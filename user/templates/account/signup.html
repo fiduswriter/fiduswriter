@@ -5,7 +5,7 @@
 
 {% block title %}{% trans "Sign Up" %}{% endblock %}
 {% block loginlabel %}{% trans "Already have an account" %}?{% endblock %}
-{% block loginhref %}{{login_url}}{% endblock %}
+{% block loginhref %}/{% endblock %}
 {% block loginbtn %}{% trans "Log In" %}{% endblock %}
 
 {% block contents %}
@@ -13,7 +13,7 @@
     <h1 class="fw-login-title">{% trans "Sign up" %}</h1>
     <p>
         {% blocktrans with site.name as site_name %}
-        Already have an account? Then please <a href="{{login_url}}" title="Login to {{site_name}}">login</a>.
+        Already have an account? Then please <a href="/" title="Login to {{site_name}}">login</a>.
         {% endblocktrans %}
     </p>
 </div>

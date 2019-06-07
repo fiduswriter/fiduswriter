@@ -124,7 +124,6 @@ class WebSocket(BaseWebSocketHandler):
                 'id': doc_owner.id,
                 'name': doc_owner.readable_name,
                 'username': doc_owner.username,
-                #'avatar': get_user_avatar_url(doc_owner)['url'],
                 'avatar': get_user_avatar_url(doc_owner),
                 'team_members': []
             }
@@ -479,7 +478,6 @@ class WebSocket(BaseWebSocketHandler):
                     'session_id': session_id,
                     'id': waiter.user_info.user.id,
                     'name': waiter.user_info.user.readable_name,
-                    #'avatar': get_user_avatar_url(waiter.user_info.user)['url']
                     'avatar': get_user_avatar_url(waiter.user_info.user)
                 })
             message = {

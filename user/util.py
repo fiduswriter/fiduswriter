@@ -1,5 +1,6 @@
 from avatar.utils import get_primary_avatar, get_default_avatar_url
 
+
 def string_to_color(username):
     hash = 0
     for ch in username:
@@ -11,6 +12,7 @@ def string_to_color(username):
 
     return 'rgb(' + r + ',' + g + ',' + b + ')'
 
+
 def get_user_avatar_url(user):
     avatar = get_primary_avatar(user, 80)
     if avatar:
@@ -18,12 +20,22 @@ def get_user_avatar_url(user):
         return {
             'url': url,
             'uploaded': True,
-            'html': '<img class="fw-avatar" src="' + url + '" alt="' + user.username + '">'
+            'html': (
+                '<img class="fw-avatar" src="' +
+                url +
+                '" alt="' + user.username + '">'
+            )
         }
     else:
         cl = string_to_color(user.username)
         return {
             'url': get_default_avatar_url(),
             'uploaded': False,
-            'html': '<span class="fw-string-avatar" style="background-color: ' + cl + ';"><span>' + user.username[0] + '</span></span>'
+            'html': (
+                '<span class="fw-string-avatar" style="background-color: ' +
+                cl +
+                ';"><span>' +
+                user.username[0] +
+                '</span></span>'
+            )
         }

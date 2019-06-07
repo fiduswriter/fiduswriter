@@ -9,8 +9,7 @@ const answerCommentTemplate = ({
         commentId,
         activeCommentAnswerId,
         active,
-        user,
-        staticUrl
+        user
     }) =>
     `<div class="comment-item comment-answer" id="comment-answer-${answer.id}">
         <div class="comment-user">
@@ -51,8 +50,7 @@ const singleCommentTemplate = ({
         comment,
         author,
         active,
-        editComment,
-        staticUrl
+        editComment
     }) =>
     `<div class="comment-item">
         <div class="comment-user">
@@ -72,8 +70,7 @@ const singleCommentTemplate = ({
 /** A template for the editor of a first comment before it has been saved (not an answer to a comment). */
 const firstCommentTemplate = ({
         comment,
-        author,
-        staticUrl
+        author
     }) =>
     `<div class="comment-item">
         <div class="comment-user">
@@ -259,7 +256,7 @@ const BLOCK_NAMES = {
 
 const blockChangeTemplate = ({before}) => `<div class="format-change-info"><b>${gettext('Was')}:</b> ${BLOCK_NAMES[before.type]}</div>`
 
-const trackTemplate = ({type, data, node, active, docInfo, filterOptions, staticUrl}) => {
+const trackTemplate = ({type, data, node, active, docInfo, filterOptions}) => {
     if (!filterOptions.track) {
         return '<div class="margin-box track hidden"></div>'
     }

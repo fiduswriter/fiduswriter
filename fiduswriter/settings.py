@@ -115,7 +115,7 @@ STATICFILES_DIRS = (
     os.path.join(PROJECT_PATH, 'static-libs'),
 )
 
-LOGIN_URL = '/account/login/'
+LOGIN_URL = '/'
 
 # List of finder classes that know how to find static files in
 # various locations.

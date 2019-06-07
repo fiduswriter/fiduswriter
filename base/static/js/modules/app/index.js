@@ -15,35 +15,49 @@ export class App {
         this.name = 'Fidus Writer'
         this.config.app = this
         this.routes = {
-            "usermedia": () => new ImageOverview(this.config),
-            "bibliography": () => new BibliographyOverview(this.config),
-            "user": pathnameParts => {
-                let returnValue
-                switch (pathnameParts[2]) {
-                    case "profile":
-                        returnValue = new Profile(this.config)
-                        break
-                    case "team":
-                        returnValue = new ContactsOverview(this.config)
-                        break
-                    default:
-                        returnValue = false
+            "usermedia": {
+                loggedIn: true,
+                open: () => new ImageOverview(this.config)
+            },
+            "bibliography": {
+                loggedIn: true,
+                open: () => new BibliographyOverview(this.config)
+            },
+            "user": {
+                loggedIn: true,
+                open: pathnameParts => {
+                    let returnValue
+                    switch (pathnameParts[2]) {
+                        case "profile":
+                            returnValue = new Profile(this.config)
+                            break
+                        case "team":
+                            returnValue = new ContactsOverview(this.config)
+                            break
+                        default:
+                            returnValue = false
+                    }
+                    return returnValue
                 }
-                return returnValue
             },
-            "document": pathnameParts => {
-                const id = pathnameParts[2]
-                return import('../editor').then(({Editor}) => new Editor(this.config, id))
+            "document": {
+                loggedIn: true,
+                open: pathnameParts => {
+                    const id = pathnameParts[2]
+                    return import('../editor').then(({Editor}) => new Editor(this.config, id))
+                }
             },
-            "": () => new DocumentOverview(this.config)
+            "": {
+                loggedIn: true,
+                open: () => new DocumentOverview(this.config)
+            }
         }
     }
 
     init() {
         if (!this.config.loggedIn) {
             this.activateFidusPlugins()
-            this.page = new LoginPage(this.config)
-            this.page.init()
+            this.selectPage()
             this.bind()
             return
         }
@@ -61,12 +75,6 @@ export class App {
         )
         this.bind()
         this.connectWs()
-    }
-
-    initWithoutUser() {
-        this.activateFidusPlugins()
-        this.selectPage()
-        this.bind()
     }
 
     bind() {
@@ -106,6 +114,10 @@ export class App {
     }
 
     activateFidusPlugins() {
+        if (this.plugins) {
+            // Plugins have been activated already
+            return
+        }
         // Add plugins.
         this.plugins = {}
 
@@ -122,8 +134,14 @@ export class App {
             this.page.close()
         }
         const pathnameParts = window.location.pathname.split('/')
-        const page = this.routes[pathnameParts[1]] ? this.routes[pathnameParts[1]](pathnameParts) : false
-        if (page) {
+        const route = this.routes[pathnameParts[1]]
+        if (route) {
+            if (route.loggedIn && !this.config.loggedIn) {
+                this.page = new LoginPage(this.config)
+                this.page.init()
+                return
+            }
+            const page = route.open(pathnameParts)
             if (page.then) {
                 page.then(thisPage => {
                     this.page = thisPage

@@ -44,7 +44,7 @@ export class DeleteUserDialog {
            response => {
                switch (response.status) {
                    case 204:
-                        window.location = '/account/login/'
+                        window.location = '/'
                         break
                     case 403:
                         addAlert('error', gettext('Staff accounts have to be deleted through the admin interface.'))

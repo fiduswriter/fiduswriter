@@ -245,7 +245,7 @@ module.exports = {
         "prefer-destructuring": "off",
         "prefer-numeric-literals": "error",
         "prefer-object-spread": "off",
-        "prefer-promise-reject-errors": "error",
+        "prefer-promise-reject-errors": "off",
         "prefer-reflect": "off",
         "prefer-rest-params": "off",
         "prefer-spread": "error",

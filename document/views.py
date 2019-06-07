@@ -30,7 +30,7 @@ from base.html_email import html_email
 def get_accessrights(ars):
     ret = []
     for ar in ars:
-        the_avatar = get_user_avatar_url(ar.user)['url']
+        the_avatar = get_user_avatar_url(ar.user)
         ret.append({
             'document_id': ar.document.id,
             'user_id': ar.user.id,
@@ -114,7 +114,7 @@ def documents_list(request):
             'owner': {
                 'id': document.owner.id,
                 'name': document.owner.readable_name,
-                'avatar': get_user_avatar_url(document.owner)['url']
+                'avatar': get_user_avatar_url(document.owner)
             },
             'added': added,
             'updated': updated,
@@ -137,9 +137,12 @@ def get_documentlist_js(request):
             tm_object['id'] = team_member.member.id
             tm_object['name'] = team_member.member.readable_name
             tm_object['username'] = team_member.member.get_username()
+            '''
             tm_object['avatar'] = get_user_avatar_url(
                 team_member.member
             )['url']
+            '''
+            tm_object['avatar'] = get_user_avatar_url(team_member.member)
             response['team_members'].append(tm_object)
         serializer = PythonWithURLSerializer()
         export_temps = serializer.serialize(

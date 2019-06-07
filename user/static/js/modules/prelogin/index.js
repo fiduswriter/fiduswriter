@@ -1,0 +1,98 @@
+import {setLanguage, ensureCSS, setDocTitle, whenReady} from "../common"
+import {FeedbackTab} from "../feedback"
+
+import {basePreloginTemplate} from "./templates"
+
+export class PreloginPage {
+    constructor({app, isFree, language, registrationOpen, staticUrl}) {
+        this.app = app
+        this.isFree = isFree
+        this.language = language
+        this.registrationOpen = registrationOpen
+        this.staticUrl = staticUrl
+        this.pluginLoaders = {}
+        this.title = ''
+        this.contents = ''
+        this.headerLinks = [
+            {
+                type: 'label',
+                text: gettext('New here?')
+            },
+            {
+                type: 'button',
+                text: gettext('Sign up'),
+                link: '/account/signup/'
+            }
+        ]
+        this.footerLinks = [
+            {
+                text: gettext("Terms and Conditions"),
+                link: '/pages/terms/'
+            },
+            {
+                text: gettext("Privacy policy"),
+                link: '/pages/privacy/'
+            },
+            {
+                text: gettext("Equations and Math with MathLive"),
+                link: 'https://mathlive.io/'
+            },
+            {
+                text: gettext("Citations with Citation Style Language"),
+                link: 'https://citationstyles.org/'
+            },
+            {
+                text: gettext("Editing with ProseMirror"),
+                link: 'https://prosemirror.net/'
+            }
+        ]
+    }
+
+    activateFidusPlugins() {
+        // Add plugins.
+        this.plugins = {}
+
+        Object.keys(this.pluginLoaders).forEach(plugin => {
+            if (typeof this.pluginLoaders[plugin] === 'function') {
+                this.plugins[plugin] = new this.pluginLoaders[plugin]({page: this, staticUrl: this.staticUrl})
+                this.plugins[plugin].init()
+            }
+        })
+    }
+
+    init() {
+        whenReady().then(() => {
+            this.render()
+            this.activateFidusPlugins()
+            this.bind()
+        })
+    }
+
+    bind() {
+        document.getElementById('lang-selection').addEventListener('change', event => {
+            this.language = event.target.value
+            return setLanguage(this.app.config, this.language).then(
+                () => this.init()
+            )
+        })
+    }
+
+    render() {
+        document.body = document.createElement('body')
+        document.body.innerHTML = basePreloginTemplate({
+            isFree: this.isFree,
+            language: this.language,
+            headerLinks: this.headerLinks,
+            footerLinks: this.footerLinks,
+            contents: this.contents,
+            staticUrl: this.staticUrl
+        })
+        ensureCSS([
+            'prelogin.css'
+        ], this.staticUrl)
+        setDocTitle(this.title, this.app)
+        const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
+        feedbackTab.init()
+    }
+
+}

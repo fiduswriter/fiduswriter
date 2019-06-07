@@ -1,4 +1,4 @@
-.fw-header {
+.fw-header.prelogin {
     border-bottom: solid 1px #8e8e8e;
     height: 123px;
 }
@@ -7,29 +7,26 @@
     margin-top: 38px;
 }
 
-.fw-header-nav {
+.prelogin #header-nav {
     position: absolute;
     right: 40px;
     top: 2px;
-}
-
-.fw-header-nav {
     font-size: 14px;
     color: #fff;
     line-height: 34px;
 }
 
-.fw-header-nav .fw-button {
+.prelogin #header-nav .fw-button {
     margin-left: 12px;
 }
 
-.fw-contents {
+.fw-contents.prelogin {
     top: 195px;
     padding-bottom: 150px;
     line-height: 2em;
 }
 
-.fw-contents:after {
+.fw-contents.prelogin:after {
     display: block;
     content: ' ';
     clear: both;
@@ -103,7 +100,7 @@
     font-size: 15px;
 }
 
-body > footer {
+footer.prelogin {
     position: fixed;
     left: 0;
     bottom: 0;

@@ -346,7 +346,7 @@ def list_team_members_js(request):
                 'name': member.readable_name,
                 'username': member.get_username(),
                 'email': member.email,
-                'avatar': userutil.get_user_avatar_url(member)['url']
+                'avatar': userutil.get_user_avatar_url(member)
             }
             response['team_members'].append(team_member)
     return JsonResponse(
@@ -388,9 +388,7 @@ def add_team_member_js(request):
                 team_member_form = TeamMemberForm(form_data)
                 if team_member_form.is_valid():
                     team_member_form.save()
-                    the_avatar = userutil.get_user_avatar_url(
-                        new_member
-                    )['url']
+                    the_avatar = userutil.get_user_avatar_url(new_member)
                     response['member'] = {
                         'id': new_member.pk,
                         'name': new_member.username,

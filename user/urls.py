@@ -6,14 +6,6 @@ from . import views
 from base.views import app
 
 
-class LoginView(allauth_views.LoginView):
-    def get_context_data(self, **kwargs):
-        context = super(LoginView, self).get_context_data(**kwargs)
-        # Add info about whether registration is open.
-        context['registration_open'] = settings.REGISTRATION_OPEN
-        return context
-
-
 if settings.REGISTRATION_OPEN:
     signup_view = allauth_views.signup
 else:
@@ -71,9 +63,6 @@ urlpatterns = [
 
     # User avatar handling
     url('^avatar/', include('avatar.urls')),
-
-    # Login view
-    url(r'^login/$', LoginView.as_view(), name="account_login"),
 
     # Signup view
     url(r"^signup/$", signup_view, name="account_signup"),

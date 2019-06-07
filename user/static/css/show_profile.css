@@ -1,94 +1,62 @@
-#profile-wrapper {
-    padding-bottom: 20px;
-}
 #profile-avatar {
     position: relative;
     float: left;
-    width: 128px;
+    width: 166px;
     text-align: center;
-    margin-right: 35px;
+    padding-right: 46px;
+    box-sizing: border-box;
 }
-#profile-avatar img {
-    padding: 23px;
-    border: solid 1px #ccc;
+
+#profile-avatar .fw-avatar,
+#profile-avatar .fw-string-avatar {
+    width: 100%;
+    height: auto;
+    font-size: 50px;
 }
+
 #profile-data {
-    width: auto;
-    text-align: left;
-    line-height: 26px;
+    float: left;
+    width: calc(100% - 166px);
+    max-width: 505px;
 }
-#avatar-pulldown-wrapper {
+
+.profile-data-row {
     position: relative;
+    padding-right: 21px;
 }
+
+.profile-data-row + .profile-data-row {
+    margin-top: 12px
+}
+
+#fw-edit-profile-pwd {
+    position: absolute;
+    right: 0;
+    top: 30px;
+}
+
+#avatar-pulldown-wrapper {
+    margin-top: 23px;
+}
+
 #edit-avatar-btn {
-    display: block;
-    font-size: 11px;
-    cursor: pointer;
-    background-color: #e6e6e6;
-    font-weight: 700;
-    padding: 5px 0 2px;
-    margin-top: 9px;
+    color: #84b4a7;
 }
 
-#profile-data th, #profile-data td {
-    padding-bottom: 5px;
-    vertical-align: middle;
+#edit-avatar-btn:hover {
+    text-decoration: underline;
 }
 
-#profile-data .profile-emial-title {
-    vertical-align: top;
-    padding-top: 82px;
-}
-
-#profile-data th {
-    padding-right: 20px;
-}
-#profile-submit-wrapper {
-    text-align: right;
-    padding-top: 30px;
-}
-#profile-data input[type="text"],
-#profile-data input[type="password"] {
-    width: 470px;
-}
-
-#confirmaccountdeletion p {
-  line-height: 1.3em;
-}
-
-#username-confirmation {
-  margin: 15px 0 0;
-}
-
-.fw-profile-dialog-input {
-    width: 290px;
-    margin-bottom: 6px;
-}
-
-#profile-data .fw-document-table {
-    width: 476px;
-    white-space: nowrap;
-    margin-top: 40px;
-}
-
-#profile-data .fw-document-table th,
-#profile-data .fw-document-table td {
+.profile-email-action {
     text-align: center;
-    vertical-align: middle;
-    height: 36px;
-    padding: 0;
-    line-height: 36px;
 }
 
-#profile-data .fw-document-table td.emailaddress {
-    width: 235px;
-    text-align: left;
+.profile-email-table tbody tr:last-child td {
+    border-bottom: 0 none;
 }
 
-#profile-data .fw-document-table .disabled {
-    color: #cecece;
-}
-
-#add-profile-email {
-    cursor: pointer;
+#profile-submit-wrapper {
+    margin-top: 36px;
+    text-align: right;
+    padding-right: 21px;
 }

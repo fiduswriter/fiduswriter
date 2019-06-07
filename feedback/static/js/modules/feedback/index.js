@@ -18,8 +18,7 @@ export class FeedbackTab {
     render() {
         document.body.insertAdjacentHTML(
             'beforeend',
-            `<a class="feedback-tab" href="#">${gettext("Tech support")}</a>
-            <div class="feedback-panel">
+            `<a class="feedback-tab" href="#"></a><div class="feedback-panel">
               <div id="feedback-wrapper">
                 <div id="feedback-title">${gettext("Tech support")}</div>
                 <p>${gettext("Did you encounter an error or bug?")}<br>
@@ -37,6 +36,21 @@ export class FeedbackTab {
               </div>
             </div>`
         )
+
+        let header_nav_wrapper = document.querySelector('.fw-header .fw-container')
+        if (null === header_nav_wrapper) {
+            header_nav_wrapper = document.querySelector('#headerbar')
+        }
+
+        if (null === header_nav_wrapper) {
+            header_nav_wrapper = document.body
+        }
+
+        header_nav_wrapper.insertAdjacentHTML(
+            'beforeend',
+            `<a class="feedback-tab" href="#"></a>`
+        )
+
         ensureCSS('feedback/feedback.css', this.staticUrl)
     }
 

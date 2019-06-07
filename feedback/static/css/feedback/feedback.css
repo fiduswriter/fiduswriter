@@ -19,24 +19,39 @@
  background: #ecdc9e;
 }
 a.feedback-tab {
-    position: fixed;
-    right: 8px;
-    top: 0px;
-    width: auto;
-    padding: 0 10px 0 10px;
-    background: #ecdc9e;
-    border-color: #eac642;
-    border-style: solid;
-    border-width: 1px;
-    border-top-width: 0;
-    text-decoration: none;
-    border-bottom-left-radius: 6px;
-    border-bottom-right-radius: 6px;
-    font-family: 'Lato', sans-serif;
-    font-size: 13px;
-    color: #d3421c;
-    line-height: 23px;
+    position: absolute;
+    right: 85px;
+    top: -3px;
+    display: block;
+    width: 35px;
+    height: 35px;
+    overflow: hidden;
+    background-color: #4da4f1;
+    border-radius: 50%;
     z-index: 100;
+    cursor: pointer;
+    text-indent: -999px;
+    z-index: 1;
+}
+
+a.feedback-tab:before {
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 7px;
+    font-family: 'Font Awesome 5 Free';
+    font-size: 20px;
+    content: "\f075";
+    color: white;
+    text-indent: 0;
+    text-align: center;
+    line-height: 1;
+}
+
+#headerbar a.feedback-tab {
+    right: 60px;
+    top: 23px;
 }
 
 a.feedback-tab:hover {

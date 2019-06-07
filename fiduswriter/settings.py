@@ -45,6 +45,9 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000
 # Whether anyone surfing to the site can open an account.
 REGISTRATION_OPEN = True
 
+# This determines whether there is a star labeled "Free" on the login page
+IS_FREE = True
+
 # Send emails to console.
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -112,7 +115,7 @@ STATICFILES_DIRS = (
     os.path.join(PROJECT_PATH, 'static-libs'),
 )
 
-LOGIN_URL = '/account/login/'
+LOGIN_URL = '/'
 
 # List of finder classes that know how to find static files in
 # various locations.
@@ -291,6 +294,10 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
+        'tornado.access': {
+            'handlers': ['null'],
+            'propagate': False,
+        }
     }
 }
 
@@ -336,6 +343,9 @@ ADMIN_SITE_TITLE = gettext('Fidus Writer Admin')
 ADMIN_SITE_HEADER = gettext('Fidus Writer Administration Site')
 ADMIN_INDEX_TITLE = gettext('Welcome to the Fidus Writer Administration Site')
 
+# The below allow login via JavaScript
+SESSION_COOKIE_HTTPONLY = False
+CSRF_COOKIE_HTTPONLY = False
 
 local_config_path = os.path.join(PROJECT_PATH, 'configuration.py')
 try:

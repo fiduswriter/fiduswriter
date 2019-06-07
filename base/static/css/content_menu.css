@@ -4,14 +4,12 @@
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.11);
     font-size: 14px;
     z-index: 101;
-    padding: 0px;
-    border-width: 1px;
-    border-style: solid;
-    border-color: #eeeeee;
+    padding: 0;
+    border: 0 none;
     border-image: initial;
     overflow: hidden;
-    border-radius: 4px;
-    outline: 0px;
+    border-radius: 6px;
+    outline: 0;
 }
 
 .ui-content_menu-content.ui-scrollable {
@@ -55,7 +53,8 @@
     background-color: #eeeeee;
 }
 .content-menu-item-divider {
-    border: 0.8px solid #eeeeee !important;
+    border: 0 none;
+    border-top: 1px solid #eeeeee !important;
 }
 .content-menu-item-icon {
     position: absolute;

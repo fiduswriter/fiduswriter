@@ -2,6 +2,7 @@ from django import template
 from django.templatetags.static import PrefixNode
 from django.apps import apps
 from django.conf import settings
+from allauth.socialaccount.models import providers
 
 register = template.Library()
 
@@ -26,8 +27,24 @@ def fiduswriter_config_js(context):
         ws_server = settings.SERVER_INFO['WS_SERVER']
     else:
         ws_server = ''
+    socialaccount_providers = []
+    for provider in providers.registry.get_list():
+        socialaccount_providers.append({
+            'id': provider.id,
+            'name': provider.name,
+            'login_url': provider.get_login_url(context['request'])
+        })
     return {
         'static_url': static_url,
         'ws_port': ws_port,
-        'ws_server': ws_server
+        'ws_server': ws_server,
+        'is_free': ('true' if settings.IS_FREE else 'false'),
+        'registration_open': (
+            'true' if settings.REGISTRATION_OPEN else 'false'
+        ),
+        'logged_in': (
+            'true' if context['request'].user.is_authenticated else 'false'
+        ),
+        'language': context['request'].LANGUAGE_CODE,
+        'socialaccount_providers': socialaccount_providers
     }

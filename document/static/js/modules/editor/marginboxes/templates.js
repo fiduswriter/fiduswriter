@@ -9,12 +9,11 @@ const answerCommentTemplate = ({
         commentId,
         activeCommentAnswerId,
         active,
-        user,
-        staticUrl
+        user
     }) =>
     `<div class="comment-item comment-answer" id="comment-answer-${answer.id}">
         <div class="comment-user">
-            <img class="comment-user-avatar" src="${author ? author.avatar : `${staticUrl}img/default_avatar.png?v=${process.env.TRANSPILE_VERSION}`}">
+            ${author ? author.avatar.html : `<span class="fw-string-avatar"></span>`}
             <h5 class="comment-user-name">${escapeText(author ? author.name : answer.username)}</h5>
             <p class="comment-date">${localizeDate(answer.date)}</p>
         </div>
@@ -51,12 +50,11 @@ const singleCommentTemplate = ({
         comment,
         author,
         active,
-        editComment,
-        staticUrl
+        editComment
     }) =>
     `<div class="comment-item">
         <div class="comment-user">
-            <img class="comment-user-avatar" src="${author ? author.avatar : `${staticUrl}img/default_avatar.png?v=${process.env.TRANSPILE_VERSION}`}">
+            ${author ? author.avatar.html : `<span class="fw-string-avatar"></span>`}
             <h5 class="comment-user-name">${escapeText(author ? author.name : comment.username)}</h5>
             <p class="comment-date">${localizeDate(comment.date)}</p>
         </div>
@@ -72,12 +70,11 @@ const singleCommentTemplate = ({
 /** A template for the editor of a first comment before it has been saved (not an answer to a comment). */
 const firstCommentTemplate = ({
         comment,
-        author,
-        staticUrl
+        author
     }) =>
     `<div class="comment-item">
         <div class="comment-user">
-            <img class="comment-user-avatar" src="${author ? author.avatar : `${staticUrl}img/default_avatar.png?v=${process.env.TRANSPILE_VERSION}`}">
+            ${author ? author.avatar.html : `<span class="fw-string-avatar"></span>`}
             <h5 class="comment-user-name">${escapeText(author ? author.name : comment.username)}</h5>
             <p class="comment-date">${localizeDate(comment.date)}</p>
         </div>
@@ -259,7 +256,7 @@ const BLOCK_NAMES = {
 
 const blockChangeTemplate = ({before}) => `<div class="format-change-info"><b>${gettext('Was')}:</b> ${BLOCK_NAMES[before.type]}</div>`
 
-const trackTemplate = ({type, data, node, active, docInfo, filterOptions, staticUrl}) => {
+const trackTemplate = ({type, data, node, active, docInfo, filterOptions}) => {
     if (!filterOptions.track) {
         return '<div class="margin-box track hidden"></div>'
     }
@@ -271,7 +268,7 @@ const trackTemplate = ({type, data, node, active, docInfo, filterOptions, static
         <div class="margin-box track ${active ? 'active' : 'inactive'}" data-type="${type}">
             <div class="track-${type}">
                 <div class="comment-user">
-                    <img class="comment-user-avatar" src="${author ? author.avatar : `${staticUrl}img/default_avatar.png?v=${process.env.TRANSPILE_VERSION}`}">
+                    ${author ? author.avatar.html : `<span class="fw-string-avatar"></span>`}
                     <h5 class="comment-user-name">${escapeText(author ? author.name : data.username)}</h5>
                     <p class="comment-date">${node.type.name==='text' ? `${gettext('ca.')} ` : ''}${localizeDate(data.date*60000, 'minutes')}</p>
                 </div>
@@ -282,18 +279,10 @@ const trackTemplate = ({type, data, node, active, docInfo, filterOptions, static
             </div>
             ${
                 docInfo.access_rights === 'write' ?
-                `<span class="show-marginbox-options fa fa-ellipsis-v"></span>
-                <div class="marginbox-options fw-pulldown fw-right">
-                    <ul>
-                        <li><span class="fw-pulldown-item track-accept" data-type="${type}" title="${gettext("Accept")}">
-                            ${gettext("Accept")}
-                        </span></li>
-                        <li><span class="fw-pulldown-item track-reject" data-type="${type}" title="${gettext("Reject")}">
-                            ${gettext("Reject")}
-                        </span></li>
-                    </ul>
-                </div>` :
-                ''
+                    `<div class="track-ctas">
+                        <button class="track-accept fw-button fw-dark" type="submit" data-type="${type}">${gettext("Accept")}</button>
+                        <button class="track-reject fw-button fw-orange" type="submit" data-type="${type}">${gettext("Reject")}</button>
+                    </div>` : ''
             }
 
         </div>`

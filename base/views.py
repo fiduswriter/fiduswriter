@@ -1,8 +1,8 @@
 from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 
-@login_required
+@ensure_csrf_cookie
 def app(request):
     """
     Load a page controlled by the JavaScript app.

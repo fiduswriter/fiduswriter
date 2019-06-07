@@ -10,6 +10,7 @@ import {FeedbackTab} from "../../feedback"
 import {
     docSchema
 } from "../../schema/document"
+
 /*
 * Helper functions for the document overview page.
 */
@@ -46,8 +47,8 @@ export class DocumentOverview {
         document.body = document.createElement('body')
         document.body.innerHTML = baseBodyTemplate({
             contents: '<ul id="fw-overview-menu"></ul>',
-            username: this.user.username,
-            staticUrl: this.staticUrl
+            user: this.user,
+            staticUrl: this.staticUrl,
         })
         ensureCSS([
             'add_remove_dialog.css',
@@ -176,28 +177,28 @@ export class DocumentOverview {
     createTableRow(doc) {
         return [
             String(doc.id),
-            `<input type="checkbox" class="entry-select" data-id="${doc.id}">`,
-            `<span class="fw-document-table-title fw-inline">
+            `<input type="checkbox" class="entry-select fw-check" data-id="${doc.id}" id="doc-${doc.id}"><label for="doc-${doc.id}"></label>`,
+            `<span class="fw-document-table-title">
                 <i class="far fa-file-alt"></i>
                 <a class="doc-title fw-link-text fw-searchable" href="/document/${doc.id}/">
                     ${doc.title.length ? escapeText(doc.title) : gettext('Untitled')}
                 </a>
             </span>`,
             doc.revisions.length ?
-            `<span class="fw-inline revisions" data-id="${doc.id}">
+            `<span class="revisions" data-id="${doc.id}">
                 <i class="fas fa-history"></i>
             </span>` :
             '',
             `<span class="date">${localizeDate(doc.added*1000, 'sortable-date')}</span>`,
             `<span class="date">${localizeDate(doc.updated*1000, 'sortable-date')}</span>`,
             `<span>
-                <img class="fw-avatar" src="${doc.owner.avatar}" />
+                ${doc.owner.avatar.html}
             </span>
-            <span class="fw-inline fw-searchable">${escapeText(doc.owner.name)}</span>`,
-            `<span class="rights fw-inline" data-id="${doc.id}" title="${doc.rights}">
+            <span class="fw-searchable">${escapeText(doc.owner.name)}</span>`,
+            `<span class="rights" data-id="${doc.id}" title="${doc.rights}">
                 <i data-id="${doc.id}" class="icon-access-right icon-access-${doc.rights}"></i>
             </span>`,
-            `<span class="delete-document fw-inline fw-link-text" data-id="${doc.id}"
+            `<span class="delete-document fw-link-text" data-id="${doc.id}"
                     data-title="${escapeText(doc.title)}">
                 ${
                     this.user.id === doc.owner.id ?

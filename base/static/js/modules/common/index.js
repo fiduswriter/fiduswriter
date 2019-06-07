@@ -54,8 +54,7 @@ export {
 from "./worker"
 
 export {
-    baseBodyTemplate,
-    basePreloginTemplate
+    baseBodyTemplate
 }
 from "./templates"
 export {

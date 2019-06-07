@@ -7,19 +7,16 @@
     margin-top: 38px;
 }
 
-.prelogin .fw-header-nav {
+.prelogin #header-nav {
     position: absolute;
     right: 40px;
     top: 2px;
-}
-
-.prelogin .fw-header-nav {
     font-size: 14px;
     color: #fff;
     line-height: 34px;
 }
 
-.prelogin .fw-header-nav .fw-button {
+.prelogin #header-nav .fw-button {
     margin-left: 12px;
 }
 

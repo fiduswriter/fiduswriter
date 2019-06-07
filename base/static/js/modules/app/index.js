@@ -16,15 +16,15 @@ export class App {
         this.config.app = this
         this.routes = {
             "usermedia": {
-                loggedIn: true,
+                requireLogin: true,
                 open: () => new ImageOverview(this.config)
             },
             "bibliography": {
-                loggedIn: true,
+                requireLogin: true,
                 open: () => new BibliographyOverview(this.config)
             },
             "user": {
-                loggedIn: true,
+                requireLogin: true,
                 open: pathnameParts => {
                     let returnValue
                     switch (pathnameParts[2]) {
@@ -41,14 +41,14 @@ export class App {
                 }
             },
             "document": {
-                loggedIn: true,
+                requireLogin: true,
                 open: pathnameParts => {
                     const id = pathnameParts[2]
                     return import('../editor').then(({Editor}) => new Editor(this.config, id))
                 }
             },
             "": {
-                loggedIn: true,
+                requireLogin: true,
                 open: () => new DocumentOverview(this.config)
             }
         }
@@ -136,7 +136,7 @@ export class App {
         const pathnameParts = window.location.pathname.split('/')
         const route = this.routes[pathnameParts[1]]
         if (route) {
-            if (route.loggedIn && !this.config.loggedIn) {
+            if (route.requireLogin && !this.config.loggedIn) {
                 this.page = new LoginPage(this.config)
                 this.page.init()
                 return

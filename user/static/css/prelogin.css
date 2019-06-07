@@ -119,6 +119,10 @@ footer.prelogin {
     top: 0;
 }
 
+.prelogin .fw-footer-links {
+    top: 8px;
+}
+
 .fw-footer-links > li {
     display: inline-block;
     margin-right: 15px;

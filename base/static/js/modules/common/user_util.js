@@ -4,6 +4,13 @@
  * @param preopen An optional function to be called before opening the dropdown box. Used to position dropdown box.
  */
 export const filterPrimaryEmail = function(emails) {
-    const primary_emails = emails.filter(email => email.primary)
-    return primary_emails[0].address
+    const primaryEmails = emails.filter(email => email.primary)
+    if (!primaryEmails.length) {
+        if(emails.length) {
+            return emails[0].address
+        } else {
+            return ''
+        }
+    }
+    return primaryEmails[0].address
 }

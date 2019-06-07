@@ -52,6 +52,7 @@ export class App {
                 open: () => new DocumentOverview(this.config)
             }
         }
+        this.openLoginPage = () => new LoginPage(this.config)
     }
 
     init() {
@@ -137,7 +138,7 @@ export class App {
         const route = this.routes[pathnameParts[1]]
         if (route) {
             if (route.requireLogin && !this.config.loggedIn) {
-                this.page = new LoginPage(this.config)
+                this.page = this.openLoginPage()
                 this.page.init()
                 return
             }

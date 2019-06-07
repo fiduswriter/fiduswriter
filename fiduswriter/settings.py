@@ -343,6 +343,9 @@ ADMIN_SITE_TITLE = gettext('Fidus Writer Admin')
 ADMIN_SITE_HEADER = gettext('Fidus Writer Administration Site')
 ADMIN_INDEX_TITLE = gettext('Welcome to the Fidus Writer Administration Site')
 
+# The below allow login via JavaScript
+SESSION_COOKIE_HTTPONLY = False
+CSRF_COOKIE_HTTPONLY = False
 
 local_config_path = os.path.join(PROJECT_PATH, 'configuration.py')
 try:

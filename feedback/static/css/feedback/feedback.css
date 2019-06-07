@@ -40,7 +40,7 @@ a.feedback-tab:before {
     left: 0;
     right: 0;
     top: 7px;
-    font-family: FontAwesome;
+    font-family: 'Font Awesome 5 Free';
     font-size: 20px;
     content: "\f075";
     color: white;

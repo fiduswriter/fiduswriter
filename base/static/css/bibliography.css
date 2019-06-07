@@ -299,3 +299,29 @@ div.literal em, pre.long-literal em {
 #bibimport-api-search .bibimport-search-result, #bibimport-api-search div.item {
     clear: left;
 }
+
+/**
+Modal header
+ */
+.bib-dialog-header .fw-select-container {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0;
+}
+
+.bib-dialog-header .ui-tabs-nav {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0;
+    height: auto;
+}
+
+.tab-link-inner {
+    display: block;
+    margin-left: 20px;
+    color: rgba(98, 96, 96, 0.6);
+}
+
+.current-tab .tab-link-inner {
+    color: #2c2723;
+}

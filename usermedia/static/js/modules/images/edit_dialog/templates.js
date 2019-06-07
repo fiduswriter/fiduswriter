@@ -49,7 +49,7 @@ export const imageEditTemplate = ({image, cats}) =>
     <div>
         ${
             image && image.image ?
-            `<img src="${image.image}" />` :
+            `<div class="img" style="background-image: url(${image.image});"></div>` :
             ''
         }
     </div></div>

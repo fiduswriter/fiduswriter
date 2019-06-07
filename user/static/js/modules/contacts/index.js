@@ -8,7 +8,7 @@ import {menuModel} from "./menu"
 export class ContactsOverview {
     constructor({app, user, staticUrl}) {
         this.app = app
-        this.username = user.username
+        this.user = user
         this.staticUrl = staticUrl
     }
 
@@ -42,8 +42,8 @@ export class ContactsOverview {
                     </tbody>
                 </table>
             </div>`,
-            username: this.username,
-            staticUrl: this.staticUrl
+            user: this.user,
+            staticUrl: this.staticUrl,
         })
         setDocTitle(gettext('Team Members'), this.app)
         const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})

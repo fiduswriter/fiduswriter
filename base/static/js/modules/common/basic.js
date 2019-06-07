@@ -214,5 +214,4 @@ export const setDocTitle = function(title, app) {
     if (document.title !== titleText) {
         document.title = titleText
     }
-
 }

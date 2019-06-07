@@ -27,10 +27,16 @@ export {
     post,
     postJson,
     postBare,
-    ensureCSS,
-    getUserInfo
+    ensureCSS
 }
 from "./network"
+
+export {
+    getUserInfo,
+    setLanguage,
+    loginUser
+}
+from "./user"
 
 export {
     Dialog,
@@ -55,3 +61,7 @@ export {
     WebSocketConnector
 }
 from "./ws"
+export {
+    filterPrimaryEmail
+}
+from "./user_util"

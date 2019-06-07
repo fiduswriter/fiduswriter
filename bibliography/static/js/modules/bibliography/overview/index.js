@@ -14,7 +14,7 @@ export class BibliographyOverview {
 
     constructor({app, user, staticUrl}) {
         this.app = app
-        this.username = user.username
+        this.user = user
         this.staticUrl = staticUrl
     }
 
@@ -39,7 +39,7 @@ export class BibliographyOverview {
         document.body = document.createElement('body')
         document.body.innerHTML = baseBodyTemplate({
             contents: '<ul id="fw-overview-menu"></ul>',
-            username: this.username,
+            user: this.user,
             staticUrl: this.staticUrl
         })
         ensureCSS([
@@ -131,8 +131,8 @@ export class BibliographyOverview {
         const bibauthors = bibInfo.fields.author || bibInfo.fields.editor
         return [
             String(id),
-            `<input type="checkbox" class="entry-select" data-id="${id}">`, // checkbox
-            `<span class="fw-document-table-title fw-inline">
+            `<input type="checkbox" class="entry-select fw-check" data-id="${id}" id="bib-${id}"><label for="bib-${id}"></label>`, // checkbox
+            `<span class="fw-document-table-title">
                 <i class="fa fa-book"></i>
                 <span class="edit-bib fw-link-text fw-searchable" data-id="${id}">
                     ${bibInfo.fields.title ? escapeText(litToText(bibInfo.fields.title)) : gettext('Untitled')}

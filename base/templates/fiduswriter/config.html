@@ -14,7 +14,12 @@
         const websocketProtocol = location.protocol === 'https:' ? 'wss://' : 'ws://'
         window.fidusConfig = {
             staticUrl: '{{ static_url }}',
-            websocketUrl: websocketProtocol + websocketServer + websocketPort
+            websocketUrl: websocketProtocol + websocketServer + websocketPort,
+            language: '{{ language }}',
+            registrationOpen: {{ registration_open }},
+            socialaccountProviders: {{ socialaccount_providers | safe }},
+            isFree: {{ is_free }},
+            loggedIn: {{ logged_in }}
         };
     })();
 </script>

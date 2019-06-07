@@ -6,7 +6,7 @@ span.deletion {
 .selected-deletion,
 .selected-format_change,
 .selected-block_change {
-    background-color: #fffacf;
+    background-color: #afbed4;
 }
 
 .tag.selected-insertion,
@@ -48,4 +48,12 @@ span.deletion {
 li[data-track]::before,
 li [data-track]::before {
     left: -5px;
+}
+
+.track-ctas {
+    display: none;
+}
+
+.track.active .track-ctas {
+    display: block;
 }

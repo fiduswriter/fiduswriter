@@ -124,7 +124,7 @@
 table.dataTable-table thead th a:after {
     font-family: 'Font Awesome 5 Free';
     font-weight: 900;
-    font-size: inherit;
+    font-size: 80%;
     text-rendering: auto;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

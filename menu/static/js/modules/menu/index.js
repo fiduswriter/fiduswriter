@@ -55,14 +55,7 @@ export class SiteMenu {
         const button = document.getElementById('preferences-btn')
         addDropdownBox(
             button,
-            box,
-            () => {
-                // In addition to adding the dropdown, we also need to add some css
-                // values so that the dropdown is placed close to #preferences-btn
-                const btnOffset = button.getBoundingClientRect()
-                box.style.left = `${document.body.scrollLeft + btnOffset.left - 52}px`
-                box.style.top = `${document.body.scrollTop + btnOffset.top + 27}px`
-            }
+            box
         )
 
         // Same for form button

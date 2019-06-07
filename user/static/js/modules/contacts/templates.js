@@ -5,19 +5,17 @@ export const teammemberTemplate = ({members}) =>
     members.map(member =>
         `<tr id="user-${member.id}">
             <td width="30">
-                <span class="fw-inline">
-                    <input type="checkbox" class="entry-select" data-id="${member.id}"/>
-                </span>
+                <input type="checkbox" class="entry-select fw-check" id="member-${member.id}" data-id="${member.id}"/><label for="member-${member.id}"></label>
             </td>
             <td width="350">
-                <span><img class="fw-avatar" src="${member.avatar}" /></span>
-                <span class="fw-inline">${escapeText(member.name)}</span>
+                <span>${member.avatar.html}</span>
+                ${escapeText(member.name)}
             </td>
             <td width="350">
-                <span class="fw-inline">${escapeText(member.email)}</span>
+                ${escapeText(member.email)}
             </td>
             <td width="50" align="center">
-                <span class="fw-link-text delete-single-member fw-inline"
+                <span class="fw-link-text delete-single-member"
                         data-id="${member.id}">
                     <i class="fa fa-trash-alt"></i>
                 </span>

@@ -118,25 +118,25 @@ export const verifiedAccountTemplate = () =>
     <p>${gettext('You can now log in.')}</p>`
 
 export const profileContents = ({avatar, username, first_name, last_name, emails}) =>
-    `<div id="profile-wrapper">
+    `<div id="profile-wrapper" class="clearfix">
         <div id="profile-avatar">
-            <img src="${avatar.url}" width="80" height="80" alt="${username}">
+            ${avatar.html}
             <div id="avatar-pulldown-wrapper">
                 <span id="edit-avatar-btn" class="fw-link-text">
-                    <i class="fa fa-pencil-alt"></i> ${gettext('Edit profile picture')}
+                    ${gettext('Edit profile picture')}
                 </span>
-                <div id="edit-avatar-pulldown" class="fw-pulldown fw-left">
+                <div id="edit-avatar-pulldown" class="fw-pulldown">
                     <ul>
                         <li>
                             <span class="fw-pulldown-item change-avatar">
-                                <i class="fa fa-file-image-o"></i> ${gettext('Change picture')}
+                                ${gettext('Change picture')}
                             </span>
                         </li>
                         ${
                             avatar.uploaded ?
                             `<li>
                                 <span class="fw-pulldown-item delete-avatar">
-                                    <i class="fa fa-times-circle"></i> ${gettext('Delete picture')}
+                                    ${gettext('Delete picture')}
                                 </span>
                             </li>` :
                             ''
@@ -145,80 +145,79 @@ export const profileContents = ({avatar, username, first_name, last_name, emails
                 </div>
             </div>
         </div>
-        <table id="profile-data">
-            <tbody>
-                <tr>
-                    <th>${gettext('Username')}:</th>
-                    <td><input type="text" name="username" id="username" value="${escapeText(username)}" /></td>
-                </tr>
-                <tr>
-                    <th>${gettext('First name')}:</th>
-                    <td><input type="text" name="firstname" id="first_name" value="${escapeText(first_name)}" /></td>
-                </tr>
-                <tr>
-                    <th>${gettext('Last name')}:</th>
-                    <td><input type="text" name="lastname" id="last_name" value="${escapeText(last_name)}" /></td>
-                </tr>
-                <tr>
-                    <th>${gettext('Password')}:</th>
-                    <td>
-                        <input type="password" value="******" readonly disabled />
-                        <span id="fw-edit-profile-pwd" class="fw-link-text"><i class="fa fa-pencil-alt"></i></span>
-                    </td>
-                </tr>
-                <tr>
-                    <th class="profile-emial-title">${gettext('Email')}:</th>
-                    <td>
-                        <table class="fw-document-table">
-                            <thead class="fw-document-table-header">
-                                <tr>
-                                    <th></th>
-                                    <th>${gettext('Primary address')}</th>
-                                    <th>${gettext('Verified')}</th>
-                                    <th>${gettext('Delete')}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${
-                                    emails.map(
-                                        email => `<tr${email.primary ? ' class="primary-email-tr"' : ''}>
-                                            <td class="emailaddress">${email.address}</td>
-                                            <td>
-                                                ${
-                                                    email.verified ?
-                                                        `<input type="radio" class="primary-email-radio" value="${email.address}"
-                                                            name="primaryemail"${ email.primary ? " checked" : ""} />` :
-                                                        ''
-                                                }
-                                            </td>
-                                            <td>
-                                                ${ email.verified ? '<i class="fa fa-check"></i>' : '<i class="fa fa-check disabled"></i>' }
-                                            </td>
-                                            <td>
-                                                <span class="${ email.primary ? 'disabled' : 'delete-email fw-link-text' }" data-email="${email.address}">
-                                                    <i class="fa fa-trash-alt"></i>
-                                                </span>
-                                            </td>
-                                        </tr>`
-                                    ).join('')
-                                }
-                            </tbody>
-                        </table>
-                        <div class="fw-link-text" id="add-profile-email">
-                            <i class="fa fa-plus-circle"></i>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2" id="profile-submit-wrapper" >
-                        <span id="submit-profile" class="fw-button fw-dark">
-                            ${gettext('Submit')}
-                        </span>
-                        <span id="delete-account" data-username="${username}" class="fw-button fw-orange">
-                            ${gettext('Delete account')}
-                        </span>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <div id="profile-data">
+            <div class="profile-data-row">
+                <label class="form-label">${gettext('Username')}</label>
+                <input type="text" name="username" id="username" value="${escapeText(username)}" />
+            </div>
+            <div class="profile-data-row">
+                <label class="form-label">${gettext('First name')}</label>
+                <input type="text" name="firstname" id="first_name" value="${escapeText(first_name)}" />
+            </div>
+            <div class="profile-data-row">
+                <label class="form-label">${gettext('Last name')}</label>
+                <input type="text" name="lastname" id="last_name" value="${escapeText(last_name)}" />
+            </div>
+            <div class="profile-data-row">
+                <label class="form-label">${gettext('Password')}</label>
+                <input type="password" value="******" readonly disabled />
+                <span id="fw-edit-profile-pwd" class="fw-link-text"><i class="fa fa-pencil-alt"></i></span>
+            </div>
+            <div class="profile-data-row">
+                <table class="fw-document-table profile-email-table">
+                    <thead class="fw-document-table-header">
+                        <tr>
+                            <th>${gettext('Email')}</th>
+                            <th>${gettext('Primary address')}</th>
+                            <th>${gettext('Verified')}</th>
+                            <th>&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${
+                            emails.map(
+                                email => `<tr${email.primary ? ' class="primary-email-tr"' : ''}>
+                                    <td class="emailaddress">${email.address}</td>
+                                    <td>
+                                        ${
+                                            email.verified ?
+                                                `<input type="radio" class="primary-email-radio" value="${email.address}"
+                                                    name="primaryemail"${ email.primary ? " checked" : ""} />` :
+                                                ''
+                                        }
+                                    </td>
+                                    <td>
+                                        ${ email.verified ? '<i class="fa fa-check"></i>' : '<i class="fa fa-check disabled"></i>' }
+                                    </td>
+                                    <td class="profile-email-action">
+                                        ${
+                                            email.primary ?
+                                                '&nbsp;' :
+                                                '<span class="delete-email fw-link-text" data-email="' + email.address + '">' +
+                                                '<i class="fa fa-trash-alt"></i>' +
+                                                '</span>'
+                                        }
+                                    </td>
+                                </tr>`
+                            ).join('')
+                        }
+                        <tr>
+                            <td colspan="3"></td>
+                            <td class="profile-email-action">
+                                <span class="fw-link-text" id="add-profile-email">
+                                    <i class="fa fa-plus-circle"></i>
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="profile-submit-wrapper">
+                <span id="submit-profile" class="fw-button fw-dark">
+                    ${gettext('Submit')}
+                </span>
+                <span id="delete-account" data-username="${username}" class="fw-button fw-orange">
+                    ${gettext('Delete account')}
+                </span>
+            </div>
     </div>`

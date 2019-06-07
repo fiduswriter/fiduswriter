@@ -25,11 +25,15 @@ export class ImageOverview {
     constructor({app, staticUrl, user}) {
         this.app = app
         this.staticUrl = staticUrl
-        this.username = user.username
+        this.user = user
         this.mod = {}
     }
 
     init() {
+        ensureCSS([
+            'dialog_usermedia.css'
+        ], this.staticUrl)
+
         whenReady().then(() => {
             this.render()
             new ImageOverviewCategories(this)
@@ -48,7 +52,7 @@ export class ImageOverview {
         document.body = document.createElement('body')
         document.body.innerHTML = baseBodyTemplate({
             contents: '<ul id="fw-overview-menu"></ul>',
-            username: this.username,
+            user: this.user,
             staticUrl: this.staticUrl
         })
         ensureCSS([
@@ -143,25 +147,27 @@ export class ImageOverview {
         }
         return [
             String(id),
-            `<input type="checkbox" class="entry-select" data-id="${id}">`,
+            `<input type="checkbox" class="entry-select fw-check" id="doc-img-${id}" data-id="${id}"><label for="doc-img-${id}"></label>`,
             `<span class="fw-usermedia-image">
                 <img src="${image.thumbnail ? image.thumbnail : image.image}">
             </span>
-            <span class="fw-inline fw-usermedia-title">
+            <span class="fw-usermedia-title">
                 <span class="edit-image fw-link-text fw-searchable" data-id="${id}">
                     ${image.title.length ? escapeText(image.title) : gettext('Untitled')}
                 </span>
                 <span class="fw-usermedia-type">${fileType}</span>
             </span>`,
-            `<span class="fw-inline">${image.width} x ${image.height}</span>`,
+            `<span>${image.width} x ${image.height}</span>`,
             `<span class="date">${localizeDate(image.added, 'sortable-date')}</span>`,
-            `<span class="delete-image fw-inline fw-link-text" data-id="${id}">
+            `<span class="delete-image fw-link-text" data-id="${id}">
                 <i class="fa fa-trash-alt"></i>
             </span>`
         ]
     }
 
     removeTableRows(ids) {
+        ids = ids.map(id => parseInt(id))
+
         const existingRows = this.table.data.map((data, index) => {
             const id = parseInt(data.cells[0].textContent)
             if (ids.includes(id)) {

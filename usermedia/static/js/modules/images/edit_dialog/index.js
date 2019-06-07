@@ -79,8 +79,8 @@ export class ImageEditDialog {
             this.mediaInput = mediaInputSelector.files[0]
             const fr = new window.FileReader()
             fr.onload = () => {
-                this.mediaPreviewerDiv.innerHTML = `<img src="${fr.result}" />`
-                this.mediaPreviewer = this.mediaPreviewerDiv.querySelector('img')
+                this.mediaPreviewerDiv.innerHTML = `<div class="img" style="background-image: url(${fr.result});" />`
+                this.mediaPreviewer = this.mediaPreviewerDiv.querySelector('.img')
                 this.mediaPreviewerDiv.classList.remove('crop-mode')
                 this.dialog.centerDialog()
                 //this.cropMode(false)
@@ -121,7 +121,8 @@ export class ImageEditDialog {
         } else if (!this.rotation && !this.cropped) {
             imageData.image = this.mediaInput
         } else {
-            const base64data = this.mediaPreviewer.src
+            const mediaPreviewer_style = this.mediaPreviewer.currentStyle || window.getComputedStyle(this.mediaPreviewer, false)
+            const base64data = mediaPreviewer_style.backgroundImage.slice(4, -1).replace(/"/g, "")
             const bstr = atob(base64data.split(',')[1])
             let n = bstr.length
             const u8arr = new Uint8Array(n)

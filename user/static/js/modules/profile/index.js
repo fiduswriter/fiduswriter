@@ -1,4 +1,4 @@
-import {addDropdownBox, whenReady, activateWait, deactivateWait, post, addAlert, baseBodyTemplate, findTarget, setDocTitle} from "../common"
+import {addDropdownBox, whenReady, activateWait, deactivateWait, post, addAlert, baseBodyTemplate, findTarget, setDocTitle, ensureCSS} from "../common"
 import {SiteMenu} from "../menu"
 import {changeAvatarDialog, deleteAvatarDialog, changePwdDialog, addEmailDialog, changePrimaryEmailDialog, deleteEmailDialog} from "./dialogs"
 import {profileContents} from "./templates"
@@ -58,9 +58,14 @@ export class Profile {
         document.body = document.createElement('body')
         document.body.innerHTML = baseBodyTemplate({
             contents: profileContents(this.user),
-            username: this.user.username,
+            user: this.user,
             staticUrl: this.staticUrl
         })
+
+        ensureCSS([
+            'show_profile.css'
+        ], this.staticUrl)
+
         setDocTitle(gettext('Configure profile'), this.app)
         const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
         feedbackTab.init()

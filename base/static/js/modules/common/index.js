@@ -61,3 +61,7 @@ export {
     WebSocketConnector
 }
 from "./ws"
+export {
+    filterPrimaryEmail
+}
+from "./user_util"

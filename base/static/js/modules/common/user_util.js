@@ -6,7 +6,7 @@
 export const filterPrimaryEmail = function(emails) {
     const primaryEmails = emails.filter(email => email.primary)
     if (!primaryEmails.length) {
-        if(emails.length) {
+        if (emails.length) {
             return emails[0].address
         } else {
             return ''

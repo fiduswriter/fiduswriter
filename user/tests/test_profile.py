@@ -35,7 +35,7 @@ class EditProfileTest(LiveTornadoTestCase, SeleniumHelper):
         driver = self.driver
         driver.get(self.base_url + "/")
         driver.find_element_by_id("preferences-btn").click()
-        driver.find_element_by_link_text("Edit profile").click()
+        driver.find_element_by_css_selector(".fw-avatar-card").click()
         driver.find_element_by_id("first_name").clear()
         driver.find_element_by_id("first_name").send_keys("Snowman")
         driver.find_element_by_id("last_name").clear()
@@ -120,7 +120,7 @@ class EditProfileTest(LiveTornadoTestCase, SeleniumHelper):
         driver.find_element_by_id("preferences-btn").click()
         driver.find_element_by_css_selector("button.fw-logout-button").click()
         try:
-            self.assertEqual("Fidus Writer - Log In.", driver.title)
+            self.assertEqual("Login - Fidus Writer", driver.title)
         except AssertionError as e:
             self.verificationErrors.append(str(e))
 

@@ -143,3 +143,7 @@ table td {
     background-color: #8cf;
     caret-color: transparent;
 }
+
+.error-element{
+    border:3px solid red;
+}

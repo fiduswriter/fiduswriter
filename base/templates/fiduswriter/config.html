@@ -17,7 +17,7 @@
             websocketUrl: websocketProtocol + websocketServer + websocketPort,
             language: '{{ language }}',
             registrationOpen: {{ registration_open }},
-            socialaccountProviders: [],
+            socialaccountProviders: {{ socialaccount_providers | safe }},
             isFree: {{ is_free }},
             loggedIn: {{ logged_in }}
         };

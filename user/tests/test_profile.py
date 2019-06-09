@@ -41,6 +41,7 @@ class EditProfileTest(LiveTornadoTestCase, SeleniumHelper):
         driver.find_element_by_id("last_name").clear()
         driver.find_element_by_id("last_name").send_keys("Yeti")
         driver.find_element_by_id("submit-profile").click()
+        time.sleep(0.3)
         for i in range(100):
             if len(
                 driver.find_elements_by_css_selector(

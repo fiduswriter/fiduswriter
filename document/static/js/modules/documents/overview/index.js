@@ -51,6 +51,7 @@ export class DocumentOverview {
             staticUrl: this.staticUrl,
         })
         ensureCSS([
+            'document_overview.css',
             'add_remove_dialog.css',
             'access_rights_dialog.css'
         ], this.staticUrl)

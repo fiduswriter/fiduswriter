@@ -6,6 +6,13 @@ export class Signup extends PreloginPage {
         super({app, isFree, language, registrationOpen, staticUrl})
         this.title = gettext('Signup')
         this.registrationOpen = registrationOpen
+        this.headerLinks = [
+            {
+                type: 'button',
+                text: gettext('Log in'),
+                link: '/'
+            }
+        ]
         if (this.registrationOpen) {
             this.contents = `<div class="fw-login-left">
                 <h1 class="fw-login-title">${gettext("Sign up")}</h1>
@@ -97,7 +104,7 @@ export class Signup extends PreloginPage {
             if (errors) {
                 return
             }
-            post('/account/signup_js/', {username, password1, password2, email}).then(
+            post('/account/signup/', {username, password1, password2, email}).then(
                 () => document.querySelector('.fw-contents').innerHTML =
                     `<div class="fw-login-left">
                         <h1 class="fw-login-title">${gettext('Verify Your E-mail Address')}</h1>

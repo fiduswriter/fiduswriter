@@ -5,6 +5,7 @@ import {ContactsOverview} from "../contacts"
 import {Profile} from "../profile"
 import {getUserInfo, findTarget, WebSocketConnector, showSystemMessage} from "../common"
 import {LoginPage} from "../login"
+import {EmailConfirm} from "../email_confirm"
 import {PasswordReset} from "../password_reset"
 import {Signup} from "../signup"
 import {ImageDB} from "../images/database"
@@ -26,10 +27,15 @@ export class App {
                 open: pathnameParts => {
                     let returnValue
                     switch (pathnameParts[2]) {
-                        case "passwordreset":
+                        case "confirm-email": {
+                            const key = pathnameParts[3]
+                            returnValue = new EmailConfirm(this.config, key)
+                            break
+                        }
+                        case "password-reset":
                             returnValue = new PasswordReset(this.config)
                             break
-                        case "signup":
+                        case "sign-up":
                             returnValue = new Signup(this.config)
                             break
                         default:

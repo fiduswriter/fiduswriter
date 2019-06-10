@@ -22,7 +22,7 @@ export class PreloginPage {
             {
                 type: 'button',
                 text: gettext('Sign up'),
-                link: '/account/signup/'
+                link: '/account/sign-up/'
             }
         ]
         this.footerLinks = [

@@ -1,7 +1,5 @@
 from allauth.account import views as allauth_views
 from django.conf.urls import include, url
-from django.views.generic.base import RedirectView
-from django.conf import settings
 from . import views
 from base.views import app
 
@@ -61,18 +59,31 @@ urlpatterns = [
 
     # Signup view
     url(
-        '^signup/$',
+        '^sign-up/$',
         app,
         name='app'
     ),
 
-    url(r"^signup_js/$", allauth_views.signup, name="account_signup"),
+    url(
+        "^get_confirmkey_data_js/$",
+        views.get_confirmkey_data_js,
+        name="get_confirmkey_data_js"
+    ),
 
     url(
-        '^passwordreset/$',
+        '^password-reset/$',
         app,
         name='password_reset'
     ),
+
+    url(
+        '^confirm-email/[-:\w]+/$',
+        app,
+        name='account_confirm_email'
+    ),
+
+    url(r"^confirm-email_js/(?P<key>[-:\w]+)/$", allauth_views.confirm_email,
+        name="account_confirm_email_js"),
 
     # Authentication handling
     url('', include('allauth.urls')),

@@ -15,7 +15,7 @@ export class LoginPage extends PreloginPage {
             <h1 class="fw-login-title">${gettext("Log in")}</h1>
             ${
                 this.registrationOpen ?
-                    `<p>${gettext("If you are new here, please <a href='/account/signup/' title='Sign up'>sign up</a> or use one of the login options below to create an account.")}</p>` +
+                    `<p>${gettext("If you are new here, please <a href='/account/sign-up/' title='Sign up'>sign up</a> or use one of the login options below to create an account.")}</p>` +
                     (
                         this.socialaccountProviders.length ?
                         `<div class="socialaccount_ballot">
@@ -58,7 +58,7 @@ export class LoginPage extends PreloginPage {
                     <input type="checkbox" name="remember" id="id_remember">
                     <label for="id_remember">${gettext("Remember me")}</label>
                 </div>
-                <a id="lost-passwd" href="/account/passwordreset/">${gettext("Forgot Password?")}</a>
+                <a id="lost-passwd" href="/account/password-reset/">${gettext("Forgot Password?")}</a>
             </form>
         </div>`
         super.render()

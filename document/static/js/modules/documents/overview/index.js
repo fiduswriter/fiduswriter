@@ -50,6 +50,7 @@ export class DocumentOverview {
             staticUrl: this.staticUrl
         })
         ensureCSS([
+            'document_overview.css',
             'add_remove_dialog.css',
             'access_rights_dialog.css'
         ], this.staticUrl)
@@ -185,7 +186,7 @@ export class DocumentOverview {
             </span>`,
             doc.revisions.length ?
             `<span class="fw-inline revisions" data-id="${doc.id}">
-                <i class="fa fa-clock-o"></i>
+                <i class="fas fa-history"></i>
             </span>` :
             '',
             `<span class="date">${localizeDate(doc.added*1000, 'sortable-date')}</span>`,

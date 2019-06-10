@@ -22,15 +22,17 @@ export class PasswordReset extends PreloginPage {
             }</p>
         </div>
         <div class="fw-login-right">
-            <ul id="non_field_errors" class="errorlist"></ul>
-            <div class="input-wrapper">
-                <label for="id_email">${gettext('E-mail address')}</label>
-                <input type="email" name="email" size="30" placeholder="${gettext('E-mail address')}" required="" id="id_email">
-                <ul id="id_email_errors" class="errorlist"></ul>
-            </div>
-            <div class="submit-wrapper">
-                <button class="fw-button fw-dark fw-uppercase" id="email-submit" type="submit">${gettext("Reset My Password")}</button>
-            </div>
+            <form>
+                <ul id="non_field_errors" class="errorlist"></ul>
+                <div class="input-wrapper">
+                    <label for="id_email">${gettext('E-mail address')}</label>
+                    <input type="email" name="email" size="30" placeholder="${gettext('E-mail address')}" required="" id="id_email" autocomplete="email">
+                    <ul id="id_email_errors" class="errorlist"></ul>
+                </div>
+                <div class="submit-wrapper">
+                    <button class="fw-button fw-dark fw-uppercase" id="email-submit" type="submit">${gettext("Reset My Password")}</button>
+                </div>
+            </form>
         </div>`
         super.render()
     }
@@ -43,7 +45,8 @@ export class PasswordReset extends PreloginPage {
             emailInput.focus()
         }
 
-        document.getElementById('email-submit').addEventListener('click', () => {
+        document.getElementById('email-submit').addEventListener('click', event => {
+            event.preventDefault()
             document.querySelector('#non_field_errors').innerHTML = ''
             document.querySelector('#id_email_errors').innerHTML = ''
 
@@ -53,7 +56,23 @@ export class PasswordReset extends PreloginPage {
                 return
             }
             post('/account/password/reset/', {email}).then(
-                () => document.querySelector('.fw-login-right').innerHTML = `<p>${gettext('Thanks! Please check your email for instructions on how to reset your password.')}</p>`
+                () => document.querySelector('.fw-contents').innerHTML = document.querySelector('.fw-contents').innerHTML =
+                    `<div class="fw-login-left">
+                        <h1 class="fw-login-title">${gettext('Instructions emailed')}</h1>
+                        <p>
+                            ${
+                                interpolate(
+                                    gettext('We have sent an e-mail to <a href="mailto:%(email)s">%(email)s</a> with instructions on how to reset your password.'),
+                                    {email},
+                                    true
+                                )
+                            }
+                            <br />
+                            ${
+                                gettext('Please contact us if you do not receive it within a few minutes.')
+                            }
+                        </p>
+                    </div>`
             ).catch(
                 response => response.json().then(
                     json => {

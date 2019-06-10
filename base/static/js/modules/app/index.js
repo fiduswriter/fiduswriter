@@ -6,6 +6,7 @@ import {Profile} from "../profile"
 import {getUserInfo, findTarget, WebSocketConnector, showSystemMessage} from "../common"
 import {LoginPage} from "../login"
 import {PasswordReset} from "../password_reset"
+import {Signup} from "../signup"
 import {ImageDB} from "../images/database"
 import {BibliographyDB} from "../bibliography/database"
 import * as plugins from "../../plugins/app"
@@ -27,6 +28,9 @@ export class App {
                     switch (pathnameParts[2]) {
                         case "passwordreset":
                             returnValue = new PasswordReset(this.config)
+                            break
+                        case "signup":
+                            returnValue = new Signup(this.config)
                             break
                         default:
                             returnValue = false

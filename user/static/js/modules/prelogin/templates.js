@@ -13,7 +13,7 @@ export const basePreloginTemplate = ({contents, staticUrl, isFree, language, hea
                       returnValue = `<label>${hLink.text}</label>`
                       break
                   case 'button':
-                      returnValue = `<a class="fw-button fw-orange fw-uppercase" href="${hLink.href}">${hLink.text}</a>`
+                      returnValue = `<a class="fw-button fw-orange fw-uppercase" href="${hLink.link}">${hLink.text}</a>`
                       break
                   default:
                       returnValue = ''

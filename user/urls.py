@@ -6,11 +6,6 @@ from . import views
 from base.views import app
 
 
-if settings.REGISTRATION_OPEN:
-    signup_view = allauth_views.signup
-else:
-    signup_view = RedirectView.as_view(url='/', permanent=False)
-
 urlpatterns = [
     url('^save/$', views.save_profile_js, name='save_profile_js'),
 
@@ -65,7 +60,13 @@ urlpatterns = [
     url('^avatar/', include('avatar.urls')),
 
     # Signup view
-    url(r"^signup/$", signup_view, name="account_signup"),
+    url(
+        '^signup/$',
+        app,
+        name='app'
+    ),
+
+    url(r"^signup_js/$", allauth_views.signup, name="account_signup"),
 
     url(
         '^passwordreset/$',

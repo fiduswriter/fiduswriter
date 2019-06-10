@@ -5,6 +5,7 @@ import {ContactsOverview} from "../contacts"
 import {Profile} from "../profile"
 import {getUserInfo, findTarget, WebSocketConnector, showSystemMessage} from "../common"
 import {LoginPage} from "../login"
+import {PasswordReset} from "../password_reset"
 import {ImageDB} from "../images/database"
 import {BibliographyDB} from "../bibliography/database"
 import * as plugins from "../../plugins/app"
@@ -15,13 +16,34 @@ export class App {
         this.name = 'Fidus Writer'
         this.config.app = this
         this.routes = {
-            "usermedia": {
+            "": {
                 requireLogin: true,
-                open: () => new ImageOverview(this.config)
+                open: () => new DocumentOverview(this.config)
+            },
+            "account": {
+                requireLogin: false,
+                open: pathnameParts => {
+                    let returnValue
+                    switch (pathnameParts[2]) {
+                        case "passwordreset":
+                            returnValue = new PasswordReset(this.config)
+                            break
+                        default:
+                            returnValue = false
+                    }
+                    return returnValue
+                }
             },
             "bibliography": {
                 requireLogin: true,
                 open: () => new BibliographyOverview(this.config)
+            },
+            "document": {
+                requireLogin: true,
+                open: pathnameParts => {
+                    const id = pathnameParts[2]
+                    return import('../editor').then(({Editor}) => new Editor(this.config, id))
+                }
             },
             "user": {
                 requireLogin: true,
@@ -40,16 +62,9 @@ export class App {
                     return returnValue
                 }
             },
-            "document": {
+            "usermedia": {
                 requireLogin: true,
-                open: pathnameParts => {
-                    const id = pathnameParts[2]
-                    return import('../editor').then(({Editor}) => new Editor(this.config, id))
-                }
-            },
-            "": {
-                requireLogin: true,
-                open: () => new DocumentOverview(this.config)
+                open: () => new ImageOverview(this.config)
             }
         }
         this.openLoginPage = () => new LoginPage(this.config)
@@ -148,13 +163,14 @@ export class App {
                     this.page = thisPage
                     this.page.init()
                 })
-            } else {
+                return
+            } else if (page) {
                 this.page = page
                 this.page.init()
+                return
             }
-        } else {
-            window.location = window.location
         }
+        window.location = window.location
     }
 
     getUserInfo() {

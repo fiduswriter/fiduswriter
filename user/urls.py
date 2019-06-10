@@ -67,6 +67,12 @@ urlpatterns = [
     # Signup view
     url(r"^signup/$", signup_view, name="account_signup"),
 
+    url(
+        '^passwordreset/$',
+        app,
+        name='password_reset'
+    ),
+
     # Authentication handling
     url('', include('allauth.urls')),
 ]

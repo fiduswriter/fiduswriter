@@ -57,7 +57,7 @@ export class LoginPage extends PreloginPage {
                 <input type="checkbox" name="remember" id="id_remember">
                 <label for="id_remember">${gettext("Remember me")}</label>
             </div>
-                <a id="lost-passwd" href="/account/password/reset/">${gettext("Forgot Password?")}</a>
+                <a id="lost-passwd" href="/account/passwordreset/">${gettext("Forgot Password?")}</a>
             </form>
         </div>`
         super.render()
@@ -90,10 +90,10 @@ export class LoginPage extends PreloginPage {
                 password = document.getElementById('id_password').value,
                 remember = document.getElementById('id_remember').checked
             if (!login.length) {
-                document.querySelector('#id_login_errors').innerHTML = gettext('This field is required.')
+                document.querySelector('#id_login_errors').innerHTML = `<li>${gettext('This field is required.')}</li>`
             }
             if (!password.length) {
-                document.querySelector('#id_password_errors').innerHTML = gettext('This field is required.')
+                document.querySelector('#id_password_errors').innerHTML = `<li>${gettext('This field is required.')}</li>`
             }
             if (!login.length || !password.length) {
                 return

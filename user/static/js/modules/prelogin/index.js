@@ -1,4 +1,5 @@
 import {setLanguage, ensureCSS, setDocTitle, whenReady} from "../common"
+import * as plugins from "../../plugins/prelogin"
 import {FeedbackTab} from "../feedback"
 
 import {basePreloginTemplate} from "./templates"
@@ -52,9 +53,18 @@ export class PreloginPage {
         // Add plugins.
         this.plugins = {}
 
+        // Plugins for the specific page
         Object.keys(this.pluginLoaders).forEach(plugin => {
             if (typeof this.pluginLoaders[plugin] === 'function') {
                 this.plugins[plugin] = new this.pluginLoaders[plugin]({page: this, staticUrl: this.staticUrl})
+                this.plugins[plugin].init()
+            }
+        })
+
+        // General plugins for all prelogin pages
+        Object.keys(plugins).forEach(plugin => {
+            if (typeof plugins[plugin] === 'function') {
+                this.plugins[plugin] = new plugins[plugin]({page: this, staticUrl: this.staticUrl})
                 this.plugins[plugin].init()
             }
         })

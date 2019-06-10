@@ -26,7 +26,6 @@ admin_site_urls = (admin.site.urls[0] + [
 # Django URLs -- Notice that these are only consulted after the
 # tornado_url_list found in base/servers/tornado_django_hybrid.py
 urlpatterns = [
-    url('^$', app_view, name='index'),
     url(
         '^robots\.txt$',
         lambda r: HttpResponse(
@@ -39,7 +38,11 @@ urlpatterns = [
     url('^api/i18n/', include('django.conf.urls.i18n')),
 
     # I18n Javascript translations
-    url(r'^api/jsi18n/$', JavaScriptCatalog.as_view(), name='javascript-catalog'),
+    url(
+        r'^api/jsi18n/$',
+        JavaScriptCatalog.as_view(),
+        name='javascript-catalog'
+    ),
 
     # Admin interface
     path('admin/', admin_site_urls),
@@ -74,3 +77,7 @@ if hasattr(settings, 'EXTRA_URLS'):
         urlpatterns += [
             url(extra_url[0], include(extra_url[1])),
         ]
+
+urlpatterns += [
+    url('^.*', app_view, name='app')
+]

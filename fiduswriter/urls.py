@@ -30,16 +30,16 @@ urlpatterns = [
     url(
         '^robots\.txt$',
         lambda r: HttpResponse(
-            "User-agent: *\nDisallow: /text/\nDisallow: /bibliography/",
+            "User-agent: *\nDisallow: /document/\nDisallow: /bibliography/",
             mimetype="text/plain"
         )
     ),
 
     # I18n manual language switcher
-    url('^i18n/', include('django.conf.urls.i18n')),
+    url('^api/i18n/', include('django.conf.urls.i18n')),
 
     # I18n Javascript translations
-    url(r'^jsi18n/$', JavaScriptCatalog.as_view(), name='javascript-catalog'),
+    url(r'^api/jsi18n/$', JavaScriptCatalog.as_view(), name='javascript-catalog'),
 
     # Admin interface
     path('admin/', admin_site_urls),

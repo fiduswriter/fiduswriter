@@ -1,13 +1,8 @@
 from django.conf.urls import url
 
 from . import views
-from base.views import app
 
 urlpatterns = [
-    url('^$', app, name='index'),
-    url('^new/$', app, name='editor'),
-    url('^n\d+/$', app, name='editor'),
-    url('^\d+/$', app, name='editor'),
     url(
         '^documentlist/$',
         views.get_documentlist_js,

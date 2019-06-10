@@ -1,30 +1,17 @@
 from allauth.account import views as allauth_views
 from django.conf.urls import include, url
-from django.views.generic.base import RedirectView
-from django.conf import settings
 from . import views
 from base.views import app
 
-
-if settings.REGISTRATION_OPEN:
-    signup_view = allauth_views.signup
-else:
-    signup_view = RedirectView.as_view(url='/', permanent=False)
 
 urlpatterns = [
     url('^save/$', views.save_profile_js, name='save_profile_js'),
 
     # Show user profiles
-    url('^team/$', app, name='list_team_members'),
     url(
         '^team/list/$',
         views.list_team_members_js,
         name='list_team_members_js'
-    ),
-    url(
-        '^profile/$',
-        app,
-        name='show_userprofile'
     ),
     url(
         '^info/$',
@@ -64,8 +51,20 @@ urlpatterns = [
     # User avatar handling
     url('^avatar/', include('avatar.urls')),
 
-    # Signup view
-    url(r"^signup/$", signup_view, name="account_signup"),
+    url(
+        "^get_confirmkey_data_js/$",
+        views.get_confirmkey_data_js,
+        name="get_confirmkey_data_js"
+    ),
+
+    url(
+        '^confirm-email/[-:\w]+/$',
+        app,
+        name='account_confirm_email'
+    ),
+
+    url(r"^confirm-email_js/(?P<key>[-:\w]+)/$", allauth_views.confirm_email,
+        name="account_confirm_email_js"),
 
     # Authentication handling
     url('', include('allauth.urls')),

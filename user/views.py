@@ -9,7 +9,11 @@ from .forms import UserForm, TeamMemberForm
 from . import util as userutil
 from document.models import AccessRight
 
-from allauth.account.models import EmailAddress
+from allauth.account.models import (
+    EmailAddress,
+    EmailConfirmation,
+    EmailConfirmationHMAC
+)
 from allauth.account import signals
 from django.contrib.auth.forms import PasswordChangeForm
 from allauth.account.forms import AddEmailForm
@@ -458,6 +462,31 @@ def remove_team_member_js(request):
             ).first()
             team_member_object_instance.delete()
         status = 200
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+def get_confirmkey_data_js(request):
+    """
+    Get data for an email confirmation key
+    """
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        key = request.POST['key']
+        confirmation = EmailConfirmationHMAC.from_key(key)
+        if not confirmation:
+            qs = EmailConfirmation.objects.all_valid()
+            qs = qs.select_related("email_address__user")
+            confirmation = qs.filter(key=key.lower()).first()
+        if confirmation:
+            status = 200
+            response['username'] = confirmation.email_address.user.username
+            response['email'] = confirmation.email_address.email
+        else:
+            status = 404
     return JsonResponse(
         response,
         status=status

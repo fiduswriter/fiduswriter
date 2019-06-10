@@ -38,6 +38,10 @@ def fiduswriter_config_js(context):
         'static_url': static_url,
         'ws_port': ws_port,
         'ws_server': ws_server,
+        'contact_email': settings.SERVER_INFO['CONTACT_EMAIL'],
+        'test_server': (
+            'true' if settings.SERVER_INFO['TEST_SERVER'] else 'false'
+        ),
         'is_free': ('true' if settings.IS_FREE else 'false'),
         'registration_open': (
             'true' if settings.REGISTRATION_OPEN else 'false'

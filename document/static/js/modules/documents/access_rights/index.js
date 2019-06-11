@@ -161,7 +161,7 @@ export class DocumentAccessRightsDialog {
 
     submitAccessRight(newCollaborators, newAccessRights) {
         postJson(
-            '/document/accessright/save/',
+            '/api/document/accessright/save/',
             {
                 'documents': this.documentIds,
                 'collaborators': newCollaborators,

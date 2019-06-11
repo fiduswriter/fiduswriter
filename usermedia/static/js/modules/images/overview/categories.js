@@ -13,7 +13,7 @@ export class ImageOverviewCategories {
         activateWait()
 
         postJson(
-            '/usermedia/save_category/',
+            '/api/usermedia/save_category/',
             {
                 'ids': cats.ids,
                 'titles': cats.titles

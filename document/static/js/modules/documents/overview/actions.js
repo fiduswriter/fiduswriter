@@ -17,7 +17,7 @@ export class DocumentOverviewActions {
             return
         }
         postJson(
-            '/document/delete/',
+            '/api/document/delete/',
             {id}
         ).then(
             ({json}) => {

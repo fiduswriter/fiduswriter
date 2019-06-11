@@ -9,7 +9,7 @@ export class BibliographyDBServerConnector {
 
     getDB(lastModified, numberOfEntries, localStorageOwnerId) {
         return postJson(
-            '/bibliography/biblist/',
+            '/api/bibliography/biblist/',
             {
                 last_modified: lastModified,
                 number_of_entries: numberOfEntries,
@@ -56,7 +56,7 @@ export class BibliographyDBServerConnector {
         })
 
         return postJson(
-            '/bibliography/save/',
+            '/api/bibliography/save/',
             {
                 is_new: isNew,
                 bibs: JSON.stringify(dbObject)
@@ -68,7 +68,7 @@ export class BibliographyDBServerConnector {
 
     saveCategories(cats) {
         return postJson(
-            '/bibliography/save_category/',
+            '/api/bibliography/save_category/',
             cats
         ).then(
             ({json}) => {
@@ -79,14 +79,14 @@ export class BibliographyDBServerConnector {
 
     deleteCategory(ids) {
         return post(
-            '/bibliography/delete_category/',
+            '/api/bibliography/delete_category/',
             {ids}
         )
     }
 
     deleteBibEntries(ids) {
         return post(
-            '/bibliography/delete/',
+            '/api/bibliography/delete/',
             {ids}
         )
     }

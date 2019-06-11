@@ -75,7 +75,7 @@ export class Profile {
         activateWait()
 
         post(
-            '/account/save/',
+            '/api/account/save/',
             {
                 form_data: JSON.stringify({
                     user: {

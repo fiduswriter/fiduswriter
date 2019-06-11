@@ -35,7 +35,7 @@ export class DocMaintenance {
     getDocBatch() {
         this.batch++
         postJson(
-            '/document/maintenance/get_all/', {batch: this.batch}
+            '/api/document/maintenance/get_all/', {batch: this.batch}
         ).then(
             ({json}) => {
                 const docs = window.JSON.parse(json.docs)
@@ -75,7 +75,7 @@ export class DocMaintenance {
             // the document user.
 
             p = postJson(
-                '/document/maintenance/get_user_biblist/',
+                '/api/document/maintenance/get_user_biblist/',
                 {
                     user_id: doc.fields.owner
                 }
@@ -109,7 +109,7 @@ export class DocMaintenance {
     saveDoc(doc) {
         this.docSavesLeft++
         const p1 = post(
-            '/document/maintenance/save_doc/',
+            '/api/document/maintenance/save_doc/',
             {
                 id: doc.id,
                 contents: window.JSON.stringify(doc.contents),
@@ -122,7 +122,7 @@ export class DocMaintenance {
         ), promises = [p1]
         if (doc.imageIds) {
             const p2 = post(
-                '/document/maintenance/add_images_to_doc/',
+                '/api/document/maintenance/add_images_to_doc/',
                 {
                     doc_id: doc.id,
                     ids: doc.imageIds
@@ -143,7 +143,7 @@ export class DocMaintenance {
     updateRevisions() {
         addAlert('info', gettext('Updating saved revisions.'))
         postJson(
-            '/document/maintenance/get_all_revision_ids/'
+            '/api/document/maintenance/get_all_revision_ids/'
         ).then(
             ({json}) => {
                 this.revSavesLeft = json.revision_ids.length
@@ -205,7 +205,7 @@ export class DocMaintenance {
         zipfs.generateAsync({type:"blob", mimeType: "application/fidus+zip"}).then(blob => {
 
             post(
-                '/document/maintenance/update_revision/',
+                '/api/document/maintenance/update_revision/',
                 {
                     id,
                     file: {

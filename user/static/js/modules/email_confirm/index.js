@@ -24,7 +24,7 @@ export class EmailConfirm extends PreloginPage {
             () => document.getElementById('terms-check').matches(':checked')
         ]
         this.confirmQuestionsTemplates = [checkTermsTemplate]
-        this.confirmMethods = [() => post(`/account/confirm-email_js/${this.key}/`)]
+        this.confirmMethods = [() => post(`/api/account/confirm-email/${this.key}/`)]
         if (this.testServer) {
             this.formChecks.push(
                 () => document.getElementById('test-check').matches(':checked')
@@ -52,7 +52,7 @@ export class EmailConfirm extends PreloginPage {
     }
 
     getConfirmData() {
-        return postJson('/account/get_confirmkey_data_js/', {key: this.key}).then(
+        return postJson('/api/account/get_confirmkey_data/', {key: this.key}).then(
             ({json}) => {
                 this.username = json.username
                 this.email = json.email

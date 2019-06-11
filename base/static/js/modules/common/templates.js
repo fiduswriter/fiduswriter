@@ -32,7 +32,7 @@ export const baseBodyTemplate = ({user, contents, staticUrl}) => `
                         </a>
                     </li>
                     <li>
-                        <form class="fw-pulldown-item" action="/account/logout/" method="post">
+                        <form class="fw-pulldown-item" action="/api/account/logout/" method="post">
                             <input type="hidden" name="csrfmiddlewaretoken" value="${getCsrfToken()}">
                             <button class="fw-logout-button" type="submit">${gettext("Log out")}</button>
                         </form>

@@ -222,7 +222,7 @@ export class Editor {
         const initPromises = [whenReady()]
         if (this.docInfo.hasOwnProperty('templateId')) {
             initPromises.push(
-                postJson(`/document/create_doc/${this.docInfo.templateId}/`).then(
+                postJson(`/api/document/create_doc/${this.docInfo.templateId}/`).then(
                     ({json}) => {
                         this.docInfo.id = json.id
                         window.history.replaceState("", "", `/document/${this.docInfo.id}/`)

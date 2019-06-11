@@ -1,7 +1,5 @@
-from allauth.account import views as allauth_views
 from django.conf.urls import include, url
 from . import views
-from base.views import app
 
 
 urlpatterns = [
@@ -56,15 +54,6 @@ urlpatterns = [
         views.get_confirmkey_data,
         name="get_confirmkey_data"
     ),
-
-    url(
-        '^confirm-email/[-:\w]+/$',
-        app,
-        name='account_confirm_email'
-    ),
-
-    url(r"^confirm-email_js/(?P<key>[-:\w]+)/$", allauth_views.confirm_email,
-        name="account_confirm_email_js"),
 
     # Authentication handling
     url('', include('allauth.urls')),

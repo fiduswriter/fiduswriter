@@ -62,7 +62,7 @@ export class PasswordReset extends PreloginPage {
                 document.querySelector('#id_email_errors').innerHTML = `<li>${gettext('This field is required.')}</li>`
                 return
             }
-            post('/account/password/reset/', {email}).then(
+            post('/api/account/password/reset/', {email}).then(
                 () => document.querySelector('.fw-contents').innerHTML = document.querySelector('.fw-contents').innerHTML =
                     `<div class="fw-login-left">
                         <h1 class="fw-login-title">${gettext('Instructions emailed')}</h1>

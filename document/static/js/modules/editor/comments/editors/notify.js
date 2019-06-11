@@ -6,7 +6,7 @@ export const notifyMentionedUser = (docId, userId, comment) => {
 
     const {html, text} = serializeCommentNode(comment)
     return post(
-        '/document/comment_notify/',
+        '/api/document/comment_notify/',
         {
             doc_id: docId,
             collaborator_id: userId,

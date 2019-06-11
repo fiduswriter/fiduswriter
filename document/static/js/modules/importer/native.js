@@ -47,7 +47,7 @@ export class ImportNative {
     saveImages(images, ImageTranslationTable) {
         const sendPromises = Object.values(images).map(
             imageEntry => {
-                return postJson('/document/import/image/', {
+                return postJson('/api/document/import/image/', {
                     doc_id: this.docId,
                     title: imageEntry.title,
                     checksum: imageEntry.checksum,
@@ -95,7 +95,7 @@ export class ImportNative {
         // We create the document on the sever so that we have an ID for it and
         // can link the images to it.
 
-        return postJson('/document/import/create/').then(
+        return postJson('/api/document/import/create/').then(
             ({json}) => this.docId = json.id
         ).catch(error => {
             addAlert('error', gettext('Could not create document'))
@@ -108,7 +108,7 @@ export class ImportNative {
             template_hash = templateHash(template),
             template_title = template.attrs.template
         return postJson(
-            '/document/import/',
+            '/api/document/import/',
             {
                 id: this.docId,
                 title: this.doc.title,

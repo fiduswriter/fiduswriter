@@ -50,9 +50,6 @@ urlpatterns = [
     # Account management
     url('^account/', include('user.urls')),
 
-    # Flat pages
-    url('^pages/', include('django.contrib.flatpages.urls')),
-
 ]
 
 for app in settings.INSTALLED_APPS:

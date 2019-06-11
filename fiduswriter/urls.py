@@ -46,10 +46,6 @@ urlpatterns = [
 
     # Admin interface
     path('admin/', admin_site_urls),
-
-    # Account management
-    url('^api/account/', include('user.urls')),
-
 ]
 
 for app in settings.INSTALLED_APPS:

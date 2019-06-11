@@ -24,7 +24,7 @@ export const changeAvatarDialog = function(app) {
                 const file = avatarUploader.files[0]
 
                 post(
-                    '/api/account/avatar/upload/',
+                    '/api/user/avatar/upload/',
                     {
                         avatar: {
                             file,
@@ -75,7 +75,7 @@ const deleteAvatar = function(app) {
     activateWait()
 
     post(
-        '/api/account/avatar/delete/'
+        '/api/user/avatar/delete/'
     ).then(
         () => deactivateWait()
     ).then(
@@ -140,7 +140,7 @@ export const changePwdDialog = function() {
                 activateWait()
 
                 postJson(
-                    '/api/account/passwordchange/',
+                    '/api/user/passwordchange/',
                     {
                         old_password: oldPwd,
                         new_password1: newPwd1,
@@ -205,7 +205,7 @@ export const addEmailDialog = function() {
                 document.getElementById('new-profile-email').value = email
 
                 postJson(
-                    '/api/account/emailadd/',
+                    '/api/user/emailadd/',
                     {
                         email
                     }
@@ -251,7 +251,7 @@ export const deleteEmailDialog = function(target, app) {
                 activateWait()
 
                 post(
-                    '/api/account/emaildelete/',
+                    '/api/user/emaildelete/',
                     {
                         email
                     }
@@ -303,7 +303,7 @@ export const changePrimaryEmailDialog = function(app) {
                 activateWait()
 
                 post(
-                    '/api/account/emailprimary/',
+                    '/api/user/emailprimary/',
                     {
                         email
                     }

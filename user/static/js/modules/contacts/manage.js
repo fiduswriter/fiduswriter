@@ -18,7 +18,7 @@ const addMember = function(userString) {
     }
 
     return postJson(
-        '/api/account/teammember/add',
+        '/api/user/teammember/add',
         {
             user_string: userString
         }
@@ -96,7 +96,7 @@ export const addMemberDialog = function() {
 const deleteMember = function(ids) {
 
     postJson(
-        '/api/account/teammember/remove',
+        '/api/user/teammember/remove',
         {
             'members': ids
         }

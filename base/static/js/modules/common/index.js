@@ -21,7 +21,6 @@ export {
 from "./basic"
 
 export {
-    getCsrfToken,
     get,
     getJson,
     post,

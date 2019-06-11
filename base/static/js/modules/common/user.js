@@ -26,7 +26,7 @@ export const getUserInfo = function() {
 }
 
 export const loginUser = function(config, login, password, remember) {
-    return post('/api/account/login/', {login, password, remember}).then(
+    return post('/api/user/login/', {login, password, remember}).then(
         () => {
             config.loggedIn = true
         }

@@ -38,7 +38,7 @@ export class DeleteUserDialog {
        activateWait()
 
        postBare(
-           '/api/account/delete/',
+           '/api/user/delete/',
            {password}
        ).then(
            response => {

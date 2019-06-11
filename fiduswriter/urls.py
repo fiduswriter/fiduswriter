@@ -46,10 +46,6 @@ urlpatterns = [
 
     # Admin interface
     path('admin/', admin_site_urls),
-
-    # Account management
-    url('^account/', include('user.urls')),
-
 ]
 
 for app in settings.INSTALLED_APPS:
@@ -59,7 +55,7 @@ for app in settings.INSTALLED_APPS:
         pass
     else:
         app_name = app.rsplit('.', 1).pop()
-        urlpatterns += [url('^%s/' % app_name, include('%s.urls' % app))]
+        urlpatterns += [url('^api/%s/' % app_name, include('%s.urls' % app))]
 
 if settings.DEBUG:
     from django.views.static import serve as static_serve

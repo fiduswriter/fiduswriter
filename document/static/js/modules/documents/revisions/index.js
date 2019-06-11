@@ -159,7 +159,7 @@ export class DocumentRevisionsDialog {
 
     deleteRevision(id) {
         return post(
-            '/document/delete_revision/',
+            '/api/document/delete_revision/',
             {id}
         ).then(
             () => {

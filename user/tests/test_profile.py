@@ -61,13 +61,13 @@ class EditProfileTest(LiveTornadoTestCase, SeleniumHelper):
         driver.find_element_by_id("new-password-input2").send_keys("otter2")
         driver.find_element_by_xpath("(//button[@type='button'])[2]").click()
         for i in range(100):
+            time.sleep(0.1)
             if len(
                 driver.find_elements_by_css_selector(
                     "#alerts-wrapper .alerts-info"
                 )
-            ) == 1:
+            ) > 0:
                 break
-            time.sleep(0.1)
         else:
             self.fail("time out")
         driver.find_element_by_id("fw-edit-profile-pwd").click()
@@ -120,6 +120,7 @@ class EditProfileTest(LiveTornadoTestCase, SeleniumHelper):
             self.fail("time out")
         driver.find_element_by_id("preferences-btn").click()
         driver.find_element_by_css_selector("button.fw-logout-button").click()
+        time.sleep(1)
         try:
             self.assertEqual("Login - Fidus Writer", driver.title)
         except AssertionError as e:

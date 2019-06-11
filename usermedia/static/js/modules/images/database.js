@@ -14,7 +14,7 @@ export class ImageDB {
 
         activateWait()
 
-        return postJson('/usermedia/images/').then(
+        return postJson('/api/usermedia/images/').then(
             ({json}) => {
                 this.cats = json.imageCategories
                 json.images.forEach(
@@ -34,7 +34,7 @@ export class ImageDB {
         activateWait()
 
         return postJson(
-            '/usermedia/save/',
+            '/api/usermedia/save/',
             postData
         ).then(
             ({json}) => {

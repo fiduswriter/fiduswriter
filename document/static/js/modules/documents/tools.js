@@ -14,7 +14,7 @@ export const getMissingDocumentListData = function(ids, documentList) {
 
     if (incompleteIds.length > 0) {
         return postJson(
-            '/document/documentlist/extra/',
+            '/api/document/documentlist/extra/',
             {
                 ids: incompleteIds.join(',')
             }

@@ -104,7 +104,7 @@ export class Signup extends PreloginPage {
             if (errors) {
                 return
             }
-            post('/account/signup/', {username, password1, password2, email}).then(
+            post('/api/user/signup/', {username, password1, password2, email}).then(
                 () => document.querySelector('.fw-contents').innerHTML =
                     `<div class="fw-login-left">
                         <h1 class="fw-login-title">${gettext('Verify Your E-mail Address')}</h1>

@@ -1,5 +1,5 @@
 import * as plugins from "../../plugins/menu"
-import {addDropdownBox, whenReady} from "../common"
+import {addDropdownBox, whenReady, post} from "../common"
 import {headerNavTemplate} from "./templates"
 
 // Bindings for the top menu on overview pages
@@ -58,11 +58,12 @@ export class SiteMenu {
             box
         )
 
-        // Same for form button
-        document.querySelectorAll('#user-preferences-pulldown form').forEach(el => el.addEventListener('mousedown', event => {
-            event.preventDefault()
-            el.submit()
-        }))
+        // Same for logout button
+        document.querySelector('.fw-logout-button').addEventListener('click', () => {
+            post('/api/user/logout/').then(
+                () => window.location = '/'
+            )
+        })
     }
 
     activatePlugins() {

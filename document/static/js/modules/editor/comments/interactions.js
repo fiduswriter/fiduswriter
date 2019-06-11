@@ -262,7 +262,7 @@ export class ModCommentInteractions {
         const {html, text} = serializeComment(comment.comment)
 
         post(
-            '/document/comment_notify/',
+            '/api/document/comment_notify/',
             {
                 doc_id: this.mod.editor.docInfo.id,
                 collaborator_id: user,

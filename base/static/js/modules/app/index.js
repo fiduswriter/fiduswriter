@@ -10,7 +10,8 @@ import {PasswordReset} from "../password_reset"
 import {Signup} from "../signup"
 import {ImageDB} from "../images/database"
 import {BibliographyDB} from "../bibliography/database"
-import {Page404} from "./404"
+import {Page404} from "../404"
+import {FlatPage} from "../flatpage"
 import * as plugins from "../../plugins/app"
 
 export class App {
@@ -54,6 +55,12 @@ export class App {
                 open: pathnameParts => {
                     const id = pathnameParts[2]
                     return import('../editor').then(({Editor}) => new Editor(this.config, id))
+                }
+            },
+            "pages": {
+                open: pathnameParts => {
+                    const url = `/${pathnameParts[2]}/`
+                    return new FlatPage(this.config, url)
                 }
             },
             "user": {

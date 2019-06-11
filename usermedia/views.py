@@ -23,7 +23,7 @@ serializer = SimpleSerializer()
 
 # save changes or create a new entry
 @login_required
-def save_js(request):
+def save(request):
     response = {}
     response['errormsg'] = {}
     status = 403
@@ -88,7 +88,7 @@ def save_js(request):
 
 # delete an image
 @login_required
-def delete_js(request):
+def delete(request):
     status = 405
     response = {}
     if request.is_ajax() and request.method == 'POST':
@@ -109,7 +109,7 @@ def delete_js(request):
 
 # returns list of images
 @login_required
-def images_js(request):
+def images(request):
     response = {}
     status = 403
     if request.is_ajax() and request.method == 'POST':
@@ -148,7 +148,7 @@ def images_js(request):
 
 # save changes or create a new category
 @login_required
-def save_category_js(request):
+def save_category(request):
     status = 405
     response = {}
     response['entries'] = []

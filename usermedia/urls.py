@@ -3,8 +3,12 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    url('^save/$', views.save_js, name='save_js'),
-    url('^delete/$', views.delete_js, name='delete_js'),
-    url('^images/$', views.images_js, name='images_js'),
-    url('^save_category/$', views.save_category_js, name='save_category_js')
+    url('^save/$', views.save, name='usermedia_save'),
+    url('^delete/$', views.delete, name='usermedia_delete'),
+    url('^images/$', views.images, name='usermedia_images'),
+    url(
+        '^save_category/$',
+        views.save_category,
+        name='usermedia_save_category'
+    )
 ]

@@ -5,24 +5,24 @@ from . import views
 urlpatterns = [
     url(
         '^documentlist/$',
-        views.get_documentlist_js,
-        name='get_documentlist_js'
+        views.get_documentlist,
+        name='get_documentlist'
     ),
     url(
         '^documentlist/extra/$',
-        views.get_documentlist_extra_js,
-        name='get_documentlist_extra_js'
+        views.get_documentlist_extra,
+        name='get_documentlist_extra'
     ),
-    url('^delete/$', views.delete_js, name='delete_js'),
+    url('^delete/$', views.delete, name='delete'),
     url(
         '^create_doc/(?P<template_id>[0-9]+)/$',
-        views.create_doc_js,
-        name='create_doc_js'
+        views.create_doc,
+        name='create_doc'
     ),
-    url('^import/create/$', views.import_create_js, name='import_create_js'),
-    url('^import/image/$', views.import_image_js, name='import_image_js'),
-    url('^import/$', views.import_js, name='import_js'),
-    url('^upload/$', views.upload_revision_js, name='upload_revision_js'),
+    url('^import/create/$', views.import_create, name='import_create'),
+    url('^import/image/$', views.import_image, name='import_image'),
+    url('^import/$', views.import_doc, name='import_doc'),
+    url('^upload/$', views.upload_revision, name='upload_revision'),
     url(
         '^get_revision/(?P<revision_id>[0-9]+)/$',
         views.get_revision,
@@ -30,47 +30,47 @@ urlpatterns = [
     ),
     url(
         '^delete_revision/$',
-        views.delete_revision_js,
-        name='delete_revision_js'
+        views.delete_revision,
+        name='delete_revision'
     ),
     url(
         '^accessright/save/$',
-        views.access_right_save_js,
-        name='access_right_save_js'
+        views.access_right_save,
+        name='access_right_save'
     ),
     url(
         '^comment_notify/$',
-        views.comment_notify_js,
-        name='comment_notify_js'
+        views.comment_notify,
+        name='comment_notify'
     ),
     url(
         '^maintenance/get_all/$',
-        views.get_all_docs_js,
-        name='get_all_docs_js'
+        views.get_all_docs,
+        name='get_all_docs'
     ),
     url(
         '^maintenance/save_doc/$',
-        views.save_doc_js,
-        name='save_doc_js'
+        views.save_doc,
+        name='save_doc'
     ),
     url(
         '^maintenance/add_images_to_doc/$',
-        views.add_images_to_doc_js,
-        name='add_images_to_doc_js'
+        views.add_images_to_doc,
+        name='add_images_to_doc'
     ),
     url(
         '^maintenance/get_all_revision_ids/$',
-        views.get_all_revision_ids_js,
-        name='get_all_revision_ids_js'
+        views.get_all_revision_ids,
+        name='get_all_revision_ids'
     ),
     url(
         '^maintenance/get_user_biblist/$',
-        views.get_user_biblist_js,
-        name='get_user_biblist_js'
+        views.get_user_biblist,
+        name='get_user_biblist'
     ),
     url(
         '^maintenance/update_revision/$',
-        views.update_revision_js,
-        name='update_revision_js'
+        views.update_revision,
+        name='update_revision'
     )
 ]

@@ -30,6 +30,6 @@ class Feedback(models.Model):
         send_mail('Feedback from ' + from_sender + reply_to,
                   self.message,
                   settings.DEFAULT_FROM_EMAIL,
-                  [settings.SERVER_INFO['CONTACT_EMAIL']],
+                  [settings.CONTACT_EMAIL],
                   fail_silently=True)
         super(Feedback, self).save(*args, **kwargs)

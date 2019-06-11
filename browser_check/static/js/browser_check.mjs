@@ -10,5 +10,5 @@ const MINIMUM_BROWSER_VERSIONS = {
 
 // Verify that we are running on a current browser.
 if (bowser.isUnsupportedBrowser(MINIMUM_BROWSER_VERSIONS, true, window.navigator.userAgent)) {
-    window.location = '/browser_check'
+    window.location = '/browser_check/'
 }

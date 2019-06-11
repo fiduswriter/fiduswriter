@@ -10,6 +10,7 @@ import {PasswordReset} from "../password_reset"
 import {Signup} from "../signup"
 import {ImageDB} from "../images/database"
 import {BibliographyDB} from "../bibliography/database"
+import {Page404} from "./404"
 import * as plugins from "../../plugins/app"
 
 export class App {
@@ -78,6 +79,7 @@ export class App {
             }
         }
         this.openLoginPage = () => new LoginPage(this.config)
+        this.open404Page = () => new Page404(this.config)
     }
 
     init() {
@@ -180,7 +182,8 @@ export class App {
                 return
             }
         }
-        window.location = window.location
+        this.page = this.open404Page()
+        this.page.init()
     }
 
     getUserInfo() {

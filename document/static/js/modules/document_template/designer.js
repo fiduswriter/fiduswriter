@@ -250,31 +250,31 @@ export class DocumentTemplateDesigner {
                             default:
                                 break
                         }
-                        if(el.classList.contains("error-element")){
+                        if (el.classList.contains("error-element")) {
                             el.classList.remove("error-element")
                         }
                         if (!id.length) {
                             valid = false
                             this.errors.missing_id = gettext('All document parts need an ID.')
                             el.classList.add("error-element")
-                            el.scrollIntoView({block:"center" , behavior :"smooth"})
+                            el.scrollIntoView({block:"center", behavior :"smooth"})
                         }
                         if (/\s/.test(id)) {
                             valid = false
                             this.errors.no_spaces = gettext('IDs cannot contain spaces.')
                             el.classList.add("error-element")
-                            el.scrollIntoView({block:"center" , behavior :"smooth"})
+                            el.scrollIntoView({block:"center", behavior :"smooth"})
                         }
                         if (ids.includes(id)) {
                             valid = false
                             Array.from(document.querySelectorAll('.to-container .doc-part:not(.fixed)')).map(
                                 el => {
                                     const id_duplicate = el.querySelector('input.id').value
-                                    if(id_duplicate == id ){
+                                    if (id_duplicate == id) {
                                         el.classList.add("error-element")
                                     }
                                 })
-                            el.scrollIntoView({block:"center" , behavior :"smooth"})
+                            el.scrollIntoView({block:"center", behavior :"smooth"})
                             this.errors.unique_id = gettext('IDs have to be unique.')
                         }
                         ids.push(id)

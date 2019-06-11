@@ -15,7 +15,7 @@ export class LoginPage extends PreloginPage {
             <h1 class="fw-login-title">${gettext("Log in")}</h1>
             ${
                 this.registrationOpen ?
-                    `<p>${gettext("If you are new here, please <a href='/account/signup/' title='Sign up'>sign up</a> or use one of the login options below to create an account.")}</p>` +
+                    `<p>${gettext("If you are new here, please <a href='/account/sign-up/' title='Sign up'>sign up</a> or use one of the login options below to create an account.")}</p>` +
                     (
                         this.socialaccountProviders.length ?
                         `<div class="socialaccount_ballot">
@@ -40,24 +40,25 @@ export class LoginPage extends PreloginPage {
             }
         </div>
         <div class="fw-login-right">
-            <ul id="non_field_errors" class="errorlist"></ul>
-            <div class="input-wrapper">
-                <label for="id_login">${gettext("Username")}</label>
-                <input type="text" name="login" placeholder="${gettext("Username or e-mail")}" autofocus="autofocus" required="" id="id_login">
-                <ul id="id_login_errors" class="errorlist"></ul>
-            </div>
-            <div class="input-wrapper">
-                <label for="id_password">${gettext("Password")}</label>
-                <input type="password" name="password" placeholder="${gettext("Password")}" required="" id="id_password">
-                <ul id="id_password_errors" class="errorlist"></ul>
-            </div>
-            <div class="submit-wrapper">
-                <button class="fw-button fw-dark fw-uppercase" type="submit" id="login-submit">${gettext("Log in")}</button>
-                <br>
-                <input type="checkbox" name="remember" id="id_remember">
-                <label for="id_remember">${gettext("Remember me")}</label>
-            </div>
-                <a id="lost-passwd" href="/account/password/reset/">${gettext("Forgot Password?")}</a>
+            <form>
+                <ul id="non_field_errors" class="errorlist"></ul>
+                <div class="input-wrapper">
+                    <label for="id_login">${gettext("Username")}</label>
+                    <input type="text" name="login" placeholder="${gettext("Username or e-mail")}" autofocus="autofocus" required="" id="id_login" autocomplete="username email">
+                    <ul id="id_login_errors" class="errorlist"></ul>
+                </div>
+                <div class="input-wrapper">
+                    <label for="id_password">${gettext("Password")}</label>
+                    <input type="password" name="password" placeholder="${gettext("Password")}" required="" id="id_password" autocomplete="current-password">
+                    <ul id="id_password_errors" class="errorlist"></ul>
+                </div>
+                <div class="submit-wrapper">
+                    <button class="fw-button fw-dark fw-uppercase" type="submit" id="login-submit">${gettext("Log in")}</button>
+                    <br>
+                    <input type="checkbox" name="remember" id="id_remember">
+                    <label for="id_remember">${gettext("Remember me")}</label>
+                </div>
+                <a id="lost-passwd" href="/account/password-reset/">${gettext("Forgot Password?")}</a>
             </form>
         </div>`
         super.render()
@@ -81,7 +82,12 @@ export class LoginPage extends PreloginPage {
             button => button.style.width = `${btnWidth}px`
         )
 
-        document.getElementById('login-submit').addEventListener('click', () => {
+        if (!this.registrationOpen) {
+            return
+        }
+
+        document.getElementById('login-submit').addEventListener('click', event => {
+            event.preventDefault()
             document.querySelector('#non_field_errors').innerHTML = ''
             document.querySelector('#id_login_errors').innerHTML = ''
             document.querySelector('#id_password_errors').innerHTML = ''
@@ -89,13 +95,16 @@ export class LoginPage extends PreloginPage {
             const login = document.getElementById('id_login').value,
                 password = document.getElementById('id_password').value,
                 remember = document.getElementById('id_remember').checked
+            let errors = false
             if (!login.length) {
-                document.querySelector('#id_login_errors').innerHTML = gettext('This field is required.')
+                document.querySelector('#id_login_errors').innerHTML = `<li>${gettext('This field is required.')}</li>`
+                errors = true
             }
             if (!password.length) {
-                document.querySelector('#id_password_errors').innerHTML = gettext('This field is required.')
+                document.querySelector('#id_password_errors').innerHTML = `<li>${gettext('This field is required.')}</li>`
+                errors = true
             }
-            if (!login.length || !password.length) {
+            if (errors) {
                 return
             }
             return loginUser(this.app.config, login, password, remember).then(

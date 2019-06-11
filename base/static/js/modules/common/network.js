@@ -18,7 +18,7 @@ const getCookie = function(name) {
     return null
 }
 
-export const getCsrfToken = function() {
+const getCsrfToken = function() {
     return getCookie('csrftoken')
 }
 

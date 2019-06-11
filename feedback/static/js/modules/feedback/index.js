@@ -24,7 +24,7 @@ export class FeedbackTab {
                 <p>${gettext("Did you encounter an error or bug?")}<br>
                     ${gettext("Give a brief description of what has happened.")}</p>
                 <div id="feedback-form">
-                  <form method="post" action="/feedback/feedback/">
+                  <form>
                     <textarea id="message" name="message" rows="10" cols="30"></textarea>
                     <input type="button" value='${gettext("submit")}' id="feedbackbutton" class="fw-button fw-orange" />
                   </form>
@@ -89,7 +89,7 @@ export class FeedbackTab {
         closeFeedbackEl.style.display = 'none'
         feedbackFormEl.style.visibility = 'hidden'
 
-        post('/feedback/feedback/', {message: messageEl.value}).then(
+        post('/api/feedback/feedback/', {message: messageEl.value}).then(
             () => {
                 messageEl.value = ''
                 closeFeedbackEl.style.display = 'block'

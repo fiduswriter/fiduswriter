@@ -25,7 +25,7 @@ serializer = SimpleSerializer()
 
 # returns list of bibliography items
 @login_required
-def biblist_js(request):
+def biblist(request):
     response = {}
     status = 403
     if request.is_ajax() and request.method == 'POST':
@@ -74,7 +74,7 @@ def biblist_js(request):
 
 # save bibliography entries from bibtex importer or form
 @login_required
-def save_js(request):
+def save(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
@@ -115,7 +115,7 @@ def save_js(request):
 
 # delete an entry
 @login_required
-def delete_js(request):
+def delete(request):
     status = 405
     response = {}
     if request.is_ajax() and request.method == 'POST':
@@ -135,7 +135,7 @@ def delete_js(request):
 
 # save changes or create a new category
 @login_required
-def save_category_js(request):
+def save_category(request):
     status = 405
     response = {}
     response['entries'] = []
@@ -174,7 +174,7 @@ def save_category_js(request):
 
 # Delete one or more categories
 @login_required
-def delete_category_js(request):
+def delete_category(request):
     status = 405
     response = {}
     if request.is_ajax() and request.method == 'POST':

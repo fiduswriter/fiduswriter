@@ -5,16 +5,14 @@ import os
 DEBUG = True
 AUTO_TRANSPILE = True
 
-SERVER_INFO = {
-    # This determines whether the server is used for testing and will let the
-    # users know upon signup know that their documents may disappear.
-    'TEST_SERVER': True,
-    # This is the contact email that will be shown in various places all over
-    # the site.
-    'CONTACT_EMAIL': 'mail@email.com',
-    # If websockets is running on a non-standard port, add it here:
-    'WS_PORT': False,
-}
+# This determines whether the server is used for testing and will let the
+# users know upon signup know that their documents may disappear.
+TEST_SERVER = True
+# This is the contact email that will be shown in various places all over
+# the site.
+CONTACT_EMAIL = 'mail@email.com'
+# If websockets is running on a non-standard port, add it here:
+WS_PORT = False
 
 ADMINS = (
     ('Your Name', 'your_email@example.com'),
@@ -162,7 +160,6 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
-                'base.context_processors.server_info',
                 'django.contrib.auth.context_processors.auth',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.i18n',
@@ -243,6 +240,7 @@ ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 
 # allow login either with email or username
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+ACCOUNT_ADAPTER = "user.adapter.AccountAdapter"
 
 AUTH_PROFILE_MODULE = "account.UserProfile"
 

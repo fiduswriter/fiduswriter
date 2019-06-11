@@ -103,7 +103,7 @@ export class DocumentOverview {
 
     getDocumentListData() {
         postJson(
-            '/document/documentlist/'
+            '/api/document/documentlist/'
         ).catch(
             error => {
                 addAlert('error', gettext('Cannot load data of documents.'))

@@ -26,30 +26,26 @@ admin_site_urls = (admin.site.urls[0] + [
 # Django URLs -- Notice that these are only consulted after the
 # tornado_url_list found in base/servers/tornado_django_hybrid.py
 urlpatterns = [
-    url('^$', app_view, name='index'),
     url(
         '^robots\.txt$',
         lambda r: HttpResponse(
-            "User-agent: *\nDisallow: /text/\nDisallow: /bibliography/",
+            "User-agent: *\nDisallow: /document/\nDisallow: /bibliography/",
             mimetype="text/plain"
         )
     ),
 
     # I18n manual language switcher
-    url('^i18n/', include('django.conf.urls.i18n')),
+    url('^api/i18n/', include('django.conf.urls.i18n')),
 
     # I18n Javascript translations
-    url(r'^jsi18n/$', JavaScriptCatalog.as_view(), name='javascript-catalog'),
+    url(
+        r'^api/jsi18n/$',
+        JavaScriptCatalog.as_view(),
+        name='javascript-catalog'
+    ),
 
     # Admin interface
     path('admin/', admin_site_urls),
-
-    # Account management
-    url('^account/', include('user.urls')),
-
-    # Flat pages
-    url('^pages/', include('django.contrib.flatpages.urls')),
-
 ]
 
 for app in settings.INSTALLED_APPS:
@@ -59,7 +55,7 @@ for app in settings.INSTALLED_APPS:
         pass
     else:
         app_name = app.rsplit('.', 1).pop()
-        urlpatterns += [url('^%s/' % app_name, include('%s.urls' % app))]
+        urlpatterns += [url('^api/%s/' % app_name, include('%s.urls' % app))]
 
 if settings.DEBUG:
     from django.views.static import serve as static_serve
@@ -74,3 +70,7 @@ if hasattr(settings, 'EXTRA_URLS'):
         urlpatterns += [
             url(extra_url[0], include(extra_url[1])),
         ]
+
+urlpatterns += [
+    url('^.*', app_view, name='app')
+]

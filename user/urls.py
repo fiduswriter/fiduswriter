@@ -1,71 +1,59 @@
-from allauth.account import views as allauth_views
 from django.conf.urls import include, url
-from django.views.generic.base import RedirectView
-from django.conf import settings
 from . import views
-from base.views import app
 
-
-if settings.REGISTRATION_OPEN:
-    signup_view = allauth_views.signup
-else:
-    signup_view = RedirectView.as_view(url='/', permanent=False)
 
 urlpatterns = [
-    url('^save/$', views.save_profile_js, name='save_profile_js'),
+    url('^save/$', views.save_profile, name='save_profile'),
 
     # Show user profiles
-    url('^team/$', app, name='list_team_members'),
     url(
         '^team/list/$',
-        views.list_team_members_js,
-        name='list_team_members_js'
-    ),
-    url(
-        '^profile/$',
-        app,
-        name='show_userprofile'
+        views.list_team_members,
+        name='list_team_members'
     ),
     url(
         '^info/$',
-        views.info_js,
-        name='info_js'
+        views.info,
+        name='info'
     ),
-    url('^avatar/delete/$', views.delete_avatar_js, name="delete_avatar_js"),
-    url('^avatar/upload/$', views.upload_avatar_js, name="upload_avatar_js"),
+    url('^avatar/delete/$', views.delete_avatar, name="delete_avatar"),
+    url('^avatar/upload/$', views.upload_avatar, name="upload_avatar"),
     url(
         '^passwordchange/$',
-        views.password_change_js,
-        name="password_change_js"
+        views.password_change,
+        name="password_change"
     ),
-    url('^emailadd/$', views.add_email_js, name="add_email_js"),
-    url('^emaildelete/$', views.delete_email_js, name="delete_email_js"),
-    url('^emailprimary/$', views.primary_email_js, name="primary_email_js"),
+    url('^emailadd/$', views.add_email, name="add_email"),
+    url('^emaildelete/$', views.delete_email, name="delete_email"),
+    url('^emailprimary/$', views.primary_email, name="primary_email"),
 
     # Delete a user profile
-    url('^delete/$', views.delete_user_js, name='delete_user_js'),
+    url('^delete/$', views.delete_user, name='delete_user'),
 
     url(
         '^teammember/add',
-        views.add_team_member_js,
-        name='add_team_member_js'
+        views.add_team_member,
+        name='add_team_member'
     ),
     url(
         '^teammember/edit',
-        views.change_team_member_roles_js,
-        name='change_team_member_roles_js'
+        views.change_team_member_roles,
+        name='change_team_member_roles'
     ),
     url(
         '^teammember/remove',
-        views.remove_team_member_js,
-        name='remove_team_member_js'
+        views.remove_team_member,
+        name='remove_team_member'
     ),
 
     # User avatar handling
     url('^avatar/', include('avatar.urls')),
 
-    # Signup view
-    url(r"^signup/$", signup_view, name="account_signup"),
+    url(
+        "^get_confirmkey_data/$",
+        views.get_confirmkey_data,
+        name="get_confirmkey_data"
+    ),
 
     # Authentication handling
     url('', include('allauth.urls')),

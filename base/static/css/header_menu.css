@@ -90,16 +90,12 @@
 }
 
 .fw-logout-button {
-    background: none!important;
+    background: none;
     border: none;
-    padding: 0!important;
-    font-size: inherit;
     font-family: inherit;
-    cursor: pointer;
     color: #fff;
-}
-.fw-logout-button:hover {
-    color: #000;
+    border-bottom: 1px solid #f2f2f2;
+    width: 100%;
 }
 
 #user-preferences {

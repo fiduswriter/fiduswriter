@@ -52,7 +52,7 @@ export class ContactsOverview {
 
     getList() {
 
-        postJson('/user/team/list/').then(
+        postJson('/api/user/team/list/').then(
             ({json}) => {
                 document.querySelector('#team-table tbody').innerHTML += teammemberTemplate({members: json.team_members})
             }

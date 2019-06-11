@@ -19,12 +19,12 @@ def fiduswriter_config_js(context):
         static_url = staticfiles_storage.base_url
     else:
         static_url = PrefixNode.handle_simple("STATIC_URL")
-    if 'WS_PORT' in settings.SERVER_INFO:
-        ws_port = settings.SERVER_INFO['WS_PORT']
+    if hasattr(settings, 'WS_PORT'):
+        ws_port = settings.WS_PORT
     else:
         ws_port = ''
-    if 'WS_SERVER' in settings.SERVER_INFO:
-        ws_server = settings.SERVER_INFO['WS_SERVER']
+    if hasattr(settings, 'WS_SERVER'):
+        ws_server = settings.WS_SERVER
     else:
         ws_server = ''
     socialaccount_providers = []
@@ -38,6 +38,10 @@ def fiduswriter_config_js(context):
         'static_url': static_url,
         'ws_port': ws_port,
         'ws_server': ws_server,
+        'contact_email': settings.CONTACT_EMAIL,
+        'test_server': (
+            'true' if settings.TEST_SERVER else 'false'
+        ),
         'is_free': ('true' if settings.IS_FREE else 'false'),
         'registration_open': (
             'true' if settings.REGISTRATION_OPEN else 'false'

@@ -5,8 +5,13 @@ import {ContactsOverview} from "../contacts"
 import {Profile} from "../profile"
 import {getUserInfo, findTarget, WebSocketConnector, showSystemMessage} from "../common"
 import {LoginPage} from "../login"
+import {EmailConfirm} from "../email_confirm"
+import {PasswordReset} from "../password_reset"
+import {Signup} from "../signup"
 import {ImageDB} from "../images/database"
 import {BibliographyDB} from "../bibliography/database"
+import {Page404} from "../404"
+import {FlatPage} from "../flatpage"
 import * as plugins from "../../plugins/app"
 
 export class App {
@@ -15,13 +20,48 @@ export class App {
         this.name = 'Fidus Writer'
         this.config.app = this
         this.routes = {
-            "usermedia": {
+            "": {
                 requireLogin: true,
-                open: () => new ImageOverview(this.config)
+                open: () => new DocumentOverview(this.config)
+            },
+            "account": {
+                requireLogin: false,
+                open: pathnameParts => {
+                    let returnValue
+                    switch (pathnameParts[2]) {
+                        case "confirm-email": {
+                            const key = pathnameParts[3]
+                            returnValue = new EmailConfirm(this.config, key)
+                            break
+                        }
+                        case "password-reset":
+                            returnValue = new PasswordReset(this.config)
+                            break
+                        case "sign-up":
+                            returnValue = new Signup(this.config)
+                            break
+                        default:
+                            returnValue = false
+                    }
+                    return returnValue
+                }
             },
             "bibliography": {
                 requireLogin: true,
                 open: () => new BibliographyOverview(this.config)
+            },
+            "document": {
+                requireLogin: true,
+                open: pathnameParts => {
+                    const id = pathnameParts[2]
+                    return import('../editor').then(({Editor}) => new Editor(this.config, id))
+                }
+            },
+            "pages": {
+                open: pathnameParts => {
+                    const url = `/${pathnameParts[2]}/`
+                    return new FlatPage(this.config, url)
+                }
             },
             "user": {
                 requireLogin: true,
@@ -40,19 +80,13 @@ export class App {
                     return returnValue
                 }
             },
-            "document": {
+            "usermedia": {
                 requireLogin: true,
-                open: pathnameParts => {
-                    const id = pathnameParts[2]
-                    return import('../editor').then(({Editor}) => new Editor(this.config, id))
-                }
-            },
-            "": {
-                requireLogin: true,
-                open: () => new DocumentOverview(this.config)
+                open: () => new ImageOverview(this.config)
             }
         }
         this.openLoginPage = () => new LoginPage(this.config)
+        this.open404Page = () => new Page404(this.config)
     }
 
     init() {
@@ -148,13 +182,15 @@ export class App {
                     this.page = thisPage
                     this.page.init()
                 })
-            } else {
+                return
+            } else if (page) {
                 this.page = page
                 this.page.init()
+                return
             }
-        } else {
-            window.location = window.location
         }
+        this.page = this.open404Page()
+        this.page.init()
     }
 
     getUserInfo() {

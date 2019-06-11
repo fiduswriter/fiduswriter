@@ -81,7 +81,7 @@ export class ImageOverview {
 
         activateWait()
         post(
-            '/usermedia/delete/',
+            '/api/usermedia/delete/',
             {ids}
         ).catch(
             error => {

@@ -35,7 +35,7 @@ export class SaveRevision {
 
     uploadRevision(blob) {
 
-        post('/document/upload/', {
+        post('/api/document/upload/', {
             note: this.note,
             file: {
                 file: blob,

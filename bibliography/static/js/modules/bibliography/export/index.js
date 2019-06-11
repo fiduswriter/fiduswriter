@@ -18,7 +18,6 @@ export class BibLatexFileExporter {
                     'contents': exporter.output
                 }]
             )
-
             zipper.init().then(
                 blob => download(blob, 'bibliography.zip', 'application/zip')
             )

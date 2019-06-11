@@ -4,6 +4,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.flatpages.models import FlatPage
 from django.http import JsonResponse
 
+
 @ensure_csrf_cookie
 def app(request):
     """

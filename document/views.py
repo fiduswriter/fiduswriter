@@ -42,7 +42,7 @@ def get_accessrights(ars):
 
 
 @login_required
-def get_documentlist_extra_js(request):
+def get_documentlist_extra(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
@@ -125,7 +125,7 @@ def documents_list(request):
 
 
 @login_required
-def get_documentlist_js(request):
+def get_documentlist(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
@@ -176,7 +176,7 @@ def get_documentlist_js(request):
 
 
 @login_required
-def delete_js(request):
+def delete(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
@@ -303,7 +303,7 @@ def send_share_notification(request, doc_id, collaborator_id, right, change):
 
 @login_required
 @transaction.atomic
-def access_right_save_js(request):
+def access_right_save(request):
     status = 405
     response = {}
     if request.is_ajax() and request.method == 'POST':
@@ -368,7 +368,7 @@ def access_right_save_js(request):
 
 
 @login_required
-def create_doc_js(request, template_id):
+def create_doc(request, template_id):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
@@ -385,7 +385,7 @@ def create_doc_js(request, template_id):
 
 
 @login_required
-def import_create_js(request):
+def import_create(request):
     # First step of import: Create a document and return the id of it
     response = {}
     status = 405
@@ -400,7 +400,7 @@ def import_create_js(request):
 
 
 @login_required
-def import_image_js(request):
+def import_image(request):
     # create an image for a document
     response = {}
     status = 405
@@ -438,7 +438,7 @@ def import_image_js(request):
 
 
 @login_required
-def import_js(request):
+def import_doc(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
@@ -497,7 +497,7 @@ def import_js(request):
 
 
 @login_required
-def upload_revision_js(request):
+def upload_revision(request):
     response = {}
     can_save = False
     status = 405
@@ -549,7 +549,7 @@ def get_revision(request, revision_id):
 
 
 @login_required
-def delete_revision_js(request):
+def delete_revision(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
@@ -581,7 +581,7 @@ def has_doc_access(doc, user):
 
 
 @login_required
-def comment_notify_js(request):
+def comment_notify(request):
     response = {}
     if not request.is_ajax() or request.method != 'POST':
         return JsonResponse(
@@ -736,7 +736,7 @@ def comment_notify_js(request):
 
 # maintenance views
 @staff_member_required
-def get_all_docs_js(request):
+def get_all_docs(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
@@ -759,7 +759,7 @@ def get_all_docs_js(request):
 
 
 @staff_member_required
-def save_doc_js(request):
+def save_doc(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
@@ -793,7 +793,7 @@ def save_doc_js(request):
 
 
 @staff_member_required
-def get_user_biblist_js(request):
+def get_user_biblist(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
@@ -816,7 +816,7 @@ def get_user_biblist_js(request):
 
 
 @staff_member_required
-def get_all_revision_ids_js(request):
+def get_all_revision_ids(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
@@ -832,7 +832,7 @@ def get_all_revision_ids_js(request):
 
 
 @staff_member_required
-def update_revision_js(request):
+def update_revision(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
@@ -851,7 +851,7 @@ def update_revision_js(request):
 
 
 @staff_member_required
-def add_images_to_doc_js(request):
+def add_images_to_doc(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':

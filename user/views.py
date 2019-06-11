@@ -33,7 +33,7 @@ def logout_page(request):
 
 
 @login_required
-def info_js(request):
+def info(request):
     """
     Get user profile info
     """
@@ -65,7 +65,7 @@ def info_js(request):
 
 
 @login_required
-def password_change_js(request):
+def password_change(request):
     '''
     Change password
     '''
@@ -90,7 +90,7 @@ def password_change_js(request):
 
 
 @login_required
-def add_email_js(request):
+def add_email(request):
     '''
     Add email address
     '''
@@ -117,7 +117,7 @@ def add_email_js(request):
 
 
 @login_required
-def delete_email_js(request):
+def delete_email(request):
     response = {}
     status = 405
     email = request.POST["email"]
@@ -153,7 +153,7 @@ def delete_email_js(request):
 
 
 @login_required
-def primary_email_js(request):
+def primary_email(request):
     response = {}
     status = 405
     email = request.POST["email"]
@@ -198,7 +198,7 @@ def primary_email_js(request):
 
 
 @login_required
-def upload_avatar_js(request):
+def upload_avatar(request):
     '''
     Upload avatar image
     '''
@@ -236,7 +236,7 @@ def upload_avatar_js(request):
 
 
 @login_required
-def delete_avatar_js(request):
+def delete_avatar(request):
     '''
     Delete avatar image
     '''
@@ -270,7 +270,7 @@ def delete_avatar_js(request):
 
 
 @login_required
-def delete_user_js(request):
+def delete_user(request):
     """
     Delete the user
     """
@@ -295,7 +295,7 @@ def delete_user_js(request):
 
 
 @login_required
-def save_profile_js(request):
+def save_profile(request):
     """
     Save user profile information
     """
@@ -337,7 +337,7 @@ def save_profile_js(request):
 
 
 @login_required
-def list_team_members_js(request):
+def list_team_members(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
@@ -360,7 +360,7 @@ def list_team_members_js(request):
 
 
 @login_required
-def add_team_member_js(request):
+def add_team_member(request):
     """
     Add a user as a team member of the current user
     """
@@ -414,7 +414,7 @@ def add_team_member_js(request):
 
 
 @login_required
-def change_team_member_roles_js(request):
+def change_team_member_roles(request):
     """
     Change the roles of a team member
     """
@@ -441,7 +441,7 @@ def change_team_member_roles_js(request):
 
 
 @login_required
-def remove_team_member_js(request):
+def remove_team_member(request):
     """
     Remove a team member
     """
@@ -468,7 +468,7 @@ def remove_team_member_js(request):
     )
 
 
-def get_confirmkey_data_js(request):
+def get_confirmkey_data(request):
     """
     Get data for an email confirmation key
     """

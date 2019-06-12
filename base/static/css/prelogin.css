@@ -5,6 +5,8 @@
 
 .fw-login-logo {
     margin-top: 38px;
+    display: inline-block;
+    cursor: pointer;
 }
 
 .prelogin #header-nav {

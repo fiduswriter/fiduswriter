@@ -4,6 +4,7 @@ import {history, redo, undo} from "prosemirror-history"
 import {toggleMark, baseKeymap} from "prosemirror-commands"
 import {keymap} from "prosemirror-keymap"
 
+import {icon, InlineTools} from "../../../prosemirror/inline_tools"
 import {litSchema} from "../../schema/literal"
 
 export class LiteralFieldForm {
@@ -46,7 +47,14 @@ export class LiteralFieldForm {
                             command(this.view.state, tr => this.view.dispatch(tr))
                         }
                     }),
-                    this.placeholderPlugin()
+                    this.placeholderPlugin(),
+                    InlineTools([
+                        {command: toggleMark(litSchema.marks.strong), dom: icon("strong", gettext('Strong'))},
+                        {command: toggleMark(litSchema.marks.em), dom: icon("em", gettext('Emphasis'))},
+                        {command: toggleMark(litSchema.marks.smallcaps), dom: icon("smallcaps", gettext('Small caps'))},
+                        {command: toggleMark(litSchema.marks.sub), dom: icon("sub", gettext('Subscript₊'))},
+                        {command: toggleMark(litSchema.marks.sup), dom: icon("sup", gettext('Supscript²'))}
+                    ])
                 ]
             }),
             handleDOMEvents: {

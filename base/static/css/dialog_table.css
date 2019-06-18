@@ -1,5 +1,6 @@
 .fw-dialog-table td {
     padding-bottom: 7px;
+    position: relative;
 }
 
 .fw-tablerow-title {
@@ -14,13 +15,11 @@
     position: relative;
 }
 
-
 .fw-tablerow-title .tooltip {
     position: absolute;
     min-width: 260px;
     top: 30px;
     left: 10px;
-    padding: 10px;
     background-color: #879ded;
     color: white;
     border-radius: 3px;

@@ -57,36 +57,10 @@ export class LiteralFieldForm {
                     ])
                 ]
             }),
-            handleDOMEvents: {
-                focus: (_view, _event) => {
-                    document.querySelectorAll('.ui-dialog-buttonset .fw-edit').forEach(el => el.classList.remove('disabled'))
-                    document.querySelectorAll('.ui-dialog-buttonset .fw-nocase').forEach(el => el.classList.add('disabled'))
-                },
-                blur: (_view, _event) => {
-                    document.querySelectorAll('.ui-dialog-buttonset .fw-edit').forEach(el => el.classList.add('disabled'))
-                }
-            },
             dispatchTransaction: tr => {
                 const newState = this.view.state.apply(tr)
                 this.view.updateState(newState)
             }
-        })
-        const supportedMarks = ['em', 'strong', 'sub', 'sup', 'smallcaps']
-        supportedMarks.forEach(mark =>{
-            this.linkMarkButton(mark)
-        })
-    }
-
-    linkMarkButton(mark) {
-        document.querySelector(`.ui-dialog-buttonset .fw-${mark}`).addEventListener("mousedown",  event => {
-            event.preventDefault()
-            event.stopPropagation()
-            if (!this.view.hasFocus()) {
-                return
-            }
-            const sMark = this.view.state.schema.marks[mark]
-            const command = toggleMark(sMark)
-            command(this.view.state, tr => this.view.dispatch(tr))
         })
     }
 

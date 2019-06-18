@@ -73,3 +73,8 @@
     font-weight: bold;
     font-variant: small-caps;
 }
+
+.menuicon.nocase:before {
+    content: "cP";
+    font-weight: bold;
+}

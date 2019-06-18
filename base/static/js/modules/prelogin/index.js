@@ -72,13 +72,14 @@ export class PreloginPage {
 
     init() {
         whenReady().then(() => {
-            this.render()
             this.activateFidusPlugins()
+            this.render()
             this.bind()
         })
     }
 
     bind() {
+        document.querySelector('.fw-login-logo').addEventListener('click', () => this.app.goTo('/'))
         document.getElementById('lang-selection').addEventListener('change', event => {
             this.language = event.target.value
             return setLanguage(this.app.config, this.language).then(

@@ -20,8 +20,8 @@ export class FlatPage extends PreloginPage {
             whenReady(),
             this.getPageData(),
         ]).then(() => {
-            this.render()
             this.activateFidusPlugins()
+            this.render()
             this.bind()
         })
     }

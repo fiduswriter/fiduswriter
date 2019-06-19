@@ -58,7 +58,21 @@
     position: relative;
     margin-top: 24px;
     overflow-y: auto;
-    max-height: calc(100vh - 200px);
+    max-height: calc(100vh - 206px);
+}
+
+.input-list-wrapper tr:last-child td {
+    padding-bottom: 0;
+}
+
+.input-list-wrapper td.input-field-list-ctrl {
+    padding-right: 20px;
+    text-align: right;
+    vertical-align: middle;
+}
+
+.entry-field input[type=text] {
+    margin: 0;
 }
 
 .ui-dialog-buttonpane {

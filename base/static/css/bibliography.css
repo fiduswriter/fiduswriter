@@ -1,9 +1,6 @@
-#bib-dialog {
-    margin-top: 18px;
-}
-
 #bib-dialog .ui-tabs-panel {
-    height: 439px;
+    min-height: 0;
+    height: calc(100vh - 278px);
 }
 
 #bib-dialog .fw-dialog-table th {
@@ -47,6 +44,10 @@
     display: inline-block;
 }
 
+#bib-dialog .entry-field .type-switch-input-inner select {
+    width: 100%;
+}
+
 #bib-dialog .entry-field .fw-select-arrow {
     position: absolute;
 	top: 14px;
@@ -54,35 +55,113 @@
 	pointer-events: none;
 }
 
-#bib-dialog .input-with-button {
-    width: 705px;
-}
-
-#bib-dialog .input-with-button button {
-    width: 81px;
+#bib-dialog .type-switch {
+    position: relative;
+    width: 140px;
+    height: 38px;
     float: left;
-    margin-right: 18px;
+    margin-right: 5px;
+    font-size: 14px;
+    color: white;
+    background-color: #76a698;
+    border: 0 none;
+    border-radius: 19px;
+    white-space: nowrap;
+    padding: 0;
+    line-height: 38px;
+    overflow: hidden;
+    cursor: pointer;
 }
 
-#bib-dialog .input-with-button .field-part {
+#bib-dialog .type-switch.disabled {
+    background-color: #e0e0e0;
+}
+
+.type-switch-inner {
+    position: absolute;
+    display: block;
+    left: 0;
+    top: 0;
+    width: calc(200% - 38px);
+    transition: left 0.3s;
+}
+
+.type-switch-inner:after {
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    left: calc(50% - 19px);
+    top: 0;
+    content: "";
+    width: 38px;
+    height: 38px;
+    border-radius: 19px;
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
+}
+
+.value2 .type-switch-inner {
+    left: calc(-100% + 38px)
+}
+
+.type-switch-label {
+    box-sizing: border-box;
+    display: block;
+    width: 50%;
+    float: left;
+}
+
+.type-switch-label:first-child {
+    padding-right: 12px;
+}
+
+.type-switch-label:last-child {
+    padding-left: 12px;
+}
+
+#bib-dialog .type-switch-input-wrapper {
+    width: 686px;
+}
+
+.type-switch-input-wrapper:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.type-switch-input-inner {
+    position: relative;
+    float: left;
+    width: calc(100% - 145px);
+}
+
+#bib-dialog .type-switch-input-inner .field-part {
     display: inline-block;
-    margin-right: 18px;
+    margin-right: 5px;
 }
 
-#bib-dialog .input-with-button .field-part-huge .ProseMirror {
+#bib-dialog .type-switch-input-inner .field-part:last-child {
+    margin-right: 0;
+}
+
+#bib-dialog .type-switch-input-inner .field-part-huge .ProseMirror {
     width: 250px;
 }
 
-#bib-dialog .input-with-button .field-part-long .ProseMirror {
+#bib-dialog .type-switch-input-inner .field-part-long .ProseMirror {
     width: 130px;
 }
 
-#bib-dialog .input-with-button .field-part-short .ProseMirror {
+#bib-dialog  .field-part-short .ProseMirror {
     width: 58px;
 }
 
-#bib-dialog .input-with-button .field-part-single .ProseMirror {
-    width: 561px;
+#bib-dialog .type-switch-input-inner .field-part-single {
+    width: 100%;
+}
+
+#bib-dialog .type-switch-input-inner .field-part-single .ProseMirror {
+    width: 100%;
 }
 
 

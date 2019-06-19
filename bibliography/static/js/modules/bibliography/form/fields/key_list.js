@@ -14,7 +14,7 @@ export class KeyListForm {
 
     drawForm() {
         this.fields = []
-        this.dom.innerHTML = '<table><tbody></tbody></table>'
+        this.dom.innerHTML = '<table class="input-list-wrapper"><tbody></tbody></table>'
         this.currentValue.forEach((fieldValue, index) => {
             this.addField(fieldValue, index)
         })
@@ -26,7 +26,7 @@ export class KeyListForm {
             noSpaceTmp`
             <tr>
                 <td></td>
-                <td>
+                <td class="input-field-list-ctrl">
                     <span class="fa fa-minus-circle"></span>&nbsp;
                     <span class="fa fa-plus-circle"></span>
                 </td>

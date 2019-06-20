@@ -17,11 +17,11 @@
     display: flex;
     border: 2px solid #f2f2f2;
     border-top: 0 none;
-    top: 225px;
+    top: 223px;
 }
 
 body.header-closed #margin-box-filter {
-    top: 72px;
+    top: 70px;
 }
 
 .margin-box-filter-button {

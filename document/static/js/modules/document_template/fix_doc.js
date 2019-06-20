@@ -1,5 +1,7 @@
 import hash from "object-hash"
 
+import {toFullJSON} from "../schema/mini_json"
+
 function cleanFootnotes(node, elements, marks) {
     if (node.attrs && node.attrs.footnote) {
         // We remove forbidden block nodes
@@ -30,48 +32,39 @@ function cleanNode(node, elements, marks) {
     }
 }
 
-export function adjustDocToTemplate(doc, template, documentStyles, citationStyles, schema) {
-    if (!doc.attrs) {
-        doc.attrs = {}
-    }
-    const removedFootnoteElements = 'footnote_elements' in doc.attrs ? doc.attrs.footnote_elements.filter(
+export function adjustDocToTemplate(miniDoc, template, documentStyles, citationStyles, schema) {
+    const doc = toFullJSON(miniDoc, schema),
+        removedFootnoteElements = doc.attrs.footnote_elements.filter(
             element => !template.attrs.footnote_elements.includes(element)
-        ) : [],
-        removedFootnoteMarks = 'footnote_marks' in doc.attrs ? doc.attrs.footnote_marks.filter(
+        ),
+        removedFootnoteMarks = doc.attrs.footnote_marks.filter(
             mark => !template.attrs.footnote_marks.includes(mark)
-        ) : [],
+        ),
         attrs = ['footnote_marks', 'footnote_elements', 'languages', 'papersizes', 'template']
-    attrs.forEach(attr => doc.attrs[attr] = attr in template.attrs ? template.attrs[attr] : schema.nodes['article'].attrs[attr].default)
+    attrs.forEach(attr => doc.attrs[attr] = template.attrs[attr])
 
-    const docLanguages = 'languages' in doc.attrs ? doc.attrs.languages : schema.nodes['article'].attrs.languages.default
-    const docLanguage = 'language' in doc.attrs ? doc.attrs.language : schema.nodes['article'].attrs.language.default
-    if (!docLanguages.includes(docLanguage)) {
-        if (!docLanguages.length) {
+    if (!doc.attrs.languages.includes(doc.attrs.language)) {
+        if (!doc.attrs.languages.length) {
             throw new Error('Document template allows no languages.')
         }
-        doc.attrs.language = docLanguages[0]
+        doc.attrs.language = doc.attrs.languages[0]
     }
 
-
-    const docPapersizes = 'papersizes' in doc.attrs ? doc.attrs.papersizes : schema.nodes['article'].attrs.papersizes.default
-    const docPapersize = 'papersize' in doc.attrs ? doc.attrs.papersize : schema.nodes['article'].attrs.papersize.default
-    if (!docPapersizes.includes(docPapersize)) {
-        if (!docPapersizes.length) {
+    if (!doc.attrs.papersizes.includes(doc.attrs.papersize)) {
+        if (!doc.attrs.papersizes.length) {
             throw new Error('Document template allows no paper sizes.')
         }
-        doc.attrs.papersize = docPapersizes[0]
+        doc.attrs.papersize = doc.attrs.papersizes[0]
     }
 
-    const docDocumentstyle = 'documentstyle' in doc.attrs ? doc.attrs.documentstyle : schema.nodes['article'].attrs.documentstyle.default
-    if (!documentStyles.map(style => style.filename).includes(docDocumentstyle)) {
+    if (!documentStyles.map(style => style.filename).includes(doc.attrs.documentstyle)) {
         if (!documentStyles.length) {
             throw new Error('No document styles have been defined for document template.')
         }
         doc.attrs.documentstyle = documentStyles[0].filename
     }
 
-    const docCitationstyle = 'citationstyle' in doc.attrs ? doc.attrs.citationstyle : schema.nodes['article'].attrs.citationstyle.default
-    if (!citationStyles.map(style => style.short_title).includes(docCitationstyle)) {
+    if (!citationStyles.map(style => style.short_title).includes(doc.attrs.citationstyle)) {
         if (!citationStyles.length) {
             throw new Error('No citation styles have been defined for document template.')
         }
@@ -167,17 +160,12 @@ export function adjustDocToTemplate(doc, template, documentStyles, citationStyle
                 }
             }
 
-            if (oldNode.attrs.elements || schema.nodes[oldNode.type].attrs.elements) { // parts that define elements also define marks.
-                const oldElements = oldNode.attrs.elements || schema.nodes[oldNode.type].attrs.elements.default
-                const newElements = newNode.attrs.elements || schema.nodes[newNode.type].attrs.elements.default
-                const removedElements = oldElements.filter(
-                    element => !newElements.includes(element)
+            if (oldNode.attrs.elements) { // parts that define elements also define marks.
+                const removedElements = oldNode.attrs.elements.filter(
+                    element => !newNode.attrs.elements.includes(element)
                 )
-
-                const oldMarks = oldNode.attrs.marks || schema.nodes[oldNode.type].attrs.marks.default
-                const newMarks = newNode.attrs.marks || schema.nodes[newNode.type].attrs.marks.default
-                const removedMarks = oldMarks.filter(
-                    mark => !newMarks.includes(mark)
+                const removedMarks = oldNode.attrs.marks.filter(
+                    mark => !newNode.attrs.marks.includes(mark)
                 )
                 if (removedElements.length || removedMarks.length) {
                     cleanNode(newNode, removedElements, removedMarks)
@@ -200,7 +188,6 @@ export function adjustDocToTemplate(doc, template, documentStyles, citationStyle
             // The node is new and didn't exist in the old document.
             doc.content.push(JSON.parse(JSON.stringify(part)))
         }
-
     })
 
     // move remaining oldContent items that were not in template.

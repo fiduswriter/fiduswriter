@@ -1,6 +1,6 @@
 export const menuModel = () => ({
     content: [
-        {
+        /*{
             type: 'select-action-dropdown',
             id: 'bib_selector',
             open: false,
@@ -26,7 +26,7 @@ export const menuModel = () => ({
                 }
             ],
             order: 0
-        },
+        },*/
         {
             type: 'dropdown',
             id: 'cat_selector',
@@ -42,15 +42,13 @@ export const menuModel = () => ({
             order: 1
         },
         {
-            type: 'button',
-            icon: 'pencil',
+            type: 'text',
             title: gettext('Edit categories'),
             action: overview => overview.mod.categories.editCategoryDialog(),
             order: 2
         },
         {
-            type: 'button',
-            icon: 'plus-circle',
+            type: 'text',
             title: gettext('Upload new image'),
             action: overview => {
                 import("../edit_dialog").then(({ImageEditDialog}) => {

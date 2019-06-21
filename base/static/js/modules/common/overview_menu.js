@@ -62,8 +62,9 @@ export class OverviewMenuView {
             this.model.content[menuNumber].open = false
 
             if (this.model.content[menuNumber].type==='dropdown') {
-                this.model.content[menuNumber].title =
-                    this.model.content[menuNumber].content[itemNumber].title
+                this.model.content[menuNumber].title = this.model.content[menuNumber].content[itemNumber].title
+                this.openedMenu = false
+                this.update()
             }
             return false
         } else if (target.matches('#fw-overview-menu li .select-action input[type=checkbox]')) {
@@ -142,7 +143,7 @@ export class OverviewMenuView {
     getMenuHTML() {
         return `<ul id="fw-overview-menu">${
             this.model.content.map(menuItem =>
-                `<li class="fw-overview-menu-item${menuItem.id ? ` ${menuItem.id}` : ''}">${
+                `<li class="fw-overview-menu-item${menuItem.id ? ` ${menuItem.id}` : ''} ${menuItem.type}">${
                     this.getMenuItemHTML(menuItem)
                 }</li>`
             ).join('')
@@ -157,6 +158,9 @@ export class OverviewMenuView {
                 break
             case 'select-action-dropdown':
                 returnValue = this.getSelectionActionDropdownHTML(menuItem)
+                break
+            case 'text':
+                returnValue = this.getTextHTML(menuItem)
                 break
             case 'button':
                 returnValue = this.getButtonHTML(menuItem)
@@ -188,7 +192,7 @@ export class OverviewMenuView {
 
     getDropdownHTML(menuItem) {
         return `
-        <div class="dropdown fw-button fw-light fw-large">
+        <div class="dropdown fw-dropdown-menu">
             <label>${
                 menuItem.title ?
                 escapeText(menuItem.title) :
@@ -232,6 +236,10 @@ export class OverviewMenuView {
                 ''
             }
         </button>`
+    }
+
+    getTextHTML(menuItem) {
+        return `<button class="fw-text-menu" title="${menuItem.title}">${menuItem.title}</button>`
     }
 
     getSearchHTML(menuItem) {

@@ -3,7 +3,7 @@ import {BibLatexFileImportDialog} from "../import"
 
 export const menuModel = () => ({
     content: [
-        {
+        /*{
             type: 'select-action-dropdown',
             id: 'bib_selector',
             open: false,
@@ -40,7 +40,7 @@ export const menuModel = () => ({
                 }
             ],
             order: 0
-        },
+        },*/
         {
             type: 'dropdown',
             id: 'cat_selector',
@@ -56,15 +56,13 @@ export const menuModel = () => ({
             order: 1
         },
         {
-            type: 'button',
-            icon: 'pencil',
+            type: 'text',
             title: gettext('Edit categories'),
             action: overview => overview.editCategoriesDialog(),
             order: 2
         },
         {
-            type: 'button',
-            icon: 'plus-circle',
+            type: 'text',
             title: gettext('Register new source'),
             action: overview => {
                 import("../form").then(({BibEntryForm}) => {
@@ -80,8 +78,7 @@ export const menuModel = () => ({
             order: 3
         },
         {
-            type: 'button',
-            icon: 'upload',
+            type: 'text',
             title: gettext('Upload BibTeX file'),
             action: overview => {
                 const fileImporter = new BibLatexFileImportDialog(

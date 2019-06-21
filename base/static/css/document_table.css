@@ -195,7 +195,7 @@
     max-height: 60px;
     overflow: hidden;
     vertical-align: top;
-    margin: 2px 14px 2px 0;
+    margin: 0 14px 2px 0;
 }
 .fw-usermedia-image > img {
     min-width: 100%;

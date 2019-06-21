@@ -46,9 +46,10 @@ export class DocumentOverview {
     render() {
         document.body = document.createElement('body')
         document.body.innerHTML = baseBodyTemplate({
-            contents: '<ul id="fw-overview-menu"></ul>',
+            contents: '',
             user: this.user,
             staticUrl: this.staticUrl,
+            hasOverview: true
         })
         ensureCSS([
             'document_overview.css',
@@ -232,7 +233,7 @@ export class DocumentOverview {
     }
 
     addExportTemplatesToMenu() {
-        const docSelectMenuItem = this.menu.model.content.find(menuItem => menuItem.id='doc_selector')
+        /*const docSelectMenuItem = this.menu.model.content.find(menuItem => menuItem.id='doc_selector')
         this.exportTemplates.forEach(template => {
             docSelectMenuItem.content.push({
                 title: `${gettext('Export selected as: ')} ${template.file_name} (${template.file_type})`,
@@ -246,7 +247,7 @@ export class DocumentOverview {
                 }
             })
         })
-        this.menu.update()
+        this.menu.update()*/
     }
 
     multipleNewDocumentMenuItem() {

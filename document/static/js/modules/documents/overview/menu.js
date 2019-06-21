@@ -3,7 +3,7 @@ import {addAlert} from "../../common"
 
 export const menuModel = () => ({
     content: [
-        {
+        /*{
             type: 'select-action-dropdown',
             id: 'doc_selector',
             open: false,
@@ -103,18 +103,16 @@ export const menuModel = () => ({
                 }
             ],
             order: 0
-        },
+        },*/
         {
-            type: 'button',
+            type: 'text',
             id: 'new_document',
-            icon: 'plus-circle',
             title: gettext('Create new document'),
             action: overview => overview.goToNewDocument('new'),
             order: 1
         },
         {
-            type: 'button',
-            icon: 'upload',
+            type: 'text',
             title: gettext('Upload Fidus document'),
             action: overview => overview.mod.actions.importFidus(),
             order: 2

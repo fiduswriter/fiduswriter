@@ -196,7 +196,7 @@
 
 .tokenfield-set {
     position: relative;
-    padding: 8px 10px 3px;
+    padding: 0 10px;
 }
 
 .tokenfield .tokenfield-set > ul {
@@ -204,10 +204,10 @@
     padding: 0;
     list-style-type: none;
 }
+
 .tokenfield .tokenfield-set > ul > li {
     display: inline-block;
-    margin-right: 5px;
-    margin-bottom: 5px;
+    margin: 8px 5px 0 0;
     padding: 0 5px;
     border-radius: 3px;
     line-height: 1.5;
@@ -215,6 +215,10 @@
     color: #fff;
     background: #76a698;
     border: 1px solid #7d948e;
+}
+
+.tokenfield .tokenfield-set > ul > li:last-child {
+    margin-bottom: 8px;
 }
 
 .tokenfield .tokenfield-set > ul > li a {

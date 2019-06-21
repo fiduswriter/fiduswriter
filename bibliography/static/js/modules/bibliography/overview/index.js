@@ -38,9 +38,10 @@ export class BibliographyOverview {
     render() {
         document.body = document.createElement('body')
         document.body.innerHTML = baseBodyTemplate({
-            contents: '<ul id="fw-overview-menu"></ul>',
+            contents: '',
             user: this.user,
-            staticUrl: this.staticUrl
+            staticUrl: this.staticUrl,
+            hasOverview: true
         })
         ensureCSS([
             'bibliography.css',
@@ -55,6 +56,7 @@ export class BibliographyOverview {
     /* Initialize the overview table */
     initTable(ids) {
         const tableEl = document.createElement('table')
+        tableEl.id = "bibliography"
         tableEl.classList.add('fw-document-table')
         tableEl.classList.add('fw-large')
         document.querySelector('.fw-contents').appendChild(tableEl)
@@ -104,7 +106,7 @@ export class BibliographyOverview {
             action: _overview => {
                 const trs = document.querySelectorAll('#bibliography > tbody > tr')
                 trs.forEach(tr => {
-                    if (tr.classList.contains(`cat_${cat.id}`)) {
+                    if (tr.querySelector('.fw-document-table-title').classList.contains(`cat_${cat.id}`)) {
                         tr.style.display = ''
                     } else {
                         tr.style.display = 'none'
@@ -129,10 +131,11 @@ export class BibliographyOverview {
     createTableRow(id) {
         const bibInfo = this.app.bibDB.db[id]
         const bibauthors = bibInfo.fields.author || bibInfo.fields.editor
+        const cats = bibInfo.entry_cat.map(cat => `cat_${cat}`)
         return [
             String(id),
             `<input type="checkbox" class="entry-select fw-check" data-id="${id}" id="bib-${id}"><label for="bib-${id}"></label>`, // checkbox
-            `<span class="fw-document-table-title">
+            `<span class="fw-document-table-title ${cats.join(' ')}">
                 <i class="fa fa-book"></i>
                 <span class="edit-bib fw-link-text fw-searchable" data-id="${id}">
                     ${bibInfo.fields.title ? escapeText(litToText(bibInfo.fields.title)) : gettext('Untitled')}

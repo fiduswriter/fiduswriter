@@ -22,9 +22,13 @@ body {
     overflow: hidden;
 }
 
-.fw-contents {
+.fw-contents-outer {
     position: relative;
     top: 70px;
+}
+
+.fw-contents {
+    position: relative;
     width: auto;
     height: auto;
     min-width: 985px;

@@ -5,9 +5,9 @@ import {litToText, nameToText} from "../tools"
 import {editCategoriesTemplate} from "./templates"
 import {BibTypeTitles} from "../form/strings"
 import {SiteMenu} from "../../menu"
-import {OverviewMenuView, findTarget, whenReady, Dialog, baseBodyTemplate, ensureCSS, setDocTitle, escapeText} from "../../common"
+import {OverviewMenuView, findTarget, whenReady, Dialog, baseBodyTemplate, ensureCSS, setDocTitle, escapeText, DatatableBulk} from "../../common"
 import {FeedbackTab} from "../../feedback"
-import {menuModel} from "./menu"
+import {menuModel, bulkModel} from "./menu"
 import * as plugins from "../../../plugins/bibliography_overview"
 
 export class BibliographyOverview {
@@ -60,6 +60,9 @@ export class BibliographyOverview {
         tableEl.classList.add('fw-document-table')
         tableEl.classList.add('fw-large')
         document.querySelector('.fw-contents').appendChild(tableEl)
+
+        const dt_bulk = new DatatableBulk(this, bulkModel)
+
         this.table = new DataTable(tableEl, {
             searchable: true,
             paging: false,
@@ -71,7 +74,7 @@ export class BibliographyOverview {
                 top: ""
             },
             data: {
-                headings: ['', '&emsp;&emsp;', gettext("Title"), gettext("Sourcetype"), gettext("Author"), gettext("Published"), ''],
+                headings: ['', dt_bulk.getHTML(), gettext("Title"), gettext("Sourcetype"), gettext("Author"), gettext("Published"), ''],
                 data: ids.map(id => this.createTableRow(id))
             },
             columns: [
@@ -90,6 +93,8 @@ export class BibliographyOverview {
         this.table.on('datatable.sort', (column, dir) => {
             this.lastSort = {column, dir}
         })
+
+        dt_bulk.init(this.table.table)
     }
 
     /** Adds a list of bibliography categories to current list of bibliography categories.

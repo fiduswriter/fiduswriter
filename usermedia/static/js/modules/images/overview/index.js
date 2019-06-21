@@ -13,11 +13,12 @@ import {
     OverviewMenuView,
     baseBodyTemplate,
     setDocTitle,
-    ensureCSS
+    ensureCSS,
+    DatatableBulk
 } from "../../common"
 import {SiteMenu} from "../../menu"
 import {FeedbackTab} from "../../feedback"
-import {menuModel} from "./menu"
+import {menuModel, bulkModel} from "./menu"
 import * as plugins from "../../../plugins/images_overview"
  /** Helper functions for user added images/SVGs.*/
 
@@ -194,6 +195,9 @@ export class ImageOverview {
         tableEl.classList.add('fw-document-table')
         tableEl.classList.add('fw-large')
         document.querySelector('.fw-contents').appendChild(tableEl)
+
+        const dt_bulk = new DatatableBulk(this, bulkModel)
+
         this.table = new DataTable(tableEl, {
             searchable: true,
             paging: false,
@@ -205,7 +209,7 @@ export class ImageOverview {
                 top: ""
             },
             data: {
-                headings: ['', '&emsp;&emsp;', gettext("File"), gettext("Size (px)"), gettext("Added"), ''],
+                headings: ['', dt_bulk.getHTML(), gettext("File"), gettext("Size (px)"), gettext("Added"), ''],
                 data: ids.map(id => this.createTableRow(id))
             },
             columns: [
@@ -224,6 +228,8 @@ export class ImageOverview {
         this.table.on('datatable.sort', (column, dir) => {
             this.lastSort = {column, dir}
         })
+
+        dt_bulk.init(this.table.table)
     }
 
     // get IDs of selected bib entries

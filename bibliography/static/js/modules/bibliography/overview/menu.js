@@ -1,46 +1,29 @@
-import {BibLatexFileExporter} from "../export"
 import {BibLatexFileImportDialog} from "../import"
+import {BibLatexFileExporter} from "../export"
+
+export const bulkModel = [
+    {
+        title: gettext('Delete selected'),
+        action: overview => {
+            const ids = overview.getSelected().map(id => parseInt(id))
+            if (ids.length) {
+                overview.deleteBibEntryDialog(ids)
+            }
+        }
+    }, {
+        title: gettext('Export selected'),
+        action: overview => {
+            const ids = overview.getSelected()
+            if (ids.length) {
+                const exporter = new BibLatexFileExporter(overview.app.bibDB, ids)
+                exporter.init()
+            }
+        }
+    }
+]
 
 export const menuModel = () => ({
     content: [
-        /*{
-            type: 'select-action-dropdown',
-            id: 'bib_selector',
-            open: false,
-            checked: false,
-            checkAction: _overview => {
-                const checkboxes = document.querySelectorAll('input.entry-select[type=checkbox]')
-                checkboxes.forEach(checkbox => checkbox.checked = true)
-            },
-            uncheckAction: _overview => {
-                const checkboxes = document.querySelectorAll('input.entry-select[type=checkbox]')
-                checkboxes.forEach(checkbox => checkbox.checked = false)
-            },
-            content: [
-                {
-                    title: gettext('Delete selected'),
-                    action: overview => {
-                        const ids = overview.getSelected().map(id => parseInt(id))
-                        if (ids.length) {
-                            overview.deleteBibEntryDialog(ids)
-                        }
-                    },
-                    order: 0
-                },
-                {
-                    title: gettext('Export selected'),
-                    action: overview => {
-                        const ids = overview.getSelected()
-                        if (ids.length) {
-                            const exporter = new BibLatexFileExporter(overview.app.bibDB, ids)
-                            exporter.init()
-                        }
-                    },
-                    order: 1
-                }
-            ],
-            order: 0
-        },*/
         {
             type: 'dropdown',
             id: 'cat_selector',

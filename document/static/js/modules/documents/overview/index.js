@@ -3,8 +3,8 @@ import {DataTable} from "simple-datatables"
 import * as plugins from "../../../plugins/documents_overview"
 import {DocumentOverviewActions} from "./actions"
 import {DocumentAccessRightsDialog} from "../access_rights"
-import {menuModel} from "./menu"
-import {activateWait, deactivateWait, addAlert, postJson, OverviewMenuView, findTarget, whenReady, escapeText, localizeDate, baseBodyTemplate, ensureCSS, setDocTitle} from "../../common"
+import {menuModel, bulkModel} from "./menu"
+import {activateWait, deactivateWait, addAlert, postJson, OverviewMenuView, findTarget, whenReady, escapeText, localizeDate, baseBodyTemplate, ensureCSS, setDocTitle, DatatableBulk} from "../../common"
 import {SiteMenu} from "../../menu"
 import {FeedbackTab} from "../../feedback"
 import {
@@ -144,6 +144,9 @@ export class DocumentOverview {
         tableEl.classList.add('fw-document-table')
         tableEl.classList.add('fw-large')
         document.querySelector('.fw-contents').appendChild(tableEl)
+
+        const dt_bulk = new DatatableBulk(this, bulkModel)
+
         this.table = new DataTable(tableEl, {
             searchable: true,
             paging: false,
@@ -155,7 +158,7 @@ export class DocumentOverview {
                 top: ""
             },
             data: {
-                headings: ['', '&emsp;&emsp;', gettext("Title"), gettext("Revisions"), gettext("Created"), gettext("Last changed"), gettext("Owner"), gettext("Rights"), ''],
+                headings: ['', dt_bulk.getHTML(), gettext("Title"), gettext("Revisions"), gettext("Created"), gettext("Last changed"), gettext("Owner"), gettext("Rights"), ''],
                 data: this.documentList.map(doc => this.createTableRow(doc))
             },
             columns: [
@@ -174,6 +177,8 @@ export class DocumentOverview {
         this.table.on('datatable.sort', (column, dir) => {
             this.lastSort = {column, dir}
         })
+
+        dt_bulk.init(this.table.table)
     }
 
     createTableRow(doc) {

@@ -1,32 +1,17 @@
+export const bulkModel = [
+    {
+        title: gettext('Delete selected'),
+        action: overview => {
+            const ids = overview.getSelected()
+            if (ids.length) {
+                overview.deleteImageDialog(ids)
+            }
+        }
+    }
+]
+
 export const menuModel = () => ({
     content: [
-        /*{
-            type: 'select-action-dropdown',
-            id: 'bib_selector',
-            open: false,
-            checked: false,
-            checkAction: _overview => {
-                const checkboxes = document.querySelectorAll('input.entry-select[type=checkbox]')
-                checkboxes.forEach(checkbox => checkbox.checked = true)
-            },
-            uncheckAction: _overview => {
-                const checkboxes = document.querySelectorAll('input.entry-select[type=checkbox]')
-                checkboxes.forEach(checkbox => checkbox.checked = false)
-            },
-            content: [
-                {
-                    title: gettext('Delete selected'),
-                    action: overview => {
-                        const ids = overview.getSelected()
-                        if (ids.length) {
-                            overview.deleteImageDialog(ids)
-                        }
-                    },
-                    order: 0
-                }
-            ],
-            order: 0
-        },*/
         {
             type: 'dropdown',
             id: 'cat_selector',

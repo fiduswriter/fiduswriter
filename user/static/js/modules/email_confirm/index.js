@@ -45,8 +45,8 @@ export class EmailConfirm extends PreloginPage {
             whenReady(),
             this.getConfirmData(),
         ]).then(() => {
-            this.render()
             this.activateFidusPlugins()
+            this.render()
             this.bind()
         })
     }

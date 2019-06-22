@@ -140,7 +140,6 @@ export class ImageOverview {
 
     createTableRow(id) {
         const image = this.app.imageDB.db[id]
-        console.log(image)
         const cats = image.cats.map(cat => `cat_${cat}`)
 
         let fileType = image.file_type.split('/')

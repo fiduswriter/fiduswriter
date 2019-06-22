@@ -217,7 +217,8 @@ export class Editor {
             'add_remove_dialog.css',
             'bibliography.css',
             'table_menu.css',
-            'cropper.min.css'
+            'cropper.min.css',
+            'inline_tools.css'
         ], this.staticUrl)
         const initPromises = [whenReady()]
         if (this.docInfo.hasOwnProperty('templateId')) {

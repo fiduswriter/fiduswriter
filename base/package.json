@@ -21,7 +21,7 @@
   "dependencies": {
     "diff-dom": "4.1.3",
     "downloadjs": "1.4.7",
-    "@fortawesome/fontawesome-free": "^5.8.2",
+    "@fortawesome/fontawesome-free": "^5.9.0",
     "w3c-keyname": "1.1.x",
     "simple-datatables": "^2.1.0",
     "vivliostyle-print": "1.1.13",

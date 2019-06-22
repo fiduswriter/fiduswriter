@@ -45,7 +45,8 @@ export class BibliographyOverview {
         })
         ensureCSS([
             'bibliography.css',
-            'prosemirror.css'
+            'prosemirror.css',
+            'inline_tools.css'
         ], this.staticUrl)
         setDocTitle(gettext('Bibliography Manager'), this.app)
         const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})

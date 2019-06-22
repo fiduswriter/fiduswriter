@@ -287,6 +287,7 @@ export class DocumentTemplateDesigner {
                 footnote_marks: Array.from(document.querySelectorAll('.footnote-value .marks:checked')).map(el => el.value),
                 languages: Array.from(document.querySelectorAll('.languages-value option:checked')).map(el => el.value),
                 papersizes: Array.from(document.querySelectorAll('.papersizes-value option:checked')).map(el => el.value),
+                bibliography_header: document.querySelector('.bibliography-header-value input').value,
                 template: document.querySelector('#id_title').value
             }
         }

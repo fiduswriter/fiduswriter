@@ -48,6 +48,7 @@ export class OdtExporterCitations {
         this.citFm = new FormatCitations(
             this.citInfos,
             this.exporter.doc.settings.citationstyle,
+            '',
             this.bibDB,
             this.citationStyles,
             this.citationLocales

@@ -45,6 +45,7 @@ export class ModCitations {
             this.citRenderer = new RenderCitations(
                 document.getElementById('paper-editable'),
                 this.editor.view.state.doc.firstChild.attrs.citationstyle,
+                this.editor.view.state.doc.firstChild.attrs.bibliography_header,
                 this.editor.mod.db.bibDB,
                 this.editor.mod.documentTemplate.citationStyles,
                 this.editor.mod.documentTemplate.citationLocales

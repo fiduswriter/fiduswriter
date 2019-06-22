@@ -17,12 +17,16 @@ const GRAPHIC_STYLES = {
 
 
 const PAR_STYLES = {
-    Standard: '<style:style style:name="Standard" style:family="paragraph" style:class="text" />',
+    Bibliography_20_Heading: noSpaceTmp`<style:style style:name="Bibliography_20_Heading" style:display-name="Bibliography Heading" style:family="paragraph" style:parent-style-name="Heading" style:class="index">
+        <style:paragraph-properties fo:margin-left="0in" fo:margin-right="0in" fo:text-indent="0in" style:auto-text-indent="false" text:number-lines="false" text:line-number="0"/>
+        <style:text-properties fo:font-size="16pt" fo:font-weight="bold" style:font-size-asian="16pt" style:font-weight-asian="bold" style:font-size-complex="16pt" style:font-weight-complex="bold"/>
+    </style:style>`,
     Caption: noSpaceTmp`<style:style style:name="Caption" style:family="paragraph" style:parent-style-name="Standard" style:class="extra">
             <style:paragraph-properties fo:margin-top="0.0835in" fo:margin-bottom="0.0835in" loext:contextual-spacing="false" text:number-lines="false" text:line-number="0" />
             <style:text-properties fo:font-style="italic" style:font-style-asian="italic" style:font-style-complex="italic" />
         </style:style>`,
-    Figure: '<style:style style:name="Figure" style:family="paragraph" style:parent-style-name="Caption" style:class="extra" />'
+    Figure: '<style:style style:name="Figure" style:family="paragraph" style:parent-style-name="Caption" style:class="extra" />',
+    Standard: '<style:style style:name="Standard" style:family="paragraph" style:class="text" />'
 }
 
 export class OdtExporterStyles {

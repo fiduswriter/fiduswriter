@@ -447,7 +447,13 @@ export class Editor {
         let stateDoc
         if (doc.contents.type) {
             stateDoc = this.schema.nodeFromJSON({type:'doc', content:[
-                adjustDocToTemplate(doc.contents, this.docInfo.template, this.mod.documentTemplate.documentStyles, this.mod.documentTemplate.citationStyles)
+                adjustDocToTemplate(
+                    doc.contents,
+                    this.docInfo.template,
+                    this.mod.documentTemplate.documentStyles,
+                    this.mod.documentTemplate.citationStyles,
+                    this.schema
+                )
             ]})
         } else {
             const article = JSON.parse(JSON.stringify(this.docInfo.template)),

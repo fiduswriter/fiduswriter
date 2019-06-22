@@ -25,6 +25,36 @@ export class NameFieldForm {
     }
 
     init() {
+        this.prepareWrapper()
+        this.drawForm()
+    }
+
+    prepareWrapper() {
+        this.dom.innerHTML =
+            noSpaceTmp`
+                <div class="type-switch-input-wrapper">
+                    <button class="type-switch">
+                        <span class="type-switch-inner">
+                            <span class="type-switch-label">${gettext('Person')}</span>
+                            <span class="type-switch-label">${gettext('Organization')}</span>
+                        </span>
+                    </button>
+                    <div class="type-switch-input-inner"></div>
+                </div>
+            `
+
+        this.switcher = this.dom.querySelector('.type-switch')
+        this.inner = this.dom.querySelector('.type-switch-input-inner')
+
+        this.switcher.addEventListener('click', () => this.switchMode())
+    }
+
+    switchMode() {
+        const formValue = this.value
+        if (formValue) {
+            Object.assign(this.currentValue, formValue)
+        }
+        this.realPerson = !this.realPerson
         this.drawForm()
     }
 
@@ -37,10 +67,12 @@ export class NameFieldForm {
     }
 
     drawPersonForm() {
+        this.switcher.classList.add('value1')
+        this.switcher.classList.remove('value2')
+
         this.fields = {}
-        this.dom.innerHTML = noSpaceTmp`
-            <div class='person input-with-button'>
-                <button class="switch-type fw-button fw-green">${gettext('Person')}</button>
+        this.inner.innerHTML =
+            noSpaceTmp`
                 <div class='given field-part field-part-long'></div>
                 <div class='prefix field-part field-part-short'></div>
                 <div class='family field-part field-part-long'></div>
@@ -50,8 +82,7 @@ export class NameFieldForm {
                         ${this.currentValue.useprefix? 'checked' : ''}>
                     &nbsp;${gettext('Prefix used')}
                 </div>
-            </div>
-        `
+            `
         this.fields['given'] = new LiteralFieldForm(
             this.dom.querySelector('.given'),
             this.currentValue.given,
@@ -76,40 +107,20 @@ export class NameFieldForm {
             gettext('Suffix')
         )
         this.fields.suffix.init()
-        this.dom.querySelector('.switch-type').addEventListener(
-            'click',
-            () => this.switchMode()
-        )
-    }
-
-    switchMode() {
-        const formValue = this.value
-        if (formValue) {
-            Object.assign(this.currentValue, formValue)
-        }
-        this.realPerson = !this.realPerson
-        this.drawForm()
     }
 
     drawOrganizationForm() {
+        this.switcher.classList.add('value2')
+        this.switcher.classList.remove('value1')
+
         this.fields = {}
-        this.dom.innerHTML = noSpaceTmp`
-            <div class='organization input-with-button'>
-                <button class="switch-type fw-button fw-green">${gettext('Organization')}</button>
-                <div class='literal-text field-part field-part-single'></div>
-            </div>
-        `
+        this.inner.innerHTML = noSpaceTmp`<div class='literal-text field-part field-part-single'></div>`
         this.fields['literal'] = new LiteralFieldForm(
             this.dom.querySelector('.literal-text'),
             this.currentValue.literal,
             gettext('Organization name')
         )
         this.fields.literal.init()
-        this.dom.querySelector('.switch-type').addEventListener(
-            'click',
-            () => this.switchMode()
-
-        )
     }
 
     get value() {

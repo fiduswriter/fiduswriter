@@ -41,9 +41,9 @@ export class ImageOverviewCategories {
                 type: 'category',
                 title: cat.category_title,
                 action: _overview => {
-                    const trs = document.querySelectorAll('#bibliography > tbody > tr')
+                    const trs = document.querySelectorAll('#imagelist > tbody > tr')
                     trs.forEach(tr => {
-                        if (tr.classList.contains(`cat_${cat.id}`)) {
+                        if (tr.querySelector('.fw-usermedia-image').classList.contains(`cat_${cat.id}`)) {
                             tr.style.display = ''
                         } else {
                             tr.style.display = 'none'

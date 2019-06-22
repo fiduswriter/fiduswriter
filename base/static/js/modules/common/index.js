@@ -64,3 +64,6 @@ export {
     filterPrimaryEmail
 }
 from "./user_util"
+export {
+    DatatableBulk
+} from "./datatable_bulk"

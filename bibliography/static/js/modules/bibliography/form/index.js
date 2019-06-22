@@ -63,36 +63,6 @@ export class BibEntryForm {
         const buttons = [
             {
                 type: 'close'
-            },
-            {
-                classes: "fw-small fw-green fw-left fw-strong fw-edit disabled",
-                text: gettext('Strong'),
-                click: () => {}
-            },
-            {
-                classes: "fw-small fw-green fw-left fw-em fw-edit disabled",
-                text: gettext('Emphasis'),
-                click: () => {}
-            },
-            {
-                classes: "fw-small fw-green fw-left fw-smallcaps fw-edit disabled",
-                text: gettext('Small caps'),
-                click: () => {}
-            },
-            {
-                classes: "fw-small fw-green fw-left fw-sub fw-edit disabled",
-                text: gettext('Subscript₊'),
-                click: () => {}
-            },
-            {
-                classes: "fw-small fw-green fw-left fw-sup fw-edit disabled",
-                text: gettext('Supscript²'),
-                click: () => {}
-            },
-            {
-                classes: "fw-small fw-green fw-left fw-nocase fw-edit disabled",
-                text: gettext('CasE ProTecT'),
-                click: () => {}
             }
         ]
 
@@ -113,7 +83,6 @@ export class BibEntryForm {
                 title: this.dialogHeader,
                 id: 'bib-dialog',
                 width: 940,
-                height: 570,
                 body: bibDialog({
                     'bib_type': this.currentValues.bib_type,
                     BibTypes,

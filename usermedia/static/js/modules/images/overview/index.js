@@ -13,11 +13,12 @@ import {
     OverviewMenuView,
     baseBodyTemplate,
     setDocTitle,
-    ensureCSS
+    ensureCSS,
+    DatatableBulk
 } from "../../common"
 import {SiteMenu} from "../../menu"
 import {FeedbackTab} from "../../feedback"
-import {menuModel} from "./menu"
+import {menuModel, bulkModel} from "./menu"
 import * as plugins from "../../../plugins/images_overview"
  /** Helper functions for user added images/SVGs.*/
 
@@ -51,9 +52,10 @@ export class ImageOverview {
     render() {
         document.body = document.createElement('body')
         document.body.innerHTML = baseBodyTemplate({
-            contents: '<ul id="fw-overview-menu"></ul>',
+            contents: '',
             user: this.user,
-            staticUrl: this.staticUrl
+            staticUrl: this.staticUrl,
+            hasOverview: true
         })
         ensureCSS([
             'cropper.min.css'
@@ -138,6 +140,9 @@ export class ImageOverview {
 
     createTableRow(id) {
         const image = this.app.imageDB.db[id]
+        console.log(image)
+        const cats = image.cats.map(cat => `cat_${cat}`)
+
         let fileType = image.file_type.split('/')
 
         if (1 < fileType.length) {
@@ -145,10 +150,11 @@ export class ImageOverview {
         } else {
             fileType = fileType[0].toUpperCase()
         }
+
         return [
             String(id),
             `<input type="checkbox" class="entry-select fw-check" id="doc-img-${id}" data-id="${id}"><label for="doc-img-${id}"></label>`,
-            `<span class="fw-usermedia-image">
+            `<span class="fw-usermedia-image ${cats.join(' ')}">
                 <img src="${image.thumbnail ? image.thumbnail : image.image}">
             </span>
             <span class="fw-usermedia-title">
@@ -185,13 +191,17 @@ export class ImageOverview {
     /* Initialize the overview table */
     initTable(ids) {
         const tableEl = document.createElement('table')
+        tableEl.id = "imagelist"
         tableEl.classList.add('fw-document-table')
         tableEl.classList.add('fw-large')
         document.querySelector('.fw-contents').appendChild(tableEl)
+
+        const dt_bulk = new DatatableBulk(this, bulkModel)
+
         this.table = new DataTable(tableEl, {
             searchable: true,
             paging: false,
-            scrollY: "calc(100vh - 220px)",
+            scrollY: "calc(100vh - 240px)",
             labels: {
                 noRows: gettext("No images available") // Message shown when there are no search results
             },
@@ -199,7 +209,7 @@ export class ImageOverview {
                 top: ""
             },
             data: {
-                headings: ['', '&emsp;&emsp;', gettext("File"), gettext("Size (px)"), gettext("Added"), ''],
+                headings: ['', dt_bulk.getHTML(), gettext("File"), gettext("Size (px)"), gettext("Added"), ''],
                 data: ids.map(id => this.createTableRow(id))
             },
             columns: [
@@ -218,6 +228,8 @@ export class ImageOverview {
         this.table.on('datatable.sort', (column, dir) => {
             this.lastSort = {column, dir}
         })
+
+        dt_bulk.init(this.table.table)
     }
 
     // get IDs of selected bib entries

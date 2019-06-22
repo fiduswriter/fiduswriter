@@ -3,8 +3,8 @@ import {DataTable} from "simple-datatables"
 import * as plugins from "../../../plugins/documents_overview"
 import {DocumentOverviewActions} from "./actions"
 import {DocumentAccessRightsDialog} from "../access_rights"
-import {menuModel} from "./menu"
-import {activateWait, deactivateWait, addAlert, postJson, OverviewMenuView, findTarget, whenReady, escapeText, localizeDate, baseBodyTemplate, ensureCSS, setDocTitle} from "../../common"
+import {menuModel, bulkModel} from "./menu"
+import {activateWait, deactivateWait, addAlert, postJson, OverviewMenuView, findTarget, whenReady, escapeText, localizeDate, baseBodyTemplate, ensureCSS, setDocTitle, DatatableBulk} from "../../common"
 import {SiteMenu} from "../../menu"
 import {FeedbackTab} from "../../feedback"
 import {
@@ -46,9 +46,10 @@ export class DocumentOverview {
     render() {
         document.body = document.createElement('body')
         document.body.innerHTML = baseBodyTemplate({
-            contents: '<ul id="fw-overview-menu"></ul>',
+            contents: '',
             user: this.user,
             staticUrl: this.staticUrl,
+            hasOverview: true
         })
         ensureCSS([
             'document_overview.css',
@@ -143,10 +144,13 @@ export class DocumentOverview {
         tableEl.classList.add('fw-document-table')
         tableEl.classList.add('fw-large')
         document.querySelector('.fw-contents').appendChild(tableEl)
+
+        const dt_bulk = new DatatableBulk(this, bulkModel)
+
         this.table = new DataTable(tableEl, {
             searchable: true,
             paging: false,
-            scrollY: "calc(100vh - 220px)",
+            scrollY: "calc(100vh - 240px)",
             labels: {
                 noRows: gettext("No documents available") // Message shown when there are no search results
             },
@@ -154,7 +158,7 @@ export class DocumentOverview {
                 top: ""
             },
             data: {
-                headings: ['', '&emsp;&emsp;', gettext("Title"), gettext("Revisions"), gettext("Created"), gettext("Last changed"), gettext("Owner"), gettext("Rights"), ''],
+                headings: ['', dt_bulk.getHTML(), gettext("Title"), gettext("Revisions"), gettext("Created"), gettext("Last changed"), gettext("Owner"), gettext("Rights"), ''],
                 data: this.documentList.map(doc => this.createTableRow(doc))
             },
             columns: [
@@ -173,6 +177,8 @@ export class DocumentOverview {
         this.table.on('datatable.sort', (column, dir) => {
             this.lastSort = {column, dir}
         })
+
+        dt_bulk.init(this.table.table)
     }
 
     createTableRow(doc) {
@@ -232,7 +238,7 @@ export class DocumentOverview {
     }
 
     addExportTemplatesToMenu() {
-        const docSelectMenuItem = this.menu.model.content.find(menuItem => menuItem.id='doc_selector')
+        /*const docSelectMenuItem = this.menu.model.content.find(menuItem => menuItem.id='doc_selector')
         this.exportTemplates.forEach(template => {
             docSelectMenuItem.content.push({
                 title: `${gettext('Export selected as: ')} ${template.file_name} (${template.file_type})`,
@@ -246,7 +252,7 @@ export class DocumentOverview {
                 }
             })
         })
-        this.menu.update()
+        this.menu.update()*/
     }
 
     multipleNewDocumentMenuItem() {

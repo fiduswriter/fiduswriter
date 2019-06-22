@@ -135,7 +135,11 @@ export class DocumentOverviewActions {
     }
 
     copyFiles(ids) {
-        getMissingDocumentListData(ids, this.documentOverview.documentList).then(
+        getMissingDocumentListData(
+            ids,
+            this.documentOverview.documentList,
+            this.documentOverview.schema
+        ).then(
             () => {
                 ids.forEach(id => {
                     const doc = this.documentOverview.documentList.find(entry => entry.id === id)
@@ -160,7 +164,8 @@ export class DocumentOverviewActions {
     downloadNativeFiles(ids) {
         getMissingDocumentListData(
             ids,
-            this.documentOverview.documentList
+            this.documentOverview.documentList,
+            this.documentOverview.schema
         ).then(
             () => ids.forEach(id => {
                 const doc = this.documentOverview.documentList.find(entry => entry.id===id)
@@ -176,7 +181,8 @@ export class DocumentOverviewActions {
     downloadHtmlFiles(ids) {
         getMissingDocumentListData(
             ids,
-            this.documentOverview.documentList
+            this.documentOverview.documentList,
+            this.documentOverview.schema
         ).then(
             () => ids.forEach(id => {
                 const doc = this.documentOverview.documentList.find(entry => entry.id===id)
@@ -200,7 +206,8 @@ export class DocumentOverviewActions {
     downloadTemplateExportFiles(ids, templateUrl, templateType) {
         getMissingDocumentListData(
             ids,
-            this.documentOverview.documentList
+            this.documentOverview.documentList,
+            this.documentOverview.schema
         ).then(
             () => {
                 ids.forEach(id => {
@@ -239,7 +246,8 @@ export class DocumentOverviewActions {
     downloadLatexFiles(ids) {
         getMissingDocumentListData(
             ids,
-            this.documentOverview.documentList
+            this.documentOverview.documentList,
+            this.documentOverview.schema
         ).then(
             () =>
                 ids.forEach(id => {
@@ -259,7 +267,8 @@ export class DocumentOverviewActions {
     downloadEpubFiles(ids) {
         getMissingDocumentListData(
             ids,
-            this.documentOverview.documentList
+            this.documentOverview.documentList,
+            this.documentOverview.schema
         ).then(
             () =>
                 ids.forEach(id => {

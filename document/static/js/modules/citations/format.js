@@ -1,10 +1,12 @@
+import {escapeText} from "../common"
 /*
 * Use CSL and bibDB to format all citations for the given prosemirror json citation nodes
 */
 export class FormatCitations {
-    constructor(allCitationInfos, citationStyle, bibDB, citationStyles, citationLocales) {
+    constructor(allCitationInfos, citationStyle, bibliographyHeader, bibDB, citationStyles, citationLocales) {
         this.allCitationInfos = allCitationInfos
         this.citationStyle = citationStyle
+        this.bibliographyHeader = bibliographyHeader
         this.bibDB = bibDB
         this.citationStyles = citationStyles
         this.citationLocales = citationLocales
@@ -39,7 +41,7 @@ export class FormatCitations {
         }
         const bib = this.bibliography,
             bibHTML = bib[0].bibstart + bib[1].join('') + bib[0].bibend
-        return `<h1 class="article-bibliography-header"></h1>${bibHTML}`
+        return `<h1 class="article-bibliography-header">${escapeText(this.bibliographyHeader)}</h1>${bibHTML}`
     }
 
         // CSS

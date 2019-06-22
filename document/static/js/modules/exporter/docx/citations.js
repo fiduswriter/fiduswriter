@@ -54,6 +54,7 @@ export class DocxExporterCitations {
         this.citFm = new FormatCitations(
             this.citInfos,
             this.exporter.doc.settings.citationstyle,
+            '',
             this.bibDB,
             this.citationStyles,
             this.citationLocales
@@ -101,6 +102,26 @@ export class DocxExporterCitations {
     }
 
     addReferenceStyle(bibInfo) {
+        const stylesEl = this.styleXml.querySelector('styles')
+        if (!this.styleXml.querySelector(`style[*|styleId="BibliographyHeading"]`)) {
+            // There is no style definition for the bibliography heading. We have to add it.
+            const headingStyleDef = noSpaceTmp`
+                <w:style w:type="paragraph" w:styleId="BibliographyHeading">
+                    <w:name w:val="Bibliography Heading"/>
+                    <w:basedOn w:val="Heading"/>
+                    <w:pPr>
+                        <w:suppressLineNumbers/>
+                        <w:ind w:left="0" w:hanging="0"/>
+                    </w:pPr>
+                    <w:rPr>
+                        <w:b/>
+                        <w:bCs/>
+                        <w:sz w:val="32"/>
+                        <w:szCs w:val="32"/>
+                    </w:rPr>
+                </w:style>`
+            stylesEl.insertAdjacentHTML('beforeEnd', headingStyleDef)
+        }
         // The style called "Bibliography1" will override any previous style
         // of the same name.
         const stylesParStyle = this.styleXml.querySelector(`style[*|styleId="Bibliography1"]`)
@@ -139,7 +160,7 @@ export class DocxExporterCitations {
                 </w:pPr>
                 <w:rPr></w:rPr>
             </w:style>`
-        const stylesEl = this.styleXml.querySelector('styles')
+
         stylesEl.insertAdjacentHTML('beforeEnd', styleDef)
     }
 

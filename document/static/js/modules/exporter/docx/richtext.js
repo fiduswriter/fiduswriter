@@ -52,6 +52,15 @@ export class DocxExporterRichtext {
                     end = '</w:p>' + end
                 }
                 break
+            case 'bibliography_heading':
+                start += noSpaceTmp`
+                    <w:p>
+                        <w:pPr>
+                            <w:pStyle w:val="BibliographyHeading"/>
+                            <w:rPr></w:rPr>
+                        </w:pPr>`
+                end = '</w:p>' + end
+                break
             case 'heading1':
                 start += noSpaceTmp`
                     <w:p>

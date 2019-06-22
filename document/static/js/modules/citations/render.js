@@ -4,9 +4,10 @@ import {FormatCitations} from "./format"
  */
 
 export class RenderCitations {
-    constructor(contentElement, citationStyle, bibDB, citationStyles, citationLocales) {
+    constructor(contentElement, citationStyle, bibliographyHeader, bibDB, citationStyles, citationLocales) {
         this.contentElement = contentElement
         this.citationStyle = citationStyle
+        this.bibliographyHeader = bibliographyHeader
         this.bibDB = bibDB
         this.citationStyles = citationStyles
         this.citationLocales = citationLocales
@@ -25,6 +26,7 @@ export class RenderCitations {
         this.fm = new FormatCitations(
             this.allCitationInfos,
             this.citationStyle,
+            this.bibliographyHeader,
             this.bibDB,
             this.citationStyles,
             this.citationLocales

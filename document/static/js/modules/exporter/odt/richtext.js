@@ -23,6 +23,11 @@ export class OdtExporterRichtext {
                 start += `<text:p text:style-name="${options.section}">`
                 end = '</text:p>' + end
                 break
+            case 'bibliography_heading':
+                this.exporter.styles.checkParStyle('Bibliography_20_Heading')
+                start += `<text:p text:style-name="Bibliography_20_Heading">`
+                end = '</text:p>' + end
+                break
             case 'heading1':
                 start += `
                     <text:h text:outline-level="1">

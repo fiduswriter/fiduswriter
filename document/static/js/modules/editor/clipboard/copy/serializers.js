@@ -28,6 +28,7 @@ class ClipboardDOMSerializer {
         const citRenderer = new RenderCitations(
             domFragment,
             this.editor.view.state.doc.firstChild.attrs.citationstyle,
+            this.editor.view.state.doc.firstChild.attrs.bibliography_header,
             this.editor.mod.db.bibDB,
             this.editor.mod.documentTemplate.citationStyles,
             this.editor.mod.documentTemplate.citationLocales

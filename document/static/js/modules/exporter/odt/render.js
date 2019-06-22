@@ -84,7 +84,9 @@ export class OdtExporterRender {
         })
         this.tags.push({
             title: '@bibliography', // The '@' triggers handling as block
-            content: pmBib ? pmBib.content : [{type: 'paragraph', contents: [{type:'text', text: ' '}]}]
+            content: pmBib ?
+                [{type: 'bibliography_heading', content: [{type: 'text', text: this.exporter.doc.settings.bibliography_header}]}].concat(pmBib.content) :
+                [{type: 'paragraph', content: [{type:'text', text: ' '}]}]
         })
     }
 

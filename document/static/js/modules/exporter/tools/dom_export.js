@@ -27,6 +27,7 @@ export class BaseDOMExporter {
         const citRenderer = new RenderCitations(
             this.contents,
             this.doc.settings.citationstyle,
+            this.doc.settings.bibliography_header,
             this.bibDB,
             this.citationStyles,
             this.citationLocales

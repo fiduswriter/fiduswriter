@@ -78,6 +78,7 @@
         "papersizes": ["A4", "US Letter"],
         "template": "Standard Article",
         "papersize": "A4",
-        "language": "af-ZA"
+        "language": "af-ZA",
+        "bibliography_header": "Bibliography"
     }
 }

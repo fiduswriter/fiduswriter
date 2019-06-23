@@ -13,9 +13,9 @@ from style.models import DocumentStyle, CitationStyle
 
 from django.conf import settings
 
-# FW_DOCUMENT_VERSION: See also FW_FILETYPE_VERSION specified in export
-# (same value from >= 2.0) in
-# document/static/js/modules/exporter/native/zip.js
+# FW_DOCUMENT_VERSION:
+# Also defined in frontend
+# document/static/js/modules/schema/index.js
 
 FW_DOCUMENT_VERSION = 3.0
 
@@ -264,6 +264,11 @@ def revision_filename(instance, filename):
 
 class DocumentRevision(models.Model):
     document = models.ForeignKey(Document, on_delete=models.deletion.CASCADE)
+    doc_version = models.DecimalField(
+        max_digits=3,
+        decimal_places=1,
+        default=FW_DOCUMENT_VERSION
+    )
     note = models.CharField(max_length=255, default='', blank=True)
     date = models.DateTimeField(auto_now=True)
     file_object = models.FileField(upload_to=revision_filename)

@@ -1,7 +1,8 @@
 import {updateFile} from "../importer/update"
 import {updateDoc} from "../schema/convert"
 import {addAlert, post, postJson, findTarget, whenReady} from "../common"
-import {FW_FILETYPE_VERSION} from "../exporter/native"
+import {FW_DOCUMENT_VERSION} from "../schema"
+import {templateHash} from "../document_template"
 
 // To upgrade all docs and document revions to the newest version
 
@@ -12,6 +13,7 @@ export class DocMaintenance {
         this.batchesDone = false
         this.docSavesLeft = 0
         this.revSavesLeft = 0
+        this.docTemplatesSavesLeft = 0
     }
 
     init() {
@@ -22,6 +24,7 @@ export class DocMaintenance {
                     case findTarget(event, 'input#update:not(.disabled)', el):
                         document.querySelector('input#update').disabled = true
                         document.querySelector('input#update').value = gettext('Updating...')
+                        addAlert('info', gettext('Updating documents.'))
                         this.getDocBatch()
                         break
                     default:
@@ -45,8 +48,13 @@ export class DocMaintenance {
                     this.getDocBatch()
                 } else {
                     this.batchesDone = true
-                    if (this.docSavesLeft===0) {
-                        this.updateRevisions()
+                    if (!this.docSavesLeft) {
+                        if (this.batch > 1) {
+                            addAlert('success', gettext('All documents updated!'))
+                        } else {
+                            addAlert('info', gettext('No documents to update.'))
+                        }
+                        this.updateDocumentTemplates()
                     }
                 }
             }
@@ -97,11 +105,8 @@ export class DocMaintenance {
         }
         p.then(bibliography => {
             // updates doc to the newest version
-            doc = updateDoc(oldDoc, bibliography, docVersion)
-            // only proceed with saving if the doc update has changed something
-            if (doc !== oldDoc) {
-                this.saveDoc(doc)
-            }
+            doc = updateDoc(oldDoc, docVersion, bibliography)
+            this.saveDoc(doc)
         })
     }
 
@@ -115,7 +120,6 @@ export class DocMaintenance {
                 contents: window.JSON.stringify(doc.contents),
                 bibliography: window.JSON.stringify(doc.bibliography),
                 comments: window.JSON.stringify(doc.comments),
-                doc_version: parseFloat(FW_FILETYPE_VERSION),
                 version: doc.version,
                 last_diffs: window.JSON.stringify(doc.last_diffs)
             }
@@ -135,7 +139,74 @@ export class DocMaintenance {
             this.docSavesLeft--
             if (this.docSavesLeft===0 && this.batchesDone) {
                 addAlert('success', gettext('All documents updated!'))
-                this.done()
+                this.updateDocumentTemplates()
+            }
+        })
+    }
+
+    updateDocumentTemplates() {
+        addAlert('info', gettext('Updating document templates.'))
+        postJson(
+            '/api/document/maintenance/get_all_template_ids/'
+        ).then(
+            ({json}) => {
+                const count = json.template_ids.length
+                if (count) {
+                    json.template_ids.forEach(
+                        templateId => this.updateDocumentTemplate(templateId)
+                    )
+                } else {
+                    addAlert('info', gettext('No document templates to update.'))
+                    this.updateRevisions()
+                }
+            }
+        )
+    }
+
+    updateDocumentTemplate(id) {
+        postJson(
+            `/api/document/maintenance/get_template/`, {id}
+        ).then(
+            // The field 'definition' of the document template module has the same
+            // structure as the field 'contents' of the document module.
+            // Therefore we can use the same update procedure for both of them.
+            // We are creating a doc from the fields of the template to upgrade it.
+            // Templates were introduced at doc version 3.0, so we don't need to consider
+            // previous versions. Also, we can leave several fields empty as they are not
+            // used for templates.
+            ({json}) => {
+                const oldDoc = {
+                    contents: window.JSON.parse(json.definition),
+                    last_diffs: [],
+                    bibliography: {},
+                    comments: {},
+                    title: json.title,
+                    version: 1,
+                    id
+                }
+                const docVersion = parseFloat(json.doc_version)
+                const doc = updateDoc(oldDoc, docVersion)
+                this.saveDocumentTemplate(doc)
+            }
+
+        )
+    }
+
+    saveDocumentTemplate(doc) {
+        this.docTemplatesSavesLeft++
+        post(
+            '/api/document/maintenance/save_template/',
+            {
+                id: doc.id,
+                definition: window.JSON.stringify(doc.contents),
+                definition_hash: templateHash(doc.contents)
+            }
+        ).then(() => {
+            addAlert('success', `${gettext('The document template has been updated')}: ${doc.id}`)
+            this.docTemplatesSavesLeft--
+            if (!this.docTemplatesSavesLeft) {
+                addAlert('success', gettext('All document templates updated!'))
+                this.updateRevisions()
             }
         })
     }
@@ -150,6 +221,7 @@ export class DocMaintenance {
                 if (this.revSavesLeft) {
                     json.revision_ids.forEach(revId => this.updateRevision(revId))
                 } else {
+                    addAlert('info', gettext('No document revisions to update.'))
                     this.done()
                 }
             }
@@ -162,7 +234,7 @@ export class DocMaintenance {
             import("jszip")
         ]).then(([{default: JSZipUtils}, {default: JSZip}]) => {
             JSZipUtils.getBinaryContent(
-                `/document/get_revision/${id}/`,
+                `/api/document/get_revision/${id}/`,
                 (err, fidusFile) => {
                 const zipfs = new JSZip()
                 zipfs.loadAsync(fidusFile).then(() => {
@@ -177,23 +249,15 @@ export class DocMaintenance {
                     })
                     Promise.all(p).then(() => {
                         const filetypeVersion = parseFloat(openedFiles["filetype-version"])
-                        if (filetypeVersion !== parseFloat(FW_FILETYPE_VERSION)) {
-                            const {bib, doc} = updateFile(
-                                window.JSON.parse(openedFiles["document.json"]),
-                                window.JSON.parse(openedFiles["bibliography.json"]),
-                                filetypeVersion
-                            )
-                            zipfs.file("filetype-version", FW_FILETYPE_VERSION)
-                            zipfs.file("document.json", window.JSON.stringify(doc))
-                            zipfs.file("bibliography.json", window.JSON.stringify(bib))
-                            this.saveRevision(id, zipfs)
-                        } else {
-                            this.revSavesLeft--
-                            if (this.revSavesLeft===0) {
-                                this.done()
-                            }
-                        }
-
+                        const {bib, doc} = updateFile(
+                            window.JSON.parse(openedFiles["document.json"]),
+                            window.JSON.parse(openedFiles["bibliography.json"]),
+                            filetypeVersion
+                        )
+                        zipfs.file("filetype-version", FW_DOCUMENT_VERSION)
+                        zipfs.file("document.json", window.JSON.stringify(doc))
+                        zipfs.file("bibliography.json", window.JSON.stringify(bib))
+                        this.saveRevision(id, zipfs)
                     })
                 })
             })
@@ -215,7 +279,7 @@ export class DocMaintenance {
                 }
             ).then(
                 () => {
-                    addAlert('success', gettext('The revision has been updated: ') + id)
+                    addAlert('success', gettext('The document revision has been updated: ') + id)
                     this.revSavesLeft--
                     if (this.revSavesLeft===0) {
                         this.done()
@@ -226,7 +290,7 @@ export class DocMaintenance {
     }
 
     done() {
-        document.querySelector('input#update').value = gettext('All documents and revisions updated!')
+        document.querySelector('input#update').value = gettext('All documents, document templates and document revisions updated!')
     }
 
 }

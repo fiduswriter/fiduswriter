@@ -1,11 +1,5 @@
 import {ZipFileCreator} from "../tools/zip"
-
-/** The current Fidus Writer filetype version.
- * The importer will not import from a higher version and the exporter
-  * will include this number in all exports.
- */
-export const FW_FILETYPE_VERSION = "3.0"
-
+import {FW_DOCUMENT_VERSION} from "../../schema"
 /** Create a zip blob for a shrunk fidus file.
 */
 
@@ -29,7 +23,7 @@ export class ZipFidus {
             contents: JSON.stringify(this.shrunkBibDB)
         }, {
             filename: 'filetype-version',
-            contents: FW_FILETYPE_VERSION
+            contents: FW_DOCUMENT_VERSION
         }]
 
         const zipper = new ZipFileCreator(

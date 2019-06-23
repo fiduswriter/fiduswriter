@@ -1,6 +1,6 @@
 import {updateDoc} from "../schema/convert"
 
-export function updateFile(doc, bibliography, filetypeVersion) {
+export function updateFile(doc, filetypeVersion, bibliography) {
     // update bibliography -- currently not needed
     // bibliography = updateBib(bibliography)
 

@@ -98,10 +98,10 @@ export class ImportFidusFile {
             const images = JSON.parse(this.textFiles.find(file => file.filename === 'images.json').contents),
                 updatedFile =  updateFile(
                     JSON.parse(this.textFiles.find(file => file.filename === 'document.json').contents),
+                    filetypeVersion,
                     JSON.parse(
                         this.textFiles.find(file => file.filename === 'bibliography.json').contents
-                    ),
-                    filetypeVersion
+                    )
                 ),
                 {bibliography} = updatedFile
             let {doc} = updatedFile

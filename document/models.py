@@ -89,7 +89,7 @@ def default_template():
     template = dt.objects.first()
     if template:
         return template.pk
-    template = DocumentTemplate()
+    template = dt()
     template.definition = settings.DOC_TEMPLATE
     template.definition_hash = settings.DOC_TEMPLATE_HASH
     template.title = _('Standard Article')

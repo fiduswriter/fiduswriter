@@ -1,7 +1,6 @@
 from builtins import str
 from builtins import object
 
-from django.apps import apps
 from django.db import models
 from django.db.utils import OperationalError, ProgrammingError
 from django.contrib.auth.models import User
@@ -85,11 +84,10 @@ class DocumentTemplate(models.Model):
 def default_template():
     # We need to get the historical version of the model as newer versions
     # may have changed in structure
-    dt = apps.get_model('document', 'DocumentTemplate')
-    template = dt.objects.first()
+    template = DocumentTemplate.objects.first()
     if template:
         return template.pk
-    template = dt()
+    template = DocumentTemplate()
     template.definition = settings.DOC_TEMPLATE
     template.definition_hash = settings.DOC_TEMPLATE_HASH
     template.title = _('Standard Article')

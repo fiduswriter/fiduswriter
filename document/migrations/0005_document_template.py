@@ -5,6 +5,41 @@ from django.conf import settings
 import django.db.models.deletion
 import document.models
 
+DEFAULT_TEMPLATE_ID = 1
+
+
+def create_default_template(apps, schema_editor):
+    global DEFAULT_TEMPLATE_ID
+    Document = apps.get_model('document', 'Document')
+    document = Document.objects.first()
+    if not document:
+        # There are no documents in the system yet. CitationStyles/
+        # DocumentStyles will not have been created yet either. We therefore do
+        # not need to create any DocumentTemplates just yet. A template will
+        # be created automatically when creating the first Document.
+        return
+    DocumentTemplate = apps.get_model('document', 'DocumentTemplate')
+    template = DocumentTemplate.objects.first()
+    if template:
+        DEFAULT_TEMPLATE_ID = template.pk
+        return
+    template = DocumentTemplate()
+    template.definition = settings.DOC_TEMPLATE
+    template.definition_hash = settings.DOC_TEMPLATE_HASH
+    template.title = 'Standard Article'
+    template.save()
+    CitationStyle = apps.get_model('style', 'CitationStyle')
+    for style in CitationStyle.objects.all():
+        template.citation_styles.add(style)
+    DocumentStyle = apps.get_model('style', 'DocumentStyle')
+    for style in DocumentStyle.objects.all():
+        template.document_styles.add(style)
+    ExportTemplate = apps.get_model('document', 'ExportTemplate')
+    for exporter in ExportTemplate.objects.all():
+        template.export_templates.add(exporter)
+    DEFAULT_TEMPLATE_ID = template.pk
+    return
+
 
 class Migration(migrations.Migration):
 
@@ -13,9 +48,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunPython(create_default_template),
         migrations.AddField(
             model_name='document',
             name='template',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='document.DocumentTemplate'),
+            field=models.ForeignKey(default=DEFAULT_TEMPLATE_ID, on_delete=django.db.models.deletion.CASCADE, to='document.DocumentTemplate'),
         ),
     ]

@@ -8,7 +8,7 @@ export const getSettings = function(pmArticle) {
     return settings
 }
 
-export const updateDoc = function(doc, bibliography, docVersion) {
+export const updateDoc = function(doc, docVersion, bibliography = false) {
     /* This is to clean documents taking all the accepted formatting from older
        versions and outputting the current version of the doc format.
        Notice that the docVersion isn't the same as the version of the FW export
@@ -74,6 +74,8 @@ export const updateDoc = function(doc, bibliography, docVersion) {
             break
         case 2.3: // Fidus Writer 3.5.10
             doc = convertDocV23(doc)
+            break
+        case 3.0: // Fidus Writer 3.6
             break
     }
     return doc

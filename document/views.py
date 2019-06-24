@@ -18,7 +18,7 @@ from django.core.paginator import Paginator, EmptyPage
 
 from user.util import get_user_avatar_url
 from document.models import Document, AccessRight, DocumentRevision, \
-    ExportTemplate, DocumentTemplate, CAN_UPDATE_DOCUMENT
+    ExportTemplate, DocumentTemplate, CAN_UPDATE_DOCUMENT, FW_DOCUMENT_VERSION
 from usermedia.models import DocumentImage, Image
 from bibliography.models import Entry
 from document.helpers.serializers import PythonWithURLSerializer
@@ -741,7 +741,9 @@ def get_all_docs(request):
     status = 405
     if request.is_ajax() and request.method == 'POST':
         status = 200
-        doc_list = Document.objects.all()
+        doc_list = Document.objects.filter(
+            doc_version__lt=str(FW_DOCUMENT_VERSION)
+        )
         paginator = Paginator(doc_list, 10)  # Get 10 docs per page
 
         batch = request.POST['batch']
@@ -770,7 +772,6 @@ def save_doc(request):
         contents = request.POST.get('contents', False)
         bibliography = request.POST.get('bibliography', False)
         comments = request.POST.get('comments', False)
-        doc_version = request.POST.get('doc_version', False)
         last_diffs = request.POST.get('last_diffs', False)
         version = request.POST.get('version', False)
         if contents:
@@ -779,12 +780,11 @@ def save_doc(request):
             doc.bibliography = bibliography
         if comments:
             doc.comments = comments
-        if doc_version:
-            doc.doc_version = doc_version
         if version:
             doc.version = version
         if last_diffs:
             doc.last_diffs = last_diffs
+        doc.doc_version = FW_DOCUMENT_VERSION
         doc.save()
     return JsonResponse(
         response,
@@ -816,12 +816,71 @@ def get_user_biblist(request):
 
 
 @staff_member_required
+def get_all_template_ids(request):
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        status = 200
+        templates = DocumentTemplate.objects.filter(
+            doc_version__lt=str(FW_DOCUMENT_VERSION)
+        ).only('id')
+        response["template_ids"] = []
+        for template in templates:
+            response["template_ids"].append(template.id)
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@staff_member_required
+def get_template(request):
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        template_id = request.POST['id']
+        template = DocumentTemplate.objects.filter(pk=int(template_id)).first()
+        if template:
+            status = 200
+            response['definition'] = template.definition
+            response['title'] = template.title
+            response['doc_version'] = template.doc_version
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@staff_member_required
+def save_template(request):
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        template_id = request.POST['id']
+        template = DocumentTemplate.objects.filter(pk=int(template_id)).first()
+        if template:
+            status = 200
+            # Only looking at fields that may have changed.
+            definition = request.POST.get('definition', False)
+            if definition:
+                template.definition = definition
+            template.doc_version = FW_DOCUMENT_VERSION
+            template.save()
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@staff_member_required
 def get_all_revision_ids(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
         status = 200
-        revisions = DocumentRevision.objects.only('id')
+        revisions = DocumentRevision.objects.filter(
+            doc_version__lt=str(FW_DOCUMENT_VERSION)
+        ).only('id')
         response["revision_ids"] = []
         for revision in revisions:
             response["revision_ids"].append(revision.id)
@@ -836,14 +895,16 @@ def update_revision(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
-        status = 200
         revision_id = request.POST['id']
-        revision = DocumentRevision.objects.get(pk=int(revision_id))
-        # keep the filename
-        file_name = revision.file_object.name
-        revision.file_object = request.FILES['file']
-        revision.file_object.name = file_name
-        revision.save()
+        revision = DocumentRevision.objects.filter(pk=int(revision_id)).first()
+        if revision:
+            status = 200
+            # keep the filename
+            file_name = revision.file_object.name
+            revision.file_object = request.FILES['file']
+            revision.file_object.name = file_name
+            revision.doc_version = FW_DOCUMENT_VERSION
+            revision.save()
     return JsonResponse(
         response,
         status=status

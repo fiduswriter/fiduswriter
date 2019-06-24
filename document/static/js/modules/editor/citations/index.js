@@ -42,10 +42,12 @@ export class ModCitations {
         }
         const emptyCitations = document.querySelectorAll('#paper-editable span.citation:empty')
         if (emptyCitations.length) {
+            const settings = this.editor.view.state.doc.firstChild.attrs,
+                bibliographyHeader = settings.bibliography_header[settings.language] || settings.bibliography_header.default
             this.citRenderer = new RenderCitations(
                 document.getElementById('paper-editable'),
-                this.editor.view.state.doc.firstChild.attrs.citationstyle,
-                this.editor.view.state.doc.firstChild.attrs.bibliography_header,
+                settings.citationstyle,
+                bibliographyHeader,
                 this.editor.mod.db.bibDB,
                 this.editor.mod.documentTemplate.citationStyles,
                 this.editor.mod.documentTemplate.citationLocales

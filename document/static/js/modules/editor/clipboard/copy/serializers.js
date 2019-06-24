@@ -25,10 +25,12 @@ class ClipboardDOMSerializer {
     }
 
     renderCitations(domFragment) {
+        const settings = this.editor.view.state.doc.firstChild.attrs,
+            bibliographyHeader = settings.bibliography_header[settings.language] || settings.bibliography_header.default
         const citRenderer = new RenderCitations(
             domFragment,
-            this.editor.view.state.doc.firstChild.attrs.citationstyle,
-            this.editor.view.state.doc.firstChild.attrs.bibliography_header,
+            settings.citationstyle,
+            bibliographyHeader,
             this.editor.mod.db.bibDB,
             this.editor.mod.documentTemplate.citationStyles,
             this.editor.mod.documentTemplate.citationLocales

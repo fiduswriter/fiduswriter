@@ -178,14 +178,14 @@ export class DocMaintenance {
                 Promise.all(p).then(() => {
                     let filetypeVersion = parseFloat(openedFiles["filetype-version"])
                     if (filetypeVersion !== parseFloat(FW_FILETYPE_VERSION)) {
-                        let {bib, doc} = updateFile(
+                        let {bibliography, doc} = updateFile(
                             window.JSON.parse(openedFiles["document.json"]),
                             window.JSON.parse(openedFiles["bibliography.json"]),
                             filetypeVersion
                         )
                         zipfs.file("filetype-version", FW_FILETYPE_VERSION)
                         zipfs.file("document.json", window.JSON.stringify(doc))
-                        zipfs.file("bibliography.json", window.JSON.stringify(bib))
+                        zipfs.file("bibliography.json", window.JSON.stringify(bibliography))
                         this.saveRevision(id, zipfs)
                     } else {
                         this.revSavesLeft--

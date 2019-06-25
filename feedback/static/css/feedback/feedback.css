@@ -39,9 +39,9 @@ a.feedback-tab:before {
     position: absolute;
     left: 0;
     right: 0;
-    top: 7px;
+    top: 9px;
     font-family: 'Font Awesome 5 Free';
-    font-size: 20px;
+    font-size: 16px;
     content: "\f075";
     color: white;
     text-indent: 0;

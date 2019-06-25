@@ -95,6 +95,7 @@ const helpTemplate = ({help, filterOptions}) => {
 const commentTemplate = ({comment, view, active, editComment, activeCommentAnswerId, user, docInfo, filterOptions, staticUrl}) => {
     if (
         !filterOptions.comments ||
+        (filterOptions.commentsOnlyMajor && !comment.isMajor) ||
         (!filterOptions.commentsResolved && comment.resolved) ||
         (filterOptions.author && comment.user !== filterOptions.author) ||
         (filterOptions.assigned && comment.assignedUser !== filterOptions.assigned) ||
@@ -293,14 +294,11 @@ export const marginboxFilterTemplate = ({marginBoxes, filterOptions, docInfo}) =
     const tracks = marginBoxes.find(box => ['insertion', 'deletion', 'format_change', 'block_change'].includes(box.type))
     const help = marginBoxes.find(box => box.type==='help')
     let filterHTML = ''
-    if (comments) {
+    if (comments || filterOptions.commentsOnlyMajor) {
         filterHTML += `<div id="margin-box-filter-comments" class="margin-box-filter-button${filterOptions.comments ? '' : ' disabled'}">
             <span class="label">${gettext('Comments')}</span>
             <span class="show-marginbox-options fa fa-ellipsis-v"></span>
             <div class="marginbox-options fw-pulldown fw-right"><ul>
-                <li><span class="fw-pulldown-item${filterOptions.commentsResolved ? ' selected' : ''}" id="margin-box-filter-comments-resolved">
-                    ${gettext('Show resolved comments')}
-                </span></li>
                 <li>
                     <span class="fw-pulldown-item show-marginbox-options-submenu" title="${gettext('Author')}">
                         ${gettext('Author')}
@@ -340,6 +338,18 @@ export const marginboxFilterTemplate = ({marginBoxes, filterOptions, docInfo}) =
                         }
                         </ul>
                     </div>
+                </li>
+                <li>
+                    <span class="fw-pulldown-item margin-box-filter-comments-check">
+                        <input type="checkbox" class="fw-check fw-label-check"${filterOptions.commentsOnlyMajor ? ' checked' : ''} id="margin-box-filter-comments-only-major">
+                        <label for="margin-box-filter-comments-only-major">${gettext('Only major comments')}</label>
+                    </span>
+                </li>
+                <li>
+                    <span class="fw-pulldown-item margin-box-filter-comments-check">
+                        <input type="checkbox" class="fw-check fw-label-check"${filterOptions.commentsResolved ? ' checked' : ''} id="margin-box-filter-comments-resolved">
+                        <label for="margin-box-filter-comments-resolved">${gettext('Resolved comments')}</label>
+                    </span>
                 </li>
             </ul></div>
         </div>`

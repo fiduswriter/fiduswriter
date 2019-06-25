@@ -64,9 +64,9 @@ urlpatterns = [
         name='add_images_to_doc_js'
     ),
     url(
-        '^maintenance/get_all_revision_ids/$',
-        views.get_all_revision_ids_js,
-        name='get_all_revision_ids_js'
+        '^maintenance/get_all_revisions/$',
+        views.get_all_revisions_js,
+        name='get_all_revisions_js'
     ),
     url(
         '^maintenance/get_user_biblist/$',

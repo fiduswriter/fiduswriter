@@ -6,6 +6,8 @@ import {updateDoc} from "../schema/convert"
 import {addAlert, post, postJson, findTarget, whenReady} from "../common"
 import {FW_FILETYPE_VERSION} from "../exporter/native"
 
+import {recreateBibliography} from "./tools"
+
 // To upgrade all docs and document revions to the newest version
 
 export class DocMaintenance {
@@ -146,12 +148,12 @@ export class DocMaintenance {
     updateRevisions() {
         addAlert('info', gettext('Updating saved revisions.'))
         postJson(
-            '/document/maintenance/get_all_revision_ids/'
+            '/document/maintenance/get_all_revisions/'
         ).then(
             ({json}) => {
-                this.revSavesLeft = json.revision_ids.length
+                this.revSavesLeft = json.revisions.length
                 if (this.revSavesLeft) {
-                    json.revision_ids.forEach(revId => this.updateRevision(revId))
+                    json.revisions.forEach(([revId, ownerId]) => this.updateRevision(revId, ownerId))
                 } else {
                     this.done()
                 }
@@ -159,7 +161,7 @@ export class DocMaintenance {
         )
     }
 
-    updateRevision(id) {
+    updateRevision(id, ownerId) {
         JSZipUtils.getBinaryContent(
             `/document/get_revision/${id}/`,
             (err, fidusFile) => {
@@ -174,9 +176,46 @@ export class DocMaintenance {
                         openedFiles[fileName] = fileContent
                     }))
                 })
-                Promise.all(p).then(() => {
-                    const filetypeVersion = parseFloat(openedFiles["filetype-version"])
-                    if (filetypeVersion !== parseFloat(FW_FILETYPE_VERSION)) {
+                Promise.all(p).then(
+                    () => {
+                        let mustUpdate = false
+                        if (!openedFiles["bibliography.json"].length) {
+                            mustUpdate = true
+                            // File is corrupted. We try to recreate the bibliography
+                            return postJson(
+                                '/document/maintenance/get_user_biblist/',
+                                {
+                                    user_id: ownerId
+                                }
+                            ).then(
+                                ({json}) => {
+                                    const fullBib = json.bibList.reduce((db, item) => {
+                                        const id = item['id']
+                                        const bibDBEntry = {}
+                                        bibDBEntry['fields'] = JSON.parse(item['fields'])
+                                        bibDBEntry['bib_type'] = item['bib_type']
+                                        bibDBEntry['entry_key'] = item['entry_key']
+                                        db[id] = bibDBEntry
+                                        return db
+                                    }, {})
+                                    const shrunkBib = {}
+                                    const doc = window.JSON.parse(openedFiles["document.json"])
+                                    recreateBibliography(shrunkBib, fullBib, doc.contents)
+                                    openedFiles["bibliography.json"] = window.JSON.stringify(shrunkBib)
+                                    return Promise.resolve({mustUpdate})
+                                }
+                            )
+                        } else {
+                            if (openedFiles["filetype-version"] !== parseFloat(FW_FILETYPE_VERSION)) {
+                                mustUpdate = true
+                            }
+                            return Promise.resolve({mustUpdate})
+                        }
+                    }
+                ).then(
+                    ({mustUpdate}) => {
+                    if (mustUpdate) {
+                        const filetypeVersion = parseFloat(openedFiles["filetype-version"])
                         const {bibliography, doc} = updateFile(
                             window.JSON.parse(openedFiles["document.json"]),
                             window.JSON.parse(openedFiles["bibliography.json"]),

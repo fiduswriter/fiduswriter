@@ -377,7 +377,7 @@ const v23ExtraAttrs = {
     "template": "Standard Article"
 }
 
-const convertNodeV23 = function(node, imageIds) {
+const convertNodeV23 = function(node) {
     switch (node.type) {
         case 'article':
             node.attrs = Object.assign({}, node.attrs, v23ExtraAttrs)
@@ -487,7 +487,7 @@ const convertNodeV23 = function(node, imageIds) {
     }
     if (node.content) {
         node.content.forEach(childNode => {
-            convertNodeV23(childNode, imageIds)
+            convertNodeV23(childNode)
         })
     }
 }

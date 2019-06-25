@@ -805,15 +805,18 @@ def get_user_biblist_js(request):
 
 
 @staff_member_required
-def get_all_revision_ids_js(request):
+def get_all_revisions_js(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
         status = 200
-        revisions = DocumentRevision.objects.only('id')
-        response["revision_ids"] = []
+        revisions = DocumentRevision.objects.only('id', 'document__owner_id')
+        response["revisions"] = []
         for revision in revisions:
-            response["revision_ids"].append(revision.id)
+            response["revisions"].append([
+                revision.id,
+                revision.document.owner_id
+            ])
     return JsonResponse(
         response,
         status=status
@@ -828,10 +831,13 @@ def update_revision_js(request):
         status = 200
         revision_id = request.POST['id']
         revision = DocumentRevision.objects.get(pk=int(revision_id))
-        # keep the filename
+        # keep the filename but delete the old file.
         file_name = revision.file_object.name
+        file_path = os.path.join(settings.MEDIA_ROOT, file_name)
+        if os.path.exists(file_path):
+            os.remove(file_path)
         revision.file_object = request.FILES['file']
-        revision.file_object.name = file_name
+        revision.file_object.name = file_name.split('/')[-1]
         revision.save()
     return JsonResponse(
         response,

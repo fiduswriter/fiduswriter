@@ -64,6 +64,21 @@ urlpatterns = [
         name='get_all_revision_ids'
     ),
     url(
+        '^maintenance/get_all_template_ids/$',
+        views.get_all_template_ids,
+        name='get_all_template_ids'
+    ),
+    url(
+        '^maintenance/get_template/$',
+        views.get_template,
+        name='get_template'
+    ),
+    url(
+        '^maintenance/save_template/$',
+        views.save_template,
+        name='save_template'
+    ),
+    url(
         '^maintenance/get_user_biblist/$',
         views.get_user_biblist,
         name='get_user_biblist'

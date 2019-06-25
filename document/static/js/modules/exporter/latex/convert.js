@@ -576,8 +576,11 @@ export class LatexExporterConvert {
 
     assembleEpilogue() {
         let epilogue = ''
+        const settings = this.exporter.doc.settings,
+            bibliographyHeader = settings.bibliography_header[settings.language] || settings.bibliography_header.default
+
         if (this.features.citations) {
-            epilogue += '\n\n\\printbibliography'
+            epilogue += `\n\n\\printbibliography[title={${escapeLatexText(bibliographyHeader)}}]`
         }
         return epilogue
     }

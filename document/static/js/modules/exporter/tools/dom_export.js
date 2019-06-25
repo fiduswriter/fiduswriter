@@ -23,10 +23,12 @@ export class BaseDOMExporter {
         this.schema.cached.imageDB = this.imageDB
         const serializer = DOMSerializer.fromSchema(this.schema)
         this.contents = serializer.serializeNode(this.schema.nodeFromJSON(this.docContents))
-
+        const settings = this.exporter.doc.settings,
+            bibliographyHeader = settings.bibliography_header[settings.language] || settings.bibliography_header.default
         const citRenderer = new RenderCitations(
             this.contents,
             this.doc.settings.citationstyle,
+            bibliographyHeader,
             this.bibDB,
             this.citationStyles,
             this.citationLocales

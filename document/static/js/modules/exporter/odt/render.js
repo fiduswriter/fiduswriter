@@ -82,9 +82,13 @@ export class OdtExporterRender {
             }
             return tag
         })
+        const settings = this.exporter.doc.settings,
+            bibliographyHeader = settings.bibliography_header[settings.language] || settings.bibliography_header.default
         this.tags.push({
             title: '@bibliography', // The '@' triggers handling as block
-            content: pmBib ? pmBib.content : [{type: 'paragraph', contents: [{type:'text', text: ' '}]}]
+            content: pmBib ?
+                [{type: 'bibliography_heading', content: [{type: 'text', text: bibliographyHeader}]}].concat(pmBib.content) :
+                [{type: 'paragraph', content: [{type:'text', text: ' '}]}]
         })
     }
 

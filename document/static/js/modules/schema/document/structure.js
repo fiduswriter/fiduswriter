@@ -25,16 +25,21 @@ export const article = {
             default: false
         },
         languages: { // Available languages
-            default: ['en-US']
+            default: ["af-ZA", "sq-AL", "ar", "ast", "be", "br", "bg", "ca", "ca-ES-Valencia", "zh-CN", "da", "nl", "en-AU", "en-CA", "en-NZ", "en-ZA", "en-GB", "en-US", "eo", "fr", "gl", "de-DE", "de-AU", "de-CH", "el", "he", "is", "it", "ja", "km", "lt", "ml", "nb-NO", "nn-NO", "fa", "pl", "pt-BR", "pt-PT", "ro", "ru", "tr", "sr-SP-Cy", "sr-SP-Lt", "sk", "sl", "es", "sv", "ta", "tl", "uk"]
         },
         papersizes: { // Available paper sizes
-            default: ['A4']
+            default: ["A4", "US Letter"]
         },
         footnote_marks: {
-            default: ['strong', 'em']
+            default: ['strong', 'em', 'link', 'anchor']
         },
         footnote_elements: {
-            default: ['paragraph']
+            default: ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "table"]
+        },
+        bibliography_header: {
+            default: {
+                default: 'Bibliography' // Default string
+            }
         },
         template: {
             default: ''
@@ -118,10 +123,10 @@ const partSpec = (type, content, attrs = {}) => ({
 
 export const richtext_part = partSpec('richtext', 'block+', {
     elements: {
-        default: []
+        default: ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote", "table"]
     },
     marks: {
-        default: []
+        default: ['strong', 'em', 'link', 'anchor']
     },
     metadata: {
         default: false
@@ -129,10 +134,10 @@ export const richtext_part = partSpec('richtext', 'block+', {
 })
 export const heading_part = partSpec('heading', 'heading', {
     elements: {
-        default: []
+        default: ["heading1"]
     },
     marks: {
-        default: []
+        default: ['strong', 'em', 'link', 'anchor']
     },
     metadata: {
         default: false
@@ -156,10 +161,10 @@ export const tags_part = partSpec('tags', 'tag*', {
 })
 export const table_part = partSpec('table', 'table', {
     elements: {
-        default: []
+        default: ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote"]
     },
     marks: {
-        default: []
+        default: ['strong', 'em', 'link', 'anchor']
     }
 })
 

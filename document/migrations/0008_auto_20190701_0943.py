@@ -49,10 +49,11 @@ def fix_document_revisions(apps, schema_editor):
                 )
             )
             continue
-        old_file = open(old_path, "r")
+        old_file = open(old_path)
+        new_file = File(old_file)
         revision.file_object.save(
             "document-revisions/{id}.fidus".format(id=revision.pk),
-            File(old_file)
+            new_file
         )
 
 class Migration(migrations.Migration):

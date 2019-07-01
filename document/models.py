@@ -80,6 +80,33 @@ class DocumentTemplate(models.Model):
             )
             self.document_styles.add(style)
 
+    @classmethod
+    def check(cls, **kwargs):
+        errors = super(DocumentTemplate, cls).check(**kwargs)
+        errors.extend(cls._check_doc_versions(**kwargs))
+        return errors
+
+    @classmethod
+    def _check_doc_versions(cls, **kwargs):
+        try:
+            if len(
+                cls.objects.filter(doc_version__lt=str(FW_DOCUMENT_VERSION))
+            ):
+                return [
+                    checks.Warning(
+                        'Document templates need to be upgraded. Please '
+                        'navigate to /admin/document/document/maintenance/ '
+                        'with a browser as a superuser and upgrade all '
+                        'document templates on this server.',
+                        obj=cls
+                    )
+                ]
+            else:
+                return []
+        except (ProgrammingError, OperationalError):
+            # Database has not yet been initialized, so don't throw any error.
+            return []
+
 
 def default_template():
     # We need to get the historical version of the model as newer versions
@@ -293,3 +320,30 @@ class DocumentRevision(models.Model):
                 str(self.document.id)
         else:
             return str(self.id) + ' of ' + str(self.document.id)
+
+    @classmethod
+    def check(cls, **kwargs):
+        errors = super(DocumentRevision, cls).check(**kwargs)
+        errors.extend(cls._check_doc_versions(**kwargs))
+        return errors
+
+    @classmethod
+    def _check_doc_versions(cls, **kwargs):
+        try:
+            if len(
+                cls.objects.filter(doc_version__lt=str(FW_DOCUMENT_VERSION))
+            ):
+                return [
+                    checks.Warning(
+                        'Document revisions need to be upgraded. Please '
+                        'navigate to /admin/document/document/maintenance/ '
+                        'with a browser as a superuser and upgrade all '
+                        'document revisions on this server.',
+                        obj=cls
+                    )
+                ]
+            else:
+                return []
+        except (ProgrammingError, OperationalError):
+            # Database has not yet been initialized, so don't throw any error.
+            return []

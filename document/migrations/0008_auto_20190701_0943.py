@@ -77,6 +77,7 @@ def fix_document_revisions(apps, schema_editor):
             new_file
         )
 
+
 class Migration(migrations.Migration):
 
     dependencies = [

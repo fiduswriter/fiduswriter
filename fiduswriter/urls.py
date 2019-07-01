@@ -27,7 +27,7 @@ admin_site_urls = (admin.site.urls[0] + [
 # tornado_url_list found in base/servers/tornado_django_hybrid.py
 urlpatterns = [
     url(
-        '^robots\.txt$',
+        '^robots.txt$',
         lambda r: HttpResponse(
             "User-agent: *\nDisallow: /document/\nDisallow: /bibliography/",
             mimetype="text/plain"

@@ -52,7 +52,7 @@ def fix_document_revisions(apps, schema_editor):
             )
             continue
         # We create a backup just in case
-        if not os.path.exist(
+        if not os.path.exists(
             os.path.join(
                 settings.MEDIA_ROOT,
                 "document-revisions-backup"

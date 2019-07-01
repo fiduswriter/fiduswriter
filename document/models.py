@@ -254,7 +254,7 @@ class AccessRight(models.Model):
 
 
 def revision_filename(instance, filename):
-    return '/'.join(['revision', str(instance.document.id), filename])
+    return "document-revisions/{id}.fidus".format(id=instance.pk)
 
 
 class DocumentRevision(models.Model):
@@ -263,6 +263,17 @@ class DocumentRevision(models.Model):
     date = models.DateTimeField(auto_now=True)
     file_object = models.FileField(upload_to=revision_filename)
     file_name = models.CharField(max_length=255, default='', blank=True)
+
+    def save(self, *args, **kwargs):
+        if self.pk is None:
+            # We remove the file_object the first time so that we can use the
+            # pk as the name of the saved revision file.
+            file_object = self.file_object
+            self.file_object = None
+            super(DocumentRevision, self).save(*args, **kwargs)
+            self.file_object = file_object
+            kwargs.pop('force_insert', None)
+        super(DocumentRevision, self).save(*args, **kwargs)
 
     def __str__(self):
         if len(self.note) > 0:

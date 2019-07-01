@@ -829,7 +829,7 @@ def update_revision_js(request):
         revision_id = request.POST['id']
         revision = DocumentRevision.objects.get(pk=int(revision_id))
         # keep the filename
-        file_name = revision.file_object.name
+        file_name = revision.file_object.name.split('/')[-1]
         revision.file_object = request.FILES['file']
         revision.file_object.name = file_name
         revision.save()

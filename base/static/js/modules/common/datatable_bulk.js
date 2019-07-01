@@ -78,7 +78,7 @@ export class DatatableBulk {
             return `<li><span data-id="${i}" class="fw-pulldown-item">${escapeText(action.title)}</span></li>`
         }).join('')
 
-        return(
+        return (
             `<div id="${this.id}" class="dt-bulk${this.opened ? ' opened' : ''}">
                 <input type="checkbox" id="${this.id}_check" class="fw-check"><label for="${this.id}_check"></label>
                 <span class="dt-bulk-dropdown"><i class="fa fa-caret-down"></i></span>

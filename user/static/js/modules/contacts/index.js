@@ -1,4 +1,3 @@
-import {DataTable} from "simple-datatables"
 import {teammemberTemplate} from "./templates"
 import {deleteMemberDialog} from "./manage"
 import {postJson, addAlert, OverviewMenuView, findTarget, whenReady, baseBodyTemplate, setDocTitle, DatatableBulk} from "../common"

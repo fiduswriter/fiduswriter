@@ -144,6 +144,16 @@ tr.fw-checkable.checked:after {
     transform: rotate(45deg);
 }
 
+.fw-label-check + label {
+    line-height: 15px;
+}
+
+.fw-label-check + label:before {
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 6px;
+}
+
 /*
  * addable input fields button
  */

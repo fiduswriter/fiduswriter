@@ -49,9 +49,10 @@ export class ModMarginboxes {
         document.body.addEventListener('click', event => {
             const el = {}
             switch (true) {
-                case findTarget(event, '#margin-box-filter-comments-resolved', el):
-                    this.filterOptions.commentsResolved = !this.filterOptions.commentsResolved
-                    this.view(this.editor.currentView)
+                case findTarget(event, '.margin-box-filter-comments-check', el):
+                //case findTarget(event, '#margin-box-filter-comments-resolved', el):
+                    //this.filterOptions.commentsResolved = !this.filterOptions.commentsResolved
+                    //this.view(this.editor.currentView)
                     break
                 case findTarget(event, '.margin-box-filter-comments-author', el):
                     this.filterOptions.author = parseInt(el.target.dataset.id)
@@ -105,6 +106,20 @@ export class ModMarginboxes {
                     break
             }
         })
+
+        document.body.addEventListener('change', evt => {
+            switch (evt.target.id) {
+                case "margin-box-filter-comments-resolved":
+                    this.filterOptions.commentsResolved = evt.target.checked
+                    this.view(this.editor.currentView)
+                    break
+
+                case "margin-box-filter-comments-only-major":
+                    this.filterOptions.commentsOnlyMajor = evt.target.checked
+                    this.view(this.editor.currentView)
+                    break
+            }
+        }, false)
     }
 
     closeAllMenus(selector='.marginbox-options-submenu.fw-open, .marginbox-options.fw-open') {
@@ -432,7 +447,12 @@ export class ModMarginboxes {
         }
         commentIds.forEach(commentId => {
             const comment = this.editor.mod.comments.store.findComment(commentId)
-            if (!comment || (!this.filterOptions.commentsResolved && comment.resolved)) {
+
+            if (
+                !comment ||
+                (this.filterOptions.commentsOnlyMajor && !comment.isMajor) ||
+                (!this.filterOptions.commentsResolved && comment.resolved)
+            ) {
                 // We have no comment with this ID. Ignore the referrer.
                 return
             }

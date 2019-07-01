@@ -87,10 +87,7 @@ span.select-action-dropdown {
     background-color: #fbf9d2;
 }
 
-.fw-button.fw-white input[type=text]:focus {
-    background-color: #fbf9d2;
-}
-
+.fw-button.fw-white input[type=text]:focus,
 .fw-white.fw-input:hover {
-    background-color:;
+    background-color: #fbf9d2;
 }

@@ -1,10 +1,10 @@
 import {ImportNative} from "./native"
-import {FW_FILETYPE_VERSION} from "../exporter/native"
+import {FW_DOCUMENT_VERSION} from "../schema"
 import {updateFile} from "./update"
 /** The current Fidus Writer filetype version. The importer will not import from
  * a different version and the exporter will include this number in all exports.
  */
-const MIN_FW_FILETYPE_VERSION = 1.6, MAX_FW_FILETYPE_VERSION = parseFloat(FW_FILETYPE_VERSION)
+const MIN_FW_DOCUMENT_VERSION = 1.6, MAX_FW_DOCUMENT_VERSION = parseFloat(FW_DOCUMENT_VERSION)
 
 const TEXT_FILENAMES = ['mimetype', 'filetype-version', 'document.json', 'images.json', 'bibliography.json']
 
@@ -92,16 +92,16 @@ export class ImportFidusFile {
         const filetypeVersion = parseFloat(this.textFiles.find(file => file.filename === 'filetype-version').contents),
             mimeType = this.textFiles.find(file => file.filename === 'mimetype').contents
         if (mimeType === 'application/fidus+zip' &&
-            filetypeVersion >= MIN_FW_FILETYPE_VERSION &&
-            filetypeVersion <= MAX_FW_FILETYPE_VERSION) {
+            filetypeVersion >= MIN_FW_DOCUMENT_VERSION &&
+            filetypeVersion <= MAX_FW_DOCUMENT_VERSION) {
             // This seems to be a valid fidus file with current version number.
             const images = JSON.parse(this.textFiles.find(file => file.filename === 'images.json').contents),
                 updatedFile =  updateFile(
                     JSON.parse(this.textFiles.find(file => file.filename === 'document.json').contents),
+                    filetypeVersion,
                     JSON.parse(
                         this.textFiles.find(file => file.filename === 'bibliography.json').contents
-                    ),
-                    filetypeVersion
+                    )
                 ),
                 {bibliography} = updatedFile
             let {doc} = updatedFile
@@ -126,7 +126,7 @@ export class ImportFidusFile {
         } else {
             // The file is not a Fidus Writer file.
             this.statusText = gettext('The uploaded file does not appear to be of the version used on this server: ') +
-            FW_FILETYPE_VERSION
+            FW_DOCUMENT_VERSION
             return this
         }
     }

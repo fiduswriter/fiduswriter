@@ -79,10 +79,12 @@ export class DocxExporterRender {
             }
             return tag
         })
+        const settings = this.exporter.doc.settings,
+            bibliographyHeader = settings.bibliography_header[settings.language] || settings.bibliography_header.default
         this.tags.push({
             title: '@bibliography', // The '@' triggers handling as block
             content: pmBib ?
-                [{type: 'bibliography_heading', content: [{type: 'text', text: this.exporter.doc.settings.bibliography_header}]}].concat(pmBib.content) :
+                [{type: 'bibliography_heading', content: [{type: 'text', text: bibliographyHeader}]}].concat(pmBib.content) :
                 [{type: 'paragraph', content: [{type:'text', text: ' '}]}]
         })
     }

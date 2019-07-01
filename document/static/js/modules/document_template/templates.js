@@ -506,8 +506,8 @@ export const papersizesTemplate = ({papersizes = PAPER_SIZES.map(size => size[0]
 ${PAPER_SIZES.map(size => `<option value="${size[0]}"${papersizes.includes(size[0]) ? ' selected' : ''}>${size[0]}</option>`).join('')}
 </select>`
 
-export const bibliographyHeaderTemplate = ({bibliography_header = gettext('Bibliography')}) =>
-`<input type="text" value="${escapeText(bibliography_header)}">`
+export const bibliographyHeaderTemplate = ({bibliography_header = {default: gettext('Bibliography')}}) =>
+`<input type="text" value="${escapeText(bibliography_header.default || '')}">`
 
 export const templateEditorValueTemplate = ({content}) =>
     content.map(docPart => {

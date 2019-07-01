@@ -106,7 +106,7 @@ class BaseWebSocketHandler(DjangoHandlerMixin, WebSocketHandler):
     def send(self, message):
         try:
             yield self.write_message(message)
-        except (WebSocketClosedError, StreamClosedError) as e:
+        except (WebSocketClosedError, StreamClosedError):
             pass
 
     def resend_messages(self, from_no):

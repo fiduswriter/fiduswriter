@@ -1,2 +1,2 @@
-selenium==3.141.0
 chromedriver-binary
+selenium==3.141.0

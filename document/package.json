@@ -8,7 +8,7 @@
         "fastdom": "1.0.9",
         "fast-deep-equal": "2.0.x",
         "fast-json-patch": "2.0.x",
-        "fix-utf8": "1.0.4",
+        "fix-utf8": "1.1.1",
         "jszip": "3.2.1",
         "jszip-utils": "0.0.2",
         "mathlive": "0.29.x",

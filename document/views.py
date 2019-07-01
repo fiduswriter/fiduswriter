@@ -900,7 +900,9 @@ def update_revision(request):
         if revision:
             status = 200
             # keep the filename
-            file_name = revision.file_object.name
+            file_name = revision.file_object.name.split('/')[-1]
+            # Delete the FieldFile as otherwise the file remains.
+            revision.file_object.delete()
             revision.file_object = request.FILES['file']
             revision.file_object.name = file_name
             revision.doc_version = FW_DOCUMENT_VERSION

@@ -5,9 +5,9 @@ import {litToText, nameToText} from "../tools"
 import {editCategoriesTemplate} from "./templates"
 import {BibTypeTitles} from "../form/strings"
 import {SiteMenu} from "../../menu"
-import {OverviewMenuView, findTarget, whenReady, Dialog, baseBodyTemplate, ensureCSS, setDocTitle, escapeText} from "../../common"
+import {OverviewMenuView, findTarget, whenReady, Dialog, baseBodyTemplate, ensureCSS, setDocTitle, escapeText, DatatableBulk} from "../../common"
 import {FeedbackTab} from "../../feedback"
-import {menuModel} from "./menu"
+import {menuModel, bulkModel} from "./menu"
 import * as plugins from "../../../plugins/bibliography_overview"
 
 export class BibliographyOverview {
@@ -38,13 +38,15 @@ export class BibliographyOverview {
     render() {
         document.body = document.createElement('body')
         document.body.innerHTML = baseBodyTemplate({
-            contents: '<ul id="fw-overview-menu"></ul>',
+            contents: '',
             user: this.user,
-            staticUrl: this.staticUrl
+            staticUrl: this.staticUrl,
+            hasOverview: true
         })
         ensureCSS([
             'bibliography.css',
-            'prosemirror.css'
+            'prosemirror.css',
+            'inline_tools.css'
         ], this.staticUrl)
         setDocTitle(gettext('Bibliography Manager'), this.app)
         const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
@@ -55,13 +57,17 @@ export class BibliographyOverview {
     /* Initialize the overview table */
     initTable(ids) {
         const tableEl = document.createElement('table')
+        tableEl.id = "bibliography"
         tableEl.classList.add('fw-document-table')
         tableEl.classList.add('fw-large')
         document.querySelector('.fw-contents').appendChild(tableEl)
+
+        const dt_bulk = new DatatableBulk(this, bulkModel)
+
         this.table = new DataTable(tableEl, {
             searchable: true,
             paging: false,
-            scrollY: "calc(100vh - 220px)",
+            scrollY: "calc(100vh - 240px)",
             labels: {
                 noRows: gettext("No sources registered") // Message shown when there are no search results
             },
@@ -69,7 +75,7 @@ export class BibliographyOverview {
                 top: ""
             },
             data: {
-                headings: ['', '&emsp;&emsp;', gettext("Title"), gettext("Sourcetype"), gettext("Author"), gettext("Published"), ''],
+                headings: ['', dt_bulk.getHTML(), gettext("Title"), gettext("Sourcetype"), gettext("Author"), gettext("Published"), ''],
                 data: ids.map(id => this.createTableRow(id))
             },
             columns: [
@@ -88,6 +94,8 @@ export class BibliographyOverview {
         this.table.on('datatable.sort', (column, dir) => {
             this.lastSort = {column, dir}
         })
+
+        dt_bulk.init(this.table.table)
     }
 
     /** Adds a list of bibliography categories to current list of bibliography categories.
@@ -104,7 +112,7 @@ export class BibliographyOverview {
             action: _overview => {
                 const trs = document.querySelectorAll('#bibliography > tbody > tr')
                 trs.forEach(tr => {
-                    if (tr.classList.contains(`cat_${cat.id}`)) {
+                    if (tr.querySelector('.fw-document-table-title').classList.contains(`cat_${cat.id}`)) {
                         tr.style.display = ''
                     } else {
                         tr.style.display = 'none'
@@ -129,10 +137,11 @@ export class BibliographyOverview {
     createTableRow(id) {
         const bibInfo = this.app.bibDB.db[id]
         const bibauthors = bibInfo.fields.author || bibInfo.fields.editor
+        const cats = bibInfo.entry_cat.map(cat => `cat_${cat}`)
         return [
             String(id),
             `<input type="checkbox" class="entry-select fw-check" data-id="${id}" id="bib-${id}"><label for="bib-${id}"></label>`, // checkbox
-            `<span class="fw-document-table-title">
+            `<span class="fw-document-table-title ${cats.join(' ')}">
                 <i class="fa fa-book"></i>
                 <span class="edit-bib fw-link-text fw-searchable" data-id="${id}">
                     ${bibInfo.fields.title ? escapeText(litToText(bibInfo.fields.title)) : gettext('Untitled')}

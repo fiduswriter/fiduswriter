@@ -18,49 +18,32 @@ export class KeyFieldForm {
     }
 
     init() {
+        this.prepareWrapper()
         this.drawForm()
     }
 
-    drawForm() {
-        if (this.predefined) {
-            this.drawSelectionListForm()
-        } else {
-            this.drawCustomInputForm()
-        }
-    }
+    prepareWrapper() {
+        this.dom.innerHTML =
+            noSpaceTmp`
+                <div class="type-switch-input-wrapper">
+                    <button class="type-switch">
+                        <span class="type-switch-inner">
+                            <span class="type-switch-label">${gettext('From list')}</span>
+                            <span class="type-switch-label">${gettext('Custom')}</span>
+                        </span>
+                    </button>
+                    <div class="type-switch-input-inner"></div>
+                </div>
+            `
 
-    drawSelectionListForm() {
-        this.dom.innerHTML = noSpaceTmp`
-            <div class='selection-list input-with-button'>
-                <button class="switch-type fw-button fw-green">${gettext('From list')}</button>
-                <select class='key-selection'><option value=''></option></select>
-                <div class="fw-select-arrow fa fa-caret-down"></div>
-            </div>
-        `
-        const selectEl = this.dom.querySelector('.key-selection')
-        if (Array.isArray(this.fieldType.options)) {
-            this.fieldType.options.forEach(option => {
-                selectEl.insertAdjacentHTML('beforeend', `<option value="${option}">${BibOptionTitles[option]}</option>`)
-            })
-        } else {
-            Object.keys(this.fieldType.options).forEach(option => {
-                selectEl.insertAdjacentHTML('beforeend', `<option value="${option}">${BibOptionTitles[option]}</option>`)
-            })
-        }
-
-        if (this.currentValue['predefined']) {
-            selectEl.value = this.currentValue['predefined']
-        }
+        this.switcher = this.dom.querySelector('.type-switch')
+        this.inner = this.dom.querySelector('.type-switch-input-inner')
 
         if (this.fieldType.strict) {
-            this.dom.querySelector('.switch-type').classList.add('disabled')
+            this.switcher.classList.add('disabled')
         } else {
-            this.dom.querySelector('.switch-type').addEventListener(
-                'click',
-                () => this.switchMode()
-            )
+            this.switcher.addEventListener('click', () => this.switchMode())
         }
-
     }
 
     switchMode() {
@@ -76,23 +59,50 @@ export class KeyFieldForm {
         this.drawForm()
     }
 
+    drawForm() {
+        if (this.predefined) {
+            this.drawSelectionListForm()
+        } else {
+            this.drawCustomInputForm()
+        }
+    }
+
+    drawSelectionListForm() {
+        this.switcher.classList.add('value1')
+        this.switcher.classList.remove('value2')
+
+        this.inner.innerHTML =
+            noSpaceTmp`
+                <select class='key-selection'><option value=''></option></select>
+                <div class="fw-select-arrow fa fa-caret-down"></div>
+            `
+        const selectEl = this.dom.querySelector('.key-selection')
+        if (Array.isArray(this.fieldType.options)) {
+            this.fieldType.options.forEach(option => {
+                selectEl.insertAdjacentHTML('beforeend', `<option value="${option}">${BibOptionTitles[option]}</option>`)
+            })
+        } else {
+            Object.keys(this.fieldType.options).forEach(option => {
+                selectEl.insertAdjacentHTML('beforeend', `<option value="${option}">${BibOptionTitles[option]}</option>`)
+            })
+        }
+
+        if (this.currentValue['predefined']) {
+            selectEl.value = this.currentValue['predefined']
+        }
+    }
+
     drawCustomInputForm() {
+        this.switcher.classList.remove('value1')
+        this.switcher.classList.add('value2')
+
         this.fields = {}
-        this.dom.innerHTML = noSpaceTmp`
-            <div class='key-field input-with-button'>
-                <button class="switch-type fw-button fw-green">${gettext('Custom')}</button>
-                <div class='custom-input field-part field-part-single'></div>
-            </div>
-        `
+        this.inner.innerHTML = noSpaceTmp`<div class='custom-input field-part field-part-single'></div>`
         this.fields['custom'] = new LiteralFieldForm(
             this.dom.querySelector('.custom-input'),
             this.currentValue['custom']
         )
         this.fields.custom.init()
-        this.dom.querySelector('.switch-type').addEventListener(
-            'click',
-            () => this.switchMode()
-        )
     }
 
     get value() {

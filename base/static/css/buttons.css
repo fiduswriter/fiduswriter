@@ -74,8 +74,8 @@
 }
 
 .fw-button.fw-white {
-    border-color: #e0e0e0;
-    background-color: #f9f9f9;
+    border: 0 none;
+    background-color: #f3f3f3;
     color: #000;
 }
 .fw-button.fw-white:not(.disabled):hover {

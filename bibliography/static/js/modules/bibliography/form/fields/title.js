@@ -4,6 +4,7 @@ import {history, redo, undo} from "prosemirror-history"
 import {toggleMark, baseKeymap} from "prosemirror-commands"
 import {keymap} from "prosemirror-keymap"
 
+import {icon, InlineTools} from "../../../prosemirror/inline_tools"
 import {titleSchema} from "../../schema/title"
 
 export class TitleFieldForm {
@@ -40,38 +41,21 @@ export class TitleFieldForm {
                             const command = toggleMark(sMark)
                             command(this.view.state, tr => this.view.dispatch(tr))
                         }
-                    })
+                    }),
+                    InlineTools([
+                        {command: toggleMark(titleSchema.marks.strong), dom: icon("strong", gettext('Strong'))},
+                        {command: toggleMark(titleSchema.marks.em), dom: icon("em", gettext('Emphasis'))},
+                        {command: toggleMark(titleSchema.marks.smallcaps), dom: icon("smallcaps", gettext('Small caps'))},
+                        {command: toggleMark(titleSchema.marks.sub), dom: icon("sub", gettext('Subscript₊'))},
+                        {command: toggleMark(titleSchema.marks.sup), dom: icon("sup", gettext('Supscript²'))},
+                        {command: toggleMark(titleSchema.marks.nocase), dom: icon("nocase", gettext('CasE ProTecT'))}
+                    ])
                 ]
             }),
-            handleDOMEvents: {
-                focus: (_view, _event) => {
-                    document.querySelectorAll('.ui-dialog-buttonset .fw-edit').forEach(el => el.classList.remove('disabled'))
-                },
-                blur: (_view, _event) => {
-                    document.querySelectorAll('.ui-dialog-buttonset .fw-edit').forEach(el => el.classList.add('disabled'))
-                }
-            },
             dispatchTransaction: tr => {
                 const newState = this.view.state.apply(tr)
                 this.view.updateState(newState)
             }
-        })
-        const supportedMarks = ['em', 'strong', 'sub', 'sup', 'smallcaps', 'nocase']
-        supportedMarks.forEach(mark =>{
-            this.linkMarkButton(mark)
-        })
-    }
-
-    linkMarkButton(mark) {
-        document.querySelector(`.ui-dialog-buttonset .fw-${mark}`).addEventListener("mousedown", event => {
-            event.preventDefault()
-            event.stopPropagation()
-            if (!this.view.hasFocus()) {
-                return
-            }
-            const sMark = this.view.state.schema.marks[mark]
-            const command = toggleMark(sMark)
-            command(this.view.state, tr => this.view.dispatch(tr))
         })
     }
 

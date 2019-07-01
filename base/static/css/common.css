@@ -22,14 +22,18 @@ body {
     overflow: hidden;
 }
 
-.fw-contents {
+.fw-contents-outer {
     position: relative;
     top: 70px;
+}
+
+.fw-contents {
+    position: relative;
     width: auto;
     height: auto;
     min-width: 985px;
     margin: 0 213px;
-    padding: 40px 0;
+    padding: 40px 0 20px;
 }
 
 @media (max-width: 1429px) {

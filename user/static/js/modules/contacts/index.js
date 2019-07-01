@@ -1,9 +1,9 @@
 import {teammemberTemplate} from "./templates"
 import {deleteMemberDialog} from "./manage"
-import {postJson, addAlert, OverviewMenuView, findTarget, whenReady, baseBodyTemplate, setDocTitle} from "../common"
+import {postJson, addAlert, OverviewMenuView, findTarget, whenReady, baseBodyTemplate, setDocTitle, DatatableBulk} from "../common"
 import {FeedbackTab} from "../feedback"
 import {SiteMenu} from "../menu"
-import {menuModel} from "./menu"
+import {menuModel, bulkModel} from "./menu"
 
 export class ContactsOverview {
     constructor({app, user, staticUrl}) {
@@ -25,14 +25,15 @@ export class ContactsOverview {
     }
 
     render() {
+        const dt_bulk = new DatatableBulk(this, bulkModel)
+
         document.body = document.createElement('body')
         document.body.innerHTML = baseBodyTemplate({
-            contents: `<ul id="fw-overview-menu"></ul>
-            <div class="fw-table-wrapper">
+            contents: `<div class="fw-table-wrapper">
                 <table id="team-table" class="tablesorter fw-document-table">
                     <thead class="fw-document-table-header">
                         <tr>
-                            <td width="30"></td>
+                            <td width="30">${dt_bulk.getHTML()}</td>
                             <th width="350">${gettext("Contacts")}</th>
                             <th width="350">${gettext("E-mail address")}</th>
                             <th width="50" align="center">${gettext("Delete")}</th>
@@ -44,10 +45,13 @@ export class ContactsOverview {
             </div>`,
             user: this.user,
             staticUrl: this.staticUrl,
+            hasOverview: true
         })
         setDocTitle(gettext('Team Members'), this.app)
         const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
         feedbackTab.init()
+
+        dt_bulk.init(document.querySelector('#team-table'))
     }
 
     getList() {

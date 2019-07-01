@@ -6,16 +6,7 @@ button {
     outline-width: 0;
 }
 
-input[type=text],
-input[type=password],
-input[type=search],
-input[type=email] {
-    padding: 0 3px;
-    height: 36px;
-    width: calc(100% - 8px);
-}
-
-input[type=text].category-form {
+input[type='text'].category-form {
     width: calc(100% - 38px);
 }
 
@@ -28,12 +19,17 @@ input[type='password'],
 input[type='search'],
 input[type='email'],
 textarea {
+    box-sizing: border-box;
+    width: 100%;
+    height: 40px;
+    padding: 0 10px;
     font-size: 14px;
     line-height: 1.33em;
-    border: solid 1px #d3d3d3;
     box-shadow: none;
     border-radius: 0;
     margin: 5px 0 5px 0;
+    background-color: #f3f3f3;
+    border: 0 none;
 }
 
 input[type='text']:focus,
@@ -148,6 +144,16 @@ tr.fw-checkable.checked:after {
     transform: rotate(45deg);
 }
 
+.fw-label-check + label {
+    line-height: 15px;
+}
+
+.fw-label-check + label:before {
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 6px;
+}
+
 /*
  * addable input fields button
  */
@@ -224,6 +230,6 @@ tr.fw-checkable.checked:after {
 .fw-select-container .fw-select-arrow {
     position: absolute;
 	top: 14px;
-	right: 5px;
+	right: 16px;
 	pointer-events: none;
 }

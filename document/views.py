@@ -830,6 +830,8 @@ def update_revision_js(request):
         revision = DocumentRevision.objects.get(pk=int(revision_id))
         # keep the filename
         file_name = revision.file_object.name.split('/')[-1]
+        # Delete the FieldFile as otherwise the file remains.
+        revision.file_object.delete()
         revision.file_object = request.FILES['file']
         revision.file_object.name = file_name
         revision.save()

@@ -49,8 +49,7 @@ def fix_document_revisions(apps, schema_editor):
                 )
             )
             continue
-        old_file = open(old_path)
-        new_file = File(old_file)
+        new_file = File(open(old_path, 'rb'))
         revision.file_object.save(
             "document-revisions/{id}.fidus".format(id=revision.pk),
             new_file

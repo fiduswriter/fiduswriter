@@ -57,7 +57,6 @@ export class TitleFieldForm {
                 this.view.updateState(newState)
             }
         })
-        //const supportedMarks = ['em', 'strong', 'sub', 'sup', 'smallcaps', 'nocase']
     }
 
     get value() {

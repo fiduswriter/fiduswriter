@@ -9,23 +9,6 @@ export const icon = (text, name) => {
     return span
 }
 
-// class SelectionSizeTooltip {
-//     constructor(view) {
-//         this.update(view, null)
-//     }
-//
-//     update(view, _lastState) {
-//         if (view.state) {
-//             const storedMarks = view.state.storedMarks || view.state.selection.$head.marks()
-//             if (storedMarks) {
-//                 for (const mark of storedMarks) {
-//                     console.log(mark.type)
-//                 }
-//             }
-//         }
-//     }
-// }
-
 class MenuView {
     constructor(items, view) {
         this.items = items

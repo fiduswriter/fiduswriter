@@ -149,9 +149,8 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
             ).text)
         except AssertionError as e:
             self.verificationErrors.append(str(e))
-        driver.find_element_by_xpath(
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'CasE ProTecT'])[1]/following::button[1]"
+        driver.find_element_by_css_selector(
+            "button.fw-dark"
         ).click()
         # Closed citation dialog
         search_input = driver.find_element_by_css_selector(

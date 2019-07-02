@@ -37,9 +37,9 @@ export class ModDocumentTemplate {
         }
         const metadataMenu = {
             id: 'metadata',
-            title: gettext('Metadata'),
+            title: gettext('Optional sections'),
             type: 'menu',
-            tooltip: gettext('Choose which metadata to enable.'),
+            tooltip: gettext('Choose which optional sections to enable.'),
             order: 0,
             disabled: editor => editor.docInfo.access_rights !== 'write',
             content: hideableDocParts.map(([node, index]) => ({

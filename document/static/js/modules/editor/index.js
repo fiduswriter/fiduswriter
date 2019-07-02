@@ -317,10 +317,18 @@ export class Editor {
     }
 
     close() {
-        this.menu.toolbarViews.forEach(view => view.destroy())
-        this.menu.selectionMenuViews.forEach(view => view.destroy())
-        this.menu.headerView.destroy()
-        this.ws.close()
+        if (this.menu.toolbarViews) {
+            this.menu.toolbarViews.forEach(view => view.destroy())
+        }
+        if (this.menu.selectionMenuViews) {
+            this.menu.selectionMenuViews.forEach(view => view.destroy())
+        }
+        if (this.menu.headerView) {
+            this.menu.headerView.destroy()
+        }
+        if (this.ws) {
+            this.ws.close()
+        }
     }
 
     render() {

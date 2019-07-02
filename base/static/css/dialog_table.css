@@ -15,6 +15,11 @@
     display: none;
 }
 
+.fw-dialog-table tr > td .fa-minus-circle, .fw-dialog-table tr > td .fa-plus-circle {
+    cursor: pointer;
+}
+
+
 .fw-tablerow-title.wtooltip {
     position: relative;
 }

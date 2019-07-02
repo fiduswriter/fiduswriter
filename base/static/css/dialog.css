@@ -71,6 +71,10 @@
     vertical-align: middle;
 }
 
+.input-list-wrapper td.input-field-list-ctrl .fa {
+    display: inline;
+}
+
 .entry-field input[type=text] {
     margin: 0;
 }

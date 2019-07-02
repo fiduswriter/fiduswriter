@@ -26,10 +26,10 @@ export class LanguageDialog {
                 }
 
                 const article = this.editor.view.state.doc.firstChild
-                const attrs = Object.assign({}, article.attrs)
-                attrs.language = language
+                const attrs = Object.assign({}, article.attrs, {language})
+
                 this.editor.view.dispatch(
-                    this.editor.view.state.tr.setNodeMarkup(0, false, attrs)
+                    this.editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta('settings', true)
                 )
                 return
             }

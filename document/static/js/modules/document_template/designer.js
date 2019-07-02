@@ -17,7 +17,8 @@ import {
     toggleEditorButtonTemplate,
     footnoteTemplate,
     languagesTemplate,
-    papersizesTemplate
+    papersizesTemplate,
+    bibliographyHeaderTemplate
 } from "./templates"
 import {whenReady, ensureCSS, findTarget} from "../common"
 import {
@@ -129,7 +130,10 @@ export class DocumentTemplateDesigner {
             'prosemirror-example-setup.css',
             'document_template_designer.css',
             'tags.css',
-            'contributors.css'
+            'contributors.css',
+            'dialog.css',
+            'table.css',
+            'dialog_table.css'
         ], this.staticUrl)
         whenReady().then(() => {
             this.definitionTextarea = document.querySelector('textarea[name=definition]')
@@ -287,9 +291,19 @@ export class DocumentTemplateDesigner {
                 footnote_marks: Array.from(document.querySelectorAll('.footnote-value .marks:checked')).map(el => el.value),
                 languages: Array.from(document.querySelectorAll('.languages-value option:checked')).map(el => el.value),
                 papersizes: Array.from(document.querySelectorAll('.papersizes-value option:checked')).map(el => el.value),
-                bibliography_header: {
-                    default: document.querySelector('.bibliography-header-value input').value
-                },
+                bibliography_header: Array.from(document.querySelectorAll('.bibliography-header-value tr')).reduce(
+                    (stringObj, trEl) => {
+                        const inputEl = trEl.querySelector('input')
+                        if (!inputEl.value.length) {
+                            return stringObj
+                        }
+                        const selectEl = trEl.querySelector('select')
+                        const language = selectEl ? selectEl.value : 'default'
+                        stringObj[language] = inputEl.value
+                        return stringObj
+                    },
+                    {}
+                ),
                 template: document.querySelector('#id_title').value
             }
         }
@@ -531,6 +545,20 @@ export class DocumentTemplateDesigner {
                     event.preventDefault()
                     el.target.closest('.doc-part').querySelector('.attrs').classList.toggle('hidden')
                     break
+                case findTarget(event, '.bibliography-header-value .fa-plus-circle', el):
+                    event.preventDefault()
+                    this.setCurrentValue()
+                    this.templateEditor.querySelector('.bibliography-header-value').innerHTML =
+                        bibliographyHeaderTemplate({
+                            bibliography_header: Object.assign({}, this.value.attrs.bibliography_header, {zzz: ''}) // 'zzz' so that the entry is added at the of the list
+                        })
+                    break
+                case findTarget(event, '.bibliography-header-value .fa-minus-circle', el): {
+                    event.preventDefault()
+                    const trEl = el.target.closest('tr')
+                    trEl.parentElement.removeChild(trEl)
+                    break
+                }
                 default:
                     break
             }

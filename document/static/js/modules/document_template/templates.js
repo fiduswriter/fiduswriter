@@ -506,8 +506,30 @@ export const papersizesTemplate = ({papersizes = PAPER_SIZES.map(size => size[0]
 ${PAPER_SIZES.map(size => `<option value="${size[0]}"${papersizes.includes(size[0]) ? ' selected' : ''}>${size[0]}</option>`).join('')}
 </select>`
 
+const languageSelector = language =>
+`<select>
+${LANGUAGES.map(lang => `<option value="${lang[0]}"${language === lang[0] ? ' selected' : ''}>${lang[1]}</option>`).join('')}
+</select>`
+
 export const bibliographyHeaderTemplate = ({bibliography_header = {default: gettext('Bibliography')}}) =>
-`<input type="text" value="${escapeText(bibliography_header.default || '')}">`
+`<table class="fw-dialog-table fw-small input-list-wrapper">${
+    // Sort alphabetically but always have 'default' first.
+    Object.keys(bibliography_header).sort().sort(a => a === 'default' ? -1 : 0).map(
+        language =>
+            `<tr>
+                <td>${
+                    language === 'default' ? gettext('Default') : languageSelector(language)
+                }</td>
+                <td>
+                    <input type="text" value="${escapeText(bibliography_header[language])}" >
+                </td>
+                <td class="input-field-list-ctrl">
+                    <span class="fa fa-minus-circle"></span>&nbsp;<span class="fa fa-plus-circle"></span>
+                </td>
+            </tr>`
+    ).join('')
+}</table>`
+
 
 export const templateEditorValueTemplate = ({content}) =>
     content.map(docPart => {

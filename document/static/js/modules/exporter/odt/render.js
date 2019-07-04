@@ -1,5 +1,6 @@
 import {textContent} from "../tools/doc_contents"
 import {escapeText} from "../../common"
+import {BIBLIOGRAPHY_HEADERS} from "../../schema/const"
 
 export class OdtExporterRender {
     constructor(exporter, docContents) {
@@ -83,7 +84,7 @@ export class OdtExporterRender {
             return tag
         })
         const settings = this.exporter.doc.settings,
-            bibliographyHeader = settings.bibliography_header[settings.language] || settings.bibliography_header.default
+            bibliographyHeader = settings.bibliography_header[settings.language] || BIBLIOGRAPHY_HEADERS[settings.language]
         this.tags.push({
             title: '@bibliography', // The '@' triggers handling as block
             content: pmBib ?

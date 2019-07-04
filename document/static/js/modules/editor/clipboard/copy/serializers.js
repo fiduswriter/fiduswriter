@@ -1,7 +1,7 @@
 import {DOMSerializer} from "prosemirror-model"
 import {RenderCitations} from "../../../citations/render"
 import {createDocCopySchema, fnCopySchema} from "./schema"
-
+import {BIBLIOGRAPHY_HEADERS} from "../../../schema/const"
 
 // Wrap around DOMSerializer, allowing post processing.
 class ClipboardDOMSerializer {
@@ -26,7 +26,7 @@ class ClipboardDOMSerializer {
 
     renderCitations(domFragment) {
         const settings = this.editor.view.state.doc.firstChild.attrs,
-            bibliographyHeader = settings.bibliography_header[settings.language] || settings.bibliography_header.default
+            bibliographyHeader = settings.bibliography_header[settings.language] || BIBLIOGRAPHY_HEADERS[settings.language]
         const citRenderer = new RenderCitations(
             domFragment,
             settings.citationstyle,

@@ -1,5 +1,6 @@
 import {RenderCitations} from "../../citations/render"
 import {Dialog, cancelPromise} from "../../common"
+import {BIBLIOGRAPHY_HEADERS} from "../../schema/const"
 
 export class ModCitations {
     constructor(editor) {
@@ -43,7 +44,7 @@ export class ModCitations {
         const emptyCitations = document.querySelectorAll('#paper-editable span.citation:empty')
         if (emptyCitations.length) {
             const settings = this.editor.view.state.doc.firstChild.attrs,
-                bibliographyHeader = settings.bibliography_header[settings.language] || settings.bibliography_header.default
+                bibliographyHeader = settings.bibliography_header[settings.language] || BIBLIOGRAPHY_HEADERS[settings.language]
             this.citRenderer = new RenderCitations(
                 document.getElementById('paper-editable'),
                 settings.citationstyle,

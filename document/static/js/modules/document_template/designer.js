@@ -298,8 +298,7 @@ export class DocumentTemplateDesigner {
                             return stringObj
                         }
                         const selectEl = trEl.querySelector('select')
-                        const language = selectEl ? selectEl.value : 'default'
-                        stringObj[language] = inputEl.value
+                        stringObj[selectEl.value] = inputEl.value
                         return stringObj
                     },
                     {}

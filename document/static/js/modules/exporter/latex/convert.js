@@ -1,4 +1,5 @@
 import {escapeLatexText} from "./escape_latex"
+import {BIBLIOGRAPHY_HEADERS} from "../../schema/const"
 
 export class LatexExporterConvert {
     constructor(exporter, imageDB, bibDB) {
@@ -577,7 +578,7 @@ export class LatexExporterConvert {
     assembleEpilogue() {
         let epilogue = ''
         const settings = this.exporter.doc.settings,
-            bibliographyHeader = settings.bibliography_header[settings.language] || settings.bibliography_header.default
+            bibliographyHeader = settings.bibliography_header[settings.language] || BIBLIOGRAPHY_HEADERS[settings.language]
 
         if (this.features.citations) {
             epilogue += `\n\n\\printbibliography[title={${escapeLatexText(bibliographyHeader)}}]`

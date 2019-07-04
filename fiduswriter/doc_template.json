@@ -79,8 +79,6 @@
         "template": "Standard Article",
         "papersize": "A4",
         "language": "af-ZA",
-        "bibliography_header": {
-            "default": "Bibliography"
-        }
+        "bibliography_header": {}
     }
 }

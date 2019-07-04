@@ -1,6 +1,7 @@
 import {DOMSerializer} from "prosemirror-model"
-
 import {RenderCitations} from "../../citations/render"
+import {BIBLIOGRAPHY_HEADERS} from "../../schema/const"
+
 /*
 
 WARNING: DEPRECATED!
@@ -24,7 +25,7 @@ export class BaseDOMExporter {
         const serializer = DOMSerializer.fromSchema(this.schema)
         this.contents = serializer.serializeNode(this.schema.nodeFromJSON(this.docContents))
         const settings = this.exporter.doc.settings,
-            bibliographyHeader = settings.bibliography_header[settings.language] || settings.bibliography_header.default
+            bibliographyHeader = settings.bibliography_header[settings.language] || BIBLIOGRAPHY_HEADERS[settings.language]
         const citRenderer = new RenderCitations(
             this.contents,
             this.doc.settings.citationstyle,

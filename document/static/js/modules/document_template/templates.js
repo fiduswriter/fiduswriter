@@ -511,24 +511,28 @@ const languageSelector = language =>
 ${LANGUAGES.map(lang => `<option value="${lang[0]}"${language === lang[0] ? ' selected' : ''}>${lang[1]}</option>`).join('')}
 </select>`
 
-export const bibliographyHeaderTemplate = ({bibliography_header = {default: gettext('Bibliography')}}) =>
-`<table class="fw-dialog-table fw-small input-list-wrapper">${
-    // Sort alphabetically but always have 'default' first.
-    Object.keys(bibliography_header).sort().sort(a => a === 'default' ? -1 : 0).map(
-        language =>
-            `<tr>
-                <td>${
-                    language === 'default' ? gettext('Default') : languageSelector(language)
-                }</td>
-                <td>
-                    <input type="text" value="${escapeText(bibliography_header[language])}" >
-                </td>
-                <td class="input-field-list-ctrl">
-                    <span class="fa fa-minus-circle"></span>&nbsp;<span class="fa fa-plus-circle"></span>
-                </td>
-            </tr>`
-    ).join('')
-}</table>`
+export const bibliographyHeaderTemplate = ({bibliography_header = {zzz: ''}}) => {
+    let translations = Object.entries(bibliography_header)
+    if (!translations.length) {
+        translations = [['zzz' ,'']]
+    }
+    return `<table class="fw-dialog-table fw-small input-list-wrapper">${
+        translations.map(
+            translation =>
+                `<tr>
+                    <td>${
+                        languageSelector(translation[0])
+                    }</td>
+                    <td>
+                        <input type="text" value="${escapeText(translation[1])}" >
+                    </td>
+                    <td class="input-field-list-ctrl">
+                        <span class="fa fa-minus-circle"></span>&nbsp;<span class="fa fa-plus-circle"></span>
+                    </td>
+                </tr>`
+        ).join('')
+    }</table>`
+}
 
 
 export const templateEditorValueTemplate = ({content}) =>
@@ -625,7 +629,7 @@ export const documentConstructorTemplate = ({value}) =>
                 </tr>
                 <tr>
                     <td>
-                        ${gettext('Bibliography header')}
+                        ${gettext('Custom bibliography header')}
                     </td>
                     <td class="bibliography-header-value">
                         ${bibliographyHeaderTemplate(value.attrs || {})}

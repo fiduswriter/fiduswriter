@@ -1,37 +1,37 @@
 # Spanish translation for Fidus Writer
 # Copyright (C) 2012 Ana Carolina Vera Resquín
 # This file is distributed under the same license as Fidus Writer.
-# Ana Vera Resquín <ani.tavr77@gmail.com>, 2013.
+# Ana Carolina Vera Resquín <ani.tavr77@gmail.com>, 2013.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-10 21:50+0000\n"
-"PO-Revision-Date: 2013-03-03 12:18-0700\n"
-"Last-Translator: Ana Vera Resquín <ani.tavr77@gmail.com>\n"
+"POT-Creation-Date: 2019-07-04 10:30+0000\n"
+"PO-Revision-Date: 2019-07-04 11:44+0100\n"
+"Last-Translator: Ana Carolina Vera Resquín <ani.tavr77@gmail.com>\n"
 "Language-Team: Spanish <ani.tavr77@gmail.com>\n"
-"Language: Spanish \n"
+"Language: Spanish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.5.4\n"
 
 #: base/templates/admin/console.html:5 base/templates/admin/console.html:17
 #: base/templates/admin/overview.html:14
 msgid "Admin Console"
-msgstr ""
+msgstr "Consola de administración"
 
 #: base/templates/admin/console.html:19
 msgid "Current number of user sessions:"
-msgstr ""
+msgstr "Número actual de sesiones conectadas"
 
 #: base/templates/admin/console.html:21
 msgid "Send a system message to all connected users:"
-msgstr ""
+msgstr "Enviar un mensaje del sistema a todos los usuarios conectados:"
 
 #: base/templates/admin/console.html:25
-#, fuzzy
 msgid "Message"
 msgstr "Mensaje"
 
@@ -39,30 +39,29 @@ msgstr "Mensaje"
 msgid ""
 "This system will go offline for scheduled maintenance in 30 minutes. All "
 "your work will be saved automatically and we will be back shortly."
-msgstr ""
+msgstr "El sistema se desconectará para mantenimiento en 30 minutos"
 
 #: base/templates/admin/console.html:34
 msgid "Send to connected users"
-msgstr ""
+msgstr "Enviar a usuarios conectados"
 
 #: base/templates/admin/overview.html:10
 msgid "Extras"
-msgstr ""
+msgstr "Extras"
 
 #: base/templates/admin/overview.html:17
-#: document/templates/admin/document/maintenance.html:17
-#, fuzzy
+#: document/templates/admin/document/maintenance.html:18
 msgid "Document Maintenance"
-msgstr "Documentos"
+msgstr "Mantenimiento de documento"
 
-#: base/templates/app.html:11 user/templates/account/base.html:7
+#: base/templates/app.html:11
 msgid "The all in one solution for collaborative academic writing."
 msgstr "La herramienta perfecta para redactar textos académicos."
 
 #: browser_check/templates/browser_check/browser_not_supported.html:4
 #: browser_check/templates/browser_check/browser_not_supported.html:27
 msgid "Browser not supported"
-msgstr ""
+msgstr "Navegador no compatible"
 
 #: browser_check/templates/browser_check/browser_not_supported.html:28
 msgid ""
@@ -73,29 +72,31 @@ msgid ""
 "                desktop computer.\n"
 "            "
 msgstr ""
+"\n"
+"                Su navegador no es compatible con Fidus Writer.\n"
+"                Por favor actualice! Recomendamos usar una versión\n"
+"                actual de Chrome/Chromium o de Firefox en una computadora.\n"
+"                "
 
 #: document/admin.py:45
-#, fuzzy
-#| msgid "Export the document to an HTML file"
 msgid "Duplicate selected document templates"
-msgstr "Exportar el documento a un archivo HTML"
+msgstr "Duplicar la plantilla seleccionada"
 
-#: document/models.py:86
+#: document/models.py:120
 msgid "Standard Article"
-msgstr ""
+msgstr "Artículo estándar"
 
 #: document/templates/admin/document/document/change_list_object_tools.html:8
-#, fuzzy, python-format
-#| msgid "Added %(name)s \"%(object)s\"."
+#, python-format
 msgid "Add %(name)s"
-msgstr "Añadido %(name)s \"%(object)s\"."
+msgstr "Añadir %(name)s"
 
 #: document/templates/admin/document/document/change_list_object_tools.html:13
 #: document/templates/admin/document/maintenance.html:5
 msgid "Maintenance"
-msgstr ""
+msgstr "Mantenimiento"
 
-#: document/templates/admin/document/maintenance.html:19
+#: document/templates/admin/document/maintenance.html:20
 msgid ""
 "\n"
 "            Before and after upgrading Fidus Writer, you should update all "
@@ -105,58 +106,53 @@ msgid ""
 "            no user is currently editing any document!\n"
 "            "
 msgstr ""
+"\n"
+"            Antes y después de actualizar Fidus Writer, debe actualizar "
+"todos los documentos\n"
+"           de todos los usuarios a la versión más reciente de documentos. "
+"Solo haga esto si\n"
+"           sabe que ningún usuario está editando ningún documento\n"
+"          "
 
-#: document/templates/admin/document/maintenance.html:27
+#: document/templates/admin/document/maintenance.html:28
 msgid "Update all documents (DANGER!)"
-msgstr ""
+msgstr "Actualizar todos lo documentos (¡PELIGRO!)"
 
-#: document/views.py:209 document/views.py:624
-#, fuzzy
+#: document/views.py:212 document/views.py:627
 msgid "Untitled"
-msgstr "Subtítulo"
+msgstr "Sin título"
 
-#: document/views.py:280 document/views.py:710
-#, fuzzy
-#| msgid "Documents"
+#: document/views.py:283 document/views.py:713
 msgid "Document"
-msgstr "Documentos"
+msgstr "Documento"
 
-#: document/views.py:282 document/views.py:712
+#: document/views.py:285 document/views.py:715
 msgid "Author"
 msgstr "Autor"
 
-#: document/views.py:284
-#, fuzzy
-#| msgid "Define access rights"
+#: document/views.py:287
 msgid "Access Rights"
-msgstr "Define derechos de acceso"
+msgstr "Derechos de acceso"
 
-#: document/views.py:287 document/views.py:717
-#, fuzzy
-#| msgid "edit documents"
+#: document/views.py:290 document/views.py:720
 msgid "Access the document"
-msgstr "editar documentos"
+msgstr "Acceder al documento"
 
-#: document/views.py:290
-#, fuzzy
+#: document/views.py:293
 msgid "Document shared:"
-msgstr "Documentos"
+msgstr "Documento  compartido"
 
-#: document/views.py:650
-#, fuzzy
+#: document/views.py:653
 msgid "Comment on :"
-msgstr "Comentarios"
+msgstr "Comentaria a:"
 
-#: document/views.py:671
-#, fuzzy
+#: document/views.py:674
 msgid "Comment assignment on :"
-msgstr "Comentarios"
+msgstr "Comentario asignado en :"
 
-#: document/views.py:714
-#, fuzzy
-#| msgid "Comments"
+#: document/views.py:717
 msgid "Comment"
-msgstr "Comentarios"
+msgstr "Comentario"
 
 #: fiduswriter/settings.py:226
 msgid "English"
@@ -183,57 +179,24 @@ msgid "Spanish"
 msgstr "Español"
 
 #: fiduswriter/settings.py:232
-#, fuzzy
-#| msgid "Portuguese"
 msgid "Portuguese (Brazil)"
-msgstr "Portugués"
+msgstr "Portugués (Brasil)"
 
-#: fiduswriter/settings.py:335
-#, fuzzy
+#: fiduswriter/settings.py:340
 msgid "Fidus Writer Admin"
-msgstr "editar documentos"
+msgstr "Administrar Fidus Writer"
 
-#: fiduswriter/settings.py:336
-#, fuzzy
+#: fiduswriter/settings.py:341
 msgid "Fidus Writer Administration Site"
-msgstr "editar documentos"
+msgstr "Sitio de administración de Fidus  Writer"
 
-#: fiduswriter/settings.py:337
+#: fiduswriter/settings.py:342
 msgid "Welcome to the Fidus Writer Administration Site"
-msgstr ""
+msgstr "Bienvenido al sitio de administración de Fidus Writer"
 
 #: style/models.py:36 style/models.py:61
-#, fuzzy
-#| msgid "Default Avatar"
 msgid "Default"
-msgstr "Imagen de perfil predeterminada"
-
-#: user/templates/account/base.html:55 user/templates/account/login.html:7
-#: user/templates/account/signup.html:9
-msgid "Log In"
-msgstr "Iniciar sesión"
-
-#: user/templates/account/base.html:74
-msgid "Terms and Conditions"
-msgstr "Términos y Condiciones"
-
-#: user/templates/account/base.html:79
-msgid "Privacy policy"
-msgstr ""
-
-#: user/templates/account/base.html:84
-#, fuzzy
-#| msgid "Equations and Math by mathjax"
-msgid "Equations and Math with MathLive"
-msgstr "Matemáticas con mathjax"
-
-#: user/templates/account/base.html:89
-msgid "Citations with Citation Style Language"
-msgstr "Estilos de citaciones con CSL"
-
-#: user/templates/account/base.html:94
-msgid "Editing with ProseMirror"
-msgstr ""
+msgstr "Predeterminado"
 
 #: user/templates/account/email/email_confirmation_message.html:7
 #: user/templates/account/email/password_reset_key_message.html:7
@@ -292,186 +255,169 @@ msgstr ""
 msgid "In case you forgot, your username is %(username)s."
 msgstr ""
 
-#: user/templates/account/email_confirm.html:8
-msgid "Confirm E-mail Address"
-msgstr "Confirmar Correo electrónico"
-
-#: user/templates/account/login.html:8
-#: user/templates/account/password_reset.html:7
-msgid "New here?"
-msgstr "¿Nuevo usuario?"
-
-#: user/templates/account/login.html:10
-#: user/templates/account/password_reset.html:9
-#: user/templates/account/signup.html:13 user/templates/account/signup.html:51
-msgid "Sign up"
-msgstr "Regístrate"
-
-#: user/templates/account/login.html:18 user/templates/account/login.html:69
-msgid "Log in"
-msgstr "Inicia sesión"
-
-#: user/templates/account/login.html:26
-#, fuzzy, python-format
-msgid ""
-"\n"
-"        If you are new here, please <a href=\"%(signup_url)s\" title=\"Sign "
-"up for %(site_name)s\">sign up</a> or use one of the login options below to "
-"create an account.\n"
-"        "
-msgstr ""
-"\n"
-"        Por favor inicia sesión utilizando una cuenta con uno de estos "
-"proveedores o tu cuenta de Fidus Writer.<br/>\n"
-"        ¿Sos nuevo?, por favor, <a href=\"%(signup_url)s\" title="
-"\"Regístrate para %(site_name)s\">regístrate</a>.\n"
-"        "
-
-#: user/templates/account/login.html:37
-msgid "Login with"
-msgstr "Inicia sesión con"
-
-#: user/templates/account/login.html:46
-#, fuzzy, python-format
-msgid ""
-"\n"
-"        If you are new here, please <a href=\"%(signup_url)s\" title=\"Sign "
-"up for %(site_name)s\">sign up</a>.\n"
-"        "
-msgstr ""
-"\n"
-"        Por favor inicia sesión utilizando una cuenta con uno de estos "
-"proveedores o tu cuenta de Fidus Writer.<br/>\n"
-"        ¿Sos nuevo?, por favor, <a href=\"%(signup_url)s\" title="
-"\"Regístrate para %(site_name)s\">regístrate</a>.\n"
-"        "
-
-#: user/templates/account/login.html:58
-msgid "Username"
-msgstr "Usuario"
-
-#: user/templates/account/login.html:62
-msgid "Password"
-msgstr "Contraseña"
-
-#: user/templates/account/login.html:72
-msgid "Remember me"
-msgstr "Recuerda tu contraseña"
-
-#: user/templates/account/login.html:74
-msgid "Forgot Password?"
-msgstr "¿Olvidaste tu Contraseña?"
-
-#: user/templates/account/password_reset.html:6
-#: user/templates/account/password_reset.html:13
-msgid "Password reset"
-msgstr "Restablece tu contraseña"
-
-#: user/templates/account/password_reset.html:14
-#, fuzzy, python-format
-msgid ""
-"\n"
-"    <p>Forgotten your password? Enter your e-mail address in the form, and "
-"we'll send you an e-mail allowing you to reset it.</p>\n"
-"    <p>If you have any trouble resetting your password, please <a href="
-"\"mailto:%(CONTACT_EMAIL)s\">contact us</a>.</p>\n"
-"    "
-msgstr ""
-"\n"
-"    <p>Olvidaste tu contraseña? Ingresá tu correo electrónico abajo, y te "
-"enviaremos un correo que te permita restablecerla.</p>\n"
-"    <p>Si tienes algún problema haciéndolo, por favor <a href=\"mailto:"
-"mail@fiduswriter.com\">contáctanos</a>.</p>\n"
-"    "
-
-#: user/templates/account/password_reset.html:28
-#: user/templates/account/signup.html:44
-msgid "E-mail address"
-msgstr "Correo electrónico"
-
-#: user/templates/account/password_reset.html:32
-msgid "Reset My Password"
-msgstr "Restablecer Mi Contraseña"
-
-#: user/templates/account/signup.html:6
-msgid "Sign Up"
-msgstr "Regístrate"
-
-#: user/templates/account/signup.html:7
-msgid "Already have an account"
-msgstr "Ya tienes una cuenta"
-
-#: user/templates/account/signup.html:15
-#, python-format
-msgid ""
-"\n"
-"        Already have an account? Then please <a href=\"%(login_url)s\" title="
-"\"Login to %(site_name)s\">login</a>.\n"
-"        "
-msgstr ""
-"\n"
-"        ¿Ya tienes una cuenta? Entonces <a href=\"%(login_url)s\" title="
-"\"Inicia sesión en %(site_name)s\">inicia sesión</a>.\n"
-"        "
-
-#: user/templates/account/signup.html:29
-msgid "Choose your username"
-msgstr "Escoge tu usuario"
-
-#: user/templates/account/signup.html:34
-msgid "Create a password"
-msgstr "Crea una contraseña"
-
-#: user/templates/account/signup.html:39
-msgid "Confirm your password"
-msgstr "Confirma tu contraseña"
-
-#: user/templates/account/signup_closed.html:5
-#: user/templates/account/signup_closed.html:9
-msgid "Sign Up Closed"
-msgstr "La inscripción está cerrada"
-
-#: user/templates/account/signup_closed.html:10
-msgid "We are sorry, but the sign up is currently closed."
-msgstr "Lo sentimos, pero la inscripción está cerrada."
-
-#: user/templates/account/verification_sent.html:5
-#: user/templates/account/verification_sent.html:9
-msgid "Verify Your E-mail Address"
-msgstr "Verifique su dirección de Correo Electrónico"
-
-#: user/templates/account/verification_sent.html:12
-#, python-format
-msgid ""
-"\n"
-"        We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</a> "
-"for verification.\n"
-"        Follow the link provided to finalize the signup process.\n"
-"        <br />\n"
-"        Please contact us if you do not receive it within a few minutes.\n"
-"        "
-msgstr ""
-"\n"
-"\tTe hemos enviado un correo a <a href=\"mailto:%(email)s\">%(email)s</a> "
-"para la verificación.\n"
-"\tSigue el enlace para completar el proceso de registro.\n"
-"\t<br />\n"
-"        Por favor, contactanos si no lo recibes dentro de unos minutos.\n"
-"        "
-
 #: usermedia/views.py:34
 msgid "Filetype not supported"
-msgstr ""
+msgstr "No se admite el tipo  de archivo"
 
 #: usermedia/views.py:60
 msgid "No file uploaded"
-msgstr ""
+msgstr "Ningún archivo subido"
+
+#~ msgid "Terms and Conditions"
+#~ msgstr "Términos y Condiciones"
+
+#~ msgid "Privacy policy"
+#~ msgstr "Política de privacidad"
+
+#~| msgid "Equations and Math by mathjax"
+#~ msgid "Equations and Math by KaTeX"
+#~ msgstr "Ecuaciones y matemáticas con KaTex"
+
+#~ msgid "Citations with Citation Style Language"
+#~ msgstr "Citaciones con Citation Style Language"
+
+#~ msgid "Editing with ProseMirror"
+#~ msgstr "Editar con ProseMirror"
+
+#~ msgid "Log In"
+#~ msgstr "Iniciar sesión"
+
+#~ msgid "Confirm E-mail Address"
+#~ msgstr "Confirmar correo electrónico"
+
+#~ msgid "New here?"
+#~ msgstr "¿Usuario nuevo?"
+
+#~ msgid "Sign up"
+#~ msgstr "Registrarse"
+
+#~ msgid "Log in"
+#~ msgstr "Iniciar sesión"
+
+#~ msgid ""
+#~ "\n"
+#~ "        If you are new here, please <a href=\"%(signup_url)s\" title="
+#~ "\"Sign up for %(site_name)s\">sign up</a> or use one of the login options "
+#~ "below to create an account.\n"
+#~ "        "
+#~ msgstr ""
+#~ "\n"
+#~ "        Si eres nuevo, por favor <a href=\"%(signup_url)s\" title="
+#~ "\"Regístrate en %(site_name)s\">regístrate</a> o utiliza uno de estos "
+#~ "proveedores para crear una cuenta.\n"
+#~ "        "
+
+#~ msgid "Login with"
+#~ msgstr "Iniciar sesión con"
+
+#~ msgid ""
+#~ "\n"
+#~ "        If you are new here, please <a href=\"%(signup_url)s\" title="
+#~ "\"Sign up for %(site_name)s\">sign up</a>.\n"
+#~ "        "
+#~ msgstr ""
+#~ "\n"
+#~ "        Si eres nuevo, por favor  <a href=\"%(signup_url)s\" title="
+#~ "\"Regístrate en %(site_name)s\">regístrate</a>.\n"
+#~ "        "
+
+#~ msgid "Username"
+#~ msgstr "Usuario"
+
+#~ msgid "Password"
+#~ msgstr "Contraseña"
+
+# Se refiere  a la contraseña? está bien la traducción?
+#~ msgid "Remember me"
+#~ msgstr "Recordar contraseña"
+
+#~ msgid "Forgot Password?"
+#~ msgstr "¿Olvidaste tu contraseña?"
 
 #~ msgid "Sign Out"
 #~ msgstr "Regístrate"
 
 #~ msgid "Are you sure you want to sign out?"
-#~ msgstr "¿Estás seguro que deseas cerrar la sesión?"
+#~ msgstr "¿Estás seguro que deseas cerrar sesión?"
+
+#~ msgid "Password reset"
+#~ msgstr "Restablecer contraseña"
+
+#~ msgid ""
+#~ "\n"
+#~ "    <p>Forgotten your password? Enter your e-mail address below, and "
+#~ "we'll send you an e-mail allowing you to reset it.</p>\n"
+#~ "    <p>If you have any trouble resetting your password, please <a href="
+#~ "\"mailto:%(CONTACT_EMAIL)s\">contact us</a>.</p>\n"
+#~ "    "
+#~ msgstr ""
+#~ "\n"
+#~ "    <p>¿Olvidaste tu contraseña? Ingresa tu correo electrónico a "
+#~ "continuación y te enviaremos un correo para restablecer tu contraseña.</"
+#~ "p>\n"
+#~ "    <p>Si tienes algún problema haciéndolo, por favor <a href=\"mailto:"
+#~ "%(CONTACT_EMAIL)s\">contáctanos</a>.</p>\n"
+#~ "    "
+
+#~ msgid "E-mail address"
+#~ msgstr "Correo electrónico"
+
+#~ msgid "Reset My Password"
+#~ msgstr "Restablecer mi contraseña"
+
+#~ msgid "Sign Up"
+#~ msgstr "Regístrate"
+
+#~ msgid "Already have an account"
+#~ msgstr "Ya tienes una cuenta"
+
+#~ msgid ""
+#~ "\n"
+#~ "        Already have an account? Then please <a href=\"%(login_url)s\" "
+#~ "title=\"Login to %(site_name)s\">login</a>.\n"
+#~ "        "
+#~ msgstr ""
+#~ "\n"
+#~ "        ¿Ya tienes una cuenta? Entonces, por favor <a href=\"%(login_url)s"
+#~ "\" title=\"Inicia sesión en %(site_name)s\">inicia sesión</a>.\n"
+#~ "        "
+
+#~ msgid "Choose your username"
+#~ msgstr "Escoge tu usuario"
+
+#~ msgid "Create a password"
+#~ msgstr "Crea una contraseña"
+
+#~ msgid "Confirm your password"
+#~ msgstr "Confirma tu contraseña"
+
+# No suena bien ni claro. Alternativa?
+# No puedes registrarte. El registro está cerrado.
+#~ msgid "Sign Up Closed"
+#~ msgstr "El registro está cerrado"
+
+#~ msgid "We are sorry, but the sign up is currently closed."
+#~ msgstr "Lo sentimos, pero el registro está cerrado."
+
+#~ msgid "Verify Your E-mail Address"
+#~ msgstr "Verifica tu dirección de correo electrónico"
+
+#~ msgid ""
+#~ "\n"
+#~ "        We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</"
+#~ "a> for verification.\n"
+#~ "        Follow the link provided to finalize the signup process.\n"
+#~ "        <br />\n"
+#~ "        Please contact us if you do not receive it within a few minutes.\n"
+#~ "        "
+#~ msgstr ""
+#~ "\n"
+#~ "        Te hemos enviado un correo  de verificación a <a href=\"mailto:"
+#~ "%(email)s\">%(email)s</a>\n"
+#~ "        Sigue el enlace para completar el proceso de registro.\n"
+#~ "        <br />\n"
+#~ "        Por favor, contáctanos si no lo recibes dentro de unos minutos.\n"
+#~ "        "
 
 #~ msgid "Edit profile"
 #~ msgstr "Edita tu perfil"
@@ -527,7 +473,6 @@ msgstr ""
 #~ msgid "Document Overview"
 #~ msgstr "Lista de Documentos"
 
-#, fuzzy
 #~| msgid "Thank you for your comment!"
 #~ msgid "Thank you for your report!"
 #~ msgstr "¡Gracias por tu comentario!"
@@ -693,7 +638,6 @@ msgstr ""
 #~ msgid "Download"
 #~ msgstr "Descargar"
 
-#, fuzzy
 #~| msgid "Either print or create a PDF using your browser's print dialog"
 #~ msgid "Either print or create a PDF using your browser print dialog"
 #~ msgstr ""
@@ -806,7 +750,6 @@ msgstr ""
 #~ msgid "By authors"
 #~ msgstr "Autor"
 
-#, fuzzy
 #~| msgid "Username"
 #~ msgid "By username"
 #~ msgstr "Usuario"
@@ -862,22 +805,18 @@ msgstr ""
 #~ msgid "Upload Fidus Book"
 #~ msgstr "Subir Libro Fidus"
 
-#, fuzzy
 #~| msgid "Register new source"
 #~ msgid "Register journals"
 #~ msgstr "Registrar nueva fuente"
 
-#, fuzzy
 #~| msgid "edit documents"
 #~ msgid "maintenance documents"
 #~ msgstr "editar documentos"
 
-#, fuzzy
 #~| msgid "Document Style"
 #~ msgid "Document Update"
 #~ msgstr "Estilo del Documento"
 
-#, fuzzy
 #~| msgid "Save the current document"
 #~ msgid "remove current column."
 #~ msgstr "Guardar este documento"
@@ -886,7 +825,6 @@ msgstr ""
 #~ msgid "remove column"
 #~ msgstr "Borrar de mi equipo"
 
-#, fuzzy
 #~| msgid "Remove"
 #~ msgid "remove row"
 #~ msgstr "Eliminar"

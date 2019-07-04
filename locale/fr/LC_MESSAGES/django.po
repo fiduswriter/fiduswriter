@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-10 21:50+0000\n"
+"POT-Creation-Date: 2019-07-04 10:30+0000\n"
 "PO-Revision-Date: 2016-06-17 15:21+0200\n"
 "Last-Translator: Nicolas Rochard <nrochard@gmail.com>\n"
 "Language-Team: français <nrochard@gmail.com>\n"
@@ -50,13 +50,13 @@ msgid "Extras"
 msgstr ""
 
 #: base/templates/admin/overview.html:17
-#: document/templates/admin/document/maintenance.html:17
+#: document/templates/admin/document/maintenance.html:18
 #, fuzzy
 #| msgid "Document Style"
 msgid "Document Maintenance"
 msgstr "Style de Document"
 
-#: base/templates/app.html:11 user/templates/account/base.html:7
+#: base/templates/app.html:11
 msgid "The all in one solution for collaborative academic writing."
 msgstr "La solution tout en un pour l'écriture académique collaborative."
 
@@ -81,7 +81,7 @@ msgstr ""
 msgid "Duplicate selected document templates"
 msgstr "Exporter le document en fichier HTML"
 
-#: document/models.py:86
+#: document/models.py:120
 msgid "Standard Article"
 msgstr ""
 
@@ -95,7 +95,7 @@ msgstr ""
 msgid "Maintenance"
 msgstr ""
 
-#: document/templates/admin/document/maintenance.html:19
+#: document/templates/admin/document/maintenance.html:20
 msgid ""
 "\n"
 "            Before and after upgrading Fidus Writer, you should update all "
@@ -106,53 +106,53 @@ msgid ""
 "            "
 msgstr ""
 
-#: document/templates/admin/document/maintenance.html:27
+#: document/templates/admin/document/maintenance.html:28
 msgid "Update all documents (DANGER!)"
 msgstr ""
 
-#: document/views.py:209 document/views.py:624
+#: document/views.py:212 document/views.py:627
 msgid "Untitled"
 msgstr "Sans Titre"
 
-#: document/views.py:280 document/views.py:710
+#: document/views.py:283 document/views.py:713
 #, fuzzy
 #| msgid "Documents"
 msgid "Document"
 msgstr "Documents"
 
-#: document/views.py:282 document/views.py:712
+#: document/views.py:285 document/views.py:715
 msgid "Author"
 msgstr "Auteur"
 
-#: document/views.py:284
+#: document/views.py:287
 #, fuzzy
 #| msgid "Rights"
 msgid "Access Rights"
 msgstr "Droits"
 
-#: document/views.py:287 document/views.py:717
+#: document/views.py:290 document/views.py:720
 #, fuzzy
 #| msgid "edit documents"
 msgid "Access the document"
 msgstr "éditer les documents"
 
-#: document/views.py:290
+#: document/views.py:293
 msgid "Document shared:"
 msgstr "Document partagé:"
 
-#: document/views.py:650
+#: document/views.py:653
 #, fuzzy
 #| msgid "Comment"
 msgid "Comment on :"
 msgstr "Commentaire"
 
-#: document/views.py:671
+#: document/views.py:674
 #, fuzzy
 #| msgid "Comment"
 msgid "Comment assignment on :"
 msgstr "Commentaire"
 
-#: document/views.py:714
+#: document/views.py:717
 #, fuzzy
 #| msgid "Comments"
 msgid "Comment"
@@ -186,52 +186,25 @@ msgstr "Espagnol"
 msgid "Portuguese (Brazil)"
 msgstr ""
 
-#: fiduswriter/settings.py:335
+#: fiduswriter/settings.py:340
 #, fuzzy
 #| msgid "Fidus Writer document write access"
 msgid "Fidus Writer Admin"
 msgstr "Droits d'écriture du document Fidus Writer"
 
-#: fiduswriter/settings.py:336
+#: fiduswriter/settings.py:341
 #, fuzzy
 #| msgid "Fidus Writer document write access"
 msgid "Fidus Writer Administration Site"
 msgstr "Droits d'écriture du document Fidus Writer"
 
-#: fiduswriter/settings.py:337
+#: fiduswriter/settings.py:342
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr ""
 
 #: style/models.py:36 style/models.py:61
 msgid "Default"
 msgstr ""
-
-#: user/templates/account/base.html:55 user/templates/account/login.html:7
-#: user/templates/account/signup.html:9
-msgid "Log In"
-msgstr "Connexion"
-
-#: user/templates/account/base.html:74
-msgid "Terms and Conditions"
-msgstr "Termes et Conditions"
-
-#: user/templates/account/base.html:79
-msgid "Privacy policy"
-msgstr ""
-
-#: user/templates/account/base.html:84
-#, fuzzy
-#| msgid "Equations and Math by KaTeX"
-msgid "Equations and Math with MathLive"
-msgstr "Équations et Math par KaTeX"
-
-#: user/templates/account/base.html:89
-msgid "Citations with Citation Style Language"
-msgstr "Citations avec Citation Style Language"
-
-#: user/templates/account/base.html:94
-msgid "Editing with ProseMirror"
-msgstr "Édité avec ProseMirror"
 
 #: user/templates/account/email/email_confirmation_message.html:7
 #: user/templates/account/email/password_reset_key_message.html:7
@@ -289,181 +262,6 @@ msgstr ""
 msgid "In case you forgot, your username is %(username)s."
 msgstr ""
 
-#: user/templates/account/email_confirm.html:8
-msgid "Confirm E-mail Address"
-msgstr "Confirmer l'Adresse E-mail"
-
-#: user/templates/account/login.html:8
-#: user/templates/account/password_reset.html:7
-msgid "New here?"
-msgstr "Nouveau dans le coin?"
-
-#: user/templates/account/login.html:10
-#: user/templates/account/password_reset.html:9
-#: user/templates/account/signup.html:13 user/templates/account/signup.html:51
-msgid "Sign up"
-msgstr "S'inscrire"
-
-#: user/templates/account/login.html:18 user/templates/account/login.html:69
-msgid "Log in"
-msgstr "Se connecter"
-
-#: user/templates/account/login.html:26
-#, python-format
-msgid ""
-"\n"
-"        If you are new here, please <a href=\"%(signup_url)s\" title=\"Sign "
-"up for %(site_name)s\">sign up</a> or use one of the login options below to "
-"create an account.\n"
-"        "
-msgstr ""
-"\n"
-"        Si vous êtes nouveau ici, merci de vous <a href=\"%(signup_url)s\" "
-"title=\"Sign up for %(site_name)s\">inscrire</a> ou d'utiliser une des "
-"options suivantes pour créer un compte.\n"
-"        "
-
-#: user/templates/account/login.html:37
-msgid "Login with"
-msgstr "Connexion avec"
-
-#: user/templates/account/login.html:46
-#, python-format
-msgid ""
-"\n"
-"        If you are new here, please <a href=\"%(signup_url)s\" title=\"Sign "
-"up for %(site_name)s\">sign up</a>.\n"
-"        "
-msgstr ""
-"\n"
-"        Si vous êtes nouveau ici, veuillez vous <a href=\"%(signup_url)s\" "
-"title=\"Sign up for %(site_name)s\">inscrire</a>.\n"
-"        "
-
-#: user/templates/account/login.html:58
-msgid "Username"
-msgstr "Nom d'utilisateur"
-
-#: user/templates/account/login.html:62
-msgid "Password"
-msgstr "Mot de passe"
-
-#: user/templates/account/login.html:72
-msgid "Remember me"
-msgstr "Se souvenir de moi"
-
-#: user/templates/account/login.html:74
-msgid "Forgot Password?"
-msgstr "Mot de Passe Oublié?"
-
-#: user/templates/account/password_reset.html:6
-#: user/templates/account/password_reset.html:13
-msgid "Password reset"
-msgstr "Réinitialiser le Mot de Passe"
-
-#: user/templates/account/password_reset.html:14
-#, fuzzy, python-format
-#| msgid ""
-#| "\n"
-#| "    <p>Forgotten your password? Enter your e-mail address below, and "
-#| "we'll send you an e-mail allowing you to reset it.</p>\n"
-#| "    <p>If you have any trouble resetting your password, please <a href="
-#| "\"mailto:%(CONTACT_EMAIL)s\">contact us</a>.</p>\n"
-#| "    "
-msgid ""
-"\n"
-"    <p>Forgotten your password? Enter your e-mail address in the form, and "
-"we'll send you an e-mail allowing you to reset it.</p>\n"
-"    <p>If you have any trouble resetting your password, please <a href="
-"\"mailto:%(CONTACT_EMAIL)s\">contact us</a>.</p>\n"
-"    "
-msgstr ""
-"\n"
-"    <p>Mot de passe oublié? Entrez votre adresse emailEnter your e-mail "
-"address en dessous, et nous vous enverrons un email pour le réinitialiser.</"
-"p>\n"
-"    <p>Si vous rencontrez des difficultés à réinitialiser votre mot de "
-"passe, merci de <a href=\"mailto:%(CONTACT_EMAIL)s\">nous contacter</a>.</"
-"p>\n"
-"    "
-
-#: user/templates/account/password_reset.html:28
-#: user/templates/account/signup.html:44
-msgid "E-mail address"
-msgstr "Adresse E-mail"
-
-#: user/templates/account/password_reset.html:32
-msgid "Reset My Password"
-msgstr "Réinitialiser Mon Mot de Passe"
-
-#: user/templates/account/signup.html:6
-msgid "Sign Up"
-msgstr "S'inscrire"
-
-#: user/templates/account/signup.html:7
-msgid "Already have an account"
-msgstr "Vous avez déjà un compte"
-
-#: user/templates/account/signup.html:15
-#, python-format
-msgid ""
-"\n"
-"        Already have an account? Then please <a href=\"%(login_url)s\" title="
-"\"Login to %(site_name)s\">login</a>.\n"
-"        "
-msgstr ""
-"\n"
-"        Vous avez déjà un compte ? Merci de vous <a href=\"%(login_url)s\" "
-"title=\"Login to %(site_name)s\">identifier</a>.\n"
-"        "
-
-#: user/templates/account/signup.html:29
-msgid "Choose your username"
-msgstr "Choisissez votre nom d'utilisateur"
-
-#: user/templates/account/signup.html:34
-msgid "Create a password"
-msgstr "Créer un mot de passe"
-
-#: user/templates/account/signup.html:39
-msgid "Confirm your password"
-msgstr "Confirmez votre mot de passe"
-
-#: user/templates/account/signup_closed.html:5
-#: user/templates/account/signup_closed.html:9
-msgid "Sign Up Closed"
-msgstr "Enregistrement Fermé"
-
-#: user/templates/account/signup_closed.html:10
-msgid "We are sorry, but the sign up is currently closed."
-msgstr "Nous sommes désolés, mais les inscriptions sont actuellement fermées."
-
-#: user/templates/account/verification_sent.html:5
-#: user/templates/account/verification_sent.html:9
-msgid "Verify Your E-mail Address"
-msgstr "Vérifiez Votre Adresse E-mail"
-
-#: user/templates/account/verification_sent.html:12
-#, python-format
-msgid ""
-"\n"
-"        We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</a> "
-"for verification.\n"
-"        Follow the link provided to finalize the signup process.\n"
-"        <br />\n"
-"        Please contact us if you do not receive it within a few minutes.\n"
-"        "
-msgstr ""
-"\n"
-"        Nous avons envoyé un email de vérification à <a href=\"mailto:"
-"%(email)s\">%(email)s</a>.\n"
-"        Suivez le lien indiqué pour finaliser votre processus "
-"d'inscription.\n"
-"        <br />\n"
-"        Merci de vous contacter si vous ne recevez rien d'ici quelques "
-"minutes.\n"
-"        "
-
 #: usermedia/views.py:34
 msgid "Filetype not supported"
 msgstr ""
@@ -471,6 +269,163 @@ msgstr ""
 #: usermedia/views.py:60
 msgid "No file uploaded"
 msgstr ""
+
+#~ msgid "Log In"
+#~ msgstr "Connexion"
+
+#~ msgid "Terms and Conditions"
+#~ msgstr "Termes et Conditions"
+
+#, fuzzy
+#~| msgid "Equations and Math by KaTeX"
+#~ msgid "Equations and Math with MathLive"
+#~ msgstr "Équations et Math par KaTeX"
+
+#~ msgid "Citations with Citation Style Language"
+#~ msgstr "Citations avec Citation Style Language"
+
+#~ msgid "Editing with ProseMirror"
+#~ msgstr "Édité avec ProseMirror"
+
+#~ msgid "Confirm E-mail Address"
+#~ msgstr "Confirmer l'Adresse E-mail"
+
+#~ msgid "New here?"
+#~ msgstr "Nouveau dans le coin?"
+
+#~ msgid "Sign up"
+#~ msgstr "S'inscrire"
+
+#~ msgid "Log in"
+#~ msgstr "Se connecter"
+
+#~ msgid ""
+#~ "\n"
+#~ "        If you are new here, please <a href=\"%(signup_url)s\" title="
+#~ "\"Sign up for %(site_name)s\">sign up</a> or use one of the login options "
+#~ "below to create an account.\n"
+#~ "        "
+#~ msgstr ""
+#~ "\n"
+#~ "        Si vous êtes nouveau ici, merci de vous <a href=\"%(signup_url)s"
+#~ "\" title=\"Sign up for %(site_name)s\">inscrire</a> ou d'utiliser une des "
+#~ "options suivantes pour créer un compte.\n"
+#~ "        "
+
+#~ msgid "Login with"
+#~ msgstr "Connexion avec"
+
+#~ msgid ""
+#~ "\n"
+#~ "        If you are new here, please <a href=\"%(signup_url)s\" title="
+#~ "\"Sign up for %(site_name)s\">sign up</a>.\n"
+#~ "        "
+#~ msgstr ""
+#~ "\n"
+#~ "        Si vous êtes nouveau ici, veuillez vous <a href=\"%(signup_url)s"
+#~ "\" title=\"Sign up for %(site_name)s\">inscrire</a>.\n"
+#~ "        "
+
+#~ msgid "Username"
+#~ msgstr "Nom d'utilisateur"
+
+#~ msgid "Password"
+#~ msgstr "Mot de passe"
+
+#~ msgid "Remember me"
+#~ msgstr "Se souvenir de moi"
+
+#~ msgid "Forgot Password?"
+#~ msgstr "Mot de Passe Oublié?"
+
+#~ msgid "Password reset"
+#~ msgstr "Réinitialiser le Mot de Passe"
+
+#, fuzzy
+#~| msgid ""
+#~| "\n"
+#~| "    <p>Forgotten your password? Enter your e-mail address below, and "
+#~| "we'll send you an e-mail allowing you to reset it.</p>\n"
+#~| "    <p>If you have any trouble resetting your password, please <a href="
+#~| "\"mailto:%(CONTACT_EMAIL)s\">contact us</a>.</p>\n"
+#~| "    "
+#~ msgid ""
+#~ "\n"
+#~ "    <p>Forgotten your password? Enter your e-mail address in the form, "
+#~ "and we'll send you an e-mail allowing you to reset it.</p>\n"
+#~ "    <p>If you have any trouble resetting your password, please <a href="
+#~ "\"mailto:%(CONTACT_EMAIL)s\">contact us</a>.</p>\n"
+#~ "    "
+#~ msgstr ""
+#~ "\n"
+#~ "    <p>Mot de passe oublié? Entrez votre adresse emailEnter your e-mail "
+#~ "address en dessous, et nous vous enverrons un email pour le réinitialiser."
+#~ "</p>\n"
+#~ "    <p>Si vous rencontrez des difficultés à réinitialiser votre mot de "
+#~ "passe, merci de <a href=\"mailto:%(CONTACT_EMAIL)s\">nous contacter</a>.</"
+#~ "p>\n"
+#~ "    "
+
+#~ msgid "E-mail address"
+#~ msgstr "Adresse E-mail"
+
+#~ msgid "Reset My Password"
+#~ msgstr "Réinitialiser Mon Mot de Passe"
+
+#~ msgid "Sign Up"
+#~ msgstr "S'inscrire"
+
+#~ msgid "Already have an account"
+#~ msgstr "Vous avez déjà un compte"
+
+#~ msgid ""
+#~ "\n"
+#~ "        Already have an account? Then please <a href=\"%(login_url)s\" "
+#~ "title=\"Login to %(site_name)s\">login</a>.\n"
+#~ "        "
+#~ msgstr ""
+#~ "\n"
+#~ "        Vous avez déjà un compte ? Merci de vous <a href=\"%(login_url)s"
+#~ "\" title=\"Login to %(site_name)s\">identifier</a>.\n"
+#~ "        "
+
+#~ msgid "Choose your username"
+#~ msgstr "Choisissez votre nom d'utilisateur"
+
+#~ msgid "Create a password"
+#~ msgstr "Créer un mot de passe"
+
+#~ msgid "Confirm your password"
+#~ msgstr "Confirmez votre mot de passe"
+
+#~ msgid "Sign Up Closed"
+#~ msgstr "Enregistrement Fermé"
+
+#~ msgid "We are sorry, but the sign up is currently closed."
+#~ msgstr ""
+#~ "Nous sommes désolés, mais les inscriptions sont actuellement fermées."
+
+#~ msgid "Verify Your E-mail Address"
+#~ msgstr "Vérifiez Votre Adresse E-mail"
+
+#~ msgid ""
+#~ "\n"
+#~ "        We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</"
+#~ "a> for verification.\n"
+#~ "        Follow the link provided to finalize the signup process.\n"
+#~ "        <br />\n"
+#~ "        Please contact us if you do not receive it within a few minutes.\n"
+#~ "        "
+#~ msgstr ""
+#~ "\n"
+#~ "        Nous avons envoyé un email de vérification à <a href=\"mailto:"
+#~ "%(email)s\">%(email)s</a>.\n"
+#~ "        Suivez le lien indiqué pour finaliser votre processus "
+#~ "d'inscription.\n"
+#~ "        <br />\n"
+#~ "        Merci de vous contacter si vous ne recevez rien d'ici quelques "
+#~ "minutes.\n"
+#~ "        "
 
 #~ msgid "Sign Out"
 #~ msgstr "Déconnexion"

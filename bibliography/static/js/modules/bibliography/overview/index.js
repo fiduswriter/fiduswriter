@@ -58,7 +58,7 @@ export class BibliographyOverview {
     initTable(ids) {
         const tableEl = document.createElement('table')
         tableEl.id = "bibliography"
-        tableEl.classList.add('fw-document-table')
+        tableEl.classList.add('fw-data-table')
         tableEl.classList.add('fw-large')
         document.querySelector('.fw-contents').appendChild(tableEl)
 
@@ -112,7 +112,7 @@ export class BibliographyOverview {
             action: _overview => {
                 const trs = document.querySelectorAll('#bibliography > tbody > tr')
                 trs.forEach(tr => {
-                    if (tr.querySelector('.fw-document-table-title').classList.contains(`cat_${cat.id}`)) {
+                    if (tr.querySelector('.fw-data-table-title').classList.contains(`cat_${cat.id}`)) {
                         tr.style.display = ''
                     } else {
                         tr.style.display = 'none'
@@ -141,7 +141,7 @@ export class BibliographyOverview {
         return [
             String(id),
             `<input type="checkbox" class="entry-select fw-check" data-id="${id}" id="bib-${id}"><label for="bib-${id}"></label>`, // checkbox
-            `<span class="fw-document-table-title ${cats.join(' ')}">
+            `<span class="fw-data-table-title ${cats.join(' ')}">
                 <i class="fa fa-book"></i>
                 <span class="edit-bib fw-link-text fw-searchable" data-id="${id}">
                     ${bibInfo.fields.title ? escapeText(litToText(bibInfo.fields.title)) : gettext('Untitled')}

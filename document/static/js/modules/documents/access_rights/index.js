@@ -51,7 +51,7 @@ export class DocumentAccessRightsDialog {
                 click: () => {
                     addMemberDialog().then(
                         memberData => {
-                            document.querySelector('#my-contacts .fw-document-table-body').insertAdjacentHTML(
+                            document.querySelector('#my-contacts .fw-data-table-body').insertAdjacentHTML(
                                 'beforeend',
                                 accessRightTrTemplate({contacts: [memberData]})
                             )
@@ -107,7 +107,7 @@ export class DocumentAccessRightsDialog {
         this.dialog.dialogEl.querySelector('#add-share-member').addEventListener('click', () => {
             const selectedData = []
             document.querySelectorAll('#my-contacts .fw-checkable.checked').forEach(el => {
-                const memberId = el.getAttribute('data-id')
+                const memberId = parseInt(el.dataset.id)
                 const collaboratorEl = document.getElementById(`collaborator-${memberId}`)
                 if (collaboratorEl) {
                     if (collaboratorEl.dataset.right === 'delete') {
@@ -116,11 +116,12 @@ export class DocumentAccessRightsDialog {
                         collaboratorEl.dataset.right = 'read'
                     }
                 } else {
+                    const collaborator = this.contacts.find(contact => contact.id === memberId)
                     selectedData.push({
-                        'user_id': memberId,
-                        'user_name': el.dataset.name,
-                        'avatar': el.dataset.avatar,
-                        'rights': 'read'
+                        user_id: memberId,
+                        user_name: collaborator.name,
+                        avatar: collaborator.avatar,
+                        rights: 'read'
                     })
                 }
             })

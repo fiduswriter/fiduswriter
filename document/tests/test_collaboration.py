@@ -1048,7 +1048,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         # click on 'Use image' button
         WebDriverWait(driver, self.wait_time).until(
             EC.element_to_be_clickable(
-                (By.CSS_SELECTOR, '.fw-document-table i.fa-check')
+                (By.CSS_SELECTOR, '.fw-data-table i.fa-check')
             )
         )
 

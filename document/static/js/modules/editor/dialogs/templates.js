@@ -195,14 +195,14 @@ export const figureImageItemTemplate =  ({id, cats, image, thumbnail, title}) =>
 /** A template to select images inside the figure configuration dialog in the editor. */
 export const figureImageTemplate = ({imageDB}) =>
     `<div>
-        <table id="imagelist" class="tablesorter fw-document-table" style="width:342px;">
-            <thead class="fw-document-table-header">
+        <table id="imagelist" class="tablesorter fw-data-table" style="width:342px;">
+            <thead class="fw-data-table-header">
                 <tr>
                     <th width="50">${gettext("Image")}</th>
                     <th width="150">${gettext("Title")}</th>
                 </tr>
             </thead>
-            <tbody class="fw-document-table-body fw-small">
+            <tbody class="fw-data-table-body fw-small">
                 ${Object.values(imageDB).map(image => figureImageItemTemplate(image))}
             </tbody>
         </table>
@@ -309,13 +309,13 @@ export const configureCitationTemplate = ({citedItemsHTML, citeFormat}) =>
                 </select>
                 <div class="fw-select-arrow fa fa-caret-down"></div>
             </div>
-            <table id="selected-cite-source-table" class="fw-document-table tablesorter">
-                <thead class="fw-document-table-header"><tr>
+            <table id="selected-cite-source-table" class="fw-data-table tablesorter">
+                <thead class="fw-data-table-header"><tr>
                     <th width="135">${gettext("Title")}</th>
                     <th width="135">${gettext("Author")}</th>
                     <th width="50" align="center">${gettext("Remove")}</th>
                 </tr></thead>
-                <tbody class="fw-document-table-body fw-min">
+                <tbody class="fw-data-table-body fw-min">
                   ${citedItemsHTML}
                 </tbody>
             </table>
@@ -329,7 +329,7 @@ export const selectedCitationTemplate = ({title, author, id, db, prefix, locator
           <table class="fw-cite-parts-table">
               <tr>
                   <td width="135">
-                      <span class="fw-document-table-title fw-inline">
+                      <span class="fw-data-table-title fw-inline">
                           <i class="fa fa-book"></i>
                           <span data-id="${id}">
                               ${escapeText(title)}

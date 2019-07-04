@@ -4,9 +4,9 @@ import {escapeText} from "../../common"
 export const accessRightOverviewTemplate = ({contacts, collaborators}) =>
     `<div id="my-contacts" class="fw-ar-container">
         <h3 class="fw-green-title">${gettext("My contacts")}</h3>
-        <table class="fw-document-table">
-            <thead class="fw-document-table-header"><tr><th width="337">${gettext("Contacts")}</th></tr></thead>
-            <tbody class="fw-document-table-body fw-small">
+        <table class="fw-data-table">
+            <thead class="fw-data-table-header"><tr><th width="337">${gettext("Contacts")}</th></tr></thead>
+            <tbody class="fw-data-table-body fw-small">
                 ${accessRightTrTemplate({contacts})}
             </tbody>
         </table>
@@ -16,13 +16,13 @@ export const accessRightOverviewTemplate = ({contacts, collaborators}) =>
     </span>
     <div id="share-member" class="fw-ar-container">
         <h3 class="fw-green-title">${gettext("My collaborators")}</h3>
-        <table class="fw-document-table tablesorter">
-            <thead class="fw-document-table-header"><tr>
+        <table class="fw-data-table tablesorter">
+            <thead class="fw-data-table-header"><tr>
                     <th width="217">${gettext("Collaborators")}</th>
                     <th width="50" align="center">${gettext("Rights")}</th>
                     <th width="50" align="center">${gettext("Delete")}</th>
             </tr></thead>
-            <tbody class="fw-document-table-body fw-small">
+            <tbody class="fw-data-table-body fw-small">
                 ${collaboratorsTemplate({collaborators})}
             </tbody>
         </table>
@@ -32,20 +32,20 @@ export const accessRightOverviewTemplate = ({contacts, collaborators}) =>
 export const accessRightTrTemplate = ({contacts}) =>
     contacts.map(contact =>
         `<tr>
-            <td width="337" data-id="${contact.id}" data-avatar="${contact.avatar}" data-name="${escapeText(contact.name)}" class="fw-checkable fw-checkable-td">
-                <span><img class="fw-avatar" src="${contact.avatar}" /></span>
+            <td width="337" data-id="${contact.id}" class="fw-checkable fw-checkable-td">
+                <span>${contact.avatar.html}</span>
                 <span class="fw-inline">${escapeText(contact.name)}</span>
             </td>
         </tr>`
     ).join('')
 
-/** The template for an individual row in the left hand side list of users (the collaborators of the current document) of the access rights dialogue. */
+/** The template for an individual row in the right hand side list of users (the collaborators of the current document) of the access rights dialogue. */
 export const collaboratorsTemplate = ({collaborators}) =>
     collaborators.map(collaborator =>
         `<tr id="collaborator-${collaborator.user_id}" data-id="${collaborator.user_id}"
         class="collaborator-tr" data-right="${collaborator.rights}">
             <td width="215">
-                <span><img class="fw-avatar" src="${collaborator.avatar}" /></span>
+                <span>${collaborator.avatar.html}</span>
                 <span class="fw-inline">${escapeText(collaborator.user_name)}</span>
             </td>
             <td width="50" align="center">

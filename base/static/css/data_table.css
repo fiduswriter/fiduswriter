@@ -1,9 +1,9 @@
-.fw-document-table {
+.fw-data-table {
     font-size: 13px;
     line-height: 1.25;
 }
 
-.fw-document-table thead,
+.fw-data-table thead,
 .dataTable-table thead {
     font-weight: 900;
     font-size: 11px;
@@ -13,89 +13,80 @@
     color: #2c2723;
 }
 
-.fw-document-table th,
-.fw-document-table td,
+.fw-data-table th,
+.fw-data-table td,
 .dataTable-table th,
 .dataTable-table td {
     padding: 15px 0;
     vertical-align: top;
 }
 
-.fw-document-table .date,
+.fw-data-table .date,
 .dataTable-table .date {
     white-space: nowrap;
 }
 
-.fw-document-table.fw-large tbody {
+.fw-data-table.fw-large tbody {
     width: 985px;
     max-height: calc(100vh - 320px);
 }
 
-.fw-document-table.fw-middle tbody {
+.fw-data-table.fw-middle tbody {
     width: 600px;
     max-height: calc(100vh - 320px);
 }
 
-.fw-document-table.fw-small tbody {
+.fw-data-table.fw-small tbody {
     width: 342px;
     height: 270px;
 }
 
-.fw-document-table.fw-min tbody {
+.fw-data-table.fw-min tbody {
     width: 342px;
     height: 225px;
 }
 
-/*.fw-document-table tbody tr:hover {
+/*.fw-data-table tbody tr:hover {
     background-color: #fbf9d2;
 }*/
 
-.fw-document-table th,
-.fw-document-table td,
+.fw-data-table th,
+.fw-data-table td,
 .dataTable-table th,
 .dataTable-table td {
     border-bottom: solid 1px #cecece;
 }
 
-.fw-document-table th:last-child,
-.fw-document-table td:last-child,
+.fw-data-table th:last-child,
+.fw-data-table td:last-child,
 .dataTable-table th:last-child,
 .dataTable-table td:last-child {
     padding-right: 0;
 }
 
-.fw-document-table td.td-icon {
+.fw-data-table td.td-icon {
     text-align: center;
 }
 
-.fw-document-table-title {
+.fw-data-table-title {
     color: #a7321f;
 }
 
-.fw-document-table-title i.fa,
-.fw-document-table-title i.far {
+.fw-data-table-title i.fa,
+.fw-data-table-title i.far {
     margin-right: 10px;
 }
 
-.fw-document-table .icon-trash {
+.fw-data-table .icon-trash {
     font-size: 15px;
 }
 
-.fw-document-table td:first-child {
-    width: 40px;
-}
-
-.fw-document-table td:last-child {
-    width: 30px;
-    text-align: center;
-}
-
-.owned-by-user .icon-access-right,.fw-document-table .fa-clock, .fw-document-table .fa-trash, .fw-document-table .fa-download {
+.owned-by-user .icon-access-right,.fw-data-table .fa-clock, .fw-data-table .fa-trash, .fw-data-table .fa-download {
     color: #a7321f;
     cursor: pointer;
 }
 
-.owned-by-user .icon-access-right:hover,.fw-document-table .fa-clock:hover, .fw-document-table .fa-trash:hover, .fw-document-table .fa-download:hover {
+.owned-by-user .icon-access-right:hover,.fw-data-table .fa-clock:hover, .fw-data-table .fa-trash:hover, .fw-data-table .fa-download:hover {
     color: #2c2723;
 }
 
@@ -104,8 +95,8 @@
     display: none;
 }
 
-.fw-document-table .fw-avatar,
-.fw-document-table .fw-string-avatar {
+.fw-data-table .fw-avatar,
+.fw-data-table .fw-string-avatar {
     display: inline-block;
     width: 25px;
     height: 25px;
@@ -175,14 +166,14 @@
 }
 
 /* Align text with top of images */
-.fw-document-table tbody td {
+.fw-data-table tbody td {
     vertical-align: top;
 }
 
-.fw-document-table tbody td.checkable {
+.fw-data-table tbody td.checkable {
     position: relative;
 }
-.fw-document-table tbody tr.checked td.checkable:after {
+.fw-data-table tbody tr.checked td.checkable:after {
     width: 1em;
     height: 1em;
     position: absolute;

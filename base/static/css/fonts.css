@@ -139,7 +139,7 @@ table.dataTable-table thead th[data-sortable]:not([data-sortable=false]).asc a:a
 table.dataTable-table thead th[data-sortable]:not([data-sortable=false]).desc a:after {
     content: '\f0dd';
 }
-.fw-document-table-body tr.checked td.checkable:after {
+.fw-data-table-body tr.checked td.checkable:after {
     display: inline-block;
     font-family: 'Font Awesome 5 Free';
     font-weight: 900;

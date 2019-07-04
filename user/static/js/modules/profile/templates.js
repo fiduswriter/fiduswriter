@@ -110,8 +110,8 @@ export const profileContents = ({avatar, username, first_name, last_name, emails
                 <span id="fw-edit-profile-pwd" class="fw-link-text"><i class="fa fa-pencil-alt"></i></span>
             </div>
             <div class="profile-data-row">
-                <table class="fw-document-table profile-email-table">
-                    <thead class="fw-document-table-header">
+                <table class="fw-data-table profile-email-table">
+                    <thead class="fw-data-table-header">
                         <tr>
                             <th>${gettext('Email')}</th>
                             <th>${gettext('Primary address')}</th>

@@ -191,7 +191,7 @@ export class ImageOverview {
     initTable(ids) {
         const tableEl = document.createElement('table')
         tableEl.id = "imagelist"
-        tableEl.classList.add('fw-document-table')
+        tableEl.classList.add('fw-data-table')
         tableEl.classList.add('fw-large')
         document.querySelector('.fw-contents').appendChild(tableEl)
 

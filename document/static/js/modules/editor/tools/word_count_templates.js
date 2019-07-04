@@ -1,6 +1,6 @@
 export const wordCounterDialogTemplate = ({words, chars_no_space, chars}) =>
-    `<table class="fw-document-table">
-        <thead class="fw-document-table-header"><tr>
+    `<table class="fw-data-table">
+        <thead class="fw-data-table-header"><tr>
             <th>${gettext("Number of")}</th>
             <th>${gettext("Document")}</th>
         </tr></thead>

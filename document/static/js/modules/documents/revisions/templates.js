@@ -2,8 +2,8 @@ import {localizeDate, escapeText} from "../../common"
 
 /** A template for listing the templates of a certain document */
 export const documentrevisionsTemplate = ({doc}) =>
-    `<table class="fw-document-table" style="width:342px;">
-        <thead class="fw-document-table-header">
+    `<table class="fw-data-table" style="width:342px;">
+        <thead class="fw-data-table-header">
             <th width="80">${gettext('Time')}</th>
             <th width="300">${gettext('Description')}</th>
             <th width="50">${gettext('Recreate')}</th>
@@ -14,7 +14,7 @@ export const documentrevisionsTemplate = ({doc}) =>
                 ''
             }
         </thead>
-        <tbody class="fw-document-table-body fw-middle">
+        <tbody class="fw-data-table-body fw-middle">
             ${
                 doc.revisions.slice().sort((a, b) => a.date > b.date).map(rev =>
                     `<tr class="revision-${rev.pk}" data-document="${doc.id}">

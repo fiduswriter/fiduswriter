@@ -141,6 +141,7 @@ export class DocumentOverview {
     /* Initialize the overview table */
     initTable() {
         const tableEl = document.createElement('table')
+        tableEl.classList.add('fw-data-table')
         tableEl.classList.add('fw-document-table')
         tableEl.classList.add('fw-large')
         document.querySelector('.fw-contents').appendChild(tableEl)
@@ -185,7 +186,7 @@ export class DocumentOverview {
         return [
             String(doc.id),
             `<input type="checkbox" class="entry-select fw-check" data-id="${doc.id}" id="doc-${doc.id}"><label for="doc-${doc.id}"></label>`,
-            `<span class="fw-document-table-title">
+            `<span class="fw-data-table-title">
                 <i class="far fa-file-alt"></i>
                 <a class="doc-title fw-link-text fw-searchable" href="/document/${doc.id}/">
                     ${doc.title.length ? escapeText(doc.title) : gettext('Untitled')}

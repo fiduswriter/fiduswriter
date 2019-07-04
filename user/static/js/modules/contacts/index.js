@@ -30,8 +30,8 @@ export class ContactsOverview {
         document.body = document.createElement('body')
         document.body.innerHTML = baseBodyTemplate({
             contents: `<div class="fw-table-wrapper">
-                <table id="team-table" class="tablesorter fw-document-table">
-                    <thead class="fw-document-table-header">
+                <table id="team-table" class="tablesorter fw-data-table">
+                    <thead class="fw-data-table-header">
                         <tr>
                             <td width="30">${dt_bulk.getHTML()}</td>
                             <th width="350">${gettext("Contacts")}</th>
@@ -39,7 +39,7 @@ export class ContactsOverview {
                             <th width="50" align="center">${gettext("Delete")}</th>
                         </tr>
                     </thead>
-                    <tbody class="fw-document-table-body fw-large">
+                    <tbody class="fw-data-table-body fw-large">
                     </tbody>
                 </table>
             </div>`,

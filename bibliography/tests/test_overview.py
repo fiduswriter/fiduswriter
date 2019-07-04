@@ -161,7 +161,7 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
             self.assertEqual(
                 "No sources registered",
                 driver.find_element_by_css_selector(
-                    ".fw-document-table.fw-large.dataTable-table td"
+                    ".fw-data-table.fw-large.dataTable-table td"
                 ).text
             )
         except AssertionError as e:
@@ -175,7 +175,7 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
             self.assertEqual(
                 "The title",
                 driver.find_element_by_css_selector(
-                    ".fw-document-table-title .edit-bib").text
+                    ".fw-data-table-title .edit-bib").text
             )
         except AssertionError as e:
             self.verificationErrors.append(str(e))
@@ -193,7 +193,7 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
             EC.presence_of_element_located(
                 (
                     By.CSS_SELECTOR,
-                    ".fw-document-table tr:nth-child(2) .edit-bib"
+                    ".fw-data-table tr:nth-child(2) .edit-bib"
                 )
             )
         )

@@ -16,11 +16,11 @@
     height: 33px;
 }
 
-#selected-cite-source-table .fw-document-table-title>span {
+#selected-cite-source-table .fw-data-table-title>span {
     width: 100px;
 }
 
-#cite-source-table .fw-document-table-title>span {
+#cite-source-table .fw-data-table-title>span {
     width: 128px;
 }
 

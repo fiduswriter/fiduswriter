@@ -102,7 +102,7 @@ export class CitationDialog {
         const bibauthors = bib.fields.author || bib.fields.editor
         return [
             `${db}-${id}`,
-            `<span class="fw-document-table-title fw-inline">
+            `<span class="fw-data-table-title fw-inline">
                 <i class="fa fa-book"></i>
                 <span class="fw-searchable">${bib.fields.title ? escapeText(litToText(bib.fields.title)) : gettext('Untitled')}</span>
             </span>`,
@@ -176,7 +176,7 @@ export class CitationDialog {
         const len = items.length
         for (let i = 0; i < len; i ++) {
             const item = items[i]
-            document.querySelector('#selected-cite-source-table .fw-document-table-body').insertAdjacentHTML(
+            document.querySelector('#selected-cite-source-table .fw-data-table-body').insertAdjacentHTML(
                 'beforeend',
                 selectedCitationTemplate({
                     id: item.id,
@@ -192,7 +192,7 @@ export class CitationDialog {
 
     initTable() {
         const tableEl = document.createElement('table')
-        tableEl.classList.add('fw-document-table')
+        tableEl.classList.add('fw-data-table')
         tableEl.classList.add('fw-large')
         this.dialog.dialogEl.querySelector('#my-sources').appendChild(tableEl)
         this.table = new DataTable(tableEl, {

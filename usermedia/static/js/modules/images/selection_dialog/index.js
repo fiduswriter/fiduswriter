@@ -96,7 +96,7 @@ export class ImageSelectionDialog {
     initTable() {
         /* Initialize the overview table */
         const tableEl = document.createElement('table')
-        tableEl.classList.add('fw-document-table')
+        tableEl.classList.add('fw-data-table')
         tableEl.classList.add('fw-small')
         this.imageDialog.dialogEl.querySelector('div.image-selection-table').appendChild(tableEl)
         this.table = new DataTable(tableEl, {

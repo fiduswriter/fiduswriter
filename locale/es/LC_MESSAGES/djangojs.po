@@ -1,7 +1,7 @@
 # Spanish translation for Fidus Writer
-# Copyright (C) 2012 Ana Vera Resquín
+# Copyright (C) 2012 Ana Carolina Vera Resquín
 # This file is distributed under the same license as Fidus Writer.
-# Ana Vera Resquín <ani.tavr77@gmail.com>, 2013.
+# Ana Carolina Vera Resquín <ani.tavr77@gmail.com>, 2013.
 #
 msgid ""
 msgstr ""

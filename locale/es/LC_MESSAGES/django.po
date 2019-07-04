@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-30 23:51+0000\n"
+"POT-Creation-Date: 2019-07-04 10:30+0000\n"
 "PO-Revision-Date: 2019-07-04 11:44+0100\n"
 "Last-Translator: Ana Vera Resquín <ani.tavr77@gmail.com>\n"
 "Language-Team: Spanish <ani.tavr77@gmail.com>\n"
@@ -50,34 +50,13 @@ msgid "Extras"
 msgstr "Extras"
 
 #: base/templates/admin/overview.html:17
-#: document/templates/admin/document/maintenance.html:17
+#: document/templates/admin/document/maintenance.html:18
 msgid "Document Maintenance"
 msgstr "Mantenimiento de documento"
 
-#: base/templates/app.html:11 user/templates/account/base.html:7
+#: base/templates/app.html:11
 msgid "The all in one solution for collaborative academic writing."
 msgstr "La herramienta perfecta para redactar textos académicos."
-
-#: base/templates/footer.html:7
-msgid "Terms and Conditions"
-msgstr "Términos y Condiciones"
-
-#: base/templates/footer.html:12
-msgid "Privacy policy"
-msgstr "Política de privacidad"
-
-#: base/templates/footer.html:17
-#| msgid "Equations and Math by mathjax"
-msgid "Equations and Math by KaTeX"
-msgstr "Ecuaciones y matemáticas con KaTex"
-
-#: base/templates/footer.html:22
-msgid "Citations with Citation Style Language"
-msgstr "Citaciones con Citation Style Language"
-
-#: base/templates/footer.html:27
-msgid "Editing with ProseMirror"
-msgstr "Editar con ProseMirror"
 
 #: browser_check/templates/browser_check/browser_not_supported.html:4
 #: browser_check/templates/browser_check/browser_not_supported.html:27
@@ -100,17 +79,15 @@ msgstr ""
 "                "
 
 #: document/admin.py:45
-#| msgid "Export the document to an HTML file"
 msgid "Duplicate selected document templates"
 msgstr "Duplicar la plantilla seleccionada"
 
-#: document/models.py:86
+#: document/models.py:120
 msgid "Standard Article"
 msgstr "Artículo estándar"
 
 #: document/templates/admin/document/document/change_list_object_tools.html:8
 #, python-format
-#| msgid "Added %(name)s \"%(object)s\"."
 msgid "Add %(name)s"
 msgstr "Añadir %(name)s"
 
@@ -119,7 +96,7 @@ msgstr "Añadir %(name)s"
 msgid "Maintenance"
 msgstr "Mantenimiento"
 
-#: document/templates/admin/document/maintenance.html:19
+#: document/templates/admin/document/maintenance.html:20
 msgid ""
 "\n"
 "            Before and after upgrading Fidus Writer, you should update all "
@@ -137,47 +114,43 @@ msgstr ""
 "           sabe que ningún usuario está editando ningún documento\n"
 "          "
 
-#: document/templates/admin/document/maintenance.html:27
+#: document/templates/admin/document/maintenance.html:28
 msgid "Update all documents (DANGER!)"
 msgstr "Actualizar todos lo documentos (¡PELIGRO!)"
 
-#: document/views.py:209 document/views.py:617
+#: document/views.py:212 document/views.py:627
 msgid "Untitled"
 msgstr "Sin título"
 
-#: document/views.py:280 document/views.py:703
-#| msgid "Documents"
+#: document/views.py:283 document/views.py:713
 msgid "Document"
 msgstr "Documento"
 
-#: document/views.py:282 document/views.py:705
+#: document/views.py:285 document/views.py:715
 msgid "Author"
 msgstr "Autor"
 
-#: document/views.py:284
-#| msgid "Define access rights"
+#: document/views.py:287
 msgid "Access Rights"
 msgstr "Derechos de acceso"
 
-#: document/views.py:287 document/views.py:710
-#| msgid "edit documents"
+#: document/views.py:290 document/views.py:720
 msgid "Access the document"
 msgstr "Acceder al documento"
 
-#: document/views.py:290
+#: document/views.py:293
 msgid "Document shared:"
 msgstr "Documento  compartido"
 
-#: document/views.py:643
+#: document/views.py:653
 msgid "Comment on :"
 msgstr "Comentaria a:"
 
-#: document/views.py:664
+#: document/views.py:674
 msgid "Comment assignment on :"
 msgstr "Comentario asignado en :"
 
-#: document/views.py:707
-#| msgid "Comments"
+#: document/views.py:717
 msgid "Comment"
 msgstr "Comentario"
 
@@ -206,207 +179,81 @@ msgid "Spanish"
 msgstr "Español"
 
 #: fiduswriter/settings.py:232
-#| msgid "Portuguese"
 msgid "Portuguese (Brazil)"
 msgstr "Portugués (Brasil)"
 
-#: fiduswriter/settings.py:335
+#: fiduswriter/settings.py:340
 msgid "Fidus Writer Admin"
 msgstr "Administrar Fidus Writer"
 
-#: fiduswriter/settings.py:336
+#: fiduswriter/settings.py:341
 msgid "Fidus Writer Administration Site"
 msgstr "Sitio de administración de Fidus  Writer"
 
-#: fiduswriter/settings.py:337
+#: fiduswriter/settings.py:342
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "Bienvenido al sitio de administración de Fidus Writer"
 
 #: style/models.py:36 style/models.py:61
-#| msgid "Default Avatar"
 msgid "Default"
 msgstr "Predeterminado"
 
-#: user/templates/account/base.html:55 user/templates/account/login.html:7
-#: user/templates/account/signup.html:9
-msgid "Log In"
-msgstr "Iniciar sesión"
-
-#: user/templates/account/email_confirm.html:8
-msgid "Confirm E-mail Address"
-msgstr "Confirmar correo electrónico"
-
-#: user/templates/account/login.html:8
-#: user/templates/account/password_reset.html:7
-msgid "New here?"
-msgstr "¿Usuario nuevo?"
-
-#: user/templates/account/login.html:10
-#: user/templates/account/password_reset.html:9
-#: user/templates/account/signup.html:13 user/templates/account/signup.html:51
-msgid "Sign up"
-msgstr "Registrarse"
-
-#: user/templates/account/login.html:18 user/templates/account/login.html:69
-msgid "Log in"
-msgstr "Iniciar sesión"
-
-#: user/templates/account/login.html:26
+#: user/templates/account/email/email_confirmation_message.html:7
+#: user/templates/account/email/password_reset_key_message.html:7
 #, python-format
 msgid ""
 "\n"
-"        If you are new here, please <a href=\"%(signup_url)s\" title=\"Sign "
-"up for %(site_name)s\">sign up</a> or use one of the login options below to "
-"create an account.\n"
-"        "
-msgstr ""
-"\n"
-"        Si eres nuevo, por favor <a href=\"%(signup_url)s\" title="
-"\"Regístrate en %(site_name)s\">regístrate</a> o utiliza uno de estos "
-"proveedores para crear una cuenta.\n"
-"        "
-
-#: user/templates/account/login.html:37
-msgid "Login with"
-msgstr "Iniciar sesión con"
-
-#: user/templates/account/login.html:46
-#, python-format
-msgid ""
-"\n"
-"        If you are new here, please <a href=\"%(signup_url)s\" title=\"Sign "
-"up for %(site_name)s\">sign up</a>.\n"
-"        "
-msgstr ""
-"\n"
-"        Si eres nuevo, por favor  <a href=\"%(signup_url)s\" title="
-"\"Regístrate en %(site_name)s\">regístrate</a>.\n"
-"        "
-
-#: user/templates/account/login.html:58
-msgid "Username"
-msgstr "Usuario"
-
-#: user/templates/account/login.html:62
-msgid "Password"
-msgstr "Contraseña"
-
-# Se refiere  a la contraseña? está bien la traducción?
-#: user/templates/account/login.html:72
-msgid "Remember me"
-msgstr "Recordar contraseña"
-
-#: user/templates/account/login.html:74
-msgid "Forgot Password?"
-msgstr "¿Olvidaste tu contraseña?"
-
-#: user/templates/account/logout.html:5 user/templates/account/logout.html:9
-#: user/templates/account/logout.html:19
-msgid "Sign Out"
-msgstr "Regístrate"
-
-#: user/templates/account/logout.html:11
-msgid "Are you sure you want to sign out?"
-msgstr "¿Estás seguro que deseas cerrar sesión?"
-
-#: user/templates/account/password_reset.html:6
-#: user/templates/account/password_reset.html:13
-msgid "Password reset"
-msgstr "Restablecer contraseña"
-
-#: user/templates/account/password_reset.html:14
-#, python-format
-msgid ""
-"\n"
-"    <p>Forgotten your password? Enter your e-mail address below, and we'll "
-"send you an e-mail allowing you to reset it.</p>\n"
-"    <p>If you have any trouble resetting your password, please <a href="
-"\"mailto:%(CONTACT_EMAIL)s\">contact us</a>.</p>\n"
+"        Hello from %(site_name)s!\n"
 "    "
 msgstr ""
+
+#: user/templates/account/email/email_confirmation_message.html:14
+#, python-format
+msgid ""
 "\n"
-"    <p>¿Olvidaste tu contraseña? Ingresa tu correo electrónico a "
-"continuación y te enviaremos un correo para restablecer tu contraseña.</p>\n"
-"    <p>Si tienes algún problema haciéndolo, por favor <a href=\"mailto:"
-"%(CONTACT_EMAIL)s\">contáctanos</a>.</p>\n"
+"        You're receiving this e-mail because user %(user_display)s has given "
+"yours as an e-mail address to connect their account.\n"
 "    "
+msgstr ""
 
-#: user/templates/account/password_reset.html:28
-#: user/templates/account/signup.html:44
-msgid "E-mail address"
-msgstr "Correo electrónico"
-
-#: user/templates/account/password_reset.html:32
-msgid "Reset My Password"
-msgstr "Restablecer mi contraseña"
-
-#: user/templates/account/signup.html:6
-msgid "Sign Up"
-msgstr "Regístrate"
-
-#: user/templates/account/signup.html:7
-msgid "Already have an account"
-msgstr "Ya tienes una cuenta"
-
-#: user/templates/account/signup.html:15
+#: user/templates/account/email/email_confirmation_message.html:20
 #, python-format
 msgid ""
 "\n"
-"        Already have an account? Then please <a href=\"%(login_url)s\" title="
-"\"Login to %(site_name)s\">login</a>.\n"
-"        "
+"        To confirm this is correct, go to <a href=\"%(url)s\">%(url)s</a>.\n"
+"    "
 msgstr ""
-"\n"
-"        ¿Ya tienes una cuenta? Entonces, por favor <a href=\"%(login_url)s\" "
-"title=\"Inicia sesión en %(site_name)s\">inicia sesión</a>.\n"
-"        "
 
-#: user/templates/account/signup.html:29
-msgid "Choose your username"
-msgstr "Escoge tu usuario"
-
-#: user/templates/account/signup.html:34
-msgid "Create a password"
-msgstr "Crea una contraseña"
-
-#: user/templates/account/signup.html:39
-msgid "Confirm your password"
-msgstr "Confirma tu contraseña"
-
-# No suena bien ni claro. Alternativa?
-# No puedes registrarte. El registro está cerrado.
-#: user/templates/account/signup_closed.html:5
-#: user/templates/account/signup_closed.html:9
-msgid "Sign Up Closed"
-msgstr "El registro está cerrado"
-
-#: user/templates/account/signup_closed.html:10
-msgid "We are sorry, but the sign up is currently closed."
-msgstr "Lo sentimos, pero el registro está cerrado."
-
-#: user/templates/account/verification_sent.html:5
-#: user/templates/account/verification_sent.html:9
-msgid "Verify Your E-mail Address"
-msgstr "Verifica tu dirección de correo electrónico"
-
-#: user/templates/account/verification_sent.html:12
+#: user/templates/account/email/email_confirmation_message.html:26
+#: user/templates/account/email/password_reset_key_message.html:32
 #, python-format
 msgid ""
 "\n"
-"        We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</a> "
-"for verification.\n"
-"        Follow the link provided to finalize the signup process.\n"
-"        <br />\n"
-"        Please contact us if you do not receive it within a few minutes.\n"
-"        "
+"        Thank you from %(site_name)s!\n"
+"    "
 msgstr ""
+
+#: user/templates/account/email/password_reset_key_message.html:13
+#, fuzzy
+msgid ""
 "\n"
-"        Te hemos enviado un correo  de verificación a <a href=\"mailto:"
-"%(email)s\">%(email)s</a>\n"
-"        Sigue el enlace para completar el proceso de registro.\n"
-"        <br />\n"
-"        Por favor, contáctanos si no lo recibes dentro de unos minutos.\n"
-"        "
+"        You're receiving this e-mail because you or someone else has "
+"requested a password for your user account.\n"
+"    "
+msgstr "Estás recibiendo ese correo porque pediste restablecer tu contraseña"
+
+#: user/templates/account/email/password_reset_key_message.html:18
+msgid ""
+"\n"
+"        It can be safely ignored if you did not request a password reset. "
+"Click the link below to reset your password.\n"
+"    "
+msgstr ""
+
+#: user/templates/account/email/password_reset_key_message.html:27
+#, python-format
+msgid "In case you forgot, your username is %(username)s."
+msgstr ""
 
 #: usermedia/views.py:34
 msgid "Filetype not supported"
@@ -415,6 +262,162 @@ msgstr "No se admite el tipo  de archivo"
 #: usermedia/views.py:60
 msgid "No file uploaded"
 msgstr "Ningún archivo subido"
+
+#~ msgid "Terms and Conditions"
+#~ msgstr "Términos y Condiciones"
+
+#~ msgid "Privacy policy"
+#~ msgstr "Política de privacidad"
+
+#~| msgid "Equations and Math by mathjax"
+#~ msgid "Equations and Math by KaTeX"
+#~ msgstr "Ecuaciones y matemáticas con KaTex"
+
+#~ msgid "Citations with Citation Style Language"
+#~ msgstr "Citaciones con Citation Style Language"
+
+#~ msgid "Editing with ProseMirror"
+#~ msgstr "Editar con ProseMirror"
+
+#~ msgid "Log In"
+#~ msgstr "Iniciar sesión"
+
+#~ msgid "Confirm E-mail Address"
+#~ msgstr "Confirmar correo electrónico"
+
+#~ msgid "New here?"
+#~ msgstr "¿Usuario nuevo?"
+
+#~ msgid "Sign up"
+#~ msgstr "Registrarse"
+
+#~ msgid "Log in"
+#~ msgstr "Iniciar sesión"
+
+#~ msgid ""
+#~ "\n"
+#~ "        If you are new here, please <a href=\"%(signup_url)s\" title="
+#~ "\"Sign up for %(site_name)s\">sign up</a> or use one of the login options "
+#~ "below to create an account.\n"
+#~ "        "
+#~ msgstr ""
+#~ "\n"
+#~ "        Si eres nuevo, por favor <a href=\"%(signup_url)s\" title="
+#~ "\"Regístrate en %(site_name)s\">regístrate</a> o utiliza uno de estos "
+#~ "proveedores para crear una cuenta.\n"
+#~ "        "
+
+#~ msgid "Login with"
+#~ msgstr "Iniciar sesión con"
+
+#~ msgid ""
+#~ "\n"
+#~ "        If you are new here, please <a href=\"%(signup_url)s\" title="
+#~ "\"Sign up for %(site_name)s\">sign up</a>.\n"
+#~ "        "
+#~ msgstr ""
+#~ "\n"
+#~ "        Si eres nuevo, por favor  <a href=\"%(signup_url)s\" title="
+#~ "\"Regístrate en %(site_name)s\">regístrate</a>.\n"
+#~ "        "
+
+#~ msgid "Username"
+#~ msgstr "Usuario"
+
+#~ msgid "Password"
+#~ msgstr "Contraseña"
+
+# Se refiere  a la contraseña? está bien la traducción?
+#~ msgid "Remember me"
+#~ msgstr "Recordar contraseña"
+
+#~ msgid "Forgot Password?"
+#~ msgstr "¿Olvidaste tu contraseña?"
+
+#~ msgid "Sign Out"
+#~ msgstr "Regístrate"
+
+#~ msgid "Are you sure you want to sign out?"
+#~ msgstr "¿Estás seguro que deseas cerrar sesión?"
+
+#~ msgid "Password reset"
+#~ msgstr "Restablecer contraseña"
+
+#~ msgid ""
+#~ "\n"
+#~ "    <p>Forgotten your password? Enter your e-mail address below, and "
+#~ "we'll send you an e-mail allowing you to reset it.</p>\n"
+#~ "    <p>If you have any trouble resetting your password, please <a href="
+#~ "\"mailto:%(CONTACT_EMAIL)s\">contact us</a>.</p>\n"
+#~ "    "
+#~ msgstr ""
+#~ "\n"
+#~ "    <p>¿Olvidaste tu contraseña? Ingresa tu correo electrónico a "
+#~ "continuación y te enviaremos un correo para restablecer tu contraseña.</"
+#~ "p>\n"
+#~ "    <p>Si tienes algún problema haciéndolo, por favor <a href=\"mailto:"
+#~ "%(CONTACT_EMAIL)s\">contáctanos</a>.</p>\n"
+#~ "    "
+
+#~ msgid "E-mail address"
+#~ msgstr "Correo electrónico"
+
+#~ msgid "Reset My Password"
+#~ msgstr "Restablecer mi contraseña"
+
+#~ msgid "Sign Up"
+#~ msgstr "Regístrate"
+
+#~ msgid "Already have an account"
+#~ msgstr "Ya tienes una cuenta"
+
+#~ msgid ""
+#~ "\n"
+#~ "        Already have an account? Then please <a href=\"%(login_url)s\" "
+#~ "title=\"Login to %(site_name)s\">login</a>.\n"
+#~ "        "
+#~ msgstr ""
+#~ "\n"
+#~ "        ¿Ya tienes una cuenta? Entonces, por favor <a href=\"%(login_url)s"
+#~ "\" title=\"Inicia sesión en %(site_name)s\">inicia sesión</a>.\n"
+#~ "        "
+
+#~ msgid "Choose your username"
+#~ msgstr "Escoge tu usuario"
+
+#~ msgid "Create a password"
+#~ msgstr "Crea una contraseña"
+
+#~ msgid "Confirm your password"
+#~ msgstr "Confirma tu contraseña"
+
+# No suena bien ni claro. Alternativa?
+# No puedes registrarte. El registro está cerrado.
+#~ msgid "Sign Up Closed"
+#~ msgstr "El registro está cerrado"
+
+#~ msgid "We are sorry, but the sign up is currently closed."
+#~ msgstr "Lo sentimos, pero el registro está cerrado."
+
+#~ msgid "Verify Your E-mail Address"
+#~ msgstr "Verifica tu dirección de correo electrónico"
+
+#~ msgid ""
+#~ "\n"
+#~ "        We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</"
+#~ "a> for verification.\n"
+#~ "        Follow the link provided to finalize the signup process.\n"
+#~ "        <br />\n"
+#~ "        Please contact us if you do not receive it within a few minutes.\n"
+#~ "        "
+#~ msgstr ""
+#~ "\n"
+#~ "        Te hemos enviado un correo  de verificación a <a href=\"mailto:"
+#~ "%(email)s\">%(email)s</a>\n"
+#~ "        Sigue el enlace para completar el proceso de registro.\n"
+#~ "        <br />\n"
+#~ "        Por favor, contáctanos si no lo recibes dentro de unos minutos.\n"
+#~ "        "
 
 #~ msgid "Edit profile"
 #~ msgstr "Edita tu perfil"
@@ -1975,13 +1978,6 @@ msgstr "Ningún archivo subido"
 #~ msgstr ""
 #~ "Te hemos enviado por correo electrónico las instrucciones para "
 #~ "restablecer tu contraseña. En breve recibirás el correo."
-
-#, fuzzy
-#~ msgid ""
-#~ "You're receiving this email because you requested a password reset for "
-#~ "your user account at %(site_name)s."
-#~ msgstr ""
-#~ "Estás recibiendo ese correo porque pediste restablecer tu contraseña"
 
 #~ msgid "Please go to the following page and choose a new password:"
 #~ msgstr "Por favor, haz clic acá y elige una nueva contraseña:"

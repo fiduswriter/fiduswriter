@@ -74,14 +74,27 @@ export class DocumentOverview {
                     docId = parseInt(el.target.dataset.id)
                     this.mod.actions.deleteDocumentDialog([docId])
                     break
-                case findTarget(event, '.owned-by-user .rights', el):
+                case findTarget(event, '.owned-by-user.rights', el):
                     docId = parseInt(el.target.dataset.id)
-                    new DocumentAccessRightsDialog(
-                        [docId],
-                        this.accessRights,
-                        this.teamMembers,
-                        newAccessRights => this.accessRights = newAccessRights,
-                        memberDetails => this.teamMembers.push(memberDetails)
+                    postJson(
+                        '/api/document/documentaccess/',
+                        {documents: [docId]}
+                    ).then(
+                        ({json}) => {
+                            this.accessRights = this.accessRights.filter(ar => ar.document_id !== docId).concat(json.access_rights)
+                        }
+                    ).catch(
+                        () => addAlert('error', gettext('Cannot load document access data.'))
+                    ).then(
+                        () => {
+                            new DocumentAccessRightsDialog(
+                                [docId],
+                                this.accessRights,
+                                this.teamMembers,
+                                newAccessRights => this.accessRights = newAccessRights,
+                                memberDetails => this.teamMembers.push(memberDetails)
+                            )
+                        }
                     )
                     break
                 default:
@@ -203,7 +216,7 @@ export class DocumentOverview {
                 ${doc.owner.avatar.html}
             </span>
             <span class="fw-searchable">${escapeText(doc.owner.name)}</span>`,
-            `<span class="rights" data-id="${doc.id}" title="${doc.rights}">
+            `<span class="rights${doc.is_owner ? ' owned-by-user' : ''}" data-id="${doc.id}" title="${doc.rights}">
                 <i data-id="${doc.id}" class="icon-access-right icon-access-${doc.rights}"></i>
             </span>`,
             `<span class="delete-document fw-link-text" data-id="${doc.id}"

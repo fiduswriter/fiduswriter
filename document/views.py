@@ -125,6 +125,22 @@ def documents_list(request):
 
 
 @login_required
+def get_documentaccess(request):
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        status = 200
+        qs = AccessRight.objects.filter(document__owner=request.user)
+        doc_ids = request.POST.getlist('documents[]')
+        if len(doc_ids) > 0:
+            qs.filter(document_id__in=doc_ids)
+        response['access_rights'] = get_accessrights(qs)
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+@login_required
 def get_documentlist(request):
     response = {}
     status = 405

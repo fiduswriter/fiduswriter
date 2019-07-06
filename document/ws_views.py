@@ -168,15 +168,12 @@ class WebSocket(BaseWebSocketHandler):
             tm_object['id'] = team_member.member.id
             tm_object['name'] = team_member.member.readable_name
             tm_object['username'] = team_member.member.get_username()
-            '''
-            tm_object['avatar'] = get_user_avatar_url(
-                team_member.member
-            )['url']
-            '''
             tm_object['avatar'] = get_user_avatar_url(team_member.member)
             response['doc_info']['owner']['team_members'].append(tm_object)
         collaborators = get_accessrights(
-            AccessRight.objects.filter(document__owner=doc_owner)
+            AccessRight.objects.filter(
+                document_id=self.doc['id']
+            )
         )
         response['doc_info']['collaborators'] = collaborators
         response['doc_info']['session_id'] = self.id

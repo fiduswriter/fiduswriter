@@ -9,6 +9,11 @@ urlpatterns = [
         name='get_documentlist'
     ),
     url(
+        '^documentaccess/$',
+        views.get_documentaccess,
+        name='get_documentaccess'
+    ),
+    url(
         '^documentlist/extra/$',
         views.get_documentlist_extra,
         name='get_documentlist_extra'

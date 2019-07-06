@@ -1,3 +1,5 @@
+import uuid
+
 from builtins import str
 from builtins import object
 
@@ -281,6 +283,26 @@ class AccessRight(models.Model):
             '%(name)s %(rights)s on %(doc_id)d' %
             {
                 'name': self.user.readable_name,
+                'rights': self.rights,
+                'doc_id': self.document.id
+            }
+        )
+
+
+class AccessRightInvite(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    email = models.EmailField() # The email where the invite was sent
+    document = models.ForeignKey(Document, on_delete=models.deletion.CASCADE)
+    rights = models.CharField(
+        max_length=21,
+        choices=RIGHTS_CHOICES,
+        blank=False)
+
+    def __str__(self):
+        return (
+            '%(email)s %(rights)s on %(doc_id)d' %
+            {
+                'email': self.email,
                 'rights': self.rights,
                 'doc_id': self.document.id
             }

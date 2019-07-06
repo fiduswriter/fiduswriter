@@ -7,7 +7,7 @@ export const accessRightOverviewTemplate = ({contacts, collaborators}) =>
         <table class="fw-data-table">
             <thead class="fw-data-table-header"><tr><th width="337">${gettext("Contacts")}</th></tr></thead>
             <tbody class="fw-data-table-body fw-small">
-                ${accessRightTrTemplate({contacts})}
+                ${contactsTemplate({contacts})}
             </tbody>
         </table>
     </div>
@@ -28,8 +28,8 @@ export const accessRightOverviewTemplate = ({contacts, collaborators}) =>
         </table>
     </div>`
 
-/** The template for an individual row in the right hand side list of users (all contacts) of the access rights dialogue. */
-export const accessRightTrTemplate = ({contacts}) =>
+/** The template for an individual row in the left hand side list of users (all contacts) of the access rights dialogue. */
+export const contactsTemplate = ({contacts}) =>
     contacts.map(contact =>
         `<tr>
             <td width="337" data-id="${contact.id}" class="fw-checkable fw-checkable-td">
@@ -43,7 +43,7 @@ export const accessRightTrTemplate = ({contacts}) =>
 export const collaboratorsTemplate = ({collaborators}) =>
     collaborators.map(collaborator =>
         `<tr id="collaborator-${collaborator.user_id}" data-id="${collaborator.user_id}"
-        class="collaborator-tr" data-right="${collaborator.rights}">
+        class="collaborator-tr" data-rights="${collaborator.rights}">
             <td width="215">
                 <span>${collaborator.avatar.html}</span>
                 <span class="fw-inline">${escapeText(collaborator.user_name)}</span>
@@ -60,22 +60,22 @@ export const collaboratorsTemplate = ({collaborators}) =>
                                 </span>
                             </li>
                             <li>
-                                <span class="fw-pulldown-item" data-right="write" title="${gettext("Write")}">
+                                <span class="fw-pulldown-item" data-rights="write" title="${gettext("Write")}">
                                     <i class="icon-access-write" ></i>&nbsp;${gettext("Write")}
                                 </span>
                             </li>
                             <li>
-                                <span class="fw-pulldown-item" data-right="write-tracked" title="${gettext("Write with changes tracked")}">
+                                <span class="fw-pulldown-item" data-rights="write-tracked" title="${gettext("Write with changes tracked")}">
                                     <i class="icon-access-write-tracked" ></i>&nbsp;${gettext("Write tracked")}
                                 </span>
                             </li>
                             <li>
-                                <span class="fw-pulldown-item" data-right="comment" title="${gettext("Comment")}">
+                                <span class="fw-pulldown-item" data-rights="comment" title="${gettext("Comment")}">
                                     <i class="icon-access-comment"></i>&nbsp;${gettext("Comment")}
                                 </span>
                             </li>
                             <li>
-                                <span class="fw-pulldown-item" data-right="read" title="${gettext("Read")}">
+                                <span class="fw-pulldown-item" data-rights="read" title="${gettext("Read")}">
                                     <i class="icon-access-read"></i>&nbsp;${gettext("Read")}
                                 </span>
                             </li>
@@ -87,14 +87,14 @@ export const collaboratorsTemplate = ({collaborators}) =>
                                 </span>
                             </li>
                             <li>
-                                <span class="fw-pulldown-item" data-right="read-without-comments" title="${
+                                <span class="fw-pulldown-item" data-rights="read-without-comments" title="${
                                         gettext("Read document but not see comments and chats of others")
                                     }">
                                     <i class="icon-access-read-without-comments"></i>&nbsp;${gettext("No comments")}
                                 </span>
                             </li>
                             <li>
-                                <span class="fw-pulldown-item" data-right="review" title="${
+                                <span class="fw-pulldown-item" data-rights="review" title="${
                                         gettext("Comment, but not see comments and chats of others")
                                     }">
                                     <i class="icon-access-review"></i>&nbsp;${gettext("Review")}
@@ -105,7 +105,7 @@ export const collaboratorsTemplate = ({collaborators}) =>
                 </div>
             </td>
             <td width="50" align="center">
-                <span class="delete-collaborator fw-inline" data-right="delete">
+                <span class="delete-collaborator fw-inline" data-rights="delete">
                     <i class="fa fa-trash-alt fw-link-text"></i>
                 </span>
             </td>

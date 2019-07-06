@@ -1,4 +1,4 @@
-import {accessRightOverviewTemplate, accessRightTrTemplate, collaboratorsTemplate} from "./templates"
+import {accessRightOverviewTemplate, contactsTemplate, collaboratorsTemplate} from "./templates"
 import {addMemberDialog} from "../../contacts/manage"
 import {openDropdownBox, findTarget, setCheckableLabel, addAlert, postJson, Dialog} from "../../common"
 
@@ -32,29 +32,29 @@ export class DocumentAccessRightsDialog {
     }
 
     createAccessRightsDialog() {
-        const documentCollaborators = {}
-        const len = this.accessRights.length
 
-        for (let i = 0; i < len; i++) {
-            if (this.documentIds.includes(this.accessRights[i].document_id)) {
-                if ('undefined' == typeof (
-                    documentCollaborators[this.accessRights[i].user_id]
-                )) {
-                    documentCollaborators[this.accessRights[i].user_id] =
-                        this.accessRights[i]
-                    documentCollaborators[this.accessRights[i].user_id].count = 1
-                } else {
-                    if (
-                        documentCollaborators[this.accessRights[i].user_id].rights !=
-                        this.accessRights[i].rights
-                    )
-                    documentCollaborators[this.accessRights[i].user_id].rights ='read'
-                    documentCollaborators[this.accessRights[i].user_id].count +=1
-                }
+        const docCollabs = {}
+
+        // We are potentially dealing with access rights of several documents, so
+        // we first need to find out which users have access on all of the documents.
+        // Those are the access rights we will display in the dialog.
+        this.accessRights.forEach(ar => {
+            if (!this.documentIds.includes(ar.document_id)) {
+                return
             }
-        }
+            if (!docCollabs[ar.user_id]) {
+                docCollabs[ar.user_id] = Object.assign({}, ar)
+                docCollabs[ar.user_id].count = 1
+            } else {
+                if (docCollabs[ar.user_id].rights != ar.rights) {
+                    // We use read rights if the user has different rights on different docs.
+                    docCollabs[ar.user_id].rights ='read'
+                }
+                docCollabs[ar.user_id].count +=1
+            }
+        })
 
-        const collaborators = Object.values(documentCollaborators).filter(
+        const collaborators = Object.values(docCollabs).filter(
             col => col.count === this.documentIds.length
         )
 
@@ -67,7 +67,7 @@ export class DocumentAccessRightsDialog {
                         memberData => {
                             document.querySelector('#my-contacts .fw-data-table-body').insertAdjacentHTML(
                                 'beforeend',
-                                accessRightTrTemplate({contacts: [memberData]})
+                                contactsTemplate({contacts: [memberData]})
                             )
                             document.querySelector('#share-member table tbody').insertAdjacentHTML(
                                 'beforeend',
@@ -88,13 +88,11 @@ export class DocumentAccessRightsDialog {
                 classes: "fw-dark",
                 click: () => {
                     //apply the current state to server
-                    const collaborators = [],
-                        rights = []
+                    const accessRights = []
                     document.querySelectorAll('#share-member .collaborator-tr').forEach(el => {
-                        collaborators.push(el.dataset.id)
-                        rights.push(el.dataset.right)
+                        accessRights.push({user_id: parseInt(el.dataset.id), rights: el.dataset.rights})
                     })
-                    this.submitAccessRight(collaborators, rights)
+                    this.submitAccessRight(accessRights)
                     this.dialog.close()
                 }
             },
@@ -124,10 +122,10 @@ export class DocumentAccessRightsDialog {
                 const memberId = parseInt(el.dataset.id)
                 const collaboratorEl = document.getElementById(`collaborator-${memberId}`)
                 if (collaboratorEl) {
-                    if (collaboratorEl.dataset.right === 'delete') {
+                    if (collaboratorEl.dataset.rights === 'delete') {
                         collaboratorEl.classList.remove('delete')
                         collaboratorEl.classList.addClass('read')
-                        collaboratorEl.dataset.right = 'read'
+                        collaboratorEl.dataset.rights = 'read'
                     }
                 } else {
                     const collaborator = this.contacts.find(contact => contact.id === memberId)
@@ -155,10 +153,13 @@ export class DocumentAccessRightsDialog {
                     setCheckableLabel(el.target)
                     break
                 case findTarget(event, '.edit-right-wrapper .fw-pulldown-item, .delete-collaborator', el): {
-                    const newRight = el.target.dataset.right
+                    const newRight = el.target.dataset.rights
                     const colRow = el.target.closest('.collaborator-tr')
-                    colRow.dataset.right = newRight
-                    colRow.querySelector('.icon-access-right').setAttribute('class', `icon-access-right icon-access-${newRight}`)
+                    colRow.dataset.rights = newRight
+                    colRow.querySelector('.icon-access-right').setAttribute(
+                        'class',
+                        `icon-access-right icon-access-${newRight}`
+                    )
                     break
                 }
                 case findTarget(event, '.edit-right', el): {
@@ -175,13 +176,12 @@ export class DocumentAccessRightsDialog {
 
     }
 
-    submitAccessRight(newCollaborators, newAccessRights) {
+    submitAccessRight(newAccessRights) {
         postJson(
             '/api/document/save_access_rights/',
             {
-                document_ids: this.documentIds,
-                collaborator_ids: newCollaborators,
-                access_rights: newAccessRights
+                document_ids: JSON.stringify(this.documentIds),
+                access_rights: JSON.stringify(newAccessRights)
             }
         ).then(
             () => {

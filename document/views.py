@@ -141,10 +141,9 @@ def save_access_rights(request):
     status = 405
     response = {}
     if request.is_ajax() and request.method == 'POST':
-        document_ids = request.POST.getlist('document_ids[]')
-        collaborator_ids = request.POST.getlist('collaborator_ids[]')
-        access_rights = request.POST.getlist('access_rights[]')
-        for doc_id in document_ids:
+        doc_ids = json_decode(request.POST['document_ids'])
+        rights = json_decode(request.POST['access_rights'])
+        for doc_id in doc_ids:
             doc = Document.objects.filter(
                 pk=doc_id,
                 owner=request.user
@@ -152,42 +151,40 @@ def save_access_rights(request):
             if not doc:
                 continue
             x = 0
-            for collaborator_id in collaborator_ids:
-                try:
-                    tgt_right = access_rights[x]
-                except IndexError:
-                    tgt_right = 'read'
-                if tgt_right == 'delete':
+            for right in rights:
+                if right['rights'] == 'delete':
                     # Status 'delete' means the access right is marked for
                     # deletion.
-                    access_right = AccessRight.objects.filter(
-                        document_id=doc_id, user_id=collaborator_id).first()
-                    if access_right:
-                        access_right.delete()
+                    AccessRight.objects.filter(
+                        document_id=doc_id,
+                        user_id=right['user_id']
+                    ).delete()
                 else:
                     access_right = AccessRight.objects.filter(
-                        document_id=doc_id, user_id=collaborator_id).first()
+                        document_id=doc_id,
+                        user_id=right['user_id']
+                    ).first()
                     if access_right:
-                        if access_right.rights != tgt_right:
-                            access_right.rights = tgt_right
+                        if access_right.rights != right['rights']:
+                            access_right.rights = right['rights']
                             send_share_notification(
                                 request,
                                 doc_id,
-                                collaborator_id,
-                                tgt_right,
+                                right['user_id'],
+                                right['rights'],
                                 True
                             )
                     else:
                         access_right = AccessRight.objects.create(
                             document_id=doc_id,
-                            user_id=collaborator_id,
-                            rights=tgt_right,
+                            user_id=right['user_id'],
+                            rights=right['rights']
                         )
                         send_share_notification(
                             request,
                             doc_id,
-                            collaborator_id,
-                            tgt_right,
+                            right['user_id'],
+                            right['rights'],
                             False
                         )
                     access_right.save()

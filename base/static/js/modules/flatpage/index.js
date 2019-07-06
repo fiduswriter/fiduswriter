@@ -27,7 +27,7 @@ export class FlatPage extends PreloginPage {
     }
 
     getPageData() {
-        return postJson(`/base/flatpage/`, {url: this.url}).then(
+        return postJson(`/api/base/flatpage/`, {url: this.url}).then(
             ({json}) => {
                 this.title = json.title
                 this.contents = `<div>

@@ -82,9 +82,7 @@ export class PreloginPage {
         document.querySelector('.fw-login-logo').addEventListener('click', () => this.app.goTo('/'))
         document.getElementById('lang-selection').addEventListener('change', event => {
             this.language = event.target.value
-            return setLanguage(this.app.config, this.language).then(
-                () => this.init()
-            )
+            return setLanguage(this.app.config, this.language)
         })
     }
 

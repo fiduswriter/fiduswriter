@@ -28,7 +28,8 @@ export const bulkModel = [
                 const dialog = new DocumentAccessRightsDialog(
                     ids,
                     overview.teamMembers,
-                    memberDetails => overview.teamMembers.push(memberDetails)
+                    memberDetails => overview.teamMembers.push(memberDetails),
+                    overview.registrationOpen
                 )
                 dialog.init()
             }

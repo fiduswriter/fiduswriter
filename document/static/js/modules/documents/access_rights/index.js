@@ -1,5 +1,5 @@
 import {accessRightOverviewTemplate, contactsTemplate, collaboratorsTemplate} from "./templates"
-import {addMemberDialog} from "../../contacts/manage"
+import {AddContactDialog} from "../../contacts/add_dialog"
 import {openDropdownBox, findTarget, setCheckableLabel, addAlert, postJson, Dialog} from "../../common"
 
 /**
@@ -8,10 +8,11 @@ import {openDropdownBox, findTarget, setCheckableLabel, addAlert, postJson, Dial
 
 export class DocumentAccessRightsDialog {
 
-    constructor(documentIds, contacts, newContactCall) {
+    constructor(documentIds, contacts, newContactCall, registrationOpen) {
         this.documentIds = documentIds
         this.contacts = contacts
         this.newContactCall = newContactCall // a function to be called when a new contact has been added with contact details
+        this.registrationOpen = registrationOpen
     }
 
     init() {
@@ -63,7 +64,8 @@ export class DocumentAccessRightsDialog {
                 text: gettext('Add new contact'),
                 classes: "fw-light fw-add-button",
                 click: () => {
-                    addMemberDialog().then(
+                    const dialog = new AddContactDialog(this.registrationOpen)
+                    dialog.init().then(
                         memberData => {
                             document.querySelector('#my-contacts .fw-data-table-body').insertAdjacentHTML(
                                 'beforeend',

@@ -1,6 +1,6 @@
-import {accessRightOverviewTemplate, contactsTemplate, collaboratorsTemplate} from "./templates"
+import {accessRightOverviewTemplate, contactsTemplate, collaboratorsTemplate, invitesTemplate} from "./templates"
 import {AddContactDialog} from "../../contacts/add_dialog"
-import {openDropdownBox, findTarget, setCheckableLabel, addAlert, postJson, Dialog} from "../../common"
+import {openDropdownBox, findTarget, setCheckableLabel, addAlert, postJson, Dialog, escapeText} from "../../common"
 
 /**
 * Functions for the document access rights dialog.
@@ -27,6 +27,7 @@ export class DocumentAccessRightsDialog {
         ).then(
             ({json}) => {
                 this.accessRights = json.access_rights
+                this.invites = json.invites
                 this.createAccessRightsDialog()
             }
         )
@@ -59,28 +60,68 @@ export class DocumentAccessRightsDialog {
             col => col.count === this.documentIds.length
         )
 
+        const docInvites = {}
+
+        // We are potentially dealing with access rights of several documents, so
+        // we first need to find out which users have access on all of the documents.
+        // Those are the access rights we will display in the dialog.
+        this.invites.forEach(inv => {
+            if (!this.documentIds.includes(inv.document_id)) {
+                return
+            }
+            if (!docInvites[inv.email]) {
+                docInvites[inv.email] = Object.assign({}, inv)
+                docInvites[inv.email].count = 1
+            } else {
+                if (docInvites[inv.email].rights != inv.rights) {
+                    // We use read rights if the user has different rights on different docs.
+                    docInvites[inv.email].rights = 'read'
+                }
+                docInvites[inv.email].count += 1
+            }
+        })
+
+        const invites = Object.values(docInvites).filter(
+            inv => inv.count === this.documentIds.length
+        )
+
+
         const buttons = [
             {
-                text: gettext('Add new contact'),
+                text: gettext('Add contact or invite new user'),
                 classes: "fw-light fw-add-button",
                 click: () => {
-                    const dialog = new AddContactDialog(this.registrationOpen)
+                    const dialog = new AddContactDialog(
+                        this.registrationOpen,
+                        gettext('Add contact or invite new user'),
+                        true
+                    )
                     dialog.init().then(
-                        memberData => {
-                            document.querySelector('#my-contacts .fw-data-table-body').insertAdjacentHTML(
-                                'beforeend',
-                                contactsTemplate({contacts: [memberData]})
-                            )
-                            document.querySelector('#share-member table tbody').insertAdjacentHTML(
-                                'beforeend',
-                                collaboratorsTemplate({'collaborators': [{
-                                    user_id: memberData.id,
-                                    user_name: memberData.name,
-                                    avatar: memberData.avatar,
-                                    rights: 'read'
-                                }]})
-                            )
-                            this.newContactCall(memberData)
+                        contactData => {
+                            if (contactData.id) {
+                                document.querySelector('#my-contacts .fw-data-table-body').insertAdjacentHTML(
+                                    'beforeend',
+                                    contactsTemplate({contacts: [contactData]})
+                                )
+                                document.querySelector('#share-member table tbody').insertAdjacentHTML(
+                                    'beforeend',
+                                    collaboratorsTemplate({'collaborators': [{
+                                        user_id: contactData.id,
+                                        user_name: contactData.name,
+                                        avatar: contactData.avatar,
+                                        rights: 'read'
+                                    }]})
+                                )
+                                this.newContactCall(contactData)
+                            } else if (
+                                contactData.email &&
+                                !document.querySelector(`.invite-tr[data-email="${escapeText(contactData.email)}"]`)
+                            ) {
+                                document.querySelector('#share-member table tbody').insertAdjacentHTML(
+                                    'beforeend',
+                                    invitesTemplate({'invites': [{'email': contactData.email, rights: 'read'}]})
+                                )
+                            }
                         }
                     )
                 }
@@ -94,7 +135,11 @@ export class DocumentAccessRightsDialog {
                     document.querySelectorAll('#share-member .collaborator-tr').forEach(el => {
                         accessRights.push({user_id: parseInt(el.dataset.id), rights: el.dataset.rights})
                     })
-                    this.submitAccessRight(accessRights)
+                    const invites = []
+                    document.querySelectorAll('#share-member .invite-tr').forEach(el => {
+                        invites.push({email: el.dataset.email, rights: el.dataset.rights})
+                    })
+                    this.submitAccessRight(accessRights, invites)
                     this.dialog.close()
                 }
             },
@@ -109,7 +154,8 @@ export class DocumentAccessRightsDialog {
             height: 440,
             body: accessRightOverviewTemplate({
                 contacts: this.contacts,
-                collaborators
+                collaborators,
+                invites
             }),
             buttons
         })
@@ -156,7 +202,7 @@ export class DocumentAccessRightsDialog {
                     break
                 case findTarget(event, '.edit-right-wrapper .fw-pulldown-item, .delete-collaborator', el): {
                     const newRight = el.target.dataset.rights
-                    const colRow = el.target.closest('.collaborator-tr')
+                    const colRow = el.target.closest('.collaborator-tr,.invite-tr')
                     colRow.dataset.rights = newRight
                     colRow.querySelector('.icon-access-right').setAttribute(
                         'class',
@@ -178,17 +224,17 @@ export class DocumentAccessRightsDialog {
 
     }
 
-    submitAccessRight(newAccessRights) {
+    submitAccessRight(newAccessRights, invites) {
         postJson(
             '/api/document/save_access_rights/',
             {
                 document_ids: JSON.stringify(this.documentIds),
-                access_rights: JSON.stringify(newAccessRights)
+                access_rights: JSON.stringify(newAccessRights),
+                invites: JSON.stringify(invites)
             }
         ).then(
             () => {
-                addAlert('success', gettext(
-                    'Access rights have been saved'))
+                addAlert('success', gettext('Access rights have been saved'))
             }
         ).catch(
             () => addAlert('error', gettext('Access rights could not be saved'))

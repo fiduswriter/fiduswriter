@@ -300,13 +300,17 @@ class AccessRightInvite(models.Model):
 
     def __str__(self):
         return (
-            '%(email)s %(rights)s on %(doc_id)d' %
+            '%(email)s %(rights)s on %(doc_id)d: %(id)d' %
             {
                 'email': self.email,
                 'rights': self.rights,
-                'doc_id': self.document.id
+                'doc_id': self.document.id,
+                'id': self.id
             }
         )
+
+    def get_absolute_url(self):
+        return "/invite/%i/" % self.id
 
 
 def revision_filename(instance, filename):

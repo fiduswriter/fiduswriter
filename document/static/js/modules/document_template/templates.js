@@ -514,7 +514,7 @@ ${LANGUAGES.map(lang => `<option value="${lang[0]}"${language === lang[0] ? ' se
 export const bibliographyHeaderTemplate = ({bibliography_header = {zzz: ''}}) => {
     let translations = Object.entries(bibliography_header)
     if (!translations.length) {
-        translations = [['zzz' ,'']]
+        translations = [['zzz', '']]
     }
     return `<table class="fw-dialog-table fw-small input-list-wrapper">${
         translations.map(

@@ -25,26 +25,12 @@ export const bulkModel = [
                 addAlert('error', gettext('You cannot share documents of other users'))
             }
             if (ownIds.length) {
-                postJson(
-                    '/api/document/documentaccess/',
-                    {documents: ownIds}
-                ).then(
-                    ({json}) => {
-                        this.accessRights = this.accessRights.filter(ar => !ownIds.includes(ar.document_id)).concat(json.access_rights)
-                    }
-                ).catch(
-                    () => addAlert('error', gettext('Cannot load document access data.'))
-                ).then(
-                    () => {
-                        new DocumentAccessRightsDialog(
-                            ids,
-                            overview.accessRights,
-                            overview.teamMembers,
-                            newAccessRights => overview.accessRights = newAccessRights,
-                            memberDetails => overview.teamMembers.push(memberDetails)
-                        )
-                    }
+                const dialog = new DocumentAccessRightsDialog(
+                    ids,
+                    overview.teamMembers,
+                    memberDetails => overview.teamMembers.push(memberDetails)
                 )
+                dialog.init()
             }
         },
         order: 1

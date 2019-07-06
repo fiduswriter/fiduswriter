@@ -291,7 +291,7 @@ class AccessRight(models.Model):
 
 class AccessRightInvite(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    email = models.EmailField() # The email where the invite was sent
+    email = models.EmailField()  # The email where the invite was sent
     document = models.ForeignKey(Document, on_delete=models.deletion.CASCADE)
     rights = models.CharField(
         max_length=21,

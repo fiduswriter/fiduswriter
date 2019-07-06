@@ -2,7 +2,6 @@ import {DocumentAccessRightsDialog} from "../../../documents/access_rights"
 import {SaveRevision, SaveCopy} from "../../../exporter/native"
 import {ExportFidusFile} from "../../../exporter/native/file"
 import {RevisionDialog, LanguageDialog} from "../../dialogs"
-import {postJson} from "../../../common"
 
 const languageItem = function(code, name, order) {
     return {
@@ -44,28 +43,14 @@ export const headerbarModel = () => ({
                     tooltip: gettext('Share the document with other users.'),
                     order: 0,
                     action: editor => {
-                        postJson(
-                            '/api/document/documentaccess/',
-                            {documents: [editor.docInfo.id]}
-                        ).then(
-                            ({json}) => editor.docInfo.collaborators = json.access_rights
-                        ).catch(
-                            () => addAlert('error', gettext('Cannot load document access data.'))
-                        ).then(
-                            () => {
-                                new DocumentAccessRightsDialog(
-                                    [editor.docInfo.id],
-                                    editor.docInfo.collaborators,
-                                    editor.docInfo.owner.team_members,
-                                    newCollaborators => {
-                                        editor.docInfo.collaborators = newCollaborators
-                                    },
-                                    memberData => {
-                                        editor.user.team_members.push(memberData)
-                                    }
-                                )
+                        const dialog = new DocumentAccessRightsDialog(
+                            [editor.docInfo.id],
+                            editor.docInfo.owner.team_members,
+                            memberData => {
+                                editor.user.team_members.push(memberData)
                             }
                         )
+                        dialog.init()
                     },
                     disabled: editor => {
                         return !editor.docInfo.is_owner

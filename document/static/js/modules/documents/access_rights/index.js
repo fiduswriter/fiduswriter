@@ -8,13 +8,27 @@ import {openDropdownBox, findTarget, setCheckableLabel, addAlert, postJson, Dial
 
 export class DocumentAccessRightsDialog {
 
-    constructor(documentIds, accessRights, contacts, modifiedRightsCall, newContactCall) {
+    constructor(documentIds, contacts, newContactCall) {
         this.documentIds = documentIds
-        this.accessRights = accessRights
         this.contacts = contacts
-        this.modifiedRightsCall = modifiedRightsCall // a function to be called when access rights are modified with the new rights
         this.newContactCall = newContactCall // a function to be called when a new contact has been added with contact details
-        this.createAccessRightsDialog()
+    }
+
+    init() {
+        postJson(
+            '/api/document/documentaccess/',
+            {document_ids: this.documentIds}
+        ).catch(
+            error => {
+                addAlert('error', gettext('Cannot load document access data.'))
+                throw error
+            }
+        ).then(
+            ({json}) => {
+                this.accessRights = json.access_rights
+                this.createAccessRightsDialog()
+            }
+        )
     }
 
     createAccessRightsDialog() {
@@ -170,9 +184,7 @@ export class DocumentAccessRightsDialog {
                 'rights': newAccessRights
             }
         ).then(
-            ({json}) => {
-                this.accessRights = json.access_rights
-                this.modifiedRightsCall(this.accessRights)
+            () => {
                 addAlert('success', gettext(
                     'Access rights have been saved'))
             }

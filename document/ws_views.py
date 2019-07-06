@@ -11,9 +11,8 @@ from document.helpers.serializers import PythonWithURLSerializer
 from base.ws_handler import BaseWebSocketHandler
 import logging
 from tornado.escape import json_decode, json_encode
-from document.models import AccessRight, COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \
+from document.models import COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \
     CAN_COMMUNICATE, FW_DOCUMENT_VERSION
-from document.views import get_accessrights
 from usermedia.models import Image, DocumentImage, UserImage
 from user.util import get_user_avatar_url
 
@@ -170,12 +169,6 @@ class WebSocket(BaseWebSocketHandler):
             tm_object['username'] = team_member.member.get_username()
             tm_object['avatar'] = get_user_avatar_url(team_member.member)
             response['doc_info']['owner']['team_members'].append(tm_object)
-        collaborators = get_accessrights(
-            AccessRight.objects.filter(
-                document_id=self.doc['id']
-            )
-        )
-        response['doc_info']['collaborators'] = collaborators
         response['doc_info']['session_id'] = self.id
         self.send_message(response)
 

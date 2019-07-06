@@ -27,20 +27,6 @@ from style.models import CitationStyle, CitationLocale, DocumentStyle
 from base.html_email import html_email
 
 
-def get_accessrights(ars):
-    ret = []
-    for ar in ars:
-        the_avatar = get_user_avatar_url(ar.user)
-        ret.append({
-            'document_id': ar.document.id,
-            'user_id': ar.user.id,
-            'user_name': ar.user.readable_name,
-            'rights': ar.rights,
-            'avatar': the_avatar
-        })
-    return ret
-
-
 @login_required
 def get_documentlist_extra(request):
     response = {}
@@ -131,14 +117,24 @@ def get_documentaccess(request):
     if request.is_ajax() and request.method == 'POST':
         status = 200
         qs = AccessRight.objects.filter(document__owner=request.user)
-        doc_ids = request.POST.getlist('documents[]')
+        doc_ids = request.POST.getlist('document_ids[]')
         if len(doc_ids) > 0:
-            qs.filter(document_id__in=doc_ids)
-        response['access_rights'] = get_accessrights(qs)
+            qs = qs.filter(document_id__in=doc_ids)
+        access_rights = []
+        for ar in qs:
+            access_rights.append({
+                'document_id': ar.document.id,
+                'user_id': ar.user.id,
+                'user_name': ar.user.readable_name,
+                'rights': ar.rights,
+                'avatar': get_user_avatar_url(ar.user)
+            })
+        response['access_rights'] = access_rights
     return JsonResponse(
         response,
         status=status
     )
+
 
 @login_required
 def get_documentlist(request):
@@ -176,8 +172,6 @@ def get_documentlist(request):
             use_natural_foreign_keys=True
         )
         response['document_styles'] = [obj['fields'] for obj in doc_styles]
-        response['access_rights'] = get_accessrights(
-            AccessRight.objects.filter(document__owner=request.user))
         doc_templates = DocumentTemplate.objects.filter(
             Q(user=request.user) | Q(user=None)
         )
@@ -374,8 +368,6 @@ def access_right_save(request):
                         )
                     access_right.save()
                 x += 1
-        response['access_rights'] = get_accessrights(
-            AccessRight.objects.filter(document__owner=request.user))
         status = 201
     return JsonResponse(
         response,

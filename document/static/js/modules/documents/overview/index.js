@@ -24,7 +24,6 @@ export class DocumentOverview {
         this.schema = docSchema
         this.documentList = []
         this.teamMembers = []
-        this.accessRights = []
         this.mod = {}
     }
 
@@ -74,29 +73,16 @@ export class DocumentOverview {
                     docId = parseInt(el.target.dataset.id)
                     this.mod.actions.deleteDocumentDialog([docId])
                     break
-                case findTarget(event, '.owned-by-user.rights', el):
+                case findTarget(event, '.owned-by-user.rights', el): {
                     docId = parseInt(el.target.dataset.id)
-                    postJson(
-                        '/api/document/documentaccess/',
-                        {documents: [docId]}
-                    ).then(
-                        ({json}) => {
-                            this.accessRights = this.accessRights.filter(ar => ar.document_id !== docId).concat(json.access_rights)
-                        }
-                    ).catch(
-                        () => addAlert('error', gettext('Cannot load document access data.'))
-                    ).then(
-                        () => {
-                            new DocumentAccessRightsDialog(
-                                [docId],
-                                this.accessRights,
-                                this.teamMembers,
-                                newAccessRights => this.accessRights = newAccessRights,
-                                memberDetails => this.teamMembers.push(memberDetails)
-                            )
-                        }
+                    const dialog = new DocumentAccessRightsDialog(
+                        [docId],
+                        this.teamMembers,
+                        memberDetails => this.teamMembers.push(memberDetails)
                     )
+                    dialog.init()
                     break
+                }
                 default:
                     break
             }
@@ -133,7 +119,6 @@ export class DocumentOverview {
                 })
 
                 this.teamMembers = json.team_members
-                this.accessRights = json.access_rights
                 this.citationStyles = json.citation_styles
                 this.citationLocales = json.citation_locales
                 this.documentStyles = json.document_styles

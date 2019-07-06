@@ -6,7 +6,6 @@ from django.core import serializers
 from django.http import HttpResponse, JsonResponse, HttpRequest
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-from django.core.exceptions import ObjectDoesNotExist
 from django.core.files import File
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
@@ -111,7 +110,7 @@ def documents_list(request):
 
 
 @login_required
-def get_documentaccess(request):
+def get_access_rights(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
@@ -130,6 +129,70 @@ def get_documentaccess(request):
                 'avatar': get_user_avatar_url(ar.user)
             })
         response['access_rights'] = access_rights
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@login_required
+@transaction.atomic
+def save_access_rights(request):
+    status = 405
+    response = {}
+    if request.is_ajax() and request.method == 'POST':
+        document_ids = request.POST.getlist('document_ids[]')
+        collaborator_ids = request.POST.getlist('collaborator_ids[]')
+        access_rights = request.POST.getlist('access_rights[]')
+        for doc_id in document_ids:
+            doc = Document.objects.filter(
+                pk=doc_id,
+                owner=request.user
+            ).first()
+            if not doc:
+                continue
+            x = 0
+            for collaborator_id in collaborator_ids:
+                try:
+                    tgt_right = access_rights[x]
+                except IndexError:
+                    tgt_right = 'read'
+                if tgt_right == 'delete':
+                    # Status 'delete' means the access right is marked for
+                    # deletion.
+                    access_right = AccessRight.objects.filter(
+                        document_id=doc_id, user_id=collaborator_id).first()
+                    if access_right:
+                        access_right.delete()
+                else:
+                    access_right = AccessRight.objects.filter(
+                        document_id=doc_id, user_id=collaborator_id).first()
+                    if access_right:
+                        if access_right.rights != tgt_right:
+                            access_right.rights = tgt_right
+                            send_share_notification(
+                                request,
+                                doc_id,
+                                collaborator_id,
+                                tgt_right,
+                                True
+                            )
+                    else:
+                        access_right = AccessRight.objects.create(
+                            document_id=doc_id,
+                            user_id=collaborator_id,
+                            rights=tgt_right,
+                        )
+                        send_share_notification(
+                            request,
+                            doc_id,
+                            collaborator_id,
+                            tgt_right,
+                            False
+                        )
+                    access_right.save()
+                x += 1
+        status = 201
     return JsonResponse(
         response,
         status=status
@@ -308,70 +371,6 @@ def send_share_notification(request, doc_id, collaborator_id, right, change):
         [collaborator_email],
         fail_silently=True,
         html_message=html_email(body_html)
-    )
-
-
-@login_required
-@transaction.atomic
-def access_right_save(request):
-    status = 405
-    response = {}
-    if request.is_ajax() and request.method == 'POST':
-        tgt_documents = request.POST.getlist('documents[]')
-        tgt_users = request.POST.getlist('collaborators[]')
-        tgt_rights = request.POST.getlist('rights[]')
-        for tgt_doc in tgt_documents:
-            doc_id = int(tgt_doc)
-            try:
-                Document.objects.get(pk=doc_id, owner=request.user)
-            except ObjectDoesNotExist:
-                continue
-            x = 0
-            for tgt_user in tgt_users:
-                collaborator_id = int(tgt_user)
-                try:
-                    tgt_right = tgt_rights[x]
-                except IndexError:
-                    tgt_right = 'read'
-                if tgt_right == 'delete':
-                    # Status 'delete' means the access right is marked for
-                    # deletion.
-                    access_right = AccessRight.objects.filter(
-                        document_id=doc_id, user_id=collaborator_id).first()
-                    if access_right:
-                        access_right.delete()
-                else:
-                    access_right = AccessRight.objects.filter(
-                        document_id=doc_id, user_id=collaborator_id).first()
-                    if access_right:
-                        if access_right.rights != tgt_right:
-                            access_right.rights = tgt_right
-                            send_share_notification(
-                                request,
-                                doc_id,
-                                collaborator_id,
-                                tgt_right,
-                                True
-                            )
-                    else:
-                        access_right = AccessRight.objects.create(
-                            document_id=doc_id,
-                            user_id=collaborator_id,
-                            rights=tgt_right,
-                        )
-                        send_share_notification(
-                            request,
-                            doc_id,
-                            collaborator_id,
-                            tgt_right,
-                            False
-                        )
-                    access_right.save()
-                x += 1
-        status = 201
-    return JsonResponse(
-        response,
-        status=status
     )
 
 

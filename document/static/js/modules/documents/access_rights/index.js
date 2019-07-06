@@ -16,7 +16,7 @@ export class DocumentAccessRightsDialog {
 
     init() {
         postJson(
-            '/api/document/documentaccess/',
+            '/api/document/get_access_rights/',
             {document_ids: this.documentIds}
         ).catch(
             error => {
@@ -177,11 +177,11 @@ export class DocumentAccessRightsDialog {
 
     submitAccessRight(newCollaborators, newAccessRights) {
         postJson(
-            '/api/document/accessright/save/',
+            '/api/document/save_access_rights/',
             {
-                'documents': this.documentIds,
-                'collaborators': newCollaborators,
-                'rights': newAccessRights
+                document_ids: this.documentIds,
+                collaborator_ids: newCollaborators,
+                access_rights: newAccessRights
             }
         ).then(
             () => {

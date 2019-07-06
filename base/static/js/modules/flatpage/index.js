@@ -5,14 +5,6 @@ export class FlatPage extends PreloginPage {
     constructor({app, isFree, language, registrationOpen, staticUrl}, url) {
         super({app, isFree, language, registrationOpen, staticUrl})
         this.url = url
-
-        this.headerLinks = [
-            {
-                type: 'button',
-                text: gettext('Log in'),
-                link: '/'
-            }
-        ]
     }
 
     init() {

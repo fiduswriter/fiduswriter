@@ -7,13 +7,6 @@ export class PasswordReset extends PreloginPage {
         this.contactEmail = contactEmail
         this.title = gettext('Reset Password')
         // Note: We do not currently support plugins targetting only the reset password page
-        this.headerLinks = [
-            {
-                type: 'button',
-                text: gettext('Log in'),
-                link: '/'
-            }
-        ]
     }
 
     render() {

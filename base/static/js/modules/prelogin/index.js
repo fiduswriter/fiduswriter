@@ -14,17 +14,6 @@ export class PreloginPage {
         this.pluginLoaders = {}
         this.title = ''
         this.contents = ''
-        this.headerLinks = [
-            {
-                type: 'label',
-                text: gettext('New here?')
-            },
-            {
-                type: 'button',
-                text: gettext('Sign up'),
-                link: '/account/sign-up/'
-            }
-        ]
         this.footerLinks = [
             {
                 text: gettext("Terms and Conditions"),
@@ -45,6 +34,13 @@ export class PreloginPage {
             {
                 text: gettext("Editing with ProseMirror"),
                 link: 'https://prosemirror.net/'
+            }
+        ]
+        this.headerLinks = [
+            {
+                type: 'button',
+                text: gettext('Log in'),
+                link: '/'
             }
         ]
     }

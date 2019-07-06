@@ -25,6 +25,7 @@ from document.helpers.serializers import PythonWithURLSerializer
 from bibliography.views import serializer
 from style.models import CitationStyle, CitationLocale, DocumentStyle
 from base.html_email import html_email
+from user.models import TeamMember
 
 
 @login_required
@@ -240,6 +241,73 @@ def save_access_rights(request):
                             False
                         )
         status = 201
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+def apply_invite(inv, user):
+    old_ar = AccessRight.objects.filter(
+        user=user,
+        document=inv.document
+    ).first()
+    if old_ar:
+        # If the user already has rights, we should only be upgrading
+        # them, not downgrade. Unfortuantely it is not easy to
+        # say how each right compares. So unless the invite gives read
+        # access, or the user already has write access, we change to
+        # the access right of the invite.
+        if inv.rights == 'read':
+            pass
+        elif old_ar.rights == 'write':
+            pass
+        else:
+            old_ar.rights = inv.rights
+            old_ar.save()
+    elif inv.document.owner == user:
+        pass
+    else:
+        ar = AccessRight.objects.create(
+            document=inv.document,
+            user=user,
+            rights=inv.rights
+        )
+        ar.save()
+        if not TeamMember.objects.filter(
+            leader=inv.document.owner,
+            member=user
+        ).first():
+            tm1 = TeamMember.objects.create(
+                leader=inv.document.owner,
+                member=user
+            )
+            tm1.save()
+        if not TeamMember.objects.filter(
+            leader=user,
+            member=inv.document.owner,
+        ).first():
+            tm2 = TeamMember.objects.create(
+                leader=user,
+                member=inv.document.owner
+            )
+            tm2.save()
+    inv.delete()
+
+
+@login_required
+def invite(request):
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        status = 200
+        id = int(request.POST['id'])
+        inv = AccessRightInvite.objects.filter(id=id).first()
+        if inv:
+            response['redirect'] = inv.document.get_absolute_url()
+            apply_invite(inv, request.user)
+        else:
+            response['redirect'] = ''
     return JsonResponse(
         response,
         status=status

@@ -8,6 +8,17 @@ export class LoginPage extends PreloginPage {
         this.socialaccountProviders = socialaccountProviders
         this.title = gettext('Login')
         this.pluginLoaders = pluginLoaders
+        this.headerLinks = [
+            {
+                type: 'label',
+                text: gettext('New here?')
+            },
+            {
+                type: 'button',
+                text: gettext('Sign up'),
+                link: '/account/sign-up/'
+            }
+        ]
     }
 
     render() {

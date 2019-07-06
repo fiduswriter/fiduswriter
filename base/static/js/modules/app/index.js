@@ -1,5 +1,6 @@
 import {BibliographyOverview} from "../bibliography/overview"
 import {DocumentOverview} from "../documents/overview"
+import {DocumentInvite} from "../documents/invite"
 import {ImageOverview} from "../images/overview"
 import {ContactsOverview} from "../contacts"
 import {Profile} from "../profile"
@@ -55,6 +56,12 @@ export class App {
                 open: pathnameParts => {
                     const id = pathnameParts[2]
                     return import('../editor').then(({Editor}) => new Editor(this.config, id))
+                }
+            },
+            "invite": {
+                open: pathnameParts => {
+                    const id = pathnameParts[2]
+                    return new DocumentInvite(this.config, id)
                 }
             },
             "pages": {

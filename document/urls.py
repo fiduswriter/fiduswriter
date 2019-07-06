@@ -44,6 +44,11 @@ urlpatterns = [
         name='save_access_rights'
     ),
     url(
+        '^invite/$',
+        views.invite,
+        name='invite'
+    ),
+    url(
         '^comment_notify/$',
         views.comment_notify,
         name='comment_notify'

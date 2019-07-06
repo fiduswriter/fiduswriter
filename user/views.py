@@ -7,13 +7,14 @@ from django.contrib.auth.models import User
 
 from .forms import UserForm, TeamMemberForm
 from . import util as userutil
-from document.models import AccessRight
+from document.models import AccessRight, AccessRightInvite
 
 from allauth.account.models import (
     EmailAddress,
     EmailConfirmation,
     EmailConfirmationHMAC
 )
+from allauth.account.views import SignupView
 from allauth.account import signals
 from django.contrib.auth.forms import PasswordChangeForm
 from allauth.account.forms import AddEmailForm
@@ -22,6 +23,8 @@ from avatar.models import Avatar
 from avatar import views as avatarviews
 from avatar.forms import UploadAvatarForm
 from avatar.signals import avatar_updated
+
+from document.views import apply_invite
 
 
 def logout_page(request):
@@ -491,3 +494,17 @@ def get_confirmkey_data(request):
         response,
         status=status
     )
+
+
+class FidusSignupView(SignupView):
+    def form_valid(self, form):
+        ret = super(FidusSignupView, self).form_valid(form)
+        if 'invite_id' in self.request.POST:
+            invite_id = int(self.request.POST['invite_id'])
+            inv = AccessRightInvite.objects.filter(id=invite_id).first()
+            if inv:
+                apply_invite(inv, self.user)
+        return ret
+
+
+signup = FidusSignupView.as_view()

@@ -46,6 +46,7 @@ urlpatterns = [
 
     # Admin interface
     path('admin/', admin_site_urls),
+
 ]
 
 for app in settings.INSTALLED_APPS:

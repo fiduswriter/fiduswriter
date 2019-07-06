@@ -55,6 +55,8 @@ urlpatterns = [
         name="get_confirmkey_data"
     ),
 
+    url(r"^signup/$", views.signup, name="account_signup"),
+
     # Authentication handling
     url('', include('allauth.urls')),
 ]

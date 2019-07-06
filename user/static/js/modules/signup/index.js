@@ -79,7 +79,8 @@ export class Signup extends PreloginPage {
             const username = document.getElementById('id_username').value,
                 password1 = document.getElementById('id_password1').value,
                 password2 = document.getElementById('id_password2').value,
-                email = document.getElementById('id_email').value
+                emailEl = document.getElementById('id_email'),
+                email = emailEl.value
             let errors = false
             if (!username.length) {
                 document.querySelector('#id_username_errors').innerHTML = `<li>${gettext('This field is required.')}</li>`
@@ -97,7 +98,10 @@ export class Signup extends PreloginPage {
                 document.querySelector('#id_password2_errors').innerHTML = `<li>${gettext('You must type the same password each time.')}</li>`
                 errors = true
             }
-            if (!email.length) {
+            if (!emailEl.checkValidity()) {
+                document.querySelector('#id_email_errors').innerHTML = `<li>${gettext('This is not a valid email.')}</li>`
+                errors = true
+            } else if (!email.length) {
                 document.querySelector('#id_email_errors').innerHTML = `<li>${gettext('This field is required.')}</li>`
                 errors = true
             }

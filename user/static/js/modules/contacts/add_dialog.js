@@ -5,7 +5,7 @@ import {postJson, cancelPromise, Dialog} from "../common"
 export class AddContactDialog  {
     constructor(registrationOpen, title = gettext('Add a user to your contacts'), returnUnregisteredEmail = false) {
         this.registrationOpen = registrationOpen
-        this.returnUnregisteredEmail = returnUnregisteredEmail
+        this.returnUnregisteredEmail = returnUnregisteredEmail // Whether to allow the dialog return an unregistred email instead of a user instance
         this.title = title
     }
 
@@ -72,7 +72,7 @@ export class AddContactDialog  {
                         responseHtml = gettext('You cannot add yourself to your contacts!')
                     } else if (json.error === 2) {
                         responseHtml = gettext('This person is already in your contacts')
-                    } else if (userString.includes('@') && userString.includes('.')) {
+                    } else if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userString)) { // regex taken from https://tylermcginnis.com/validate-email-address-javascript/
                         responseHtml = gettext('No user is registered with the given email address.')
                         if (this.registrationOpen) {
                             if (this.returnUnregisteredEmail) {

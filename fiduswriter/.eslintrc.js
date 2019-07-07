@@ -15,7 +15,7 @@ module.exports = {
             "node": {
                 "moduleDirectory": '.transpile/node_modules'
             },
-            [path.resolve('test/eslint-import-resolver')]: {}
+            [path.resolve('testing/eslint-import-resolver')]: {}
         }
     },
     "parser": "babel-eslint",

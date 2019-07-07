@@ -1,8 +1,8 @@
 from selenium.common.exceptions import NoSuchElementException
 import time
 
-from test.testcases import LiveTornadoTestCase
-from test.selenium_helper import SeleniumHelper
+from testing.testcases import LiveTornadoTestCase
+from testing.selenium_helper import SeleniumHelper
 
 
 class EditProfileTest(LiveTornadoTestCase, SeleniumHelper):

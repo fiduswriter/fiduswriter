@@ -231,13 +231,7 @@ export class HeaderbarView {
                 <div id="connected-collaborators">
                     ${
                         participants.map(participant =>
-                            `<img src="${participant.avatar}" alt="${
-                                escapeText(participant.name)
-                            }" title="${
-                                escapeText(participant.name)
-                            }" class="avatar user-${
-                                participant.id
-                            }">`).join('')
+                            participant.avatar.html).join('')
                     }
                 </div>
             `

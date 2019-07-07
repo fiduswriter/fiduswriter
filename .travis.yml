@@ -13,8 +13,8 @@ addons:
 install:
   - mv travis/configuration.py ./
   - pip3 install requests[security]
-  - pip3 install -r requirements.txt
-  - pip3 install -r dev-requirements.txt
+  - pip3 install ./
+  - pip3 install -r fiduswriter/dev-requirements.txt
   - pip3 install coverage
   - pip3 install coveralls
   - coverage run manage.py init --no-static --no-compress
@@ -28,7 +28,7 @@ env:
     - TEST=bibliography
     - TEST=usermedia
 
-script: travis_retry coverage run manage.py test $TEST
+script: travis_retry coverage run `which fiduswriter` test $TEST
 
 stages:
   - lint

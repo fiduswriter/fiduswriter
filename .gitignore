@@ -1,5 +1,7 @@
 fiduswriter.sql
 fiduswriter.sql.backup
+/dist/
+/fiduswriter.egg-info/
 __pycache__/
 *.py[cod]
 *~
@@ -11,10 +13,7 @@ build
 local_settings.py
 .settings
 /media/
-.elasticbeanstalk/
 *.mo
-/node_modules/
-style/static/
 venv/
 .idea/
 /configuration.py
@@ -30,19 +29,14 @@ document/static/js/modules/citations/enUS_locale.js
 chromedriver
 testing.py
 es6-tmp/
-/.transpile-cache/
 /.transpile/
 /static-transpile/
 /static-libs/
-*.es5.js
 base/static/css/libs/
 .coverage
 /npm-debug.log
-/package.json
 *.swp
 *.swo
-/.transpile-time
-/package-lock.json
 /book
 /citation-api-import
 /languagetool
@@ -50,5 +44,3 @@ base/static/css/libs/
 /ojs
 /phplist
 /payment
-fiduswriter_plugins/
-color_menu

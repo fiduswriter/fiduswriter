@@ -20,9 +20,13 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-# The top path of the project. The default is for it to point to the directory
-# above this file.
-PROJECT_PATH = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
+# The top path of the project. Depending on whether ./manage.py is executed or
+# the fiduswriter pip package, it is either the dir that contains manage.py or
+# the cwd.
+PROJECT_PATH = os.environ.get('PROJECT_PATH')
+# SRC_PATH is the root path of the FW sources. If ./manage.py is executed, it
+# is the same as PROJECT_PATH.
+SRC_PATH = os.environ.get('SRC_PATH')
 
 # Paths to settings files
 SETTINGS_PATHS = [os.path.dirname(__file__), ]
@@ -141,12 +145,12 @@ MIDDLEWARE = (
     'django.middleware.locale.LocaleMiddleware',
 )
 
-# The location of the top urls.py file inside the fiduswriter folder.
+# The location of the top urls.py file inside the core folder.
 # You only need to change this in very advanced setups.
-ROOT_URLCONF = 'fiduswriter.urls'
+ROOT_URLCONF = 'core.urls'
 
-# Python dotted path to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = 'fiduswriter.wsgi.application'
+## Python dotted path to the WSGI application used by Django's runserver.
+# WSGI_APPLICATION = 'fiduswriter.wsgi.application'
 
 
 TEMPLATES = [

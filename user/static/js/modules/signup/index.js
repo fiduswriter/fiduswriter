@@ -30,7 +30,7 @@ export class Signup extends PreloginPage {
                     </div>
                     <div class="input-wrapper">
                         <label for="id_password2">${gettext('Confirm your password')}</label>
-                        <input type="password" name="password2" placeholder="${gettext('Password (again)')}'" required="" id="id_password2" autocomplete="new-password">
+                        <input type="password" name="password2" placeholder="${gettext('Password (again)')}" required="" id="id_password2" autocomplete="new-password">
                         <ul id="id_password2_errors" class="errorlist"></ul>
                     </div>
                     <div class="input-wrapper">

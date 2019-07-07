@@ -7,7 +7,7 @@ import {Profile} from "../profile"
 import {getUserInfo, findTarget, WebSocketConnector, showSystemMessage} from "../common"
 import {LoginPage} from "../login"
 import {EmailConfirm} from "../email_confirm"
-import {PasswordReset} from "../password_reset"
+import {PasswordResetRequest, PasswordResetChangePassword} from "../password_reset"
 import {Signup} from "../signup"
 import {ImageDB} from "../images/database"
 import {BibliographyDB} from "../bibliography/database"
@@ -36,8 +36,13 @@ export class App {
                             break
                         }
                         case "password-reset":
-                            returnValue = new PasswordReset(this.config)
+                            returnValue = new PasswordResetRequest(this.config)
                             break
+                        case "change-password": {
+                            const key = pathnameParts[3]
+                            returnValue = new PasswordResetChangePassword(this.config, key)
+                            break
+                        }
                         case "sign-up":
                             returnValue = new Signup(this.config)
                             break

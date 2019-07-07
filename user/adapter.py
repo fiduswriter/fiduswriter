@@ -15,3 +15,17 @@ class AccountAdapter(DefaultAccountAdapter):
             request,
             url)
         return ret
+
+    def send_mail(self, template_prefix, email, context):
+        if template_prefix == 'account/email/password_reset_key':
+            # We replace the password reset URL to avoid a '/api' in the URL.
+            key = context['password_reset_url'].split('/')[-2]
+            url = '/account/change-password/{}/'.format(key)
+            context['password_reset_url'] = build_absolute_uri(
+                context['request'],
+                url)
+        return super(AccountAdapter, self).send_mail(
+            template_prefix,
+            email,
+            context
+        )

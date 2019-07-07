@@ -3,8 +3,6 @@ import {confirmAccountTemplate, verifiedAccountTemplate, checkTermsTemplate, tes
 import {PreloginPage} from "../prelogin"
 import * as pluginLoaders from "../../plugins/confirm_account"
 
-
-
 export class EmailConfirm extends PreloginPage {
     constructor({app, isFree, language, registrationOpen, testServer, staticUrl}, key) {
         super({app, isFree, language, registrationOpen, staticUrl})
@@ -31,13 +29,6 @@ export class EmailConfirm extends PreloginPage {
             )
             this.confirmQuestionsTemplates.push(testServerQuestionTemplate)
         }
-        this.headerLinks = [
-            {
-                type: 'button',
-                text: gettext('Log in'),
-                link: '/'
-            }
-        ]
     }
 
     init() {

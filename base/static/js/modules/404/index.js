@@ -8,13 +8,5 @@ export class Page404 extends PreloginPage {
             <h1 class="fw-login-title">${gettext('Error 404')}</h1>
             <p>${gettext('The page you are looking for cannot be found.')}</p>
         </div>`
-
-        this.headerLinks = [
-            {
-                type: 'button',
-                text: gettext('Log in'),
-                link: '/'
-            }
-        ]
     }
 }

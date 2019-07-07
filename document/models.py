@@ -1,3 +1,5 @@
+import uuid
+
 from builtins import str
 from builtins import object
 
@@ -285,6 +287,30 @@ class AccessRight(models.Model):
                 'doc_id': self.document.id
             }
         )
+
+
+class AccessRightInvite(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    email = models.EmailField()  # The email where the invite was sent
+    document = models.ForeignKey(Document, on_delete=models.deletion.CASCADE)
+    rights = models.CharField(
+        max_length=21,
+        choices=RIGHTS_CHOICES,
+        blank=False)
+
+    def __str__(self):
+        return (
+            '%(email)s %(rights)s on %(doc_id)d: %(id)d' %
+            {
+                'email': self.email,
+                'rights': self.rights,
+                'doc_id': self.document.id,
+                'id': self.id
+            }
+        )
+
+    def get_absolute_url(self):
+        return "/invite/%i/" % self.id
 
 
 def revision_filename(instance, filename):

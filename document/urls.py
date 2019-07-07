@@ -34,9 +34,19 @@ urlpatterns = [
         name='delete_revision'
     ),
     url(
-        '^accessright/save/$',
-        views.access_right_save,
-        name='access_right_save'
+        '^get_access_rights/$',
+        views.get_access_rights,
+        name='get_access_rights'
+    ),
+    url(
+        '^save_access_rights/$',
+        views.save_access_rights,
+        name='save_access_rights'
+    ),
+    url(
+        '^invite/$',
+        views.invite,
+        name='invite'
     ),
     url(
         '^comment_notify/$',

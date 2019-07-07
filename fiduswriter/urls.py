@@ -46,6 +46,7 @@ urlpatterns = [
 
     # Admin interface
     path('admin/', admin_site_urls),
+
 ]
 
 for app in settings.INSTALLED_APPS:
@@ -72,5 +73,6 @@ if hasattr(settings, 'EXTRA_URLS'):
         ]
 
 urlpatterns += [
-    url('^.*', app_view, name='app')
+    url('^.*/$', app_view, name='app'),
+    url('^$', app_view, name='app')
 ]

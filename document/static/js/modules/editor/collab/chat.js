@@ -16,7 +16,9 @@ export class ModCollabChat {
 
     beep() {
         const notification = document.getElementById('chat-notification')
-        notification.play()
+        notification.play().catch(
+            () => {} // Don't worry about it if the browser prohibits playing the sound
+        )
     }
 
     flashtab(messageTitle) {

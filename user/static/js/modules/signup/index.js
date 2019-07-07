@@ -6,13 +6,6 @@ export class Signup extends PreloginPage {
         super({app, isFree, language, registrationOpen, staticUrl})
         this.title = gettext('Signup')
         this.registrationOpen = registrationOpen
-        this.headerLinks = [
-            {
-                type: 'button',
-                text: gettext('Log in'),
-                link: '/'
-            }
-        ]
         if (this.registrationOpen) {
             this.contents = `<div class="fw-login-left">
                 <h1 class="fw-login-title">${gettext("Sign up")}</h1>
@@ -37,7 +30,7 @@ export class Signup extends PreloginPage {
                     </div>
                     <div class="input-wrapper">
                         <label for="id_password2">${gettext('Confirm your password')}</label>
-                        <input type="password" name="password2" placeholder="${gettext('Password (again)')}'" required="" id="id_password2" autocomplete="new-password">
+                        <input type="password" name="password2" placeholder="${gettext('Password (again)')}" required="" id="id_password2" autocomplete="new-password">
                         <ul id="id_password2_errors" class="errorlist"></ul>
                     </div>
                     <div class="input-wrapper">
@@ -79,7 +72,8 @@ export class Signup extends PreloginPage {
             const username = document.getElementById('id_username').value,
                 password1 = document.getElementById('id_password1').value,
                 password2 = document.getElementById('id_password2').value,
-                email = document.getElementById('id_email').value
+                emailEl = document.getElementById('id_email'),
+                email = emailEl.value
             let errors = false
             if (!username.length) {
                 document.querySelector('#id_username_errors').innerHTML = `<li>${gettext('This field is required.')}</li>`
@@ -97,14 +91,21 @@ export class Signup extends PreloginPage {
                 document.querySelector('#id_password2_errors').innerHTML = `<li>${gettext('You must type the same password each time.')}</li>`
                 errors = true
             }
-            if (!email.length) {
+            if (!emailEl.checkValidity()) {
+                document.querySelector('#id_email_errors').innerHTML = `<li>${gettext('This is not a valid email.')}</li>`
+                errors = true
+            } else if (!email.length) {
                 document.querySelector('#id_email_errors').innerHTML = `<li>${gettext('This field is required.')}</li>`
                 errors = true
             }
             if (errors) {
                 return
             }
-            post('/api/user/signup/', {username, password1, password2, email}).then(
+            const sendData  = {username, password1, password2, email}
+            if (this.app.inviteId) {
+                sendData['invite_id'] = this.app.inviteId
+            }
+            post('/api/user/signup/', sendData).then(
                 () => document.querySelector('.fw-contents').innerHTML =
                     `<div class="fw-login-left">
                         <h1 class="fw-login-title">${gettext('Verify Your E-mail Address')}</h1>

@@ -17,14 +17,14 @@ import {
 
 export class DocumentOverview {
 
-    constructor({app, user, staticUrl}) {
+    constructor({app, user, staticUrl, registrationOpen}) {
         this.app = app
         this.user = user
         this.staticUrl = staticUrl
+        this.registrationOpen = registrationOpen
         this.schema = docSchema
         this.documentList = []
         this.teamMembers = []
-        this.accessRights = []
         this.mod = {}
     }
 
@@ -74,16 +74,17 @@ export class DocumentOverview {
                     docId = parseInt(el.target.dataset.id)
                     this.mod.actions.deleteDocumentDialog([docId])
                     break
-                case findTarget(event, '.owned-by-user .rights', el):
+                case findTarget(event, '.owned-by-user.rights', el): {
                     docId = parseInt(el.target.dataset.id)
-                    new DocumentAccessRightsDialog(
+                    const dialog = new DocumentAccessRightsDialog(
                         [docId],
-                        this.accessRights,
                         this.teamMembers,
-                        newAccessRights => this.accessRights = newAccessRights,
-                        memberDetails => this.teamMembers.push(memberDetails)
+                        memberDetails => this.teamMembers.push(memberDetails),
+                        this.registrationOpen
                     )
+                    dialog.init()
                     break
+                }
                 default:
                     break
             }
@@ -120,7 +121,6 @@ export class DocumentOverview {
                 })
 
                 this.teamMembers = json.team_members
-                this.accessRights = json.access_rights
                 this.citationStyles = json.citation_styles
                 this.citationLocales = json.citation_locales
                 this.documentStyles = json.document_styles
@@ -203,7 +203,7 @@ export class DocumentOverview {
                 ${doc.owner.avatar.html}
             </span>
             <span class="fw-searchable">${escapeText(doc.owner.name)}</span>`,
-            `<span class="rights" data-id="${doc.id}" title="${doc.rights}">
+            `<span class="rights${doc.is_owner ? ' owned-by-user' : ''}" data-id="${doc.id}" title="${doc.rights}">
                 <i data-id="${doc.id}" class="icon-access-right icon-access-${doc.rights}"></i>
             </span>`,
             `<span class="delete-document fw-link-text" data-id="${doc.id}"

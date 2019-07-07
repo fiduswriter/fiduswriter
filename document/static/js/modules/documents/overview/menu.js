@@ -25,13 +25,13 @@ export const bulkModel = [
                 addAlert('error', gettext('You cannot share documents of other users'))
             }
             if (ownIds.length) {
-                new DocumentAccessRightsDialog(
+                const dialog = new DocumentAccessRightsDialog(
                     ids,
-                    overview.accessRights,
                     overview.teamMembers,
-                    newAccessRights => overview.accessRights = newAccessRights,
-                    memberDetails => overview.teamMembers.push(memberDetails)
+                    memberDetails => overview.teamMembers.push(memberDetails),
+                    overview.registrationOpen
                 )
+                dialog.init()
             }
         },
         order: 1

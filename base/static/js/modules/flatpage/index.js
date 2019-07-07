@@ -5,14 +5,6 @@ export class FlatPage extends PreloginPage {
     constructor({app, isFree, language, registrationOpen, staticUrl}, url) {
         super({app, isFree, language, registrationOpen, staticUrl})
         this.url = url
-
-        this.headerLinks = [
-            {
-                type: 'button',
-                text: gettext('Log in'),
-                link: '/'
-            }
-        ]
     }
 
     init() {
@@ -27,7 +19,7 @@ export class FlatPage extends PreloginPage {
     }
 
     getPageData() {
-        return postJson(`/base/flatpage/`, {url: this.url}).then(
+        return postJson(`/api/base/flatpage/`, {url: this.url}).then(
             ({json}) => {
                 this.title = json.title
                 this.contents = `<div>

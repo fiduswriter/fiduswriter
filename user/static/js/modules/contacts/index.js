@@ -1,15 +1,16 @@
 import {teammemberTemplate} from "./templates"
-import {deleteMemberDialog} from "./manage"
+import {DeleteContactDialog} from "./delete_dialog"
 import {postJson, addAlert, OverviewMenuView, findTarget, whenReady, baseBodyTemplate, setDocTitle, DatatableBulk} from "../common"
 import {FeedbackTab} from "../feedback"
 import {SiteMenu} from "../menu"
 import {menuModel, bulkModel} from "./menu"
 
 export class ContactsOverview {
-    constructor({app, user, staticUrl}) {
+    constructor({app, user, staticUrl, registrationOpen}) {
         this.app = app
         this.user = user
         this.staticUrl = staticUrl
+        this.registrationOpen = registrationOpen
     }
 
     init() {
@@ -72,10 +73,12 @@ export class ContactsOverview {
         document.body.addEventListener('click', event => {
             const el = {}
             switch (true) {
-                case findTarget(event, '.delete-single-member', el):
+                case findTarget(event, '.delete-single-member', el): {
                     //delete single user
-                    deleteMemberDialog([el.target.dataset.id])
+                    const dialog = new DeleteContactDialog([el.target.dataset.id])
+                    dialog.init()
                     break
+                }
                 default:
                     break
             }

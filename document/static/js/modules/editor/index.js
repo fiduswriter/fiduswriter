@@ -126,10 +126,11 @@ export class Editor {
     // A class that contains everything that happens on the editor page.
     // It is currently not possible to initialize more than one editor class, as it
     // contains bindings to menu items, etc. that are uniquely defined.
-    constructor({app, staticUrl, websocketUrl, user}, idString) {
+    constructor({app, staticUrl, websocketUrl, user, registrationOpen}, idString) {
         this.app = app
         this.staticUrl = staticUrl
         this.websocketUrl = websocketUrl
+        this.registrationOpen = registrationOpen
         this.user = user
         this.mod = {}
         // Whether the editor is currently waiting for a document update. Set to true

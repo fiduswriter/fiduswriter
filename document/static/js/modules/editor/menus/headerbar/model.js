@@ -43,17 +43,15 @@ export const headerbarModel = () => ({
                     tooltip: gettext('Share the document with other users.'),
                     order: 0,
                     action: editor => {
-                        new DocumentAccessRightsDialog(
+                        const dialog = new DocumentAccessRightsDialog(
                             [editor.docInfo.id],
-                            editor.docInfo.collaborators,
                             editor.docInfo.owner.team_members,
-                            newCollaborators => {
-                                editor.docInfo.collaborators = newCollaborators
-                            },
                             memberData => {
                                 editor.user.team_members.push(memberData)
-                            }
+                            },
+                            editor.registrationOpen
                         )
+                        dialog.init()
                     },
                     disabled: editor => {
                         return !editor.docInfo.is_owner

@@ -149,10 +149,6 @@ MIDDLEWARE = (
 # You only need to change this in very advanced setups.
 ROOT_URLCONF = 'core.urls'
 
-## Python dotted path to the WSGI application used by Django's runserver.
-# WSGI_APPLICATION = 'fiduswriter.wsgi.application'
-
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

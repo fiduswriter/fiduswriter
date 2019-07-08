@@ -41,9 +41,9 @@ jobs:
       addons: {}
       before_cache: skip
       cache: false
-      before_install: cp
+      before_install: cp fiduswriter/.flake8 ./
       install: pip3 install ./ && pip3 install flake8==3.5.0
-      after_success: skip fiduswriter/.flake8 ./
+      after_success: skip
       env: TESTS=before
       before_script: skip
       script: flake8 ./ && `which fiduswriter` lint_js

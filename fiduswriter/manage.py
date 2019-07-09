@@ -22,6 +22,10 @@ def entry():
         "PROJECT_PATH",
         os.getcwd()
     )
+    os.environ.setdefault(
+        "NO_COMPILEMESSAGES",
+        'true'
+    )
     inner()
 
 

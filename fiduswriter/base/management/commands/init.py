@@ -57,7 +57,8 @@ class Command(BaseCommand):
                 "document/fixtures/initial_export_templates.json"
             )
         )
-        call_command("compilemessages")
+        if not os.environ.get('NO_COMPILEMESSAGES'):
+            call_command("compilemessages")
         call_command("transpile")
         if not options["no-compress"]:
             try:

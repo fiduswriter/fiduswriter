@@ -87,7 +87,7 @@ setuptools.setup(
         "Topic :: Text Processing",
         "Topic :: Text Processing :: Markup :: HTML",
         "Topic :: Text Processing :: Markup :: LaTeX",
-        "Topic :: Text Processing :: Markup :: XML"
+        "Topic :: Text Processing :: Markup :: XML",
         "Topic :: Utilities",
     ],
     packages=setuptools.find_packages(),

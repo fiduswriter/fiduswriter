@@ -74,6 +74,10 @@ export {
 }
 from "./table_menu"
 export {
+    figureMenuPlugin
+}
+from "./figure_menu"
+export {
     tagInputPlugin,
     TagsView
 }

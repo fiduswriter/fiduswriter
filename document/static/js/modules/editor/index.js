@@ -110,6 +110,7 @@ import {
     selectionMenuPlugin,
     settingsPlugin,
     tableMenuPlugin,
+ //   figureMenuPlugin,
     tocRenderPlugin,
     toolbarPlugin,
     trackPlugin,

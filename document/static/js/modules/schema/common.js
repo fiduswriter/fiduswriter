@@ -197,6 +197,8 @@ export const figure = {
             dom.dataset.track = JSON.stringify(node.attrs.track)
         }
         if (node.attrs.image !== false) {
+            //const imgBox = document.createElement("div")
+            //imgBox.classList.add('')
             dom.appendChild(document.createElement("div"))
             if (node.type.schema.cached.imageDB) {
                 if (node.type.schema.cached.imageDB.db[node.attrs.image] &&
@@ -206,6 +208,14 @@ export const figure = {
                     img.setAttribute('src', imgSrc)
                     dom.firstChild.appendChild(img)
                     dom.dataset.imageSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
+
+
+                     const menuButton = document.createElement("button")
+                     menuButton.classList.add('figure-menu-btn')//ch
+                     menuButton.innerHTML = '<span class="figure-menu-icon"><i class="fa fa-ellipsis-v"></i></span>';//ch
+                     //imgMenu.appendChild(menuButton)
+                     //dom.firstChild.appendChild(menuButton)
+                     dom.appendChild(menuButton)
                 } else {
                     /* The image was not present in the imageDB -- possibly because a collaborator just added ut.
                     Try to reload the imageDB, but only once. If the image cannot be found in the updated
@@ -220,6 +230,14 @@ export const figure = {
                                 img.setAttribute('src', imgSrc)
                                 dom.firstChild.appendChild(img)
                                 dom.dataset.imageSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
+
+                                //const imgMenu = document.createElement('div')
+                                const menuButton = document.createElement("button")
+                                menuButton.classList.add('figure-menu-btn')//ch
+                                menuButton.innerHTML = '<span class="figure-menu-icon"><i class="fa fa-ellipsis-v"></i></span>';//ch
+                                //imgMenu.appendChild(menuButton)
+                                //dom.firstChild.appendChild(menuButton)
+                                dom.appendChild(menuButton)
                             } else {
                                 imageDBBroken = true
                             }
@@ -227,6 +245,8 @@ export const figure = {
                     }
                 }
             }
+
+
         } else {
             const domEquation = document.createElement('div')
             domEquation.classList.add('figure-equation')

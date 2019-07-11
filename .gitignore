@@ -12,6 +12,10 @@ build
 *.mo
 *.swp
 *.swo
+/*.snap
+/stage/
+/prime/
+/parts/
 /fiduswriter/venv/
 /fiduswriter/configuration.py
 /fiduswriter/chromedriver

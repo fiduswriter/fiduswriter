@@ -1,30 +1,14 @@
 import os
-import shutil
 import distutils
 import setuptools
 from setuptools.command.sdist import sdist as _sdist
-from django.core.management import call_command
 
 
-with open(os.path.join(os.path.dirname(__file__), 'version.txt')) as f:
-    VERSION = f.read()
-
-with open(
-    os.path.join(
-        os.path.dirname(__file__),
-        'fiduswriter/requirements.txt'
-    )
-) as f:
-    REQUIREMENTS = f.read().splitlines()
-
-with open(
-    os.path.join(
-        os.path.dirname(__file__),
-        'README.md'
-    ),
-    encoding='utf-8'
-) as f:
-    LONG_DESCRIPTION = f.read()
+def read(name):
+    with open(
+        os.path.join(os.path.dirname(os.path.realpath(__file__)), name)
+    ) as f:
+        return f.read()
 
 
 class CompileMessagesCommand(distutils.cmd.Command):
@@ -41,17 +25,18 @@ class CompileMessagesCommand(distutils.cmd.Command):
         pass
 
     def run(self):
-        cwd = os.getcwd()
-        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "fiduswriter.core.settings")
-        SRC_PATH = os.path.join(
+        import subprocess
+        command = []
+        command.append(os.path.join(
             os.path.dirname(os.path.realpath(__file__)),
-            'fiduswriter/'
+            'fiduswriter/manage.py'
+        ))
+        command.append('compilemessages')
+        self.announce(
+            'Running command: %s' % str(' '.join(command)),
+            level=distutils.log.INFO
         )
-        shutil.os.chdir(SRC_PATH)
-        os.environ.setdefault("PROJECT_PATH", SRC_PATH)
-        os.environ.setdefault("SRC_PATH", SRC_PATH)
-        call_command('compilemessages')
-        shutil.os.chdir(cwd)
+        subprocess.check_call(command)
 
 
 class SdistCommand(_sdist):
@@ -68,13 +53,13 @@ setuptools.setup(
         'sdist': SdistCommand,
     },
     name="fiduswriter",
-    version=VERSION,
+    version=read('version.txt').splitlines()[0],
     description="The all in one solution for collaborative academic writing",
     license="AGPL",
     author="Lund Info AB",
     author_email="mail@lundinfo.com",
     url="https://www.fiduswriter.org",
-    long_description=LONG_DESCRIPTION,
+    long_description=read('README.md'),
     long_description_content_type='text/markdown',
     classifiers = [
         "Development Status :: 3 - Alpha",
@@ -92,7 +77,7 @@ setuptools.setup(
     ],
     packages=setuptools.find_packages(),
     include_package_data=True,
-    install_requires=REQUIREMENTS,
+    install_requires=read('fiduswriter/requirements.txt').splitlines(),
     entry_points={
         "console_scripts": [
             "fiduswriter=fiduswriter.manage:entry"

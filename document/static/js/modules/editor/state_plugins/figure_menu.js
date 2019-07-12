@@ -69,17 +69,14 @@ class ImageView {
                     this.dom.firstChild.appendChild(img)
                     this.dom.dataset.imageSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
 
-
                      this.menuButton = document.createElement("button")
                      this.menuButton.classList.add('figure-menu-btn')
                      this.menuButton.innerHTML = '<span class="figure-menu-icon"><i class="fa fa-ellipsis-v"></i></span>';
-                     //menuButton.onclick = openFigureDialog()
+
                      this.menuButton.addEventListener('click', () => {
                         const editor = this.options.editor
                         const dialog = new FigureDialog(editor)
                         dialog.init()
-                        console.log("clicked dialog opened")
-                        console.log("editor :- ", editor)
                      })
                      this.dom.appendChild(this.menuButton)
                 } else {
@@ -97,7 +94,6 @@ class ImageView {
                                 this.dom.firstChild.appendChild(img)
                                 this.dom.dataset.imageSrc = this.node.type.schema.cached.imageDB.db[this.node.attrs.image].image
 
-
                                 this.menuButton = document.createElement("button")
                                 this.menuButton.classList.add('figure-menu-btn')
                                 this.menuButton.innerHTML = '<span class="figure-menu-icon"><i class="fa fa-ellipsis-v"></i></span>';
@@ -105,8 +101,6 @@ class ImageView {
                                     const editor = this.options.editor
                                     const dialog = new FigureDialog(editor)
                                     dialog.init()
-                                    console.log("clicked dialog opened")
-                                    console.log("editor :- ", editor)
                                 })
                                 this.dom.appendChild(this.menuButton)
                             } else {
@@ -148,51 +142,6 @@ class ImageView {
             this.dom.appendChild(this.captionNode)
         }
 
-
-
-
-
-//        this.dom = document.createElement('div')
-//        this.menuButton = document.createElement("button")
-//        this.menuButton.classList.add('figure-menu-btn')
-//        this.menuButton.innerHTML = '<span class="figure-menu-icon"><i class="fa fa-ellipsis-v"></i></span>';
-//        this.menuButton.addEventListener('click', () => {
-//            const editor = options.editor
-//            const dialog = new FigureDialog(options.editor)
-//            dialog.init()
-//            console.log("clicked dialog opened")
-//        })
-//        this.dom.appendChild(this.menuButton)
-//        const fig = document.createElement("figure")
-//        this.contentDOM = this.dom.appendChild(fig)
-//        this.dom.appendChild(this.contentDOM)
-//        if (this.node.type.schema.cached.imageDB.db[node.attrs.image] &&
-//            this.node.type.schema.cached.imageDB.db[node.attrs.image].image) {
-//                const imgSrc = this.node.type.schema.cached.imageDB.db[node.attrs.image].image
-//                const img = document.createElement("img")
-//                img.setAttribute('src', imgSrc)
-//                this.dom.firstChild.appendChild(img)
-//                this.dom.dataset.imageSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
-
-
-//                                const menuButton = document.createElement("button")
-//                                menuButton.classList.add('figure-menu-btn')
-//                                menuButton.innerHTML = '<span class="figure-menu-icon"><i class="fa fa-ellipsis-v"></i></span>';
-//                                dom.appendChild(menuButton)
-
-    }
-
-
-/*
-     stopEvent(event, options) {
-        console.log("stopEvent")
-
-//        const dialog = new FigureDialog(this.options.editor)
-//        dialog.init()
-
-        return true
-    }*/
-
     ignoreMutation(_record) {
         console.log("igM")
         return true
@@ -208,11 +157,8 @@ export const figureMenuPlugin = function(options) {
         state: {
             init(_config, _state) {
                 if (options.editor.docInfo.access_rights === 'write') {
-                    console.log("HELLO")
-                    console.log("spec :- ", this.spec)
                     this.spec.props.nodeViews['figure'] =
                         (node, view, getPos) => new ImageView(node, view, getPos, options)
-                     console.log("node view created")
                 }
                 return {}
             },

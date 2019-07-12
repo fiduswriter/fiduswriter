@@ -23,7 +23,7 @@ export class FigureDialog {
         this.figureNode = false
         this.contentNode = false
         this.caption = ''
-        this.figureCategory = 'figure'
+        this.figureCategory = 'none'
         this.aligned = 'center'
         this.width = "50"
         this.equation = ''

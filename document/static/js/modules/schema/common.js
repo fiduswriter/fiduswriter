@@ -208,11 +208,11 @@ export const figure = {
                     dom.dataset.imageSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
 
 
-                     const menuButton = document.createElement("button")
-                     menuButton.classList.add('figure-menu-btn')
-                     menuButton.innerHTML = '<span class="figure-menu-icon"><i class="fa fa-ellipsis-v"></i></span>';
-                     menuButton.onclick = openFigureDialog()
-                     dom.appendChild(menuButton)
+//                     const menuButton = document.createElement("button")
+//                     menuButton.classList.add('figure-menu-btn')
+//                     menuButton.innerHTML = '<span class="figure-menu-icon"><i class="fa fa-ellipsis-v"></i></span>';
+//                     //menuButton.onclick = openFigureDialog()
+//                     dom.appendChild(menuButton)
                 } else {
                     /* The image was not present in the imageDB -- possibly because a collaborator just added ut.
                     Try to reload the imageDB, but only once. If the image cannot be found in the updated
@@ -229,10 +229,10 @@ export const figure = {
                                 dom.dataset.imageSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
 
 
-                                const menuButton = document.createElement("button")
-                                menuButton.classList.add('figure-menu-btn')
-                                menuButton.innerHTML = '<span class="figure-menu-icon"><i class="fa fa-ellipsis-v"></i></span>';
-                                dom.appendChild(menuButton)
+//                                const menuButton = document.createElement("button")
+//                                menuButton.classList.add('figure-menu-btn')
+//                                menuButton.innerHTML = '<span class="figure-menu-icon"><i class="fa fa-ellipsis-v"></i></span>';
+//                                dom.appendChild(menuButton)
                             } else {
                                 imageDBBroken = true
                             }
@@ -277,9 +277,9 @@ export const figure = {
     }
 }
 
-openFigureDialog(){
-    new FigureDialog(editor)
-}
+//openFigureDialog(){
+//    new FigureDialog(editor)
+//}
 
 export const randomHeadingId = () => {
     return `H${Math.round(Math.random()*10000000) + 1}`

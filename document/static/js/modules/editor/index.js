@@ -219,7 +219,7 @@ export class Editor {
             'review.css',
             'add_remove_dialog.css',
             'bibliography.css',
-            'table_menu.css',
+            'dot_menu.css',
             'cropper.min.css',
             'inline_tools.css'
         ], this.staticUrl)

@@ -13,10 +13,6 @@
     right: -15px;
     top: 0px;
 }
-.table-menu-icon {
-    font-size: 18px;
-    color:#cecece;
-}
 
 .figure-menu-btn {
     background-color: Transparent;
@@ -25,7 +21,13 @@
     cursor:pointer;
     overflow: hidden;
     outline:none;
-    right: -15px;
-    top: 0px;
+    right: -22px;
+    top: -7px;
     float: right;
+    position: relative;
+}
+
+.dot-menu-icon {
+    font-size: 18px;
+    color:#cecece;
 }

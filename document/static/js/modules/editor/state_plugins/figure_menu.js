@@ -1,19 +1,11 @@
-
-
-
-import {Plugin, PluginKey, Selection} from "prosemirror-state"
-import {ContentMenu} from '../../common'
+import {Plugin, PluginKey} from "prosemirror-state"
 import {FigureDialog} from "../dialogs"
+import {FIG_CATS} from "../../schema/common"
 
 const key = new PluginKey('imageMenu')
 let imageDBBroken = false
-const FIG_CATS = {
-    'none': gettext('None'),
-    'figure': gettext('Figure'),
-    'table': gettext('Table'),
-    'photo': gettext('Photo')
-}
-class ImageView {
+
+class FigureView {
     constructor(node, view, getPos, options) {
 
         this.node = node
@@ -71,7 +63,7 @@ class ImageView {
 
                      this.menuButton = document.createElement("button")
                      this.menuButton.classList.add('figure-menu-btn')
-                     this.menuButton.innerHTML = '<span class="figure-menu-icon"><i class="fa fa-ellipsis-v"></i></span>';
+                     this.menuButton.innerHTML = '<span class="figure-menu-icon"><i class="fa fa-ellipsis-v"></i></span>'
 
                      this.menuButton.addEventListener('click', () => {
                         const editor = this.options.editor
@@ -96,7 +88,7 @@ class ImageView {
 
                                 this.menuButton = document.createElement("button")
                                 this.menuButton.classList.add('figure-menu-btn')
-                                this.menuButton.innerHTML = '<span class="figure-menu-icon"><i class="fa fa-ellipsis-v"></i></span>';
+                                this.menuButton.innerHTML = '<span class="figure-menu-icon"><i class="fa fa-ellipsis-v"></i></span>'
                                 this.menuButton.addEventListener('click', () => {
                                     const editor = this.options.editor
                                     const dialog = new FigureDialog(editor)
@@ -141,9 +133,9 @@ class ImageView {
         } else {
             this.dom.appendChild(this.captionNode)
         }
+    }
 
     ignoreMutation(_record) {
-        console.log("igM")
         return true
     }
 
@@ -158,7 +150,7 @@ export const figureMenuPlugin = function(options) {
             init(_config, _state) {
                 if (options.editor.docInfo.access_rights === 'write') {
                     this.spec.props.nodeViews['figure'] =
-                        (node, view, getPos) => new ImageView(node, view, getPos, options)
+                        (node, view, getPos) => new FigureView(node, view, getPos, options)
                 }
                 return {}
             },

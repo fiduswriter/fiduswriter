@@ -65,7 +65,6 @@ export const tableMenuPlugin = function(options) {
         state: {
             init(_config, _state) {
                 if (options.editor.docInfo.access_rights === 'write') {
-                console.log("spec.props  IS => ", this.spec.props)
                     this.spec.props.nodeViews['table'] =
                         (node, view, getPos) => new TableView(node, view, getPos, options)
                 }

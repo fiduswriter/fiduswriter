@@ -227,8 +227,6 @@ export const figure = {
                     }
                 }
             }
-
-
         } else {
             const domEquation = document.createElement('div')
             domEquation.classList.add('figure-equation')

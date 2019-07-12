@@ -197,8 +197,6 @@ export const figure = {
             dom.dataset.track = JSON.stringify(node.attrs.track)
         }
         if (node.attrs.image !== false) {
-            //const imgBox = document.createElement("div")
-            //imgBox.classList.add('')
             dom.appendChild(document.createElement("div"))
             if (node.type.schema.cached.imageDB) {
                 if (node.type.schema.cached.imageDB.db[node.attrs.image] &&
@@ -211,10 +209,9 @@ export const figure = {
 
 
                      const menuButton = document.createElement("button")
-                     menuButton.classList.add('figure-menu-btn')//ch
-                     menuButton.innerHTML = '<span class="figure-menu-icon"><i class="fa fa-ellipsis-v"></i></span>';//ch
-                     //imgMenu.appendChild(menuButton)
-                     //dom.firstChild.appendChild(menuButton)
+                     menuButton.classList.add('figure-menu-btn')
+                     menuButton.innerHTML = '<span class="figure-menu-icon"><i class="fa fa-ellipsis-v"></i></span>';
+                     menuButton.onclick = openFigureDialog()
                      dom.appendChild(menuButton)
                 } else {
                     /* The image was not present in the imageDB -- possibly because a collaborator just added ut.
@@ -231,12 +228,10 @@ export const figure = {
                                 dom.firstChild.appendChild(img)
                                 dom.dataset.imageSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
 
-                                //const imgMenu = document.createElement('div')
+
                                 const menuButton = document.createElement("button")
-                                menuButton.classList.add('figure-menu-btn')//ch
-                                menuButton.innerHTML = '<span class="figure-menu-icon"><i class="fa fa-ellipsis-v"></i></span>';//ch
-                                //imgMenu.appendChild(menuButton)
-                                //dom.firstChild.appendChild(menuButton)
+                                menuButton.classList.add('figure-menu-btn')
+                                menuButton.innerHTML = '<span class="figure-menu-icon"><i class="fa fa-ellipsis-v"></i></span>';
                                 dom.appendChild(menuButton)
                             } else {
                                 imageDBBroken = true
@@ -280,6 +275,10 @@ export const figure = {
 
         return dom
     }
+}
+
+openFigureDialog(){
+    new FigureDialog(editor)
 }
 
 export const randomHeadingId = () => {

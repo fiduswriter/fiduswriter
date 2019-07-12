@@ -195,6 +195,7 @@ export class Editor {
             [documentTemplatePlugin, () => ({editor: this})],
             [trackPlugin, () => ({editor: this})],
             [tableMenuPlugin, () => ({editor: this})],
+          //  [figureMenuPlugin, () => ({editor: this})],
             [tocRenderPlugin, () => ({editor: this})],
         ]
     }

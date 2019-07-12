@@ -15,7 +15,7 @@ class ImageView {
         this.getPos = getPos
         this.options = options
 
-        this.imgMenu = document.createElement('div')
+        this.dom = document.createElement('div')
         this.menuButton = document.createElement("button")
         this.menuButton.classList.add('figure-menu-btn')
         this.menuButton.innerHTML = '<span class="figure-menu-icon"><i class="fa fa-ellipsis-v"></i></span>';
@@ -25,11 +25,10 @@ class ImageView {
 //            dialog.init()
 //            console.log("clicked dialog opened")
 //        })
-        this.imgMenu.appendChild(this.menuButton)
+        this.dom.appendChild(this.menuButton)
         const fig = document.createElement("figure")
-        this.contentDOM = this.imgMenu.appendChild(fig)
-        this.imgMenu.appendChild(this.contentDOM)
-
+        this.contentDOM = this.dom.appendChild(fig)
+        this.dom.appendChild(this.contentDOM)
 
     }
 

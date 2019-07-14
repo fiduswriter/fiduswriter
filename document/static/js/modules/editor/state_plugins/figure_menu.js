@@ -2,7 +2,7 @@ import {Plugin, PluginKey} from "prosemirror-state"
 import {DOMSerializer} from "prosemirror-model"
 import {FigureDialog} from "../dialogs"
 
-const key = new PluginKey('imageMenu')
+const key = new PluginKey('figureMenu')
 
 class FigureView {
     constructor(node, view, getPos, options) {
@@ -26,12 +26,6 @@ class FigureView {
         })
 
     }
-
-    ignoreMutation(_record) {
-        return true
-    }
-
-
 }
 
 

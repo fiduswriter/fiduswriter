@@ -1,3 +1,8 @@
+//import {
+//    FIG_CATS, FIGURE, TABLE, PHOTO
+//} from "../../schema/const"
+
+
 function parseReferences(str) {
     if (!str) {
         return []
@@ -156,6 +161,7 @@ export const figure = {
         }
     }],
     toDOM(node) {
+    console.log(node)
         const dom = document.createElement('figure')
         dom.dataset.equation = node.attrs.equation
         dom.dataset.image = node.attrs.image
@@ -242,6 +248,7 @@ export const figure = {
             figureCatNode.classList.add(`figure-cat-${node.attrs.figureCategory}`)
             figureCatNode.setAttribute('data-figure-category', node.attrs.figureCategory)
             figureCatNode.innerHTML = FIG_CATS[node.attrs.figureCategory]
+            console.log(node)
             captionNode.appendChild(figureCatNode)
         }
         if (node.attrs.caption !== '') {

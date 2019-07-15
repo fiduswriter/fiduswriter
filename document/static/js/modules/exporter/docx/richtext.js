@@ -3,8 +3,8 @@ import {
     escapeText
 } from "../../common"
 import {
-    FIG_CATS
-} from "../../schema/common"
+    FIG_CATS, FIGURE, TABLE, PHOTO
+} from "../../schema/const"
 
 export class DocxExporterRichtext {
     constructor(exporter, rels, citations, images) {
@@ -305,7 +305,7 @@ export class DocxExporterRichtext {
                         //bibliographyHeader = settings.bibliography_header[settings.language] || BIBLIOGRAPHY_HEADERS[settings.language]
                         //console.log("USER SETTINGS :- ", user_settings)
                         //figName = settings.figure[user_settings.language] ||
-                        <w:t xml:space="preserve">${FIG_CATS[node.attrs.figureCategory]} </w:t>
+                        <w:t xml:space="preserve">${FIG_CATS[node.attrs.figureCategory][this.exporter.doc.settings.language]} </w:t>
                     </w:r>
                     <w:r>
                         <w:rPr></w:rPr>

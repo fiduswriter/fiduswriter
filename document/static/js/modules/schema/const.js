@@ -51,6 +51,8 @@ export const LANGUAGES = [
     ['uk', gettext('Ukrainian'), 'ltr']
 ]
 
+ "../../schema/const"
+
 export const BIBLIOGRAPHY_HEADERS = {
     'af-ZA': 'Bibliografie',
     'sq-AL': 'Bibliografi',
@@ -111,12 +113,6 @@ export const PAPER_SIZES = [
 ]
 
 
-export const FIG_CATS = {
-    'none': gettext('None'),
-    'figure': FIGURE,
-    'table': TABLE,
-    'photo': PHOTO
-}
 
 
 
@@ -125,7 +121,7 @@ export const FIGURE = {
     'af-ZA': 'Figuur',
     'sq-AL': 'figurë',
     'ar': 'الشكل',
-    'ast': 'Bibliografía',////////////
+    'ast': 'Figura',
     'be': 'Малюнак',
     'br': 'Restr KmPlotComment',
     'bg': 'Фигура',
@@ -153,7 +149,6 @@ export const FIGURE = {
     'ja': '図',
     'km': 'រូបភាព',
     'lt': 'Pav',
-
     'ml': 'ചിത്രം',
     'nb-NO': 'Figur',
     'nn-NO': 'Figur',
@@ -180,7 +175,7 @@ export const TABLE = {
     'af-ZA': 'TABEL',
     'sq-AL': 'tabelë',
     'ar': 'الطاولة',
-    'ast': 'table',
+    'ast': 'Mesa',
     'be': 'Табліца',
     'br': 'Taolenn',
     'bg': 'маса',
@@ -233,7 +228,7 @@ export const PHOTO = {
     'af-ZA': 'Foto',
     'sq-AL': 'Foto',
     'ar': 'صورة فوتوغرافية',
-    'ast': 'Bibliografía',///////
+    'ast': 'Foto',
     'be': 'Фота',
     'br': 'Foto',
     'bg': 'снимка',
@@ -280,4 +275,11 @@ export const PHOTO = {
     'ta': 'புகைப்பட',
     'tl': 'Larawan',
     'uk': 'Фото'
+}
+
+export const FIG_CATS = {
+    'none': gettext('None'),
+    'figure': FIGURE,
+    'table': TABLE,
+    'photo': PHOTO
 }

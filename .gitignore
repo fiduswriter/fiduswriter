@@ -16,6 +16,7 @@ build
 /stage/
 /prime/
 /parts/
+/venv/
 /fiduswriter/venv/
 /fiduswriter/configuration.py
 /fiduswriter/chromedriver

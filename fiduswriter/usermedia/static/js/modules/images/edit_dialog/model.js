@@ -1,4 +1,7 @@
 import Cropper from 'cropperjs'
+
+let mediaPreviewerImg = false
+
 export const imageEditModel = () => ({
     content: [{
             title: gettext('Rotate Left'),
@@ -6,9 +9,10 @@ export const imageEditModel = () => ({
             tooltip: gettext('Rotate-left'),
             order: 0,
             action: dialog => {
-                rotateBase64Image(dialog.mediaPreviewer.src, dialog.mediaInput.type, 'left').then((response) => {
-                    dialog.mediaPreviewer.src = response
-                })
+                const mediaPreviewerStyle = dialog.mediaPreviewer.currentStyle || window.getComputedStyle(dialog.mediaPreviewer, false)
+                rotateBase64Image(mediaPreviewerStyle.backgroundImage.slice(4, -1).replace(/"/g, ""), dialog.mediaInput.type, 'left').then(
+                    response => dialog.mediaPreviewer.setAttribute('style', `background-image: url(${response});`)
+                )
                 if (dialog.rotation === 0) {
                     dialog.rotation = 270
                 } else {
@@ -24,9 +28,10 @@ export const imageEditModel = () => ({
             tooltip: gettext('Rotate-right'),
             order: 0,
             action: dialog => {
-                rotateBase64Image(dialog.mediaPreviewer.src, dialog.mediaInput.type, 'right').then((response) => {
-                    dialog.mediaPreviewer.src = response
-                })
+                const mediaPreviewerStyle = dialog.mediaPreviewer.currentStyle || window.getComputedStyle(dialog.mediaPreviewer, false)
+                rotateBase64Image(mediaPreviewerStyle.backgroundImage.slice(4, -1).replace(/"/g, ""), dialog.mediaInput.type, 'right').then(
+                    response => dialog.mediaPreviewer.setAttribute('style', `background-image: url(${response});`)
+                )
                 if (dialog.rotation === 270) {
                     dialog.rotation = 0
                 } else {
@@ -42,7 +47,13 @@ export const imageEditModel = () => ({
             tooltip: gettext('Crop image'),
             order: 0,
             action: dialog => {
-                const cropper = new Cropper(dialog.mediaPreviewer, {
+                const mediaPreviewerStyle = dialog.mediaPreviewer.currentStyle || window.getComputedStyle(dialog.mediaPreviewer, false)
+                //const base64data = mediaPreviewerStyle.backgroundImage.slice(4, -1).replace(/"/g, "")
+                mediaPreviewerImg = document.createElement('img')
+                //img.src = `url(${base64data})`
+                mediaPreviewerImg.src = mediaPreviewerStyle.backgroundImage.slice(4, -1).replace(/"/g, "")
+                dialog.mediaPreviewer.parentElement.replaceChild(mediaPreviewerImg, dialog.mediaPreviewer)
+                const cropper = new Cropper(mediaPreviewerImg, {
                     viewMode: 1,
                     responsive: true,
                 })
@@ -63,9 +74,11 @@ const toggleCropMode = (val, dialog, cropper) => {
             {
                 text: gettext("Crop"),
                 click: () => {
-                    dialog.mediaPreviewer.src = cropper.getCroppedCanvas().toDataURL(
-                        dialog.mediaInput.type
-                    )
+                    dialog.mediaPreviewer.setAttribute('style', `background-image: url(${
+                        cropper.getCroppedCanvas().toDataURL(
+                            dialog.mediaInput.type
+                        )
+                    });`)
                     dialog.cropped = true
                     cropper.destroy()
                     toggleCropMode(false, dialog, cropper)
@@ -83,6 +96,10 @@ const toggleCropMode = (val, dialog, cropper) => {
         ])
     } else {
         dialog.mediaPreviewerDiv.classList.remove('crop-mode')
+        if (mediaPreviewerImg) {
+            mediaPreviewerImg.parentElement.replaceChild(dialog.mediaPreviewer, mediaPreviewerImg)
+            mediaPreviewerImg = false
+        }
         if (oldButtons) {
             dialog.dialog.buttons = oldButtons
             oldButtons = false

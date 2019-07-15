@@ -1,0 +1,43 @@
+name: fiduswriter
+adopt-info: fiduswriter
+summary: An academic collaborative word processor
+base: core18
+confinement: strict
+grade: devel
+
+
+parts:
+  fiduswriter:
+    plugin: python
+    python-version: python3
+    parse-info: [setup.py]
+    source: .
+    stage-packages:
+      - libjpeg-dev
+      - python3-dev
+      - python3-pip
+      - python3-distutils
+      - gettext
+      - zlib1g-dev
+      - wget
+      - build-essential
+      - libc6
+      - libmagic1
+    after: [node]
+  node:
+    plugin: make
+    source-type: tar
+    source: https://nodejs.org/download/release/v10.16.0/node-v10.16.0.tar.gz
+    build-packages:
+      - g++
+      - make
+      - python2.7
+    override-build: |
+      ./configure --prefix=/ --release-urlbase=https://nodejs.org/download/release/
+      snapcraftctl build
+      mkdir -p \$SNAPCRAFT_PART_INSTALL/etc
+      echo "prefix = /usr/local" >> \$SNAPCRAFT_PART_INSTALL/etc/npmrc
+
+apps:
+  fiduswriter:
+    command: bin/fiduswriter

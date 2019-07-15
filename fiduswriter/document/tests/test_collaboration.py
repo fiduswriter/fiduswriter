@@ -7,7 +7,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
 from django.conf import settings
-from test.testcases import LiveTornadoTestCase
+from testing.testcases import LiveTornadoTestCase
 from .editor_helper import EditorHelper
 
 

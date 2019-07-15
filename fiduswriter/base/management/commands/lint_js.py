@@ -1,4 +1,5 @@
 import shutil
+import os
 from subprocess import call
 
 from django.core.management.base import BaseCommand
@@ -11,7 +12,13 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         call_command("npm_install")
-        shutil.os.chdir(settings.PROJECT_PATH)
-        return_value = call([".transpile/node_modules/.bin/eslint", "."])
+        shutil.os.chdir(settings.SRC_PATH)
+        return_value = call([
+            os.path.join(
+                settings.PROJECT_PATH,
+                ".transpile/node_modules/.bin/eslint"
+            ),
+            "."
+        ])
         if return_value > 0:
             exit(return_value)

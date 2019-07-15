@@ -1,6 +1,0 @@
-static-transpile/
-static-libs/
-.transpile-cache/
-node_modules/
-bundled_js_libs/
-venv/

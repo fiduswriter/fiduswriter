@@ -20,7 +20,6 @@ export class EpubExporter extends BaseEpubExporter {
         this.citationStyles = citationStyles
         this.citationLocales = citationLocales
         this.staticUrl = staticUrl
-        
         this.shortLang = this.doc.settings.language.split('-')[0]
         this.lang = this.doc.settings.language
     }

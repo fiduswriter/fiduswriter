@@ -78,6 +78,13 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     include_package_data=True,
     install_requires=read('fiduswriter/requirements.txt').splitlines(),
+    extras_require={
+        "books": "fiduswriter-books >= 3.7.0, < 3.8.0",
+        "citation-api-import": "fiduswriter-citation-api-import >= 3.7.0, < 3.8.0",
+        "languagetool": "fiduswriter-languagetool >= 3.7.0, < 3.8.0",
+        "ojs": "fiduswriter-ojs >= 3.7.0, < 3.8.0",
+        "phplist": "fiduswriter-phplist >= 3.7.0, < 3.8.0"
+    },
     entry_points={
         "console_scripts": [
             "fiduswriter=fiduswriter.manage:entry"

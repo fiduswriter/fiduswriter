@@ -32,8 +32,7 @@ from "./network"
 
 export {
     getUserInfo,
-    setLanguage,
-    loginUser
+    setLanguage
 }
 from "./user"
 

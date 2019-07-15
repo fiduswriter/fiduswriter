@@ -9,11 +9,3 @@ export const setLanguage = function(config, language) {
 export const getUserInfo = function() {
     return postJson('/api/user/info/')
 }
-
-export const loginUser = function(config, login, password, remember) {
-    return post('/api/user/login/', {login, password, remember}).then(
-        () => {
-            config.loggedIn = true
-        }
-    )
-}

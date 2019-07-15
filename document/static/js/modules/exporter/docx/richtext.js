@@ -301,6 +301,10 @@ export class DocxExporterRichtext {
                             this.figureCounter[figCat] = 1
                         }
                         figCountXml = `<w:r>
+                        //const user_settings = this.exporter.doc.settings,
+                        //bibliographyHeader = settings.bibliography_header[settings.language] || BIBLIOGRAPHY_HEADERS[settings.language]
+                        //console.log("USER SETTINGS :- ", user_settings)
+                        //figName = settings.figure[user_settings.language] ||
                         <w:t xml:space="preserve">${FIG_CATS[node.attrs.figureCategory]} </w:t>
                     </w:r>
                     <w:r>

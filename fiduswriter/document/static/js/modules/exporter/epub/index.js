@@ -15,10 +15,10 @@ export class EpubExporter extends BaseEpubExporter {
     constructor(schema, doc, bibDB, imageDB, citationStyles, citationLocales, staticUrl) {
         super(schema)
         this.doc = doc
-        this.citationStyles = citationStyles
-        this.citationLocales = citationLocales
         this.bibDB = bibDB
         this.imageDB = imageDB
+        this.citationStyles = citationStyles
+        this.citationLocales = citationLocales
         this.staticUrl = staticUrl
         this.shortLang = this.doc.settings.language.split('-')[0]
         this.lang = this.doc.settings.language

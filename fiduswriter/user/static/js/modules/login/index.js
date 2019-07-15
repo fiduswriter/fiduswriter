@@ -1,4 +1,4 @@
-import {loginUser, escapeText} from "../common"
+import {escapeText, postJson} from "../common"
 import * as pluginLoaders from "../../plugins/login"
 import {PreloginPage} from "../prelogin"
 
@@ -118,8 +118,28 @@ export class LoginPage extends PreloginPage {
             if (errors) {
                 return
             }
-            return loginUser(this.app.config, login, password, remember).then(
-                () => this.app.init()
+            return postJson('/api/user/login/', {login, password, remember}).then(
+                ({json}) => {
+                    if (json.location === '/api/account/confirm-email/') {
+                        // Email has not yet been confirmed.
+                        document.querySelector('.fw-contents').innerHTML =
+                            `<div class="fw-login-left">
+                                <h1 class="fw-login-title">${gettext('Verify Your E-mail Address')}</h1>
+                                <p>
+                                    ${
+                                        gettext('We have sent an e-mail to your email address for verification. Follow the link provided to finalize the signup process.')
+                                    }
+                                    <br />
+                                    ${
+                                        gettext('Please contact us if you do not receive it within a few minutes.')
+                                    }
+                                </p>
+                            </div>`
+                    } else {
+                        this.app.config.loggedIn = true
+                        this.app.init()
+                    }
+                }
             ).catch(
                 response => response.json().then(
                     json => {

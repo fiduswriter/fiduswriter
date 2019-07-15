@@ -17,7 +17,7 @@ from django.core.paginator import Paginator, EmptyPage
 
 from user.util import get_user_avatar_url
 from document.models import Document, AccessRight, DocumentRevision, \
-    ExportTemplate, DocumentTemplate, \
+    ExportTemplate, DocumentTemplate, default_template, \
     AccessRightInvite, CAN_UPDATE_DOCUMENT, FW_DOCUMENT_VERSION
 from usermedia.models import DocumentImage, Image
 from bibliography.models import Entry
@@ -602,6 +602,11 @@ def create_doc(request, template_id):
     status = 405
     if request.is_ajax() and request.method == 'POST':
         status = 201
+        template = DocumentTemplate.objects.filter(
+            id=template_id
+        ).first()
+        if not template:
+            template_id = default_template()
         document = Document.objects.create(
             owner_id=request.user.pk,
             template_id=template_id

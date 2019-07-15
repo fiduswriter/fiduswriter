@@ -121,8 +121,8 @@ export class ImageEditDialog {
         } else if (!this.rotation && !this.cropped) {
             imageData.image = this.mediaInput
         } else {
-            const mediaPreviewer_style = this.mediaPreviewer.currentStyle || window.getComputedStyle(this.mediaPreviewer, false)
-            const base64data = mediaPreviewer_style.backgroundImage.slice(4, -1).replace(/"/g, "")
+            const mediaPreviewerStyle = this.mediaPreviewer.currentStyle || window.getComputedStyle(this.mediaPreviewer, false)
+            const base64data = mediaPreviewerStyle.backgroundImage.slice(4, -1).replace(/"/g, "")
             const bstr = atob(base64data.split(',')[1])
             let n = bstr.length
             const u8arr = new Uint8Array(n)

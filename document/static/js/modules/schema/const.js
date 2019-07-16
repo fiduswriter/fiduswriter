@@ -51,7 +51,7 @@ export const LANGUAGES = [
     ['uk', gettext('Ukrainian'), 'ltr']
 ]
 
- "../../schema/const"
+
 
 export const BIBLIOGRAPHY_HEADERS = {
     'af-ZA': 'Bibliografie',

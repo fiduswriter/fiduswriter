@@ -261,7 +261,8 @@ export class FigureDialog {
                 caption: this.caption,
                 aligned: this.aligned,
                 width: this.width,
-                dir: this.editor.docInfo.dir
+                dir: this.editor.docInfo.dir,
+                language: this.editor.view.state.doc.firstChild.attrs.language
             }),
             buttons,
             beforeClose: () => {

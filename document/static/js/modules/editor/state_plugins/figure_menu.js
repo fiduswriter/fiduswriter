@@ -46,6 +46,9 @@ export const figureMenuPlugin = function(options) {
         },
         props: {
             nodeViews: {}
-        }
+        }/*,
+        view(_view) {
+
+        }*/
     })
 }

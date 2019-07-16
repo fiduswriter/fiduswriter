@@ -1,7 +1,7 @@
 import {DOMSerializer} from "prosemirror-model"
 import {RenderCitations} from "../../../citations/render"
 import {createDocCopySchema, fnCopySchema} from "./schema"
-import {BIBLIOGRAPHY_HEADERS} from "../../../schema/const"
+import {BIBLIOGRAPHY_HEADERS} from "../../../schema/i18n"
 
 // Wrap around DOMSerializer, allowing post processing.
 class ClipboardDOMSerializer {

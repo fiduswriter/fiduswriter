@@ -1,3 +1,4 @@
+
 function parseReferences(str) {
     if (!str) {
         return []
@@ -89,13 +90,6 @@ export function randomFigureId() {
     return 'F' + Math.round(Math.random()*10000000) + 1
 }
 
-export const FIG_CATS = {
-    'none': gettext('None'),
-    'figure': gettext('Figure'),
-    'table': gettext('Table'),
-    'photo': gettext('Photo')
-}
-
 
 export function parseTracks(str) {
     if (!str) {
@@ -156,6 +150,7 @@ export const figure = {
         }
     }],
     toDOM(node) {
+    console.log(node)
         const dom = document.createElement('figure')
         dom.dataset.equation = node.attrs.equation
         dom.dataset.image = node.attrs.image
@@ -241,7 +236,7 @@ export const figure = {
             const figureCatNode = document.createElement('span')
             figureCatNode.classList.add(`figure-cat-${node.attrs.figureCategory}`)
             figureCatNode.setAttribute('data-figure-category', node.attrs.figureCategory)
-            figureCatNode.innerHTML = FIG_CATS[node.attrs.figureCategory]
+            //figureCatNode.innerHTML = FIG_CATS[node.attrs.figureCategory]
             captionNode.appendChild(figureCatNode)
         }
         if (node.attrs.caption !== '') {

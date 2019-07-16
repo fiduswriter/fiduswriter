@@ -1,6 +1,6 @@
 import {RenderCitations} from "../../citations/render"
 import {Dialog, cancelPromise} from "../../common"
-import {BIBLIOGRAPHY_HEADERS} from "../../schema/const"
+import {BIBLIOGRAPHY_HEADERS} from "../../schema/i18n"
 
 export class ModCitations {
     constructor(editor) {

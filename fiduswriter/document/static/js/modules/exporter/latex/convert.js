@@ -1,5 +1,5 @@
 import {escapeLatexText} from "./escape_latex"
-import {BIBLIOGRAPHY_HEADERS} from "../../schema/i18n"
+import {BIBLIOGRAPHY_HEADERS, FIG_CATS} from "../../schema/i18n"
 
 export class LatexExporterConvert {
     constructor(exporter, imageDB, bibDB) {
@@ -13,6 +13,7 @@ export class LatexExporterConvert {
         // epilogue based on our findings.
         this.features = {}
         this.internalLinks = []
+        this.figureCounter = {} // counters for each type of figure (figure/table/photo)
     }
 
     init(docContents) {
@@ -418,7 +419,19 @@ export class LatexExporterConvert {
             }
             case 'figure': {
                 const figureType = node.attrs.figureCategory
-                const caption = node.attrs.caption
+                let caption = node.attrs.caption
+                if (figureType!=='none') {
+                    if (!this.figureCounter[figureType]) {
+                        this.figureCounter[figureType] = 1
+                    }
+                    const figCount = this.figureCounter[figureType]++
+                    const figLabel = `${FIG_CATS[figureType][this.exporter.doc.settings.language]} ${figCount}`
+                    if (caption.length) {
+                        caption = `${figLabel}: ${caption}`
+                    } else {
+                        caption = figLabel
+                    }
+                }
                 let innerFigure = ''
                 let aligned = 'left'
                 if (node.attrs.width !== '100') {

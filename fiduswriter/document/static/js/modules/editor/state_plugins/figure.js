@@ -56,7 +56,7 @@ export const figurePlugin = function(options) {
             return {
                 update: (_view, _prevState) => {
                     let selector = '*[class^="figure-cat-"]:empty'
-                    if(options.editor.view.state.doc.firstChild.attrs.language !== userLanguage) {
+                    if (options.editor.view.state.doc.firstChild.attrs.language !== userLanguage) {
                         selector = '*[class^="figure-cat-"]'
                         userLanguage = options.editor.view.state.doc.firstChild.attrs.language
                     }

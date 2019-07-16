@@ -1,7 +1,3 @@
-//import {
-//    FIG_CATS, FIGURE, TABLE, PHOTO
-//} from "../../schema/const"
-
 
 function parseReferences(str) {
     if (!str) {
@@ -93,13 +89,6 @@ export const equation = {
 export function randomFigureId() {
     return 'F' + Math.round(Math.random()*10000000) + 1
 }
-
-//export const FIG_CATS = {
-//    'none': gettext('None'),
-//    'figure': gettext('Figure'),
-//    'table': gettext('Table'),
-//    'photo': gettext('Photo')
-//}
 
 
 export function parseTracks(str) {

@@ -1,6 +1,6 @@
 import {escapeText} from "../../common"
 import {
-    FIG_CATS, FIGURE, TABLE, PHOTO
+    FIG_CATS, FIGURE, TABLE, PHOTO, NONE
 } from "../../schema/i18n"
 
 

@@ -110,7 +110,7 @@ import {
     selectionMenuPlugin,
     settingsPlugin,
     tableMenuPlugin,
-    figureMenuPlugin,
+    figurePlugin,
     tocRenderPlugin,
     toolbarPlugin,
     trackPlugin,
@@ -195,7 +195,7 @@ export class Editor {
             [documentTemplatePlugin, () => ({editor: this})],
             [trackPlugin, () => ({editor: this})],
             [tableMenuPlugin, () => ({editor: this})],
-            [figureMenuPlugin, () => ({editor: this})],
+            [figurePlugin, () => ({editor: this})],
             [tocRenderPlugin, () => ({editor: this})],
         ]
     }

@@ -1,6 +1,6 @@
 import {DOMSerializer} from "prosemirror-model"
 import {RenderCitations} from "../../citations/render"
-import {BIBLIOGRAPHY_HEADERS} from "../../schema/i18n"
+import {BIBLIOGRAPHY_HEADERS, FIG_CATS} from "../../schema/i18n"
 
 /*
 
@@ -24,6 +24,7 @@ export class BaseDOMExporter {
         this.schema.cached.imageDB = this.imageDB
         const serializer = DOMSerializer.fromSchema(this.schema)
         this.contents = serializer.serializeNode(this.schema.nodeFromJSON(this.docContents))
+        this.contents.querySelectorAll('*[class^="figure-cat-"]').forEach(el => el.innerHTML = FIG_CATS[el.dataset.figureCategory][this.doc.settings.language])
         const bibliographyHeader = this.doc.settings.bibliography_header[this.doc.settings.language] || BIBLIOGRAPHY_HEADERS[this.doc.settings.language]
         const citRenderer = new RenderCitations(
             this.contents,

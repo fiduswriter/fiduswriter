@@ -1,5 +1,5 @@
 import {escapeLatexText} from "./escape_latex"
-import {BIBLIOGRAPHY_HEADERS} from "../../schema/const"
+import {BIBLIOGRAPHY_HEADERS} from "../../schema/i18n"
 
 export class LatexExporterConvert {
     constructor(exporter, imageDB, bibDB) {

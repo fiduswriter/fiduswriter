@@ -66,17 +66,7 @@ MANAGERS = ADMINS
 # DEFAULT_FROM_EMAIL = 'mail@email.com' # For messages to end users
 # SERVER_EMAIL = 'mail@email.com' # For messages to server administrators
 
-
-# Make this unique, and don't share it with anybody. Change the default string.
-SECRET_KEY = '2ouq2zgw5y-@w+t6!#zf#-z1inigg7$lg3p%8e3kkob1bf$#p4'
-
-
-try:
-    INSTALLED_APPS
-except NameError:
-    INSTALLED_APPS = ()
-
-INSTALLED_APPS += (
+INSTALLED_APPS = [
     # If you want to enable one or several of the social network login options
     # below, make sure you add the authorization keys at:
     # http://SERVER.COM/admin/socialaccount/socialapp/
@@ -89,7 +79,7 @@ INSTALLED_APPS += (
     # 'allauth.socialaccount.providers.persona',
     # 'allauth.socialaccount.providers.soundcloud',
     # 'allauth.socialaccount.providers.stackexchange',
-)
+]
 
 # A list of allowed hostnames of this Fidus Writer installation
 ALLOWED_HOSTS = [

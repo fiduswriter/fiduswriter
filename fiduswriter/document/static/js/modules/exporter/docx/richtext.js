@@ -4,7 +4,7 @@ import {
 } from "../../common"
 import {
     FIG_CATS
-} from "../../schema/common"
+} from "../../schema/i18n"
 
 export class DocxExporterRichtext {
     constructor(exporter, rels, citations, images) {
@@ -301,7 +301,7 @@ export class DocxExporterRichtext {
                             this.figureCounter[figCat] = 1
                         }
                         figCountXml = `<w:r>
-                        <w:t xml:space="preserve">${FIG_CATS[node.attrs.figureCategory]} </w:t>
+                        <w:t xml:space="preserve">${FIG_CATS[node.attrs.figureCategory][this.exporter.doc.settings.language]} </w:t>
                     </w:r>
                     <w:r>
                         <w:rPr></w:rPr>

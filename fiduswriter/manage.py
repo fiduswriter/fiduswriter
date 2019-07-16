@@ -55,11 +55,10 @@ def inner(default_project_path):
         for setting in dir(mod):
             if setting.isupper():
                 setting_value = getattr(mod, setting)
-                if setting == 'INSTALLED_PLUGINS':
-                    # plugins are added to INSTALLED_APPS
+                if setting == 'INSTALLED_APPS':
+                    # installed apps are added to existing INSTALLED_APPS
                     setting_value = default_settings.INSTALLED_APPS + \
                         setting_value
-                    setting = 'INSTALLED_APPS'
                 setattr(CONFIGURATION, setting, setting_value)
     settings.configure(
         CONFIGURATION,

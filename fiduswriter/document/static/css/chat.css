@@ -45,8 +45,16 @@
 
 #connected-collaborators {
     position: fixed;
-    right: 60px;
-    top: 20px;
+    right: 85px;
+    top: 16px;
+}
+
+#connected-collaborators .fw-string-avatar {
+    margin-left: -10px;
+}
+
+#connected-collaborators .fw-string-avatar:first-child {
+    margin-left: 0;
 }
 
 #connected-collaborators img {

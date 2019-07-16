@@ -13,7 +13,21 @@
     right: -15px;
     top: 0px;
 }
-.table-menu-icon {
+
+.figure-menu-btn {
+    background-color: Transparent;
+    background-repeat:no-repeat;
+    border: 1px;
+    cursor:pointer;
+    overflow: hidden;
+    outline:none;
+    right: -22px;
+    top: -7px;
+    float: right;
+    position: relative;
+}
+
+.dot-menu-icon {
     font-size: 18px;
     color:#cecece;
 }

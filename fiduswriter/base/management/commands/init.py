@@ -2,6 +2,10 @@ import os
 from django.core.management.base import BaseCommand, CommandError
 from django.core.management import call_command
 from django.conf import settings
+from django.contrib.flatpages.models import FlatPage
+
+from style.models import DocumentStyle
+from document.models import ExportTemplate
 
 
 class Command(BaseCommand):
@@ -36,34 +40,43 @@ class Command(BaseCommand):
             call_command("migrate", fake=True)
         else:
             call_command("migrate")
-        call_command(
-            "loaddata",
-            os.path.join(
-                settings.SRC_PATH,
-                "style/fixtures/initial_styles.json"
+        if DocumentStyle.objects.count() == 0:
+            call_command(
+                "loaddata",
+                os.path.join(
+                    settings.SRC_PATH,
+                    "style/fixtures/initial_styles.json"
+                )
             )
-        )
-        call_command(
-            "loaddata",
-            os.path.join(
-                settings.SRC_PATH,
-                "base/fixtures/initial_terms.json"
+        if FlatPage.objects.count() == 0:
+            call_command(
+                "loaddata",
+                os.path.join(
+                    settings.SRC_PATH,
+                    "base/fixtures/initial_terms.json"
+                )
             )
-        )
-        call_command(
-            "loaddata",
-            os.path.join(
-                settings.SRC_PATH,
-                "document/fixtures/initial_export_templates.json"
+        if ExportTemplate.objects.count() == 0:
+            call_command(
+                "loaddata",
+                os.path.join(
+                    settings.SRC_PATH,
+                    "document/fixtures/initial_export_templates.json"
+                )
             )
-        )
-        if not os.environ.get('NO_COMPILEMESSAGES'):
-            call_command("compilemessages")
+        call_command("compilemessages")
         call_command("transpile")
-        if not options["no-compress"]:
+        if (
+            not options["no-compress"] and
+            settings.COMPRESS_OFFLINE and
+            settings.COMPRESS_ENABLED
+        ):
             try:
                 call_command("compress")
             except CommandError:
                 pass
-        if not options["no-static"]:
+        if (
+            not options["no-static"] and
+            not settings.DEBUG
+        ):
             call_command("collectstatic", interactive=False)

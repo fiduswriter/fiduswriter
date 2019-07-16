@@ -2,6 +2,7 @@ import os
 import distutils
 import setuptools
 from setuptools.command.sdist import sdist as _sdist
+from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
 
 
 def read(name):
@@ -47,14 +48,23 @@ class SdistCommand(_sdist):
         _sdist.run(self)
 
 
+class BdistWheelCommand(_bdist_wheel):
+    """Custom build command."""
+
+    def run(self):
+        self.run_command('compilemessages')
+        _bdist_wheel.run(self)
+
+
 setuptools.setup(
     cmdclass={
         'compilemessages': CompileMessagesCommand,
         'sdist': SdistCommand,
+        'bdist_wheel': BdistWheelCommand
     },
     name="fiduswriter",
     version=read('version.txt').splitlines()[0],
-    description="The all in one solution for collaborative academic writing",
+    description="A semantic wordprocessor for academic purposes",
     license="AGPL",
     author="Lund Info AB",
     author_email="mail@lundinfo.com",

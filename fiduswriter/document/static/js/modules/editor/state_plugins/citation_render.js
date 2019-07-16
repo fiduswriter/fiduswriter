@@ -1,5 +1,6 @@
 import {Plugin, PluginKey} from "prosemirror-state"
 import {ReplaceStep, ReplaceAroundStep} from "prosemirror-transform"
+
 const key = new PluginKey('citationRender')
 
 export const citationRenderPlugin = function(options) {
@@ -57,8 +58,15 @@ export const citationRenderPlugin = function(options) {
         },
         view(_view) {
             options.editor.mod.citations.resetCitations()
+            //console.log(" language :- ", options.editor.view.state.doc.firstChild.attrs.language)
+           // let user_language = options.editor.view.state.doc.firstChild.attrs.language
+           // Array.from(document.querySelectorAll('*[class^="figure-cat-"] ')).forEach(el => el.innerHTML = FIG_CATS[el.dataset.figureCategory][user_language])
+            //console.log("aaa ", document.querySelectorAll('.figure-title'))
             return {
                 update: (view, _prevState) => {
+                  //  let user_language = options.editor.view.state.doc.firstChild.attrs.language
+                   // Array.from(document.querySelectorAll('*[class^="figure-cat-"] ')).forEach(el => el.innerHTML = FIG_CATS[el.dataset.figureCategory][user_language])
+                    //console.log("aaa ", Array.from(document.querySelectorAll('*[class^="figure-cat-"] ')) )
                     const {action} = key.getState(view.state)
                     if (action==='reset') {
                         options.editor.mod.citations.resetCitations()

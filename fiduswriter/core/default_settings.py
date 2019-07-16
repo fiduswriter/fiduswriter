@@ -1,5 +1,4 @@
 import os
-
 # If you want to show debug messages, set DEBUG to True.
 
 DEBUG = True
@@ -24,8 +23,7 @@ MANAGERS = ADMINS
 # the fiduswriter pip package, it is either the dir that contains manage.py or
 # the cwd.
 PROJECT_PATH = os.environ.get('PROJECT_PATH')
-# SRC_PATH is the root path of the FW sources. If ./manage.py is executed, it
-# is the same as PROJECT_PATH.
+# SRC_PATH is the root path of the FW sources.
 SRC_PATH = os.environ.get('SRC_PATH')
 
 # Paths to settings files
@@ -79,7 +77,7 @@ SITE_ID = 1
 USE_I18N = True
 
 LOCALE_PATHS = (
-    os.path.join(PROJECT_PATH, 'locale'),
+    os.path.join(SRC_PATH, 'locale'),
 )
 
 # A list of allowed hostnames of this Fidus Writer installation
@@ -204,6 +202,10 @@ INSTALLED_APPS = [
     'compressor',
     'feedback',
     'style'
+]
+
+PLUGINS = [
+    # Additional installed apps
 ]
 
 AUTHENTICATION_BACKENDS = (
@@ -344,13 +346,3 @@ ADMIN_INDEX_TITLE = gettext('Welcome to the Fidus Writer Administration Site')
 # The below allow login via JavaScript
 SESSION_COOKIE_HTTPONLY = False
 CSRF_COOKIE_HTTPONLY = False
-
-local_config_path = os.path.join(PROJECT_PATH, 'configuration.py')
-try:
-    local_config = open(local_config_path)
-except IOError:
-    pass
-else:
-    exec(local_config.read(), globals())
-    # Paths to settings files
-    SETTINGS_PATHS += [local_config_path]

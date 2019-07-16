@@ -1,0 +1,55 @@
+name: fiduswriter
+adopt-info: fiduswriter
+summary: 'An academic collaborative word processor'
+base: core18
+confinement: strict
+grade: devel
+parts:
+  fiduswriter:
+    plugin: python
+    python-version: python3
+    parse-info:
+      - setup.py
+    source: .
+    filesets:
+      exclude:
+        - '-lib/python3.6/site-packages/fiduswriter/configuration.py'
+        - '-lib/python3.6/site-packages/fiduswriter/payment'
+    stage:
+      - $exclude
+    override-build: "rm -f fiduswriter/configuration.py\nsnapcraftctl build\n"
+    requirements:
+      - fiduswriter/requirements.txt
+    stage-packages:
+      - libjpeg-dev
+      - python3-dev
+      - python3-pip
+      - python3-distutils
+      - gettext
+      - zlib1g-dev
+      - wget
+      - build-essential
+      - libmagic1
+    after:
+      - node
+  node:
+    plugin: make
+    source-type: tar
+    source: 'https://nodejs.org/download/release/v10.16.0/node-v10.16.0.tar.gz'
+    build-packages:
+      - g++
+      - make
+      - python2.7
+    override-build: "./configure --prefix=/ --release-urlbase=https://nodejs.org/download/release/\nsnapcraftctl build\nmkdir -p \\$SNAPCRAFT_PART_INSTALL/etc\necho \"prefix = /usr/local\" >> \\$SNAPCRAFT_PART_INSTALL/etc/npmrc\n"
+apps:
+  fiduswriter:
+    command: 'bin/fiduswriter --pythonpath $SNAP_USER_DATA'
+    plugs:
+      - network-bind
+      - network-control
+      - network-observe
+layout:
+  /etc/magic:
+    bind-file: $SNAP/etc/magic
+  /etc/wgetrc:
+    bind-file: $SNAP/etc/wgetrc

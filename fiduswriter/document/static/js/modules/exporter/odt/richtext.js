@@ -1,5 +1,7 @@
 import {noSpaceTmp, escapeText} from "../../common"
-import {FIG_CATS} from "../../schema/common"
+import {
+    FIG_CATS
+} from "../../schema/i18n"
 
 export class OdtExporterRichtext {
     constructor(exporter, images) {
@@ -217,9 +219,9 @@ export class OdtExporterRichtext {
                     const figCount = this.figureCounter[figCat]++
                     const figCountXml = `<text:sequence text:ref-name="ref${figCat}${figCount-1}" text:name="${figCat}" text:formula="ooow:${figCat}+1" style:num-format="1">${figCount}</text:sequence>`
                     if (caption.length) {
-                        caption = `${FIG_CATS[figCat]} ${figCountXml}: ${caption}`
+                        caption = `${FIG_CATS[figCat][this.exporter.settings.language]} ${figCountXml}: ${caption}`
                     } else {
-                        caption = `${FIG_CATS[figCat]} ${figCountXml}`
+                        caption = `${FIG_CATS[figCat][this.exporter.settings.language]} ${figCountXml}`
                     }
                 }
                 let relWidth = node.attrs.width

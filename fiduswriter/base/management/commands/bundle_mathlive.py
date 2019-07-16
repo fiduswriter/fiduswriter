@@ -52,10 +52,25 @@ class Command(BaseCommand):
             settings.PROJECT_PATH, "static-libs/css/libs/mathlive/")
         if not os.path.exists(mathlive_css_path):
             os.makedirs(mathlive_css_path)
-        call(["cp", ".transpile/node_modules/mathlive/dist/mathlive.css",
-              mathlive_css_path])
-        call(["cp", "-R", ".transpile/node_modules/mathlive/dist/fonts",
-              mathlive_css_path])
+        call([
+            "cp",
+            "--preserve=mode",
+            os.path.join(
+                settings.PROJECT_PATH,
+                ".transpile/node_modules/mathlive/dist/mathlive.css"
+            ),
+            mathlive_css_path
+        ])
+        call([
+            "cp",
+            "-r",
+            "--preserve=mode",
+            os.path.join(
+                settings.PROJECT_PATH,
+                ".transpile/node_modules/mathlive/dist/fonts"
+            ),
+            mathlive_css_path
+        ])
         zip_file_path = os.path.join(
             settings.PROJECT_PATH, 'static-libs/zip/mathlive_style.zip')
         zip_dir = os.path.dirname(zip_file_path)

@@ -9,6 +9,7 @@ __pycache__/
 build
 .project
 .settings
+.idea
 *.mo
 *.swp
 *.swo

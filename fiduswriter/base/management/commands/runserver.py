@@ -48,6 +48,8 @@ class Command(BaseCommand):
                     'or address:port pair.' % options['addrport']
                 )
             self.addr, _ipv4, _ipv6, _fqdn, self.port = m.groups()
+            if not self.addr:
+                self.addr = self.default_addr
         else:
             self.addr = self.default_addr
             self.port = self.default_port

@@ -1,7 +1,8 @@
 import {escapeText} from "../../common"
 import {
     FIG_CATS
-} from "../../schema/common"
+} from "../../schema/i18n"
+
 
 export const linkDialogTemplate = ({defaultLink, internalTargets, link, linkTitle}) =>
     `${
@@ -221,7 +222,7 @@ export const figureImageTemplate = ({imageDB}) =>
     </div>`
 
     /** A template to configure the display of a figure in the editor. */
-export const configureFigureTemplate = ({caption, dir}) =>
+export const configureFigureTemplate = ({caption, dir, language}) =>
     `<div class="fw-media-uploader">
             <input type="hidden" id="figure-category">
             <div style="margin-top: 10px;">
@@ -234,9 +235,9 @@ export const configureFigureTemplate = ({caption, dir}) =>
                         style="left: 10px;">
                     <ul id="figure-category-list">
                         ${
-                            Object.entries(FIG_CATS).map(([id, title]) =>
+                            Object.entries(FIG_CATS).map(([id, title_object]) =>
                                 `<li><span class="fw-pulldown-item" id="figure-category-${id}">
-                                    ${title}
+                                    ${title_object[language]}
                                 </span></li>`
                             ).join('')
                         }

@@ -24,7 +24,7 @@ export class PrintExporter extends HTMLExporter {
                 font-size: 70%;
                 position: relative;
                 top: -0.3em;
-                
+
             }
             section[role=doc-footnote] > *:first-child:before {
                 counter-increment: footnote-counter;

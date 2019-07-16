@@ -13,7 +13,7 @@ class TableView {
         this.dom.classList.add(`table-${node.attrs.width}`, `table-${node.attrs.aligned}`, 'table-container')
         this.menuButton = document.createElement("button")
         this.menuButton.classList.add('table-menu-btn')
-        this.menuButton.innerHTML = '<span class="table-menu-icon"><i class="fa fa-ellipsis-v"></i></span>'
+        this.menuButton.innerHTML = '<span class="dot-menu-icon"><i class="fa fa-ellipsis-v"></i></span>'
         this.dom.appendChild(this.menuButton)
         const table = document.createElement("table")
         const tbody = document.createElement("tbody")

@@ -110,6 +110,7 @@ import {
     selectionMenuPlugin,
     settingsPlugin,
     tableMenuPlugin,
+    figureMenuPlugin,
     tocRenderPlugin,
     toolbarPlugin,
     trackPlugin,
@@ -194,6 +195,7 @@ export class Editor {
             [documentTemplatePlugin, () => ({editor: this})],
             [trackPlugin, () => ({editor: this})],
             [tableMenuPlugin, () => ({editor: this})],
+            [figureMenuPlugin, () => ({editor: this})],
             [tocRenderPlugin, () => ({editor: this})],
         ]
     }
@@ -217,7 +219,7 @@ export class Editor {
             'review.css',
             'add_remove_dialog.css',
             'bibliography.css',
-            'table_menu.css',
+            'dot_menu.css',
             'cropper.min.css',
             'inline_tools.css'
         ], this.staticUrl)

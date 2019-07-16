@@ -40,8 +40,18 @@ export const article = {
             default: {}
         },
         template: {
-            default: ''
+            default: {}
+        },
+        figure: {
+            default: {}
+        },
+        table: {
+            default: {}
+        },
+        photo: {
+            default: {}
         }
+
     },
     parseDOM: [{
         tag: "div.article",

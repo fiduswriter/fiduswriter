@@ -1,6 +1,6 @@
 import {textContent} from "../tools/doc_contents"
 import {escapeText} from "../../common"
-import {BIBLIOGRAPHY_HEADERS} from "../../schema/const"
+import {BIBLIOGRAPHY_HEADERS} from "../../schema/i18n"
 
 export class OdtExporterRender {
     constructor(exporter, docContents) {

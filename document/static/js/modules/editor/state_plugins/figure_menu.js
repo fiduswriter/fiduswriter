@@ -1,6 +1,9 @@
 import {Plugin, PluginKey} from "prosemirror-state"
 import {DOMSerializer} from "prosemirror-model"
 import {FigureDialog} from "../dialogs"
+import {
+    FIG_CATS, FIGURE, TABLE, PHOTO
+} from "../../schema/const"
 
 const key = new PluginKey('figureMenu')
 
@@ -46,9 +49,18 @@ export const figureMenuPlugin = function(options) {
         },
         props: {
             nodeViews: {}
-        }/*,
+        },
         view(_view) {
+            let user_language = options.editor.view.state.doc.firstChild.attrs.language
+             Array.from(document.querySelectorAll('*[class^="figure-cat-"] ')).forEach(el => el.innerHTML = FIG_CATS[el.dataset.figureCategory][user_language])
+             return {
+                update: (view, _prevState) => {
+                    let user_language = options.editor.view.state.doc.firstChild.attrs.language
+                    Array.from(document.querySelectorAll('*[class^="figure-cat-"] ')).forEach(el => el.innerHTML = FIG_CATS[el.dataset.figureCategory][user_language])
 
-        }*/
+                }
+            }
+
+        }
     })
 }

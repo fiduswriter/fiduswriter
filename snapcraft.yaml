@@ -12,6 +12,16 @@ parts:
     python-version: python3
     parse-info: [setup.py]
     source: .
+    filesets:
+        exclude:
+            - "-lib/python3.6/site-packages/fiduswriter/configuration.py"
+            - "-lib/python3.6/site-packages/fiduswriter/payment"
+    stage:
+        - "$exclude"
+    override-build: |
+        rm fiduswriter/configuration.py
+        snapcraftctl build
+    requirements: [fiduswriter/requirements.txt]
     stage-packages:
       - libjpeg-dev
       - python3-dev
@@ -21,7 +31,6 @@ parts:
       - zlib1g-dev
       - wget
       - build-essential
-      - libc6
       - libmagic1
     after: [node]
   node:

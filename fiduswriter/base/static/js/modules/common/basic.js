@@ -30,10 +30,10 @@ export const openDropdownBox = function(box) {
     // Show this box
     box.style.display = 'block'
 
-    const closeDropdownBox = function(event) {
+    function closeDropdownBox(event) {
         event.preventDefault()
         box.style.display = ''
-        document.removeEventListener('click', closeDropdownBox, false)
+        document.body.removeEventListener('click', closeDropdownBox, false)
     }
     document.body.addEventListener('click', closeDropdownBox, false)
 }

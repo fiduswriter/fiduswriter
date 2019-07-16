@@ -227,8 +227,7 @@ export const configureFigureTemplate = ({caption, dir, language}) =>
             <input type="hidden" id="figure-category">
             <div style="margin-top: 10px;">
                 <div id="figure-category-btn" class="fw-button fw-light fw-large">
-                    <input type="hidden" id="figure-category" />
-                    <label></label>
+                    <span class="label"></span>
                     <span class="fa fa-caret-down"></span>
                 </div>
                 <div id="figure-category-pulldown" class="fw-pulldown fw-left"
@@ -244,8 +243,7 @@ export const configureFigureTemplate = ({caption, dir, language}) =>
                     </ul>
                 </div>
                 <div id="figure-alignment-btn" class="fw-button fw-light fw-large">
-                    <input type="hidden" id="figure-alignment" />
-                    <label></label>
+                    <span class="label"></span>
                     <span class="fa fa-caret-down"></span>
                 </div>
                 <div id="figure-alignment-pulldown" class="fw-pulldown fw-left"
@@ -263,8 +261,7 @@ export const configureFigureTemplate = ({caption, dir, language}) =>
                     </ul>
                 </div>
                 <div id="figure-width-btn" class="fw-button fw-light fw-large">
-                    <input type="hidden" id="figure-width" />
-                    <label></label>
+                    <span class="label"></span>
                     <span class="fa fa-caret-down"></span>
                 </div>
                 <div id="figure-width-pulldown" class="fw-pulldown fw-left"

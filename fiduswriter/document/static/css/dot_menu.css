@@ -31,3 +31,7 @@
     font-size: 18px;
     color:#cecece;
 }
+
+.dot-menu-icon:hover {
+    color:#000;
+}

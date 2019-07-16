@@ -1,7 +1,6 @@
 import {Plugin, PluginKey} from "prosemirror-state"
 
 import {LANGUAGES} from "../../schema/const"
-import {FIG_CATS} from "../../schema/i18n"
 import {setDocTitle} from "../../common"
 
 const key = new PluginKey('settings')
@@ -67,7 +66,6 @@ export const settingsPlugin = function(options) {
                         if (newValue.length) {
                             const lang = LANGUAGES.find(lang => lang[0] === newValue)
                             document.querySelectorAll('.ProseMirror').forEach(el => el.dir = lang[2])
-                            Array.from(document.querySelectorAll('*[class^="figure-cat-"]')).forEach(el => el.innerHTML = FIG_CATS[el.dataset.figureCategory][newValue])
                             options.editor.docInfo.dir = lang[2]
                         } else {
                             settingsValid = false

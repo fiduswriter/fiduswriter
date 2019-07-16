@@ -32,7 +32,7 @@ class FigureView {
 }
 
 
-export const figureMenuPlugin = function(options) {
+export const figurePlugin = function(options) {
     return new Plugin({
         key,
         state: {
@@ -51,12 +51,16 @@ export const figureMenuPlugin = function(options) {
             nodeViews: {}
         },
         view(_view) {
-            const userLanguage = options.editor.view.state.doc.firstChild.attrs.language
-            Array.from(document.querySelectorAll('*[class^="figure-cat-"]')).forEach(el => el.innerHTML = FIG_CATS[el.dataset.figureCategory][userLanguage])
+            let userLanguage = options.editor.view.state.doc.firstChild.attrs.language
+            document.querySelectorAll('*[class^="figure-cat-"]').forEach(el => el.innerHTML = FIG_CATS[el.dataset.figureCategory][userLanguage])
             return {
                 update: (_view, _prevState) => {
-                    const userLanguage = options.editor.view.state.doc.firstChild.attrs.language
-                    Array.from(document.querySelectorAll('*[class^="figure-cat-"]:empty')).forEach(el => el.innerHTML = FIG_CATS[el.dataset.figureCategory][userLanguage])
+                    let selector = '*[class^="figure-cat-"]:empty'
+                    if (options.editor.view.state.doc.firstChild.attrs.language !== userLanguage) {
+                        selector = '*[class^="figure-cat-"]'
+                        userLanguage = options.editor.view.state.doc.firstChild.attrs.language
+                    }
+                    document.querySelectorAll(selector).forEach(el => el.innerHTML = FIG_CATS[el.dataset.figureCategory][userLanguage])
                 }
             }
         }

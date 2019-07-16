@@ -17,7 +17,9 @@ parts:
         - '-lib/python3.6/site-packages/fiduswriter/payment'
     stage:
       - $exclude
-    override-build: "rm -f fiduswriter/configuration.py\nsnapcraftctl build\n"
+    override-build: |
+      rm -f fiduswriter/configuration.py
+      snapcraftctl build
     requirements:
       - fiduswriter/requirements.txt
     stage-packages:
@@ -33,14 +35,13 @@ parts:
     after:
       - node
   node:
-    plugin: make
-    source-type: tar
-    source: 'https://nodejs.org/download/release/v10.16.0/node-v10.16.0.tar.gz'
-    build-packages:
-      - g++
-      - make
-      - python2.7
-    override-build: "./configure --prefix=/ --release-urlbase=https://nodejs.org/download/release/\nsnapcraftctl build\nmkdir -p \\$SNAPCRAFT_PART_INSTALL/etc\necho \"prefix = /usr/local\" >> \\$SNAPCRAFT_PART_INSTALL/etc/npmrc\n"
+    plugin: nodejs
+    nodejs-package-manager: npm
+    source: ./travis
+    override-pull: |
+      echo '{"name": "fiduswriter", "version": "1.0.0", "dependencies": {"npm": "*"}, "bin": {"npm": "node_modules/.bin/npm"}}' > package.json
+      snapcraftctl pull
+      rm -f configuration.py
 apps:
   fiduswriter:
     command: 'bin/fiduswriter --pythonpath $SNAP_USER_DATA'

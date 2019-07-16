@@ -149,17 +149,17 @@ export class FigureDialog {
     }
 
     setFigureLabel() {
-        this.dialog.dialogEl.querySelector('#figure-category-btn label').innerHTML =
+        this.dialog.dialogEl.querySelector('#figure-category-btn .label').innerHTML =
             document.getElementById(`figure-category-${this.figureCategory}`).innerText
     }
 
     setFigureAlignment() {
-        this.dialog.dialogEl.querySelector('#figure-alignment-btn label').innerHTML =
+        this.dialog.dialogEl.querySelector('#figure-alignment-btn .label').innerHTML =
             document.getElementById(`figure-alignment-${this.aligned}`).innerText
     }
 
     setFigureWidth() {
-        this.dialog.dialogEl.querySelector('#figure-width-btn label').innerHTML =
+        this.dialog.dialogEl.querySelector('#figure-width-btn .label').innerHTML =
             document.getElementById(`figure-width-${this.width}`).innerText
 
     }

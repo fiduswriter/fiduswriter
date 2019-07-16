@@ -109,17 +109,21 @@ figure {
 
 .figure-cat-figure::after {
     counter-increment: figure-cat-0;
-    content: ' ' counter(figure-cat-0) ': ';
+    content: ' ' counter(figure-cat-0);
 }
 
 .figure-cat-photo::after {
     counter-increment: figure-cat-1;
-    content: ' ' counter(figure-cat-1) ': ';
+    content: ' ' counter(figure-cat-1);
 }
 
 .figure-cat-table::after {
     counter-increment: figure-cat-2;
-    content: ' ' counter(figure-cat-2) ': ';
+    content: ' ' counter(figure-cat-2);
+}
+
+.figure-cat-figure + span::before, .figure-cat-photo + span::before, .figure-cat-table + span::before {
+    content: ': ';
 }
 
 .user-contents a,

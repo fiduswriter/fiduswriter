@@ -1,7 +1,7 @@
 import {escapeText} from "../../common"
 import {
     FIG_CATS, FIGURE, TABLE, PHOTO
-} from "../../schema/const"
+} from "../../schema/i18n"
 
 
 export const linkDialogTemplate = ({defaultLink, internalTargets, link, linkTitle}) =>

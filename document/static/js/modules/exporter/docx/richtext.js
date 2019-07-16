@@ -4,7 +4,7 @@ import {
 } from "../../common"
 import {
     FIG_CATS, FIGURE, TABLE, PHOTO
-} from "../../schema/const"
+} from "../../schema/i18n"
 
 export class DocxExporterRichtext {
     constructor(exporter, rels, citations, images) {

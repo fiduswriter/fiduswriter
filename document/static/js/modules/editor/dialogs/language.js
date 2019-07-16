@@ -1,7 +1,7 @@
 import {Dialog} from "../../common"
 
 import {languageTemplate} from "./templates"
-import {LANGUAGES} from "../../schema/const"
+import {LANGUAGES} from "../../schema/i18n"
 
 
 export class LanguageDialog {

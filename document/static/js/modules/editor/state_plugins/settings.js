@@ -1,6 +1,6 @@
 import {Plugin, PluginKey} from "prosemirror-state"
 
-import {LANGUAGES} from "../../schema/const"
+import {LANGUAGES} from "../../schema/i18n"
 import {setDocTitle} from "../../common"
 
 const key = new PluginKey('settings')

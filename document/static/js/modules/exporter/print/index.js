@@ -1,6 +1,6 @@
 import {vivliostylePrint} from "vivliostyle-print"
 
-import {PAPER_SIZES} from "../../schema/const"
+import {PAPER_SIZES} from "../../schema/i18n"
 import {HTMLExporter} from "../html"
 import {addAlert} from "../../common"
 import {removeHidden} from "../tools/doc_contents"

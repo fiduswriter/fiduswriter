@@ -1,5 +1,5 @@
 import {escapeText} from "../common"
-import {LANGUAGES, PAPER_SIZES} from "../schema/const"
+import {LANGUAGES, PAPER_SIZES} from "../schema/i18n"
 
 
 const allowedElementsTemplate = ({elements}, footnote=true, table=true) =>

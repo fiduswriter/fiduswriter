@@ -1,6 +1,6 @@
 import {noSpaceTmp, escapeText} from "../../common"
 import {
-    FIG_CATS, FIGURE, TABLE, PHOTO
+    FIG_CATS
 } from "../../schema/i18n"
 
 export class OdtExporterRichtext {

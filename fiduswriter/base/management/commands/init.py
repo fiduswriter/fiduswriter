@@ -8,7 +8,6 @@ from style.models import DocumentStyle
 from document.models import ExportTemplate
 
 
-
 class Command(BaseCommand):
     help = ('Initialize Fidus Writer installation.')
 

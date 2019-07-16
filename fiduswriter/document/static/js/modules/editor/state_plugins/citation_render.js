@@ -1,8 +1,5 @@
 import {Plugin, PluginKey} from "prosemirror-state"
 import {ReplaceStep, ReplaceAroundStep} from "prosemirror-transform"
-import {
-    FIG_CATS, FIGURE, TABLE, PHOTO
-} from "../../schema/i18n"
 
 const key = new PluginKey('citationRender')
 

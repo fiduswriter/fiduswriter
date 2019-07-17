@@ -301,7 +301,7 @@ export class DocxExporterRichtext {
                             this.figureCounter[figCat] = 1
                         }
                         figCountXml = `<w:r>
-                        <w:t xml:space="preserve">${FIG_CATS[node.attrs.figureCategory][this.exporter.doc.settings.language]} </w:t>
+                        <w:t xml:space="preserve">${FIG_CATS[figCat][this.exporter.doc.settings.language]} </w:t>
                     </w:r>
                     <w:r>
                         <w:rPr></w:rPr>
@@ -309,7 +309,7 @@ export class DocxExporterRichtext {
                     </w:r>
                     <w:r>
                         <w:rPr></w:rPr>
-                        <w:instrText> SEQ ${node.attrs.figureCategory} \\* ARABIC </w:instrText>
+                        <w:instrText> SEQ ${figCat} \\* ARABIC </w:instrText>
                     </w:r>
                     <w:r>
                         <w:rPr></w:rPr>

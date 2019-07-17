@@ -64,7 +64,26 @@ class Command(BaseCommand):
                     "document/fixtures/initial_export_templates.json"
                 )
             )
-        call_command("compilemessages")
+        if (
+            os.environ.get('NO_COMPILEMESSAGES') or
+            (
+                os.path.isfile(os.path.join(
+                    settings.SRC_PATH,
+                    "locale/BASE/LC_MESSAGES/django.mo"
+                )) and
+                os.path.getmtime(os.path.join(
+                    settings.SRC_PATH,
+                    "locale/BASE/LC_MESSAGES/django.mo"
+                )) > os.path.getmtime(os.path.join(
+                    settings.SRC_PATH,
+                    "locale/BASE/LC_MESSAGES/django.po"
+                ))
+            )
+
+        ):
+            pass
+        else:
+            call_command("compilemessages")
         call_command("transpile")
         if (
             not options["no-compress"] and

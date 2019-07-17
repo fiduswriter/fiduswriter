@@ -10,7 +10,6 @@ export class PrintExporter extends HTMLExporter {
     constructor(schema, citationStyles, citationLocales, staticUrl, documentStyles, doc, bibDB, imageDB) {
         super(schema, citationStyles, citationLocales, staticUrl, documentStyles, doc, bibDB, imageDB)
         this.staticUrl = staticUrl
-        this.removeUrlPrefix = false
         this.styleSheets.push({contents:
             `a.fn {
                 -adapt-template: url(data:application/xml,${
@@ -94,10 +93,37 @@ export class PrintExporter extends HTMLExporter {
         )
     }
 
+    addStyle() {
+        // Override the default as we need to use the original URLs in print.
+        const docStyle = this.documentStyles.find(docStyle => docStyle.filename===this.doc.settings.documentstyle)
+
+        const docStyleCSS = `
+        ${docStyle.fonts.map(font => {
+            return `@font-face {${
+                font[1].replace('[URL]', font[0])
+            }}`
+        }).join('\n')}
+        ${docStyle.contents}
+        `
+        this.styleSheets.push({contents: docStyleCSS})
+        this.styleSheets.forEach(sheet => {
+            if (sheet.url) {
+                sheet.filename = sheet.url
+                delete sheet.url
+            }
+        })
+
+        return Promise.resolve()
+    }
+
     getFootnoteAnchor(counter) {
         const footnoteAnchor = super.getFootnoteAnchor(counter)
         // Add the counter directly into the footnote.
         footnoteAnchor.innerHTML = counter
         return footnoteAnchor
+    }
+
+    prepareBinaryFiles() {
+        // Not needed for print
     }
 }

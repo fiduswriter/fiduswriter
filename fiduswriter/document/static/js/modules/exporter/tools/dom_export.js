@@ -1,6 +1,7 @@
 import {DOMSerializer} from "prosemirror-model"
 import {RenderCitations} from "../../citations/render"
 import {BIBLIOGRAPHY_HEADERS, FIG_CATS} from "../../schema/i18n"
+import {get} from "../../common"
 
 /*
 
@@ -16,18 +17,63 @@ by little, and they are all based on the BaseDOMExporter class.
 
 export class DOMExporter {
 
-    constructor(schema, staticUrl, citationStyles, citationLocales) {
+    constructor(schema, staticUrl, citationStyles, citationLocales, documentStyles = []) {
         this.schema = schema
         this.staticUrl = staticUrl
         this.citationStyles = citationStyles
         this.citationLocales = citationLocales
+        this.documentStyles = documentStyles
+
+        this.fontFiles = []
+        this.binaryFiles = []
+        this.styleSheets = [
+            {url: `${this.staticUrl}css/document.css?v=${process.env.TRANSPILE_VERSION}`}
+        ]
+    }
+
+    addStyle() {
+        const docStyle = this.documentStyles.find(docStyle => docStyle.filename===this.doc.settings.documentstyle)
+
+        const docStyleCSS = `
+        ${docStyle.fonts.map(font => {
+            return `@font-face {${
+                font[1].replace('[URL]', font[0].split('/').pop().split('?')[0])
+            }}`
+        }).join('\n')}
+        ${docStyle.contents}
+        `
+
+        this.styleSheets.push({contents: docStyleCSS, filename: `${docStyle.filename}.css`})
+        this.fontFiles = this.fontFiles.concat(docStyle.fonts.map(font => ({
+            filename: font[0].split('/').pop().split('?')[0],
+            url: font[0]
+        })))
+
+        const p = []
+        this.styleSheets.forEach(sheet => {
+            if (sheet.url) {
+                p.push(
+                    get(sheet.url).then(
+                        response => response.text()
+                    ).then(
+                        response => {
+                            sheet.contents = response
+                            sheet.filename = sheet.url.split('/').pop().split('?')[0]
+                            delete sheet.url
+                            // TODO: include fonts/images included in files
+                        }
+                    )
+                )
+            }
+        })
+        return Promise.all(p)
     }
 
     joinDocumentParts() {
         this.schema.cached.imageDB = this.imageDB
         const serializer = DOMSerializer.fromSchema(this.schema)
         this.contents = serializer.serializeNode(this.schema.nodeFromJSON(this.docContents))
-        this.contents.querySelectorAll('*[class^="figure-cat-"]').forEach(el => el.innerHTML = FIG_CATS[el.dataset.figureCategory][this.doc.settings.language])
+        this.addFigureLabels(this.doc.settings.language)
         const bibliographyHeader = this.doc.settings.bibliography_header[this.doc.settings.language] || BIBLIOGRAPHY_HEADERS[this.doc.settings.language]
         const citRenderer = new RenderCitations(
             this.contents,
@@ -46,6 +92,10 @@ export class DOMExporter {
         )
     }
 
+    addFigureLabels(language) {
+        this.contents.querySelectorAll('*[class^="figure-cat-"]').forEach(el => el.innerHTML = FIG_CATS[el.dataset.figureCategory][language])
+    }
+
     addBibliographyHTML(bibliographyHTML) {
         if (bibliographyHTML.length > 0) {
             const tempNode = document.createElement('div')
@@ -54,33 +104,6 @@ export class DOMExporter {
                 this.contents.appendChild(tempNode.firstChild)
             }
         }
-    }
-
-    addFigureNumbers(htmlEl) {
-
-        htmlEl.querySelectorAll('figcaption .figure-cat-figure').forEach(
-            (el, index) => {
-                el.innerHTML += ' ' + (index + 1) + ': '
-            }
-        )
-
-        htmlEl.querySelectorAll('figcaption .figure-cat-photo').forEach(
-            (el, index) => {
-                el.innerHTML += ' ' + (index + 1) + ': '
-            }
-        )
-
-        htmlEl.querySelectorAll('figcaption .figure-cat-table').forEach(
-            (el, index) => {
-                el.innerHTML += ' ' + (index + 1) + ': '
-            }
-        )
-        return htmlEl
-
-    }
-
-    makeTitleHeading(htmlEl) {
-
     }
 
     replaceImgSrc(htmlString) {

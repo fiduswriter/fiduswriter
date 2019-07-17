@@ -187,6 +187,7 @@ export const headerbarModel = () => ({
                                 editor.mod.documentTemplate.citationStyles,
                                 editor.mod.documentTemplate.citationLocales,
                                 editor.staticUrl,
+                                editor.mod.documentTemplate.documentStyles,
                                 editor.getDoc({changes: 'acceptAllNoInsertions'}),
                                 editor.mod.db.bibDB,
                                 editor.mod.db.imageDB

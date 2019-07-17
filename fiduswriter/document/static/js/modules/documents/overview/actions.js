@@ -279,6 +279,7 @@ export class DocumentOverviewActions {
                             this.documentOverview.citationStyles,
                             this.documentOverview.citationLocales,
                             this.documentOverview.staticUrl,
+                            this.documentOverview.documentStyles,
                             doc,
                             {db:doc.bibliography},
                             {db:doc.images}

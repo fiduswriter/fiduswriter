@@ -2,7 +2,7 @@ import {mathliveOpfIncludes} from "../../mathlive/opf_includes"
 import {escapeText} from "../../common"
 
 /** A template for the OPF file of an epub. */
-export const opfTemplate = ({id, idType, title, language, authors, keywords, date, modified, images, styleSheets, math}) =>
+export const opfTemplate = ({id, idType, title, language, authors, keywords, date, modified, images, fontFiles, styleSheets, math}) =>
 `<?xml version="1.0" encoding="UTF-8"?>
 <package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="${idType}" xml:lang="${language}" prefix="cc: http://creativecommons.org/ns#">
     <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
@@ -10,8 +10,7 @@ export const opfTemplate = ({id, idType, title, language, authors, keywords, dat
             <dc:title>${escapeText(title)}</dc:title>
 ${
     authors.map(author => `\t\t<dc:creator>${escapeText(author)}</dc:creator>\n`).join('')
-}
-${
+}${
     keywords.map(keyword => `\t\t<dc:subject>${escapeText(keyword)}</dc:subject>\n`).join('')
 }
         <dc:language>${language}</dc:language>
@@ -37,13 +36,23 @@ ${
             'jpeg'
         }" />\n`
     ).join('')
-}
-${
+}${
+    fontFiles.map((fontFile, index) =>
+        `\t\t\t<item ${
+            `id="font${index}"`
+        } href="${
+            fontFile.filename
+        }" media-type="application/${
+            fontFile.filename.split(".")[1]==="woff" ?
+            'font-woff' :
+            'font-sfnt'
+        }" />\n`
+    ).join('')
+}${
     styleSheets.map((sheet, index) =>
         `\t\t\t<item id="css${index}" href="${sheet.filename}" media-type="text/css" />\n`
     ).join('')
-}
-${
+}${
     math ?
     mathliveOpfIncludes :
     ''

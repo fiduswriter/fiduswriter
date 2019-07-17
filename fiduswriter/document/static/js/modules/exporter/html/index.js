@@ -11,50 +11,30 @@ import {DOMExporter} from "../tools/dom_export"
 
 export class HTMLExporter extends DOMExporter {
     constructor(schema, citationStyles, citationLocales, staticUrl, documentStyles, doc, bibDB, imageDB) {
-        super(schema, staticUrl, citationStyles, citationLocales)
+        super(schema, staticUrl, citationStyles, citationLocales, documentStyles)
         this.doc = doc
-        this.documentStyles = documentStyles
         this.bibDB = bibDB
         this.imageDB = imageDB
-        this.styleSheets = [
-            {filename: `${this.staticUrl}css/document.css?v=${process.env.TRANSPILE_VERSION}`}
-        ]
-        this.removeUrlPrefix = true
     }
 
     init() {
         addAlert('info', `${this.doc.title}: ${gettext('HTML export has been initiated.')}`)
         this.docContents = removeHidden(this.doc.contents, false)
-        let docStyle
+
         return this.addStyle().then(
-            style => docStyle = style
-        ).then(
             () => this.joinDocumentParts()
         ).then(
             () => this.fillToc()
         ).then(
             () => this.postProcess()
         ).then(
-            ({title, html, math, imageFiles}) => this.save({title, html, math, imageFiles, docStyle})
+            ({title, html, math}) => this.save({title, html, math})
         )
 
     }
 
-    addStyle() {
-        const docStyle = this.documentStyles.find(docStyle => docStyle.filename===this.doc.settings.documentstyle)
-
-        const docStyleCSS = `
-        ${docStyle.fonts.map(font => {
-            return `@font-face {${
-                font[1].replace('[URL]', this.removeUrlPrefix ? font[0].split('/').pop() : font[0])
-            }}`
-        }).join('\n')}
-
-        ${docStyle.contents}
-        `
-        this.styleSheets.push({contents: docStyleCSS})
-
-        return Promise.resolve(docStyle)
+    prepareBinaryFiles() {
+        this.binaryFiles = this.binaryFiles.concat(modifyImages(this.contents)).concat(this.fontFiles)
     }
 
     postProcess() {
@@ -64,41 +44,30 @@ export class HTMLExporter extends DOMExporter {
         const math = this.contents.querySelectorAll('.equation, .figure-equation').length ? true : false
 
         if (math) {
-            this.styleSheets.push({filename: `${this.staticUrl}css/libs/mathlive/mathlive.css?v=${process.env.TRANSPILE_VERSION}`})
+            this.styleSheets.push({url: `${this.staticUrl}css/libs/mathlive/mathlive.css?v=${process.env.TRANSPILE_VERSION}`})
         }
 
-        const imageFiles = this.removeUrlPrefix ? modifyImages(this.contents) : []
+        this.prepareBinaryFiles()
 
         const html = htmlExportTemplate({
             part: false,
             title,
             settings: this.doc.settings,
             styleSheets: this.styleSheets,
-            contents: this.contents,
-            removeUrlPrefix: this.removeUrlPrefix
+            contents: this.contents
         })
 
-        return {title, html, math, imageFiles}
+        return {title, html, math}
     }
 
-
-    // The save function is specific to HTMl saving and therefore assumes that this.removeUrlPrefix === true
-    save({title, html, math, imageFiles, docStyle}) {
-
-        const fontFiles = docStyle.fonts.map(font => ({
-            filename: font[0].split('/').pop(),
-            url: font[0]
-        }))
-
-        const binaryFiles = fontFiles.concat(imageFiles)
-
+    save({title, html, math}) {
         const textFiles = [{
             filename: 'document.html',
             contents: pretty(this.replaceImgSrc(html), {ocd: true})
         }]
 
         this.styleSheets.forEach(styleSheet => {
-            if (styleSheet.contents && styleSheet.filename) {
+            if (styleSheet.filename) {
                 textFiles.push(styleSheet)
             }
         })
@@ -114,7 +83,7 @@ export class HTMLExporter extends DOMExporter {
 
         const zipper = new ZipFileCreator(
             textFiles,
-            binaryFiles,
+            this.binaryFiles,
             includeZips
         )
 

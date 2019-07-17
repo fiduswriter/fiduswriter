@@ -88,7 +88,7 @@ ${
 
 /** A template for each list item in the navMap of an epub's NCX file. */
 export const ncxItemTemplate = ({item}) =>
-`        <navPoint id="${item.docNum ? `${item.id}-${item.docNum}` : item.id}">
+`        <navPoint id="t${item.docNum ? `${item.id}-${item.docNum}` : item.id}">
             <navLabel><text>${escapeText(item.title)}</text></navLabel>
             <content src="${item.link ? item.link : item.docNum ? `document-${item.docNum}.xhtml#${item.id}` : `document.xhtml#${item.id}` }"/>
 ${
@@ -116,15 +116,13 @@ ${
     ).join('')
 }
     </head>
-    <body>
-${
-    part && part.length ?
-    `\t\t<h1 class="part">${escapeText(part)}</h1>` :
-    ''
-}
-        ${body}
-
-    </body>
+    <body>${
+        part && part.length ?
+        `\t\t<h1 class="part">${escapeText(part)}</h1>` :
+        ''
+    }${
+        body
+    }</body>
 </html>`
 
 

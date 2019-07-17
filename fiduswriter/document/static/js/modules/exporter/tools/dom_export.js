@@ -76,6 +76,10 @@ export class BaseDOMExporter {
 
     }
 
+    makeTitleHeading(htmlEl) {
+        
+    }
+
     replaceImgSrc(htmlString) {
         htmlString = htmlString.replace(/<(img|IMG) data-src([^>]+)>/gm,
             "<$1 src$2>")

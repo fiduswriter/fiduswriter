@@ -24,7 +24,7 @@ export const obj2Node = function(obj, docType) {
                 // Do not allow scripts
                 return parser.createTextNode('')
             } else {
-                node = parser.createElement(obj.nn)
+                node = parser.createElement(obj.nn.toLowerCase())
             }
             if (obj.a) {
                 for (let i = 0; i < obj.a.length; i++) {

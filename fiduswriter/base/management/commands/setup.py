@@ -9,7 +9,7 @@ from document.models import ExportTemplate
 
 
 class Command(BaseCommand):
-    help = ('Initialize Fidus Writer installation.')
+    help = ('Setup Fidus Writer installation.')
 
     def add_arguments(self, parser):
         parser.add_argument(

@@ -9,10 +9,11 @@
 
 DEBUG = True
 
-# Transpile JavaScript automatically when running the server. You might want to
-# turn this off on a production server
+# Migrate, transpile JavaScript and install required fixtures automatically
+# when starting runserver. You might want to turn this off on a production
+# server. The default is the opposite of DEBUG
 
-AUTO_TRANSPILE = True
+# AUTO_SETUP = False
 
 # This determines whether the server is used for testing and will let the
 # users know upon signup know that their documents may disappear.

@@ -2,7 +2,6 @@ import os
 # If you want to show debug messages, set DEBUG to True.
 
 DEBUG = True
-AUTO_TRANSPILE = True
 
 # This determines whether the server is used for testing and will let the
 # users know upon signup know that their documents may disappear.

@@ -7,8 +7,8 @@ import {removeHidden} from "../tools/doc_contents"
 
 export class PrintExporter extends HTMLExporter {
 
-    constructor(schema, doc, bibDB, imageDB, citationStyles, citationLocales, documentStyles, staticUrl) {
-        super(schema, doc, bibDB, imageDB, citationStyles, citationLocales, documentStyles, staticUrl)
+    constructor(schema, citationStyles, citationLocales, staticUrl, documentStyles, doc, bibDB, imageDB) {
+        super(schema, citationStyles, citationLocales, staticUrl, documentStyles, doc, bibDB, imageDB)
         this.staticUrl = staticUrl
         this.removeUrlPrefix = false
         this.styleSheets.push({contents:

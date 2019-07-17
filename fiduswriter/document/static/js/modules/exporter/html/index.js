@@ -10,15 +10,12 @@ import {addAlert} from "../../common"
 import {DOMExporter} from "../tools/dom_export"
 
 export class HTMLExporter extends DOMExporter {
-    constructor(schema, doc, bibDB, imageDB, citationStyles, citationLocales, documentStyles, staticUrl) {
-        super(schema)
+    constructor(schema, citationStyles, citationLocales, staticUrl, documentStyles, doc, bibDB, imageDB) {
+        super(schema, staticUrl, citationStyles, citationLocales)
         this.doc = doc
-        this.citationStyles = citationStyles
-        this.citationLocales = citationLocales
         this.documentStyles = documentStyles
         this.bibDB = bibDB
         this.imageDB = imageDB
-        this.staticUrl = staticUrl
         this.styleSheets = [
             {filename: `${this.staticUrl}css/document.css?v=${process.env.TRANSPILE_VERSION}`}
         ]

@@ -16,8 +16,11 @@ by little, and they are all based on the BaseDOMExporter class.
 
 export class DOMExporter {
 
-    constructor(schema) {
+    constructor(schema, staticUrl, citationStyles, citationLocales) {
         this.schema = schema
+        this.staticUrl = staticUrl
+        this.citationStyles = citationStyles
+        this.citationLocales = citationLocales
     }
 
     joinDocumentParts() {

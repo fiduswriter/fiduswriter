@@ -12,14 +12,11 @@ import {DOMExporter} from "../tools/dom_export"
 
 export class EpubExporter extends DOMExporter {
 
-    constructor(schema, doc, bibDB, imageDB, citationStyles, citationLocales, staticUrl) {
-        super(schema)
+    constructor(schema, citationStyles, citationLocales, staticUrl, doc, bibDB, imageDB) {
+        super(schema, staticUrl, citationStyles, citationLocales)
         this.doc = doc
         this.bibDB = bibDB
         this.imageDB = imageDB
-        this.citationStyles = citationStyles
-        this.citationLocales = citationLocales
-        this.staticUrl = staticUrl
         this.shortLang = this.doc.settings.language.split('-')[0]
         this.lang = this.doc.settings.language
     }

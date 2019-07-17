@@ -189,13 +189,13 @@ export class DocumentOverviewActions {
                 import("../../exporter/html").then(({HTMLExporter}) => {
                     const exporter = new HTMLExporter(
                         this.documentOverview.schema,
-                        doc,
-                        {db:doc.bibliography},
-                        {db:doc.images},
                         this.documentOverview.citationStyles,
                         this.documentOverview.citationLocales,
+                        this.documentOverview.staticUrl,
                         this.documentOverview.documentStyles,
-                        this.documentOverview.staticUrl
+                        doc,
+                        {db:doc.bibliography},
+                        {db:doc.images}
                     )
                     exporter.init()
                 })
@@ -276,12 +276,12 @@ export class DocumentOverviewActions {
                     import("../../exporter/epub").then(({EpubExporter}) => {
                         const exporter = new EpubExporter(
                             this.documentOverview.schema,
-                            doc,
-                            {db:doc.bibliography},
-                            {db:doc.images},
                             this.documentOverview.citationStyles,
                             this.documentOverview.citationLocales,
-                            this.documentOverview.staticUrl
+                            this.documentOverview.staticUrl,
+                            doc,
+                            {db:doc.bibliography},
+                            {db:doc.images}
                         )
                         exporter.init()
                     })

@@ -14,7 +14,7 @@ by little, and they are all based on the BaseDOMExporter class.
     This is how the LaTeX, ODT and DOCX export filters work.
 */
 
-export class BaseDOMExporter {
+export class DOMExporter {
 
     constructor(schema) {
         this.schema = schema
@@ -77,7 +77,7 @@ export class BaseDOMExporter {
     }
 
     makeTitleHeading(htmlEl) {
-        
+
     }
 
     replaceImgSrc(htmlString) {

@@ -6,11 +6,11 @@ import {modifyImages} from "../tools/html"
 import {ZipFileCreator} from "../tools/zip"
 import {opfTemplate, containerTemplate, ncxTemplate, navTemplate, xhtmlTemplate} from "./templates"
 import {addAlert} from "../../common"
-import {BaseEpubExporter} from "./base"
+import {epubExporterMixin} from "./mixin"
 import {removeHidden} from "../tools/doc_contents"
+import {DOMExporter} from "../tools/dom_export"
 
-
-export class EpubExporter extends BaseEpubExporter {
+export class EpubExporter extends DOMExporter {
 
     constructor(schema, doc, bibDB, imageDB, citationStyles, citationLocales, staticUrl) {
         super(schema)
@@ -193,3 +193,5 @@ export class EpubExporter extends BaseEpubExporter {
 
     }
 }
+
+Object.assign(EpubExporter.prototype, epubExporterMixin)

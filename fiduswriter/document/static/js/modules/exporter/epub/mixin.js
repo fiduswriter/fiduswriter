@@ -1,6 +1,4 @@
-import {BaseDOMExporter} from "../tools/dom_export"
-
-export class BaseEpubExporter extends BaseDOMExporter {
+export const epubExporterMixin  = {
     getTimestamp() {
         const today = new Date()
         let second = today.getUTCSeconds()
@@ -28,8 +26,7 @@ export class BaseEpubExporter extends BaseDOMExporter {
 
         return year + '-' + month + '-' + day + 'T' + hour + ':' +
             minute + ':' + second + 'Z'
-    }
-
+    },
     styleEpubFootnotes(htmlCode) {
         // Converts RASH style footnotes into epub footnotes.
         const footnotes = htmlCode.querySelectorAll('section.fnlist section[role=doc-footnote]')
@@ -64,10 +61,7 @@ export class BaseEpubExporter extends BaseDOMExporter {
         })
 
         return htmlCode
-    }
-
-
-
+    },
     setLinks(htmlEl, docNum) {
         const contentItems = []
         let title
@@ -89,8 +83,7 @@ export class BaseEpubExporter extends BaseDOMExporter {
             }
         })
         return contentItems
-    }
-
+    },
     orderLinks(contentItems) {
         for (let i = 0; i < contentItems.length; i++) {
             contentItems[i].subItems = []
@@ -114,5 +107,4 @@ export class BaseEpubExporter extends BaseDOMExporter {
         }
         return contentItems
     }
-
 }

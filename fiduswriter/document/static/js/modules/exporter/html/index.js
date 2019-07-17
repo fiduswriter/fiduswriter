@@ -7,9 +7,9 @@ import {ZipFileCreator} from "../tools/zip"
 import {removeHidden} from "../tools/doc_contents"
 import {htmlExportTemplate} from "../html/templates"
 import {addAlert} from "../../common"
-import {BaseDOMExporter} from "../tools/dom_export"
+import {DOMExporter} from "../tools/dom_export"
 
-export class HTMLExporter extends BaseDOMExporter {
+export class HTMLExporter extends DOMExporter {
     constructor(schema, doc, bibDB, imageDB, citationStyles, citationLocales, documentStyles, staticUrl) {
         super(schema)
         this.doc = doc

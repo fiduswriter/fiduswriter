@@ -76,7 +76,9 @@ export class PrintExporter extends HTMLExporter {
     init() {
         addAlert('info', `${this.doc.title}: ${gettext('Printing has been initiated.')}`)
         this.docContents = removeHidden(this.doc.contents, false)
-        return this.addStyle().then(
+        this.addDocStyle(this.doc)
+
+        return this.loadStyles().then(
             () => this.joinDocumentParts()
         ).then(
             () => this.fillToc()
@@ -93,9 +95,9 @@ export class PrintExporter extends HTMLExporter {
         )
     }
 
-    addStyle() {
+    addDocStyle(doc) {
         // Override the default as we need to use the original URLs in print.
-        const docStyle = this.documentStyles.find(docStyle => docStyle.filename===this.doc.settings.documentstyle)
+        const docStyle = this.documentStyles.find(docStyle => docStyle.filename===doc.settings.documentstyle)
 
         const docStyleCSS = `
         ${docStyle.fonts.map(font => {
@@ -106,6 +108,9 @@ export class PrintExporter extends HTMLExporter {
         ${docStyle.contents}
         `
         this.styleSheets.push({contents: docStyleCSS})
+    }
+
+    loadStyles() {
         this.styleSheets.forEach(sheet => {
             if (sheet.url) {
                 sheet.filename = sheet.url

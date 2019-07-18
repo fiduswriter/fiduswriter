@@ -31,8 +31,8 @@ export class DOMExporter {
         ]
     }
 
-    addStyle() {
-        const docStyle = this.documentStyles.find(docStyle => docStyle.filename===this.doc.settings.documentstyle)
+    addDocStyle(doc) {
+        const docStyle = this.documentStyles.find(docStyle => docStyle.filename===doc.settings.documentstyle)
 
         const docStyleCSS = `
         ${docStyle.fonts.map(font => {
@@ -48,7 +48,10 @@ export class DOMExporter {
             filename: font[0].split('/').pop().split('?')[0],
             url: font[0]
         })))
+        return `${docStyle.filename}.css`
+    }
 
+    loadStyles() {
         const p = []
         this.styleSheets.forEach(sheet => {
             if (sheet.url) {

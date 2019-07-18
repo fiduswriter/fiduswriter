@@ -52,7 +52,7 @@ def inner(default_project_path):
                 if setting == 'INSTALLED_APPS':
                     # installed apps are added to existing INSTALLED_APPS
                     setting_value = default_settings.INSTALLED_APPS + \
-                        setting_value
+                        list(setting_value)
                 setattr(CONFIGURATION, setting, setting_value)
     settings.configure(
         CONFIGURATION,

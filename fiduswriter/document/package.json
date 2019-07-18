@@ -28,8 +28,6 @@
         "prosemirror-transform": "1.1.x",
         "prosemirror-view": "1.7.x",
         "prosemirror-suggestions": "0.2.x",
-        "texzilla": "1.0.1",
-        "system": "2.0.1",
         "pretty": "2.0.0",
         "sortablejs": "1.8.x",
         "object-hash": "1.3.1"

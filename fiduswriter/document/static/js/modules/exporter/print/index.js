@@ -1,5 +1,3 @@
-import {vivliostylePrint} from "vivliostyle-print"
-
 import {PAPER_SIZES} from "../../schema/const"
 import {HTMLExporter} from "../html"
 import {addAlert} from "../../common"
@@ -85,12 +83,14 @@ export class PrintExporter extends HTMLExporter {
         ).then(
             () => this.postProcess()
         ).then(
-            ({html, title}) => vivliostylePrint(
-                html,
-                {
-                    title,
-                    resourcesUrl: `${this.staticUrl}vivliostyle-resources/`
-                }
+            ({html, title}) => import("vivliostyle-print").then(
+                ({vivliostylePrint}) => vivliostylePrint(
+                    html,
+                    {
+                        title,
+                        resourcesUrl: `${this.staticUrl}vivliostyle-resources/`
+                    }
+                )
             )
         )
     }

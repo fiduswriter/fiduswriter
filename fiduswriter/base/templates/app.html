@@ -3,7 +3,7 @@
 {% load transpile %}
 {% load fiduswriter %}
 <!DOCTYPE html>
-<html class="fw-basic-text">
+<html class="fw-basic-text" lang="{{ LANGUAGE_CODE }}">
     <head>
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
@@ -33,14 +33,12 @@
         <link type="text/css" rel="stylesheet" href="{% static "css/figure.css" %}" />
         <link type="text/css" rel="stylesheet" href="{% static "css/dialog.css" %}" />
         <link type="text/css" rel="stylesheet" href="{% static "css/content_menu.css" %}" />
-        <!-- Font Awesome -->
-        <link type="text/css" rel="stylesheet" href="{% static "fontawesome/css/all.css" %}" />
         <!-- layout styles -->
         <link type="text/css" rel="stylesheet" href="{% static "css/common.css" %}" />
         <link type="text/css" rel="stylesheet" href="{% static "css/header_menu.css" %}" />
         {% endcompress %}
         <!-- Check browser -->
-        <script type="text/javascript" src="{% static "js/browser_check.mjs" %}"  crossorigin="anonymous"></script>
+        <script type="text/javascript" src="{% static "js/browser_check.mjs" %}" crossorigin="anonymous" defer async></script>
         <script type="text/javascript" src="/api/jsi18n/" id="i18n"></script>
         <!-- JS error handling -->
         <script type="text/javascript" src="{% url 'js-error-handler-js' %}"></script>

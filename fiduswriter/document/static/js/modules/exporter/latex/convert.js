@@ -2,8 +2,9 @@ import {escapeLatexText} from "./escape_latex"
 import {BIBLIOGRAPHY_HEADERS, FIG_CATS} from "../../schema/i18n"
 
 export class LatexExporterConvert {
-    constructor(exporter, imageDB, bibDB) {
+    constructor(exporter, imageDB, bibDB, settings = false) {
         this.exporter = exporter
+        this.settings = settings
         this.imageDB = imageDB
         this.bibDB = bibDB
         this.imageIds = []
@@ -425,7 +426,7 @@ export class LatexExporterConvert {
                         this.figureCounter[figureType] = 1
                     }
                     const figCount = this.figureCounter[figureType]++
-                    const figLabel = `${FIG_CATS[figureType][this.exporter.doc.settings.language]} ${figCount}`
+                    const figLabel = this.settings ? `${FIG_CATS[figureType][this.settings.language]} ${figCount}` : figCount
                     if (caption.length) {
                         caption = `${figLabel}: ${caption}`
                     } else {
@@ -590,9 +591,7 @@ export class LatexExporterConvert {
 
     assembleEpilogue() {
         let epilogue = ''
-        const settings = this.exporter.doc.settings,
-            bibliographyHeader = settings.bibliography_header[settings.language] || BIBLIOGRAPHY_HEADERS[settings.language]
-
+        const bibliographyHeader = this.settings ? this.settings.bibliography_header[this.settings.language] || BIBLIOGRAPHY_HEADERS[this.settings.language] : gettext('Bibliography')
         if (this.features.citations) {
             epilogue += `\n\n\\printbibliography[title={${escapeLatexText(bibliographyHeader)}}]`
         }

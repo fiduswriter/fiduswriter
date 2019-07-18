@@ -189,9 +189,9 @@ export class DocumentOverviewActions {
                 import("../../exporter/html").then(({HTMLExporter}) => {
                     const exporter = new HTMLExporter(
                         this.documentOverview.schema,
+                        this.documentOverview.staticUrl,
                         this.documentOverview.citationStyles,
                         this.documentOverview.citationLocales,
-                        this.documentOverview.staticUrl,
                         this.documentOverview.documentStyles,
                         doc,
                         {db:doc.bibliography},
@@ -276,9 +276,9 @@ export class DocumentOverviewActions {
                     import("../../exporter/epub").then(({EpubExporter}) => {
                         const exporter = new EpubExporter(
                             this.documentOverview.schema,
+                            this.documentOverview.staticUrl,
                             this.documentOverview.citationStyles,
                             this.documentOverview.citationLocales,
-                            this.documentOverview.staticUrl,
                             this.documentOverview.documentStyles,
                             doc,
                             {db:doc.bibliography},

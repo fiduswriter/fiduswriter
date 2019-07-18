@@ -133,9 +133,9 @@ export const headerbarModel = () => ({
                         import("../../../exporter/print").then(({PrintExporter}) => {
                             const exporter = new PrintExporter(
                                 editor.schema,
+                                editor.staticUrl,
                                 editor.mod.documentTemplate.citationStyles,
                                 editor.mod.documentTemplate.citationLocales,
-                                editor.staticUrl,
                                 editor.mod.documentTemplate.documentStyles,
                                 editor.getDoc({changes: 'acceptAllNoInsertions'}),
                                 editor.mod.db.bibDB,
@@ -163,9 +163,9 @@ export const headerbarModel = () => ({
                         import("../../../exporter/html").then(({HTMLExporter}) => {
                             const exporter = new HTMLExporter(
                                 editor.schema,
+                                editor.staticUrl,
                                 editor.mod.documentTemplate.citationStyles,
                                 editor.mod.documentTemplate.citationLocales,
-                                editor.staticUrl,
                                 editor.mod.documentTemplate.documentStyles,
                                 editor.getDoc({changes: 'acceptAllNoInsertions'}),
                                 editor.mod.db.bibDB,
@@ -184,9 +184,9 @@ export const headerbarModel = () => ({
                         import("../../../exporter/epub").then(({EpubExporter}) => {
                             const exporter = new EpubExporter(
                                 editor.schema,
+                                editor.staticUrl,
                                 editor.mod.documentTemplate.citationStyles,
                                 editor.mod.documentTemplate.citationLocales,
-                                editor.staticUrl,
                                 editor.mod.documentTemplate.documentStyles,
                                 editor.getDoc({changes: 'acceptAllNoInsertions'}),
                                 editor.mod.db.bibDB,

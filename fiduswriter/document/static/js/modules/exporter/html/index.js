@@ -21,7 +21,9 @@ export class HTMLExporter extends DOMExporter {
         addAlert('info', `${this.doc.title}: ${gettext('HTML export has been initiated.')}`)
         this.docContents = removeHidden(this.doc.contents, false)
 
-        return this.addStyle().then(
+        this.addDocStyle(this.doc)
+
+        return this.loadStyles().then(
             () => this.joinDocumentParts()
         ).then(
             () => this.fillToc()

@@ -24,7 +24,7 @@ export class LatexExporter {
     init() {
         this.zipFileName = `${createSlug(this.doc.title)}.latex.zip`
         this.docContents = fixTables(removeHidden(this.doc.contents))
-        this.converter = new LatexExporterConvert(this, this.imageDB, this.bibDB)
+        this.converter = new LatexExporterConvert(this, this.imageDB, this.bibDB, this.doc.settings)
         this.conversion = this.converter.init(this.docContents)
         if (Object.keys(this.conversion.usedBibDB).length > 0) {
             const bibExport = new BibLatexExporter(this.conversion.usedBibDB)

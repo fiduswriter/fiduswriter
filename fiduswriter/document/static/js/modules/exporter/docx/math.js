@@ -1,5 +1,3 @@
-import TeXZilla from "texzilla"
-
 import {noSpaceTmp} from "../../common"
 
 // Not entirely sure if we need this font here. This is included whenever Word
@@ -19,6 +17,7 @@ export class DocxExporterMath {
         this.fontTableXml = false
         this.addedCambriaMath = false
         this.processor = new window.XSLTProcessor()
+        this.domParser = new DOMParser()
     }
 
     init() {
@@ -27,6 +26,10 @@ export class DocxExporterMath {
                 this.fontTableXml = fontTableXml
                 return this.setupXslt()
             }
+        ).then(
+            () => import("mathlive")
+        ).then(
+            MathLive => this.mathLive = MathLive
         )
     }
 
@@ -47,7 +50,12 @@ export class DocxExporterMath {
             fontsEl.insertAdjacentHTML('beforeEnd', CAMBRIA_MATH_FONT_DECLARATION)
             this.addedCambriaMath = true
         }
-        const mathml = TeXZilla.toMathML(latex)
+
+        const mathml = this.domParser.parseFromString(
+            `<math xmlns="http://www.w3.org/1998/Math/MathML"><semantics>${this.mathLive.latexToMathML(latex)}</semantics></math>`,
+            "application/xml"
+        ).documentElement
+
         const omml = this.processor.transformToDocument(mathml)
         return omml.firstChild.outerHTML
 

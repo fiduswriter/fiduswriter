@@ -6,20 +6,17 @@ import {modifyImages} from "../tools/html"
 import {ZipFileCreator} from "../tools/zip"
 import {opfTemplate, containerTemplate, ncxTemplate, navTemplate, xhtmlTemplate} from "./templates"
 import {addAlert} from "../../common"
-import {BaseEpubExporter} from "./base"
+import {styleEpubFootnotes, getTimestamp, setLinks, orderLinks, addFigureLabels} from "./tools"
 import {removeHidden} from "../tools/doc_contents"
+import {DOMExporter} from "../tools/dom_export"
 
+export class EpubExporter extends DOMExporter {
 
-export class EpubExporter extends BaseEpubExporter {
-
-    constructor(schema, doc, bibDB, imageDB, citationStyles, citationLocales, staticUrl) {
-        super(schema)
+    constructor(schema, staticUrl, citationStyles, citationLocales, documentStyles, doc, bibDB, imageDB) {
+        super(schema, staticUrl, citationStyles, citationLocales, documentStyles)
         this.doc = doc
         this.bibDB = bibDB
         this.imageDB = imageDB
-        this.citationStyles = citationStyles
-        this.citationLocales = citationLocales
-        this.staticUrl = staticUrl
         this.shortLang = this.doc.settings.language.split('-')[0]
         this.lang = this.doc.settings.language
     }
@@ -28,20 +25,25 @@ export class EpubExporter extends BaseEpubExporter {
         addAlert('info', this.doc.title + ': ' + gettext(
             'Epub export has been initiated.'))
         this.docContents = removeHidden(this.doc.contents, false)
-        this.joinDocumentParts().then(
+        this.addDocStyle(this.doc)
+
+        return this.loadStyles().then(
+            () => this.joinDocumentParts()
+        ).then(
             () => this.fillToc()
         ).then(
-            () => this.exportTwo()
+            () => this.save()
         )
     }
 
-    exportTwo() {
-        const styleSheets = [] //TODO: fill style sheets with something meaningful.
+    addFigureLabels(language) {
+        return addFigureLabels(this.contents, language)
+    }
+
+    save() {
         const title = this.doc.title
 
-        let contents = this.contents
-
-        contents = this.addFigureNumbers(contents)
+        const contents = this.contents
 
         const images = modifyImages(contents)
 
@@ -56,17 +58,17 @@ export class EpubExporter extends BaseEpubExporter {
         const math = equations.length ? true : false
 
         // Make links to all H1-3 and create a TOC list of them
-        const contentItems = this.orderLinks(this.setLinks(
+        const contentItems = orderLinks(setLinks(
             contentsBody))
 
-        const contentsBodyEpubPrepared = this.styleEpubFootnotes(
+        const contentsBodyEpubPrepared = styleEpubFootnotes(
             contentsBody)
 
         let xhtmlCode = xhtmlTemplate({
             part: false,
             shortLang: this.shortLang,
             title,
-            styleSheets,
+            styleSheets: this.styleSheets,
             math,
             body: obj2Node(node2Obj(contentsBodyEpubPrepared), 'xhtml').innerHTML
         })
@@ -75,7 +77,7 @@ export class EpubExporter extends BaseEpubExporter {
 
         const containerCode = containerTemplate({})
 
-        const timestamp = this.getTimestamp()
+        const timestamp = getTimestamp()
 
 
         const authors = this.docContents.content.reduce(
@@ -122,9 +124,10 @@ export class EpubExporter extends BaseEpubExporter {
             id: this.doc.id,
             date: timestamp.slice(0, 10), // TODO: the date should probably be the original document creation date instead
             modified: timestamp,
-            styleSheets,
+            styleSheets: this.styleSheets,
             math,
-            images
+            images,
+            fontFiles: this.fontFiles
         })
 
         const ncxCode = ncxTemplate({
@@ -157,22 +160,25 @@ export class EpubExporter extends BaseEpubExporter {
             contents: xhtmlCode
         }]
 
-
-        for (let i = 0; i < styleSheets.length; i++) {
-            const styleSheet = styleSheets[i]
+        this.styleSheets.forEach(styleSheet => {
             outputList.push({
                 filename: 'EPUB/' + styleSheet.filename,
                 contents: styleSheet.contents
             })
-        }
-
-        const httpOutputList = []
-        for (let i = 0; i < images.length; i++) {
-            httpOutputList.push({
-                filename: 'EPUB/' + images[i].filename,
-                url: images[i].url
+        })
+        images.forEach(image => {
+            this.binaryFiles.push({
+                filename: 'EPUB/' + image.filename,
+                url: image.url
             })
-        }
+        })
+        this.fontFiles.forEach(font => {
+            this.binaryFiles.push({
+                filename: 'EPUB/' + font.filename,
+                url: font.url
+            })
+        })
+
         const includeZips = []
         if (math) {
             includeZips.push({
@@ -182,7 +188,7 @@ export class EpubExporter extends BaseEpubExporter {
         }
         const zipper = new ZipFileCreator(
             outputList,
-            httpOutputList,
+            this.binaryFiles,
             includeZips,
             'application/epub+zip'
         )

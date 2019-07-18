@@ -1,10 +1,9 @@
-import TeXZilla from "texzilla"
-
 export class OdtExporterMath {
     constructor(exporter) {
         this.exporter = exporter
         this.objectCounter = 1
         this.manifestXml = false
+        this.domParser = new DOMParser()
     }
 
     init() {
@@ -14,6 +13,10 @@ export class OdtExporterMath {
                 this.checkObjectCounter()
                 return Promise.resolve()
             }
+        ).then(
+            () => import("mathlive")
+        ).then(
+            MathLive => this.mathLive = MathLive
         )
     }
 
@@ -37,9 +40,13 @@ export class OdtExporterMath {
     }
 
     addMath(latex) {
-        const mathml = TeXZilla.toMathML(latex)
         const objectNumber = this.objectCounter++
-        this.exporter.xml.addXmlFile(`Object ${objectNumber}/content.xml`, mathml)
+        this.exporter.xml.addExtraFile(
+            `Object ${objectNumber}/content.xml`,
+            `<math xmlns="http://www.w3.org/1998/Math/MathML">${
+                this.mathLive.latexToMathML(latex)
+            }</math>`
+        )
         const manifestEl = this.manifestXml.querySelector('manifest')
         const stringOne = `<manifest:file-entry manifest:full-path="Object ${objectNumber}/content.xml" manifest:media-type="text/xml"/>`
         manifestEl.insertAdjacentHTML('beforeEnd', stringOne)

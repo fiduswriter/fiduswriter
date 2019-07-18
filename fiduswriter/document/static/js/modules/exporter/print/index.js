@@ -7,10 +7,9 @@ import {removeHidden} from "../tools/doc_contents"
 
 export class PrintExporter extends HTMLExporter {
 
-    constructor(schema, doc, bibDB, imageDB, citationStyles, citationLocales, documentStyles, staticUrl) {
-        super(schema, doc, bibDB, imageDB, citationStyles, citationLocales, documentStyles, staticUrl)
+    constructor(schema, staticUrl, citationStyles, citationLocales, documentStyles, doc, bibDB, imageDB) {
+        super(schema, staticUrl, citationStyles, citationLocales, documentStyles, doc, bibDB, imageDB)
         this.staticUrl = staticUrl
-        this.removeUrlPrefix = false
         this.styleSheets.push({contents:
             `a.fn {
                 -adapt-template: url(data:application/xml,${
@@ -77,7 +76,9 @@ export class PrintExporter extends HTMLExporter {
     init() {
         addAlert('info', `${this.doc.title}: ${gettext('Printing has been initiated.')}`)
         this.docContents = removeHidden(this.doc.contents, false)
-        return this.addStyle().then(
+        this.addDocStyle(this.doc)
+
+        return this.loadStyles().then(
             () => this.joinDocumentParts()
         ).then(
             () => this.fillToc()
@@ -94,10 +95,40 @@ export class PrintExporter extends HTMLExporter {
         )
     }
 
+    addDocStyle(doc) {
+        // Override the default as we need to use the original URLs in print.
+        const docStyle = this.documentStyles.find(docStyle => docStyle.filename===doc.settings.documentstyle)
+
+        const docStyleCSS = `
+        ${docStyle.fonts.map(font => {
+            return `@font-face {${
+                font[1].replace('[URL]', font[0])
+            }}`
+        }).join('\n')}
+        ${docStyle.contents}
+        `
+        this.styleSheets.push({contents: docStyleCSS})
+    }
+
+    loadStyles() {
+        this.styleSheets.forEach(sheet => {
+            if (sheet.url) {
+                sheet.filename = sheet.url
+                delete sheet.url
+            }
+        })
+
+        return Promise.resolve()
+    }
+
     getFootnoteAnchor(counter) {
         const footnoteAnchor = super.getFootnoteAnchor(counter)
         // Add the counter directly into the footnote.
         footnoteAnchor.innerHTML = counter
         return footnoteAnchor
+    }
+
+    prepareBinaryFiles() {
+        // Not needed for print
     }
 }

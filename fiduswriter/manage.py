@@ -22,12 +22,6 @@ def inner(default_project_path):
         # We prevent the pythonpath to be handled later on by removing it from
         # sys_argv
         sys_argv = sys_argv[:index] + sys_argv[index+2:]
-        # If the project lives in another directory we skip recompiling the
-        # messages as there are likely several installations running.
-        os.environ.setdefault(
-            "NO_COMPILEMESSAGES",
-            'true'
-        )
     else:
         PROJECT_PATH = default_project_path
     os.environ.setdefault(
@@ -58,7 +52,7 @@ def inner(default_project_path):
                 if setting == 'INSTALLED_APPS':
                     # installed apps are added to existing INSTALLED_APPS
                     setting_value = default_settings.INSTALLED_APPS + \
-                        setting_value
+                        list(setting_value)
                 setattr(CONFIGURATION, setting, setting_value)
     settings.configure(
         CONFIGURATION,

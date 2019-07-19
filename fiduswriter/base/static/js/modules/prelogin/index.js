@@ -25,15 +25,18 @@ export class PreloginPage {
             },
             {
                 text: gettext("Equations and Math with MathLive"),
-                link: 'https://mathlive.io/'
+                link: 'https://mathlive.io/',
+                external: true
             },
             {
                 text: gettext("Citations with Citation Style Language"),
-                link: 'https://citationstyles.org/'
+                link: 'https://citationstyles.org/',
+                external: true
             },
             {
                 text: gettext("Editing with ProseMirror"),
-                link: 'https://prosemirror.net/'
+                link: 'https://prosemirror.net/',
+                external: true
             }
         ]
         this.headerLinks = [

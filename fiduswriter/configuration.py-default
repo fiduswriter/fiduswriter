@@ -1,3 +1,5 @@
+import os
+
 #############################################
 # Django settings for Fidus Writer project. #
 #############################################
@@ -86,3 +88,6 @@ INSTALLED_APPS = [
 ALLOWED_HOSTS = [
     'localhost',
 ]
+
+# Paths to settings files
+SETTINGS_PATHS = [os.path.dirname(__file__), ]

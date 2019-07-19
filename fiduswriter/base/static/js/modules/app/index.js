@@ -1,5 +1,3 @@
-import {BibliographyOverview} from "../bibliography/overview"
-import {DocumentOverview} from "../documents/overview"
 import {DocumentInvite} from "../documents/invite"
 import {ImageOverview} from "../images/overview"
 import {ContactsOverview} from "../contacts"
@@ -23,7 +21,7 @@ export class App {
         this.routes = {
             "": {
                 requireLogin: true,
-                open: () => new DocumentOverview(this.config)
+                open: () => import(/* webpackPrefetch: true */"../documents/overview").then(({DocumentOverview}) => new DocumentOverview(this.config))
             },
             "account": {
                 requireLogin: false,
@@ -54,13 +52,13 @@ export class App {
             },
             "bibliography": {
                 requireLogin: true,
-                open: () => new BibliographyOverview(this.config)
+                open: () => import("../bibliography/overview").then(({BibliographyOverview}) => new BibliographyOverview(this.config))
             },
             "document": {
                 requireLogin: true,
                 open: pathnameParts => {
                     const id = pathnameParts[2]
-                    return import('../editor').then(({Editor}) => new Editor(this.config, id))
+                    return import(/* webpackPrefetch: true *//* webpackChunkName: "editor" */'../editor').then(({Editor}) => new Editor(this.config, id))
                 }
             },
             "invite": {
@@ -102,6 +100,12 @@ export class App {
     }
 
     init() {
+        // We add CSS here dynamically without the "ensureCSS" helper function
+        // because we know that the page has not been loaded earlier.
+        document.head.insertAdjacentHTML(
+            'beforeend',
+            `<link rel="stylesheet" type="text/css" href="${this.config.staticUrl}fontawesome/css/all.css?v=${process.env.TRANSPILE_VERSION}">`
+        )
         if (!this.config.loggedIn) {
             this.activateFidusPlugins()
             this.selectPage()

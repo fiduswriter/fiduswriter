@@ -35,11 +35,11 @@ export const basePreloginTemplate = ({contents, staticUrl, isFree, language, hea
         <ul class="fw-footer-links">
             ${
                 footerLinks.map(
-                    fLink => `<li><a href="${fLink.link}" target="_blank">${fLink.text}</a></li>`
+                    fLink => `<li><a href="${fLink.link}" target="_blank"${ fLink.external ? ' rel="noreferrer"' : ''}>${fLink.text}</a></li>`
                 ).join('')
             }
         </ul>
-        <select id="lang-selection">
+        <select id="lang-selection" aria-label="${gettext('Select language')}">
             <option value="bg" ${language === 'bg' ? 'selected' : ''}>Български</option>
             <option value="de" ${language === 'de' ? 'selected' : ''}>Deutsch</option>
             <option value="en" ${language === 'en' ? 'selected' : ''}>English</option>

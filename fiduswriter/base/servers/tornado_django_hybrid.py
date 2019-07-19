@@ -47,7 +47,8 @@ def make_tornado_server():
     tornado_app = Application(
         tornado_url_list,
         debug=settings.DEBUG,
-        websocket_ping_interval=settings.WEBSOCKET_PING_INTERVAL
+        websocket_ping_interval=settings.WEBSOCKET_PING_INTERVAL,
+        compress_response=True
     )
     server = HTTPServer(tornado_app)
     server.xheaders = True

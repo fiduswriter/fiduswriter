@@ -53,7 +53,7 @@ export class FeedbackTab {
 
         header_nav_wrapper.insertAdjacentHTML(
             'beforeend',
-            `<a class="feedback-tab" href="#"></a>`
+            `<a class="feedback-tab" aria-label="${gettext('Technical support')}" href="#"></a>`
         )
 
         ensureCSS('feedback/feedback.css', this.staticUrl)

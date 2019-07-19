@@ -41,7 +41,7 @@ export const contactsTemplate = ({contacts}) =>
     ).join('')
 
 const rightsPulldown = () =>
-`<div class="fw-pulldown fw-left">
+`<div class="fw-pulldown fw-right">
     <ul>
         <li>
             <span class="fw-pulldown-header" title="${gettext("Basic access rights")}">

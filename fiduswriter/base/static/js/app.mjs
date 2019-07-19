@@ -1,6 +1,9 @@
-import {App} from "./modules/app"
+import OfflinePluginRuntime from 'offline-plugin/runtime'
 
-const theApp = new App(window.fidusConfig)
+OfflinePluginRuntime.install()
 
-theApp.init()
-window.theApp = theApp
+import("./modules/app").then(({App}) => {
+    const theApp = new App(window.fidusConfig)
+    theApp.init()
+    window.theApp = theApp
+})

@@ -341,3 +341,11 @@ ADMIN_INDEX_TITLE = gettext('Welcome to the Fidus Writer Administration Site')
 # The below allow login via JavaScript
 SESSION_COOKIE_HTTPONLY = False
 CSRF_COOKIE_HTTPONLY = False
+
+# To make npm-mjs enable the webpack offline plugin
+WEBPACK_CONFIG_TEMPLATE = os.path.join(
+    os.path.dirname(
+        os.path.realpath(__file__)
+    ),
+    'webpack.config.template'
+)

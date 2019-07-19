@@ -1,3 +1,5 @@
+import os
+
 from importlib import import_module
 
 from django.conf.urls import include, url
@@ -6,6 +8,7 @@ from django.contrib import admin
 from django.urls import path
 from django.conf import settings
 from django.views.i18n import JavaScriptCatalog
+from django.views.static import serve as static_serve
 
 from base.views import app as app_view
 from base.views import admin_console as admin_console_view
@@ -34,6 +37,14 @@ urlpatterns = [
         )
     ),
 
+    url('^sw.js$', static_serve, {
+        'document_root': os.path.join(
+            settings.PROJECT_PATH,
+            'static-transpile/js/transpile/'
+        ),
+        'path': 'sw.js'
+    }),
+
     # I18n manual language switcher
     url('^api/i18n/', include('django.conf.urls.i18n')),
 
@@ -59,7 +70,6 @@ for app in settings.INSTALLED_APPS:
         urlpatterns += [url('^api/%s/' % app_name, include('%s.urls' % app))]
 
 if settings.DEBUG:
-    from django.views.static import serve as static_serve
     urlpatterns += [
         url('^media/(?P<path>.*)$', static_serve, {
             'document_root': settings.MEDIA_ROOT,

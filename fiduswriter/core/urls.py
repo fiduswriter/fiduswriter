@@ -12,6 +12,7 @@ from django.views.static import serve as static_serve
 
 from base.views import app as app_view
 from base.views import admin_console as admin_console_view
+from base.views import manifest_json
 
 
 admin.site.site_header = settings.ADMIN_SITE_HEADER
@@ -37,10 +38,12 @@ urlpatterns = [
         )
     ),
 
+    url('^manifest.json$', manifest_json, name='manifest_json'),
+
     url('^sw.js$', static_serve, {
         'document_root': os.path.join(
             settings.PROJECT_PATH,
-            'static-transpile/js/transpile/'
+            'static-transpile/js'
         ),
         'path': 'sw.js'
     }),

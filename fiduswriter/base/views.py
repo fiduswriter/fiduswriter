@@ -14,6 +14,13 @@ def app(request):
     return render(request, 'app.html')
 
 
+def manifest_json(request):
+    """
+    Load the manifest.json.
+    """
+    return render(request, 'manifest.json')
+
+
 # view is shown only in admin interface, so authentication is taken care of
 def admin_console(request):
     """

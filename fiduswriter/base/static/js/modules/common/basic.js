@@ -98,13 +98,14 @@ export const addAlert = function(alertType, alertMsg) {
 }
 
 // Used for system mesages
-export const showSystemMessage = function(message) {
+export const showSystemMessage = function(message, buttons = [{type: 'close'}]) {
     const dialog = new Dialog({
         title: gettext('System message'),
         body: `<p>${escapeText(message)}</p>`,
-        buttons: [{type: 'close'}]
+        buttons
     })
     dialog.open()
+    return dialog
 }
 
 /** Turn milliseconds since epoch (UTC) into a local date string.

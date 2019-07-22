@@ -4,7 +4,7 @@ django-allauth==0.39.1
 django-avatar==4.1.0
 django-compressor==2.3
 django-js-error-hook==0.7
-django-npm-mjs==1.1.0
+django-npm-mjs==1.2.0
 jsonpatch==1.23
 Pillow==6.0.0
 python-dateutil==2.8.0

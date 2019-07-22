@@ -38,6 +38,7 @@ def inner(default_project_path):
     # global_settings.py, default_settings.py and configuration.py
     from django.conf import global_settings as CONFIGURATION
     from core import default_settings
+    SETTINGS_PATHS = [default_settings.__file__]
     for setting in dir(default_settings):
         setting_value = getattr(default_settings, setting)
         setattr(CONFIGURATION, setting, setting_value)
@@ -46,6 +47,7 @@ def inner(default_project_path):
     except ModuleNotFoundError:
         SETTINGS_MODULE = None
     if mod:
+        SETTINGS_PATHS.append(mod.__file__)
         for setting in dir(mod):
             if setting.isupper():
                 setting_value = getattr(mod, setting)
@@ -53,13 +55,11 @@ def inner(default_project_path):
                     # installed apps are added to existing INSTALLED_APPS
                     setting_value = default_settings.INSTALLED_APPS + \
                         list(setting_value)
-                if setting == 'SETTINGS_PATHS':
-                    setting_value = default_settings.SETTINGS_PATHS + \
-                        list(setting_value)
                 setattr(CONFIGURATION, setting, setting_value)
     settings.configure(
         CONFIGURATION,
-        SETTINGS_MODULE=SETTINGS_MODULE
+        SETTINGS_MODULE=SETTINGS_MODULE,
+        SETTINGS_PATHS=SETTINGS_PATHS
     )
     os.environ['TZ'] = settings.TIME_ZONE
     from django.core.management import execute_from_command_line

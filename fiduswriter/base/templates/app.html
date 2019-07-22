@@ -13,6 +13,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="theme-color" content="#84b4a7">
         <link rel="shortcut icon" href="{% static "img/favicon.png" %}" type="image/png"/>
+        <link rel="manifest" href="/manifest.json">
         <!-- commons styles -->
         {% compress css %}
         <link type="text/css" rel="stylesheet" href="{% static "css/reset.css" %}" />
@@ -46,5 +47,8 @@
         <!-- Main page script -->
         <script type="text/javascript" src="{% static "js/app.mjs" %}" crossorigin="anonymous"></script>
     </head>
-    <body><div id="wait" class="active"><i class="fa fa-spinner fa-pulse"></i></div></body>
+    <body><div id="wait" class="active"><i class="fa fa-spinner fa-pulse"></i></div><noscript>
+        <h1>{% trans "JavaScript disabled" %}</h1>
+        <p>{% trans "Fidus Writer requires you to enable JavaScript." %}</p>
+    </noscript></body>
 </html>

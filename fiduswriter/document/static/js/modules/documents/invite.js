@@ -8,7 +8,7 @@ export class DocumentInvite {
     }
 
     init() {
-        if (!this.app.config.loggedIn) {
+        if (!this.app.config.user.is_authenticated) {
             // The user is not logged in and will possibly click around on the
             // outer pages for a while before signing up.
             // We store the invite id in the app so that it can be found there

@@ -88,6 +88,3 @@ INSTALLED_APPS = [
 ALLOWED_HOSTS = [
     'localhost',
 ]
-
-# Paths to settings files
-SETTINGS_PATHS = [os.path.dirname(__file__), ]

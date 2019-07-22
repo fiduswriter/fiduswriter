@@ -46,9 +46,9 @@ def fiduswriter_config_js(context):
         'registration_open': (
             'true' if settings.REGISTRATION_OPEN else 'false'
         ),
-        'logged_in': (
-            'true' if context['request'].user.is_authenticated else 'false'
-        ),
         'language': context['request'].LANGUAGE_CODE,
-        'socialaccount_providers': socialaccount_providers
+        'socialaccount_providers': socialaccount_providers,
+        'debug': (
+            'true' if settings.DEBUG else 'false'
+        )
     }

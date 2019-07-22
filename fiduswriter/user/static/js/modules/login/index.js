@@ -136,7 +136,6 @@ export class LoginPage extends PreloginPage {
                                 </p>
                             </div>`
                     } else {
-                        this.app.config.loggedIn = true
                         this.app.init()
                     }
                 }

@@ -21,7 +21,7 @@ export class BibLatexImporter {
     }
 
     init() {
-        const importWorker = makeWorker(`${this.staticUrl}js/transpile/biblatex_import_worker.js?v=${process.env.TRANSPILE_VERSION}`)
+        const importWorker = makeWorker(`${this.staticUrl}js/biblatex_import_worker.js?v=${process.env.TRANSPILE_VERSION}`)
         importWorker.onmessage = message => this.onMessage(message.data)
         importWorker.postMessage({fileContents: this.fileContents})
     }

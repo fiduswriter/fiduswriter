@@ -1,11 +1,16 @@
-import {post, postJson} from "./network"
+import {post} from "./network"
 
 export const setLanguage = function(config, language) {
     return post('/api/i18n/setlang/', {language}).then(
-        () => window.location.reload()
+        () => {
+            // We delete the network cache as this contains the JS
+            // translations.
+            caches.keys().then(names => {
+                for (const name of names) {
+                    caches.delete(name)
+                }
+                window.location.reload()
+            })
+        }
     )
-}
-
-export const getUserInfo = function() {
-    return postJson('/api/user/info/')
 }

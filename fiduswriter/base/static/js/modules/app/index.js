@@ -1,8 +1,10 @@
+import OfflinePluginRuntime from 'offline-plugin/runtime'
+
 import {DocumentInvite} from "../documents/invite"
 import {ImageOverview} from "../images/overview"
 import {ContactsOverview} from "../contacts"
 import {Profile} from "../profile"
-import {getUserInfo, findTarget, WebSocketConnector, showSystemMessage} from "../common"
+import {findTarget, WebSocketConnector, showSystemMessage, postJson} from "../common"
 import {LoginPage} from "../login"
 import {EmailConfirm} from "../email_confirm"
 import {PasswordResetRequest, PasswordResetChangePassword} from "../password_reset"
@@ -10,6 +12,7 @@ import {Signup} from "../signup"
 import {ImageDB} from "../images/database"
 import {BibliographyDB} from "../bibliography/database"
 import {Page404} from "../404"
+import {OfflinePage} from "../offline"
 import {FlatPage} from "../flatpage"
 import * as plugins from "../../plugins/app"
 
@@ -96,6 +99,7 @@ export class App {
             }
         }
         this.openLoginPage = () => new LoginPage(this.config)
+        this.openOfflinePage = () => new OfflinePage(this.config)
         this.open404Page = () => new Page404(this.config)
     }
 
@@ -106,26 +110,49 @@ export class App {
             'beforeend',
             `<link rel="stylesheet" type="text/css" href="${this.config.staticUrl}fontawesome/css/all.css?v=${process.env.TRANSPILE_VERSION}">`
         )
-        if (!this.config.loggedIn) {
+        if (navigator.onLine) {
+            this.getUserInfo().then(
+                () => this.setup()
+            ).catch(
+                error => {
+                    if (error instanceof TypeError) {
+                        // We could not fetch user info from server, so let's
+                        // assume we are disconnected.
+                        this.page = this.openOfflinePage()
+                        this.page.init()
+                    } else {
+                        throw error
+                    }
+                }
+            )
+        } else {
+            this.page = this.openOfflinePage()
+            this.page.init()
+        }
+
+    }
+
+    setup() {
+        if (!this.config.user.is_authenticated) {
             this.activateFidusPlugins()
-            this.selectPage()
-            this.bind()
-            return
+            return this.selectPage().then(
+                () => this.bind()
+            )
         }
         this.bibDB = new BibliographyDB()
         this.imageDB = new ImageDB()
-        Promise.all([
+        this.connectWs()
+        return Promise.all([
             this.bibDB.getDB(),
             this.imageDB.getDB(),
-            this.getUserInfo()
         ]).then(
             () => {
                 this.activateFidusPlugins()
-                this.selectPage()
+                return this.selectPage()
             }
+        ).then(
+            () => this.bind()
         )
-        this.bind()
-        this.connectWs()
     }
 
     bind() {
@@ -144,6 +171,33 @@ export class App {
                     break
             }
         })
+        if (!this.config.debug) {
+            OfflinePluginRuntime.install({
+                onUpdateReady: () => {
+                    const buttons = [
+                        {
+                            text: gettext('Update'),
+                            classes: 'fw-dark',
+                            click: () => {
+                                OfflinePluginRuntime.applyUpdate()
+                                dialog.close()
+                            }
+                        }
+                    ]
+                    const dialog = showSystemMessage(
+                        interpolate(
+                            gettext(
+                                'A new version of %(appName)s is available.'
+                            ),
+                            {appName: this.name},
+                            true
+                        ),
+                        buttons
+                    )
+                },
+                onUpdated: () => window.location.reload()
+            })
+        }
     }
 
     connectWs() {
@@ -187,30 +241,27 @@ export class App {
         const pathnameParts = window.location.pathname.split('/')
         const route = this.routes[pathnameParts[1]]
         if (route) {
-            if (route.requireLogin && !this.config.loggedIn) {
+            if (route.requireLogin && !this.config.user.is_authenticated) {
                 this.page = this.openLoginPage()
-                this.page.init()
-                return
+                return this.page.init()
             }
             const page = route.open(pathnameParts)
             if (page.then) {
-                page.then(thisPage => {
+                return page.then(thisPage => {
                     this.page = thisPage
-                    this.page.init()
+                    return this.page.init()
                 })
-                return
             } else if (page) {
                 this.page = page
-                this.page.init()
-                return
+                return this.page.init()
             }
         }
         this.page = this.open404Page()
-        this.page.init()
+        return this.page.init()
     }
 
     getUserInfo() {
-        return getUserInfo().then(
+        return postJson('/api/user/info/').then(
             ({json}) => {
                 this.config.user = json
             }

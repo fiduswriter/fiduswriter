@@ -70,7 +70,7 @@ export class PreloginPage {
     }
 
     init() {
-        whenReady().then(() => {
+        return whenReady().then(() => {
             this.activateFidusPlugins()
             this.render()
             this.bind()

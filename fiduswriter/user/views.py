@@ -35,32 +35,37 @@ def logout_page(request):
     return HttpResponseRedirect('/')
 
 
-@login_required
 def info(request):
     """
     Get user profile info
     """
     if not request.is_ajax() or request.method != 'POST':
         return JsonResponse({}, status=405)
-    response = {
-        'id': request.user.id,
-        'username': request.user.username,
-        'first_name': request.user.first_name,
-        'name': request.user.readable_name,
-        'last_name': request.user.last_name,
-        'avatar': userutil.get_user_avatar_url(request.user),
-        'emails': []
-    }
-
-    for emailaddress in request.user.emailaddress_set.all():
-        email = {
-            'address': emailaddress.email,
+    if request.user.is_authenticated:
+        response = {
+            'id': request.user.id,
+            'username': request.user.username,
+            'first_name': request.user.first_name,
+            'name': request.user.readable_name,
+            'last_name': request.user.last_name,
+            'avatar': userutil.get_user_avatar_url(request.user),
+            'emails': [],
+            'is_authenticated': True
         }
-        if emailaddress.primary:
-            email['primary'] = True
-        if emailaddress.verified:
-            email['verified'] = True
-        response['emails'].append(email)
+
+        for emailaddress in request.user.emailaddress_set.all():
+            email = {
+                'address': emailaddress.email,
+            }
+            if emailaddress.primary:
+                email['primary'] = True
+            if emailaddress.verified:
+                email['verified'] = True
+            response['emails'].append(email)
+    else:
+        response = {
+            'is_authenticated': False
+        }
     return JsonResponse(
         response,
         status=200

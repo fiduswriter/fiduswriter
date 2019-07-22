@@ -31,7 +31,7 @@ class EditorHelper(SeleniumHelper):
 
     def inject_helpers(self, driver):
         test_caret_script = open(
-            'static-transpile/js/transpile/test_caret.js',
+            'static-transpile/js/test_caret.js',
             'r'
         ).read()
         driver.execute_script(

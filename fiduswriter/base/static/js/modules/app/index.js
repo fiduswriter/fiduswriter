@@ -198,6 +198,18 @@ export class App {
                 onUpdated: () => window.location.reload()
             })
         }
+            window.addEventListener(
+                "beforeinstallprompt",
+                event => {
+                    this.config.installprompt = event
+                    event.userChoice.then(
+                        () => {
+                            delete this.config.installprompt
+                            window.location.reload()
+                        }
+                    )
+                }
+            )
     }
 
     connectWs() {

@@ -6,7 +6,6 @@ export class OverviewMenuView {
         this.overview = overview
         this.model = model()
         if (this.overview.app.config.installprompt) {
-            console.log('add to menu')
             this.model.content.unshift({
                 type: 'button',
                 title: interpolate(

@@ -49,17 +49,19 @@
     top: 16px;
 }
 
-#connected-collaborators .fw-string-avatar {
-    margin-left: -10px;
-}
-
-#connected-collaborators .fw-string-avatar:first-child {
-    margin-left: 0;
-}
-
+#connected-collaborators .fw-string-avatar,
 #connected-collaborators img {
-    width: 26px;
-    margin-left: 4px;
+    box-sizing: border-box;
+    width: 35px;
+    height: 35px;
+    margin-left: -10px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#connected-collaborators .fw-string-avatar:first-child,
+#connected-collaborators img:first-child {
+    margin-left: 0;
 }
 
 #messageform.empty:before {

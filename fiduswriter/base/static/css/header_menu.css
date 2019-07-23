@@ -108,8 +108,7 @@
 }
 
 #preferences-btn .fw-avatar,
-#preferences-btn .fw-string-avatar,
-#connected-collaborators .fw-string-avatar {
+#preferences-btn .fw-string-avatar {
     width: 35px;
     height: 35px;
 }

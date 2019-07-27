@@ -11,6 +11,19 @@ import os
 
 DEBUG = True
 
+PROJECT_PATH = os.environ.get('PROJECT_PATH')
+# SRC_PATH is the root path of the FW sources.
+SRC_PATH = os.environ.get('SRC_PATH')
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(PROJECT_PATH, 'fiduswriter.sql'),
+        'CONN_MAX_AGE': 15
+    }
+
+}
+
 # Migrate, transpile JavaScript and install required fixtures automatically
 # when starting runserver. You might want to turn this off on a production
 # server. The default is the opposite of DEBUG

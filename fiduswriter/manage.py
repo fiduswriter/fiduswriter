@@ -50,16 +50,13 @@ def inner(default_project_path):
         SETTINGS_PATHS.append(mod.__file__)
         for setting in dir(mod):
             if setting.isupper():
-                setting_value = getattr(mod, setting)
-                if setting == 'INSTALLED_APPS':
-                    # installed apps are added to existing INSTALLED_APPS
-                    setting_value = default_settings.INSTALLED_APPS + \
-                        list(setting_value)
-                setattr(CONFIGURATION, setting, setting_value)
+                setattr(CONFIGURATION, setting, getattr(mod, setting))
     settings.configure(
         CONFIGURATION,
         SETTINGS_MODULE=SETTINGS_MODULE,
-        SETTINGS_PATHS=SETTINGS_PATHS
+        SETTINGS_PATHS=SETTINGS_PATHS,
+        INSTALLED_APPS=CONFIGURATION.BASE_APPS +
+        list(CONFIGURATION.INSTALLED_APPS)
     )
     os.environ['TZ'] = settings.TIME_ZONE
     from django.core.management import execute_from_command_line

@@ -1,6 +1,8 @@
 import os
-# If you want to show debug messages, set DEBUG to True.
 
+PORT = 8000
+
+# If you want to show debug messages, set DEBUG to True.
 DEBUG = True
 
 # This determines whether the server is used for testing and will let the
@@ -31,7 +33,6 @@ DATABASES = {
         'NAME': os.path.join(PROJECT_PATH, 'fiduswriter.sql'),
         'CONN_MAX_AGE': 15
     }
-
 }
 
 # Will let any user not delete more than 5000 bibliography entries

@@ -31,7 +31,7 @@ class Command(BaseCommand):
     requires_system_checks = True
     leave_locale_alone = True
     default_addr = '127.0.0.1'
-    default_port = '8000'
+    default_port = str(settings.PORT)
 
     def add_arguments(self, parser):
         parser.add_argument(

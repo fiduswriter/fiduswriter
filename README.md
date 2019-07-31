@@ -12,7 +12,7 @@ Installation procedures can be found in our [WIKI](https://github.com/fiduswrite
 Contributing
 ------------
 
-For details on contributing, please read our [Code of Conduct](CODE_OF_CONDUCT.md) check http://fiduswriter.org/help-us/
+For details on contributing, please check http://fiduswriter.org/help-us/ .
 
 [![Coverage Status](https://coveralls.io/repos/github/fiduswriter/fiduswriter/badge.svg?branch=master)](https://coveralls.io/github/fiduswriter/fiduswriter?branch=master)
 

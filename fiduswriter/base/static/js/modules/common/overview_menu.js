@@ -5,19 +5,6 @@ export class OverviewMenuView {
     constructor(overview, model) {
         this.overview = overview
         this.model = model()
-        if (this.overview.app.config.installprompt) {
-            this.model.content.unshift({
-                type: 'button',
-                title: interpolate(
-                    gettext('Install %(appName)s'),
-                    {appName: this.overview.app.name},
-                    true
-                ),
-                action: () => {
-                    this.overview.app.config.installprompt.prompt()
-                }
-            })
-        }
         this.dd = new DiffDOM({
             valueDiffing: false
         })

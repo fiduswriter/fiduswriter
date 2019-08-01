@@ -1,6 +1,10 @@
+import json
+
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext as _
+
+from .csl_xml_to_json import XMLWalker
 
 
 def document_filename(instance, filename):
@@ -66,12 +70,18 @@ class CitationStyle(models.Model):
         default='default'
     )
     contents = models.TextField(
-        help_text='The XML style definiton.',
+        help_text='The style definiton (JSON, accepts also XML).',
         default=default_citationstyle
     )
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        if self.contents.strip()[0] == '<':  # XML - we convert
+            walker = XMLWalker(self.contents)
+            self.contents = json.dumps(walker.output, indent=4)
+        super().save(*args, **kwargs)
 
 
 class CitationLocale(models.Model):
@@ -79,7 +89,9 @@ class CitationLocale(models.Model):
         max_length=4,
         help_text='language code of the locale file.'
     )
-    contents = models.TextField(help_text='The XML style definiton.')
+    contents = models.TextField(
+        help_text='The locale definiton (JSON, accepts also XML).'
+    )
 
     def display_language_code(self):
         if len(self.language_code) > 2:
@@ -89,3 +101,9 @@ class CitationLocale(models.Model):
 
     def __str__(self):
         return self.display_language_code()
+
+    def save(self, *args, **kwargs):
+        if self.contents.strip()[0] == '<':  # XML - we convert
+            walker = XMLWalker(self.contents)
+            self.contents = json.dumps(walker.output, indent=4)
+        super().save(*args, **kwargs)

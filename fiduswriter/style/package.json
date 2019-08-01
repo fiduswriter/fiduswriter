@@ -1,0 +1,7 @@
+{
+    "scripts": {
+        "get_citation_locale": "mkdir -p ../static-libs/js/modules/citations/ && echo -n 'export const enUSLocale = ' > ../static-libs/js/modules/citations/en_us_locale.js && wget -q -O - https://raw.githubusercontent.com/citation-style-language/locales/master/locales-en-US.xml | ../style/csl_xml_to_json.py >> ../static-libs/js/modules/citations/en_us_locale.js",
+        "get_jats_csl": "mkdir -p ../static-libs/csl/ && wget https://raw.githubusercontent.com/jgm/pandoc/1e80288606ba0f0b33a11bf2625850ef070492a0/data/jats.csl -q -O - | ../style/csl_xml_to_json.py > ../static-libs/csl/jats.json",
+        "postinstall": "npm run get_citation_locale && npm run get_jats_csl"
+    }
+}

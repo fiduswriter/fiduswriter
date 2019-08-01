@@ -77,6 +77,16 @@ export const bulkModel = [
         order: 5
     },
     {
+        title: gettext('Export selected as JATS'),
+        action: overview => {
+            const ids = overview.getSelected()
+            if (ids.length) {
+                overview.mod.actions.downloadJATSFiles(ids)
+            }
+        },
+        order: 6
+    },
+    {
         title: gettext('Download selected as Fidus document'),
         action: overview => {
             const ids = overview.getSelected()
@@ -84,7 +94,7 @@ export const bulkModel = [
                 overview.mod.actions.downloadNativeFiles(ids)
             }
         },
-        order: 6
+        order: 7
     }
 ]
 

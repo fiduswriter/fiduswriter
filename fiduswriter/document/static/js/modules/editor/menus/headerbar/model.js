@@ -211,6 +211,25 @@ export const headerbarModel = () => ({
                             exporter.init()
                         })
                     }
+                },
+                {
+                    title: gettext('JATS (experimental)'),
+                    type: 'action',
+                    tooltip: gettext('Export the document to a Journal Archiving and Interchange Tag Library NISO JATS Version 1.2 file.'),
+                    order: 2,
+                    action: editor => {
+                        import("../../../exporter/jats").then(({JATSExporter}) => {
+                            const exporter = new JATSExporter(
+                                editor.staticUrl,
+                                editor.getDoc({changes: 'acceptAllNoInsertions'}),
+                                editor.mod.db.bibDB,
+                                editor.mod.db.imageDB,
+                                editor.mod.documentTemplate.citationStyles,
+                                editor.mod.documentTemplate.citationLocales,
+                            )
+                            exporter.init()
+                        })
+                    }
                 }
             ]
         },

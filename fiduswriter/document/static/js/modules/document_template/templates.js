@@ -133,6 +133,7 @@ const headingTemplate = ({
             <select class="metadata">
                 <option value="false" ${metadata===false ? "selected" : ""}>${gettext('None')}</option>
                 <option value="subtitle" ${metadata==='subtitle' ? "selected" : ""}>${gettext('Subtitle')}</option>
+                <option value="title" ${metadata==='title' ? "selected" : ""}>${gettext('Title (translated)')}</option>
             </select>
         </div>
         <div class="label">${gettext('Locking')}
@@ -225,6 +226,7 @@ const contributorsTemplate = ({
             <select class="metadata">
                 <option value="false" ${metadata===false ? "selected" : ""}>${gettext('None')}</option>
                 <option value="authors" ${metadata==='authors' ? "selected" : ""}>${gettext('Authors')}</option>
+                <option value="editors" ${metadata==='editors' ? "selected" : ""}>${gettext('Editors')}</option>
             </select>
         </div>
         <div class="label">${gettext('Locking')}
@@ -279,6 +281,15 @@ const richtextTemplate = ({
             <select class="metadata">
                 <option value="false" ${metadata===false ? "selected" : ""}>${gettext('None')}</option>
                 <option value="abstract" ${metadata==='abstract' ? "selected" : ""}>${gettext('Abstract')}</option>
+                <option value="cases" ${metadata==='cases' ? "selected" : ""}>${gettext('Cases/Case Reports')}</option>
+                <option value="conclusions" ${metadata==='conclusions' ? "selected" : ""}>${gettext('Conclusions/Comment')}</option>
+                <option value="discussion" ${metadata==='discussion' ? "selected" : ""}>${gettext('Discussion/Interpretation')}</option>
+                <option value="intro" ${metadata==='intro' ? "selected" : ""}>${gettext('Introduction/Synopsis')}</option>
+                <option value="materials" ${metadata==='materials' ? "selected" : ""}>${gettext('Materials')}</option>
+                <option value="methods" ${metadata==='methods' ? "selected" : ""}>${gettext('Methods/Methodology/Procedures')}</option>
+                <option value="results" ${metadata==='results' ? "selected" : ""}>${gettext('Results/Statement of Findings')}</option>
+                <option value="subjects" ${metadata==='subjects' ? "selected" : ""}>${gettext('Subjects/Participants/Patients')}</option>
+                <option value="supplementary-material" ${metadata==='supplementary-material' ? "selected" : ""}>${gettext('Supplementary materials')}</option>
             </select>
         </div>
         <div class="label">${gettext('Locking')}

@@ -327,7 +327,7 @@ DEFAULT_CITATIONSTYLE = open(
         os.path.dirname(
             os.path.realpath(__file__)
         ),
-        'default_citationstyle.xml'
+        'default_citationstyle.json'
     ),
     'r'
 ).read()

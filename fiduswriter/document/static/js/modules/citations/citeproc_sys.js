@@ -1,6 +1,6 @@
 /* Connects Fidus Writer citation system with citeproc */
 import {CSLExporter} from "biblatex-csl-converter"
-import {enUSLocale} from "./enUS_locale"
+import {enUSLocale} from "./en_us_locale"
 
 export class citeprocSys {
     constructor(bibDB, citationLocales) {

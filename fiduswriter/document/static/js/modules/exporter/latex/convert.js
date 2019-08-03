@@ -2,7 +2,7 @@ import {escapeLatexText} from "./escape_latex"
 import {BIBLIOGRAPHY_HEADERS, FIG_CATS} from "../../schema/i18n"
 
 export class LatexExporterConvert {
-    constructor(exporter, imageDB, bibDB, settings = false) {
+    constructor(exporter, imageDB, bibDB, settings) {
         this.exporter = exporter
         this.settings = settings
         this.imageDB = imageDB
@@ -36,7 +36,7 @@ export class LatexExporterConvert {
         return '\\documentclass{article}\n'
     }
 
-    // Check for things needed before creating raw transofrm
+    // Check for things needed before creating raw transform
     preWalkJson(node) {
         switch (node.type) {
             // Collect all internal links so that we only set the anchors for those
@@ -82,11 +82,12 @@ export class LatexExporterConvert {
                 }
                 break
             case 'contributor':
-                // Ignore - we deal with namelist_part instead.
+                // Ignore - we deal with contributors_part instead.
                 break
             case 'contributors_part':
                 if (node.content) {
                     if (node.attrs.metadata === 'authors') {
+                        // TODO: deal with node.attrs.metadata === 'editors'
                         const authorsPerAffil = node.content.map(node => {
                             const author = node.attrs,
                                 nameParts = []
@@ -170,15 +171,15 @@ export class LatexExporterConvert {
                 if (node.content) {
                     if (node.attrs.metadata === 'keywords') {
                         start += '\n\\keywords{'
-                        start += node.content.map(
-                            keyword => escapeLatexText(keyword.attrs.tag)
-                        ).join('\\sep ')
                         end = '}' + end
                         this.features.keywords = true
                     } else if (!options.madeTitle) {
                         start += '\n\n\\maketitle\n'
                         options.madeTitle = true
                     }
+                    content += node.content.map(
+                        keyword => escapeLatexText(keyword.attrs.tag)
+                    ).join('\\sep ')
                 }
                 break
             case 'tag':
@@ -249,11 +250,11 @@ export class LatexExporterConvert {
             }
             case 'code':
                 start += '\n\\begin{code}\n\n'
-                end = '\n\n\\end{code}\n'
+                end = '\n\n\\end{code}\n' + end
                 break
             case 'blockquote':
                 start += '\n\\begin{quote}\n\n'
-                end = '\n\n\\end{quote}\n'
+                end = '\n\n\\end{quote}\n' + end
                 break
             case 'ordered_list':
                 start += '\n\\begin{enumerate}'
@@ -426,7 +427,7 @@ export class LatexExporterConvert {
                         this.figureCounter[figureType] = 1
                     }
                     const figCount = this.figureCounter[figureType]++
-                    const figLabel = this.settings ? `${FIG_CATS[figureType][this.settings.language]} ${figCount}` : figCount
+                    const figLabel = `${FIG_CATS[figureType][this.settings.language]} ${figCount}`
                     if (caption.length) {
                         caption = `${figLabel}: ${caption}`
                     } else {
@@ -591,8 +592,8 @@ export class LatexExporterConvert {
 
     assembleEpilogue() {
         let epilogue = ''
-        const bibliographyHeader = this.settings ? this.settings.bibliography_header[this.settings.language] || BIBLIOGRAPHY_HEADERS[this.settings.language] : gettext('Bibliography')
         if (this.features.citations) {
+            const bibliographyHeader = this.settings.bibliography_header[this.settings.language] || BIBLIOGRAPHY_HEADERS[this.settings.language]
             epilogue += `\n\n\\printbibliography[title={${escapeLatexText(bibliographyHeader)}}]`
         }
         return epilogue

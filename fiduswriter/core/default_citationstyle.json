@@ -1,0 +1,131 @@
+{
+    "name": "style",
+    "attrs": {
+        "xmlns": "http://purl.org/net/xbiblio/csl",
+        "class": "in-text",
+        "version": "1.0",
+        "demote-non-dropping-particle": "sort-only",
+        "default-locale": "en-US"
+    },
+    "children": [
+        {
+            "name": "citation",
+            "attrs": {
+                "collapse": "citation-number"
+            },
+            "children": [
+                {
+                    "name": "layout",
+                    "attrs": {
+                        "prefix": "[",
+                        "suffix": "]",
+                        "delimiter": ","
+                    },
+                    "children": [
+                        {
+                            "name": "text",
+                            "attrs": {
+                                "variable": "citation-number"
+                            },
+                            "children": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "bibliography",
+            "attrs": {
+                "et-al-min": "4",
+                "et-al-use-first": "3",
+                "entry-spacing": "0"
+            },
+            "children": [
+                {
+                    "name": "layout",
+                    "attrs": {},
+                    "children": [
+                        {
+                            "name": "text",
+                            "attrs": {
+                                "variable": "citation-number",
+                                "suffix": ". "
+                            },
+                            "children": []
+                        },
+                        {
+                            "name": "names",
+                            "attrs": {
+                                "variable": "author",
+                                "suffix": ". "
+                            },
+                            "children": [
+                                {
+                                    "name": "name",
+                                    "attrs": {
+                                        "and": "text",
+                                        "delimiter": ", ",
+                                        "name-as-sort-order": "all",
+                                        "sort-separator": ", ",
+                                        "form": "long",
+                                        "initialize-with": ". "
+                                    },
+                                    "children": []
+                                }
+                            ]
+                        },
+                        {
+                            "name": "text",
+                            "attrs": {
+                                "variable": "title",
+                                "prefix": ". ",
+                                "suffix": ". "
+                            },
+                            "children": []
+                        },
+                        {
+                            "name": "text",
+                            "attrs": {
+                                "variable": "container-title",
+                                "form": "short",
+                                "suffix": " "
+                            },
+                            "children": []
+                        },
+                        {
+                            "name": "date",
+                            "attrs": {
+                                "variable": "issued",
+                                "suffix": "; "
+                            },
+                            "children": [
+                                {
+                                    "name": "date-part",
+                                    "attrs": {
+                                        "name": "year"
+                                    },
+                                    "children": []
+                                }
+                            ]
+                        },
+                        {
+                            "name": "text",
+                            "attrs": {
+                                "variable": "volume",
+                                "suffix": ":"
+                            },
+                            "children": []
+                        },
+                        {
+                            "name": "text",
+                            "attrs": {
+                                "variable": "page"
+                            },
+                            "children": []
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

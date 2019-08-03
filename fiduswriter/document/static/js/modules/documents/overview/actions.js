@@ -264,6 +264,30 @@ export class DocumentOverviewActions {
         )
     }
 
+    downloadJATSFiles(ids) {
+        getMissingDocumentListData(
+            ids,
+            this.documentOverview.documentList,
+            this.documentOverview.schema
+        ).then(
+            () =>
+                ids.forEach(id => {
+                    const doc = this.documentOverview.documentList.find(entry => entry.id===id)
+                    import("../../exporter/jats").then(({JATSExporter}) => {
+                        const exporter = new JATSExporter(
+                            this.documentOverview.staticUrl,
+                            doc,
+                            {db:doc.bibliography},
+                            {db:doc.images},
+                            this.documentOverview.citationStyles,
+                            this.documentOverview.citationLocales
+                        )
+                        exporter.init()
+                    })
+                })
+        )
+    }
+
     downloadEpubFiles(ids) {
         getMissingDocumentListData(
             ids,

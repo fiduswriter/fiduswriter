@@ -138,7 +138,7 @@ export class FormatCitations {
                         }
 
                         if (0 < j) {
-                            newCiteText += '; '
+                            newCiteText += citeprocInstance.citation.opt.layout_delimiter || '; '
                         }
                         newCiteText += `${citeprocInstance.makeCitationCluster(onlyNameOption)} ${citeprocInstance.makeCitationCluster(onlyDateOption)}`
                     }

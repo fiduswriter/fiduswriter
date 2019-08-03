@@ -15,8 +15,14 @@ export class ModDocumentTemplate {
     setStyles(styles) {
         this.exportTemplates = styles.export_templates
         this.documentStyles = styles.document_styles
-        this.citationStyles = styles.citation_styles
-        this.citationLocales = styles.citation_locales
+        this.citationStyles = styles.citation_styles.map(style => {
+            style.contents = JSON.parse(style.contents)
+            return style
+        })
+        this.citationLocales = styles.citation_locales.map(locale => {
+            locale.contents = JSON.parse(locale.contents)
+            return locale
+        })
         this.addExportTemplateMenuEntries()
         this.addDocumentStylesMenuEntries()
         this.addCitationStylesMenuEntries()

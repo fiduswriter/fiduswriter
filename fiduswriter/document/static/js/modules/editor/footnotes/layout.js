@@ -28,12 +28,12 @@ export class ModFootnoteLayout {
             // DOM read phase
             const footnoteBoxes = document.querySelectorAll('#footnote-box-container .footnote-container'),
                 referrers = getFootnoteMarkers(this.mod.editor.view.state)
-            let totalOffset = document.getElementById('footnote-box-container').getBoundingClientRect().top,
-                footnotePlacementStyle = ''
-            if (referrers.length !== footnoteBoxes.length) {
-                // Apparently not all footnote boxes have been drawn. Abort for now.
+            if (!referrers.length || referrers.length !== footnoteBoxes.length) {
+                // Apparently not all footnote boxes have been drawn or there are none. Abort for now.
                 return
             }
+            let totalOffset = document.getElementById('footnote-box-container').getBoundingClientRect().top,
+                footnotePlacementStyle = ''
             if (this.mod.editor.mod.citations.citationType==='note') {
                 /* Citations are also in footnotes, so both citation footnotes
                  * and editor footnotes have to be placed. They should be placed

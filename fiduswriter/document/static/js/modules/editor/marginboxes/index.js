@@ -1,7 +1,7 @@
 import fastdom from "fastdom"
 import {DiffDOM, stringToObj} from "diff-dom"
 
-import {findTarget} from "../../common"
+import {findTarget, cancelPromise} from "../../common"
 import {marginBoxesTemplate, marginboxFilterTemplate} from "./templates"
 import {getCommentDuringCreationDecoration, getSelectedChanges, getFootnoteMarkers} from "../state_plugins"
 
@@ -262,8 +262,15 @@ export class ModMarginboxes {
             docInfo: this.editor.docInfo
         })
 
-        if (document.getElementById('margin-box-filter').innerHTML != marginBoxFilterHTML) {
-            document.getElementById('margin-box-filter').innerHTML = marginBoxFilterHTML
+        const marginBoxFilterElement = document.getElementById('margin-box-filter')
+
+        if (!marginBoxFilterElement) {
+            // User has navigated away already.
+            return cancelPromise()
+        }
+
+        if (marginBoxFilterElement.innerHTML != marginBoxFilterHTML) {
+            marginBoxFilterElement.innerHTML = marginBoxFilterHTML
         }
 
         return new Promise(resolve => {

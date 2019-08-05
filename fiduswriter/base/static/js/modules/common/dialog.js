@@ -60,7 +60,7 @@ export class Dialog {
         if (options.buttons) {
             this.setButtons(options.buttons)
         }
-        this.beforeClose = options.onClose || false
+        this.beforeClose = options.beforeClose || false
         this.onClose = options.onClose || false
         this.icon = options.icon || false
         this.scroll = options.scroll || false

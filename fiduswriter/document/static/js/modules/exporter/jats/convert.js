@@ -268,10 +268,12 @@ export class JATSExporterConvert {
                                 content += `<xref ref-type="aff" rid="aff${affNumber}" />`
                             }
                             content += '</contrib>'
-                        } else if (contributor.affiliation) {
+                        } else if (contributor.institution) {
                             // There is an affiliation but no first/last name. We take this
                             // as a group collaboration.
-                            content += `<collab><named-content content-type="name">${escapeText(contributor.affiliation)}</named-content></collab>`
+                            content += `<contrib id="${contributorTypeId}-${counter++}" contrib-type="group">`
+                            content += `<collab><named-content content-type="name">${escapeText(contributor.institution)}</named-content></collab>`
+                            content += '</contrib>'
                         }
                     })
                 }

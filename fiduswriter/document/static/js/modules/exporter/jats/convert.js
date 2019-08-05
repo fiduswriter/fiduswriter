@@ -185,6 +185,8 @@ export class JATSExporterConvert {
             front += this.walkJson(contributors)
         })
         Object.entries(this.affiliations).forEach(([institution, index]) => front += `<aff id="aff${index}"><institution>${escapeText(institution)}</institution></aff>`)
+        // https://validator.jats4r.org/ requires a <permissions> element here, but is OK with it being empty.
+        front += '<permissions/>'
         if (this.frontMatter.abstract.default) {
             front += this.walkJson(this.frontMatter.abstract.default)
             front += this.closeSections(0)
@@ -514,19 +516,19 @@ export class JATSExporterConvert {
                     // only allows <p> block level elements https://jats.nlm.nih.gov/archiving/tag-library/1.2/element/fn.html
                     break
                 }
-                start += `<table width="${node.attrs.width}%"><tbody>`
-                end = `</tbody></table>` + end
+                start += `<table-wrap><table width="${node.attrs.width}%"><tbody>`
+                end = `</tbody></table></table-wrap>` + end
                 break
             case 'table_row':
                 start += '<tr>'
                 end = '</tr>' + end
                 break
             case 'table_cell':
-                start += `<td colspan="${node.attrs.colspan}" rowspan="${node.attrs.rowspan}">`
+                start += `<td${node.attrs.colspan === 1 ? '' : ` colspan="${node.attrs.colspan}"`}${node.attrs.rowspan === 1 ? '' : ` rowspan="${node.attrs.rowspan}"`}>`
                 end = '</td>' + end
                 break
             case 'table_header':
-                start += `<th colspan="${node.attrs.colspan}" rowspan="${node.attrs.rowspan}">`
+                start += `<th${node.attrs.colspan === 1 ? '' : ` colspan="${node.attrs.colspan}"`}${node.attrs.rowspan === 1 ? '' : ` rowspan="${node.attrs.rowspan}"`}>`
                 end = '</th>' + end
                 break
             case 'equation':

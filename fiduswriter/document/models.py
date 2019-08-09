@@ -64,6 +64,8 @@ class DocumentTemplate(models.Model):
         blank=True,
         on_delete=models.deletion.CASCADE
     )
+    added = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title
@@ -81,6 +83,20 @@ class DocumentTemplate(models.Model):
                 filename='default'
             )
             self.document_styles.add(style)
+
+    def is_deletable(self):
+        reverse_relations = [
+            f for f in self._meta.model._meta.get_fields()
+            if (f.one_to_many or f.one_to_one) and
+            f.auto_created and not f.concrete
+        ]
+
+        for r in reverse_relations:
+            if r.remote_field.model.objects.filter(
+                **{r.field.name: self}
+            ).exists():
+                return False
+        return True
 
     @classmethod
     def check(cls, **kwargs):

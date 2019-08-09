@@ -129,7 +129,7 @@ export class ImportNative {
                 this.doc.owner = {
                     id: this.user.id,
                     name: this.user.name,
-                    avatar: this.user.avatar.url
+                    avatar: this.user.avatar
                 }
                 this.doc.is_owner = true
                 this.doc.version = 0

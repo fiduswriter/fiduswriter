@@ -95,7 +95,6 @@ export class DocumentOverviewActions {
                                 addAlert('error', statusText)
                                 return
                             }
-
                             this.documentOverview.documentList.push(doc)
                             this.documentOverview.addDocToTable(doc)
                             importDialog.close()

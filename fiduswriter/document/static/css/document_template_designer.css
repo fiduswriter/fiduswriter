@@ -132,6 +132,7 @@ table td {
 .ProseMirror-menubar {
     background-color: inherit;
     position: inherit;
+    min-height: 21px !important;
 }
 
 .article-table th {

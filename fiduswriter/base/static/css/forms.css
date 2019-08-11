@@ -14,10 +14,10 @@ textarea {
     padding: 2px;
 }
 
-input[type='text'],
-input[type='password'],
-input[type='search'],
-input[type='email'],
+input[type='text']:not(.fw-inline),
+input[type='password']:not(.fw-inline),
+input[type='search']:not(.fw-inline),
+input[type='email']:not(.fw-inline),
 textarea {
     box-sizing: border-box;
     width: 100%;

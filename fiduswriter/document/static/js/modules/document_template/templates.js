@@ -124,8 +124,8 @@ const headingTemplate = ({
             </li>
         </ul>
         <div class="label">
-            ${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}">
-            ${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}">
+            ${gettext('ID')} <input type="text" class="id fw-inline" value="${escapeText(id)}">
+            ${gettext('Title')} <input type="text" class="title fw-inline" value="${escapeText(title)}">
         </div>
     </div>
     <div class="attrs hidden">
@@ -216,12 +216,12 @@ const contributorsTemplate = ({
             </li>
         </ul>
         <div class="label">
-            ${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}">
-            ${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}">
+            ${gettext('ID')} <input type="text" class="id fw-inline" value="${escapeText(id)}">
+            ${gettext('Title')} <input type="text" class="title fw-inline" value="${escapeText(title)}">
         </div>
     </div>
     <div class="attrs hidden">
-        <div class="label">${gettext('Item title')} <input type="text" class="item_title" value="${escapeText(item_title)}"></div>
+        <div class="label">${gettext('Item title')} <input type="text" class="item_title fw-inline" value="${escapeText(item_title)}"></div>
         <div class="label">${gettext('Metadata function')}
             <select class="metadata">
                 <option value="false" ${metadata===false ? "selected" : ""}>${gettext('None')}</option>
@@ -272,8 +272,8 @@ const richtextTemplate = ({
             </li>
         </ul>
         <div class="label">
-            ${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}">
-            ${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}">
+            ${gettext('ID')} <input type="text" class="id fw-inline" value="${escapeText(id)}">
+            ${gettext('Title')} <input type="text" class="title fw-inline" value="${escapeText(title)}">
         </div>
     </div>
     <div class="attrs hidden">
@@ -344,8 +344,8 @@ const separatorTemplate = ({
             </li>
         </ul>
         <div class="label">
-            ${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}">
-            ${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}">
+            ${gettext('ID')} <input type="text" class="id fw-inline" value="${escapeText(id)}">
+            ${gettext('Title')} <input type="text" class="title fw-inline" value="${escapeText(title)}">
         </div>
     </div>
     <div class="attrs hidden">
@@ -376,12 +376,12 @@ const tagsTemplate = ({
             </li>
         </ul>
         <div class="label">
-            ${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}">
-            ${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}">
+            ${gettext('ID')} <input type="text" class="id fw-inline" value="${escapeText(id)}">
+            ${gettext('Title')} <input type="text" class="title fw-inline" value="${escapeText(title)}">
         </div>
     </div>
     <div class="attrs hidden">
-        <div class="label">${gettext('Item title')} <input type="text" class="item_title" value="${escapeText(item_title)}"></div>
+        <div class="label">${gettext('Item title')} <input type="text fw-inline" class="item_title" value="${escapeText(item_title)}"></div>
         <div class="label">${gettext('Metadata function')}
             <select class="metadata">
                 <option value="false" ${metadata===false ? "selected" : ""}>${gettext('None')}</option>
@@ -431,8 +431,8 @@ const tableTemplate = ({
             </li>
         </ul>
         <div class="label">
-            ${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}">
-            ${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}">
+            ${gettext('ID')} <input type="text" class="id fw-inline" value="${escapeText(id)}">
+            ${gettext('Title')} <input type="text" class="title fw-inline" value="${escapeText(title)}">
         </div>
     </div>
     <div class="attrs hidden">
@@ -487,8 +487,8 @@ const tocTemplate = ({
             </li>
         </ul>
         <div class="label">
-            ${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}">
-            ${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}">
+            ${gettext('ID')} <input type="text" class="id fw-inline" value="${escapeText(id)}">
+            ${gettext('Title')} <input type="text" class="title fw-inline" value="${escapeText(title)}">
         </div>
     </div>
     <div class="attrs hidden">

@@ -12,15 +12,10 @@ import {tableEditing} from "prosemirror-tables"
 import {randomHeadingId} from "../schema/common"
 import {TagsView, ContributorsView} from "../editor/state_plugins"
 import {
-    documentConstructorTemplate,
-    templateEditorValueTemplate,
-    toggleEditorButtonTemplate,
-    footnoteTemplate,
-    languagesTemplate,
-    papersizesTemplate,
+    documentDesignerTemplate,
     bibliographyHeaderTemplate
 } from "./templates"
-import {whenReady, ensureCSS, findTarget} from "../common"
+import {ensureCSS, findTarget} from "../common"
 import {
     helpSchema,
     helpMenuContent,
@@ -108,12 +103,10 @@ function addHeadingIds(oldState, newState, editors) {
 }
 
 export class DocumentTemplateDesigner {
-    constructor({staticUrl}) {
+    constructor({staticUrl}, value, dom) {
         this.staticUrl = staticUrl
-        this.definitionTextarea = false
-        this.templateEditor = false
-        this.errors = {}
-        this.value = []
+        this.value = value
+        this.dom = dom
 
         this.editors = []
         this.listeners = {
@@ -122,6 +115,7 @@ export class DocumentTemplateDesigner {
     }
 
     init() {
+        this.dom.innerHTML = documentDesignerTemplate({value: this.value})
         ensureCSS([
             'common.css',
             'dialog.css',
@@ -135,45 +129,18 @@ export class DocumentTemplateDesigner {
             'table.css',
             'dialog_table.css'
         ], this.staticUrl)
-        whenReady().then(() => {
-            this.definitionTextarea = document.querySelector('textarea[name=definition]')
-            this.definitionHashInput = document.querySelector('#id_definition_hash')
-            this.definitionHashInputBlock = document.querySelector('div.field-definition_hash')
-            this.getInitialValue()
-            this.modifyDOM()
-            this.bind()
-        })
-
-    }
-
-    modifyDOM() {
-        this.definitionTextarea.style.display='none'
-        this.definitionHashInputBlock.style.display='none'
-        this.definitionTextarea.insertAdjacentHTML(
-            'beforebegin',
-            toggleEditorButtonTemplate()
-        )
-
-        this.definitionTextarea.insertAdjacentHTML(
-            'afterend',
-            documentConstructorTemplate({value: this.value})
-        )
-        this.templateEditor = document.getElementById('template-editor')
         this.setupInitialEditors()
+        this.bind()
     }
 
-    getInitialValue() {
-        this.value = JSON.parse(this.definitionTextarea.value)
-    }
-
-    setCurrentValue() {
+    getCurrentValue() {
         let valid = true
         const ids = []
-        this.errors = {}
+        const errors = {}
         this.value = {
             type: 'article',
             content: [{type: 'title'}].concat(
-                Array.from(document.querySelectorAll('.to-container .doc-part:not(.fixed)')).map(
+                Array.from(this.dom.querySelectorAll('.to-container .doc-part:not(.fixed)')).map(
                     el => {
                         const type = el.dataset.type,
                             id = el.querySelector('input.id').value,
@@ -259,13 +226,13 @@ export class DocumentTemplateDesigner {
                         }
                         if (!id.length) {
                             valid = false
-                            this.errors.missing_id = gettext('All document parts need an ID.')
+                            errors.missing_id = gettext('All document parts need an ID.')
                             el.classList.add("error-element")
                             el.scrollIntoView({block:"center", behavior :"smooth"})
                         }
                         if (/\s/.test(id)) {
                             valid = false
-                            this.errors.no_spaces = gettext('IDs cannot contain spaces.')
+                            errors.no_spaces = gettext('IDs cannot contain spaces.')
                             el.classList.add("error-element")
                             el.scrollIntoView({block:"center", behavior :"smooth"})
                         }
@@ -279,7 +246,7 @@ export class DocumentTemplateDesigner {
                                     }
                                 })
                             el.scrollIntoView({block:"center", behavior :"smooth"})
-                            this.errors.unique_id = gettext('IDs have to be unique.')
+                            errors.unique_id = gettext('IDs have to be unique.')
                         }
                         ids.push(id)
                         return node
@@ -318,19 +285,11 @@ export class DocumentTemplateDesigner {
         }
         this.value.attrs.language = this.value.attrs.languages[0]
 
-        this.definitionTextarea.value = JSON.stringify(this.value)
-        this.definitionHashInput.value = templateHash(this.value)
-        this.showErrors()
-        return valid
-    }
-
-    showErrors() {
-        this.definitionTextarea.parentElement.querySelector('ul.errorlist').innerHTML =
-            Object.values(this.errors).map(error => `<li>${error}</li>`).join('')
+        return {valid, value: this.value, errors, hash: templateHash(this.value)}
     }
 
     setupInitialEditors() {
-        Array.from(document.querySelectorAll('.to-container .doc-part:not(.fixed)')).forEach((el, index) => {
+        Array.from(this.dom.querySelectorAll('.to-container .doc-part:not(.fixed)')).forEach((el, index) => {
             const value = this.value.content[index+1], // offset by title
                 help = value.attrs.help,
                 initial = value.attrs.initial,
@@ -467,9 +426,14 @@ export class DocumentTemplateDesigner {
         return false
     }
 
+    close() {
+        this.dom.innerHTML = ''
+        document.removeEventListener('scroll', this.listeners.onScroll)
+    }
+
     bind() {
         new Sortable(
-            document.querySelector('.from-container'),
+            this.dom.querySelector('.from-container'),
             {
                 group: {
                     name: 'document',
@@ -481,7 +445,7 @@ export class DocumentTemplateDesigner {
             }
         )
         new Sortable(
-            document.querySelector('.to-container'),
+            this.dom.querySelector('.to-container'),
             {
                 group: {
                     name: 'document',
@@ -498,7 +462,7 @@ export class DocumentTemplateDesigner {
             }
         )
         new Sortable(
-            document.querySelector('.trash'),
+            this.dom.querySelector('.trash'),
             {
                 group: {
                     name: 'document',
@@ -509,37 +473,9 @@ export class DocumentTemplateDesigner {
             }
         )
 
-        document.body.addEventListener('click', event => {
+        this.dom.addEventListener('click', event => {
             const el = {}
             switch (true) {
-                case findTarget(event, '#toggle-editor', el):
-                    event.preventDefault()
-                    if (this.definitionTextarea.style.display==='none') {
-                        this.definitionTextarea.style.display=''
-                        this.definitionHashInputBlock.style.display=''
-                        this.templateEditor.style.display='none'
-                        this.setCurrentValue()
-                    } else {
-                        this.definitionTextarea.style.display='none'
-                        this.definitionHashInputBlock.style.display='none'
-                        this.templateEditor.style.display=''
-                        this.getInitialValue()
-                        this.templateEditor.querySelector('.to-container').innerHTML =
-                            templateEditorValueTemplate({content: this.value.content.slice(1) || []})
-                        this.templateEditor.querySelector('.footnote-value').innerHTML =
-                            footnoteTemplate(this.value.attrs)
-                        this.templateEditor.querySelector('.languages-value').innerHTML =
-                            languagesTemplate(this.value.attrs)
-                        this.templateEditor.querySelector('.papersizes-value').innerHTML =
-                            papersizesTemplate(this.value.attrs)
-                        this.setupInitialEditors()
-                    }
-                    break
-                case findTarget(event, 'div.submit-row input[type=submit]', el):
-                    if (this.definitionTextarea.style.display==='none' && !this.setCurrentValue()) {
-                        event.preventDefault()
-                    }
-                    break
                 case findTarget(event, '.doc-part .configure', el):
                     event.preventDefault()
                     el.target.closest('.doc-part').querySelector('.attrs').classList.toggle('hidden')
@@ -547,7 +483,7 @@ export class DocumentTemplateDesigner {
                 case findTarget(event, '.bibliography-header-value .fa-plus-circle', el):
                     event.preventDefault()
                     this.setCurrentValue()
-                    this.templateEditor.querySelector('.bibliography-header-value').innerHTML =
+                    this.dom.querySelector('.bibliography-header-value').innerHTML =
                         bibliographyHeaderTemplate({
                             bibliography_header: Object.assign({}, this.value.attrs.bibliography_header, {zzz: ''}) // 'zzz' so that the entry is added at the of the list
                         })
@@ -567,7 +503,7 @@ export class DocumentTemplateDesigner {
     }
 
     onScroll() {
-        const fromContainer = this.templateEditor.querySelector('.from-container'),
+        const fromContainer = this.dom.querySelector('.from-container'),
             rect = fromContainer.getBoundingClientRect()
 
         if (rect.height + rect.top > 0) {

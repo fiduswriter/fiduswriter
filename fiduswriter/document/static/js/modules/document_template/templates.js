@@ -502,17 +502,17 @@ const tocTemplate = ({
     </div>
 </div>`
 
-export const footnoteTemplate = ({
+const footnoteTemplate = ({
     footnote_elements = ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "table"],
     footnote_marks = ["strong", "em", "underline", "link"]
 }) => `<div class="doc-part attrs">${allowedElementsTemplate({elements: footnote_elements}, false)}${allowedMarksTemplate({marks: footnote_marks})}</div>`
 
-export const languagesTemplate = ({languages = LANGUAGES.map(lang => lang[0])}) =>
+const languagesTemplate = ({languages = LANGUAGES.map(lang => lang[0])}) =>
 `<select multiple size=5>
 ${LANGUAGES.map(lang => `<option value="${lang[0]}"${languages.includes(lang[0]) ? ' selected' : ''}>${lang[1]}</option>`).join('')}
 </select>`
 
-export const papersizesTemplate = ({papersizes = PAPER_SIZES.map(size => size[0])}) =>
+const papersizesTemplate = ({papersizes = PAPER_SIZES.map(size => size[0])}) =>
 `<select multiple size=5>
 ${PAPER_SIZES.map(size => `<option value="${size[0]}"${papersizes.includes(size[0]) ? ' selected' : ''}>${size[0]}</option>`).join('')}
 </select>`
@@ -546,7 +546,7 @@ export const bibliographyHeaderTemplate = ({bibliography_header = {zzz: ''}}) =>
 }
 
 
-export const templateEditorValueTemplate = ({content}) =>
+const templateEditorValueTemplate = ({content}) =>
     content.map(docPart => {
         switch (docPart.type) {
             case 'heading_part':
@@ -575,78 +575,74 @@ export const toggleEditorButtonTemplate = () =>
         </li>
     </ul>`
 
-export const documentConstructorTemplate = ({value}) =>
-    `<ul class="errorlist"></ul>
-    <div id="template-editor">
-        <table>
-            <thead>
-                <tr>
-                    <th>${gettext('Element types')}</th>
-                    <th>${gettext('Document structure')}</th>
-                    <th>${gettext('Delete')}</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="from-container">
-                        ${headingTemplate({})}
-                        ${contributorsTemplate({})}
-                        ${richtextTemplate({})}
-                        ${tagsTemplate({})}
-                        ${tableTemplate({})}
-                        ${tocTemplate({})}
-                        ${separatorTemplate({})}
-                    </td>
-                    <td class="to-column">
-                        <div class="doc-part fixed" data-type="initial">${gettext('Title')}</div>
-                        <div class="to-container">${templateEditorValueTemplate({content: value.content || []})}</div>
-                    </td>
-                    <td class="trash">
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <table>
-            <thead>
-                <tr>
-                    <th>${gettext('Setting')}</th>
-                    <th>${gettext('Value')}</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        ${gettext('Footnote specifications')}
-                    </td>
-                    <td class="footnote-value">
-                        ${footnoteTemplate(value.attrs || {})}
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        ${gettext('Permitted languages')}
-                    </td>
-                    <td class="languages-value">
-                        ${languagesTemplate(value.attrs || {})}
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        ${gettext('Permitted paper sizes')}
-                    </td>
-                    <td class="papersizes-value">
-                        ${papersizesTemplate(value.attrs || {})}
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        ${gettext('Custom bibliography header')}
-                    </td>
-                    <td class="bibliography-header-value">
-                        ${bibliographyHeaderTemplate(value.attrs || {})}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    `
+export const documentDesignerTemplate = ({value}) =>
+    `<table>
+        <thead>
+            <tr>
+                <th>${gettext('Element types')}</th>
+                <th>${gettext('Document structure')}</th>
+                <th>${gettext('Delete')}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="from-container">
+                    ${headingTemplate({})}
+                    ${contributorsTemplate({})}
+                    ${richtextTemplate({})}
+                    ${tagsTemplate({})}
+                    ${tableTemplate({})}
+                    ${tocTemplate({})}
+                    ${separatorTemplate({})}
+                </td>
+                <td class="to-column">
+                    <div class="doc-part fixed" data-type="initial">${gettext('Title')}</div>
+                    <div class="to-container">${templateEditorValueTemplate({content: value.content || []})}</div>
+                </td>
+                <td class="trash">
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table>
+        <thead>
+            <tr>
+                <th>${gettext('Setting')}</th>
+                <th>${gettext('Value')}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    ${gettext('Footnote specifications')}
+                </td>
+                <td class="footnote-value">
+                    ${footnoteTemplate(value.attrs || {})}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    ${gettext('Permitted languages')}
+                </td>
+                <td class="languages-value">
+                    ${languagesTemplate(value.attrs || {})}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    ${gettext('Permitted paper sizes')}
+                </td>
+                <td class="papersizes-value">
+                    ${papersizesTemplate(value.attrs || {})}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    ${gettext('Custom bibliography header')}
+                </td>
+                <td class="bibliography-header-value">
+                    ${bibliographyHeaderTemplate(value.attrs || {})}
+                </td>
+            </tr>
+        </tbody>
+    </table>`

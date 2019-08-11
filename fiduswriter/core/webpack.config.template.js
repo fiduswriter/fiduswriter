@@ -47,7 +47,7 @@ module.exports = { // eslint-disable-line no-undef
                 'admin_console.js',
                 'maintenance.js',
                 'test_caret.js',
-                'document_template_designer.js'
+                'document_template_admin.js'
             ]
         })
     ],

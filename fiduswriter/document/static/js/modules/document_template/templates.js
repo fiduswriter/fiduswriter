@@ -568,15 +568,11 @@ const templateEditorValueTemplate = ({content}) =>
         }
     }).join('')
 
-export const toggleEditorButtonTemplate = () =>
-    `<ul class="object-tools right">
-        <li>
-            <span class="link" id="toggle-editor">${gettext('Source/Editor')}</span>
-        </li>
-    </ul>`
-
-export const documentDesignerTemplate = ({value}) =>
-    `<table>
+export const documentDesignerTemplate = ({value, title, citationStyles}) =>
+    `<table><tbody>
+    <tr><td>${gettext('Title')}</td><td><input text="text" class="style-title vTextField fw-inline" value="${escapeText(title)}"></td></tr>
+    </tbody></table>
+    <table>
         <thead>
             <tr>
                 <th>${gettext('Element types')}</th>
@@ -642,6 +638,20 @@ export const documentDesignerTemplate = ({value}) =>
                 </td>
                 <td class="bibliography-header-value">
                     ${bibliographyHeaderTemplate(value.attrs || {})}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    ${gettext('Citation styles')}
+                </td>
+                <td>
+                    <select required="" class="citation-styles" multiple="">${
+                        citationStyles.map(style => `<option value="${style.id}"${
+                            style.selected ? ' selected' : ''
+                        }>${
+                            escapeText(style.title)
+                        }</option>`).join('')
+                    }</select>
                 </td>
             </tr>
         </tbody>

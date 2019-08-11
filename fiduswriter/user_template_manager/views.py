@@ -56,10 +56,12 @@ def get(request):
     )
     document_styles = serializer.serialize(
         doc_template.documentstyle_set.all(),
-        use_natural_foreign_keys=True
+        use_natural_foreign_keys=True,
+        fields=['title', 'slug', 'contents', 'documentstylefile_set']
     )
     citation_styles = serializer.serialize(
-        CitationStyle.objects.all()
+        CitationStyle.objects.all(),
+        fields=['title', ]
     )
     response = {
         'template': {

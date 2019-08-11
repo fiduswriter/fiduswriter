@@ -103,9 +103,11 @@ function addHeadingIds(oldState, newState, editors) {
 }
 
 export class DocumentTemplateDesigner {
-    constructor({staticUrl}, value, dom) {
+    constructor({staticUrl}, title, value, citationStyles, dom) {
         this.staticUrl = staticUrl
+        this.title = title
         this.value = value
+        this.citationStyles = citationStyles
         this.dom = dom
 
         this.editors = []
@@ -115,7 +117,7 @@ export class DocumentTemplateDesigner {
     }
 
     init() {
-        this.dom.innerHTML = documentDesignerTemplate({value: this.value})
+        this.dom.innerHTML = documentDesignerTemplate({title: this.title, value: this.value, citationStyles: this.citationStyles})
         ensureCSS([
             'common.css',
             'dialog.css',
@@ -137,6 +139,18 @@ export class DocumentTemplateDesigner {
         let valid = true
         const ids = []
         const errors = {}
+        const el = this.dom.querySelector('input.style-title')
+        if (el.classList.contains("error-element")) {
+            el.classList.remove("error-element")
+        }
+        this.title = el.value
+        if (!this.title.length) {
+            valid = false
+            errors.empty_style_title = gettext('The style needs a title.')
+            el.classList.add("error-element")
+            el.scrollIntoView({block:"center", behavior :"smooth"})
+        }
+
         this.value = {
             type: 'article',
             content: [{type: 'title'}].concat(
@@ -238,7 +252,7 @@ export class DocumentTemplateDesigner {
                         }
                         if (ids.includes(id)) {
                             valid = false
-                            Array.from(document.querySelectorAll('.to-container .doc-part:not(.fixed)')).map(
+                            Array.from(this.dom.querySelectorAll('.to-container .doc-part:not(.fixed)')).map(
                                 el => {
                                     const id_duplicate = el.querySelector('input.id').value
                                     if (id_duplicate == id) {
@@ -254,11 +268,11 @@ export class DocumentTemplateDesigner {
                 )
             ),
             attrs: {
-                footnote_elements: Array.from(document.querySelectorAll('.footnote-value .elements:checked')).map(el => el.value),
-                footnote_marks: Array.from(document.querySelectorAll('.footnote-value .marks:checked')).map(el => el.value),
-                languages: Array.from(document.querySelectorAll('.languages-value option:checked')).map(el => el.value),
-                papersizes: Array.from(document.querySelectorAll('.papersizes-value option:checked')).map(el => el.value),
-                bibliography_header: Array.from(document.querySelectorAll('.bibliography-header-value tr')).reduce(
+                footnote_elements: Array.from(this.dom.querySelectorAll('.footnote-value .elements:checked')).map(el => el.value),
+                footnote_marks: Array.from(this.dom.querySelectorAll('.footnote-value .marks:checked')).map(el => el.value),
+                languages: Array.from(this.dom.querySelectorAll('.languages-value option:checked')).map(el => el.value),
+                papersizes: Array.from(this.dom.querySelectorAll('.papersizes-value option:checked')).map(el => el.value),
+                bibliography_header: Array.from(this.dom.querySelectorAll('.bibliography-header-value tr')).reduce(
                     (stringObj, trEl) => {
                         const inputEl = trEl.querySelector('input')
                         if (!inputEl.value.length) {
@@ -270,7 +284,7 @@ export class DocumentTemplateDesigner {
                     },
                     {}
                 ),
-                template: document.querySelector('#id_title').value
+                template: this.title
             }
         }
         if (!this.value.attrs.papersizes.length) {
@@ -285,7 +299,11 @@ export class DocumentTemplateDesigner {
         }
         this.value.attrs.language = this.value.attrs.languages[0]
 
-        return {valid, value: this.value, errors, hash: templateHash(this.value)}
+        const citationStyles = Array.from(
+            this.dom.querySelectorAll('.citation-styles option:checked')
+        ).map(el => parseInt(el.value))
+
+        return {valid, title: this.title, value: this.value, citationStyles, errors, hash: templateHash(this.value)}
     }
 
     setupInitialEditors() {
@@ -482,7 +500,7 @@ export class DocumentTemplateDesigner {
                     break
                 case findTarget(event, '.bibliography-header-value .fa-plus-circle', el):
                     event.preventDefault()
-                    this.setCurrentValue()
+                    this.getCurrentValue()
                     this.dom.querySelector('.bibliography-header-value').innerHTML =
                         bibliographyHeaderTemplate({
                             bibliography_header: Object.assign({}, this.value.attrs.bibliography_header, {zzz: ''}) // 'zzz' so that the entry is added at the of the list

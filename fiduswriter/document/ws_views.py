@@ -92,12 +92,12 @@ class WebSocket(BaseWebSocketHandler):
         serializer = PythonWithURLSerializer()
         export_temps = serializer.serialize(
             doc_db.template.exporttemplate_set.all(),
-            fields = ['file_type', 'template_file', 'title']
+            fields=['file_type', 'template_file', 'title']
         )
         document_styles = serializer.serialize(
             doc_db.template.documentstyle_set.all(),
             use_natural_foreign_keys=True,
-            fields = ['title', 'slug', 'contents', 'documentstylefile_set']
+            fields=['title', 'slug', 'contents', 'documentstylefile_set']
         )
         cite_styles = serializer.serialize(
             doc_db.template.citation_styles.all()

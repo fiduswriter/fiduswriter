@@ -6,6 +6,7 @@ from document.models import DocumentTemplate
 from style.models import CitationStyle
 from document.helpers.serializers import PythonWithURLSerializer
 
+
 @login_required
 def list(request):
     response = {}

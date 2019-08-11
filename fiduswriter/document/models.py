@@ -11,7 +11,7 @@ from django.core import checks
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 
-from style.models import OldDocumentStyle, CitationStyle, DocumentStyle
+from style.models import CitationStyle, DocumentStyle
 
 from django.conf import settings
 
@@ -20,30 +20,6 @@ from django.conf import settings
 # document/static/js/modules/schema/index.js
 
 FW_DOCUMENT_VERSION = 3.0
-
-TEMPLATE_CHOICES = (
-    ('docx', 'Docx'),
-    ('odt', 'ODT')
-)
-
-
-def template_filename(instance, filename):
-    return '/'.join(['export-templates', filename])
-
-
-class ExportTemplate(models.Model):
-    file_name = models.CharField(max_length=255, default='', blank=True)
-    file_type = models.CharField(
-        max_length=5,
-        choices=TEMPLATE_CHOICES,
-        blank=False)
-    template_file = models.FileField(upload_to=template_filename)
-
-    class Meta(object):
-        unique_together = (("file_name", "file_type"),)
-
-    def __str__(self):
-        return self.file_name + " (" + self.file_type + ")"
 
 
 class DocumentTemplate(models.Model):
@@ -55,9 +31,7 @@ class DocumentTemplate(models.Model):
         default=FW_DOCUMENT_VERSION
     )
     definition_hash = models.CharField(max_length=22, default='', blank=True)
-    document_styles = models.ManyToManyField(OldDocumentStyle)
     citation_styles = models.ManyToManyField(CitationStyle)
-    export_templates = models.ManyToManyField(ExportTemplate, blank=True)
     user = models.ForeignKey(
         User,
         null=True,

@@ -84,7 +84,6 @@ export const settingsPlugin = function(options) {
         const docStyle = options.editor.mod.documentTemplate.documentStyles.find(doc_style => doc_style.slug===docStyleId)
 
         let docStyleCSS = docStyle.contents
-        
         docStyle.documentstylefile_set.forEach(
             ([url, filename]) => docStyleCSS = docStyleCSS.replace(
                 new RegExp(filename, 'g'),

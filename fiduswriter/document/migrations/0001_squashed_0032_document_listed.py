@@ -131,7 +131,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('file_name', models.CharField(blank=True, default='', max_length=255)),
                 ('file_type', models.CharField(choices=[('docx', 'Docx'), ('odt', 'ODT')], max_length=5)),
-                ('template_file', models.FileField(upload_to=document.models.template_filename)),
+                ('template_file', models.FileField(upload_to='export_template')),
             ],
         ),
         migrations.AlterUniqueTogether(

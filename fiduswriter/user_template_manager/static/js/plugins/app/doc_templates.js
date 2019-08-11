@@ -8,7 +8,6 @@ export class DocTemplatesAppItem {
         this.app.routes['templates'] = {
           requireLogin: true,
           open: pathnameParts => {
-              console.log(pathnameParts)
               if (pathnameParts.length < 4) {
                   return import("../../modules/doc_templates/overview").then(({DocTemplatesOverview}) => new DocTemplatesOverview(this.app.config))
               } else {

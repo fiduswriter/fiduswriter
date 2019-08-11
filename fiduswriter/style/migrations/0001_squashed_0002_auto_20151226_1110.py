@@ -35,7 +35,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('title', models.CharField(help_text='The human readable title.', max_length=128)),
-                ('font_file', models.FileField(help_text='The font file.', upload_to=style.models.document_filename)),
+                ('font_file', models.FileField(help_text='The font file.', upload_to='document-font')),
                 ('fontface_definition', models.TextField(help_text='The CSS definition of the font face (everything inside of @font-face{}). Add [URL] where the link to the font file is to appear.')),
             ],
         ),

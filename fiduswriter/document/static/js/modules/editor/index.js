@@ -392,11 +392,6 @@ export class Editor {
                 }
             },
             dispatchTransaction: tr => {
-                console.log({tr})
-                this.trCount++
-                // if (this.trCount > 10) {
-                //     console.log({tr: JSON.stringify(tr.toJSON())})
-                // }
                 const trackedTr = amendTransaction(tr, this.view.state, this)
                 const newState = this.view.state.apply(trackedTr)
                 this.view.updateState(newState)

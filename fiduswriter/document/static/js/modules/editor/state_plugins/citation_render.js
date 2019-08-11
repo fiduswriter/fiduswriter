@@ -22,7 +22,6 @@ export const citationRenderPlugin = function(options) {
                 if (action || tr.getMeta('settings')) {
                     return {action} // We already need to reset the bibliography or another setting is used. Don't bother checking for more reasons to do so.
                 }
-                console.log({tr})
                 tr.steps.forEach((step, index) => {
                     if (step instanceof ReplaceStep || step instanceof ReplaceAroundStep) {
                         if (step.from !== step.to) {
@@ -61,7 +60,6 @@ export const citationRenderPlugin = function(options) {
             return {
                 update: (view, _prevState) => {
                     const {action} = key.getState(view.state)
-                    console.log({action})
                     if (action==='reset') {
                         options.editor.mod.citations.resetCitations()
                         const tr = view.state.tr.setMeta(key, {action: false})

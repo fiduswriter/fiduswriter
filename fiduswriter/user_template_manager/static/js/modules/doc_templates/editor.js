@@ -9,10 +9,9 @@ export class DocTemplatesEditor {
     }
 
     init() {
-        return postJson('/api/user_template_manager/get/', {id: this.id}). then(
+        return postJson('/api/user_template_manager/get/', {id: this.id}).then(
             ({json}) => {
                 this.template = json
-                console.log({json})
                 return whenReady()
             }
         )

@@ -7,53 +7,6 @@ from django.utils.translation import ugettext as _
 from .csl_xml_to_json import XMLWalker
 
 
-def document_filename(instance, filename):
-    return '/'.join(['document-fonts', filename])
-
-
-class DocumentFont(models.Model):
-    title = models.CharField(
-        max_length=128,
-        help_text='The human readable title.')
-    font_file = models.FileField(
-        upload_to=document_filename,
-        help_text='The font file.')
-    fontface_definition = models.TextField(
-        help_text=(
-            'The CSS definition of the font face (everything inside of '
-            '@font-face{}). Add [URL] where the link to the font file is to '
-            'appear.'
-        )
-    )
-
-    def natural_key(self):
-        return (self.font_file.url, self.fontface_definition)
-
-    def __str__(self):
-        return self.title
-
-
-class OldDocumentStyle(models.Model):
-    title = models.CharField(
-        max_length=128,
-        help_text='The human readable title.',
-        default=_('Default')
-    )
-    filename = models.SlugField(
-        max_length=20,
-        help_text='The base of the filenames the style occupies.',
-        default='default'
-    )
-    contents = models.TextField(
-        help_text='The CSS style definiton.',
-        default=''
-    )
-    fonts = models.ManyToManyField(DocumentFont, blank=True, default=None)
-
-    def __str__(self):
-        return self.title
-
-
 class DocumentStyle(models.Model):
     title = models.CharField(
         max_length=128,

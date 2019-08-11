@@ -10,13 +10,6 @@ class DocumentStyleAdmin(admin.ModelAdmin):
 admin.site.register(models.DocumentStyle, DocumentStyleAdmin)
 
 
-class DocumentFontAdmin(admin.ModelAdmin):
-    pass
-
-
-admin.site.register(models.DocumentFont, DocumentFontAdmin)
-
-
 class DocumentStyleFileAdmin(admin.ModelAdmin):
     pass
 

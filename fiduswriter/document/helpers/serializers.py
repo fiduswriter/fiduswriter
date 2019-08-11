@@ -15,7 +15,6 @@ class PythonWithURLSerializer(PythonSerializer):
                 field
             )
 
-
     def end_object(self, obj):
         # We add reverse foreign key relations if they are explicitly added.
         # Needed to include DocumentStyleFont with DocumentStyle\
@@ -27,7 +26,7 @@ class PythonWithURLSerializer(PythonSerializer):
                     related_name = field.related_name
                 else:
                     related_name = field.name + '_set'
-                if not related_name in self.selected_fields:
+                if related_name not in self.selected_fields:
                     continue
                 if self.use_natural_foreign_keys and hasattr(
                     field.remote_field.model, 'natural_key'

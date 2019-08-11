@@ -50,16 +50,6 @@
     }
 },
 {
-    "model": "style.documentstyle",
-    "pk": 6,
-    "fields": {
-        "title": "Default",
-        "slug": "default",
-        "contents": "",
-        "document_template": 1
-    }
-},
-{
     "model": "style.documentstylefile",
     "pk": 1,
     "fields": {

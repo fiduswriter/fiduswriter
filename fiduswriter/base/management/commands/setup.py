@@ -45,7 +45,7 @@ class Command(BaseCommand):
                 "loaddata",
                 os.path.join(
                     settings.SRC_PATH,
-                    "style/fixtures/citation_styles.json"
+                    "style/fixtures/initial_citationstyles.json"
                 )
             )
         if DocumentTemplate.objects.count() == 0:

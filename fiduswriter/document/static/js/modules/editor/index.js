@@ -375,7 +375,6 @@ export class Editor {
     }
 
     initEditor() {
-        //this.trCount = 0
         // The following two commands prevent Firefox from showing table controls.
         document.execCommand("enableObjectResizing", false, false)
         document.execCommand("enableInlineTableEditing", false, false)

@@ -60,16 +60,6 @@
     }
 },
 {
-    "model": "style.documentstyle",
-    "pk": 7,
-    "fields": {
-        "title": "Default",
-        "slug": "default",
-        "contents": "",
-        "document_template": 8
-    }
-},
-{
     "model": "style.documentstylefile",
     "pk": 1,
     "fields": {

@@ -375,6 +375,7 @@ export class Editor {
     }
 
     initEditor() {
+        //this.trCount = 0
         // The following two commands prevent Firefox from showing table controls.
         document.execCommand("enableObjectResizing", false, false)
         document.execCommand("enableInlineTableEditing", false, false)
@@ -391,6 +392,11 @@ export class Editor {
                 }
             },
             dispatchTransaction: tr => {
+                console.log({tr})
+                this.trCount++
+                // if (this.trCount > 10) {
+                //     console.log({tr: JSON.stringify(tr.toJSON())})
+                // }
                 const trackedTr = amendTransaction(tr, this.view.state, this)
                 const newState = this.view.state.apply(trackedTr)
                 this.view.updateState(newState)

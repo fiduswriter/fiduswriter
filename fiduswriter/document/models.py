@@ -11,7 +11,7 @@ from django.core import checks
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 
-from style.models import DocumentStyle, CitationStyle
+from style.models import OldDocumentStyle, CitationStyle, DocumentStyle
 
 from django.conf import settings
 
@@ -55,7 +55,7 @@ class DocumentTemplate(models.Model):
         default=FW_DOCUMENT_VERSION
     )
     definition_hash = models.CharField(max_length=22, default='', blank=True)
-    document_styles = models.ManyToManyField(DocumentStyle)
+    document_styles = models.ManyToManyField(OldDocumentStyle)
     citation_styles = models.ManyToManyField(CitationStyle)
     export_templates = models.ManyToManyField(ExportTemplate, blank=True)
     user = models.ForeignKey(
@@ -77,12 +77,11 @@ class DocumentTemplate(models.Model):
                 short_title='default'
             )
             self.citation_styles.add(style)
-        # TODO: add a field to classify document styles by used fields
-        if self.document_styles.count() == 0:
-            style, created = DocumentStyle.objects.get_or_create(
-                filename='default'
-            )
-            self.document_styles.add(style)
+        if self.documentstyle_set.count() == 0:
+            doc_style = DocumentStyle()
+            doc_style.document_template = self
+            # TODO: add some style content to this style
+            doc_style.save()
 
     def is_deletable(self):
         reverse_relations = [
@@ -129,7 +128,7 @@ class DocumentTemplate(models.Model):
 def default_template():
     # We need to get the historical version of the model as newer versions
     # may have changed in structure
-    template = DocumentTemplate.objects.first()
+    template = DocumentTemplate.objects.filter(user=None).first()
     if template:
         return template.pk
     template = DocumentTemplate()
@@ -139,10 +138,6 @@ def default_template():
     template.save()
     for style in CitationStyle.objects.all():
         template.citation_styles.add(style)
-    for style in DocumentStyle.objects.all():
-        template.document_styles.add(style)
-    for exporter in ExportTemplate.objects.all():
-        template.export_templates.add(exporter)
     return template.pk
 
 

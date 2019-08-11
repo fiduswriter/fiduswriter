@@ -17,13 +17,14 @@ from django.core.paginator import Paginator, EmptyPage
 
 from user.util import get_user_avatar_url
 from document.models import Document, AccessRight, DocumentRevision, \
-    ExportTemplate, DocumentTemplate, default_template, \
+    DocumentTemplate, default_template, \
     AccessRightInvite, CAN_UPDATE_DOCUMENT, FW_DOCUMENT_VERSION
 from usermedia.models import DocumentImage, Image
 from bibliography.models import Entry
 from document.helpers.serializers import PythonWithURLSerializer
 from bibliography.views import serializer
-from style.models import CitationStyle, CitationLocale, DocumentStyle
+from style.models import CitationStyle, CitationLocale, DocumentStyle, \
+    ExportTemplate
 from base.html_email import html_email
 from user.models import TeamMember
 
@@ -336,7 +337,11 @@ def get_documentlist(request):
             response['team_members'].append(tm_object)
         serializer = PythonWithURLSerializer()
         export_temps = serializer.serialize(
-            ExportTemplate.objects.all()
+            ExportTemplate.objects.filter(
+                Q(document_template__user=None) |
+                Q(document_template__user=request.user)
+            ),
+            fields = ['file_type', 'template_file', 'title']
         )
         response['export_templates'] = [obj['fields'] for obj in export_temps]
         cit_styles = serializer.serialize(
@@ -346,8 +351,12 @@ def get_documentlist(request):
         cit_locales = serializer.serialize(CitationLocale.objects.all())
         response['citation_locales'] = [obj['fields'] for obj in cit_locales]
         doc_styles = serializer.serialize(
-            DocumentStyle.objects.all(),
-            use_natural_foreign_keys=True
+            DocumentStyle.objects.filter(
+                Q(document_template__user=None) |
+                Q(document_template__user=request.user)
+            ),
+            use_natural_foreign_keys=True,
+            fields = ['title', 'slug', 'contents', 'documentstylefile_set']
         )
         response['document_styles'] = [obj['fields'] for obj in doc_styles]
         doc_templates = DocumentTemplate.objects.filter(

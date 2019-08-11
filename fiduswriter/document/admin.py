@@ -31,17 +31,26 @@ class DocumentTemplateAdmin(admin.ModelAdmin):
 
     def duplicate(self, request, queryset):
         for template in queryset:
-            document_styles = list(template.document_styles.all())
             citation_styles = list(template.citation_styles.all())
-            export_templates = list(template.export_templates.all())
+            document_styles = list(template.documentstyle_set.all())
+            export_templates = list(template.exporttemplate_set.all())
             template.pk = None
             template.save()
-            for ds in document_styles:
-                template.document_styles.add(ds)
             for cs in citation_styles:
                 template.citation_styles.add(cs)
+            for ds in document_styles:
+                style_files = list(ds.documentstylefile_set.all())
+                ds.pk = None
+                ds.document_template = template
+                ds.save()
+                for sf in style_files:
+                    sf.pk = None
+                    sf.style = ds
+                    sf.save()
             for et in export_templates:
-                template.export_templates.add(et)
+                et.pk = None
+                et.document_template = template
+                et.save()
     duplicate.short_description = _("Duplicate selected document templates")
 
 
@@ -67,10 +76,3 @@ class DocumentRevisionAdmin(admin.ModelAdmin):
 
 
 admin.site.register(models.DocumentRevision, DocumentRevisionAdmin)
-
-
-class ExportTemplateAdmin(admin.ModelAdmin):
-    pass
-
-
-admin.site.register(models.ExportTemplate, ExportTemplateAdmin)

@@ -99,15 +99,14 @@ export class PrintExporter extends HTMLExporter {
         // Override the default as we need to use the original URLs in print.
         const docStyle = this.documentStyles.find(docStyle => docStyle.filename===doc.settings.documentstyle)
 
-        const docStyleCSS = `
-        ${docStyle.fonts.map(font => {
-            return `@font-face {${
-                font[1].replace('[URL]', font[0])
-            }}`
-        }).join('\n')}
-        ${docStyle.contents}
-        `
-        this.styleSheets.push({contents: docStyleCSS})
+        let contents = docStyle.contents
+        docStyle.documentstylefile_set.forEach(
+            ([url, filename]) => contents = contents.replace(
+                new RegExp(filename, 'g'),
+                url
+            )
+        )
+        this.styleSheets.push({contents})
     }
 
     loadStyles() {

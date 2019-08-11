@@ -17,6 +17,13 @@ class DocumentFontAdmin(admin.ModelAdmin):
 admin.site.register(models.DocumentFont, DocumentFontAdmin)
 
 
+class DocumentStyleFileAdmin(admin.ModelAdmin):
+    pass
+
+
+admin.site.register(models.DocumentStyleFile, DocumentStyleFileAdmin)
+
+
 class CitationStyleAdmin(admin.ModelAdmin):
     pass
 
@@ -29,3 +36,10 @@ class CitationLocaleAdmin(admin.ModelAdmin):
 
 
 admin.site.register(models.CitationLocale, CitationLocaleAdmin)
+
+
+class ExportTemplateAdmin(admin.ModelAdmin):
+    pass
+
+
+admin.site.register(models.ExportTemplate, ExportTemplateAdmin)

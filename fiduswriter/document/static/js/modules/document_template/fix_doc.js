@@ -57,11 +57,11 @@ export function adjustDocToTemplate(miniDoc, template, documentStyles, citationS
         doc.attrs.papersize = doc.attrs.papersizes[0]
     }
 
-    if (!documentStyles.map(style => style.filename).includes(doc.attrs.documentstyle)) {
+    if (!documentStyles.map(style => style.slug).includes(doc.attrs.documentstyle)) {
         if (!documentStyles.length) {
             throw new Error('No document styles have been defined for document template.')
         }
-        doc.attrs.documentstyle = documentStyles[0].filename
+        doc.attrs.documentstyle = documentStyles[0].slug
     }
 
     if (!citationStyles.map(style => style.short_title).includes(doc.attrs.citationstyle)) {

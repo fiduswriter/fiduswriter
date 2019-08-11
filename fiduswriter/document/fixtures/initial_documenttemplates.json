@@ -1,0 +1,26 @@
+[
+{
+    "model": "document.documenttemplate",
+    "pk": 1,
+    "fields": {
+        "title": "Standard Article",
+        "definition": "{\n    \"type\": \"article\",\n    \"content\": [{\n        \"type\": \"title\"\n    }, {\n        \"type\": \"heading_part\",\n        \"attrs\": {\n            \"id\": \"subtitle\",\n            \"title\": \"Subtitle\",\n            \"initial\": [{\n                \"type\": \"heading1\",\n                \"attrs\": {\n                    \"id\": \"H6323428\"\n                }\n            }],\n            \"optional\": \"hidden\",\n            \"hidden\": true,\n            \"elements\": [\"heading1\"],\n            \"marks\": [\"strong\", \"em\", \"link\", \"anchor\"],\n            \"metadata\": \"subtitle\"\n        },\n        \"content\": [{\n            \"type\": \"heading1\",\n            \"attrs\": {\n                \"id\": \"H6323428\"\n            }\n        }]\n    }, {\n        \"type\": \"contributors_part\",\n        \"attrs\": {\n            \"id\": \"authors\",\n            \"title\": \"Authors\",\n            \"optional\": \"hidden\",\n            \"hidden\": true,\n            \"item_title\": \"Author\",\n            \"metadata\": \"authors\"\n        }\n    }, {\n        \"type\": \"richtext_part\",\n        \"attrs\": {\n            \"id\": \"abstract\",\n            \"title\": \"Abstract\",\n            \"optional\": \"hidden\",\n            \"hidden\": true,\n            \"elements\": [\"paragraph\", \"heading1\", \"heading2\", \"heading3\", \"heading4\", \"heading5\", \"heading6\", \"figure\", \"ordered_list\", \"bullet_list\", \"horizontal_rule\", \"equation\", \"citation\", \"blockquote\", \"footnote\", \"table\"],\n            \"marks\": [\"strong\", \"em\", \"link\", \"anchor\"],\n            \"metadata\": \"abstract\"\n        },\n        \"content\": [{\n            \"type\": \"paragraph\"\n        }]\n    }, {\n        \"type\": \"tags_part\",\n        \"attrs\": {\n            \"id\": \"keywords\",\n            \"title\": \"Keywords\",\n            \"optional\": \"hidden\",\n            \"hidden\": true,\n            \"item_title\": \"Keyword\",\n            \"metadata\": \"keywords\"\n        }\n    }, {\n        \"type\": \"richtext_part\",\n        \"attrs\": {\n            \"id\": \"body\",\n            \"title\": \"Body\",\n            \"elements\": [\"paragraph\", \"heading1\", \"heading2\", \"heading3\", \"heading4\", \"heading5\", \"heading6\", \"figure\", \"ordered_list\", \"bullet_list\", \"horizontal_rule\", \"equation\", \"citation\", \"blockquote\", \"footnote\", \"table\"],\n            \"marks\": [\"strong\", \"em\", \"link\", \"anchor\"]\n        },\n        \"content\": [{\n            \"type\": \"paragraph\"\n        }]\n    }],\n    \"attrs\": {\n        \"footnote_elements\": [\"paragraph\", \"heading1\", \"heading2\", \"heading3\", \"heading4\", \"heading5\", \"heading6\", \"figure\", \"ordered_list\", \"bullet_list\", \"horizontal_rule\", \"equation\", \"citation\", \"blockquote\", \"table\"],\n        \"footnote_marks\": [\"strong\", \"em\", \"link\", \"anchor\"],\n        \"languages\": [\"af-ZA\", \"sq-AL\", \"ar\", \"ast\", \"be\", \"br\", \"bg\", \"ca\", \"ca-ES-Valencia\", \"zh-CN\", \"da\", \"nl\", \"en-AU\", \"en-CA\", \"en-NZ\", \"en-ZA\", \"en-GB\", \"en-US\", \"eo\", \"fr\", \"gl\", \"de-DE\", \"de-AU\", \"de-CH\", \"el\", \"he\", \"is\", \"it\", \"ja\", \"km\", \"lt\", \"ml\", \"nb-NO\", \"nn-NO\", \"fa\", \"pl\", \"pt-BR\", \"pt-PT\", \"ro\", \"ru\", \"tr\", \"sr-SP-Cy\", \"sr-SP-Lt\", \"sk\", \"sl\", \"es\", \"sv\", \"ta\", \"tl\", \"uk\"],\n        \"papersizes\": [\"A4\", \"US Letter\"],\n        \"template\": \"Standard Article\",\n        \"papersize\": \"A4\",\n        \"language\": \"af-ZA\",\n        \"bibliography_header\": {}\n    }\n}\n",
+        "doc_version": "3.0",
+        "definition_hash": "9oh5bHynenFdZxCA5NvXVQ",
+        "user": null,
+        "added": "2019-07-09T09:23:49Z",
+        "updated": "2019-08-08T10:29:44.304Z",
+        "citation_styles": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+        ]
+    }
+}
+]

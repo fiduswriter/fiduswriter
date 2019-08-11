@@ -4,8 +4,8 @@ from django.core.management import call_command
 from django.conf import settings
 from django.contrib.flatpages.models import FlatPage
 
-from style.models import DocumentStyle
-from document.models import ExportTemplate
+from document.models import DocumentTemplate
+from style.models import DocumentStyle, CitationStyle
 
 
 class Command(BaseCommand):
@@ -40,6 +40,22 @@ class Command(BaseCommand):
             call_command("migrate", fake=True)
         else:
             call_command("migrate")
+        if CitationStyle.objects.count() == 0:
+            call_command(
+                "loaddata",
+                os.path.join(
+                    settings.SRC_PATH,
+                    "style/fixtures/citation_styles.json"
+                )
+            )
+        if DocumentTemplate.objects.count() == 0:
+            call_command(
+                "loaddata",
+                os.path.join(
+                    settings.SRC_PATH,
+                    "document/fixtures/initial_documenttemplates.json"
+                )
+            )
         if DocumentStyle.objects.count() == 0:
             call_command(
                 "loaddata",
@@ -54,14 +70,6 @@ class Command(BaseCommand):
                 os.path.join(
                     settings.SRC_PATH,
                     "base/fixtures/initial_terms.json"
-                )
-            )
-        if ExportTemplate.objects.count() == 0:
-            call_command(
-                "loaddata",
-                os.path.join(
-                    settings.SRC_PATH,
-                    "document/fixtures/initial_export_templates.json"
                 )
             )
         if (

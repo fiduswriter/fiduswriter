@@ -154,13 +154,13 @@ export class ModDocumentTemplate {
                 action: editor => {
                     const article = editor.view.state.doc.firstChild
                     const attrs = Object.assign({}, article.attrs)
-                    attrs.documentstyle = docStyle.filename
+                    attrs.documentstyle = docStyle.slug
                     editor.view.dispatch(
                         editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta('settings', true)
                     )
                 },
                 selected: editor => {
-                    return editor.view.state.doc.firstChild.attrs.documentstyle === docStyle.filename
+                    return editor.view.state.doc.firstChild.attrs.documentstyle === docStyle.slug
                 }
             }
         })

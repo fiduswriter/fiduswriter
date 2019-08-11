@@ -2,8 +2,8 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 
-from document.models import DocumentTemplate, ExportTemplate
-from style.models import CitationStyle, DocumentStyle
+from document.models import DocumentTemplate
+from style.models import CitationStyle
 from document.helpers.serializers import PythonWithURLSerializer
 
 @login_required
@@ -51,10 +51,10 @@ def get(request):
         return JsonResponse({}, status=405)
     serializer = PythonWithURLSerializer()
     export_templates = serializer.serialize(
-        ExportTemplate.objects.all()
+        doc_template.exporttemplate_set.all()
     )
     document_styles = serializer.serialize(
-        DocumentStyle.objects.all(),
+        doc_template.documentstyle_set.all(),
         use_natural_foreign_keys=True
     )
     citation_styles = serializer.serialize(
@@ -66,19 +66,13 @@ def get(request):
             'title': doc_template.title,
             'definition': doc_template.definition,
             'definition_hash': doc_template.definition_hash,
-            'export_templates': [
-                f.id for f in doc_template.export_templates.all()
-            ],
-            'document_styles': [
-                f.id for f in doc_template.document_styles.all()
-            ],
+            'export_templates': export_templates,
+            'document_styles': document_styles,
             'citation_styles': [
                 f.id for f in doc_template.citation_styles.all()
             ],
         },
-        'document_styles': document_styles,
         'citation_styles': citation_styles,
-        'export_templates': export_templates
     }
     return JsonResponse(
         response,
@@ -99,9 +93,27 @@ def copy(request):
         return JsonResponse({}, status=405)
     response = {}
     status = 201
-    doc_template.id = None
+    citation_styles = list(doc_template.citation_styles.all())
+    document_styles = list(doc_template.documentstyle_set.all())
+    export_templates = list(doc_template.exporttemplate_set.all())
+    doc_template.pk = None
     doc_template.user = request.user
     doc_template.save()
+    for cs in citation_styles:
+        doc_template.citation_styles.add(cs)
+    for ds in document_styles:
+        style_files = list(ds.documentstylefile_set.all())
+        ds.pk = None
+        ds.document_template = doc_template
+        ds.save()
+        for sf in style_files:
+            sf.pk = None
+            sf.style = ds
+            sf.save()
+    for et in export_templates:
+        et.pk = None
+        et.document_template = doc_template
+        et.save()
     response['new_id'] = doc_template.id
     return JsonResponse(
         response,

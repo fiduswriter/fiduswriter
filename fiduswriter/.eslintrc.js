@@ -26,10 +26,10 @@ module.exports = {
         "globalReturn": false,
       }
     },
-    // "parserOptions": {
-    //     "ecmaVersion": 2018,
-    //     "sourceType": "module"
-    // },
+    "parserOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module"
+    },
     "rules": {
         "accessor-pairs": "error",
         "array-bracket-newline": "off",

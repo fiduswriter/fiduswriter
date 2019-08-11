@@ -92,7 +92,7 @@ export class ModDocumentTemplate {
             if (template.file_type==='docx') {
                 return {
                     class: 'export_template',
-                    title: `${template.file_name} (DOCX)`,
+                    title: `${template.title} (DOCX)`,
                     type: 'action',
                     tooltip: gettext('Export the document to a DOCX file with the given template.'),
                     action: editor => {
@@ -117,7 +117,7 @@ export class ModDocumentTemplate {
             } else {
                 return {
                     class: 'export_template',
-                    title: `${template.file_name} (ODT)`,
+                    title: `${template.title} (ODT)`,
                     type: 'action',
                     tooltip: gettext('Export the document to an ODT file with the given template.'),
                     action: editor => {

@@ -81,17 +81,7 @@ export class DocTemplatesOverview {
                 {
                     select: [1, 5],
                     sortable: false
-                },
-                // {
-                //     select: 3,
-                //     type: "date",
-                //     format: "YYYY-MM-DD"
-                // },
-                // {
-                //     select: 4,
-                //     type: "date",
-                //     format: "YYYY-DD-MM"
-                // }
+                }
             ]
         })
         this.lastSort = {column: 0, dir: 'asc'}
@@ -107,15 +97,21 @@ export class DocTemplatesOverview {
         return [
             String(docTemplate.id),
             `<input type="checkbox" class="entry-select" data-id="${docTemplate.id}">`,
-            `<span class="fw-data-table-title fw-inline">
+            `<span class="${ docTemplate.is_owner ? 'fw-data-table-title ' : '' }fw-inline">
                 <i class="far fa-file"></i>
-                <a href='/templates/${docTemplate.id}/'>
-                    ${
-                        docTemplate.title.length ?
-                        escapeText(docTemplate.title) :
-                        gettext('Untitled')
-                    }
-                </a>
+                ${
+                    docTemplate.is_owner ?
+                    `<a href='/templates/${docTemplate.id}/'>
+                        ${
+                            docTemplate.title.length ?
+                            escapeText(docTemplate.title) :
+                            gettext('Untitled')
+                        }
+                    </a>` :
+                    docTemplate.title.length ?
+                    escapeText(docTemplate.title) :
+                    gettext('Untitled')
+                }
             </span>`,
             docTemplate.added, // format?
             docTemplate.updated, // format ?

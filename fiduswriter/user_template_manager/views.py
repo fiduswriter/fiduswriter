@@ -44,8 +44,8 @@ def get(request):
         status = 201
     else:
         doc_template = DocumentTemplate.objects.filter(
-            Q(id=id),
-            Q(user=request.user) | Q(user=None)
+            id=id,
+            user=request.user
         ).first()
         status = 200
     if doc_template is None:
@@ -84,6 +84,31 @@ def get(request):
 
 
 @login_required
+def save(request):
+    if not request.is_ajax() or request.method != 'POST':
+        return JsonResponse({}, status=405)
+    id = request.POST['id']
+    doc_template = DocumentTemplate.objects.filter(
+        id=id,
+        user=request.user
+    ).first()
+    if doc_template is None:
+        return JsonResponse({}, status=405)
+    response = {}
+    status = 200
+    doc_template.definition = request.POST['value']
+    doc_template.title = request.POST['title']
+    doc_template.definition_hash = request.POST['hash']
+    print(request.POST.getlist('citation_styles[]'))
+    doc_template.citation_styles.set(request.POST.getlist('citation_styles[]'))
+    doc_template.save()
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@login_required
 def copy(request):
     if not request.is_ajax() or request.method != 'POST':
         return JsonResponse({}, status=405)
@@ -96,16 +121,16 @@ def copy(request):
         return JsonResponse({}, status=405)
     response = {}
     status = 201
-    citation_styles = list(doc_template.citation_styles.all())
-    document_styles = list(doc_template.documentstyle_set.all())
-    export_templates = list(doc_template.exporttemplate_set.all())
+    citation_styles = [style for style in doc_template.citation_styles.all()]
+    document_styles = [style for style in doc_template.documentstyle_set.all()]
+    export_templates = [template for template in doc_template.exporttemplate_set.all()]
     doc_template.pk = None
     doc_template.user = request.user
     doc_template.save()
     for cs in citation_styles:
         doc_template.citation_styles.add(cs)
     for ds in document_styles:
-        style_files = list(ds.documentstylefile_set.all())
+        style_files = [file for file in ds.documentstylefile_set.all()]
         ds.pk = None
         ds.document_template = doc_template
         ds.save()

@@ -1,5 +1,5 @@
 import {DocumentTemplateDesigner} from "../document_template"
-import {whenReady, postJson, setDocTitle} from "../common"
+import {whenReady, postJson, setDocTitle, findTarget, post, addAlert} from "../common"
 import {FeedbackTab} from "../feedback"
 
 export class DocTemplatesEditor {
@@ -22,7 +22,6 @@ export class DocTemplatesEditor {
                         selected: this.template.citation_styles.includes(style.pk)
                     })
                 )
-                // console.log({json})
                 return whenReady()
             }
         ).then(
@@ -36,6 +35,7 @@ export class DocTemplatesEditor {
                     document.body.querySelector('#template-editor')
                 )
                 this.templateDesigner.init()
+                this.bind()
             }
         )
     }
@@ -56,11 +56,58 @@ export class DocTemplatesEditor {
                 <h1>${gettext('Template Editor')}</h1>
                 <div id="template-editor"></div>
                 <div id="errors"></div>
-                <div id="other-elements"></div>
+                <div class="ui-dialog-buttonset">
+                    <button type="button" class="fw-dark fw-button ui-button ui-corner-all ui-widget save">
+                        ${gettext('Save')}
+                    </button>
+                    <button type="button" class="fw-orange fw-button ui-button ui-corner-all ui-widget close">
+                        ${gettext('Close')}
+                    </button>
+                </div>
             </div>
         </div>`
         setDocTitle(gettext('Template Editor'), this.app)
         const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
         feedbackTab.init()
+    }
+
+    showErrors(errors) {
+        document.querySelector('#errors').innerHTML = Object.values(errors).map(error => `<li>${error}</li>`).join('')
+    }
+
+    save() {
+        document.querySelector('#errors').innerHTML = ''
+        const {valid, value, citationStyles, errors, hash, title} = this.templateDesigner.getCurrentValue()
+        if (!valid) {
+            this.showErrors(errors)
+        } else {
+            post('/api/user_template_manager/save/', {
+                id: this.id,
+                value: JSON.stringify(value),
+                citation_styles: citationStyles,
+                hash,
+                title
+            }).then(
+                () => addAlert('info', gettext('Saved template'))
+            )
+        }
+    }
+
+    bind() {
+        document.body.addEventListener('click', event => {
+            const el = {}
+            switch (true) {
+                case findTarget(event, 'button.save', el):
+                    event.preventDefault()
+                    this.save()
+                    break
+                case findTarget(event, 'button.close', el):
+                    event.preventDefault()
+                    this.app.goTo('/templates/')
+                    break
+                default:
+                    break
+            }
+        })
     }
 }

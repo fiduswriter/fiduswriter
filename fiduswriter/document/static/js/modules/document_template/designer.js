@@ -522,12 +522,13 @@ export class DocumentTemplateDesigner {
 
     onScroll() {
         const fromContainer = this.dom.querySelector('.from-container'),
-            rect = fromContainer.getBoundingClientRect()
-
-        if (rect.height + rect.top > 0) {
+            toContainer = this.dom.querySelector('.to-container'),
+            fromRect = fromContainer.getBoundingClientRect(),
+            toRect = toContainer.getBoundingClientRect()
+        if (toRect.height + 25 + fromRect.top > 0) {
             const contentSize = 6 * 61, // 61px for each content type.
-                maxPadding = rect.height - contentSize - 10 // 10px for padding bottom
-            fromContainer.style.paddingTop = `${Math.min(8-Math.min(rect.top, 0), maxPadding)}px`
+                maxPadding = toRect.height - contentSize - 20; // 20px for padding bottom
+            fromContainer.style.paddingTop = `${Math.min(10-Math.min(fromRect.top, 0), maxPadding)}px`
         }
 
     }

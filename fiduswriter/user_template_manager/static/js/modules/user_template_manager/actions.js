@@ -64,8 +64,6 @@ export class DocTemplatesActions {
     }
 
     copyDocTemplate(oldDocTemplate) {
-        const docTemplate = Object.assign({}, oldDocTemplate)
-        docTemplate.is_owner = true
         return postJson(
             '/api/user_template_manager/copy/',
             {id: oldDocTemplate.id}
@@ -76,6 +74,8 @@ export class DocTemplatesActions {
             }
         ).then(
             ({json}) => {
+                const docTemplate = JSON.parse(JSON.stringify(oldDocTemplate))
+                docTemplate.is_owner = true
                 docTemplate.id = json['new_id']
                 this.docTemplatesOverview.templateList.push(docTemplate)
                 this.docTemplatesOverview.addDocTemplateToTable(docTemplate)

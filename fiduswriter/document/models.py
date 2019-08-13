@@ -61,7 +61,8 @@ class DocumentTemplate(models.Model):
         reverse_relations = [
             f for f in self._meta.model._meta.get_fields()
             if (f.one_to_many or f.one_to_one) and
-            f.auto_created and not f.concrete
+            f.auto_created and not f.concrete and
+            not f.name in ['documentstyle', 'exporttemplate']
         ]
 
         for r in reverse_relations:

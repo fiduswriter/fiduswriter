@@ -103,11 +103,14 @@ function addHeadingIds(oldState, newState, editors) {
 }
 
 export class DocumentTemplateDesigner {
-    constructor({staticUrl}, title, value, citationStyles, dom) {
+    constructor({staticUrl}, id, title, value, citationStyles, documentStyles, exportTemplates, dom) {
         this.staticUrl = staticUrl
+        this.id = id
         this.title = title
         this.value = value
         this.citationStyles = citationStyles
+        this.documentStyles = documentStyles
+        this.exportTemplates = exportTemplates
         this.dom = dom
 
         this.editors = []

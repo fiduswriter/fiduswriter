@@ -32,7 +32,7 @@ export const bulkModel = [
         }
     },
     {
-        title: gettext('Copy selected'),
+        title: gettext('Duplicate selected'),
         action: overview => {
             const ids = overview.getSelected()
             ids.forEach(id =>

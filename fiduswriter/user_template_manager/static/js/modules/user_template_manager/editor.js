@@ -29,9 +29,12 @@ export class DocTemplatesEditor {
                 this.render()
                 this.templateDesigner = new DocumentTemplateDesigner(
                     {staticUrl: this.staticUrl},
+                    this.id,
                     this.template.title,
                     this.template.definition,
                     this.citationStyles,
+                    this.template.document_styles,
+                    this.template.export_templates,
                     document.body.querySelector('#template-editor')
                 )
                 this.templateDesigner.init()

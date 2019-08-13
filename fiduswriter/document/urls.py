@@ -54,47 +54,52 @@ urlpatterns = [
         name='comment_notify'
     ),
     url(
-        '^maintenance/get_all/$',
+        '^admin/get_template_extras/$',
+        views.get_template_extras,
+        name='get_template_extras'
+    ),
+    url(
+        '^admin/get_all/$',
         views.get_all_docs,
         name='get_all_docs'
     ),
     url(
-        '^maintenance/save_doc/$',
+        '^admin/save_doc/$',
         views.save_doc,
         name='save_doc'
     ),
     url(
-        '^maintenance/add_images_to_doc/$',
+        '^admin/add_images_to_doc/$',
         views.add_images_to_doc,
         name='add_images_to_doc'
     ),
     url(
-        '^maintenance/get_all_revision_ids/$',
+        '^admin/get_all_revision_ids/$',
         views.get_all_revision_ids,
         name='get_all_revision_ids'
     ),
     url(
-        '^maintenance/get_all_template_ids/$',
+        '^admin/get_all_template_ids/$',
         views.get_all_template_ids,
         name='get_all_template_ids'
     ),
     url(
-        '^maintenance/get_template/$',
+        '^admin/get_template/$',
         views.get_template,
         name='get_template'
     ),
     url(
-        '^maintenance/save_template/$',
+        '^admin/save_template/$',
         views.save_template,
         name='save_template'
     ),
     url(
-        '^maintenance/get_user_biblist/$',
+        '^admin/get_user_biblist/$',
         views.get_user_biblist,
         name='get_user_biblist'
     ),
     url(
-        '^maintenance/update_revision/$',
+        '^admin/update_revision/$',
         views.update_revision,
         name='update_revision'
     )

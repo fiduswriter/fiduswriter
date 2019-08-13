@@ -1095,6 +1095,36 @@ def get_template(request):
 
 
 @staff_member_required
+def get_template_extras(request):
+    if not request.is_ajax() or request.method != 'POST':
+        return JsonResponse({}, status=405)
+    id = request.POST['id']
+    doc_template = DocumentTemplate.objects.filter(
+        id=id
+    ).first()
+    status = 200
+    if doc_template is None:
+        return JsonResponse({}, status=405)
+    serializer = PythonWithURLSerializer()
+    export_templates = serializer.serialize(
+        doc_template.exporttemplate_set.all()
+    )
+    document_styles = serializer.serialize(
+        doc_template.documentstyle_set.all(),
+        use_natural_foreign_keys=True,
+        fields=['title', 'slug', 'contents', 'documentstylefile_set']
+    )
+    response = {
+        'export_templates': export_templates,
+        'document_styles': document_styles,
+    }
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@staff_member_required
 def save_template(request):
     response = {}
     status = 405

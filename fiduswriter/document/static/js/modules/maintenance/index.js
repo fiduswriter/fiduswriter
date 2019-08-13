@@ -38,7 +38,7 @@ export class DocMaintenance {
     getDocBatch() {
         this.batch++
         postJson(
-            '/api/document/maintenance/get_all/', {batch: this.batch}
+            '/api/document/admin/get_all/', {batch: this.batch}
         ).then(
             ({json}) => {
                 const docs = window.JSON.parse(json.docs)
@@ -83,7 +83,7 @@ export class DocMaintenance {
             // the document user.
 
             p = postJson(
-                '/api/document/maintenance/get_user_biblist/',
+                '/api/document/admin/get_user_biblist/',
                 {
                     user_id: doc.fields.owner
                 }
@@ -114,7 +114,7 @@ export class DocMaintenance {
     saveDoc(doc) {
         this.docSavesLeft++
         const p1 = post(
-            '/api/document/maintenance/save_doc/',
+            '/api/document/admin/save_doc/',
             {
                 id: doc.id,
                 contents: window.JSON.stringify(doc.contents),
@@ -126,7 +126,7 @@ export class DocMaintenance {
         ), promises = [p1]
         if (doc.imageIds) {
             const p2 = post(
-                '/api/document/maintenance/add_images_to_doc/',
+                '/api/document/admin/add_images_to_doc/',
                 {
                     doc_id: doc.id,
                     ids: doc.imageIds
@@ -147,7 +147,7 @@ export class DocMaintenance {
     updateDocumentTemplates() {
         addAlert('info', gettext('Updating document templates.'))
         postJson(
-            '/api/document/maintenance/get_all_template_ids/'
+            '/api/document/admin/get_all_template_ids/'
         ).then(
             ({json}) => {
                 const count = json.template_ids.length
@@ -165,7 +165,7 @@ export class DocMaintenance {
 
     updateDocumentTemplate(id) {
         postJson(
-            `/api/document/maintenance/get_template/`, {id}
+            `/api/document/admin/get_template/`, {id}
         ).then(
             // The field 'definition' of the document template module has the same
             // structure as the field 'contents' of the document module.
@@ -195,7 +195,7 @@ export class DocMaintenance {
     saveDocumentTemplate(doc) {
         this.docTemplatesSavesLeft++
         post(
-            '/api/document/maintenance/save_template/',
+            '/api/document/admin/save_template/',
             {
                 id: doc.id,
                 definition: window.JSON.stringify(doc.contents),
@@ -214,7 +214,7 @@ export class DocMaintenance {
     updateRevisions() {
         addAlert('info', gettext('Updating saved revisions.'))
         postJson(
-            '/api/document/maintenance/get_all_revision_ids/'
+            '/api/document/admin/get_all_revision_ids/'
         ).then(
             ({json}) => {
                 this.revSavesLeft = json.revision_ids.length
@@ -269,7 +269,7 @@ export class DocMaintenance {
         zipfs.generateAsync({type:"blob", mimeType: "application/fidus+zip"}).then(blob => {
 
             post(
-                '/api/document/maintenance/update_revision/',
+                '/api/document/admin/update_revision/',
                 {
                     id,
                     file: {

@@ -123,7 +123,9 @@ def copy(request):
     status = 201
     citation_styles = [style for style in doc_template.citation_styles.all()]
     document_styles = [style for style in doc_template.documentstyle_set.all()]
-    export_templates = [template for template in doc_template.exporttemplate_set.all()]
+    export_templates = [
+        template for template in doc_template.exporttemplate_set.all()
+    ]
     doc_template.pk = None
     doc_template.user = request.user
     doc_template.save()

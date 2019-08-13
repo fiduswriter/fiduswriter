@@ -1,4 +1,4 @@
-import {whenReady, findTarget} from "../common"
+import {whenReady, findTarget, postJson} from "../common"
 import {DocumentTemplateDesigner} from "./designer"
 
 export class DocumentTemplateAdmin {
@@ -6,10 +6,28 @@ export class DocumentTemplateAdmin {
         this.staticUrl = staticUrl
         this.definitionTextarea = false
         this.templateDesigner = false
+        this.templateExtras = false
+        const locationParts = window.location.href.split('/')
+        let id = parseInt(locationParts[locationParts.length-3])
+        if (isNaN(id)) {
+            id = 0
+        }
+        this.id = id
     }
 
     init() {
-        whenReady().then(() => {
+        const initialTasks = [
+            whenReady()
+        ]
+        if (this.id) {
+            initialTasks.push(
+                postJson('/api/document/admin/get_template_extras/', {id: this.id}).then(
+                    ({json}) => this.templateExtras = json
+                )
+            )
+        }
+
+        Promise.all(initialTasks).then(() => {
             this.titleInput = document.querySelector('#id_title')
             this.titleBlock = document.querySelector('div.field-title')
             this.definitionTextarea = document.querySelector('textarea[name=definition]')
@@ -26,6 +44,7 @@ export class DocumentTemplateAdmin {
     initDesigner() {
         this.templateDesigner = new DocumentTemplateDesigner(
             {staticUrl: this.staticUrl},
+            this.id,
             this.titleInput.value,
             JSON.parse(this.definitionTextarea.value),
             Array.from(
@@ -39,6 +58,8 @@ export class DocumentTemplateAdmin {
                     }
                 )
             ),
+            this.templateExtras.document_styles || [],
+            this.templateExtras.export_templates || [],
             document.getElementById('template-editor')
         )
         this.templateDesigner.init()

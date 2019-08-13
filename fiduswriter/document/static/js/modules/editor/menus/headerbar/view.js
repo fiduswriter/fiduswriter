@@ -21,6 +21,7 @@ export class HeaderbarView {
 
         this.bindEvents()
         this.update()
+        this.lastOpened = null
     }
 
     removeUnavailable(menu) {
@@ -75,12 +76,22 @@ export class HeaderbarView {
                 seekItem = seekItem.previousElementSibling
             }
             const menu = this.editor.menu.headerbarModel.content[menuNumber]
+            console.log("Clicked menu is  ")
+            console.log(menu)
 
             let menuItem = menu
 
             while (searchPath.length) {
                 menuItem = menuItem.content[searchPath.pop()]
             }
+
+            console.log(" --- ")
+            console.log(menuItem)
+/*            if(this.lastOpened === null){
+                this.lastOpened = menuItem
+            }*/
+//            console.log("If menu includes menuItem")
+//            console.log(menu.includes(menuItem))
 
             switch (menuItem.type) {
                 case 'action':
@@ -101,7 +112,26 @@ export class HeaderbarView {
                     this.update()
                     break
                 case 'menu':
-                    this.closeMenu(menu)
+                    if(this.lastOpened === null){
+                        this.lastOpened = menuItem
+                        this.closeMenu(menu)
+                        //normal flow
+                    }
+                    else{
+                        if(this.lastOpened.content.find(menu => menu.id === menuItem.id)){
+                            //do not close menus because lastOpened is a parent of menuItem
+                            // we want the parent to be remained opened
+                            console.log("DO NOT CLOSE MENUS")
+                            this.lastOpened = menuItem
+                        }
+                        else{
+                            // last Opened is not a parent of current menuItem so we close menu - normal flow
+                            this.closeMenu(menu)
+                            this.lastOpened = null
+                       }
+
+                    }
+
                     menuItem.open = true
                     this.update()
                     break
@@ -140,8 +170,16 @@ export class HeaderbarView {
         }
     }
 
+/*    inHierarchy(menuItem){
+        if
+    }*/
+
     closeMenu(menu) {
+/*    console.log("MENUS :- ")
+    console.log(menu)
+    console.log("MENU ITEMS :- ")*/
         menu.content.forEach(menuItem => {
+//        console.log(menuItem)
             if (menuItem.type === 'menu' && menuItem.open) {
                 menuItem.open = false
                 this.closeMenu(menuItem)

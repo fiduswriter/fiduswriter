@@ -527,7 +527,7 @@ export class DocumentTemplateDesigner {
             toRect = toContainer.getBoundingClientRect()
         if (toRect.height + 25 + fromRect.top > 0) {
             const contentSize = 6 * 61, // 61px for each content type.
-                maxPadding = toRect.height - contentSize - 20; // 20px for padding bottom
+                maxPadding = toRect.height - contentSize - 20 // 20px for padding bottom
             fromContainer.style.paddingTop = `${Math.min(10-Math.min(fromRect.top, 0), maxPadding)}px`
         }
 

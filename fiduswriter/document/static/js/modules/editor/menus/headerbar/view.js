@@ -393,6 +393,10 @@ export class HeaderbarView {
 
     getMenuMenuItemHTML(menuItem) {
         return `<span class="fw-pulldown-item${
+          menuItem.selected && menuItem.selected(this.editor) ?
+            ' selected' :
+            ''
+        }${
             menuItem.disabled && menuItem.disabled(this.editor) ?
             ' disabled' :
             ''

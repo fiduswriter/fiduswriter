@@ -21,7 +21,7 @@ export class HeaderbarView {
 
         this.bindEvents()
         this.update()
-        this.lastOpened = null
+        this.lastOpened = []
     }
 
     removeUnavailable(menu) {
@@ -87,11 +87,6 @@ export class HeaderbarView {
 
             console.log(" --- ")
             console.log(menuItem)
-/*            if(this.lastOpened === null){
-                this.lastOpened = menuItem
-            }*/
-//            console.log("If menu includes menuItem")
-//            console.log(menu.includes(menuItem))
 
             switch (menuItem.type) {
                 case 'action':
@@ -101,6 +96,7 @@ export class HeaderbarView {
                     menuItem.action(this.editor)
                     menu.open = false
                     this.closeMenu(menu)
+                    this.lastOpened = []
                     this.update()
                     break
                 case 'setting':
@@ -112,28 +108,56 @@ export class HeaderbarView {
                     this.update()
                     break
                 case 'menu':
-                    if(this.lastOpened === null){
-                        this.lastOpened = menuItem
-                        this.closeMenu(menu)
+                    if(this.lastOpened.length == 0 ){
+                        this.lastOpened = [menuItem]
+                        this.closeMenuV2(menu, menuItem)
+                        console.log("lastOpened initialized")
                         //normal flow
                     }
                     else{
-                        if(this.lastOpened.content.find(menu => menu.id === menuItem.id)){
-                            //do not close menus because lastOpened is a parent of menuItem
-                            // we want the parent to be remained opened
-                            console.log("DO NOT CLOSE MENUS")
-                            this.lastOpened = menuItem
-                        }
-                        else{
-                            // last Opened is not a parent of current menuItem so we close menu - normal flow
-                            this.closeMenu(menu)
-                            this.lastOpened = null
-                       }
+                        let flag = true
+                        console.log("This time : ", this.lastOpened )
 
+                         if(this.lastOpened[this.lastOpened.length -1].content.find(menu => menu.id === menuItem.id))
+                            {
+                                console.log("DO NOT CLOSE MENUS")
+                                this.lastOpened.push(menuItem)
+
+                                flag = false
+                            }
+                        if(flag){
+                        for(let index=this.lastOpened.length-2; index>=0; index--){
+                            console.log("Check id :- ", this.lastOpened[index].id)
+                            if(this.lastOpened[index].content.find(menu => menu.id === menuItem.id))
+                            {
+                                console.log("DO NOT CLOSE MENUS")
+//                                this.lastOpened.push(menuItem)
+                                let diff = this.lastOpened.length - (index + 1)
+                                if(diff > 0){//not last element
+                                    this.lastOpened.splice(index +1, diff)
+                                }
+
+                                this.lastOpened.push(menuItem)
+
+                                flag = false
+                                this.closeMenuV2(menu, menuItem)
+                                break
+                            }
+                        }
+                        }
+                        if(flag){
+                            console.log("flag is true")
+                            this.closeMenu(menu)
+                            this.lastOpened = [menuItem]
+
+                        }
                     }
 
                     menuItem.open = true
                     this.update()
+                    console.log("****************************************")
+                    console.log(this.lastOpened)
+                    console.log("****************************************")
                     break
                 default:
                     break
@@ -152,6 +176,7 @@ export class HeaderbarView {
                 } else if (menu.open) {
                     menu.open = false
                     this.closeMenu(menu)
+                    this.lastOpened = []
                 }
             })
             this.update()
@@ -162,6 +187,7 @@ export class HeaderbarView {
                     needUpdate = true
                     menu.open = false
                     this.closeMenu(menu)
+                    this.lastOpened = []
                 }
             })
             if (needUpdate) {
@@ -182,10 +208,26 @@ export class HeaderbarView {
 //        console.log(menuItem)
             if (menuItem.type === 'menu' && menuItem.open) {
                 menuItem.open = false
+                console.log("closed ", menu.id, " in normals")
                 this.closeMenu(menuItem)
             }
         })
     }
+
+    closeMenuV2(menu, current_menu_item) {
+        menu.content.forEach(menuItem => {
+
+            if (menuItem.type === 'menu' && menuItem.open ) {
+                console.log("WE ARE CHECKING IF WE CAN CLOSE ", menuItem.id , " checking if it is in ", this.lastOpened, " or is current item ", current_menu_item)
+                if(!this.lastOpened.includes(menuItem) && current_menu_item!=menuItem){
+                    menuItem.open = false
+                    console.log(menuItem.id , " was closed!")
+                }
+                this.closeMenuV2(menuItem, current_menu_item)
+            }
+        })
+    }
+
 
     onkeydown(event) {
         let name = keyName(event)

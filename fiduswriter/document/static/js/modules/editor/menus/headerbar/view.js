@@ -185,7 +185,6 @@ export class HeaderbarView {
             if (menuItem.type === 'menu' && menuItem.open) {
                 menuItem.open = false
                 this.closeAllMenu(menuItem)
-                console.log("closed ", menu.id, " in normals")
             }
         })
     }
@@ -193,7 +192,6 @@ export class HeaderbarView {
     closeOtherMenu(menu, currentMenuItem) {
         menu.content.forEach(menuItem => {
             if (menuItem.type === 'menu' && menuItem.open ) {
-            console.log("WE ARE CHECKING IF WE CAN CLOSE ", menuItem.id , " checking if it is in ", this.lastOpened, " or is current item ", current_menu_item)
                 if(!this.parentChain.includes(menuItem) && currentMenuItem!=menuItem){
                     menuItem.open = false
                 }

@@ -21,7 +21,7 @@ export class HeaderbarView {
 
         this.bindEvents()
         this.update()
-        this.lastOpened = []
+        this.parentChain = []
     }
 
     removeUnavailable(menu) {
@@ -76,17 +76,12 @@ export class HeaderbarView {
                 seekItem = seekItem.previousElementSibling
             }
             const menu = this.editor.menu.headerbarModel.content[menuNumber]
-            console.log("Clicked menu is  ")
-            console.log(menu)
 
             let menuItem = menu
 
             while (searchPath.length) {
                 menuItem = menuItem.content[searchPath.pop()]
             }
-
-            console.log(" --- ")
-            console.log(menuItem)
 
             switch (menuItem.type) {
                 case 'action':
@@ -95,8 +90,8 @@ export class HeaderbarView {
                     }
                     menuItem.action(this.editor)
                     menu.open = false
-                    this.closeMenu(menu)
-                    this.lastOpened = []
+                    this.closeAllMenu(menu)
+                    this.parentChain = []
                     this.update()
                     break
                 case 'setting':
@@ -108,56 +103,43 @@ export class HeaderbarView {
                     this.update()
                     break
                 case 'menu':
-                    if(this.lastOpened.length == 0 ){
-                        this.lastOpened = [menuItem]
-                        this.closeMenuV2(menu, menuItem)
-                        console.log("lastOpened initialized")
-                        //normal flow
+                    if(this.parentChain.length == 0 ){
+                        //simple case
+                        this.parentChain = [menuItem]
+                        this.closeOtherMenu(menu, menuItem)
                     }
                     else{
-                        let flag = true
-                        console.log("This time : ", this.lastOpened )
+                        let flagCloseAllMenu = true
+                        let isMenuItemInParentChain = this.parentChain[this.parentChain.length -1].content.find(menu => menu.id === menuItem.id)
+                        if(isMenuItemInParentChain) {
+                            //Do not close all open menus
+                            this.parentChain.push(menuItem)
+                        }
 
-                         if(this.lastOpened[this.lastOpened.length -1].content.find(menu => menu.id === menuItem.id))
-                            {
-                                console.log("DO NOT CLOSE MENUS")
-                                this.lastOpened.push(menuItem)
+                        else if(!isMenuItemInParentChain) {
 
-                                flag = false
-                            }
-                        if(flag){
-                        for(let index=this.lastOpened.length-2; index>=0; index--){
-                            console.log("Check id :- ", this.lastOpened[index].id)
-                            if(this.lastOpened[index].content.find(menu => menu.id === menuItem.id))
-                            {
-                                console.log("DO NOT CLOSE MENUS")
-//                                this.lastOpened.push(menuItem)
-                                let diff = this.lastOpened.length - (index + 1)
-                                if(diff > 0){//not last element
-                                    this.lastOpened.splice(index +1, diff)
+                            for(let index=this.parentChain.length-2; index>=0; index--){
+
+                                if(this.parentChain[index].content.find(menu => menu.id === menuItem.id)) {
+
+                                    let noOfRemovals = this.parentChain.length - (index + 1)
+                                    if(noOfRemovals > 0){//not last element
+                                        this.parentChain.splice(index +1, noOfRemovals)
+                                    }
+                                    this.parentChain.push(menuItem)
+                                    this.closeOtherMenu(menu, menuItem)
+                                    flagCloseAllMenu = false
+                                    break
                                 }
-
-                                this.lastOpened.push(menuItem)
-
-                                flag = false
-                                this.closeMenuV2(menu, menuItem)
-                                break
                             }
                         }
-                        }
-                        if(flag){
-                            console.log("flag is true")
-                            this.closeMenu(menu)
-                            this.lastOpened = [menuItem]
-
+                        if(flagCloseAllMenu && !isMenuItemInParentChain){
+                            this.closeAllMenu(menu)
+                            this.parentChain = [menuItem]
                         }
                     }
-
                     menuItem.open = true
                     this.update()
-                    console.log("****************************************")
-                    console.log(this.lastOpened)
-                    console.log("****************************************")
                     break
                 default:
                     break
@@ -175,8 +157,8 @@ export class HeaderbarView {
                     menu.open = true
                 } else if (menu.open) {
                     menu.open = false
-                    this.closeMenu(menu)
-                    this.lastOpened = []
+                    this.closeAllMenu(menu)
+                    this.parentChain = []
                 }
             })
             this.update()
@@ -186,8 +168,8 @@ export class HeaderbarView {
                 if (menu.open) {
                     needUpdate = true
                     menu.open = false
-                    this.closeMenu(menu)
-                    this.lastOpened = []
+                    this.closeAllMenu(menu)
+                    this.parentChain = []
                 }
             })
             if (needUpdate) {
@@ -196,34 +178,26 @@ export class HeaderbarView {
         }
     }
 
-/*    inHierarchy(menuItem){
-        if
-    }*/
 
-    closeMenu(menu) {
-/*    console.log("MENUS :- ")
-    console.log(menu)
-    console.log("MENU ITEMS :- ")*/
+
+    closeAllMenu(menu) {
         menu.content.forEach(menuItem => {
-//        console.log(menuItem)
             if (menuItem.type === 'menu' && menuItem.open) {
                 menuItem.open = false
+                this.closeAllMenu(menuItem)
                 console.log("closed ", menu.id, " in normals")
-                this.closeMenu(menuItem)
             }
         })
     }
 
-    closeMenuV2(menu, current_menu_item) {
+    closeOtherMenu(menu, currentMenuItem) {
         menu.content.forEach(menuItem => {
-
             if (menuItem.type === 'menu' && menuItem.open ) {
-                console.log("WE ARE CHECKING IF WE CAN CLOSE ", menuItem.id , " checking if it is in ", this.lastOpened, " or is current item ", current_menu_item)
-                if(!this.lastOpened.includes(menuItem) && current_menu_item!=menuItem){
+            console.log("WE ARE CHECKING IF WE CAN CLOSE ", menuItem.id , " checking if it is in ", this.lastOpened, " or is current item ", current_menu_item)
+                if(!this.parentChain.includes(menuItem) && currentMenuItem!=menuItem){
                     menuItem.open = false
-                    console.log(menuItem.id , " was closed!")
                 }
-                this.closeMenuV2(menuItem, current_menu_item)
+                this.closeOtherMenu(menuItem, currentMenuItem)
             }
         })
     }

@@ -21,6 +21,7 @@ export class HeaderbarView {
 
         this.bindEvents()
         this.update()
+        this.parentChain = []
     }
 
     removeUnavailable(menu) {
@@ -89,7 +90,8 @@ export class HeaderbarView {
                     }
                     menuItem.action(this.editor)
                     menu.open = false
-                    this.closeMenu(menu)
+                    this.closeAllMenu(menu)
+                    this.parentChain = []
                     this.update()
                     break
                 case 'setting':
@@ -101,7 +103,41 @@ export class HeaderbarView {
                     this.update()
                     break
                 case 'menu':
-                    this.closeMenu(menu)
+                    if(this.parentChain.length == 0 ){
+                        //simple case
+                        this.parentChain = [menuItem]
+                        this.closeOtherMenu(menu, menuItem)
+                    }
+                    else{
+                        let flagCloseAllMenu = true
+                        let isMenuItemInParentChain = this.parentChain[this.parentChain.length -1].content.find(menu => menu.id === menuItem.id)
+                        if(isMenuItemInParentChain) {
+                            //Do not close all open menus
+                            this.parentChain.push(menuItem)
+                        }
+
+                        else if(!isMenuItemInParentChain) {
+
+                            for(let index=this.parentChain.length-2; index>=0; index--){
+
+                                if(this.parentChain[index].content.find(menu => menu.id === menuItem.id)) {
+
+                                    let noOfRemovals = this.parentChain.length - (index + 1)
+                                    if(noOfRemovals > 0){//not last element
+                                        this.parentChain.splice(index +1, noOfRemovals)
+                                    }
+                                    this.parentChain.push(menuItem)
+                                    this.closeOtherMenu(menu, menuItem)
+                                    flagCloseAllMenu = false
+                                    break
+                                }
+                            }
+                        }
+                        if(flagCloseAllMenu && !isMenuItemInParentChain){
+                            this.closeAllMenu(menu)
+                            this.parentChain = [menuItem]
+                        }
+                    }
                     menuItem.open = true
                     this.update()
                     break
@@ -121,7 +157,8 @@ export class HeaderbarView {
                     menu.open = true
                 } else if (menu.open) {
                     menu.open = false
-                    this.closeMenu(menu)
+                    this.closeAllMenu(menu)
+                    this.parentChain = []
                 }
             })
             this.update()
@@ -131,7 +168,8 @@ export class HeaderbarView {
                 if (menu.open) {
                     needUpdate = true
                     menu.open = false
-                    this.closeMenu(menu)
+                    this.closeAllMenu(menu)
+                    this.parentChain = []
                 }
             })
             if (needUpdate) {
@@ -140,14 +178,28 @@ export class HeaderbarView {
         }
     }
 
-    closeMenu(menu) {
+
+
+    closeAllMenu(menu) {
         menu.content.forEach(menuItem => {
             if (menuItem.type === 'menu' && menuItem.open) {
                 menuItem.open = false
-                this.closeMenu(menuItem)
+                this.closeAllMenu(menuItem)
             }
         })
     }
+
+    closeOtherMenu(menu, currentMenuItem) {
+        menu.content.forEach(menuItem => {
+            if (menuItem.type === 'menu' && menuItem.open ) {
+                if(!this.parentChain.includes(menuItem) && currentMenuItem!=menuItem){
+                    menuItem.open = false
+                }
+                this.closeOtherMenu(menuItem, currentMenuItem)
+            }
+        })
+    }
+
 
     onkeydown(event) {
         let name = keyName(event)
@@ -313,6 +365,10 @@ export class HeaderbarView {
 
     getMenuMenuItemHTML(menuItem) {
         return `<span class="fw-pulldown-item${
+          menuItem.selected && menuItem.selected(this.editor) ?
+            ' selected' :
+            ''
+        }${
             menuItem.disabled && menuItem.disabled(this.editor) ?
             ' disabled' :
             ''

@@ -54,6 +54,11 @@ urlpatterns = [
         name='comment_notify'
     ),
     url(
+        '^save_document_style/$',
+        views.save_document_style,
+        name='save_document_style'
+    ),
+    url(
         '^admin/get_template_extras/$',
         views.get_template_extras,
         name='get_template_extras'

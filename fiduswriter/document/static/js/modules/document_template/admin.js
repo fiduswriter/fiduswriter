@@ -1,4 +1,4 @@
-import {whenReady, findTarget, postJson} from "../common"
+import {whenReady, findTarget, postJson, escapeText} from "../common"
 import {DocumentTemplateDesigner} from "./designer"
 
 export class DocumentTemplateAdmin {
@@ -110,7 +110,7 @@ export class DocumentTemplateAdmin {
 
     showErrors(errors) {
         this.templateDesignerBlock.querySelector('ul.errorlist').innerHTML =
-            Object.values(errors).map(error => `<li>${error}</li>`).join('')
+            Object.values(errors).map(error => `<li>${escapeText(error)}</li>`).join('')
     }
 
 

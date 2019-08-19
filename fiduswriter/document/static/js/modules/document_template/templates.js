@@ -568,7 +568,17 @@ const templateEditorValueTemplate = ({content}) =>
         }
     }).join('')
 
-export const documentDesignerTemplate = ({value, title, citationStyles}) =>
+export const documentStylesTemplate = ({documentStyles}) => `${documentStyles.map(
+    style => `<button class="fw-green fw-small fw-button ui-button document-style" data-id="${style.pk}">
+        ${escapeText(style.fields.title)}
+    </button>`
+).join('')}
+<button class="fw-green fw-small fw-button ui-button document-style" data-id="0">
+    <i class="fas fa-plus-circle"></i>
+    ${gettext('Add new style')}
+</button>`
+
+export const documentDesignerTemplate = ({id, value, title, citationStyles, documentStyles}) =>
     `<table><tbody>
     <tr><td>${gettext('Title')}</td><td><input text="text" class="style-title vTextField fw-inline" value="${escapeText(title)}"></td></tr>
     </tbody></table>
@@ -600,7 +610,7 @@ export const documentDesignerTemplate = ({value, title, citationStyles}) =>
             </tr>
         </tbody>
     </table>
-    <table>
+    <table class="fw-data-table">
         <thead>
             <tr>
                 <th>${gettext('Setting')}</th>
@@ -654,5 +664,19 @@ export const documentDesignerTemplate = ({value, title, citationStyles}) =>
                     }</select>
                 </td>
             </tr>
+            ${
+                id ?
+                `<tr>
+                    <td>
+                        ${gettext('Document styles')}
+                    </td>
+                    <td>
+                        <div class="ui-dialog-buttonset document-styles">
+                                ${documentStylesTemplate({documentStyles})}
+                        </div>
+                    </td>
+                </tr>` :
+                ''
+            }
         </tbody>
     </table>`

@@ -103,3 +103,13 @@
     background-color: rgba(170, 170, 170, 0.3);
     z-index: 100;
 }
+
+.ui-dialog-content textarea {
+    min-height: 112px;
+    min-width: 350px;
+    height: auto;
+}
+
+.fw-media-file-input {
+    display: none;
+}

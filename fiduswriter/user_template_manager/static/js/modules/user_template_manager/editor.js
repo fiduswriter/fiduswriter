@@ -1,5 +1,5 @@
 import {DocumentTemplateDesigner} from "../document_template"
-import {whenReady, postJson, setDocTitle, findTarget, post, addAlert} from "../common"
+import {whenReady, postJson, setDocTitle, findTarget, post, addAlert, ensureCSS} from "../common"
 import {FeedbackTab} from "../feedback"
 
 export class DocTemplatesEditor {
@@ -11,6 +11,9 @@ export class DocTemplatesEditor {
     }
 
     init() {
+        ensureCSS([
+            'errorlist.css'
+        ], this.staticUrl)
         return postJson('/api/user_template_manager/get/', {id: this.id}).then(
             ({json}) => {
                 this.template = json.template
@@ -58,7 +61,7 @@ export class DocTemplatesEditor {
             <div class="fw-contents">
                 <h1>${gettext('Template Editor')}</h1>
                 <div id="template-editor"></div>
-                <div id="errors"></div>
+                <ul class="errorlist"></ul>
                 <div class="ui-dialog-buttonset">
                     <button type="button" class="fw-dark fw-button ui-button ui-corner-all ui-widget save">
                         ${gettext('Save')}
@@ -75,11 +78,11 @@ export class DocTemplatesEditor {
     }
 
     showErrors(errors) {
-        document.querySelector('#errors').innerHTML = Object.values(errors).map(error => `<li>${error}</li>`).join('')
+        document.querySelector('.errorlist').innerHTML = Object.values(errors).map(error => `<li>${error}</li>`).join('')
     }
 
     save() {
-        document.querySelector('#errors').innerHTML = ''
+        document.querySelector('.errorlist').innerHTML = ''
         const {valid, value, citationStyles, errors, hash, title} = this.templateDesigner.getCurrentValue()
         if (!valid) {
             this.showErrors(errors)

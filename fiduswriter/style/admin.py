@@ -22,12 +22,6 @@ class DocumentStyleAdmin(admin.ModelAdmin):
 admin.site.register(models.DocumentStyle, DocumentStyleAdmin)
 
 
-class DocumentStyleInline(admin.TabularInline):
-    model = models.DocumentStyle
-    extra = 1
-    show_change_link = True
-
-
 class CitationStyleAdmin(admin.ModelAdmin):
     pass
 

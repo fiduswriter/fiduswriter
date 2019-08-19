@@ -9,12 +9,17 @@ import {menuBar} from "prosemirror-menu"
 import {buildKeymap, buildInputRules} from "prosemirror-example-setup"
 import {tableEditing} from "prosemirror-tables"
 
+import {ensureCSS, findTarget} from "../common"
 import {TagsView, ContributorsView} from "../editor/state_plugins"
+
 import {
     documentDesignerTemplate,
-    bibliographyHeaderTemplate
+    bibliographyHeaderTemplate,
+    documentStylesTemplate
 } from "./templates"
-import {ensureCSS, findTarget} from "../common"
+import {
+    DocumentStyleDialog
+} from "./document_style_dialog"
 import {
     helpSchema,
     helpMenuContent,
@@ -28,7 +33,6 @@ import {
     contributorsPartSchema,
     templateHash
 } from "./schema"
-
 import {
     debounced,
     noTrack,
@@ -54,7 +58,13 @@ export class DocumentTemplateDesigner {
     }
 
     init() {
-        this.dom.innerHTML = documentDesignerTemplate({title: this.title, value: this.value, citationStyles: this.citationStyles})
+        this.dom.innerHTML = documentDesignerTemplate({
+            id: this.id,
+            title: this.title,
+            value: this.value,
+            citationStyles: this.citationStyles,
+            documentStyles: this.documentStyles
+        })
         ensureCSS([
             'common.css',
             'dialog.css',
@@ -447,6 +457,22 @@ export class DocumentTemplateDesigner {
                     event.preventDefault()
                     const trEl = el.target.closest('tr')
                     trEl.parentElement.removeChild(trEl)
+                    break
+                }
+                case findTarget(event, 'button.document-style', el): {
+                    event.preventDefault()
+                    const id = parseInt(el.target.dataset.id)
+                    console.log(id)
+                    const style = this.documentStyles.find(style => style.pk === id)
+                    const dialog = new DocumentStyleDialog(
+                        id,
+                        style,
+                        this.id,
+                        this.documentStyles,
+                        () => this.dom.querySelector('.document-styles').innerHTML =
+                            documentStylesTemplate({documentStyles: this.documentStyles})
+                    )
+                    dialog.init()
                     break
                 }
                 default:

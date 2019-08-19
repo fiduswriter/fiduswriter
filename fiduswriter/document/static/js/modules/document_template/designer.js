@@ -462,7 +462,6 @@ export class DocumentTemplateDesigner {
                 case findTarget(event, 'button.document-style', el): {
                     event.preventDefault()
                     const id = parseInt(el.target.dataset.id)
-                    console.log(id)
                     const style = this.documentStyles.find(style => style.pk === id)
                     const dialog = new DocumentStyleDialog(
                         id,

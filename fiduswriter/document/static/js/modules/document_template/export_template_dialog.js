@@ -245,11 +245,15 @@ export class ExportTemplateDialog {
                             case 'richtext_part':
                             case 'table_part':
                                 return `@${node.attrs.id}`
-                            default:
+                            case 'heading_part':
+                            case 'contributors_part':
+                            case 'tags_part':
                                 return node.attrs.id
+                            default:
+                                return false
                         }
                     }
-                ).concat(['@bibliography'])
+                ).concat(['@bibliography']).filter(tag => tag)
                 const parser = new window.DOMParser()
                 const xml = parser.parseFromString(string, "text/xml")
                 if (fileType === 'odt') {

@@ -86,10 +86,7 @@ export class PrintExporter extends HTMLExporter {
             ({html, title}) => import("vivliostyle-print").then(
                 ({vivliostylePrint}) => vivliostylePrint(
                     html,
-                    {
-                        title,
-                        resourcesUrl: `${this.staticUrl}vivliostyle-resources/`
-                    }
+                    {title}
                 )
             )
         )

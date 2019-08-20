@@ -861,7 +861,7 @@ html[hc=a5] #toolbar {
     z-index: 100;
 }
 
-#close-document-top a {
+#close-document-top a, #close-document-top .fw-link-text {
     width: 10px;
     height: 10px;
     opacity: 0.6;

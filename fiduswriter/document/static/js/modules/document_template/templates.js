@@ -124,8 +124,8 @@ const headingTemplate = ({
             </li>
         </ul>
         <div class="label">
-            ${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}">
-            ${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}">
+            ${gettext('ID')} <input type="text" class="id fw-inline" value="${escapeText(id)}">
+            ${gettext('Title')} <input type="text" class="title fw-inline" value="${escapeText(title)}">
         </div>
     </div>
     <div class="attrs hidden">
@@ -216,12 +216,12 @@ const contributorsTemplate = ({
             </li>
         </ul>
         <div class="label">
-            ${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}">
-            ${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}">
+            ${gettext('ID')} <input type="text" class="id fw-inline" value="${escapeText(id)}">
+            ${gettext('Title')} <input type="text" class="title fw-inline" value="${escapeText(title)}">
         </div>
     </div>
     <div class="attrs hidden">
-        <div class="label">${gettext('Item title')} <input type="text" class="item_title" value="${escapeText(item_title)}"></div>
+        <div class="label">${gettext('Item title')} <input type="text" class="item_title fw-inline" value="${escapeText(item_title)}"></div>
         <div class="label">${gettext('Metadata function')}
             <select class="metadata">
                 <option value="false" ${metadata===false ? "selected" : ""}>${gettext('None')}</option>
@@ -272,8 +272,8 @@ const richtextTemplate = ({
             </li>
         </ul>
         <div class="label">
-            ${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}">
-            ${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}">
+            ${gettext('ID')} <input type="text" class="id fw-inline" value="${escapeText(id)}">
+            ${gettext('Title')} <input type="text" class="title fw-inline" value="${escapeText(title)}">
         </div>
     </div>
     <div class="attrs hidden">
@@ -344,8 +344,8 @@ const separatorTemplate = ({
             </li>
         </ul>
         <div class="label">
-            ${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}">
-            ${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}">
+            ${gettext('ID')} <input type="text" class="id fw-inline" value="${escapeText(id)}">
+            ${gettext('Title')} <input type="text" class="title fw-inline" value="${escapeText(title)}">
         </div>
     </div>
     <div class="attrs hidden">
@@ -376,12 +376,12 @@ const tagsTemplate = ({
             </li>
         </ul>
         <div class="label">
-            ${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}">
-            ${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}">
+            ${gettext('ID')} <input type="text" class="id fw-inline" value="${escapeText(id)}">
+            ${gettext('Title')} <input type="text" class="title fw-inline" value="${escapeText(title)}">
         </div>
     </div>
     <div class="attrs hidden">
-        <div class="label">${gettext('Item title')} <input type="text" class="item_title" value="${escapeText(item_title)}"></div>
+        <div class="label">${gettext('Item title')} <input type="text fw-inline" class="item_title" value="${escapeText(item_title)}"></div>
         <div class="label">${gettext('Metadata function')}
             <select class="metadata">
                 <option value="false" ${metadata===false ? "selected" : ""}>${gettext('None')}</option>
@@ -431,8 +431,8 @@ const tableTemplate = ({
             </li>
         </ul>
         <div class="label">
-            ${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}">
-            ${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}">
+            ${gettext('ID')} <input type="text" class="id fw-inline" value="${escapeText(id)}">
+            ${gettext('Title')} <input type="text" class="title fw-inline" value="${escapeText(title)}">
         </div>
     </div>
     <div class="attrs hidden">
@@ -487,8 +487,8 @@ const tocTemplate = ({
             </li>
         </ul>
         <div class="label">
-            ${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}">
-            ${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}">
+            ${gettext('ID')} <input type="text" class="id fw-inline" value="${escapeText(id)}">
+            ${gettext('Title')} <input type="text" class="title fw-inline" value="${escapeText(title)}">
         </div>
     </div>
     <div class="attrs hidden">
@@ -502,17 +502,17 @@ const tocTemplate = ({
     </div>
 </div>`
 
-export const footnoteTemplate = ({
+const footnoteTemplate = ({
     footnote_elements = ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "table"],
     footnote_marks = ["strong", "em", "underline", "link"]
 }) => `<div class="doc-part attrs">${allowedElementsTemplate({elements: footnote_elements}, false)}${allowedMarksTemplate({marks: footnote_marks})}</div>`
 
-export const languagesTemplate = ({languages = LANGUAGES.map(lang => lang[0])}) =>
+const languagesTemplate = ({languages = LANGUAGES.map(lang => lang[0])}) =>
 `<select multiple size=5>
 ${LANGUAGES.map(lang => `<option value="${lang[0]}"${languages.includes(lang[0]) ? ' selected' : ''}>${lang[1]}</option>`).join('')}
 </select>`
 
-export const papersizesTemplate = ({papersizes = PAPER_SIZES.map(size => size[0])}) =>
+const papersizesTemplate = ({papersizes = PAPER_SIZES.map(size => size[0])}) =>
 `<select multiple size=5>
 ${PAPER_SIZES.map(size => `<option value="${size[0]}"${papersizes.includes(size[0]) ? ' selected' : ''}>${size[0]}</option>`).join('')}
 </select>`
@@ -546,7 +546,7 @@ export const bibliographyHeaderTemplate = ({bibliography_header = {zzz: ''}}) =>
 }
 
 
-export const templateEditorValueTemplate = ({content}) =>
+const templateEditorValueTemplate = ({content}) =>
     content.map(docPart => {
         switch (docPart.type) {
             case 'heading_part':
@@ -568,85 +568,135 @@ export const templateEditorValueTemplate = ({content}) =>
         }
     }).join('')
 
-export const toggleEditorButtonTemplate = () =>
-    `<ul class="object-tools right">
-        <li>
-            <span class="link" id="toggle-editor">${gettext('Source/Editor')}</span>
-        </li>
-    </ul>`
+export const documentStylesTemplate = ({documentStyles}) => `${documentStyles.map(
+    style => `<button class="fw-green fw-small fw-button ui-button document-style" data-id="${style.pk}">
+        ${escapeText(style.fields.title)}
+    </button>`
+).join('')}
+<button class="fw-green fw-small fw-button ui-button document-style" data-id="0">
+    <i class="fas fa-plus-circle"></i>
+    ${gettext('Add new document style')}
+</button>`
 
-export const documentConstructorTemplate = ({value}) =>
-    `<ul class="errorlist"></ul>
-    <div id="template-editor">
-        <table>
-            <thead>
-                <tr>
-                    <th>${gettext('Element types')}</th>
-                    <th>${gettext('Document structure')}</th>
-                    <th>${gettext('Delete')}</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="from-container">
-                        ${headingTemplate({})}
-                        ${contributorsTemplate({})}
-                        ${richtextTemplate({})}
-                        ${tagsTemplate({})}
-                        ${tableTemplate({})}
-                        ${tocTemplate({})}
-                        ${separatorTemplate({})}
+export const exportTemplatesTemplate = ({exportTemplates}) => `${exportTemplates.map(
+    template => `<button class="fw-green fw-small fw-button ui-button export-template" data-id="${template.pk}">
+        ${escapeText(template.fields.title)}
+    </button>`
+).join('')}
+<button class="fw-green fw-small fw-button ui-button export-template" data-id="0">
+    <i class="fas fa-plus-circle"></i>
+    ${gettext('Add new export template')}
+</button>`
+
+export const documentDesignerTemplate = ({id, value, title, citationStyles, documentStyles, exportTemplates}) =>
+    `<table><tbody>
+    <tr><td>${gettext('Title')}</td><td><input text="text" class="style-title vTextField fw-inline" value="${escapeText(title)}"></td></tr>
+    </tbody></table>
+    <table>
+        <thead>
+            <tr>
+                <th>${gettext('Element types')}</th>
+                <th>${gettext('Document structure')}</th>
+                <th>${gettext('Delete')}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="from-container">
+                    ${headingTemplate({})}
+                    ${contributorsTemplate({})}
+                    ${richtextTemplate({})}
+                    ${tagsTemplate({})}
+                    ${tableTemplate({})}
+                    ${tocTemplate({})}
+                    ${separatorTemplate({})}
+                </td>
+                <td class="to-column">
+                    <div class="doc-part fixed" data-type="initial">${gettext('Title')}</div>
+                    <div class="to-container">${templateEditorValueTemplate({content: value.content || []})}</div>
+                </td>
+                <td class="trash">
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="fw-data-table">
+        <thead>
+            <tr>
+                <th>${gettext('Setting')}</th>
+                <th>${gettext('Value')}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    ${gettext('Footnote specifications')}
+                </td>
+                <td class="footnote-value">
+                    ${footnoteTemplate(value.attrs || {})}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    ${gettext('Permitted languages')}
+                </td>
+                <td class="languages-value">
+                    ${languagesTemplate(value.attrs || {})}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    ${gettext('Permitted paper sizes')}
+                </td>
+                <td class="papersizes-value">
+                    ${papersizesTemplate(value.attrs || {})}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    ${gettext('Custom bibliography header')}
+                </td>
+                <td class="bibliography-header-value">
+                    ${bibliographyHeaderTemplate(value.attrs || {})}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    ${gettext('Citation styles')}
+                </td>
+                <td>
+                    <select required="" class="citation-styles" multiple="">${
+                        citationStyles.map(style => `<option value="${style.id}"${
+                            style.selected ? ' selected' : ''
+                        }>${
+                            escapeText(style.title)
+                        }</option>`).join('')
+                    }</select>
+                </td>
+            </tr>
+            ${
+                id ?
+                `<tr>
+                    <td>
+                        ${gettext('Document styles')}
                     </td>
-                    <td class="to-column">
-                        <div class="doc-part fixed" data-type="initial">${gettext('Title')}</div>
-                        <div class="to-container">${templateEditorValueTemplate({content: value.content || []})}</div>
-                    </td>
-                    <td class="trash">
+                    <td>
+                        <div class="ui-dialog-buttonset document-styles">
+                                ${documentStylesTemplate({documentStyles})}
+                        </div>
                     </td>
                 </tr>
-            </tbody>
-        </table>
-        <table>
-            <thead>
-                <tr>
-                    <th>${gettext('Setting')}</th>
-                    <th>${gettext('Value')}</th>
-                </tr>
-            </thead>
-            <tbody>
                 <tr>
                     <td>
-                        ${gettext('Footnote specifications')}
+                        ${gettext('Export templates')}
                     </td>
-                    <td class="footnote-value">
-                        ${footnoteTemplate(value.attrs || {})}
-                    </td>
-                </tr>
-                <tr>
                     <td>
-                        ${gettext('Permitted languages')}
+                        <div class="ui-dialog-buttonset export-templates">
+                                ${exportTemplatesTemplate({exportTemplates})}
+                        </div>
                     </td>
-                    <td class="languages-value">
-                        ${languagesTemplate(value.attrs || {})}
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        ${gettext('Permitted paper sizes')}
-                    </td>
-                    <td class="papersizes-value">
-                        ${papersizesTemplate(value.attrs || {})}
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        ${gettext('Custom bibliography header')}
-                    </td>
-                    <td class="bibliography-header-value">
-                        ${bibliographyHeaderTemplate(value.attrs || {})}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    `
+                </tr>` :
+                ''
+            }
+        </tbody>
+    </table>`

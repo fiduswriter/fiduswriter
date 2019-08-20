@@ -19,10 +19,9 @@ export const citationRenderPlugin = function(options) {
                 }
                 let {action} = this.getState(oldState)
 
-                if (action) {
-                    return {action} // We already need to reset the bibliography. Don't bother checking for more reasons to do so.
+                if (action || tr.getMeta('settings')) {
+                    return {action} // We already need to reset the bibliography or another setting is used. Don't bother checking for more reasons to do so.
                 }
-
                 tr.steps.forEach((step, index) => {
                     if (step instanceof ReplaceStep || step instanceof ReplaceAroundStep) {
                         if (step.from !== step.to) {

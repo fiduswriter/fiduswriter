@@ -163,7 +163,8 @@ export class App {
                 case findTarget(event, 'a', el):
                     if (
                         el.target.hostname === window.location.hostname &&
-                        el.target.getAttribute('href')[0] === '/'
+                        el.target.getAttribute('href')[0] === '/' &&
+                        el.target.getAttribute('href').slice(0, 7) !== '/media/'
                     ) {
                         event.preventDefault()
                         this.goTo(el.target.href)

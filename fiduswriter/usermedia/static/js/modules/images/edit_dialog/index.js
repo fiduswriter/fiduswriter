@@ -83,7 +83,6 @@ export class ImageEditDialog {
                 this.mediaPreviewer = this.mediaPreviewerDiv.querySelector('.img')
                 this.mediaPreviewerDiv.classList.remove('crop-mode')
                 this.dialog.centerDialog()
-                //this.cropMode(false)
             }
             fr.readAsDataURL(this.mediaInput)
             document.querySelector('.figure-edit-menu').classList.remove("hide")

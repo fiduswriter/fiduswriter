@@ -16,10 +16,10 @@ export const settingsPlugin = function(options) {
             switch (key) {
                 case 'documentstyle':
                     if (
-                        !options.editor.mod.documentTemplate.documentStyles.find(d => d.filename === value) &&
+                        !options.editor.mod.documentTemplate.documentStyles.find(d => d.slug === value) &&
                         options.editor.mod.documentTemplate.documentStyles.length
                     ) {
-                        fixedSettings[key] = options.editor.mod.documentTemplate.documentStyles[0].filename
+                        fixedSettings[key] = options.editor.mod.documentTemplate.documentStyles[0].slug
                         changed = true
                     }
                     break
@@ -81,17 +81,15 @@ export const settingsPlugin = function(options) {
      */
     const updateDocStyleCSS = function(docStyleId) {
 
-        const docStyle = options.editor.mod.documentTemplate.documentStyles.find(doc_style => doc_style.filename===docStyleId)
+        const docStyle = options.editor.mod.documentTemplate.documentStyles.find(doc_style => doc_style.slug===docStyleId)
 
-        const docStyleCSS = `
-        ${docStyle.fonts.map(font => {
-            return `@font-face {${
-                font[1].replace('[URL]', font[0])
-            }}`
-        }).join('\n')}
-
-        ${docStyle.contents}
-        `
+        let docStyleCSS = docStyle.contents
+        docStyle.documentstylefile_set.forEach(
+            ([url, filename]) => docStyleCSS = docStyleCSS.replace(
+                new RegExp(filename, 'g'),
+                url
+            )
+        )
 
         let docStyleEl = document.getElementById('document-style')
 

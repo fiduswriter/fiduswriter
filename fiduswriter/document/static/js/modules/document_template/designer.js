@@ -9,18 +9,21 @@ import {menuBar} from "prosemirror-menu"
 import {buildKeymap, buildInputRules} from "prosemirror-example-setup"
 import {tableEditing} from "prosemirror-tables"
 
-import {randomHeadingId} from "../schema/common"
+import {ensureCSS, findTarget} from "../common"
 import {TagsView, ContributorsView} from "../editor/state_plugins"
+
 import {
-    documentConstructorTemplate,
-    templateEditorValueTemplate,
-    toggleEditorButtonTemplate,
-    footnoteTemplate,
-    languagesTemplate,
-    papersizesTemplate,
-    bibliographyHeaderTemplate
+    documentDesignerTemplate,
+    bibliographyHeaderTemplate,
+    documentStylesTemplate,
+    exportTemplatesTemplate
 } from "./templates"
-import {whenReady, ensureCSS, findTarget} from "../common"
+import {
+    DocumentStyleDialog
+} from "./document_style_dialog"
+import {
+    ExportTemplateDialog
+} from "./export_template_dialog"
 import {
     helpSchema,
     helpMenuContent,
@@ -34,86 +37,23 @@ import {
     contributorsPartSchema,
     templateHash
 } from "./schema"
+import {
+    debounced,
+    noTrack,
+    addHeadingIds
+} from "./tools"
 
-// from https://codeburst.io/throttling-and-debouncing-in-javascript-646d076d0a44
-function debounced(delay, fn) {
-    let timerId
-    return function(...args) {
-        if (timerId) {
-            clearTimeout(timerId)
-        }
-        timerId = setTimeout(() => {
-            fn(...args)
-            timerId = null
-        }, delay)
-    }
-}
-
-function noTrack(node) {
-    if (node.attrs && node.attrs.track) {
-        delete node.attrs.track
-        if (!Object.keys(node.attrs).length) {
-            delete node.attrs
-        }
-    }
-    if (node.content) {
-        node.content.forEach(child => noTrack(child))
-    }
-    return node
-}
-
-function addHeadingIds(oldState, newState, editors) {
-    const newHeadings = [],
-        usedHeadingIds = []
-
-    editors.forEach(([_el, view]) => {
-        if (view.state === oldState) {
-            return
-        }
-        view.state.doc.descendants(node => {
-            if (node.type.groups.includes('heading')) {
-                usedHeadingIds.push(node.attrs.id)
-            }
-        })
-    })
-    newState.doc.descendants((node, pos) => {
-        if (node.type.groups.includes('heading')) {
-            if (node.attrs.id === false || usedHeadingIds.includes(node.attrs.id)) {
-                newHeadings.push({pos, node})
-            } else {
-                usedHeadingIds.push(node.attrs.id)
-            }
-
-        }
-    })
-    if (!newHeadings.length) {
-        return null
-    }
-    const newTr = newState.tr
-    newHeadings.forEach(
-        newHeading => {
-            let id
-            while (!id || usedHeadingIds.includes(id)) {
-                id = randomHeadingId()
-            }
-            usedHeadingIds.push(id)
-            newTr.setNodeMarkup(
-                newHeading.pos,
-                null,
-                Object.assign({}, newHeading.node.attrs, {id})
-            )
-        }
-    )
-    return newTr
-}
 
 export class DocumentTemplateDesigner {
-    constructor({staticUrl}) {
+    constructor({staticUrl}, id, title, value, citationStyles, documentStyles, exportTemplates, dom) {
         this.staticUrl = staticUrl
-        this.definitionTextarea = false
-        this.templateEditor = false
-        this.errors = {}
-        this.value = []
+        this.id = id
+        this.title = title
+        this.value = value
+        this.citationStyles = citationStyles
+        this.documentStyles = documentStyles
+        this.exportTemplates = exportTemplates
+        this.dom = dom
 
         this.editors = []
         this.listeners = {
@@ -122,6 +62,14 @@ export class DocumentTemplateDesigner {
     }
 
     init() {
+        this.dom.innerHTML = documentDesignerTemplate({
+            id: this.id,
+            title: this.title,
+            value: this.value,
+            citationStyles: this.citationStyles,
+            documentStyles: this.documentStyles,
+            exportTemplates: this.exportTemplates
+        })
         ensureCSS([
             'common.css',
             'dialog.css',
@@ -135,45 +83,30 @@ export class DocumentTemplateDesigner {
             'table.css',
             'dialog_table.css'
         ], this.staticUrl)
-        whenReady().then(() => {
-            this.definitionTextarea = document.querySelector('textarea[name=definition]')
-            this.definitionHashInput = document.querySelector('#id_definition_hash')
-            this.definitionHashInputBlock = document.querySelector('div.field-definition_hash')
-            this.getInitialValue()
-            this.modifyDOM()
-            this.bind()
-        })
-
-    }
-
-    modifyDOM() {
-        this.definitionTextarea.style.display='none'
-        this.definitionHashInputBlock.style.display='none'
-        this.definitionTextarea.insertAdjacentHTML(
-            'beforebegin',
-            toggleEditorButtonTemplate()
-        )
-
-        this.definitionTextarea.insertAdjacentHTML(
-            'afterend',
-            documentConstructorTemplate({value: this.value})
-        )
-        this.templateEditor = document.getElementById('template-editor')
         this.setupInitialEditors()
+        this.bind()
     }
 
-    getInitialValue() {
-        this.value = JSON.parse(this.definitionTextarea.value)
-    }
-
-    setCurrentValue() {
+    getCurrentValue() {
         let valid = true
         const ids = []
-        this.errors = {}
+        const errors = {}
+        const el = this.dom.querySelector('input.style-title')
+        if (el.classList.contains("error-element")) {
+            el.classList.remove("error-element")
+        }
+        this.title = el.value
+        if (!this.title.length) {
+            valid = false
+            errors.empty_style_title = gettext('The style needs a title.')
+            el.classList.add("error-element")
+            el.scrollIntoView({block:"center", behavior :"smooth"})
+        }
+
         this.value = {
             type: 'article',
             content: [{type: 'title'}].concat(
-                Array.from(document.querySelectorAll('.to-container .doc-part:not(.fixed)')).map(
+                Array.from(this.dom.querySelectorAll('.to-container .doc-part:not(.fixed)')).map(
                     el => {
                         const type = el.dataset.type,
                             id = el.querySelector('input.id').value,
@@ -259,19 +192,19 @@ export class DocumentTemplateDesigner {
                         }
                         if (!id.length) {
                             valid = false
-                            this.errors.missing_id = gettext('All document parts need an ID.')
+                            errors.missing_id = gettext('All document parts need an ID.')
                             el.classList.add("error-element")
                             el.scrollIntoView({block:"center", behavior :"smooth"})
                         }
                         if (/\s/.test(id)) {
                             valid = false
-                            this.errors.no_spaces = gettext('IDs cannot contain spaces.')
+                            errors.no_spaces = gettext('IDs cannot contain spaces.')
                             el.classList.add("error-element")
                             el.scrollIntoView({block:"center", behavior :"smooth"})
                         }
                         if (ids.includes(id)) {
                             valid = false
-                            Array.from(document.querySelectorAll('.to-container .doc-part:not(.fixed)')).map(
+                            Array.from(this.dom.querySelectorAll('.to-container .doc-part:not(.fixed)')).map(
                                 el => {
                                     const id_duplicate = el.querySelector('input.id').value
                                     if (id_duplicate == id) {
@@ -279,7 +212,7 @@ export class DocumentTemplateDesigner {
                                     }
                                 })
                             el.scrollIntoView({block:"center", behavior :"smooth"})
-                            this.errors.unique_id = gettext('IDs have to be unique.')
+                            errors.unique_id = gettext('IDs have to be unique.')
                         }
                         ids.push(id)
                         return node
@@ -287,11 +220,11 @@ export class DocumentTemplateDesigner {
                 )
             ),
             attrs: {
-                footnote_elements: Array.from(document.querySelectorAll('.footnote-value .elements:checked')).map(el => el.value),
-                footnote_marks: Array.from(document.querySelectorAll('.footnote-value .marks:checked')).map(el => el.value),
-                languages: Array.from(document.querySelectorAll('.languages-value option:checked')).map(el => el.value),
-                papersizes: Array.from(document.querySelectorAll('.papersizes-value option:checked')).map(el => el.value),
-                bibliography_header: Array.from(document.querySelectorAll('.bibliography-header-value tr')).reduce(
+                footnote_elements: Array.from(this.dom.querySelectorAll('.footnote-value .elements:checked')).map(el => el.value),
+                footnote_marks: Array.from(this.dom.querySelectorAll('.footnote-value .marks:checked')).map(el => el.value),
+                languages: Array.from(this.dom.querySelectorAll('.languages-value option:checked')).map(el => el.value),
+                papersizes: Array.from(this.dom.querySelectorAll('.papersizes-value option:checked')).map(el => el.value),
+                bibliography_header: Array.from(this.dom.querySelectorAll('.bibliography-header-value tr')).reduce(
                     (stringObj, trEl) => {
                         const inputEl = trEl.querySelector('input')
                         if (!inputEl.value.length) {
@@ -303,7 +236,7 @@ export class DocumentTemplateDesigner {
                     },
                     {}
                 ),
-                template: document.querySelector('#id_title').value
+                template: this.title
             }
         }
         if (!this.value.attrs.papersizes.length) {
@@ -318,19 +251,15 @@ export class DocumentTemplateDesigner {
         }
         this.value.attrs.language = this.value.attrs.languages[0]
 
-        this.definitionTextarea.value = JSON.stringify(this.value)
-        this.definitionHashInput.value = templateHash(this.value)
-        this.showErrors()
-        return valid
-    }
+        const citationStyles = Array.from(
+            this.dom.querySelectorAll('.citation-styles option:checked')
+        ).map(el => parseInt(el.value))
 
-    showErrors() {
-        this.definitionTextarea.parentElement.querySelector('ul.errorlist').innerHTML =
-            Object.values(this.errors).map(error => `<li>${error}</li>`).join('')
+        return {valid, title: this.title, value: this.value, citationStyles, errors, hash: templateHash(this.value)}
     }
 
     setupInitialEditors() {
-        Array.from(document.querySelectorAll('.to-container .doc-part:not(.fixed)')).forEach((el, index) => {
+        Array.from(this.dom.querySelectorAll('.to-container .doc-part:not(.fixed)')).forEach((el, index) => {
             const value = this.value.content[index+1], // offset by title
                 help = value.attrs.help,
                 initial = value.attrs.initial,
@@ -467,9 +396,14 @@ export class DocumentTemplateDesigner {
         return false
     }
 
+    close() {
+        this.dom.innerHTML = ''
+        document.removeEventListener('scroll', this.listeners.onScroll)
+    }
+
     bind() {
         new Sortable(
-            document.querySelector('.from-container'),
+            this.dom.querySelector('.from-container'),
             {
                 group: {
                     name: 'document',
@@ -481,7 +415,7 @@ export class DocumentTemplateDesigner {
             }
         )
         new Sortable(
-            document.querySelector('.to-container'),
+            this.dom.querySelector('.to-container'),
             {
                 group: {
                     name: 'document',
@@ -498,7 +432,7 @@ export class DocumentTemplateDesigner {
             }
         )
         new Sortable(
-            document.querySelector('.trash'),
+            this.dom.querySelector('.trash'),
             {
                 group: {
                     name: 'document',
@@ -509,45 +443,17 @@ export class DocumentTemplateDesigner {
             }
         )
 
-        document.body.addEventListener('click', event => {
+        this.dom.addEventListener('click', event => {
             const el = {}
             switch (true) {
-                case findTarget(event, '#toggle-editor', el):
-                    event.preventDefault()
-                    if (this.definitionTextarea.style.display==='none') {
-                        this.definitionTextarea.style.display=''
-                        this.definitionHashInputBlock.style.display=''
-                        this.templateEditor.style.display='none'
-                        this.setCurrentValue()
-                    } else {
-                        this.definitionTextarea.style.display='none'
-                        this.definitionHashInputBlock.style.display='none'
-                        this.templateEditor.style.display=''
-                        this.getInitialValue()
-                        this.templateEditor.querySelector('.to-container').innerHTML =
-                            templateEditorValueTemplate({content: this.value.content.slice(1) || []})
-                        this.templateEditor.querySelector('.footnote-value').innerHTML =
-                            footnoteTemplate(this.value.attrs)
-                        this.templateEditor.querySelector('.languages-value').innerHTML =
-                            languagesTemplate(this.value.attrs)
-                        this.templateEditor.querySelector('.papersizes-value').innerHTML =
-                            papersizesTemplate(this.value.attrs)
-                        this.setupInitialEditors()
-                    }
-                    break
-                case findTarget(event, 'div.submit-row input[type=submit]', el):
-                    if (this.definitionTextarea.style.display==='none' && !this.setCurrentValue()) {
-                        event.preventDefault()
-                    }
-                    break
                 case findTarget(event, '.doc-part .configure', el):
                     event.preventDefault()
                     el.target.closest('.doc-part').querySelector('.attrs').classList.toggle('hidden')
                     break
                 case findTarget(event, '.bibliography-header-value .fa-plus-circle', el):
                     event.preventDefault()
-                    this.setCurrentValue()
-                    this.templateEditor.querySelector('.bibliography-header-value').innerHTML =
+                    this.getCurrentValue()
+                    this.dom.querySelector('.bibliography-header-value').innerHTML =
                         bibliographyHeaderTemplate({
                             bibliography_header: Object.assign({}, this.value.attrs.bibliography_header, {zzz: ''}) // 'zzz' so that the entry is added at the of the list
                         })
@@ -556,6 +462,40 @@ export class DocumentTemplateDesigner {
                     event.preventDefault()
                     const trEl = el.target.closest('tr')
                     trEl.parentElement.removeChild(trEl)
+                    break
+                }
+                case findTarget(event, 'button.document-style', el): {
+                    event.preventDefault()
+                    const id = parseInt(el.target.dataset.id)
+                    const style = this.documentStyles.find(style => style.pk === id)
+                    const dialog = new DocumentStyleDialog(
+                        id,
+                        style,
+                        this.id,
+                        this.documentStyles,
+                        () => this.dom.querySelector('.document-styles').innerHTML =
+                            documentStylesTemplate({documentStyles: this.documentStyles})
+                    )
+                    dialog.init()
+                    break
+                }
+                case findTarget(event, 'button.export-template', el): {
+                    event.preventDefault()
+                    const id = parseInt(el.target.dataset.id)
+                    const template = this.exportTemplates.find(template => template.pk === id)
+                    const {value, valid} = this.getCurrentValue()
+                    if (valid) {
+                        const dialog = new ExportTemplateDialog(
+                            id,
+                            template,
+                            this.id,
+                            this.exportTemplates,
+                            () => this.dom.querySelector('.export-templates').innerHTML =
+                                exportTemplatesTemplate({exportTemplates: this.exportTemplates}),
+                            value
+                        )
+                        dialog.init()
+                    }
                     break
                 }
                 default:
@@ -567,13 +507,14 @@ export class DocumentTemplateDesigner {
     }
 
     onScroll() {
-        const fromContainer = this.templateEditor.querySelector('.from-container'),
-            rect = fromContainer.getBoundingClientRect()
-
-        if (rect.height + rect.top > 0) {
+        const fromContainer = this.dom.querySelector('.from-container'),
+            toContainer = this.dom.querySelector('.to-container'),
+            fromRect = fromContainer.getBoundingClientRect(),
+            toRect = toContainer.getBoundingClientRect()
+        if (toRect.height + 25 + fromRect.top > 0) {
             const contentSize = 6 * 61, // 61px for each content type.
-                maxPadding = rect.height - contentSize - 10 // 10px for padding bottom
-            fromContainer.style.paddingTop = `${Math.min(8-Math.min(rect.top, 0), maxPadding)}px`
+                maxPadding = toRect.height - contentSize - 20 // 20px for padding bottom
+            fromContainer.style.paddingTop = `${Math.min(10-Math.min(fromRect.top, 0), maxPadding)}px`
         }
 
     }

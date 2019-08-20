@@ -17,13 +17,14 @@ from django.core.paginator import Paginator, EmptyPage
 
 from user.util import get_user_avatar_url
 from document.models import Document, AccessRight, DocumentRevision, \
-    ExportTemplate, DocumentTemplate, default_template, \
+    DocumentTemplate, default_template, \
     AccessRightInvite, CAN_UPDATE_DOCUMENT, FW_DOCUMENT_VERSION
 from usermedia.models import DocumentImage, Image
 from bibliography.models import Entry
 from document.helpers.serializers import PythonWithURLSerializer
 from bibliography.views import serializer
-from style.models import CitationStyle, CitationLocale, DocumentStyle
+from style.models import CitationStyle, CitationLocale, DocumentStyle, \
+    ExportTemplate
 from base.html_email import html_email
 from user.models import TeamMember
 
@@ -65,6 +66,7 @@ def get_documentlist_extra(request):
     )
 
 
+@login_required
 def documents_list(request):
     documents = Document.objects.filter(
         Q(owner=request.user) | Q(accessright__user=request.user),
@@ -336,7 +338,11 @@ def get_documentlist(request):
             response['team_members'].append(tm_object)
         serializer = PythonWithURLSerializer()
         export_temps = serializer.serialize(
-            ExportTemplate.objects.all()
+            ExportTemplate.objects.filter(
+                Q(document_template__user=None) |
+                Q(document_template__user=request.user)
+            ),
+            fields=['file_type', 'template_file', 'title']
         )
         response['export_templates'] = [obj['fields'] for obj in export_temps]
         cit_styles = serializer.serialize(
@@ -346,8 +352,12 @@ def get_documentlist(request):
         cit_locales = serializer.serialize(CitationLocale.objects.all())
         response['citation_locales'] = [obj['fields'] for obj in cit_locales]
         doc_styles = serializer.serialize(
-            DocumentStyle.objects.all(),
-            use_natural_foreign_keys=True
+            DocumentStyle.objects.filter(
+                Q(document_template__user=None) |
+                Q(document_template__user=request.user)
+            ),
+            use_natural_foreign_keys=True,
+            fields=['title', 'slug', 'contents', 'documentstylefile_set']
         )
         response['document_styles'] = [obj['fields'] for obj in doc_styles]
         doc_templates = DocumentTemplate.objects.filter(
@@ -1079,6 +1089,36 @@ def get_template(request):
             response['definition'] = template.definition
             response['title'] = template.title
             response['doc_version'] = template.doc_version
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@staff_member_required
+def get_template_extras(request):
+    if not request.is_ajax() or request.method != 'POST':
+        return JsonResponse({}, status=405)
+    id = request.POST['id']
+    doc_template = DocumentTemplate.objects.filter(
+        id=id
+    ).first()
+    status = 200
+    if doc_template is None:
+        return JsonResponse({}, status=405)
+    serializer = PythonWithURLSerializer()
+    export_templates = serializer.serialize(
+        doc_template.exporttemplate_set.all()
+    )
+    document_styles = serializer.serialize(
+        doc_template.documentstyle_set.all(),
+        use_natural_foreign_keys=True,
+        fields=['title', 'slug', 'contents', 'documentstylefile_set']
+    )
+    response = {
+        'export_templates': export_templates,
+        'document_styles': document_styles,
+    }
     return JsonResponse(
         response,
         status=status

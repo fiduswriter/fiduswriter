@@ -103,27 +103,27 @@ export class HeaderbarView {
                     this.update()
                     break
                 case 'menu':
-                    if(this.parentChain.length == 0 ){
+                    if (this.parentChain.length == 0) {
                         //simple case
                         this.parentChain = [menuItem]
                         this.closeOtherMenu(menu, menuItem)
                     }
-                    else{
+                    else {
                         let flagCloseAllMenu = true
-                        let isMenuItemInParentChain = this.parentChain[this.parentChain.length -1].content.find(menu => menu.id === menuItem.id)
-                        if(isMenuItemInParentChain) {
+                        const isMenuItemInParentChain = this.parentChain[this.parentChain.length -1].content.find(menu => menu.id === menuItem.id)
+                        if (isMenuItemInParentChain) {
                             //Do not close all open menus
                             this.parentChain.push(menuItem)
                         }
 
-                        else if(!isMenuItemInParentChain) {
+                        else if (!isMenuItemInParentChain) {
 
-                            for(let index=this.parentChain.length-2; index>=0; index--){
+                            for (let index=this.parentChain.length-2; index>=0; index--) {
 
-                                if(this.parentChain[index].content.find(menu => menu.id === menuItem.id)) {
+                                if (this.parentChain[index].content.find(menu => menu.id === menuItem.id)) {
 
-                                    let noOfRemovals = this.parentChain.length - (index + 1)
-                                    if(noOfRemovals > 0){//not last element
+                                    const noOfRemovals = this.parentChain.length - (index + 1)
+                                    if (noOfRemovals > 0) {//not last element
                                         this.parentChain.splice(index +1, noOfRemovals)
                                     }
                                     this.parentChain.push(menuItem)
@@ -133,7 +133,7 @@ export class HeaderbarView {
                                 }
                             }
                         }
-                        if(flagCloseAllMenu && !isMenuItemInParentChain){
+                        if (flagCloseAllMenu && !isMenuItemInParentChain) {
                             this.closeAllMenu(menu)
                             this.parentChain = [menuItem]
                         }
@@ -191,8 +191,8 @@ export class HeaderbarView {
 
     closeOtherMenu(menu, currentMenuItem) {
         menu.content.forEach(menuItem => {
-            if (menuItem.type === 'menu' && menuItem.open ) {
-                if(!this.parentChain.includes(menuItem) && currentMenuItem!=menuItem){
+            if (menuItem.type === 'menu' && menuItem.open) {
+                if (!this.parentChain.includes(menuItem) && currentMenuItem!=menuItem) {
                     menuItem.open = false
                 }
                 this.closeOtherMenu(menuItem, currentMenuItem)

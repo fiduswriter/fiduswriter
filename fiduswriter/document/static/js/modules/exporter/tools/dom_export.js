@@ -32,21 +32,15 @@ export class DOMExporter {
     }
 
     addDocStyle(doc) {
-        const docStyle = this.documentStyles.find(docStyle => docStyle.filename===doc.settings.documentstyle)
+        const docStyle = this.documentStyles.find(docStyle => docStyle.slug===doc.settings.documentstyle)
 
-        const docStyleCSS = `
-        ${docStyle.fonts.map(font => {
-            return `@font-face {${
-                font[1].replace('[URL]', font[0].split('/').pop().split('?')[0])
-            }}`
-        }).join('\n')}
-        ${docStyle.contents}
-        `
+        // The files will be in the base directory. The filenames of
+        // DocumentStyleFiles will therefore not need to replaced with their URLs.
 
-        this.styleSheets.push({contents: docStyleCSS, filename: `${docStyle.filename}.css`})
-        this.fontFiles = this.fontFiles.concat(docStyle.fonts.map(font => ({
-            filename: font[0].split('/').pop().split('?')[0],
-            url: font[0]
+        this.styleSheets.push({contents: docStyle.contents, filename: `${docStyle.slug}.css`})
+        this.fontFiles = this.fontFiles.concat(docStyle.documentstylefile_set.map(([url, filename]) => ({
+            filename,
+            url
         })))
         return `${docStyle.filename}.css`
     }

@@ -14,3 +14,33 @@ class PythonWithURLSerializer(PythonSerializer):
                 obj,
                 field
             )
+
+    def end_object(self, obj):
+        # We add reverse foreign key relations if they are explicitly added.
+        # Needed to include DocumentStyleFont with DocumentStyle\
+        if self.selected_fields is not None:
+            for field in obj._meta.related_objects:
+                if not field.one_to_many:
+                    continue
+                if field.related_name:
+                    related_name = field.related_name
+                else:
+                    related_name = field.name + '_set'
+                if related_name not in self.selected_fields:
+                    continue
+                if self.use_natural_foreign_keys and hasattr(
+                    field.remote_field.model, 'natural_key'
+                ):
+                    def o2m_value(value):
+                        return value.natural_key()
+                else:
+                    def o2m_value(value):
+                        return self._value_from_field(value, value._meta.pk)
+                self._current[related_name] = [
+                    o2m_value(related) for related in getattr(
+                        obj, related_name
+                    ).iterator()
+                ]
+
+        return super(PythonWithURLSerializer, self).end_object(obj)
+        # if field.remote_field.through._meta.auto_created:

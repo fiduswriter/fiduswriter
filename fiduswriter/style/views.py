@@ -2,9 +2,48 @@ from django.http import JsonResponse
 from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import login_required
 from document.helpers.serializers import PythonWithURLSerializer
+from django.utils.translation import ugettext as _
 
 from .models import DocumentStyle, DocumentStyleFile
 from document.models import DocumentTemplate
+
+
+@login_required
+def delete_document_style(request):
+    response = {}
+    if not request.is_ajax() or request.method != 'POST':
+        return JsonResponse(
+            response,
+            status=405
+        )
+    id = int(request.POST['id'])
+    if request.user.is_staff:
+        document_style = DocumentStyle.objects.filter(id=id).first()
+    else:
+        document_style = DocumentStyle.objects.filter(
+            id=id,
+            user=request.user
+        ).first()
+    if not document_style:
+        return JsonResponse(
+            response,
+            status=405
+        )
+    if document_style.document_template.documentstyle_set.all().count() < 2:
+        # We do not the style if there is only one left for this template
+        response['errors'] = {
+            'template': _('The template needs at least 1 document style')
+        }
+        return JsonResponse(
+            response,
+            status=400
+        )
+    document_style.delete()
+    status = 200
+    return JsonResponse(
+        response,
+        status=status
+    )
 
 
 @login_required

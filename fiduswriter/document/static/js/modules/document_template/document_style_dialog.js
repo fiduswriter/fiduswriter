@@ -62,6 +62,13 @@ export class DocumentStyleDialog {
             },
             {type: 'cancel'}
         ]
+        if (this.allStyles.length > 1 && this.id) {
+            buttons.unshift({
+                text: gettext('Delete'),
+                classes: 'fw-orange',
+                click: () => this.deleteStyleDialog()
+            })
+        }
         this.dialog = new Dialog({
             id: 'document-style-dialog',
             title: gettext("Document style"),
@@ -120,6 +127,64 @@ export class DocumentStyleDialog {
     showErrors(errors) {
         this.dialog.dialogEl.querySelector('ul.errorlist').innerHTML =
             errors.map(error => `<li>${escapeText(error)}</li>`).join('')
+    }
+
+    deleteStyle() {
+        postJson('/api/style/delete_document_style/', {id: this.id}).then(
+            () => {
+                const oldStyleIndex = this.allStyles.findIndex(style => style.pk === this.id)
+                if (!(typeof oldStyleIndex === 'undefined')) {
+                    this.allStyles.splice(oldStyleIndex, 1)
+                    this.refresh()
+                }
+                this.dialog.close()
+            }
+        ).catch(
+            response => {
+                if (response.json) {
+                    response.json().then(
+                        json => {
+                            if (json.errors) {
+                                const errors = []
+                                Object.keys(json.errors).forEach(key => {
+                                    json.errors[key].forEach(
+                                        error => errors.push(`${key}: ${error}`)
+                                    )
+                                })
+                                this.showErrors(errors)
+                            }
+                        }
+                    )
+                } else {
+                    throw response
+                }
+            }
+        )
+    }
+
+    deleteStyleDialog() {
+        const buttons = [
+            {
+                text: gettext('Delete'),
+                classes: "fw-dark",
+                click: () => {
+                    dialog.close()
+                    this.deleteStyle()
+                }
+            },
+            {
+                type: 'cancel'
+            }
+        ]
+        const dialog = new Dialog({
+            id: 'confirmdeletion',
+            icon: 'exclamation-triangle',
+            title: gettext('Confirm deletion'),
+            body: `<p>${gettext('Do you really want to delete the document style')}?</p>`,
+            height: 180,
+            buttons
+        })
+        dialog.open()
     }
 
     getCurrentValue() {

@@ -6,9 +6,7 @@ export const menuModel = () => ({
             type: 'text',
             title: gettext('Create new document template'),
             action: overview => {
-                overview.getImageDB().then(() => {
-                    overview.mod.actions.createBookDialog(0, overview.imageDB)
-                })
+                overview.app.goTo('/templates/0/')
             }
         }
     ]

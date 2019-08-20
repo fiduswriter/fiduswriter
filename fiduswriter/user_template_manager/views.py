@@ -36,7 +36,7 @@ def list(request):
 def get(request):
     if not request.is_ajax() or request.method != 'POST':
         return JsonResponse({}, status=405)
-    id = request.POST['id']
+    id = int(request.POST['id'])
     if id == 0:
         doc_template = DocumentTemplate()
         doc_template.user = request.user

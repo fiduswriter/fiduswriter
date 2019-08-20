@@ -7,16 +7,18 @@ export class DocTemplatesEditor {
         this.app = app
         this.staticUrl = staticUrl
         this.user = user
-        this.id = parseInt(idString)
+        this.idString = idString
     }
 
     init() {
         ensureCSS([
-            'errorlist.css'
+            'errorlist.css',
+            'editor.css'
         ], this.staticUrl)
-        return postJson('/api/user_template_manager/get/', {id: this.id}).then(
+        return postJson('/api/user_template_manager/get/', {id: this.idString}).then(
             ({json}) => {
                 this.template = json.template
+                this.id = json.template.id
                 this.template.definition = JSON.parse(this.template.definition)
                 this.citationStyles = json.citation_styles.map(
                     style => ({
@@ -52,14 +54,18 @@ export class DocTemplatesEditor {
         `<div id="wait" class="">
             <i class="fa fa-spinner fa-pulse"></i>
         </div>
-        <header class="fw-header">
-            <div class="fw-container">
-                <h1 class="fw-logo"><span class="fw-logo-text"></span><img src="${this.staticUrl}svg/icon.svg?v=${process.env.TRANSPILE_VERSION}"></h1>
+        <nav id="headerbar"><div>
+            <div id="close-document-top" title="${gettext('Close the template without saving and return to the overview')}">
+                <span class="fw-link-text close">
+                    <i class="fa fa-times"></i>
+                </span>
             </div>
-        </header>
-        <div class="fw-contents-outer">
-            <div class="fw-contents">
+            <div id="document-top">
                 <h1>${gettext('Template Editor')}</h1>
+            </div>
+        </div>
+        <div>
+            <div class="fw-contents">
                 <div id="template-editor"></div>
                 <ul class="errorlist"></ul>
                 <div class="ui-dialog-buttonset">
@@ -107,7 +113,7 @@ export class DocTemplatesEditor {
                     event.preventDefault()
                     this.save()
                     break
-                case findTarget(event, 'button.close', el):
+                case findTarget(event, 'button.close, span.close', el):
                     event.preventDefault()
                     this.app.goTo('/templates/')
                     break

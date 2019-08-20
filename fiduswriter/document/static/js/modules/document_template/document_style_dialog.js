@@ -143,7 +143,7 @@ export class DocumentStyleDialog {
 
     save({title, slug, contents}) {
         return postJson(
-            '/api/document/save_document_style/',
+            '/api/style/save_document_style/',
             {
                 id: this.id,
                 title,

@@ -1,4 +1,4 @@
-import {whenReady, findTarget, postJson, escapeText} from "../common"
+import {whenReady, findTarget, postJson, escapeText, ensureCSS} from "../common"
 import {DocumentTemplateDesigner} from "./designer"
 
 export class DocumentTemplateAdmin {
@@ -16,6 +16,11 @@ export class DocumentTemplateAdmin {
     }
 
     init() {
+        ensureCSS([
+            'admin.css',
+            'ui_dialogs.css',
+            'buttons.css'
+        ], this.staticUrl)
         const initialTasks = [
             whenReady()
         ]

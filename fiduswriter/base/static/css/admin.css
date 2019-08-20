@@ -1,0 +1,8 @@
+.fw-link-text {
+    cursor: pointer;
+    color: #b73717;
+}
+
+.fw-link-text:hover {
+    color: #2c2723;
+}

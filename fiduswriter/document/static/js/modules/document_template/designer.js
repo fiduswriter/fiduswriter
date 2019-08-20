@@ -15,11 +15,15 @@ import {TagsView, ContributorsView} from "../editor/state_plugins"
 import {
     documentDesignerTemplate,
     bibliographyHeaderTemplate,
-    documentStylesTemplate
+    documentStylesTemplate,
+    exportTemplatesTemplate
 } from "./templates"
 import {
     DocumentStyleDialog
 } from "./document_style_dialog"
+import {
+    ExportTemplateDialog
+} from "./export_template_dialog"
 import {
     helpSchema,
     helpMenuContent,
@@ -63,7 +67,8 @@ export class DocumentTemplateDesigner {
             title: this.title,
             value: this.value,
             citationStyles: this.citationStyles,
-            documentStyles: this.documentStyles
+            documentStyles: this.documentStyles,
+            exportTemplates: this.exportTemplates
         })
         ensureCSS([
             'common.css',
@@ -472,6 +477,25 @@ export class DocumentTemplateDesigner {
                             documentStylesTemplate({documentStyles: this.documentStyles})
                     )
                     dialog.init()
+                    break
+                }
+                case findTarget(event, 'button.export-template', el): {
+                    event.preventDefault()
+                    const id = parseInt(el.target.dataset.id)
+                    const template = this.exportTemplates.find(template => template.pk === id)
+                    const {value, valid} = this.getCurrentValue()
+                    if (valid) {
+                        const dialog = new ExportTemplateDialog(
+                            id,
+                            template,
+                            this.id,
+                            this.exportTemplates,
+                            () => this.dom.querySelector('.export-templates').innerHTML =
+                                exportTemplatesTemplate({exportTemplates: this.exportTemplates}),
+                            value
+                        )
+                        dialog.init()
+                    }
                     break
                 }
                 default:

@@ -1,10 +1,10 @@
 import {Dialog, escapeText, findTarget, postJson} from "../common"
 
 export class DocumentStyleDialog {
-    constructor(id, style, templateId, allStyles, refresh) {
+    constructor(id, style, documentTemplateId, allStyles, refresh) {
         this.id = id
         this.style = style
-        this.templateId = templateId
+        this.documentTemplateId = documentTemplateId
         this.allStyles = allStyles
         this.refresh = refresh
 
@@ -28,7 +28,7 @@ export class DocumentStyleDialog {
                             const docStyle = json.doc_style[0]
                             const pk = docStyle.pk
                             const oldStyleIndex = this.allStyles.findIndex(style => style.pk === pk)
-                            if (!(typeof oldStyleIndex === 'undefined')) {
+                            if (oldStyleIndex > -1) {
                                 this.allStyles.splice(oldStyleIndex, 1, docStyle)
                             } else {
                                 this.allStyles.push(docStyle)
@@ -180,7 +180,7 @@ export class DocumentStyleDialog {
             id: 'confirmdeletion',
             icon: 'exclamation-triangle',
             title: gettext('Confirm deletion'),
-            body: `<p>${gettext('Do you really want to delete the document style')}?</p>`,
+            body: `<p>${gettext('Do you really want to delete the document style?')}</p>`,
             height: 180,
             buttons
         })
@@ -214,7 +214,7 @@ export class DocumentStyleDialog {
                 title,
                 slug,
                 contents,
-                template_id: this.templateId,
+                template_id: this.documentTemplateId,
                 added_files: this.addedFiles,
                 deleted_files: this.deletedFiles
             }

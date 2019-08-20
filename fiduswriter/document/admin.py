@@ -3,7 +3,6 @@ from django.shortcuts import render
 from django.urls import path
 from django.utils.translation import ugettext as _
 from . import models
-from style.admin import ExportTemplateInline
 
 
 class DocumentAdmin(admin.ModelAdmin):
@@ -29,7 +28,6 @@ admin.site.register(models.Document, DocumentAdmin)
 class DocumentTemplateAdmin(admin.ModelAdmin):
     actions = ['duplicate', ]
     list_display = ('title', 'user',)
-    inlines = [ExportTemplateInline, ]
 
     def duplicate(self, request, queryset):
         for template in queryset:

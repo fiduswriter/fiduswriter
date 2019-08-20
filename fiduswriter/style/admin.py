@@ -41,8 +41,3 @@ class ExportTemplateAdmin(admin.ModelAdmin):
 
 
 admin.site.register(models.ExportTemplate, ExportTemplateAdmin)
-
-
-class ExportTemplateInline(admin.TabularInline):
-    model = models.ExportTemplate
-    extra = 1

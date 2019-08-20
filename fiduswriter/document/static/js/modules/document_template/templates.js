@@ -575,10 +575,20 @@ export const documentStylesTemplate = ({documentStyles}) => `${documentStyles.ma
 ).join('')}
 <button class="fw-green fw-small fw-button ui-button document-style" data-id="0">
     <i class="fas fa-plus-circle"></i>
-    ${gettext('Add new style')}
+    ${gettext('Add new document style')}
 </button>`
 
-export const documentDesignerTemplate = ({id, value, title, citationStyles, documentStyles}) =>
+export const exportTemplatesTemplate = ({exportTemplates}) => `${exportTemplates.map(
+    template => `<button class="fw-green fw-small fw-button ui-button export-template" data-id="${template.pk}">
+        ${escapeText(template.fields.title)}
+    </button>`
+).join('')}
+<button class="fw-green fw-small fw-button ui-button export-template" data-id="0">
+    <i class="fas fa-plus-circle"></i>
+    ${gettext('Add new export template')}
+</button>`
+
+export const documentDesignerTemplate = ({id, value, title, citationStyles, documentStyles, exportTemplates}) =>
     `<table><tbody>
     <tr><td>${gettext('Title')}</td><td><input text="text" class="style-title vTextField fw-inline" value="${escapeText(title)}"></td></tr>
     </tbody></table>
@@ -673,6 +683,16 @@ export const documentDesignerTemplate = ({id, value, title, citationStyles, docu
                     <td>
                         <div class="ui-dialog-buttonset document-styles">
                                 ${documentStylesTemplate({documentStyles})}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        ${gettext('Export templates')}
+                    </td>
+                    <td>
+                        <div class="ui-dialog-buttonset export-templates">
+                                ${exportTemplatesTemplate({exportTemplates})}
                         </div>
                     </td>
                 </tr>` :

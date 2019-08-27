@@ -11,7 +11,6 @@ export class ModDocumentTemplate {
         this.citationLocales = []
     }
 
-
     setStyles(styles) {
         this.exportTemplates = styles.export_templates
         this.documentStyles = styles.document_styles

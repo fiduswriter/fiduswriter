@@ -9,23 +9,86 @@ export const article = {
     selectable: false,
     allowGapCursor: false,
     attrs: {
-        papersize: {
-            default: 'A4'
-        },
-        citationstyle: {
-            default: ''
-        },
         documentstyle: {
             default: ''
-        },
-        language: {
-            default: 'en-US'
         },
         tracked: {
             default: false
         },
+        citationstyle: { // Default citation style
+            default: 'apa'
+        },
+        citationstyles: { // Available citation styles
+            default: [
+                'american-anthropological-association',
+                'apa',
+                'chicago-author-date',
+                'chicago-note-bibliography',
+                'harvard-cite-them-right', // harvard1
+                'modern-language-association', // mla
+                'oxford-university-press-humsoc',
+                'nature'
+            ]
+        },
+        language: { // Default language
+            default: 'en-US'
+        },
         languages: { // Available languages
-            default: ["af-ZA", "sq-AL", "ar", "ast", "be", "br", "bg", "ca", "ca-ES-Valencia", "zh-CN", "da", "nl", "en-AU", "en-CA", "en-NZ", "en-ZA", "en-GB", "en-US", "eo", "fr", "gl", "de-DE", "de-AU", "de-CH", "el", "he", "is", "it", "ja", "km", "lt", "ml", "nb-NO", "nn-NO", "fa", "pl", "pt-BR", "pt-PT", "ro", "ru", "tr", "sr-SP-Cy", "sr-SP-Lt", "sk", "sl", "es", "sv", "ta", "tl", "uk"]
+            default: [
+                "af-ZA",
+                "sq-AL",
+                "ar",
+                "ast",
+                "be",
+                "br",
+                "bg",
+                "ca",
+                "ca-ES-Valencia",
+                "zh-CN",
+                "da",
+                "nl",
+                "en-AU",
+                "en-CA",
+                "en-NZ",
+                "en-ZA",
+                "en-GB",
+                "en-US",
+                "eo",
+                "fr",
+                "gl",
+                "de-DE",
+                "de-AU",
+                "de-CH",
+                "el",
+                "he",
+                "is",
+                "it",
+                "ja",
+                "km",
+                "lt",
+                "ml",
+                "nb-NO",
+                "nn-NO",
+                "fa",
+                "pl",
+                "pt-BR",
+                "pt-PT",
+                "ro",
+                "ru",
+                "tr",
+                "sr-SP-Cy",
+                "sr-SP-Lt",
+                "sk",
+                "sl",
+                "es",
+                "sv",
+                "ta",
+                "tl",
+                "uk"
+            ]
+        },
+        papersize: { // Default paper size
+            default: 'A4'
         },
         papersizes: { // Available paper sizes
             default: ["A4", "US Letter"]
@@ -41,17 +104,7 @@ export const article = {
         },
         template: {
             default: {}
-        },
-        figure: {
-            default: {}
-        },
-        table: {
-            default: {}
-        },
-        photo: {
-            default: {}
         }
-
     },
     parseDOM: [{
         tag: "div.article",

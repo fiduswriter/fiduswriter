@@ -1,3 +1,5 @@
+import {styles} from "citeproc-plus"
+
 import {escapeText} from "../common"
 import {LANGUAGES, PAPER_SIZES} from "../schema/const"
 
@@ -507,10 +509,33 @@ const footnoteTemplate = ({
     footnote_marks = ["strong", "em", "underline", "link"]
 }) => `<div class="doc-part attrs">${allowedElementsTemplate({elements: footnote_elements}, false)}${allowedMarksTemplate({marks: footnote_marks})}</div>`
 
+const citationstylesTemplate = ({citationstyles = ['apa']}) =>
+`<select multiple size=5>
+${Object.entries(styles).map(([key, value]) => `<option value="${key}"${citationstyles.includes(key) ? ' selected' : ''}>${value}</option>`).join('')}
+</select>`
+
+export const citationstyleTemplate = ({citationstyle = 'apa', citationstyles=['apa']}) => {
+    if (!citationstyles.includes(citationstyle)) {
+        citationstyle = citationstyles[0]
+    }
+    return `<select>
+        ${citationstyles.map(key => `<option value="${key}"${citationstyle === key ? ' selected' : ''}>${styles[key]}</option>`).join('')}
+    </select>`
+}
+
 const languagesTemplate = ({languages = LANGUAGES.map(lang => lang[0])}) =>
 `<select multiple size=5>
 ${LANGUAGES.map(lang => `<option value="${lang[0]}"${languages.includes(lang[0]) ? ' selected' : ''}>${lang[1]}</option>`).join('')}
 </select>`
+
+export const languageTemplate = ({language = 'en-US', languages = LANGUAGES.map(lang => lang[0])}) => {
+    if (!languages.includes(language)) {
+        language = languages[0]
+    }
+    return `<select>
+        ${LANGUAGES.filter(lang => languages.includes(lang[0])).map(lang => `<option value="${lang[0]}"${language === lang[0] ? ' selected' : ''}>${lang[1]}</option>`).join('')}
+    </select>`
+}
 
 const papersizesTemplate = ({papersizes = PAPER_SIZES.map(size => size[0])}) =>
 `<select multiple size=5>
@@ -638,10 +663,18 @@ export const documentDesignerTemplate = ({id, value, title, citationStyles, docu
             </tr>
             <tr>
                 <td>
-                    ${gettext('Permitted languages')}
+                    ${gettext('Available languages')}
                 </td>
                 <td class="languages-value">
                     ${languagesTemplate(value.attrs || {})}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    ${gettext('Default language')}
+                </td>
+                <td class="language-value">
+                    ${languageTemplate(value.attrs || {})}
                 </td>
             </tr>
             <tr>
@@ -658,6 +691,22 @@ export const documentDesignerTemplate = ({id, value, title, citationStyles, docu
                 </td>
                 <td class="bibliography-header-value">
                     ${bibliographyHeaderTemplate(value.attrs || {})}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    ${gettext('Available citation styles')}
+                </td>
+                <td class="citationstyles-value">
+                    ${citationstylesTemplate(value.attrs || {})}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    ${gettext('Default citation style')}
+                </td>
+                <td class="citationstyle-value">
+                    ${citationstyleTemplate(value.attrs || {})}
                 </td>
             </tr>
             <tr>

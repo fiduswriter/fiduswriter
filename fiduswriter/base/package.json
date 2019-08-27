@@ -18,6 +18,7 @@
   "license": "AGPL",
   "private": true,
   "dependencies": {
+    "file-loader": "^4.2.0",
     "diff-dom": "4.1.6",
     "downloadjs": "1.4.7",
     "@fortawesome/fontawesome-free": "^5.9.0",

@@ -468,15 +468,9 @@ export class Editor {
                 )
             ]})
         } else {
-            const article = JSON.parse(JSON.stringify(this.docInfo.template)),
-                language = navigator.languages.find(
-                    lang => article.attrs.languages.includes(lang)
-                )
-            // Set document language according to local user preferences
-            if (language) {
-                article.attrs.language = language
-            }
-            stateDoc = this.schema.nodeFromJSON({type:'doc', content:[article]})
+            stateDoc = this.schema.nodeFromJSON({type:'doc', content:[
+                JSON.parse(JSON.stringify(this.docInfo.template))
+            ]})
         }
         const plugins = this.statePlugins.map(plugin => {
             if (plugin[1]) {

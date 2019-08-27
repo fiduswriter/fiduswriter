@@ -2,7 +2,6 @@
 
 from django.db import migrations, models
 import django.db.models.deletion
-import document.models
 import uuid
 
 
@@ -16,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='document',
             name='template',
-            field=models.ForeignKey(default=document.models.default_template, on_delete=django.db.models.deletion.CASCADE, to='document.DocumentTemplate'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='document.DocumentTemplate'),
         ),
         migrations.CreateModel(
             name='AccessRightInvite',

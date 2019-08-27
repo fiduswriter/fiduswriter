@@ -229,6 +229,59 @@ export const separator_part = {
     }
 }
 
+
+
+export const file_upload_part = {
+    marks: "annotation track",
+    group: "part",
+    defining: true,
+    attrs : {
+            id: {
+            default: 'file_upload'
+        },
+        files: {
+            default: ''
+        }
+    },
+    parseDOM: [{
+        tag: 'div.uploadFile',
+        getAttrs(dom) {
+            return {
+                file: dom.dataset.file
+            }
+        }
+    }],
+    toDOM(node) {
+    /* Here we must have the dialog to upload attachment called */
+/*        const dom = document.createElement('button')
+        dom.innerHTML = "Upload File"
+        dom.dataset.file = node.attrs.file
+        dom.classList.add('article-file_upload_part')
+
+        dom.setAttribute('contenteditable', 'false')
+        return dom*/
+
+        const dom = document.createElement('div')
+        dom.dataset.file = node.attrs.file
+        dom.classList.add('article-part', 'article-file_upload_part')
+
+
+        const button_upload = document.createElement('button')
+        button_upload.innerHTML = "Upload File"
+        button_upload.setAttribute('contenteditable', 'false')
+
+        const button_manage = document.createElement('button')
+        button_manage.innerHTML = "Manage File"
+        button_manage.setAttribute('contenteditable', 'false')
+
+        dom.appendChild(button_upload)
+        dom.appendChild(button_manage)
+
+        return dom
+    }
+}
+
+
 export const title = {
     content: "text*",
     marks: "annotation track",

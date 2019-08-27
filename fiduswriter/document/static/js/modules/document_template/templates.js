@@ -359,6 +359,46 @@ const separatorTemplate = ({
     </div>
 </div>`
 
+const fileUploadTemplate = ({
+    id="",
+    title="",
+    optional="false"
+}) =>
+`<div class="doc-part" data-type="file_upload_part">
+    <div class="doc-part-header">
+        ${gettext('File Uploader')}
+        <ul class="object-tools right">
+            <li>
+                <span class="link configure">${gettext('Configure')}</span>
+            </li>
+        </ul>
+        <div class="label">
+            ${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}">
+            ${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}">
+        </div>
+    </div>
+    <div class="attrs hidden">
+        <div class="label">${gettext('Optional')}
+            <select class="optional">
+                <option value="false" ${optional==='false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
+                <option value="shown" ${optional==='shown' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
+                <option value="hidden" ${optional==='hidden' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
+            </select>
+        </div>
+        <div class='label'>
+            ${gettext('Allowed Buttons')}
+        </div>
+        <label>
+            <input type="checkbox" class="elements" value="addFile" />
+            ${gettext('Add Attachment')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="manageFile" />
+            ${gettext('Manage Attachment')}
+        </label>
+    </div>
+</div>`
+
 const tagsTemplate = ({
     id="",
     title="",
@@ -563,6 +603,8 @@ const templateEditorValueTemplate = ({content}) =>
                 return tocTemplate(docPart.attrs)
             case 'separator_part':
                 return separatorTemplate(docPart.attrs)
+            case 'file_upload_part':
+                return fileUploadTemplate(docPart.attrs)
             default:
                 return ''
         }
@@ -610,6 +652,7 @@ export const documentDesignerTemplate = ({id, value, title, citationStyles, docu
                     ${tableTemplate({})}
                     ${tocTemplate({})}
                     ${separatorTemplate({})}
+                    ${fileUploadTemplate({})}
                 </td>
                 <td class="to-column">
                     <div class="doc-part fixed" data-type="initial">${gettext('Title')}</div>

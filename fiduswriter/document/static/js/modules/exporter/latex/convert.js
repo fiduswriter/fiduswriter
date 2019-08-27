@@ -199,6 +199,7 @@ export class LatexExporterConvert {
                 start += '\n\n\\tableofcontents\n'
                 break
             case 'separator_part':
+            case 'file_upload_part':
             case 'table_part':
                 // part separators as in page breaks should usually already be handled
                 // by LaTeX and table parts will simply show the table inside of them.

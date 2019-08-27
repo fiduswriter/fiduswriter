@@ -81,6 +81,9 @@ form .aligned ul.object-tools.right {
     background-color: #985F99;
 }
 
+.doc-part[data-type='file_upload_part'] {
+     background-color: #CCFFF7;
+}
 .from-container .doc-part, .trash .doc-part {
     height: 50px;
 }

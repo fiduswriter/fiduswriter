@@ -253,18 +253,10 @@ export const file_upload_part = {
     }],
     toDOM(node) {
     /* Here we must have the dialog to upload attachment called */
-/*        const dom = document.createElement('button')
-        dom.innerHTML = "Upload File"
-        dom.dataset.file = node.attrs.file
-        dom.classList.add('article-file_upload_part')
-
-        dom.setAttribute('contenteditable', 'false')
-        return dom*/
 
         const dom = document.createElement('div')
         dom.dataset.file = node.attrs.file
         dom.classList.add('article-part', 'article-file_upload_part')
-
 
         const button_upload = document.createElement('button')
         button_upload.innerHTML = "Upload File"

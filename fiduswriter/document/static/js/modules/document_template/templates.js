@@ -389,11 +389,11 @@ const fileUploadTemplate = ({
             ${gettext('Allowed Buttons')}
         </div>
         <label>
-            <input type="checkbox" class="elements" value="addFile" />
+            <input type="checkbox" class="elements addFile" value="addFile" />
             ${gettext('Add Attachment')}
         </label>
         <label>
-            <input type="checkbox" class="elements" value="manageFile" />
+            <input type="checkbox" class="elements manageFile" value="manageFile" />
             ${gettext('Manage Attachment')}
         </label>
     </div>

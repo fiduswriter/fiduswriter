@@ -139,6 +139,9 @@ export class DocumentTemplateDesigner {
                             attrs.locking = locking
                         }
                         switch (type) {
+                            // case 'file_upload_part': 
+                            //     console.log("$$$$$$$$$$$$$$$$", el.querySelectorAll('.addFile'))
+                            //     break
                             case 'richtext_part':
                             case 'heading_part': {
                                 attrs.elements = Array.from(el.querySelectorAll('.elements:checked')).map(el => el.value)

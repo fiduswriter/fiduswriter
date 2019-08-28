@@ -64,7 +64,7 @@ class Command(BaseCommand):
         ) or (
             not hasattr(settings, 'AUTO_SETUP') and settings.DEBUG
         ):
-            call_command("setup")
+            call_command("setup", force_transpile=False)
         self.stdout.write((
             "%(started_at)s\n"
             "Django version %(version)s, using settings %(settings)r\n"

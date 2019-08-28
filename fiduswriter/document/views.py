@@ -17,8 +17,8 @@ from django.core.paginator import Paginator, EmptyPage
 
 from user.util import get_user_avatar_url
 from document.models import Document, AccessRight, DocumentRevision, \
-    DocumentTemplate, default_template, \
-    AccessRightInvite, CAN_UPDATE_DOCUMENT, FW_DOCUMENT_VERSION
+    DocumentTemplate, AccessRightInvite, CAN_UPDATE_DOCUMENT, \
+    FW_DOCUMENT_VERSION
 from usermedia.models import DocumentImage, Image
 from bibliography.models import Entry
 from document.helpers.serializers import PythonWithURLSerializer
@@ -610,18 +610,26 @@ def send_invite_notification(request, doc_id, email, rights, invite, change):
 def create_doc(request, template_id):
     response = {}
     status = 405
-    if request.is_ajax() and request.method == 'POST':
-        status = 201
-        template = DocumentTemplate.objects.filter(
-            id=template_id
-        ).first()
-        if not template:
-            template_id = default_template()
-        document = Document.objects.create(
-            owner_id=request.user.pk,
-            template_id=template_id
+    if not request.is_ajax() or request.method != 'POST':
+        return JsonResponse(
+            response,
+            status=status
         )
-        response['id'] = document.id
+    document_template = DocumentTemplate.objects.filter(
+        Q(user=request.user) | Q(user=None),
+        id=template_id
+    ).first()
+    if not document_template:
+        return JsonResponse(
+            response,
+            status=status
+        )
+    document = Document.objects.create(
+        owner_id=request.user.pk,
+        template_id=template_id
+    )
+    status = 201
+    response['id'] = document.id
     return JsonResponse(
         response,
         status=status

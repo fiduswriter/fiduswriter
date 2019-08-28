@@ -302,26 +302,6 @@ AVATAR_GRAVATAR_BACKUP = False
 AVATAR_DEFAULT_URL = 'img/default_avatar.png'
 AVATAR_MAX_AVATARS_PER_USER = 1
 
-DOC_TEMPLATE = open(
-    os.path.join(
-        os.path.dirname(
-            os.path.realpath(__file__)
-        ),
-        'doc_template.json'
-    ),
-    'r'
-).read()
-
-DOC_TEMPLATE_HASH = open(
-    os.path.join(
-        os.path.dirname(
-            os.path.realpath(__file__)
-        ),
-        'doc_template.hash'
-    ),
-    'r'
-).read()[:22]
-
 DEFAULT_CITATIONSTYLE = open(
     os.path.join(
         os.path.dirname(

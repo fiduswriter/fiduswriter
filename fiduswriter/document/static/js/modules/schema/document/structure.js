@@ -241,7 +241,14 @@ export const file_upload_part = {
         },
         files: {
             default: ''
+        },
+        upload: {
+            default: true
+        },
+        manage: {
+            default: true
         }
+
     },
     parseDOM: [{
         tag: 'div.uploadFile',

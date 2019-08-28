@@ -139,9 +139,22 @@ export class DocumentTemplateDesigner {
                             attrs.locking = locking
                         }
                         switch (type) {
-                            // case 'file_upload_part': 
-                            //     console.log("$$$$$$$$$$$$$$$$", el.querySelectorAll('.addFile'))
-                            //     break
+                            case 'file_upload_part': 
+                                const upload_checkbox = el.querySelector('.upload')
+                                if(upload_checkbox.checked == true){
+                                    attrs.upload = 'true'
+                                }
+                                else{
+                                    attrs.upload = false
+                                }
+                                const manage_checkbox = el.querySelector('.manage')
+                                if(manage_checkbox.checked == true){
+                                    attrs.manage = 'true'
+                                }
+                                else{
+                                    attrs.manage = false
+                                }
+                                break
                             case 'richtext_part':
                             case 'heading_part': {
                                 attrs.elements = Array.from(el.querySelectorAll('.elements:checked')).map(el => el.value)

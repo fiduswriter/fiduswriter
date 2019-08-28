@@ -362,7 +362,9 @@ const separatorTemplate = ({
 const fileUploadTemplate = ({
     id="",
     title="",
-    optional="false"
+    optional="false",
+    upload="true",
+    manage="true"
 }) =>
 `<div class="doc-part" data-type="file_upload_part">
     <div class="doc-part-header">
@@ -389,11 +391,11 @@ const fileUploadTemplate = ({
             ${gettext('Allowed Buttons')}
         </div>
         <label>
-            <input type="checkbox" class="elements addFile" value="addFile" />
+            <input type="checkbox" class="elements upload" value=${upload} ${upload==='true' ? 'checked' : ''}/>
             ${gettext('Add Attachment')}
         </label>
         <label>
-            <input type="checkbox" class="elements manageFile" value="manageFile" />
+            <input type="checkbox" class="elements manage" value=${manage} ${manage==='true' ? 'checked' : ''}/>
             ${gettext('Manage Attachment')}
         </label>
     </div>

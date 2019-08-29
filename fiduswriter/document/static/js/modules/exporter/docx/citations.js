@@ -52,6 +52,7 @@ export class DocxExporterCitations {
             }
         )
         this.citFm = new FormatCitations(
+            this.exporter.csl,
             this.citInfos,
             this.exporter.doc.settings.citationstyle,
             '',

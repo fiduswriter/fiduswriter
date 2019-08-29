@@ -1,9 +1,11 @@
 import {escapeText} from "../common"
+import {citeprocSys} from "./citeproc_sys"
 /*
 * Use CSL and bibDB to format all citations for the given prosemirror json citation nodes
 */
 export class FormatCitations {
-    constructor(allCitationInfos, citationStyle, bibliographyHeader, bibDB, citationStyles, citationLocales) {
+    constructor(csl, allCitationInfos, citationStyle, bibliographyHeader, bibDB, citationStyles, citationLocales) {
+        this.csl = csl
         this.allCitationInfos = allCitationInfos
         this.citationStyle = citationStyle
         this.bibliographyHeader = bibliographyHeader
@@ -36,7 +38,7 @@ export class FormatCitations {
     }
 
     get bibHTML() {
-        if (!this.bibliography[0].entry_ids.length) {
+        if (!this.bibliography || !this.bibliography[0].entry_ids.length) {
             return ''
         }
         const bib = this.bibliography,
@@ -46,6 +48,9 @@ export class FormatCitations {
 
         // CSS
     get bibCSS()  {
+        if (!this.bibliography || !this.bibliography[0].entry_ids.length) {
+            return ''
+        }
         const bibInfo = this.bibliography[0]
         let css = '\n'
             css += `.csl-entry {padding-bottom: ${bibInfo.entryspacing+1}em;}\n`
@@ -90,19 +95,9 @@ export class FormatCitations {
     }
 
     getFormattedCitations() {
-        return Promise.all([
-            import("citeproc"),
-            import("./citeproc_sys")
-        ]).then(([CSL, {citeprocSys}]) => {
-            this.citationStyleDef = this.citationStyles.find(style => style.short_title === this.citationStyle)
-            if (!this.citationStyleDef && this.citationStyles.length) {
-                this.citationStyleDef = this.citationStyles[0]
-            }
-            const citeprocConnector = new citeprocSys(this.bibDB, this.citationLocales)
-            const citeprocInstance = new CSL.Engine(
-                citeprocConnector,
-                this.citationStyleDef.contents
-            )
+        const citeprocConnector = new citeprocSys(this.bibDB, this.citationLocales)
+        return this.csl.getEngine(citeprocConnector, this.citationStyle).then(citeprocInstance => {
+
             const allIds = []
             this.citations.forEach(cit =>
                 cit.citationItems.forEach(item => allIds.push(String(item.id)))
@@ -155,7 +150,5 @@ export class FormatCitations {
                 return Promise.resolve()
             }
         })
-
-
     }
 }

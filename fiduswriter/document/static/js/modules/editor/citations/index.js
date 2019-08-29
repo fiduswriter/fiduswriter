@@ -50,6 +50,7 @@ export class ModCitations {
                 settings.citationstyle,
                 bibliographyHeader,
                 this.editor.mod.db.bibDB,
+                this.editor.app.csl,
                 this.editor.mod.documentTemplate.citationStyles,
                 this.editor.mod.documentTemplate.citationLocales
             )

@@ -1,4 +1,5 @@
 import bowser from "bowser"
+import {styles} from "citeproc-plus"
 import {Dialog} from "../../common"
 
 export class ModDocumentTemplate {
@@ -24,7 +25,6 @@ export class ModDocumentTemplate {
         })
         this.addExportTemplateMenuEntries()
         this.addDocumentStylesMenuEntries()
-        this.addCitationStylesMenuEntries()
         if (this.editor.menu.headerView) {
             this.editor.menu.headerView.update()
         }
@@ -105,6 +105,7 @@ export class ModDocumentTemplate {
                                 template.template_file,
                                 editor.mod.db.bibDB,
                                 editor.mod.db.imageDB,
+                                editor.app.csl,
                                 editor.mod.documentTemplate.citationStyles,
                                 editor.mod.documentTemplate.citationLocales,
                                 editor.staticUrl
@@ -130,6 +131,7 @@ export class ModDocumentTemplate {
                                 template.template_file,
                                 editor.mod.db.bibDB,
                                 editor.mod.db.imageDB,
+                                editor.app.csl,
                                 editor.mod.documentTemplate.citationStyles,
                                 editor.mod.documentTemplate.citationLocales
                             )
@@ -169,20 +171,19 @@ export class ModDocumentTemplate {
         const settingsMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id==='settings'),
             citationStyleMenu = settingsMenu.content.find(menu => menu.id==='citation_style')
 
-        citationStyleMenu.content = this.citationStyles.map(citeStyle => {
+        citationStyleMenu.content = this.editor.view.state.doc.firstChild.attrs.citationstyles.map(citationstyle => {
             return {
-                title: citeStyle.title,
+                title: styles[citationstyle],
                 type: 'setting',
                 action: editor => {
                     const article = editor.view.state.doc.firstChild
-                    const attrs = Object.assign({}, article.attrs)
-                    attrs.citationstyle = citeStyle.short_title
+                    const attrs = Object.assign({}, article.attrs, {citationstyle})
                     editor.view.dispatch(
                         editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta('settings', true)
                     )
                 },
                 selected: editor => {
-                    return editor.view.state.doc.firstChild.attrs.citationstyle === citeStyle.short_title
+                    return editor.view.state.doc.firstChild.attrs.citationstyle === citationstyle
                 }
             }
         })

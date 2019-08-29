@@ -164,6 +164,7 @@ export const headerbarModel = () => ({
                             const exporter = new HTMLExporter(
                                 editor.schema,
                                 editor.staticUrl,
+                                editor.app.csl,
                                 editor.mod.documentTemplate.citationStyles,
                                 editor.mod.documentTemplate.citationLocales,
                                 editor.mod.documentTemplate.documentStyles,
@@ -185,6 +186,7 @@ export const headerbarModel = () => ({
                             const exporter = new EpubExporter(
                                 editor.schema,
                                 editor.staticUrl,
+                                editor.app.csl,
                                 editor.mod.documentTemplate.citationStyles,
                                 editor.mod.documentTemplate.citationLocales,
                                 editor.mod.documentTemplate.documentStyles,
@@ -224,6 +226,7 @@ export const headerbarModel = () => ({
                                 editor.getDoc({changes: 'acceptAllNoInsertions'}),
                                 editor.mod.db.bibDB,
                                 editor.mod.db.imageDB,
+                                editor.app.csl,
                                 editor.mod.documentTemplate.citationStyles,
                                 editor.mod.documentTemplate.citationLocales,
                             )

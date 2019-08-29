@@ -501,6 +501,7 @@ export class Editor {
         this.mod.marginboxes.view(this.view)
         // Set part specific settings
         this.mod.documentTemplate.addDocPartSettings()
+        this.mod.documentTemplate.addCitationStylesMenuEntries()
         this.waitingForDocument = false
         deactivateWait()
         if (locationHash.length) {

@@ -189,6 +189,7 @@ export class DocumentOverviewActions {
                     const exporter = new HTMLExporter(
                         this.documentOverview.schema,
                         this.documentOverview.staticUrl,
+                        this.documentOverview.app.csl,
                         this.documentOverview.citationStyles,
                         this.documentOverview.citationLocales,
                         this.documentOverview.documentStyles,
@@ -218,6 +219,7 @@ export class DocumentOverviewActions {
                                 templateUrl,
                                 {db:doc.bibliography},
                                 {db:doc.images},
+                                this.documentOverview.app.csl,
                                 this.documentOverview.citationStyles,
                                 this.documentOverview.citationLocales,
                                 this.documentOverview.staticUrl
@@ -231,6 +233,7 @@ export class DocumentOverviewActions {
                                 templateUrl,
                                 {db:doc.bibliography},
                                 {db:doc.images},
+                                this.documentOverview.app.csl,
                                 this.documentOverview.citationStyles,
                                 this.documentOverview.citationLocales
                             )
@@ -278,6 +281,7 @@ export class DocumentOverviewActions {
                             doc,
                             {db:doc.bibliography},
                             {db:doc.images},
+                            this.documentOverview.app.csl,
                             this.documentOverview.citationStyles,
                             this.documentOverview.citationLocales
                         )
@@ -300,6 +304,7 @@ export class DocumentOverviewActions {
                         const exporter = new EpubExporter(
                             this.documentOverview.schema,
                             this.documentOverview.staticUrl,
+                            this.documentOverview.app.csl,
                             this.documentOverview.citationStyles,
                             this.documentOverview.citationLocales,
                             this.documentOverview.documentStyles,

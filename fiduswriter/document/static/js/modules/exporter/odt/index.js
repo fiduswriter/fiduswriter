@@ -22,11 +22,12 @@ TODO:
 */
 
 export class OdtExporter {
-    constructor(doc, templateUrl, bibDB, imageDB, citationStyles, citationLocales) {
+    constructor(doc, templateUrl, bibDB, imageDB, csl, citationStyles, citationLocales) {
         this.doc = doc
         this.templateUrl = templateUrl
         this.bibDB = bibDB
         this.imageDB = imageDB
+        this.csl = csl
         this.citationStyles = citationStyles
         this.citationLocales = citationLocales
         this.pmCits = false

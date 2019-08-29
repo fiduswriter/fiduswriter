@@ -24,11 +24,12 @@ TODO:
 */
 
 export class DocxExporter {
-    constructor(doc, templateUrl, bibDB, imageDB, citationStyles, citationLocales, staticUrl) {
+    constructor(doc, templateUrl, bibDB, imageDB, csl, citationStyles, citationLocales, staticUrl) {
         this.doc = doc
         this.templateUrl = templateUrl
         this.bibDB = bibDB
         this.imageDB = imageDB
+        this.csl = csl
         this.citationStyles = citationStyles
         this.citationLocales = citationLocales
         this.staticUrl = staticUrl

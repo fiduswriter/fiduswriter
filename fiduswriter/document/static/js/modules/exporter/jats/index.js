@@ -11,11 +11,12 @@ import {darManifest, readMe} from "./templates"
 */
 
 export class JATSExporter {
-    constructor(staticUrl, doc, bibDB, imageDB, citationStyles, citationLocales) {
+    constructor(staticUrl, doc, bibDB, imageDB, csl, citationStyles, citationLocales) {
         this.staticUrl = staticUrl
         this.doc = doc
         this.bibDB = bibDB
         this.imageDB = imageDB
+        this.csl = csl
         this.citationStyles = citationStyles
         this.citationLocales = citationLocales
         this.docContents = false

@@ -48,6 +48,7 @@ export class JATSExporterCitations {
         //console.log(this.citFm.citeprocInstance.citation.opt.layout_prefix)
         //this.citFm.citeprocInstance.citation.opt.layout_prefix = ''
         this.citJATSFm = new FormatCitations(
+            this.exporter.csl,
             this.citInfos,
             'jats',
             '',

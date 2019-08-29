@@ -12,8 +12,8 @@ import {DOMExporter} from "../tools/dom_export"
 
 export class EpubExporter extends DOMExporter {
 
-    constructor(schema, staticUrl, citationStyles, citationLocales, documentStyles, doc, bibDB, imageDB) {
-        super(schema, staticUrl, citationStyles, citationLocales, documentStyles)
+    constructor(schema, staticUrl, csl, citationStyles, citationLocales, documentStyles, doc, bibDB, imageDB) {
+        super(schema, staticUrl, csl, citationStyles, citationLocales, documentStyles)
         this.doc = doc
         this.bibDB = bibDB
         this.imageDB = imageDB

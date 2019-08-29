@@ -236,11 +236,11 @@ export const file_upload_part = {
     group: "part",
     defining: true,
     attrs : {
-            id: {
+        id: {
             default: 'file_upload'
         },
         files: {
-            default: ''
+            default: []
         },
         upload: {
             default: true
@@ -252,29 +252,45 @@ export const file_upload_part = {
     },
     parseDOM: [{
         tag: 'div.uploadFile',
-        getAttrs(dom) {
-            return {
-                file: dom.dataset.file
-            }
-        }
+        // getAttrs(dom) {
+        //     return {
+        //         file: dom.dataset.file
+        //     }
+        // }
     }],
     toDOM(node) {
     /* Here we must have the dialog to upload attachment called */
 
         const dom = document.createElement('div')
-        dom.dataset.file = node.attrs.file
+        dom.dataset.files = node.attrs.files
         dom.classList.add('article-part', 'article-file_upload_part')
+        console.log("len = ", node.attrs.files.length)
+        if (node.attrs.files.length) {
+            const filelinks_dom = document.createElement('div')
+            filelinks_dom.classList.add('article-filelinks')
+            node.attrs.files.forEach(addFileLinks)
+            function addFileLinks(file) {
+                const fileLink = document.createElement('a')
+                fileLink.innerHTML = file
+                filelinks_dom.appendChild(fileLink)
+            }
+            dom.appendChild(filelinks_dom)
 
-        const button_upload = document.createElement('button')
-        button_upload.innerHTML = "Upload File"
-        button_upload.setAttribute('contenteditable', 'false')
+        }
 
-        const button_manage = document.createElement('button')
-        button_manage.innerHTML = "Manage File"
-        button_manage.setAttribute('contenteditable', 'false')
+        if(node.attrs.upload) {
+            const button_upload = document.createElement('button')
+            button_upload.innerHTML = "Upload File"
+            button_upload.setAttribute('contenteditable', 'false')
+            dom.appendChild(button_upload)
+        }
 
-        dom.appendChild(button_upload)
-        dom.appendChild(button_manage)
+        if(node.attrs.manage) {
+            const button_manage = document.createElement('button')
+            button_manage.innerHTML = "Manage File"
+            button_manage.setAttribute('contenteditable', 'false')
+            dom.appendChild(button_manage)
+        }
 
         return dom
     }

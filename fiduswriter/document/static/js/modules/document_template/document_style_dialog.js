@@ -13,6 +13,7 @@ export class DocumentStyleDialog {
     }
 
     init() {
+    console.log("##########################")
         const buttons = [
             {
                 text: gettext('Save'),

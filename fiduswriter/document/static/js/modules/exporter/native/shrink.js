@@ -1,5 +1,6 @@
 import {addAlert} from "../../common"
-
+import {toMiniJSON} from "../../schema/mini_json"
+import {docSchema} from "../../schema/document"
 // Generate a copy of the fidus doc, imageDB and bibDB with all clutter removed.
 export class ShrinkFidus {
     constructor(doc, imageDB, bibDB) {
@@ -58,6 +59,8 @@ export class ShrinkFidus {
         delete(docCopy.added)
         delete(docCopy.updated)
         delete(docCopy.revisions)
+
+        docCopy.contents = toMiniJSON(docSchema.nodeFromJSON(docCopy.contents))
 
         return new Promise(resolve => resolve({
             doc: docCopy,

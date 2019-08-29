@@ -1,10 +1,9 @@
+import {toFullJSON, toMiniJSON} from "../schema/mini_json"
+import {docSchema} from "../schema/document"
+
+
 export function extractTemplate(doc) {
-    const template = JSON.parse(JSON.stringify(doc))
-    // Set attributes to default values
-    delete template.attrs.citationstyle
-    delete template.attrs.documentstyle
-    delete template.attrs.tracked
-    template.attrs.language = template.attrs.languages[0]
+    const template = toFullJSON(doc, docSchema)
     template.attrs.papersize = template.attrs.papersizes[0]
     template.content = template.content.filter(part => !part.attrs || !part.attrs.deleted)
     template.content.forEach(part => {
@@ -43,6 +42,6 @@ export function extractTemplate(doc) {
             delete part.attrs.optional
         }
     })
-    return template
+    return toMiniJSON(docSchema.nodeFromJSON(template))
 
 }

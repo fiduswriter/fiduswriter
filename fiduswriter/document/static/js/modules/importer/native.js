@@ -36,9 +36,9 @@ export class ImportNative {
             // bibliography without any changes.
             return this.saveDocument()
         }).catch(
-            () => {
+            error => {
                 addAlert('error', 'Could not create document')
-                return Promise.reject(new Error('document not created'))
+                throw error
             }
         )
 

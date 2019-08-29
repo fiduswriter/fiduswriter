@@ -24,8 +24,8 @@ export const article = {
                 'apa',
                 'chicago-author-date',
                 'chicago-note-bibliography',
-                'harvard-cite-them-right', // harvard1
-                'modern-language-association', // mla
+                'harvard-cite-them-right', // previously harvard1
+                'modern-language-association', // previously mla
                 'oxford-university-press-humsoc',
                 'nature'
             ]

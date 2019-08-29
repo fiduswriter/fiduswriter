@@ -129,8 +129,7 @@ export const figure = {
         id: {default: false},
         track: {default: []},
         aligned: {default: 'center'},
-        width:{default:"100"},
-        //height: {default:"50"},
+        width:{default:"100"}
     },
     parseDOM: [{
         tag: 'figure',
@@ -300,7 +299,9 @@ export const heading6 = createHeading(6)
 
 export const comment = {
     attrs: {
-        id: {}
+        id: {
+            default: false
+        }
     },
     inclusive: false,
     excludes: "",

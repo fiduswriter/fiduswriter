@@ -206,7 +206,7 @@ export const heading_part = partSpec('heading', 'heading', {
 })
 export const contributors_part = partSpec('contributors', 'contributor*', {
     item_title: {
-        default: gettext('Contributor')
+        default: 'Contributor'
     },
     metadata: {
         default: false
@@ -214,7 +214,7 @@ export const contributors_part = partSpec('contributors', 'contributor*', {
 })
 export const tags_part = partSpec('tags', 'tag*', {
     item_title: {
-        default: gettext('Tag')
+        default: 'Tag'
     },
     metadata: {
         default: false
@@ -238,7 +238,7 @@ export const table_of_contents = {
     }],
     attrs: {
         title: {
-            default: gettext('Table of Contents')
+            default: 'Table of Contents'
         },
         id: {
             default: 'toc'
@@ -288,9 +288,6 @@ export const title = {
     group: "fixedpart",
     defining: true,
     attrs : {
-        title: {
-            default: gettext('Title')
-        },
         id: {
             default: 'title'
         }

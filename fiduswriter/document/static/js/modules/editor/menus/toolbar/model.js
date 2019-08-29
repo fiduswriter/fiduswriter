@@ -132,7 +132,7 @@ export const toolbarModel = () => ({
                     editor.currentView.state.selection.$anchor.node(2) ===
                         editor.currentView.state.selection.$head.node(2)
                 ) {
-                    title = editor.currentView.state.selection.$anchor.node(2).attrs.title
+                    title = editor.currentView.state.selection.$anchor.node(2).attrs.title || gettext('Title')
                     return title.length > 20 ? title.slice(0, 20)+"..." : title
                 } else if (
                     editor.currentView.state.selection.$anchor.depth === 1 &&

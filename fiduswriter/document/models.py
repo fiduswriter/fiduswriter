@@ -45,11 +45,6 @@ class DocumentTemplate(models.Model):
 
     def save(self, *args, **kwargs):
         super(DocumentTemplate, self).save(*args, **kwargs)
-        if self.citation_styles.count() == 0:
-            style, created = CitationStyle.objects.get_or_create(
-                short_title='default'
-            )
-            self.citation_styles.add(style)
         if self.documentstyle_set.count() == 0:
             doc_style = DocumentStyle()
             doc_style.document_template = self

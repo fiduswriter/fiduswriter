@@ -4,12 +4,13 @@ import {FormatCitations} from "./format"
  */
 
 export class RenderCitations {
-    constructor(contentElement, citationStyle, bibliographyHeader, bibDB, csl) {
+    constructor(contentElement, citationStyle, bibliographyHeader, bibDB, csl, synchronous = false) {
         this.contentElement = contentElement
         this.citationStyle = citationStyle
         this.bibliographyHeader = bibliographyHeader
         this.bibDB = bibDB
         this.csl = csl
+        this.synchronous = synchronous
 
         this.allCitationNodes = []
         this.allCitationInfos = []
@@ -28,18 +29,29 @@ export class RenderCitations {
             this.allCitationInfos,
             this.citationStyle,
             this.bibliographyHeader,
-            this.bibDB
+            this.bibDB,
+            this.synchronous
         )
-        return this.fm.init().then(
-            () => this.renderCitations()
-        )
+        if (this.synchronous) {
+            if (!this.fm.init()) {
+                return false
+            }
+            this.renderCitations()
+            return true
+        } else {
+            return this.fm.init().then(
+                () => {
+                    this.renderCitations()
+                    return Promise.resolve()
+                }
+            )
+        }
     }
 
     renderCitations() {
         if ('note' !== this.fm.citationType) {
             this.fm.citationTexts.forEach((citationText, index) => this.allCitationNodes[index].innerHTML = citationText)
         }
-        return Promise.resolve()
     }
 
 }

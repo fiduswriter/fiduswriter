@@ -32,22 +32,26 @@ class ClipboardDOMSerializer {
             settings.citationstyle,
             bibliographyHeader,
             this.editor.mod.db.bibDB,
-            this.editor.app.csl
+            this.editor.app.csl,
+            true // synchronous. Should work as the editor has used the same style previously.
         )
-        citRenderer.init()
-        citRenderer.renderCitations()
-        if (citRenderer.fm.bibHTML.length) {
-            const bibDiv = document.createElement('div')
-            bibDiv.classList.add('fiduswriter-clipboard-bibliography')
-            bibDiv.innerHTML = citRenderer.fm.bibHTML
-            bibDiv.firstElementChild.innerHTML = gettext('Bibliography')
-            domFragment.appendChild(bibDiv)
+        if (citRenderer.init()) {
+            if (citRenderer.fm.bibHTML.length) {
+                const bibDiv = document.createElement('div')
+                bibDiv.classList.add('fiduswriter-clipboard-bibliography')
+                bibDiv.innerHTML = citRenderer.fm.bibHTML
+                bibDiv.firstElementChild.innerHTML = gettext('Bibliography')
+                domFragment.appendChild(bibDiv)
+            }
+            return citRenderer.fm
+        } else {
+            return false
         }
-        return citRenderer.fm
+
     }
 
     renderFootnotes(domFragment, citationFormatter) {
-        const footnoteSelector = citationFormatter.citationType === 'note' ?
+        const footnoteSelector = citationFormatter && citationFormatter.citationType === 'note' ?
             '.footnote-marker, .citation' :
             '.footnote-marker'
         // Inside of footnote markers add anchors and put footnotes with contents

@@ -31,7 +31,7 @@ export class DocxExporter {
         this.imageDB = imageDB
         this.csl = csl
         this.staticUrl = staticUrl
-        
+
         this.pmBib = false
         this.docContents = false
         this.docTitle = false

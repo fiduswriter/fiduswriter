@@ -90,7 +90,7 @@ export class OdtExporterCitations {
 
         // Now we do the same for the bibliography.
         const cslBib = this.citFm.bibliography
-        if (cslBib[1].length > 0) {
+        if (cslBib && cslBib[1].length > 0) {
             this.exporter.styles.addReferenceStyle(cslBib[0])
             const bibNode = cslBibSchema.nodeFromJSON({type:'cslbib'})
             const serializer = DOMSerializer.fromSchema(cslBibSchema)

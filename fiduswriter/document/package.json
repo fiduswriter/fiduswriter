@@ -1,7 +1,6 @@
 {
     "dependencies": {
-        "citeproc": "2.1.x",
-        "citeproc-plus": "0.0.12",
+        "citeproc-plus": "0.0.16",
         "fastdom": "1.0.9",
         "fast-deep-equal": "2.0.x",
         "fast-json-patch": "2.0.x",

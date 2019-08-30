@@ -53,12 +53,11 @@ import {
 
 
 export class DocumentTemplateDesigner {
-    constructor({staticUrl}, id, title, value, citationStyles, documentStyles, exportTemplates, dom) {
+    constructor({staticUrl}, id, title, value, documentStyles, exportTemplates, dom) {
         this.staticUrl = staticUrl
         this.id = id
         this.title = title
         this.value = toFullJSON(value, docSchema)
-        this.citationStyles = citationStyles
         this.documentStyles = documentStyles
         this.exportTemplates = exportTemplates
         this.dom = dom
@@ -74,7 +73,6 @@ export class DocumentTemplateDesigner {
             id: this.id,
             title: this.title,
             value: this.value,
-            citationStyles: this.citationStyles,
             documentStyles: this.documentStyles,
             exportTemplates: this.exportTemplates
         })
@@ -272,16 +270,10 @@ export class DocumentTemplateDesigner {
             this.value.attrs.language = this.value.attrs.citationstyles[0]
         }
 
-
-        const citationStyles = Array.from(
-            this.dom.querySelectorAll('.citation-styles option:checked')
-        ).map(el => parseInt(el.value))
-
         return {
             valid,
             title: this.title,
             value: toMiniJSON(docSchema.nodeFromJSON(this.value)),
-            citationStyles,
             errors,
             hash: templateHash(this.value)
         }
@@ -543,7 +535,7 @@ export class DocumentTemplateDesigner {
             const checkedElements = Array.from(this.dom.querySelectorAll('.citationstyles-value option:checked'))
             this.getCurrentValue()
             if (checkedElements.length > this.value.attrs.citationstyles.length) {
-                // Selected more than the max limit. We deselet the remaining.
+                // Selected more than the max limit. We deselect the remaining.
                 checkedElements.forEach(el => {
                     if (!this.value.attrs.citationstyles.includes(el.value)) {
                         el.selected = false

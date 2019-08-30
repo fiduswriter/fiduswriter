@@ -11,7 +11,7 @@ from django.core import checks
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 
-from style.models import CitationStyle, DocumentStyle
+from style.models import DocumentStyle
 
 from django.conf import settings
 
@@ -31,7 +31,6 @@ class DocumentTemplate(models.Model):
         default=FW_DOCUMENT_VERSION
     )
     definition_hash = models.CharField(max_length=22, default='', blank=True)
-    citation_styles = models.ManyToManyField(CitationStyle)
     user = models.ForeignKey(
         User,
         null=True,

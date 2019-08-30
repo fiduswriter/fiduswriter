@@ -32,7 +32,7 @@ function cleanNode(node, elements, marks) {
     }
 }
 
-export function adjustDocToTemplate(miniDoc, miniTemplate, documentStyles, citationStyles, schema) {
+export function adjustDocToTemplate(miniDoc, miniTemplate, documentStyles, schema) {
     const doc = toFullJSON(miniDoc, schema),
         template = toFullJSON(miniTemplate, schema),
         removedFootnoteElements = doc.attrs.footnote_elements.filter(
@@ -72,11 +72,11 @@ export function adjustDocToTemplate(miniDoc, miniTemplate, documentStyles, citat
         doc.attrs.documentstyle = documentStyles[0].slug
     }
 
-    if (!citationStyles.map(style => style.short_title).includes(doc.attrs.citationstyle)) {
-        if (!citationStyles.length) {
+    if (!doc.attrs.citationstyles.includes(doc.attrs.citationstyle)) {
+        if (!doc.attrs.citationstyles.length) {
             throw new Error('No citation styles have been defined for document template.')
         }
-        doc.attrs.citationstyle = citationStyles[0].short_title
+        doc.attrs.citationstyle = doc.attrs.citationstyles[0]
     }
 
 

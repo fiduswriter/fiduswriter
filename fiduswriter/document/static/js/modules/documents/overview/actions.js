@@ -190,8 +190,6 @@ export class DocumentOverviewActions {
                         this.documentOverview.schema,
                         this.documentOverview.staticUrl,
                         this.documentOverview.app.csl,
-                        this.documentOverview.citationStyles,
-                        this.documentOverview.citationLocales,
                         this.documentOverview.documentStyles,
                         doc,
                         {db:doc.bibliography},
@@ -220,8 +218,6 @@ export class DocumentOverviewActions {
                                 {db:doc.bibliography},
                                 {db:doc.images},
                                 this.documentOverview.app.csl,
-                                this.documentOverview.citationStyles,
-                                this.documentOverview.citationLocales,
                                 this.documentOverview.staticUrl
                             )
                             exporter.init()
@@ -233,9 +229,7 @@ export class DocumentOverviewActions {
                                 templateUrl,
                                 {db:doc.bibliography},
                                 {db:doc.images},
-                                this.documentOverview.app.csl,
-                                this.documentOverview.citationStyles,
-                                this.documentOverview.citationLocales
+                                this.documentOverview.app.csl
                             )
                             exporter.init()
                         })
@@ -281,9 +275,7 @@ export class DocumentOverviewActions {
                             doc,
                             {db:doc.bibliography},
                             {db:doc.images},
-                            this.documentOverview.app.csl,
-                            this.documentOverview.citationStyles,
-                            this.documentOverview.citationLocales
+                            this.documentOverview.app.csl
                         )
                         exporter.init()
                     })
@@ -305,8 +297,6 @@ export class DocumentOverviewActions {
                             this.documentOverview.schema,
                             this.documentOverview.staticUrl,
                             this.documentOverview.app.csl,
-                            this.documentOverview.citationStyles,
-                            this.documentOverview.citationLocales,
                             this.documentOverview.documentStyles,
                             doc,
                             {db:doc.bibliography},

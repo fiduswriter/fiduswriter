@@ -23,8 +23,7 @@ from usermedia.models import DocumentImage, Image
 from bibliography.models import Entry
 from document.helpers.serializers import PythonWithURLSerializer
 from bibliography.views import serializer
-from style.models import CitationStyle, CitationLocale, DocumentStyle, \
-    ExportTemplate
+from style.models import DocumentStyle, ExportTemplate
 from base.html_email import html_email
 from user.models import TeamMember
 
@@ -345,12 +344,6 @@ def get_documentlist(request):
             fields=['file_type', 'template_file', 'title']
         )
         response['export_templates'] = [obj['fields'] for obj in export_temps]
-        cit_styles = serializer.serialize(
-            CitationStyle.objects.all()
-        )
-        response['citation_styles'] = [obj['fields'] for obj in cit_styles]
-        cit_locales = serializer.serialize(CitationLocale.objects.all())
-        response['citation_locales'] = [obj['fields'] for obj in cit_locales]
         doc_styles = serializer.serialize(
             DocumentStyle.objects.filter(
                 Q(document_template__user=None) |

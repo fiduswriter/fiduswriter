@@ -613,7 +613,7 @@ export const exportTemplatesTemplate = ({exportTemplates}) => `${exportTemplates
     ${gettext('Add new export template')}
 </button>`
 
-export const documentDesignerTemplate = ({id, value, title, citationStyles, documentStyles, exportTemplates}) =>
+export const documentDesignerTemplate = ({id, value, title, documentStyles, exportTemplates}) =>
     `<table><tbody>
     <tr><td>${gettext('Title')}</td><td><input text="text" class="style-title vTextField fw-inline" value="${escapeText(title)}"></td></tr>
     </tbody></table>
@@ -707,20 +707,6 @@ export const documentDesignerTemplate = ({id, value, title, citationStyles, docu
                 </td>
                 <td class="citationstyle-value">
                     ${citationstyleTemplate(value.attrs || {})}
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    ${gettext('Citation styles')}
-                </td>
-                <td>
-                    <select required="" class="citation-styles" multiple="">${
-                        citationStyles.map(style => `<option value="${style.id}"${
-                            style.selected ? ' selected' : ''
-                        }>${
-                            escapeText(style.title)
-                        }</option>`).join('')
-                    }</select>
                 </td>
             </tr>
             ${

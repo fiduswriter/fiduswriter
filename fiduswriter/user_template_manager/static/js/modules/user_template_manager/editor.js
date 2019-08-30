@@ -20,13 +20,7 @@ export class DocTemplatesEditor {
                 this.template = json.template
                 this.id = json.template.id
                 this.template.definition = JSON.parse(this.template.definition)
-                this.citationStyles = json.citation_styles.map(
-                    style => ({
-                        title: style.fields.title,
-                        id: style.pk,
-                        selected: this.template.citation_styles.includes(style.pk)
-                    })
-                )
+
                 return whenReady()
             }
         ).then(
@@ -37,7 +31,6 @@ export class DocTemplatesEditor {
                     this.id,
                     this.template.title,
                     this.template.definition,
-                    this.citationStyles,
                     this.template.document_styles,
                     this.template.export_templates,
                     document.body.querySelector('#template-editor')
@@ -89,14 +82,13 @@ export class DocTemplatesEditor {
 
     save() {
         document.querySelector('.errorlist').innerHTML = ''
-        const {valid, value, citationStyles, errors, hash, title} = this.templateDesigner.getCurrentValue()
+        const {valid, value, errors, hash, title} = this.templateDesigner.getCurrentValue()
         if (!valid) {
             this.showErrors(errors)
         } else {
             post('/api/user_template_manager/save/', {
                 id: this.id,
                 value: JSON.stringify(value),
-                citation_styles: citationStyles,
                 hash,
                 title
             }).then(

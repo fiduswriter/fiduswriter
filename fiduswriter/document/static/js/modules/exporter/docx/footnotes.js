@@ -85,8 +85,7 @@ export class DocxExporterFootnotes {
             this.citations = new DocxExporterCitations(
                 this.exporter,
                 this.exporter.bibDB,
-                this.exporter.citationStyles,
-                this.exporter.citationLocales,
+                this.exporter.csl,
                 this.fnPmJSON,
                 this.exporter.citations.citInfos
             )

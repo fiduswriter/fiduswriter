@@ -24,15 +24,14 @@ TODO:
 */
 
 export class DocxExporter {
-    constructor(doc, templateUrl, bibDB, imageDB, csl, citationStyles, citationLocales, staticUrl) {
+    constructor(doc, templateUrl, bibDB, imageDB, csl, staticUrl) {
         this.doc = doc
         this.templateUrl = templateUrl
         this.bibDB = bibDB
         this.imageDB = imageDB
         this.csl = csl
-        this.citationStyles = citationStyles
-        this.citationLocales = citationLocales
         this.staticUrl = staticUrl
+        
         this.pmBib = false
         this.docContents = false
         this.docTitle = false
@@ -50,7 +49,7 @@ export class DocxExporter {
         this.rels = new DocxExporterRels(this, 'document')
         this.images = new DocxExporterImages(this, this.imageDB, this.rels, this.docContents)
         this.lists = new DocxExporterLists(this, this.rels, this.docContents)
-        this.citations = new DocxExporterCitations(this, this.bibDB, this.citationStyles, this.citationLocales, this.docContents)
+        this.citations = new DocxExporterCitations(this, this.bibDB, this.csl, this.docContents)
         this.richtext = new DocxExporterRichtext(
             this,
             this.rels,

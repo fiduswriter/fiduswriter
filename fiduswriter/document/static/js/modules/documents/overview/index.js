@@ -121,8 +121,6 @@ export class DocumentOverview {
                 })
 
                 this.teamMembers = json.team_members
-                this.citationStyles = json.citation_styles
-                this.citationLocales = json.citation_locales
                 this.documentStyles = json.document_styles
                 this.exportTemplates = json.export_templates
                 this.documentTemplates = json.document_templates

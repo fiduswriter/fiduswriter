@@ -6,11 +6,10 @@ import {cslBibSchema} from "../../bibliography/schema/csl_bib"
 import {descendantNodes} from "../tools/doc_contents"
 
 export class OdtExporterCitations {
-    constructor(exporter, bibDB, citationStyles, citationLocales, docContents, docTemplate, origCitInfos = []) {
+    constructor(exporter, bibDB, csl, docContents, docTemplate, origCitInfos = []) {
         this.exporter = exporter
         this.bibDB = bibDB
-        this.citationStyles = citationStyles
-        this.citationLocales = citationLocales
+        this.csl = csl
         this.docContents = docContents
         this.docTemplate = docTemplate
         // If citInfos were found in a previous run, they are stored here
@@ -46,13 +45,11 @@ export class OdtExporterCitations {
             }
         )
         this.citFm = new FormatCitations(
-            this.exporter.csl,
+            this.csl,
             this.citInfos,
             this.exporter.doc.settings.citationstyle,
             '',
-            this.bibDB,
-            this.citationStyles,
-            this.citationLocales
+            this.bibDB
         )
         return this.citFm.init().then(
             () => {

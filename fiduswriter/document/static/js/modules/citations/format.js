@@ -4,15 +4,12 @@ import {citeprocSys} from "./citeproc_sys"
 * Use CSL and bibDB to format all citations for the given prosemirror json citation nodes
 */
 export class FormatCitations {
-    constructor(csl, allCitationInfos, citationStyle, bibliographyHeader, bibDB, citationStyles, citationLocales) {
+    constructor(csl, allCitationInfos, citationStyle, bibliographyHeader, bibDB) {
         this.csl = csl
         this.allCitationInfos = allCitationInfos
         this.citationStyle = citationStyle
         this.bibliographyHeader = bibliographyHeader
         this.bibDB = bibDB
-        this.citationStyles = citationStyles
-        this.citationLocales = citationLocales
-        this.citationStyleDef = false
     }
 
     init() {
@@ -95,7 +92,7 @@ export class FormatCitations {
     }
 
     getFormattedCitations() {
-        const citeprocConnector = new citeprocSys(this.bibDB, this.citationLocales)
+        const citeprocConnector = new citeprocSys(this.bibDB)
         return this.csl.getEngine(citeprocConnector, this.citationStyle).then(citeprocInstance => {
 
             const allIds = []

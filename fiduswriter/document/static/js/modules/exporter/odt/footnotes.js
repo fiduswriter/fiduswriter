@@ -50,8 +50,7 @@ export class OdtExporterFootnotes {
             this.citations = new OdtExporterCitations(
                 this.exporter,
                 this.exporter.bibDB,
-                this.exporter.citationStyles,
-                this.exporter.citationLocales,
+                this.exporter.csl,
                 this.fnPmJSON,
                 this.exporter.citations.citInfos
             )

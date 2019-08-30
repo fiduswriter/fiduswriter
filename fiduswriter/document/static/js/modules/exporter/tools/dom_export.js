@@ -17,12 +17,10 @@ by little, and they are all based on the BaseDOMExporter class.
 
 export class DOMExporter {
 
-    constructor(schema, staticUrl, csl, citationStyles, citationLocales, documentStyles) {
+    constructor(schema, staticUrl, csl, documentStyles) {
         this.schema = schema
         this.staticUrl = staticUrl
         this.csl = csl
-        this.citationStyles = citationStyles
-        this.citationLocales = citationLocales
         this.documentStyles = documentStyles
 
         this.fontFiles = []
@@ -78,9 +76,7 @@ export class DOMExporter {
             this.doc.settings.citationstyle,
             bibliographyHeader,
             this.bibDB,
-            this.csl,
-            this.citationStyles,
-            this.citationLocales
+            this.csl
         )
         return citRenderer.init().then(
             () => {

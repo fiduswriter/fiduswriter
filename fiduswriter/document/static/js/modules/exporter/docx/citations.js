@@ -7,13 +7,13 @@ import {descendantNodes} from "../tools/doc_contents"
 import {noSpaceTmp} from "../../common"
 
 export class DocxExporterCitations {
-    constructor(exporter, bibDB, citationStyles, citationLocales, docContents, origCitInfos = []) {
+    constructor(exporter, bibDB, csl, docContents, origCitInfos = []) {
         this.exporter = exporter
         this.bibDB = bibDB
-        this.citationStyles = citationStyles
-        this.citationLocales = citationLocales
+        this.csl = csl
         this.docContents = docContents
         this.origCitInfos = origCitInfos
+
         this.citInfos = []
         this.citationTexts = []
         this.pmCits = []
@@ -52,13 +52,11 @@ export class DocxExporterCitations {
             }
         )
         this.citFm = new FormatCitations(
-            this.exporter.csl,
+            this.csl,
             this.citInfos,
             this.exporter.doc.settings.citationstyle,
             '',
-            this.bibDB,
-            this.citationStyles,
-            this.citationLocales
+            this.bibDB
         )
         return this.citFm.init().then(
             () => {

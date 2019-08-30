@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib.flatpages.models import FlatPage
 
 from document.models import DocumentTemplate
-from style.models import DocumentStyle, CitationStyle
+from style.models import DocumentStyle
 
 
 class Command(BaseCommand):
@@ -40,14 +40,6 @@ class Command(BaseCommand):
             call_command("migrate", fake=True)
         else:
             call_command("migrate")
-        if CitationStyle.objects.count() == 0:
-            call_command(
-                "loaddata",
-                os.path.join(
-                    settings.SRC_PATH,
-                    "style/fixtures/initial_citationstyles.json"
-                )
-            )
         if DocumentTemplate.objects.count() == 0:
             call_command(
                 "loaddata",

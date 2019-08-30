@@ -463,7 +463,6 @@ export class Editor {
                     doc.contents,
                     this.docInfo.template,
                     this.mod.documentTemplate.documentStyles,
-                    this.mod.documentTemplate.citationStyles,
                     this.schema
                 )
             ]})

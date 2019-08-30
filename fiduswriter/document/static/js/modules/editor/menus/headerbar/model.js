@@ -134,8 +134,7 @@ export const headerbarModel = () => ({
                             const exporter = new PrintExporter(
                                 editor.schema,
                                 editor.staticUrl,
-                                editor.mod.documentTemplate.citationStyles,
-                                editor.mod.documentTemplate.citationLocales,
+                                editor.app.csl,
                                 editor.mod.documentTemplate.documentStyles,
                                 editor.getDoc({changes: 'acceptAllNoInsertions'}),
                                 editor.mod.db.bibDB,
@@ -165,8 +164,6 @@ export const headerbarModel = () => ({
                                 editor.schema,
                                 editor.staticUrl,
                                 editor.app.csl,
-                                editor.mod.documentTemplate.citationStyles,
-                                editor.mod.documentTemplate.citationLocales,
                                 editor.mod.documentTemplate.documentStyles,
                                 editor.getDoc({changes: 'acceptAllNoInsertions'}),
                                 editor.mod.db.bibDB,
@@ -187,8 +184,6 @@ export const headerbarModel = () => ({
                                 editor.schema,
                                 editor.staticUrl,
                                 editor.app.csl,
-                                editor.mod.documentTemplate.citationStyles,
-                                editor.mod.documentTemplate.citationLocales,
                                 editor.mod.documentTemplate.documentStyles,
                                 editor.getDoc({changes: 'acceptAllNoInsertions'}),
                                 editor.mod.db.bibDB,
@@ -226,9 +221,7 @@ export const headerbarModel = () => ({
                                 editor.getDoc({changes: 'acceptAllNoInsertions'}),
                                 editor.mod.db.bibDB,
                                 editor.mod.db.imageDB,
-                                editor.app.csl,
-                                editor.mod.documentTemplate.citationStyles,
-                                editor.mod.documentTemplate.citationLocales,
+                                editor.app.csl
                             )
                             exporter.init()
                         })

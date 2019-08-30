@@ -3,7 +3,6 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 
 from document.models import DocumentTemplate
-from style.models import CitationStyle
 from document.helpers.serializers import PythonWithURLSerializer
 
 
@@ -59,10 +58,6 @@ def get(request):
         use_natural_foreign_keys=True,
         fields=['title', 'slug', 'contents', 'documentstylefile_set']
     )
-    citation_styles = serializer.serialize(
-        CitationStyle.objects.all(),
-        fields=['title', ]
-    )
     response = {
         'template': {
             'id': doc_template.id,
@@ -70,12 +65,8 @@ def get(request):
             'definition': doc_template.definition,
             'definition_hash': doc_template.definition_hash,
             'export_templates': export_templates,
-            'document_styles': document_styles,
-            'citation_styles': [
-                f.id for f in doc_template.citation_styles.all()
-            ],
+            'document_styles': document_styles
         },
-        'citation_styles': citation_styles,
     }
     return JsonResponse(
         response,
@@ -99,8 +90,6 @@ def save(request):
     doc_template.definition = request.POST['value']
     doc_template.title = request.POST['title']
     doc_template.definition_hash = request.POST['hash']
-    print(request.POST.getlist('citation_styles[]'))
-    doc_template.citation_styles.set(request.POST.getlist('citation_styles[]'))
     doc_template.save()
     return JsonResponse(
         response,
@@ -121,7 +110,6 @@ def copy(request):
         return JsonResponse({}, status=405)
     response = {}
     status = 201
-    citation_styles = [style for style in doc_template.citation_styles.all()]
     document_styles = [style for style in doc_template.documentstyle_set.all()]
     export_templates = [
         template for template in doc_template.exporttemplate_set.all()
@@ -129,8 +117,6 @@ def copy(request):
     doc_template.pk = None
     doc_template.user = request.user
     doc_template.save()
-    for cs in citation_styles:
-        doc_template.citation_styles.add(cs)
     for ds in document_styles:
         style_files = [file for file in ds.documentstylefile_set.all()]
         ds.pk = None

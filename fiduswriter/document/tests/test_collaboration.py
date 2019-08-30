@@ -20,7 +20,6 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
     TEST_TEXT = "Lorem ipsum dolor sit amet."
     MULTILINE_TEST_TEXT = "Lorem ipsum\ndolor sit amet."
     fixtures = [
-        'initial_citationstyles.json',
         'initial_documenttemplates.json',
         'initial_styles.json',
     ]

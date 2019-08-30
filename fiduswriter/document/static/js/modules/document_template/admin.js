@@ -39,7 +39,6 @@ export class DocumentTemplateAdmin {
             this.definitionHashInput = document.querySelector('#id_definition_hash')
             this.definitionHashBlock = document.querySelector('div.field-definition_hash')
             this.definitionBlock = document.querySelector('div.field-definition')
-            this.citationStyleBlock = document.querySelector('div.field-citation_styles')
             this.modifyDOM()
             this.initDesigner()
             this.bind()
@@ -52,17 +51,6 @@ export class DocumentTemplateAdmin {
             this.id,
             this.titleInput.value,
             JSON.parse(this.definitionTextarea.value),
-            Array.from(
-                document.querySelectorAll('#id_citation_styles option')
-            ).map(
-                el => (
-                    {
-                        title: el.innerText,
-                        id: parseInt(el.value),
-                        selected: el.selected
-                    }
-                )
-            ),
             this.templateExtras.document_styles || [],
             this.templateExtras.export_templates || [],
             document.getElementById('template-editor')
@@ -70,22 +58,9 @@ export class DocumentTemplateAdmin {
         this.templateDesigner.init()
     }
 
-    selectCitationStyles(ids) {
-        Array.from(
-            document.querySelectorAll('#id_citation_styles option')
-        ).forEach(el => {
-            if (ids.includes(parseInt(el.value))) {
-                el.selected = true
-            } else {
-                el.selected = false
-            }
-        })
-    }
-
     modifyDOM() {
         this.definitionBlock.style.display='none'
         this.definitionHashBlock.style.display='none'
-        this.citationStyleBlock.style.display='none'
         this.titleBlock.style.display='none'
         this.titleBlock.insertAdjacentHTML(
             'beforebegin',
@@ -104,11 +79,10 @@ export class DocumentTemplateAdmin {
     }
 
     setCurrentValue() {
-        const {valid, value, citationStyles, errors, hash, title} = this.templateDesigner.getCurrentValue()
+        const {valid, value, errors, hash, title} = this.templateDesigner.getCurrentValue()
         this.definitionTextarea.value = JSON.stringify(value)
         this.definitionHashInput.value = hash
         this.titleInput.value = title
-        this.selectCitationStyles(citationStyles)
         this.showErrors(errors)
         return valid
     }
@@ -129,7 +103,6 @@ export class DocumentTemplateAdmin {
                     if (this.definitionBlock.style.display==='none') {
                         this.definitionBlock.style.display=''
                         this.definitionHashBlock.style.display=''
-                        this.citationStyleBlock.style.display=''
                         this.titleBlock.style.display=''
                         this.setCurrentValue()
                         this.templateDesigner.close()
@@ -138,7 +111,6 @@ export class DocumentTemplateAdmin {
                     } else {
                         this.definitionBlock.style.display='none'
                         this.definitionHashBlock.style.display='none'
-                        this.citationStyleBlock.style.display='none'
                         this.titleBlock.style.display='none'
                         this.templateDesignerBlock.style.display=''
                         this.initDesigner()

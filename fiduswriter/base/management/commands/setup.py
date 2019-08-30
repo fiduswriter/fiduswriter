@@ -33,8 +33,19 @@ class Command(BaseCommand):
             default=False,
             help='Do not attempt to compress static files.',
         )
+        parser.add_argument(
+            '--force-transpile',
+            action='store_true',
+            dest='force_transpile',
+            default=True,
+            help='Force a transpile if nothing has changed.',
+        )
 
     def handle(self, *args, **options):
+        if options["force_transpile"]:
+            force_transpile = True
+        else:
+            force_transpile = False
         if options["restart"]:
             call_command("flush")
             call_command("migrate", fake=True)
@@ -84,7 +95,7 @@ class Command(BaseCommand):
             pass
         else:
             call_command("compilemessages")
-        call_command("transpile")
+        call_command("transpile", force=force_transpile)
         if (
             not options["no-compress"] and
             settings.COMPRESS_OFFLINE and

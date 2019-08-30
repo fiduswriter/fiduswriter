@@ -6,14 +6,11 @@ from builtins import object
 from django.db import models
 from django.db.utils import OperationalError, ProgrammingError
 from django.contrib.auth.models import User
-from django.utils.translation import ugettext as _
 from django.core import checks
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 
 from style.models import DocumentStyle
-
-from django.conf import settings
 
 # FW_DOCUMENT_VERSION:
 # Also defined in frontend
@@ -94,22 +91,6 @@ class DocumentTemplate(models.Model):
             return []
 
 
-def default_template():
-    # We need to get the historical version of the model as newer versions
-    # may have changed in structure
-    template = DocumentTemplate.objects.filter(user=None).first()
-    if template:
-        return template.pk
-    template = DocumentTemplate()
-    template.definition = settings.DOC_TEMPLATE
-    template.definition_hash = settings.DOC_TEMPLATE_HASH
-    template.title = _('Standard Article')
-    template.save()
-    for style in CitationStyle.objects.all():
-        template.citation_styles.add(style)
-    return template.pk
-
-
 class Document(models.Model):
     title = models.CharField(max_length=255, default='', blank=True)
     contents = models.TextField(default='{}')  # json object of content
@@ -143,8 +124,7 @@ class Document(models.Model):
     listed = models.BooleanField(default=True)
     template = models.ForeignKey(
         DocumentTemplate,
-        on_delete=models.deletion.CASCADE,
-        default=default_template
+        on_delete=models.deletion.CASCADE
     )
 
     def __str__(self):

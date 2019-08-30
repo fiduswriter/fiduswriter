@@ -43,6 +43,51 @@ export class PartView {
     }
 }
 
+export class FileView{
+    constructor(node, view, getPos) {
+        this.node = node
+        this.view = view
+        this.getPos = getPos
+        this.dom = document.createElement('div')
+
+        if (this.node.attrs.files.length) {
+            this.filelinks_dom = document.createElement('div')
+            this.filelinks_dom.classList.add('article-filelinks')
+            for (let file_index=0; file_index<this.node.attrs.files.length; file_index++) {
+                let fileLink = addFileLinks(this.node.attrs.files[file_index])
+                this.filelinks_dom.appendChild(fileLink)
+            }
+            this.node.attrs.files.forEach(addFileLinks)
+            function addFileLinks(file) {
+                const fileLink = document.createElement('a')
+                fileLink.innerHTML = file
+                return fileLink
+                //this.filelinks_dom.appendChild(fileLink)
+                //also block the default behaviour maybe
+            }
+            this.dom.appendChild(this.filelinks_dom)
+
+        }
+
+        this.dom.classList.add('article-part', 'article-file_upload_part')
+        if(this.node.attrs.upload) {
+            this.button_upload = document.createElement('button')
+            this.button_upload.innerHTML = "Upload File"
+            this.button_upload.setAttribute('contenteditable', 'false')
+            this.button_upload.onclick = function(){console.log("you clicked")}
+            this.dom.appendChild(this.button_upload)
+        }
+        console.log("File View Worked! ")
+        if(this.node.attrs.manage) {
+            this.button_manage = document.createElement('button')
+            this.button_manage.innerHTML = "Manage File"
+            this.button_manage.setAttribute('contenteditable', 'false')
+            this.button_manage.onclick = function(){console.log("you clicked")}
+            this.dom.appendChild(this.button_manage)
+        }
+    }
+}
+
 const key = new PluginKey('documentTemplate')
 export const documentTemplatePlugin = function(options) {
     return new Plugin({
@@ -61,6 +106,11 @@ export const documentTemplatePlugin = function(options) {
                         getPos
                     )
                     this.spec.props.nodeViews['table_part'] = (node, view, getPos) => new PartView(
+                        node,
+                        view,
+                        getPos
+                    )
+                    this.spec.props.nodeViews['file_upload_part'] = (node, view, getPos) => new FileView(
                         node,
                         view,
                         getPos

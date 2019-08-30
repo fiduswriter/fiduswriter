@@ -240,7 +240,7 @@ export const file_upload_part = {
             default: 'file_upload'
         },
         files: {
-            default: []
+            default: ['file1.pdf']
         },
         upload: {
             default: true
@@ -273,6 +273,7 @@ export const file_upload_part = {
                 const fileLink = document.createElement('a')
                 fileLink.innerHTML = file
                 filelinks_dom.appendChild(fileLink)
+                //also block the default behaviour maybe
             }
             dom.appendChild(filelinks_dom)
 

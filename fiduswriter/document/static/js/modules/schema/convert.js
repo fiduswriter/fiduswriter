@@ -717,7 +717,7 @@ const convertNodeV30 = function(node) {
             }
         }
         switch (node.type) {
-            case 'article':
+            case 'article': {
                 if (node.attrs.language === '') {
                     delete node.attrs.language
                 }
@@ -740,6 +740,7 @@ const convertNodeV30 = function(node) {
                         delete node.attrs.citationstyle
                 }
                 break
+            }
             case 'title':
                 delete node.attrs.title
                 break

@@ -80,7 +80,6 @@ export const selectionMenuModel = () => ({
             ),
             available: editor => !COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights),
             disabled: editor => editor.currentView.state.selection.$anchor.depth < 2 || !tracksInSelection(editor.currentView),
-            // selected: () => false,
             order: 3
         },
         {
@@ -94,7 +93,6 @@ export const selectionMenuModel = () => ({
             ),
             available: editor => !COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights),
             disabled: editor => editor.currentView.state.selection.$anchor.depth < 2 || !tracksInSelection(editor.currentView),
-            // selected: () => false,
             order: 4
         }
     ]

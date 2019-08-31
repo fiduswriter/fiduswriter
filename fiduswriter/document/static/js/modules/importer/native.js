@@ -1,6 +1,6 @@
 import {addAlert, postJson} from "../common"
 import {GetImages} from "./get_images"
-import {templateHash, extractTemplate} from "../document_template"
+import {extractTemplate} from "../document_template"
 
 export class ImportNative {
     /* Save document information into the database */
@@ -93,8 +93,8 @@ export class ImportNative {
 
     createDoc() {
         const template = extractTemplate(this.doc.contents),
-            template_hash = templateHash(template),
-            template_title = template.attrs.template
+            template_title = template.attrs.template,
+            import_id = template.attrs.import_id
         // We create the document on the sever so that we have an ID for it and
         // can link the images to it.
 
@@ -102,7 +102,7 @@ export class ImportNative {
             '/api/document/import/create/',
             {
                 template: JSON.stringify(template),
-                template_hash,
+                import_id,
                 template_title
             }
         ).then(

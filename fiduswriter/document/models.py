@@ -19,13 +19,13 @@ FW_DOCUMENT_VERSION = 3.1
 
 class DocumentTemplate(models.Model):
     title = models.CharField(max_length=255, default='', blank=True)
+    import_id = models.CharField(max_length=255, default='', blank=True)
     definition = models.TextField(default='{}')
     doc_version = models.DecimalField(
         max_digits=3,
         decimal_places=1,
         default=FW_DOCUMENT_VERSION
     )
-    definition_hash = models.CharField(max_length=22, default='', blank=True)
     user = models.ForeignKey(
         User,
         null=True,

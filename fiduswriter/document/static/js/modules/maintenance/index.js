@@ -2,7 +2,6 @@ import {updateFile} from "../importer/update"
 import {updateDoc} from "../schema/convert"
 import {addAlert, post, postJson, findTarget, whenReady} from "../common"
 import {FW_DOCUMENT_VERSION} from "../schema"
-import {templateHash} from "../document_template"
 
 // To upgrade all docs and document revions to the newest version
 
@@ -198,8 +197,7 @@ export class DocMaintenance {
             '/api/document/admin/save_template/',
             {
                 id: doc.id,
-                definition: window.JSON.stringify(doc.contents),
-                definition_hash: templateHash(doc.contents)
+                definition: window.JSON.stringify(doc.contents)
             }
         ).then(() => {
             addAlert('success', `${gettext('The document template has been updated')}: ${doc.id}`)

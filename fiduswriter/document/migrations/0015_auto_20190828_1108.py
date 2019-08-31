@@ -88,5 +88,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(set_citationstyles, lambda apps, schema_editor: None),
+        migrations.RunPython(set_citationstyles),
     ]

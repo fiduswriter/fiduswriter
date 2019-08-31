@@ -42,8 +42,7 @@ import {
     headingPartSchema,
     headingMenuContent,
     tagsPartSchema,
-    contributorsPartSchema,
-    templateHash
+    contributorsPartSchema
 } from "./schema"
 import {
     debounced,
@@ -97,17 +96,33 @@ export class DocumentTemplateDesigner {
         let valid = true
         const ids = []
         const errors = {}
-        const el = this.dom.querySelector('input.style-title')
-        if (el.classList.contains("error-element")) {
-            el.classList.remove("error-element")
+        const titleEl = this.dom.querySelector('input.title')
+        if (titleEl.classList.contains("error-element")) {
+            titleEl.classList.remove("error-element")
         }
-        this.title = el.value
+        this.title = titleEl.value
         if (!this.title.length) {
             valid = false
-            errors.empty_style_title = gettext('The style needs a title.')
-            el.classList.add("error-element")
-            el.scrollIntoView({block:"center", behavior :"smooth"})
+            errors.empty_template_title = gettext('The template needs a title.')
+            titleEl.classList.add("error-element")
+            titleEl.scrollIntoView({block:"center", behavior :"smooth"})
         }
+        const importIdEl = this.dom.querySelector('input.import-id')
+        const importId = importIdEl.value
+        if (!importId.length) {
+            valid = false
+            errors.empty_import_id = gettext('The template needs an ID.')
+            importIdEl.classList.add("error-element")
+            importIdEl.scrollIntoView({block:"center", behavior :"smooth"})
+        }
+        if (/\s/.test(importId)) {
+            valid = false
+            errors.no_spaces = gettext('The template ID cannot contain spaces.')
+            importIdEl.classList.add("error-element")
+            importIdEl.scrollIntoView({block:"center", behavior :"smooth"})
+        }
+
+
 
         this.value = {
             type: 'article',
@@ -226,6 +241,7 @@ export class DocumentTemplateDesigner {
                 )
             ),
             attrs: {
+                import_id: importId,
                 footnote_elements: Array.from(this.dom.querySelectorAll('.footnote-value .elements:checked')).map(el => el.value),
                 footnote_marks: Array.from(this.dom.querySelectorAll('.footnote-value .marks:checked')).map(el => el.value),
                 language: this.dom.querySelector('.language-value option:checked') ? this.dom.querySelector('.language-value option:checked').value : false,
@@ -275,7 +291,7 @@ export class DocumentTemplateDesigner {
             title: this.title,
             value: toMiniJSON(docSchema.nodeFromJSON(this.value)),
             errors,
-            hash: templateHash(this.value)
+            import_id: importId
         }
     }
 

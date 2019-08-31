@@ -82,14 +82,14 @@ export class DocTemplatesEditor {
 
     save() {
         document.querySelector('.errorlist').innerHTML = ''
-        const {valid, value, errors, hash, title} = this.templateDesigner.getCurrentValue()
+        const {valid, value, errors, import_id, title} = this.templateDesigner.getCurrentValue()
         if (!valid) {
             this.showErrors(errors)
         } else {
             post('/api/user_template_manager/save/', {
                 id: this.id,
                 value: JSON.stringify(value),
-                hash,
+                import_id,
                 title
             }).then(
                 () => addAlert('info', gettext('Saved template'))

@@ -103,7 +103,10 @@ export const article = {
             default: {}
         },
         template: {
-            default: {}
+            default: ''
+        },
+        import_id: {
+            default: ''
         }
     },
     parseDOM: [{

@@ -36,8 +36,8 @@ export class DocumentTemplateAdmin {
             this.titleInput = document.querySelector('#id_title')
             this.titleBlock = document.querySelector('div.field-title')
             this.definitionTextarea = document.querySelector('textarea[name=definition]')
-            this.definitionHashInput = document.querySelector('#id_definition_hash')
-            this.definitionHashBlock = document.querySelector('div.field-definition_hash')
+            this.definitionImportIdInput = document.querySelector('#id_import_id')
+            this.definitionImportIdBlock = document.querySelector('div.field-import_id')
             this.definitionBlock = document.querySelector('div.field-definition')
             this.modifyDOM()
             this.initDesigner()
@@ -60,7 +60,7 @@ export class DocumentTemplateAdmin {
 
     modifyDOM() {
         this.definitionBlock.style.display='none'
-        this.definitionHashBlock.style.display='none'
+        this.definitionImportIdBlock.style.display='none'
         this.titleBlock.style.display='none'
         this.titleBlock.insertAdjacentHTML(
             'beforebegin',
@@ -79,9 +79,9 @@ export class DocumentTemplateAdmin {
     }
 
     setCurrentValue() {
-        const {valid, value, errors, hash, title} = this.templateDesigner.getCurrentValue()
+        const {valid, value, errors, import_id, title} = this.templateDesigner.getCurrentValue()
         this.definitionTextarea.value = JSON.stringify(value)
-        this.definitionHashInput.value = hash
+        this.definitionImportIdInput.value = import_id
         this.titleInput.value = title
         this.showErrors(errors)
         return valid
@@ -102,7 +102,7 @@ export class DocumentTemplateAdmin {
                     event.preventDefault()
                     if (this.definitionBlock.style.display==='none') {
                         this.definitionBlock.style.display=''
-                        this.definitionHashBlock.style.display=''
+                        this.definitionImportIdBlock.style.display=''
                         this.titleBlock.style.display=''
                         this.setCurrentValue()
                         this.templateDesigner.close()
@@ -110,7 +110,7 @@ export class DocumentTemplateAdmin {
                         this.templateDesignerBlock.style.display='none'
                     } else {
                         this.definitionBlock.style.display='none'
-                        this.definitionHashBlock.style.display='none'
+                        this.definitionImportIdBlock.style.display='none'
                         this.titleBlock.style.display='none'
                         this.templateDesignerBlock.style.display=''
                         this.initDesigner()

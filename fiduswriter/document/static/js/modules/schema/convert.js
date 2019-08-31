@@ -721,6 +721,8 @@ const convertNodeV30 = function(node) {
                 if (node.attrs.language === '') {
                     delete node.attrs.language
                 }
+                const template = node.attrs.template || 'default'
+                node.attrs.import_id = template.normalize('NFKC').replace(/[^\w\s-]/g, '').toLowerCase().trim().replace(/[-\s]+/g, '-')
                 switch (node.attrs.citationstyle) {
                     case 'harvard1':
                         node.attrs.citationstyle = 'harvard-cite-them-right'

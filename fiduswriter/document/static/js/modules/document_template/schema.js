@@ -1,4 +1,3 @@
-import hash from "object-hash"
 import {schema} from "prosemirror-schema-basic"
 import {Schema, DOMSerializer} from "prosemirror-model"
 import {buildMenuItems} from "prosemirror-example-setup"
@@ -172,15 +171,3 @@ export const contributorsPartSchema = new Schema({
     },
     marks: docSchema.spec.marks
 })
-
-export function templateHash(template) {
-    template = JSON.parse(JSON.stringify(template))
-    delete template.attrs.template // We remove the template title for hash calculation
-    return hash(
-        template,
-        {
-            algorithm: 'md5',
-            encoding: 'base64'
-        }
-    ).slice(null, 22)
-}

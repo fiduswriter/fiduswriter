@@ -636,19 +636,19 @@ def import_create(request):
     status = 405
     if request.is_ajax() and request.method == 'POST':
         status = 201
-        template_hash = request.POST['template_hash']
+        import_id = request.POST['import_id']
         document_template = DocumentTemplate.objects.filter(
             Q(user=request.user) | Q(user=None),
-            definition_hash=template_hash
+            import_id=import_id
         ).first()
         if not document_template:
             title = request.POST['template_title']
             definition = json_encode(json_decode(request.POST['template']))
             document_template = DocumentTemplate()
             document_template.title = title
+            document_template.import_id = import_id
             document_template.user = request.user
             document_template.definition = definition
-            document_template.definition_hash = template_hash
             document_template.save()
         document = Document.objects.create(
             owner_id=request.user.pk,

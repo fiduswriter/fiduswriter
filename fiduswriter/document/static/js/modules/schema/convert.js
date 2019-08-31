@@ -514,6 +514,12 @@ const convertDocV23 = function(doc) {
 }
 
 const convertNodeV30 = function(node) {
+    if (node.attrs && node.attrs.marks) {
+        node.attrs.marks = node.attrs.marks.filter(mark => mark !== 'anchor')
+    }
+    if (node.attrs && node.attrs.footnote_marks) {
+        node.attrs.footnote_marks = node.attrs.footnote_marks.filter(mark => mark !== 'anchor')
+    }
     let attrs
     switch (node.type) {
         case 'article':
@@ -530,7 +536,7 @@ const convertNodeV30 = function(node) {
                 ],
                 papersize: 'A4',
                 papersizes: ["A4", "US Letter"],
-                footnote_marks: ['strong', 'em', 'link', 'anchor'],
+                footnote_marks: ['strong', 'em', 'link'],
                 footnote_elements: ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "table"]
             }
             break
@@ -546,7 +552,7 @@ const convertNodeV30 = function(node) {
                 initial: false,
                 deleted: false,
                 elements: ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote", "table"],
-                marks: ['strong', 'em', 'link', 'anchor'],
+                marks: ['strong', 'em', 'link'],
                 metadata: false
             }
             break
@@ -562,7 +568,7 @@ const convertNodeV30 = function(node) {
                 initial: false,
                 deleted: false,
                 elements: ["heading1"],
-                marks: ['strong', 'em', 'link', 'anchor'],
+                marks: ['strong', 'em', 'link'],
                 metadata: false
             }
             break
@@ -608,7 +614,7 @@ const convertNodeV30 = function(node) {
                 initial: false,
                 deleted: false,
                 elements: ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote"],
-                marks: ['strong', 'em', 'link', 'anchor'],
+                marks: ['strong', 'em', 'link'],
                 metadata: false
             }
             break

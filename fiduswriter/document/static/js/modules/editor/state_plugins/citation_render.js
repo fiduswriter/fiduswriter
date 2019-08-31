@@ -68,6 +68,8 @@ export const citationRenderPlugin = function(options) {
                         options.editor.mod.citations.footnoteNumberOverride()
                         const tr = view.state.tr.setMeta(key, {action: false})
                         view.dispatch(tr)
+                    } else if (view.dom.querySelector('.citation:empty')) {
+                        options.editor.mod.citations.resetCitations()
                     }
                 },
                 destroy: () => {

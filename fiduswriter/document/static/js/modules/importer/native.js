@@ -92,10 +92,20 @@ export class ImportNative {
     }
 
     createDoc() {
+        const template = extractTemplate(this.doc.contents),
+            template_hash = templateHash(template),
+            template_title = template.attrs.template
         // We create the document on the sever so that we have an ID for it and
         // can link the images to it.
 
-        return postJson('/api/document/import/create/').then(
+        return postJson(
+            '/api/document/import/create/',
+            {
+                template: JSON.stringify(template),
+                template_hash,
+                template_title
+            }
+        ).then(
             ({json}) => this.docId = json.id
         ).catch(error => {
             addAlert('error', gettext('Could not create document'))
@@ -104,9 +114,6 @@ export class ImportNative {
     }
 
     saveDocument() {
-        const template = extractTemplate(this.doc.contents),
-            template_hash = templateHash(template),
-            template_title = template.attrs.template
         return postJson(
             '/api/document/import/',
             {
@@ -114,10 +121,7 @@ export class ImportNative {
                 title: this.doc.title,
                 contents: JSON.stringify(this.doc.contents),
                 comments: JSON.stringify(this.doc.comments),
-                bibliography: JSON.stringify(this.bibliography),
-                template: JSON.stringify(template),
-                template_hash,
-                template_title
+                bibliography: JSON.stringify(this.bibliography)
             }
         ).then(
             ({json}) => {

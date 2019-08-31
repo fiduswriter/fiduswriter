@@ -119,7 +119,7 @@ export class ImportFidusFile {
                 this.ok = true
                 this.doc = doc
                 this.docInfo = docInfo
-                this.statusText = `${doc.title} ${gettext(' successfully imported.')}`
+                this.statusText = `${doc.title} ${gettext('successfully imported.')}`
                 return this
             })
 

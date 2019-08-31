@@ -636,7 +636,24 @@ def import_create(request):
     status = 405
     if request.is_ajax() and request.method == 'POST':
         status = 201
-        document = Document.objects.create(owner_id=request.user.pk)
+        template_hash = request.POST['template_hash']
+        document_template = DocumentTemplate.objects.filter(
+            Q(user=request.user) | Q(user=None),
+            definition_hash=template_hash
+        ).first()
+        if not document_template:
+            title = request.POST['template_title']
+            definition = json_encode(json_decode(request.POST['template']))
+            document_template = DocumentTemplate()
+            document_template.title = title
+            document_template.user = request.user
+            document_template.definition = definition
+            document_template.definition_hash = template_hash
+            document_template.save()
+        document = Document.objects.create(
+            owner_id=request.user.pk,
+            template=document_template
+        )
         response['id'] = document.id
     return JsonResponse(
         response,
@@ -714,21 +731,6 @@ def import_doc(request):
             json_encode(json_decode(request.POST['bibliography']))
         # document.doc_version should always be the current version, so don't
         # bother about it.
-        template_hash = request.POST['template_hash']
-        document_template = DocumentTemplate.objects.filter(
-            Q(user=request.user) | Q(user=None),
-            definition_hash=template_hash
-        ).first()
-        if not document_template:
-            title = request.POST['template_title']
-            definition = json_encode(json_decode(request.POST['template']))
-            document_template = DocumentTemplate()
-            document_template.title = title
-            document_template.user = request.user
-            document_template.definition = definition
-            document_template.definition_hash = template_hash
-            document_template.save()
-        document.template = document_template
         document.save()
         response['document_id'] = document.id
         response['added'] = time.mktime(document.added.utctimetuple())

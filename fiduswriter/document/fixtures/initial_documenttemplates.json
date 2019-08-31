@@ -1,1 +1,15 @@
-[{"model": "document.documenttemplate", "pk": 1, "fields": {"title": "Standard Article", "definition": "{\"type\":\"article\",\"attrs\":{\"citationstyles\":[\"american-anthropological-association\",\"apa\",\"chicago-author-date\",\"chicago-note-bibliography\",\"harvard-cite-them-right\",\"modern-language-association\",\"nature\",\"oxford-university-press-humsoc\"],\"template\":\"Standard Article\"},\"content\":[{\"type\":\"title\"},{\"type\":\"heading_part\",\"attrs\":{\"title\":\"Subtitle\",\"id\":\"subtitle\",\"optional\":\"hidden\",\"hidden\":true,\"initial\":[{\"type\":\"heading1\",\"attrs\":{\"id\":\"H6323428\"}}],\"metadata\":\"subtitle\"},\"content\":[{\"type\":\"heading1\",\"attrs\":{\"id\":\"H6323428\"}}]},{\"type\":\"contributors_part\",\"attrs\":{\"title\":\"Authors\",\"id\":\"authors\",\"optional\":\"hidden\",\"hidden\":true,\"item_title\":\"Author\",\"metadata\":\"authors\"}},{\"type\":\"richtext_part\",\"attrs\":{\"title\":\"Abstract\",\"id\":\"abstract\",\"optional\":\"hidden\",\"hidden\":true,\"metadata\":\"abstract\"},\"content\":[{\"type\":\"paragraph\"}]},{\"type\":\"tags_part\",\"attrs\":{\"title\":\"Keywords\",\"id\":\"keywords\",\"optional\":\"hidden\",\"hidden\":true,\"item_title\":\"Keyword\",\"metadata\":\"keywords\"}},{\"type\":\"richtext_part\",\"attrs\":{\"title\":\"Body\",\"id\":\"body\"},\"content\":[{\"type\":\"paragraph\"}]}]}", "doc_version": "3.1", "definition_hash": "fhXMwMdO9Fr9A1XQrNks3Q", "user": null, "added": "2019-07-09T09:23:49Z", "updated": "2019-08-30T14:23:01.915Z"}}]
+[
+{
+    "model": "document.documenttemplate",
+    "pk": 1,
+    "fields": {
+        "title": "Standard Article",
+        "import_id": "standard-article",
+        "definition": "{\"type\":\"article\",\"attrs\":{\"template\":\"Standard Article\",\"import_id\":\"standard-article\"},\"content\":[{\"type\":\"title\"},{\"type\":\"heading_part\",\"attrs\":{\"title\":\"Subtitle\",\"id\":\"subtitle\",\"optional\":\"hidden\",\"hidden\":true,\"initial\":[{\"type\":\"heading1\",\"attrs\":{\"id\":\"H6323428\"}}],\"marks\":[\"strong\",\"em\",\"link\"],\"metadata\":\"subtitle\"},\"content\":[{\"type\":\"heading1\",\"attrs\":{\"id\":\"H6323428\"}}]},{\"type\":\"contributors_part\",\"attrs\":{\"title\":\"Authors\",\"id\":\"authors\",\"optional\":\"hidden\",\"hidden\":true,\"item_title\":\"Author\",\"metadata\":\"authors\"}},{\"type\":\"richtext_part\",\"attrs\":{\"title\":\"Abstract\",\"id\":\"abstract\",\"optional\":\"hidden\",\"hidden\":true,\"marks\":[\"strong\",\"em\",\"link\"],\"metadata\":\"abstract\"},\"content\":[{\"type\":\"paragraph\"}]},{\"type\":\"tags_part\",\"attrs\":{\"title\":\"Keywords\",\"id\":\"keywords\",\"optional\":\"hidden\",\"hidden\":true,\"item_title\":\"Keyword\",\"metadata\":\"keywords\"}},{\"type\":\"richtext_part\",\"attrs\":{\"title\":\"Body\",\"id\":\"body\",\"marks\":[\"strong\",\"em\",\"link\"]},\"content\":[{\"type\":\"paragraph\"}]}]}",
+        "doc_version": "3.1",
+        "user": null,
+        "added": "2019-07-09T09:23:49Z",
+        "updated": "2019-08-31T18:58:18.345Z"
+    }
+}
+]

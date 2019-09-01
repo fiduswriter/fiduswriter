@@ -189,8 +189,7 @@ export class DocumentOverviewActions {
                     const exporter = new HTMLExporter(
                         this.documentOverview.schema,
                         this.documentOverview.staticUrl,
-                        this.documentOverview.citationStyles,
-                        this.documentOverview.citationLocales,
+                        this.documentOverview.app.csl,
                         this.documentOverview.documentStyles,
                         doc,
                         {db:doc.bibliography},
@@ -218,8 +217,7 @@ export class DocumentOverviewActions {
                                 templateUrl,
                                 {db:doc.bibliography},
                                 {db:doc.images},
-                                this.documentOverview.citationStyles,
-                                this.documentOverview.citationLocales,
+                                this.documentOverview.app.csl,
                                 this.documentOverview.staticUrl
                             )
                             exporter.init()
@@ -231,8 +229,7 @@ export class DocumentOverviewActions {
                                 templateUrl,
                                 {db:doc.bibliography},
                                 {db:doc.images},
-                                this.documentOverview.citationStyles,
-                                this.documentOverview.citationLocales
+                                this.documentOverview.app.csl
                             )
                             exporter.init()
                         })
@@ -278,8 +275,7 @@ export class DocumentOverviewActions {
                             doc,
                             {db:doc.bibliography},
                             {db:doc.images},
-                            this.documentOverview.citationStyles,
-                            this.documentOverview.citationLocales
+                            this.documentOverview.app.csl
                         )
                         exporter.init()
                     })
@@ -300,8 +296,7 @@ export class DocumentOverviewActions {
                         const exporter = new EpubExporter(
                             this.documentOverview.schema,
                             this.documentOverview.staticUrl,
-                            this.documentOverview.citationStyles,
-                            this.documentOverview.citationLocales,
+                            this.documentOverview.app.csl,
                             this.documentOverview.documentStyles,
                             doc,
                             {db:doc.bibliography},

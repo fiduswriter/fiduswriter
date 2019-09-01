@@ -463,20 +463,13 @@ export class Editor {
                     doc.contents,
                     this.docInfo.template,
                     this.mod.documentTemplate.documentStyles,
-                    this.mod.documentTemplate.citationStyles,
                     this.schema
                 )
             ]})
         } else {
-            const article = JSON.parse(JSON.stringify(this.docInfo.template)),
-                language = navigator.languages.find(
-                    lang => article.attrs.languages.includes(lang)
-                )
-            // Set document language according to local user preferences
-            if (language) {
-                article.attrs.language = language
-            }
-            stateDoc = this.schema.nodeFromJSON({type:'doc', content:[article]})
+            stateDoc = this.schema.nodeFromJSON({type:'doc', content:[
+                JSON.parse(JSON.stringify(this.docInfo.template))
+            ]})
         }
         const plugins = this.statePlugins.map(plugin => {
             if (plugin[1]) {
@@ -507,6 +500,7 @@ export class Editor {
         this.mod.marginboxes.view(this.view)
         // Set part specific settings
         this.mod.documentTemplate.addDocPartSettings()
+        this.mod.documentTemplate.addCitationStylesMenuEntries()
         this.waitingForDocument = false
         deactivateWait()
         if (locationHash.length) {

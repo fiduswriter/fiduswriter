@@ -1,4 +1,5 @@
 import OfflinePluginRuntime from 'offline-plugin/runtime'
+import {CSL} from 'citeproc-plus'
 
 import {DocumentInvite} from "../documents/invite"
 import {ImageOverview} from "../images/overview"
@@ -141,6 +142,7 @@ export class App {
         }
         this.bibDB = new BibliographyDB()
         this.imageDB = new ImageDB()
+        this.csl = new CSL()
         this.connectWs()
         return Promise.all([
             this.bibDB.getDB(),

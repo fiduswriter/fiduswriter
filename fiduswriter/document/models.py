@@ -7,28 +7,25 @@ from django.db import models
 from django.db.utils import OperationalError, ProgrammingError
 from django.contrib.auth.models import User
 from django.core import checks
-from django.db.models.signals import post_delete
-from django.dispatch import receiver
 
-from style.models import CitationStyle, DocumentStyle
+from style.models import DocumentStyle
 
 # FW_DOCUMENT_VERSION:
 # Also defined in frontend
 # document/static/js/modules/schema/index.js
 
-FW_DOCUMENT_VERSION = 3.0
+FW_DOCUMENT_VERSION = 3.1
 
 
 class DocumentTemplate(models.Model):
     title = models.CharField(max_length=255, default='', blank=True)
+    import_id = models.CharField(max_length=255, default='', blank=True)
     definition = models.TextField(default='{}')
     doc_version = models.DecimalField(
         max_digits=3,
         decimal_places=1,
         default=FW_DOCUMENT_VERSION
     )
-    definition_hash = models.CharField(max_length=22, default='', blank=True)
-    citation_styles = models.ManyToManyField(CitationStyle)
     user = models.ForeignKey(
         User,
         null=True,
@@ -37,17 +34,13 @@ class DocumentTemplate(models.Model):
     )
     added = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    auto_delete = True
 
     def __str__(self):
         return self.title
 
     def save(self, *args, **kwargs):
         super(DocumentTemplate, self).save(*args, **kwargs)
-        if self.citation_styles.count() == 0:
-            style, created = CitationStyle.objects.get_or_create(
-                short_title='default'
-            )
-            self.citation_styles.add(style)
         if self.documentstyle_set.count() == 0:
             doc_style = DocumentStyle()
             doc_style.document_template = self
@@ -150,10 +143,16 @@ class Document(models.Model):
             f for f in self._meta.model._meta.get_fields()
             if (f.one_to_many or f.one_to_one) and
             f.auto_created and not f.concrete and
-            f.name not in ['accessright', 'documentrevision']
+            f.name not in [
+                'accessright',
+                'accessrightinvite',
+                'documentrevision',
+                'documentimage'
+            ]
         ]
 
         for r in reverse_relations:
+            print(r)
             if r.remote_field.model.objects.filter(
                 **{r.field.name: self}
             ).exists():
@@ -186,17 +185,6 @@ class Document(models.Model):
         except (ProgrammingError, OperationalError):
             # Database has not yet been initialized, so don't throw any error.
             return []
-
-
-@receiver(post_delete)
-def delete_document(sender, instance, **kwargs):
-    if sender == Document:
-        if (
-            instance.template.user and
-            instance.template.document_set.count() == 0
-        ):
-            # User template no longer used.
-            instance.template.delete()
 
 
 RIGHTS_CHOICES = (

@@ -302,16 +302,6 @@ AVATAR_GRAVATAR_BACKUP = False
 AVATAR_DEFAULT_URL = 'img/default_avatar.png'
 AVATAR_MAX_AVATARS_PER_USER = 1
 
-DEFAULT_CITATIONSTYLE = open(
-    os.path.join(
-        os.path.dirname(
-            os.path.realpath(__file__)
-        ),
-        'default_citationstyle.json'
-    ),
-    'r'
-).read()
-
 WEBSOCKET_PING_INTERVAL = 55
 
 ADMIN_SITE_TITLE = gettext('Fidus Writer Admin')

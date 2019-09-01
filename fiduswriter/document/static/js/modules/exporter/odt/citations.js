@@ -6,11 +6,10 @@ import {cslBibSchema} from "../../bibliography/schema/csl_bib"
 import {descendantNodes} from "../tools/doc_contents"
 
 export class OdtExporterCitations {
-    constructor(exporter, bibDB, citationStyles, citationLocales, docContents, docTemplate, origCitInfos = []) {
+    constructor(exporter, bibDB, csl, docContents, docTemplate, origCitInfos = []) {
         this.exporter = exporter
         this.bibDB = bibDB
-        this.citationStyles = citationStyles
-        this.citationLocales = citationLocales
+        this.csl = csl
         this.docContents = docContents
         this.docTemplate = docTemplate
         // If citInfos were found in a previous run, they are stored here
@@ -46,12 +45,11 @@ export class OdtExporterCitations {
             }
         )
         this.citFm = new FormatCitations(
+            this.csl,
             this.citInfos,
             this.exporter.doc.settings.citationstyle,
             '',
-            this.bibDB,
-            this.citationStyles,
-            this.citationLocales
+            this.bibDB
         )
         return this.citFm.init().then(
             () => {
@@ -92,7 +90,7 @@ export class OdtExporterCitations {
 
         // Now we do the same for the bibliography.
         const cslBib = this.citFm.bibliography
-        if (cslBib[1].length > 0) {
+        if (cslBib && cslBib[1].length > 0) {
             this.exporter.styles.addReferenceStyle(cslBib[0])
             const bibNode = cslBibSchema.nodeFromJSON({type:'cslbib'})
             const serializer = DOMSerializer.fromSchema(cslBibSchema)

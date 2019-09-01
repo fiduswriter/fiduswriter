@@ -23,8 +23,7 @@ from usermedia.models import DocumentImage, Image
 from bibliography.models import Entry
 from document.helpers.serializers import PythonWithURLSerializer
 from bibliography.views import serializer
-from style.models import CitationStyle, CitationLocale, DocumentStyle, \
-    ExportTemplate
+from style.models import DocumentStyle, ExportTemplate
 from base.html_email import html_email
 from user.models import TeamMember
 
@@ -345,12 +344,6 @@ def get_documentlist(request):
             fields=['file_type', 'template_file', 'title']
         )
         response['export_templates'] = [obj['fields'] for obj in export_temps]
-        cit_styles = serializer.serialize(
-            CitationStyle.objects.all()
-        )
-        response['citation_styles'] = [obj['fields'] for obj in cit_styles]
-        cit_locales = serializer.serialize(CitationLocale.objects.all())
-        response['citation_locales'] = [obj['fields'] for obj in cit_locales]
         doc_styles = serializer.serialize(
             DocumentStyle.objects.filter(
                 Q(document_template__user=None) |
@@ -643,7 +636,24 @@ def import_create(request):
     status = 405
     if request.is_ajax() and request.method == 'POST':
         status = 201
-        document = Document.objects.create(owner_id=request.user.pk)
+        import_id = request.POST['import_id']
+        document_template = DocumentTemplate.objects.filter(
+            Q(user=request.user) | Q(user=None),
+            import_id=import_id
+        ).first()
+        if not document_template:
+            title = request.POST['template_title']
+            definition = json_encode(json_decode(request.POST['template']))
+            document_template = DocumentTemplate()
+            document_template.title = title
+            document_template.import_id = import_id
+            document_template.user = request.user
+            document_template.definition = definition
+            document_template.save()
+        document = Document.objects.create(
+            owner_id=request.user.pk,
+            template=document_template
+        )
         response['id'] = document.id
     return JsonResponse(
         response,
@@ -721,21 +731,6 @@ def import_doc(request):
             json_encode(json_decode(request.POST['bibliography']))
         # document.doc_version should always be the current version, so don't
         # bother about it.
-        template_hash = request.POST['template_hash']
-        document_template = DocumentTemplate.objects.filter(
-            Q(user=request.user) | Q(user=None),
-            definition_hash=template_hash
-        ).first()
-        if not document_template:
-            title = request.POST['template_title']
-            definition = json_encode(json_decode(request.POST['template']))
-            document_template = DocumentTemplate()
-            document_template.title = title
-            document_template.user = request.user
-            document_template.definition = definition
-            document_template.definition_hash = template_hash
-            document_template.save()
-        document.template = document_template
         document.save()
         response['document_id'] = document.id
         response['added'] = time.mktime(document.added.utctimetuple())

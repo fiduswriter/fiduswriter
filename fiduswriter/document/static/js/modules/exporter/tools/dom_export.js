@@ -41,7 +41,6 @@ export class DOMExporter {
             filename,
             url
         })))
-        return `${docStyle.filename}.css`
     }
 
     loadStyles() {

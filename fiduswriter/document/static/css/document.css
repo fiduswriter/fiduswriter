@@ -188,6 +188,9 @@ table {
     table-layout: auto !important;
 }
 
+.article-title {
+    font-size: 48px;
+}
 
 .article .table-of-contents h1,
 .article .table-of-contents h2,

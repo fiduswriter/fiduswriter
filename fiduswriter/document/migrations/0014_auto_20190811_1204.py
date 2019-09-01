@@ -7,6 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('document', '0013_auto_20190808_1126'),
+        ('style', '0006_auto_20190809_1757'),
     ]
 
     operations = [

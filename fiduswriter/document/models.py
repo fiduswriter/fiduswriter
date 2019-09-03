@@ -359,3 +359,29 @@ class DocumentRevision(models.Model):
         except (ProgrammingError, OperationalError):
             # Database has not yet been initialized, so don't throw any error.
             return []
+
+def documentattachmentfile_location(instance, filename):
+    # preserve the original filename
+    instance.filename = filename
+    return '/'.join(['attachment-files', filename])
+
+class Attachment(models.Model):
+    document = models.ForeignKey(Document, on_delete=models.deletion.CASCADE)
+    file = models.FileField(
+        upload_to = documentattachmentfile_location,
+        help_text = (
+            'Attachment file of the document. The filename will be replaced '
+            'with the final url of the file in the attached file.'
+        )
+    )
+    file_name = models.CharField(max_length=255, default='', blank=True)
+    date_uploaded = models.DateTimeField(auto_now_add=True, null=True)
+
+    def __str__(self):
+        return (
+            'Attachment %(file_name)s in document %(doc_id)d ' %
+            {
+                'file_name': self.file_name,
+                'doc_id': self.document.id
+            }
+        )

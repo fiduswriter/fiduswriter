@@ -18,7 +18,8 @@ from django.core.paginator import Paginator, EmptyPage
 from user.util import get_user_avatar_url
 from document.models import Document, AccessRight, DocumentRevision, \
     DocumentTemplate, default_template, \
-    AccessRightInvite, CAN_UPDATE_DOCUMENT, FW_DOCUMENT_VERSION
+    AccessRightInvite, Attachment, \
+    CAN_UPDATE_DOCUMENT, FW_DOCUMENT_VERSION
 from usermedia.models import DocumentImage, Image
 from bibliography.models import Entry
 from document.helpers.serializers import PythonWithURLSerializer
@@ -1225,4 +1226,33 @@ def add_images_to_doc(request):
     return JsonResponse(
         response,
         status=status
+    )
+
+@login_required
+def upload_attachment(request):
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        file = request.FILES['file']
+        doc_id = request.POST['docId']
+        document = Document.objects.filter(id=doc_id).first()
+        if document:
+            if document.owner == request.user:
+                can_save = True
+            else:
+                access_rights = AccessRight.objects.filter(
+                    document=document, user=request.user)
+                if len(access_rights) > 0 and access_rights[
+                    0
+                ].rights == 'write':
+                    can_save = True
+        if can_save:
+            status = 201
+            file = Attachment.objects.create(file=file, document=document)
+            response['id'] = file.id
+            response['name'] = file.file_name
+            response['path'] = file.file.path
+    return JsonResponse(
+        response,
+        status = status
     )

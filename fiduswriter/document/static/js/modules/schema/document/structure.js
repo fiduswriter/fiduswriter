@@ -242,6 +242,9 @@ export const file_upload_part = {
         files: {
             default: ['file1.pdf']
         },
+        files_path: {
+            default: ['/media/proposal1/file1.pdf']
+        },
         upload: {
             default: true
         },

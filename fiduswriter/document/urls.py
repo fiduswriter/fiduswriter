@@ -102,5 +102,10 @@ urlpatterns = [
         '^admin/update_revision/$',
         views.update_revision,
         name='update_revision'
+    ),
+    url(
+        '^attachment/upload/$',
+        views.upload_attachment,
+        name='upload_attachment'
     )
 ]

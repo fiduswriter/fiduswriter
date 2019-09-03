@@ -64,10 +64,14 @@ export class FileView{
                 let fileLink = addFileLinks(this.node.attrs.files[file_index])
                 this.filelinks_dom.appendChild(fileLink)
             }
+            for(let index=0; index<this.node.attrs.files.length; index++) {
+                addFileLinks(this.node.attrs.files[index], this.node.attrs.files_path[index])
+            }
             this.node.attrs.files.forEach(addFileLinks)
-            function addFileLinks(file) {
+            function addFileLinks(file, path) {
                 const fileLink = document.createElement('a')
                 fileLink.innerHTML = file
+                fileLink.setAttribute('href', path);
                 return fileLink
                 //this.filelinks_dom.appendChild(fileLink)
                 //also block the default behaviour maybe
@@ -135,19 +139,19 @@ export class FileView{
                       fileList.forEach(function (file) {
                         form_file_uploader.append('file', file);
                         let request = new XMLHttpRequest();
-                        request.open("POST", '/dashboard/uploadFile');
+                        request.open("POST", '/api/document/attachment/upload/');
                         request.send(form_file_uploader);
             
                         request.onreadystatechange = function() {
-                          if(this.readyState === 4 && this.status === 200) {
-                            // console.log("Success",request.response)
+                          if(this.readyState === 4 && this.status === 201) {
+                            console.log("Success",request.response)
                             status = JSON.parse(request.responseText);
-                            // console.log("Response type    - ", request.responseType)
-                            let name = status['attachment_name'].split('/')[1]
+                            console.log("Response type    - ", request.responseType)
+/*                            let name = status['attachment_name'].split('/')[1]
                             let at_pos = document.querySelector(".article-Letters_of_intent_opt");
                             at_pos.insertAdjacentHTML('afterbegin', `<a target="_blank" href="${window.location.origin}/media/${status['attachment_name']}?images=${status['num_images']}">${name} </a>`)
                             //bindEventOnAnchorTag()
-                            blockAnchorLinks()
+                            blockAnchorLinks()*/
                             //setTargetBlank()
                             addAlert('info', status.status)
                           }

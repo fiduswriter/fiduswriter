@@ -50,10 +50,12 @@ export class PartView {
 }
 
 export class FileView{
-    constructor(node, view, getPos, docId) {
+    constructor(node, view, getPos, docId, options) {
         this.node = node
         this.view = view
         this.getPos = getPos
+        this.options = options
+        console.log(" doc id ---", docId)
         this.docId = docId
         this.dom = document.createElement('div')
 
@@ -86,13 +88,87 @@ export class FileView{
             this.button_upload.innerHTML = "Upload File"
             this.button_upload.setAttribute('contenteditable', 'false')
             //this.button_upload.onclick = function(){console.log("you clicked")}
+            const buttons = []
+            buttons.push({
+              text: 'Upload',
+              click: () => {
+                let fileList = getFiles();
+                fileList.forEach(function (file) {
+
+                  const values = {
+                      docId: docId,
+                      file: file
+                  }
+
+                  postJson('/api/document/attachment/upload/', values).then(
+                    ({json}) => {
+                        console.log(" result :-  ", json)
+                        // console.log("old files :- ", this.node.attrs)// unable to access the node here
+                        // let files = this.node.attrs
+                        // let files_new = this.node.attrs
+                        // console.log("New files :- ", files_new)
+                        // files_new.files.push(json.name) 
+
+                        // const attrs = Object.assign({}, files, files_new)
+
+                        // this.options.editor.view.dispatch(
+                        // this.options.editor.view.state.tr.setNodeMarkup(this.getPos, false, attrs)
+                        // )
+                        // console.log(this.node.attrs.files, " now")
+                        
+                        // files.push(json.name)
+                        // console.log(" fs ", files)
+
+                    }
+                ).catch(
+                    response => {
+                      console.log("error")
+                    }
+                  )
+      
+
+                })
+                this.dialog.close()
+      
+              }
+            }
+            
+
+            )
+            buttons.push({
+              type: 'cancel',
+              text: 'Cancel',
+             // classes: 'ask-review',
+              click: () => {
+                dialog.close();
+              }
+            })
+
             this.button_upload.onclick = ()=>{
                 //console.log(options.editor.docInfo)
-                FileUploadDialog(docId = this.docId)
+                console.log(" doc id ", docId)
+                //FileUploadDialog(docId, this.node.attrs.files, this.node.attrs.files_path)
+                this.dialog = new Dialog({
+                  title: 'File Uploader',
+                  body:`<div class="upload-file-dialog">
+                      <b>
+                        Please Upload a File <i style="font-size:0.85rem;">(* Max. file size: 2MB)</i>
+                    <br/>
+                    <form name="file-uploader" id="file-uploader">
+                        <br/><input id="file-input" name="pdfFile" type="file" multiple/>
+                    </form>
+                    <div id='file-list-display'></div>
+                    <br>
+                  </div>`,
+                  buttons,
+                })
+                this.dialog.open()
+                document.querySelector(".upload-file-dialog").querySelector("#file-input").addEventListener("change", getFiles);
 
             }
             this.dom.appendChild(this.button_upload)
         }
+        console.log(this.node.attrs.files)
         console.log("File View Worked! ")
         if(this.node.attrs.manage) {
             this.button_manage = document.createElement('button')
@@ -110,75 +186,7 @@ export class FileView{
             this.dom.appendChild(this.button_manage)
         }
 
-        function FileUploadDialog(docId) {
-            //File size is hard coded currently
-            let dialog = new Dialog({
-                title: 'File Uploader',
-                body:`<div class="upload-file-dialog">
-                    <b>
-                      Please Upload a File <i style="font-size:0.85rem;">(* Max. file size: 2MB)</i>
-                  <br/>
-                  <form name="file-uploader" id="file-uploader">
-                      <br/><input id="file-input" name="pdfFile" type="file" multiple/>
-                  </form>
-                  <div id='file-list-display'></div>
-                  <br>
-                </div>`,
-                buttons: [
-                  {
-                    text: 'Upload',
-                    //classes: 'ask-review',//////////////////////////////////////
-                    click: () => {
-                      //let getCsrfToken = () => getCookie('csrftoken');
-                      let status;
-                      let form_file_uploader = new FormData();
-                      //form_file_uploader.append('csrfmiddlewaretoken', getCsrfToken());
-                      form_file_uploader.append('docId', docId);
-            
-                      let fileList = getFiles();
-                      fileList.forEach(function (file) {
-                        form_file_uploader.append('file', file);
-                        let request = new XMLHttpRequest();
-                        request.open("POST", '/api/document/attachment/upload/');
-                        request.send(form_file_uploader);
-            
-                        request.onreadystatechange = function() {
-                          if(this.readyState === 4 && this.status === 201) {
-                            console.log("Success",request.response)
-                            status = JSON.parse(request.responseText);
-                            console.log("Response type    - ", request.responseType)
-/*                            let name = status['attachment_name'].split('/')[1]
-                            let at_pos = document.querySelector(".article-Letters_of_intent_opt");
-                            at_pos.insertAdjacentHTML('afterbegin', `<a target="_blank" href="${window.location.origin}/media/${status['attachment_name']}?images=${status['num_images']}">${name} </a>`)
-                            //bindEventOnAnchorTag()
-                            blockAnchorLinks()*/
-                            //setTargetBlank()
-                            addAlert('info', status.status)
-                          }
-                          else {
-                              console.log("=======")
-                            status = request.response;
-                          }
-                        }
-                      })
-                      dialog.close()
-            
-                    }
-                  },
-                  {
-                    type: 'cancel',
-                    text: 'Cancel',
-                    classes: 'ask-review',
-                    click: () => {
-                      dialog.close();
-                    }
-                  }
-                ]
-              })
-              dialog.open()
-              document.querySelector(".upload-file-dialog").querySelector("#file-input").addEventListener("change", getFiles);
 
-        }
         function getFiles() {
             let fileInput = document.getElementById('file-input');
             let fileList = [];
@@ -445,12 +453,11 @@ export const documentTemplatePlugin = function(options) {
                     )
                     console.log(options.editor.docInfo)
                     let docId = options.editor.docInfo.id
-                    this.spec.props.nodeViews['file_upload_part'] = (node, view, getPos, docId) => new FileView(
-                        node,
-                        view,
-                        getPos,
-                        docId
-                    )
+                    console.log("yoloooo  ", options.editor.view.state.doc.firstChild)
+
+                    this.spec.props.nodeViews['file_upload_part'] = (node, view, getPos) =>{console.log(" DOC   1D", docId);
+                    console.log(view)
+                    return new FileView(node, view, getPos, docId, options);}
                     // Tags and Contributors have node views defined in tag_input and contributor_input.
                     // TOCs have node views defined in toc_render.
                 }

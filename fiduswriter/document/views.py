@@ -1232,9 +1232,11 @@ def add_images_to_doc(request):
 def upload_attachment(request):
     response = {}
     status = 405
+    print(request)
+    print(request.POST)
     if request.is_ajax() and request.method == 'POST':
-        file = request.FILES['file']
         doc_id = request.POST['docId']
+        file = request.FILES['file']
         document = Document.objects.filter(id=doc_id).first()
         if document:
             if document.owner == request.user:
@@ -1246,12 +1248,14 @@ def upload_attachment(request):
                     0
                 ].rights == 'write':
                     can_save = True
+
         if can_save:
             status = 201
-            file = Attachment.objects.create(file=file, document=document)
-            response['id'] = file.id
-            response['name'] = file.file_name
-            response['path'] = file.file.path
+            print(file)
+            attachment = Attachment.objects.create(file=file, document=document)
+            response['id'] = attachment.id
+            response['name'] = attachment.file.name
+            response['path'] = attachment.file.path
     return JsonResponse(
         response,
         status = status

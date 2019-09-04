@@ -57,7 +57,7 @@ export class DocTemplatesOverview {
         tableEl.classList.add('fw-large')
         document.querySelector('.fw-contents').appendChild(tableEl)
 
-        const dt_bulk = new DatatableBulk(this, bulkModel)
+        const dtBulk = new DatatableBulk(this, bulkModel)
 
         this.table = new DataTable(tableEl, {
             searchable: true,
@@ -70,7 +70,7 @@ export class DocTemplatesOverview {
                 top: ""
             },
             data: {
-                headings: ['', dt_bulk.getHTML(), gettext("Title"), gettext("Created"), gettext("Last changed"), ''],
+                headings: ['', dtBulk.getHTML(), gettext("Title"), gettext("Created"), gettext("Last changed"), ''],
                 data: this.templateList.map(docTemplate => this.createTableRow(docTemplate))
             },
             columns: [
@@ -90,7 +90,7 @@ export class DocTemplatesOverview {
             this.lastSort = {column, dir}
         })
 
-        dt_bulk.init(this.table.table)
+        dtBulk.init(this.table.table)
     }
 
     createTableRow(docTemplate) {

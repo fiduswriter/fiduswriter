@@ -1,3 +1,4 @@
+include version.txt
 recursive-include fiduswriter *
 exclude fiduswriter/fiduswriter.sql
 exclude fiduswriter/fiduswriter.sql.backup

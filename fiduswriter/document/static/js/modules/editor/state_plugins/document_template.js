@@ -1,5 +1,6 @@
 import {Plugin, PluginKey} from "prosemirror-state"
 import {Fragment} from "prosemirror-model"
+import {DOMSerializer} from "prosemirror-model"
 import {
     addAlert,
     Dialog,
@@ -57,31 +58,9 @@ export class FileView{
         this.options = options
         console.log(" inside constructor, node", node)
         this.docId = docId
-        this.dom = document.createElement('div')
+        this.serializer = DOMSerializer.fromSchema(node.type.schema)
 
-        if (this.node.attrs.files.length) {
-            this.filelinks_dom = document.createElement('div')
-            this.filelinks_dom.classList.add('article-filelinks')
-            for (let file_index=0; file_index<this.node.attrs.files.length; file_index++) {
-                let fileLink = addFileLinks(this.node.attrs.files[file_index], this.node.attrs.files_path[file_index])
-                this.filelinks_dom.appendChild(fileLink)
-            }
-            for(let index=0; index<this.node.attrs.files.length; index++) {
-                addFileLinks(this.node.attrs.files[index], this.node.attrs.files_path[index])
-            }
-            this.node.attrs.files.forEach(addFileLinks)
-            function addFileLinks(file, path) {
-                const fileLink = document.createElement('a')
-                fileLink.innerHTML = file
-                fileLink.setAttribute('href', path);
-                return fileLink
-                //this.filelinks_dom.appendChild(fileLink)
-                //also block the default behaviour maybe
-            }
-            this.dom.appendChild(this.filelinks_dom)
-
-        }
-
+        this.dom = this.serializer.serializeNode(this.node)
         this.dom.classList.add('article-part', 'article-file_upload_part')
         if(this.node.attrs.upload) {
             this.button_upload = document.createElement('button')
@@ -103,8 +82,7 @@ export class FileView{
                   postJson('/api/document/attachment/upload/', values).then(
                     ({json}) => {
                         console.log(" result :-  ", json)
-                        console.log("get pos ", getPos())
-                        console.log("old files :- ", this.node.attrs.files.length)// unable to access the node here
+                        console.log("get pos ", this.getPos(), this.options.editor.view.state.doc.nodeAt(this.getPos()))
 
                         let files = this.node.attrs
                         let files_new = this.node.attrs
@@ -116,10 +94,10 @@ export class FileView{
                         const attrs = Object.assign({}, files, files_new)
 
                         this.options.editor.view.dispatch(
-                          this.options.editor.view.state.tr.setNodeMarkup(getPos(), null, attrs)
+                          this.options.editor.view.state.tr.setNodeMarkup(this.getPos(), null, attrs)
                         )
                         console.log(this.node.attrs.files, " now")
-                        
+                        return
 
                     }
                   ).catch(
@@ -169,6 +147,7 @@ export class FileView{
 
             }
             this.dom.appendChild(this.button_upload)
+            //this.dom.insertBefore(this.button_upload, this.dom.lastChild)
         }
         console.log(this.node.attrs.files)
         console.log("File View Worked! ")
@@ -181,11 +160,12 @@ export class FileView{
             this.button_manage.onclick = ()=>{
                 //console.log(options.editor.docInfo)
                 console.log("you clicked")
-                //////
+                //////not yet complete
                 manageAttachment()
 
             }
             this.dom.appendChild(this.button_manage)
+            //this.dom.insertBefore(this.button_manage, this.dom.lastChild)
         }
 
 

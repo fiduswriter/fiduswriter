@@ -255,46 +255,38 @@ export const file_upload_part = {
     },
     parseDOM: [{
         tag: 'div.uploadFile',
-        // getAttrs(dom) {
-        //     return {
-        //         file: dom.dataset.file
-        //     }
-        // }
+        getAttrs(dom) {
+            console.log("dom data :- ", dom.dataset)
+            return {
+                files: dom.dataset.files,
+                files_path: dom.dataset.files_path
+            }
+        }
+
     }],
     toDOM(node) {
-    /* Here we must have the dialog to upload attachment called */
 
         const dom = document.createElement('div')
         dom.dataset.files = node.attrs.files
         dom.classList.add('article-part', 'article-file_upload_part')
         console.log("len = ", node.attrs.files.length)
+
         if (node.attrs.files.length) {
             const filelinks_dom = document.createElement('div')
             filelinks_dom.classList.add('article-filelinks')
-            node.attrs.files.forEach(addFileLinks)
-            function addFileLinks(file) {
+
+            for(let index=0; index<node.attrs.files.length; index++){
                 const fileLink = document.createElement('a')
-                fileLink.innerHTML = file
+                fileLink.innerHTML = node.attrs.files[index]
+                fileLink.setAttribute('href', node.attrs.files_path[index]);
                 filelinks_dom.appendChild(fileLink)
                 //also block the default behaviour maybe
             }
+
             dom.appendChild(filelinks_dom)
 
         }
 
-        if(node.attrs.upload) {
-            const button_upload = document.createElement('button')
-            button_upload.innerHTML = "Upload File"
-            button_upload.setAttribute('contenteditable', 'false')
-            dom.appendChild(button_upload)
-        }
-
-        if(node.attrs.manage) {
-            const button_manage = document.createElement('button')
-            button_manage.innerHTML = "Manage File"
-            button_manage.setAttribute('contenteditable', 'false')
-            dom.appendChild(button_manage)
-        }
         console.log("to DOM file part")
         return dom
     }

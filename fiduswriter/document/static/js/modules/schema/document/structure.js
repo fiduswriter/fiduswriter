@@ -295,7 +295,7 @@ export const file_upload_part = {
             button_manage.setAttribute('contenteditable', 'false')
             dom.appendChild(button_manage)
         }
-
+        console.log("to DOM file part")
         return dom
     }
 }

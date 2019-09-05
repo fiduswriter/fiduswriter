@@ -55,7 +55,7 @@ export class FileView{
         this.view = view
         this.getPos = getPos
         this.options = options
-        console.log(" doc id ---", docId)
+        console.log(" inside constructor, node", node)
         this.docId = docId
         this.dom = document.createElement('div')
 
@@ -63,7 +63,7 @@ export class FileView{
             this.filelinks_dom = document.createElement('div')
             this.filelinks_dom.classList.add('article-filelinks')
             for (let file_index=0; file_index<this.node.attrs.files.length; file_index++) {
-                let fileLink = addFileLinks(this.node.attrs.files[file_index])
+                let fileLink = addFileLinks(this.node.attrs.files[file_index], this.node.attrs.files_path[file_index])
                 this.filelinks_dom.appendChild(fileLink)
             }
             for(let index=0; index<this.node.attrs.files.length; index++) {
@@ -93,7 +93,7 @@ export class FileView{
               text: 'Upload',
               click: () => {
                 let fileList = getFiles();
-                fileList.forEach(function (file) {
+                fileList.forEach(file => {
 
                   const values = {
                       docId: docId,
@@ -103,26 +103,28 @@ export class FileView{
                   postJson('/api/document/attachment/upload/', values).then(
                     ({json}) => {
                         console.log(" result :-  ", json)
-                        // console.log("old files :- ", this.node.attrs)// unable to access the node here
-                        // let files = this.node.attrs
-                        // let files_new = this.node.attrs
-                        // console.log("New files :- ", files_new)
-                        // files_new.files.push(json.name) 
+                        console.log("get pos ", getPos())
+                        console.log("old files :- ", this.node.attrs.files.length)// unable to access the node here
 
-                        // const attrs = Object.assign({}, files, files_new)
-
-                        // this.options.editor.view.dispatch(
-                        // this.options.editor.view.state.tr.setNodeMarkup(this.getPos, false, attrs)
-                        // )
-                        // console.log(this.node.attrs.files, " now")
+                        let files = this.node.attrs
+                        let files_new = this.node.attrs
                         
-                        // files.push(json.name)
-                        // console.log(" fs ", files)
+                        files_new.files.push(json.name)
+                        files_new.files_path.push(json.path)
+
+                        console.log("New files :- ", files_new.files.length)
+                        const attrs = Object.assign({}, files, files_new)
+
+                        this.options.editor.view.dispatch(
+                          this.options.editor.view.state.tr.setNodeMarkup(getPos(), null, attrs)
+                        )
+                        console.log(this.node.attrs.files, " now")
+                        
 
                     }
-                ).catch(
+                  ).catch(
                     response => {
-                      console.log("error")
+                      console.log("error", response)
                     }
                   )
       
@@ -455,9 +457,10 @@ export const documentTemplatePlugin = function(options) {
                     let docId = options.editor.docInfo.id
                     console.log("yoloooo  ", options.editor.view.state.doc.firstChild)
 
-                    this.spec.props.nodeViews['file_upload_part'] = (node, view, getPos) =>{console.log(" DOC   1D", docId);
-                    console.log(view)
-                    return new FileView(node, view, getPos, docId, options);}
+                    this.spec.props.nodeViews['file_upload_part'] = (node, view, getPos) =>{
+                      console.log(" DOC   1D", docId);
+                      console.log(view)
+                      return new FileView(node, view, getPos, docId, options);}
                     // Tags and Contributors have node views defined in tag_input and contributor_input.
                     // TOCs have node views defined in toc_render.
                 }
@@ -510,6 +513,7 @@ export const documentTemplatePlugin = function(options) {
                     from: tr.mapping.map(marker.from, 1),
                     to: tr.mapping.map(marker.to, -1)
                 }))
+                console.log("In apply");
                 return {
                     protectedRanges
                 }

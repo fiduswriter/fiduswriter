@@ -1252,9 +1252,9 @@ def upload_attachment(request):
         if can_save:
             status = 201
             print(file)
-            attachment = Attachment.objects.create(file=file, document=document)
+            attachment = Attachment.objects.create(file=file, document=document, file_name=file.name)
             response['id'] = attachment.id
-            response['name'] = attachment.file.name
+            response['name'] = attachment.file_name
             response['path'] = attachment.file.path
     return JsonResponse(
         response,

@@ -97,6 +97,12 @@ export class FileView{
                           this.options.editor.view.state.tr.setNodeMarkup(this.getPos(), null, attrs)
                         )
                         console.log(this.node.attrs.files, " now")
+                        console.log(this.dom.querySelector('.article-filelinks'))
+                        const filelinks_dom = this.dom.querySelector('.article-filelinks')
+                        const fileLink = document.createElement('a')
+                        fileLink.innerHTML = json.name
+                        fileLink.setAttribute('href', json.path);
+                        filelinks_dom.appendChild(fileLink)
                         return
 
                     }

@@ -126,7 +126,7 @@ export class FileView{
               text: 'Cancel',
              // classes: 'ask-review',
               click: () => {
-                dialog.close();
+                this.dialog.close();
               }
             })
 
@@ -443,10 +443,12 @@ export const documentTemplatePlugin = function(options) {
                     let docId = options.editor.docInfo.id
                     console.log("yoloooo  ", options.editor.view.state.doc.firstChild)
 
-                    this.spec.props.nodeViews['file_upload_part'] = (node, view, getPos) =>{
-                      console.log(" DOC   1D", docId);
-                      console.log(view)
-                      return new FileView(node, view, getPos, docId, options);}
+                    this.spec.props.nodeViews['file_upload_part'] = (node, view, getPos) => new FileView(
+                      node, 
+                      view, 
+                      getPos, 
+                      docId, //not needed can be removed later after accessing docid from options
+                      options);
                     // Tags and Contributors have node views defined in tag_input and contributor_input.
                     // TOCs have node views defined in toc_render.
                 }
@@ -508,6 +510,21 @@ export const documentTemplatePlugin = function(options) {
         props: {
             nodeViews: {}
         },
+        view(_view) {
+          //let currentNode = options.editor.view.state.doc.nodeAt(this.getPos())
+          console.log("view called ")
+          // let userLanguage = options.editor.view.state.doc.firstChild.attrs.language
+          // document.querySelectorAll('*[class^="figure-cat-"]').forEach(el => el.innerHTML = FIG_CATS[el.dataset.figureCategory][userLanguage])
+          return {
+            
+              update: (_view, _prevState) => {
+                console.log("yolo")
+                console.log("view :- ", _view)
+                console.log("Nodeview :- file_upload_part", _view.nodeViews.file_upload_part)
+                console.log("prev state :- ", _prevState)
+              }
+          }
+      },
         filterTransaction: (tr, state) => {
             if (
                 !tr.docChanged ||

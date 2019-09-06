@@ -81,24 +81,24 @@ export class FileView{
 
                   postJson('/api/document/attachment/upload/', values).then(
                     ({json}) => {
-                        // console.log(" result :-  ", json)
-                        // console.log("get pos ", this.getPos(), this.options.editor.view.state.doc.nodeAt(this.getPos()))
+                        console.log(" result :-  ", json)
+                        console.log("get pos ", this.getPos(), this.options.editor.view.state.doc.nodeAt(this.getPos()))
 
-                        // let files = this.node.attrs
-                        // let files_new = this.node.attrs
-                        // const attrs_n = JSON.parse(JSON.stringify(this.node.attrs))
+                        let files = this.node.attrs
+                        let files_new = this.node.attrs
+                        const attrs_n = JSON.parse(JSON.stringify(this.node.attrs))
                         
-                        // // files_new.files.push(json.name)
-                        // // files_new.files_path.push(json.path)
-                        // attrs_n.files.push(json.name)
-                        // attrs_n.files_path.push(json.path)
+                        // files_new.files.push(json.name)
+                        // files_new.files_path.push(json.path)
+                        attrs_n.files.push(json.name)
+                        attrs_n.files_path.push(json.path)
 
-                        // console.log("New files :- ", files_new.files.length)
-                        // const attrs = Object.assign({}, files, attrs_n)
-                        // // const attrs = Object.assign({}, this.node.attrs, {files: this.node.attrs.files.concat([json.name]), files_path: this.node.attrs.files_path.concat([json.path])})
-                        // this.options.editor.view.dispatch(
-                        //   this.options.editor.view.state.tr.setNodeMarkup(this.getPos(), null, attrs)
-                        // )
+                        console.log("New files :- ", files_new.files.length)
+                        const attrs = Object.assign({}, files, attrs_n)
+                        // const attrs = Object.assign({}, this.node.attrs, {files: this.node.attrs.files.concat([json.name]), files_path: this.node.attrs.files_path.concat([json.path])})
+                        this.options.editor.view.dispatch(
+                          this.options.editor.view.state.tr.setNodeMarkup(this.getPos(), null, attrs)
+                        )
 
                         // console.log(this.node.attrs.files, " now")
                         // console.log(this.dom.querySelector('.article-filelinks'))
@@ -107,7 +107,7 @@ export class FileView{
                         // fileLink.innerHTML = json.name
                         // fileLink.setAttribute('href', json.path);
                         // filelinks_dom.appendChild(fileLink)
-                        this.update(this.view, this.node, json)  
+                        // this.update(this.view, this.node)  
 
                         return
 
@@ -423,33 +423,38 @@ function setTargetBlank(){
     }
 
 
-    update(view, node, json) {
+    update(view, node) {
       console.log("update of nodeview called")
-      console.log(" result :-  ", json)
-      console.log("get pos ", this.getPos(), this.options.editor.view.state.doc.nodeAt(this.getPos()))
+      // console.log(" result :-  ", json)
+      // console.log("get pos ", this.getPos(), this.options.editor.view.state.doc.nodeAt(this.getPos()))
 
-      let files = this.node.attrs
-      let files_new = this.node.attrs
-      const attrs_n = JSON.parse(JSON.stringify(this.node.attrs))
+      // let files = this.node.attrs
+      // let files_new = this.node.attrs
+      // const attrs_n = JSON.parse(JSON.stringify(this.node.attrs))
       
       // files_new.files.push(json.name)
       // files_new.files_path.push(json.path)
-      attrs_n.files.push(json.name)
-      attrs_n.files_path.push(json.path)
+      // attrs_n.files.push(json.name)
+      // attrs_n.files_path.push(json.path)
 
-      console.log("New files :- ", files_new.files.length)
-      const attrs = Object.assign({}, files, attrs_n)
-
-      this.options.editor.view.dispatch(
-        this.options.editor.view.state.tr.setNodeMarkup(this.getPos(), null, attrs)
-      )
-      console.log(this.node.attrs.files, " now")
-      console.log(this.dom.querySelector('.article-filelinks'))
-      const filelinks_dom = this.dom.querySelector('.article-filelinks')
-      const fileLink = document.createElement('a')
-      fileLink.innerHTML = json.name
-      fileLink.setAttribute('href', json.path);
-      filelinks_dom.appendChild(fileLink)
+      // console.log("New files :- ", files_new.files.length)
+      // const attrs = Object.assign({}, files, attrs_n)
+      // const trans = this.view.state.tr.setNodeMarkup(this.getPos(), false, attrs)
+      // this.view.dispatch(
+      //   this.view.state.tr.setNodeMarkup(this.getPos(), false, attrs)
+      // )
+      // console.log("999999", trans)
+      // this.view.dispatch(
+      //   trans
+      // )
+      // Not necessary :-
+      // console.log(this.node.attrs.files, " now")
+      // console.log(this.dom.querySelector('.article-filelinks'))
+      // const filelinks_dom = this.dom.querySelector('.article-filelinks')
+      // const fileLink = document.createElement('a')
+      // fileLink.innerHTML = json.name
+      // fileLink.setAttribute('href', json.path);
+      // filelinks_dom.appendChild(fileLink)
 
   }
 

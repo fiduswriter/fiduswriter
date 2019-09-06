@@ -86,12 +86,15 @@ export class FileView{
 
                         let files = this.node.attrs
                         let files_new = this.node.attrs
+                        const attrs_n = JSON.parse(JSON.stringify(this.node.attrs))
                         
-                        files_new.files.push(json.name)
-                        files_new.files_path.push(json.path)
+                        // files_new.files.push(json.name)
+                        // files_new.files_path.push(json.path)
+                        attrs_n.files.push(json.name)
+                        attrs_n.files_path.push(json.path)
 
                         console.log("New files :- ", files_new.files.length)
-                        const attrs = Object.assign({}, files, files_new)
+                        const attrs = Object.assign({}, files, attrs_n)
 
                         this.options.editor.view.dispatch(
                           this.options.editor.view.state.tr.setNodeMarkup(this.getPos(), null, attrs)
@@ -195,42 +198,42 @@ export class FileView{
             });
           }
           
-let dragSrcEl = null;
+          let dragSrcEl = null;
 
-function handleDragStart(e) {
-  // Target (this) element is the source node.
-  dragSrcEl = this;
-  e.dataTransfer.effectAllowed = 'move';
-  e.dataTransfer.setData('text/html', this.outerHTML);
-  this.classList.add('dragElem');
-}
+          function handleDragStart(e) {
+            // Target (this) element is the source node.
+            dragSrcEl = this;
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.outerHTML);
+            this.classList.add('dragElem');
+          }
 
-function handleDragOver(e) {
+          function handleDragOver(e) {
 
-  if (e.preventDefault) {
-    e.preventDefault(); // Necessary. Allows us to drop.
-  }
-  this.classList.add('over');
-  if(this.classList.contains('delete-area')){
-    this.classList.add('delete-area-drop')
-  }
-  e.dataTransfer.dropEffect = 'move';  // See the section on the DataTransfer object.
-  return false;
-}
+            if (e.preventDefault) {
+              e.preventDefault(); // Necessary. Allows us to drop.
+            }
+            this.classList.add('over');
+            if(this.classList.contains('delete-area')){
+              this.classList.add('delete-area-drop')
+            }
+            e.dataTransfer.dropEffect = 'move';  // See the section on the DataTransfer object.
+            return false;
+          }
 
-function handleDragEnter(e) {
-  // console.log("on drag enter")
-  // this / e.target is the current hover target.
-}
+          function handleDragEnter(e) {
+            // console.log("on drag enter")
+            // this / e.target is the current hover target.
+          }
 
-function handleDragLeave(e) {
-  // console.log("on drag leave")
-  // console.log(this)
-  if(this.classList.contains('delete-area')){
-    this.classList.remove('delete-area-drop')
-  }
-  this.classList.remove('over');  // this / e.target is previous target element.
-}
+          function handleDragLeave(e) {
+            // console.log("on drag leave")
+            // console.log(this)
+            if(this.classList.contains('delete-area')){
+              this.classList.remove('delete-area-drop')
+            }
+            this.classList.remove('over');  // this / e.target is previous target element.
+          }
 
 function handleDrop(e) {
   // console.log("on drag drop")
@@ -415,6 +418,29 @@ function setTargetBlank(){
           
           
     }
+
+    update(view, node) {
+      console.log("update of nodeview called")
+      // const activeMarks = []
+
+      // if (view.state) {
+      //     const storedMarks = view.state.storedMarks || view.state.selection.$head.marks()
+      //     if (storedMarks) {
+      //         for (const mark of storedMarks) {
+      //             activeMarks[mark.type.name] = true
+      //         }
+      //     }
+      // }
+
+      // this.items.forEach(({dom}) => {
+      //     if (activeMarks[dom.getAttribute('data-type')]) {
+      //         dom.classList.add('active')
+      //     } else {
+      //         dom.classList.remove('active')
+      //     }
+      // })
+  }
+
 }
 
 const key = new PluginKey('documentTemplate')
@@ -510,21 +536,7 @@ export const documentTemplatePlugin = function(options) {
         props: {
             nodeViews: {}
         },
-        view(_view) {
-          //let currentNode = options.editor.view.state.doc.nodeAt(this.getPos())
-          console.log("view called ")
-          // let userLanguage = options.editor.view.state.doc.firstChild.attrs.language
-          // document.querySelectorAll('*[class^="figure-cat-"]').forEach(el => el.innerHTML = FIG_CATS[el.dataset.figureCategory][userLanguage])
-          return {
-            
-              update: (_view, _prevState) => {
-                console.log("yolo")
-                console.log("view :- ", _view)
-                console.log("Nodeview :- file_upload_part", _view.nodeViews.file_upload_part)
-                console.log("prev state :- ", _prevState)
-              }
-          }
-      },
+
         filterTransaction: (tr, state) => {
             if (
                 !tr.docChanged ||

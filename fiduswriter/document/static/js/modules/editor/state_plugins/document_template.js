@@ -84,21 +84,19 @@ export class FileView{
                         console.log(" result :-  ", json)
                         console.log("get pos ", this.getPos(), this.options.editor.view.state.doc.nodeAt(this.getPos()))
 
-                        let files = this.node.attrs
-                        let files_new = this.node.attrs
-                        const attrs_n = JSON.parse(JSON.stringify(this.node.attrs))
-                        
-                        // files_new.files.push(json.name)
-                        // files_new.files_path.push(json.path)
-                        attrs_n.files.push(json.name)
-                        attrs_n.files_path.push(json.path)
-
-                        console.log("New files :- ", files_new.files.length)
-                        const attrs = Object.assign({}, files, attrs_n)
-                        // const attrs = Object.assign({}, this.node.attrs, {files: this.node.attrs.files.concat([json.name]), files_path: this.node.attrs.files_path.concat([json.path])})
-                        this.options.editor.view.dispatch(
-                          this.options.editor.view.state.tr.setNodeMarkup(this.getPos(), null, attrs)
+                        const attrs = Object.assign(
+                            {},
+                            this.node.attrs,
+                            {
+                                files: this.node.attrs.files.concat([json.name]),
+                                files_path: this.node.attrs.files.concat([json.path])
+                            }
                         )
+
+                        const tr = this.options.editor.view.state.tr.setNodeMarkup(this.getPos(), null, attrs).setMeta('filterFree', true)
+                        console.log({attrs, pos: this.getPos(), tr})
+                        // const attrs = Object.assign({}, this.node.attrs, {files: this.node.attrs.files.concat([json.name]), files_path: this.node.attrs.files_path.concat([json.path])})
+                        this.options.editor.view.dispatch(tr)
 
                         // console.log(this.node.attrs.files, " now")
                         // console.log(this.dom.querySelector('.article-filelinks'))
@@ -107,7 +105,7 @@ export class FileView{
                         // fileLink.innerHTML = json.name
                         // fileLink.setAttribute('href', json.path);
                         // filelinks_dom.appendChild(fileLink)
-                        // this.update(this.view, this.node)  
+                        // this.update(this.view, this.node)
 
                         return
 
@@ -117,14 +115,14 @@ export class FileView{
                       console.log("error", response)
                     }
                   )
-      
+
 
                 })
                 this.dialog.close()
-      
+
               }
             }
-            
+
 
             )
             buttons.push({
@@ -168,7 +166,7 @@ export class FileView{
             this.button_manage.innerHTML = "Manage File"
             this.button_manage.setAttribute('contenteditable', 'false')
             this.button_manage.onclick = function(){console.log("you clicked")}
-            
+
             this.button_manage.onclick = ()=>{
                 //console.log(options.editor.docInfo)
                 console.log("you clicked")
@@ -190,7 +188,7 @@ export class FileView{
             renderFileList(fileList);
             return fileList;
           }
-          
+
           function renderFileList(fileList) {
             let fileListDisplay = document.getElementById('file-list-display');
             fileListDisplay.innerHTML = '';
@@ -200,7 +198,7 @@ export class FileView{
               fileListDisplay.appendChild(fileDisplayEl);
             });
           }
-          
+
           let dragSrcEl = null;
 
           function handleDragStart(e) {
@@ -248,7 +246,7 @@ function handleDrop(e) {
   if (dragSrcEl != this) {
     if(this.classList.contains('delete-area')){
       // the array stores the link from which we delete the files in bkend
-      link_array.push(dragSrcEl.childNodes[0].href) 
+      link_array.push(dragSrcEl.childNodes[0].href)
       // The element array is used to store respective elements. To be used in future for better error handling
       element_array.push(dragSrcEl)
       this.previousElementSibling.removeChild(dragSrcEl)
@@ -264,7 +262,7 @@ function handleDrop(e) {
     var dropHTML = e.dataTransfer.getData('text/html');
     this.insertAdjacentHTML('beforebegin',dropHTML);
     var dropElem = this.previousSibling;
-    addDnDHandlers(dropElem);    
+    addDnDHandlers(dropElem);
   }
   this.classList.remove('over');
   return false;
@@ -297,12 +295,12 @@ function deleteindb(docId){
       if(response.status == "ok"){
         addAlert("info","Deleted file successfully")
       }
-      else {  
+      else {
         console.log("Problem with deleting file!")
         addAlert("error","Problem with deleting file!")
       }
   })
-  } 
+  }
 }
 
 function delete_elements_in_array(){
@@ -345,7 +343,7 @@ function manageAttachment(docId){
         deleteindb(docId=docId)
         let dialog_content = document.querySelector("#columns").innerHTML
         let regex = /(<li[^>]+>|<li>)/g;
-        dialog_content = dialog_content.replace(regex, "<p>");  
+        dialog_content = dialog_content.replace(regex, "<p>");
         dialog_content = dialog_content.replace(/<\/li>/g,"</p>");
         dialog_content += `<p><br/></p>`
         document.querySelector(".article-Letters_of_intent_opt").innerHTML = dialog_content;
@@ -378,7 +376,7 @@ function setTargetBlank(){
 
     setTimeout(()=>{
       let aTags = document.querySelectorAll(".article-Letters_of_intent_opt a")
-  
+
       Object.entries(aTags).map((obj)=>{
         obj[1].onclick = (e)=>{
           e.preventDefault()
@@ -390,10 +388,10 @@ function setTargetBlank(){
           anchor.click()
         }
       })
-  
+
       //blockAnchorLinks()
     },1000)
-  
+
   }
 //   function getFiles() {
 //     let fileInput = document.getElementById('file-input');
@@ -404,7 +402,7 @@ function setTargetBlank(){
 //     renderFileList(fileList);
 //     return fileList;
 //   }
-  
+
   function renderFileList(fileList) {
     let fileListDisplay = document.getElementById('file-list-display');
     fileListDisplay.innerHTML = '';
@@ -414,12 +412,12 @@ function setTargetBlank(){
       fileListDisplay.appendChild(fileDisplayEl);
     });
   }
-  
 
 
 
- 
-          
+
+
+
     }
 
 
@@ -431,7 +429,7 @@ function setTargetBlank(){
       // let files = this.node.attrs
       // let files_new = this.node.attrs
       // const attrs_n = JSON.parse(JSON.stringify(this.node.attrs))
-      
+
       // files_new.files.push(json.name)
       // files_new.files_path.push(json.path)
       // attrs_n.files.push(json.name)
@@ -487,9 +485,9 @@ export const documentTemplatePlugin = function(options) {
                     console.log("yoloooo  ", options.editor.view.state.doc.firstChild)
 
                     this.spec.props.nodeViews['file_upload_part'] = (node, view, getPos) => new FileView(
-                      node, 
-                      view, 
-                      getPos, 
+                      node,
+                      view,
+                      getPos,
                       docId, //not needed can be removed later after accessing docid from options
                       options);
                     // Tags and Contributors have node views defined in tag_input and contributor_input.

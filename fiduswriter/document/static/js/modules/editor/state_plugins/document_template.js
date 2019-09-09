@@ -86,7 +86,8 @@ export class FileView{
 
                         const attrs_new = JSON.parse(JSON.stringify(this.node.attrs)) 
                         attrs_new.files.push(json.name)
-                        attrs_new.files_path.push(json.path)
+                        const url = window.location.origin + '/' + json.path
+                        attrs_new.files_path.push(url)
                         const attrs = Object.assign({}, this.node.attrs, attrs_new)
                         // const attrs = Object.assign({}, this.node.attrs, {files: this.node.attrs.files.concat([json.name]), files_path: this.node.attrs.files_path.concat([json.path])})
 

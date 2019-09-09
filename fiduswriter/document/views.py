@@ -1255,8 +1255,33 @@ def upload_attachment(request):
             attachment = Attachment.objects.create(file=file, document=document, file_name=file.name)
             response['id'] = attachment.id
             response['name'] = attachment.file_name
-            response['path'] = attachment.file.path
+            response['path'] = os.path.relpath(attachment.file.path)
+            print("path :---------------------", os.path.relpath(attachment.file.path) )
+
     return JsonResponse(
         response,
         status = status
     )
+
+@login_required
+def download_attachment(request):
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        status = 200
+        attachment = Attachment.objects.filter(
+            id=request.POST['attachment_id']
+        ).first()
+
+        if attachment:
+
+            http_response = HttpResponse(
+                attachment.file_object.file,
+                content_type='application/pdf; charset=x-user-defined',
+                status=200
+            )
+            http_response[
+                'Content-Disposition'] = 'attachment; filename=some_name.pdf'
+            return http_response
+
+

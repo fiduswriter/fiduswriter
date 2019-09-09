@@ -82,21 +82,17 @@ export function adjustDocToTemplate(miniDoc, template, documentStyles, citationS
     ]
 
     let movedParts = []
-    console.log("Old content---",oldContent)
+
     template.content.slice(1).forEach(part => {
         let oldNode = oldContent.find(
             oldContentNode =>
                 oldContentNode.type === part.type &&
                 oldContentNode.attrs.id === part.attrs.id
         )
-        console.log("--------------------------------------------------------")
 
-        console.log("1. part ", part)
         if (oldNode) {
-            console.log("Old Node :- ", oldNode)
-            console.log("oldcontent[0] :- ", oldContent[0])
+
             while (oldNode !== oldContent[0]) {
-                console.log("in while")
                 // did not enter here
                 const firstOldContent = oldContent.shift(),
                     inTemplate = !!template.content.find(
@@ -108,7 +104,6 @@ export function adjustDocToTemplate(miniDoc, template, documentStyles, citationS
 
                 if (inTemplate) {
                     movedParts.push(firstOldContent)
-                    console.log("moved parts pushed")
                 } else if (
                     firstOldContent.content &&
                     !firstOldContent.attrs.hidden &&
@@ -128,9 +123,7 @@ export function adjustDocToTemplate(miniDoc, template, documentStyles, citationS
                 ) {
                     firstOldContent.attrs.deleted = true
                     doc.content.push(firstOldContent)
-                    console.log("big push")
                 }
-            console.log("wile done")
             }
             oldContent.shift()
             
@@ -147,7 +140,7 @@ export function adjustDocToTemplate(miniDoc, template, documentStyles, citationS
         }
 
         if (oldNode) {
-            console.log("old node---",oldNode)
+
             const newNode = Object.assign(
                     {},
                     oldNode,
@@ -155,21 +148,19 @@ export function adjustDocToTemplate(miniDoc, template, documentStyles, citationS
                         attrs: {}
                     }
                 )
-            console.log("part", part)
+
             if(oldNode.attrs.files){
                 newNode.attrs.files = oldNode.attrs.files
-                console.log("---------------------------------")
             }
-            console.log("new node is",newNode)
             if(oldNode.attrs['files_path']){
                 newNode.attrs['files_path'] = oldNode.attrs['files_path']
             }
-            console.log("new node is",newNode)
+
             Object.entries(part.attrs).forEach(([key, value]) => {
-                console.log("key ", key)
+
                 newNode.attrs[key] = value
             })
-            console.log("New Node :- ", newNode)
+
             if (newNode.attrs.optional) {
                 newNode.attrs.hidden = oldNode.attrs.hidden
             }
@@ -189,7 +180,6 @@ export function adjustDocToTemplate(miniDoc, template, documentStyles, citationS
             }
 
             if (oldNode.attrs.elements) { // parts that define elements also define marks.
-                console.log("has elements")
                 const removedElements = oldNode.attrs.elements.filter(
                     element => !newNode.attrs.elements.includes(element)
                 )
@@ -200,7 +190,6 @@ export function adjustDocToTemplate(miniDoc, template, documentStyles, citationS
                     cleanNode(newNode, removedElements, removedMarks)
                     if (!newNode.content && ['richtext_part', 'heading_part', 'file_upload_part'].includes(part.type)) {
                         newNode.content = [{type: part.attrs.elements[0]}]
-                        console.log("content")
                     } else if (!newNode.content && part.type === 'table_part') {
                         newNode.content = [
                             {type: 'table', content: [

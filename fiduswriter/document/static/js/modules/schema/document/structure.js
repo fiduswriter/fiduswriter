@@ -277,8 +277,20 @@ export const file_upload_part = {
 
             for(let index=0; index<node.attrs.files.length; index++){
                 const fileLink = document.createElement('a')
+                fileLink.download = 'temp.pdf'
+                fileLink.href = node.attrs.files_path[index]
+
+
+
+
                 fileLink.innerHTML = node.attrs.files[index]
-                fileLink.setAttribute('href', node.attrs.files_path[index]);
+                // fileLink.setAttribute('href', node.attrs.files_path[index]);
+                // fileLink.setAttribute('download', 'file.pdf');
+                // fileLink.onclick = () => {
+                //     window.location=node.attrs.files_path[index]
+                // }
+                // fileLink.setAttribute('target', '_blank');
+
                 filelinks_dom.appendChild(fileLink)
                 //also block the default behaviour maybe
             }

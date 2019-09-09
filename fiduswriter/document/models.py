@@ -360,15 +360,25 @@ class DocumentRevision(models.Model):
             # Database has not yet been initialized, so don't throw any error.
             return []
 
-def documentattachmentfile_location(instance, filename):
-    # preserve the original filename
-    instance.filename = filename
-    return '/'.join(['attachment-files', filename])
 
 class Attachment(models.Model):
+
+
+    def attachmentDirectoryPath(instance, filename):
+        """
+        File will be uploaded to MEDIA_ROOT/Attachment-files/Document<id>/<filename>
+        :param instance: An instance of the model where the FileField is defined
+        :param filename: The filename that was originally given to the file.
+        :return: File storage path
+        """
+        # preserve the original filename
+        instance.filename = filename
+        return 'Attachment-files/Document{0}/{1}'.format(instance.document.id, filename)
+
+
     document = models.ForeignKey(Document, on_delete=models.deletion.CASCADE)
     file = models.FileField(
-        upload_to = documentattachmentfile_location,
+        upload_to = attachmentDirectoryPath,
         help_text = (
             'Attachment file of the document. The filename will be replaced '
             'with the final url of the file in the attached file.'

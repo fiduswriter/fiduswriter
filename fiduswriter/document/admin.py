@@ -31,13 +31,10 @@ class DocumentTemplateAdmin(admin.ModelAdmin):
 
     def duplicate(self, request, queryset):
         for template in queryset:
-            citation_styles = list(template.citation_styles.all())
             document_styles = list(template.documentstyle_set.all())
             export_templates = list(template.exporttemplate_set.all())
             template.pk = None
             template.save()
-            for cs in citation_styles:
-                template.citation_styles.add(cs)
             for ds in document_styles:
                 style_files = list(ds.documentstylefile_set.all())
                 ds.pk = None

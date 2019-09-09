@@ -8,8 +8,6 @@ from django.db.utils import OperationalError, ProgrammingError
 from django.contrib.auth.models import User
 from django.core import checks
 
-from style.models import DocumentStyle
-
 # FW_DOCUMENT_VERSION:
 # Also defined in frontend
 # document/static/js/modules/schema/index.js
@@ -38,14 +36,6 @@ class DocumentTemplate(models.Model):
 
     def __str__(self):
         return self.title
-
-    def save(self, *args, **kwargs):
-        super(DocumentTemplate, self).save(*args, **kwargs)
-        if self.documentstyle_set.count() == 0:
-            doc_style = DocumentStyle()
-            doc_style.document_template = self
-            # TODO: add some style content to this style
-            doc_style.save()
 
     def is_deletable(self):
         reverse_relations = [

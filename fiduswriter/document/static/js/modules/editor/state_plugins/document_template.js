@@ -84,20 +84,14 @@ export class FileView{
                         console.log(" result :-  ", json)
                         console.log("get pos ", this.getPos(), this.options.editor.view.state.doc.nodeAt(this.getPos()))
 
-                        let files = this.node.attrs
-                        let files_new = this.node.attrs
-                        const attrs_n = JSON.parse(JSON.stringify(this.node.attrs))
-                        
-                        // files_new.files.push(json.name)
-                        // files_new.files_path.push(json.path)
-                        attrs_n.files.push(json.name)
-                        attrs_n.files_path.push(json.path)
-
-                        console.log("New files :- ", files_new.files.length)
-                        const attrs = Object.assign({}, files, attrs_n)
+                        const attrs_new = JSON.parse(JSON.stringify(this.node.attrs)) 
+                        attrs_new.files.push(json.name)
+                        attrs_new.files_path.push(json.path)
+                        const attrs = Object.assign({}, this.node.attrs, attrs_new)
                         // const attrs = Object.assign({}, this.node.attrs, {files: this.node.attrs.files.concat([json.name]), files_path: this.node.attrs.files_path.concat([json.path])})
+
                         this.options.editor.view.dispatch(
-                          this.options.editor.view.state.tr.setNodeMarkup(this.getPos(), null, attrs)
+                          this.options.editor.view.state.tr.setNodeMarkup(this.getPos(), null, attrs).setMeta('filterFree', true)
                         )
 
                         // console.log(this.node.attrs.files, " now")

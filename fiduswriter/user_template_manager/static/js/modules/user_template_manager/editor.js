@@ -13,7 +13,8 @@ export class DocTemplatesEditor {
     init() {
         ensureCSS([
             'errorlist.css',
-            'editor.css'
+            'editor.css',
+            'user_template_manager.css'
         ], this.staticUrl)
         return postJson('/api/user_template_manager/get/', {id: this.idString}).then(
             ({json}) => {

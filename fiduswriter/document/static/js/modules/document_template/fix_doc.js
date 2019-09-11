@@ -152,6 +152,9 @@ export function adjustDocToTemplate(miniDoc, template, documentStyles, citationS
             if(oldNode.attrs.files){
                 newNode.attrs.files = oldNode.attrs.files
             }
+            if(oldNode.attrs.files_id){
+                newNode.attrs.files_id = oldNode.attrs.files_id
+            }
             if(oldNode.attrs['files_path']){
                 newNode.attrs['files_path'] = oldNode.attrs['files_path']
             }

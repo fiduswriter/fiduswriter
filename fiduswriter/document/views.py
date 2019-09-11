@@ -1277,7 +1277,7 @@ def download_attachment(request):
 
         if attachment:
             status = 201
-            response['path'] = os.path.relpath(attachment.file.path)
+            response['path'] = os.path.relpath(attachment.file.path, settings.PROJECT_PATH)
             response['id'] = attachment.id
 
     return JsonResponse(

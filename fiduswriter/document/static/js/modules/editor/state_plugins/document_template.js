@@ -51,13 +51,13 @@ export class PartView {
 }
 
 export class FileView{
-    constructor(node, view, getPos, docId, options) {
+    constructor(node, view, getPos, options) {
         this.node = node
         this.view = view
         this.getPos = getPos
         this.options = options
         console.log(" inside constructor, node", node)
-        this.docId = docId
+        this.docId = options.editor.docInfo.id
         this.serializer = DOMSerializer.fromSchema(node.type.schema)
         this.dom = this.serializer.serializeNode(this.node)
         this.dom.classList.add('article-part', 'article-file_upload_part')
@@ -73,22 +73,25 @@ export class FileView{
               text: 'Upload',
               click: () => {
                 let fileList = getFiles();
+                /* Multiple file upload disabled because transaction is taking some time but attributes are updated before that and do not have the latest updtaed value after transaction.*/
                 fileList.forEach(file => {
 
                   const values = {
-                      docId: docId,
+                      docId: this.docId,
                       file: file
                   }
 
                   postJson('/api/document/attachment/upload/', values).then(
                     ({json}) => {
                         console.log(" result :-  ", json)
-                        console.log("get pos ", this.getPos(), this.options.editor.view.state.doc.nodeAt(this.getPos()))
+                        //console.log("get pos ", this.getPos(), this.options.editor.view.state.doc.nodeAt(this.getPos()))
 
                         const attrs_new = JSON.parse(JSON.stringify(this.node.attrs)) 
+
                         attrs_new.files.push(json.name)
                         const url = window.location.origin + '/' + json.path
                         attrs_new.files_path.push(url)
+                        attrs_new.files_id.push(json.id)
                         const attrs = Object.assign({}, this.node.attrs, attrs_new)
                         // const attrs = Object.assign({}, this.node.attrs, {files: this.node.attrs.files.concat([json.name]), files_path: this.node.attrs.files_path.concat([json.path])})
 
@@ -120,7 +123,7 @@ export class FileView{
 
             this.button_upload.onclick = ()=>{
                 //console.log(options.editor.docInfo)
-                console.log(" doc id ", docId)
+                console.log(" doc id ", this.docId)
 
                 this.dialog = new Dialog({
                   title: 'File Uploader',
@@ -129,7 +132,8 @@ export class FileView{
                         Please Upload a File <i style="font-size:0.85rem;">(* Max. file size: 2MB)</i>
                     <br/>
                     <form name="file-uploader" id="file-uploader">
-                        <br/><input id="file-input" name="pdfFile" type="file" multiple/>
+                        <!--<br/><input id="file-input" name="pdfFile" type="file" multiple/>-->
+                        <br/><input id="file-input" name="pdfFile" type="file" />
                     </form>
                     <div id='file-list-display'></div>
                     <br>
@@ -157,7 +161,7 @@ export class FileView{
                 //console.log(options.editor.docInfo)
                 console.log("you clicked")
                 //////not yet complete
-                manageAttachment()
+                manageAttachment(this.dom, this.docId, this.node)
 
             }
             this.dom.appendChild(this.button_manage)
@@ -167,6 +171,7 @@ export class FileView{
 
         function getFiles() {
             // Get the files uploaded by the user inside the dialog
+            // Provision for multiple file upload in future
             let fileInput = document.getElementById('file-input');
             let fileList = [];
             for (let i = 0; i < fileInput.files.length; i++) {
@@ -224,172 +229,159 @@ export class FileView{
             this.classList.remove('over');  // this / e.target is previous target element.
           }
 
-function handleDrop(e) {
-  // console.log("on drag drop")
-  // this/e.target is current target element.
-  if (e.stopPropagation) {
-    e.stopPropagation(); // Stops some browsers from redirecting.
-  }
-  // Don't do anything if dropping the same column we're dragging.
-  if (dragSrcEl != this) {
-    if(this.classList.contains('delete-area')){
-      // the array stores the link from which we delete the files in bkend
-      link_array.push(dragSrcEl.childNodes[0].href) 
-      // The element array is used to store respective elements. To be used in future for better error handling
-      element_array.push(dragSrcEl)
-      this.previousElementSibling.removeChild(dragSrcEl)
-      this.classList.remove('delete-area-drop')
-      // console.log("hola",dragSrcEl)
-      return;
-    }
-    // Set the source column's HTML to the HTML of the column we dropped on.
-    //alert(this.outerHTML);
-    //dragSrcEl.innerHTML = this.innerHTML;
-    //this.innerHTML = e.dataTransfer.getData('text/html');
-    this.parentNode.removeChild(dragSrcEl);
-    var dropHTML = e.dataTransfer.getData('text/html');
-    this.insertAdjacentHTML('beforebegin',dropHTML);
-    var dropElem = this.previousSibling;
-    addDnDHandlers(dropElem);    
-  }
-  this.classList.remove('over');
-  return false;
-}
+          function handleDrop(e) {
+              // console.log("on drag drop")
+              // this/e.target is current target element.
+              if (e.stopPropagation) {
+                  e.stopPropagation(); // Stops some browsers from redirecting.
+              }
+              // Don't do anything if dropping the same column we're dragging.
+              if (dragSrcEl != this) {
+                  if(this.classList.contains('delete-area')) {
+                      // the array stores the link from which we delete the files in bkend
+                      link_array.push(dragSrcEl.childNodes[0].href) 
+                      // The element array is used to store respective elements. To be used in future for better error handling
+                      element_array.push(dragSrcEl)
+                      this.previousElementSibling.removeChild(dragSrcEl)
+                      this.classList.remove('delete-area-drop')
+                      return;
+                  }
+                  // Set the source column's HTML to the HTML of the column we dropped on.
+                  //alert(this.outerHTML);
+                  //dragSrcEl.innerHTML = this.innerHTML;
+                  //this.innerHTML = e.dataTransfer.getData('text/html');
+                  this.parentNode.removeChild(dragSrcEl);
+                  var dropHTML = e.dataTransfer.getData('text/html');
+                  this.insertAdjacentHTML('beforebegin',dropHTML);
+                  var dropElem = this.previousSibling;
+                  addDnDHandlers(dropElem);    
+              }
+              this.classList.remove('over');
+              return false;
+          }
 
-function handleDragEnd(e) {
-  // console.log("on drag end")
-  // this/e.target is the source node.
-  this.classList.remove('over');
-  this.classList.remove('dragElem');
-  /*[].forEach.call(cols, function (col) {
-    col.classList.remove('over');
-  });*/
-}
+          function handleDragEnd(e) {
+              // console.log("on drag end")
+              // this/e.target is the source node.
+              this.classList.remove('over');
+              this.classList.remove('dragElem');
+              /*[].forEach.call(cols, function (col) {
+                col.classList.remove('over');
+              });*/
+          }
 
 
-function addDnDHandlers(elem) {
-  elem.addEventListener('dragstart', handleDragStart, false);
-  elem.addEventListener('dragenter', handleDragEnter, false)
-  elem.addEventListener('dragover', handleDragOver, false);
-  elem.addEventListener('dragleave', handleDragLeave, false);
-  elem.addEventListener('drop', handleDrop, false);
-  elem.addEventListener('dragend', handleDragEnd, false);
-}
+          function addDnDHandlers(elem) {
+              elem.addEventListener('dragstart', handleDragStart, false);
+              elem.addEventListener('dragenter', handleDragEnter, false)
+              elem.addEventListener('dragover', handleDragOver, false);
+              elem.addEventListener('dragleave', handleDragLeave, false);
+              elem.addEventListener('drop', handleDrop, false);
+              elem.addEventListener('dragend', handleDragEnd, false);
+          }
 
-function deleteindb(docId){
-  for(let link in link_array){
-    let promis = getJson('/dashboard/delete_attachment',{'link':link_array[link], 'id_doc': docId})
-    promis.then((response)=>{
-      if(response.status == "ok"){
-        addAlert("info","Deleted file successfully")
-      }
-      else {  
-        console.log("Problem with deleting file!")
-        addAlert("error","Problem with deleting file!")
-      }
-  })
-  } 
-}
+          function deleteindb(docId){
+              for(let link in link_array){
+                  let promis = getJson('/dashboard/delete_attachment',{'link':link_array[link], 'id_doc': docId})
+                  promis.then((response)=>{
+                      if(response.status == "ok"){
+                          addAlert("info","Deleted file successfully")
+                      }
+                      else {
+                          console.log("Problem with deleting file!")
+                          addAlert("error","Problem with deleting file!")
+                      }
+                  })
+              } 
+          }
 
-function delete_elements_in_array(){
-  // Reset the link_array and element_array when dialog is opened.
-  link_array = []
-  element_array = []
-}
+          function delete_elements_in_array(){
+              // Reset the link_array and element_array when dialog is opened.
+              link_array = []
+              element_array = []
+          }
 
-function manageAttachment(docId){
-  // Copying the content of editor into dialogbox
-  let temporary_div = document.createElement('div')
-  //This class name must be in the Template !!!
-  temporary_div.innerHTML = document.querySelector(".article-Letters_of_intent_opt").innerHTML
-  // Creating a List to hold the elements for dialogbox
-  let ul = document.createElement('ul')
-  ul.setAttribute('id','columns')
-  for(let i of temporary_div.children){
-    if(i.querySelector('a'))
-      ul.innerHTML += `<li class="column" draggable="true">${i.innerHTML}</li>`
-  }
+          function manageAttachment(dom, docId, node){
+              console.log("dom ", dom.querySelector('.article-filelinks').innerHTML)
+              // Copying the content of editor into dialogbox
+     
+              // Creating a List to hold the elements for dialogbox
+              let ul = document.createElement('ol')
+              ul.setAttribute('id','columns')
 
-  let delete_button = `<div class="delete-area">
-  <span><i class="fa fa-trash"></i></span>
-  </div>
-  `
-  let div_for_dialog_box = document.createElement('div')
-  div_for_dialog_box.innerHTML = delete_button
-  div_for_dialog_box.prepend(ul)
-  div_for_dialog_box.innerHTML += `<i style="font-size:0.85rem;">* Drag attachments to new spot in the list to change the order<br/> * Drag and drop on to trash icon to remove the attachment </i>`
+              for(let index=0; index<node.attrs.files.length; index++) {
+                  ul.innerHTML += `<li class="file_manage" id="file_${node.attrs.files_id[index]}" draggable="true">${node.attrs.files[index]}</li>`
+              }
 
-  let dialog = new Dialog({
-    title: 'Manage Attachment',
-    body:`${div_for_dialog_box.innerHTML}`,
-    buttons: [
-    {
-      text: 'Update',
-      classes: 'ask-review',
-      click: ()=>{
-        // Deleting in DB
-        deleteindb(docId=docId)
-        let dialog_content = document.querySelector("#columns").innerHTML
-        let regex = /(<li[^>]+>|<li>)/g;
-        dialog_content = dialog_content.replace(regex, "<p>");  
-        dialog_content = dialog_content.replace(/<\/li>/g,"</p>");
-        dialog_content += `<p><br/></p>`
-        document.querySelector(".article-Letters_of_intent_opt").innerHTML = dialog_content;
-        blockAnchorLinks()
-        //setTargetBlank()
-        dialog.close();
-      }
-    },
-    {
-      type: 'cancel',
-      text: 'Cancel',
-      classes: 'ask-review',
-      click: () => {
-        dialog.close();
-      }
-    }
-  ]
-  })
-  dialog.open()
+              let delete_button = `<div class="delete-area">
+                                      <span><i class="fa fa-trash"></i></span>
+                                  </div>`
+              let div_for_dialog_box = document.createElement('div')
+              div_for_dialog_box.innerHTML = delete_button
+              div_for_dialog_box.prepend(ul)
+              div_for_dialog_box.innerHTML += `<i style="font-size:0.85rem;">* Drag attachments to new spot in the list to change the order<br/> * Drag and drop on to trash icon to remove the attachment </i>`
 
-  dialog.dialogEl.style.width = dialog.dialogEl.offsetWidth+"px"
-  dialog.dialogEl.querySelector('.ui-dialog-content').classList.add("overflow-none")
-  var cols = document.querySelectorAll('#columns .column');
-  [].forEach.call(cols, addDnDHandlers);
-  addDnDHandlers(document.querySelector('.delete-area'))
-  delete_elements_in_array()
-}
+              let dialog = new Dialog({
+                  title: 'Manage Attachment',
+                  body:`${div_for_dialog_box.innerHTML}`,
+                  buttons: [{
+                      text: 'Update',
 
-function setTargetBlank(){
+                      click: ()=>{
+                      // Deleting in DB
+                      // deleteindb(docId=docId)
+                      let dialog_content = document.querySelector("#columns").innerHTML
+                      let regex = /(<li[^>]+>|<li>)/g;
+                      dialog_content = dialog_content.replace(regex, "<p>");  
+                      dialog_content = dialog_content.replace(/<\/li>/g,"</p>");
+                      dialog_content += `<p><br/></p>`
+                      document.dom.querySelector('.article-filelinks').innerHTML = dialog_content;
+                      blockAnchorLinks()
+                      //setTargetBlank()
+                      dialog.close();
+                      }
+                  },
+                  {
+                      type: 'cancel',
+                      text: 'Cancel',
 
-    setTimeout(()=>{
-      let aTags = document.querySelectorAll(".article-Letters_of_intent_opt a")
+                      click: () => {
+                          dialog.close();
+                      }
+                  }]
+              })
+              dialog.open()
+
+              dialog.dialogEl.style.width = dialog.dialogEl.offsetWidth+"px"
+              dialog.dialogEl.querySelector('.ui-dialog-content').classList.add("overflow-none")
+              var cols = document.querySelectorAll('#columns .file_manage');
+              [].forEach.call(cols, addDnDHandlers);
+              addDnDHandlers(document.querySelector('.delete-area'))
+              //delete_elements_in_array()
+          }
+
+          function setTargetBlank(){
+
+              setTimeout(()=>{
+                  let aTags = document.querySelectorAll(".article-Letters_of_intent_opt a")
   
-      Object.entries(aTags).map((obj)=>{
-        obj[1].onclick = (e)=>{
-          e.preventDefault()
-          e.stopPropagation()
-          let url = e.target.parentElement.href
-          let anchor =  document.createElement('a')
-          anchor.href = url;
-          anchor.setAttribute('download','')
-          anchor.click()
-        }
-      })
+                  Object.entries(aTags).map((obj)=>{
+                      obj[1].onclick = (e)=>{
+                          e.preventDefault()
+                          e.stopPropagation()
+                          let url = e.target.parentElement.href
+                          let anchor =  document.createElement('a')
+                          anchor.href = url;
+                          anchor.setAttribute('download','')
+                          anchor.click()
+                      }
+                  })
   
-      //blockAnchorLinks()
-    },1000)
+              //blockAnchorLinks()
+              },1000)
   
-  }
-//   function getFiles() {
-//     let fileInput = document.getElementById('file-input');
-//     let fileList = [];
-//     for (let i = 0; i < fileInput.files.length; i++) {
-//       fileList.push(fileInput.files[i]);
-//     }
-//     renderFileList(fileList);
-//     return fileList;
-//   }
+          }
+
   
   function renderFileList(fileList) {
     let fileListDisplay = document.getElementById('file-list-display');
@@ -409,40 +401,6 @@ function setTargetBlank(){
     }
 
 
-    update(view, node) {
-      console.log("update of nodeview called")
-      // console.log(" result :-  ", json)
-      // console.log("get pos ", this.getPos(), this.options.editor.view.state.doc.nodeAt(this.getPos()))
-
-      // let files = this.node.attrs
-      // let files_new = this.node.attrs
-      // const attrs_n = JSON.parse(JSON.stringify(this.node.attrs))
-      
-      // files_new.files.push(json.name)
-      // files_new.files_path.push(json.path)
-      // attrs_n.files.push(json.name)
-      // attrs_n.files_path.push(json.path)
-
-      // console.log("New files :- ", files_new.files.length)
-      // const attrs = Object.assign({}, files, attrs_n)
-      // const trans = this.view.state.tr.setNodeMarkup(this.getPos(), false, attrs)
-      // this.view.dispatch(
-      //   this.view.state.tr.setNodeMarkup(this.getPos(), false, attrs)
-      // )
-      // console.log("999999", trans)
-      // this.view.dispatch(
-      //   trans
-      // )
-      // Not necessary :-
-      // console.log(this.node.attrs.files, " now")
-      // console.log(this.dom.querySelector('.article-filelinks'))
-      // const filelinks_dom = this.dom.querySelector('.article-filelinks')
-      // const fileLink = document.createElement('a')
-      // fileLink.innerHTML = json.name
-      // fileLink.setAttribute('href', json.path);
-      // filelinks_dom.appendChild(fileLink)
-
-  }
 
 }
 
@@ -476,7 +434,6 @@ export const documentTemplatePlugin = function(options) {
                       node, 
                       view, 
                       getPos, 
-                      docId, //not needed can be removed later after accessing docid from options
                       options);
                     // Tags and Contributors have node views defined in tag_input and contributor_input.
                     // TOCs have node views defined in toc_render.

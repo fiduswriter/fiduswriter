@@ -59,9 +59,10 @@ export class FileView{
         console.log(" inside constructor, node", node)
         this.docId = docId
         this.serializer = DOMSerializer.fromSchema(node.type.schema)
-
         this.dom = this.serializer.serializeNode(this.node)
         this.dom.classList.add('article-part', 'article-file_upload_part')
+        
+        // Upload Button
         if(this.node.attrs.upload) {
             this.button_upload = document.createElement('button')
             this.button_upload.innerHTML = "Upload File"
@@ -94,18 +95,7 @@ export class FileView{
                         this.options.editor.view.dispatch(
                           this.options.editor.view.state.tr.setNodeMarkup(this.getPos(), null, attrs).setMeta('filterFree', true)
                         )
-
-                        // console.log(this.node.attrs.files, " now")
-                        // console.log(this.dom.querySelector('.article-filelinks'))
-                        // const filelinks_dom = this.dom.querySelector('.article-filelinks')
-                        // const fileLink = document.createElement('a')
-                        // fileLink.innerHTML = json.name
-                        // fileLink.setAttribute('href', json.path);
-                        // filelinks_dom.appendChild(fileLink)
-                        // this.update(this.view, this.node)  
-
                         return
-
                     }
                   ).catch(
                     response => {
@@ -118,14 +108,11 @@ export class FileView{
                 this.dialog.close()
       
               }
-            }
-            
+            })
 
-            )
             buttons.push({
               type: 'cancel',
               text: 'Cancel',
-             // classes: 'ask-review',
               click: () => {
                 this.dialog.close();
               }
@@ -134,7 +121,7 @@ export class FileView{
             this.button_upload.onclick = ()=>{
                 //console.log(options.editor.docInfo)
                 console.log(" doc id ", docId)
-                //FileUploadDialog(docId, this.node.attrs.files, this.node.attrs.files_path)
+
                 this.dialog = new Dialog({
                   title: 'File Uploader',
                   body:`<div class="upload-file-dialog">
@@ -151,13 +138,15 @@ export class FileView{
                 })
                 this.dialog.open()
                 document.querySelector(".upload-file-dialog").querySelector("#file-input").addEventListener("change", getFiles);
-
             }
+
             this.dom.appendChild(this.button_upload)
             //this.dom.insertBefore(this.button_upload, this.dom.lastChild)
         }
+
         console.log(this.node.attrs.files)
         console.log("File View Worked! ")
+        // Manage Button
         if(this.node.attrs.manage) {
             this.button_manage = document.createElement('button')
             this.button_manage.innerHTML = "Manage File"
@@ -177,6 +166,7 @@ export class FileView{
 
 
         function getFiles() {
+            // Get the files uploaded by the user inside the dialog
             let fileInput = document.getElementById('file-input');
             let fileList = [];
             for (let i = 0; i < fileInput.files.length; i++) {
@@ -187,6 +177,7 @@ export class FileView{
           }
           
           function renderFileList(fileList) {
+            // On upload, display file on the dialog
             let fileListDisplay = document.getElementById('file-list-display');
             fileListDisplay.innerHTML = '';
             fileList.forEach(function (file, index) {

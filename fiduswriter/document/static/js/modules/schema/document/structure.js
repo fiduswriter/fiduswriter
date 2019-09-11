@@ -292,14 +292,13 @@ export const file_upload_part = {
                 // fileLink.setAttribute('target', '_blank');
 
                 filelinks_dom.appendChild(fileLink)
-                //also block the default behaviour maybe
+
             }
 
             dom.appendChild(filelinks_dom)
 
         }
 
-        console.log("to DOM file part")
         return dom
     }
 }

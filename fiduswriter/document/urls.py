@@ -107,5 +107,10 @@ urlpatterns = [
         '^attachment/upload/$',
         views.upload_attachment,
         name='upload_attachment'
+    ),
+    url(
+        '^attachment/download/$',
+        views.download_attachment,
+        name='download_attachment'
     )
 ]

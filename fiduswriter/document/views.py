@@ -1234,6 +1234,7 @@ def upload_attachment(request):
     status = 405
     print(request)
     print(request.POST)
+    print("settings project path - ", settings.PROJECT_PATH)
     if request.is_ajax() and request.method == 'POST':
         doc_id = request.POST['docId']
         file = request.FILES['file']
@@ -1255,8 +1256,9 @@ def upload_attachment(request):
             attachment = Attachment.objects.create(file=file, document=document, file_name=file.name)
             response['id'] = attachment.id
             response['name'] = attachment.file_name
-            response['path'] = os.path.relpath(attachment.file.path)
-            print("path :---------------------", os.path.relpath(attachment.file.path) )
+            response['path'] = os.path.relpath(attachment.file.path, settings.PROJECT_PATH)
+            print("path :---------------------", os.path.relpath(attachment.file.path, settings.PROJECT_PATH) )
+            print("attachment path  as in db :----------", attachment.file.path )
 
     return JsonResponse(
         response,
@@ -1274,14 +1276,13 @@ def download_attachment(request):
         ).first()
 
         if attachment:
+            status = 201
+            response['path'] = os.path.relpath(attachment.file.path)
+            response['id'] = attachment.id
 
-            http_response = HttpResponse(
-                attachment.file_object.file,
-                content_type='application/pdf; charset=x-user-defined',
-                status=200
-            )
-            http_response[
-                'Content-Disposition'] = 'attachment; filename=some_name.pdf'
-            return http_response
+    return JsonResponse(
+        response,
+        status = status
+    )
 
 

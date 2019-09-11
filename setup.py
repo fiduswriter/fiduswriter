@@ -2,7 +2,6 @@ import os
 import distutils
 import setuptools
 from setuptools.command.sdist import sdist as _sdist
-from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
 
 
 def read(name):
@@ -12,7 +11,7 @@ def read(name):
         return f.read()
 
 
-class CompileMessagesCommand(distutils.cmd.Command):
+class compilemessages(distutils.cmd.Command):
     """A custom command to create *.mo files for each language."""
     description = "Create *.mo files to be included in the final package."
     user_options = []
@@ -40,28 +39,33 @@ class CompileMessagesCommand(distutils.cmd.Command):
         subprocess.check_call(command)
 
 
-class SdistCommand(_sdist):
+class sdist(_sdist):
     """Custom build command."""
 
     def run(self):
         self.run_command('compilemessages')
         _sdist.run(self)
 
+cmdclass = {
+    'compilemessages': compilemessages,
+    'sdist': sdist
+}
 
-class BdistWheelCommand(_bdist_wheel):
-    """Custom build command."""
+try:
+    from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
+    class bdist_wheel(_bdist_wheel):
+        """Custom build command."""
 
-    def run(self):
-        self.run_command('compilemessages')
-        _bdist_wheel.run(self)
+        def run(self):
+            self.run_command('compilemessages')
+            _bdist_wheel.run(self)
+    cmdclass['bdist_wheel'] = bdist_wheel
+except ImportError:
+    pass
 
 
 setuptools.setup(
-    cmdclass={
-        'compilemessages': CompileMessagesCommand,
-        'sdist': SdistCommand,
-        'bdist_wheel': BdistWheelCommand
-    },
+    cmdclass=cmdclass,
     name="fiduswriter",
     version=read('version.txt').splitlines()[0],
     description="A semantic wordprocessor for academic purposes",
@@ -87,6 +91,7 @@ setuptools.setup(
     ],
     packages=setuptools.find_packages(),
     include_package_data=True,
+    python_requires='>=3',
     install_requires=read('fiduswriter/requirements.txt').splitlines(),
     extras_require={
         "books": "fiduswriter-books ~= 3.7.0rc1",

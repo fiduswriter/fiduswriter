@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-07-04 10:30+0000\n"
-"PO-Revision-Date: 2019-07-04 11:44+0100\n"
+"PO-Revision-Date: 2019-07-30 00:18+0100\n"
 "Last-Translator: Ana Carolina Vera Resquín <ani.tavr77@gmail.com>\n"
 "Language-Team: Spanish <ani.tavr77@gmail.com>\n"
 "Language: Spanish\n"
@@ -21,11 +21,12 @@ msgstr ""
 #: base/templates/admin/console.html:5 base/templates/admin/console.html:17
 #: base/templates/admin/overview.html:14
 msgid "Admin Console"
-msgstr "Consola de administración"
+msgstr "Consola de Administración"
 
+# creo que esto es más entendible "Número actual de sesiones conectadas" no sé que te parece
 #: base/templates/admin/console.html:19
 msgid "Current number of user sessions:"
-msgstr "Número actual de sesiones conectadas"
+msgstr "Número actual de sesiones de usuario"
 
 #: base/templates/admin/console.html:21
 msgid "Send a system message to all connected users:"
@@ -39,7 +40,9 @@ msgstr "Mensaje"
 msgid ""
 "This system will go offline for scheduled maintenance in 30 minutes. All "
 "your work will be saved automatically and we will be back shortly."
-msgstr "El sistema se desconectará para mantenimiento en 30 minutos"
+msgstr ""
+"El sistema se desconectará en 30 minutos para un mantenimiento programado. "
+"Todo su trabajo se guardará automáticamente y estaremos de vuelta en breve."
 
 #: base/templates/admin/console.html:34
 msgid "Send to connected users"
@@ -52,7 +55,7 @@ msgstr "Extras"
 #: base/templates/admin/overview.html:17
 #: document/templates/admin/document/maintenance.html:18
 msgid "Document Maintenance"
-msgstr "Mantenimiento de documento"
+msgstr "Mantenimiento de Documento"
 
 #: base/templates/app.html:11
 msgid "The all in one solution for collaborative academic writing."
@@ -75,16 +78,16 @@ msgstr ""
 "\n"
 "                Su navegador no es compatible con Fidus Writer.\n"
 "                Por favor actualice! Recomendamos usar una versión\n"
-"                actual de Chrome/Chromium o de Firefox en una computadora.\n"
+"                acual de Chrome/Chromium o de Firefox en una computadora.\n"
 "                "
 
 #: document/admin.py:45
 msgid "Duplicate selected document templates"
-msgstr "Duplicar la plantilla seleccionada"
+msgstr "Duplicar plantillas de documentos seleccionados"
 
 #: document/models.py:120
 msgid "Standard Article"
-msgstr "Artículo estándar"
+msgstr "Artículo Estándar"
 
 #: document/templates/admin/document/document/change_list_object_tools.html:8
 #, python-format
@@ -111,7 +114,7 @@ msgstr ""
 "todos los documentos\n"
 "           de todos los usuarios a la versión más reciente de documentos. "
 "Solo haga esto si\n"
-"           sabe que ningún usuario está editando ningún documento\n"
+"           sabe que ningún usuario está editando algún documento\n"
 "          "
 
 #: document/templates/admin/document/maintenance.html:28
@@ -132,7 +135,7 @@ msgstr "Autor"
 
 #: document/views.py:287
 msgid "Access Rights"
-msgstr "Derechos de acceso"
+msgstr "Derechos de Acceso"
 
 #: document/views.py:290 document/views.py:720
 msgid "Access the document"
@@ -140,12 +143,14 @@ msgstr "Acceder al documento"
 
 #: document/views.py:293
 msgid "Document shared:"
-msgstr "Documento  compartido"
+msgstr "Documento  compartido:"
 
+# el espacio antes de los dos puntos se ve raro
 #: document/views.py:653
 msgid "Comment on :"
-msgstr "Comentaria a:"
+msgstr "Comentar :"
 
+# el espacio antes de los dos puntos se ve raro
 #: document/views.py:674
 msgid "Comment assignment on :"
 msgstr "Comentario asignado en :"
@@ -188,11 +193,11 @@ msgstr "Administrar Fidus Writer"
 
 #: fiduswriter/settings.py:341
 msgid "Fidus Writer Administration Site"
-msgstr "Sitio de administración de Fidus  Writer"
+msgstr "Sitio de Administración de Fidus  Writer"
 
 #: fiduswriter/settings.py:342
 msgid "Welcome to the Fidus Writer Administration Site"
-msgstr "Bienvenido al sitio de administración de Fidus Writer"
+msgstr "Bienvenido al Sitio de Administración de Fidus Writer"
 
 #: style/models.py:36 style/models.py:61
 msgid "Default"
@@ -206,7 +211,11 @@ msgid ""
 "        Hello from %(site_name)s!\n"
 "    "
 msgstr ""
+"\n"
+"        Hola desde %(site_name)s!\n"
+"    "
 
+# Se entiende?
 #: user/templates/account/email/email_confirmation_message.html:14
 #, python-format
 msgid ""
@@ -215,6 +224,11 @@ msgid ""
 "yours as an e-mail address to connect their account.\n"
 "    "
 msgstr ""
+"\n"
+"       Ha recibido este correo electrónico porque el usuario "
+"%(user_display)s dió esta dirección de correo electrónico para conectarse a "
+"su cuenta.\n"
+"    "
 
 #: user/templates/account/email/email_confirmation_message.html:20
 #, python-format
@@ -223,7 +237,12 @@ msgid ""
 "        To confirm this is correct, go to <a href=\"%(url)s\">%(url)s</a>.\n"
 "    "
 msgstr ""
+"\n"
+"       Para confirmar que esto es correcto, diríjase a <a href=\"%(url)s\">"
+"%(url)s</a>.\n"
+"    "
 
+# de o desde? no sé a si queda bien con el sitio del paréntesis
 #: user/templates/account/email/email_confirmation_message.html:26
 #: user/templates/account/email/password_reset_key_message.html:32
 #, python-format
@@ -232,16 +251,24 @@ msgid ""
 "        Thank you from %(site_name)s!\n"
 "    "
 msgstr ""
+"\n"
+"        Gracias de %(site_name)s!\n"
+"    "
 
+# Bien?
 #: user/templates/account/email/password_reset_key_message.html:13
-#, fuzzy
 msgid ""
 "\n"
 "        You're receiving this e-mail because you or someone else has "
 "requested a password for your user account.\n"
 "    "
-msgstr "Estás recibiendo ese correo porque pediste restablecer tu contraseña"
+msgstr ""
+"\n"
+"        Está recibiendo este correo electrónico porque usted u otra persona "
+"ha solicitado una contraseña para su cuenta de usuario.\n"
+"    "
 
+# En español generalmente no se usa safely en este tipo de mensajes de restablecimiento de contraseña.
 #: user/templates/account/email/password_reset_key_message.html:18
 msgid ""
 "\n"
@@ -249,11 +276,15 @@ msgid ""
 "Click the link below to reset your password.\n"
 "    "
 msgstr ""
+"\n"
+"        Ignore este mensaje si no ha solicitado el restablecimiento de su "
+"contraseña. Haga clic en el enlace de abajo para restablecer su contraseña.\n"
+"    "
 
 #: user/templates/account/email/password_reset_key_message.html:27
 #, python-format
 msgid "In case you forgot, your username is %(username)s."
-msgstr ""
+msgstr "En caso de que lo haya olvidado, su nombre de usuario es %(username)s."
 
 #: usermedia/views.py:34
 msgid "Filetype not supported"

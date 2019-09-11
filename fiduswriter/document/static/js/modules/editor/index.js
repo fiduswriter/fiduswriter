@@ -441,7 +441,7 @@ export class Editor {
 
         this.docInfo = data.doc_info
         this.docInfo.version = doc["v"]
-        this.docInfo.template = data.doc.template.definition
+        this.docInfo.template = data.doc.template
         new ModDB(this)
         this.mod.db.bibDB.setDB(data.doc.bibliography)
         // assign bibDB to be used in document schema.
@@ -459,14 +459,14 @@ export class Editor {
             stateDoc = this.schema.nodeFromJSON({type:'doc', content:[
                 adjustDocToTemplate(
                     doc.contents,
-                    this.docInfo.template,
+                    this.docInfo.template.definition,
                     this.mod.documentTemplate.documentStyles,
                     this.schema
                 )
             ]})
         } else {
             stateDoc = this.schema.nodeFromJSON({type:'doc', content:[
-                JSON.parse(JSON.stringify(this.docInfo.template))
+                JSON.parse(JSON.stringify(this.docInfo.template.definition))
             ]})
         }
         const plugins = this.statePlugins.map(plugin => {

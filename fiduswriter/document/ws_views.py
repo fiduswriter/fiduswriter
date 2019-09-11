@@ -69,7 +69,7 @@ class WebSocket(BaseWebSocketHandler):
                 'title': doc_db.title,
                 'id': doc_db.id,
                 'template': {
-                    'title': doc_db.template.title,
+                    'id': doc_db.template.id,
                     'definition': json_decode(doc_db.template.definition)
                 }
             }

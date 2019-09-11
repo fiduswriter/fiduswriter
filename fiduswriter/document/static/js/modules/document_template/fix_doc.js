@@ -67,9 +67,10 @@ export function adjustDocToTemplate(miniDoc, miniTemplate, documentStyles, schem
 
     if (!documentStyles.map(style => style.slug).includes(doc.attrs.documentstyle)) {
         if (!documentStyles.length) {
-            throw new Error('No document styles have been defined for document template.')
+            doc.attrs.documentstyle = false
+        } else {
+            doc.attrs.documentstyle = documentStyles[0].slug
         }
-        doc.attrs.documentstyle = documentStyles[0].slug
     }
 
     if (!doc.attrs.citationstyles.includes(doc.attrs.citationstyle)) {

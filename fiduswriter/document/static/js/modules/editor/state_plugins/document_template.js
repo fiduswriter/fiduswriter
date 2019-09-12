@@ -168,7 +168,7 @@ export class FileView{
                 console.log("you clicked")
                 //////not yet complete
 
-                              
+
               //console.log("dom ", dom.querySelector('.article-filelinks').innerHTML)
               // Copying the content of editor into dialogbox
      
@@ -218,7 +218,7 @@ export class FileView{
                           let index = this.node.attrs.files_id.indexOf(id)
                           //console.log("old pos = ", index)
                           files.push(this.node.attrs.files[index])
-                          files_path.push(this.node.attrs.files_path)
+                          files_path.push(this.node.attrs.files_path[index])
 
                       }
                       console.log("file id list :- ", files_id)
@@ -276,9 +276,12 @@ export class FileView{
 
 
 
-                manageAttachment(this.dom, this.docId, this.node)
+
+
+
 
             }
+            
             this.dom.appendChild(this.button_manage)
             //this.dom.insertBefore(this.button_manage, this.dom.lastChild)
         }
@@ -417,12 +420,8 @@ export class FileView{
               element_array = []
           }
 
-          function manageAttachment(dom, docId, node){
 
-          }
-
-
-          function setTargetBlank(){
+          function setTargetBlank(){// NOT REQUIRED!
               setTimeout(()=>{
                   let aTags = document.querySelectorAll(".article-Letters_of_intent_opt a")
   
@@ -442,15 +441,6 @@ export class FileView{
               },1000)
           }
   
-          function renderFileList(fileList) {
-              let fileListDisplay = document.getElementById('file-list-display');
-              fileListDisplay.innerHTML = '';
-              fileList.forEach(function (file, index) {
-                  let fileDisplayEl = document.createElement('p');
-                  fileDisplayEl.innerHTML = (index + 1) + ': ' + file.name;
-                  fileListDisplay.appendChild(fileDisplayEl);
-              });
-          }
 
  }
 }

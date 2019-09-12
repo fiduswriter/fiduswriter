@@ -363,8 +363,7 @@ class DocumentRevision(models.Model):
 
 class Attachment(models.Model):
 
-
-    def attachmentDirectoryPath(instance, filename):
+    def attachmentDirectoryPath(self, filename):
         """
         File will be uploaded to MEDIA_ROOT/Attachment-files/Document<id>/<filename>
         :param instance: An instance of the model where the FileField is defined
@@ -372,9 +371,8 @@ class Attachment(models.Model):
         :return: File storage path
         """
         # preserve the original filename
-        instance.filename = filename
-        return 'Attachment-files/Document{0}/{1}'.format(instance.document.id, filename)
-
+        self.filename = filename
+        return 'Attachment-files/Document{0}/{1}'.format(self.document.id, filename)
 
     document = models.ForeignKey(Document, on_delete=models.deletion.CASCADE)
     file = models.FileField(

@@ -72,10 +72,12 @@ export class FileView{
             buttons.push({
               text: 'Upload',
               click: () => {
-                let fileList = getFiles();
-                /* Multiple file upload disabled because transaction is taking some time but attributes are updated before that and do not have the latest updtaed value after transaction.*/
+                let fileList = getFiles();//Returns single file for now
+                
+                /* Multiple file upload disabled because transaction is taking some time
+                but attributes are updated before that and do not have the latest updated value after transaction.*/
+                
                 fileList.forEach(file => {
-
                   const values = {
                       docId: this.docId,
                       file: file
@@ -85,33 +87,35 @@ export class FileView{
                     ({json}) => {
                         console.log(" result :-  ", json)
                         //console.log("get pos ", this.getPos(), this.options.editor.view.state.doc.nodeAt(this.getPos()))
-
-                        const attrs_new = JSON.parse(JSON.stringify(this.node.attrs)) 
-
-                        attrs_new.files.push(json.name)
+                        
                         const url = window.location.origin + '/' + json.path
-                        attrs_new.files_path.push(url)
-                        attrs_new.files_id.push(json.id)
-                        const attrs = Object.assign({}, this.node.attrs, attrs_new)
-                        // const attrs = Object.assign({}, this.node.attrs, {files: this.node.attrs.files.concat([json.name]), files_path: this.node.attrs.files_path.concat([json.path])})
-
-                        this.options.editor.view.dispatch(
-                          this.options.editor.view.state.tr.setNodeMarkup(this.getPos(), null, attrs).setMeta('filterFree', true)
+                        const attrs = Object.assign(
+                            {},
+                            this.node.attrs,
+                            {
+                                files: this.node.attrs.files.concat([json.name]),
+                                files_path: this.node.attrs.files.concat([url])
+                            }
                         )
+
+                        const tr = this.options.editor.view.state.tr.setNodeMarkup(this.getPos(), null, attrs).setMeta('filterFree', true)
+                        console.log({attrs, pos: this.getPos(), tr})
+                        this.options.editor.view.dispatch(tr)
                         return
                     }
                   ).catch(
                     response => {
-                      console.log("error", response)
+                      console.log("error ", response)
                     }
                   )
-      
+
 
                 })
                 this.dialog.close()
-      
+
               }
-            })
+
+            })//check braces here!
 
             buttons.push({
               type: 'cancel',
@@ -156,7 +160,7 @@ export class FileView{
             this.button_manage.innerHTML = "Manage File"
             this.button_manage.setAttribute('contenteditable', 'false')
             this.button_manage.onclick = function(){console.log("you clicked")}
-            
+
             this.button_manage.onclick = ()=>{
                 //console.log(options.editor.docInfo)
                 console.log("you clicked")
@@ -180,7 +184,7 @@ export class FileView{
             renderFileList(fileList);
             return fileList;
           }
-          
+
           function renderFileList(fileList) {
             // On upload, display file on the dialog
             let fileListDisplay = document.getElementById('file-list-display');
@@ -191,7 +195,7 @@ export class FileView{
               fileListDisplay.appendChild(fileDisplayEl);
             });
           }
-          
+
           let dragSrcEl = null;
 
           function handleDragStart(e) {
@@ -228,6 +232,7 @@ export class FileView{
             }
             this.classList.remove('over');  // this / e.target is previous target element.
           }
+
 
           function handleDrop(e) {
               // console.log("on drag drop")
@@ -329,7 +334,7 @@ export class FileView{
 
                       click: ()=>{
                       // Deleting in DB
-                      // deleteindb(docId=docId)
+                      // deleteindb(docId=docId) //UNCOMMENT THIS
                       let dialog_content = document.querySelector("#columns").innerHTML
                       let regex = /(<li[^>]+>|<li>)/g;
                       dialog_content = dialog_content.replace(regex, "<p>");  
@@ -357,11 +362,11 @@ export class FileView{
               var cols = document.querySelectorAll('#columns .file_manage');
               [].forEach.call(cols, addDnDHandlers);
               addDnDHandlers(document.querySelector('.delete-area'))
-              //delete_elements_in_array()
+              //delete_elements_in_array() // UNCOMMENT THIS
           }
 
-          function setTargetBlank(){
 
+          function setTargetBlank(){
               setTimeout(()=>{
                   let aTags = document.querySelectorAll(".article-Letters_of_intent_opt a")
   
@@ -379,9 +384,7 @@ export class FileView{
   
               //blockAnchorLinks()
               },1000)
-  
           }
-
   
   function renderFileList(fileList) {
     let fileListDisplay = document.getElementById('file-list-display');
@@ -392,16 +395,8 @@ export class FileView{
       fileListDisplay.appendChild(fileDisplayEl);
     });
   }
-  
 
-
-
- 
-          
-    }
-
-
-
+ }
 }
 
 const key = new PluginKey('documentTemplate')

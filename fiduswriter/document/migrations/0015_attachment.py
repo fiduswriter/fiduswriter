@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             name='Attachment',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('file', models.FileField(help_text='Attachment file of the document. The filename will be replaced with the final url of the file in the attached file.', upload_to=document.models.documentattachmentfile_location)),
+                ('file', models.FileField(help_text='Attachment file of the document. The filename will be replaced with the final url of the file in the attached file.', upload_to=document.models.Attachment.attachmentDirectoryPath)),
                 ('file_name', models.CharField(blank=True, default='', max_length=255)),
                 ('date_uploaded', models.DateTimeField(auto_now_add=True, null=True)),
                 ('document', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='document.Document')),

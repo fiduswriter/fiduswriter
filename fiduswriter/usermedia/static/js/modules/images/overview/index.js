@@ -92,9 +92,7 @@ export class ImageOverview {
             }
         ).then(
             () => {
-                ids.forEach(id => {
-                    delete this.app.imageDB[id]
-                })
+                ids.forEach(id => delete this.app.imageDB.db[id])
                 this.removeTableRows(ids)
                 addAlert('success', gettext('The image(s) have been deleted'))
             }
@@ -123,7 +121,6 @@ export class ImageOverview {
             icon: 'exclamation-triangle',
             title: gettext('Confirm deletion'),
             body: `<p>${gettext('Delete the image(s)')}?</p>`,
-            height: 180,
             buttons
         })
         dialog.open()

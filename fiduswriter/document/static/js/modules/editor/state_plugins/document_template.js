@@ -56,6 +56,7 @@ export class FileView{
         this.view = view
         this.getPos = getPos
         this.options = options
+        this.link_array = []
         console.log(" inside constructor, node", node)
         this.docId = options.editor.docInfo.id
         this.serializer = DOMSerializer.fromSchema(node.type.schema)
@@ -94,7 +95,8 @@ export class FileView{
                             this.node.attrs,
                             {
                                 files: this.node.attrs.files.concat([json.name]),
-                                files_path: this.node.attrs.files.concat([url])
+                                files_path: this.node.attrs.files_path.concat([url]),
+                                files_id: this.node.attrs.files_id.concat([json.id])
                             }
                         )
 
@@ -165,6 +167,115 @@ export class FileView{
                 //console.log(options.editor.docInfo)
                 console.log("you clicked")
                 //////not yet complete
+
+                              
+              //console.log("dom ", dom.querySelector('.article-filelinks').innerHTML)
+              // Copying the content of editor into dialogbox
+     
+              // Creating a List to hold the elements for dialogbox
+              let ol = document.createElement('ol')
+              ol.setAttribute('id','manage_files')
+              
+              // Loading Dialog box from node's contents
+              for(let index=0; index<this.node.attrs.files.length; index++) {
+                  ol.innerHTML += `<li class="file_list" id="file_${this.node.attrs.files_id[index]}" draggable="true">${this.node.attrs.files[index]}</li>`
+              }
+
+              let delete_button = `<div class="delete-area">
+                                      <span><i class="fa fa-trash"></i></span>
+                                  </div>`
+              let div_for_dialog_box = document.createElement('div')
+              div_for_dialog_box.innerHTML = delete_button
+              let temp_div = document.createElement('div')
+
+              temp_div.appendChild(ol)
+              div_for_dialog_box.prepend(temp_div)
+              div_for_dialog_box.innerHTML += `<i style="font-size:0.85rem;">* Drag attachments to new spot in the list to change the order<br/> * Drag and drop on to trash icon to remove the attachment </i>`
+
+              console.log("Dialog contents :- ", div_for_dialog_box.querySelector("#manage_files").children)
+              let dialog = new Dialog({
+                  title: 'Manage Attachment',
+                  body:`${div_for_dialog_box.innerHTML}`,
+                  buttons: [{
+                      text: 'Update',
+
+                      click: ()=>{
+                      // Deleting in DB
+                      // deleteindb(docId=docId) //UNCOMMENT THIS
+                      // let dialog_content = document.querySelector("#manage_files").innerHTML
+                      let dialog_content = document.querySelector("#manage_files")
+                      console.log("dc ",dialog_content)
+                      console.log("dc ",typeof(dialog_content))
+                      console.log("dc ",dialog_content.innerHTML)
+                      
+                      let files_id = []
+                      let files = []
+                      let files_path = []
+                      for(let list_element of dialog_content.children) {
+                          console.log(list_element.id)
+                          let id = Number(list_element.id.split("file_")[1])
+                          files_id.push(id)
+                          let index = this.node.attrs.files_id.indexOf(id)
+                          //console.log("old pos = ", index)
+                          files.push(this.node.attrs.files[index])
+                          files_path.push(this.node.attrs.files_path)
+
+                      }
+                      console.log("file id list :- ", files_id)
+                      console.log("file  list :- ", files)
+                      console.log("file path list :- ", files_path)
+
+
+                      const attrs = Object.assign(
+                        {},
+                        this.node.attrs,
+                        {
+                            files: files,
+                            files_path: files_path,
+                            files_id: files_id
+                        }
+                    )
+
+                    const tr = this.options.editor.view.state.tr.setNodeMarkup(this.getPos(), null, attrs).setMeta('filterFree', true)
+                    console.log({attrs, pos: this.getPos(), tr})
+                    this.options.editor.view.dispatch(tr)
+
+                      //blockAnchorLinks()//uncomment later
+                      //setTargetBlank()
+                      dialog.close();
+                      }
+                  },
+                  {
+                      type: 'cancel',
+                      text: 'Cancel',
+
+                      click: () => {
+                          dialog.close();
+                      }
+                  }]
+              })
+              dialog.open()
+
+              dialog.dialogEl.style.width = dialog.dialogEl.offsetWidth+"px"
+              dialog.dialogEl.querySelector('.ui-dialog-content').classList.add("overflow-none")
+              let cols = document.querySelectorAll('#manage_files .file_list');
+              [].forEach.call(cols, addDnDHandlers);
+              addDnDHandlers(document.querySelector('.delete-area'))
+              //delete_elements_in_array() // UNCOMMENT THIS
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 manageAttachment(this.dom, this.docId, this.node)
 
             }
@@ -244,7 +355,7 @@ export class FileView{
               if (dragSrcEl != this) {
                   if(this.classList.contains('delete-area')) {
                       // the array stores the link from which we delete the files in bkend
-                      link_array.push(dragSrcEl.childNodes[0].href) 
+                      //this.link_array.push(dragSrcEl.childNodes[0].href) //uncomment this!!!!
                       // The element array is used to store respective elements. To be used in future for better error handling
                       element_array.push(dragSrcEl)
                       this.previousElementSibling.removeChild(dragSrcEl)
@@ -307,62 +418,7 @@ export class FileView{
           }
 
           function manageAttachment(dom, docId, node){
-              console.log("dom ", dom.querySelector('.article-filelinks').innerHTML)
-              // Copying the content of editor into dialogbox
-     
-              // Creating a List to hold the elements for dialogbox
-              let ul = document.createElement('ol')
-              ul.setAttribute('id','columns')
 
-              for(let index=0; index<node.attrs.files.length; index++) {
-                  ul.innerHTML += `<li class="file_manage" id="file_${node.attrs.files_id[index]}" draggable="true">${node.attrs.files[index]}</li>`
-              }
-
-              let delete_button = `<div class="delete-area">
-                                      <span><i class="fa fa-trash"></i></span>
-                                  </div>`
-              let div_for_dialog_box = document.createElement('div')
-              div_for_dialog_box.innerHTML = delete_button
-              div_for_dialog_box.prepend(ul)
-              div_for_dialog_box.innerHTML += `<i style="font-size:0.85rem;">* Drag attachments to new spot in the list to change the order<br/> * Drag and drop on to trash icon to remove the attachment </i>`
-
-              let dialog = new Dialog({
-                  title: 'Manage Attachment',
-                  body:`${div_for_dialog_box.innerHTML}`,
-                  buttons: [{
-                      text: 'Update',
-
-                      click: ()=>{
-                      // Deleting in DB
-                      // deleteindb(docId=docId) //UNCOMMENT THIS
-                      let dialog_content = document.querySelector("#columns").innerHTML
-                      let regex = /(<li[^>]+>|<li>)/g;
-                      dialog_content = dialog_content.replace(regex, "<p>");  
-                      dialog_content = dialog_content.replace(/<\/li>/g,"</p>");
-                      dialog_content += `<p><br/></p>`
-                      document.dom.querySelector('.article-filelinks').innerHTML = dialog_content;
-                      blockAnchorLinks()
-                      //setTargetBlank()
-                      dialog.close();
-                      }
-                  },
-                  {
-                      type: 'cancel',
-                      text: 'Cancel',
-
-                      click: () => {
-                          dialog.close();
-                      }
-                  }]
-              })
-              dialog.open()
-
-              dialog.dialogEl.style.width = dialog.dialogEl.offsetWidth+"px"
-              dialog.dialogEl.querySelector('.ui-dialog-content').classList.add("overflow-none")
-              var cols = document.querySelectorAll('#columns .file_manage');
-              [].forEach.call(cols, addDnDHandlers);
-              addDnDHandlers(document.querySelector('.delete-area'))
-              //delete_elements_in_array() // UNCOMMENT THIS
           }
 
 
@@ -386,15 +442,15 @@ export class FileView{
               },1000)
           }
   
-  function renderFileList(fileList) {
-    let fileListDisplay = document.getElementById('file-list-display');
-    fileListDisplay.innerHTML = '';
-    fileList.forEach(function (file, index) {
-      var fileDisplayEl = document.createElement('p');
-      fileDisplayEl.innerHTML = (index + 1) + ': ' + file.name;
-      fileListDisplay.appendChild(fileDisplayEl);
-    });
-  }
+          function renderFileList(fileList) {
+              let fileListDisplay = document.getElementById('file-list-display');
+              fileListDisplay.innerHTML = '';
+              fileList.forEach(function (file, index) {
+                  let fileDisplayEl = document.createElement('p');
+                  fileDisplayEl.innerHTML = (index + 1) + ': ' + file.name;
+                  fileListDisplay.appendChild(fileDisplayEl);
+              });
+          }
 
  }
 }

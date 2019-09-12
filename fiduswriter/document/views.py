@@ -1234,7 +1234,6 @@ def upload_attachment(request):
     status = 405
     print(request)
     print(request.POST)
-    print("settings project path - ", settings.PROJECT_PATH)
     if request.is_ajax() and request.method == 'POST':
         doc_id = request.POST['docId']
         file = request.FILES['file']

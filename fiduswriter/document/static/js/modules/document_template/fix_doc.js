@@ -89,14 +89,19 @@ export function adjustDocToTemplate(miniDoc, template, documentStyles, citationS
                 oldContentNode.type === part.type &&
                 oldContentNode.attrs.id === part.attrs.id
         )
+
         if (oldNode) {
+
             while (oldNode !== oldContent[0]) {
+                // did not enter here
                 const firstOldContent = oldContent.shift(),
                     inTemplate = !!template.content.find(
                         part =>
                             part.type === firstOldContent.type &&
                             part.attrs.id === firstOldContent.attrs.id
                     )
+
+
                 if (inTemplate) {
                     movedParts.push(firstOldContent)
                 } else if (
@@ -121,7 +126,9 @@ export function adjustDocToTemplate(miniDoc, template, documentStyles, citationS
                 }
             }
             oldContent.shift()
+            
         } else {
+            console.log("first")
             oldNode = movedParts.find(
                 oldContentNode =>
                     oldContentNode.type === part.type &&
@@ -131,7 +138,9 @@ export function adjustDocToTemplate(miniDoc, template, documentStyles, citationS
                 movedParts = movedParts.filter(oldContentNode => oldContentNode !== oldNode)
             }
         }
+
         if (oldNode) {
+
             const newNode = Object.assign(
                     {},
                     oldNode,
@@ -139,9 +148,22 @@ export function adjustDocToTemplate(miniDoc, template, documentStyles, citationS
                         attrs: {}
                     }
                 )
+
+            if(oldNode.attrs.files){
+                newNode.attrs.files = oldNode.attrs.files
+            }
+            if(oldNode.attrs.files_id){
+                newNode.attrs.files_id = oldNode.attrs.files_id
+            }
+            if(oldNode.attrs['files_path']){
+                newNode.attrs['files_path'] = oldNode.attrs['files_path']
+            }
+
             Object.entries(part.attrs).forEach(([key, value]) => {
+
                 newNode.attrs[key] = value
             })
+
             if (newNode.attrs.optional) {
                 newNode.attrs.hidden = oldNode.attrs.hidden
             }
@@ -169,7 +191,7 @@ export function adjustDocToTemplate(miniDoc, template, documentStyles, citationS
                 )
                 if (removedElements.length || removedMarks.length) {
                     cleanNode(newNode, removedElements, removedMarks)
-                    if (!newNode.content && ['richtext_part', 'heading_part'].includes(part.type)) {
+                    if (!newNode.content && ['richtext_part', 'heading_part', 'file_upload_part'].includes(part.type)) {
                         newNode.content = [{type: part.attrs.elements[0]}]
                     } else if (!newNode.content && part.type === 'table_part') {
                         newNode.content = [
@@ -180,6 +202,7 @@ export function adjustDocToTemplate(miniDoc, template, documentStyles, citationS
                             ]}
                         ]
                     }
+
                 }
             }
             doc.content.push(newNode)

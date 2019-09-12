@@ -228,3 +228,15 @@ table {
 .underline {
     text-decoration: underline;
 }
+
+#columns {
+    list-style: decimal;
+    list-style-position: inside;
+}
+
+.file_manage{
+    background-color: lightgrey;
+    padding: 3px;
+    margin: 3px;
+    border-radius: 5px;
+}

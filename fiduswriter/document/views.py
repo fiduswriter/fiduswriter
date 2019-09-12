@@ -1234,6 +1234,7 @@ def upload_attachment(request):
     status = 405
     print(request)
     print(request.POST)
+    print("settings project path - ", settings.PROJECT_PATH)
     if request.is_ajax() and request.method == 'POST':
         doc_id = request.POST['docId']
         file = request.FILES['file']
@@ -1255,8 +1256,33 @@ def upload_attachment(request):
             attachment = Attachment.objects.create(file=file, document=document, file_name=file.name)
             response['id'] = attachment.id
             response['name'] = attachment.file_name
-            response['path'] = attachment.file.path
+            response['path'] = os.path.relpath(attachment.file.path, settings.PROJECT_PATH)
+            print("path :---------------------", os.path.relpath(attachment.file.path, settings.PROJECT_PATH) )
+            print("attachment path  as in db :----------", attachment.file.path )
+
     return JsonResponse(
         response,
         status = status
     )
+
+@login_required
+def download_attachment(request):
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        status = 200
+        attachment = Attachment.objects.filter(
+            id=request.POST['attachment_id']
+        ).first()
+
+        if attachment:
+            status = 201
+            response['path'] = os.path.relpath(attachment.file.path, settings.PROJECT_PATH)
+            response['id'] = attachment.id
+
+    return JsonResponse(
+        response,
+        status = status
+    )
+
+

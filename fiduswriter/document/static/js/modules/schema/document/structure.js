@@ -245,6 +245,9 @@ export const file_upload_part = {
         files_path: {
             default: ['/media/proposal1/file1.pdf']
         },
+        files_id: {
+            default: [1]
+        },
         upload: {
             default: true
         },
@@ -259,15 +262,17 @@ export const file_upload_part = {
             console.log("dom data :- ", dom.dataset)
             return {
                 files: dom.dataset.files,
-                files_path: dom.dataset.files_path
+                files_path: dom.dataset.files_path,
+                files_id: dom.dataset.files_id
             }
         }
 
     }],
     toDOM(node) {
-
+        console.log("-----------------------------")
         const dom = document.createElement('div')
         dom.dataset.files = node.attrs.files
+        dom.dataset.files_id = node.attrs.files_id
         dom.classList.add('article-part', 'article-file_upload_part')
         console.log("len = ", node.attrs.files.length)
 
@@ -277,17 +282,25 @@ export const file_upload_part = {
 
             for(let index=0; index<node.attrs.files.length; index++){
                 const fileLink = document.createElement('a')
+                fileLink.download = 'temp.pdf'
+                fileLink.href = node.attrs.files_path[index]
                 fileLink.innerHTML = node.attrs.files[index]
-                fileLink.setAttribute('href', node.attrs.files_path[index]);
+                // fileLink.setAttribute('href', node.attrs.files_path[index]);
+                // fileLink.setAttribute('download', 'file.pdf');
+                // fileLink.onclick = () => {
+                //     window.location=node.attrs.files_path[index]
+                // }
+                // fileLink.setAttribute('target', '_blank');
+
                 filelinks_dom.appendChild(fileLink)
-                //also block the default behaviour maybe
+                const linebreak = document.createElement("br");
+                filelinks_dom.appendChild(linebreak)
             }
 
             dom.appendChild(filelinks_dom)
 
         }
 
-        console.log("to DOM file part")
         return dom
     }
 }

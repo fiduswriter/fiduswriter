@@ -62,6 +62,7 @@ export class FileView{
         this.serializer = DOMSerializer.fromSchema(node.type.schema)
         this.dom = this.serializer.serializeNode(this.node)
         this.dom.classList.add('article-part', 'article-file_upload_part')
+        this.dom.setAttribute('draggable', false)
         
         // Upload Button
         if(this.node.attrs.upload) {

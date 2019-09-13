@@ -240,19 +240,22 @@ export const file_upload_part = {
             default: 'file_upload'
         },
         files: {
-            default: ['file1.pdf']
+            default: []
         },
         files_path: {
-            default: ['/media/proposal1/file1.pdf']
+            default: []
         },
         files_id: {
-            default: [1]
+            default: []
         },
         upload: {
             default: true
         },
         manage: {
             default: true
+        },
+        locking: {
+            default: 'fixed'
         }
 
     },

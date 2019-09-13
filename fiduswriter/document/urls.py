@@ -112,5 +112,10 @@ urlpatterns = [
         '^attachment/download/$',
         views.download_attachment,
         name='download_attachment'
+    ),
+    url(
+        '^attachment/delete/$',
+        views.delete_attachment,
+        name='delete_attachment'
     )
 ]

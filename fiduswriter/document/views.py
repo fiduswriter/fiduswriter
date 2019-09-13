@@ -1250,7 +1250,6 @@ def upload_attachment(request):
                     can_save = True
 
         if can_save:
-            status = 201
             print(file)
             attachment = Attachment.objects.create(file=file, document=document, file_name=file.name)
             response['id'] = attachment.id
@@ -1258,6 +1257,7 @@ def upload_attachment(request):
             response['path'] = os.path.relpath(attachment.file.path, settings.PROJECT_PATH)
             print("path :---------------------", os.path.relpath(attachment.file.path, settings.PROJECT_PATH) )
             print("attachment path  as in db :----------", attachment.file.path )
+            status = 201
 
     return JsonResponse(
         response,
@@ -1284,4 +1284,43 @@ def download_attachment(request):
         status = status
     )
 
+@login_required
+def delete_attachment(request):
+    print("_________________________________________________________ reached delete")
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        status = 200
+        response['deleted'] = 'fail'
+        attachment_id = request.POST['attachment_id']
+        doc_id = request.POST['doc_id']
+        # check if user has access to document then delete
+        document = Document.objects.filter(id=doc_id).first()
+        if document:
+            if document.owner == request.user:
+                can_delete = True
+            else:
+                access_rights = AccessRight.objects.filter(
+                    document=document, user=request.user)
+                if len(access_rights) > 0 and access_rights[
+                    0
+                ].rights == 'write':
+                    can_delete = True
+
+        if can_delete:
+            attachment = Attachment.objects.filter(
+                id=attachment_id
+            ).first()
+
+            if attachment:
+                attachment.delete()
+                status = 201
+                response['deleted'] = 'success'
+            else:
+                status = 201
+            
+    return JsonResponse(
+        response,
+        status = status
+    )
 

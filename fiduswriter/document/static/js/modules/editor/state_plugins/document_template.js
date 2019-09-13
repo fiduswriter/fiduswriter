@@ -56,7 +56,7 @@ export class FileView{
         this.view = view
         this.getPos = getPos
         this.options = options
-        this.link_array = []
+        let link_array = []
         console.log(" inside constructor, node", node)
         this.docId = options.editor.docInfo.id
         this.serializer = DOMSerializer.fromSchema(node.type.schema)
@@ -186,10 +186,8 @@ export class FileView{
                                   </div>`
               let div_for_dialog_box = document.createElement('div')
               div_for_dialog_box.innerHTML = delete_button
-              let temp_div = document.createElement('div')
 
-              temp_div.appendChild(ol)
-              div_for_dialog_box.prepend(temp_div)
+              div_for_dialog_box.prepend(ol)
               div_for_dialog_box.innerHTML += `<i style="font-size:0.85rem;">* Drag attachments to new spot in the list to change the order<br/> * Drag and drop on to trash icon to remove the attachment </i>`
 
               console.log("Dialog contents :- ", div_for_dialog_box.querySelector("#manage_files").children)
@@ -201,7 +199,7 @@ export class FileView{
 
                       click: ()=>{
                       // Deleting in DB
-                      // deleteindb(docId=docId) //UNCOMMENT THIS
+                      deleteindb(this.docId) //UNCOMMENT THIS
                       // let dialog_content = document.querySelector("#manage_files").innerHTML
                       let dialog_content = document.querySelector("#manage_files")
                       console.log("dc ",dialog_content)
@@ -212,7 +210,7 @@ export class FileView{
                       let files = []
                       let files_path = []
                       for(let list_element of dialog_content.children) {
-                          console.log(list_element.id)
+
                           let id = Number(list_element.id.split("file_")[1])
                           files_id.push(id)
                           let index = this.node.attrs.files_id.indexOf(id)
@@ -261,7 +259,7 @@ export class FileView{
               let cols = document.querySelectorAll('#manage_files .file_list');
               [].forEach.call(cols, addDnDHandlers);
               addDnDHandlers(document.querySelector('.delete-area'))
-              //delete_elements_in_array() // UNCOMMENT THIS
+              delete_elements_in_array() // UNCOMMENT THIS
 
 
 
@@ -288,12 +286,19 @@ export class FileView{
 
 
         function getFiles() {
+
             // Get the files uploaded by the user inside the dialog
             // Provision for multiple file upload in future
             let fileInput = document.getElementById('file-input');
             let fileList = [];
             for (let i = 0; i < fileInput.files.length; i++) {
-              fileList.push(fileInput.files[i]);
+                //Allow only PDF files
+                if (fileInput.files[i].type == "application/pdf") {
+                    fileList.push(fileInput.files[i]);
+                }
+                else {
+                    addAlert("error", "Add only PDF files.")
+                }
             }
             renderFileList(fileList);
             return fileList;
@@ -349,7 +354,7 @@ export class FileView{
 
 
           function handleDrop(e) {
-              // console.log("on drag drop")
+
               // this/e.target is current target element.
               if (e.stopPropagation) {
                   e.stopPropagation(); // Stops some browsers from redirecting.
@@ -358,9 +363,9 @@ export class FileView{
               if (dragSrcEl != this) {
                   if(this.classList.contains('delete-area')) {
                       // the array stores the link from which we delete the files in bkend
-                      //this.link_array.push(dragSrcEl.childNodes[0].href) //uncomment this!!!!
+                      link_array.push(dragSrcEl.id) //uncomment this!!!!
                       // The element array is used to store respective elements. To be used in future for better error handling
-                      element_array.push(dragSrcEl)
+                      //element_array.push(dragSrcEl)//nr
                       this.previousElementSibling.removeChild(dragSrcEl)
                       this.classList.remove('delete-area-drop')
                       return;
@@ -370,10 +375,10 @@ export class FileView{
                   //dragSrcEl.innerHTML = this.innerHTML;
                   //this.innerHTML = e.dataTransfer.getData('text/html');
                   this.parentNode.removeChild(dragSrcEl);
-                  var dropHTML = e.dataTransfer.getData('text/html');
+                  let dropHTML = e.dataTransfer.getData('text/html');
                   this.insertAdjacentHTML('beforebegin',dropHTML);
-                  var dropElem = this.previousSibling;
-                  addDnDHandlers(dropElem);    
+                  let dropElem = this.previousSibling;
+                  addDnDHandlers(dropElem);
               }
               this.classList.remove('over');
               return false;
@@ -399,25 +404,30 @@ export class FileView{
               elem.addEventListener('dragend', handleDragEnd, false);
           }
 
-          function deleteindb(docId){
-              for(let link in link_array){
-                  let promis = getJson('/dashboard/delete_attachment',{'link':link_array[link], 'id_doc': docId})
+          function deleteindb(docId) {
+              for(let link in link_array) {
+                  const att_id = Number(link_array[link].split("file_")[1])
+                  let promis = postJson('/api/document/attachment/delete/',{'attachment_id':att_id, 'doc_id': docId})
                   promis.then((response)=>{
-                      if(response.status == "ok"){
+                      if(response.json.deleted == "success") {
                           addAlert("info","Deleted file successfully")
                       }
                       else {
                           console.log("Problem with deleting file!")
                           addAlert("error","Problem with deleting file!")
                       }
-                  })
+                  }).catch(
+                    response => {
+                      console.log("error ", response)
+                    }
+                  )
               } 
           }
 
-          function delete_elements_in_array(){
+          function delete_elements_in_array() {
               // Reset the link_array and element_array when dialog is opened.
               link_array = []
-              element_array = []
+              //element_array = []
           }
 
 

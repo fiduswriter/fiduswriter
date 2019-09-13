@@ -240,3 +240,75 @@ table {
     margin: 10px;
     border-radius: 5px;
 }
+
+[draggable] {
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+    /* Required to make elements draggable in old WebKit */
+    -khtml-user-drag: element;
+    -webkit-user-drag: element;
+    }
+      
+    #columns {
+        list-style-type: none;
+        padding: 10px 10px 30px 10px;
+    }
+    
+    .column {
+        padding-bottom: 10px;
+        padding-top: 10px;
+        cursor: move;
+    }
+    .column header {
+        height: 20px;
+        width: 150px;
+        color: black;
+        background-color: #ccc;
+        padding: 5px;
+        border-bottom: 1px solid #ddd;
+        border-radius: 10px;
+        border: 2px solid #666666;
+    }
+    
+    .column a {
+        /* height: 20px;
+        width: 150px;*/
+        color: black; 
+        /* background-color: #ccc; */
+        padding: 5px;
+        border-bottom: 1px solid #ddd;
+        cursor: move;
+        /* border-radius: 10px; */
+        /* border: 1px solid #666666; */
+    }
+    
+    .column.dragElem {
+        opacity: 0.4;
+    }
+    .column.over {
+        /* //border: 2px dashed #000; */
+        border-top: 2px solid #666666;
+    }
+    
+    .delete-area {
+        text-align: center;
+        padding: 20px;
+        border: 1px dashed #666;
+        margin-bottom: 10px;
+    }
+    
+    .delete-area i {
+        color:#666;
+        font-size:36px
+    }
+    
+    .delete-area-drop {
+        opacity: 0.4;
+    }
+    
+    .overflow-none {
+        overflow: hidden !important;
+    }
+    

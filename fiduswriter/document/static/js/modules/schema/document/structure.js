@@ -270,10 +270,12 @@ export const file_upload_part = {
     }],
     toDOM(node) {
         console.log("-----------------------------")
+        //setAttribute('contenteditable','false')
         const dom = document.createElement('div')
         dom.dataset.files = node.attrs.files
         dom.dataset.files_id = node.attrs.files_id
         dom.classList.add('article-part', 'article-file_upload_part')
+        dom.removeAttribute('draggable')
         console.log("len = ", node.attrs.files.length)
 
         if (node.attrs.files.length) {

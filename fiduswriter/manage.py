@@ -18,12 +18,12 @@ def inner(default_project_path):
     if '--pythonpath' in sys_argv:
         index = sys_argv.index('--pythonpath')
         PROJECT_PATH = os.path.join(os.getcwd(), sys_argv[index + 1])
-        sys.path.insert(0, PROJECT_PATH)
         # We prevent the pythonpath to be handled later on by removing it from
         # sys_argv
         sys_argv = sys_argv[:index] + sys_argv[index+2:]
     else:
         PROJECT_PATH = default_project_path
+    sys.path.insert(0, PROJECT_PATH)
     os.environ.setdefault(
         "PROJECT_PATH",
         PROJECT_PATH

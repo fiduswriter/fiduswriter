@@ -131,14 +131,17 @@ SECRET_KEY = '2ouq2zgw5y-@w+t6!#zf#-z1inigg7$lg3p%8e3kkob1bf$#p4'
 
 # These middleware classes is what Fidus Writer needs in its standard setup.
 # You only need to change this in very advanced setups.
-MIDDLEWARE = (
+BASE_MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.locale.LocaleMiddleware',
-)
+]
+
+MIDDLEWARE = []
+
 
 # The location of the top urls.py file inside the core folder.
 # You only need to change this in very advanced setups.
@@ -171,7 +174,7 @@ TEMPLATES = [
 
 # The following are the apps needed by Fidus Writer.
 
-BASE_APPS = [
+BASE_INSTALLED_APPS = [
     'base',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -201,6 +204,9 @@ BASE_APPS = [
 ]
 # These are additional apps to be overriden by configuration.py
 INSTALLED_APPS = []
+
+# These are apps that are removed from base apps overriden by configuration.py
+REMOVED_APPS = []
 
 
 AUTHENTICATION_BACKENDS = (

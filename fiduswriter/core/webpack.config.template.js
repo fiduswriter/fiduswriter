@@ -66,6 +66,7 @@ module.exports = { // eslint-disable-line no-undef
         })
     ],
     entry: {
+        polyfill: '@babel/polyfill', // To prevent 'Uncaught ReferenceError: regeneratorRuntime is not defined'
         $ENTRIES$ // eslint-disable-line no-undef
     }
 }

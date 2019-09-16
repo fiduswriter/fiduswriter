@@ -33,6 +33,7 @@
   "devDependencies": {
     "updates": "^8.0.2",
     "@babel/cli": "^7.4.4",
-    "@babel/plugin-transform-template-literals": "^7.4.4"
+    "@babel/plugin-transform-template-literals": "^7.4.4",
+    "@babel/polyfill": "^7.6.0"
   }
 }

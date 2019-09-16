@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-07-04 10:30+0000\n"
-"PO-Revision-Date: 2019-07-04 11:43+0100\n"
+"PO-Revision-Date: 2019-09-11 07:31+0100\n"
 "Last-Translator: Ana Carolina Vera Resquin <ani.tavr77@gmail.com>\n"
 "Language-Team: Spanish <ani.tavr77@gmail.com>\n"
 "Language: Spanish\n"
@@ -21,17 +21,17 @@ msgstr ""
 #: base/static/js/modules/404/index.js:17
 #: base/static/js/modules/flatpage/index.js:43
 msgid "Page not found"
-msgstr ""
+msgstr "Página no encontrada"
 
 #: base/static/js/modules/404/index.js:18
 #: base/static/js/modules/flatpage/index.js:44
 msgid "Error 404"
-msgstr ""
+msgstr "Error 404"
 
 #: base/static/js/modules/404/index.js:18
 #: base/static/js/modules/flatpage/index.js:44
 msgid "The page you are looking for cannot be found."
-msgstr ""
+msgstr "La página que busca no se puede encontrar."
 
 #: base/static/js/modules/404/index.js:21
 #: base/static/js/modules/flatpage/index.js:21
@@ -412,9 +412,10 @@ msgstr "Entrada subtipo"
 msgid "Electronic identifier of an online publication"
 msgstr "Identificador electrónico de una publicación online"
 
+# "a" una publicación en ....o "de" una publicación en...
 #: bibliography/static/js/modules/bibliography/form/strings.js:30
 msgid "Additional information to an online publication"
-msgstr "Información adicional de una publicación online"
+msgstr "Información adicional de una publicación en línea."
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:31
 msgid "Eprint identifier type"
@@ -430,7 +431,7 @@ msgstr "Título del evento"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:34
 msgid "Local link to the work"
-msgstr "Enlace local al trabajo"
+msgstr "Enlace local a la obra"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:35
 msgid "Foreword author(s)"
@@ -542,6 +543,7 @@ msgstr "Título principal"
 msgid "Annex to the maintitle"
 msgstr "Anexo al título principal"
 
+# postfix?
 #: bibliography/static/js/modules/bibliography/form/strings.js:61
 msgid "author name addon"
 msgstr "nombre del autor postfix"
@@ -556,7 +558,7 @@ msgstr "Número del trabajo en una serie"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:64
 msgid "Organization(s)"
-msgstr "Organizacion(es)"
+msgstr "Organización(es)"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:65
 msgid "Publication date of the original work"
@@ -608,15 +610,15 @@ msgstr "Título de la re-impresión"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:77
 msgid "Name of series"
-msgstr "Nombre de una serie"
+msgstr "Nombre de la serie"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:78
 msgid "Abbreviated author(s)"
-msgstr "Nombre abreviados de autor(es)"
+msgstr "Nombres abreviados del autor(es)"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:79
 msgid "Abbreviated editor(s)"
-msgstr "Nombres abreviados de redactor(es)"
+msgstr "Nombres abreviados delredactor(es)"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:80
 msgid "Shorthand"
@@ -663,9 +665,11 @@ msgstr "Subtítulo"
 msgid "Title"
 msgstr "Título"
 
+# Complemento de título.
+# no se que es postfix.
 #: bibliography/static/js/modules/bibliography/form/strings.js:87
 msgid "Title addon"
-msgstr "Título postfix"
+msgstr "Título postfix   ???????????????????????//"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:88
 msgid "Translator(s)"
@@ -686,7 +690,7 @@ msgstr "Fecha de accesso"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:92
 msgid "Location of a conference"
-msgstr "Lugar de una conferencia"
+msgstr "Lugar de la conferencia"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:93
 msgid "Version"
@@ -703,6 +707,7 @@ msgstr "Número total de volúmenes"
 #: bibliography/static/js/modules/bibliography/form/strings.js:97
 msgid "In <em>Extended Date Time Format</em> (EDTF) 1.0<br>Level 0 or 1"
 msgstr ""
+"En <em>Formato de fecha y hora extendida</em> (EDTF) 1.0<br>Level 0 or 1"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:98
 msgid ""
@@ -711,6 +716,10 @@ msgid ""
 "the prefix \"van\"     is not used. \"Vincent van Gogh\" turns into \"van "
 "Gogh\", so the prefix \"van\" is used."
 msgstr ""
+"El prefijo \"used\" cuando se usa en casos donde solo se usa el "
+"apellido.     Por ejemplo:. \"Ludwig van Beethoven\" se  convierte en "
+"\"Beethoven\", por lo que\"van\"     is not used. \"Vincent van Gogh\" se "
+"conviente en \"van Gogh\", por lo que \"van\" is used."
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:104
 msgid "Range or single page, column, paragraph, section, line"
@@ -794,6 +803,7 @@ msgstr "Actas"
 msgid "Multi-volume proceedings"
 msgstr "Actas de varios volumenes"
 
+# bien?
 #: bibliography/static/js/modules/bibliography/form/strings.js:132
 msgid "Article in a proceedings"
 msgstr "Artículo en un acta"
@@ -834,23 +844,27 @@ msgstr "Artículo de periodico"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:141
 msgid "Journal article"
-msgstr "Artículo en revista cientifica"
+msgstr "Artículo de revista cientifica"
 
+# no es entrada "de"....
 #: bibliography/static/js/modules/bibliography/form/strings.js:142
 msgid "Encyclopedia entry"
 msgstr "Entrada en Enciclopedia"
 
+# No es entrada "de" diccionario?
 #: bibliography/static/js/modules/bibliography/form/strings.js:143
 msgid "Dictionary entry"
 msgstr "Entrada en Diccionario"
 
+# Publicación en el blog...>sería mejor o esta correcta la traducción?
 #: bibliography/static/js/modules/bibliography/form/strings.js:144
 msgid "Blog post"
 msgstr "Entrada en Blog"
 
+# correcto?
 #: bibliography/static/js/modules/bibliography/form/strings.js:145
 msgid "Forum post"
-msgstr "Entrada en Foro online"
+msgstr "Publicación en el foro"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:152
 msgid "Editor"
@@ -949,7 +963,7 @@ msgstr ""
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:171
 msgid "Ph.D. thesis"
-msgstr ""
+msgstr "Tesis de doctorado"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:172
 msgid "Candidate thesis"
@@ -975,7 +989,7 @@ msgstr ""
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:177
 msgid "Audio CD"
-msgstr ""
+msgstr "CD de audio"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:178
 msgid "Acadian"
@@ -1008,7 +1022,7 @@ msgstr "Catalán"
 #: bibliography/static/js/modules/bibliography/form/strings.js:184
 #: bibliography/static/js/modules/bibliography/form/strings.js:185
 msgid "Chinese"
-msgstr ""
+msgstr "Chino"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:186
 msgid "Croatian"
@@ -1031,7 +1045,7 @@ msgstr "Holandés"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:190
 msgid "Australian English"
-msgstr ""
+msgstr "Inglés australiano"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:191
 #, fuzzy
@@ -1041,7 +1055,7 @@ msgstr "Español"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:192
 msgid "New Zealand English"
-msgstr ""
+msgstr "Inglés neozelandés"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:193
 #: bibliography/static/js/modules/bibliography/form/strings.js:194
@@ -1077,7 +1091,7 @@ msgstr "Francés"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:201
 msgid "Canadian French"
-msgstr ""
+msgstr "Frances canadiense"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:202
 msgid "German"
@@ -1085,7 +1099,7 @@ msgstr "Alemán"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:203
 msgid "Austrian German"
-msgstr ""
+msgstr "Alemán austriaco"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:204
 #: document/static/js/modules/schema/const.js:1
@@ -1120,7 +1134,7 @@ msgstr "Japonés"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:210
 msgid "Latin"
-msgstr ""
+msgstr "Latín"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:211
 msgid "Latvian"
@@ -1141,11 +1155,11 @@ msgstr "Mongol"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:215
 msgid "Norwegian"
-msgstr ""
+msgstr "Noruego"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:216
 msgid "New Norwegian"
-msgstr ""
+msgstr "Nuevo noruego"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:217
 #: document/static/js/modules/editor/menus/headerbar/model.js:201
@@ -1155,7 +1169,7 @@ msgstr "Polaco"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:218
 msgid "Portuguese"
-msgstr ""
+msgstr "Portugués"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:219
 #: bibliography/static/js/modules/bibliography/form/strings.js:220
@@ -1188,7 +1202,7 @@ msgstr "Eslovaco"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:226
 msgid "Slovene"
-msgstr ""
+msgstr "Esloveno"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:227
 #: document/static/js/modules/editor/menus/headerbar/model.js:201
@@ -1243,20 +1257,24 @@ msgstr "Categorías"
 #: bibliography/static/js/modules/bibliography/import/biblatex.js:3
 msgid "No bibliography entries could be found in import file."
 msgstr ""
+"No se encontraron entradas de bibliografía en el archivo de importación."
 
 #: bibliography/static/js/modules/bibliography/import/biblatex.js:4
 msgid "An error occured while reading a bibtex entry"
-msgstr ""
+msgstr "Se produjo un error al leer una entrada bibtex"
 
 #: bibliography/static/js/modules/bibliography/import/biblatex.js:5
 msgid "Field cannot not be saved. Fidus Writer does not support the field."
 msgstr ""
+"No se pudo guardar el campo. Fidus Writer no es compatible con el campo."
 
 #: bibliography/static/js/modules/bibliography/import/biblatex.js:6
 msgid ""
 "Entry has been saved as \"misc\". Fidus Writer does not support the entry "
 "type."
 msgstr ""
+"La entrada se ha guardado como \"misc\". Fidus Writer no admite el tipo de "
+"entrada."
 
 #: bibliography/static/js/modules/bibliography/import/biblatex.js:7
 msgid "Field does not contain a valid EDTF string."
@@ -1264,7 +1282,7 @@ msgstr ""
 
 #: bibliography/static/js/modules/bibliography/import/biblatex.js:39
 msgid "There was an issue with the bibtex import"
-msgstr ""
+msgstr "Hubo un problema con la importación bibtex"
 
 #: bibliography/static/js/modules/bibliography/import/dialog.js:16
 #: document/static/js/modules/documents/overview/actions.js:61
@@ -1349,7 +1367,7 @@ msgstr "Confirmar acción"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:228
 msgid "Delete the bibliography item(s)"
-msgstr "Borrar el/los artículo(s) de la bibliografía"
+msgstr "Borrar el/los elemento(s) de la bibliografía"
 
 #: bibliography/static/js/modules/bibliography/overview/menu.js:4
 #: document/static/js/modules/documents/overview/menu.js:4
@@ -1400,15 +1418,15 @@ msgstr " y otros"
 
 #: document/static/js/modules/document_template/designer.js:271
 msgid "All document parts need an ID."
-msgstr ""
+msgstr "Todas las partes del documento necesitan una identificación."
 
 #: document/static/js/modules/document_template/designer.js:281
 msgid "IDs cannot contain spaces."
-msgstr ""
+msgstr "La identificación no puede contener espacios."
 
 #: document/static/js/modules/document_template/designer.js:302
 msgid "IDs have to be unique."
-msgstr ""
+msgstr "La identificación debe ser única."
 
 #: document/static/js/modules/document_template/schema.js:79
 #: document/static/js/modules/document_template/schema.js:146
@@ -1635,7 +1653,7 @@ msgstr "No definido"
 #: document/static/js/modules/editor/dialogs/link.js:154
 #: document/static/js/modules/editor/menus/toolbar/model.js:365
 msgid "Link"
-msgstr ""
+msgstr "Enlace"
 
 #: document/static/js/modules/document_template/templates.js:10
 #: document/static/js/modules/editor/menus/selection/model.js:43
@@ -1669,7 +1687,7 @@ msgstr "Figura"
 #: document/static/js/modules/document_template/templates.js:72
 #: document/static/js/modules/document_template/templates.js:82
 msgid "ID"
-msgstr ""
+msgstr "Identificación"
 
 #: document/static/js/modules/document_template/templates.js:21
 #: document/static/js/modules/document_template/templates.js:32
@@ -1700,7 +1718,7 @@ msgstr ""
 #: document/static/js/modules/document_template/templates.js:62
 #: document/static/js/modules/document_template/templates.js:72
 msgid "User can change contents"
-msgstr ""
+msgstr "Los usuarios pueden cambiar el contenido"
 
 #: document/static/js/modules/document_template/templates.js:21
 #: document/static/js/modules/document_template/templates.js:32
@@ -1708,14 +1726,14 @@ msgstr ""
 #: document/static/js/modules/document_template/templates.js:62
 #: document/static/js/modules/document_template/templates.js:72
 msgid "User can not change contents"
-msgstr ""
+msgstr "Los usuarios no pueden cambiar el contenido"
 
 #: document/static/js/modules/document_template/templates.js:21
 #: document/static/js/modules/document_template/templates.js:32
 #: document/static/js/modules/document_template/templates.js:43
 #: document/static/js/modules/document_template/templates.js:62
 msgid "User can only add content"
-msgstr ""
+msgstr "Los usuarios solo pueden agregar contenido"
 
 #: document/static/js/modules/document_template/templates.js:21
 #: document/static/js/modules/document_template/templates.js:32
@@ -1737,7 +1755,7 @@ msgstr "Campos Opcionales"
 #: document/static/js/modules/document_template/templates.js:72
 #: document/static/js/modules/document_template/templates.js:82
 msgid "Obligatory field"
-msgstr ""
+msgstr "Campo obligatorio"
 
 #: document/static/js/modules/document_template/templates.js:21
 #: document/static/js/modules/document_template/templates.js:32
@@ -1864,7 +1882,7 @@ msgstr "Estilo de documento"
 
 #: document/static/js/modules/document_template/templates.js:148
 msgid "Setting"
-msgstr ""
+msgstr "Configuración"
 
 #: document/static/js/modules/document_template/templates.js:148
 msgid "Value"
@@ -1901,7 +1919,7 @@ msgstr "Compartir tus documentos con otros"
 
 #: document/static/js/modules/documents/access_rights/index.js:156
 msgid "Access rights have been saved"
-msgstr "Derechos de accesso han sido guardado"
+msgstr "Los derechos de acceso han sido guardados."
 
 #: document/static/js/modules/documents/access_rights/index.js:157
 #, fuzzy
@@ -2006,9 +2024,10 @@ msgstr "Borrar el/los documento(s)"
 msgid "Import a Fidus file"
 msgstr "Importar otra archivo Fidus"
 
+# Encontré esta traducción de Document Overview en informática. No sé si aplica.
 #: document/static/js/modules/documents/overview/index.js:54
 msgid "Document Overview"
-msgstr "Lista de Documentos"
+msgstr "Resumen de Documentos"
 
 #: document/static/js/modules/documents/overview/index.js:101
 msgid "Cannot load data of documents."
@@ -2201,7 +2220,7 @@ msgstr ""
 
 #: document/static/js/modules/editor/dialogs/citation.js:323
 msgid "Please select at least one citation source!"
-msgstr "Por favro, selecciona al menos un fuente!"
+msgstr "Por favor, selecciona al menos una fuente."
 
 #: document/static/js/modules/editor/dialogs/contributor.js:20
 #: document/static/js/modules/editor/dialogs/contributor.js:77
@@ -2284,7 +2303,7 @@ msgstr "Insertar formula"
 
 #: document/static/js/modules/editor/dialogs/figure.js:209
 msgid "Enter latex math or insert an image"
-msgstr "Ingresar código latex o insertar un imagen"
+msgstr "Ingresar código latex o insertar una imagen"
 
 #: document/static/js/modules/editor/dialogs/language.js:14
 #, fuzzy
@@ -2378,19 +2397,19 @@ msgstr ""
 
 #: document/static/js/modules/editor/dialogs/templates.js:15
 msgid "100 %"
-msgstr ""
+msgstr "100 %"
 
 #: document/static/js/modules/editor/dialogs/templates.js:15
 msgid "75 %"
-msgstr ""
+msgstr "75 %"
 
 #: document/static/js/modules/editor/dialogs/templates.js:15
 msgid "50 %"
-msgstr ""
+msgstr "50 %"
 
 #: document/static/js/modules/editor/dialogs/templates.js:15
 msgid "25 %"
-msgstr ""
+msgstr "25 %"
 
 #: document/static/js/modules/editor/dialogs/templates.js:15
 #, fuzzy
@@ -2424,27 +2443,28 @@ msgstr "Subir"
 
 #: document/static/js/modules/editor/dialogs/templates.js:34
 msgid "100"
-msgstr ""
+msgstr "100"
 
 #: document/static/js/modules/editor/dialogs/templates.js:34
 msgid "75"
-msgstr ""
+msgstr "75"
 
 #: document/static/js/modules/editor/dialogs/templates.js:34
 msgid "50"
-msgstr ""
+msgstr "50"
 
 #: document/static/js/modules/editor/dialogs/templates.js:34
 msgid "25"
-msgstr ""
+msgstr "25"
 
+# En ete contecto no sé a qué se refiere caption
 #: document/static/js/modules/editor/dialogs/templates.js:34
 msgid "Insert caption"
-msgstr "Insertar leyenda"
+msgstr "Insertar subtítulo"
 
 #: document/static/js/modules/editor/dialogs/templates.js:40
 msgid "My sources"
-msgstr "Mis fuente(s)"
+msgstr "Mis fuentes"
 
 #: document/static/js/modules/editor/dialogs/templates.js:40
 msgid "Citation format"
@@ -2458,9 +2478,10 @@ msgstr "(Autor, 1998)"
 msgid "Author (1998)"
 msgstr "Autor (1998)"
 
+# bien?
 #: document/static/js/modules/editor/dialogs/templates.js:51
 msgid "Text before"
-msgstr "Texto antes"
+msgstr "Texto anterior"
 
 #: document/static/js/modules/editor/dialogs/templates.js:54
 #, fuzzy
@@ -2800,7 +2821,8 @@ msgstr "Compartir el documento con otros usuarios."
 #: document/static/js/modules/editor/menus/headerbar/model.js:55
 #: document/static/js/modules/editor/menus/headerbar/view.js:225
 msgid "Close the document and return to the document overview menu."
-msgstr "Cerrar el documento y regresar a la lista de documentos."
+msgstr ""
+"Cierre el documento y regrese al menú de descripción general del documento."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:61
 #: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
@@ -2948,6 +2970,7 @@ msgstr "Tamaño del Papel"
 msgid "Choose a papersize for print and PDF generation."
 msgstr ""
 
+# es solo A4? no se si bien sobre "din"
 #: document/static/js/modules/editor/menus/headerbar/model.js:233
 msgid "DIN A4"
 msgstr "A4"
@@ -3299,11 +3322,11 @@ msgstr "Desconocido"
 
 #: document/static/js/modules/exporter/epub/index.js:24
 msgid "Epub export has been initiated."
-msgstr "Exportación del archivo Epub ha sido iniciado."
+msgstr "La exportación del archivo Epub ha sido iniciada."
 
 #: document/static/js/modules/exporter/html/index.js:27
 msgid "HTML export has been initiated."
-msgstr "Exportación del archivo HTML ha sido iniciado."
+msgstr "La exportación del archivo HTML ha sido iniciada."
 
 #: document/static/js/modules/exporter/native/copy.js:30
 #, fuzzy
@@ -3322,7 +3345,7 @@ msgstr "El documento no se pudo guardar"
 
 #: document/static/js/modules/exporter/native/shrink.js:15
 msgid "File export has been initiated."
-msgstr "Exportación del archivo ha sido iniciado"
+msgstr "La exportación del archivo ha sido iniciada"
 
 #: document/static/js/modules/exporter/print/index.js:17
 #, fuzzy
@@ -3458,11 +3481,11 @@ msgstr ""
 
 #: document/static/js/modules/schema/const.js:1
 msgid "Belarusian"
-msgstr "Belarús"
+msgstr "Bielorruso"
 
 #: document/static/js/modules/schema/const.js:1
 msgid "Breton"
-msgstr "Breton"
+msgstr "Bretón"
 
 #: document/static/js/modules/schema/const.js:1
 msgid "Catalan (Valencia)"
@@ -3504,7 +3527,7 @@ msgstr ""
 
 #: document/static/js/modules/schema/const.js:1
 msgid "Khmer"
-msgstr "Khmer"
+msgstr "Camboyano"
 
 #: document/static/js/modules/schema/const.js:1
 msgid "Malayalam"
@@ -3631,11 +3654,11 @@ msgstr ""
 
 #: user/static/js/modules/contacts/manage.js:38
 msgid "No user is registered with the given email address."
-msgstr "Ningun usuario registrado con ese correo."
+msgstr "Ningun usuario está registrado con este correo."
 
 #: user/static/js/modules/contacts/manage.js:38
 msgid "Please invite him/her "
-msgstr "Por favor, invitale "
+msgstr "Por favor, invítale "
 
 #: user/static/js/modules/contacts/manage.js:38
 msgid "Fidus Writer"
@@ -3643,7 +3666,7 @@ msgstr "Fidus Writer"
 
 #: user/static/js/modules/contacts/manage.js:38
 msgid "Hey, I would like you to sign up for a Fidus Writer account."
-msgstr "Hola, me gustaría invitarte a crear una Fidus Writer cuenta."
+msgstr "Hola, me gustaría invitarte a crear una cuenta de Fidus Writer."
 
 #: user/static/js/modules/contacts/manage.js:38
 msgid "Please register at"
@@ -3778,10 +3801,9 @@ msgstr "Nombre de usuario o correo elctrónico"
 msgid "Password"
 msgstr "Contraseña"
 
-# Se refiere  a la contraseña? está bien la traducción?
 #: user/static/js/modules/login/index.js:26
 msgid "Remember me"
-msgstr "Recordar contraseña"
+msgstr "Recordar (la contraseña????????????????????????????????????????)"
 
 #: user/static/js/modules/login/index.js:26
 msgid "Forgot Password?"
@@ -3805,9 +3827,10 @@ msgstr "¡Todos los campos son obligatorios!"
 msgid "Reset Password"
 msgstr "Restablecer mi contraseña"
 
+# bien?
 #: user/static/js/modules/password_reset/index.js:30
 msgid "Password reset"
-msgstr "Restablecer contraseña"
+msgstr "Restablecimiento de contraseña"
 
 #: user/static/js/modules/password_reset/index.js:30
 #, fuzzy
@@ -3947,10 +3970,9 @@ msgstr " importado con exito."
 msgid "The email could not be deleted!"
 msgstr "¡No fue posible añadir el correo!"
 
-# muy largo?
 #: user/static/js/modules/profile/dialogs.js:198
 msgid "Confirm remove"
-msgstr "Confirmar que quiere borrar"
+msgstr "Confirmar acción"
 
 #: user/static/js/modules/profile/dialogs.js:200
 msgid "Remove the email address"
@@ -3962,7 +3984,7 @@ msgstr "Borrar correo "
 msgid "The email could not be set primary"
 msgstr "¡El correo principal no pudo ser cambiado!"
 
-# ????
+# no se????
 #: user/static/js/modules/profile/dialogs.js:230
 msgid "Confirm set primary"
 msgstr "Confirmar cambiar correo principal    ??????????????????????"
@@ -4248,7 +4270,6 @@ msgstr "Subir nuevo imagen"
 msgid "Use image"
 msgstr "Cambiar imagen"
 
-#, fuzzy
 #~| msgid "Documents"
 #~ msgid "Show resolved comments"
 #~ msgstr "Documentos"

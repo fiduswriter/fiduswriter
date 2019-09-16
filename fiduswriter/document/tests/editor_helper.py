@@ -15,6 +15,7 @@ class EditorHelper(SeleniumHelper):
     def create_new_document(self):
         doc = Document.objects.create(
             owner=self.user,
+            template_id=1  # from fixture
         )
         doc.save()
         return doc

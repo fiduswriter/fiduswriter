@@ -25,10 +25,10 @@ export const settingsPlugin = function(options) {
                     break
                 case 'citationstyle':
                     if (
-                        !options.editor.mod.documentTemplate.citationStyles.find(d => d.short_title === value) &&
-                        options.editor.mod.documentTemplate.citationStyles.length
+                        !settings.citationstyles.includes(value) &&
+                        settings.citationstyles.length
                     ) {
-                        fixedSettings[key] = options.editor.mod.documentTemplate.citationStyles[0].short_title
+                        fixedSettings[key] = settings.citationstyles[0]
                         changed = true
                     }
                     break

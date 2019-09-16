@@ -5,8 +5,8 @@ import {removeHidden} from "../tools/doc_contents"
 
 export class PrintExporter extends HTMLExporter {
 
-    constructor(schema, staticUrl, citationStyles, citationLocales, documentStyles, doc, bibDB, imageDB) {
-        super(schema, staticUrl, citationStyles, citationLocales, documentStyles, doc, bibDB, imageDB)
+    constructor(schema, staticUrl, csl, documentStyles, doc, bibDB, imageDB) {
+        super(schema, staticUrl, csl, documentStyles, doc, bibDB, imageDB)
         this.staticUrl = staticUrl
         this.styleSheets.push({contents:
             `a.fn {
@@ -96,6 +96,9 @@ export class PrintExporter extends HTMLExporter {
         // Override the default as we need to use the original URLs in print.
         const docStyle = this.documentStyles.find(docStyle => docStyle.slug===doc.settings.documentstyle)
 
+        if (!docStyle) {
+            return
+        }
         let contents = docStyle.contents
         docStyle.documentstylefile_set.forEach(
             ([url, filename]) => contents = contents.replace(

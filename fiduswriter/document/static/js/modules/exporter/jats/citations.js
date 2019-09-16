@@ -1,12 +1,11 @@
 import {FormatCitations} from "../../citations/format"
-import {getJson} from "../../common"
 
 export class JATSExporterCitations {
-    constructor(exporter, bibDB, citationStyles, citationLocales) {
+    constructor(exporter, bibDB, csl) {
         this.exporter = exporter
         this.bibDB = bibDB
-        this.citationStyles = citationStyles
-        this.citationLocales = citationLocales
+        this.csl = csl
+
         this.citationTexts = []
         this.citFm = false
         this.citJATSFm = false
@@ -19,11 +18,7 @@ export class JATSExporterCitations {
         if (!citInfos.length) {
             return Promise.resolve()
         }
-        return getJson(`${this.exporter.staticUrl}csl/jats.json?v=${process.env.TRANSPILE_VERSION}`)
-            .then(csl => {
-                this.jatsCSL = csl
-                return this.formatCitations()
-            })
+        return this.formatCitations()
     }
 
     // Citations are highly interdependent -- so we need to format them all
@@ -31,35 +26,36 @@ export class JATSExporterCitations {
     // We need to run this twice - once using the current document style for
     // citations and once for the JATS bibliography.
     formatCitations() {
-        const citationStyle = JSON.parse(JSON.stringify(this.citationStyles.find(style => style.short_title === this.exporter.doc.settings.citationstyle)))
-        const citationLayout = citationStyle.contents.children.find(section => section.name === 'citation').children.find(section => section.name === 'layout').attrs
-        const origCitationLayout = JSON.parse(JSON.stringify(citationLayout))
-        citationLayout.prefix = '{{prefix}}'
-        citationLayout.suffix = '{{suffix}}'
-        citationLayout.delimiter = '{{delimiter}}'
-        this.citFm = new FormatCitations(
-            this.citInfos,
-            this.exporter.doc.settings.citationstyle,
-            '',
-            this.bibDB,
-            [citationStyle],
-            this.citationLocales
-        )
-        //console.log(this.citFm.citeprocInstance.citation.opt.layout_prefix)
-        //this.citFm.citeprocInstance.citation.opt.layout_prefix = ''
-        this.citJATSFm = new FormatCitations(
-            this.citInfos,
-            'jats',
-            '',
-            this.bibDB,
-            [{short_title: 'jats', contents: this.jatsCSL}],
-            this.citationLocales
-        )
-        return Promise.all([
-            this.citFm.init(),
-            this.citJATSFm.init()
-        ]).then(
-            () => {
+        return this.csl.getStyle(this.exporter.doc.settings.citationstyle).then(
+            citationstyle => {
+                const modStyle = JSON.parse(JSON.stringify(citationstyle))
+                const citationLayout = modStyle.children.find(section => section.name === 'citation').children.find(section => section.name === 'layout').attrs
+                const origCitationLayout = JSON.parse(JSON.stringify(citationLayout))
+                citationLayout.prefix = '{{prefix}}'
+                citationLayout.suffix = '{{suffix}}'
+                citationLayout.delimiter = '{{delimiter}}'
+                this.citFm = new FormatCitations(
+                    this.csl,
+                    this.citInfos,
+                    modStyle,
+                    '',
+                    this.bibDB
+                )
+                this.citJATSFm = new FormatCitations(
+                    this.csl,
+                    this.citInfos,
+                    'jats',
+                    '',
+                    this.bibDB
+                )
+                return Promise.all([
+                    Promise.resolve(origCitationLayout),
+                    this.citFm.init(),
+                    this.citJATSFm.init()
+                ])
+            }
+        ).then(
+            ([origCitationLayout]) => {
                 // We need to add xref-links to the bibliography items. And there may be more than one work cited
                 // so we need to first split, then add the links and eventually put the citation back together
                 // again.

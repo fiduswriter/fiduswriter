@@ -62,7 +62,7 @@ export class BibliographyOverview {
         tableEl.classList.add('fw-large')
         document.querySelector('.fw-contents').appendChild(tableEl)
 
-        const dt_bulk = new DatatableBulk(this, bulkModel)
+        const dtBulk = new DatatableBulk(this, bulkModel)
 
         this.table = new DataTable(tableEl, {
             searchable: true,
@@ -75,7 +75,7 @@ export class BibliographyOverview {
                 top: ""
             },
             data: {
-                headings: ['', dt_bulk.getHTML(), gettext("Title"), gettext("Sourcetype"), gettext("Author"), gettext("Published"), ''],
+                headings: ['', dtBulk.getHTML(), gettext("Title"), gettext("Sourcetype"), gettext("Author"), gettext("Published"), ''],
                 data: ids.map(id => this.createTableRow(id))
             },
             columns: [
@@ -95,7 +95,7 @@ export class BibliographyOverview {
             this.lastSort = {column, dir}
         })
 
-        dt_bulk.init(this.table.table)
+        dtBulk.init(this.table.table)
     }
 
     /** Adds a list of bibliography categories to current list of bibliography categories.

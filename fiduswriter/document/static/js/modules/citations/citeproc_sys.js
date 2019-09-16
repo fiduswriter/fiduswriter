@@ -1,11 +1,9 @@
 /* Connects Fidus Writer citation system with citeproc */
 import {CSLExporter} from "biblatex-csl-converter"
-import {enUSLocale} from "./en_us_locale"
 
 export class citeprocSys {
-    constructor(bibDB, citationLocales) {
+    constructor(bibDB) {
         this.bibDB = bibDB
-        this.citationLocales = citationLocales
         this.abbreviations = {
             "default": {}
         }
@@ -28,15 +26,6 @@ export class citeprocSys {
             }
         }
         return this.items[id]
-    }
-
-    retrieveLocale(lang) {
-        const langCode = lang.replace('-', '')
-        const locale = this.citationLocales.find(locale => locale.language_code===langCode)
-        if (locale) {
-            return locale.contents
-        }
-        return enUSLocale
     }
 
     getAbbreviation(dummy, obj, jurisdiction, vartype, key) {

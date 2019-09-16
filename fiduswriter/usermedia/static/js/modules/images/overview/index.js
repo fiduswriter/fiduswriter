@@ -92,9 +92,7 @@ export class ImageOverview {
             }
         ).then(
             () => {
-                ids.forEach(id => {
-                    delete this.app.imageDB[id]
-                })
+                ids.forEach(id => delete this.app.imageDB.db[id])
                 this.removeTableRows(ids)
                 addAlert('success', gettext('The image(s) have been deleted'))
             }
@@ -123,7 +121,6 @@ export class ImageOverview {
             icon: 'exclamation-triangle',
             title: gettext('Confirm deletion'),
             body: `<p>${gettext('Delete the image(s)')}?</p>`,
-            height: 180,
             buttons
         })
         dialog.open()
@@ -195,7 +192,7 @@ export class ImageOverview {
         tableEl.classList.add('fw-large')
         document.querySelector('.fw-contents').appendChild(tableEl)
 
-        const dt_bulk = new DatatableBulk(this, bulkModel)
+        const dtBulk = new DatatableBulk(this, bulkModel)
 
         this.table = new DataTable(tableEl, {
             searchable: true,
@@ -208,7 +205,7 @@ export class ImageOverview {
                 top: ""
             },
             data: {
-                headings: ['', dt_bulk.getHTML(), gettext("File"), gettext("Size (px)"), gettext("Added"), ''],
+                headings: ['', dtBulk.getHTML(), gettext("File"), gettext("Size (px)"), gettext("Added"), ''],
                 data: ids.map(id => this.createTableRow(id))
             },
             columns: [
@@ -228,7 +225,7 @@ export class ImageOverview {
             this.lastSort = {column, dir}
         })
 
-        dt_bulk.init(this.table.table)
+        dtBulk.init(this.table.table)
     }
 
     // get IDs of selected bib entries

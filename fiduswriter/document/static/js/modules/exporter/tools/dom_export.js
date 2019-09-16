@@ -17,11 +17,10 @@ by little, and they are all based on the BaseDOMExporter class.
 
 export class DOMExporter {
 
-    constructor(schema, staticUrl, citationStyles, citationLocales, documentStyles) {
+    constructor(schema, staticUrl, csl, documentStyles) {
         this.schema = schema
         this.staticUrl = staticUrl
-        this.citationStyles = citationStyles
-        this.citationLocales = citationLocales
+        this.csl = csl
         this.documentStyles = documentStyles
 
         this.fontFiles = []
@@ -36,13 +35,14 @@ export class DOMExporter {
 
         // The files will be in the base directory. The filenames of
         // DocumentStyleFiles will therefore not need to replaced with their URLs.
-
+        if (!docStyle) {
+            return
+        }
         this.styleSheets.push({contents: docStyle.contents, filename: `${docStyle.slug}.css`})
         this.fontFiles = this.fontFiles.concat(docStyle.documentstylefile_set.map(([url, filename]) => ({
             filename,
             url
         })))
-        return `${docStyle.filename}.css`
     }
 
     loadStyles() {
@@ -77,8 +77,7 @@ export class DOMExporter {
             this.doc.settings.citationstyle,
             bibliographyHeader,
             this.bibDB,
-            this.citationStyles,
-            this.citationLocales
+            this.csl
         )
         return citRenderer.init().then(
             () => {

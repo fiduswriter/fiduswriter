@@ -603,7 +603,7 @@ export const documentTemplatePlugin = function(options) {
                         node.attrs.elements.concat('table_row', 'table_cell', 'table_header', 'list_item', 'text') :
                         false
                     allowedMarks = node.attrs.marks ?
-                        node.attrs.marks.concat('insertion', 'deletion', 'comment') :
+                        node.attrs.marks.concat('insertion', 'deletion', 'comment', 'anchor') :
                         false
                     return allowed
                 }

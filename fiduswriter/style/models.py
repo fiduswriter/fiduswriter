@@ -1,10 +1,5 @@
-import json
-
-from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext as _
-
-from .csl_xml_to_json import XMLWalker
 
 
 class DocumentStyle(models.Model):
@@ -99,58 +94,3 @@ class ExportTemplate(models.Model):
 
     class Meta(object):
         unique_together = (("title", "document_template"),)
-
-
-def default_citationstyle():
-    return settings.DEFAULT_CITATIONSTYLE
-
-
-class CitationStyle(models.Model):
-    title = models.CharField(
-        max_length=128,
-        help_text='The human readable title.',
-        default=_('Default')
-    )
-    short_title = models.SlugField(
-        max_length=40,
-        help_text='A title used for constant names.',
-        default='default'
-    )
-    contents = models.TextField(
-        help_text='The style definiton (JSON, accepts also XML).',
-        default=default_citationstyle
-    )
-
-    def __str__(self):
-        return self.title
-
-    def save(self, *args, **kwargs):
-        if self.contents.strip()[0] == '<':  # XML - we convert
-            walker = XMLWalker(self.contents)
-            self.contents = json.dumps(walker.output, indent=4)
-        super().save(*args, **kwargs)
-
-
-class CitationLocale(models.Model):
-    language_code = models.SlugField(
-        max_length=4,
-        help_text='language code of the locale file.'
-    )
-    contents = models.TextField(
-        help_text='The locale definiton (JSON, accepts also XML).'
-    )
-
-    def display_language_code(self):
-        if len(self.language_code) > 2:
-            return self.language_code[:2] + "-" + self.language_code[2:]
-        else:
-            self.language_code
-
-    def __str__(self):
-        return self.display_language_code()
-
-    def save(self, *args, **kwargs):
-        if self.contents.strip()[0] == '<':  # XML - we convert
-            walker = XMLWalker(self.contents)
-            self.contents = json.dumps(walker.output, indent=4)
-        super().save(*args, **kwargs)

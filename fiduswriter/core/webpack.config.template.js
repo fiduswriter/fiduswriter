@@ -3,20 +3,30 @@ const OfflinePlugin = require("offline-plugin") // eslint-disable-line no-undef
 module.exports = { // eslint-disable-line no-undef
     mode: "$MODE$",
     module: {
-        rules: [{
-            $RULES$, // eslint-disable-line no-undef
-            use: {
-                loader: "babel-loader",
-                options: {
-                    presets: [
-                        "@babel/preset-env"
-                    ],
-                    plugins: [
-                        "@babel/plugin-syntax-dynamic-import"
-                    ]
+        rules: [
+            {
+                test: /\.(csljson)$/i,
+                use: [
+                    {
+                        loader: 'file-loader',
+                    },
+                ],
+            },
+            {
+                $RULES$, // eslint-disable-line no-undef
+                use: {
+                    loader: "babel-loader",
+                    options: {
+                        presets: [
+                            "@babel/preset-env"
+                        ],
+                        plugins: [
+                            "@babel/plugin-syntax-dynamic-import"
+                        ]
+                    }
                 }
             }
-        }]
+        ]
     },
     output: {
         path: "$OUT_DIR$",
@@ -47,7 +57,11 @@ module.exports = { // eslint-disable-line no-undef
                 'admin_console.js',
                 'maintenance.js',
                 'test_caret.js',
-                'document_template_admin.js'
+                'document_template_admin.js',
+                '**/.*',
+                '**/*.map',
+                '**/*.gz',
+                '**/*.csljson'
             ]
         })
     ],

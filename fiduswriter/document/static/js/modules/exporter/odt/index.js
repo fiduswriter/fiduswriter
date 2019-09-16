@@ -22,13 +22,13 @@ TODO:
 */
 
 export class OdtExporter {
-    constructor(doc, templateUrl, bibDB, imageDB, citationStyles, citationLocales) {
+    constructor(doc, templateUrl, bibDB, imageDB, csl) {
         this.doc = doc
         this.templateUrl = templateUrl
         this.bibDB = bibDB
         this.imageDB = imageDB
-        this.citationStyles = citationStyles
-        this.citationLocales = citationLocales
+        this.csl = csl
+
         this.pmCits = false
         this.docContents = false
         this.docTitle = false
@@ -45,7 +45,7 @@ export class OdtExporter {
         this.styles = new OdtExporterStyles(this)
         this.math = new OdtExporterMath(this)
         this.images = new OdtExporterImages(this, this.imageDB, this.docContents)
-        this.citations = new OdtExporterCitations(this, this.bibDB, this.citationStyles, this.citationLocales, this.docContents)
+        this.citations = new OdtExporterCitations(this, this.bibDB, this.csl, this.docContents)
         this.richtext = new OdtExporterRichtext(this, this.images)
 
         this.xml = new XmlZip(

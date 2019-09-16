@@ -192,7 +192,7 @@ module.exports = {
         "no-shadow": "off",
         "no-shadow-restricted-names": "error",
         "no-spaced-func": "off",
-        "no-sync": "error",
+        "no-sync": "off",
         "no-tabs": [
             "error",
             {

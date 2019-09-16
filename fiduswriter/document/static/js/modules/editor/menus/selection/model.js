@@ -2,39 +2,39 @@ import {toggleMark} from "prosemirror-commands"
 
 import {COMMENT_ONLY_ROLES} from "../.."
 import {randomAnchorId} from "../../../schema/common"
+import {acceptAll, rejectAll} from "../../track"
 
-function markAvailable(editor, markName) {
-      let markInDocParts = false
-      editor.view.state.doc.firstChild.forEach(docPart => {
-          if (docPart.attrs.elements && docPart.attrs.marks.includes(markName)) {
-              markInDocParts = true
-          }
-      })
-      return (
-          editor.view.state.doc.firstChild.attrs.footnote_marks.includes(markName) ||
-          markInDocParts
-      )
-}
+const tracksInSelection = view => {
+    let tracks = false
+    const from = view.state.selection.from,
+        to = view.state.selection.to
 
-function markDisabled(editor, markName) {
-    if (editor.currentView === editor.view) {
-        // main editor
-        const anchorDocPart = editor.currentView.state.selection.$anchor.node(2),
-            headDocPart = editor.currentView.state.selection.$head.node(2)
-        return !anchorDocPart ||
-            headDocPart !== anchorDocPart ||
-            !anchorDocPart.attrs.marks ||
-            !anchorDocPart.attrs.marks.includes(markName)
-    } else {
-        // footnote editor
-        const anchorFootnote = editor.currentView.state.selection.$anchor.node(1),
-            headFootnote = editor.currentView.state.selection.$head.node(1)
+    view.state.doc.nodesBetween(
+        from,
+        to,
+        (node, pos) => {
+            if (pos < from && !node.isInline) {
+                return true
+            } else if (tracks) {
+                return false
+            } else if (node.attrs.track && node.attrs.track.length) {
+                tracks = true
+            } else if (node.marks && node.marks.find(mark => {
+                if (
+                    ['deletion', 'format_change'].includes(mark.type.name) ||
+                    mark.type.name === 'insertion' && !mark.attrs.approved
+                ) {
+                    return true
+                } else {
+                    return false
+                }
 
-        return !anchorFootnote ||
-            headFootnote !== anchorFootnote ||
-            !editor.view.state.doc.firstChild.attrs.footnote_marks.includes(markName)
-    }
-
+            })) {
+                tracks = true
+            }
+        }
+    )
+    return tracks
 }
 
 export const selectionMenuModel = () => ({
@@ -51,7 +51,7 @@ export const selectionMenuModel = () => ({
             selected: editor => !!editor.currentView.state.selection.$head.marks().some(
                 mark => mark.type.name === 'comment'
             ),
-            order: 18
+            order: 1
         },
         {
             type: 'button',
@@ -62,12 +62,38 @@ export const selectionMenuModel = () => ({
                 const command = toggleMark(mark, {id: randomAnchorId()})
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
-            available: editor => !COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) && markAvailable(editor, 'anchor'),
-            disabled: editor => markDisabled(editor, 'anchor'),
+            available: editor => !COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights),
+            disabled: editor => editor.currentView.state.selection.$anchor.depth < 2,
             selected: editor => !!editor.currentView.state.selection.$head.marks().some(
                 mark => mark.type.name === 'anchor'
             ),
-            order: 19
+            order: 2
+        },
+        {
+            type: 'button',
+            title: gettext('Accept all in selection'),
+            icon: 'check-double',
+            action: editor => acceptAll(
+                editor.currentView,
+                editor.currentView.state.selection.from,
+                editor.currentView.state.selection.to
+            ),
+            available: editor => !COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights),
+            disabled: editor => editor.currentView.state.selection.$anchor.depth < 2 || !tracksInSelection(editor.currentView),
+            order: 3
+        },
+        {
+            type: 'button',
+            title: gettext('Reject all in selection'),
+            icon: 'trash',
+            action: editor => rejectAll(
+                editor.currentView,
+                editor.currentView.state.selection.from,
+                editor.currentView.state.selection.to
+            ),
+            available: editor => !COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights),
+            disabled: editor => editor.currentView.state.selection.$anchor.depth < 2 || !tracksInSelection(editor.currentView),
+            order: 4
         }
     ]
 })

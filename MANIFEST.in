@@ -1,4 +1,6 @@
+include version.txt
 recursive-include fiduswriter *
+exclude **/*.pyc
 exclude fiduswriter/fiduswriter.sql
 exclude fiduswriter/fiduswriter.sql.backup
 exclude fiduswriter/testing.py

@@ -96,7 +96,9 @@ form .aligned ul.object-tools.right {
 .attrs.hidden {
     display: none;
 }
-
+.hide{
+    display: none;
+}
 .attrs label {
     display: inline-block;
     width: initial;

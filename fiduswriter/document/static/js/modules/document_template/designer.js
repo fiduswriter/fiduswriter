@@ -160,19 +160,18 @@ export class DocumentTemplateDesigner {
                             attrs.locking = locking
                         }
                         switch (type) {
-                            case 'file_upload_part': 
-                                const upload_checkbox = el.querySelector('.upload')
-                                if(upload_checkbox.checked == true){
+                            case 'file_upload_part':
+                                if (el.querySelector('.upload').checked == true) {
                                     attrs.upload = 'true'
                                 }
-                                else{
+                                else {
                                     attrs.upload = false
                                 }
-                                const manage_checkbox = el.querySelector('.manage')
-                                if(manage_checkbox.checked == true){
+
+                                if (el.querySelector('.manage').checked == true) {
                                     attrs.manage = 'true'
                                 }
-                                else{
+                                else {
                                     attrs.manage = false
                                 }
                                 break

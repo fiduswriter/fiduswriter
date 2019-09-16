@@ -1,10 +1,8 @@
 import {Plugin, PluginKey} from "prosemirror-state"
-import {Fragment} from "prosemirror-model"
-import {DOMSerializer} from "prosemirror-model"
+import {DOMSerializer, Fragment} from "prosemirror-model"
 import {
     addAlert,
     Dialog,
-    getJson,
     postJson
   } from "../../common"
 
@@ -50,20 +48,19 @@ export class PartView {
     }
 }
 
-export class FileView{
+export class FileView {
     constructor(node, view, getPos, options) {
         this.node = node
         this.view = view
         this.getPos = getPos
         this.options = options
         let link_array = []
-        console.log(" inside constructor, node", node)
         this.docId = options.editor.docInfo.id
         this.serializer = DOMSerializer.fromSchema(node.type.schema)
         this.dom = this.serializer.serializeNode(this.node)
         this.dom.classList.add('article-part', 'article-file_upload_part')
         this.dom.setAttribute('draggable', false)
-        
+
         // Upload Button
         if(this.node.attrs.upload) {
             this.button_upload = document.createElement('button')
@@ -74,11 +71,11 @@ export class FileView{
             buttons.push({
               text: 'Upload',
               click: () => {
-                let fileList = getFiles();//Returns single file for now
-                
+                const fileList = getFiles() //Returns single file for now
+
                 /* Multiple file upload disabled because transaction is taking some time
                 but attributes are updated before that and do not have the latest updated value after transaction.*/
-                
+
                 fileList.forEach(file => {
                   const values = {
                       docId: this.docId,
@@ -87,9 +84,7 @@ export class FileView{
 
                   postJson('/api/document/attachment/upload/', values).then(
                     ({json}) => {
-                        console.log(" result :-  ", json)
-                        //console.log("get pos ", this.getPos(), this.options.editor.view.state.doc.nodeAt(this.getPos()))
-                        
+
                         const url = window.location.origin + '/' + json.path
                         const attrs = Object.assign(
                             {},
@@ -101,8 +96,9 @@ export class FileView{
                             }
                         )
 
-                        const tr = this.options.editor.view.state.tr.setNodeMarkup(this.getPos(), null, attrs).setMeta('filterFree', true)
-                        console.log({attrs, pos: this.getPos(), tr})
+                        const tr = this.options.editor.view.state.tr.setNodeMarkup(
+                            this.getPos(), null, attrs).setMeta('filterFree', true)
+                        //console.log({attrs, pos: this.getPos(), tr})
                         this.options.editor.view.dispatch(tr)
                         return
                     }
@@ -112,7 +108,6 @@ export class FileView{
                     }
                   )
 
-
                 })
                 this.dialog.close()
 
@@ -121,16 +116,14 @@ export class FileView{
             })//check braces here!
 
             buttons.push({
-              type: 'cancel',
-              text: 'Cancel',
-              click: () => {
-                this.dialog.close();
-              }
+                type: 'cancel',
+                text: 'Cancel',
+                click: () => {
+                    this.dialog.close();
+                }
             })
 
             this.button_upload.onclick = ()=>{
-                //console.log(options.editor.docInfo)
-                console.log(" doc id ", this.docId)
 
                 this.dialog = new Dialog({
                   title: 'File Uploader',

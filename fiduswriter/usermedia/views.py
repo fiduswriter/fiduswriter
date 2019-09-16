@@ -184,7 +184,6 @@ def save_category(request):
     )
 
 
-
 # returns list of attachments
 @login_required
 def attachments(request):
@@ -204,7 +203,6 @@ def attachments(request):
                         'id': attachment.id,
                         'name': user_attachment.file_name,
                         'file_url': attachment.url,
-                        'file_type': image.file_type,
                         'added': attachment.date_uploaded,
                     #    'checksum': image.checksum,
                     }

@@ -1230,6 +1230,7 @@ def add_images_to_doc(request):
         status=status
     )
 
+
 @login_required
 def upload_attachment(request):
     response = {}
@@ -1253,18 +1254,22 @@ def upload_attachment(request):
 
         if can_save:
             print(file)
-            attachment = Attachment.objects.create(file=file, document=document, file_name=file.name)
+            attachment = Attachment.objects.create(file=file, document=document,
+                                                     file_name=file.name)
             response['id'] = attachment.id
             response['name'] = attachment.file_name
-            response['path'] = os.path.relpath(attachment.file.path, settings.PROJECT_PATH)
-            print("path :---------------------", os.path.relpath(attachment.file.path, settings.PROJECT_PATH) )
-            print("attachment path  as in db :----------", attachment.file.path )
+            response['path'] = os.path.relpath(attachment.file.path,
+                                                 settings.PROJECT_PATH)
+            print("path :--", os.path.relpath(attachment.file.path,
+                                             settings.PROJECT_PATH))
+            print("attachment path  as in db :----------", attachment.file.path)
             status = 201
 
     return JsonResponse(
         response,
-        status = status
+        status=status
     )
+
 
 @login_required
 def download_attachment(request):
@@ -1285,6 +1290,7 @@ def download_attachment(request):
         response,
         status = status
     )
+
 
 @login_required
 def delete_attachment(request):
@@ -1323,6 +1329,6 @@ def delete_attachment(request):
             
     return JsonResponse(
         response,
-        status = status
+        status=status
     )
 

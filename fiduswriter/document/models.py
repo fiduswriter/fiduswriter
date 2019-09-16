@@ -7,6 +7,7 @@ from django.db import models
 from django.db.utils import OperationalError, ProgrammingError
 from django.contrib.auth.models import User
 from django.core import checks
+from django.dispatch import receiver
 
 # FW_DOCUMENT_VERSION:
 # Also defined in frontend
@@ -323,19 +324,21 @@ class Attachment(models.Model):
 
     def attachmentDirectoryPath(self, filename):
         """
-        File will be uploaded to MEDIA_ROOT/Attachment-files/Document<id>/<filename>
+            File will be uploaded to 
+            MEDIA_ROOT/Attachment-files/Document<id>/<filename>
         :param instance: An instance of the model where the FileField is defined
         :param filename: The filename that was originally given to the file.
         :return: File storage path
         """
         # preserve the original filename
         self.filename = filename
-        return 'Attachment-files/Document{0}/{1}'.format(self.document.id, filename)
+        return 'Attachment-files/Document{0}/{1}'.\
+            format(self.document.id, filename)
 
     document = models.ForeignKey(Document, on_delete=models.deletion.CASCADE)
     file = models.FileField(
-        upload_to = attachmentDirectoryPath,
-        help_text = (
+        upload_to=attachmentDirectoryPath,
+        help_text=(
             'Attachment file of the document. The filename will be replaced '
             'with the final url of the file in the attached file.'
         )
@@ -351,6 +354,7 @@ class Attachment(models.Model):
                 'doc_id': self.document.id
             }
         )
+
 
 @receiver(models.signals.post_delete, sender=Attachment)
 def auto_delete_file_on_delete(sender, instance, **kwargs):

@@ -135,9 +135,9 @@ export function adjustDocToTemplate(miniDoc, miniTemplate, documentStyles, schem
                 }
             }
             oldContent.shift()
-            
+
         } else {
-            console.log("first")
+
             oldNode = movedParts.find(
                 oldContentNode =>
                     oldContentNode.type === part.type &&
@@ -158,13 +158,13 @@ export function adjustDocToTemplate(miniDoc, miniTemplate, documentStyles, schem
                     }
                 )
 
-            if(oldNode.attrs.files){
+            if (oldNode.attrs.files) {
                 newNode.attrs.files = oldNode.attrs.files
             }
-            if(oldNode.attrs.files_id){
+            if (oldNode.attrs.files_id) {
                 newNode.attrs.files_id = oldNode.attrs.files_id
             }
-            if(oldNode.attrs['files_path']){
+            if (oldNode.attrs['files_path']) {
                 newNode.attrs['files_path'] = oldNode.attrs['files_path']
             }
 

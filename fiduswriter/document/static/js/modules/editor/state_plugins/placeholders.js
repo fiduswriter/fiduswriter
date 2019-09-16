@@ -38,7 +38,7 @@ export const placeholdersPlugin = function(options) {
                     return
                 }
 
-                const text = `${partElement.attrs.title}...`
+                const text = partElement.type === state.schema.nodes['title'] ? `${gettext('Title')}...` : `${partElement.attrs.title}...`
                 const placeHolder = document.createElement('span')
                 placeHolder.classList.add('placeholder')
                 placeHolder.setAttribute('data-placeholder', text)

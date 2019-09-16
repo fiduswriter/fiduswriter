@@ -8,6 +8,9 @@ def set_document_revision_version(apps, schema_editor):
     DocumentRevision = apps.get_model('document', 'DocumentRevision')
     revisions = DocumentRevision.objects.all()
     for revision in revisions:
+        if not revision.file_object:
+            revision.delete()
+            continue
         zip = ZipFile(revision.file_object.path, 'r')
         version = zip.read('filetype-version')
         revision.doc_version = float(version)

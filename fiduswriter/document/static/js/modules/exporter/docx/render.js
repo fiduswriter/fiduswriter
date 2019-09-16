@@ -180,6 +180,9 @@ export class DocxExporterRender {
 
     // Render tags that exchange paragraphs
     parRender(tag) {
+        if (!tag.par) {
+            return
+        }
         const pStyle = tag.par.querySelector('pStyle')
         const options = {
             dimensions: tag.dimensions,

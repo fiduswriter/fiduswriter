@@ -32,22 +32,30 @@ function cleanNode(node, elements, marks) {
     }
 }
 
-export function adjustDocToTemplate(miniDoc, template, documentStyles, citationStyles, schema) {
+export function adjustDocToTemplate(miniDoc, miniTemplate, documentStyles, schema) {
     const doc = toFullJSON(miniDoc, schema),
+        template = toFullJSON(miniTemplate, schema),
         removedFootnoteElements = doc.attrs.footnote_elements.filter(
             element => !template.attrs.footnote_elements.includes(element)
         ),
         removedFootnoteMarks = doc.attrs.footnote_marks.filter(
             mark => !template.attrs.footnote_marks.includes(mark)
         ),
-        attrs = ['footnote_marks', 'footnote_elements', 'languages', 'papersizes', 'bibliography_header', 'template']
+        attrs = ['footnote_marks', 'footnote_elements', 'languages', 'citationstyles', 'papersizes', 'bibliography_header', 'template']
     attrs.forEach(attr => doc.attrs[attr] = template.attrs[attr])
+
+    if (!doc.attrs.citationstyles.includes(doc.attrs.citationstyle)) {
+        if (!doc.attrs.citationstyles.length) {
+            throw new Error('Document template allows no citation styles.')
+        }
+        doc.attrs.citationstyle = template.attrs.citationstyle
+    }
 
     if (!doc.attrs.languages.includes(doc.attrs.language)) {
         if (!doc.attrs.languages.length) {
             throw new Error('Document template allows no languages.')
         }
-        doc.attrs.language = doc.attrs.languages[0]
+        doc.attrs.language = template.attrs.language
     }
 
     if (!doc.attrs.papersizes.includes(doc.attrs.papersize)) {
@@ -59,16 +67,17 @@ export function adjustDocToTemplate(miniDoc, template, documentStyles, citationS
 
     if (!documentStyles.map(style => style.slug).includes(doc.attrs.documentstyle)) {
         if (!documentStyles.length) {
-            throw new Error('No document styles have been defined for document template.')
+            doc.attrs.documentstyle = false
+        } else {
+            doc.attrs.documentstyle = documentStyles[0].slug
         }
-        doc.attrs.documentstyle = documentStyles[0].slug
     }
 
-    if (!citationStyles.map(style => style.short_title).includes(doc.attrs.citationstyle)) {
-        if (!citationStyles.length) {
+    if (!doc.attrs.citationstyles.includes(doc.attrs.citationstyle)) {
+        if (!doc.attrs.citationstyles.length) {
             throw new Error('No citation styles have been defined for document template.')
         }
-        doc.attrs.citationstyle = citationStyles[0].short_title
+        doc.attrs.citationstyle = doc.attrs.citationstyles[0]
     }
 
 

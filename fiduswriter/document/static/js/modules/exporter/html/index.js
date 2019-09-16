@@ -10,8 +10,8 @@ import {addAlert} from "../../common"
 import {DOMExporter} from "../tools/dom_export"
 
 export class HTMLExporter extends DOMExporter {
-    constructor(schema, staticUrl, citationStyles, citationLocales, documentStyles, doc, bibDB, imageDB) {
-        super(schema, staticUrl, citationStyles, citationLocales, documentStyles)
+    constructor(schema, staticUrl, csl, documentStyles, doc, bibDB, imageDB) {
+        super(schema, staticUrl, csl, documentStyles)
         this.doc = doc
         this.bibDB = bibDB
         this.imageDB = imageDB

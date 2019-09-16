@@ -376,8 +376,6 @@ export class Editor {
 
     initEditor() {
         // The following two commands prevent Firefox from showing table controls.
-        document.execCommand("enableObjectResizing", false, false)
-        document.execCommand("enableInlineTableEditing", false, false)
         this.view = new EditorView(document.getElementById('document-editable'), {
             state: EditorState.create({
                 schema: this.schema
@@ -443,7 +441,7 @@ export class Editor {
 
         this.docInfo = data.doc_info
         this.docInfo.version = doc["v"]
-        this.docInfo.template = data.doc.template.definition
+        this.docInfo.template = data.doc.template
         new ModDB(this)
         this.mod.db.bibDB.setDB(data.doc.bibliography)
         // assign bibDB to be used in document schema.
@@ -461,22 +459,15 @@ export class Editor {
             stateDoc = this.schema.nodeFromJSON({type:'doc', content:[
                 adjustDocToTemplate(
                     doc.contents,
-                    this.docInfo.template,
+                    this.docInfo.template.definition,
                     this.mod.documentTemplate.documentStyles,
-                    this.mod.documentTemplate.citationStyles,
                     this.schema
                 )
             ]})
         } else {
-            const article = JSON.parse(JSON.stringify(this.docInfo.template)),
-                language = navigator.languages.find(
-                    lang => article.attrs.languages.includes(lang)
-                )
-            // Set document language according to local user preferences
-            if (language) {
-                article.attrs.language = language
-            }
-            stateDoc = this.schema.nodeFromJSON({type:'doc', content:[article]})
+            stateDoc = this.schema.nodeFromJSON({type:'doc', content:[
+                JSON.parse(JSON.stringify(this.docInfo.template.definition))
+            ]})
         }
         const plugins = this.statePlugins.map(plugin => {
             if (plugin[1]) {
@@ -507,6 +498,7 @@ export class Editor {
         this.mod.marginboxes.view(this.view)
         // Set part specific settings
         this.mod.documentTemplate.addDocPartSettings()
+        this.mod.documentTemplate.addCitationStylesMenuEntries()
         this.waitingForDocument = false
         deactivateWait()
         if (locationHash.length) {

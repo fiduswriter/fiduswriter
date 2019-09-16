@@ -1,18 +1,33 @@
-import {Mapping, AddMarkStep, RemoveMarkStep} from "prosemirror-transform"
+import {Mapping, AddMarkStep, RemoveMarkStep, ReplaceStep} from "prosemirror-transform"
+import {Slice} from "prosemirror-model"
 
 import {deactivateAllSelectedChanges} from "../state_plugins"
 
 import {deleteNode} from "./delete"
 
-export const acceptAll = function(view) {
+export const acceptAll = function(view, from = 0, to = false) {
+    if (!to) {
+        to = view.state.doc.content.size
+    }
     const tr = view.state.tr.setMeta('track', true), map = new Mapping()
-    view.state.doc.descendants((node, pos) => {
+    view.state.doc.nodesBetween(from, to, (node, pos) => {
+        if (pos < from && !node.isInline) {
+            return true
+        }
         let deletedNode = false
         if (
-            node.attrs.track && node.attrs.track.find(track => track.type==='deletion') ||
-            node.marks && node.marks.find(mark => mark.type.name==='deletion')
+            node.attrs.track && node.attrs.track.find(track => track.type==='deletion')
         ) {
             deleteNode(tr, node, pos, map, true)
+            deletedNode = true
+        } else if (node.marks && node.marks.find(mark => mark.type.name==='deletion')) {
+            const delStep = new ReplaceStep(
+                map.map(Math.max(pos, from)),
+                map.map(Math.min(pos+node.nodeSize, to)),
+                Slice.empty
+            )
+            tr.step(delStep)
+            map.appendMap(delStep.getMap())
             deletedNode = true
         } else if (node.attrs.track && node.attrs.track.find(track => track.type==='insertion')) {
             const track = node.attrs.track.filter(track => track.type !== 'insertion')
@@ -22,8 +37,8 @@ export const acceptAll = function(view) {
                 attrs = Object.assign({}, mark.attrs, {approved: true})
             tr.step(
                 new AddMarkStep(
-                    map.map(pos),
-                    map.map(pos+node.nodeSize),
+                    map.map(Math.max(pos, from)),
+                    map.map(Math.min(pos+node.nodeSize, to)),
                     view.state.schema.marks.insertion.create(attrs)
                 )
             )
@@ -36,8 +51,8 @@ export const acceptAll = function(view) {
         ) {
             tr.step(
                 new RemoveMarkStep(
-                    map.map(pos),
-                    map.map(pos+node.nodeSize),
+                    map.map(Math.max(pos, from)),
+                    map.map(Math.min(pos+node.nodeSize, to)),
                     formatChangeMark
                 )
             )

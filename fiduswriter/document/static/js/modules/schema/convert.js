@@ -1,6 +1,7 @@
 /* To convert to and from how the document is stored in the database to how ProseMirror expects it.
  We use the DOM import for ProseMirror as the JSON we store in the database is really jsonized HTML.
 */
+import deepEqual from "fast-deep-equal"
 import {randomHeadingId, randomFigureId} from "./common"
 
 export const getSettings = function(pmArticle) {
@@ -32,6 +33,7 @@ export const updateDoc = function(doc, docVersion, bibliography = false) {
             doc = convertDocV21(doc)
             doc = convertDocV22(doc)
             doc = convertDocV23(doc)
+            doc = convertDocV30(doc)
             break
         case 1.1: // Fidus Writer 3.1
             doc = convertDocV11(doc)
@@ -41,6 +43,7 @@ export const updateDoc = function(doc, docVersion, bibliography = false) {
             doc = convertDocV21(doc)
             doc = convertDocV22(doc)
             doc = convertDocV23(doc)
+            doc = convertDocV30(doc)
             break
         case 1.2: // Fidus Writer 3.2
             doc = convertDocV12(doc)
@@ -49,6 +52,7 @@ export const updateDoc = function(doc, docVersion, bibliography = false) {
             doc = convertDocV21(doc)
             doc = convertDocV22(doc)
             doc = convertDocV23(doc)
+            doc = convertDocV30(doc)
             break
         case 1.3: // Fidus Writer 3.3 prerelease
             doc = convertDocV13(doc, bibliography)
@@ -56,26 +60,34 @@ export const updateDoc = function(doc, docVersion, bibliography = false) {
             doc = convertDocV21(doc)
             doc = convertDocV22(doc)
             doc = convertDocV23(doc)
+            doc = convertDocV30(doc)
             break
         case 2.0: // Fidus Writer 3.3
             doc = convertDocV20(doc)
             doc = convertDocV21(doc)
             doc = convertDocV22(doc)
             doc = convertDocV23(doc)
+            doc = convertDocV30(doc)
             break
         case 2.1: // Fidus Writer 3.4
             doc = convertDocV21(doc)
             doc = convertDocV22(doc)
             doc = convertDocV23(doc)
+            doc = convertDocV30(doc)
             break
         case 2.2: // Fidus Writer 3.5.7
             doc = convertDocV22(doc)
             doc = convertDocV23(doc)
+            doc = convertDocV30(doc)
             break
         case 2.3: // Fidus Writer 3.5.10
             doc = convertDocV23(doc)
+            doc = convertDocV30(doc)
             break
         case 3.0: // Fidus Writer 3.6
+            doc = convertDocV30(doc)
+            break
+        case 3.1: // Fidus Writer 3.7
             break
     }
     return doc
@@ -379,7 +391,7 @@ const v23ExtraAttrs = {
     "template": "Standard Article"
 }
 
-const convertNodeV23 = function(node, imageIds) {
+const convertNodeV23 = function(node) {
     switch (node.type) {
         case 'article':
             node.attrs = Object.assign({}, node.attrs, v23ExtraAttrs)
@@ -489,7 +501,7 @@ const convertNodeV23 = function(node, imageIds) {
     }
     if (node.content) {
         node.content.forEach(childNode => {
-            convertNodeV23(childNode, imageIds)
+            convertNodeV23(childNode)
         })
     }
 }
@@ -498,5 +510,310 @@ const convertDocV23 = function(doc) {
     const returnDoc = JSON.parse(JSON.stringify(doc))
     convertNodeV23(returnDoc.contents)
     returnDoc.settings = Object.assign({}, returnDoc.settings, v23ExtraAttrs)
+    return returnDoc
+}
+
+const convertNodeV30 = function(node) {
+    if (node.attrs && node.attrs.marks) {
+        node.attrs.marks = node.attrs.marks.filter(mark => mark !== 'anchor')
+    }
+    if (node.attrs && node.attrs.footnote_marks) {
+        node.attrs.footnote_marks = node.attrs.footnote_marks.filter(mark => mark !== 'anchor')
+    }
+    let attrs
+    switch (node.type) {
+        case 'article':
+            attrs = {
+                documentstyle: '',
+                tracked: false,
+                citationstyle: 'apa',
+                language: 'en-US',
+                languages: ["af-ZA", "sq-AL", "ar", "ast", "be", "br", "bg", "ca",
+                    "ca-ES-Valencia", "zh-CN", "da", "nl", "en-AU", "en-CA", "en-NZ", "en-ZA", "en-GB",
+                    "en-US", "eo", "fr", "gl", "de-DE", "de-AU", "de-CH", "el", "he", "is", "it",
+                    "ja", "km", "lt", "ml", "nb-NO", "nn-NO", "fa", "pl", "pt-BR", "pt-PT", "ro",
+                    "ru", "tr", "sr-SP-Cy", "sr-SP-Lt", "sk", "sl", "es", "sv", "ta", "tl", "uk"
+                ],
+                papersize: 'A4',
+                papersizes: ["A4", "US Letter"],
+                footnote_marks: ['strong', 'em', 'link'],
+                footnote_elements: ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "table"]
+            }
+            break
+        case 'richtext_part':
+            attrs = {
+                title: '',
+                id: '',
+                locking: false,
+                language: false,
+                optional: false,
+                hidden: false,
+                help: false,
+                initial: false,
+                deleted: false,
+                elements: ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote", "table"],
+                marks: ['strong', 'em', 'link'],
+                metadata: false
+            }
+            break
+        case 'heading_part':
+            attrs = {
+                title: '',
+                id: '',
+                locking: false,
+                language: false,
+                optional: false,
+                hidden: false,
+                help: false,
+                initial: false,
+                deleted: false,
+                elements: ["heading1"],
+                marks: ['strong', 'em', 'link'],
+                metadata: false
+            }
+            break
+        case 'contributors_part':
+            attrs = {
+                title: '',
+                id: '',
+                locking: false,
+                language: false,
+                optional: false,
+                hidden: false,
+                help: false,
+                initial: false,
+                deleted: false,
+                item_title: 'Contributor',
+                metadata: false
+            }
+            break
+        case 'tags_part':
+            attrs = {
+                title: '',
+                id: '',
+                locking: false,
+                language: false,
+                optional: false,
+                hidden: false,
+                help: false,
+                initial: false,
+                deleted: false,
+                item_title: 'Tag',
+                metadata: false
+            }
+            break
+        case 'table_part':
+            attrs = {
+                title: '',
+                id: '',
+                locking: false,
+                language: false,
+                optional: false,
+                hidden: false,
+                help: false,
+                initial: false,
+                deleted: false,
+                elements: ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote"],
+                marks: ['strong', 'em', 'link'],
+                metadata: false
+            }
+            break
+        case 'table_of_contents':
+            attrs = {
+                title: 'Table of Contents',
+                id: 'toc',
+                optional: false,
+                hidden: false
+            }
+            break
+        case 'separator_part':
+            attrs = {
+                id: 'separator'
+            }
+            break
+        case 'title':
+            attrs = {
+                id: 'title'
+            }
+            break
+        case 'contributor':
+            attrs = {
+                firstname: false,
+                lastname: false,
+                email: false,
+                institution: false
+            }
+            break
+        case 'tag':
+            attrs = {
+                tag: ''
+            }
+            break
+        case 'footnote':
+            attrs = {
+                footnote: [{
+                    type: 'paragraph'
+                }]
+            }
+            break
+        case 'code_block':
+        case 'paragraph':
+        case 'blockquote':
+        case 'horizontal_rule':
+        case 'bullet_list':
+        case 'list_item':
+            attrs = {
+                track: []
+            }
+            break
+        case 'ordered_list':
+            attrs = {
+                order: 1,
+                track: []
+            }
+            break
+        case 'citation':
+            attrs = {
+                format: 'autocite',
+                references: []
+            }
+            break
+        case 'equation':
+            attrs = {
+                equation: ''
+            }
+            break
+        case 'figure':
+            attrs = {
+                equation: '',
+                image: false,
+                figureCategory: '',
+                caption: '',
+                id: false,
+                track: [],
+                aligned: 'center',
+                width: '100'
+            }
+            break
+        case 'heading1':
+        case 'heading2':
+        case 'heading3':
+        case 'heading4':
+        case 'heading5':
+        case 'heading6':
+            attrs = {
+                id: false,
+                track: []
+            }
+            break
+        default:
+            break
+    }
+
+    if (attrs && node.attrs) {
+        for (const attr in attrs) {
+            if (attr in node.attrs && deepEqual(node.attrs[attr], attrs[attr])) {
+                delete node.attrs[attr]
+            }
+        }
+        switch (node.type) {
+            case 'article': {
+                if (node.attrs.language === '') {
+                    delete node.attrs.language
+                }
+                const template = node.attrs.template || 'default'
+                node.attrs.import_id = template.normalize('NFKC').replace(/[^\w\s-]/g, '').toLowerCase().trim().replace(/[-\s]+/g, '-')
+                switch (node.attrs.citationstyle) {
+                    case 'harvard1':
+                        node.attrs.citationstyle = 'harvard-cite-them-right'
+                        break
+                    case 'mla':
+                        node.attrs.citationstyle = 'modern-language-association'
+                        break
+                    case 'american-anthropological-association':
+                    case 'chicago-author-date':
+                    case 'chicago-note-bibliography':
+                    case 'oxford-university-press-humsoc':
+                    case 'nature':
+                        break
+                    default:
+                        delete node.attrs.citationstyle
+                }
+                break
+            }
+            case 'title':
+                delete node.attrs.title
+                break
+            default:
+                break
+        }
+    }
+
+    if (node.marks) {
+        for (const mark in node.marks) {
+            let attrs
+            switch (mark.type) {
+                case 'comment':
+                    attrs = {
+                        id: false
+                    }
+                    break
+                case 'annotation_tag':
+                    attrs = {
+                        type: '',
+                        key: '',
+                        value: ''
+                    }
+                    break
+                case 'anchor':
+                    attrs = {
+                        id: false
+                    }
+                    break
+                case 'deletion':
+                    attrs = {
+                        user: 0,
+                        username: '',
+                        date: 0
+                    }
+                    break
+                case 'insertion':
+                    attrs = {
+                        user: 0,
+                        username: '',
+                        date: 0,
+                        approved: true
+                    }
+                    break
+                case 'format_change':
+                    attrs = {
+                        user: 0,
+                        username: '',
+                        date: 0,
+                        before: [],
+                        after: []
+                    }
+                    break
+            }
+            if (attrs && mark.attrs) {
+                for (const attr in attrs) {
+                    if (attr in mark.attrs && deepEqual(mark.attrs[attr], attrs[attr])) {
+                        delete mark.attrs[attr]
+                    }
+                }
+            }
+        }
+    }
+
+    if (node.content) {
+        node.content.forEach(childNode => {
+            convertNodeV30(childNode)
+        })
+    }
+}
+
+const convertDocV30 = function(doc) {
+    const returnDoc = JSON.parse(JSON.stringify(doc))
+    convertNodeV30(returnDoc.contents)
     return returnDoc
 }

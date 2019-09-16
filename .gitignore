@@ -29,7 +29,7 @@ build
 /fiduswriter/static-transpile/
 /fiduswriter/static-libs/
 /fiduswriter/book
-/fiduswriter/citation-api-import
+/fiduswriter/citation_api_import
 /fiduswriter/languagetool
 /fiduswriter/npm_mjs
 /fiduswriter/ojs

@@ -121,8 +121,6 @@ export class DocumentOverview {
                 })
 
                 this.teamMembers = json.team_members
-                this.citationStyles = json.citation_styles
-                this.citationLocales = json.citation_locales
                 this.documentStyles = json.document_styles
                 this.exportTemplates = json.export_templates
                 this.documentTemplates = json.document_templates
@@ -146,7 +144,7 @@ export class DocumentOverview {
         tableEl.classList.add('fw-large')
         document.querySelector('.fw-contents').appendChild(tableEl)
 
-        const dt_bulk = new DatatableBulk(this, bulkModel)
+        const dtBulk = new DatatableBulk(this, bulkModel)
 
         this.table = new DataTable(tableEl, {
             searchable: true,
@@ -159,7 +157,7 @@ export class DocumentOverview {
                 top: ""
             },
             data: {
-                headings: ['', dt_bulk.getHTML(), gettext("Title"), gettext("Revisions"), gettext("Created"), gettext("Last changed"), gettext("Owner"), gettext("Rights"), ''],
+                headings: ['', dtBulk.getHTML(), gettext("Title"), gettext("Revisions"), gettext("Created"), gettext("Last changed"), gettext("Owner"), gettext("Rights"), ''],
                 data: this.documentList.map(doc => this.createTableRow(doc))
             },
             columns: [
@@ -179,7 +177,7 @@ export class DocumentOverview {
             this.lastSort = {column, dir}
         })
 
-        dt_bulk.init(this.table.table)
+        dtBulk.init(this.table.table)
     }
 
     createTableRow(doc) {

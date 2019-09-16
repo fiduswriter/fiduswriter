@@ -18,12 +18,12 @@ def inner(default_project_path):
     if '--pythonpath' in sys_argv:
         index = sys_argv.index('--pythonpath')
         PROJECT_PATH = os.path.join(os.getcwd(), sys_argv[index + 1])
-        sys.path.insert(0, PROJECT_PATH)
         # We prevent the pythonpath to be handled later on by removing it from
         # sys_argv
         sys_argv = sys_argv[:index] + sys_argv[index+2:]
     else:
         PROJECT_PATH = default_project_path
+    sys.path.insert(0, PROJECT_PATH)
     os.environ.setdefault(
         "PROJECT_PATH",
         PROJECT_PATH
@@ -51,12 +51,18 @@ def inner(default_project_path):
         for setting in dir(mod):
             if setting.isupper():
                 setattr(CONFIGURATION, setting, getattr(mod, setting))
+    INSTALLED_APPS = CONFIGURATION.BASE_INSTALLED_APPS + list(
+        CONFIGURATION.INSTALLED_APPS
+    )
+    for app in CONFIGURATION.REMOVED_APPS:
+        INSTALLED_APPS.remove(app)
     settings.configure(
         CONFIGURATION,
         SETTINGS_MODULE=SETTINGS_MODULE,
         SETTINGS_PATHS=SETTINGS_PATHS,
-        INSTALLED_APPS=CONFIGURATION.BASE_APPS +
-        list(CONFIGURATION.INSTALLED_APPS)
+        INSTALLED_APPS=INSTALLED_APPS,
+        MIDDLEWARE=CONFIGURATION.BASE_MIDDLEWARE +
+        list(CONFIGURATION.MIDDLEWARE)
     )
     os.environ['TZ'] = settings.TIME_ZONE
     from django.core.management import execute_from_command_line

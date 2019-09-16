@@ -105,7 +105,6 @@ def convert_old_models(apps, schema_editor):
             export_template.title = title
             export_template.file_type = old_et.file_type
             export_template.document_template = dt
-            print(old_et.file_name)
             new_file = File(open(old_et.template_file.path, 'rb'))
             export_template.template_file.save(
                 title + '.' + old_et.file_type,

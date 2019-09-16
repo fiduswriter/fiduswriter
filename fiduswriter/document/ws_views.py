@@ -16,8 +16,6 @@ from document.models import COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \
 from usermedia.models import Image, DocumentImage, UserImage
 from user.util import get_user_avatar_url
 
-from style.models import CitationLocale
-
 logger = logging.getLogger(__name__)
 
 
@@ -71,7 +69,7 @@ class WebSocket(BaseWebSocketHandler):
                 'title': doc_db.title,
                 'id': doc_db.id,
                 'template': {
-                    'title': doc_db.template.title,
+                    'id': doc_db.template.id,
                     'definition': json_decode(doc_db.template.definition)
                 }
             }
@@ -99,17 +97,10 @@ class WebSocket(BaseWebSocketHandler):
             use_natural_foreign_keys=True,
             fields=['title', 'slug', 'contents', 'documentstylefile_set']
         )
-        cite_styles = serializer.serialize(
-            doc_db.template.citation_styles.all()
-        )
-        cite_locales = serializer.serialize(
-            CitationLocale.objects.all()
-        )
+
         response['styles'] = {
             'export_templates': [obj['fields'] for obj in export_temps],
-            'document_styles': [obj['fields'] for obj in document_styles],
-            'citation_styles': [obj['fields'] for obj in cite_styles],
-            'citation_locales': [obj['fields'] for obj in cite_locales],
+            'document_styles': [obj['fields'] for obj in document_styles]
         }
         self.send_message(response)
 

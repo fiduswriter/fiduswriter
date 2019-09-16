@@ -9,29 +9,92 @@ export const article = {
     selectable: false,
     allowGapCursor: false,
     attrs: {
-        papersize: {
-            default: 'A4'
-        },
-        citationstyle: {
-            default: ''
-        },
         documentstyle: {
             default: ''
-        },
-        language: {
-            default: 'en-US'
         },
         tracked: {
             default: false
         },
+        citationstyle: { // Default citation style
+            default: 'apa'
+        },
+        citationstyles: { // Available citation styles
+            default: [
+                'american-anthropological-association',
+                'apa',
+                'chicago-author-date',
+                'chicago-note-bibliography',
+                'harvard-cite-them-right', // previously harvard1
+                'modern-language-association', // previously mla
+                'nature',
+                'oxford-university-press-humsoc'
+            ]
+        },
+        language: { // Default language
+            default: 'en-US'
+        },
         languages: { // Available languages
-            default: ["af-ZA", "sq-AL", "ar", "ast", "be", "br", "bg", "ca", "ca-ES-Valencia", "zh-CN", "da", "nl", "en-AU", "en-CA", "en-NZ", "en-ZA", "en-GB", "en-US", "eo", "fr", "gl", "de-DE", "de-AU", "de-CH", "el", "he", "is", "it", "ja", "km", "lt", "ml", "nb-NO", "nn-NO", "fa", "pl", "pt-BR", "pt-PT", "ro", "ru", "tr", "sr-SP-Cy", "sr-SP-Lt", "sk", "sl", "es", "sv", "ta", "tl", "uk"]
+            default: [
+                "af-ZA",
+                "sq-AL",
+                "ar",
+                "ast",
+                "be",
+                "br",
+                "bg",
+                "ca",
+                "ca-ES-Valencia",
+                "zh-CN",
+                "da",
+                "nl",
+                "en-AU",
+                "en-CA",
+                "en-NZ",
+                "en-ZA",
+                "en-GB",
+                "en-US",
+                "eo",
+                "fr",
+                "gl",
+                "de-DE",
+                "de-AU",
+                "de-CH",
+                "el",
+                "he",
+                "is",
+                "it",
+                "ja",
+                "km",
+                "lt",
+                "ml",
+                "nb-NO",
+                "nn-NO",
+                "fa",
+                "pl",
+                "pt-BR",
+                "pt-PT",
+                "ro",
+                "ru",
+                "tr",
+                "sr-SP-Cy",
+                "sr-SP-Lt",
+                "sk",
+                "sl",
+                "es",
+                "sv",
+                "ta",
+                "tl",
+                "uk"
+            ]
+        },
+        papersize: { // Default paper size
+            default: 'A4'
         },
         papersizes: { // Available paper sizes
             default: ["A4", "US Letter"]
         },
         footnote_marks: {
-            default: ['strong', 'em', 'link', 'anchor']
+            default: ['strong', 'em', 'link']
         },
         footnote_elements: {
             default: ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "table"]
@@ -40,18 +103,11 @@ export const article = {
             default: {}
         },
         template: {
-            default: {}
+            default: ''
         },
-        figure: {
-            default: {}
-        },
-        table: {
-            default: {}
-        },
-        photo: {
-            default: {}
+        import_id: {
+            default: ''
         }
-
     },
     parseDOM: [{
         tag: "div.article",
@@ -153,7 +209,7 @@ export const heading_part = partSpec('heading', 'heading', {
 })
 export const contributors_part = partSpec('contributors', 'contributor*', {
     item_title: {
-        default: gettext('Contributor')
+        default: 'Contributor'
     },
     metadata: {
         default: false
@@ -161,7 +217,7 @@ export const contributors_part = partSpec('contributors', 'contributor*', {
 })
 export const tags_part = partSpec('tags', 'tag*', {
     item_title: {
-        default: gettext('Tag')
+        default: 'Tag'
     },
     metadata: {
         default: false
@@ -185,7 +241,7 @@ export const table_of_contents = {
     }],
     attrs: {
         title: {
-            default: gettext('Table of Contents')
+            default: 'Table of Contents'
         },
         id: {
             default: 'toc'
@@ -317,9 +373,6 @@ export const title = {
     group: "fixedpart",
     defining: true,
     attrs : {
-        title: {
-            default: gettext('Title')
-        },
         id: {
             default: 'title'
         }

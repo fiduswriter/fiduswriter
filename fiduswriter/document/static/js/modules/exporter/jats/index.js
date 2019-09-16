@@ -11,13 +11,13 @@ import {darManifest, readMe} from "./templates"
 */
 
 export class JATSExporter {
-    constructor(staticUrl, doc, bibDB, imageDB, citationStyles, citationLocales) {
+    constructor(staticUrl, doc, bibDB, imageDB, csl) {
         this.staticUrl = staticUrl
         this.doc = doc
         this.bibDB = bibDB
         this.imageDB = imageDB
-        this.citationStyles = citationStyles
-        this.citationLocales = citationLocales
+        this.csl = csl
+
         this.docContents = false
         this.zipFileName = false
         this.textFiles = []
@@ -28,7 +28,7 @@ export class JATSExporter {
         this.zipFileName = `${createSlug(this.doc.title)}.jats.zip`
         this.docContents = removeHidden(this.doc.contents)
         this.converter = new JATSExporterConvert(this, this.imageDB, this.bibDB, this.doc.settings)
-        this.citations = new JATSExporterCitations(this, this.bibDB, this.citationStyles, this.citationLocales)
+        this.citations = new JATSExporterCitations(this, this.bibDB, this.csl)
         this.conversion = this.converter.init(this.docContents).then(({jats, imageIds}) => {
             this.textFiles.push({filename: 'manuscript.xml', contents: jats})
             this.textFiles.push({filename: 'README.txt', contents: readMe})

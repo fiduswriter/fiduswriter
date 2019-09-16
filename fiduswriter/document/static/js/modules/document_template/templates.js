@@ -329,30 +329,13 @@ const richtextTemplate = ({
 
 
 const separatorTemplate = ({
-    id="",
-    title="",
-    optional="false"
+    id=""
 }) =>
 `<div class="doc-part" data-type="separator_part">
     <div class="doc-part-header">
         ${gettext('Separator')}
-        <ul class="object-tools right">
-            <li>
-                <span class="link configure">${gettext('Configure')}</span>
-            </li>
-        </ul>
         <div class="label">
             ${gettext('ID')} <input type="text" class="id fw-inline" value="${escapeText(id)}">
-            ${gettext('Title')} <input type="text" class="title fw-inline" value="${escapeText(title)}">
-        </div>
-    </div>
-    <div class="attrs hidden">
-        <div class="label">${gettext('Optional')}
-            <select class="optional">
-                <option value="false" ${optional==='false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
-                <option value="shown" ${optional==='shown' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
-                <option value="hidden" ${optional==='hidden' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
-            </select>
         </div>
     </div>
 </div>`

@@ -131,7 +131,7 @@ export class DocumentTemplateDesigner {
                     el => {
                         const type = el.dataset.type,
                             id = el.querySelector('input.id').value,
-                            title = el.querySelector('input.title').value,
+                            title = el.querySelector('input.title') ? el.querySelector('input.title').value : false,
                             help = this.getEditorValue(el.querySelector('.instructions')),
                             initial = this.getEditorValue(
                                 el.querySelector('.initial'),
@@ -140,7 +140,7 @@ export class DocumentTemplateDesigner {
                             locking = el.querySelector('.locking option:checked') ?
                                 el.querySelector('.locking option:checked').value :
                                 'false',
-                            optional = el.querySelector('.optional option:checked').value,
+                            optional = el.querySelector('.optional option:checked') ? el.querySelector('.optional option:checked').value : false,
                             attrs = {id, title},
                             node = {type, attrs}
                         if (help) {

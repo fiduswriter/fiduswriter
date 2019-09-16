@@ -9,6 +9,7 @@ from django.utils.translation import ugettext as _
 
 from usermedia.models import Image, ImageCategory, UserImage
 from .models import ALLOWED_FILETYPES
+from document.models import Attachment, Document
 
 
 class SimpleSerializer(Serializer):
@@ -176,6 +177,38 @@ def save_category(request):
             response['entries'].append(
                 {'id': the_cat.id, 'category_title': the_cat.category_title})
         status = 201
+
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+
+# returns list of attachments
+@login_required
+def attachments(request):
+    response = {}
+    status = 403
+    if request.is_ajax() and request.method == 'POST':
+        status = 200
+        documents = Document.objects.filter(user=request.user)
+        for document in documents:
+            response['attachments'] = []
+
+            user_attachments = Attachment.objects.filter(document=document)
+            for user_attachment in user_attachments:
+                attachment = user_attachment.file
+                if attachment:
+                    field_obj = {
+                        'id': attachment.id,
+                        'name': user_attachment.file_name,
+                        'file_url': attachment.url,
+                        'file_type': image.file_type,
+                        'added': attachment.date_uploaded,
+                    #    'checksum': image.checksum,
+                    }
+                response['attachments'].append(field_obj)
 
     return JsonResponse(
         response,

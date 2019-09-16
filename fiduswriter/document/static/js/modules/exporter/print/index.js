@@ -94,7 +94,7 @@ export class PrintExporter extends HTMLExporter {
 
     addDocStyle(doc) {
         // Override the default as we need to use the original URLs in print.
-        const docStyle = this.documentStyles.find(docStyle => docStyle.filename===doc.settings.documentstyle)
+        const docStyle = this.documentStyles.find(docStyle => docStyle.slug===doc.settings.documentstyle)
 
         let contents = docStyle.contents
         docStyle.documentstylefile_set.forEach(

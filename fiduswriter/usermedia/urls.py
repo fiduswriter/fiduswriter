@@ -6,6 +6,7 @@ urlpatterns = [
     url('^save/$', views.save, name='usermedia_save'),
     url('^delete/$', views.delete, name='usermedia_delete'),
     url('^images/$', views.images, name='usermedia_images'),
+    url('^attachments/$', views.attachments, name='usermedia_attachments'),
     url(
         '^save_category/$',
         views.save_category,

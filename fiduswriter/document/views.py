@@ -1286,7 +1286,7 @@ def download_attachment(request):
 
 @login_required
 def delete_attachment(request):
-    print("_________________________________________________________ reached delete")
+    print("_________________________________________________________ ")
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':

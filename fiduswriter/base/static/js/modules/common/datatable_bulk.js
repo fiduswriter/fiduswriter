@@ -22,10 +22,14 @@ export class DatatableBulk {
     }
 
     onTableCheckChange() {
+        const el = document.querySelector(`#${this.id}`)
+        if (!el) {
+            return
+        }
         if (this.isChecked()) {
-            document.querySelector(`#${this.id}`).classList.remove('disabled')
+            el.classList.remove('disabled')
         } else {
-            document.querySelector(`#${this.id}`).classList.add('disabled')
+            el.classList.add('disabled')
         }
     }
 
@@ -36,17 +40,20 @@ export class DatatableBulk {
     }
 
     isChecked() {
-        const checked_boxes = this.table.querySelectorAll('input.entry-select[type=checkbox]:checked')
-        return checked_boxes && checked_boxes.length
+        const checkedBoxes = this.table.querySelectorAll('input.entry-select[type=checkbox]:checked')
+        return checkedBoxes && checkedBoxes.length
     }
 
     onClick(event) {
         const target = event.target
-        const last_opened = this.opened
+        const lastOpened = this.opened
 
-        if (last_opened) {
+        if (lastOpened) {
             this.opened = false
-            document.querySelector(`#${this.id}`).classList.remove('opened')
+            const el = document.querySelector(`#${this.id}`)
+            if (el) {
+                el.classList.remove('opened')
+            }
         }
 
         if (target.matches(`#${this.id} *`)) {
@@ -56,25 +63,29 @@ export class DatatableBulk {
 
             if (target.matches('.dt-bulk-dropdown, .dt-bulk-dropdown *')) {
                 // Dropdown
-                if (!last_opened) {
+                if (!lastOpened) {
                     this.opened = true
-                    document.querySelector(`#${this.id}`).classList.add('opened')
+                    const el = document.querySelector(`#${this.id}`)
+                    if (el) {
+                        el.classList.add('opened')
+                    }
+
                 }
             } else if (target.matches('.fw-check + label, .fw-check + label *')) {
                 // Click on bulk checkbox
-                const is_checked = this.isAllChecked()
-                this.table.querySelectorAll('input.entry-select[type=checkbox]').forEach(checkbox => checkbox.checked = !is_checked)
+                const isChecked = this.isAllChecked()
+                this.table.querySelectorAll('input.entry-select[type=checkbox]').forEach(checkbox => checkbox.checked = !isChecked)
                 this.onTableCheckChange()
             } else if (target.matches('.fw-pulldown-item')) {
                 // Click on action pulldown
-                const action_id = parseInt(target.dataset.id)
-                this.actions[action_id].action(this.overview)
+                const actionId = parseInt(target.dataset.id)
+                this.actions[actionId].action(this.overview)
             }
         }
     }
 
     getHTML() {
-        const pulldown_options = this.actions.map((action, i) => {
+        const pulldownOptions = this.actions.map((action, i) => {
             return `<li><span data-id="${i}" class="fw-pulldown-item">${escapeText(action.title)}</span></li>`
         }).join('')
 
@@ -83,7 +94,7 @@ export class DatatableBulk {
                 <input type="checkbox" id="${this.id}_check" class="fw-check"><label for="${this.id}_check"></label>
                 <span class="dt-bulk-dropdown"><i class="fa fa-caret-down"></i></span>
                 <div class="fw-pulldown fw-left">
-                    <ul>${pulldown_options}</ul>
+                    <ul>${pulldownOptions}</ul>
                 </div>
             </div>`
         )

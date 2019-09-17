@@ -373,8 +373,8 @@ const fileUploadTemplate = ({
             </li>
         </ul>
         <div class="label">
-            ${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}">
-            ${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}">
+            ${gettext('ID')} <input type="text" class="id fw-inline" value="${escapeText(id)}">
+            ${gettext('Title')} <input type="text" class="title fw-inline" value="${escapeText(title)}">
         </div>
     </div>
     <div class="attrs hidden">
@@ -385,9 +385,11 @@ const fileUploadTemplate = ({
                 <option value="hidden" ${optional==='hidden' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </div>
-        <div class='label'>
+
+        <div class='label hide'>
             ${gettext('Allowed Buttons')}
         </div>
+        <div class="hide"><!-- Hidden -->
         <label>
             <input type="checkbox" class="elements upload hidden" value=${upload} ${upload==='true' ? 'checked' : ''}/>
             ${gettext('Add Attachment')}
@@ -395,7 +397,9 @@ const fileUploadTemplate = ({
         <label>
             <input type="checkbox" class="elements manage hidden" value=${manage} ${manage==='true' ? 'checked' : ''}/>
             ${gettext('Manage Attachment')}
-        </label> 
+
+        </label>
+        </div>
     </div>
 </div>`
 

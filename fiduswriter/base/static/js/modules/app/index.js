@@ -1,3 +1,5 @@
+import '@babel/polyfill' // To fix issue with async generators
+
 import OfflinePluginRuntime from 'offline-plugin/runtime'
 import {CSL} from 'citeproc-plus'
 

@@ -5,8 +5,10 @@ export class ModDB {
     constructor(editor) {
         editor.mod.db = this
         this.editor = editor
+        console.log("this.editor.mod ", this.editor.mod)
         new ModImageDB(this)
         new ModBibliographyDB(this)
+
     }
 
     // remove images/citation items that are no longer part of the document.

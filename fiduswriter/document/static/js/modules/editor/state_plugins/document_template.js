@@ -96,8 +96,7 @@ export class FileView {
                             }
                         )
 
-                        const tr = this.options.editor.view.state.tr.setNodeMarkup(
-                            this.getPos(), null, attrs).setMeta('filterFree', true)
+                        const tr = this.options.editor.view.state.tr.setNodeMarkup(this.getPos(), null, attrs).setMeta('filterFree', true)
                         //console.log({attrs, pos: this.getPos(), tr})
                         this.options.editor.view.dispatch(tr)
                         return

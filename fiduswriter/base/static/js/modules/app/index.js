@@ -11,11 +11,13 @@ import {EmailConfirm} from "../email_confirm"
 import {PasswordResetRequest, PasswordResetChangePassword} from "../password_reset"
 import {Signup} from "../signup"
 import {ImageDB} from "../images/database"
+import {FileDB} from "../files/database"
 import {BibliographyDB} from "../bibliography/database"
 import {Page404} from "../404"
 import {OfflinePage} from "../offline"
 import {FlatPage} from "../flatpage"
 import * as plugins from "../../plugins/app"
+//import { FileDB } from '../../../../../usermedia/static/js/modules/files/database'
 
 export class App {
     constructor(config = {}) {
@@ -140,13 +142,16 @@ export class App {
                 () => this.bind()
             )
         }
+        console.log("Checkpoint 1")
         this.bibDB = new BibliographyDB()
         this.imageDB = new ImageDB()
+        this.fileDB =new FileDB()
         this.csl = new CSL()
         this.connectWs()
         return Promise.all([
             this.bibDB.getDB(),
             this.imageDB.getDB(),
+            this.fileDB.getDB(),
         ]).then(
             () => {
                 this.activateFidusPlugins()

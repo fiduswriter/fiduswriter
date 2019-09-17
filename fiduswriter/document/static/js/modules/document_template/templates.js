@@ -385,17 +385,17 @@ const fileUploadTemplate = ({
                 <option value="hidden" ${optional==='hidden' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </div>
-        <!--<div class='label'>
+        <div class='label'>
             ${gettext('Allowed Buttons')}
         </div>
         <label>
-            <input type="checkbox" class="elements upload" value=${upload} ${upload==='true' ? 'checked' : ''}/>
+            <input type="checkbox" class="elements upload hidden" value=${upload} ${upload==='true' ? 'checked' : ''}/>
             ${gettext('Add Attachment')}
         </label>
         <label>
-            <input type="checkbox" class="elements manage" value=${manage} ${manage==='true' ? 'checked' : ''}/>
+            <input type="checkbox" class="elements manage hidden" value=${manage} ${manage==='true' ? 'checked' : ''}/>
             ${gettext('Manage Attachment')}
-        </label> -->
+        </label> 
     </div>
 </div>`
 

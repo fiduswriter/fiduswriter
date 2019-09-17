@@ -189,24 +189,28 @@ def save_category(request):
 def attachments(request):
     response = {}
     status = 403
+    print("###########################################################################")
+    print("inside attachments backend")
     if request.is_ajax() and request.method == 'POST':
         status = 200
-        documents = Document.objects.filter(user=request.user)
+        documents = Document.objects.filter(owner=request.user)
+        response['attachments'] = []
         for document in documents:
-            response['attachments'] = []
 
             user_attachments = Attachment.objects.filter(document=document)
             for user_attachment in user_attachments:
+                print(user_attachment)
                 attachment = user_attachment.file
                 if attachment:
                     field_obj = {
-                        'id': attachment.id,
+                        'id': user_attachment.id,
                         'name': user_attachment.file_name,
                         'file_url': attachment.url,
-                        'added': attachment.date_uploaded,
+                        'added': user_attachment.date_uploaded,
                     #    'checksum': image.checksum,
                     }
                 response['attachments'].append(field_obj)
+    print("response = ", response)
 
     return JsonResponse(
         response,

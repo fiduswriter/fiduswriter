@@ -223,7 +223,11 @@ export class Editor {
             'cropper.min.css',
             'inline_tools.css'
         ], this.staticUrl)
-        const initPromises = [whenReady()]
+        new ModDocumentTemplate(this)
+        const initPromises = [
+            whenReady(),
+            this.mod.documentTemplate.getCitationStyles()
+        ]
         if (this.docInfo.hasOwnProperty('templateId')) {
             initPromises.push(
                 postJson(`/api/document/create_doc/${this.docInfo.templateId}/`).then(
@@ -406,7 +410,6 @@ export class Editor {
         new ModMarginboxes(this)
         this.mod.marginboxes.init()
         new ModComments(this)
-        new ModDocumentTemplate(this)
         new ModNavigator(this)
         this.mod.navigator.init()
         this.activateFidusPlugins()

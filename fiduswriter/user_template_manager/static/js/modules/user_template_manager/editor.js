@@ -8,6 +8,7 @@ export class DocTemplatesEditor {
         this.staticUrl = staticUrl
         this.user = user
         this.idString = idString
+        this.citationStyles = false
     }
 
     init() {
@@ -16,7 +17,11 @@ export class DocTemplatesEditor {
             'editor.css',
             'user_template_manager.css'
         ], this.staticUrl)
-        return postJson('/api/user_template_manager/get/', {id: this.idString}).then(
+        return this.app.csl.getCitationStyles(
+            styles => this.citationstyles = styles
+        ).then(
+            () => postJson('/api/user_template_manager/get/', {id: this.idString})
+        ).then(
             ({json}) => {
                 this.template = json.template
                 this.id = json.template.id
@@ -33,6 +38,7 @@ export class DocTemplatesEditor {
                     this.template.title,
                     this.template.definition,
                     this.template.document_styles,
+                    this.citationStyles,
                     this.template.export_templates,
                     document.body.querySelector('#template-editor')
                 )

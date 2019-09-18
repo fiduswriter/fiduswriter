@@ -1,5 +1,3 @@
-import {styles} from "citeproc-plus"
-
 import {escapeText} from "../common"
 import {LANGUAGES, PAPER_SIZES} from "../schema/const"
 
@@ -488,9 +486,9 @@ const footnoteTemplate = ({
     footnote_marks = ["strong", "em", "underline", "link"]
 }) => `<div class="doc-part attrs">${allowedElementsTemplate({elements: footnote_elements}, false)}${allowedMarksTemplate({marks: footnote_marks})}</div>`
 
-const citationstylesTemplate = ({citationstyles = ['apa']}) =>
+const citationstylesTemplate = ({citationstyles = ['apa'], allCitationStyles}) =>
 `<select multiple size=5>
-${Object.entries(styles).map(([key, value]) => `<option value="${key}"${citationstyles.includes(key) ? ' selected' : ''}>${value}</option>`).join('')}
+${Object.entries(allCitationStyles).map(([key, value]) => `<option value="${key}"${citationstyles.includes(key) ? ' selected' : ''}>${value}</option>`).join('')}
 </select>`
 
 export const citationstyleTemplate = ({citationstyle = 'apa', citationstyles=['apa']}) => {
@@ -592,7 +590,7 @@ export const exportTemplatesTemplate = ({exportTemplates}) => `${exportTemplates
     ${gettext('Add new export template')}
 </button>`
 
-export const documentDesignerTemplate = ({id, value, title, documentStyles, exportTemplates}) =>
+export const documentDesignerTemplate = ({id, value, title, documentStyles, exportTemplates, citationStyles}) =>
     `<table class="title_id"><tbody>
     <tr><td>${gettext('Title')}</td><td><input type="text" class="title vTextField fw-inline" value="${escapeText(title)}"></td></tr>
     <tr><td>${gettext('ID')}</td><td><input type="text" class="import-id vTextField fw-inline" value="${escapeText(value.attrs.import_id || '')}"></td></tr>
@@ -678,7 +676,7 @@ export const documentDesignerTemplate = ({id, value, title, documentStyles, expo
                     ${gettext('Available citation styles')}
                 </td>
                 <td class="citationstyles-value">
-                    ${citationstylesTemplate(value.attrs || {})}
+                    ${citationstylesTemplate(value.attrs || {}, citationStyles)}
                 </td>
             </tr>
             <tr>

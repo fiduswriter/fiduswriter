@@ -158,6 +158,11 @@ export function adjustDocToTemplate(miniDoc, miniTemplate, documentStyles, schem
                     }
                 )
 
+
+            Object.entries(part.attrs).forEach(([key, value]) => {
+
+                newNode.attrs[key] = value
+            })
             if (oldNode.attrs.files) {
                 newNode.attrs.files = oldNode.attrs.files
             }
@@ -167,11 +172,6 @@ export function adjustDocToTemplate(miniDoc, miniTemplate, documentStyles, schem
             if (oldNode.attrs['files_path']) {
                 newNode.attrs['files_path'] = oldNode.attrs['files_path']
             }
-
-            Object.entries(part.attrs).forEach(([key, value]) => {
-
-                newNode.attrs[key] = value
-            })
 
             if (newNode.attrs.optional) {
                 newNode.attrs.hidden = oldNode.attrs.hidden

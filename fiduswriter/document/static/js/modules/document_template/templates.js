@@ -486,17 +486,21 @@ const footnoteTemplate = ({
     footnote_marks = ["strong", "em", "underline", "link"]
 }) => `<div class="doc-part attrs">${allowedElementsTemplate({elements: footnote_elements}, false)}${allowedMarksTemplate({marks: footnote_marks})}</div>`
 
-const citationstylesTemplate = ({citationstyles = ['apa'], allCitationStyles}) =>
+const citationstylesTemplate = ({citationstyles = ['apa']}, allCitationStyles) =>
 `<select multiple size=5>
 ${Object.entries(allCitationStyles).map(([key, value]) => `<option value="${key}"${citationstyles.includes(key) ? ' selected' : ''}>${value}</option>`).join('')}
 </select>`
 
-export const citationstyleTemplate = ({citationstyle = 'apa', citationstyles=['apa']}) => {
+export const citationstyleTemplate = ({citationstyle = 'apa', citationstyles=['apa']}, allCitationStyles) => {
     if (!citationstyles.includes(citationstyle)) {
         citationstyle = citationstyles[0]
     }
     return `<select>
-        ${citationstyles.map(key => `<option value="${key}"${citationstyle === key ? ' selected' : ''}>${styles[key]}</option>`).join('')}
+        ${
+            citationstyles.map(
+                key => `<option value="${key}"${citationstyle === key ? ' selected' : ''}>${
+                    allCitationStyles[key]
+                }</option>`).join('')}
     </select>`
 }
 
@@ -684,7 +688,7 @@ export const documentDesignerTemplate = ({id, value, title, documentStyles, expo
                     ${gettext('Default citation style')}
                 </td>
                 <td class="citationstyle-value">
-                    ${citationstyleTemplate(value.attrs || {})}
+                    ${citationstyleTemplate(value.attrs || {}, citationStyles)}
                 </td>
             </tr>
             ${

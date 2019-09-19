@@ -17,7 +17,7 @@ export class DocTemplatesEditor {
             'editor.css',
             'user_template_manager.css'
         ], this.staticUrl)
-        return this.app.csl.getCitationStyles(
+        return this.app.csl.getStyles(
             styles => this.citationstyles = styles
         ).then(
             () => postJson('/api/user_template_manager/get/', {id: this.idString})

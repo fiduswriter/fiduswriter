@@ -560,7 +560,10 @@ export class DocumentTemplateDesigner {
                     }
                 })
             }
-            this.dom.querySelector('.citationstyle-value').innerHTML = citationstyleTemplate(this.value.attrs)
+            this.dom.querySelector('.citationstyle-value').innerHTML = citationstyleTemplate(
+                this.value.attrs,
+                this.citationStyles
+            )
         })
     }
 

@@ -42,12 +42,14 @@ export class GetImages {
 
     getImageUrlEntry() {
         if (this.counter < this.imageEntries.length) {
-            const getUrl = this.entries.find(entry => entry.filename === this.imageEntries[this.counter].image.split('/').pop()).url
-            //const mimeString = this.imageEntries[this.counter].file_type
+            const getUrl = this.entries.find(
+                entry => entry.filename === this.imageEntries[this.counter].image.split('/').pop()
+            ).url
             return get(getUrl).then(
                 response => response.blob()
             ).then(
                 blob => {
+                    // const mimeString = this.imageEntries[this.counter].file_type
                     // const dataView = new DataView(blob)
                     // const newBlob = new window.Blob([dataView], {type: mimeString})
                     // this.imageEntries[this.counter]['file'] = newBlob

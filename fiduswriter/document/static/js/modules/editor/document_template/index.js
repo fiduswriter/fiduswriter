@@ -1,5 +1,4 @@
 import bowser from "bowser"
-import {styles} from "citeproc-plus"
 import {Dialog} from "../../common"
 
 export class ModDocumentTemplate {
@@ -153,13 +152,20 @@ export class ModDocumentTemplate {
         })
     }
 
+    getCitationStyles() {
+        return this.editor.app.csl.getStyles().then(
+            styles => {
+                this.citationStyles = styles
+            }
+        )
+    }
+
     addCitationStylesMenuEntries() {
         const settingsMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id==='settings'),
             citationStyleMenu = settingsMenu.content.find(menu => menu.id==='citation_style')
-
         citationStyleMenu.content = this.editor.view.state.doc.firstChild.attrs.citationstyles.map(citationstyle => {
             return {
-                title: styles[citationstyle],
+                title: this.citationStyles[citationstyle],
                 type: 'setting',
                 action: editor => {
                     const article = editor.view.state.doc.firstChild

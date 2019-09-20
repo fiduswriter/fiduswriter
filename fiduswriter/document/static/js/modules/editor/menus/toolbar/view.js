@@ -14,7 +14,6 @@ export class ToolbarView {
         this.dd = new DiffDOM({
             valueDiffing: false
         })
-        this.toolbarEl = document.querySelector('#toolbar').firstElementChild
         this.sideMargins = 14 + 14 + 140 // CSS sets left margin to 14px + 46 px for left most button and we want the same margin on both sides
         this.availableWidth = window.innerWidth - this.sideMargins
         this.openedMenu = false
@@ -186,7 +185,10 @@ export class ToolbarView {
                 return true
             }
         })
-        const toolbarEl = document.querySelector('#toolbar').firstElementChild
+        const toolbarEl = (document.querySelector('#toolbar') || {}).firstElementChild
+        if (!toolbarEl) {
+            return
+        }
         const diff = this.dd.diff(toolbarEl, this.getToolbarHTML(menuIndexToDrop))
         this.dd.apply(toolbarEl, diff)
     }

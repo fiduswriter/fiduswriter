@@ -38,6 +38,17 @@ module.exports = { // eslint-disable-line no-undef
             "process.env.TRANSPILE_VERSION": process.env.TRANSPILE_VERSION
         }),
         new OfflinePlugin({
+            cacheMaps: [
+                {
+                    match: function(url) {
+                        if (url.pathname.indexOf('/admin/') === 0) {
+                            return true
+                        }
+                        return new URL('/', url.location)
+                    },
+                    requestTypes: ['navigate']
+                }
+            ],
             ServiceWorker: {
                 publicPath: '/sw.js',
                 events: true

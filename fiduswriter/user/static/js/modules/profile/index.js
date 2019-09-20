@@ -17,8 +17,11 @@ export class Profile {
             this.render()
             const smenu = new SiteMenu("") // Nothing highlighted
             smenu.init()
-            addDropdownBox(document.getElementById('edit-avatar-btn'), document.getElementById('edit-avatar-pulldown'))
-            document.body.addEventListener('click', event => {
+            addDropdownBox(
+                this.dom.querySelector('#edit-avatar-btn'),
+                this.dom.querySelector('#edit-avatar-pulldown')
+            )
+            this.dom.addEventListener('click', event => {
                 const el = {}
                 let dialog
                 switch (true) {
@@ -29,7 +32,9 @@ export class Profile {
                         changePwdDialog()
                         break
                     case findTarget(event, '#delete-account', el):
-                        dialog = new DeleteUserDialog(document.getElementById('delete-account').dataset.username)
+                        dialog = new DeleteUserDialog(
+                            this.dom.querySelector('#delete-account').dataset.username
+                        )
                         dialog.init()
                         break
                     case findTarget(event, '#submit-profile', el):
@@ -48,19 +53,20 @@ export class Profile {
                         break
                 }
             })
-            document.querySelectorAll('.primary-email-radio').forEach(el => el.addEventListener(
+            this.dom.querySelectorAll('.primary-email-radio').forEach(el => el.addEventListener(
                 'change', () => changePrimaryEmailDialog(this.app)
             ))
         })
     }
 
     render() {
-        document.body = document.createElement('body')
-        document.body.innerHTML = baseBodyTemplate({
+        this.dom = document.createElement('body')
+        this.dom.innerHTML = baseBodyTemplate({
             contents: profileContents(this.user),
             user: this.user,
             staticUrl: this.staticUrl
         })
+        document.body = this.dom
 
         ensureCSS([
             'show_profile.css'
@@ -79,9 +85,9 @@ export class Profile {
             {
                 form_data: JSON.stringify({
                     user: {
-                        username: document.getElementById('username').value,
-                        first_name: document.getElementById('first_name').value,
-                        last_name: document.getElementById('last_name').value
+                        username: this.dom.querySelector('#username').value,
+                        first_name: this.dom.querySelector('#first_name').value,
+                        last_name: this.dom.querySelector('#last_name').value
                     }
                 })
             }

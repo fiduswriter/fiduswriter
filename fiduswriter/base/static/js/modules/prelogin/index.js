@@ -78,16 +78,16 @@ export class PreloginPage {
     }
 
     bind() {
-        document.querySelector('.fw-login-logo').addEventListener('click', () => this.app.goTo('/'))
-        document.getElementById('lang-selection').addEventListener('change', event => {
+        this.dom.querySelector('.fw-login-logo').addEventListener('click', () => this.app.goTo('/'))
+        this.dom.querySelector('#lang-selection').addEventListener('change', event => {
             this.language = event.target.value
             return setLanguage(this.app.config, this.language)
         })
     }
 
     render() {
-        document.body = document.createElement('body')
-        document.body.innerHTML = basePreloginTemplate({
+        this.dom = document.createElement('body')
+        this.dom.innerHTML = basePreloginTemplate({
             isFree: this.isFree,
             language: this.language,
             headerLinks: this.headerLinks,
@@ -95,6 +95,7 @@ export class PreloginPage {
             contents: this.contents,
             staticUrl: this.staticUrl
         })
+        document.body = this.dom
         ensureCSS([
             'prelogin.css'
         ], this.staticUrl)

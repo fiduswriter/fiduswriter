@@ -142,7 +142,6 @@ class Document(models.Model):
         ]
 
         for r in reverse_relations:
-            print(r)
             if r.remote_field.model.objects.filter(
                 **{r.field.name: self}
             ).exists():

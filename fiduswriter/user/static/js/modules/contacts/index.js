@@ -28,8 +28,8 @@ export class ContactsOverview {
     render() {
         const dtBulk = new DatatableBulk(this, bulkModel)
 
-        document.body = document.createElement('body')
-        document.body.innerHTML = baseBodyTemplate({
+        this.dom = document.createElement('body')
+        this.dom.innerHTML = baseBodyTemplate({
             contents: `<div class="fw-table-wrapper">
                 <table id="team-table" class="tablesorter fw-data-table">
                     <thead class="fw-data-table-header">
@@ -48,18 +48,20 @@ export class ContactsOverview {
             staticUrl: this.staticUrl,
             hasOverview: true
         })
+        document.body = this.dom
         setDocTitle(gettext('Team Members'), this.app)
         const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
         feedbackTab.init()
 
-        dtBulk.init(document.querySelector('#team-table'))
+        dtBulk.init(
+            this.dom.querySelector('#team-table'))
     }
 
     getList() {
 
         postJson('/api/user/team/list/').then(
             ({json}) => {
-                document.querySelector('#team-table tbody').innerHTML += teammemberTemplate({members: json.team_members})
+                this.dom.querySelector('#team-table tbody').innerHTML += teammemberTemplate({members: json.team_members})
             }
         ).catch(
             error => {
@@ -70,7 +72,7 @@ export class ContactsOverview {
     }
 
     bind() {
-        document.body.addEventListener('click', event => {
+        this.dom.addEventListener('click', event => {
             const el = {}
             switch (true) {
                 case findTarget(event, '.delete-single-member', el): {
@@ -88,7 +90,7 @@ export class ContactsOverview {
     // get IDs of selected contacts
     getSelected() {
         return Array.from(
-            document.querySelectorAll('.entry-select:checked:not(:disabled)')
+            this.dom.querySelectorAll('.entry-select:checked:not(:disabled)')
         ).map(el => parseInt(el.getAttribute('data-id')))
     }
 

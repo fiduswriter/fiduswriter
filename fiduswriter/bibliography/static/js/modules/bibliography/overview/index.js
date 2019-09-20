@@ -36,13 +36,14 @@ export class BibliographyOverview {
     }
 
     render() {
-        document.body = document.createElement('body')
-        document.body.innerHTML = baseBodyTemplate({
+        this.dom = document.createElement('body')
+        this.dom.innerHTML = baseBodyTemplate({
             contents: '',
             user: this.user,
             staticUrl: this.staticUrl,
             hasOverview: true
         })
+        document.body = this.dom
         ensureCSS([
             'bibliography.css',
             'prosemirror.css',
@@ -60,7 +61,7 @@ export class BibliographyOverview {
         tableEl.id = "bibliography"
         tableEl.classList.add('fw-data-table')
         tableEl.classList.add('fw-large')
-        document.querySelector('.fw-contents').appendChild(tableEl)
+        this.dom.querySelector('.fw-contents').appendChild(tableEl)
 
         const dtBulk = new DatatableBulk(this, bulkModel)
 
@@ -110,7 +111,7 @@ export class BibliographyOverview {
             title: cat.category_title,
             type: 'category',
             action: _overview => {
-                const trs = document.querySelectorAll('#bibliography > tbody > tr')
+                const trs = this.dom.querySelectorAll('#bibliography > tbody > tr')
                 trs.forEach(tr => {
                     if (tr.querySelector('.fw-data-table-title').classList.contains(`cat_${cat.id}`)) {
                         tr.style.display = ''
@@ -179,7 +180,7 @@ export class BibliographyOverview {
                 classes: "fw-dark",
                 click: () => {
                     const cats = {ids:[], titles:[]}
-                    document.querySelectorAll('#editCategories .category-form').forEach(
+                    this.dom.querySelectorAll('#editCategories .category-form').forEach(
                         el => {
                             const title = el.value.trim()
                             if (title.length) {
@@ -244,7 +245,7 @@ export class BibliographyOverview {
     // get IDs of selected bib entries
     getSelected() {
         return Array.from(
-            document.querySelectorAll('.entry-select:checked:not(:disabled)')
+            this.dom.querySelectorAll('.entry-select:checked:not(:disabled)')
         ).map(el => parseInt(el.getAttribute('data-id')))
     }
 
@@ -264,7 +265,7 @@ export class BibliographyOverview {
      * @function bibEvents
           */
     bindEvents() {
-        document.body.addEventListener('click', event => {
+        this.dom.addEventListener('click', event => {
             const el = {}
             switch (true) {
                 case findTarget(event, '.delete-bib', el): {
@@ -308,7 +309,7 @@ export class BibliographyOverview {
         })
 
         // Allow pasting of bibtex data.
-        document.body.addEventListener('paste', event => {
+        this.dom.addEventListener('paste', event => {
             if (event.target.nodeName === 'INPUT') {
                 // We are inside of an input element, cancel.
                 return false
@@ -318,20 +319,20 @@ export class BibliographyOverview {
         })
 
         // The two drag events are needed to allow dropping
-        document.body.addEventListener('dragover', event => {
+        this.dom.addEventListener('dragover', event => {
             if (event.dataTransfer.types.includes('text/plain')) {
                 event.preventDefault()
             }
         })
 
-        document.body.addEventListener('dragenter', event => {
+        this.dom.addEventListener('dragenter', event => {
             if (event.dataTransfer.types.includes('text/plain')) {
                 event.preventDefault()
             }
         })
 
         // Allow dropping of bibtex data
-        document.body.addEventListener('drop', event => {
+        this.dom.addEventListener('drop', event => {
             if (event.target.nodeName === 'INPUT') {
                 // We are inside of an input element, cancel.
                 return false

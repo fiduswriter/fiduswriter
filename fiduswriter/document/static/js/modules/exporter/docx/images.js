@@ -1,3 +1,4 @@
+import {get} from "../../common"
 import {descendantNodes} from "../tools/doc_contents"
 
 export class DocxExporterImages {
@@ -56,21 +57,17 @@ export class DocxExporterImages {
             usedImgs.forEach((image) => {
                 const imgDBEntry = this.imageDB.db[image]
                 p.push(
-                    new Promise(resolve => {
-                        import("jszip-utils").then(
-                            ({default: JSZipUtils}) => JSZipUtils.getBinaryContent(
-                                imgDBEntry.image,
-                                (err, imageFile) => {
-                                    const wImgId = this.addImage(
-                                        imgDBEntry.image.split('/').pop(),
-                                        imageFile
-                                    )
-                                    this.imgIdTranslation[image] = wImgId
-                                    resolve()
-                                }
+                    get(imgDBEntry.image).then(
+                        response => response.blob()
+                    ).then(
+                        blob => {
+                            const wImgId = this.addImage(
+                                imgDBEntry.image.split('/').pop(),
+                                blob
                             )
-                        )
-                    })
+                            this.imgIdTranslation[image] = wImgId
+                        }
+                    )
                 )
             })
 

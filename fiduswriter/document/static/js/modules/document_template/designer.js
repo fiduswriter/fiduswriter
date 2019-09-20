@@ -52,12 +52,13 @@ import {
 
 
 export class DocumentTemplateDesigner {
-    constructor({staticUrl}, id, title, value, documentStyles, exportTemplates, dom) {
+    constructor({staticUrl}, id, title, value, documentStyles, citationStyles, exportTemplates, dom) {
         this.staticUrl = staticUrl
         this.id = id
         this.title = title
         this.value = toFullJSON(value, docSchema)
         this.documentStyles = documentStyles
+        this.citationStyles = citationStyles
         this.exportTemplates = exportTemplates
         this.dom = dom
 
@@ -73,7 +74,8 @@ export class DocumentTemplateDesigner {
             title: this.title,
             value: this.value,
             documentStyles: this.documentStyles,
-            exportTemplates: this.exportTemplates
+            exportTemplates: this.exportTemplates,
+            citationStyles: this.citationStyles
         })
         ensureCSS([
             'common.css',
@@ -558,7 +560,10 @@ export class DocumentTemplateDesigner {
                     }
                 })
             }
-            this.dom.querySelector('.citationstyle-value').innerHTML = citationstyleTemplate(this.value.attrs)
+            this.dom.querySelector('.citationstyle-value').innerHTML = citationstyleTemplate(
+                this.value.attrs,
+                this.citationStyles
+            )
         })
     }
 

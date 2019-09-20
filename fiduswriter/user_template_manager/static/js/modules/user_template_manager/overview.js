@@ -34,13 +34,14 @@ export class DocTemplatesOverview {
     }
 
     render() {
-        document.body = document.createElement('body')
-        document.body.innerHTML = baseBodyTemplate({
+        this.dom = document.createElement('body')
+        this.dom.innerHTML = baseBodyTemplate({
             contents: '',
             user: this.user,
             staticUrl: this.staticUrl,
             hasOverview: true
         })
+        document.body = this.dom
         ensureCSS([
             'add_remove_dialog.css',
             'access_rights_dialog.css'
@@ -55,7 +56,7 @@ export class DocTemplatesOverview {
         const tableEl = document.createElement('table')
         tableEl.classList.add('fw-data-table')
         tableEl.classList.add('fw-large')
-        document.querySelector('.fw-contents').appendChild(tableEl)
+        this.dom.querySelector('.fw-contents').appendChild(tableEl)
 
         const dtBulk = new DatatableBulk(this, bulkModel)
 
@@ -163,7 +164,7 @@ export class DocTemplatesOverview {
     }
 
     bind() {
-        document.body.addEventListener('click', event => {
+        this.dom.addEventListener('click', event => {
             const el = {}
             switch (true) {
                 case findTarget(event, '.delete-doc-template', el): {
@@ -185,7 +186,7 @@ export class DocTemplatesOverview {
 
     getSelected() {
         return Array.from(
-            document.querySelectorAll('.entry-select:checked:not(:disabled)')
+            this.dom.querySelectorAll('.entry-select:checked:not(:disabled)')
         ).map(el => parseInt(el.getAttribute('data-id')))
     }
 }

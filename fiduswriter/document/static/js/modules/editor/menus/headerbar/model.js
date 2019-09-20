@@ -47,7 +47,7 @@ export const headerbarModel = () => ({
                             [editor.docInfo.id],
                             editor.docInfo.owner.team_members,
                             memberData => {
-                                editor.user.team_members.push(memberData)
+                                editor.docInfo.owner.team_members.push(memberData)
                             },
                             editor.registrationOpen
                         )
@@ -104,7 +104,7 @@ export const headerbarModel = () => ({
                                 editor.user
                             )
                         copier.init().then(({docInfo}) =>
-                            window.location.href = `/document/${docInfo.id}/`
+                            editor.app.goTo(`/document/${docInfo.id}/`)
                         ).catch(() => false)
                     }
                 },

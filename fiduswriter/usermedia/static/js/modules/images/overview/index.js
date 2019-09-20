@@ -50,13 +50,14 @@ export class ImageOverview {
     }
 
     render() {
-        document.body = document.createElement('body')
-        document.body.innerHTML = baseBodyTemplate({
+        this.dom = document.createElement('body')
+        this.dom.innerHTML = baseBodyTemplate({
             contents: '',
             user: this.user,
             staticUrl: this.staticUrl,
             hasOverview: true
         })
+        document.body = this.dom
         ensureCSS([
             'cropper.min.css'
         ], this.staticUrl)
@@ -190,7 +191,7 @@ export class ImageOverview {
         tableEl.id = "imagelist"
         tableEl.classList.add('fw-data-table')
         tableEl.classList.add('fw-large')
-        document.querySelector('.fw-contents').appendChild(tableEl)
+        this.dom.querySelector('.fw-contents').appendChild(tableEl)
 
         const dtBulk = new DatatableBulk(this, bulkModel)
 
@@ -231,12 +232,12 @@ export class ImageOverview {
     // get IDs of selected bib entries
     getSelected() {
         return Array.from(
-            document.querySelectorAll('.entry-select:checked:not(:disabled)')
+            this.dom.querySelectorAll('.entry-select:checked:not(:disabled)')
         ).map(el => parseInt(el.getAttribute('data-id')))
     }
 
     bindEvents() {
-        document.body.addEventListener('click', event => {
+        this.dom.addEventListener('click', event => {
             const el = {}
             switch (true) {
                 case findTarget(event, '.delete-image', el): {

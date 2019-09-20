@@ -40,7 +40,7 @@ export class DocTemplatesEditor {
                     this.template.document_styles,
                     this.citationStyles,
                     this.template.export_templates,
-                    document.body.querySelector('#template-editor')
+                    this.dom.querySelector('#template-editor')
                 )
                 this.templateDesigner.init()
                 this.bind()
@@ -49,8 +49,8 @@ export class DocTemplatesEditor {
     }
 
     render() {
-        document.body = document.createElement('body')
-        document.body.innerHTML =
+        this.dom = document.createElement('body')
+        this.dom.innerHTML =
         `<div id="wait" class="">
             <i class="fa fa-spinner fa-pulse"></i>
         </div>
@@ -78,17 +78,18 @@ export class DocTemplatesEditor {
                 </div>
             </div>
         </div>`
+        document.body = this.dom
         setDocTitle(gettext('Template Editor'), this.app)
         const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
         feedbackTab.init()
     }
 
     showErrors(errors) {
-        document.querySelector('.errorlist').innerHTML = Object.values(errors).map(error => `<li>${error}</li>`).join('')
+        this.dom.querySelector('.errorlist').innerHTML = Object.values(errors).map(error => `<li>${error}</li>`).join('')
     }
 
     save() {
-        document.querySelector('.errorlist').innerHTML = ''
+        this.dom.querySelector('.errorlist').innerHTML = ''
         const {valid, value, errors, import_id, title} = this.templateDesigner.getCurrentValue()
         if (!valid) {
             this.showErrors(errors)
@@ -105,7 +106,7 @@ export class DocTemplatesEditor {
     }
 
     bind() {
-        document.body.addEventListener('click', event => {
+        this.dom.addEventListener('click', event => {
             const el = {}
             switch (true) {
                 case findTarget(event, 'button.save', el):

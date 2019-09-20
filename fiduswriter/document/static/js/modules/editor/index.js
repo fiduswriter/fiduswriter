@@ -262,7 +262,7 @@ export class Editor {
                     this.mod.collab.docChanges.checkVersion()
                 },
                 restartMessage: () => ({type: 'get_document'}), // Too many messages have been lost and we need to restart
-                messagesElement: () => document.getElementById('unobtrusive_messages'),
+                messagesElement: () => this.dom.querySelector('#unobtrusive_messages'),
                 warningNotAllSent: gettext('Warning! Not all your changes have been saved! You could suffer data loss. Attempting to reconnect...'),
                 infoDisconnected: gettext('Disconnected. Attempting to reconnect...'),
                 receiveData: data => {
@@ -339,9 +339,10 @@ export class Editor {
     }
 
     render() {
-        document.body = document.createElement('body')
-        document.body.classList.add('editor')
-        document.body.innerHTML = `<div id="editor">
+        this.dom = document.createElement('body')
+        document.body = this.dom
+        this.dom.classList.add('editor')
+        this.dom.innerHTML = `<div id="editor">
             <div id="wait"><i class="fa fa-spinner fa-pulse"></i></div>
             <header>
                 <nav id="headerbar"><div></div></nav>
@@ -380,7 +381,7 @@ export class Editor {
 
     initEditor() {
         // The following two commands prevent Firefox from showing table controls.
-        this.view = new EditorView(document.getElementById('document-editable'), {
+        this.view = new EditorView(this.dom.querySelector('#document-editable'), {
             state: EditorState.create({
                 schema: this.schema
             }),
@@ -577,7 +578,7 @@ export class Editor {
     }
 
     scrollPosIntoView(pos, view) {
-        const topMenuHeight = document.querySelector('header').offsetHeight + 10
+        const topMenuHeight = this.dom.querySelector('header').offsetHeight + 10
         const $pos = view.state.doc.resolve(pos)
         view.dispatch(view.state.tr.setSelection(new TextSelection($pos, $pos)))
         view.focus()

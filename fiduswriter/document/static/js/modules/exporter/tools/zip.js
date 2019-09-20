@@ -1,3 +1,5 @@
+import {get} from "../../common"
+
 /** Creates a zip file.
  * @function zipFileCreator
  * @param {list} textFiles A list of files in plain text format.
@@ -33,14 +35,10 @@ export class ZipFileCreator {
             } else {
                 zipDir = this.zipFs.folder(zipFile.directory)
             }
-            return new Promise(
-                resolve => import("jszip-utils").then(
-                    ({default: JSZipUtils}) => JSZipUtils.getBinaryContent(zipFile.url, (err, contents) => {
-                        zipDir.loadAsync(contents).then(_importedZip => {
-                            resolve()
-                        })
-                    })
-                )
+            return get(zipFile.url).then(
+                response => response.blob()
+            ).then(
+                blob => zipDir.loadAsync(blob)
             )
         })
         return Promise.all(includePromises).then(
@@ -54,13 +52,10 @@ export class ZipFileCreator {
             this.zipFs.file(textFile.filename, textFile.contents, {compression: 'DEFLATE'})
         })
         const httpPromises = this.binaryFiles.map(binaryFile =>
-            new Promise(
-                resolve => import("jszip-utils").then(({default: JSZipUtils}) => {
-                    JSZipUtils.getBinaryContent(binaryFile.url, (err, contents) => {
-                        this.zipFs.file(binaryFile.filename, contents, {binary: true, compression: 'DEFLATE'})
-                        resolve()
-                    })
-                })
+            get(binaryFile.url).then(
+                response => response.blob()
+            ).then(
+                blob => this.zipFs.file(binaryFile.filename, blob, {binary: true, compression: 'DEFLATE'})
             )
         )
         return Promise.all(httpPromises).then(

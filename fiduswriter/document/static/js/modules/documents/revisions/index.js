@@ -2,7 +2,7 @@ import download from "downloadjs"
 
 import {documentrevisionsTemplate} from "./templates"
 import {ImportFidusFile} from "../../importer/file"
-import {deactivateWait, addAlert, post, cancelPromise, findTarget, Dialog, escapeText} from "../../common"
+import {deactivateWait, addAlert, get, post, cancelPromise, findTarget, Dialog, escapeText} from "../../common"
 
 /**
  * Functions for the recovering previously created document revisions.
@@ -70,36 +70,31 @@ export class DocumentRevisionsDialog {
      */
 
     recreate(id, user) {
-        return new Promise (resolve =>
-            import("jszip-utils").then(({default: JSZipUtils}) => {
-                JSZipUtils.getBinaryContent(
-                    `/api/document/get_revision/${id}/`,
-                    (err, fidusFile) => {
-                        const importer = new ImportFidusFile(
-                            fidusFile,
-                            user
-                        )
-                        resolve(
-                            importer.init().then(
-                                ({ok, statusText, doc}) => {
-                                    deactivateWait()
-                                    if (ok) {
-                                        addAlert('info', statusText)
-                                        return {
-                                            action: 'added-document',
-                                            doc
-                                        }
-                                    } else {
-                                        addAlert('error', statusText)
-                                        return Promise.reject(new Error(statusText))
-                                    }
-
-                                }
-                            )
-                        )
-                    }
+        return get(`/api/document/get_revision/${id}/`).then(
+            response => response.blob()
+        ).then(
+            blob => {
+                const importer = new ImportFidusFile(
+                    blob,
+                    user
                 )
-            })
+                return importer.init()
+            }
+        ).then(
+            ({ok, statusText, doc}) => {
+                deactivateWait()
+                if (ok) {
+                    addAlert('info', statusText)
+                    return {
+                        action: 'added-document',
+                        doc
+                    }
+                } else {
+                    addAlert('error', statusText)
+                    return Promise.reject(new Error(statusText))
+                }
+
+            }
         )
     }
 
@@ -109,12 +104,11 @@ export class DocumentRevisionsDialog {
      */
 
     download(id, filename) {
-        import("jszip-utils").then(({default: JSZipUtils}) => {
-            JSZipUtils.getBinaryContent(
-                `/api/document/get_revision/${id}/`,
-                (err, fidusFile) => download(fidusFile, filename, 'application/fidus+zip')
-            )
-        })
+        get(`/api/document/get_revision/${id}/`).then(
+            response => response.blob()
+        ).then(
+            blob => download(blob, filename, 'application/fidus+zip')
+        )
     }
 
     /**

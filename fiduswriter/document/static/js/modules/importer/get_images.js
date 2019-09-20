@@ -1,3 +1,5 @@
+import {get} from "../common"
+
 export class GetImages {
     constructor(images, entries) {
         this.images = images
@@ -40,21 +42,20 @@ export class GetImages {
 
     getImageUrlEntry() {
         if (this.counter < this.imageEntries.length) {
-            return new Promise(resolve => {
-                const getUrl = this.entries.find(entry => entry.filename === this.imageEntries[this.counter].image.split('/').pop()).url
-                const mimeString = this.imageEntries[this.counter].file_type
-                import("jszip-utils").then(
-                    ({default: JSZipUtils}) => JSZipUtils.getBinaryContent(getUrl, (err, data) => {
-                        const dataView = new DataView(data)
-                        const blob = new window.Blob([dataView], {type: mimeString})
-                        this.imageEntries[this.counter]['file'] = blob
-                        this.counter++
-                        this.getImageUrlEntry().then(()=>{
-                            resolve()
-                        })
-                    })
-                )
-            })
+            const getUrl = this.entries.find(entry => entry.filename === this.imageEntries[this.counter].image.split('/').pop()).url
+            const mimeString = this.imageEntries[this.counter].file_type
+            return get(getUrl).then(
+                response => response.blob()
+            ).then(
+                blob => {
+                    // const dataView = new DataView(blob)
+                    // const newBlob = new window.Blob([dataView], {type: mimeString})
+                    // this.imageEntries[this.counter]['file'] = newBlob
+                    this.imageEntries[this.counter]['file'] = blob
+                    this.counter++
+                    return this.getImageUrlEntry()
+                }
+            )
         } else {
             return Promise.resolve()
         }

@@ -1,6 +1,8 @@
+import JSZip from "jszip"
+
 import {updateFile} from "../importer/update"
 import {updateDoc} from "../schema/convert"
-import {addAlert, post, postJson, findTarget, whenReady} from "../common"
+import {addAlert, get, post, postJson, findTarget, whenReady} from "../common"
 import {FW_DOCUMENT_VERSION} from "../schema"
 
 // To upgrade all docs and document revions to the newest version
@@ -227,15 +229,12 @@ export class DocMaintenance {
     }
 
     updateRevision(id) {
-        Promise.all([
-            import("jszip-utils"),
-            import("jszip")
-        ]).then(([{default: JSZipUtils}, {default: JSZip}]) => {
-            JSZipUtils.getBinaryContent(
-                `/api/document/get_revision/${id}/`,
-                (err, fidusFile) => {
+        return get(`/api/document/get_revision/${id}/`).then(
+            response => response.blob()
+        ).then(
+            blob => {
                 const zipfs = new JSZip()
-                zipfs.loadAsync(fidusFile).then(() => {
+                return zipfs.loadAsync(blob).then(() => {
                     const openedFiles = {}, p = []
                     // We don't open other files as they currently don't need to be changed.
                     const fileNames = ["filetype-version", "document.json", "bibliography.json"]
@@ -245,7 +244,7 @@ export class DocMaintenance {
                             openedFiles[fileName] = fileContent
                         }))
                     })
-                    Promise.all(p).then(() => {
+                    return Promise.all(p).then(() => {
                         const filetypeVersion = parseFloat(openedFiles["filetype-version"])
                         const {bibliography, doc} = updateFile(
                             window.JSON.parse(openedFiles["document.json"]),
@@ -258,8 +257,8 @@ export class DocMaintenance {
                         this.saveRevision(id, zipfs)
                     })
                 })
-            })
-        })
+            }
+        )
 
     }
 

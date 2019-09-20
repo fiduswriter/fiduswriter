@@ -11,8 +11,6 @@ export class DocMaintenance {
     constructor({staticUrl}) {
         this.staticUrl = staticUrl
         this.batch = 0
-        this.batchesDone = false
-        this.docSavesLeft = 0
         this.revSavesLeft = 0
         this.docTemplatesSavesLeft = 0
     }
@@ -45,18 +43,16 @@ export class DocMaintenance {
                 const docs = window.JSON.parse(json.docs)
                 if (docs.length) {
                     addAlert('info', `${gettext('Downloaded batch')}: ${this.batch}`)
-                    docs.forEach(doc => this.fixDoc(doc))
-                    this.getDocBatch()
+                    Promise.all(docs.map(doc => this.fixDoc(doc))).then(
+                        () => this.getDocBatch()
+                    )
                 } else {
-                    this.batchesDone = true
-                    if (!this.docSavesLeft) {
-                        if (this.batch > 1) {
-                            addAlert('success', gettext('All documents updated!'))
-                        } else {
-                            addAlert('info', gettext('No documents to update.'))
-                        }
-                        this.updateDocumentTemplates()
+                    if (this.batch > 1) {
+                        addAlert('success', gettext('All documents updated!'))
+                    } else {
+                        addAlert('info', gettext('No documents to update.'))
                     }
+                    this.updateDocumentTemplates()
                 }
             }
         ).catch(
@@ -104,16 +100,15 @@ export class DocMaintenance {
         } else {
             p = Promise.resolve(doc.bibliography)
         }
-        p.then(bibliography => {
+        return p.then(bibliography => {
             // updates doc to the newest version
             doc = updateDoc(oldDoc, docVersion, bibliography)
-            this.saveDoc(doc)
+            return this.saveDoc(doc)
         })
     }
 
 
     saveDoc(doc) {
-        this.docSavesLeft++
         const p1 = post(
             '/api/document/admin/save_doc/',
             {
@@ -135,13 +130,8 @@ export class DocMaintenance {
             )
             promises.push(p2)
         }
-        Promise.all(promises).then(() => {
+        return Promise.all(promises).then(() => {
             addAlert('success', `${gettext('The document has been updated')}: ${doc.id}`)
-            this.docSavesLeft--
-            if (this.docSavesLeft===0 && this.batchesDone) {
-                addAlert('success', gettext('All documents updated!'))
-                this.updateDocumentTemplates()
-            }
         })
     }
 

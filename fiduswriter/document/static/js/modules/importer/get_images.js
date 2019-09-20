@@ -43,7 +43,7 @@ export class GetImages {
     getImageUrlEntry() {
         if (this.counter < this.imageEntries.length) {
             const getUrl = this.entries.find(entry => entry.filename === this.imageEntries[this.counter].image.split('/').pop()).url
-            const mimeString = this.imageEntries[this.counter].file_type
+            //const mimeString = this.imageEntries[this.counter].file_type
             return get(getUrl).then(
                 response => response.blob()
             ).then(

@@ -44,13 +44,14 @@ export class DocumentOverview {
     }
 
     render() {
-        document.body = document.createElement('body')
-        document.body.innerHTML = baseBodyTemplate({
+        this.dom = document.createElement('body')
+        this.dom.innerHTML = baseBodyTemplate({
             contents: '',
             user: this.user,
             staticUrl: this.staticUrl,
             hasOverview: true
         })
+        document.body = this.dom
         ensureCSS([
             'document_overview.css',
             'add_remove_dialog.css',
@@ -62,7 +63,7 @@ export class DocumentOverview {
     }
 
     bind() {
-        document.body.addEventListener('click', event => {
+        this.dom.addEventListener('click', event => {
             const el = {}
             let docId
             switch (true) {

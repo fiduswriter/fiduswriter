@@ -102,7 +102,6 @@ export class App {
         this.openLoginPage = () => new LoginPage(this.config)
         this.openOfflinePage = () => new OfflinePage(this.config)
         this.open404Page = () => new Page404(this.config)
-        this.showingUpdateDialog = false
     }
 
     init() {
@@ -177,34 +176,7 @@ export class App {
         })
         if (!this.config.debug) {
             OfflinePluginRuntime.install({
-                onUpdateReady: () => {
-                    if (this.showingUpdateDialog) {
-                        // Do not show more than one dialog.
-                        return
-                    }
-                    const buttons = [
-                        {
-                            text: gettext('Update'),
-                            classes: 'fw-dark',
-                            click: () => {
-                                OfflinePluginRuntime.applyUpdate()
-                                dialog.close()
-                                this.showingUpdateDialog = false
-                            }
-                        }
-                    ]
-                    const dialog = showSystemMessage(
-                        interpolate(
-                            gettext(
-                                'A new version of %(appName)s is available.'
-                            ),
-                            {appName: this.name},
-                            true
-                        ),
-                        buttons
-                    )
-                    this.showingUpdateDialog = true
-                },
+                onUpdateReady: () => OfflinePluginRuntime.applyUpdate(),
                 onUpdated: () => window.location.reload()
             })
         }

@@ -13,7 +13,6 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.db.models import Q
 from django.contrib.admin.views.decorators import staff_member_required
-from django.core.paginator import Paginator, EmptyPage
 
 from user.util import get_user_avatar_url
 from document.models import Document, AccessRight, DocumentRevision, \
@@ -983,24 +982,18 @@ def comment_notify(request):
 
 # maintenance views
 @staff_member_required
-def get_all_docs(request):
+def get_all_old_docs(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
         status = 200
         doc_list = Document.objects.filter(
             doc_version__lt=str(FW_DOCUMENT_VERSION)
+        )[:10]
+        response['docs'] = serializers.serialize(
+            'json',
+            doc_list
         )
-        paginator = Paginator(doc_list, 10)  # Get 10 docs per page
-
-        batch = request.POST['batch']
-        try:
-            response['docs'] = serializers.serialize(
-                'json',
-                paginator.page(batch)
-            )
-        except EmptyPage:
-            response['docs'] = "[]"
     return JsonResponse(
         response,
         status=status

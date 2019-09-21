@@ -102,6 +102,7 @@ export class App {
         this.openLoginPage = () => new LoginPage(this.config)
         this.openOfflinePage = () => new OfflinePage(this.config)
         this.open404Page = () => new Page404(this.config)
+        this.showingUpdateDialog = false
     }
 
     init() {
@@ -177,6 +178,10 @@ export class App {
         if (!this.config.debug) {
             OfflinePluginRuntime.install({
                 onUpdateReady: () => {
+                    if (this.showingUpdateDialog) {
+                        // Do not show more than one dialog.
+                        return
+                    }
                     const buttons = [
                         {
                             text: gettext('Update'),
@@ -184,6 +189,7 @@ export class App {
                             click: () => {
                                 OfflinePluginRuntime.applyUpdate()
                                 dialog.close()
+                                this.showingUpdateDialog = false
                             }
                         }
                     ]
@@ -197,6 +203,7 @@ export class App {
                         ),
                         buttons
                     )
+                    this.showingUpdateDialog = true
                 },
                 onUpdated: () => window.location.reload()
             })

@@ -37,7 +37,7 @@ export class DocMaintenance {
     getDocBatch() {
         this.batch++
         postJson(
-            '/api/document/admin/get_all/', {batch: this.batch}
+            '/api/document/admin/get_all_old/'
         ).then(
             ({json}) => {
                 const docs = window.JSON.parse(json.docs)

@@ -59,9 +59,9 @@ urlpatterns = [
         name='get_template_extras'
     ),
     url(
-        '^admin/get_all/$',
-        views.get_all_docs,
-        name='get_all_docs'
+        '^admin/get_all_old/$',
+        views.get_all_old_docs,
+        name='get_all_old_docs'
     ),
     url(
         '^admin/save_doc/$',

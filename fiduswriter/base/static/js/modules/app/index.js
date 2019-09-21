@@ -176,28 +176,7 @@ export class App {
         })
         if (!this.config.debug) {
             OfflinePluginRuntime.install({
-                onUpdateReady: () => {
-                    const buttons = [
-                        {
-                            text: gettext('Update'),
-                            classes: 'fw-dark',
-                            click: () => {
-                                OfflinePluginRuntime.applyUpdate()
-                                dialog.close()
-                            }
-                        }
-                    ]
-                    const dialog = showSystemMessage(
-                        interpolate(
-                            gettext(
-                                'A new version of %(appName)s is available.'
-                            ),
-                            {appName: this.name},
-                            true
-                        ),
-                        buttons
-                    )
-                },
+                onUpdateReady: () => OfflinePluginRuntime.applyUpdate(),
                 onUpdated: () => window.location.reload()
             })
         }

@@ -16,16 +16,17 @@ export class DatatableBulk {
     }
 
     bindEvents() {
-        document.body.addEventListener('click', this.onClick.bind(this))
+        this.overview.dom.addEventListener('click', this.onClick.bind(this))
         this.table.addEventListener('change', this.onTableCheckChange.bind(this))
         this.onTableCheckChange()
     }
 
     onTableCheckChange() {
-        const el = document.querySelector(`#${this.id}`)
+        const el = this.overview.dom.querySelector(`#${this.id}`)
         if (!el) {
             return
         }
+
         if (this.isChecked()) {
             el.classList.remove('disabled')
         } else {

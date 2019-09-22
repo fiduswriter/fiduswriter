@@ -206,12 +206,6 @@
     vertical-align: middle;
 }
 
-.dt-bulk:not(.disabled) .fw-check + label::before {
-    content: '✔';
-    font-size: 12pt;
-    font-family: 'Lato', sans-serif;
-}
-
 .dt-bulk-dropdown {
     display: inline-block;
     vertical-align: middle;

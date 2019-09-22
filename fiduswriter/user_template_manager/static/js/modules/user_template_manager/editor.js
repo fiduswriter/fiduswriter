@@ -17,10 +17,11 @@ export class DocTemplatesEditor {
             'editor.css',
             'user_template_manager.css'
         ], this.staticUrl)
-        return this.app.csl.getStyles(
-            styles => this.citationstyles = styles
-        ).then(
-            () => postJson('/api/user_template_manager/get/', {id: this.idString})
+        return this.app.csl.getStyles().then(
+            styles => {
+                this.citationStyles = styles
+                return postJson('/api/user_template_manager/get/', {id: this.idString})
+            }
         ).then(
             ({json}) => {
                 this.template = json.template

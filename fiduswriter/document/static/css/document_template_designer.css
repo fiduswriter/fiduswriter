@@ -148,3 +148,47 @@ table td {
 .error-element{
     border:3px solid red;
 }
+
+#template-editor .initial em, #template-editor .instructions em {
+    font-style: italic;
+}
+
+#template-editor .initial strong, #template-editor .instructions strong {
+    font-weight: bold;
+}
+
+#template-editor .initial code, #template-editor .instructions code {
+    font-family: monospace;
+}
+
+#template-editor .initial h1, #template-editor .instructions h1 {
+    font-size: 28px;
+}
+
+#template-editor .initial h2, #template-editor .instructions h2 {
+    font-size: 24px;
+}
+
+#template-editor .initial h3, #template-editor .instructions h3 {
+    font-size: 20px;
+}
+
+#template-editor .initial h4, #template-editor .instructions h4 {
+    font-size: 16px;
+}
+
+#template-editor .initial h5, #template-editor .instructions h5 {
+    font-size: 14px;
+}
+
+#template-editor .initial h6, #template-editor .instructions h6 {
+    font-size: 12px;
+}
+
+#template-editor .initial ul, #template-editor .instructions ul {
+    list-style-type: disc;
+}
+
+#template-editor .initial ol, #template-editor .instructions ol {
+    list-style-type: decimal;
+}

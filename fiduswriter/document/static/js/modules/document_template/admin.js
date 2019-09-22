@@ -26,7 +26,7 @@ export class DocumentTemplateAdmin {
         const csl = new CSL()
         const initialTasks = [
             whenReady(),
-            csl.getStyles.then(
+            csl.getStyles().then(
                 styles => this.citationStyles = styles
             )
         ]

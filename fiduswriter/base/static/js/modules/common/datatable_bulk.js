@@ -27,6 +27,12 @@ export class DatatableBulk {
             return
         }
 
+        if (this.isAllChecked()) {
+            el.querySelector('input[type=checkbox]').checked = true
+        } else {
+            el.querySelector('input[type=checkbox]').checked = false
+        }
+
         if (this.isChecked()) {
             el.classList.remove('disabled')
         } else {
@@ -75,6 +81,7 @@ export class DatatableBulk {
             } else if (target.matches('.fw-check + label, .fw-check + label *')) {
                 // Click on bulk checkbox
                 const isChecked = this.isAllChecked()
+                target.closest('div.dataTable-wrapper').querySelector('input[type=checkbox]').checked = !isChecked
                 this.table.querySelectorAll('input.entry-select[type=checkbox]').forEach(checkbox => checkbox.checked = !isChecked)
                 this.onTableCheckChange()
             } else if (target.matches('.fw-pulldown-item')) {

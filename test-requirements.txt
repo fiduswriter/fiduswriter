@@ -1,2 +1,0 @@
-selenium==3.14.1
-chromedriver-binary

@@ -24,8 +24,11 @@
 --ignore-directory=is:static-transpile
 --ignore-directory=is:static-libs
 --ignore-directory=is:.transpile-cache
+--ignore-directory=is:.transpile
+--ignore-directory=is:fiduswriter.egg-info
 --ignore-directory=is:fixtures
 --ignore-directory=is:venv
+--ignore-directory=is:build
 --ignore-file=ext:bak
 --ignore-file=match:/~$/
 --ignore-file=match:/^#.+#$/

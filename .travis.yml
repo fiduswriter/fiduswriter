@@ -11,13 +11,14 @@ addons:
   chrome: beta
 
 install:
-  - mv travis/configuration.py ./
+  - cd fiduswriter
+  - mv ../travis/configuration.py ./
   - pip3 install requests[security]
   - pip3 install -r requirements.txt
   - pip3 install -r dev-requirements.txt
   - pip3 install coverage
   - pip3 install coveralls
-  - coverage run manage.py init --no-static --no-compress
+  - coverage run manage.py setup --no-static --no-compress
 
 env:
   global:
@@ -41,12 +42,12 @@ jobs:
       addons: {}
       before_cache: skip
       cache: false
-      before_install: skip
+      before_install: cd fiduswriter
       install: pip3 install -r requirements.txt && pip3 install flake8==3.5.0
       after_success: skip
       env: TESTS=before
       before_script: skip
-      script: flake8 ./ && python3 manage.py check_js
+      script: flake8 ./ && python3 manage.py lint_js
     - stage: coveralls
       addons: {}
       before_cache: skip
@@ -64,7 +65,7 @@ after_success:
 
 cache:
   directories:
-    - node_modules
+    - fiduswriter/.transpile
     - $HOME/.cache/pip
     - static-libs
 before_cache:

@@ -1,0 +1,7 @@
+{
+    "dependencies": {
+        "biblatex-csl-converter": "1.6.x",
+        "fix-utf8": "1.1.1",
+        "tokenfield": "^1.2.2"
+    }
+}

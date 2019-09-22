@@ -1,0 +1,25 @@
+include version.txt
+recursive-include fiduswriter *
+exclude **/*.pyc
+exclude fiduswriter/fiduswriter.sql
+exclude fiduswriter/fiduswriter.sql.backup
+exclude fiduswriter/testing.py
+exclude fiduswriter/configuration.py
+exclude fiduswriter/.coveragerc
+exclude fiduswriter/.editorconfig
+exclude fiduswriter/chromedriver
+prune fiduswriter/media
+prune fiduswriter/.transpile
+prune fiduswriter/static-transpile
+prune fiduswriter/static-libs
+prune fiduswriter/venv
+prune fiduswriter/media
+prune fiduswriter/static-transpile
+prune fiduswriter/static-libs
+prune fiduswriter/book
+prune fiduswriter/citation-api-import
+prune fiduswriter/languagetool
+prune fiduswriter/npm_mjs
+prune fiduswriter/ojs
+prune fiduswriter/phplist
+prune fiduswriter/payment

@@ -1,0 +1,4193 @@
+# LANGUAGE translation for Fidus Writer
+# Copyright (C) YEAR THE TRANSLATORS NAME
+# This file is distributed under the same license as Fidus Writer.
+# THE TRANSLATORS NAME <EMAIL@ADDRESS>, YEAR
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-07-04 10:30+0000\n"
+"PO-Revision-Date: 2016-06-17 15:21+0200\n"
+"Last-Translator: Nicolas Rochard <nrochard@gmail.com>\n"
+"Language-Team: français <nrochard@gmail.com>\n"
+"Language: French \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Gtranslator 2.91.7\n"
+
+#: base/static/js/modules/404/index.js:17
+#: base/static/js/modules/flatpage/index.js:43
+msgid "Page not found"
+msgstr ""
+
+#: base/static/js/modules/404/index.js:18
+#: base/static/js/modules/flatpage/index.js:44
+msgid "Error 404"
+msgstr ""
+
+#: base/static/js/modules/404/index.js:18
+#: base/static/js/modules/flatpage/index.js:44
+msgid "The page you are looking for cannot be found."
+msgstr ""
+
+#: base/static/js/modules/404/index.js:21
+#: base/static/js/modules/flatpage/index.js:21
+#: user/static/js/modules/email_confirm/index.js:40
+#: user/static/js/modules/login/index.js:26
+#: user/static/js/modules/password_reset/index.js:24
+#: user/static/js/modules/signup/index.js:22
+msgid "Log in"
+msgstr "Se connecter"
+
+#: base/static/js/modules/admin_console/index.js:31
+msgid "Message delivered successfully!"
+msgstr ""
+
+#: base/static/js/modules/admin_console/index.js:33
+msgid "Message delivered"
+msgstr ""
+
+#: base/static/js/modules/admin_console/index.js:57
+msgid "Sending..."
+msgstr ""
+
+#: base/static/js/modules/common/basic.js:105
+msgid "System message"
+msgstr ""
+
+#: base/static/js/modules/common/dialog.js:14
+#: base/static/js/modules/common/dialog.js:30
+#: document/static/js/modules/editor/menus/headerbar/model.js:52
+msgid "Close"
+msgstr "Fermer"
+
+#: base/static/js/modules/common/dialog.js:35
+#: document/static/js/modules/editor/comments/editors/answer.js:11
+#: document/static/js/modules/editor/comments/editors/comment.js:87
+#: document/static/js/modules/editor/dialogs/templates.js:28
+msgid "Cancel"
+msgstr ""
+
+#: base/static/js/modules/common/dialog.js:40
+msgid "OK"
+msgstr ""
+
+#: base/static/js/modules/common/templates.js:7
+#: document/static/js/modules/documents/access_rights/templates.js:7
+#: user/static/js/modules/contacts/index.js:35
+msgid "Contacts"
+msgstr "Contacts"
+
+#: base/static/js/modules/common/templates.js:7
+msgid "Log out"
+msgstr "Déconnexion"
+
+#: base/static/js/modules/common/ws.js:22
+msgid "Warning! Some data is unsaved"
+msgstr ""
+
+#: base/static/js/modules/common/ws.js:24
+#: document/static/js/modules/editor/index.js:172
+msgid "Disconnected. Attempting to reconnect..."
+msgstr ""
+
+#: base/static/js/modules/prelogin/index.js:23
+msgid "New here?"
+msgstr "Nouveau dans le coin?"
+
+#: base/static/js/modules/prelogin/index.js:26
+#: user/static/js/modules/signup/index.js:27
+msgid "Sign up"
+msgstr "S'inscrire"
+
+#: base/static/js/modules/prelogin/index.js:30
+msgid "Terms and Conditions"
+msgstr "Termes et Conditions"
+
+#: base/static/js/modules/prelogin/index.js:33
+msgid "Privacy policy"
+msgstr ""
+
+#: base/static/js/modules/prelogin/index.js:36
+#, fuzzy
+#| msgid "Equations and Math by KaTeX"
+msgid "Equations and Math with MathLive"
+msgstr "Équations et Math par KaTeX"
+
+#: base/static/js/modules/prelogin/index.js:39
+msgid "Citations with Citation Style Language"
+msgstr "Citations avec Citation Style Language"
+
+#: base/static/js/modules/prelogin/index.js:42
+msgid "Editing with ProseMirror"
+msgstr "Édité avec ProseMirror"
+
+#: bibliography/static/js/modules/bibliography/database/index.js:75
+msgid "Could not obtain bibliography data"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/database/index.js:88
+#: bibliography/static/js/modules/bibliography/import/biblatex.js:8
+msgid "The bibliography could not be updated"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/database/index.js:97
+msgid "The bibliography has been updated."
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/database/index.js:118
+#: usermedia/static/js/modules/images/overview/categories.js:23
+msgid "The categories have been updated"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/database/index.js:122
+msgid "The categories could not be updated"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/database/index.js:162
+msgid "The bibliography item(s) have been deleted"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/fields/key.js:57
+msgid "From list"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/fields/key.js:57
+msgid "Custom"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/fields/literal.js:44
+#: bibliography/static/js/modules/bibliography/form/fields/literal_long.js:41
+#: bibliography/static/js/modules/bibliography/form/fields/title.js:41
+#: document/static/js/modules/document_template/templates.js:10
+#: document/static/js/modules/editor/marginboxes/templates.js:114
+#: document/static/js/modules/editor/menus/toolbar/model.js:245
+msgid "Strong"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/fields/literal.js:47
+#: bibliography/static/js/modules/bibliography/form/fields/literal_long.js:44
+#: bibliography/static/js/modules/bibliography/form/fields/title.js:44
+#: document/static/js/modules/document_template/templates.js:10
+#: document/static/js/modules/editor/marginboxes/templates.js:113
+#: document/static/js/modules/editor/menus/toolbar/model.js:270
+msgid "Emphasis"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/fields/literal.js:50
+#: bibliography/static/js/modules/bibliography/form/fields/literal_long.js:47
+#: bibliography/static/js/modules/bibliography/form/fields/title.js:47
+msgid "Small caps"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/fields/literal.js:53
+#: bibliography/static/js/modules/bibliography/form/fields/literal_long.js:50
+#: bibliography/static/js/modules/bibliography/form/fields/title.js:50
+msgid "Subscript₊"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/fields/literal.js:56
+#: bibliography/static/js/modules/bibliography/form/fields/literal_long.js:53
+#: bibliography/static/js/modules/bibliography/form/fields/title.js:53
+msgid "Supscript²"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/fields/name.js:63
+msgid "Person"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/fields/name.js:63
+msgid "Organization"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/fields/name.js:92
+msgid "Prefix used"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/fields/name.js:93
+#: user/static/js/modules/profile/templates.js:33
+msgid "First name"
+msgstr "Prénom"
+
+#: bibliography/static/js/modules/bibliography/form/fields/name.js:95
+msgid "Prefix"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/fields/name.js:97
+#: user/static/js/modules/profile/templates.js:33
+msgid "Last name"
+msgstr "Nom"
+
+#: bibliography/static/js/modules/bibliography/form/fields/name.js:99
+msgid "Suffix"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/fields/name.js:108
+msgid "Organization name"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/fields/range.js:56
+msgid "Single value"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/fields/range.js:56
+msgid "Range"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/fields/range.js:95
+msgid "From"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/fields/range.js:97
+msgid "To"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/fields/title.js:56
+msgid "CasE ProTecT"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/index.js:76
+msgid "Edit Source"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/index.js:80
+msgid "Register New Source"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/index.js:100
+#: bibliography/static/js/modules/bibliography/overview/index.js:175
+#: document/static/js/modules/documents/access_rights/index.js:57
+#: document/static/js/modules/editor/comments/editors/answer.js:11
+#: document/static/js/modules/editor/comments/editors/comment.js:87
+#: user/static/js/modules/contacts/manage.js:53
+#: user/static/js/modules/profile/dialogs.js:78
+#: user/static/js/modules/profile/dialogs.js:138
+#: user/static/js/modules/profile/dialogs.js:211
+#: user/static/js/modules/profile/templates.js:33
+#: usermedia/static/js/modules/images/overview/categories.js:51
+msgid "Submit"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/index.js:276
+msgid "Error in form, check highlighted values!"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:2
+#: document/static/js/modules/document_template/templates.js:43
+msgid "Abstract"
+msgstr "Résumé"
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:3
+msgid "Addendum"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:4
+msgid "Afterword"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:5
+msgid "Annotation"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:6
+msgid "Annotations author(s)"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:7
+msgid "Author(s)"
+msgstr "Auteur(s)"
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:8
+msgid "Author type"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:9
+msgid "Book author(s)"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:10
+msgid "Book pagination"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:11
+msgid "Book subtitle"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:12
+msgid "Book title"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:13
+msgid "Book title annex"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:14
+msgid "Chapter or section"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:15
+msgid "Author(s) of a commentary"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:16
+msgid "Publication date"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:17
+msgid "Digital Object Identifier"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:18
+msgid "Edition"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:19
+msgid "Editor(s)"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:20
+msgid "Secondary editor"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:21
+msgid "Secondary editor 2"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:22
+msgid "Secondary editor 3"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:23
+msgid "Role of editor(s)"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:24
+msgid "Role of secondary editor"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:25
+msgid "Role of secondary editor 2"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:26
+msgid "Role of secondary editor 3"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:27
+msgid "Electronic identifier of an article"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:28
+msgid "Entry subtype"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:29
+msgid "Electronic identifier of an online publication"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:30
+msgid "Additional information to an online publication"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:31
+msgid "Eprint identifier type"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:32
+msgid "Event date"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:33
+msgid "Event title"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:34
+msgid "Local link to the work"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:35
+msgid "Foreword author(s)"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:36
+msgid "Patent holder(s)"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:37
+msgid "Publication notice"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:38
+msgid "Title for indexing"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:39
+#: document/static/js/modules/editor/dialogs/templates.js:54
+msgid "Institution"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:40
+msgid "Author(s) of an introduction to the work"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:41
+msgid "ISAN"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:42
+msgid "ISBN"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:43
+msgid "ISMN"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:44
+msgid "ISRN"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:45
+msgid "ISSN"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:46
+msgid "Issue"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:47
+msgid "Issue subtitle"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:48
+msgid "Issue title"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:49
+msgid "ISWC"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:50
+msgid "Subtitle of publication"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:51
+msgid "Title of publication"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:52
+#: document/static/js/modules/document_template/templates.js:62
+msgid "Keywords"
+msgstr "Mots-clés"
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:53
+msgid "Label"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:54
+msgid "Language(s) of work"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:55
+msgid "Language of bibliography item"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:56
+msgid "Library information"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:57
+msgid "Location(s) of publication"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:58
+msgid "Main subtitle"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:59
+msgid "Maintitle"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:60
+msgid "Annex to the maintitle"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:61
+msgid "author name addon"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:62
+msgid "Note"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:63
+msgid "Number of the work in a series"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:64
+msgid "Organization(s)"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:65
+msgid "Publication date of the original work"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:66
+msgid "Language of the original work"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:67
+msgid "Publication location of the original edition"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:68
+msgid "Publisher of the original edition"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:69
+msgid "Title of the original work"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:70
+msgid "Pages"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:71
+msgid "Total number of pages"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:72
+msgid "Pagination"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:73
+msgid "Number of a partial volume"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:74
+msgid "Publisher(s)"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:75
+msgid "Publication state of the work"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:76
+msgid "Title of reprint"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:77
+msgid "Name of series"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:78
+msgid "Abbreviated author(s)"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:79
+msgid "Abbreviated editor(s)"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:80
+msgid "Shorthand"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:81
+msgid "Shorthand intro"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:82
+msgid "Acronym of the publication's title"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:83
+msgid "Acronym of the series"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:84
+msgid "Abridged title"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:85
+#: document/static/js/modules/document_template/templates.js:21
+msgid "Subtitle"
+msgstr "Sous Titre"
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:86
+#: bibliography/static/js/modules/bibliography/overview/index.js:77
+#: document/static/js/modules/document_template/templates.js:21
+#: document/static/js/modules/document_template/templates.js:32
+#: document/static/js/modules/document_template/templates.js:43
+#: document/static/js/modules/document_template/templates.js:53
+#: document/static/js/modules/document_template/templates.js:62
+#: document/static/js/modules/document_template/templates.js:72
+#: document/static/js/modules/document_template/templates.js:82
+#: document/static/js/modules/document_template/templates.js:146
+#: document/static/js/modules/documents/overview/index.js:151
+#: document/static/js/modules/editor/dialogs/citation.js:196
+#: document/static/js/modules/editor/dialogs/templates.js:28
+#: document/static/js/modules/editor/dialogs/templates.js:40
+#: document/static/js/modules/editor/state_plugins/links.js:125
+#: document/static/js/modules/schema/document/structure.js:245
+#: usermedia/static/js/modules/images/selection_dialog/index.js:105
+msgid "Title"
+msgstr "Titre"
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:87
+msgid "Title addon"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:88
+msgid "Translator(s)"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:89
+msgid "Manual type"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:90
+#: document/static/js/modules/editor/dialogs/templates.js:8
+msgid "URL"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:91
+msgid "Access date"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:92
+msgid "Location of a conference"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:93
+msgid "Version"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:94
+msgid "Volume"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:95
+msgid "Total number of volumes"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:97
+msgid "In <em>Extended Date Time Format</em> (EDTF) 1.0<br>Level 0 or 1"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:98
+msgid ""
+"Prefixed is \"used\" when it is used in cases where only the last name is "
+"used.     For example: \"Ludwig van Beethoven\" turns into \"Beethoven\", so "
+"the prefix \"van\"     is not used. \"Vincent van Gogh\" turns into \"van "
+"Gogh\", so the prefix \"van\" is used."
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:104
+msgid "Range or single page, column, paragraph, section, line"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:113
+msgid "Article"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:114
+msgid "Book"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:115
+msgid "Multi-volume book"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:116
+msgid "In book"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:117
+msgid "Book in book"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:118
+msgid "Supplemental material in a book"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:119
+msgid "Booklet"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:120
+msgid "Collection"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:121
+msgid "Multi-volume collection"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:122
+msgid "In collection"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:123
+msgid "Supplemental material in a collection"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:124
+#: bibliography/static/js/modules/bibliography/form/strings.js:148
+msgid "Manual"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:125
+msgid "Miscellany"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:126
+msgid "Online resource"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:127
+#: bibliography/static/js/modules/bibliography/form/strings.js:149
+msgid "Patent"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:128
+msgid "Periodical"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:129
+msgid "Supplemental material in a periodical"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:130
+msgid "Proceedings"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:131
+msgid "Multi-volume proceedings"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:132
+msgid "Article in a proceedings"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:133
+msgid "Reference"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:134
+msgid "Multi-volume work of reference"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:135
+msgid "Article in a work of reference"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:136
+#: bibliography/static/js/modules/bibliography/form/strings.js:150
+msgid "Report"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:137
+#: bibliography/static/js/modules/bibliography/form/strings.js:151
+msgid "Thesis"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:138
+msgid "Unpublished"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:139
+msgid "Magazine article"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:140
+msgid "Newspaper article"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:141
+msgid "Journal article"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:142
+msgid "Encyclopedia entry"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:143
+msgid "Dictionary entry"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:144
+msgid "Blog post"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:145
+msgid "Forum post"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:152
+msgid "Editor"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:153
+msgid "Compiler"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:154
+msgid "Founder"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:155
+msgid "Continuator"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:156
+msgid "Redactor"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:157
+msgid "Reviser"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:158
+msgid "Collaborator"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:159
+#: document/static/js/modules/editor/dialogs/templates.js:51
+msgid "Page"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:160
+msgid "Column"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:161
+msgid "Section"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:162
+#: document/static/js/modules/document_template/templates.js:6
+#: document/static/js/modules/editor/marginboxes/templates.js:136
+msgid "Paragraph"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:163
+msgid "Verse"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:164
+msgid "Line"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:165
+msgid "In preparation"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:166
+msgid "Submitted"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:167
+msgid "Forthcoming"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:168
+msgid "In press"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:169
+msgid "Pre-published"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:170
+msgid "M.A. thesis"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:171
+msgid "Ph.D. thesis"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:172
+msgid "Candidate thesis"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:173
+msgid "Technical report"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:174
+msgid "Research report"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:175
+msgid "Computer software"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:176
+msgid "Data CD"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:177
+msgid "Audio CD"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:178
+msgid "Acadian"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:179
+#: document/static/js/modules/schema/const.js:1
+msgid "Afrikaans"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:180
+#: document/static/js/modules/schema/const.js:1
+msgid "Arabic"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:181
+msgid "Basque"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:182
+#: document/static/js/modules/schema/const.js:1
+msgid "Bulgarian"
+msgstr "Bulgare"
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:183
+#: document/static/js/modules/schema/const.js:1
+msgid "Catalan"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:184
+#: bibliography/static/js/modules/bibliography/form/strings.js:185
+msgid "Chinese"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:186
+msgid "Croatian"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:187
+msgid "Czech"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:188
+#: document/static/js/modules/schema/const.js:1
+msgid "Danish"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:189
+#: document/static/js/modules/editor/menus/headerbar/model.js:201
+#: document/static/js/modules/schema/const.js:1
+msgid "Dutch"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:190
+msgid "Australian English"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:191
+msgid "Canadian English"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:192
+msgid "New Zealand English"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:193
+#: bibliography/static/js/modules/bibliography/form/strings.js:194
+msgid "UK English"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:195
+#: bibliography/static/js/modules/bibliography/form/strings.js:196
+msgid "US English"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:197
+msgid "Estonian"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:198
+msgid "Farsi"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:199
+msgid "Finnish"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:200
+#: document/static/js/modules/editor/menus/headerbar/model.js:201
+#: document/static/js/modules/schema/const.js:1
+msgid "French"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:201
+msgid "Canadian French"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:202
+msgid "German"
+msgstr "Allemand"
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:203
+msgid "Austrian German"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:204
+#: document/static/js/modules/schema/const.js:1
+msgid "Greek"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:205
+#: document/static/js/modules/schema/const.js:1
+msgid "Hebrew"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:206
+msgid "Hungarian"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:207
+#: document/static/js/modules/schema/const.js:1
+msgid "Icelandic"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:208
+#: document/static/js/modules/editor/menus/headerbar/model.js:201
+#: document/static/js/modules/schema/const.js:1
+msgid "Italian"
+msgstr "Italien"
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:209
+#: document/static/js/modules/editor/menus/headerbar/model.js:201
+#: document/static/js/modules/schema/const.js:1
+msgid "Japanese"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:210
+msgid "Latin"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:211
+msgid "Latvian"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:212
+#: document/static/js/modules/schema/const.js:1
+msgid "Lithuanian"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:213
+msgid "Magyar"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:214
+msgid "Mongolian"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:215
+msgid "Norwegian"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:216
+msgid "New Norwegian"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:217
+#: document/static/js/modules/editor/menus/headerbar/model.js:201
+#: document/static/js/modules/schema/const.js:1
+msgid "Polish"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:218
+msgid "Portuguese"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:219
+#: bibliography/static/js/modules/bibliography/form/strings.js:220
+msgid "Brazilian Portuguese"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:221
+#: document/static/js/modules/schema/const.js:1
+msgid "Romanian"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:222
+#: document/static/js/modules/editor/menus/headerbar/model.js:201
+#: document/static/js/modules/schema/const.js:1
+msgid "Russian"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:223
+msgid "Serbian"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:224
+msgid "Cyrillic Serbian"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:225
+#: document/static/js/modules/schema/const.js:1
+msgid "Slovak"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:226
+msgid "Slovene"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:227
+#: document/static/js/modules/editor/menus/headerbar/model.js:201
+#: document/static/js/modules/schema/const.js:1
+msgid "Spanish"
+msgstr "Espagnol"
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:228
+#: document/static/js/modules/schema/const.js:1
+msgid "Swedish"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:229
+msgid "Thai"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:230
+#: document/static/js/modules/schema/const.js:1
+msgid "Turkish"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:231
+#: document/static/js/modules/schema/const.js:1
+msgid "Ukrainian"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/strings.js:232
+msgid "Vietnamese"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/templates.js:6
+msgid "Select source type"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/templates.js:6
+msgid "Required Fields"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/templates.js:6
+msgid "Optional Fields"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/templates.js:6
+msgid "Categories"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/import/biblatex.js:3
+msgid "No bibliography entries could be found in import file."
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/import/biblatex.js:4
+msgid "An error occured while reading a bibtex entry"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/import/biblatex.js:5
+msgid "Field cannot not be saved. Fidus Writer does not support the field."
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/import/biblatex.js:6
+msgid ""
+"Entry has been saved as \"misc\". Fidus Writer does not support the entry "
+"type."
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/import/biblatex.js:7
+msgid "Field does not contain a valid EDTF string."
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/import/biblatex.js:39
+msgid "There was an issue with the bibtex import"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/import/dialog.js:16
+#: document/static/js/modules/documents/overview/actions.js:61
+msgid "Import"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/import/dialog.js:51
+msgid "Import a BibTex library"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/import/templates.js:2
+#: document/static/js/modules/documents/overview/templates.js:2
+#: user/static/js/modules/profile/templates.js:7
+#: usermedia/static/js/modules/images/edit_dialog/templates.js:20
+msgid "Select a file"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/overview/index.js:49
+msgid "Bibliography Manager"
+msgstr "Gestionnaire de Bibliographie"
+
+#: bibliography/static/js/modules/bibliography/overview/index.js:70
+#: document/static/js/modules/editor/dialogs/citation.js:187
+msgid "No sources registered"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/overview/index.js:77
+msgid "Sourcetype"
+msgstr "Type de Source"
+
+#: bibliography/static/js/modules/bibliography/overview/index.js:77
+#: document/static/js/modules/editor/dialogs/citation.js:196
+#: document/static/js/modules/editor/dialogs/templates.js:40
+#: document/static/js/modules/editor/marginboxes/templates.js:178
+msgid "Author"
+msgstr "Auteur"
+
+#: bibliography/static/js/modules/bibliography/overview/index.js:77
+msgid "Published"
+msgstr "Publié"
+
+#: bibliography/static/js/modules/bibliography/overview/index.js:145
+#: document/static/js/modules/documents/overview/index.js:176
+#: document/static/js/modules/editor/dialogs/citation.js:98
+#: document/static/js/modules/editor/dialogs/citation.js:139
+#: document/static/js/modules/exporter/tools/file.js:3
+#: usermedia/static/js/modules/images/overview/index.js:126
+msgid "Untitled"
+msgstr "Sans Titre"
+
+#: bibliography/static/js/modules/bibliography/overview/index.js:200
+#: usermedia/static/js/modules/images/overview/categories.js:76
+msgid "Edit Categories"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/overview/index.js:216
+#: document/static/js/modules/document_template/templates.js:146
+#: document/static/js/modules/documents/access_rights/templates.js:9
+#: document/static/js/modules/documents/overview/actions.js:42
+#: document/static/js/modules/documents/revisions/index.js:129
+#: document/static/js/modules/documents/revisions/templates.js:6
+#: document/static/js/modules/editor/marginboxes/templates.js:13
+#: document/static/js/modules/editor/marginboxes/templates.js:82
+#: user/static/js/modules/contacts/index.js:35
+#: user/static/js/modules/contacts/manage.js:94
+#: user/static/js/modules/profile/delete_user.js:10
+#: user/static/js/modules/profile/dialogs.js:58
+#: usermedia/static/js/modules/images/overview/index.js:85
+msgid "Delete"
+msgstr "Effacer"
+
+#: bibliography/static/js/modules/bibliography/overview/index.js:227
+#: document/static/js/modules/documents/overview/actions.js:37
+#: document/static/js/modules/documents/revisions/index.js:146
+#: user/static/js/modules/contacts/manage.js:104
+#: user/static/js/modules/profile/delete_user.js:25
+#: user/static/js/modules/profile/dialogs.js:68
+#: usermedia/static/js/modules/images/overview/index.js:97
+msgid "Confirm deletion"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/overview/index.js:228
+msgid "Delete the bibliography item(s)"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/overview/menu.js:4
+#: document/static/js/modules/documents/overview/menu.js:4
+#: user/static/js/modules/contacts/menu.js:4
+#: usermedia/static/js/modules/images/overview/menu.js:2
+msgid "Delete selected"
+msgstr "Effacer la sélection"
+
+#: bibliography/static/js/modules/bibliography/overview/menu.js:13
+msgid "Export selected"
+msgstr "Exporter la sélection"
+
+#: bibliography/static/js/modules/bibliography/overview/menu.js:28
+#: usermedia/static/js/modules/images/overview/menu.js:16
+msgid "All categories"
+msgstr "Toutes les catégories"
+
+#: bibliography/static/js/modules/bibliography/overview/menu.js:37
+#: usermedia/static/js/modules/images/overview/menu.js:25
+msgid "Edit categories"
+msgstr "Éditer les catégories"
+
+#: bibliography/static/js/modules/bibliography/overview/menu.js:42
+#: document/static/js/modules/editor/dialogs/citation.js:24
+msgid "Register new source"
+msgstr "Enregistrer une nouvelle source"
+
+#: bibliography/static/js/modules/bibliography/overview/menu.js:57
+msgid "Upload BibTeX file"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/overview/menu.js:66
+msgid "Search bibliography"
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/tools.js:30
+msgid " and others"
+msgstr ""
+
+#: document/static/js/modules/document_template/designer.js:271
+msgid "All document parts need an ID."
+msgstr ""
+
+#: document/static/js/modules/document_template/designer.js:281
+msgid "IDs cannot contain spaces."
+msgstr ""
+
+#: document/static/js/modules/document_template/designer.js:302
+msgid "IDs have to be unique."
+msgstr ""
+
+#: document/static/js/modules/document_template/schema.js:79
+#: document/static/js/modules/document_template/schema.js:146
+#: document/static/js/modules/document_template/schema.js:177
+msgid "Change to heading "
+msgstr ""
+
+#: document/static/js/modules/document_template/schema.js:80
+#: document/static/js/modules/document_template/schema.js:147
+#: document/static/js/modules/document_template/schema.js:178
+msgid "Heading level "
+msgstr ""
+
+#: document/static/js/modules/document_template/schema.js:86
+#: document/static/js/modules/document_template/schema.js:87
+msgid "Insert Table"
+msgstr ""
+
+#: document/static/js/modules/document_template/schema.js:112
+#: document/static/js/modules/document_template/schema.js:113
+#, fuzzy
+#| msgid "Delete selected"
+msgid "Delete Table"
+msgstr "Effacer la sélection"
+
+#: document/static/js/modules/document_template/schema.js:159
+msgid "Insert column before"
+msgstr ""
+
+#: document/static/js/modules/document_template/schema.js:159
+msgid "Insert column after"
+msgstr ""
+
+#: document/static/js/modules/document_template/schema.js:159
+#: document/static/js/modules/editor/menus/table/model.js:120
+msgid "Delete column"
+msgstr ""
+
+#: document/static/js/modules/document_template/schema.js:159
+msgid "Insert row before"
+msgstr ""
+
+#: document/static/js/modules/document_template/schema.js:159
+msgid "Insert row after"
+msgstr ""
+
+#: document/static/js/modules/document_template/schema.js:159
+#: document/static/js/modules/editor/menus/table/model.js:103
+msgid "Delete row"
+msgstr ""
+
+#: document/static/js/modules/document_template/schema.js:159
+msgid "Split cell"
+msgstr ""
+
+#: document/static/js/modules/document_template/schema.js:159
+#: document/static/js/modules/editor/menus/table/model.js:140
+msgid "Merge cells"
+msgstr ""
+
+#: document/static/js/modules/document_template/schema.js:159
+#: document/static/js/modules/editor/menus/table/model.js:194
+msgid "Toggle header column"
+msgstr ""
+
+#: document/static/js/modules/document_template/schema.js:159
+#: document/static/js/modules/editor/menus/table/model.js:177
+msgid "Toggle header row"
+msgstr ""
+
+#: document/static/js/modules/document_template/schema.js:159
+msgid "Toggle header cells"
+msgstr ""
+
+#: document/static/js/modules/document_template/schema.js:161
+#: document/static/js/modules/document_template/schema.js:164
+#: document/static/js/modules/document_template/templates.js:6
+#: document/static/js/modules/document_template/templates.js:72
+#: document/static/js/modules/editor/menus/toolbar/model.js:462
+#: document/static/js/modules/schema/common.js:107
+msgid "Table"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:6
+msgid "Allowed elements"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:6
+#: document/static/js/modules/document_template/templates.js:21
+#: document/static/js/modules/editor/marginboxes/templates.js:137
+#: document/static/js/modules/editor/menus/navigator/model.js:3
+msgid "Heading 1"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:6
+#: document/static/js/modules/document_template/templates.js:21
+#: document/static/js/modules/editor/marginboxes/templates.js:138
+#: document/static/js/modules/editor/menus/navigator/model.js:6
+msgid "Heading 2"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:6
+#: document/static/js/modules/document_template/templates.js:21
+#: document/static/js/modules/editor/marginboxes/templates.js:139
+#: document/static/js/modules/editor/menus/navigator/model.js:9
+msgid "Heading 3"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:6
+#: document/static/js/modules/document_template/templates.js:21
+#: document/static/js/modules/editor/marginboxes/templates.js:140
+#: document/static/js/modules/editor/menus/navigator/model.js:12
+msgid "Heading 4"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:6
+#: document/static/js/modules/document_template/templates.js:21
+#: document/static/js/modules/editor/marginboxes/templates.js:141
+#: document/static/js/modules/editor/menus/navigator/model.js:15
+msgid "Heading 5"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:6
+#: document/static/js/modules/document_template/templates.js:21
+#: document/static/js/modules/editor/marginboxes/templates.js:142
+#: document/static/js/modules/editor/menus/navigator/model.js:18
+msgid "Heading 6"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:6
+#: document/static/js/modules/editor/menus/toolbar/model.js:16
+#: document/static/js/modules/editor/menus/toolbar/model.js:446
+#: document/static/js/modules/schema/common.js:106
+msgid "Figure"
+msgstr "Figure"
+
+#: document/static/js/modules/document_template/templates.js:6
+msgid "Ordered list"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:6
+#: document/static/js/modules/editor/menus/toolbar/model.js:332
+msgid "Bullet list"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:6
+msgid "Horizontal rule"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:6
+msgid "Equation"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:6
+msgid "Citation"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:6
+#: document/static/js/modules/editor/menus/toolbar/model.js:348
+msgid "Blockquote"
+msgstr "Bloc de citation"
+
+#: document/static/js/modules/document_template/templates.js:6
+#: document/static/js/modules/editor/menus/toolbar/model.js:110
+#: document/static/js/modules/editor/menus/toolbar/model.js:381
+msgid "Footnote"
+msgstr "Note de bas de page"
+
+#: document/static/js/modules/document_template/templates.js:10
+msgid "Allowed marks"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:10
+#: document/static/js/modules/editor/marginboxes/templates.js:115
+#: document/static/js/modules/editor/menus/toolbar/model.js:291
+msgid "Underline"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:10
+#: document/static/js/modules/editor/dialogs/link.js:154
+#: document/static/js/modules/editor/menus/toolbar/model.js:365
+msgid "Link"
+msgstr "Lien"
+
+#: document/static/js/modules/document_template/templates.js:10
+#: document/static/js/modules/editor/menus/selection/model.js:43
+#: document/static/js/modules/editor/state_plugins/links.js:125
+msgid "Anchor"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:21
+msgid "Heading"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:21
+#: document/static/js/modules/document_template/templates.js:32
+#: document/static/js/modules/document_template/templates.js:43
+#: document/static/js/modules/document_template/templates.js:53
+#: document/static/js/modules/document_template/templates.js:62
+#: document/static/js/modules/document_template/templates.js:72
+#: document/static/js/modules/document_template/templates.js:82
+msgid "Configure"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:21
+#: document/static/js/modules/document_template/templates.js:32
+#: document/static/js/modules/document_template/templates.js:43
+#: document/static/js/modules/document_template/templates.js:53
+#: document/static/js/modules/document_template/templates.js:62
+#: document/static/js/modules/document_template/templates.js:72
+#: document/static/js/modules/document_template/templates.js:82
+msgid "ID"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:21
+#: document/static/js/modules/document_template/templates.js:32
+#: document/static/js/modules/document_template/templates.js:43
+#: document/static/js/modules/document_template/templates.js:62
+msgid "Metadata function"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:21
+#: document/static/js/modules/document_template/templates.js:32
+#: document/static/js/modules/document_template/templates.js:43
+#: document/static/js/modules/document_template/templates.js:62
+#: document/static/js/modules/schema/common.js:105
+msgid "None"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:21
+#: document/static/js/modules/document_template/templates.js:32
+#: document/static/js/modules/document_template/templates.js:43
+#: document/static/js/modules/document_template/templates.js:62
+#: document/static/js/modules/document_template/templates.js:72
+msgid "Locking"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:21
+#: document/static/js/modules/document_template/templates.js:32
+#: document/static/js/modules/document_template/templates.js:43
+#: document/static/js/modules/document_template/templates.js:62
+#: document/static/js/modules/document_template/templates.js:72
+msgid "User can change contents"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:21
+#: document/static/js/modules/document_template/templates.js:32
+#: document/static/js/modules/document_template/templates.js:43
+#: document/static/js/modules/document_template/templates.js:62
+#: document/static/js/modules/document_template/templates.js:72
+msgid "User can not change contents"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:21
+#: document/static/js/modules/document_template/templates.js:32
+#: document/static/js/modules/document_template/templates.js:43
+#: document/static/js/modules/document_template/templates.js:62
+msgid "User can only add content"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:21
+#: document/static/js/modules/document_template/templates.js:32
+#: document/static/js/modules/document_template/templates.js:43
+#: document/static/js/modules/document_template/templates.js:53
+#: document/static/js/modules/document_template/templates.js:62
+#: document/static/js/modules/document_template/templates.js:72
+#: document/static/js/modules/document_template/templates.js:82
+msgid "Optional"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:21
+#: document/static/js/modules/document_template/templates.js:32
+#: document/static/js/modules/document_template/templates.js:43
+#: document/static/js/modules/document_template/templates.js:53
+#: document/static/js/modules/document_template/templates.js:62
+#: document/static/js/modules/document_template/templates.js:72
+#: document/static/js/modules/document_template/templates.js:82
+msgid "Obligatory field"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:21
+#: document/static/js/modules/document_template/templates.js:32
+#: document/static/js/modules/document_template/templates.js:43
+#: document/static/js/modules/document_template/templates.js:53
+#: document/static/js/modules/document_template/templates.js:62
+#: document/static/js/modules/document_template/templates.js:72
+#: document/static/js/modules/document_template/templates.js:82
+msgid "Optional, shown by default"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:21
+#: document/static/js/modules/document_template/templates.js:32
+#: document/static/js/modules/document_template/templates.js:43
+#: document/static/js/modules/document_template/templates.js:53
+#: document/static/js/modules/document_template/templates.js:62
+#: document/static/js/modules/document_template/templates.js:72
+#: document/static/js/modules/document_template/templates.js:82
+msgid "Optional, not shown by default"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:21
+msgid "Allowed headings"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:23
+#: document/static/js/modules/document_template/templates.js:47
+#: document/static/js/modules/document_template/templates.js:76
+msgid "Language"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:23
+#: document/static/js/modules/document_template/templates.js:47
+#: document/static/js/modules/document_template/templates.js:76
+msgid "Document language"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:23
+#: document/static/js/modules/document_template/templates.js:32
+#: document/static/js/modules/document_template/templates.js:47
+#: document/static/js/modules/document_template/templates.js:62
+#: document/static/js/modules/document_template/templates.js:76
+msgid "Initial content"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:23
+#: document/static/js/modules/document_template/templates.js:32
+#: document/static/js/modules/document_template/templates.js:47
+#: document/static/js/modules/document_template/templates.js:62
+#: document/static/js/modules/document_template/templates.js:76
+#: document/static/js/modules/editor/marginboxes/templates.js:186
+msgid "Instructions"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:32
+msgid "Namelist"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:32
+#: document/static/js/modules/document_template/templates.js:62
+msgid "Item title"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:32
+msgid "Authors"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:43
+msgid "Richtext"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:53
+msgid "Separator"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:62
+msgid "Tags"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:72
+msgid "User can not change first row"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:82
+#: document/static/js/modules/schema/document/structure.js:191
+msgid "Table of Contents"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:143
+msgid "Source/Editor"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:146
+msgid "Element types"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:146
+msgid "Document structure"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:148
+msgid "Setting"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:148
+msgid "Value"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:148
+msgid "Footnote specifications"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:148
+msgid "Permitted languages"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:148
+msgid "Permitted paper sizes"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:148
+#, fuzzy
+#| msgid "Bibliography Manager"
+msgid "Custom bibliography header"
+msgstr "Gestionnaire de Bibliographie"
+
+#: document/static/js/modules/documents/access_rights/index.js:38
+#: user/static/js/modules/contacts/menu.js:16
+msgid "Add new contact"
+msgstr "Ajouter un nouveau contact"
+
+#: document/static/js/modules/documents/access_rights/index.js:74
+msgid "Share your document with others"
+msgstr ""
+
+#: document/static/js/modules/documents/access_rights/index.js:156
+msgid "Access rights have been saved"
+msgstr ""
+
+#: document/static/js/modules/documents/access_rights/index.js:157
+msgid "Access rights could not be saved"
+msgstr ""
+
+#: document/static/js/modules/documents/access_rights/templates.js:7
+msgid "My contacts"
+msgstr ""
+
+#: document/static/js/modules/documents/access_rights/templates.js:9
+msgid "My collaborators"
+msgstr ""
+
+#: document/static/js/modules/documents/access_rights/templates.js:9
+msgid "Collaborators"
+msgstr ""
+
+#: document/static/js/modules/documents/access_rights/templates.js:9
+#: document/static/js/modules/documents/overview/index.js:151
+msgid "Rights"
+msgstr ""
+
+#: document/static/js/modules/documents/access_rights/templates.js:21
+msgid "Basic access rights"
+msgstr ""
+
+#: document/static/js/modules/documents/access_rights/templates.js:21
+msgid "Basic"
+msgstr ""
+
+#: document/static/js/modules/documents/access_rights/templates.js:21
+msgid "Write"
+msgstr ""
+
+#: document/static/js/modules/documents/access_rights/templates.js:21
+msgid "Write with changes tracked"
+msgstr ""
+
+#: document/static/js/modules/documents/access_rights/templates.js:21
+msgid "Write tracked"
+msgstr ""
+
+#: document/static/js/modules/documents/access_rights/templates.js:21
+#: document/static/js/modules/editor/menus/selection/model.js:32
+#, fuzzy
+msgid "Comment"
+msgstr ""
+"#-#-#-#-#  djangojs.po (1.0)  #-#-#-#-#\n"
+"#-#-#-#-#  djangojs.po (1.0)  #-#-#-#-#\n"
+"Commentaires"
+
+#: document/static/js/modules/documents/access_rights/templates.js:21
+msgid "Read"
+msgstr ""
+
+#: document/static/js/modules/documents/access_rights/templates.js:21
+msgid "Access rights used within document review"
+msgstr ""
+
+#: document/static/js/modules/documents/access_rights/templates.js:21
+msgid "Review"
+msgstr ""
+
+#: document/static/js/modules/documents/access_rights/templates.js:21
+msgid "Read document but not see comments and chats of others"
+msgstr ""
+
+#: document/static/js/modules/documents/access_rights/templates.js:21
+msgid "No comments"
+msgstr ""
+
+#: document/static/js/modules/documents/access_rights/templates.js:21
+msgid "Comment, but not see comments and chats of others"
+msgstr ""
+
+#: document/static/js/modules/documents/overview/actions.js:26
+msgid "Document has been deleted"
+msgstr ""
+
+#: document/static/js/modules/documents/overview/actions.js:30
+msgid "Could not delete document"
+msgstr ""
+
+#: document/static/js/modules/documents/overview/actions.js:38
+msgid "Delete the document(s)?"
+msgstr ""
+
+#: document/static/js/modules/documents/overview/actions.js:103
+msgid "Import a Fidus file"
+msgstr ""
+
+#: document/static/js/modules/documents/overview/index.js:54
+msgid "Document Overview"
+msgstr "Aperçu du document"
+
+#: document/static/js/modules/documents/overview/index.js:101
+msgid "Cannot load data of documents."
+msgstr ""
+
+#: document/static/js/modules/documents/overview/index.js:144
+msgid "No documents available"
+msgstr ""
+
+#: document/static/js/modules/documents/overview/index.js:151
+msgid "Revisions"
+msgstr "Révisions"
+
+#: document/static/js/modules/documents/overview/index.js:151
+msgid "Created"
+msgstr "Créé"
+
+#: document/static/js/modules/documents/overview/index.js:151
+msgid "Last changed"
+msgstr "Dernière modification"
+
+#: document/static/js/modules/documents/overview/index.js:151
+msgid "Owner"
+msgstr "Propriétaire"
+
+#: document/static/js/modules/documents/overview/menu.js:10
+msgid "You cannot delete documents of other users"
+msgstr ""
+
+#: document/static/js/modules/documents/overview/menu.js:19
+msgid "Share selected"
+msgstr "Partager la sélection"
+
+#: document/static/js/modules/documents/overview/menu.js:25
+msgid "You cannot share documents of other users"
+msgstr ""
+
+#: document/static/js/modules/documents/overview/menu.js:34
+msgid "Copy selected"
+msgstr "Copier la sélection"
+
+#: document/static/js/modules/documents/overview/menu.js:44
+msgid "Export selected as Epub"
+msgstr "Exporter la sélection en Epub"
+
+#: document/static/js/modules/documents/overview/menu.js:54
+msgid "Export selected as HTML"
+msgstr "Exporter la sélection en HTML"
+
+#: document/static/js/modules/documents/overview/menu.js:64
+msgid "Export selected as LaTeX"
+msgstr "Exporter la sélection en LaTex"
+
+#: document/static/js/modules/documents/overview/menu.js:74
+msgid "Download selected as Fidus document"
+msgstr ""
+
+#: document/static/js/modules/documents/overview/menu.js:88
+msgid "Create new document"
+msgstr ""
+
+#: document/static/js/modules/documents/overview/menu.js:93
+msgid "Upload Fidus document"
+msgstr ""
+
+#: document/static/js/modules/documents/overview/menu.js:99
+msgid "Search documents"
+msgstr ""
+
+#: document/static/js/modules/documents/revisions/index.js:27
+msgid "Saved revisions of"
+msgstr ""
+
+#: document/static/js/modules/documents/revisions/index.js:148
+msgid "Do you really want to delete the revision?"
+msgstr ""
+
+#: document/static/js/modules/documents/revisions/index.js:164
+msgid "Revision deleted"
+msgstr ""
+
+#: document/static/js/modules/documents/revisions/index.js:171
+msgid "Could not delete revision."
+msgstr ""
+
+#: document/static/js/modules/documents/revisions/templates.js:6
+msgid "Time"
+msgstr ""
+
+#: document/static/js/modules/documents/revisions/templates.js:6
+msgid "Description"
+msgstr ""
+
+#: document/static/js/modules/documents/revisions/templates.js:6
+#: document/static/js/modules/editor/marginboxes/templates.js:82
+msgid "Recreate"
+msgstr ""
+
+#: document/static/js/modules/documents/revisions/templates.js:6
+#: document/static/js/modules/editor/menus/headerbar/model.js:88
+msgid "Download"
+msgstr "Télécharger"
+
+#: document/static/js/modules/documents/tools.js:29
+msgid "Could not obtain extra document data"
+msgstr ""
+
+#: document/static/js/modules/editor/citations/index.js:92
+msgid "No tracking"
+msgstr ""
+
+#: document/static/js/modules/editor/citations/index.js:93
+msgid "Changes to citation sources are not being tracked!"
+msgstr ""
+
+#: document/static/js/modules/editor/clipboard/copy/serializers.js:37
+#: menu/static/js/modules/menu/index.js:15
+msgid "Bibliography"
+msgstr "Bibliographie"
+
+#: document/static/js/modules/editor/collab/chat.js:79
+msgid "Send a message..."
+msgstr ""
+
+#: document/static/js/modules/editor/comments/editors/answer.js:11
+#: document/static/js/modules/editor/comments/editors/comment.js:87
+#: document/static/js/modules/editor/marginboxes/templates.js:13
+#: document/static/js/modules/editor/marginboxes/templates.js:82
+#: document/static/js/modules/editor/state_plugins/contributor_input.js:63
+#: document/static/js/modules/editor/state_plugins/links.js:125
+msgid "Edit"
+msgstr ""
+
+#: document/static/js/modules/editor/comments/editors/comment.js:87
+msgid "High priority"
+msgstr ""
+
+#: document/static/js/modules/editor/comments/interactions.js:307
+#: document/static/js/modules/editor/comments/interactions.js:365
+#: document/static/js/modules/editor/comments/store.js:50
+msgid "Reviewer"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/citation.js:14
+#: document/static/js/modules/editor/dialogs/figure.js:21
+#: document/static/js/modules/editor/dialogs/link.js:10
+#: document/static/js/modules/editor/dialogs/math.js:21
+#: document/static/js/modules/editor/dialogs/table.js:53
+#: document/static/js/modules/editor/dialogs/templates.js:28
+msgid "Insert"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/citation.js:31
+#: document/static/js/modules/editor/dialogs/figure.js:187
+#: document/static/js/modules/editor/dialogs/templates.js:40
+#: document/static/js/modules/editor/state_plugins/links.js:125
+#: user/static/js/modules/profile/dialogs.js:179
+msgid "Remove"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/citation.js:39
+#: document/static/js/modules/editor/dialogs/contributor.js:20
+#: document/static/js/modules/editor/dialogs/contributor.js:77
+#: document/static/js/modules/editor/dialogs/figure.js:178
+#: document/static/js/modules/editor/dialogs/link.js:55
+#: document/static/js/modules/editor/dialogs/math.js:21
+#: document/static/js/modules/editor/dialogs/table.js:194
+#: usermedia/static/js/modules/images/edit_dialog/index.js:24
+msgid "Update"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/citation.js:57
+msgid "Configure Citation"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/citation.js:189
+#: usermedia/static/js/modules/images/selection_dialog/index.js:98
+msgid "Search..."
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/citation.js:323
+msgid "Please select at least one citation source!"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/contributor.js:20
+#: document/static/js/modules/editor/dialogs/contributor.js:77
+#: document/static/js/modules/editor/state_plugins/contributor_input.js:37
+#: document/static/js/modules/editor/state_plugins/tag_input.js:47
+msgid "Add"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/contributor.js:33
+msgid "Email is in incorrect format!"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/figure.js:26
+msgid "or"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/figure.js:26
+msgid "Insert image"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/figure.js:37
+#: document/static/js/modules/editor/dialogs/math.js:71
+msgid "Functions"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/figure.js:38
+#: document/static/js/modules/editor/dialogs/math.js:72
+msgid "Greek Letters"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/figure.js:39
+#: document/static/js/modules/editor/dialogs/math.js:73
+msgid "LaTeX Command Mode"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/figure.js:40
+#: document/static/js/modules/editor/dialogs/math.js:74
+msgid "Numeric"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/figure.js:41
+#: document/static/js/modules/editor/dialogs/math.js:75
+msgid "Symbols and Roman Letters"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/figure.js:42
+#: document/static/js/modules/editor/dialogs/math.js:76
+msgid "Copy to Clipboard"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/figure.js:43
+#: document/static/js/modules/editor/dialogs/math.js:77
+#: document/static/js/modules/editor/menus/toolbar/model.js:486
+#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
+msgid "Redo"
+msgstr "Rétablir"
+
+#: document/static/js/modules/editor/dialogs/figure.js:44
+#: document/static/js/modules/editor/dialogs/math.js:78
+msgid "Toggle Virtual Keyboard"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/figure.js:45
+#: document/static/js/modules/editor/dialogs/math.js:79
+#: document/static/js/modules/editor/menus/toolbar/model.js:479
+#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
+msgid "Undo"
+msgstr "Annuler"
+
+#: document/static/js/modules/editor/dialogs/figure.js:62
+#: document/static/js/modules/editor/dialogs/math.js:99
+msgid "Type formula"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/figure.js:209
+msgid "Enter latex math or insert an image"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/language.js:14
+msgid "Change"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/language.js:40
+msgid "Change language of the document"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/math.js:51
+msgid "Mathematical formula"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/revision.js:13
+msgid "Save"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/revision.js:26
+msgid "Revision description"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/table.js:88
+msgid "Insert table"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/table.js:205
+msgid "Resize table"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/templates.js:8
+msgid "Internal"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/templates.js:8
+msgid "Select Target"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/templates.js:8
+msgid "External"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/templates.js:8
+msgid "Link title"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/templates.js:13
+msgid "Description (optional)"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/templates.js:15
+msgid "Position"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/templates.js:15
+#: document/static/js/modules/editor/dialogs/templates.js:34
+msgid "Center"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/templates.js:15
+#: document/static/js/modules/editor/dialogs/templates.js:34
+msgid "Right"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/templates.js:15
+#: document/static/js/modules/editor/dialogs/templates.js:34
+msgid "Left"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/templates.js:15
+msgid "Size"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/templates.js:15
+msgid "100 %"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/templates.js:15
+msgid "75 %"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/templates.js:15
+msgid "50 %"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/templates.js:15
+msgid "25 %"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/templates.js:15
+msgid "Column Width"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/templates.js:15
+msgid "Fixed"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/templates.js:15
+msgid "Fit the content"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/templates.js:16
+#: document/static/js/modules/editor/menus/toolbar/model.js:431
+msgid "Math"
+msgstr "Math"
+
+#: document/static/js/modules/editor/dialogs/templates.js:28
+#: usermedia/static/js/modules/images/selection_dialog/index.js:105
+msgid "Image"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/templates.js:28
+#: user/static/js/modules/profile/dialogs.js:8
+#: usermedia/static/js/modules/images/edit_dialog/index.js:24
+msgid "Upload"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/templates.js:34
+msgid "100"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/templates.js:34
+msgid "75"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/templates.js:34
+msgid "50"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/templates.js:34
+msgid "25"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/templates.js:34
+msgid "Insert caption"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/templates.js:40
+msgid "My sources"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/templates.js:40
+msgid "Citation format"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/templates.js:40
+msgid "(Author, 1998)"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/templates.js:40
+msgid "Author (1998)"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/templates.js:51
+msgid "Text before"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/templates.js:54
+msgid "Firstname"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/templates.js:54
+msgid "Lastname"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/templates.js:54
+#: document/static/js/modules/schema/document/content.js:53
+#: user/static/js/modules/profile/templates.js:33
+msgid "Email"
+msgstr "Email"
+
+#: document/static/js/modules/editor/document_template/index.js:41
+msgid "Optional sections"
+msgstr ""
+
+#: document/static/js/modules/editor/document_template/index.js:43
+#, fuzzy
+#| msgid "Choose which metadata to enable."
+msgid "Choose which optional sections to enable."
+msgstr "Choisir les métadonnées à activer."
+
+#: document/static/js/modules/editor/document_template/index.js:49
+msgid "Show/hide"
+msgstr ""
+
+#: document/static/js/modules/editor/document_template/index.js:73
+msgid "Safari bug warning"
+msgstr ""
+
+#: document/static/js/modules/editor/document_template/index.js:75
+msgid ""
+"Unfortunately Safari has a bug which makes it impossible to export to this "
+"format. Please use Chrome or Firefox (on a desktop computer)."
+msgstr ""
+
+#: document/static/js/modules/editor/document_template/index.js:93
+msgid "Export the document to a DOCX file with the given template."
+msgstr ""
+
+#: document/static/js/modules/editor/document_template/index.js:115
+msgid "Export the document to an ODT file with the given template."
+msgstr ""
+
+#: document/static/js/modules/editor/index.js:171
+msgid ""
+"Warning! Not all your changes have been saved! You could suffer data loss. "
+"Attempting to reconnect..."
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:73
+msgid "Assigned to"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:82
+msgid "Assign comment to user"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:82
+msgid "Assign to"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:82
+msgid "Remove user assignment from comment"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:82
+msgid "No-one"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:82
+msgid "Assign comment to"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:82
+msgid "Recreate comment"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:82
+msgid "Resolve comment"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:82
+msgid "Resolve"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:82
+msgid "Delete comment"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:86
+msgid "Insertion"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:87
+msgid "Deletion"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:88
+msgid "Format change"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:89
+msgid "Block change"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:90
+msgid "New paragraph"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:91
+msgid "New heading"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:92
+msgid "Inserted citation"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:93
+msgid "Wrapped into blockquote"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:94
+msgid "Added code block"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:95
+msgid "Inserted figure"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:96
+msgid "New list item"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:97
+msgid "Inserted table"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:98
+msgid "New keyword: %(keyword)s"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:99
+msgid "Merged paragraph"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:100
+msgid "Merged heading"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:101
+msgid "Deleted citation"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:102
+msgid "Unwrapped blockquote"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:103
+msgid "Removed code block"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:104
+msgid "Deleted figure"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:105
+msgid "Lifted list item"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:106
+#: document/static/js/modules/editor/menus/table/model.js:242
+msgid "Delete table"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:107
+msgid "Deleted keyword: %(keyword)s"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:108
+msgid "Changed into paragraph"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:109
+msgid "Changed into heading %(level)s"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:110
+msgid "Changed into code block"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:125
+msgid "Removed"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:129
+#: usermedia/static/js/modules/images/overview/index.js:167
+msgid "Added"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:143
+msgid "Code block"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:148
+msgid "Was"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:164
+msgid "ca."
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:164
+msgid "Accept"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:164
+msgid "Reject"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:178
+msgid "Comments"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:178
+msgid "Show comments from all authors."
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:178
+msgid "Any"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:178
+msgid "Show comments of "
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:178
+msgid "Assignee"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:178
+msgid "Any/None"
+msgstr ""
+
+#: document/static/js/modules/editor/marginboxes/templates.js:178
+#, fuzzy
+#| msgid "Filter comments"
+msgid "Only major comments"
+msgstr "Filter les commentaires"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:178
+#, fuzzy
+#| msgid "Filter comments"
+msgid "Resolved comments"
+msgstr "Filter les commentaires"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:182
+#: document/static/js/modules/editor/menus/headerbar/model.js:293
+msgid "Track changes"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:31
+#: usermedia/static/js/modules/images/overview/index.js:167
+msgid "File"
+msgstr "Fichier"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:32
+msgid "File handling"
+msgstr "Gestion du fichier"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:36
+msgid "Share"
+msgstr "Partager"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:39
+msgid "Share the document with other users."
+msgstr "Partager le document avec les autres utilisateurs."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:55
+#: document/static/js/modules/editor/menus/headerbar/view.js:225
+msgid "Close the document and return to the document overview menu."
+msgstr "Fermer le document et revenir à l'aperçu du documents."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:61
+#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
+msgid "Save revision"
+msgstr "Sauvegarder la révision"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:64
+msgid "Save a revision of the current document."
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:76
+msgid "Create Copy"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:79
+msgid "Create copy of the current document."
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:91
+msgid "Download the current document."
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:97
+msgid "Print/PDF"
+msgstr "Imprimer/PDF"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:100
+msgid "Either print or create a PDF using your browser print dialog."
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:116
+msgid "Export"
+msgstr "Exporter"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:117
+msgid "Export of the document contents"
+msgstr "Exporter le contenu du document"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:121
+msgid "HTML"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:123
+msgid "Export the document to an HTML file."
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:136
+msgid "Epub"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:138
+msgid "Export the document to an Epub electronic reader file."
+msgstr "Exporter le document en Epub liseuse de document. "
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:151
+msgid "LaTeX"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:153
+msgid "Export the document to an LaTeX file."
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:168
+msgid "Settings"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:169
+msgid "Configure settings of this document."
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:174
+msgid "Citation Style"
+msgstr "Style de Citation"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:176
+msgid "Choose your preferred citation style."
+msgstr "Choisissez votre style de citation préféré."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:184
+msgid "Document Style"
+msgstr "Style de Document"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:186
+msgid "Choose your preferred document style."
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:194
+msgid "Text Language"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:196
+msgid "Choose the language of the document."
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:201
+#: document/static/js/modules/schema/const.js:1
+msgid "English (United States)"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:201
+#: document/static/js/modules/schema/const.js:1
+msgid "English (United Kingdom)"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:201
+#: document/static/js/modules/schema/const.js:1
+msgid "German (Germany)"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:201
+#: document/static/js/modules/schema/const.js:1
+msgid "Chinese (Simplified)"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:201
+#: document/static/js/modules/schema/const.js:1
+msgid "Portuguese (Brazil)"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:210
+msgid "Other"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:225
+msgid "Paper Size"
+msgstr "Format de Papier"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:227
+msgid "Choose a papersize for print and PDF generation."
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:233
+msgid "DIN A4"
+msgstr "DIN A4"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:235
+msgid "A4 (DIN A4/ISO 216) which is used in most of the world."
+msgstr "A4 (DIN A4/ISO 216) qui est le plus utilisé."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:250
+msgid "US Letter"
+msgstr "US Letter"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:252
+msgid "The format used by the USA and some other American countries."
+msgstr ""
+"Le format est utilisé par les États-Unis et quelques autres pays d'Amérique."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:270
+msgid "Tools"
+msgstr "Outils"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:271
+msgid "Select document editing tool."
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:275
+#: document/static/js/modules/editor/tools/word_count.js:32
+msgid "Word counter"
+msgstr "Compteur de Mots"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:277
+msgid "See document statistics."
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:283
+msgid "Keyboard shortcuts"
+msgstr "Raccourcis clavier"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:285
+msgid "Show an overview of available keyboard shortcuts."
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:295
+msgid "Tracking changes to the document"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:301
+msgid "Record"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:303
+msgid "Record document changes"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:318
+msgid "Accept all"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:320
+msgid "Accept all tracked changes."
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:326
+msgid "Reject all"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:328
+msgid "Reject all tracked changes."
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/view.js:222
+msgid "Untitled Document"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/table/model.js:32
+msgid "Add row above"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/table/model.js:32
+#: document/static/js/modules/editor/menus/table/model.js:49
+#: document/static/js/modules/editor/menus/table/model.js:66
+#: document/static/js/modules/editor/menus/table/model.js:83
+#: document/static/js/modules/editor/menus/table/model.js:103
+#: document/static/js/modules/editor/menus/table/model.js:120
+#: document/static/js/modules/editor/menus/table/model.js:140
+#: document/static/js/modules/editor/menus/table/model.js:157
+#: document/static/js/modules/editor/menus/table/model.js:177
+#: document/static/js/modules/editor/menus/table/model.js:194
+#: document/static/js/modules/editor/menus/table/model.js:211
+msgid "Not tracked"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/table/model.js:34
+msgid "Add a row above the current row"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/table/model.js:49
+msgid "Add row below"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/table/model.js:51
+msgid "Add a row below the current row"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/table/model.js:66
+msgid "Add column left"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/table/model.js:68
+msgid "Add a column to the left of the current column"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/table/model.js:83
+msgid "Add column right"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/table/model.js:85
+msgid "Add a column to the right of the current column"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/table/model.js:105
+msgid "Delete current row"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/table/model.js:122
+msgid "Delete current column"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/table/model.js:142
+msgid "Merge selected cells"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/table/model.js:157
+msgid "Split cells"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/table/model.js:159
+msgid "Split selected cell"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/table/model.js:179
+msgid "Toggle header-status of currently selected row"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/table/model.js:196
+msgid "Toggle header-status of currently selected column"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/table/model.js:211
+msgid "Toggle header cell"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/table/model.js:213
+msgid "Toggle header-status of currently selected cells"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/table/model.js:231
+msgid "Resize/Reposition"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/table/model.js:233
+msgid "Resize/Reposition a table."
+msgstr ""
+
+#: document/static/js/modules/editor/menus/table/model.js:245
+msgid "Delete currently selected table"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:8
+msgid "Normal Text"
+msgstr "Texte Normal"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:9
+msgid "1st Heading"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:10
+msgid "2nd Heading"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:11
+msgid "3rd Heading"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:12
+msgid "4th Heading"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:13
+msgid "5th Heading"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:14
+msgid "6th Heading"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:15
+msgid "Code"
+msgstr "Code"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:81
+msgid "Open/close header menu"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:316
+msgid "Numbered list"
+msgstr "Liste numérotée"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:399
+msgid "Cite"
+msgstr "Citer"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:415
+msgid "Horizontal line"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:463
+msgid "Insert a table into the document."
+msgstr ""
+
+#: document/static/js/modules/editor/menus/toolbar/view.js:255
+msgid "More"
+msgstr ""
+
+#: document/static/js/modules/editor/navigator/index.js:190
+msgid "Document Navigator"
+msgstr ""
+
+#: document/static/js/modules/editor/state_plugins/keyword_input.js:46
+msgid "Add keyword..."
+msgstr ""
+
+#: document/static/js/modules/editor/state_plugins/links.js:33
+msgid "Link copied to clipboard"
+msgstr ""
+
+#: document/static/js/modules/editor/state_plugins/links.js:35
+msgid "Copy to clipboard failed. Please copy manually."
+msgstr ""
+
+#: document/static/js/modules/editor/state_plugins/links.js:125
+msgid "Copy link"
+msgstr ""
+
+#: document/static/js/modules/editor/state_plugins/links.js:125
+msgid "Edit link"
+msgstr ""
+
+#: document/static/js/modules/editor/state_plugins/links.js:125
+msgid "Remove link"
+msgstr ""
+
+#: document/static/js/modules/editor/state_plugins/links.js:125
+msgid "Copy anchor"
+msgstr ""
+
+#: document/static/js/modules/editor/state_plugins/links.js:125
+msgid "Remove anchor"
+msgstr ""
+
+#: document/static/js/modules/editor/tools/show_key_bindings.js:15
+msgid "Keyboard Shortcuts"
+msgstr ""
+
+#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
+msgid "Print"
+msgstr ""
+
+#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
+msgid "Show keyboard shortcuts"
+msgstr ""
+
+#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
+msgid "Paste with content detection"
+msgstr ""
+
+#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
+msgid "Paste without content detection"
+msgstr ""
+
+#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
+msgid "Bold"
+msgstr "Gras"
+
+#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
+msgid "Italics"
+msgstr ""
+
+#: document/static/js/modules/editor/tools/word_count_templates.js:5
+msgid "Number of"
+msgstr ""
+
+#: document/static/js/modules/editor/tools/word_count_templates.js:5
+#, fuzzy
+msgid "Document"
+msgstr ""
+"#-#-#-#-#  djangojs.po (1.0)  #-#-#-#-#\n"
+"#-#-#-#-#  djangojs.po (1.0)  #-#-#-#-#\n"
+"Documents"
+
+#: document/static/js/modules/editor/tools/word_count_templates.js:5
+msgid "Words"
+msgstr ""
+
+#: document/static/js/modules/editor/tools/word_count_templates.js:5
+msgid "Characters without blanks"
+msgstr ""
+
+#: document/static/js/modules/editor/tools/word_count_templates.js:5
+msgid "Characters with blanks"
+msgstr ""
+
+#: document/static/js/modules/exporter/docx/metadata.js:65
+#: document/static/js/modules/exporter/docx/metadata.js:66
+#: document/static/js/modules/exporter/odt/metadata.js:66
+msgid "Unknown"
+msgstr ""
+
+#: document/static/js/modules/exporter/epub/index.js:24
+msgid "Epub export has been initiated."
+msgstr ""
+
+#: document/static/js/modules/exporter/html/index.js:27
+msgid "HTML export has been initiated."
+msgstr ""
+
+#: document/static/js/modules/exporter/native/copy.js:30
+msgid " successfully copied."
+msgstr ""
+
+#: document/static/js/modules/exporter/native/revision.js:38
+msgid "Revision saved"
+msgstr ""
+
+#: document/static/js/modules/exporter/native/revision.js:38
+msgid "Revision could not be saved."
+msgstr ""
+
+#: document/static/js/modules/exporter/native/shrink.js:15
+msgid "File export has been initiated."
+msgstr ""
+
+#: document/static/js/modules/exporter/print/index.js:17
+msgid "Printing has been initiated."
+msgstr ""
+
+#: document/static/js/modules/importer/file.js:42
+#: document/static/js/modules/importer/file.js:67
+msgid "The uploaded file does not appear to be a Fidus Writer file."
+msgstr ""
+
+#: document/static/js/modules/importer/file.js:123
+msgid " successfully imported."
+msgstr ""
+
+#: document/static/js/modules/importer/file.js:128
+msgid ""
+"The uploaded file does not appear to be of the version used on this server: "
+msgstr ""
+
+#: document/static/js/modules/importer/native.js:53
+msgid "Could not save Image"
+msgstr ""
+
+#: document/static/js/modules/importer/native.js:96
+msgid "Could not create document"
+msgstr ""
+
+#: document/static/js/modules/importer/native.js:140
+msgid "Could not save "
+msgstr ""
+
+#: document/static/js/modules/maintenance/index.js:26
+msgid "Updating..."
+msgstr ""
+
+#: document/static/js/modules/maintenance/index.js:27
+#, fuzzy
+#| msgid "edit documents"
+msgid "Updating documents."
+msgstr "éditer les documents"
+
+#: document/static/js/modules/maintenance/index.js:47
+msgid "Downloaded batch"
+msgstr ""
+
+#: document/static/js/modules/maintenance/index.js:55
+#: document/static/js/modules/maintenance/index.js:136
+msgid "All documents updated!"
+msgstr ""
+
+#: document/static/js/modules/maintenance/index.js:57
+#, fuzzy
+#| msgid "Document Style"
+msgid "No documents to update."
+msgstr "Style de Document"
+
+#: document/static/js/modules/maintenance/index.js:64
+msgid "Could not download batch"
+msgstr ""
+
+#: document/static/js/modules/maintenance/index.js:132
+msgid "The document has been updated"
+msgstr ""
+
+#: document/static/js/modules/maintenance/index.js:143
+#, fuzzy
+#| msgid "Export the document to an HTML file"
+msgid "Updating document templates."
+msgstr "Exporter le document en fichier HTML"
+
+#: document/static/js/modules/maintenance/index.js:152
+msgid "No document templates to update."
+msgstr ""
+
+#: document/static/js/modules/maintenance/index.js:193
+msgid "The document template has been updated"
+msgstr ""
+
+#: document/static/js/modules/maintenance/index.js:197
+#, fuzzy
+#| msgid "Export the document to an HTML file"
+msgid "All document templates updated!"
+msgstr "Exporter le document en fichier HTML"
+
+#: document/static/js/modules/maintenance/index.js:204
+msgid "Updating saved revisions."
+msgstr ""
+
+#: document/static/js/modules/maintenance/index.js:213
+msgid "No document revisions to update."
+msgstr ""
+
+#: document/static/js/modules/maintenance/index.js:265
+msgid "The document revision has been updated: "
+msgstr ""
+
+#: document/static/js/modules/maintenance/index.js:276
+msgid "All documents, document templates and document revisions updated!"
+msgstr ""
+
+#: document/static/js/modules/schema/common.js:108
+msgid "Photo"
+msgstr ""
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Albanian"
+msgstr ""
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Asturian"
+msgstr ""
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Belarusian"
+msgstr ""
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Breton"
+msgstr ""
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Catalan (Valencia)"
+msgstr ""
+
+#: document/static/js/modules/schema/const.js:1
+msgid "English (Australia)"
+msgstr ""
+
+#: document/static/js/modules/schema/const.js:1
+msgid "English (Canada)"
+msgstr ""
+
+#: document/static/js/modules/schema/const.js:1
+msgid "English (New Zealand)"
+msgstr ""
+
+#: document/static/js/modules/schema/const.js:1
+msgid "English (South Africa)"
+msgstr ""
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Esperanto"
+msgstr ""
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Galician"
+msgstr ""
+
+#: document/static/js/modules/schema/const.js:1
+msgid "German (Austria)"
+msgstr ""
+
+#: document/static/js/modules/schema/const.js:1
+msgid "German (Switzerland)"
+msgstr ""
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Khmer"
+msgstr ""
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Malayalam"
+msgstr ""
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Norwegian (bokmål)"
+msgstr ""
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Norwegian (nynorsk)"
+msgstr ""
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Persian"
+msgstr ""
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Portuguese (Portugal)"
+msgstr ""
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Serbian (Cyrillic)"
+msgstr ""
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Serbian (Latin)"
+msgstr ""
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Slovenian"
+msgstr ""
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Tamil"
+msgstr ""
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Tagalog"
+msgstr ""
+
+#: document/static/js/modules/schema/document/structure.js:160
+msgid "Contributor"
+msgstr ""
+
+#: document/static/js/modules/schema/document/structure.js:168
+msgid "Tag"
+msgstr ""
+
+#: feedback/static/js/modules/feedback/index.js:18
+msgid "Tech support"
+msgstr ""
+
+#: feedback/static/js/modules/feedback/index.js:18
+msgid "Did you encounter an error or bug?"
+msgstr ""
+
+#: feedback/static/js/modules/feedback/index.js:18
+msgid "Give a brief description of what has happened."
+msgstr ""
+
+#: feedback/static/js/modules/feedback/index.js:18
+msgid "submit"
+msgstr "soumettre"
+
+#: feedback/static/js/modules/feedback/index.js:18
+#, fuzzy
+msgid "Thank you for your report!"
+msgstr ""
+"#-#-#-#-#  djangojs.po (1.0)  #-#-#-#-#\n"
+"#-#-#-#-#  djangojs.po (1.0)  #-#-#-#-#\n"
+"Merci pour votre commentaire!"
+
+#: menu/static/js/modules/menu/index.js:9
+msgid "Documents"
+msgstr ""
+
+#: menu/static/js/modules/menu/index.js:11
+msgid "edit documents"
+msgstr ""
+
+#: menu/static/js/modules/menu/index.js:17
+msgid "manage bibliography library"
+msgstr "gérer la bibliothèque bibliographique"
+
+#: menu/static/js/modules/menu/index.js:21
+#: usermedia/static/js/modules/images/selection_dialog/index.js:75
+msgid "Images"
+msgstr "Images"
+
+#: menu/static/js/modules/menu/index.js:23
+msgid "manage image files"
+msgstr "gérer les fichiers images"
+
+#: user/static/js/modules/contacts/index.js:35
+#: user/static/js/modules/password_reset/index.js:32
+#: user/static/js/modules/signup/index.js:27
+msgid "E-mail address"
+msgstr "Adresse E-mail"
+
+#: user/static/js/modules/contacts/index.js:40
+msgid "Team Members"
+msgstr ""
+
+#: user/static/js/modules/contacts/index.js:56
+msgid "Could not obtain contacts list"
+msgstr ""
+
+#: user/static/js/modules/contacts/manage.js:34
+msgid "You cannot add yourself to your contacts!"
+msgstr ""
+
+#: user/static/js/modules/contacts/manage.js:36
+msgid "This person is already in your contacts"
+msgstr ""
+
+#: user/static/js/modules/contacts/manage.js:38
+msgid "No user is registered with the given email address."
+msgstr ""
+
+#: user/static/js/modules/contacts/manage.js:38
+msgid "Please invite him/her "
+msgstr ""
+
+#: user/static/js/modules/contacts/manage.js:38
+msgid "Fidus Writer"
+msgstr ""
+
+#: user/static/js/modules/contacts/manage.js:38
+msgid "Hey, I would like you to sign up for a Fidus Writer account."
+msgstr ""
+
+#: user/static/js/modules/contacts/manage.js:38
+msgid "Please register at"
+msgstr ""
+
+#: user/static/js/modules/contacts/manage.js:38
+msgid "by sending an email"
+msgstr ""
+
+#: user/static/js/modules/contacts/manage.js:40
+msgid "User is not registered."
+msgstr ""
+
+#: user/static/js/modules/contacts/manage.js:67
+msgid "Add a user to your contacts"
+msgstr ""
+
+#: user/static/js/modules/contacts/manage.js:106
+msgid "Remove from the contacts"
+msgstr ""
+
+#: user/static/js/modules/contacts/templates.js:7
+msgid "E-mail address or username"
+msgstr ""
+
+#: user/static/js/modules/email_confirm/index.js:22
+#, fuzzy
+#| msgid "Confirm E-mail Address"
+msgid "Confirm Email"
+msgstr "Confirmer l'Adresse E-mail"
+
+#: user/static/js/modules/email_confirm/templates.js:7
+msgid "Confirm E-mail Address and Agree to Terms and Conditions"
+msgstr "Confirmer l'Adresse E-mail et Accepter les Termes et Conditions"
+
+#: user/static/js/modules/email_confirm/templates.js:9
+#, fuzzy
+#| msgid ""
+#| "\n"
+#| "        Please confirm that you own the email <a href=\"mailto:%(email)s"
+#| "\">%(email)s</a>,\n"
+#| "        that you apply for the username %(user_display)s, and that you "
+#| "have read and agree to the\n"
+#| "        <a href=\"/terms/\" target=\"_blank\">Terms and Conditions</a>.\n"
+#| "        "
+msgid ""
+"Please confirm that you own the email <a href=\"mailto:%(email)s\">"
+"%(email)s</a>, that you apply for the username %(username)s, and that you "
+"have read and agree to our <a href=\"/pages/terms/\" target=\"_blank\">Terms "
+"and Conditions</a> and <a href=\"/pages/privacy/\" target=\"_blank\">Privacy "
+"Policy</a>."
+msgstr ""
+"\n"
+"        Merci de confirmer que votre adresse email <a href=\"mailto:%(email)s"
+"\">%(email)s</a>,\n"
+"        s'applique à votre nom d'utilisateur %(user_display)s, et que vous "
+"avez lu et accepter les\n"
+"        <a href=\"/terms/\" target=\"_blank\">Termes et Conditions</a>.\n"
+"        "
+
+#: user/static/js/modules/email_confirm/templates.js:12
+msgid "Confirm"
+msgstr "Confirmer"
+
+#: user/static/js/modules/email_confirm/templates.js:14
+msgid ""
+"I have read and agree to the <a href=\"/terms/\" target=\"_blank\">Terms and "
+"Conditions</a>."
+msgstr ""
+
+#: user/static/js/modules/email_confirm/templates.js:15
+msgid ""
+"I am aware that I am signing up for a test account and that service may be "
+"ended abruptly and without notice, leaving me without my files."
+msgstr ""
+
+#: user/static/js/modules/email_confirm/templates.js:17
+#, fuzzy
+#| msgid ""
+#| "\n"
+#| "        This e-mail confirmation link expired or is invalid.\n"
+#| "        Please <a href=\"%(email_url)s\">issue a new e-mail confirmation "
+#| "request</a>.\n"
+#| "        "
+msgid ""
+"This e-mail confirmation link expired or is invalid. Please try to open "
+"another account."
+msgstr ""
+"\n"
+"        Ce lien de vérification d'e-mail a expiré ou est invalide.\n"
+"        Merci de <a href=\"%(email_url)s\">soumettre une nouvelle demander "
+"de confirmation d'e-mail</a>.\n"
+"        "
+
+#: user/static/js/modules/email_confirm/templates.js:19
+msgid "Thanks for verifying!"
+msgstr ""
+
+#: user/static/js/modules/email_confirm/templates.js:19
+msgid "You can now log in."
+msgstr ""
+
+#: user/static/js/modules/login/index.js:21
+#, fuzzy
+#| msgid "Login with"
+msgid "Login"
+msgstr "Connexion avec"
+
+#: user/static/js/modules/login/index.js:26
+#, fuzzy
+#| msgid ""
+#| "\n"
+#| "        If you are new here, please <a href=\"%(signup_url)s\" title="
+#| "\"Sign up for %(site_name)s\">sign up</a> or use one of the login options "
+#| "below to create an account.\n"
+#| "        "
+msgid ""
+"If you are new here, please <a href='/account/sign-up/' title='Sign up'>sign "
+"up</a> or use one of the login options below to create an account."
+msgstr ""
+"\n"
+"        Si vous êtes nouveau ici, merci de vous <a href=\"%(signup_url)s\" "
+"title=\"Sign up for %(site_name)s\">inscrire</a> ou d'utiliser une des "
+"options suivantes pour créer un compte.\n"
+"        "
+
+#: user/static/js/modules/login/index.js:26
+msgid "Login with"
+msgstr "Connexion avec"
+
+#: user/static/js/modules/login/index.js:26
+#: user/static/js/modules/profile/templates.js:10
+#: user/static/js/modules/profile/templates.js:33
+#: user/static/js/modules/signup/index.js:27
+msgid "Username"
+msgstr "Nom d'utilisateur"
+
+#: user/static/js/modules/login/index.js:26
+#, fuzzy
+#| msgid "Username"
+msgid "Username or e-mail"
+msgstr "Nom d'utilisateur"
+
+#: user/static/js/modules/login/index.js:26
+#: user/static/js/modules/profile/templates.js:10
+#: user/static/js/modules/profile/templates.js:33
+#: user/static/js/modules/signup/index.js:27
+msgid "Password"
+msgstr "Mot de passe"
+
+#: user/static/js/modules/login/index.js:26
+msgid "Remember me"
+msgstr "Se souvenir de moi"
+
+#: user/static/js/modules/login/index.js:26
+msgid "Forgot Password?"
+msgstr "Mot de Passe Oublié?"
+
+#: user/static/js/modules/login/index.js:59
+#: user/static/js/modules/login/index.js:64
+#: user/static/js/modules/password_reset/index.js:51
+#: user/static/js/modules/signup/index.js:55
+#: user/static/js/modules/signup/index.js:60
+#: user/static/js/modules/signup/index.js:65
+#: user/static/js/modules/signup/index.js:75
+msgid "This field is required."
+msgstr ""
+
+#: user/static/js/modules/password_reset/index.js:20
+#, fuzzy
+#| msgid "Reset My Password"
+msgid "Reset Password"
+msgstr "Réinitialiser Mon Mot de Passe"
+
+#: user/static/js/modules/password_reset/index.js:30
+msgid "Password reset"
+msgstr "Réinitialiser le Mot de Passe"
+
+#: user/static/js/modules/password_reset/index.js:30
+#, fuzzy
+#| msgid ""
+#| "\n"
+#| "    <p>Forgotten your password? Enter your e-mail address below, and "
+#| "we'll send you an e-mail allowing you to reset it.</p>\n"
+#| "    <p>If you have any trouble resetting your password, please <a href="
+#| "\"mailto:%(CONTACT_EMAIL)s\">contact us</a>.</p>\n"
+#| "    "
+msgid ""
+"Forgotten your password? Enter your e-mail address in the form, and we'll "
+"send you an e-mail allowing you to reset it."
+msgstr ""
+"\n"
+"    <p>Mot de passe oublié? Entrez votre adresse emailEnter your e-mail "
+"address en dessous, et nous vous enverrons un email pour le réinitialiser.</"
+"p>\n"
+"    <p>Si vous rencontrez des difficultés à réinitialiser votre mot de "
+"passe, merci de <a href=\"mailto:%(CONTACT_EMAIL)s\">nous contacter</a>.</"
+"p>\n"
+"    "
+
+#: user/static/js/modules/password_reset/index.js:30
+msgid ""
+"If you have any trouble resetting your password, please <a href=\"mailto:"
+"%(contactEmail)s\">contact us</a>."
+msgstr ""
+
+#: user/static/js/modules/password_reset/index.js:32
+msgid "Reset My Password"
+msgstr "Réinitialiser Mon Mot de Passe"
+
+#: user/static/js/modules/password_reset/index.js:57
+msgid "Instructions emailed"
+msgstr ""
+
+#: user/static/js/modules/password_reset/index.js:57
+msgid ""
+"We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</a> with "
+"instructions on how to reset your password."
+msgstr ""
+
+#: user/static/js/modules/password_reset/index.js:59
+#: user/static/js/modules/signup/index.js:90
+msgid "Please contact us if you do not receive it within a few minutes."
+msgstr ""
+
+#: user/static/js/modules/profile/delete_user.js:45
+msgid "Staff accounts have to be deleted through the admin interface."
+msgstr ""
+
+#: user/static/js/modules/profile/delete_user.js:49
+msgid "Password incorrect."
+msgstr ""
+
+#: user/static/js/modules/profile/delete_user.js:53
+msgid "Could not delete user account."
+msgstr ""
+
+#: user/static/js/modules/profile/dialogs.js:25
+msgid "Could not update profile avatar"
+msgstr ""
+
+#: user/static/js/modules/profile/dialogs.js:34
+msgid "Upload your profile picture"
+msgstr ""
+
+#: user/static/js/modules/profile/dialogs.js:52
+msgid "Could not delete avatar"
+msgstr ""
+
+#: user/static/js/modules/profile/dialogs.js:87
+msgid "All fields are required!"
+msgstr ""
+
+#: user/static/js/modules/profile/dialogs.js:92
+msgid "Please confirm the new password!"
+msgstr ""
+
+#: user/static/js/modules/profile/dialogs.js:107
+msgid "The password has been changed."
+msgstr ""
+
+#: user/static/js/modules/profile/dialogs.js:118
+msgid "The password could not be changed!"
+msgstr ""
+
+#: user/static/js/modules/profile/dialogs.js:123
+msgid "The password could not be changed"
+msgstr ""
+
+#: user/static/js/modules/profile/dialogs.js:130
+msgid "Change Password"
+msgstr ""
+
+#: user/static/js/modules/profile/dialogs.js:145
+msgid "New email address is required!"
+msgstr ""
+
+#: user/static/js/modules/profile/dialogs.js:158
+msgid "Confirmation e-mail sent to"
+msgstr ""
+
+#: user/static/js/modules/profile/dialogs.js:162
+msgid "The email could not be added!"
+msgstr ""
+
+#: user/static/js/modules/profile/dialogs.js:169
+msgid "Add Email"
+msgstr ""
+
+#: user/static/js/modules/profile/dialogs.js:185
+msgid "Email succesfully deleted!"
+msgstr ""
+
+#: user/static/js/modules/profile/dialogs.js:190
+msgid "The email could not be deleted!"
+msgstr ""
+
+#: user/static/js/modules/profile/dialogs.js:198
+msgid "Confirm remove"
+msgstr ""
+
+#: user/static/js/modules/profile/dialogs.js:200
+msgid "Remove the email address"
+msgstr ""
+
+#: user/static/js/modules/profile/dialogs.js:222
+msgid "The email could not be set primary"
+msgstr ""
+
+#: user/static/js/modules/profile/dialogs.js:230
+msgid "Confirm set primary"
+msgstr ""
+
+#: user/static/js/modules/profile/dialogs.js:232
+msgid "Set this email as the address primary"
+msgstr ""
+
+#: user/static/js/modules/profile/index.js:75
+msgid "Configure profile"
+msgstr ""
+
+#: user/static/js/modules/profile/index.js:92
+msgid "Could not save profile data"
+msgstr ""
+
+#: user/static/js/modules/profile/templates.js:4
+msgid "Delete the avatar?"
+msgstr ""
+
+#: user/static/js/modules/profile/templates.js:10
+msgid "NOTICE: ALL OF YOUR INFORMATION WILL DISAPPEAR FROM OUR SYSTEM!"
+msgstr ""
+
+#: user/static/js/modules/profile/templates.js:10
+msgid ""
+"Really delete your account? Type in your username and password below to "
+"confirm deletion."
+msgstr ""
+
+#: user/static/js/modules/profile/templates.js:10
+msgid "We cannot reverse an account deletion."
+msgstr ""
+
+#: user/static/js/modules/profile/templates.js:10
+msgid ""
+"Some copies of your files may temporarily be kept in our backup system, but "
+"also these will disappear automatically in due time."
+msgstr ""
+
+#: user/static/js/modules/profile/templates.js:13
+msgid "Enter the new E-mail address"
+msgstr ""
+
+#: user/static/js/modules/profile/templates.js:26
+msgid "Old password"
+msgstr ""
+
+#: user/static/js/modules/profile/templates.js:26
+msgid "New password"
+msgstr ""
+
+#: user/static/js/modules/profile/templates.js:26
+msgid "Confirm the new password"
+msgstr ""
+
+#: user/static/js/modules/profile/templates.js:33
+msgid "Edit profile picture"
+msgstr "Changer l'image de profil"
+
+#: user/static/js/modules/profile/templates.js:33
+msgid "Change picture"
+msgstr "Changer l'image"
+
+#: user/static/js/modules/profile/templates.js:33
+msgid "Delete picture"
+msgstr "Effacer l'image"
+
+#: user/static/js/modules/profile/templates.js:33
+msgid "Primary address"
+msgstr "Adresse Principale"
+
+#: user/static/js/modules/profile/templates.js:33
+msgid "Verified"
+msgstr "Vérifié"
+
+#: user/static/js/modules/profile/templates.js:33
+msgid "Delete account"
+msgstr "Effacer son compte"
+
+#: user/static/js/modules/signup/index.js:18
+#, fuzzy
+#| msgid "Sign up"
+msgid "Signup"
+msgstr "S'inscrire"
+
+#: user/static/js/modules/signup/index.js:27
+#, fuzzy
+#| msgid ""
+#| "\n"
+#| "        Already have an account? Then please <a href=\"%(login_url)s\" "
+#| "title=\"Login to %(site_name)s\">login</a>.\n"
+#| "        "
+msgid ""
+"Already have an account? Then please <a href=\"/\" title=\"Login\">login</a>."
+msgstr ""
+"\n"
+"        Vous avez déjà un compte ? Merci de vous <a href=\"%(login_url)s\" "
+"title=\"Login to %(site_name)s\">identifier</a>.\n"
+"        "
+
+#: user/static/js/modules/signup/index.js:27
+msgid "Choose your username"
+msgstr "Choisissez votre nom d'utilisateur"
+
+#: user/static/js/modules/signup/index.js:27
+msgid "Create a password"
+msgstr "Créer un mot de passe"
+
+#: user/static/js/modules/signup/index.js:27
+msgid "Confirm your password"
+msgstr "Confirmez votre mot de passe"
+
+#: user/static/js/modules/signup/index.js:27
+#, fuzzy
+#| msgid "Password"
+msgid "Password (again)"
+msgstr "Mot de passe"
+
+#: user/static/js/modules/signup/index.js:29
+msgid "Sign Up Closed"
+msgstr "Enregistrement Fermé"
+
+#: user/static/js/modules/signup/index.js:29
+msgid "We are sorry, but the sign up is currently closed."
+msgstr "Nous sommes désolés, mais les inscriptions sont actuellement fermées."
+
+#: user/static/js/modules/signup/index.js:70
+msgid "You must type the same password each time."
+msgstr ""
+
+#: user/static/js/modules/signup/index.js:88
+msgid "Verify Your E-mail Address"
+msgstr "Vérifiez Votre Adresse E-mail"
+
+#: user/static/js/modules/signup/index.js:88
+#, fuzzy
+#| msgid ""
+#| "\n"
+#| "        We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</"
+#| "a> for verification.\n"
+#| "        Follow the link provided to finalize the signup process.\n"
+#| "        <br />\n"
+#| "        Please contact us if you do not receive it within a few minutes.\n"
+#| "        "
+msgid ""
+"We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</a> for "
+"verification. Follow the link provided to finalize the signup process."
+msgstr ""
+"\n"
+"        Nous avons envoyé un email de vérification à <a href=\"mailto:"
+"%(email)s\">%(email)s</a>.\n"
+"        Suivez le lien indiqué pour finaliser votre processus "
+"d'inscription.\n"
+"        <br />\n"
+"        Merci de vous contacter si vous ne recevez rien d'ici quelques "
+"minutes.\n"
+"        "
+
+#: usermedia/static/js/modules/images/database.js:41
+msgid "Could not save image"
+msgstr ""
+
+#: usermedia/static/js/modules/images/edit_dialog/index.js:16
+msgid "Update Image Information"
+msgstr ""
+
+#: usermedia/static/js/modules/images/edit_dialog/index.js:16
+msgid "Upload Image"
+msgstr ""
+
+#: usermedia/static/js/modules/images/edit_dialog/index.js:127
+msgid "The image has been updated."
+msgstr ""
+
+#: usermedia/static/js/modules/images/edit_dialog/index.js:132
+msgid "Some errors were found. Please examine the form."
+msgstr ""
+
+#: usermedia/static/js/modules/images/edit_dialog/model.js:4
+msgid "Rotate Left"
+msgstr ""
+
+#: usermedia/static/js/modules/images/edit_dialog/model.js:6
+msgid "Rotate-left"
+msgstr ""
+
+#: usermedia/static/js/modules/images/edit_dialog/model.js:21
+msgid "Rotate Right"
+msgstr ""
+
+#: usermedia/static/js/modules/images/edit_dialog/model.js:23
+msgid "Rotate-right"
+msgstr ""
+
+#: usermedia/static/js/modules/images/edit_dialog/model.js:38
+#: usermedia/static/js/modules/images/edit_dialog/model.js:59
+msgid "Crop"
+msgstr ""
+
+#: usermedia/static/js/modules/images/edit_dialog/model.js:40
+msgid "Crop image"
+msgstr ""
+
+#: usermedia/static/js/modules/images/edit_dialog/templates.js:12
+msgid "Select categories"
+msgstr ""
+
+#: usermedia/static/js/modules/images/edit_dialog/templates.js:20
+msgid "Insert a title"
+msgstr ""
+
+#: usermedia/static/js/modules/images/edit_dialog/templates.js:20
+msgid "Edit Figure"
+msgstr ""
+
+#: usermedia/static/js/modules/images/overview/categories.js:16
+msgid "Could not update categories"
+msgstr ""
+
+#: usermedia/static/js/modules/images/overview/index.js:47
+msgid "Media Manager"
+msgstr "Gestionnaire de Médias"
+
+#: usermedia/static/js/modules/images/overview/index.js:72
+msgid "The image(s) could not be deleted"
+msgstr ""
+
+#: usermedia/static/js/modules/images/overview/index.js:79
+msgid "The image(s) have been deleted"
+msgstr ""
+
+#: usermedia/static/js/modules/images/overview/index.js:98
+msgid "Delete the image(s)"
+msgstr ""
+
+#: usermedia/static/js/modules/images/overview/index.js:160
+#: usermedia/static/js/modules/images/selection_dialog/index.js:96
+msgid "No images available"
+msgstr ""
+
+#: usermedia/static/js/modules/images/overview/index.js:167
+msgid "Size (px)"
+msgstr "Taille (px)"
+
+#: usermedia/static/js/modules/images/overview/menu.js:30
+msgid "Upload new image"
+msgstr "Charger une nouvelle image"
+
+#: usermedia/static/js/modules/images/overview/menu.js:45
+msgid "Search images"
+msgstr ""
+
+#: usermedia/static/js/modules/images/selection_dialog/index.js:35
+msgid "Add new image"
+msgstr ""
+
+#: usermedia/static/js/modules/images/selection_dialog/index.js:53
+msgid "Use image"
+msgstr ""
+
+#, fuzzy
+#~| msgid "Document Style"
+#~ msgid "Document Maintenance"
+#~ msgstr "Style de Document"
+
+#~ msgid "The all in one solution for collaborative academic writing."
+#~ msgstr "La solution tout en un pour l'écriture académique collaborative."
+
+#, fuzzy
+#~| msgid "Rights"
+#~ msgid "Access Rights"
+#~ msgstr "Droits"
+
+#, fuzzy
+#~| msgid "edit documents"
+#~ msgid "Access the document"
+#~ msgstr "éditer les documents"
+
+#~ msgid "Document shared:"
+#~ msgstr "Document partagé:"
+
+#, fuzzy
+#~| msgid "Comment"
+#~ msgid "Comment on :"
+#~ msgstr "Commentaire"
+
+#, fuzzy
+#~| msgid "Comment"
+#~ msgid "Comment assignment on :"
+#~ msgstr "Commentaire"
+
+#~ msgid "English"
+#~ msgstr "Anglais"
+
+#, fuzzy
+#~| msgid "Fidus Writer document write access"
+#~ msgid "Fidus Writer Admin"
+#~ msgstr "Droits d'écriture du document Fidus Writer"
+
+#, fuzzy
+#~| msgid "Fidus Writer document write access"
+#~ msgid "Fidus Writer Administration Site"
+#~ msgstr "Droits d'écriture du document Fidus Writer"
+
+#~ msgid "Log In"
+#~ msgstr "Connexion"
+
+#~ msgid ""
+#~ "\n"
+#~ "        If you are new here, please <a href=\"%(signup_url)s\" title="
+#~ "\"Sign up for %(site_name)s\">sign up</a>.\n"
+#~ "        "
+#~ msgstr ""
+#~ "\n"
+#~ "        Si vous êtes nouveau ici, veuillez vous <a href=\"%(signup_url)s"
+#~ "\" title=\"Sign up for %(site_name)s\">inscrire</a>.\n"
+#~ "        "
+
+#~ msgid "Sign Up"
+#~ msgstr "S'inscrire"
+
+#~ msgid "Already have an account"
+#~ msgstr "Vous avez déjà un compte"
+
+#~ msgid "Edit profile"
+#~ msgstr "Éditer le profil"
+
+#~ msgid "Metadata"
+#~ msgstr "Métadonnées"
+
+#~ msgid "Sign Out"
+#~ msgstr "Déconnexion"
+
+#~ msgid "Are you sure you want to sign out?"
+#~ msgstr "Êtes vous sûr de vouloir vous déconnecter?"
+
+#~ msgid "Team members"
+#~ msgstr "Membres de l'équipe"
+
+#~ msgid "User does not exist."
+#~ msgstr "L'Utilisateur n'existe pas"
+
+#~ msgid "en"
+#~ msgstr "fr"
+
+#~ msgid "Feedback"
+#~ msgstr "Feedback"
+
+#~ msgid ""
+#~ "\n"
+#~ "        I have read and agree to the <a href=\"/terms/\" target=\"_blank"
+#~ "\">Terms and Conditions</a>.\n"
+#~ "        "
+#~ msgstr ""
+#~ "\n"
+#~ "        J'ai lu et accepté les <a href=\"/terms/\" target=\"_blank"
+#~ "\">Termes et Conditions</a>.\n"
+#~ "        "
+
+#~ msgid ""
+#~ "\n"
+#~ "            I am aware that I am signing up for a test account and that "
+#~ "service may be ended abruptly and without notice, leaving me without my "
+#~ "files.\n"
+#~ "            "
+#~ msgstr ""
+#~ "\n"
+#~ "            Je suis conscient de souscrire à un compte test qui pourrait "
+#~ "être interrompu sans préavis, me laissant sans fichier.\n"
+#~ "            "
+
+#~ msgid "Updated"
+#~ msgstr "Mis à jour"
+
+#~ msgid ""
+#~ "\n"
+#~ "            Fidus Writer saves small pieces of text information (cookies) "
+#~ "on your device\n"
+#~ "            in order to deliver better content and for statistical "
+#~ "purposes. You\n"
+#~ "            can disable the usage of cookies by changing the settings of "
+#~ "your browser.\n"
+#~ "            By browsing our website without changing the browser settings "
+#~ "you grant\n"
+#~ "            us permission to store that information on your device.\n"
+#~ "            "
+#~ msgstr ""
+#~ "\n"
+#~ "            Fidus Writer enregistre de petits morceaux d'information de "
+#~ "texte (cookies) sur votre appareil\n"
+#~ "            afin d'offrir un meilleur contenu et à des fins statistiques. "
+#~ "Vous\n"
+#~ "            pouvez désactiver l'utilisation de cookies en modifiant les "
+#~ "paramètres de votre navigateur.\n"
+#~ "            En naviguant sur notre site Web sans modifier les paramètres "
+#~ "du navigateur vous nous accordez\n"
+#~ "            la permission de conserver cette information sur votre "
+#~ "appareil.\n"
+#~ "            "
+
+#~ msgid "Import Bibtex Library"
+#~ msgstr "Importer une Bibliothèque Bibtex"
+
+#~ msgid "Save a revision of the current document"
+#~ msgstr "Sauvegarder une révision du document en cours"
+
+#~ msgid "Create copy of the current document"
+#~ msgstr "Créer une copie du document en cours"
+
+#~ msgid "Create copy"
+#~ msgstr "Créer une copie"
+
+#~ msgid "Download the current document"
+#~ msgstr "Télécharger le document en cours"
+
+#, fuzzy
+#~| msgid "Either print or create a PDF using your browser's print dialog"
+#~ msgid "Either print or create a PDF using your browser print dialog"
+#~ msgstr ""
+#~ "Imprimer ou créer un fichier PDF en utilisant la fonction d'impression de "
+#~ "votre navigateur"
+
+#~ msgid "Export the document to an HTML file"
+#~ msgstr "Exporter le document en fichier HTML"
+
+#~ msgid ""
+#~ "Export the document to a Latex file. This will also attach a BibTex file "
+#~ "if you are using citations."
+#~ msgstr ""
+#~ "Exporter le document vers un fichier Latex. Cela permettra de joindre un "
+#~ "fichier BibTex si vous utilisez des citations."
+
+#~ msgid "Choose a document style"
+#~ msgstr "Choisir un style de document"
+
+#~ msgid "Choose a papersize for printing and PDF generation."
+#~ msgstr ""
+#~ "Choisir un format de papier pour l'impression et la génération du PDF. "
+
+#~ msgid "Define a subtitle in addition to the title of the document."
+#~ msgstr "Définir un sous-titre en plus du titre du document."
+
+#~ msgid "Add an abstract to the document."
+#~ msgstr "Ajouter un résumé au document."
+
+#~ msgid "Specify the authors of the document."
+#~ msgstr "Spécifier les auteurs du document."
+
+#~ msgid "Add keywords to facilitate categorization."
+#~ msgstr "Ajouter des mots clés pour faciliter la catégorisation."
+
+#~ msgid "Show/hide the top menu."
+#~ msgstr "Afficher/masquer le menu supérieur."
+
+#~ msgid "Text that is part of a standard paragraph."
+#~ msgstr "Le texte qui fait partie d'un paragraphe standard."
+
+#~ msgid "A headline of the highest level (under title)."
+#~ msgstr "Un titre du plus haut niveau (en dessous du titre)"
+
+#~ msgid "1st Headline"
+#~ msgstr "1er Titre"
+
+#~ msgid "A headline of the 2nd highest level."
+#~ msgstr "Un titre du second niveau le plus haut."
+
+#~ msgid "2nd Headline"
+#~ msgstr "2ème Titre"
+
+#~ msgid "A headline of the 3rd highest level."
+#~ msgstr "Un titre du troisème niveau le plus haut."
+
+#~ msgid "3rd Headline"
+#~ msgstr "3ème Titre"
+
+#~ msgid "A headline of the 4th highest level."
+#~ msgstr "Un titre du quatrième niveau le plus haut."
+
+#~ msgid "4th Headline"
+#~ msgstr "4ème Titre"
+
+#~ msgid "A headline of the 5th highest level."
+#~ msgstr "Un titre du cinquième niveau le plus haut."
+
+#~ msgid "5th Headline"
+#~ msgstr "5ème Titre"
+
+#~ msgid "A headline of the 6th highest level."
+#~ msgstr "Un titre du sixième niveau le plus haut."
+
+#~ msgid "6th Headline"
+#~ msgstr "6ème Titre"
+
+#~ msgid "Computer Code."
+#~ msgstr "Code Informatique."
+
+#~ msgid "Italic"
+#~ msgstr "Italic"
+
+#~ msgid "Bulleted list"
+#~ msgstr "Liste à puces"
+
+#~ msgid "Show/hide comments"
+#~ msgstr "Afficher/masquer les commentaire"
+
+#~ msgid "By readers"
+#~ msgstr "Par lecteurs"
+
+#~ msgid "By reviewers"
+#~ msgstr "Par correcteurs"
+
+#~ msgid "By authors"
+#~ msgstr "Par auteurs"
+
+#~ msgid "By editors"
+#~ msgstr "Par éditeurs"
+
+#~ msgid "By username"
+#~ msgstr "Par nom d'utilisateur"
+
+#~ msgid "Download selected as Fidus Document"
+#~ msgstr "Télécharger la sélection comme Document Fidus"
+
+#~ msgid "Create New Document"
+#~ msgstr "Créer un Nouveau Document"
+
+#~ msgid "Upload Fidus Document"
+#~ msgstr "Charger un Document Fidus"
+
+#~ msgid "Select action"
+#~ msgstr "Sélectionner une action"
+
+#~ msgid "compose books"
+#~ msgstr "organiser les livres"
+
+#~ msgid "Books"
+#~ msgstr "Livres"
+
+#~ msgid "Book Overview"
+#~ msgstr "Aperçu du Livre"
+
+#~ msgid "Export selected for Print/PDF"
+#~ msgstr "Exporter la sélection pour Impression/PDF"
+
+#~ msgid "Create New Book"
+#~ msgstr "Créer un Nouveau Livre"
+
+#~ msgid "Upload Fidus Book"
+#~ msgstr "Charger un FidusBook"
+
+#~ msgid "Book shared:"
+#~ msgstr "Livre partagé:"
+
+#~ msgid "Fidus Writer book write access"
+#~ msgstr "Accès en écriture du Livre Fidus Writer"
+
+#, fuzzy
+#~| msgid "Save revision"
+#~ msgid "Finish the revision"
+#~ msgstr "Sauvegarder la révision"
+
+#, fuzzy
+#~| msgid "Register new source"
+#~ msgid "Register journals"
+#~ msgstr "Enregistrer une nouvelle source"

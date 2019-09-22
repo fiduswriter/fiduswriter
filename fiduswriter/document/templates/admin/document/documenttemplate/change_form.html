@@ -1,0 +1,16 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+{% load transpile %}
+{% load fiduswriter %}
+{% block extrahead %}{{ block.super }}
+<!-- Font Awesome -->
+<link type="text/css" rel="stylesheet" href="{% static "fontawesome/css/all.css" %}" />
+{% fiduswriter_config_js %}
+<script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+<!--  Translations -->
+<script type="text/javascript" src="/api/jsi18n/"></script>
+<!-- JS error handling -->
+<script type="text/javascript" src="{% url 'js-error-handler-js' %}"></script>
+<script type="text/javascript" src="{% static "js/document_template_admin.mjs" %}"></script>
+{{ media }}
+{% endblock %}

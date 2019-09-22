@@ -1,0 +1,124 @@
+.fw-header > .fw-container {
+    z-index: 100;
+    overflow: visible;
+    margin: 19.5px 0 21.5px;
+}
+
+.fw-logo, #header-nav {
+    display: inline-block;
+}
+
+.fw-logo > img {
+    width: auto;
+    height: 27px;
+}
+
+.fw-logo-text {
+    line-height: 0;
+    position: relative;
+    top: -4px;
+    font-family: 'Roboto', sans-serif;
+    text-transform: uppercase;
+    color:  #fff;
+    font-size: 15pt;
+}
+
+.fw-login-logo .fw-logo-text {
+    font-size: 30pt;
+}
+
+.fw-login-logo img {
+    height: 38px;
+}
+
+.fw-logo-text:before {
+    content: 'Fidus';
+    font-weight: 700;
+}
+
+.fw-logo-text:after {
+    content: 'Writer ';
+    font-weight: 300;
+
+}
+
+.fw-user-preferences {
+    position: absolute;
+    right: 40px;
+    top: -3px;
+}
+
+.fw-user-preferences .fw-name {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+#header-nav {
+    position: relative;
+    top: -8px;
+}
+
+.fw-nav-container {
+    overflow: visible;
+    padding-left: 22px;
+}
+
+.fw-nav-item {
+    position: relative;
+    display: inline-block;
+    width: auto;
+    margin-right: 22px;
+}
+.fw-nav-item.active-menu-wrapper:after {
+    position: absolute;
+    left: 50%;
+    top: 34px;
+    line-height: 100%;
+    font-size: 24px;
+    margin-left: -8px;
+    color: #84b4a7;
+}
+
+.fw-nav-item a {
+    color: #fff;
+    opacity: 0.7;
+    text-decoration: none;
+}
+
+.fw-nav-item a:hover, .fw-nav-item.active-menu-wrapper a {
+    opacity: 1.0;
+}
+
+.fw-logout-button {
+    background: none;
+    border: none;
+    font-family: inherit;
+    color: #fff;
+    border-bottom: 1px solid #f2f2f2;
+    width: 100%;
+}
+
+#user-preferences {
+    z-index: 2;
+}
+
+#user-preferences .fw-button {
+    padding: 0;
+    border: 0 none;
+}
+
+#preferences-btn .fw-avatar,
+#preferences-btn .fw-string-avatar {
+    width: 35px;
+    height: 35px;
+}
+
+#preferences-btn .fw-avatar:hover,
+#preferences-btn .fw-string-avatar:hover {
+    opacity: 0.7;
+}
+
+#user-preferences-pulldown a,
+#user-preferences-pulldown .fw-logout-button {
+    color: #2c2723;
+}

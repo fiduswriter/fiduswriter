@@ -1,0 +1,73 @@
+/*For profile list*/
+
+.avatar {
+    border-bottom-width: 4px;
+    border-bottom-style: solid;
+}
+
+#chat {
+    position: fixed;
+    bottom: 0px;
+    right: 5px;
+    background-color: white;
+    width: 250px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-bottom: 0;
+    display: none;
+    z-index: 100;
+}
+
+#chat.highlighted {
+    background-color: #6495ed;
+}
+
+#chat .resize-button {
+    text-align: right;
+    cursor: pointer;
+    display: block;
+}
+
+#chat-container {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+#chat-container .message:last-child {
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+}
+
+#chat-container .message {
+    padding-top: 5px;
+}
+
+#connected-collaborators {
+    position: fixed;
+    right: 85px;
+    top: 16px;
+}
+
+#connected-collaborators .fw-string-avatar,
+#connected-collaborators img {
+    box-sizing: border-box;
+    width: 35px;
+    height: 35px;
+    margin-left: -10px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#connected-collaborators .fw-string-avatar:first-child,
+#connected-collaborators img:first-child {
+    margin-left: 0;
+}
+
+#messageform.empty:before {
+    color: #cecece;
+}
+
+#chat {
+    transition: top 2s ease;
+}

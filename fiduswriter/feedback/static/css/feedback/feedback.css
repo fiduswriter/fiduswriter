@@ -1,0 +1,118 @@
+.feedback-panel {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  background-color: rgba(0,0,0,0.75);
+  font-family: scalareg, "courier new", courier;
+  display: none;
+}
+#feedback-wrapper {
+  position: absolute;
+  top: 200px;
+  left: 50%;
+  width: auto;
+  margin-left: -148px;
+  padding: 65px 27px 12px;
+ background: #ecdc9e;
+}
+a.feedback-tab {
+    position: absolute;
+    right: 85px;
+    top: -3px;
+    display: block;
+    width: 35px;
+    height: 35px;
+    overflow: hidden;
+    background-color: #4da4f1;
+    border-radius: 50%;
+    z-index: 100;
+    cursor: pointer;
+    text-indent: -999px;
+    z-index: 1;
+}
+
+a.feedback-tab:before {
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 9px;
+    font-family: 'Font Awesome 5 Free';
+    font-size: 16px;
+    content: "\f075";
+    color: white;
+    text-indent: 0;
+    text-align: center;
+    line-height: 1;
+}
+
+#headerbar a.feedback-tab {
+    right: 60px;
+    top: 16px;
+}
+
+#footer-menu.prelogin a.feedback-tab {
+    position: relative;
+    right: auto;
+    top: auto;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 20px;
+}
+
+@media (max-width: 1079px) {
+    #footer-menu.prelogin a.feedback-tab {
+        margin-left: 12px;
+    }
+}
+
+a.feedback-tab:hover {
+  background-color: #e6d180;
+}
+#feedback-wrapper textarea {
+  width: 287px;
+  height: 190px;
+  padding: 3px;
+  resize: none;
+}
+#feedbackbutton {
+  display: block;
+  margin: 17px 0 0 auto;
+}
+#feedback-title {
+  position: absolute;
+  left: 27px;
+  top: 20px;
+  font-family: 'Lato', sans-serif;
+  font-size: 27px;
+  color: #d3421c;
+  padding-right: 60px;
+}
+#response-message {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  text-align: center;
+  font-size: 16px;
+  display: none;
+}
+#closeFeedback {
+  display: block;
+  position: absolute;
+  right: 25px;
+  top: 20px;
+  cursor: pointer;
+  color: #555;
+}
+#closeFeedback:hover {
+  color: #999;
+}
+@media print {
+  .feedback-tab, .feedback-panel {
+    display: none;
+  }
+}

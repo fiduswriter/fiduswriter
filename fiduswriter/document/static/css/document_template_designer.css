@@ -1,0 +1,194 @@
+form .aligned ul.object-tools.right {
+    margin-left: inherit;
+    height: 3em;
+}
+
+.object-tools span.link, .object-tools span.link {
+    display: block;
+    float: left;
+    padding: 3px 12px;
+    background: #999;
+    font-weight: 400;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #fff;
+    border-radius: 15px;
+    cursor: pointer;
+}
+
+.object-tools span.link:focus, .object-tools span.link:hover {
+    background-color: #417690;
+}
+
+.from-container, .to-column, .trash {
+    border: 1px solid black;
+    background-color: white;
+}
+
+.to-container {
+    min-height: 500px;
+}
+
+.to-column .smooth-dnd-draggable-wrapper {
+    overflow: visible !important;
+}
+
+.to-column {
+    width: 650px;
+}
+
+.to-column .article-part table td {
+    border: 1px solid black;
+}
+
+.from-container {
+    width: 150px;
+}
+
+.trash {
+    background-color: grey;
+    width: 100px
+}
+
+.doc-part {
+    background-color: #F0F8FF;
+    border-bottom: 3px dotted black;
+    padding: 4px;
+}
+
+.doc-part[data-type="heading_part"] {
+    background-color: #84C4FE;
+}
+
+.doc-part[data-type="contributors_part"] {
+    background-color: #928EFE;
+}
+
+.doc-part[data-type="richtext_part"] {
+    background-color: #FFC87B;
+}
+
+.doc-part[data-type="tags_part"] {
+    background-color: #FFDF7B;
+}
+
+.doc-part[data-type="table_part"] {
+    background-color: #BFEDC1;
+}
+
+.doc-part[data-type="table_of_contents"] {
+    background-color: #985F99;
+}
+
+.from-container .doc-part, .trash .doc-part {
+    height: 50px;
+}
+
+.from-container .attrs,
+.from-container .object-tools,
+.trash .attrs,
+.trash .object-tools,
+.from-container .doc-part-header .label,
+.attrs.hidden {
+    display: none;
+}
+
+.attrs label {
+    display: inline-block;
+    width: initial;
+    float: initial;
+}
+
+table td {
+    vertical-align: top;
+}
+
+.doc-part-header {
+    cursor: move; /* fallback if grab cursor is unsupported */
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
+    height: 60px;
+}
+
+.label {
+    padding: 5px 0 5px 0;
+}
+
+.from-container .doc-part-header {
+    height: 100%;
+}
+
+.object-tools.right {
+    float: right;
+}
+
+.ProseMirror {
+    background-color: #fff;
+    color: #000;
+}
+
+.ProseMirror-menubar {
+    background-color: inherit;
+    position: inherit;
+    min-height: 21px !important;
+}
+
+.article-table th {
+    background-color: #76a698;
+    color: #fff;
+}
+
+.ProseMirror td.selectedCell {
+    background-color: #8cf;
+    caret-color: transparent;
+}
+
+.error-element{
+    border:3px solid red;
+}
+
+#template-editor .initial em, #template-editor .instructions em {
+    font-style: italic;
+}
+
+#template-editor .initial strong, #template-editor .instructions strong {
+    font-weight: bold;
+}
+
+#template-editor .initial code, #template-editor .instructions code {
+    font-family: monospace;
+}
+
+#template-editor .initial h1, #template-editor .instructions h1 {
+    font-size: 28px;
+}
+
+#template-editor .initial h2, #template-editor .instructions h2 {
+    font-size: 24px;
+}
+
+#template-editor .initial h3, #template-editor .instructions h3 {
+    font-size: 20px;
+}
+
+#template-editor .initial h4, #template-editor .instructions h4 {
+    font-size: 16px;
+}
+
+#template-editor .initial h5, #template-editor .instructions h5 {
+    font-size: 14px;
+}
+
+#template-editor .initial h6, #template-editor .instructions h6 {
+    font-size: 12px;
+}
+
+#template-editor .initial ul, #template-editor .instructions ul {
+    list-style-type: disc;
+}
+
+#template-editor .initial ol, #template-editor .instructions ol {
+    list-style-type: decimal;
+}

@@ -1,0 +1,138 @@
+/* pulldown menu box */
+.fw-pulldown {
+    position: absolute;
+    display: none;
+    z-index: 100;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    background-color: white;
+    border-radius: 6px;
+    color: black;
+}
+.fw-pulldown.fw-open {
+    display: block;
+}
+.fw-pulldown.fw-left, .fw-pulldown.fw-center {
+    left: -10px
+}
+.fw-pulldown.fw-right {
+    right: 0
+}
+/* sub menu */
+.fw-pulldown .fw-pulldown {
+    top: 0;
+    left: 100%;
+    margin-top: 0;
+}
+
+.fw-pulldown.fw-right .fw-pulldown {
+    left: auto;
+    right: 100%;
+}
+
+.fw-pulldown > ul {
+    position: relative;
+    padding: 12px 0;
+    border: 0 none;
+}
+
+.fw-pulldown-header {
+    line-height: 18px;
+    background-color: #2c2723;
+    color: #fff;
+    display: block;
+}
+
+.fw-pulldown-item {
+    position: relative;
+    display: block;
+    width: auto;
+    height: auto;
+    min-width: 110px;
+    padding: 16px 30px;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1;
+    text-align: left;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    border-bottom: 1px solid #f2f2f2;
+}
+
+.fw-pulldown li:last-child .fw-pulldown-item {
+    border-bottom: 0 none;
+}
+
+.fw-pulldown-item.selected {
+    background-color: #f2f2f2;
+}
+
+.fw-pulldown-item .fw-icon-right {
+    position: absolute;
+    right: 10px;
+}
+
+.fw-pulldown li {
+    position: relative;
+}
+
+.fw-pulldown hr {
+    width: 80%;
+    display: block;
+    height: 1px;
+    border: 0;
+    background-color: #ccc;
+}
+
+.fw-pulldown .delete-comment:after {
+    font-family: "Font Awesome 5 Free";
+    content: "\f2ed";
+    opacity: 0.4;
+    float: right;
+    display: block;
+}
+
+.disabled .fw-pulldown-item {
+    color: #999999;
+}
+
+.fw-pulldown-icon {
+    margin-left: 0;
+}
+
+.fw-pulldown-item:hover {
+    background-color: #f2f2f2;
+}
+
+.fw-pulldown input[type=radio] {
+    display: none;
+}
+
+.fw-pulldown-select {
+    position: relative;
+}
+
+.fw-pulldown-select-label {
+    position: relative;
+    font-size: 13px;
+    width: auto;
+    height: 33px;
+    line-height: 33px;
+    border: solid 1px #000;
+    cursor: pointer;
+}
+
+.fw-pulldown-select-label label {
+    margin-left: 10px;
+}
+
+.fw-pulldown-select-label:after {
+    position: absolute;
+    right: 10px;
+    top: 0;
+    display: block;
+    width: 1em;
+    height: 1em;
+    font-size: 14px;
+    content: '\25be';
+}

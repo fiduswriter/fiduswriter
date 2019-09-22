@@ -1,0 +1,54 @@
+{% load i18n %}
+{% load compress %}
+{% load transpile %}
+{% load fiduswriter %}
+<!DOCTYPE html>
+<html class="fw-basic-text" lang="{{ LANGUAGE_CODE }}">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <title> Fidus Writer </title>
+        <meta name="description" content="{% trans "The all in one solution for collaborative academic writing." %}">
+        <meta name="author" content="Fidus Writer" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="theme-color" content="#84b4a7">
+        <link rel="shortcut icon" href="{% static "img/favicon.png" %}" type="image/png"/>
+        <link rel="manifest" href="/manifest.json">
+        <!-- commons styles -->
+        {% compress css %}
+        <link type="text/css" rel="stylesheet" href="{% static "css/reset.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fonts.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/text.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/forms.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/ui_dialogs.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/ui_autofill.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/buttons.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/pulldown.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/loader.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/alerts.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/document_menu.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/data_table.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/dialog_table.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/dropkick.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/ui_tabs.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/figure.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/dialog.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/content_menu.css" %}" />
+        <!-- layout styles -->
+        <link type="text/css" rel="stylesheet" href="{% static "css/common.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/header_menu.css" %}" />
+        {% endcompress %}
+        <!-- Check browser -->
+        <script type="text/javascript" src="{% static "js/browser_check.mjs" %}" crossorigin="anonymous" defer async></script>
+        <script type="text/javascript" src="/api/jsi18n/" id="i18n"></script>
+        <!-- JS error handling -->
+        <script type="text/javascript" src="{% url 'js-error-handler-js' %}"></script>
+        {% fiduswriter_config_js %}
+        <!-- Main page script -->
+        <script type="text/javascript" src="{% static "js/app.mjs" %}" crossorigin="anonymous"></script>
+    </head>
+    <body><div id="wait" class="active"><i class="fa fa-spinner fa-pulse"></i></div><noscript>
+        <h1>{% trans "JavaScript disabled" %}</h1>
+        <p>{% trans "Fidus Writer requires you to enable JavaScript." %}</p>
+    </noscript></body>
+</html>

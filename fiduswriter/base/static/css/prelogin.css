@@ -1,0 +1,143 @@
+.fw-header.prelogin {
+    border-bottom: solid 1px #8e8e8e;
+    height: 123px;
+}
+
+.fw-login-logo {
+    margin-top: 38px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.prelogin #header-nav {
+    position: absolute;
+    right: 40px;
+    top: 2px;
+    font-size: 14px;
+    color: #fff;
+    line-height: 34px;
+}
+
+.prelogin #header-nav .fw-button {
+    margin-left: 12px;
+}
+
+.fw-contents.prelogin {
+    top: 195px;
+    padding-bottom: 150px;
+    line-height: 2em;
+}
+
+.fw-contents.prelogin:after {
+    display: block;
+    content: ' ';
+    clear: both;
+}
+
+.fw-login-left {
+    width: 340px;
+    float: left;
+    margin-bottom: 100px;
+}
+
+.fw-login-title {
+    text-transform: uppercase;
+    font-weight: 300;
+    font-size: 30px;
+    margin-bottom: 30px;
+}
+
+.fw-login-left p {
+    margin-top: 20px;
+    font-size: 15px;
+    line-height: 20px;
+}
+
+.socialaccount_ballot {
+    margin-top: 50px;
+}
+
+.socialaccount_ballot li {
+    margin-top: 10px;
+}
+
+.fw-login-right {
+    width: 280px;
+    padding: 25px;
+    margin: 0 0 0 auto;
+    background-color: #f9f9f9;
+    border: solid 1px #d3d3d3;
+}
+
+.input-wrapper label {
+    font-size: 13px;
+    font-weight: 900;
+    display: block;
+}
+
+.input-wrapper input {
+    display: block;
+    width: 270px;
+    margin: 10px 0;
+}
+
+.submit-wrapper {
+    margin-top: 14px;
+    line-height: 34px;
+}
+
+.submit-wrapper label {
+    font-size: 14px;
+    color: #585757;
+    margin-left: 4px;
+}
+
+.submit-wrapper .fw-button {
+    margin-right: 15px;
+}
+
+#lost-passwd {
+    display: block;
+    margin-top: 35px;
+    font-size: 15px;
+}
+
+footer.prelogin {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: auto;
+    border-top: solid 1px #cecece;
+    background-color: #fff;
+    text-align: right;
+    padding: 27px 0;
+    z-index: 2;
+}
+
+.fw-footer-links {
+    position: absolute;
+    left: 40px;
+    top: 0;
+}
+
+.prelogin .fw-footer-links {
+    top: 8px;
+}
+
+.fw-footer-links > li {
+    display: inline-block;
+    margin-right: 15px;
+    font-size: 12px;
+    line-height: 18px;
+    text-align: left;
+    vertical-align: top;
+}
+
+.fw-footer-links > li a {
+    color: #2c2723;
+}
+
+.fw-footer-links > li a:hover {
+    color: #b73717;
+}

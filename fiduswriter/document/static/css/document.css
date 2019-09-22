@@ -1,0 +1,233 @@
+body {
+    counter-reset: figure-cat-0 figure-cat-1 figure-cat-2 footnote-counter footnote-marker-counter;
+}
+
+
+/* CSL */
+
+.csl-bib-body {
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+}
+
+.csl-left-margin {
+    padding-right: 1ch;
+}
+
+.csl-entry i {
+    font-style: italic;
+}
+
+.csl-entry b {
+    font-weight: bold;
+}
+
+.csl-entry sup {
+    vertical-align: super;
+    font-size: smaller;
+}
+
+.csl-entry sub {
+    vertical-align: sub;
+    font-size: smaller;
+}
+
+.csl-indent {
+    padding-left: 0.5in;
+}
+
+.csl-entry {
+    clear: left;
+}
+
+.csl-left-margin {
+    clear: left;
+    float: left;
+    white-space: pre;
+}
+
+.csl-right-inline {
+    padding-left: 20px;
+}
+
+span.anchor {
+    text-decoration: underline;
+    color: green;
+}
+
+figure figcaption {
+    margin-top: 10px;
+    font-size: .9em;
+}
+
+figure img {
+    max-width: 100%
+}
+
+figure {
+    width: calc(80% - 12px);
+    border: 1px solid black;
+    padding: 5px;
+    text-align: center;
+    break-inside: avoid;
+    cursor: pointer;
+    margin: 10%;
+    clear: none;
+}
+
+.aligned-right {
+    float: right;
+}
+
+.aligned-left {
+    float: left;
+}
+
+.aligned-center {
+    float: none;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    align-content: center;
+}
+
+.image-width-100 {
+    width: 80%;
+    box-sizing:border-box;
+}
+
+.image-width-75 {
+    width: 55%;
+    box-sizing:border-box;
+}
+
+.image-width-50 {
+    width: 40%;
+    margin-left:5%;
+    margin-right:5%;
+    box-sizing:border-box;
+}
+
+.image-width-25 {
+    width: 21%;
+    margin-left:2%;
+    margin-right:2%;
+    box-sizing:border-box;
+}
+
+.figure-cat-figure::after {
+    counter-increment: figure-cat-0;
+    content: ' ' counter(figure-cat-0);
+}
+
+.figure-cat-photo::after {
+    counter-increment: figure-cat-1;
+    content: ' ' counter(figure-cat-1);
+}
+
+.figure-cat-table::after {
+    counter-increment: figure-cat-2;
+    content: ' ' counter(figure-cat-2);
+}
+
+.figure-cat-figure + span::before, .figure-cat-photo + span::before, .figure-cat-table + span::before {
+    content: ': ';
+}
+
+.user-contents a,
+.user-contents a:hover {
+    color: #84b4a7;
+    text-decoration: underline;
+}
+
+table {
+    clear: both
+}
+
+.table-25 {
+    width: 25%;
+}
+
+.table-50 {
+    width: 50%;
+}
+
+.table-75 {
+    width: 75%;
+}
+
+.table-100 {
+    width: 100%;
+}
+
+.table-center {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    clear: both;
+}
+
+.table-left {
+    float: left;
+}
+
+.table-right {
+    float: right;
+}
+
+.user-contents a,
+.user-contents a:hover {
+    color: #84b4a7;
+    text-decoration: underline;
+}
+
+.table-fixed {
+    table-layout: fixed !important;
+}
+
+.table-auto {
+    table-layout: auto !important;
+}
+
+.article-title {
+    font-size: 48px;
+}
+
+.article .table-of-contents h1,
+.article .table-of-contents h2,
+.article .table-of-contents h3,
+.article .table-of-contents h4,
+.article .table-of-contents h5,
+.article .table-of-contents h6 {
+    font-size: 1em;
+    font-weight: normal;
+    font-family: 'Lato', sans-serif;
+    margin-bottom: unset;
+}
+
+.article .table-of-contents h2 {
+    padding-left: 1em;
+}
+
+.article .table-of-contents h3 {
+    padding-left: 2em;
+}
+
+.article .table-of-contents h4 {
+    padding-left: 3em;
+}
+
+.article .table-of-contents h5 {
+    padding-left: 4em;
+}
+
+.article .table-of-contents h6 {
+    padding-left: 5em;
+}
+
+.article .table-of-contents h1.toc {
+    font-style: italic;
+}
+
+.underline {
+    text-decoration: underline;
+}

@@ -1,0 +1,1670 @@
+# German translation for Fidus Writer
+# Copyright (C) 2013 Daniel Frebel
+# This file is distributed under the same license as Fidus Writer.
+# Daniel Frebel <daniel@fiduswriter.com>, 2013.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-07-04 10:30+0000\n"
+"PO-Revision-Date: 2013-02-24 10:03-0600\n"
+"Last-Translator: Daniel Frebel <daniel@fiduswriter.com>\n"
+"Language-Team: German <daniel@fiduswriter.com>\n"
+"Language: DE \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: base/templates/admin/console.html:5 base/templates/admin/console.html:17
+#: base/templates/admin/overview.html:14
+msgid "Admin Console"
+msgstr ""
+
+#: base/templates/admin/console.html:19
+msgid "Current number of user sessions:"
+msgstr ""
+
+#: base/templates/admin/console.html:21
+msgid "Send a system message to all connected users:"
+msgstr ""
+
+#: base/templates/admin/console.html:25
+msgid "Message"
+msgstr ""
+
+#: base/templates/admin/console.html:27
+msgid ""
+"This system will go offline for scheduled maintenance in 30 minutes. All "
+"your work will be saved automatically and we will be back shortly."
+msgstr ""
+
+#: base/templates/admin/console.html:34
+msgid "Send to connected users"
+msgstr ""
+
+#: base/templates/admin/overview.html:10
+msgid "Extras"
+msgstr ""
+
+#: base/templates/admin/overview.html:17
+#: document/templates/admin/document/maintenance.html:18
+#, fuzzy
+msgid "Document Maintenance"
+msgstr "Dokumente"
+
+#: base/templates/app.html:11
+msgid "The all in one solution for collaborative academic writing."
+msgstr "Die Komplettlösung zum Erstellen wissenschaftlicher Texte"
+
+#: browser_check/templates/browser_check/browser_not_supported.html:4
+#: browser_check/templates/browser_check/browser_not_supported.html:27
+msgid "Browser not supported"
+msgstr ""
+
+#: browser_check/templates/browser_check/browser_not_supported.html:28
+msgid ""
+"\n"
+"                Your browser is not supported by Fidus Writer.\n"
+"                Please update! We recommend using a current\n"
+"                version of Chrome/Chromium or Firefox on a\n"
+"                desktop computer.\n"
+"            "
+msgstr ""
+
+#: document/admin.py:45
+#, fuzzy
+#| msgid "Export the document to an HTML file"
+msgid "Duplicate selected document templates"
+msgstr "Exportiere das Dokument in eine HTML-Datei"
+
+#: document/models.py:120
+msgid "Standard Article"
+msgstr ""
+
+#: document/templates/admin/document/document/change_list_object_tools.html:8
+#, python-format
+msgid "Add %(name)s"
+msgstr ""
+
+#: document/templates/admin/document/document/change_list_object_tools.html:13
+#: document/templates/admin/document/maintenance.html:5
+msgid "Maintenance"
+msgstr ""
+
+#: document/templates/admin/document/maintenance.html:20
+msgid ""
+"\n"
+"            Before and after upgrading Fidus Writer, you should update all "
+"the documents\n"
+"            of all users to the newest document version. Only do this if you "
+"know that\n"
+"            no user is currently editing any document!\n"
+"            "
+msgstr ""
+
+#: document/templates/admin/document/maintenance.html:28
+msgid "Update all documents (DANGER!)"
+msgstr ""
+
+#: document/views.py:212 document/views.py:627
+#, fuzzy
+msgid "Untitled"
+msgstr "Untertitel"
+
+#: document/views.py:283 document/views.py:713
+#, fuzzy
+#| msgid "Documents"
+msgid "Document"
+msgstr "Dokumente"
+
+#: document/views.py:285 document/views.py:715
+msgid "Author"
+msgstr "Autor"
+
+#: document/views.py:287
+#, fuzzy
+#| msgid "Define access rights"
+msgid "Access Rights"
+msgstr "Zugangsberechtigungen festlegen"
+
+#: document/views.py:290 document/views.py:720
+#, fuzzy
+#| msgid "edit documents"
+msgid "Access the document"
+msgstr "Dokumente bearbeiten"
+
+#: document/views.py:293
+#, fuzzy
+msgid "Document shared:"
+msgstr "Dokumente"
+
+#: document/views.py:653
+#, fuzzy
+msgid "Comment on :"
+msgstr "Anmerkungen"
+
+#: document/views.py:674
+#, fuzzy
+msgid "Comment assignment on :"
+msgstr "Anmerkungen"
+
+#: document/views.py:717
+#, fuzzy
+#| msgid "Comments"
+msgid "Comment"
+msgstr "Anmerkungen"
+
+#: fiduswriter/settings.py:226
+msgid "English"
+msgstr "Englisch"
+
+#: fiduswriter/settings.py:227
+msgid "Bulgarian"
+msgstr "Bulgarisch"
+
+#: fiduswriter/settings.py:228
+msgid "German"
+msgstr "Deutsch"
+
+#: fiduswriter/settings.py:229
+msgid "French"
+msgstr ""
+
+#: fiduswriter/settings.py:230
+msgid "Italian"
+msgstr ""
+
+#: fiduswriter/settings.py:231
+msgid "Spanish"
+msgstr "Spanisch"
+
+#: fiduswriter/settings.py:232
+msgid "Portuguese (Brazil)"
+msgstr ""
+
+#: fiduswriter/settings.py:340
+#, fuzzy
+msgid "Fidus Writer Admin"
+msgstr "Dokumente bearbeiten"
+
+#: fiduswriter/settings.py:341
+#, fuzzy
+msgid "Fidus Writer Administration Site"
+msgstr "Dokumente bearbeiten"
+
+#: fiduswriter/settings.py:342
+msgid "Welcome to the Fidus Writer Administration Site"
+msgstr ""
+
+#: style/models.py:36 style/models.py:61
+#, fuzzy
+msgid "Default"
+msgstr "Bild entfernen"
+
+#: user/templates/account/email/email_confirmation_message.html:7
+#: user/templates/account/email/password_reset_key_message.html:7
+#, python-format
+msgid ""
+"\n"
+"        Hello from %(site_name)s!\n"
+"    "
+msgstr ""
+
+#: user/templates/account/email/email_confirmation_message.html:14
+#, python-format
+msgid ""
+"\n"
+"        You're receiving this e-mail because user %(user_display)s has given "
+"yours as an e-mail address to connect their account.\n"
+"    "
+msgstr ""
+
+#: user/templates/account/email/email_confirmation_message.html:20
+#, python-format
+msgid ""
+"\n"
+"        To confirm this is correct, go to <a href=\"%(url)s\">%(url)s</a>.\n"
+"    "
+msgstr ""
+
+#: user/templates/account/email/email_confirmation_message.html:26
+#: user/templates/account/email/password_reset_key_message.html:32
+#, python-format
+msgid ""
+"\n"
+"        Thank you from %(site_name)s!\n"
+"    "
+msgstr ""
+
+#: user/templates/account/email/password_reset_key_message.html:13
+msgid ""
+"\n"
+"        You're receiving this e-mail because you or someone else has "
+"requested a password for your user account.\n"
+"    "
+msgstr ""
+
+#: user/templates/account/email/password_reset_key_message.html:18
+msgid ""
+"\n"
+"        It can be safely ignored if you did not request a password reset. "
+"Click the link below to reset your password.\n"
+"    "
+msgstr ""
+
+#: user/templates/account/email/password_reset_key_message.html:27
+#, python-format
+msgid "In case you forgot, your username is %(username)s."
+msgstr ""
+
+#: usermedia/views.py:34
+msgid "Filetype not supported"
+msgstr ""
+
+#: usermedia/views.py:60
+msgid "No file uploaded"
+msgstr ""
+
+#~ msgid "Log In"
+#~ msgstr "Anmelden"
+
+#~ msgid "Terms and Conditions"
+#~ msgstr "Geschäftsbedingungen"
+
+#, fuzzy
+#~| msgid "Equations and Math by mathjax"
+#~ msgid "Equations and Math with MathLive"
+#~ msgstr "Matheformeln mit mathjax"
+
+#~ msgid "Citations with Citation Style Language"
+#~ msgstr "Zitate mit Citation Style Language"
+
+#~ msgid "Confirm E-mail Address"
+#~ msgstr "E-Mailadresse bestätigen"
+
+#~ msgid "New here?"
+#~ msgstr "Neu hier?"
+
+#~ msgid "Sign up"
+#~ msgstr "Registrieren"
+
+#~ msgid "Log in"
+#~ msgstr "Anmelden"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "        If you are new here, please <a href=\"%(signup_url)s\" title="
+#~ "\"Sign up for %(site_name)s\">sign up</a> or use one of the login options "
+#~ "below to create an account.\n"
+#~ "        "
+#~ msgstr ""
+#~ "\n"
+#~ "        Bitte melde dich mit einem deiner externen Konten oder deinem "
+#~ "Fidus Writer Konto an.<br/>\n"
+#~ "        Neu hier? Einfach kostenfrei ein neues <a href=\"%(signup_url)s\" "
+#~ "title=\"Sign up for %(site_name)s\">Konto erstellen</a>.\n"
+#~ "        "
+
+#~ msgid "Login with"
+#~ msgstr "Anmelden mit"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "        If you are new here, please <a href=\"%(signup_url)s\" title="
+#~ "\"Sign up for %(site_name)s\">sign up</a>.\n"
+#~ "        "
+#~ msgstr ""
+#~ "\n"
+#~ "        Bitte melde dich mit einem deiner externen Konten oder deinem "
+#~ "Fidus Writer Konto an.<br/>\n"
+#~ "        Neu hier? Einfach kostenfrei ein neues <a href=\"%(signup_url)s\" "
+#~ "title=\"Sign up for %(site_name)s\">Konto erstellen</a>.\n"
+#~ "        "
+
+#~ msgid "Username"
+#~ msgstr "Nutzername"
+
+#~ msgid "Password"
+#~ msgstr "Kennwort"
+
+#~ msgid "Remember me"
+#~ msgstr "Angemeldet bleiben"
+
+#~ msgid "Forgot Password?"
+#~ msgstr "Kennwort vergessen?"
+
+#~ msgid "Password reset"
+#~ msgstr "Kennwort zurücksetzen"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "    <p>Forgotten your password? Enter your e-mail address in the form, "
+#~ "and we'll send you an e-mail allowing you to reset it.</p>\n"
+#~ "    <p>If you have any trouble resetting your password, please <a href="
+#~ "\"mailto:%(CONTACT_EMAIL)s\">contact us</a>.</p>\n"
+#~ "    "
+#~ msgstr ""
+#~ "\n"
+#~ "    <p>Kennwort vergessen? Gib enfach deine E-Mailadresee ein und wir "
+#~ "werden dir eine Nachricht zusenden, mit der du dein Kennwort "
+#~ "zurückzusetzen kannst.</p>\n"
+#~ "    <p>Gibt es Probleme mit dem zurücksetzen deines Kennwortes, schicke "
+#~ "eine <a href=\"mailto:mail@fiduswriter.com\">E-Mail</a>.</p>\n"
+#~ "    "
+
+#~ msgid "E-mail address"
+#~ msgstr "E-Mailadresse"
+
+#~ msgid "Reset My Password"
+#~ msgstr "Kennwort zurücksetzen"
+
+#~ msgid "Sign Up"
+#~ msgstr "Registrieren"
+
+#~ msgid "Already have an account"
+#~ msgstr "Du hast schon ein Konto"
+
+#~ msgid ""
+#~ "\n"
+#~ "        Already have an account? Then please <a href=\"%(login_url)s\" "
+#~ "title=\"Login to %(site_name)s\">login</a>.\n"
+#~ "        "
+#~ msgstr ""
+#~ "\n"
+#~ "        Du hast bereits ein Konto? Dann kannst du dich einfach <a href="
+#~ "\"%(login_url)s\" title=\"Für %(site_name)s anmelden\">anmelden</a>.\n"
+#~ "        "
+
+#~ msgid "Choose your username"
+#~ msgstr "Wähle deinen Nutzernamen"
+
+#~ msgid "Create a password"
+#~ msgstr "Kennwort erstellen"
+
+#~ msgid "Confirm your password"
+#~ msgstr "Kennwort bestätigen"
+
+#~ msgid "Sign Up Closed"
+#~ msgstr "Registrierung geschlossen"
+
+#~ msgid "We are sorry, but the sign up is currently closed."
+#~ msgstr "Es tut uns leid, aber die Anmeldung ist zur Zeit geschlossen."
+
+#~ msgid "Verify Your E-mail Address"
+#~ msgstr "Verifiziere Deine E-Mailadresse"
+
+#~ msgid ""
+#~ "\n"
+#~ "        We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</"
+#~ "a> for verification.\n"
+#~ "        Follow the link provided to finalize the signup process.\n"
+#~ "        <br />\n"
+#~ "        Please contact us if you do not receive it within a few minutes.\n"
+#~ "        "
+#~ msgstr ""
+#~ "\n"
+#~ "        Wir haben eine E-mail an <a href=\"mailto:%(email)s\">%(email)s</"
+#~ "a> zur Verifizierung geschickt.\n"
+#~ "        Folge dem Link in der E-Mail um die Anmeldung abzuschließen.\n"
+#~ "        <br />\n"
+#~ "        Bitte kontaktier uns wenn du die E-Mail nicht innerhalb weniger "
+#~ "Minuten empfängst.\n"
+#~ "        "
+
+#~ msgid "Sign Out"
+#~ msgstr "Abmelden"
+
+#~ msgid "Are you sure you want to sign out?"
+#~ msgstr "Bist du sicher dass du dich abmelden willst?"
+
+#~ msgid "Edit profile"
+#~ msgstr "Profil bearbeiten"
+
+#~ msgid "Contacts"
+#~ msgstr "Kontakte"
+
+#~ msgid "Log out"
+#~ msgstr "Abmelden"
+
+#~ msgid "Team members"
+#~ msgstr "Teammitglieder"
+
+#~ msgid "Delete"
+#~ msgstr "Entfernen"
+
+#~ msgid "Edit profile picture"
+#~ msgstr "Profilbild bearbeiten"
+
+#~ msgid "Change picture"
+#~ msgstr "Bild ändern"
+
+#~ msgid "Delete picture"
+#~ msgstr "Bild löschen"
+
+#~ msgid "First name"
+#~ msgstr "Vorname"
+
+#~ msgid "Last name"
+#~ msgstr "Nachname"
+
+#~ msgid "Email"
+#~ msgstr "E-Mailadresse"
+
+#~ msgid "Primary address"
+#~ msgstr "Primäre e-mailadresse"
+
+#~ msgid "Verified"
+#~ msgstr "Verifiziert"
+
+#~ msgid "submit"
+#~ msgstr "einschicken"
+
+#~ msgid "Delete account"
+#~ msgstr "Konto löschen"
+
+#~ msgid "User does not exist."
+#~ msgstr "Benutzer existiert nicht."
+
+#~ msgid "Bibliography Manager"
+#~ msgstr "Bibliografiemanager"
+
+#~ msgid "en"
+#~ msgstr "de"
+
+#~ msgid "Document Overview"
+#~ msgstr "Dokumentenübersicht"
+
+#, fuzzy
+#~| msgid "Thank you for your comment!"
+#~ msgid "Thank you for your report!"
+#~ msgstr "Vielen Dank für deine Anmerkung!"
+
+#~ msgid "Media Manager"
+#~ msgstr "Medienmanager"
+
+#~ msgid "Feedback"
+#~ msgstr "Feedback"
+
+#~ msgid "Confirm E-mail Address and Agree to Terms and Conditions"
+#~ msgstr "Bestätige die E-Mailadresse und stimme den Geschäftsbedingungen zu"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "        Please confirm that you own the email <a href=\"mailto:%(email)s"
+#~ "\">%(email)s</a>,\n"
+#~ "        that you apply for the username %(user_display)s, and that you "
+#~ "have read and agree to the\n"
+#~ "        <a href=\"/terms/\" target=\"_blank\">Terms and Conditions</a>.\n"
+#~ "        "
+#~ msgstr ""
+#~ "\n"
+#~ "Bitte bestätige, dass du den Usernamen %(user_display)s beantragt hast, "
+#~ "dass <a href=\"mailto:%(email)s\">%(email)s</a> deine Emailadresse ist, "
+#~ "und dass du den <a href=\"http://www.fiduswriter.com/?"
+#~ "page_id=41\">Geschäftsbedingungen</a> zustimmst.\n"
+#~ "        "
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "        I have read and agree to the <a href=\"/terms/\" target=\"_blank"
+#~ "\">Terms and Conditions</a>.\n"
+#~ "        "
+#~ msgstr ""
+#~ "\n"
+#~ "        Ich habe die <a href=\"http://www.fiduswriter.com/?"
+#~ "page_id=41\">Geschäftsbedingungen</a> gelesen und stimme ihnen zu."
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "            I am aware that I am signing up for a test account and that "
+#~ "service may be ended abruptly and without notice, leaving me without my "
+#~ "files.\n"
+#~ "            "
+#~ msgstr ""
+#~ "\n"
+#~ "        Ich bin mir darüber im Klaren, dass ich an einem Betatest "
+#~ "teilnehme und dass dieser ohne Vorankündigung jederzeit beendet werden "
+#~ "kann.\n"
+#~ "        "
+
+#~ msgid "Confirm"
+#~ msgstr "Bestätigen"
+
+#~ msgid ""
+#~ "\n"
+#~ "        This e-mail confirmation link expired or is invalid.\n"
+#~ "        Please <a href=\"%(email_url)s\">issue a new e-mail confirmation "
+#~ "request</a>.\n"
+#~ "        "
+#~ msgstr ""
+#~ "\n"
+#~ "Dieser Link zur E-Mailbestätigung ist abgelaufen oder ungültig.\n"
+#~ "       Bitte <a href=\"%(email_url)s\">issue eine neue E-Mailbestätigung "
+#~ "anfordern</a>.\n"
+#~ "        "
+
+#~ msgid "Title"
+#~ msgstr "Titel"
+
+#~ msgid "Sourcetype"
+#~ msgstr "Dokumententyp"
+
+#~ msgid "Published"
+#~ msgstr "Veröffentlicht"
+
+#~ msgid "Created"
+#~ msgstr "Erstellt"
+
+#~ msgid "Last changed"
+#~ msgstr "Letzte Änderungen"
+
+#~ msgid "Owner"
+#~ msgstr "Besitzer"
+
+#~ msgid "Rights"
+#~ msgstr "Rechte"
+
+#~ msgid "File"
+#~ msgstr "Datei"
+
+#~ msgid "Size (px)"
+#~ msgstr "Größe (px)"
+
+#~ msgid "Updated"
+#~ msgstr "Verändert"
+
+#~ msgid "manage bibliography library"
+#~ msgstr "Bibliografisches Verzeichnis managen"
+
+#~ msgid "Bibliography"
+#~ msgstr "Bibliografie"
+
+#~ msgid "manage image files"
+#~ msgstr "Bilddatein managen"
+
+#~ msgid "Images"
+#~ msgstr "Bilder"
+
+#~ msgid "Delete selected"
+#~ msgstr "Auswahl löschen"
+
+#~ msgid "Export selected"
+#~ msgstr "Auswahl exportieren"
+
+#~ msgid "All categories"
+#~ msgstr "Alle Kategorien"
+
+#~ msgid "Edit categories"
+#~ msgstr "Kategorien bearbeiten"
+
+#~ msgid "Register new source"
+#~ msgstr "Neue Quelle eintragen"
+
+#~ msgid "Import Bibtex Library"
+#~ msgstr "Bibtex Datei importieren"
+
+#~ msgid "Close the document and return to the document overview menu."
+#~ msgstr "Dokument schließen und zur Übersicht zurückkehren."
+
+#~ msgid "File handling"
+#~ msgstr "Dateiverwaltung"
+
+#~ msgid "Share the document with other users."
+#~ msgstr "Teile das Dokument mit anderen Benutzern."
+
+#~ msgid "Share"
+#~ msgstr "Teilen"
+
+#~ msgid "Close"
+#~ msgstr "Schließen"
+
+#, fuzzy
+#~ msgid "Save a revision of the current document"
+#~ msgstr "Kopie des aktuellen Dokumentes speichern"
+
+#, fuzzy
+#~ msgid "Create copy of the current document"
+#~ msgstr "Kopie des aktuellen Dokumentes speichern"
+
+#, fuzzy
+#~ msgid "Create copy"
+#~ msgstr "Kopie speichern"
+
+#~ msgid "Download the current document"
+#~ msgstr "Aktuelles Dokument downloaden"
+
+#~ msgid "Download"
+#~ msgstr "Download"
+
+#, fuzzy
+#~| msgid "Either print or create a PDF using your browser's print dialog"
+#~ msgid "Either print or create a PDF using your browser print dialog"
+#~ msgstr ""
+#~ "Entweder Drucke oder erstelle eine PDF mit dem Druckdialog des Browsers"
+
+#~ msgid "Print/PDF"
+#~ msgstr "Drucken/PDF"
+
+#~ msgid "Export of the document contents"
+#~ msgstr "Export des Inhaltes des Dokumentes"
+
+#~ msgid "Export"
+#~ msgstr "Exportieren"
+
+#~ msgid "Export the document to an HTML file"
+#~ msgstr "Exportiere das Dokument in eine HTML-Datei"
+
+#~ msgid "Export the document to an Epub electronic reader file."
+#~ msgstr "Exportiere das Dokument in eine Epub Datei."
+
+#~ msgid ""
+#~ "Export the document to a Latex file. This will also attach a BibTex file "
+#~ "if you are using citations."
+#~ msgstr ""
+#~ "Exportiere das Dokument in eine Latex Datei. Eine Bibtex Datei wird auch "
+#~ "hinzugefügt wenn Zitate verwendet werden."
+
+#~ msgid "Choose your preferred citation style."
+#~ msgstr "Wähle deinen bevorzugten Zitierstil."
+
+#~ msgid "Citation Style"
+#~ msgstr "Zitierstil"
+
+#~ msgid "Choose a document style"
+#~ msgstr "Wähle einen Dokumentenstil"
+
+#~ msgid "Document Style"
+#~ msgstr "Dokumentenstil"
+
+#~ msgid "Choose a papersize for printing and PDF generation."
+#~ msgstr "Wähle eine Papiergröße für Druck und PDF Erstellung."
+
+#~ msgid "Paper Size"
+#~ msgstr "Papiergröße"
+
+#~ msgid "A4 (DIN A4/ISO 216) which is used in most of the world."
+#~ msgstr "DIN A4 (ISO 216) welches das meißtverwendete Format weltweit ist."
+
+#~ msgid "DIN A4"
+#~ msgstr "DIN A4"
+
+#~ msgid "The format used by the USA and some other American countries."
+#~ msgstr ""
+#~ "Das Format das in den USA und einigen amerikanischen Staaten verwendet "
+#~ "wird."
+
+#~ msgid "US Letter"
+#~ msgstr "US Letter"
+
+#~ msgid "Choose which metadata to enable."
+#~ msgstr "Wähle welche Metadaten zugänglich sein sollen."
+
+#~ msgid "Metadata"
+#~ msgstr "Metadaten"
+
+#~ msgid "Define a subtitle in addition to the title of the document."
+#~ msgstr "Definiere einen Untertitel neben dem Titel des Dokumentes."
+
+#~ msgid "Subtitle"
+#~ msgstr "Untertitel"
+
+#~ msgid "Add an abstract to the document."
+#~ msgstr "Eine Zusammenfassung dem Dokument hinzufügen."
+
+#~ msgid "Abstract"
+#~ msgstr "Zusammenfassung"
+
+#, fuzzy
+#~ msgid "Specify the authors of the document."
+#~ msgstr "Der Titel des Dokumentes"
+
+#, fuzzy
+#~ msgid "Author(s)"
+#~ msgstr "Autor"
+
+#~ msgid "Tools"
+#~ msgstr "Werkzeuge"
+
+#~ msgid "Word counter"
+#~ msgstr "Wortzähler"
+
+#~ msgid "Show/hide the top menu."
+#~ msgstr "Yopmenu anzeigen/verstecken"
+
+#, fuzzy
+#~ msgid "Footnote"
+#~ msgstr "Havard"
+
+#~ msgid "Show/hide comments"
+#~ msgstr "Kommentare zeigen/verbergen"
+
+#, fuzzy
+#~ msgid "Filter comments"
+#~ msgstr "Dokument bearbeiten"
+
+#, fuzzy
+#~ msgid "By authors"
+#~ msgstr "Autor"
+
+#, fuzzy
+#~| msgid "Username"
+#~ msgid "By username"
+#~ msgstr "Nutzername"
+
+#~ msgid "Share selected"
+#~ msgstr "Auswahl teilen"
+
+#~ msgid "Copy selected"
+#~ msgstr "Auswahl kopieren"
+
+#~ msgid "Export selected as Epub"
+#~ msgstr "Auswahl als Epub exportieren"
+
+#~ msgid "Export selected as HTML"
+#~ msgstr "Auswahl als HTML exportieren"
+
+#~ msgid "Export selected as LaTeX"
+#~ msgstr "Auswahl als LaTeX exportieren"
+
+#~ msgid "Download selected as Fidus Document"
+#~ msgstr "Downloade die Auswahl als Fidus Dokument"
+
+#~ msgid "Create New Document"
+#~ msgstr "Neues Dokument erstellen"
+
+#~ msgid "Upload Fidus Document"
+#~ msgstr "Fidus Dokument Uploaden"
+
+#~ msgid "Select action"
+#~ msgstr "Aktion wählen"
+
+#~ msgid "Add new contact"
+#~ msgstr "Neuen Kontakt hinzufügen"
+
+#~ msgid "Upload new image"
+#~ msgstr "Neues Bild hochladen"
+
+#~ msgid "compose books"
+#~ msgstr "Bücher zusammensetzen"
+
+#~ msgid "Books"
+#~ msgstr "Bücher"
+
+#~ msgid "Book Overview"
+#~ msgstr "Buchübersicht"
+
+#~ msgid "Export selected for Print/PDF"
+#~ msgstr "Auswahl als Print/PDF exportieren"
+
+#~ msgid "Create New Book"
+#~ msgstr "Neues Buch erstellen"
+
+#~ msgid "Upload Fidus Book"
+#~ msgstr "Fidus Book Uploaden"
+
+#~ msgid "submit the paper to ojs"
+#~ msgstr "Das Paper einreichen"
+
+#~ msgid "Submit paper"
+#~ msgstr "Einreichen"
+
+#, fuzzy
+#~| msgid "Finish the review"
+#~ msgid "Finish the revision"
+#~ msgstr "Review beenden"
+
+#~ msgid "Finish the review"
+#~ msgstr "Review beenden"
+
+#~ msgid "Return to OJS"
+#~ msgstr "zurück nach OJS"
+
+#, fuzzy
+#~| msgid "Register new source"
+#~ msgid "Register journals"
+#~ msgstr "Neue Quelle eintragen"
+
+#, fuzzy
+#~| msgid "edit documents"
+#~ msgid "maintenance documents"
+#~ msgstr "Dokumente bearbeiten"
+
+#, fuzzy
+#~| msgid "Document Style"
+#~ msgid "Document Update"
+#~ msgstr "Dokumentenstil"
+
+#, fuzzy
+#~| msgid "Save the current document"
+#~ msgid "remove current column."
+#~ msgstr "Das aktuelle Dokumente speichern"
+
+#, fuzzy
+#~ msgid "remove column"
+#~ msgstr "Von Team entfernen"
+
+#~ msgid "Handle tracking of changes."
+#~ msgstr "Steuer Tracking von Veränderungen."
+
+#~ msgid "Changes"
+#~ msgstr "Veränderungen"
+
+#~ msgid "Turn tracking of changes on."
+#~ msgstr "Tracking anschalten"
+
+#~ msgid "Track"
+#~ msgstr "Tracken"
+
+#~ msgid "Show all changes that have been tracked in the entire document."
+#~ msgstr "Alle Veränderungen die im Dokument getracked wurden anzeigen."
+
+#~ msgid "Show"
+#~ msgstr "Zeigen"
+
+#~ msgid "Accept all changes that have been tracked in the entire document."
+#~ msgstr "Akzeptiere alle Veränderungen die im Dokument getracked wurden."
+
+#~ msgid "Accept all"
+#~ msgstr "Alle Akzeptieren"
+
+#~ msgid "Reject all changes that have been tracked in the entire document."
+#~ msgstr "Verwerfe alle Veränderungen die im Dokument getracked wurden."
+
+#~ msgid "Reject all"
+#~ msgstr "Alle verwerfen"
+
+#~ msgid "The title of the document"
+#~ msgstr "Der Titel des Dokumentes"
+
+#~ msgid "Browser check"
+#~ msgstr "Browser Überprüfung"
+
+#~ msgid "Hey there!"
+#~ msgstr "Hallo!"
+
+#, fuzzy
+#~ msgid ""
+#~ "Unfortunately, Fidus Writer currently only works on Google Chrome (29+) "
+#~ "and Apple Safari (6.1+). We hope to provide support for Mozilla Firefox "
+#~ "in the future."
+#~ msgstr ""
+#~ "Leider ist Fidus Writer im Moment nur mit Google Chrome zu verwenden. Wir "
+#~ "arbeiten an einer Version für Mozilla Firefox."
+
+#~ msgid "American Psychological Association."
+#~ msgstr "American Psychological Association."
+
+#~ msgid "APA"
+#~ msgstr "APA"
+
+#~ msgid "The author-date variant of the Chicago style"
+#~ msgstr "Die Autor-Datum Variante des Chicagostiles"
+
+#~ msgid "Chicago (Author-Date)"
+#~ msgstr "Chicago (Autor-Datum)"
+
+#~ msgid "Chicago format with short notes and full bibliography"
+#~ msgstr "Chicago Format mit kurzer Fußnote und kompletter Bibliografie"
+
+#~ msgid "Chicago (Note with Bibliography)"
+#~ msgstr "Chicago (Fußnote mit Bibliografie)"
+
+#~ msgid "The Harvard author-date style"
+#~ msgstr "Der Harvard Autor-Datum Stil"
+
+#~ msgid "Harvard"
+#~ msgstr "Havard"
+
+#~ msgid "Modern Language Association"
+#~ msgstr "Modern Language Association"
+
+#~ msgid "MLA"
+#~ msgstr "MLA"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "        Please notice that Fidus Writer currently only works with the "
+#~ "Google Chrome browser. For best results, please enable CSS Regions within "
+#~ "the browser. You can read how to do that <a href=\"http://fiduswriter."
+#~ "org/2013/03/15/how-do-i-enable-page-views-in-fidus-writer/\" target="
+#~ "\"_blank\">here</a>.</p>\n"
+#~ "        "
+#~ msgstr ""
+#~ "\n"
+#~ "        Bitte bemerke, dass Fidus Writer zur Zeit nur mit dem Google "
+#~ "Chrome Browser funktioniert. Für das beste Resultat, schalte CSS Regions "
+#~ "im Browser an. Du kannst <a href=\"http://fiduswriter.com/2013/03/15/how-"
+#~ "do-i-enable-page-views-in-fidus-writer/\" target=\"_blank\">hier</a> "
+#~ "lesen wie man das macht.</p>\n"
+#~ "        "
+
+#~ msgid "Requires Chrome/enable css regions"
+#~ msgstr "Benötigt Chrome/CSS Regions"
+
+#~ msgid "Elephant"
+#~ msgstr "Elefant"
+
+#~ msgid "Comfy Elephant"
+#~ msgstr "Gemütlicher Elefant"
+
+#~ msgid "Owl"
+#~ msgstr "Eule"
+
+#~ msgid "Drowsy Owl"
+#~ msgstr "Schläfrige Eule"
+
+#~ msgid "Fox"
+#~ msgstr "Fuchs"
+
+#~ msgid "Foxy Fox"
+#~ msgstr "Sexy Fuchs"
+
+#~ msgid "Save"
+#~ msgstr "Speichern"
+
+#, fuzzy
+#~ msgid "Successfully updated your avatar."
+#~ msgstr "Bild entfernen"
+
+#~ msgid "Your current avatar: "
+#~ msgstr "Aktuelles Profilbild"
+
+#~ msgid "You haven't uploaded an avatar yet. Please upload one now."
+#~ msgstr ""
+#~ "Sie haben bisher kein Profilbild hochgeladen. Bitte holen sie dies nach."
+
+#~ msgid "Upload New Image"
+#~ msgstr "Neues Bild hochladen"
+
+#~ msgid "Choose new Default"
+#~ msgstr "Einstellung ändern"
+
+#~ msgid "Please select the avatars that you would like to delete."
+#~ msgstr "Bitte das zu löschende Profilbild auswählen."
+
+#~ msgid ""
+#~ "You have no avatars to delete. Please <a href=\"%(avatar_change_url)s"
+#~ "\">upload one</a> now."
+#~ msgstr ""
+#~ "Sie haben kein Profilbild. Bitte eines <a href=\"%(avatar_change_url)s"
+#~ "\">hochladen</a> "
+
+#~ msgid "Delete These"
+#~ msgstr "Diese Entfernen"
+
+#, fuzzy
+#~ msgid ""
+#~ "You have updated your avatar <a href=\"%(avatar_url)s\">%(avatar)s</a>."
+#~ msgstr ""
+#~ "Sie haben kein Profilbild. Bitte eines <a href=\"%(avatar_change_url)s"
+#~ "\">hochladen</a> "
+
+#~ msgid "Contents"
+#~ msgstr "Inhalt"
+
+#, fuzzy
+#~ msgid "Classic style"
+#~ msgstr "Klassisch"
+
+#~ msgid "Classic"
+#~ msgstr "Klassisch"
+
+#, fuzzy
+#~ msgid "Modern style"
+#~ msgstr "Modern"
+
+#~ msgid "Modern"
+#~ msgstr "Modern"
+
+#, fuzzy
+#~ msgid "Funky style"
+#~ msgstr "Funky"
+
+#~ msgid "Funky"
+#~ msgstr "Funky"
+
+#~ msgid "Chicago"
+#~ msgstr "Chicago"
+
+#, fuzzy
+#~ msgid "File type"
+#~ msgstr "Datei"
+
+#~ msgid "Remember Me"
+#~ msgstr "Angemeldet bleiben"
+
+#~ msgid "E-mail"
+#~ msgstr "E-Mailadresse"
+
+#~ msgid "Username or e-mail"
+#~ msgstr "Nutzername oder E-Mail"
+
+#~ msgctxt "field label"
+#~ msgid "Login"
+#~ msgstr "Login"
+
+#~ msgid "The e-mail address and/or password you specified are not correct."
+#~ msgstr "Ungültige E-Mailadresse oder ungültiges Passwort "
+
+#~ msgid "The username and/or password you specified are not correct."
+#~ msgstr "Ungültige E-Mailadresse oder ungültiges Passwort"
+
+#~ msgid "The login and/or password you specified are not correct."
+#~ msgstr "Ungültige E-Mailadresse oder ungültiges Passwort"
+
+#~ msgid "New Password"
+#~ msgstr "Neues Kennwort"
+
+#~ msgid "email address"
+#~ msgstr "E-Mailadresse"
+
+#~ msgid "email addresses"
+#~ msgstr "E-Mailadresse"
+
+#~ msgid "email confirmation"
+#~ msgstr "E-Mailbestätigung"
+
+#~ msgid "Account"
+#~ msgstr "Konto"
+
+#~ msgid "E-mail Addresses"
+#~ msgstr "E-Mailadresse"
+
+#~ msgid "Add E-mail Address"
+#~ msgstr "E-Mailadresse hinzufügen"
+
+#~ msgid ""
+#~ "This e-mail confirmation link expired or is invalid. Please <a href="
+#~ "\"%(email_url)s\">issue a new e-mail confirmation request</a>."
+#~ msgstr ""
+#~ "Dieser Link zur E-Mailbestätigung ist abgelaufen oder ungültig. Bitte <a "
+#~ "href=\"%(email_url)s\">issue eine neue E-Mailbestätigung anfordern</a>."
+
+#~ msgid "Sign In"
+#~ msgstr "Registriere dich"
+
+#, fuzzy
+#~ msgid ""
+#~ "Please sign in with one\n"
+#~ "of your existing third party accounts. Or, <a href=\"%(signup_url)s"
+#~ "\">sign up</a> \n"
+#~ "for a %(site_name)s account and sign in below:"
+#~ msgstr ""
+#~ "\n"
+#~ "        Bitte melde dich mit einem deiner externen Konten oder deinem "
+#~ "Fiduswriterkonto an.<br/>\n"
+#~ "        Neu hier? Einfach kostenfrei ein neues <a href=\"%(signup_url)s\" "
+#~ "title=\"Sign up for %(site_name)s\">Konto erstellen</a>.\n"
+#~ "        "
+
+#~ msgid "Change Password"
+#~ msgstr "Kennwort ändern"
+
+#~ msgid "Delete Password"
+#~ msgstr "Kennwort entfernen"
+
+#~ msgid "delete my password"
+#~ msgstr "Mein Kennwort entfernen"
+
+#~ msgid "Password Deleted"
+#~ msgstr "Kennwort entfernt"
+
+#~ msgid "Password Reset"
+#~ msgstr "Kennwort zurücksetzen"
+
+#~ msgid ""
+#~ "Forgotten your password? Enter your e-mail address below, and we'll send "
+#~ "you an e-mail allowing you to reset it."
+#~ msgstr ""
+#~ "Passwort vergessen? Gib enfach deine E-mailadresee ein und wir werden dir "
+#~ "eine Nachricht zusenden, mit der du dein Passwort zurückzusetzen kannst."
+
+#, fuzzy
+#~ msgid "change password"
+#~ msgstr "Passwort ändern"
+
+#~ msgid "Set Password"
+#~ msgstr "Kennwort"
+
+#, fuzzy
+#~ msgid "Signup"
+#~ msgstr "registriere dich"
+
+#, fuzzy
+#~ msgid ""
+#~ "Already have an account? Then please <a href=\"%(login_url)s\">sign in</"
+#~ "a>."
+#~ msgstr ""
+#~ "\n"
+#~ "        Du hast bereits ein Konto? Dann kannst du dich einfach <a href="
+#~ "\"%(login_url)s\" title=\"Für %(site_name)s anmelden\">anmelden</a>.\n"
+#~ "        "
+
+#, fuzzy
+#~ msgid "Password Reset E-mail"
+#~ msgstr "Passwort zurücksetzen"
+
+#, fuzzy
+#~ msgid "Danish"
+#~ msgstr "Spanisch"
+
+#, fuzzy
+#~ msgid "British English"
+#~ msgstr "Englisch"
+
+#, fuzzy
+#~ msgid "Mexican Spanish"
+#~ msgstr "Spanisch"
+
+#, fuzzy
+#~ msgid "Polish"
+#~ msgstr "Veröffentlicht"
+
+#, fuzzy
+#~ msgid "Vietnamese"
+#~ msgstr "Vorname"
+
+#, fuzzy
+#~ msgid "Successfully deleted %(count)d %(items)s."
+#~ msgstr "Bild entfernen"
+
+#, fuzzy
+#~ msgid "No"
+#~ msgstr "Keine"
+
+#, fuzzy
+#~ msgid "action time"
+#~ msgstr "Zitierstil"
+
+#, fuzzy
+#~ msgid "change message"
+#~ msgstr "Passwort ändern"
+
+#, fuzzy
+#~ msgid "log entry"
+#~ msgstr "Country"
+
+#~ msgid "None"
+#~ msgstr "Keine"
+
+#, fuzzy
+#~ msgid "Changed %s."
+#~ msgstr "Änderungen"
+
+#, fuzzy
+#~ msgid "No fields changed."
+#~ msgstr "Letzte Änderungen"
+
+#, fuzzy
+#~ msgid "No action selected."
+#~ msgstr "Auswahl exportieren"
+
+#, fuzzy
+#~ msgid "Change %s"
+#~ msgstr "Änderungen"
+
+#, fuzzy
+#~ msgid "0 of %(cnt)s selected"
+#~ msgstr "Auswahl exportieren"
+
+#, fuzzy
+#~ msgid "Change history: %s"
+#~ msgstr "Aufgaben ändern"
+
+#, fuzzy
+#~ msgid "Add Another"
+#~ msgstr "Zu Team hinzufügen"
+
+#, fuzzy
+#~ msgid "Change:"
+#~ msgstr "Änderungen"
+
+#, fuzzy
+#~ msgid "Run the selected action"
+#~ msgstr "Aktion wählen"
+
+#, fuzzy
+#~ msgid "Clear selection"
+#~ msgstr "Auswahl löschen"
+
+#~ msgid "Change password"
+#~ msgstr "Kennwort ändern"
+
+#, fuzzy
+#~ msgid "Remove from sorting"
+#~ msgstr "Von Team entfernen"
+
+#, fuzzy
+#~ msgid "Change"
+#~ msgstr "Änderungen"
+
+#, fuzzy
+#~ msgid "Recent Actions"
+#~ msgstr "Aktion wählen"
+
+#, fuzzy
+#~ msgid "Password:"
+#~ msgstr "Kennwort"
+
+#, fuzzy
+#~ msgid "Forgotten your password or username?"
+#~ msgstr "Wähle deinen Nutzernamen"
+
+#, fuzzy
+#~ msgid "User"
+#~ msgstr "Nutzername"
+
+#, fuzzy
+#~ msgid "Show all"
+#~ msgstr "Zeigen"
+
+#, fuzzy
+#~ msgid "Enter a username and password."
+#~ msgstr "kennwort erstellen"
+
+#, fuzzy
+#~ msgid "Delete?"
+#~ msgstr "Entfernen"
+
+#, fuzzy
+#~ msgid "Log in again"
+#~ msgstr "Anmelden"
+
+#, fuzzy
+#~ msgid "Password change"
+#~ msgstr "Kennwort"
+
+#, fuzzy
+#~ msgid "Password change successful"
+#~ msgstr "Kennwort zurücksetzen"
+
+#, fuzzy
+#~ msgid "Old password"
+#~ msgstr "Kennwort"
+
+#, fuzzy
+#~ msgid "New password"
+#~ msgstr "Neues Kennwort"
+
+#, fuzzy
+#~ msgid "Change my password"
+#~ msgstr "Kennwort ändern"
+
+#, fuzzy
+#~ msgid "Password reset complete"
+#~ msgstr "Kennwort zurücksetzen"
+
+#, fuzzy
+#~ msgid "Password reset confirmation"
+#~ msgstr "Passwort zurücksetzen"
+
+#, fuzzy
+#~ msgid "Enter new password"
+#~ msgstr "kennwort erstellen"
+
+#, fuzzy
+#~ msgid "New password:"
+#~ msgstr "Neues Kennwort"
+
+#, fuzzy
+#~ msgid "Confirm password:"
+#~ msgstr "kennwort bestätigen"
+
+#, fuzzy
+#~ msgid "Password reset unsuccessful"
+#~ msgstr "Kennwort zurücksetzen"
+
+#, fuzzy
+#~ msgid "Password reset successful"
+#~ msgstr "Kennwort zurücksetzen"
+
+#, fuzzy
+#~ msgid "Thanks for using our site!"
+#~ msgstr "Vielen Dank für deine Anmerkung!"
+
+#, fuzzy
+#~ msgid ""
+#~ "Forgotten your password? Enter your email address below, and we'll email "
+#~ "instructions for setting a new one."
+#~ msgstr ""
+#~ "Passwort vergessen? Gib enfach deine E-mailadresee ein und wir werden dir "
+#~ "eine Nachricht zusenden, mit der du dein Passwort zurückzusetzen kannst."
+
+#, fuzzy
+#~ msgid "Email address:"
+#~ msgstr "E-Mailadresse"
+
+#, fuzzy
+#~ msgid "Reset my password"
+#~ msgstr "Kennwort zurücksetzen"
+
+#, fuzzy
+#~ msgid "All dates"
+#~ msgstr "Alle Kategorien"
+
+#, fuzzy
+#~ msgid "(None)"
+#~ msgstr "Keine"
+
+#, fuzzy
+#~ msgid "Select %s"
+#~ msgstr "Aktion wählen"
+
+#, fuzzy
+#~ msgid "Select %s to change"
+#~ msgstr "Aktion wählen"
+
+#, fuzzy
+#~ msgid "Models"
+#~ msgstr "Modern"
+
+#, fuzzy
+#~ msgid "Change password: %s"
+#~ msgstr "Kennwort ändern"
+
+#, fuzzy
+#~ msgid "No password set."
+#~ msgstr "Kennwort zurücksetzen"
+
+#, fuzzy
+#~ msgid "Password confirmation"
+#~ msgstr "E-Mailbestätigung"
+
+#, fuzzy
+#~ msgid "New password confirmation"
+#~ msgstr "E-Mailbestätigung"
+
+#, fuzzy
+#~ msgid "name"
+#~ msgstr "Nutzername"
+
+#, fuzzy
+#~ msgid "codename"
+#~ msgstr "Nutzername"
+
+#, fuzzy
+#~ msgid "password"
+#~ msgstr "Kennwort"
+
+#, fuzzy
+#~ msgid "first name"
+#~ msgstr "Vorname"
+
+#, fuzzy
+#~ msgid "last name"
+#~ msgstr "Nachname"
+
+#, fuzzy
+#~ msgid "user"
+#~ msgstr "Alle Nutzer"
+
+#, fuzzy
+#~ msgid "users"
+#~ msgstr "Alle Nutzer"
+
+#, fuzzy
+#~ msgid "Logged out"
+#~ msgstr "Abmelden"
+
+#, fuzzy
+#~ msgid "Password reset on %(site_name)s"
+#~ msgstr "Kennwort zurücksetzen"
+
+#, fuzzy
+#~ msgid "Content"
+#~ msgstr "Inhalt"
+
+#, fuzzy
+#~ msgid "Flag selected comments"
+#~ msgstr "Dokument bearbeiten"
+
+#, fuzzy
+#~ msgid "Approve selected comments"
+#~ msgstr "Dokument bearbeiten"
+
+#, fuzzy
+#~ msgid "%(site_name)s comments"
+#~ msgstr "Dokument bearbeiten"
+
+#, fuzzy
+#~ msgid "Email address"
+#~ msgstr "E-Mailadresse"
+
+#, fuzzy
+#~ msgid "content type"
+#~ msgstr "Inhalt"
+
+#, fuzzy
+#~ msgid "user's name"
+#~ msgstr "Nutzername"
+
+#, fuzzy
+#~ msgid "user's email address"
+#~ msgstr "E-Mailadresse"
+
+#, fuzzy
+#~ msgid "comment"
+#~ msgstr "Anmerkungen"
+
+#, fuzzy
+#~ msgid "comments"
+#~ msgstr "Anmerkungen"
+
+#, fuzzy
+#~ msgid "comment flag"
+#~ msgstr "Anmerkungen"
+
+#, fuzzy
+#~ msgid "comment flags"
+#~ msgstr "Anmerkungen"
+
+#, fuzzy
+#~ msgid "Approve a comment"
+#~ msgstr "Dokument bearbeiten"
+
+#, fuzzy
+#~ msgid "Thanks for commenting"
+#~ msgstr "Vielen Dank für deine Anmerkung!"
+
+#, fuzzy
+#~ msgid "Thank you for your comment"
+#~ msgstr "Vielen Dank für deine Anmerkung!"
+
+#, fuzzy
+#~ msgid "Post your comment"
+#~ msgstr "Vielen Dank für deine Anmerkung!"
+
+#, fuzzy
+#~ msgid "content types"
+#~ msgstr "Inhalt"
+
+#, fuzzy
+#~ msgid "content"
+#~ msgstr "Inhalt"
+
+#, fuzzy
+#~ msgid "template name"
+#~ msgstr "Nachname"
+
+#, fuzzy
+#~ msgid "first step"
+#~ msgstr "Vorname"
+
+#, fuzzy
+#~ msgid "No feeds are registered."
+#~ msgstr "Keine Nutzer registriert"
+
+#, fuzzy
+#~ msgid "Slug %r isn't registered."
+#~ msgstr "Keine Nutzer registriert"
+
+#, fuzzy
+#~ msgid "one"
+#~ msgstr "Keine"
+
+#, fuzzy
+#~ msgid "eight"
+#~ msgstr "Rechte"
+
+#, fuzzy
+#~ msgid "Basque Country"
+#~ msgstr "Country"
+
+#, fuzzy
+#~ msgid "County Antrim"
+#~ msgstr "Country"
+
+#, fuzzy
+#~ msgid "County Armagh"
+#~ msgstr "Country"
+
+#, fuzzy
+#~ msgid "County Down"
+#~ msgstr "Country"
+
+#, fuzzy
+#~ msgid "County Tyrone"
+#~ msgstr "Country"
+
+#, fuzzy
+#~ msgid "Banten"
+#~ msgstr "Inhalt"
+
+#, fuzzy
+#~ msgid "Fermanagh"
+#~ msgstr "Deutsch"
+
+#, fuzzy
+#~ msgid "domain name"
+#~ msgstr "Nachname"
+
+#, fuzzy
+#~ msgid "display name"
+#~ msgstr "Vorname"
+
+#, fuzzy
+#~ msgid "Enter a valid email address."
+#~ msgstr "E-Mailadresse"
+
+#, fuzzy
+#~ msgid "File path"
+#~ msgstr "Datei"
+
+#, fuzzy
+#~ msgid "IPv4 address"
+#~ msgstr "E-Mailadresse"
+
+#, fuzzy
+#~ msgid "Mon"
+#~ msgstr "Modern"
+
+#, fuzzy
+#~ msgid "September"
+#~ msgstr "Angemeldet bleiben"
+
+#, fuzzy
+#~ msgid "December"
+#~ msgstr "Angemeldet bleiben"
+
+#, fuzzy
+#~ msgctxt "alt. month"
+#~ msgid "September"
+#~ msgstr "Angemeldet bleiben"
+
+#, fuzzy
+#~ msgctxt "alt. month"
+#~ msgid "December"
+#~ msgstr "Angemeldet bleiben"
+
+#, fuzzy
+#~ msgid "Last child"
+#~ msgstr "Letzte Änderungen"
+
+#, fuzzy
+#~ msgid "Threaded comments"
+#~ msgstr "Dokument bearbeiten"
+
+#~ msgid "Profile"
+#~ msgstr "Profil"
+
+#~ msgid "Change your avatar"
+#~ msgstr "Bild bearbeiten"
+
+#~ msgid "About me"
+#~ msgstr "Über mich"
+
+#~ msgid "Email Addresses"
+#~ msgstr "E-Mailadresse"
+
+#~ msgid "Edit"
+#~ msgstr "Bearbeiten"
+
+#~ msgid "All users"
+#~ msgstr "Alle Nutzer"
+
+#~ msgid "No users registered"
+#~ msgstr "Keine Nutzer registriert"
+
+#~ msgid "previous"
+#~ msgstr "vorherige"
+
+#~ msgid "Page"
+#~ msgstr "Seite"
+
+#~ msgid "of"
+#~ msgstr "von"
+
+#~ msgid "next"
+#~ msgstr "nächste"
+
+#~ msgid "Team"
+#~ msgstr "Team"
+
+#~ msgid "Thanks for verifying! You can now log in to Fidus Writer."
+#~ msgstr "Danke für die Bestätigung! Du kannst jetzt einloggen."
+
+#~ msgid "Share documents"
+#~ msgstr "Dokumente teilen"
+
+#~ msgid "Roles:"
+#~ msgstr "Aufgaben:"
+
+#, fuzzy
+#~ msgid " Title "
+#~ msgstr "Titel"
+
+#~ msgid "Select source type"
+#~ msgstr "Dokumententyp wählen"
+
+#~ msgid "Category"
+#~ msgstr "Kategorie"
+
+#~ msgid "Edit Category"
+#~ msgstr "Kategorie bearbeiten"
+
+#~ msgid "Roles"
+#~ msgstr "Aufgaben"
+
+#~ msgid "No team members registered. Go and find some team members first."
+#~ msgstr "Keine Teammitglieder registriert. Suche dir zuerst Teammitglieder"
+
+#~ msgid "My documents"
+#~ msgstr "Meine Dokumente"
+
+#~ msgid "Access"
+#~ msgstr "Zugang"
+
+#~ msgid "Shared documents I can edit"
+#~ msgstr "Zum Bearbeiten freigegebene Dokumente"
+
+#~ msgid "Shared documents I can read"
+#~ msgstr "Zum Lesen freigegebene Dokumente "

@@ -1,0 +1,235 @@
+input,
+textarea,
+button {
+    font-family: 'Lato', sans-serif;
+    margin: 0;
+    outline-width: 0;
+}
+
+input[type='text'].category-form {
+    width: calc(100% - 38px);
+}
+
+textarea {
+    padding: 2px;
+}
+
+input[type='text']:not(.fw-inline),
+input[type='password']:not(.fw-inline),
+input[type='search']:not(.fw-inline),
+input[type='email']:not(.fw-inline),
+textarea {
+    box-sizing: border-box;
+    width: 100%;
+    height: 40px;
+    padding: 0 10px;
+    font-size: 14px;
+    line-height: 1.33em;
+    box-shadow: none;
+    border-radius: 0;
+    margin: 5px 0 5px 0;
+    background-color: #f3f3f3;
+    border: 0 none;
+}
+
+input[type='text']:focus,
+input[type='password']:focus,
+input[type='search']:focus,
+input[type='email']:focus,
+textarea:focus {
+    background-color: #fbf9d2;
+}
+
+.form-label {
+    font-size: 11px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+/*
+ * Bibliography entry input
+ */
+#uploadimage input.entryForm,
+#uploadimage input.fw-input {
+    width: 486px;
+}
+
+/*
+ * Name input fields
+ */
+.fw-name-input {
+    width: 226px
+}
+
+.fw-name-input.fw-first {
+    margin-right: 23px;
+}
+
+/*
+ * checkable label / td
+ */
+.fw-checkable {
+    cursor: pointer;
+    background-color: #fff;
+}
+
+.fw-checkable.checked {
+    background-color: #fbf9d2;
+}
+
+tr.fw-checkable.checked:after {
+    display: none;
+    content: '';
+}
+
+.fw-checkable-td, .fw-checkable > td {
+    position: relative
+}
+
+.fw-checkable-td.checked:after, tr.fw-checkable.checked > td:last-child:after {
+    top: 17px
+}
+
+.fw-checkable-label {
+    position: relative;
+    display: block;
+    width: 462px;
+    height: 36px;
+    line-height: 36px;
+    border: solid 1px #d3d3d3;
+    padding-left: 12px;
+    margin-bottom: 10px;
+}
+
+.fw-checkable-input {
+    display: none;
+}
+
+/**
+ * Checkbox
+ */
+.fw-check {
+    position: absolute;
+    opacity: 0;
+}
+
+.fw-check + label {
+    position: relative;
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+
+.fw-check + label:before {
+    content: "";
+    position: relative;
+    display: block;
+    width: 13px;
+    height: 13px;
+    border: 1px solid #a7a6a7;
+    border-radius: 2px;
+    background: linear-gradient(to bottom, rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%);
+}
+
+.fw-check:checked + label:after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    display: block;
+    width: 3px;
+    height: 7px;
+    border-bottom: 2px solid black;
+    border-right: 2px solid black;
+    transform: rotate(45deg);
+}
+
+.fw-label-check + label {
+    line-height: 15px;
+}
+
+.fw-label-check + label:before {
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 6px;
+}
+
+/*
+ * addable input fields button
+ */
+.fw-add-input {
+    cursor: pointer;
+    margin-left: 14px;
+}
+
+.fw-add-input::before {
+    width: 0.7em;
+}
+
+.fw-list-input {
+    margin-top: 7px;
+}
+
+.fw-list-input:first-child {
+    margin-top: 0;
+}
+
+/*
+ * form error
+ */
+.fw-fomt-error {
+    color: #f00;
+}
+
+/*
+ * ajax file uploader
+ */
+.ajax-upload input[type='file'] {
+    display: none;
+}
+
+.ajax-upload-label {
+    margin-left: 10px;
+}
+
+/*
+ * checkbox in a fw-button
+ */
+.fw-button input[type='checkbox'] {
+    margin-right: 3px;
+}
+
+/*
+ * radio buttons
+ */
+.fw-radio input[type=radio] {
+     display: inline-block;
+     width: 40px;
+     margin-bottom: 20px;
+}
+
+
+.fw-select-container {
+    margin-bottom: 18px;
+    position: relative;
+}
+
+.fw-select-container select {
+    display: inline-block;
+    width: calc(100% - 22px);
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+}
+
+.fw-select-container select option.placeholder {
+    display: none;
+}
+
+.fw-select-container .fw-select-arrow {
+    position: absolute;
+	top: 14px;
+	right: 16px;
+	pointer-events: none;
+}

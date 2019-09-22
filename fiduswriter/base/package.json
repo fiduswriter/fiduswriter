@@ -1,0 +1,38 @@
+// Fidus Writer will combine this file with package.json files in other installed
+// apps before executing npm commands. Different from a regular package.json, comments
+// are allowed in this file.
+
+{
+  "name": "fidus-writer",
+  "description": "Install dependencies for ES6 transpilation",
+  "scripts": {
+    "get_mml2omml": "mkdir -p ../static-libs/xsl/ && wget https://raw.githubusercontent.com/AbiWord/abiword/14cbf144cb10a5a5ea6ee11275f7178ca4ff055a/plugins/openxml/omml_xslt/mml2omml.xsl -O ../static-libs/xsl/mml2omml.xsl",
+    "copy_fontawesome": "mkdir -p ../static-libs/fontawesome/ && cp -r --preserve=mode node_modules/@fortawesome/fontawesome-free/css ../static-libs/fontawesome/ && cp -r node_modules/@fortawesome/fontawesome-free/webfonts ../static-libs/fontawesome/",
+    "copy_prosemirror_css": "mkdir -p ../static-libs/css/ && cp --preserve=mode node_modules/prosemirror-view/style/prosemirror.css ../static-libs/css/ && cp node_modules/prosemirror-menu/style/menu.css ../static-libs/css/prosemirror-menu.css && cp node_modules/prosemirror-example-setup/style/style.css ../static-libs/css/prosemirror-example-setup.css",
+    "copy_mathlive_css": "mkdir -p ../static-libs/css/ && cp --preserve=mode node_modules/mathlive/dist/mathlive*.css ../static-libs/css/",
+    "copy_mathlive_fonts": "mkdir -p ../static-libs/css/fonts/ && cp --preserve=mode node_modules/mathlive/dist/fonts/* ../static-libs/css/fonts/",
+    "postinstall": "npm run get_mml2omml && npm run copy_fontawesome && npm run copy_prosemirror_css && npm run copy_mathlive_css && npm run copy_mathlive_fonts",
+    "babel-transform-template-literals": "babel --plugins @babel/plugin-transform-template-literals,@babel/plugin-syntax-dynamic-import"
+  },
+  "author": "Johannes Wilm",
+  "license": "AGPL",
+  "private": true,
+  "dependencies": {
+    "file-loader": "^4.2.0",
+    "diff-dom": "4.1.6",
+    "downloadjs": "1.4.7",
+    "@fortawesome/fontawesome-free": "^5.9.0",
+    "w3c-keyname": "1.1.x",
+    "simple-datatables": "^2.1.6",
+    "vivliostyle-print": "^1.2.2",
+    "eslint": "^5.16.0",
+    "eslint-plugin-import": "^2.18.2",
+    "babel-eslint": "^10.0.3",
+    "offline-plugin": "5.0.x"
+  },
+  "devDependencies": {
+    "updates": "^8.0.2",
+    "@babel/cli": "7.6.x",
+    "@babel/plugin-transform-template-literals": "^7.4.4"
+  }
+}

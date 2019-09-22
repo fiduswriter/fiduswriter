@@ -1,0 +1,93 @@
+.fw-overview-menu-wrapper {
+    position: relative;
+    background-color: white;
+    padding: 11px 0;
+}
+
+#fw-overview-menu {
+    position: relative;
+    margin: 0 213px;
+}
+
+#fw-overview-menu:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+@media (max-width: 1429px) {
+    #fw-overview-menu {
+        margin: 0 auto;
+        max-width: 1004px;
+    }
+}
+
+.fw-overview-menu-item {
+    position: relative;
+    float: left;
+    margin-right: 14px;
+}
+
+.fw-overview-menu-item.search {
+    float: right;
+    margin-right: 0;
+}
+
+.fw-text-menu {
+    height: 40px;
+    color: #a2a2a2;
+    padding: 0;
+    border: 0 none;
+    background-color: transparent;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.fw-text-menu:hover {
+    color: #0f0f0f;
+}
+
+.fw-dropdown-menu {
+    padding-top: 14px;
+    font-size: 14px;
+    color: #a2a2a2;
+    cursor: pointer;
+    height: 40px;
+    box-sizing: border-box;
+}
+
+.fw-dropdown-menu:hover {
+    color: #0f0f0f;
+}
+
+div.select-action {
+    cursor: pointer;
+    min-width: 38px;
+}
+
+div.select-action input[type=checkbox] {
+    cursor: default;
+}
+
+span.select-action-dropdown {
+    margin-left: 5px;
+}
+
+.fw-button input[type=text] {
+    width: calc(100% - 30px);
+    height: 30px;
+    border: 0;
+}
+
+.fw-white input[type=text] {
+    background-color: #f3f3f3;
+}
+
+.fw-button.fw-white:focus-within {
+    background-color: #fbf9d2;
+}
+
+.fw-button.fw-white input[type=text]:focus,
+.fw-white.fw-input:hover {
+    background-color: #fbf9d2;
+}

@@ -1,5 +1,7 @@
 import {ModImageDB} from "./images"
 import {ModBibliographyDB} from "./bibliography"
+import {ModFileDB} from "./files"
+
 
 export class ModDB {
     constructor(editor) {
@@ -8,6 +10,7 @@ export class ModDB {
         console.log("this.editor.mod ", this.editor.mod)
         new ModImageDB(this)
         new ModBibliographyDB(this)
+        new ModFileDB(this)
 
     }
 
@@ -15,6 +18,8 @@ export class ModDB {
     clean() {
         const usedImages = [],
             usedBibs = []
+            console.log("this.editor.view.state.doc -", this.editor.view.state.doc.descendants(node =>{console.log("node :- ", node)}))
+
         this.editor.view.state.doc.descendants(node => {
             if (node.type.name==='citation') {
                 node.attrs.references.forEach(ref => usedBibs.push(parseInt(ref.id)))

@@ -356,12 +356,12 @@ class Attachment(models.Model):
         )
 
 
-@receiver(models.signals.post_delete, sender=Attachment)
-def auto_delete_file_on_delete(sender, instance, **kwargs):
-    """
-    Deletes file from filesystem
-    when corresponding `Attachment` object is deleted.
-    """
-    if instance.file:
-        if os.path.isfile(instance.file.path):
-            os.remove(instance.file.path)
+# @receiver(models.signals.post_delete, sender=Attachment)
+# def auto_delete_file_on_delete(sender, instance, **kwargs):
+#     """
+#     Deletes file from filesystem
+#     when corresponding `Attachment` object is deleted.
+#     """
+#     if instance.file:
+#         if os.path.isfile(instance.file.path):
+#             os.remove(instance.file.path)

@@ -10,7 +10,7 @@
 
 export class ModImageDB {
     constructor(mod) {
-        console.log("this inside ModImageDB :-", this.db)
+        console.log("this inside ModImageDB :-", mod)
         mod.imageDB = this
         this.mod = mod
         this.db = false

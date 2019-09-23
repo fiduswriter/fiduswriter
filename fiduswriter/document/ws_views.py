@@ -15,6 +15,7 @@ from document.models import COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \
     CAN_COMMUNICATE, FW_DOCUMENT_VERSION
 from usermedia.models import Image, DocumentImage, UserImage
 from user.util import get_user_avatar_url
+from document.models import Attachment
 
 logger = logging.getLogger(__name__)
 
@@ -144,6 +145,17 @@ class WebSocket(BaseWebSocketHandler):
                 field_obj['height'] = image.height
                 field_obj['width'] = image.width
             response['doc']['images'][image.id] = field_obj
+
+        # for dfile in Attachment.objects.filter(document_id=self.doc['id']):
+        #     file = dfile.file
+        #     field_obj = {
+        #         'id': dfile.id,
+        #         'file_name': dfile.file_name,
+        #         'date_uploaded': dfile.date_uploaded,
+        #         'file_url': file.url
+        #     }
+        #     response['doc']['files'][dfile.id] = field_obj
+
         if self.user_info.access_rights == 'read-without-comments':
             response['doc']['comments'] = []
         elif self.user_info.access_rights == 'review':

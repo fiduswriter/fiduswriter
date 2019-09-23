@@ -154,6 +154,7 @@ export class App {
             this.fileDB.getDB(),
         ]).then(
             () => {
+               // console.log("After getting the db this.fileDB.getDB() :- ", this.fileDB)
                 this.activateFidusPlugins()
                 return this.selectPage()
             }

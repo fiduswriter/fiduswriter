@@ -17,7 +17,6 @@ export class FileDB {
                 console.log("Attachments :- ", json.attachments)
                 json.attachments.forEach(
                     file => {
-                        
                         this.db[file.id] = file.name
                     }
 

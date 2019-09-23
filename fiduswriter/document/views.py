@@ -1327,7 +1327,7 @@ def delete_attachment(request):
             else:
                 status = 201
             
-    return JsonResponse(
+    return JsonResponse(file_type
         response,
         status=status
     )

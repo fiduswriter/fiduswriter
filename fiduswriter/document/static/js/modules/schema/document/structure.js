@@ -341,7 +341,7 @@ export const file_upload_part = {
             const filelinks_dom = document.createElement('div')
             filelinks_dom.classList.add('article-filelinks')
 
-            for(let index=0; index<node.attrs.files.length; index++){
+            for (let index=0; index<node.attrs.files.length; index++) {
                 const fileLink = document.createElement('a')
                 fileLink.download = 'temp.pdf'
                 fileLink.href = node.attrs.files_path[index]
@@ -354,7 +354,7 @@ export const file_upload_part = {
                 // fileLink.setAttribute('target', '_blank');
 
                 filelinks_dom.appendChild(fileLink)
-                const linebreak = document.createElement("br");
+                const linebreak = document.createElement("br")
                 filelinks_dom.appendChild(linebreak)
             }
 

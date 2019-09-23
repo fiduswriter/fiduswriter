@@ -453,6 +453,7 @@ export class Editor {
         this.schema.cached.imageDB = this.mod.db.imageDB
         // assign image DB to be used in footnote schema.
         this.mod.footnotes.fnEditor.schema.cached.imageDB = this.mod.db.imageDB
+//        this.mod.footnotes.fnEditor.schema.cached.fileDB = this.mod.db.fileDB
         this.docInfo.confirmedJson = JSON.parse(JSON.stringify(doc.contents))
         let stateDoc
         if (doc.contents.type) {

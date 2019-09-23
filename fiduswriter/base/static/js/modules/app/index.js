@@ -166,7 +166,8 @@ export class App {
                     if (
                         el.target.hostname === window.location.hostname &&
                         el.target.getAttribute('href')[0] === '/' &&
-                        el.target.getAttribute('href').slice(0, 7) !== '/media/'
+                        el.target.getAttribute('href').slice(0, 7) !== '/media/' &&
+                        el.target.getAttribute('href').slice(0, 5) !== '/api/'
                     ) {
                         event.preventDefault()
                         this.goTo(el.target.href)

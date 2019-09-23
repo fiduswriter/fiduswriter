@@ -73,9 +73,12 @@ export class PasswordResetChangePassword extends PreloginPage {
                 return
             }
             get(`/api/account/password/reset/key/${this.key}/`).then(
-                () => post('/api/account/password/reset/key/2-set-password/', {password1, password2})
+                response => {
+                    return post(response.url, {password1, password2})
+                }
             ).then(
-                () => document.querySelector('.fw-contents').innerHTML = document.querySelector('.fw-contents').innerHTML =
+                () => {
+                    document.querySelector('.fw-contents').innerHTML = document.querySelector('.fw-contents').innerHTML =
                     `<div class="fw-login-left">
                         <h1 class="fw-login-title">${gettext('Password reset')}</h1>
                         <p>
@@ -84,6 +87,7 @@ export class PasswordResetChangePassword extends PreloginPage {
                             }
                         </p>
                     </div>`
+                }
             ).catch(
                 response => response.json().then(
                     json => {

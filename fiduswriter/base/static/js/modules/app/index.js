@@ -224,7 +224,10 @@ export class App {
         const pathnameParts = window.location.pathname.split('/')
         const route = this.routes[pathnameParts[1]]
         if (route) {
-            if (route.requireLogin && !this.config.user.is_authenticated) {
+            if (
+                route.requireLogin &&
+                !(this.config.user || {}).is_authenticated    
+            ) {
                 this.page = this.openLoginPage()
                 return this.page.init()
             }

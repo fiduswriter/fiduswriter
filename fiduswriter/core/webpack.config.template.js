@@ -41,10 +41,13 @@ module.exports = { // eslint-disable-line no-undef
             cacheMaps: [
                 {
                     match: function(url) {
-                        if (url.pathname.indexOf('/admin/') === 0) {
+                        if (
+                            url.pathname.indexOf('/admin') === 0 ||
+                            url.pathname.indexOf('/api/') === 0
+                        ) {
                             return true
                         }
-                        return new URL('/', url.location)
+                        return new URL('/', url)
                     },
                     requestTypes: ['navigate']
                 }

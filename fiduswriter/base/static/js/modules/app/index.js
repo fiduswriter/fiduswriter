@@ -166,7 +166,8 @@ export class App {
                     if (
                         el.target.hostname === window.location.hostname &&
                         el.target.getAttribute('href')[0] === '/' &&
-                        el.target.getAttribute('href').slice(0, 7) !== '/media/'
+                        el.target.getAttribute('href').slice(0, 7) !== '/media/' &&
+                        el.target.getAttribute('href').slice(0, 5) !== '/api/'
                     ) {
                         event.preventDefault()
                         this.goTo(el.target.href)
@@ -223,7 +224,10 @@ export class App {
         const pathnameParts = window.location.pathname.split('/')
         const route = this.routes[pathnameParts[1]]
         if (route) {
-            if (route.requireLogin && !this.config.user.is_authenticated) {
+            if (
+                route.requireLogin &&
+                !(this.config.user || {}).is_authenticated
+            ) {
                 this.page = this.openLoginPage()
                 return this.page.init()
             }

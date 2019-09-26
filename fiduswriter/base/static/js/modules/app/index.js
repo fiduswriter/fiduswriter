@@ -226,7 +226,7 @@ export class App {
         if (route) {
             if (
                 route.requireLogin &&
-                !(this.config.user || {}).is_authenticated    
+                !(this.config.user || {}).is_authenticated
             ) {
                 this.page = this.openLoginPage()
                 return this.page.init()

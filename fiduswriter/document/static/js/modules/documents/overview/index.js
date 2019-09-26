@@ -260,7 +260,7 @@ export class DocumentOverview {
         const menuItem = this.menu.model.content.find(menuItem => menuItem.id==='new_document')
         menuItem.type = 'dropdown'
         menuItem.content = this.documentTemplates.map(docTemplate => ({
-            title: docTemplate.title,
+            title: docTemplate.title || gettext('Undefined'),
             action: () => this.goToNewDocument(`n${docTemplate.id}`)
         }))
         this.menu.update()

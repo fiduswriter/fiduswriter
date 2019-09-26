@@ -7,7 +7,7 @@ export class DocTemplatesEditor {
         this.app = app
         this.staticUrl = staticUrl
         this.user = user
-        this.idString = idString
+        this.id = parseInt(idString)
         this.citationStyles = false
     }
 
@@ -20,12 +20,12 @@ export class DocTemplatesEditor {
         return this.app.csl.getStyles().then(
             styles => {
                 this.citationStyles = styles
-                return postJson('/api/user_template_manager/get/', {id: this.idString})
+                return postJson('/api/user_template_manager/get/', {id: this.id})
             }
         ).then(
             ({json}) => {
                 this.template = json.template
-                this.id = json.template.id
+                this.id = json.template.id // Updated if previously 0
                 this.template.definition = JSON.parse(this.template.definition)
 
                 return whenReady()

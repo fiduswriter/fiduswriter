@@ -97,7 +97,7 @@ setuptools.setup(
         "books": "fiduswriter-books ~= 3.7.1",
         "citation-api-import": "fiduswriter-citation-api-import ~= 3.7.0",
         "languagetool": "fiduswriter-languagetool ~= 3.7.0",
-        "ojs": "fiduswriter-ojs ~= 3.7.0",
+        "ojs": "fiduswriter-ojs ~= 3.7.1",
         "phplist": "fiduswriter-phplist ~= 3.7.0"
     },
     entry_points={

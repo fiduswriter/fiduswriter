@@ -469,8 +469,15 @@ export class Editor {
                 )
             ]})
         } else {
+            const definition = JSON.parse(JSON.stringify(this.docInfo.template.definition))
+            if (!definition.type) {
+                definition.type = 'article'
+            }
+            if (!definition.content) {
+                definition.content = [{type: 'title'}]
+            }
             stateDoc = this.schema.nodeFromJSON({type:'doc', content:[
-                JSON.parse(JSON.stringify(this.docInfo.template.definition))
+                definition
             ]})
         }
         const plugins = this.statePlugins.map(plugin => {

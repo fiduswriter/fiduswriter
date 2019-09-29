@@ -94,10 +94,10 @@ setuptools.setup(
     python_requires='>=3',
     install_requires=read('fiduswriter/requirements.txt').splitlines(),
     extras_require={
-        "books": "fiduswriter-books ~= 3.7.1",
+        "books": "fiduswriter-books ~= 3.7.2",
         "citation-api-import": "fiduswriter-citation-api-import ~= 3.7.0",
         "languagetool": "fiduswriter-languagetool ~= 3.7.0",
-        "ojs": "fiduswriter-ojs ~= 3.7.0",
+        "ojs": "fiduswriter-ojs ~= 3.7.1",
         "phplist": "fiduswriter-phplist ~= 3.7.0"
     },
     entry_points={

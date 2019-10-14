@@ -26,7 +26,7 @@ export const checkTermsTemplate = () =>
     `<td>
         <input type="checkbox" class="checker" id="terms-check">
     </td><td>
-        ${gettext('I have read and agree to the <a href="/terms/" target="_blank">Terms and Conditions</a>.')}
+        ${gettext('I have read and agree to the <a href="/pages/terms/" target="_blank">Terms and Conditions</a>.')}
     </td>`
 
 export const testServerQuestionTemplate = () =>

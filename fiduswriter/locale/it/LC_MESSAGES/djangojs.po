@@ -3689,7 +3689,7 @@ msgstr "Conferma"
 
 #: user/static/js/modules/email_confirm/templates.js:14
 msgid ""
-"I have read and agree to the <a href=\"/terms/\" target=\"_blank\">Terms and "
+"I have read and agree to the <a href=\"/pages/terms/\" target=\"_blank\">Terms and "
 "Conditions</a>."
 msgstr ""
 
@@ -4697,7 +4697,7 @@ msgstr "Aggiorna immagine"
 #, fuzzy
 #~ msgid ""
 #~ "\n"
-#~ "        I have read and agree to the <a href=\"/terms/\" target=\"_blank"
+#~ "        I have read and agree to the <a href=\"/pages/terms/\" target=\"_blank"
 #~ "\">Terms and Conditions</a>.\n"
 #~ "        "
 #~ msgstr ""

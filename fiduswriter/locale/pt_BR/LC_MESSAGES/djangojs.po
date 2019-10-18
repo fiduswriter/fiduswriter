@@ -3316,8 +3316,8 @@ msgid "Confirm"
 msgstr "Confirmar"
 
 #: user/static/js/modules/email_confirm/templates.js:14
-msgid "I have read and agree to the <a href=\"/terms/\" target=\"_blank\">Terms and Conditions</a>."
-msgstr "Li e concordo com os <a href=\"/terms/\" target=\"_blank\">Termos eCondições </a>."
+msgid "I have read and agree to the <a href=\"/pages/terms/\" target=\"_blank\">Terms and Conditions</a>."
+msgstr "Li e concordo com os <a href=\"/pages/terms/\" target=\"_blank\">Termos eCondições </a>."
 
 #: user/static/js/modules/email_confirm/templates.js:15
 msgid ""
@@ -3390,7 +3390,7 @@ msgstr "Redefinir Senha"
 
 #: user/static/js/modules/password_reset/index.js:30
 msgid "Password reset"
-msgstr "Redefinição de senha"
+msgstr "Redefiniço de senha"
 
 #: user/static/js/modules/password_reset/index.js:30
 msgid ""

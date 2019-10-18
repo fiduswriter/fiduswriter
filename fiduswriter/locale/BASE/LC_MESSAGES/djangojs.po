@@ -4072,7 +4072,7 @@ msgstr ""
 #: static-transpile/js/transpile/profile.js:1527
 #: user/static/js/modules/profile/templates.js:99
 msgid ""
-"I have read and agree to the <a href=\"/terms/\" target=\"_blank\">Terms and "
+"I have read and agree to the <a href=\"/pages/terms/\" target=\"_blank\">Terms and "
 "Conditions</a>."
 msgstr ""
 

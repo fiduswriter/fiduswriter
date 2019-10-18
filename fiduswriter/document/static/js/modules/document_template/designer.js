@@ -10,7 +10,7 @@ import {buildKeymap, buildInputRules} from "prosemirror-example-setup"
 import {tableEditing} from "prosemirror-tables"
 
 import {ensureCSS, findTarget} from "../common"
-import {TagsView, ContributorsView} from "../editor/state_plugins"
+import {TagsPartView, ContributorsPartView} from "../editor/state_plugins"
 import {
     docSchema
 } from "../schema/document"
@@ -362,7 +362,7 @@ export class DocumentTemplateDesigner {
                 plugins.push(new Plugin({
                     props: {
                         nodeViews: {
-                            tags_part: (node, view, getPos) => new TagsView(node, view, getPos)
+                            tags_part: (node, view, getPos) => new TagsPartView(node, view, getPos)
                         }
                     }
                 }))
@@ -372,7 +372,7 @@ export class DocumentTemplateDesigner {
                 plugins.push(new Plugin({
                     props: {
                         nodeViews: {
-                            contributors_part: (node, view, getPos) => new ContributorsView(node, view, getPos)
+                            contributors_part: (node, view, getPos) => new ContributorsPartView(node, view, getPos)
                         }
                     }
                 }))

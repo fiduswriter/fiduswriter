@@ -380,17 +380,21 @@ export class Editor {
     }
 
     initEditor() {
-        // The following two commands prevent Firefox from showing table controls.
+        let setFocus = false
         this.view = new EditorView(this.dom.querySelector('#document-editable'), {
             state: EditorState.create({
                 schema: this.schema
             }),
             handleDOMEvents: {
                 focus: (view, _event) => {
-                    this.currentView = this.view
-                    // We focus once more, as focus may have disappeared due to
-                    // disappearing placeholders.
-                    view.focus()
+                    if (!setFocus) {
+                        this.currentView = this.view
+                        // We focus once more, as focus may have disappeared due to
+                        // disappearing placeholders.
+                        setFocus = true
+                        view.focus()
+                        setFocus = false
+                    }
                 }
             },
             dispatchTransaction: tr => {

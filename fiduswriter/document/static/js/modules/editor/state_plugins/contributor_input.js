@@ -1,13 +1,14 @@
 import {Plugin, PluginKey} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
 
-import {noSpaceTmp} from "../../common"
+import {noSpaceTmp, escapeText} from "../../common"
 import {ContributorDialog} from "../dialogs"
 import {addDeletedPartWidget} from "./document_template"
 
 const key = new PluginKey('contributorInput')
 
-export class ContributorsView {
+
+export class ContributorsPartView {
     constructor(node, view, getPos) {
         this.node = node
         this.view = view
@@ -16,11 +17,13 @@ export class ContributorsView {
         this.dom.classList.add('article-part')
         this.dom.classList.add(`article-${this.node.type.name}`)
         this.dom.classList.add(`article-${this.node.attrs.id}`)
+        this.dom.contentEditable = false
         if (node.attrs.hidden) {
             this.dom.dataset.hidden = true
         }
         this.contentDOM = document.createElement('span')
         this.contentDOM.classList.add('contributors-inner')
+        this.contentDOM.contentEditable = true
         this.dom.appendChild(this.contentDOM)
         const nodeTitle = this.node.attrs.item_title
         this.dom.insertAdjacentHTML(
@@ -36,37 +39,33 @@ export class ContributorsView {
             addDeletedPartWidget(this.dom, view, getPos)
         }
     }
-
-    stopEvent(_event) {
-        return true
-    }
-
-    ignoreMutation(_record) {
-        return true
-    }
 }
 
 export const contributorInputPlugin = function(options) {
 
-    const createDropUp = function() {
+    const createDropUp = function(selection) {
         const dropUp = document.createElement('span'),
-            requiredPx = 60
+            requiredPx = 120,
+            parentNode = selection.$anchor.parent
 
         dropUp.classList.add('drop-up-outer')
 
         dropUp.innerHTML = noSpaceTmp`
             <div class="link drop-up-inner" style="top: -${requiredPx}px;">
-                <div class="edit">
-                    [<a href="#" class="edit-contributor">${gettext('Edit')}</a>]
+                <div class="drop-up-head">
+                    <div>${escapeText(parentNode.attrs.item_title)}</div>
                 </div>
+                <ul class="drop-up-options">
+                    <li class="edit-contributor">${gettext('Edit')}</li>
+                </ul>
             </div>`
 
         dropUp.querySelector('.edit-contributor').addEventListener('click', event => {
             event.preventDefault()
             const dialog = new ContributorDialog(
-                options.editor.view.state.selection.$anchor.parent,
+                parentNode,
                 options.editor.view,
-                options.editor.view.state.selection.node.attrs
+                selection.node.attrs
             )
             dialog.init()
         })
@@ -78,24 +77,18 @@ export const contributorInputPlugin = function(options) {
         state: {
             init(_config, _state) {
                 const decos = DecorationSet.empty
-                let dropUp
 
                 if (options.editor.docInfo.access_rights === 'write') {
-                    dropUp = createDropUp()
                     this.spec.props.nodeViews['contributors_part'] =
-                        (node, view, getPos) => new ContributorsView(node, view, getPos)
+                        (node, view, getPos) => new ContributorsPartView(node, view, getPos)
                 }
 
                 return {
-                    decos,
-                    dropUp
+                    decos
                 }
             },
             apply(tr, prev, oldState, state) {
                 const pluginState = this.getState(oldState)
-                const {
-                    dropUp
-                } = pluginState
                 let {
                     decos
                 } = pluginState
@@ -105,8 +98,7 @@ export const contributorInputPlugin = function(options) {
                     (!tr.docChanged && !tr.selectionSet)
                 ) {
                     return {
-                        decos,
-                        dropUp
+                        decos
                     }
                 }
 
@@ -126,7 +118,7 @@ export const contributorInputPlugin = function(options) {
                     state.selection.node.type.name === 'contributor' &&
                     state.selection.node !== oldState.selection.node
                 ) {
-                    const dropUpDeco = Decoration.widget(state.selection.from, dropUp, {
+                    const dropUpDeco = Decoration.widget(state.selection.from, createDropUp(state.selection), {
                         side: -1,
                         stopEvent: () => true,
                         id: 'contributorDropUp'
@@ -136,8 +128,7 @@ export const contributorInputPlugin = function(options) {
                 }
 
                 return {
-                    decos,
-                    dropUp
+                    decos
                 }
             }
         },

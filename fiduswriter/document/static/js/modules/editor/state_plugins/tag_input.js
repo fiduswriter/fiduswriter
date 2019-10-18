@@ -168,7 +168,7 @@ const createTagInputEditor = (view, getPos, node) => {
     return [dom, tagInputView]
 }
 
-export class TagsView {
+export class TagsPartView {
     constructor(node, view, getPos) {
         this.node = node
         this.view = view
@@ -177,6 +177,7 @@ export class TagsView {
         this.dom.classList.add('article-part')
         this.dom.classList.add(`article-${this.node.type.name}`)
         this.dom.classList.add(`article-${this.node.attrs.id}`)
+        this.dom.contentEditable = false
         if (node.attrs.hidden) {
             this.dom.dataset.hidden = true
         }
@@ -239,7 +240,7 @@ export const tagInputPlugin = function(options) {
             init(_config, _state) {
                 if (options.editor.docInfo.access_rights === 'write') {
                     this.spec.props.nodeViews['tags_part'] =
-                        (node, view, getPos) => new TagsView(node, view, getPos)
+                        (node, view, getPos) => new TagsPartView(node, view, getPos)
                 }
 
                 return {}

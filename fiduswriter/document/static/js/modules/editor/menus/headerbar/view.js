@@ -1,5 +1,5 @@
 import {DiffDOM} from "diff-dom"
-import keyName from "w3c-keyname"
+import {keyName} from "w3c-keyname"
 
 import {escapeText} from "../../../common"
 

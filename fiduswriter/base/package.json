@@ -22,7 +22,6 @@
     "diff-dom": "4.1.6",
     "downloadjs": "1.4.7",
     "@fortawesome/fontawesome-free": "^5.9.0",
-    "w3c-keyname": "1.1.x",
     "simple-datatables": "^2.1.7",
     "vivliostyle-print": "^1.2.2",
     "eslint": "^5.16.0",

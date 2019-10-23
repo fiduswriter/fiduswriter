@@ -28,7 +28,10 @@ export class ModFootnoteLayout {
             // DOM read phase
             const footnoteBoxes = document.querySelectorAll('#footnote-box-container .footnote-container'),
                 referrers = getFootnoteMarkers(this.mod.editor.view.state)
-            if (!referrers.length || referrers.length !== footnoteBoxes.length) {
+            if (
+                (!referrers.length && this.mod.editor.mod.citations.citationType !== 'note') ||
+                referrers.length !== footnoteBoxes.length
+            ) {
                 // Apparently not all footnote boxes have been drawn or there are none. Abort for now.
                 return
             }

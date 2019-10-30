@@ -9,5 +9,4 @@ jsonpatch==1.24
 Pillow==6.2.1
 python-dateutil==2.8.0
 python-magic==0.4.15
-setuptools==41.4.0
 tornado==6.0.3

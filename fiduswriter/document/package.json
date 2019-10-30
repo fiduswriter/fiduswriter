@@ -6,7 +6,7 @@
         "fast-json-patch": "2.0.x",
         "fix-utf8": "1.1.1",
         "jszip": "3.2.2",
-        "mathlive": "0.32.x",
+        "mathlive": "0.32.3",
         "orderedmap": "1.0.0",
         "prosemirror-collab": "1.1.2",
         "prosemirror-commands": "1.0.8",

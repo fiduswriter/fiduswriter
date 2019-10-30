@@ -819,13 +819,13 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         insert_button = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "insert-math"))
         )
-
         # type formula
         math_field = driver.find_element_by_class_name('math-field')
         math_field.click()
-        driver.find_element_by_class_name(
+        keyboard_toggle = driver.find_element_by_class_name(
             'ML__virtual-keyboard-toggle'
-        ).click()
+        )
+        keyboard_toggle.click()
 
         # wait for keyboard
         WebDriverWait(driver, self.wait_time).until(
@@ -852,12 +852,10 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         driver.find_element_by_css_selector('li[data-alt-keys="3"]').click()
         driver.find_element_by_css_selector('li[data-alt-keys="="]').click()
         driver.find_element_by_css_selector('li[data-alt-keys="7"]').click()
-
         # close keyboard
         driver.find_element_by_class_name(
             'ML__virtual-keyboard-toggle'
         ).click()
-
         insert_button.click()
 
     def get_mathequation(self, driver):
@@ -893,7 +891,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 30)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(

@@ -54,13 +54,12 @@ export class MathDialog {
                 }
             ],
             title: gettext('Mathematical formula'),
-            height: 150,
             beforeClose: () => {
                 if (this.mathField) {
-                    this.mathField.$revertToOriginalContent()
                     this.mathField = false
                 }
             },
+            classes: 'math',
             onClose: () => this.editor.currentView.focus()
         })
         this.dialog.open()
@@ -70,8 +69,6 @@ export class MathDialog {
         import("mathlive").then(MathLive => {
             this.mathField = MathLive.makeMathField(this.mathliveDOM, {
                 virtualKeyboardMode: 'manual',
-                onBlur: () => this.showPlaceHolder(),
-                onFocus: () => this.hidePlaceHolder(),
                 locale: 'int',
                 strings: {
                     'int': {
@@ -88,7 +85,6 @@ export class MathDialog {
                 }
             })
             this.mathField.$latex(this.equation)
-            this.showPlaceHolder()
         })
     }
 
@@ -98,18 +94,5 @@ export class MathDialog {
      */
     getLatex() {
         return this.mathField.$latex()
-    }
-
-    showPlaceHolder() {
-        if (!this.getLatex().length) {
-            this.mathliveDOM.insertAdjacentHTML('beforeend', `<span class="placeholder" >${gettext('Type formula')}</span>`)
-        }
-    }
-
-    hidePlaceHolder() {
-        const placeHolder = this.mathliveDOM.querySelector('.placeholder')
-        if (placeHolder) {
-            this.mathliveDOM.removeChild(placeHolder)
-        }
     }
 }

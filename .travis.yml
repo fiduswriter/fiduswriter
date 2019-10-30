@@ -1,14 +1,14 @@
 language: python
 python:
-  - "3.6"
+  - "3.7"
 node_js:
   - "10"
 
-dist: xenial
+dist: bionic
 sudo: required
 
 addons:
-  chrome: beta
+  chrome: stable
 
 install:
   - cd fiduswriter

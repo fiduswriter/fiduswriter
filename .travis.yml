@@ -43,7 +43,7 @@ jobs:
       before_cache: skip
       cache: false
       before_install: cd fiduswriter
-      install: pip3 install -r requirements.txt && pip3 install flake8==3.5.0
+      install: pip3 install -r requirements.txt && pip3 install flake8==3.7.9
       after_success: skip
       env: TESTS=before
       before_script: skip

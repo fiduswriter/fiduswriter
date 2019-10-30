@@ -46,11 +46,12 @@ class EditorHelper(SeleniumHelper):
 
     def add_title(self, driver):
         title = "My title"
-        driver.execute_script(
-            'window.testCaret.setSelection(2,2)')
         document_input = self.driver.find_element_by_class_name(
             'ProseMirror'
         )
+        document_input.click()
+        driver.execute_script(
+            'window.testCaret.setSelection(2,2)')
         self.input_text(document_input, title)
 
     def wait_for_doc_size(self, driver, size, seconds=False):

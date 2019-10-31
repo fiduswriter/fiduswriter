@@ -267,7 +267,6 @@ export class FigureDialog {
             buttons,
             beforeClose: () => {
                 if (this.mathField) {
-                    this.mathField.$revertToOriginalContent()
                     this.mathField = false
                 }
             },

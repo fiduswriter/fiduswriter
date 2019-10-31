@@ -1,14 +1,14 @@
 language: python
 python:
-  - "3.6"
+  - "3.7"
 node_js:
   - "10"
 
-dist: xenial
+dist: bionic
 sudo: required
 
 addons:
-  chrome: beta
+  chrome: stable
 
 install:
   - cd fiduswriter
@@ -43,7 +43,7 @@ jobs:
       before_cache: skip
       cache: false
       before_install: cd fiduswriter
-      install: pip3 install -r requirements.txt && pip3 install flake8==3.5.0
+      install: pip3 install -r requirements.txt && pip3 install flake8==3.7.9
       after_success: skip
       env: TESTS=before
       before_script: skip

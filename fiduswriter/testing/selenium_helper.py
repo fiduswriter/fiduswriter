@@ -25,7 +25,7 @@ class SeleniumHelper(object):
         wait_time = 0
         chrome_options = webdriver.ChromeOptions()
         if os.getenv("CI"):
-            chrome_options.binary_location = '/usr/bin/google-chrome-beta'
+            chrome_options.binary_location = '/usr/bin/google-chrome-stable'
             chrome_options.add_argument('--headless')
             chrome_options.add_argument('--disable-gpu')
         for i in range(number):

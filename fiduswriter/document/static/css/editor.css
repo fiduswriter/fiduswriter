@@ -260,6 +260,20 @@ header {
     overflow: hidden;
 }
 
+.ui-dialog-content.math {
+    min-width: 200px;
+    padding-right: 50px;
+    padding-bottom: 10px;
+}
+
+/* See https://github.com/arnog/mathlive/issues/290 */
+.ML__scroller {
+    display: none;
+}
+.ML__fieldcontainer__field {
+    min-height: 23px;
+}
+
 div#statusarea {
     position: absolute;
     right: 50%;

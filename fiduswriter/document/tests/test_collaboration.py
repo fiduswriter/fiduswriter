@@ -6,6 +6,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
 from django.conf import settings
 from testing.testcases import LiveTornadoTestCase
 from .editor_helper import EditorHelper
@@ -72,29 +73,20 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver, self.doc)
         self.load_document_editor(self.driver2, self.doc)
 
-        document_input = self.driver.find_element_by_class_name(
-            'ProseMirror'
+        title_input = self.driver.find_element_by_class_name(
+            'article-title'
         )
-        document_input2 = self.driver2.find_element_by_class_name(
-            'ProseMirror'
+        title_input2 = self.driver2.find_element_by_class_name(
+            'article-title'
         )
-
-        # Chrome with selenium has problem with focusing elements, so we use
-        # the ProseMirror internal methods for this.
-        # First start tag is length 1, so placing after first start tag is
-        # position 1
-        self.driver.execute_script(
-            'window.testCaret.setSelection(2,2)')
-        self.driver2.execute_script(
-            'window.testCaret.setSelection(2,2)')
 
         first_part = "Here is "
         second_part = "my title"
 
         for i in range(8):
-            document_input.send_keys(second_part[i])
+            title_input.send_keys(second_part[i])
             time.sleep(randrange(30, 40) / 200.0)
-            document_input2.send_keys(first_part[i])
+            title_input2.send_keys(first_part[i])
             time.sleep(randrange(30, 40) / 200.0)
 
         # Wait for the two editors to be synched
@@ -110,22 +102,17 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             self.get_title(self.driver)
         )
 
-        # Chrome with selenium has problem with focusing elements, so we use
-        # the ProseMirror internal methods for this.
-        # Original document length was 16 (1 for each start/end tag of fields
-        # with plaintext and 2 for richtext fields - abstract and contents).
-        # Cursor needs to be in last element, so -2 for last end tag.
-        # Added content is 16 characters long, so + 16.
-        # Total: 30.
-        self.driver.execute_script(
-            'window.testCaret.setSelection(33,33)')
-        self.driver2.execute_script(
-            'window.testCaret.setSelection(33,33)')
+        body_input = self.driver.find_element_by_class_name(
+            'article-body'
+        )
+        body_input2 = self.driver2.find_element_by_class_name(
+            'article-body'
+        )
 
         for char in self.TEST_TEXT:
-            document_input.send_keys(char)
+            body_input.send_keys(char)
             time.sleep(randrange(30, 40) / 200.0)
-            document_input2.send_keys(char)
+            body_input2.send_keys(char)
             time.sleep(randrange(30, 40) / 200.0)
 
         # Wait for the two editors to be synched
@@ -149,31 +136,23 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver, self.doc)
         self.load_document_editor(self.driver2, self.doc)
 
-        document_input = self.driver.find_element_by_class_name(
-            'ProseMirror'
+        title_input = self.driver.find_element_by_class_name(
+            'article-title'
         )
-        document_input2 = self.driver2.find_element_by_class_name(
-            'ProseMirror'
+        title_input2 = self.driver2.find_element_by_class_name(
+            'article-title'
         )
-        # Chrome with selenium has problem with focusing elements, so we use
-        # the ProseMirror internal methods for this.
-        # First start tag is length 1, so placing after first start tag is
-        # position 1
-        self.driver.execute_script(
-            'window.testCaret.setSelection(2,2)')
-        self.driver2.execute_script(
-            'window.testCaret.setSelection(2,2)')
 
         first_part = "Here is "
         second_part = "my title"
 
         p1 = multiprocessing.Process(
             target=self.input_text,
-            args=(document_input, second_part)
+            args=(title_input, second_part)
         )
         p2 = multiprocessing.Process(
             target=self.input_text,
-            args=(document_input2, first_part)
+            args=(title_input2, first_part)
         )
         p1.start()
         p2.start()
@@ -193,25 +172,20 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             self.get_title(self.driver)
         )
 
-        # Chrome with selenium has problem with focusing elements, so we use
-        # the ProseMirror internal methods for this.
-        # Original document length was 16 (1 for each start/end tag of fields
-        # with plaintext and 2 for richtext fields - abstract and contents).
-        # Cursor needs to be in last element, so -2 for last end tag.
-        # Added content is 16 characters long, so + 16.
-        # Total: 30.
-        self.driver.execute_script(
-            'window.testCaret.setSelection(33,33)')
-        self.driver2.execute_script(
-            'window.testCaret.setSelection(33,33)')
+        body_input = self.driver.find_element_by_class_name(
+            'article-body'
+        )
+        body_input2 = self.driver2.find_element_by_class_name(
+            'article-body'
+        )
 
         p1 = multiprocessing.Process(
             target=self.input_text,
-            args=(document_input, self.TEST_TEXT)
+            args=(body_input, self.TEST_TEXT)
         )
         p2 = multiprocessing.Process(
             target=self.input_text,
-            args=(document_input2, self.TEST_TEXT)
+            args=(body_input2, self.TEST_TEXT)
         )
         p1.start()
         p2.start()
@@ -741,8 +715,9 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def perform_delete_undo(self, driver):
-        element = driver.find_element_by_class_name('ProseMirror')
-        element.send_keys(Keys.BACKSPACE)
+        actions = ActionChains(driver)
+        actions.send_keys(Keys.BACKSPACE)
+        actions.perform()
 
         button = driver.find_element_by_xpath('//*[@title="Undo"]')
         button.click()
@@ -783,7 +758,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
-            'ProseMirror'
+            'article-title'
         )
         content.click()
 
@@ -819,13 +794,13 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         insert_button = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "insert-math"))
         )
-
         # type formula
         math_field = driver.find_element_by_class_name('math-field')
         math_field.click()
-        driver.find_element_by_class_name(
+        keyboard_toggle = driver.find_element_by_class_name(
             'ML__virtual-keyboard-toggle'
-        ).click()
+        )
+        keyboard_toggle.click()
 
         # wait for keyboard
         WebDriverWait(driver, self.wait_time).until(
@@ -852,12 +827,10 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         driver.find_element_by_css_selector('li[data-alt-keys="3"]').click()
         driver.find_element_by_css_selector('li[data-alt-keys="="]').click()
         driver.find_element_by_css_selector('li[data-alt-keys="7"]').click()
-
         # close keyboard
         driver.find_element_by_class_name(
             'ML__virtual-keyboard-toggle'
         ).click()
-
         insert_button.click()
 
     def get_mathequation(self, driver):
@@ -893,7 +866,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 30)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
@@ -1231,7 +1204,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         self.add_title(self.driver)
         document_input = self.driver.find_element_by_class_name(
-            'ProseMirror'
+            'article-body'
         )
 
         # Total: 22
@@ -1249,12 +1222,9 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
-            'ProseMirror'
+            'article-body'
         )
         content.click()
-
-        self.driver2.execute_script(
-            'window.testCaret.setSelection(28,28)')
 
         p2 = multiprocessing.Process(
             target=self.add_citation,
@@ -1267,7 +1237,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.wait_for_doc_sync(self.driver, self.driver2)
 
         self.assertEqual(
-            18,
+            11,
             len(self.get_citation_within_text(self.driver2))
         )
 
@@ -1277,7 +1247,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
         self.assertEqual(
-            52,
+            60,
             len(self.get_citation_bib(self.driver))
         )
 

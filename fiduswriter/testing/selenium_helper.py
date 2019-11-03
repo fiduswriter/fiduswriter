@@ -1,6 +1,5 @@
 from builtins import range
 from builtins import object
-from chromedriver_binary import chromedriver_filename
 import os
 
 from django.test import Client
@@ -28,6 +27,9 @@ class SeleniumHelper(object):
             chrome_options.binary_location = '/usr/bin/google-chrome-stable'
             chrome_options.add_argument('--headless')
             chrome_options.add_argument('--disable-gpu')
+            chromedriver_filename = '~/bin/chromedriver'
+        else:
+            from chromedriver_binary import chromedriver_filename
         for i in range(number):
             drivers.append(
                 webdriver.Chrome(

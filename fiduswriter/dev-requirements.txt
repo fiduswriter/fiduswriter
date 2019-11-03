@@ -2,4 +2,3 @@ flake8==3.7.9
 selenium==3.141.0
 setuptools==41.6.0
 twine==2.0.0
-chromedriver-binary

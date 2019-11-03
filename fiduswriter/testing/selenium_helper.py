@@ -27,7 +27,7 @@ class SeleniumHelper(object):
             chrome_options.binary_location = '/usr/bin/google-chrome-stable'
             chrome_options.add_argument('--headless')
             chrome_options.add_argument('--disable-gpu')
-            chromedriver_filename = '~/bin/chromedriver'
+            chromedriver_filename = '/usr/bin/chromedriver'
         else:
             from chromedriver_binary import chromedriver_filename
         for i in range(number):

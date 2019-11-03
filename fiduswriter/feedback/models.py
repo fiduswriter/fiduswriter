@@ -23,7 +23,7 @@ class Feedback(models.Model):
         reply_to = ''
         if self.owner:
             from_sender = self.owner.username
-            if self.owner.email and self.owner.email:
+            if self.owner.email:
                 reply_to = ' (' + self.owner.email + ')'
         else:
             from_sender = 'Anonymous'

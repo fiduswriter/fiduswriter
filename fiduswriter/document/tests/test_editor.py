@@ -166,3 +166,124 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             len(change_tracking_boxes),
             6
         )
+
+    def test_share_document(self):
+        self.create_user(
+            username='Yeti2',
+            email='yeti2@snowman.com',
+            passtext='otter'
+        )
+        self.driver.get(self.base_url)
+        self.driver.find_element(By.ID, "id_login").send_keys("Yeti")
+        self.driver.find_element(By.ID, "id_password").send_keys("otter")
+        self.driver.find_element(By.ID, "login-submit").click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.CSS_SELECTOR,
+                    ".new_document button"
+                )
+            )
+        )
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".new_document button"
+        ).click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.CLASS_NAME, 'editor-toolbar'))
+        )
+        self.driver.find_element(By.CSS_SELECTOR, ".article-title").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".article-title").send_keys(
+            "A test article to share"
+        )
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".header-menu:nth-child(1) > .header-nav-item"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "li:nth-child(1) > .fw-pulldown-item"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".ui-dialog .fw-add-button"
+        ).click()
+        self.driver.find_element(
+            By.ID,
+            "new-member-user-string"
+        ).click()
+        self.driver.find_element(By.ID, "new-member-user-string").send_keys(
+            "yeti2@snowman.com"
+        )
+        ActionChains(self.driver).send_keys(
+            Keys.TAB
+        ).send_keys(
+            Keys.RETURN
+        ).perform()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".collaborator-tr .fa-caret-down"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".fw-pulldown-item[data-rights=write]"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".ui-dialog .fw-dark"
+        ).click()
+        self.driver.find_element(
+            By.ID,
+            "close-document-top"
+        ).click()
+        self.driver.find_element(
+            By.ID,
+            "preferences-btn"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".fw-logout-button"
+        ).click()
+        self.driver.find_element(By.ID, "id_login").send_keys("Yeti2")
+        self.driver.find_element(By.ID, "id_password").send_keys("otter")
+        self.driver.find_element(By.ID, "login-submit").click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.CSS_SELECTOR,
+                    ".new_document button"
+                )
+            )
+        )
+        documents = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr'
+        )
+        self.assertEqual(
+            len(documents),
+            1
+        )
+        write_access_rights = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr .icon-access-write'
+        )
+        self.assertEqual(
+            len(write_access_rights),
+            1
+        )
+        self.driver.find_element_by_css_selector(
+            '.fw-contents tbody tr a.doc-title'
+        ).click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.CLASS_NAME, 'editor-toolbar'))
+        )
+        self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+            "The body"
+        )
+        assert self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".article-title"
+        ).text == "A test article to share"
+        assert self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".article-body"
+        ).text == "The body"

@@ -62,25 +62,24 @@ export class JATSExporterCitations {
                 // The IDs used in the jats bibliography are 1 and up in this order
                 this.citJATSFm.bibliography[0].entry_ids.forEach((id, index) => this.jatsIdConvert[id] = index + 1)
                 this.citationTexts = this.citFm.citationTexts.map(
-                    (citationText, index) => {
-                        const prefixSplit = citationText.split('{{prefix}}')
-                        const prefix = prefixSplit.length > 1 ? prefixSplit.shift() + (origCitationLayout.prefix || '') : ''
-                        citationText = prefixSplit[0]
-                        const suffixSplit = citationText.split('{{suffix}}')
-                        const suffix = suffixSplit.length > 1 ? (origCitationLayout.suffix || '') + suffixSplit.pop() : ''
-                        citationText = suffixSplit[0]
-                        const content = citationText.split('{{delimiter}}').map((ref, conIndex) => {
-                            const citId = this.citJATSFm.citations[index].sortedItems[conIndex][1].id
+                    (ref, index) => {
+                        const content = ref.split('{{delimiter}}').map((citationText, conIndex) => {
+                            const prefixSplit = citationText.split('{{prefix}}')
+                            const prefix = prefixSplit.length > 1 ? prefixSplit.shift() + (origCitationLayout.prefix || '') : ''
+                            citationText = prefixSplit[0]
+                            const suffixSplit = citationText.split('{{suffix}}')
+                            const suffix = suffixSplit.length > 1 ? (origCitationLayout.suffix || '') + suffixSplit.pop() : ''
+                            citationText = suffixSplit[0]
+                            const citId = this.citFm.citations[index].sortedItems[conIndex][1].id
                             const jatsId = this.jatsIdConvert[citId]
-                            return `<xref ref-type="bibr" rid="ref-${jatsId}">${ref}</xref>`
+                            return `${prefix}<xref ref-type="bibr" rid="ref-${jatsId}">${citationText}</xref>${suffix}`
                         }).join((origCitationLayout.delimiter || ''))
-                        return (prefix + content + suffix).replace(/<b>/g, '<bold>').replace(/<\/b>/g, '</bold>')
+                        return content.replace(/<b>/g, '<bold>').replace(/<\/b>/g, '</bold>')
                             .replace(/<i>/g, '<italic>').replace(/<\/i>/g, '</italic>')
                             .replace(/<span style="font-variant:small-caps;">/g, '<sc>').replace(/<\/span>/g, '</sc>')
 
                     }
                 )
-
                 this.jatsBib = this.citJATSFm.bibliography[1].map(entry =>
                     entry.substring(
                         entry.indexOf('{{jats}}'),

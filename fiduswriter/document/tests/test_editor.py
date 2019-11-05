@@ -5,7 +5,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
-import time
+
 
 class EditorTest(LiveTornadoTestCase, SeleniumHelper):
     fixtures = [
@@ -53,7 +53,10 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
                 )
             )
         )
-        self.driver.find_element(By.CSS_SELECTOR, ".new_document button").click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".new_document button"
+        ).click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, 'editor-toolbar'))
         )

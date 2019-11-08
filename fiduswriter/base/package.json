@@ -30,7 +30,7 @@
     "offline-plugin": "5.0.x"
   },
   "devDependencies": {
-    "updates": "^9.0.0",
+    "updates": "^9.0.1",
     "@babel/cli": "7.6.x",
     "@babel/plugin-transform-template-literals": "^7.4.4"
   }

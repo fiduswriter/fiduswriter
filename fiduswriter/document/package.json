@@ -1,13 +1,13 @@
 {
     "dependencies": {
-        "citeproc-plus": "0.1.0",
+        "citeproc-plus": "0.1.2",
         "fastdom": "1.0.9",
         "fast-deep-equal": "2.0.x",
         "fast-json-patch": "2.0.x",
         "fix-utf8": "1.1.1",
         "jszip": "3.2.2",
-        "mathlive": "0.32.3",
-        "orderedmap": "1.0.0",
+        "mathlive": "0.32.8",
+        "orderedmap": "1.1.0",
         "prosemirror-collab": "1.1.2",
         "prosemirror-commands": "1.0.8",
         "prosemirror-dropcursor": "1.2.0",

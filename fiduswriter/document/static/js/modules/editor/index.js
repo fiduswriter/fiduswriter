@@ -266,6 +266,9 @@ export class Editor {
                 warningNotAllSent: gettext('Warning! Not all your changes have been saved! You could suffer data loss. Attempting to reconnect...'),
                 infoDisconnected: gettext('Disconnected. Attempting to reconnect...'),
                 receiveData: data => {
+                    if (document.body !== this.dom) {
+                        return // user navigated away.
+                    }
                     switch (data.type) {
                         case 'chat':
                             this.mod.collab.chat.newMessage(data)

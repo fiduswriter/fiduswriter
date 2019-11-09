@@ -1,4 +1,4 @@
-import hash from "object-hash"
+import deepEqual from "fast-deep-equal"
 
 import {toFullJSON} from "../schema/mini_json"
 
@@ -159,10 +159,10 @@ export function adjustDocToTemplate(miniDoc, miniTemplate, documentStyles, schem
                     (newNode.attrs.initial || oldNode.attrs.initial) &&
                     (
                         oldNode.attrs.locking === 'fixed' ||
-
-                        hash(oldNode.attrs.initial || {}) === hash(oldNode.content || {})
+                        deepEqual(oldNode.attrs.initial || {}, oldNode.content || {})
                     )
                 ) {
+
                     if (newNode.attrs.initial) {
                         newNode.content = newNode.attrs.initial
                     } else {

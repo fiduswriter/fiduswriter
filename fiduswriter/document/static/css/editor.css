@@ -266,10 +266,6 @@ header {
     padding-bottom: 10px;
 }
 
-/* See https://github.com/arnog/mathlive/issues/290 */
-.ML__scroller {
-    display: none;
-}
 .ML__fieldcontainer__field {
     min-height: 23px;
 }

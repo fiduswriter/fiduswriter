@@ -1,3 +1,5 @@
+import time
+
 from testing.testcases import LiveTornadoTestCase
 from testing.selenium_helper import SeleniumHelper
 from selenium.webdriver.common.by import By
@@ -5,6 +7,8 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
+
+from allauth.account.models import EmailConfirmationHMAC, EmailAddress
 
 
 class EditorTest(LiveTornadoTestCase, SeleniumHelper):
@@ -222,6 +226,22 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         ).perform()
         self.driver.find_element(
             By.CSS_SELECTOR,
+            ".ui-dialog .fw-add-button"
+        ).click()
+        self.driver.find_element(
+            By.ID,
+            "new-member-user-string"
+        ).click()
+        self.driver.find_element(By.ID, "new-member-user-string").send_keys(
+            "yeti3@snowman.com"
+        )
+        ActionChains(self.driver).send_keys(
+            Keys.TAB
+        ).send_keys(
+            Keys.RETURN
+        ).perform()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
             ".collaborator-tr .fa-caret-down"
         ).click()
         self.driver.find_element(
@@ -287,3 +307,137 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             ".article-body"
         ).text == "The body"
+        self.driver.find_element(
+            By.ID,
+            "close-document-top"
+        ).click()
+        self.driver.find_element(
+            By.ID,
+            "preferences-btn"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".fw-logout-button"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            'a[title="Sign up"]'
+        ).click()
+        self.driver.find_element(
+            By.ID,
+            'id_username'
+        ).send_keys('Yeti3')
+        self.driver.find_element(
+            By.ID,
+            'id_password1'
+        ).send_keys('password')
+        self.driver.find_element(
+            By.ID,
+            'id_password2'
+        ).send_keys('password')
+        self.driver.find_element(
+            By.ID,
+            'id_email'
+        ).send_keys('yeti3@snowman.com')
+        self.driver.find_element(
+            By.ID,
+            'signup-submit'
+        ).click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.CSS_SELECTOR,
+                    'a[href="mailto:yeti3@snowman.com"]'
+                )
+            )
+        )
+        email = EmailAddress.objects.filter(email='yeti3@snowman.com').first()
+        self.assertIsNotNone(email)
+        confirmation_key = EmailConfirmationHMAC(email).key
+        self.driver.get(
+            self.base_url +
+            "/account/confirm-email/" +
+            confirmation_key +
+            "/"
+        )
+        self.driver.find_element(
+            By.ID,
+            'terms-check'
+        ).click()
+        self.driver.find_element(
+            By.ID,
+            'test-check'
+        ).click()
+        self.driver.find_element(
+            By.ID,
+            'submit'
+        ).click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.text_to_be_present_in_element(
+                (
+                    By.CSS_SELECTOR,
+                    ".fw-contents h1"
+                ),
+                "Thanks for verifying!"
+            )
+        )
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            'a[href="/"]'
+        ).click()
+        self.driver.find_element(By.ID, "id_login").send_keys("Yeti3")
+        self.driver.find_element(By.ID, "id_password").send_keys("password")
+        self.driver.find_element(By.ID, "login-submit").click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.CSS_SELECTOR,
+                    ".new_document button"
+                )
+            )
+        )
+        documents = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr'
+        )
+        self.assertEqual(
+            len(documents),
+            1
+        )
+        read_access_rights = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr .icon-access-read'
+        )
+        self.assertEqual(
+            len(read_access_rights),
+            1
+        )
+        self.driver.find_element_by_css_selector(
+            '.fw-contents tbody tr a.doc-title'
+        ).click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.CLASS_NAME, 'editor-toolbar'))
+        )
+        self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+            "Some extra content that doesn't show"
+        )
+        assert self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".article-title"
+        ).text == "A test article to share"
+        time.sleep(0.5)  # Wait for prosemirror to synchronize
+        assert self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".article-body"
+        ).text == "The body"
+        self.driver.find_element(
+            By.ID,
+            "close-document-top"
+        ).click()
+        self.driver.find_element(
+            By.ID,
+            "preferences-btn"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".fw-logout-button"
+        ).click()

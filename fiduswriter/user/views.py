@@ -504,9 +504,17 @@ def get_confirmkey_data(request):
 class FidusSignupView(SignupView):
     def form_valid(self, form):
         ret = super(FidusSignupView, self).form_valid(form)
+        if ret.status_code > 399:
+            return ret
         if 'invite_id' in self.request.POST:
             invite_id = int(self.request.POST['invite_id'])
             inv = AccessRightInvite.objects.filter(id=invite_id).first()
+            if inv:
+                apply_invite(inv, self.user)
+        else:
+            inv = AccessRightInvite.objects.filter(
+                email=self.user.email
+            ).first()
             if inv:
                 apply_invite(inv, self.user)
         return ret

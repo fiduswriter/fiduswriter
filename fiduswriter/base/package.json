@@ -21,7 +21,7 @@
     "file-loader": "^4.2.0",
     "diff-dom": "4.1.6",
     "downloadjs": "1.4.7",
-    "@fortawesome/fontawesome-free": "^5.9.0",
+    "@fortawesome/fontawesome-free": "^5.11.2",
     "simple-datatables": "^2.1.7",
     "vivliostyle-print": "^1.2.2",
     "eslint": "^5.16.0",

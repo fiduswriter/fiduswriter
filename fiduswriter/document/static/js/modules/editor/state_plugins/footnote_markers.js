@@ -61,7 +61,7 @@ export const getFootnoteMarkerContents = function(state) {
         return []
     }
     const fnMarkers = fnState.fnMarkers
-    return fnMarkers.map(fnMarker => state.doc.nodeAt(fnMarker.from).attrs.footnote) : []
+    return fnMarkers.map(fnMarker => state.doc.nodeAt(fnMarker.from).attrs.footnote)
 }
 
 export const updateFootnoteMarker = function(state, index, content) {

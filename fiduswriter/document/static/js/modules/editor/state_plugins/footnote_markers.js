@@ -56,10 +56,12 @@ const getAddedRanges = function(tr) {
 }
 
 export const getFootnoteMarkerContents = function(state) {
-    const {
-        fnMarkers
-    } = key.getState(state)
-    return fnMarkers.map(fnMarker => state.doc.nodeAt(fnMarker.from).attrs.footnote)
+    const fnState = key.getState(state)
+    if (!fnState) {
+        return []
+    }
+    const fnMarkers = fnState.fnMarkers
+    return fnMarkers.map(fnMarker => state.doc.nodeAt(fnMarker.from).attrs.footnote) : []
 }
 
 export const updateFootnoteMarker = function(state, index, content) {

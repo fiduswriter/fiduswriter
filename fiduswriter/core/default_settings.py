@@ -325,3 +325,11 @@ WEBPACK_CONFIG_TEMPLATE = os.path.join(
     ),
     'webpack.config.template.js'
 )
+
+# JS error logging
+JAVASCRIPT_ERROR_USERAGENT_BLACKLIST = ['googlebot', 'bingbot', 'cutycapt']
+JAVASCRIPT_ERROR_BLACKLIST = [
+    'script error',
+    'the operation is insecure',
+    'parse error'
+]

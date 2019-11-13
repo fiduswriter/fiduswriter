@@ -27,14 +27,6 @@ from avatar.signals import avatar_updated
 from document.views import apply_invite
 
 
-def logout_page(request):
-    """
-    Log users out and re-direct them to the main page.
-    """
-    logout(request)
-    return HttpResponseRedirect('/')
-
-
 def info(request):
     """
     Get user profile info

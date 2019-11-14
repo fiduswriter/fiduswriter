@@ -3928,7 +3928,7 @@ msgstr "E-Mail hinzufügen"
 #: user/static/js/modules/profile/dialogs.js:185
 #, fuzzy
 #| msgid " successfully imported."
-msgid "Email succesfully deleted!"
+msgid "Email successfully deleted!"
 msgstr " importiert."
 
 #: user/static/js/modules/profile/dialogs.js:190

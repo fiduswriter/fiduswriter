@@ -1,6 +1,6 @@
 /** A template for the confirm email/agree to terms page */
 export const confirmAccountTemplate = ({username, email, verified, validKey, confirmQuestionsTemplates}) =>
-    `<h1 class="fw-login-title">${gettext('Confirm E-mail Address and Agree to Terms and Conditions')}</h1>
+    `<h1 class="fw-login-title">${ verified ? gettext('Confirm E-mail Address') : gettext('Confirm E-mail Address and Agree to Terms and Conditions')}</h1>
     ${validKey ? confirmAccountFormTemplate({username, email, verified, confirmQuestionsTemplates}) : expiredConfirmationLinkTemplate()}
     `
 

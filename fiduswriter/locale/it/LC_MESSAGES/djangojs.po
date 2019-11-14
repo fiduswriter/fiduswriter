@@ -3913,7 +3913,7 @@ msgstr "Aggiungi un indirizzo mail"
 #: user/static/js/modules/profile/dialogs.js:185
 #, fuzzy
 #| msgid " successfully imported."
-msgid "Email succesfully deleted!"
+msgid "Email successfully deleted!"
 msgstr " importato con successo"
 
 #: user/static/js/modules/profile/dialogs.js:190

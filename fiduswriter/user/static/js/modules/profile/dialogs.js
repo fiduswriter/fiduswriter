@@ -4,9 +4,6 @@ deleteEmailDialogTemplate, changePrimaryEmailDialogTemplate} from "./templates"
 import {activateWait, deactivateWait, post, postJson, addAlert, Dialog, escapeText} from "../common"
 
 export const changeAvatarDialog = function(app) {
-    const avatarUploader = document.createElement('input')
-    avatarUploader.type='file'
-    avatarUploader.accept=".png, .jpg, .jpeg"
 
     const buttons = [
         {
@@ -50,6 +47,12 @@ export const changeAvatarDialog = function(app) {
             type: 'cancel'
         }
     ]
+
+    const avatarUploader = document.createElement('input')
+    avatarUploader.type='file'
+    avatarUploader.accept=".png, .jpg, .jpeg"
+    avatarUploader.style.display = 'none'
+
     const dialog = new Dialog({
         id: 'change-avatar-dialog',
         title: gettext('Upload your profile picture'),
@@ -57,6 +60,7 @@ export const changeAvatarDialog = function(app) {
         buttons
     })
     dialog.open()
+    dialog.dialogEl.appendChild(avatarUploader)
 
     avatarUploader.addEventListener('change', () => {
          document.getElementById('uploaded-avatar-name').innerHTML = avatarUploader.value.replace(/C:\\fakepath\\/i, '')
@@ -271,7 +275,7 @@ export const deleteEmailDialog = function(target, app) {
                 ).then(
                     () => app.selectPage()
                 ).then(
-                    () => addAlert('info', gettext('Email succesfully deleted!'))
+                    () => addAlert('info', gettext('Email successfully deleted!'))
                 ).catch(
                     () => {
                         deactivateWait()
@@ -317,15 +321,16 @@ export const changePrimaryEmailDialog = function(app) {
                     () => {
                         dialog.close()
                         deactivateWait()
+                        return app.getUserInfo()
                     }
                 ).then(
-                    () => app.getUserInfo()
-                ).then(
                     () => app.selectPage()
+                ).then(
+                    () => addAlert('info', gettext('The primary email has been updated.'))
                 ).catch(
                     _error => {
                         deactivateWait()
-                        addAlert('error', gettext('The email could not be set primary'))
+                        addAlert('error', gettext('The email could not be set to be primary email.'))
                     }
                 )
             }

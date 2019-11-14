@@ -3903,7 +3903,7 @@ msgstr "Добави имейл"
 #: user/static/js/modules/profile/dialogs.js:185
 #, fuzzy
 #| msgid " successfully imported."
-msgid "Email succesfully deleted!"
+msgid "Email successfully deleted!"
 msgstr " успешно импортиран."
 
 #: user/static/js/modules/profile/dialogs.js:190

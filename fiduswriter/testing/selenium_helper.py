@@ -68,6 +68,7 @@ class SeleniumHelper(object):
             user=user,
             email=email,
             verified=True,
+            primary=True
         ).save()
 
         return user

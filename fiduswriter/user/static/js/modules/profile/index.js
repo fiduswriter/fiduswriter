@@ -13,7 +13,7 @@ export class Profile {
     }
 
     init() {
-        whenReady().then(() => {
+        return whenReady().then(() => {
             this.render()
             const smenu = new SiteMenu("") // Nothing highlighted
             smenu.init()
@@ -29,7 +29,7 @@ export class Profile {
                         addEmailDialog(this.app)
                         break
                     case findTarget(event, '#fw-edit-profile-pwd', el):
-                        changePwdDialog()
+                        changePwdDialog({username: this.user.username})
                         break
                     case findTarget(event, '#delete-account', el):
                         dialog = new DeleteUserDialog(
@@ -80,7 +80,7 @@ export class Profile {
     save() {
         activateWait()
 
-        post(
+        return post(
             '/api/user/save/',
             {
                 form_data: JSON.stringify({

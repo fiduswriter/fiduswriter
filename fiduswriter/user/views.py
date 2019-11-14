@@ -485,6 +485,18 @@ def get_confirmkey_data(request):
             status = 200
             response['username'] = confirmation.email_address.user.username
             response['email'] = confirmation.email_address.email
+            if request.user:
+                if request.user != confirmation.email_address.user:
+                    response['logout'] = True
+                    logout(request)
+            # We check if the user has another verified email already. If yes,
+            # we don't need to display the terms and test server warning again.
+            if confirmation.email_address.user.emailaddress_set.filter(
+                verified=True
+            ).first():
+                response['verified'] = True
+            else:
+                response['verified'] = False
         else:
             status = 404
     return JsonResponse(

@@ -114,7 +114,7 @@ export const deleteAvatarDialog = function(app) {
     dialog.open()
 }
 
-export const changePwdDialog = function() {
+export const changePwdDialog = function({username}) {
     const buttons = [
         {
             text: gettext('Submit'),
@@ -179,7 +179,7 @@ export const changePwdDialog = function() {
     const dialog = new Dialog({
         id: 'fw-change-pwd-dialog',
         title: gettext('Change Password'),
-        body: changePwdDialogTemplate(),
+        body: changePwdDialogTemplate({username}),
         buttons
     })
 

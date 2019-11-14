@@ -256,6 +256,6 @@ export class App {
 
     goTo(url) {
         window.history.pushState({}, "", url)
-        this.selectPage()
+        return this.selectPage()
     }
 }

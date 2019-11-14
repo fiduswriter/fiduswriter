@@ -3,9 +3,7 @@ import base64
 from builtins import object
 from django.contrib import auth
 from django.conf import settings
-from django.core.handlers.wsgi import WSGIRequest
 from importlib import import_module
-from tornado.wsgi import WSGIContainer
 
 
 class DjangoHandlerMixin(object):
@@ -44,14 +42,3 @@ class DjangoHandlerMixin(object):
             if user is not None and user.is_authenticated:
                 return user
             return None
-
-    def get_django_request(self):
-        request = \
-            WSGIRequest(WSGIContainer.environ(self.request))
-        request.session = self.get_django_session()
-
-        if self.current_user:
-            request.user = self.current_user
-        else:
-            request.user = auth.models.AnonymousUser()
-        return request

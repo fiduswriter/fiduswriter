@@ -186,7 +186,7 @@ export const changePwdDialog = function() {
     dialog.open()
 }
 
-export const addEmailDialog = function() {
+export const addEmailDialog = function(app) {
 
     const buttons = [
         {
@@ -211,17 +211,23 @@ export const addEmailDialog = function() {
                     }
                 ).then(
                     ({json, status}) => {
+                        deactivateWait()
                         if (200 === status) {
                             dialog.close()
-                            addAlert('info', `${gettext('Confirmation e-mail sent to')}: ${email}`)
+                            return app.getUserInfo().then(
+                                () => app.selectPage()
+                            ).then(
+                                () => addAlert('info', `${gettext('Confirmation e-mail sent to')}: ${email}`)
+                            )
                         } else {
                             document.getElementById('fw-add-email-error').innerHTML = json.msg['email'][0]
                         }
                     }
                 ).catch(
-                    () => document.getElementById('fw-add-email-error').innerHTML = gettext('The email could not be added!')
-                ).then(
-                    () => deactivateWait()
+                    () => {
+                        deactivateWait()
+                        addAlert('error', gettext('The email could not be added!'))
+                    }
                 )
             }
         },
@@ -256,8 +262,6 @@ export const deleteEmailDialog = function(target, app) {
                         email
                     }
                 ).then(
-                    () => addAlert('info', gettext('Email succesfully deleted!'))
-                ).then(
                     () => {
                         dialog.close()
                         deactivateWait()
@@ -266,6 +270,8 @@ export const deleteEmailDialog = function(target, app) {
                     () => app.getUserInfo()
                 ).then(
                     () => app.selectPage()
+                ).then(
+                    () => addAlert('info', gettext('Email succesfully deleted!'))
                 ).catch(
                     () => {
                         deactivateWait()

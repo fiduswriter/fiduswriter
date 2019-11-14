@@ -133,7 +133,7 @@ export const profileContents = ({avatar, username, first_name, last_name, emails
                                         }
                                     </td>
                                     <td>
-                                        ${ email.verified ? '<i class="fa fa-check"></i>' : '<i class="fa fa-check disabled"></i>' }
+                                        ${ email.verified ? '<i class="fa fa-check"></i>' : '' }
                                     </td>
                                     <td class="profile-email-action">
                                         ${

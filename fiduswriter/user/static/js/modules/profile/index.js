@@ -26,7 +26,7 @@ export class Profile {
                 let dialog
                 switch (true) {
                     case findTarget(event, '#add-profile-email', el):
-                        addEmailDialog()
+                        addEmailDialog(this.app)
                         break
                     case findTarget(event, '#fw-edit-profile-pwd', el):
                         changePwdDialog()

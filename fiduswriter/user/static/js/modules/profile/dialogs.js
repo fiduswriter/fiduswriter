@@ -4,9 +4,6 @@ deleteEmailDialogTemplate, changePrimaryEmailDialogTemplate} from "./templates"
 import {activateWait, deactivateWait, post, postJson, addAlert, Dialog, escapeText} from "../common"
 
 export const changeAvatarDialog = function(app) {
-    const avatarUploader = document.createElement('input')
-    avatarUploader.type='file'
-    avatarUploader.accept=".png, .jpg, .jpeg"
 
     const buttons = [
         {
@@ -50,6 +47,12 @@ export const changeAvatarDialog = function(app) {
             type: 'cancel'
         }
     ]
+
+    const avatarUploader = document.createElement('input')
+    avatarUploader.type='file'
+    avatarUploader.accept=".png, .jpg, .jpeg"
+    avatarUploader.style.display = 'none'
+
     const dialog = new Dialog({
         id: 'change-avatar-dialog',
         title: gettext('Upload your profile picture'),
@@ -57,6 +60,7 @@ export const changeAvatarDialog = function(app) {
         buttons
     })
     dialog.open()
+    dialog.dialogEl.appendChild(avatarUploader)
 
     avatarUploader.addEventListener('change', () => {
          document.getElementById('uploaded-avatar-name').innerHTML = avatarUploader.value.replace(/C:\\fakepath\\/i, '')
@@ -114,7 +118,7 @@ export const deleteAvatarDialog = function(app) {
     dialog.open()
 }
 
-export const changePwdDialog = function() {
+export const changePwdDialog = function({username}) {
     const buttons = [
         {
             text: gettext('Submit'),
@@ -179,14 +183,14 @@ export const changePwdDialog = function() {
     const dialog = new Dialog({
         id: 'fw-change-pwd-dialog',
         title: gettext('Change Password'),
-        body: changePwdDialogTemplate(),
+        body: changePwdDialogTemplate({username}),
         buttons
     })
 
     dialog.open()
 }
 
-export const addEmailDialog = function() {
+export const addEmailDialog = function(app) {
 
     const buttons = [
         {
@@ -211,17 +215,23 @@ export const addEmailDialog = function() {
                     }
                 ).then(
                     ({json, status}) => {
+                        deactivateWait()
                         if (200 === status) {
                             dialog.close()
-                            addAlert('info', `${gettext('Confirmation e-mail sent to')}: ${email}`)
+                            return app.getUserInfo().then(
+                                () => app.selectPage()
+                            ).then(
+                                () => addAlert('info', `${gettext('Confirmation e-mail sent to')}: ${email}`)
+                            )
                         } else {
                             document.getElementById('fw-add-email-error').innerHTML = json.msg['email'][0]
                         }
                     }
                 ).catch(
-                    () => document.getElementById('fw-add-email-error').innerHTML = gettext('The email could not be added!')
-                ).then(
-                    () => deactivateWait()
+                    () => {
+                        deactivateWait()
+                        addAlert('error', gettext('The email could not be added!'))
+                    }
                 )
             }
         },
@@ -256,8 +266,6 @@ export const deleteEmailDialog = function(target, app) {
                         email
                     }
                 ).then(
-                    () => addAlert('info', gettext('Email succesfully deleted!'))
-                ).then(
                     () => {
                         dialog.close()
                         deactivateWait()
@@ -266,6 +274,8 @@ export const deleteEmailDialog = function(target, app) {
                     () => app.getUserInfo()
                 ).then(
                     () => app.selectPage()
+                ).then(
+                    () => addAlert('info', gettext('Email successfully deleted!'))
                 ).catch(
                     () => {
                         deactivateWait()
@@ -311,15 +321,16 @@ export const changePrimaryEmailDialog = function(app) {
                     () => {
                         dialog.close()
                         deactivateWait()
+                        return app.getUserInfo()
                     }
                 ).then(
-                    () => app.getUserInfo()
-                ).then(
                     () => app.selectPage()
+                ).then(
+                    () => addAlert('info', gettext('The primary email has been updated.'))
                 ).catch(
                     _error => {
                         deactivateWait()
-                        addAlert('error', gettext('The email could not be set primary'))
+                        addAlert('error', gettext('The email could not be set to be primary email.'))
                     }
                 )
             }

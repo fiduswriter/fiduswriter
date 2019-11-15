@@ -25,8 +25,10 @@ export const deleteUserDialogTemplate = () =>
     <p>
         ${gettext('Some copies of your files may temporarily be kept in our backup system, but also these will disappear automatically in due time.')}
     </p>
-    <input type="text" id="username-confirmation" placeholder="${gettext('Username')}">
-    <input type="password" id="password" autocomplete="new-password" placeholder="${gettext('Password')}">`
+    <form>
+        <input type="text" id="username-confirmation" placeholder="${gettext('Username')}">
+        <input type="password" id="password" autocomplete="new-password" placeholder="${gettext('Password')}">
+    </form>`
 
 /** A template for the change email dialog of the user account. */
 export const changeEmailDialogTemplate = () =>
@@ -48,15 +50,16 @@ export const deleteEmailDialogTemplate = ({text}) => `<p>${escapeText(text)}</p>
 export const changePrimaryEmailDialogTemplate = ({text}) => `<p>${escapeText(text)}</p>`
 
 /** A template for the change password dialog of the user account. */
-export const changePwdDialogTemplate = () =>
+export const changePwdDialogTemplate = ({username}) =>
     `<table class="ui-dialog-content-table"><tbody>
         <tr><td><form id="fw-password-change-form" action="" method="post"
                 onsubmit="return false;">
-            <input type="password" id="old-password-input" name="old_password"
+            <input type="text" id="current-username" autocomplete="username" value="${escapeText(username)}" style="display: none;">
+            <input type="password" id="old-password-input" name="old_password" autocomplete="current-password"
                     class="fw-profile-dialog-input" placeholder="${gettext('Old password')}" /><br />
-            <input type="password" id="new-password-input1" name="new_password1"
+            <input type="password" id="new-password-input1" name="new_password1" autocomplete="new-password"
                     class="fw-profile-dialog-input" placeholder="${gettext('New password')}" /><br />
-            <input type="password" id="new-password-input2" name="new_password2"
+            <input type="password" id="new-password-input2" name="new_password2" autocomplete="new-password"
                     class="fw-profile-dialog-input"
                     placeholder="${gettext('Confirm the new password')}" />
         </form></td></tr>
@@ -92,23 +95,25 @@ export const profileContents = ({avatar, username, first_name, last_name, emails
             </div>
         </div>
         <div id="profile-data">
-            <div class="profile-data-row">
-                <label class="form-label">${gettext('Username')}</label>
-                <input type="text" name="username" id="username" value="${escapeText(username)}" />
-            </div>
-            <div class="profile-data-row">
-                <label class="form-label">${gettext('First name')}</label>
-                <input type="text" name="firstname" id="first_name" value="${escapeText(first_name)}" />
-            </div>
-            <div class="profile-data-row">
-                <label class="form-label">${gettext('Last name')}</label>
-                <input type="text" name="lastname" id="last_name" value="${escapeText(last_name)}" />
-            </div>
-            <div class="profile-data-row">
-                <label class="form-label">${gettext('Password')}</label>
-                <input type="password" value="******" readonly disabled />
-                <span id="fw-edit-profile-pwd" class="fw-link-text"><i class="fa fa-pencil-alt"></i></span>
-            </div>
+            <form>
+                <div class="profile-data-row">
+                    <label class="form-label">${gettext('Username')}</label>
+                    <input type="text" name="username" id="username" autocomplete="username" value="${escapeText(username)}" />
+                </div>
+                <div class="profile-data-row">
+                    <label class="form-label">${gettext('First name')}</label>
+                    <input type="text" name="firstname" id="first_name" autocomplete="given-name" value="${escapeText(first_name)}" />
+                </div>
+                <div class="profile-data-row">
+                    <label class="form-label">${gettext('Last name')}</label>
+                    <input type="text" name="lastname" id="last_name" autocomplete="family-name" value="${escapeText(last_name)}" />
+                </div>
+                <div class="profile-data-row">
+                    <label class="form-label">${gettext('Password')}</label>
+                    <input type="password" value="******" autocomplete="new-password" readonly disabled />
+                    <span id="fw-edit-profile-pwd" class="fw-link-text"><i class="fa fa-pencil-alt"></i></span>
+                </div>
+            </form>
             <div class="profile-data-row">
                 <table class="fw-data-table profile-email-table">
                     <thead class="fw-data-table-header">
@@ -133,7 +138,7 @@ export const profileContents = ({avatar, username, first_name, last_name, emails
                                         }
                                     </td>
                                     <td>
-                                        ${ email.verified ? '<i class="fa fa-check"></i>' : '<i class="fa fa-check disabled"></i>' }
+                                        ${ email.verified ? '<i class="fa fa-check"></i>' : '' }
                                     </td>
                                     <td class="profile-email-action">
                                         ${

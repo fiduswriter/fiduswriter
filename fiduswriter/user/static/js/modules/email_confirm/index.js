@@ -1,4 +1,4 @@
-import {whenReady, post, activateWait, deactivateWait, postJson} from "../common"
+import {whenReady, post, activateWait, deactivateWait, postJson, addAlert} from "../common"
 import {confirmAccountTemplate, verifiedAccountTemplate, checkTermsTemplate, testServerQuestionTemplate} from "./templates"
 import {PreloginPage} from "../prelogin"
 import * as pluginLoaders from "../../plugins/confirm_account"
@@ -14,21 +14,15 @@ export class EmailConfirm extends PreloginPage {
         this.key = key
 
         this.validKey = false
+        this.loggedIn = false
+        this.verified = false
         this.username = ''
         this.email = ''
 
         this.submissionReady = false
-        this.formChecks = [
-            () => document.getElementById('terms-check').matches(':checked')
-        ]
-        this.confirmQuestionsTemplates = [checkTermsTemplate]
+        this.formChecks = []
+        this.confirmQuestionsTemplates = []
         this.confirmMethods = [() => post(`/api/user/confirm-email/${this.key}/`)]
-        if (this.testServer) {
-            this.formChecks.push(
-                () => document.getElementById('test-check').matches(':checked')
-            )
-            this.confirmQuestionsTemplates.push(testServerQuestionTemplate)
-        }
     }
 
     init() {
@@ -48,17 +42,46 @@ export class EmailConfirm extends PreloginPage {
                 this.username = json.username
                 this.email = json.email
                 this.validKey = true
+                this.verified = json.verified
+                this.firstVerification = !json.verified
+                if (json.logout) {
+                    this.app.config.user = {is_authenticated: false}
+                }
             }
         ).catch(()=> {})
     }
 
     render() {
-        this.contents = confirmAccountTemplate({validKey: this.validKey, username: this.username, email: this.email, confirmQuestionsTemplates: this.confirmQuestionsTemplates})
+        if (!this.verified) {
+            if (this.testServer) {
+                this.formChecks.push(
+                    () => document.getElementById('test-check').matches(':checked')
+                )
+                this.confirmQuestionsTemplates.unshift(
+                    testServerQuestionTemplate
+                )
+            }
+            this.formChecks.push(
+                () => document.getElementById('terms-check').matches(':checked')
+            )
+            this.confirmQuestionsTemplates.unshift(checkTermsTemplate)
+        }
+        this.contents = confirmAccountTemplate({
+            validKey: this.validKey,
+            username: this.username,
+            verified: this.verified,
+            email: this.email,
+            confirmQuestionsTemplates: this.confirmQuestionsTemplates
+        })
         super.render()
     }
 
     bind() {
         super.bind()
+        if (!this.formChecks.length) {
+            document.getElementById('submit').removeAttribute("disabled")
+            this.submissionReady = true
+        }
         document.querySelectorAll('.checker').forEach(el => el.addEventListener(
             'click',
             () => {
@@ -80,8 +103,18 @@ export class EmailConfirm extends PreloginPage {
             Promise.all(this.confirmMethods.map(method => method())).then(
                 () => {
                     deactivateWait()
-                    const contentsDOM = document.querySelector('.fw-contents')
-                    contentsDOM.innerHTML = verifiedAccountTemplate()
+                    if (this.app.config.user.is_authenticated) {
+                        const emailObject = this.app.config.user.emails.find(email => email.address === this.email)
+                        if (emailObject) {
+                            emailObject.verified = true
+                        }
+                        return this.app.goTo('/user/profile/').then(
+                            () => addAlert('info', gettext('Email verified!'))
+                        )
+                    } else {
+                        const contentsDOM = document.querySelector('.fw-contents')
+                        contentsDOM.innerHTML = verifiedAccountTemplate()
+                    }
                 }
             )
         })

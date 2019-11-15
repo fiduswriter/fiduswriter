@@ -3606,7 +3606,7 @@ msgid "Add Email"
 msgstr ""
 
 #: user/static/js/modules/profile/dialogs.js:185
-msgid "Email succesfully deleted!"
+msgid "Email successfully deleted!"
 msgstr ""
 
 #: user/static/js/modules/profile/dialogs.js:190

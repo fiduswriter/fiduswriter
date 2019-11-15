@@ -31,10 +31,11 @@ class EditorHelper(SeleniumHelper):
         self.inject_helpers(driver)
 
     def inject_helpers(self, driver):
-        test_caret_script = open(
+        with open(
             'static-transpile/js/test_caret.js',
             'r'
-        ).read()
+        ) as file:
+            test_caret_script = file.read()
         driver.execute_script(
             test_caret_script
         )

@@ -1,6 +1,6 @@
 import json
 
-from django.http import JsonResponse, HttpResponseRedirect
+from django.http import JsonResponse
 from django.contrib.auth import logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -25,14 +25,6 @@ from avatar.forms import UploadAvatarForm
 from avatar.signals import avatar_updated
 
 from document.views import apply_invite
-
-
-def logout_page(request):
-    """
-    Log users out and re-direct them to the main page.
-    """
-    logout(request)
-    return HttpResponseRedirect('/')
 
 
 def info(request):
@@ -422,33 +414,6 @@ def add_team_member(request):
 
 
 @login_required
-def change_team_member_roles(request):
-    """
-    Change the roles of a team member
-    """
-    response = {}
-    status = 405
-    if request.is_ajax() and request.method == 'POST':
-        form_data = json.loads(request.POST['form_data'])
-        form_data['leader'] = request.user.pk
-        member = User.objects.get(pk=form_data['member'])
-        team_member_object_instance = request.user.leader.filter(
-            member=member
-        ).first()
-        team_member_form = TeamMemberForm(
-            form_data,
-            instance=team_member_object_instance
-        )
-        if team_member_form.is_valid():
-            team_member_form.save()
-            status = 200
-    return JsonResponse(
-        response,
-        status=status
-    )
-
-
-@login_required
 def remove_team_member(request):
     """
     Remove a team member
@@ -493,6 +458,18 @@ def get_confirmkey_data(request):
             status = 200
             response['username'] = confirmation.email_address.user.username
             response['email'] = confirmation.email_address.email
+            if request.user:
+                if request.user != confirmation.email_address.user:
+                    response['logout'] = True
+                    logout(request)
+            # We check if the user has another verified email already. If yes,
+            # we don't need to display the terms and test server warning again.
+            if confirmation.email_address.user.emailaddress_set.filter(
+                verified=True
+            ).first():
+                response['verified'] = True
+            else:
+                response['verified'] = False
         else:
             status = 404
     return JsonResponse(

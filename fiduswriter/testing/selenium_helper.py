@@ -22,11 +22,11 @@ class SeleniumHelper(object):
             clients.append(Client())
         drivers = []
         wait_time = 0
-        chrome_options = webdriver.ChromeOptions()
+        options = webdriver.ChromeOptions()
         if os.getenv("CI"):
-            chrome_options.binary_location = '/usr/bin/google-chrome-stable'
-            chrome_options.add_argument('--headless')
-            chrome_options.add_argument('--disable-gpu')
+            options.binary_location = '/usr/bin/google-chrome-stable'
+            options.add_argument('--headless')
+            options.add_argument('--disable-gpu')
             chromedriver_filename = '/home/travis/bin/chromedriver'
             os.environ["PATH"] += os.pathsep + '/home/travis/bin'
         else:
@@ -35,7 +35,7 @@ class SeleniumHelper(object):
             drivers.append(
                 webdriver.Chrome(
                     chromedriver_filename,
-                    chrome_options=chrome_options
+                    options=options
                 )
             )
         wait_time = 6
@@ -68,6 +68,7 @@ class SeleniumHelper(object):
             user=user,
             email=email,
             verified=True,
+            primary=True
         ).save()
 
         return user

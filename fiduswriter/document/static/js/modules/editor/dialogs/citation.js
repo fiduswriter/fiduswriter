@@ -228,7 +228,11 @@ export class CitationDialog {
     }
 
     checkRow(dataIndex) {
-        const checkCell = this.table.data[dataIndex].cells[3]
+        const data = this.table.data[dataIndex]
+        if (!data) {
+            return
+        }
+        const checkCell = data.cells[3]
 
         if (checkCell.innerHTML.trim().length) {
             checkCell.innerHTML = ''

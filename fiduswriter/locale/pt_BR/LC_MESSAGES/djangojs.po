@@ -3493,7 +3493,7 @@ msgid "Add Email"
 msgstr "Adicionar Email"
 
 #: user/static/js/modules/profile/dialogs.js:185
-msgid "Email succesfully deleted!"
+msgid "Email successfully deleted!"
 msgstr "Email excluído com sucesso!"
 
 #: user/static/js/modules/profile/dialogs.js:190

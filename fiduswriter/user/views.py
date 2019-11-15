@@ -414,33 +414,6 @@ def add_team_member(request):
 
 
 @login_required
-def change_team_member_roles(request):
-    """
-    Change the roles of a team member
-    """
-    response = {}
-    status = 405
-    if request.is_ajax() and request.method == 'POST':
-        form_data = json.loads(request.POST['form_data'])
-        form_data['leader'] = request.user.pk
-        member = User.objects.get(pk=form_data['member'])
-        team_member_object_instance = request.user.leader.filter(
-            member=member
-        ).first()
-        team_member_form = TeamMemberForm(
-            form_data,
-            instance=team_member_object_instance
-        )
-        if team_member_form.is_valid():
-            team_member_form.save()
-            status = 200
-    return JsonResponse(
-        response,
-        status=status
-    )
-
-
-@login_required
 def remove_team_member(request):
     """
     Remove a team member

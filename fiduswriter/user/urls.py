@@ -36,11 +36,6 @@ urlpatterns = [
         name='add_team_member'
     ),
     url(
-        '^teammember/edit',
-        views.change_team_member_roles,
-        name='change_team_member_roles'
-    ),
-    url(
         '^teammember/remove',
         views.remove_team_member,
         name='remove_team_member'

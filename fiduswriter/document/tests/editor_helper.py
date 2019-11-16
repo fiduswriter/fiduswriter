@@ -1,6 +1,7 @@
 import time
 from random import randrange
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from testing.selenium_helper import SeleniumHelper
@@ -43,6 +44,13 @@ class EditorHelper(SeleniumHelper):
     def input_text(self, document_input, text):
         for char in text:
             document_input.send_keys(char)
+            time.sleep(randrange(10, 40) / 200.0)
+
+    def type_text(self, driver, text):
+        for char in text:
+            actions = ActionChains(driver)
+            actions.send_keys(char)
+            actions.perform()
             time.sleep(randrange(10, 40) / 200.0)
 
     def add_title(self, driver):

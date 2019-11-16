@@ -256,6 +256,9 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.ID,
             "close-document-top"
         ).click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable((By.ID, 'preferences-btn'))
+        )
         self.driver.find_element(
             By.ID,
             "preferences-btn"
@@ -311,6 +314,9 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.ID,
             "close-document-top"
         ).click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable((By.ID, 'preferences-btn'))
+        )
         self.driver.find_element(
             By.ID,
             "preferences-btn"

@@ -1256,13 +1256,6 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             len(self.get_citation_bib(self.driver2))
         )
 
-    def type_text(self, driver, text):
-        for char in text:
-            actions = ActionChains(driver)
-            actions.send_keys(char)
-            actions.perform()
-            time.sleep(randrange(10, 40) / 200.0)
-
     def test_offline(self):
         """
         Test one client going offline in collaborative mode while both clients
@@ -1276,10 +1269,6 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.driver.find_element_by_class_name(
             'article-body'
         ).click()
-
-        # # Total: 22
-        # self.driver.execute_script(
-        #     'window.testCaret.setSelection(25,25)')
 
         p1 = multiprocessing.Process(
             target=self.type_text,
@@ -1299,7 +1288,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             'article-body'
         ).click()
 
-        # Total: 22
+        # Total: 25
         self.driver2.execute_script(
             'window.testCaret.setSelection(25,25)'
         )
@@ -1323,3 +1312,23 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             self.get_contents(self.driver2),
             self.get_contents(self.driver)
         )
+
+    def test_chat(self):
+        "Test whether chat messages can be delivered"
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
+        self.driver.find_element_by_id(
+            'messageform'
+        ).click()
+        actions = ActionChains(self.driver)
+        actions.send_keys('hello\n')
+        actions.perform()
+        message_body = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "message-body"))
+        )
+        assert message_body.text == "hello"
+
+        message_body2 = WebDriverWait(self.driver2, self.wait_time).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "message-body"))
+        )
+        assert message_body2.text == "hello"

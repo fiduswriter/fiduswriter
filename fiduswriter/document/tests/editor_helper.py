@@ -47,11 +47,9 @@ class EditorHelper(SeleniumHelper):
 
     def add_title(self, driver):
         title = "My title"
-        title_input = self.driver.find_element_by_class_name(
+        self.driver.find_element_by_class_name(
             'article-title'
-        )
-        title_input.click()
-        self.input_text(title_input, title)
+        ).send_keys(title)
 
     def wait_for_doc_size(self, driver, size, seconds=False):
         if seconds is False:

@@ -127,7 +127,7 @@ export class DocxExporterRichtext {
                         <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
                 end = '</w:p>' + end
                 break
-            case 'code':
+            case 'code_block':
                 start += '<w:p>'
                 start += '<w:pPr><w:pStyle w:val="Code"/><w:rPr></w:rPr></w:pPr>'
                 end = '</w:p>' + end

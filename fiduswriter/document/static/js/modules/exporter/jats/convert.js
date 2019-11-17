@@ -364,7 +364,7 @@ export class JATSExporterConvert {
                 end = '</title>' + end
                 break
             }
-            case 'code':
+            case 'code_block':
                 if (options.inFootnote) {
                     // only allows <p> block level elements https://jats.nlm.nih.gov/archiving/tag-library/1.2/element/fn.html
                     start += `<p id="p-${++this.parCounter}">`

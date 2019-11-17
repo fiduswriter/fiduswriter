@@ -384,7 +384,13 @@ export class ModCommentStore {
             } else if (event.type == "update") {
                 this.updateLocalComment(event, false)
             } else if (event.type == "add_answer") {
-                this.addLocalAnswer(event.id, event, false)
+                this.addLocalAnswer(event.id, {
+                    answer: event.answer,
+                    id: event.answerId,
+                    date: event.date,
+                    user: event.user,
+                    username: event.username
+                }, false)
             } else if (event.type == "delete_answer") {
                 this.deleteLocalAnswer(event.id, event.answerId,
                     false)

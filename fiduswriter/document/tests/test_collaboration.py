@@ -977,6 +977,104 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             len(self.get_comment(self.driver2))
         )
 
+        # Change comment
+        self.driver.find_element_by_css_selector(
+            '.margin-box.comment .show-marginbox-options'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            '.edit-comment'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            '#comment-editor p'
+        ).send_keys('MODIFICATION')
+        self.driver.find_element_by_css_selector(
+            '.comment-is-major'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            '#comment-editor .submit'
+        ).click()
+        WebDriverWait(self.driver2, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".margin-box.comment-is-major-bgc")
+            )
+        )
+        self.assertEqual(
+            22,
+            len(self.get_comment(self.driver2))
+        )
+        self.assertEqual(
+            len(self.get_comment(self.driver)),
+            len(self.get_comment(self.driver2))
+        )
+
+        # Add comment answer
+        self.driver2.find_element_by_css_selector(
+            '.margin-box.comment'
+        ).click()
+        self.driver2.find_element_by_css_selector(
+            '#answer-editor .ProseMirror'
+        ).send_keys('My answer')
+        self.driver2.find_element_by_css_selector(
+            '.comment-answer .submit'
+        ).click()
+        comment_answer = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".comment-answer .comment-text-wrapper p")
+            )
+        )
+        assert comment_answer.text == "My answer"
+
+        # Modify comment answer
+        comment_answer.click()
+        self.driver.find_element_by_css_selector(
+            '.comment-answer .show-marginbox-options'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            '.edit-comment-answer'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            '#answer-editor p'
+        ).send_keys('\nMODIFICATION')
+        self.driver.find_element_by_css_selector(
+            '.comment-answer .submit'
+        ).click()
+        answer_addition = WebDriverWait(self.driver2, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".comment-answer .comment-text-wrapper p+p")
+            )
+        )
+        assert answer_addition.text == "MODIFICATION"
+
+        # Delete comment answer
+        answer_addition.click()
+        self.driver2.find_element_by_css_selector(
+            '.comment-answer .show-marginbox-options'
+        ).click()
+        self.driver2.find_element_by_css_selector(
+            '.delete-comment-answer'
+        ).click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.invisibility_of_element_located(
+                (By.CSS_SELECTOR, ".comment-answer")
+            )
+        )
+
+        # Delete comment
+        self.driver.find_element_by_css_selector(
+            '.margin-box.comment'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            '.margin-box.comment .show-marginbox-options'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            '.delete-comment'
+        ).click()
+        WebDriverWait(self.driver2, self.wait_time).until(
+            EC.invisibility_of_element_located(
+                (By.CSS_SELECTOR, ".margin-box.comment")
+            )
+        )
+
     def add_figure(self, driver):
         button = driver.find_element_by_xpath('//*[@title="Figure"]')
         button.click()
@@ -1248,6 +1346,34 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         self.assertEqual(
             60,
+            len(self.get_citation_bib(self.driver))
+        )
+
+        self.assertEqual(
+            len(self.get_citation_bib(self.driver)),
+            len(self.get_citation_bib(self.driver2))
+        )
+
+        # We delete the citation again
+        ActionChains(self.driver).double_click(
+            self.driver.find_element_by_css_selector(
+                'div.article-body span.citation'
+            )
+        ).send_keys(
+            Keys.BACKSPACE
+        ).perform()
+
+        self.wait_for_doc_sync(self.driver, self.driver2)
+
+        self.assertEqual(
+            len(self.driver2.find_elements_by_css_selector(
+                'div.article-body span.citation'
+            )),
+            0
+        )
+
+        self.assertEqual(
+            0,
             len(self.get_citation_bib(self.driver))
         )
 

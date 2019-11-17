@@ -77,6 +77,7 @@ function markDisabled(editor, markName) {
         // main editor
         const anchorDocPart = editor.currentView.state.selection.$anchor.node(2),
             headDocPart = editor.currentView.state.selection.$head.node(2)
+
         return !anchorDocPart ||
             headDocPart !== anchorDocPart ||
             !anchorDocPart.attrs.marks ||

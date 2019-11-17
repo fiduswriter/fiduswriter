@@ -1214,6 +1214,18 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             len(self.get_caption(self.driver2))
         )
 
+        # Check if image is still there after reload
+        self.driver.refresh()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, 'div.article-body figure')
+            )
+        )
+        self.assertEqual(
+            1,
+            len(self.get_image(self.driver))
+        )
+
     def add_citation(self, driver):
         button = driver.find_element_by_xpath('//*[@title="Cite"]')
         button.click()

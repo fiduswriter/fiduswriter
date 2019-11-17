@@ -50,7 +50,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(By.ID, "id_password").send_keys("otter")
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.presence_of_element_located(
+            EC.element_to_be_clickable(
                 (
                     By.CSS_SELECTOR,
                     ".new_document button"
@@ -240,6 +240,11 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         ).send_keys(
             Keys.RETURN
         ).perform()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, ".collaborator-tr .fa-caret-down")
+            )
+        )
         self.driver.find_element(
             By.CSS_SELECTOR,
             ".collaborator-tr .fa-caret-down"

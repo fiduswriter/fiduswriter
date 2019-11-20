@@ -4,7 +4,9 @@ import {
     WebSocketConnector,
     postJson,
     activateWait,
-    deactivateWait
+    deactivateWait,
+    recreateTransform,
+    showSystemMessage
 } from "../common"
 import {
     FeedbackTab
@@ -16,6 +18,9 @@ import {
     EditorState,
     TextSelection
 } from "prosemirror-state"
+import {
+    Mapping
+} from "prosemirror-transform"
 import {
     EditorView
 } from "prosemirror-view"
@@ -30,7 +35,8 @@ import {
 } from "prosemirror-keymap"
 import {
     collab,
-    sendableSteps
+    sendableSteps,
+    receiveTransaction
 } from "prosemirror-collab"
 import {
     tableEditing
@@ -167,6 +173,9 @@ export class Editor {
         }
         this.client_id = Math.floor(Math.random() * 0xFFFFFFFF)
         this.clientTimeAdjustment = 0
+
+        this.trackOfflineLimit = 50 // Limit of local changes while offline for tracking to kick in when multiple users edit
+        this.remoteTrackOfflineLimit = 20 // Limit of remote changes while offline for tracking to kick in when multiple users edit
         this.statePlugins = [
             [keymap, () => buildEditorKeymap(this.schema)],
             [keymap, () => buildKeymap(this.schema)],
@@ -280,7 +289,12 @@ export class Editor {
                             this.mod.documentTemplate.setStyles(data.styles)
                             break
                         case 'doc_data':
-                            this.receiveDocument(data)
+                            this.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
+                            if (this.docInfo.confirmedDoc) {
+                                this.adjustDocument(data)
+                            } else {
+                                this.loadDocument(data)
+                            }
                             break
                         case 'confirm_version':
                             this.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
@@ -401,7 +415,8 @@ export class Editor {
                 }
             },
             dispatchTransaction: tr => {
-                const trackedTr = amendTransaction(tr, this.view.state, this)
+                const approved = !this.view.state.doc.firstChild.attrs.tracked && this.docInfo.access_rights !== 'write-tracked'
+                const trackedTr = amendTransaction(tr, this.view.state, this, approved)
                 const newState = this.view.state.apply(trackedTr)
                 this.view.updateState(newState)
                 this.mod.collab.docChanges.sendToCollaborators()
@@ -436,9 +451,115 @@ export class Editor {
         })
     }
 
-    receiveDocument(data) {
+    adjustDocument(data) {
+        // Adjust the document when reconnecting after offline and many changes
+        // happening on server.
+        if (this.docInfo.version < data.doc.v) {
+            const confirmedState = EditorState.create({doc: this.docInfo.confirmedDoc})
+            const unconfirmedTr = confirmedState.tr
+            sendableSteps(this.view.state).steps.forEach(step => unconfirmedTr.step(step))
+            const rollbackTr = this.view.state.tr
+            unconfirmedTr.steps.slice().reverse().forEach(
+                (step, index) => rollbackTr.step(step.invert(unconfirmedTr.docs[unconfirmedTr.docs.length - index - 1]))
+            )
+            // We reset to there being no local changes to send.
+            this.view.dispatch(receiveTransaction(
+                this.view.state,
+                rollbackTr.steps,
+                rollbackTr.steps.map(_step => this.client_id)
+            ))
+
+            const toDoc = this.schema.nodeFromJSON({type:'doc', content:[
+                data.doc.contents
+            ]})
+            const lostTr = recreateTransform(this.view.state.doc, toDoc)
+
+            let tracked
+            let localTr // local steps to be reapplied
+            const lostState = EditorState.create({doc: toDoc})
+            if (
+                ['write', 'write-tracked'].includes(this.docInfo.access_rights) &&
+                (unconfirmedTr.steps.length > this.trackOfflineLimit || lostTr.steps.length > this.remoteTrackOfflineLimit)
+            ) {
+                tracked = true
+                // Either this user has made 50 changes since going offline,
+                // or the document has 20 changes to it. Therefore we add tracking
+                // to the changes of this user and ask user to clean up.
+                localTr = amendTransaction(unconfirmedTr, lostState, this, false)
+            } else {
+                tracked = false
+                localTr = unconfirmedTr
+            }
+            const rebasedTr = lostState.tr.setMeta('remote', true)
+            const maps = localTr.mapping.maps.slice().reverse().map(map => map.invert()).concat(lostTr.mapping)
+            localTr.steps.forEach(
+                (step, index) => {
+                    const mapped = step.map(new Mapping(maps.slice(localTr.steps.length - index)))
+                    if (mapped && !rebasedTr.maybeStep(mapped).failed) {
+                        maps.push(mapped.getMap())
+                    }
+                }
+            )
+
+            const usedImages = [],
+                usedBibs = []
+            const footnoteFind = (node, usedImages, usedBibs) => {
+                if (node.name==='citation') {
+                    node.attrs.references.forEach(ref => usedBibs.push(parseInt(ref.id)))
+                } else if (node.name==='figure' && node.attrs.image) {
+                    usedImages.push(node.attrs.image)
+                } else if (node.content) {
+                    node.content.forEach(subNode => footnoteFind(subNode, usedImages, usedBibs))
+                }
+            }
+            rebasedTr.doc.descendants(node => {
+                if (node.type.name==='citation') {
+                    node.attrs.references.forEach(ref => usedBibs.push(parseInt(ref.id)))
+                } else if (node.type.name==='figure' && node.attrs.image) {
+                    usedImages.push(node.attrs.image)
+                } else if (node.type.name==='footnote' && node.attrs.footnote) {
+                    node.attrs.footnote.forEach(subNode => footnoteFind(subNode, usedImages, usedBibs))
+                }
+            })
+            const oldBibDB = this.mod.db.bibDB.db
+            this.mod.db.bibDB.setDB(data.doc.bibliography)
+            usedBibs.forEach(id => {
+                if (!this.mod.db.bibDB.db[id] && oldBibDB[id]) {
+                    this.mod.db.bibDB.updateReference(id, oldBibDB[id])
+                }
+            })
+            const oldImageDB = this.mod.db.imageDB.db
+            this.mod.db.imageDB.setDB(data.doc.images)
+            usedImages.forEach(id => {
+                if (!this.mod.db.imageDB.db[id] && oldImageDB[id]) {
+                    this.mod.db.imageDB.setImage(id, oldImageDB[id])
+                }
+            })
+            this.view.dispatch(receiveTransaction(
+                this.view.state,
+                lostTr.steps,
+                lostTr.steps.map(_step => 'remote')
+            ))
+            this.docInfo.version = data.doc.v
+
+            this.view.dispatch(rebasedTr)
+            if (tracked) {
+                showSystemMessage(
+                    gettext(
+                        'The document was modified substantially by other users while you were offline. We have merged your changes in as tracked changes. You should verify that your edits still make sense.'
+                    )
+                )
+            }
+            this.mod.footnotes.fnEditor.renderAllFootnotes()
+
+        } else {
+            // The server seems to have lost some data. We reset.
+            this.loadDocument(data)
+        }
+    }
+
+    loadDocument(data) {
         // Reset collaboration
-        this.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
         this.mod.collab.docChanges.unconfirmedDiffs = {}
         if (this.mod.collab.docChanges.awaitingDiffResponse) {
             this.mod.collab.docChanges.enableDiffSending()
@@ -448,10 +569,8 @@ export class Editor {
 
         this.clientTimeAdjustment = Date.now() - data.time
 
-        const doc = data.doc
-
         this.docInfo = data.doc_info
-        this.docInfo.version = doc["v"]
+        this.docInfo.version = data.doc.v
         this.docInfo.template = data.doc.template
         new ModDB(this)
         this.mod.db.bibDB.setDB(data.doc.bibliography)
@@ -464,12 +583,12 @@ export class Editor {
         this.schema.cached.imageDB = this.mod.db.imageDB
         // assign image DB to be used in footnote schema.
         this.mod.footnotes.fnEditor.schema.cached.imageDB = this.mod.db.imageDB
-        this.docInfo.confirmedJson = JSON.parse(JSON.stringify(doc.contents))
+        this.docInfo.confirmedJson = JSON.parse(JSON.stringify(data.doc.contents))
         let stateDoc
-        if (doc.contents.type) {
+        if (data.doc.contents.type) {
             stateDoc = this.schema.nodeFromJSON({type:'doc', content:[
                 adjustDocToTemplate(
-                    doc.contents,
+                    data.doc.contents,
                     this.docInfo.template.definition,
                     this.mod.documentTemplate.documentStyles,
                     this.schema
@@ -489,7 +608,7 @@ export class Editor {
         }
         const plugins = this.statePlugins.map(plugin => {
             if (plugin[1]) {
-                return plugin[0](plugin[1](doc))
+                return plugin[0](plugin[1](data.doc))
             } else {
                 return plugin[0]()
             }
@@ -512,7 +631,7 @@ export class Editor {
 
         //  Setup comment handling
         this.mod.comments.store.reset()
-        this.mod.comments.store.loadComments(doc.comments)
+        this.mod.comments.store.loadComments(data.doc.comments)
         this.mod.marginboxes.view(this.view)
         // Set part specific settings
         this.mod.documentTemplate.addDocPartSettings()

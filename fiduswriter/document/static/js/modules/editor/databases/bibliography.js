@@ -70,7 +70,7 @@ export class ModBibliographyDB {
     }
 
     // This function only makes real sense in the user's bibDB. It is kept here
-    // for comaptibility reasons.
+    // for compatibility reasons.
     getDB() {
         return new Promise(resolve => {
             window.setTimeout(

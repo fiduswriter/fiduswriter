@@ -21,6 +21,7 @@ logger = logging.getLogger(__name__)
 
 class WebSocket(BaseWebSocketHandler):
     sessions = dict()
+    history_length = 1000  # Only keep the last 1000 diffs
 
     def open(self, arg):
         super().open(arg)
@@ -342,8 +343,9 @@ class WebSocket(BaseWebSocketHandler):
             return
         if pv == dv:
             self.doc["last_diffs"].append(message)
-            # Only keep the last 1000 diffs
-            self.doc["last_diffs"] = self.doc["last_diffs"][-1000:]
+            self.doc["last_diffs"] = self.doc[
+                "last_diffs"
+            ][-self.history_length:]
             self.doc['version'] += 1
             if "jd" in message:  # jd = json diff
                 try:

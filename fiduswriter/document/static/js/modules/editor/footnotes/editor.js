@@ -92,7 +92,8 @@ export class ModFootnoteEditor {
                 ) {
                     return
                 }
-                const trackedTr = amendTransaction(tr, this.view.state, this.mod.editor)
+                const approved = !this.mod.editor.view.state.doc.firstChild.attrs.tracked && this.mod.editor.docInfo.access_rights !== 'write-tracked'
+                const trackedTr = amendTransaction(tr, this.view.state, this.mod.editor, approved)
                 const newState = this.view.state.apply(trackedTr)
 
                 this.view.updateState(newState)

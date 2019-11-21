@@ -208,7 +208,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
 
         # driver 2 sets tracking limit
         self.driver2.execute_script(
-            'window.theApp.page.trackOfflineLimit = 0'
+            'window.theApp.page.mod.collab.doc.trackOfflineLimit = 0'
         )
 
         # driver 2 goes offline

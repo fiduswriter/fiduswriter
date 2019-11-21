@@ -3,24 +3,15 @@ import {
     ensureCSS,
     WebSocketConnector,
     postJson,
-    activateWait,
-    deactivateWait,
-    recreateTransform,
-    showSystemMessage
+    activateWait
 } from "../common"
 import {
     FeedbackTab
 } from "../feedback"
 import {
-    adjustDocToTemplate
-} from "../document_template"
-import {
     EditorState,
     TextSelection
 } from "prosemirror-state"
-import {
-    Mapping
-} from "prosemirror-transform"
 import {
     EditorView
 } from "prosemirror-view"
@@ -35,8 +26,7 @@ import {
 } from "prosemirror-keymap"
 import {
     collab,
-    sendableSteps,
-    receiveTransaction
+    sendableSteps
 } from "prosemirror-collab"
 import {
     tableEditing
@@ -174,8 +164,6 @@ export class Editor {
         this.client_id = Math.floor(Math.random() * 0xFFFFFFFF)
         this.clientTimeAdjustment = 0
 
-        this.trackOfflineLimit = 50 // Limit of local changes while offline for tracking to kick in when multiple users edit
-        this.remoteTrackOfflineLimit = 20 // Limit of remote changes while offline for tracking to kick in when multiple users edit
         this.statePlugins = [
             [keymap, () => buildEditorKeymap(this.schema)],
             [keymap, () => buildKeymap(this.schema)],
@@ -268,7 +256,7 @@ export class Editor {
                 },
                 resubScribed: () => {
                     this.mod.footnotes.fnEditor.renderAllFootnotes()
-                    this.mod.collab.docChanges.checkVersion()
+                    this.mod.collab.doc.checkVersion()
                 },
                 restartMessage: () => ({type: 'get_document'}), // Too many messages have been lost and we need to restart
                 messagesElement: () => this.dom.querySelector('#unobtrusive_messages'),
@@ -289,46 +277,41 @@ export class Editor {
                             this.mod.documentTemplate.setStyles(data.styles)
                             break
                         case 'doc_data':
-                            this.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
-                            if (this.docInfo.confirmedDoc) {
-                                this.adjustDocument(data)
-                            } else {
-                                this.loadDocument(data)
-                            }
+                            this.mod.collab.doc.receiveDocument(data)
                             break
                         case 'confirm_version':
-                            this.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
+                            this.mod.collab.doc.cancelCurrentlyCheckingVersion()
                             if (data["v"] !== this.docInfo.version) {
-                                this.mod.collab.docChanges.checkVersion()
+                                this.mod.collab.doc.checkVersion()
                                 return
                             }
-                            this.mod.collab.docChanges.enableDiffSending()
+                            this.mod.collab.doc.enableDiffSending()
                             break
                         case 'selection_change':
-                            this.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
+                            this.mod.collab.doc.cancelCurrentlyCheckingVersion()
                             if (data["v"] !== this.docInfo.version) {
-                                this.mod.collab.docChanges.checkVersion()
+                                this.mod.collab.doc.checkVersion()
                                 return
                             }
-                            this.mod.collab.docChanges.receiveSelectionChange(data)
+                            this.mod.collab.doc.receiveSelectionChange(data)
                             break
                         case 'diff':
                             if (data["cid"] === this.client_id) {
                                 // The diff origins from the local user.
-                                this.mod.collab.docChanges.confirmDiff(data["rid"])
+                                this.mod.collab.doc.confirmDiff(data["rid"])
                                 return
                             }
                             if (data["v"] !== this.docInfo.version) {
-                                this.mod.collab.docChanges.checkVersion()
+                                this.mod.collab.doc.checkVersion()
                                 return
                             }
-                            this.mod.collab.docChanges.receiveFromCollaborators(data)
+                            this.mod.collab.doc.receiveFromCollaborators(data)
                             break
                         case 'confirm_diff':
-                            this.mod.collab.docChanges.confirmDiff(data["rid"])
+                            this.mod.collab.doc.confirmDiff(data["rid"])
                             break
                         case 'reject_diff':
-                            this.mod.collab.docChanges.rejectDiff(data["rid"])
+                            this.mod.collab.doc.rejectDiff(data["rid"])
                             break
                     }
                 }
@@ -419,7 +402,7 @@ export class Editor {
                 const trackedTr = amendTransaction(tr, this.view.state, this, approved)
                 const newState = this.view.state.apply(trackedTr)
                 this.view.updateState(newState)
-                this.mod.collab.docChanges.sendToCollaborators()
+                this.mod.collab.doc.sendToCollaborators()
             }
 
         })
@@ -427,6 +410,7 @@ export class Editor {
         this.currentView = this.view
         this.mod.citations.init()
         this.mod.footnotes.init()
+        new ModDB(this)
         new ModCollab(this)
         new ModTools(this)
         new ModTrack(this)
@@ -449,198 +433,6 @@ export class Editor {
                 this.plugins[plugin].init()
             }
         })
-    }
-
-    adjustDocument(data) {
-        // Adjust the document when reconnecting after offline and many changes
-        // happening on server.
-        if (this.docInfo.version < data.doc.v) {
-            const confirmedState = EditorState.create({doc: this.docInfo.confirmedDoc})
-            const unconfirmedTr = confirmedState.tr
-            sendableSteps(this.view.state).steps.forEach(step => unconfirmedTr.step(step))
-            const rollbackTr = this.view.state.tr
-            unconfirmedTr.steps.slice().reverse().forEach(
-                (step, index) => rollbackTr.step(step.invert(unconfirmedTr.docs[unconfirmedTr.docs.length - index - 1]))
-            )
-            // We reset to there being no local changes to send.
-            this.view.dispatch(receiveTransaction(
-                this.view.state,
-                rollbackTr.steps,
-                rollbackTr.steps.map(_step => this.client_id)
-            ))
-
-            const toDoc = this.schema.nodeFromJSON({type:'doc', content:[
-                data.doc.contents
-            ]})
-            const lostTr = recreateTransform(this.view.state.doc, toDoc)
-
-            let tracked
-            let localTr // local steps to be reapplied
-            const lostState = EditorState.create({doc: toDoc})
-            if (
-                ['write', 'write-tracked'].includes(this.docInfo.access_rights) &&
-                (unconfirmedTr.steps.length > this.trackOfflineLimit || lostTr.steps.length > this.remoteTrackOfflineLimit)
-            ) {
-                tracked = true
-                // Either this user has made 50 changes since going offline,
-                // or the document has 20 changes to it. Therefore we add tracking
-                // to the changes of this user and ask user to clean up.
-                localTr = amendTransaction(unconfirmedTr, lostState, this, false)
-            } else {
-                tracked = false
-                localTr = unconfirmedTr
-            }
-            const rebasedTr = lostState.tr.setMeta('remote', true)
-            const maps = localTr.mapping.maps.slice().reverse().map(map => map.invert()).concat(lostTr.mapping)
-            localTr.steps.forEach(
-                (step, index) => {
-                    const mapped = step.map(new Mapping(maps.slice(localTr.steps.length - index)))
-                    if (mapped && !rebasedTr.maybeStep(mapped).failed) {
-                        maps.push(mapped.getMap())
-                    }
-                }
-            )
-
-            const usedImages = [],
-                usedBibs = []
-            const footnoteFind = (node, usedImages, usedBibs) => {
-                if (node.name==='citation') {
-                    node.attrs.references.forEach(ref => usedBibs.push(parseInt(ref.id)))
-                } else if (node.name==='figure' && node.attrs.image) {
-                    usedImages.push(node.attrs.image)
-                } else if (node.content) {
-                    node.content.forEach(subNode => footnoteFind(subNode, usedImages, usedBibs))
-                }
-            }
-            rebasedTr.doc.descendants(node => {
-                if (node.type.name==='citation') {
-                    node.attrs.references.forEach(ref => usedBibs.push(parseInt(ref.id)))
-                } else if (node.type.name==='figure' && node.attrs.image) {
-                    usedImages.push(node.attrs.image)
-                } else if (node.type.name==='footnote' && node.attrs.footnote) {
-                    node.attrs.footnote.forEach(subNode => footnoteFind(subNode, usedImages, usedBibs))
-                }
-            })
-            const oldBibDB = this.mod.db.bibDB.db
-            this.mod.db.bibDB.setDB(data.doc.bibliography)
-            usedBibs.forEach(id => {
-                if (!this.mod.db.bibDB.db[id] && oldBibDB[id]) {
-                    this.mod.db.bibDB.updateReference(id, oldBibDB[id])
-                }
-            })
-            const oldImageDB = this.mod.db.imageDB.db
-            this.mod.db.imageDB.setDB(data.doc.images)
-            usedImages.forEach(id => {
-                if (!this.mod.db.imageDB.db[id] && oldImageDB[id]) {
-                    this.mod.db.imageDB.setImage(id, oldImageDB[id])
-                }
-            })
-            this.view.dispatch(receiveTransaction(
-                this.view.state,
-                lostTr.steps,
-                lostTr.steps.map(_step => 'remote')
-            ))
-            this.docInfo.version = data.doc.v
-
-            this.view.dispatch(rebasedTr)
-            if (tracked) {
-                showSystemMessage(
-                    gettext(
-                        'The document was modified substantially by other users while you were offline. We have merged your changes in as tracked changes. You should verify that your edits still make sense.'
-                    )
-                )
-            }
-            this.mod.footnotes.fnEditor.renderAllFootnotes()
-
-        } else {
-            // The server seems to have lost some data. We reset.
-            this.loadDocument(data)
-        }
-    }
-
-    loadDocument(data) {
-        // Reset collaboration
-        this.mod.collab.docChanges.unconfirmedDiffs = {}
-        if (this.mod.collab.docChanges.awaitingDiffResponse) {
-            this.mod.collab.docChanges.enableDiffSending()
-        }
-        // Remember location hash to scroll there subsequently.
-        const locationHash = window.location.hash
-
-        this.clientTimeAdjustment = Date.now() - data.time
-
-        this.docInfo = data.doc_info
-        this.docInfo.version = data.doc.v
-        this.docInfo.template = data.doc.template
-        new ModDB(this)
-        this.mod.db.bibDB.setDB(data.doc.bibliography)
-        // assign bibDB to be used in document schema.
-        this.schema.cached.bibDB = this.mod.db.bibDB
-        // assign bibDB to be used in footnote schema.
-        this.mod.footnotes.fnEditor.schema.cached.bibDB = this.mod.db.bibDB
-        this.mod.db.imageDB.setDB(data.doc.images)
-        // assign image DB to be used in document schema.
-        this.schema.cached.imageDB = this.mod.db.imageDB
-        // assign image DB to be used in footnote schema.
-        this.mod.footnotes.fnEditor.schema.cached.imageDB = this.mod.db.imageDB
-        this.docInfo.confirmedJson = JSON.parse(JSON.stringify(data.doc.contents))
-        let stateDoc
-        if (data.doc.contents.type) {
-            stateDoc = this.schema.nodeFromJSON({type:'doc', content:[
-                adjustDocToTemplate(
-                    data.doc.contents,
-                    this.docInfo.template.definition,
-                    this.mod.documentTemplate.documentStyles,
-                    this.schema
-                )
-            ]})
-        } else {
-            const definition = JSON.parse(JSON.stringify(this.docInfo.template.definition))
-            if (!definition.type) {
-                definition.type = 'article'
-            }
-            if (!definition.content) {
-                definition.content = [{type: 'title'}]
-            }
-            stateDoc = this.schema.nodeFromJSON({type:'doc', content:[
-                definition
-            ]})
-        }
-        const plugins = this.statePlugins.map(plugin => {
-            if (plugin[1]) {
-                return plugin[0](plugin[1](data.doc))
-            } else {
-                return plugin[0]()
-            }
-        })
-
-        const stateConfig = {
-            schema: this.schema,
-            doc: stateDoc,
-            plugins
-        }
-
-        // Set document in prosemirror
-        this.view.setProps({state: EditorState.create(stateConfig)})
-        this.view.setProps({nodeViews: {}}) // Needed to initialize nodeViews in plugins
-        // Set initial confirmed doc
-        this.docInfo.confirmedDoc = this.view.state.doc
-
-        // Render footnotes based on main doc
-        this.mod.footnotes.fnEditor.renderAllFootnotes()
-
-        //  Setup comment handling
-        this.mod.comments.store.reset()
-        this.mod.comments.store.loadComments(data.doc.comments)
-        this.mod.marginboxes.view(this.view)
-        // Set part specific settings
-        this.mod.documentTemplate.addDocPartSettings()
-        this.mod.documentTemplate.addCitationStylesMenuEntries()
-        this.waitingForDocument = false
-        deactivateWait()
-        if (locationHash.length) {
-            this.scrollIdIntoView(locationHash.slice(1))
-        }
     }
 
     // Collect all components of the current doc. Needed for saving and export

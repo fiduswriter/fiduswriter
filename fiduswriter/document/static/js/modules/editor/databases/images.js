@@ -27,7 +27,7 @@ export class ModImageDB {
         // Set a timeout so that the update can be combines with other updates
         // if they happen more or less simultaneously.
         window.setTimeout(
-            () => this.mod.editor.mod.collab.docChanges.sendToCollaborators(),
+            () => this.mod.editor.mod.collab.doc.sendToCollaborators(),
             100
         )
     }

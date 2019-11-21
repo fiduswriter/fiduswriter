@@ -27,9 +27,7 @@
     "eslint": "^5.16.0",
     "eslint-plugin-import": "^2.18.2",
     "babel-eslint": "^10.0.3",
-    "offline-plugin": "5.0.x",
-    "rfc6902": "^3.0.4",
-    "diff": "^4.0.1"
+    "offline-plugin": "5.0.x"
   },
   "devDependencies": {
     "updates": "^9.0.1",

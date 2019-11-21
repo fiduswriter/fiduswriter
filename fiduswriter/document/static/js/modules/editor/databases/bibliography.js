@@ -23,7 +23,7 @@ export class ModBibliographyDB {
         // Set a timeout so that the update can be combines with other updates
         // if they happen more or less simultaneously.
         window.setTimeout(
-            () => this.mod.editor.mod.collab.docChanges.sendToCollaborators(),
+            () => this.mod.editor.mod.collab.doc.sendToCollaborators(),
             100
         )
     }
@@ -70,7 +70,7 @@ export class ModBibliographyDB {
     }
 
     // This function only makes real sense in the user's bibDB. It is kept here
-    // for comaptibility reasons.
+    // for compatibility reasons.
     getDB() {
         return new Promise(resolve => {
             window.setTimeout(

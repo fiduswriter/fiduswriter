@@ -58,13 +58,6 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             '.firstChild.textContent;'
         )
 
-    def get_contents(self, driver):
-        # Contents is child 5.
-        return driver.execute_script(
-            'return window.theApp.page.view.state.doc.firstChild'
-            '.child(5).textContent;'
-        )
-
     def test_typing(self):
         """
         Test typing in collaborative mode with one user using browser windows
@@ -1392,63 +1385,6 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.assertEqual(
             len(self.get_citation_bib(self.driver)),
             len(self.get_citation_bib(self.driver2))
-        )
-
-    def test_offline(self):
-        """
-        Test one client going offline in collaborative mode while both clients
-        continue to write and whether documents are synched when user returns
-        online.
-        """
-        self.load_document_editor(self.driver, self.doc)
-        self.load_document_editor(self.driver2, self.doc)
-
-        self.add_title(self.driver)
-        self.driver.find_element_by_class_name(
-            'article-body'
-        ).click()
-
-        p1 = multiprocessing.Process(
-            target=self.type_text,
-            args=(self.driver, self.TEST_TEXT)
-        )
-        p1.start()
-
-        # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
-
-        # driver 2 goes offline
-        self.driver2.execute_script(
-            'window.theApp.page.ws.goOffline()'
-        )
-
-        self.driver2.find_element_by_class_name(
-            'article-body'
-        ).click()
-
-        # Total: 25
-        self.driver2.execute_script(
-            'window.testCaret.setSelection(25,25)'
-        )
-
-        p2 = multiprocessing.Process(
-            target=self.type_text,
-            args=(self.driver2, self.TEST_TEXT)
-        )
-        p2.start()
-        p1.join()
-        p2.join()
-
-        # driver 2 goes online
-        self.driver2.execute_script(
-            'window.theApp.page.ws.goOnline()'
-        )
-
-        self.wait_for_doc_sync(self.driver, self.driver2)
-
-        self.assertEqual(
-            self.get_contents(self.driver2),
-            self.get_contents(self.driver)
         )
 
     def test_chat(self):

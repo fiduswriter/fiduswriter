@@ -33,6 +33,7 @@ env:
     - TEST=feedback
     - TEST=document.tests.test_collaboration
     - TEST=document.tests.test_editor
+    - TEST=document.tests.test_offline
     - TEST=bibliography
     - TEST=usermedia
 

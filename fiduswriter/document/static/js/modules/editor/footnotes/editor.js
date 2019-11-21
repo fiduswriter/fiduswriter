@@ -92,7 +92,8 @@ export class ModFootnoteEditor {
                 ) {
                     return
                 }
-                const trackedTr = amendTransaction(tr, this.view.state, this.mod.editor)
+                const approved = !this.mod.editor.view.state.doc.firstChild.attrs.tracked && this.mod.editor.docInfo.access_rights !== 'write-tracked'
+                const trackedTr = amendTransaction(tr, this.view.state, this.mod.editor, approved)
                 const newState = this.view.state.apply(trackedTr)
 
                 this.view.updateState(newState)
@@ -172,11 +173,11 @@ export class ModFootnoteEditor {
         // Most changes to the footnotes are followed by a change to the main editor,
         // so changes are sent to collaborators automatically. When footnotes are added/deleted,
         // the change is reversed, so we need to inform collabs manually.
-        this.mod.editor.mod.collab.docChanges.sendToCollaborators()
+        this.mod.editor.mod.collab.doc.sendToCollaborators()
     }
 
     removeFootnote(index) {
-        if (!this.mod.editor.mod.collab.docChanges.receiving) {
+        if (!this.mod.editor.mod.collab.doc.receiving) {
             let startPos = 0
             for (let i=0;i<index;i++) {
                 startPos += this.view.state.doc.child(i).nodeSize
@@ -188,7 +189,7 @@ export class ModFootnoteEditor {
             // Most changes to the footnotes are followed by a change to the main editor,
             // so changes are sent to collaborators automatically. When footnotes are added/deleted,
             // the change is reverse, so we need to inform collabs manually.
-            this.mod.editor.mod.collab.docChanges.sendToCollaborators()
+            this.mod.editor.mod.collab.doc.sendToCollaborators()
         }
     }
 

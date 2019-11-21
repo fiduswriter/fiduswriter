@@ -138,7 +138,8 @@ function markWrapping(
 }
 
 
-export function amendTransaction(tr, state, editor) {
+export function amendTransaction(tr, state, editor, approved) {
+
     if (
             !tr.steps.length ||
             tr.meta && !Object.keys(tr.meta).every(
@@ -152,7 +153,6 @@ export function amendTransaction(tr, state, editor) {
         return tr
     }
     const user = editor.user.id, // current user
-        approved = !editor.view.state.doc.firstChild.attrs.tracked && editor.docInfo.access_rights !== 'write-tracked',
         newTr = state.tr,
         map = new Mapping(),
         exactDate = Date.now() - editor.clientTimeAdjustment,

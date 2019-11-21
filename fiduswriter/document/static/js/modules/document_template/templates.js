@@ -34,6 +34,14 @@ const allowedElementsTemplate = ({elements}, footnote=true, table=true) =>
     <input type="checkbox" class="elements" value="heading6" ${elements.includes('heading6') ? 'checked' : ''}/>
     ${gettext('Heading 6')}
 </label>
+${
+    footnote ?
+    '' :
+    `<label>
+        <input type="checkbox" class="elements" value="code_block" ${elements.includes('code_block') ? 'checked' : ''}/>
+        ${gettext('Code')}
+    </label>`
+}
 <label>
     <input type="checkbox" class="elements" value="figure" ${elements.includes('figure') ? 'checked' : ''}/>
     ${gettext('Figure')}

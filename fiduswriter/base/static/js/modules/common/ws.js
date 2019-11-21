@@ -29,6 +29,7 @@ export class WebSocketConnector {
             /* A list of messages from a previous connection */
         this.oldMessages = []
 
+        this.online = true
         this.connected = false
         /* Increases when connection has to be reestablished */
         /* 0 = before first connection. */
@@ -39,6 +40,19 @@ export class WebSocketConnector {
 
     init() {
         this.createWSConnection()
+    }
+
+    goOffline() {
+        // Simulate offline mode due to lack of ways of doing this in Chrome/Firefox
+        // https://bugzilla.mozilla.org/show_bug.cgi?id=1421357
+        // https://bugs.chromium.org/p/chromium/issues/detail?id=423246
+        this.online = false
+        this.ws.close()
+    }
+
+    goOnline() {
+        // Reconnect from offline mode
+        this.online = true
     }
 
     close() {
@@ -55,9 +69,8 @@ export class WebSocketConnector {
             client: 0,
             lastTen: []
         }
-        this.ws = new window.WebSocket(
-            this.url
-        )
+        const url = this.online ? this.url : 'ws://offline'
+        this.ws = new window.WebSocket(url)
 
         this.ws.onmessage = event => {
             const data = JSON.parse(event.data)

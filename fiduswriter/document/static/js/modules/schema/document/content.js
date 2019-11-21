@@ -103,7 +103,7 @@ export const footnote = {
 
 export const code_block = {
     content: "text*",
-    marks: "annotation track",
+    marks: "_",
     group: "block",
     code: true,
     defining: true,

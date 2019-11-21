@@ -187,7 +187,7 @@ const partSpec = (type, content, attrs = {}) => ({
 
 export const richtext_part = partSpec('richtext', 'block+', {
     elements: {
-        default: ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote", "table"]
+        default: ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "code_block", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote", "table"]
     },
     marks: {
         default: ['strong', 'em', 'link', 'anchor']

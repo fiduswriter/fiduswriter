@@ -977,6 +977,104 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             len(self.get_comment(self.driver2))
         )
 
+        # Change comment
+        self.driver.find_element_by_css_selector(
+            '.margin-box.comment .show-marginbox-options'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            '.edit-comment'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            '#comment-editor p'
+        ).send_keys('MODIFICATION')
+        self.driver.find_element_by_css_selector(
+            '.comment-is-major'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            '#comment-editor .submit'
+        ).click()
+        WebDriverWait(self.driver2, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".margin-box.comment-is-major-bgc")
+            )
+        )
+        self.assertEqual(
+            22,
+            len(self.get_comment(self.driver2))
+        )
+        self.assertEqual(
+            len(self.get_comment(self.driver)),
+            len(self.get_comment(self.driver2))
+        )
+
+        # Add comment answer
+        self.driver2.find_element_by_css_selector(
+            '.margin-box.comment'
+        ).click()
+        self.driver2.find_element_by_css_selector(
+            '#answer-editor .ProseMirror'
+        ).send_keys('My answer')
+        self.driver2.find_element_by_css_selector(
+            '.comment-answer .submit'
+        ).click()
+        comment_answer = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".comment-answer .comment-text-wrapper p")
+            )
+        )
+        assert comment_answer.text == "My answer"
+
+        # Modify comment answer
+        comment_answer.click()
+        self.driver.find_element_by_css_selector(
+            '.comment-answer .show-marginbox-options'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            '.edit-comment-answer'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            '#answer-editor p'
+        ).send_keys('\nMODIFICATION')
+        self.driver.find_element_by_css_selector(
+            '.comment-answer .submit'
+        ).click()
+        answer_addition = WebDriverWait(self.driver2, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".comment-answer .comment-text-wrapper p+p")
+            )
+        )
+        assert answer_addition.text == "MODIFICATION"
+
+        # Delete comment answer
+        answer_addition.click()
+        self.driver2.find_element_by_css_selector(
+            '.comment-answer .show-marginbox-options'
+        ).click()
+        self.driver2.find_element_by_css_selector(
+            '.delete-comment-answer'
+        ).click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.invisibility_of_element_located(
+                (By.CSS_SELECTOR, ".comment-answer")
+            )
+        )
+
+        # Delete comment
+        self.driver.find_element_by_css_selector(
+            '.margin-box.comment'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            '.margin-box.comment .show-marginbox-options'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            '.delete-comment'
+        ).click()
+        WebDriverWait(self.driver2, self.wait_time).until(
+            EC.invisibility_of_element_located(
+                (By.CSS_SELECTOR, ".margin-box.comment")
+            )
+        )
+
     def add_figure(self, driver):
         button = driver.find_element_by_xpath('//*[@title="Figure"]')
         button.click()
@@ -1114,6 +1212,18 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.assertEqual(
             len(self.get_caption(self.driver)),
             len(self.get_caption(self.driver2))
+        )
+
+        # Check if image is still there after reload
+        self.driver.refresh()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, 'div.article-body figure')
+            )
+        )
+        self.assertEqual(
+            1,
+            len(self.get_image(self.driver))
         )
 
     def add_citation(self, driver):
@@ -1255,3 +1365,108 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             len(self.get_citation_bib(self.driver)),
             len(self.get_citation_bib(self.driver2))
         )
+
+        # We delete the citation again
+        ActionChains(self.driver).double_click(
+            self.driver.find_element_by_css_selector(
+                'div.article-body span.citation'
+            )
+        ).send_keys(
+            Keys.BACKSPACE
+        ).perform()
+
+        self.wait_for_doc_sync(self.driver, self.driver2)
+
+        self.assertEqual(
+            len(self.driver2.find_elements_by_css_selector(
+                'div.article-body span.citation'
+            )),
+            0
+        )
+
+        self.assertEqual(
+            0,
+            len(self.get_citation_bib(self.driver))
+        )
+
+        self.assertEqual(
+            len(self.get_citation_bib(self.driver)),
+            len(self.get_citation_bib(self.driver2))
+        )
+
+    def test_offline(self):
+        """
+        Test one client going offline in collaborative mode while both clients
+        continue to write and whether documents are synched when user returns
+        online.
+        """
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
+
+        self.add_title(self.driver)
+        self.driver.find_element_by_class_name(
+            'article-body'
+        ).click()
+
+        p1 = multiprocessing.Process(
+            target=self.type_text,
+            args=(self.driver, self.TEST_TEXT)
+        )
+        p1.start()
+
+        # Wait for the first processor to write some text
+        self.wait_for_doc_size(self.driver2, 34)
+
+        # driver 2 goes offline
+        self.driver2.execute_script(
+            'window.theApp.page.ws.goOffline()'
+        )
+
+        self.driver2.find_element_by_class_name(
+            'article-body'
+        ).click()
+
+        # Total: 25
+        self.driver2.execute_script(
+            'window.testCaret.setSelection(25,25)'
+        )
+
+        p2 = multiprocessing.Process(
+            target=self.type_text,
+            args=(self.driver2, self.TEST_TEXT)
+        )
+        p2.start()
+        p1.join()
+        p2.join()
+
+        # driver 2 goes online
+        self.driver2.execute_script(
+            'window.theApp.page.ws.goOnline()'
+        )
+
+        self.wait_for_doc_sync(self.driver, self.driver2)
+
+        self.assertEqual(
+            self.get_contents(self.driver2),
+            self.get_contents(self.driver)
+        )
+
+    def test_chat(self):
+        "Test whether chat messages can be delivered"
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
+        self.driver.find_element_by_id(
+            'messageform'
+        ).click()
+        actions = ActionChains(self.driver)
+        actions.send_keys('hello\n')
+        actions.perform()
+        message_body = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "message-body"))
+        )
+        assert message_body.text == "hello"
+
+        message_body2 = WebDriverWait(self.driver2, self.wait_time).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "message-body"))
+        )
+        assert message_body2.text == "hello"

@@ -137,7 +137,6 @@ const spec = {
         em: marks.em,
         strong: marks.strong,
         link: marks.link,
-        code: marks.code,
         underline,
         comment,
         annotation_tag,

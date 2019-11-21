@@ -248,7 +248,7 @@ export class LatexExporterConvert {
                 }
                 break
             }
-            case 'code':
+            case 'code_block':
                 start += '\n\\begin{code}\n\n'
                 end = '\n\n\\end{code}\n' + end
                 break

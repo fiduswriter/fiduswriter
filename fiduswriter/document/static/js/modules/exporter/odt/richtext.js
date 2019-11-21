@@ -66,7 +66,7 @@ export class OdtExporterRichtext {
                     <text:bookmark text:name="${node.attrs.id}"/>`
                 end = '</text:h>' + end
                 break
-            case 'code':
+            case 'code_block':
                 this.exporter.styles.checkParStyle('Preformatted_20_Text')
                 start += '<text:p text:style-name="Preformatted_20_Text">'
                 end = '</text:p>' + end

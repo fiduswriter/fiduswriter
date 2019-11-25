@@ -8,7 +8,7 @@ export class LoginPage extends PreloginPage {
         this.socialaccountProviders = socialaccountProviders
         this.title = gettext('Login')
         this.pluginLoaders = pluginLoaders
-        this.headerLinks = [
+        this.headerLinks = this.registrationOpen ? [
             {
                 type: 'label',
                 text: gettext('New here?')
@@ -18,7 +18,7 @@ export class LoginPage extends PreloginPage {
                 text: gettext('Sign up'),
                 link: '/account/sign-up/'
             }
-        ]
+        ] : []
     }
 
     render() {
@@ -92,10 +92,6 @@ export class LoginPage extends PreloginPage {
         socialButtons.forEach(
             button => button.style.width = `${btnWidth}px`
         )
-
-        if (!this.registrationOpen) {
-            return
-        }
 
         document.getElementById('login-submit').addEventListener('click', event => {
             event.preventDefault()

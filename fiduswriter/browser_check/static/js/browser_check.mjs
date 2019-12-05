@@ -1,14 +1,14 @@
-import bowser from "bowser"
+import Bowser from "bowser"
 
 const MINIMUM_BROWSER_VERSIONS = {
-    msedge: '15',
-    msie: '15', // effectively none
-    firefox: '52',
-    chrome: '66',
-    safari: '11'
+    chrome: '>=66',
+    safari: '>=11',
+    msie: '>=15', // effectively none
+    msedge: '>=15',
+    firefox: '>=52'
 }
 
 // Verify that we are running on a current browser.
-if (bowser.isUnsupportedBrowser(MINIMUM_BROWSER_VERSIONS, true, window.navigator.userAgent)) {
-    window.location = '/browser_check/'
+if (Bowser.getParser(window.navigator.userAgent).satisfies(MINIMUM_BROWSER_VERSIONS)) {
+    window.location = '/api/browser_check/'
 }

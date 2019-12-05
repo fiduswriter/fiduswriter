@@ -271,7 +271,6 @@ export class FigureDialog {
                 }
             },
             onClose: () => this.editor.currentView.focus()
-
         })
 
         this.dialog.open()

@@ -1,7 +1,4 @@
-import Bowser from "bowser"
 import {Dialog} from "../../common"
-
-const browser = Bowser.getParser(window.navigator.userAgent)
 
 export class ModDocumentTemplate {
     constructor(editor) {
@@ -86,7 +83,7 @@ export class ModDocumentTemplate {
                     type: 'action',
                     tooltip: gettext('Export the document to a DOCX file with the given template.'),
                     action: editor => {
-                        if (browser.isBrowser('safari')) {
+                        if (navigator.userAgent.indexOf("Safari") > -1) {
                             this.showSafariErrorMessage()
                             return
                         }
@@ -110,7 +107,7 @@ export class ModDocumentTemplate {
                     type: 'action',
                     tooltip: gettext('Export the document to an ODT file with the given template.'),
                     action: editor => {
-                        if (browser.isBrowser('safari')) {
+                        if (navigator.userAgent.indexOf("Safari") > -1) {
                             this.showSafariErrorMessage()
                             return
                         }

@@ -390,6 +390,18 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
             'tr:nth-child(1) > td > label'
         ).click()
 
+        # Native
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, '.dt-bulk-dropdown'))
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Download selected as Fidus document"]'
+        ).click()
+        time.sleep(1)
+        assert os.path.isfile(
+            os.path.join(self.download_dir, 'title.fidus')
+        )
+
         # EPUB
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, '.dt-bulk-dropdown'))
@@ -403,8 +415,8 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         )
 
         # HTML
-        self.driver.find_element_by_css_selector(
-            '.fa-caret-down'
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, '.dt-bulk-dropdown'))
         ).click()
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Export selected as HTML"]'
@@ -415,8 +427,8 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         )
 
         # LaTeX
-        self.driver.find_element_by_css_selector(
-            '.fa-caret-down'
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, '.dt-bulk-dropdown'))
         ).click()
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Export selected as LaTeX"]'
@@ -427,8 +439,8 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         )
 
         # JATS
-        self.driver.find_element_by_css_selector(
-            '.fa-caret-down'
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, '.dt-bulk-dropdown'))
         ).click()
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Export selected as JATS"]'
@@ -436,18 +448,6 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         time.sleep(1)
         assert os.path.isfile(
             os.path.join(self.download_dir, 'title.jats (1).zip')
-        )
-
-        # Native
-        self.driver.find_element_by_css_selector(
-            '.fa-caret-down'
-        ).click()
-        self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Download selected as Fidus document"]'
-        ).click()
-        time.sleep(1)
-        assert os.path.isfile(
-            os.path.join(self.download_dir, 'title.fidus')
         )
 
         # Revision

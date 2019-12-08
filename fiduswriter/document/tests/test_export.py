@@ -1,7 +1,6 @@
 import os
 import time
 from tempfile import mkdtemp
-from shutil import rmtree
 
 from testing.testcases import LiveTornadoTestCase
 from testing.selenium_helper import SeleniumHelper
@@ -34,7 +33,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
     @classmethod
     def tearDownClass(cls):
         cls.driver.quit()
-        rmtree(cls.download_dir)
+        os.rmdir(cls.download_dir)
         super(ExportTest, cls).tearDownClass()
 
     def setUp(self):
@@ -305,6 +304,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         time.sleep(1)
         assert os.path.isfile(os.path.join(
             self.download_dir, 'title.html.zip'))
+        os.remove(os.path.join(self.download_dir, 'title.html.zip'))
 
         # EPUB
         self.driver.find_element(
@@ -316,6 +316,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         time.sleep(1)
         assert os.path.isfile(os.path.join(self.download_dir, 'title.epub'))
+        os.remove(os.path.join(self.download_dir, 'title.epub'))
 
         # LaTeX
         self.driver.find_element(
@@ -328,6 +329,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         time.sleep(1)
         assert os.path.isfile(os.path.join(
             self.download_dir, 'title.latex.zip'))
+        os.remove(os.path.join(self.download_dir, 'title.latex.zip'))
 
         # JATS
         self.driver.find_element(
@@ -340,6 +342,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         time.sleep(1)
         assert os.path.isfile(os.path.join(
             self.download_dir, 'title.jats.zip'))
+        os.remove(os.path.join(self.download_dir, 'title.jats.zip'))
 
         # DOCX
         self.driver.find_element(
@@ -351,6 +354,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         time.sleep(1)
         assert os.path.isfile(os.path.join(self.download_dir, 'title.docx'))
+        os.remove(os.path.join(self.download_dir, 'title.docx'))
 
         # ODT
         self.driver.find_element(
@@ -361,7 +365,8 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
             '//*[normalize-space()="Free (ODT)"]'
         ).click()
         time.sleep(1)
-        assert os.path.isfile(os.path.join(self.download_dir, 'title.docx'))
+        assert os.path.isfile(os.path.join(self.download_dir, 'title.odt'))
+        os.remove(os.path.join(self.download_dir, 'title.odt'))
 
         # Save a revision
         self.driver.find_element(
@@ -401,6 +406,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         assert os.path.isfile(
             os.path.join(self.download_dir, 'title.fidus')
         )
+        os.remove(os.path.join(self.download_dir, 'title.fidus'))
 
         # EPUB
         WebDriverWait(self.driver, self.wait_time).until(
@@ -411,8 +417,9 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         time.sleep(1)
         assert os.path.isfile(
-            os.path.join(self.download_dir, 'title (1).epub')
+            os.path.join(self.download_dir, 'title.epub')
         )
+        os.remove(os.path.join(self.download_dir, 'title.epub'))
 
         # HTML
         WebDriverWait(self.driver, self.wait_time).until(
@@ -423,8 +430,9 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         time.sleep(1)
         assert os.path.isfile(
-            os.path.join(self.download_dir, 'title.html (1).zip')
+            os.path.join(self.download_dir, 'title.html.zip')
         )
+        os.remove(os.path.join(self.download_dir, 'title.html.zip'))
 
         # LaTeX
         WebDriverWait(self.driver, self.wait_time).until(
@@ -435,8 +443,9 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         time.sleep(1)
         assert os.path.isfile(
-            os.path.join(self.download_dir, 'title.latex (1).zip')
+            os.path.join(self.download_dir, 'title.latex.zip')
         )
+        os.remove(os.path.join(self.download_dir, 'title.latex.zip'))
 
         # JATS
         WebDriverWait(self.driver, self.wait_time).until(
@@ -447,8 +456,9 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         time.sleep(1)
         assert os.path.isfile(
-            os.path.join(self.download_dir, 'title.jats (1).zip')
+            os.path.join(self.download_dir, 'title.jats.zip')
         )
+        os.remove(os.path.join(self.download_dir, 'title.jats.zip'))
 
         # Revision
         self.driver.find_element_by_css_selector(
@@ -459,5 +469,6 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         time.sleep(1)
         assert os.path.isfile(
-            os.path.join(self.download_dir, 'title (1).fidus')
+            os.path.join(self.download_dir, 'title.fidus')
         )
+        os.remove(os.path.join(self.download_dir, 'title.fidus'))

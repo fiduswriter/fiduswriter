@@ -170,6 +170,7 @@ export class App {
                         el.target.getAttribute('href').slice(0, 5) !== '/api/'
                     ) {
                         event.preventDefault()
+                        event.stopImmediatePropagation()
                         this.goTo(el.target.href)
                     }
                     break

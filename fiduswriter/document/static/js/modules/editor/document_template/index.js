@@ -83,7 +83,7 @@ export class ModDocumentTemplate {
                     type: 'action',
                     tooltip: gettext('Export the document to a DOCX file with the given template.'),
                     action: editor => {
-                        if (navigator.userAgent.indexOf("Safari") > -1) {
+                        if (navigator.vendor ===  "Apple Computer, Inc.") {
                             this.showSafariErrorMessage()
                             return
                         }
@@ -107,7 +107,7 @@ export class ModDocumentTemplate {
                     type: 'action',
                     tooltip: gettext('Export the document to an ODT file with the given template.'),
                     action: editor => {
-                        if (navigator.userAgent.indexOf("Safari") > -1) {
+                        if (navigator.vendor ===  "Apple Computer, Inc.") {
                             this.showSafariErrorMessage()
                             return
                         }

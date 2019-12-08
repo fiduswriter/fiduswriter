@@ -29,7 +29,7 @@ export class DocumentOverview {
     }
 
     init() {
-        whenReady().then(() => {
+        return whenReady().then(() => {
             this.render()
             activateWait(true)
             const smenu = new SiteMenu("documents")
@@ -105,7 +105,7 @@ export class DocumentOverview {
     }
 
     getDocumentListData() {
-        postJson(
+        return postJson(
             '/api/document/documentlist/'
         ).catch(
             error => {

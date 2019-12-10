@@ -1,4 +1,4 @@
-import {whenReady, postJson} from "../common"
+import {whenReady, postJson, ensureCSS} from "../common"
 import {PreloginPage} from "../prelogin"
 
 export class FlatPage extends PreloginPage {
@@ -11,6 +11,9 @@ export class FlatPage extends PreloginPage {
         return Promise.all([
             whenReady(),
             this.getPageData(),
+            ensureCSS([
+                'flatpage.css'
+            ], this.staticUrl)
         ]).then(() => {
             this.activateFidusPlugins()
             this.render()

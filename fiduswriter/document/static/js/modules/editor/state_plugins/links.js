@@ -78,7 +78,7 @@ export const linksPlugin = function(options) {
         while (
             index < ($head.parent.childCount-1) &&
             currentMarks.some(mark => mark.isInSet(
-                $head.parent.child(index-1).marks
+                $head.parent.child(index+1).marks
             ))
         ) {
             index++

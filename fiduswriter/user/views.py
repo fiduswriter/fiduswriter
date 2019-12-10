@@ -4,6 +4,8 @@ from django.http import JsonResponse
 from django.contrib.auth import logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.conf import settings
+from django.shortcuts import HttpResponseRedirect
 
 from .forms import UserForm, TeamMemberForm
 from . import util as userutil
@@ -480,6 +482,8 @@ def get_confirmkey_data(request):
 
 class FidusSignupView(SignupView):
     def form_valid(self, form):
+        if not settings.REGISTRATION_OPEN:
+            return HttpResponseRedirect('/')
         ret = super(FidusSignupView, self).form_valid(form)
         if ret.status_code > 399:
             return ret

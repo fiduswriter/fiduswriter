@@ -237,7 +237,7 @@ export class Editor {
                 )
             )
         }
-        Promise.all(initPromises).then(() => {
+        return Promise.all(initPromises).then(() => {
             new ModCitations(this)
             new ModFootnotes(this)
             this.ws = new WebSocketConnector({

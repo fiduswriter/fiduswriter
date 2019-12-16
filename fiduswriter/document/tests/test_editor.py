@@ -44,6 +44,22 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
     def tearDown(self):
         self.leave_site(self.driver)
 
+    def check_body(self, driver, body_text, seconds=False):
+        if seconds is False:
+            seconds = self.wait_time
+        # Contents is child 5.
+        current_body_text = driver.execute_script(
+            'return window.theApp.page.view.state.doc.firstChild'
+            '.child(5).textContent;'
+        )
+        if seconds < 0:
+            assert False, "Body text incorrect"
+        elif current_body_text == body_text:
+            return True
+        else:
+            time.sleep(0.1)
+            return self.check_body(driver, body_text, seconds - 0.1)
+
     def test_track_changes(self):
         self.driver.get(self.base_url)
         self.driver.find_element(By.ID, "id_login").send_keys("Yeti")
@@ -295,10 +311,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             ".article-title"
         ).text == "A test article to share"
-        assert self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".article-body"
-        ).text == "The body"
+        self.check_body(self.driver, 'The body')
         self.driver.find_element(
             By.ID,
             "close-document-top"
@@ -415,11 +428,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             ".article-title"
         ).text == "A test article to share"
-        time.sleep(1)  # Wait for prosemirror to synchronize
-        assert self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".article-body"
-        ).text == "The body"
+        self.check_body(self.driver, 'The body')
         self.driver.find_element(
             By.ID,
             "close-document-top"

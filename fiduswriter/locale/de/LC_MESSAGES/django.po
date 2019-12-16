@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-04 10:30+0000\n"
+"POT-Creation-Date: 2019-12-16 19:42+0000\n"
 "PO-Revision-Date: 2013-02-24 10:03-0600\n"
 "Last-Translator: Daniel Frebel <daniel@fiduswriter.com>\n"
 "Language-Team: German <daniel@fiduswriter.com>\n"
@@ -17,30 +17,30 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: base/templates/admin/console.html:5 base/templates/admin/console.html:17
+#: base/templates/admin/console.html:5 base/templates/admin/console.html:18
 #: base/templates/admin/overview.html:14
 msgid "Admin Console"
 msgstr ""
 
-#: base/templates/admin/console.html:19
+#: base/templates/admin/console.html:20
 msgid "Current number of user sessions:"
 msgstr ""
 
-#: base/templates/admin/console.html:21
+#: base/templates/admin/console.html:22
 msgid "Send a system message to all connected users:"
 msgstr ""
 
-#: base/templates/admin/console.html:25
+#: base/templates/admin/console.html:26
 msgid "Message"
 msgstr ""
 
-#: base/templates/admin/console.html:27
+#: base/templates/admin/console.html:28
 msgid ""
 "This system will go offline for scheduled maintenance in 30 minutes. All "
 "your work will be saved automatically and we will be back shortly."
 msgstr ""
 
-#: base/templates/admin/console.html:34
+#: base/templates/admin/console.html:35
 msgid "Send to connected users"
 msgstr ""
 
@@ -58,6 +58,14 @@ msgstr "Dokumente"
 msgid "The all in one solution for collaborative academic writing."
 msgstr "Die Komplettlösung zum Erstellen wissenschaftlicher Texte"
 
+#: base/templates/app.html:51
+msgid "JavaScript disabled"
+msgstr ""
+
+#: base/templates/app.html:52
+msgid "Fidus Writer requires you to enable JavaScript."
+msgstr ""
+
 #: browser_check/templates/browser_check/browser_not_supported.html:4
 #: browser_check/templates/browser_check/browser_not_supported.html:27
 msgid "Browser not supported"
@@ -73,15 +81,53 @@ msgid ""
 "            "
 msgstr ""
 
-#: document/admin.py:45
+#: core/default_settings.py:229
+msgid "English"
+msgstr "Englisch"
+
+#: core/default_settings.py:230
+msgid "Bulgarian"
+msgstr "Bulgarisch"
+
+#: core/default_settings.py:231
+msgid "German"
+msgstr "Deutsch"
+
+#: core/default_settings.py:232
+msgid "French"
+msgstr ""
+
+#: core/default_settings.py:233
+msgid "Italian"
+msgstr ""
+
+#: core/default_settings.py:234
+msgid "Spanish"
+msgstr "Spanisch"
+
+#: core/default_settings.py:235
+msgid "Portuguese (Brazil)"
+msgstr ""
+
+#: core/default_settings.py:313
+#, fuzzy
+msgid "Fidus Writer Admin"
+msgstr "Dokumente bearbeiten"
+
+#: core/default_settings.py:314
+#, fuzzy
+msgid "Fidus Writer Administration Site"
+msgstr "Dokumente bearbeiten"
+
+#: core/default_settings.py:315
+msgid "Welcome to the Fidus Writer Administration Site"
+msgstr ""
+
+#: document/admin.py:51
 #, fuzzy
 #| msgid "Export the document to an HTML file"
 msgid "Duplicate selected document templates"
 msgstr "Exportiere das Dokument in eine HTML-Datei"
-
-#: document/models.py:120
-msgid "Standard Article"
-msgstr ""
 
 #: document/templates/admin/document/document/change_list_object_tools.html:8
 #, python-format
@@ -108,100 +154,74 @@ msgstr ""
 msgid "Update all documents (DANGER!)"
 msgstr ""
 
-#: document/views.py:212 document/views.py:627
+#: document/views.py:402 document/views.py:502 document/views.py:873
 #, fuzzy
 msgid "Untitled"
 msgstr "Untertitel"
 
-#: document/views.py:283 document/views.py:713
+#: document/views.py:474 document/views.py:578
+#, fuzzy
+#| msgid "Share"
+msgid "shared"
+msgstr "Teilen"
+
+#: document/views.py:476 document/views.py:580 document/views.py:959
 #, fuzzy
 #| msgid "Documents"
 msgid "Document"
 msgstr "Dokumente"
 
-#: document/views.py:285 document/views.py:715
+#: document/views.py:478 document/views.py:582 document/views.py:961
 msgid "Author"
 msgstr "Autor"
 
-#: document/views.py:287
+#: document/views.py:480 document/views.py:584
 #, fuzzy
 #| msgid "Define access rights"
 msgid "Access Rights"
 msgstr "Zugangsberechtigungen festlegen"
 
-#: document/views.py:290 document/views.py:720
+#: document/views.py:483 document/views.py:966
 #, fuzzy
 #| msgid "edit documents"
 msgid "Access the document"
 msgstr "Dokumente bearbeiten"
 
-#: document/views.py:293
+#: document/views.py:486 document/views.py:590
 #, fuzzy
 msgid "Document shared:"
 msgstr "Dokumente"
 
-#: document/views.py:653
+#: document/views.py:587
+#, fuzzy
+#| msgid "edit documents"
+msgid "Sign up or log in and access the document"
+msgstr "Dokumente bearbeiten"
+
+#: document/views.py:899
 #, fuzzy
 msgid "Comment on :"
 msgstr "Anmerkungen"
 
-#: document/views.py:674
+#: document/views.py:920
 #, fuzzy
 msgid "Comment assignment on :"
 msgstr "Anmerkungen"
 
-#: document/views.py:717
+#: document/views.py:963
 #, fuzzy
 #| msgid "Comments"
 msgid "Comment"
 msgstr "Anmerkungen"
 
-#: fiduswriter/settings.py:226
-msgid "English"
-msgstr "Englisch"
-
-#: fiduswriter/settings.py:227
-msgid "Bulgarian"
-msgstr "Bulgarisch"
-
-#: fiduswriter/settings.py:228
-msgid "German"
-msgstr "Deutsch"
-
-#: fiduswriter/settings.py:229
-msgid "French"
-msgstr ""
-
-#: fiduswriter/settings.py:230
-msgid "Italian"
-msgstr ""
-
-#: fiduswriter/settings.py:231
-msgid "Spanish"
-msgstr "Spanisch"
-
-#: fiduswriter/settings.py:232
-msgid "Portuguese (Brazil)"
-msgstr ""
-
-#: fiduswriter/settings.py:340
-#, fuzzy
-msgid "Fidus Writer Admin"
-msgstr "Dokumente bearbeiten"
-
-#: fiduswriter/settings.py:341
-#, fuzzy
-msgid "Fidus Writer Administration Site"
-msgstr "Dokumente bearbeiten"
-
-#: fiduswriter/settings.py:342
-msgid "Welcome to the Fidus Writer Administration Site"
-msgstr ""
-
-#: style/models.py:36 style/models.py:61
+#: style/models.py:81
 #, fuzzy
 msgid "Default"
 msgstr "Bild entfernen"
+
+#: style/views.py:35
+msgid "The template needs at least 1 document style"
+msgstr ""
 
 #: user/templates/account/email/email_confirmation_message.html:7
 #: user/templates/account/email/password_reset_key_message.html:7
@@ -500,7 +520,8 @@ msgstr ""
 #~ "\">%(email)s</a>,\n"
 #~ "        that you apply for the username %(user_display)s, and that you "
 #~ "have read and agree to the\n"
-#~ "        <a href=\"/pages/terms/\" target=\"_blank\">Terms and Conditions</a>.\n"
+#~ "        <a href=\"/pages/terms/\" target=\"_blank\">Terms and Conditions</"
+#~ "a>.\n"
 #~ "        "
 #~ msgstr ""
 #~ "\n"
@@ -513,8 +534,8 @@ msgstr ""
 #, fuzzy
 #~ msgid ""
 #~ "\n"
-#~ "        I have read and agree to the <a href=\"/pages/terms/\" target=\"_blank"
-#~ "\">Terms and Conditions</a>.\n"
+#~ "        I have read and agree to the <a href=\"/pages/terms/\" target="
+#~ "\"_blank\">Terms and Conditions</a>.\n"
 #~ "        "
 #~ msgstr ""
 #~ "\n"
@@ -619,9 +640,6 @@ msgstr ""
 
 #~ msgid "Share the document with other users."
 #~ msgstr "Teile das Dokument mit anderen Benutzern."
-
-#~ msgid "Share"
-#~ msgstr "Teilen"
 
 #~ msgid "Close"
 #~ msgstr "Schließen"

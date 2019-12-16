@@ -137,7 +137,7 @@ function markWrapping(
 }
 
 
-export function amendTransaction(tr, state, editor, approved) {
+export function amendTransaction(tr, state, editor) {
 
     if (
             !tr.steps.length ||

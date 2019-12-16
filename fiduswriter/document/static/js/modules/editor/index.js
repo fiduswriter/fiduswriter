@@ -398,8 +398,7 @@ export class Editor {
                 }
             },
             dispatchTransaction: tr => {
-                const approved = !this.view.state.doc.firstChild.attrs.tracked && this.docInfo.access_rights !== 'write-tracked'
-                const trackedTr = amendTransaction(tr, this.view.state, this, approved)
+                const trackedTr = amendTransaction(tr, this.view.state, this)
                 const newState = this.view.state.apply(trackedTr)
                 this.view.updateState(newState)
                 this.mod.collab.doc.sendToCollaborators()

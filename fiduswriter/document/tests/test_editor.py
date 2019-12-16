@@ -54,7 +54,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         )
         if seconds < 0:
             assert False, "Body text incorrect"
-        else if current_body_text == body_text:
+        elif current_body_text == body_text:
             return True
         else:
             time.sleep(0.1)
@@ -428,7 +428,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             ".article-title"
         ).text == "A test article to share"
-        this.check_body(self.driver, 'The body')
+        self.check_body(self.driver, 'The body')
         self.driver.find_element(
             By.ID,
             "close-document-top"

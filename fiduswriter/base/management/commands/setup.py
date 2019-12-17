@@ -77,14 +77,14 @@ class Command(BaseCommand):
             (
                 os.path.isfile(os.path.join(
                     settings.SRC_PATH,
-                    "locale/BASE/LC_MESSAGES/django.mo"
+                    "locale/es/LC_MESSAGES/django.mo"
                 )) and
                 os.path.getmtime(os.path.join(
                     settings.SRC_PATH,
-                    "locale/BASE/LC_MESSAGES/django.mo"
+                    "locale/es/LC_MESSAGES/django.mo"
                 )) > os.path.getmtime(os.path.join(
                     settings.SRC_PATH,
-                    "locale/BASE/LC_MESSAGES/django.po"
+                    "locale/es/LC_MESSAGES/django.po"
                 ))
             )
 

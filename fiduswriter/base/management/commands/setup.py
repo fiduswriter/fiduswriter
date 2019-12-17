@@ -21,23 +21,20 @@ class Command(BaseCommand):
         )
         parser.add_argument(
             '--no-static',
-            action='store_true',
-            dest='no-static',
-            default=False,
+            action='store_false',
+            dest='static',
             help='Do not collect static files.',
         )
         parser.add_argument(
             '--no-compress',
-            action='store_true',
-            dest='no-compress',
-            default=False,
+            action='store_false',
+            dest='compress',
             help='Do not attempt to compress static files.',
         )
         parser.add_argument(
-            '--force-transpile',
-            action='store_true',
+            '--no-force-transpile',
+            action='store_false',
             dest='force_transpile',
-            default=True,
             help='Force a transpile if nothing has changed.',
         )
 
@@ -97,7 +94,7 @@ class Command(BaseCommand):
             call_command("compilemessages")
         call_command("transpile", force=force_transpile)
         if (
-            not options["no-compress"] and
+            options["compress"] and
             settings.COMPRESS_OFFLINE and
             settings.COMPRESS_ENABLED
         ):
@@ -106,7 +103,7 @@ class Command(BaseCommand):
             except CommandError:
                 pass
         if (
-            not options["no-static"] and
+            options["static"] and
             not settings.DEBUG
         ):
             call_command("collectstatic", interactive=False)

@@ -1,11 +1,44 @@
 msgid ""
 msgstr ""
+"Project-Id-Version: Fidus Writer\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-12-17 01:58+0000\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: POEditor.com\n"
-"Project-Id-Version: Fidus Writer\n"
-"Language: es\n"
+
+#: base/static/js/modules/404/index.js:17
+#: base/static/js/modules/flatpage/index.js:38
+msgid "Page not found"
+msgstr "Página no encontrada"
+
+#: base/static/js/modules/404/index.js:18
+#: base/static/js/modules/flatpage/index.js:39
+msgid "Error 404"
+msgstr "Error 404"
+
+#: base/static/js/modules/404/index.js:18
+#: base/static/js/modules/flatpage/index.js:39
+msgid "The page you are looking for cannot be found."
+msgstr "La página que busca no se pudo encontrar."
+
+#: base/static/js/modules/admin_console/index.js:31
+msgid "Message delivered successfully!"
+msgstr "¡Mensaje entregado con éxito!"
+
+#: base/static/js/modules/admin_console/index.js:33
+msgid "Message delivered"
+msgstr "Mensaje enviado"
+
+#: base/static/js/modules/admin_console/index.js:57
+msgid "Sending..."
+msgstr "Enviando..."
+
+#: base/static/js/modules/common/basic.js:107
+msgid "System message"
+msgstr "Mensaje del sistema"
 
 #: base/static/js/modules/common/dialog.js:14
 #: base/static/js/modules/common/dialog.js:30
@@ -13,6 +46,78 @@ msgstr ""
 #: user_template_manager/static/js/modules/user_template_manager/editor.js:44
 msgid "Close"
 msgstr "Cerrar"
+
+#: base/static/js/modules/common/dialog.js:35
+#: document/static/js/modules/editor/comments/editors/answer.js:11
+#: document/static/js/modules/editor/comments/editors/comment.js:87
+#: document/static/js/modules/editor/dialogs/templates.js:28
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: base/static/js/modules/common/dialog.js:40
+msgid "OK"
+msgstr "Ok"
+
+#: base/static/js/modules/common/templates.js:7
+#: document/static/js/modules/documents/access_rights/templates.js:8
+#: user/static/js/modules/contacts/index.js:37
+msgid "Contacts"
+msgstr "Contactos"
+
+#: base/static/js/modules/common/templates.js:7
+msgid "Log out"
+msgstr "Cerrar sesión"
+
+#: base/static/js/modules/common/ws.js:22
+msgid "Warning! Some data is unsaved"
+msgstr "¡Advertencia! Algunos datos no están guardados"
+
+#: base/static/js/modules/common/ws.js:24
+#: document/static/js/modules/editor/index.js:177
+msgid "Disconnected. Attempting to reconnect..."
+msgstr "Desconectado. Intentando reconectar..."
+
+#: base/static/js/modules/offline/index.js:17
+#: base/static/js/modules/offline/index.js:18
+msgid "Disconnected"
+msgstr "Desconectado"
+
+#: base/static/js/modules/offline/index.js:18
+msgid "You are currently disconnected from the %(appName)s server."
+msgstr "Actualmente está desconectado del servidor %(appName)s."
+
+#: base/static/js/modules/offline/index.js:25
+msgid "Reload page"
+msgstr "Recargar página"
+
+#: base/static/js/modules/prelogin/index.js:22
+msgid "Terms and Conditions"
+msgstr "Términos y Condiciones"
+
+#: base/static/js/modules/prelogin/index.js:25
+msgid "Privacy policy"
+msgstr "Política de privacidad"
+
+#: base/static/js/modules/prelogin/index.js:28
+msgid "Equations and Math with MathLive"
+msgstr "Ecuaciones y matemáticas con MathLive"
+
+#: base/static/js/modules/prelogin/index.js:32
+msgid "Citations with Citation Style Language"
+msgstr "Citaciones con Citation Style Language"
+
+#: base/static/js/modules/prelogin/index.js:36
+msgid "Editing with ProseMirror"
+msgstr "Editar con ProseMirror"
+
+#: base/static/js/modules/prelogin/index.js:42
+#: user/static/js/modules/login/index.js:34
+msgid "Log in"
+msgstr "Iniciar sesión"
+
+#: base/static/js/modules/prelogin/templates.js:25
+msgid "Select language"
+msgstr "Seleccione el idioma"
 
 #: bibliography/static/js/modules/bibliography/database/index.js:75
 msgid "Could not obtain bibliography data"
@@ -40,43 +145,13 @@ msgstr "No se pudieron actualizar las categorías"
 msgid "The bibliography item(s) have been deleted"
 msgstr "Se han eliminado los elementos de la bibliografía"
 
-#. corregir. No sé el contexto
 #: bibliography/static/js/modules/bibliography/form/fields/key.js:57
 msgid "From list"
 msgstr "De la lista"
 
-#: bibliography/static/js/modules/bibliography/form/fields/name.js:63
-msgid "Person"
-msgstr "Persona"
-
-#: bibliography/static/js/modules/bibliography/form/fields/name.js:108
-msgid "Organization name"
-msgstr "Nombre de organización"
-
-#: bibliography/static/js/modules/bibliography/form/fields/range.js:56
-msgid "Range"
-msgstr "Rango"
-
-#: bibliography/static/js/modules/bibliography/form/fields/range.js:95
-msgid "From"
-msgstr "Desde"
-
-#: bibliography/static/js/modules/bibliography/form/fields/range.js:97
-msgid "To"
-msgstr "Hasta"
-
-#. Está bien?
-#: bibliography/static/js/modules/bibliography/form/fields/range.js:56
-msgid "Single value"
-msgstr "Valor único"
-
-#: bibliography/static/js/modules/bibliography/form/index.js:76
-msgid "Edit Source"
-msgstr "Editar Fuente"
-
-#: bibliography/static/js/modules/bibliography/form/index.js:80
-msgid "Register New Source"
-msgstr "Registrar Nueva Fuente"
+#: bibliography/static/js/modules/bibliography/form/fields/key.js:57
+msgid "Custom"
+msgstr "Personalizado"
 
 #: bibliography/static/js/modules/bibliography/form/fields/literal.js:44
 #: bibliography/static/js/modules/bibliography/form/fields/literal_long.js:41
@@ -114,11 +189,67 @@ msgstr "Subíndice₊"
 msgid "Supscript²"
 msgstr "Superíndice²"
 
-#. LeTraProTeGida
-#. Es lo que se me ocurrió
+#: bibliography/static/js/modules/bibliography/form/fields/name.js:63
+msgid "Person"
+msgstr "Persona"
+
+#: bibliography/static/js/modules/bibliography/form/fields/name.js:63
+msgid "Organization"
+msgstr "Organización"
+
+#: bibliography/static/js/modules/bibliography/form/fields/name.js:92
+msgid "Prefix used"
+msgstr "Prefijo utilizado"
+
+#: bibliography/static/js/modules/bibliography/form/fields/name.js:93
+#: user/static/js/modules/profile/templates.js:35
+msgid "First name"
+msgstr "Nombre"
+
+#: bibliography/static/js/modules/bibliography/form/fields/name.js:95
+msgid "Prefix"
+msgstr "Prefijo"
+
+#: bibliography/static/js/modules/bibliography/form/fields/name.js:97
+#: user/static/js/modules/profile/templates.js:35
+msgid "Last name"
+msgstr "Apellido"
+
+#: bibliography/static/js/modules/bibliography/form/fields/name.js:99
+msgid "Suffix"
+msgstr "Sufijo"
+
+#: bibliography/static/js/modules/bibliography/form/fields/name.js:108
+msgid "Organization name"
+msgstr "Nombre de organización"
+
+#: bibliography/static/js/modules/bibliography/form/fields/range.js:56
+msgid "Single value"
+msgstr "Valor único"
+
+#: bibliography/static/js/modules/bibliography/form/fields/range.js:56
+msgid "Range"
+msgstr "Rango"
+
+#: bibliography/static/js/modules/bibliography/form/fields/range.js:95
+msgid "From"
+msgstr "Desde"
+
+#: bibliography/static/js/modules/bibliography/form/fields/range.js:97
+msgid "To"
+msgstr "Hasta"
+
 #: bibliography/static/js/modules/bibliography/form/fields/title.js:56
 msgid "CasE ProTecT"
 msgstr "PreSerVar LeTra"
+
+#: bibliography/static/js/modules/bibliography/form/index.js:76
+msgid "Edit Source"
+msgstr "Editar Fuente"
+
+#: bibliography/static/js/modules/bibliography/form/index.js:80
+msgid "Register New Source"
+msgstr "Registrar Nueva Fuente"
 
 #: bibliography/static/js/modules/bibliography/form/index.js:100
 #: bibliography/static/js/modules/bibliography/overview/index.js:176
@@ -134,7 +265,6 @@ msgstr "PreSerVar LeTra"
 msgid "Submit"
 msgstr "Añadir"
 
-#. creo que así es suficiente
 #: bibliography/static/js/modules/bibliography/form/index.js:276
 msgid "Error in form, check highlighted values!"
 msgstr "¡Error en el formulario, verifique los valores resaltados!"
@@ -200,7 +330,6 @@ msgstr "Autor(es) del comentario"
 msgid "Publication date"
 msgstr "Fecha de publicación"
 
-#. Esta correcto?
 #: bibliography/static/js/modules/bibliography/form/strings.js:17
 msgid "Digital Object Identifier"
 msgstr "Identificador digital de objeto (DOI)"
@@ -253,12 +382,10 @@ msgstr "Subtipo de entrada"
 msgid "Electronic identifier of an online publication"
 msgstr "Identificador electrónico de una publicación online"
 
-#. a" una publicación en ....o "de" una publicación en..
 #: bibliography/static/js/modules/bibliography/form/strings.js:30
 msgid "Additional information to an online publication"
 msgstr "Información adicional de una publicación online"
 
-#. está bien?
 #: bibliography/static/js/modules/bibliography/form/strings.js:31
 msgid "Eprint identifier type"
 msgstr "Tipo del identificador de la impresión digital"
@@ -381,7 +508,6 @@ msgstr "Título principal"
 msgid "Annex to the maintitle"
 msgstr "Anexo al título principal"
 
-#. correcto? según entendí addon es un programa de audio
 #: bibliography/static/js/modules/bibliography/form/strings.js:61
 msgid "author name addon"
 msgstr "nombre del autor del addon"
@@ -430,7 +556,6 @@ msgstr "Número total de páginas"
 msgid "Pagination"
 msgstr "Paginación"
 
-#. supongo que está bien
 #: bibliography/static/js/modules/bibliography/form/strings.js:73
 msgid "Number of a partial volume"
 msgstr "Número de un volumen parcial"
@@ -463,12 +588,10 @@ msgstr "Nombres abreviados del/los editores(es)"
 msgid "Shorthand"
 msgstr "Taquigrafía"
 
-#. Está bien?
 #: bibliography/static/js/modules/bibliography/form/strings.js:81
 msgid "Shorthand intro"
 msgstr "Introducción a la taquigrafía"
 
-#. En este caso es acrónimo o es sigla? En inglés depende del contexto, en español son dos palabras diferentes
 #: bibliography/static/js/modules/bibliography/form/strings.js:82
 msgid "Acronym of the publication's title"
 msgstr "Siglas del título de la publicación"
@@ -508,8 +631,6 @@ msgstr "Subtítulo"
 msgid "Title"
 msgstr "Título"
 
-#. Complemento de título.
-#. no se que es postfix.
 #: bibliography/static/js/modules/bibliography/form/strings.js:87
 msgid "Title addon"
 msgstr "Título postfix"
@@ -549,11 +670,20 @@ msgstr "Número total de volúmenes"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:97
 msgid "In <em>Extended Date Time Format</em> (EDTF) 1.0<br>Level 0 or 1"
-msgstr "En <em>Formato de fecha y hora extendida</em> (EDTF) 1.0<br>Nivel 0 o 1"
+msgstr ""
+"En <em>Formato de fecha y hora extendida</em> (EDTF) 1.0<br>Nivel 0 o 1"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:98
-msgid "Prefixed is \"used\" when it is used in cases where only the last name is used.     For example: \"Ludwig van Beethoven\" turns into \"Beethoven\", so the prefix \"van\"     is not used. \"Vincent van Gogh\" turns into \"van Gogh\", so the prefix \"van\" is used."
-msgstr "El prefijo se \"utiliza\" en casos donde solo se usa el apellido.     Por ejemplo: \"Ludwig van Beethoven\" se convierte en \"Beethoven\", por lo que \"van\"     no es utilizado. \"Vincent van Gogh\" se conviente en \"van Gogh\", por lo que \"van\" sí es utilizado."
+msgid ""
+"Prefixed is \"used\" when it is used in cases where only the last name is "
+"used.     For example: \"Ludwig van Beethoven\" turns into \"Beethoven\", so "
+"the prefix \"van\"     is not used. \"Vincent van Gogh\" turns into \"van "
+"Gogh\", so the prefix \"van\" is used."
+msgstr ""
+"El prefijo se \"utiliza\" en casos donde solo se usa el apellido.     Por "
+"ejemplo: \"Ludwig van Beethoven\" se convierte en \"Beethoven\", por lo que "
+"\"van\"     no es utilizado. \"Vincent van Gogh\" se conviente en \"van Gogh"
+"\", por lo que \"van\" sí es utilizado."
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:104
 msgid "Range or single page, column, paragraph, section, line"
@@ -637,7 +767,6 @@ msgstr "Actas"
 msgid "Multi-volume proceedings"
 msgstr "Actas de varios volumenes"
 
-#. bien?
 #: bibliography/static/js/modules/bibliography/form/strings.js:132
 msgid "Article in a proceedings"
 msgstr "Artículo en un acta"
@@ -680,22 +809,18 @@ msgstr "Artículo de periodico"
 msgid "Journal article"
 msgstr "Artículo de revista cientifica"
 
-#. no es entrada "de"....
 #: bibliography/static/js/modules/bibliography/form/strings.js:142
 msgid "Encyclopedia entry"
 msgstr "Entrada en Enciclopedia"
 
-#. No es entrada "de" diccionario?
 #: bibliography/static/js/modules/bibliography/form/strings.js:143
 msgid "Dictionary entry"
 msgstr "Entrada en Diccionario"
 
-#. Publicación en el blog...>sería mejor o esta correcta la traducción?
 #: bibliography/static/js/modules/bibliography/form/strings.js:144
 msgid "Blog post"
 msgstr "Entrada en Blog"
 
-#. correcto?
 #: bibliography/static/js/modules/bibliography/form/strings.js:145
 msgid "Forum post"
 msgstr "Publicación en el foro"
@@ -712,7 +837,6 @@ msgstr "Compilador"
 msgid "Founder"
 msgstr "Fundador"
 
-#. Está bien?
 #: bibliography/static/js/modules/bibliography/form/strings.js:155
 msgid "Continuator"
 msgstr "Continuador"
@@ -756,7 +880,6 @@ msgstr "Verso"
 msgid "Line"
 msgstr "Línea"
 
-#. correcto?
 #: bibliography/static/js/modules/bibliography/form/strings.js:165
 msgid "In preparation"
 msgstr "En preparación"
@@ -777,7 +900,6 @@ msgstr "Imprimiendo"
 msgid "Pre-published"
 msgstr "Pre publicado"
 
-#. esto me habías dicho que no se traduce, verdad?
 #: bibliography/static/js/modules/bibliography/form/strings.js:170
 msgid "M.A. thesis"
 msgstr "M.A thesis"
@@ -1051,12 +1173,21 @@ msgid "Select source type"
 msgstr "Seleccionar tipo de fuente"
 
 #: bibliography/static/js/modules/bibliography/form/templates.js:6
+msgid "Required Fields"
+msgstr "Campos Requeridos"
+
+#: bibliography/static/js/modules/bibliography/form/templates.js:6
+msgid "Optional Fields"
+msgstr "Campos Opcionales"
+
+#: bibliography/static/js/modules/bibliography/form/templates.js:6
 msgid "Categories"
 msgstr "Categorías"
 
 #: bibliography/static/js/modules/bibliography/import/biblatex.js:3
 msgid "No bibliography entries could be found in import file."
-msgstr "No se encontraron entradas de bibliografía en el archivo de importación."
+msgstr ""
+"No se encontraron entradas de bibliografía en el archivo de importación."
 
 #: bibliography/static/js/modules/bibliography/import/biblatex.js:4
 msgid "An error occured while reading a bibtex entry"
@@ -1064,14 +1195,17 @@ msgstr "Se produjo un error al leer una entrada bibtex"
 
 #: bibliography/static/js/modules/bibliography/import/biblatex.js:5
 msgid "Field cannot not be saved. Fidus Writer does not support the field."
-msgstr "No se pudo guardar el campo. Fidus Writer no es compatible con el campo."
+msgstr ""
+"No se pudo guardar el campo. Fidus Writer no es compatible con el campo."
 
 #: bibliography/static/js/modules/bibliography/import/biblatex.js:6
-msgid "Entry has been saved as \"misc\". Fidus Writer does not support the entry type."
-msgstr "La entrada se ha guardado como \"misc\". Fidus Writer no admite el tipo de entrada."
+msgid ""
+"Entry has been saved as \"misc\". Fidus Writer does not support the entry "
+"type."
+msgstr ""
+"La entrada se ha guardado como \"misc\". Fidus Writer no admite el tipo de "
+"entrada."
 
-#. Si se puede simplificar pondríar una secuencia standard EDPF...
-#. no se que pensás
 #: bibliography/static/js/modules/bibliography/import/biblatex.js:7
 msgid "Field does not contain a valid EDTF string."
 msgstr "El campo no contiene una secuencia EDTF valida."
@@ -1085,7 +1219,6 @@ msgstr "Hubo un problema con la importación bibtex"
 msgid "Import"
 msgstr "Importar"
 
-#. Es como puse o es así, "Importar una biblioteca BibTex"?
 #: bibliography/static/js/modules/bibliography/import/dialog.js:51
 msgid "Import a BibTex library"
 msgstr "Importar una biblioteca en formato Bibtex"
@@ -1096,6 +1229,10 @@ msgstr "Importar una biblioteca en formato Bibtex"
 #: usermedia/static/js/modules/images/edit_dialog/templates.js:20
 msgid "Select a file"
 msgstr "Selecciona un archivo"
+
+#: bibliography/static/js/modules/bibliography/overview/index.js:50
+msgid "Bibliography Manager"
+msgstr "Administrador de Bibliografía"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:71
 #: document/static/js/modules/editor/dialogs/citation.js:187
@@ -1116,6 +1253,16 @@ msgstr "Autor"
 #: bibliography/static/js/modules/bibliography/overview/index.js:78
 msgid "Published"
 msgstr "Publicado"
+
+#: bibliography/static/js/modules/bibliography/overview/index.js:146
+#: document/static/js/modules/documents/overview/index.js:179
+#: document/static/js/modules/editor/dialogs/citation.js:98
+#: document/static/js/modules/editor/dialogs/citation.js:139
+#: document/static/js/modules/exporter/tools/file.js:3
+#: user_template_manager/static/js/modules/user_template_manager/overview.js:99
+#: usermedia/static/js/modules/images/overview/index.js:124
+msgid "Untitled"
+msgstr "Sin título"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:201
 #: usermedia/static/js/modules/images/overview/categories.js:76
@@ -1199,1664 +1346,21 @@ msgstr "Buscar bibliografía"
 msgid " and others"
 msgstr " y otros"
 
-#: user/static/js/modules/contacts/menu.js:18
-msgid "Add new contact"
-msgstr "Añadir nuevo contacto"
-
-#: document/static/js/modules/documents/access_rights/index.js:132
-msgid "Share your document with others"
-msgstr "Compartir tus documentos con otros"
-
-#: document/static/js/modules/documents/access_rights/index.js:215
-msgid "Access rights have been saved"
-msgstr "Los derechos de acceso han sido guardados"
-
-#: document/static/js/modules/documents/access_rights/index.js:216
-msgid "Access rights could not be saved"
-msgstr "Los derechos de acceso no se pudieron guardar"
-
-#: document/static/js/modules/documents/access_rights/templates.js:8
-msgid "My contacts"
-msgstr "Mis contactos"
-
-#: document/static/js/modules/documents/access_rights/templates.js:10
-msgid "Collaborators"
-msgstr "Colaboradores"
-
-#: document/static/js/modules/documents/access_rights/templates.js:21
-msgid "Write"
-msgstr "Escribir"
-
-#: document/static/js/modules/documents/access_rights/templates.js:21
-msgid "Read"
-msgstr "Leer"
-
-#: document/static/js/modules/documents/access_rights/templates.js:21
-msgid "Access rights used within document review"
-msgstr "Derechos de acceso utilizados en la revisión de documentos"
-
-#: document/static/js/modules/documents/access_rights/templates.js:21
-msgid "Review"
-msgstr "Revisar"
-
-#: document/static/js/modules/documents/access_rights/templates.js:21
-msgid "Read document but not see comments and chats of others"
-msgstr "Leer el documento pero no mostrar comentarios ni chats de otros usuarios"
-
-#: document/static/js/modules/documents/overview/actions.js:30
-msgid "Could not delete document"
-msgstr "No se pudo eliminar el documento"
-
-#: document/static/js/modules/documents/overview/actions.js:26
-msgid "Document has been deleted"
-msgstr "El documento ha sido eliminado"
-
-#: document/static/js/modules/documents/overview/actions.js:38
-msgid "Delete the document(s)?"
-msgstr "Borrar el/los documento/s?"
-
-#: document/static/js/modules/documents/overview/index.js:106
-msgid "Cannot load data of documents."
-msgstr "No se pueden cargar datos de documentos."
-
-#: document/static/js/modules/documents/overview/index.js:147
-msgid "No documents available"
-msgstr "No hay documentos disponibles"
-
-#: document/static/js/modules/documents/overview/index.js:154
-msgid "Revisions"
-msgstr "Revisiones"
-
-#: document/static/js/modules/documents/overview/index.js:154
-#: user_template_manager/static/js/modules/user_template_manager/overview.js:74
-msgid "Created"
-msgstr "Creado"
-
-#: document/static/js/modules/documents/overview/index.js:154
-#: user_template_manager/static/js/modules/user_template_manager/overview.js:74
-msgid "Last changed"
-msgstr "Último cambio"
-
-#: document/static/js/modules/documents/overview/index.js:154
-msgid "Owner"
-msgstr "Propietario"
-
-#: document/static/js/modules/documents/access_rights/templates.js:10
-#: document/static/js/modules/documents/overview/index.js:154
-msgid "Rights"
-msgstr "Derechos"
-
-#: document/static/js/modules/documents/overview/menu.js:10
-msgid "You cannot delete documents of other users"
-msgstr "No puedes eliminar documentos de otros usuarios"
-
-#: document/static/js/modules/documents/overview/menu.js:19
-msgid "Share selected"
-msgstr "Compartir lo seleccionado"
-
-#: document/static/js/modules/documents/overview/menu.js:25
-msgid "You cannot share documents of other users"
-msgstr "No puedes compartir documentos de otros usuarios"
-
-#: document/static/js/modules/documents/overview/menu.js:35
-msgid "Copy selected"
-msgstr "Copiar lo seleccionado"
-
-#: document/static/js/modules/documents/overview/menu.js:45
-msgid "Export selected as Epub"
-msgstr "Exportar lo seleccionado a Epub"
-
-#: document/static/js/modules/documents/overview/menu.js:55
-msgid "Export selected as HTML"
-msgstr "Exportar lo seleccionado a HTML"
-
-#: document/static/js/modules/documents/overview/menu.js:65
-msgid "Export selected as LaTeX"
-msgstr "Exportar lo seleccionado a LaTeX"
-
-#: document/static/js/modules/documents/overview/menu.js:85
-msgid "Download selected as Fidus document"
-msgstr "Descargar lo seleccionado como documento Fidus"
-
-#: document/static/js/modules/documents/overview/menu.js:99
-msgid "Create new document"
-msgstr "Crear nuevo documento"
-
-#: document/static/js/modules/documents/overview/menu.js:104
-msgid "Upload Fidus document"
-msgstr "Subir documento de Fidus"
-
-#: document/static/js/modules/documents/overview/menu.js:110
-msgid "Search documents"
-msgstr "Buscar documentos"
-
-#: document/static/js/modules/documents/revisions/index.js:27
-msgid "Saved revisions of"
-msgstr "Revisiones guardadas de"
-
-#: document/static/js/modules/documents/revisions/index.js:140
-msgid "Do you really want to delete the revision?"
-msgstr "¿Estás seguro que quieres eliminar la revisión?"
-
-#: document/static/js/modules/documents/revisions/index.js:156
-msgid "Revision deleted"
-msgstr "Revisión eliminada"
-
-#: document/static/js/modules/documents/revisions/index.js:163
-msgid "Could not delete revision."
-msgstr "No se pudo eliminar la revisión."
-
-#. contexto?
-#: document/static/js/modules/documents/revisions/templates.js:6
-msgid "Time"
-msgstr "Hora"
-
-#. Rehacer,
-#. restablecer
-#. ???
-#. contexto...
-#: document/static/js/modules/documents/revisions/templates.js:6
-#: document/static/js/modules/editor/marginboxes/templates.js:82
-msgid "Recreate"
-msgstr "Rehacer"
-
-#: document/static/js/modules/documents/tools.js:32
-msgid "Could not obtain extra document data"
-msgstr "No se pudieron obtener datos adicionales del documento"
-
-#: document/static/js/modules/editor/comments/interactions.js:307
-#: document/static/js/modules/editor/comments/interactions.js:365
-#: document/static/js/modules/editor/comments/store.js:50
-msgid "Reviewer"
-msgstr "Reseña"
-
-#: document/static/js/modules/editor/dialogs/citation.js:39
-#: document/static/js/modules/editor/dialogs/contributor.js:20
-#: document/static/js/modules/editor/dialogs/contributor.js:77
-#: document/static/js/modules/editor/dialogs/figure.js:178
-#: document/static/js/modules/editor/dialogs/link.js:55
-#: document/static/js/modules/editor/dialogs/math.js:21
-#: document/static/js/modules/editor/dialogs/table.js:194
-#: usermedia/static/js/modules/images/edit_dialog/index.js:24
-msgid "Update"
-msgstr "Actualizar"
-
-#: document/static/js/modules/editor/dialogs/contributor.js:20
-#: document/static/js/modules/editor/dialogs/contributor.js:77
-#: document/static/js/modules/editor/state_plugins/contributor_input.js:39
-#: document/static/js/modules/editor/state_plugins/tag_input.js:47
-msgid "Add"
-msgstr "Añadir"
-
-#: document/static/js/modules/editor/dialogs/contributor.js:33
-msgid "Email is in incorrect format!"
-msgstr "¡El correo electrónico está en formato incorrecto!"
-
-#: document/static/js/modules/editor/dialogs/citation.js:14
-#: document/static/js/modules/editor/dialogs/figure.js:21
-#: document/static/js/modules/editor/dialogs/link.js:10
-#: document/static/js/modules/editor/dialogs/math.js:21
-#: document/static/js/modules/editor/dialogs/table.js:53
-#: document/static/js/modules/editor/dialogs/templates.js:28
-msgid "Insert"
-msgstr "Insertar"
-
-#: document/static/js/modules/editor/dialogs/citation.js:31
-#: document/static/js/modules/editor/dialogs/figure.js:187
-#: document/static/js/modules/editor/dialogs/templates.js:41
-#: document/static/js/modules/editor/state_plugins/links.js:125
-#: user/static/js/modules/profile/dialogs.js:190
-msgid "Remove"
-msgstr "Eliminar"
-
-#: document/static/js/modules/editor/dialogs/citation.js:57
-msgid "Configure Citation"
-msgstr "Configurar Cita"
-
-#: bibliography/static/js/modules/bibliography/overview/index.js:146
-#: document/static/js/modules/documents/overview/index.js:179
-#: document/static/js/modules/editor/dialogs/citation.js:98
-#: document/static/js/modules/editor/dialogs/citation.js:139
-#: document/static/js/modules/exporter/tools/file.js:3
-#: user_template_manager/static/js/modules/user_template_manager/overview.js:99
-#: usermedia/static/js/modules/images/overview/index.js:124
-msgid "Untitled"
-msgstr "Sin título"
-
-#: document/static/js/modules/editor/dialogs/citation.js:189
-#: usermedia/static/js/modules/images/selection_dialog/index.js:98
-msgid "Search..."
-msgstr "Buscar..."
-
-#: document/static/js/modules/editor/dialogs/citation.js:329
-msgid "Please select at least one citation source!"
-msgstr "¡Por favor, selecciona al menos una fuente de cita!"
-
-#: document/static/js/modules/editor/dialogs/figure.js:209
-msgid "Enter latex math or insert an image"
-msgstr "Itroducir matemáticas de latex o insertar una imagen"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Albanian"
-msgstr "Albanés"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Asturian"
-msgstr ""
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Belarusian"
-msgstr "Bielorruso"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Breton"
-msgstr "Bretón"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Catalan (Valencia)"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:215
-#: document/static/js/modules/schema/const.js:1
-msgid "Chinese (Simplified)"
-msgstr ""
-
-#: document/static/js/modules/schema/const.js:1
-msgid "English (Australia)"
-msgstr ""
-
-#: document/static/js/modules/schema/const.js:1
-#, fuzzy
-msgid "English (Canada)"
-msgstr "Español"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "English (New Zealand)"
-msgstr ""
-
-#: document/static/js/modules/schema/const.js:1
-msgid "English (South Africa)"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:215
-#: document/static/js/modules/schema/const.js:1
-msgid "English (United Kingdom)"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:215
-#: document/static/js/modules/schema/const.js:1
-msgid "English (United States)"
-msgstr ""
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Esperanto"
-msgstr "Esperanto"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Galician"
-msgstr "Gallego"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:215
-#: document/static/js/modules/schema/const.js:1
-msgid "German (Germany)"
-msgstr ""
-
-#: document/static/js/modules/schema/const.js:1
-msgid "German (Austria)"
-msgstr ""
-
-#: document/static/js/modules/schema/const.js:1
-msgid "German (Switzerland)"
-msgstr ""
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Khmer"
-msgstr "Camboyano"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Malayalam"
-msgstr "Malayalam"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Norwegian (bokmål)"
-msgstr ""
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Norwegian (nynorsk)"
-msgstr ""
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Persian"
-msgstr "Persa"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:215
-#: document/static/js/modules/schema/const.js:1
-msgid "Portuguese (Brazil)"
-msgstr "Portugués (Brasil)"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Portuguese (Portugal)"
-msgstr ""
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Serbian (Cyrillic)"
-msgstr ""
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Serbian (Latin)"
-msgstr ""
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Slovenian"
-msgstr "Esloveno"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Tamil"
-msgstr "Tamil"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Tagalog"
-msgstr ""
-
-#: document/static/js/modules/editor/dialogs/language.js:14
-msgid "Change"
-msgstr "Cambios"
-
-#: document/static/js/modules/editor/dialogs/language.js:40
-msgid "Change language of the document"
-msgstr "Cambiar el idioma del documento"
-
-#: document/static/js/modules/document_template/templates.js:10
-#: document/static/js/modules/editor/dialogs/link.js:154
-#: document/static/js/modules/editor/menus/toolbar/model.js:364
-msgid "Link"
-msgstr "Enlace"
-
-#: document/static/js/modules/editor/dialogs/math.js:51
-msgid "Mathematical formula"
-msgstr "Fórmula matemática"
-
-#: document/static/js/modules/document_template/document_style_dialog.js:15
-#: document/static/js/modules/document_template/export_template_dialog.js:17
-#: document/static/js/modules/editor/dialogs/revision.js:13
-#: user_template_manager/static/js/modules/user_template_manager/editor.js:44
-msgid "Save"
-msgstr "Guardar"
-
-#: document/static/js/modules/editor/dialogs/revision.js:26
-msgid "Revision description"
-msgstr "Descripción de la versión"
-
-#: document/static/js/modules/editor/dialogs/table.js:88
-msgid "Insert table"
-msgstr "Insertar tabla"
-
-#: document/static/js/modules/editor/dialogs/templates.js:8
-msgid "Internal"
-msgstr "Interno"
-
-#: document/static/js/modules/editor/dialogs/templates.js:8
-msgid "Select Target"
-msgstr "Seleccionar ubicacion"
-
-#: document/static/js/modules/editor/dialogs/templates.js:8
-msgid "External"
-msgstr "Externo"
-
-#: base/static/js/modules/common/dialog.js:35
-#: document/static/js/modules/editor/comments/editors/answer.js:11
-#: document/static/js/modules/editor/comments/editors/comment.js:87
-#: document/static/js/modules/editor/dialogs/templates.js:28
-msgid "Cancel"
-msgstr "Cancelar"
-
-#. Buscar en Fidus y verificar si cuadra
-#: document/static/js/modules/document_template/templates.js:21
-#: document/static/js/modules/document_template/templates.js:32
-#: document/static/js/modules/document_template/templates.js:43
-#: document/static/js/modules/document_template/templates.js:60
-msgid "None"
-msgstr "Ningún"
-
-#: document/static/js/modules/document_template/templates.js:6
-#: document/static/js/modules/editor/menus/toolbar/model.js:16
-#: document/static/js/modules/editor/menus/toolbar/model.js:445
-msgid "Figure"
-msgstr "Figura"
-
-#: document/static/js/modules/document_template/schema.js:160
-#: document/static/js/modules/document_template/schema.js:163
-#: document/static/js/modules/document_template/templates.js:6
-#: document/static/js/modules/document_template/templates.js:70
-#: document/static/js/modules/editor/menus/toolbar/model.js:461
-msgid "Table"
-msgstr "Tabla"
-
-#: document/static/js/modules/editor/dialogs/templates.js:41
-msgid "My sources"
-msgstr "Mis fuentes"
-
-#: document/static/js/modules/editor/dialogs/templates.js:41
-msgid "Citation format"
-msgstr "Estilo de citas"
-
-#: document/static/js/modules/editor/dialogs/templates.js:41
-msgid "Author (1998)"
-msgstr "Autor (1998)"
-
-#: document/static/js/modules/editor/comments/editors/answer.js:11
-#: document/static/js/modules/editor/comments/editors/comment.js:87
-#: document/static/js/modules/editor/marginboxes/templates.js:13
-#: document/static/js/modules/editor/marginboxes/templates.js:82
-#: document/static/js/modules/editor/state_plugins/contributor_input.js:58
-#: document/static/js/modules/editor/state_plugins/links.js:125
-msgid "Edit"
-msgstr "Editar"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:90
-msgid "New paragraph"
-msgstr "Nuevo párrafo"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:91
-msgid "New heading"
-msgstr "Nuevo título"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:93
-msgid "Wrapped into blockquote"
-msgstr "Poner en bloque de cita"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:94
-msgid "Added code block"
-msgstr "Bloque de código añadido"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:95
-msgid "Inserted figure"
-msgstr "Figura inserrtada"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:96
-msgid "New list item"
-msgstr "Nuevo elemento de lista"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:97
-msgid "Inserted table"
-msgstr "Tabla insertada"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:99
-msgid "Merged paragraph"
-msgstr ""
-
-#: document/static/js/modules/editor/marginboxes/templates.js:100
-#, fuzzy
-msgid "Merged heading"
-msgstr "3er Título"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:102
-#, fuzzy
-msgid "Unwrapped blockquote"
-msgstr "Bloque de cita"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:103
-msgid "Removed code block"
-msgstr ""
-
-#: document/static/js/modules/editor/marginboxes/templates.js:104
-#, fuzzy
-msgid "Deleted figure"
-msgstr "Borrar"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:105
-msgid "Lifted list item"
-msgstr ""
-
-#: document/static/js/modules/editor/marginboxes/templates.js:106
-#: document/static/js/modules/editor/menus/table/model.js:242
-#, fuzzy
-msgid "Delete table"
-msgstr "Borrar Imagen"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:88
-msgid "Format change"
-msgstr "Cambio de formato"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:125
-#, fuzzy
-msgid "Removed"
-msgstr "Borrar"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:129
-#: usermedia/static/js/modules/images/overview/index.js:165
-#, fuzzy
-msgid "Added"
-msgstr "Apéndice"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:164
-#, fuzzy
-msgid "Reject"
-msgstr "Rechazar Cambio"
-
-#: document/static/js/modules/document_template/export_template_dialog.js:76
-#: document/static/js/modules/editor/menus/headerbar/model.js:31
-#: usermedia/static/js/modules/images/overview/index.js:165
-msgid "File"
-msgstr "Archivo"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:32
-msgid "File handling"
-msgstr "Manejar archivos"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:36
-msgid "Share"
-msgstr "Compartir"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:39
-msgid "Share the document with other users."
-msgstr "Compartir el documento con otros usuarios."
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:54
-#: document/static/js/modules/editor/menus/headerbar/view.js:275
-msgid "Close the document and return to the document overview menu."
-msgstr "Cierre el documento y regrese al menú de descripción general del documento."
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:60
-#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
-#, fuzzy
-msgid "Save revision"
-msgstr "Versión"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:63
-msgid "Save a revision of the current document."
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:75
-#, fuzzy
-msgid "Create Copy"
-msgstr "Creado por"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:78
-msgid "Create copy of the current document."
-msgstr "Crear copia del documento actual."
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:99
-msgid "Either print or create a PDF using your browser print dialog."
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:115
-msgid "Export"
-msgstr "Exportar"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:116
-msgid "Export of the document contents"
-msgstr "Exportar el contenido del documento"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:120
-msgid "HTML"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:122
-msgid "Export the document to an HTML file."
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:135
-msgid "Epub"
-msgstr "Epub"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:137
-msgid "Export the document to an Epub electronic reader file."
-msgstr "Exportar el documento a un archivo de lectura electrónica Epub."
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:150
-msgid "LaTeX"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:152
-msgid "Export the document to an LaTeX file."
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:182
-msgid "Settings"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:183
-msgid "Configure settings of this document."
-msgstr "Configurar ajustes del documento."
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:188
-msgid "Citation Style"
-msgstr "Estilo de Citas"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:190
-msgid "Choose your preferred citation style."
-msgstr "Escoger estilo de citas."
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:198
-msgid "Document Style"
-msgstr "Estilo del Documento"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:200
-msgid "Choose your preferred document style."
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:208
-#, fuzzy
-msgid "Text Language"
-msgstr "Idioma"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:210
-msgid "Choose the language of the document."
-msgstr "Elegir el idioma del documento."
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:224
-msgid "Other"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:239
-msgid "Paper Size"
-msgstr "Tamaño del Papel"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:241
-msgid "Choose a papersize for print and PDF generation."
-msgstr ""
-
-#. es solo A4? no se si bien sobre "din"
-#: document/static/js/modules/editor/menus/headerbar/model.js:247
-msgid "DIN A4"
-msgstr "A4"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:249
-msgid "A4 (DIN A4/ISO 216) which is used in most of the world."
-msgstr "A4 (DIN A4/ISO 216) tamaño más utilizado a nivel mundial."
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:264
-msgid "US Letter"
-msgstr "US Letter"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:266
-msgid "The format used by the USA and some other American countries."
-msgstr "Formato utilizado por los EEUU y algunos países de América."
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:284
-msgid "Tools"
-msgstr "Herramientas"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:285
-msgid "Select document editing tool."
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:289
-#: document/static/js/modules/editor/tools/word_count.js:32
-msgid "Word counter"
-msgstr "Contador de palabras"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:291
-msgid "See document statistics."
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:297
-msgid "Keyboard shortcuts"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:299
-msgid "Show an overview of available keyboard shortcuts."
-msgstr ""
-
-#: document/static/js/modules/editor/menus/toolbar/model.js:462
-msgid "Insert a table into the document."
-msgstr "Insertar una tabla en el documento."
-
-#: document/static/js/modules/editor/menus/table/model.js:32
-msgid "Add row above"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/table/model.js:34
-msgid "Add a row above the current row"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/table/model.js:49
-msgid "Add row below"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/table/model.js:51
-msgid "Add a row below the current row"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/table/model.js:66
-msgid "Add column left"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/table/model.js:68
-msgid "Add a column to the left of the current column"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/table/model.js:83
-msgid "Add column right"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/table/model.js:85
-msgid "Add a column to the right of the current column"
-msgstr ""
-
-#: document/static/js/modules/document_template/schema.js:158
-#: document/static/js/modules/editor/menus/table/model.js:103
-msgid "Delete row"
-msgstr "Borrar fila"
-
-#: document/static/js/modules/editor/menus/table/model.js:105
-msgid "Delete current row"
-msgstr ""
-
-#: document/static/js/modules/document_template/schema.js:158
-#: document/static/js/modules/editor/menus/table/model.js:120
-msgid "Delete column"
-msgstr "Borrar columna"
-
-#: document/static/js/modules/editor/menus/table/model.js:122
-msgid "Delete current column"
-msgstr ""
-
-#: document/static/js/modules/document_template/schema.js:158
-#: document/static/js/modules/editor/menus/table/model.js:140
-msgid "Merge cells"
-msgstr "Combinar celdas"
-
-#: document/static/js/modules/editor/menus/table/model.js:142
-#, fuzzy
-msgid "Merge selected cells"
-msgstr "Utiliza imagen seleccionado"
-
-#: document/static/js/modules/document_template/schema.js:158
-msgid "Split cell"
-msgstr "Celda dividida"
-
-#: document/static/js/modules/editor/menus/table/model.js:159
-msgid "Split selected cell"
-msgstr ""
-
-#. Prestar compu de Johannes sí o sí
-#. Encabezado de fila?
-#: document/static/js/modules/document_template/schema.js:158
-#: document/static/js/modules/editor/menus/table/model.js:177
-msgid "Toggle header row"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/table/model.js:179
-msgid "Toggle header-status of currently selected row"
-msgstr ""
-
-#. Prestar compu de Johannes sí o sí
-#. Es Encabezado de columna?
-#: document/static/js/modules/document_template/schema.js:158
-#: document/static/js/modules/editor/menus/table/model.js:194
-msgid "Toggle header column"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/table/model.js:196
-msgid "Toggle header-status of currently selected column"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/table/model.js:211
-msgid "Toggle header cell"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/table/model.js:213
-msgid "Toggle header-status of currently selected cells"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/table/model.js:245
-msgid "Delete currently selected table"
-msgstr ""
-
-#: document/static/js/modules/document_template/templates.js:32
-msgid "Authors"
-msgstr "Autores"
-
-#: document/static/js/modules/editor/menus/toolbar/model.js:8
-msgid "Normal Text"
-msgstr "Texto normal"
-
-#: document/static/js/modules/editor/menus/toolbar/model.js:9
-#, fuzzy
-msgid "1st Heading"
-msgstr "1er Título"
-
-#: document/static/js/modules/editor/menus/toolbar/model.js:10
-#, fuzzy
-msgid "2nd Heading"
-msgstr "2ndo Título"
-
-#: document/static/js/modules/editor/menus/toolbar/model.js:11
-#, fuzzy
-msgid "3rd Heading"
-msgstr "3er Título"
-
-#: document/static/js/modules/editor/menus/toolbar/model.js:12
-#, fuzzy
-msgid "4th Heading"
-msgstr "1er Título"
-
-#: document/static/js/modules/editor/menus/toolbar/model.js:13
-#, fuzzy
-msgid "5th Heading"
-msgstr "1er Título"
-
-#: document/static/js/modules/editor/menus/toolbar/model.js:14
-#, fuzzy
-msgid "6th Heading"
-msgstr "1er Título"
-
-#: document/static/js/modules/document_template/templates.js:6
-#: document/static/js/modules/editor/menus/toolbar/model.js:15
-msgid "Code"
-msgstr "Código"
-
-#: document/static/js/modules/editor/menus/toolbar/model.js:80
-msgid "Open/close header menu"
-msgstr ""
-
-#: document/static/js/modules/document_template/templates.js:6
-#: document/static/js/modules/editor/menus/toolbar/model.js:109
-#: document/static/js/modules/editor/menus/toolbar/model.js:380
-msgid "Footnote"
-msgstr "Nota de Pie"
-
-#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
-msgid "Bold"
-msgstr "Negrita"
-
-#: document/static/js/modules/editor/menus/toolbar/model.js:315
-#, fuzzy
-msgid "Numbered list"
-msgstr "Lista enumerada"
-
-#: document/static/js/modules/document_template/templates.js:6
-#: document/static/js/modules/editor/menus/toolbar/model.js:331
-msgid "Bullet list"
-msgstr "Lista viñetada"
-
-#: document/static/js/modules/document_template/templates.js:6
-#: document/static/js/modules/editor/menus/toolbar/model.js:347
-msgid "Blockquote"
-msgstr "Bloque de cita"
-
-#: document/static/js/modules/editor/menus/toolbar/model.js:398
-msgid "Cite"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/toolbar/model.js:414
-msgid "Horizontal line"
-msgstr ""
-
-#: document/static/js/modules/editor/dialogs/templates.js:16
-#: document/static/js/modules/editor/menus/toolbar/model.js:430
-msgid "Math"
-msgstr "Matematicas"
-
-#: document/static/js/modules/editor/dialogs/figure.js:45
-#: document/static/js/modules/editor/dialogs/math.js:76
-#: document/static/js/modules/editor/menus/toolbar/model.js:478
-#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
-msgid "Undo"
-msgstr "Deshacer"
-
-#: document/static/js/modules/editor/dialogs/figure.js:43
-#: document/static/js/modules/editor/dialogs/math.js:74
-#: document/static/js/modules/editor/menus/toolbar/model.js:485
-#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
-msgid "Redo"
-msgstr "Rehacer"
-
-#: document/static/js/modules/documents/access_rights/templates.js:21
-#: document/static/js/modules/editor/menus/selection/model.js:33
-msgid "Comment"
-msgstr "Comentario"
-
-#: document/static/js/modules/editor/menus/selection/model.js:44
-#: document/static/js/modules/editor/state_plugins/links.js:125
-msgid "Anchor"
-msgstr "Ancla"
-
-#: document/static/js/modules/editor/menus/toolbar/view.js:259
-msgid "More"
-msgstr ""
-
-#: document/static/js/modules/editor/index.js:176
-msgid "Warning! Not all your changes have been saved! You could suffer data loss. Attempting to reconnect..."
-msgstr "¡Advertencia! ¡No se han guardado todos sus cambios! Podría sufrir pérdida de datos. Intentando reconectar..."
-
-#: document/static/js/modules/editor/state_plugins/keyword_input.js:46
-msgid "Add keyword..."
-msgstr "Añadir palabra clave..."
-
-#: document/static/js/modules/editor/state_plugins/links.js:33
-msgid "Link copied to clipboard"
-msgstr ""
-
-#: document/static/js/modules/editor/state_plugins/links.js:35
-msgid "Copy to clipboard failed. Please copy manually."
-msgstr ""
-
-#: document/static/js/modules/editor/document_template/index.js:67
-msgid "Safari bug warning"
-msgstr "Advertencia de error de Safari"
-
-#: document/static/js/modules/editor/document_template/index.js:69
-msgid "Unfortunately Safari has a bug which makes it impossible to export to this format. Please use Chrome or Firefox (on a desktop computer)."
-msgstr "Desafortunadamente, Safari tiene un error que hace que sea imposible exportar a este formato. Utilice Chrome o Firefox (en una computadora)."
-
-#: document/static/js/modules/editor/document_template/index.js:87
-msgid "Export the document to a DOCX file with the given template."
-msgstr "Exportar el documento a un archivo DOCX con la plantilla dada."
-
-#: document/static/js/modules/editor/document_template/index.js:109
-msgid "Export the document to an ODT file with the given template."
-msgstr "Exporte el documento a un archivo ODT con la plantilla dada."
-
-#: document/static/js/modules/editor/tools/show_key_bindings.js:15
-msgid "Keyboard Shortcuts"
-msgstr "Atajos del teclado"
-
-#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
-msgid "Print"
-msgstr "Imprimir"
-
-#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
-msgid "Italics"
-msgstr "Cursiva"
-
-#: document/static/js/modules/editor/tools/word_count_templates.js:5
-msgid "Number of"
-msgstr "Número de"
-
-#: document/static/js/modules/editor/tools/word_count_templates.js:5
-msgid "Words"
-msgstr "Palabras"
-
-#: document/static/js/modules/editor/tools/word_count_templates.js:5
-msgid "Characters with blanks"
-msgstr "Caracteres con espacios"
-
-#: document/static/js/modules/exporter/docx/metadata.js:65
-#: document/static/js/modules/exporter/docx/metadata.js:66
-#: document/static/js/modules/exporter/odt/metadata.js:66
-msgid "Unknown"
-msgstr "Desconocido"
-
-#: document/static/js/modules/exporter/epub/index.js:22
-msgid "Epub export has been initiated."
-msgstr "La exportación del archivo Epub se ha iniciado."
-
-#: document/static/js/modules/exporter/html/index.js:19
-msgid "HTML export has been initiated."
-msgstr "La exportación del archivo HTML ha sido iniciada."
-
-#: document/static/js/modules/exporter/native/copy.js:30
-msgid " successfully copied."
-msgstr "copiado con exito."
-
-#: document/static/js/modules/exporter/native/revision.js:38
-msgid "Revision saved"
-msgstr "Versión guardada"
-
-#: document/static/js/modules/exporter/native/revision.js:38
-msgid "Revision could not be saved."
-msgstr "No se pudo guardar esta versión del documento"
-
-#: document/static/js/modules/exporter/native/shrink.js:17
-msgid "File export has been initiated."
-msgstr "La exportación del archivo ha sido iniciada"
-
-#: document/static/js/modules/importer/file.js:42
-#: document/static/js/modules/importer/file.js:67
-msgid "The uploaded file does not appear to be a Fidus Writer file."
-msgstr "El archivo cargado no parece ser un archivo de Fidus Writer."
-
-#: document/static/js/modules/importer/file.js:128
-msgid "The uploaded file does not appear to be of the version used on this server: "
-msgstr "El archivo cargado no parece ser de la versión utilizada en este servidor: "
-
-#: document/static/js/modules/importer/native.js:53
-msgid "Could not save Image"
-msgstr "No se pudo guardar la imagen"
-
-#: document/static/js/modules/importer/native.js:103
-msgid "Could not create document"
-msgstr "No se pudo crear el documento"
-
-#: document/static/js/modules/importer/native.js:141
-msgid "Could not save "
-msgstr "No se pudo guardar "
-
-#: document/static/js/modules/maintenance/index.js:24
-msgid "Updating..."
-msgstr "Actualizando..."
-
-#: document/static/js/modules/maintenance/index.js:43
-msgid "Downloaded batch"
-msgstr ""
-
-#: document/static/js/modules/maintenance/index.js:55
-msgid "Could not download batch"
-msgstr "No se pudo descargar el lote"
-
-#: document/static/js/modules/maintenance/index.js:122
-#, fuzzy
-msgid "The document has been updated"
-msgstr "El/los documento(s) han sido borrado(s)"
-
-#: document/static/js/modules/maintenance/index.js:47
-msgid "All documents updated!"
-msgstr ""
-
-#: document/static/js/modules/maintenance/index.js:187
-msgid "Updating saved revisions."
-msgstr "Actualizando las versiones guardadas"
-
-#: document/static/js/modules/editor/dialogs/templates.js:55
-#: document/static/js/modules/schema/document/content.js:53
-#: user/static/js/modules/profile/templates.js:35
-msgid "Email"
-msgstr "Correo electrónico"
-
-#: menu/static/js/modules/menu/index.js:9
-msgid "Documents"
-msgstr "Documentos"
-
-#: menu/static/js/modules/menu/index.js:11
-msgid "edit documents"
-msgstr "editar documentos"
-
-#: document/static/js/modules/editor/clipboard/copy/serializers.js:37
-#: menu/static/js/modules/menu/index.js:15
-msgid "Bibliography"
-msgstr "Bibliografía"
-
-#: menu/static/js/modules/menu/index.js:17
-msgid "manage bibliography library"
-msgstr "administrar bibliografía de biblioteca"
-
-#: menu/static/js/modules/menu/index.js:21
-#: usermedia/static/js/modules/images/selection_dialog/index.js:75
-msgid "Images"
-msgstr "Imágenes"
-
-#: menu/static/js/modules/menu/index.js:23
-msgid "manage image files"
-msgstr "gestionar archivos de imagen"
-
-#: base/static/js/modules/common/dialog.js:40
-msgid "OK"
-msgstr "Ok"
-
-#. esta bien?
-#: bibliography/static/js/modules/bibliography/form/fields/key.js:57
-msgid "Custom"
-msgstr "Personalizado"
-
-#: bibliography/static/js/modules/bibliography/form/fields/name.js:92
-msgid "Prefix used"
-msgstr "Prefijo utilizado"
-
-#: bibliography/static/js/modules/bibliography/form/fields/name.js:93
-#: user/static/js/modules/profile/templates.js:35
-msgid "First name"
-msgstr "Nombre"
-
-#: bibliography/static/js/modules/bibliography/form/fields/name.js:95
-msgid "Prefix"
-msgstr "Prefijo"
-
-#: bibliography/static/js/modules/bibliography/form/fields/name.js:97
-#: user/static/js/modules/profile/templates.js:35
-msgid "Last name"
-msgstr "Apellido"
-
-#: bibliography/static/js/modules/bibliography/form/fields/name.js:99
-msgid "Suffix"
-msgstr "Sufijo"
-
-#: bibliography/static/js/modules/bibliography/form/fields/name.js:63
-msgid "Organization"
-msgstr "Organización"
-
-#: bibliography/static/js/modules/bibliography/form/templates.js:6
-msgid "Required Fields"
-msgstr "Campos Requeridos"
-
-#: bibliography/static/js/modules/bibliography/form/templates.js:6
-msgid "Optional Fields"
-msgstr "Campos Opcionales"
-
-#: user/static/js/modules/profile/templates.js:4
-msgid "Delete the avatar?"
-msgstr "¿Quieres borrar la imagen de perfil?"
-
-#: user/static/js/modules/profile/templates.js:10
-msgid "NOTICE: ALL OF YOUR INFORMATION WILL DISAPPEAR FROM OUR SYSTEM!"
-msgstr ""
-
-#: user/static/js/modules/profile/templates.js:10
-#, fuzzy
-msgid "Really delete your account? Type in your username and password below to confirm deletion."
-msgstr "Realmente quieres borrar tu cuenta? Escribe tu usuario abajo para confirmar."
-
-#: user/static/js/modules/profile/templates.js:10
-msgid "We cannot reverse an account deletion."
-msgstr ""
-
-#: user/static/js/modules/profile/templates.js:10
-msgid "Some copies of your files may temporarily be kept in our backup system, but also these will disappear automatically in due time."
-msgstr ""
-
-#: user/static/js/modules/login/index.js:34
-#: user/static/js/modules/profile/templates.js:10
-#: user/static/js/modules/profile/templates.js:35
-#: user/static/js/modules/signup/index.js:22
-msgid "Username"
-msgstr "Usuario"
-
-#: user/static/js/modules/login/index.js:34
-#: user/static/js/modules/password_reset/change_password.js:25
-#: user/static/js/modules/profile/templates.js:10
-#: user/static/js/modules/profile/templates.js:35
-#: user/static/js/modules/signup/index.js:22
-msgid "Password"
-msgstr "Contraseña"
-
-#: user/static/js/modules/profile/templates.js:13
-msgid "Enter the new E-mail address"
-msgstr "Ingresar el nuevo correo"
-
-#: user/static/js/modules/profile/templates.js:28
-msgid "Old password"
-msgstr "Vieja contraseña"
-
-#: user/static/js/modules/profile/templates.js:28
-msgid "New password"
-msgstr "Nueva contraseña"
-
-#: user/static/js/modules/profile/templates.js:28
-msgid "Confirm the new password"
-msgstr "Confirma la nueva contraseña"
-
-#: user/static/js/modules/email_confirm/templates.js:8
-msgid "Confirm E-mail Address and Agree to Terms and Conditions"
-msgstr "Confirmar Correo Electrónico y aceptar Términos y Condiciones"
-
-#: user/static/js/modules/email_confirm/templates.js:25
-msgid "Confirm"
-msgstr "Confirmar"
-
-#: user/static/js/modules/email_confirm/templates.js:27
-#, fuzzy
-msgid "I have read and agree to the <a href=\"/pages/terms/\" target=\"_blank\">Terms and Conditions</a>."
-msgstr "\n"
-"He leído y estoy de acuerdo con los <a href=\"http://www.fiduswriter.com/?page_id=41\">Términos y Condiciones</a>.\n"
-"        "
-
-#: user/static/js/modules/email_confirm/templates.js:28
-msgid "I am aware that I am signing up for a test account and that service may be ended abruptly and without notice, leaving me without my files."
-msgstr ""
-
-#: user/static/js/modules/email_confirm/templates.js:32
-msgid "Thanks for verifying!"
-msgstr "¡Muchas Gracias!"
-
-#: user/static/js/modules/email_confirm/templates.js:32
-#, fuzzy
-msgid "You can now log in."
-msgstr "Gracias por confirmar! Ahora puedes ingresar a Fidus Writer."
-
-#: user/static/js/modules/contacts/index.js:59
-msgid "Could not obtain contacts list"
-msgstr ""
-
-#: user/static/js/modules/contacts/add_dialog.js:67
-msgid "You cannot add yourself to your contacts!"
-msgstr "¡No puedes añadirte a tu lista de contactos!"
-
-#: user/static/js/modules/contacts/add_dialog.js:69
-msgid "This person is already in your contacts"
-msgstr ""
-
-#: user/static/js/modules/contacts/add_dialog.js:72
-msgid "No user is registered with the given email address."
-msgstr "Ningun usuario está registrado con este correo."
-
-#: user/static/js/modules/contacts/add_dialog.js:81
-msgid "Please invite him/her "
-msgstr "Por favor, invítale "
-
-#: user/static/js/modules/contacts/add_dialog.js:81
-msgid "Fidus Writer"
-msgstr "Fidus Writer"
-
-#: user/static/js/modules/contacts/add_dialog.js:81
-msgid "Hey, I would like you to sign up for a Fidus Writer account."
-msgstr "Hola, me gustaría invitarte a crear una cuenta de Fidus Writer."
-
-#: user/static/js/modules/contacts/add_dialog.js:81
-msgid "Please register at"
-msgstr "Por favor, registrate en"
-
-#: user/static/js/modules/contacts/add_dialog.js:81
-msgid "by sending an email"
-msgstr "mandando un correo"
-
-#: user/static/js/modules/contacts/add_dialog.js:84
-msgid "User is not registered."
-msgstr ""
-
-#: user/static/js/modules/contacts/add_dialog.js:5
-msgid "Add a user to your contacts"
-msgstr "Añadir un usuario a tu lista de contactos"
-
-#: user/static/js/modules/contacts/templates.js:7
-#, fuzzy
-msgid "E-mail address or username"
-msgstr "Correo electrónico del usuario"
-
-#: base/static/js/modules/common/templates.js:7
-#: document/static/js/modules/documents/access_rights/templates.js:8
-#: user/static/js/modules/contacts/index.js:37
-msgid "Contacts"
-msgstr "Contactos"
-
-#: document/static/js/modules/documents/access_rights/templates.js:10
-msgid "My collaborators"
-msgstr "Mis colaboradores"
-
-#: document/static/js/modules/documents/access_rights/templates.js:21
-msgid "Basic access rights"
-msgstr "Derechos de acceso básicos"
-
-#: document/static/js/modules/documents/access_rights/templates.js:21
-msgid "Basic"
-msgstr "Básico"
-
-#: document/static/js/modules/documents/access_rights/templates.js:21
-msgid "No comments"
-msgstr "Sin comentarios"
-
-#: document/static/js/modules/documents/access_rights/templates.js:21
-msgid "Comment, but not see comments and chats of others"
-msgstr "Comentar, pero no ver comentarios ni chats de otros"
-
-#: document/static/js/modules/documents/overview/actions.js:103
-msgid "Import a Fidus file"
-msgstr "Importar un archivo de Fidus"
-
-#: document/static/js/modules/importer/file.js:123
-msgid "successfully imported."
-msgstr " importado con exito."
-
-#: document/static/js/modules/documents/revisions/templates.js:6
-msgid "Description"
-msgstr "Descripción"
-
-#: document/static/js/modules/documents/revisions/templates.js:6
-#: document/static/js/modules/editor/menus/headerbar/model.js:87
-msgid "Download"
-msgstr "Descargar"
-
-#: document/static/js/modules/editor/collab/chat.js:80
-msgid "Send a message..."
-msgstr "Enviar un mensaje..."
-
-#: document/static/js/modules/editor/dialogs/templates.js:8
-msgid "Link title"
-msgstr "Título del enlace"
-
-#: document/static/js/modules/editor/dialogs/templates.js:13
-msgid "Description (optional)"
-msgstr "Descripción(opcional)"
-
-#: document/static/js/modules/editor/dialogs/templates.js:28
-#: usermedia/static/js/modules/images/selection_dialog/index.js:105
-msgid "Image"
-msgstr "Imagen"
-
-#: document/static/js/modules/editor/dialogs/templates.js:28
-#: user/static/js/modules/profile/dialogs.js:5
-#: usermedia/static/js/modules/images/edit_dialog/index.js:24
-msgid "Upload"
-msgstr "Subir"
-
-#: document/static/js/modules/editor/dialogs/figure.js:26
-msgid "Insert image"
-msgstr "Insertar imagen"
-
-#. En ete contecto no sé a qué se refiere caption
-#: document/static/js/modules/editor/dialogs/templates.js:35
-msgid "Insert caption"
-msgstr "Insertar subtítulo"
-
-#: document/static/js/modules/editor/dialogs/templates.js:41
-msgid "(Author, 1998)"
-msgstr "(Autor, 1998)"
-
-#. bien?
-#: document/static/js/modules/editor/dialogs/templates.js:52
-msgid "Text before"
-msgstr "Texto anterior"
-
-#: document/static/js/modules/editor/dialogs/templates.js:55
-msgid "Firstname"
-msgstr "Nombre"
-
-#: document/static/js/modules/editor/dialogs/templates.js:55
-msgid "Lastname"
-msgstr "Apellido"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:164
-msgid "ca."
-msgstr ""
-
-#: document/static/js/modules/editor/marginboxes/templates.js:164
-#, fuzzy
-msgid "Accept"
-msgstr "Aceptar Cambio"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:90
-msgid "Download the current document."
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:96
-msgid "Print/PDF"
-msgstr "Imprimir PDF"
-
-#: document/static/js/modules/editor/menus/headerbar/view.js:272
-msgid "Untitled Document"
-msgstr "Documento sin nombre"
-
-#: base/static/js/modules/common/ws.js:24
-#: document/static/js/modules/editor/index.js:177
-msgid "Disconnected. Attempting to reconnect..."
-msgstr "Desconectado. Intentando reconectar..."
-
-#: document/static/js/modules/editor/state_plugins/links.js:125
-msgid "Copy link"
-msgstr ""
-
-#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
-msgid "Show keyboard shortcuts"
-msgstr "Mostrar atajos del teclado"
-
-#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
-msgid "Paste with content detection"
-msgstr "Pegar con detección de contenido"
-
-#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
-msgid "Paste without content detection"
-msgstr "Pegar sin detección de contenido"
-
-#: document/static/js/modules/editor/tools/word_count_templates.js:5
-msgid "Document"
-msgstr "Documento"
-
-#: document/static/js/modules/editor/tools/word_count_templates.js:5
-msgid "Characters without blanks"
-msgstr "Caracteres sin espacios"
-
-#: usermedia/static/js/modules/images/database.js:41
-msgid "Could not save image"
-msgstr "No se pudo guarda la imagen"
-
-#: usermedia/static/js/modules/images/edit_dialog/index.js:16
-msgid "Update Image Information"
-msgstr "Actualizar la información de la imagen"
-
-#: usermedia/static/js/modules/images/edit_dialog/index.js:16
-msgid "Upload Image"
-msgstr "Subir Imagen"
-
-#: usermedia/static/js/modules/images/edit_dialog/index.js:127
-msgid "The image has been updated."
-msgstr "El imagen ha sido actualizada"
-
-#: usermedia/static/js/modules/images/edit_dialog/index.js:132
-msgid "Some errors were found. Please examine the form."
-msgstr "Encontramos algunos errores. Por favor examine el formulario."
-
-#: usermedia/static/js/modules/images/edit_dialog/templates.js:12
-msgid "Select categories"
-msgstr "Seleccionar categorías"
-
-#: usermedia/static/js/modules/images/edit_dialog/templates.js:20
-msgid "Insert a title"
-msgstr "Insertar un título"
-
-#: usermedia/static/js/modules/images/selection_dialog/index.js:35
-msgid "Add new image"
-msgstr "Agregar nueva imagen"
-
-#: usermedia/static/js/modules/images/selection_dialog/index.js:53
-msgid "Use image"
-msgstr "Usar imagen"
-
-#: usermedia/static/js/modules/images/overview/index.js:158
-#: usermedia/static/js/modules/images/selection_dialog/index.js:96
-msgid "No images available"
-msgstr "No hay imágenes disponibles"
-
-#: usermedia/static/js/modules/images/overview/categories.js:16
-msgid "Could not update categories"
-msgstr "No se pudieron actualizar las categorías."
-
-#: usermedia/static/js/modules/images/overview/index.js:73
-msgid "The image(s) could not be deleted"
-msgstr "No se pudieron eliminar las imágenes"
-
-#: usermedia/static/js/modules/images/overview/index.js:78
-msgid "The image(s) have been deleted"
-msgstr "La imagen ha sido eliminada"
-
-#: usermedia/static/js/modules/images/overview/index.js:97
-msgid "Delete the image(s)"
-msgstr "Eliminar imagen(es)"
-
-#: usermedia/static/js/modules/images/overview/index.js:165
-msgid "Size (px)"
-msgstr "Tamaño (píxeles)"
-
-#: usermedia/static/js/modules/images/overview/menu.js:30
-msgid "Upload new image"
-msgstr "Subir nueva imagen"
-
-#: usermedia/static/js/modules/images/overview/menu.js:45
-msgid "Search images"
-msgstr "Buscar imágenes"
-
-#: user/static/js/modules/profile/delete_user.js:45
-msgid "Staff accounts have to be deleted through the admin interface."
-msgstr ""
-
-#: user/static/js/modules/profile/delete_user.js:49
-msgid "Password incorrect."
-msgstr ""
-
-#: user/static/js/modules/profile/delete_user.js:53
-msgid "Could not delete user account."
-msgstr ""
-
-#: user/static/js/modules/profile/dialogs.js:22
-msgid "Could not update profile avatar"
-msgstr ""
-
-#: user/static/js/modules/profile/dialogs.js:35
-msgid "Upload your profile picture"
-msgstr "Subir imagen de perfil"
-
-#: user/static/js/modules/profile/dialogs.js:54
-msgid "Could not delete avatar"
-msgstr "No se pudo eliminar la imagen de perfil"
-
-#: user/static/js/modules/profile/index.js:95
-msgid "Could not save profile data"
-msgstr "No se pudieron guardar los datos del perfil."
-
-#: user/static/js/modules/profile/dialogs.js:91
-msgid "All fields are required!"
-msgstr "¡Todos los campos son obligatorios!"
-
-#: user/static/js/modules/profile/dialogs.js:96
-msgid "Please confirm the new password!"
-msgstr "¡Por favor, confirma la nueva contraseña!"
-
-#: user/static/js/modules/profile/dialogs.js:111
-msgid "The password has been changed."
-msgstr "La contraseña ha sido cambiada."
-
-#: user/static/js/modules/profile/dialogs.js:122
-msgid "The password could not be changed!"
-msgstr "¡No fue posible cambiar la contraseña!"
-
-#: user/static/js/modules/profile/dialogs.js:127
-msgid "The password could not be changed"
-msgstr "No fue posible cambiar la contraseña"
-
-#: user/static/js/modules/password_reset/change_password.js:20
-#: user/static/js/modules/profile/dialogs.js:134
-msgid "Change Password"
-msgstr "Cambiar contraseña"
-
-#: user/static/js/modules/profile/dialogs.js:151
-msgid "New email address is required!"
-msgstr "¡Se requiere un nuevo correo!"
-
-#: user/static/js/modules/profile/dialogs.js:166
-msgid "Confirmation e-mail sent to"
-msgstr "Mandar correo de confirmación a"
-
-#: user/static/js/modules/profile/dialogs.js:172
-msgid "The email could not be added!"
-msgstr "¡No fue posible añadir el correo!"
-
-#: user/static/js/modules/profile/dialogs.js:180
-msgid "Add Email"
-msgstr "Añadir correo"
-
-#: user/static/js/modules/profile/dialogs.js:209
-msgid "Confirm remove"
-msgstr "Confirmar acción"
-
-#: user/static/js/modules/profile/dialogs.js:211
-msgid "Remove the email address"
-msgstr "Eliminar la dirección de correo electrónico"
-
-#. no se????
-#: user/static/js/modules/profile/dialogs.js:242
-msgid "Confirm set primary"
-msgstr "Confirmar correo principal"
-
-#: user/static/js/modules/profile/dialogs.js:244
-#, fuzzy
-msgid "Set this email as the address primary"
-msgstr "Cambiar correo principal"
-
-#: base/static/js/modules/404/index.js:17
-#: base/static/js/modules/flatpage/index.js:38
-msgid "Page not found"
-msgstr "Página no encontrada"
-
-#: base/static/js/modules/404/index.js:18
-#: base/static/js/modules/flatpage/index.js:39
-msgid "Error 404"
-msgstr "Error 404"
-
-#: base/static/js/modules/404/index.js:18
-#: base/static/js/modules/flatpage/index.js:39
-msgid "The page you are looking for cannot be found."
-msgstr "La página que busca no se pudo encontrar."
-
-#: base/static/js/modules/admin_console/index.js:31
-msgid "Message delivered successfully!"
-msgstr "¡Mensaje entregado con éxito!"
-
-#: base/static/js/modules/admin_console/index.js:33
-msgid "Message delivered"
-msgstr "Mensaje enviado"
-
-#: base/static/js/modules/admin_console/index.js:57
-msgid "Sending..."
-msgstr "Enviando..."
-
-#: base/static/js/modules/common/basic.js:107
-msgid "System message"
-msgstr "Mensaje del sistema"
-
-#: base/static/js/modules/common/templates.js:7
-msgid "Log out"
-msgstr "Cerrar sesión"
-
-#: base/static/js/modules/common/ws.js:22
-msgid "Warning! Some data is unsaved"
-msgstr "¡Advertencia! Algunos datos no están guardados"
-
-#: base/static/js/modules/offline/index.js:17
-#: base/static/js/modules/offline/index.js:18
-msgid "Disconnected"
-msgstr ""
-
-#: base/static/js/modules/offline/index.js:18
-msgid "You are currently disconnected from the %(appName)s server."
-msgstr ""
-
-#: base/static/js/modules/offline/index.js:25
-#, fuzzy
-msgid "Reload page"
-msgstr "Subir Imagen"
-
-#: base/static/js/modules/prelogin/index.js:22
-msgid "Terms and Conditions"
-msgstr "Términos y Condiciones"
-
-#: base/static/js/modules/prelogin/index.js:25
-msgid "Privacy policy"
-msgstr "Política de privacidad"
-
-#: base/static/js/modules/prelogin/index.js:28
-msgid "Equations and Math with MathLive"
-msgstr "Ecuaciones y matemáticas con MathLive"
-
-#: base/static/js/modules/prelogin/index.js:32
-msgid "Citations with Citation Style Language"
-msgstr "Citaciones con Citation Style Language"
-
-#: base/static/js/modules/prelogin/index.js:36
-msgid "Editing with ProseMirror"
-msgstr "Editar con ProseMirror"
-
-#: base/static/js/modules/prelogin/index.js:42
-#: user/static/js/modules/login/index.js:34
-msgid "Log in"
-msgstr "Iniciar sesión"
-
-#: base/static/js/modules/prelogin/templates.js:25
-#, fuzzy
-msgid "Select language"
-msgstr "Seleccionar Imagen"
-
-#: bibliography/static/js/modules/bibliography/overview/index.js:50
-msgid "Bibliography Manager"
-msgstr "Administrador de Bibliografía"
-
 #: document/static/js/modules/document_template/admin.js:60
 msgid "Source/Editor"
 msgstr "Fuente/Redactor"
 
 #: document/static/js/modules/document_template/designer.js:66
-#, fuzzy
 msgid "The template needs a title."
-msgstr "Apellido"
+msgstr "La plantilla necesita un título."
 
 #: document/static/js/modules/document_template/designer.js:79
-#, fuzzy
 msgid "The template needs an ID."
-msgstr "Todas las partes del documento necesitan una identificación."
+msgstr "La plantilla necesita una identificación."
 
 #: document/static/js/modules/document_template/designer.js:89
-#, fuzzy
 msgid "The template ID cannot contain spaces."
-msgstr "La identificación no puede contener espacios."
+msgstr "La ID de plantilla no puede contener espacios."
 
 #: document/static/js/modules/document_template/designer.js:228
 msgid "All document parts need an ID."
@@ -2870,97 +1374,99 @@ msgstr "La identificación no puede contener espacios."
 msgid "IDs have to be unique."
 msgstr "La identificación debe ser única."
 
+#: document/static/js/modules/document_template/document_style_dialog.js:15
+#: document/static/js/modules/document_template/export_template_dialog.js:17
+#: document/static/js/modules/editor/dialogs/revision.js:13
+#: user_template_manager/static/js/modules/user_template_manager/editor.js:44
+msgid "Save"
+msgstr "Guardar"
+
 #: document/static/js/modules/document_template/document_style_dialog.js:79
-#, fuzzy
 msgid "Document style"
-msgstr "Estilo del Documento"
+msgstr "Estilo de documento"
 
 #: document/static/js/modules/document_template/document_style_dialog.js:80
 msgid "Slug"
-msgstr ""
+msgstr "Babosa"
 
 #: document/static/js/modules/document_template/document_style_dialog.js:80
-#, fuzzy
 msgid "CSS Style"
-msgstr "Estilo de Citas"
+msgstr "Estilo CSS"
 
 #: document/static/js/modules/document_template/document_style_dialog.js:80
-#, fuzzy
 msgid "Files"
-msgstr "Archivo"
+msgstr "Archivos"
 
 #: document/static/js/modules/document_template/document_style_dialog.js:80
-#, fuzzy
 msgid "Add a file"
-msgstr "Añadir correo"
+msgstr "Agregar un archivo"
 
 #: document/static/js/modules/document_template/document_style_dialog.js:135
-#, fuzzy
 msgid "Do you really want to delete the document style?"
-msgstr "¿Estás seguro que quieres eliminar la revisión?"
+msgstr "¿Realmente quieres eliminar el estilo del documento?"
 
 #: document/static/js/modules/document_template/document_style_dialog.js:149
 msgid "All fields need to be filled out."
-msgstr ""
+msgstr "Todos los campos deben completarse."
 
 #: document/static/js/modules/document_template/document_style_dialog.js:153
 msgid "A slug can only contain letters, numbers, hyphens and underscores."
 msgstr ""
+"Una babosa solo puede contener letras, números, guiones y guiones bajos."
 
 #: document/static/js/modules/document_template/document_style_dialog.js:157
-#, fuzzy
 msgid "The slug has to be unique."
-msgstr "La identificación debe ser única."
+msgstr "La babosa tiene que ser única."
 
 #: document/static/js/modules/document_template/document_style_dialog.js:239
 msgid "A file with the same name exists already."
-msgstr ""
+msgstr "Ya existe un archivo con el mismo nombre."
 
 #: document/static/js/modules/document_template/export_template_dialog.js:74
-#, fuzzy
 msgid "Export template"
-msgstr "Exportar lo seleccionado"
+msgstr "Exportar plantilla"
 
 #: document/static/js/modules/document_template/export_template_dialog.js:76
-#, fuzzy
+#: document/static/js/modules/editor/menus/headerbar/model.js:31
+#: usermedia/static/js/modules/images/overview/index.js:165
+msgid "File"
+msgstr "Archivo"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:76
 msgid "Select"
-msgstr "Seleccionar tipo de acción"
+msgstr "Seleccionar"
 
 #: document/static/js/modules/document_template/export_template_dialog.js:76
-#, fuzzy
 msgid "Filetype"
 msgstr "Tipo de archivo"
 
 #: document/static/js/modules/document_template/export_template_dialog.js:76
 msgid "Found tags"
-msgstr ""
+msgstr "Etiquetas encontradas"
 
 #: document/static/js/modules/document_template/export_template_dialog.js:76
 msgid "Missing tags"
-msgstr ""
+msgstr "Etiquetas faltantes"
 
 #: document/static/js/modules/document_template/export_template_dialog.js:135
-#, fuzzy
 msgid "Do you really want to delete the export template?"
-msgstr "¿Estás seguro que quieres eliminar la revisión?"
+msgstr "¿Realmente quieres eliminar la plantilla de exportación?"
 
 #: document/static/js/modules/document_template/export_template_dialog.js:146
 msgid "You need to upload a template file in ODT or DOCX format."
-msgstr ""
+msgstr "Debe cargar un archivo de plantilla en formato ODT o DOCX."
 
 #: document/static/js/modules/document_template/export_template_dialog.js:150
 msgid "Another export file with the same filename exists already."
-msgstr ""
+msgstr "Ya existe otro archivo de exportación con el mismo nombre de archivo."
 
 #: document/static/js/modules/document_template/export_template_dialog.js:183
-#, fuzzy
 msgid "Unknown filetype"
-msgstr "Desconocido"
+msgstr "Tipo de archivo desconocido"
 
 #: document/static/js/modules/document_template/export_template_dialog.js:280
-#, fuzzy
 msgid "Selected file not supported."
-msgstr "No se admite el tipo  de archivo"
+msgstr "El archivo seleccionado no es compatible."
 
 #: document/static/js/modules/document_template/schema.js:78
 #: document/static/js/modules/document_template/schema.js:145
@@ -2968,7 +1474,6 @@ msgstr "No se admite el tipo  de archivo"
 msgid "Change to heading "
 msgstr "Cambiar a encabezado "
 
-#. está bien?
 #: document/static/js/modules/document_template/schema.js:79
 #: document/static/js/modules/document_template/schema.js:146
 #: document/static/js/modules/document_template/schema.js:177
@@ -2994,6 +1499,11 @@ msgid "Insert column after"
 msgstr "Insertar columnas después"
 
 #: document/static/js/modules/document_template/schema.js:158
+#: document/static/js/modules/editor/menus/table/model.js:120
+msgid "Delete column"
+msgstr "Borrar columna"
+
+#: document/static/js/modules/document_template/schema.js:158
 msgid "Insert row before"
 msgstr "Insertar fila antes"
 
@@ -3001,12 +1511,41 @@ msgstr "Insertar fila antes"
 msgid "Insert row after"
 msgstr "Insertar fila después"
 
-#. Prestar compu de Johannes sí o sí
-#. 
-#. Encabezado de celda?
+#: document/static/js/modules/document_template/schema.js:158
+#: document/static/js/modules/editor/menus/table/model.js:103
+msgid "Delete row"
+msgstr "Borrar fila"
+
+#: document/static/js/modules/document_template/schema.js:158
+msgid "Split cell"
+msgstr "Celda dividida"
+
+#: document/static/js/modules/document_template/schema.js:158
+#: document/static/js/modules/editor/menus/table/model.js:140
+msgid "Merge cells"
+msgstr "Combinar celdas"
+
+#: document/static/js/modules/document_template/schema.js:158
+#: document/static/js/modules/editor/menus/table/model.js:194
+msgid "Toggle header column"
+msgstr "Alternar columna de encabezado"
+
+#: document/static/js/modules/document_template/schema.js:158
+#: document/static/js/modules/editor/menus/table/model.js:177
+msgid "Toggle header row"
+msgstr "Alternar fila de encabezado"
+
 #: document/static/js/modules/document_template/schema.js:158
 msgid "Toggle header cells"
-msgstr ""
+msgstr "Alternar celdas de encabezado"
+
+#: document/static/js/modules/document_template/schema.js:160
+#: document/static/js/modules/document_template/schema.js:163
+#: document/static/js/modules/document_template/templates.js:6
+#: document/static/js/modules/document_template/templates.js:70
+#: document/static/js/modules/editor/menus/toolbar/model.js:461
+msgid "Table"
+msgstr "Tabla"
 
 #: document/static/js/modules/document_template/templates.js:6
 msgid "Allowed elements"
@@ -3055,8 +1594,24 @@ msgid "Heading 6"
 msgstr "Título 6"
 
 #: document/static/js/modules/document_template/templates.js:6
+#: document/static/js/modules/editor/menus/toolbar/model.js:15
+msgid "Code"
+msgstr "Código"
+
+#: document/static/js/modules/document_template/templates.js:6
+#: document/static/js/modules/editor/menus/toolbar/model.js:16
+#: document/static/js/modules/editor/menus/toolbar/model.js:445
+msgid "Figure"
+msgstr "Figura"
+
+#: document/static/js/modules/document_template/templates.js:6
 msgid "Ordered list"
 msgstr "Lista ordenada"
+
+#: document/static/js/modules/document_template/templates.js:6
+#: document/static/js/modules/editor/menus/toolbar/model.js:331
+msgid "Bullet list"
+msgstr "Lista viñetada"
 
 #: document/static/js/modules/document_template/templates.js:6
 msgid "Horizontal rule"
@@ -3070,6 +1625,17 @@ msgstr "Ecuación"
 msgid "Citation"
 msgstr "Citación"
 
+#: document/static/js/modules/document_template/templates.js:6
+#: document/static/js/modules/editor/menus/toolbar/model.js:347
+msgid "Blockquote"
+msgstr "Bloque de cita"
+
+#: document/static/js/modules/document_template/templates.js:6
+#: document/static/js/modules/editor/menus/toolbar/model.js:109
+#: document/static/js/modules/editor/menus/toolbar/model.js:380
+msgid "Footnote"
+msgstr "Nota de Pie"
+
 #: document/static/js/modules/document_template/templates.js:10
 msgid "Allowed marks"
 msgstr "Marcas permitidas"
@@ -3079,6 +1645,12 @@ msgstr "Marcas permitidas"
 #: document/static/js/modules/editor/menus/toolbar/model.js:290
 msgid "Underline"
 msgstr "Subrayado"
+
+#: document/static/js/modules/document_template/templates.js:10
+#: document/static/js/modules/editor/dialogs/link.js:154
+#: document/static/js/modules/editor/menus/toolbar/model.js:364
+msgid "Link"
+msgstr "Enlace"
 
 #: document/static/js/modules/document_template/templates.js:21
 msgid "Heading"
@@ -3104,7 +1676,6 @@ msgstr "Configurar"
 msgid "ID"
 msgstr "Identificación"
 
-#. Verificar...
 #: document/static/js/modules/document_template/templates.js:21
 #: document/static/js/modules/document_template/templates.js:32
 #: document/static/js/modules/document_template/templates.js:43
@@ -3113,10 +1684,16 @@ msgid "Metadata function"
 msgstr "Función de metadatos"
 
 #: document/static/js/modules/document_template/templates.js:21
-msgid "Title (translated)"
-msgstr ""
+#: document/static/js/modules/document_template/templates.js:32
+#: document/static/js/modules/document_template/templates.js:43
+#: document/static/js/modules/document_template/templates.js:60
+msgid "None"
+msgstr "Ningún"
 
-#. Ver si cuadra en contexto
+#: document/static/js/modules/document_template/templates.js:21
+msgid "Title (translated)"
+msgstr "Título (traducido)"
+
 #: document/static/js/modules/document_template/templates.js:21
 #: document/static/js/modules/document_template/templates.js:32
 #: document/static/js/modules/document_template/templates.js:43
@@ -3166,7 +1743,6 @@ msgstr "Opcional"
 msgid "Obligatory field"
 msgstr "Campo obligatorio"
 
-#. verificar si cuadraen contexto
 #: document/static/js/modules/document_template/templates.js:21
 #: document/static/js/modules/document_template/templates.js:32
 #: document/static/js/modules/document_template/templates.js:43
@@ -3185,7 +1761,6 @@ msgstr "Opcional, se muestra por defecto"
 msgid "Optional, not shown by default"
 msgstr "Opcional, no se muestra por defecto"
 
-#. o Encabezados permitidos. Verificar en comu de J
 #: document/static/js/modules/document_template/templates.js:21
 msgid "Allowed headings"
 msgstr "Títulos permitidos"
@@ -3229,9 +1804,12 @@ msgid "Item title"
 msgstr "Título del elemento"
 
 #: document/static/js/modules/document_template/templates.js:32
-#, fuzzy
+msgid "Authors"
+msgstr "Autores"
+
+#: document/static/js/modules/document_template/templates.js:32
 msgid "Editors"
-msgstr "Redactor"
+msgstr "Editores"
 
 #: document/static/js/modules/document_template/templates.js:43
 msgid "Richtext"
@@ -3239,43 +1817,40 @@ msgstr "Richtext"
 
 #: document/static/js/modules/document_template/templates.js:43
 msgid "Cases/Case Reports"
-msgstr ""
+msgstr "Casos / informes de casos"
 
 #: document/static/js/modules/document_template/templates.js:43
 msgid "Conclusions/Comment"
-msgstr ""
+msgstr "Conclusiones / comentario"
 
 #: document/static/js/modules/document_template/templates.js:43
 msgid "Discussion/Interpretation"
-msgstr ""
+msgstr "Discusión / Interpretación"
 
 #: document/static/js/modules/document_template/templates.js:43
-#, fuzzy
 msgid "Introduction/Synopsis"
-msgstr "Instituciones"
+msgstr "Introducción / Sinopsis"
 
 #: document/static/js/modules/document_template/templates.js:43
 msgid "Materials"
-msgstr ""
+msgstr "Materiales"
 
 #: document/static/js/modules/document_template/templates.js:43
 msgid "Methods/Methodology/Procedures"
-msgstr ""
+msgstr "Métodos / Metodología / Procedimientos"
 
 #: document/static/js/modules/document_template/templates.js:43
 msgid "Results/Statement of Findings"
-msgstr ""
+msgstr "Resultados / Declaración de resultados"
 
 #: document/static/js/modules/document_template/templates.js:43
 msgid "Subjects/Participants/Patients"
-msgstr ""
+msgstr "Sujetos / Participantes / Pacientes"
 
 #: document/static/js/modules/document_template/templates.js:43
-#, fuzzy
 msgid "Supplementary materials"
-msgstr "Material adicional en un libro"
+msgstr "Materiales complementarios"
 
-#. Verificar encompu de J
 #: document/static/js/modules/document_template/templates.js:51
 msgid "Separator"
 msgstr "Separador"
@@ -3286,21 +1861,19 @@ msgstr "Etiquetas"
 
 #: document/static/js/modules/document_template/templates.js:70
 msgid "User can not change first row"
-msgstr ""
+msgstr "El usuario no puede cambiar la primera fila"
 
 #: document/static/js/modules/document_template/templates.js:80
 msgid "Table of Contents"
 msgstr "Tabla de contenidos"
 
 #: document/static/js/modules/document_template/templates.js:173
-#, fuzzy
 msgid "Add new document style"
-msgstr "Escoger estilo del documento"
+msgstr "Agregar nuevo estilo de documento"
 
 #: document/static/js/modules/document_template/templates.js:176
-#, fuzzy
 msgid "Add new export template"
-msgstr "Añadir nuevo contacto"
+msgstr "Agregar nueva plantilla de exportación"
 
 #: document/static/js/modules/document_template/templates.js:184
 msgid "Element types"
@@ -3323,14 +1896,12 @@ msgid "Footnote specifications"
 msgstr "Especificaciones de nota de pie"
 
 #: document/static/js/modules/document_template/templates.js:186
-#, fuzzy
 msgid "Available languages"
-msgstr "Idiomas permitidos"
+msgstr "Idiomas Disponibles"
 
 #: document/static/js/modules/document_template/templates.js:186
-#, fuzzy
 msgid "Default language"
-msgstr "Idioma del documento"
+msgstr "Idioma predeterminado"
 
 #: document/static/js/modules/document_template/templates.js:186
 msgid "Permitted paper sizes"
@@ -3341,34 +1912,70 @@ msgid "Custom bibliography header"
 msgstr "Encabezado de bibliografía personalizado"
 
 #: document/static/js/modules/document_template/templates.js:186
-#, fuzzy
 msgid "Available citation styles"
-msgstr "Estilo de Citas"
+msgstr "Estilos de citas disponibles"
 
 #: document/static/js/modules/document_template/templates.js:186
-#, fuzzy
 msgid "Default citation style"
-msgstr "Borrar Imagen"
+msgstr "Estilo de cita predeterminado"
 
 #: document/static/js/modules/document_template/templates.js:186
-#, fuzzy
 msgid "Document styles"
-msgstr "Estilo del Documento"
+msgstr "Estilos de documentos"
 
 #: document/static/js/modules/document_template/templates.js:188
-#, fuzzy
 msgid "Export templates"
-msgstr "Exportar lo seleccionado"
+msgstr "Exportar plantillas"
 
 #: document/static/js/modules/documents/access_rights/index.js:21
-#, fuzzy
 msgid "Cannot load document access data."
-msgstr "No se pueden cargar datos de documentos."
+msgstr "No se pueden cargar los datos de acceso al documento."
 
 #: document/static/js/modules/documents/access_rights/index.js:78
 #: document/static/js/modules/documents/access_rights/index.js:81
 msgid "Add contact or invite new user"
-msgstr ""
+msgstr "Agregar contacto o invitar a un nuevo usuario"
+
+#: document/static/js/modules/documents/access_rights/index.js:132
+msgid "Share your document with others"
+msgstr "Compartir tus documentos con otros"
+
+#: document/static/js/modules/documents/access_rights/index.js:215
+msgid "Access rights have been saved"
+msgstr "Los derechos de acceso han sido guardados"
+
+#: document/static/js/modules/documents/access_rights/index.js:216
+msgid "Access rights could not be saved"
+msgstr "Los derechos de acceso no se pudieron guardar"
+
+#: document/static/js/modules/documents/access_rights/templates.js:8
+msgid "My contacts"
+msgstr "Mis contactos"
+
+#: document/static/js/modules/documents/access_rights/templates.js:10
+msgid "My collaborators"
+msgstr "Mis colaboradores"
+
+#: document/static/js/modules/documents/access_rights/templates.js:10
+msgid "Collaborators"
+msgstr "Colaboradores"
+
+#: document/static/js/modules/documents/access_rights/templates.js:10
+#: document/static/js/modules/documents/overview/index.js:154
+msgid "Rights"
+msgstr "Derechos"
+
+#: document/static/js/modules/documents/access_rights/templates.js:21
+msgid "Basic access rights"
+msgstr "Derechos de acceso básicos"
+
+#: document/static/js/modules/documents/access_rights/templates.js:21
+msgid "Basic"
+msgstr "Básico"
+
+#: document/static/js/modules/documents/access_rights/templates.js:21
+msgid "Write"
+msgstr "Escribir"
 
 #: document/static/js/modules/documents/access_rights/templates.js:21
 msgid "Write with changes tracked"
@@ -3378,24 +1985,175 @@ msgstr "Escribir con cambios rastreados"
 msgid "Write tracked"
 msgstr "Escritura rastreada"
 
+#: document/static/js/modules/documents/access_rights/templates.js:21
+#: document/static/js/modules/editor/menus/selection/model.js:33
+msgid "Comment"
+msgstr "Comentario"
+
+#: document/static/js/modules/documents/access_rights/templates.js:21
+msgid "Read"
+msgstr "Leer"
+
+#: document/static/js/modules/documents/access_rights/templates.js:21
+msgid "Access rights used within document review"
+msgstr "Derechos de acceso utilizados en la revisión de documentos"
+
+#: document/static/js/modules/documents/access_rights/templates.js:21
+msgid "Review"
+msgstr "Revisar"
+
+#: document/static/js/modules/documents/access_rights/templates.js:21
+msgid "Read document but not see comments and chats of others"
+msgstr ""
+"Leer el documento pero no mostrar comentarios ni chats de otros usuarios"
+
+#: document/static/js/modules/documents/access_rights/templates.js:21
+msgid "No comments"
+msgstr "Sin comentarios"
+
+#: document/static/js/modules/documents/access_rights/templates.js:21
+msgid "Comment, but not see comments and chats of others"
+msgstr "Comentar, pero no ver comentarios ni chats de otros"
+
 #: document/static/js/modules/documents/access_rights/templates.js:32
 msgid "Invite"
-msgstr ""
+msgstr "Invitación"
 
-#. Encontré esta traducción de Document Overview en informática. No sé si aplica.
+#: document/static/js/modules/documents/overview/actions.js:26
+msgid "Document has been deleted"
+msgstr "El documento ha sido eliminado"
+
+#: document/static/js/modules/documents/overview/actions.js:30
+msgid "Could not delete document"
+msgstr "No se pudo eliminar el documento"
+
+#: document/static/js/modules/documents/overview/actions.js:38
+msgid "Delete the document(s)?"
+msgstr "Borrar el/los documento/s?"
+
+#: document/static/js/modules/documents/overview/actions.js:103
+msgid "Import a Fidus file"
+msgstr "Importar un archivo de Fidus"
+
 #: document/static/js/modules/documents/overview/index.js:56
 msgid "Document Overview"
 msgstr "Resumen de Documento"
 
+#: document/static/js/modules/documents/overview/index.js:106
+msgid "Cannot load data of documents."
+msgstr "No se pueden cargar datos de documentos."
+
+#: document/static/js/modules/documents/overview/index.js:147
+msgid "No documents available"
+msgstr "No hay documentos disponibles"
+
+#: document/static/js/modules/documents/overview/index.js:154
+msgid "Revisions"
+msgstr "Revisiones"
+
+#: document/static/js/modules/documents/overview/index.js:154
+#: user_template_manager/static/js/modules/user_template_manager/overview.js:74
+msgid "Created"
+msgstr "Creado"
+
+#: document/static/js/modules/documents/overview/index.js:154
+#: user_template_manager/static/js/modules/user_template_manager/overview.js:74
+msgid "Last changed"
+msgstr "Último cambio"
+
+#: document/static/js/modules/documents/overview/index.js:154
+msgid "Owner"
+msgstr "Propietario"
+
 #: document/static/js/modules/documents/overview/index.js:228
-#, fuzzy
 msgid "Undefined"
-msgstr "Subrayado"
+msgstr "Indefinido"
+
+#: document/static/js/modules/documents/overview/menu.js:10
+msgid "You cannot delete documents of other users"
+msgstr "No puedes eliminar documentos de otros usuarios"
+
+#: document/static/js/modules/documents/overview/menu.js:19
+msgid "Share selected"
+msgstr "Compartir lo seleccionado"
+
+#: document/static/js/modules/documents/overview/menu.js:25
+msgid "You cannot share documents of other users"
+msgstr "No puedes compartir documentos de otros usuarios"
+
+#: document/static/js/modules/documents/overview/menu.js:35
+msgid "Copy selected"
+msgstr "Copiar lo seleccionado"
+
+#: document/static/js/modules/documents/overview/menu.js:45
+msgid "Export selected as Epub"
+msgstr "Exportar lo seleccionado a Epub"
+
+#: document/static/js/modules/documents/overview/menu.js:55
+msgid "Export selected as HTML"
+msgstr "Exportar lo seleccionado a HTML"
+
+#: document/static/js/modules/documents/overview/menu.js:65
+msgid "Export selected as LaTeX"
+msgstr "Exportar lo seleccionado a LaTeX"
 
 #: document/static/js/modules/documents/overview/menu.js:75
-#, fuzzy
 msgid "Export selected as JATS"
-msgstr "Exportar lo seleccionado a HTML"
+msgstr "Exportar seleccionado como JATS"
+
+#: document/static/js/modules/documents/overview/menu.js:85
+msgid "Download selected as Fidus document"
+msgstr "Descargar lo seleccionado como documento Fidus"
+
+#: document/static/js/modules/documents/overview/menu.js:99
+msgid "Create new document"
+msgstr "Crear nuevo documento"
+
+#: document/static/js/modules/documents/overview/menu.js:104
+msgid "Upload Fidus document"
+msgstr "Subir documento de Fidus"
+
+#: document/static/js/modules/documents/overview/menu.js:110
+msgid "Search documents"
+msgstr "Buscar documentos"
+
+#: document/static/js/modules/documents/revisions/index.js:27
+msgid "Saved revisions of"
+msgstr "Revisiones guardadas de"
+
+#: document/static/js/modules/documents/revisions/index.js:140
+msgid "Do you really want to delete the revision?"
+msgstr "¿Estás seguro que quieres eliminar la revisión?"
+
+#: document/static/js/modules/documents/revisions/index.js:156
+msgid "Revision deleted"
+msgstr "Revisión eliminada"
+
+#: document/static/js/modules/documents/revisions/index.js:163
+msgid "Could not delete revision."
+msgstr "No se pudo eliminar la revisión."
+
+#: document/static/js/modules/documents/revisions/templates.js:6
+msgid "Time"
+msgstr "Hora"
+
+#: document/static/js/modules/documents/revisions/templates.js:6
+msgid "Description"
+msgstr "Descripción"
+
+#: document/static/js/modules/documents/revisions/templates.js:6
+#: document/static/js/modules/editor/marginboxes/templates.js:82
+msgid "Recreate"
+msgstr "Rehacer"
+
+#: document/static/js/modules/documents/revisions/templates.js:6
+#: document/static/js/modules/editor/menus/headerbar/model.js:87
+msgid "Download"
+msgstr "Descargar"
+
+#: document/static/js/modules/documents/tools.js:32
+msgid "Could not obtain extra document data"
+msgstr "No se pudieron obtener datos adicionales del documento"
 
 #: document/static/js/modules/editor/citations/index.js:92
 msgid "No tracking"
@@ -3405,13 +2163,93 @@ msgstr "Sin rastreo"
 msgid "Changes to citation sources are not being tracked!"
 msgstr "¡En las fuentes de citas no se utilizaron cambios rastreados!"
 
+#: document/static/js/modules/editor/clipboard/copy/serializers.js:37
+#: menu/static/js/modules/menu/index.js:15
+msgid "Bibliography"
+msgstr "Bibliografía"
+
+#: document/static/js/modules/editor/collab/chat.js:80
+msgid "Send a message..."
+msgstr "Enviar un mensaje..."
+
+#: document/static/js/modules/editor/comments/editors/answer.js:11
+#: document/static/js/modules/editor/comments/editors/comment.js:87
+#: document/static/js/modules/editor/marginboxes/templates.js:13
+#: document/static/js/modules/editor/marginboxes/templates.js:82
+#: document/static/js/modules/editor/state_plugins/contributor_input.js:58
+#: document/static/js/modules/editor/state_plugins/links.js:125
+msgid "Edit"
+msgstr "Editar"
+
 #: document/static/js/modules/editor/comments/editors/comment.js:87
 msgid "High priority"
 msgstr "Alta prioridad"
 
+#: document/static/js/modules/editor/comments/interactions.js:307
+#: document/static/js/modules/editor/comments/interactions.js:365
+#: document/static/js/modules/editor/comments/store.js:50
+msgid "Reviewer"
+msgstr "Reseña"
+
+#: document/static/js/modules/editor/dialogs/citation.js:14
+#: document/static/js/modules/editor/dialogs/figure.js:21
+#: document/static/js/modules/editor/dialogs/link.js:10
+#: document/static/js/modules/editor/dialogs/math.js:21
+#: document/static/js/modules/editor/dialogs/table.js:53
+#: document/static/js/modules/editor/dialogs/templates.js:28
+msgid "Insert"
+msgstr "Insertar"
+
+#: document/static/js/modules/editor/dialogs/citation.js:31
+#: document/static/js/modules/editor/dialogs/figure.js:187
+#: document/static/js/modules/editor/dialogs/templates.js:41
+#: document/static/js/modules/editor/state_plugins/links.js:125
+#: user/static/js/modules/profile/dialogs.js:190
+msgid "Remove"
+msgstr "Eliminar"
+
+#: document/static/js/modules/editor/dialogs/citation.js:39
+#: document/static/js/modules/editor/dialogs/contributor.js:20
+#: document/static/js/modules/editor/dialogs/contributor.js:77
+#: document/static/js/modules/editor/dialogs/figure.js:178
+#: document/static/js/modules/editor/dialogs/link.js:55
+#: document/static/js/modules/editor/dialogs/math.js:21
+#: document/static/js/modules/editor/dialogs/table.js:194
+#: usermedia/static/js/modules/images/edit_dialog/index.js:24
+msgid "Update"
+msgstr "Actualizar"
+
+#: document/static/js/modules/editor/dialogs/citation.js:57
+msgid "Configure Citation"
+msgstr "Configurar Cita"
+
+#: document/static/js/modules/editor/dialogs/citation.js:189
+#: usermedia/static/js/modules/images/selection_dialog/index.js:98
+msgid "Search..."
+msgstr "Buscar..."
+
+#: document/static/js/modules/editor/dialogs/citation.js:329
+msgid "Please select at least one citation source!"
+msgstr "¡Por favor, selecciona al menos una fuente de cita!"
+
+#: document/static/js/modules/editor/dialogs/contributor.js:20
+#: document/static/js/modules/editor/dialogs/contributor.js:77
+#: document/static/js/modules/editor/state_plugins/contributor_input.js:39
+#: document/static/js/modules/editor/state_plugins/tag_input.js:47
+msgid "Add"
+msgstr "Añadir"
+
+#: document/static/js/modules/editor/dialogs/contributor.js:33
+msgid "Email is in incorrect format!"
+msgstr "¡El correo electrónico está en formato incorrecto!"
+
 #: document/static/js/modules/editor/dialogs/figure.js:26
 msgid "or"
 msgstr "o"
+
+#: document/static/js/modules/editor/dialogs/figure.js:26
+msgid "Insert image"
+msgstr "Insertar imagen"
 
 #: document/static/js/modules/editor/dialogs/figure.js:37
 #: document/static/js/modules/editor/dialogs/math.js:68
@@ -3443,18 +2281,76 @@ msgstr "Símbolos y letras romanas"
 msgid "Copy to Clipboard"
 msgstr "Copiar al portapapeles"
 
+#: document/static/js/modules/editor/dialogs/figure.js:43
+#: document/static/js/modules/editor/dialogs/math.js:74
+#: document/static/js/modules/editor/menus/toolbar/model.js:485
+#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
+msgid "Redo"
+msgstr "Rehacer"
+
 #: document/static/js/modules/editor/dialogs/figure.js:44
 #: document/static/js/modules/editor/dialogs/math.js:75
 msgid "Toggle Virtual Keyboard"
 msgstr "Teclado virtual"
 
+#: document/static/js/modules/editor/dialogs/figure.js:45
+#: document/static/js/modules/editor/dialogs/math.js:76
+#: document/static/js/modules/editor/menus/toolbar/model.js:478
+#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
+msgid "Undo"
+msgstr "Deshacer"
+
 #: document/static/js/modules/editor/dialogs/figure.js:62
 msgid "Type formula"
 msgstr "fórmula"
 
+#: document/static/js/modules/editor/dialogs/figure.js:209
+msgid "Enter latex math or insert an image"
+msgstr "Itroducir matemáticas de latex o insertar una imagen"
+
+#: document/static/js/modules/editor/dialogs/language.js:14
+msgid "Change"
+msgstr "Cambios"
+
+#: document/static/js/modules/editor/dialogs/language.js:40
+msgid "Change language of the document"
+msgstr "Cambiar el idioma del documento"
+
+#: document/static/js/modules/editor/dialogs/math.js:51
+msgid "Mathematical formula"
+msgstr "Fórmula matemática"
+
+#: document/static/js/modules/editor/dialogs/revision.js:26
+msgid "Revision description"
+msgstr "Descripción de la versión"
+
+#: document/static/js/modules/editor/dialogs/table.js:88
+msgid "Insert table"
+msgstr "Insertar tabla"
+
 #: document/static/js/modules/editor/dialogs/table.js:205
 msgid "Resize table"
 msgstr "Cambiar tamaño de tabla"
+
+#: document/static/js/modules/editor/dialogs/templates.js:8
+msgid "Internal"
+msgstr "Interno"
+
+#: document/static/js/modules/editor/dialogs/templates.js:8
+msgid "Select Target"
+msgstr "Seleccionar ubicacion"
+
+#: document/static/js/modules/editor/dialogs/templates.js:8
+msgid "External"
+msgstr "Externo"
+
+#: document/static/js/modules/editor/dialogs/templates.js:8
+msgid "Link title"
+msgstr "Título del enlace"
+
+#: document/static/js/modules/editor/dialogs/templates.js:13
+msgid "Description (optional)"
+msgstr "Descripción(opcional)"
 
 #: document/static/js/modules/editor/dialogs/templates.js:15
 msgid "Position"
@@ -3507,6 +2403,22 @@ msgstr "Fijado"
 msgid "Fit the content"
 msgstr "Ajustar el contenido"
 
+#: document/static/js/modules/editor/dialogs/templates.js:16
+#: document/static/js/modules/editor/menus/toolbar/model.js:430
+msgid "Math"
+msgstr "Matematicas"
+
+#: document/static/js/modules/editor/dialogs/templates.js:28
+#: usermedia/static/js/modules/images/selection_dialog/index.js:105
+msgid "Image"
+msgstr "Imagen"
+
+#: document/static/js/modules/editor/dialogs/templates.js:28
+#: user/static/js/modules/profile/dialogs.js:5
+#: usermedia/static/js/modules/images/edit_dialog/index.js:24
+msgid "Upload"
+msgstr "Subir"
+
 #: document/static/js/modules/editor/dialogs/templates.js:35
 msgid "100"
 msgstr "100"
@@ -3523,6 +2435,44 @@ msgstr "50"
 msgid "25"
 msgstr "25"
 
+#: document/static/js/modules/editor/dialogs/templates.js:35
+msgid "Insert caption"
+msgstr "Insertar subtítulo"
+
+#: document/static/js/modules/editor/dialogs/templates.js:41
+msgid "My sources"
+msgstr "Mis fuentes"
+
+#: document/static/js/modules/editor/dialogs/templates.js:41
+msgid "Citation format"
+msgstr "Estilo de citas"
+
+#: document/static/js/modules/editor/dialogs/templates.js:41
+msgid "(Author, 1998)"
+msgstr "(Autor, 1998)"
+
+#: document/static/js/modules/editor/dialogs/templates.js:41
+msgid "Author (1998)"
+msgstr "Autor (1998)"
+
+#: document/static/js/modules/editor/dialogs/templates.js:52
+msgid "Text before"
+msgstr "Texto anterior"
+
+#: document/static/js/modules/editor/dialogs/templates.js:55
+msgid "Firstname"
+msgstr "Nombre"
+
+#: document/static/js/modules/editor/dialogs/templates.js:55
+msgid "Lastname"
+msgstr "Apellido"
+
+#: document/static/js/modules/editor/dialogs/templates.js:55
+#: document/static/js/modules/schema/document/content.js:53
+#: user/static/js/modules/profile/templates.js:35
+msgid "Email"
+msgstr "Correo electrónico"
+
 #: document/static/js/modules/editor/document_template/index.js:35
 msgid "Optional sections"
 msgstr "Secciones Opcionales"
@@ -3534,6 +2484,34 @@ msgstr "Elija qué secciones opcionales habilitar."
 #: document/static/js/modules/editor/document_template/index.js:43
 msgid "Show/hide"
 msgstr "Mostrar/ocultrar"
+
+#: document/static/js/modules/editor/document_template/index.js:67
+msgid "Safari bug warning"
+msgstr "Advertencia de error de Safari"
+
+#: document/static/js/modules/editor/document_template/index.js:69
+msgid ""
+"Unfortunately Safari has a bug which makes it impossible to export to this "
+"format. Please use Chrome or Firefox (on a desktop computer)."
+msgstr ""
+"Desafortunadamente, Safari tiene un error que hace que sea imposible "
+"exportar a este formato. Utilice Chrome o Firefox (en una computadora)."
+
+#: document/static/js/modules/editor/document_template/index.js:87
+msgid "Export the document to a DOCX file with the given template."
+msgstr "Exportar el documento a un archivo DOCX con la plantilla dada."
+
+#: document/static/js/modules/editor/document_template/index.js:109
+msgid "Export the document to an ODT file with the given template."
+msgstr "Exporte el documento a un archivo ODT con la plantilla dada."
+
+#: document/static/js/modules/editor/index.js:176
+msgid ""
+"Warning! Not all your changes have been saved! You could suffer data loss. "
+"Attempting to reconnect..."
+msgstr ""
+"¡Advertencia! ¡No se han guardado todos sus cambios! Podría sufrir pérdida "
+"de datos. Intentando reconectar..."
 
 #: document/static/js/modules/editor/marginboxes/templates.js:73
 msgid "Assigned to"
@@ -3583,60 +2561,139 @@ msgstr "Inserción"
 msgid "Deletion"
 msgstr "Supresión"
 
+#: document/static/js/modules/editor/marginboxes/templates.js:88
+msgid "Format change"
+msgstr "Cambio de formato"
+
 #: document/static/js/modules/editor/marginboxes/templates.js:89
 msgid "Block change"
 msgstr "Cambio de bloque"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:90
+msgid "New paragraph"
+msgstr "Nuevo párrafo"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:91
+msgid "New heading"
+msgstr "Nuevo título"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:92
 msgid "Inserted citation"
 msgstr "Insertar citación"
 
+#: document/static/js/modules/editor/marginboxes/templates.js:93
+msgid "Wrapped into blockquote"
+msgstr "Poner en bloque de cita"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:94
+msgid "Added code block"
+msgstr "Bloque de código añadido"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:95
+msgid "Inserted figure"
+msgstr "Figura inserrtada"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:96
+msgid "New list item"
+msgstr "Nuevo elemento de lista"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:97
+msgid "Inserted table"
+msgstr "Tabla insertada"
+
 #: document/static/js/modules/editor/marginboxes/templates.js:98
 msgid "New keyword: %(keyword)s"
 msgstr "Nueva palabra clave: %(palabra/s clave/s)"
 
+#: document/static/js/modules/editor/marginboxes/templates.js:99
+msgid "Merged paragraph"
+msgstr "Párrafo fusionado"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:100
+msgid "Merged heading"
+msgstr "Rumbo combinado"
+
 #: document/static/js/modules/editor/marginboxes/templates.js:101
-#, fuzzy
 msgid "Deleted citation"
-msgstr "Borrar Imagen"
+msgstr "Cita eliminada"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:102
+msgid "Unwrapped blockquote"
+msgstr "Cita en bloque sin envolver"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:103
+msgid "Removed code block"
+msgstr "Se eliminó el bloque de código"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:104
+msgid "Deleted figure"
+msgstr "Figura eliminada"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:105
+msgid "Lifted list item"
+msgstr "Elemento de lista levantado"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:106
+#: document/static/js/modules/editor/menus/table/model.js:242
+msgid "Delete table"
+msgstr "Eliminar tabla"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:107
 msgid "Deleted keyword: %(keyword)s"
-msgstr ""
+msgstr "Palabra clave eliminada: %(keyword)s"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:108
 msgid "Changed into paragraph"
-msgstr ""
+msgstr "Cambiado a párrafo"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:109
 msgid "Changed into heading %(level)s"
-msgstr ""
+msgstr "Cambiado al encabezado %(level)s"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:110
-#, fuzzy
 msgid "Changed into code block"
-msgstr "Bloque de cita"
+msgstr "Cambiado al bloque de código"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:125
+msgid "Removed"
+msgstr "Eliminar"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:129
+#: usermedia/static/js/modules/images/overview/index.js:165
+msgid "Added"
+msgstr "Adicional"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:143
 msgid "Code block"
-msgstr ""
+msgstr "Bloque de código"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:148
 msgid "Was"
-msgstr ""
+msgstr "Fue"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:164
+msgid "ca."
+msgstr "California."
+
+#: document/static/js/modules/editor/marginboxes/templates.js:164
+msgid "Accept"
+msgstr "Aceptar"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:164
+msgid "Reject"
+msgstr "Rechazar"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:178
-#, fuzzy
 msgid "Comments"
-msgstr "Comentario"
+msgstr "Comentarios"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:178
 msgid "Show comments from all authors."
-msgstr ""
+msgstr "Mostrar comentarios de todos los autores."
 
 #: document/static/js/modules/editor/marginboxes/templates.js:178
 msgid "Any"
-msgstr ""
+msgstr "Ninguna"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:178
 msgid "Show comments of "
@@ -3644,49 +2701,238 @@ msgstr "Mostrar comentarios de "
 
 #: document/static/js/modules/editor/marginboxes/templates.js:178
 msgid "Assignee"
-msgstr ""
+msgstr "Cesionario"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:178
 msgid "Any/None"
-msgstr ""
+msgstr "Cualquiera / ninguno"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:178
-#, fuzzy
 msgid "Only major comments"
-msgstr "Documentos"
+msgstr "Solo comentarios importantes"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:178
-#, fuzzy
 msgid "Resolved comments"
-msgstr "Documentos"
+msgstr "Comentarios resueltos"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:182
 #: document/static/js/modules/editor/menus/headerbar/model.js:307
-#, fuzzy
 msgid "Track changes"
-msgstr "Último cambio"
+msgstr "Cambio de camino"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:32
+msgid "File handling"
+msgstr "Manejar archivos"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:36
+msgid "Share"
+msgstr "Compartir"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:39
+msgid "Share the document with other users."
+msgstr "Compartir el documento con otros usuarios."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:54
+#: document/static/js/modules/editor/menus/headerbar/view.js:275
+msgid "Close the document and return to the document overview menu."
+msgstr ""
+"Cierre el documento y regrese al menú de descripción general del documento."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:60
+#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
+msgid "Save revision"
+msgstr "Guardar revisión"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:63
+msgid "Save a revision of the current document."
+msgstr "Guardar una revisión del documento actual."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:75
+msgid "Create Copy"
+msgstr "Crear copia"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:78
+msgid "Create copy of the current document."
+msgstr "Crear copia del documento actual."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:90
+msgid "Download the current document."
+msgstr "Descargue el documento actual."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:96
+msgid "Print/PDF"
+msgstr "Imprimir PDF"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:99
+msgid "Either print or create a PDF using your browser print dialog."
+msgstr ""
+"Imprima o cree un PDF utilizando el diálogo de impresión de su navegador."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:115
+msgid "Export"
+msgstr "Exportar"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:116
+msgid "Export of the document contents"
+msgstr "Exportar el contenido del documento"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:120
+msgid "HTML"
+msgstr "HTML"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:122
+msgid "Export the document to an HTML file."
+msgstr "Exporte el documento a un archivo HTML."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:135
+msgid "Epub"
+msgstr "Epub"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:137
+msgid "Export the document to an Epub electronic reader file."
+msgstr "Exportar el documento a un archivo de lectura electrónica Epub."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:150
+msgid "LaTeX"
+msgstr "Látex"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:152
+msgid "Export the document to an LaTeX file."
+msgstr "Exporte el documento a un archivo LaTeX."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:165
 msgid "JATS (experimental)"
-msgstr ""
+msgstr "JATS (experimental)"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:167
-msgid "Export the document to a Journal Archiving and Interchange Tag Library NISO JATS Version 1.2 file."
+msgid ""
+"Export the document to a Journal Archiving and Interchange Tag Library NISO "
+"JATS Version 1.2 file."
 msgstr ""
+"Exporte el documento a un archivo NISO JATS Versión 1.2 de la Biblioteca de "
+"Etiquetas de Intercambio y Archivado de Diario."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:182
+msgid "Settings"
+msgstr "Configuraciones"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:183
+msgid "Configure settings of this document."
+msgstr "Configurar ajustes del documento."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:188
+msgid "Citation Style"
+msgstr "Estilo de Citas"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:190
+msgid "Choose your preferred citation style."
+msgstr "Escoger estilo de citas."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:198
+msgid "Document Style"
+msgstr "Estilo del Documento"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:200
+msgid "Choose your preferred document style."
+msgstr "Elija su estilo de documento preferido."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:208
+msgid "Text Language"
+msgstr "Lenguaje de texto"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:210
+msgid "Choose the language of the document."
+msgstr "Elegir el idioma del documento."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:215
+#: document/static/js/modules/schema/const.js:1
+msgid "English (United States)"
+msgstr "Inglés Estados Unidos)"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:215
+#: document/static/js/modules/schema/const.js:1
+msgid "English (United Kingdom)"
+msgstr "Inglés reino unido)"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:215
+#: document/static/js/modules/schema/const.js:1
+msgid "German (Germany)"
+msgstr "Alemán Alemania)"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:215
+#: document/static/js/modules/schema/const.js:1
+msgid "Chinese (Simplified)"
+msgstr "Chino simplificado)"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:215
+#: document/static/js/modules/schema/const.js:1
+msgid "Portuguese (Brazil)"
+msgstr "Portugués (Brasil)"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:224
+msgid "Other"
+msgstr "Otro"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:239
+msgid "Paper Size"
+msgstr "Tamaño del Papel"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:241
+msgid "Choose a papersize for print and PDF generation."
+msgstr "Elija un tamaño de papel para la impresión y la generación de PDF."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:247
+msgid "DIN A4"
+msgstr "A4"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:249
+msgid "A4 (DIN A4/ISO 216) which is used in most of the world."
+msgstr "A4 (DIN A4/ISO 216) tamaño más utilizado a nivel mundial."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:264
+msgid "US Letter"
+msgstr "US Letter"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:266
+msgid "The format used by the USA and some other American countries."
+msgstr "Formato utilizado por los EEUU y algunos países de América."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:284
+msgid "Tools"
+msgstr "Herramientas"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:285
+msgid "Select document editing tool."
+msgstr "Seleccione la herramienta de edición de documentos."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:289
+#: document/static/js/modules/editor/tools/word_count.js:32
+msgid "Word counter"
+msgstr "Contador de palabras"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:291
+msgid "See document statistics."
+msgstr "Ver estadísticas del documento."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:297
+msgid "Keyboard shortcuts"
+msgstr "Atajos de teclado"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:299
+msgid "Show an overview of available keyboard shortcuts."
+msgstr "Muestra una descripción general de los atajos de teclado disponibles."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:309
-#, fuzzy
 msgid "Tracking changes to the document"
-msgstr "El subtítulo del documento"
+msgstr "Seguimiento de cambios en el documento"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:315
 msgid "Record"
-msgstr ""
+msgstr "Grabar"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:317
-#, fuzzy
 msgid "Record document changes"
-msgstr "Mis documentos"
+msgstr "Registrar cambios en el documento"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:332
 msgid "Accept all"
@@ -3704,15 +2950,26 @@ msgstr "Rechazar todos"
 msgid "Reject all tracked changes."
 msgstr "Rechazar todos los cambios rastreados."
 
+#: document/static/js/modules/editor/menus/headerbar/view.js:272
+msgid "Untitled Document"
+msgstr "Documento sin nombre"
+
+#: document/static/js/modules/editor/menus/selection/model.js:44
+#: document/static/js/modules/editor/state_plugins/links.js:125
+msgid "Anchor"
+msgstr "Ancla"
+
 #: document/static/js/modules/editor/menus/selection/model.js:59
-#, fuzzy
 msgid "Accept all in selection"
-msgstr "Compartir lo seleccionado"
+msgstr "Aceptar todo en la selección"
 
 #: document/static/js/modules/editor/menus/selection/model.js:67
-#, fuzzy
 msgid "Reject all in selection"
-msgstr "Compartir lo seleccionado"
+msgstr "Rechazar todo en la selección"
+
+#: document/static/js/modules/editor/menus/table/model.js:32
+msgid "Add row above"
+msgstr "Agregar fila arriba"
 
 #: document/static/js/modules/editor/menus/table/model.js:32
 #: document/static/js/modules/editor/menus/table/model.js:49
@@ -3726,29 +2983,161 @@ msgstr "Compartir lo seleccionado"
 #: document/static/js/modules/editor/menus/table/model.js:194
 #: document/static/js/modules/editor/menus/table/model.js:211
 msgid "Not tracked"
-msgstr ""
+msgstr "Sin seguimiento"
+
+#: document/static/js/modules/editor/menus/table/model.js:34
+msgid "Add a row above the current row"
+msgstr "Agregar una fila sobre la fila actual"
+
+#: document/static/js/modules/editor/menus/table/model.js:49
+msgid "Add row below"
+msgstr "Agregar fila debajo"
+
+#: document/static/js/modules/editor/menus/table/model.js:51
+msgid "Add a row below the current row"
+msgstr "Agregar una fila debajo de la fila actual"
+
+#: document/static/js/modules/editor/menus/table/model.js:66
+msgid "Add column left"
+msgstr "Agregar columna a la izquierda"
+
+#: document/static/js/modules/editor/menus/table/model.js:68
+msgid "Add a column to the left of the current column"
+msgstr "Agregar una columna a la izquierda de la columna actual"
+
+#: document/static/js/modules/editor/menus/table/model.js:83
+msgid "Add column right"
+msgstr "Agregar columna a la derecha"
+
+#: document/static/js/modules/editor/menus/table/model.js:85
+msgid "Add a column to the right of the current column"
+msgstr "Agregar una columna a la derecha de la columna actual"
+
+#: document/static/js/modules/editor/menus/table/model.js:105
+msgid "Delete current row"
+msgstr "Eliminar fila actual"
+
+#: document/static/js/modules/editor/menus/table/model.js:122
+msgid "Delete current column"
+msgstr "Eliminar columna actual"
+
+#: document/static/js/modules/editor/menus/table/model.js:142
+msgid "Merge selected cells"
+msgstr "Combinar celdas seleccionadas"
 
 #: document/static/js/modules/editor/menus/table/model.js:157
 msgid "Split cells"
+msgstr "Células partidas"
+
+#: document/static/js/modules/editor/menus/table/model.js:159
+msgid "Split selected cell"
+msgstr "Dividir celda seleccionada"
+
+#: document/static/js/modules/editor/menus/table/model.js:179
+msgid "Toggle header-status of currently selected row"
+msgstr "Alternar el estado del encabezado de la fila seleccionada actualmente"
+
+#: document/static/js/modules/editor/menus/table/model.js:196
+msgid "Toggle header-status of currently selected column"
 msgstr ""
+"Alternar el estado del encabezado de la columna seleccionada actualmente"
+
+#: document/static/js/modules/editor/menus/table/model.js:211
+msgid "Toggle header cell"
+msgstr "Alternar celda de encabezado"
+
+#: document/static/js/modules/editor/menus/table/model.js:213
+msgid "Toggle header-status of currently selected cells"
+msgstr ""
+"Alternar el estado del encabezado de las celdas seleccionadas actualmente"
 
 #: document/static/js/modules/editor/menus/table/model.js:231
 msgid "Resize/Reposition"
-msgstr ""
+msgstr "Cambiar tamaño / Reposición"
 
 #: document/static/js/modules/editor/menus/table/model.js:233
 msgid "Resize/Reposition a table."
-msgstr ""
+msgstr "Cambiar el tamaño / reposicionar una tabla."
+
+#: document/static/js/modules/editor/menus/table/model.js:245
+msgid "Delete currently selected table"
+msgstr "Eliminar la tabla seleccionada actualmente"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:8
+msgid "Normal Text"
+msgstr "Texto normal"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:9
+msgid "1st Heading"
+msgstr "1er título"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:10
+msgid "2nd Heading"
+msgstr "2do título"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:11
+msgid "3rd Heading"
+msgstr "3.er rumbo"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:12
+msgid "4th Heading"
+msgstr "4 ° título"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:13
+msgid "5th Heading"
+msgstr "5 ° rumbo"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:14
+msgid "6th Heading"
+msgstr "6 ° rumbo"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:80
+msgid "Open/close header menu"
+msgstr "Abrir / cerrar menú de encabezado"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:315
+msgid "Numbered list"
+msgstr "Lista numerada"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:398
+msgid "Cite"
+msgstr "Citar"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:414
+msgid "Horizontal line"
+msgstr "Linea horizontal"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:462
+msgid "Insert a table into the document."
+msgstr "Insertar una tabla en el documento."
+
+#: document/static/js/modules/editor/menus/toolbar/view.js:259
+msgid "More"
+msgstr "Más"
 
 #: document/static/js/modules/editor/navigator/index.js:190
-#, fuzzy
 msgid "Document Navigator"
-msgstr "Estilo de documento"
+msgstr "Navegador de documentos"
+
+#: document/static/js/modules/editor/state_plugins/keyword_input.js:46
+msgid "Add keyword..."
+msgstr "Añadir palabra clave..."
+
+#: document/static/js/modules/editor/state_plugins/links.js:33
+msgid "Link copied to clipboard"
+msgstr "link copiado al portapapeles"
+
+#: document/static/js/modules/editor/state_plugins/links.js:35
+msgid "Copy to clipboard failed. Please copy manually."
+msgstr "La copia al portapapeles ha fallado. Por favor copie manualmente."
 
 #: document/static/js/modules/editor/state_plugins/links.js:125
-#, fuzzy
+msgid "Copy link"
+msgstr "Copiar link"
+
+#: document/static/js/modules/editor/state_plugins/links.js:125
 msgid "Edit link"
-msgstr "Edición"
+msgstr "Editar enlace"
 
 #: document/static/js/modules/editor/state_plugins/links.js:125
 msgid "Remove link"
@@ -3762,42 +3151,166 @@ msgstr "Copiar ancla"
 msgid "Remove anchor"
 msgstr "Eliminar ancla"
 
+#: document/static/js/modules/editor/tools/show_key_bindings.js:15
+msgid "Keyboard Shortcuts"
+msgstr "Atajos del teclado"
+
+#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
+msgid "Print"
+msgstr "Imprimir"
+
+#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
+msgid "Show keyboard shortcuts"
+msgstr "Mostrar atajos del teclado"
+
+#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
+msgid "Paste with content detection"
+msgstr "Pegar con detección de contenido"
+
+#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
+msgid "Paste without content detection"
+msgstr "Pegar sin detección de contenido"
+
+#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
+msgid "Bold"
+msgstr "Negrita"
+
+#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
+msgid "Italics"
+msgstr "Cursiva"
+
+#: document/static/js/modules/editor/tools/word_count_templates.js:5
+msgid "Number of"
+msgstr "Número de"
+
+#: document/static/js/modules/editor/tools/word_count_templates.js:5
+msgid "Document"
+msgstr "Documento"
+
+#: document/static/js/modules/editor/tools/word_count_templates.js:5
+msgid "Words"
+msgstr "Palabras"
+
+#: document/static/js/modules/editor/tools/word_count_templates.js:5
+msgid "Characters without blanks"
+msgstr "Caracteres sin espacios"
+
+#: document/static/js/modules/editor/tools/word_count_templates.js:5
+msgid "Characters with blanks"
+msgstr "Caracteres con espacios"
+
+#: document/static/js/modules/exporter/docx/metadata.js:65
+#: document/static/js/modules/exporter/docx/metadata.js:66
+#: document/static/js/modules/exporter/odt/metadata.js:66
+msgid "Unknown"
+msgstr "Desconocido"
+
+#: document/static/js/modules/exporter/epub/index.js:22
+msgid "Epub export has been initiated."
+msgstr "La exportación del archivo Epub se ha iniciado."
+
+#: document/static/js/modules/exporter/html/index.js:19
+msgid "HTML export has been initiated."
+msgstr "La exportación del archivo HTML ha sido iniciada."
+
+#: document/static/js/modules/exporter/native/copy.js:30
+msgid " successfully copied."
+msgstr "copiado con exito."
+
+#: document/static/js/modules/exporter/native/revision.js:38
+msgid "Revision saved"
+msgstr "Versión guardada"
+
+#: document/static/js/modules/exporter/native/revision.js:38
+msgid "Revision could not be saved."
+msgstr "No se pudo guardar esta versión del documento"
+
+#: document/static/js/modules/exporter/native/shrink.js:17
+msgid "File export has been initiated."
+msgstr "La exportación del archivo ha sido iniciada"
+
 #: document/static/js/modules/exporter/print/index.js:15
 msgid "Printing has been initiated."
 msgstr "La impresión ha sido iniciada."
+
+#: document/static/js/modules/importer/file.js:42
+#: document/static/js/modules/importer/file.js:67
+msgid "The uploaded file does not appear to be a Fidus Writer file."
+msgstr "El archivo cargado no parece ser un archivo de Fidus Writer."
+
+#: document/static/js/modules/importer/file.js:123
+msgid "successfully imported."
+msgstr " importado con exito."
+
+#: document/static/js/modules/importer/file.js:128
+msgid ""
+"The uploaded file does not appear to be of the version used on this server: "
+msgstr ""
+"El archivo cargado no parece ser de la versión utilizada en este servidor: "
+
+#: document/static/js/modules/importer/native.js:53
+msgid "Could not save Image"
+msgstr "No se pudo guardar la imagen"
+
+#: document/static/js/modules/importer/native.js:103
+msgid "Could not create document"
+msgstr "No se pudo crear el documento"
+
+#: document/static/js/modules/importer/native.js:141
+msgid "Could not save "
+msgstr "No se pudo guardar "
+
+#: document/static/js/modules/maintenance/index.js:24
+msgid "Updating..."
+msgstr "Actualizando..."
 
 #: document/static/js/modules/maintenance/index.js:25
 msgid "Updating documents."
 msgstr "Actualizando documentos."
 
+#: document/static/js/modules/maintenance/index.js:43
+msgid "Downloaded batch"
+msgstr "Lote descargado"
+
+#: document/static/js/modules/maintenance/index.js:47
+msgid "All documents updated!"
+msgstr "Todos los documentos actualizados!"
+
 #: document/static/js/modules/maintenance/index.js:49
-#, fuzzy
 msgid "No documents to update."
-msgstr "El/los documento(s) han sido borrado(s)"
+msgstr "No hay documentos para actualizar."
+
+#: document/static/js/modules/maintenance/index.js:55
+msgid "Could not download batch"
+msgstr "No se pudo descargar el lote"
+
+#: document/static/js/modules/maintenance/index.js:122
+msgid "The document has been updated"
+msgstr "El documento ha sido actualizado"
 
 #: document/static/js/modules/maintenance/index.js:127
 msgid "Updating document templates."
 msgstr "Actualizando plantillas de documentos"
 
 #: document/static/js/modules/maintenance/index.js:136
-#, fuzzy
 msgid "No document templates to update."
-msgstr "El/los documento(s) han sido borrado(s)"
+msgstr "No hay plantillas de documentos para actualizar."
 
 #: document/static/js/modules/maintenance/index.js:176
-#, fuzzy
 msgid "The document template has been updated"
-msgstr "El/los documento(s) han sido borrado(s)"
+msgstr "La plantilla del documento ha sido actualizada"
 
 #: document/static/js/modules/maintenance/index.js:180
-#, fuzzy
 msgid "All document templates updated!"
-msgstr "El/los documento(s) han sido borrado(s)"
+msgstr "¡Todas las plantillas de documentos actualizadas!"
+
+#: document/static/js/modules/maintenance/index.js:187
+msgid "Updating saved revisions."
+msgstr "Actualizando las versiones guardadas"
 
 #: document/static/js/modules/maintenance/index.js:196
-#, fuzzy
 msgid "No document revisions to update."
-msgstr "El/los documento(s) han sido borrado(s)"
+msgstr "No hay revisiones de documentos para actualizar."
 
 #: document/static/js/modules/maintenance/index.js:242
 msgid "The document revision has been updated: "
@@ -3806,18 +3319,116 @@ msgstr "La versión del documento ha sido actualizada: "
 #: document/static/js/modules/maintenance/index.js:253
 msgid "All documents, document templates and document revisions updated!"
 msgstr ""
+"¡Todos los documentos, plantillas de documentos y revisiones de documentos "
+"actualizados!"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Albanian"
+msgstr "Albanés"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Asturian"
+msgstr "asturiano"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Belarusian"
+msgstr "Bielorruso"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Breton"
+msgstr "Bretón"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Catalan (Valencia)"
+msgstr "Catalán (valencia)"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "English (Australia)"
+msgstr "Inglés (Australia)"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "English (Canada)"
+msgstr "Inglés canadiense"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "English (New Zealand)"
+msgstr "Inglés (Nueva Zelanda)"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "English (South Africa)"
+msgstr "Inglés (Sudáfrica)"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Esperanto"
+msgstr "Esperanto"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Galician"
+msgstr "Gallego"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "German (Austria)"
+msgstr "Alemán (Austria)"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "German (Switzerland)"
+msgstr "Alemán (Suiza)"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Khmer"
+msgstr "Camboyano"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Malayalam"
+msgstr "Malayalam"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Norwegian (bokmål)"
+msgstr "Noruego (bokmål)"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Norwegian (nynorsk)"
+msgstr "Noruego (nynorsk)"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Persian"
+msgstr "Persa"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Portuguese (Portugal)"
+msgstr "Portugués (portugal)"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Serbian (Cyrillic)"
+msgstr "Serbio (cirílico)"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Serbian (Latin)"
+msgstr "Serbio (latín)"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Slovenian"
+msgstr "Esloveno"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Tamil"
+msgstr "Tamil"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Tagalog"
+msgstr "Tagalo"
 
 #: feedback/static/js/modules/feedback/index.js:18
 msgid "Tech support"
-msgstr ""
+msgstr "Apoyo técnico"
 
 #: feedback/static/js/modules/feedback/index.js:18
 msgid "Did you encounter an error or bug?"
-msgstr ""
+msgstr "¿Encontró un error o error?"
 
 #: feedback/static/js/modules/feedback/index.js:18
 msgid "Give a brief description of what has happened."
-msgstr ""
+msgstr "Dé una breve descripción de lo que sucedió."
 
 #: feedback/static/js/modules/feedback/index.js:18
 msgid "submit"
@@ -3828,14 +3439,73 @@ msgid "Thank you for your report!"
 msgstr "¡Gracias por tu comentario!"
 
 #: feedback/static/js/modules/feedback/index.js:33
-#, fuzzy
 msgid "Technical support"
-msgstr "Informe técnico"
+msgstr "Soporte técnico"
+
+#: menu/static/js/modules/menu/index.js:9
+msgid "Documents"
+msgstr "Documentos"
+
+#: menu/static/js/modules/menu/index.js:11
+msgid "edit documents"
+msgstr "editar documentos"
+
+#: menu/static/js/modules/menu/index.js:17
+msgid "manage bibliography library"
+msgstr "administrar bibliografía de biblioteca"
+
+#: menu/static/js/modules/menu/index.js:21
+#: usermedia/static/js/modules/images/selection_dialog/index.js:75
+msgid "Images"
+msgstr "Imágenes"
+
+#: menu/static/js/modules/menu/index.js:23
+msgid "manage image files"
+msgstr "gestionar archivos de imagen"
+
+#: user/static/js/modules/contacts/add_dialog.js:5
+msgid "Add a user to your contacts"
+msgstr "Añadir un usuario a tu lista de contactos"
+
+#: user/static/js/modules/contacts/add_dialog.js:67
+msgid "You cannot add yourself to your contacts!"
+msgstr "¡No puedes añadirte a tu lista de contactos!"
+
+#: user/static/js/modules/contacts/add_dialog.js:69
+msgid "This person is already in your contacts"
+msgstr "Esta persona ya está en tus contactos"
+
+#: user/static/js/modules/contacts/add_dialog.js:72
+msgid "No user is registered with the given email address."
+msgstr "Ningun usuario está registrado con este correo."
+
+#: user/static/js/modules/contacts/add_dialog.js:81
+msgid "Please invite him/her "
+msgstr "Por favor, invítale "
+
+#: user/static/js/modules/contacts/add_dialog.js:81
+msgid "Fidus Writer"
+msgstr "Fidus Writer"
+
+#: user/static/js/modules/contacts/add_dialog.js:81
+msgid "Hey, I would like you to sign up for a Fidus Writer account."
+msgstr "Hola, me gustaría invitarte a crear una cuenta de Fidus Writer."
+
+#: user/static/js/modules/contacts/add_dialog.js:81
+msgid "Please register at"
+msgstr "Por favor, registrate en"
+
+#: user/static/js/modules/contacts/add_dialog.js:81
+msgid "by sending an email"
+msgstr "mandando un correo"
+
+#: user/static/js/modules/contacts/add_dialog.js:84
+msgid "User is not registered."
+msgstr "El usuario no está registrado."
 
 #: user/static/js/modules/contacts/delete_dialog.js:33
-#, fuzzy
 msgid "Remove from contacts"
-msgstr "Borrar de tus contactos"
+msgstr "Eliminar de contactos"
 
 #: user/static/js/modules/contacts/index.js:37
 #: user/static/js/modules/password_reset/request_email.js:26
@@ -3844,37 +3514,94 @@ msgid "E-mail address"
 msgstr "Correo electrónico"
 
 #: user/static/js/modules/contacts/index.js:43
-#, fuzzy
 msgid "Team Members"
-msgstr "Miembro de equipo"
+msgstr "Miembros del equipo"
+
+#: user/static/js/modules/contacts/index.js:59
+msgid "Could not obtain contacts list"
+msgstr "No se pudo obtener la lista de contactos"
+
+#: user/static/js/modules/contacts/menu.js:18
+msgid "Add new contact"
+msgstr "Añadir nuevo contacto"
+
+#: user/static/js/modules/contacts/templates.js:7
+msgid "E-mail address or username"
+msgstr "Dirección de correo electrónico o nombre de usuario"
 
 #: user/static/js/modules/email_confirm/index.js:22
-#, fuzzy
 msgid "Confirm Email"
 msgstr "Confirmar correo electrónico"
 
 #: user/static/js/modules/email_confirm/index.js:119
-#, fuzzy
 msgid "Email verified!"
-msgstr "Sin verificar"
+msgstr "¡Correo verificado!"
 
 #: user/static/js/modules/email_confirm/templates.js:8
-#, fuzzy
 msgid "Confirm E-mail Address"
-msgstr "Añade dirección de Correo electrónico"
+msgstr "Confirmar el correo"
+
+#: user/static/js/modules/email_confirm/templates.js:8
+msgid "Confirm E-mail Address and Agree to Terms and Conditions"
+msgstr "Confirmar Correo Electrónico y aceptar Términos y Condiciones"
 
 #: user/static/js/modules/email_confirm/templates.js:20
-msgid "Please confirm that you own the email <a href=\"mailto:%(email)s\">%(email)s</a>."
+msgid ""
+"Please confirm that you own the email <a href=\"mailto:%(email)s\">"
+"%(email)s</a>."
 msgstr ""
+"Confirme que es el propietario del correo electrónico <a href=\"mailto:"
+"%(email)s\">%(email)s</a>."
 
 #: user/static/js/modules/email_confirm/templates.js:22
-msgid "Please confirm that you own the email <a href=\"mailto:%(email)s\">%(email)s</a>, that you apply for the username %(username)s, and that you have read and agree to our <a href=\"/pages/terms/\" target=\"_blank\">Terms and Conditions</a> and <a href=\"/pages/privacy/\" target=\"_blank\">Privacy Policy</a>."
-msgstr "Por favor, confirma que <a href=\"mailto:%(email)s\">%(email)s</a> es tu correo, que quieres obtener el usuario %(user_display)s y que has leído y aceptado nuestros <a href=\"http://www.fiduswriter.com/?page_id=41\">Términos y Condiciones</a>."
+msgid ""
+"Please confirm that you own the email <a href=\"mailto:%(email)s\">"
+"%(email)s</a>, that you apply for the username %(username)s, and that you "
+"have read and agree to our <a href=\"/pages/terms/\" target=\"_blank\">Terms "
+"and Conditions</a> and <a href=\"/pages/privacy/\" target=\"_blank\">Privacy "
+"Policy</a>."
+msgstr ""
+"Por favor, confirma que <a href=\"mailto:%(email)s\">%(email)s</a> es tu "
+"correo, que quieres obtener el usuario %(user_display)s y que has leído y "
+"aceptado nuestros <a href=\"http://www.fiduswriter.com/?"
+"page_id=41\">Términos y Condiciones</a>."
+
+#: user/static/js/modules/email_confirm/templates.js:25
+msgid "Confirm"
+msgstr "Confirmar"
+
+#: user/static/js/modules/email_confirm/templates.js:27
+msgid ""
+"I have read and agree to the <a href=\"/pages/terms/\" target=\"_blank"
+"\">Terms and Conditions</a>."
+msgstr ""
+"He leído y acepto los <a href=\"/pages/terms/\" target=\"_blank\"> Términos "
+"y condiciones </a>."
+
+#: user/static/js/modules/email_confirm/templates.js:28
+msgid ""
+"I am aware that I am signing up for a test account and that service may be "
+"ended abruptly and without notice, leaving me without my files."
+msgstr ""
+"Soy consciente de que me estoy registrando para obtener una cuenta de prueba "
+"y que el servicio puede finalizar abruptamente y sin previo aviso, dejándome "
+"sin mis archivos."
 
 #: user/static/js/modules/email_confirm/templates.js:30
-#, fuzzy
-msgid "This e-mail confirmation link expired or is invalid. Please try to open another account."
-msgstr "El enlace de confirmación de correo ha caducado o no es válido. Por favor, envía a <a href =\"%(email_url)s\">una nueva solicitud de confirmación por correo electrónico</a>."
+msgid ""
+"This e-mail confirmation link expired or is invalid. Please try to open "
+"another account."
+msgstr ""
+"Este enlace de confirmación de correo electrónico expiró o no es válido. "
+"Intenta abrir otra cuenta."
+
+#: user/static/js/modules/email_confirm/templates.js:32
+msgid "Thanks for verifying!"
+msgstr "¡Muchas Gracias!"
+
+#: user/static/js/modules/email_confirm/templates.js:32
+msgid "You can now log in."
+msgstr "Ahora puede iniciar sesión."
 
 #: user/static/js/modules/login/index.js:21
 msgid "Login"
@@ -3890,16 +3617,35 @@ msgid "Sign up"
 msgstr "Registrarse"
 
 #: user/static/js/modules/login/index.js:34
-msgid "If you are new here, please <a href='/account/sign-up/' title='Sign up'>sign up</a> or use one of the login options below to create an account."
-msgstr "Si eres nuevo, por favor <a href='/account/sign-up/' title='Sign up'>regístrate</a> o utiliza uno de estos proveedores para crear una cuenta."
+msgid ""
+"If you are new here, please <a href='/account/sign-up/' title='Sign up'>sign "
+"up</a> or use one of the login options below to create an account."
+msgstr ""
+"Si eres nuevo, por favor <a href='/account/sign-up/' title='Sign "
+"up'>regístrate</a> o utiliza uno de estos proveedores para crear una cuenta."
 
 #: user/static/js/modules/login/index.js:34
 msgid "Login with"
 msgstr "Iniciar sesión con"
 
 #: user/static/js/modules/login/index.js:34
+#: user/static/js/modules/profile/templates.js:10
+#: user/static/js/modules/profile/templates.js:35
+#: user/static/js/modules/signup/index.js:22
+msgid "Username"
+msgstr "Usuario"
+
+#: user/static/js/modules/login/index.js:34
 msgid "Username or e-mail"
 msgstr "Nombre de usuario o correo elctrónico"
+
+#: user/static/js/modules/login/index.js:34
+#: user/static/js/modules/password_reset/change_password.js:25
+#: user/static/js/modules/profile/templates.js:10
+#: user/static/js/modules/profile/templates.js:35
+#: user/static/js/modules/signup/index.js:22
+msgid "Password"
+msgstr "Contraseña"
 
 #: user/static/js/modules/login/index.js:34
 msgid "Remember me"
@@ -3927,24 +3673,36 @@ msgid "Verify Your E-mail Address"
 msgstr "Verifica tu dirección de correo electrónico"
 
 #: user/static/js/modules/login/index.js:84
-#, fuzzy
-msgid "We have sent an e-mail to your email address for verification. Follow the link provided to finalize the signup process."
-msgstr "Te hemos enviado un e-mail a <a href=\"mailto:%(email)s\">%(email)s</a> para verificación. Sigue el enlace para completar el proceso de registro."
+msgid ""
+"We have sent an e-mail to your email address for verification. Follow the "
+"link provided to finalize the signup process."
+msgstr ""
+"Hemos enviado un correo electrónico a su dirección de correo electrónico "
+"para su verificación. Siga el enlace proporcionado para finalizar el proceso "
+"de registro."
 
 #: user/static/js/modules/login/index.js:84
 #: user/static/js/modules/password_reset/request_email.js:62
 #: user/static/js/modules/signup/index.js:95
-#, fuzzy
 msgid "Please contact us if you do not receive it within a few minutes."
-msgstr "Te hemos enviado un e-mail. Por favor, ponete en contacto con nosotros si no lo recibes dentro de unos pocos minutos."
+msgstr "Póngase en contacto con nosotros si no lo recibe en unos minutos."
+
+#: user/static/js/modules/password_reset/change_password.js:20
+#: user/static/js/modules/profile/dialogs.js:134
+msgid "Change Password"
+msgstr "Cambiar contraseña"
 
 #: user/static/js/modules/password_reset/change_password.js:25
 msgid "Change password"
 msgstr "Cambiar contraseña"
 
 #: user/static/js/modules/password_reset/change_password.js:25
-msgid "You have indicated that you have forgotten your password. Please enter your new password in the form twice."
+msgid ""
+"You have indicated that you have forgotten your password. Please enter your "
+"new password in the form twice."
 msgstr ""
+"Has indicado que has olvidado tu contraseña. Ingrese su nueva contraseña en "
+"el formulario dos veces."
 
 #: user/static/js/modules/password_reset/change_password.js:25
 #: user/static/js/modules/signup/index.js:22
@@ -3962,39 +3720,46 @@ msgid "Password (again)"
 msgstr "Escribe nuevamente tu contraseña"
 
 #: user/static/js/modules/password_reset/change_password.js:25
-#, fuzzy
 msgid "Change My Password"
-msgstr "Cambiar contraseña"
+msgstr "Cambiar mi contraseña"
 
 #: user/static/js/modules/password_reset/change_password.js:59
 #: user/static/js/modules/signup/index.js:66
 msgid "You must type the same password each time."
 msgstr "Debes escribir la misma contraseña cada vez."
 
-#. bien?
 #: user/static/js/modules/password_reset/change_password.js:73
 #: user/static/js/modules/password_reset/request_email.js:24
 msgid "Password reset"
 msgstr "Restablecimiento de contraseña"
 
 #: user/static/js/modules/password_reset/change_password.js:73
-#, fuzzy
-msgid "Your password has been reset and you can now log in with the new password."
-msgstr "Tu contraseña ha sido definida. Ahora puedes iniciar sesión."
+msgid ""
+"Your password has been reset and you can now log in with the new password."
+msgstr ""
+"Su contraseña se ha restablecido y ahora puede iniciar sesión con la nueva "
+"contraseña."
 
 #: user/static/js/modules/password_reset/request_email.js:20
-#, fuzzy
 msgid "Reset Password"
-msgstr "Restablecer mi contraseña"
+msgstr "Restablecer la contraseña"
 
 #: user/static/js/modules/password_reset/request_email.js:24
-#, fuzzy
-msgid "Forgotten your password? Enter your e-mail address in the form, and we'll send you an e-mail allowing you to reset it."
-msgstr "¿Olvidaste tu contraséña? Ingresa tu correo electronico abajo y te mandaremos las instrucciones para restablecerla."
-
-#: user/static/js/modules/password_reset/request_email.js:24
-msgid "If you have any trouble resetting your password, please <a href=\"mailto:%(contactEmail)s\">contact us</a>."
+msgid ""
+"Forgotten your password? Enter your e-mail address in the form, and we'll "
+"send you an e-mail allowing you to reset it."
 msgstr ""
+"¿Olvidaste tu contraseña? Ingrese su dirección de correo electrónico en el "
+"formulario y le enviaremos un correo electrónico que le permitirá "
+"restablecerlo."
+
+#: user/static/js/modules/password_reset/request_email.js:24
+msgid ""
+"If you have any trouble resetting your password, please <a href=\"mailto:"
+"%(contactEmail)s\">contact us</a>."
+msgstr ""
+"Si tiene algún problema para restablecer su contraseña, <a href=\"mailto:"
+"%(contactEmail)s\"> contáctenos </a>."
 
 #: user/static/js/modules/password_reset/request_email.js:26
 msgid "Reset My Password"
@@ -4002,44 +3767,169 @@ msgstr "Restablecer mi contraseña"
 
 #: user/static/js/modules/password_reset/request_email.js:47
 #: user/static/js/modules/signup/index.js:71
-#, fuzzy
 msgid "This is not a valid email."
-msgstr "Correo electrónico"
+msgstr "Este no es un correo electrónico válido."
 
 #: user/static/js/modules/password_reset/request_email.js:60
-#, fuzzy
 msgid "Instructions emailed"
-msgstr "Institución"
+msgstr "Instrucciones enviadas por correo electrónico"
 
 #: user/static/js/modules/password_reset/request_email.js:60
-#, fuzzy
-msgid "We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</a> with instructions on how to reset your password."
-msgstr "Por favor, confirma que <a href=\"mailto:%(email)s\">%(email)s</a> es un correo para el usuario %(user_display)s."
+msgid ""
+"We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</a> with "
+"instructions on how to reset your password."
+msgstr ""
+"Hemos enviado un correo electrónico a <a href=\"mailto:%(email)s\">%(email)s "
+"</a> con instrucciones sobre cómo restablecer su contraseña."
 
-#: user/static/js/modules/profile/dialogs.js:199
-#, fuzzy
-msgid "Email successfully deleted!"
-msgstr "¡El correo electrónico ha sido eliminado con éxito!"
+#: user/static/js/modules/profile/delete_user.js:45
+msgid "Staff accounts have to be deleted through the admin interface."
+msgstr ""
+"Las cuentas del personal deben eliminarse a través de la interfaz de "
+"administración."
 
-#: user/static/js/modules/profile/dialogs.js:201
-#, fuzzy
-msgid "The email could not be deleted!"
+#: user/static/js/modules/profile/delete_user.js:49
+msgid "Password incorrect."
+msgstr "Contraseña incorrecta."
+
+#: user/static/js/modules/profile/delete_user.js:53
+msgid "Could not delete user account."
+msgstr "No se pudo eliminar la cuenta de usuario."
+
+#: user/static/js/modules/profile/dialogs.js:22
+msgid "Could not update profile avatar"
+msgstr "No se pudo actualizar el avatar del perfil"
+
+#: user/static/js/modules/profile/dialogs.js:35
+msgid "Upload your profile picture"
+msgstr "Subir imagen de perfil"
+
+#: user/static/js/modules/profile/dialogs.js:54
+msgid "Could not delete avatar"
+msgstr "No se pudo eliminar la imagen de perfil"
+
+#: user/static/js/modules/profile/dialogs.js:91
+msgid "All fields are required!"
+msgstr "¡Todos los campos son obligatorios!"
+
+#: user/static/js/modules/profile/dialogs.js:96
+msgid "Please confirm the new password!"
+msgstr "¡Por favor, confirma la nueva contraseña!"
+
+#: user/static/js/modules/profile/dialogs.js:111
+msgid "The password has been changed."
+msgstr "La contraseña ha sido cambiada."
+
+#: user/static/js/modules/profile/dialogs.js:122
+msgid "The password could not be changed!"
+msgstr "¡No fue posible cambiar la contraseña!"
+
+#: user/static/js/modules/profile/dialogs.js:127
+msgid "The password could not be changed"
+msgstr "No fue posible cambiar la contraseña"
+
+#: user/static/js/modules/profile/dialogs.js:151
+msgid "New email address is required!"
+msgstr "¡Se requiere un nuevo correo!"
+
+#: user/static/js/modules/profile/dialogs.js:166
+msgid "Confirmation e-mail sent to"
+msgstr "Mandar correo de confirmación a"
+
+#: user/static/js/modules/profile/dialogs.js:172
+msgid "The email could not be added!"
 msgstr "¡No fue posible añadir el correo!"
 
+#: user/static/js/modules/profile/dialogs.js:180
+msgid "Add Email"
+msgstr "Añadir correo"
+
+#: user/static/js/modules/profile/dialogs.js:199
+msgid "Email successfully deleted!"
+msgstr "Correo electrónico eliminado correctamente"
+
+#: user/static/js/modules/profile/dialogs.js:201
+msgid "The email could not be deleted!"
+msgstr "¡No se pudo eliminar el correo electrónico!"
+
+#: user/static/js/modules/profile/dialogs.js:209
+msgid "Confirm remove"
+msgstr "Confirmar acción"
+
+#: user/static/js/modules/profile/dialogs.js:211
+msgid "Remove the email address"
+msgstr "Eliminar la dirección de correo electrónico"
+
 #: user/static/js/modules/profile/dialogs.js:232
-#, fuzzy
 msgid "The primary email has been updated."
-msgstr "El imagen ha sido actualizada"
+msgstr "El correo electrónico principal ha sido actualizado."
 
 #: user/static/js/modules/profile/dialogs.js:234
-#, fuzzy
 msgid "The email could not be set to be primary email."
-msgstr "El correo electrónico no se pudo establecer como primario"
+msgstr ""
+"No se pudo configurar el correo electrónico como correo electrónico "
+"principal."
+
+#: user/static/js/modules/profile/dialogs.js:242
+msgid "Confirm set primary"
+msgstr "Confirmar correo principal"
+
+#: user/static/js/modules/profile/dialogs.js:244
+msgid "Set this email as the address primary"
+msgstr "Establezca este correo electrónico como la dirección principal"
 
 #: user/static/js/modules/profile/index.js:78
-#, fuzzy
 msgid "Configure profile"
-msgstr "Confirmar borradura"
+msgstr "Configurar perfil"
+
+#: user/static/js/modules/profile/index.js:95
+msgid "Could not save profile data"
+msgstr "No se pudieron guardar los datos del perfil."
+
+#: user/static/js/modules/profile/templates.js:4
+msgid "Delete the avatar?"
+msgstr "¿Quieres borrar la imagen de perfil?"
+
+#: user/static/js/modules/profile/templates.js:10
+msgid "NOTICE: ALL OF YOUR INFORMATION WILL DISAPPEAR FROM OUR SYSTEM!"
+msgstr "AVISO: ¡TODA SU INFORMACIÓN DESAPARECIRÁ DE NUESTRO SISTEMA!"
+
+#: user/static/js/modules/profile/templates.js:10
+msgid ""
+"Really delete your account? Type in your username and password below to "
+"confirm deletion."
+msgstr ""
+"¿Realmente borraste tu cuenta? Escriba su nombre de usuario y contraseña a "
+"continuación para confirmar la eliminación."
+
+#: user/static/js/modules/profile/templates.js:10
+msgid "We cannot reverse an account deletion."
+msgstr "No podemos revertir la eliminación de una cuenta."
+
+#: user/static/js/modules/profile/templates.js:10
+msgid ""
+"Some copies of your files may temporarily be kept in our backup system, but "
+"also these will disappear automatically in due time."
+msgstr ""
+"Algunas copias de sus archivos pueden conservarse temporalmente en nuestro "
+"sistema de respaldo, pero también desaparecerán automáticamente a su debido "
+"tiempo."
+
+#: user/static/js/modules/profile/templates.js:13
+msgid "Enter the new E-mail address"
+msgstr "Ingresar el nuevo correo"
+
+#: user/static/js/modules/profile/templates.js:28
+msgid "Old password"
+msgstr "Vieja contraseña"
+
+#: user/static/js/modules/profile/templates.js:28
+msgid "New password"
+msgstr "Nueva contraseña"
+
+#: user/static/js/modules/profile/templates.js:28
+msgid "Confirm the new password"
+msgstr "Confirma la nueva contraseña"
 
 #: user/static/js/modules/profile/templates.js:35
 msgid "Edit profile picture"
@@ -4070,15 +3960,16 @@ msgid "Signup"
 msgstr "Regístrate"
 
 #: user/static/js/modules/signup/index.js:22
-msgid "Already have an account? Then please <a href=\"/\" title=\"Login\">login</a>."
-msgstr "¿Ya tienes una cuenta? Entonces, por favor <a href=\"/\" title=\"Login\"> iniciar sesión</a>."
+msgid ""
+"Already have an account? Then please <a href=\"/\" title=\"Login\">login</a>."
+msgstr ""
+"¿Ya tienes una cuenta? Entonces, por favor <a href=\"/\" title=\"Login\"> "
+"iniciar sesión</a>."
 
 #: user/static/js/modules/signup/index.js:22
 msgid "Choose your username"
 msgstr "Escoge tu usuario"
 
-#. No suena bien ni claro. Alternativa?
-#. No puedes registrarte. El registro está cerrado.
 #: user/static/js/modules/signup/index.js:24
 msgid "Sign Up Closed"
 msgstr "El registro está cerrado"
@@ -4088,92 +3979,101 @@ msgid "We are sorry, but the sign up is currently closed."
 msgstr "Lo sentimos, pero el registro está cerrado."
 
 #: user/static/js/modules/signup/index.js:93
-msgid "We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</a> for verification. Follow the link provided to finalize the signup process."
-msgstr "Te hemos enviado un e-mail a <a href=\"mailto:%(email)s\">%(email)s</a> para verificación. Sigue el enlace para completar el proceso de registro."
+msgid ""
+"We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</a> for "
+"verification. Follow the link provided to finalize the signup process."
+msgstr ""
+"Te hemos enviado un e-mail a <a href=\"mailto:%(email)s\">%(email)s</a> para "
+"verificación. Sigue el enlace para completar el proceso de registro."
 
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:18
-#, fuzzy
 msgid "Could not delete document template"
-msgstr "No se pudo eliminar el documento"
+msgstr "No se pudo eliminar la plantilla del documento"
 
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:24
-#, fuzzy
 msgid "Document template successfully deleted"
-msgstr "¡El correo electrónico ha sido eliminado con éxito!"
+msgstr "Plantilla de documento eliminada correctamente"
 
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:28
 msgid "Document template still required by documents"
-msgstr ""
+msgstr "La plantilla del documento todavía es requerida por los documentos"
 
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:48
-#, fuzzy
 msgid "Delete the document templates?"
-msgstr "Borrar el/los documento/s?"
+msgstr "¿Eliminar las plantillas de documentos?"
 
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:48
-#, fuzzy
 msgid "Delete the document template?"
-msgstr "Borrar el/los documento/s?"
+msgstr "¿Eliminar la plantilla del documento?"
 
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:58
-#, fuzzy
 msgid "The document template could not be copied"
-msgstr "El/los documento(s) han sido borrado(s)"
+msgstr "La plantilla del documento no se pudo copiar"
 
 #: user_template_manager/static/js/modules/user_template_manager/editor.js:44
-#, fuzzy
 msgid "Close the template without saving and return to the overview"
-msgstr "Cierre el documento y regrese al menú de descripción general del documento."
+msgstr "Cierre la plantilla sin guardar y vuelva a la vista general."
 
 #: user_template_manager/static/js/modules/user_template_manager/editor.js:44
 #: user_template_manager/static/js/modules/user_template_manager/editor.js:46
 msgid "Template Editor"
-msgstr ""
+msgstr "Editor de plantillas"
 
 #: user_template_manager/static/js/modules/user_template_manager/editor.js:75
 msgid "Saved template"
-msgstr ""
+msgstr "Plantilla guardada"
 
 #: user_template_manager/static/js/modules/user_template_manager/menu.js:5
-#, fuzzy
 msgid "Create new document template"
-msgstr "Crear nuevo documento"
+msgstr "Crear nueva plantilla de documento"
 
 #: user_template_manager/static/js/modules/user_template_manager/menu.js:21
-#, fuzzy
 msgid "You cannot delete system document templates."
-msgstr "No puedes eliminar documentos de otros usuarios"
+msgstr "No puede eliminar plantillas de documentos del sistema."
 
 #: user_template_manager/static/js/modules/user_template_manager/menu.js:29
-#, fuzzy
 msgid "Duplicate selected"
-msgstr "Borrar lo seleccionado"
+msgstr "Duplicado seleccionado"
 
-#. Encontré esta traducción de Document Overview en informática. No sé si aplica.
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:47
-#, fuzzy
 msgid "Document Templates Overview"
-msgstr "Resumen de Documento"
+msgstr "Resumen de plantillas de documentos"
 
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:67
-#, fuzzy
 msgid "No document templates available"
-msgstr "No hay documentos disponibles"
+msgstr "No hay plantillas de documentos disponibles."
 
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:131
-#, fuzzy
 msgid "Cannot load data of document templates."
-msgstr "No se pueden cargar datos de documentos."
+msgstr "No se pueden cargar datos de plantillas de documentos."
 
 #: user_template_manager/static/js/plugins/menu/user_template_manager.js:10
-#, fuzzy
 msgid "Document Templates"
-msgstr "Estilo del Documento"
+msgstr "Plantillas de documentos"
 
 #: user_template_manager/static/js/plugins/menu/user_template_manager.js:12
-#, fuzzy
 msgid "Templates"
-msgstr "Apellido"
+msgstr "Plantillas"
+
+#: usermedia/static/js/modules/images/database.js:41
+msgid "Could not save image"
+msgstr "No se pudo guarda la imagen"
+
+#: usermedia/static/js/modules/images/edit_dialog/index.js:16
+msgid "Update Image Information"
+msgstr "Actualizar la información de la imagen"
+
+#: usermedia/static/js/modules/images/edit_dialog/index.js:16
+msgid "Upload Image"
+msgstr "Subir Imagen"
+
+#: usermedia/static/js/modules/images/edit_dialog/index.js:127
+msgid "The image has been updated."
+msgstr "El imagen ha sido actualizada"
+
+#: usermedia/static/js/modules/images/edit_dialog/index.js:132
+msgid "Some errors were found. Please examine the form."
+msgstr "Encontramos algunos errores. Por favor examine el formulario."
 
 #: usermedia/static/js/modules/images/edit_dialog/model.js:5
 msgid "Rotate Left"
@@ -4200,11 +4100,59 @@ msgstr "Recortar"
 msgid "Crop image"
 msgstr "Recortar imagen"
 
+#: usermedia/static/js/modules/images/edit_dialog/templates.js:12
+msgid "Select categories"
+msgstr "Seleccionar categorías"
+
+#: usermedia/static/js/modules/images/edit_dialog/templates.js:20
+msgid "Insert a title"
+msgstr "Insertar un título"
+
 #: usermedia/static/js/modules/images/edit_dialog/templates.js:20
 msgid "Edit Figure"
 msgstr "Edita Figura"
+
+#: usermedia/static/js/modules/images/overview/categories.js:16
+msgid "Could not update categories"
+msgstr "No se pudieron actualizar las categorías."
 
 #: usermedia/static/js/modules/images/overview/index.js:48
 msgid "Media Manager"
 msgstr "Administrador de medios"
 
+#: usermedia/static/js/modules/images/overview/index.js:73
+msgid "The image(s) could not be deleted"
+msgstr "No se pudieron eliminar las imágenes"
+
+#: usermedia/static/js/modules/images/overview/index.js:78
+msgid "The image(s) have been deleted"
+msgstr "La imagen ha sido eliminada"
+
+#: usermedia/static/js/modules/images/overview/index.js:97
+msgid "Delete the image(s)"
+msgstr "Eliminar imagen(es)"
+
+#: usermedia/static/js/modules/images/overview/index.js:158
+#: usermedia/static/js/modules/images/selection_dialog/index.js:96
+msgid "No images available"
+msgstr "No hay imágenes disponibles"
+
+#: usermedia/static/js/modules/images/overview/index.js:165
+msgid "Size (px)"
+msgstr "Tamaño (píxeles)"
+
+#: usermedia/static/js/modules/images/overview/menu.js:30
+msgid "Upload new image"
+msgstr "Subir nueva imagen"
+
+#: usermedia/static/js/modules/images/overview/menu.js:45
+msgid "Search images"
+msgstr "Buscar imágenes"
+
+#: usermedia/static/js/modules/images/selection_dialog/index.js:35
+msgid "Add new image"
+msgstr "Agregar nueva imagen"
+
+#: usermedia/static/js/modules/images/selection_dialog/index.js:53
+msgid "Use image"
+msgstr "Usar imagen"

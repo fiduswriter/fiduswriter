@@ -26,7 +26,7 @@ export class ModToolsWordCount {
         const textContent = this.getNonDeletedTextContent(this.mod.editor.view.state.doc),
             footnoteContent = this.getNonDeletedTextContent(this.mod.editor.mod.footnotes.fnEditor.view.state.doc),
             bibliographyContent = document.querySelector('.article-bibliography').textContent
-        let docContent = textContent + ' ' + footnoteContent + ' ' + bibliographyContent
+        const docContent = textContent + ' ' + footnoteContent + ' ' + bibliographyContent
         const docNumChars = docContent.split('\n').join('').length - 2 // Subtract two for added spaces
         const docWords = docContent.split(/[\n ]+/)
 

@@ -7,37 +7,57 @@ export class ModToolsWordCount {
         this.mod = mod
     }
 
+    getNonDeletedTextContent(topNode) {
+        let text = ''
+        topNode.descendants((node) => {
+            if (node.marks.find(mark => mark.type.name === 'deletion')) {
+                return
+            } else if (node.isBlock) {
+                text += '\n'
+            } else if (node.isText) {
+                text += node.text
+            }
+        })
+        return text.replace(/(^\s*)|(\s*$)/gi, "").replace(/[ ]{2,}/gi, " ").replace(/\n /, "\n").replace(/\n{2,}/gi, "\n")
+
+    }
+
     countWords() {
-        const textContent = this.mod.editor.view.state.doc.textContent,
-            footnoteContent = this.mod.editor.mod.footnotes.fnEditor.view.state.doc.textContent,
+        const textContent = this.getNonDeletedTextContent(this.mod.editor.view.state.doc),
+            footnoteContent = this.getNonDeletedTextContent(this.mod.editor.mod.footnotes.fnEditor.view.state.doc),
             bibliographyContent = document.querySelector('.article-bibliography').textContent
-        let wholeContent = textContent + ' ' + footnoteContent + ' ' + bibliographyContent
-        const numChars = wholeContent.length - 2 // Subtract two for added spaces
+        let docContent = textContent + ' ' + footnoteContent + ' ' + bibliographyContent
+        const docNumChars = docContent.split('\n').join('').length - 2 // Subtract two for added spaces
+        const docWords = docContent.split(/[\n ]+/)
 
-        wholeContent = wholeContent.replace(/(^\s*)|(\s*$)/gi, "")
-        wholeContent = wholeContent.replace(/[ ]{2,}/gi, " ")
-        wholeContent = wholeContent.replace(/\n /, "\n")
-        wholeContent = wholeContent.split(' ')
+        const docNumNoSpace = docWords.join('').length
+        const docNumWords = docNumNoSpace ? docWords.length : 0
 
-        const numWords = wholeContent.length
-        const numNoSpace = wholeContent.join('').length
+        const selectionContent = this.getNonDeletedTextContent(
+            this.mod.editor.currentView.state.doc.cut(
+                this.mod.editor.currentView.state.selection.from,
+                this.mod.editor.currentView.state.selection.to
+            )
+        )
+        const selectionNumChars = selectionContent.split('\n').join('').length
+        const selectionWords = selectionContent.split(/[\n ]+/)
+        const selectionNumNoSpace = selectionWords.join('').length
+        const selectionNumWords = selectionNumNoSpace ? selectionWords.length : 0
 
         return {
-            numWords,
-            numNoSpace,
-            numChars
+            docNumWords,
+            docNumNoSpace,
+            docNumChars,
+            selectionNumWords,
+            selectionNumNoSpace,
+            selectionNumChars
         }
     }
 
     wordCountDialog() {
-        const stats = this.countWords(),
-            dialog = new Dialog({
+        const dialog = new Dialog({
                 title: gettext('Word counter'),
-                body: wordCounterDialogTemplate({
-                    'words': stats.numWords,
-                    'chars_no_space': stats.numNoSpace,
-                    'chars': stats.numChars
-                }),
+                body: wordCounterDialogTemplate(this.countWords()),
                 buttons: [{type: 'close'}]
             })
         dialog.open()

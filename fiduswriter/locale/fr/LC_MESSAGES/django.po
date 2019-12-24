@@ -1,13 +1,11 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Fidus Writer backend\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-17 01:58+0000\n"
-"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: POEditor.com\n"
+"Project-Id-Version: Fidus Writer backend\n"
+"Language: fr\n"
 
 #: base/templates/admin/console.html:5 base/templates/admin/console.html:18
 #: base/templates/admin/overview.html:14
@@ -27,13 +25,8 @@ msgid "Message"
 msgstr "Message"
 
 #: base/templates/admin/console.html:28
-msgid ""
-"This system will go offline for scheduled maintenance in 30 minutes. All "
-"your work will be saved automatically and we will be back shortly."
-msgstr ""
-"Ce système sera mis hors ligne pour une maintenance planifiée dans 30 "
-"minutes. Tout votre travail sera enregistré automatiquement et nous "
-"reviendrons sous peu."
+msgid "This system will go offline for scheduled maintenance in 30 minutes. All your work will be saved automatically and we will be back shortly."
+msgstr "Ce système sera mis hors ligne pour une maintenance planifiée dans 30 minutes. Tout votre travail sera enregistré automatiquement et nous reviendrons sous peu."
 
 #: base/templates/admin/console.html:35
 msgid "Send to connected users"
@@ -66,18 +59,15 @@ msgid "Browser not supported"
 msgstr "Navigateur non pris en charge"
 
 #: browser_check/templates/browser_check/browser_not_supported.html:28
-msgid ""
-"\n"
+msgid "\n"
 "                Your browser is not supported by Fidus Writer.\n"
 "                Please update! We recommend using a current\n"
 "                version of Chrome/Chromium or Firefox on a\n"
 "                desktop computer.\n"
 "            "
-msgstr ""
-"\n"
+msgstr "\n"
 "                Votre navigateur n'est pas pris en charge par Fidus Writer.\n"
-"                Veuillez mettre à jour! Nous vous recommandons d'utiliser un "
-"courant\n"
+"                Veuillez mettre à jour! Nous vous recommandons d'utiliser un courant\n"
 "                version de Chrome / Chromium ou Firefox sur un\n"
 "                ordinateur de bureau.\n"
 "                        "
@@ -127,7 +117,6 @@ msgid "Duplicate selected document templates"
 msgstr "Dupliquer les modèles de documents sélectionnés"
 
 #: document/templates/admin/document/document/change_list_object_tools.html:8
-#, python-format
 msgid "Add %(name)s"
 msgstr "Ajouter %(name)s"
 
@@ -137,20 +126,14 @@ msgid "Maintenance"
 msgstr "Entretien"
 
 #: document/templates/admin/document/maintenance.html:20
-msgid ""
-"\n"
-"            Before and after upgrading Fidus Writer, you should update all "
-"the documents\n"
-"            of all users to the newest document version. Only do this if you "
-"know that\n"
+msgid "\n"
+"            Before and after upgrading Fidus Writer, you should update all the documents\n"
+"            of all users to the newest document version. Only do this if you know that\n"
 "            no user is currently editing any document!\n"
 "            "
-msgstr ""
-"\n"
-"            Avant et après la mise à niveau de Fidus Writer, vous devez "
-"mettre à jour tous les documents\n"
-"            de tous les utilisateurs à la dernière version du document. Ne "
-"faites cela que si vous savez que\n"
+msgstr "\n"
+"            Avant et après la mise à niveau de Fidus Writer, vous devez mettre à jour tous les documents\n"
+"            de tous les utilisateurs à la dernière version du document. Ne faites cela que si vous savez que\n"
 "            aucun utilisateur ne modifie actuellement aucun document!\n"
 "                        "
 
@@ -190,10 +173,12 @@ msgstr "Document partagé:"
 msgid "Sign up or log in and access the document"
 msgstr "Inscrivez-vous ou connectez-vous et accédez au document"
 
+#. el espacio antes de los dos puntos se ve raro
 #: document/views.py:899
 msgid "Comment on :"
 msgstr "Commenter :"
 
+#. el espacio antes de los dos puntos se ve raro
 #: document/views.py:920
 msgid "Comment assignment on :"
 msgstr "Affectation des commentaires sur:"
@@ -212,89 +197,58 @@ msgstr "Le modèle nécessite au moins 1 style de document"
 
 #: user/templates/account/email/email_confirmation_message.html:7
 #: user/templates/account/email/password_reset_key_message.html:7
-#, fuzzy, python-format
-#| msgid ""
-#| "\n"
-#| "        Hello from %(site_name)s!\n"
-#| "    "
-msgid ""
-"\n"
+msgid "\n"
 "        Hello from %(site_name)s!\n"
 "    "
-msgstr ""
-"\n"
+msgstr "\n"
 "        Bonjour de% (nom_site) s!\n"
 "        "
 
+#. Se entiende?
 #: user/templates/account/email/email_confirmation_message.html:14
-#, fuzzy, python-format
-#| msgid ""
-#| "\n"
-#| "        You're receiving this e-mail because user %(user_display)s has "
-#| "given yours as an e-mail address to connect their account.\n"
-#| "    "
-msgid ""
-"\n"
-"        You're receiving this e-mail because user %(user_display)s has given "
-"yours as an e-mail address to connect their account.\n"
+msgid "\n"
+"        You're receiving this e-mail because user %(user_display)s has given yours as an e-mail address to connect their account.\n"
 "    "
-msgstr ""
-"\n"
-"        Vous recevez cet e-mail car l'utilisateur% (user_display) s a donné "
-"la vôtre comme adresse e-mail pour connecter son compte.\n"
+msgstr "\n"
+"        Vous recevez cet e-mail car l'utilisateur% (user_display) s a donné la vôtre comme adresse e-mail pour connecter son compte.\n"
 "        "
 
 #: user/templates/account/email/email_confirmation_message.html:20
-#, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        To confirm this is correct, go to <a href=\"%(url)s\">%(url)s</a>.\n"
 "    "
-msgstr ""
-"\n"
-"        Pour confirmer que cela est correct, accédez à <a href=\"%(url)s\">"
-"%(url)s</a>.\n"
+msgstr "\n"
+"        Pour confirmer que cela est correct, accédez à <a href=\"%(url)s\">%(url)s</a>.\n"
 "        "
 
 #: user/templates/account/email/email_confirmation_message.html:26
 #: user/templates/account/email/password_reset_key_message.html:32
-#, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        Thank you from %(site_name)s!\n"
 "    "
-msgstr ""
-"\n"
+msgstr "\n"
 "        Merci de %(site_name)s!\n"
 "        "
 
+#. Bien?
 #: user/templates/account/email/password_reset_key_message.html:13
-msgid ""
-"\n"
-"        You're receiving this e-mail because you or someone else has "
-"requested a password for your user account.\n"
+msgid "\n"
+"        You're receiving this e-mail because you or someone else has requested a password for your user account.\n"
 "    "
-msgstr ""
-"\n"
-"        Vous recevez cet e-mail parce que vous ou quelqu'un d'autre avez "
-"demandé un mot de passe pour votre compte d'utilisateur.\n"
+msgstr "\n"
+"        Vous recevez cet e-mail parce que vous ou quelqu'un d'autre avez demandé un mot de passe pour votre compte d'utilisateur.\n"
 "        "
 
+#. En español generalmente no se usa safely en este tipo de mensajes de restablecimiento de contraseña.
 #: user/templates/account/email/password_reset_key_message.html:18
-msgid ""
-"\n"
-"        It can be safely ignored if you did not request a password reset. "
-"Click the link below to reset your password.\n"
+msgid "\n"
+"        It can be safely ignored if you did not request a password reset. Click the link below to reset your password.\n"
 "    "
-msgstr ""
-"\n"
-"        Il peut être ignoré en toute sécurité si vous n'avez pas demandé de "
-"réinitialisation du mot de passe. Cliquez sur le lien ci-dessous pour "
-"réinitialiser votre mot de passe.\n"
+msgstr "\n"
+"        Il peut être ignoré en toute sécurité si vous n'avez pas demandé de réinitialisation du mot de passe. Cliquez sur le lien ci-dessous pour réinitialiser votre mot de passe.\n"
 "        "
 
 #: user/templates/account/email/password_reset_key_message.html:27
-#, python-format
 msgid "In case you forgot, your username is %(username)s."
 msgstr "Si vous avez oublié, votre nom d'utilisateur est %(username)s."
 
@@ -305,3 +259,4 @@ msgstr "Type de fichier non pris en charge"
 #: usermedia/views.py:60
 msgid "No file uploaded"
 msgstr "Aucun fichier téléchargé"
+

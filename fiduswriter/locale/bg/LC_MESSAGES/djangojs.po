@@ -1,44 +1,11 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Fidus Writer\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-17 01:58+0000\n"
-"Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: POEditor.com\n"
-
-#: base/static/js/modules/404/index.js:17
-#: base/static/js/modules/flatpage/index.js:38
-msgid "Page not found"
-msgstr "Страницата не е намерена"
-
-#: base/static/js/modules/404/index.js:18
-#: base/static/js/modules/flatpage/index.js:39
-msgid "Error 404"
-msgstr "Грешка 404"
-
-#: base/static/js/modules/404/index.js:18
-#: base/static/js/modules/flatpage/index.js:39
-msgid "The page you are looking for cannot be found."
-msgstr "Страницата, която търсите, не може да бъде намерена."
-
-#: base/static/js/modules/admin_console/index.js:31
-msgid "Message delivered successfully!"
-msgstr "Съобщението е доставено успешно!"
-
-#: base/static/js/modules/admin_console/index.js:33
-msgid "Message delivered"
-msgstr "Съобщението е доставено"
-
-#: base/static/js/modules/admin_console/index.js:57
-msgid "Sending..."
-msgstr "Изпращане..."
-
-#: base/static/js/modules/common/basic.js:107
-msgid "System message"
-msgstr "Системно съобщение"
+"Project-Id-Version: Fidus Writer\n"
+"Language: bg\n"
 
 #: base/static/js/modules/common/dialog.js:14
 #: base/static/js/modules/common/dialog.js:30
@@ -46,78 +13,6 @@ msgstr "Системно съобщение"
 #: user_template_manager/static/js/modules/user_template_manager/editor.js:44
 msgid "Close"
 msgstr "Затвори"
-
-#: base/static/js/modules/common/dialog.js:35
-#: document/static/js/modules/editor/comments/editors/answer.js:11
-#: document/static/js/modules/editor/comments/editors/comment.js:87
-#: document/static/js/modules/editor/dialogs/templates.js:28
-msgid "Cancel"
-msgstr "Отказ"
-
-#: base/static/js/modules/common/dialog.js:40
-msgid "OK"
-msgstr "Добре"
-
-#: base/static/js/modules/common/templates.js:7
-#: document/static/js/modules/documents/access_rights/templates.js:8
-#: user/static/js/modules/contacts/index.js:37
-msgid "Contacts"
-msgstr "Контакти"
-
-#: base/static/js/modules/common/templates.js:7
-msgid "Log out"
-msgstr "Изход"
-
-#: base/static/js/modules/common/ws.js:22
-msgid "Warning! Some data is unsaved"
-msgstr "Внимание! Някои данни не са запазени"
-
-#: base/static/js/modules/common/ws.js:24
-#: document/static/js/modules/editor/index.js:177
-msgid "Disconnected. Attempting to reconnect..."
-msgstr "Връзката е прекъсната. Опит за повторно свързване ..."
-
-#: base/static/js/modules/offline/index.js:17
-#: base/static/js/modules/offline/index.js:18
-msgid "Disconnected"
-msgstr "Disconnected"
-
-#: base/static/js/modules/offline/index.js:18
-msgid "You are currently disconnected from the %(appName)s server."
-msgstr "В момента сте прекъснали връзката със сървъра %(appName)s."
-
-#: base/static/js/modules/offline/index.js:25
-msgid "Reload page"
-msgstr "Презареждане на страницата"
-
-#: base/static/js/modules/prelogin/index.js:22
-msgid "Terms and Conditions"
-msgstr "Общи условия"
-
-#: base/static/js/modules/prelogin/index.js:25
-msgid "Privacy policy"
-msgstr "Политика за поверителност"
-
-#: base/static/js/modules/prelogin/index.js:28
-msgid "Equations and Math with MathLive"
-msgstr "Уравнения и математика с MathLive"
-
-#: base/static/js/modules/prelogin/index.js:32
-msgid "Citations with Citation Style Language"
-msgstr "Цитати с Citation Style Language"
-
-#: base/static/js/modules/prelogin/index.js:36
-msgid "Editing with ProseMirror"
-msgstr "Редактиране с ProseMirror"
-
-#: base/static/js/modules/prelogin/index.js:42
-#: user/static/js/modules/login/index.js:34
-msgid "Log in"
-msgstr "Влез"
-
-#: base/static/js/modules/prelogin/templates.js:25
-msgid "Select language"
-msgstr "Избери език"
 
 #: bibliography/static/js/modules/bibliography/database/index.js:75
 msgid "Could not obtain bibliography data"
@@ -145,13 +40,43 @@ msgstr "Категориите не можаха да бъдат актуали�
 msgid "The bibliography item(s) have been deleted"
 msgstr "Библиографските запис(и) бяха изтрити"
 
+#. corregir. No sé el contexto
 #: bibliography/static/js/modules/bibliography/form/fields/key.js:57
 msgid "From list"
 msgstr "От списъка"
 
-#: bibliography/static/js/modules/bibliography/form/fields/key.js:57
-msgid "Custom"
-msgstr "Персонализиран"
+#: bibliography/static/js/modules/bibliography/form/fields/name.js:63
+msgid "Person"
+msgstr "човек"
+
+#: bibliography/static/js/modules/bibliography/form/fields/name.js:108
+msgid "Organization name"
+msgstr "Наименование на организацията"
+
+#: bibliography/static/js/modules/bibliography/form/fields/range.js:56
+msgid "Range"
+msgstr "диапазон"
+
+#: bibliography/static/js/modules/bibliography/form/fields/range.js:95
+msgid "From"
+msgstr "от"
+
+#: bibliography/static/js/modules/bibliography/form/fields/range.js:97
+msgid "To"
+msgstr "Да се"
+
+#. Está bien?
+#: bibliography/static/js/modules/bibliography/form/fields/range.js:56
+msgid "Single value"
+msgstr "Единична стойност"
+
+#: bibliography/static/js/modules/bibliography/form/index.js:76
+msgid "Edit Source"
+msgstr "Редактиране на източник"
+
+#: bibliography/static/js/modules/bibliography/form/index.js:80
+msgid "Register New Source"
+msgstr "Добавяне на нов източник"
 
 #: bibliography/static/js/modules/bibliography/form/fields/literal.js:44
 #: bibliography/static/js/modules/bibliography/form/fields/literal_long.js:41
@@ -189,67 +114,11 @@ msgstr "Subscript₊"
 msgid "Supscript²"
 msgstr "Supscript²"
 
-#: bibliography/static/js/modules/bibliography/form/fields/name.js:63
-msgid "Person"
-msgstr "човек"
-
-#: bibliography/static/js/modules/bibliography/form/fields/name.js:63
-msgid "Organization"
-msgstr "организация"
-
-#: bibliography/static/js/modules/bibliography/form/fields/name.js:92
-msgid "Prefix used"
-msgstr "Използван префикс"
-
-#: bibliography/static/js/modules/bibliography/form/fields/name.js:93
-#: user/static/js/modules/profile/templates.js:35
-msgid "First name"
-msgstr "Име"
-
-#: bibliography/static/js/modules/bibliography/form/fields/name.js:95
-msgid "Prefix"
-msgstr "префикс"
-
-#: bibliography/static/js/modules/bibliography/form/fields/name.js:97
-#: user/static/js/modules/profile/templates.js:35
-msgid "Last name"
-msgstr "Фамилия"
-
-#: bibliography/static/js/modules/bibliography/form/fields/name.js:99
-msgid "Suffix"
-msgstr "Наставка"
-
-#: bibliography/static/js/modules/bibliography/form/fields/name.js:108
-msgid "Organization name"
-msgstr "Наименование на организацията"
-
-#: bibliography/static/js/modules/bibliography/form/fields/range.js:56
-msgid "Single value"
-msgstr "Единична стойност"
-
-#: bibliography/static/js/modules/bibliography/form/fields/range.js:56
-msgid "Range"
-msgstr "диапазон"
-
-#: bibliography/static/js/modules/bibliography/form/fields/range.js:95
-msgid "From"
-msgstr "от"
-
-#: bibliography/static/js/modules/bibliography/form/fields/range.js:97
-msgid "To"
-msgstr "Да се"
-
+#. LeTraProTeGida
+#. Es lo que se me ocurrió
 #: bibliography/static/js/modules/bibliography/form/fields/title.js:56
 msgid "CasE ProTecT"
 msgstr "CasE ProTecT"
-
-#: bibliography/static/js/modules/bibliography/form/index.js:76
-msgid "Edit Source"
-msgstr "Редактиране на източник"
-
-#: bibliography/static/js/modules/bibliography/form/index.js:80
-msgid "Register New Source"
-msgstr "Добавяне на нов източник"
 
 #: bibliography/static/js/modules/bibliography/form/index.js:100
 #: bibliography/static/js/modules/bibliography/overview/index.js:176
@@ -265,6 +134,7 @@ msgstr "Добавяне на нов източник"
 msgid "Submit"
 msgstr "Изпрати"
 
+#. creo que así es suficiente
 #: bibliography/static/js/modules/bibliography/form/index.js:276
 msgid "Error in form, check highlighted values!"
 msgstr "Грешка във формата, проверете маркираните стойности!"
@@ -330,6 +200,7 @@ msgstr "Автор(и) на коментара"
 msgid "Publication date"
 msgstr "Дата на публикуване"
 
+#. Esta correcto?
 #: bibliography/static/js/modules/bibliography/form/strings.js:17
 msgid "Digital Object Identifier"
 msgstr "Дигитален идентификатор"
@@ -382,10 +253,12 @@ msgstr "Тип на записа"
 msgid "Electronic identifier of an online publication"
 msgstr "Електронен идентификатор на публикацията"
 
+#. a" una publicación en ....o "de" una publicación en..
 #: bibliography/static/js/modules/bibliography/form/strings.js:30
 msgid "Additional information to an online publication"
 msgstr "Допълнителна информация към онлайн публикация"
 
+#. está bien?
 #: bibliography/static/js/modules/bibliography/form/strings.js:31
 msgid "Eprint identifier type"
 msgstr "Епринт идентификатор"
@@ -508,6 +381,7 @@ msgstr "Осн. Заглавие"
 msgid "Annex to the maintitle"
 msgstr "Допълнение към основното заглавие"
 
+#. correcto? según entendí addon es un programa de audio
 #: bibliography/static/js/modules/bibliography/form/strings.js:61
 msgid "author name addon"
 msgstr "Допълнителен Автор"
@@ -556,6 +430,7 @@ msgstr "Брой страниц"
 msgid "Pagination"
 msgstr "Страниране"
 
+#. supongo que está bien
 #: bibliography/static/js/modules/bibliography/form/strings.js:73
 msgid "Number of a partial volume"
 msgstr "Номер от непълен том"
@@ -588,10 +463,12 @@ msgstr "Съкратен Редактор(и)"
 msgid "Shorthand"
 msgstr "Стенография"
 
+#. Está bien?
 #: bibliography/static/js/modules/bibliography/form/strings.js:81
 msgid "Shorthand intro"
 msgstr "Стонография накратко"
 
+#. En este caso es acrónimo o es sigla? En inglés depende del contexto, en español son dos palabras diferentes
 #: bibliography/static/js/modules/bibliography/form/strings.js:82
 msgid "Acronym of the publication's title"
 msgstr "Акроним на заглавието"
@@ -631,6 +508,8 @@ msgstr "Подзаглавие"
 msgid "Title"
 msgstr "Заглавие"
 
+#. Complemento de título.
+#. no se que es postfix.
 #: bibliography/static/js/modules/bibliography/form/strings.js:87
 msgid "Title addon"
 msgstr "Добавено заглавие"
@@ -673,16 +552,8 @@ msgid "In <em>Extended Date Time Format</em> (EDTF) 1.0<br>Level 0 or 1"
 msgstr "В <em> Формат на удължена дата </em> (EDTF) 1.0 <br> ниво 0 или 1"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:98
-msgid ""
-"Prefixed is \"used\" when it is used in cases where only the last name is "
-"used.     For example: \"Ludwig van Beethoven\" turns into \"Beethoven\", so "
-"the prefix \"van\"     is not used. \"Vincent van Gogh\" turns into \"van "
-"Gogh\", so the prefix \"van\" is used."
-msgstr ""
-"Префиксът се \"използва\", когато се използва в случаите, когато се използва "
-"само фамилното име. Например: „Лудвиг ван Бетовен“ се превръща в „Бетовен“, "
-"така че префиксът „ван“ не се използва. \"Vincent van Gogh\" се превръща във "
-"\"van Gogh\", така че се използва префиксът \"van\"."
+msgid "Prefixed is \"used\" when it is used in cases where only the last name is used.     For example: \"Ludwig van Beethoven\" turns into \"Beethoven\", so the prefix \"van\"     is not used. \"Vincent van Gogh\" turns into \"van Gogh\", so the prefix \"van\" is used."
+msgstr "Префиксът се \"използва\", когато се използва в случаите, когато се използва само фамилното име. Например: „Лудвиг ван Бетовен“ се превръща в „Бетовен“, така че префиксът „ван“ не се използва. \"Vincent van Gogh\" се превръща във \"van Gogh\", така че се използва префиксът \"van\"."
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:104
 msgid "Range or single page, column, paragraph, section, line"
@@ -766,6 +637,7 @@ msgstr "Протоколи"
 msgid "Multi-volume proceedings"
 msgstr "Многотомни протоколи"
 
+#. bien?
 #: bibliography/static/js/modules/bibliography/form/strings.js:132
 msgid "Article in a proceedings"
 msgstr "Статия от протоколи"
@@ -808,18 +680,22 @@ msgstr "Статия във вестник"
 msgid "Journal article"
 msgstr "Статия в журнал"
 
+#. no es entrada "de"....
 #: bibliography/static/js/modules/bibliography/form/strings.js:142
 msgid "Encyclopedia entry"
 msgstr "Запис в енциклопедия"
 
+#. No es entrada "de" diccionario?
 #: bibliography/static/js/modules/bibliography/form/strings.js:143
 msgid "Dictionary entry"
 msgstr "уа в речник"
 
+#. Publicación en el blog...>sería mejor o esta correcta la traducción?
 #: bibliography/static/js/modules/bibliography/form/strings.js:144
 msgid "Blog post"
 msgstr "Блог запис"
 
+#. correcto?
 #: bibliography/static/js/modules/bibliography/form/strings.js:145
 msgid "Forum post"
 msgstr "Запис във Форум"
@@ -899,6 +775,7 @@ msgstr "В пресата"
 msgid "Pre-published"
 msgstr "Предварително публикувано"
 
+#. esto me habías dicho que no se traduce, verdad?
 #: bibliography/static/js/modules/bibliography/form/strings.js:170
 msgid "M.A. thesis"
 msgstr "М. А. теза"
@@ -1172,21 +1049,12 @@ msgid "Select source type"
 msgstr "Избери тип на източника"
 
 #: bibliography/static/js/modules/bibliography/form/templates.js:6
-msgid "Required Fields"
-msgstr "Задължителни полета"
-
-#: bibliography/static/js/modules/bibliography/form/templates.js:6
-msgid "Optional Fields"
-msgstr "Полета по избор"
-
-#: bibliography/static/js/modules/bibliography/form/templates.js:6
 msgid "Categories"
 msgstr "Категории"
 
 #: bibliography/static/js/modules/bibliography/import/biblatex.js:3
 msgid "No bibliography entries could be found in import file."
-msgstr ""
-"Във файла за импортиране не могат да бъдат намерени библиографски записи."
+msgstr "Във файла за импортиране не могат да бъдат намерени библиографски записи."
 
 #: bibliography/static/js/modules/bibliography/import/biblatex.js:4
 msgid "An error occured while reading a bibtex entry"
@@ -1197,12 +1065,11 @@ msgid "Field cannot not be saved. Fidus Writer does not support the field."
 msgstr "Полето не може да бъде запазено. Fidus Writer не поддържа полето."
 
 #: bibliography/static/js/modules/bibliography/import/biblatex.js:6
-msgid ""
-"Entry has been saved as \"misc\". Fidus Writer does not support the entry "
-"type."
-msgstr ""
-"Записът е запазен като „misc“. Fidus Writer не поддържа типа на записа."
+msgid "Entry has been saved as \"misc\". Fidus Writer does not support the entry type."
+msgstr "Записът е запазен като „misc“. Fidus Writer не поддържа типа на записа."
 
+#. Si se puede simplificar pondríar una secuencia standard EDPF...
+#. no se que pensás
 #: bibliography/static/js/modules/bibliography/import/biblatex.js:7
 msgid "Field does not contain a valid EDTF string."
 msgstr "Полето не съдържа валиден EDTF низ."
@@ -1227,10 +1094,6 @@ msgstr "Импортирайте библиотека на BibTex"
 msgid "Select a file"
 msgstr "Изберете файл"
 
-#: bibliography/static/js/modules/bibliography/overview/index.js:50
-msgid "Bibliography Manager"
-msgstr "Управление на Библиография"
-
 #: bibliography/static/js/modules/bibliography/overview/index.js:71
 #: document/static/js/modules/editor/dialogs/citation.js:187
 msgid "No sources registered"
@@ -1250,16 +1113,6 @@ msgstr "Автор"
 #: bibliography/static/js/modules/bibliography/overview/index.js:78
 msgid "Published"
 msgstr "Публикувани"
-
-#: bibliography/static/js/modules/bibliography/overview/index.js:146
-#: document/static/js/modules/documents/overview/index.js:179
-#: document/static/js/modules/editor/dialogs/citation.js:98
-#: document/static/js/modules/editor/dialogs/citation.js:139
-#: document/static/js/modules/exporter/tools/file.js:3
-#: user_template_manager/static/js/modules/user_template_manager/overview.js:99
-#: usermedia/static/js/modules/images/overview/index.js:124
-msgid "Untitled"
-msgstr "Неозаглавен"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:201
 #: usermedia/static/js/modules/images/overview/categories.js:76
@@ -1343,6 +1196,1612 @@ msgstr "Търсене в библиография"
 msgid " and others"
 msgstr "и други"
 
+#: user/static/js/modules/contacts/menu.js:18
+msgid "Add new contact"
+msgstr "Добавяне на нов контакт"
+
+#: document/static/js/modules/documents/access_rights/index.js:132
+msgid "Share your document with others"
+msgstr "Сподели документа с други потребители"
+
+#: document/static/js/modules/documents/access_rights/index.js:215
+msgid "Access rights have been saved"
+msgstr "Правата за достъп бяха запазени"
+
+#: document/static/js/modules/documents/access_rights/index.js:216
+msgid "Access rights could not be saved"
+msgstr "Правата за достъп не можаха да бъдат запазени"
+
+#: document/static/js/modules/documents/access_rights/templates.js:8
+msgid "My contacts"
+msgstr "Моите контати"
+
+#: document/static/js/modules/documents/access_rights/templates.js:10
+msgid "Collaborators"
+msgstr "Сътрудници"
+
+#: document/static/js/modules/documents/access_rights/templates.js:21
+msgid "Write"
+msgstr "Напиши"
+
+#: document/static/js/modules/documents/access_rights/templates.js:21
+msgid "Read"
+msgstr "Прочети"
+
+#: document/static/js/modules/documents/access_rights/templates.js:21
+msgid "Access rights used within document review"
+msgstr "Права за достъп, използвани при преглед на документи"
+
+#: document/static/js/modules/documents/access_rights/templates.js:21
+msgid "Review"
+msgstr "преглед"
+
+#: document/static/js/modules/documents/access_rights/templates.js:21
+msgid "Read document but not see comments and chats of others"
+msgstr "Прочетете документа, но не виждайте коментари и чатове на други"
+
+#: document/static/js/modules/documents/overview/actions.js:30
+msgid "Could not delete document"
+msgstr "Документът не може да бъде изтрит"
+
+#: document/static/js/modules/documents/overview/actions.js:26
+msgid "Document has been deleted"
+msgstr "Документът е изтрит"
+
+#: document/static/js/modules/documents/overview/actions.js:38
+msgid "Delete the document(s)?"
+msgstr "Изтрий документ(и)?"
+
+#: document/static/js/modules/documents/overview/index.js:106
+msgid "Cannot load data of documents."
+msgstr "Не могат да се зареждат данни на документи."
+
+#: document/static/js/modules/documents/overview/index.js:147
+msgid "No documents available"
+msgstr "Няма налични документи"
+
+#: document/static/js/modules/documents/overview/index.js:154
+msgid "Revisions"
+msgstr "Ревизиите"
+
+#: document/static/js/modules/documents/overview/index.js:154
+#: user_template_manager/static/js/modules/user_template_manager/overview.js:74
+msgid "Created"
+msgstr "Създаден"
+
+#: document/static/js/modules/documents/overview/index.js:154
+#: user_template_manager/static/js/modules/user_template_manager/overview.js:74
+msgid "Last changed"
+msgstr "Последна промяна"
+
+#: document/static/js/modules/documents/overview/index.js:154
+msgid "Owner"
+msgstr "Собственик"
+
+#: document/static/js/modules/documents/access_rights/templates.js:10
+#: document/static/js/modules/documents/overview/index.js:154
+msgid "Rights"
+msgstr "Права"
+
+#: document/static/js/modules/documents/overview/menu.js:10
+msgid "You cannot delete documents of other users"
+msgstr "Не можете да изтриете документи на други потребители"
+
+#: document/static/js/modules/documents/overview/menu.js:19
+msgid "Share selected"
+msgstr "Сподели избраните"
+
+#: document/static/js/modules/documents/overview/menu.js:25
+msgid "You cannot share documents of other users"
+msgstr "Не можете да споделяте документи на други потребители"
+
+#: document/static/js/modules/documents/overview/menu.js:35
+msgid "Copy selected"
+msgstr "Копирай избраните"
+
+#: document/static/js/modules/documents/overview/menu.js:45
+msgid "Export selected as Epub"
+msgstr "Експортирай избраните като Epub"
+
+#: document/static/js/modules/documents/overview/menu.js:55
+msgid "Export selected as HTML"
+msgstr "Експортирай избраните като HTML"
+
+#: document/static/js/modules/documents/overview/menu.js:65
+msgid "Export selected as LaTeX"
+msgstr "Експортирай избраните като LaTeX"
+
+#: document/static/js/modules/documents/overview/menu.js:85
+msgid "Download selected as Fidus document"
+msgstr "Изтеглете избрания като Fidus документ"
+
+#: document/static/js/modules/documents/overview/menu.js:99
+msgid "Create new document"
+msgstr "Създайте нов документ"
+
+#: document/static/js/modules/documents/overview/menu.js:104
+msgid "Upload Fidus document"
+msgstr "Качване на Fidus документ"
+
+#: document/static/js/modules/documents/overview/menu.js:110
+msgid "Search documents"
+msgstr "Търсене на документи"
+
+#: document/static/js/modules/documents/revisions/index.js:27
+msgid "Saved revisions of"
+msgstr "Запазени ревизии на"
+
+#: document/static/js/modules/documents/revisions/index.js:140
+msgid "Do you really want to delete the revision?"
+msgstr "Наистина ли искате да изтриете редакцията?"
+
+#: document/static/js/modules/documents/revisions/index.js:156
+msgid "Revision deleted"
+msgstr "Ревизията е изтрита"
+
+#: document/static/js/modules/documents/revisions/index.js:163
+msgid "Could not delete revision."
+msgstr "Ревизията не можа да се изтрие."
+
+#. contexto?
+#: document/static/js/modules/documents/revisions/templates.js:6
+msgid "Time"
+msgstr "път"
+
+#: document/static/js/modules/documents/revisions/templates.js:6
+#: document/static/js/modules/editor/marginboxes/templates.js:82
+msgid "Recreate"
+msgstr "Recreate"
+
+#: document/static/js/modules/documents/tools.js:32
+msgid "Could not obtain extra document data"
+msgstr "Не можаха да се получат допълнителни данни за документа"
+
+#: document/static/js/modules/editor/comments/interactions.js:307
+#: document/static/js/modules/editor/comments/interactions.js:365
+#: document/static/js/modules/editor/comments/store.js:50
+msgid "Reviewer"
+msgstr "рецензент"
+
+#: document/static/js/modules/editor/dialogs/citation.js:39
+#: document/static/js/modules/editor/dialogs/contributor.js:20
+#: document/static/js/modules/editor/dialogs/contributor.js:77
+#: document/static/js/modules/editor/dialogs/figure.js:178
+#: document/static/js/modules/editor/dialogs/link.js:55
+#: document/static/js/modules/editor/dialogs/math.js:21
+#: document/static/js/modules/editor/dialogs/table.js:194
+#: usermedia/static/js/modules/images/edit_dialog/index.js:24
+msgid "Update"
+msgstr "Обновяване"
+
+#: document/static/js/modules/editor/dialogs/contributor.js:20
+#: document/static/js/modules/editor/dialogs/contributor.js:77
+#: document/static/js/modules/editor/state_plugins/contributor_input.js:39
+#: document/static/js/modules/editor/state_plugins/tag_input.js:47
+msgid "Add"
+msgstr "Добави"
+
+#: document/static/js/modules/editor/dialogs/contributor.js:33
+msgid "Email is in incorrect format!"
+msgstr "Имейлът е в неправилен формат!"
+
+#: document/static/js/modules/editor/dialogs/citation.js:14
+#: document/static/js/modules/editor/dialogs/figure.js:21
+#: document/static/js/modules/editor/dialogs/link.js:10
+#: document/static/js/modules/editor/dialogs/math.js:21
+#: document/static/js/modules/editor/dialogs/table.js:53
+#: document/static/js/modules/editor/dialogs/templates.js:28
+msgid "Insert"
+msgstr "Вмъкване"
+
+#: document/static/js/modules/editor/dialogs/citation.js:31
+#: document/static/js/modules/editor/dialogs/figure.js:187
+#: document/static/js/modules/editor/dialogs/templates.js:41
+#: document/static/js/modules/editor/state_plugins/links.js:125
+#: user/static/js/modules/profile/dialogs.js:190
+msgid "Remove"
+msgstr "Изтриване"
+
+#: document/static/js/modules/editor/dialogs/citation.js:57
+msgid "Configure Citation"
+msgstr "Настройка на цитати"
+
+#: bibliography/static/js/modules/bibliography/overview/index.js:146
+#: document/static/js/modules/documents/overview/index.js:179
+#: document/static/js/modules/editor/dialogs/citation.js:98
+#: document/static/js/modules/editor/dialogs/citation.js:139
+#: document/static/js/modules/exporter/tools/file.js:3
+#: user_template_manager/static/js/modules/user_template_manager/overview.js:99
+#: usermedia/static/js/modules/images/overview/index.js:124
+msgid "Untitled"
+msgstr "Неозаглавен"
+
+#: document/static/js/modules/editor/dialogs/citation.js:189
+#: usermedia/static/js/modules/images/selection_dialog/index.js:98
+msgid "Search..."
+msgstr "Търсене..."
+
+#: document/static/js/modules/editor/dialogs/citation.js:329
+msgid "Please select at least one citation source!"
+msgstr "Моля изберете поне един източник на цитати!"
+
+#: document/static/js/modules/editor/dialogs/figure.js:209
+msgid "Enter latex math or insert an image"
+msgstr "Въведете Latex формула или изображение"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Albanian"
+msgstr "албански"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Asturian"
+msgstr "Астурия"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Belarusian"
+msgstr "Беларус"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Breton"
+msgstr "Бретон"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Catalan (Valencia)"
+msgstr "Каталунски (Валенсия)"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:215
+#: document/static/js/modules/schema/const.js:1
+msgid "Chinese (Simplified)"
+msgstr "Опростен китайски)"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "English (Australia)"
+msgstr "Английски (Австралия)"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "English (Canada)"
+msgstr "Английски (Канада)"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "English (New Zealand)"
+msgstr "Английски (Нова Зеландия)"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "English (South Africa)"
+msgstr "Английски (Южна Африка)"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:215
+#: document/static/js/modules/schema/const.js:1
+msgid "English (United Kingdom)"
+msgstr "Английски (Обединено кралство)"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:215
+#: document/static/js/modules/schema/const.js:1
+msgid "English (United States)"
+msgstr "Английски (Съединени щати)"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Esperanto"
+msgstr "есперанто"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Galician"
+msgstr "галисийски"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:215
+#: document/static/js/modules/schema/const.js:1
+msgid "German (Germany)"
+msgstr "Немски (Германия)"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "German (Austria)"
+msgstr "Немски (Австрия)"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "German (Switzerland)"
+msgstr "Немски (Швейцария)"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Khmer"
+msgstr "Червените"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Malayalam"
+msgstr "малаялам"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Norwegian (bokmål)"
+msgstr "Норвежки (bokmål)"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Norwegian (nynorsk)"
+msgstr "Норвежки (nynorsk)"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Persian"
+msgstr "персийски"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:215
+#: document/static/js/modules/schema/const.js:1
+msgid "Portuguese (Brazil)"
+msgstr "Португалски (Бразилия)"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Portuguese (Portugal)"
+msgstr "Португалски (Португалия)"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Serbian (Cyrillic)"
+msgstr "Сръбски (на кирилица)"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Serbian (Latin)"
+msgstr "Сръбски (латински)"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Slovenian"
+msgstr "словенски"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Tamil"
+msgstr "тамилски"
+
+#: document/static/js/modules/schema/const.js:1
+msgid "Tagalog"
+msgstr "тагалог"
+
+#: document/static/js/modules/editor/dialogs/language.js:14
+msgid "Change"
+msgstr "промяна"
+
+#: document/static/js/modules/editor/dialogs/language.js:40
+msgid "Change language of the document"
+msgstr "Промяна на езика на документа"
+
+#: document/static/js/modules/document_template/templates.js:10
+#: document/static/js/modules/editor/dialogs/link.js:154
+#: document/static/js/modules/editor/menus/toolbar/model.js:364
+msgid "Link"
+msgstr "връзка"
+
+#: document/static/js/modules/editor/dialogs/math.js:51
+msgid "Mathematical formula"
+msgstr "Математическа формула"
+
+#: document/static/js/modules/document_template/document_style_dialog.js:15
+#: document/static/js/modules/document_template/export_template_dialog.js:17
+#: document/static/js/modules/editor/dialogs/revision.js:13
+#: user_template_manager/static/js/modules/user_template_manager/editor.js:44
+msgid "Save"
+msgstr "Запази"
+
+#: document/static/js/modules/editor/dialogs/revision.js:26
+msgid "Revision description"
+msgstr "Описание на редакцията"
+
+#: document/static/js/modules/editor/dialogs/table.js:88
+msgid "Insert table"
+msgstr "Вмъкване на маса"
+
+#: document/static/js/modules/editor/dialogs/templates.js:8
+msgid "Internal"
+msgstr "вътрешен"
+
+#: document/static/js/modules/editor/dialogs/templates.js:8
+msgid "Select Target"
+msgstr "Изберете Цел"
+
+#: document/static/js/modules/editor/dialogs/templates.js:8
+msgid "External"
+msgstr "Външен"
+
+#: base/static/js/modules/common/dialog.js:35
+#: document/static/js/modules/editor/comments/editors/answer.js:11
+#: document/static/js/modules/editor/comments/editors/comment.js:87
+#: document/static/js/modules/editor/dialogs/templates.js:28
+msgid "Cancel"
+msgstr "Отказ"
+
+#. Buscar en Fidus y verificar si cuadra
+#: document/static/js/modules/document_template/templates.js:21
+#: document/static/js/modules/document_template/templates.js:32
+#: document/static/js/modules/document_template/templates.js:43
+#: document/static/js/modules/document_template/templates.js:60
+msgid "None"
+msgstr "Нито един"
+
+#: document/static/js/modules/document_template/templates.js:6
+#: document/static/js/modules/editor/menus/toolbar/model.js:16
+#: document/static/js/modules/editor/menus/toolbar/model.js:445
+msgid "Figure"
+msgstr "Фигура"
+
+#: document/static/js/modules/document_template/schema.js:160
+#: document/static/js/modules/document_template/schema.js:163
+#: document/static/js/modules/document_template/templates.js:6
+#: document/static/js/modules/document_template/templates.js:70
+#: document/static/js/modules/editor/menus/toolbar/model.js:461
+msgid "Table"
+msgstr "Таблица"
+
+#: document/static/js/modules/editor/dialogs/templates.js:41
+msgid "My sources"
+msgstr "Моите източници"
+
+#: document/static/js/modules/editor/dialogs/templates.js:41
+msgid "Citation format"
+msgstr "Формат на цитати"
+
+#: document/static/js/modules/editor/dialogs/templates.js:41
+msgid "Author (1998)"
+msgstr "Автор (1998)"
+
+#: document/static/js/modules/editor/comments/editors/answer.js:11
+#: document/static/js/modules/editor/comments/editors/comment.js:87
+#: document/static/js/modules/editor/marginboxes/templates.js:13
+#: document/static/js/modules/editor/marginboxes/templates.js:82
+#: document/static/js/modules/editor/state_plugins/contributor_input.js:58
+#: document/static/js/modules/editor/state_plugins/links.js:125
+msgid "Edit"
+msgstr "Редактиране"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:90
+msgid "New paragraph"
+msgstr "Нов параграф"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:91
+msgid "New heading"
+msgstr "Ново заглавие"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:93
+msgid "Wrapped into blockquote"
+msgstr "Увита в блокчейн"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:94
+msgid "Added code block"
+msgstr "Добавен блок код"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:95
+msgid "Inserted figure"
+msgstr "Вмъкната фигура"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:96
+msgid "New list item"
+msgstr "Нов елемент от списъка"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:97
+msgid "Inserted table"
+msgstr "Вмъкната маса"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:99
+msgid "Merged paragraph"
+msgstr "Обединен параграф"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:100
+msgid "Merged heading"
+msgstr "Обединено заглавие"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:102
+msgid "Unwrapped blockquote"
+msgstr "Неупаковано блокчейн"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:103
+msgid "Removed code block"
+msgstr "Премахнат код код"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:104
+msgid "Deleted figure"
+msgstr "Изтрита фигура"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:105
+msgid "Lifted list item"
+msgstr "Повдигнат елемент от списъка"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:106
+#: document/static/js/modules/editor/menus/table/model.js:242
+msgid "Delete table"
+msgstr "Изтриване на таблицата"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:88
+msgid "Format change"
+msgstr "Промяна на формата"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:125
+msgid "Removed"
+msgstr "Премахнато"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:129
+#: usermedia/static/js/modules/images/overview/index.js:165
+msgid "Added"
+msgstr "Добавен"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:164
+msgid "Reject"
+msgstr "Отхвърляне"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:76
+#: document/static/js/modules/editor/menus/headerbar/model.js:31
+#: usermedia/static/js/modules/images/overview/index.js:165
+msgid "File"
+msgstr "Файл"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:32
+msgid "File handling"
+msgstr "Управление на файлове"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:36
+msgid "Share"
+msgstr "Сподели"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:39
+msgid "Share the document with other users."
+msgstr "Сподели документа с други потребители"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:54
+#: document/static/js/modules/editor/menus/headerbar/view.js:275
+msgid "Close the document and return to the document overview menu."
+msgstr "Затвори документа и се върни към обзора на документа"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:60
+#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
+msgid "Save revision"
+msgstr "Запазване на ревизията"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:63
+msgid "Save a revision of the current document."
+msgstr "Запазете ревизия на текущия документ."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:75
+msgid "Create Copy"
+msgstr "Създаване на копие"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:78
+msgid "Create copy of the current document."
+msgstr "Създайте копие на текущия документ."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:99
+msgid "Either print or create a PDF using your browser print dialog."
+msgstr "Или отпечатайте, или създайте PDF, използвайки диалоговия прозорец за печат на браузъра."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:115
+msgid "Export"
+msgstr "Експортиране"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:116
+msgid "Export of the document contents"
+msgstr "Експортирай съдаржанието на документа"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:120
+msgid "HTML"
+msgstr "HTML"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:122
+msgid "Export the document to an HTML file."
+msgstr "Експортирайте документа в HTML файл."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:135
+msgid "Epub"
+msgstr "Epub"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:137
+msgid "Export the document to an Epub electronic reader file."
+msgstr "Експортирай документа като Epub електронна книга"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:150
+msgid "LaTeX"
+msgstr "LaTeX"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:152
+msgid "Export the document to an LaTeX file."
+msgstr "Експортирайте документа в LaTeX файл."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:182
+msgid "Settings"
+msgstr "Настройки"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:183
+msgid "Configure settings of this document."
+msgstr "Конфигурирайте настройките на този документ."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:188
+msgid "Citation Style"
+msgstr "Сти на цтатите"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:190
+msgid "Choose your preferred citation style."
+msgstr "Изберете предпочитан стил на цитатите."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:198
+msgid "Document Style"
+msgstr "Стил на Документа"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:200
+msgid "Choose your preferred document style."
+msgstr "Изберете предпочитания от вас стил на документ."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:208
+msgid "Text Language"
+msgstr "Език на текста"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:210
+msgid "Choose the language of the document."
+msgstr "Изберете езика на документа."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:224
+msgid "Other"
+msgstr "друг"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:239
+msgid "Paper Size"
+msgstr "Размер на лист"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:241
+msgid "Choose a papersize for print and PDF generation."
+msgstr "Изберете размер на хартия за печат и генериране на PDF."
+
+#. es solo A4? no se si bien sobre "din"
+#: document/static/js/modules/editor/menus/headerbar/model.js:247
+msgid "DIN A4"
+msgstr "DIN A4"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:249
+msgid "A4 (DIN A4/ISO 216) which is used in most of the world."
+msgstr "A4 (DIN A4/ISO 216) използван в по голямата част от света"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:264
+msgid "US Letter"
+msgstr "US Letter"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:266
+msgid "The format used by the USA and some other American countries."
+msgstr "Форматът използван в USA и някои американски страни."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:284
+msgid "Tools"
+msgstr "Инструменти"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:285
+msgid "Select document editing tool."
+msgstr "Изберете инструмент за редактиране на документи."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:289
+#: document/static/js/modules/editor/tools/word_count.js:50
+msgid "Word counter"
+msgstr "Брой Думи"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:291
+msgid "See document statistics."
+msgstr "Вижте статистиката на документите."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:297
+msgid "Keyboard shortcuts"
+msgstr "Комбинация от клавиши"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:299
+msgid "Show an overview of available keyboard shortcuts."
+msgstr "Показване на преглед на наличните клавишни комбинации."
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:462
+msgid "Insert a table into the document."
+msgstr "Поставете таблица в документа."
+
+#: document/static/js/modules/editor/menus/table/model.js:32
+msgid "Add row above"
+msgstr "Добавете ред по-горе"
+
+#: document/static/js/modules/editor/menus/table/model.js:34
+msgid "Add a row above the current row"
+msgstr "Добавете ред над текущия ред"
+
+#: document/static/js/modules/editor/menus/table/model.js:49
+msgid "Add row below"
+msgstr "Добавете ред по-долу"
+
+#: document/static/js/modules/editor/menus/table/model.js:51
+msgid "Add a row below the current row"
+msgstr "Добавете ред под текущия ред"
+
+#: document/static/js/modules/editor/menus/table/model.js:66
+msgid "Add column left"
+msgstr "Добавете колона вляво"
+
+#: document/static/js/modules/editor/menus/table/model.js:68
+msgid "Add a column to the left of the current column"
+msgstr "Добавете колона вляво от текущата колона"
+
+#: document/static/js/modules/editor/menus/table/model.js:83
+msgid "Add column right"
+msgstr "Добавете колона вдясно"
+
+#: document/static/js/modules/editor/menus/table/model.js:85
+msgid "Add a column to the right of the current column"
+msgstr "Добавете колона вдясно от текущата колона"
+
+#: document/static/js/modules/document_template/schema.js:158
+#: document/static/js/modules/editor/menus/table/model.js:103
+msgid "Delete row"
+msgstr "Изтриване на ред"
+
+#: document/static/js/modules/editor/menus/table/model.js:105
+msgid "Delete current row"
+msgstr "Изтриване на текущия ред"
+
+#: document/static/js/modules/document_template/schema.js:158
+#: document/static/js/modules/editor/menus/table/model.js:120
+msgid "Delete column"
+msgstr "Изтриване на колона"
+
+#: document/static/js/modules/editor/menus/table/model.js:122
+msgid "Delete current column"
+msgstr "Изтриване на текущата колона"
+
+#: document/static/js/modules/document_template/schema.js:158
+#: document/static/js/modules/editor/menus/table/model.js:140
+msgid "Merge cells"
+msgstr "Сливане на клетки"
+
+#: document/static/js/modules/editor/menus/table/model.js:142
+msgid "Merge selected cells"
+msgstr "Обединяване на избрани клетки"
+
+#: document/static/js/modules/document_template/schema.js:158
+msgid "Split cell"
+msgstr "Раздели клетка"
+
+#: document/static/js/modules/editor/menus/table/model.js:159
+msgid "Split selected cell"
+msgstr "Разделяне на избраната клетка"
+
+#. Prestar compu de Johannes sí o sí
+#. Encabezado de fila?
+#: document/static/js/modules/document_template/schema.js:158
+#: document/static/js/modules/editor/menus/table/model.js:177
+msgid "Toggle header row"
+msgstr "Превключване на заглавния ред"
+
+#: document/static/js/modules/editor/menus/table/model.js:179
+msgid "Toggle header-status of currently selected row"
+msgstr "Превключване на състоянието на заглавката на текущо избрания ред"
+
+#. Prestar compu de Johannes sí o sí
+#. Es Encabezado de columna?
+#: document/static/js/modules/document_template/schema.js:158
+#: document/static/js/modules/editor/menus/table/model.js:194
+msgid "Toggle header column"
+msgstr "Превключване на колоната на заглавката"
+
+#: document/static/js/modules/editor/menus/table/model.js:196
+msgid "Toggle header-status of currently selected column"
+msgstr "Превключване на състоянието на заглавката на текущо избраната колона"
+
+#: document/static/js/modules/editor/menus/table/model.js:211
+msgid "Toggle header cell"
+msgstr "Превключване на клетката на заглавката"
+
+#: document/static/js/modules/editor/menus/table/model.js:213
+msgid "Toggle header-status of currently selected cells"
+msgstr "Превключване на състоянието на заглавката на текущо избраните клетки"
+
+#: document/static/js/modules/editor/menus/table/model.js:245
+msgid "Delete currently selected table"
+msgstr "Изтрийте текущо избраната таблица"
+
+#: document/static/js/modules/document_template/templates.js:32
+msgid "Authors"
+msgstr "Автори"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:8
+msgid "Normal Text"
+msgstr "Нормален текст"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:9
+msgid "1st Heading"
+msgstr "1-во заглавие"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:10
+msgid "2nd Heading"
+msgstr "2-ро заглавие"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:11
+msgid "3rd Heading"
+msgstr "3-та позиция"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:12
+msgid "4th Heading"
+msgstr "4-та позиция"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:13
+msgid "5th Heading"
+msgstr "5-та позиция"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:14
+msgid "6th Heading"
+msgstr "6-та позиция"
+
+#: document/static/js/modules/document_template/templates.js:6
+#: document/static/js/modules/editor/menus/toolbar/model.js:15
+msgid "Code"
+msgstr "Код"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:80
+msgid "Open/close header menu"
+msgstr "Отваряне / затваряне на менюто на заглавката"
+
+#: document/static/js/modules/document_template/templates.js:6
+#: document/static/js/modules/editor/menus/toolbar/model.js:109
+#: document/static/js/modules/editor/menus/toolbar/model.js:380
+msgid "Footnote"
+msgstr "бележка под линия"
+
+#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
+msgid "Bold"
+msgstr "смел"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:315
+msgid "Numbered list"
+msgstr "Номериран списък"
+
+#: document/static/js/modules/document_template/templates.js:6
+#: document/static/js/modules/editor/menus/toolbar/model.js:331
+msgid "Bullet list"
+msgstr "Списък с куршуми"
+
+#: document/static/js/modules/document_template/templates.js:6
+#: document/static/js/modules/editor/menus/toolbar/model.js:347
+msgid "Blockquote"
+msgstr "Текстов блок"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:398
+msgid "Cite"
+msgstr "цитирам"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:414
+msgid "Horizontal line"
+msgstr "Хоризонтална линия"
+
+#: document/static/js/modules/editor/dialogs/templates.js:16
+#: document/static/js/modules/editor/menus/toolbar/model.js:430
+msgid "Math"
+msgstr "Math"
+
+#: document/static/js/modules/editor/dialogs/figure.js:45
+#: document/static/js/modules/editor/dialogs/math.js:76
+#: document/static/js/modules/editor/menus/toolbar/model.js:478
+#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
+msgid "Undo"
+msgstr "Undo"
+
+#: document/static/js/modules/editor/dialogs/figure.js:43
+#: document/static/js/modules/editor/dialogs/math.js:74
+#: document/static/js/modules/editor/menus/toolbar/model.js:485
+#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
+msgid "Redo"
+msgstr "Redo"
+
+#: document/static/js/modules/documents/access_rights/templates.js:21
+#: document/static/js/modules/editor/menus/selection/model.js:33
+msgid "Comment"
+msgstr "коментар"
+
+#: document/static/js/modules/editor/menus/selection/model.js:44
+#: document/static/js/modules/editor/state_plugins/links.js:125
+msgid "Anchor"
+msgstr "котва"
+
+#: document/static/js/modules/editor/menus/toolbar/view.js:259
+msgid "More"
+msgstr "| Повече ▼"
+
+#: document/static/js/modules/editor/index.js:176
+msgid "Warning! Not all your changes have been saved! You could suffer data loss. Attempting to reconnect..."
+msgstr "Внимание! Не всички ваши промени са запазени! Може да претърпите загуба на данни. Опит за повторно свързване ..."
+
+#: document/static/js/modules/editor/state_plugins/keyword_input.js:46
+msgid "Add keyword..."
+msgstr "Добавяне на ключова дума ..."
+
+#: document/static/js/modules/editor/state_plugins/links.js:33
+msgid "Link copied to clipboard"
+msgstr "Връзка се копира в клипборда"
+
+#: document/static/js/modules/editor/state_plugins/links.js:35
+msgid "Copy to clipboard failed. Please copy manually."
+msgstr "Копирането в клипборда не бе успешно. Моля, копирайте ръчно."
+
+#: document/static/js/modules/editor/document_template/index.js:67
+msgid "Safari bug warning"
+msgstr "Предупреждение за грешки в Safari"
+
+#: document/static/js/modules/editor/document_template/index.js:69
+msgid "Unfortunately Safari has a bug which makes it impossible to export to this format. Please use Chrome or Firefox (on a desktop computer)."
+msgstr "За съжаление Safari има грешка, която прави невъзможно експортирането в този формат. Моля, използвайте Chrome или Firefox (на настолен компютър)."
+
+#: document/static/js/modules/editor/document_template/index.js:87
+msgid "Export the document to a DOCX file with the given template."
+msgstr "Експортирайте документа в DOCX файл с дадения шаблон."
+
+#: document/static/js/modules/editor/document_template/index.js:109
+msgid "Export the document to an ODT file with the given template."
+msgstr "Експортирайте документа в ODT файл с дадения шаблон."
+
+#: document/static/js/modules/editor/tools/show_key_bindings.js:15
+msgid "Keyboard Shortcuts"
+msgstr "Комбинация от клавиши"
+
+#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
+msgid "Print"
+msgstr "печат"
+
+#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
+msgid "Italics"
+msgstr "курсив"
+
+#: document/static/js/modules/editor/tools/word_count_templates.js:8
+msgid "Number of"
+msgstr "Номер от"
+
+#: document/static/js/modules/editor/tools/word_count_templates.js:8
+msgid "Words"
+msgstr "Думи"
+
+#: document/static/js/modules/editor/tools/word_count_templates.js:8
+msgid "Characters with blanks"
+msgstr "Знаци (с интервали)"
+
+#: document/static/js/modules/exporter/docx/metadata.js:65
+#: document/static/js/modules/exporter/docx/metadata.js:66
+#: document/static/js/modules/exporter/odt/metadata.js:66
+msgid "Unknown"
+msgstr "Неизвестен"
+
+#: document/static/js/modules/exporter/epub/index.js:22
+msgid "Epub export has been initiated."
+msgstr "Започнат бе Epub експорт."
+
+#: document/static/js/modules/exporter/html/index.js:19
+msgid "HTML export has been initiated."
+msgstr "Започнат бе HTML експорт."
+
+#: document/static/js/modules/exporter/native/copy.js:30
+msgid " successfully copied."
+msgstr " успешно копиран"
+
+#: document/static/js/modules/exporter/native/revision.js:38
+msgid "Revision saved"
+msgstr "Ревизията е запазена"
+
+#: document/static/js/modules/exporter/native/revision.js:38
+msgid "Revision could not be saved."
+msgstr "Ревизията не можа да бъде запазена."
+
+#: document/static/js/modules/exporter/native/shrink.js:17
+msgid "File export has been initiated."
+msgstr "Експортирането беше стартирано."
+
+#: document/static/js/modules/importer/file.js:42
+#: document/static/js/modules/importer/file.js:67
+msgid "The uploaded file does not appear to be a Fidus Writer file."
+msgstr "Каченият файл не изглежда да е Fidus Writer."
+
+#: document/static/js/modules/importer/file.js:128
+msgid "The uploaded file does not appear to be of the version used on this server: "
+msgstr "Каченият файл не е от версията, използвана на този сървър: "
+
+#: document/static/js/modules/importer/native.js:53
+msgid "Could not save Image"
+msgstr "Изображение не можа да се запази"
+
+#: document/static/js/modules/importer/native.js:103
+msgid "Could not create document"
+msgstr "Не можа да се създаде документ"
+
+#: document/static/js/modules/importer/native.js:141
+msgid "Could not save "
+msgstr "Не можа да бъде запазен"
+
+#: document/static/js/modules/maintenance/index.js:24
+msgid "Updating..."
+msgstr "Актуализира ..."
+
+#: document/static/js/modules/maintenance/index.js:43
+msgid "Downloaded batch"
+msgstr "Изтеглена партида"
+
+#: document/static/js/modules/maintenance/index.js:55
+msgid "Could not download batch"
+msgstr "Партидата не можа да се изтегли"
+
+#: document/static/js/modules/maintenance/index.js:122
+msgid "The document has been updated"
+msgstr "Документът е актуализиран"
+
+#: document/static/js/modules/maintenance/index.js:47
+msgid "All documents updated!"
+msgstr "Всички документи са актуализирани!"
+
+#: document/static/js/modules/maintenance/index.js:187
+msgid "Updating saved revisions."
+msgstr "Актуализиране на запазените версии."
+
+#: document/static/js/modules/editor/dialogs/templates.js:55
+#: document/static/js/modules/schema/document/content.js:53
+#: user/static/js/modules/profile/templates.js:35
+msgid "Email"
+msgstr "Имейл"
+
+#: menu/static/js/modules/menu/index.js:9
+msgid "Documents"
+msgstr "Документи"
+
+#: menu/static/js/modules/menu/index.js:11
+msgid "edit documents"
+msgstr "редактиране на документи"
+
+#: document/static/js/modules/editor/clipboard/copy/serializers.js:37
+#: menu/static/js/modules/menu/index.js:15
+msgid "Bibliography"
+msgstr "Библиография"
+
+#: menu/static/js/modules/menu/index.js:17
+msgid "manage bibliography library"
+msgstr "управление на библиографска библиотека"
+
+#: menu/static/js/modules/menu/index.js:21
+#: usermedia/static/js/modules/images/selection_dialog/index.js:75
+msgid "Images"
+msgstr "Изображени"
+
+#: menu/static/js/modules/menu/index.js:23
+msgid "manage image files"
+msgstr "управление на изображения"
+
+#: base/static/js/modules/common/dialog.js:40
+msgid "OK"
+msgstr "Добре"
+
+#. esta bien?
+#: bibliography/static/js/modules/bibliography/form/fields/key.js:57
+msgid "Custom"
+msgstr "Персонализиран"
+
+#: bibliography/static/js/modules/bibliography/form/fields/name.js:92
+msgid "Prefix used"
+msgstr "Използван префикс"
+
+#: bibliography/static/js/modules/bibliography/form/fields/name.js:93
+#: user/static/js/modules/profile/templates.js:35
+msgid "First name"
+msgstr "Име"
+
+#: bibliography/static/js/modules/bibliography/form/fields/name.js:95
+msgid "Prefix"
+msgstr "префикс"
+
+#: bibliography/static/js/modules/bibliography/form/fields/name.js:97
+#: user/static/js/modules/profile/templates.js:35
+msgid "Last name"
+msgstr "Фамилия"
+
+#: bibliography/static/js/modules/bibliography/form/fields/name.js:99
+msgid "Suffix"
+msgstr "Наставка"
+
+#: bibliography/static/js/modules/bibliography/form/fields/name.js:63
+msgid "Organization"
+msgstr "организация"
+
+#: bibliography/static/js/modules/bibliography/form/templates.js:6
+msgid "Required Fields"
+msgstr "Задължителни полета"
+
+#: bibliography/static/js/modules/bibliography/form/templates.js:6
+msgid "Optional Fields"
+msgstr "Полета по избор"
+
+#: user/static/js/modules/profile/templates.js:4
+msgid "Delete the avatar?"
+msgstr "Да се изтрие ли аватарът?"
+
+#: user/static/js/modules/profile/templates.js:10
+msgid "NOTICE: ALL OF YOUR INFORMATION WILL DISAPPEAR FROM OUR SYSTEM!"
+msgstr "ЗАБЕЛЕЖКА: ВСИЧКА ВАША ИНФОРМАЦИЯ ЩЕ ИЗХВЪРЛЯ ОТ НАШАТА СИСТЕМА!"
+
+#: user/static/js/modules/profile/templates.js:10
+msgid "Really delete your account? Type in your username and password below to confirm deletion."
+msgstr "Наистина ли да изтриете акаунта си? Въведете вашето потребителско име и парола по-долу, за да потвърдите изтриването."
+
+#: user/static/js/modules/profile/templates.js:10
+msgid "We cannot reverse an account deletion."
+msgstr "Не можем да обърнем изтриването на акаунт."
+
+#: user/static/js/modules/profile/templates.js:10
+msgid "Some copies of your files may temporarily be kept in our backup system, but also these will disappear automatically in due time."
+msgstr "Някои копия на вашите файлове могат временно да се съхраняват в нашата резервна система, но също така те ще изчезнат автоматично навреме."
+
+#: user/static/js/modules/login/index.js:34
+#: user/static/js/modules/profile/templates.js:10
+#: user/static/js/modules/profile/templates.js:35
+#: user/static/js/modules/signup/index.js:22
+msgid "Username"
+msgstr "Потребител"
+
+#: user/static/js/modules/login/index.js:34
+#: user/static/js/modules/password_reset/change_password.js:25
+#: user/static/js/modules/profile/templates.js:10
+#: user/static/js/modules/profile/templates.js:35
+#: user/static/js/modules/signup/index.js:22
+msgid "Password"
+msgstr "Парола"
+
+#: user/static/js/modules/profile/templates.js:13
+msgid "Enter the new E-mail address"
+msgstr "Веведете новият имейл"
+
+#: user/static/js/modules/profile/templates.js:28
+msgid "Old password"
+msgstr "Стара парола"
+
+#: user/static/js/modules/profile/templates.js:28
+msgid "New password"
+msgstr "Нова парола"
+
+#: user/static/js/modules/profile/templates.js:28
+msgid "Confirm the new password"
+msgstr "Потвърди новата парола"
+
+#: user/static/js/modules/email_confirm/templates.js:8
+msgid "Confirm E-mail Address and Agree to Terms and Conditions"
+msgstr "Потвърдете вашият имейл и се съгласете с общите условия"
+
+#: user/static/js/modules/email_confirm/templates.js:25
+msgid "Confirm"
+msgstr "Потвърди"
+
+#: user/static/js/modules/email_confirm/templates.js:27
+msgid "I have read and agree to the <a href=\"/pages/terms/\" target=\"_blank\">Terms and Conditions</a>."
+msgstr "Прочетох и приемам <a href=\"/pages/terms/\" target=\"_blank\"> Общи условия </a>."
+
+#: user/static/js/modules/email_confirm/templates.js:28
+msgid "I am aware that I am signing up for a test account and that service may be ended abruptly and without notice, leaving me without my files."
+msgstr "Наясно съм, че се регистрирам за тестов акаунт и тази услуга може да бъде прекратена рязко и без предизвестие, оставяйки ме без моите файлове."
+
+#: user/static/js/modules/email_confirm/templates.js:32
+msgid "Thanks for verifying!"
+msgstr "Благодаря за потвърждаването!"
+
+#: user/static/js/modules/email_confirm/templates.js:32
+msgid "You can now log in."
+msgstr "Вече можете да влезете."
+
+#: user/static/js/modules/contacts/index.js:59
+msgid "Could not obtain contacts list"
+msgstr "Списъкът с контакти не можа да се получи"
+
+#: user/static/js/modules/contacts/add_dialog.js:67
+msgid "You cannot add yourself to your contacts!"
+msgstr "Не можете да добавите себе си към вашите контакти!"
+
+#: user/static/js/modules/contacts/add_dialog.js:69
+msgid "This person is already in your contacts"
+msgstr "Този човек вече е във вашите контакти"
+
+#: user/static/js/modules/contacts/add_dialog.js:72
+msgid "No user is registered with the given email address."
+msgstr "Няма регистриран потребител с този имейл."
+
+#: user/static/js/modules/contacts/add_dialog.js:81
+msgid "Please invite him/her "
+msgstr "Моля поканете него/нея"
+
+#: user/static/js/modules/contacts/add_dialog.js:81
+msgid "Fidus Writer"
+msgstr "Fidus Writer"
+
+#: user/static/js/modules/contacts/add_dialog.js:81
+msgid "Hey, I would like you to sign up for a Fidus Writer account."
+msgstr "Ей, бих искал да се регистрирате за акаунт във Fidus Writer."
+
+#: user/static/js/modules/contacts/add_dialog.js:81
+msgid "Please register at"
+msgstr "Моля регистрирай се на"
+
+#: user/static/js/modules/contacts/add_dialog.js:81
+msgid "by sending an email"
+msgstr "със електронно писмо"
+
+#: user/static/js/modules/contacts/add_dialog.js:84
+msgid "User is not registered."
+msgstr "Потребителят не е регистриран."
+
+#: user/static/js/modules/contacts/add_dialog.js:5
+msgid "Add a user to your contacts"
+msgstr "Добави потребител към твоите контакти"
+
+#: user/static/js/modules/contacts/templates.js:7
+msgid "E-mail address or username"
+msgstr "Е-мейл адрес или потребителско име"
+
+#: base/static/js/modules/common/templates.js:7
+#: document/static/js/modules/documents/access_rights/templates.js:8
+#: user/static/js/modules/contacts/index.js:37
+msgid "Contacts"
+msgstr "Контакти"
+
+#: document/static/js/modules/documents/access_rights/templates.js:10
+msgid "My collaborators"
+msgstr "Моите приноси"
+
+#: document/static/js/modules/documents/access_rights/templates.js:21
+msgid "Basic access rights"
+msgstr "Основни права за достъп"
+
+#: document/static/js/modules/documents/access_rights/templates.js:21
+msgid "Basic"
+msgstr "Основен"
+
+#: document/static/js/modules/documents/access_rights/templates.js:21
+msgid "No comments"
+msgstr "Без коментари"
+
+#: document/static/js/modules/documents/access_rights/templates.js:21
+msgid "Comment, but not see comments and chats of others"
+msgstr "Коментирайте, но не виждайте коментари и чатове на други хора"
+
+#: document/static/js/modules/documents/overview/actions.js:103
+msgid "Import a Fidus file"
+msgstr "Импортирайте Fidus файл"
+
+#: document/static/js/modules/importer/file.js:123
+msgid "successfully imported."
+msgstr "успешно импортиран."
+
+#: document/static/js/modules/documents/revisions/templates.js:6
+msgid "Description"
+msgstr "описание"
+
+#: document/static/js/modules/documents/revisions/templates.js:6
+#: document/static/js/modules/editor/menus/headerbar/model.js:87
+msgid "Download"
+msgstr "Изтегли"
+
+#: document/static/js/modules/editor/collab/chat.js:80
+msgid "Send a message..."
+msgstr "Изпрати съобщение..."
+
+#: document/static/js/modules/editor/dialogs/templates.js:8
+msgid "Link title"
+msgstr "Заглавие на връзката"
+
+#: document/static/js/modules/editor/dialogs/templates.js:13
+msgid "Description (optional)"
+msgstr "Описание (незадължително)"
+
+#: document/static/js/modules/editor/dialogs/templates.js:28
+#: usermedia/static/js/modules/images/selection_dialog/index.js:105
+msgid "Image"
+msgstr "Изображение"
+
+#: document/static/js/modules/editor/dialogs/templates.js:28
+#: user/static/js/modules/profile/dialogs.js:5
+#: usermedia/static/js/modules/images/edit_dialog/index.js:24
+msgid "Upload"
+msgstr "Качване"
+
+#: document/static/js/modules/editor/dialogs/figure.js:26
+msgid "Insert image"
+msgstr "Вмъкни изображение"
+
+#. En ete contecto no sé a qué se refiere caption
+#: document/static/js/modules/editor/dialogs/templates.js:35
+msgid "Insert caption"
+msgstr "Сложи опсание"
+
+#: document/static/js/modules/editor/dialogs/templates.js:41
+msgid "(Author, 1998)"
+msgstr "(Автор, 1998)"
+
+#. bien?
+#: document/static/js/modules/editor/dialogs/templates.js:52
+msgid "Text before"
+msgstr "Текстов преди"
+
+#: document/static/js/modules/editor/dialogs/templates.js:55
+msgid "Firstname"
+msgstr "Първо име"
+
+#: document/static/js/modules/editor/dialogs/templates.js:55
+msgid "Lastname"
+msgstr "Фамилия"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:164
+msgid "ca."
+msgstr "ок"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:164
+msgid "Accept"
+msgstr "приемам"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:90
+msgid "Download the current document."
+msgstr "Изтеглете текущия документ."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:96
+msgid "Print/PDF"
+msgstr "Печат/PDF"
+
+#: document/static/js/modules/editor/menus/headerbar/view.js:272
+msgid "Untitled Document"
+msgstr "Неозаглавен документ"
+
+#: base/static/js/modules/common/ws.js:24
+#: document/static/js/modules/editor/index.js:177
+msgid "Disconnected. Attempting to reconnect..."
+msgstr "Връзката е прекъсната. Опит за повторно свързване ..."
+
+#: document/static/js/modules/editor/state_plugins/links.js:125
+msgid "Copy link"
+msgstr "Копирай връзка"
+
+#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
+msgid "Show keyboard shortcuts"
+msgstr "Показване на клавишни комбинации"
+
+#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
+msgid "Paste with content detection"
+msgstr "Поставяне с откриване на съдържание"
+
+#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
+msgid "Paste without content detection"
+msgstr "Поставяне без откриване на съдържание"
+
+#: document/static/js/modules/editor/tools/word_count_templates.js:8
+msgid "Document"
+msgstr "Документ"
+
+#: document/static/js/modules/editor/tools/word_count_templates.js:8
+msgid "Characters without blanks"
+msgstr "Знаци (без интервали)"
+
+#: usermedia/static/js/modules/images/database.js:41
+msgid "Could not save image"
+msgstr "Изображението не можа да бъде запазено"
+
+#: usermedia/static/js/modules/images/edit_dialog/index.js:16
+msgid "Update Image Information"
+msgstr "Актуализирайте информацията за изображението"
+
+#: usermedia/static/js/modules/images/edit_dialog/index.js:16
+msgid "Upload Image"
+msgstr "Качи изображение"
+
+#: usermedia/static/js/modules/images/edit_dialog/index.js:127
+msgid "The image has been updated."
+msgstr "Изображението е актуализирано."
+
+#: usermedia/static/js/modules/images/edit_dialog/index.js:132
+msgid "Some errors were found. Please examine the form."
+msgstr "Намерени бяха някои грешки. Моля, разгледайте формата."
+
+#: usermedia/static/js/modules/images/edit_dialog/templates.js:12
+msgid "Select categories"
+msgstr "Избери категории"
+
+#: usermedia/static/js/modules/images/edit_dialog/templates.js:20
+msgid "Insert a title"
+msgstr "Вмъкни заглавие"
+
+#: usermedia/static/js/modules/images/selection_dialog/index.js:35
+msgid "Add new image"
+msgstr "Добавете ново изображение"
+
+#: usermedia/static/js/modules/images/selection_dialog/index.js:53
+msgid "Use image"
+msgstr "Използвайте изображение"
+
+#: usermedia/static/js/modules/images/overview/index.js:158
+#: usermedia/static/js/modules/images/selection_dialog/index.js:96
+msgid "No images available"
+msgstr "Няма налични изображения"
+
+#: usermedia/static/js/modules/images/overview/categories.js:16
+msgid "Could not update categories"
+msgstr "Категориите не можаха да се актуализират"
+
+#: usermedia/static/js/modules/images/overview/index.js:73
+msgid "The image(s) could not be deleted"
+msgstr "Изображението или съответно изображенията не можаха да бъдат изтрити"
+
+#: usermedia/static/js/modules/images/overview/index.js:78
+msgid "The image(s) have been deleted"
+msgstr "Изображенията бяха изтрити"
+
+#: usermedia/static/js/modules/images/overview/index.js:97
+msgid "Delete the image(s)"
+msgstr "Изтрий изображенията"
+
+#: usermedia/static/js/modules/images/overview/index.js:165
+msgid "Size (px)"
+msgstr "Размер (px)"
+
+#: usermedia/static/js/modules/images/overview/menu.js:30
+msgid "Upload new image"
+msgstr "Качване на ново изображение"
+
+#: usermedia/static/js/modules/images/overview/menu.js:45
+msgid "Search images"
+msgstr "Търсене на изображения"
+
+#: user/static/js/modules/profile/delete_user.js:45
+msgid "Staff accounts have to be deleted through the admin interface."
+msgstr "Сметките на персонала трябва да бъдат изтрити чрез администраторския интерфейс."
+
+#: user/static/js/modules/profile/delete_user.js:49
+msgid "Password incorrect."
+msgstr "Неправилна парола"
+
+#: user/static/js/modules/profile/delete_user.js:53
+msgid "Could not delete user account."
+msgstr "Потребителският акаунт не може да бъде изтрит."
+
+#: user/static/js/modules/profile/dialogs.js:22
+msgid "Could not update profile avatar"
+msgstr "Аватарът на потребителския профил не можа да бъде актуализиран"
+
+#: user/static/js/modules/profile/dialogs.js:35
+msgid "Upload your profile picture"
+msgstr "Качи профилна снимка"
+
+#: user/static/js/modules/profile/dialogs.js:54
+msgid "Could not delete avatar"
+msgstr "Аватарът не може да бъде изтрит"
+
+#: user/static/js/modules/profile/index.js:95
+msgid "Could not save profile data"
+msgstr "Данните от потребителския профил не можаха да се запазят"
+
+#: user/static/js/modules/profile/dialogs.js:91
+msgid "All fields are required!"
+msgstr "Всички полета са задължителни"
+
+#: user/static/js/modules/profile/dialogs.js:96
+msgid "Please confirm the new password!"
+msgstr "Моля потвърдете новата парола!"
+
+#: user/static/js/modules/profile/dialogs.js:111
+msgid "The password has been changed."
+msgstr "Паролата беше променена."
+
+#: user/static/js/modules/profile/dialogs.js:122
+msgid "The password could not be changed!"
+msgstr "Паролата не можа да бъде променена!"
+
+#: user/static/js/modules/profile/dialogs.js:127
+msgid "The password could not be changed"
+msgstr "Паролата не можа да бъде променена"
+
+#: user/static/js/modules/password_reset/change_password.js:20
+#: user/static/js/modules/profile/dialogs.js:134
+msgid "Change Password"
+msgstr "Промяна на паролата"
+
+#: user/static/js/modules/profile/dialogs.js:151
+msgid "New email address is required!"
+msgstr "Необходим е нов имейл адрес."
+
+#: user/static/js/modules/profile/dialogs.js:166
+msgid "Confirmation e-mail sent to"
+msgstr "Имейл за потвърждение, изпратен до"
+
+#: user/static/js/modules/profile/dialogs.js:172
+msgid "The email could not be added!"
+msgstr "Имейлът не можа да бъде добавен!"
+
+#: user/static/js/modules/profile/dialogs.js:180
+msgid "Add Email"
+msgstr "Добави имейл"
+
+#: user/static/js/modules/profile/dialogs.js:209
+msgid "Confirm remove"
+msgstr "Потвърди изтриването"
+
+#: user/static/js/modules/profile/dialogs.js:211
+msgid "Remove the email address"
+msgstr "Изтриване на имейл"
+
+#. no se????
+#: user/static/js/modules/profile/dialogs.js:242
+msgid "Confirm set primary"
+msgstr "Потвърди настройването като основен"
+
+#: user/static/js/modules/profile/dialogs.js:244
+msgid "Set this email as the address primary"
+msgstr "Задайте този имейл като основен адрес"
+
+#: base/static/js/modules/404/index.js:17
+#: base/static/js/modules/flatpage/index.js:38
+msgid "Page not found"
+msgstr "Страницата не е намерена"
+
+#: base/static/js/modules/404/index.js:18
+#: base/static/js/modules/flatpage/index.js:39
+msgid "Error 404"
+msgstr "Грешка 404"
+
+#: base/static/js/modules/404/index.js:18
+#: base/static/js/modules/flatpage/index.js:39
+msgid "The page you are looking for cannot be found."
+msgstr "Страницата, която търсите, не може да бъде намерена."
+
+#: base/static/js/modules/admin_console/index.js:31
+msgid "Message delivered successfully!"
+msgstr "Съобщението е доставено успешно!"
+
+#: base/static/js/modules/admin_console/index.js:33
+msgid "Message delivered"
+msgstr "Съобщението е доставено"
+
+#: base/static/js/modules/admin_console/index.js:57
+msgid "Sending..."
+msgstr "Изпращане..."
+
+#: base/static/js/modules/common/basic.js:107
+msgid "System message"
+msgstr "Системно съобщение"
+
+#: base/static/js/modules/common/templates.js:7
+msgid "Log out"
+msgstr "Изход"
+
+#: base/static/js/modules/common/ws.js:22
+msgid "Warning! Some data is unsaved"
+msgstr "Внимание! Някои данни не са запазени"
+
+#: base/static/js/modules/offline/index.js:17
+#: base/static/js/modules/offline/index.js:18
+msgid "Disconnected"
+msgstr "Disconnected"
+
+#: base/static/js/modules/offline/index.js:18
+msgid "You are currently disconnected from the %(appName)s server."
+msgstr "В момента сте прекъснали връзката със сървъра %(appName)s."
+
+#: base/static/js/modules/offline/index.js:25
+msgid "Reload page"
+msgstr "Презареждане на страницата"
+
+#: base/static/js/modules/prelogin/index.js:22
+msgid "Terms and Conditions"
+msgstr "Общи условия"
+
+#: base/static/js/modules/prelogin/index.js:25
+msgid "Privacy policy"
+msgstr "Политика за поверителност"
+
+#: base/static/js/modules/prelogin/index.js:28
+msgid "Equations and Math with MathLive"
+msgstr "Уравнения и математика с MathLive"
+
+#: base/static/js/modules/prelogin/index.js:32
+msgid "Citations with Citation Style Language"
+msgstr "Цитати с Citation Style Language"
+
+#: base/static/js/modules/prelogin/index.js:36
+msgid "Editing with ProseMirror"
+msgstr "Редактиране с ProseMirror"
+
+#: base/static/js/modules/prelogin/index.js:42
+#: user/static/js/modules/login/index.js:34
+msgid "Log in"
+msgstr "Влез"
+
+#: base/static/js/modules/prelogin/templates.js:25
+msgid "Select language"
+msgstr "Избери език"
+
+#: bibliography/static/js/modules/bibliography/overview/index.js:50
+msgid "Bibliography Manager"
+msgstr "Управление на Библиография"
+
 #: document/static/js/modules/document_template/admin.js:60
 msgid "Source/Editor"
 msgstr "Източник / Редактор"
@@ -1370,13 +2829,6 @@ msgstr "Идентификационните номера не могат да �
 #: document/static/js/modules/document_template/designer.js:259
 msgid "IDs have to be unique."
 msgstr "Идентификационните документи трябва да бъдат уникални."
-
-#: document/static/js/modules/document_template/document_style_dialog.js:15
-#: document/static/js/modules/document_template/export_template_dialog.js:17
-#: document/static/js/modules/editor/dialogs/revision.js:13
-#: user_template_manager/static/js/modules/user_template_manager/editor.js:44
-msgid "Save"
-msgstr "Запази"
 
 #: document/static/js/modules/document_template/document_style_dialog.js:79
 msgid "Document style"
@@ -1423,12 +2875,6 @@ msgid "Export template"
 msgstr "Експорт шаблон"
 
 #: document/static/js/modules/document_template/export_template_dialog.js:76
-#: document/static/js/modules/editor/menus/headerbar/model.js:31
-#: usermedia/static/js/modules/images/overview/index.js:165
-msgid "File"
-msgstr "Файл"
-
-#: document/static/js/modules/document_template/export_template_dialog.js:76
 msgid "Select"
 msgstr "Изберете"
 
@@ -1470,6 +2916,7 @@ msgstr "Избраният файл не се поддържа."
 msgid "Change to heading "
 msgstr "Преминаване към заглавие "
 
+#. está bien?
 #: document/static/js/modules/document_template/schema.js:79
 #: document/static/js/modules/document_template/schema.js:146
 #: document/static/js/modules/document_template/schema.js:177
@@ -1495,11 +2942,6 @@ msgid "Insert column after"
 msgstr "Вмъкнете колона след"
 
 #: document/static/js/modules/document_template/schema.js:158
-#: document/static/js/modules/editor/menus/table/model.js:120
-msgid "Delete column"
-msgstr "Изтриване на колона"
-
-#: document/static/js/modules/document_template/schema.js:158
 msgid "Insert row before"
 msgstr "Вмъкване на ред преди"
 
@@ -1507,41 +2949,12 @@ msgstr "Вмъкване на ред преди"
 msgid "Insert row after"
 msgstr "Вмъкване на ред след"
 
-#: document/static/js/modules/document_template/schema.js:158
-#: document/static/js/modules/editor/menus/table/model.js:103
-msgid "Delete row"
-msgstr "Изтриване на ред"
-
-#: document/static/js/modules/document_template/schema.js:158
-msgid "Split cell"
-msgstr "Раздели клетка"
-
-#: document/static/js/modules/document_template/schema.js:158
-#: document/static/js/modules/editor/menus/table/model.js:140
-msgid "Merge cells"
-msgstr "Сливане на клетки"
-
-#: document/static/js/modules/document_template/schema.js:158
-#: document/static/js/modules/editor/menus/table/model.js:194
-msgid "Toggle header column"
-msgstr "Превключване на колоната на заглавката"
-
-#: document/static/js/modules/document_template/schema.js:158
-#: document/static/js/modules/editor/menus/table/model.js:177
-msgid "Toggle header row"
-msgstr "Превключване на заглавния ред"
-
+#. Prestar compu de Johannes sí o sí
+#. 
+#. Encabezado de celda?
 #: document/static/js/modules/document_template/schema.js:158
 msgid "Toggle header cells"
 msgstr "Превключване на заглавните клетки"
-
-#: document/static/js/modules/document_template/schema.js:160
-#: document/static/js/modules/document_template/schema.js:163
-#: document/static/js/modules/document_template/templates.js:6
-#: document/static/js/modules/document_template/templates.js:70
-#: document/static/js/modules/editor/menus/toolbar/model.js:461
-msgid "Table"
-msgstr "Таблица"
 
 #: document/static/js/modules/document_template/templates.js:6
 msgid "Allowed elements"
@@ -1590,24 +3003,8 @@ msgid "Heading 6"
 msgstr "Позиция 6"
 
 #: document/static/js/modules/document_template/templates.js:6
-#: document/static/js/modules/editor/menus/toolbar/model.js:15
-msgid "Code"
-msgstr "Код"
-
-#: document/static/js/modules/document_template/templates.js:6
-#: document/static/js/modules/editor/menus/toolbar/model.js:16
-#: document/static/js/modules/editor/menus/toolbar/model.js:445
-msgid "Figure"
-msgstr "Фигура"
-
-#: document/static/js/modules/document_template/templates.js:6
 msgid "Ordered list"
 msgstr "Подреден списък"
-
-#: document/static/js/modules/document_template/templates.js:6
-#: document/static/js/modules/editor/menus/toolbar/model.js:331
-msgid "Bullet list"
-msgstr "Списък с куршуми"
 
 #: document/static/js/modules/document_template/templates.js:6
 msgid "Horizontal rule"
@@ -1621,17 +3018,6 @@ msgstr "уравнение"
 msgid "Citation"
 msgstr "Цитат"
 
-#: document/static/js/modules/document_template/templates.js:6
-#: document/static/js/modules/editor/menus/toolbar/model.js:347
-msgid "Blockquote"
-msgstr "Текстов блок"
-
-#: document/static/js/modules/document_template/templates.js:6
-#: document/static/js/modules/editor/menus/toolbar/model.js:109
-#: document/static/js/modules/editor/menus/toolbar/model.js:380
-msgid "Footnote"
-msgstr "бележка под линия"
-
 #: document/static/js/modules/document_template/templates.js:10
 msgid "Allowed marks"
 msgstr "Разрешени марки"
@@ -1641,12 +3027,6 @@ msgstr "Разрешени марки"
 #: document/static/js/modules/editor/menus/toolbar/model.js:290
 msgid "Underline"
 msgstr "Подчертан"
-
-#: document/static/js/modules/document_template/templates.js:10
-#: document/static/js/modules/editor/dialogs/link.js:154
-#: document/static/js/modules/editor/menus/toolbar/model.js:364
-msgid "Link"
-msgstr "връзка"
 
 #: document/static/js/modules/document_template/templates.js:21
 msgid "Heading"
@@ -1672,6 +3052,7 @@ msgstr "Конфигуриране"
 msgid "ID"
 msgstr "документ за самоличност"
 
+#. Verificar...
 #: document/static/js/modules/document_template/templates.js:21
 #: document/static/js/modules/document_template/templates.js:32
 #: document/static/js/modules/document_template/templates.js:43
@@ -1680,16 +3061,10 @@ msgid "Metadata function"
 msgstr "Функция за метаданни"
 
 #: document/static/js/modules/document_template/templates.js:21
-#: document/static/js/modules/document_template/templates.js:32
-#: document/static/js/modules/document_template/templates.js:43
-#: document/static/js/modules/document_template/templates.js:60
-msgid "None"
-msgstr "Нито един"
-
-#: document/static/js/modules/document_template/templates.js:21
 msgid "Title (translated)"
 msgstr "Заглавие (преведено)"
 
+#. Ver si cuadra en contexto
 #: document/static/js/modules/document_template/templates.js:21
 #: document/static/js/modules/document_template/templates.js:32
 #: document/static/js/modules/document_template/templates.js:43
@@ -1739,6 +3114,7 @@ msgstr "по избор"
 msgid "Obligatory field"
 msgstr "Задължително поле"
 
+#. verificar si cuadraen contexto
 #: document/static/js/modules/document_template/templates.js:21
 #: document/static/js/modules/document_template/templates.js:32
 #: document/static/js/modules/document_template/templates.js:43
@@ -1757,6 +3133,7 @@ msgstr "По избор, показва се по подразбиране"
 msgid "Optional, not shown by default"
 msgstr "По избор, не се показва по подразбиране"
 
+#. o Encabezados permitidos. Verificar en comu de J
 #: document/static/js/modules/document_template/templates.js:21
 msgid "Allowed headings"
 msgstr "Разрешени заглавия"
@@ -1798,10 +3175,6 @@ msgstr "Списък с имена"
 #: document/static/js/modules/document_template/templates.js:60
 msgid "Item title"
 msgstr "Заглавие на предмета"
-
-#: document/static/js/modules/document_template/templates.js:32
-msgid "Authors"
-msgstr "Автори"
 
 #: document/static/js/modules/document_template/templates.js:32
 msgid "Editors"
@@ -1847,6 +3220,7 @@ msgstr "Дисциплини / Участници / Пациенти"
 msgid "Supplementary materials"
 msgstr "Допълнителни материали"
 
+#. Verificar encompu de J
 #: document/static/js/modules/document_template/templates.js:51
 msgid "Separator"
 msgstr "сепаратор"
@@ -1932,47 +3306,6 @@ msgstr "Не могат да се заредят данни за достъп д
 msgid "Add contact or invite new user"
 msgstr "Добавете контакт или поканете нов потребител"
 
-#: document/static/js/modules/documents/access_rights/index.js:132
-msgid "Share your document with others"
-msgstr "Сподели документа с други потребители"
-
-#: document/static/js/modules/documents/access_rights/index.js:215
-msgid "Access rights have been saved"
-msgstr "Правата за достъп бяха запазени"
-
-#: document/static/js/modules/documents/access_rights/index.js:216
-msgid "Access rights could not be saved"
-msgstr "Правата за достъп не можаха да бъдат запазени"
-
-#: document/static/js/modules/documents/access_rights/templates.js:8
-msgid "My contacts"
-msgstr "Моите контати"
-
-#: document/static/js/modules/documents/access_rights/templates.js:10
-msgid "My collaborators"
-msgstr "Моите приноси"
-
-#: document/static/js/modules/documents/access_rights/templates.js:10
-msgid "Collaborators"
-msgstr "Сътрудници"
-
-#: document/static/js/modules/documents/access_rights/templates.js:10
-#: document/static/js/modules/documents/overview/index.js:154
-msgid "Rights"
-msgstr "Права"
-
-#: document/static/js/modules/documents/access_rights/templates.js:21
-msgid "Basic access rights"
-msgstr "Основни права за достъп"
-
-#: document/static/js/modules/documents/access_rights/templates.js:21
-msgid "Basic"
-msgstr "Основен"
-
-#: document/static/js/modules/documents/access_rights/templates.js:21
-msgid "Write"
-msgstr "Напиши"
-
 #: document/static/js/modules/documents/access_rights/templates.js:21
 msgid "Write with changes tracked"
 msgstr "Пишете с проследени промени"
@@ -1981,174 +3314,22 @@ msgstr "Пишете с проследени промени"
 msgid "Write tracked"
 msgstr "Пишете проследено"
 
-#: document/static/js/modules/documents/access_rights/templates.js:21
-#: document/static/js/modules/editor/menus/selection/model.js:33
-msgid "Comment"
-msgstr "коментар"
-
-#: document/static/js/modules/documents/access_rights/templates.js:21
-msgid "Read"
-msgstr "Прочети"
-
-#: document/static/js/modules/documents/access_rights/templates.js:21
-msgid "Access rights used within document review"
-msgstr "Права за достъп, използвани при преглед на документи"
-
-#: document/static/js/modules/documents/access_rights/templates.js:21
-msgid "Review"
-msgstr "преглед"
-
-#: document/static/js/modules/documents/access_rights/templates.js:21
-msgid "Read document but not see comments and chats of others"
-msgstr "Прочетете документа, но не виждайте коментари и чатове на други"
-
-#: document/static/js/modules/documents/access_rights/templates.js:21
-msgid "No comments"
-msgstr "Без коментари"
-
-#: document/static/js/modules/documents/access_rights/templates.js:21
-msgid "Comment, but not see comments and chats of others"
-msgstr "Коментирайте, но не виждайте коментари и чатове на други хора"
-
 #: document/static/js/modules/documents/access_rights/templates.js:32
 msgid "Invite"
 msgstr "каня"
 
-#: document/static/js/modules/documents/overview/actions.js:26
-msgid "Document has been deleted"
-msgstr "Документът е изтрит"
-
-#: document/static/js/modules/documents/overview/actions.js:30
-msgid "Could not delete document"
-msgstr "Документът не може да бъде изтрит"
-
-#: document/static/js/modules/documents/overview/actions.js:38
-msgid "Delete the document(s)?"
-msgstr "Изтрий документ(и)?"
-
-#: document/static/js/modules/documents/overview/actions.js:103
-msgid "Import a Fidus file"
-msgstr "Импортирайте Fidus файл"
-
+#. Encontré esta traducción de Document Overview en informática. No sé si aplica.
 #: document/static/js/modules/documents/overview/index.js:56
 msgid "Document Overview"
 msgstr "Преглед на документа"
-
-#: document/static/js/modules/documents/overview/index.js:106
-msgid "Cannot load data of documents."
-msgstr "Не могат да се зареждат данни на документи."
-
-#: document/static/js/modules/documents/overview/index.js:147
-msgid "No documents available"
-msgstr "Няма налични документи"
-
-#: document/static/js/modules/documents/overview/index.js:154
-msgid "Revisions"
-msgstr "Ревизиите"
-
-#: document/static/js/modules/documents/overview/index.js:154
-#: user_template_manager/static/js/modules/user_template_manager/overview.js:74
-msgid "Created"
-msgstr "Създаден"
-
-#: document/static/js/modules/documents/overview/index.js:154
-#: user_template_manager/static/js/modules/user_template_manager/overview.js:74
-msgid "Last changed"
-msgstr "Последна промяна"
-
-#: document/static/js/modules/documents/overview/index.js:154
-msgid "Owner"
-msgstr "Собственик"
 
 #: document/static/js/modules/documents/overview/index.js:228
 msgid "Undefined"
 msgstr "неопределен"
 
-#: document/static/js/modules/documents/overview/menu.js:10
-msgid "You cannot delete documents of other users"
-msgstr "Не можете да изтриете документи на други потребители"
-
-#: document/static/js/modules/documents/overview/menu.js:19
-msgid "Share selected"
-msgstr "Сподели избраните"
-
-#: document/static/js/modules/documents/overview/menu.js:25
-msgid "You cannot share documents of other users"
-msgstr "Не можете да споделяте документи на други потребители"
-
-#: document/static/js/modules/documents/overview/menu.js:35
-msgid "Copy selected"
-msgstr "Копирай избраните"
-
-#: document/static/js/modules/documents/overview/menu.js:45
-msgid "Export selected as Epub"
-msgstr "Експортирай избраните като Epub"
-
-#: document/static/js/modules/documents/overview/menu.js:55
-msgid "Export selected as HTML"
-msgstr "Експортирай избраните като HTML"
-
-#: document/static/js/modules/documents/overview/menu.js:65
-msgid "Export selected as LaTeX"
-msgstr "Експортирай избраните като LaTeX"
-
 #: document/static/js/modules/documents/overview/menu.js:75
 msgid "Export selected as JATS"
 msgstr "Износът е избран като JATS"
-
-#: document/static/js/modules/documents/overview/menu.js:85
-msgid "Download selected as Fidus document"
-msgstr "Изтеглете избрания като Fidus документ"
-
-#: document/static/js/modules/documents/overview/menu.js:99
-msgid "Create new document"
-msgstr "Създайте нов документ"
-
-#: document/static/js/modules/documents/overview/menu.js:104
-msgid "Upload Fidus document"
-msgstr "Качване на Fidus документ"
-
-#: document/static/js/modules/documents/overview/menu.js:110
-msgid "Search documents"
-msgstr "Търсене на документи"
-
-#: document/static/js/modules/documents/revisions/index.js:27
-msgid "Saved revisions of"
-msgstr "Запазени ревизии на"
-
-#: document/static/js/modules/documents/revisions/index.js:140
-msgid "Do you really want to delete the revision?"
-msgstr "Наистина ли искате да изтриете редакцията?"
-
-#: document/static/js/modules/documents/revisions/index.js:156
-msgid "Revision deleted"
-msgstr "Ревизията е изтрита"
-
-#: document/static/js/modules/documents/revisions/index.js:163
-msgid "Could not delete revision."
-msgstr "Ревизията не можа да се изтрие."
-
-#: document/static/js/modules/documents/revisions/templates.js:6
-msgid "Time"
-msgstr "път"
-
-#: document/static/js/modules/documents/revisions/templates.js:6
-msgid "Description"
-msgstr "описание"
-
-#: document/static/js/modules/documents/revisions/templates.js:6
-#: document/static/js/modules/editor/marginboxes/templates.js:82
-msgid "Recreate"
-msgstr "Recreate"
-
-#: document/static/js/modules/documents/revisions/templates.js:6
-#: document/static/js/modules/editor/menus/headerbar/model.js:87
-msgid "Download"
-msgstr "Изтегли"
-
-#: document/static/js/modules/documents/tools.js:32
-msgid "Could not obtain extra document data"
-msgstr "Не можаха да се получат допълнителни данни за документа"
 
 #: document/static/js/modules/editor/citations/index.js:92
 msgid "No tracking"
@@ -2158,93 +3339,13 @@ msgstr "Без проследяване"
 msgid "Changes to citation sources are not being tracked!"
 msgstr "Промените в източниците на цитиране не се проследяват!"
 
-#: document/static/js/modules/editor/clipboard/copy/serializers.js:37
-#: menu/static/js/modules/menu/index.js:15
-msgid "Bibliography"
-msgstr "Библиография"
-
-#: document/static/js/modules/editor/collab/chat.js:80
-msgid "Send a message..."
-msgstr "Изпрати съобщение..."
-
-#: document/static/js/modules/editor/comments/editors/answer.js:11
-#: document/static/js/modules/editor/comments/editors/comment.js:87
-#: document/static/js/modules/editor/marginboxes/templates.js:13
-#: document/static/js/modules/editor/marginboxes/templates.js:82
-#: document/static/js/modules/editor/state_plugins/contributor_input.js:58
-#: document/static/js/modules/editor/state_plugins/links.js:125
-msgid "Edit"
-msgstr "Редактиране"
-
 #: document/static/js/modules/editor/comments/editors/comment.js:87
 msgid "High priority"
 msgstr "Висок приоритет"
 
-#: document/static/js/modules/editor/comments/interactions.js:307
-#: document/static/js/modules/editor/comments/interactions.js:365
-#: document/static/js/modules/editor/comments/store.js:50
-msgid "Reviewer"
-msgstr "рецензент"
-
-#: document/static/js/modules/editor/dialogs/citation.js:14
-#: document/static/js/modules/editor/dialogs/figure.js:21
-#: document/static/js/modules/editor/dialogs/link.js:10
-#: document/static/js/modules/editor/dialogs/math.js:21
-#: document/static/js/modules/editor/dialogs/table.js:53
-#: document/static/js/modules/editor/dialogs/templates.js:28
-msgid "Insert"
-msgstr "Вмъкване"
-
-#: document/static/js/modules/editor/dialogs/citation.js:31
-#: document/static/js/modules/editor/dialogs/figure.js:187
-#: document/static/js/modules/editor/dialogs/templates.js:41
-#: document/static/js/modules/editor/state_plugins/links.js:125
-#: user/static/js/modules/profile/dialogs.js:190
-msgid "Remove"
-msgstr "Изтриване"
-
-#: document/static/js/modules/editor/dialogs/citation.js:39
-#: document/static/js/modules/editor/dialogs/contributor.js:20
-#: document/static/js/modules/editor/dialogs/contributor.js:77
-#: document/static/js/modules/editor/dialogs/figure.js:178
-#: document/static/js/modules/editor/dialogs/link.js:55
-#: document/static/js/modules/editor/dialogs/math.js:21
-#: document/static/js/modules/editor/dialogs/table.js:194
-#: usermedia/static/js/modules/images/edit_dialog/index.js:24
-msgid "Update"
-msgstr "Обновяване"
-
-#: document/static/js/modules/editor/dialogs/citation.js:57
-msgid "Configure Citation"
-msgstr "Настройка на цитати"
-
-#: document/static/js/modules/editor/dialogs/citation.js:189
-#: usermedia/static/js/modules/images/selection_dialog/index.js:98
-msgid "Search..."
-msgstr "Търсене..."
-
-#: document/static/js/modules/editor/dialogs/citation.js:329
-msgid "Please select at least one citation source!"
-msgstr "Моля изберете поне един източник на цитати!"
-
-#: document/static/js/modules/editor/dialogs/contributor.js:20
-#: document/static/js/modules/editor/dialogs/contributor.js:77
-#: document/static/js/modules/editor/state_plugins/contributor_input.js:39
-#: document/static/js/modules/editor/state_plugins/tag_input.js:47
-msgid "Add"
-msgstr "Добави"
-
-#: document/static/js/modules/editor/dialogs/contributor.js:33
-msgid "Email is in incorrect format!"
-msgstr "Имейлът е в неправилен формат!"
-
 #: document/static/js/modules/editor/dialogs/figure.js:26
 msgid "or"
 msgstr "или"
-
-#: document/static/js/modules/editor/dialogs/figure.js:26
-msgid "Insert image"
-msgstr "Вмъкни изображение"
 
 #: document/static/js/modules/editor/dialogs/figure.js:37
 #: document/static/js/modules/editor/dialogs/math.js:68
@@ -2276,76 +3377,18 @@ msgstr "Символи и римски букви"
 msgid "Copy to Clipboard"
 msgstr "Копиране в клипборда"
 
-#: document/static/js/modules/editor/dialogs/figure.js:43
-#: document/static/js/modules/editor/dialogs/math.js:74
-#: document/static/js/modules/editor/menus/toolbar/model.js:485
-#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
-msgid "Redo"
-msgstr "Redo"
-
 #: document/static/js/modules/editor/dialogs/figure.js:44
 #: document/static/js/modules/editor/dialogs/math.js:75
 msgid "Toggle Virtual Keyboard"
 msgstr "Превключване на виртуална клавиатура"
 
-#: document/static/js/modules/editor/dialogs/figure.js:45
-#: document/static/js/modules/editor/dialogs/math.js:76
-#: document/static/js/modules/editor/menus/toolbar/model.js:478
-#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
-msgid "Undo"
-msgstr "Undo"
-
 #: document/static/js/modules/editor/dialogs/figure.js:62
 msgid "Type formula"
 msgstr "Тип формула"
 
-#: document/static/js/modules/editor/dialogs/figure.js:209
-msgid "Enter latex math or insert an image"
-msgstr "Въведете Latex формула или изображение"
-
-#: document/static/js/modules/editor/dialogs/language.js:14
-msgid "Change"
-msgstr "промяна"
-
-#: document/static/js/modules/editor/dialogs/language.js:40
-msgid "Change language of the document"
-msgstr "Промяна на езика на документа"
-
-#: document/static/js/modules/editor/dialogs/math.js:51
-msgid "Mathematical formula"
-msgstr "Математическа формула"
-
-#: document/static/js/modules/editor/dialogs/revision.js:26
-msgid "Revision description"
-msgstr "Описание на редакцията"
-
-#: document/static/js/modules/editor/dialogs/table.js:88
-msgid "Insert table"
-msgstr "Вмъкване на маса"
-
 #: document/static/js/modules/editor/dialogs/table.js:205
 msgid "Resize table"
 msgstr "Таблица за преоразмеряване"
-
-#: document/static/js/modules/editor/dialogs/templates.js:8
-msgid "Internal"
-msgstr "вътрешен"
-
-#: document/static/js/modules/editor/dialogs/templates.js:8
-msgid "Select Target"
-msgstr "Изберете Цел"
-
-#: document/static/js/modules/editor/dialogs/templates.js:8
-msgid "External"
-msgstr "Външен"
-
-#: document/static/js/modules/editor/dialogs/templates.js:8
-msgid "Link title"
-msgstr "Заглавие на връзката"
-
-#: document/static/js/modules/editor/dialogs/templates.js:13
-msgid "Description (optional)"
-msgstr "Описание (незадължително)"
 
 #: document/static/js/modules/editor/dialogs/templates.js:15
 msgid "Position"
@@ -2398,22 +3441,6 @@ msgstr "Фиксирана"
 msgid "Fit the content"
 msgstr "Поставете съдържанието"
 
-#: document/static/js/modules/editor/dialogs/templates.js:16
-#: document/static/js/modules/editor/menus/toolbar/model.js:430
-msgid "Math"
-msgstr "Math"
-
-#: document/static/js/modules/editor/dialogs/templates.js:28
-#: usermedia/static/js/modules/images/selection_dialog/index.js:105
-msgid "Image"
-msgstr "Изображение"
-
-#: document/static/js/modules/editor/dialogs/templates.js:28
-#: user/static/js/modules/profile/dialogs.js:5
-#: usermedia/static/js/modules/images/edit_dialog/index.js:24
-msgid "Upload"
-msgstr "Качване"
-
 #: document/static/js/modules/editor/dialogs/templates.js:35
 msgid "100"
 msgstr "100"
@@ -2430,44 +3457,6 @@ msgstr "50"
 msgid "25"
 msgstr "25"
 
-#: document/static/js/modules/editor/dialogs/templates.js:35
-msgid "Insert caption"
-msgstr "Сложи опсание"
-
-#: document/static/js/modules/editor/dialogs/templates.js:41
-msgid "My sources"
-msgstr "Моите източници"
-
-#: document/static/js/modules/editor/dialogs/templates.js:41
-msgid "Citation format"
-msgstr "Формат на цитати"
-
-#: document/static/js/modules/editor/dialogs/templates.js:41
-msgid "(Author, 1998)"
-msgstr "(Автор, 1998)"
-
-#: document/static/js/modules/editor/dialogs/templates.js:41
-msgid "Author (1998)"
-msgstr "Автор (1998)"
-
-#: document/static/js/modules/editor/dialogs/templates.js:52
-msgid "Text before"
-msgstr "Текстов преди"
-
-#: document/static/js/modules/editor/dialogs/templates.js:55
-msgid "Firstname"
-msgstr "Първо име"
-
-#: document/static/js/modules/editor/dialogs/templates.js:55
-msgid "Lastname"
-msgstr "Фамилия"
-
-#: document/static/js/modules/editor/dialogs/templates.js:55
-#: document/static/js/modules/schema/document/content.js:53
-#: user/static/js/modules/profile/templates.js:35
-msgid "Email"
-msgstr "Имейл"
-
 #: document/static/js/modules/editor/document_template/index.js:35
 msgid "Optional sections"
 msgstr "Незадължителни секции"
@@ -2479,34 +3468,6 @@ msgstr "Изберете кои незадължителни секции да �
 #: document/static/js/modules/editor/document_template/index.js:43
 msgid "Show/hide"
 msgstr "Покажи скрий"
-
-#: document/static/js/modules/editor/document_template/index.js:67
-msgid "Safari bug warning"
-msgstr "Предупреждение за грешки в Safari"
-
-#: document/static/js/modules/editor/document_template/index.js:69
-msgid ""
-"Unfortunately Safari has a bug which makes it impossible to export to this "
-"format. Please use Chrome or Firefox (on a desktop computer)."
-msgstr ""
-"За съжаление Safari има грешка, която прави невъзможно експортирането в този "
-"формат. Моля, използвайте Chrome или Firefox (на настолен компютър)."
-
-#: document/static/js/modules/editor/document_template/index.js:87
-msgid "Export the document to a DOCX file with the given template."
-msgstr "Експортирайте документа в DOCX файл с дадения шаблон."
-
-#: document/static/js/modules/editor/document_template/index.js:109
-msgid "Export the document to an ODT file with the given template."
-msgstr "Експортирайте документа в ODT файл с дадения шаблон."
-
-#: document/static/js/modules/editor/index.js:176
-msgid ""
-"Warning! Not all your changes have been saved! You could suffer data loss. "
-"Attempting to reconnect..."
-msgstr ""
-"Внимание! Не всички ваши промени са запазени! Може да претърпите загуба на "
-"данни. Опит за повторно свързване ..."
 
 #: document/static/js/modules/editor/marginboxes/templates.js:73
 msgid "Assigned to"
@@ -2556,82 +3517,21 @@ msgstr "вмъкване"
 msgid "Deletion"
 msgstr "заличаване"
 
-#: document/static/js/modules/editor/marginboxes/templates.js:88
-msgid "Format change"
-msgstr "Промяна на формата"
-
 #: document/static/js/modules/editor/marginboxes/templates.js:89
 msgid "Block change"
 msgstr "Блокова промяна"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:90
-msgid "New paragraph"
-msgstr "Нов параграф"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:91
-msgid "New heading"
-msgstr "Ново заглавие"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:92
 msgid "Inserted citation"
 msgstr "Вмъкнато цитиране"
 
-#: document/static/js/modules/editor/marginboxes/templates.js:93
-msgid "Wrapped into blockquote"
-msgstr "Увита в блокчейн"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:94
-msgid "Added code block"
-msgstr "Добавен блок код"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:95
-msgid "Inserted figure"
-msgstr "Вмъкната фигура"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:96
-msgid "New list item"
-msgstr "Нов елемент от списъка"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:97
-msgid "Inserted table"
-msgstr "Вмъкната маса"
-
 #: document/static/js/modules/editor/marginboxes/templates.js:98
 msgid "New keyword: %(keyword)s"
 msgstr "Нова ключова дума: %(keyword)s"
 
-#: document/static/js/modules/editor/marginboxes/templates.js:99
-msgid "Merged paragraph"
-msgstr "Обединен параграф"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:100
-msgid "Merged heading"
-msgstr "Обединено заглавие"
-
 #: document/static/js/modules/editor/marginboxes/templates.js:101
 msgid "Deleted citation"
 msgstr "Изтрито цитиране"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:102
-msgid "Unwrapped blockquote"
-msgstr "Неупаковано блокчейн"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:103
-msgid "Removed code block"
-msgstr "Премахнат код код"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:104
-msgid "Deleted figure"
-msgstr "Изтрита фигура"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:105
-msgid "Lifted list item"
-msgstr "Повдигнат елемент от списъка"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:106
-#: document/static/js/modules/editor/menus/table/model.js:242
-msgid "Delete table"
-msgstr "Изтриване на таблицата"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:107
 msgid "Deleted keyword: %(keyword)s"
@@ -2649,15 +3549,6 @@ msgstr "Променено в заглавие %(level)s"
 msgid "Changed into code block"
 msgstr "Променен в код код"
 
-#: document/static/js/modules/editor/marginboxes/templates.js:125
-msgid "Removed"
-msgstr "Премахнато"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:129
-#: usermedia/static/js/modules/images/overview/index.js:165
-msgid "Added"
-msgstr "Добавен"
-
 #: document/static/js/modules/editor/marginboxes/templates.js:143
 msgid "Code block"
 msgstr "Блок код"
@@ -2665,18 +3556,6 @@ msgstr "Блок код"
 #: document/static/js/modules/editor/marginboxes/templates.js:148
 msgid "Was"
 msgstr "Беше"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:164
-msgid "ca."
-msgstr "ок"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:164
-msgid "Accept"
-msgstr "приемам"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:164
-msgid "Reject"
-msgstr "Отхвърляне"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:178
 msgid "Comments"
@@ -2715,207 +3594,13 @@ msgstr "Решени коментари"
 msgid "Track changes"
 msgstr "Проследяване на промените"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:32
-msgid "File handling"
-msgstr "Управление на файлове"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:36
-msgid "Share"
-msgstr "Сподели"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:39
-msgid "Share the document with other users."
-msgstr "Сподели документа с други потребители"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:54
-#: document/static/js/modules/editor/menus/headerbar/view.js:275
-msgid "Close the document and return to the document overview menu."
-msgstr "Затвори документа и се върни към обзора на документа"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:60
-#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
-msgid "Save revision"
-msgstr "Запазване на ревизията"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:63
-msgid "Save a revision of the current document."
-msgstr "Запазете ревизия на текущия документ."
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:75
-msgid "Create Copy"
-msgstr "Създаване на копие"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:78
-msgid "Create copy of the current document."
-msgstr "Създайте копие на текущия документ."
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:90
-msgid "Download the current document."
-msgstr "Изтеглете текущия документ."
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:96
-msgid "Print/PDF"
-msgstr "Печат/PDF"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:99
-msgid "Either print or create a PDF using your browser print dialog."
-msgstr ""
-"Или отпечатайте, или създайте PDF, използвайки диалоговия прозорец за печат "
-"на браузъра."
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:115
-msgid "Export"
-msgstr "Експортиране"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:116
-msgid "Export of the document contents"
-msgstr "Експортирай съдаржанието на документа"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:120
-msgid "HTML"
-msgstr "HTML"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:122
-msgid "Export the document to an HTML file."
-msgstr "Експортирайте документа в HTML файл."
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:135
-msgid "Epub"
-msgstr "Epub"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:137
-msgid "Export the document to an Epub electronic reader file."
-msgstr "Експортирай документа като Epub електронна книга"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:150
-msgid "LaTeX"
-msgstr "LaTeX"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:152
-msgid "Export the document to an LaTeX file."
-msgstr "Експортирайте документа в LaTeX файл."
-
 #: document/static/js/modules/editor/menus/headerbar/model.js:165
 msgid "JATS (experimental)"
 msgstr "JATS (експериментален)"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:167
-msgid ""
-"Export the document to a Journal Archiving and Interchange Tag Library NISO "
-"JATS Version 1.2 file."
-msgstr ""
-"Експортирайте документа в библиотека с етикети за архивиране и обмен на "
-"журнали NISO JATS версия 1.2."
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:182
-msgid "Settings"
-msgstr "Настройки"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:183
-msgid "Configure settings of this document."
-msgstr "Конфигурирайте настройките на този документ."
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:188
-msgid "Citation Style"
-msgstr "Сти на цтатите"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:190
-msgid "Choose your preferred citation style."
-msgstr "Изберете предпочитан стил на цитатите."
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:198
-msgid "Document Style"
-msgstr "Стил на Документа"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:200
-msgid "Choose your preferred document style."
-msgstr "Изберете предпочитания от вас стил на документ."
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:208
-msgid "Text Language"
-msgstr "Език на текста"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:210
-msgid "Choose the language of the document."
-msgstr "Изберете езика на документа."
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:215
-#: document/static/js/modules/schema/const.js:1
-msgid "English (United States)"
-msgstr "Английски (Съединени щати)"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:215
-#: document/static/js/modules/schema/const.js:1
-msgid "English (United Kingdom)"
-msgstr "Английски (Обединено кралство)"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:215
-#: document/static/js/modules/schema/const.js:1
-msgid "German (Germany)"
-msgstr "Немски (Германия)"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:215
-#: document/static/js/modules/schema/const.js:1
-msgid "Chinese (Simplified)"
-msgstr "Опростен китайски)"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:215
-#: document/static/js/modules/schema/const.js:1
-msgid "Portuguese (Brazil)"
-msgstr "Португалски (Бразилия)"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:224
-msgid "Other"
-msgstr "друг"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:239
-msgid "Paper Size"
-msgstr "Размер на лист"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:241
-msgid "Choose a papersize for print and PDF generation."
-msgstr "Изберете размер на хартия за печат и генериране на PDF."
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:247
-msgid "DIN A4"
-msgstr "DIN A4"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:249
-msgid "A4 (DIN A4/ISO 216) which is used in most of the world."
-msgstr "A4 (DIN A4/ISO 216) използван в по голямата част от света"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:264
-msgid "US Letter"
-msgstr "US Letter"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:266
-msgid "The format used by the USA and some other American countries."
-msgstr "Форматът използван в USA и някои американски страни."
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:284
-msgid "Tools"
-msgstr "Инструменти"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:285
-msgid "Select document editing tool."
-msgstr "Изберете инструмент за редактиране на документи."
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:289
-#: document/static/js/modules/editor/tools/word_count.js:32
-msgid "Word counter"
-msgstr "Брой Думи"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:291
-msgid "See document statistics."
-msgstr "Вижте статистиката на документите."
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:297
-msgid "Keyboard shortcuts"
-msgstr "Комбинация от клавиши"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:299
-msgid "Show an overview of available keyboard shortcuts."
-msgstr "Показване на преглед на наличните клавишни комбинации."
+msgid "Export the document to a Journal Archiving and Interchange Tag Library NISO JATS Version 1.2 file."
+msgstr "Експортирайте документа в библиотека с етикети за архивиране и обмен на журнали NISO JATS версия 1.2."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:309
 msgid "Tracking changes to the document"
@@ -2945,15 +3630,6 @@ msgstr "Отхвърли всички"
 msgid "Reject all tracked changes."
 msgstr "Отхвърлете всички проследени промени."
 
-#: document/static/js/modules/editor/menus/headerbar/view.js:272
-msgid "Untitled Document"
-msgstr "Неозаглавен документ"
-
-#: document/static/js/modules/editor/menus/selection/model.js:44
-#: document/static/js/modules/editor/state_plugins/links.js:125
-msgid "Anchor"
-msgstr "котва"
-
 #: document/static/js/modules/editor/menus/selection/model.js:59
 msgid "Accept all in selection"
 msgstr "Приемете всички в селекцията"
@@ -2961,10 +3637,6 @@ msgstr "Приемете всички в селекцията"
 #: document/static/js/modules/editor/menus/selection/model.js:67
 msgid "Reject all in selection"
 msgstr "Отхвърлете всички в селекцията"
-
-#: document/static/js/modules/editor/menus/table/model.js:32
-msgid "Add row above"
-msgstr "Добавете ред по-горе"
 
 #: document/static/js/modules/editor/menus/table/model.js:32
 #: document/static/js/modules/editor/menus/table/model.js:49
@@ -2980,69 +3652,9 @@ msgstr "Добавете ред по-горе"
 msgid "Not tracked"
 msgstr "Не е проследен"
 
-#: document/static/js/modules/editor/menus/table/model.js:34
-msgid "Add a row above the current row"
-msgstr "Добавете ред над текущия ред"
-
-#: document/static/js/modules/editor/menus/table/model.js:49
-msgid "Add row below"
-msgstr "Добавете ред по-долу"
-
-#: document/static/js/modules/editor/menus/table/model.js:51
-msgid "Add a row below the current row"
-msgstr "Добавете ред под текущия ред"
-
-#: document/static/js/modules/editor/menus/table/model.js:66
-msgid "Add column left"
-msgstr "Добавете колона вляво"
-
-#: document/static/js/modules/editor/menus/table/model.js:68
-msgid "Add a column to the left of the current column"
-msgstr "Добавете колона вляво от текущата колона"
-
-#: document/static/js/modules/editor/menus/table/model.js:83
-msgid "Add column right"
-msgstr "Добавете колона вдясно"
-
-#: document/static/js/modules/editor/menus/table/model.js:85
-msgid "Add a column to the right of the current column"
-msgstr "Добавете колона вдясно от текущата колона"
-
-#: document/static/js/modules/editor/menus/table/model.js:105
-msgid "Delete current row"
-msgstr "Изтриване на текущия ред"
-
-#: document/static/js/modules/editor/menus/table/model.js:122
-msgid "Delete current column"
-msgstr "Изтриване на текущата колона"
-
-#: document/static/js/modules/editor/menus/table/model.js:142
-msgid "Merge selected cells"
-msgstr "Обединяване на избрани клетки"
-
 #: document/static/js/modules/editor/menus/table/model.js:157
 msgid "Split cells"
 msgstr "Разделяне на клетки"
-
-#: document/static/js/modules/editor/menus/table/model.js:159
-msgid "Split selected cell"
-msgstr "Разделяне на избраната клетка"
-
-#: document/static/js/modules/editor/menus/table/model.js:179
-msgid "Toggle header-status of currently selected row"
-msgstr "Превключване на състоянието на заглавката на текущо избрания ред"
-
-#: document/static/js/modules/editor/menus/table/model.js:196
-msgid "Toggle header-status of currently selected column"
-msgstr "Превключване на състоянието на заглавката на текущо избраната колона"
-
-#: document/static/js/modules/editor/menus/table/model.js:211
-msgid "Toggle header cell"
-msgstr "Превключване на клетката на заглавката"
-
-#: document/static/js/modules/editor/menus/table/model.js:213
-msgid "Toggle header-status of currently selected cells"
-msgstr "Превключване на състоянието на заглавката на текущо избраните клетки"
 
 #: document/static/js/modules/editor/menus/table/model.js:231
 msgid "Resize/Reposition"
@@ -3052,81 +3664,9 @@ msgstr "Resize / Преместете"
 msgid "Resize/Reposition a table."
 msgstr "Преоразмеряване / препозициониране на таблица."
 
-#: document/static/js/modules/editor/menus/table/model.js:245
-msgid "Delete currently selected table"
-msgstr "Изтрийте текущо избраната таблица"
-
-#: document/static/js/modules/editor/menus/toolbar/model.js:8
-msgid "Normal Text"
-msgstr "Нормален текст"
-
-#: document/static/js/modules/editor/menus/toolbar/model.js:9
-msgid "1st Heading"
-msgstr "1-во заглавие"
-
-#: document/static/js/modules/editor/menus/toolbar/model.js:10
-msgid "2nd Heading"
-msgstr "2-ро заглавие"
-
-#: document/static/js/modules/editor/menus/toolbar/model.js:11
-msgid "3rd Heading"
-msgstr "3-та позиция"
-
-#: document/static/js/modules/editor/menus/toolbar/model.js:12
-msgid "4th Heading"
-msgstr "4-та позиция"
-
-#: document/static/js/modules/editor/menus/toolbar/model.js:13
-msgid "5th Heading"
-msgstr "5-та позиция"
-
-#: document/static/js/modules/editor/menus/toolbar/model.js:14
-msgid "6th Heading"
-msgstr "6-та позиция"
-
-#: document/static/js/modules/editor/menus/toolbar/model.js:80
-msgid "Open/close header menu"
-msgstr "Отваряне / затваряне на менюто на заглавката"
-
-#: document/static/js/modules/editor/menus/toolbar/model.js:315
-msgid "Numbered list"
-msgstr "Номериран списък"
-
-#: document/static/js/modules/editor/menus/toolbar/model.js:398
-msgid "Cite"
-msgstr "цитирам"
-
-#: document/static/js/modules/editor/menus/toolbar/model.js:414
-msgid "Horizontal line"
-msgstr "Хоризонтална линия"
-
-#: document/static/js/modules/editor/menus/toolbar/model.js:462
-msgid "Insert a table into the document."
-msgstr "Поставете таблица в документа."
-
-#: document/static/js/modules/editor/menus/toolbar/view.js:259
-msgid "More"
-msgstr "| Повече ▼"
-
-#: document/static/js/modules/editor/navigator/index.js:190
+#: document/static/js/modules/editor/navigator/index.js:201
 msgid "Document Navigator"
 msgstr "Навигатор за документи"
-
-#: document/static/js/modules/editor/state_plugins/keyword_input.js:46
-msgid "Add keyword..."
-msgstr "Добавяне на ключова дума ..."
-
-#: document/static/js/modules/editor/state_plugins/links.js:33
-msgid "Link copied to clipboard"
-msgstr "Връзка се копира в клипборда"
-
-#: document/static/js/modules/editor/state_plugins/links.js:35
-msgid "Copy to clipboard failed. Please copy manually."
-msgstr "Копирането в клипборда не бе успешно. Моля, копирайте ръчно."
-
-#: document/static/js/modules/editor/state_plugins/links.js:125
-msgid "Copy link"
-msgstr "Копирай връзка"
 
 #: document/static/js/modules/editor/state_plugins/links.js:125
 msgid "Edit link"
@@ -3144,141 +3684,17 @@ msgstr "Копирайте котва"
 msgid "Remove anchor"
 msgstr "Свалете котвата"
 
-#: document/static/js/modules/editor/tools/show_key_bindings.js:15
-msgid "Keyboard Shortcuts"
-msgstr "Комбинация от клавиши"
-
-#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
-msgid "Print"
-msgstr "печат"
-
-#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
-msgid "Show keyboard shortcuts"
-msgstr "Показване на клавишни комбинации"
-
-#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
-msgid "Paste with content detection"
-msgstr "Поставяне с откриване на съдържание"
-
-#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
-msgid "Paste without content detection"
-msgstr "Поставяне без откриване на съдържание"
-
-#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
-msgid "Bold"
-msgstr "смел"
-
-#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
-msgid "Italics"
-msgstr "курсив"
-
-#: document/static/js/modules/editor/tools/word_count_templates.js:5
-msgid "Number of"
-msgstr "Номер от"
-
-#: document/static/js/modules/editor/tools/word_count_templates.js:5
-msgid "Document"
-msgstr "Документ"
-
-#: document/static/js/modules/editor/tools/word_count_templates.js:5
-msgid "Words"
-msgstr "Думи"
-
-#: document/static/js/modules/editor/tools/word_count_templates.js:5
-msgid "Characters without blanks"
-msgstr "Знаци (без интервали)"
-
-#: document/static/js/modules/editor/tools/word_count_templates.js:5
-msgid "Characters with blanks"
-msgstr "Знаци (с интервали)"
-
-#: document/static/js/modules/exporter/docx/metadata.js:65
-#: document/static/js/modules/exporter/docx/metadata.js:66
-#: document/static/js/modules/exporter/odt/metadata.js:66
-msgid "Unknown"
-msgstr "Неизвестен"
-
-#: document/static/js/modules/exporter/epub/index.js:22
-msgid "Epub export has been initiated."
-msgstr "Започнат бе Epub експорт."
-
-#: document/static/js/modules/exporter/html/index.js:19
-msgid "HTML export has been initiated."
-msgstr "Започнат бе HTML експорт."
-
-#: document/static/js/modules/exporter/native/copy.js:30
-msgid " successfully copied."
-msgstr " успешно копиран"
-
-#: document/static/js/modules/exporter/native/revision.js:38
-msgid "Revision saved"
-msgstr "Ревизията е запазена"
-
-#: document/static/js/modules/exporter/native/revision.js:38
-msgid "Revision could not be saved."
-msgstr "Ревизията не можа да бъде запазена."
-
-#: document/static/js/modules/exporter/native/shrink.js:17
-msgid "File export has been initiated."
-msgstr "Експортирането беше стартирано."
-
 #: document/static/js/modules/exporter/print/index.js:15
 msgid "Printing has been initiated."
 msgstr "Печатането е започнало."
-
-#: document/static/js/modules/importer/file.js:42
-#: document/static/js/modules/importer/file.js:67
-msgid "The uploaded file does not appear to be a Fidus Writer file."
-msgstr "Каченият файл не изглежда да е Fidus Writer."
-
-#: document/static/js/modules/importer/file.js:123
-msgid "successfully imported."
-msgstr "успешно импортиран."
-
-#: document/static/js/modules/importer/file.js:128
-msgid ""
-"The uploaded file does not appear to be of the version used on this server: "
-msgstr "Каченият файл не е от версията, използвана на този сървър: "
-
-#: document/static/js/modules/importer/native.js:53
-msgid "Could not save Image"
-msgstr "Изображение не можа да се запази"
-
-#: document/static/js/modules/importer/native.js:103
-msgid "Could not create document"
-msgstr "Не можа да се създаде документ"
-
-#: document/static/js/modules/importer/native.js:141
-msgid "Could not save "
-msgstr "Не можа да бъде запазен"
-
-#: document/static/js/modules/maintenance/index.js:24
-msgid "Updating..."
-msgstr "Актуализира ..."
 
 #: document/static/js/modules/maintenance/index.js:25
 msgid "Updating documents."
 msgstr "Актуализиране на документи."
 
-#: document/static/js/modules/maintenance/index.js:43
-msgid "Downloaded batch"
-msgstr "Изтеглена партида"
-
-#: document/static/js/modules/maintenance/index.js:47
-msgid "All documents updated!"
-msgstr "Всички документи са актуализирани!"
-
 #: document/static/js/modules/maintenance/index.js:49
 msgid "No documents to update."
 msgstr "Няма документи за актуализиране."
-
-#: document/static/js/modules/maintenance/index.js:55
-msgid "Could not download batch"
-msgstr "Партидата не можа да се изтегли"
-
-#: document/static/js/modules/maintenance/index.js:122
-msgid "The document has been updated"
-msgstr "Документът е актуализиран"
 
 #: document/static/js/modules/maintenance/index.js:127
 msgid "Updating document templates."
@@ -3296,10 +3712,6 @@ msgstr "Шаблонът на документа е актуализиран"
 msgid "All document templates updated!"
 msgstr "Всички шаблони за документи са актуализирани!"
 
-#: document/static/js/modules/maintenance/index.js:187
-msgid "Updating saved revisions."
-msgstr "Актуализиране на запазените версии."
-
 #: document/static/js/modules/maintenance/index.js:196
 msgid "No document revisions to update."
 msgstr "Няма редакции на документи, които да се актуализират."
@@ -3310,105 +3722,7 @@ msgstr "Редакцията на документа е актуализиран
 
 #: document/static/js/modules/maintenance/index.js:253
 msgid "All documents, document templates and document revisions updated!"
-msgstr ""
-"Всички документи, шаблони на документи и ревизии на документи са "
-"актуализирани!"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Albanian"
-msgstr "албански"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Asturian"
-msgstr "Астурия"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Belarusian"
-msgstr "Беларус"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Breton"
-msgstr "Бретон"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Catalan (Valencia)"
-msgstr "Каталунски (Валенсия)"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "English (Australia)"
-msgstr "Английски (Австралия)"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "English (Canada)"
-msgstr "Английски (Канада)"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "English (New Zealand)"
-msgstr "Английски (Нова Зеландия)"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "English (South Africa)"
-msgstr "Английски (Южна Африка)"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Esperanto"
-msgstr "есперанто"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Galician"
-msgstr "галисийски"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "German (Austria)"
-msgstr "Немски (Австрия)"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "German (Switzerland)"
-msgstr "Немски (Швейцария)"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Khmer"
-msgstr "Червените"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Malayalam"
-msgstr "малаялам"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Norwegian (bokmål)"
-msgstr "Норвежки (bokmål)"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Norwegian (nynorsk)"
-msgstr "Норвежки (nynorsk)"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Persian"
-msgstr "персийски"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Portuguese (Portugal)"
-msgstr "Португалски (Португалия)"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Serbian (Cyrillic)"
-msgstr "Сръбски (на кирилица)"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Serbian (Latin)"
-msgstr "Сръбски (латински)"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Slovenian"
-msgstr "словенски"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Tamil"
-msgstr "тамилски"
-
-#: document/static/js/modules/schema/const.js:1
-msgid "Tagalog"
-msgstr "тагалог"
+msgstr "Всички документи, шаблони на документи и ревизии на документи са актуализирани!"
 
 #: feedback/static/js/modules/feedback/index.js:18
 msgid "Tech support"
@@ -3434,67 +3748,6 @@ msgstr "Благодаря за доклада!"
 msgid "Technical support"
 msgstr "Техническа поддръжка"
 
-#: menu/static/js/modules/menu/index.js:9
-msgid "Documents"
-msgstr "Документи"
-
-#: menu/static/js/modules/menu/index.js:11
-msgid "edit documents"
-msgstr "редактиране на документи"
-
-#: menu/static/js/modules/menu/index.js:17
-msgid "manage bibliography library"
-msgstr "управление на библиографска библиотека"
-
-#: menu/static/js/modules/menu/index.js:21
-#: usermedia/static/js/modules/images/selection_dialog/index.js:75
-msgid "Images"
-msgstr "Изображени"
-
-#: menu/static/js/modules/menu/index.js:23
-msgid "manage image files"
-msgstr "управление на изображения"
-
-#: user/static/js/modules/contacts/add_dialog.js:5
-msgid "Add a user to your contacts"
-msgstr "Добави потребител към твоите контакти"
-
-#: user/static/js/modules/contacts/add_dialog.js:67
-msgid "You cannot add yourself to your contacts!"
-msgstr "Не можете да добавите себе си към вашите контакти!"
-
-#: user/static/js/modules/contacts/add_dialog.js:69
-msgid "This person is already in your contacts"
-msgstr "Този човек вече е във вашите контакти"
-
-#: user/static/js/modules/contacts/add_dialog.js:72
-msgid "No user is registered with the given email address."
-msgstr "Няма регистриран потребител с този имейл."
-
-#: user/static/js/modules/contacts/add_dialog.js:81
-msgid "Please invite him/her "
-msgstr "Моля поканете него/нея"
-
-#: user/static/js/modules/contacts/add_dialog.js:81
-msgid "Fidus Writer"
-msgstr "Fidus Writer"
-
-#: user/static/js/modules/contacts/add_dialog.js:81
-msgid "Hey, I would like you to sign up for a Fidus Writer account."
-msgstr "Ей, бих искал да се регистрирате за акаунт във Fidus Writer."
-
-#: user/static/js/modules/contacts/add_dialog.js:81
-msgid "Please register at"
-msgstr "Моля регистрирай се на"
-
-#: user/static/js/modules/contacts/add_dialog.js:81
-msgid "by sending an email"
-msgstr "със електронно писмо"
-
-#: user/static/js/modules/contacts/add_dialog.js:84
-msgid "User is not registered."
-msgstr "Потребителят не е регистриран."
-
 #: user/static/js/modules/contacts/delete_dialog.js:33
 msgid "Remove from contacts"
 msgstr "Премахване от контакти"
@@ -3509,18 +3762,6 @@ msgstr "Имейл адрес"
 msgid "Team Members"
 msgstr "Членове на отбора"
 
-#: user/static/js/modules/contacts/index.js:59
-msgid "Could not obtain contacts list"
-msgstr "Списъкът с контакти не можа да се получи"
-
-#: user/static/js/modules/contacts/menu.js:18
-msgid "Add new contact"
-msgstr "Добавяне на нов контакт"
-
-#: user/static/js/modules/contacts/templates.js:7
-msgid "E-mail address or username"
-msgstr "Е-мейл адрес или потребителско име"
-
 #: user/static/js/modules/email_confirm/index.js:22
 msgid "Confirm Email"
 msgstr "Потвърдете имейл"
@@ -3533,67 +3774,17 @@ msgstr "Проверен имейл!"
 msgid "Confirm E-mail Address"
 msgstr "Потвърди имейл адреса"
 
-#: user/static/js/modules/email_confirm/templates.js:8
-msgid "Confirm E-mail Address and Agree to Terms and Conditions"
-msgstr "Потвърдете вашият имейл и се съгласете с общите условия"
-
 #: user/static/js/modules/email_confirm/templates.js:20
-msgid ""
-"Please confirm that you own the email <a href=\"mailto:%(email)s\">"
-"%(email)s</a>."
-msgstr ""
-"Моля, потвърдете, че притежавате имейл <a href=\"mailto:%(email)s\">"
-"%(email)s </a>."
+msgid "Please confirm that you own the email <a href=\"mailto:%(email)s\">%(email)s</a>."
+msgstr "Моля, потвърдете, че притежавате имейл <a href=\"mailto:%(email)s\">%(email)s </a>."
 
 #: user/static/js/modules/email_confirm/templates.js:22
-msgid ""
-"Please confirm that you own the email <a href=\"mailto:%(email)s\">"
-"%(email)s</a>, that you apply for the username %(username)s, and that you "
-"have read and agree to our <a href=\"/pages/terms/\" target=\"_blank\">Terms "
-"and Conditions</a> and <a href=\"/pages/privacy/\" target=\"_blank\">Privacy "
-"Policy</a>."
-msgstr ""
-"Моля, потвърдете, че притежавате имейл <a href=\"mailto:%(email)s\">"
-"%(email)s</a>, че кандидатствате за потребителското име% (потребителско име) "
-"s и че сте прочели и се съгласили към нашите <a href=\"/pages/terms/\" "
-"target=\"_blank\"> Общи условия </a> и <a href=\"/pages/privacy/\" target="
-"\"_blank\"> Декларация за поверителност </a> ,"
-
-#: user/static/js/modules/email_confirm/templates.js:25
-msgid "Confirm"
-msgstr "Потвърди"
-
-#: user/static/js/modules/email_confirm/templates.js:27
-msgid ""
-"I have read and agree to the <a href=\"/pages/terms/\" target=\"_blank"
-"\">Terms and Conditions</a>."
-msgstr ""
-"Прочетох и приемам <a href=\"/pages/terms/\" target=\"_blank\"> Общи условия "
-"</a>."
-
-#: user/static/js/modules/email_confirm/templates.js:28
-msgid ""
-"I am aware that I am signing up for a test account and that service may be "
-"ended abruptly and without notice, leaving me without my files."
-msgstr ""
-"Наясно съм, че се регистрирам за тестов акаунт и тази услуга може да бъде "
-"прекратена рязко и без предизвестие, оставяйки ме без моите файлове."
+msgid "Please confirm that you own the email <a href=\"mailto:%(email)s\">%(email)s</a>, that you apply for the username %(username)s, and that you have read and agree to our <a href=\"/pages/terms/\" target=\"_blank\">Terms and Conditions</a> and <a href=\"/pages/privacy/\" target=\"_blank\">Privacy Policy</a>."
+msgstr "Моля, потвърдете, че притежавате имейл <a href=\"mailto:%(email)s\">%(email)s</a>, че кандидатствате за потребителското име% (потребителско име) s и че сте прочели и се съгласили към нашите <a href=\"/pages/terms/\" target=\"_blank\"> Общи условия </a> и <a href=\"/pages/privacy/\" target=\"_blank\"> Декларация за поверителност </a> ,"
 
 #: user/static/js/modules/email_confirm/templates.js:30
-msgid ""
-"This e-mail confirmation link expired or is invalid. Please try to open "
-"another account."
-msgstr ""
-"Тази връзка за потвърждение на електронната поща изтече или е невалидна. "
-"Моля, опитайте да отворите друг акаунт."
-
-#: user/static/js/modules/email_confirm/templates.js:32
-msgid "Thanks for verifying!"
-msgstr "Благодаря за потвърждаването!"
-
-#: user/static/js/modules/email_confirm/templates.js:32
-msgid "You can now log in."
-msgstr "Вече можете да влезете."
+msgid "This e-mail confirmation link expired or is invalid. Please try to open another account."
+msgstr "Тази връзка за потвърждение на електронната поща изтече или е невалидна. Моля, опитайте да отворите друг акаунт."
 
 #: user/static/js/modules/login/index.js:21
 msgid "Login"
@@ -3609,36 +3800,16 @@ msgid "Sign up"
 msgstr "Създай акаунт"
 
 #: user/static/js/modules/login/index.js:34
-msgid ""
-"If you are new here, please <a href='/account/sign-up/' title='Sign up'>sign "
-"up</a> or use one of the login options below to create an account."
-msgstr ""
-"Ако сте нов тук, моля, <a href='/account/sign-up/' title='регистрирайте се> "
-"се регистрирайте </a> или използвайте една от опциите за вход по-долу, за да "
-"създадете акаунт."
+msgid "If you are new here, please <a href='/account/sign-up/' title='Sign up'>sign up</a> or use one of the login options below to create an account."
+msgstr "Ако сте нов тук, моля, <a href='/account/sign-up/' title='регистрирайте се> се регистрирайте </a> или използвайте една от опциите за вход по-долу, за да създадете акаунт."
 
 #: user/static/js/modules/login/index.js:34
 msgid "Login with"
 msgstr "Влез със"
 
 #: user/static/js/modules/login/index.js:34
-#: user/static/js/modules/profile/templates.js:10
-#: user/static/js/modules/profile/templates.js:35
-#: user/static/js/modules/signup/index.js:22
-msgid "Username"
-msgstr "Потребител"
-
-#: user/static/js/modules/login/index.js:34
 msgid "Username or e-mail"
 msgstr "Потребителско име или имейл"
-
-#: user/static/js/modules/login/index.js:34
-#: user/static/js/modules/password_reset/change_password.js:25
-#: user/static/js/modules/profile/templates.js:10
-#: user/static/js/modules/profile/templates.js:35
-#: user/static/js/modules/signup/index.js:22
-msgid "Password"
-msgstr "Парола"
 
 #: user/static/js/modules/login/index.js:34
 msgid "Remember me"
@@ -3666,36 +3837,22 @@ msgid "Verify Your E-mail Address"
 msgstr "Потвърди имейл"
 
 #: user/static/js/modules/login/index.js:84
-msgid ""
-"We have sent an e-mail to your email address for verification. Follow the "
-"link provided to finalize the signup process."
-msgstr ""
-"Изпратихме имейл до вашия имейл адрес за проверка. Следвайте предоставената "
-"връзка, за да финализирате процеса на регистрация."
+msgid "We have sent an e-mail to your email address for verification. Follow the link provided to finalize the signup process."
+msgstr "Изпратихме имейл до вашия имейл адрес за проверка. Следвайте предоставената връзка, за да финализирате процеса на регистрация."
 
 #: user/static/js/modules/login/index.js:84
 #: user/static/js/modules/password_reset/request_email.js:62
 #: user/static/js/modules/signup/index.js:95
 msgid "Please contact us if you do not receive it within a few minutes."
-msgstr ""
-"Моля, свържете се с нас, ако не го получите в рамките на няколко минути."
-
-#: user/static/js/modules/password_reset/change_password.js:20
-#: user/static/js/modules/profile/dialogs.js:134
-msgid "Change Password"
-msgstr "Промяна на паролата"
+msgstr "Моля, свържете се с нас, ако не го получите в рамките на няколко минути."
 
 #: user/static/js/modules/password_reset/change_password.js:25
 msgid "Change password"
 msgstr "Промяна на парола"
 
 #: user/static/js/modules/password_reset/change_password.js:25
-msgid ""
-"You have indicated that you have forgotten your password. Please enter your "
-"new password in the form twice."
-msgstr ""
-"Вие сте посочили, че сте забравили паролата си. Моля, въведете новата си "
-"парола във формата два пъти."
+msgid "You have indicated that you have forgotten your password. Please enter your new password in the form twice."
+msgstr "Вие сте посочили, че сте забравили паролата си. Моля, въведете новата си парола във формата два пъти."
 
 #: user/static/js/modules/password_reset/change_password.js:25
 #: user/static/js/modules/signup/index.js:22
@@ -3721,14 +3878,14 @@ msgstr "Промяна на паролата ми"
 msgid "You must type the same password each time."
 msgstr "Трябва да въвеждате една и съща парола всеки път."
 
+#. bien?
 #: user/static/js/modules/password_reset/change_password.js:73
 #: user/static/js/modules/password_reset/request_email.js:24
 msgid "Password reset"
 msgstr "Смяна на парола"
 
 #: user/static/js/modules/password_reset/change_password.js:73
-msgid ""
-"Your password has been reset and you can now log in with the new password."
+msgid "Your password has been reset and you can now log in with the new password."
 msgstr "Вашата парола е нулирана и вече можете да влезете с новата парола."
 
 #: user/static/js/modules/password_reset/request_email.js:20
@@ -3736,20 +3893,12 @@ msgid "Reset Password"
 msgstr "Нулиране на парола"
 
 #: user/static/js/modules/password_reset/request_email.js:24
-msgid ""
-"Forgotten your password? Enter your e-mail address in the form, and we'll "
-"send you an e-mail allowing you to reset it."
-msgstr ""
-"Забравили сте си паролата? Въведете своя имейл адрес във формата и ние ще ви "
-"изпратим имейл, позволяващ да го нулирате."
+msgid "Forgotten your password? Enter your e-mail address in the form, and we'll send you an e-mail allowing you to reset it."
+msgstr "Забравили сте си паролата? Въведете своя имейл адрес във формата и ние ще ви изпратим имейл, позволяващ да го нулирате."
 
 #: user/static/js/modules/password_reset/request_email.js:24
-msgid ""
-"If you have any trouble resetting your password, please <a href=\"mailto:"
-"%(contactEmail)s\">contact us</a>."
-msgstr ""
-"Ако имате проблеми с нулирането на паролата си, моля <a href=\"mailto:"
-"%(contactEmail)s\"> свържете се с нас </a>."
+msgid "If you have any trouble resetting your password, please <a href=\"mailto:%(contactEmail)s\">contact us</a>."
+msgstr "Ако имате проблеми с нулирането на паролата си, моля <a href=\"mailto:%(contactEmail)s\"> свържете се с нас </a>."
 
 #: user/static/js/modules/password_reset/request_email.js:26
 msgid "Reset My Password"
@@ -3765,74 +3914,8 @@ msgid "Instructions emailed"
 msgstr "Инструкции по имейл"
 
 #: user/static/js/modules/password_reset/request_email.js:60
-msgid ""
-"We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</a> with "
-"instructions on how to reset your password."
-msgstr ""
-"Изпратихме имейл до <a href=\"mailto:%(email)s\">%(email)s</a> с инструкции "
-"как да нулирате паролата си."
-
-#: user/static/js/modules/profile/delete_user.js:45
-msgid "Staff accounts have to be deleted through the admin interface."
-msgstr ""
-"Сметките на персонала трябва да бъдат изтрити чрез администраторския "
-"интерфейс."
-
-#: user/static/js/modules/profile/delete_user.js:49
-msgid "Password incorrect."
-msgstr "Неправилна парола"
-
-#: user/static/js/modules/profile/delete_user.js:53
-msgid "Could not delete user account."
-msgstr "Потребителският акаунт не може да бъде изтрит."
-
-#: user/static/js/modules/profile/dialogs.js:22
-msgid "Could not update profile avatar"
-msgstr "Аватарът на потребителския профил не можа да бъде актуализиран"
-
-#: user/static/js/modules/profile/dialogs.js:35
-msgid "Upload your profile picture"
-msgstr "Качи профилна снимка"
-
-#: user/static/js/modules/profile/dialogs.js:54
-msgid "Could not delete avatar"
-msgstr "Аватарът не може да бъде изтрит"
-
-#: user/static/js/modules/profile/dialogs.js:91
-msgid "All fields are required!"
-msgstr "Всички полета са задължителни"
-
-#: user/static/js/modules/profile/dialogs.js:96
-msgid "Please confirm the new password!"
-msgstr "Моля потвърдете новата парола!"
-
-#: user/static/js/modules/profile/dialogs.js:111
-msgid "The password has been changed."
-msgstr "Паролата беше променена."
-
-#: user/static/js/modules/profile/dialogs.js:122
-msgid "The password could not be changed!"
-msgstr "Паролата не можа да бъде променена!"
-
-#: user/static/js/modules/profile/dialogs.js:127
-msgid "The password could not be changed"
-msgstr "Паролата не можа да бъде променена"
-
-#: user/static/js/modules/profile/dialogs.js:151
-msgid "New email address is required!"
-msgstr "Необходим е нов имейл адрес."
-
-#: user/static/js/modules/profile/dialogs.js:166
-msgid "Confirmation e-mail sent to"
-msgstr "Имейл за потвърждение, изпратен до"
-
-#: user/static/js/modules/profile/dialogs.js:172
-msgid "The email could not be added!"
-msgstr "Имейлът не можа да бъде добавен!"
-
-#: user/static/js/modules/profile/dialogs.js:180
-msgid "Add Email"
-msgstr "Добави имейл"
+msgid "We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</a> with instructions on how to reset your password."
+msgstr "Изпратихме имейл до <a href=\"mailto:%(email)s\">%(email)s</a> с инструкции как да нулирате паролата си."
 
 #: user/static/js/modules/profile/dialogs.js:199
 msgid "Email successfully deleted!"
@@ -3842,14 +3925,6 @@ msgstr "Имейлът е изтрит успешно!"
 msgid "The email could not be deleted!"
 msgstr "Имейлът не можа да бъде изтрит!"
 
-#: user/static/js/modules/profile/dialogs.js:209
-msgid "Confirm remove"
-msgstr "Потвърди изтриването"
-
-#: user/static/js/modules/profile/dialogs.js:211
-msgid "Remove the email address"
-msgstr "Изтриване на имейл"
-
 #: user/static/js/modules/profile/dialogs.js:232
 msgid "The primary email has been updated."
 msgstr "Основният имейл е актуализиран."
@@ -3858,65 +3933,9 @@ msgstr "Основният имейл е актуализиран."
 msgid "The email could not be set to be primary email."
 msgstr "Имейлът не може да бъде зададен като основен имейл."
 
-#: user/static/js/modules/profile/dialogs.js:242
-msgid "Confirm set primary"
-msgstr "Потвърди настройването като основен"
-
-#: user/static/js/modules/profile/dialogs.js:244
-msgid "Set this email as the address primary"
-msgstr "Задайте този имейл като основен адрес"
-
 #: user/static/js/modules/profile/index.js:78
 msgid "Configure profile"
 msgstr "Конфигуриране на профил"
-
-#: user/static/js/modules/profile/index.js:95
-msgid "Could not save profile data"
-msgstr "Данните от потребителския профил не можаха да се запазят"
-
-#: user/static/js/modules/profile/templates.js:4
-msgid "Delete the avatar?"
-msgstr "Да се изтрие ли аватарът?"
-
-#: user/static/js/modules/profile/templates.js:10
-msgid "NOTICE: ALL OF YOUR INFORMATION WILL DISAPPEAR FROM OUR SYSTEM!"
-msgstr "ЗАБЕЛЕЖКА: ВСИЧКА ВАША ИНФОРМАЦИЯ ЩЕ ИЗХВЪРЛЯ ОТ НАШАТА СИСТЕМА!"
-
-#: user/static/js/modules/profile/templates.js:10
-msgid ""
-"Really delete your account? Type in your username and password below to "
-"confirm deletion."
-msgstr ""
-"Наистина ли да изтриете акаунта си? Въведете вашето потребителско име и "
-"парола по-долу, за да потвърдите изтриването."
-
-#: user/static/js/modules/profile/templates.js:10
-msgid "We cannot reverse an account deletion."
-msgstr "Не можем да обърнем изтриването на акаунт."
-
-#: user/static/js/modules/profile/templates.js:10
-msgid ""
-"Some copies of your files may temporarily be kept in our backup system, but "
-"also these will disappear automatically in due time."
-msgstr ""
-"Някои копия на вашите файлове могат временно да се съхраняват в нашата "
-"резервна система, но също така те ще изчезнат автоматично навреме."
-
-#: user/static/js/modules/profile/templates.js:13
-msgid "Enter the new E-mail address"
-msgstr "Веведете новият имейл"
-
-#: user/static/js/modules/profile/templates.js:28
-msgid "Old password"
-msgstr "Стара парола"
-
-#: user/static/js/modules/profile/templates.js:28
-msgid "New password"
-msgstr "Нова парола"
-
-#: user/static/js/modules/profile/templates.js:28
-msgid "Confirm the new password"
-msgstr "Потвърди новата парола"
 
 #: user/static/js/modules/profile/templates.js:35
 msgid "Edit profile picture"
@@ -3947,15 +3966,15 @@ msgid "Signup"
 msgstr "Регистрирай се"
 
 #: user/static/js/modules/signup/index.js:22
-msgid ""
-"Already have an account? Then please <a href=\"/\" title=\"Login\">login</a>."
-msgstr ""
-"Вече имате акаунт? След това, моля, <a href=\"/\" title=\"Login\"> вход </a>."
+msgid "Already have an account? Then please <a href=\"/\" title=\"Login\">login</a>."
+msgstr "Вече имате акаунт? След това, моля, <a href=\"/\" title=\"Login\"> вход </a>."
 
 #: user/static/js/modules/signup/index.js:22
 msgid "Choose your username"
 msgstr "Изберете потребителско име"
 
+#. No suena bien ni claro. Alternativa?
+#. No puedes registrarte. El registro está cerrado.
 #: user/static/js/modules/signup/index.js:24
 msgid "Sign Up Closed"
 msgstr "Създаването на акаунти е изключено"
@@ -3965,12 +3984,8 @@ msgid "We are sorry, but the sign up is currently closed."
 msgstr "Съжалаваме, но в момента създаването на акаунти е изключено"
 
 #: user/static/js/modules/signup/index.js:93
-msgid ""
-"We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</a> for "
-"verification. Follow the link provided to finalize the signup process."
-msgstr ""
-"Изпратихме имейл до <a href=\"mailto:%(email)s\">%(email)s</a> за проверка. "
-"Следвайте предоставената връзка, за да финализирате процеса на регистрация."
+msgid "We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</a> for verification. Follow the link provided to finalize the signup process."
+msgstr "Изпратихме имейл до <a href=\"mailto:%(email)s\">%(email)s</a> за проверка. Следвайте предоставената връзка, за да финализирате процеса на регистрация."
 
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:18
 msgid "Could not delete document template"
@@ -4021,6 +4036,7 @@ msgstr "Не можете да изтриете шаблони на систем
 msgid "Duplicate selected"
 msgstr "Избран е дубликат"
 
+#. Encontré esta traducción de Document Overview en informática. No sé si aplica.
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:47
 msgid "Document Templates Overview"
 msgstr "Преглед на шаблони за документи"
@@ -4040,26 +4056,6 @@ msgstr "Шаблони за документи"
 #: user_template_manager/static/js/plugins/menu/user_template_manager.js:12
 msgid "Templates"
 msgstr "Templates"
-
-#: usermedia/static/js/modules/images/database.js:41
-msgid "Could not save image"
-msgstr "Изображението не можа да бъде запазено"
-
-#: usermedia/static/js/modules/images/edit_dialog/index.js:16
-msgid "Update Image Information"
-msgstr "Актуализирайте информацията за изображението"
-
-#: usermedia/static/js/modules/images/edit_dialog/index.js:16
-msgid "Upload Image"
-msgstr "Качи изображение"
-
-#: usermedia/static/js/modules/images/edit_dialog/index.js:127
-msgid "The image has been updated."
-msgstr "Изображението е актуализирано."
-
-#: usermedia/static/js/modules/images/edit_dialog/index.js:132
-msgid "Some errors were found. Please examine the form."
-msgstr "Намерени бяха някои грешки. Моля, разгледайте формата."
 
 #: usermedia/static/js/modules/images/edit_dialog/model.js:5
 msgid "Rotate Left"
@@ -4086,59 +4082,15 @@ msgstr "реколта"
 msgid "Crop image"
 msgstr "Изрязване на изображението"
 
-#: usermedia/static/js/modules/images/edit_dialog/templates.js:12
-msgid "Select categories"
-msgstr "Избери категории"
-
-#: usermedia/static/js/modules/images/edit_dialog/templates.js:20
-msgid "Insert a title"
-msgstr "Вмъкни заглавие"
-
 #: usermedia/static/js/modules/images/edit_dialog/templates.js:20
 msgid "Edit Figure"
 msgstr "Редактиране на фигура"
-
-#: usermedia/static/js/modules/images/overview/categories.js:16
-msgid "Could not update categories"
-msgstr "Категориите не можаха да се актуализират"
 
 #: usermedia/static/js/modules/images/overview/index.js:48
 msgid "Media Manager"
 msgstr "Управление на медийни елементи"
 
-#: usermedia/static/js/modules/images/overview/index.js:73
-msgid "The image(s) could not be deleted"
-msgstr "Изображението или съответно изображенията не можаха да бъдат изтрити"
+#: document/static/js/modules/editor/tools/word_count_templates.js:8
+msgid "Selection"
+msgstr "Селекцията"
 
-#: usermedia/static/js/modules/images/overview/index.js:78
-msgid "The image(s) have been deleted"
-msgstr "Изображенията бяха изтрити"
-
-#: usermedia/static/js/modules/images/overview/index.js:97
-msgid "Delete the image(s)"
-msgstr "Изтрий изображенията"
-
-#: usermedia/static/js/modules/images/overview/index.js:158
-#: usermedia/static/js/modules/images/selection_dialog/index.js:96
-msgid "No images available"
-msgstr "Няма налични изображения"
-
-#: usermedia/static/js/modules/images/overview/index.js:165
-msgid "Size (px)"
-msgstr "Размер (px)"
-
-#: usermedia/static/js/modules/images/overview/menu.js:30
-msgid "Upload new image"
-msgstr "Качване на ново изображение"
-
-#: usermedia/static/js/modules/images/overview/menu.js:45
-msgid "Search images"
-msgstr "Търсене на изображения"
-
-#: usermedia/static/js/modules/images/selection_dialog/index.js:35
-msgid "Add new image"
-msgstr "Добавете ново изображение"
-
-#: usermedia/static/js/modules/images/selection_dialog/index.js:53
-msgid "Use image"
-msgstr "Използвайте изображение"

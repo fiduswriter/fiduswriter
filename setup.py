@@ -98,7 +98,7 @@ setuptools.setup(
         "citation-api-import": "fiduswriter-citation-api-import ~= 3.7.1",
         "languagetool": "fiduswriter-languagetool ~= 3.7.1",
         "ojs": "fiduswriter-ojs ~= 3.7.2",
-        "phplist": "fiduswriter-phplist ~= 3.7.1",
+        "phplist": "fiduswriter-phplist ~= 3.7.2",
         "mysql": read('fiduswriter/mysql-requirements.txt').splitlines(),
         "postgresql": read(
             'fiduswriter/postgresql-requirements.txt'

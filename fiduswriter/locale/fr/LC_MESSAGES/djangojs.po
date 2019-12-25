@@ -2779,7 +2779,7 @@ msgstr "Politique de confidentialité"
 
 #: base/static/js/modules/prelogin/index.js:28
 msgid "Equations and Math with MathLive"
-msgstr "Équations et mathématiques avec MathLive"
+msgstr "Mathématiques avec MathLive"
 
 #: base/static/js/modules/prelogin/index.js:32
 msgid "Citations with Citation Style Language"

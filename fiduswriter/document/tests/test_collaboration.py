@@ -797,10 +797,6 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         # type formula
         math_field = driver.find_element_by_class_name('math-field')
         math_field.click()
-        keyboard_toggle = driver.find_element_by_class_name(
-            'ML__virtual-keyboard-toggle'
-        )
-        keyboard_toggle.click()
 
         # wait for keyboard
         WebDriverWait(driver, self.wait_time).until(
@@ -829,7 +825,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         driver.find_element_by_css_selector('li[data-alt-keys="7"]').click()
         # close keyboard
         driver.find_element_by_class_name(
-            'ML__virtual-keyboard-toggle'
+            'ui-dialog-titlebar'
         ).click()
         insert_button.click()
 

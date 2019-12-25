@@ -2775,11 +2775,11 @@ msgstr "Geschäftsbedingungen"
 
 #: base/static/js/modules/prelogin/index.js:25
 msgid "Privacy policy"
-msgstr "Datenschutz-Bestimmungen"
+msgstr "Datenschutz"
 
 #: base/static/js/modules/prelogin/index.js:28
 msgid "Equations and Math with MathLive"
-msgstr "Gleichungen und Mathematik mit MathLive"
+msgstr "Mathe mit MathLive"
 
 #: base/static/js/modules/prelogin/index.js:32
 msgid "Citations with Citation Style Language"
@@ -2787,7 +2787,7 @@ msgstr "Zitate mit Citation Style Language"
 
 #: base/static/js/modules/prelogin/index.js:36
 msgid "Editing with ProseMirror"
-msgstr "Bearbeiten mit ProseMirror"
+msgstr "Schreiben mit ProseMirror"
 
 #: base/static/js/modules/prelogin/index.js:42
 #: user/static/js/modules/login/index.js:34

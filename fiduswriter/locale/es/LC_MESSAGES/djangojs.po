@@ -1577,7 +1577,7 @@ msgstr "Guardar"
 
 #: document/static/js/modules/editor/dialogs/revision.js:26
 msgid "Revision description"
-msgstr "Descripción de la versión"
+msgstr "Descripción de la revisión"
 
 #: document/static/js/modules/editor/dialogs/table.js:88
 msgid "Insert table"
@@ -1745,11 +1745,11 @@ msgstr "Cierre el documento y regrese al menú de descripción general del docum
 #: document/static/js/modules/editor/menus/headerbar/model.js:60
 #: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
 msgid "Save revision"
-msgstr "Guardar  versión"
+msgstr "Guardar revisión"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:63
 msgid "Save a revision of the current document."
-msgstr "Guardar una versión del documento actual."
+msgstr "Guardar una revisión del documento actual."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:75
 msgid "Create Copy"
@@ -2168,11 +2168,11 @@ msgstr "copiado con exito."
 
 #: document/static/js/modules/exporter/native/revision.js:38
 msgid "Revision saved"
-msgstr "Versión guardada"
+msgstr "Revisión guardada"
 
 #: document/static/js/modules/exporter/native/revision.js:38
 msgid "Revision could not be saved."
-msgstr "No se pudo guardar esta versión del documento"
+msgstr "No se pudo guardar esta revisión del documento"
 
 #: document/static/js/modules/exporter/native/shrink.js:17
 msgid "File export has been initiated."
@@ -3718,7 +3718,7 @@ msgstr "No hay versiones de documentos para actualizar."
 
 #: document/static/js/modules/maintenance/index.js:242
 msgid "The document revision has been updated: "
-msgstr "La versión del documento ha sido actualizada: "
+msgstr "La revisión del documento ha sido actualizada: "
 
 #: document/static/js/modules/maintenance/index.js:253
 msgid "All documents, document templates and document revisions updated!"

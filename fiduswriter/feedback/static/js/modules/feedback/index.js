@@ -1,4 +1,4 @@
-import {post, ensureCSS} from "../common"
+import {post, ensureCSS, whenReady} from "../common"
 
 // Creates the feedback tab. The tab is meant for user feedback to the developers while FW is still in
 // a somewhat early stage. It is included in a way so it's easy to remove from all the templates.
@@ -60,7 +60,6 @@ export class FeedbackTab {
     }
 
     bind() {
-        document.querySelector('a.feedback-tab').style.marginTop = document.querySelector('a.feedback-tab').clientWidth
 
         document.querySelector('a.feedback-tab').addEventListener('click', event => {
             document.querySelector('.feedback-panel').style.display = 'block'

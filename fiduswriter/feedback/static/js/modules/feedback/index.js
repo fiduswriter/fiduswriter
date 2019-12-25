@@ -1,4 +1,4 @@
-import {post, ensureCSS, whenReady} from "../common"
+import {post, ensureCSS} from "../common"
 
 // Creates the feedback tab. The tab is meant for user feedback to the developers while FW is still in
 // a somewhat early stage. It is included in a way so it's easy to remove from all the templates.

@@ -1186,7 +1186,7 @@ msgstr "Neue Quelle registrieren"
 
 #: bibliography/static/js/modules/bibliography/overview/menu.js:57
 msgid "Upload BibTeX file"
-msgstr "Laden Sie die BibTeX-Datei hoch"
+msgstr "BibTeX-Datei hochladen"
 
 #: bibliography/static/js/modules/bibliography/overview/menu.js:66
 msgid "Search bibliography"
@@ -1321,7 +1321,7 @@ msgstr "Neues Dokument erstellen"
 
 #: document/static/js/modules/documents/overview/menu.js:104
 msgid "Upload Fidus document"
-msgstr "Laden Sie das Fidus-Dokument hoch"
+msgstr "Fidus-Datei hochladen"
 
 #: document/static/js/modules/documents/overview/menu.js:110
 msgid "Search documents"
@@ -2485,7 +2485,7 @@ msgstr "Bild"
 #: user/static/js/modules/profile/dialogs.js:5
 #: usermedia/static/js/modules/images/edit_dialog/index.js:24
 msgid "Upload"
-msgstr "Uploaden"
+msgstr "Hochladen"
 
 #: document/static/js/modules/editor/dialogs/figure.js:26
 msgid "Insert image"
@@ -2649,7 +2649,7 @@ msgstr "Profil-Avatar konnte nicht aktualisiert werden"
 
 #: user/static/js/modules/profile/dialogs.js:35
 msgid "Upload your profile picture"
-msgstr "Profilbild uploaden"
+msgstr "Profilbild hochladen"
 
 #: user/static/js/modules/profile/dialogs.js:54
 msgid "Could not delete avatar"

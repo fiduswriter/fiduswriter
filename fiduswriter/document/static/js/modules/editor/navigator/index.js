@@ -138,6 +138,10 @@ export class ModNavigator {
                 items.push({id: node.attrs.id, textContent: node.textContent, type: node.type})
             }
         })
+        const bibHeader = document.querySelector('h1.article-bibliography-header')
+        if (bibHeader) {
+            items.push({id: 'bibliography', textContent: bibHeader.innerText, type: {name: 'h1'}})
+        }
         if (items.length) {
             return this.navigatorHTML(items)
         } else {

@@ -31,7 +31,7 @@ import {
     recreateTransform
 } from "./recreate_transform"
 import {
-    amendTransaction
+    trackedTransaction
 } from "../track"
 
 export class ModCollabDoc {
@@ -140,7 +140,13 @@ export class ModCollabDoc {
                 // Either this user has made 50 changes since going offline,
                 // or the document has 20 changes to it. Therefore we add tracking
                 // to the changes of this user and ask user to clean up.
-                localTr = amendTransaction(unconfirmedTr, lostState, this.mod.editor, false)
+                localTr = trackedTransaction(
+                    unconfirmedTr,
+                    lostState,
+                    this.mod.editor.user,
+                    false,
+                    Date.now() - this.mod.editor.clientTimeAdjustment
+                )
             } else {
                 tracked = false
                 localTr = unconfirmedTr

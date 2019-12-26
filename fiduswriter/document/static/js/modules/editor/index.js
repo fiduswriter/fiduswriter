@@ -237,7 +237,7 @@ export class Editor {
                 )
             )
         }
-        Promise.all(initPromises).then(() => {
+        return Promise.all(initPromises).then(() => {
             new ModCitations(this)
             new ModFootnotes(this)
             this.ws = new WebSocketConnector({
@@ -357,7 +357,7 @@ export class Editor {
                             <div id="citation-footnote-box-container"></div>
                         </div>
                     </div>
-                    <div class="article-bibliography user-contents"></div>
+                    <div id="bibliography" class="article-bibliography user-contents"></div>
                 </div>
                 <nav id="selection-menu"><div></div></nav>
                 <div id="margin-box-column">
@@ -398,8 +398,7 @@ export class Editor {
                 }
             },
             dispatchTransaction: tr => {
-                const approved = !this.view.state.doc.firstChild.attrs.tracked && this.docInfo.access_rights !== 'write-tracked'
-                const trackedTr = amendTransaction(tr, this.view.state, this, approved)
+                const trackedTr = amendTransaction(tr, this.view.state, this)
                 const newState = this.view.state.apply(trackedTr)
                 this.view.updateState(newState)
                 this.mod.collab.doc.sendToCollaborators()

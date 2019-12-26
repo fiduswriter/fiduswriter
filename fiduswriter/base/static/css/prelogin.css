@@ -116,13 +116,7 @@ footer.prelogin {
 }
 
 .fw-footer-links {
-    position: absolute;
-    left: 40px;
-    top: 0;
-}
-
-.prelogin .fw-footer-links {
-    top: 8px;
+    float: left;
 }
 
 .fw-footer-links > li {
@@ -140,4 +134,9 @@ footer.prelogin {
 
 .fw-footer-links > li a:hover {
     color: #b73717;
+}
+
+#lang-selection {
+    vertical-align: top;
+    margin-bottom: 10px;
 }

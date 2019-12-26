@@ -1,4 +1,3 @@
-import bowser from "bowser"
 import {Dialog} from "../../common"
 
 export class ModDocumentTemplate {
@@ -84,7 +83,7 @@ export class ModDocumentTemplate {
                     type: 'action',
                     tooltip: gettext('Export the document to a DOCX file with the given template.'),
                     action: editor => {
-                        if (bowser.safari) {
+                        if (navigator.vendor ===  "Apple Computer, Inc.") {
                             this.showSafariErrorMessage()
                             return
                         }
@@ -108,7 +107,7 @@ export class ModDocumentTemplate {
                     type: 'action',
                     tooltip: gettext('Export the document to an ODT file with the given template.'),
                     action: editor => {
-                        if (bowser.safari) {
+                        if (navigator.vendor ===  "Apple Computer, Inc.") {
                             this.showSafariErrorMessage()
                             return
                         }

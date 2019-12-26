@@ -60,7 +60,7 @@ a.feedback-tab:before {
     top: auto;
     display: inline-block;
     vertical-align: middle;
-    margin-left: 20px;
+    margin-left: 10px;
 }
 
 @media (max-width: 1079px) {

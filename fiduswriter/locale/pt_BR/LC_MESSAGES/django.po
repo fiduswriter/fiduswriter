@@ -14,7 +14,7 @@ msgstr "Console de Administração"
 
 #: base/templates/admin/console.html:20
 msgid "Current number of user sessions:"
-msgstr "Nº de sessões de usuários:"
+msgstr "Número atual de sessões conectadas:"
 
 #: base/templates/admin/console.html:22
 msgid "Send a system message to all connected users:"
@@ -43,7 +43,7 @@ msgstr "Manutenção de Documentos"
 
 #: base/templates/app.html:11
 msgid "The all in one solution for collaborative academic writing."
-msgstr "A solução completa para a escrita acadêmica colaborativa."
+msgstr "A ferramenta perfeita para escrever textos acadêmicos."
 
 #: base/templates/app.html:51
 msgid "JavaScript disabled"
@@ -69,7 +69,7 @@ msgstr "\n"
 "                Seu navegador não é suportado pelo Fidus Writer.\n"
 "                Favor atualizar! Recomendados usar uma versão\n"
 "                atual do Chrome/Chromium ou Firefox num\n"
-"                computador de mesa.\n"
+"                computador.\n"
 "            "
 
 #: core/default_settings.py:229
@@ -110,7 +110,7 @@ msgstr "Site de Administração do Fidus Writer"
 
 #: core/default_settings.py:315
 msgid "Welcome to the Fidus Writer Administration Site"
-msgstr "Bem Vindo! ao site de Administração do Fidus Writer"
+msgstr "Bem Vindo ao site de Administração do Fidus Writer"
 
 #: document/admin.py:51
 msgid "Duplicate selected document templates"
@@ -159,7 +159,7 @@ msgstr "Autor"
 
 #: document/views.py:480 document/views.py:584
 msgid "Access Rights"
-msgstr "Direitos de acesso"
+msgstr "Direitos de Acesso"
 
 #: document/views.py:483 document/views.py:966
 msgid "Access the document"
@@ -170,9 +170,8 @@ msgid "Document shared:"
 msgstr "Documento compartilhado:"
 
 #: document/views.py:587
-#, fuzzy
 msgid "Sign up or log in and access the document"
-msgstr "Acessar o documento"
+msgstr "Cadastre-se ou faça login e acesse o documento"
 
 #. el espacio antes de los dos puntos se ve raro
 #: document/views.py:899

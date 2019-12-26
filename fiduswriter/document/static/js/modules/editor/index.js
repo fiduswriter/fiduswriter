@@ -357,7 +357,7 @@ export class Editor {
                             <div id="citation-footnote-box-container"></div>
                         </div>
                     </div>
-                    <div class="article-bibliography user-contents"></div>
+                    <div id="bibliography" class="article-bibliography user-contents"></div>
                 </div>
                 <nav id="selection-menu"><div></div></nav>
                 <div id="margin-box-column">

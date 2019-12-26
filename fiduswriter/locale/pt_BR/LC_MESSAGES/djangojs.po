@@ -712,7 +712,6 @@ msgstr "Compilador"
 msgid "Founder"
 msgstr "Fundador"
 
-#. Está bien?
 #: bibliography/static/js/modules/bibliography/form/strings.js:155
 msgid "Continuator"
 msgstr "Continuador"
@@ -756,14 +755,13 @@ msgstr "Versículo"
 msgid "Line"
 msgstr "Linha"
 
-#. correcto?
 #: bibliography/static/js/modules/bibliography/form/strings.js:165
 msgid "In preparation"
 msgstr "Em preparação"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:166
 msgid "Submitted"
-msgstr "Submetido"
+msgstr "Enviado"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:167
 msgid "Forthcoming"
@@ -1085,7 +1083,6 @@ msgstr "Existe um problema com a importação do bibtex"
 msgid "Import"
 msgstr "Importar"
 
-#. Es como puse o es así, "Importar una biblioteca BibTex"?
 #: bibliography/static/js/modules/bibliography/import/dialog.js:51
 msgid "Import a BibTex library"
 msgstr "Importar uma biblioteca BibTex"
@@ -1351,10 +1348,6 @@ msgstr "Não foi possível excluir a revisão."
 msgid "Time"
 msgstr "Tempo"
 
-#. Rehacer,
-#. restablecer
-#. ???
-#. contexto...
 #: document/static/js/modules/documents/revisions/templates.js:6
 #: document/static/js/modules/editor/marginboxes/templates.js:82
 msgid "Recreate"
@@ -1872,7 +1865,7 @@ msgid "Select document editing tool."
 msgstr "Selecione a ferramenta de edição de documentos."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:289
-#: document/static/js/modules/editor/tools/word_count.js:32
+#: document/static/js/modules/editor/tools/word_count.js:50
 msgid "Word counter"
 msgstr "Contador de palavras"
 
@@ -2143,15 +2136,15 @@ msgstr "Imprimir"
 msgid "Italics"
 msgstr "Itálico"
 
-#: document/static/js/modules/editor/tools/word_count_templates.js:5
+#: document/static/js/modules/editor/tools/word_count_templates.js:8
 msgid "Number of"
 msgstr "Número de"
 
-#: document/static/js/modules/editor/tools/word_count_templates.js:5
+#: document/static/js/modules/editor/tools/word_count_templates.js:8
 msgid "Words"
 msgstr "Palavras"
 
-#: document/static/js/modules/editor/tools/word_count_templates.js:5
+#: document/static/js/modules/editor/tools/word_count_templates.js:8
 msgid "Characters with blanks"
 msgstr "Caracteres com espaços em branco"
 
@@ -2459,9 +2452,8 @@ msgid "Import a Fidus file"
 msgstr "Importar um arquivo Fidus"
 
 #: document/static/js/modules/importer/file.js:123
-#, fuzzy
 msgid "successfully imported."
-msgstr " importado com sucesso."
+msgstr "importado com sucesso."
 
 #: document/static/js/modules/documents/revisions/templates.js:6
 msgid "Description"
@@ -2562,11 +2554,11 @@ msgstr "Colar com detecção de conteúdo"
 msgid "Paste without content detection"
 msgstr "Colar sem detecção de conteúdo"
 
-#: document/static/js/modules/editor/tools/word_count_templates.js:5
+#: document/static/js/modules/editor/tools/word_count_templates.js:8
 msgid "Document"
 msgstr "Documento"
 
-#: document/static/js/modules/editor/tools/word_count_templates.js:5
+#: document/static/js/modules/editor/tools/word_count_templates.js:8
 msgid "Characters without blanks"
 msgstr "Caracteres sem espaços em branco"
 
@@ -2771,12 +2763,11 @@ msgstr "Desconectado"
 
 #: base/static/js/modules/offline/index.js:18
 msgid "You are currently disconnected from the %(appName)s server."
-msgstr "No momento, você está desconectado do servidor% (appName) s."
+msgstr "No momento, você está desconectado do servidor %(appName)s."
 
 #: base/static/js/modules/offline/index.js:25
-#, fuzzy
 msgid "Reload page"
-msgstr "Carregar Imagem"
+msgstr "Recarregar página"
 
 #: base/static/js/modules/prelogin/index.js:22
 msgid "Terms and Conditions"
@@ -2804,9 +2795,8 @@ msgid "Log in"
 msgstr "Entrar"
 
 #: base/static/js/modules/prelogin/templates.js:25
-#, fuzzy
 msgid "Select language"
-msgstr "Selecionar Destino"
+msgstr "Selecione o idioma"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:50
 msgid "Bibliography Manager"
@@ -2821,14 +2811,12 @@ msgid "The template needs a title."
 msgstr "O modelo precisa de um título."
 
 #: document/static/js/modules/document_template/designer.js:79
-#, fuzzy
 msgid "The template needs an ID."
-msgstr "Tadas partes do documento precisa de um ID."
+msgstr "O modelo precisa de um ID."
 
 #: document/static/js/modules/document_template/designer.js:89
-#, fuzzy
 msgid "The template ID cannot contain spaces."
-msgstr "IDs não podem conter espaços."
+msgstr "O ID do modelo não pode conter espaços."
 
 #: document/static/js/modules/document_template/designer.js:228
 msgid "All document parts need an ID."
@@ -2843,33 +2831,28 @@ msgid "IDs have to be unique."
 msgstr "IDs devem ser únicos."
 
 #: document/static/js/modules/document_template/document_style_dialog.js:79
-#, fuzzy
 msgid "Document style"
-msgstr "Estilo do Documento"
+msgstr "Estilo do documento"
 
 #: document/static/js/modules/document_template/document_style_dialog.js:80
 msgid "Slug"
 msgstr "Slug"
 
 #: document/static/js/modules/document_template/document_style_dialog.js:80
-#, fuzzy
 msgid "CSS Style"
-msgstr "Estilo de Citação"
+msgstr "Estilo CSS"
 
 #: document/static/js/modules/document_template/document_style_dialog.js:80
-#, fuzzy
 msgid "Files"
-msgstr "Arquivo"
+msgstr "Arquivos"
 
 #: document/static/js/modules/document_template/document_style_dialog.js:80
-#, fuzzy
 msgid "Add a file"
-msgstr "Adicionar Email"
+msgstr "Adicionar um arquivo"
 
 #: document/static/js/modules/document_template/document_style_dialog.js:135
-#, fuzzy
 msgid "Do you really want to delete the document style?"
-msgstr "Você realmente quer excluir a revisão?"
+msgstr "Deseja realmente excluir o estilo do documento?"
 
 #: document/static/js/modules/document_template/document_style_dialog.js:149
 msgid "All fields need to be filled out."
@@ -2877,57 +2860,51 @@ msgstr "Todos os campos precisam ser preenchidos."
 
 #: document/static/js/modules/document_template/document_style_dialog.js:153
 msgid "A slug can only contain letters, numbers, hyphens and underscores."
-msgstr "Uma lesma pode conter apenas letras, números, hífens e sublinhados."
+msgstr "Um slug pode conter apenas letras, números, hífens e sublinhados."
 
 #: document/static/js/modules/document_template/document_style_dialog.js:157
-#, fuzzy
 msgid "The slug has to be unique."
-msgstr "IDs devem ser únicos."
+msgstr "A slug tem que ser único."
 
 #: document/static/js/modules/document_template/document_style_dialog.js:239
 msgid "A file with the same name exists already."
 msgstr "Um arquivo com o mesmo nome já existe."
 
 #: document/static/js/modules/document_template/export_template_dialog.js:74
-#, fuzzy
 msgid "Export template"
-msgstr "Exportar selecionado"
+msgstr "Modelo de exportação"
 
 #: document/static/js/modules/document_template/export_template_dialog.js:76
-#, fuzzy
 msgid "Select"
-msgstr "Selecione um arquivo"
+msgstr "Selecione"
 
 #: document/static/js/modules/document_template/export_template_dialog.js:76
-#, fuzzy
 msgid "Filetype"
-msgstr "Arquivo"
+msgstr "Tipo de arquivo"
 
 #: document/static/js/modules/document_template/export_template_dialog.js:76
 msgid "Found tags"
-msgstr "Tags encontradas"
+msgstr "Marcações encontradas"
 
 #: document/static/js/modules/document_template/export_template_dialog.js:76
 msgid "Missing tags"
-msgstr "Tags ausentes"
+msgstr "Marcações ausentes"
 
 #: document/static/js/modules/document_template/export_template_dialog.js:135
-#, fuzzy
 msgid "Do you really want to delete the export template?"
-msgstr "Você realmente quer excluir a revisão?"
+msgstr "Deseja realmente excluir o modelo de exportação?"
 
 #: document/static/js/modules/document_template/export_template_dialog.js:146
 msgid "You need to upload a template file in ODT or DOCX format."
-msgstr "Você precisa fazer o upload de um arquivo de modelo no formato ODT ou DOCX."
+msgstr "Você precisa carregar um arquivo de modelo no formato ODT ou DOCX."
 
 #: document/static/js/modules/document_template/export_template_dialog.js:150
 msgid "Another export file with the same filename exists already."
 msgstr "Já existe outro arquivo de exportação com o mesmo nome de arquivo."
 
 #: document/static/js/modules/document_template/export_template_dialog.js:183
-#, fuzzy
 msgid "Unknown filetype"
-msgstr "Desconhecido"
+msgstr "Tipo de arquivo desconhecido"
 
 #: document/static/js/modules/document_template/export_template_dialog.js:280
 msgid "Selected file not supported."
@@ -3200,9 +3177,8 @@ msgid "Item title"
 msgstr "Título do item"
 
 #: document/static/js/modules/document_template/templates.js:32
-#, fuzzy
 msgid "Editors"
-msgstr "Editor"
+msgstr "Editores"
 
 #: document/static/js/modules/document_template/templates.js:43
 msgid "Richtext"
@@ -3210,20 +3186,19 @@ msgstr "Richtext"
 
 #: document/static/js/modules/document_template/templates.js:43
 msgid "Cases/Case Reports"
-msgstr "Casos / Relatos de Casos"
+msgstr "Casos/Relatos de Casos"
 
 #: document/static/js/modules/document_template/templates.js:43
 msgid "Conclusions/Comment"
-msgstr "Conclusões / Comentário"
+msgstr "Conclusões/Comentário"
 
 #: document/static/js/modules/document_template/templates.js:43
 msgid "Discussion/Interpretation"
-msgstr "Discussão / Interpretação"
+msgstr "Discussão/Interpretação"
 
 #: document/static/js/modules/document_template/templates.js:43
-#, fuzzy
 msgid "Introduction/Synopsis"
-msgstr "Instruções"
+msgstr "Introdução/Sinopse"
 
 #: document/static/js/modules/document_template/templates.js:43
 msgid "Materials"
@@ -3231,20 +3206,19 @@ msgstr "Materiais"
 
 #: document/static/js/modules/document_template/templates.js:43
 msgid "Methods/Methodology/Procedures"
-msgstr "Métodos / Metodologia / Procedimentos"
+msgstr "Métodos/Metodologia/Procedimentos"
 
 #: document/static/js/modules/document_template/templates.js:43
 msgid "Results/Statement of Findings"
-msgstr "Resultados / Declaração de Constatações"
+msgstr "Resultados/Declaração de Constatações"
 
 #: document/static/js/modules/document_template/templates.js:43
 msgid "Subjects/Participants/Patients"
-msgstr "Sujeitos / Participantes / Pacientes"
+msgstr "Sujeitos/Participantes/Pacientes"
 
 #: document/static/js/modules/document_template/templates.js:43
-#, fuzzy
 msgid "Supplementary materials"
-msgstr "Material suplementar num livro"
+msgstr "Materiais suplementares"
 
 #. Verificar encompu de J
 #: document/static/js/modules/document_template/templates.js:51
@@ -3264,14 +3238,12 @@ msgid "Table of Contents"
 msgstr "Sumário"
 
 #: document/static/js/modules/document_template/templates.js:173
-#, fuzzy
 msgid "Add new document style"
-msgstr "Estilo do Documento"
+msgstr "Adicionar novo estilo de documento"
 
 #: document/static/js/modules/document_template/templates.js:176
-#, fuzzy
 msgid "Add new export template"
-msgstr "Adicionar novo contato"
+msgstr "Adicionar novo modelo de exportação"
 
 #: document/static/js/modules/document_template/templates.js:184
 msgid "Element types"
@@ -3294,14 +3266,12 @@ msgid "Footnote specifications"
 msgstr "Definições do rodapé"
 
 #: document/static/js/modules/document_template/templates.js:186
-#, fuzzy
 msgid "Available languages"
-msgstr "Idiomas permitidos"
+msgstr "Idiomas disponíveis"
 
 #: document/static/js/modules/document_template/templates.js:186
-#, fuzzy
 msgid "Default language"
-msgstr "Idioma do documento"
+msgstr "Idioma padrão"
 
 #: document/static/js/modules/document_template/templates.js:186
 msgid "Permitted paper sizes"
@@ -3312,29 +3282,24 @@ msgid "Custom bibliography header"
 msgstr "Título bibliográfico personalizado"
 
 #: document/static/js/modules/document_template/templates.js:186
-#, fuzzy
 msgid "Available citation styles"
-msgstr "Estilo de Citação"
+msgstr "Estilos de citação disponíveis"
 
 #: document/static/js/modules/document_template/templates.js:186
-#, fuzzy
 msgid "Default citation style"
-msgstr "Citação excluída"
+msgstr "Estilo de citação padrão"
 
 #: document/static/js/modules/document_template/templates.js:186
-#, fuzzy
 msgid "Document styles"
-msgstr "Estilo do Documento"
+msgstr "Estilos de documento"
 
 #: document/static/js/modules/document_template/templates.js:188
-#, fuzzy
 msgid "Export templates"
-msgstr "Exportar selecionado"
+msgstr "Modelos de exportação"
 
 #: document/static/js/modules/documents/access_rights/index.js:21
-#, fuzzy
 msgid "Cannot load document access data."
-msgstr "Não foi possível ler dados dos documentos."
+msgstr "Não é possível carregar os dados de acesso ao documento."
 
 #: document/static/js/modules/documents/access_rights/index.js:78
 #: document/static/js/modules/documents/access_rights/index.js:81
@@ -3359,14 +3324,12 @@ msgid "Document Overview"
 msgstr "Visão geral do documento"
 
 #: document/static/js/modules/documents/overview/index.js:228
-#, fuzzy
 msgid "Undefined"
-msgstr "Sublinhado"
+msgstr "Indefinido"
 
 #: document/static/js/modules/documents/overview/menu.js:75
-#, fuzzy
 msgid "Export selected as JATS"
-msgstr "Exportar selecionado como HTML"
+msgstr "Exportação selecionada como JATS"
 
 #: document/static/js/modules/editor/citations/index.js:92
 msgid "No tracking"
@@ -3637,7 +3600,7 @@ msgstr "JATS (experimental)"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:167
 msgid "Export the document to a Journal Archiving and Interchange Tag Library NISO JATS Version 1.2 file."
-msgstr "Exporte o documento para um arquivo NISO JATS Versão 1.2 da Biblioteca de Tags de Arquivamento e Intercâmbio de Diário."
+msgstr "Exporte o documento para um arquivo Journal Archiving and Interchange Tag Library NISO JATS Version 1.2."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:309
 msgid "Tracking changes to the document"
@@ -3668,14 +3631,12 @@ msgid "Reject all tracked changes."
 msgstr "Rejeitar todas alterações registradas."
 
 #: document/static/js/modules/editor/menus/selection/model.js:59
-#, fuzzy
 msgid "Accept all in selection"
-msgstr "Aceitar tudo"
+msgstr "Aceitar tudo na seleção"
 
 #: document/static/js/modules/editor/menus/selection/model.js:67
-#, fuzzy
 msgid "Reject all in selection"
-msgstr "Rejeitar tudo"
+msgstr "Rejeitar tudo na seleção"
 
 #: document/static/js/modules/editor/menus/table/model.js:32
 #: document/static/js/modules/editor/menus/table/model.js:49
@@ -3703,7 +3664,7 @@ msgstr "Redimensionar/Reposicionar"
 msgid "Resize/Reposition a table."
 msgstr "Redimensionar/Reposicionar uma tabela."
 
-#: document/static/js/modules/editor/navigator/index.js:190
+#: document/static/js/modules/editor/navigator/index.js:201
 msgid "Document Navigator"
 msgstr "Navegador de Documento"
 
@@ -3777,19 +3738,17 @@ msgstr "Faça uma breve descrição do que aconteceu."
 
 #: feedback/static/js/modules/feedback/index.js:18
 msgid "submit"
-msgstr "submeter"
+msgstr "enviar"
 
 #: feedback/static/js/modules/feedback/index.js:18
 msgid "Thank you for your report!"
 msgstr "Obrigado por seu relato!"
 
 #: feedback/static/js/modules/feedback/index.js:33
-#, fuzzy
 msgid "Technical support"
-msgstr "Relatório técnico"
+msgstr "Suporte técnico"
 
 #: user/static/js/modules/contacts/delete_dialog.js:33
-#, fuzzy
 msgid "Remove from contacts"
 msgstr "Remover dos contatos"
 
@@ -3808,18 +3767,16 @@ msgid "Confirm Email"
 msgstr "Confirme o endereço de email"
 
 #: user/static/js/modules/email_confirm/index.js:119
-#, fuzzy
 msgid "Email verified!"
-msgstr "Verificado"
+msgstr "Email verificado!"
 
 #: user/static/js/modules/email_confirm/templates.js:8
-#, fuzzy
 msgid "Confirm E-mail Address"
-msgstr "Confirme o endereço de email"
+msgstr "Confirme o endereço de e-mail"
 
 #: user/static/js/modules/email_confirm/templates.js:20
 msgid "Please confirm that you own the email <a href=\"mailto:%(email)s\">%(email)s</a>."
-msgstr "Confirme que você é o proprietário do e-mail <a href=\"mailto:%(email)s\">% (email) s </a>."
+msgstr "Confirme que você é o proprietário do e-mail <a href=\"mailto:%(email)s\">%(email)s </a>."
 
 #: user/static/js/modules/email_confirm/templates.js:22
 msgid "Please confirm that you own the email <a href=\"mailto:%(email)s\">%(email)s</a>, that you apply for the username %(username)s, and that you have read and agree to our <a href=\"/pages/terms/\" target=\"_blank\">Terms and Conditions</a> and <a href=\"/pages/privacy/\" target=\"_blank\">Privacy Policy</a>."
@@ -3880,9 +3837,8 @@ msgid "Verify Your E-mail Address"
 msgstr "Verifique Seu Endereço Email"
 
 #: user/static/js/modules/login/index.js:84
-#, fuzzy
 msgid "We have sent an e-mail to your email address for verification. Follow the link provided to finalize the signup process."
-msgstr "Enviamos um email para <a href=\"mailto:%(email)s\">%(email)s </a> para verificação. Siga o link fornecido para finalizar o processo de inscrição."
+msgstr "Enviámos um email para o seu endereço de email para verificação. Siga o link fornecido para finalizar o processo de inscrição."
 
 #: user/static/js/modules/login/index.js:84
 #: user/static/js/modules/password_reset/request_email.js:62
@@ -3891,9 +3847,8 @@ msgid "Please contact us if you do not receive it within a few minutes."
 msgstr "Entre em contato conosco se você não o receber dentro de alguns minutos."
 
 #: user/static/js/modules/password_reset/change_password.js:25
-#, fuzzy
 msgid "Change password"
-msgstr "Alterar sua Senha"
+msgstr "Mudar senha"
 
 #: user/static/js/modules/password_reset/change_password.js:25
 msgid "You have indicated that you have forgotten your password. Please enter your new password in the form twice."
@@ -3915,9 +3870,8 @@ msgid "Password (again)"
 msgstr "Senha (novamente)"
 
 #: user/static/js/modules/password_reset/change_password.js:25
-#, fuzzy
 msgid "Change My Password"
-msgstr "Alterar sua Senha"
+msgstr "Mudar minha senha"
 
 #: user/static/js/modules/password_reset/change_password.js:59
 #: user/static/js/modules/signup/index.js:66
@@ -3972,14 +3926,12 @@ msgid "The email could not be deleted!"
 msgstr "O email não pôde ser excluído!"
 
 #: user/static/js/modules/profile/dialogs.js:232
-#, fuzzy
 msgid "The primary email has been updated."
-msgstr "A imagem foi atualizada."
+msgstr "O email principal foi atualizado."
 
 #: user/static/js/modules/profile/dialogs.js:234
-#, fuzzy
 msgid "The email could not be set to be primary email."
-msgstr "O email não pôde ser definido como principal"
+msgstr "Não foi possível definir o email como email principal."
 
 #: user/static/js/modules/profile/index.js:78
 msgid "Configure profile"
@@ -4036,38 +3988,32 @@ msgid "We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</a> for 
 msgstr "Enviamos um email para <a href=\"mailto:%(email)s\">%(email)s </a> para verificação. Siga o link fornecido para finalizar o processo de inscrição."
 
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:18
-#, fuzzy
 msgid "Could not delete document template"
-msgstr "Não foi possível excluir documento"
+msgstr "Não foi possível excluir o modelo do documento"
 
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:24
-#, fuzzy
 msgid "Document template successfully deleted"
-msgstr "Email excluído com sucesso!"
+msgstr "Modelo de documento excluído com sucesso"
 
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:28
 msgid "Document template still required by documents"
 msgstr "Modelo de documento ainda exigido pelos documentos"
 
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:48
-#, fuzzy
 msgid "Delete the document templates?"
-msgstr "Excluir o(s) documento(s)?"
+msgstr "Excluir os modelos de documento?"
 
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:48
-#, fuzzy
 msgid "Delete the document template?"
-msgstr "Excluir o(s) documento(s)?"
+msgstr "Excluir o modelo do documento?"
 
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:58
-#, fuzzy
 msgid "The document template could not be copied"
-msgstr "O modelo de documento foi atualizado"
+msgstr "Não foi possível copiar o modelo do documento"
 
 #: user_template_manager/static/js/modules/user_template_manager/editor.js:44
-#, fuzzy
 msgid "Close the template without saving and return to the overview"
-msgstr "Feche o documento e retorne para o menu de síntese do documento."
+msgstr "Feche o modelo sem salvar e retorne à visão geral"
 
 #: user_template_manager/static/js/modules/user_template_manager/editor.js:44
 #: user_template_manager/static/js/modules/user_template_manager/editor.js:46
@@ -4079,40 +4025,33 @@ msgid "Saved template"
 msgstr "Modelo salvo"
 
 #: user_template_manager/static/js/modules/user_template_manager/menu.js:5
-#, fuzzy
 msgid "Create new document template"
-msgstr "Criar documento novo"
+msgstr "Criar novo modelo de documento"
 
 #: user_template_manager/static/js/modules/user_template_manager/menu.js:21
-#, fuzzy
 msgid "You cannot delete system document templates."
-msgstr "Você não pode excluir documentos de outros usuários"
+msgstr "Você não pode excluir modelos de documento do sistema."
 
 #: user_template_manager/static/js/modules/user_template_manager/menu.js:29
-#, fuzzy
 msgid "Duplicate selected"
-msgstr "Excluir selecionado"
+msgstr "Duplicado selecionado"
 
 #. Encontré esta traducción de Document Overview en informática. No sé si aplica.
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:47
-#, fuzzy
 msgid "Document Templates Overview"
-msgstr "Visão geral do documento"
+msgstr "Visão geral dos modelos de documento"
 
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:67
-#, fuzzy
 msgid "No document templates available"
-msgstr "Nenhum documento disponível"
+msgstr "Nenhum modelo de documento disponível"
 
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:131
-#, fuzzy
 msgid "Cannot load data of document templates."
-msgstr "Não foi possível ler dados dos documentos."
+msgstr "Não é possível carregar dados dos modelos de documento."
 
 #: user_template_manager/static/js/plugins/menu/user_template_manager.js:10
-#, fuzzy
 msgid "Document Templates"
-msgstr "Atualizando modelos de documento."
+msgstr "Modelos de documentos"
 
 #: user_template_manager/static/js/plugins/menu/user_template_manager.js:12
 msgid "Templates"
@@ -4150,4 +4089,8 @@ msgstr "Editar Figura"
 #: usermedia/static/js/modules/images/overview/index.js:48
 msgid "Media Manager"
 msgstr "Gerenciador de Mídia"
+
+#: document/static/js/modules/editor/tools/word_count_templates.js:8
+msgid "Selection"
+msgstr "Seleção"
 

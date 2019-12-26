@@ -1138,7 +1138,7 @@ msgstr "Editar Categorías"
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:35
 #: usermedia/static/js/modules/images/overview/index.js:84
 msgid "Delete"
-msgstr "Borrar"
+msgstr "Eliminar"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:228
 #: document/static/js/modules/document_template/document_style_dialog.js:134
@@ -1155,7 +1155,7 @@ msgstr "Confirmar acción"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:229
 msgid "Delete the bibliography item(s)"
-msgstr "Borrar el/los elemento(s) de la bibliografía"
+msgstr "Eliminar el/los elemento(s) de la bibliografía"
 
 #: bibliography/static/js/modules/bibliography/overview/menu.js:4
 #: document/static/js/modules/documents/overview/menu.js:4
@@ -1163,7 +1163,7 @@ msgstr "Borrar el/los elemento(s) de la bibliografía"
 #: user_template_manager/static/js/modules/user_template_manager/menu.js:12
 #: usermedia/static/js/modules/images/overview/menu.js:2
 msgid "Delete selected"
-msgstr "Borrar lo seleccionado"
+msgstr "Eliminar lo seleccionado"
 
 #: bibliography/static/js/modules/bibliography/overview/menu.js:13
 msgid "Export selected"
@@ -1250,7 +1250,7 @@ msgstr "El documento ha sido eliminado"
 
 #: document/static/js/modules/documents/overview/actions.js:38
 msgid "Delete the document(s)?"
-msgstr "Borrar el/los documento/s?"
+msgstr "Eliminar el/los documento/s?"
 
 #: document/static/js/modules/documents/overview/index.js:106
 msgid "Cannot load data of documents."
@@ -1920,7 +1920,7 @@ msgstr "Añadir una columna a la derecha de la columna actual"
 #: document/static/js/modules/document_template/schema.js:158
 #: document/static/js/modules/editor/menus/table/model.js:103
 msgid "Delete row"
-msgstr "Borrar fila"
+msgstr "Eliminar fila"
 
 #: document/static/js/modules/editor/menus/table/model.js:105
 msgid "Delete current row"
@@ -1929,7 +1929,7 @@ msgstr "Eliminar fila actual"
 #: document/static/js/modules/document_template/schema.js:158
 #: document/static/js/modules/editor/menus/table/model.js:120
 msgid "Delete column"
-msgstr "Borrar columna"
+msgstr "Eliminar columna"
 
 #: document/static/js/modules/editor/menus/table/model.js:122
 msgid "Delete current column"
@@ -2062,7 +2062,7 @@ msgstr "Linea horizontal"
 #: document/static/js/modules/editor/dialogs/templates.js:16
 #: document/static/js/modules/editor/menus/toolbar/model.js:430
 msgid "Math"
-msgstr "Matematicas"
+msgstr "Matemáticas"
 
 #: document/static/js/modules/editor/dialogs/figure.js:45
 #: document/static/js/modules/editor/dialogs/math.js:76
@@ -2300,7 +2300,7 @@ msgstr "Campos Opcionales"
 
 #: user/static/js/modules/profile/templates.js:4
 msgid "Delete the avatar?"
-msgstr "¿Quieres borrar la imagen de perfil?"
+msgstr "¿Quieres eliminar la imagen de perfil?"
 
 #: user/static/js/modules/profile/templates.js:10
 msgid "NOTICE: ALL OF YOUR INFORMATION WILL DISAPPEAR FROM OUR SYSTEM!"
@@ -2787,7 +2787,7 @@ msgstr "Citaciones con Citation Style Language"
 
 #: base/static/js/modules/prelogin/index.js:36
 msgid "Editing with ProseMirror"
-msgstr "Editar con ProseMirror"
+msgstr "Ediciones con ProseMirror"
 
 #: base/static/js/modules/prelogin/index.js:42
 #: user/static/js/modules/login/index.js:34
@@ -2931,7 +2931,7 @@ msgstr "Insertar tabla"
 #: document/static/js/modules/document_template/schema.js:111
 #: document/static/js/modules/document_template/schema.js:112
 msgid "Delete Table"
-msgstr "Borrar tabla"
+msgstr "Eliminar tabla"
 
 #: document/static/js/modules/document_template/schema.js:158
 msgid "Insert column before"
@@ -3567,7 +3567,7 @@ msgstr "Mostrar comentarios de todos los autores."
 
 #: document/static/js/modules/editor/marginboxes/templates.js:178
 msgid "Any"
-msgstr "Ninguno"
+msgstr "Cualquiera"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:178
 msgid "Show comments of "
@@ -3575,11 +3575,11 @@ msgstr "Mostrar comentarios de "
 
 #: document/static/js/modules/editor/marginboxes/templates.js:178
 msgid "Assignee"
-msgstr "Asignado"
+msgstr "Asignado a"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:178
 msgid "Any/None"
-msgstr "Cualquiera/Ninguno"
+msgstr "Cualquiera/Nadie"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:178
 msgid "Only major comments"
@@ -3947,7 +3947,7 @@ msgstr "Cambiar imagen"
 
 #: user/static/js/modules/profile/templates.js:35
 msgid "Delete picture"
-msgstr "Borrar imagen"
+msgstr "Eliminar imagen"
 
 #: user/static/js/modules/profile/templates.js:35
 msgid "Primary address"
@@ -3959,7 +3959,7 @@ msgstr "Verificado"
 
 #: user/static/js/modules/profile/templates.js:35
 msgid "Delete account"
-msgstr "Borrar cuenta"
+msgstr "Eliminar cuenta"
 
 #: user/static/js/modules/signup/index.js:18
 msgid "Signup"

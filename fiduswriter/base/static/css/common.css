@@ -2,12 +2,11 @@ body {
     width: 100%;
     height: 100%;
     background-color: #f9f9f9;
+    min-width: 380px;
+    overflow-y: hidden;
 }
 
 .fw-header {
-    position: fixed;
-    left: 0;
-    top: 0;
     width: 100%;
     height: auto;
     background-color: #84b4a7;
@@ -22,18 +21,13 @@ body {
     overflow: hidden;
 }
 
-.fw-contents-outer {
-    position: relative;
-    top: 70px;
-}
-
 .fw-contents {
     position: relative;
     width: auto;
     height: auto;
-    min-width: 985px;
-    margin: 0 213px;
-    padding: 40px 0 20px;
+    max-width: 985px;
+    margin: 0 auto;
+    padding: 40px 8px 20px 8px;
 }
 
 @media (max-width: 1429px) {

@@ -19,9 +19,9 @@
  background: #ecdc9e;
 }
 a.feedback-tab {
-    position: absolute;
-    right: 85px;
-    top: -3px;
+    /* position: absolute; */
+    /* right: 85px; */
+    /* top: 18px; */
     display: block;
     width: 35px;
     height: 35px;
@@ -30,16 +30,17 @@ a.feedback-tab {
     border-radius: 50%;
     z-index: 100;
     cursor: pointer;
-    text-indent: -999px;
+    /* text-indent: -999px; */
     z-index: 1;
+    float: right;
 }
 
 a.feedback-tab:before {
     display: block;
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 9px;
+    /* position: absolute; */
+    /* left: 0; */
+    /* right: 0; */
+    /* top: 9px; */
     font-family: 'Font Awesome 5 Free';
     font-size: 16px;
     content: "\f075";
@@ -47,6 +48,8 @@ a.feedback-tab:before {
     text-indent: 0;
     text-align: center;
     line-height: 1;
+    vertical-align: middle;
+    padding-top: 9px;
 }
 
 #headerbar a.feedback-tab {

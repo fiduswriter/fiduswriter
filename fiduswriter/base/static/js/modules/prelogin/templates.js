@@ -23,7 +23,7 @@ export const basePreloginTemplate = ({contents, staticUrl, isFree, language, hea
       }</nav>
    </div>
    ${isFree ?
-       `<div class="star" style="width:961px;position:relative;margin:0 auto;"><img src="${staticUrl}img/free_star.png?v=${process.env.TRANSPILE_VERSION}" style="position:absolute;top:0px;left:0px;z-index:3;height:73px;"></div>` :
+       `<div class="star" style="position:relative;margin:0 auto;"><img src="${staticUrl}img/free_star.png?v=${process.env.TRANSPILE_VERSION}" style="position:absolute;top:0px;left:0px;z-index:3;height:73px;"></div>` :
        ''
    }
 </header>

@@ -185,20 +185,34 @@ export class ImageOverview {
         }
     }
 
+    onResize() {
+        if (!this.table) {
+            return
+        }
+        this.initTable(Object.keys(this.app.imageDB.db))
+    }
+
     /* Initialize the overview table */
     initTable(ids) {
         const tableEl = document.createElement('table')
         tableEl.id = "imagelist"
         tableEl.classList.add('fw-data-table')
         tableEl.classList.add('fw-large')
+        this.dom.querySelector('.fw-contents').innerHTML = ''
         this.dom.querySelector('.fw-contents').appendChild(tableEl)
 
         const dtBulk = new DatatableBulk(this, bulkModel)
 
+        const hiddenCols = [0]
+
+        if (window.innerWidth < 450) {
+            hiddenCols.push(5)
+        }
+
         this.table = new DataTable(tableEl, {
             searchable: true,
             paging: false,
-            scrollY: "calc(100vh - 240px)",
+            scrollY: `${Math.max(window.innerHeight - 360, 100)}px`,
             labels: {
                 noRows: gettext("No images available") // Message shown when there are no search results
             },
@@ -211,7 +225,7 @@ export class ImageOverview {
             },
             columns: [
                 {
-                    select: 0,
+                    select: hiddenCols,
                     hidden: true
                 },
                 {

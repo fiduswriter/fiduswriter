@@ -54,6 +54,13 @@ export class BibliographyOverview {
         feedbackTab.init()
     }
 
+    onResize() {
+        if (!this.table) {
+            return
+        }
+        this.initTable(Object.keys(this.app.bibDB.db))
+    }
+
 
     /* Initialize the overview table */
     initTable(ids) {
@@ -61,19 +68,30 @@ export class BibliographyOverview {
         tableEl.id = "bibliography"
         tableEl.classList.add('fw-data-table')
         tableEl.classList.add('fw-large')
+        this.dom.querySelector('.fw-contents').innerHTML = ''
         this.dom.querySelector('.fw-contents').appendChild(tableEl)
 
         const dtBulk = new DatatableBulk(this, bulkModel)
 
+        const hiddenCols = [0]
+
+        if (window.innerWidth < 600) {
+            hiddenCols.push(6)
+            if (window.innerWidth < 450) {
+                hiddenCols.push(3)
+            }
+        }
+
         this.table = new DataTable(tableEl, {
             searchable: true,
             paging: false,
-            scrollY: "calc(100vh - 240px)",
+            scrollY: `${Math.max(window.innerHeight - 360, 100)}px`,
             labels: {
                 noRows: gettext("No sources registered") // Message shown when there are no search results
             },
             layout: {
-                top: ""
+                top: "",
+                bottom: ""
             },
             data: {
                 headings: ['', dtBulk.getHTML(), gettext("Title"), gettext("Sourcetype"), gettext("Author"), gettext("Published"), ''],
@@ -81,7 +99,7 @@ export class BibliographyOverview {
             },
             columns: [
                 {
-                    select: 0,
+                    select: hiddenCols,
                     hidden: true
                 },
                 {

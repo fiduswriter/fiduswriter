@@ -23,8 +23,8 @@
 }
 
 .fw-contents.prelogin {
-    top: 195px;
-    padding-bottom: 150px;
+    top: 45px;
+    padding-bottom: 160px;
     line-height: 2em;
 }
 
@@ -37,7 +37,7 @@
 .fw-login-left {
     width: 340px;
     float: left;
-    margin-bottom: 100px;
+    margin-bottom: 65px;
 }
 
 .fw-login-title {
@@ -64,7 +64,7 @@
 .fw-login-right {
     width: 280px;
     padding: 25px;
-    margin: 0 0 0 auto;
+    float: right;
     background-color: #f9f9f9;
     border: solid 1px #d3d3d3;
 }

@@ -157,8 +157,8 @@ export class DocumentOverview {
 
         const hiddenCols = [0]
 
-        if (window.innerWidth < 520) {
-            hiddenCols.push(4, 8)
+        if (window.innerWidth < 500) {
+            hiddenCols.push(1, 4)
             if (window.innerWidth < 400) {
                 hiddenCols.push(5)
             }

@@ -205,8 +205,8 @@ export class ImageOverview {
 
         const hiddenCols = [0]
 
-        if (window.innerWidth < 450) {
-            hiddenCols.push(5)
+        if (window.innerWidth < 500) {
+            hiddenCols.push(1)
         }
 
         this.table = new DataTable(tableEl, {

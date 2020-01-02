@@ -75,8 +75,8 @@ export class BibliographyOverview {
 
         const hiddenCols = [0]
 
-        if (window.innerWidth < 600) {
-            hiddenCols.push(6)
+        if (window.innerWidth < 500) {
+            hiddenCols.push(1)
             if (window.innerWidth < 450) {
                 hiddenCols.push(3)
             }

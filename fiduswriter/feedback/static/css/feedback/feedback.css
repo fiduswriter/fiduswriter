@@ -37,10 +37,6 @@ a.feedback-tab {
 
 a.feedback-tab:before {
     display: block;
-    /* position: absolute; */
-    /* left: 0; */
-    /* right: 0; */
-    /* top: 9px; */
     font-family: 'Font Awesome 5 Free';
     font-size: 16px;
     content: "\f075";
@@ -53,6 +49,7 @@ a.feedback-tab:before {
 }
 
 #headerbar a.feedback-tab {
+    position: absolute;
     right: 60px;
     top: 16px;
 }

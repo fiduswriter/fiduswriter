@@ -2,7 +2,7 @@ body {
     width: 100%;
     height: 100%;
     background-color: #f9f9f9;
-    min-width: 380px;
+    min-width: calc(380px - 100vw + 100%); /* to substract scrollbar width. */
     overflow-y: hidden;
 }
 

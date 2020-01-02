@@ -50,7 +50,7 @@ function markDeletion(tr, from, to, user, date1, date10) {
                 return true
             } else if (['table_row', 'table_cell'].includes(node.type.name)) {
                 return false
-            } else if (node.isInline && node.marks.find(mark => mark.type.name==='insertion' && mark.attrs.user===user && !mark.attrs.approved)) {
+            } else if (node.isInline && node.marks.find(mark => mark.type.name==='insertion' && mark.attrs.user===user.id && !mark.attrs.approved)) {
                 const removeStep = new ReplaceStep(
                     deletionMap.map(Math.max(from, pos)),
                     deletionMap.map(Math.min(to, pos + node.nodeSize)),
@@ -70,7 +70,7 @@ function markDeletion(tr, from, to, user, date1, date10) {
                 !node.attrs.track.find(trackAttr => trackAttr.type === 'deletion') &&
                 !['bullet_list', 'ordered_list'].includes(node.type.name)
             ) {
-                if (node.attrs.track.find(trackAttr => trackAttr.type === 'insertion' && trackAttr.user===user)) {
+                if (node.attrs.track.find(trackAttr => trackAttr.type === 'insertion' && trackAttr.user===user.id)) {
                     let removeStep
                     // user has created element. so (s)he is allowed to delete it again.
                     if (node.isTextblock && to < (pos + node.nodeSize)) {

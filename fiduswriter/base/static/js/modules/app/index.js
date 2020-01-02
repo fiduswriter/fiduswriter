@@ -176,6 +176,16 @@ export class App {
                     break
             }
         })
+        let resizeDone
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeDone)
+            resizeDone = setTimeout(() => {
+                if (this.page && this.page.onResize) {
+                    this.page.onResize()
+                }
+            }, 250)
+        })
+
         if (!this.config.debug) {
             OfflinePluginRuntime.install({
                 onUpdateReady: () => OfflinePluginRuntime.applyUpdate(),

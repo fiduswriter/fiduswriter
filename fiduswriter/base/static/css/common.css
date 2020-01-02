@@ -25,13 +25,14 @@ body {
     position: relative;
     width: auto;
     height: auto;
-    max-width: 985px;
-    margin: 0 auto;
+    min-width: 985px;
+    margin: 0 213px;
     padding: 40px 8px 20px 8px;
 }
 
 @media (max-width: 1429px) {
     .fw-contents {
+        min-width: unset;
         margin: 0 auto;
         max-width: 1004px;
     }

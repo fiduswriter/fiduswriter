@@ -87,6 +87,7 @@ export class PreloginPage {
 
     render() {
         this.dom = document.createElement('body')
+        this.dom.classList.add('prelogin')
         this.dom.innerHTML = basePreloginTemplate({
             isFree: this.isFree,
             language: this.language,

@@ -1,3 +1,8 @@
+body.prelogin {
+    overflow-y: auto;
+    min-width: 365px;
+}
+
 .fw-header.prelogin {
     border-bottom: solid 1px #8e8e8e;
     height: 123px;

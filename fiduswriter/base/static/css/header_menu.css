@@ -1,7 +1,7 @@
 .fw-header > .fw-container {
     z-index: 100;
     overflow: visible;
-    margin: 19.5px 0 21.5px;
+    padding: 19.5px 34px 21.5px;
 }
 
 .fw-logo, #header-nav {
@@ -43,19 +43,12 @@
 }
 
 .fw-user-preferences {
-    position: absolute;
-    right: 40px;
-    top: -3px;
+    float: right;
 }
 
 .fw-user-preferences .fw-name {
     display: inline-block;
     margin-right: 10px;
-}
-
-#header-nav {
-    position: relative;
-    top: -8px;
 }
 
 .fw-nav-container {
@@ -68,11 +61,12 @@
     display: inline-block;
     width: auto;
     margin-right: 22px;
+    margin-top: 4px;
 }
 .fw-nav-item.active-menu-wrapper:after {
     position: absolute;
     left: 50%;
-    top: 34px;
+    top: 24px;
     line-height: 100%;
     font-size: 24px;
     margin-left: -8px;
@@ -100,6 +94,7 @@
 
 #user-preferences {
     z-index: 2;
+    margin-left: 8px;
 }
 
 #user-preferences .fw-button {

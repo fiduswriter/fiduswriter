@@ -40,9 +40,14 @@ export class SiteMenu {
         }
 
         whenReady().then(() => {
+            this.sortMenu()
             this.renderMenu()
             this.bindPreferencePullDown()
         })
+    }
+
+    sortMenu() {
+        this.navItems.sort((a, b) => a.order - b.order)
     }
 
     renderMenu() {

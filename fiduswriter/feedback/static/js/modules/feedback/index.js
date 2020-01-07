@@ -60,7 +60,6 @@ export class FeedbackTab {
     }
 
     bind() {
-        document.querySelector('a.feedback-tab').style.marginTop = document.querySelector('a.feedback-tab').clientWidth
 
         document.querySelector('a.feedback-tab').addEventListener('click', event => {
             document.querySelector('.feedback-panel').style.display = 'block'

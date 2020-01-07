@@ -44,6 +44,22 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
     def tearDown(self):
         self.leave_site(self.driver)
 
+    def check_body(self, driver, body_text, seconds=False):
+        if seconds is False:
+            seconds = self.wait_time
+        # Contents is child 5.
+        current_body_text = driver.execute_script(
+            'return window.theApp.page.view.state.doc.firstChild'
+            '.child(5).textContent;'
+        )
+        if seconds < 0:
+            assert False, "Body text incorrect"
+        elif current_body_text == body_text:
+            return True
+        else:
+            time.sleep(0.1)
+            return self.check_body(driver, body_text, seconds - 0.1)
+
     def test_track_changes(self):
         self.driver.get(self.base_url)
         self.driver.find_element(By.ID, "id_login").send_keys("Yeti")
@@ -56,10 +72,6 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
                     ".new_document button"
                 )
             )
-        )
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".new_document button"
         ).click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, 'editor-toolbar'))
@@ -182,16 +194,12 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(By.ID, "id_password").send_keys("otter")
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.presence_of_element_located(
+            EC.element_to_be_clickable(
                 (
                     By.CSS_SELECTOR,
                     ".new_document button"
                 )
             )
-        )
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".new_document button"
         ).click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, 'editor-toolbar'))
@@ -244,10 +252,6 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             EC.element_to_be_clickable(
                 (By.CSS_SELECTOR, ".collaborator-tr .fa-caret-down")
             )
-        )
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".collaborator-tr .fa-caret-down"
         ).click()
         self.driver.find_element(
             By.CSS_SELECTOR,
@@ -263,10 +267,6 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.ID, 'preferences-btn'))
-        )
-        self.driver.find_element(
-            By.ID,
-            "preferences-btn"
         ).click()
         self.driver.find_element(
             By.CSS_SELECTOR,
@@ -311,20 +311,13 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             ".article-title"
         ).text == "A test article to share"
-        assert self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".article-body"
-        ).text == "The body"
+        self.check_body(self.driver, 'The body')
         self.driver.find_element(
             By.ID,
             "close-document-top"
         ).click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.ID, 'preferences-btn'))
-        )
-        self.driver.find_element(
-            By.ID,
-            "preferences-btn"
         ).click()
         self.driver.find_element(
             By.CSS_SELECTOR,
@@ -435,21 +428,13 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             ".article-title"
         ).text == "A test article to share"
-        time.sleep(0.5)  # Wait for prosemirror to synchronize
-        assert self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".article-body"
-        ).text == "The body"
+        self.check_body(self.driver, 'The body')
         self.driver.find_element(
             By.ID,
             "close-document-top"
         ).click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.ID, 'preferences-btn'))
-        )
-        self.driver.find_element(
-            By.ID,
-            "preferences-btn"
         ).click()
         self.driver.find_element(
             By.CSS_SELECTOR,

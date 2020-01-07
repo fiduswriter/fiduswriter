@@ -18,6 +18,7 @@ export class MathDialog {
         //initialize dialog and open it
         this.dialog = new Dialog({
             body: mathDialogTemplate(),
+            height: 100,
             buttons: [
                 {
                     text: this.equationSelected ? gettext('Update') : gettext('Insert'),
@@ -68,7 +69,7 @@ export class MathDialog {
 
         import("mathlive").then(MathLive => {
             this.mathField = MathLive.makeMathField(this.mathliveDOM, {
-                virtualKeyboardMode: 'manual',
+                virtualKeyboardMode: 'onfocus',
                 locale: 'int',
                 strings: {
                     'int': {

@@ -170,11 +170,22 @@ export class App {
                         el.target.getAttribute('href').slice(0, 5) !== '/api/'
                     ) {
                         event.preventDefault()
+                        event.stopImmediatePropagation()
                         this.goTo(el.target.href)
                     }
                     break
             }
         })
+        let resizeDone
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeDone)
+            resizeDone = setTimeout(() => {
+                if (this.page && this.page.onResize) {
+                    this.page.onResize()
+                }
+            }, 250)
+        })
+
         if (!this.config.debug) {
             OfflinePluginRuntime.install({
                 onUpdateReady: () => OfflinePluginRuntime.applyUpdate(),

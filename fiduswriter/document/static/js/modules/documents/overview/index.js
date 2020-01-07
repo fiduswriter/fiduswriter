@@ -29,7 +29,7 @@ export class DocumentOverview {
     }
 
     init() {
-        whenReady().then(() => {
+        return whenReady().then(() => {
             this.render()
             activateWait(true)
             const smenu = new SiteMenu("documents")
@@ -105,7 +105,7 @@ export class DocumentOverview {
     }
 
     getDocumentListData() {
-        postJson(
+        return postJson(
             '/api/document/documentlist/'
         ).catch(
             error => {
@@ -137,25 +137,43 @@ export class DocumentOverview {
 
     }
 
+    onResize() {
+        if (!this.table) {
+            return
+        }
+        this.initTable()
+    }
+
     /* Initialize the overview table */
     initTable() {
         const tableEl = document.createElement('table')
         tableEl.classList.add('fw-data-table')
         tableEl.classList.add('fw-document-table')
         tableEl.classList.add('fw-large')
+        document.querySelector('.fw-contents').innerHTML = '' // Delete any old table
         document.querySelector('.fw-contents').appendChild(tableEl)
 
         const dtBulk = new DatatableBulk(this, bulkModel)
 
+        const hiddenCols = [0]
+
+        if (window.innerWidth < 500) {
+            hiddenCols.push(1, 4)
+            if (window.innerWidth < 400) {
+                hiddenCols.push(5)
+            }
+        }
+
         this.table = new DataTable(tableEl, {
             searchable: true,
             paging: false,
-            scrollY: "calc(100vh - 240px)",
+            scrollY: `${Math.max(window.innerHeight - 360, 100)}px`,
             labels: {
                 noRows: gettext("No documents available") // Message shown when there are no search results
             },
             layout: {
-                top: ""
+                top: "",
+                bottom: ""
             },
             data: {
                 headings: ['', dtBulk.getHTML(), gettext("Title"), gettext("Revisions"), gettext("Created"), gettext("Last changed"), gettext("Owner"), gettext("Rights"), ''],
@@ -163,7 +181,7 @@ export class DocumentOverview {
             },
             columns: [
                 {
-                    select: 0,
+                    select: hiddenCols,
                     hidden: true
                 },
                 {

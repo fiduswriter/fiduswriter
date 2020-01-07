@@ -3,10 +3,10 @@ import {Slice} from "prosemirror-model"
 import {ReplaceStep, ReplaceAroundStep, AddMarkStep, RemoveMarkStep, Mapping} from "prosemirror-transform"
 import {CellSelection} from "prosemirror-tables"
 
-function markInsertion(tr, from, to, user, username, date1, date10, approved) {
+function markInsertion(tr, from, to, user, date1, date10, approved) {
     tr.removeMark(from, to, tr.doc.type.schema.marks.deletion)
     tr.removeMark(from, to, tr.doc.type.schema.marks.insertion)
-    const insertionMark = tr.doc.type.schema.marks.insertion.create({user, username, date: date10, approved})
+    const insertionMark = tr.doc.type.schema.marks.insertion.create({user: user.id, username: user.username, date: date10, approved})
     tr.addMark(from, to, insertionMark)
     // Add insertion mark also to block nodes (figures, text blocks) but not table cells/rows and lists.
     tr.doc.nodesBetween(
@@ -21,7 +21,7 @@ function markInsertion(tr, from, to, user, username, date1, date10, approved) {
             if (node.attrs.track) {
                 const track = []
                 if (!approved) {
-                    track.push({type: 'insertion', user, username, date: date1})
+                    track.push({type: 'insertion', user: user.id, username: user.username, date: date1})
                 }
                 tr.setNodeMarkup(pos, null, Object.assign({}, node.attrs, {track}), node.marks)
             }
@@ -33,8 +33,8 @@ function markInsertion(tr, from, to, user, username, date1, date10, approved) {
     )
 }
 
-function markDeletion(tr, from, to, user, username, date1, date10) {
-    const deletionMark = tr.doc.type.schema.marks.deletion.create({user, username, date: date10})
+function markDeletion(tr, from, to, user, date1, date10) {
+    const deletionMark = tr.doc.type.schema.marks.deletion.create({user: user.id, username: user.username, date: date10})
     let firstTableCellChild = false
     const deletionMap = new Mapping()
     // Add deletion mark to block nodes (figures, text blocks) and find already deleted inline nodes (and leave them alone)
@@ -50,7 +50,7 @@ function markDeletion(tr, from, to, user, username, date1, date10) {
                 return true
             } else if (['table_row', 'table_cell'].includes(node.type.name)) {
                 return false
-            } else if (node.isInline && node.marks.find(mark => mark.type.name==='insertion' && mark.attrs.user===user && !mark.attrs.approved)) {
+            } else if (node.isInline && node.marks.find(mark => mark.type.name==='insertion' && mark.attrs.user===user.id && !mark.attrs.approved)) {
                 const removeStep = new ReplaceStep(
                     deletionMap.map(Math.max(from, pos)),
                     deletionMap.map(Math.min(to, pos + node.nodeSize)),
@@ -70,7 +70,7 @@ function markDeletion(tr, from, to, user, username, date1, date10) {
                 !node.attrs.track.find(trackAttr => trackAttr.type === 'deletion') &&
                 !['bullet_list', 'ordered_list'].includes(node.type.name)
             ) {
-                if (node.attrs.track.find(trackAttr => trackAttr.type === 'insertion' && trackAttr.user===user)) {
+                if (node.attrs.track.find(trackAttr => trackAttr.type === 'insertion' && trackAttr.user===user.id)) {
                     let removeStep
                     // user has created element. so (s)he is allowed to delete it again.
                     if (node.isTextblock && to < (pos + node.nodeSize)) {
@@ -96,7 +96,7 @@ function markDeletion(tr, from, to, user, username, date1, date10) {
                     }
                 } else {
                     const track = node.attrs.track.slice()
-                    track.push({type: 'deletion', user, username, date: date1})
+                    track.push({type: 'deletion', user: user.id, username: user.username, date: date1})
                     tr.setNodeMarkup(deletionMap.map(pos), null, Object.assign({}, node.attrs, {track}), node.marks)
                 }
             }
@@ -112,7 +112,6 @@ function markWrapping(
     oldNode,
     newNode,
     user,
-    username,
     date1
 ) {
     let track = oldNode.attrs.track.slice(),
@@ -121,11 +120,11 @@ function markWrapping(
     if (blockTrack) {
         track = track.filter(track => track !== blockTrack)
         if (blockTrack.before.type !== newNode.type.name || blockTrack.before.attrs.level !== newNode.attrs.level) {
-            blockTrack = {type: "block_change", user, username, date: date1, before: blockTrack.before}
+            blockTrack = {type: "block_change", user: user.id, username: user.username, date: date1, before: blockTrack.before}
             track.push(blockTrack)
         }
     } else {
-        blockTrack = {type: "block_change", user, username, date: date1, before: {type: oldNode.type.name, attrs: oldNode.attrs}}
+        blockTrack = {type: "block_change", user: user.id, username: user.username, date: date1, before: {type: oldNode.type.name, attrs: oldNode.attrs}}
         if (blockTrack.before.attrs.id) {
             delete blockTrack.before.attrs.id
         }
@@ -138,27 +137,35 @@ function markWrapping(
 }
 
 
-export function amendTransaction(tr, state, editor, approved) {
-
+export function amendTransaction(tr, state, editor) {
     if (
             !tr.steps.length ||
             tr.meta && !Object.keys(tr.meta).every(
                 // Only replace TRs that have no metadata or only inputType metadata
-                metadata => ['inputType', 'uiEvent'].includes(metadata)
+                metadata => ['inputType', 'uiEvent', 'paste'].includes(metadata)
             ) ||
             // don't replace history TRs
             ['historyUndo', 'historyRedo'].includes(tr.getMeta('inputType'))
     ) {
-        // None of the transactions change the doc, or all are remote, come from footnotes, are footnote creations, history or fixing IDs. Give up.
+        // None of the transactions change the doc, or all are remote, come from footnotes,
+        // are footnote creations, history or fixing IDs. Give up.
         return tr
+    } else {
+        return trackedTransaction(
+            tr,
+            state,
+            editor.user,
+            !editor.view.state.doc.firstChild.attrs.tracked && editor.docInfo.access_rights !== 'write-tracked',
+            Date.now() - editor.clientTimeAdjustment
+        )
     }
-    const user = editor.user.id, // current user
-        newTr = state.tr,
+}
+  
+export function trackedTransaction(tr, state, user, approved, date) {
+    const newTr = state.tr,
         map = new Mapping(),
-        exactDate = Date.now() - editor.clientTimeAdjustment,
-        date10 = Math.floor(exactDate/600000) * 10, // 10 minute interval
-        date1 = Math.floor(exactDate/60000), // 1 minute interval
-        username = editor.user.username,
+        date10 = Math.floor(date/600000) * 10, // 10 minute interval
+        date1 = Math.floor(date/60000), // 1 minute interval
         // We only insert content if this is not directly a tr for cell deletion. This is because tables delete rows by deleting the
         // contents of each cell and replacing it with an empty paragraph.
         cellDeleteTr = ['deleteContentBackward', 'deleteContentForward'].includes(tr.getMeta('inputType')) && (state.selection instanceof CellSelection)
@@ -193,7 +200,6 @@ export function amendTransaction(tr, state, editor, approved) {
                     newStep.from,
                     mappedNewStepTo,
                     user,
-                    username,
                     date1,
                     date10,
                     approved
@@ -209,7 +215,7 @@ export function amendTransaction(tr, state, editor, approved) {
             }
             if (!approved && step.from !== step.to) {
                 map.appendMap(
-                    markDeletion(newTr, step.from, step.to, user, username, date1, date10)
+                    markDeletion(newTr, step.from, step.to, user, date1, date10)
                 )
             }
         } else if (approved) {
@@ -219,11 +225,11 @@ export function amendTransaction(tr, state, editor, approved) {
                 newTr.step(step)
                 const from = step.getMap().map(step.from, -1)
                 const to = step.getMap().map(step.gapFrom)
-                markInsertion(newTr, from, to, user, username, date1, date10, false)
+                markInsertion(newTr, from, to, user, date1, date10, false)
             } else if (!step.slice.size) {// unwrapped from something
                 map.appendMap(step.invert(doc).getMap())
                 map.appendMap(
-                    markDeletion(newTr, step.from, step.gapFrom, user, username, date1, date10)
+                    markDeletion(newTr, step.from, step.gapFrom, user, date1, date10)
                 )
             } else if (step.slice.size===2 && step.gapFrom-step.from===1 && step.to-step.gapTo===1) { // Replaced one wrapping with another
                 newTr.step(step)
@@ -235,7 +241,6 @@ export function amendTransaction(tr, state, editor, approved) {
                         oldNode,
                         step.slice.content.firstChild,
                         user,
-                        username,
                         date1
                     )
                 }
@@ -252,7 +257,7 @@ export function amendTransaction(tr, state, editor, approved) {
                         ) {
                             return true
                         }
-                        markInsertion(newTr, range.from, range.to, user, username, date1, date10, false)
+                        markInsertion(newTr, range.from, range.to, user, date1, date10, false)
                     })
                 )
             }
@@ -292,7 +297,7 @@ export function amendTransaction(tr, state, editor, approved) {
                         newTr.addMark(
                             Math.max(step.from, pos),
                             Math.min(step.to, pos + node.nodeSize),
-                            state.schema.marks.format_change.create({user, username, date: date10, before, after})
+                            state.schema.marks.format_change.create({user: user.id, username: user.username, date: date10, before, after})
                         )
                     } else if (formatChangeMark) {
                         newTr.removeMark(
@@ -341,7 +346,7 @@ export function amendTransaction(tr, state, editor, approved) {
                         newTr.addMark(
                             Math.max(step.from, pos),
                             Math.min(step.to, pos + node.nodeSize),
-                            state.schema.marks.format_change.create({user, username, date: date10, before, after})
+                            state.schema.marks.format_change.create({user: user.id, username: user.username, date: date10, before, after})
                         )
                     } else if (formatChangeMark) {
                         newTr.removeMark(

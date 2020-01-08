@@ -14,7 +14,7 @@ export class ToolbarView {
         this.dd = new DiffDOM({
             valueDiffing: false
         })
-        this.sideMargins = 15 + 15 // CSS sets left margin to 14px + 46 px for left most button and we want the same margin on both sides
+        this.sideMargins = 20 + 20 // CSS sets left margin to 14px + 46 px for left most button and we want the same margin on both sides
         this.availableWidth = window.innerWidth - this.sideMargins
         this.openedMenu = false
         this.listeners = {}

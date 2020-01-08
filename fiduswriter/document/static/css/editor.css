@@ -142,7 +142,6 @@ header {
 
 .editor-toolbar {
     position: relative;
-    z-index: 102;
     width: auto !important;
     padding-left: 110px
 }
@@ -1096,7 +1095,7 @@ body.no-scroll {
     }
     #navigator {
         top: 195px;
-        z-index: 101;
+        z-index: 90;
     }
     #navigator-button {
         width: 46px;

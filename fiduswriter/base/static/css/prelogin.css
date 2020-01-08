@@ -16,11 +16,19 @@ body.prelogin {
 .prelogin #header-nav {
     position: absolute;
     right: 40px;
-    top: 2px;
+    top: 38px;
     font-size: 14px;
     color: #fff;
     line-height: 34px;
 }
+
+@media (max-width: 540px) {
+    .prelogin #header-nav {
+        top: 2px;
+    }
+}
+
+
 
 .prelogin #header-nav .fw-button {
     margin-left: 12px;

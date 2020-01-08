@@ -58,8 +58,10 @@
     position: relative;
     margin-top: 24px;
     overflow-y: auto;
-    max-height: calc(100vh - 206px);
+    max-height: calc(100vh - 60px);
     min-height: 20px;
+    max-width: calc(100vw - 38px);
+    overflow-x: hidden;
 }
 
 .input-list-wrapper tr:last-child td {

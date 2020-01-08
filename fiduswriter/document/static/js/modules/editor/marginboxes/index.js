@@ -277,72 +277,77 @@ export class ModMarginboxes {
 
             fastdom.measure(() => {
                 // DOM read phase
-                const marginBoxesDOM = document.querySelectorAll('#margin-box-container .margin-box')
-                if (marginBoxesDOM.length !== referrers.length || !marginBoxesDOM.length) {
-                    // Number of comment boxes and referrers differ.
-                    // This isn't right. Abort.
-                    resolve()
-                    return
-                }
-                const bodyTop = document.body.getBoundingClientRect().top,
-                    marginBoxPlacements = Array.from(marginBoxesDOM).map((mboxDOM, index) => {
-                        const mboxDOMRect = mboxDOM.getBoundingClientRect()
-                        return {
-                            height: mboxDOMRect.height,
-                            refPos: this.editor.view.coordsAtPos(referrers[index]).top - bodyTop
-                        }
-                    }),
-                    firstActiveIndex = marginBoxes.findIndex(mBox => mBox.active),
-                    firstActiveMboxPlacement = marginBoxPlacements[firstActiveIndex]
-
-                let activeIndex = firstActiveIndex,
-                    currentPos = 0
-                while (activeIndex > -1) {
-                    const mboxPlacement = marginBoxPlacements[activeIndex]
-                    if (mboxPlacement.height === 0) {
-                        mboxPlacement.pos = currentPos
-                    } else if (mboxPlacement===firstActiveMboxPlacement) {
-                        mboxPlacement.pos = mboxPlacement.refPos
-                    } else {
-                        mboxPlacement.pos = Math.min(
-                            currentPos - 2 - mboxPlacement.height,
-                            mboxPlacement.refPos
-                    )
-                    }
-                    currentPos = mboxPlacement.pos
-                    activeIndex--
-                }
-                if (firstActiveIndex > -1) {
-                    currentPos = firstActiveMboxPlacement.pos + firstActiveMboxPlacement.height
-                    activeIndex = firstActiveIndex + 1
+                let marginBoxesPlacementStyle = ''
+                if (getComputedStyle(marginBoxFilterElement).position) {
+                    // We are in mobile/tablet mode. We don't need to place margin boxes.
                 } else {
-                    activeIndex = 0
-                }
-
-                while (activeIndex < marginBoxPlacements.length) {
-                    const mboxPlacement = marginBoxPlacements[activeIndex]
-                    mboxPlacement.pos = Math.max(currentPos + 2, mboxPlacement.refPos)
-                    currentPos = mboxPlacement.pos + mboxPlacement.height
-                    activeIndex++
-                }
-
-                const initialOffset = document.body.classList.contains('header-closed') ? 72 + 90 : 225 + 90
-                let totalOffset = 0
-
-                const marginBoxesPlacementStyle = marginBoxPlacements.map((mboxPlacement, index) => {
-                    if (mboxPlacement.height === 0) {
-                        return ''
+                    const marginBoxesDOM = document.querySelectorAll('#margin-box-container .margin-box')
+                    if (marginBoxesDOM.length !== referrers.length || !marginBoxesDOM.length) {
+                        // Number of comment boxes and referrers differ.
+                        // This isn't right. Abort.
+                        resolve()
+                        return
                     }
-                    const pos = mboxPlacement.pos - initialOffset
-                    let css = ''
-                    if (pos !== totalOffset) {
-                        const topMargin = parseInt(pos - totalOffset)
-                        css += `.margin-box:nth-of-type(${(index+1)}) {margin-top: ${topMargin}px;}\n`
-                        totalOffset += topMargin
+                    const bodyTop = document.body.getBoundingClientRect().top,
+                        marginBoxPlacements = Array.from(marginBoxesDOM).map((mboxDOM, index) => {
+                            const mboxDOMRect = mboxDOM.getBoundingClientRect()
+                            return {
+                                height: mboxDOMRect.height,
+                                refPos: this.editor.view.coordsAtPos(referrers[index]).top - bodyTop
+                            }
+                        }),
+                        firstActiveIndex = marginBoxes.findIndex(mBox => mBox.active),
+                        firstActiveMboxPlacement = marginBoxPlacements[firstActiveIndex]
+
+                    let activeIndex = firstActiveIndex,
+                        currentPos = 0
+                    while (activeIndex > -1) {
+                        const mboxPlacement = marginBoxPlacements[activeIndex]
+                        if (mboxPlacement.height === 0) {
+                            mboxPlacement.pos = currentPos
+                        } else if (mboxPlacement===firstActiveMboxPlacement) {
+                            mboxPlacement.pos = mboxPlacement.refPos
+                        } else {
+                            mboxPlacement.pos = Math.min(
+                                currentPos - 2 - mboxPlacement.height,
+                                mboxPlacement.refPos
+                        )
+                        }
+                        currentPos = mboxPlacement.pos
+                        activeIndex--
                     }
-                    totalOffset += mboxPlacement.height + 2
-                    return css
-                }).join('')
+                    if (firstActiveIndex > -1) {
+                        currentPos = firstActiveMboxPlacement.pos + firstActiveMboxPlacement.height
+                        activeIndex = firstActiveIndex + 1
+                    } else {
+                        activeIndex = 0
+                    }
+
+                    while (activeIndex < marginBoxPlacements.length) {
+                        const mboxPlacement = marginBoxPlacements[activeIndex]
+                        mboxPlacement.pos = Math.max(currentPos + 2, mboxPlacement.refPos)
+                        currentPos = mboxPlacement.pos + mboxPlacement.height
+                        activeIndex++
+                    }
+
+                    const initialOffset = document.body.classList.contains('header-closed') ? 72 + 90 : 225 + 90
+                    let totalOffset = 0
+
+                    marginBoxesPlacementStyle = marginBoxPlacements.map((mboxPlacement, index) => {
+                        if (mboxPlacement.height === 0) {
+                            return ''
+                        }
+                        const pos = mboxPlacement.pos - initialOffset
+                        let css = ''
+                        if (pos !== totalOffset) {
+                            const topMargin = parseInt(pos - totalOffset)
+                            css += `.margin-box:nth-of-type(${(index+1)}) {margin-top: ${topMargin}px;}\n`
+                            totalOffset += topMargin
+                        }
+                        totalOffset += mboxPlacement.height + 2
+                        return css
+                    }).join('')
+                }
 
                 fastdom.mutate(() => {
                     //DOM write phase

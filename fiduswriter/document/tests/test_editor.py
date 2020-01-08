@@ -53,7 +53,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             '.child(5).textContent;'
         )
         if seconds < 0:
-            assert False, "Body text incorrect"
+            assert False, "Body text incorrect: {}".format(current_body_text)
         elif current_body_text == body_text:
             return True
         else:

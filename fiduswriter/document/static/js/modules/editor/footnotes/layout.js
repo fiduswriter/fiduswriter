@@ -35,9 +35,13 @@ export class ModFootnoteLayout {
                 // Apparently not all footnote boxes have been drawn or there are none. Abort for now.
                 return
             }
-            let totalOffset = document.getElementById('footnote-box-container').getBoundingClientRect().top,
-                footnotePlacementStyle = ''
-            if (this.mod.editor.mod.citations.citationType==='note') {
+            const footnoteBoxContainer = document.getElementById('footnote-box-container')
+            let footnotePlacementStyle = ''
+
+            if (getComputedStyle(footnoteBoxContainer).display === 'block') {
+                // We are in mobile/tablet mode. We don't need to place footnotes.
+            } else if (this.mod.editor.mod.citations.citationType==='note') {
+                const totalOffset = footnoteBoxContainer.getBoundingClientRect().top
                 /* Citations are also in footnotes, so both citation footnotes
                  * and editor footnotes have to be placed. They should be placed
                  * in the order the markers appear in the content, even though
@@ -95,6 +99,7 @@ export class ModFootnoteLayout {
                 })
 
             } else {
+                let totalOffset = footnoteBoxContainer.getBoundingClientRect().top
                 /* Only editor footnotes (no citation footnotes) need to be layouted.
                  * We use the existing footnote markers referrers to find the
                  * placement.

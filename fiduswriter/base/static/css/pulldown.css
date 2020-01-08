@@ -2,7 +2,7 @@
 .fw-pulldown {
     position: absolute;
     display: none;
-    z-index: 100;
+    z-index: 101;
     box-shadow: 0 0 20px rgba(0,0,0,0.2);
     background-color: white;
     border-radius: 6px;

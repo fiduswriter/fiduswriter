@@ -27,7 +27,7 @@ const languageItem = function(code, name, order) {
 
 
 export const headerbarModel = () => ({
-    open: true, // Whether the menu is shown at all.
+    open: window.innerWidth > 500, // Whether the menu is shown at all.
     content: [
         {
             id: 'file',

@@ -19,9 +19,6 @@
  background: #ecdc9e;
 }
 a.feedback-tab {
-    /* position: absolute; */
-    /* right: 85px; */
-    /* top: 18px; */
     display: block;
     width: 35px;
     height: 35px;
@@ -30,9 +27,12 @@ a.feedback-tab {
     border-radius: 50%;
     z-index: 100;
     cursor: pointer;
-    /* text-indent: -999px; */
     z-index: 1;
     float: right;
+}
+
+body.header-closed a.feedback-tab {
+    display: none;
 }
 
 a.feedback-tab:before {

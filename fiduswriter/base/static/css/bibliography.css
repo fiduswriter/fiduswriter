@@ -11,6 +11,7 @@
 
 #bib-dialog .entry-field .ProseMirror, #bib-dialog .entry-field input[type=text] {
     width: 686px;
+    max-width: 80vw;
 }
 
 #bib-dialog :focus {
@@ -117,6 +118,7 @@
 
 #bib-dialog .type-switch-input-wrapper {
     width: 686px;
+    max-width: 80vw;
 }
 
 .type-switch-input-wrapper:after {
@@ -174,6 +176,7 @@
 .tokenfield {
     width: 686px;
     position: relative;
+    max-width: 80vw;
 }
 
 .tokenfield:before, .tokenfield:after {
@@ -393,4 +396,53 @@ Modal header
 
 .current-tab .tab-link-inner {
     color: #2c2723;
+}
+
+@media screen and (max-width: 740px) {
+    #bib-dialog .entry-field .ProseMirror, #bib-dialog .entry-field input[type=text] {
+        max-width: 70vw;
+    }
+    #bib-dialog .type-switch-input-wrapper {
+        max-width: 70vw;
+    }
+    .tokenfield {
+        max-width: 70vw;
+    }
+}
+
+@media screen and (max-width: 560px) {
+    #bib-dialog .entry-field .ProseMirror, #bib-dialog .entry-field input[type=text] {
+        max-width: 50vw;
+    }
+    #bib-dialog .type-switch-input-wrapper {
+        max-width: 50vw;
+    }
+    .tokenfield {
+        max-width: 50vw;
+    }
+    #bib-dialog .type-switch {
+        display: block;
+        margin-bottom: 5px;
+    }
+    .type-switch-input-inner {
+        width: auto;
+    }
+}
+
+@media screen and (max-width: 460px) {
+    #bib-dialog .entry-field .ProseMirror, #bib-dialog .entry-field input[type=text] {
+        max-width: 40vw;
+    }
+    #bib-dialog .type-switch-input-wrapper {
+        max-width: 40vw;
+    }
+    .tokenfield {
+        max-width: 40vw;
+    }
+    #bib-dialog .fw-dialog-table th {
+        width: 140px;
+    }
+    .ui-tabs-panel {
+        overflow-x: hidden;
+    }
 }

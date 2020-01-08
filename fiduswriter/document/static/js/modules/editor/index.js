@@ -379,6 +379,16 @@ export class Editor {
         feedbackTab.init()
     }
 
+    onResize() {
+        if (!this.view || !this.mod.marginboxes) {
+            // Editor not yet set up
+            return
+        }
+        this.mod.marginboxes.updateDOM()
+        this.mod.footnotes.layout.updateDOM()
+        this.menu.toolbarViews.forEach(view => view.onResize())
+    }
+
     initEditor() {
         let setFocus = false
         this.view = new EditorView(this.dom.querySelector('#document-editable'), {

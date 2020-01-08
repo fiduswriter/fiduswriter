@@ -7,12 +7,13 @@ body.editor {
     width: 100%;
     background-color: #f2f2f2;
     overflow-y: auto;
+    overflow-x: hidden;
 }
 
 header {
     position: fixed;
     width: 100%;
-    z-index: 100;
+    z-index: 91;
 }
 
 #document-top {
@@ -97,10 +98,11 @@ header {
 
 #toolbar {
     display: block;
-    z-index: 88;
+    z-index: 108;
     width: 100%;
     -webkit-user-select: none;
-    padding: 34px 0;
+    padding-top: 34px;
+    padding-bottom: 34px;
     background-color: #f2f2f2;
 }
 
@@ -140,6 +142,7 @@ header {
 
 .editor-toolbar {
     position: relative;
+    z-index: 102;
     width: auto !important;
     padding-left: 110px
 }
@@ -185,7 +188,7 @@ header {
 
 .editor-toolbar div.multiButtons .multibuttonsCover {
     position: relative;
-    min-width: 85px;
+    min-width: 35px;
     max-width: 120px;
     font-size: 11px;
     font-weight: 700;
@@ -302,7 +305,6 @@ div#statusarea .error {
 
 body.header-closed #toolbar {
     padding-top: 12px;
-    padding-bottom: 12px;
 }
 
 body.header-closed #editor-content {
@@ -771,49 +773,6 @@ ul.drop-up-options li:hover {
     outline: none;
 }
 
-
-/* Additions for tablets + mobile */
-@media screen and (max-width: 1279px) {
-    #document-top>h1 {
-        padding-left: 52px;
-        background-position: 14px 0;
-    }
-
-    #header-navigation {
-        margin-left: 52px;
-    }
-
-    .editor-toolbar div.ui-buttonset:first-child {
-        left: 3px;
-    }
-
-    .editor-toolbar {
-        padding-left: 52px;
-    }
-
-    #editor-content {
-        padding-left: 52px;
-        padding-right: 30px;
-    }
-}
-
-
-@media screen and (max-width: 1023px) {
-    #editor-content {
-        padding-right: 15px;
-    }
-    #flow {
-        padding-left: 8px;
-    }
-    #document-top>h1 {
-        background: initial;
-        padding-left: 8px;
-    }
-    #header-navigation {
-        margin-left: 8px;
-    }
-}
-
 .ProseMirror-gapcursor {
     display: none;
     pointer-events: none;
@@ -1089,4 +1048,118 @@ html[hc=a5] #toolbar {
 }
 body.no-scroll {
     overflow: hidden;
+}
+
+/* Additions for tablets + mobile */
+@media screen and (max-width: 1279px) {
+    #document-top>h1 {
+        padding-left: 52px;
+        background-position: 14px 0;
+    }
+
+    #header-navigation {
+        margin-left: 52px;
+    }
+
+    .editor-toolbar div.ui-buttonset:first-child {
+        left: 3px;
+    }
+
+    .editor-toolbar {
+        padding-left: 52px;
+    }
+
+    #editor-content {
+        padding-left: 52px;
+        padding-right: 30px;
+    }
+}
+
+
+@media screen and (max-width: 1023px) {
+    #toolbar {
+        padding-bottom: 6px;
+    }
+    #editor-content {
+        padding-right: 0;
+        padding-left: 15px;
+    }
+    #flow {
+        padding: 16px 25px 8px 8px;
+    }
+    #document-top>h1 {
+        background: initial;
+        padding-left: 8px;
+    }
+    #header-navigation {
+        margin-left: 8px;
+    }
+    #navigator {
+        top: 195px;
+        z-index: 101;
+    }
+    #navigator-button {
+        width: 46px;
+        height: 46px;
+        line-height: 46px;
+    }
+    body.header-closed #navigator {
+        top: 64px;
+    }
+    body.header-closed #editor-content {
+        top: 96px;
+    }
+    /* Show footnotes at bottom rather than next to main editor. */
+    #footnote-box-container {
+        display: block !important;
+        width: auto !important;
+    }
+    #document-editable {
+        display: block;
+    }
+    .margin-box.inactive {
+        display: none;
+    }
+    #margin-box-filter {
+        position: fixed !important;
+        top: 195px !important;
+        right: 8px;
+    }
+    body.header-closed #margin-box-filter {
+        top: 64px !important;
+    }
+    #margin-box-column {
+        width: auto;
+        position: absolute;
+    }
+    #margin-box-container {
+        overflow-y: auto;
+        overflow-x: hidden;
+        bottom: 0;
+        position: fixed;
+        left: -1px;
+        right: 0;
+        max-height: 35vh;
+    }
+    .comment-btns {
+        text-align: left !important;
+    }
+    .margin-box.active {
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        margin-top: 0px !important;
+    }
+    .footnote-container {
+        margin-top: 0px !important;
+    }
+}
+
+@media screen and (max-width: 420px) {
+    .editor-toolbar div.ui-buttonset {
+        margin-right: 0px;
+    }
+    .editor-toolbar div.multiButtons .multibuttonsCover {
+        padding: 0 25px 0 15px;
+    }
 }

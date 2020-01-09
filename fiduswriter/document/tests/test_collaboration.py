@@ -814,8 +814,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
                     'li[data-alt-keys="2"]'
                 )
             )
-        )
-        driver.find_element_by_css_selector('li[data-alt-keys="2"]').click()
+        ).click()
         driver.find_element_by_css_selector(
             'li[data-alt-keys="x-var"]'
         ).click()

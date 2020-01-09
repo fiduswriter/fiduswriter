@@ -96,7 +96,7 @@ setuptools.setup(
     extras_require={
         "books": "fiduswriter-books ~= 3.7.5",
         "citation-api-import": "fiduswriter-citation-api-import ~= 3.7.1",
-        "languagetool": "fiduswriter-languagetool ~= 3.7.1",
+        "languagetool": "fiduswriter-languagetool ~= 3.7.2",
         "ojs": "fiduswriter-ojs ~= 3.7.2",
         "phplist": "fiduswriter-phplist ~= 3.7.2",
         "mysql": read('fiduswriter/mysql-requirements.txt').splitlines(),

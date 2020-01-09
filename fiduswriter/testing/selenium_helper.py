@@ -36,8 +36,10 @@ class SeleniumHelper(object):
             options.add_argument('--disable-gpu')
             chromedriver_filename = '/home/travis/bin/chromedriver'
             os.environ["PATH"] += os.pathsep + '/home/travis/bin'
+            wait_time = 10
         else:
             from chromedriver_binary import chromedriver_filename
+            wait_time = 6
         for i in range(number):
             drivers.append(
                 webdriver.Chrome(
@@ -45,7 +47,6 @@ class SeleniumHelper(object):
                     options=options
                 )
             )
-        wait_time = 6
         for driver in drivers:
             # Set sizes of browsers so that all buttons are visible.
             driver.set_window_position(0, 0)

@@ -807,7 +807,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
                 )
             )
         )
-        WebDriverWait(driver, self.wait_time).until(
+        element = WebDriverWait(driver, self.wait_time).until(
             EC.element_to_be_clickable(
                 (
                     By.CSS_SELECTOR,
@@ -815,7 +815,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
                 )
             )
         )
-        driver.find_element_by_css_selector('li[data-alt-keys="2"]').click()
+        element.click()
         driver.find_element_by_css_selector(
             'li[data-alt-keys="x-var"]'
         ).click()

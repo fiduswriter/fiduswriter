@@ -5,7 +5,7 @@ import {DocumentInvite} from "../documents/invite"
 import {ImageOverview} from "../images/overview"
 import {ContactsOverview} from "../contacts"
 import {Profile} from "../profile"
-import {findTarget, WebSocketConnector, showSystemMessage, postJson} from "../common"
+import {findTarget, WebSocketConnector, showSystemMessage, postJson, ensureCSS} from "../common"
 import {LoginPage} from "../login"
 import {EmailConfirm} from "../email_confirm"
 import {PasswordResetRequest, PasswordResetChangePassword} from "../password_reset"
@@ -105,14 +105,11 @@ export class App {
     }
 
     init() {
-        // We add CSS here dynamically without the "ensureCSS" helper function
-        // because we know that the page has not been loaded earlier.
-        document.head.insertAdjacentHTML(
-            'beforeend',
-            `<link rel="stylesheet" type="text/css" href="${this.config.staticUrl}fontawesome/css/all.css?v=${process.env.TRANSPILE_VERSION}">`
-        )
+        ensureCSS([
+            'fontawesome/css/all.css'
+        ], this.config.staticUrl)
         if (navigator.onLine) {
-            this.getUserInfo().then(
+            return this.getUserInfo().then(
                 () => this.setup()
             ).catch(
                 error => {
@@ -128,7 +125,7 @@ export class App {
             )
         } else {
             this.page = this.openOfflinePage()
-            this.page.init()
+            return this.page.init()
         }
 
     }

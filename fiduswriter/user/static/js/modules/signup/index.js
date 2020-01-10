@@ -1,4 +1,4 @@
-import {escapeText, post} from "../common"
+import {escapeText, postJson} from "../common"
 import {PreloginPage} from "../prelogin"
 
 export class Signup extends PreloginPage {
@@ -132,24 +132,30 @@ export class Signup extends PreloginPage {
             if (this.app.inviteId) {
                 sendData['invite_id'] = this.app.inviteId
             }
-            post('/api/user/signup/', sendData).then(
-                () => fwContents.innerHTML =
-                    `<div class="fw-login-left">
-                        <h1 class="fw-login-title">${gettext('Verify Your E-mail Address')}</h1>
-                        <p>
-                            ${
-                                interpolate(
-                                    gettext('We have sent an e-mail to <a href="mailto:%(email)s">%(email)s</a> for verification. Follow the link provided to finalize the signup process.'),
-                                    {email},
-                                    true
-                                )
-                            }
-                            <br />
-                            ${
-                                gettext('Please contact us if you do not receive it within a few minutes.')
-                            }
-                        </p>
-                    </div>`
+            postJson('/api/user/signup/', sendData).then(
+                ({json}) => {
+                    if (json.location === '/api/account/confirm-email/') {
+                        fwContents.innerHTML = `<div class="fw-login-left">
+                            <h1 class="fw-login-title">${gettext('Verify Your E-mail Address')}</h1>
+                            <p>
+                                ${
+                                    interpolate(
+                                        gettext('We have sent an e-mail to <a href="mailto:%(email)s">%(email)s</a> for verification. Follow the link provided to finalize the signup process.'),
+                                        {email},
+                                        true
+                                    )
+                                }
+                                <br />
+                                ${
+                                    gettext('Please contact us if you do not receive it within a few minutes.')
+                                }
+                            </p>
+                        </div>`
+                    } else {
+                        window.history.pushState({}, "", '/')
+                        this.app.init()
+                    }
+                }
             ).catch(
                 response => response.json().then(
                     json => {

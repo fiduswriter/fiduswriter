@@ -198,7 +198,6 @@ BASE_INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'avatar',
-    'compressor',
     'feedback',
     'style'
 ]
@@ -333,3 +332,6 @@ JAVASCRIPT_ERROR_BLACKLIST = [
     'the operation is insecure',
     'parse error'
 ]
+
+# The page to show while transpilation takes place.
+SETUP_PAGE_PATH = os.path.join(SRC_PATH, 'base/setup_page/')

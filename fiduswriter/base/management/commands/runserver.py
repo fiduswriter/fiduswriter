@@ -1,7 +1,11 @@
 import re
+import threading
 
 from datetime import datetime
 from sys import platform
+from tornado.httpserver import HTTPServer
+import tornado.ioloop
+from tornado.web import Application
 
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
@@ -9,6 +13,7 @@ from django.utils import translation
 from django.conf import settings
 
 from base.servers.tornado_django_hybrid import run as run_server
+from base.handlers import SetupStaticFilesHandler
 
 try:
     from asyncio import set_event_loop_policy
@@ -32,6 +37,7 @@ class Command(BaseCommand):
     leave_locale_alone = True
     default_addr = '127.0.0.1'
     default_port = str(settings.PORT)
+    compile_server = False
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -64,7 +70,16 @@ class Command(BaseCommand):
         ) or (
             not hasattr(settings, 'AUTO_SETUP') and settings.DEBUG
         ):
+            server = self.get_setup_server()
+            loop_thread = threading.Thread(
+                target=tornado.ioloop.IOLoop.current().start
+            )
+            loop_thread.daemon = True
+            loop_thread.start()
             call_command("setup", force_transpile=False)
+            server.stop()
+            ioloop = tornado.ioloop.IOLoop.current()
+            ioloop.add_callback(ioloop.stop)
         self.stdout.write((
             "%(started_at)s\n"
             "Django version %(version)s, using settings %(settings)r\n"
@@ -84,3 +99,25 @@ class Command(BaseCommand):
         translation.activate(settings.LANGUAGE_CODE)
 
         run_server(self.port)
+
+    def get_setup_server(self):
+        # Start a tornado server to run while the compile is happening
+        tornado_app = Application(
+            [
+                (
+                    r'/(.*)',
+                    SetupStaticFilesHandler,
+                    {
+                        'path': settings.SETUP_PAGE_PATH,
+                        'default_filename': "index.html"
+                    }
+                ),
+            ],
+            debug=settings.DEBUG,
+            websocket_ping_interval=settings.WEBSOCKET_PING_INTERVAL,
+            compress_response=True
+        )
+        server = HTTPServer(tornado_app, no_keep_alive=True)
+        server.xheaders = True
+        server.listen(int(self.port))
+        return server

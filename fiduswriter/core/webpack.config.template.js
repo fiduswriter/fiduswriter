@@ -62,6 +62,7 @@ module.exports = { // eslint-disable-line no-undef
                 "/",
                 "/api/django_js_error_hook/utils.js",
                 "/api/jsi18n/",
+                "$TRANSPILE_BASE_URL$browser_check.js",
                 "/manifest.json",
                 $STATIC_FRONTEND_FILES$ // eslint-disable-line no-undef
             ],

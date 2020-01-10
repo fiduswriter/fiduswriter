@@ -1,4 +1,4 @@
-import {escapeText, post} from "../common"
+import {escapeText, postJson} from "../common"
 import {PreloginPage} from "../prelogin"
 
 export class Signup extends PreloginPage {
@@ -132,7 +132,7 @@ export class Signup extends PreloginPage {
             if (this.app.inviteId) {
                 sendData['invite_id'] = this.app.inviteId
             }
-            post('/api/user/signup/', sendData).then(
+            postJson('/api/user/signup/', sendData).then(
                 ({json}) => {
                     if (json.location === '/api/account/confirm-email/') {
                         fwContents.innerHTML = `<div class="fw-login-left">

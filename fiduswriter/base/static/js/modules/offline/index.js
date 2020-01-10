@@ -27,7 +27,7 @@ export class OfflinePage extends PreloginPage {
     }
 
     init() {
-        super.init().then(
+        return super.init().then(
             () => document.querySelectorAll('#lang-selection,.feedback-tab').forEach(el => el.style.visibility = 'hidden')
         )
     }

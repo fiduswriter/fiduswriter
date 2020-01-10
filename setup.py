@@ -89,7 +89,7 @@ setuptools.setup(
         "Topic :: Text Processing :: Markup :: XML",
         "Topic :: Utilities",
     ],
-    packages=setuptools.find_packages(),
+    packages=setuptools.find_namespace_packages(include=['fiduswriter']),
     include_package_data=True,
     python_requires='>=3',
     install_requires=read('fiduswriter/requirements.txt').splitlines(),

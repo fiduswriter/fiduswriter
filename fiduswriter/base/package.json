@@ -24,9 +24,11 @@
     "@fortawesome/fontawesome-free": "^5.11.2",
     "simple-datatables": "^2.1.9",
     "vivliostyle-print": "^1.2.2",
-    "eslint": "^5.16.0",
-    "eslint-plugin-import": "^2.18.2",
-    "babel-eslint": "^10.0.3",
+    "eslint": "6.8.0",
+    "eslint-global-patch": "1.0.4",
+    "eslint-plugin-import": "2.20.0",
+    "eslint-module-utils": "2.5.0",
+    "babel-eslint": "10.0.3",
     "offline-plugin": "5.0.x"
   },
   "devDependencies": {

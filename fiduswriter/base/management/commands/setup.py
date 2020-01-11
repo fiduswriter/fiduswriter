@@ -26,12 +26,6 @@ class Command(BaseCommand):
             help='Do not collect static files.',
         )
         parser.add_argument(
-            '--no-compress',
-            action='store_false',
-            dest='compress',
-            help='Do not attempt to compress static files.',
-        )
-        parser.add_argument(
             '--no-force-transpile',
             action='store_false',
             dest='force_transpile',

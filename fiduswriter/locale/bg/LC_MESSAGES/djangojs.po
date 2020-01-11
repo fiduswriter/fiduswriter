@@ -1363,12 +1363,14 @@ msgstr "Не можаха да се получат допълнителни да
 msgid "Reviewer"
 msgstr "рецензент"
 
+#: base/static/js/modules/setup/index.js:17
+#: base/static/js/modules/setup/index.js:18
 #: document/static/js/modules/editor/dialogs/citation.js:39
 #: document/static/js/modules/editor/dialogs/contributor.js:20
 #: document/static/js/modules/editor/dialogs/contributor.js:77
 #: document/static/js/modules/editor/dialogs/figure.js:178
 #: document/static/js/modules/editor/dialogs/link.js:55
-#: document/static/js/modules/editor/dialogs/math.js:21
+#: document/static/js/modules/editor/dialogs/math.js:22
 #: document/static/js/modules/editor/dialogs/table.js:194
 #: usermedia/static/js/modules/images/edit_dialog/index.js:24
 msgid "Update"
@@ -1388,7 +1390,7 @@ msgstr "Имейлът е в неправилен формат!"
 #: document/static/js/modules/editor/dialogs/citation.js:14
 #: document/static/js/modules/editor/dialogs/figure.js:21
 #: document/static/js/modules/editor/dialogs/link.js:10
-#: document/static/js/modules/editor/dialogs/math.js:21
+#: document/static/js/modules/editor/dialogs/math.js:22
 #: document/static/js/modules/editor/dialogs/table.js:53
 #: document/static/js/modules/editor/dialogs/templates.js:28
 msgid "Insert"
@@ -1564,7 +1566,7 @@ msgstr "Промяна на езика на документа"
 msgid "Link"
 msgstr "връзка"
 
-#: document/static/js/modules/editor/dialogs/math.js:51
+#: document/static/js/modules/editor/dialogs/math.js:52
 msgid "Mathematical formula"
 msgstr "Математическа формула"
 
@@ -2065,14 +2067,14 @@ msgid "Math"
 msgstr "Math"
 
 #: document/static/js/modules/editor/dialogs/figure.js:45
-#: document/static/js/modules/editor/dialogs/math.js:76
+#: document/static/js/modules/editor/dialogs/math.js:77
 #: document/static/js/modules/editor/menus/toolbar/model.js:478
 #: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
 msgid "Undo"
 msgstr "Undo"
 
 #: document/static/js/modules/editor/dialogs/figure.js:43
-#: document/static/js/modules/editor/dialogs/math.js:74
+#: document/static/js/modules/editor/dialogs/math.js:75
 #: document/static/js/modules/editor/menus/toolbar/model.js:485
 #: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
 msgid "Redo"
@@ -3331,11 +3333,11 @@ msgstr "неопределен"
 msgid "Export selected as JATS"
 msgstr "Износът е избран като JATS"
 
-#: document/static/js/modules/editor/citations/index.js:92
+#: document/static/js/modules/editor/citations/index.js:96
 msgid "No tracking"
 msgstr "Без проследяване"
 
-#: document/static/js/modules/editor/citations/index.js:93
+#: document/static/js/modules/editor/citations/index.js:97
 msgid "Changes to citation sources are not being tracked!"
 msgstr "Промените в източниците на цитиране не се проследяват!"
 
@@ -3348,37 +3350,37 @@ msgid "or"
 msgstr "или"
 
 #: document/static/js/modules/editor/dialogs/figure.js:37
-#: document/static/js/modules/editor/dialogs/math.js:68
+#: document/static/js/modules/editor/dialogs/math.js:69
 msgid "Functions"
 msgstr "Функции"
 
 #: document/static/js/modules/editor/dialogs/figure.js:38
-#: document/static/js/modules/editor/dialogs/math.js:69
+#: document/static/js/modules/editor/dialogs/math.js:70
 msgid "Greek Letters"
 msgstr "Гръцки букви"
 
 #: document/static/js/modules/editor/dialogs/figure.js:39
-#: document/static/js/modules/editor/dialogs/math.js:70
+#: document/static/js/modules/editor/dialogs/math.js:71
 msgid "LaTeX Command Mode"
 msgstr "LaTeX команден режим"
 
 #: document/static/js/modules/editor/dialogs/figure.js:40
-#: document/static/js/modules/editor/dialogs/math.js:71
+#: document/static/js/modules/editor/dialogs/math.js:72
 msgid "Numeric"
 msgstr "Цифрова"
 
 #: document/static/js/modules/editor/dialogs/figure.js:41
-#: document/static/js/modules/editor/dialogs/math.js:72
+#: document/static/js/modules/editor/dialogs/math.js:73
 msgid "Symbols and Roman Letters"
 msgstr "Символи и римски букви"
 
 #: document/static/js/modules/editor/dialogs/figure.js:42
-#: document/static/js/modules/editor/dialogs/math.js:73
+#: document/static/js/modules/editor/dialogs/math.js:74
 msgid "Copy to Clipboard"
 msgstr "Копиране в клипборда"
 
 #: document/static/js/modules/editor/dialogs/figure.js:44
-#: document/static/js/modules/editor/dialogs/math.js:75
+#: document/static/js/modules/editor/dialogs/math.js:76
 msgid "Toggle Virtual Keyboard"
 msgstr "Превключване на виртуална клавиатура"
 
@@ -3819,30 +3821,30 @@ msgstr "Запомни ме"
 msgid "Forgot Password?"
 msgstr "Забравена Парола?"
 
-#: user/static/js/modules/login/index.js:62
-#: user/static/js/modules/login/index.js:67
+#: user/static/js/modules/login/index.js:80
+#: user/static/js/modules/login/index.js:85
 #: user/static/js/modules/password_reset/change_password.js:49
 #: user/static/js/modules/password_reset/change_password.js:54
 #: user/static/js/modules/password_reset/request_email.js:50
-#: user/static/js/modules/signup/index.js:51
-#: user/static/js/modules/signup/index.js:56
-#: user/static/js/modules/signup/index.js:61
-#: user/static/js/modules/signup/index.js:74
+#: user/static/js/modules/signup/index.js:66
+#: user/static/js/modules/signup/index.js:71
+#: user/static/js/modules/signup/index.js:76
+#: user/static/js/modules/signup/index.js:89
 msgid "This field is required."
 msgstr "Това поле е задължително."
 
-#: user/static/js/modules/login/index.js:84
-#: user/static/js/modules/signup/index.js:93
+#: user/static/js/modules/login/index.js:102
+#: user/static/js/modules/signup/index.js:112
 msgid "Verify Your E-mail Address"
 msgstr "Потвърди имейл"
 
-#: user/static/js/modules/login/index.js:84
+#: user/static/js/modules/login/index.js:102
 msgid "We have sent an e-mail to your email address for verification. Follow the link provided to finalize the signup process."
 msgstr "Изпратихме имейл до вашия имейл адрес за проверка. Следвайте предоставената връзка, за да финализирате процеса на регистрация."
 
-#: user/static/js/modules/login/index.js:84
+#: user/static/js/modules/login/index.js:102
 #: user/static/js/modules/password_reset/request_email.js:62
-#: user/static/js/modules/signup/index.js:95
+#: user/static/js/modules/signup/index.js:114
 msgid "Please contact us if you do not receive it within a few minutes."
 msgstr "Моля, свържете се с нас, ако не го получите в рамките на няколко минути."
 
@@ -3874,7 +3876,7 @@ msgid "Change My Password"
 msgstr "Промяна на паролата ми"
 
 #: user/static/js/modules/password_reset/change_password.js:59
-#: user/static/js/modules/signup/index.js:66
+#: user/static/js/modules/signup/index.js:81
 msgid "You must type the same password each time."
 msgstr "Трябва да въвеждате една и съща парола всеки път."
 
@@ -3905,7 +3907,7 @@ msgid "Reset My Password"
 msgstr "Смени моята Парола"
 
 #: user/static/js/modules/password_reset/request_email.js:47
-#: user/static/js/modules/signup/index.js:71
+#: user/static/js/modules/signup/index.js:86
 msgid "This is not a valid email."
 msgstr "Това не е валиден имейл."
 
@@ -3983,7 +3985,7 @@ msgstr "Създаването на акаунти е изключено"
 msgid "We are sorry, but the sign up is currently closed."
 msgstr "Съжалаваме, но в момента създаването на акаунти е изключено"
 
-#: user/static/js/modules/signup/index.js:93
+#: user/static/js/modules/signup/index.js:112
 msgid "We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</a> for verification. Follow the link provided to finalize the signup process."
 msgstr "Изпратихме имейл до <a href=\"mailto:%(email)s\">%(email)s</a> за проверка. Следвайте предоставената връзка, за да финализирате процеса на регистрация."
 
@@ -4093,4 +4095,8 @@ msgstr "Управление на медийни елементи"
 #: document/static/js/modules/editor/tools/word_count_templates.js:8
 msgid "Selection"
 msgstr "Селекцията"
+
+#: base/static/js/modules/setup/index.js:18
+msgid "The %(appName)s server is currently being updated. Please wait."
+msgstr "В момента сървърът на %(appName)s се актуализира. Моля Изчакай."
 

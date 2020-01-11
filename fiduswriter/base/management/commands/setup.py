@@ -94,15 +94,6 @@ class Command(BaseCommand):
             call_command("compilemessages")
         call_command("transpile", force=force_transpile)
         if (
-            options["compress"] and
-            settings.COMPRESS_OFFLINE and
-            settings.COMPRESS_ENABLED
-        ):
-            try:
-                call_command("compress")
-            except CommandError:
-                pass
-        if (
             options["static"] and
             not settings.DEBUG
         ):

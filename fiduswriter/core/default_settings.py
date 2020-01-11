@@ -120,10 +120,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
-    'compressor.finders.CompressorFinder',
 )
-
-COMPRESS_OUTPUT_DIR = '.'
 
 # Make this unique, and don't share it with anybody. Change the default string.
 SECRET_KEY = '2ouq2zgw5y-@w+t6!#zf#-z1inigg7$lg3p%8e3kkob1bf$#p4'
@@ -198,7 +195,6 @@ BASE_INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'avatar',
-    'compressor',
     'feedback',
     'style'
 ]
@@ -333,3 +329,6 @@ JAVASCRIPT_ERROR_BLACKLIST = [
     'the operation is insecure',
     'parse error'
 ]
+
+# The page to show while transpilation takes place.
+SETUP_PAGE_PATH = os.path.join(SRC_PATH, 'base/setup_page/')

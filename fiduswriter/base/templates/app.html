@@ -1,5 +1,4 @@
 {% load i18n %}
-{% load compress %}
 {% load transpile %}
 {% load fiduswriter %}
 <!DOCTYPE html>
@@ -15,7 +14,6 @@
         <link rel="shortcut icon" href="{% static "img/favicon.png" %}" type="image/png"/>
         <link rel="manifest" href="/manifest.json">
         <!-- commons styles -->
-        {% compress css %}
         <link type="text/css" rel="stylesheet" href="{% static "css/reset.css" %}" />
         <link type="text/css" rel="stylesheet" href="{% static "css/fonts.css" %}" />
         <link type="text/css" rel="stylesheet" href="{% static "css/text.css" %}" />
@@ -37,7 +35,6 @@
         <!-- layout styles -->
         <link type="text/css" rel="stylesheet" href="{% static "css/common.css" %}" />
         <link type="text/css" rel="stylesheet" href="{% static "css/header_menu.css" %}" />
-        {% endcompress %}
         <!-- Check browser -->
         <script type="text/javascript" src="{% static "js/browser_check.js" %}" crossorigin="anonymous" defer async></script>
         <script type="text/javascript" src="/api/jsi18n/" id="i18n"></script>

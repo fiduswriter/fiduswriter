@@ -14,6 +14,7 @@ import {ImageDB} from "../images/database"
 import {BibliographyDB} from "../bibliography/database"
 import {Page404} from "../404"
 import {OfflinePage} from "../offline"
+import {SetupPage} from "../setup"
 import {FlatPage} from "../flatpage"
 import * as plugins from "../../plugins/app"
 
@@ -101,6 +102,7 @@ export class App {
         }
         this.openLoginPage = () => new LoginPage(this.config)
         this.openOfflinePage = () => new OfflinePage(this.config)
+        this.openSetupPage = () => new SetupPage(this.config)
         this.open404Page = () => new Page404(this.config)
     }
 
@@ -117,6 +119,12 @@ export class App {
                         // We could not fetch user info from server, so let's
                         // assume we are disconnected.
                         this.page = this.openOfflinePage()
+                        this.page.init()
+                    } else if (error.status === 405) {
+                        // 405 indicates that the server is running but the
+                        // method is not allowed. This must be the setup server.
+                        // We show a setup message instead.
+                        this.page = this.openSetupPage()
                         this.page.init()
                     } else {
                         throw error

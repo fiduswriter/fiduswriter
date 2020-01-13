@@ -1,4 +1,4 @@
-import {escapeText, post} from "../common"
+import {escapeText, postJson} from "../common"
 import {PreloginPage} from "../prelogin"
 
 export class Signup extends PreloginPage {
@@ -56,46 +56,73 @@ export class Signup extends PreloginPage {
     bind() {
         super.bind()
 
-        if (!this.registrationOpen) {
+        const signupSubmit = document.querySelector('#signup-submit')
+
+        if (!this.registrationOpen || !signupSubmit) {
             return
         }
 
-        document.getElementById('signup-submit').addEventListener('click', event => {
+        signupSubmit.addEventListener('click', event => {
             event.preventDefault()
 
-            document.querySelector('#non_field_errors').innerHTML = ''
-            document.querySelector('#id_username_errors').innerHTML = ''
-            document.querySelector('#id_password1_errors').innerHTML = ''
-            document.querySelector('#id_password2_errors').innerHTML = ''
-            document.querySelector('#id_email_errors').innerHTML = ''
+            const nonFieldErrors = document.querySelector('#non_field_errors'),
+                idUsername = document.querySelector('#id_username'),
+                idUsernameErrors = document.querySelector('#id_username_errors'),
+                idPassword1 = document.querySelector('#id_password1'),
+                idPassword1Errors = document.querySelector('#id_password1_errors'),
+                idPassword2 = document.querySelector('#id_password2'),
+                idPassword2Errors = document.querySelector('#id_password2_errors'),
+                idEmail = document.querySelector('#id_email'),
+                idEmailErrors = document.querySelector('#id_email_errors'),
+                fwContents = document.querySelector('.fw-contents')
 
-            const username = document.getElementById('id_username').value,
-                password1 = document.getElementById('id_password1').value,
-                password2 = document.getElementById('id_password2').value,
-                emailEl = document.getElementById('id_email'),
-                email = emailEl.value
+            if (
+                !nonFieldErrors ||
+                !idUsername ||
+                !idUsernameErrors ||
+                !idPassword1 ||
+                !idPassword1Errors ||
+                !idPassword2 ||
+                !idPassword2Errors ||
+                !idEmail ||
+                !idEmailErrors ||
+                !fwContents
+            ) {
+                return
+            }
+
+            nonFieldErrors.innerHTML = ''
+            idUsernameErrors.innerHTML = ''
+            idPassword1Errors.innerHTML = ''
+            idPassword2Errors.innerHTML = ''
+            idEmailErrors.innerHTML = ''
+
+            const username = idUsername.value,
+                password1 = idPassword1.value,
+                password2 = idPassword2.value,
+                email = idEmail.value
             let errors = false
             if (!username.length) {
-                document.querySelector('#id_username_errors').innerHTML = `<li>${gettext('This field is required.')}</li>`
+                idUsernameErrors.innerHTML = `<li>${gettext('This field is required.')}</li>`
                 errors = true
             }
             if (!password1.length) {
-                document.querySelector('#id_password1_errors').innerHTML = `<li>${gettext('This field is required.')}</li>`
+                idPassword1Errors.innerHTML = `<li>${gettext('This field is required.')}</li>`
                 errors = true
             }
             if (!password2.length) {
-                document.querySelector('#id_password2_errors').innerHTML = `<li>${gettext('This field is required.')}</li>`
+                idPassword2Errors.innerHTML = `<li>${gettext('This field is required.')}</li>`
                 errors = true
             }
             if (password1 !== password2) {
-                document.querySelector('#id_password2_errors').innerHTML = `<li>${gettext('You must type the same password each time.')}</li>`
+                idPassword2Errors.innerHTML = `<li>${gettext('You must type the same password each time.')}</li>`
                 errors = true
             }
-            if (!emailEl.checkValidity()) {
-                document.querySelector('#id_email_errors').innerHTML = `<li>${gettext('This is not a valid email.')}</li>`
+            if (!idEmail.checkValidity()) {
+                idEmailErrors.innerHTML = `<li>${gettext('This is not a valid email.')}</li>`
                 errors = true
             } else if (!email.length) {
-                document.querySelector('#id_email_errors').innerHTML = `<li>${gettext('This field is required.')}</li>`
+                idEmailErrors.innerHTML = `<li>${gettext('This field is required.')}</li>`
                 errors = true
             }
             if (errors) {
@@ -105,41 +132,47 @@ export class Signup extends PreloginPage {
             if (this.app.inviteId) {
                 sendData['invite_id'] = this.app.inviteId
             }
-            post('/api/user/signup/', sendData).then(
-                () => document.querySelector('.fw-contents').innerHTML =
-                    `<div class="fw-login-left">
-                        <h1 class="fw-login-title">${gettext('Verify Your E-mail Address')}</h1>
-                        <p>
-                            ${
-                                interpolate(
-                                    gettext('We have sent an e-mail to <a href="mailto:%(email)s">%(email)s</a> for verification. Follow the link provided to finalize the signup process.'),
-                                    {email},
-                                    true
-                                )
-                            }
-                            <br />
-                            ${
-                                gettext('Please contact us if you do not receive it within a few minutes.')
-                            }
-                        </p>
-                    </div>`
+            postJson('/api/user/signup/', sendData).then(
+                ({json}) => {
+                    if (json.location === '/api/account/confirm-email/') {
+                        fwContents.innerHTML = `<div class="fw-login-left">
+                            <h1 class="fw-login-title">${gettext('Verify Your E-mail Address')}</h1>
+                            <p>
+                                ${
+                                    interpolate(
+                                        gettext('We have sent an e-mail to <a href="mailto:%(email)s">%(email)s</a> for verification. Follow the link provided to finalize the signup process.'),
+                                        {email},
+                                        true
+                                    )
+                                }
+                                <br />
+                                ${
+                                    gettext('Please contact us if you do not receive it within a few minutes.')
+                                }
+                            </p>
+                        </div>`
+                    } else {
+                        window.history.pushState({}, "", '/')
+                        this.app.init()
+                    }
+                }
             ).catch(
                 response => response.json().then(
                     json => {
                         json.form.errors.forEach(
-                            error => document.querySelector("#non_field_errors").innerHTML += `<li>${escapeText(error)}</li>`
+                            error => nonFieldErrors.innerHTML += `<li>${escapeText(error)}</li>`
                         )
                         json.form.fields.username.errors.forEach(
-                            error => document.querySelector('#id_username_errors').innerHTML += `<li>${escapeText(error)}</li>`
+                            error => idUsernameErrors.innerHTML += `<li>${escapeText(error)}</li>`
                         )
                         json.form.fields.password1.errors.forEach(
-                            error => document.querySelector('#id_password1_errors').innerHTML += `<li>${escapeText(error)}</li>`
+                            error => idPassword1Errors.innerHTML += `<li>${escapeText(error)}</li>`
                         )
                         json.form.fields.password2.errors.forEach(
-                            error => document.querySelector('#id_password2_errors').innerHTML += `<li>${escapeText(error)}</li>`
+                            error => idPassword2Errors.innerHTML += `<li>${escapeText(error)}</li>`
                         )
                         json.form.fields.email.errors.forEach(
-                            error => document.querySelector('#id_email_errors').innerHTML += `<li>${escapeText(error)}</li>`
+                            error => idEmailErrors.innerHTML += `<li>${escapeText(error)}</li>`
                         )
                     }
                 )

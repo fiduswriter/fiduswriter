@@ -7,6 +7,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import ElementClickInterceptedException
 from django.conf import settings
 from testing.testcases import LiveTornadoTestCase
 from .editor_helper import EditorHelper
@@ -800,7 +801,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
                 )
             )
         )
-        WebDriverWait(driver, self.wait_time).until(
+        element = WebDriverWait(driver, self.wait_time).until(
             EC.element_to_be_clickable(
                 (
                     By.CSS_SELECTOR,
@@ -808,7 +809,19 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
                 )
             )
         )
-        driver.find_element_by_css_selector('li[data-alt-keys="2"]').click()
+        try:
+            element.click()
+        except ElementClickInterceptedException:
+            time.sleep(1)
+            WebDriverWait(driver, self.wait_time).until(
+                EC.element_to_be_clickable(
+                    (
+                        By.CSS_SELECTOR,
+                        'li[data-alt-keys="2"]'
+                    )
+                )
+            ).click()
+
         driver.find_element_by_css_selector(
             'li[data-alt-keys="x-var"]'
         ).click()

@@ -5,7 +5,7 @@ import {DocumentInvite} from "../documents/invite"
 import {ImageOverview} from "../images/overview"
 import {ContactsOverview} from "../contacts"
 import {Profile} from "../profile"
-import {findTarget, WebSocketConnector, showSystemMessage, postJson} from "../common"
+import {findTarget, WebSocketConnector, showSystemMessage, postJson, ensureCSS} from "../common"
 import {LoginPage} from "../login"
 import {EmailConfirm} from "../email_confirm"
 import {PasswordResetRequest, PasswordResetChangePassword} from "../password_reset"
@@ -14,6 +14,7 @@ import {ImageDB} from "../images/database"
 import {BibliographyDB} from "../bibliography/database"
 import {Page404} from "../404"
 import {OfflinePage} from "../offline"
+import {SetupPage} from "../setup"
 import {FlatPage} from "../flatpage"
 import * as plugins from "../../plugins/app"
 
@@ -101,18 +102,16 @@ export class App {
         }
         this.openLoginPage = () => new LoginPage(this.config)
         this.openOfflinePage = () => new OfflinePage(this.config)
+        this.openSetupPage = () => new SetupPage(this.config)
         this.open404Page = () => new Page404(this.config)
     }
 
     init() {
-        // We add CSS here dynamically without the "ensureCSS" helper function
-        // because we know that the page has not been loaded earlier.
-        document.head.insertAdjacentHTML(
-            'beforeend',
-            `<link rel="stylesheet" type="text/css" href="${this.config.staticUrl}fontawesome/css/all.css?v=${process.env.TRANSPILE_VERSION}">`
-        )
+        ensureCSS([
+            'fontawesome/css/all.css'
+        ], this.config.staticUrl)
         if (navigator.onLine) {
-            this.getUserInfo().then(
+            return this.getUserInfo().then(
                 () => this.setup()
             ).catch(
                 error => {
@@ -121,6 +120,12 @@ export class App {
                         // assume we are disconnected.
                         this.page = this.openOfflinePage()
                         this.page.init()
+                    } else if (error.status === 405) {
+                        // 405 indicates that the server is running but the
+                        // method is not allowed. This must be the setup server.
+                        // We show a setup message instead.
+                        this.page = this.openSetupPage()
+                        this.page.init()
                     } else {
                         throw error
                     }
@@ -128,7 +133,7 @@ export class App {
             )
         } else {
             this.page = this.openOfflinePage()
-            this.page.init()
+            return this.page.init()
         }
 
     }

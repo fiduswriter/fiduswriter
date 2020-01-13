@@ -304,9 +304,11 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             EC.presence_of_element_located((By.CLASS_NAME, 'editor-toolbar'))
         )
         self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+        ActionChains(self.driver).send_keys(
             "The body"
-        )
+        ).send_keys(
+            Keys.ENTER
+        ).perform()
         assert self.driver.find_element(
             By.CSS_SELECTOR,
             ".article-title"

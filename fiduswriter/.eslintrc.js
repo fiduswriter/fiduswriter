@@ -24,11 +24,9 @@ module.exports = {
       "allowImportExportEverywhere": true,
       "ecmaFeatures": {
         "globalReturn": false,
-      }
-    },
-    "parserOptions": {
-        "ecmaVersion": 2018,
-        "sourceType": "module"
+      },
+      "ecmaVersion": 2018,
+      "sourceType": "module"
     },
     "rules": {
         "accessor-pairs": "error",

@@ -1363,12 +1363,14 @@ msgstr "Es konnten keine zusätzlichen Dokumentdaten abgerufen werden"
 msgid "Reviewer"
 msgstr "Gutachter"
 
+#: base/static/js/modules/setup/index.js:17
+#: base/static/js/modules/setup/index.js:18
 #: document/static/js/modules/editor/dialogs/citation.js:39
 #: document/static/js/modules/editor/dialogs/contributor.js:20
 #: document/static/js/modules/editor/dialogs/contributor.js:77
 #: document/static/js/modules/editor/dialogs/figure.js:178
 #: document/static/js/modules/editor/dialogs/link.js:55
-#: document/static/js/modules/editor/dialogs/math.js:21
+#: document/static/js/modules/editor/dialogs/math.js:22
 #: document/static/js/modules/editor/dialogs/table.js:194
 #: usermedia/static/js/modules/images/edit_dialog/index.js:24
 msgid "Update"
@@ -1388,7 +1390,7 @@ msgstr "E-Mail ist im falschen Format!"
 #: document/static/js/modules/editor/dialogs/citation.js:14
 #: document/static/js/modules/editor/dialogs/figure.js:21
 #: document/static/js/modules/editor/dialogs/link.js:10
-#: document/static/js/modules/editor/dialogs/math.js:21
+#: document/static/js/modules/editor/dialogs/math.js:22
 #: document/static/js/modules/editor/dialogs/table.js:53
 #: document/static/js/modules/editor/dialogs/templates.js:28
 msgid "Insert"
@@ -1564,7 +1566,7 @@ msgstr "Ändern Sie die Sprache des Dokumentes"
 msgid "Link"
 msgstr "Verknüpfung"
 
-#: document/static/js/modules/editor/dialogs/math.js:51
+#: document/static/js/modules/editor/dialogs/math.js:52
 msgid "Mathematical formula"
 msgstr "Mathematische Formel"
 
@@ -2065,14 +2067,14 @@ msgid "Math"
 msgstr "Mathematik"
 
 #: document/static/js/modules/editor/dialogs/figure.js:45
-#: document/static/js/modules/editor/dialogs/math.js:76
+#: document/static/js/modules/editor/dialogs/math.js:77
 #: document/static/js/modules/editor/menus/toolbar/model.js:478
 #: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
 msgid "Undo"
 msgstr "Rückgängig"
 
 #: document/static/js/modules/editor/dialogs/figure.js:43
-#: document/static/js/modules/editor/dialogs/math.js:74
+#: document/static/js/modules/editor/dialogs/math.js:75
 #: document/static/js/modules/editor/menus/toolbar/model.js:485
 #: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
 msgid "Redo"
@@ -3331,11 +3333,11 @@ msgstr "Nicht definiert"
 msgid "Export selected as JATS"
 msgstr "Export als JATS ausgewählt"
 
-#: document/static/js/modules/editor/citations/index.js:92
+#: document/static/js/modules/editor/citations/index.js:96
 msgid "No tracking"
 msgstr "Keine Spuränderungen"
 
-#: document/static/js/modules/editor/citations/index.js:93
+#: document/static/js/modules/editor/citations/index.js:97
 msgid "Changes to citation sources are not being tracked!"
 msgstr "Änderungen an Zitierquellen werden nicht nachverfolgt!"
 
@@ -3348,37 +3350,37 @@ msgid "or"
 msgstr "oder"
 
 #: document/static/js/modules/editor/dialogs/figure.js:37
-#: document/static/js/modules/editor/dialogs/math.js:68
+#: document/static/js/modules/editor/dialogs/math.js:69
 msgid "Functions"
 msgstr "Funktionen"
 
 #: document/static/js/modules/editor/dialogs/figure.js:38
-#: document/static/js/modules/editor/dialogs/math.js:69
+#: document/static/js/modules/editor/dialogs/math.js:70
 msgid "Greek Letters"
 msgstr "Griechische Buchstaben"
 
 #: document/static/js/modules/editor/dialogs/figure.js:39
-#: document/static/js/modules/editor/dialogs/math.js:70
+#: document/static/js/modules/editor/dialogs/math.js:71
 msgid "LaTeX Command Mode"
 msgstr "LaTeX-Befehlsmodus"
 
 #: document/static/js/modules/editor/dialogs/figure.js:40
-#: document/static/js/modules/editor/dialogs/math.js:71
+#: document/static/js/modules/editor/dialogs/math.js:72
 msgid "Numeric"
 msgstr "Numerisch"
 
 #: document/static/js/modules/editor/dialogs/figure.js:41
-#: document/static/js/modules/editor/dialogs/math.js:72
+#: document/static/js/modules/editor/dialogs/math.js:73
 msgid "Symbols and Roman Letters"
 msgstr "Symbole und römische Buchstaben"
 
 #: document/static/js/modules/editor/dialogs/figure.js:42
-#: document/static/js/modules/editor/dialogs/math.js:73
+#: document/static/js/modules/editor/dialogs/math.js:74
 msgid "Copy to Clipboard"
 msgstr "In die Zwischenablage kopieren"
 
 #: document/static/js/modules/editor/dialogs/figure.js:44
-#: document/static/js/modules/editor/dialogs/math.js:75
+#: document/static/js/modules/editor/dialogs/math.js:76
 msgid "Toggle Virtual Keyboard"
 msgstr "Virtuelle Tastatur umschalten"
 
@@ -3819,30 +3821,30 @@ msgstr "Angemeldet bleiben"
 msgid "Forgot Password?"
 msgstr "Kennwort vergessen?"
 
-#: user/static/js/modules/login/index.js:62
-#: user/static/js/modules/login/index.js:67
+#: user/static/js/modules/login/index.js:80
+#: user/static/js/modules/login/index.js:85
 #: user/static/js/modules/password_reset/change_password.js:49
 #: user/static/js/modules/password_reset/change_password.js:54
 #: user/static/js/modules/password_reset/request_email.js:50
-#: user/static/js/modules/signup/index.js:51
-#: user/static/js/modules/signup/index.js:56
-#: user/static/js/modules/signup/index.js:61
-#: user/static/js/modules/signup/index.js:74
+#: user/static/js/modules/signup/index.js:66
+#: user/static/js/modules/signup/index.js:71
+#: user/static/js/modules/signup/index.js:76
+#: user/static/js/modules/signup/index.js:89
 msgid "This field is required."
 msgstr "Dieses Feld wird benötigt."
 
-#: user/static/js/modules/login/index.js:84
-#: user/static/js/modules/signup/index.js:93
+#: user/static/js/modules/login/index.js:102
+#: user/static/js/modules/signup/index.js:112
 msgid "Verify Your E-mail Address"
 msgstr "Verifiziere Deine E-Mailadresse"
 
-#: user/static/js/modules/login/index.js:84
+#: user/static/js/modules/login/index.js:102
 msgid "We have sent an e-mail to your email address for verification. Follow the link provided to finalize the signup process."
 msgstr "Wir haben eine E-Mail zur Bestätigung an Ihre E-Mail-Adresse gesendet. Folgen Sie dem angegebenen Link, um den Anmeldevorgang abzuschließen."
 
-#: user/static/js/modules/login/index.js:84
+#: user/static/js/modules/login/index.js:102
 #: user/static/js/modules/password_reset/request_email.js:62
-#: user/static/js/modules/signup/index.js:95
+#: user/static/js/modules/signup/index.js:114
 msgid "Please contact us if you do not receive it within a few minutes."
 msgstr "Bitte kontaktieren Sie uns, wenn Sie es nicht innerhalb weniger Minuten erhalten."
 
@@ -3874,7 +3876,7 @@ msgid "Change My Password"
 msgstr "Ändere mein Passwort"
 
 #: user/static/js/modules/password_reset/change_password.js:59
-#: user/static/js/modules/signup/index.js:66
+#: user/static/js/modules/signup/index.js:81
 msgid "You must type the same password each time."
 msgstr "Sie müssen jedes Mal dasselbe Kennwort eingeben."
 
@@ -3905,7 +3907,7 @@ msgid "Reset My Password"
 msgstr "Kennwort zurücksetzen"
 
 #: user/static/js/modules/password_reset/request_email.js:47
-#: user/static/js/modules/signup/index.js:71
+#: user/static/js/modules/signup/index.js:86
 msgid "This is not a valid email."
 msgstr "Dies ist keine gültige E-Mail."
 
@@ -3983,7 +3985,7 @@ msgstr "Registrierung geschlossen"
 msgid "We are sorry, but the sign up is currently closed."
 msgstr "Es tut uns leid, aber die Anmeldung ist zur Zeit geschlossen."
 
-#: user/static/js/modules/signup/index.js:93
+#: user/static/js/modules/signup/index.js:112
 msgid "We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</a> for verification. Follow the link provided to finalize the signup process."
 msgstr "Wir haben eine E-Mail zur Bestätigung an <a href=\"mailto:%(email)s\">%(email)s</a> gesendet. Folgen Sie dem angegebenen Link, um den Anmeldevorgang abzuschließen."
 
@@ -4093,4 +4095,8 @@ msgstr "Medienmanager"
 #: document/static/js/modules/editor/tools/word_count_templates.js:8
 msgid "Selection"
 msgstr "Auswahl"
+
+#: base/static/js/modules/setup/index.js:18
+msgid "The %(appName)s server is currently being updated. Please wait."
+msgstr "Der %(appName)s Server wird aktualisiert. Bitte warten."
 

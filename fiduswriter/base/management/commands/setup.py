@@ -1,5 +1,5 @@
 import os
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.core.management import call_command
 from django.conf import settings
 from django.contrib.flatpages.models import FlatPage
@@ -24,12 +24,6 @@ class Command(BaseCommand):
             action='store_false',
             dest='static',
             help='Do not collect static files.',
-        )
-        parser.add_argument(
-            '--no-compress',
-            action='store_false',
-            dest='compress',
-            help='Do not attempt to compress static files.',
         )
         parser.add_argument(
             '--no-force-transpile',
@@ -93,15 +87,6 @@ class Command(BaseCommand):
         else:
             call_command("compilemessages")
         call_command("transpile", force=force_transpile)
-        if (
-            options["compress"] and
-            settings.COMPRESS_OFFLINE and
-            settings.COMPRESS_ENABLED
-        ):
-            try:
-                call_command("compress")
-            except CommandError:
-                pass
         if (
             options["static"] and
             not settings.DEBUG

@@ -1,14 +1,14 @@
 import {PreloginPage} from "../prelogin"
 
-export class OfflinePage extends PreloginPage {
+export class SetupPage extends PreloginPage {
     constructor({app, isFree, language, registrationOpen, staticUrl}) {
         super({app, isFree, language, registrationOpen, staticUrl})
-        this.title = gettext('Disconnected')
+        this.title = gettext('Update')
         this.contents = `<div class="fw-login-left">
-            <h1 class="fw-login-title">${gettext('Disconnected')}</h1>
+            <h1 class="fw-login-title">${gettext('Update')}</h1>
             <p>${interpolate(
                 gettext(
-                    'You are currently disconnected from the %(appName)s server.'
+                    'The %(appName)s server is currently being updated. Please wait.'
                 ),
                 {appName: this.app.name},
                 true
@@ -17,16 +17,11 @@ export class OfflinePage extends PreloginPage {
 
         this.footerLinks = this.footerLinks.filter(link => link.external) // We only show external links as internal links will not work
 
-        this.headerLinks = [
-            {
-                type: 'button',
-                text: gettext('Reload page'),
-                link: window.location.pathname
-            }
-        ]
+        this.headerLinks = []
     }
 
     init() {
+        setTimeout(() => this.app.init(), 5000)
         return super.init().then(
             () => document.querySelectorAll('#lang-selection,.feedback-tab').forEach(el => el.style.visibility = 'hidden')
         )

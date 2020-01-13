@@ -26,10 +26,14 @@ export class ModCitations {
     resetCitations() {
         const citations = document.querySelectorAll('#paper-editable span.citation')
         citations.forEach(citation => citation.innerHTML = '')
-        if (document.querySelector('.article-bibliography').innerHTML !== '') {
-            document.querySelector('.article-bibliography').innerHTML = ''
-        }
+        const articleBibliography = document.querySelector('.article-bibliography')
         const citationsContainer = document.getElementById('citation-footnote-box-container')
+        if (!articleBibliography || !citationsContainer) {
+            return
+        }
+        if (articleBibliography.innerHTML !== '') {
+            articleBibliography.innerHTML = ''
+        }
         if (citationsContainer.innerHTML !== '') {
             citationsContainer.innerHTML = ''
         }
@@ -119,7 +123,11 @@ export class ModCitations {
         }
         this.citationType = citRenderer.fm.citationType
         // Add the rendered html and css of the bibliography to the DOM.
-        document.querySelector('.article-bibliography').innerHTML = citRenderer.fm.bibHTML
+        const articleBibliography = document.querySelector('.article-bibliography')
+        if (!articleBibliography) {
+            return
+        }
+        articleBibliography.innerHTML = citRenderer.fm.bibHTML
         let styleEl = document.querySelector('.article-bibliography-style')
         if (!styleEl) {
             document.body.insertAdjacentHTML('beforeend', '<style type="text/css" class="article-bibliography-style"></style>')

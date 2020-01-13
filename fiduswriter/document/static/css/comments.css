@@ -61,7 +61,6 @@ body.header-closed #margin-box-filter {
 .margin-box-filter-button:nth-child(2):nth-last-child(2) .label,
 .margin-box-filter-button:nth-child(3):nth-last-child(1) .label {
     font-size: 10px;
-    top: 30px;
     left: 4px;
 }
 

@@ -6,6 +6,10 @@ body {
     overflow-y: hidden;
 }
 
+body.scrollable {
+    overflow-y: auto;
+}
+
 .fw-header {
     width: 100%;
     height: auto;

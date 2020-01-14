@@ -66,6 +66,8 @@ export class Dialog {
         this.scroll = options.scroll || false
         this.dialogEl = false
         this.backdropEl = false
+        this.dragging = false
+        this.hasBeenMoved = false
     }
 
     setButtons(buttons) {
@@ -118,26 +120,60 @@ export class Dialog {
         this.dialogEl.style.left = `${(totalWidth - dialogWidth)/2 + scrollLeftOffset}px`
     }
 
+    adjustDialogToScroll() {
+        this.dialogEl.style.top = `${
+            Math.max(
+                Math.min(
+                    this.dialogEl.offsetTop,
+                    this.backdropEl.scrollHeight - this.dialogEl.scrollHeight + window.pageYOffset
+                ),
+                window.pageYOffset
+            )
+        }px`
+    }
+
+    moveDialog(x, y) {
+        this.dialogEl.style.top = `${
+            Math.min(
+                Math.max(y - this.dragging.y, 0),
+                this.backdropEl.scrollHeight - this.dialogEl.scrollHeight + window.pageYOffset
+            )
+        }px`
+        this.dialogEl.style.left = `${
+            Math.min(
+                Math.max(x - this.dragging.x, 0),
+                document.body.scrollWidth - this.dialogEl.scrollWidth
+            )
+        }px`
+        this.hasBeenMoved = true
+    }
+
     scrollevent() {
-        this.centerDialog()
+        if (this.hasBeenMoved) {
+            // The dialog has been moved manually. We just adjust the position to make it stay in the view.
+            this.adjustDialogToScroll()
+        } else {
+            this.centerDialog()
+        }
+
     }
 
     bind() {
         window.addEventListener('scroll', this.eventAddress, false)
         this.dialogEl.addEventListener('click', event => {
             const el = {}
-            let buttonNumber, seekItem
             switch (true) {
-                case findTarget(event, '.ui-dialog-buttonpane button', el):
+                case findTarget(event, '.ui-dialog-buttonpane button', el): {
                     event.preventDefault()
-                    buttonNumber = 0
-                    seekItem = el.target
+                    let buttonNumber = 0
+                    let seekItem = el.target
                     while (seekItem.previousElementSibling) {
                         buttonNumber++
                         seekItem = seekItem.previousElementSibling
                     }
                     this.buttons[buttonNumber].click()
                     break
+                }
                 case findTarget(event, '.ui-dialog-titlebar-close', el):
                     event.preventDefault()
                     this.close()
@@ -146,6 +182,36 @@ export class Dialog {
                     break
             }
         })
+        this.dialogEl.addEventListener('mousedown', event => {
+            const el = {}
+            switch (true) {
+                case findTarget(event, '.ui-dialog-titlebar', el):
+                    this.dragging = {
+                        x: event.clientX - this.dialogEl.offsetLeft,
+                        y: event.clientY - this.dialogEl.offsetTop
+                    }
+                    break
+                default:
+                    break
+            }
+        })
+        this.dialogEl.addEventListener('mouseup', event => {
+            const el = {}
+            switch (true) {
+                case findTarget(event, '.ui-dialog-titlebar', el):
+                    this.dragging = false
+                    break
+                default:
+                    break
+            }
+        })
+        this.dialogEl.addEventListener('mousemove', event => {
+            if (!this.dragging) {
+                return
+            }
+            this.moveDialog(event.clientX, event.clientY)
+        })
+
     }
 
     getHighestDialogZIndex() {

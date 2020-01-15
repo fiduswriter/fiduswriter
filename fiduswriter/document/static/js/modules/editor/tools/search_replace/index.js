@@ -151,13 +151,15 @@ export class SearchReplaceDialog {
             onClose: () => {
                 this.endSearch()
                 this.editor.currentView.focus()
-            }
+            },
+            canEscape: true
         })
 
         this.dialog.open()
 
         this.searchInput = this.dialog.dialogEl.querySelector('.search')
         this.replaceInput = this.dialog.dialogEl.querySelector('.replace')
+        this.dialog.dialogEl.querySelector('input[type=text]').focus()
 
         this.bind()
     }

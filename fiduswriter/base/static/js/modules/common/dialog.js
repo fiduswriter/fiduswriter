@@ -1,3 +1,5 @@
+import {keyName} from "w3c-keyname"
+
 import {findTarget} from "./basic"
 
 const dialogTemplate = ({id, classes, title, height, width, icon, buttons, zIndex, body, scroll}) =>
@@ -49,7 +51,6 @@ const BUTTON_TYPES = {
 
 export class Dialog {
     constructor(options) {
-        this.eventAddress = this.scrollevent.bind(this)
         this.id = options.id || false
         this.classes = options.classes || false
         this.title = options.title || ''
@@ -64,10 +65,12 @@ export class Dialog {
         this.onClose = options.onClose || false
         this.icon = options.icon || false
         this.scroll = options.scroll || false
+        this.canEscape = options.canEscape || false
         this.dialogEl = false
         this.backdropEl = false
         this.dragging = false
         this.hasBeenMoved = false
+        this.listeners = {}
     }
 
     setButtons(buttons) {
@@ -148,18 +151,39 @@ export class Dialog {
         this.hasBeenMoved = true
     }
 
-    scrollevent() {
+    onScroll(_event) {
         if (this.hasBeenMoved) {
             // The dialog has been moved manually. We just adjust the position to make it stay in the view.
             this.adjustDialogToScroll()
         } else {
             this.centerDialog()
         }
+    }
 
+    onKeydown(event) {
+        let name = keyName(event)
+        if (event.altKey) {
+            name = "Alt-" + name
+        }
+        if (event.ctrlKey) {
+            name = "Ctrl-" + name
+        }
+        if (event.metaKey) {
+            name = "Meta-" + name
+        }
+        if (event.shiftKey) {
+            name = "Shift-" + name
+        }
+        if (name === 'Escape' && this.canEscape) {
+            this.close()
+        }
     }
 
     bind() {
-        window.addEventListener('scroll', this.eventAddress, false)
+        this.listeners.onScroll = event => this.onScroll(event)
+        window.addEventListener('scroll', this.listeners.onScroll, false)
+        this.listeners.onKeydown = event => this.onKeydown(event)
+        document.body.addEventListener('keydown', this.listeners.onKeydown)
         this.dialogEl.addEventListener('click', event => {
             const el = {}
             switch (true) {
@@ -224,7 +248,8 @@ export class Dialog {
         if (!this.dialogEl) {
             return
         }
-        window.removeEventListener("scroll",  this.eventAddress, false)
+        window.removeEventListener("scroll",  this.listeners.onScroll, false)
+        document.body.removeEventListener("keydown", this.listeners.onKeydown)
         if (this.beforeClose) {
             this.beforeClose()
         }

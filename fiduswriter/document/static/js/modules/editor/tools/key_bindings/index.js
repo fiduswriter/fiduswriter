@@ -14,7 +14,8 @@ export class KeyBindingsDialog {
             title: gettext('Keyboard Shortcuts'),
             body: keyBindingsTemplate(),
             width: 800,
-            buttons: [{type: 'close'}]
+            buttons: [{type: 'close'}],
+            canEscape: true
         })
         dialog.open()
     }

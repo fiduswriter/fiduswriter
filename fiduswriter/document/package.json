@@ -23,7 +23,6 @@
         "prosemirror-transform": "1.2.3",
         "prosemirror-view": "1.13.7",
         "prosemirror-suggestions": "0.2.0",
-        "w3c-keyname": "2.1.x",
         "pretty": "2.0.0",
         "sortablejs": "1.8.x",
         "rfc6902": "^3.0.4",

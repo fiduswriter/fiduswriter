@@ -1,20 +1,18 @@
-import {showKeyBindingsTemplate} from "./show_key_bindings_templates"
-import {Dialog} from "../../common"
+import {keyBindingsTemplate} from "./templates"
+import {Dialog} from "../../../common"
 /* This is an adaptation of question.mark for Fidus Writer http://fiduswriter.org
 * originally by Gabriel Lopez <gabriel.marcos.lopez@gmail.com>
 */
 
-export class ModToolsShowKeyBindings {
-    constructor(mod) {
-        mod.showKeyBindings = this
-        this.mod = mod
+export class KeyBindingsDialog {
+    constructor(editor) {
+        this.editor = editor
     }
 
-    show() {
+    init() {
         const dialog = new Dialog({
             title: gettext('Keyboard Shortcuts'),
-            body: showKeyBindingsTemplate(),
-            height: 500,
+            body: keyBindingsTemplate(),
             width: 800,
             buttons: [{type: 'close'}]
         })

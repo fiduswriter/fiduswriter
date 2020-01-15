@@ -324,6 +324,14 @@ body.header-closed #editor-content {
     background-color: grey;
 }
 
+#paper-editable .search {
+    background-color: #84b4a7;
+}
+
+#paper-editable .search.selected {
+    background-color: #b73717;
+}
+
 #paper-editable {
     display: table;
     width: 100%;

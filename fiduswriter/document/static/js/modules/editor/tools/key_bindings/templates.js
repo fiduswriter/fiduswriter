@@ -1,4 +1,4 @@
-export const showKeyBindingsTemplate = () =>
+export const keyBindingsTemplate = () =>
     `<div id="helpListWrap" class="help-list-wrap">
         <ul class="help-list">
           <li class="help-key-unit">
@@ -31,6 +31,10 @@ export const showKeyBindingsTemplate = () =>
           </li>
         </ul><!-- .help-list -->
         <ul class="help-list">
+          <li class="help-key-unit">
+            <kbd class="help-key"><span>CTRL+H</span></kbd>
+            <span class="help-key-def">${gettext('Search and replace')}</span>
+          </li>
           <li class="help-key-unit">
             <kbd class="help-key"><span>CTRL+B</span></kbd>
             <span class="help-key-def">${gettext('Bold')}</span>

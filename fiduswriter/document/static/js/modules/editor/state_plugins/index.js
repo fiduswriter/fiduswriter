@@ -97,3 +97,13 @@ export {
     deactivateAllSelectedChanges
 }
 from "./track"
+export {
+    searchPlugin,
+    setSearchTerm,
+    getSearchMatches,
+    selectPreviousSearchMatch,
+    selectNextSearchMatch,
+    deselectSearchMatch,
+    endSearch
+}
+from "./search"

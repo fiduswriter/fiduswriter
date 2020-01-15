@@ -61,9 +61,6 @@ import {
     ModCollab
 } from "./collab"
 import {
-    ModTools
-} from "./tools"
-import {
     ModTrack,
     acceptAllNoInsertions,
     amendTransaction
@@ -110,6 +107,7 @@ import {
     tocRenderPlugin,
     toolbarPlugin,
     trackPlugin,
+    searchPlugin,
 } from "./state_plugins"
 import {
     buildEditorKeymap
@@ -194,6 +192,7 @@ export class Editor {
             [tableMenuPlugin, () => ({editor: this})],
             [figurePlugin, () => ({editor: this})],
             [tocRenderPlugin, () => ({editor: this})],
+            [searchPlugin],
         ]
     }
 
@@ -422,7 +421,6 @@ export class Editor {
         this.mod.footnotes.init()
         new ModDB(this)
         new ModCollab(this)
-        new ModTools(this)
         new ModTrack(this)
         new ModMarginboxes(this)
         this.mod.marginboxes.init()

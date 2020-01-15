@@ -51,6 +51,7 @@ export class DocTemplatesEditor {
 
     render() {
         this.dom = document.createElement('body')
+        this.dom.classList.add('scrollable')
         this.dom.innerHTML =
         `<div id="wait" class="">
             <i class="fa fa-spinner fa-pulse"></i>

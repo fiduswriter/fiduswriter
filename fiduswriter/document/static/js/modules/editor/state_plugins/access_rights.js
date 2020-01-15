@@ -13,7 +13,7 @@ export const accessRightsPlugin = function(options) {
                 return allowed
             }
 
-            if (READ_ONLY_ROLES.includes(options.editor.docInfo.access_rights)) {
+            if (READ_ONLY_ROLES.includes(options.editor.docInfo.access_rights) && tr.docChanged) {
                 // User only has read access. Don't allow anything.
                 allowed = false
             } else if (COMMENT_ONLY_ROLES.includes(options.editor.docInfo.access_rights)) {

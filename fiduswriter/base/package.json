@@ -29,7 +29,8 @@
     "eslint-plugin-import": "2.20.0",
     "eslint-import-resolver-node": "0.3.3",
     "babel-eslint": "10.0.3",
-    "offline-plugin": "5.0.x"
+    "offline-plugin": "5.0.x",
+    "w3c-keyname": "2.1.x"
   },
   "devDependencies": {
     "updates": "^9.0.1",

@@ -6,7 +6,6 @@ body.editor {
     color: #2c2723;
     width: 100%;
     background-color: #f2f2f2;
-    overflow-y: auto;
     overflow-x: hidden;
 }
 
@@ -323,6 +322,14 @@ body.header-closed #editor-content {
 #paper-editable .citation:hover,
 .equation:hover {
     background-color: grey;
+}
+
+#paper-editable .search {
+    background-color: #84b4a7;
+}
+
+#paper-editable .search.selected {
+    background-color: #b73717;
 }
 
 #paper-editable {

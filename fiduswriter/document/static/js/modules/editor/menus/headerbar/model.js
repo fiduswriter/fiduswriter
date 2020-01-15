@@ -2,6 +2,7 @@ import {DocumentAccessRightsDialog} from "../../../documents/access_rights"
 import {SaveRevision, SaveCopy} from "../../../exporter/native"
 import {ExportFidusFile} from "../../../exporter/native/file"
 import {RevisionDialog, LanguageDialog} from "../../dialogs"
+import {WordCountDialog, KeyBindingsDialog, SearchReplaceDialog} from "../../tools"
 
 const languageItem = function(code, name, order) {
     return {
@@ -433,17 +434,30 @@ export const headerbarModel = () => ({
                     tooltip: gettext('See document statistics.'),
                     order: 0,
                     action: editor => {
-                        editor.mod.tools.wordCount.wordCountDialog()
+                        const dialog = new WordCountDialog(editor)
+                        dialog.init()
+                    }
+                },
+                {
+                    title: gettext('Search and replace'),
+                    type: 'action',
+                    tooltip: gettext('Show a search and replace dialog.'),
+                    order: 1,
+                    keys: 'Ctrl-h',
+                    action: editor => {
+                        const dialog = new SearchReplaceDialog(editor)
+                        dialog.init()
                     }
                 },
                 {
                     title: gettext('Keyboard shortcuts'),
                     type: 'action',
                     tooltip: gettext('Show an overview of available keyboard shortcuts.'),
-                    order: 1,
+                    order: 2,
                     keys: 'Shift-Ctrl-/',
                     action: editor => {
-                        editor.mod.tools.showKeyBindings.show()
+                        const dialog = new KeyBindingsDialog(editor)
+                        dialog.init()
                     }
                 }
             ]

@@ -1,10 +1,19 @@
-import {wordCounterDialogTemplate} from "./word_count_templates"
-import {Dialog} from "../../common"
+import {wordCounterDialogTemplate} from "./templates"
+import {Dialog} from "../../../common"
 
-export class ModToolsWordCount {
-    constructor(mod) {
-        mod.wordCount = this
-        this.mod = mod
+export class WordCountDialog {
+    constructor(editor) {
+        this.editor = editor
+    }
+
+    init() {
+        const dialog = new Dialog({
+                title: gettext('Word counter'),
+                body: wordCounterDialogTemplate(this.countWords()),
+                buttons: [{type: 'close'}],
+                canEscape: true
+            })
+        dialog.open()
     }
 
     getNonDeletedTextContent(topNode) {
@@ -19,12 +28,11 @@ export class ModToolsWordCount {
             }
         })
         return text.replace(/(^\s*)|(\s*$)/gi, "").replace(/[ ]{2,}/gi, " ").replace(/\n /, "\n").replace(/\n{2,}/gi, "\n")
-
     }
 
     countWords() {
-        const textContent = this.getNonDeletedTextContent(this.mod.editor.view.state.doc),
-            footnoteContent = this.getNonDeletedTextContent(this.mod.editor.mod.footnotes.fnEditor.view.state.doc),
+        const textContent = this.getNonDeletedTextContent(this.editor.view.state.doc),
+            footnoteContent = this.getNonDeletedTextContent(this.editor.mod.footnotes.fnEditor.view.state.doc),
             bibliographyContent = document.querySelector('.article-bibliography').textContent
         const docContent = textContent + ' ' + footnoteContent + ' ' + bibliographyContent
         const docNumChars = docContent.split('\n').join('').length - 2 // Subtract two for added spaces
@@ -34,9 +42,9 @@ export class ModToolsWordCount {
         const docNumWords = docNumNoSpace ? docWords.length : 0
 
         const selectionContent = this.getNonDeletedTextContent(
-            this.mod.editor.currentView.state.doc.cut(
-                this.mod.editor.currentView.state.selection.from,
-                this.mod.editor.currentView.state.selection.to
+            this.editor.currentView.state.doc.cut(
+                this.editor.currentView.state.selection.from,
+                this.editor.currentView.state.selection.to
             )
         )
         const selectionNumChars = selectionContent.split('\n').join('').length
@@ -54,13 +62,6 @@ export class ModToolsWordCount {
         }
     }
 
-    wordCountDialog() {
-        const dialog = new Dialog({
-                title: gettext('Word counter'),
-                body: wordCounterDialogTemplate(this.countWords()),
-                buttons: [{type: 'close'}]
-            })
-        dialog.open()
-    }
+
 
 }

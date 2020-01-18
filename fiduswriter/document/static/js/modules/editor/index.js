@@ -206,7 +206,7 @@ export class Editor {
             'document.css',
             'carets.css',
             'tracking.css',
-            'comments.css',
+            'margin_boxes.css',
             'prosemirror.css',
             'footnotes.css',
             'chat.css',

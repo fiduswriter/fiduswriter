@@ -349,13 +349,13 @@ export const marginboxFilterTemplate = ({marginBoxes, filterOptions, docInfo}) =
                     </div>
                 </li>
                 <li>
-                    <span class="fw-pulldown-item margin-box-filter-comments-check">
+                    <span class="fw-pulldown-item margin-box-filter-check">
                         <input type="checkbox" class="fw-check fw-label-check"${filterOptions.commentsOnlyMajor ? ' checked' : ''} id="margin-box-filter-comments-only-major">
                         <label for="margin-box-filter-comments-only-major">${gettext('Only major comments')}</label>
                     </span>
                 </li>
                 <li>
-                    <span class="fw-pulldown-item margin-box-filter-comments-check">
+                    <span class="fw-pulldown-item margin-box-filter-check">
                         <input type="checkbox" class="fw-check fw-label-check"${filterOptions.commentsResolved ? ' checked' : ''} id="margin-box-filter-comments-resolved">
                         <label for="margin-box-filter-comments-resolved">${gettext('Resolved comments')}</label>
                     </span>
@@ -374,13 +374,13 @@ export const marginboxFilterTemplate = ({marginBoxes, filterOptions, docInfo}) =
             <span class="show-marginbox-options fa fa-ellipsis-v"></span>
             <div class="marginbox-options fw-pulldown fw-right"><ul>
                 <li>
-                <span class="fw-pulldown-item">
+                <span class="fw-pulldown-item margin-box-filter-check">
                     <input type="checkbox" class="fw-check fw-label-check"${filterOptions.help ? ' checked' : ''} id="margin-box-filter-info-help">
                     <label for="margin-box-filter-info-help">${gettext('Instructions')}</label>
                 </span>
                 </li>
                 <li>
-                <span class="fw-pulldown-item">
+                <span class="fw-pulldown-item margin-box-filter-check">
                     <input type="checkbox" class="fw-check fw-label-check"${filterOptions.warning ? ' checked' : ''} id="margin-box-filter-info-warning">
                     <label for="margin-box-filter-info-warning">${gettext('Warnings')}</label>
                 </span>

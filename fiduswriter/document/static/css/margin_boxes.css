@@ -97,12 +97,15 @@ body.header-closed #margin-box-filter {
     text-shadow: none;
 }
 
-.margin-box.active {
+#margin-box-container div.margin-box.active {
     color: #000;
-    background-color: #fffacf;
     border: 1px solid #c5c5c5;
     left: -18px;
     z-index: 5;
+}
+
+.margin-box.comment.active {
+    background-color: #fffacf;
 }
 
 .margin-box.help.active {
@@ -119,7 +122,7 @@ body.header-closed #margin-box-filter {
     background-color: #e0aa9e;
 }
 
-.margin-box.warning.active {
+#margin-box-container div.margin-box.warning.active {
     background-color: #b73717;
     color: #fff;
 }

@@ -51,6 +51,9 @@ export class ModMarginboxes {
         document.body.addEventListener('click', event => {
             const el = {}
             switch (true) {
+                case findTarget(event, '.margin-box-filter-check', el):
+                    // do not react to clicks on checkboxes within sub menus
+                    break
                 case findTarget(event, '.margin-box-filter-comments-author', el):
                     this.filterOptions.author = parseInt(el.target.dataset.id)
                     this.view(this.editor.currentView)
@@ -70,9 +73,6 @@ export class ModMarginboxes {
                 case findTarget(event, '#margin-box-filter-track', el):
                     this.filterOptions.track = !this.filterOptions.track
                     this.view(this.editor.currentView)
-                    break
-                case findTarget(event, '.marginbox-options', el):
-                    // do not react to clicks within sub menus
                     break
                 case findTarget(event, '#margin-box-filter-comments', el):
                     this.filterOptions.comments = !this.filterOptions.comments

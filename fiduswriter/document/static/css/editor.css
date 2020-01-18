@@ -326,12 +326,24 @@ body.header-closed #editor-content {
     background-color: grey;
 }
 
+#paper-editable .cross-reference.missing-target,
+#paper-editable .cross-reference.missing-target:hover,
+#paper-editable a.missing-target {
+    background-color: #b73717;
+}
+
+#paper-editable .cross-reference.missing-target,
+#paper-editable .cross-reference.missing-target:hover {
+    text-transform: uppercase;
+}
+
+
 #paper-editable .search {
     background-color: #84b4a7;
 }
 
 #paper-editable .search.selected {
-    background-color: #b73717;
+    background-color: #8ab5a6;
 }
 
 #paper-editable {

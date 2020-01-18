@@ -347,7 +347,6 @@ export const linksPlugin = function(options) {
                     })
 
                     if (foundIdElement || foundAnchorWithoutId) {
-                        console.log('LINK UPDATE')
                         const linkUpdate = {foundAnchorWithoutId}
                         tr.setMeta('linkUpdate', linkUpdate)
                         if (oldState.schema === options.editor.view.state.schema) {

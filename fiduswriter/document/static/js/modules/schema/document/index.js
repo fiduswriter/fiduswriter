@@ -26,7 +26,8 @@ import {
     parseTracks,
     comment,
     annotation_tag,
-    cross_reference
+    cross_reference,
+    link
 } from "../common"
 import {
     contributor,
@@ -138,7 +139,7 @@ const spec = {
     marks: OrderedMap.from({
         em: marks.em,
         strong: marks.strong,
-        link: marks.link,
+        link,
         underline,
         comment,
         annotation_tag,

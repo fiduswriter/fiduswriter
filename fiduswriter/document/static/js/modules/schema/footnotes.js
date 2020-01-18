@@ -25,7 +25,8 @@ import {
     format_change,
     comment,
     annotation_tag,
-    cross_reference
+    cross_reference,
+    link
 } from "./common"
 
 const footnotecontainer = {
@@ -70,7 +71,7 @@ const spec = {
   marks: OrderedMap.from({
       em: marks.em,
       strong: marks.strong,
-      link: marks.link,
+      link,
       underline,
       anchor,
       comment,

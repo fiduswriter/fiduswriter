@@ -95,10 +95,9 @@ export class ModFootnoteEditor {
                     return
                 }
                 const trackedTr = amendTransaction(tr, this.view.state, this.mod.editor)
-                const newState = this.view.state.apply(trackedTr)
-
+                const {state: newState, transactions} = this.view.state.applyTransaction(trackedTr)
                 this.view.updateState(newState)
-                this.onTransaction(trackedTr, remote)
+                transactions.forEach(subTr => this.onTransaction(subTr))
                 this.mod.layout.updateDOM()
             }
         })
@@ -106,9 +105,9 @@ export class ModFootnoteEditor {
     }
 
     // Find out if we need to recalculate the bibliography
-    onTransaction(tr, remote) {
+    onTransaction(tr) {
         const mainMeta = tr.getMeta('toMain')
-        if (remote || (!mainMeta && !tr.docChanged)) {
+        if (tr.getMeta('remote') || (!mainMeta && !tr.docChanged)) {
             return
         }
         const mainTr = this.mod.editor.view.state.tr,
@@ -140,9 +139,9 @@ export class ModFootnoteEditor {
                 mainTr.setMeta(key, value)
             })
         }
-
-        this.mod.editor.view.dispatch(mainTr)
-
+        if (mainMeta || mainTr.docChanged) {
+            this.mod.editor.view.dispatch(mainTr)
+        }
     }
 
     applyDiffs(diffs, cid) {

@@ -10,8 +10,8 @@ export const accessRightsPlugin = function(options) {
         filterTransaction: (tr, _state) => {
             let allowed = true
             const remote = tr.getMeta('remote')
-            const filterFree = tr.getMeta('filterFree')
-            if (remote || filterFree) {
+            const fromMain = tr.getMeta('fromMain')
+            if (remote || fromMain) {
                 return allowed
             }
 

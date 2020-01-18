@@ -86,6 +86,35 @@ export const equation = {
     }
 }
 
+export const cross_reference = {
+    inline: true,
+    group: "inline",
+    attrs: {
+        id: {
+            default: false
+        },
+        title: {
+            default: null // title === null means that the target is gone
+        }
+    },
+    parseDOM: [{
+        tag: "span.cross-reference[data-id][data-title]",
+        getAttrs(dom) {
+            return {
+                id: dom.dataset.id,
+                title: dom.dataset.title
+            }
+        }
+    }],
+    toDOM(node) {
+        return ["span", {
+            class: 'cross-reference',
+            'data-id': node.attrs.id,
+            'data-title': node.attrs.title
+        }, node.attrs.title ? node.attrs.title : gettext('UNDEFINED')]
+    }
+}
+
 export function randomFigureId() {
     return 'F' + Math.round(Math.random()*10000000) + 1
 }

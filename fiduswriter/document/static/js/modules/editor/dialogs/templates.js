@@ -4,9 +4,30 @@ import {
 } from "../../schema/i18n"
 
 
-export const linkDialogTemplate = ({defaultLink, internalTargets, link, linkTitle}) =>
+export const linkDialogTemplate = ({defaultLink, internalTargets, linkType, title, target, allowedContent}) =>
     `${
-        internalTargets.length ?
+        allowedContent.cross_reference && internalTargets.length ?
+        `<div class="fw-radio">
+            <input type="radio" name="link-type" value="cross_reference" class="cross-reference-check">
+            <label class="cross-reference-label">${gettext("Cross reference")}</label>
+        </div>
+        <div class="fw-select-container">
+            <select class="cross-reference-selector fw-button fw-white fw-large" required="">
+                <option class="placeholder" selected="" disabled="" value="">
+                    ${gettext("Select Target")}
+                </option>
+                ${
+                    internalTargets.map(iTarget =>
+                        `<option class="cross-reference-item" type="text" value="${iTarget.id}" ${target === iTarget.id ? "selected" : ""}>
+                            ${escapeText(iTarget.text)}
+                        </option>`
+                    ).join('')
+                }
+            </select>
+            <div class="fw-select-arrow fa fa-caret-down"></div>
+        </div><p></p>` : ''
+    }${
+        allowedContent.link && internalTargets.length ?
         `<div class="fw-radio">
             <input type="radio" name="link-type" value="internal" class="link-internal-check">
             <label class="link-internal-label">${gettext("Internal")}</label>
@@ -17,11 +38,11 @@ export const linkDialogTemplate = ({defaultLink, internalTargets, link, linkTitl
                     ${gettext("Select Target")}
                 </option>
                 ${
-                    internalTargets.map(target =>
-                        `<option class="link-item" type="text" value="${target.id}" ${link === `#${target.id}` ? "selected" : ""}>
-                            ${target.text}
+                    internalTargets.map(iTarget =>
+                        `<option class="link-item" type="text" value="${iTarget.id}" ${target === iTarget.id ? "selected" : ""}>
+                            ${escapeText(iTarget.text)}
                         </option>`
-                    )
+                    ).join('')
                 }
             </select>
             <div class="fw-select-arrow fa fa-caret-down"></div>
@@ -33,10 +54,13 @@ export const linkDialogTemplate = ({defaultLink, internalTargets, link, linkTitl
         </div>`
         :
         ''
-    }
-    <input class="link-title" type="text" value="${escapeText(linkTitle)}" placeholder="${gettext("Link title")}"/>
-    <p></p>
-    <input class="link" type="text" value="${["#", undefined].includes(link[0]) ? defaultLink : link}" placeholder="${gettext("URL")}"/>`
+    }${
+        allowedContent.link ?
+        `<input class="link-title" type="text" value="${escapeText(title)}" placeholder="${gettext("Link title")}"/>
+        <p></p>
+        <input class="link" type="text" value="${target && linkType === 'external' ? target : defaultLink}" placeholder="${gettext("URL")}"/>` :
+        ''
+    }`
 
 /** Dialog to add a note to a revision before saving. */
 export const revisionDialogTemplate = ({dir}) =>

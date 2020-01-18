@@ -24,7 +24,8 @@ import {
     insertion,
     format_change,
     comment,
-    annotation_tag
+    annotation_tag,
+    cross_reference
 } from "./common"
 
 const footnotecontainer = {
@@ -61,6 +62,7 @@ const spec = {
     hard_break: nodes.hard_break,
     citation,
     equation,
+    cross_reference,
     ordered_list,
     bullet_list,
     list_item

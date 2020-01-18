@@ -314,13 +314,15 @@ body.header-closed #editor-content {
 }
 
 #paper-editable .citation,
-.equation {
+#paper-editable .cross-reference,
+#paper-editable .equation {
     cursor: pointer;
     background-color: lightgrey;
 }
 
 #paper-editable .citation:hover,
-.equation:hover {
+#paper-editable .cross-reference:hover,
+#paper-editable .equation:hover {
     background-color: grey;
 }
 

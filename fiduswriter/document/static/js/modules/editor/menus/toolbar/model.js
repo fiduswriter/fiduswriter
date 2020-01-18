@@ -474,7 +474,10 @@ export const toolbarModel = () => ({
                 if (
                     READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
                     COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
-                    markDisabled(editor, 'link')
+                    (
+                        markDisabled(editor, 'link') &&
+                        elementDisabled(editor, 'cross_reference')
+                    )
                 ) {
                     return true
                 }

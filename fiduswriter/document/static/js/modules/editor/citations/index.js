@@ -175,7 +175,7 @@ export class ModCitations {
 
         this.footnoteNumberOverride()
         if (needFootnoteLayout) {
-            this.editor.mod.footnotes.layout.layoutFootnotes()
+            this.editor.mod.footnotes.layout.updateDOM()
         }
     }
 

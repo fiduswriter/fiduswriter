@@ -25,7 +25,8 @@ import {
     format_change,
     parseTracks,
     comment,
-    annotation_tag
+    annotation_tag,
+    cross_reference
 } from "../common"
 import {
     contributor,
@@ -75,6 +76,7 @@ let specNodes = OrderedMap.from({
     hard_break: nodes.hard_break,
     citation,
     equation,
+    cross_reference,
     footnote,
     ordered_list,
     bullet_list,

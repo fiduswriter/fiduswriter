@@ -25,6 +25,36 @@ const copyLink = function(href) {
     }
 }
 
+export const getInternalTargets = function(state, editor) {
+    const internalTargets = []
+
+    const figures = {}
+
+    state.doc.descendants(node => {
+        if (node.type.groups.includes('heading') && node.textContent.length) {
+            internalTargets.push({
+                id: node.attrs.id,
+                text: node.textContent
+            })
+        }
+
+        if (node.type.name === 'figure' && node.attrs.figureCategory) {
+            if (!figures[node.attrs.figureCategory]) {
+                figures[node.attrs.figureCategory] = 0
+            }
+            figures[node.attrs.figureCategory]++
+
+            internalTargets.push({
+                id: node.attrs.id,
+                text: editor === 'main' ?
+                    `${gettext(node.attrs.figureCategory)} ${figures[node.attrs.figureCategory]}` :
+                    `${gettext(node.attrs.figureCategory)} ${figures[node.attrs.figureCategory]}A`
+            })
+        }
+    })
+    return internalTargets
+}
+
 export const linksPlugin = function(options) {
 
     function getUrl(state, oldState, oldUrl) {
@@ -261,6 +291,74 @@ export const linksPlugin = function(options) {
                     linkMark = newLinkMark
                     anchorMark = newAnchorMark
                 }
+                if (!tr.getMeta('remote')) {
+                    // We look for changes to figures or headings.
+                    let foundIdElement = false // found heading or figure
+                    let ranges = []
+                    tr.steps.forEach((step, index) => {
+                        if (step.jsonID ===
+                            'replace' || step.jsonID ===
+                            'replaceAround') {
+                            ranges.push([step.from, step.to])
+                            tr.docs[index].nodesBetween(
+                                step.from,
+                                step.to,
+                                node => {
+                                    if (
+                                        node.type.groups.includes('heading') ||
+                                        node.type.name === 'figure'
+                                    ) {
+                                        foundIdElement = true
+                                    }
+                                }
+                            )
+                        }
+                        ranges = ranges.map(range => {
+                            return [
+                                tr.mapping.maps[index].map(range[0], -1),
+                                tr.mapping.maps[index].map(range[1], 1)
+                            ]
+                        })
+                    })
+                    let foundAnchorWithoutId = false // found an anchor without an ID
+                    ranges.forEach(range => {
+                        state.doc.nodesBetween(
+                            range[0],
+                            range[1],
+                            node => {
+                                if (
+                                    !foundIdElement &&
+                                    (
+                                        node.type.groups.includes('heading') ||
+                                        node.type.name === 'figure'
+                                    )
+                                ) {
+                                    foundIdElement = true
+                                }
+                                if (!foundAnchorWithoutId) {
+                                    node.marks.forEach(mark => {
+                                        if (mark.type.name === 'anchor' && !mark.attrs.id) {
+                                            foundAnchorWithoutId = true
+                                        }
+                                    })
+                                }
+                            }
+                        )
+                    })
+
+                    if (foundIdElement || foundAnchorWithoutId) {
+                        console.log('LINK UPDATE')
+                        const linkUpdate = {foundAnchorWithoutId}
+                        tr.setMeta('linkUpdate', linkUpdate)
+                        if (oldState.schema === options.editor.view.state.schema) {
+                            tr.setMeta('toFoot', {linkUpdate: true})
+                        } else {
+                            tr.setMeta('toMain', {linkUpdate: true})
+                        }
+                    }
+                }
+
+
                 return {
                     url,
                     decos,
@@ -271,85 +369,35 @@ export const linksPlugin = function(options) {
         },
         appendTransaction: (trs, oldState, newState) => {
             // Check if any of the transactions are local.
-            if (trs.every(tr => !tr.docChanged || tr.getMeta('remote'))) {
+            if (trs.every(tr => !tr.getMeta('linkUpdate'))) {
                 // All transactions are remote or don't change anything. Give up.
                 return
             }
-            // Check if there are any headings or figures in the affected range.
-            // Otherwise, skip.
-            let ranges = []
-            trs.forEach(tr => {
-                tr.steps.forEach((step, index) => {
-                    if (step.jsonID ===
-                        'replace' || step.jsonID ===
-                        'replaceAround') {
-                        ranges.push([step.from,
-                            step.to
-                        ])
-                    }
-                    ranges = ranges.map(range => {
-                        return [
-                            tr
-                            .mapping
-                            .maps[
-                                index
-                            ].map(
-                                range[
-                                    0
-                                ], -
-                                1),
-                            tr
-                            .mapping
-                            .maps[
-                                index
-                            ].map(
-                                range[
-                                    1
-                                ],
-                                1)
-                        ]
-                    })
-                })
+
+            const foundAnchorWithoutId = trs.find(tr => {
+                const linkUpdate = tr.getMeta('linkUpdate')
+                return linkUpdate && linkUpdate.foundAnchorWithoutId
             })
-            let foundIdElement = false, // found heading or figure
-                foundAnchorWithoutId = false // found an anchor without an ID
-            ranges.forEach(range => {
-                newState.doc.nodesBetween(
-                    range[0],
-                    range[1],
-                    node => {
-                        if (
-                            node.type.groups.includes('heading') ||
-                            node.type.name === 'figure'
-                        ) {
-                            foundIdElement = true
-                        }
-                        node.marks.forEach(mark => {
-                            if (mark.type.name === 'anchor' && !mark.attrs.id) {
-                                foundAnchorWithoutId = true
-                            }
-                        })
-                    }
-                )
-            })
-
-            if (!foundIdElement && !foundAnchorWithoutId) {
-                return
-            }
-
-            // Check that unique IDs only exist once in the document
-            // If an ID is used more than once, add steps to change the ID of all
-            // but the first occurence.
-            const headingIds = [],
-                doubleHeadingIds = [],
-                figureIds = [],
-                doubleFigureIds = []
-
             // ID should not be found in the other pm either. So we look through
             // those as well.
             const otherState = oldState.schema === options.editor.view.state.schema ?
                 options.editor.mod.footnotes.fnEditor.view.state :
                 options.editor.view.state
+
+            const internalTargets = getInternalTargets(newState, oldState.schema === options.editor.view.state.schema ? 'main' : 'foot').concat(
+                getInternalTargets(otherState, oldState.schema === options.editor.view.state.schema ? 'foot' : 'main')
+            )
+
+            // Check if there are any headings or figures in the affected range.
+            // Otherwise, skip.
+
+            // Check that unique IDs only exist once in the document and that the
+            // text values are up to date for all IDs if they are referenced.
+            //
+            // If an ID is used more than once, add steps to change the ID of all
+            // but the first occurence.
+            const headingIds = [],
+                figureIds = []
 
             otherState.doc.descendants(node => {
                 if (node.type.groups.includes('heading')) {
@@ -359,76 +407,70 @@ export const linksPlugin = function(options) {
                 }
             })
 
+            const newTr = newState.tr.setMeta('fixIds', true)
+
             newState.doc.descendants((node, pos) => {
                 if (node.type.groups.includes('heading')) {
                     if (headingIds.includes(node.attrs.id) || !node.attrs.id) {
                         // Add node if the id is false (default) or it is present twice
-                        doubleHeadingIds.push({
-                            node,
-                            pos
-                        })
-                    }
-                    headingIds.push(node.attrs.id)
-                }
+                        let id
 
-                if (node.type.name === 'figure') {
+                        while (!id || headingIds.includes(id)) {
+                            id = randomHeadingId()
+                        }
+
+                        const attrs = Object.assign({}, node.attrs, {id})
+
+                        // Because we only change attributes, positions should stay the
+                        // the same throughout all our extra steps. We therefore do no
+                        // mapping of positions through these steps.
+                        newTr.setNodeMarkup(pos, null, attrs)
+
+                        headingIds.push(id)
+                    } else {
+                        headingIds.push(node.attrs.id)
+                    }
+                } else if (node.type.name === 'figure') {
                     // Add node if the id is false (default) or it is present twice
                     if (figureIds.includes(node.attrs.id) || !node.attrs.id) {
-                        doubleFigureIds.push({
-                            node,
-                            pos
-                        })
+                        let id
+
+                        while (!id || figureIds.includes(id)) {
+                            id = randomFigureId()
+                        }
+
+                        const attrs = Object.assign({}, node.attrs, {id})
+                        newTr.setNodeMarkup(pos, null, attrs)
+                        figureIds.push(id)
+                    } else {
+                        figureIds.push(node.attrs.id)
                     }
-                    figureIds.push(node.attrs.id)
+                } else if (
+                    node.type.name === 'cross_reference' &&
+                    !internalTargets.find(it => it.id===node.attrs.id && it.text===node.attrs.title)
+                ) {
+                    const iTarget = internalTargets.find(it => it.id===node.attrs.id)
+                    const attrs = Object.assign({}, node.attrs, {title: iTarget ? iTarget.text : null})
+                    newTr.setNodeMarkup(pos, null, attrs)
                 }
+                node.marks.forEach(mark => {
+                    if (
+                        mark.type.name === 'link' &&
+                        mark.attrs.href[0] === '#' &&
+                        !internalTargets.find(it => it.id===mark.attrs.href.slice(1) && it.text===node.attrs.title)
+                    ) {
+                        const iTarget = internalTargets.find(it => it.id===mark.attrs.href.slice(1))
+                        const attrs = Object.assign({}, mark.attrs, {title: iTarget ? iTarget.text : null})
+                        newTr.addMark(pos, pos + node.nodeSize, newState.schema.marks.link.create(attrs))
+                    }
+                })
 
-            })
-
-            if (!doubleHeadingIds.length && !doubleFigureIds.length) {
-                return
-            }
-
-            const newTransaction = newState.tr.setMeta('fixIds', true)
-            // Change the IDs of the nodes that having an ID that was used previously
-            // already.
-            doubleHeadingIds.forEach(doubleId => {
-                let id
-
-                while (!id || headingIds.includes(id)) {
-                    id = randomHeadingId()
-                }
-
-                const attrs = Object.assign({}, doubleId.node.attrs, {id})
-
-                // Because we only change attributes, positions should stay the
-                // the same throughout all our extra steps. We therefore do no
-                // mapping of positions through these steps.
-                newTransaction.setNodeMarkup(doubleId.pos, null, attrs)
-
-                headingIds.push(id)
-            })
-
-
-            doubleFigureIds.forEach(doubleId => {
-                let id
-
-                while (!id || figureIds.includes(id)) {
-                    id = randomFigureId()
-                }
-
-                const attrs = Object.assign({}, doubleId.node.attrs, {id})
-
-                // Because we only change attributes, positions should stay the
-                // the same throughout all our extra steps. We therefore do no
-                // mapping of positions through these steps.
-                newTransaction.setNodeMarkup(doubleId.pos, null, attrs)
-                figureIds.push(id)
             })
 
             // Remove anchor marks without ID
             if (foundAnchorWithoutId) {
                 const markType = newState.schema.marks.anchor.create({id : false})
-                newTransaction.step(
+                newTr.step(
                     new RemoveMarkStep(
                         0,
                         newState.doc.content.size,
@@ -436,7 +478,8 @@ export const linksPlugin = function(options) {
                     )
                 )
             }
-            return newTransaction
+
+            return newTr
         },
         props: {
             handleDOMEvents: {

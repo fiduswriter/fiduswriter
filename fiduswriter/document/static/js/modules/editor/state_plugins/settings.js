@@ -105,7 +105,7 @@ export const settingsPlugin = function(options) {
         // for font loading.
         window.setTimeout(() => {
             options.editor.mod.marginboxes.updateDOM()
-            options.editor.mod.footnotes.layout.layoutFootnotes()
+            options.editor.mod.footnotes.layout.updateDOM()
         }, 250)
 
     }

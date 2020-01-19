@@ -44,6 +44,210 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
     def tearDown(self):
         self.leave_site(self.driver)
 
+    def test_crossrefs_and_internal_links(self):
+        self.driver.get(self.base_url)
+        self.driver.find_element(By.ID, "id_login").send_keys("Yeti")
+        self.driver.find_element(By.ID, "id_password").send_keys("otter")
+        self.driver.find_element(By.ID, "login-submit").click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (
+                    By.CSS_SELECTOR,
+                    ".new_document button"
+                )
+            )
+        ).click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.CLASS_NAME, 'editor-toolbar'))
+        )
+        self.driver.find_element(By.CSS_SELECTOR, ".article-title").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".article-title").send_keys(
+            "Test"
+        )
+        # We enable the abstract
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#header-navigation > div:nth-child(3) > span"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            (
+                "#header-navigation > div:nth-child(3) > div "
+                "> ul > li:nth-child(1) > span"
+            )
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            (
+                "#header-navigation > div:nth-child(3) > div "
+                "> ul > li:nth-child(1) > div > ul > li:nth-child(3) > span"
+            )
+        ).click()
+        self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
+        ActionChains(self.driver).send_keys(
+            Keys.LEFT
+        ).send_keys(
+            "An abstract title"
+        ).perform()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#toolbar > div > div > div:nth-child(3) > div"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            (
+                "#toolbar > div > div > div:nth-child(3) > div > div > "
+                "ul > li:nth-child(4) > span > label"
+            )
+        ).click()
+        # We type in th body
+        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+            "Body"
+        )
+        # We add a cross reference
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#toolbar > div > div > div:nth-child(9) > button > span > i"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#edit-link > div:nth-child(2) > select"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#edit-link > div:nth-child(2) > select > option:nth-child(2)"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            (
+                "body > div.ui-dialog.ui-corner-all.ui-widget."
+                "ui-widget-content.ui-front.ui-dialog-buttons > "
+                "div.ui-dialog-buttonpane.ui-widget-content."
+                "ui-helper-clearfix > div > button.fw-dark."
+                "fw-button.ui-button.ui-corner-all.ui-widget"
+            )
+        ).click()
+        cross_reference = self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".article-body .cross-reference"
+        )
+        assert cross_reference.text == 'An abstract title'
+        # We add an internal link
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#toolbar > div > div > div:nth-child(9) > button > span > i"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#edit-link > div:nth-child(5) > select"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#edit-link > div:nth-child(5) > select > option:nth-child(2)"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            (
+                "body > div.ui-dialog.ui-corner-all.ui-widget."
+                "ui-widget-content.ui-front.ui-dialog-buttons > "
+                "div.ui-dialog-buttonpane.ui-widget-content."
+                "ui-helper-clearfix > div > button.fw-dark."
+                "fw-button.ui-button.ui-corner-all.ui-widget"
+            )
+        ).click()
+        internal_link = self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".article-body a"
+        )
+        assert internal_link.text == 'An abstract title'
+        # We change the link text.
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".article-abstract h3"
+        ).click()
+        ActionChains(self.driver).send_keys(
+            Keys.BACKSPACE
+        ).send_keys(
+            Keys.BACKSPACE
+        ).send_keys(
+            Keys.BACKSPACE
+        ).send_keys(
+            Keys.BACKSPACE
+        ).send_keys(
+            Keys.BACKSPACE
+        ).send_keys(
+            Keys.BACKSPACE
+        ).perform()
+        cross_reference = self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".article-body .cross-reference"
+        )
+        assert cross_reference.text == 'An abstract'
+        internal_link = self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".article-body a"
+        )
+        assert internal_link.text == 'An abstract title'
+        assert internal_link.get_attribute("title") == 'An abstract'
+        ActionChains(self.driver).send_keys(
+            Keys.BACKSPACE
+        ).send_keys(
+            Keys.BACKSPACE
+        ).send_keys(
+            Keys.BACKSPACE
+        ).send_keys(
+            Keys.BACKSPACE
+        ).send_keys(
+            Keys.BACKSPACE
+        ).send_keys(
+            Keys.BACKSPACE
+        ).send_keys(
+            Keys.BACKSPACE
+        ).send_keys(
+            Keys.BACKSPACE
+        ).send_keys(
+            Keys.BACKSPACE
+        ).send_keys(
+            Keys.BACKSPACE
+        ).send_keys(
+            Keys.BACKSPACE
+        ).perform()
+        cross_reference = self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".article-body .cross-reference.missing-target"
+        )
+        assert cross_reference.text == 'MISSING TARGET'
+        internal_link = self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".article-body a.missing-target"
+        )
+        assert internal_link.get_attribute("title") == 'Missing target'
+        self.assertEqual(
+            len(self.driver.find_elements_by_css_selector(
+                '.margin-box.warning'
+            )),
+            2
+        )
+        ActionChains(self.driver).send_keys(
+            'Title'
+        ).perform()
+        cross_reference = self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".article-body .cross-reference"
+        )
+        assert cross_reference.text == 'Title'
+        internal_link = self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".article-body a"
+        )
+        assert internal_link.get_attribute("title") == 'Title'
+        self.assertEqual(
+            len(self.driver.find_elements_by_css_selector(
+                '.margin-box.warning'
+            )),
+            0
+        )
+
     def check_body(self, driver, body_text, seconds=False):
         if seconds is False:
             seconds = self.wait_time

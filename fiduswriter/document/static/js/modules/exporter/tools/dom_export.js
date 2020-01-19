@@ -197,6 +197,10 @@ export class DOMExporter {
         this.contents.querySelectorAll('.figure-cat-figure').forEach(el => {
             delete el.dataset.figureCategory
         })
+
+        this.contents.querySelectorAll('.cross-reference').forEach(el => {
+            el.innerHTML = `<a href="#${el.dataset.id}">${el.innerHTML}</a>`
+        })
     }
 
     // Fill the contents of table of contents.

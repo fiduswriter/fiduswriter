@@ -232,10 +232,10 @@ export class LatexExporterConvert {
                         start += '\n\n\\subsubsection{'
                         break
                 }
+                end = `}\\label{${node.attrs.id}}\n\n` + end
                 // Check if this heading is being linked to. If this is the case,
                 // place a protected hypertarget here that does not add an extra
                 // entry into the PDF TOC.
-                end = '}\n\n' + end
                 if (this.internalLinks.includes(node.attrs.id)) {
                     // Add a link target
                     end = `\\texorpdfstring{\\protect\\hypertarget{${node.attrs.id}}{}}{}` + end
@@ -288,13 +288,17 @@ export class LatexExporterConvert {
                     start += '\\protect\\footnotemark{}'
                     options.unplacedFootnotes.push(node.attrs.footnote)
                 } else {
-                    start += '\\footnote{'
+                    if (!node.attrs.footnote.find(par => par.type === 'figure')) {
+                        // LaTeX doesn't allow figures in footnotes, so well move
+                        // this footnote into the regular text.
+                        start += '\\footnote{'
+                        end = '}' + end
+                    }
                     let fnContent = ''
                     node.attrs.footnote.forEach(footPar => {
                         fnContent += this.walkJson(footPar, options)
                     })
                     content += fnContent.replace(/^\s+|\s+$/g, '')
-                    end = '}' + end
                 }
                 break
             case 'text': {
@@ -331,6 +335,11 @@ export class LatexExporterConvert {
                     this.features.hyperlinks = true
                 }
                 content += escapeLatexText(node.text)
+                break
+            }
+            case 'cross_reference': {
+                content += `\\hyperref[${node.attrs.id}]{${node.attrs.title || 'MISSING TARGET'}}`
+                this.features.hyperlinks = true
                 break
             }
             case 'citation': {
@@ -464,17 +473,18 @@ export class LatexExporterConvert {
                 }
                 if (figureType==='table') {
                     start += `\n\\begin{table}\n`
-                    content += `\\caption{${caption}}\n${innerFigure}`
+                    content += `\\caption*{${caption}}\\label{${node.attrs.id}}\n${innerFigure}`
                     end = `\\end{table}\n` + end
                 } else { // TODO: handle photo figure types in a special way
                     start += `\n\\begin{figure}\n`
-                    content += `${innerFigure}\\caption{${caption}}\n`
+                    content += `${innerFigure}\\caption*{${caption}}\\label{${node.attrs.id}}\n`
                     end = `\\end{figure}\n` + end
                 }
                 if (this.internalLinks.includes(node.attrs.id)) {
                     // Add a link target
                     end = `\\texorpdfstring{\\protect\\hypertarget{${node.attrs.id}}{}}{}\n` + end
                 }
+                this.features.captions = true
                 break
             }
             case 'table':
@@ -634,6 +644,10 @@ export class LatexExporterConvert {
 
         if (this.features.hyperlinks) {
             preamble += '\n\\usepackage{hyperref}'
+        }
+
+        if (this.features.captions) {
+            preamble += '\n\\usepackage{caption}'
         }
 
         if (this.features.citations) {

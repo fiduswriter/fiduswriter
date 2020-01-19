@@ -11,6 +11,7 @@ export class OdtExporterRichtext {
         this.fnCounter = 0 // real footnotes
         this.fnAlikeCounter = 0 // real footnotes and citations as footnotes
         this.figureCounter = {} // counters for each type of figure (figure/table/photo)
+        this.fnFigureCounter = {} // counters for each type of figure (figure/table/photo)
         this.zIndex = 0
     }
 
@@ -213,11 +214,12 @@ export class OdtExporterRichtext {
                 // user's language but rather the document language
                 const figCat = node.attrs.figureCategory
                 if (figCat !== 'none') {
-                    if (!this.figureCounter[figCat]) {
-                        this.figureCounter[figCat] = 1
+                    const figureCounter = options.inFootnote ? this.fnFigureCounter : this.figureCounter
+                    if (!figureCounter[figCat]) {
+                        figureCounter[figCat] = 1
                     }
-                    const figCount = this.figureCounter[figCat]++
-                    const figCountXml = `<text:sequence text:ref-name="ref${figCat}${figCount-1}" text:name="${figCat}" text:formula="ooow:${figCat}+1" style:num-format="1">${figCount}</text:sequence>`
+                    const figCount = figureCounter[figCat]++
+                    const figCountXml = `<text:sequence text:ref-name="ref${figCat}${figCount-1}${options.inFootnote ? 'A' : ''}" text:name="${figCat}" text:formula="ooow:${figCat}+1" style:num-format="1">${figCount}${options.inFootnote ? 'A' : ''}</text:sequence>`
                     if (caption.length) {
                         caption = `<text:bookmark-start text:name="${node.attrs.id}"/>${FIG_CATS[figCat][this.exporter.doc.settings.language]} ${figCountXml}<text:bookmark-end text:name="${node.attrs.id}"/>: ${caption}`
                     } else {

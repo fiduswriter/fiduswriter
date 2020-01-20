@@ -64,12 +64,17 @@ body.header-closed #margin-box-filter {
     left: 4px;
 }
 
+#margin-box-container div.margin-box {
+    width: 218px;
+    margin: 2px 0 0 0;
+    position: relative;
+    padding: 0;
+    border: 0;
+}
+
 .margin-box {
     background-color: #f8f8f8;
     color: #2c2723;
-    width: 218px;
-    margin-top: 2px;
-    position: relative;
 }
 
 .margin-box .comment-item:first-child {
@@ -92,12 +97,15 @@ body.header-closed #margin-box-filter {
     text-shadow: none;
 }
 
-.margin-box.active {
+#margin-box-container div.margin-box.active {
     color: #000;
-    background-color: #fffacf;
     border: 1px solid #c5c5c5;
     left: -18px;
     z-index: 5;
+}
+
+.margin-box.comment.active {
+    background-color: #fffacf;
 }
 
 .margin-box.help.active {
@@ -108,6 +116,15 @@ body.header-closed #margin-box-filter {
 .margin-box.help.active:after {
     color: #79b8a5;
     left: -15px
+}
+
+.margin-box.warning {
+    background-color: #e0aa9e;
+}
+
+#margin-box-container div.margin-box.warning.active {
+    background-color: #b73717;
+    color: #fff;
 }
 
 .margin-box.active .comment-item:first-child {
@@ -123,6 +140,11 @@ body.header-closed #margin-box-filter {
     font-size: 36px;
     color: #fffacf;
     text-shadow: -1px 0px 0px #c5c5c5;
+}
+
+.margin-box.warning.active:after {
+    top: 0;
+    color: #b73717;
 }
 
 .margin-box.hidden {

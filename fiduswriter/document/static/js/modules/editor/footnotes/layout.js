@@ -17,10 +17,6 @@ export class ModFootnoteLayout {
         }
     }
 
-    layoutFootnotes() {
-        this.updateDOM()
-    }
-
     updateDOM() {
         // Handle the CSS layout of the footnotes on the screen.
         // DOM write phase - nothing to do.

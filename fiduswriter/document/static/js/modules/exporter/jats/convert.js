@@ -455,6 +455,12 @@ export class JATSExporterConvert {
                 content += escapeText(node.text)
                 break
             }
+            case 'cross_reference': {
+                start += `<xref rid="${node.attrs.id}">`
+                content += escapeText(node.attrs.title || 'MISSING TARGET')
+                end = '</xref>' + end
+                break
+            }
             case 'citation': {
                 const citationText = this.exporter.citations.citationTexts[this.citationCount++]
                 if (options.inFootnote || this.exporter.citations.citFm.citationType !== 'note') {

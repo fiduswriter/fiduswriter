@@ -50,7 +50,8 @@ export {
 }
 from "./jump_hidden_nodes"
 export {
-    linksPlugin
+    linksPlugin,
+    getInternalTargets
 }
 from "./links"
 export {

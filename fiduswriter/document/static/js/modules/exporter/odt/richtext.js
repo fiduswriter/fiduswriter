@@ -11,6 +11,7 @@ export class OdtExporterRichtext {
         this.fnCounter = 0 // real footnotes
         this.fnAlikeCounter = 0 // real footnotes and citations as footnotes
         this.figureCounter = {} // counters for each type of figure (figure/table/photo)
+        this.fnFigureCounter = {} // counters for each type of figure (figure/table/photo)
         this.zIndex = 0
     }
 
@@ -33,38 +34,38 @@ export class OdtExporterRichtext {
             case 'heading1':
                 start += `
                     <text:h text:outline-level="1">
-                    <text:bookmark text:name="${node.attrs.id}"/>`
-                end = '</text:h>' + end
+                    <text:bookmark-start text:name="${node.attrs.id}"/>`
+                end = `<text:bookmark-end text:name="${node.attrs.id}"/></text:h>` + end
                 break
             case 'heading2':
                 start += `
                     <text:h text:outline-level="2">
-                    <text:bookmark text:name="${node.attrs.id}"/>`
-                end = '</text:h>' + end
+                    <text:bookmark-start text:name="${node.attrs.id}"/>`
+                end = `<text:bookmark-end text:name="${node.attrs.id}"/></text:h>` + end
                 break
             case 'heading3':
                 start += `
                     <text:h text:outline-level="3">
-                    <text:bookmark text:name="${node.attrs.id}"/>`
-                end = '</text:h>' + end
+                    <text:bookmark-start text:name="${node.attrs.id}"/>`
+                end = `<text:bookmark-end text:name="${node.attrs.id}"/></text:h>` + end
                 break
             case 'heading4':
                 start += `
                     <text:h text:outline-level="4">
-                    <text:bookmark text:name="${node.attrs.id}"/>`
-                end = '</text:h>' + end
+                    <text:bookmark-start text:name="${node.attrs.id}"/>`
+                end = `<text:bookmark-end text:name="${node.attrs.id}"/></text:h>` + end
                 break
             case 'heading5':
                 start += `
                     <text:h text:outline-level="5">
-                    <text:bookmark text:name="${node.attrs.id}"/>`
-                end = '</text:h>' + end
+                    <text:bookmark-start text:name="${node.attrs.id}"/>`
+                end = `<text:bookmark-end text:name="${node.attrs.id}"/></text:h>` + end
                 break
             case 'heading6':
                 start += `
                     <text:h text:outline-level="6">
-                    <text:bookmark text:name="${node.attrs.id}"/>`
-                end = '</text:h>' + end
+                    <text:bookmark-start text:name="${node.attrs.id}"/>`
+                end = `<text:bookmark-end text:name="${node.attrs.id}"/></text:h>` + end
                 break
             case 'code_block':
                 this.exporter.styles.checkParStyle('Preformatted_20_Text')
@@ -213,15 +214,16 @@ export class OdtExporterRichtext {
                 // user's language but rather the document language
                 const figCat = node.attrs.figureCategory
                 if (figCat !== 'none') {
-                    if (!this.figureCounter[figCat]) {
-                        this.figureCounter[figCat] = 1
+                    const figureCounter = options.inFootnote ? this.fnFigureCounter : this.figureCounter
+                    if (!figureCounter[figCat]) {
+                        figureCounter[figCat] = 1
                     }
-                    const figCount = this.figureCounter[figCat]++
-                    const figCountXml = `<text:sequence text:ref-name="ref${figCat}${figCount-1}" text:name="${figCat}" text:formula="ooow:${figCat}+1" style:num-format="1">${figCount}</text:sequence>`
+                    const figCount = figureCounter[figCat]++
+                    const figCountXml = `<text:sequence text:ref-name="ref${figCat}${figCount-1}${options.inFootnote ? 'A' : ''}" text:name="${figCat}" text:formula="ooow:${figCat}+1" style:num-format="1">${figCount}${options.inFootnote ? 'A' : ''}</text:sequence>`
                     if (caption.length) {
-                        caption = `${FIG_CATS[figCat][this.exporter.doc.settings.language]} ${figCountXml}: ${caption}`
+                        caption = `<text:bookmark-start text:name="${node.attrs.id}"/>${FIG_CATS[figCat][this.exporter.doc.settings.language]} ${figCountXml}<text:bookmark-end text:name="${node.attrs.id}"/>: ${caption}`
                     } else {
-                        caption = `${FIG_CATS[figCat][this.exporter.doc.settings.language]} ${figCountXml}`
+                        caption = `<text:bookmark-start text:name="${node.attrs.id}"/>${FIG_CATS[figCat][this.exporter.doc.settings.language]} ${figCountXml}<text:bookmark-end text:name="${node.attrs.id}"/>`
                     }
                 }
                 let relWidth = node.attrs.width
@@ -268,7 +270,9 @@ export class OdtExporterRichtext {
                             <svg:desc>formula</svg:desc>
                         </draw:frame>`
                 }
-                content += `<text:bookmark text:name="${node.attrs.id}"/>`
+                if (figCat === 'none') {
+                    content += `<text:bookmark text:name="${node.attrs.id}"/>`
+                }
                 break
             }
             case 'table': {
@@ -316,6 +320,16 @@ export class OdtExporterRichtext {
                         <draw:object xlink:href="./Object ${objectNumber}" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/>
                         <svg:desc>formula</svg:desc>
                     </draw:frame>`
+                break
+            }
+            case 'cross_reference': {
+                const title = node.attrs.title
+                const id = node.attrs.id
+                if (title) {
+                    start += `<text:bookmark-ref text:reference-format="text" text:ref-name="${id}">`
+                    end = '</text:bookmark-ref>' + end
+                }
+                content += escapeText(title || 'MISSING TARGET')
                 break
             }
             case 'hard_break':

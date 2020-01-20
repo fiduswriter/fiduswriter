@@ -64,7 +64,7 @@ export const getFootnoteMarkerContents = function(state) {
     return fnMarkers.map(fnMarker => state.doc.nodeAt(fnMarker.from).attrs.footnote)
 }
 
-export const updateFootnoteMarker = function(state, index, content) {
+export const updateFootnoteMarker = function(state, tr, index, content) {
     const {
         fnMarkers
     } = key.getState(state)
@@ -74,11 +74,11 @@ export const updateFootnoteMarker = function(state, index, content) {
     if (node.attrs.footnote === content) {
         return
     }
-    const tr = state.tr.setNodeMarkup(footnote.from, node.type, {
+    tr.setNodeMarkup(footnote.from, node.type, {
         footnote: content
     })
     tr.setMeta('fromFootnote', true)
-    return tr
+    return
 }
 
 export const getFootnoteMarkers = function(state) {
@@ -143,43 +143,60 @@ export const footnoteMarkersPlugin = function(options) {
                     }
                     return true
                 })
-                deletedFootnotesIndexes.forEach(index =>
-                    options.editor.mod.footnotes.fnEditor.removeFootnote(index)
-                )
-                if (!fromFootnote) {
-                    ranges.forEach(range => {
-                        let newFootnotes = findFootnoteMarkers(range.from, range.to, tr.doc)
-                        if (newFootnotes.length) {
+                if (fromFootnote) {
+                    return {fnMarkers}
+                }
+                const footTr = options.editor.mod.footnotes.fnEditor.view.state.tr
 
-                            const firstFn = newFootnotes[0]
-                            let offset = fnMarkers.findIndex(marker => marker.from > firstFn.from)
-                            if (offset < 0) {
-                                offset = fnMarkers.length
-                            }
-                            if (remote) {
-                                newFootnotes = newFootnotes.filter(
-                                    // In case of remote trasnactions, we cannot mark them as coming from footnote, so we
-                                    // will need to remove duplicates instead.
-                                    newMarker =>
-                                        fnMarkers.find(oldMarker => oldMarker.from === newMarker.from) ?
-                                        false :
-                                        true
-                                )
-                            } else {
-                                newFootnotes.forEach((footnote, index) => {
-                                    const fnContent = state.doc.nodeAt(footnote.from).attrs.footnote
-                                    options.editor.mod.footnotes.fnEditor.renderFootnote(
-                                        fnContent,
-                                        offset + index
-                                    )
-                                })
-                            }
-                            fnMarkers = fnMarkers.concat(newFootnotes).sort((a, b) => a.from > b.from ? 1 : -1)
+                footTr.setMeta('fromMain', true)
+
+                deletedFootnotesIndexes.forEach(index =>
+                    options.editor.mod.footnotes.fnEditor.removeFootnote(index, footTr)
+                )
+                ranges.forEach(range => {
+                    let newFootnotes = findFootnoteMarkers(range.from, range.to, tr.doc)
+                    if (newFootnotes.length) {
+
+                        const firstFn = newFootnotes[0]
+                        let offset = fnMarkers.findIndex(marker => marker.from > firstFn.from)
+                        if (offset < 0) {
+                            offset = fnMarkers.length
                         }
+                        if (remote) {
+                            newFootnotes = newFootnotes.filter(
+                                // In case of remote trasnactions, we cannot mark them as coming from footnote, so we
+                                // will need to remove duplicates instead.
+                                newMarker =>
+                                    fnMarkers.find(oldMarker => oldMarker.from === newMarker.from) ?
+                                    false :
+                                    true
+                            )
+                        } else {
+                            newFootnotes.forEach((footnote, index) => {
+                                const fnContent = state.doc.nodeAt(footnote.from).attrs.footnote
+                                options.editor.mod.footnotes.fnEditor.renderFootnote(
+                                    fnContent,
+                                    offset + index,
+                                    footTr
+                                )
+                            })
+                        }
+                        fnMarkers = fnMarkers.concat(newFootnotes).sort((a, b) => a.from > b.from ? 1 : -1)
+                    }
+                })
+
+                const footMeta = tr.getMeta('toFoot')
+
+                if (footMeta) {
+                    Object.entries(footMeta).forEach(([key, value]) => {
+                        footTr.setMeta(key, value)
                     })
                 }
 
-                options.editor.mod.footnotes.layout.layoutFootnotes()
+                if (footTr.docChanged || footMeta) {
+                    tr.setMeta('footTr', footTr)
+                }
+
                 return {
                     fnMarkers
                 }

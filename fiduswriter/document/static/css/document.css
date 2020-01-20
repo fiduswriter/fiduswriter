@@ -1,4 +1,4 @@
-body {
+#document-editable, #footnote-box-container {
     counter-reset: figure-cat-0 figure-cat-1 figure-cat-2 footnote-counter footnote-marker-counter;
 }
 
@@ -120,14 +120,26 @@ figure {
     content: ' ' counter(figure-cat-0);
 }
 
+#footnote-box-container .figure-cat-figure::after {
+    content: ' ' counter(figure-cat-0) 'A';
+}
+
 .figure-cat-photo::after {
     counter-increment: figure-cat-1;
     content: ' ' counter(figure-cat-1);
 }
 
+#footnote-box-container .figure-cat-photo::after {
+    content: ' ' counter(figure-cat-1) 'A';
+}
+
 .figure-cat-table::after {
     counter-increment: figure-cat-2;
     content: ' ' counter(figure-cat-2);
+}
+
+#footnote-box-container .figure-cat-table::after {
+    content: ' ' counter(figure-cat-2) 'A';
 }
 
 .figure-cat-figure + span::before, .figure-cat-photo + span::before, .figure-cat-table + span::before {

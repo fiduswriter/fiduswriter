@@ -14,7 +14,9 @@ export class ModMarginboxes {
         this.filterOptions = {
             track: true,
             comments: true,
+            info: true,
             help: true,
+            warning: true,
             commentsResolved: false,
             author: 0,
             assigned: 0
@@ -49,10 +51,8 @@ export class ModMarginboxes {
         document.body.addEventListener('click', event => {
             const el = {}
             switch (true) {
-                case findTarget(event, '.margin-box-filter-comments-check', el):
-                //case findTarget(event, '#margin-box-filter-comments-resolved', el):
-                    //this.filterOptions.commentsResolved = !this.filterOptions.commentsResolved
-                    //this.view(this.editor.currentView)
+                case findTarget(event, '.margin-box-filter-check', el):
+                    // do not react to clicks on checkboxes within sub menus
                     break
                 case findTarget(event, '.margin-box-filter-comments-author', el):
                     this.filterOptions.author = parseInt(el.target.dataset.id)
@@ -78,8 +78,8 @@ export class ModMarginboxes {
                     this.filterOptions.comments = !this.filterOptions.comments
                     this.view(this.editor.currentView)
                     break
-                case findTarget(event, '#margin-box-filter-help', el):
-                    this.filterOptions.help = !this.filterOptions.help
+                case findTarget(event, '#margin-box-filter-info', el):
+                    this.filterOptions.info = !this.filterOptions.info
                     this.view(this.editor.currentView)
                     break
                 case findTarget(event, '.margin-box.comment.inactive', el):
@@ -116,6 +116,16 @@ export class ModMarginboxes {
 
                 case "margin-box-filter-comments-only-major":
                     this.filterOptions.commentsOnlyMajor = evt.target.checked
+                    this.view(this.editor.currentView)
+                    break
+
+                case "margin-box-filter-info-help":
+                    this.filterOptions.help = evt.target.checked
+                    this.view(this.editor.currentView)
+                    break
+
+                case "margin-box-filter-info-warning":
+                    this.filterOptions.warning = evt.target.checked
                     this.view(this.editor.currentView)
                     break
             }
@@ -396,6 +406,31 @@ export class ModMarginboxes {
                 }
             }
             marginBoxes.push(helpBox)
+            referrers.push(refPos)
+        }
+
+        if (node.type.name === 'cross_reference' && !node.attrs.title) {
+            const warningBox = {
+                type: 'warning',
+                data: {
+                    active: selection.node && selection.node === node,
+                    warning: gettext('A cross reference has lost its target.')
+                }
+            }
+            marginBoxes.push(warningBox)
+            referrers.push(refPos)
+        }
+
+        if (node.marks.find(mark => mark.type.name === 'link' && !mark.attrs.title)) {
+            const linkMark = node.marks.find(mark => mark.type.name === 'link')
+            const warningBox = {
+                type: 'warning',
+                data: {
+                    active: linkMark.isInSet(selection.$anchor.marks()),
+                    warning: gettext('An internal link has lost its target.')
+                }
+            }
+            marginBoxes.push(warningBox)
             referrers.push(refPos)
         }
 

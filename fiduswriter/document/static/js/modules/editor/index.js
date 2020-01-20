@@ -206,7 +206,7 @@ export class Editor {
             'document.css',
             'carets.css',
             'tracking.css',
-            'comments.css',
+            'margin_boxes.css',
             'prosemirror.css',
             'footnotes.css',
             'chat.css',
@@ -409,8 +409,15 @@ export class Editor {
             },
             dispatchTransaction: tr => {
                 const trackedTr = amendTransaction(tr, this.view.state, this)
-                const newState = this.view.state.apply(trackedTr)
+                const {state: newState, transactions} = this.view.state.applyTransaction(trackedTr)
                 this.view.updateState(newState)
+                transactions.forEach(subTr => {
+                    const footTr = subTr.getMeta('footTr')
+                    if (footTr) {
+                        this.mod.footnotes.fnEditor.view.dispatch(footTr)
+                    }
+                })
+
                 this.mod.collab.doc.sendToCollaborators()
             }
 

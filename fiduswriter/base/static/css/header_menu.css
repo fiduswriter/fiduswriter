@@ -19,7 +19,7 @@
     top: -4px;
     font-family: 'Roboto', sans-serif;
     text-transform: uppercase;
-    color:  #fff;
+    color:  var(--main-background-color);
     font-size: 15pt;
 }
 
@@ -70,11 +70,11 @@
     line-height: 100%;
     font-size: 24px;
     margin-left: -8px;
-    color: #84b4a7;
+    color: var(--color-3);
 }
 
 .fw-nav-item a {
-    color: #fff;
+    color: var(--main-background-color);
     opacity: 0.7;
     text-decoration: none;
 }
@@ -87,7 +87,7 @@
     background: none;
     border: none;
     font-family: inherit;
-    color: #fff;
+    color: var(--main-background-color);
     border-bottom: 1px solid #f2f2f2;
     width: 100%;
 }
@@ -115,5 +115,5 @@
 
 #user-preferences-pulldown a,
 #user-preferences-pulldown .fw-logout-button {
-    color: #2c2723;
+    color: var(--color-1-hover);
 }

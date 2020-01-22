@@ -37,8 +37,8 @@
 
 .fw-pulldown-header {
     line-height: 18px;
-    background-color: #2c2723;
-    color: #fff;
+    background-color: var(--color-1-hover);
+    color: var(--main-background-color);
     display: block;
 }
 
@@ -118,7 +118,7 @@
     width: auto;
     height: 33px;
     line-height: 33px;
-    border: solid 1px #000;
+    border: solid 1px var(--main-text-color);
     cursor: pointer;
 }
 

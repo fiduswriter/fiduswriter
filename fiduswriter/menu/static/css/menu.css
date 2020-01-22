@@ -21,7 +21,7 @@ body > header > .container {
 }
 #user-preferences .username {
     display: inline-block;
-    color: #fff;
+    color: var(--main-background-color);
     margin-right: 10px;
 }
 #user-preferences #preferences-btn {
@@ -30,7 +30,7 @@ body > header > .container {
     height: 26px;
     line-height: 26px;
     border-color: #7d948e;
-    background-color: #76a698;
+    background-color: var(--color-3-hover);
 }
 #user-preferences #preferences-btn:hover {
     background-color: #96c6b8;
@@ -53,7 +53,7 @@ body > header > .container {
 
 #header-nav {
     position: relative;
-    background-color: #fff;
+    background-color: var(--main-background-color);
     border-top: solid 1px #8d8d8d;
     border-bottom: solid 1px #b6b6b6;
     z-index: 1;
@@ -79,12 +79,12 @@ body > header > .container {
     line-height: 100%;
     font-size: 38px;
     margin-left: -13px;
-    color: #fff;
+    color: var(--main-background-color);
     text-shadow: 0 1px 1px #b6b6b6;
 }
 
 #header-nav a {
-    color: #a9abaa;
+    color: var(--grey-5);
     text-decoration: none;
 }
 #header-nav a:hover, #header-nav a.active {

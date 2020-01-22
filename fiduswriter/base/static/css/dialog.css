@@ -20,7 +20,7 @@
     position: relative;
     margin: 0 -19px;
     padding: 19px 40px 19px 19px;
-    background: #605f5f;
+    background: var(--grey-2);
     color: white;
     cursor: move;
     user-select: none;
@@ -38,7 +38,7 @@
 }
 
 .ui-dialog-titlebar-close:hover {
-    color: #e0e0e0;
+    color: var(--grey-1);
 }
 
 .ui-button-icon-only {

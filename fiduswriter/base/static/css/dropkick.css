@@ -37,14 +37,14 @@
 }
 
 .dk-option {
-    background-color: #fff;
+    background-color: var(--main-background-color);
     border-bottom: 1px solid #ccc;
     padding: 0 4px;
     height: 24px;
     line-height: 24px;
 }
 .dk-select-options .dk-option-highlight, .dk-select-options .dk-option-selected {
-    background-color: #e0e0e0;
+    background-color: var(--grey-1);
 }
 /* Inner container for options, this is what makes the scrollbar possible. */
 .dk-select-options_inner {
@@ -61,13 +61,13 @@
 
 .dk-selected:hover, .dk-selected:focus {
   outline: none;
-  border-color: #b73717;
+  border-color: var(--color-1);
 }
 
  .dk-selected:hover:before, .dk-selected:focus:before {
-     border-top-color: #b73717;
+     border-top-color: var(--color-1);
  }
 
 .dk-selected:hover:after, .dk-selected:focus:after {
-    border-left-color: #b73717;
+    border-left-color: var(--color-1);
 }

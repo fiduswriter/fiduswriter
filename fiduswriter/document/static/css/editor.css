@@ -3,7 +3,7 @@ body.editor {
     height: 100%;
     font-family: 'Lato', sans-serif;
     font-size: 13px;
-    color: #2c2723;
+    color: var(--color-1-hover);
     width: 100%;
     background-color: #f2f2f2;
     overflow-x: hidden;
@@ -17,14 +17,14 @@ header {
 
 #document-top {
     padding: 16px 0;
-    background-color: #84b4a7;
+    background-color: var(--color-3);
     width: 100%;
     border-bottom: 1px solid #c2dad3;
 }
 
 #document-top>h1 {
     font-size: 22px;
-    color: #fff;
+    color: var(--main-background-color);
     font-style: italic;
     padding: 0 48px 0 110px;
     background: url(../img/fidus_face.png) no-repeat 42px 0;
@@ -112,21 +112,21 @@ header {
 #comments-display {
     left: 100%;
     margin-left: 14px;
-    background-color: #fbf9d2;
+    background-color: var(--input-focus-color);
     vertical-align: top;
 }
 
 #comments-display.selected {
-    background-color: #f9f9f9;
+    background-color: var(--grey-3);
 }
 
 #comments-display:hover {
-    background-color: #e0e0e0;
+    background-color: var(--grey-1);
 }
 
 #comments-display.disabled {
     color: #ccc;
-    background-color: #f9f9f9;
+    background-color: var(--grey-3);
 }
 
 #reviewed {
@@ -136,7 +136,7 @@ header {
 }
 
 #reviewed:hover {
-    background-color: #e0e0e0;
+    background-color: var(--grey-1);
 }
 
 .editor-toolbar {
@@ -161,10 +161,10 @@ header {
 .editor-toolbar div.info {
     /*max-width: 90px;*/
     min-width: 62px;
-    color: #000;
-    background-color: #f9f9f9;
+    color: var(--main-text-color);
+    background-color: var(--grey-3);
     text-shadow: none;
-    border-color: #e0e0e0;
+    border-color: var(--grey-1);
     height: 46px;
     line-height: 46px;
     padding: 0 10px;
@@ -190,7 +190,7 @@ header {
     max-width: 120px;
     font-size: 11px;
     font-weight: 700;
-    color: #2c2723;
+    color: var(--color-1-hover);
     font-family: Lato;
     font-size: 13px;
     font-weight: 700;
@@ -329,7 +329,7 @@ body.header-closed #editor-content {
 #paper-editable .cross-reference.missing-target,
 #paper-editable .cross-reference.missing-target:hover,
 #paper-editable a.missing-target {
-    background-color: #b73717;
+    background-color: var(--color-1);
 }
 
 #paper-editable .cross-reference.missing-target,
@@ -339,7 +339,7 @@ body.header-closed #editor-content {
 
 
 #paper-editable .search {
-    background-color: #84b4a7;
+    background-color: var(--color-3);
 }
 
 #paper-editable .search.selected {
@@ -505,8 +505,8 @@ span.delete {
 }
 
 .ProseMirror th {
-    background-color: #76a698;
-    color: #fff;
+    background-color: var(--color-3-hover);
+    color: var(--main-background-color);
 }
 
 #comments-filter {
@@ -517,15 +517,15 @@ span.delete {
     position: fixed;
     bottom: 0;
     left: 100px;
-    background-color: #f9f9f9;
-    border-top: 1px solid #e0e0e0;
-    border-right: 1px solid #e0e0e0;
-    border-left: 1px solid #e0e0e0;
+    background-color: var(--grey-3);
+    border-top: 1px solid var(--grey-1);
+    border-right: 1px solid var(--grey-1);
+    border-left: 1px solid var(--grey-1);
     padding: 4px;
 }
 
 #unobtrusive_messages .warn {
-    color: #b73717;
+    color: var(--color-1);
 }
 
 #unobtrusive_messages:empty {
@@ -584,13 +584,13 @@ span.delete {
     display: inline-block;
     padding: 0 8px;
     text-align: center;
-    background-color: #fff;
+    background-color: var(--main-background-color);
     background-repeat: repeat-x;
     background-image: linear-gradient(#f5f5f5 0%, #eee 100%);
     border: 1px solid #ccc;
     border-radius: 3px;
-    -webkit-box-shadow: inset 0 1px 0 #fff, 0 1px 0 #ccc;
-    box-shadow: inset 0 1px 0 #fff, 0 1px 0 #ccc;
+    -webkit-box-shadow: inset 0 1px 0 var(--main-background-color), 0 1px 0 #ccc;
+    box-shadow: inset 0 1px 0 var(--main-background-color), 0 1px 0 #ccc;
 }
 
 .help-key-def {
@@ -676,7 +676,7 @@ table.insert-table-selection td {
 }
 
 table.insert-table-selection td.hover {
-    background-color: #e0e0e0;
+    background-color: var(--grey-1);
 }
 
 table.insert-table-selection td.selected {
@@ -728,8 +728,8 @@ table.insert-table-selection td.selected.hover {
 
 .drop-up-head {
     padding: 20px 22px;
-    background-color: #605f5f;
-    color: #ffffff;
+    background-color: var(--grey-2);
+    color: var(--main-background-color);
     font-family: Lato;
     font-size: 13px;
     font-weight: 400;
@@ -740,7 +740,7 @@ table.insert-table-selection td.selected.hover {
 
 .drop-up-head .link-href a {
     opacity: 0.6;
-    color: #ffffff;
+    color: var(--main-background-color);
     font-family: Lato;
     font-size: 12px;
     font-weight: 700;
@@ -759,7 +759,7 @@ table.insert-table-selection td.selected.hover {
 .user-contents ul.drop-up-options li {
     border-top: 1px solid #eeeeee;
     padding: 16px 30px;
-    color: #2c2723;
+    color: var(--color-1-hover);
     font-family: Lato;
     font-size: 13px;
     font-weight: 400;
@@ -841,7 +841,7 @@ html[hc=a5] body {
 html[hc=a3] #toolbar,
 html[hc=a4] #toolbar,
 html[hc=a5] #toolbar {
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--grey-1);
 }
 
 #close-document-top {
@@ -855,7 +855,7 @@ html[hc=a5] #toolbar {
     width: 10px;
     height: 10px;
     opacity: 0.6;
-    color: #ffffff;
+    color: var(--main-background-color);
     font-size: 14px;
     font-weight: 400;
     line-height: 25px;

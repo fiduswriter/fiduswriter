@@ -11,14 +11,14 @@
 }
 
 .ui-tabs-nav .fw-button {
-    color: #000;
-    border-color: #e0e0e0;
-    background: #f9f9f9;
+    color: var(--main-text-color);
+    border-color: var(--grey-1);
+    background: var(--grey-3);
 }
 
 .ui-tabs-nav .fw-button:hover,
 .ui-tabs-nav .ui-tabs-active .fw-button  {
-    background: #f9f9f9;
+    background: var(--grey-3);
 }
 
 .ui-tabs-panel {

@@ -60,7 +60,7 @@
     margin-right: 5px;
     font-size: 14px;
     color: white;
-    background-color: #76a698;
+    background-color: var(--color-3-hover);
     border: 0 none;
     border-radius: 19px;
     white-space: nowrap;
@@ -71,7 +71,7 @@
 }
 
 #bib-dialog .type-switch.disabled {
-    background-color: #e0e0e0;
+    background-color: var(--grey-1);
 }
 
 .type-switch-inner {
@@ -93,8 +93,8 @@
     width: 38px;
     height: 38px;
     border-radius: 19px;
-    background-color: #f9f9f9;
-    border: 1px solid #e0e0e0;
+    background-color: var(--grey-3);
+    border: 1px solid var(--grey-1);
 }
 
 .value2 .type-switch-inner {
@@ -165,7 +165,7 @@
 
 #bib-dialog .ProseMirror-focused div.literal,
 #bib-dialog .ProseMirror-focused pre.long-literal {
-    background-color: #fbf9d2;
+    background-color: var(--input-focus-color);
 }
 
 #bib-dialog .fw-pulldown.fw-center {
@@ -194,7 +194,7 @@
     font-size: 14px;
     line-height: 1.42857;
     color: #555555;
-    background-color: #e0e0e0;
+    background-color: var(--grey-1);
 }
 
 .tokenfield-set {
@@ -215,8 +215,8 @@
     border-radius: 3px;
     line-height: 1.5;
     cursor: pointer;
-    color: #fff;
-    background: #76a698;
+    color: var(--main-background-color);
+    background: var(--color-3-hover);
     border: 1px solid #7d948e;
 }
 
@@ -225,7 +225,7 @@
 }
 
 .tokenfield .tokenfield-set > ul > li a {
-    color: #fff;
+    color: var(--main-background-color);
 }
 
 .tokenfield .tokenfield-input {
@@ -313,7 +313,7 @@ div.literal em, pre.long-literal em {
     height: 36px;
     border: solid 1px #ccc;
     line-height: 36px;
-    background-color: #fff;
+    background-color: var(--main-background-color);
     padding: 0 12px;
     font-size: 13px;
     margin-bottom: 10px;
@@ -395,7 +395,7 @@ Modal header
 }
 
 .current-tab .tab-link-inner {
-    color: #2c2723;
+    color: var(--color-1-hover);
 }
 
 @media screen and (max-width: 740px) {

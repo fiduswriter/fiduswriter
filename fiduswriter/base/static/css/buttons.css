@@ -2,7 +2,7 @@
     display: inline-block;
     width: auto;
     height: 34px;
-    color: #fff;
+    color: var(--main-background-color);
     line-height: 34px;
     padding: 0 12px;
     font-size: 14px;
@@ -17,7 +17,7 @@
 }
 
 .fw-button:hover {
-    color: #fff;
+    color: var(--main-background-color);
 }
 
 .fw-button:focus {
@@ -62,30 +62,30 @@
 }
 
 .fw-button.fw-light {
-    border-color: #e0e0e0;
-    background-color: #f9f9f9;
-    color: #2c2723;
+    border-color: var(--grey-1);
+    background-color: var(--grey-3);
+    color: var(--color-1-hover);
 }
 
 .fw-button.fw-light:not(.disabled):hover,
 .fw-button.fw-light.ui-state-active {
-    background-color: #e0e0e0;
-    color: #2c2723;
+    background-color: var(--grey-1);
+    color: var(--color-1-hover);
 }
 
 .fw-button.fw-white {
     border: 0 none;
     background-color: #f3f3f3;
-    color: #000;
+    color: var(--main-text-color);
 }
 .fw-button.fw-white:not(.disabled):hover {
-    background-color: #f9f9f9;
-    color: #000;
+    background-color: var(--grey-3);
+    color: var(--main-text-color);
 }
 
 .fw-button.fw-green {
     border-color: #7d948e;
-    background-color: #76a698;
+    background-color: var(--color-3-hover);
 }
 .fw-button.fw-green:not(.disabled):hover {
     background-color: #96c6b8;
@@ -320,7 +320,7 @@
 }
 
 .fw-plain-button:hover {
-    background-color: #e0e0e0;
+    background-color: var(--grey-1);
 }
 
 .fw-button.disabled {

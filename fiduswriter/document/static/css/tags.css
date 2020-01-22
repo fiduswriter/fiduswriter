@@ -30,7 +30,7 @@
     border-radius: 3px;
     line-height: 2em;
     cursor: pointer;
-    color: #fff;
-    background: #76a698;
+    color: var(--main-background-color);
+    background: var(--color-3-hover);
     border: 1px solid #7d948e;
 }

@@ -2,7 +2,7 @@ ul.errorlist {
     margin: 0 0 4px;
     padding: 0;
     color: #ba2121;
-    background: #fff;
+    background: var(--main-background-color);
 }
 ul.errorlist li:first-child {
     margin-top: 0;

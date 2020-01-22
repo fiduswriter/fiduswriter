@@ -33,5 +33,5 @@
 }
 
 .dot-menu-icon:hover {
-    color:#000;
+    color:var(--main-text-color);
 }

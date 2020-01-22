@@ -1,0 +1,22 @@
+:root {
+  --warning-background: rgba(221, 208, 63, 0.8);
+  --main-background-color: #fff;
+  --main-text-color: #000;
+  --overlay-color: rgba(170, 170, 170, 0.3);
+  --input-focus-color: #fbf9d2;
+  --color-1: #b73717; /* red */
+  --color-1-hover: #2c2723;
+  --color-2: #79aec8; /* blue */
+  --color-3: #84b4a7; /* green */
+  --color-3-hover: #76a698;
+
+  --grey-1: #e0e0e0;
+  --grey-2: #605f5f;
+  --grey-3: #f9f9f9;
+  --grey-4: #9e9e9e;
+  --grey-5: #a9abaa;
+  --grey-6: #a8a8a8;
+
+
+}
+

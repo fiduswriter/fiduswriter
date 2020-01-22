@@ -148,7 +148,7 @@ figure {
 
 .user-contents a,
 .user-contents a:hover {
-    color: #84b4a7;
+    color: var(--color-3);
     text-decoration: underline;
 }
 
@@ -188,7 +188,7 @@ table {
 
 .user-contents a,
 .user-contents a:hover {
-    color: #84b4a7;
+    color: var(--color-3);
     text-decoration: underline;
 }
 

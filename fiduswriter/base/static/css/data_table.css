@@ -10,7 +10,7 @@
 }
 
 .dataTable-table thead th a {
-    color: #2c2723;
+    color: var(--color-1-hover);
 }
 
 .fw-data-table th,
@@ -45,10 +45,6 @@
     width: 342px;
     height: 225px;
 }
-
-/*.fw-data-table tbody tr:hover {
-    background-color: #fbf9d2;
-}*/
 
 .fw-data-table th,
 .fw-data-table td,
@@ -87,7 +83,7 @@
 }
 
 .owned-by-user .icon-access-right:hover,.fw-data-table .fa-clock:hover, .fw-data-table .fa-trash:hover, .fw-data-table .fa-download:hover {
-    color: #2c2723;
+    color: var(--color-1-hover);
 }
 
 /* A deleted access rights row */
@@ -118,11 +114,11 @@
 }
 
 .fw-table-wrapper .dataTables_filter label {
-    color: #a9abaa;
+    color: var(--grey-5);
 }
 
 .fw-table-wrapper .dataTables_filter label.focus {
-    color: #000;
+    color: var(--main-text-color);
 }
 
 .fw-table-wrapper .dataTables_filter label:after {

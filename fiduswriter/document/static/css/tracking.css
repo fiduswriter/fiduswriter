@@ -13,8 +13,8 @@ span.deletion {
 .contributor.selected-insertion,
 .tag.selected-deletion,
 .contributor.selected-deletion {
-    background-color: #fffacf;
-    color: #000;
+    background-color: var(--main-background-color)acf;
+    color: var(--main-text-color);
 }
 
 .margin-box.track>div {

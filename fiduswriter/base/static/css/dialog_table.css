@@ -43,7 +43,7 @@
     min-width: 260px;
     top: calc(100% + 2px);
     left: calc(100% - 13px);
-    background-color: #605f5f;
+    background-color: var(--grey-2);
     color: white;
     border-radius: 6px;
     line-height: 1.5;

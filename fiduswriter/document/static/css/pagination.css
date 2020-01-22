@@ -2,7 +2,7 @@
 
 .simplepage {
     width: 5.43in;
-    background-color: #fff;
+    background-color: var(--main-background-color);
     border: solid 1px #d9d9d9;
     min-height: 10.6in;
     margin: 60px auto .2in;
@@ -18,7 +18,7 @@ img {
     width: 5.43in;
     position: relative;
     page-break-after: always;
-    background-color: #fff;
+    background-color: var(--main-background-color);
     margin-left: auto;
     margin-right: auto;
     padding: 0 1.7in;

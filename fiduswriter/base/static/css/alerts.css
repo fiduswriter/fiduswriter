@@ -22,7 +22,7 @@
     border-radius: 3px;
     box-shadow: 0px 0px 5px rgba(240, 240, 240, 1);
     margin-bottom: 5px;
-    color: #fff;
+    color: var(--main-background-color);
     font-size: 15px;
     line-height: 20px;
     opacity: 0;
@@ -46,7 +46,7 @@
 }
 
 #alerts-wrapper .alerts-warning {
-    background-color: rgba(221, 208, 63, 0.8);
+    background-color: var(--warning-background);
 }
 
 #alerts-wrapper .alerts-info {

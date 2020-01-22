@@ -39,7 +39,7 @@
 }
 .content-menu-item {
     padding: 18px 31px 15px 31px;
-    color: #2c2723;
+    color: var(--color-1-hover);
     font-family: Lato;
     font-size: 14px;
     font-weight: 400;

@@ -14,7 +14,7 @@
     right: 40px;
     top: 38px;
     font-size: 14px;
-    color: #fff;
+    color: var(--main-background-color);
     line-height: 34px;
 }
 
@@ -73,7 +73,7 @@
     width: 280px;
     padding: 25px;
     float: right;
-    background-color: #f9f9f9;
+    background-color: var(--grey-3);
     border: solid 1px #d3d3d3;
 }
 
@@ -117,7 +117,7 @@ footer.prelogin {
     width: 100%;
     height: auto;
     border-top: solid 1px #cecece;
-    background-color: #fff;
+    background-color: var(--main-background-color);
     text-align: right;
     padding: 27px 0;
     z-index: 2;
@@ -137,11 +137,11 @@ footer.prelogin {
 }
 
 .fw-footer-links > li a {
-    color: #2c2723;
+    color: var(--color-1-hover);
 }
 
 .fw-footer-links > li a:hover {
-    color: #b73717;
+    color: var(--color-1);
 }
 
 #lang-selection {

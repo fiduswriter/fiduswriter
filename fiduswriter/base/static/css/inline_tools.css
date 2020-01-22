@@ -19,7 +19,7 @@
     border-radius: 50%;
     overflow: hidden;
     text-indent: -999px;
-    background-color: #e0e0e0;
+    background-color: var(--grey-1);
     cursor: pointer;
 }
 

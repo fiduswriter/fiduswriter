@@ -37,7 +37,7 @@ input[type='password']:focus,
 input[type='search']:focus,
 input[type='email']:focus,
 textarea:focus {
-    background-color: #fbf9d2;
+    background-color: var(--input-focus-color);
 }
 
 .form-label {
@@ -70,11 +70,11 @@ textarea:focus {
  */
 .fw-checkable {
     cursor: pointer;
-    background-color: #fff;
+    background-color: var(--main-background-color);
 }
 
 .fw-checkable.checked {
-    background-color: #fbf9d2;
+    background-color: var(--input-focus-color);
 }
 
 tr.fw-checkable.checked:after {

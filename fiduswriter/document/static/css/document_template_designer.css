@@ -12,7 +12,7 @@ form .aligned ul.object-tools.right {
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: #fff;
+    color: var(--main-background-color);
     border-radius: 15px;
     cursor: pointer;
 }
@@ -125,8 +125,8 @@ table td {
 }
 
 .ProseMirror {
-    background-color: #fff;
-    color: #000;
+    background-color: var(--main-background-color);
+    color: var(--main-text-color);
 }
 
 .ProseMirror-menubar {
@@ -136,8 +136,8 @@ table td {
 }
 
 .article-table th {
-    background-color: #76a698;
-    color: #fff;
+    background-color: var(--color-3-hover);
+    color: var(--main-background-color);
 }
 
 .ProseMirror td.selectedCell {

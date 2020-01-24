@@ -7,7 +7,7 @@ form .aligned ul.object-tools.right {
     display: block;
     float: left;
     padding: 3px 12px;
-    background: #999;
+    background: var(--grey-g);
     font-weight: 400;
     font-size: 11px;
     text-transform: uppercase;
@@ -136,8 +136,8 @@ table td {
 }
 
 .article-table th {
-    background-color: var(--color-3-hover);
-    color: var(--main-background-color);
+    background-color: var(--color-6-background);
+    color: var(--color-6);
 }
 
 .ProseMirror td.selectedCell {

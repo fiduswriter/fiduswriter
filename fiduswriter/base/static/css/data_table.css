@@ -50,7 +50,7 @@
 .fw-data-table td,
 .dataTable-table th,
 .dataTable-table td {
-    border-bottom: solid 1px #cecece;
+    border-bottom: solid 1px var(--grey-9);
 }
 
 .fw-data-table th:last-child,
@@ -65,7 +65,7 @@
 }
 
 .fw-data-table-title {
-    color: #a7321f;
+    color: var(--color-1-icon);
 }
 
 .fw-data-table-title i.fa,
@@ -78,7 +78,7 @@
 }
 
 .owned-by-user .icon-access-right,.fw-data-table .fa-clock, .fw-data-table .fa-trash, .fw-data-table .fa-download {
-    color: #a7321f;
+    color: var(--color-1-icon);
     cursor: pointer;
 }
 

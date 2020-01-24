@@ -12,13 +12,13 @@
 
 .ui-tabs-nav .fw-button {
     color: var(--main-text-color);
-    border-color: var(--grey-1);
-    background: var(--grey-3);
+    border-color: var(--color-light-border);
+    background: var(--color-light-background);
 }
 
 .ui-tabs-nav .fw-button:hover,
 .ui-tabs-nav .ui-tabs-active .fw-button  {
-    background: var(--grey-3);
+    background: var(--color-light-background);
 }
 
 .ui-tabs-panel {

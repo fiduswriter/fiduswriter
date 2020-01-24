@@ -8,12 +8,12 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: rgba(240, 240, 240, 0.7);
+    background-color: rgba(var(--wait-active-background-color));
     z-index: 1500;
 }
 
 #wait.active.full {
-    background-color: rgba(240, 240, 240, 1);
+    background-color: rgba(var(--wait-active-full-background-color));
 }
 
 #wait.active i {

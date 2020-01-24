@@ -60,15 +60,7 @@ a {
   outline: none;
 }
 
-::-webkit-input-placeholder {
-   color: var(--grey-5);
-   font-size: 14px;
-}
-::-moz-placeholder {
-   color: var(--grey-5);
-   font-size: 14px;
-}
-:-ms-input-placeholder {
-   color: var(--grey-5);
+::placeholder {
+   color: #a9abaa;
    font-size: 14px;
 }

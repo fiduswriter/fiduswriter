@@ -21,7 +21,7 @@ body > header > .container {
 }
 #user-preferences .username {
     display: inline-block;
-    color: var(--main-background-color);
+    color: var(--color-6);
     margin-right: 10px;
 }
 #user-preferences #preferences-btn {
@@ -29,11 +29,11 @@ body > header > .container {
     padding: 0 3px;
     height: 26px;
     line-height: 26px;
-    border-color: #7d948e;
-    background-color: var(--color-3-hover);
+    border-color: var(--color-6-border);
+    background-color: var(--color-6-background);
 }
 #user-preferences #preferences-btn:hover {
-    background-color: #96c6b8;
+    background-color: var(--color-6-hover);
 }
 #preferences-btn .fa-cog {
     margin-right: -5px;

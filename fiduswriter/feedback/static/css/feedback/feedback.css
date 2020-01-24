@@ -88,7 +88,7 @@ a.feedback-tab:hover {
   top: 20px;
   font-family: 'Lato', sans-serif;
   font-size: 27px;
-  color: #d3421c;
+  color: var(--color-3-background-from);
   padding-right: 60px;
 }
 #response-message {
@@ -109,7 +109,7 @@ a.feedback-tab:hover {
   color: #555;
 }
 #closeFeedback:hover {
-  color: #999;
+  color: var(--grey-g);
 }
 @media print {
   .feedback-tab, .feedback-panel {

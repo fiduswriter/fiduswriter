@@ -5,7 +5,7 @@ body.editor {
     font-size: 13px;
     color: var(--color-1-hover);
     width: 100%;
-    background-color: #f2f2f2;
+    background-color: var(--grey-7);
     overflow-x: hidden;
 }
 
@@ -17,14 +17,14 @@ header {
 
 #document-top {
     padding: 16px 0;
-    background-color: var(--color-3);
+    background-color: var(--color-5-background);
     width: 100%;
     border-bottom: 1px solid #c2dad3;
 }
 
-#document-top>h1 {
+#document-top > h1 {
     font-size: 22px;
-    color: var(--main-background-color);
+    color: var(--color-5);
     font-style: italic;
     padding: 0 48px 0 110px;
     background: url(../img/fidus_face.png) no-repeat 42px 0;
@@ -74,7 +74,7 @@ header {
 
 #header-navigation span.selected.disabled,
 #toolbar span.selected.disabled {
-    background-color: #ccc;
+    background-color: var(--grey-h);
     color: white !important;
 }
 
@@ -102,7 +102,7 @@ header {
     -webkit-user-select: none;
     padding-top: 34px;
     padding-bottom: 34px;
-    background-color: #f2f2f2;
+    background-color: var(--grey-7);
 }
 
 #ice-control {
@@ -117,16 +117,16 @@ header {
 }
 
 #comments-display.selected {
-    background-color: var(--grey-3);
+    background-color: var(--color-light-background);
 }
 
 #comments-display:hover {
-    background-color: var(--grey-1);
+    background-color: var(--color-light-background-hover);
 }
 
 #comments-display.disabled {
-    color: #ccc;
-    background-color: var(--grey-3);
+    color: var(--grey-h);
+    background-color: var(--color-light-background);
 }
 
 #reviewed {
@@ -136,7 +136,7 @@ header {
 }
 
 #reviewed:hover {
-    background-color: var(--grey-1);
+    background-color: var(--color-light-background-hover);
 }
 
 .editor-toolbar {
@@ -162,9 +162,9 @@ header {
     /*max-width: 90px;*/
     min-width: 62px;
     color: var(--main-text-color);
-    background-color: var(--grey-3);
+    background-color: var(--color-light-background);
     text-shadow: none;
-    border-color: var(--grey-1);
+    border-color: var(--color-light-border);
     height: 46px;
     line-height: 46px;
     padding: 0 10px;
@@ -339,11 +339,11 @@ body.header-closed #editor-content {
 
 
 #paper-editable .search {
-    background-color: var(--color-3);
+    background-color: var(--color-5-background);
 }
 
 #paper-editable .search.selected {
-    background-color: #8ab5a6;
+    background-color: var(--color-6-focus);
 }
 
 #paper-editable {
@@ -396,7 +396,7 @@ font {
 
 .article-part:before {
     text-transform: none;
-    color: #cecece;
+    color: var(--grey-9);
 }
 
 
@@ -505,8 +505,8 @@ span.delete {
 }
 
 .ProseMirror th {
-    background-color: var(--color-3-hover);
-    color: var(--main-background-color);
+    background-color: var(--color-6-background);
+    color: var(--color-6);
 }
 
 #comments-filter {
@@ -517,10 +517,10 @@ span.delete {
     position: fixed;
     bottom: 0;
     left: 100px;
-    background-color: var(--grey-3);
-    border-top: 1px solid var(--grey-1);
-    border-right: 1px solid var(--grey-1);
-    border-left: 1px solid var(--grey-1);
+    background-color: var(--color-light-background);
+    border-top: 1px solid var(--color-light-border);
+    border-right: 1px solid var(--color-light-border);
+    border-left: 1px solid var(--color-light-border);
     padding: 4px;
 }
 
@@ -587,10 +587,10 @@ span.delete {
     background-color: var(--main-background-color);
     background-repeat: repeat-x;
     background-image: linear-gradient(#f5f5f5 0%, #eee 100%);
-    border: 1px solid #ccc;
+    border: 1px solid var(--grey-h);
     border-radius: 3px;
-    -webkit-box-shadow: inset 0 1px 0 var(--main-background-color), 0 1px 0 #ccc;
-    box-shadow: inset 0 1px 0 var(--main-background-color), 0 1px 0 #ccc;
+    -webkit-box-shadow: inset 0 1px 0 var(--main-background-color), 0 1px 0 var(--grey-h);
+    box-shadow: inset 0 1px 0 var(--main-background-color), 0 1px 0 var(--grey-h);
 }
 
 .help-key-def {
@@ -613,7 +613,7 @@ span.delete {
     display: block;
     padding-top: 10px;
     padding-bottom: 10px;
-    border: solid 1px #d3d3d3;
+    border: solid 1px var(--grey-8);
     cursor: text;
     position: relative;
 }
@@ -622,7 +622,7 @@ span.delete {
     position: absolute;
     top: 20px;
     left: 10px;
-    color: #d3d3d3;
+    color: var(--grey-8);
 }
 
 .math-latex {
@@ -676,11 +676,11 @@ table.insert-table-selection td {
 }
 
 table.insert-table-selection td.hover {
-    background-color: var(--grey-1);
+    background-color: var(--color-light-border);
 }
 
 table.insert-table-selection td.selected {
-    background-color: #4f4d4f;
+    background-color: var(--color-dark-border);
 }
 
 table.insert-table-selection td.selected.hover {
@@ -752,12 +752,12 @@ table.insert-table-selection td.selected.hover {
 }
 
 .link.drop-up-inner {
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.11);
+    box-shadow: 0 0 20px rgba(var(--dropup-box-shadow-color));
     border-radius: 6px;
 }
 
 .user-contents ul.drop-up-options li {
-    border-top: 1px solid #eeeeee;
+    border-top: 1px solid var(--grey-b);
     padding: 16px 30px;
     color: var(--color-1-hover);
     font-family: Lato;
@@ -773,7 +773,7 @@ table.insert-table-selection td.selected.hover {
 }
 
 ul.drop-up-options li:hover {
-    background-color: #eeeeee;
+    background-color: var(--grey-b);
 }
 
 .drop-up-options .remove-link:after {
@@ -829,7 +829,7 @@ as much black as possible. */
 html[hc=a3] .ui-widget-overlay,
 html[hc=a4] .ui-widget-overlay,
 html[hc=a5] .ui-widget-overlay {
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(var(--overlay--highcontrast-color));
 }
 
 html[hc=a3] body,
@@ -863,7 +863,7 @@ html[hc=a5] #toolbar {
 }
 
 .article-part.article-deleted {
-    border: 3px solid #d3421c;
+    border: 3px solid var(--color-3-background-from);
     border-radius: 5px;
     padding: 10px 20px 10px 10px;
     margin: 5px 0;
@@ -879,7 +879,7 @@ html[hc=a5] #toolbar {
 }
 
 .remove-article-part:hover {
-    color: #d3421c;
+    color: var(--color-3-background-from);
 }
 
 .editor .article .table-of-contents {
@@ -945,7 +945,7 @@ html[hc=a5] #toolbar {
 
 ::-webkit-scrollbar-thumb:hover {
     cursor: pointer;
-    background: #0f0f0f;
+    background: var(--grey-e);
 }
 
 #navigator-content a {

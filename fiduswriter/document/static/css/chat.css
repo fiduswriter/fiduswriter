@@ -12,7 +12,7 @@
     background-color: white;
     width: 250px;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--grey-h);
     border-bottom: 0;
     display: none;
     z-index: 100;
@@ -34,7 +34,7 @@
 }
 
 #chat-container .message:last-child {
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid var(--grey-h);
     margin-bottom: 6px;
     padding-bottom: 6px;
 }
@@ -65,7 +65,7 @@
 }
 
 #messageform.empty:before {
-    color: #cecece;
+    color: var(--grey-9);
 }
 
 #chat {

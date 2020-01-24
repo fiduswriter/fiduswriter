@@ -13,7 +13,7 @@ span.deletion {
 .contributor.selected-insertion,
 .tag.selected-deletion,
 .contributor.selected-deletion {
-    background-color: var(--main-background-color)acf;
+    background-color: #fffacf;
     color: var(--main-text-color);
 }
 

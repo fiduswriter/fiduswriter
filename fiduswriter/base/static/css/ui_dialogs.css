@@ -4,15 +4,15 @@
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: var(--overlay-color);
+    background-color: rgba(var(--overlay-color));
     z-index: 100;
 }
 
 .ui-dialog {
     position: absolute;
     padding: 19px;
-    background-color: var(--grey-3);
-    border: solid 1px var(--grey-1);
+    background-color: var(--color-light-background);
+    border: solid 1px var(--color-light-border);
     box-shadow: 0 0 10px var(--grey-4);
     overflow: hidden;
     border-radius: 4px;
@@ -24,10 +24,6 @@
 .ui-dialog-titlebar {
     position: relative;
     padding: 0;
-}
-
-.ui-draggable .ui-dialog-titlebar {
-    cursor: move;
 }
 
 .ui-dialog-title {

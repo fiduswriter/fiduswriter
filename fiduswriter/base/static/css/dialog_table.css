@@ -30,7 +30,7 @@
     content: "?";
     line-height: 1;
     color: white;
-    background-color: rgba(38, 38, 38, 0.6);
+    background-color: rgba(var(--tooltip-background-color));
     width: 12px;
     height: 12px;
     border-radius: 6px;

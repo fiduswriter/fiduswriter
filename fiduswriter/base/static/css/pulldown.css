@@ -3,7 +3,7 @@
     position: absolute;
     display: none;
     z-index: 101;
-    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    box-shadow: 0 0 20px rgba(var(--pulldown-box-shadow-color));
     background-color: white;
     border-radius: 6px;
     color: black;
@@ -56,7 +56,7 @@
     text-decoration: none;
     white-space: nowrap;
     cursor: pointer;
-    border-bottom: 1px solid #f2f2f2;
+    border-bottom: 1px solid var(--grey-7);
 }
 
 .fw-pulldown li:last-child .fw-pulldown-item {
@@ -64,7 +64,7 @@
 }
 
 .fw-pulldown-item.selected {
-    background-color: #f2f2f2;
+    background-color: var(--grey-7);
 }
 
 .fw-pulldown-item .fw-icon-right {
@@ -81,7 +81,7 @@
     display: block;
     height: 1px;
     border: 0;
-    background-color: #ccc;
+    background-color: var(--grey-h);
 }
 
 .fw-pulldown .delete-comment:after {
@@ -93,7 +93,7 @@
 }
 
 .disabled .fw-pulldown-item {
-    color: #999999;
+    color: var(--grey-g);
 }
 
 .fw-pulldown-icon {
@@ -101,7 +101,7 @@
 }
 
 .fw-pulldown-item:hover {
-    background-color: #f2f2f2;
+    background-color: var(--grey-7);
 }
 
 .fw-pulldown input[type=radio] {

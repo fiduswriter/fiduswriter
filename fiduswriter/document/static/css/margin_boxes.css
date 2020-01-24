@@ -15,7 +15,7 @@
     margin-bottom: 6px;
     margin-left: -3px;
     display: flex;
-    border: 2px solid #f2f2f2;
+    border: 2px solid var(--grey-7);
     border-top: 0 none;
     top: 225px;
 }
@@ -26,10 +26,10 @@ body.header-closed #margin-box-filter {
 
 .margin-box-filter-button {
     flex: 1;
-    background-color: var(--color-3);
-    color: var(--main-background-color);
-    border-right: 1px solid #f2f2f2;
-    border-left: 1px solid #f2f2f2;
+    background-color: var(--color-5-background);
+    color: var(--color-5);
+    border-right: 1px solid var(--grey-7);
+    border-left: 1px solid var(--grey-7);
     position: relative;
     cursor: pointer;
 }
@@ -39,7 +39,7 @@ body.header-closed #margin-box-filter {
 }
 
 .margin-box-filter-button.disabled {
-    background-color: var(--grey-1);
+    background-color: var(--color-light-background-hover);
     color: #545454;
 }
 
@@ -105,7 +105,7 @@ body.header-closed #margin-box-filter {
 }
 
 .margin-box.comment.active {
-    background-color: var(--main-background-color)acf;
+    background-color: #fffacf;
 }
 
 .margin-box.help.active {
@@ -128,7 +128,7 @@ body.header-closed #margin-box-filter {
 }
 
 .margin-box.active .comment-item:first-child {
-    background-color: var(--main-background-color)acf;
+    background-color: #fffacf;
     padding-bottom: 10px;
 }
 
@@ -138,7 +138,7 @@ body.header-closed #margin-box-filter {
     top: 30px;
     line-height: 1em;
     font-size: 36px;
-    color: var(--main-background-color)acf;
+    color: #fffacf;
     text-shadow: -1px 0px 0px #c5c5c5;
 }
 
@@ -222,7 +222,7 @@ body.header-closed #margin-box-filter {
     height: 26px;
     float: left;
     margin-right: 8px;
-    border: solid 1px #ccc;
+    border: solid 1px var(--grey-h);
 }
 
 .comment-user-name {
@@ -256,7 +256,7 @@ body.header-closed #margin-box-filter {
     width: 194px;
     background-color: var(--main-background-color);
     min-height: 40px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--grey-h);
     padding: 2px;
     margin-bottom: 6px;
     cursor: text;
@@ -321,7 +321,7 @@ body.header-closed #margin-box-filter {
 
 .comment-is-major-bgc .comment-item:first-child:before {
     content: "HP";
-    background-color: #af3515;
+    background-color: var(--error-border-color);
 }
 
 .comment.resolved .comment-item:first-child:after,
@@ -348,7 +348,7 @@ body.header-closed #margin-box-filter {
 
 .comment.resolved.active .comment-item:first-child:after,
 .comment-is-major-bgc.active .comment-item:first-child:after {
-    border-bottom-color: var(--main-background-color)acf;
+    border-bottom-color: #fffacf;
 }
 
 .comment-is-major-bgc .comment-item:first-child {
@@ -367,8 +367,8 @@ body.header-closed #margin-box-filter {
 #comment-editor .tagger,
 #answer-editor .tagger {
     margin: 5px -10px -11px -10px;
-    background-color: var(--grey-3);
-    border: 1px solid var(--grey-1);
+    background-color: var(--color-light-background);
+    border: 1px solid var(--color-light-border);
 }
 
 #comment-editor .tagger:empty,
@@ -386,7 +386,7 @@ body.header-closed #margin-box-filter {
 #comment-editor .tagger .tag.selected,
 #answer-editor .tagger .tag:hover,
 #answer-editor .tagger .tag.selected {
-    background-color: var(--grey-1);
+    background-color: var(--color-light-background-hover);
 }
 
 #comment-editor .tagger .tag-user,
@@ -413,7 +413,7 @@ body.header-closed #margin-box-filter {
 }
 
 .help-text-wrapper blockquote {
-    border-left: 2px solid #ccc;
+    border-left: 2px solid var(--grey-h);
     margin-left: 5px;
     padding-left: 5px;
 }

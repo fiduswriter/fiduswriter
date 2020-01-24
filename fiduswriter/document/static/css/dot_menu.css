@@ -29,7 +29,7 @@
 
 .dot-menu-icon {
     font-size: 18px;
-    color:#cecece;
+    color:var(--grey-9);
 }
 
 .dot-menu-icon:hover {

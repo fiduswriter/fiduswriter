@@ -1,14 +1,16 @@
+/* uses standard Django colors */
+
 .fw-link-text {
     cursor: pointer;
-    color: var(--color-1);
+    color: #b73717;
 }
 
 .fw-link-text:hover {
-    color: var(--color-1-hover);
+    color: #2c2723;
 }
 
 .fw-button {
-    background: var(--color-2);
+    background: #79aec8;
     padding: 10px 15px;
     border: none;
     border-radius: 4px;

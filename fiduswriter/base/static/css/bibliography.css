@@ -20,7 +20,7 @@
 }
 
 #bib-dialog .entry-field.fw-fomt-error input[type=text] {
-    background-color: #f34141;
+    background-color: var(--input-error-background-color);
 }
 
 
@@ -31,7 +31,7 @@
 #bib-dialog .entry-field select {
     padding: 0px 3px 0px 13px;
     border: 0 none;
-    background-color: #f3f3f3;
+    background-color: var(--grey-a);
     height: 38px;
     width: 561px;
     appearance: none;
@@ -59,8 +59,8 @@
     float: left;
     margin-right: 5px;
     font-size: 14px;
-    color: white;
-    background-color: var(--color-3-hover);
+    color: var(--color-6);
+    background-color: var(--color-6-background);
     border: 0 none;
     border-radius: 19px;
     white-space: nowrap;
@@ -71,7 +71,7 @@
 }
 
 #bib-dialog .type-switch.disabled {
-    background-color: var(--grey-1);
+    background-color: var(--color-light-background-hover);
 }
 
 .type-switch-inner {
@@ -93,8 +93,8 @@
     width: 38px;
     height: 38px;
     border-radius: 19px;
-    background-color: var(--grey-3);
-    border: 1px solid var(--grey-1);
+    background-color: var(--color-light-background);
+    border: 1px solid var(--color-light-border);
 }
 
 .value2 .type-switch-inner {
@@ -194,7 +194,7 @@
     font-size: 14px;
     line-height: 1.42857;
     color: #555555;
-    background-color: var(--grey-1);
+    background-color: var(--color-light-background-hover);
 }
 
 .tokenfield-set {
@@ -215,9 +215,9 @@
     border-radius: 3px;
     line-height: 1.5;
     cursor: pointer;
-    color: var(--main-background-color);
-    background: var(--color-3-hover);
-    border: 1px solid #7d948e;
+    color: var(--color-6);
+    background: var(--color-6-background);
+    border: 1px solid var(--color-6-border);
 }
 
 .tokenfield .tokenfield-set > ul > li:last-child {
@@ -240,7 +240,7 @@ div.literal, pre.long-literal {
     border-radius: 0;
     padding: 11px 10px 0;
     min-height: 38px;
-    background-color: #f3f3f3;
+    background-color: var(--grey-a);
 }
 
 pre.long-literal {
@@ -311,7 +311,7 @@ div.literal em, pre.long-literal em {
 .checkable-label {
     width: 462px;
     height: 36px;
-    border: solid 1px #ccc;
+    border: solid 1px var(--grey-h);
     line-height: 36px;
     background-color: var(--main-background-color);
     padding: 0 12px;

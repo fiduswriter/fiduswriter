@@ -25,8 +25,8 @@
 
 .inline-tools .menuicon:hover,
 .inline-tools .menuicon.active {
-    background-color: #7d948e;
-    color: white;
+    background-color: var(--color-6-border);
+    color: var(--color-6);
 }
 
 .inline-tools .menuicon + .menuicon {

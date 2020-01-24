@@ -1,5 +1,5 @@
 .fw-header.prelogin {
-    border-bottom: solid 1px #8e8e8e;
+    border-bottom: solid 1px var(--grey-i);
     height: 123px;
 }
 
@@ -23,8 +23,6 @@
         top: 2px;
     }
 }
-
-
 
 .prelogin #header-nav .fw-button {
     margin-left: 12px;
@@ -73,8 +71,8 @@
     width: 280px;
     padding: 25px;
     float: right;
-    background-color: var(--grey-3);
-    border: solid 1px #d3d3d3;
+    background-color: var(--color-light-background);
+    border: solid 1px var(--grey-8);
 }
 
 .input-wrapper label {
@@ -96,7 +94,7 @@
 
 .submit-wrapper label {
     font-size: 14px;
-    color: #585757;
+    color: var(--grey-f);
     margin-left: 4px;
 }
 
@@ -116,7 +114,7 @@ footer.prelogin {
     bottom: 0;
     width: 100%;
     height: auto;
-    border-top: solid 1px #cecece;
+    border-top: solid 1px var(--grey-9);
     background-color: var(--main-background-color);
     text-align: right;
     padding: 27px 0;

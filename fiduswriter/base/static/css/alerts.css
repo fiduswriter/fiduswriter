@@ -9,7 +9,7 @@
 
 #alerts-wrapper {
     z-index: 1600;
-    direction:ltr;
+    direction: ltr;
 }
 
 #alerts-wrapper li {
@@ -20,9 +20,8 @@
     padding: 20px 20px 20px 60px;
     border: none;
     border-radius: 3px;
-    box-shadow: 0px 0px 5px rgba(240, 240, 240, 1);
+    box-shadow: 0px 0px 5px rgba(var(--alert-box-shadow-color));
     margin-bottom: 5px;
-    color: var(--main-background-color);
     font-size: 15px;
     line-height: 20px;
     opacity: 0;
@@ -42,24 +41,28 @@
 }
 
 #alerts-wrapper .alerts-error {
-    background-color: rgba(200, 63, 27, 0.8);
+    color: var(--error-color);
+    background-color: rgba(var(--error-background-color));
 }
 
 #alerts-wrapper .alerts-warning {
-    background-color: var(--warning-background);
+    color: var(--warning-color);
+    background-color: rgba(var(--warning-background-color));
 }
 
 #alerts-wrapper .alerts-info {
-    background-color: rgba(36, 113, 176, 0.8);
+    color: var(--info-color);
+    background-color: rgba(var(--info-background-color));
 }
 
 #alerts-wrapper .alerts-success {
-    background-color: rgba(109, 164, 147, 0.8);
+    color: var(--success-color);
+    background-color: rgba(var(--success-background-color));
 }
 /* A form wasn't filled out correctly and the warning was added to the form. */
 div.warning {
     margin: 0 0 5px 0;
-    border: 1px solid rgba(200, 63, 27, 0.8);
-    background-color: rgba(200, 63, 27, 0.4);
+    border: 1px solid rgba(var(--warning-2-border-color));
+    background-color: rgba(var(--warning-2-background-color));
     padding: 6px;
 }

@@ -18,12 +18,12 @@ form .aligned ul.object-tools.right {
 }
 
 .object-tools span.link:focus, .object-tools span.link:hover {
-    background-color: #417690;
+    background-color: var(--color-2-background);
 }
 
 .from-container, .to-column, .trash {
-    border: 1px solid black;
-    background-color: white;
+    border: 1px solid var(--color-white-border);
+    background-color: var(--color-white-background);
 }
 
 .to-container {
@@ -39,7 +39,7 @@ form .aligned ul.object-tools.right {
 }
 
 .to-column .article-part table td {
-    border: 1px solid black;
+    border: 1px solid var(--color-white-border);
 }
 
 .from-container {
@@ -47,7 +47,7 @@ form .aligned ul.object-tools.right {
 }
 
 .trash {
-    background-color: grey;
+    background-color: var(--color-dark-background);
     width: 100px
 }
 

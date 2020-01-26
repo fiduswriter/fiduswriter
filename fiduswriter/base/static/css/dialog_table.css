@@ -43,8 +43,8 @@
     min-width: 260px;
     top: calc(100% + 2px);
     left: calc(100% - 13px);
-    background-color: var(--grey-2);
-    color: white;
+    background-color: var(--color-dark-background);
+    color: var(--color-dark);
     border-radius: 6px;
     line-height: 1.5;
     padding: 14px 18px;

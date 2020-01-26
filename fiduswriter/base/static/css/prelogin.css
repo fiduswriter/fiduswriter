@@ -135,11 +135,11 @@ footer.prelogin {
 }
 
 .fw-footer-links > li a {
-    color: var(--color-1-hover);
+    color: var(--color-1);
 }
 
 .fw-footer-links > li a:hover {
-    color: var(--color-1);
+    color: var(--color-1-hover);
 }
 
 #lang-selection {

@@ -59,23 +59,13 @@
 .fw-button.fw-light {
     border-color: var(--color-light-border);
     background-color: var(--color-light-background);
-    color: var(--color-light-2);
+    color: var(--color-light);
 }
 
 .fw-button.fw-light:not(.disabled):hover,
 .fw-button.fw-light.ui-state-active {
     background-color: var(--color-light-background-hover);
-    color: var(--color-1-hover);
-}
-
-.fw-button.fw-white {
-    border: 0 none;
-    background-color: var(--grey-a);
-    color: var(--main-text-color);
-}
-.fw-button.fw-white:not(.disabled):hover {
-    background-color: var(--color-light-background);
-    color: var(--main-text-color);
+    color: var(--color-light-hover);
 }
 
 .fw-button.fw-green {
@@ -183,7 +173,7 @@
 }
 
 .fw-button.disabled {
-    color: var(--grey-h);
+    color: var(--color-disabled);
     cursor: default;
 }
 

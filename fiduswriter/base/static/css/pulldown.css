@@ -37,8 +37,8 @@
 
 .fw-pulldown-header {
     line-height: 18px;
-    background-color: var(--color-1-hover);
-    color: var(--main-background-color);
+    background-color: var(--pulldown-header-background-color);
+    color: var(--pulldown-header-color);
     display: block;
 }
 
@@ -81,7 +81,7 @@
     display: block;
     height: 1px;
     border: 0;
-    background-color: var(--grey-h);
+    background-color: var(--pulldown-separator-color);
 }
 
 .fw-pulldown .delete-comment:after {
@@ -93,7 +93,7 @@
 }
 
 .disabled .fw-pulldown-item {
-    color: var(--grey-g);
+    color: var(--color-disabled);
 }
 
 .fw-pulldown-icon {

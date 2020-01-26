@@ -9,17 +9,17 @@
     position: fixed;
     bottom: 0px;
     right: 5px;
-    background-color: white;
+    background-color: var(--color-white-background);
     width: 250px;
     padding: 10px;
-    border: 1px solid var(--grey-h);
+    border: 1px solid var(--color-white-border);
     border-bottom: 0;
     display: none;
     z-index: 100;
 }
 
 #chat.highlighted {
-    background-color: #6495ed;
+    background-color: var(--chat-highlight-background-color);
 }
 
 #chat .resize-button {
@@ -34,7 +34,7 @@
 }
 
 #chat-container .message:last-child {
-    border-bottom: 1px solid var(--grey-h);
+    border-bottom: 1px solid var(--color-white-border);
     margin-bottom: 6px;
     padding-bottom: 6px;
 }

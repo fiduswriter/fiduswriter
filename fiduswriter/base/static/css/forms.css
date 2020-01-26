@@ -28,7 +28,8 @@ textarea {
     box-shadow: none;
     border-radius: 0;
     margin: 5px 0 5px 0;
-    background-color: var(--grey-a);
+    color: var(--color-light);
+    background-color: var(--color-light-background);
     border: 0 none;
 }
 
@@ -37,7 +38,7 @@ input[type='password']:focus,
 input[type='search']:focus,
 input[type='email']:focus,
 textarea:focus {
-    background-color: var(--input-focus-color);
+    background-color: var(--input-focus-background-color);
 }
 
 .form-label {
@@ -74,7 +75,7 @@ textarea:focus {
 }
 
 .fw-checkable.checked {
-    background-color: var(--input-focus-color);
+    background-color: var(--input-focus-background-color);
 }
 
 tr.fw-checkable.checked:after {
@@ -126,7 +127,7 @@ tr.fw-checkable.checked:after {
     display: block;
     width: 13px;
     height: 13px;
-    border: 1px solid var(--grey-k);
+    border: 1px solid var(--overview-checkbox-border);
     border-radius: 2px;
     background: linear-gradient(to bottom, rgba(var(--overview-checkbox-background-color-from)) 0%, rgba(var(--overview-checkbox-background-color-to)) 100%);
 }

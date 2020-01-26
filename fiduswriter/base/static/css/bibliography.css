@@ -31,7 +31,8 @@
 #bib-dialog .entry-field select {
     padding: 0px 3px 0px 13px;
     border: 0 none;
-    background-color: var(--grey-a);
+    color: var(--color-light);
+    background-color: var(--color-light-background);
     height: 38px;
     width: 561px;
     appearance: none;
@@ -71,7 +72,8 @@
 }
 
 #bib-dialog .type-switch.disabled {
-    background-color: var(--color-light-background-hover);
+    color: var(--color-disabled);
+    background-color: var(--color-disabled-background);
 }
 
 .type-switch-inner {
@@ -165,7 +167,7 @@
 
 #bib-dialog .ProseMirror-focused div.literal,
 #bib-dialog .ProseMirror-focused pre.long-literal {
-    background-color: var(--input-focus-color);
+    background-color: var(--input-focus-background-color);
 }
 
 #bib-dialog .fw-pulldown.fw-center {
@@ -193,7 +195,7 @@
     position: relative;
     font-size: 14px;
     line-height: 1.42857;
-    color: #555555;
+    color: var(--tokenfield-color);
     background-color: var(--color-light-background-hover);
 }
 
@@ -240,7 +242,8 @@ div.literal, pre.long-literal {
     border-radius: 0;
     padding: 11px 10px 0;
     min-height: 38px;
-    background-color: var(--grey-a);
+    color: var(--color-light);
+    background-color: var(--color-light-background);
 }
 
 pre.long-literal {
@@ -311,9 +314,9 @@ div.literal em, pre.long-literal em {
 .checkable-label {
     width: 462px;
     height: 36px;
-    border: solid 1px var(--grey-h);
+    border: solid 1px var(--color-white-border);
     line-height: 36px;
-    background-color: var(--main-background-color);
+    background-color: var(--color-white-background);
     padding: 0 12px;
     font-size: 13px;
     margin-bottom: 10px;
@@ -391,11 +394,13 @@ Modal header
 .tab-link-inner {
     display: block;
     margin-left: 20px;
-    color: rgba(98, 96, 96, 0.6);
+    color: var(--color-light);
+    opacity: 0.6;
 }
 
-.current-tab .tab-link-inner {
-    color: var(--color-1-hover);
+.current-tab .tab-link-inner, .tab-link-inner:hover {
+    color: var(--color-light-hover);
+    opacity: 1.0;
 }
 
 @media screen and (max-width: 740px) {

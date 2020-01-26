@@ -39,8 +39,8 @@ body.header-closed #margin-box-filter {
 }
 
 .margin-box-filter-button.disabled {
-    background-color: var(--color-light-background-hover);
-    color: #545454;
+    background-color: var(--color-disabled-background);
+    color: var(--color-disabled);
 }
 
 .margin-box-filter-button .marginbox-options.fw-pulldown.fw-right {
@@ -73,12 +73,13 @@ body.header-closed #margin-box-filter {
 }
 
 .margin-box {
-    background-color: #f8f8f8;
-    color: var(--color-1-hover);
+    background-color: var(--color-light-background);
+    color: var(--color-light);
 }
 
 .margin-box .comment-item:first-child {
-    background-color: var(--main-background-color);
+    color: var(--color-light);
+    background-color: var(--color-light-background);
 }
 
 .margin-box.track {
@@ -222,7 +223,7 @@ body.header-closed #margin-box-filter {
     height: 26px;
     float: left;
     margin-right: 8px;
-    border: solid 1px var(--grey-h);
+    border: solid 1px var(--color-white-border);
 }
 
 .comment-user-name {
@@ -254,9 +255,9 @@ body.header-closed #margin-box-filter {
 
 .margin-box .ProseMirror-wrapper {
     width: 194px;
-    background-color: var(--main-background-color);
+    background-color: var(--color-white-background);
     min-height: 40px;
-    border: 1px solid var(--grey-h);
+    border: 1px solid var(--color-white-border);
     padding: 2px;
     margin-bottom: 6px;
     cursor: text;
@@ -413,7 +414,7 @@ body.header-closed #margin-box-filter {
 }
 
 .help-text-wrapper blockquote {
-    border-left: 2px solid var(--grey-h);
+    border-left: 2px solid var(--color-white-border);
     margin-left: 5px;
     padding-left: 5px;
 }

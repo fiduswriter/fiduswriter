@@ -20,8 +20,8 @@
     position: relative;
     margin: 0 -19px;
     padding: 19px 40px 19px 19px;
-    background: var(--grey-2);
-    color: white;
+    background: var(--color-dark-background);
+    color: var(--color-dark);
     cursor: move;
     user-select: none;
 }

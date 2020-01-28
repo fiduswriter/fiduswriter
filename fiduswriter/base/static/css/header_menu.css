@@ -70,7 +70,7 @@
     line-height: 100%;
     font-size: 24px;
     margin-left: -8px;
-    color: var(--color-4-text);
+    color: var(--cs-4-text);
 }
 
 .fw-nav-item a {
@@ -115,5 +115,5 @@
 
 #user-preferences-pulldown a,
 #user-preferences-pulldown .fw-logout-button {
-    color: var(--color-1-hover);
+    color: var(--cs-1-hover);
 }

@@ -93,7 +93,7 @@
 }
 
 .disabled .fw-pulldown-item {
-    color: var(--color-disabled);
+    color: var(--cs-disabled);
 }
 
 .fw-pulldown-icon {

@@ -29,9 +29,9 @@
 
 .dot-menu-icon {
     font-size: 18px;
-    color:var(--color-white-text);
+    color:var(--cs-white-text);
 }
 
 .dot-menu-icon:hover {
-    color:var(--color-white-hover);
+    color:var(--cs-white-hover);
 }

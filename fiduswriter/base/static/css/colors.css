@@ -11,8 +11,6 @@
   --highcontrast-background-color: #fff;
   --highcontrast-border-color: #e0e0e0;
 
-
-
   --alert-box-shadow-color: 240, 240, 240, 1;
   --pulldown-box-shadow-color: 0, 0, 0, 0.2;
   --dropup-box-shadow-color: 0, 0, 0, 0.11;
@@ -28,78 +26,79 @@
 
   --chat-highlight-background-color: #6495ed;
 
-  --info-color: #fff;
+  --info-text-color: #fff;
   --info-background-color: 36, 113, 176, 0.8;
 
-  --success-color: #fff;
+  --success-text-color: #fff;
   --success-background-color: 109, 164, 147, 0.8;
 
-  --warning-color: #fff;
+  --warning-text-color: #fff;
   --warning-background-color: 221, 208, 63, 0.8;
   --warning-border-color: 200, 63, 27, 0.8;
 
   --error-border-color: #af3515;
   --error-background-color: #cc3f1a;
   --input-error-background-color: #f34141;
-  --error-color: #fff;
+  --error-text-color: #fff;
 
+ /* Color Schemes (CS) */
 
-  --color-1-text: #b73717; /* red text */
-  --color-1-icon: #a7321f;
-  --color-1-hover: #2c2723;
+  --cs-1-text: #b73717; /* red text */
+  --cs-1-icon: #a7321f;
+  --cs-1-hover: #2c2723;
 
-  --color-2-background-from: #0d78be; /* white on blue */
-  --color-2-background-to: #0d63ab;
-  --color-2-background: #0d78be; /* flat */
-  --color-2-border: #0557a1;
-  --color-2-background-hover: #0d63ab;
-  --color-2-background-selected: #63ab0d;
-  --color-2-box-shadow: #3c9fdf;
-  --color-2-text: #fff;
+  --cs-2-background-from: #0d78be; /* white on blue */
+  --cs-2-background-to: #0d63ab;
+  --cs-2-background: #0d78be; /* flat */
+  --cs-2-border: #0557a1;
+  --cs-2-background-hover: #0d63ab;
+  --cs-2-background-selected: #63ab0d;
+  --cs-2-box-shadow: #3c9fdf;
+  --cs-2-text: #fff;
 
-  --color-3-text: #fff;
-  --color-3-background-from: #d3421c; /* white on orange */
-  --color-3-background-to: #b13615;
-  --color-3-background-hover: #b13615;
-  --color-3-border: #7d331f;
+  --cs-3-text: #fff;
+  --cs-3-background-from: #d3421c; /* white on orange */
+  --cs-3-background-to: #b13615;
+  --cs-3-background-hover: #b13615;
+  --cs-3-border: #7d331f;
 
-  --color-4-text: #84b4a7; /* light green text */
+  --cs-4-text: #84b4a7; /* light green text */
 
-  --color-5-text: #fff;
-  --color-5-background: #84b4a7; /* white on light green */
-  --color-5-border: #f2f2f2;
-  --color-5-background-hover: #97cdbe;
+  --cs-5-text: #fff;
+  --cs-5-background: #84b4a7; /* white on light green */
+  --cs-5-border: #f2f2f2;
+  --cs-5-background-hover: #97cdbe;
 
-  --color-6-text: #fff;
-  --color-6-background: #76a698; /* white on dark green */
-  --color-6-border: #7d948e;
-  --color-6-focus: #8ab5a6;
-  --color-6-hover: #96c6b8;
+  --cs-6-text: #fff;
+  --cs-6-background: #76a698; /* white on dark green */
+  --cs-6-border: #7d948e;
+  --cs-6-focus: #8ab5a6;
+  --cs-6-hover: #96c6b8;
 
-  --color-dark-text: #fff; /* white on dark */
-  --color-dark-hover: #e0e0e0;
-  --color-dark-border: #4f4d4f;
-  --color-dark-background-hover: #585858;
-  --color-dark-background: #585858; /* flat */
-  --color-dark-background-from: #6a6a6a;
-  --color-dark-background-to: #585858;
-  --color-dark-box-shadow:  #7f7f7f;
+  --cs-dark-text: #fff; /* white on dark */
+  --cs-dark-hover: #e0e0e0;
+  --cs-dark-border: #4f4d4f;
+  --cs-dark-background-hover: #585858;
+  --cs-dark-background: #585858; /* flat */
+  --cs-dark-background-from: #6a6a6a;
+  --cs-dark-background-to: #585858;
+  --cs-dark-box-shadow:  #7f7f7f;
 
-  --color-light-text: #2c2723;
-  --color-light-border: #e0e0e0; /* dark on white-ish background */
-  --color-light-background: #f9f9f9;
-  --color-light-background-hover: #e0e0e0;
-  --color-light-hover: #000;
-  --color-light-box-shadow: #9e9e9e;
+  --cs-light-text: #2c2723;
+  --cs-light-border: #e0e0e0; /* dark on white-ish background */
+  --cs-light-background: #f9f9f9;
+  --cs-light-background-hover: #e0e0e0;
+  --cs-light-hover: #000;
+  --cs-light-box-shadow: #9e9e9e;
 
-  --color-white-text: #000; /* black on white */
-  --color-white-background: #fff;
-  --color-white-background-hover: #f9f9f9;
-  --color-white-border: #ccc;
+  --cs-white-text: #000; /* black on white */
+  --cs-white-background: #fff;
+  --cs-white-background-hover: #f9f9f9;
+  --cs-white-border: #ccc;
 
-  --color-disabled: #a9a9a9;
-  --color-disabled-background: #d3d3d3;
-  --color-disabled-border: #a9a9a9;
+  --cs-disabled: #a9a9a9;
+  --cs-disabled-background: #d3d3d3;
+  --cs-disabled-border: #a9a9a9;
 
  --overview-checkbox-color: #000;
  --overview-checkbox-background-color-from: 255, 255, 255, 1;

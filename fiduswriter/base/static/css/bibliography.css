@@ -31,8 +31,8 @@
 #bib-dialog .entry-field select {
     padding: 0px 3px 0px 13px;
     border: 0 none;
-    color: var(--color-light-text);
-    background-color: var(--color-light-background);
+    color: var(--cs-light-text);
+    background-color: var(--cs-light-background);
     height: 38px;
     width: 561px;
     appearance: none;
@@ -60,8 +60,8 @@
     float: left;
     margin-right: 5px;
     font-size: 14px;
-    color: var(--color-6-text);
-    background-color: var(--color-6-background);
+    color: var(--cs-6-text);
+    background-color: var(--cs-6-background);
     border: 0 none;
     border-radius: 19px;
     white-space: nowrap;
@@ -72,8 +72,8 @@
 }
 
 #bib-dialog .type-switch.disabled {
-    color: var(--color-disabled);
-    background-color: var(--color-disabled-background);
+    color: var(--cs-disabled);
+    background-color: var(--cs-disabled-background);
 }
 
 .type-switch-inner {
@@ -95,8 +95,8 @@
     width: 38px;
     height: 38px;
     border-radius: 19px;
-    background-color: var(--color-light-background);
-    border: 1px solid var(--color-light-border);
+    background-color: var(--cs-light-background);
+    border: 1px solid var(--cs-light-border);
 }
 
 .value2 .type-switch-inner {
@@ -196,7 +196,7 @@
     font-size: 14px;
     line-height: 1.42857;
     color: var(--tokenfield-color);
-    background-color: var(--color-light-background-hover);
+    background-color: var(--cs-light-background-hover);
 }
 
 .tokenfield-set {
@@ -217,9 +217,9 @@
     border-radius: 3px;
     line-height: 1.5;
     cursor: pointer;
-    color: var(--color-6-text);
-    background: var(--color-6-background);
-    border: 1px solid var(--color-6-border);
+    color: var(--cs-6-text);
+    background: var(--cs-6-background);
+    border: 1px solid var(--cs-6-border);
 }
 
 .tokenfield .tokenfield-set > ul > li:last-child {
@@ -242,8 +242,8 @@ div.literal, pre.long-literal {
     border-radius: 0;
     padding: 11px 10px 0;
     min-height: 38px;
-    color: var(--color-light-text);
-    background-color: var(--color-light-background);
+    color: var(--cs-light-text);
+    background-color: var(--cs-light-background);
 }
 
 pre.long-literal {
@@ -314,9 +314,9 @@ div.literal em, pre.long-literal em {
 .checkable-label {
     width: 462px;
     height: 36px;
-    border: solid 1px var(--color-white-border);
+    border: solid 1px var(--cs-white-border);
     line-height: 36px;
-    background-color: var(--color-white-background);
+    background-color: var(--cs-white-background);
     padding: 0 12px;
     font-size: 13px;
     margin-bottom: 10px;
@@ -394,12 +394,12 @@ Modal header
 .tab-link-inner {
     display: block;
     margin-left: 20px;
-    color: var(--color-light-text);
+    color: var(--cs-light-text);
     opacity: 0.6;
 }
 
 .current-tab .tab-link-inner, .tab-link-inner:hover {
-    color: var(--color-light-hover);
+    color: var(--cs-light-hover);
     opacity: 1.0;
 }
 

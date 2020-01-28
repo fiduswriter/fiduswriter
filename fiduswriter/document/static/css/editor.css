@@ -3,9 +3,9 @@ body.editor {
     height: 100%;
     font-family: 'Lato', sans-serif;
     font-size: 13px;
-    color: var(--color-light-text);
+    color: var(--cs-light-text);
     width: 100%;
-    background-color: var(--color-light-background);
+    background-color: var(--cs-light-background);
     overflow-x: hidden;
 }
 
@@ -17,14 +17,14 @@ header {
 
 #document-top {
     padding: 16px 0;
-    background-color: var(--color-5-background);
+    background-color: var(--cs-5-background);
     width: 100%;
-    border-bottom: 1px solid var(--color-5-border);
+    border-bottom: 1px solid var(--cs-5-border);
 }
 
 #document-top > h1 {
     font-size: 22px;
-    color: var(--color-5-text);
+    color: var(--cs-5-text);
     font-style: italic;
     padding: 0 48px 0 110px;
     background: url(../img/fidus_face.png) no-repeat 42px 0;
@@ -69,14 +69,14 @@ header {
 
 #header-navigation span.disabled,
 #toolbar span.disabled {
-    color: var(--color-disabled) !important;
+    color: var(--cs-disabled) !important;
     text-shadow: none;
 }
 
 #header-navigation span.selected.disabled,
 #toolbar span.selected.disabled {
-    background-color: var(--color-disabled-background);
-    color: var(--color-disabled) !important;
+    background-color: var(--cs-disabled-background);
+    color: var(--cs-disabled) !important;
 }
 
 /*
@@ -104,7 +104,7 @@ header {
     user-select: none;
     padding-top: 34px;
     padding-bottom: 34px;
-    background-color: var(--color-light-background);
+    background-color: var(--cs-light-background);
 }
 
 #ice-control {
@@ -119,16 +119,16 @@ header {
 }
 
 #comments-display.selected {
-    background-color: var(--color-light-background);
+    background-color: var(--cs-light-background);
 }
 
 #comments-display:hover {
-    background-color: var(--color-light-background-hover);
+    background-color: var(--cs-light-background-hover);
 }
 
 #comments-display.disabled {
-    color: var(--color-disabled);
-    background-color: var(--color-disabled-background);
+    color: var(--cs-disabled);
+    background-color: var(--cs-disabled-background);
 }
 
 #reviewed {
@@ -138,7 +138,7 @@ header {
 }
 
 #reviewed:hover {
-    background-color: var(--color-light-background-hover);
+    background-color: var(--cs-light-background-hover);
 }
 
 .editor-toolbar {
@@ -163,10 +163,10 @@ header {
 .editor-toolbar div.info {
     /*max-width: 90px;*/
     min-width: 62px;
-    color: var(--color-light-text);
-    background-color: var(--color-light-background);
+    color: var(--cs-light-text);
+    background-color: var(--cs-light-background);
     text-shadow: none;
-    border-color: var(--color-light-border);
+    border-color: var(--cs-light-border);
     height: 46px;
     line-height: 46px;
     padding: 0 10px;
@@ -192,7 +192,7 @@ header {
     max-width: 120px;
     font-size: 11px;
     font-weight: 700;
-    color: var(--color-light-text);
+    color: var(--cs-light-text);
     font-family: Lato;
     font-size: 13px;
     font-weight: 700;
@@ -210,7 +210,7 @@ header {
     width: 9px;
     height: 5px;
     opacity: 0.5;
-    color: var(--color-light-text);
+    color: var(--cs-light-text);
     font-size: 15px;
     line-height: 15.75px;
     letter-spacing: 0.15px;
@@ -229,7 +229,7 @@ header {
     width: 10px;
     height: 10px;
     opacity: 0.4;
-    color: var(--color-light-text);
+    color: var(--cs-light-text);
     font-size: 17px;
     font-weight: 400;
     line-height: 15.75px;
@@ -320,11 +320,11 @@ body.header-closed #editor-content {
 
 
 #paper-editable .search {
-    background-color: var(--color-5-background);
+    background-color: var(--cs-5-background);
 }
 
 #paper-editable .search.selected {
-    background-color: var(--color-5-background-hover);
+    background-color: var(--cs-5-background-hover);
 }
 
 #paper-editable {
@@ -377,7 +377,7 @@ font {
 
 .article-part:before {
     text-transform: none;
-    color: var(--color-white-border);
+    color: var(--cs-white-border);
 }
 
 
@@ -457,8 +457,8 @@ span.delete {
 }
 
 #flow {
-    color: var(--color-white-text);
-    background-color: var(--color-white-background);
+    color: var(--cs-white-text);
+    background-color: var(--cs-white-background);
 }
 
 #document-editable {
@@ -487,8 +487,8 @@ span.delete {
 }
 
 .ProseMirror th {
-    background-color: var(--color-6-background);
-    color: var(--color-6-text);
+    background-color: var(--cs-6-background);
+    color: var(--cs-6-text);
 }
 
 #comments-filter {
@@ -499,10 +499,10 @@ span.delete {
     position: fixed;
     bottom: 0;
     left: 100px;
-    background-color: var(--color-light-background);
-    border-top: 1px solid var(--color-light-border);
-    border-right: 1px solid var(--color-light-border);
-    border-left: 1px solid var(--color-light-border);
+    background-color: var(--cs-light-background);
+    border-top: 1px solid var(--cs-light-border);
+    border-right: 1px solid var(--cs-light-border);
+    border-left: 1px solid var(--cs-light-border);
     padding: 4px;
 }
 
@@ -563,14 +563,14 @@ span.delete {
 /* MathLive Editor Overwrite */
 
 .math-field {
-    background-color: var(--color-white-background);
+    background-color: var(--cs-white-background);
     margin: 9px 10px 7px 10px;
     padding-left: 5px;
     font-size: 20px;
     display: block;
     padding-top: 10px;
     padding-bottom: 10px;
-    border: solid 1px var(--color-white-border);
+    border: solid 1px var(--cs-white-border);
     cursor: text;
     position: relative;
 }
@@ -605,7 +605,7 @@ table.insert-table-selection {
 
 table.insert-table-selection,
 table.insert-table-selection td {
-    border: 1px solid var(--color-white-border);
+    border: 1px solid var(--cs-white-border);
 }
 
 table.insert-table-selection td {
@@ -614,15 +614,15 @@ table.insert-table-selection td {
 }
 
 table.insert-table-selection td.hover {
-    background-color: var(--color-white-background-hover);
+    background-color: var(--cs-white-background-hover);
 }
 
 table.insert-table-selection td.selected {
-    background-color: var(--color-white-background-hover);
+    background-color: var(--cs-white-background-hover);
 }
 
 .ProseMirror td.selectedCell {
-    background-color: var(--color-2-background);
+    background-color: var(--cs-2-background);
     caret-color: transparent;
 }
 
@@ -653,17 +653,17 @@ table.insert-table-selection td.selected {
 
 .drop-up-inner {
     position: relative;
-    background-color: var(--color-white-background);
+    background-color: var(--cs-white-background);
     z-index: 1;
     font-weight: normal;
-    color: var(--color-white-text);
+    color: var(--cs-white-text);
     left: 10px;
 }
 
 .drop-up-head {
     padding: 20px 22px;
-    background-color: var(--color-dark-background);
-    color: var(--color-dark-text);
+    background-color: var(--cs-dark-background);
+    color: var(--cs-dark-text);
     font-family: Lato;
     font-size: 13px;
     font-weight: 400;
@@ -673,7 +673,7 @@ table.insert-table-selection td.selected {
 }
 
 .drop-up-head .link-href a {
-    color: var(--color-dark-text);
+    color: var(--cs-dark-text);
     font-family: Lato;
     font-size: 12px;
     font-weight: 700;
@@ -690,10 +690,10 @@ table.insert-table-selection td.selected {
 }
 
 .user-contents ul.drop-up-options li {
-    border-top: 1px solid var(--color-light-border);
+    border-top: 1px solid var(--cs-light-border);
     padding: 16px 30px;
-    color: var(--color-light-text);
-    background: var(--color-light-background);
+    color: var(--cs-light-text);
+    background: var(--cs-light-background);
     font-family: Lato;
     font-size: 13px;
     font-weight: 400;
@@ -707,7 +707,7 @@ table.insert-table-selection td.selected {
 }
 
 ul.drop-up-options li:hover {
-    background-color: var(--color-light-background-hover);
+    background-color: var(--cs-light-background-hover);
 }
 
 .drop-up-options .remove-link:after {
@@ -789,7 +789,7 @@ html[hc=a5] #toolbar {
     width: 10px;
     height: 10px;
     opacity: 0.6;
-    color: var(--color-5-text);
+    color: var(--cs-5-text);
     font-size: 14px;
     font-weight: 400;
     line-height: 25px;
@@ -810,11 +810,11 @@ html[hc=a5] #toolbar {
     right:  5px;
     cursor: pointer;
     font-size: 16px;
-    color: var(--color-1-icon);
+    color: var(--cs-1-icon);
 }
 
 .remove-article-part:hover {
-    color: var(--color-1-hover);
+    color: var(--cs-1-hover);
 }
 
 .editor .article .table-of-contents {

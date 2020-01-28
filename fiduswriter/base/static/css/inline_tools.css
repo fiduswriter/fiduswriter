@@ -19,17 +19,17 @@
     border-radius: 50%;
     overflow: hidden;
     text-indent: -999px;
-    background-color: var(--color-2-background);
-    color: var(--color-2-text);
+    background-color: var(--cs-2-background);
+    color: var(--cs-2-text);
     cursor: pointer;
 }
 
 .inline-tools .menuicon:hover {
-    background-color: var(--color-2-background-hover);
+    background-color: var(--cs-2-background-hover);
 }
 
 .inline-tools .menuicon.active {
-    background-color: var(--color-2-background-selected);
+    background-color: var(--cs-2-background-selected);
 }
 
 .inline-tools .menuicon + .menuicon {

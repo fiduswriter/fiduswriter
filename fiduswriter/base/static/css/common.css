@@ -1,7 +1,7 @@
 body {
     width: 100%;
     height: 100%;
-    background-color: var(--color-light-background);
+    background-color: var(--cs-light-background);
     min-width: calc(380px - 100vw + 100%); /* to substract scrollbar width. */
     overflow-y: hidden;
 }
@@ -13,7 +13,7 @@ body.scrollable {
 .fw-header {
     width: 100%;
     height: auto;
-    background-color: var(--color-5-background);
+    background-color: var(--cs-5-background);
     z-index: 2;
 }
 
@@ -51,7 +51,7 @@ body.scrollable {
 .fw-contents .errorlist {
     border: 2px solid var(--error-border-color);
     background-color: var(--error-background-color);
-    color: var(--error-color);
+    color: var(--error-text-color);
     margin: 10px 0;
     display: inline-block;
     font-size: 1.4em;
@@ -82,7 +82,7 @@ table .fw-inline {
 }
 
 .fw-avatar  {
-    border: solid 1px var(--color-light-border);
+    border: solid 1px var(--cs-light-border);
 }
 
 .fw-string-avatar {

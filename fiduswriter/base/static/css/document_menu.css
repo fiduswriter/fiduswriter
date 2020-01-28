@@ -80,8 +80,8 @@ span.select-action-dropdown {
 }
 
 .fw-white input[type=text] {
-    color: var(--color-light-text);
-    background-color: var(--color-light-background);
+    color: var(--cs-light-text);
+    background-color: var(--cs-light-background);
 }
 
 .fw-button.fw-white:focus-within {

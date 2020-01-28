@@ -41,22 +41,22 @@
 }
 
 #alerts-wrapper .alerts-error {
-    color: var(--error-color);
+    color: var(--error-text-color);
     background-color: var(--error-background-color);
 }
 
 #alerts-wrapper .alerts-warning {
-    color: var(--warning-color);
+    color: var(--warning-text-color);
     background-color: rgba(var(--warning-background-color));
 }
 
 #alerts-wrapper .alerts-info {
-    color: var(--info-color);
+    color: var(--info-text-color);
     background-color: rgba(var(--info-background-color));
 }
 
 #alerts-wrapper .alerts-success {
-    color: var(--success-color);
+    color: var(--success-text-color);
     background-color: rgba(var(--success-background-color));
 }
 /* A form wasn't filled out correctly and the warning was added to the form. */

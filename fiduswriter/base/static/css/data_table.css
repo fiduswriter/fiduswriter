@@ -10,7 +10,7 @@
 }
 
 .dataTable-table thead th a {
-    color: var(--color-1-hover);
+    color: var(--cs-1-hover);
 }
 
 .fw-data-table th,
@@ -65,7 +65,7 @@
 }
 
 .fw-data-table-title {
-    color: var(--color-1-icon);
+    color: var(--cs-1-icon);
 }
 
 .fw-data-table-title i.fa,
@@ -78,12 +78,12 @@
 }
 
 .owned-by-user .icon-access-right,.fw-data-table .fa-clock, .fw-data-table .fa-trash, .fw-data-table .fa-download {
-    color: var(--color-1-icon);
+    color: var(--cs-1-icon);
     cursor: pointer;
 }
 
 .owned-by-user .icon-access-right:hover,.fw-data-table .fa-clock:hover, .fw-data-table .fa-trash:hover, .fw-data-table .fa-download:hover {
-    color: var(--color-1-hover);
+    color: var(--cs-1-hover);
 }
 
 /* A deleted access rights row */

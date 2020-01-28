@@ -40,7 +40,7 @@
 }
 
 #edit-avatar-btn {
-    color: var(--color-4-text);
+    color: var(--cs-4-text);
 }
 
 #edit-avatar-btn:hover {

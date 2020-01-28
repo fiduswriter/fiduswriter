@@ -30,7 +30,7 @@
     border-radius: 3px;
     line-height: 2em;
     cursor: pointer;
-    color: var(--color-6-text);
-    background: var(--color-6-background);
-    border: 1px solid var(--color-6-border);
+    color: var(--cs-6-text);
+    background: var(--cs-6-background);
+    border: 1px solid var(--cs-6-border);
 }

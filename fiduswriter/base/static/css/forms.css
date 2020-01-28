@@ -28,8 +28,8 @@ textarea {
     box-shadow: none;
     border-radius: 0;
     margin: 5px 0 5px 0;
-    color: var(--color-light-text);
-    background-color: var(--color-light-background);
+    color: var(--cs-light-text);
+    background-color: var(--cs-light-background);
     border: 0 none;
 }
 

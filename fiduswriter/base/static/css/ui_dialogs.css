@@ -11,9 +11,9 @@
 .ui-dialog {
     position: absolute;
     padding: 19px;
-    background-color: var(--color-light-background);
-    border: solid 1px var(--color-light-border);
-    box-shadow: 0 0 10px var(--color-light-box-shadow);
+    background-color: var(--cs-light-background);
+    border: solid 1px var(--cs-light-border);
+    box-shadow: 0 0 10px var(--cs-light-box-shadow);
     overflow: hidden;
     border-radius: 4px;
     font-size: 14px;

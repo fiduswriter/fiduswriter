@@ -9,10 +9,10 @@
     position: fixed;
     bottom: 0px;
     right: 5px;
-    background-color: var(--color-white-background);
+    background-color: var(--cs-white-background);
     width: 250px;
     padding: 10px;
-    border: 1px solid var(--color-white-border);
+    border: 1px solid var(--cs-white-border);
     border-bottom: 0;
     display: none;
     z-index: 100;
@@ -34,7 +34,7 @@
 }
 
 #chat-container .message:last-child {
-    border-bottom: 1px solid var(--color-white-border);
+    border-bottom: 1px solid var(--cs-white-border);
     margin-bottom: 6px;
     padding-bottom: 6px;
 }

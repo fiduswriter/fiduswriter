@@ -71,7 +71,7 @@
     width: 280px;
     padding: 25px;
     float: right;
-    background-color: var(--color-light-background);
+    background-color: var(--cs-light-background);
     border: solid 1px var(--grey-8);
 }
 
@@ -135,11 +135,11 @@ footer.prelogin {
 }
 
 .fw-footer-links > li a {
-    color: var(--color-1-text);
+    color: var(--cs-1-text);
 }
 
 .fw-footer-links > li a:hover {
-    color: var(--color-1-hover);
+    color: var(--cs-1-hover);
 }
 
 #lang-selection {

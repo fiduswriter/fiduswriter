@@ -13,7 +13,7 @@
     display: table-cell;
     width: 406px;
     height: 226px;
-    border: 2px dashed var(--grey-d);
+    border: 2px dashed var(--cs-white-border);
     text-align: center;
     vertical-align: middle;
     position: relative;
@@ -75,7 +75,7 @@ th.figure-preview-row, td.figure-preview-row {
 
 .figure-edit-icon {
     font-size: 18px;
-    color: var(--grey-9);
+    color: var(--cs-white-nofocus-text);
 }
 
 .crop-mode {

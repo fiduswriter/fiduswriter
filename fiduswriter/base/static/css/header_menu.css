@@ -6,6 +6,7 @@
 
 .fw-logo, #header-nav {
     display: inline-block;
+    vertical-align: top;
 }
 
 .fw-logo > img {
@@ -19,7 +20,7 @@
     top: -4px;
     font-family: 'Roboto', sans-serif;
     text-transform: uppercase;
-    color:  var(--main-background-color);
+    color: var(--cs-5-text);
     font-size: 15pt;
 }
 
@@ -66,7 +67,7 @@
 .fw-nav-item.active-menu-wrapper:after {
     position: absolute;
     left: 50%;
-    top: 24px;
+    top: 37px;
     line-height: 100%;
     font-size: 24px;
     margin-left: -8px;
@@ -74,21 +75,18 @@
 }
 
 .fw-nav-item a {
-    color: var(--main-background-color);
-    opacity: 0.7;
+    color: rgba(var(--nagivation-link-text-color));
     text-decoration: none;
 }
 
 .fw-nav-item a:hover, .fw-nav-item.active-menu-wrapper a {
-    opacity: 1.0;
+    color: rgba(var(--nagivation-link-active-text-color));
 }
 
 .fw-logout-button {
     background: none;
     border: none;
     font-family: inherit;
-    color: var(--main-background-color);
-    border-bottom: 1px solid var(--grey-7);
     width: 100%;
 }
 

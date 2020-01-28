@@ -4,9 +4,9 @@
     display: none;
     z-index: 101;
     box-shadow: 0 0 20px rgba(var(--pulldown-box-shadow-color));
-    background-color: white;
+    background-color: var(--pulldown-background-color);
     border-radius: 6px;
-    color: black;
+    color: var(--pulldown-text-color);
 }
 .fw-pulldown.fw-open {
     display: block;
@@ -38,7 +38,7 @@
 .fw-pulldown-header {
     line-height: 18px;
     background-color: var(--pulldown-header-background-color);
-    color: var(--pulldown-header-color);
+    color: var(--pulldown-header-text-color);
     display: block;
 }
 
@@ -56,7 +56,7 @@
     text-decoration: none;
     white-space: nowrap;
     cursor: pointer;
-    border-bottom: 1px solid var(--grey-7);
+    border-bottom: 1px solid var(--pulldown-separator-color);
 }
 
 .fw-pulldown li:last-child .fw-pulldown-item {
@@ -64,7 +64,7 @@
 }
 
 .fw-pulldown-item.selected {
-    background-color: var(--grey-7);
+    background-color: var(--pulldown-selected-background-color);
 }
 
 .fw-pulldown-item .fw-icon-right {
@@ -101,38 +101,9 @@
 }
 
 .fw-pulldown-item:hover {
-    background-color: var(--grey-7);
+    background-color: var(--pulldown-hover-background-color);
 }
 
 .fw-pulldown input[type=radio] {
     display: none;
-}
-
-.fw-pulldown-select {
-    position: relative;
-}
-
-.fw-pulldown-select-label {
-    position: relative;
-    font-size: 13px;
-    width: auto;
-    height: 33px;
-    line-height: 33px;
-    border: solid 1px var(--main-text-color);
-    cursor: pointer;
-}
-
-.fw-pulldown-select-label label {
-    margin-left: 10px;
-}
-
-.fw-pulldown-select-label:after {
-    position: absolute;
-    right: 10px;
-    top: 0;
-    display: block;
-    width: 1em;
-    height: 1em;
-    font-size: 14px;
-    content: '\25be';
 }

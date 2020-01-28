@@ -1,6 +1,6 @@
 .ui-content_menu {
     position: absolute;
-    background-color: var(--contentmenu-background-color);
+    background-color: var(--pulldown-background-color);
     box-shadow: 0 0 20px rgba(var(--dropup-box-shadow-color));
     font-size: 14px;
     z-index: 101;
@@ -39,7 +39,7 @@
 }
 .content-menu-item {
     padding: 18px 31px 15px 31px;
-    color: var(--cs-1-hover);
+    color: var(--pulldown-text-color);
     font-family: Lato;
     font-size: 14px;
     font-weight: 400;
@@ -50,14 +50,14 @@
     opacity:0.6;
 }
 .content-menu-item:hover {
-    background-color: var(--grey-b);
+    background-color: var(--pulldown-hover-background-color);
 }
 .content-menu-item-divider {
     border: 0 none;
-    border-top: 1px solid var(--grey-b) !important;
+    border-top: 1px solid var(--pulldown-separator-color) !important;
 }
 .content-menu-item-icon {
     position: absolute;
     right: 40px;
-    color: var(--grey-j);
+    color: var(--pulldown-text-color);
 }

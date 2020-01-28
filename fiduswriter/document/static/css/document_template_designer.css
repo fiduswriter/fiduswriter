@@ -1,26 +1,3 @@
-form .aligned ul.object-tools.right {
-    margin-left: inherit;
-    height: 3em;
-}
-
-.object-tools span.link, .object-tools span.link {
-    display: block;
-    float: left;
-    padding: 3px 12px;
-    background: var(--grey-g);
-    font-weight: 400;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--main-background-color);
-    border-radius: 15px;
-    cursor: pointer;
-}
-
-.object-tools span.link:focus, .object-tools span.link:hover {
-    background-color: var(--cs-2-background);
-}
-
 .from-container, .to-column, .trash {
     border: 1px solid var(--cs-white-border);
     background-color: var(--cs-white-background);
@@ -123,8 +100,8 @@ table td {
 }
 
 .ProseMirror {
-    background-color: var(--main-background-color);
-    color: var(--main-text-color);
+    background-color: var(--cs-white-background);
+    color: var(--cs-white-text);
 }
 
 .ProseMirror-menubar {
@@ -189,4 +166,12 @@ table td {
 
 #template-editor .initial ol, #template-editor .instructions ol {
     list-style-type: decimal;
+}
+.object-tools span.link {
+    display: block;
+    cursor: pointer;
+    border-radius: 15px;
+    background-color: var(--cs-2-background);
+    color: var(--cs-2-text);
+    padding: 3px 12px;
 }

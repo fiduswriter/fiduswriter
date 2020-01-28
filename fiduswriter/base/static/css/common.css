@@ -139,11 +139,11 @@ table .fw-inline {
     font-size: 13px;
     display: block;
     padding-top: 6px;
-    color: var(--grey-6);
+    color: var(--cs-white-nofocus-text);
 }
 
 .ProseMirror span.placeholder::before {
-    color: var(--grey-9);
+    color: var(--cs-white-placeholder-text);
     content: attr(data-placeholder);
     cursor: text;
 }

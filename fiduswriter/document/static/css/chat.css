@@ -65,7 +65,7 @@
 }
 
 #messageform.empty:before {
-    color: var(--grey-9);
+    color: var(--cs-white-placeholder-text);
 }
 
 #chat {

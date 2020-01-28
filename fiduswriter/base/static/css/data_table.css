@@ -50,7 +50,7 @@
 .fw-data-table td,
 .dataTable-table th,
 .dataTable-table td {
-    border-bottom: solid 1px var(--grey-9);
+    border-bottom: solid 1px var(--cs-white-border);
 }
 
 .fw-data-table th:last-child,
@@ -65,7 +65,7 @@
 }
 
 .fw-data-table-title {
-    color: var(--cs-1-icon);
+    color: var(--cs-1-text);
 }
 
 .fw-data-table-title i.fa,
@@ -98,45 +98,6 @@
     height: 25px;
     vertical-align: top;
     margin: -4px 10px -5px 0;
-}
-
-/*
- * Data Tables Plugin
- */
-.fw-table-wrapper .dataTables_filter {
-    position: fixed;
-    left: auto;
-    top: 96px;
-    margin-left: 495px;
-    width: 315px;
-    text-align: right;
-    z-index: 5;
-}
-
-.fw-table-wrapper .dataTables_filter label {
-    color: var(--grey-5);
-}
-
-.fw-table-wrapper .dataTables_filter label.focus {
-    color: var(--main-text-color);
-}
-
-.fw-table-wrapper .dataTables_filter label:after {
-    margin-left: 5px;
-    font-size: 16px;
-}
-
-.fw-table-wrapper .dataTables_filter input[type="search"] {
-    width: 255px;
-    height: 20px;
-    padding: 0 0 2px;
-    border-style: none;
-    border-bottom-style: solid;
-    border-bottom-width: 1px;
-}
-
-.fw-table-wrapper .dataTables_filter input[type="search"]:focus {
-    background-color: transparent;
 }
 
 /* the usermedia table */

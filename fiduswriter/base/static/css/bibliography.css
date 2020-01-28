@@ -227,7 +227,7 @@
 }
 
 .tokenfield .tokenfield-set > ul > li a {
-    color: var(--main-background-color);
+    color: var(--cs-6-text);
 }
 
 .tokenfield .tokenfield-input {

@@ -28,8 +28,8 @@
 .icon-access-review:before {content: '\f075'; } /* '' */
 
 .icon-access-read-without-comments:before, .icon-access-review:before, .icon-access-write-tracked:before {
-    background-color: var(--main-text-color);
-    color: var(--main-background-color);
+    background-color: var(--cs-dark-text-color);
+    color: var(--cs-dark-background-color);
     padding: 2px;
     border-radius: 4px;
 }
@@ -110,16 +110,6 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     content: '\f055';
-}
-.fw-table-wrapper .dataTables_filter label:after {
-    display: inline-block;
-    font-family: 'Font Awesome 5 Free';
-    font-weight: 900;
-    font-size: inherit;
-    text-rendering: auto;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    content: '\f002';
 }
 table.dataTable-table thead th a:after {
     font-family: 'Font Awesome 5 Free';

@@ -1,8 +1,8 @@
 ul.errorlist {
     margin: 0 0 4px;
     padding: 0;
-    color: #ba2121;
-    background: var(--main-background-color);
+    color: var(-error-text-color);
+    background: var(--error-background-color);
 }
 ul.errorlist li:first-child {
     margin-top: 0;

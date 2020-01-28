@@ -28,8 +28,8 @@ textarea {
     box-shadow: none;
     border-radius: 0;
     margin: 5px 0 5px 0;
-    color: var(--cs-light-text);
-    background-color: var(--cs-light-background);
+    color: var(--cs-white-text);
+    background-color: var(--input-background-color);
     border: 0 none;
 }
 
@@ -71,11 +71,6 @@ textarea:focus {
  */
 .fw-checkable {
     cursor: pointer;
-    background-color: var(--main-background-color);
-}
-
-.fw-checkable.checked {
-    background-color: var(--input-focus-background-color);
 }
 
 tr.fw-checkable.checked:after {
@@ -97,7 +92,7 @@ tr.fw-checkable.checked:after {
     width: 462px;
     height: 36px;
     line-height: 36px;
-    border: solid 1px var(--grey-8);
+    border: solid 1px var(--cs-light-border);
     padding-left: 12px;
     margin-bottom: 10px;
 }

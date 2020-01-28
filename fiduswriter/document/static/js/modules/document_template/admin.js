@@ -19,6 +19,8 @@ export class DocumentTemplateAdmin {
 
     init() {
         ensureCSS([
+            'colors.css',
+            'document_template_designer_admin.css',
             'admin.css',
             'ui_dialogs.css',
             'buttons.css'

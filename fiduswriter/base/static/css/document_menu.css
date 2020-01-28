@@ -1,6 +1,6 @@
 .fw-overview-menu-wrapper {
     position: relative;
-    background-color: var(--main-background-color);
+    background-color: var(--cs-white-background);
     padding: 11px 8px;
 }
 
@@ -35,7 +35,7 @@
 
 .fw-text-menu {
     height: 40px;
-    color: var(--grey-c);
+    color: var(--cs-white-nofocus-text);
     padding: 0;
     border: 0 none;
     background-color: transparent;
@@ -44,20 +44,20 @@
 }
 
 .fw-text-menu:hover {
-    color: var(--grey-e);
+    color: var(--cs-white-text);
 }
 
 .fw-dropdown-menu {
     padding-top: 14px;
     font-size: 14px;
-    color: var(--grey-c);
+    color: var(--cs-white-nofocus-text);
     cursor: pointer;
     height: 40px;
     box-sizing: border-box;
 }
 
 .fw-dropdown-menu:hover {
-    color: var(--grey-e);
+    color: var(--cs-white-text);
 }
 
 div.select-action {

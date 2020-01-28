@@ -618,7 +618,7 @@ table.insert-table-selection td.hover {
 }
 
 table.insert-table-selection td.selected {
-    background-color: var(--cs-white-background-hover);
+    background-color: var(--cs-white-background-selected);
 }
 
 .ProseMirror td.selectedCell {

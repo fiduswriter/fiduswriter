@@ -80,7 +80,7 @@ span.select-action-dropdown {
 }
 
 .fw-white input[type=text] {
-    color: var(--color-light);
+    color: var(--color-light-text);
     background-color: var(--color-light-background);
 }
 

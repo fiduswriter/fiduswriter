@@ -135,7 +135,7 @@ footer.prelogin {
 }
 
 .fw-footer-links > li a {
-    color: var(--color-1);
+    color: var(--color-1-text);
 }
 
 .fw-footer-links > li a:hover {

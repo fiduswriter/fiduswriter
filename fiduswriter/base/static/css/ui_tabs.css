@@ -11,7 +11,7 @@
 }
 
 .ui-tabs-nav .fw-button {
-    color: var(--main-text-color);
+    color: var(--color-light-text);
     border-color: var(--color-light-border);
     background: var(--color-light-background);
 }

@@ -2,7 +2,6 @@
     counter-reset: figure-cat-0 figure-cat-1 figure-cat-2 footnote-counter footnote-marker-counter;
 }
 
-
 /* CSL */
 
 .csl-bib-body {
@@ -52,7 +51,7 @@
 
 span.anchor {
     text-decoration: underline;
-    color: green;
+    color: var(--color-4-text);
 }
 
 figure figcaption {
@@ -66,7 +65,7 @@ figure img {
 
 figure {
     width: calc(80% - 12px);
-    border: 1px solid black;
+    border: 1px solid var(--color-white-border);
     padding: 5px;
     text-align: center;
     break-inside: avoid;
@@ -146,12 +145,6 @@ figure {
     content: ': ';
 }
 
-.user-contents a,
-.user-contents a:hover {
-    color: var(--color-4);
-    text-decoration: underline;
-}
-
 table {
     clear: both
 }
@@ -188,8 +181,12 @@ table {
 
 .user-contents a,
 .user-contents a:hover {
-    color: var(--color-4);
+    color: var(--color-1-text);
     text-decoration: underline;
+}
+
+.user-contents a:hover {
+    color: var(--color-1-hover);
 }
 
 .table-fixed {

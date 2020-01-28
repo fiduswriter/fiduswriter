@@ -3,8 +3,8 @@
     z-index: 5;
 }
 .table-menu-btn {
-    background-color: Transparent;
-    background-repeat:no-repeat;
+    background-color: transparent;
+    background-repeat: no-repeat;
     border: 1px;
     cursor:pointer;
     overflow: hidden;
@@ -29,9 +29,9 @@
 
 .dot-menu-icon {
     font-size: 18px;
-    color:var(--grey-9);
+    color:var(--color-white-text);
 }
 
 .dot-menu-icon:hover {
-    color:var(--main-text-color);
+    color:var(--color-white-hover);
 }

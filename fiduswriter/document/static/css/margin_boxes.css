@@ -15,7 +15,7 @@
     margin-bottom: 6px;
     margin-left: -3px;
     display: flex;
-    border: 2px solid var(--grey-7);
+    border: 2px solid var(--color-white-border);
     border-top: 0 none;
     top: 225px;
 }
@@ -27,15 +27,15 @@ body.header-closed #margin-box-filter {
 .margin-box-filter-button {
     flex: 1;
     background-color: var(--color-5-background);
-    color: var(--color-5);
-    border-right: 1px solid var(--grey-7);
-    border-left: 1px solid var(--grey-7);
+    color: var(--color-5-text);
+    border-right: 1px solid var(--color-5-border);
+    border-left: 1px solid var(--color-5-border);
     position: relative;
     cursor: pointer;
 }
 
 .margin-box-filter-button:hover {
-    background-color: #97cdbe;
+    background-color: var(--color-5-background-hover);
 }
 
 .margin-box-filter-button.disabled {
@@ -74,62 +74,63 @@ body.header-closed #margin-box-filter {
 
 .margin-box {
     background-color: var(--color-light-background);
-    color: var(--color-light);
+    color: var(--color-light-text);
 }
 
 .margin-box .comment-item:first-child {
-    color: var(--color-light);
+    color: var(--color-light-text);
     background-color: var(--color-light-background);
 }
 
 .margin-box.track {
-    background-color: rgba(45, 82, 144, 0.63);
-    color: var(--main-background-color);
+    background-color: rgba(var(--editor-track-background-color));
+    color: var(--editor-track-text-color);
 }
 
 .margin-box.track.active {
-    background-color: #788fb4;
-    color: var(--main-background-color);
+    background-color: var(--editor-track-active-background-color);
+    color: var(--editor-track-text-color);
     border: 0 none;
 }
 
 .margin-box.track.active:after {
-    color: #788fb4;
+    color: var(--editor-track-active-background-color);
     text-shadow: none;
 }
 
 #margin-box-container div.margin-box.active {
-    color: var(--main-text-color);
-    border: 1px solid #c5c5c5;
+    color: var(--color-white-text);
+    border: 1px solid var(--color-white-border);
     left: -18px;
     z-index: 5;
 }
 
 .margin-box.comment.active {
-    background-color: #fffacf;
+    background-color: var(--editor-active-comment-background-color);
 }
 
 .margin-box.help.active {
-    background-color: #fafafa;
+    background-color: var(--editor-active-help-background-color);
     left:-15px
 }
 
 .margin-box.help.active:after {
-    color: #79b8a5;
+    color: var(--editor-active-help-arrow-color);
     left: -15px
 }
 
 .margin-box.warning {
-    background-color: #e0aa9e;
+    background-color: rgba(var(--warning-background-color));
+    color: var(--warning-color);
 }
 
 #margin-box-container div.margin-box.warning.active {
-    background-color: var(--color-1);
-    color: var(--main-background-color);
+    background-color: var(--error-background-color);
+    color: var(--error-color);
 }
 
 .margin-box.active .comment-item:first-child {
-    background-color: #fffacf;
+    background-color: var(--editor-active-comment-background-color);
     padding-bottom: 10px;
 }
 
@@ -139,13 +140,13 @@ body.header-closed #margin-box-filter {
     top: 30px;
     line-height: 1em;
     font-size: 36px;
-    color: #fffacf;
-    text-shadow: -1px 0px 0px #c5c5c5;
+    color: var(--editor-active-comment-background-color);
+    text-shadow: -1px 0px 0px var(--color-white-border);
 }
 
 .margin-box.warning.active:after {
     top: 0;
-    color: var(--color-1);
+    color: var(--color-1-text);
 }
 
 .margin-box.hidden {
@@ -168,7 +169,7 @@ body.header-closed #margin-box-filter {
     top: 0;
     display: block;
     height: 1px;
-    background-color: rgba(0,0,0,0.2);
+    background-color: var(--color-white-border);
     content: "";
 }
 
@@ -223,7 +224,7 @@ body.header-closed #margin-box-filter {
     height: 26px;
     float: left;
     margin-right: 8px;
-    border: solid 1px var(--color-white-border);
+    border: 1px solid var(--color-white-border);
 }
 
 .comment-user-name {
@@ -238,7 +239,7 @@ body.header-closed #margin-box-filter {
 }
 
 .assigned-user {
-    border: 1px solid rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--color-white-border);
     padding: 5px;
     margin: 10px 0 10px 0;
     font-size: 0.9em;
@@ -306,7 +307,7 @@ body.header-closed #margin-box-filter {
     position: absolute;
     right: 30px;
     top: 0;
-    color: white;
+    color: var(--editor-comment-resolved-text-color);
     font-size: 8px;
     width: 18px;
     text-align: center;
@@ -317,12 +318,12 @@ body.header-closed #margin-box-filter {
 
 .comment.resolved .comment-item:first-child:before {
     content: 'RC';
-    background-color: #3c3c3c;
+    background-color: var(--editor-resolved-comment-icon-color);
 }
 
 .comment-is-major-bgc .comment-item:first-child:before {
     content: "HP";
-    background-color: var(--error-border-color);
+    background-color: var(--editor-major-comment-icon-color);
 }
 
 .comment.resolved .comment-item:first-child:after,
@@ -340,24 +341,24 @@ body.header-closed #margin-box-filter {
 }
 
 .comment.resolved .comment-item:first-child:after {
-    border-bottom-color: white;
+    border-bottom-color: var(--editor-comment-resolved-border-color);
 }
 
 .comment-is-major-bgc .comment-item:first-child:after {
-    border-bottom-color: #f4c9d9;
+    border-bottom-color: var(--editor-major-comment-background-color);
 }
 
 .comment.resolved.active .comment-item:first-child:after,
 .comment-is-major-bgc.active .comment-item:first-child:after {
-    border-bottom-color: #fffacf;
+    border-bottom-color: var(--editor-active-comment-background-color);
 }
 
 .comment-is-major-bgc .comment-item:first-child {
-    background-color: #f4c9d9;
+    background-color: var(--editor-major-comment-background-color);
 }
 
 .comment.resolved .comment-item {
-    opacity: 0.7;
+    opacity: var(--editor-comment-resolved-opacity);
 }
 
 #comment-editor .ProseMirror-suggestion,

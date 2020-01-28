@@ -2,21 +2,16 @@
   --main-background-color: #fff;
   --main-text-color: #000;
   --overlay-color: 170, 170, 170, 0.3;
-  --overlay-highcontrast-color: 255, 255, 255, 0.8;
   --input-focus-background-color: #fbf9d2;
 
   --wait-active-background-color: 240, 240, 240, 0.7;
   --wait-active-full-background-color: 240, 240, 240, 1;
 
-  --info-color: #fff;
-  --success-color: #fff;
-  --warning-color: #fff;
-  --error-color: #fff;
+  --highcontrast-overlay-color: 255, 255, 255, 0.8;
+  --highcontrast-background-color: #fff;
+  --highcontrast-border-color: #e0e0e0;
 
-  --info-background-color: 36, 113, 176, 0.8;
-  --success-background-color: 109, 164, 147, 0.8;
-  --warning-background-color: 221, 208, 63, 0.8;
-  --error-background-color: 200, 63, 27, 0.8;
+
 
   --alert-box-shadow-color: 240, 240, 240, 1;
   --pulldown-box-shadow-color: 0, 0, 0, 0.2;
@@ -33,47 +28,56 @@
 
   --chat-highlight-background-color: #6495ed;
 
-  /* to be removed: */
+  --info-color: #fff;
+  --info-background-color: 36, 113, 176, 0.8;
 
-  --warning-2-border-color: 200, 63, 27, 0.8;
-  --warning-2-background-color: 200, 63, 27, 0.4;
+  --success-color: #fff;
+  --success-background-color: 109, 164, 147, 0.8;
 
-/* end to be removed */
+  --warning-color: #fff;
+  --warning-background-color: 221, 208, 63, 0.8;
+  --warning-border-color: 200, 63, 27, 0.8;
 
   --error-border-color: #af3515;
   --error-background-color: #cc3f1a;
-
   --input-error-background-color: #f34141;
+  --error-color: #fff;
 
-  --color-1: #b73717; /* red */
+
+  --color-1-text: #b73717; /* red text */
   --color-1-icon: #a7321f;
   --color-1-hover: #2c2723;
 
-  --color-2-background-from: #0d78be; /* blue */
+  --color-2-background-from: #0d78be; /* white on blue */
   --color-2-background-to: #0d63ab;
   --color-2-background: #0d78be; /* flat */
   --color-2-border: #0557a1;
   --color-2-background-hover: #0d63ab;
+  --color-2-background-selected: #63ab0d;
   --color-2-box-shadow: #3c9fdf;
+  --color-2-text: #fff;
 
-  --color-3: #fff;
-  --color-3-background-from: #d3421c; /* orange */
+  --color-3-text: #fff;
+  --color-3-background-from: #d3421c; /* white on orange */
   --color-3-background-to: #b13615;
   --color-3-background-hover: #b13615;
   --color-3-border: #7d331f;
 
-  --color-4: #84b4a7; /* light green on white */
+  --color-4-text: #84b4a7; /* light green text */
 
-  --color-5: #fff;
+  --color-5-text: #fff;
   --color-5-background: #84b4a7; /* white on light green */
+  --color-5-border: #f2f2f2;
+  --color-5-background-hover: #97cdbe;
 
-  --color-6: #fff;
+  --color-6-text: #fff;
   --color-6-background: #76a698; /* white on dark green */
   --color-6-border: #7d948e;
   --color-6-focus: #8ab5a6;
   --color-6-hover: #96c6b8;
 
-  --color-dark: #fff; /* white on dark */
+  --color-dark-text: #fff; /* white on dark */
+  --color-dark-hover: #e0e0e0;
   --color-dark-border: #4f4d4f;
   --color-dark-background-hover: #585858;
   --color-dark-background: #585858; /* flat */
@@ -81,14 +85,16 @@
   --color-dark-background-to: #585858;
   --color-dark-box-shadow:  #7f7f7f;
 
+  --color-light-text: #2c2723;
   --color-light-border: #e0e0e0; /* dark on white-ish background */
   --color-light-background: #f9f9f9;
   --color-light-background-hover: #e0e0e0;
   --color-light-hover: #000;
-  --color-light: #2c2723;
+  --color-light-box-shadow: #9e9e9e;
 
-  --color-white: #000; /* black on white */
+  --color-white-text: #000; /* black on white */
   --color-white-background: #fff;
+  --color-white-background-hover: #f9f9f9;
   --color-white-border: #ccc;
 
   --color-disabled: #a9a9a9;
@@ -100,8 +106,7 @@
  --overview-checkbox-background-color-to: 255, 255, 255, 0;
  --overview-checkbox-border: #a9a9a9;
 
-  --grey-1: #e0e0e0;
-  --grey-4: #9e9e9e;
+
   --grey-5: #a9abaa;
   --grey-6: #a8a8a8;
   --grey-7: #f2f2f2;
@@ -113,9 +118,41 @@
   --grey-e: #0f0f0f;
   --grey-f: #585757;
   --grey-g: #999999;
-  --grey-h: #cccccc;
   --grey-i: #8e8e8e;
   --grey-j: #bebebe;
+
+
+  /* template manager */
+  --part-neutral-background-color: #f0f8ff;
+  --part-neutral-border-color: #000;
+  --part-heading-background-color: #84c4fe;
+  --part-contributors-background-color: #928efe;
+  --part-richtext-background-color: #ffc87b;
+  --part-tags-background-color: #ffdf7b;
+  --part-table-background-color: #bfedc1;
+  --part-toc-background-color: #985f99;
+
+  /* editor */
+  --editor-track-background-color: 45, 82, 144, 0.63;
+  --editor-track-active-background-color: #788fb4;
+  --editor-track-text-color: #fff;
+  --editor-reviewed: #81f781;
+  --editor-text-content-item-background-color: #d3d3d3; /*citations, toc and other content that is a single unit*/
+  --editor-text-content-item-hover-background-color: #808080;
+  --editor-navigator-background-color: 0,0,0,0.8;
+  --editor-navigator-color: #fff;
+  --editor-navigator-scrollbar-background-color: #181818;
+  --editor-navigator-scrollbar-background-color-hover: #0f0f0f;
+  --editor-navigator-checkbox-color: #444;
+  --editor-active-comment-background-color: #fffacf;
+  --editor-active-help-background-color: #fafafa;
+  --editor-active-help-arrow-color: #79b8a5;
+  --editor-major-comment-background-color: #f4c9d9;
+  --editor-resolved-comment-icon-color: #3c3c3c;
+  --editor-major-comment-icon-color: #af3515;
+  --editor-comment-resolved-opacity: 0.7;
+  --editor-comment-resolved-text-color: #fff;
+  --editor-comment-resolved-border-color: #fff;
 
 }
 

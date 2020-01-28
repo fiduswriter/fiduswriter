@@ -21,8 +21,9 @@
     margin: 0 -19px;
     padding: 19px 40px 19px 19px;
     background: var(--color-dark-background);
-    color: var(--color-dark);
-    cursor: move;
+    color: var(--color-dark-text);
+    cursor: move; /* fallback if grab cursor is unsupported */
+    cursor: grab;
     user-select: none;
 }
 
@@ -34,11 +35,11 @@
 
 .ui-dialog-titlebar-close {
     right: 19px;
-    color: white;
+    color: var(--color-dark-text);
 }
 
 .ui-dialog-titlebar-close:hover {
-    color: var(--grey-1);
+    color: var(--color-dark-hover);
 }
 
 .ui-button-icon-only {

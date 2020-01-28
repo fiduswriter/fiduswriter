@@ -52,33 +52,33 @@ form .aligned ul.object-tools.right {
 }
 
 .doc-part {
-    background-color: #F0F8FF;
-    border-bottom: 3px dotted black;
+    background-color: var(--part-neutral-background-color);
+    border-bottom: 3px dotted var(--part-neutral-border-color);
     padding: 4px;
 }
 
 .doc-part[data-type="heading_part"] {
-    background-color: #84C4FE;
+    background-color: var(--part-heading-background-color);
 }
 
 .doc-part[data-type="contributors_part"] {
-    background-color: #928EFE;
+    background-color: var(--part-contributors-background-color);
 }
 
 .doc-part[data-type="richtext_part"] {
-    background-color: #FFC87B;
+    background-color: var(--part-richtext-background-color);
 }
 
 .doc-part[data-type="tags_part"] {
-    background-color: #FFDF7B;
+    background-color: var(--part-tags-background-color);
 }
 
 .doc-part[data-type="table_part"] {
-    background-color: #BFEDC1;
+    background-color: var(--part-table-background-color);
 }
 
 .doc-part[data-type="table_of_contents"] {
-    background-color: #985F99;
+    background-color: var(--part-toc-background-color);
 }
 
 .from-container .doc-part, .trash .doc-part {
@@ -107,8 +107,6 @@ table td {
 .doc-part-header {
     cursor: move; /* fallback if grab cursor is unsupported */
     cursor: grab;
-    cursor: -moz-grab;
-    cursor: -webkit-grab;
     height: 60px;
 }
 
@@ -137,16 +135,16 @@ table td {
 
 .article-table th {
     background-color: var(--color-6-background);
-    color: var(--color-6);
+    color: var(--color-6-text);
 }
 
 .ProseMirror td.selectedCell {
-    background-color: #8cf;
+    background-color: var(--color-2-background);
     caret-color: transparent;
 }
 
 .error-element{
-    border:3px solid red;
+    border:3px solid var(--error-background-color);
 }
 
 #template-editor .initial em, #template-editor .instructions em {

@@ -13,7 +13,7 @@
     padding: 19px;
     background-color: var(--color-light-background);
     border: solid 1px var(--color-light-border);
-    box-shadow: 0 0 10px var(--grey-4);
+    box-shadow: 0 0 10px var(--color-light-box-shadow);
     overflow: hidden;
     border-radius: 4px;
     font-size: 14px;

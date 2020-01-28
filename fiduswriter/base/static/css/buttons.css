@@ -59,7 +59,7 @@
 .fw-button.fw-light {
     border-color: var(--color-light-border);
     background-color: var(--color-light-background);
-    color: var(--color-light);
+    color: var(--color-light-text);
 }
 
 .fw-button.fw-light:not(.disabled):hover,
@@ -68,8 +68,20 @@
     color: var(--color-light-hover);
 }
 
+.fw-button.fw-white {
+    border: 0 none;
+    background-color: var(--color-white-background);
+    color: var(--color-white-text);
+}
+
+.fw-button.fw-light:not(.disabled):hover,
+.fw-button.fw-light.ui-state-active {
+    background-color: var(--color-white-background-hover);
+}
+
+
 .fw-button.fw-green {
-    color: var(--color-6)
+    color: var(--color-6-text)
     border-color: var(--color-6-border);
     background-color: var(--color-6-background);
 }
@@ -78,7 +90,7 @@
 }
 
 .fw-button.fw-orange {
-    color: var(--color-3);
+    color: var(--color-3-text);
     background: linear-gradient(to bottom left, var(--color-3-background-from), var(--color-3-background-to));
     border-color: var(--color-3-border);
 }
@@ -87,7 +99,7 @@
 }
 
 .fw-button.fw-dark {
-    color: var(--color-dark);
+    color: var(--color-dark-text);
     background: linear-gradient(to bottom left, var(--color-dark-background-from), var(--color-dark-background-to));
     box-shadow: 0 1px 1px 0 var(--color-dark-box-shadow) inset;
     border-color: var(--color-dark-border);
@@ -147,6 +159,7 @@
     background: linear-gradient(to bottom left, var(--color-2-background-from), var(--color-2-background-to));
     box-shadow: 0px 0px 1px 1px var(--color-2-box-shadow) inset;
     border-color: var(--color-2-border);
+    color: var(--color-2-text);
 }
 
 .fw-button.fw-socialaccount:hover {

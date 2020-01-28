@@ -3,9 +3,9 @@ body.editor {
     height: 100%;
     font-family: 'Lato', sans-serif;
     font-size: 13px;
-    color: var(--color-1-hover);
+    color: var(--color-light-text);
     width: 100%;
-    background-color: var(--grey-7);
+    background-color: var(--color-light-background);
     overflow-x: hidden;
 }
 
@@ -19,12 +19,12 @@ header {
     padding: 16px 0;
     background-color: var(--color-5-background);
     width: 100%;
-    border-bottom: 1px solid #c2dad3;
+    border-bottom: 1px solid var(--color-5-border);
 }
 
 #document-top > h1 {
     font-size: 22px;
-    color: var(--color-5);
+    color: var(--color-5-text);
     font-style: italic;
     padding: 0 48px 0 110px;
     background: url(../img/fidus_face.png) no-repeat 42px 0;
@@ -39,6 +39,7 @@ header {
     position: relative;
     margin: 20px 0 0 110px;
     -webkit-user-select: none;
+    user-select: none;
 }
 
 #header-navigation>div {
@@ -100,9 +101,10 @@ header {
     z-index: 108;
     width: 100%;
     -webkit-user-select: none;
+    user-select: none;
     padding-top: 34px;
     padding-bottom: 34px;
-    background-color: var(--grey-7);
+    background-color: var(--color-light-background);
 }
 
 #ice-control {
@@ -132,7 +134,7 @@ header {
 #reviewed {
     left: 100%;
     margin-left: 14px;
-    background-color: #81F781;
+    background-color: var(--editor-reviewed);
 }
 
 #reviewed:hover {
@@ -161,7 +163,7 @@ header {
 .editor-toolbar div.info {
     /*max-width: 90px;*/
     min-width: 62px;
-    color: var(--main-text-color);
+    color: var(--color-light-text);
     background-color: var(--color-light-background);
     text-shadow: none;
     border-color: var(--color-light-border);
@@ -190,7 +192,7 @@ header {
     max-width: 120px;
     font-size: 11px;
     font-weight: 700;
-    color: var(--color-1-hover);
+    color: var(--color-light-text);
     font-family: Lato;
     font-size: 13px;
     font-weight: 700;
@@ -208,7 +210,7 @@ header {
     width: 9px;
     height: 5px;
     opacity: 0.5;
-    color: #262626;
+    color: var(--color-light-text);
     font-size: 15px;
     line-height: 15.75px;
     letter-spacing: 0.15px;
@@ -227,7 +229,7 @@ header {
     width: 10px;
     height: 10px;
     opacity: 0.4;
-    color: #262626;
+    color: var(--color-light-text);
     font-size: 17px;
     font-weight: 400;
     line-height: 15.75px;
@@ -272,27 +274,6 @@ header {
     min-height: 23px;
 }
 
-div#statusarea {
-    position: absolute;
-    right: 50%;
-    top: 100%;
-    z-index: 80;
-    width: 200px;
-    text-align: right;
-    margin-right: -4in;
-    color: #828282;
-    padding-top: 16px;
-}
-
-div#statusarea .saved {
-    padding: 2px 21px 0 0;
-    background: url(../img/loading.gif) no-repeat right top;
-}
-
-div#statusarea .error {
-    color: red;
-}
-
 #editor-content {
     display: flex;
     position: relative;
@@ -310,26 +291,26 @@ body.header-closed #editor-content {
 }
 
 #flow .article-bibliography {
-    background-color: lightgrey;
+    background-color: var(--editor-text-content-item-background-color);
 }
 
 #paper-editable .citation,
 #paper-editable .cross-reference,
 #paper-editable .equation {
     cursor: pointer;
-    background-color: lightgrey;
+    background-color: var(--editor-text-content-item-background-color);
 }
 
 #paper-editable .citation:hover,
 #paper-editable .cross-reference:hover,
 #paper-editable .equation:hover {
-    background-color: grey;
+    background-color: var(--editor-text-content-item-hover-background-color);
 }
 
 #paper-editable .cross-reference.missing-target,
 #paper-editable .cross-reference.missing-target:hover,
 #paper-editable a.missing-target {
-    background-color: var(--color-1);
+    background-color: var(--error-background-color);
 }
 
 #paper-editable .cross-reference.missing-target,
@@ -343,7 +324,7 @@ body.header-closed #editor-content {
 }
 
 #paper-editable .search.selected {
-    background-color: var(--color-6-focus);
+    background-color: var(--color-5-background-hover);
 }
 
 #paper-editable {
@@ -375,7 +356,7 @@ div#layout {
 
 input.required,
 error {
-    border: 2px solid red;
+    border: 2px solid var(--error-border-color);
 }
 
 
@@ -396,7 +377,7 @@ font {
 
 .article-part:before {
     text-transform: none;
-    color: var(--grey-9);
+    color: var(--color-white-border);
 }
 
 
@@ -476,7 +457,8 @@ span.delete {
 }
 
 #flow {
-    background-color: white;
+    color: var(--color-white-text);
+    background-color: var(--color-white-background);
 }
 
 #document-editable {
@@ -506,7 +488,7 @@ span.delete {
 
 .ProseMirror th {
     background-color: var(--color-6-background);
-    color: var(--color-6);
+    color: var(--color-6-text);
 }
 
 #comments-filter {
@@ -525,7 +507,8 @@ span.delete {
 }
 
 #unobtrusive_messages .warn {
-    color: var(--color-1);
+    color: var(--color-warning-text);
+    background-color: rgba(var(--color-warning-background));
 }
 
 #unobtrusive_messages:empty {
@@ -545,9 +528,6 @@ span.delete {
 .help-list-wrap {
     overflow: hidden;
     margin: 0 auto;
-    -webkit-transition: width .2s linear;
-    -moz-transition: width .2s linear;
-    -o-transition: width .2s linear;
     transition: width .2s linear;
 }
 
@@ -570,28 +550,6 @@ span.delete {
     padding: 5px 0;
 }
 
-.help-key {
-    min-width: 60px;
-    float: left;
-    clear: left;
-    position: relative;
-    bottom: 2px;
-}
-
-.help-key span {
-    font-size: 15px;
-    color: #555;
-    display: inline-block;
-    padding: 0 8px;
-    text-align: center;
-    background-color: var(--color-white-background);
-    background-repeat: repeat-x;
-    background-image: linear-gradient(#f5f5f5 0%, #eee 100%);
-    border: 1px solid var(--color-white-border);
-    border-radius: 3px;
-    box-shadow: inset 0 1px 0 var(--main-background-color), 0 1px 0 var(--grey-h);
-}
-
 .help-key-def {
     display: inline-block;
     margin-left: 1em;
@@ -605,14 +563,14 @@ span.delete {
 /* MathLive Editor Overwrite */
 
 .math-field {
-    background-color: white;
+    background-color: var(--color-white-background);
     margin: 9px 10px 7px 10px;
     padding-left: 5px;
     font-size: 20px;
     display: block;
     padding-top: 10px;
     padding-bottom: 10px;
-    border: solid 1px var(--grey-8);
+    border: solid 1px var(--color-white-border);
     cursor: text;
     position: relative;
 }
@@ -621,7 +579,7 @@ span.delete {
     position: absolute;
     top: 20px;
     left: 10px;
-    color: var(--grey-8);
+    color: var(--editor-text-content-item-background-color);
 }
 
 .math-latex {
@@ -632,28 +590,9 @@ span.delete {
     padding-left: 5px;
 }
 
-/* .math-field-header {
-    font-size: 113%;
-    font-weight: 400;
-} */
-
-/* .math-error {
-    margin: 10px 0px;
-    padding: 12px;
-    color: #D8000C;
-    background-color: #FFBABA;
-    font-size: 2em;
-    vertical-align: middle;
-    display: none;
-} */
-
 .ML__popover {
     z-index: 1000;
 }
-
-/* .ML__base:empty:before, .ML__base > span:first-child:empty:before {
-    content: 'Type here';
-} */
 
 div.table-edit-button-group {
     margin-bottom: 10px;
@@ -666,7 +605,7 @@ table.insert-table-selection {
 
 table.insert-table-selection,
 table.insert-table-selection td {
-    border: 1px solid #ddd;
+    border: 1px solid var(--color-white-border);
 }
 
 table.insert-table-selection td {
@@ -675,19 +614,15 @@ table.insert-table-selection td {
 }
 
 table.insert-table-selection td.hover {
-    background-color: var(--color-light-border);
+    background-color: var(--color-white-background-hover);
 }
 
 table.insert-table-selection td.selected {
-    background-color: var(--color-dark-border);
-}
-
-table.insert-table-selection td.selected.hover {
-    background-color: #585858;
+    background-color: var(--color-white-background-hover);
 }
 
 .ProseMirror td.selectedCell {
-    background-color: #8cf;
+    background-color: var(--color-2-background);
     caret-color: transparent;
 }
 
@@ -718,17 +653,17 @@ table.insert-table-selection td.selected.hover {
 
 .drop-up-inner {
     position: relative;
-    background-color: white;
+    background-color: var(--color-white-background);
     z-index: 1;
     font-weight: normal;
-    color: black;
+    color: var(--color-white-text);
     left: 10px;
 }
 
 .drop-up-head {
     padding: 20px 22px;
     background-color: var(--color-dark-background);
-    color: var(--color-dark);
+    color: var(--color-dark-text);
     font-family: Lato;
     font-size: 13px;
     font-weight: 400;
@@ -738,8 +673,7 @@ table.insert-table-selection td.selected.hover {
 }
 
 .drop-up-head .link-href a {
-    opacity: 0.6;
-    color: var(--main-background-color);
+    color: var(--color-dark-text);
     font-family: Lato;
     font-size: 12px;
     font-weight: 700;
@@ -756,9 +690,10 @@ table.insert-table-selection td.selected.hover {
 }
 
 .user-contents ul.drop-up-options li {
-    border-top: 1px solid var(--grey-b);
+    border-top: 1px solid var(--color-light-border);
     padding: 16px 30px;
-    color: var(--color-1-hover);
+    color: var(--color-light-text);
+    background: var(--color-light-background);
     font-family: Lato;
     font-size: 13px;
     font-weight: 400;
@@ -772,7 +707,7 @@ table.insert-table-selection td.selected.hover {
 }
 
 ul.drop-up-options li:hover {
-    background-color: var(--grey-b);
+    background-color: var(--color-light-background-hover);
 }
 
 .drop-up-options .remove-link:after {
@@ -828,19 +763,19 @@ as much black as possible. */
 html[hc=a3] .ui-widget-overlay,
 html[hc=a4] .ui-widget-overlay,
 html[hc=a5] .ui-widget-overlay {
-    background-color: rgba(var(--overlay--highcontrast-color));
+    background-color: rgba(var(--highcontrast-overlay-color));
 }
 
 html[hc=a3] body,
 html[hc=a4] body,
 html[hc=a5] body {
-    background-color: white;
+    background-color: var(--highcontrast-background-color);
 }
 
 html[hc=a3] #toolbar,
 html[hc=a4] #toolbar,
 html[hc=a5] #toolbar {
-    border-bottom: 1px solid var(--grey-1);
+    border-bottom: 1px solid var(--highcontrast-border-color);
 }
 
 #close-document-top {
@@ -854,7 +789,7 @@ html[hc=a5] #toolbar {
     width: 10px;
     height: 10px;
     opacity: 0.6;
-    color: var(--main-background-color);
+    color: var(--color-5-text);
     font-size: 14px;
     font-weight: 400;
     line-height: 25px;
@@ -862,7 +797,7 @@ html[hc=a5] #toolbar {
 }
 
 .article-part.article-deleted {
-    border: 3px solid var(--color-3-background-from);
+    border: 3px solid rgba(var(--warning-border-color));
     border-radius: 5px;
     padding: 10px 20px 10px 10px;
     margin: 5px 0;
@@ -875,14 +810,15 @@ html[hc=a5] #toolbar {
     right:  5px;
     cursor: pointer;
     font-size: 16px;
+    color: var(--color-1-icon);
 }
 
 .remove-article-part:hover {
-    color: var(--color-3-background-from);
+    color: var(--color-1-hover);
 }
 
 .editor .article .table-of-contents {
-    background-color: lightgrey;
+    background-color: var(--editor-text-content-item-background-color);
     padding: 10px;
 }
 
@@ -902,10 +838,10 @@ html[hc=a5] #toolbar {
     top: auto;
     left: 0;
     display: block;
-    background-color: rgba(0,0,0,0.8);
+    background-color: rgba(var(--editor-navigator-background-color));
     min-width: 216px;
     max-width:480px;
-    color: white;
+    color: var(--editor-navigator-color);
     padding: 15px 30px 15px 50px;
     box-sizing: border-box;
     font-size: 13px;
@@ -938,17 +874,17 @@ html[hc=a5] #toolbar {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #181818;
+    background: var(--editor-navigator-scrollbar-background-color);
     border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
     cursor: pointer;
-    background: var(--grey-e);
+    background: var(--editor-navigator-scrollbar-background-color-hover);
 }
 
 #navigator-content a {
-    color: white;
+    color: var(--editor-navigator-color);
 }
 
 #navigator-list > * {
@@ -996,12 +932,15 @@ html[hc=a5] #toolbar {
     height: 42px;
     text-align: center;
     line-height: 42px;
-    background-color: #303030;
+    background-color: rgba(var(--editor-navigator-background-color));
     cursor: pointer;
     z-index: 4;
 }
+#navigator.opened #navigator-button {
+    background-color: inherit;
+}
 .navigator-arrow-icon {
-    color: white;
+    color: var(--editor-navigator-color));
 }
 .navigator-arrow-icon i {
     transition: all 0.50s 0.25s;
@@ -1032,8 +971,8 @@ html[hc=a5] #toolbar {
     appearance: none;
     display: inline-block;
     position: relative;
-    background-color: white;
-    color: #444;
+    background-color: var(--editor-navigator-color);
+    color: var(--editor-navigator-checkbox-color);
     top: 5px;
     height: 18px;
     width: 18px;
@@ -1050,14 +989,8 @@ html[hc=a5] #toolbar {
     font-weight: bold;
     font-size: 1.2em;
 }
-.form-checkbox:hover {
-    background-color: #f7f7f7;
-}
-.form-checkbox:checked {
-    background-color: #f1f1f1;
-}
 .navigator-label {
-    color: white;
+    color: var(--editor-navigator-color);
     cursor: pointer;
     display: inline-block;
     vertical-align: middle;

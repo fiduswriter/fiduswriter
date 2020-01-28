@@ -9,7 +9,7 @@
 a,
 .fw-link-text {
     cursor: pointer;
-    color: var(--color-1);
+    color: var(--color-1-text);
 }
 
 a:hover,
@@ -19,12 +19,12 @@ a:hover,
 }
 
 .fw-header-text {
-    color: var(--main-background-color);
+    color: var(--color-5-text);
     font-size: 14px;
 }
 
 .fw-header-navigation-text {
-    color: var(--main-background-color);
+    color: var(--color-5-text);
     font-weight: 400;
     letter-spacing: 0.6px;
     text-transform: uppercase;
@@ -34,5 +34,5 @@ a:hover,
 .fw-green-title {
     font-size: 14px;
     font-weight: 700;
-    color: var(--color-4);
+    color: var(--color-4-text);
 }

@@ -42,7 +42,7 @@
 
 #alerts-wrapper .alerts-error {
     color: var(--error-color);
-    background-color: rgba(var(--error-background-color));
+    background-color: var(--error-background-color);
 }
 
 #alerts-wrapper .alerts-warning {
@@ -62,7 +62,7 @@
 /* A form wasn't filled out correctly and the warning was added to the form. */
 div.warning {
     margin: 0 0 5px 0;
-    border: 1px solid rgba(var(--warning-2-border-color));
-    background-color: rgba(var(--warning-2-background-color));
+    border: 1px solid rgba(var(--warning-border-color));
+    background-color: rgba(var(--warning-background-color));
     padding: 6px;
 }

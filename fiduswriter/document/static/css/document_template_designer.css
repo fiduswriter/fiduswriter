@@ -1,3 +1,11 @@
+table td {
+    vertical-align: top;
+}
+
+.label {
+    padding: 5px 0 5px 0;
+}
+
 .from-container,
 .to-column,
 .trash {
@@ -80,18 +88,10 @@
     float: initial;
 }
 
-table td {
-    vertical-align: top;
-}
-
 .doc-part-header {
     cursor: move; /* fallback if grab cursor is unsupported */
     cursor: grab;
     height: 60px;
-}
-
-.label {
-    padding: 5px 0 5px 0;
 }
 
 .from-container .doc-part-header {

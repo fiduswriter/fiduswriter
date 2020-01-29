@@ -11,15 +11,14 @@
     font-weight: bold;
 }
 
-.fw-dialog-table tr:first-child > td .fa-minus-circle {
-    display: none;
-}
-
 .fw-dialog-table tr > td .fa-minus-circle,
 .fw-dialog-table tr > td .fa-plus-circle {
     cursor: pointer;
 }
 
+.fw-dialog-table tr:first-child > td .fa-minus-circle {
+    display: none;
+}
 
 .fw-tablerow-title.wtooltip {
     position: relative;

@@ -20,7 +20,6 @@ video {
     *display: inline;
     *zoom: 1;
 }
-audio:not([controls]) { display: none; }
 [hidden] { display: none; }
 
 /* http://meyerweb.com/eric/tools/css/reset/
@@ -115,6 +114,8 @@ video {
     font: inherit;
     vertical-align: baseline;
 }
+
+audio:not([controls]) { display: none; }
 
 /* HTML5 display-role reset for older browsers */
 article,

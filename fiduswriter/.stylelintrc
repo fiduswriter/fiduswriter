@@ -10,7 +10,6 @@
         "number-leading-zero": "never",
         "max-nesting-depth": 2,
         "indentation": 4,
-        "no-descending-specificity": null,
         "csstools/value-no-unknown-custom-properties": [
             true,
             {

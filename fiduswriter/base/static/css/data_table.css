@@ -47,6 +47,11 @@
     height: 225px;
 }
 
+/* Align text with top of images */
+.fw-data-table tbody td {
+    vertical-align: top;
+}
+
 .fw-data-table th:last-child,
 .fw-data-table td:last-child,
 .dataTable-table th:last-child,
@@ -123,11 +128,6 @@
 .fw-usermedia-image > img {
     min-width: 100%;
     min-height: 100%;
-}
-
-/* Align text with top of images */
-.fw-data-table tbody td {
-    vertical-align: top;
 }
 
 .fw-data-table tbody td.checkable {

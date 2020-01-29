@@ -24,6 +24,10 @@
     }
 }
 
+.submit-wrapper .fw-button {
+    margin-right: 15px;
+}
+
 .prelogin #header-nav .fw-button {
     margin-left: 12px;
 }
@@ -97,10 +101,6 @@
     font-size: 14px;
     color: var(--cs-light-nofocus-text);
     margin-left: 4px;
-}
-
-.submit-wrapper .fw-button {
-    margin-right: 15px;
 }
 
 #lost-passwd {

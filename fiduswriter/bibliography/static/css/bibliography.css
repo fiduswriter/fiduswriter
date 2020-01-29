@@ -144,6 +144,10 @@
     margin-right: 0;
 }
 
+#bib-dialog .field-part-short .ProseMirror {
+    width: 64px;
+}
+
 #bib-dialog .type-switch-input-inner .field-part-huge .ProseMirror {
     width: 250px;
 }
@@ -152,16 +156,40 @@
     width: 130px;
 }
 
-#bib-dialog .field-part-short .ProseMirror {
-    width: 64px;
-}
-
 #bib-dialog .type-switch-input-inner .field-part-single {
     width: 100%;
 }
 
 #bib-dialog .type-switch-input-inner .field-part-single .ProseMirror {
     width: 100%;
+}
+
+div.literal,
+pre.long-literal {
+    box-sizing: border-box;
+    font-size: 14px;
+    line-height: 1.33em;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 11px 10px 0;
+    min-height: 38px;
+    color: var(--cs-light-text);
+    background-color: var(--cs-light-background);
+}
+
+pre.long-literal {
+    min-height: 112px;
+    height: auto;
+}
+
+div.literal strong,
+pre.long-literal strong {
+    font-weight: bold;
+}
+
+div.literal em,
+pre.long-literal em {
+    font-style: italic;
 }
 
 
@@ -233,34 +261,6 @@
 
 .tokenfield .tokenfield-input {
     outline: none;
-}
-
-div.literal,
-pre.long-literal {
-    box-sizing: border-box;
-    font-size: 14px;
-    line-height: 1.33em;
-    box-shadow: none;
-    border-radius: 0;
-    padding: 11px 10px 0;
-    min-height: 38px;
-    color: var(--cs-light-text);
-    background-color: var(--cs-light-background);
-}
-
-pre.long-literal {
-    min-height: 112px;
-    height: auto;
-}
-
-div.literal strong,
-pre.long-literal strong {
-    font-weight: bold;
-}
-
-div.literal em,
-pre.long-literal em {
-    font-style: italic;
 }
 
 .list-input-wrapper .add-remove-list {

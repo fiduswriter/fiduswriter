@@ -19,6 +19,7 @@
 .dataTable-table td {
     padding: 15px 0;
     vertical-align: top;
+    border-bottom: solid 1px var(--cs-white-border);
 }
 
 .fw-data-table .date,
@@ -44,13 +45,6 @@
 .fw-data-table.fw-min tbody {
     width: 342px;
     height: 225px;
-}
-
-.fw-data-table th,
-.fw-data-table td,
-.dataTable-table th,
-.dataTable-table td {
-    border-bottom: solid 1px var(--cs-white-border);
 }
 
 .fw-data-table th:last-child,

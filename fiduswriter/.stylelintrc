@@ -10,6 +10,7 @@
         "value-list-comma-newline-after": null,
         "max-nesting-depth": 2,
         "indentation": 4,
-        "font-family-no-missing-generic-family-keyword": true
+        "font-family-no-missing-generic-family-keyword": true,
+        "no-descending-specificity": null
     }
 }

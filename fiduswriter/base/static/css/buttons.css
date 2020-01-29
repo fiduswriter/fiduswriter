@@ -140,10 +140,15 @@
     vertical-align: top;
     line-height: 35px;
     padding: 0;
+    background: linear-gradient(to bottom left, var(--cs-2-background-from), var(--cs-2-background-to));
+    box-shadow: 0 0 1px 1px var(--cs-2-box-shadow) inset;
+    border-color: var(--cs-2-border);
+    color: var(--cs-2-text);
 }
 
 .fw-button.fw-socialaccount:hover {
     box-shadow: none;
+    background: var(--cs-2-background-hover);
 }
 
 .fw-button.fw-socialaccount > span {
@@ -156,24 +161,9 @@
     border-right-style: solid;
     border-right-width: 1px;
     line-height: 37px;
-}
-
-.fw-button.fw-socialaccount {
-    background: linear-gradient(to bottom left, var(--cs-2-background-from), var(--cs-2-background-to));
-    box-shadow: 0 0 1px 1px var(--cs-2-box-shadow) inset;
-    border-color: var(--cs-2-border);
-    color: var(--cs-2-text);
-}
-
-.fw-button.fw-socialaccount:hover {
-    background: var(--cs-2-background-hover);
-}
-
-.fw-button.fw-socialaccount > span {
     border-right-color: var(--cs-2-border);
     box-shadow: 1px 0 0 0 var(--cs-2-box-shadow);
 }
-
 
 .fw-plain-button {
     display: block;
@@ -224,22 +214,6 @@
 .fw-button.fw-twitter > span {
     border-right-color: #2498be;
     box-shadow: 1px 0 0 0 #8ddffc;
-}
-
-.fw-button.fw-google {
-    background: linear-gradient(to bottom left, #879ded, #6d84d8);
-    box-shadow: 0 0 1px 1px #93a6e6 inset;
-    border-color: #6578bb;
-}
-
-.fw-button.fw-google:hover {
-    background: #6d84d8;
-}
-
-.fw-button.fw-google > span {
-    border-right-color: #6578bb;
-    box-shadow: 1px 0 0 0 #b1c0f2;
-    font-size: 18px;
 }
 
 .fw-button.fw-google {

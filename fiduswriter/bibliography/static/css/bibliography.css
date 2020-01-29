@@ -16,7 +16,6 @@
 }
 
 #bib-dialog :focus {
-    outline-color: transparent;
     outline: 0;
 }
 

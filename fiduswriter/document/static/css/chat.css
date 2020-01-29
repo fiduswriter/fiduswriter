@@ -16,6 +16,7 @@
     border-bottom: 0;
     display: none;
     z-index: 100;
+    transition: top 2s ease;
 }
 
 #chat.highlighted {
@@ -66,8 +67,4 @@
 
 #messageform.empty::before {
     color: var(--cs-white-placeholder-text);
-}
-
-#chat {
-    transition: top 2s ease;
 }

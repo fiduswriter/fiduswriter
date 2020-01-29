@@ -335,6 +335,7 @@ body.header-closed #editor-content {
 #document-editable {
     display: table-cell;
     vertical-align: top;
+    white-space: pre-wrap;
 }
 
 div#layout {
@@ -355,7 +356,7 @@ div#layout {
 /* for forms */
 
 input.required,
-error {
+input.error {
     border: 2px solid var(--error-border-color);
 }
 
@@ -451,26 +452,16 @@ span.delete {
     position: relative;
     width: 100%;
     bottom: 50px;
+    color: var(--cs-white-text);
+    background-color: var(--cs-white-background);
 }
 
 #flow.hide {
     display: none;
 }
 
-#flow {
-    color: var(--cs-white-text);
-    background-color: var(--cs-white-background);
-}
-
-#document-editable {
-    white-space: pre-wrap;
-}
-
 .ProseMirror {
     border: none !important;
-}
-
-.ProseMirror {
     padding: 0 !important;
     line-height: inherit !important;
 }

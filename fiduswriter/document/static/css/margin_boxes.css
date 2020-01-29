@@ -118,11 +118,6 @@ body.header-closed #margin-box-filter {
     left: -15px;
 }
 
-.margin-box.help.active::after {
-    color: var(--editor-active-help-arrow-color);
-    left: -13px;
-}
-
 .margin-box.warning {
     background-color: rgba(var(--warning-background-color));
     color: var(--warning-text-color);
@@ -154,6 +149,8 @@ body.header-closed #margin-box-filter {
 }
 
 .margin-box.help.active::after {
+    color: var(--editor-active-help-arrow-color);
+    left: -13px;
     top: 10px;
 }
 

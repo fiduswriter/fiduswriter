@@ -7,13 +7,9 @@
         "max-empty-lines": 4,
         "string-quotes": "single",
         "color-hex-length": "long",
-        "declaration-colon-newline-after": null,
-        "font-family-name-quotes": null,
         "number-leading-zero": "never",
-        "value-list-comma-newline-after": null,
         "max-nesting-depth": 2,
         "indentation": 4,
-        "font-family-no-missing-generic-family-keyword": true,
         "no-descending-specificity": null,
         "csstools/value-no-unknown-custom-properties": [
             true,

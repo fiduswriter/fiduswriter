@@ -10,7 +10,7 @@
 }
 
 .dataTable-table thead th a {
-    color: #2c2723;
+    color: var(--cs-1-hover);
 }
 
 .fw-data-table th,
@@ -19,6 +19,7 @@
 .dataTable-table td {
     padding: 15px 0;
     vertical-align: top;
+    border-bottom: solid 1px var(--cs-white-border);
 }
 
 .fw-data-table .date,
@@ -46,17 +47,6 @@
     height: 225px;
 }
 
-/*.fw-data-table tbody tr:hover {
-    background-color: #fbf9d2;
-}*/
-
-.fw-data-table th,
-.fw-data-table td,
-.dataTable-table th,
-.dataTable-table td {
-    border-bottom: solid 1px #cecece;
-}
-
 .fw-data-table th:last-child,
 .fw-data-table td:last-child,
 .dataTable-table th:last-child,
@@ -69,7 +59,7 @@
 }
 
 .fw-data-table-title {
-    color: #a7321f;
+    color: var(--cs-1-text);
 }
 
 .fw-data-table-title i.fa,
@@ -81,13 +71,19 @@
     font-size: 15px;
 }
 
-.owned-by-user .icon-access-right,.fw-data-table .fa-clock, .fw-data-table .fa-trash, .fw-data-table .fa-download {
-    color: #a7321f;
+.owned-by-user .icon-access-right,
+.fw-data-table .fa-clock,
+.fw-data-table .fa-trash,
+.fw-data-table .fa-download {
+    color: var(--cs-1-icon);
     cursor: pointer;
 }
 
-.owned-by-user .icon-access-right:hover,.fw-data-table .fa-clock:hover, .fw-data-table .fa-trash:hover, .fw-data-table .fa-download:hover {
-    color: #2c2723;
+.owned-by-user .icon-access-right:hover,
+.fw-data-table .fa-clock:hover,
+.fw-data-table .fa-trash:hover,
+.fw-data-table .fa-download:hover {
+    color: var(--cs-1-hover);
 }
 
 /* A deleted access rights row */
@@ -104,54 +100,17 @@
     margin: -4px 10px -5px 0;
 }
 
-/*
- * Data Tables Plugin
- */
-.fw-table-wrapper .dataTables_filter {
-    position: fixed;
-    left: auto;
-    top: 96px;
-    margin-left: 495px;
-    width: 315px;
-    text-align: right;
-    z-index: 5;
-}
-
-.fw-table-wrapper .dataTables_filter label {
-    color: #a9abaa;
-}
-
-.fw-table-wrapper .dataTables_filter label.focus {
-    color: #000;
-}
-
-.fw-table-wrapper .dataTables_filter label:after {
-    margin-left: 5px;
-    font-size: 16px;
-}
-
-.fw-table-wrapper .dataTables_filter input[type="search"] {
-    width: 255px;
-    height: 20px;
-    padding: 0 0 2px;
-    border-style: none;
-    border-bottom-style: solid;
-    border-bottom-width: 1px;
-}
-
-.fw-table-wrapper .dataTables_filter input[type="search"]:focus {
-    background-color: transparent;
-}
-
 /* the usermedia table */
 .fw-usermedia-title {
     display: inline-block;
     height: auto;
 }
+
 .fw-usermedia-type {
     display: block;
     margin-top: 3px;
 }
+
 .fw-usermedia-image {
     display: inline-block;
     max-width: 60px;
@@ -160,6 +119,7 @@
     vertical-align: top;
     margin: 0 14px 2px 0;
 }
+
 .fw-usermedia-image > img {
     min-width: 100%;
     min-height: 100%;
@@ -173,7 +133,8 @@
 .fw-data-table tbody td.checkable {
     position: relative;
 }
-.fw-data-table tbody tr.checked td.checkable:after {
+
+.fw-data-table tbody tr.checked td.checkable::after {
     width: 1em;
     height: 1em;
     position: absolute;

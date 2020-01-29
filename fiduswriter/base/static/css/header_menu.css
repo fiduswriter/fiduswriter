@@ -4,8 +4,10 @@
     padding: 19.5px 34px 21.5px;
 }
 
-.fw-logo, #header-nav {
+.fw-logo,
+#header-nav {
     display: inline-block;
+    vertical-align: top;
 }
 
 .fw-logo > img {
@@ -19,7 +21,7 @@
     top: -4px;
     font-family: 'Roboto', sans-serif;
     text-transform: uppercase;
-    color:  #fff;
+    color: var(--cs-5-text);
     font-size: 15pt;
 }
 
@@ -31,15 +33,14 @@
     height: 38px;
 }
 
-.fw-logo-text:before {
+.fw-logo-text::before {
     content: 'Fidus';
     font-weight: 700;
 }
 
-.fw-logo-text:after {
+.fw-logo-text::after {
     content: 'Writer ';
     font-weight: 300;
-
 }
 
 .fw-user-preferences {
@@ -63,32 +64,31 @@
     margin-right: 22px;
     margin-top: 4px;
 }
-.fw-nav-item.active-menu-wrapper:after {
+
+.fw-nav-item.active-menu-wrapper::after {
     position: absolute;
     left: 50%;
-    top: 24px;
+    top: 37px;
     line-height: 100%;
     font-size: 24px;
     margin-left: -8px;
-    color: #84b4a7;
+    color: var(--cs-4-text);
 }
 
 .fw-nav-item a {
-    color: #fff;
-    opacity: 0.7;
+    color: rgba(var(--nagivation-link-text-color));
     text-decoration: none;
 }
 
-.fw-nav-item a:hover, .fw-nav-item.active-menu-wrapper a {
-    opacity: 1.0;
+.fw-nav-item a:hover,
+.fw-nav-item.active-menu-wrapper a {
+    color: rgba(var(--nagivation-link-active-text-color));
 }
 
 .fw-logout-button {
     background: none;
     border: none;
     font-family: inherit;
-    color: #fff;
-    border-bottom: 1px solid #f2f2f2;
     width: 100%;
 }
 
@@ -110,10 +110,10 @@
 
 #preferences-btn .fw-avatar:hover,
 #preferences-btn .fw-string-avatar:hover {
-    opacity: 0.7;
+    opacity: .7;
 }
 
 #user-preferences-pulldown a,
 #user-preferences-pulldown .fw-logout-button {
-    color: #2c2723;
+    color: var(--cs-1-hover);
 }

@@ -9,29 +9,30 @@
     width: 164px;
 }
 
-#bib-dialog .entry-field .ProseMirror, #bib-dialog .entry-field input[type=text] {
+#bib-dialog .entry-field .ProseMirror,
+#bib-dialog .entry-field input[type=text] {
     width: 686px;
     max-width: 80vw;
 }
 
 #bib-dialog :focus {
-  outline-color: transparent;
-  outline: 0;
+    outline: 0;
 }
 
 #bib-dialog .entry-field.fw-fomt-error input[type=text] {
-    background-color: #f34141;
+    background-color: var(--input-error-background-color);
 }
 
 
 #bib-dialog .entry-field .selection-list {
-    position: relative
+    position: relative;
 }
 
 #bib-dialog .entry-field select {
-    padding: 0px 3px 0px 13px;
+    padding: 0 3px 0 13px;
     border: 0 none;
-    background-color: #f3f3f3;
+    color: var(--cs-light-text);
+    background-color: var(--cs-light-background);
     height: 38px;
     width: 561px;
     appearance: none;
@@ -47,9 +48,9 @@
 
 #bib-dialog .entry-field .fw-select-arrow {
     position: absolute;
-	top: 14px;
-	right: 16px;
-	pointer-events: none;
+    top: 14px;
+    right: 16px;
+    pointer-events: none;
 }
 
 #bib-dialog .type-switch {
@@ -59,8 +60,8 @@
     float: left;
     margin-right: 5px;
     font-size: 14px;
-    color: white;
-    background-color: #76a698;
+    color: var(--cs-6-text);
+    background-color: var(--cs-6-background);
     border: 0 none;
     border-radius: 19px;
     white-space: nowrap;
@@ -71,7 +72,8 @@
 }
 
 #bib-dialog .type-switch.disabled {
-    background-color: #e0e0e0;
+    color: var(--cs-disabled);
+    background-color: var(--cs-disabled-background);
 }
 
 .type-switch-inner {
@@ -80,25 +82,25 @@
     left: 0;
     top: 0;
     width: calc(200% - 38px);
-    transition: left 0.3s;
+    transition: left .3s;
 }
 
-.type-switch-inner:after {
+.type-switch-inner::after {
     box-sizing: border-box;
     display: block;
     position: absolute;
     left: calc(50% - 19px);
     top: 0;
-    content: "";
+    content: '';
     width: 38px;
     height: 38px;
     border-radius: 19px;
-    background-color: #f9f9f9;
-    border: 1px solid #e0e0e0;
+    background-color: var(--cs-light-background);
+    border: 1px solid var(--cs-light-border);
 }
 
 .value2 .type-switch-inner {
-    left: calc(-100% + 38px)
+    left: calc(-100% + 38px);
 }
 
 .type-switch-label {
@@ -121,8 +123,8 @@
     max-width: 80vw;
 }
 
-.type-switch-input-wrapper:after {
-    content: "";
+.type-switch-input-wrapper::after {
+    content: '';
     display: table;
     clear: both;
 }
@@ -165,7 +167,7 @@
 
 #bib-dialog .ProseMirror-focused div.literal,
 #bib-dialog .ProseMirror-focused pre.long-literal {
-    background-color: #fbf9d2;
+    background-color: var(--input-focus-background-color);
 }
 
 #bib-dialog .fw-pulldown.fw-center {
@@ -179,12 +181,13 @@
     max-width: 80vw;
 }
 
-.tokenfield:before, .tokenfield:after {
-    content: " ";
+.tokenfield::before,
+.tokenfield::after {
+    content: ' ';
     display: table;
 }
 
-.tokenfield:after {
+.tokenfield::after {
     clear: both;
 }
 
@@ -193,8 +196,8 @@
     position: relative;
     font-size: 14px;
     line-height: 1.42857;
-    color: #555555;
-    background-color: #e0e0e0;
+    color: var(--tokenfield-color);
+    background-color: var(--cs-light-background-hover);
 }
 
 .tokenfield-set {
@@ -215,9 +218,9 @@
     border-radius: 3px;
     line-height: 1.5;
     cursor: pointer;
-    color: #fff;
-    background: #76a698;
-    border: 1px solid #7d948e;
+    color: var(--cs-6-text);
+    background: var(--cs-6-background);
+    border: 1px solid var(--cs-6-border);
 }
 
 .tokenfield .tokenfield-set > ul > li:last-child {
@@ -225,14 +228,15 @@
 }
 
 .tokenfield .tokenfield-set > ul > li a {
-    color: #fff;
+    color: var(--cs-6-text);
 }
 
 .tokenfield .tokenfield-input {
     outline: none;
 }
 
-div.literal, pre.long-literal {
+div.literal,
+pre.long-literal {
     box-sizing: border-box;
     font-size: 14px;
     line-height: 1.33em;
@@ -240,7 +244,8 @@ div.literal, pre.long-literal {
     border-radius: 0;
     padding: 11px 10px 0;
     min-height: 38px;
-    background-color: #f3f3f3;
+    color: var(--cs-light-text);
+    background-color: var(--cs-light-background);
 }
 
 pre.long-literal {
@@ -248,11 +253,13 @@ pre.long-literal {
     height: auto;
 }
 
-div.literal strong, pre.long-literal strong  {
+div.literal strong,
+pre.long-literal strong {
     font-weight: bold;
 }
 
-div.literal em, pre.long-literal em {
+div.literal em,
+pre.long-literal em {
     font-style: italic;
 }
 
@@ -262,12 +269,12 @@ div.literal em, pre.long-literal em {
     margin-left: 14px;
 }
 
-.list-input-wrapper .add-remove-list:before {
+.list-input-wrapper .add-remove-list::before {
     content: '\2796';
-    width: 0.7em;
+    width: .7em;
 }
 
-.list-input-wrapper:last-child .add-remove-list:before {
+.list-input-wrapper:last-child .add-remove-list::before {
     content: '\2795';
 }
 
@@ -282,11 +289,13 @@ div.literal em, pre.long-literal em {
     text-align: center;
 }
 
-#bib-dialog td .dk-selected, #bib-dialog td .dk-select-options {
+#bib-dialog td .dk-selected,
+#bib-dialog td .dk-select-options {
     width: 486px !important;
 }
 
-#bib-dialog th .dk-selected, #bib-dialog th .dk-select-options {
+#bib-dialog th .dk-selected,
+#bib-dialog th .dk-select-options {
     width: 140px !important;
 }
 
@@ -311,9 +320,9 @@ div.literal em, pre.long-literal em {
 .checkable-label {
     width: 462px;
     height: 36px;
-    border: solid 1px #ccc;
+    border: solid 1px var(--cs-white-border);
     line-height: 36px;
-    background-color: #fff;
+    background-color: var(--cs-white-background);
     padding: 0 12px;
     font-size: 13px;
     margin-bottom: 10px;
@@ -337,6 +346,7 @@ div.literal em, pre.long-literal em {
     white-space: nowrap;
     overflow: hidden;
 }
+
 #source-type-selection .icon-down-dir {
     position: absolute;
     right: 10px;
@@ -345,7 +355,8 @@ div.literal em, pre.long-literal em {
 #editCategories {
     width: 369px !important;
 }
-#editCategories input[type="text"] {
+
+#editCategories input[type='text'] {
     width: 310px;
 }
 
@@ -364,11 +375,12 @@ div.literal em, pre.long-literal em {
 
 #bibimport-api-search h3 {
     font-weight: 700;
-    margin: 10px 0px 10px 20px;
+    margin: 10px 0 10px 20px;
     font-size: 1.1em;
 }
 
-#bibimport-api-search .bibimport-search-result, #bibimport-api-search div.item {
+#bibimport-api-search .bibimport-search-result,
+#bibimport-api-search div.item {
     clear: left;
 }
 
@@ -391,57 +403,73 @@ Modal header
 .tab-link-inner {
     display: block;
     margin-left: 20px;
-    color: rgba(98, 96, 96, 0.6);
+    color: var(--cs-light-text);
+    opacity: .6;
 }
 
-.current-tab .tab-link-inner {
-    color: #2c2723;
+.current-tab .tab-link-inner,
+.tab-link-inner:hover {
+    color: var(--cs-light-hover);
+    opacity: 1;
 }
 
 @media screen and (max-width: 740px) {
-    #bib-dialog .entry-field .ProseMirror, #bib-dialog .entry-field input[type=text] {
+    #bib-dialog .entry-field .ProseMirror,
+    #bib-dialog .entry-field input[type=text] {
         max-width: 70vw;
     }
+
     #bib-dialog .type-switch-input-wrapper {
         max-width: 70vw;
     }
+
     .tokenfield {
         max-width: 70vw;
     }
 }
 
 @media screen and (max-width: 560px) {
-    #bib-dialog .entry-field .ProseMirror, #bib-dialog .entry-field input[type=text] {
+    #bib-dialog .entry-field .ProseMirror,
+    #bib-dialog .entry-field input[type=text] {
         max-width: 50vw;
     }
+
     #bib-dialog .type-switch-input-wrapper {
         max-width: 50vw;
     }
+
     .tokenfield {
         max-width: 50vw;
     }
+
     #bib-dialog .type-switch {
         display: block;
         margin-bottom: 5px;
     }
+
     .type-switch-input-inner {
         width: auto;
     }
 }
 
 @media screen and (max-width: 460px) {
-    #bib-dialog .entry-field .ProseMirror, #bib-dialog .entry-field input[type=text] {
+    #bib-dialog .entry-field .ProseMirror,
+    #bib-dialog .entry-field input[type=text] {
         max-width: 40vw;
     }
+
     #bib-dialog .type-switch-input-wrapper {
         max-width: 40vw;
     }
+
     .tokenfield {
         max-width: 40vw;
     }
+
     #bib-dialog .fw-dialog-table th {
         width: 140px;
     }
+
     .ui-tabs-panel {
         overflow-x: hidden;
     }

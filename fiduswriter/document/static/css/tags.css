@@ -20,7 +20,7 @@
 
 .tags-inner br,
 .contributors-inner br {
-    display: none
+    display: none;
 }
 
 .tag {
@@ -30,7 +30,7 @@
     border-radius: 3px;
     line-height: 2em;
     cursor: pointer;
-    color: #fff;
-    background: #76a698;
-    border: 1px solid #7d948e;
+    color: var(--cs-6-text);
+    background: var(--cs-6-background);
+    border: 1px solid var(--cs-6-border);
 }

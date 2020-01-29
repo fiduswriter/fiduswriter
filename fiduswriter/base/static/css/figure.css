@@ -13,7 +13,7 @@
     display: table-cell;
     width: 406px;
     height: 226px;
-    border: 2px dashed #8b8b8b;
+    border: 2px dashed var(--cs-white-border);
     text-align: center;
     vertical-align: middle;
     position: relative;
@@ -58,7 +58,8 @@
     width: 396px;
 }
 
-th.figure-preview-row, td.figure-preview-row {
+th.figure-preview-row,
+td.figure-preview-row {
     vertical-align: top;
 }
 
@@ -75,7 +76,7 @@ th.figure-preview-row, td.figure-preview-row {
 
 .figure-edit-icon {
     font-size: 18px;
-    color: #cecece;
+    color: var(--cs-white-nofocus-text);
 }
 
 .crop-mode {
@@ -85,7 +86,7 @@ th.figure-preview-row, td.figure-preview-row {
 
 .crop-icon {
     font-size: 1.2em;
-    color: white
+    color: white;
 }
 
 .hide {

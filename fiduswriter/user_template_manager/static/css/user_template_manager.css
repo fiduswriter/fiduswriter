@@ -1,13 +1,13 @@
-#template-editor table.title_id input[type='text'] {
-    margin-bottom: 4px;
-}
-
 .bibliography-header-value input[type='text'] {
     margin: 10px;
-    background-color: #fff;
-    border: 1px solid rgb(169, 169, 169);
+    background-color: var(--cs-white-background);
+    border: 1px solid var(--cs-white-border);
 }
 
 .bibliography-header-value table.fw-small {
     width: 100%;
+}
+
+#template-editor table.title_id input[type='text'] {
+    margin-bottom: 4px;
 }

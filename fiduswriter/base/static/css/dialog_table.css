@@ -15,7 +15,8 @@
     display: none;
 }
 
-.fw-dialog-table tr > td .fa-minus-circle, .fw-dialog-table tr > td .fa-plus-circle {
+.fw-dialog-table tr > td .fa-minus-circle,
+.fw-dialog-table tr > td .fa-plus-circle {
     cursor: pointer;
 }
 
@@ -24,13 +25,13 @@
     position: relative;
 }
 
-.fw-tablerow-title.wtooltip:after {
+.fw-tablerow-title.wtooltip::after {
     display: inline-block;
     vertical-align: baseline;
-    content: "?";
+    content: '?';
     line-height: 1;
     color: white;
-    background-color: rgba(38, 38, 38, 0.6);
+    background-color: rgba(var(--tooltip-background-color));
     width: 12px;
     height: 12px;
     border-radius: 6px;
@@ -43,8 +44,8 @@
     min-width: 260px;
     top: calc(100% + 2px);
     left: calc(100% - 13px);
-    background-color: #605f5f;
-    color: white;
+    background-color: var(--cs-dark-background);
+    color: var(--cs-dark-text);
     border-radius: 6px;
     line-height: 1.5;
     padding: 14px 18px;

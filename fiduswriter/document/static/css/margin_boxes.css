@@ -15,7 +15,7 @@
     margin-bottom: 6px;
     margin-left: -3px;
     display: flex;
-    border: 2px solid #f2f2f2;
+    border: 2px solid var(--cs-white-border);
     border-top: 0 none;
     top: 225px;
 }
@@ -26,21 +26,21 @@ body.header-closed #margin-box-filter {
 
 .margin-box-filter-button {
     flex: 1;
-    background-color: #84b4a7;
-    color: #fff;
-    border-right: 1px solid #f2f2f2;
-    border-left: 1px solid #f2f2f2;
+    background-color: var(--cs-5-background);
+    color: var(--cs-5-text);
+    border-right: 1px solid var(--cs-5-border);
+    border-left: 1px solid var(--cs-5-border);
     position: relative;
     cursor: pointer;
 }
 
 .margin-box-filter-button:hover {
-    background-color: #97cdbe;
+    background-color: var(--cs-5-background-hover);
 }
 
 .margin-box-filter-button.disabled {
-    background-color: #e0e0e0;
-    color: #545454;
+    background-color: var(--cs-disabled-background);
+    color: var(--cs-disabled);
 }
 
 .margin-box-filter-button .marginbox-options.fw-pulldown.fw-right {
@@ -53,7 +53,7 @@ body.header-closed #margin-box-filter {
     position: absolute;
     font-size: 12px;
     font-weight: 700;
-    letter-spacing: 0.06px;
+    letter-spacing: .06px;
     line-height: 44px;
 }
 
@@ -73,102 +73,106 @@ body.header-closed #margin-box-filter {
 }
 
 .margin-box {
-    background-color: #f8f8f8;
-    color: #2c2723;
-}
-
-.margin-box .comment-item:first-child {
-    background-color: #fff;
-}
-
-.margin-box.track {
-    background-color: rgba(45, 82, 144, 0.63);
-    color: #fff;
-}
-
-.margin-box.track.active {
-    background-color: #788fb4;
-    color: #fff;
-    border: 0 none;
-}
-
-.margin-box.track.active:after {
-    color: #788fb4;
-    text-shadow: none;
-}
-
-#margin-box-container div.margin-box.active {
-    color: #000;
-    border: 1px solid #c5c5c5;
-    left: -18px;
-    z-index: 5;
-}
-
-.margin-box.comment.active {
-    background-color: #fffacf;
-}
-
-.margin-box.help.active {
-    background-color: #fafafa;
-    left:-15px
-}
-
-.margin-box.help.active:after {
-    color: #79b8a5;
-    left: -15px
-}
-
-.margin-box.warning {
-    background-color: #e0aa9e;
-}
-
-#margin-box-container div.margin-box.warning.active {
-    background-color: #b73717;
-    color: #fff;
-}
-
-.margin-box.active .comment-item:first-child {
-    background-color: #fffacf;
-    padding-bottom: 10px;
-}
-
-.margin-box.active:after {
-    position: absolute;
-    left: -11px;
-    top: 30px;
-    line-height: 1em;
-    font-size: 36px;
-    color: #fffacf;
-    text-shadow: -1px 0px 0px #c5c5c5;
-}
-
-.margin-box.warning.active:after {
-    top: 0;
-    color: #b73717;
-}
-
-.margin-box.hidden {
-    display: none;
+    background-color: var(--cs-light-background);
+    color: var(--cs-light-text);
 }
 
 .comment-item {
     padding: 12px 10px;
 }
 
+.margin-box .comment-item:first-child {
+    color: var(--cs-light-text);
+    background-color: var(--cs-light-background);
+}
+
+.margin-box.track {
+    background-color: rgba(var(--editor-track-background-color));
+    color: var(--editor-track-text-color);
+}
+
+.margin-box.track.active {
+    background-color: var(--editor-track-active-background-color);
+    color: var(--editor-track-text-color);
+    border: 0 none;
+}
+
+.margin-box.track.active::after {
+    color: var(--editor-track-active-background-color);
+    text-shadow: none;
+}
+
+#margin-box-container div.margin-box.active {
+    color: var(--cs-white-text);
+    border: 1px solid var(--cs-white-border);
+    left: -18px;
+    z-index: 5;
+}
+
+.margin-box.comment.active {
+    background-color: var(--editor-active-comment-background-color);
+}
+
+.margin-box.help.active {
+    background-color: var(--editor-active-help-background-color);
+    left: -15px;
+}
+
+.margin-box.help.active::after {
+    color: var(--editor-active-help-arrow-color);
+    left: -15px;
+}
+
+.margin-box.warning {
+    background-color: rgba(var(--warning-background-color));
+    color: var(--warning-text-color);
+}
+
+#margin-box-container div.margin-box.warning.active {
+    background-color: var(--error-background-color);
+    color: var(--error-text-color);
+}
+
+.margin-box.active .comment-item:first-child {
+    background-color: var(--editor-active-comment-background-color);
+    padding-bottom: 10px;
+}
+
+.margin-box.active::after {
+    position: absolute;
+    left: -11px;
+    top: 30px;
+    line-height: 1em;
+    font-size: 36px;
+    color: var(--editor-active-comment-background-color);
+    text-shadow: -1px 0 0 var(--cs-white-border);
+}
+
+.margin-box.warning.active::after {
+    top: 0;
+    color: var(--cs-1-text);
+}
+
+.margin-box.hidden {
+    display: none;
+}
+
+
+
 .comment-item.comment-answer {
     position: relative;
 }
 
-.inactive .comment-answer + .comment-answer[id]:before,
-.active .comment-answer[id]:before {
+.active .comment-answer[id]::before,
+.inactive .comment-answer + .comment-answer[id]::before {
     position: absolute;
     left: 10px;
     right: 10px;
     top: 0;
     display: block;
     height: 1px;
-    background-color: rgba(0,0,0,0.2);
-    content: "";
+    background-color: var(--cs-white-border);
+    content: '';
 }
 
 .comment-item.wait,
@@ -195,6 +199,11 @@ body.header-closed #margin-box-filter {
     background-size: 20px 20px;
 }
 
+.comment-btns {
+    margin-top: 5px;
+    text-align: right;
+}
+
 .wait .comment-btns {
     display: none;
 }
@@ -203,7 +212,7 @@ body.header-closed #margin-box-filter {
     margin-bottom: 9px;
 }
 
-.comment-user:after {
+.comment-user::after {
     display: block;
     clear: both;
     content: '';
@@ -222,11 +231,11 @@ body.header-closed #margin-box-filter {
     height: 26px;
     float: left;
     margin-right: 8px;
-    border: solid 1px #ccc;
+    border: 1px solid var(--cs-white-border);
 }
 
 .comment-user-name {
-    font-family: Lato;
+    font-family: Lato, sans-serif;
     font-size: 12px;
     font-weight: 700;
     line-height: 20px;
@@ -237,10 +246,10 @@ body.header-closed #margin-box-filter {
 }
 
 .assigned-user {
-    border: 1px solid rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--cs-white-border);
     padding: 5px;
     margin: 10px 0 10px 0;
-    font-size: 0.9em;
+    font-size: .9em;
     text-align: center;
 }
 
@@ -254,17 +263,12 @@ body.header-closed #margin-box-filter {
 
 .margin-box .ProseMirror-wrapper {
     width: 194px;
-    background-color: #fff;
+    background-color: var(--cs-white-background);
     min-height: 40px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--cs-white-border);
     padding: 2px;
     margin-bottom: 6px;
     cursor: text;
-}
-
-.comment-btns {
-    margin-top: 5px;
-    text-align: right;
 }
 
 .margin-box .btn {
@@ -284,7 +288,7 @@ body.header-closed #margin-box-filter {
     right: 0;
     top: 0;
     cursor: pointer;
-    opacity: 0.4;
+    opacity: .4;
     height: auto;
     width: 17px;
     line-height: 44px;
@@ -299,13 +303,13 @@ body.header-closed #margin-box-filter {
     margin: 5px 5px 9px 3px;
 }
 
-.comment.resolved .comment-item:first-child:before,
-.comment-is-major-bgc .comment-item:first-child:before {
+.comment.resolved .comment-item:first-child::before,
+.comment-is-major-bgc .comment-item:first-child::before {
     display: block;
     position: absolute;
     right: 30px;
     top: 0;
-    color: white;
+    color: var(--editor-comment-resolved-text-color);
     font-size: 8px;
     width: 18px;
     text-align: center;
@@ -314,20 +318,20 @@ body.header-closed #margin-box-filter {
     font-weight: 700;
 }
 
-.comment.resolved .comment-item:first-child:before {
+.comment.resolved .comment-item:first-child::before {
     content: 'RC';
-    background-color: #3c3c3c;
+    background-color: var(--editor-resolved-comment-icon-color);
 }
 
-.comment-is-major-bgc .comment-item:first-child:before {
-    content: "HP";
-    background-color: #af3515;
+.comment-is-major-bgc .comment-item:first-child::before {
+    content: 'HP';
+    background-color: var(--editor-major-comment-icon-color);
 }
 
-.comment.resolved .comment-item:first-child:after,
-.comment-is-major-bgc .comment-item:first-child:after {
+.comment.resolved .comment-item:first-child::after,
+.comment-is-major-bgc .comment-item:first-child::after {
     display: block;
-    content: "";
+    content: '';
     position: absolute;
     right: 30px;
     top: 18px;
@@ -338,25 +342,25 @@ body.header-closed #margin-box-filter {
     border-color: transparent;
 }
 
-.comment.resolved .comment-item:first-child:after {
-    border-bottom-color: white;
+.comment.resolved .comment-item:first-child::after {
+    border-bottom-color: var(--editor-comment-resolved-border-color);
 }
 
-.comment-is-major-bgc .comment-item:first-child:after {
-    border-bottom-color: #f4c9d9;
+.comment-is-major-bgc .comment-item:first-child::after {
+    border-bottom-color: var(--editor-major-comment-background-color);
 }
 
-.comment.resolved.active .comment-item:first-child:after,
-.comment-is-major-bgc.active .comment-item:first-child:after {
-    border-bottom-color: #fffacf;
+.comment.resolved.active .comment-item:first-child::after,
+.comment-is-major-bgc.active .comment-item:first-child::after {
+    border-bottom-color: var(--editor-active-comment-background-color);
 }
 
 .comment-is-major-bgc .comment-item:first-child {
-    background-color: #f4c9d9;
+    background-color: var(--editor-major-comment-background-color);
 }
 
 .comment.resolved .comment-item {
-    opacity: 0.7;
+    opacity: var(--editor-comment-resolved-opacity);
 }
 
 #comment-editor .ProseMirror-suggestion,
@@ -367,8 +371,8 @@ body.header-closed #margin-box-filter {
 #comment-editor .tagger,
 #answer-editor .tagger {
     margin: 5px -10px -11px -10px;
-    background-color: #f9f9f9;
-    border: 1px solid #e0e0e0;
+    background-color: var(--cs-light-background);
+    border: 1px solid var(--cs-light-border);
 }
 
 #comment-editor .tagger:empty,
@@ -386,7 +390,7 @@ body.header-closed #margin-box-filter {
 #comment-editor .tagger .tag.selected,
 #answer-editor .tagger .tag:hover,
 #answer-editor .tagger .tag.selected {
-    background-color: #e0e0e0;
+    background-color: var(--cs-light-background-hover);
 }
 
 #comment-editor .tagger .tag-user,
@@ -395,7 +399,7 @@ body.header-closed #margin-box-filter {
 }
 
 
-.help-text-wrapper{
+.help-text-wrapper {
     padding: 10px 10px 10px 10px;
 }
 
@@ -413,7 +417,7 @@ body.header-closed #margin-box-filter {
 }
 
 .help-text-wrapper blockquote {
-    border-left: 2px solid #ccc;
+    border-left: 2px solid var(--cs-white-border);
     margin-left: 5px;
     padding-left: 5px;
 }

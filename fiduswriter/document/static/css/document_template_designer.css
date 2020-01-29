@@ -1,29 +1,8 @@
-form .aligned ul.object-tools.right {
-    margin-left: inherit;
-    height: 3em;
-}
-
-.object-tools span.link, .object-tools span.link {
-    display: block;
-    float: left;
-    padding: 3px 12px;
-    background: #999;
-    font-weight: 400;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: #fff;
-    border-radius: 15px;
-    cursor: pointer;
-}
-
-.object-tools span.link:focus, .object-tools span.link:hover {
-    background-color: #417690;
-}
-
-.from-container, .to-column, .trash {
-    border: 1px solid black;
-    background-color: white;
+.from-container,
+.to-column,
+.trash {
+    border: 1px solid var(--cs-white-border);
+    background-color: var(--cs-white-background);
 }
 
 .to-container {
@@ -39,7 +18,7 @@ form .aligned ul.object-tools.right {
 }
 
 .to-column .article-part table td {
-    border: 1px solid black;
+    border: 1px solid var(--cs-white-border);
 }
 
 .from-container {
@@ -47,41 +26,42 @@ form .aligned ul.object-tools.right {
 }
 
 .trash {
-    background-color: grey;
-    width: 100px
+    background-color: var(--cs-dark-background);
+    width: 100px;
 }
 
 .doc-part {
-    background-color: #F0F8FF;
-    border-bottom: 3px dotted black;
+    background-color: var(--part-neutral-background-color);
+    border-bottom: 3px dotted var(--part-neutral-border-color);
     padding: 4px;
 }
 
-.doc-part[data-type="heading_part"] {
-    background-color: #84C4FE;
+.doc-part[data-type='heading_part'] {
+    background-color: var(--part-heading-background-color);
 }
 
-.doc-part[data-type="contributors_part"] {
-    background-color: #928EFE;
+.doc-part[data-type='contributors_part'] {
+    background-color: var(--part-contributors-background-color);
 }
 
-.doc-part[data-type="richtext_part"] {
-    background-color: #FFC87B;
+.doc-part[data-type='richtext_part'] {
+    background-color: var(--part-richtext-background-color);
 }
 
-.doc-part[data-type="tags_part"] {
-    background-color: #FFDF7B;
+.doc-part[data-type='tags_part'] {
+    background-color: var(--part-tags-background-color);
 }
 
-.doc-part[data-type="table_part"] {
-    background-color: #BFEDC1;
+.doc-part[data-type='table_part'] {
+    background-color: var(--part-table-background-color);
 }
 
-.doc-part[data-type="table_of_contents"] {
-    background-color: #985F99;
+.doc-part[data-type='table_of_contents'] {
+    background-color: var(--part-toc-background-color);
 }
 
-.from-container .doc-part, .trash .doc-part {
+.from-container .doc-part,
+.trash .doc-part {
     height: 50px;
 }
 
@@ -107,8 +87,6 @@ table td {
 .doc-part-header {
     cursor: move; /* fallback if grab cursor is unsupported */
     cursor: grab;
-    cursor: -moz-grab;
-    cursor: -webkit-grab;
     height: 60px;
 }
 
@@ -125,8 +103,8 @@ table td {
 }
 
 .ProseMirror {
-    background-color: #fff;
-    color: #000;
+    background-color: var(--cs-white-background);
+    color: var(--cs-white-text);
 }
 
 .ProseMirror-menubar {
@@ -136,59 +114,79 @@ table td {
 }
 
 .article-table th {
-    background-color: #76a698;
-    color: #fff;
+    background-color: var(--cs-6-background);
+    color: var(--cs-6-text);
 }
 
 .ProseMirror td.selectedCell {
-    background-color: #8cf;
+    background-color: var(--cs-2-background);
     caret-color: transparent;
 }
 
-.error-element{
-    border:3px solid red;
+.error-element {
+    border: 3px solid var(--error-background-color);
 }
 
-#template-editor .initial em, #template-editor .instructions em {
+#template-editor .initial em,
+#template-editor .instructions em {
     font-style: italic;
 }
 
-#template-editor .initial strong, #template-editor .instructions strong {
+#template-editor .initial strong,
+#template-editor .instructions strong {
     font-weight: bold;
 }
 
-#template-editor .initial code, #template-editor .instructions code {
+#template-editor .initial code,
+#template-editor .instructions code {
     font-family: monospace;
 }
 
-#template-editor .initial h1, #template-editor .instructions h1 {
+#template-editor .initial h1,
+#template-editor .instructions h1 {
     font-size: 28px;
 }
 
-#template-editor .initial h2, #template-editor .instructions h2 {
+#template-editor .initial h2,
+#template-editor .instructions h2 {
     font-size: 24px;
 }
 
-#template-editor .initial h3, #template-editor .instructions h3 {
+#template-editor .initial h3,
+#template-editor .instructions h3 {
     font-size: 20px;
 }
 
-#template-editor .initial h4, #template-editor .instructions h4 {
+#template-editor .initial h4,
+#template-editor .instructions h4 {
     font-size: 16px;
 }
 
-#template-editor .initial h5, #template-editor .instructions h5 {
+#template-editor .initial h5,
+#template-editor .instructions h5 {
     font-size: 14px;
 }
 
-#template-editor .initial h6, #template-editor .instructions h6 {
+#template-editor .initial h6,
+#template-editor .instructions h6 {
     font-size: 12px;
 }
 
-#template-editor .initial ul, #template-editor .instructions ul {
+#template-editor .initial ul,
+#template-editor .instructions ul {
     list-style-type: disc;
 }
 
-#template-editor .initial ol, #template-editor .instructions ol {
+#template-editor .initial ol,
+#template-editor .instructions ol {
     list-style-type: decimal;
+}
+
+.object-tools span.link {
+    display: block;
+    cursor: pointer;
+    border-radius: 15px;
+    background-color: var(--cs-2-background);
+    color: var(--cs-2-text);
+    padding: 3px 12px;
 }

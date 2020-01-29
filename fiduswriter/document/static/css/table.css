@@ -2,7 +2,8 @@ table.fw-small {
     width: 342px;
 }
 
-table.fw-small tr, table th {
+table.fw-small tr,
+table th {
     padding: 15px 0;
 }
 

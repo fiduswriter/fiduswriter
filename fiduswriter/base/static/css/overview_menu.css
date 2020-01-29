@@ -1,6 +1,6 @@
 .fw-overview-menu-wrapper {
     position: relative;
-    background-color: white;
+    background-color: var(--cs-white-background);
     padding: 11px 8px;
 }
 
@@ -9,8 +9,8 @@
     margin: 0 213px;
 }
 
-#fw-overview-menu:after {
-    content: "";
+#fw-overview-menu::after {
+    content: '';
     display: table;
     clear: both;
 }
@@ -35,7 +35,7 @@
 
 .fw-text-menu {
     height: 40px;
-    color: #a2a2a2;
+    color: var(--cs-white-nofocus-text);
     padding: 0;
     border: 0 none;
     background-color: transparent;
@@ -44,20 +44,20 @@
 }
 
 .fw-text-menu:hover {
-    color: #0f0f0f;
+    color: var(--cs-white-text);
 }
 
 .fw-dropdown-menu {
     padding-top: 14px;
     font-size: 14px;
-    color: #a2a2a2;
+    color: var(--cs-white-nofocus-text);
     cursor: pointer;
     height: 40px;
     box-sizing: border-box;
 }
 
 .fw-dropdown-menu:hover {
-    color: #0f0f0f;
+    color: var(--cs-white-text);
 }
 
 div.select-action {
@@ -80,14 +80,15 @@ span.select-action-dropdown {
 }
 
 .fw-white input[type=text] {
-    background-color: #f3f3f3;
+    color: var(--cs-light-text);
+    background-color: var(--cs-light-background);
 }
 
 .fw-button.fw-white:focus-within {
-    background-color: #fbf9d2;
+    background-color: var(--input-focus-background-color);
 }
 
 .fw-button.fw-white input[type=text]:focus,
 .fw-white.fw-input:hover {
-    background-color: #fbf9d2;
+    background-color: var(--input-focus-background-color);
 }

@@ -12,7 +12,7 @@ export const linkDialogTemplate = ({defaultLink, internalTargets, linkType, titl
             <label class="cross-reference-label">${gettext("Cross reference")}</label>
         </div>
         <div class="fw-select-container">
-            <select class="cross-reference-selector fw-button fw-white fw-large" required="">
+            <select class="cross-reference-selector fw-button fw-light fw-large" required="">
                 <option class="placeholder" selected="" disabled="" value="">
                     ${gettext("Select Target")}
                 </option>
@@ -33,7 +33,7 @@ export const linkDialogTemplate = ({defaultLink, internalTargets, linkType, titl
             <label class="link-internal-label">${gettext("Internal")}</label>
         </div>
         <div class="fw-select-container">
-            <select class="internal-link-selector fw-button fw-white fw-large" required="">
+            <select class="internal-link-selector fw-button fw-light fw-large" required="">
                 <option class="placeholder" selected="" disabled="" value="">
                     ${gettext("Select Target")}
                 </option>
@@ -325,7 +325,7 @@ export const configureCitationTemplate = ({citedItemsHTML, citeFormat}) =>
         <div id="cited-items" class="fw-ar-container">
             <h3 class="fw-green-title">${gettext("Citation format")}</h3>
             <div class="fw-select-container">
-                <select id="citation-style-selector" class="fw-button fw-white fw-large" required="">
+                <select id="citation-style-selector" class="fw-button fw-light fw-large" required="">
                     <option value="autocite" ${citeFormat==="autocite" ? "selected" : ""}>${gettext("(Author, 1998)")}</option>
                     <option value="textcite" ${citeFormat==="textcite" ? "selected" : ""}>${gettext("Author (1998)")}</option>
                 </select>
@@ -394,7 +394,7 @@ export const contributorTemplate = ({contributor}) =>
     `
 
 export const languageTemplate = ({currentLanguage, allowedLanguages}) =>
-    `<select class="fw-button fw-white fw-large">
+    `<select class="fw-button fw-light fw-large">
         ${
             allowedLanguages.map(language =>
                 `<option value="${language[0]}" ${language[0]===currentLanguage ? 'selected' : ''}>

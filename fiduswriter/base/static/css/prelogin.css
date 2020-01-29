@@ -1,5 +1,5 @@
 .fw-header.prelogin {
-    border-bottom: solid 1px #8e8e8e;
+    border-bottom: solid 1px var(--cs-white-border);
     height: 123px;
 }
 
@@ -14,7 +14,7 @@
     right: 40px;
     top: 38px;
     font-size: 14px;
-    color: #fff;
+    color: var(--cs-5-text);
     line-height: 34px;
 }
 
@@ -23,8 +23,6 @@
         top: 2px;
     }
 }
-
-
 
 .prelogin #header-nav .fw-button {
     margin-left: 12px;
@@ -36,7 +34,7 @@
     line-height: 2em;
 }
 
-.fw-contents.prelogin:after {
+.fw-contents.prelogin::after {
     display: block;
     content: ' ';
     clear: both;
@@ -73,8 +71,9 @@
     width: 280px;
     padding: 25px;
     float: right;
-    background-color: #f9f9f9;
-    border: solid 1px #d3d3d3;
+    background-color: var(--cs-light-background);
+    border: solid 1px var(--cs-light-border);
+    color: var(--cs-light-text);
 }
 
 .input-wrapper label {
@@ -96,7 +95,7 @@
 
 .submit-wrapper label {
     font-size: 14px;
-    color: #585757;
+    color: var(--cs-light-nofocus-text);
     margin-left: 4px;
 }
 
@@ -116,8 +115,8 @@ footer.prelogin {
     bottom: 0;
     width: 100%;
     height: auto;
-    border-top: solid 1px #cecece;
-    background-color: #fff;
+    border-top: solid 1px var(--cs-white-border);
+    background-color: var(--cs-white-background);
     text-align: right;
     padding: 27px 0;
     z-index: 2;
@@ -137,11 +136,11 @@ footer.prelogin {
 }
 
 .fw-footer-links > li a {
-    color: #2c2723;
+    color: var(--cs-1-text);
 }
 
 .fw-footer-links > li a:hover {
-    color: #b73717;
+    color: var(--cs-1-hover);
 }
 
 #lang-selection {

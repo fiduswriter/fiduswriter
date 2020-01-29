@@ -56,7 +56,7 @@ jobs:
       after_success: skip
       env: TESTS=before
       before_script: skip
-      script: flake8 ./ && python3 manage.py lint_js
+      script: flake8 ./ && python3 manage.py lint_js && python3 manage.py lint_css
     - stage: coveralls
       addons: {}
       before_cache: skip

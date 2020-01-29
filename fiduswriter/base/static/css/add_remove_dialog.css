@@ -2,8 +2,8 @@
     display: inline-block;
     width: 338px;
     height: 360px;
-    background-color: #fff;
-    border: solid 1px #ccc;
+    background-color: var(--cs-white-background);
+    border: solid 1px var(--cs-white-border);
     vertical-align: middle;
     padding: 20px 14px 0 14px;
     overflow-y: auto;

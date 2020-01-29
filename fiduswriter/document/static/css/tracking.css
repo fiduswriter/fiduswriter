@@ -6,18 +6,18 @@ span.deletion {
 .selected-deletion,
 .selected-format_change,
 .selected-block_change {
-    background-color: #afbed4;
+    background-color: var(--editor-active-track-background-color);
 }
 
 .tag.selected-insertion,
 .contributor.selected-insertion,
 .tag.selected-deletion,
 .contributor.selected-deletion {
-    background-color: #fffacf;
-    color: #000;
+    background-color: var(--editor-active-track-background-color);
+    color: var(--cs-white-text);
 }
 
-.margin-box.track>div {
+.margin-box.track > div {
     padding: 10px;
 }
 

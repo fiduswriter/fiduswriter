@@ -8,7 +8,7 @@ from django.conf import settings
 
 
 class Command(BaseCommand):
-    help = 'Check JavaScript files with ESLint'
+    help = 'Check CSS files with Stylelint'
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -21,13 +21,22 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         call_command("npm_install")
-        shutil.os.chdir(settings.SRC_PATH)
+        shutil.os.chdir(
+            os.path.join(
+                settings.PROJECT_PATH,
+                ".transpile/"
+            )
+        )
         command_array = [
             os.path.join(
                 settings.PROJECT_PATH,
-                ".transpile/node_modules/.bin/eslint"
+                ".transpile/node_modules/.bin/stylelint"
             ),
-            "."
+            "../**/*.css",
+            "!../**/static-libs/**",
+            "!../**/venv/**",
+            "--config",
+            "../.stylelintrc"
         ]
         if options['fix']:
             command_array.append('--fix')

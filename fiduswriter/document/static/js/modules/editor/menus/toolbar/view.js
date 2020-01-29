@@ -233,7 +233,7 @@ export class ToolbarView {
             return `
                 <div class="ui-buttonset more-button">
                     <div class="multiButtons">
-                        <span class="multibuttonsCover fw-button fw-light fw-large edit-button">
+                        <span class="multibuttonsCover fw-button fw-white fw-large edit-button">
                             ${gettext('More')}
                         </span>
                         ${this.getMoreButtonListHTML(menuIndexToDrop)}
@@ -265,7 +265,7 @@ export class ToolbarView {
     getDropdownHTML(menuItem) {
         return `
         <div class="multiButtons">
-            <span class="multibuttonsCover fw-button fw-light fw-large edit-button${menuItem.disabled && menuItem.disabled(this.editor) ? ' disabled' : ''}">
+            <span class="multibuttonsCover fw-button fw-white fw-large edit-button${menuItem.disabled && menuItem.disabled(this.editor) ? ' disabled' : ''}">
                 ${menuItem.show(this.editor)}
             </span>
             ${this.getDropdownListHTML(menuItem)}
@@ -294,7 +294,7 @@ export class ToolbarView {
 
     getButtonHTML(menuItem) {
         return `
-        <button aria-label="${menuItem.title}" class="fw-button fw-light fw-large fw-square edit-button${menuItem.disabled && menuItem.disabled(this.editor) ? ' disabled' : ''}${menuItem.selected && menuItem.selected(this.editor) ? ' ui-state-active' : ''}${menuItem.class ? ` ${menuItem.class(this.editor)}` : ''}" title="${menuItem.title}" >
+        <button aria-label="${menuItem.title}" class="fw-button fw-white fw-large fw-square edit-button${menuItem.disabled && menuItem.disabled(this.editor) ? ' disabled' : ''}${menuItem.selected && menuItem.selected(this.editor) ? ' ui-state-active' : ''}${menuItem.class ? ` ${menuItem.class(this.editor)}` : ''}" title="${menuItem.title}" >
             <span class="ui-button-text">
                 <i class="fa fa-${typeof(menuItem.icon) === 'function' ? menuItem.icon(this.editor) : menuItem.icon}"></i>
             </span>

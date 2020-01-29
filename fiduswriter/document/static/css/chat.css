@@ -1,4 +1,4 @@
-/*For profile list*/
+/* For profile list */
 
 .avatar {
     border-bottom-width: 4px;
@@ -7,19 +7,20 @@
 
 #chat {
     position: fixed;
-    bottom: 0px;
+    bottom: 0;
     right: 5px;
-    background-color: white;
+    background-color: var(--cs-white-background);
     width: 250px;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--cs-white-border);
     border-bottom: 0;
     display: none;
     z-index: 100;
+    transition: top 2s ease;
 }
 
 #chat.highlighted {
-    background-color: #6495ed;
+    background-color: var(--chat-highlight-background-color);
 }
 
 #chat .resize-button {
@@ -34,7 +35,7 @@
 }
 
 #chat-container .message:last-child {
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid var(--cs-white-border);
     margin-bottom: 6px;
     padding-bottom: 6px;
 }
@@ -64,10 +65,6 @@
     margin-left: 0;
 }
 
-#messageform.empty:before {
-    color: #cecece;
-}
-
-#chat {
-    transition: top 2s ease;
+#messageform.empty::before {
+    color: var(--cs-white-placeholder-text);
 }

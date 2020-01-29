@@ -499,8 +499,8 @@ span.delete {
 }
 
 #unobtrusive_messages .warn {
-    color: var(--color-warning-text);
-    background-color: rgba(var(--color-warning-background));
+    color: var(--warning-text-color);
+    background-color: rgba(var(--warning-background-color));
 }
 
 #unobtrusive_messages:empty {

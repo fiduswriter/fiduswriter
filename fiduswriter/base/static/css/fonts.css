@@ -31,8 +31,8 @@
 .icon-access-read-without-comments::before,
 .icon-access-review::before,
 .icon-access-write-tracked::before {
-    background-color: var(--cs-dark-text-color);
-    color: var(--cs-dark-background-color);
+    background-color: var(--cs-dark-text);
+    color: var(--cs-dark-background);
     padding: 2px;
     border-radius: 4px;
 }

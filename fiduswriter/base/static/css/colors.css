@@ -95,12 +95,15 @@
 
     /* black on white */
     --cs-white-text: #000000;
+    --cs-white-border: #cccccc;
     --cs-white-nofocus-text: #a8a8a8;
     --cs-white-placeholder-text: #cecece;
     --cs-white-background: #ffffff;
     --cs-white-background-hover: #f9f9f9;
     --cs-white-background-selected: #dddddd;
-    --cs-white-border: #cccccc;
+
+
+    /* disabled */
     --cs-disabled: #a9a9a9;
     --cs-disabled-background: #d3d3d3;
     --cs-disabled-border: #a9a9a9;

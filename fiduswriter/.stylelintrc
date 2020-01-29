@@ -1,5 +1,8 @@
 {
     "extends": "stylelint-config-standard",
+    "plugins": [
+        "stylelint-value-no-unknown-custom-properties"
+    ],
     "rules": {
         "max-empty-lines": 4,
         "string-quotes": "single",
@@ -11,6 +14,12 @@
         "max-nesting-depth": 2,
         "indentation": 4,
         "font-family-no-missing-generic-family-keyword": true,
-        "no-descending-specificity": null
+        "no-descending-specificity": null,
+        "csstools/value-no-unknown-custom-properties": [
+            true,
+            {
+                "importFrom": ["../base/static/css/colors.css"]
+            }
+        ]
     }
 }

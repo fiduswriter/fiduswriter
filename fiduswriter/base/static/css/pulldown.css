@@ -64,6 +64,14 @@
     border-bottom: 1px solid var(--pulldown-separator-color);
 }
 
+.fw-pulldown-item:hover {
+    background-color: var(--pulldown-hover-background-color);
+}
+
+.disabled .fw-pulldown-item {
+    color: var(--cs-disabled);
+}
+
 .fw-pulldown li:last-child .fw-pulldown-item {
     border-bottom: 0 none;
 }
@@ -97,16 +105,8 @@
     display: block;
 }
 
-.disabled .fw-pulldown-item {
-    color: var(--cs-disabled);
-}
-
 .fw-pulldown-icon {
     margin-left: 0;
-}
-
-.fw-pulldown-item:hover {
-    background-color: var(--pulldown-hover-background-color);
 }
 
 .fw-pulldown input[type=radio] {

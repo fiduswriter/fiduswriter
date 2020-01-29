@@ -34,14 +34,14 @@
     overflow-y: auto;
 }
 
+#chat-container .message {
+    padding-top: 5px;
+}
+
 #chat-container .message:last-child {
     border-bottom: 1px solid var(--cs-white-border);
     margin-bottom: 6px;
     padding-bottom: 6px;
-}
-
-#chat-container .message {
-    padding-top: 5px;
 }
 
 #connected-collaborators {

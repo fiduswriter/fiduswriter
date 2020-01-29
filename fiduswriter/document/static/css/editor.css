@@ -14,6 +14,35 @@ header {
     z-index: 91;
 }
 
+
+.pagination-footnote-item {
+    width: 100%;
+}
+
+.pagination-footnote-item-container {
+    cursor: pointer;
+}
+
+.pagination-footnote-item-container::before {
+    content: '\0000a0x';
+    position: absolute;
+    visibility: hidden;
+    font-weight: bold;
+}
+
+.pagination-footnote-item-container:hover::before {
+    visibility: visible;
+}
+
+.pagination-footnote-item-container > div {
+    margin-left: 15px;
+}
+
+.article-body,
+.pagination-footnote > * > * {
+    font-size: 12pt;
+}
+
 #document-top {
     padding: 16px 0;
     background-color: var(--cs-5-background);
@@ -307,17 +336,15 @@ body.header-closed #editor-content {
     background-color: var(--editor-text-content-item-hover-background-color);
 }
 
+#paper-editable .cross-reference.missing-target {
+    text-transform: uppercase;
+}
+
 #paper-editable .cross-reference.missing-target,
 #paper-editable .cross-reference.missing-target:hover,
 #paper-editable a.missing-target {
     background-color: var(--error-background-color);
 }
-
-#paper-editable .cross-reference.missing-target,
-#paper-editable .cross-reference.missing-target:hover {
-    text-transform: uppercase;
-}
-
 
 #paper-editable .search {
     background-color: var(--cs-5-background);
@@ -411,35 +438,6 @@ span.delete {
 .article-body:focus {
     outline: none;
 }
-
-.pagination-footnote-item {
-    width: 100%;
-}
-
-.pagination-footnote-item-container {
-    cursor: pointer;
-}
-
-.pagination-footnote-item-container::before {
-    content: '\0000a0x';
-    position: absolute;
-    visibility: hidden;
-    font-weight: bold;
-}
-
-.pagination-footnote-item-container:hover::before {
-    visibility: visible;
-}
-
-.pagination-footnote-item-container > div {
-    margin-left: 15px;
-}
-
-.article-body,
-.pagination-footnote > * > * {
-    font-size: 12pt;
-}
-
 
 /* Prevent user from writing in the footnote editor while there are no footnotes. */
 
@@ -822,10 +820,6 @@ html[hc=a5] #toolbar {
     z-index: 9;
 }
 
-#navigator.opened #navigator-content {
-    transform: translateX(0);
-}
-
 #navigator-content {
     position: fixed;
     top: auto;
@@ -841,6 +835,10 @@ html[hc=a5] #toolbar {
     line-height: 1.2;
     transform: translateX(-100%);
     transition: transform .2s ease-out;
+}
+
+#navigator.opened #navigator-content {
+    transform: translateX(0);
 }
 
 #navigator-list {
@@ -941,7 +939,7 @@ html[hc=a5] #toolbar {
 }
 
 .navigator-arrow-icon {
-    color: var(--editor-navigator-color));
+    color: var(--editor-navigator-color);
 }
 
 .navigator-arrow-icon i {

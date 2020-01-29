@@ -33,6 +33,14 @@
     margin-right: 0;
 }
 
+.fw-overview-menu-item.search div.fw-button.disabled {
+    background-color: var(--input-background-color);
+}
+
+.fw-overview-menu-item.search div.fw-button.disabled:focus-within {
+    background-color: var(--input-focus-background-color);
+}
+
 .fw-text-menu {
     height: 40px;
     color: var(--cs-white-nofocus-text);

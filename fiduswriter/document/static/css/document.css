@@ -1,16 +1,20 @@
-#document-editable, #footnote-box-container {
+#document-editable,
+#footnote-box-container {
     counter-reset: figure-cat-0 figure-cat-1 figure-cat-2 footnote-counter footnote-marker-counter;
 }
 
 /* CSL */
 
 .csl-bib-body {
-    padding-top: 0.5em;
-    padding-bottom: 0.5em;
+    padding-top: .5em;
+    padding-bottom: .5em;
 }
 
 .csl-left-margin {
     padding-right: 1ch;
+    clear: left;
+    float: left;
+    white-space: pre;
 }
 
 .csl-entry i {
@@ -32,17 +36,11 @@
 }
 
 .csl-indent {
-    padding-left: 0.5in;
+    padding-left: .5in;
 }
 
 .csl-entry {
     clear: left;
-}
-
-.csl-left-margin {
-    clear: left;
-    float: left;
-    white-space: pre;
 }
 
 .csl-right-inline {
@@ -60,7 +58,7 @@ figure figcaption {
 }
 
 figure img {
-    max-width: 100%
+    max-width: 100%;
 }
 
 figure {
@@ -92,26 +90,26 @@ figure {
 
 .image-width-100 {
     width: 80%;
-    box-sizing:border-box;
+    box-sizing: border-box;
 }
 
 .image-width-75 {
     width: 55%;
-    box-sizing:border-box;
+    box-sizing: border-box;
 }
 
 .image-width-50 {
     width: 40%;
-    margin-left:5%;
-    margin-right:5%;
-    box-sizing:border-box;
+    margin-left: 5%;
+    margin-right: 5%;
+    box-sizing: border-box;
 }
 
 .image-width-25 {
     width: 21%;
-    margin-left:2%;
-    margin-right:2%;
-    box-sizing:border-box;
+    margin-left: 2%;
+    margin-right: 2%;
+    box-sizing: border-box;
 }
 
 .figure-cat-figure::after {
@@ -141,12 +139,14 @@ figure {
     content: ' ' counter(figure-cat-2) 'A';
 }
 
-.figure-cat-figure + span::before, .figure-cat-photo + span::before, .figure-cat-table + span::before {
+.figure-cat-figure + span::before,
+.figure-cat-photo + span::before,
+.figure-cat-table + span::before {
     content: ': ';
 }
 
 table {
-    clear: both
+    clear: both;
 }
 
 .table-25 {

@@ -17,7 +17,7 @@
 }
 
 .ui-tabs-nav .fw-button:hover,
-.ui-tabs-nav .ui-tabs-active .fw-button  {
+.ui-tabs-nav .ui-tabs-active .fw-button {
     background: var(--cs-light-background);
 }
 

@@ -15,7 +15,8 @@
     display: none;
 }
 
-.fw-dialog-table tr > td .fa-minus-circle, .fw-dialog-table tr > td .fa-plus-circle {
+.fw-dialog-table tr > td .fa-minus-circle,
+.fw-dialog-table tr > td .fa-plus-circle {
     cursor: pointer;
 }
 
@@ -24,10 +25,10 @@
     position: relative;
 }
 
-.fw-tablerow-title.wtooltip:after {
+.fw-tablerow-title.wtooltip::after {
     display: inline-block;
     vertical-align: baseline;
-    content: "?";
+    content: '?';
     line-height: 1;
     color: white;
     background-color: rgba(var(--tooltip-background-color));

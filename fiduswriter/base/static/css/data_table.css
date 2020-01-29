@@ -77,12 +77,18 @@
     font-size: 15px;
 }
 
-.owned-by-user .icon-access-right,.fw-data-table .fa-clock, .fw-data-table .fa-trash, .fw-data-table .fa-download {
+.owned-by-user .icon-access-right,
+.fw-data-table .fa-clock,
+.fw-data-table .fa-trash,
+.fw-data-table .fa-download {
     color: var(--cs-1-icon);
     cursor: pointer;
 }
 
-.owned-by-user .icon-access-right:hover,.fw-data-table .fa-clock:hover, .fw-data-table .fa-trash:hover, .fw-data-table .fa-download:hover {
+.owned-by-user .icon-access-right:hover,
+.fw-data-table .fa-clock:hover,
+.fw-data-table .fa-trash:hover,
+.fw-data-table .fa-download:hover {
     color: var(--cs-1-hover);
 }
 
@@ -105,10 +111,12 @@
     display: inline-block;
     height: auto;
 }
+
 .fw-usermedia-type {
     display: block;
     margin-top: 3px;
 }
+
 .fw-usermedia-image {
     display: inline-block;
     max-width: 60px;
@@ -117,6 +125,7 @@
     vertical-align: top;
     margin: 0 14px 2px 0;
 }
+
 .fw-usermedia-image > img {
     min-width: 100%;
     min-height: 100%;
@@ -130,7 +139,8 @@
 .fw-data-table tbody td.checkable {
     position: relative;
 }
-.fw-data-table tbody tr.checked td.checkable:after {
+
+.fw-data-table tbody tr.checked td.checkable::after {
     width: 1em;
     height: 1em;
     position: absolute;

@@ -1,7 +1,3 @@
-#template-editor table.title_id input[type='text'] {
-    margin-bottom: 4px;
-}
-
 .bibliography-header-value input[type='text'] {
     margin: 10px;
     background-color: var(--cs-white-background-color);
@@ -10,4 +6,8 @@
 
 .bibliography-header-value table.fw-small {
     width: 100%;
+}
+
+#template-editor table.title_id input[type='text'] {
+    margin-bottom: 4px;
 }

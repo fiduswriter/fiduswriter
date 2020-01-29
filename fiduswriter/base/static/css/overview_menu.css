@@ -9,8 +9,8 @@
     margin: 0 213px;
 }
 
-#fw-overview-menu:after {
-    content: "";
+#fw-overview-menu::after {
+    content: '';
     display: table;
     clear: both;
 }

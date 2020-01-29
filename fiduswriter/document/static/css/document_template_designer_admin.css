@@ -6,16 +6,17 @@ form .aligned ul.object-tools.right {
 
 .object-tools span.link {
     float: left;
-    background: #999 !important;
+    background: #999999 !important;
     font-weight: 400;
     font-size: 11px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: #fff !important;
+    letter-spacing: .5px;
+    color: #ffffff !important;
     border-radius: 15px;
 }
 
-.object-tools span.link:focus, .object-tools span.link:hover {
+.object-tools span.link:focus,
+.object-tools span.link:hover {
     background-color: #417690;
 }
 

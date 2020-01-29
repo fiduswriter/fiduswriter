@@ -1,5 +1,4 @@
 body.editor {
-    width: 100%;
     height: 100%;
     font-family: 'Lato', sans-serif;
     font-size: 13px;
@@ -42,7 +41,7 @@ header {
     user-select: none;
 }
 
-#header-navigation>div {
+#header-navigation > div {
     position: relative;
     display: inline-block;
     margin-right: 18px;
@@ -55,7 +54,7 @@ header {
 }
 
 #header-navigation .header-nav-item {
-    opacity: 0.6;
+    opacity: .6;
     line-height: 35px;
 }
 
@@ -144,7 +143,7 @@ header {
 .editor-toolbar {
     position: relative;
     width: auto !important;
-    padding-left: 110px
+    padding-left: 110px;
 }
 
 .editor-toolbar div.ui-buttonset {
@@ -161,7 +160,7 @@ header {
 }
 
 .editor-toolbar div.info {
-    /*max-width: 90px;*/
+    /* max-width: 90px; */
     min-width: 62px;
     color: var(--cs-light-text);
     background-color: var(--cs-light-background);
@@ -172,7 +171,7 @@ header {
     padding: 0 10px;
     display: inline-block;
     font-size: 14px;
-    border-width: 0px;
+    border-width: 0;
     border-radius: 23px;
     text-decoration: none;
     box-shadow: none;
@@ -190,17 +189,15 @@ header {
     position: relative;
     min-width: 35px;
     max-width: 120px;
-    font-size: 11px;
-    font-weight: 700;
     color: var(--cs-light-text);
-    font-family: Lato;
+    font-family: Lato, sans-serif;
     font-size: 13px;
     font-weight: 700;
-    letter-spacing: 0.07px;
+    letter-spacing: .07px;
     padding: 0 40px 0 20px;
 }
 
-.editor-toolbar div.multiButtons .multibuttonsCover:after {
+.editor-toolbar div.multiButtons .multibuttonsCover::after {
     display: block;
     position: absolute;
     right: 10px;
@@ -209,14 +206,14 @@ header {
     margin-top: 0;
     width: 9px;
     height: 5px;
-    opacity: 0.5;
+    opacity: .5;
     color: var(--cs-light-text);
     font-size: 15px;
     line-height: 15.75px;
-    letter-spacing: 0.15px;
+    letter-spacing: .15px;
 }
 
-.editor-toolbar div.multiButtons .multibuttonsCover.disabled:after {
+.editor-toolbar div.multiButtons .multibuttonsCover.disabled::after {
     display: none;
 }
 
@@ -228,16 +225,17 @@ header {
 .editor-toolbar .fw-button.no-border .ui-button-text {
     width: 10px;
     height: 10px;
-    opacity: 0.4;
+    opacity: .4;
     color: var(--cs-light-text);
     font-size: 17px;
     font-weight: 400;
     line-height: 15.75px;
-    letter-spacing: 0.17px;
+    letter-spacing: .17px;
 }
 
-.editor-toolbar .fw-button, .editor-selection-menu .fw-button {
-    border-width: 0px;
+.editor-toolbar .fw-button,
+.editor-selection-menu .fw-button {
+    border-width: 0;
 }
 
 .editor-selection-menu .fw-button {
@@ -245,13 +243,15 @@ header {
 }
 
 
-.editor-toolbar .fw-button.fw-large, .editor-selection-menu .fw-button.fw-large {
+.editor-toolbar .fw-button.fw-large,
+.editor-selection-menu .fw-button.fw-large {
     height: 46px;
     line-height: 46px;
     border-radius: 23px;
 }
 
-.editor-toolbar .fw-button.fw-large.fw-square, .editor-selection-menu .fw-button.fw-large.fw-square {
+.editor-toolbar .fw-button.fw-large.fw-square,
+.editor-selection-menu .fw-button.fw-large.fw-square {
     width: 46px;
 }
 
@@ -366,16 +366,16 @@ font {
     color: inherit !important;
 }
 
-/* Don't show parts marked as hidden*/
+/* Don't show parts marked as hidden */
 
 .article-part[data-hidden] {
     display: none;
 }
 
 
-/* For default contents of title and contents field*/
+/* For default contents of title and contents field */
 
-.article-part:before {
+.article-part::before {
     text-transform: none;
     color: var(--cs-white-border);
 }
@@ -386,6 +386,7 @@ font {
 .article-part {
     min-height: 1.5em;
     line-height: initial;
+
     /* Cancel out 1.6em line height for metadata/title. */
 }
 
@@ -429,12 +430,12 @@ span.delete {
     visibility: visible;
 }
 
-.pagination-footnote-item-container>div {
+.pagination-footnote-item-container > div {
     margin-left: 15px;
 }
 
 .article-body,
-.pagination-footnote>*>* {
+.pagination-footnote > * > * {
     font-size: 12pt;
 }
 
@@ -482,7 +483,7 @@ span.delete {
 .ProseMirror td,
 .ProseMirror th {
     vertical-align: top;
-    border: 1px solid #ddd;
+    border: 1px solid #dddddd;
     padding: 3px 5px;
 }
 
@@ -664,17 +665,17 @@ table.insert-table-selection td.selected {
     padding: 20px 22px;
     background-color: var(--cs-dark-background);
     color: var(--cs-dark-text);
-    font-family: Lato;
+    font-family: Lato, sans-serif;
     font-size: 13px;
     font-weight: 400;
     line-height: 18px;
-    letter-spacing: 0.13px;
+    letter-spacing: .13px;
     border-radius: 6px 6px 0 0;
 }
 
 .drop-up-head .link-href a {
     color: var(--cs-dark-text);
-    font-family: Lato;
+    font-family: Lato, sans-serif;
     font-size: 12px;
     font-weight: 700;
     text-decoration: none;
@@ -694,7 +695,7 @@ table.insert-table-selection td.selected {
     padding: 16px 30px;
     color: var(--cs-light-text);
     background: var(--cs-light-background);
-    font-family: Lato;
+    font-family: Lato, sans-serif;
     font-size: 13px;
     font-weight: 400;
     line-height: 1em;
@@ -710,16 +711,16 @@ ul.drop-up-options li:hover {
     background-color: var(--cs-light-background-hover);
 }
 
-.drop-up-options .remove-link:after {
-    font-family: "Font Awesome 5 Free";
-    content: "\f2ed";
-    opacity: 0.4;
+.drop-up-options .remove-link::after {
+    font-family: 'Font Awesome 5 Free', monospace;
+    content: '\f2ed';
+    opacity: .4;
     float: right;
     display: block;
 }
 
 .drop-up-inner .edit {
-    font-size: 0.8em;
+    font-size: .8em;
     text-align: right;
 }
 
@@ -736,8 +737,8 @@ ul.drop-up-options li:hover {
 
 /* gapcursor related */
 
-.ProseMirror-gapcursor:after {
-    content: "";
+.ProseMirror-gapcursor::after {
+    content: '';
     display: block;
     position: absolute;
     top: -2px;
@@ -785,15 +786,16 @@ html[hc=a5] #toolbar {
     z-index: 100;
 }
 
-#close-document-top a, #close-document-top .fw-link-text {
+#close-document-top a,
+#close-document-top .fw-link-text {
     width: 10px;
     height: 10px;
-    opacity: 0.6;
+    opacity: .6;
     color: var(--cs-5-text);
     font-size: 14px;
     font-weight: 400;
     line-height: 25px;
-    letter-spacing: -0.35px;
+    letter-spacing: -.35px;
 }
 
 .article-part.article-deleted {
@@ -807,7 +809,7 @@ html[hc=a5] #toolbar {
 .remove-article-part {
     position: absolute;
     top: 5px;
-    right:  5px;
+    right: 5px;
     cursor: pointer;
     font-size: 16px;
     color: var(--cs-1-icon);
@@ -840,14 +842,14 @@ html[hc=a5] #toolbar {
     display: block;
     background-color: rgba(var(--editor-navigator-background-color));
     min-width: 216px;
-    max-width:480px;
+    max-width: 480px;
     color: var(--editor-navigator-color);
     padding: 15px 30px 15px 50px;
     box-sizing: border-box;
     font-size: 13px;
     line-height: 1.2;
     transform: translateX(-100%);
-    transition: transform 0.2s ease-out;
+    transition: transform .2s ease-out;
 }
 
 #navigator-list {
@@ -898,22 +900,28 @@ html[hc=a5] #toolbar {
 #navigator-content h2 {
     padding-left: 1em;
 }
+
 #navigator-content h3 {
     padding-left: 2em;
 }
+
 #navigator-content h4 {
     padding-left: 3em;
 }
+
 #navigator-content h5 {
     padding-left: 4em;
 }
+
 #navigator-content h6 {
     padding-left: 5em;
 }
+
 #navigator-content .header {
     text-transform: uppercase;
     padding-bottom: 20px;
 }
+
 .header-container {
     position: relative;
     padding-right: 28px;
@@ -936,15 +944,19 @@ html[hc=a5] #toolbar {
     cursor: pointer;
     z-index: 4;
 }
+
 #navigator.opened #navigator-button {
     background-color: inherit;
 }
+
 .navigator-arrow-icon {
     color: var(--editor-navigator-color));
 }
+
 .navigator-arrow-icon i {
-    transition: all 0.50s 0.25s;
+    transition: all .5s .25s;
 }
+
 .rotate {
     transform: rotate(180deg);
 }
@@ -958,7 +970,7 @@ html[hc=a5] #toolbar {
 }
 
 #navigator-filter-icon {
-    transition: transform 0.2s;
+    transition: transform .2s;
 }
 
 #navigator-filter-icon:hover {
@@ -982,6 +994,7 @@ html[hc=a5] #toolbar {
     margin-right: 7px;
     outline: none;
 }
+
 .form-checkbox:checked::before {
     position: absolute;
     left: 3px;
@@ -989,22 +1002,25 @@ html[hc=a5] #toolbar {
     font-weight: bold;
     font-size: 1.2em;
 }
+
 .navigator-label {
     color: var(--editor-navigator-color);
     cursor: pointer;
     display: inline-block;
     vertical-align: middle;
 }
+
 .hide {
     display: none;
 }
+
 body.no-scroll {
     overflow: hidden;
 }
 
 /* Additions for tablets + mobile */
 @media screen and (max-width: 1279px) {
-    #document-top>h1 {
+    #document-top > h1 {
         padding-left: 52px;
         background-position: 14px 0;
     }
@@ -1032,58 +1048,73 @@ body.no-scroll {
     #toolbar {
         padding-bottom: 6px;
     }
+
     #editor-content {
         padding-right: 0;
         padding-left: 15px;
     }
+
     #flow {
         padding: 16px 25px 8px 8px;
     }
-    #document-top>h1 {
+
+    #document-top > h1 {
         background: initial;
         padding-left: 8px;
     }
+
     #header-navigation {
         margin-left: 8px;
     }
+
     #navigator {
         top: 195px;
         z-index: 90;
     }
+
     #navigator-button {
         width: 46px;
         height: 46px;
         line-height: 46px;
     }
+
     body.header-closed #navigator {
         top: 64px;
     }
+
     body.header-closed #editor-content {
         top: 96px;
     }
+
     /* Show footnotes at bottom rather than next to main editor. */
     #footnote-box-container {
         display: block !important;
         width: auto !important;
     }
+
     #document-editable {
         display: block;
     }
+
     .margin-box.inactive {
         display: none;
     }
+
     #margin-box-filter {
         position: fixed !important;
         top: 195px !important;
         right: 8px;
     }
+
     body.header-closed #margin-box-filter {
         top: 64px !important;
     }
+
     #margin-box-column {
         width: auto;
         position: absolute;
     }
+
     #margin-box-container {
         overflow-y: auto;
         overflow-x: hidden;
@@ -1093,24 +1124,28 @@ body.no-scroll {
         right: 0;
         max-height: 35vh;
     }
+
     .comment-btns {
         text-align: left !important;
     }
+
     .margin-box.active {
         left: 0 !important;
         right: 0 !important;
         width: 100% !important;
-        margin-top: 0px !important;
+        margin-top: 0 !important;
     }
+
     .footnote-container {
-        margin-top: 0px !important;
+        margin-top: 0 !important;
     }
 }
 
 @media screen and (max-width: 420px) {
     .editor-toolbar div.ui-buttonset {
-        margin-right: 0px;
+        margin-right: 0;
     }
+
     .editor-toolbar div.multiButtons .multibuttonsCover {
         padding: 0 25px 0 15px;
     }

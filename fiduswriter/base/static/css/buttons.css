@@ -41,18 +41,21 @@
     padding: 0;
     text-align: center;
 }
+
 .fw-button.fw-large.fw-square {
     width: 40px;
 }
 
-.fw-button .fw-button-icon:before {
+.fw-button .fw-button-icon::before {
     line-height: 34px;
     margin: 0;
 }
-.fw-button.fw-large .fw-button-icon:before {
+
+.fw-button.fw-large .fw-button-icon::before {
     line-height: 40px;
 }
-.fw-button.fw-small .fw-button-icon:before {
+
+.fw-button.fw-small .fw-button-icon::before {
     line-height: 26px;
 }
 
@@ -60,12 +63,6 @@
     border-color: var(--cs-light-border);
     background-color: var(--cs-light-background);
     color: var(--cs-light-text);
-}
-
-.fw-button.fw-light:not(.disabled):hover,
-.fw-button.fw-light.ui-state-active {
-    background-color: var(--cs-light-background-hover);
-    color: var(--cs-light-hover);
 }
 
 .fw-button.fw-white {
@@ -77,14 +74,16 @@
 .fw-button.fw-light:not(.disabled):hover,
 .fw-button.fw-light.ui-state-active {
     background-color: var(--cs-white-background-hover);
+    color: var(--cs-light-hover);
 }
 
 
 .fw-button.fw-green {
-    color: var(--cs-6-text)
+    color: var(--cs-6-text);
     border-color: var(--cs-6-border);
     background-color: var(--cs-6-background);
 }
+
 .fw-button.fw-green:not(.disabled):hover {
     background-color: var(--cs-6-hover);
 }
@@ -94,6 +93,7 @@
     background: linear-gradient(to bottom left, var(--cs-3-background-from), var(--cs-3-background-to));
     border-color: var(--cs-3-border);
 }
+
 .fw-button.fw-orange:not(.disabled):hover {
     background: var(--cs-3-background-hover);
 }
@@ -104,14 +104,17 @@
     box-shadow: 0 1px 1px 0 var(--cs-dark-box-shadow) inset;
     border-color: var(--cs-dark-border);
 }
+
 .fw-button.fw-dark:not(.disabled):hover {
     background: var(--cs-dark-background-hover);
 }
+
 .fw-button:disabled {
     background: var(--cs-disabled-background);
     color: var(--cs-disabled);
     border-color: var(--cs-disabled-border);
 }
+
 .fw-button.fw-left {
     float: left;
 }
@@ -157,7 +160,7 @@
 
 .fw-button.fw-socialaccount {
     background: linear-gradient(to bottom left, var(--cs-2-background-from), var(--cs-2-background-to));
-    box-shadow: 0px 0px 1px 1px var(--cs-2-box-shadow) inset;
+    box-shadow: 0 0 1px 1px var(--cs-2-box-shadow) inset;
     border-color: var(--cs-2-border);
     color: var(--cs-2-text);
 }
@@ -194,12 +197,14 @@
 
 .fw-button.fw-facebook {
     background: linear-gradient(to bottom left, #0d78be, #0d63ab);
-    box-shadow: 0px 0px 1px 1px #3c9fdf inset;
+    box-shadow: 0 0 1px 1px #3c9fdf inset;
     border-color: #0557a1;
 }
+
 .fw-button.fw-facebook:hover {
     background: #0d63ab;
 }
+
 .fw-button.fw-facebook > span {
     border-right-color: #0557a1;
     box-shadow: 1px 0 0 0 #3c9fdf;
@@ -208,12 +213,14 @@
 
 .fw-button.fw-twitter {
     background: linear-gradient(to bottom left, #3ccfff, #17addf);
-    box-shadow: 0px 0px 1px 1px #3dcfff inset;
+    box-shadow: 0 0 1px 1px #3dcfff inset;
     border-color: #2498be;
 }
+
 .fw-button.fw-twitter:hover {
     background: #17addf;
 }
+
 .fw-button.fw-twitter > span {
     border-right-color: #2498be;
     box-shadow: 1px 0 0 0 #8ddffc;
@@ -221,12 +228,14 @@
 
 .fw-button.fw-google {
     background: linear-gradient(to bottom left, #879ded, #6d84d8);
-    box-shadow: 0px 0px 1px 1px #93a6e6 inset;
+    box-shadow: 0 0 1px 1px #93a6e6 inset;
     border-color: #6578bb;
 }
+
 .fw-button.fw-google:hover {
     background: #6d84d8;
 }
+
 .fw-button.fw-google > span {
     border-right-color: #6578bb;
     box-shadow: 1px 0 0 0 #b1c0f2;
@@ -235,12 +244,14 @@
 
 .fw-button.fw-google {
     background: linear-gradient(to bottom left, #879ded, #6d84d8);
-    box-shadow: 0px 0px 1px 1px #93a6e6 inset;
+    box-shadow: 0 0 1px 1px #93a6e6 inset;
     border-color: #6578bb;
 }
+
 .fw-button.fw-google:hover {
     background: #6d84d8;
 }
+
 .fw-button.fw-google > span {
     border-right-color: #6578bb;
     box-shadow: 1px 0 0 0 #b1c0f2;
@@ -249,12 +260,14 @@
 
 .fw-button.fw-soundcloud {
     background: linear-gradient(to bottom left, #f76700, #fa3219);
-    box-shadow: 0px 0px 1px 1px #f79955 inset;
+    box-shadow: 0 0 1px 1px #f79955 inset;
     border-color: #c53421;
 }
+
 .fw-button.fw-soundcloud:hover {
     background: #fa1b19;
 }
+
 .fw-button.fw-soundcloud > span {
     border-right-color: #c53421;
     box-shadow: 1px 0 0 0 #f79955;
@@ -263,12 +276,14 @@
 
 .fw-button.fw-openid {
     background: linear-gradient(to bottom left, #fae719, #fac219);
-    box-shadow: 0px 0px 1px 1px #fad819 inset;
+    box-shadow: 0 0 1px 1px #fad819 inset;
     border-color: #faad19;
 }
+
 .fw-button.fw-openid:hover {
     background: #e8c817;
 }
+
 .fw-button.fw-openid > span {
     border-right-color: #faad19;
     box-shadow: 1px 0 0 0 #fad819;
@@ -277,12 +292,14 @@
 
 .fw-button.fw-persona {
     background: linear-gradient(to bottom left, #17e861, #1bbd54);
-    box-shadow: 0px 0px 1px 1px #29e76c inset;
+    box-shadow: 0 0 1px 1px #29e76c inset;
     border-color: #168e40;
 }
+
 .fw-button.fw-persona:hover {
     background: #17a74a;
 }
+
 .fw-button.fw-persona > span {
     border-right-color: #168e40;
     box-shadow: 1px 0 0 0 #29e76c;
@@ -291,12 +308,14 @@
 
 .fw-button.fw-linkedin {
     background: linear-gradient(to bottom left, #c529e7, #ad22cb);
-    box-shadow: 0px 0px 1px 1px #d648f4 inset;
+    box-shadow: 0 0 1px 1px #d648f4 inset;
     border-color: #841c9a;
 }
+
 .fw-button.fw-linkedin:hover {
     background: #9720b0;
 }
+
 .fw-button.fw-linkedin > span {
     border-right-color: #841c9a;
     box-shadow: 1px 0 0 0 #d648f4;
@@ -305,12 +324,14 @@
 
 .fw-button.fw-github {
     background: linear-gradient(to bottom left, #f95858, #f92958);
-    box-shadow: 0px 0px 1px 1px #f87795 inset;
+    box-shadow: 0 0 1px 1px #f87795 inset;
     border-color: #d20e3c;
 }
+
 .fw-button.fw-github:hover {
     background: #e32653;
 }
+
 .fw-button.fw-github > span {
     border-right-color: #d20e3c;
     box-shadow: 1px 0 0 0 #f87795;
@@ -319,20 +340,22 @@
 
 .fw-button.fw-stackexchange {
     background: linear-gradient(to bottom left, #fcff23, #eaed0d);
-    box-shadow: 0px 0px 1px 1px #fdff91 inset;
+    box-shadow: 0 0 1px 1px #fdff91 inset;
     border-color: #ced03f;
     color: #585854;
 }
+
 .fw-button.fw-stackexchange:hover {
     background: #fcff00;
 }
+
 .fw-button.fw-stackexchange > span {
     border-right-color: #ced03f;
     box-shadow: 1px 0 0 0 #fdff91;
     font-size: 18px;
 }
 
-.fw-add-button:after {
+.fw-add-button::after {
     margin-left: 10px;
 }
 

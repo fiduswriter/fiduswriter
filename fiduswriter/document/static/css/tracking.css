@@ -17,7 +17,7 @@ span.deletion {
     color: var(--cs-white-text);
 }
 
-.margin-box.track>div {
+.margin-box.track > div {
     padding: 10px;
 }
 

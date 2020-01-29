@@ -36,7 +36,7 @@
     margin-left: 2px;
 }
 
-.inline-tools .menuicon:before {
+.inline-tools .menuicon::before {
     position: absolute;
     left: 0;
     top: 0;
@@ -48,37 +48,37 @@
     font-size: 13px;
 }
 
-.menuicon.strong:before,
-.menuicon.em:before,
-.menuicon.sup:before,
-.menuicon.sub:before {
-    font-family: "Font Awesome 5 Free";
+.menuicon.strong::before,
+.menuicon.em::before,
+.menuicon.sup::before,
+.menuicon.sub::before {
+    font-family: 'Font Awesome 5 Free', monospace;
     font-weight: 900;
 }
 
-.menuicon.strong:before {
-    content: "\f032";
+.menuicon.strong::before {
+    content: '\f032';
 }
 
-.menuicon.em:before {
-    content: "\f033";
+.menuicon.em::before {
+    content: '\f033';
 }
 
-.menuicon.sup:before {
-    content: "\f12b";
+.menuicon.sup::before {
+    content: '\f12b';
 }
 
-.menuicon.sub:before {
-    content: "\f12c";
+.menuicon.sub::before {
+    content: '\f12c';
 }
 
-.menuicon.smallcaps:before {
-    content: "Tt";
+.menuicon.smallcaps::before {
+    content: 'Tt';
     font-weight: bold;
     font-variant: small-caps;
 }
 
-.menuicon.nocase:before {
-    content: "cP";
+.menuicon.nocase::before {
+    content: 'cP';
     font-weight: bold;
 }

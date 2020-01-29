@@ -2,7 +2,7 @@
     position: fixed;
     right: 22px;
     bottom: 10px;
-    direction:rtl;
+    direction: rtl;
     -webkit-column-width: 328px;
     z-index: 101;
 }
@@ -20,12 +20,12 @@
     padding: 20px 20px 20px 60px;
     border: none;
     border-radius: 3px;
-    box-shadow: 0px 0px 5px rgba(var(--alert-box-shadow-color));
+    box-shadow: 0 0 5px rgba(var(--alert-box-shadow-color));
     margin-bottom: 5px;
     font-size: 15px;
     line-height: 20px;
     opacity: 0;
-    transition: opacity 0.3s;
+    transition: opacity .3s;
     -webkit-column-break-inside: avoid;
 }
 
@@ -33,7 +33,7 @@
     opacity: 1;
 }
 
-#alerts-wrapper li:before {
+#alerts-wrapper li::before {
     position: absolute;
     left: 20px;
     top: 20px;
@@ -59,6 +59,7 @@
     color: var(--success-text-color);
     background-color: rgba(var(--success-background-color));
 }
+
 /* A form wasn't filled out correctly and the warning was added to the form. */
 div.warning {
     margin: 0 0 5px 0;

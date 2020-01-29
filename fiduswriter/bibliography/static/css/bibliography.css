@@ -9,14 +9,15 @@
     width: 164px;
 }
 
-#bib-dialog .entry-field .ProseMirror, #bib-dialog .entry-field input[type=text] {
+#bib-dialog .entry-field .ProseMirror,
+#bib-dialog .entry-field input[type=text] {
     width: 686px;
     max-width: 80vw;
 }
 
 #bib-dialog :focus {
-  outline-color: transparent;
-  outline: 0;
+    outline-color: transparent;
+    outline: 0;
 }
 
 #bib-dialog .entry-field.fw-fomt-error input[type=text] {
@@ -25,11 +26,11 @@
 
 
 #bib-dialog .entry-field .selection-list {
-    position: relative
+    position: relative;
 }
 
 #bib-dialog .entry-field select {
-    padding: 0px 3px 0px 13px;
+    padding: 0 3px 0 13px;
     border: 0 none;
     color: var(--cs-light-text);
     background-color: var(--cs-light-background);
@@ -48,9 +49,9 @@
 
 #bib-dialog .entry-field .fw-select-arrow {
     position: absolute;
-	top: 14px;
-	right: 16px;
-	pointer-events: none;
+    top: 14px;
+    right: 16px;
+    pointer-events: none;
 }
 
 #bib-dialog .type-switch {
@@ -82,16 +83,16 @@
     left: 0;
     top: 0;
     width: calc(200% - 38px);
-    transition: left 0.3s;
+    transition: left .3s;
 }
 
-.type-switch-inner:after {
+.type-switch-inner::after {
     box-sizing: border-box;
     display: block;
     position: absolute;
     left: calc(50% - 19px);
     top: 0;
-    content: "";
+    content: '';
     width: 38px;
     height: 38px;
     border-radius: 19px;
@@ -100,7 +101,7 @@
 }
 
 .value2 .type-switch-inner {
-    left: calc(-100% + 38px)
+    left: calc(-100% + 38px);
 }
 
 .type-switch-label {
@@ -123,8 +124,8 @@
     max-width: 80vw;
 }
 
-.type-switch-input-wrapper:after {
-    content: "";
+.type-switch-input-wrapper::after {
+    content: '';
     display: table;
     clear: both;
 }
@@ -181,12 +182,13 @@
     max-width: 80vw;
 }
 
-.tokenfield:before, .tokenfield:after {
-    content: " ";
+.tokenfield::before,
+.tokenfield::after {
+    content: ' ';
     display: table;
 }
 
-.tokenfield:after {
+.tokenfield::after {
     clear: both;
 }
 
@@ -234,7 +236,8 @@
     outline: none;
 }
 
-div.literal, pre.long-literal {
+div.literal,
+pre.long-literal {
     box-sizing: border-box;
     font-size: 14px;
     line-height: 1.33em;
@@ -251,11 +254,13 @@ pre.long-literal {
     height: auto;
 }
 
-div.literal strong, pre.long-literal strong  {
+div.literal strong,
+pre.long-literal strong {
     font-weight: bold;
 }
 
-div.literal em, pre.long-literal em {
+div.literal em,
+pre.long-literal em {
     font-style: italic;
 }
 
@@ -265,12 +270,12 @@ div.literal em, pre.long-literal em {
     margin-left: 14px;
 }
 
-.list-input-wrapper .add-remove-list:before {
+.list-input-wrapper .add-remove-list::before {
     content: '\2796';
-    width: 0.7em;
+    width: .7em;
 }
 
-.list-input-wrapper:last-child .add-remove-list:before {
+.list-input-wrapper:last-child .add-remove-list::before {
     content: '\2795';
 }
 
@@ -285,11 +290,13 @@ div.literal em, pre.long-literal em {
     text-align: center;
 }
 
-#bib-dialog td .dk-selected, #bib-dialog td .dk-select-options {
+#bib-dialog td .dk-selected,
+#bib-dialog td .dk-select-options {
     width: 486px !important;
 }
 
-#bib-dialog th .dk-selected, #bib-dialog th .dk-select-options {
+#bib-dialog th .dk-selected,
+#bib-dialog th .dk-select-options {
     width: 140px !important;
 }
 
@@ -340,6 +347,7 @@ div.literal em, pre.long-literal em {
     white-space: nowrap;
     overflow: hidden;
 }
+
 #source-type-selection .icon-down-dir {
     position: absolute;
     right: 10px;
@@ -348,7 +356,8 @@ div.literal em, pre.long-literal em {
 #editCategories {
     width: 369px !important;
 }
-#editCategories input[type="text"] {
+
+#editCategories input[type='text'] {
     width: 310px;
 }
 
@@ -367,11 +376,12 @@ div.literal em, pre.long-literal em {
 
 #bibimport-api-search h3 {
     font-weight: 700;
-    margin: 10px 0px 10px 20px;
+    margin: 10px 0 10px 20px;
     font-size: 1.1em;
 }
 
-#bibimport-api-search .bibimport-search-result, #bibimport-api-search div.item {
+#bibimport-api-search .bibimport-search-result,
+#bibimport-api-search div.item {
     clear: left;
 }
 
@@ -395,58 +405,72 @@ Modal header
     display: block;
     margin-left: 20px;
     color: var(--cs-light-text);
-    opacity: 0.6;
+    opacity: .6;
 }
 
-.current-tab .tab-link-inner, .tab-link-inner:hover {
+.current-tab .tab-link-inner,
+.tab-link-inner:hover {
     color: var(--cs-light-hover);
-    opacity: 1.0;
+    opacity: 1;
 }
 
 @media screen and (max-width: 740px) {
-    #bib-dialog .entry-field .ProseMirror, #bib-dialog .entry-field input[type=text] {
+    #bib-dialog .entry-field .ProseMirror,
+    #bib-dialog .entry-field input[type=text] {
         max-width: 70vw;
     }
+
     #bib-dialog .type-switch-input-wrapper {
         max-width: 70vw;
     }
+
     .tokenfield {
         max-width: 70vw;
     }
 }
 
 @media screen and (max-width: 560px) {
-    #bib-dialog .entry-field .ProseMirror, #bib-dialog .entry-field input[type=text] {
+    #bib-dialog .entry-field .ProseMirror,
+    #bib-dialog .entry-field input[type=text] {
         max-width: 50vw;
     }
+
     #bib-dialog .type-switch-input-wrapper {
         max-width: 50vw;
     }
+
     .tokenfield {
         max-width: 50vw;
     }
+
     #bib-dialog .type-switch {
         display: block;
         margin-bottom: 5px;
     }
+
     .type-switch-input-inner {
         width: auto;
     }
 }
 
 @media screen and (max-width: 460px) {
-    #bib-dialog .entry-field .ProseMirror, #bib-dialog .entry-field input[type=text] {
+    #bib-dialog .entry-field .ProseMirror,
+    #bib-dialog .entry-field input[type=text] {
         max-width: 40vw;
     }
+
     #bib-dialog .type-switch-input-wrapper {
         max-width: 40vw;
     }
+
     .tokenfield {
         max-width: 40vw;
     }
+
     #bib-dialog .fw-dialog-table th {
         width: 140px;
     }
+
     .ui-tabs-panel {
         overflow-x: hidden;
     }

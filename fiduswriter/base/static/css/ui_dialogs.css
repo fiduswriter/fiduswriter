@@ -79,17 +79,17 @@
     color: var(--cs-dark-hover);
 }
 
-.ui-icon-closethick:before {
-    width: 0.7em;
+.ui-icon-closethick::before {
+    width: .7em;
     height: 1em;
     padding-top: 5px;
-    content: "\f00d";
+    content: '\f00d';
 }
 
 .ui-dialog-content {
     position: relative;
     margin-top: 24px;
-    overflow: auto
+    overflow: auto;
 }
 
 .ui-dialog-buttonset {

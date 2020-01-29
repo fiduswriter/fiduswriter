@@ -58,7 +58,8 @@
     width: 396px;
 }
 
-th.figure-preview-row, td.figure-preview-row {
+th.figure-preview-row,
+td.figure-preview-row {
     vertical-align: top;
 }
 
@@ -85,7 +86,7 @@ th.figure-preview-row, td.figure-preview-row {
 
 .crop-icon {
     font-size: 1.2em;
-    color: white
+    color: white;
 }
 
 .hide {

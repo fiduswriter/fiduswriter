@@ -11,4 +11,8 @@ class Command(BaseCommand):
             call_command("lint_js")
         except CommandError:
             pass
+        try:
+            call_command("lint_css")
+        except CommandError:
+            pass
         call_command("lint_py")

@@ -4,7 +4,8 @@
     padding: 19.5px 34px 21.5px;
 }
 
-.fw-logo, #header-nav {
+.fw-logo,
+#header-nav {
     display: inline-block;
     vertical-align: top;
 }
@@ -32,15 +33,14 @@
     height: 38px;
 }
 
-.fw-logo-text:before {
+.fw-logo-text::before {
     content: 'Fidus';
     font-weight: 700;
 }
 
-.fw-logo-text:after {
+.fw-logo-text::after {
     content: 'Writer ';
     font-weight: 300;
-
 }
 
 .fw-user-preferences {
@@ -64,7 +64,8 @@
     margin-right: 22px;
     margin-top: 4px;
 }
-.fw-nav-item.active-menu-wrapper:after {
+
+.fw-nav-item.active-menu-wrapper::after {
     position: absolute;
     left: 50%;
     top: 37px;
@@ -79,7 +80,8 @@
     text-decoration: none;
 }
 
-.fw-nav-item a:hover, .fw-nav-item.active-menu-wrapper a {
+.fw-nav-item a:hover,
+.fw-nav-item.active-menu-wrapper a {
     color: rgba(var(--nagivation-link-active-text-color));
 }
 
@@ -108,7 +110,7 @@
 
 #preferences-btn .fw-avatar:hover,
 #preferences-btn .fw-string-avatar:hover {
-    opacity: 0.7;
+    opacity: .7;
 }
 
 #user-preferences-pulldown a,

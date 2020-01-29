@@ -4,10 +4,13 @@ ul.errorlist {
     color: var(-error-text-color);
     background: var(--error-background-color);
 }
-ul.errorlist li:first-child {
-    margin-top: 0;
-}
 
 ul.errorlist li {
     list-style: none;
 }
+
+ul.errorlist li:first-child {
+    margin-top: 0;
+}
+
+

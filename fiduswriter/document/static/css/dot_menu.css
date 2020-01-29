@@ -2,25 +2,26 @@
     position: relative;
     z-index: 5;
 }
+
 .table-menu-btn {
     background-color: transparent;
     background-repeat: no-repeat;
     border: 1px;
-    cursor:pointer;
+    cursor: pointer;
     overflow: hidden;
-    outline:none;
+    outline: none;
     position: absolute;
     right: -15px;
-    top: 0px;
+    top: 0;
 }
 
 .figure-menu-btn {
     background-color: Transparent;
-    background-repeat:no-repeat;
+    background-repeat: no-repeat;
     border: 1px;
-    cursor:pointer;
+    cursor: pointer;
     overflow: hidden;
-    outline:none;
+    outline: none;
     right: -22px;
     top: -7px;
     float: right;
@@ -29,9 +30,9 @@
 
 .dot-menu-icon {
     font-size: 18px;
-    color:var(--cs-white-nofocus-text);
+    color: var(--cs-white-nofocus-text);
 }
 
 .dot-menu-icon:hover {
-    color:var(--cs-white-hover);
+    color: var(--cs-white-hover);
 }

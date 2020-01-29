@@ -24,8 +24,8 @@
 
 .ui-widget-overlay {
     position: fixed;
-    left: 0px;
-    top: 0px;
+    left: 0;
+    top: 0;
     width: 100%;
     height: 100%;
     background-color: rgba(var(--overlay-color));
@@ -37,25 +37,30 @@
     padding: 0 0 5px 0;
     cursor: pointer;
 }
+
 .content-menu-item {
     padding: 18px 31px 15px 31px;
     color: var(--pulldown-text-color);
-    font-family: Lato;
+    font-family: Lato, sans-serif;
     font-size: 14px;
     font-weight: 400;
     line-height: 1em;
 }
+
 .content-menu-item.disabled {
     pointer-events: none;
-    opacity:0.6;
+    opacity: .6;
 }
+
 .content-menu-item:hover {
     background-color: var(--pulldown-hover-background-color);
 }
+
 .content-menu-item-divider {
     border: 0 none;
     border-top: 1px solid var(--pulldown-separator-color) !important;
 }
+
 .content-menu-item-icon {
     position: absolute;
     right: 40px;

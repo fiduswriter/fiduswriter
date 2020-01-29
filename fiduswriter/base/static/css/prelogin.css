@@ -34,7 +34,7 @@
     line-height: 2em;
 }
 
-.fw-contents.prelogin:after {
+.fw-contents.prelogin::after {
     display: block;
     content: ' ';
     clear: both;

@@ -1,4 +1,4 @@
-/*For profile list*/
+/* For profile list */
 
 .avatar {
     border-bottom-width: 4px;
@@ -7,7 +7,7 @@
 
 #chat {
     position: fixed;
-    bottom: 0px;
+    bottom: 0;
     right: 5px;
     background-color: var(--cs-white-background);
     width: 250px;
@@ -64,7 +64,7 @@
     margin-left: 0;
 }
 
-#messageform.empty:before {
+#messageform.empty::before {
     color: var(--cs-white-placeholder-text);
 }
 

@@ -1,4 +1,6 @@
-.from-container, .to-column, .trash {
+.from-container,
+.to-column,
+.trash {
     border: 1px solid var(--cs-white-border);
     background-color: var(--cs-white-background);
 }
@@ -25,7 +27,7 @@
 
 .trash {
     background-color: var(--cs-dark-background);
-    width: 100px
+    width: 100px;
 }
 
 .doc-part {
@@ -34,31 +36,32 @@
     padding: 4px;
 }
 
-.doc-part[data-type="heading_part"] {
+.doc-part[data-type='heading_part'] {
     background-color: var(--part-heading-background-color);
 }
 
-.doc-part[data-type="contributors_part"] {
+.doc-part[data-type='contributors_part'] {
     background-color: var(--part-contributors-background-color);
 }
 
-.doc-part[data-type="richtext_part"] {
+.doc-part[data-type='richtext_part'] {
     background-color: var(--part-richtext-background-color);
 }
 
-.doc-part[data-type="tags_part"] {
+.doc-part[data-type='tags_part'] {
     background-color: var(--part-tags-background-color);
 }
 
-.doc-part[data-type="table_part"] {
+.doc-part[data-type='table_part'] {
     background-color: var(--part-table-background-color);
 }
 
-.doc-part[data-type="table_of_contents"] {
+.doc-part[data-type='table_of_contents'] {
     background-color: var(--part-toc-background-color);
 }
 
-.from-container .doc-part, .trash .doc-part {
+.from-container .doc-part,
+.trash .doc-part {
     height: 50px;
 }
 
@@ -120,53 +123,65 @@ table td {
     caret-color: transparent;
 }
 
-.error-element{
-    border:3px solid var(--error-background-color);
+.error-element {
+    border: 3px solid var(--error-background-color);
 }
 
-#template-editor .initial em, #template-editor .instructions em {
+#template-editor .initial em,
+#template-editor .instructions em {
     font-style: italic;
 }
 
-#template-editor .initial strong, #template-editor .instructions strong {
+#template-editor .initial strong,
+#template-editor .instructions strong {
     font-weight: bold;
 }
 
-#template-editor .initial code, #template-editor .instructions code {
+#template-editor .initial code,
+#template-editor .instructions code {
     font-family: monospace;
 }
 
-#template-editor .initial h1, #template-editor .instructions h1 {
+#template-editor .initial h1,
+#template-editor .instructions h1 {
     font-size: 28px;
 }
 
-#template-editor .initial h2, #template-editor .instructions h2 {
+#template-editor .initial h2,
+#template-editor .instructions h2 {
     font-size: 24px;
 }
 
-#template-editor .initial h3, #template-editor .instructions h3 {
+#template-editor .initial h3,
+#template-editor .instructions h3 {
     font-size: 20px;
 }
 
-#template-editor .initial h4, #template-editor .instructions h4 {
+#template-editor .initial h4,
+#template-editor .instructions h4 {
     font-size: 16px;
 }
 
-#template-editor .initial h5, #template-editor .instructions h5 {
+#template-editor .initial h5,
+#template-editor .instructions h5 {
     font-size: 14px;
 }
 
-#template-editor .initial h6, #template-editor .instructions h6 {
+#template-editor .initial h6,
+#template-editor .instructions h6 {
     font-size: 12px;
 }
 
-#template-editor .initial ul, #template-editor .instructions ul {
+#template-editor .initial ul,
+#template-editor .instructions ul {
     list-style-type: disc;
 }
 
-#template-editor .initial ol, #template-editor .instructions ol {
+#template-editor .initial ol,
+#template-editor .instructions ol {
     list-style-type: decimal;
 }
+
 .object-tools span.link {
     display: block;
     cursor: pointer;

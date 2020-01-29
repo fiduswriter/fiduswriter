@@ -10,15 +10,15 @@
 /* Make the <hr> at the end of the footnote editor not show. It is only there
 because PM needs some content. */
 
-#footnote-box-container>div.ProseMirror>div:last-child>hr {
-    display: none
+#footnote-box-container > div.ProseMirror > div:last-child > hr {
+    display: none;
 }
 
 #citation-footnote-box-container {
     position: absolute;
 }
 
-#footnote-box-container .footnote-container>*:first-child::before {
+#footnote-box-container .footnote-container > *:first-child::before {
     counter-increment: footnote-counter;
     content: counter(footnote-counter) ' ';
 }
@@ -27,10 +27,17 @@ because PM needs some content. */
     display: grid;
 }
 
-.user-contents .footnote-container h1, .user-contents .footnote-container h2, .user-contents .footnote-container h3,
-.user-contents .footnote-container h4, .user-contents .footnote-container h5, .user-contents .footnote-container h6,
-.user-contents .footnote-container p, .user-contents .footnote-container blockquote, .user-contents .footnote-container code,
-.user-contents .footnote-container ol, .user-contents .footnote-container ul {
+.user-contents .footnote-container h1,
+.user-contents .footnote-container h2,
+.user-contents .footnote-container h3,
+.user-contents .footnote-container h4,
+.user-contents .footnote-container h5,
+.user-contents .footnote-container h6,
+.user-contents .footnote-container p,
+.user-contents .footnote-container blockquote,
+.user-contents .footnote-container code,
+.user-contents .footnote-container ol,
+.user-contents .footnote-container ul {
     margin-bottom: unset;
 }
 
@@ -55,20 +62,21 @@ because PM needs some content. */
     counter-increment: none;
 }
 
-.pagination-footnotes .footnote-marker>*:first-child::before {
+.pagination-footnotes .footnote-marker > *:first-child::before {
     counter-increment: footnote-counter;
     content: counter(footnote-counter) ' ';
 }
 
-.pagination-contents .footnote-marker>* {
+.pagination-contents .footnote-marker > * {
     display: none;
 }
 
 .footnote-marker,
 .citation-footnote-marker {
     font-size: 75%;
-    /*line-height: 0;*/
+
+    /* line-height: 0; */
     position: relative;
     vertical-align: baseline;
-    top: -0.5em;
+    top: -.5em;
 }

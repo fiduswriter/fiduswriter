@@ -8,15 +8,20 @@
     border-radius: 6px;
     color: var(--pulldown-text-color);
 }
+
 .fw-pulldown.fw-open {
     display: block;
 }
-.fw-pulldown.fw-left, .fw-pulldown.fw-center {
-    left: -10px
+
+.fw-pulldown.fw-left,
+.fw-pulldown.fw-center {
+    left: -10px;
 }
+
 .fw-pulldown.fw-right {
-    right: 0
+    right: 0;
 }
+
 /* sub menu */
 .fw-pulldown .fw-pulldown {
     top: 0;
@@ -84,10 +89,10 @@
     background-color: var(--pulldown-separator-color);
 }
 
-.fw-pulldown .delete-comment:after {
-    font-family: "Font Awesome 5 Free";
-    content: "\f2ed";
-    opacity: 0.4;
+.fw-pulldown .delete-comment::after {
+    font-family: 'Font Awesome 5 Free', monospace;
+    content: '\f2ed';
+    opacity: .4;
     float: right;
     display: block;
 }

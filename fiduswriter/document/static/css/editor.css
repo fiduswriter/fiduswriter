@@ -941,7 +941,7 @@ html[hc=a5] #toolbar {
 }
 
 .navigator-arrow-icon {
-    color: var(--editor-navigator-color));
+    color: var(--editor-navigator-color);
 }
 
 .navigator-arrow-icon i {

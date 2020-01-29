@@ -15,7 +15,7 @@
     margin-bottom: 6px;
     margin-left: -3px;
     display: flex;
-    border: 2px solid var(--cs-white-border);
+    border: 2px solid var(--cs-light-background);
     border-top: 0 none;
     top: 225px;
 }
@@ -73,8 +73,8 @@ body.header-closed #margin-box-filter {
 }
 
 .margin-box {
-    background-color: var(--cs-light-background);
-    color: var(--cs-light-text);
+    background-color: var(--cs-white-background);
+    color: var(--cs-white-text);
 }
 
 .comment-item {
@@ -82,8 +82,8 @@ body.header-closed #margin-box-filter {
 }
 
 .margin-box .comment-item:first-child {
-    color: var(--cs-light-text);
-    background-color: var(--cs-light-background);
+    color: var(--cs-white-text);
+    background-color: var(--cs-white-background);
 }
 
 .margin-box.track {
@@ -120,7 +120,7 @@ body.header-closed #margin-box-filter {
 
 .margin-box.help.active::after {
     color: var(--editor-active-help-arrow-color);
-    left: -15px;
+    left: -13px;
 }
 
 .margin-box.warning {
@@ -151,6 +151,10 @@ body.header-closed #margin-box-filter {
 .margin-box.warning.active::after {
     top: 0;
     color: var(--cs-1-text);
+}
+
+.margin-box.help.active::after {
+    top: 10px;
 }
 
 .margin-box.hidden {

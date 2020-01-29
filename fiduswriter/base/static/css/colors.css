@@ -86,7 +86,7 @@
 
     /* dark on white-ish background */
     --cs-light-text: #2c2723;
-    --cs-light-nofocus-text: #585757;
+    --cs-light-nofocus-text: #999999;
     --cs-light-border: #e0e0e0;
     --cs-light-background: #f9f9f9;
     --cs-light-background-hover: #e0e0e0;

@@ -641,6 +641,39 @@ def import_create(request):
             import_id=import_id
         ).first()
         if not document_template:
+            # The user doesn't have this template.
+            # We check whether the template exists with one of the documents
+            # shared with the user. If so, we'll copy it so that we can avoid
+            # having to create an entirely new template without styles or
+            # exporter templates
+            access_right = request.user.accessright_set.filter(
+                document__template__import_id=import_id
+            ).first()
+            if access_right:
+                document_template = access_right.document.template
+                document_styles = list(
+                    document_template.documentstyle_set.all()
+                )
+                export_templates = list(
+                    document_template.exporttemplate_set.all()
+                )
+                document_template.pk = None
+                document_template.user = request.user
+                document_template.save()
+                for ds in document_styles:
+                    style_files = list(ds.documentstylefile_set.all())
+                    ds.pk = None
+                    ds.document_template = document_template
+                    ds.save()
+                    for sf in style_files:
+                        sf.pk = None
+                        sf.style = ds
+                        sf.save()
+                for et in export_templates:
+                    et.pk = None
+                    et.document_template = document_template
+                    et.save()
+        if not document_template:
             title = request.POST['template_title']
             definition = json_encode(json_decode(request.POST['template']))
             document_template = DocumentTemplate()

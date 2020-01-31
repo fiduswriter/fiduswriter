@@ -412,6 +412,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(By.CSS_SELECTOR, ".article-title").send_keys(
             "A test article to share"
         )
+        # Open share dialog
         self.driver.find_element(
             By.CSS_SELECTOR,
             ".header-menu:nth-child(1) > .header-nav-item"
@@ -635,6 +636,28 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             ".article-title"
         ).text == "A test article to share"
         self.check_body(self.driver, 'The body')
+        # Make a copy of the file
+        old_body = self.driver.find_element(By.CSS_SELECTOR, ".article-body")
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".header-menu:nth-child(1) > .header-nav-item"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "li:nth-child(4) > .fw-pulldown-item"
+        ).click()
+        # Check whether user now has write access
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.staleness_of(old_body)
+        )
+        self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+            "Some extra content that does show"
+        )
+        self.check_body(
+            self.driver,
+            'The bodySome extra content that does show'
+        )
         self.driver.find_element(
             By.ID,
             "close-document-top"

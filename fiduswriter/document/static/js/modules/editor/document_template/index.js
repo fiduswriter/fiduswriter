@@ -1,4 +1,5 @@
-import {Dialog} from "../../common"
+import {Dialog, escapeText} from "../../common"
+import {SaveCopy} from "../../exporter/native"
 
 export class ModDocumentTemplate {
     constructor(editor) {
@@ -11,8 +12,12 @@ export class ModDocumentTemplate {
     setStyles(styles) {
         this.exportTemplates = styles.export_templates
         this.documentStyles = styles.document_styles
+        this.documentTemplates = styles.document_templates
         this.addExportTemplateMenuEntries()
         this.addDocumentStylesMenuEntries()
+        if (Object.keys(this.documentTemplates).length) {
+            this.addCopyAsMenuEntry()
+        }
         if (this.editor.menu.headerView) {
             this.editor.menu.headerView.update()
         }
@@ -69,6 +74,59 @@ export class ModDocumentTemplate {
             buttons: [{type: 'close'}]
         })
         dialog.open()
+    }
+
+    addCopyAsMenuEntry() {
+        const fileMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id==='file')
+        // Cancel if run already
+        if (fileMenu.content.find(menuItem => menuItem.id==='copy_as')) {
+            return
+        }
+        fileMenu.content.push({
+            id: 'copy_as',
+            title: gettext('Create copy as ...'),
+            type: 'action',
+            tooltip: gettext('Create copy of the current document with a specific template.'),
+            order: 3.5,
+            action: editor => {
+                const selectTemplateDialog = new Dialog({
+                    title: gettext('Choose document template'),
+                    body: `<p>
+                        ${gettext('Select document template for copy.')}
+                        </p>
+                        <select class="fw-button fw-large fw-light">${
+                            Object.entries(editor.mod.documentTemplate.documentTemplates).map(
+                                ([importId, dt]) => `<option value="${escapeText(importId)}">${escapeText(dt.title)}</option>`
+                            ).join('')
+                        }</select>`,
+                    buttons: [
+                        {
+                            text: gettext('Copy'),
+                            classes: "fw-dark",
+                            click: () => {
+                                const copier = new SaveCopy(
+                                        editor.getDoc(),
+                                        editor.mod.db.bibDB,
+                                        editor.mod.db.imageDB,
+                                        editor.user,
+                                        selectTemplateDialog.dialogEl.querySelector('select').value
+                                    )
+                                copier.init().then(({docInfo}) =>
+                                    editor.app.goTo(`/document/${docInfo.id}/`)
+                                ).catch(() => false)
+                                selectTemplateDialog.close()
+                            }
+                        },
+                        {
+                            type: 'cancel'
+                        }
+                    ]
+                })
+                selectTemplateDialog.open()
+            }
+        })
+
+        fileMenu.content = fileMenu.content.sort((a, b) => a.order - b.order)
     }
 
     addExportTemplateMenuEntries() {

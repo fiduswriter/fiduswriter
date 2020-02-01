@@ -12,9 +12,11 @@ from base.ws_handler import BaseWebSocketHandler
 import logging
 from tornado.escape import json_decode, json_encode
 from document.models import COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \
-    CAN_COMMUNICATE, FW_DOCUMENT_VERSION
+    CAN_COMMUNICATE, FW_DOCUMENT_VERSION, DocumentTemplate
 from usermedia.models import Image, DocumentImage, UserImage
 from user.util import get_user_avatar_url
+
+from django.db.models import F, Q
 
 logger = logging.getLogger(__name__)
 
@@ -98,10 +100,19 @@ class WebSocket(BaseWebSocketHandler):
             use_natural_foreign_keys=True,
             fields=['title', 'slug', 'contents', 'documentstylefile_set']
         )
+        document_templates = {}
+        for obj in DocumentTemplate.objects.filter(
+            Q(user=self.user) | Q(user=None)
+        ).order_by(F('user').desc(nulls_first=True)):
+            document_templates[obj.import_id] = {
+                'title': obj.title,
+                'id': obj.id
+            }
 
         response['styles'] = {
             'export_templates': [obj['fields'] for obj in export_temps],
-            'document_styles': [obj['fields'] for obj in document_styles]
+            'document_styles': [obj['fields'] for obj in document_styles],
+            'document_templates': document_templates
         }
         self.send_message(response)
 

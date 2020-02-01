@@ -92,7 +92,7 @@ export const headerbarModel = () => ({
                     disabled: editor => editor.docInfo.access_rights !== 'write'
                 },
                 {
-                    title: gettext('Create Copy'),
+                    title: gettext('Create copy'),
                     type: 'action',
                     //icon: 'copy',
                     tooltip: gettext('Create copy of the current document.'),

@@ -22,7 +22,7 @@ from usermedia.models import DocumentImage, Image
 from bibliography.models import Entry
 from document.helpers.serializers import PythonWithURLSerializer
 from bibliography.views import serializer
-from style.models import DocumentStyle, ExportTemplate
+from style.models import DocumentStyle
 from base.html_email import html_email
 from user.models import TeamMember
 
@@ -335,12 +335,13 @@ def get_documentlist(request):
             tm_object['avatar'] = get_user_avatar_url(team_member.member)
             response['team_members'].append(tm_object)
         serializer = PythonWithURLSerializer()
-        export_temps = serializer.serialize(
-            ExportTemplate.objects.filter(
+        doc_styles = serializer.serialize(
+            DocumentStyle.objects.filter(
                 Q(document_template__user=None) |
                 Q(document_template__user=request.user)
             ),
-            fields=['file_type', 'template_file', 'title']
+            use_natural_foreign_keys=True,
+            fields=['title', 'slug', 'contents', 'documentstylefile_set']
         )
         response['document_styles'] = [obj['fields'] for obj in doc_styles]
         doc_templates = DocumentTemplate.objects.filter(

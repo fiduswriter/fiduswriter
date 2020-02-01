@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from django.conf import settings
 from django.core.mail import send_mail
-from django.db.models import Q
+from django.db.models import F, Q
 from django.contrib.admin.views.decorators import staff_member_required
 
 from user.util import get_user_avatar_url
@@ -354,11 +354,13 @@ def get_documentlist(request):
         response['document_styles'] = [obj['fields'] for obj in doc_styles]
         doc_templates = DocumentTemplate.objects.filter(
             Q(user=request.user) | Q(user=None)
-        )
-        response['document_templates'] = [
-            {'id': obj.id, 'title': obj.title} for obj in doc_templates
-        ]
-
+        ).order_by(F('user').desc(nulls_first=True))
+        response['document_templates'] = {}
+        for obj in doc_templates:
+            response['document_templates'][obj.import_id] = {
+                'title': obj.title,
+                'id': obj.id
+            }
     return JsonResponse(
         response,
         status=status
@@ -639,7 +641,7 @@ def import_create(request):
         document_template = DocumentTemplate.objects.filter(
             Q(user=request.user) | Q(user=None),
             import_id=import_id
-        ).first()
+        ).order_by(F('user').desc(nulls_last=True)).first()
         if not document_template:
             # The user doesn't have this template.
             # We check whether the template exists with one of the documents
@@ -683,7 +685,7 @@ def import_create(request):
             document_template.definition = definition
             document_template.save()
         document = Document.objects.create(
-            owner_id=request.user.pk,
+            owner=request.user,
             template=document_template
         )
         response['id'] = document.id

@@ -3,7 +3,7 @@ import {DataTable} from "simple-datatables"
 import {DocTemplatesActions} from "./actions"
 import {OverviewMenuView, escapeText, findTarget, whenReady, postJson, activateWait, deactivateWait, addAlert, baseBodyTemplate, ensureCSS, setDocTitle, DatatableBulk} from "../common"
 import {SiteMenu} from "../menu"
-import {menuModel, bulkModel} from "./menu"
+import {menuModel, bulkMenuModel} from "./menu"
 import {FeedbackTab} from "../feedback"
 
 
@@ -66,7 +66,7 @@ export class DocTemplatesOverview {
         this.dom.querySelector('.fw-contents').innerHTML = ''
         this.dom.querySelector('.fw-contents').appendChild(tableEl)
 
-        const dtBulk = new DatatableBulk(this, bulkModel)
+        this.dtBulk = new DatatableBulk(this, bulkMenuModel())
 
         const hiddenCols = [0]
 
@@ -85,7 +85,7 @@ export class DocTemplatesOverview {
                 top: ""
             },
             data: {
-                headings: ['', dtBulk.getHTML(), gettext("Title"), gettext("Created"), gettext("Last changed"), ''],
+                headings: ['', this.dtBulk.getHTML(), gettext("Title"), gettext("Created"), gettext("Last changed"), ''],
                 data: this.templateList.map(docTemplate => this.createTableRow(docTemplate))
             },
             columns: [
@@ -105,7 +105,7 @@ export class DocTemplatesOverview {
             this.lastSort = {column, dir}
         })
 
-        dtBulk.init(this.table.table)
+        this.dtBulk.init(this.table.table)
     }
 
     createTableRow(docTemplate) {

@@ -3,7 +3,7 @@ import {DataTable} from "simple-datatables"
 import * as plugins from "../../../plugins/documents_overview"
 import {DocumentOverviewActions} from "./actions"
 import {DocumentAccessRightsDialog} from "../access_rights"
-import {menuModel, bulkModel} from "./menu"
+import {menuModel, bulkMenuModel} from "./menu"
 import {activateWait, deactivateWait, addAlert, postJson, OverviewMenuView, findTarget, whenReady, escapeText, localizeDate, baseBodyTemplate, ensureCSS, setDocTitle, DatatableBulk} from "../../common"
 import {SiteMenu} from "../../menu"
 import {FeedbackTab} from "../../feedback"
@@ -37,6 +37,7 @@ export class DocumentOverview {
             new DocumentOverviewActions(this)
             this.menu = new OverviewMenuView(this, menuModel)
             this.menu.init()
+            this.dtBulkModel = bulkMenuModel()
             this.activateFidusPlugins()
             this.bind()
             this.getDocumentListData()
@@ -127,7 +128,7 @@ export class DocumentOverview {
                 this.documentTemplates = json.document_templates
                 this.initTable()
                 this.addExportTemplatesToMenu()
-                if (this.documentTemplates.length > 1) {
+                if (Object.keys(this.documentTemplates).length > 1) {
                     this.multipleNewDocumentMenuItem()
                 }
             }
@@ -153,7 +154,7 @@ export class DocumentOverview {
         document.querySelector('.fw-contents').innerHTML = '' // Delete any old table
         document.querySelector('.fw-contents').appendChild(tableEl)
 
-        const dtBulk = new DatatableBulk(this, bulkModel)
+        this.dtBulk = new DatatableBulk(this, this.dtBulkModel)
 
         const hiddenCols = [0]
 
@@ -176,7 +177,17 @@ export class DocumentOverview {
                 bottom: ""
             },
             data: {
-                headings: ['', dtBulk.getHTML(), gettext("Title"), gettext("Revisions"), gettext("Created"), gettext("Last changed"), gettext("Owner"), gettext("Rights"), ''],
+                headings: [
+                    '',
+                    this.dtBulk.getHTML(),
+                    gettext("Title"),
+                    gettext("Revisions"),
+                    gettext("Created"),
+                    gettext("Last changed"),
+                    gettext("Owner"),
+                    gettext("Rights"),
+                    ''
+                ],
                 data: this.documentList.map(doc => this.createTableRow(doc))
             },
             columns: [
@@ -196,7 +207,7 @@ export class DocumentOverview {
             this.lastSort = {column, dir}
         })
 
-        dtBulk.init(this.table.table)
+        this.dtBulk.init(this.table.table)
     }
 
     createTableRow(doc) {
@@ -277,11 +288,29 @@ export class DocumentOverview {
 
         const menuItem = this.menu.model.content.find(menuItem => menuItem.id==='new_document')
         menuItem.type = 'dropdown'
-        menuItem.content = this.documentTemplates.map(docTemplate => ({
+        menuItem.content = Object.values(this.documentTemplates).map(docTemplate => ({
             title: docTemplate.title || gettext('Undefined'),
             action: () => this.goToNewDocument(`n${docTemplate.id}`)
         }))
         this.menu.update()
+
+        this.dtBulkModel.content.push({
+            title: gettext('Copy selected as...'),
+            tooltip: gettext('Copy the documents and assignthem to a specific template.'),
+            action: overview => {
+                const ids = overview.getSelected()
+                if (ids.length) {
+                    overview.mod.actions.copyFilesAs(ids)
+                }
+            },
+            disabled: overview => !overview.getSelected().length,
+            order: 2.5
+        })
+
+        this.dtBulk.update()
+
+
+
 
     }
 

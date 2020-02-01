@@ -1,26 +1,32 @@
 import {BibLatexFileImportDialog} from "../import"
 import {BibLatexFileExporter} from "../export"
 
-export const bulkModel = [
-    {
-        title: gettext('Delete selected'),
-        action: overview => {
-            const ids = overview.getSelected().map(id => parseInt(id))
-            if (ids.length) {
-                overview.deleteBibEntryDialog(ids)
-            }
+export const bulkMenuModel = () => ({
+    content: [
+        {
+            title: gettext('Delete selected'),
+            tooltip: gettext('Delete selected bibliography entries.'),
+            action: overview => {
+                const ids = overview.getSelected().map(id => parseInt(id))
+                if (ids.length) {
+                    overview.deleteBibEntryDialog(ids)
+                }
+            },
+            disabled: overview => !overview.getSelected().length
+        }, {
+            title: gettext('Export selected'),
+            tooltip: gettext('Export selected bibliography entries.'),
+            action: overview => {
+                const ids = overview.getSelected()
+                if (ids.length) {
+                    const exporter = new BibLatexFileExporter(overview.app.bibDB, ids)
+                    exporter.init()
+                }
+            },
+            disabled: overview => !overview.getSelected().length
         }
-    }, {
-        title: gettext('Export selected'),
-        action: overview => {
-            const ids = overview.getSelected()
-            if (ids.length) {
-                const exporter = new BibLatexFileExporter(overview.app.bibDB, ids)
-                exporter.init()
-            }
-        }
-    }
-]
+    ]
+})
 
 export const menuModel = () => ({
     content: [

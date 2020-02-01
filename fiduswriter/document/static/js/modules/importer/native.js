@@ -4,13 +4,14 @@ import {extractTemplate} from "../document_template"
 
 export class ImportNative {
     /* Save document information into the database */
-    constructor(doc, bibliography, images, otherFiles, user) {
+    constructor(doc, bibliography, images, otherFiles, user, importId=null) {
         this.doc = doc
         this.docId = false
         this.bibliography = bibliography
         this.images = images
         this.otherFiles = otherFiles // Data of image files
         this.user = user
+        this.importId = importId
     }
 
     init() {
@@ -94,7 +95,7 @@ export class ImportNative {
     createDoc() {
         const template = extractTemplate(this.doc.contents),
             template_title = template.attrs.template,
-            import_id = template.attrs.import_id
+            import_id = this.importId ? this.importId : template.attrs.import_id
         // We create the document on the sever so that we have an ID for it and
         // can link the images to it.
 

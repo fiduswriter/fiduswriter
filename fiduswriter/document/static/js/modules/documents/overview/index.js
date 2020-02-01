@@ -124,10 +124,8 @@ export class DocumentOverview {
 
                 this.teamMembers = json.team_members
                 this.documentStyles = json.document_styles
-                this.exportTemplates = json.export_templates
                 this.documentTemplates = json.document_templates
                 this.initTable()
-                this.addExportTemplatesToMenu()
                 if (Object.keys(this.documentTemplates).length > 1) {
                     this.multipleNewDocumentMenuItem()
                 }
@@ -264,24 +262,6 @@ export class DocumentOverview {
         this.table.insert({data: [this.createTableRow(doc)]})
         // Redo last sort
         this.table.columns().sort(this.lastSort.column, this.lastSort.dir)
-    }
-
-    addExportTemplatesToMenu() {
-        /*const docSelectMenuItem = this.menu.model.content.find(menuItem => menuItem.id='doc_selector')
-        this.exportTemplates.forEach(template => {
-            docSelectMenuItem.content.push({
-                title: `${gettext('Export selected as: ')} ${template.file_name} (${template.file_type})`,
-                action: overview => {
-                    const ids = overview.getSelected()
-                    if (ids.length) {
-                        const fileType = template.file_type
-                        const templateUrl = template.template_file
-                        this.mod.actions.downloadTemplateExportFiles(ids, templateUrl, fileType)
-                    }
-                }
-            })
-        })
-        this.menu.update()*/
     }
 
     multipleNewDocumentMenuItem() {

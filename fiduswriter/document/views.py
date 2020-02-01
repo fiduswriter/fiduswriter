@@ -342,15 +342,6 @@ def get_documentlist(request):
             ),
             fields=['file_type', 'template_file', 'title']
         )
-        response['export_templates'] = [obj['fields'] for obj in export_temps]
-        doc_styles = serializer.serialize(
-            DocumentStyle.objects.filter(
-                Q(document_template__user=None) |
-                Q(document_template__user=request.user)
-            ),
-            use_natural_foreign_keys=True,
-            fields=['title', 'slug', 'contents', 'documentstylefile_set']
-        )
         response['document_styles'] = [obj['fields'] for obj in doc_styles]
         doc_templates = DocumentTemplate.objects.filter(
             Q(user=request.user) | Q(user=None)

@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from django.conf import settings
 from django.core.mail import send_mail
-from django.db.models import Q
+from django.db.models import F, Q
 from django.contrib.admin.views.decorators import staff_member_required
 
 from user.util import get_user_avatar_url
@@ -22,7 +22,7 @@ from usermedia.models import DocumentImage, Image
 from bibliography.models import Entry
 from document.helpers.serializers import PythonWithURLSerializer
 from bibliography.views import serializer
-from style.models import DocumentStyle, ExportTemplate
+from style.models import DocumentStyle
 from base.html_email import html_email
 from user.models import TeamMember
 
@@ -335,14 +335,6 @@ def get_documentlist(request):
             tm_object['avatar'] = get_user_avatar_url(team_member.member)
             response['team_members'].append(tm_object)
         serializer = PythonWithURLSerializer()
-        export_temps = serializer.serialize(
-            ExportTemplate.objects.filter(
-                Q(document_template__user=None) |
-                Q(document_template__user=request.user)
-            ),
-            fields=['file_type', 'template_file', 'title']
-        )
-        response['export_templates'] = [obj['fields'] for obj in export_temps]
         doc_styles = serializer.serialize(
             DocumentStyle.objects.filter(
                 Q(document_template__user=None) |
@@ -354,11 +346,13 @@ def get_documentlist(request):
         response['document_styles'] = [obj['fields'] for obj in doc_styles]
         doc_templates = DocumentTemplate.objects.filter(
             Q(user=request.user) | Q(user=None)
-        )
-        response['document_templates'] = [
-            {'id': obj.id, 'title': obj.title} for obj in doc_templates
-        ]
-
+        ).order_by(F('user').desc(nulls_first=True))
+        response['document_templates'] = {}
+        for obj in doc_templates:
+            response['document_templates'][obj.import_id] = {
+                'title': obj.title,
+                'id': obj.id
+            }
     return JsonResponse(
         response,
         status=status
@@ -639,7 +633,40 @@ def import_create(request):
         document_template = DocumentTemplate.objects.filter(
             Q(user=request.user) | Q(user=None),
             import_id=import_id
-        ).first()
+        ).order_by(F('user').desc(nulls_last=True)).first()
+        if not document_template:
+            # The user doesn't have this template.
+            # We check whether the template exists with one of the documents
+            # shared with the user. If so, we'll copy it so that we can avoid
+            # having to create an entirely new template without styles or
+            # exporter templates
+            access_right = request.user.accessright_set.filter(
+                document__template__import_id=import_id
+            ).first()
+            if access_right:
+                document_template = access_right.document.template
+                document_styles = list(
+                    document_template.documentstyle_set.all()
+                )
+                export_templates = list(
+                    document_template.exporttemplate_set.all()
+                )
+                document_template.pk = None
+                document_template.user = request.user
+                document_template.save()
+                for ds in document_styles:
+                    style_files = list(ds.documentstylefile_set.all())
+                    ds.pk = None
+                    ds.document_template = document_template
+                    ds.save()
+                    for sf in style_files:
+                        sf.pk = None
+                        sf.style = ds
+                        sf.save()
+                for et in export_templates:
+                    et.pk = None
+                    et.document_template = document_template
+                    et.save()
         if not document_template:
             title = request.POST['template_title']
             definition = json_encode(json_decode(request.POST['template']))
@@ -650,7 +677,7 @@ def import_create(request):
             document_template.definition = definition
             document_template.save()
         document = Document.objects.create(
-            owner_id=request.user.pk,
+            owner=request.user,
             template=document_template
         )
         response['id'] = document.id

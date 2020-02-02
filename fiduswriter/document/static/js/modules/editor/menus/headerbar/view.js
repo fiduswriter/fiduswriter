@@ -230,8 +230,6 @@ export class HeaderbarView {
         })
     }
 
-
-
     update() {
         const diff = this.dd.diff(this.headerEl, this.getHeaderHTML())
         this.dd.apply(this.headerEl, diff)

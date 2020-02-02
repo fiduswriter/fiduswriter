@@ -400,7 +400,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
             EC.element_to_be_clickable((By.CSS_SELECTOR, '.dt-bulk-dropdown'))
         ).click()
         self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Download selected as Fidus document"]'
+            '//*[normalize-space()="Export selected as FIDUS"]'
         ).click()
         time.sleep(1)
         assert os.path.isfile(

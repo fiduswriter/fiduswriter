@@ -1,102 +1,120 @@
 import {DocumentAccessRightsDialog} from "../access_rights"
 import {addAlert} from "../../common"
 
-export const bulkModel = [
-    {
-        title: gettext('Delete selected'),
-        action: overview => {
-            const ids = overview.getSelected()
-            const ownIds = ids.filter(id => overview.documentList.find(doc => doc.id===id).is_owner)
-            if (ownIds.length !== ids.length) {
-                addAlert('error', gettext('You cannot delete documents of other users'))
-            }
-            if (ownIds.length) {
-                overview.mod.actions.deleteDocumentDialog(ownIds)
-            }
+export const bulkMenuModel = () => ({
+    content: [
+        {
+            title: gettext('Delete selected'),
+            tooltip: gettext('Delete the documents that have been selected.'),
+            action: overview => {
+                const ids = overview.getSelected()
+                const ownIds = ids.filter(id => overview.documentList.find(doc => doc.id===id).is_owner)
+                if (ownIds.length !== ids.length) {
+                    addAlert('error', gettext('You cannot delete documents of other users'))
+                }
+                if (ownIds.length) {
+                    overview.mod.actions.deleteDocumentDialog(ownIds)
+                }
+            },
+            disabled: overview => !overview.getSelected().length,
+            order: 0
         },
-        order: 0
-    },
-    {
-        title: gettext('Share selected'),
-        action: overview => {
-            const ids = overview.getSelected()
-            const ownIds = ids.filter(id => overview.documentList.find(doc => doc.id===id).is_owner)
-            if (ownIds.length !== ids.length) {
-                addAlert('error', gettext('You cannot share documents of other users'))
-            }
-            if (ownIds.length) {
-                const dialog = new DocumentAccessRightsDialog(
-                    ids,
-                    overview.teamMembers,
-                    memberDetails => overview.teamMembers.push(memberDetails),
-                    overview.registrationOpen
-                )
-                dialog.init()
-            }
+        {
+            title: gettext('Share selected'),
+            tooltip: gettext('Share the documents that have been selected.'),
+            action: overview => {
+                const ids = overview.getSelected()
+                const ownIds = ids.filter(id => overview.documentList.find(doc => doc.id===id).is_owner)
+                if (ownIds.length !== ids.length) {
+                    addAlert('error', gettext('You cannot share documents of other users'))
+                }
+                if (ownIds.length) {
+                    const dialog = new DocumentAccessRightsDialog(
+                        ids,
+                        overview.teamMembers,
+                        memberDetails => overview.teamMembers.push(memberDetails),
+                        overview.registrationOpen
+                    )
+                    dialog.init()
+                }
+            },
+            disabled: overview => !overview.getSelected().length,
+            order: 1
         },
-        order: 1
-    },
-    {
-        title: gettext('Copy selected'),
-        action: overview => {
-            const ids = overview.getSelected()
-            if (ids.length) {
-                overview.mod.actions.copyFiles(ids)
-            }
+        {
+            title: gettext('Copy selected'),
+            tooltip: gettext('Copy the documents that have been selected.'),
+            action: overview => {
+                const ids = overview.getSelected()
+                if (ids.length) {
+                    overview.mod.actions.copyFiles(ids)
+                }
+            },
+            disabled: overview => !overview.getSelected().length,
+            order: 2
         },
-        order: 2
-    },
-    {
-        title: gettext('Export selected as Epub'),
-        action: overview => {
-            const ids = overview.getSelected()
-            if (ids.length) {
-                overview.mod.actions.downloadEpubFiles(ids)
-            }
+        {
+            title: gettext('Export selected as Epub'),
+            tooltip: gettext('Export the documents that have been selected as Epub files.'),
+            action: overview => {
+                const ids = overview.getSelected()
+                if (ids.length) {
+                    overview.mod.actions.downloadEpubFiles(ids)
+                }
+            },
+            disabled: overview => !overview.getSelected().length,
+            order: 3
         },
-        order: 3
-    },
-    {
-        title: gettext('Export selected as HTML'),
-        action: overview => {
-            const ids = overview.getSelected()
-            if (ids.length) {
-                overview.mod.actions.downloadHtmlFiles(ids)
-            }
+        {
+            title: gettext('Export selected as HTML'),
+            tooltip: gettext('Export the documents that have been selected as HTML files.'),
+            action: overview => {
+                const ids = overview.getSelected()
+                if (ids.length) {
+                    overview.mod.actions.downloadHtmlFiles(ids)
+                }
+            },
+            disabled: overview => !overview.getSelected().length,
+            order: 4
         },
-        order: 4
-    },
-    {
-        title: gettext('Export selected as LaTeX'),
-        action: overview => {
-            const ids = overview.getSelected()
-            if (ids.length) {
-                overview.mod.actions.downloadLatexFiles(ids)
-            }
+        {
+            title: gettext('Export selected as LaTeX'),
+            tooltip: gettext('Export the documents that have been selected as LaTeX files.'),
+            action: overview => {
+                const ids = overview.getSelected()
+                if (ids.length) {
+                    overview.mod.actions.downloadLatexFiles(ids)
+                }
+            },
+            disabled: overview => !overview.getSelected().length,
+            order: 5
         },
-        order: 5
-    },
-    {
-        title: gettext('Export selected as JATS'),
-        action: overview => {
-            const ids = overview.getSelected()
-            if (ids.length) {
-                overview.mod.actions.downloadJATSFiles(ids)
-            }
+        {
+            title: gettext('Export selected as JATS'),
+            tooltip: gettext('Export the documents that have been selected as JATS files.'),
+            action: overview => {
+                const ids = overview.getSelected()
+                if (ids.length) {
+                    overview.mod.actions.downloadJATSFiles(ids)
+                }
+            },
+            disabled: overview => !overview.getSelected().length,
+            order: 6
         },
-        order: 6
-    },
-    {
-        title: gettext('Download selected as Fidus document'),
-        action: overview => {
-            const ids = overview.getSelected()
-            if (ids.length) {
-                overview.mod.actions.downloadNativeFiles(ids)
-            }
-        },
-        order: 7
-    }
-]
+        {
+            title: gettext('Export selected as FIDUS'),
+            tooltip: gettext('Export the documents that have been selected as FIDUS files.'),
+            action: overview => {
+                const ids = overview.getSelected()
+                if (ids.length) {
+                    overview.mod.actions.downloadNativeFiles(ids)
+                }
+            },
+            disabled: overview => !overview.getSelected().length,
+            order: 7
+        }
+    ]
+})
 
 export const menuModel = () => ({
     content: [

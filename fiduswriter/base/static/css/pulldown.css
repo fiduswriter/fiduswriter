@@ -61,7 +61,6 @@
     text-decoration: none;
     white-space: nowrap;
     cursor: pointer;
-    border-bottom: 1px solid var(--pulldown-separator-color);
 }
 
 .fw-pulldown-item:hover {

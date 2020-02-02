@@ -2,18 +2,22 @@ import {AddContactDialog} from "./add_dialog"
 import {DeleteContactDialog} from "./delete_dialog"
 import {teammemberTemplate} from "./templates"
 
-export const bulkModel = [
-    {
-        title: gettext('Delete selected'),
-        action: overview => {
-            const ids = overview.getSelected()
-            if (ids.length) {
-                const dialog = new DeleteContactDialog(ids)
-                dialog.init()
-            }
+export const bulkMenuModel = () => ({
+    content: [
+        {
+            title: gettext('Delete selected'),
+            tooltip: gettext('Delete selected contacts.'),
+            action: overview => {
+                const ids = overview.getSelected()
+                if (ids.length) {
+                    const dialog = new DeleteContactDialog(ids)
+                    dialog.init()
+                }
+            },
+            disabled: overview => !overview.getSelected().length
         }
-    }
-]
+    ]
+})
 
 export const menuModel = () => ({
     content: [

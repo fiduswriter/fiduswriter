@@ -7,7 +7,7 @@ import {BibTypeTitles} from "../form/strings"
 import {SiteMenu} from "../../menu"
 import {OverviewMenuView, findTarget, whenReady, Dialog, baseBodyTemplate, ensureCSS, setDocTitle, escapeText, DatatableBulk} from "../../common"
 import {FeedbackTab} from "../../feedback"
-import {menuModel, bulkModel} from "./menu"
+import {menuModel, bulkMenuModel} from "./menu"
 import * as plugins from "../../../plugins/bibliography_overview"
 
 export class BibliographyOverview {
@@ -71,7 +71,7 @@ export class BibliographyOverview {
         this.dom.querySelector('.fw-contents').innerHTML = ''
         this.dom.querySelector('.fw-contents').appendChild(tableEl)
 
-        const dtBulk = new DatatableBulk(this, bulkModel)
+        this.dtBulk = new DatatableBulk(this, bulkMenuModel())
 
         const hiddenCols = [0]
 
@@ -94,7 +94,7 @@ export class BibliographyOverview {
                 bottom: ""
             },
             data: {
-                headings: ['', dtBulk.getHTML(), gettext("Title"), gettext("Sourcetype"), gettext("Author"), gettext("Published"), ''],
+                headings: ['', this.dtBulk.getHTML(), gettext("Title"), gettext("Sourcetype"), gettext("Author"), gettext("Published"), ''],
                 data: ids.map(id => this.createTableRow(id))
             },
             columns: [
@@ -114,7 +114,7 @@ export class BibliographyOverview {
             this.lastSort = {column, dir}
         })
 
-        dtBulk.init(this.table.table)
+        this.dtBulk.init(this.table.table)
     }
 
     /** Adds a list of bibliography categories to current list of bibliography categories.

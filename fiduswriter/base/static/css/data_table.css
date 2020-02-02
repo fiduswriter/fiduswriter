@@ -154,14 +154,6 @@
     min-width: 30px;
 }
 
-.dt-bulk .fw-pulldown {
-    display: none;
-}
-
-.dt-bulk.opened .fw-pulldown {
-    display: block;
-}
-
 .dt-bulk .fw-check + label {
     display: inline-block;
     vertical-align: middle;

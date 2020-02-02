@@ -18,7 +18,7 @@ import {
 } from "../../common"
 import {SiteMenu} from "../../menu"
 import {FeedbackTab} from "../../feedback"
-import {menuModel, bulkModel} from "./menu"
+import {menuModel, bulkMenuModel} from "./menu"
 import * as plugins from "../../../plugins/images_overview"
  /** Helper functions for user added images/SVGs.*/
 
@@ -201,7 +201,7 @@ export class ImageOverview {
         this.dom.querySelector('.fw-contents').innerHTML = ''
         this.dom.querySelector('.fw-contents').appendChild(tableEl)
 
-        const dtBulk = new DatatableBulk(this, bulkModel)
+        this.dtBulk = new DatatableBulk(this, bulkMenuModel())
 
         const hiddenCols = [0]
 
@@ -220,7 +220,7 @@ export class ImageOverview {
                 top: ""
             },
             data: {
-                headings: ['', dtBulk.getHTML(), gettext("File"), gettext("Size (px)"), gettext("Added"), ''],
+                headings: ['', this.dtBulk.getHTML(), gettext("File"), gettext("Size (px)"), gettext("Added"), ''],
                 data: ids.map(id => this.createTableRow(id))
             },
             columns: [
@@ -240,7 +240,7 @@ export class ImageOverview {
             this.lastSort = {column, dir}
         })
 
-        dtBulk.init(this.table.table)
+        this.dtBulk.init(this.table.table)
     }
 
     // get IDs of selected bib entries

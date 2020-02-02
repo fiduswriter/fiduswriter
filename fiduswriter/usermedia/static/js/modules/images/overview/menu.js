@@ -1,14 +1,18 @@
-export const bulkModel = [
-    {
-        title: gettext('Delete selected'),
-        action: overview => {
-            const ids = overview.getSelected()
-            if (ids.length) {
-                overview.deleteImageDialog(ids)
-            }
+export const bulkMenuModel = () => ({
+    content: [
+        {
+            title: gettext('Delete selected'),
+            tooltip: gettext('Delete selected images.'),
+            action: overview => {
+                const ids = overview.getSelected()
+                if (ids.length) {
+                    overview.deleteImageDialog(ids)
+                }
+            },
+            disabled: overview => !overview.getSelected().length
         }
-    }
-]
+    ]
+})
 
 export const menuModel = () => ({
     content: [

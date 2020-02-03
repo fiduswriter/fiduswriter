@@ -55,7 +55,7 @@ export const headerbarModel = () => ({
                         dialog.init()
                     },
                     disabled: editor => {
-                        return !editor.docInfo.is_owner
+                        return !editor.docInfo.is_owner || !editor.ws.isOnline()
                     }
                 },
                 {
@@ -66,7 +66,8 @@ export const headerbarModel = () => ({
                     order: 1,
                     action: editor => {
                         editor.app.goTo('/')
-                    }
+                    },
+                    disabled:editor => !editor.ws.isOnline()
                 },
                 {
                     title: gettext('Save revision'),
@@ -89,7 +90,10 @@ export const headerbarModel = () => ({
                             }
                         )
                     },
-                    disabled: editor => editor.docInfo.access_rights !== 'write'
+                    disabled: editor => {
+                        return editor.docInfo.access_rights !== 'write' || !editor.ws.isOnline()
+                    }
+                    
                 },
                 {
                     title: gettext('Create copy'),
@@ -107,7 +111,8 @@ export const headerbarModel = () => ({
                         copier.init().then(({docInfo}) =>
                             editor.app.goTo(`/document/${docInfo.id}/`)
                         ).catch(() => false)
-                    }
+                    },
+                    disabled: editor => !editor.ws.isOnline(),
                 },
                 {
                     title: gettext('Download'),

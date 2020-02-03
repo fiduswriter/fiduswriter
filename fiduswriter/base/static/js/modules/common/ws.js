@@ -42,6 +42,10 @@ export class WebSocketConnector {
         this.createWSConnection()
     }
 
+    isOnline(){
+        return this.connected
+    }
+
     goOffline() {
         // Simulate offline mode due to lack of ways of doing this in Chrome/Firefox
         // https://bugzilla.mozilla.org/show_bug.cgi?id=1421357

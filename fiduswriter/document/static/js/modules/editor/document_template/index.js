@@ -123,7 +123,8 @@ export class ModDocumentTemplate {
                     ]
                 })
                 selectTemplateDialog.open()
-            }
+            },
+            disabled:editor => !editor.ws.isOnline()
         })
 
         fileMenu.content = fileMenu.content.sort((a, b) => a.order - b.order)

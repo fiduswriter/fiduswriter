@@ -527,7 +527,8 @@ export const toolbarModel = () => ({
                     (
                         editor.currentView.state.selection.jsonID === 'node' &&
                         editor.currentView.state.selection.node.type.name !== 'citation'
-                    )
+                    ) ||
+                    !editor.ws.isOnline()
                 ) {
                     return true
                 }
@@ -596,7 +597,8 @@ export const toolbarModel = () => ({
                 if (
                     READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
                     COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
-                    elementDisabled(editor, 'figure')
+                    elementDisabled(editor, 'figure') ||
+                    !editor.ws.isOnline()
                 ) {
                     return true
                 }

@@ -527,7 +527,7 @@ class WebSocket(BaseWebSocketHandler):
         doc_db.bibliography = json_encode(doc['bibliography'])
         logger.debug('saving document # %d' % doc_db.id)
         logger.debug('version %d' % doc_db.version)
-        doc_db.save()
+        doc_db.save(update_fields=['title','version','contents','last_diffs','comments','bibliography'])
 
     @classmethod
     def save_all_docs(cls):

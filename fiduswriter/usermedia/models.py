@@ -28,7 +28,9 @@ class Image(models.Model):
     uploader = models.ForeignKey(
         User,
         related_name='image_uploader',
-        on_delete=models.deletion.CASCADE
+        on_delete=models.deletion.SET_NULL,
+        blank=True,
+        null=True
     )
     added = models.DateTimeField(auto_now_add=True)
     image = models.FileField(upload_to=get_file_path)

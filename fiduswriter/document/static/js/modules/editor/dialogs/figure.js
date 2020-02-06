@@ -12,9 +12,6 @@ import {
     ContentMenu
 } from "../../common"
 import {
-    CopyrightDialog
-} from "../../copyright_dialog"
-import {
     randomFigureId
 } from "../../schema/common"
 
@@ -37,39 +34,6 @@ export class FigureDialog {
         this.node = this.editor.currentView.state.selection.node
         this.submitMessage = gettext('Insert')
         this.dialog = false
-
-        this.imageMenuModel = {
-            content: [
-                {
-                    title: gettext('Set Copyright'),
-                    type: 'action',
-                    tooltip: gettext('Specify copyright information'),
-                    order: 0,
-                    action: () => {
-                        const dialog = new CopyrightDialog(this.copyright)
-                        dialog.init().then(
-                            copyright => {
-                                if (copyright) {
-                                    this.copyright = copyright
-                                }
-                            }
-                        )
-                    }
-                },
-                {
-                    title: gettext('Remove image'),
-                    type: 'action',
-                    tooltip: gettext('Remove the image that is previewed'),
-                    order: 1,
-                    action: () => {
-                        this.imgId = false
-                        this.imgDb = false
-                        this.copyright = false
-                        this.layoutMathEditor()
-                    }
-                }
-            ]
-        }
     }
 
 
@@ -189,7 +153,7 @@ export class FigureDialog {
                 'click',
                 event => {
                     const contentMenu = new ContentMenu({
-                        menu: this.imageMenuModel,
+                        menu: this.editor.menu.imageMenuModel,
                         page: this,
                         menuPos: {X: event.pageX, Y: event.pageY},
                     })

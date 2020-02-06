@@ -212,7 +212,7 @@ export const headerbarModel = () => ({
                     }
                 },
                 {
-                    title: gettext('JATS (experimental)'),
+                    title: gettext('JATS'),
                     type: 'action',
                     tooltip: gettext('Export the document to a Journal Archiving and Interchange Tag Library NISO JATS Version 1.2 file.'),
                     order: 2,

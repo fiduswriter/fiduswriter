@@ -23,9 +23,3 @@ noSpaceTmp`<!DOCTYPE manifest PUBLIC "DarManifest 0.1.0" "http://darformat.org/D
         }" name="${image.title}" path="${image.filename}"/>`).join('')
     }</assets>
 </dar>`
-
-export const readMe =
-`The manuscript.xml file contains a document in the Journal Archiving and Interchange Tag Library NISO JATS Version 1.2 format.
-This export option is new in Fidus Writer 3.7 and the overall structure of the file
-is likely to change in the subsequent versions. It is therefore marked as experimental.
-`

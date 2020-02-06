@@ -5,7 +5,7 @@ import {removeHidden} from "../tools/doc_contents"
 import {JATSExporterConvert} from "./convert"
 import {JATSExporterCitations} from "./citations"
 import {ZipFileCreator} from "../tools/zip"
-import {darManifest, readMe} from "./templates"
+import {darManifest} from "./templates"
 /*
  Exporter to JATS
 */
@@ -31,7 +31,6 @@ export class JATSExporter {
         this.citations = new JATSExporterCitations(this, this.bibDB, this.csl)
         this.conversion = this.converter.init(this.docContents).then(({jats, imageIds}) => {
             this.textFiles.push({filename: 'manuscript.xml', contents: jats})
-            this.textFiles.push({filename: 'README.txt', contents: readMe})
             const images = imageIds.map(
                 id => {
                     const imageEntry = this.imageDB.db[id]

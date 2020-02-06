@@ -833,7 +833,7 @@ const convertDocV30 = function(doc) {
 const convertDocV31 = function(doc) {
     // Conversion adds no new requirements. Version update is required so that
     // users don't try to open file in a previous FW file. That won't work as
-    // additional syntax has been added (copyright + cross references). 
+    // additional syntax has been added (copyright + cross references).
     const returnDoc = JSON.parse(JSON.stringify(doc))
     return returnDoc
 }

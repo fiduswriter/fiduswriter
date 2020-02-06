@@ -84,7 +84,7 @@ export const copyrightTemplate = ({holder, year, freeToRead, licenses}) =>
                 <td class="entry-field licenses">
                     <table class="input-list-wrapper">
                         <tbody>
-                            ${licenses.map(license => licenseTemplate(license)).join('')}
+                            ${licenses ? licenses.map(license => licenseTemplate(license)).join('') : ''}
                             ${licenseTemplate({url: '', start: false})}
                         </tbody>
                     </table>

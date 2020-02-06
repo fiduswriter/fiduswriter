@@ -8,7 +8,7 @@ body.editor {
     overflow-x: hidden;
 }
 
-header {
+body.editor header {
     position: fixed;
     width: 100%;
     z-index: 91;

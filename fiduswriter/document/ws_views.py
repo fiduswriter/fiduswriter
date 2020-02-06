@@ -1,6 +1,7 @@
 from builtins import str
 import uuid
 import atexit
+import json
 from time import mktime, time
 from copy import deepcopy
 
@@ -145,6 +146,7 @@ class WebSocket(BaseWebSocketHandler):
             field_obj = {
                 'id': image.id,
                 'title': dimage.title,
+                'copyright': json.loads(dimage.copyright),
                 'image': image.image.url,
                 'file_type': image.file_type,
                 'added': mktime(image.added.timetuple()) * 1000,
@@ -235,15 +237,17 @@ class WebSocket(BaseWebSocketHandler):
                 doc_image = DocumentImage.objects.filter(
                     document_id=self.doc["id"],
                     image_id=id
-                )
-                if doc_image.exists():
+                ).first()
+                if doc_image:
                     doc_image.title = iu["image"]["title"]
+                    doc_image.copyright = json.dumps(iu["image"]["copyright"])
                     doc_image.save()
                 else:
                     DocumentImage.objects.create(
                         document_id=self.doc["id"],
                         image_id=id,
-                        title=iu["image"]["title"]
+                        title=iu["image"]["title"],
+                        copyright=json.dumps(iu["image"]["copyright"])
                     )
             elif iu["type"] == "delete":
                 DocumentImage.objects.filter(

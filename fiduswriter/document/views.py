@@ -1,6 +1,7 @@
 import time
 import os
 import bleach
+import json
 from tornado.escape import json_decode, json_encode
 from django.core import serializers
 from django.http import HttpResponse, JsonResponse, HttpRequest
@@ -49,6 +50,7 @@ def get_documentlist_extra(request):
                     'image': image.image.image.url,
                     'thumbnail': image.image.thumbnail.url,
                     'title': image.title,
+                    'copyright': json.loads(image.copyright),
                     'width': image.image.width
                 }
             response['documents'].append({
@@ -716,6 +718,7 @@ def import_image(request):
         doc_image = DocumentImage.objects.create(
             image=image,
             title=request.POST['title'],
+            copyright=json.dumps(request.POST['copyright']),
             document=document
         )
         response['id'] = doc_image.image.id
@@ -1224,12 +1227,16 @@ def add_images_to_doc(request):
         ).delete()
         ids = request.POST.getlist('ids[]')
         for id in ids:
-            title = 'Deleted'
+            doc_image_data = {
+                'document': doc,
+                'title': 'Deleted'
+            }
             image = Image.objects.filter(id=id).first()
             if image:
                 user_image = image.userimage_set.all().first()
                 if user_image:
-                    title = user_image.title
+                    doc_image_data['title'] = user_image.title
+                    doc_image_data['copyright'] = user_image.copyright
             else:
                 image = Image()
                 image.pk = id
@@ -1239,12 +1246,8 @@ def add_images_to_doc(request):
                 ))
                 image.image.save('error.png', File(f))
                 image.save()
-            DocumentImage.objects.create(
-                document=doc,
-                image=image,
-                title=title
-            )
-
+            doc_image_data['image'] = image
+            DocumentImage.objects.create(**doc_image_data)
     return JsonResponse(
         response,
         status=status

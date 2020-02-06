@@ -180,6 +180,9 @@ class Image(models.Model):
 # Image linked to a particular User.
 class UserImage(models.Model):
     title = models.CharField(max_length=128)
+    copyright = models.TextField(
+        default='{"holder":false,"year":false,"freeToRead":true,"licenses":[]}'
+    )
     owner = models.ForeignKey(
         User,
         related_name='image_owner',
@@ -187,7 +190,7 @@ class UserImage(models.Model):
         null=True,
         on_delete=models.deletion.CASCADE
     )
-    image_cat = models.CharField(max_length=255, default='')
+    image_cat = models.CharField(max_length=255, default='[]')
     image = models.ForeignKey(
         Image,
         on_delete=models.deletion.CASCADE
@@ -203,6 +206,9 @@ class UserImage(models.Model):
 # Image linked to a document
 class DocumentImage(models.Model):
     title = models.CharField(max_length=128, default='')
+    copyright = models.TextField(
+        default='{"holder":false,"year":false,"freeToRead":true,"licenses":[]}'
+    )
     document = models.ForeignKey(
         Document,
         on_delete=models.deletion.CASCADE

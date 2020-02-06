@@ -1,6 +1,5 @@
-from builtins import map
-from builtins import filter
 from time import mktime
+import json
 
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
@@ -51,6 +50,8 @@ def save(request):
                 if 'checksum' in request.POST:
                     image.checksum = request.POST['checksum']
             user_image.title = request.POST['title']
+            if 'copyright' in request.POST:
+                user_image.copyright = request.POST['copyright']
             if 'cats' in request.POST:
                 user_image.image_cat = request.POST['cats']
             if 'image' in request.FILES:
@@ -65,16 +66,12 @@ def save(request):
                 response['values'] = {
                     'id': image.id,
                     'title': user_image.title,
+                    'copyright': json.loads(user_image.copyright),
                     'image': image.image.url,
                     'file_type': image.file_type,
                     'added': mktime(image.added.timetuple()) * 1000,
                     'checksum': image.checksum,
-                    'cats': list(
-                        map(
-                            int,
-                            list(filter(bool, user_image.image_cat.split(',')))
-                        )
-                    )
+                    'cats': json.loads(user_image.image_cat)
                 }
                 if image.thumbnail:
                     response['values']['thumbnail'] = image.thumbnail.url
@@ -124,16 +121,13 @@ def images(request):
                 field_obj = {
                     'id': image.id,
                     'title': user_image.title,
+                    'copyright': json.loads(user_image.copyright),
                     'image': image.image.url,
                     'file_type': image.file_type,
                     'added': mktime(image.added.timetuple()) * 1000,
                     'checksum': image.checksum,
-                    'cats': list(
-                        map(
-                            int,
-                            list(filter(bool, user_image.image_cat.split(',')))
-                        )
-                    )
+                    'cats': json.loads(user_image.image_cat),
+                    'flash': 'hash'
                 }
                 if image.thumbnail:
                     field_obj['thumbnail'] = image.thumbnail.url

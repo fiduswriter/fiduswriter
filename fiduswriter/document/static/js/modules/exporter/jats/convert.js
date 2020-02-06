@@ -25,7 +25,10 @@ export class JATSExporterConvert {
             contributors: [],
             abstract: {},
             keywords: [],
-            tags: []
+            tags: [],
+            copyright: {
+                licenses: []
+            }
         }
         this.citInfos = []
         this.citationCount = 0
@@ -48,71 +51,72 @@ export class JATSExporterConvert {
 
     // Remove items from the body that should be in the front.
     preWalkJson(node, parentNode = false) {
-        if (parentNode) {
-            switch (node.type) {
-                case 'title':
-                    this.frontMatter.title['default'] = node
-                    parentNode.content = parentNode.content.filter(child => child !== node)
-                    break
-                case 'heading_part':
-                    if (
-                        ['title', 'subtitle'].includes(node.attrs.metadata) &&
-                        !this.frontMatter[node.attrs.metadata][node.attrs.language || 'default'] &&
-                        node.content &&
-                        node.content.length
-                    ) {
-                        // We only take the first instance of title/subtitle per language
-                        this.frontMatter[node.attrs.metadata][node.attrs.language || 'default'] = {
-                            type: node.attrs.language ? `trans_${node.attrs.metadata}`: node.attrs.metadata,
-                            attrs: {
-                                id: node.content[0].attrs.id,
-                                language: node.attrs.language
-                            },
-                            content: node.content[0].content
-                        }
-                        parentNode.content = parentNode.content.filter(child => child !== node)
-                    }
-                    break
-                case 'richtext_part':
-                    if (
-                        node.attrs.metadata === 'abstract' &&
-                        !this.frontMatter.abstract[node.attrs.language || 'default']
-                    ) {
-                        // We only take the first instance of abstract per language
-                        this.frontMatter.abstract[node.attrs.language || 'default'] = {
-                            type: node.attrs.language ? 'trans_abstract' : 'abstract',
-                            attrs: {
-                                id: node.attrs.id,
-                                language: node.attrs.language
-                            },
-                            content: node.content
-                        }
-                        parentNode.content = parentNode.content.filter(child => child !== node)
-                    }
-                    break
-                case 'tags_part':
-                    if (
-                        node.attrs.metadata === 'keywords'
-                    ) {
-                        this.frontMatter.keywords.push({
-                            type: 'keywords',
-                            attrs: {
-                                language: node.attrs.language
-                            },
-                            content: node.content
-                        })
-                    } else {
-                        this.frontMatter.tags.push(node)
+        switch (node.type) {
+            case 'article':
+                this.frontMatter.copyright = node.attrs.copyright
+                break
+            case 'title':
+                this.frontMatter.title['default'] = node
+                parentNode.content = parentNode.content.filter(child => child !== node)
+                break
+            case 'heading_part':
+                if (
+                    ['title', 'subtitle'].includes(node.attrs.metadata) &&
+                    !this.frontMatter[node.attrs.metadata][node.attrs.language || 'default'] &&
+                    node.content &&
+                    node.content.length
+                ) {
+                    // We only take the first instance of title/subtitle per language
+                    this.frontMatter[node.attrs.metadata][node.attrs.language || 'default'] = {
+                        type: node.attrs.language ? `trans_${node.attrs.metadata}`: node.attrs.metadata,
+                        attrs: {
+                            id: node.content[0].attrs.id,
+                            language: node.attrs.language
+                        },
+                        content: node.content[0].content
                     }
                     parentNode.content = parentNode.content.filter(child => child !== node)
-                    break
-                case 'contributors_part':
-                    this.frontMatter.contributors.push(node)
+                }
+                break
+            case 'richtext_part':
+                if (
+                    node.attrs.metadata === 'abstract' &&
+                    !this.frontMatter.abstract[node.attrs.language || 'default']
+                ) {
+                    // We only take the first instance of abstract per language
+                    this.frontMatter.abstract[node.attrs.language || 'default'] = {
+                        type: node.attrs.language ? 'trans_abstract' : 'abstract',
+                        attrs: {
+                            id: node.attrs.id,
+                            language: node.attrs.language
+                        },
+                        content: node.content
+                    }
                     parentNode.content = parentNode.content.filter(child => child !== node)
-                    break
-                default:
-                    break
-            }
+                }
+                break
+            case 'tags_part':
+                if (
+                    node.attrs.metadata === 'keywords'
+                ) {
+                    this.frontMatter.keywords.push({
+                        type: 'keywords',
+                        attrs: {
+                            language: node.attrs.language
+                        },
+                        content: node.content
+                    })
+                } else {
+                    this.frontMatter.tags.push(node)
+                }
+                parentNode.content = parentNode.content.filter(child => child !== node)
+                break
+            case 'contributors_part':
+                this.frontMatter.contributors.push(node)
+                parentNode.content = parentNode.content.filter(child => child !== node)
+                break
+            default:
+                break
         }
         if (node.content) {
             node.content.forEach(child => this.preWalkJson(child, node))
@@ -186,7 +190,21 @@ export class JATSExporterConvert {
         })
         Object.entries(this.affiliations).forEach(([institution, index]) => front += `<aff id="aff${index}"><institution>${escapeText(institution)}</institution></aff>`)
         // https://validator.jats4r.org/ requires a <permissions> element here, but is OK with it being empty.
-        front += '<permissions/>'
+        if (this.frontMatter.copyright.holder) {
+            front += '<permissions>'
+            const year = this.frontMatter.copyright.year ? this.frontMatter.copyright.year : new Date().getFullYear()
+            front += `<copyright-year>${year}</copyright-year>`
+            front += `<copyright-holder>${escapeText(this.frontMatter.copyright.holder)}</copyright-holder>`
+            if (this.frontMatter.copyright.freeToRead) {
+                front += '<ali:free_to_read/>'
+            }
+            front += this.frontMatter.copyright.licenses.map(license =>
+                `<license><ali:license_ref${license.start ? ` start_date="${license.start}"` : ''}>${escapeText(license.url)}</ali:license_ref></license>`
+            ).join('')
+            front += '</permissions>'
+        } else {
+            front += '<permissions/>'
+        }
         if (this.frontMatter.abstract.default) {
             front += this.walkJson(this.frontMatter.abstract.default)
             front += this.closeSections(0)
@@ -479,17 +497,19 @@ export class JATSExporterConvert {
                     // only allows <p> block level elements https://jats.nlm.nih.gov/archiving/tag-library/1.2/element/fn.html
                     break
                 }
-                let imageFilename
+                let imageFilename, copyright
                 if (node.attrs.image) {
                     this.imageIds.push(node.attrs.image)
                     const imageDBEntry = this.imageDB.db[node.attrs.image],
                         filePathName = imageDBEntry.image
+                    copyright = imageDBEntry.copyright
                     imageFilename = filePathName.split('/').pop()
                 }
                 if (
                     node.attrs.figureCategory === 'none' &&
                     imageFilename &&
-                    !node.attrs.caption.length
+                    !node.attrs.caption.length &&
+                    (!copyright || !copyright.holder)
                 ) {
                     content += `<graphic id="${node.attrs.id}" position="anchor" xlink:href="${imageFilename}"/>`
                 } else {
@@ -513,6 +533,19 @@ export class JATSExporterConvert {
                         end = '</disp-formula>' + end
                         content = `<tex-math><![CDATA[${node.attrs.equation}]]></tex-math>`
                     } else {
+                        if (copyright && copyright.holder) {
+                            start += '<permissions>'
+                            const year = copyright.year ? copyright.year : new Date().getFullYear()
+                            start += `<copyright-year>${year}</copyright-year>`
+                            start += `<copyright-holder>${escapeText(copyright.holder)}</copyright-holder>`
+                            if (copyright.freeToRead) {
+                                start += '<ali:free_to_read/>'
+                            }
+                            start += copyright.licenses.map(license =>
+                                `<license><ali:license_ref${license.start ? ` start_date="${license.start}"` : ''}>${escapeText(license.url)}</ali:license_ref></license>`
+                            ).join('')
+                            start += '</permissions>'
+                        }
                         content += `<graphic position="anchor" xlink:href="${imageFilename}"/>`
                     }
                 }

@@ -126,8 +126,7 @@ def images(request):
                     'file_type': image.file_type,
                     'added': mktime(image.added.timetuple()) * 1000,
                     'checksum': image.checksum,
-                    'cats': json.loads(user_image.image_cat),
-                    'flash': 'hash'
+                    'cats': json.loads(user_image.image_cat)
                 }
                 if image.thumbnail:
                     field_obj['thumbnail'] = image.thumbnail.url

@@ -74,11 +74,6 @@ td.figure-preview-row {
     right: -5px;
 }
 
-.figure-edit-icon {
-    font-size: 18px;
-    color: var(--cs-white-nofocus-text);
-}
-
 .crop-mode {
     height: 500px !important;
     width: 800px !important;

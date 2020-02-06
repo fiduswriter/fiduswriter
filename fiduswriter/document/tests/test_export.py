@@ -337,7 +337,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
             '.header-nav-item[title="Export of the document contents"]'
         ).click()
         self.driver.find_element_by_xpath(
-            '//*[normalize-space()="JATS (experimental)"]'
+            '//*[normalize-space()="JATS"]'
         ).click()
         time.sleep(1)
         assert os.path.isfile(os.path.join(

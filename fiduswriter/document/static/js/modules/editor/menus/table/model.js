@@ -25,7 +25,7 @@ const tableAddedFromTemplate = function(state) {
 const tableAddedByUser = function(table, userId) {
     return table.attrs.track.find(track => (track.type==='insertion' && track.user === userId)) ? true : false
 }
-export const tableMenuModel = ()=> ({
+export const tableMenuModel = () => ({
     content: [
         {
             title: editor => `${gettext('Add row above')}${editor.view.state.doc.firstChild.attrs.tracked ? ` (${gettext('Not tracked')})` : ''}`,

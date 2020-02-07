@@ -1,6 +1,7 @@
 import {DocumentAccessRightsDialog} from "../../../documents/access_rights"
 import {SaveRevision, SaveCopy} from "../../../exporter/native"
 import {ExportFidusFile} from "../../../exporter/native/file"
+import {CopyrightDialog} from "../../../copyright_dialog"
 import {RevisionDialog, LanguageDialog} from "../../dialogs"
 import {WordCountDialog, KeyBindingsDialog, SearchReplaceDialog} from "../../tools"
 
@@ -211,7 +212,7 @@ export const headerbarModel = () => ({
                     }
                 },
                 {
-                    title: gettext('JATS (experimental)'),
+                    title: gettext('JATS'),
                     type: 'action',
                     tooltip: gettext('Export the document to a Journal Archiving and Interchange Tag Library NISO JATS Version 1.2 file.'),
                     order: 2,
@@ -418,6 +419,30 @@ export const headerbarModel = () => ({
                             }
                         }
                     ]
+                },
+                {
+                    title: gettext('Copyright Information'),
+                    type: 'setting',
+                    order: 5,
+                    action: editor => {
+                        const dialog = new CopyrightDialog(editor.view.state.doc.firstChild.attrs.copyright)
+                        dialog.init().then(
+                            copyright => {
+                                if (copyright) {
+                                    const article = editor.view.state.doc.firstChild
+                                    const attrs = Object.assign({}, article.attrs, {copyright})
+
+                                    editor.view.dispatch(
+                                        editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta('settings', true)
+                                    )
+                                }
+                                editor.currentView.focus()
+                            }
+                        )
+                    },
+                    disabled: editor => {
+                        return editor.docInfo.access_rights !== 'write'
+                    }
                 }
             ]
         },

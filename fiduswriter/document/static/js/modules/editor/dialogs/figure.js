@@ -1,3 +1,5 @@
+import deepEqual from "fast-deep-equal"
+
 import {
     configureFigureTemplate
 } from "./templates"
@@ -6,7 +8,8 @@ import {
 } from "../../images/selection_dialog"
 import {
     addDropdownBox,
-    Dialog
+    Dialog,
+    ContentMenu
 } from "../../common"
 import {
     randomFigureId
@@ -19,6 +22,7 @@ export class FigureDialog {
         this.userImageDB = this.editor.app.imageDB
         this.imgId = false
         this.imgDb = false
+        this.copyright = false
         this.insideFigure = false
         this.figureNode = false
         this.contentNode = false
@@ -31,6 +35,7 @@ export class FigureDialog {
         this.submitMessage = gettext('Insert')
         this.dialog = false
     }
+
 
     layoutMathEditor() {
         this.dialog.dialogEl.querySelector('.inner-figure-preview').innerHTML =
@@ -116,6 +121,11 @@ export class FigureDialog {
                 if (id) {
                     this.imgId = id
                     this.imgDb = db
+                    // We take a copy of the object in case of the image coming from the user db in order
+                    // not to overwrite the copyright info from the user's image db.
+                    this.copyright = db === 'document' ?
+                        this.imageDB.db[this.imgId].copyright :
+                        JSON.parse(JSON.stringify(this.userImageDB.db[this.imgId].copyright))
                     this.layoutImagePreview()
                 } else {
                     this.imgId = false
@@ -133,18 +143,23 @@ export class FigureDialog {
                 this.mathField = false
             }
             const db = this.imgDb === 'document' ? this.imageDB.db : this.userImageDB.db
+
             this.dialog.dialogEl.querySelector('.inner-figure-preview').innerHTML =
                 `<img src="${db[this.imgId].image}" style="max-width: 400px;max-height:220px">
-                <i class="fas fa-times-circle remove-image"></i>`
-            this.dialog.dialogEl.querySelector('.inner-figure-preview .remove-image').addEventListener(
+                <span class="dot-menu-icon"><i class="fa fa-ellipsis-v"></i></span>`
+
+
+            this.dialog.dialogEl.querySelector('.dot-menu-icon').addEventListener(
                 'click',
-                () => {
-                    this.imgId = false
-                    this.imgDb = false
-                    this.layoutMathEditor()
+                event => {
+                    const contentMenu = new ContentMenu({
+                        menu: this.editor.menu.imageMenuModel,
+                        page: this,
+                        menuPos: {X: event.pageX, Y: event.pageY},
+                    })
+                    contentMenu.open()
                 }
             )
-
         }
     }
 
@@ -178,6 +193,18 @@ export class FigureDialog {
             return false
         }
 
+        if (this.imgDb === 'user') {
+            // Add image to document db.
+            const imageEntry = JSON.parse(JSON.stringify(this.userImageDB.db[this.imgId]))
+            imageEntry.copyright = this.copyright
+            this.imageDB.setImage(this.imgId, imageEntry)
+            this.imgDb = 'document'
+        } else if (this.imgId && !deepEqual(this.copyright, this.imageDB.db[this.imgId].copyright)) {
+            const imageEntry = JSON.parse(JSON.stringify(this.imageDB.db[this.imgId]))
+            imageEntry.copyright = this.copyright
+            this.imageDB.setImage(this.imgId, imageEntry)
+        }
+
         if (
             this.insideFigure &&
             this.equation === this.node.attrs.equation &&
@@ -192,12 +219,7 @@ export class FigureDialog {
             this.dialog.close()
             return false
         }
-        if (this.imgDb === 'user') {
-            // Add image to document db.
-            const imageEntry = this.userImageDB.db[this.imgId]
-            this.imageDB.setImage(this.imgId, imageEntry)
-            this.imgDb = 'document'
-        }
+
         // This is the node wherein figureAlignment will affect the attribute
         const nodeType = this.editor.currentView.state.schema.nodes['figure']
         const tr = this.editor.currentView.state.tr.replaceSelectionWith(
@@ -284,6 +306,7 @@ export class FigureDialog {
         this.setFigureWidth()
 
         if (this.imgId) {
+            this.copyright = this.imageDB.db[this.imgId].copyright
             this.layoutImagePreview()
         } else {
             this.layoutMathEditor()

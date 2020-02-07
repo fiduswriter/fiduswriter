@@ -91,6 +91,23 @@ export class OdtExporterRender {
                 [{type: 'bibliography_heading', content: [{type: 'text', text: bibliographyHeader}]}].concat(pmBib.content) :
                 [{type: 'paragraph', content: [{type:'text', text: ' '}]}]
         })
+        this.tags.push({
+            title: '@copyright', // The '@' triggers handling as block
+            content: settings.copyright && settings.copyright.holder ?
+                [{type: 'paragraph', content: [{type: 'text', text: `© ${settings.copyright.year ? settings.copyright.year : new Date().getFullYear()} ${settings.copyright.holder}`}]}] :
+                [{type: 'paragraph', content: [{type:'text', text: ' '}]}]
+        })
+        this.tags.push({
+            title: '@licenses', // The '@' triggers handling as block
+            content: settings.copyright && settings.copyright.licenses.length ?
+                settings.copyright.licenses.map(
+                    license => ({type: 'paragraph', content: [
+                        {type: 'text', marks: [{type: 'link', attrs: {href: license.url, title: license.url}}], text: license.url},
+                        {type: 'text', text: license.start ? ` (${license.start})` : ''}
+                    ]})
+                ) :
+                [{type: 'paragraph', content: [{type:'text', text: ' '}]}]
+        })
     }
 
     // go through content.xml looking for tags and replace them with the given

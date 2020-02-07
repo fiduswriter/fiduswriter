@@ -107,6 +107,14 @@ export const article = {
         },
         import_id: {
             default: ''
+        },
+        copyright: {
+            default: {
+                holder: false,
+                year: false,
+                freeToRead: true,
+                licenses: []
+            }
         }
     },
     parseDOM: [{

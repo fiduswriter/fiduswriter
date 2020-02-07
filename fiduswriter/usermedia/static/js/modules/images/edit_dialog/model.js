@@ -1,5 +1,7 @@
 import Cropper from 'cropperjs'
 
+import {CopyrightDialog} from "../../copyright_dialog"
+
 let mediaPreviewerImg = false
 
 export const imageEditModel = () => ({
@@ -20,13 +22,14 @@ export const imageEditModel = () => ({
                 }
 
             },
+            disabled: dialog => dialog.imageId,
             icon: 'redo fa-rotate-180'
         },
         {
             title: gettext('Rotate Right'),
             type: 'action',
             tooltip: gettext('Rotate-right'),
-            order: 0,
+            order: 1,
             action: dialog => {
                 const mediaPreviewerStyle = dialog.mediaPreviewer.currentStyle || window.getComputedStyle(dialog.mediaPreviewer, false)
                 rotateBase64Image(mediaPreviewerStyle.backgroundImage.slice(4, -1).replace(/"/g, ""), dialog.mediaInput.type, 'right').then(
@@ -38,14 +41,14 @@ export const imageEditModel = () => ({
                     dialog.rotation += 90
                 }
             },
-
+            disabled: dialog => dialog.imageId,
             icon: 'undo'
         },
         {
             title: gettext('Crop'),
             type: 'action',
             tooltip: gettext('Crop image'),
-            order: 0,
+            order: 2,
             action: dialog => {
                 const mediaPreviewerStyle = dialog.mediaPreviewer.currentStyle || window.getComputedStyle(dialog.mediaPreviewer, false)
                 //const base64data = mediaPreviewerStyle.backgroundImage.slice(4, -1).replace(/"/g, "")
@@ -59,8 +62,25 @@ export const imageEditModel = () => ({
                 })
                 toggleCropMode(true, dialog, cropper)
             },
+            disabled: dialog => dialog.imageId,
             icon: 'crop'
         },
+        {
+            title: gettext('Set Copyright'),
+            type: 'action',
+            tooltip: gettext('Specify copyright information'),
+            order: 3,
+            action: dialog => {
+                const crDialog = new CopyrightDialog(dialog.copyright)
+                crDialog.init().then(
+                    copyright => {
+                        if (copyright) {
+                            dialog.copyright = copyright
+                        }
+                    }
+                )
+            }
+        }
     ]
 })
 

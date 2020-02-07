@@ -52,11 +52,11 @@ export class HTMLExporter extends DOMExporter {
         this.prepareBinaryFiles()
 
         const html = htmlExportTemplate({
+            contents: this.contents,
             part: false,
-            title,
             settings: this.doc.settings,
             styleSheets: this.styleSheets,
-            contents: this.contents
+            title
         })
 
         return {title, html, math}

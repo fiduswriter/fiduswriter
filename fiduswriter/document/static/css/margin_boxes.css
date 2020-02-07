@@ -220,7 +220,9 @@ body.header-closed #margin-box-filter {
 }
 
 .comment-user .fw-avatar,
-.comment-user .fw-string-avatar {
+.comment-user .fw-string-avatar,
+.tag-user .fw-avatar,
+.tag-user .fw-string-avatar {
     width: 26px;
     height: 26px;
     float: left;
@@ -387,11 +389,14 @@ body.header-closed #margin-box-filter {
     cursor: pointer;
 }
 
-#comment-editor .tagger .tag:hover,
 #comment-editor .tagger .tag.selected,
-#answer-editor .tagger .tag:hover,
 #answer-editor .tagger .tag.selected {
-    background-color: var(--cs-light-background-hover);
+    background-color: var(--cs-6-focus);
+}
+
+#comment-editor .tagger .tag:hover,
+#answer-editor .tagger .tag:hover {
+    background-color: var(--cs-6-hover);
 }
 
 #comment-editor .tagger .tag-user,

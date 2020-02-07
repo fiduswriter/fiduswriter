@@ -43,8 +43,8 @@ export const imageEditTemplate = ({image, cats}) =>
         }
     </div>
     <div class="figure-preview">
-        <button class="figure-edit-menu hide" title="${gettext('Edit Figure')}">
-            <span class="figure-edit-icon"><i class="fa fa-ellipsis-v"></i></span>
+        <button class="figure-edit-menu" title="${gettext('Edit Image')}">
+            <span class="dot-menu-icon"><i class="fa fa-ellipsis-v"></i></span>
         </button>
     <div>
         ${

@@ -72,6 +72,7 @@ import {
     headerbarModel,
     toolbarModel,
     tableMenuModel,
+    imageMenuModel,
     navigatorFilterModel,
     selectionMenuModel
 } from "./menus"
@@ -156,6 +157,7 @@ export class Editor {
             headerbarModel: headerbarModel(),
             toolbarModel: toolbarModel(),
             tableMenuModel: tableMenuModel(),
+            imageMenuModel: imageMenuModel(),
             navigatorFilterModel: navigatorFilterModel(),
             selectionMenuModel: selectionMenuModel()
         }

@@ -2,7 +2,7 @@ import {mathliveOpfIncludes} from "../../mathlive/opf_includes"
 import {escapeText} from "../../common"
 
 /** A template for the OPF file of an epub. */
-export const opfTemplate = ({id, idType, title, language, authors, keywords, date, modified, images, fontFiles, styleSheets, math}) =>
+export const opfTemplate = ({id, idType, title, language, authors, keywords, date, modified, images, fontFiles, styleSheets, math, copyright}) =>
 `<?xml version="1.0" encoding="UTF-8"?>
 <package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="${idType}" xml:lang="${language}" prefix="cc: http://creativecommons.org/ns#">
     <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
@@ -15,6 +15,7 @@ ${
 }
         <dc:language>${language}</dc:language>
         <dc:date>${date}</dc:date>
+        ${ copyright && copyright.holder ? `<dc:rights>© ${ copyright.year ? copyright.year : new Date().getFullYear()} ${escapeText(copyright.holder)}</dc:rights>` : ''}
         <meta property="dcterms:modified">${modified}</meta>
     </metadata>
     <manifest>
@@ -109,11 +110,12 @@ ${
 
 
 /** A template for a document in an epub. */
-export const xhtmlTemplate = ({shortLang, title, math, styleSheets, part, body}) =>
+export const xhtmlTemplate = ({shortLang, title, math, styleSheets, part, body, copyright}) =>
 `<?xml version="1.0" encoding="UTF-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="${shortLang}" lang="${shortLang}"
         xmlns:epub="http://www.idpf.org/2007/ops">
     <head>
+        ${copyright && copyright.holder ? `<meta name="copyright" content="© ${copyright.year ? copyright.year : new Date().getFullYear()} ${escapeText(copyright.holder)}" />` : ''}
         <title>${escapeText(title)}</title>
 ${
     math ?
@@ -131,6 +133,15 @@ ${
         ''
     }${
         body
+    }${
+        copyright && copyright.holder ?
+            `<div>© ${copyright.year ? copyright.year : new Date().getFullYear()} ${copyright.holder}</div>` :
+            ''
+    }
+    ${
+        copyright && copyright.licenses.length ?
+            `<div>${copyright.licenses.map(license => `<a rel="license" href="${escapeText(license.url)}">${escapeText(license.url)}${license.start ? ` (${license.start})` : ''}</a>`).join('</div><div>')}</div>` :
+            ''
     }</body>
 </html>`
 

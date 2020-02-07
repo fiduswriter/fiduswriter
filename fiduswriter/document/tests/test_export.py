@@ -61,9 +61,39 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
                 )
             )
         ).click()
+        # Set copyright
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.presence_of_element_located((By.CLASS_NAME, 'editor-toolbar'))
-        )
+            EC.presence_of_element_located((
+                By.CSS_SELECTOR,
+                '#header-navigation > div:nth-child(3) > span'
+            ))
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            (
+                "#header-navigation > div:nth-child(3) > "
+                "div > ul > li:nth-child(6) > span"
+            )
+        ).click()
+        self.driver.find_element_by_css_selector(
+            '.holder'
+        ).send_keys('The Big Company')
+        self.driver.find_element_by_css_selector(
+            '.year'
+        ).send_keys('2003')
+        self.driver.find_element_by_css_selector(
+            '.license'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            '.license > option:nth-child(4)'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            '.license-start'
+        ).send_keys('2001-04-06')
+        self.driver.find_element_by_css_selector(
+            "[aria-describedby=configure-copyright] button.fw-dark"
+        ).click()
+
         self.driver.find_element(By.CSS_SELECTOR, ".article-title").click()
         self.driver.find_element(By.CSS_SELECTOR, ".article-title").send_keys(
             "Title"
@@ -237,7 +267,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
             'document/tests/uploads/image.png'
         )
 
-        # inorder to select the image we send the image path in the
+        # in order to select the image we send the image path in the
         # LOCAL MACHINE to the input tag
         upload_image_url = WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
@@ -260,6 +290,35 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
 
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Use image"]'
+        ).click()
+
+        # Set copyright info
+        self.driver.find_element_by_css_selector(
+            "div.figure-preview > div > span > i"
+        ).click()
+        self.driver.find_element_by_css_selector(
+            (
+                "body > div.ui-content_menu.ui-corner-all.ui-widget."
+                "ui-widget-content.ui-front > div > div > ul > li:nth-child(1)"
+            )
+        ).click()
+        self.driver.find_element_by_css_selector(
+            '.holder'
+        ).send_keys('Johannes Wilm')
+        self.driver.find_element_by_css_selector(
+            '.year'
+        ).send_keys('1998')
+        self.driver.find_element_by_css_selector(
+            '.license'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            '.license > option:nth-child(2)'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            '.license-start'
+        ).send_keys('1998-04-23')
+        self.driver.find_element_by_css_selector(
+            "[aria-describedby=configure-copyright] button.fw-dark"
         ).click()
 
         # click on 'Insert' button
@@ -337,7 +396,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
             '.header-nav-item[title="Export of the document contents"]'
         ).click()
         self.driver.find_element_by_xpath(
-            '//*[normalize-space()="JATS (experimental)"]'
+            '//*[normalize-space()="JATS"]'
         ).click()
         time.sleep(1)
         assert os.path.isfile(os.path.join(

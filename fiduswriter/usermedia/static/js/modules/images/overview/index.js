@@ -32,7 +32,8 @@ export class ImageOverview {
 
     init() {
         ensureCSS([
-            'dialog_usermedia.css'
+            'dialog_usermedia.css',
+            'dot_menu.css'
         ], this.staticUrl)
 
         whenReady().then(() => {

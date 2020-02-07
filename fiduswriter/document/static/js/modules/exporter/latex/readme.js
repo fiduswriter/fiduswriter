@@ -2,8 +2,9 @@ export const readMe =
 `In order to compile the latex file, you need to use at least TeXLive 2016. If
 there are citations, you additionally need Biber 2.7/BibLaTeX 3.7.
 
-On Ubuntu 18.04+ install the packages texlive-latex-base and
-texlive-latex-extra.
+On Ubuntu 18.04+ install these packages:
+
+> sudo apt install texlive-latex-base texlive-bibtex-extra biber texlive-latex-extra
 
 Extract all the files included in this ZIP into a folder.
 Run then these commands to create a PDF from within this folder:

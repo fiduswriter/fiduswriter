@@ -253,7 +253,7 @@ export class ExportTemplateDialog {
                                 return false
                         }
                     }
-                ).concat(['@bibliography']).filter(tag => tag)
+                ).concat(['@bibliography', '@copyright', '@licenses']).filter(tag => tag)
                 const parser = new window.DOMParser()
                 const xml = parser.parseFromString(string, "text/xml")
                 if (fileType === 'odt') {

@@ -127,7 +127,8 @@ export class EpubExporter extends DOMExporter {
             styleSheets: this.styleSheets,
             math,
             images,
-            fontFiles: this.fontFiles
+            fontFiles: this.fontFiles,
+            copyright: this.doc.settings.copyright
         })
 
         const ncxCode = ncxTemplate({

@@ -213,6 +213,47 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             "#id_user option[value='2']"
         ).click()
+        # Modify a document style
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".document-style"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "input.slug"
+        ).send_keys('fish')
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "[aria-describedby=document-style-dialog] button.fw-dark"
+        ).click()
+        time.sleep(1)
+        # Delete a document style
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".document-style"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "[aria-describedby=document-style-dialog] button.fw-orange"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "[aria-describedby=confirmdeletion] button.fw-dark"
+        ).click()
+        # Delete an export style
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".export-template"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "[aria-describedby=export-template-dialog] button.fw-orange"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "[aria-describedby=confirmdeletion] button.fw-dark"
+        ).click()
+
         self.driver.find_element(
             By.CSS_SELECTOR,
             "input[type=submit]"

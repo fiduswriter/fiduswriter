@@ -658,6 +658,35 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             self.driver,
             'The bodySome extra content that does show'
         )
+        # Tag user 2
+        ActionChains(self.driver).key_down(
+            Keys.SHIFT
+        ).send_keys(
+            Keys.LEFT
+        ).send_keys(
+            Keys.LEFT
+        ).send_keys(
+            Keys.LEFT
+        ).send_keys(
+            Keys.LEFT
+        ).key_up(
+            Keys.SHIFT
+        ).perform()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "button .fa-comment"
+        ).click()
+        ActionChains(self.driver).send_keys(
+            'Hello @Yeti2'
+        ).perform()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".tag-user"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".comment-btns .submit"
+        ).click()
         self.driver.find_element(
             By.ID,
             "close-document-top"

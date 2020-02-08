@@ -546,6 +546,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element_by_css_selector(
             'button.fw-dark'
         ).click()
+        time.sleep(1)
         self.assertEqual(
             len(self.driver.find_elements_by_css_selector(
                 '#revisions-dialog > table > tbody tr'

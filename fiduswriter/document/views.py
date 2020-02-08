@@ -661,20 +661,20 @@ def import_create(request):
                 et.pk = None
                 et.document_template = document_template
                 et.save()
-        if not document_template:
-            title = request.POST['template_title']
-            definition = json_encode(json_decode(request.POST['template']))
-            document_template = DocumentTemplate()
-            document_template.title = title
-            document_template.import_id = import_id
-            document_template.user = request.user
-            document_template.definition = definition
-            document_template.save()
-        document = Document.objects.create(
-            owner=request.user,
-            template=document_template
-        )
-        response['id'] = document.id
+    if not document_template:
+        title = request.POST['template_title']
+        definition = json_encode(json_decode(request.POST['template']))
+        document_template = DocumentTemplate()
+        document_template.title = title
+        document_template.import_id = import_id
+        document_template.user = request.user
+        document_template.definition = definition
+        document_template.save()
+    document = Document.objects.create(
+        owner=request.user,
+        template=document_template
+    )
+    response['id'] = document.id
     return JsonResponse(
         response,
         status=status

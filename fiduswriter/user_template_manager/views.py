@@ -1,30 +1,32 @@
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.views.decorators.http import require_POST
 
+from base.decorators import ajax_required
 from document.models import DocumentTemplate
 from document.helpers.serializers import PythonWithURLSerializer
 
 
 @login_required
+@ajax_required
+@require_POST
 def list(request):
     response = {}
-    status = 405
-    if request.is_ajax() and request.method == 'POST':
-        status = 200
-        doc_templates = DocumentTemplate.objects.filter(
-            Q(user=request.user) | Q(user=None)
-        )
-        date_format = '%Y-%m-%d'
-        response['document_templates'] = [
-            {
-                'id': obj.id,
-                'title': obj.title,
-                'is_owner': (obj.user is not None),
-                'added': obj.added.strftime(date_format),
-                'updated': obj.updated.strftime(date_format)
-            } for obj in doc_templates
-        ]
+    status = 200
+    doc_templates = DocumentTemplate.objects.filter(
+        Q(user=request.user) | Q(user=None)
+    )
+    date_format = '%Y-%m-%d'
+    response['document_templates'] = [
+        {
+            'id': obj.id,
+            'title': obj.title,
+            'is_owner': (obj.user is not None),
+            'added': obj.added.strftime(date_format),
+            'updated': obj.updated.strftime(date_format)
+        } for obj in doc_templates
+    ]
     return JsonResponse(
         response,
         status=status
@@ -32,9 +34,9 @@ def list(request):
 
 
 @login_required
+@ajax_required
+@require_POST
 def get(request):
-    if not request.is_ajax() or request.method != 'POST':
-        return JsonResponse({}, status=405)
     id = int(request.POST['id'])
     if id == 0:
         doc_template = DocumentTemplate()
@@ -74,9 +76,9 @@ def get(request):
 
 
 @login_required
+@ajax_required
+@require_POST
 def save(request):
-    if not request.is_ajax() or request.method != 'POST':
-        return JsonResponse({}, status=405)
     id = request.POST['id']
     doc_template = DocumentTemplate.objects.filter(
         id=id,
@@ -97,9 +99,9 @@ def save(request):
 
 
 @login_required
+@ajax_required
+@require_POST
 def copy(request):
-    if not request.is_ajax() or request.method != 'POST':
-        return JsonResponse({}, status=405)
     id = request.POST['id']
     doc_template = DocumentTemplate.objects.filter(
         Q(id=id),
@@ -137,22 +139,23 @@ def copy(request):
 
 
 @login_required
+@ajax_required
+@require_POST
 def delete(request):
     response = {}
     status = 405
-    if request.is_ajax() and request.method == 'POST':
-        id = int(request.POST['id'])
-        doc_template = DocumentTemplate.objects.filter(
-            pk=id,
-            user=request.user
-        ).first()
-        if doc_template:
-            status = 200
-            if doc_template.is_deletable():
-                doc_template.delete()
-                response['done'] = True
-            else:
-                response['done'] = False
+    id = int(request.POST['id'])
+    doc_template = DocumentTemplate.objects.filter(
+        pk=id,
+        user=request.user
+    ).first()
+    if doc_template:
+        status = 200
+        if doc_template.is_deletable():
+            doc_template.delete()
+            response['done'] = True
+        else:
+            response['done'] = False
     return JsonResponse(
         response,
         status=status

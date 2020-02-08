@@ -3,19 +3,18 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import login_required
 from document.helpers.serializers import PythonWithURLSerializer
 from django.utils.translation import ugettext as _
+from django.views.decorators.http import require_POST
 
+from base.decorators import ajax_required
 from .models import DocumentStyle, DocumentStyleFile, ExportTemplate
 from document.models import DocumentTemplate
 
 
 @login_required
+@require_POST
+@ajax_required
 def delete_document_style(request):
     response = {}
-    if not request.is_ajax() or request.method != 'POST':
-        return JsonResponse(
-            response,
-            status=405
-        )
     id = int(request.POST['id'])
     if request.user.is_staff:
         document_style = DocumentStyle.objects.filter(id=id).first()
@@ -47,13 +46,10 @@ def delete_document_style(request):
 
 
 @login_required
+@require_POST
+@ajax_required
 def save_document_style(request):
     response = {}
-    if not request.is_ajax() or request.method != 'POST':
-        return JsonResponse(
-            response,
-            status=405
-        )
     template_id = int(request.POST['template_id'])
     if request.user.is_staff:
         template = DocumentTemplate.objects.filter(id=template_id).first()
@@ -122,13 +118,10 @@ def save_document_style(request):
 
 
 @login_required
+@require_POST
+@ajax_required
 def delete_export_template(request):
     response = {}
-    if not request.is_ajax() or request.method != 'POST':
-        return JsonResponse(
-            response,
-            status=405
-        )
     id = int(request.POST['id'])
     if request.user.is_staff:
         export_template = ExportTemplate.objects.filter(id=id).first()
@@ -151,13 +144,10 @@ def delete_export_template(request):
 
 
 @login_required
+@require_POST
+@ajax_required
 def save_export_template(request):
     response = {}
-    if not request.is_ajax() or request.method != 'POST':
-        return JsonResponse(
-            response,
-            status=405
-        )
     template_id = int(request.POST['template_id'])
     if request.user.is_staff:
         template = DocumentTemplate.objects.filter(id=template_id).first()

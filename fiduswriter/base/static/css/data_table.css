@@ -79,7 +79,8 @@
 .owned-by-user .icon-access-right,
 .fw-data-table .fa-clock,
 .fw-data-table .fa-trash,
-.fw-data-table .fa-download {
+.fw-data-table .fa-download,
+.fw-data-table .fa-history {
     color: var(--cs-1-icon);
     cursor: pointer;
 }
@@ -87,7 +88,8 @@
 .owned-by-user .icon-access-right:hover,
 .fw-data-table .fa-clock:hover,
 .fw-data-table .fa-trash:hover,
-.fw-data-table .fa-download:hover {
+.fw-data-table .fa-download:hover,
+.fw-data-table .fa-history:hover {
     color: var(--cs-1-hover);
 }
 

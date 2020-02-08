@@ -531,3 +531,70 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
             os.path.join(self.download_dir, 'title.fidus')
         )
         os.remove(os.path.join(self.download_dir, 'title.fidus'))
+        self.driver.find_element_by_css_selector(
+            '.recreate-revision'
+        ).click()
+        self.assertEqual(
+            len(self.driver.find_elements_by_css_selector(
+                '#revisions-dialog > table > tbody tr'
+            )),
+            1
+        )
+        self.driver.find_element_by_css_selector(
+            '.delete-revision'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            'button.fw-dark'
+        ).click()
+        self.assertEqual(
+            len(self.driver.find_elements_by_css_selector(
+                '#revisions-dialog > table > tbody tr'
+            )),
+            0
+        )
+        self.driver.find_element_by_css_selector(
+            'button.fw-orange'
+        ).click()
+
+        # Delete document
+        documents = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr a.doc-title'
+        )
+        self.assertEqual(
+            len(documents),
+            2
+        )
+        self.driver.find_element_by_css_selector(
+            'tr:nth-child(1) > td > label'
+        ).click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, '.dt-bulk-dropdown'))
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Delete selected"]'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            'button.fw-dark'
+        ).click()
+        time.sleep(1)
+        documents = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr a.doc-title'
+        )
+        self.assertEqual(
+            len(documents),
+            1
+        )
+        self.driver.find_element_by_css_selector(
+            '.fw-contents tbody tr .delete-document'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            'button.fw-dark'
+        ).click()
+        time.sleep(1)
+        documents = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr a.doc-title'
+        )
+        self.assertEqual(
+            len(documents),
+            0
+        )

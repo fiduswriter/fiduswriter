@@ -66,6 +66,7 @@ class SeleniumHelper(object):
     ):
         user = User.objects.create(
             username=username,
+            email=email,
             password=make_password(passtext),
             is_active=True
         )

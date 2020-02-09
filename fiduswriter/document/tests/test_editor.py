@@ -8,6 +8,8 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
+from django.core import mail
+
 from allauth.account.models import EmailConfirmationHMAC, EmailAddress
 
 
@@ -788,16 +790,25 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             "button .fa-comment"
         ).click()
         ActionChains(self.driver).send_keys(
-            'Hello @Yeti2'
+            'Hello @Yeti'
         ).perform()
         self.driver.find_element(
             By.CSS_SELECTOR,
             ".tag-user"
         ).click()
+        self.assertEqual(
+            4,
+            len(mail.outbox)
+        )
         self.driver.find_element(
             By.CSS_SELECTOR,
             ".comment-btns .submit"
         ).click()
+        time.sleep(1)
+        self.assertEqual(
+            5,
+            len(mail.outbox)
+        )
         self.driver.find_element(
             By.ID,
             "close-document-top"

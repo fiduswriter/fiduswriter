@@ -273,7 +273,7 @@ class EditProfileTest(LiveTornadoTestCase, SeleniumHelper):
                 "Login - Fidus Writer"
             )
         )
-        urls = find_urls(mail.outbox[1].body)
+        urls = self.find_urls(mail.outbox[1].body)
         self.driver.get(urls[0])
         assert self.driver.find_element(
             By.CSS_SELECTOR,
@@ -297,7 +297,7 @@ class EditProfileTest(LiveTornadoTestCase, SeleniumHelper):
         )
         self.login_user(user2, self.driver, self.client)
         driver.get(self.base_url + "/")
-        urls = find_urls(mail.outbox[2].body)
+        urls = self.find_urls(mail.outbox[2].body)
         self.driver.get(urls[0])
         assert self.driver.find_element(
             By.CSS_SELECTOR,

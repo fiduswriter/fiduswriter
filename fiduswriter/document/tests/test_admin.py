@@ -1,4 +1,6 @@
 import time
+import os
+from tempfile import mkdtemp
 
 from testing.testcases import LiveTornadoTestCase
 from testing.selenium_helper import SeleniumHelper
@@ -19,8 +21,9 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
     def setUpClass(cls):
         super(EditorTest, cls).setUpClass()
         cls.base_url = cls.live_server_url
+        cls.download_dir = mkdtemp()
         cls.base_admin_url = cls.base_url + '/admin/'
-        driver_data = cls.get_drivers(1)
+        driver_data = cls.get_drivers(1, cls.download_dir)
         cls.driver = driver_data["drivers"][0]
         cls.client = driver_data["clients"][0]
         cls.driver.implicitly_wait(driver_data["wait_time"])
@@ -29,6 +32,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
     @classmethod
     def tearDownClass(cls):
         cls.driver.quit()
+        os.rmdir(cls.download_dir)
         super(EditorTest, cls).tearDownClass()
 
     def setUp(self):
@@ -240,11 +244,27 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             "[aria-describedby=confirmdeletion] button.fw-dark"
         ).click()
-        # Delete an export style
+        # Download export template file
         self.driver.find_element(
             By.CSS_SELECTOR,
             ".export-template"
         ).click()
+        export_template_link = self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".export-template-file a"
+        )
+        et_file = export_template_link.get_attribute("href").split('/')[-1]
+        export_template_link.click()
+        time.sleep(1)
+        assert os.path.isfile(
+            os.path.join(self.download_dir, et_file)
+        )
+        # Delete export template
+        old_len_export_templates = len(
+            self.driver.find_elements_by_css_selector(
+                '.export-template'
+            )
+        )
         self.driver.find_element(
             By.CSS_SELECTOR,
             "[aria-describedby=export-template-dialog] button.fw-orange"
@@ -253,7 +273,39 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             "[aria-describedby=confirmdeletion] button.fw-dark"
         ).click()
-
+        time.sleep(1)
+        len_export_templates = len(self.driver.find_elements_by_css_selector(
+            '.export-template'
+        ))
+        self.assertEqual(
+            old_len_export_templates - 1,
+            len_export_templates
+        )
+        old_len_export_templates = len_export_templates
+        # Upload export template file
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".export-template .fa-plus-circle"
+        ).click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".fw-media-file-input")
+            )
+        ).send_keys(os.path.join(self.download_dir, et_file))
+        time.sleep(1)
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".ui-dialog .fw-dark"
+        ).click()
+        time.sleep(1)
+        len_export_templates = len(self.driver.find_elements_by_css_selector(
+            '.export-template'
+        ))
+        self.assertEqual(
+            old_len_export_templates + 1,
+            len_export_templates
+        )
+        os.remove(os.path.join(self.download_dir, et_file))
         self.driver.find_element(
             By.CSS_SELECTOR,
             "input[type=submit]"

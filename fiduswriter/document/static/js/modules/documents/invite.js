@@ -16,17 +16,16 @@ export class DocumentInvite {
             // browsing session.
             this.app.inviteId = this.id
             this.app.page = this.app.openLoginPage()
-            this.app.page.init()
-            return
+            return this.app.page.init()
         }
 
-        postJson(
+        return postJson(
             '/api/document/invite/',
             {id: this.id}
         ).then(
             ({json}) => {
                 window.history.replaceState({}, "", json.redirect)
-                this.app.selectPage()
+                return this.app.selectPage()
             }
         )
     }

@@ -111,9 +111,7 @@ export class App {
             'fontawesome/css/all.css'
         ], this.config.staticUrl)
         if (navigator.onLine) {
-            return this.getUserInfo().then(
-                () => this.setup()
-            ).catch(
+            return this.getUserInfo().catch(
                 error => {
                     if (error instanceof TypeError) {
                         // We could not fetch user info from server, so let's
@@ -129,6 +127,16 @@ export class App {
                     } else {
                         throw error
                     }
+                    return Promise.reject(false)
+                }
+            ).then(
+                () => this.setup()
+            ).catch(
+                error => {
+                    if (error === false) {
+                        return
+                    }
+                    throw error
                 }
             )
         } else {

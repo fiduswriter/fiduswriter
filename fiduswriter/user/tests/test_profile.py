@@ -1,5 +1,4 @@
 import time
-import re
 import os
 
 from selenium.common.exceptions import NoSuchElementException
@@ -12,16 +11,6 @@ from selenium.common.exceptions import StaleElementReferenceException
 
 from django.core import mail
 from django.conf import settings
-
-
-def find_urls(string):
-    return re.findall(
-        (
-            'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|'
-            '(?:%[0-9a-fA-F][0-9a-fA-F]))+'
-        ),
-        string
-    )
 
 
 class EditProfileTest(LiveTornadoTestCase, SeleniumHelper):
@@ -198,7 +187,7 @@ class EditProfileTest(LiveTornadoTestCase, SeleniumHelper):
             )),
             0
         )
-        urls = find_urls(mail.outbox[0].body)
+        urls = self.find_urls(mail.outbox[0].body)
         self.driver.get(urls[0])
         assert self.driver.find_element(
             By.CSS_SELECTOR,

@@ -1,5 +1,6 @@
 from builtins import range
 from builtins import object
+import re
 import os
 
 from django.test import Client
@@ -56,6 +57,15 @@ class SeleniumHelper(object):
             "drivers": drivers,
             "wait_time": wait_time
         }
+
+    def find_urls(self, string):
+        return re.findall(
+            (
+                'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|'
+                '(?:%[0-9a-fA-F][0-9a-fA-F]))+'
+            ),
+            string
+        )
 
     # create django data
     def create_user(

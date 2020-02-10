@@ -512,7 +512,7 @@ class WebSocket(BaseWebSocketHandler):
                         # The reviewer should not receive comments updates from
                         # others than themselves, so we remove the comments
                         # from the copy of the message sent to the reviewer
-                        # that are not from them. We still need to sned the
+                        # that are not from them. We still need to send the
                         # rest of the message as it may contain other diff
                         # information.
                         message = deepcopy(message)

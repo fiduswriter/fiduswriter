@@ -29,6 +29,7 @@ env:
   global:
     - COVERALLS_PARALLEL=true
   matrix:
+    - TEST=base
     - TEST=user
     - TEST=feedback
     - TEST=document.tests.test_collaboration

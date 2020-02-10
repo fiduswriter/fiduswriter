@@ -137,10 +137,15 @@ export class ImageEditDialog {
         return new Promise(resolve => {
             this.imageDB.saveImage(imageData).then(
                 imageId => {
-                    this.dialog.close()
-                    addAlert('success', gettext('The image has been updated.'))
-                    this.imageId = imageId
-                    resolve(imageId)
+                    // imageId is undefined when the user tries to upload button when he is offline.
+                    if(imageId !== undefined){
+                        this.dialog.close()
+                        addAlert('success', gettext('The image has been updated.'))
+                        this.imageId = imageId
+                        resolve(imageId)
+                    }else{
+                        this.dialog.close()
+                    }
                 },
                 errors => {
                     this.displayCreateImageError(errors)

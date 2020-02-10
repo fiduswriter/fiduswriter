@@ -94,11 +94,19 @@ export const post = function(url, params={}, csrfToken=false) {
 
 // post and then return json and status
 export const postJson = function(url, params={}, csrfToken=false) {
-    return post(url, params, csrfToken).then(
-        response => response.json().then(
-            json => ({json, status: response.status})
+    if(navigator.onLine){
+        return post(url, params, csrfToken).then(
+            response => response.json().then(
+                json => ({json, status: response.status})
+            )
         )
-    )
+    }else{
+        let response_json={"json":{"user-offline":true}}
+        return new Promise(resolve => { resolve(response_json) }).then(response=>{
+            return response
+        })
+    }
+
 }
 
 export const ensureCSS = function(cssUrl, staticUrl) {

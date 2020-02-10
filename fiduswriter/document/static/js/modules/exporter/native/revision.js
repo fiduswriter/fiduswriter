@@ -30,6 +30,8 @@ export class SaveRevision {
             }
         ).then(
             blob => this.uploadRevision(blob)
+        ).catch(
+            addAlert('error', gettext("Revision file could not be generated."))
         )
     }
 
@@ -43,7 +45,14 @@ export class SaveRevision {
             },
             document_id: this.doc.id
         }).then(
-            () => addAlert('success', gettext('Revision saved')),
+            ({json}) => {
+                if(json['user-offline'] !== undefined && json['user-offline'] == true){
+                    addAlert('error', gettext("You're offline now. Please try again after coming Online"))
+
+                }else {
+                    addAlert('success', gettext('Revision saved'))
+                }
+            },
             () => addAlert('error', gettext('Revision could not be saved.'))
         )
     }

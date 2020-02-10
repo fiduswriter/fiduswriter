@@ -1,4 +1,4 @@
-import {Dialog, escapeText} from "../../common"
+import {Dialog, escapeText , addAlert} from "../../common"
 import {SaveCopy} from "../../exporter/native"
 
 export class ModDocumentTemplate {
@@ -104,17 +104,23 @@ export class ModDocumentTemplate {
                             text: gettext('Copy'),
                             classes: "fw-dark",
                             click: () => {
-                                const copier = new SaveCopy(
+                                if(!editor.ws.isOnline()){
+                                    addAlert('error', "You're offline. Please try again after you're Online.")
+                                    selectTemplateDialog.close()
+                                } else{
+                                    const copier = new SaveCopy(
                                         editor.getDoc(),
                                         editor.mod.db.bibDB,
                                         editor.mod.db.imageDB,
                                         editor.user,
                                         selectTemplateDialog.dialogEl.querySelector('select').value
                                     )
-                                copier.init().then(({docInfo}) =>
-                                    editor.app.goTo(`/document/${docInfo.id}/`)
-                                ).catch(() => false)
-                                selectTemplateDialog.close()
+                                    copier.init().then(({docInfo}) =>
+                                        editor.app.goTo(`/document/${docInfo.id}/`)
+                                    ).catch(() => false)
+                                    selectTemplateDialog.close()
+                                }
+
                             }
                         },
                         {

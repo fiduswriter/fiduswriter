@@ -117,6 +117,9 @@ class WebSocket(BaseWebSocketHandler):
         }
         self.send_message(response)
 
+    def unfixable(self):
+        self.send_document()
+
     def send_document(self):
         response = dict()
         response['type'] = 'doc_data'
@@ -373,7 +376,7 @@ class WebSocket(BaseWebSocketHandler):
                     logger.exception("Cannot apply json diff.")
                     logger.error(json_encode(message))
                     logger.error(json_encode(self.doc['contents']))
-                    self.send_document()
+                    self.unfixable()
                 # The json diff is only needed by the python backend which does
                 # not understand the steps. It can therefore be removed before
                 # broadcast to other clients.
@@ -408,7 +411,7 @@ class WebSocket(BaseWebSocketHandler):
             else:
                 logger.debug('unfixable')
                 # Client has a version that is too old to be fixed
-                self.send_document()
+                self.unfixable()
         else:
             # Client has a higher version than server. Something is fishy!
             logger.debug('unfixable')
@@ -436,7 +439,7 @@ class WebSocket(BaseWebSocketHandler):
         else:
             logger.debug('unfixable')
             # Client has a version that is too old
-            self.send_document()
+            self.unfixable()
             return
 
     def can_update_document(self):

@@ -27,7 +27,7 @@ class BaseWebSocketHandler(DjangoHandlerMixin, WebSocketHandler):
             'client': 0,
             'last_ten': []
         }
-        if self.user is None:
+        if not self.user.is_authenticated:
             self.access_denied()
             return
         response = dict()
@@ -109,6 +109,9 @@ class BaseWebSocketHandler(DjangoHandlerMixin, WebSocketHandler):
         except (WebSocketClosedError, StreamClosedError):
             pass
 
+    def unfixable(self):
+        pass
+
     def resend_messages(self, from_no):
         to_send = self.messages["server"] - from_no
         logger.debug('resending messages: %d' % to_send)
@@ -121,7 +124,7 @@ class BaseWebSocketHandler(DjangoHandlerMixin, WebSocketHandler):
         if to_send > len(self.messages['last_ten']):
             # Too many messages requested. We have to abort.
             logger.debug('cannot fix it')
-            self.send_document()
+            self.unfixable()
             return
         self.messages['server'] -= to_send
         for message in self.messages['last_ten'][0-to_send:]:
@@ -139,10 +142,6 @@ class BaseWebSocketHandler(DjangoHandlerMixin, WebSocketHandler):
         host = host.split(':')[0]
         # Check to see that origin matches host directly, EXCLUDING ports
         return origin == host
-
-    def allow_draft76(self):
-        # for iOS 5.0 Safari
-        return True
 
     def prepare(self):
         super(BaseWebSocketHandler, self).prepare()

@@ -220,6 +220,20 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
             'Lean UX: Applying lean principles to improve user experience',
             book_title_el.text
         )
+
+        # Export through dropdown menu
+        self.driver.find_element_by_css_selector(
+            'tr:nth-child(1) > td > label'
+        ).click()
+        driver.find_element_by_css_selector(
+            ".dt-bulk-dropdown").click()
+        driver.find_element_by_css_selector(
+            "li.content-menu-item:nth-child(2)").click()
+        time.sleep(1)
+        assert os.path.isfile(os.path.join(
+            self.download_dir, 'bibliography.zip'))
+        os.remove(os.path.join(self.download_dir, 'bibliography.zip'))
+
         # Delete bib entry
         entries = self.driver.find_elements_by_css_selector(
             '.fw-data-table .edit-bib'
@@ -242,21 +256,11 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
             len(entries),
             1
         )
-        # Export through dropdown menu
-        driver.find_element_by_css_selector(
-            "#bibliography > tbody > tr > td:nth-child(1) > label").click()
-        driver.find_element_by_css_selector(
-            ".dt-bulk-dropdown").click()
-        driver.find_element_by_css_selector(
-            "li.content-menu-item:nth-child(2)").click()
-        time.sleep(1)
-        assert os.path.isfile(os.path.join(
-            self.download_dir, 'bibliography.zip'))
-        os.remove(os.path.join(self.download_dir, 'bibliography.zip'))
+
         # Delete through dropdown menu
-        driver.find_element_by_css_selector(
-            "#bibliography > tbody > tr > td:nth-child(1) > label").click()
-        time.sleep(1)
+        self.driver.find_element_by_css_selector(
+            'tr:nth-child(1) > td > label'
+        ).click()
         driver.find_element_by_css_selector(
             ".dt-bulk-dropdown").click()
         driver.find_element_by_css_selector(

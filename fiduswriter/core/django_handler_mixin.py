@@ -1,5 +1,3 @@
-import base64
-
 from builtins import object
 from django.contrib import auth
 from django.conf import settings

@@ -39,11 +39,7 @@ export class ImageDB {
         ).then(
             ({json}) => {
                 deactivateWait()
-                if(json['user-offline'] !== undefined && json['user-offline'] ==  true){
-                    addAlert('error', gettext('You are offline now!!'))
-                    return 
-                }
-                else if (Object.keys(json.errormsg).length) {
+                if (Object.keys(json.errormsg).length) {
                     return Promise.reject(new Error(json.errormsg))
                 } else {
                     this.db[json.values.id] = json.values

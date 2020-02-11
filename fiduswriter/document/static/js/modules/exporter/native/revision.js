@@ -1,7 +1,8 @@
 import {ZipFidus} from "./zip"
 import {ShrinkFidus} from "./shrink"
 import {createSlug} from "../tools/file"
-import {addAlert, post} from "../../common"
+import {addAlert, postJson} from "../../common"
+
 
 /** Create a Fidus Writer document and upload it to the server as a backup.
  * @function uploadNative
@@ -31,13 +32,16 @@ export class SaveRevision {
         ).then(
             blob => this.uploadRevision(blob)
         ).catch(
-            addAlert('error', gettext("Revision file could not be generated."))
+            (error)=>{
+                addAlert('error', gettext("Revision file could not be generated."))
+                throw (error)
+            }
         )
     }
 
     uploadRevision(blob) {
 
-        post('/api/document/upload/', {
+        postJson('/api/document/upload/', {
             note: this.note,
             file: {
                 file: blob,
@@ -45,15 +49,14 @@ export class SaveRevision {
             },
             document_id: this.doc.id
         }).then(
-            ({json}) => {
-                if(json['user-offline'] !== undefined && json['user-offline'] == true){
-                    addAlert('error', gettext("You're offline now. Please try again after coming Online"))
-
-                }else {
-                    addAlert('success', gettext('Revision saved'))
-                }
+            () => {
+                addAlert('success', gettext('Revision saved'))
             },
             () => addAlert('error', gettext('Revision could not be saved.'))
+        ).catch(
+            (error)=>{
+                throw (error)
+            }
         )
     }
 

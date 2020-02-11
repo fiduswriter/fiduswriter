@@ -1,3 +1,5 @@
+import { addAlert } from './basic'
+
 /** Get cookie to set as part of the request header of all AJAX requests to the server.
  * @param name The name of the token to look for in the cookie.
  */
@@ -101,12 +103,11 @@ export const postJson = function(url, params={}, csrfToken=false) {
             )
         )
     }else{
-        let response_json={"json":{"user-offline":true}}
-        return new Promise(resolve => { resolve(response_json) }).then(response=>{
-            return response
+        addAlert('error', "You're offline now. Please try again after coming Online")
+        return Promise.reject(new Error('offline')).then(()=>{},(error)=> {
+            throw error
         })
     }
-
 }
 
 export const ensureCSS = function(cssUrl, staticUrl) {

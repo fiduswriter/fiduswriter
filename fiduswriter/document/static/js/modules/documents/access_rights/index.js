@@ -26,14 +26,9 @@ export class DocumentAccessRightsDialog {
             }
         ).then(
             ({json}) => {
-                if(json['user-offline'] !== undefined && json['user-offline'] == true){
-                    addAlert('error', gettext("You're offline now.Please try again after you're online."))
-                    return
-                } else {
-                    this.accessRights = json.access_rights
-                    this.invites = json.invites
-                    this.createAccessRightsDialog()
-                }
+                this.accessRights = json.access_rights
+                this.invites = json.invites
+                this.createAccessRightsDialog()
             }
         )
     }
@@ -238,13 +233,8 @@ export class DocumentAccessRightsDialog {
                 invites: JSON.stringify(invites)
             }
         ).then(
-            ({json}) => {
-                if(json['user-offline'] !== undefined && json['user-offline'] == true){
-                    addAlert('error', gettext("You're offline now.Please try again after you're online."))
-                    return
-                } else {
-                    addAlert('success', gettext('Access rights have been saved'))
-                }
+            () => {
+                addAlert('success', gettext('Access rights have been saved'))
             }
         ).catch(
             () => addAlert('error', gettext('Access rights could not be saved'))

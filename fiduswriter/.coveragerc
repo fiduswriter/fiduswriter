@@ -1,5 +1,6 @@
 [run]
-omit = 
+parallel = True
+omit =
 	*migrations*
 	venv/*
 	*virtualenv*

@@ -5,6 +5,10 @@ from importlib import import_module
 
 from django.conf import settings
 
+if "COVERAGE_PROCESS_START" in os.environ:
+    import coverage
+    coverage.process_startup()
+
 SRC_PATH = os.path.dirname(os.path.realpath(__file__))
 os.environ.setdefault(
     "SRC_PATH",

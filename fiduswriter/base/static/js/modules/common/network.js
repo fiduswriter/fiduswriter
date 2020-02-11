@@ -96,17 +96,20 @@ export const post = function(url, params={}, csrfToken=false) {
 
 // post and then return json and status
 export const postJson = function(url, params={}, csrfToken=false) {
-    if(navigator.onLine){
-        return post(url, params, csrfToken).then(
-            response => response.json().then(
-                json => ({json, status: response.status})
-            )
-        )
-    }else{
+    // If the base ws of the app is disconnected we assume that user is offline.
+    // Moreover if the ws readystate is not 0 we consider to check the connected status as 0 means ,
+    // websocket is trying to establish a connection.
+    if(window.theApp !== undefined && window.theApp.ws.ws.readyState!=0 && !window.theApp.ws.connected){
         addAlert('error', "You're offline now. Please try again after coming Online")
         return Promise.reject(new Error('offline')).then(()=>{},(error)=> {
             throw error
         })
+    }else{
+        return post(url, params, csrfToken).then(
+            response => response.json().then(
+                json => ({json, status: response.status})
+            )
+        ) 
     }
 }
 

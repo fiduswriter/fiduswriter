@@ -40,7 +40,7 @@ env:
     - TEST=bibliography
     - TEST=usermedia
 
-script: travis_retry coverage --concurrency=multiprocessing run manage.py test $TEST
+script: travis_retry coverage run --concurrency=multiprocessing manage.py test $TEST
 
 stages:
   - lint

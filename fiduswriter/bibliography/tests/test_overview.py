@@ -1,12 +1,16 @@
 import os
-from testing.testcases import LiveTornadoTestCase
-from testing.selenium_helper import SeleniumHelper
+import time
+from tempfile import mkdtemp
+
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 from django.conf import settings
+
+from testing.testcases import LiveTornadoTestCase
+from testing.selenium_helper import SeleniumHelper
 
 
 class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
@@ -15,7 +19,8 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
     def setUpClass(cls):
         super(BibliographyOverviewTest, cls).setUpClass()
         cls.base_url = cls.live_server_url
-        driver_data = cls.get_drivers(1)
+        cls.download_dir = mkdtemp()
+        driver_data = cls.get_drivers(1, cls.download_dir)
         cls.driver = driver_data["drivers"][0]
         cls.client = driver_data["clients"][0]
         cls.driver.implicitly_wait(driver_data["wait_time"])
@@ -24,6 +29,7 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
     @classmethod
     def tearDownClass(cls):
         cls.driver.quit()
+        os.rmdir(cls.download_dir)
         super(BibliographyOverviewTest, cls).tearDownClass()
 
     def setUp(self):
@@ -152,6 +158,19 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
         driver.find_element_by_css_selector(
             "button.fw-dark"
         ).click()
+        # Make change to citation source
+        driver.find_element_by_css_selector(
+            ".edit-bib"
+        ).click()
+        date_input = driver.find_element_by_css_selector(
+            ".entry-field.date input"
+        )
+        date_input.click()
+        date_input.send_keys(Keys.BACKSPACE)
+        date_input.send_keys('5')
+        driver.find_element_by_css_selector(
+            "button.fw-dark"
+        ).click()
         # Closed citation dialog
         search_input = driver.find_element_by_css_selector(
             ".fw-overview-menu-item .fw-button input[type=text]")
@@ -200,6 +219,81 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
         self.assertEqual(
             'Lean UX: Applying lean principles to improve user experience',
             book_title_el.text
+        )
+        # Delete bib entry
+        entries = self.driver.find_elements_by_css_selector(
+            '.fw-data-table .edit-bib'
+        )
+        self.assertEqual(
+            len(entries),
+            2
+        )
+        driver.find_element_by_css_selector(
+            ".delete-bib").click()
+        driver.find_element_by_css_selector(
+            "button.fw-dark").click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.staleness_of(entries[0])
+        )
+        entries = self.driver.find_elements_by_css_selector(
+            '.fw-data-table .edit-bib'
+        )
+        self.assertEqual(
+            len(entries),
+            1
+        )
+        # Export through dropdown menu
+        driver.find_element_by_css_selector(
+            "#bibliography > tbody > tr > td:nth-child(1) > label").click()
+        driver.find_element_by_css_selector(
+            ".dt-bulk-dropdown").click()
+        driver.find_element_by_css_selector(
+            "li.content-menu-item:nth-child(2)").click()
+        time.sleep(1)
+        assert os.path.isfile(os.path.join(
+            self.download_dir, 'bibliography.zip'))
+        os.remove(os.path.join(self.download_dir, 'bibliography.zip'))
+        # Delete through dropdown menu
+        driver.find_element_by_css_selector(
+            "#bibliography > tbody > tr > td:nth-child(1) > label").click()
+        driver.find_element_by_css_selector(
+            ".dt-bulk-dropdown").click()
+        driver.find_element_by_css_selector(
+            "li.content-menu-item:nth-child(1)").click()
+        driver.find_element_by_css_selector(
+            "button.fw-dark").click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.staleness_of(entries[0])
+        )
+        entries = self.driver.find_elements_by_css_selector(
+            '.fw-data-table .edit-bib'
+        )
+        self.assertEqual(
+            len(entries),
+            0
+        )
+        # Delete category
+        driver.find_element_by_css_selector(
+            "button[title='Edit categories']").click()
+        category_inputs = self.driver.find_elements_by_css_selector(
+            '#editCategoryList tr'
+        )
+        self.assertEqual(
+            len(category_inputs),
+            4
+        )
+        driver.find_element_by_css_selector(
+            ".fw-add-input.icon-addremove").click()
+        driver.find_element_by_css_selector(
+            "button.fw-dark").click()
+        driver.find_element_by_css_selector(
+            "button[title='Edit categories']").click()
+        category_inputs = self.driver.find_elements_by_css_selector(
+            '#editCategoryList tr'
+        )
+        self.assertEqual(
+            len(category_inputs),
+            3
         )
 
     def tearDown(self):

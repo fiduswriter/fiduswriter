@@ -238,7 +238,7 @@ export class BibliographyOverview {
         const buttons = [
             {
                 text: gettext('Delete'),
-                class: "fw-dark",
+                classes: "fw-dark",
                 click: () => {
                     this.deleteBibEntries(ids)
                     dialog.close()
@@ -253,7 +253,6 @@ export class BibliographyOverview {
             id: 'confirmdeletion',
             title: gettext('Confirm deletion'),
             body: `<p>${gettext('Delete the bibliography item(s)')}?</p>`,
-            height: 180,
             buttons,
             icon: 'exclamation-triangle'
         })

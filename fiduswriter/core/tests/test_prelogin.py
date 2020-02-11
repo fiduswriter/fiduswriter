@@ -1,3 +1,4 @@
+import time
 from selenium.webdriver.common.by import By
 from testing.testcases import LiveTornadoTestCase
 from testing.selenium_helper import SeleniumHelper
@@ -29,6 +30,7 @@ class PreloginTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             "a[href='/pages/terms/']"
         ).click()
+        time.sleep(1)
         self.assertEqual(
             self.driver.find_element(
                 By.CSS_SELECTOR,

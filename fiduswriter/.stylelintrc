@@ -13,7 +13,7 @@
         "csstools/value-no-unknown-custom-properties": [
             true,
             {
-                "importFrom": ["../base/static/css/colors.css"]
+                "importFrom": ["../core/static/css/colors.css"]
             }
         ]
     }

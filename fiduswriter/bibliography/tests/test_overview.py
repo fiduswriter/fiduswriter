@@ -256,6 +256,7 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
         # Delete through dropdown menu
         driver.find_element_by_css_selector(
             "#bibliography > tbody > tr > td:nth-child(1) > label").click()
+        time.sleep(1)
         driver.find_element_by_css_selector(
             ".dt-bulk-dropdown").click()
         driver.find_element_by_css_selector(

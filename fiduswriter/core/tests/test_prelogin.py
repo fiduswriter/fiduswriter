@@ -24,8 +24,7 @@ class PreloginTest(LiveTornadoTestCase, SeleniumHelper):
         super(PreloginTest, cls).tearDownClass()
 
     def test_flatpage(self):
-        driver = self.driver
-        driver.get(self.base_url + "/")
+        self.driver.get(self.base_url + "/")
         self.driver.find_element(
             By.CSS_SELECTOR,
             "a[href='/pages/terms/']"

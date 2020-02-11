@@ -319,6 +319,10 @@ export class Editor {
             this.render()
             activateWait(true)
             this.initEditor()
+
+            this.ws.ws.addEventListener('close',(event)=>{
+                this.menu.toolbarViews.forEach(view => view.update())
+            })
         })
     }
 

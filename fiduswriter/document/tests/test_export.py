@@ -530,7 +530,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         assert os.path.isfile(
             os.path.join(self.download_dir, 'title.fidus')
         )
-        os.remove(os.path.join(self.download_dir, 'title.fidus'))
+        # We keep the file to test import below
         self.driver.find_element_by_css_selector(
             '.recreate-revision'
         ).click()
@@ -599,3 +599,35 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
             len(documents),
             0
         )
+        # We delete the image so our import will cause an image import
+        self.driver.find_element_by_css_selector(
+            "a[href='/usermedia/']"
+        ).click()
+        self.driver.find_element_by_css_selector(
+            ".delete-image"
+        ).click()
+        self.driver.find_element_by_css_selector(
+            ".fw-dark"
+        ).click()
+        # We import the fidus file
+        self.driver.find_element_by_css_selector(
+            "a[href='/']"
+        ).click()
+        self.driver.find_element_by_css_selector(
+            "button[title='Upload Fidus document']"
+        ).click()
+        self.driver.find_element_by_css_selector(
+            "#fidus-uploader"
+        ).send_keys(os.path.join(self.download_dir, 'title.fidus'))
+        self.driver.find_element_by_css_selector(
+            ".fw-dark"
+        ).click()
+        documents = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr a.doc-title'
+        )
+        self.assertEqual(
+            len(documents),
+            1
+        )
+        # We delete our downloaded fidus file
+        os.remove(os.path.join(self.download_dir, 'title.fidus'))

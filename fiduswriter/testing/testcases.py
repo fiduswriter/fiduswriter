@@ -5,7 +5,6 @@ import os
 import socket
 import sys
 import threading
-from unittest import skipIf         # NOQA: Imported here for backward compatibility
 
 from django.core.exceptions import ImproperlyConfigured
 from django.db import connections
@@ -13,15 +12,13 @@ from django.utils import six
 from django.test.testcases import TransactionTestCase
 
 from tornado.ioloop import IOLoop
+from tornado.platform.asyncio import AnyThreadEventLoopPolicy
+from asyncio import set_event_loop_policy
 
 from core.servers.tornado_django_hybrid import make_tornado_server
 
-try:
-    from asyncio import set_event_loop_policy
-    from tornado.platform.asyncio import AnyThreadEventLoopPolicy
-    set_event_loop_policy(AnyThreadEventLoopPolicy())
-except ImportError:
-    pass
+
+set_event_loop_policy(AnyThreadEventLoopPolicy())
 
 
 class LiveTornadoThread(threading.Thread):

@@ -457,17 +457,25 @@ export class Editor {
     // Collect all components of the current doc. Needed for saving and export
     // filters
     getDoc(options={}) {
-        const pmArticle = options.changes === 'acceptAllNoInsertions' ?
+        let pmArticle;
+        if(this.ws.connected){
+            pmArticle = options.changes === 'acceptAllNoInsertions' ?
             acceptAllNoInsertions(this.docInfo.confirmedDoc).firstChild :
             this.docInfo.confirmedDoc.firstChild
-            let title = ""
-            pmArticle.firstChild.forEach(
-                child => {
-                    if (!child.marks.find(mark => mark.type.name==='deletion')) {
-                        title += child.textContent
-                    }
+        } else {
+            pmArticle = options.changes === 'acceptAllNoInsertions' ?
+            acceptAllNoInsertions(this.currentView.docView.node).firstChild :
+            this.currentView.docView.node.firstChild
+        }
+
+        let title = ""
+        pmArticle.firstChild.forEach(
+            child => {
+                if (!child.marks.find(mark => mark.type.name==='deletion')) {
+                    title += child.textContent
                 }
-            )
+            }
+        )
         return {
             contents: pmArticle.toJSON(),
             settings: getSettings(pmArticle),

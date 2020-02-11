@@ -63,7 +63,7 @@ class Command(BaseCommand):
                 "loaddata",
                 os.path.join(
                     settings.SRC_PATH,
-                    "base/fixtures/initial_terms.json"
+                    "core/fixtures/initial_terms.json"
                 )
             )
         if (

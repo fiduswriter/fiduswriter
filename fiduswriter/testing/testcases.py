@@ -14,7 +14,7 @@ from django.test.testcases import TransactionTestCase
 
 from tornado.ioloop import IOLoop
 
-from base.servers.tornado_django_hybrid import make_tornado_server
+from core.servers.tornado_django_hybrid import make_tornado_server
 
 try:
     from asyncio import set_event_loop_policy

@@ -8,7 +8,7 @@ from django.conf import settings
 from django.shortcuts import HttpResponseRedirect
 from django.views.decorators.http import require_POST
 
-from base.decorators import ajax_required
+from core.decorators import ajax_required
 from .forms import UserForm, TeamMemberForm
 from . import util as userutil
 from document.models import AccessRight, AccessRightInvite

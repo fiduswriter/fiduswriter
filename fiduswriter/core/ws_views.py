@@ -1,4 +1,4 @@
-from base.ws_handler import BaseWebSocketHandler
+from .ws_handler import BaseWebSocketHandler
 
 
 class WebSocket(BaseWebSocketHandler):

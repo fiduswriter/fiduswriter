@@ -12,7 +12,7 @@ from tempfile import mkdtemp
 from django.conf import settings
 
 
-class TestStringMethods(unittest.TestCase):
+class ManageTest(unittest.TestCase):
 
     def setUp(self):
         self.temp_dir = mkdtemp()

@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.views.decorators.http import require_POST
 
-from base.decorators import ajax_required
+from core.decorators import ajax_required
 from document.models import DocumentTemplate
 from document.helpers.serializers import PythonWithURLSerializer
 

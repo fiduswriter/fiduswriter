@@ -40,7 +40,7 @@ class Command(makemessages.Command):
             for file in files:
                 # We need to copy the JS files first, as otherwise babel will
                 # attempt to read package.json files in subdirs, such as
-                # base/package.json
+                # core/package.json
                 in_path = urllib.parse.urljoin(
                     self.temp_dir_in + '/',
                     file.dirpath

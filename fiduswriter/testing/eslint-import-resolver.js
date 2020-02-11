@@ -24,7 +24,7 @@ exports.resolve = function(source, file, config) {
     }
 
     const djangoApps = [
-        'base',
+        'core',
         'bibliography',
         'browser_check',
         'document',

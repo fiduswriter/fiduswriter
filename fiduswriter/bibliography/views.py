@@ -8,7 +8,7 @@ from django.db.models import Max, Count
 from django.core.serializers.python import Serializer
 from django.views.decorators.http import require_POST
 
-from base.decorators import ajax_required
+from core.decorators import ajax_required
 
 from bibliography.models import (
     Entry,

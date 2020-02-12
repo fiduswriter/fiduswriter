@@ -11,6 +11,7 @@ from selenium.common.exceptions import StaleElementReferenceException
 
 from django.core import mail
 from django.conf import settings
+from django.contrib.auth.models import User
 
 
 class ProfileTest(LiveTornadoTestCase, SeleniumHelper):
@@ -312,6 +313,36 @@ class ProfileTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             ".fw-contents.prelogin h1"
         ).text == "Thanks for verifying!"
+        # Log in and delete account
+        self.login_user(user2, self.driver, self.client)
+        self.driver.get(self.base_url + "/")
+        driver.find_element_by_id("preferences-btn").click()
+        driver.find_element_by_css_selector(".fw-avatar-card").click()
+        driver.find_element_by_id("delete-account").click()
+        driver.find_element_by_id("username-confirmation").send_keys(
+            'Yeti2'
+        )
+        driver.find_element_by_id("password").send_keys(
+            'otter1'
+        )
+        self.assertEqual(
+            len(User.objects.filter(username='Yeti2')),
+            1
+        )
+        driver.find_element_by_css_selector(".ui-dialog .fw-dark").click()
+        time.sleep(1)
+        login_header = self.driver.find_elements(
+            By.CSS_SELECTOR,
+            "h1.fw-login-title"
+        )
+        self.assertEqual(
+            len(login_header),
+            1
+        )
+        self.assertEqual(
+            len(User.objects.filter(username='Yeti2')),
+            0
+        )
 
     def is_element_present(self, how, what):
         try:

@@ -482,11 +482,73 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         self.driver.find_element(
             By.CSS_SELECTOR,
+            "#my-contacts"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "tr:nth-child(3) .fa-caret-down"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "tr:nth-child(3) .fw-pulldown-item[data-rights=write]"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#my-contacts"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
             ".ui-dialog .fw-dark"
         ).click()
         time.sleep(1)
         # We keep track of the invitation email to open it later.
         user4_invitation_email = mail.outbox[-1].body
+        #  Reopen the share dialog and add a fifth user
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".header-menu:nth-child(1) > .header-nav-item"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "li:nth-child(1) > .fw-pulldown-item"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".ui-dialog .fw-add-button"
+        ).click()
+        self.driver.find_element(
+            By.ID,
+            "new-member-user-string"
+        ).click()
+        self.driver.find_element(By.ID, "new-member-user-string").send_keys(
+            "yeti5@snowman.com"
+        )
+        ActionChains(self.driver).send_keys(
+            Keys.TAB
+        ).send_keys(
+            Keys.RETURN
+        ).perform()
+        # Downgrade the write rights to read rights for user4
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "tr:nth-child(3) .fa-caret-down.edit-right"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "tr:nth-child(3) .fw-pulldown-item[data-rights=read]"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#my-contacts"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".ui-dialog .fw-dark"
+        ).click()
+        time.sleep(1)
+        # We keep track of the invitation email to open it later.
+        user5_invitation_email = mail.outbox[-1].body
+        # We close the editor
         self.driver.find_element(
             By.ID,
             "close-document-top"
@@ -847,7 +909,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(
             By.ID,
             'id_username'
-        ).send_keys('Yeti5')
+        ).send_keys('Yeti4')
         self.driver.find_element(
             By.ID,
             'id_password1'
@@ -859,7 +921,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(
             By.ID,
             'id_email'
-        ).send_keys('yeti5@snowman.com')
+        ).send_keys('yeti4a@snowman.com')
         self.driver.find_element(
             By.ID,
             'signup-submit'
@@ -868,7 +930,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             EC.presence_of_element_located(
                 (
                     By.CSS_SELECTOR,
-                    'a[href="mailto:yeti5@snowman.com"]'
+                    'a[href="mailto:yeti4a@snowman.com"]'
                 )
             )
         )
@@ -901,6 +963,39 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             'a[href="/"]'
         ).click()
+        self.driver.find_element(By.ID, "id_login").send_keys("Yeti4")
+        self.driver.find_element(By.ID, "id_password").send_keys("password")
+        self.driver.find_element(By.ID, "login-submit").click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.CSS_SELECTOR,
+                    ".new_document button"
+                )
+            )
+        )
+        documents = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr a.doc-title'
+        )
+        self.assertEqual(
+            len(documents),
+            1
+        )
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#preferences-btn"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".fw-logout-button"
+        ).click()
+        # User 5 signs up with a different email first and then clicks the
+        # invitation link. This should land user 5 directly in the editor.
+        user5 = self.create_user(
+            username='Yeti5',
+            email='yeti5a@snowman.com',
+            passtext='password'
+        )
         self.driver.find_element(By.ID, "id_login").send_keys("Yeti5")
         self.driver.find_element(By.ID, "id_password").send_keys("password")
         self.driver.find_element(By.ID, "login-submit").click()
@@ -913,7 +1008,26 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             )
         )
         documents = self.driver.find_elements_by_css_selector(
-            '.fw-contents tbody tr'
+            '.fw-contents tbody tr a.doc-title'
+        )
+        self.assertEqual(
+            len(documents),
+            0
+        )
+        invitation_link = self.find_urls(user5_invitation_email)[0]
+        self.driver.get(invitation_link)
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.CLASS_NAME, 'editor-toolbar'))
+        )
+        self.driver.find_element(
+            By.ID,
+            "close-document-top"
+        ).click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable((By.ID, 'preferences-btn'))
+        )
+        documents = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr a.doc-title'
         )
         self.assertEqual(
             len(documents),

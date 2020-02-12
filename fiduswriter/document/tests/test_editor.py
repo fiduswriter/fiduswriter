@@ -991,7 +991,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         # User 5 signs up with a different email first and then clicks the
         # invitation link. This should land user 5 directly in the editor.
-        user5 = self.create_user(
+        self.create_user(
             username='Yeti5',
             email='yeti5a@snowman.com',
             passtext='password'

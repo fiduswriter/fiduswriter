@@ -58,8 +58,8 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         self.assertEqual(
             self.driver2.find_element(
-                By.ID,
-                "session_count"
+                By.CSS_SELECTOR,
+                "#session_count:not(:empty)"
             ).text,
             '1'
         )

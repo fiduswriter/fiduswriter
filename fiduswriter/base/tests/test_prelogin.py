@@ -1,5 +1,6 @@
-import time
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from testing.testcases import LiveTornadoTestCase
 from testing.selenium_helper import SeleniumHelper
 
@@ -30,10 +31,8 @@ class PreloginTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             "a[href='/pages/terms/']"
         ).click()
-        time.sleep(2)
-        h3 = self.driver.find_element(
-            By.CSS_SELECTOR,
-            "h3"
+        h3 = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, 'h3'))
         )
         self.assertEqual(
             h3.text,
@@ -43,11 +42,13 @@ class PreloginTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             "a[href='/pages/privacy/']"
         ).click()
+        h3 = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, 'h3:nth-child(4)')
+            )
+        )
         self.assertEqual(
-            self.driver.find_element(
-                By.CSS_SELECTOR,
-                "h3:nth-child(4)"
-            ).text,
+            h3.text,
             'B. Collecting personal information'
         )
 

@@ -7,6 +7,7 @@ from testing.selenium_helper import SeleniumHelper
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait, Select
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 from django.conf import settings
 
@@ -323,6 +324,9 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
 
         # click on 'Insert' button
         self.driver.find_element_by_css_selector("button.fw-dark").click()
+        ActionChains(self.driver).send_keys(
+            Keys.RIGHT
+        ).perform()
         self.driver.find_element(By.CSS_SELECTOR, ".fa-table").click()
         self.driver.find_element(
             By.CSS_SELECTOR,

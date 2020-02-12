@@ -17,6 +17,7 @@ import {OfflinePage} from "../offline"
 import {SetupPage} from "../setup"
 import {FlatPage} from "../flatpage"
 import * as plugins from "../../plugins/app"
+import { indexedDB } from '../indexed-db'
 
 export class App {
     constructor(config = {}) {
@@ -149,6 +150,7 @@ export class App {
         this.imageDB = new ImageDB()
         this.csl = new CSL()
         this.connectWs()
+        this.indexedDB = new indexedDB(this)
         return Promise.all([
             this.bibDB.getDB(),
             this.imageDB.getDB(),

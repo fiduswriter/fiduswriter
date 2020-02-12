@@ -11,7 +11,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
 
-class EditorTest(LiveTornadoTestCase, SeleniumHelper):
+class AdminTest(LiveTornadoTestCase, SeleniumHelper):
     fixtures = [
         'initial_documenttemplates.json',
         'initial_styles.json',
@@ -19,7 +19,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
 
     @classmethod
     def setUpClass(cls):
-        super(EditorTest, cls).setUpClass()
+        super().setUpClass()
         cls.base_url = cls.live_server_url
         cls.download_dir = mkdtemp()
         cls.base_admin_url = cls.base_url + '/admin/'
@@ -33,7 +33,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
     def tearDownClass(cls):
         cls.driver.quit()
         os.rmdir(cls.download_dir)
-        super(EditorTest, cls).tearDownClass()
+        super().tearDownClass()
 
     def setUp(self):
         self.verificationErrors = []
@@ -59,6 +59,28 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
 
     def tearDown(self):
         self.leave_site(self.driver)
+
+    def test_maintenance(self):
+        self.driver.get(self.base_admin_url)
+        username = self.driver.find_element(By.ID, "id_username")
+        username.send_keys("Admin")
+        self.driver.find_element(By.ID, "id_password").send_keys("password")
+        self.driver.find_element(By.CSS_SELECTOR, "input[type=submit]").click()
+        time.sleep(2)
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "a[href='/admin/document/document/maintenance/']"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#update"
+        ).click()
+        self.assertEqual(
+            1,
+            len(self.driver.find_elements_by_css_selector(
+                '#update[disabled]'
+            ))
+        )
 
     def test_templates(self):
         self.driver.get(self.base_admin_url)

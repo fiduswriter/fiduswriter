@@ -16,7 +16,7 @@ class SeleniumHelper(object):
     """
 
     @classmethod
-    def get_drivers(cls, number, download_dir=False):
+    def get_drivers(cls, number, download_dir=False, user_agent=False):
         # django native clients, to be used for faster login.
         clients = []
         for i in range(number):
@@ -31,6 +31,8 @@ class SeleniumHelper(object):
                 "download.directory_upgrade": True
             }
             options.add_experimental_option("prefs", prefs)
+        if user_agent:
+            options.add_argument("user-agent=%s".format(user_agent))
         if os.getenv("CI"):
             options.binary_location = '/usr/bin/google-chrome-stable'
             options.add_argument('--headless')

@@ -6,7 +6,7 @@ from testing.testcases import LiveTornadoTestCase
 from testing.selenium_helper import SeleniumHelper
 
 
-class CoreAdminTest(LiveTornadoTestCase, SeleniumHelper):
+class AdminTest(LiveTornadoTestCase, SeleniumHelper):
 
     @classmethod
     def setUpClass(cls):

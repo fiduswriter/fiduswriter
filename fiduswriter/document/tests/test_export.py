@@ -22,7 +22,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
 
     @classmethod
     def setUpClass(cls):
-        super(ExportTest, cls).setUpClass()
+        super().setUpClass()
         cls.base_url = cls.live_server_url
         cls.download_dir = mkdtemp()
         driver_data = cls.get_drivers(1, cls.download_dir)
@@ -35,7 +35,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
     def tearDownClass(cls):
         cls.driver.quit()
         os.rmdir(cls.download_dir)
-        super(ExportTest, cls).tearDownClass()
+        super().tearDownClass()
 
     def setUp(self):
         self.verificationErrors = []

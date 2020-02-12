@@ -21,7 +21,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
 
     @classmethod
     def setUpClass(cls):
-        super(OfflineTests, cls).setUpClass()
+        super().setUpClass()
         driver_data = cls.get_drivers(2)
         cls.driver = driver_data["drivers"][0]
         cls.driver2 = driver_data["drivers"][1]
@@ -33,7 +33,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
     def tearDownClass(cls):
         cls.driver.quit()
         cls.driver2.quit()
-        super(OfflineTests, cls).tearDownClass()
+        super().tearDownClass()
 
     def setUp(self):
         self.user = self.create_user()

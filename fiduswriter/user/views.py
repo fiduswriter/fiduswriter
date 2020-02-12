@@ -487,7 +487,7 @@ class FidusSignupView(SignupView):
     def form_valid(self, form):
         if not settings.REGISTRATION_OPEN:
             return HttpResponseRedirect('/')
-        ret = super(FidusSignupView, self).form_valid(form)
+        ret = super().form_valid(form)
         if ret.status_code > 399:
             return ret
         if 'invite_id' in self.request.POST:

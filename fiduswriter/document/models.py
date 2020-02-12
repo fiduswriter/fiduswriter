@@ -54,7 +54,7 @@ class DocumentTemplate(models.Model):
 
     @classmethod
     def check(cls, **kwargs):
-        errors = super(DocumentTemplate, cls).check(**kwargs)
+        errors = super().check(**kwargs)
         errors.extend(cls._check_doc_versions(**kwargs))
         return errors
 
@@ -150,7 +150,7 @@ class Document(models.Model):
 
     @classmethod
     def check(cls, **kwargs):
-        errors = super(Document, cls).check(**kwargs)
+        errors = super().check(**kwargs)
         errors.extend(cls._check_doc_versions(**kwargs))
         return errors
 
@@ -278,7 +278,7 @@ class DocumentRevision(models.Model):
             # pk as the name of the saved revision file.
             file_object = self.file_object
             self.file_object = None
-            super(DocumentRevision, self).save(*args, **kwargs)
+            super().save(*args, **kwargs)
             self.file_object = file_object
             kwargs.pop('force_insert', None)
         super(DocumentRevision, self).save(*args, **kwargs)
@@ -292,7 +292,7 @@ class DocumentRevision(models.Model):
 
     @classmethod
     def check(cls, **kwargs):
-        errors = super(DocumentRevision, cls).check(**kwargs)
+        errors = super().check(**kwargs)
         errors.extend(cls._check_doc_versions(**kwargs))
         return errors
 

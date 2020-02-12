@@ -11,7 +11,7 @@ class PreloginTest(LiveTornadoTestCase, SeleniumHelper):
 
     @classmethod
     def setUpClass(cls):
-        super(PreloginTest, cls).setUpClass()
+        super().setUpClass()
         cls.base_url = cls.live_server_url
         driver_data = cls.get_drivers(1)
         cls.driver = driver_data["drivers"][0]
@@ -22,7 +22,7 @@ class PreloginTest(LiveTornadoTestCase, SeleniumHelper):
     @classmethod
     def tearDownClass(cls):
         cls.driver.quit()
-        super(PreloginTest, cls).tearDownClass()
+        super().tearDownClass()
 
     def test_flatpage(self):
         self.driver.get(self.base_url + "/")

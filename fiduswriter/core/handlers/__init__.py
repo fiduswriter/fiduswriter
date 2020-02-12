@@ -30,7 +30,7 @@ class RobotsHandler(RequestHandler):
 class DjangoStaticFilesHandler(StaticFileHandler):
 
     def initialize(self, default_filename=None):
-        super(DjangoStaticFilesHandler, self).initialize(None,
+        super().initialize(None,
                                                          default_filename=None)
 
     def validate_absolute_path(self, root, absolute_path):
@@ -95,7 +95,7 @@ class SetupStaticFilesHandler(StaticFileHandler):
             adjusted_path = 'index.html'
         else:
             adjusted_path = path
-        return super(SetupStaticFilesHandler, cls).get_absolute_path(
+        return super().get_absolute_path(
             root,
             adjusted_path
         )

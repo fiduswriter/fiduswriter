@@ -38,7 +38,7 @@ class LiveTornadoThread(threading.Thread):
         self.error = None
         self.static_handler = static_handler
         self.connections_override = connections_override
-        super(LiveTornadoThread, self).__init__()
+        super().__init__()
 
     def run(self):
         """
@@ -164,7 +164,7 @@ class LiveTornadoTestCase(TransactionTestCase):
         cls.live_server_url = 'http://%s:%s' % (
             cls.server_thread.host, cls.server_thread.port)
 
-        super(LiveTornadoTestCase, cls).setUpClass()
+        super().setUpClass()
 
     @classmethod
     def _tearDownClassInternal(cls):
@@ -182,4 +182,4 @@ class LiveTornadoTestCase(TransactionTestCase):
     @classmethod
     def tearDownClass(cls):
         cls._tearDownClassInternal()
-        super(LiveTornadoTestCase, cls).tearDownClass()
+        super().tearDownClass()

@@ -63,7 +63,7 @@ class Command(django.core.management.commands.loaddata.Command):
         fixture_paths = (join(path, 'media') for path in fixture_paths)
         fixture_paths = [path for path in fixture_paths if isdir(path)]
         self.fixture_media_paths = fixture_paths
-        return_value = super(Command, self).handle(*fixture_labels, **options)
+        return_value = super().handle(*fixture_labels, **options)
         # Disconnect signal listeners
         for modelclass in models_with_filefields():
             signals.pre_save.disconnect(

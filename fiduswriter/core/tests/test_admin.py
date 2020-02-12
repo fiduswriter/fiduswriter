@@ -10,7 +10,7 @@ class CoreAdminTest(LiveTornadoTestCase, SeleniumHelper):
 
     @classmethod
     def setUpClass(cls):
-        super(CoreAdminTest, cls).setUpClass()
+        super().setUpClass()
         cls.base_url = cls.live_server_url
         cls.base_admin_url = cls.base_url + '/admin/'
         driver_data = cls.get_drivers(2)
@@ -26,7 +26,7 @@ class CoreAdminTest(LiveTornadoTestCase, SeleniumHelper):
     def tearDownClass(cls):
         cls.driver.quit()
         cls.driver2.quit()
-        super(CoreAdminTest, cls).tearDownClass()
+        super().tearDownClass()
 
     def setUp(self):
         self.admin = self.create_user(

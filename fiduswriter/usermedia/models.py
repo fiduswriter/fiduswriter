@@ -174,7 +174,7 @@ class Image(models.Model):
         self.check_filetype()
         self.create_thumbnail()
 
-        super(Image, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
 
 # Image linked to a particular User.

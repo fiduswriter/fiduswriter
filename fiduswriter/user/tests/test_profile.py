@@ -17,7 +17,7 @@ class EditProfileTest(LiveTornadoTestCase, SeleniumHelper):
 
     @classmethod
     def setUpClass(cls):
-        super(EditProfileTest, cls).setUpClass()
+        super().setUpClass()
         cls.base_url = cls.live_server_url
         driver_data = cls.get_drivers(1)
         cls.driver = driver_data["drivers"][0]
@@ -28,7 +28,7 @@ class EditProfileTest(LiveTornadoTestCase, SeleniumHelper):
     @classmethod
     def tearDownClass(cls):
         cls.driver.quit()
-        super(EditProfileTest, cls).tearDownClass()
+        super().tearDownClass()
 
     def setUp(self):
         self.verificationErrors = []

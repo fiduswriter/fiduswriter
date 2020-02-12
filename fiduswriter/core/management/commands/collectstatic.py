@@ -7,4 +7,4 @@ from npm_mjs.management.commands.collectstatic import (
 class Command(CollectStaticCommand):
     def handle(self, *args, **options):
         call_command("transpile")
-        return super(Command, self).handle(*args, **options)
+        return super().handle(*args, **options)

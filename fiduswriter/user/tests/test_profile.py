@@ -13,7 +13,7 @@ from django.core import mail
 from django.conf import settings
 
 
-class EditProfileTest(LiveTornadoTestCase, SeleniumHelper):
+class ProfileTest(LiveTornadoTestCase, SeleniumHelper):
 
     @classmethod
     def setUpClass(cls):

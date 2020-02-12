@@ -1,8 +1,7 @@
 from django import template
-from django.templatetags.static import PrefixNode
-from django.apps import apps
 from django.conf import settings
 from allauth.socialaccount.models import providers
+from django.contrib.staticfiles.storage import staticfiles_storage
 
 register = template.Library()
 
@@ -14,19 +13,6 @@ def fiduswriter_config_js(context):
     Usage::
         {% fiduswriter_config_js %}
     """
-    if apps.is_installed('django.contrib.staticfiles'):
-        from django.contrib.staticfiles.storage import staticfiles_storage
-        static_url = staticfiles_storage.base_url
-    else:
-        static_url = PrefixNode.handle_simple("STATIC_URL")
-    if hasattr(settings, 'WS_PORT'):
-        ws_port = settings.WS_PORT
-    else:
-        ws_port = ''
-    if hasattr(settings, 'WS_SERVER'):
-        ws_server = settings.WS_SERVER
-    else:
-        ws_server = ''
     socialaccount_providers = []
     for provider in providers.registry.get_list():
         socialaccount_providers.append({
@@ -35,9 +21,9 @@ def fiduswriter_config_js(context):
             'login_url': provider.get_login_url(context['request'])
         })
     return {
-        'static_url': static_url,
-        'ws_port': ws_port,
-        'ws_server': ws_server,
+        'static_url': staticfiles_storage.base_url,
+        'ws_port': getattr(settings, 'WS_PORT', ''),
+        'ws_server': getattr(settings, 'WS_SERVER', ''),
         'contact_email': settings.CONTACT_EMAIL,
         'test_server': (
             'true' if settings.TEST_SERVER else 'false'

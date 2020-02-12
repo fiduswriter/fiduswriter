@@ -10,7 +10,7 @@ class PythonWithURLSerializer(PythonSerializer):
         if isinstance(field, models.FileField) and hasattr(value, 'url'):
             self._current[field.name] = value.url
         else:
-            return super(PythonWithURLSerializer, self).handle_field(
+            return super().handle_field(
                 obj,
                 field
             )
@@ -42,5 +42,4 @@ class PythonWithURLSerializer(PythonSerializer):
                     ).iterator()
                 ]
 
-        return super(PythonWithURLSerializer, self).end_object(obj)
-        # if field.remote_field.through._meta.auto_created:
+        return super().end_object(obj)

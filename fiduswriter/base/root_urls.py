@@ -10,9 +10,9 @@ from django.conf import settings
 from django.views.i18n import JavaScriptCatalog
 from django.views.static import serve as static_serve
 
-from base.views import app as app_view
-from base.views import admin_console as admin_console_view
-from base.views import manifest_json
+from .views import app as app_view
+from .views import admin_console as admin_console_view
+from .views import manifest_json
 
 
 admin.site.site_header = settings.ADMIN_SITE_HEADER

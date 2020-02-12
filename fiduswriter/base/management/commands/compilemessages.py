@@ -11,4 +11,4 @@ class Command(CompilemessagesCommand):
                 'Using packaged version. Skipping compile messages.'
             )
         else:
-            return super(Command, self).handle(*args, **options)
+            return super().handle(*args, **options)

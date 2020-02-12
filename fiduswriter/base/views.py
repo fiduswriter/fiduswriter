@@ -3,6 +3,9 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.flatpages.models import FlatPage
 from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+
+from .decorators import ajax_required
 
 
 @ensure_csrf_cookie
@@ -29,6 +32,8 @@ def admin_console(request):
     return render(request, 'admin/console.html')
 
 
+@ajax_required
+@require_POST
 def flatpage(request):
     """
     Models: `flatpages.flatpages`
@@ -38,14 +43,13 @@ def flatpage(request):
     """
     response = {}
     status = 404
-    if request.is_ajax() and request.method == 'POST':
-        url = request.POST['url']
-        site_id = get_current_site(request).id
-        flatpage = FlatPage.objects.filter(url=url, sites=site_id).first()
-        if flatpage:
-            status = 200
-            response['title'] = flatpage.title
-            response['content'] = flatpage.content
+    url = request.POST['url']
+    site_id = get_current_site(request).id
+    flatpage = FlatPage.objects.filter(url=url, sites=site_id).first()
+    if flatpage:
+        status = 200
+        response['title'] = flatpage.title
+        response['content'] = flatpage.content
     return JsonResponse(
         response,
         status=status

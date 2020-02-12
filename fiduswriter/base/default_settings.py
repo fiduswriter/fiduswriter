@@ -140,9 +140,9 @@ BASE_MIDDLEWARE = [
 MIDDLEWARE = []
 
 
-# The location of the top urls.py file inside the core folder.
+# The location of the top urls.py file inside the base folder.
 # You only need to change this in very advanced setups.
-ROOT_URLCONF = 'core.urls'
+ROOT_URLCONF = 'base.root_urls'
 
 TEMPLATES = [
     {
@@ -201,7 +201,7 @@ BASE_INSTALLED_APPS = [
 # These are additional apps to be overriden by configuration.py
 INSTALLED_APPS = []
 
-# These are apps that are removed from base apps overriden by configuration.py
+# These are apps that are removed from core apps overriden by configuration.py
 REMOVED_APPS = []
 
 

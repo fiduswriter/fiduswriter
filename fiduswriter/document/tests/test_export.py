@@ -7,6 +7,7 @@ from testing.selenium_helper import SeleniumHelper
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait, Select
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 from django.conf import settings
 
@@ -21,7 +22,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
 
     @classmethod
     def setUpClass(cls):
-        super(ExportTest, cls).setUpClass()
+        super().setUpClass()
         cls.base_url = cls.live_server_url
         cls.download_dir = mkdtemp()
         driver_data = cls.get_drivers(1, cls.download_dir)
@@ -34,7 +35,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
     def tearDownClass(cls):
         cls.driver.quit()
         os.rmdir(cls.download_dir)
-        super(ExportTest, cls).tearDownClass()
+        super().tearDownClass()
 
     def setUp(self):
         self.verificationErrors = []
@@ -323,6 +324,9 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
 
         # click on 'Insert' button
         self.driver.find_element_by_css_selector("button.fw-dark").click()
+        ActionChains(self.driver).send_keys(
+            Keys.RIGHT
+        ).perform()
         self.driver.find_element(By.CSS_SELECTOR, ".fa-table").click()
         self.driver.find_element(
             By.CSS_SELECTOR,
@@ -530,4 +534,104 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         assert os.path.isfile(
             os.path.join(self.download_dir, 'title.fidus')
         )
+        # We keep the file to test import below
+        self.driver.find_element_by_css_selector(
+            '.recreate-revision'
+        ).click()
+        self.assertEqual(
+            len(self.driver.find_elements_by_css_selector(
+                '#revisions-dialog > table > tbody tr'
+            )),
+            1
+        )
+        self.driver.find_element_by_css_selector(
+            '.delete-revision'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            'button.fw-dark'
+        ).click()
+        time.sleep(1)
+        self.assertEqual(
+            len(self.driver.find_elements_by_css_selector(
+                '#revisions-dialog > table > tbody tr'
+            )),
+            0
+        )
+        self.driver.find_element_by_css_selector(
+            'button.fw-orange'
+        ).click()
+
+        # Delete document
+        documents = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr a.doc-title'
+        )
+        self.assertEqual(
+            len(documents),
+            2
+        )
+        self.driver.find_element_by_css_selector(
+            'tr:nth-child(1) > td > label'
+        ).click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, '.dt-bulk-dropdown'))
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Delete selected"]'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            'button.fw-dark'
+        ).click()
+        time.sleep(1)
+        documents = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr a.doc-title'
+        )
+        self.assertEqual(
+            len(documents),
+            1
+        )
+        self.driver.find_element_by_css_selector(
+            '.fw-contents tbody tr .delete-document'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            'button.fw-dark'
+        ).click()
+        time.sleep(1)
+        documents = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr a.doc-title'
+        )
+        self.assertEqual(
+            len(documents),
+            0
+        )
+        # We delete the image so our import will cause an image import
+        self.driver.find_element_by_css_selector(
+            "a[href='/usermedia/']"
+        ).click()
+        self.driver.find_element_by_css_selector(
+            ".delete-image"
+        ).click()
+        self.driver.find_element_by_css_selector(
+            ".fw-dark"
+        ).click()
+        # We import the fidus file
+        self.driver.find_element_by_css_selector(
+            "a[href='/']"
+        ).click()
+        self.driver.find_element_by_css_selector(
+            "button[title='Upload Fidus document']"
+        ).click()
+        self.driver.find_element_by_css_selector(
+            "#fidus-uploader"
+        ).send_keys(os.path.join(self.download_dir, 'title.fidus'))
+        self.driver.find_element_by_css_selector(
+            ".fw-dark"
+        ).click()
+        documents = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr a.doc-title'
+        )
+        self.assertEqual(
+            len(documents),
+            1
+        )
+        # We delete our downloaded fidus file
         os.remove(os.path.join(self.download_dir, 'title.fidus'))

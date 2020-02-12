@@ -1,4 +1,6 @@
 import time
+import os
+from tempfile import mkdtemp
 
 from testing.testcases import LiveTornadoTestCase
 from testing.selenium_helper import SeleniumHelper
@@ -9,7 +11,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
 
-class EditorTest(LiveTornadoTestCase, SeleniumHelper):
+class AdminTest(LiveTornadoTestCase, SeleniumHelper):
     fixtures = [
         'initial_documenttemplates.json',
         'initial_styles.json',
@@ -17,10 +19,11 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
 
     @classmethod
     def setUpClass(cls):
-        super(EditorTest, cls).setUpClass()
+        super().setUpClass()
         cls.base_url = cls.live_server_url
+        cls.download_dir = mkdtemp()
         cls.base_admin_url = cls.base_url + '/admin/'
-        driver_data = cls.get_drivers(1)
+        driver_data = cls.get_drivers(1, cls.download_dir)
         cls.driver = driver_data["drivers"][0]
         cls.client = driver_data["clients"][0]
         cls.driver.implicitly_wait(driver_data["wait_time"])
@@ -29,7 +32,8 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
     @classmethod
     def tearDownClass(cls):
         cls.driver.quit()
-        super(EditorTest, cls).tearDownClass()
+        os.rmdir(cls.download_dir)
+        super().tearDownClass()
 
     def setUp(self):
         self.verificationErrors = []
@@ -55,6 +59,28 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
 
     def tearDown(self):
         self.leave_site(self.driver)
+
+    def test_maintenance(self):
+        self.driver.get(self.base_admin_url)
+        username = self.driver.find_element(By.ID, "id_username")
+        username.send_keys("Admin")
+        self.driver.find_element(By.ID, "id_password").send_keys("password")
+        self.driver.find_element(By.CSS_SELECTOR, "input[type=submit]").click()
+        time.sleep(2)
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "a[href='/admin/document/document/maintenance/']"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#update"
+        ).click()
+        self.assertEqual(
+            1,
+            len(self.driver.find_elements_by_css_selector(
+                '#update[disabled]'
+            ))
+        )
 
     def test_templates(self):
         self.driver.get(self.base_admin_url)
@@ -211,7 +237,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         self.driver.find_element(
             By.CSS_SELECTOR,
-            "#id_user option[value='2']"
+            "#id_user > option:nth-child(3)"
         ).click()
         # Modify a document style
         self.driver.find_element(
@@ -240,11 +266,27 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             "[aria-describedby=confirmdeletion] button.fw-dark"
         ).click()
-        # Delete an export style
+        # Download export template file
         self.driver.find_element(
             By.CSS_SELECTOR,
             ".export-template"
         ).click()
+        export_template_link = self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".export-template-file a"
+        )
+        et_file = export_template_link.get_attribute("href").split('/')[-1]
+        export_template_link.click()
+        time.sleep(1)
+        assert os.path.isfile(
+            os.path.join(self.download_dir, et_file)
+        )
+        # Delete export template
+        old_len_export_templates = len(
+            self.driver.find_elements_by_css_selector(
+                '.export-template'
+            )
+        )
         self.driver.find_element(
             By.CSS_SELECTOR,
             "[aria-describedby=export-template-dialog] button.fw-orange"
@@ -253,7 +295,39 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             "[aria-describedby=confirmdeletion] button.fw-dark"
         ).click()
-
+        time.sleep(1)
+        len_export_templates = len(self.driver.find_elements_by_css_selector(
+            '.export-template'
+        ))
+        self.assertEqual(
+            old_len_export_templates - 1,
+            len_export_templates
+        )
+        old_len_export_templates = len_export_templates
+        # Upload export template file
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".export-template .fa-plus-circle"
+        ).click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".fw-media-file-input")
+            )
+        ).send_keys(os.path.join(self.download_dir, et_file))
+        time.sleep(1)
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".ui-dialog .fw-dark"
+        ).click()
+        time.sleep(1)
+        len_export_templates = len(self.driver.find_elements_by_css_selector(
+            '.export-template'
+        ))
+        self.assertEqual(
+            old_len_export_templates + 1,
+            len_export_templates
+        )
+        os.remove(os.path.join(self.download_dir, et_file))
         self.driver.find_element(
             By.CSS_SELECTOR,
             "input[type=submit]"

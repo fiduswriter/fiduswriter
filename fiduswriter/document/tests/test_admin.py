@@ -237,7 +237,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         self.driver.find_element(
             By.CSS_SELECTOR,
-            "#id_user option[value='2']"
+            "#id_user > option:nth-child(3)"
         ).click()
         # Modify a document style
         self.driver.find_element(

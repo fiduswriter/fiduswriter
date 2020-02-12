@@ -15,7 +15,7 @@ from tornado.ioloop import IOLoop
 from tornado.platform.asyncio import AnyThreadEventLoopPolicy
 from asyncio import set_event_loop_policy
 
-from core.servers.tornado_django_hybrid import make_tornado_server
+from base.servers.tornado_django_hybrid import make_tornado_server
 
 
 set_event_loop_policy(AnyThreadEventLoopPolicy())

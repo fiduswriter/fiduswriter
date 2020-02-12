@@ -5,7 +5,7 @@ from document.helpers.serializers import PythonWithURLSerializer
 from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_POST
 
-from core.decorators import ajax_required
+from base.decorators import ajax_required
 from .models import DocumentStyle, DocumentStyleFile, ExportTemplate
 from document.models import DocumentTemplate
 

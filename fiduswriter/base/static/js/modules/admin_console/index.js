@@ -16,7 +16,7 @@ export class AdminConsole {
 
     bind() {
         this.ws = new WebSocketConnector({
-            url: `${this.websocketUrl}/ws/core/`,
+            url: `${this.websocketUrl}/ws/base/`,
             appLoaded: () => true,
             initialMessage: () => ({type: 'subscribe_admin'}),
             receiveData: data => {

@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 
-from core.decorators import ajax_required
+from base.decorators import ajax_required
 from feedback.models import Feedback
 
 

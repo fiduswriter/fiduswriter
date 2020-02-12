@@ -30,12 +30,13 @@ class PreloginTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             "a[href='/pages/terms/']"
         ).click()
-        time.sleep(1)
+        time.sleep(2)
+        h3 = self.driver.find_element(
+            By.CSS_SELECTOR,
+            "h3"
+        )
         self.assertEqual(
-            self.driver.find_element(
-                By.CSS_SELECTOR,
-                "h3"
-            ).text,
+            h3.text,
             'Your Account and Documents on the Website'
         )
         self.driver.find_element(

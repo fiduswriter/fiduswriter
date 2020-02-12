@@ -9,7 +9,7 @@ def bundle_mathlive(sender, **kwargs):
 
 
 class BaseConfig(AppConfig):
-    name = 'core'
+    name = 'base'
 
     def ready(self):
         post_npm_install.connect(bundle_mathlive)

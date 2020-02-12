@@ -140,9 +140,9 @@ BASE_MIDDLEWARE = [
 MIDDLEWARE = []
 
 
-# The location of the top urls.py file inside the core folder.
+# The location of the top urls.py file inside the base folder.
 # You only need to change this in very advanced setups.
-ROOT_URLCONF = 'core.root_urls'
+ROOT_URLCONF = 'base.root_urls'
 
 TEMPLATES = [
     {
@@ -172,7 +172,7 @@ TEMPLATES = [
 # The following are the apps needed by Fidus Writer.
 
 BASE_INSTALLED_APPS = [
-    'core',
+    'base',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -331,4 +331,4 @@ JAVASCRIPT_ERROR_BLACKLIST = [
 ]
 
 # The page to show while transpilation takes place.
-SETUP_PAGE_PATH = os.path.join(SRC_PATH, 'core/setup_page/')
+SETUP_PAGE_PATH = os.path.join(SRC_PATH, 'base/setup_page/')

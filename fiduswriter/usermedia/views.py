@@ -7,7 +7,7 @@ from django.core.serializers.python import Serializer
 from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_POST
 
-from core.decorators import ajax_required
+from base.decorators import ajax_required
 from usermedia.models import Image, ImageCategory, UserImage
 from .models import ALLOWED_FILETYPES
 

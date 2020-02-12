@@ -25,8 +25,8 @@ from bibliography.models import Entry
 from document.helpers.serializers import PythonWithURLSerializer
 from bibliography.views import serializer
 from style.models import DocumentStyle
-from core.html_email import html_email
-from core.decorators import ajax_required
+from base.html_email import html_email
+from base.decorators import ajax_required
 from user.models import TeamMember
 
 
@@ -1235,7 +1235,7 @@ def add_images_to_doc(request):
             image.pk = id
             image.uploader = doc.owner
             f = open(os.path.join(
-                settings.PROJECT_PATH, "core/static/img/error.png"
+                settings.PROJECT_PATH, "base/static/img/error.png"
             ))
             image.image.save('error.png', File(f))
             image.save()

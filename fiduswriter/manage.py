@@ -41,7 +41,7 @@ def inner(default_project_path):
     # There are three levels of settings, each overiding the previous one:
     # global_settings.py, default_settings.py and configuration.py
     from django.conf import global_settings as CONFIGURATION
-    from core import default_settings
+    from base import default_settings
     SETTINGS_PATHS = [default_settings.__file__]
     for setting in dir(default_settings):
         setting_value = getattr(default_settings, setting)

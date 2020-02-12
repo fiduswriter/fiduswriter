@@ -9,7 +9,7 @@ from jsonpatch import apply_patch, JsonPatchConflict, JsonPointerException
 
 from document.helpers.session_user_info import SessionUserInfo
 from document.helpers.serializers import PythonWithURLSerializer
-from core.ws_handler import BaseWebSocketHandler
+from base.ws_handler import BaseWebSocketHandler
 import logging
 from tornado.escape import json_decode, json_encode
 from document.models import COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \

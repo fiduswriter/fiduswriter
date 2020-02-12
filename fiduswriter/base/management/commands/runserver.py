@@ -12,8 +12,8 @@ from django.core.management.base import BaseCommand, CommandError
 from django.utils import translation
 from django.conf import settings
 
-from core.servers.tornado_django_hybrid import run as run_server
-from core.handlers import SetupStaticFilesHandler
+from base.servers.tornado_django_hybrid import run as run_server
+from base.handlers import SetupStaticFilesHandler
 
 try:
     from asyncio import set_event_loop_policy

@@ -28,7 +28,7 @@ admin_site_urls = (admin.site.urls[0] + [
 ], admin.site.urls[1], admin.site.urls[2])
 
 # Django URLs -- Notice that these are only consulted after the
-# tornado_url_list found in core/servers/tornado_django_hybrid.py
+# tornado_url_list found in base/servers/tornado_django_hybrid.py
 urlpatterns = [
     url(
         '^robots.txt$',

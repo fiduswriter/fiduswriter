@@ -8,7 +8,7 @@ from tornado.ioloop import IOLoop
 from tornado.web import Application, FallbackHandler, StaticFileHandler
 from tornado.wsgi import WSGIContainer
 
-from core.handlers import DjangoStaticFilesHandler, HelloHandler, RobotsHandler
+from base.handlers import DjangoStaticFilesHandler, HelloHandler, RobotsHandler
 
 
 def make_tornado_server():

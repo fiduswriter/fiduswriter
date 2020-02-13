@@ -92,6 +92,21 @@ export class DOMExporter {
         this.contents.querySelectorAll('*[class^="figure-cat-"]').forEach(el => el.innerHTML = FIG_CATS[el.dataset.figureCategory][language])
     }
 
+    getImageData(){
+        let p = []
+        p.push(
+            this.contents.querySelectorAll('img').forEach(el => {
+                new Promise((resolve,reject)=>{
+                    this.imageDB.mod.editor.app.indexedDB.readImage(el.src.split('/').pop()).then((response)=>{
+                        el.src = 'data:image/jpeg;base64,' + response;
+                        resolve()
+                    })
+                })
+            })
+        )
+        return Promise.all(p)
+    }
+
     addBibliographyHTML(bibliographyHTML) {
         if (bibliographyHTML.length > 0) {
             const tempNode = document.createElement('div')

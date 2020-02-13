@@ -36,6 +36,7 @@ export class indexedDB {
         db.createObjectStore("export_templates", { autoIncrement: true })
         db.createObjectStore("document_styles", { keyPath : "title" })
         db.createObjectStore("contacts_list", { keyPath : "id" })
+        db.createObjectStore("image_db", { keyPath : "name" })
         db.close()
     }
   }
@@ -110,6 +111,57 @@ export class indexedDB {
             // Do something with the request.result!
             resolve(read_all_request.result);
           };
+      }
+    })
+    return new_promise
+  }
+
+  saveImage(imageData,filename){
+    let request = window.indexedDB.open(this.app.db_config.db_name);
+    request.onerror = function(event) {
+      //
+    };
+    request.onsuccess = () => {
+      let db = event.target.result;
+      let reader = new FileReader()
+      reader.readAsBinaryString(imageData.image)
+      reader.onload = function(e) {
+        //alert(e.target.result);
+        let bits = e.target.result;
+        let ob = {
+          name:filename.split('/').pop(),
+          data:bits
+        };
+
+        let trans = db.transaction(['image_db'], 'readwrite');
+        let addReq = trans.objectStore('image_db').add(ob);
+
+        addReq.onerror = function(e) {
+          //
+        }
+
+        trans.oncomplete = function(e) {
+          //
+        }
+      } 
+    }
+  }
+
+  readImage(name){
+    let new_promise = new Promise((resolve,reject)=>{
+      let request = window.indexedDB.open(this.app.db_config.db_name);
+      request.onerror = function(event) {
+        //
+      };
+      request.onsuccess = () => {
+        let db = event.target.result;
+        let trans = db.transaction(['image_db'], 'readonly');
+        //hard coded id
+        let req = trans.objectStore('image_db').get(name);
+        req.onsuccess = function(e) {
+          let record = e.target.result;
+          resolve(btoa(record.data))
+        }
       }
     })
     return new_promise

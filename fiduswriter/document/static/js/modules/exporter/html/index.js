@@ -50,16 +50,19 @@ export class HTMLExporter extends DOMExporter {
         }
 
         this.prepareBinaryFiles()
-
-        const html = htmlExportTemplate({
-            part: false,
-            title,
-            settings: this.doc.settings,
-            styleSheets: this.styleSheets,
-            contents: this.contents
+        let new_promise = new Promise((resolve,reject)=>{
+            this.getImageData().then(()=>{
+                const html = htmlExportTemplate({
+                    part: false,
+                    title,
+                    settings: this.doc.settings,
+                    styleSheets: this.styleSheets,
+                    contents: this.contents
+                })
+                resolve({title, html, math})
+            })
         })
-
-        return {title, html, math}
+        return new_promise 
     }
 
     save({title, html, math}) {

@@ -81,7 +81,12 @@ export class PrintExporter extends HTMLExporter {
         ).then(
             () => this.fillToc()
         ).then(
-            () => this.postProcess()
+            () => {
+                let new_promise = new Promise((resolve,reject)=>{
+                    this.postProcess().then((response)=>resolve(response))
+                })
+                return new_promise
+            }
         ).then(
             ({html, title}) => import("vivliostyle-print").then(
                 ({vivliostylePrint}) => vivliostylePrint(

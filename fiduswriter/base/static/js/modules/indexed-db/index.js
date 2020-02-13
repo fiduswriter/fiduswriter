@@ -35,6 +35,7 @@ export class indexedDB {
         db.createObjectStore("team_members", { keyPath: "id" })
         db.createObjectStore("export_templates", { autoIncrement: true })
         db.createObjectStore("document_styles", { keyPath : "title" })
+        db.createObjectStore("contacts_list", { keyPath : "id" })
         db.close()
     }
   }

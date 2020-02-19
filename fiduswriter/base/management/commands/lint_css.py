@@ -33,8 +33,9 @@ class Command(BaseCommand):
                 ".transpile/node_modules/.bin/stylelint"
             ),
             "../**/*.css",
-            "!../**/static-libs/**",
-            "!../**/venv/**",
+            "!../static-libs/**",
+            "!../static/**",
+            "!../venv/**",
             "--config",
             "../.stylelintrc"
         ]

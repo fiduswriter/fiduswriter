@@ -42,8 +42,9 @@ module.exports = { // eslint-disable-line no-undef
                 {
                     match: function(url) {
                         if (
-                            url.pathname.indexOf('/admin') === 0 ||
-                            url.pathname.indexOf('/api/') === 0
+                            url.pathname.startsWith('/admin') ||
+                            url.pathname.startsWith('/api/') ||
+                            url.pathname.startsWith('/media/')
                         ) {
                             return true
                         }

@@ -5,6 +5,7 @@ import tempfile
 from decimal import Decimal
 
 from django.db import migrations, models
+from django.core.files import File
 
 # FW 3.1 documents can be upgraded to 3.2 without changes
 # (not true for reverse conversion)
@@ -12,12 +13,12 @@ OLD_FW_DOCUMENT_VERSION = 3.1
 FW_DOCUMENT_VERSION = 3.2
 
 # from https://stackoverflow.com/questions/25738523/how-to-update-one-file-inside-zip-file-using-python
-def update_revision_zip(zipname):
+def update_revision_zip(file_field, file_name):
     # generate a temp file
-    tmpfd, tmpname = tempfile.mkstemp(dir=os.path.dirname(zipname))
+    tmpfd, tmpname = tempfile.mkstemp()
     os.close(tmpfd)
     # create a temp copy of the archive without filename
-    with zipfile.ZipFile(zipname, 'r') as zin:
+    with zipfile.ZipFile(file_field.open(), 'r') as zin:
         with zipfile.ZipFile(tmpname, 'w') as zout:
             zout.comment = zin.comment # preserve the comment
             for item in zin.infolist():
@@ -26,8 +27,9 @@ def update_revision_zip(zipname):
                 else:
                     zout.writestr(item, zin.read(item.filename))
     # replace with the temp archive
-    os.remove(zipname)
-    os.rename(tmpname, zipname)
+    with open(tmpname, 'rb') as tmp_file:
+        file_field.save(file_name, File(tmp_file))
+    os.remove(tmpname)
 
 def set_document_version(apps, schema_editor):
     Document = apps.get_model('document', 'Document')
@@ -54,7 +56,7 @@ def set_document_version(apps, schema_editor):
             revision.doc_version = FW_DOCUMENT_VERSION
             revision.save()
             # Set the version number also in the zip file.
-            update_revision_zip(revision.file_object.path)
+            update_revision_zip(revision.file_object, revision.file_name)
 
 
 class Migration(migrations.Migration):

@@ -62,7 +62,7 @@ def set_document_version(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('document', '0019_remove_documenttemplate_definition_hash'),
+        ('document', '0001_squashed_20200219'),
     ]
 
     operations = [

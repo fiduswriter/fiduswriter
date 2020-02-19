@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('document', '0017_remove_documenttemplate_citation_styles'),
+        ('document', '0001_squashed_20200219'),
         ('style', '0007_auto_20190811_1204'),
     ]
 

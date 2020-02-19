@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('document', '0014_auto_20190811_1204'),
+        ('document', '0001_squashed_20200219'),
         ('style', '0006_auto_20190809_1757'),
     ]
 

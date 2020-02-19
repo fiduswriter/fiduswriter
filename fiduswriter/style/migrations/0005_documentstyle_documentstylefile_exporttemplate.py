@@ -8,7 +8,7 @@ import style.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('document', '0013_auto_20190808_1126'),
+        ('document', '0001_squashed_20200219'),
         ('style', '0004_auto_20190809_1655'),
     ]
 

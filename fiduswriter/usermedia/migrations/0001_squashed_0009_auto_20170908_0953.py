@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('document', '0030_document_bibliography'),
+        ('document', '0001_squashed_20200219'),
     ]
 
     operations = [

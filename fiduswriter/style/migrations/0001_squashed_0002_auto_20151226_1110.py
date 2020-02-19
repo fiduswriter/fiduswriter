@@ -5,8 +5,6 @@ import style.models
 
 class Migration(migrations.Migration):
 
-    replaces = [('style', '0001_initial'), ('style', '0002_auto_20151226_1110')]
-
     initial = True
 
     dependencies = [

@@ -89,9 +89,6 @@ class Migration(migrations.Migration):
                 ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
-        migrations.RunPython(
-            code=document.migrations.0005_document_template.create_default_template,
-        ),
         migrations.AddField(
             model_name='document',
             name='template',
@@ -116,12 +113,6 @@ class Migration(migrations.Migration):
             model_name='documentrevision',
             name='doc_version',
             field=models.DecimalField(decimal_places=1, default=3.0, max_digits=3),
-        ),
-        migrations.RunPython(
-            code=document.migrations.0008_auto_20190701_0943.fix_document_revisions,
-        ),
-        migrations.RunPython(
-            code=document.migrations.0011_auto_20190701_1744.set_document_revision_version,
         ),
         migrations.AlterField(
             model_name='document',
@@ -159,9 +150,6 @@ class Migration(migrations.Migration):
         migrations.DeleteModel(
             name='ExportTemplate',
         ),
-        migrations.RunPython(
-            code=document.migrations.0015_auto_20190828_1108.set_citationstyles,
-        ),
         migrations.AlterField(
             model_name='document',
             name='doc_version',
@@ -185,9 +173,6 @@ class Migration(migrations.Migration):
             model_name='documenttemplate',
             name='import_id',
             field=models.CharField(blank=True, default='', max_length=255),
-        ),
-        migrations.RunPython(
-            code=document.migrations.0018_documenttemplate_import_id.set_import_id,
         ),
         migrations.RemoveField(
             model_name='documenttemplate',

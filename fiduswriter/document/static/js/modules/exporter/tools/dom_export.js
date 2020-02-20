@@ -94,16 +94,23 @@ export class DOMExporter {
 
     getImageData(){
         let p = []
-        p.push(
-            this.contents.querySelectorAll('img').forEach(el => {
-                new Promise((resolve,reject)=>{
-                    this.imageDB.mod.editor.app.indexedDB.readImage(el.src.split('/').pop()).then((response)=>{
-                        el.src = 'data:image/jpeg;base64,' + response;
-                        resolve()
-                    })
+        // Take data from the Indexed DB only when offline.
+        if(!this.imageDB.mod.editor.ws.isOnline()){
+                this.contents.querySelectorAll('img').forEach(el => {
+                    p.push(
+                        new Promise((resolve,reject)=>{
+                            let image_name = el.src.split('/').pop()
+                            if (image_name.length == 0) {
+                                image_name = el.getAttribute("data-src")
+                            }
+                            this.imageDB.mod.editor.app.indexedDB.readImage(image_name).then((response)=>{
+                                el.src = response;
+                                resolve()
+                            })
+                        })
+                    )
                 })
-            })
-        )
+        }
         return Promise.all(p)
     }
 

@@ -157,6 +157,7 @@ export class App {
         ]).then(
             () => {
                 this.activateFidusPlugins()
+                this.cacheImageInIndexedDB()
                 return this.selectPage()
             }
         ).then(
@@ -275,5 +276,18 @@ export class App {
     goTo(url) {
         window.history.pushState({}, "", url)
         return this.selectPage()
+    }
+
+    cacheImageInIndexedDB(){
+        let db = this.imageDB.db
+        for(let key in db){
+            fetch(db[key].image).then((response)=> {
+                response.blob().then(image_blob=>{
+                    let image_name = db[key].image.split('/').pop()
+                    let file = new File([image_blob],image_name,{'type':db[key].file_type})
+                    this.indexedDB.saveImage(file,image_name)
+                })
+            })
+        }
     }
 }

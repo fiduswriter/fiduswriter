@@ -124,7 +124,7 @@ export class indexedDB {
     request.onsuccess = () => {
       let db = event.target.result;
       let reader = new FileReader()
-      reader.readAsBinaryString(imageData.image)
+      reader.readAsDataURL(imageData)
       reader.onload = function(e) {
         //alert(e.target.result);
         let bits = e.target.result;
@@ -134,7 +134,7 @@ export class indexedDB {
         };
 
         let trans = db.transaction(['image_db'], 'readwrite');
-        let addReq = trans.objectStore('image_db').add(ob);
+        let addReq = trans.objectStore('image_db').put(ob);
 
         addReq.onerror = function(e) {
           //
@@ -160,7 +160,7 @@ export class indexedDB {
         let req = trans.objectStore('image_db').get(name);
         req.onsuccess = function(e) {
           let record = e.target.result;
-          resolve(btoa(record.data))
+          resolve(record.data)
         }
       }
     })

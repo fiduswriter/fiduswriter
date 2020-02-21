@@ -96,20 +96,20 @@ export class DOMExporter {
         let p = []
         // Take data from the Indexed DB only when offline.
         if(!this.imageDB.mod.editor.ws.isOnline()){
-                this.contents.querySelectorAll('img').forEach(el => {
-                    p.push(
-                        new Promise((resolve,reject)=>{
-                            let image_name = el.src.split('/').pop()
-                            if (image_name.length == 0) {
-                                image_name = el.getAttribute("data-src")
-                            }
-                            this.imageDB.mod.editor.app.indexedDB.readImage(image_name).then((response)=>{
-                                el.src = response;
-                                resolve()
-                            })
+            this.contents.querySelectorAll('img').forEach(el => {
+                p.push(
+                    new Promise((resolve,reject)=>{
+                        let image_name = el.src.split('/').pop()
+                        if (image_name.length == 0) {
+                            image_name = el.getAttribute("data-src")
+                        }
+                        this.imageDB.mod.editor.app.indexedDB.readImage(image_name).then((response)=>{
+                            el.src = response;
+                            resolve()
                         })
-                    )
-                })
+                    })
+                )
+            })
         }
         return Promise.all(p)
     }

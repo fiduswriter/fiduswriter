@@ -166,4 +166,25 @@ export class indexedDB {
     })
     return new_promise
   }
+
+  checkImagePresent(name){
+    let new_promise = new Promise((resolve,reject)=>{
+      let request = window.indexedDB.open(this.app.db_config.db_name);
+      request.onerror = function(event) {
+        //
+      };
+      request.onsuccess = () => {
+        let db = event.target.result;
+        let trans = db.transaction(['image_db'], 'readonly');
+        //hard coded id
+        let count_req = trans.objectStore('image_db').count(name);
+        count_req.onsuccess = function(e) {
+          let record = e.target.result;
+          if (record == 1) resolve(true)
+          else resolve(false)
+        }
+      }
+    })
+    return new_promise
+  }
 }

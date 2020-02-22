@@ -71,9 +71,20 @@
     color: var(--cs-white-text);
 }
 
+.fw-button.fw-white.ui-state-active {
+    background-color: var(--cs-white-background-selected);
+    color: var(--cs-white-selected);
+}
+
+.fw-button.fw-white:not(.disabled):hover {
+    background-color: var(--cs-white-background-hover);
+    color: var(--cs-white-hover);
+}
+
+
 .fw-button.fw-light:not(.disabled):hover,
 .fw-button.fw-light.ui-state-active {
-    background-color: var(--cs-white-background-hover);
+    background-color: var(--cs-light-background-hover);
     color: var(--cs-light-hover);
 }
 

@@ -1,7 +1,8 @@
 body {
     width: 100%;
     height: 100%;
-    background-color: var(--cs-light-background);
+    background-color: var(--main-background-color);
+    color: var(--main-text-color);
     min-width: calc(380px - 100vw + 100%); /* to substract scrollbar width. */
     overflow-y: hidden;
 }

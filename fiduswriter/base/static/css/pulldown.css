@@ -4,9 +4,9 @@
     display: none;
     z-index: 101;
     box-shadow: 0 0 20px rgba(var(--pulldown-box-shadow-color));
-    background-color: var(--pulldown-background-color);
+    background-color: var(--cs-white-background);
     border-radius: 6px;
-    color: var(--pulldown-text-color);
+    color: var(--cs-white-text);
 }
 
 .fw-pulldown.fw-open {
@@ -63,10 +63,6 @@
     cursor: pointer;
 }
 
-.fw-pulldown-item:hover {
-    background-color: var(--pulldown-hover-background-color);
-}
-
 .disabled .fw-pulldown-item {
     color: var(--cs-disabled);
 }
@@ -76,7 +72,13 @@
 }
 
 .fw-pulldown-item.selected {
-    background-color: var(--pulldown-selected-background-color);
+    color: var(--cs-white-selected);
+    background-color: var(--cs-white-background-selected);
+}
+
+.fw-pulldown-item:hover, .fw-pulldown-item.selected:hover {
+    color: var(--cs-white-hover);
+    background-color: var(--cs-white-background-hover);
 }
 
 .fw-pulldown-item .fw-icon-right {

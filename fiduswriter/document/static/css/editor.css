@@ -2,9 +2,7 @@ body.editor {
     height: 100%;
     font-family: 'Lato', sans-serif;
     font-size: 13px;
-    color: var(--cs-light-text);
     width: 100%;
-    background-color: var(--cs-light-background);
     overflow-x: hidden;
 }
 
@@ -132,7 +130,7 @@ body.editor header {
     user-select: none;
     padding-top: 34px;
     padding-bottom: 34px;
-    background-color: var(--cs-light-background);
+    background-color: var(--main-background-color);
 }
 
 #ice-control {
@@ -191,10 +189,10 @@ body.editor header {
 .editor-toolbar div.info {
     /* max-width: 90px; */
     min-width: 62px;
-    color: var(--cs-light-text);
-    background-color: var(--cs-light-background);
+    color: var(--cs-white-text);
+    background-color: var(--cs-white-background);
     text-shadow: none;
-    border-color: var(--cs-light-border);
+    border-color: var(--cs-white-border);
     height: 46px;
     line-height: 46px;
     padding: 0 10px;
@@ -604,10 +602,12 @@ table.insert-table-selection td {
 }
 
 table.insert-table-selection td.hover {
+    color: var(--cs-white-hover);
     background-color: var(--cs-white-background-hover);
 }
 
 table.insert-table-selection td.selected {
+    color: var(--cs-white-selected);
     background-color: var(--cs-white-background-selected);
 }
 

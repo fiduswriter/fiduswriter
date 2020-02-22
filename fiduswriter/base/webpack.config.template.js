@@ -1,7 +1,23 @@
 const webpack = require("webpack") // eslint-disable-line no-undef
 const OfflinePlugin = require("offline-plugin") // eslint-disable-line no-undef
+
+const baseRule = {
+    test: /\.(js|mjs)$/,
+    use: {
+        loader: "babel-loader",
+        options: {
+            presets: ["@babel/preset-env"],
+            plugins: ["@babel/plugin-syntax-dynamic-import"]
+        }
+    }
+};
+
+if (django.conf.settings.DEBUG) {
+    baseRule.exclude = /node_modules/
+}
+
 module.exports = { // eslint-disable-line no-undef
-    mode: "$MODE$",
+    mode: django.conf.settings.DEBUG ? 'development' : 'production',
     module: {
         rules: [
             {
@@ -12,30 +28,18 @@ module.exports = { // eslint-disable-line no-undef
                     },
                 ],
             },
-            {
-                $RULES$, // eslint-disable-line no-undef
-                use: {
-                    loader: "babel-loader",
-                    options: {
-                        presets: [
-                            "@babel/preset-env"
-                        ],
-                        plugins: [
-                            "@babel/plugin-syntax-dynamic-import"
-                        ]
-                    }
-                }
-            }
+            baseRule
         ]
     },
     output: {
-        path: "$OUT_DIR$",
-        chunkFilename: "[id]-$VERSION$.js",
-        publicPath: "$TRANSPILE_BASE_URL$",
+        path: transpile.OUT_DIR,
+        chunkFilename: "[id]-" + transpile.VERSION + ".js",
+        publicPath: transpile.BASE_URL,
     },
     plugins: [
         new webpack.DefinePlugin({
-            "process.env.TRANSPILE_VERSION": process.env.TRANSPILE_VERSION
+            "process.env.TRANSPILE_VERSION": transpile.VERSION,
+            "settings.STATIC_URL": django.conf.settings.STATIC_URL
         }),
         new OfflinePlugin({
             cacheMaps: [
@@ -59,16 +63,15 @@ module.exports = { // eslint-disable-line no-undef
             },
             autoUpdate: true,
             appShell: "/",
-            externals: [
+            externals: transpile.STATIC_FRONTEND_FILES.concat([
                 "/",
                 "/api/django_js_error_hook/utils.js",
                 "/api/jsi18n/",
-                "$TRANSPILE_BASE_URL$browser_check.js",
-                "/manifest.json",
-                $STATIC_FRONTEND_FILES$ // eslint-disable-line no-undef
-            ],
+                transpile.BASE_URL + "browser_check.js",
+                "/manifest.json"
+            ]),
             AppCache: false,
-            version: '$VERSION$',
+            version: transpile.VERSION,
             excludes: [
                 'admin_console.js',
                 'maintenance.js',
@@ -81,7 +84,5 @@ module.exports = { // eslint-disable-line no-undef
             ]
         })
     ],
-    entry: {
-        $ENTRIES$ // eslint-disable-line no-undef
-    }
+    entry: transpile.ENTRIES
 }

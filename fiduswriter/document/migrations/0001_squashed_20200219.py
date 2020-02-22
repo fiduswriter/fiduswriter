@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
                 ('definition', models.TextField(default='{}')),
                 ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
                 ('doc_version', models.DecimalField(decimal_places=1, default=3.1, max_digits=3)),
-                ('added', models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now)),
+                ('added', models.DateTimeField(auto_now_add=True)),
                 ('updated', models.DateTimeField(auto_now=True)),
                 ('import_id', models.CharField(blank=True, default='', max_length=255)),
             ],

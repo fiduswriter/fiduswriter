@@ -18,6 +18,13 @@ const getCookie = function(name) {
     return null
 }
 
+const deleteCookie = function(name) {
+    if (!document.cookie || document.cookie === '') {
+        return null
+    }
+    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
+}
+
 const getCsrfToken = function() {
     return getCookie('csrftoken')
 }
@@ -25,6 +32,18 @@ const getCsrfToken = function() {
 /* from https://www.tjvantoll.com/2015/09/13/fetch-and-errors/ */
 const handleFetchErrors = function(response) {
     if (!response.ok) { throw response }
+    return response
+}
+
+// We don't use django messages in the frontend. The onyl messages we receive
+//  are "user logged in" and "user logged out". The admin interface does use message.
+// and in order to prevent it from displaying lots of old messages, we delete the
+// messages on beforehand.
+const removeDjangoMessages = function(response) {
+    const messages = getCookie('messages')
+    if (messages) {
+        deleteCookie('messages')
+    }
     return response
 }
 
@@ -47,6 +66,8 @@ export const get = function(url, params={}, csrfToken=false) {
         },
         credentials: 'include'
     }).then(
+        removeDjangoMessages
+    ).then(
         handleFetchErrors
     )
 }
@@ -90,6 +111,8 @@ export const postBare = function(url, params={}, csrfToken=false) {
 
 export const post = function(url, params={}, csrfToken=false) {
     return postBare(url, params, csrfToken).then(
+        removeDjangoMessages
+    ).then(
         handleFetchErrors
     )
 }

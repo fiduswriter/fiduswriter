@@ -138,7 +138,7 @@ table .fw-inline {
     font-size: 13px;
     display: block;
     padding-top: 6px;
-    color: var(--cs-white-nofocus-text);
+    color: var(--cs-white-text-secondary);
 }
 
 .ProseMirror span.placeholder::before {

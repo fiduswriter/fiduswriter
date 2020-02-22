@@ -99,7 +99,7 @@
 
 .submit-wrapper label {
     font-size: 14px;
-    color: var(--cs-light-nofocus-text);
+    color: var(--cs-light-text-secondary);
     margin-left: 4px;
 }
 

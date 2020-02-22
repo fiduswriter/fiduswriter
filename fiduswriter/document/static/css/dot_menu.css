@@ -30,7 +30,7 @@
 
 .dot-menu-icon {
     font-size: 18px;
-    color: var(--cs-white-nofocus-text);
+    color: var(--cs-white-text-secondary);
 }
 
 .dot-menu-icon:hover {

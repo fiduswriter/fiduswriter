@@ -171,7 +171,7 @@ Modal header
 .tab-link-inner {
     display: block;
     margin-left: 20px;
-    color: var(--cs-light-nofocus-text);
+    color: var(--cs-light-text-secondary);
 }
 
 .current-tab .tab-link-inner,

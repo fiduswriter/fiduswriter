@@ -71,8 +71,8 @@
     --cs-6-text: #ffffff;
     --cs-6-background: #76a698;
     --cs-6-border: #7d948e;
-    --cs-6-focus: #8ab5a6;
-    --cs-6-hover: #96c6b8;
+    --cs-6-background-focus: #8ab5a6;
+    --cs-6-background-hover: #96c6b8;
 
     /* white on dark */
     --cs-dark-text: #ffffff;
@@ -86,22 +86,21 @@
 
     /* dark on white-ish background */
     --cs-light-text: #2c2723;
-    --cs-light-nofocus-text: #999999;
+    --cs-light-hover: #000000;
+    --cs-light-text-secondary: #999999;
     --cs-light-border: #e0e0e0;
     --cs-light-background: #f9f9f9;
     --cs-light-background-hover: #e0e0e0;
-    --cs-light-hover: #000000;
     --cs-light-box-shadow: #9e9e9e;
 
     /* black on white */
     --cs-white-text: #000000;
     --cs-white-border: #cccccc;
-    --cs-white-nofocus-text: #a8a8a8;
+    --cs-white-text-secondary: #a8a8a8;
     --cs-white-placeholder-text: #cecece;
     --cs-white-background: #ffffff;
     --cs-white-background-hover: #f9f9f9;
     --cs-white-background-selected: #dddddd;
-
 
     /* disabled */
     --cs-disabled: #a9a9a9;

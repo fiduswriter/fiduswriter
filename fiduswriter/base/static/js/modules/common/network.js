@@ -19,9 +19,6 @@ const getCookie = function(name) {
 }
 
 const deleteCookie = function(name) {
-    if (!document.cookie || document.cookie === '') {
-        return null
-    }
     document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
 }
 
@@ -35,15 +32,12 @@ const handleFetchErrors = function(response) {
     return response
 }
 
-// We don't use django messages in the frontend. The onyl messages we receive
-//  are "user logged in" and "user logged out". The admin interface does use message.
-// and in order to prevent it from displaying lots of old messages, we delete the
-// messages on beforehand.
+// We don't use django messages in the frontend. The only messages that are recording
+//  are "user logged in" and "user logged out". The admin interface does use messages.
+// To prevent it from displaying lots of old login/logout messages, we delete the
+// messages after each post/get.
 const removeDjangoMessages = function(response) {
-    const messages = getCookie('messages')
-    if (messages) {
-        deleteCookie('messages')
-    }
+    deleteCookie('messages')
     return response
 }
 

@@ -67,18 +67,19 @@
     color: var(--cs-disabled);
 }
 
-.fw-pulldown li:last-child .fw-pulldown-item {
-    border-bottom: 0 none;
-}
-
 .fw-pulldown-item.selected {
     color: var(--cs-white-selected);
     background-color: var(--cs-white-background-selected);
 }
 
-.fw-pulldown-item:hover, .fw-pulldown-item.selected:hover {
+.fw-pulldown-item:hover,
+.fw-pulldown-item.selected:hover {
     color: var(--cs-white-hover);
     background-color: var(--cs-white-background-hover);
+}
+
+.fw-pulldown li:last-child .fw-pulldown-item {
+    border-bottom: 0 none;
 }
 
 .fw-pulldown-item .fw-icon-right {

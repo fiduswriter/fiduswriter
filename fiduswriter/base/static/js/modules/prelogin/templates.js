@@ -4,7 +4,7 @@ export const basePreloginTemplate = ({contents, staticUrl, isFree, language, hea
 </div>
 <header class="fw-header prelogin">
    <div class="fw-container">
-      <h1 class="fw-login-logo"><span class="fw-logo-text"></span><img src="${staticUrl}svg/icon.svg?v=${process.env.TRANSPILE_VERSION}" /></h1>
+      <h1 class="fw-login-logo"><span class="fw-logo-text"></span><img src="${staticUrl}svg/icon.svg?v=${transpile.VERSION}" /></h1>
       <nav id="header-nav">${
           headerLinks.map(hLink => {
               let returnValue
@@ -23,7 +23,7 @@ export const basePreloginTemplate = ({contents, staticUrl, isFree, language, hea
       }</nav>
    </div>
    ${isFree ?
-       `<div class="star" style="position:relative;margin:0 auto;"><img src="${staticUrl}img/free_star.png?v=${process.env.TRANSPILE_VERSION}" style="position:absolute;top:0px;left:0px;z-index:3;height:73px;"></div>` :
+       `<div class="star" style="position:relative;margin:0 auto;"><img src="${staticUrl}img/free_star.png?v=${transpile.VERSION}" style="position:absolute;top:0px;left:0px;z-index:3;height:73px;"></div>` :
        ''
    }
 </header>

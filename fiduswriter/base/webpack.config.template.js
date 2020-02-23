@@ -38,7 +38,7 @@ module.exports = { // eslint-disable-line no-undef
     },
     plugins: [
         new webpack.DefinePlugin({
-            "process.env.TRANSPILE_VERSION": transpile.VERSION,
+            "transpile.VERSION": transpile.VERSION,
             "settings.STATIC_URL": django.conf.settings.STATIC_URL
         }),
         new OfflinePlugin({

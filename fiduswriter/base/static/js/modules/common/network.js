@@ -125,7 +125,7 @@ export const ensureCSS = function(cssUrl, staticUrl) {
         cssUrl.forEach(url => ensureCSS(url, staticUrl))
         return
     }
-    const url = `${staticUrl}css/${cssUrl}?v=${process.env.TRANSPILE_VERSION}`,
+    const url = `${staticUrl}css/${cssUrl}?v=${transpile.VERSION}`,
         link = document.createElement("link")
     link.rel = "stylesheet"
     link.href = url

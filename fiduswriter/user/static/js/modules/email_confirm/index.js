@@ -4,8 +4,8 @@ import {PreloginPage} from "../prelogin"
 import * as pluginLoaders from "../../plugins/confirm_account"
 
 export class EmailConfirm extends PreloginPage {
-    constructor({app, isFree, language, testServer}, key) {
-        super({app, isFree, language})
+    constructor({app, language, testServer}, key) {
+        super({app, language})
         this.testServer = testServer
 
         this.title = gettext('Confirm Email')

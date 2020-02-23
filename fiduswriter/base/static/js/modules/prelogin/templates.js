@@ -1,4 +1,4 @@
-export const basePreloginTemplate = ({contents, isFree, language, headerLinks = [], footerLinks = []}) => `
+export const basePreloginTemplate = ({contents, language, headerLinks = [], footerLinks = []}) => `
 <div id="wait">
    <i class="fa fa-spinner fa-pulse"></i>
 </div>
@@ -22,7 +22,7 @@ export const basePreloginTemplate = ({contents, isFree, language, headerLinks = 
           }).join('')
       }</nav>
    </div>
-   ${isFree ?
+   ${settings.IS_FREE ?
        `<div class="star" style="position:relative;margin:0 auto;"><img src="${settings.STATIC_URL}img/free_star.png?v=${transpile.VERSION}" style="position:absolute;top:0px;left:0px;z-index:3;height:73px;"></div>` :
        ''
    }

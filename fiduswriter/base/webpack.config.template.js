@@ -40,6 +40,7 @@ module.exports = { // eslint-disable-line no-undef
         new webpack.DefinePlugin({
             "settings.STATIC_URL": settings.STATIC_URL, // eslint-disable-line no-undef
             "settings.REGISTRATION_OPEN": settings.REGISTRATION_OPEN, // eslint-disable-line no-undef
+            "settings.IS_FREE": settings.IS_FREE, // eslint-disable-line no-undef
             "transpile.VERSION": transpile.VERSION // eslint-disable-line no-undef
         }),
         new OfflinePlugin({

@@ -5,9 +5,8 @@ import {FeedbackTab} from "../feedback"
 import {basePreloginTemplate} from "./templates"
 
 export class PreloginPage {
-    constructor({app, isFree, language}) {
+    constructor({app, language}) {
         this.app = app
-        this.isFree = isFree
         this.language = language
         this.pluginLoaders = {}
         this.title = ''
@@ -88,7 +87,6 @@ export class PreloginPage {
         this.dom.classList.add('prelogin')
         this.dom.classList.add('scrollable')
         this.dom.innerHTML = basePreloginTemplate({
-            isFree: this.isFree,
             language: this.language,
             headerLinks: this.headerLinks,
             footerLinks: this.footerLinks,

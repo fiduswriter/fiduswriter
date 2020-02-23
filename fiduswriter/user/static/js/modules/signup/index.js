@@ -2,8 +2,8 @@ import {escapeText, postJson} from "../common"
 import {PreloginPage} from "../prelogin"
 
 export class Signup extends PreloginPage {
-    constructor({app, isFree, language}) {
-        super({app, isFree, language})
+    constructor({app, language}) {
+        super({app, language})
         this.title = gettext('Signup')
         if (settings.REGISTRATION_OPEN) {
             this.contents = `<div class="fw-login-left">

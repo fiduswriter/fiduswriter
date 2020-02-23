@@ -43,6 +43,7 @@ module.exports = { // eslint-disable-line no-undef
             "settings.CONTACT_EMAIL": settings.CONTACT_EMAIL, // eslint-disable-line no-undef
             "settings.IS_FREE": settings.IS_FREE, // eslint-disable-line no-undef
             "settings.TEST_SERVER": settings.TEST_SERVER, // eslint-disable-line no-undef
+            "settings.DEBUG": settings.DEBUG, // eslint-disable-line no-undef
             "transpile.VERSION": transpile.VERSION // eslint-disable-line no-undef
         }),
         new OfflinePlugin({

@@ -15,8 +15,7 @@
         window.fidusConfig = {
             websocketUrl: websocketProtocol + websocketServer + websocketPort,
             language: '{{ language }}',
-            socialaccountProviders: {{ socialaccount_providers | safe }},
-            debug: {{ debug }}
+            socialaccountProviders: {{ socialaccount_providers | safe }}
         };
     })();
 </script>

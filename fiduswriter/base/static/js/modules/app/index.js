@@ -199,7 +199,7 @@ export class App {
             }, 250)
         })
 
-        if (!this.config.debug) {
+        if (!settings.DEBUG) {
             OfflinePluginRuntime.install({
                 onUpdateReady: () => OfflinePluginRuntime.applyUpdate(),
                 onUpdated: () => window.location.reload()

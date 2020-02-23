@@ -23,8 +23,5 @@ def fiduswriter_config_js(context):
         'ws_port': getattr(settings, 'WS_PORT', ''),
         'ws_server': getattr(settings, 'WS_SERVER', ''),
         'language': context['request'].LANGUAGE_CODE,
-        'socialaccount_providers': socialaccount_providers,
-        'debug': (
-            'true' if settings.DEBUG else 'false'
-        )
+        'socialaccount_providers': socialaccount_providers
     }

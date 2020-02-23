@@ -100,7 +100,7 @@ const warningTemplate = ({warning, filterOptions}) => {
 }
 
 
-const commentTemplate = ({comment, view, active, editComment, activeCommentAnswerId, user, docInfo, filterOptions, staticUrl}) => {
+const commentTemplate = ({comment, view, active, editComment, activeCommentAnswerId, user, docInfo, filterOptions}) => {
     if (
         !filterOptions.comments ||
         (filterOptions.commentsOnlyMajor && !comment.isMajor) ||
@@ -126,8 +126,8 @@ const commentTemplate = ({comment, view, active, editComment, activeCommentAnswe
             class="margin-box comment ${active ? 'active' : 'inactive'} ${comment.resolved ? 'resolved' : ''} ${comment.isMajor === true ? 'comment-is-major-bgc' : ''}">
     ${
         comment.comment.length === 0 ?
-        firstCommentTemplate({comment, author, staticUrl}) :
-        singleCommentTemplate({comment, user, author, active, editComment, staticUrl})
+        firstCommentTemplate({comment, author}) :
+        singleCommentTemplate({comment, user, author, active, editComment})
     }
     ${
         assignedUsername ?
@@ -144,8 +144,7 @@ const commentTemplate = ({comment, view, active, editComment, activeCommentAnswe
                 active,
                 activeCommentAnswerId,
                 user,
-                docInfo,
-                staticUrl
+                docInfo
             })
         ).join('') :
         ''
@@ -400,8 +399,7 @@ export const marginBoxesTemplate = ({
         activeCommentAnswerId,
         user,
         docInfo,
-        filterOptions,
-        staticUrl
+        filterOptions
     }) => `<div id="margin-box-container"><div>${
         marginBoxes.map(mBox => {
         let returnValue = ''
@@ -415,8 +413,7 @@ export const marginBoxesTemplate = ({
                     editComment,
                     user,
                     docInfo,
-                    filterOptions,
-                    staticUrl
+                    filterOptions
                 })
                 break
             case 'insertion':
@@ -429,8 +426,7 @@ export const marginBoxesTemplate = ({
                     data: mBox.data,
                     active: mBox.active,
                     docInfo,
-                    filterOptions,
-                    staticUrl
+                    filterOptions
                 })
                 break
             case 'help':

@@ -17,11 +17,9 @@ import {
 
 export class DocumentOverview {
 
-    constructor({app, user, staticUrl, registrationOpen}) {
+    constructor({app, user}) {
         this.app = app
         this.user = user
-        this.staticUrl = staticUrl
-        this.registrationOpen = registrationOpen
         this.schema = docSchema
         this.documentList = []
         this.teamMembers = []
@@ -49,7 +47,6 @@ export class DocumentOverview {
         this.dom.innerHTML = baseBodyTemplate({
             contents: '',
             user: this.user,
-            staticUrl: this.staticUrl,
             hasOverview: true
         })
         document.body = this.dom
@@ -57,9 +54,9 @@ export class DocumentOverview {
             'document_overview.css',
             'add_remove_dialog.css',
             'access_rights_dialog.css'
-        ], this.staticUrl)
+        ])
         setDocTitle(gettext('Document Overview'), this.app)
-        const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
+        const feedbackTab = new FeedbackTab()
         feedbackTab.init()
     }
 
@@ -81,8 +78,7 @@ export class DocumentOverview {
                     const dialog = new DocumentAccessRightsDialog(
                         [docId],
                         this.teamMembers,
-                        memberDetails => this.teamMembers.push(memberDetails),
-                        this.registrationOpen
+                        memberDetails => this.teamMembers.push(memberDetails)
                     )
                     dialog.init()
                     break

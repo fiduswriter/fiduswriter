@@ -1,6 +1,5 @@
 {% load i18n %}
 {% load transpile %}
-{% load fiduswriter %}
 <!DOCTYPE html>
 <html class="fw-basic-text" lang="{{ LANGUAGE_CODE }}">
     <head>
@@ -38,7 +37,6 @@
         <script type="text/javascript" src="/api/jsi18n/" id="i18n"></script>
         <!-- JS error handling -->
         <script type="text/javascript" src="{% url 'js-error-handler-js' %}"></script>
-        {% fiduswriter_config_js %}
         <!-- Main page script -->
         <script type="text/javascript" src="{% static "js/app.mjs" %}" crossorigin="anonymous"></script>
     </head>

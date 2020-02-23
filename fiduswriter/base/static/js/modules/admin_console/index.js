@@ -3,8 +3,7 @@ import {findTarget, addAlert, whenReady, WebSocketConnector} from "../common"
 // To see how many users are currently online and send them maintenance messages
 
 export class AdminConsole {
-    constructor({websocketUrl}) {
-        this.websocketUrl = websocketUrl
+    constructor() {
     }
 
     init() {
@@ -16,7 +15,7 @@ export class AdminConsole {
 
     bind() {
         this.ws = new WebSocketConnector({
-            url: `${this.websocketUrl}/ws/base/`,
+            url: '/ws/base/',
             appLoaded: () => true,
             initialMessage: () => ({type: 'subscribe_admin'}),
             receiveData: data => {

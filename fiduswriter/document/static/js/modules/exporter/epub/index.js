@@ -12,8 +12,8 @@ import {DOMExporter} from "../tools/dom_export"
 
 export class EpubExporter extends DOMExporter {
 
-    constructor(schema, staticUrl, csl, documentStyles, doc, bibDB, imageDB) {
-        super(schema, staticUrl, csl, documentStyles)
+    constructor(schema, csl, documentStyles, doc, bibDB, imageDB) {
+        super(schema, csl, documentStyles)
         this.doc = doc
         this.bibDB = bibDB
         this.imageDB = imageDB
@@ -184,7 +184,7 @@ export class EpubExporter extends DOMExporter {
         if (math) {
             includeZips.push({
                 'directory': 'EPUB',
-                'url': `${this.staticUrl}zip/mathlive_style.zip?v=${process.env.TRANSPILE_VERSION}`
+                'url': `${settings.STATIC_URL}zip/mathlive_style.zip?v=${transpile.VERSION}`
             })
         }
         const zipper = new ZipFileCreator(

@@ -122,11 +122,8 @@ export class Editor {
     // A class that contains everything that happens on the editor page.
     // It is currently not possible to initialize more than one editor class, as it
     // contains bindings to menu items, etc. that are uniquely defined.
-    constructor({app, staticUrl, websocketUrl, user, registrationOpen}, idString) {
+    constructor({app, user}, idString) {
         this.app = app
-        this.staticUrl = staticUrl
-        this.websocketUrl = websocketUrl
-        this.registrationOpen = registrationOpen
         this.user = user
         this.mod = {}
         // Whether the editor is currently waiting for a document update. Set to true
@@ -220,7 +217,7 @@ export class Editor {
             'dot_menu.css',
             'cropper.min.css',
             'inline_tools.css'
-        ], this.staticUrl)
+        ])
         new ModDocumentTemplate(this)
         const initPromises = [
             whenReady(),
@@ -242,7 +239,7 @@ export class Editor {
             new ModCitations(this)
             new ModFootnotes(this)
             this.ws = new WebSocketConnector({
-                url: `${this.websocketUrl}/ws/document/${this.docInfo.id}/`,
+                url: `/ws/document/${this.docInfo.id}/`,
                 appLoaded: () => this.view.state.plugins.length,
                 anythingToSend: () => sendableSteps(this.view.state),
                 initialMessage: () => {
@@ -372,12 +369,12 @@ export class Editor {
                 <div id="chat-container"></div>
                 <div id="messageform" contentEditable="true" class="empty"></div>
                 <audio id="chat-notification">
-                    <source src="${this.staticUrl}ogg/chat_notification.ogg?v=${process.env.TRANSPILE_VERSION}" type="audio/ogg">
+                    <source src="${settings.STATIC_URL}ogg/chat_notification.ogg?v=${transpile.VERSION}" type="audio/ogg">
                 </audio>
             </div>
         </div>
         <div id="unobtrusive_messages"></div>`
-        const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
+        const feedbackTab = new FeedbackTab()
         feedbackTab.init()
     }
 

@@ -32,8 +32,7 @@ export const bulkMenuModel = () => ({
                     const dialog = new DocumentAccessRightsDialog(
                         ids,
                         overview.teamMembers,
-                        memberDetails => overview.teamMembers.push(memberDetails),
-                        overview.registrationOpen
+                        memberDetails => overview.teamMembers.push(memberDetails)
                     )
                     dialog.init()
                 }

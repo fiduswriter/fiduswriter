@@ -19,8 +19,8 @@ import {FlatPage} from "../flatpage"
 import * as plugins from "../../plugins/app"
 
 export class App {
-    constructor(config = {}) {
-        this.config = config
+    constructor() {
+        this.config = {}
         this.name = 'Fidus Writer'
         this.config.app = this
         this.routes = {
@@ -109,7 +109,7 @@ export class App {
     init() {
         ensureCSS([
             'fontawesome/css/all.css'
-        ], this.config.staticUrl)
+        ])
         if (navigator.onLine) {
             return this.getUserInfo().catch(
                 error => {
@@ -199,7 +199,7 @@ export class App {
             }, 250)
         })
 
-        if (!this.config.debug) {
+        if (!settings.DEBUG) {
             OfflinePluginRuntime.install({
                 onUpdateReady: () => OfflinePluginRuntime.applyUpdate(),
                 onUpdated: () => window.location.reload()
@@ -209,7 +209,7 @@ export class App {
 
     connectWs() {
         this.ws = new WebSocketConnector({
-            url: `${this.config.websocketUrl}/ws/base/`,
+            url: '/ws/base/',
             appLoaded: () => true,
             receiveData: data => {
                 switch (data.type) {
@@ -271,10 +271,8 @@ export class App {
     }
 
     getUserInfo() {
-        return postJson('/api/user/info/').then(
-            ({json}) => {
-                this.config.user = json
-            }
+        return postJson('/api/base/configuration/').then(
+            ({json}) => Object.entries(json).forEach(([key, value]) => this.config[key] = value)
         )
     }
 

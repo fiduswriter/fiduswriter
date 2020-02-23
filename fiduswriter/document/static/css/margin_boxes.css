@@ -15,7 +15,7 @@
     margin-bottom: 6px;
     margin-left: -3px;
     display: flex;
-    border: 2px solid var(--cs-light-background);
+    border: 2px solid var(--main-background-color);
     border-top: 0 none;
     top: 225px;
 }
@@ -391,12 +391,12 @@ body.header-closed #margin-box-filter {
 
 #comment-editor .tagger .tag.selected,
 #answer-editor .tagger .tag.selected {
-    background-color: var(--cs-6-focus);
+    background-color: var(--cs-6-background-focus);
 }
 
 #comment-editor .tagger .tag:hover,
 #answer-editor .tagger .tag:hover {
-    background-color: var(--cs-6-hover);
+    background-color: var(--cs-6-background-hover);
 }
 
 #comment-editor .tagger .tag-user,

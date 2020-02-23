@@ -72,8 +72,7 @@ export const menuModel = () => ({
             action: overview => {
                 const fileImporter = new BibLatexFileImportDialog(
                     overview.app.bibDB,
-                    ids => overview.updateTable(ids),
-                    overview.staticUrl
+                    ids => overview.updateTable(ids)
                 )
                 fileImporter.init()
             },

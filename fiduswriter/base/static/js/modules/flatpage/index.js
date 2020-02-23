@@ -2,8 +2,8 @@ import {whenReady, postJson, ensureCSS} from "../common"
 import {PreloginPage} from "../prelogin"
 
 export class FlatPage extends PreloginPage {
-    constructor({app, isFree, language, registrationOpen, staticUrl}, url) {
-        super({app, isFree, language, registrationOpen, staticUrl})
+    constructor({app, language}, url) {
+        super({app, language})
         this.url = url
     }
 
@@ -13,7 +13,7 @@ export class FlatPage extends PreloginPage {
             this.getPageData(),
             ensureCSS([
                 'flatpage.css'
-            ], this.staticUrl)
+            ])
         ]).then(() => {
             this.activateFidusPlugins()
             this.render()

@@ -18,6 +18,10 @@ const getCookie = function(name) {
     return null
 }
 
+const deleteCookie = function(name) {
+    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
+}
+
 const getCsrfToken = function() {
     return getCookie('csrftoken')
 }
@@ -25,6 +29,15 @@ const getCsrfToken = function() {
 /* from https://www.tjvantoll.com/2015/09/13/fetch-and-errors/ */
 const handleFetchErrors = function(response) {
     if (!response.ok) { throw response }
+    return response
+}
+
+// We don't use django messages in the frontend. The only messages that are recording
+//  are "user logged in" and "user logged out". The admin interface does use messages.
+// To prevent it from displaying lots of old login/logout messages, we delete the
+// messages after each post/get.
+const removeDjangoMessages = function(response) {
+    deleteCookie('messages')
     return response
 }
 
@@ -47,6 +60,8 @@ export const get = function(url, params={}, csrfToken=false) {
         },
         credentials: 'include'
     }).then(
+        removeDjangoMessages
+    ).then(
         handleFetchErrors
     )
 }
@@ -90,6 +105,8 @@ export const postBare = function(url, params={}, csrfToken=false) {
 
 export const post = function(url, params={}, csrfToken=false) {
     return postBare(url, params, csrfToken).then(
+        removeDjangoMessages
+    ).then(
         handleFetchErrors
     )
 }
@@ -103,12 +120,12 @@ export const postJson = function(url, params={}, csrfToken=false) {
     )
 }
 
-export const ensureCSS = function(cssUrl, staticUrl) {
+export const ensureCSS = function(cssUrl) {
     if (typeof cssUrl === 'object') {
-        cssUrl.forEach(url => ensureCSS(url, staticUrl))
+        cssUrl.forEach(url => ensureCSS(url))
         return
     }
-    const url = `${staticUrl}css/${cssUrl}?v=${process.env.TRANSPILE_VERSION}`,
+    const url = `${settings.STATIC_URL}css/${cssUrl}?v=${transpile.VERSION}`,
         link = document.createElement("link")
     link.rel = "stylesheet"
     link.href = url

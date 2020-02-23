@@ -72,13 +72,6 @@ for app in settings.INSTALLED_APPS:
         app_name = app.rsplit('.', 1).pop()
         urlpatterns += [url('^api/%s/' % app_name, include('%s.urls' % app))]
 
-if settings.DEBUG:
-    urlpatterns += [
-        url('^media/(?P<path>.*)$', static_serve, {
-            'document_root': settings.MEDIA_ROOT,
-        }),
-    ]
-
 if hasattr(settings, 'EXTRA_URLS'):
     for extra_url in settings.EXTRA_URLS:
         urlpatterns += [

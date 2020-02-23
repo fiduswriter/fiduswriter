@@ -151,8 +151,7 @@ export class ModDocumentTemplate {
                                 template.template_file,
                                 editor.mod.db.bibDB,
                                 editor.mod.db.imageDB,
-                                editor.app.csl,
-                                editor.staticUrl
+                                editor.app.csl
                             )
                             exporter.init()
                         })

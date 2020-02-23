@@ -2,11 +2,10 @@ import {escapeText, postJson} from "../common"
 import {PreloginPage} from "../prelogin"
 
 export class Signup extends PreloginPage {
-    constructor({app, isFree, language, registrationOpen, staticUrl}) {
-        super({app, isFree, language, registrationOpen, staticUrl})
+    constructor({app, language}) {
+        super({app, language})
         this.title = gettext('Signup')
-        this.registrationOpen = registrationOpen
-        if (this.registrationOpen) {
+        if (settings.REGISTRATION_OPEN) {
             this.contents = `<div class="fw-login-left">
                 <h1 class="fw-login-title">${gettext("Sign up")}</h1>
                 <p>
@@ -58,7 +57,7 @@ export class Signup extends PreloginPage {
 
         const signupSubmit = document.querySelector('#signup-submit')
 
-        if (!this.registrationOpen || !signupSubmit) {
+        if (!settings.REGISTRATION_OPEN || !signupSubmit) {
             return
         }
 

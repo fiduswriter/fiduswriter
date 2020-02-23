@@ -26,6 +26,8 @@ build
 /fiduswriter/fiduswriter.sql.backup
 /fiduswriter/.transpile/
 /fiduswriter/media/
+/fiduswriter/media.backup/
+/fiduswriter/static/
 /fiduswriter/static-transpile/
 /fiduswriter/static-libs/
 /fiduswriter/book

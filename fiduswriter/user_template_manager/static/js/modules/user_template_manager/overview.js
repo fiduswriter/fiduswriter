@@ -11,10 +11,9 @@ export class DocTemplatesOverview {
     // A class that contains everything that happens on the templates page.
     // It is currently not possible to initialize more than one such class, as it
     // contains bindings to menu items, etc. that are uniquely defined.
-    constructor({app, user, staticUrl}) {
+    constructor({app, userl}) {
         this.app = app
         this.user = user
-        this.staticUrl = staticUrl
         this.mod = {}
         this.templateList = []
         this.styles = false
@@ -38,16 +37,15 @@ export class DocTemplatesOverview {
         this.dom.innerHTML = baseBodyTemplate({
             contents: '',
             user: this.user,
-            staticUrl: this.staticUrl,
             hasOverview: true
         })
         document.body = this.dom
         ensureCSS([
             'add_remove_dialog.css',
             'access_rights_dialog.css'
-        ], this.staticUrl)
+        ])
         setDocTitle(gettext('Document Templates Overview'), this.app)
-        const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
+        const feedbackTab = new FeedbackTab()
         feedbackTab.init()
     }
 

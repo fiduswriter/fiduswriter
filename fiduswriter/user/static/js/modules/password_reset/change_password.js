@@ -2,9 +2,8 @@ import {escapeText, post, get} from "../common"
 import {PreloginPage} from "../prelogin"
 
 export class PasswordResetChangePassword extends PreloginPage {
-    constructor({app, language, contactEmail}, key = false) {
+    constructor({app, language}, key = false) {
         super({app, language})
-        this.contactEmail = contactEmail
         this.title = gettext('Change Password')
         this.key = key
         // Note: We do not currently support plugins targetting only the reset password page

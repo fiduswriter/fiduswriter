@@ -22,7 +22,6 @@ def fiduswriter_config_js(context):
     return {
         'ws_port': getattr(settings, 'WS_PORT', ''),
         'ws_server': getattr(settings, 'WS_SERVER', ''),
-        'contact_email': settings.CONTACT_EMAIL,
         'test_server': (
             'true' if settings.TEST_SERVER else 'false'
         ),

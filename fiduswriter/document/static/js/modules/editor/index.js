@@ -122,9 +122,8 @@ export class Editor {
     // A class that contains everything that happens on the editor page.
     // It is currently not possible to initialize more than one editor class, as it
     // contains bindings to menu items, etc. that are uniquely defined.
-    constructor({app, websocketUrl, user}, idString) {
+    constructor({app, user}, idString) {
         this.app = app
-        this.websocketUrl = websocketUrl
         this.user = user
         this.mod = {}
         // Whether the editor is currently waiting for a document update. Set to true
@@ -240,7 +239,7 @@ export class Editor {
             new ModCitations(this)
             new ModFootnotes(this)
             this.ws = new WebSocketConnector({
-                url: `${this.websocketUrl}/ws/document/${this.docInfo.id}/`,
+                url: `/ws/document/${this.docInfo.id}/`,
                 appLoaded: () => this.view.state.plugins.length,
                 anythingToSend: () => sendableSteps(this.view.state),
                 initialMessage: () => {

@@ -20,8 +20,6 @@ def fiduswriter_config_js(context):
             'login_url': provider.get_login_url(context['request'])
         })
     return {
-        'ws_port': getattr(settings, 'WS_PORT', ''),
-        'ws_server': getattr(settings, 'WS_SERVER', ''),
         'language': context['request'].LANGUAGE_CODE,
         'socialaccount_providers': socialaccount_providers
     }

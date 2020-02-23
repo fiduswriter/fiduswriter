@@ -1,5 +1,4 @@
 from django import template
-from django.conf import settings
 from allauth.socialaccount.models import providers
 
 register = template.Library()

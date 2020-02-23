@@ -29,7 +29,6 @@
 --ignore-directory=is:fixtures
 --ignore-directory=is:venv
 --ignore-directory=is:build
---ignore-directory=is:static
 --ignore-file=ext:bak
 --ignore-file=match:/~$/
 --ignore-file=match:/^#.+#$/

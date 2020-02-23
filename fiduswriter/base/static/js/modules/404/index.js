@@ -1,8 +1,8 @@
 import {PreloginPage} from "../prelogin"
 
 export class Page404 extends PreloginPage {
-    constructor({app, isFree, language, registrationOpen}) {
-        super({app, isFree, language, registrationOpen})
+    constructor({app, isFree, language}) {
+        super({app, isFree, language})
         this.title = gettext('Page not found')
         this.contents = `<div class="fw-login-left">
             <h1 class="fw-login-title">${gettext('Error 404')}</h1>

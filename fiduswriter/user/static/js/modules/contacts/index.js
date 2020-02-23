@@ -6,10 +6,9 @@ import {SiteMenu} from "../menu"
 import {menuModel, bulkMenuModel} from "./menu"
 
 export class ContactsOverview {
-    constructor({app, user, registrationOpen}) {
+    constructor({app, user}) {
         this.app = app
         this.user = user
-        this.registrationOpen = registrationOpen
     }
 
     init() {

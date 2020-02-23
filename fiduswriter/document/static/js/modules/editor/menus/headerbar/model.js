@@ -50,8 +50,7 @@ export const headerbarModel = () => ({
                             editor.docInfo.owner.team_members,
                             memberData => {
                                 editor.docInfo.owner.team_members.push(memberData)
-                            },
-                            editor.registrationOpen
+                            }
                         )
                         dialog.init()
                     },

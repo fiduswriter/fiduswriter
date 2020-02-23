@@ -1,8 +1,8 @@
 import {PreloginPage} from "../prelogin"
 
 export class SetupPage extends PreloginPage {
-    constructor({app, isFree, language, registrationOpen}) {
-        super({app, isFree, language, registrationOpen})
+    constructor({app, isFree, language}) {
+        super({app, isFree, language})
         this.title = gettext('Update')
         this.contents = `<div class="fw-login-left">
             <h1 class="fw-login-title">${gettext('Update')}</h1>

@@ -5,11 +5,10 @@ import {FeedbackTab} from "../feedback"
 import {basePreloginTemplate} from "./templates"
 
 export class PreloginPage {
-    constructor({app, isFree, language, registrationOpen}) {
+    constructor({app, isFree, language}) {
         this.app = app
         this.isFree = isFree
         this.language = language
-        this.registrationOpen = registrationOpen
         this.pluginLoaders = {}
         this.title = ''
         this.contents = ''

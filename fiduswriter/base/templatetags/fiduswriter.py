@@ -27,9 +27,6 @@ def fiduswriter_config_js(context):
             'true' if settings.TEST_SERVER else 'false'
         ),
         'is_free': ('true' if settings.IS_FREE else 'false'),
-        'registration_open': (
-            'true' if settings.REGISTRATION_OPEN else 'false'
-        ),
         'language': context['request'].LANGUAGE_CODE,
         'socialaccount_providers': socialaccount_providers,
         'debug': (

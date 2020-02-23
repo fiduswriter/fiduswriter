@@ -2,8 +2,8 @@ import {whenReady, postJson, ensureCSS} from "../common"
 import {PreloginPage} from "../prelogin"
 
 export class FlatPage extends PreloginPage {
-    constructor({app, isFree, language, registrationOpen}, url) {
-        super({app, isFree, language, registrationOpen})
+    constructor({app, isFree, language}, url) {
+        super({app, isFree, language})
         this.url = url
     }
 

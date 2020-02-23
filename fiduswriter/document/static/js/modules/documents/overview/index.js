@@ -17,10 +17,9 @@ import {
 
 export class DocumentOverview {
 
-    constructor({app, user, registrationOpen}) {
+    constructor({app, user}) {
         this.app = app
         this.user = user
-        this.registrationOpen = registrationOpen
         this.schema = docSchema
         this.documentList = []
         this.teamMembers = []
@@ -79,8 +78,7 @@ export class DocumentOverview {
                     const dialog = new DocumentAccessRightsDialog(
                         [docId],
                         this.teamMembers,
-                        memberDetails => this.teamMembers.push(memberDetails),
-                        this.registrationOpen
+                        memberDetails => this.teamMembers.push(memberDetails)
                     )
                     dialog.init()
                     break

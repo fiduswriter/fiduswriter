@@ -898,6 +898,11 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             ".fw-logout-button"
         ).click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, 'a[href="/account/sign-up/"]')
+            )
+        )
         # User 4 signs up using invitation link but different email than what
         # was in the invitation email (this should work)
         invitation_link = self.find_urls(user4_invitation_email)[0]

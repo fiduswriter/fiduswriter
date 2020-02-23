@@ -41,9 +41,11 @@ module.exports = { // eslint-disable-line no-undef
     },
     plugins: [
         new webpack.DefinePlugin({
-            "settings.STATIC_URL": settings.STATIC_URL,
+            "settings.STATIC_URL": JSON.stringify(settings.STATIC_URL),
             "settings.REGISTRATION_OPEN": settings.REGISTRATION_OPEN,
-            "settings.CONTACT_EMAIL": settings.CONTACT_EMAIL,
+            "settings.CONTACT_EMAIL": JSON.stringify(settings.CONTACT_EMAIL),
+            "settings.WS_SERVER": settings.WS_SERVER ? JSON.stringify(settings.WS_SERVER) : false,
+            "settings.WS_PORT": settings.WS_PORT,
             "settings.IS_FREE": settings.IS_FREE,
             "settings.TEST_SERVER": settings.TEST_SERVER,
             "settings.DEBUG": settings.DEBUG,

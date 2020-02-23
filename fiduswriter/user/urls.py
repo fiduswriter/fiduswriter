@@ -11,11 +11,6 @@ urlpatterns = [
         views.list_team_members,
         name='list_team_members'
     ),
-    url(
-        '^info/$',
-        views.info,
-        name='info'
-    ),
     url('^avatar/delete/$', views.delete_avatar, name="delete_avatar"),
     url('^avatar/upload/$', views.upload_avatar, name="upload_avatar"),
     url(

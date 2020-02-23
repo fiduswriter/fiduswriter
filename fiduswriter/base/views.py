@@ -5,6 +5,10 @@ from django.contrib.flatpages.models import FlatPage
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 
+from allauth.socialaccount.models import providers
+
+from user import util as userutil
+
 from .decorators import ajax_required
 
 
@@ -15,6 +19,54 @@ def app(request):
     Used all user facing pages after login.
     """
     return render(request, 'app.html')
+
+
+@ajax_required
+@require_POST
+def configuration(request):
+    """
+    Load the configuration options of the page that are request dependent.
+    """
+    socialaccount_providers = []
+    for provider in providers.registry.get_list():
+        socialaccount_providers.append({
+            'id': provider.id,
+            'name': provider.name,
+            'login_url': provider.get_login_url(request)
+        })
+    response = {
+        'language': request.LANGUAGE_CODE,
+        'socialaccount_providers': socialaccount_providers
+    }
+    if request.user.is_authenticated:
+        response['user'] = {
+            'id': request.user.id,
+            'username': request.user.username,
+            'first_name': request.user.first_name,
+            'name': request.user.readable_name,
+            'last_name': request.user.last_name,
+            'avatar': userutil.get_user_avatar_url(request.user),
+            'emails': [],
+            'is_authenticated': True
+        }
+
+        for emailaddress in request.user.emailaddress_set.all():
+            email = {
+                'address': emailaddress.email,
+            }
+            if emailaddress.primary:
+                email['primary'] = True
+            if emailaddress.verified:
+                email['verified'] = True
+            response['user']['emails'].append(email)
+    else:
+        response['user'] = {
+            'is_authenticated': False
+        }
+    return JsonResponse(
+        response,
+        status=200
+    )
 
 
 def manifest_json(request):

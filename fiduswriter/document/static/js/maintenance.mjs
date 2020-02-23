@@ -1,6 +1,6 @@
 import {DocMaintenance} from "./modules/maintenance"
 
-const theMaintainer = new DocMaintenance(window.fidusConfig)
+const theMaintainer = new DocMaintenance()
 
 theMaintainer.init()
 

@@ -19,8 +19,8 @@ import {FlatPage} from "../flatpage"
 import * as plugins from "../../plugins/app"
 
 export class App {
-    constructor(config = {}) {
-        this.config = config
+    constructor() {
+        this.config = {}
         this.name = 'Fidus Writer'
         this.config.app = this
         this.routes = {
@@ -271,10 +271,8 @@ export class App {
     }
 
     getUserInfo() {
-        return postJson('/api/user/info/').then(
-            ({json}) => {
-                this.config.user = json
-            }
+        return postJson('/api/base/configuration/').then(
+            ({json}) => Object.entries(json).forEach(([key, value]) => this.config[key] = value)
         )
     }
 

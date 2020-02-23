@@ -3,9 +3,9 @@ import * as pluginLoaders from "../../plugins/login"
 import {PreloginPage} from "../prelogin"
 
 export class LoginPage extends PreloginPage {
-    constructor({app, language, socialaccountProviders}) {
+    constructor({app, language, socialaccount_providers}) {
         super({app, language})
-        this.socialaccountProviders = socialaccountProviders
+        this.socialaccount_providers = socialaccount_providers
         this.title = gettext('Login')
         this.pluginLoaders = pluginLoaders
         this.headerLinks = settings.REGISTRATION_OPEN ? [
@@ -28,11 +28,11 @@ export class LoginPage extends PreloginPage {
                 settings.REGISTRATION_OPEN ?
                     `<p>${gettext("If you are new here, please <a href='/account/sign-up/' title='Sign up'>sign up</a> or use one of the login options below to create an account.")}</p>` +
                     (
-                        this.socialaccountProviders.length ?
+                        this.socialaccount_providers.length ?
                         `<div class="socialaccount_ballot">
                             <ul class="socialaccount_providers">
                             ${
-                                this.socialaccountProviders.map(
+                                this.socialaccount_providers.map(
                                     provider => `<li>
                                         <a title="${provider.name}" class="fw-button fw-socialaccount fw-${provider.id}"
                                             href="${provider.login_url}">

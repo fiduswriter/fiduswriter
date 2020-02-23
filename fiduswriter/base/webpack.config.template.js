@@ -12,22 +12,12 @@ const baseRule = {
     }
 }
 
-if (django.conf.settings.DEBUG) { // eslint-disable-line no-undef
+if (settings.DEBUG) { // eslint-disable-line no-undef
     baseRule.exclude = /node_modules/
 }
 
-const definitions = {
-    "settings.STATIC_URL": django.conf.settings.STATIC_URL // eslint-disable-line no-undef
-}
-
-// splitting  key so it won't be replaced
-definitions[
-    "transpile" + "." + "VERSION"  // eslint-disable-line no-useless-concat
-] = transpile.VERSION // eslint-disable-line no-undef
-
-
 module.exports = { // eslint-disable-line no-undef
-    mode: django.conf.settings.DEBUG ? 'development' : 'production', // eslint-disable-line no-undef
+    mode: settings.DEBUG ? 'development' : 'production', // eslint-disable-line no-undef
     module: {
         rules: [
             {
@@ -47,7 +37,10 @@ module.exports = { // eslint-disable-line no-undef
         publicPath: transpile.BASE_URL, // eslint-disable-line no-undef
     },
     plugins: [
-        new webpack.DefinePlugin(definitions),
+        new webpack.DefinePlugin({
+            "settings.STATIC_URL": settings.STATIC_URL, // eslint-disable-line no-undef
+            "transpile.VERSION": transpile.VERSION // eslint-disable-line no-undef
+        }),
         new OfflinePlugin({
             cacheMaps: [
                 {

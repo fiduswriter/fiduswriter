@@ -1,7 +1,6 @@
 from django import template
 from django.conf import settings
 from allauth.socialaccount.models import providers
-from django.contrib.staticfiles.storage import staticfiles_storage
 
 register = template.Library()
 

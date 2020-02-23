@@ -135,7 +135,6 @@ export const headerbarModel = () => ({
                         import("../../../exporter/print").then(({PrintExporter}) => {
                             const exporter = new PrintExporter(
                                 editor.schema,
-                                editor.staticUrl,
                                 editor.app.csl,
                                 editor.mod.documentTemplate.documentStyles,
                                 editor.getDoc({changes: 'acceptAllNoInsertions'}),
@@ -164,7 +163,6 @@ export const headerbarModel = () => ({
                         import("../../../exporter/html").then(({HTMLExporter}) => {
                             const exporter = new HTMLExporter(
                                 editor.schema,
-                                editor.staticUrl,
                                 editor.app.csl,
                                 editor.mod.documentTemplate.documentStyles,
                                 editor.getDoc({changes: 'acceptAllNoInsertions'}),
@@ -184,7 +182,6 @@ export const headerbarModel = () => ({
                         import("../../../exporter/epub").then(({EpubExporter}) => {
                             const exporter = new EpubExporter(
                                 editor.schema,
-                                editor.staticUrl,
                                 editor.app.csl,
                                 editor.mod.documentTemplate.documentStyles,
                                 editor.getDoc({changes: 'acceptAllNoInsertions'}),
@@ -219,7 +216,6 @@ export const headerbarModel = () => ({
                     action: editor => {
                         import("../../../exporter/jats").then(({JATSExporter}) => {
                             const exporter = new JATSExporter(
-                                editor.staticUrl,
                                 editor.getDoc({changes: 'acceptAllNoInsertions'}),
                                 editor.mod.db.bibDB,
                                 editor.mod.db.imageDB,

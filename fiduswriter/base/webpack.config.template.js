@@ -10,14 +10,24 @@ const baseRule = {
             plugins: ["@babel/plugin-syntax-dynamic-import"]
         }
     }
-};
+}
 
-if (django.conf.settings.DEBUG) {
+if (django.conf.settings.DEBUG) { // eslint-disable-line no-undef
     baseRule.exclude = /node_modules/
 }
 
+const definitions = {
+    "settings.STATIC_URL": django.conf.settings.STATIC_URL // eslint-disable-line no-undef
+}
+
+// splitting  key so it won't be replaced
+definitions[
+    "transpile" + "." + "VERSION"  // eslint-disable-line no-useless-concat
+] = transpile.VERSION // eslint-disable-line no-undef
+
+
 module.exports = { // eslint-disable-line no-undef
-    mode: django.conf.settings.DEBUG ? 'development' : 'production',
+    mode: django.conf.settings.DEBUG ? 'development' : 'production', // eslint-disable-line no-undef
     module: {
         rules: [
             {
@@ -32,15 +42,12 @@ module.exports = { // eslint-disable-line no-undef
         ]
     },
     output: {
-        path: transpile.OUT_DIR,
-        chunkFilename: "[id]-" + transpile.VERSION + ".js",
-        publicPath: transpile.BASE_URL,
+        path: transpile.OUT_DIR, // eslint-disable-line no-undef
+        chunkFilename: "[id]-" + transpile.VERSION + ".js", // eslint-disable-line no-undef
+        publicPath: transpile.BASE_URL, // eslint-disable-line no-undef
     },
     plugins: [
-        new webpack.DefinePlugin({
-            "transpile.VERSION": transpile.VERSION,
-            "settings.STATIC_URL": django.conf.settings.STATIC_URL
-        }),
+        new webpack.DefinePlugin(definitions),
         new OfflinePlugin({
             cacheMaps: [
                 {
@@ -63,15 +70,15 @@ module.exports = { // eslint-disable-line no-undef
             },
             autoUpdate: true,
             appShell: "/",
-            externals: transpile.STATIC_FRONTEND_FILES.concat([
+            externals: transpile.STATIC_FRONTEND_FILES.concat([ // eslint-disable-line no-undef
                 "/",
                 "/api/django_js_error_hook/utils.js",
                 "/api/jsi18n/",
-                transpile.BASE_URL + "browser_check.js",
+                transpile.BASE_URL + "browser_check.js", // eslint-disable-line no-undef
                 "/manifest.json"
             ]),
             AppCache: false,
-            version: transpile.VERSION,
+            version: transpile.VERSION, // eslint-disable-line no-undef
             excludes: [
                 'admin_console.js',
                 'maintenance.js',
@@ -84,5 +91,5 @@ module.exports = { // eslint-disable-line no-undef
             ]
         })
     ],
-    entry: transpile.ENTRIES
+    entry: transpile.ENTRIES // eslint-disable-line no-undef
 }

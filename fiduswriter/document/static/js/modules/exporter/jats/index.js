@@ -11,8 +11,7 @@ import {darManifest} from "./templates"
 */
 
 export class JATSExporter {
-    constructor(staticUrl, doc, bibDB, imageDB, csl) {
-        this.staticUrl = staticUrl
+    constructor(doc, bibDB, imageDB, csl) {
         this.doc = doc
         this.bibDB = bibDB
         this.imageDB = imageDB

@@ -2,8 +2,8 @@ import {escapeText, postJson} from "../common"
 import {PreloginPage} from "../prelogin"
 
 export class Signup extends PreloginPage {
-    constructor({app, isFree, language, registrationOpen, staticUrl}) {
-        super({app, isFree, language, registrationOpen, staticUrl})
+    constructor({app, isFree, language, registrationOpen}) {
+        super({app, isFree, language, registrationOpen})
         this.title = gettext('Signup')
         this.registrationOpen = registrationOpen
         if (this.registrationOpen) {

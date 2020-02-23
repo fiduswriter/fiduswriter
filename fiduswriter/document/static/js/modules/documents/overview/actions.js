@@ -241,7 +241,6 @@ export class DocumentOverviewActions {
                 import("../../exporter/html").then(({HTMLExporter}) => {
                     const exporter = new HTMLExporter(
                         this.documentOverview.schema,
-                        this.documentOverview.staticUrl,
                         this.documentOverview.app.csl,
                         this.documentOverview.documentStyles,
                         doc,
@@ -270,8 +269,7 @@ export class DocumentOverviewActions {
                                 templateUrl,
                                 {db:doc.bibliography},
                                 {db:doc.images},
-                                this.documentOverview.app.csl,
-                                this.documentOverview.staticUrl
+                                this.documentOverview.app.csl
                             )
                             exporter.init()
                         })
@@ -324,7 +322,6 @@ export class DocumentOverviewActions {
                     const doc = this.documentOverview.documentList.find(entry => entry.id===id)
                     import("../../exporter/jats").then(({JATSExporter}) => {
                         const exporter = new JATSExporter(
-                            this.documentOverview.staticUrl,
                             doc,
                             {db:doc.bibliography},
                             {db:doc.images},
@@ -348,7 +345,6 @@ export class DocumentOverviewActions {
                     import("../../exporter/epub").then(({EpubExporter}) => {
                         const exporter = new EpubExporter(
                             this.documentOverview.schema,
-                            this.documentOverview.staticUrl,
                             this.documentOverview.app.csl,
                             this.documentOverview.documentStyles,
                             doc,

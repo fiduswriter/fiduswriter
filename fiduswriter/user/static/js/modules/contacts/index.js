@@ -6,10 +6,9 @@ import {SiteMenu} from "../menu"
 import {menuModel, bulkMenuModel} from "./menu"
 
 export class ContactsOverview {
-    constructor({app, user, staticUrl, registrationOpen}) {
+    constructor({app, user, registrationOpen}) {
         this.app = app
         this.user = user
-        this.staticUrl = staticUrl
         this.registrationOpen = registrationOpen
     }
 
@@ -45,12 +44,11 @@ export class ContactsOverview {
                 </table>
             </div>`,
             user: this.user,
-            staticUrl: this.staticUrl,
             hasOverview: true
         })
         document.body = this.dom
         setDocTitle(gettext('Team Members'), this.app)
-        const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
+        const feedbackTab = new FeedbackTab()
         feedbackTab.init()
 
         this.dtBulk.init(

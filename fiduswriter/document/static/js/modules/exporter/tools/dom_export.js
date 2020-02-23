@@ -17,16 +17,15 @@ by little, and they are all based on the BaseDOMExporter class.
 
 export class DOMExporter {
 
-    constructor(schema, staticUrl, csl, documentStyles) {
+    constructor(schema, csl, documentStyles) {
         this.schema = schema
-        this.staticUrl = staticUrl
         this.csl = csl
         this.documentStyles = documentStyles
 
         this.fontFiles = []
         this.binaryFiles = []
         this.styleSheets = [
-            {url: `${this.staticUrl}css/document.css?v=${transpile.VERSION}`}
+            {url: `${settings.STATIC_URL}css/document.css?v=${transpile.VERSION}`}
         ]
     }
 

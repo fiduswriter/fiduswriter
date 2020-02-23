@@ -248,8 +248,7 @@ export class ModMarginboxes {
             docInfo: this.editor.docInfo,
             editComment: this.editor.mod.comments.interactions.editComment,
             activeCommentAnswerId: this.editor.mod.comments.interactions.activeCommentAnswerId,
-            filterOptions: this.filterOptions,
-            staticUrl: this.editor.staticUrl
+            filterOptions: this.filterOptions
         })
 
         this.marginBoxes = marginBoxes

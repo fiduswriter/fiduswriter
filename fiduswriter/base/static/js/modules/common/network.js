@@ -120,12 +120,12 @@ export const postJson = function(url, params={}, csrfToken=false) {
     )
 }
 
-export const ensureCSS = function(cssUrl, staticUrl) {
+export const ensureCSS = function(cssUrl) {
     if (typeof cssUrl === 'object') {
-        cssUrl.forEach(url => ensureCSS(url, staticUrl))
+        cssUrl.forEach(url => ensureCSS(url))
         return
     }
-    const url = `${staticUrl}css/${cssUrl}?v=${transpile.VERSION}`,
+    const url = `${settings.STATIC_URL}css/${cssUrl}?v=${transpile.VERSION}`,
         link = document.createElement("link")
     link.rel = "stylesheet"
     link.href = url

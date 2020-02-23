@@ -15,7 +15,6 @@ export class BibliographyDB {
      */
 
     getDB() {
-
         const localStorageVersion = window.localStorage.getItem('version')
         let lastModified = parseInt(window.localStorage.getItem('last_modified_biblist')),
             numberOfEntries = parseInt(window.localStorage.getItem('number_of_entries')),

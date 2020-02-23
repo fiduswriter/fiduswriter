@@ -109,7 +109,7 @@ export class App {
     init() {
         ensureCSS([
             'fontawesome/css/all.css'
-        ], this.config.staticUrl)
+        ])
         if (navigator.onLine) {
             return this.getUserInfo().catch(
                 error => {

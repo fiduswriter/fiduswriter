@@ -1,8 +1,8 @@
 import {PreloginPage} from "../prelogin"
 
 export class OfflinePage extends PreloginPage {
-    constructor({app, isFree, language, registrationOpen, staticUrl}) {
-        super({app, isFree, language, registrationOpen, staticUrl})
+    constructor({app, isFree, language, registrationOpen}) {
+        super({app, isFree, language, registrationOpen})
         this.title = gettext('Disconnected')
         this.contents = `<div class="fw-login-left">
             <h1 class="fw-login-title">${gettext('Disconnected')}</h1>

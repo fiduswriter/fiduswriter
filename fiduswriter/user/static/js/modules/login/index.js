@@ -3,8 +3,8 @@ import * as pluginLoaders from "../../plugins/login"
 import {PreloginPage} from "../prelogin"
 
 export class LoginPage extends PreloginPage {
-    constructor({app, isFree, language, registrationOpen, socialaccountProviders, staticUrl}) {
-        super({app, isFree, language, registrationOpen, staticUrl})
+    constructor({app, isFree, language, registrationOpen, socialaccountProviders}) {
+        super({app, isFree, language, registrationOpen})
         this.socialaccountProviders = socialaccountProviders
         this.title = gettext('Login')
         this.pluginLoaders = pluginLoaders

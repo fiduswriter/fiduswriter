@@ -2,8 +2,8 @@ import {escapeText, post} from "../common"
 import {PreloginPage} from "../prelogin"
 
 export class PasswordResetRequest extends PreloginPage {
-    constructor({app, isFree, language, registrationOpen, contactEmail, staticUrl}) {
-        super({app, isFree, language, registrationOpen, staticUrl})
+    constructor({app, isFree, language, registrationOpen, contactEmail}) {
+        super({app, isFree, language, registrationOpen})
         this.contactEmail = contactEmail
         this.title = gettext('Reset Password')
         // Note: We do not currently support plugins targetting only the reset password page

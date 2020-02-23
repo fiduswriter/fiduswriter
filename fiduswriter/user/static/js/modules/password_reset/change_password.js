@@ -2,8 +2,8 @@ import {escapeText, post, get} from "../common"
 import {PreloginPage} from "../prelogin"
 
 export class PasswordResetChangePassword extends PreloginPage {
-    constructor({app, isFree, language, registrationOpen, contactEmail, staticUrl}, key = false) {
-        super({app, isFree, language, registrationOpen, staticUrl})
+    constructor({app, isFree, language, registrationOpen, contactEmail}, key = false) {
+        super({app, isFree, language, registrationOpen})
         this.contactEmail = contactEmail
         this.title = gettext('Change Password')
         this.key = key

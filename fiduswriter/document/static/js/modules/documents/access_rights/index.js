@@ -87,11 +87,11 @@ export class DocumentAccessRightsDialog {
 
         const buttons = [
             {
-                text: gettext('Add contact or invite new user'),
+                text: settings.REGISTRATION_OPEN ? gettext('Add contact or invite new user') : gettext('Add contact'),
                 classes: "fw-light fw-add-button",
                 click: () => {
                     const dialog = new AddContactDialog(
-                        gettext('Add contact or invite new user'),
+                        settings.REGISTRATION_OPEN ? gettext('Add contact or invite new user') : gettext('Add contact'),
                         true
                     )
                     dialog.init().then(

@@ -1,6 +1,9 @@
 const webpack = require("webpack") // eslint-disable-line no-undef
 const OfflinePlugin = require("offline-plugin") // eslint-disable-line no-undef
 
+const settings = window.settings // Replaced by django-npm-mjs
+const transpile = window.transpile // Replaced by django-npm-mjs
+
 const baseRule = {
     test: /\.(js|mjs)$/,
     use: {
@@ -12,12 +15,12 @@ const baseRule = {
     }
 }
 
-if (settings.DEBUG) { // eslint-disable-line no-undef
+if (settings.DEBUG) {
     baseRule.exclude = /node_modules/
 }
 
-module.exports = { // eslint-disable-line no-undef
-    mode: settings.DEBUG ? 'development' : 'production', // eslint-disable-line no-undef
+module.exports { // eslint-disable-line no-undef
+    mode: settings.DEBUG ? 'development' : 'production',
     module: {
         rules: [
             {
@@ -32,19 +35,19 @@ module.exports = { // eslint-disable-line no-undef
         ]
     },
     output: {
-        path: transpile.OUT_DIR, // eslint-disable-line no-undef
-        chunkFilename: "[id]-" + transpile.VERSION + ".js", // eslint-disable-line no-undef
-        publicPath: transpile.BASE_URL, // eslint-disable-line no-undef
+        path: transpile.OUT_DIR,
+        chunkFilename: "[id]-" + transpile.VERSION + ".js",
+        publicPath: transpile.BASE_URL,
     },
     plugins: [
         new webpack.DefinePlugin({
-            "settings.STATIC_URL": settings.STATIC_URL, // eslint-disable-line no-undef
-            "settings.REGISTRATION_OPEN": settings.REGISTRATION_OPEN, // eslint-disable-line no-undef
-            "settings.CONTACT_EMAIL": settings.CONTACT_EMAIL, // eslint-disable-line no-undef
-            "settings.IS_FREE": settings.IS_FREE, // eslint-disable-line no-undef
-            "settings.TEST_SERVER": settings.TEST_SERVER, // eslint-disable-line no-undef
-            "settings.DEBUG": settings.DEBUG, // eslint-disable-line no-undef
-            "transpile.VERSION": transpile.VERSION // eslint-disable-line no-undef
+            "settings.STATIC_URL": settings.STATIC_URL,
+            "settings.REGISTRATION_OPEN": settings.REGISTRATION_OPEN,
+            "settings.CONTACT_EMAIL": settings.CONTACT_EMAIL,
+            "settings.IS_FREE": settings.IS_FREE,
+            "settings.TEST_SERVER": settings.TEST_SERVER,
+            "settings.DEBUG": settings.DEBUG,
+            "transpile.VERSION": transpile.VERSION
         }),
         new OfflinePlugin({
             cacheMaps: [
@@ -68,15 +71,15 @@ module.exports = { // eslint-disable-line no-undef
             },
             autoUpdate: true,
             appShell: "/",
-            externals: transpile.STATIC_FRONTEND_FILES.concat([ // eslint-disable-line no-undef
+            externals: transpile.STATIC_FRONTEND_FILES.concat([
                 "/",
                 "/api/django_js_error_hook/utils.js",
                 "/api/jsi18n/",
-                transpile.BASE_URL + "browser_check.js", // eslint-disable-line no-undef
+                transpile.BASE_URL + "browser_check.js",
                 "/manifest.json"
             ]),
             AppCache: false,
-            version: transpile.VERSION, // eslint-disable-line no-undef
+            version: transpile.VERSION,
             excludes: [
                 'admin_console.js',
                 'maintenance.js',
@@ -89,5 +92,5 @@ module.exports = { // eslint-disable-line no-undef
             ]
         })
     ],
-    entry: transpile.ENTRIES // eslint-disable-line no-undef
+    entry: transpile.ENTRIES
 }

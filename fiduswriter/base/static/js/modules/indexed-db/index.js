@@ -15,7 +15,7 @@ export class indexedDB {
       //
     };
 
-    request.onsuccess = () => {
+    request.onsuccess = (event) => {
         let database = event.target.result;
         this.app.db_config['version']=database.version
         database.close()
@@ -33,7 +33,7 @@ export class indexedDB {
         db.createObjectStore("documents", { keyPath: "id" })
         db.createObjectStore("document_templates", { keyPath: "pk" })
         db.createObjectStore("team_members", { keyPath: "id" })
-        db.createObjectStore("export_templates", { autoIncrement: true })
+        db.createObjectStore("export_templates")
         db.createObjectStore("document_styles", { keyPath : "title" })
         db.createObjectStore("contacts_list", { keyPath : "id" })
         db.createObjectStore("image_db", { keyPath : "name" })
@@ -57,7 +57,7 @@ export class indexedDB {
       //
     };
 
-    request.onsuccess = () => {
+    request.onsuccess = (event) => {
       let db = event.target.result;
       let objectStore = db.transaction(objectStoreName,'readwrite').objectStore(objectStoreName)
       for(let d in data){
@@ -71,7 +71,7 @@ export class indexedDB {
     request.onerror = function(event) {
       //
     };
-    request.onsuccess = () => {
+    request.onsuccess = (event) => {
       let db = event.target.result;
       let objectStore = db.transaction(objectStoreName,'readwrite').objectStore(objectStoreName)
       if(data !== undefined){
@@ -87,7 +87,7 @@ export class indexedDB {
     request.onerror = function(event) {
       //
     };
-    request.onsuccess = () => {
+    request.onsuccess = (event) => {
       let db = event.target.result;
       let objectStore = db.transaction(objectStoreName,'readwrite').objectStore(objectStoreName)
       objectStore.clear();
@@ -100,7 +100,7 @@ export class indexedDB {
       request.onerror = function(event) {
         //
       };
-      request.onsuccess = () => {
+      request.onsuccess = (event) => {
           let db = event.target.result;
           let objectStore = db.transaction(objectStoreName,'readwrite').objectStore(objectStoreName)
           let read_all_request = objectStore.getAll();
@@ -121,7 +121,7 @@ export class indexedDB {
     request.onerror = function(event) {
       //
     };
-    request.onsuccess = () => {
+    request.onsuccess = (event) => {
       let db = event.target.result;
       let reader = new FileReader()
       reader.readAsDataURL(imageData)
@@ -153,7 +153,7 @@ export class indexedDB {
       request.onerror = function(event) {
         //
       };
-      request.onsuccess = () => {
+      request.onsuccess = (event) => {
         let db = event.target.result;
         let trans = db.transaction(['image_db'], 'readonly');
         //hard coded id
@@ -173,7 +173,7 @@ export class indexedDB {
       request.onerror = function(event) {
         //
       };
-      request.onsuccess = () => {
+      request.onsuccess = (event) => {
         let db = event.target.result;
         let trans = db.transaction(['image_db'], 'readonly');
         //hard coded id
@@ -186,5 +186,40 @@ export class indexedDB {
       }
     })
     return new_promise
+  }
+
+  updateExportTemplate(blob){
+    console.log(blob)
+    let request = window.indexedDB.open(this.app.db_config.db_name);
+    request.onerror = function(event) {
+      //
+    };
+
+    request.onsuccess = (event) => {
+      let db = event.target.result;
+      let objectStore = db.transaction('export_templates','readwrite').objectStore('export_templates')
+      objectStore.put(blob,blob.filepath)
+    }
+  }
+
+  readTemplate(url){
+    let new_promise = new Promise((resolve,reject)=>{
+      let request = window.indexedDB.open(this.app.db_config.db_name);
+      request.onerror = function(event) {
+        //
+      };
+      request.onsuccess = (event) => {
+        let db = event.target.result;
+        let trans = db.transaction(['export_templates'], 'readonly');
+        //hard coded id
+        let req = trans.objectStore('export_templates').get(url);
+        req.onsuccess = function(e) {
+          let record = e.target.result;
+          resolve(record)
+        }
+      }
+    })
+    return new_promise
+
   }
 }

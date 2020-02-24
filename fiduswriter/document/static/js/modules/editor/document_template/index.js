@@ -1,4 +1,4 @@
-import {Dialog, escapeText , addAlert} from "../../common"
+import {Dialog, escapeText , addAlert , get} from "../../common"
 import {SaveCopy} from "../../exporter/native"
 
 export class ModDocumentTemplate {
@@ -20,6 +20,14 @@ export class ModDocumentTemplate {
         }
         if (this.editor.menu.headerView) {
             this.editor.menu.headerView.update()
+        }
+        //Cache the template files in Indexed DB
+        for(let key in styles.export_templates){
+            let template = styles.export_templates[key]
+            get(template.template_file).then(response=>response.blob()).then(blob=>{
+                blob.filepath = template.template_file
+                this.editor.app.indexedDB.updateExportTemplate(blob)
+            })
         }
     }
 

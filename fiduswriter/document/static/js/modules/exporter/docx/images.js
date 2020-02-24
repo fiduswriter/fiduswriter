@@ -56,19 +56,41 @@ export class DocxExporterImages {
             const p = []
             usedImgs.forEach((image) => {
                 const imgDBEntry = this.imageDB.db[image]
-                p.push(
-                    get(imgDBEntry.image).then(
-                        response => response.blob()
-                    ).then(
-                        blob => {
+                if(!this.imageDB.mod.editor.ws.isOnline()){
+                    p.push(
+                        window.theApp.indexedDB.readImage(imgDBEntry.image.split('/').pop()).then((response)=>{
+                            let byteString = atob(response.split(',')[1]);
+                            let mimeString = response.split(',')[0].split(':')[1].split(';')[0]
+                            let ab = new ArrayBuffer(byteString.length);
+                            let ia = new Uint8Array(ab);
+                            for (let i = 0; i < byteString.length; i++) {
+                                ia[i] = byteString.charCodeAt(i);
+                            }
+                            let blob = new Blob([ab], {type: mimeString});
                             const wImgId = this.addImage(
                                 imgDBEntry.image.split('/').pop(),
                                 blob
                             )
                             this.imgIdTranslation[image] = wImgId
-                        }
+                            return
+                        })
                     )
-                )
+                } else {
+                    p.push(
+                        get(imgDBEntry.image).then(
+                            response => response.blob()
+                        ).then(
+                            blob => {
+                                const wImgId = this.addImage(
+                                    imgDBEntry.image.split('/').pop(),
+                                    blob
+                                )
+                                this.imgIdTranslation[image] = wImgId
+                            }
+                        )
+                    )
+
+                }
             })
 
             Promise.all(p).then(() => {

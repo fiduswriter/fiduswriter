@@ -327,7 +327,6 @@ export class DocumentOverview {
     }
 
     multipleNewDocumentMenuItem() {
-        console.log("Document templates",this.documentTemplates)
         const menuItem = this.menu.model.content.find(menuItem => menuItem.id==='new_document')
         menuItem.type = 'dropdown'
         menuItem.content = Object.values(this.documentTemplates).map(docTemplate => ({

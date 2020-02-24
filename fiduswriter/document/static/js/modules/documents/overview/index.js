@@ -111,11 +111,11 @@ export class DocumentOverview {
         ).then(
             ({json}) => {
                 this.updateIndexedDB(json)
-                this.initializeView(json) 
+                this.initializeView(json)
             }
         ).catch(
             error => {
-                if(error.message == "offline"){
+                if (error.message == "offline") {
                     this.loaddatafromIndexedDB().then((json)=>{
                         this.initializeView(json)
                     })
@@ -129,16 +129,16 @@ export class DocumentOverview {
         )
 
     }
-    
+
     loaddatafromIndexedDB() {
-        let new_json = {};
-        let new_promise = new Promise((resolve,reject)=>{
+        const new_json = {}
+        const new_promise = new Promise((resolve, reject)=>{
             this.app.indexedDB.readAllData("documents").then((response)=>{
                 new_json['documents'] = response
                 this.app.indexedDB.readAllData("document_templates").then((response)=>{
-                    let dummy_dict={}
-                    for(let data in response){
-                        let pk = response[data].pk
+                    const dummy_dict={}
+                    for (const data in response) {
+                        const pk = response[data].pk
                         delete response[data].pk
                         dummy_dict[pk] = response[data]
                     }
@@ -148,19 +148,19 @@ export class DocumentOverview {
                         this.app.indexedDB.readAllData("team_members").then((response)=>{
                             new_json['team_members'] = response
                             this.app.indexedDB.readAllData("export_templates").then((response)=>{
-                                if (response.length != 0 )
+                                if (response.length != 0)
                                     new_json['export_templates'] = response
                                 resolve(new_json)
                             })
                         })
                     })
                 })
-            }) 
+            })
         })
         return new_promise
     }
 
-    updateIndexedDB(json){
+    updateIndexedDB(json) {
         // Clear data if any present
         this.app.indexedDB.clearData("documents")
         this.app.indexedDB.clearData("team_members")
@@ -169,16 +169,16 @@ export class DocumentOverview {
         this.app.indexedDB.clearData("document_templates")
 
         //Insert new data
-        this.app.indexedDB.insertData("documents",json.documents)
-        this.app.indexedDB.insertData("team_members",json.team_members)
-        this.app.indexedDB.insertData("export_templates",json.export_templates)
-        this.app.indexedDB.insertData("document_styles",json.document_styles)
-        let dummy_json = [];
-        for(var key in json.document_templates){
+        this.app.indexedDB.insertData("documents", json.documents)
+        this.app.indexedDB.insertData("team_members", json.team_members)
+        this.app.indexedDB.insertData("export_templates", json.export_templates)
+        this.app.indexedDB.insertData("document_styles", json.document_styles)
+        const dummy_json = []
+        for (const key in json.document_templates) {
             json.document_templates[key]['pk'] = key
             dummy_json.push(json.document_templates[key])
         }
-        this.app.indexedDB.insertData("document_templates",dummy_json)
+        this.app.indexedDB.insertData("document_templates", dummy_json)
     }
 
     initializeView(json) {

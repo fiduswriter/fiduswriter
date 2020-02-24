@@ -42,7 +42,7 @@ export class WebSocketConnector {
         this.createWSConnection()
     }
 
-    isOnline(){
+    isOnline() {
         return this.connected
     }
 

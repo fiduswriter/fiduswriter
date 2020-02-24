@@ -320,7 +320,7 @@ export class Editor {
             activateWait(true)
             this.initEditor()
 
-            this.ws.ws.addEventListener('close',(event)=>{
+            this.ws.ws.addEventListener('close', (event)=>{
                 this.menu.toolbarViews.forEach(view => view.update())
             })
         })
@@ -457,8 +457,8 @@ export class Editor {
     // Collect all components of the current doc. Needed for saving and export
     // filters
     getDoc(options={}) {
-        let pmArticle;
-        if(this.ws.connected){
+        let pmArticle
+        if (this.ws.connected) {
             pmArticle = options.changes === 'acceptAllNoInsertions' ?
             acceptAllNoInsertions(this.docInfo.confirmedDoc).firstChild :
             this.docInfo.confirmedDoc.firstChild

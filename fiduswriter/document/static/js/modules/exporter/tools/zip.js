@@ -51,28 +51,28 @@ export class ZipFileCreator {
         this.textFiles.forEach(textFile => {
             this.zipFs.file(textFile.filename, textFile.contents, {compression: 'DEFLATE'})
         })
-        
+
         const httpPromises = this.binaryFiles.map(binaryFile => {
             // If the User is online use network to fetch the files
-            if(window.theApp.ws.isOnline){
+            if (window.theApp.ws.isOnline) {
                 return get(binaryFile.url).then(
                     response => response.blob()
                 ).then(
                     blob => this.zipFs.file(binaryFile.filename, blob, {binary: true, compression: 'DEFLATE'})
                 )
-            }else {
+            } else {
                 // If the user is offline and the requested file other than a font file use IndexedDB
-                if(!binaryFile.filename.includes('woff')){
+                if (!binaryFile.filename.includes('woff')) {
                     window.theApp.indexedDB.readImage(binaryFile.filename).then((response)=>
                         this.zipFs.file(binaryFile.filename, this.convertDataURIToBlob(response), {binary: true, compression: 'DEFLATE'})
                     )
-                }else{
+                } else {
                     return get(binaryFile.url).then(
                         response => response.blob()
                     ).then(
                         blob => this.zipFs.file(binaryFile.filename, blob, {binary: true, compression: 'DEFLATE'})
                     )
-                } 
+                }
             }
         })
         return Promise.all(httpPromises).then(
@@ -80,15 +80,15 @@ export class ZipFileCreator {
         )
     }
 
-    convertDataURIToBlob(datauri){
-        let byteString = atob(datauri.split(',')[1]);
-        let mimeString = datauri.split(',')[0].split(':')[1].split(';')[0]
-        let ab = new ArrayBuffer(byteString.length);
-        let ia = new Uint8Array(ab);
+    convertDataURIToBlob(datauri) {
+        const byteString = atob(datauri.split(',')[1])
+        const mimeString = datauri.split(',')[0].split(':')[1].split(';')[0]
+        const ab = new ArrayBuffer(byteString.length)
+        const ia = new Uint8Array(ab)
         for (let i = 0; i < byteString.length; i++) {
-            ia[i] = byteString.charCodeAt(i);
+            ia[i] = byteString.charCodeAt(i)
         }
-        return new Blob([ab], {type: mimeString});
+        return new Blob([ab], {type: mimeString})
     }
 
 }

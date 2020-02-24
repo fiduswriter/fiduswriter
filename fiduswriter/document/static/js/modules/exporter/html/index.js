@@ -58,8 +58,8 @@ export class HTMLExporter extends DOMExporter {
             styleSheets: this.styleSheets,
             contents: this.contents
         })
-        
-        return({title, html, math})
+
+        return ({title, html, math})
     }
 
     save({title, html, math}) {

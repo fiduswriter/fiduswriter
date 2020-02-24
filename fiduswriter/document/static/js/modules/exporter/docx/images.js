@@ -56,17 +56,17 @@ export class DocxExporterImages {
             const p = []
             usedImgs.forEach((image) => {
                 const imgDBEntry = this.imageDB.db[image]
-                if(!this.imageDB.mod.editor.ws.isOnline()){
+                if (!this.imageDB.mod.editor.ws.isOnline()) {
                     p.push(
                         window.theApp.indexedDB.readImage(imgDBEntry.image.split('/').pop()).then((response)=>{
-                            let byteString = atob(response.split(',')[1]);
-                            let mimeString = response.split(',')[0].split(':')[1].split(';')[0]
-                            let ab = new ArrayBuffer(byteString.length);
-                            let ia = new Uint8Array(ab);
+                            const byteString = atob(response.split(',')[1])
+                            const mimeString = response.split(',')[0].split(':')[1].split(';')[0]
+                            const ab = new ArrayBuffer(byteString.length)
+                            const ia = new Uint8Array(ab)
                             for (let i = 0; i < byteString.length; i++) {
-                                ia[i] = byteString.charCodeAt(i);
+                                ia[i] = byteString.charCodeAt(i)
                             }
-                            let blob = new Blob([ab], {type: mimeString});
+                            const blob = new Blob([ab], {type: mimeString})
                             const wImgId = this.addImage(
                                 imgDBEntry.image.split('/').pop(),
                                 blob

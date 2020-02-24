@@ -1,140 +1,138 @@
 export class indexedDB {
-  constructor(app){
+  constructor(app) {
     this.app = app
     this.init()
   }
-  
-  init(){
+
+  init() {
     this.app['db_config'] = {
       "db_name":this.app.config.user.username,
     }
 
     // Open/Create db if it doesn't exist
-    let request = window.indexedDB.open(this.app.db_config.db_name);
+    const request = window.indexedDB.open(this.app.db_config.db_name)
     request.onerror = function(event) {
       //
-    };
+    }
 
     request.onsuccess = (event) => {
-        let database = event.target.result;
+        const database = event.target.result
         this.app.db_config['version']=database.version
         database.close()
-        if(this.app.db_config.version<2)
+        if (this.app.db_config.version<2)
           this.createDBSchema()
     }
   }
 
-  createDBSchema(){
+  createDBSchema() {
     this.app.db_config.version+=1
-    let new_request = window.indexedDB.open(this.app.db_config.db_name,this.app.db_config.version)
+    const new_request = window.indexedDB.open(this.app.db_config.db_name, this.app.db_config.version)
     new_request.onupgradeneeded = function(event) {
-        let db = event.target.result;
-        //Creating a export_templates object store
-        db.createObjectStore("documents", { keyPath: "id" })
-        db.createObjectStore("document_templates", { keyPath: "pk" })
-        db.createObjectStore("team_members", { keyPath: "id" })
+        const db = event.target.result
+        db.createObjectStore("documents", {keyPath: "id"})
+        db.createObjectStore("document_templates", {keyPath: "pk"})
+        db.createObjectStore("team_members", {keyPath: "id"})
         db.createObjectStore("export_templates")
-        db.createObjectStore("document_styles", { keyPath : "title" })
-        db.createObjectStore("contacts_list", { keyPath : "id" })
-        db.createObjectStore("image_db", { keyPath : "name" })
+        db.createObjectStore("document_styles", {keyPath : "title"})
+        db.createObjectStore("contacts_list", {keyPath : "id"})
+        db.createObjectStore("image_db", {keyPath : "name"})
         db.close()
     }
   }
 
-  createObjectStore(name,options){
+  createObjectStore(name, options) {
     this.app.db_config.version+=1
-    let new_request = window.indexedDB.open(this.app.db_config.db_name,this.app.db_config.version)
+    const new_request = window.indexedDB.open(this.app.db_config.db_name, this.app.db_config.version)
     new_request.onupgradeneeded = function(event) {
-        let db = event.target.result;
-        db.createObjectStore(name,options);
+        const db = event.target.result
+        db.createObjectStore(name, options)
     }
-
   }
 
-  updateData(objectStoreName,data){
-    let request = window.indexedDB.open(this.app.db_config.db_name);
+  updateData(objectStoreName, data) {
+    const request = window.indexedDB.open(this.app.db_config.db_name)
     request.onerror = function(event) {
       //
-    };
+    }
 
     request.onsuccess = (event) => {
-      let db = event.target.result;
-      let objectStore = db.transaction(objectStoreName,'readwrite').objectStore(objectStoreName)
-      for(let d in data){
+      const db = event.target.result
+      const objectStore = db.transaction(objectStoreName, 'readwrite').objectStore(objectStoreName)
+      for (const d in data) {
         objectStore.put(d)
       }
     }
   }
 
-  insertData(objectStoreName,data){
-    let request = window.indexedDB.open(this.app.db_config.db_name);
+  insertData(objectStoreName, data) {
+    const request = window.indexedDB.open(this.app.db_config.db_name)
     request.onerror = function(event) {
       //
-    };
+    }
     request.onsuccess = (event) => {
-      let db = event.target.result;
-      let objectStore = db.transaction(objectStoreName,'readwrite').objectStore(objectStoreName)
-      if(data !== undefined){
+      const db = event.target.result
+      const objectStore = db.transaction(objectStoreName, 'readwrite').objectStore(objectStoreName)
+      if (data !== undefined) {
         data.forEach(function(document) {
-          objectStore.add(document);
-        });
+          objectStore.add(document)
+        })
       }
     }
   }
 
-  clearData(objectStoreName){
-    let request = window.indexedDB.open(this.app.db_config.db_name);
+  clearData(objectStoreName) {
+    const request = window.indexedDB.open(this.app.db_config.db_name)
     request.onerror = function(event) {
       //
-    };
+    }
     request.onsuccess = (event) => {
-      let db = event.target.result;
-      let objectStore = db.transaction(objectStoreName,'readwrite').objectStore(objectStoreName)
-      objectStore.clear();
+      const db = event.target.result
+      const objectStore = db.transaction(objectStoreName, 'readwrite').objectStore(objectStoreName)
+      objectStore.clear()
     }
   }
 
-  readAllData(objectStoreName){
-    let new_promise = new Promise((resolve,reject)=>{
-      let request = window.indexedDB.open(this.app.db_config.db_name);
+  readAllData(objectStoreName) {
+    const new_promise = new Promise((resolve, reject)=>{
+      const request = window.indexedDB.open(this.app.db_config.db_name)
       request.onerror = function(event) {
         //
-      };
+      }
       request.onsuccess = (event) => {
-          let db = event.target.result;
-          let objectStore = db.transaction(objectStoreName,'readwrite').objectStore(objectStoreName)
-          let read_all_request = objectStore.getAll();
+        const db = event.target.result
+        const objectStore = db.transaction(objectStoreName, 'readwrite').objectStore(objectStoreName)
+        const read_all_request = objectStore.getAll()
           read_all_request.onerror = function(event) {
             // Handle errors!
-          };
+          }
           read_all_request.onsuccess = function(event) {
             // Do something with the request.result!
-            resolve(read_all_request.result);
-          };
+            resolve(read_all_request.result)
+          }
       }
     })
     return new_promise
   }
 
-  saveImage(imageData,filename){
-    let request = window.indexedDB.open(this.app.db_config.db_name);
+  saveImage(imageData, filename) {
+    const request = window.indexedDB.open(this.app.db_config.db_name)
     request.onerror = function(event) {
       //
-    };
+    }
     request.onsuccess = (event) => {
-      let db = event.target.result;
-      let reader = new FileReader()
+      const db = event.target.result
+      const reader = new FileReader()
       reader.readAsDataURL(imageData)
       reader.onload = function(e) {
         //alert(e.target.result);
-        let bits = e.target.result;
-        let ob = {
+        const bits = e.target.result
+        const ob = {
           name:filename.split('/').pop(),
           data:bits
-        };
+        }
 
-        let trans = db.transaction(['image_db'], 'readwrite');
-        let addReq = trans.objectStore('image_db').put(ob);
+        const trans = db.transaction(['image_db'], 'readwrite')
+        const addReq = trans.objectStore('image_db').put(ob)
 
         addReq.onerror = function(e) {
           //
@@ -143,23 +141,23 @@ export class indexedDB {
         trans.oncomplete = function(e) {
           //
         }
-      } 
+      }
     }
   }
 
-  readImage(name){
-    let new_promise = new Promise((resolve,reject)=>{
-      let request = window.indexedDB.open(this.app.db_config.db_name);
+  readImage(name) {
+    const new_promise = new Promise((resolve, reject)=>{
+      const request = window.indexedDB.open(this.app.db_config.db_name)
       request.onerror = function(event) {
         //
-      };
+      }
       request.onsuccess = (event) => {
-        let db = event.target.result;
-        let trans = db.transaction(['image_db'], 'readonly');
+        const db = event.target.result
+        const trans = db.transaction(['image_db'], 'readonly')
         //hard coded id
-        let req = trans.objectStore('image_db').get(name);
+        const req = trans.objectStore('image_db').get(name)
         req.onsuccess = function(e) {
-          let record = e.target.result;
+          const record = e.target.result
           resolve(record.data)
         }
       }
@@ -167,19 +165,19 @@ export class indexedDB {
     return new_promise
   }
 
-  checkImagePresent(name){
-    let new_promise = new Promise((resolve,reject)=>{
-      let request = window.indexedDB.open(this.app.db_config.db_name);
+  checkImagePresent(name) {
+    const new_promise = new Promise((resolve, reject)=>{
+      const request = window.indexedDB.open(this.app.db_config.db_name)
       request.onerror = function(event) {
         //
-      };
+      }
       request.onsuccess = (event) => {
-        let db = event.target.result;
-        let trans = db.transaction(['image_db'], 'readonly');
+        const db = event.target.result
+        const trans = db.transaction(['image_db'], 'readonly')
         //hard coded id
-        let count_req = trans.objectStore('image_db').count(name);
+        const count_req = trans.objectStore('image_db').count(name)
         count_req.onsuccess = function(e) {
-          let record = e.target.result;
+          const record = e.target.result
           if (record == 1) resolve(true)
           else resolve(false)
         }
@@ -188,33 +186,31 @@ export class indexedDB {
     return new_promise
   }
 
-  updateExportTemplate(blob){
-    console.log(blob)
-    let request = window.indexedDB.open(this.app.db_config.db_name);
+  updateExportTemplate(blob) {
+    const request = window.indexedDB.open(this.app.db_config.db_name)
     request.onerror = function(event) {
       //
-    };
+    }
 
     request.onsuccess = (event) => {
-      let db = event.target.result;
-      let objectStore = db.transaction('export_templates','readwrite').objectStore('export_templates')
-      objectStore.put(blob,blob.filepath)
+      const db = event.target.result
+      const objectStore = db.transaction('export_templates', 'readwrite').objectStore('export_templates')
+      objectStore.put(blob, blob.filepath)
     }
   }
 
-  readTemplate(url){
-    let new_promise = new Promise((resolve,reject)=>{
-      let request = window.indexedDB.open(this.app.db_config.db_name);
+  readTemplate(url) {
+    const new_promise = new Promise((resolve, reject)=>{
+      const request = window.indexedDB.open(this.app.db_config.db_name)
       request.onerror = function(event) {
         //
-      };
+      }
       request.onsuccess = (event) => {
-        let db = event.target.result;
-        let trans = db.transaction(['export_templates'], 'readonly');
-        //hard coded id
-        let req = trans.objectStore('export_templates').get(url);
+        const db = event.target.result
+        const trans = db.transaction(['export_templates'], 'readonly')
+        const req = trans.objectStore('export_templates').get(url)
         req.onsuccess = function(e) {
-          let record = e.target.result;
+          const record = e.target.result
           resolve(record)
         }
       }

@@ -93,7 +93,7 @@ export const headerbarModel = () => ({
                     disabled: editor => {
                         return editor.docInfo.access_rights !== 'write' || !editor.ws.isOnline()
                     }
-                    
+
                 },
                 {
                     title: gettext('Create copy'),

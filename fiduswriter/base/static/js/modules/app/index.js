@@ -5,7 +5,7 @@ import {DocumentInvite} from "../documents/invite"
 import {ImageOverview} from "../images/overview"
 import {ContactsOverview} from "../contacts"
 import {Profile} from "../profile"
-import {findTarget, WebSocketConnector, showSystemMessage, postJson, ensureCSS ,get} from "../common"
+import {findTarget, WebSocketConnector, showSystemMessage, postJson, ensureCSS, get} from "../common"
 import {LoginPage} from "../login"
 import {EmailConfirm} from "../email_confirm"
 import {PasswordResetRequest, PasswordResetChangePassword} from "../password_reset"
@@ -17,7 +17,7 @@ import {OfflinePage} from "../offline"
 import {SetupPage} from "../setup"
 import {FlatPage} from "../flatpage"
 import * as plugins from "../../plugins/app"
-import { indexedDB } from '../indexed-db'
+import {indexedDB} from '../indexed-db'
 
 export class App {
     constructor(config = {}) {
@@ -278,17 +278,17 @@ export class App {
         return this.selectPage()
     }
 
-    cacheImageInIndexedDB(){
-        let db = this.imageDB.db
+    cacheImageInIndexedDB() {
+        const db = this.imageDB.db
         //Cache in indexed DB if image is already not present in there.
-        for(let key in db){
-            let image_name = db[key].image.split('/').pop()
+        for (const key in db) {
+            const image_name = db[key].image.split('/').pop()
             this.indexedDB.checkImagePresent(image_name).then((is_present)=>{
-                if(!is_present){
+                if (!is_present) {
                     get(db[key].image).then((response)=> {
                         response.blob().then(image_blob=>{
-                            let file = new File([image_blob],image_name,{'type':db[key].file_type})
-                            this.indexedDB.saveImage(file,image_name)
+                            const file = new File([image_blob], image_name, {'type':db[key].file_type})
+                            this.indexedDB.saveImage(file, image_name)
                         })
                     })
                 }

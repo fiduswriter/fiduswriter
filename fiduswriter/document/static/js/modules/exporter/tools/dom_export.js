@@ -92,19 +92,19 @@ export class DOMExporter {
         this.contents.querySelectorAll('*[class^="figure-cat-"]').forEach(el => el.innerHTML = FIG_CATS[el.dataset.figureCategory][language])
     }
 
-    getImageData(){
-        let p = []
+    getImageData() {
+        const p = []
         // Take data from the Indexed DB only when offline.
-        if(!this.imageDB.mod.editor.ws.isOnline()){
+        if (!this.imageDB.mod.editor.ws.isOnline()) {
             this.contents.querySelectorAll('img').forEach(el => {
                 p.push(
-                    new Promise((resolve,reject)=>{
+                    new Promise((resolve, reject)=>{
                         let image_name = el.src.split('/').pop()
                         if (image_name.length == 0) {
                             image_name = el.getAttribute("data-src")
                         }
                         this.imageDB.mod.editor.app.indexedDB.readImage(image_name).then((response)=>{
-                            el.src = response;
+                            el.src = response
                             resolve()
                         })
                     })

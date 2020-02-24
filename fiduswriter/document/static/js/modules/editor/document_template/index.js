@@ -1,4 +1,4 @@
-import {Dialog, escapeText , addAlert , get} from "../../common"
+import {Dialog, escapeText, addAlert, get} from "../../common"
 import {SaveCopy} from "../../exporter/native"
 
 export class ModDocumentTemplate {
@@ -22,8 +22,8 @@ export class ModDocumentTemplate {
             this.editor.menu.headerView.update()
         }
         //Cache the template files in Indexed DB
-        for(let key in styles.export_templates){
-            let template = styles.export_templates[key]
+        for (const key in styles.export_templates) {
+            const template = styles.export_templates[key]
             get(template.template_file).then(response=>response.blob()).then(blob=>{
                 blob.filepath = template.template_file
                 this.editor.app.indexedDB.updateExportTemplate(blob)
@@ -112,10 +112,10 @@ export class ModDocumentTemplate {
                             text: gettext('Copy'),
                             classes: "fw-dark",
                             click: () => {
-                                if(!editor.ws.isOnline()){
+                                if (!editor.ws.isOnline()) {
                                     addAlert('error', "You're offline. Please try again after you're Online.")
                                     selectTemplateDialog.close()
-                                } else{
+                                } else {
                                     const copier = new SaveCopy(
                                         editor.getDoc(),
                                         editor.mod.db.bibDB,

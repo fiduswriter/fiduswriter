@@ -26,10 +26,10 @@ class FigureView {
         this.menuButton.addEventListener('click', () => {
 
            const editor = this.options.editor
-           if (editor.ws.isOnline()){
+           if (editor.ws.isOnline()) {
             const dialog = new FigureDialog(editor)
             dialog.init()
-           }else{
+           } else {
             addAlert('error', gettext("You're currently Offline. Please try editing the image after you're Online."))
            }
         })

@@ -1102,7 +1102,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         upload_button.click()
 
         # image path
-        imagePath = os.path.join(
+        image_path = os.path.join(
             settings.PROJECT_PATH,
             'document/tests/uploads/image.png'
         )
@@ -1114,7 +1114,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
                 (By.XPATH, '//*[@id="editimage"]/div[1]/input[2]')
             )
         )
-        upload_image_url.send_keys(imagePath)
+        upload_image_url.send_keys(image_path)
 
         # click on 'Upload' button
         driver.find_element_by_xpath(

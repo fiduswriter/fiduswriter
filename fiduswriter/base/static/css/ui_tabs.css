@@ -28,3 +28,14 @@
     padding: 0;
     margin-top: 24px;
 }
+
+.tab-link-inner {
+    display: block;
+    margin-left: 20px;
+    color: var(--cs-light-text-secondary);
+}
+
+.current-tab .tab-link-inner,
+.tab-link-inner:hover {
+    color: var(--cs-light-text);
+}

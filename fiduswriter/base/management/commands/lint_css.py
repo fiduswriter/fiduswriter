@@ -37,7 +37,11 @@ class Command(BaseCommand):
             "!../static/**",
             "!../venv/**",
             "--config",
-            "../.stylelintrc"
+            os.path.join(
+                os.environ.get('SRC_PATH'),
+                ".stylelintrc"
+            )
+
         ]
         if options['fix']:
             command_array.append('--fix')

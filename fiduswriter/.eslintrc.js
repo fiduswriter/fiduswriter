@@ -1,5 +1,3 @@
-const path = require('path');
-
 module.exports = {
     "env": {
         "browser": true,
@@ -15,7 +13,7 @@ module.exports = {
             "node": {
                 "moduleDirectory": '.transpile/node_modules'
             },
-            [path.resolve('testing/eslint_import_resolver')]: {}
+            [process.env.SRC_PATH + '/testing/eslint_import_resolver']: {}
         }
     },
     "parser": "babel-eslint",
@@ -298,6 +296,8 @@ module.exports = {
     "globals": {
         "gettext": false,
         "interpolate": false,
+        "settings": false,
+        "transpile": false,
         "process": false
     }
 };

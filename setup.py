@@ -52,6 +52,7 @@ cmdclass = {
 }
 
 try:
+    import django
     from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
     class bdist_wheel(_bdist_wheel):
         """Custom build command."""

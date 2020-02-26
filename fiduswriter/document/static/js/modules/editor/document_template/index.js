@@ -22,13 +22,13 @@ export class ModDocumentTemplate {
             this.editor.menu.headerView.update()
         }
         //Cache the template files in Indexed DB
-        for (const key in styles.export_templates) {
-            const template = styles.export_templates[key]
-            get(template.template_file).then(response=>response.blob()).then(blob=>{
-                blob.filepath = template.template_file
-                this.editor.app.indexedDB.updateExportTemplate(blob)
-            })
-        }
+        // for (const key in styles.export_templates) {
+        //     const template = styles.export_templates[key]
+        //     get(template.template_file).then(response=>response.blob()).then(blob=>{
+        //         blob.filepath = template.template_file
+        //         this.editor.app.indexedDB.updateExportTemplate(blob)
+        //     })
+        // }
     }
 
     addDocPartSettings() {

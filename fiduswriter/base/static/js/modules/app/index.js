@@ -157,7 +157,7 @@ export class App {
         ]).then(
             () => {
                 this.activateFidusPlugins()
-                this.cacheImageInIndexedDB()
+                // this.cacheImageInIndexedDB()
                 return this.selectPage()
             }
         ).then(
@@ -195,10 +195,18 @@ export class App {
         })
 
         if (!this.config.debug) {
-            OfflinePluginRuntime.install({
-                onUpdateReady: () => OfflinePluginRuntime.applyUpdate(),
-                onUpdated: () => window.location.reload()
-            })
+            console.log("Server is in production mode !!!")
+
+            if ('serviceWorker' in navigator) {
+                console.log("Inside the IF consition!!!!")
+                console.log("Hey trying to install the secondary service worker!!!!!")
+                navigator.serviceWorker.register('/sw2.js');
+              }
+
+            // OfflinePluginRuntime.install({
+            //     onUpdateReady: () => OfflinePluginRuntime.applyUpdate(),
+            //     onUpdated: () => window.location.reload()
+            // })
         }
     }
 
@@ -278,21 +286,21 @@ export class App {
         return this.selectPage()
     }
 
-    cacheImageInIndexedDB() {
-        const db = this.imageDB.db
-        //Cache in indexed DB if image is already not present in there.
-        for (const key in db) {
-            const image_name = db[key].image.split('/').pop()
-            this.indexedDB.checkImagePresent(image_name).then((is_present)=>{
-                if (!is_present) {
-                    get(db[key].image).then((response)=> {
-                        response.blob().then(image_blob=>{
-                            const file = new File([image_blob], image_name, {'type':db[key].file_type})
-                            this.indexedDB.saveImage(file, image_name)
-                        })
-                    })
-                }
-            })
-        }
-    }
+    // cacheImageInIndexedDB() {
+    //     const db = this.imageDB.db
+    //     //Cache in indexed DB if image is already not present in there.
+    //     for (const key in db) {
+    //         const image_name = db[key].image.split('/').pop()
+    //         this.indexedDB.checkImagePresent(image_name).then((is_present)=>{
+    //             if (!is_present) {
+    //                 get(db[key].image).then((response)=> {
+    //                     response.blob().then(image_blob=>{
+    //                         const file = new File([image_blob], image_name, {'type':db[key].file_type})
+    //                         this.indexedDB.saveImage(file, image_name)
+    //                     })
+    //                 })
+    //             }
+    //         })
+    //     }
+    // }
 }

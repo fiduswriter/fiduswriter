@@ -1,8 +1,7 @@
 module.exports = { // eslint-disable-line no-undef
-    "configBasedir": "./.transpile/",
-    "extends": "./.transpile/node_modules/stylelint-config-standard",
+    "extends": process.env.PROJECT_PATH + "/.transpile/node_modules/stylelint-config-standard",
     "plugins": [
-        "./.transpile/node_modules/stylelint-value-no-unknown-custom-properties"
+        process.env.PROJECT_PATH + "/.transpile/node_modules/stylelint-value-no-unknown-custom-properties"
     ],
     "rules": {
         "max-empty-lines": 4,

@@ -42,7 +42,6 @@ env:
 
 script:
     - travis_retry coverage run --concurrency=multiprocessing manage.py test $TEST
-    - coverage combine
 
 stages:
   - lint
@@ -57,9 +56,11 @@ jobs:
       install:
         - pip3 install -r requirements.txt
         - pip3 install coverage coveralls flake8==3.7.9
-      env: TESTS=before
+      env:
+        - TESTS=before
+        - COVERALLS_PARALLEL=true
       before_script: skip
-      script: coverage run manage.py lint
+      script: coverage run --concurrency=multiprocessing manage.py lint
     - stage: coveralls
       addons: {}
       before_cache: skip
@@ -72,6 +73,7 @@ jobs:
       script: curl -k https://coveralls.io/webhook?repo_token=$COVERALLS_REPO_TOKEN -d "payload[build_num]=$TRAVIS_BUILD_NUMBER&payload[status]=done"
 
 after_success:
+  - coverage combine
   - coverage report
   - coveralls
 

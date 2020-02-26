@@ -16,7 +16,7 @@ class Command(BaseCommand):
                 email = user[1]
                 password = getenv('ADMIN_PASSWORD') if getenv('ADMIN_PASSWORD')!='' else 'admin'
                 print('Creating account for %s (%s)' % (username, email))
-                admin = User.objects.create_superuser(username=username, email=email, password=password
+                admin = User.objects.create_superuser(username=username, email=email, password=password)
                 admin.is_active = True
                 admin.is_admin = True
                 admin.save()

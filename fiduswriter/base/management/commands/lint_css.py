@@ -1,4 +1,3 @@
-import shutil
 import os
 from subprocess import call
 
@@ -21,25 +20,19 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         call_command("npm_install")
-        shutil.os.chdir(
-            os.path.join(
-                settings.PROJECT_PATH,
-                ".transpile/"
-            )
-        )
         command_array = [
             os.path.join(
                 settings.PROJECT_PATH,
                 ".transpile/node_modules/.bin/stylelint"
             ),
-            "../**/*.css",
-            "!../static-libs/**",
-            "!../static/**",
-            "!../venv/**",
+            "**/*.css",
+            "!static-libs/**",
+            "!static/**",
+            "!venv/**",
             "--config",
             os.path.join(
-                os.environ.get('SRC_PATH'),
-                ".stylelintrc"
+                settings.SRC_PATH,
+                "stylelint.config.js"
             )
 
         ]

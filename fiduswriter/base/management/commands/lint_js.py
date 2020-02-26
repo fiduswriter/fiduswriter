@@ -27,6 +27,11 @@ class Command(BaseCommand):
                 settings.PROJECT_PATH,
                 ".transpile/node_modules/.bin/eslint"
             ),
+            "-c",
+            os.path.join(
+                settings.SRC_PATH,
+                ".eslintrc.js"
+            ),
             "."
         ]
         if options['fix']:

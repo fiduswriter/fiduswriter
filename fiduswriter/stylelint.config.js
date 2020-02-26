@@ -1,7 +1,8 @@
-{
-    "extends": "stylelint-config-standard",
+module.exports = { // eslint-disable-line no-undef
+    "configBasedir": "./.transpile/",
+    "extends": "./.transpile/node_modules/stylelint-config-standard",
     "plugins": [
-        "stylelint-value-no-unknown-custom-properties"
+        "./.transpile/node_modules/stylelint-value-no-unknown-custom-properties"
     ],
     "rules": {
         "max-empty-lines": 4,
@@ -13,7 +14,7 @@
         "csstools/value-no-unknown-custom-properties": [
             true,
             {
-                "importFrom": ["../base/static/css/colors.css"]
+                "importFrom": [process.env.SRC_PATH + "/base/static/css/colors.css"]
             }
         ]
     }

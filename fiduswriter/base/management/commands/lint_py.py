@@ -9,6 +9,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         shutil.os.chdir(settings.SRC_PATH)
-        return_value = call(["flake8", "./"])
+        return_value = call([
+            "flake8",
+            "--exclude",
+            "node_modules/*,*/migrations/*,venv/*",
+            "./"
+        ])
         if return_value > 0:
             exit(return_value)

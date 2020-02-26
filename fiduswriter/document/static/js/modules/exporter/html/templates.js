@@ -27,7 +27,7 @@ ${
         }
         ${
             settings.copyright && settings.copyright.licenses.length ?
-                `<div>${settings.copyright.licenses.map(license => `<a rel="license" href="${escapeText(license.url)}">${escapeText(license.url)}${license.start ? ` (${license.start})` : ''}</a>`).join('</div><div>')}</div>` :
+                `<div>${settings.copyright.licenses.map(license => `<a rel="license" href="${escapeText(license.url)}">${escapeText(license.title)}${license.start ? ` (${license.start})` : ''}</a>`).join('</div><div>')}</div>` :
                 ''
         }
     </body>

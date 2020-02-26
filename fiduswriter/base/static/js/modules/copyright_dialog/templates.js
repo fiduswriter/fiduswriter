@@ -1,14 +1,6 @@
 import {escapeText} from "../common"
+import {LICENSE_URLS} from "./index"
 
-const LICENSE_URLS = [
-    ['CC BY 4.0', 'https://creativecommons.org/licenses/by/4.0/'],
-    ['CC BY-SA 4.0', 'https://creativecommons.org/licenses/by-sa/4.0/'],
-    ['CC BY-ND 4.0', 'https://creativecommons.org/licenses/by-nd/4.0/'],
-    ['CC BY-NC 4.0', 'https://creativecommons.org/licenses/by-nc/4.0/'],
-    ['CC BY-NC-SA 4.0', 'https://creativecommons.org/licenses/by-nc-sa/4.0/'],
-    ['CC BY-NC-ND 4.0', 'https://creativecommons.org/licenses/by-nc-nd/4.0/'],
-    ['CC0', 'https://creativecommons.org/publicdomain/zero/1.0/']
-]
 
 export const licenseSelectTemplate = ({url}) =>
     `<select class="license">
@@ -19,16 +11,21 @@ export const licenseSelectTemplate = ({url}) =>
     </select>
     <div class="fw-select-arrow fa fa-caret-down"></div>`
 
-export const licenseInputTemplate = ({url}) =>
-    `<input type='text' class='field-part-single license' value="${escapeText(url)}" placeholder="${gettext('License URL')}">`
+export const licenseInputTemplate = ({url, title}) =>
+    `<div class="field-part field-part-huge">
+        <input type='text' class='license' value="${escapeText(url)}" placeholder="${gettext('License URL')}">
+    </div>
+    <div class="field-part field-part-huge">
+        <input type='text' class='license-title' value="${escapeText(title)}" placeholder="${gettext('License Title')}">
+    </div>`
 
-const licenseTemplate = ({url, start}) => {
+const licenseTemplate = ({url, title, start}) => {
     const selector = url === '' || LICENSE_URLS.find(licenseUrl => licenseUrl[1] === url) ? true : false
     return `<tr>
         <td>
             <table>
                 <tr>
-                    <td colspan="2">
+                    <td>
                         <div class="type-switch-input-wrapper">
                             <button class="type-switch value${selector ? '1' : '2'}">
                                 <span class="type-switch-inner">
@@ -36,7 +33,7 @@ const licenseTemplate = ({url, start}) => {
                                     <span class="type-switch-label">${gettext('Custom')}</span>
                                 </span>
                             </button>
-                            <div class="type-switch-input-inner">${selector ? licenseSelectTemplate({url}) : licenseInputTemplate({url})}</div>
+                            <div class="type-switch-input-inner">${selector ? licenseSelectTemplate({url}) : licenseInputTemplate({url, title})}</div>
                         </div>
                     </td>
                 </tr>
@@ -85,7 +82,7 @@ export const copyrightTemplate = ({holder, year, freeToRead, licenses}) =>
                     <table class="input-list-wrapper">
                         <tbody>
                             ${licenses ? licenses.map(license => licenseTemplate(license)).join('') : ''}
-                            ${licenseTemplate({url: '', start: false})}
+                            ${licenseTemplate({url: '', title: '', start: false})}
                         </tbody>
                     </table>
                 </td>

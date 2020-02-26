@@ -3,6 +3,21 @@ import {edtfParse} from "biblatex-csl-converter"
 import {Dialog, findTarget} from "../common"
 import {copyrightTemplate, licenseInputTemplate, licenseSelectTemplate} from "./templates"
 
+export const LICENSE_URLS = [
+    ['CC BY 4.0', 'https://creativecommons.org/licenses/by/4.0/'],
+    ['CC BY-SA 4.0', 'https://creativecommons.org/licenses/by-sa/4.0/'],
+    ['CC BY-ND 4.0', 'https://creativecommons.org/licenses/by-nd/4.0/'],
+    ['CC BY-NC 4.0', 'https://creativecommons.org/licenses/by-nc/4.0/'],
+    ['CC BY-NC-SA 4.0', 'https://creativecommons.org/licenses/by-nc-sa/4.0/'],
+    ['CC BY-NC-ND 4.0', 'https://creativecommons.org/licenses/by-nc-nd/4.0/'],
+    ['CC0', 'https://creativecommons.org/publicdomain/zero/1.0/']
+]
+
+function getLicenseTitle(url) {
+    const license = LICENSE_URLS.find(license => license[1] === url)
+    return license ? license[0] : ''
+}
+
 export class CopyrightDialog {
     constructor(copyright) {
         this.copyright = copyright
@@ -22,8 +37,10 @@ export class CopyrightDialog {
             if (!el.value.length) {
                 return false
             } else {
-                const returnValue = {url: el.value}
-                const startDate = edtfParse(licenseStartDates[index])
+                const url = el.value,
+                    title = el.matches('select') ? getLicenseTitle(url) : el.parentElement.parentElement.querySelector('.license-title').value,
+                    returnValue = {url, title},
+                    startDate = edtfParse(licenseStartDates[index])
                 if (startDate.valid && startDate.type==='Date' && !startDate.uncertain && !startDate.approximate && startDate.values.length === 3) {
                     returnValue.start = startDate.cleanedString
                 }
@@ -76,7 +93,8 @@ export class CopyrightDialog {
                     if (el.target.classList.contains('value1')) {
                         el.target.classList.add('value2')
                         el.target.classList.remove('value1')
-                        el.target.nextElementSibling.innerHTML = licenseInputTemplate({url})
+                        const title = getLicenseTitle(url)
+                        el.target.nextElementSibling.innerHTML = licenseInputTemplate({url, title})
                     } else {
                         el.target.classList.add('value1')
                         el.target.classList.remove('value2')

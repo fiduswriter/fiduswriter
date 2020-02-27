@@ -490,7 +490,7 @@ export class LatexExporterConvert {
                 if (copyright && copyright.licenses.length) {
                     copyright.licenses.forEach(
                         license => {
-                            content += `% ${license.url}${license.start ? ` (${license.start})\n` : ''}\n`
+                            content += `% ${license.title}: ${license.url}${license.start ? ` (${license.start})\n` : ''}\n`
                         }
                     )
                 }

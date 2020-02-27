@@ -8,11 +8,32 @@ import urllib.request
 
 from pathlib import Path
 from tempfile import mkdtemp
+import socket
+import errno
 
 from django.conf import settings
 
+START_PORT = 8000
+END_PORT = 8500
+
 
 class ManageTest(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.port = START_PORT
+        while cls.port < END_PORT:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            try:
+                sock.bind(("127.0.0.1", cls.port))
+            except socket.error as err:
+                if err.errno == errno.EADDRINUSE:
+                    cls.port += 1
+                else:
+                    raise err
+            sock.close()
+            break
 
     def test_startserver(self):
         os.chdir(settings.PROJECT_PATH)
@@ -27,7 +48,7 @@ class ManageTest(unittest.TestCase):
         assert sql_file.exists()
         # Get page during transpile to see if we get setup page
         page = urllib.request.urlopen(
-            'http://localhost:7000/'
+            'http://localhost:{}/'.format(self.port)
         ).read().decode('utf-8')
         assert "Fidus Writer is currently being updated." in page
         # We remove the project dir. The process should then finish as well.
@@ -44,7 +65,7 @@ class ManageTest(unittest.TestCase):
                 "--pythonpath",
                 temp_dir,
                 "runserver",
-                "7000"
+                str(self.port)
             ],
             stdout=open(os.devnull, 'w'),
             stderr=subprocess.STDOUT

@@ -99,7 +99,7 @@ export class DocxExporterRender {
             content: settings.copyright && settings.copyright.licenses.length ?
                 settings.copyright.licenses.map(
                     license => ({type: 'paragraph', content: [
-                        {type: 'text', marks: [{type: 'link', attrs: {href: license.url, title: license.url}}], text: license.url},
+                        {type: 'text', marks: [{type: 'link', attrs: {href: license.url, title: license.title}}], text: license.title},
                         {type: 'text', text: license.start ? ` (${license.start})` : ''}
                     ]})
                 ) :

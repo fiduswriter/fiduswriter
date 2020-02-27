@@ -380,10 +380,12 @@ tr.fw-checkable.checked > td:last-child::after {
     width: 64px;
 }
 
+.type-switch-input-inner .field-part-huge input,
 .type-switch-input-inner .field-part-huge .ProseMirror {
     width: 250px;
 }
 
+.type-switch-input-inner .field-part-long input,
 .type-switch-input-inner .field-part-long .ProseMirror {
     width: 130px;
 }

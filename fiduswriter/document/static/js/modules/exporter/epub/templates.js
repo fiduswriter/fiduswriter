@@ -140,7 +140,7 @@ ${
     }
     ${
         copyright && copyright.licenses.length ?
-            `<div>${copyright.licenses.map(license => `<a rel="license" href="${escapeText(license.url)}">${escapeText(license.url)}${license.start ? ` (${license.start})` : ''}</a>`).join('</div><div>')}</div>` :
+            `<div>${copyright.licenses.map(license => `<a rel="license" href="${escapeText(license.url)}">${escapeText(license.title)}${license.start ? ` (${license.start})` : ''}</a>`).join('</div><div>')}</div>` :
             ''
     }</body>
 </html>`

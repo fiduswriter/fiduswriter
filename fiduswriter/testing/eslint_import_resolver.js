@@ -13,7 +13,7 @@ function isFile(file) {
 
 exports.interfaceVersion = 2;
 
-exports.resolve = function(source, file, config) {
+function resolveFilelocation(source, file, config, modifiedPath = false) {
     const returnValue = {found: false}
     const fullPath = path.resolve(path.dirname(file), source)
 
@@ -62,5 +62,12 @@ exports.resolve = function(source, file, config) {
         }
     }
 
+    if (!returnValue.found && !modifiedPath && process.env.PROJECT_PATH !== process.env.SRC_PATH && file.includes(process.env.PROJECT_PATH)) {
+        modifiedFile = file.replace(process.env.PROJECT_PATH, process.env.SRC_PATH)
+        return resolveFilelocation(source, modifiedFile, config, true)
+    }
+
     return returnValue
 }
+
+exports.resolve = resolveFilelocation

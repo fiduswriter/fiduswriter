@@ -1,3 +1,4 @@
+import shutil
 import os
 from subprocess import call
 
@@ -20,6 +21,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         call_command("npm_install")
+        shutil.os.chdir(settings.PROJECT_PATH)
         command_array = [
             os.path.join(
                 settings.PROJECT_PATH,

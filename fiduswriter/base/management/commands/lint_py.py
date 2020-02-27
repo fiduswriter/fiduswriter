@@ -8,11 +8,11 @@ class Command(BaseCommand):
     help = 'Check Python files for PEP8 compliance'
 
     def handle(self, *args, **options):
-        shutil.os.chdir(settings.SRC_PATH)
+        shutil.os.chdir(settings.PROJECT_PATH)
         return_value = call([
             "flake8",
             "--exclude",
-            "node_modules/*,*/migrations/*,venv/*",
+            "node_modules/*,*/migrations/*,venv/*,configuration.py",
             "./"
         ])
         if return_value > 0:

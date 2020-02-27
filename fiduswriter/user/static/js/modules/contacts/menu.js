@@ -24,7 +24,7 @@ export const menuModel = () => ({
         {
             type: 'text',
             title: gettext('Add new contact'),
-            action: overview => {
+            action: _overview => {
                 const dialog = new AddContactDialog()
                 dialog.init().then(memberData => {
                     document.querySelector('#team-table tbody').insertAdjacentHTML(

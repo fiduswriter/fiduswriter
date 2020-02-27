@@ -11,7 +11,7 @@ export class DocTemplatesOverview {
     // A class that contains everything that happens on the templates page.
     // It is currently not possible to initialize more than one such class, as it
     // contains bindings to menu items, etc. that are uniquely defined.
-    constructor({app, userl}) {
+    constructor({app, user}) {
         this.app = app
         this.user = user
         this.mod = {}

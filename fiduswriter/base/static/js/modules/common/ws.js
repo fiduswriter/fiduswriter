@@ -73,7 +73,25 @@ export class WebSocketConnector {
             client: 0,
             lastTen: []
         }
-        const url = this.online ? this.url : 'ws://offline'
+        const url = this.online ?
+            `${
+                location.protocol === 'https:' ?
+                    'wss://' :
+                    'ws://'
+            }${
+                settings.WS_SERVER ?
+                    settings.WS_SERVER :
+                    location.host.split(':')[0]
+            }${
+                settings.WS_PORT ?
+                    `:${settings.WS_PORT}` :
+                    location.port.length ?
+                        `:${location.port}` :
+                        ''
+            }${
+                this.url
+            }` :
+            'ws://offline'
         this.ws = new window.WebSocket(url)
 
         this.ws.onmessage = event => {

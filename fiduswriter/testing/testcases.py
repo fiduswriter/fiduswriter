@@ -5,7 +5,6 @@ import os
 import socket
 import sys
 import threading
-from unittest import skipIf         # NOQA: Imported here for backward compatibility
 
 from django.core.exceptions import ImproperlyConfigured
 from django.db import connections
@@ -13,15 +12,13 @@ from django.utils import six
 from django.test.testcases import TransactionTestCase
 
 from tornado.ioloop import IOLoop
+from tornado.platform.asyncio import AnyThreadEventLoopPolicy
+from asyncio import set_event_loop_policy
 
 from base.servers.tornado_django_hybrid import make_tornado_server
 
-try:
-    from asyncio import set_event_loop_policy
-    from tornado.platform.asyncio import AnyThreadEventLoopPolicy
-    set_event_loop_policy(AnyThreadEventLoopPolicy())
-except ImportError:
-    pass
+
+set_event_loop_policy(AnyThreadEventLoopPolicy())
 
 
 class LiveTornadoThread(threading.Thread):
@@ -41,7 +38,7 @@ class LiveTornadoThread(threading.Thread):
         self.error = None
         self.static_handler = static_handler
         self.connections_override = connections_override
-        super(LiveTornadoThread, self).__init__()
+        super().__init__()
 
     def run(self):
         """
@@ -167,7 +164,7 @@ class LiveTornadoTestCase(TransactionTestCase):
         cls.live_server_url = 'http://%s:%s' % (
             cls.server_thread.host, cls.server_thread.port)
 
-        super(LiveTornadoTestCase, cls).setUpClass()
+        super().setUpClass()
 
     @classmethod
     def _tearDownClassInternal(cls):
@@ -185,4 +182,4 @@ class LiveTornadoTestCase(TransactionTestCase):
     @classmethod
     def tearDownClass(cls):
         cls._tearDownClassInternal()
-        super(LiveTornadoTestCase, cls).tearDownClass()
+        super().tearDownClass()

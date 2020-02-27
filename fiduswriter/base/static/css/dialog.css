@@ -67,7 +67,7 @@
     overflow-x: hidden;
 }
 
-.input-list-wrapper tr:last-child td {
+.input-list-wrapper > tbody > tr:last-child > td {
     padding-bottom: 0;
 }
 
@@ -81,7 +81,8 @@
     display: inline;
 }
 
-.entry-field input[type=text] {
+.entry-field input[type=text],
+.entry-field input[type=number] {
     margin: 0;
 }
 

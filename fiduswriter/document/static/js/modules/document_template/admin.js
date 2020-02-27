@@ -3,8 +3,7 @@ import {DocumentTemplateDesigner} from "./designer"
 import {CSL} from "citeproc-plus"
 
 export class DocumentTemplateAdmin {
-    constructor({staticUrl}) {
-        this.staticUrl = staticUrl
+    constructor() {
         this.definitionTextarea = false
         this.templateDesigner = false
         this.templateExtras = false
@@ -24,7 +23,7 @@ export class DocumentTemplateAdmin {
             'admin.css',
             'ui_dialogs.css',
             'buttons.css'
-        ], this.staticUrl)
+        ])
         const csl = new CSL()
         const initialTasks = [
             whenReady(),
@@ -55,7 +54,6 @@ export class DocumentTemplateAdmin {
 
     initDesigner() {
         this.templateDesigner = new DocumentTemplateDesigner(
-            {staticUrl: this.staticUrl},
             this.id,
             this.titleInput.value,
             JSON.parse(this.definitionTextarea.value),

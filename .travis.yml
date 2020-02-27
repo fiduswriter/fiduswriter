@@ -29,6 +29,7 @@ env:
   global:
     - COVERALLS_PARALLEL=true
   matrix:
+    - TEST='browser_check base'
     - TEST=user
     - TEST=feedback
     - TEST=document.tests.test_collaboration
@@ -39,7 +40,8 @@ env:
     - TEST=bibliography
     - TEST=usermedia
 
-script: travis_retry coverage run manage.py test $TEST
+script:
+    - travis_retry coverage run --concurrency=multiprocessing manage.py test $TEST
 
 stages:
   - lint
@@ -50,14 +52,15 @@ jobs:
   include:
     - stage: lint
       addons: {}
-      before_cache: skip
-      cache: false
       before_install: cd fiduswriter
-      install: pip3 install -r requirements.txt && pip3 install flake8==3.7.9
-      after_success: skip
-      env: TESTS=before
+      install:
+        - pip3 install -r requirements.txt
+        - pip3 install coverage coveralls flake8==3.7.9
+      env:
+        - TESTS=before
+        - COVERALLS_PARALLEL=true
       before_script: skip
-      script: flake8 ./ && python3 manage.py lint_js && python3 manage.py lint_css
+      script: coverage run --concurrency=multiprocessing manage.py lint
     - stage: coveralls
       addons: {}
       before_cache: skip
@@ -70,6 +73,7 @@ jobs:
       script: curl -k https://coveralls.io/webhook?repo_token=$COVERALLS_REPO_TOKEN -d "payload[build_num]=$TRAVIS_BUILD_NUMBER&payload[status]=done"
 
 after_success:
+  - coverage combine
   - coverage report
   - coveralls
 

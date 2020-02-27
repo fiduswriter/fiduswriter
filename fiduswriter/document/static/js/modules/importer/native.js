@@ -51,6 +51,7 @@ export class ImportNative {
                 return postJson('/api/document/import/image/', {
                     doc_id: this.docId,
                     title: imageEntry.title,
+                    copyright: imageEntry.copyright,
                     checksum: imageEntry.checksum,
                     image: {file: imageEntry.file, filename: imageEntry.image.split('/').pop()}
                 }).then(

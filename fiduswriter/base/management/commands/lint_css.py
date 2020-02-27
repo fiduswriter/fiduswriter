@@ -21,22 +21,22 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         call_command("npm_install")
-        shutil.os.chdir(
-            os.path.join(
-                settings.PROJECT_PATH,
-                ".transpile/"
-            )
-        )
+        shutil.os.chdir(settings.PROJECT_PATH)
         command_array = [
             os.path.join(
                 settings.PROJECT_PATH,
                 ".transpile/node_modules/.bin/stylelint"
             ),
-            "../**/*.css",
-            "!../**/static-libs/**",
-            "!../**/venv/**",
+            "**/*.css",
+            "!static-libs/**",
+            "!static/**",
+            "!venv/**",
             "--config",
-            "../.stylelintrc"
+            os.path.join(
+                settings.SRC_PATH,
+                "stylelint.config.js"
+            )
+
         ]
         if options['fix']:
             command_array.append('--fix')

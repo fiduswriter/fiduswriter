@@ -6,10 +6,9 @@ import {DeleteUserDialog} from "./delete_user"
 import {FeedbackTab} from "../feedback"
 
 export class Profile {
-    constructor({app, user, staticUrl}) {
+    constructor({app, user}) {
         this.app = app
         this.user = user
-        this.staticUrl = staticUrl
     }
 
     init() {
@@ -63,17 +62,16 @@ export class Profile {
         this.dom = document.createElement('body')
         this.dom.innerHTML = baseBodyTemplate({
             contents: profileContents(this.user),
-            user: this.user,
-            staticUrl: this.staticUrl
+            user: this.user
         })
         document.body = this.dom
 
         ensureCSS([
             'show_profile.css'
-        ], this.staticUrl)
+        ])
 
         setDocTitle(gettext('Configure profile'), this.app)
-        const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
+        const feedbackTab = new FeedbackTab()
         feedbackTab.init()
     }
 

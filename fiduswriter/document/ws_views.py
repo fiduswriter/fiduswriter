@@ -1,6 +1,7 @@
 from builtins import str
 import uuid
 import atexit
+import json
 from time import mktime, time
 from copy import deepcopy
 
@@ -116,6 +117,9 @@ class WebSocket(BaseWebSocketHandler):
         }
         self.send_message(response)
 
+    def unfixable(self):
+        self.send_document()
+
     def send_document(self):
         response = dict()
         response['type'] = 'doc_data'
@@ -145,6 +149,7 @@ class WebSocket(BaseWebSocketHandler):
             field_obj = {
                 'id': image.id,
                 'title': dimage.title,
+                'copyright': json.loads(dimage.copyright),
                 'image': image.image.url,
                 'file_type': image.file_type,
                 'added': mktime(image.added.timetuple()) * 1000,
@@ -235,15 +240,17 @@ class WebSocket(BaseWebSocketHandler):
                 doc_image = DocumentImage.objects.filter(
                     document_id=self.doc["id"],
                     image_id=id
-                )
-                if doc_image.exists():
+                ).first()
+                if doc_image:
                     doc_image.title = iu["image"]["title"]
+                    doc_image.copyright = json.dumps(iu["image"]["copyright"])
                     doc_image.save()
                 else:
                     DocumentImage.objects.create(
                         document_id=self.doc["id"],
                         image_id=id,
-                        title=iu["image"]["title"]
+                        title=iu["image"]["title"],
+                        copyright=json.dumps(iu["image"]["copyright"])
                     )
             elif iu["type"] == "delete":
                 DocumentImage.objects.filter(
@@ -369,7 +376,7 @@ class WebSocket(BaseWebSocketHandler):
                     logger.exception("Cannot apply json diff.")
                     logger.error(json_encode(message))
                     logger.error(json_encode(self.doc['contents']))
-                    self.send_document()
+                    self.unfixable()
                 # The json diff is only needed by the python backend which does
                 # not understand the steps. It can therefore be removed before
                 # broadcast to other clients.
@@ -404,7 +411,7 @@ class WebSocket(BaseWebSocketHandler):
             else:
                 logger.debug('unfixable')
                 # Client has a version that is too old to be fixed
-                self.send_document()
+                self.unfixable()
         else:
             # Client has a higher version than server. Something is fishy!
             logger.debug('unfixable')
@@ -432,7 +439,7 @@ class WebSocket(BaseWebSocketHandler):
         else:
             logger.debug('unfixable')
             # Client has a version that is too old
-            self.send_document()
+            self.unfixable()
             return
 
     def can_update_document(self):
@@ -508,7 +515,7 @@ class WebSocket(BaseWebSocketHandler):
                         # The reviewer should not receive comments updates from
                         # others than themselves, so we remove the comments
                         # from the copy of the message sent to the reviewer
-                        # that are not from them. We still need to sned the
+                        # that are not from them. We still need to send the
                         # rest of the message as it may contain other diff
                         # information.
                         message = deepcopy(message)
@@ -540,7 +547,13 @@ class WebSocket(BaseWebSocketHandler):
         doc_db.bibliography = json_encode(doc['bibliography'])
         logger.debug('saving document # %d' % doc_db.id)
         logger.debug('version %d' % doc_db.version)
-        doc_db.save()
+        doc_db.save(update_fields=[
+                    'title',
+                    'version',
+                    'contents',
+                    'last_diffs',
+                    'comments',
+                    'bibliography'])
 
     @classmethod
     def save_all_docs(cls):

@@ -43,7 +43,7 @@
 
 .fw-text-menu {
     height: 40px;
-    color: var(--cs-white-nofocus-text);
+    color: var(--cs-white-text-secondary);
     padding: 0;
     border: 0 none;
     background-color: transparent;
@@ -58,7 +58,7 @@
 .fw-dropdown-menu {
     padding-top: 14px;
     font-size: 14px;
-    color: var(--cs-white-nofocus-text);
+    color: var(--cs-white-text-secondary);
     cursor: pointer;
     height: 40px;
     box-sizing: border-box;

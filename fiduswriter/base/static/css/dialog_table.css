@@ -16,7 +16,7 @@
     cursor: pointer;
 }
 
-.fw-dialog-table tr:first-child > td .fa-minus-circle {
+.input-list-wrapper > tbody > tr:last-child > td > .fa-minus-circle {
     display: none;
 }
 

@@ -28,7 +28,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
     @classmethod
     def setUpClass(cls):
-        super(OneUserTwoBrowsersTests, cls).setUpClass()
+        super().setUpClass()
         driver_data = cls.get_drivers(2)
         cls.driver = driver_data["drivers"][0]
         cls.driver2 = driver_data["drivers"][1]
@@ -40,7 +40,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
     def tearDownClass(cls):
         cls.driver.quit()
         cls.driver2.quit()
-        super(OneUserTwoBrowsersTests, cls).tearDownClass()
+        super().tearDownClass()
 
     def setUp(self):
         self.user = self.create_user()
@@ -1102,7 +1102,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         upload_button.click()
 
         # image path
-        imagePath = os.path.join(
+        image_path = os.path.join(
             settings.PROJECT_PATH,
             'document/tests/uploads/image.png'
         )
@@ -1114,7 +1114,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
                 (By.XPATH, '//*[@id="editimage"]/div[1]/input[2]')
             )
         )
-        upload_image_url.send_keys(imagePath)
+        upload_image_url.send_keys(image_path)
 
         # click on 'Upload' button
         driver.find_element_by_xpath(
@@ -1359,7 +1359,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
         self.assertEqual(
-            60,
+            63,
             len(self.get_citation_bib(self.driver))
         )
 

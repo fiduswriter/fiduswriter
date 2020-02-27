@@ -1,8 +1,10 @@
 import os
 import distutils
 import setuptools
+from subprocess import call
 from setuptools.command.sdist import sdist as _sdist
-
+from setuptools.command.bdist_egg import bdist_egg as _bdist_egg
+from setuptools.command.install import install as _install
 
 def read(name):
     with open(
@@ -39,16 +41,55 @@ class compilemessages(distutils.cmd.Command):
         subprocess.check_call(command)
 
 
+class install(_install):
+    def run(self):
+        call(["pip install wheel --no-clean"], shell=True)
+        # From https://stackoverflow.com/questions/21915469/python-setuptoo
+        # ls-install-requires-is-ignored-when-overriding-cmdclass
+        if self.old_and_unmanageable or self.single_version_externally_managed:
+            return _install.run(self)
+
+        # Attempt to detect whether we were called from setup() or by another
+        # command.  If we were called by setup(), our caller will be the
+        # 'run_command' method in 'distutils.dist', and *its* caller will be
+        # the 'run_commands' method.  If we were called any other way, our
+        # immediate caller *might* be 'run_command', but it won't have been
+        # called by 'run_commands'.  This is slightly kludgy, but seems to
+        # work.
+        #
+        caller = sys._getframe(2)
+        caller_module = caller.f_globals.get('__name__','')
+        caller_name = caller.f_code.co_name
+
+        if caller_module != 'distutils.dist' or caller_name != 'run_commands':
+            # We weren't called from the command line or setup(), so we
+            # should run in backward-compatibility mode to support bdist_*
+            # commands.
+            _install.run(self)
+        else:
+            self.do_egg_install()
+
+
+class bdist_egg(_bdist_egg):
+    def run(self):
+        call(["pip install -r fiduswriter/requirements.txt --no-clean"], shell=True)
+        self.run_command('compilemessages')
+        _bdist_egg.run(self)
+
+
 class sdist(_sdist):
     """Custom build command."""
 
     def run(self):
+        call(["pip install -r fiduswriter/requirements.txt --no-clean"], shell=True)
         self.run_command('compilemessages')
         _sdist.run(self)
 
 cmdclass = {
     'compilemessages': compilemessages,
-    'sdist': sdist
+    'sdist': sdist,
+    'bdist_egg': bdist_egg,
+    'install': install
 }
 
 try:
@@ -57,6 +98,7 @@ try:
         """Custom build command."""
 
         def run(self):
+            call(["pip install -r fiduswriter/requirements.txt --no-clean"], shell=True)
             self.run_command('compilemessages')
             _bdist_wheel.run(self)
     cmdclass['bdist_wheel'] = bdist_wheel

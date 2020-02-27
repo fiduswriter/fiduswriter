@@ -12,10 +12,9 @@ import * as plugins from "../../../plugins/bibliography_overview"
 
 export class BibliographyOverview {
 
-    constructor({app, user, staticUrl}) {
+    constructor({app, user}) {
         this.app = app
         this.user = user
-        this.staticUrl = staticUrl
     }
 
     /** Bind the init function to doc loading.
@@ -40,7 +39,6 @@ export class BibliographyOverview {
         this.dom.innerHTML = baseBodyTemplate({
             contents: '',
             user: this.user,
-            staticUrl: this.staticUrl,
             hasOverview: true
         })
         document.body = this.dom
@@ -48,9 +46,9 @@ export class BibliographyOverview {
             'bibliography.css',
             'prosemirror.css',
             'inline_tools.css'
-        ], this.staticUrl)
+        ])
         setDocTitle(gettext('Bibliography Manager'), this.app)
-        const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
+        const feedbackTab = new FeedbackTab()
         feedbackTab.init()
     }
 
@@ -238,7 +236,7 @@ export class BibliographyOverview {
         const buttons = [
             {
                 text: gettext('Delete'),
-                class: "fw-dark",
+                classes: "fw-dark",
                 click: () => {
                     this.deleteBibEntries(ids)
                     dialog.close()
@@ -253,7 +251,6 @@ export class BibliographyOverview {
             id: 'confirmdeletion',
             title: gettext('Confirm deletion'),
             body: `<p>${gettext('Delete the bibliography item(s)')}?</p>`,
-            height: 180,
             buttons,
             icon: 'exclamation-triangle'
         })
@@ -367,8 +364,7 @@ export class BibliographyOverview {
                 text,
                 this.app.bibDB,
                 newIds => this.updateTable(newIds),
-                false,
-                this.staticUrl
+                false
             )
             importer.init()
         })

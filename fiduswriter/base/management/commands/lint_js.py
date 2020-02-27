@@ -21,11 +21,21 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         call_command("npm_install")
-        shutil.os.chdir(settings.SRC_PATH)
+        shutil.os.chdir(settings.PROJECT_PATH)
         command_array = [
             os.path.join(
                 settings.PROJECT_PATH,
                 ".transpile/node_modules/.bin/eslint"
+            ),
+            "--ignore-path",
+            os.path.join(
+                settings.SRC_PATH,
+                ".eslintignore"
+            ),
+            "-c",
+            os.path.join(
+                settings.SRC_PATH,
+                ".eslintrc.js"
             ),
             "."
         ]

@@ -260,7 +260,7 @@ export const headerbarModel = () => ({
                     tooltip: gettext('Choose your preferred document style.'),
                     order: 2,
                     disabled: editor => {
-                        return editor.docInfo.access_rights !== 'write'
+                        return editor.docInfo.access_rights !== 'write' || !editor.ws.isOnline()
                     },
                     content: []
                 },

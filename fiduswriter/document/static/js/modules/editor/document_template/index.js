@@ -219,7 +219,8 @@ export class ModDocumentTemplate {
                 },
                 selected: editor => {
                     return editor.view.state.doc.firstChild.attrs.documentstyle === docStyle.slug
-                }
+                },
+                disabled : editor=> !editor.ws.isOnline(),
             }
         })
     }

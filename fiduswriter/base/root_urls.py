@@ -51,7 +51,7 @@ urlpatterns = [
     url('^sw2.js$', static_serve, {
         'document_root': os.path.join(
             settings.PROJECT_PATH,
-            '.transpile/js'
+            'static-collected/js'
         ),
         'path': 'sw2.js'
     }),

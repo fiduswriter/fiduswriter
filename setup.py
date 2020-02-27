@@ -2,9 +2,12 @@ import os
 import distutils
 import setuptools
 from subprocess import call
+from glob import glob
 from setuptools.command.sdist import sdist as _sdist
 from setuptools.command.bdist_egg import bdist_egg as _bdist_egg
 from setuptools.command.install import install as _install
+from setuptools.command.build_py import build_py as _build_py
+
 
 def read(name):
     with open(
@@ -39,6 +42,28 @@ class compilemessages(distutils.cmd.Command):
             level=distutils.log.INFO
         )
         subprocess.check_call(command)
+
+
+# From https://github.com/pypa/setuptools/pull/1574
+class build_py(_build_py):
+    def find_package_modules(self, package, package_dir):
+        modules = super().find_package_modules(package, package_dir)
+        patterns = self._get_platform_patterns(
+            self.exclude_package_data,
+            package,
+            package_dir,
+        )
+
+        excluded_module_files = []
+        for pattern in patterns:
+            excluded_module_files.extend(glob(pattern))
+
+        for f in excluded_module_files:
+            for module in modules:
+                if module[2] == f:
+                    modules.remove(module)
+        return modules
+
 
 
 class install(_install):
@@ -88,6 +113,7 @@ class sdist(_sdist):
 cmdclass = {
     'compilemessages': compilemessages,
     'sdist': sdist,
+    'build_py': build_py,
     'bdist_egg': bdist_egg,
     'install': install
 }
@@ -133,6 +159,28 @@ setuptools.setup(
     ],
     packages=setuptools.find_namespace_packages(include=['fiduswriter']),
     include_package_data=True,
+    exclude_package_data={
+        "": [
+            "travis/*",
+            "build/*",
+            "fiduswriter/media/*",
+            "fiduswriter/.transpile/*",
+            "fiduswriter/static-transpile/*",
+            "fiduswriter/static-collected/*",
+            "fiduswriter/static-libs/*",
+            "fiduswriter/venv/*",
+            "fiduswriter/media/*",
+            "fiduswriter/static-transpile/*",
+            "fiduswriter/static-libs/*",
+            "fiduswriter/book/*",
+            "fiduswriter/citation-api-import/*",
+            "fiduswriter/languagetool/*",
+            "fiduswriter/npm_mjs/*",
+            "fiduswriter/ojs/*",
+            "fiduswriter/phplist/*",
+            "fiduswriter/payment/*"
+        ]
+    },
     python_requires='>=3',
     install_requires=read('fiduswriter/requirements.txt').splitlines(),
     extras_require={

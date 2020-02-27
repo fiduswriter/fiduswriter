@@ -5,7 +5,7 @@ import {DocumentInvite} from "../documents/invite"
 import {ImageOverview} from "../images/overview"
 import {ContactsOverview} from "../contacts"
 import {Profile} from "../profile"
-import {findTarget, WebSocketConnector, showSystemMessage, postJson, ensureCSS, get} from "../common"
+import {findTarget, WebSocketConnector, showSystemMessage, postJson, ensureCSS} from "../common"
 import {LoginPage} from "../login"
 import {EmailConfirm} from "../email_confirm"
 import {PasswordResetRequest, PasswordResetChangePassword} from "../password_reset"
@@ -157,7 +157,6 @@ export class App {
         ]).then(
             () => {
                 this.activateFidusPlugins()
-                // this.cacheImageInIndexedDB()
                 return this.selectPage()
             }
         ).then(
@@ -286,21 +285,4 @@ export class App {
         return this.selectPage()
     }
 
-    // cacheImageInIndexedDB() {
-    //     const db = this.imageDB.db
-    //     //Cache in indexed DB if image is already not present in there.
-    //     for (const key in db) {
-    //         const image_name = db[key].image.split('/').pop()
-    //         this.indexedDB.checkImagePresent(image_name).then((is_present)=>{
-    //             if (!is_present) {
-    //                 get(db[key].image).then((response)=> {
-    //                     response.blob().then(image_blob=>{
-    //                         const file = new File([image_blob], image_name, {'type':db[key].file_type})
-    //                         this.indexedDB.saveImage(file, image_name)
-    //                     })
-    //                 })
-    //             }
-    //         })
-    //     }
-    // }
 }

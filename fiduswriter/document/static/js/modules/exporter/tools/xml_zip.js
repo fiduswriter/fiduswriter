@@ -29,16 +29,6 @@ export class XmlZip {
         ).then(
             blob => this.rawFile = blob
         )
-
-        // if (window.theApp.ws.isOnline()) {
-        //     return get(this.url).then(
-        //         response => response.blob()
-        //     ).then(
-        //         blob => this.rawFile = blob
-        //     )
-        // } else {
-        //     return window.theApp.indexedDB.readTemplate(this.url).then(response=>this.rawFile = response)
-        // }
     }
 
     loadZip() {

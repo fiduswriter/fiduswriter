@@ -140,7 +140,6 @@ export class ImageEditDialog {
                     this.dialog.close()
                     addAlert('success', gettext('The image has been updated.'))
                     this.imageId = imageId
-                    // window.theApp.indexedDB.saveImage(imageData.image, this.imageDB.db[imageId].image)
                     resolve(imageId)
                 },
                 errors => {

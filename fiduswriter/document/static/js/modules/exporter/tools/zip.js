@@ -58,31 +58,6 @@ export class ZipFileCreator {
             blob => this.zipFs.file(binaryFile.filename, blob, {binary: true, compression: 'DEFLATE'})
         ))
         
-        // const httpPromises = this.binaryFiles.map(binaryFile => {
-        //     // If the User is online use network to fetch the files
-        //     if (window.theApp.ws.isOnline) {
-        //         return get(binaryFile.url).then(
-        //             response => response.blob()
-        //         ).then(
-        //             blob => this.zipFs.file(binaryFile.filename, blob, {binary: true, compression: 'DEFLATE'})
-        //         )
-        //     } else {
-        //         // If the user is offline and the requested file other than a font file use IndexedDB
-        //         if (!binaryFile.filename.includes('woff')) {
-        //             window.theApp.indexedDB.readImage(binaryFile.filename).then((response)=>
-        //                 this.zipFs.file(binaryFile.filename, this.convertDataURIToBlob(response), {binary: true, compression: 'DEFLATE'})
-        //             )
-        //         } else {
-        //             return get(binaryFile.url).then(
-        //                 response => response.blob()
-        //             ).then(
-        //                 blob => this.zipFs.file(binaryFile.filename, blob, {binary: true, compression: 'DEFLATE'})
-        //             )
-        //         }
-        //     }
-        // })
-
-        
         return Promise.all(httpPromises).then(
             () => this.zipFs.generateAsync({type:"blob", mimeType: this.mimeType})
         )

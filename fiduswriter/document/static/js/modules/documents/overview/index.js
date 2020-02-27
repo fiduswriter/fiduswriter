@@ -147,11 +147,7 @@ export class DocumentOverview {
                         new_json['document_styles'] = response
                         this.app.indexedDB.readAllData("team_members").then((response)=>{
                             new_json['team_members'] = response
-                            this.app.indexedDB.readAllData("export_templates").then((response)=>{
-                                if (response.length != 0)
-                                    new_json['export_templates'] = response
-                                resolve(new_json)
-                            })
+                            resolve(new_json)
                         })
                     })
                 })
@@ -164,14 +160,12 @@ export class DocumentOverview {
         // Clear data if any present
         this.app.indexedDB.clearData("documents")
         this.app.indexedDB.clearData("team_members")
-        this.app.indexedDB.clearData("export_templates")
         this.app.indexedDB.clearData("document_styles")
         this.app.indexedDB.clearData("document_templates")
 
         //Insert new data
         this.app.indexedDB.insertData("documents", json.documents)
         this.app.indexedDB.insertData("team_members", json.team_members)
-        this.app.indexedDB.insertData("export_templates", json.export_templates)
         this.app.indexedDB.insertData("document_styles", json.document_styles)
         const dummy_json = []
         for (const key in json.document_templates) {

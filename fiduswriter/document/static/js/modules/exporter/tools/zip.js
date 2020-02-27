@@ -57,7 +57,7 @@ export class ZipFileCreator {
         ).then(
             blob => this.zipFs.file(binaryFile.filename, blob, {binary: true, compression: 'DEFLATE'})
         ))
-        
+
         return Promise.all(httpPromises).then(
             () => this.zipFs.generateAsync({type:"blob", mimeType: this.mimeType})
         )

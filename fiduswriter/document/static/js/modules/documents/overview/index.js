@@ -132,7 +132,7 @@ export class DocumentOverview {
 
     loaddatafromIndexedDB() {
         const new_json = {}
-        const new_promise = new Promise((resolve, reject)=>{
+        const new_promise = new Promise((resolve, _reject)=>{
             this.app.indexedDB.readAllData("documents").then((response)=>{
                 new_json['documents'] = response
                 this.app.indexedDB.readAllData("document_templates").then((response)=>{

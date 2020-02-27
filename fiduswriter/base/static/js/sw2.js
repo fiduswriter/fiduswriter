@@ -7,7 +7,7 @@ const reg_exp_google_font_api = new RegExp("(https?:\/\/fonts\.googleapis\..*)")
 const reg_exp_docx = new RegExp("(https?:\/\/.*\.(?:docx))") // eslint-disable-line
 
 
-self.addEventListener('activate', event => {
+self.addEventListener('activate', _event => {
   self.caches.keys().then((names)=>{
     if (names == secondary_cache_name)
       caches.delete(names)

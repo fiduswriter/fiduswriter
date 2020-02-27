@@ -320,7 +320,7 @@ export class Editor {
             activateWait(true)
             this.initEditor()
 
-            this.ws.ws.addEventListener('close', (event)=>{
+            this.ws.ws.addEventListener('close', ()=>{
                 this.menu.toolbarViews.forEach(view => view.update())
             })
         })

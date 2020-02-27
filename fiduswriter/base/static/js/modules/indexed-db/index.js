@@ -11,7 +11,7 @@ export class indexedDB {
 
     // Open/Create db if it doesn't exist
     const request = window.indexedDB.open(this.app.db_config.db_name)
-    request.onerror = function(event) {
+    request.onerror = function(_event) {
       //
     }
 
@@ -32,10 +32,8 @@ export class indexedDB {
         db.createObjectStore("documents", {keyPath: "id"})
         db.createObjectStore("document_templates", {keyPath: "pk"})
         db.createObjectStore("team_members", {keyPath: "id"})
-        db.createObjectStore("export_templates")
         db.createObjectStore("document_styles", {keyPath : "title"})
         db.createObjectStore("contacts_list", {keyPath : "id"})
-        db.createObjectStore("image_db", {keyPath : "name"})
         db.close()
     }
   }
@@ -51,7 +49,7 @@ export class indexedDB {
 
   updateData(objectStoreName, data) {
     const request = window.indexedDB.open(this.app.db_config.db_name)
-    request.onerror = function(event) {
+    request.onerror = function(_event) {
       //
     }
 
@@ -66,7 +64,7 @@ export class indexedDB {
 
   insertData(objectStoreName, data) {
     const request = window.indexedDB.open(this.app.db_config.db_name)
-    request.onerror = function(event) {
+    request.onerror = function(_event) {
       //
     }
     request.onsuccess = (event) => {
@@ -82,7 +80,7 @@ export class indexedDB {
 
   clearData(objectStoreName) {
     const request = window.indexedDB.open(this.app.db_config.db_name)
-    request.onerror = function(event) {
+    request.onerror = function(_event) {
       //
     }
     request.onsuccess = (event) => {
@@ -93,19 +91,19 @@ export class indexedDB {
   }
 
   readAllData(objectStoreName) {
-    const new_promise = new Promise((resolve, reject)=>{
+    const new_promise = new Promise((resolve, _reject)=>{
       const request = window.indexedDB.open(this.app.db_config.db_name)
-      request.onerror = function(event) {
+      request.onerror = function(_event) {
         //
       }
       request.onsuccess = (event) => {
         const db = event.target.result
         const objectStore = db.transaction(objectStoreName, 'readwrite').objectStore(objectStoreName)
         const read_all_request = objectStore.getAll()
-          read_all_request.onerror = function(event) {
+          read_all_request.onerror = function(_event) {
             // Handle errors!
           }
-          read_all_request.onsuccess = function(event) {
+          read_all_request.onsuccess = function(_event) {
             // Do something with the request.result!
             resolve(read_all_request.result)
           }
@@ -114,108 +112,4 @@ export class indexedDB {
     return new_promise
   }
 
-  saveImage(imageData, filename) {
-    const request = window.indexedDB.open(this.app.db_config.db_name)
-    request.onerror = function(event) {
-      //
-    }
-    request.onsuccess = (event) => {
-      const db = event.target.result
-      const reader = new FileReader()
-      reader.readAsDataURL(imageData)
-      reader.onload = function(e) {
-        //alert(e.target.result);
-        const bits = e.target.result
-        const ob = {
-          name:filename.split('/').pop(),
-          data:bits
-        }
-
-        const trans = db.transaction(['image_db'], 'readwrite')
-        const addReq = trans.objectStore('image_db').put(ob)
-
-        addReq.onerror = function(e) {
-          //
-        }
-
-        trans.oncomplete = function(e) {
-          //
-        }
-      }
-    }
-  }
-
-  readImage(name) {
-    const new_promise = new Promise((resolve, reject)=>{
-      const request = window.indexedDB.open(this.app.db_config.db_name)
-      request.onerror = function(event) {
-        //
-      }
-      request.onsuccess = (event) => {
-        const db = event.target.result
-        const trans = db.transaction(['image_db'], 'readonly')
-        //hard coded id
-        const req = trans.objectStore('image_db').get(name)
-        req.onsuccess = function(e) {
-          const record = e.target.result
-          resolve(record.data)
-        }
-      }
-    })
-    return new_promise
-  }
-
-  checkImagePresent(name) {
-    const new_promise = new Promise((resolve, reject)=>{
-      const request = window.indexedDB.open(this.app.db_config.db_name)
-      request.onerror = function(event) {
-        //
-      }
-      request.onsuccess = (event) => {
-        const db = event.target.result
-        const trans = db.transaction(['image_db'], 'readonly')
-        //hard coded id
-        const count_req = trans.objectStore('image_db').count(name)
-        count_req.onsuccess = function(e) {
-          const record = e.target.result
-          if (record == 1) resolve(true)
-          else resolve(false)
-        }
-      }
-    })
-    return new_promise
-  }
-
-  updateExportTemplate(blob) {
-    const request = window.indexedDB.open(this.app.db_config.db_name)
-    request.onerror = function(event) {
-      //
-    }
-
-    request.onsuccess = (event) => {
-      const db = event.target.result
-      const objectStore = db.transaction('export_templates', 'readwrite').objectStore('export_templates')
-      objectStore.put(blob, blob.filepath)
-    }
-  }
-
-  readTemplate(url) {
-    const new_promise = new Promise((resolve, reject)=>{
-      const request = window.indexedDB.open(this.app.db_config.db_name)
-      request.onerror = function(event) {
-        //
-      }
-      request.onsuccess = (event) => {
-        const db = event.target.result
-        const trans = db.transaction(['export_templates'], 'readonly')
-        const req = trans.objectStore('export_templates').get(url)
-        req.onsuccess = function(e) {
-          const record = e.target.result
-          resolve(record)
-        }
-      }
-    })
-    return new_promise
-
-  }
 }

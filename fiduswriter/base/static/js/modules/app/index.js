@@ -1,4 +1,3 @@
-import OfflinePluginRuntime from 'offline-plugin/runtime'
 import {CSL} from 'citeproc-plus'
 
 import {DocumentInvite} from "../documents/invite"
@@ -194,18 +193,9 @@ export class App {
         })
 
         if (!this.config.debug) {
-            console.log("Server is in production mode !!!")
-
             if ('serviceWorker' in navigator) {
-                console.log("Inside the IF consition!!!!")
-                console.log("Hey trying to install the secondary service worker!!!!!")
-                navigator.serviceWorker.register('/sw2.js');
-              }
-
-            // OfflinePluginRuntime.install({
-            //     onUpdateReady: () => OfflinePluginRuntime.applyUpdate(),
-            //     onUpdated: () => window.location.reload()
-            // })
+                navigator.serviceWorker.register('/sw2.js')
+            }
         }
     }
 

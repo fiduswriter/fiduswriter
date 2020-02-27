@@ -320,8 +320,10 @@ export class Editor {
             activateWait(true)
             this.initEditor()
 
-            this.ws.ws.addEventListener('close', ()=>{
+            this.ws.ws.addEventListener('close', () => {
+                // Listen to close event and update the headerbar and toolbar view.
                 this.menu.toolbarViews.forEach(view => view.update())
+                this.menu.headerView.update()
             })
         })
     }

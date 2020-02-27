@@ -191,7 +191,8 @@ export class ModDocumentTemplate {
                             )
                             exporter.init()
                         })
-                    }
+                    },
+                    disabled: editor => !editor.ws.isOnline()
                 }
             }
         })

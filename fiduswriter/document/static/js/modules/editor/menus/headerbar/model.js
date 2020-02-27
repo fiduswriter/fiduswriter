@@ -197,7 +197,8 @@ export const headerbarModel = () => ({
                             )
                             exporter.init()
                         })
-                    }
+                    },
+                    disabled : editor => !editor.ws.isOnline()
                 },
                 {
                     title: gettext('LaTeX'),
@@ -213,7 +214,8 @@ export const headerbarModel = () => ({
                             )
                             exporter.init()
                         })
-                    }
+                    },
+                    disabled : editor => !editor.ws.isOnline()
                 },
                 {
                     title: gettext('JATS (experimental)'),
@@ -231,7 +233,8 @@ export const headerbarModel = () => ({
                             )
                             exporter.init()
                         })
-                    }
+                    },
+                    disabled : editor => !editor.ws.isOnline()
                 }
             ]
         },

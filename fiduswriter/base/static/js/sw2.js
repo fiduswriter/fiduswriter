@@ -1,9 +1,8 @@
 importScripts('sw.js') // eslint-disable-line
 
 const secondary_cache_name = "secondary_cache"
-const reg_exp_img = new RegExp("(https?:\/\/.*\.(?:png|jpg|gif))") // eslint-disable-line
+const reg_exp_img = new RegExp("(https?:\/\/.*\.(?:png|jpg|gif|jpeg))") // eslint-disable-line
 const reg_exp_font = new RegExp("(https?:\/\/.*\.(?:woff|woff2|ttf))") // eslint-disable-line
-const reg_exp_google_font_api = new RegExp("(https?:\/\/fonts\.googleapis\..*)") // eslint-disable-line
 const reg_exp_docx = new RegExp("(https?:\/\/.*\.(?:docx))") // eslint-disable-line
 
 
@@ -14,9 +13,9 @@ self.addEventListener('activate', _event => {
   })
 })
 
-
 self.addEventListener('fetch', function(event) {
-  if ((reg_exp_img.test(event.request.url) || reg_exp_font.test(event.request.url) || reg_exp_google_font_api.test(event.request.url) ||reg_exp_docx.test(event.request.url)) && event.request.method == "GET") {
+  const url = event.request.url
+  if ((reg_exp_img.test(url) || reg_exp_font.test(url) ||reg_exp_docx.test(url)) && event.request.method == "GET") {
     event.respondWith(
       caches.match(event.request).then((resp) => {
         return resp || fetch(event.request).then((response) => {

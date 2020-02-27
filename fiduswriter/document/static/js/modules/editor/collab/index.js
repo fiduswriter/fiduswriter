@@ -38,7 +38,9 @@ export class ModCollab {
                 // We just connected to the editor and we are the only connected
                 // party. This is a good time to clean up the databases, removing
                 // unused images and bibliography items.
-                this.editor.mod.db.clean()
+                if (this.editor.mod.db) {
+                    this.editor.mod.db.clean()
+                }
             }
             this.sessionIds = []
         }

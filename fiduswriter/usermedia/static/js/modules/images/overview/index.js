@@ -4,7 +4,7 @@ import {
     activateWait,
     deactivateWait,
     addAlert,
-    post,
+    postJson,
     findTarget,
     whenReady,
     Dialog,
@@ -84,12 +84,14 @@ export class ImageOverview {
         ids = ids.map(id => parseInt(id))
 
         activateWait()
-        post(
+        postJson(
             '/api/usermedia/delete/',
             {ids}
         ).catch(
             error => {
                 addAlert('error', gettext('The image(s) could not be deleted'))
+                if (error.message === "offline")
+                    deactivateWait()
                 throw (error)
             }
         ).then(

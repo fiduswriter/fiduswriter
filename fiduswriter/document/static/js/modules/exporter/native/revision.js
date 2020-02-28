@@ -1,7 +1,7 @@
 import {ZipFidus} from "./zip"
 import {ShrinkFidus} from "./shrink"
 import {createSlug} from "../tools/file"
-import {addAlert, postJson} from "../../common"
+import {addAlert, post} from "../../common"
 
 
 /** Create a Fidus Writer document and upload it to the server as a backup.
@@ -41,7 +41,7 @@ export class SaveRevision {
 
     uploadRevision(blob) {
 
-        postJson('/api/document/upload/', {
+        post('/api/document/upload/', {
             note: this.note,
             file: {
                 file: blob,

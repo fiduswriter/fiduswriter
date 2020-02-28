@@ -334,7 +334,7 @@ export class DocumentOverview {
                     overview.mod.actions.copyFilesAs(ids)
                 }
             },
-            disabled: overview => !overview.getSelected().length,
+            disabled: overview => !overview.getSelected().length || !overview.app.ws.isOnline(),
             order: 2.5
         })
 

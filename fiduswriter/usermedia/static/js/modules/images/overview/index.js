@@ -4,7 +4,7 @@ import {
     activateWait,
     deactivateWait,
     addAlert,
-    postJson,
+    post,
     findTarget,
     whenReady,
     Dialog,
@@ -84,7 +84,7 @@ export class ImageOverview {
         ids = ids.map(id => parseInt(id))
 
         activateWait()
-        postJson(
+        post(
             '/api/usermedia/delete/',
             {ids}
         ).catch(

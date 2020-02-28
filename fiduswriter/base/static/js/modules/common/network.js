@@ -106,15 +106,6 @@ export const postBare = function(url, params={}, csrfToken=false) {
 }
 
 export const post = function(url, params={}, csrfToken=false) {
-    return postBare(url, params, csrfToken).then(
-        removeDjangoMessages
-    ).then(
-        handleFetchErrors
-    )
-}
-
-// post and then return json and status
-export const postJson = function(url, params={}, csrfToken=false) {
     // If the base ws of the app is disconnected we assume that user is offline.
     // Moreover if the ws readystate is not 0 we consider to check the connected status as 0 means ,
     // websocket is trying to establish a connection.
@@ -124,12 +115,21 @@ export const postJson = function(url, params={}, csrfToken=false) {
             throw error
         })
     } else {
-        return post(url, params, csrfToken).then(
-            response => response.json().then(
-                json => ({json, status: response.status})
-            )
+        return postBare(url, params, csrfToken).then(
+            removeDjangoMessages
+        ).then(
+            handleFetchErrors
         )
     }
+}
+
+// post and then return json and status
+export const postJson = function(url, params={}, csrfToken=false) {
+    return post(url, params, csrfToken).then(
+        response => response.json().then(
+            json => ({json, status: response.status})
+        )
+    )
 }
 
 export const ensureCSS = function(cssUrl) {

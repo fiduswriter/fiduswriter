@@ -1,6 +1,6 @@
 import {AdminConsole} from "./modules/admin_console"
 
-const theAdminConsole = new AdminConsole(window.fidusConfig)
+const theAdminConsole = new AdminConsole()
 
 theAdminConsole.init()
 

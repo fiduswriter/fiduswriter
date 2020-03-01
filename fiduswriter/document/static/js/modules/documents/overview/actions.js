@@ -3,7 +3,7 @@ import {importFidusTemplate} from "./templates"
 import {SaveCopy, ExportFidusFile} from "../../exporter/native"
 import {ImportFidusFile} from "../../importer/file"
 import {DocumentRevisionsDialog} from "../revisions"
-import {activateWait, deactivateWait, addAlert, postJson, Dialog} from "../../common"
+import {activateWait, deactivateWait, addAlert, postJson, Dialog, escapeText} from "../../common"
 
 export class DocumentOverviewActions {
     constructor(documentOverview) {
@@ -160,6 +160,59 @@ export class DocumentOverviewActions {
         )
     }
 
+    copyFilesAs(ids) {
+        getMissingDocumentListData(
+            ids,
+            this.documentOverview.documentList,
+            this.documentOverview.schema
+        ).then(
+            () => {
+
+                const selectTemplateDialog = new Dialog({
+                    title: gettext('Choose document template'),
+                    body: `<p>
+                        ${ids.length > 1 ? gettext('Select document template for copies') : gettext('Select document template for copy.')}
+                        </p>
+                        <select class="fw-button fw-large fw-light">${
+                            Object.entries(this.documentOverview.documentTemplates).map(
+                                ([importId, dt]) => `<option value="${escapeText(importId)}">${escapeText(dt.title)}</option>`
+                            ).join('')
+                        }</select>`,
+                    buttons: [
+                        {
+                            text: gettext('Copy'),
+                            classes: "fw-dark",
+                            click: () => {
+                                ids.forEach(id => {
+                                    const doc = this.documentOverview.documentList.find(entry => entry.id === id)
+                                    const copier = new SaveCopy(
+                                        doc,
+                                        {db:doc.bibliography},
+                                        {db:doc.images},
+                                        this.documentOverview.user,
+                                        selectTemplateDialog.dialogEl.querySelector('select').value
+                                    )
+
+                                    copier.init().then(
+                                        ({doc}) => {
+                                            this.documentOverview.documentList.push(doc)
+                                            this.documentOverview.addDocToTable(doc)
+                                        }
+                                    ).catch(() => false)
+                                })
+                                selectTemplateDialog.close()
+                            }
+                        },
+                        {
+                            type: 'cancel'
+                        }
+                    ]
+                })
+                selectTemplateDialog.open()
+            }
+        )
+    }
+
     downloadNativeFiles(ids) {
         getMissingDocumentListData(
             ids,
@@ -188,7 +241,6 @@ export class DocumentOverviewActions {
                 import("../../exporter/html").then(({HTMLExporter}) => {
                     const exporter = new HTMLExporter(
                         this.documentOverview.schema,
-                        this.documentOverview.staticUrl,
                         this.documentOverview.app.csl,
                         this.documentOverview.documentStyles,
                         doc,
@@ -217,8 +269,7 @@ export class DocumentOverviewActions {
                                 templateUrl,
                                 {db:doc.bibliography},
                                 {db:doc.images},
-                                this.documentOverview.app.csl,
-                                this.documentOverview.staticUrl
+                                this.documentOverview.app.csl
                             )
                             exporter.init()
                         })
@@ -271,7 +322,6 @@ export class DocumentOverviewActions {
                     const doc = this.documentOverview.documentList.find(entry => entry.id===id)
                     import("../../exporter/jats").then(({JATSExporter}) => {
                         const exporter = new JATSExporter(
-                            this.documentOverview.staticUrl,
                             doc,
                             {db:doc.bibliography},
                             {db:doc.images},
@@ -295,7 +345,6 @@ export class DocumentOverviewActions {
                     import("../../exporter/epub").then(({EpubExporter}) => {
                         const exporter = new EpubExporter(
                             this.documentOverview.schema,
-                            this.documentOverview.staticUrl,
                             this.documentOverview.app.csl,
                             this.documentOverview.documentStyles,
                             doc,

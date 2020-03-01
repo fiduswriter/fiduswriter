@@ -8,8 +8,7 @@ import {FW_DOCUMENT_VERSION} from "../schema"
 // To upgrade all docs and document revions to the newest version
 
 export class DocMaintenance {
-    constructor({staticUrl}) {
-        this.staticUrl = staticUrl
+    constructor() {
         this.batch = 0
         this.revSavesLeft = 0
         this.docTemplatesSavesLeft = 0

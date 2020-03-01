@@ -4,9 +4,8 @@ import {PreloginPage} from "../prelogin"
 import * as pluginLoaders from "../../plugins/confirm_account"
 
 export class EmailConfirm extends PreloginPage {
-    constructor({app, isFree, language, registrationOpen, testServer, staticUrl}, key) {
-        super({app, isFree, language, registrationOpen, staticUrl})
-        this.testServer = testServer
+    constructor({app, language}, key) {
+        super({app, language})
 
         this.title = gettext('Confirm Email')
         this.pluginLoaders = pluginLoaders
@@ -53,7 +52,7 @@ export class EmailConfirm extends PreloginPage {
 
     render() {
         if (!this.verified) {
-            if (this.testServer) {
+            if (settings.TEST_SERVER) {
                 this.formChecks.push(
                     () => document.getElementById('test-check').matches(':checked')
                 )

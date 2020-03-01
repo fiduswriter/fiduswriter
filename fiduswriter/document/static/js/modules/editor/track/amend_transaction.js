@@ -138,6 +138,7 @@ function markWrapping(
 
 
 export function amendTransaction(tr, state, editor) {
+
     if (
             !tr.steps.length ||
             tr.meta && !Object.keys(tr.meta).every(
@@ -208,7 +209,8 @@ export function trackedTransaction(tr, state, user, approved, date) {
                 const condensedStep = new ReplaceStep(newStep.from, newStep.to, trTemp.doc.slice(newStep.from, mappedNewStepTo))
 
                 newTr.step(condensedStep)
-                map.appendMap(condensedStep.getMap())
+                const mirrorIndex = map.maps.length -1
+                map.appendMap(condensedStep.getMap(), mirrorIndex)
                 if (!newTr.selection.eq(trTemp.selection)) {
                     newTr.setSelection(trTemp.selection)
                 }

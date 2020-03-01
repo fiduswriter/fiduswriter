@@ -32,4 +32,4 @@ class Feedback(models.Model):
                   settings.DEFAULT_FROM_EMAIL,
                   [settings.CONTACT_EMAIL],
                   fail_silently=True)
-        super(Feedback, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)

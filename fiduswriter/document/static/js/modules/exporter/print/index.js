@@ -5,9 +5,8 @@ import {removeHidden} from "../tools/doc_contents"
 
 export class PrintExporter extends HTMLExporter {
 
-    constructor(schema, staticUrl, csl, documentStyles, doc, bibDB, imageDB) {
-        super(schema, staticUrl, csl, documentStyles, doc, bibDB, imageDB)
-        this.staticUrl = staticUrl
+    constructor(schema, csl, documentStyles, doc, bibDB, imageDB) {
+        super(schema, csl, documentStyles, doc, bibDB, imageDB)
         this.styleSheets.push({contents:
             `a.fn {
                 -adapt-template: url(data:application/xml,${

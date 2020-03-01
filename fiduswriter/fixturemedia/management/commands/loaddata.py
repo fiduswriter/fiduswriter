@@ -7,27 +7,16 @@ import django.core.serializers
 from django.db.models import signals
 from django.db.models.fields.files import FileField
 from django.utils._os import upath
+from django.apps import apps
 
-try:
-    from django.apps import apps
-    get_models = apps.get_models
 
-    def get_apps(): return [_f for _f in [
-        a.models_module for a in apps.get_app_configs()] if _f]
+def get_apps(): return [_f for _f in [
+    a.models_module for a in apps.get_app_configs()] if _f]
 
-    def get_modelclasses():
-        for modelclass in get_models():
-            yield modelclass
 
-except ImportError:
-    # old Django case
-    from django.db.models import get_apps, get_models
-
-    def get_modelclasses():
-        for app in get_apps():
-            modelclasses = get_models(app)
-            for modelclass in modelclasses:
-                yield modelclass
+def get_modelclasses():
+    for modelclass in apps.get_models():
+        yield modelclass
 
 
 def models_with_filefields():
@@ -74,7 +63,7 @@ class Command(django.core.management.commands.loaddata.Command):
         fixture_paths = (join(path, 'media') for path in fixture_paths)
         fixture_paths = [path for path in fixture_paths if isdir(path)]
         self.fixture_media_paths = fixture_paths
-        return_value = super(Command, self).handle(*fixture_labels, **options)
+        return_value = super().handle(*fixture_labels, **options)
         # Disconnect signal listeners
         for modelclass in models_with_filefields():
             signals.pre_save.disconnect(

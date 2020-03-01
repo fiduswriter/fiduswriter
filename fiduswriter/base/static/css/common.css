@@ -1,16 +1,20 @@
 body {
     width: 100%;
     height: 100%;
-    background-color: #f9f9f9;
+    background-color: var(--main-background-color);
+    color: var(--main-text-color);
+    min-width: calc(380px - 100vw + 100%); /* to substract scrollbar width. */
+    overflow-y: hidden;
+}
+
+body.scrollable {
+    overflow-y: auto;
 }
 
 .fw-header {
-    position: fixed;
-    left: 0;
-    top: 0;
     width: 100%;
     height: auto;
-    background-color: #84b4a7;
+    background-color: var(--cs-5-background);
     z-index: 2;
 }
 
@@ -22,22 +26,18 @@ body {
     overflow: hidden;
 }
 
-.fw-contents-outer {
-    position: relative;
-    top: 70px;
-}
-
 .fw-contents {
     position: relative;
     width: auto;
     height: auto;
     min-width: 985px;
     margin: 0 213px;
-    padding: 40px 0 20px;
+    padding: 40px 8px 20px 8px;
 }
 
 @media (max-width: 1429px) {
     .fw-contents {
+        min-width: unset;
         margin: 0 auto;
         max-width: 1004px;
     }
@@ -46,13 +46,13 @@ body {
 .fw-contents h1 {
     font-size: 2em;
     font-weight: bold;
-    margin-bottom: 0.2em;
+    margin-bottom: .2em;
 }
 
 .fw-contents .errorlist {
-    border: 2px solid #af3515;
-    background-color: #cc3f1a;
-    color: #fff;
+    border: 2px solid var(--error-border-color);
+    background-color: var(--error-background-color);
+    color: var(--error-text-color);
     margin: 10px 0;
     display: inline-block;
     font-size: 1.4em;
@@ -62,11 +62,13 @@ body {
     display: none;
 }
 
-.fw-contents label[for="id_password1"], .fw-contents label[for="id_password2"] {
+.fw-contents label[for='id_password1'],
+.fw-contents label[for='id_password2'] {
     display: none;
 }
 
-.fw-contents input#id_password1, .fw-contents input#id_password2 {
+.fw-contents input#id_password1,
+.fw-contents input#id_password2 {
     margin: 10px 0;
 }
 
@@ -82,8 +84,8 @@ table .fw-inline {
     padding: 5px 0;
 }
 
-.fw-avatar  {
-    border: solid 1px #e0e0e0;
+.fw-avatar {
+    border: solid 1px var(--cs-light-border);
 }
 
 .fw-string-avatar {
@@ -101,13 +103,13 @@ table .fw-inline {
     vertical-align: middle;
 }
 
-.fw-string-avatar:before,
-.fw-string-avatar:after {
+.fw-string-avatar::before,
+.fw-string-avatar::after {
     display: inline-block;
     width: 0;
     padding-top: 100%;
     vertical-align: middle;
-    content: "";
+    content: '';
 }
 
 .fw-avatar-card {
@@ -130,9 +132,6 @@ table .fw-inline {
     display: inline-block;
     vertical-align: middle;
     padding-left: 8px;
-}
-
-.fw-avatar-card-name {
     font-size: 17px;
 }
 
@@ -140,11 +139,11 @@ table .fw-inline {
     font-size: 13px;
     display: block;
     padding-top: 6px;
-    color: #a8a8a8;
+    color: var(--cs-white-text-secondary);
 }
 
 .ProseMirror span.placeholder::before {
-    color: #cecece;
+    color: var(--cs-white-placeholder-text);
     content: attr(data-placeholder);
     cursor: text;
 }
@@ -157,8 +156,8 @@ table .fw-inline {
     display: inline;
 }
 
-.clearfix:after {
-    content: "";
+.clearfix::after {
+    content: '';
     clear: both;
     display: block;
 }

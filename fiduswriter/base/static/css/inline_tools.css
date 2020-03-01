@@ -19,21 +19,24 @@
     border-radius: 50%;
     overflow: hidden;
     text-indent: -999px;
-    background-color: #e0e0e0;
+    background-color: var(--cs-2-background);
+    color: var(--cs-2-text);
     cursor: pointer;
 }
 
-.inline-tools .menuicon:hover,
+.inline-tools .menuicon:hover {
+    background-color: var(--cs-2-background-hover);
+}
+
 .inline-tools .menuicon.active {
-    background-color: #7d948e;
-    color: white;
+    background-color: var(--cs-2-background-selected);
 }
 
 .inline-tools .menuicon + .menuicon {
     margin-left: 2px;
 }
 
-.inline-tools .menuicon:before {
+.inline-tools .menuicon::before {
     position: absolute;
     left: 0;
     top: 0;
@@ -45,37 +48,37 @@
     font-size: 13px;
 }
 
-.menuicon.strong:before,
-.menuicon.em:before,
-.menuicon.sup:before,
-.menuicon.sub:before {
-    font-family: "Font Awesome 5 Free";
+.menuicon.strong::before,
+.menuicon.em::before,
+.menuicon.sup::before,
+.menuicon.sub::before {
+    font-family: 'Font Awesome 5 Free', monospace;
     font-weight: 900;
 }
 
-.menuicon.strong:before {
-    content: "\f032";
+.menuicon.strong::before {
+    content: '\f032';
 }
 
-.menuicon.em:before {
-    content: "\f033";
+.menuicon.em::before {
+    content: '\f033';
 }
 
-.menuicon.sup:before {
-    content: "\f12b";
+.menuicon.sup::before {
+    content: '\f12b';
 }
 
-.menuicon.sub:before {
-    content: "\f12c";
+.menuicon.sub::before {
+    content: '\f12c';
 }
 
-.menuicon.smallcaps:before {
-    content: "Tt";
+.menuicon.smallcaps::before {
+    content: 'Tt';
     font-weight: bold;
     font-variant: small-caps;
 }
 
-.menuicon.nocase:before {
-    content: "cP";
+.menuicon.nocase::before {
+    content: 'cP';
     font-weight: bold;
 }

@@ -84,15 +84,23 @@ const firstCommentTemplate = ({
     </div>`
 
 const helpTemplate = ({help, filterOptions}) => {
-    if (!filterOptions.help) {
+    if (!filterOptions.help || !filterOptions.info) {
         return '<div class="margin-box help hidden"></div>'
     } else {
         return `<div class="margin-box help ${help.active ? 'active' : ''}"><div class="help-text-wrapper">${serializeHelp(help.help)}</div></div>`
     }
 }
 
+const warningTemplate = ({warning, filterOptions}) => {
+    if (!filterOptions.warning || !filterOptions.info) {
+        return '<div class="margin-box warning hidden"></div>'
+    } else {
+        return `<div class="margin-box warning ${warning.active ? 'active' : ''}"><div class="help-text-wrapper">${warning.warning}</div></div>`
+    }
+}
 
-const commentTemplate = ({comment, view, active, editComment, activeCommentAnswerId, user, docInfo, filterOptions, staticUrl}) => {
+
+const commentTemplate = ({comment, view, active, editComment, activeCommentAnswerId, user, docInfo, filterOptions}) => {
     if (
         !filterOptions.comments ||
         (filterOptions.commentsOnlyMajor && !comment.isMajor) ||
@@ -118,8 +126,8 @@ const commentTemplate = ({comment, view, active, editComment, activeCommentAnswe
             class="margin-box comment ${active ? 'active' : 'inactive'} ${comment.resolved ? 'resolved' : ''} ${comment.isMajor === true ? 'comment-is-major-bgc' : ''}">
     ${
         comment.comment.length === 0 ?
-        firstCommentTemplate({comment, author, staticUrl}) :
-        singleCommentTemplate({comment, user, author, active, editComment, staticUrl})
+        firstCommentTemplate({comment, author}) :
+        singleCommentTemplate({comment, user, author, active, editComment})
     }
     ${
         assignedUsername ?
@@ -136,8 +144,7 @@ const commentTemplate = ({comment, view, active, editComment, activeCommentAnswe
                 active,
                 activeCommentAnswerId,
                 user,
-                docInfo,
-                staticUrl
+                docInfo
             })
         ).join('') :
         ''
@@ -293,6 +300,7 @@ export const marginboxFilterTemplate = ({marginBoxes, filterOptions, docInfo}) =
     const comments = marginBoxes.find(box => box.type==='comment')
     const tracks = marginBoxes.find(box => ['insertion', 'deletion', 'format_change', 'block_change'].includes(box.type))
     const help = marginBoxes.find(box => box.type==='help')
+    const warning = marginBoxes.find(box => box.type==='warning')
     let filterHTML = ''
     if (comments || filterOptions.commentsOnlyMajor) {
         filterHTML += `<div id="margin-box-filter-comments" class="margin-box-filter-button${filterOptions.comments ? '' : ' disabled'}">
@@ -340,13 +348,13 @@ export const marginboxFilterTemplate = ({marginBoxes, filterOptions, docInfo}) =
                     </div>
                 </li>
                 <li>
-                    <span class="fw-pulldown-item margin-box-filter-comments-check">
+                    <span class="fw-pulldown-item margin-box-filter-check">
                         <input type="checkbox" class="fw-check fw-label-check"${filterOptions.commentsOnlyMajor ? ' checked' : ''} id="margin-box-filter-comments-only-major">
                         <label for="margin-box-filter-comments-only-major">${gettext('Only major comments')}</label>
                     </span>
                 </li>
                 <li>
-                    <span class="fw-pulldown-item margin-box-filter-comments-check">
+                    <span class="fw-pulldown-item margin-box-filter-check">
                         <input type="checkbox" class="fw-check fw-label-check"${filterOptions.commentsResolved ? ' checked' : ''} id="margin-box-filter-comments-resolved">
                         <label for="margin-box-filter-comments-resolved">${gettext('Resolved comments')}</label>
                     </span>
@@ -359,9 +367,24 @@ export const marginboxFilterTemplate = ({marginBoxes, filterOptions, docInfo}) =
             <span class="label">${gettext('Track changes')}</span>
         </div>`
     }
-    if (help) {
-        filterHTML += `<div id="margin-box-filter-help" class="margin-box-filter-button${filterOptions.help ? '' : ' disabled'}">
-            <span class="label">${gettext('Instructions')}</span>
+    if (help || warning) {
+        filterHTML += `<div id="margin-box-filter-info" class="margin-box-filter-button${filterOptions.info ? '' : ' disabled'}">
+            <span class="label">${gettext('Informational')}</span>
+            <span class="show-marginbox-options fa fa-ellipsis-v"></span>
+            <div class="marginbox-options fw-pulldown fw-right"><ul>
+                <li>
+                <span class="fw-pulldown-item margin-box-filter-check">
+                    <input type="checkbox" class="fw-check fw-label-check"${filterOptions.help ? ' checked' : ''} id="margin-box-filter-info-help">
+                    <label for="margin-box-filter-info-help">${gettext('Instructions')}</label>
+                </span>
+                </li>
+                <li>
+                <span class="fw-pulldown-item margin-box-filter-check">
+                    <input type="checkbox" class="fw-check fw-label-check"${filterOptions.warning ? ' checked' : ''} id="margin-box-filter-info-warning">
+                    <label for="margin-box-filter-info-warning">${gettext('Warnings')}</label>
+                </span>
+                </li>
+            </ul></div>
         </div>`
     }
     return filterHTML
@@ -376,8 +399,7 @@ export const marginBoxesTemplate = ({
         activeCommentAnswerId,
         user,
         docInfo,
-        filterOptions,
-        staticUrl
+        filterOptions
     }) => `<div id="margin-box-container"><div>${
         marginBoxes.map(mBox => {
         let returnValue = ''
@@ -391,8 +413,7 @@ export const marginBoxesTemplate = ({
                     editComment,
                     user,
                     docInfo,
-                    filterOptions,
-                    staticUrl
+                    filterOptions
                 })
                 break
             case 'insertion':
@@ -405,12 +426,15 @@ export const marginBoxesTemplate = ({
                     data: mBox.data,
                     active: mBox.active,
                     docInfo,
-                    filterOptions,
-                    staticUrl
+                    filterOptions
                 })
                 break
             case 'help':
-                return helpTemplate({help: mBox.data, filterOptions})
+                returnValue = helpTemplate({help: mBox.data, filterOptions})
+                break
+            case 'warning':
+                returnValue = warningTemplate({warning: mBox.data, filterOptions})
+                break
             default:
                 break
         }

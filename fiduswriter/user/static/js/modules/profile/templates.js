@@ -6,7 +6,7 @@ export const confirmDeleteAvatarTemplate = () =>
 
 /** A template to change the user avatar. */
 export const changeAvatarDialogTemplate = () =>
-    `<span id="upload-avatar-btn" class="fw-button fw-white fw-large">
+    `<span id="upload-avatar-btn" class="fw-button fw-light fw-large">
         ${gettext('Select a file')}
     </span>
     <label id="uploaded-avatar-name" class="ajax-upload-label"></label>`

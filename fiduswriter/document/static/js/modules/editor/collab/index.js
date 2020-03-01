@@ -1,4 +1,4 @@
-import {ModCollabDocChanges} from "./doc_changes"
+import {ModCollabDoc} from "./doc"
 import {ModCollabChat} from "./chat"
 import {ModCollabColors} from "./colors"
 import {removeCollaboratorSelection} from "../state_plugins"
@@ -11,7 +11,8 @@ export class ModCollab {
         this.participants = []
         this.sessionIds = false
         this.collaborativeMode = false
-        new ModCollabDocChanges(this)
+
+        new ModCollabDoc(this)
         new ModCollabChat(this)
         new ModCollabColors(this)
     }

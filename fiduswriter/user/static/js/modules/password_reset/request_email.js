@@ -2,9 +2,8 @@ import {escapeText, post} from "../common"
 import {PreloginPage} from "../prelogin"
 
 export class PasswordResetRequest extends PreloginPage {
-    constructor({app, isFree, language, registrationOpen, contactEmail, staticUrl}) {
-        super({app, isFree, language, registrationOpen, staticUrl})
-        this.contactEmail = contactEmail
+    constructor({app, language}) {
+        super({app, language})
         this.title = gettext('Reset Password')
         // Note: We do not currently support plugins targetting only the reset password page
     }
@@ -16,7 +15,7 @@ export class PasswordResetRequest extends PreloginPage {
             <p>${
                 interpolate(
                     gettext('If you have any trouble resetting your password, please <a href="mailto:%(contactEmail)s">contact us</a>.'),
-                    {contactEmail: this.contactEmail},
+                    {contactEmail: settings.CONTACT_EMAIL},
                     true
                 )
             }</p>

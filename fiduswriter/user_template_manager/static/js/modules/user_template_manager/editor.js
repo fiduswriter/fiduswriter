@@ -3,9 +3,8 @@ import {whenReady, postJson, setDocTitle, findTarget, post, addAlert, ensureCSS}
 import {FeedbackTab} from "../feedback"
 
 export class DocTemplatesEditor {
-    constructor({app, staticUrl, user}, idString) {
+    constructor({app, user}, idString) {
         this.app = app
-        this.staticUrl = staticUrl
         this.user = user
         this.id = parseInt(idString)
         this.citationStyles = false
@@ -16,7 +15,7 @@ export class DocTemplatesEditor {
             'errorlist.css',
             'editor.css',
             'user_template_manager.css'
-        ], this.staticUrl)
+        ])
         return this.app.csl.getStyles().then(
             styles => {
                 this.citationStyles = styles
@@ -34,7 +33,6 @@ export class DocTemplatesEditor {
             () => {
                 this.render()
                 this.templateDesigner = new DocumentTemplateDesigner(
-                    {staticUrl: this.staticUrl},
                     this.id,
                     this.template.title,
                     this.template.definition,
@@ -51,6 +49,7 @@ export class DocTemplatesEditor {
 
     render() {
         this.dom = document.createElement('body')
+        this.dom.classList.add('scrollable')
         this.dom.innerHTML =
         `<div id="wait" class="">
             <i class="fa fa-spinner fa-pulse"></i>
@@ -81,7 +80,7 @@ export class DocTemplatesEditor {
         </div>`
         document.body = this.dom
         setDocTitle(gettext('Template Editor'), this.app)
-        const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
+        const feedbackTab = new FeedbackTab()
         feedbackTab.init()
     }
 

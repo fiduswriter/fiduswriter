@@ -6,8 +6,7 @@ import {post, ensureCSS} from "../common"
 
 export class FeedbackTab {
 
-    constructor({staticUrl}) {
-        this.staticUrl = staticUrl
+    constructor() {
     }
 
     init() {
@@ -56,7 +55,7 @@ export class FeedbackTab {
             `<a class="feedback-tab" aria-label="${gettext('Technical support')}" href="#"></a>`
         )
 
-        ensureCSS('feedback/feedback.css', this.staticUrl)
+        ensureCSS('feedback/feedback.css')
     }
 
     bind() {

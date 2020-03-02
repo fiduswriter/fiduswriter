@@ -1,34 +1,80 @@
 msgid ""
 msgstr ""
+"Project-Id-Version: Fidus Writer backend\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-03-01 21:52+0000\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: POEditor.com\n"
-"Project-Id-Version: Fidus Writer backend\n"
-"Language: es\n"
 
-#: base/templates/admin/console.html:5 base/templates/admin/console.html:18
+#: base/default_settings.py:226
+msgid "English"
+msgstr "Inglés"
+
+#: base/default_settings.py:227
+msgid "Bulgarian"
+msgstr "Búlgaro"
+
+#: base/default_settings.py:228
+msgid "German"
+msgstr "Alemán"
+
+#: base/default_settings.py:229
+msgid "French"
+msgstr "Francés"
+
+#: base/default_settings.py:230
+msgid "Italian"
+msgstr "Italiano"
+
+#: base/default_settings.py:231
+msgid "Spanish"
+msgstr "Español"
+
+#: base/default_settings.py:232
+msgid "Portuguese (Brazil)"
+msgstr "Portugués (Brasil)"
+
+#: base/default_settings.py:310
+msgid "Fidus Writer Admin"
+msgstr "Administrar Fidus Writer"
+
+#: base/default_settings.py:311
+msgid "Fidus Writer Administration Site"
+msgstr "Sitio de Administración de Fidus Writer"
+
+#: base/default_settings.py:312
+msgid "Welcome to the Fidus Writer Administration Site"
+msgstr "Bienvenido al Sitio de Administración de Fidus Writer"
+
+#: base/templates/admin/console.html:4 base/templates/admin/console.html:16
 #: base/templates/admin/overview.html:14
 msgid "Admin Console"
 msgstr "Consola de Administración"
 
-#: base/templates/admin/console.html:20
+#: base/templates/admin/console.html:18
 msgid "Current number of user sessions:"
 msgstr "Número actual de sesiones conectadas:"
 
-#: base/templates/admin/console.html:22
+#: base/templates/admin/console.html:20
 msgid "Send a system message to all connected users:"
 msgstr "Enviar un mensaje del sistema a todos los usuarios conectados:"
 
-#: base/templates/admin/console.html:26
+#: base/templates/admin/console.html:24
 msgid "Message"
 msgstr "Mensaje"
 
-#: base/templates/admin/console.html:28
-msgid "This system will go offline for scheduled maintenance in 30 minutes. All your work will be saved automatically and we will be back shortly."
-msgstr "El sistema se desconectará en 30 minutos para un mantenimiento programado. Todo su trabajo se guardará automáticamente y estaremos de vuelta en breve."
+#: base/templates/admin/console.html:26
+msgid ""
+"This system will go offline for scheduled maintenance in 30 minutes. All "
+"your work will be saved automatically and we will be back shortly."
+msgstr ""
+"El sistema se desconectará en 30 minutos para un mantenimiento programado. "
+"Todo su trabajo se guardará automáticamente y estaremos de vuelta en breve."
 
-#: base/templates/admin/console.html:35
+#: base/templates/admin/console.html:33
 msgid "Send to connected users"
 msgstr "Enviar a usuarios conectados"
 
@@ -37,19 +83,19 @@ msgid "Extras"
 msgstr "Extras"
 
 #: base/templates/admin/overview.html:17
-#: document/templates/admin/document/maintenance.html:18
+#: document/templates/admin/document/maintenance.html:17
 msgid "Document Maintenance"
 msgstr "Mantenimiento de Documento"
 
-#: base/templates/app.html:11
+#: base/templates/app.html:9
 msgid "The all in one solution for collaborative academic writing."
 msgstr "La herramienta perfecta para redactar textos académicos."
 
-#: base/templates/app.html:51
+#: base/templates/app.html:44
 msgid "JavaScript disabled"
 msgstr "JavaScript deshabilitado"
 
-#: base/templates/app.html:52
+#: base/templates/app.html:45
 msgid "Fidus Writer requires you to enable JavaScript."
 msgstr "Fidus Writer requiere que habilites JavaScript."
 
@@ -59,130 +105,97 @@ msgid "Browser not supported"
 msgstr "Navegador no compatible"
 
 #: browser_check/templates/browser_check/browser_not_supported.html:28
-msgid "\n"
+msgid ""
+"\n"
 "                Your browser is not supported by Fidus Writer.\n"
 "                Please update! We recommend using a current\n"
 "                version of Chrome/Chromium or Firefox on a\n"
 "                desktop computer.\n"
 "            "
-msgstr "\n"
+msgstr ""
+"\n"
 "                Su navegador no es compatible con Fidus Writer.\n"
 "               ¡Por favor actualice! Recomendamos usar una versión\n"
 "                actual de Chrome/Chromium o de Firefox en una computadora.\n"
 "                "
-
-#: core/default_settings.py:229
-msgid "English"
-msgstr "Inglés"
-
-#: core/default_settings.py:230
-msgid "Bulgarian"
-msgstr "Búlgaro"
-
-#: core/default_settings.py:231
-msgid "German"
-msgstr "Alemán"
-
-#: core/default_settings.py:232
-msgid "French"
-msgstr "Francés"
-
-#: core/default_settings.py:233
-msgid "Italian"
-msgstr "Italiano"
-
-#: core/default_settings.py:234
-msgid "Spanish"
-msgstr "Español"
-
-#: core/default_settings.py:235
-msgid "Portuguese (Brazil)"
-msgstr "Portugués (Brasil)"
-
-#: core/default_settings.py:313
-msgid "Fidus Writer Admin"
-msgstr "Administrar Fidus Writer"
-
-#: core/default_settings.py:314
-msgid "Fidus Writer Administration Site"
-msgstr "Sitio de Administración de Fidus Writer"
-
-#: core/default_settings.py:315
-msgid "Welcome to the Fidus Writer Administration Site"
-msgstr "Bienvenido al Sitio de Administración de Fidus Writer"
 
 #: document/admin.py:51
 msgid "Duplicate selected document templates"
 msgstr "Duplicar plantillas de documentos seleccionados"
 
 #: document/templates/admin/document/document/change_list_object_tools.html:8
+#, python-format
 msgid "Add %(name)s"
 msgstr "Añadir %(name)s"
 
 #: document/templates/admin/document/document/change_list_object_tools.html:13
-#: document/templates/admin/document/maintenance.html:5
+#: document/templates/admin/document/maintenance.html:4
 msgid "Maintenance"
 msgstr "Mantenimiento"
 
-#: document/templates/admin/document/maintenance.html:20
-msgid "\n"
-"            Before and after upgrading Fidus Writer, you should update all the documents\n"
-"            of all users to the newest document version. Only do this if you know that\n"
+#: document/templates/admin/document/maintenance.html:19
+msgid ""
+"\n"
+"            Before and after upgrading Fidus Writer, you should update all "
+"the documents\n"
+"            of all users to the newest document version. Only do this if you "
+"know that\n"
 "            no user is currently editing any document!\n"
 "            "
-msgstr "\n"
-"            Antes y después de actualizar Fidus Writer, debe actualizar todos los documentos\n"
-"           de todos los usuarios a la versión más reciente de documentos. Solo haga esto si\n"
+msgstr ""
+"\n"
+"            Antes y después de actualizar Fidus Writer, debe actualizar "
+"todos los documentos\n"
+"           de todos los usuarios a la versión más reciente de documentos. "
+"Solo haga esto si\n"
 "           sabe que ningún usuario está editando algún documento\n"
 "          "
 
-#: document/templates/admin/document/maintenance.html:28
+#: document/templates/admin/document/maintenance.html:27
 msgid "Update all documents (DANGER!)"
 msgstr "Actualizar todos lo documentos (¡PELIGRO!)"
 
-#: document/views.py:402 document/views.py:502 document/views.py:873
+#: document/views.py:395 document/views.py:495 document/views.py:893
 msgid "Untitled"
 msgstr "Sin título"
 
-#: document/views.py:474 document/views.py:578
+#: document/views.py:467 document/views.py:571
 msgid "shared"
 msgstr "compartido"
 
-#: document/views.py:476 document/views.py:580 document/views.py:959
+#: document/views.py:469 document/views.py:573 document/views.py:979
 msgid "Document"
 msgstr "Documento"
 
-#: document/views.py:478 document/views.py:582 document/views.py:961
+#: document/views.py:471 document/views.py:575 document/views.py:981
 msgid "Author"
 msgstr "Autor"
 
-#: document/views.py:480 document/views.py:584
+#: document/views.py:473 document/views.py:577
 msgid "Access Rights"
 msgstr "Derechos de Acceso"
 
-#: document/views.py:483 document/views.py:966
+#: document/views.py:476 document/views.py:986
 msgid "Access the document"
 msgstr "Acceder al documento"
 
-#: document/views.py:486 document/views.py:590
+#: document/views.py:479 document/views.py:583
 msgid "Document shared:"
 msgstr "Documento compartido:"
 
-#: document/views.py:587
+#: document/views.py:580
 msgid "Sign up or log in and access the document"
 msgstr "Regístrate o inicia sesión y accede al documento"
 
-#. el espacio antes de los dos puntos se ve raro
-#: document/views.py:899
+#: document/views.py:919
 msgid "Comment on :"
 msgstr "Comentar :"
 
-#. el espacio antes de los dos puntos se ve raro
-#: document/views.py:920
+#: document/views.py:940
 msgid "Comment assignment on :"
 msgstr "Comentario asignado en :"
 
-#: document/views.py:963
+#: document/views.py:983
 msgid "Comment"
 msgstr "Comentario"
 
@@ -190,72 +203,93 @@ msgstr "Comentario"
 msgid "Default"
 msgstr "Predeterminado"
 
-#: style/views.py:35
+#: style/views.py:27
 msgid "The template needs at least 1 document style"
 msgstr "La plantilla necesita al menos 1 estilo de documento"
 
 #: user/templates/account/email/email_confirmation_message.html:7
 #: user/templates/account/email/password_reset_key_message.html:7
-msgid "\n"
+#, python-format
+msgid ""
+"\n"
 "        Hello from %(site_name)s!\n"
 "    "
-msgstr "\n"
+msgstr ""
+"\n"
 "        Saludos de %(site_name)s!\n"
 "    "
 
-#. Se entiende?
 #: user/templates/account/email/email_confirmation_message.html:14
-msgid "\n"
-"        You're receiving this e-mail because user %(user_display)s has given yours as an e-mail address to connect their account.\n"
+#, python-format
+msgid ""
+"\n"
+"        You're receiving this e-mail because user %(user_display)s has given "
+"yours as an e-mail address to connect their account.\n"
 "    "
-msgstr "\n"
-"       Ha recibido este correo electrónico porque el usuario %(user_display)s dio esta dirección de correo electrónico para conectarse a su cuenta.\n"
+msgstr ""
+"\n"
+"       Ha recibido este correo electrónico porque el usuario "
+"%(user_display)s dio esta dirección de correo electrónico para conectarse a "
+"su cuenta.\n"
 "   "
 
 #: user/templates/account/email/email_confirmation_message.html:20
-msgid "\n"
+#, python-format
+msgid ""
+"\n"
 "        To confirm this is correct, go to <a href=\"%(url)s\">%(url)s</a>.\n"
 "    "
-msgstr "\n"
-"       Para confirmar que esto es correcto, diríjase a <a href=\"%(url)s\">%(url)s</a>.\n"
+msgstr ""
+"\n"
+"       Para confirmar que esto es correcto, diríjase a <a href=\"%(url)s\">"
+"%(url)s</a>.\n"
 "    "
 
 #: user/templates/account/email/email_confirmation_message.html:26
 #: user/templates/account/email/password_reset_key_message.html:32
-msgid "\n"
+#, python-format
+msgid ""
+"\n"
 "        Thank you from %(site_name)s!\n"
 "    "
-msgstr "\n"
+msgstr ""
+"\n"
 "        Muchas Gracias de parte de %(site_name)s!\n"
 "    "
 
-#. Bien?
 #: user/templates/account/email/password_reset_key_message.html:13
-msgid "\n"
-"        You're receiving this e-mail because you or someone else has requested a password for your user account.\n"
+msgid ""
+"\n"
+"        You're receiving this e-mail because you or someone else has "
+"requested a password for your user account.\n"
 "    "
-msgstr "\n"
-"        Está recibiendo este correo electrónico porque usted u otra persona ha solicitado una contraseña para su cuenta de usuario.\n"
+msgstr ""
+"\n"
+"        Está recibiendo este correo electrónico porque usted u otra persona "
+"ha solicitado una contraseña para su cuenta de usuario.\n"
 "    "
 
-#. En español generalmente no se usa safely en este tipo de mensajes de restablecimiento de contraseña.
 #: user/templates/account/email/password_reset_key_message.html:18
-msgid "\n"
-"        It can be safely ignored if you did not request a password reset. Click the link below to reset your password.\n"
+msgid ""
+"\n"
+"        It can be safely ignored if you did not request a password reset. "
+"Click the link below to reset your password.\n"
 "    "
-msgstr "\n"
-"        Ignore este mensaje si no ha solicitado el restablecimiento de su contraseña. Haga clic en el enlace de abajo para restablecer su contraseña.\n"
+msgstr ""
+"\n"
+"        Ignore este mensaje si no ha solicitado el restablecimiento de su "
+"contraseña. Haga clic en el enlace de abajo para restablecer su contraseña.\n"
 "    "
 
 #: user/templates/account/email/password_reset_key_message.html:27
+#, python-format
 msgid "In case you forgot, your username is %(username)s."
 msgstr "En caso de que lo haya olvidado, su nombre de usuario es %(username)s."
 
-#: usermedia/views.py:34
+#: usermedia/views.py:35
 msgid "Filetype not supported"
 msgstr "No se admite el tipo de archivo"
 
-#: usermedia/views.py:60
+#: usermedia/views.py:63
 msgid "No file uploaded"
 msgstr "Ningún archivo subido"
-

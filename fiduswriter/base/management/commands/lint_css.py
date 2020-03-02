@@ -31,6 +31,7 @@ class Command(BaseCommand):
             "!static-libs/**",
             "!static/**",
             "!venv/**",
+            "--allow-empty-input",
             "--config",
             os.path.join(
                 settings.SRC_PATH,

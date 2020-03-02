@@ -1,4 +1,5 @@
-from avatar.utils import get_primary_avatar, get_default_avatar_url
+from django.core.files import File
+from avatar.utils import get_default_avatar_url
 
 
 def string_to_color(username):
@@ -14,9 +15,27 @@ def string_to_color(username):
 
 
 def get_user_avatar_url(user):
-    avatar = get_primary_avatar(user, 80)
+    size = 80
+    # We use our own method to find the avatar to instead of
+    # "get_primary_avatar" as this way we can minimize the reading from disk
+    # and set a default thumbnail in case we could not create on.
+    # See https://github.com/grantmcconnaughey/django-avatar/pull/187
+    try:
+        avatar = user.avatar_set.order_by("-primary", "-date_uploaded")[0]
+    except IndexError:
+        avatar = None
     if avatar:
-        url = avatar.avatar_url(80)
+        if not avatar.thumbnail_exists(size):
+            avatar.create_thumbnail(size)
+            # Now check if the thumbnail was actually created
+            if not avatar.thumbnail_exists(size):
+                # Thumbnail was not saved. There must be some PIL bug
+                # with this image type. We store the original file instead.
+                avatar.avatar.storage.save(
+                    avatar.avatar_name(size),
+                    File(avatar.avatar.storage.open(avatar.avatar.name, 'rb'))
+                )
+        url = avatar.avatar_url(size)
         return {
             'url': url,
             'uploaded': True,

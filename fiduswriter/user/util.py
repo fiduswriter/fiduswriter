@@ -20,10 +20,7 @@ def get_user_avatar_url(user):
     # "get_primary_avatar" as this way we can minimize the reading from disk
     # and set a default thumbnail in case we could not create on.
     # See https://github.com/grantmcconnaughey/django-avatar/pull/187
-    try:
-        avatar = user.avatar_set.order_by("-primary", "-date_uploaded")[0]
-    except IndexError:
-        avatar = None
+    avatar = user.avatar_set.order_by("-primary", "-date_uploaded").first()
     if avatar:
         if not avatar.thumbnail_exists(size):
             avatar.create_thumbnail(size)

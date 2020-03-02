@@ -465,8 +465,8 @@ export class Editor {
             this.docInfo.confirmedDoc.firstChild
         } else {
             pmArticle = options.changes === 'acceptAllNoInsertions' ?
-            acceptAllNoInsertions(this.currentView.docView.node).firstChild :
-            this.currentView.docView.node.firstChild
+            acceptAllNoInsertions(this.view.docView.node).firstChild :
+            this.view.docView.node.firstChild
         }
 
         let title = ""

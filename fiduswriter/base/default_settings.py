@@ -302,9 +302,10 @@ LOGGING = {
 # Global variables for avatar
 # You only need to change this in very advanced setups.
 AVATAR_GRAVATAR_BACKUP = False
+AVATAR_THUMB_FORMAT = "PNG"
 AVATAR_DEFAULT_URL = 'img/default_avatar.png'
 AVATAR_MAX_AVATARS_PER_USER = 1
-AVATAR_THUMB_FORMAT = "PNG"
+
 
 WEBSOCKET_PING_INTERVAL = 55
 

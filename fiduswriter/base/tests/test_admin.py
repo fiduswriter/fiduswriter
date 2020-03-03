@@ -1,3 +1,5 @@
+from urllib.parse import urljoin
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
@@ -12,7 +14,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
     def setUpClass(cls):
         super().setUpClass()
         cls.base_url = cls.live_server_url
-        cls.base_admin_url = cls.base_url + '/admin/'
+        cls.base_admin_url = urljoin(cls.base_url, '/admin/')
         driver_data = cls.get_drivers(2)
         cls.driver = driver_data["drivers"][0]
         cls.driver2 = driver_data["drivers"][1]

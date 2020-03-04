@@ -8,11 +8,10 @@ import {openDropdownBox, findTarget, setCheckableLabel, addAlert, postJson, Dial
 
 export class DocumentAccessRightsDialog {
 
-    constructor(documentIds, contacts, newContactCall, registrationOpen) {
+    constructor(documentIds, contacts, newContactCall) {
         this.documentIds = documentIds
         this.contacts = contacts
         this.newContactCall = newContactCall // a function to be called when a new contact has been added with contact details
-        this.registrationOpen = registrationOpen
     }
 
     init() {
@@ -88,12 +87,11 @@ export class DocumentAccessRightsDialog {
 
         const buttons = [
             {
-                text: gettext('Add contact or invite new user'),
+                text: settings.REGISTRATION_OPEN ? gettext('Add contact or invite new user') : gettext('Add contact'),
                 classes: "fw-light fw-add-button",
                 click: () => {
                     const dialog = new AddContactDialog(
-                        this.registrationOpen,
-                        gettext('Add contact or invite new user'),
+                        settings.REGISTRATION_OPEN ? gettext('Add contact or invite new user') : gettext('Add contact'),
                         true
                     )
                     dialog.init().then(

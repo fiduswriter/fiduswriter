@@ -5,12 +5,9 @@ import {FeedbackTab} from "../feedback"
 import {basePreloginTemplate} from "./templates"
 
 export class PreloginPage {
-    constructor({app, isFree, language, registrationOpen, staticUrl}) {
+    constructor({app, language}) {
         this.app = app
-        this.isFree = isFree
         this.language = language
-        this.registrationOpen = registrationOpen
-        this.staticUrl = staticUrl
         this.pluginLoaders = {}
         this.title = ''
         this.contents = ''
@@ -55,7 +52,7 @@ export class PreloginPage {
         // Plugins for the specific page
         Object.keys(this.pluginLoaders).forEach(plugin => {
             if (typeof this.pluginLoaders[plugin] === 'function') {
-                this.plugins[plugin] = new this.pluginLoaders[plugin]({page: this, staticUrl: this.staticUrl})
+                this.plugins[plugin] = new this.pluginLoaders[plugin]({page: this})
                 this.plugins[plugin].init()
             }
         })
@@ -63,7 +60,7 @@ export class PreloginPage {
         // General plugins for all prelogin pages
         Object.keys(plugins).forEach(plugin => {
             if (typeof plugins[plugin] === 'function') {
-                this.plugins[plugin] = new plugins[plugin]({page: this, staticUrl: this.staticUrl})
+                this.plugins[plugin] = new plugins[plugin]({page: this})
                 this.plugins[plugin].init()
             }
         })
@@ -87,20 +84,20 @@ export class PreloginPage {
 
     render() {
         this.dom = document.createElement('body')
+        this.dom.classList.add('prelogin')
+        this.dom.classList.add('scrollable')
         this.dom.innerHTML = basePreloginTemplate({
-            isFree: this.isFree,
             language: this.language,
             headerLinks: this.headerLinks,
             footerLinks: this.footerLinks,
-            contents: this.contents,
-            staticUrl: this.staticUrl
+            contents: this.contents
         })
         document.body = this.dom
         ensureCSS([
             'prelogin.css'
-        ], this.staticUrl)
+        ])
         setDocTitle(this.title, this.app)
-        const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
+        const feedbackTab = new FeedbackTab()
         feedbackTab.init()
     }
 

@@ -14,7 +14,7 @@ export class ToolbarView {
         this.dd = new DiffDOM({
             valueDiffing: false
         })
-        this.sideMargins = 14 + 14 + 140 // CSS sets left margin to 14px + 46 px for left most button and we want the same margin on both sides
+        this.sideMargins = 20 + 20 // CSS sets left margin to 14px + 46 px for left most button and we want the same margin on both sides
         this.availableWidth = window.innerWidth - this.sideMargins
         this.openedMenu = false
         this.listeners = {}
@@ -44,19 +44,16 @@ export class ToolbarView {
     }
 
     bindEvents() {
-        this.listeners.onresize = event => this.onresize(event)
-        window.addEventListener('resize', this.listeners.onresize)
         this.listeners.onclick = event => this.onclick(event)
         document.body.addEventListener('click', this.listeners.onclick)
     }
 
     destroy() {
-        window.removeEventListener('resize', this.listeners.onresize)
         document.body.removeEventListener('click', this.listeners.onclick)
         this.editor.menu.toolbarViews = this.editor.menu.toolbarViews.filter(view => view !== this)
     }
 
-    onresize(_event) {
+    onResize() {
         // recalculate menu if needed
         this.availableWidth = window.innerWidth - this.sideMargins
         this.update()
@@ -175,13 +172,13 @@ export class ToolbarView {
                     spaceCounter -= 94
                     break
                 case 'menu':
-                    spaceCounter -= 111
+                    spaceCounter -= 138
                     break
                 default:
                     spaceCounter -= 52
             }
             if (spaceCounter < 0) {
-                menuIndexToDrop = index - 2 // We need the space of two buttons for the more button
+                menuIndexToDrop = Math.max(index - 2, 3) // We need the space of two buttons for the more button
                 return true
             }
         })
@@ -236,7 +233,7 @@ export class ToolbarView {
             return `
                 <div class="ui-buttonset more-button">
                     <div class="multiButtons">
-                        <span class="multibuttonsCover fw-button fw-light fw-large edit-button">
+                        <span class="multibuttonsCover fw-button fw-white fw-large edit-button">
                             ${gettext('More')}
                         </span>
                         ${this.getMoreButtonListHTML(menuIndexToDrop)}
@@ -268,7 +265,7 @@ export class ToolbarView {
     getDropdownHTML(menuItem) {
         return `
         <div class="multiButtons">
-            <span class="multibuttonsCover fw-button fw-light fw-large edit-button${menuItem.disabled && menuItem.disabled(this.editor) ? ' disabled' : ''}">
+            <span class="multibuttonsCover fw-button fw-white fw-large edit-button${menuItem.disabled && menuItem.disabled(this.editor) ? ' disabled' : ''}">
                 ${menuItem.show(this.editor)}
             </span>
             ${this.getDropdownListHTML(menuItem)}
@@ -297,7 +294,7 @@ export class ToolbarView {
 
     getButtonHTML(menuItem) {
         return `
-        <button aria-label="${menuItem.title}" class="fw-button fw-light fw-large fw-square edit-button${menuItem.disabled && menuItem.disabled(this.editor) ? ' disabled' : ''}${menuItem.selected && menuItem.selected(this.editor) ? ' ui-state-active' : ''}${menuItem.class ? ` ${menuItem.class(this.editor)}` : ''}" title="${menuItem.title}" >
+        <button aria-label="${menuItem.title}" class="fw-button fw-white fw-large fw-square edit-button${menuItem.disabled && menuItem.disabled(this.editor) ? ' disabled' : ''}${menuItem.selected && menuItem.selected(this.editor) ? ' ui-state-active' : ''}${menuItem.class ? ` ${menuItem.class(this.editor)}` : ''}" title="${menuItem.title}" >
             <span class="ui-button-text">
                 <i class="fa fa-${typeof(menuItem.icon) === 'function' ? menuItem.icon(this.editor) : menuItem.icon}"></i>
             </span>

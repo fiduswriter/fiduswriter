@@ -3,15 +3,11 @@ import {
     ensureCSS,
     WebSocketConnector,
     postJson,
-    activateWait,
-    deactivateWait
+    activateWait
 } from "../common"
 import {
     FeedbackTab
 } from "../feedback"
-import {
-    adjustDocToTemplate
-} from "../document_template"
 import {
     EditorState,
     TextSelection
@@ -65,9 +61,6 @@ import {
     ModCollab
 } from "./collab"
 import {
-    ModTools
-} from "./tools"
-import {
     ModTrack,
     acceptAllNoInsertions,
     amendTransaction
@@ -79,6 +72,7 @@ import {
     headerbarModel,
     toolbarModel,
     tableMenuModel,
+    imageMenuModel,
     navigatorFilterModel,
     selectionMenuModel
 } from "./menus"
@@ -114,6 +108,7 @@ import {
     tocRenderPlugin,
     toolbarPlugin,
     trackPlugin,
+    searchPlugin,
 } from "./state_plugins"
 import {
     buildEditorKeymap
@@ -127,11 +122,8 @@ export class Editor {
     // A class that contains everything that happens on the editor page.
     // It is currently not possible to initialize more than one editor class, as it
     // contains bindings to menu items, etc. that are uniquely defined.
-    constructor({app, staticUrl, websocketUrl, user, registrationOpen}, idString) {
+    constructor({app, user}, idString) {
         this.app = app
-        this.staticUrl = staticUrl
-        this.websocketUrl = websocketUrl
-        this.registrationOpen = registrationOpen
         this.user = user
         this.mod = {}
         // Whether the editor is currently waiting for a document update. Set to true
@@ -162,11 +154,13 @@ export class Editor {
             headerbarModel: headerbarModel(),
             toolbarModel: toolbarModel(),
             tableMenuModel: tableMenuModel(),
+            imageMenuModel: imageMenuModel(),
             navigatorFilterModel: navigatorFilterModel(),
             selectionMenuModel: selectionMenuModel()
         }
         this.client_id = Math.floor(Math.random() * 0xFFFFFFFF)
         this.clientTimeAdjustment = 0
+
         this.statePlugins = [
             [keymap, () => buildEditorKeymap(this.schema)],
             [keymap, () => buildKeymap(this.schema)],
@@ -197,6 +191,7 @@ export class Editor {
             [tableMenuPlugin, () => ({editor: this})],
             [figurePlugin, () => ({editor: this})],
             [tocRenderPlugin, () => ({editor: this})],
+            [searchPlugin],
         ]
     }
 
@@ -210,7 +205,7 @@ export class Editor {
             'document.css',
             'carets.css',
             'tracking.css',
-            'comments.css',
+            'margin_boxes.css',
             'prosemirror.css',
             'footnotes.css',
             'chat.css',
@@ -222,7 +217,7 @@ export class Editor {
             'dot_menu.css',
             'cropper.min.css',
             'inline_tools.css'
-        ], this.staticUrl)
+        ])
         new ModDocumentTemplate(this)
         const initPromises = [
             whenReady(),
@@ -244,7 +239,7 @@ export class Editor {
             new ModCitations(this)
             new ModFootnotes(this)
             this.ws = new WebSocketConnector({
-                url: `${this.websocketUrl}/ws/document/${this.docInfo.id}/`,
+                url: `/ws/document/${this.docInfo.id}/`,
                 appLoaded: () => this.view.state.plugins.length,
                 anythingToSend: () => sendableSteps(this.view.state),
                 initialMessage: () => {
@@ -259,7 +254,7 @@ export class Editor {
                 },
                 resubScribed: () => {
                     this.mod.footnotes.fnEditor.renderAllFootnotes()
-                    this.mod.collab.docChanges.checkVersion()
+                    this.mod.collab.doc.checkVersion()
                 },
                 restartMessage: () => ({type: 'get_document'}), // Too many messages have been lost and we need to restart
                 messagesElement: () => this.dom.querySelector('#unobtrusive_messages'),
@@ -280,41 +275,41 @@ export class Editor {
                             this.mod.documentTemplate.setStyles(data.styles)
                             break
                         case 'doc_data':
-                            this.receiveDocument(data)
+                            this.mod.collab.doc.receiveDocument(data)
                             break
                         case 'confirm_version':
-                            this.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
+                            this.mod.collab.doc.cancelCurrentlyCheckingVersion()
                             if (data["v"] !== this.docInfo.version) {
-                                this.mod.collab.docChanges.checkVersion()
+                                this.mod.collab.doc.checkVersion()
                                 return
                             }
-                            this.mod.collab.docChanges.enableDiffSending()
+                            this.mod.collab.doc.enableDiffSending()
                             break
                         case 'selection_change':
-                            this.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
+                            this.mod.collab.doc.cancelCurrentlyCheckingVersion()
                             if (data["v"] !== this.docInfo.version) {
-                                this.mod.collab.docChanges.checkVersion()
+                                this.mod.collab.doc.checkVersion()
                                 return
                             }
-                            this.mod.collab.docChanges.receiveSelectionChange(data)
+                            this.mod.collab.doc.receiveSelectionChange(data)
                             break
                         case 'diff':
                             if (data["cid"] === this.client_id) {
                                 // The diff origins from the local user.
-                                this.mod.collab.docChanges.confirmDiff(data["rid"])
+                                this.mod.collab.doc.confirmDiff(data["rid"])
                                 return
                             }
                             if (data["v"] !== this.docInfo.version) {
-                                this.mod.collab.docChanges.checkVersion()
+                                this.mod.collab.doc.checkVersion()
                                 return
                             }
-                            this.mod.collab.docChanges.receiveFromCollaborators(data)
+                            this.mod.collab.doc.receiveFromCollaborators(data)
                             break
                         case 'confirm_diff':
-                            this.mod.collab.docChanges.confirmDiff(data["rid"])
+                            this.mod.collab.doc.confirmDiff(data["rid"])
                             break
                         case 'reject_diff':
-                            this.mod.collab.docChanges.rejectDiff(data["rid"])
+                            this.mod.collab.doc.rejectDiff(data["rid"])
                             break
                     }
                 }
@@ -345,6 +340,7 @@ export class Editor {
         this.dom = document.createElement('body')
         document.body = this.dom
         this.dom.classList.add('editor')
+        this.dom.classList.add('scrollable')
         this.dom.innerHTML = `<div id="editor">
             <div id="wait"><i class="fa fa-spinner fa-pulse"></i></div>
             <header>
@@ -373,13 +369,23 @@ export class Editor {
                 <div id="chat-container"></div>
                 <div id="messageform" contentEditable="true" class="empty"></div>
                 <audio id="chat-notification">
-                    <source src="${this.staticUrl}ogg/chat_notification.ogg?v=${process.env.TRANSPILE_VERSION}" type="audio/ogg">
+                    <source src="${settings.STATIC_URL}ogg/chat_notification.ogg?v=${transpile.VERSION}" type="audio/ogg">
                 </audio>
             </div>
         </div>
         <div id="unobtrusive_messages"></div>`
-        const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
+        const feedbackTab = new FeedbackTab()
         feedbackTab.init()
+    }
+
+    onResize() {
+        if (!this.view || !this.mod.marginboxes) {
+            // Editor not yet set up
+            return
+        }
+        this.mod.marginboxes.updateDOM()
+        this.mod.footnotes.layout.updateDOM()
+        this.menu.toolbarViews.forEach(view => view.onResize())
     }
 
     initEditor() {
@@ -402,9 +408,16 @@ export class Editor {
             },
             dispatchTransaction: tr => {
                 const trackedTr = amendTransaction(tr, this.view.state, this)
-                const newState = this.view.state.apply(trackedTr)
+                const {state: newState, transactions} = this.view.state.applyTransaction(trackedTr)
                 this.view.updateState(newState)
-                this.mod.collab.docChanges.sendToCollaborators()
+                transactions.forEach(subTr => {
+                    const footTr = subTr.getMeta('footTr')
+                    if (footTr) {
+                        this.mod.footnotes.fnEditor.view.dispatch(footTr)
+                    }
+                })
+
+                this.mod.collab.doc.sendToCollaborators()
             }
 
         })
@@ -412,8 +425,8 @@ export class Editor {
         this.currentView = this.view
         this.mod.citations.init()
         this.mod.footnotes.init()
+        new ModDB(this)
         new ModCollab(this)
-        new ModTools(this)
         new ModTrack(this)
         new ModMarginboxes(this)
         this.mod.marginboxes.init()
@@ -434,94 +447,6 @@ export class Editor {
                 this.plugins[plugin].init()
             }
         })
-    }
-
-    receiveDocument(data) {
-        // Reset collaboration
-        this.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
-        this.mod.collab.docChanges.unconfirmedDiffs = {}
-        if (this.mod.collab.docChanges.awaitingDiffResponse) {
-            this.mod.collab.docChanges.enableDiffSending()
-        }
-        // Remember location hash to scroll there subsequently.
-        const locationHash = window.location.hash
-
-        this.clientTimeAdjustment = Date.now() - data.time
-
-        const doc = data.doc
-
-        this.docInfo = data.doc_info
-        this.docInfo.version = doc["v"]
-        this.docInfo.template = data.doc.template
-        new ModDB(this)
-        this.mod.db.bibDB.setDB(data.doc.bibliography)
-        // assign bibDB to be used in document schema.
-        this.schema.cached.bibDB = this.mod.db.bibDB
-        // assign bibDB to be used in footnote schema.
-        this.mod.footnotes.fnEditor.schema.cached.bibDB = this.mod.db.bibDB
-        this.mod.db.imageDB.setDB(data.doc.images)
-        // assign image DB to be used in document schema.
-        this.schema.cached.imageDB = this.mod.db.imageDB
-        // assign image DB to be used in footnote schema.
-        this.mod.footnotes.fnEditor.schema.cached.imageDB = this.mod.db.imageDB
-        this.docInfo.confirmedJson = JSON.parse(JSON.stringify(doc.contents))
-        let stateDoc
-        if (doc.contents.type) {
-            stateDoc = this.schema.nodeFromJSON({type:'doc', content:[
-                adjustDocToTemplate(
-                    doc.contents,
-                    this.docInfo.template.definition,
-                    this.mod.documentTemplate.documentStyles,
-                    this.schema
-                )
-            ]})
-        } else {
-            const definition = JSON.parse(JSON.stringify(this.docInfo.template.definition))
-            if (!definition.type) {
-                definition.type = 'article'
-            }
-            if (!definition.content) {
-                definition.content = [{type: 'title'}]
-            }
-            stateDoc = this.schema.nodeFromJSON({type:'doc', content:[
-                definition
-            ]})
-        }
-        const plugins = this.statePlugins.map(plugin => {
-            if (plugin[1]) {
-                return plugin[0](plugin[1](doc))
-            } else {
-                return plugin[0]()
-            }
-        })
-
-        const stateConfig = {
-            schema: this.schema,
-            doc: stateDoc,
-            plugins
-        }
-
-        // Set document in prosemirror
-        this.view.setProps({state: EditorState.create(stateConfig)})
-        this.view.setProps({nodeViews: {}}) // Needed to initialize nodeViews in plugins
-        // Set initial confirmed doc
-        this.docInfo.confirmedDoc = this.view.state.doc
-
-        // Render footnotes based on main doc
-        this.mod.footnotes.fnEditor.renderAllFootnotes()
-
-        //  Setup comment handling
-        this.mod.comments.store.reset()
-        this.mod.comments.store.loadComments(doc.comments)
-        this.mod.marginboxes.view(this.view)
-        // Set part specific settings
-        this.mod.documentTemplate.addDocPartSettings()
-        this.mod.documentTemplate.addCitationStylesMenuEntries()
-        this.waitingForDocument = false
-        deactivateWait()
-        if (locationHash.length) {
-            this.scrollIdIntoView(locationHash.slice(1))
-        }
     }
 
     // Collect all components of the current doc. Needed for saving and export

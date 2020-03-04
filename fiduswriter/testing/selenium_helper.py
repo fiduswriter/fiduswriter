@@ -1,5 +1,6 @@
 from builtins import range
 from builtins import object
+import re
 import os
 
 from django.test import Client
@@ -15,7 +16,7 @@ class SeleniumHelper(object):
     """
 
     @classmethod
-    def get_drivers(cls, number, download_dir=False):
+    def get_drivers(cls, number, download_dir=False, user_agent=False):
         # django native clients, to be used for faster login.
         clients = []
         for i in range(number):
@@ -30,6 +31,8 @@ class SeleniumHelper(object):
                 "download.directory_upgrade": True
             }
             options.add_experimental_option("prefs", prefs)
+        if user_agent:
+            options.add_argument("user-agent=%s".format(user_agent))
         if os.getenv("CI"):
             options.binary_location = '/usr/bin/google-chrome-stable'
             options.add_argument('--headless')
@@ -57,6 +60,15 @@ class SeleniumHelper(object):
             "wait_time": wait_time
         }
 
+    def find_urls(self, string):
+        return re.findall(
+            (
+                'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|'
+                '(?:%[0-9a-fA-F][0-9a-fA-F]))+'
+            ),
+            string
+        )
+
     # create django data
     def create_user(
         self,
@@ -66,6 +78,7 @@ class SeleniumHelper(object):
     ):
         user = User.objects.create(
             username=username,
+            email=email,
             password=make_password(passtext),
             is_active=True
         )

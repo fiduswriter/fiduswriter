@@ -7,15 +7,14 @@ import {BibTypeTitles} from "../form/strings"
 import {SiteMenu} from "../../menu"
 import {OverviewMenuView, findTarget, whenReady, Dialog, baseBodyTemplate, ensureCSS, setDocTitle, escapeText, DatatableBulk} from "../../common"
 import {FeedbackTab} from "../../feedback"
-import {menuModel, bulkModel} from "./menu"
+import {menuModel, bulkMenuModel} from "./menu"
 import * as plugins from "../../../plugins/bibliography_overview"
 
 export class BibliographyOverview {
 
-    constructor({app, user, staticUrl}) {
+    constructor({app, user}) {
         this.app = app
         this.user = user
-        this.staticUrl = staticUrl
     }
 
     /** Bind the init function to doc loading.
@@ -40,7 +39,6 @@ export class BibliographyOverview {
         this.dom.innerHTML = baseBodyTemplate({
             contents: '',
             user: this.user,
-            staticUrl: this.staticUrl,
             hasOverview: true
         })
         document.body = this.dom
@@ -48,10 +46,17 @@ export class BibliographyOverview {
             'bibliography.css',
             'prosemirror.css',
             'inline_tools.css'
-        ], this.staticUrl)
+        ])
         setDocTitle(gettext('Bibliography Manager'), this.app)
-        const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
+        const feedbackTab = new FeedbackTab()
         feedbackTab.init()
+    }
+
+    onResize() {
+        if (!this.table) {
+            return
+        }
+        this.initTable(Object.keys(this.app.bibDB.db))
     }
 
 
@@ -61,27 +66,38 @@ export class BibliographyOverview {
         tableEl.id = "bibliography"
         tableEl.classList.add('fw-data-table')
         tableEl.classList.add('fw-large')
+        this.dom.querySelector('.fw-contents').innerHTML = ''
         this.dom.querySelector('.fw-contents').appendChild(tableEl)
 
-        const dtBulk = new DatatableBulk(this, bulkModel)
+        this.dtBulk = new DatatableBulk(this, bulkMenuModel())
+
+        const hiddenCols = [0]
+
+        if (window.innerWidth < 500) {
+            hiddenCols.push(1)
+            if (window.innerWidth < 450) {
+                hiddenCols.push(3)
+            }
+        }
 
         this.table = new DataTable(tableEl, {
             searchable: true,
             paging: false,
-            scrollY: "calc(100vh - 240px)",
+            scrollY: `${Math.max(window.innerHeight - 360, 100)}px`,
             labels: {
                 noRows: gettext("No sources registered") // Message shown when there are no search results
             },
             layout: {
-                top: ""
+                top: "",
+                bottom: ""
             },
             data: {
-                headings: ['', dtBulk.getHTML(), gettext("Title"), gettext("Sourcetype"), gettext("Author"), gettext("Published"), ''],
+                headings: ['', this.dtBulk.getHTML(), gettext("Title"), gettext("Sourcetype"), gettext("Author"), gettext("Published"), ''],
                 data: ids.map(id => this.createTableRow(id))
             },
             columns: [
                 {
-                    select: 0,
+                    select: hiddenCols,
                     hidden: true
                 },
                 {
@@ -96,7 +112,7 @@ export class BibliographyOverview {
             this.lastSort = {column, dir}
         })
 
-        dtBulk.init(this.table.table)
+        this.dtBulk.init(this.table.table)
     }
 
     /** Adds a list of bibliography categories to current list of bibliography categories.
@@ -220,7 +236,7 @@ export class BibliographyOverview {
         const buttons = [
             {
                 text: gettext('Delete'),
-                class: "fw-dark",
+                classes: "fw-dark",
                 click: () => {
                     this.deleteBibEntries(ids)
                     dialog.close()
@@ -235,7 +251,6 @@ export class BibliographyOverview {
             id: 'confirmdeletion',
             title: gettext('Confirm deletion'),
             body: `<p>${gettext('Delete the bibliography item(s)')}?</p>`,
-            height: 180,
             buttons,
             icon: 'exclamation-triangle'
         })
@@ -349,8 +364,7 @@ export class BibliographyOverview {
                 text,
                 this.app.bibDB,
                 newIds => this.updateTable(newIds),
-                false,
-                this.staticUrl
+                false
             )
             importer.init()
         })

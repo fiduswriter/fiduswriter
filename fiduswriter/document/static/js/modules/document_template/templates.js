@@ -67,6 +67,10 @@ ${
     ${gettext('Citation')}
 </label>
 <label>
+    <input type="checkbox" class="elements" value="cross_reference" ${elements.includes('cross_reference') ? 'checked' : ''}/>
+    ${gettext('Cross reference')}
+</label>
+<label>
     <input type="checkbox" class="elements" value="blockquote" ${elements.includes('blockquote') ? 'checked' : ''}/>
     ${gettext('Blockquote')}
 </label>
@@ -261,7 +265,7 @@ const contributorsTemplate = ({
 const richtextTemplate = ({
     id="",
     title="",
-    elements=["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote"],
+    elements=["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "cross_reference", "blockquote", "footnote"],
     marks=["strong", "em", "underline", "link"],
     locking="false",
     optional="false",
@@ -403,7 +407,7 @@ const tagsTemplate = ({
 const tableTemplate = ({
     id="",
     title="",
-    elements= ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote"],
+    elements= ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "cross_reference", "blockquote", "footnote"],
     marks= ["strong", "em", "underline", "link"],
     locking="false",
     optional="false",
@@ -490,7 +494,7 @@ const tocTemplate = ({
 </div>`
 
 const footnoteTemplate = ({
-    footnote_elements = ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "table"],
+    footnote_elements = ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "cross_reference", "blockquote", "table"],
     footnote_marks = ["strong", "em", "underline", "link"]
 }) => `<div class="doc-part attrs">${allowedElementsTemplate({elements: footnote_elements}, false)}${allowedMarksTemplate({marks: footnote_marks})}</div>`
 

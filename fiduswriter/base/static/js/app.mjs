@@ -1,5 +1,5 @@
 import {App} from "./modules/app"
 
-const theApp = new App(window.fidusConfig)
+const theApp = new App()
 theApp.init()
 window.theApp = theApp

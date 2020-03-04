@@ -24,7 +24,7 @@ class AccountAdapter(DefaultAccountAdapter):
             context['password_reset_url'] = build_absolute_uri(
                 context['request'],
                 url)
-        return super(AccountAdapter, self).send_mail(
+        return super().send_mail(
             template_prefix,
             email,
             context

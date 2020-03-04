@@ -52,8 +52,7 @@ import {
 
 
 export class DocumentTemplateDesigner {
-    constructor({staticUrl}, id, title, value, documentStyles, citationStyles, exportTemplates, dom) {
-        this.staticUrl = staticUrl
+    constructor(id, title, value, documentStyles, citationStyles, exportTemplates, dom) {
         this.id = id
         this.title = title
         this.value = toFullJSON(value, docSchema)
@@ -89,7 +88,7 @@ export class DocumentTemplateDesigner {
             'dialog.css',
             'table.css',
             'dialog_table.css'
-        ], this.staticUrl)
+        ])
         this.setupInitialEditors()
         this.bind()
     }

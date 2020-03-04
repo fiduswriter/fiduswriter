@@ -3,14 +3,12 @@ import {DeleteContactDialog} from "./delete_dialog"
 import {postJson, addAlert, OverviewMenuView, findTarget, whenReady, baseBodyTemplate, setDocTitle, DatatableBulk} from "../common"
 import {FeedbackTab} from "../feedback"
 import {SiteMenu} from "../menu"
-import {menuModel, bulkModel} from "./menu"
+import {menuModel, bulkMenuModel} from "./menu"
 
 export class ContactsOverview {
-    constructor({app, user, staticUrl, registrationOpen}) {
+    constructor({app, user}) {
         this.app = app
         this.user = user
-        this.staticUrl = staticUrl
-        this.registrationOpen = registrationOpen
     }
 
     init() {
@@ -26,7 +24,7 @@ export class ContactsOverview {
     }
 
     render() {
-        const dtBulk = new DatatableBulk(this, bulkModel)
+        this.dtBulk = new DatatableBulk(this, bulkMenuModel())
 
         this.dom = document.createElement('body')
         this.dom.innerHTML = baseBodyTemplate({
@@ -34,7 +32,7 @@ export class ContactsOverview {
                 <table id="team-table" class="tablesorter fw-data-table">
                     <thead class="fw-data-table-header">
                         <tr>
-                            <td width="30">${dtBulk.getHTML()}</td>
+                            <td width="30">${this.dtBulk.getHTML()}</td>
                             <th width="350">${gettext("Contacts")}</th>
                             <th width="350">${gettext("E-mail address")}</th>
                             <th width="50" align="center">${gettext("Delete")}</th>
@@ -45,15 +43,14 @@ export class ContactsOverview {
                 </table>
             </div>`,
             user: this.user,
-            staticUrl: this.staticUrl,
             hasOverview: true
         })
         document.body = this.dom
         setDocTitle(gettext('Team Members'), this.app)
-        const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
+        const feedbackTab = new FeedbackTab()
         feedbackTab.init()
 
-        dtBulk.init(
+        this.dtBulk.init(
             this.dom.querySelector('#team-table'))
     }
 

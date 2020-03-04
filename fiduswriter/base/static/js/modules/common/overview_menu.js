@@ -244,7 +244,7 @@ export class OverviewMenuView {
 
     getSearchHTML(menuItem) {
         return `
-        <div class="fw-button fw-white fw-large disabled">
+        <div class="fw-button fw-light fw-large disabled">
             <input type="text" placeholder="${menuItem.title}" aria-label="${menuItem.title}">
             ${menuItem.icon ? `<i class="fa fa-${menuItem.icon}"></i>` : ''}
         </div>`

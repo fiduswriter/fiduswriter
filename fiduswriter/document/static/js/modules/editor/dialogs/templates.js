@@ -4,24 +4,45 @@ import {
 } from "../../schema/i18n"
 
 
-export const linkDialogTemplate = ({defaultLink, internalTargets, link, linkTitle}) =>
+export const linkDialogTemplate = ({defaultLink, internalTargets, linkType, title, target, allowedContent}) =>
     `${
-        internalTargets.length ?
+        allowedContent.cross_reference && internalTargets.length ?
+        `<div class="fw-radio">
+            <input type="radio" name="link-type" value="cross_reference" class="cross-reference-check">
+            <label class="cross-reference-label">${gettext("Cross reference")}</label>
+        </div>
+        <div class="fw-select-container">
+            <select class="cross-reference-selector fw-button fw-light fw-large" required="">
+                <option class="placeholder" selected="" disabled="" value="">
+                    ${gettext("Select Target")}
+                </option>
+                ${
+                    internalTargets.map(iTarget =>
+                        `<option class="cross-reference-item" type="text" value="${iTarget.id}" ${target === iTarget.id ? "selected" : ""}>
+                            ${escapeText(iTarget.text)}
+                        </option>`
+                    ).join('')
+                }
+            </select>
+            <div class="fw-select-arrow fa fa-caret-down"></div>
+        </div><p></p>` : ''
+    }${
+        allowedContent.link && internalTargets.length ?
         `<div class="fw-radio">
             <input type="radio" name="link-type" value="internal" class="link-internal-check">
             <label class="link-internal-label">${gettext("Internal")}</label>
         </div>
         <div class="fw-select-container">
-            <select class="internal-link-selector fw-button fw-white fw-large" required="">
+            <select class="internal-link-selector fw-button fw-light fw-large" required="">
                 <option class="placeholder" selected="" disabled="" value="">
                     ${gettext("Select Target")}
                 </option>
                 ${
-                    internalTargets.map(target =>
-                        `<option class="link-item" type="text" value="${target.id}" ${link === `#${target.id}` ? "selected" : ""}>
-                            ${target.text}
+                    internalTargets.map(iTarget =>
+                        `<option class="link-item" type="text" value="${iTarget.id}" ${target === iTarget.id ? "selected" : ""}>
+                            ${escapeText(iTarget.text)}
                         </option>`
-                    )
+                    ).join('')
                 }
             </select>
             <div class="fw-select-arrow fa fa-caret-down"></div>
@@ -33,10 +54,13 @@ export const linkDialogTemplate = ({defaultLink, internalTargets, link, linkTitl
         </div>`
         :
         ''
-    }
-    <input class="link-title" type="text" value="${escapeText(linkTitle)}" placeholder="${gettext("Link title")}"/>
-    <p></p>
-    <input class="link" type="text" value="${["#", undefined].includes(link[0]) ? defaultLink : link}" placeholder="${gettext("URL")}"/>`
+    }${
+        allowedContent.link ?
+        `<input class="link-title" type="text" value="${escapeText(title)}" placeholder="${gettext("Link title")}"/>
+        <p></p>
+        <input class="link" type="text" value="${target && linkType === 'external' ? target : defaultLink}" placeholder="${gettext("URL")}"/>` :
+        ''
+    }`
 
 /** Dialog to add a note to a revision before saving. */
 export const revisionDialogTemplate = ({dir}) =>
@@ -301,7 +325,7 @@ export const configureCitationTemplate = ({citedItemsHTML, citeFormat}) =>
         <div id="cited-items" class="fw-ar-container">
             <h3 class="fw-green-title">${gettext("Citation format")}</h3>
             <div class="fw-select-container">
-                <select id="citation-style-selector" class="fw-button fw-white fw-large" required="">
+                <select id="citation-style-selector" class="fw-button fw-light fw-large" required="">
                     <option value="autocite" ${citeFormat==="autocite" ? "selected" : ""}>${gettext("(Author, 1998)")}</option>
                     <option value="textcite" ${citeFormat==="textcite" ? "selected" : ""}>${gettext("Author (1998)")}</option>
                 </select>
@@ -370,7 +394,7 @@ export const contributorTemplate = ({contributor}) =>
     `
 
 export const languageTemplate = ({currentLanguage, allowedLanguages}) =>
-    `<select class="fw-button fw-white fw-large">
+    `<select class="fw-button fw-light fw-large">
         ${
             allowedLanguages.map(language =>
                 `<option value="${language[0]}" ${language[0]===currentLanguage ? 'selected' : ''}>

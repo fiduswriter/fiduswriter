@@ -17,16 +17,15 @@ by little, and they are all based on the BaseDOMExporter class.
 
 export class DOMExporter {
 
-    constructor(schema, staticUrl, csl, documentStyles) {
+    constructor(schema, csl, documentStyles) {
         this.schema = schema
-        this.staticUrl = staticUrl
         this.csl = csl
         this.documentStyles = documentStyles
 
         this.fontFiles = []
         this.binaryFiles = []
         this.styleSheets = [
-            {url: `${this.staticUrl}css/document.css?v=${process.env.TRANSPILE_VERSION}`}
+            {url: `${settings.STATIC_URL}css/document.css?v=${transpile.VERSION}`}
         ]
     }
 
@@ -196,6 +195,10 @@ export class DOMExporter {
 
         this.contents.querySelectorAll('.figure-cat-figure').forEach(el => {
             delete el.dataset.figureCategory
+        })
+
+        this.contents.querySelectorAll('.cross-reference').forEach(el => {
+            el.innerHTML = `<a href="#${el.dataset.id}">${el.innerHTML}</a>`
         })
     }
 

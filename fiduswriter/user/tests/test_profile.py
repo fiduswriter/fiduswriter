@@ -1,5 +1,4 @@
 import time
-import re
 import os
 
 from selenium.common.exceptions import NoSuchElementException
@@ -12,23 +11,14 @@ from selenium.common.exceptions import StaleElementReferenceException
 
 from django.core import mail
 from django.conf import settings
+from django.contrib.auth.models import User
 
 
-def find_urls(string):
-    return re.findall(
-        (
-            'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|'
-            '(?:%[0-9a-fA-F][0-9a-fA-F]))+'
-        ),
-        string
-    )
-
-
-class EditProfileTest(LiveTornadoTestCase, SeleniumHelper):
+class ProfileTest(LiveTornadoTestCase, SeleniumHelper):
 
     @classmethod
     def setUpClass(cls):
-        super(EditProfileTest, cls).setUpClass()
+        super().setUpClass()
         cls.base_url = cls.live_server_url
         driver_data = cls.get_drivers(1)
         cls.driver = driver_data["drivers"][0]
@@ -39,7 +29,7 @@ class EditProfileTest(LiveTornadoTestCase, SeleniumHelper):
     @classmethod
     def tearDownClass(cls):
         cls.driver.quit()
-        super(EditProfileTest, cls).tearDownClass()
+        super().tearDownClass()
 
     def setUp(self):
         self.verificationErrors = []
@@ -198,7 +188,7 @@ class EditProfileTest(LiveTornadoTestCase, SeleniumHelper):
             )),
             0
         )
-        urls = find_urls(mail.outbox[0].body)
+        urls = self.find_urls(mail.outbox[0].body)
         self.driver.get(urls[0])
         assert self.driver.find_element(
             By.CSS_SELECTOR,
@@ -284,7 +274,7 @@ class EditProfileTest(LiveTornadoTestCase, SeleniumHelper):
                 "Login - Fidus Writer"
             )
         )
-        urls = find_urls(mail.outbox[1].body)
+        urls = self.find_urls(mail.outbox[1].body)
         self.driver.get(urls[0])
         assert self.driver.find_element(
             By.CSS_SELECTOR,
@@ -308,7 +298,7 @@ class EditProfileTest(LiveTornadoTestCase, SeleniumHelper):
         )
         self.login_user(user2, self.driver, self.client)
         driver.get(self.base_url + "/")
-        urls = find_urls(mail.outbox[2].body)
+        urls = self.find_urls(mail.outbox[2].body)
         self.driver.get(urls[0])
         assert self.driver.find_element(
             By.CSS_SELECTOR,
@@ -323,6 +313,36 @@ class EditProfileTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             ".fw-contents.prelogin h1"
         ).text == "Thanks for verifying!"
+        # Log in and delete account
+        self.login_user(user2, self.driver, self.client)
+        self.driver.get(self.base_url + "/")
+        driver.find_element_by_id("preferences-btn").click()
+        driver.find_element_by_css_selector(".fw-avatar-card").click()
+        driver.find_element_by_id("delete-account").click()
+        driver.find_element_by_id("username-confirmation").send_keys(
+            'Yeti2'
+        )
+        driver.find_element_by_id("password").send_keys(
+            'otter1'
+        )
+        self.assertEqual(
+            len(User.objects.filter(username='Yeti2')),
+            1
+        )
+        driver.find_element_by_css_selector(".ui-dialog .fw-dark").click()
+        time.sleep(1)
+        login_header = self.driver.find_elements(
+            By.CSS_SELECTOR,
+            "h1.fw-login-title"
+        )
+        self.assertEqual(
+            len(login_header),
+            1
+        )
+        self.assertEqual(
+            len(User.objects.filter(username='Yeti2')),
+            0
+        )
 
     def is_element_present(self, how, what):
         try:

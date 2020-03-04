@@ -50,7 +50,8 @@ export {
 }
 from "./jump_hidden_nodes"
 export {
-    linksPlugin
+    linksPlugin,
+    getInternalTargets
 }
 from "./links"
 export {
@@ -97,3 +98,13 @@ export {
     deactivateAllSelectedChanges
 }
 from "./track"
+export {
+    searchPlugin,
+    setSearchTerm,
+    getSearchMatches,
+    selectPreviousSearchMatch,
+    selectNextSearchMatch,
+    deselectSearchMatch,
+    endSearch
+}
+from "./search"

@@ -7,6 +7,14 @@ export class ModDB {
         this.editor = editor
         new ModImageDB(this)
         new ModBibliographyDB(this)
+        // assign bibDB to be used in document schema.
+        this.editor.schema.cached.bibDB = this.bibDB
+        // assign bibDB to be used in footnote schema.
+        this.editor.mod.footnotes.fnEditor.schema.cached.bibDB = this.bibDB
+        // assign image DB to be used in document schema.
+        this.editor.schema.cached.imageDB = this.imageDB
+        // assign image DB to be used in footnote schema.
+        this.editor.mod.footnotes.fnEditor.schema.cached.imageDB = this.imageDB
     }
 
     // remove images/citation items that are no longer part of the document.

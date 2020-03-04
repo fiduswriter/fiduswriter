@@ -15,6 +15,7 @@ export class DocxExporterRichtext {
         this.fnCounter = 2 // footnotes 0 and 1 are occupied by separators by default.
         this.bookmarkCounter = 0
         this.figureCounter = {} // counters for each type of figure (figure/table/photo)
+        this.fnFigureCounter = {}
         this.docPrCount = 0
     }
 
@@ -165,6 +166,7 @@ export class DocxExporterRichtext {
             case 'footnotecontainer':
                 options = Object.assign({}, options)
                 options.section = 'Footnote'
+                options.inFootnote = true
                 start += `<w:footnote w:id="${this.fnCounter++}">`
                 end = '</w:footnote>' + end
                 options.footnoteRefMissing = true
@@ -247,6 +249,19 @@ export class DocxExporterRichtext {
                     content += escapeText(node.text)
                     break
                 }
+            case 'cross_reference': {
+                const title = node.attrs.title
+                const id = node.attrs.id
+                if (title) {
+                    start += `<w:hyperlink w:anchor="${id}"><w:r><w:rPr><w:rStyle w:val="Hyperlink"/></w:rPr><w:t>`
+                    end = '</w:t></w:r></w:hyperlink>' + end
+                } else {
+                    start += '<w:r><w:t>'
+                    end = '</w:t></w:r>' + end
+                }
+                content += escapeText(title || 'MISSING TARGET')
+                break
+            }
             case 'citation':
                 {
                     // We take the first citation from the stack and remove it.
@@ -297,8 +312,9 @@ export class DocxExporterRichtext {
                     let caption = escapeText(node.attrs.caption)
                     let figCountXml = ''
                     if (figCat !== 'none') {
-                        if (!this.figureCounter[figCat]) {
-                            this.figureCounter[figCat] = 1
+                        const figureCounter = options.inFootnote ? this.fnFigureCounter : this.figureCounter
+                        if (!figureCounter[figCat]) {
+                            figureCounter[figCat] = 1
                         }
                         figCountXml = `<w:r>
                         <w:t xml:space="preserve">${FIG_CATS[figCat][this.exporter.doc.settings.language]} </w:t>
@@ -317,7 +333,7 @@ export class DocxExporterRichtext {
                     </w:r>
                     <w:r>
                         <w:rPr></w:rPr>
-                        <w:t>${this.figureCounter[figCat]++}</w:t>
+                        <w:t>${figureCounter[figCat]++}${ options.inFootnote ? 'A' : ''}</w:t>
                     </w:r>
                     <w:r>
                         <w:rPr></w:rPr>

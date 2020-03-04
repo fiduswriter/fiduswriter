@@ -13,7 +13,7 @@ export function addDeletedPartWidget(dom, view, getPos) {
             to = from + view.state.doc.nodeAt(from).nodeSize,
             tr = view.state.tr
         tr.delete(from, to)
-        tr.setMeta('filterFree', true)
+        tr.setMeta('deleteUnusedSection', true)
         view.dispatch(tr)
     })
 }
@@ -132,7 +132,7 @@ export const documentTemplatePlugin = function(options) {
                 tr.getMeta('remote') ||
                 tr.getMeta('track') ||
                 tr.getMeta('fromFootnote') ||
-                tr.getMeta('filterFree') ||
+                tr.getMeta('deleteUnusedSection') ||
                 tr.getMeta('settings') ||
                 ['historyUndo', 'historyRedo'].includes(tr.getMeta('inputType'))
             ) {

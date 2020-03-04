@@ -1,3 +1,5 @@
+import {keyName} from "w3c-keyname"
+
 import {findTarget} from "./basic"
 
 const dialogTemplate = ({id, classes, title, height, width, icon, buttons, zIndex, body, scroll}) =>
@@ -49,7 +51,6 @@ const BUTTON_TYPES = {
 
 export class Dialog {
     constructor(options) {
-        this.eventAddress = this.scrollevent.bind(this)
         this.id = options.id || false
         this.classes = options.classes || false
         this.title = options.title || ''
@@ -64,8 +65,12 @@ export class Dialog {
         this.onClose = options.onClose || false
         this.icon = options.icon || false
         this.scroll = options.scroll || false
+        this.canEscape = options.canEscape || false
         this.dialogEl = false
         this.backdropEl = false
+        this.dragging = false
+        this.hasBeenMoved = false
+        this.listeners = {}
     }
 
     setButtons(buttons) {
@@ -118,26 +123,81 @@ export class Dialog {
         this.dialogEl.style.left = `${(totalWidth - dialogWidth)/2 + scrollLeftOffset}px`
     }
 
-    scrollevent() {
-        this.centerDialog()
+    adjustDialogToScroll() {
+        this.dialogEl.style.top = `${
+            Math.max(
+                Math.min(
+                    this.dialogEl.offsetTop,
+                    this.backdropEl.scrollHeight - this.dialogEl.scrollHeight + window.pageYOffset
+                ),
+                window.pageYOffset
+            )
+        }px`
+    }
+
+    moveDialog(x, y) {
+        this.dialogEl.style.top = `${
+            Math.min(
+                Math.max(y - this.dragging.y, 0),
+                this.backdropEl.scrollHeight - this.dialogEl.scrollHeight + window.pageYOffset
+            )
+        }px`
+        this.dialogEl.style.left = `${
+            Math.min(
+                Math.max(x - this.dragging.x, 0),
+                document.body.scrollWidth - this.dialogEl.scrollWidth
+            )
+        }px`
+        this.hasBeenMoved = true
+    }
+
+    onScroll(_event) {
+        if (this.hasBeenMoved) {
+            // The dialog has been moved manually. We just adjust the position to make it stay in the view.
+            this.adjustDialogToScroll()
+        } else {
+            this.centerDialog()
+        }
+    }
+
+    onKeydown(event) {
+        let name = keyName(event)
+        if (event.altKey) {
+            name = "Alt-" + name
+        }
+        if (event.ctrlKey) {
+            name = "Ctrl-" + name
+        }
+        if (event.metaKey) {
+            name = "Meta-" + name
+        }
+        if (event.shiftKey) {
+            name = "Shift-" + name
+        }
+        if (name === 'Escape' && this.canEscape) {
+            this.close()
+        }
     }
 
     bind() {
-        window.addEventListener('scroll', this.eventAddress, false)
+        this.listeners.onScroll = event => this.onScroll(event)
+        window.addEventListener('scroll', this.listeners.onScroll, false)
+        this.listeners.onKeydown = event => this.onKeydown(event)
+        document.body.addEventListener('keydown', this.listeners.onKeydown)
         this.dialogEl.addEventListener('click', event => {
             const el = {}
-            let buttonNumber, seekItem
             switch (true) {
-                case findTarget(event, '.ui-dialog-buttonpane button', el):
+                case findTarget(event, '.ui-dialog-buttonpane button', el): {
                     event.preventDefault()
-                    buttonNumber = 0
-                    seekItem = el.target
+                    let buttonNumber = 0
+                    let seekItem = el.target
                     while (seekItem.previousElementSibling) {
                         buttonNumber++
                         seekItem = seekItem.previousElementSibling
                     }
                     this.buttons[buttonNumber].click()
                     break
+                }
                 case findTarget(event, '.ui-dialog-titlebar-close', el):
                     event.preventDefault()
                     this.close()
@@ -146,6 +206,36 @@ export class Dialog {
                     break
             }
         })
+        this.dialogEl.addEventListener('mousedown', event => {
+            const el = {}
+            switch (true) {
+                case findTarget(event, '.ui-dialog-titlebar', el):
+                    this.dragging = {
+                        x: event.clientX - this.dialogEl.offsetLeft,
+                        y: event.clientY - this.dialogEl.offsetTop
+                    }
+                    break
+                default:
+                    break
+            }
+        })
+        this.dialogEl.addEventListener('mouseup', event => {
+            const el = {}
+            switch (true) {
+                case findTarget(event, '.ui-dialog-titlebar', el):
+                    this.dragging = false
+                    break
+                default:
+                    break
+            }
+        })
+        this.dialogEl.addEventListener('mousemove', event => {
+            if (!this.dragging) {
+                return
+            }
+            this.moveDialog(event.clientX, event.clientY)
+        })
+
     }
 
     getHighestDialogZIndex() {
@@ -158,7 +248,8 @@ export class Dialog {
         if (!this.dialogEl) {
             return
         }
-        window.removeEventListener("scroll",  this.eventAddress, false)
+        window.removeEventListener("scroll",  this.listeners.onScroll, false)
+        document.body.removeEventListener("keydown", this.listeners.onKeydown)
         if (this.beforeClose) {
             this.beforeClose()
         }

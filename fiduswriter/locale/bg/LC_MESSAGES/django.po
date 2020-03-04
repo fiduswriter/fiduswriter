@@ -7,28 +7,28 @@ msgstr ""
 "Project-Id-Version: Fidus Writer backend\n"
 "Language: bg\n"
 
-#: base/templates/admin/console.html:5 base/templates/admin/console.html:18
+#: base/templates/admin/console.html:4 base/templates/admin/console.html:16
 #: base/templates/admin/overview.html:14
 msgid "Admin Console"
 msgstr "Административна конзола"
 
-#: base/templates/admin/console.html:20
+#: base/templates/admin/console.html:18
 msgid "Current number of user sessions:"
 msgstr "Текущ брой потребителски сесии:"
 
-#: base/templates/admin/console.html:22
+#: base/templates/admin/console.html:20
 msgid "Send a system message to all connected users:"
 msgstr "Изпратете системно съобщение до всички свързани потребители:"
 
-#: base/templates/admin/console.html:26
+#: base/templates/admin/console.html:24
 msgid "Message"
 msgstr "съобщение"
 
-#: base/templates/admin/console.html:28
+#: base/templates/admin/console.html:26
 msgid "This system will go offline for scheduled maintenance in 30 minutes. All your work will be saved automatically and we will be back shortly."
 msgstr "Тази система ще премине офлайн за планирана поддръжка след 30 минути. Цялата ви работа ще бъде запазена автоматично и скоро ще се върнем."
 
-#: base/templates/admin/console.html:35
+#: base/templates/admin/console.html:33
 msgid "Send to connected users"
 msgstr "Изпращане на свързани потребители"
 
@@ -37,19 +37,19 @@ msgid "Extras"
 msgstr "Екстри"
 
 #: base/templates/admin/overview.html:17
-#: document/templates/admin/document/maintenance.html:18
+#: document/templates/admin/document/maintenance.html:17
 msgid "Document Maintenance"
 msgstr "Поддръжка на документи"
 
-#: base/templates/app.html:11
+#: base/templates/app.html:9
 msgid "The all in one solution for collaborative academic writing."
 msgstr "Комплексно решение за съвместно създаване на академични документи."
 
-#: base/templates/app.html:51
+#: base/templates/app.html:44
 msgid "JavaScript disabled"
 msgstr "JavaScript е деактивиран"
 
-#: base/templates/app.html:52
+#: base/templates/app.html:45
 msgid "Fidus Writer requires you to enable JavaScript."
 msgstr "Fidus Writer изисква от вас да активирате JavaScript."
 
@@ -72,43 +72,43 @@ msgstr "\n"
 "                настолен компютър.\n"
 "                        "
 
-#: core/default_settings.py:229
+#: base/default_settings.py:226
 msgid "English"
 msgstr "Английски"
 
-#: core/default_settings.py:230
+#: base/default_settings.py:227
 msgid "Bulgarian"
 msgstr "Български"
 
-#: core/default_settings.py:231
+#: base/default_settings.py:228
 msgid "German"
 msgstr "Немски"
 
-#: core/default_settings.py:232
+#: base/default_settings.py:229
 msgid "French"
 msgstr "Френски"
 
-#: core/default_settings.py:233
+#: base/default_settings.py:230
 msgid "Italian"
 msgstr "Италиански"
 
-#: core/default_settings.py:234
+#: base/default_settings.py:231
 msgid "Spanish"
 msgstr "Испански"
 
-#: core/default_settings.py:235
+#: base/default_settings.py:232
 msgid "Portuguese (Brazil)"
 msgstr "Португалски (Бразилия)"
 
-#: core/default_settings.py:313
+#: base/default_settings.py:312
 msgid "Fidus Writer Admin"
 msgstr "Fidus Writer Admin"
 
-#: core/default_settings.py:314
+#: base/default_settings.py:313
 msgid "Fidus Writer Administration Site"
 msgstr "Сайт за администрация на Fidus Writer"
 
-#: core/default_settings.py:315
+#: base/default_settings.py:314
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "Добре дошли в сайта за администрация на Fidus Writer"
 
@@ -121,11 +121,11 @@ msgid "Add %(name)s"
 msgstr "Добавете %(name)s"
 
 #: document/templates/admin/document/document/change_list_object_tools.html:13
-#: document/templates/admin/document/maintenance.html:5
+#: document/templates/admin/document/maintenance.html:4
 msgid "Maintenance"
 msgstr "Поддръжка"
 
-#: document/templates/admin/document/maintenance.html:20
+#: document/templates/admin/document/maintenance.html:19
 msgid "\n"
 "            Before and after upgrading Fidus Writer, you should update all the documents\n"
 "            of all users to the newest document version. Only do this if you know that\n"
@@ -137,53 +137,53 @@ msgstr "\n"
 "            в момента никой потребител не редактира никакъв документ!\n"
 "                        "
 
-#: document/templates/admin/document/maintenance.html:28
+#: document/templates/admin/document/maintenance.html:27
 msgid "Update all documents (DANGER!)"
 msgstr "Актуализирайте всички документи (ОПАСНОСТ!)"
 
-#: document/views.py:402 document/views.py:502 document/views.py:873
+#: document/views.py:395 document/views.py:495 document/views.py:893
 msgid "Untitled"
 msgstr "неозаглавен"
 
-#: document/views.py:474 document/views.py:578
+#: document/views.py:467 document/views.py:571
 msgid "shared"
 msgstr "споделено"
 
-#: document/views.py:476 document/views.py:580 document/views.py:959
+#: document/views.py:469 document/views.py:573 document/views.py:979
 msgid "Document"
 msgstr "документ"
 
-#: document/views.py:478 document/views.py:582 document/views.py:961
+#: document/views.py:471 document/views.py:575 document/views.py:981
 msgid "Author"
 msgstr "Автор"
 
-#: document/views.py:480 document/views.py:584
+#: document/views.py:473 document/views.py:577
 msgid "Access Rights"
 msgstr "Права за достъп"
 
-#: document/views.py:483 document/views.py:966
+#: document/views.py:476 document/views.py:986
 msgid "Access the document"
 msgstr "Достъп до документа"
 
-#: document/views.py:486 document/views.py:590
+#: document/views.py:479 document/views.py:583
 msgid "Document shared:"
 msgstr "Документът е споделен:"
 
-#: document/views.py:587
+#: document/views.py:580
 msgid "Sign up or log in and access the document"
 msgstr "Регистрирайте се или влезте и получите достъп до документа"
 
 #. el espacio antes de los dos puntos se ve raro
-#: document/views.py:899
+#: document/views.py:919
 msgid "Comment on :"
 msgstr "Коментар за:"
 
 #. el espacio antes de los dos puntos se ve raro
-#: document/views.py:920
+#: document/views.py:940
 msgid "Comment assignment on :"
 msgstr "Задание за коментар на:"
 
-#: document/views.py:963
+#: document/views.py:983
 msgid "Comment"
 msgstr "коментар"
 
@@ -191,7 +191,7 @@ msgstr "коментар"
 msgid "Default"
 msgstr "По подразбиране"
 
-#: style/views.py:35
+#: style/views.py:27
 msgid "The template needs at least 1 document style"
 msgstr "Шаблонът се нуждае от поне 1 стил на документ"
 
@@ -252,11 +252,11 @@ msgstr "\n"
 msgid "In case you forgot, your username is %(username)s."
 msgstr "В случай, че сте забравили, вашето потребителско име е %(username)s."
 
-#: usermedia/views.py:34
+#: usermedia/views.py:35
 msgid "Filetype not supported"
 msgstr "Типът файл не се поддържа"
 
-#: usermedia/views.py:60
+#: usermedia/views.py:63
 msgid "No file uploaded"
 msgstr "Не е качен файл"
 

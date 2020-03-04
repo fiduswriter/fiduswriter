@@ -63,7 +63,6 @@ export class CitationDialog {
             buttons: this.buttons,
             body: this.citationDialogHTML(),
             width: 836,
-            height: 400,
             onClose: () => this.editor.currentView.focus()
         })
         this.dialog.open()

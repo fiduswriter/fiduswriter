@@ -31,42 +31,27 @@ class compilemessages(distutils.cmd.Command):
 
     def run(self):
         import subprocess
-        try:
-            import django
+        from pathlib import Path
+        for path in Path(
+            os.path.join(
+                os.path.dirname(os.path.realpath(__file__)),
+                'fiduswriter/locale'
+            )
+        ).rglob('*.po'):
             command = [
-                os.path.join(
-                    os.path.dirname(os.path.realpath(__file__)),
-                    'fiduswriter/manage.py'
-                ),
-                'compilemessages'
+                'msgfmt',
+                '-o',
+                path.name.replace('.po', '.mo'),
+                path.name
             ]
             self.announce(
-                'Running command: %s' % str(' '.join(command)),
+                'Running command: %s in %s' % (
+                    str(' '.join(command)),
+                    path.parent
+                ),
                 level=distutils.log.INFO
             )
-            subprocess.check_call(command)
-        except ImportError:
-            from pathlib import Path
-            for path in Path(
-                os.path.join(
-                    os.path.dirname(os.path.realpath(__file__)),
-                    'fiduswriter/locale'
-                )
-            ).rglob('*.po'):
-                command = [
-                    'msgfmt',
-                    '-o',
-                    path.name.replace('.po', '.mo'),
-                    path.name
-                ]
-                self.announce(
-                    'Running command: %s in %s' % (
-                        str(' '.join(command)),
-                        path.parent
-                    ),
-                    level=distutils.log.INFO
-                )
-                subprocess.check_call(command, cwd=path.parent)
+            subprocess.check_call(command, cwd=path.parent)
 
 # From https://github.com/pypa/setuptools/pull/1574
 class build_py(_build_py):

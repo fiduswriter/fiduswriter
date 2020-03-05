@@ -21,6 +21,13 @@ def app(request):
     return render(request, 'app.html')
 
 
+def api_404(request):
+    """
+    Show a 404 error within the API.
+    """
+    return render(request, 'api_404.html', status=404)
+
+
 @ajax_required
 @require_POST
 def configuration(request):

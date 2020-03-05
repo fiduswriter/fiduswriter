@@ -10,7 +10,7 @@ from django.conf import settings
 from django.views.i18n import JavaScriptCatalog
 from django.views.static import serve as static_serve
 
-from .views import app as app_view
+from .views import app as app_view, api_404 as api_404_view
 from .views import admin_console as admin_console_view
 from .views import manifest_json
 
@@ -79,6 +79,7 @@ if hasattr(settings, 'EXTRA_URLS'):
         ]
 
 urlpatterns += [
+    url('^api/.*', api_404_view, name='api_404'),
     url('^.*/$', app_view, name='app'),
     url('^$', app_view, name='app')
 ]

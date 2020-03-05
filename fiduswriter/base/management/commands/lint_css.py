@@ -29,7 +29,7 @@ class Command(BaseCommand):
             ),
             "**/*.css",
             "!static-libs/**",
-            "!static/**",
+            "!static-collected/**",
             "!venv/**",
             "--allow-empty-input",
             "--config",

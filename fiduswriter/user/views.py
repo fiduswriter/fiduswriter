@@ -34,7 +34,7 @@ from document.views import apply_invite
 # Outdated but we need it to allow for update of 3.7 instances.
 # Can be removed in 3.9.
 def info(request):
-    return JsonResponse({}, status=405)
+    return JsonResponse({'is_authenticated': False})
 
 
 @login_required

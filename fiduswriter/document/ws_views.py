@@ -13,7 +13,7 @@ from base.ws_handler import BaseWebSocketHandler
 import logging
 from tornado.escape import json_decode, json_encode
 from document.models import COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \
-    CAN_COMMUNICATE, FW_DOCUMENT_VERSION, DocumentTemplate
+    CAN_COMMUNICATE, FW_DOCUMENT_VERSION, DocumentTemplate, Document
 from usermedia.models import Image, DocumentImage, UserImage
 from user.util import get_user_avatar_url
 
@@ -547,15 +547,24 @@ class WebSocket(BaseWebSocketHandler):
         doc_db.bibliography = json_encode(doc['bibliography'])
         logger.debug('saving document # %d' % doc_db.id)
         logger.debug('version %d' % doc_db.version)
-        doc_db.save()
-        # Temporarily disabled until we have a fix to prevent error messages
-        # doc_db.save(update_fields=[
-        #             'title',
-        #             'version',
-        #             'contents',
-        #             'last_diffs',
-        #             'comments',
-        #             'bibliography'])
+        if cls.if_doc_exists(doc_id=document_id):
+            # this check if doc exists is to avoid a db exception in case the doc has been deleted from the db
+            # in fiduswriter the oner of a doc could delete a doc while an invited writer is editing the same doc )
+            doc_db.save(update_fields=[
+                        'title',
+                        'version',
+                        'contents',
+                        'last_diffs',
+                        'comments',
+                        'bibliography'])
+        else:
+            doc_db.save()
+
+    @staticmethod
+    def if_doc_exists(doc_id: int):
+        # log in case this scenario is not expected before returning
+        return Document.objects.filter(id=doc_id).exists()
+
 
     @classmethod
     def save_all_docs(cls):

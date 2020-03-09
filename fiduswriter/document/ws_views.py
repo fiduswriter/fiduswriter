@@ -548,10 +548,11 @@ class WebSocket(BaseWebSocketHandler):
         doc_db.bibliography = json_encode(doc['bibliography'])
         logger.debug('saving document # %d' % doc_db.id)
         logger.debug('version %d' % doc_db.version)
-        # if cls.if_doc_exists(doc_id=document_id):
         try:
-            # this try block is to avoid a db exception in case the doc has been deleted from the db
-            # in fiduswriter the owner of a doc could delete a doc while an invited writer is editing the same doc
+            # this try block is to avoid a db exception
+            # in case the doc has been deleted from the db
+            # in fiduswriter the owner of a doc could delete a doc
+            # while an invited writer is editing the same doc
             doc_db.save(update_fields=[
                         'title',
                         'version',

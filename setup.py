@@ -193,7 +193,7 @@ setuptools.setup(
         "books": "fiduswriter-books ~= 3.8.0",
         "citation-api-import": "fiduswriter-citation-api-import ~= 3.8.0",
         "languagetool": "fiduswriter-languagetool ~= 3.8.0",
-        "ojs": "fiduswriter-ojs ~= 3.8.0",
+        "ojs": "fiduswriter-ojs ~= 3.8.1",
         "phplist": "fiduswriter-phplist ~= 3.8.0",
         "mysql": read('fiduswriter/mysql-requirements.txt').splitlines(),
         "postgresql": read(

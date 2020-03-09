@@ -1,3 +1,5 @@
+from typing import Tuple
+
 from document.models import AccessRight, Document, DocumentTemplate
 
 
@@ -28,7 +30,7 @@ class SessionUserInfo():
             )
         return document
 
-    def init_access(self, document_id):
+    def init_access(self, document_id) -> Tuple[Document, bool]:
         """
         Initializes access to document by id,
         :param document_id:

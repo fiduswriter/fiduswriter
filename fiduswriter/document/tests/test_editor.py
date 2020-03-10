@@ -1,4 +1,5 @@
 import time
+import os
 
 from testing.testcases import LiveTornadoTestCase
 from testing.selenium_helper import SeleniumHelper
@@ -9,6 +10,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
 from django.core import mail
+from django.conf import settings
 
 from allauth.account.models import EmailConfirmationHMAC, EmailAddress
 
@@ -106,7 +108,65 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
             "Body"
         )
-        # We add a cross reference
+        # We add a figure
+        button = self.driver.find_element_by_xpath('//*[@title="Figure"]')
+        button.click()
+
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "caption"))
+        ).send_keys('Caption')
+        self.driver.find_element_by_id("figure-category-btn").click()
+        self.driver.find_element_by_id("figure-category-photo").click()
+
+        # click on 'Insert image' button
+        self.driver.find_element_by_id('insert-figure-image').click()
+
+        upload_button = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.XPATH,
+                    '//*[normalize-space()="Add new image"]'
+                )
+            )
+        )
+
+        upload_button.click()
+
+        # image path
+        image_path = os.path.join(
+            settings.PROJECT_PATH,
+            'document/tests/uploads/image.png'
+        )
+
+        # in order to select the image we send the image path in the
+        # LOCAL MACHINE to the input tag
+        upload_image_url = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.XPATH, '//*[@id="editimage"]/div[1]/input[2]')
+            )
+        )
+        upload_image_url.send_keys(image_path)
+
+        # click on 'Upload' button
+        self.driver.find_element_by_xpath(
+            '//*[contains(@class, "ui-button") and normalize-space()="Upload"]'
+        ).click()
+
+        # click on 'Use image' button
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, '.fw-data-table i.fa-check')
+            )
+        )
+
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Use image"]'
+        ).click()
+        self.driver.find_element_by_css_selector("button.fw-dark").click()
+        ActionChains(self.driver).send_keys(
+            Keys.RIGHT
+        ).perform()
+        # We add a cross reference for the heading
         self.driver.find_element(
             By.CSS_SELECTOR,
             "#toolbar > div > div > div:nth-child(9) > button > span > i"
@@ -134,6 +194,34 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             ".article-body .cross-reference"
         )
         assert cross_reference.text == 'An abstract title'
+        # We add a second cross reference to the figure
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#toolbar > div > div > div:nth-child(9) > button > span > i"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#edit-link > div:nth-child(2) > select"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#edit-link > div:nth-child(2) > select > option:nth-child(3)"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            (
+                "body > div.ui-dialog.ui-corner-all.ui-widget."
+                "ui-widget-content.ui-front.ui-dialog-buttons > "
+                "div.ui-dialog-buttonpane.ui-widget-content."
+                "ui-helper-clearfix > div > button.fw-dark."
+                "fw-button.ui-button.ui-corner-all.ui-widget"
+            )
+        ).click()
+        figure_cross_reference = self.driver.find_elements(
+            By.CSS_SELECTOR,
+            ".article-body .cross-reference"
+        )[1]
+        assert figure_cross_reference.text == 'Photo 1'
         # We add an internal link
         self.driver.find_element(
             By.CSS_SELECTOR,
@@ -180,17 +268,59 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         ).send_keys(
             Keys.BACKSPACE
         ).perform()
-        cross_reference = self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".article-body .cross-reference"
-        )
-        assert cross_reference.text == 'An abstract'
         internal_link = self.driver.find_element(
             By.CSS_SELECTOR,
             ".article-body a"
         )
         assert internal_link.text == 'An abstract title'
         assert internal_link.get_attribute("title") == 'An abstract'
+        cross_reference = self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".article-body .cross-reference"
+        )
+        assert cross_reference.text == 'An abstract'
+        # We add a second photo figure to increase the count
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".article-body figure"
+        ).click()
+        ActionChains(self.driver).send_keys(
+            Keys.LEFT
+        ).perform()
+        button = self.driver.find_element_by_xpath('//*[@title="Figure"]')
+        button.click()
+
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "caption"))
+        ).send_keys('Caption 2')
+        self.driver.find_element_by_id("figure-category-btn").click()
+        self.driver.find_element_by_id("figure-category-photo").click()
+
+        # click on 'Insert image' button
+        self.driver.find_element_by_id('insert-figure-image').click()
+        # click on 'Use image' button
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, '.dataTable-container img')
+            )
+        ).click()
+
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Use image"]'
+        ).click()
+        self.driver.find_element_by_css_selector("button.fw-dark").click()
+        time.sleep(1)
+        figure_cross_reference = self.driver.find_elements(
+            By.CSS_SELECTOR,
+            ".article-body .cross-reference"
+        )[1]
+        assert figure_cross_reference.text == 'Photo 2'
+
+        # We delete the contents from the heading
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".article-abstract h3"
+        ).click()
         ActionChains(self.driver).send_keys(
             Keys.BACKSPACE
         ).send_keys(
@@ -230,6 +360,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             )),
             2
         )
+        # We add text to the heading again
         ActionChains(self.driver).send_keys(
             'Title'
         ).perform()
@@ -249,6 +380,24 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             )),
             0
         )
+        # We remove the second figure
+        self.driver.find_elements(
+            By.CSS_SELECTOR,
+            ".article-body figure"
+        )[1].click()
+        button = self.driver.find_element_by_xpath('//*[@title="Figure"]')
+        button.click()
+        self.driver.find_element_by_xpath(
+            '//*[contains(@class, "ui-button") and normalize-space()="Remove"]'
+        ).click()
+        time.sleep(1)
+        figure_cross_reference = self.driver.find_elements(
+            By.CSS_SELECTOR,
+            ".article-body .cross-reference"
+        )[1]
+        assert figure_cross_reference.text == 'MISSING TARGET'
+
+
 
     def check_body(self, driver, body_text, seconds=False):
         if seconds is False:

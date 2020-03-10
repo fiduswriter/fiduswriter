@@ -397,8 +397,6 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         )[1]
         assert figure_cross_reference.text == 'MISSING TARGET'
 
-
-
     def check_body(self, driver, body_text, seconds=False):
         if seconds is False:
             seconds = self.wait_time

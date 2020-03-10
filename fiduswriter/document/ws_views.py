@@ -7,6 +7,7 @@ from copy import deepcopy
 
 from jsonpatch import apply_patch, JsonPatchConflict, JsonPointerException
 
+from django.db.utils import DatabaseError
 from document.helpers.session_user_info import SessionUserInfo
 from document.helpers.serializers import PythonWithURLSerializer
 from base.ws_handler import BaseWebSocketHandler
@@ -547,15 +548,24 @@ class WebSocket(BaseWebSocketHandler):
         doc_db.bibliography = json_encode(doc['bibliography'])
         logger.debug('saving document # %d' % doc_db.id)
         logger.debug('version %d' % doc_db.version)
-        doc_db.save()
-        # Temporarily disabled until we have a fix to prevent error messages
-        # doc_db.save(update_fields=[
-        #             'title',
-        #             'version',
-        #             'contents',
-        #             'last_diffs',
-        #             'comments',
-        #             'bibliography'])
+        try:
+            # this try block is to avoid a db exception
+            # in case the doc has been deleted from the db
+            # in fiduswriter the owner of a doc could delete a doc
+            # while an invited writer is editing the same doc
+            doc_db.save(update_fields=[
+                        'title',
+                        'version',
+                        'contents',
+                        'last_diffs',
+                        'comments',
+                        'bibliography'])
+        except DatabaseError as e:
+            expected_msg = 'Save with update_fields did not affect any rows.'
+            if str(e) == expected_msg:
+                doc_db.save()
+            else:
+                raise e
 
     @classmethod
     def save_all_docs(cls):

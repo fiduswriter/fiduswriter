@@ -31,18 +31,27 @@ class compilemessages(distutils.cmd.Command):
 
     def run(self):
         import subprocess
-        command = []
-        command.append(os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
-            'fiduswriter/manage.py'
-        ))
-        command.append('compilemessages')
-        self.announce(
-            'Running command: %s' % str(' '.join(command)),
-            level=distutils.log.INFO
-        )
-        subprocess.check_call(command)
-
+        from pathlib import Path
+        for path in Path(
+            os.path.join(
+                os.path.dirname(os.path.realpath(__file__)),
+                'fiduswriter/locale'
+            )
+        ).rglob('*.po'):
+            command = [
+                'msgfmt',
+                '-o',
+                path.name.replace('.po', '.mo'),
+                path.name
+            ]
+            self.announce(
+                'Running command: %s in %s' % (
+                    str(' '.join(command)),
+                    path.parent
+                ),
+                level=distutils.log.INFO
+            )
+            subprocess.check_call(command, cwd=path.parent)
 
 # From https://github.com/pypa/setuptools/pull/1574
 class build_py(_build_py):
@@ -97,7 +106,6 @@ class install(_install):
 
 class bdist_egg(_bdist_egg):
     def run(self):
-        call(["pip install -r fiduswriter/requirements.txt --no-clean"], shell=True)
         self.run_command('compilemessages')
         _bdist_egg.run(self)
 
@@ -106,7 +114,6 @@ class sdist(_sdist):
     """Custom build command."""
 
     def run(self):
-        call(["pip install -r fiduswriter/requirements.txt --no-clean"], shell=True)
         self.run_command('compilemessages')
         _sdist.run(self)
 
@@ -124,7 +131,6 @@ try:
         """Custom build command."""
 
         def run(self):
-            call(["pip install -r fiduswriter/requirements.txt --no-clean"], shell=True)
             self.run_command('compilemessages')
             _bdist_wheel.run(self)
     cmdclass['bdist_wheel'] = bdist_wheel
@@ -187,7 +193,7 @@ setuptools.setup(
         "books": "fiduswriter-books ~= 3.8.0",
         "citation-api-import": "fiduswriter-citation-api-import ~= 3.8.0",
         "languagetool": "fiduswriter-languagetool ~= 3.8.0",
-        "ojs": "fiduswriter-ojs ~= 3.8.0",
+        "ojs": "fiduswriter-ojs ~= 3.8.1",
         "phplist": "fiduswriter-phplist ~= 3.8.0",
         "mysql": read('fiduswriter/mysql-requirements.txt').splitlines(),
         "postgresql": read(

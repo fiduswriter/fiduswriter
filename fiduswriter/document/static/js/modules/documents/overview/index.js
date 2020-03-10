@@ -272,7 +272,7 @@ export class DocumentOverview {
 
         this.dtBulkModel.content.push({
             title: gettext('Copy selected as...'),
-            tooltip: gettext('Copy the documents and assignthem to a specific template.'),
+            tooltip: gettext('Copy the documents and assign them to a specific template.'),
             action: overview => {
                 const ids = overview.getSelected()
                 if (ids.length) {

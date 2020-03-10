@@ -4,6 +4,7 @@ import {RemoveMarkStep} from "prosemirror-transform"
 
 import {noSpaceTmp, addAlert} from "../../common"
 import {randomHeadingId, randomFigureId} from "../../schema/common"
+import {FIG_CATS} from "../../schema/i18n"
 import {LinkDialog} from "../dialogs"
 
 const key = new PluginKey('links')
@@ -25,20 +26,37 @@ const copyLink = function(href) {
     }
 }
 
-export const getInternalTargets = function(state, editor) {
+const nonDeletedTextContent = node => {
+    let text = ''
+    node.descendants(subNode => {
+        if (subNode.isText && !subNode.marks.find(mark => mark.type.name==='deletion')) {
+            text += subNode.text
+        }
+    })
+    return text
+}
+
+export const getInternalTargets = function(state, language, editor) {
     const internalTargets = []
 
     const figures = {}
 
     state.doc.descendants(node => {
-        if (node.type.groups.includes('heading') && node.textContent.length) {
-            internalTargets.push({
-                id: node.attrs.id,
-                text: node.textContent
-            })
+        if (node.attrs.track && node.attrs.track.find(track => track.type==='deletion')) {
+            return true
+        }
+        if (node.type.groups.includes('heading')) {
+            const textContent = nonDeletedTextContent(node)
+            if (textContent.length) {
+                internalTargets.push({
+                    id: node.attrs.id,
+                    text: textContent
+                })
+            }
+            return true
         }
 
-        if (node.type.name === 'figure' && node.attrs.figureCategory) {
+        if (node.type.name === 'figure' && node.attrs.figureCategory && node.attrs.figureCategory !== 'none') {
             if (!figures[node.attrs.figureCategory]) {
                 figures[node.attrs.figureCategory] = 0
             }
@@ -47,9 +65,13 @@ export const getInternalTargets = function(state, editor) {
             internalTargets.push({
                 id: node.attrs.id,
                 text: editor === 'main' ?
-                    `${gettext(node.attrs.figureCategory)} ${figures[node.attrs.figureCategory]}` :
-                    `${gettext(node.attrs.figureCategory)} ${figures[node.attrs.figureCategory]}A`
+                    `${FIG_CATS[node.attrs.figureCategory][language]} ${figures[node.attrs.figureCategory]}` :
+                    `${FIG_CATS[node.attrs.figureCategory][language]} ${figures[node.attrs.figureCategory]}A`
             })
+            return true
+        }
+        if (node.isTextblock) {
+            return true
         }
     })
     return internalTargets
@@ -296,23 +318,19 @@ export const linksPlugin = function(options) {
                     let foundIdElement = false // found heading or figure
                     let ranges = []
                     tr.steps.forEach((step, index) => {
-                        if (step.jsonID ===
-                            'replace' || step.jsonID ===
-                            'replaceAround') {
-                            ranges.push([step.from, step.to])
-                            tr.docs[index].nodesBetween(
-                                step.from,
-                                step.to,
-                                node => {
-                                    if (
-                                        node.type.groups.includes('heading') ||
-                                        node.type.name === 'figure'
-                                    ) {
-                                        foundIdElement = true
-                                    }
+                        ranges.push([step.from, step.to])
+                        tr.docs[index].nodesBetween(
+                            step.from,
+                            step.to,
+                            node => {
+                                if (
+                                    node.type.groups.includes('heading') ||
+                                    node.type.name === 'figure'
+                                ) {
+                                    foundIdElement = true
                                 }
-                            )
-                        }
+                            }
+                        )
                         ranges = ranges.map(range => {
                             return [
                                 tr.mapping.maps[index].map(range[0], -1),
@@ -379,12 +397,18 @@ export const linksPlugin = function(options) {
             })
             // ID should not be found in the other pm either. So we look through
             // those as well.
-            const otherState = oldState.schema === options.editor.view.state.schema ?
-                options.editor.mod.footnotes.fnEditor.view.state :
-                options.editor.view.state
+            let otherState, language
+            if (oldState.schema === options.editor.view.state.schema) {
+                otherState = options.editor.mod.footnotes.fnEditor.view.state
+                language = newState.doc.firstChild.attrs.language
+            } else {
+                otherState = options.editor.view.state
+                language = options.editor.view.state.doc.firstChild.attrs.language
+            }
 
-            const internalTargets = getInternalTargets(newState, oldState.schema === options.editor.view.state.schema ? 'main' : 'foot').concat(
-                getInternalTargets(otherState, oldState.schema === options.editor.view.state.schema ? 'foot' : 'main')
+
+            const internalTargets = getInternalTargets(newState, language, oldState.schema === options.editor.view.state.schema ? 'main' : 'foot').concat(
+                getInternalTargets(otherState, language, oldState.schema === options.editor.view.state.schema ? 'foot' : 'main')
             )
 
             // Check if there are any headings or figures in the affected range.

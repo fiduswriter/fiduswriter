@@ -1,6 +1,7 @@
 import {localizeDate, escapeText} from "../../common"
 import {serializeComment} from "../comments/editors"
 import {serializeHelp} from "../../document_template"
+import {READ_ONLY_ROLES} from "../"
 
 /** A template for an answer to a comment */
 const answerCommentTemplate = ({
@@ -150,7 +151,7 @@ const commentTemplate = ({comment, view, active, editComment, activeCommentAnswe
         ''
     }
     ${
-        active && !activeCommentAnswerId && !editComment && 0 < comment.comment.length ?
+        active && !activeCommentAnswerId && !editComment && 0 < comment.comment.length && !READ_ONLY_ROLES.includes(docInfo.access_rights) ?
         `<div class="comment-item comment-answer">
             <div id="answer-editor"></div>
         </div>` :
@@ -158,7 +159,10 @@ const commentTemplate = ({comment, view, active, editComment, activeCommentAnswe
     }
     ${
         comment.id > 0 && (
-            comment.user===user.id ||
+            (
+                comment.user===user.id
+                && !READ_ONLY_ROLES.includes(docInfo.access_rights)
+            ) ||
             docInfo.access_rights==="write"
         ) && !editComment ?
         `<span class="show-marginbox-options fa fa-ellipsis-v" data-id="${comment.id}"></span>

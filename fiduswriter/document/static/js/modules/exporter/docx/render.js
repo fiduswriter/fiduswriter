@@ -134,7 +134,7 @@ export class DocxExporterRender {
                 const pageSize = par.querySelector('pgSz')
                 const pageMargins = par.querySelector('pgMar')
                 const cols = par.querySelector('cols')
-                if (pageSize && pageMargins && cols) { // Not sure if these all need to come together
+                if (pageSize && pageMargins) { // Not sure if these all need to come together
                     let width = parseInt(pageSize.getAttribute('w:w')) -
                     parseInt(pageMargins.getAttribute('w:right')) -
                     parseInt(pageMargins.getAttribute('w:left'))
@@ -144,7 +144,7 @@ export class DocxExporterRender {
                     parseInt(pageMargins.getAttribute('w:header')) -
                     parseInt(pageMargins.getAttribute('w:footer'))
 
-                    const colCount = parseInt(cols.getAttribute('w:num'))
+                    const colCount = cols ? parseInt(cols.getAttribute('w:num')) : 1
                     if (colCount > 1) {
                         const colSpace = parseInt(cols.getAttribute('w:space'))
                         width = width - (colSpace * (colCount-1))

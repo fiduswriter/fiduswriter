@@ -107,6 +107,11 @@ export class App {
     }
 
     init() {
+        if (!settings.DEBUG) {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw2.js')
+            }
+        }
         ensureCSS([
             'fontawesome/css/all.css'
         ])
@@ -124,8 +129,13 @@ export class App {
                         // We show a setup message instead.
                         this.page = this.openSetupPage()
                         this.page.init()
-                    } else {
+                    } else if (settings.DEBUG) {
                         throw error
+                    } else {
+                        // We don't know what is going on, but we are in production
+                        // mode. Hopefully the app will update soon.
+                        this.page = this.openOfflinePage()
+                        this.page.init()
                     }
                     return Promise.reject(false)
                 }
@@ -199,12 +209,6 @@ export class App {
                 }
             }, 250)
         })
-
-        if (!settings.DEBUG) {
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/sw2.js')
-            }
-        }
     }
 
     connectWs() {

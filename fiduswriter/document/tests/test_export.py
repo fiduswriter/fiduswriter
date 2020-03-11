@@ -241,6 +241,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
             Keys.DOWN
         )
+        # Insert figure
         button = self.driver.find_element_by_xpath('//*[@title="Figure"]')
         button.click()
 
@@ -327,6 +328,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         ActionChains(self.driver).send_keys(
             Keys.RIGHT
         ).perform()
+        # Add table
         self.driver.find_element(By.CSS_SELECTOR, ".fa-table").click()
         self.driver.find_element(
             By.CSS_SELECTOR,

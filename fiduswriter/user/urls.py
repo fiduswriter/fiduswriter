@@ -11,6 +11,13 @@ urlpatterns = [
         views.list_team_members,
         name='list_team_members'
     ),
+    # Outdated but we need it to allow for update of 3.7 instances.
+    # Can be removed in 3.9.
+    url(
+        '^info/$',
+        views.info,
+        name='info'
+    ),
     url('^avatar/delete/$', views.delete_avatar, name="delete_avatar"),
     url('^avatar/upload/$', views.upload_avatar, name="upload_avatar"),
     url(

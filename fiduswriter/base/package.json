@@ -28,15 +28,15 @@
     "eslint-global-patch": "1.0.4",
     "eslint-plugin-import": "2.20.1",
     "eslint-import-resolver-node": "0.3.3",
-    "babel-eslint": "10.0.3",
+    "babel-eslint": "10.1.0",
     "offline-plugin": "5.0.x",
     "w3c-keyname": "2.1.x",
-    "stylelint": "13.2.0",
+    "stylelint": "13.2.1",
     "stylelint-config-standard": "20.0.0",
     "stylelint-value-no-unknown-custom-properties": "2.0.0"
   },
   "devDependencies": {
-    "updates": "^9.3.3",
+    "updates": "^10.2.0",
     "@babel/cli": "7.6.x",
     "@babel/plugin-transform-template-literals": "^7.8.3"
   }

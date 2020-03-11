@@ -1,6 +1,5 @@
 import {escapeText} from "../common"
 import {citeprocSys} from "./citeproc_sys"
-import {unescapeCSL} from "biblatex-csl-converter"
 /*
 * Use CSL and bibDB to format all citations for the given prosemirror json citation nodes
 */
@@ -42,7 +41,7 @@ export class FormatCitations {
             return ''
         }
         const bib = this.bibliography,
-            bibHTML = bib[0].bibstart + unescapeCSL(bib[1].join('')) + bib[0].bibend
+            bibHTML = bib[0].bibstart + bib[1].join('') + bib[0].bibend
         return `<h1 class="article-bibliography-header">${escapeText(this.bibliographyHeader)}</h1>${bibHTML}`
     }
 
@@ -158,7 +157,7 @@ export class FormatCitations {
                 }
                 citationTexts.find(citationText => citationText[0] === i)[1] = newCiteText
             }
-            citationTexts.forEach(([index, citationText]) => this.citationTexts[index] = unescapeCSL(citationText))
+            citationTexts.forEach(([index, citationText]) => this.citationTexts[index] = citationText)
         }
         this.citationType = citeprocInstance.cslXml.dataObj.attrs.class
         this.bibliography = citeprocInstance.makeBibliography()

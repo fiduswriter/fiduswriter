@@ -563,9 +563,27 @@ class WebSocket(BaseWebSocketHandler):
         except DatabaseError as e:
             expected_msg = 'Save with update_fields did not affect any rows.'
             if str(e) == expected_msg:
-                doc_db.save()
+                cls.__insert_document(doc=doc_db)
             else:
                 raise e
+
+    @classmethod
+    def __insert_document(cls, doc: Document) -> None:
+        """
+        Purpose: during plugin tests we experienced Integrity error at the end of tests.
+        this exception occurs while handling another exception, so in order to have a clean tests output
+        we raise the exception in a way we don t output misleading error messages related to different exceptions
+
+        :param doc: socket document model instance
+        :return: None
+        """
+        from django.db.utils import IntegrityError
+        try:
+            doc.save()
+        except IntegrityError as e:
+            raise IntegrityError(
+                'plugin test error when we try to save a doc already deleted along with the rest of db data so it '
+                'raises an Integrity error: {}'.format(e)) from None
 
     @classmethod
     def save_all_docs(cls):

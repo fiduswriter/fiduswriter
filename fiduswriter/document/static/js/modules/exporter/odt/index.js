@@ -30,6 +30,7 @@ export class OdtExporter {
         this.csl = csl
 
         this.pmCits = false
+        this.pmBib = false
         this.docContents = false
         this.docTitle = false
     }
@@ -60,7 +61,10 @@ export class OdtExporter {
         ).then(
             () => this.citations.init()
         ).then(
-            () => this.math.init()
+            () => {
+                this.pmBib = this.citations.pmBib
+                return this.math.init()
+            }
         ).then(
             () => this.render.init()
         ).then(
@@ -69,7 +73,7 @@ export class OdtExporter {
             () => this.footnotes.init()
         ).then(
             () => {
-                this.render.getTagData(this.citations.pmBib)
+                this.render.getTagData(this.pmBib)
                 this.render.render()
                 this.xml.prepareAndDownload()
             }

@@ -6,10 +6,9 @@ import {activateWait, deactivateWait, Dialog} from "../../common"
 
 export class BibLatexFileImportDialog {
 
-    constructor(bibDB, addToListCall, staticUrl) {
+    constructor(bibDB, addToListCall) {
         this.bibDB = bibDB
         this.addToListCall = addToListCall
-        this.staticUrl = staticUrl
         this.tmpDB = false
     }
 
@@ -35,8 +34,7 @@ export class BibLatexFileImportDialog {
                                 event.target.result,
                                 this.bibDB,
                                 this.addToListCall,
-                                () => deactivateWait(),
-                                this.staticUrl
+                                () => deactivateWait()
                             )
                             importer.init()
                         })

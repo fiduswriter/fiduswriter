@@ -6,8 +6,7 @@ import {post, ensureCSS} from "../common"
 
 export class FeedbackTab {
 
-    constructor({staticUrl}) {
-        this.staticUrl = staticUrl
+    constructor() {
     }
 
     init() {
@@ -56,11 +55,10 @@ export class FeedbackTab {
             `<a class="feedback-tab" aria-label="${gettext('Technical support')}" href="#"></a>`
         )
 
-        ensureCSS('feedback/feedback.css', this.staticUrl)
+        ensureCSS('feedback/feedback.css')
     }
 
     bind() {
-        document.querySelector('a.feedback-tab').style.marginTop = document.querySelector('a.feedback-tab').clientWidth
 
         document.querySelector('a.feedback-tab').addEventListener('click', event => {
             document.querySelector('.feedback-panel').style.display = 'block'

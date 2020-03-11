@@ -1,3 +1,5 @@
+/* uses standard Django colors */
+
 .fw-link-text {
     cursor: pointer;
     color: #b73717;
@@ -12,10 +14,10 @@
     padding: 10px 15px;
     border: none;
     border-radius: 4px;
-    color: #fff;
+    color: #ffffff;
     cursor: pointer;
     vertical-align: middle;
-    font-family: "Roboto", "Lucida Grande", Verdana, Arial, sans-serif;
+    font-family: 'Roboto', 'Lucida Grande', Verdana, Arial, sans-serif;
     font-weight: normal;
     font-size: 13px;
 }

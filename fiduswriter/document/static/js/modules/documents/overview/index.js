@@ -3,7 +3,7 @@ import {DataTable} from "simple-datatables"
 import * as plugins from "../../../plugins/documents_overview"
 import {DocumentOverviewActions} from "./actions"
 import {DocumentAccessRightsDialog} from "../access_rights"
-import {menuModel, bulkModel} from "./menu"
+import {menuModel, bulkMenuModel} from "./menu"
 import {activateWait, deactivateWait, addAlert, postJson, OverviewMenuView, findTarget, whenReady, escapeText, localizeDate, baseBodyTemplate, ensureCSS, setDocTitle, DatatableBulk} from "../../common"
 import {SiteMenu} from "../../menu"
 import {FeedbackTab} from "../../feedback"
@@ -17,11 +17,9 @@ import {
 
 export class DocumentOverview {
 
-    constructor({app, user, staticUrl, registrationOpen}) {
+    constructor({app, user}) {
         this.app = app
         this.user = user
-        this.staticUrl = staticUrl
-        this.registrationOpen = registrationOpen
         this.schema = docSchema
         this.documentList = []
         this.teamMembers = []
@@ -29,7 +27,7 @@ export class DocumentOverview {
     }
 
     init() {
-        whenReady().then(() => {
+        return whenReady().then(() => {
             this.render()
             activateWait(true)
             const smenu = new SiteMenu("documents")
@@ -37,6 +35,7 @@ export class DocumentOverview {
             new DocumentOverviewActions(this)
             this.menu = new OverviewMenuView(this, menuModel)
             this.menu.init()
+            this.dtBulkModel = bulkMenuModel()
             this.activateFidusPlugins()
             this.bind()
             this.getDocumentListData()
@@ -44,25 +43,25 @@ export class DocumentOverview {
     }
 
     render() {
-        document.body = document.createElement('body')
-        document.body.innerHTML = baseBodyTemplate({
+        this.dom = document.createElement('body')
+        this.dom.innerHTML = baseBodyTemplate({
             contents: '',
             user: this.user,
-            staticUrl: this.staticUrl,
             hasOverview: true
         })
+        document.body = this.dom
         ensureCSS([
             'document_overview.css',
             'add_remove_dialog.css',
             'access_rights_dialog.css'
-        ], this.staticUrl)
+        ])
         setDocTitle(gettext('Document Overview'), this.app)
-        const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
+        const feedbackTab = new FeedbackTab()
         feedbackTab.init()
     }
 
     bind() {
-        document.body.addEventListener('click', event => {
+        this.dom.addEventListener('click', event => {
             const el = {}
             let docId
             switch (true) {
@@ -79,8 +78,7 @@ export class DocumentOverview {
                     const dialog = new DocumentAccessRightsDialog(
                         [docId],
                         this.teamMembers,
-                        memberDetails => this.teamMembers.push(memberDetails),
-                        this.registrationOpen
+                        memberDetails => this.teamMembers.push(memberDetails)
                     )
                     dialog.init()
                     break
@@ -104,7 +102,7 @@ export class DocumentOverview {
     }
 
     getDocumentListData() {
-        postJson(
+        return postJson(
             '/api/document/documentlist/'
         ).catch(
             error => {
@@ -122,11 +120,9 @@ export class DocumentOverview {
 
                 this.teamMembers = json.team_members
                 this.documentStyles = json.document_styles
-                this.exportTemplates = json.export_templates
                 this.documentTemplates = json.document_templates
                 this.initTable()
-                this.addExportTemplatesToMenu()
-                if (this.documentTemplates.length > 1) {
+                if (Object.keys(this.documentTemplates).length > 1) {
                     this.multipleNewDocumentMenuItem()
                 }
             }
@@ -136,33 +132,61 @@ export class DocumentOverview {
 
     }
 
+    onResize() {
+        if (!this.table) {
+            return
+        }
+        this.initTable()
+    }
+
     /* Initialize the overview table */
     initTable() {
         const tableEl = document.createElement('table')
         tableEl.classList.add('fw-data-table')
         tableEl.classList.add('fw-document-table')
         tableEl.classList.add('fw-large')
+        document.querySelector('.fw-contents').innerHTML = '' // Delete any old table
         document.querySelector('.fw-contents').appendChild(tableEl)
 
-        const dtBulk = new DatatableBulk(this, bulkModel)
+        this.dtBulk = new DatatableBulk(this, this.dtBulkModel)
+
+        const hiddenCols = [0]
+
+        if (window.innerWidth < 500) {
+            hiddenCols.push(1, 4)
+            if (window.innerWidth < 400) {
+                hiddenCols.push(5)
+            }
+        }
 
         this.table = new DataTable(tableEl, {
             searchable: true,
             paging: false,
-            scrollY: "calc(100vh - 240px)",
+            scrollY: `${Math.max(window.innerHeight - 360, 100)}px`,
             labels: {
                 noRows: gettext("No documents available") // Message shown when there are no search results
             },
             layout: {
-                top: ""
+                top: "",
+                bottom: ""
             },
             data: {
-                headings: ['', dtBulk.getHTML(), gettext("Title"), gettext("Revisions"), gettext("Created"), gettext("Last changed"), gettext("Owner"), gettext("Rights"), ''],
+                headings: [
+                    '',
+                    this.dtBulk.getHTML(),
+                    gettext("Title"),
+                    gettext("Revisions"),
+                    gettext("Created"),
+                    gettext("Last changed"),
+                    gettext("Owner"),
+                    gettext("Rights"),
+                    ''
+                ],
                 data: this.documentList.map(doc => this.createTableRow(doc))
             },
             columns: [
                 {
-                    select: 0,
+                    select: hiddenCols,
                     hidden: true
                 },
                 {
@@ -177,7 +201,7 @@ export class DocumentOverview {
             this.lastSort = {column, dir}
         })
 
-        dtBulk.init(this.table.table)
+        this.dtBulk.init(this.table.table)
     }
 
     createTableRow(doc) {
@@ -236,33 +260,33 @@ export class DocumentOverview {
         this.table.columns().sort(this.lastSort.column, this.lastSort.dir)
     }
 
-    addExportTemplatesToMenu() {
-        /*const docSelectMenuItem = this.menu.model.content.find(menuItem => menuItem.id='doc_selector')
-        this.exportTemplates.forEach(template => {
-            docSelectMenuItem.content.push({
-                title: `${gettext('Export selected as: ')} ${template.file_name} (${template.file_type})`,
-                action: overview => {
-                    const ids = overview.getSelected()
-                    if (ids.length) {
-                        const fileType = template.file_type
-                        const templateUrl = template.template_file
-                        this.mod.actions.downloadTemplateExportFiles(ids, templateUrl, fileType)
-                    }
-                }
-            })
-        })
-        this.menu.update()*/
-    }
-
     multipleNewDocumentMenuItem() {
 
         const menuItem = this.menu.model.content.find(menuItem => menuItem.id==='new_document')
         menuItem.type = 'dropdown'
-        menuItem.content = this.documentTemplates.map(docTemplate => ({
-            title: docTemplate.title,
+        menuItem.content = Object.values(this.documentTemplates).map(docTemplate => ({
+            title: docTemplate.title || gettext('Undefined'),
             action: () => this.goToNewDocument(`n${docTemplate.id}`)
         }))
         this.menu.update()
+
+        this.dtBulkModel.content.push({
+            title: gettext('Copy selected as...'),
+            tooltip: gettext('Copy the documents and assign them to a specific template.'),
+            action: overview => {
+                const ids = overview.getSelected()
+                if (ids.length) {
+                    overview.mod.actions.copyFilesAs(ids)
+                }
+            },
+            disabled: overview => !overview.getSelected().length,
+            order: 2.5
+        })
+
+        this.dtBulk.update()
+
+
+
 
     }
 

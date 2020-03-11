@@ -1,6 +1,7 @@
 import time
 from random import randrange
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from testing.selenium_helper import SeleniumHelper
@@ -31,10 +32,11 @@ class EditorHelper(SeleniumHelper):
         self.inject_helpers(driver)
 
     def inject_helpers(self, driver):
-        test_caret_script = open(
+        with open(
             'static-transpile/js/test_caret.js',
             'r'
-        ).read()
+        ) as file:
+            test_caret_script = file.read()
         driver.execute_script(
             test_caret_script
         )
@@ -44,14 +46,25 @@ class EditorHelper(SeleniumHelper):
             document_input.send_keys(char)
             time.sleep(randrange(10, 40) / 200.0)
 
+    def type_text(self, driver, text):
+        for char in text:
+            actions = ActionChains(driver)
+            actions.send_keys(char)
+            actions.perform()
+            time.sleep(randrange(10, 40) / 200.0)
+
     def add_title(self, driver):
         title = "My title"
-        driver.execute_script(
-            'window.testCaret.setSelection(2,2)')
-        document_input = self.driver.find_element_by_class_name(
-            'ProseMirror'
+        self.driver.find_element_by_class_name(
+            'article-title'
+        ).send_keys(title)
+
+    def get_contents(self, driver):
+        # Contents is child 5.
+        return driver.execute_script(
+            'return window.theApp.page.view.state.doc.firstChild'
+            '.child(5).textContent;'
         )
-        self.input_text(document_input, title)
 
     def wait_for_doc_size(self, driver, size, seconds=False):
         if seconds is False:

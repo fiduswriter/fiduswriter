@@ -11,14 +11,14 @@
 }
 
 .ui-tabs-nav .fw-button {
-    color: #000;
-    border-color: #e0e0e0;
-    background: #f9f9f9;
+    color: var(--cs-light-text);
+    border-color: var(--cs-light-border);
+    background: var(--cs-light-background);
 }
 
 .ui-tabs-nav .fw-button:hover,
-.ui-tabs-nav .ui-tabs-active .fw-button  {
-    background: #f9f9f9;
+.ui-tabs-nav .ui-tabs-active .fw-button {
+    background: var(--cs-light-background);
 }
 
 .ui-tabs-panel {
@@ -27,4 +27,15 @@
     min-height: 220px;
     padding: 0;
     margin-top: 24px;
+}
+
+.tab-link-inner {
+    display: block;
+    margin-left: 20px;
+    color: var(--cs-light-text-secondary);
+}
+
+.current-tab .tab-link-inner,
+.tab-link-inner:hover {
+    color: var(--cs-light-text);
 }

@@ -12,8 +12,8 @@ import {DOMExporter} from "../tools/dom_export"
 
 export class EpubExporter extends DOMExporter {
 
-    constructor(schema, staticUrl, csl, documentStyles, doc, bibDB, imageDB) {
-        super(schema, staticUrl, csl, documentStyles)
+    constructor(schema, csl, documentStyles, doc, bibDB, imageDB) {
+        super(schema, csl, documentStyles)
         this.doc = doc
         this.bibDB = bibDB
         this.imageDB = imageDB
@@ -82,7 +82,7 @@ export class EpubExporter extends DOMExporter {
 
         const authors = this.docContents.content.reduce(
             (authors, part) => {
-                if (part.type==='contributors_part' && part.attrs.metadata === 'authors') {
+                if (part.type==='contributors_part' && part.attrs.metadata === 'authors' && part.content) {
                     return authors.concat(part.content.map(
                         authorNode => {
                             const nameParts = []
@@ -106,7 +106,7 @@ export class EpubExporter extends DOMExporter {
         [])
         const keywords = this.docContents.content.reduce(
             (keywords, part) => {
-                if (part.type==='tags_part' && part.attrs.metadata === 'keywords') {
+                if (part.type==='tags_part' && part.attrs.metadata === 'keywords' && part.content) {
                     return keywords.concat(part.content.map(keywordNode => keywordNode.attrs.tag))
                 } else {
                     return keywords
@@ -127,7 +127,8 @@ export class EpubExporter extends DOMExporter {
             styleSheets: this.styleSheets,
             math,
             images,
-            fontFiles: this.fontFiles
+            fontFiles: this.fontFiles,
+            copyright: this.doc.settings.copyright
         })
 
         const ncxCode = ncxTemplate({
@@ -183,7 +184,7 @@ export class EpubExporter extends DOMExporter {
         if (math) {
             includeZips.push({
                 'directory': 'EPUB',
-                'url': `${this.staticUrl}zip/mathlive_style.zip?v=${process.env.TRANSPILE_VERSION}`
+                'url': `${settings.STATIC_URL}zip/mathlive_style.zip?v=${transpile.VERSION}`
             })
         }
         const zipper = new ZipFileCreator(

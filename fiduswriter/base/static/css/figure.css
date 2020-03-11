@@ -13,13 +13,13 @@
     display: table-cell;
     width: 406px;
     height: 226px;
-    border: 2px dashed #8b8b8b;
+    border: 2px dashed var(--cs-white-border);
     text-align: center;
     vertical-align: middle;
     position: relative;
 }
 
-.fw-media-uploader .figure-preview .inner-figure-preview .remove-image {
+.fw-media-uploader .figure-preview .inner-figure-preview .dot-menu-icon {
     position: absolute;
     right: 10px;
     top: 10px;
@@ -58,12 +58,13 @@
     width: 396px;
 }
 
-th.figure-preview-row, td.figure-preview-row {
+th.figure-preview-row,
+td.figure-preview-row {
     vertical-align: top;
 }
 
 .figure-edit-menu {
-    background-color: Transparent;
+    background-color: transparent;
     background-repeat: no-repeat;
     border: 1px;
     cursor: pointer;
@@ -73,11 +74,6 @@ th.figure-preview-row, td.figure-preview-row {
     right: -5px;
 }
 
-.figure-edit-icon {
-    font-size: 18px;
-    color: #cecece;
-}
-
 .crop-mode {
     height: 500px !important;
     width: 800px !important;
@@ -85,7 +81,7 @@ th.figure-preview-row, td.figure-preview-row {
 
 .crop-icon {
     font-size: 1.2em;
-    color: white
+    color: white;
 }
 
 .hide {

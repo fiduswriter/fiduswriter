@@ -20,7 +20,7 @@ pre_dump = django.dispatch.Signal(providing_args=('instance',))
 class Command(django.core.management.commands.dumpdata.Command):
 
     def add_arguments(self, parser):
-        super(Command, self).add_arguments(parser)
+        super().add_arguments(parser)
         parser.add_argument(
             '--outfile', dest='outfile',
             help=(
@@ -68,7 +68,7 @@ class Command(django.core.management.commands.dumpdata.Command):
 
             def get_dump_object(self, obj):
                 pre_dump.send(sender=type(obj), instance=obj)
-                return super(Serializer, self).get_dump_object(obj)
+                return super().get_dump_object(obj)
 
         # We don't care about deserializing.
         Deserializer = super_deserializer
@@ -91,4 +91,4 @@ class Command(django.core.management.commands.dumpdata.Command):
         self.set_up_serializer(ser_format)
 
         with File(open(outfilename, 'w')) as self.stdout:
-            super(Command, self).handle(*app_labels, **options)
+            super().handle(*app_labels, **options)

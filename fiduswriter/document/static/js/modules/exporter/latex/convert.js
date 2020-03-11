@@ -21,9 +21,10 @@ export class LatexExporterConvert {
         this.preWalkJson(docContents)
         const rawTransformation = this.walkJson(docContents)
         const body = this.postProcess(rawTransformation)
+        const copyright = this.assembleCopyright()
         const preamble = this.assemblePreamble()
         const epilogue = this.assembleEpilogue()
-        const latex = this.docDeclaration + preamble + '\n\\begin{document}\n' + body + epilogue + '\n\\end{document}\n'
+        const latex = copyright + this.docDeclaration + preamble + '\n\\begin{document}\n' + body + epilogue + '\n\\end{document}\n'
         const returnObject = {
             latex,
             imageIds: this.imageIds,
@@ -232,10 +233,10 @@ export class LatexExporterConvert {
                         start += '\n\n\\subsubsection{'
                         break
                 }
+                end = `}\\label{${node.attrs.id}}\n\n` + end
                 // Check if this heading is being linked to. If this is the case,
                 // place a protected hypertarget here that does not add an extra
                 // entry into the PDF TOC.
-                end = '}\n\n' + end
                 if (this.internalLinks.includes(node.attrs.id)) {
                     // Add a link target
                     end = `\\texorpdfstring{\\protect\\hypertarget{${node.attrs.id}}{}}{}` + end
@@ -248,9 +249,10 @@ export class LatexExporterConvert {
                 }
                 break
             }
-            case 'code':
+            case 'code_block':
                 start += '\n\\begin{code}\n\n'
                 end = '\n\n\\end{code}\n' + end
+                this.features.code = true
                 break
             case 'blockquote':
                 start += '\n\\begin{quote}\n\n'
@@ -288,13 +290,17 @@ export class LatexExporterConvert {
                     start += '\\protect\\footnotemark{}'
                     options.unplacedFootnotes.push(node.attrs.footnote)
                 } else {
-                    start += '\\footnote{'
+                    if (!node.attrs.footnote.find(par => par.type === 'figure')) {
+                        // LaTeX doesn't allow figures in footnotes, so well move
+                        // this footnote into the regular text.
+                        start += '\\footnote{'
+                        end = '}' + end
+                    }
                     let fnContent = ''
                     node.attrs.footnote.forEach(footPar => {
                         fnContent += this.walkJson(footPar, options)
                     })
                     content += fnContent.replace(/^\s+|\s+$/g, '')
-                    end = '}' + end
                 }
                 break
             case 'text': {
@@ -331,6 +337,11 @@ export class LatexExporterConvert {
                     this.features.hyperlinks = true
                 }
                 content += escapeLatexText(node.text)
+                break
+            }
+            case 'cross_reference': {
+                content += `\\hyperref[${node.attrs.id}]{${node.attrs.title || 'MISSING TARGET'}}`
+                this.features.hyperlinks = true
                 break
             }
             case 'citation': {
@@ -444,13 +455,15 @@ export class LatexExporterConvert {
                     end = '\n\n\\end{center}\n' + end
                 } else if (aligned === 'right') {
                     start += '\n\n{\\raggedleft' // This is not a typo - raggedleft = aligned: right
-                    end = '\n\n}\n'
+                    end = '\n\n}\n' + end
                 } // aligned === 'left' is default
+                let copyright
                 if (node.attrs.image) {
                     this.imageIds.push(node.attrs.image)
                     const imageDBEntry = this.imageDB.db[node.attrs.image],
                         filePathName = imageDBEntry.image,
                         filename = filePathName.split('/').pop()
+                    copyright = imageDBEntry.copyright
                     if (filename.split('.').pop() === 'svg') {
                         innerFigure += `\\includesvg[width=${parseInt(node.attrs.width)/100}\\textwidth]{${filename}}\n`
                         this.features.SVGs = true
@@ -464,17 +477,28 @@ export class LatexExporterConvert {
                 }
                 if (figureType==='table') {
                     start += `\n\\begin{table}\n`
-                    content += `\\caption{${caption}}\n${innerFigure}`
+                    content += `\\caption*{${caption}}\\label{${node.attrs.id}}\n${innerFigure}`
                     end = `\\end{table}\n` + end
                 } else { // TODO: handle photo figure types in a special way
                     start += `\n\\begin{figure}\n`
-                    content += `${innerFigure}\\caption{${caption}}\n`
+                    content += `${innerFigure}\\caption*{${caption}}\\label{${node.attrs.id}}\n`
                     end = `\\end{figure}\n` + end
+                }
+                if (copyright && copyright.holder) {
+                    content += `% © ${copyright.year ? copyright.year : new Date().getFullYear()} ${copyright.holder}\n`
+                }
+                if (copyright && copyright.licenses.length) {
+                    copyright.licenses.forEach(
+                        license => {
+                            content += `% ${license.title}: ${license.url}${license.start ? ` (${license.start})\n` : ''}\n`
+                        }
+                    )
                 }
                 if (this.internalLinks.includes(node.attrs.id)) {
                     // Add a link target
                     end = `\\texorpdfstring{\\protect\\hypertarget{${node.attrs.id}}{}}{}\n` + end
                 }
+                this.features.captions = true
                 break
             }
             case 'table':
@@ -599,6 +623,27 @@ export class LatexExporterConvert {
         return epilogue
     }
 
+    assembleCopyright() {
+        let note = ''
+        if (this.settings.copyright) {
+            if (this.settings.copyright.holder) {
+                note += `% © ${this.settings.copyright.year ? this.settings.copyright.year : new Date().getFullYear()} ${this.settings.copyright.holder}\n`
+            }
+            if (this.settings.copyright.licenses.length) {
+                this.settings.copyright.licenses.forEach(
+                    license => {
+                        note += `% ${license.url}${license.start ? ` (${license.start})` : ''}\n`
+                    }
+                )
+            }
+        }
+
+        if (note.length) {
+            note += '\n\n'
+        }
+        return note
+    }
+
     assemblePreamble() {
         let preamble = ''
 
@@ -636,6 +681,10 @@ export class LatexExporterConvert {
             preamble += '\n\\usepackage{hyperref}'
         }
 
+        if (this.features.captions) {
+            preamble += '\n\\usepackage{caption}'
+        }
+
         if (this.features.citations) {
             preamble += `
                 \n\\usepackage[backend=biber,hyperref=false,citestyle=authoryear,bibstyle=authoryear]{biblatex}
@@ -668,6 +717,24 @@ export class LatexExporterConvert {
             preamble += '\n\\usepackage{multirow}'
         }
 
+        if (this.features.code) {
+            // See https://tex.stackexchange.com/questions/445424/making-a-multiline-code-environment
+            preamble += `
+            \n\\usepackage{xcolor}
+            \\definecolor{mygray}{gray}{0.9}
+            \\usepackage{fvextra}
+            \\usepackage{tcolorbox}
+            \\newenvironment{code}%
+            {\\VerbatimEnvironment
+            \\begin{tcolorbox}[colback=mygray, boxsep=0pt, arc=0pt, boxrule=0pt]
+            \\begin{Verbatim}[fontsize=\\scriptsize, commandchars=\\\\\\{\\},
+            breaklines, breakafter=*, breaksymbolsep=0.5em,
+            breakaftersymbolpre={\\,\\tiny\\ensuremath{\\rfloor}}]}%
+            {\\end{Verbatim}%
+             \\end{tcolorbox}}
+            `
+
+        }
 
         return preamble
 

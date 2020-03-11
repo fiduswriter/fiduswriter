@@ -1,12 +1,17 @@
 import {filterPrimaryEmail} from "./user_util"
 
-export const baseBodyTemplate = ({user, contents, staticUrl, hasOverview}) => `
+export const baseBodyTemplate = ({user, contents, hasOverview}) => `
 <div id="wait">
     <i class="fa fa-spinner fa-pulse"></i>
 </div>
 <header class="fw-header">
     <div class="fw-container">
-        <h1 class="fw-logo"><span class="fw-logo-text"></span><img src="${staticUrl}svg/icon.svg?v=${process.env.TRANSPILE_VERSION}" /></h1>
+        <a href="/">
+            <h1 class="fw-logo">
+                <span class="fw-logo-text"></span>
+                <img src="${settings.STATIC_URL}svg/icon.svg?v=${transpile.VERSION}" />
+            </h1>
+        </a>
         <nav id="header-nav"></nav>
         <div id="user-preferences" class="fw-user-preferences fw-header-text">
             <div id="preferences-btn" class="fw-button">

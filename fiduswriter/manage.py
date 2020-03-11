@@ -5,6 +5,10 @@ from importlib import import_module
 
 from django.conf import settings
 
+if "COVERAGE_PROCESS_START" in os.environ:
+    import coverage
+    coverage.process_startup()
+
 SRC_PATH = os.path.dirname(os.path.realpath(__file__))
 os.environ.setdefault(
     "SRC_PATH",
@@ -37,7 +41,7 @@ def inner(default_project_path):
     # There are three levels of settings, each overiding the previous one:
     # global_settings.py, default_settings.py and configuration.py
     from django.conf import global_settings as CONFIGURATION
-    from core import default_settings
+    from base import default_settings
     SETTINGS_PATHS = [default_settings.__file__]
     for setting in dir(default_settings):
         setting_value = getattr(default_settings, setting)

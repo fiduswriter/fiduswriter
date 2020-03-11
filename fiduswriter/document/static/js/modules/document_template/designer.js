@@ -10,7 +10,7 @@ import {buildKeymap, buildInputRules} from "prosemirror-example-setup"
 import {tableEditing} from "prosemirror-tables"
 
 import {ensureCSS, findTarget} from "../common"
-import {TagsView, ContributorsView} from "../editor/state_plugins"
+import {TagsPartView, ContributorsPartView} from "../editor/state_plugins"
 import {
     docSchema
 } from "../schema/document"
@@ -52,12 +52,12 @@ import {
 
 
 export class DocumentTemplateDesigner {
-    constructor({staticUrl}, id, title, value, documentStyles, exportTemplates, dom) {
-        this.staticUrl = staticUrl
+    constructor(id, title, value, documentStyles, citationStyles, exportTemplates, dom) {
         this.id = id
         this.title = title
         this.value = toFullJSON(value, docSchema)
         this.documentStyles = documentStyles
+        this.citationStyles = citationStyles
         this.exportTemplates = exportTemplates
         this.dom = dom
 
@@ -73,7 +73,8 @@ export class DocumentTemplateDesigner {
             title: this.title,
             value: this.value,
             documentStyles: this.documentStyles,
-            exportTemplates: this.exportTemplates
+            exportTemplates: this.exportTemplates,
+            citationStyles: this.citationStyles
         })
         ensureCSS([
             'common.css',
@@ -87,7 +88,7 @@ export class DocumentTemplateDesigner {
             'dialog.css',
             'table.css',
             'dialog_table.css'
-        ], this.staticUrl)
+        ])
         this.setupInitialEditors()
         this.bind()
     }
@@ -360,7 +361,7 @@ export class DocumentTemplateDesigner {
                 plugins.push(new Plugin({
                     props: {
                         nodeViews: {
-                            tags_part: (node, view, getPos) => new TagsView(node, view, getPos)
+                            tags_part: (node, view, getPos) => new TagsPartView(node, view, getPos)
                         }
                     }
                 }))
@@ -370,7 +371,7 @@ export class DocumentTemplateDesigner {
                 plugins.push(new Plugin({
                     props: {
                         nodeViews: {
-                            contributors_part: (node, view, getPos) => new ContributorsView(node, view, getPos)
+                            contributors_part: (node, view, getPos) => new ContributorsPartView(node, view, getPos)
                         }
                     }
                 }))
@@ -558,7 +559,10 @@ export class DocumentTemplateDesigner {
                     }
                 })
             }
-            this.dom.querySelector('.citationstyle-value').innerHTML = citationstyleTemplate(this.value.attrs)
+            this.dom.querySelector('.citationstyle-value').innerHTML = citationstyleTemplate(
+                this.value.attrs,
+                this.citationStyles
+            )
         })
     }
 

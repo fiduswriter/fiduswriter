@@ -18,7 +18,7 @@ import {
 } from "../../common"
 import {SiteMenu} from "../../menu"
 import {FeedbackTab} from "../../feedback"
-import {menuModel, bulkModel} from "./menu"
+import {menuModel, bulkMenuModel} from "./menu"
 import * as plugins from "../../../plugins/images_overview"
  /** Helper functions for user added images/SVGs.*/
 
@@ -32,7 +32,8 @@ export class ImageOverview {
 
     init() {
         ensureCSS([
-            'dialog_usermedia.css'
+            'dialog_usermedia.css',
+            'dot_menu.css'
         ], this.staticUrl)
 
         whenReady().then(() => {
@@ -50,13 +51,14 @@ export class ImageOverview {
     }
 
     render() {
-        document.body = document.createElement('body')
-        document.body.innerHTML = baseBodyTemplate({
+        this.dom = document.createElement('body')
+        this.dom.innerHTML = baseBodyTemplate({
             contents: '',
             user: this.user,
             staticUrl: this.staticUrl,
             hasOverview: true
         })
+        document.body = this.dom
         ensureCSS([
             'cropper.min.css'
         ], this.staticUrl)
@@ -184,20 +186,34 @@ export class ImageOverview {
         }
     }
 
+    onResize() {
+        if (!this.table) {
+            return
+        }
+        this.initTable(Object.keys(this.app.imageDB.db))
+    }
+
     /* Initialize the overview table */
     initTable(ids) {
         const tableEl = document.createElement('table')
         tableEl.id = "imagelist"
         tableEl.classList.add('fw-data-table')
         tableEl.classList.add('fw-large')
-        document.querySelector('.fw-contents').appendChild(tableEl)
+        this.dom.querySelector('.fw-contents').innerHTML = ''
+        this.dom.querySelector('.fw-contents').appendChild(tableEl)
 
-        const dtBulk = new DatatableBulk(this, bulkModel)
+        this.dtBulk = new DatatableBulk(this, bulkMenuModel())
+
+        const hiddenCols = [0]
+
+        if (window.innerWidth < 500) {
+            hiddenCols.push(1)
+        }
 
         this.table = new DataTable(tableEl, {
             searchable: true,
             paging: false,
-            scrollY: "calc(100vh - 240px)",
+            scrollY: `${Math.max(window.innerHeight - 360, 100)}px`,
             labels: {
                 noRows: gettext("No images available") // Message shown when there are no search results
             },
@@ -205,12 +221,12 @@ export class ImageOverview {
                 top: ""
             },
             data: {
-                headings: ['', dtBulk.getHTML(), gettext("File"), gettext("Size (px)"), gettext("Added"), ''],
+                headings: ['', this.dtBulk.getHTML(), gettext("File"), gettext("Size (px)"), gettext("Added"), ''],
                 data: ids.map(id => this.createTableRow(id))
             },
             columns: [
                 {
-                    select: 0,
+                    select: hiddenCols,
                     hidden: true
                 },
                 {
@@ -225,18 +241,18 @@ export class ImageOverview {
             this.lastSort = {column, dir}
         })
 
-        dtBulk.init(this.table.table)
+        this.dtBulk.init(this.table.table)
     }
 
     // get IDs of selected bib entries
     getSelected() {
         return Array.from(
-            document.querySelectorAll('.entry-select:checked:not(:disabled)')
+            this.dom.querySelectorAll('.entry-select:checked:not(:disabled)')
         ).map(el => parseInt(el.getAttribute('data-id')))
     }
 
     bindEvents() {
-        document.body.addEventListener('click', event => {
+        this.dom.addEventListener('click', event => {
             const el = {}
             switch (true) {
                 case findTarget(event, '.delete-image', el): {

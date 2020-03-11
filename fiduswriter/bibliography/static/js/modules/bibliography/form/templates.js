@@ -3,7 +3,7 @@ export const bibDialog = ({bib_type, BibTypes, BibTypeTitles}) =>
     `<div id="bib-dialog-tabs">
         <div class="bib-dialog-header">
             <div class="fw-select-container">
-                <select id="select-bibtype" class="fw-button fw-white fw-large" required>
+                <select id="select-bibtype" class="fw-button fw-light fw-large" required>
                     ${
                         bib_type === false ?
                         `<option class="placeholder" selected disabled value="">${gettext('Select source type')}</option>` :

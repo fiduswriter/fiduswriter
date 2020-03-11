@@ -1,5 +1,5 @@
 import {DiffDOM} from "diff-dom"
-import keyName from "w3c-keyname"
+import {keyName} from "w3c-keyname"
 
 import {escapeText} from "../../../common"
 
@@ -41,13 +41,13 @@ export class HeaderbarView {
     bindEvents() {
         this.listeners.onclick = event => this.onclick(event)
         document.body.addEventListener('click', this.listeners.onclick)
-        this.listeners.onkeydown = event => this.onkeydown(event)
-        document.body.addEventListener('keydown', this.listeners.onkeydown)
+        this.listeners.onKeydown = event => this.onKeydown(event)
+        document.body.addEventListener('keydown', this.listeners.onKeydown)
     }
 
     destroy() {
         document.body.removeEventListener('click', this.listeners.onclick)
-        document.removeEventListener('keydown', this.listeners.onkeydown)
+        document.removeEventListener('keydown', this.listeners.onKeydown)
     }
 
     onclick(event) {
@@ -201,7 +201,7 @@ export class HeaderbarView {
     }
 
 
-    onkeydown(event) {
+    onKeydown(event) {
         let name = keyName(event)
         if (event.altKey) {
             name = "Alt-" + name
@@ -229,8 +229,6 @@ export class HeaderbarView {
             }
         })
     }
-
-
 
     update() {
         const diff = this.dd.diff(this.headerEl, this.getHeaderHTML())

@@ -1,7 +1,9 @@
 import {DocumentAccessRightsDialog} from "../../../documents/access_rights"
 import {SaveRevision, SaveCopy} from "../../../exporter/native"
 import {ExportFidusFile} from "../../../exporter/native/file"
+import {CopyrightDialog} from "../../../copyright_dialog"
 import {RevisionDialog, LanguageDialog} from "../../dialogs"
+import {WordCountDialog, KeyBindingsDialog, SearchReplaceDialog} from "../../tools"
 
 const languageItem = function(code, name, order) {
     return {
@@ -27,7 +29,7 @@ const languageItem = function(code, name, order) {
 
 
 export const headerbarModel = () => ({
-    open: true, // Whether the menu is shown at all.
+    open: window.innerWidth > 500, // Whether the menu is shown at all.
     content: [
         {
             id: 'file',
@@ -47,9 +49,8 @@ export const headerbarModel = () => ({
                             [editor.docInfo.id],
                             editor.docInfo.owner.team_members,
                             memberData => {
-                                editor.user.team_members.push(memberData)
-                            },
-                            editor.registrationOpen
+                                editor.docInfo.owner.team_members.push(memberData)
+                            }
                         )
                         dialog.init()
                     },
@@ -91,7 +92,7 @@ export const headerbarModel = () => ({
                     disabled: editor => editor.docInfo.access_rights !== 'write'
                 },
                 {
-                    title: gettext('Create Copy'),
+                    title: gettext('Create copy'),
                     type: 'action',
                     //icon: 'copy',
                     tooltip: gettext('Create copy of the current document.'),
@@ -104,7 +105,7 @@ export const headerbarModel = () => ({
                                 editor.user
                             )
                         copier.init().then(({docInfo}) =>
-                            window.location.href = `/document/${docInfo.id}/`
+                            editor.app.goTo(`/document/${docInfo.id}/`)
                         ).catch(() => false)
                     }
                 },
@@ -133,7 +134,6 @@ export const headerbarModel = () => ({
                         import("../../../exporter/print").then(({PrintExporter}) => {
                             const exporter = new PrintExporter(
                                 editor.schema,
-                                editor.staticUrl,
                                 editor.app.csl,
                                 editor.mod.documentTemplate.documentStyles,
                                 editor.getDoc({changes: 'acceptAllNoInsertions'}),
@@ -162,7 +162,6 @@ export const headerbarModel = () => ({
                         import("../../../exporter/html").then(({HTMLExporter}) => {
                             const exporter = new HTMLExporter(
                                 editor.schema,
-                                editor.staticUrl,
                                 editor.app.csl,
                                 editor.mod.documentTemplate.documentStyles,
                                 editor.getDoc({changes: 'acceptAllNoInsertions'}),
@@ -182,7 +181,6 @@ export const headerbarModel = () => ({
                         import("../../../exporter/epub").then(({EpubExporter}) => {
                             const exporter = new EpubExporter(
                                 editor.schema,
-                                editor.staticUrl,
                                 editor.app.csl,
                                 editor.mod.documentTemplate.documentStyles,
                                 editor.getDoc({changes: 'acceptAllNoInsertions'}),
@@ -210,14 +208,13 @@ export const headerbarModel = () => ({
                     }
                 },
                 {
-                    title: gettext('JATS (experimental)'),
+                    title: gettext('JATS'),
                     type: 'action',
                     tooltip: gettext('Export the document to a Journal Archiving and Interchange Tag Library NISO JATS Version 1.2 file.'),
                     order: 2,
                     action: editor => {
                         import("../../../exporter/jats").then(({JATSExporter}) => {
                             const exporter = new JATSExporter(
-                                editor.staticUrl,
                                 editor.getDoc({changes: 'acceptAllNoInsertions'}),
                                 editor.mod.db.bibDB,
                                 editor.mod.db.imageDB,
@@ -417,6 +414,30 @@ export const headerbarModel = () => ({
                             }
                         }
                     ]
+                },
+                {
+                    title: gettext('Copyright Information'),
+                    type: 'setting',
+                    order: 5,
+                    action: editor => {
+                        const dialog = new CopyrightDialog(editor.view.state.doc.firstChild.attrs.copyright)
+                        dialog.init().then(
+                            copyright => {
+                                if (copyright) {
+                                    const article = editor.view.state.doc.firstChild
+                                    const attrs = Object.assign({}, article.attrs, {copyright})
+
+                                    editor.view.dispatch(
+                                        editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta('settings', true)
+                                    )
+                                }
+                                editor.currentView.focus()
+                            }
+                        )
+                    },
+                    disabled: editor => {
+                        return editor.docInfo.access_rights !== 'write'
+                    }
                 }
             ]
         },
@@ -433,17 +454,30 @@ export const headerbarModel = () => ({
                     tooltip: gettext('See document statistics.'),
                     order: 0,
                     action: editor => {
-                        editor.mod.tools.wordCount.wordCountDialog()
+                        const dialog = new WordCountDialog(editor)
+                        dialog.init()
+                    }
+                },
+                {
+                    title: gettext('Search and replace'),
+                    type: 'action',
+                    tooltip: gettext('Show a search and replace dialog.'),
+                    order: 1,
+                    keys: 'Ctrl-h',
+                    action: editor => {
+                        const dialog = new SearchReplaceDialog(editor)
+                        dialog.init()
                     }
                 },
                 {
                     title: gettext('Keyboard shortcuts'),
                     type: 'action',
                     tooltip: gettext('Show an overview of available keyboard shortcuts.'),
-                    order: 1,
+                    order: 2,
                     keys: 'Shift-Ctrl-/',
                     action: editor => {
-                        editor.mod.tools.showKeyBindings.show()
+                        const dialog = new KeyBindingsDialog(editor)
+                        dialog.init()
                     }
                 }
             ]

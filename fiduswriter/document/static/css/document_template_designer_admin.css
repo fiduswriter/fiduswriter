@@ -1,0 +1,25 @@
+/* This file is used only on the admin screen and therefore contains original Django colors. */
+form .aligned ul.object-tools.right {
+    margin-left: inherit;
+    height: 3em;
+}
+
+.object-tools span.link {
+    float: left;
+    background: #999999 !important;
+    font-weight: 400;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: #ffffff !important;
+    border-radius: 15px;
+}
+
+.object-tools span.link:focus,
+.object-tools span.link:hover {
+    background-color: #417690;
+}
+
+body {
+    overflow-y: auto !important;
+}

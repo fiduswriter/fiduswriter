@@ -23,7 +23,7 @@ class Feedback(models.Model):
         reply_to = ''
         if self.owner:
             from_sender = self.owner.username
-            if self.owner.email and self.owner.email:
+            if self.owner.email:
                 reply_to = ' (' + self.owner.email + ')'
         else:
             from_sender = 'Anonymous'
@@ -32,4 +32,4 @@ class Feedback(models.Model):
                   settings.DEFAULT_FROM_EMAIL,
                   [settings.CONTACT_EMAIL],
                   fail_silently=True)
-        super(Feedback, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)

@@ -1,5 +1,3 @@
-import '@babel/polyfill' // To fix issue with async generators
-
 import OfflinePluginRuntime from 'offline-plugin/runtime'
 import {CSL} from 'citeproc-plus'
 
@@ -7,7 +5,7 @@ import {DocumentInvite} from "../documents/invite"
 import {ImageOverview} from "../images/overview"
 import {ContactsOverview} from "../contacts"
 import {Profile} from "../profile"
-import {findTarget, WebSocketConnector, showSystemMessage, postJson} from "../common"
+import {findTarget, WebSocketConnector, showSystemMessage, postJson, ensureCSS} from "../common"
 import {LoginPage} from "../login"
 import {EmailConfirm} from "../email_confirm"
 import {PasswordResetRequest, PasswordResetChangePassword} from "../password_reset"
@@ -16,12 +14,13 @@ import {ImageDB} from "../images/database"
 import {BibliographyDB} from "../bibliography/database"
 import {Page404} from "../404"
 import {OfflinePage} from "../offline"
+import {SetupPage} from "../setup"
 import {FlatPage} from "../flatpage"
 import * as plugins from "../../plugins/app"
 
 export class App {
-    constructor(config = {}) {
-        this.config = config
+    constructor() {
+        this.config = {}
         this.name = 'Fidus Writer'
         this.config.app = this
         this.routes = {
@@ -103,34 +102,57 @@ export class App {
         }
         this.openLoginPage = () => new LoginPage(this.config)
         this.openOfflinePage = () => new OfflinePage(this.config)
+        this.openSetupPage = () => new SetupPage(this.config)
         this.open404Page = () => new Page404(this.config)
     }
 
     init() {
-        // We add CSS here dynamically without the "ensureCSS" helper function
-        // because we know that the page has not been loaded earlier.
-        document.head.insertAdjacentHTML(
-            'beforeend',
-            `<link rel="stylesheet" type="text/css" href="${this.config.staticUrl}fontawesome/css/all.css?v=${process.env.TRANSPILE_VERSION}">`
-        )
+        if (!settings.DEBUG) {
+            OfflinePluginRuntime.install({
+                onUpdateReady: () => OfflinePluginRuntime.applyUpdate(),
+                onUpdated: () => window.location.reload()
+            })
+        }
+        ensureCSS([
+            'fontawesome/css/all.css'
+        ])
         if (navigator.onLine) {
-            this.getUserInfo().then(
-                () => this.setup()
-            ).catch(
+            return this.getUserInfo().catch(
                 error => {
                     if (error instanceof TypeError) {
                         // We could not fetch user info from server, so let's
                         // assume we are disconnected.
                         this.page = this.openOfflinePage()
                         this.page.init()
-                    } else {
+                    } else if (error.status === 405) {
+                        // 405 indicates that the server is running but the
+                        // method is not allowed. This must be the setup server.
+                        // We show a setup message instead.
+                        this.page = this.openSetupPage()
+                        this.page.init()
+                    } else if (settings.DEBUG) {
                         throw error
+                    } else {
+                        // We don't know what is going on, but we are in production
+                        // mode. Hopefully the app will update soon.
+                        this.page = this.openOfflinePage()
+                        this.page.init()
                     }
+                    return Promise.reject(false)
+                }
+            ).then(
+                () => this.setup()
+            ).catch(
+                error => {
+                    if (error === false) {
+                        return
+                    }
+                    throw error
                 }
             )
         } else {
             this.page = this.openOfflinePage()
-            this.page.init()
+            return this.page.init()
         }
 
     }
@@ -168,46 +190,30 @@ export class App {
                     if (
                         el.target.hostname === window.location.hostname &&
                         el.target.getAttribute('href')[0] === '/' &&
-                        el.target.getAttribute('href').slice(0, 7) !== '/media/'
+                        el.target.getAttribute('href').slice(0, 7) !== '/media/' &&
+                        el.target.getAttribute('href').slice(0, 5) !== '/api/'
                     ) {
                         event.preventDefault()
+                        event.stopImmediatePropagation()
                         this.goTo(el.target.href)
                     }
                     break
             }
         })
-        if (!this.config.debug) {
-            OfflinePluginRuntime.install({
-                onUpdateReady: () => {
-                    const buttons = [
-                        {
-                            text: gettext('Update'),
-                            classes: 'fw-dark',
-                            click: () => {
-                                OfflinePluginRuntime.applyUpdate()
-                                dialog.close()
-                            }
-                        }
-                    ]
-                    const dialog = showSystemMessage(
-                        interpolate(
-                            gettext(
-                                'A new version of %(appName)s is available.'
-                            ),
-                            {appName: this.name},
-                            true
-                        ),
-                        buttons
-                    )
-                },
-                onUpdated: () => window.location.reload()
-            })
-        }
+        let resizeDone
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeDone)
+            resizeDone = setTimeout(() => {
+                if (this.page && this.page.onResize) {
+                    this.page.onResize()
+                }
+            }, 250)
+        })
     }
 
     connectWs() {
         this.ws = new WebSocketConnector({
-            url: `${this.config.websocketUrl}/ws/base/`,
+            url: '/ws/base/',
             appLoaded: () => true,
             receiveData: data => {
                 switch (data.type) {
@@ -246,7 +252,10 @@ export class App {
         const pathnameParts = window.location.pathname.split('/')
         const route = this.routes[pathnameParts[1]]
         if (route) {
-            if (route.requireLogin && !this.config.user.is_authenticated) {
+            if (
+                route.requireLogin &&
+                !(this.config.user || {}).is_authenticated
+            ) {
                 this.page = this.openLoginPage()
                 return this.page.init()
             }
@@ -266,15 +275,13 @@ export class App {
     }
 
     getUserInfo() {
-        return postJson('/api/user/info/').then(
-            ({json}) => {
-                this.config.user = json
-            }
+        return postJson('/api/base/configuration/').then(
+            ({json}) => Object.entries(json).forEach(([key, value]) => this.config[key] = value)
         )
     }
 
     goTo(url) {
         window.history.pushState({}, "", url)
-        this.selectPage()
+        return this.selectPage()
     }
 }

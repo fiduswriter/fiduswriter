@@ -18,6 +18,7 @@ export class MathDialog {
         //initialize dialog and open it
         this.dialog = new Dialog({
             body: mathDialogTemplate(),
+            height: 100,
             buttons: [
                 {
                     text: this.equationSelected ? gettext('Update') : gettext('Insert'),
@@ -54,13 +55,12 @@ export class MathDialog {
                 }
             ],
             title: gettext('Mathematical formula'),
-            height: 150,
             beforeClose: () => {
                 if (this.mathField) {
-                    this.mathField.$revertToOriginalContent()
                     this.mathField = false
                 }
             },
+            classes: 'math',
             onClose: () => this.editor.currentView.focus()
         })
         this.dialog.open()
@@ -69,9 +69,7 @@ export class MathDialog {
 
         import("mathlive").then(MathLive => {
             this.mathField = MathLive.makeMathField(this.mathliveDOM, {
-                virtualKeyboardMode: 'manual',
-                onBlur: () => this.showPlaceHolder(),
-                onFocus: () => this.hidePlaceHolder(),
+                virtualKeyboardMode: 'onfocus',
                 locale: 'int',
                 strings: {
                     'int': {
@@ -88,7 +86,6 @@ export class MathDialog {
                 }
             })
             this.mathField.$latex(this.equation)
-            this.showPlaceHolder()
         })
     }
 
@@ -98,18 +95,5 @@ export class MathDialog {
      */
     getLatex() {
         return this.mathField.$latex()
-    }
-
-    showPlaceHolder() {
-        if (!this.getLatex().length) {
-            this.mathliveDOM.insertAdjacentHTML('beforeend', `<span class="placeholder" >${gettext('Type formula')}</span>`)
-        }
-    }
-
-    hidePlaceHolder() {
-        const placeHolder = this.mathliveDOM.querySelector('.placeholder')
-        if (placeHolder) {
-            this.mathliveDOM.removeChild(placeHolder)
-        }
     }
 }

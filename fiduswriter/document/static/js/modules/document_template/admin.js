@@ -1,12 +1,13 @@
 import {whenReady, findTarget, postJson, escapeText, ensureCSS} from "../common"
 import {DocumentTemplateDesigner} from "./designer"
+import {CSL} from "citeproc-plus"
 
 export class DocumentTemplateAdmin {
-    constructor({staticUrl}) {
-        this.staticUrl = staticUrl
+    constructor() {
         this.definitionTextarea = false
         this.templateDesigner = false
         this.templateExtras = false
+        this.citationStyles = false
         const locationParts = window.location.href.split('/')
         let id = parseInt(locationParts[locationParts.length-3])
         if (isNaN(id)) {
@@ -17,12 +18,18 @@ export class DocumentTemplateAdmin {
 
     init() {
         ensureCSS([
+            'colors.css',
+            'document_template_designer_admin.css',
             'admin.css',
             'ui_dialogs.css',
             'buttons.css'
-        ], this.staticUrl)
+        ])
+        const csl = new CSL()
         const initialTasks = [
-            whenReady()
+            whenReady(),
+            csl.getStyles().then(
+                styles => this.citationStyles = styles
+            )
         ]
         if (this.id) {
             initialTasks.push(
@@ -47,11 +54,11 @@ export class DocumentTemplateAdmin {
 
     initDesigner() {
         this.templateDesigner = new DocumentTemplateDesigner(
-            {staticUrl: this.staticUrl},
             this.id,
             this.titleInput.value,
             JSON.parse(this.definitionTextarea.value),
             this.templateExtras.document_styles || [],
+            this.citationStyles,
             this.templateExtras.export_templates || [],
             document.getElementById('template-editor')
         )

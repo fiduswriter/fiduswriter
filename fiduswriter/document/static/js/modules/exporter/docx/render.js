@@ -88,6 +88,24 @@ export class DocxExporterRender {
                 [{type: 'bibliography_heading', content: [{type: 'text', text: bibliographyHeader}]}].concat(pmBib.content) :
                 [{type: 'paragraph', content: [{type:'text', text: ' '}]}]
         })
+        this.tags.push({
+            title: '@copyright', // The '@' triggers handling as block
+            content: settings.copyright && settings.copyright.holder ?
+                [{type: 'paragraph', content: [{type: 'text', text: `© ${settings.copyright.year ? settings.copyright.year : new Date().getFullYear()} ${settings.copyright.holder}`}]}] :
+                [{type: 'paragraph', content: [{type:'text', text: ' '}]}]
+        })
+        this.tags.push({
+            title: '@licenses', // The '@' triggers handling as block
+            content: settings.copyright && settings.copyright.licenses.length ?
+                settings.copyright.licenses.map(
+                    license => ({type: 'paragraph', content: [
+                        {type: 'text', marks: [{type: 'link', attrs: {href: license.url, title: license.title}}], text: license.title},
+                        {type: 'text', text: license.start ? ` (${license.start})` : ''}
+                    ]})
+                ) :
+                [{type: 'paragraph', content: [{type:'text', text: ' '}]}]
+        })
+
     }
 
     // go through document.xml looking for tags and replace them with the given
@@ -116,7 +134,7 @@ export class DocxExporterRender {
                 const pageSize = par.querySelector('pgSz')
                 const pageMargins = par.querySelector('pgMar')
                 const cols = par.querySelector('cols')
-                if (pageSize && pageMargins && cols) { // Not sure if these all need to come together
+                if (pageSize && pageMargins) { // Not sure if these all need to come together
                     let width = parseInt(pageSize.getAttribute('w:w')) -
                     parseInt(pageMargins.getAttribute('w:right')) -
                     parseInt(pageMargins.getAttribute('w:left'))
@@ -126,7 +144,7 @@ export class DocxExporterRender {
                     parseInt(pageMargins.getAttribute('w:header')) -
                     parseInt(pageMargins.getAttribute('w:footer'))
 
-                    const colCount = parseInt(cols.getAttribute('w:num'))
+                    const colCount = cols ? parseInt(cols.getAttribute('w:num')) : 1
                     if (colCount > 1) {
                         const colSpace = parseInt(cols.getAttribute('w:space'))
                         width = width - (colSpace * (colCount-1))

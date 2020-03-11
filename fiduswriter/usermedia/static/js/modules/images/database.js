@@ -19,7 +19,6 @@ export class ImageDB {
                 this.cats = json.imageCategories
                 json.images.forEach(
                     image => {
-                        image.image = image.image.split('?')[0]
                         this.db[image.id] = image
                     }
                 )
@@ -29,9 +28,11 @@ export class ImageDB {
         )
     }
 
-    saveImage(postData) {
-
+    saveImage(imageData) {
         activateWait()
+        const postData = Object.assign({}, imageData, {
+            cats: JSON.stringify(imageData.cats)
+        })
 
         return postJson(
             '/api/usermedia/save/',

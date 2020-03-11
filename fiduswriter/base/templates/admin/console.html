@@ -1,13 +1,12 @@
 {% extends "admin/base_site.html" %}
 {% load i18n %}
 {% load transpile %}
-{% load fiduswriter %}
 {% block title %}{% trans "Admin Console" %}{% endblock %}
 {% block extrahead %}{{ block.super }}
-{% fiduswriter_config_js %}
 <link type="text/css" rel="stylesheet" href="{% static "css/alerts.css" %}" />
 <!--  Translations -->
-<script type="text/javascript" src="/jsi18n/"></script>
+<script type="text/javascript" src="/api/jsi18n/"></script>
+<script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
 <!-- JS error handling -->
 <script type="text/javascript" src="{% url 'js-error-handler-js' %}"></script>
 <script type="text/javascript" src="{% static "js/admin_console.mjs" %}"></script>

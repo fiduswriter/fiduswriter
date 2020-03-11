@@ -1,6 +1,6 @@
 from builtins import range
 from builtins import object
-from chromedriver_binary import chromedriver_filename
+import re
 import os
 
 from django.test import Client
@@ -16,26 +16,40 @@ class SeleniumHelper(object):
     """
 
     @classmethod
-    def get_drivers(cls, number):
+    def get_drivers(cls, number, download_dir=False, user_agent=False):
         # django native clients, to be used for faster login.
         clients = []
         for i in range(number):
             clients.append(Client())
         drivers = []
         wait_time = 0
-        chrome_options = webdriver.ChromeOptions()
+        options = webdriver.ChromeOptions()
+        if download_dir:
+            prefs = {
+                "download.default_directory": download_dir,
+                "download.prompt_for_download": False,
+                "download.directory_upgrade": True
+            }
+            options.add_experimental_option("prefs", prefs)
+        if user_agent:
+            options.add_argument("user-agent=%s".format(user_agent))
         if os.getenv("CI"):
-            chrome_options.binary_location = '/usr/bin/google-chrome-beta'
-            chrome_options.add_argument('--headless')
-            chrome_options.add_argument('--disable-gpu')
+            options.binary_location = '/usr/bin/google-chrome-stable'
+            options.add_argument('--headless')
+            options.add_argument('--disable-gpu')
+            chromedriver_filename = '/home/travis/bin/chromedriver'
+            os.environ["PATH"] += os.pathsep + '/home/travis/bin'
+            wait_time = 10
+        else:
+            from chromedriver_binary import chromedriver_filename
+            wait_time = 6
         for i in range(number):
             drivers.append(
                 webdriver.Chrome(
                     chromedriver_filename,
-                    chrome_options=chrome_options
+                    options=options
                 )
             )
-        wait_time = 6
         for driver in drivers:
             # Set sizes of browsers so that all buttons are visible.
             driver.set_window_position(0, 0)
@@ -46,6 +60,15 @@ class SeleniumHelper(object):
             "wait_time": wait_time
         }
 
+    def find_urls(self, string):
+        return re.findall(
+            (
+                'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|'
+                '(?:%[0-9a-fA-F][0-9a-fA-F]))+'
+            ),
+            string
+        )
+
     # create django data
     def create_user(
         self,
@@ -55,6 +78,7 @@ class SeleniumHelper(object):
     ):
         user = User.objects.create(
             username=username,
+            email=email,
             password=make_password(passtext),
             is_active=True
         )
@@ -65,6 +89,7 @@ class SeleniumHelper(object):
             user=user,
             email=email,
             verified=True,
+            primary=True
         ).save()
 
         return user

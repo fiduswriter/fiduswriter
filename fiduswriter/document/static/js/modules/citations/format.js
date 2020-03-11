@@ -3,6 +3,7 @@ import {citeprocSys} from "./citeproc_sys"
 /*
 * Use CSL and bibDB to format all citations for the given prosemirror json citation nodes
 */
+
 export class FormatCitations {
     constructor(csl, allCitationInfos, citationStyle, bibliographyHeader, bibDB, synchronous = false) {
         this.csl = csl

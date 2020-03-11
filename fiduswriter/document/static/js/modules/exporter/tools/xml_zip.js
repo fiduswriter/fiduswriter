@@ -1,4 +1,6 @@
 import download from "downloadjs"
+
+import {get} from "../../common"
 // Handle a zip file containing XML files. Make sure files are only opened once,
 // and provide a mechanism to save the file.
 
@@ -22,17 +24,11 @@ export class XmlZip {
     }
 
     downloadZip() {
-        return new Promise(resolve => {
-            import("jszip-utils").then(
-                ({default: JSZipUtils}) => JSZipUtils.getBinaryContent(
-                    this.url,
-                    (err, rawFile) => {
-                        this.rawFile = rawFile
-                        resolve()
-                    }
-                )
-            )
-        })
+        return get(this.url).then(
+            response => response.blob()
+        ).then(
+            blob => this.rawFile = blob
+        )
     }
 
     loadZip() {

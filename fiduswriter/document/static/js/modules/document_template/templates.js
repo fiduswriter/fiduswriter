@@ -1,5 +1,3 @@
-import {styles} from "citeproc-plus"
-
 import {escapeText} from "../common"
 import {LANGUAGES, PAPER_SIZES} from "../schema/const"
 
@@ -36,6 +34,14 @@ const allowedElementsTemplate = ({elements}, footnote=true, table=true) =>
     <input type="checkbox" class="elements" value="heading6" ${elements.includes('heading6') ? 'checked' : ''}/>
     ${gettext('Heading 6')}
 </label>
+${
+    footnote ?
+    '' :
+    `<label>
+        <input type="checkbox" class="elements" value="code_block" ${elements.includes('code_block') ? 'checked' : ''}/>
+        ${gettext('Code')}
+    </label>`
+}
 <label>
     <input type="checkbox" class="elements" value="figure" ${elements.includes('figure') ? 'checked' : ''}/>
     ${gettext('Figure')}
@@ -59,6 +65,10 @@ const allowedElementsTemplate = ({elements}, footnote=true, table=true) =>
 <label>
     <input type="checkbox" class="elements" value="citation" ${elements.includes('citation') ? 'checked' : ''}/>
     ${gettext('Citation')}
+</label>
+<label>
+    <input type="checkbox" class="elements" value="cross_reference" ${elements.includes('cross_reference') ? 'checked' : ''}/>
+    ${gettext('Cross reference')}
 </label>
 <label>
     <input type="checkbox" class="elements" value="blockquote" ${elements.includes('blockquote') ? 'checked' : ''}/>
@@ -255,7 +265,7 @@ const contributorsTemplate = ({
 const richtextTemplate = ({
     id="",
     title="",
-    elements=["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote"],
+    elements=["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "cross_reference", "blockquote", "footnote"],
     marks=["strong", "em", "underline", "link"],
     locking="false",
     optional="false",
@@ -397,7 +407,7 @@ const tagsTemplate = ({
 const tableTemplate = ({
     id="",
     title="",
-    elements= ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote"],
+    elements= ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "cross_reference", "blockquote", "footnote"],
     marks= ["strong", "em", "underline", "link"],
     locking="false",
     optional="false",
@@ -484,21 +494,25 @@ const tocTemplate = ({
 </div>`
 
 const footnoteTemplate = ({
-    footnote_elements = ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "table"],
+    footnote_elements = ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "cross_reference", "blockquote", "table"],
     footnote_marks = ["strong", "em", "underline", "link"]
 }) => `<div class="doc-part attrs">${allowedElementsTemplate({elements: footnote_elements}, false)}${allowedMarksTemplate({marks: footnote_marks})}</div>`
 
-const citationstylesTemplate = ({citationstyles = ['apa']}) =>
+const citationstylesTemplate = ({citationstyles = ['apa']}, allCitationStyles) =>
 `<select multiple size=5>
-${Object.entries(styles).map(([key, value]) => `<option value="${key}"${citationstyles.includes(key) ? ' selected' : ''}>${value}</option>`).join('')}
+${Object.entries(allCitationStyles).map(([key, value]) => `<option value="${key}"${citationstyles.includes(key) ? ' selected' : ''}>${value}</option>`).join('')}
 </select>`
 
-export const citationstyleTemplate = ({citationstyle = 'apa', citationstyles=['apa']}) => {
+export const citationstyleTemplate = ({citationstyle = 'apa', citationstyles=['apa']}, allCitationStyles) => {
     if (!citationstyles.includes(citationstyle)) {
         citationstyle = citationstyles[0]
     }
     return `<select>
-        ${citationstyles.map(key => `<option value="${key}"${citationstyle === key ? ' selected' : ''}>${styles[key]}</option>`).join('')}
+        ${
+            citationstyles.map(
+                key => `<option value="${key}"${citationstyle === key ? ' selected' : ''}>${
+                    allCitationStyles[key]
+                }</option>`).join('')}
     </select>`
 }
 
@@ -592,7 +606,7 @@ export const exportTemplatesTemplate = ({exportTemplates}) => `${exportTemplates
     ${gettext('Add new export template')}
 </button>`
 
-export const documentDesignerTemplate = ({id, value, title, documentStyles, exportTemplates}) =>
+export const documentDesignerTemplate = ({id, value, title, documentStyles, exportTemplates, citationStyles}) =>
     `<table class="title_id"><tbody>
     <tr><td>${gettext('Title')}</td><td><input type="text" class="title vTextField fw-inline" value="${escapeText(title)}"></td></tr>
     <tr><td>${gettext('ID')}</td><td><input type="text" class="import-id vTextField fw-inline" value="${escapeText(value.attrs.import_id || '')}"></td></tr>
@@ -678,7 +692,7 @@ export const documentDesignerTemplate = ({id, value, title, documentStyles, expo
                     ${gettext('Available citation styles')}
                 </td>
                 <td class="citationstyles-value">
-                    ${citationstylesTemplate(value.attrs || {})}
+                    ${citationstylesTemplate(value.attrs || {}, citationStyles)}
                 </td>
             </tr>
             <tr>
@@ -686,7 +700,7 @@ export const documentDesignerTemplate = ({id, value, title, documentStyles, expo
                     ${gettext('Default citation style')}
                 </td>
                 <td class="citationstyle-value">
-                    ${citationstyleTemplate(value.attrs || {})}
+                    ${citationstyleTemplate(value.attrs || {}, citationStyles)}
                 </td>
             </tr>
             ${

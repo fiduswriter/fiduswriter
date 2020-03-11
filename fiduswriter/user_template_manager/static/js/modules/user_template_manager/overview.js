@@ -3,7 +3,7 @@ import {DataTable} from "simple-datatables"
 import {DocTemplatesActions} from "./actions"
 import {OverviewMenuView, escapeText, findTarget, whenReady, postJson, activateWait, deactivateWait, addAlert, baseBodyTemplate, ensureCSS, setDocTitle, DatatableBulk} from "../common"
 import {SiteMenu} from "../menu"
-import {menuModel, bulkModel} from "./menu"
+import {menuModel, bulkMenuModel} from "./menu"
 import {FeedbackTab} from "../feedback"
 
 
@@ -11,10 +11,9 @@ export class DocTemplatesOverview {
     // A class that contains everything that happens on the templates page.
     // It is currently not possible to initialize more than one such class, as it
     // contains bindings to menu items, etc. that are uniquely defined.
-    constructor({app, user, staticUrl}) {
+    constructor({app, user}) {
         this.app = app
         this.user = user
-        this.staticUrl = staticUrl
         this.mod = {}
         this.templateList = []
         this.styles = false
@@ -34,20 +33,27 @@ export class DocTemplatesOverview {
     }
 
     render() {
-        document.body = document.createElement('body')
-        document.body.innerHTML = baseBodyTemplate({
+        this.dom = document.createElement('body')
+        this.dom.innerHTML = baseBodyTemplate({
             contents: '',
             user: this.user,
-            staticUrl: this.staticUrl,
             hasOverview: true
         })
+        document.body = this.dom
         ensureCSS([
             'add_remove_dialog.css',
             'access_rights_dialog.css'
-        ], this.staticUrl)
+        ])
         setDocTitle(gettext('Document Templates Overview'), this.app)
-        const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
+        const feedbackTab = new FeedbackTab()
         feedbackTab.init()
+    }
+
+    onResize() {
+        if (!this.table) {
+            return
+        }
+        this.initTable()
     }
 
     /* Initialize the overview table */
@@ -55,14 +61,21 @@ export class DocTemplatesOverview {
         const tableEl = document.createElement('table')
         tableEl.classList.add('fw-data-table')
         tableEl.classList.add('fw-large')
-        document.querySelector('.fw-contents').appendChild(tableEl)
+        this.dom.querySelector('.fw-contents').innerHTML = ''
+        this.dom.querySelector('.fw-contents').appendChild(tableEl)
 
-        const dtBulk = new DatatableBulk(this, bulkModel)
+        this.dtBulk = new DatatableBulk(this, bulkMenuModel())
+
+        const hiddenCols = [0]
+
+        if (window.innerWidth < 500) {
+            hiddenCols.push(1)
+        }
 
         this.table = new DataTable(tableEl, {
             searchable: true,
             paging: false,
-            scrollY: "calc(100vh - 320px)",
+            scrollY: `${Math.max(window.innerHeight - 360, 100)}px`,
             labels: {
                 noRows: gettext("No document templates available") // Message shown when there are no search results
             },
@@ -70,12 +83,12 @@ export class DocTemplatesOverview {
                 top: ""
             },
             data: {
-                headings: ['', dtBulk.getHTML(), gettext("Title"), gettext("Created"), gettext("Last changed"), ''],
+                headings: ['', this.dtBulk.getHTML(), gettext("Title"), gettext("Created"), gettext("Last changed"), ''],
                 data: this.templateList.map(docTemplate => this.createTableRow(docTemplate))
             },
             columns: [
                 {
-                    select: 0,
+                    select: hiddenCols,
                     hidden: true
                 },
                 {
@@ -90,7 +103,7 @@ export class DocTemplatesOverview {
             this.lastSort = {column, dir}
         })
 
-        dtBulk.init(this.table.table)
+        this.dtBulk.init(this.table.table)
     }
 
     createTableRow(docTemplate) {
@@ -163,7 +176,7 @@ export class DocTemplatesOverview {
     }
 
     bind() {
-        document.body.addEventListener('click', event => {
+        this.dom.addEventListener('click', event => {
             const el = {}
             switch (true) {
                 case findTarget(event, '.delete-doc-template', el): {
@@ -185,7 +198,7 @@ export class DocTemplatesOverview {
 
     getSelected() {
         return Array.from(
-            document.querySelectorAll('.entry-select:checked:not(:disabled)')
+            this.dom.querySelectorAll('.entry-select:checked:not(:disabled)')
         ).map(el => parseInt(el.getAttribute('data-id')))
     }
 }

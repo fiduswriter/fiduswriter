@@ -1,4 +1,4 @@
-import {ModCollabDocChanges} from "./doc_changes"
+import {ModCollabDoc} from "./doc"
 import {ModCollabChat} from "./chat"
 import {ModCollabColors} from "./colors"
 import {removeCollaboratorSelection} from "../state_plugins"
@@ -11,7 +11,8 @@ export class ModCollab {
         this.participants = []
         this.sessionIds = false
         this.collaborativeMode = false
-        new ModCollabDocChanges(this)
+
+        new ModCollabDoc(this)
         new ModCollabChat(this)
         new ModCollabColors(this)
     }
@@ -38,7 +39,9 @@ export class ModCollab {
                 // We just connected to the editor and we are the only connected
                 // party. This is a good time to clean up the databases, removing
                 // unused images and bibliography items.
-                this.editor.mod.db.clean()
+                if (this.editor.mod.db) {
+                    this.editor.mod.db.clean()
+                }
             }
             this.sessionIds = []
         }

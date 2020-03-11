@@ -3,12 +3,12 @@ import * as pluginLoaders from "../../plugins/login"
 import {PreloginPage} from "../prelogin"
 
 export class LoginPage extends PreloginPage {
-    constructor({app, isFree, language, registrationOpen, socialaccountProviders, staticUrl}) {
-        super({app, isFree, language, registrationOpen, staticUrl})
-        this.socialaccountProviders = socialaccountProviders
+    constructor({app, language, socialaccount_providers}) {
+        super({app, language})
+        this.socialaccount_providers = socialaccount_providers
         this.title = gettext('Login')
         this.pluginLoaders = pluginLoaders
-        this.headerLinks = [
+        this.headerLinks = settings.REGISTRATION_OPEN ? [
             {
                 type: 'label',
                 text: gettext('New here?')
@@ -18,21 +18,21 @@ export class LoginPage extends PreloginPage {
                 text: gettext('Sign up'),
                 link: '/account/sign-up/'
             }
-        ]
+        ] : []
     }
 
     render() {
         this.contents = `<div class="fw-login-left">
             <h1 class="fw-login-title">${gettext("Log in")}</h1>
             ${
-                this.registrationOpen ?
+                settings.REGISTRATION_OPEN ?
                     `<p>${gettext("If you are new here, please <a href='/account/sign-up/' title='Sign up'>sign up</a> or use one of the login options below to create an account.")}</p>` +
                     (
-                        this.socialaccountProviders.length ?
+                        this.socialaccount_providers.length ?
                         `<div class="socialaccount_ballot">
                             <ul class="socialaccount_providers">
                             ${
-                                this.socialaccountProviders.map(
+                                this.socialaccount_providers.map(
                                     provider => `<li>
                                         <a title="${provider.name}" class="fw-button fw-socialaccount fw-${provider.id}"
                                             href="${provider.login_url}">
@@ -93,26 +93,47 @@ export class LoginPage extends PreloginPage {
             button => button.style.width = `${btnWidth}px`
         )
 
-        if (!this.registrationOpen) {
+        const loginSubmit = document.querySelector('#login-submit')
+        if (!loginSubmit) {
             return
         }
 
-        document.getElementById('login-submit').addEventListener('click', event => {
+        loginSubmit.addEventListener('click', event => {
             event.preventDefault()
-            document.querySelector('#non_field_errors').innerHTML = ''
-            document.querySelector('#id_login_errors').innerHTML = ''
-            document.querySelector('#id_password_errors').innerHTML = ''
 
-            const login = document.getElementById('id_login').value,
-                password = document.getElementById('id_password').value,
-                remember = document.getElementById('id_remember').checked
+            const nonFieldErrors = document.querySelector('#non_field_errors'),
+                idLogin = document.querySelector('#id_login'),
+                idLoginErrors = document.querySelector('#id_login_errors'),
+                idPassword = document.querySelector('#id_password'),
+                idPasswordErrors = document.querySelector('#id_password_errors'),
+                idRemember = document.querySelector('#id_remember'),
+                fwContents = document.querySelector('.fw-contents')
+
+            if (
+                !idLogin ||
+                !idLoginErrors ||
+                !idPassword ||
+                !idPasswordErrors ||
+                !idRemember ||
+                !fwContents
+            ) {
+                return
+            }
+
+            nonFieldErrors.innerHTML = ''
+            idLoginErrors.innerHTML = ''
+            idPasswordErrors.innerHTML = ''
+
+            const login = idLogin.value,
+                password = idPassword.value,
+                remember = idRemember.checked
             let errors = false
             if (!login.length) {
-                document.querySelector('#id_login_errors').innerHTML = `<li>${gettext('This field is required.')}</li>`
+                idLoginErrors.innerHTML = `<li>${gettext('This field is required.')}</li>`
                 errors = true
             }
             if (!password.length) {
-                document.querySelector('#id_password_errors').innerHTML = `<li>${gettext('This field is required.')}</li>`
+                idPasswordErrors.innerHTML = `<li>${gettext('This field is required.')}</li>`
                 errors = true
             }
             if (errors) {
@@ -122,7 +143,7 @@ export class LoginPage extends PreloginPage {
                 ({json}) => {
                     if (json.location === '/api/account/confirm-email/') {
                         // Email has not yet been confirmed.
-                        document.querySelector('.fw-contents').innerHTML =
+                        fwContents.innerHTML =
                             `<div class="fw-login-left">
                                 <h1 class="fw-login-title">${gettext('Verify Your E-mail Address')}</h1>
                                 <p>
@@ -143,13 +164,13 @@ export class LoginPage extends PreloginPage {
                 response => response.json().then(
                     json => {
                         json.form.errors.forEach(
-                            error => document.querySelector("#non_field_errors").innerHTML += `<li>${escapeText(error)}</li>`
+                            error => nonFieldErrors.innerHTML += `<li>${escapeText(error)}</li>`
                         )
                         json.form.fields.login.errors.forEach(
-                            error => document.querySelector('#id_login_errors').innerHTML += `<li>${escapeText(error)}</li>`
+                            error => idLoginErrors.innerHTML += `<li>${escapeText(error)}</li>`
                         )
                         json.form.fields.password.errors.forEach(
-                            error => document.querySelector('#id_password_errors').innerHTML += `<li>${escapeText(error)}</li>`
+                            error => idPasswordErrors.innerHTML += `<li>${escapeText(error)}</li>`
                         )
                     }
                 )

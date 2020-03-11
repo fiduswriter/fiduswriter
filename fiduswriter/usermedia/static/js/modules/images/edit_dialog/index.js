@@ -7,6 +7,14 @@ export class ImageEditDialog {
         this.editor = editor
         this.imageId = imageId
         this.dialog = false
+        this.copyright = this.imageId ?
+            this.imageDB.db[this.imageId].copyright :
+            {
+                holder: false,
+                year: false,
+                freeToRead: true,
+                licenses: []
+            }
     }
 
     //open a dialog for uploading an image
@@ -85,7 +93,6 @@ export class ImageEditDialog {
                 this.dialog.centerDialog()
             }
             fr.readAsDataURL(this.mediaInput)
-            document.querySelector('.figure-edit-menu').classList.remove("hide")
         })
     }
 
@@ -111,9 +118,10 @@ export class ImageEditDialog {
     saveImage() {
         const imageData = {
             title: document.querySelector('#editimage .fw-media-title').value,
+            copyright: this.copyright,
             cats: Array.from(document.querySelectorAll('#editimage .entry-cat:checked')).map(
                 el => parseInt(el.value)
-            ).join(',')
+            )
         }
         if (this.imageId) {
             imageData.id = this.imageId

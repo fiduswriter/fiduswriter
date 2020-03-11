@@ -4,7 +4,7 @@ export {
 from "./access_rights"
 export {
     contributorInputPlugin,
-    ContributorsView
+    ContributorsPartView
 }
 from "./contributor_input"
 export {
@@ -50,7 +50,8 @@ export {
 }
 from "./jump_hidden_nodes"
 export {
-    linksPlugin
+    linksPlugin,
+    getInternalTargets
 }
 from "./links"
 export {
@@ -79,7 +80,7 @@ export {
 from "./figure"
 export {
     tagInputPlugin,
-    TagsView
+    TagsPartView
 }
 from "./tag_input"
 export {
@@ -97,3 +98,13 @@ export {
     deactivateAllSelectedChanges
 }
 from "./track"
+export {
+    searchPlugin,
+    setSearchTerm,
+    getSearchMatches,
+    selectPreviousSearchMatch,
+    selectNextSearchMatch,
+    deselectSearchMatch,
+    endSearch
+}
+from "./search"

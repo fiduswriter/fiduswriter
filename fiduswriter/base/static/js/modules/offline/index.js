@@ -1,8 +1,8 @@
 import {PreloginPage} from "../prelogin"
 
 export class OfflinePage extends PreloginPage {
-    constructor({app, isFree, language, registrationOpen, staticUrl}) {
-        super({app, isFree, language, registrationOpen, staticUrl})
+    constructor({app, language}) {
+        super({app, language})
         this.title = gettext('Disconnected')
         this.contents = `<div class="fw-login-left">
             <h1 class="fw-login-title">${gettext('Disconnected')}</h1>
@@ -27,7 +27,7 @@ export class OfflinePage extends PreloginPage {
     }
 
     init() {
-        super.init().then(
+        return super.init().then(
             () => document.querySelectorAll('#lang-selection,.feedback-tab').forEach(el => el.style.visibility = 'hidden')
         )
     }

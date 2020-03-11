@@ -3,14 +3,12 @@ import {DeleteContactDialog} from "./delete_dialog"
 import {postJson, addAlert, OverviewMenuView, findTarget, whenReady, baseBodyTemplate, setDocTitle, DatatableBulk} from "../common"
 import {FeedbackTab} from "../feedback"
 import {SiteMenu} from "../menu"
-import {menuModel, bulkModel} from "./menu"
+import {menuModel, bulkMenuModel} from "./menu"
 
 export class ContactsOverview {
-    constructor({app, user, staticUrl, registrationOpen}) {
+    constructor({app, user}) {
         this.app = app
         this.user = user
-        this.staticUrl = staticUrl
-        this.registrationOpen = registrationOpen
     }
 
     init() {
@@ -26,15 +24,15 @@ export class ContactsOverview {
     }
 
     render() {
-        const dtBulk = new DatatableBulk(this, bulkModel)
+        this.dtBulk = new DatatableBulk(this, bulkMenuModel())
 
-        document.body = document.createElement('body')
-        document.body.innerHTML = baseBodyTemplate({
+        this.dom = document.createElement('body')
+        this.dom.innerHTML = baseBodyTemplate({
             contents: `<div class="fw-table-wrapper">
                 <table id="team-table" class="tablesorter fw-data-table">
                     <thead class="fw-data-table-header">
                         <tr>
-                            <td width="30">${dtBulk.getHTML()}</td>
+                            <td width="30">${this.dtBulk.getHTML()}</td>
                             <th width="350">${gettext("Contacts")}</th>
                             <th width="350">${gettext("E-mail address")}</th>
                             <th width="50" align="center">${gettext("Delete")}</th>
@@ -45,21 +43,22 @@ export class ContactsOverview {
                 </table>
             </div>`,
             user: this.user,
-            staticUrl: this.staticUrl,
             hasOverview: true
         })
+        document.body = this.dom
         setDocTitle(gettext('Team Members'), this.app)
-        const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
+        const feedbackTab = new FeedbackTab()
         feedbackTab.init()
 
-        dtBulk.init(document.querySelector('#team-table'))
+        this.dtBulk.init(
+            this.dom.querySelector('#team-table'))
     }
 
     getList() {
 
         postJson('/api/user/team/list/').then(
             ({json}) => {
-                document.querySelector('#team-table tbody').innerHTML += teammemberTemplate({members: json.team_members})
+                this.dom.querySelector('#team-table tbody').innerHTML += teammemberTemplate({members: json.team_members})
             }
         ).catch(
             error => {
@@ -70,7 +69,7 @@ export class ContactsOverview {
     }
 
     bind() {
-        document.body.addEventListener('click', event => {
+        this.dom.addEventListener('click', event => {
             const el = {}
             switch (true) {
                 case findTarget(event, '.delete-single-member', el): {
@@ -88,7 +87,7 @@ export class ContactsOverview {
     // get IDs of selected contacts
     getSelected() {
         return Array.from(
-            document.querySelectorAll('.entry-select:checked:not(:disabled)')
+            this.dom.querySelectorAll('.entry-select:checked:not(:disabled)')
         ).map(el => parseInt(el.getAttribute('data-id')))
     }
 

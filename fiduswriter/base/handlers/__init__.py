@@ -30,8 +30,7 @@ class RobotsHandler(RequestHandler):
 class DjangoStaticFilesHandler(StaticFileHandler):
 
     def initialize(self, default_filename=None):
-        super(DjangoStaticFilesHandler, self).initialize(None,
-                                                         default_filename=None)
+        super().initialize(None, default_filename=None)
 
     def validate_absolute_path(self, root, absolute_path):
         if absolute_path is False:
@@ -58,7 +57,10 @@ class DjangoStaticFilesHandler(StaticFileHandler):
 
     def set_extra_headers(self, path):
         if settings.DEBUG:
-            self.set_header('Cache-Control', 'no-cache, must-revalidate')
+            self.set_header(
+                'Cache-Control',
+                'no-store, no-cache, must-revalidate, max-age=0'
+            )
             self.set_header('Expires', '0')
             expiration = datetime.now() - timedelta(days=366)
             self.set_header('Last-Modified', expiration)
@@ -69,3 +71,30 @@ class DjangoStaticFilesHandler(StaticFileHandler):
             )
             self.set_header('Cache-Control', "max-age=" + str(86400*365*10))
             self.set_header('Last-Modified', datetime.utcnow())
+
+
+class SetupStaticFilesHandler(StaticFileHandler):
+    def set_extra_headers(self, path):
+        self.set_header(
+            'Cache-Control',
+            'no-store, no-cache, must-revalidate, max-age=0'
+        )
+        self.set_header('Expires', '0')
+        expiration = datetime.now() - timedelta(days=366)
+        self.set_header('Last-Modified', expiration)
+
+    def compute_etag(self):
+        return None
+
+    @classmethod
+    def get_absolute_path(cls, root, path):
+        # all css and other resource files, but no html files.
+        split_path = path.split('.')
+        if len(split_path) == 1 or split_path[1] == 'html':
+            adjusted_path = 'index.html'
+        else:
+            adjusted_path = path
+        return super().get_absolute_path(
+            root,
+            adjusted_path
+        )

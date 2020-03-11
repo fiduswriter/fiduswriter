@@ -34,6 +34,7 @@ export const updateDoc = function(doc, docVersion, bibliography = false) {
             doc = convertDocV22(doc)
             doc = convertDocV23(doc)
             doc = convertDocV30(doc)
+            doc = convertDocV31(doc)
             break
         case 1.1: // Fidus Writer 3.1
             doc = convertDocV11(doc)
@@ -44,6 +45,7 @@ export const updateDoc = function(doc, docVersion, bibliography = false) {
             doc = convertDocV22(doc)
             doc = convertDocV23(doc)
             doc = convertDocV30(doc)
+            doc = convertDocV31(doc)
             break
         case 1.2: // Fidus Writer 3.2
             doc = convertDocV12(doc)
@@ -53,6 +55,7 @@ export const updateDoc = function(doc, docVersion, bibliography = false) {
             doc = convertDocV22(doc)
             doc = convertDocV23(doc)
             doc = convertDocV30(doc)
+            doc = convertDocV31(doc)
             break
         case 1.3: // Fidus Writer 3.3 prerelease
             doc = convertDocV13(doc, bibliography)
@@ -61,6 +64,7 @@ export const updateDoc = function(doc, docVersion, bibliography = false) {
             doc = convertDocV22(doc)
             doc = convertDocV23(doc)
             doc = convertDocV30(doc)
+            doc = convertDocV31(doc)
             break
         case 2.0: // Fidus Writer 3.3
             doc = convertDocV20(doc)
@@ -68,26 +72,34 @@ export const updateDoc = function(doc, docVersion, bibliography = false) {
             doc = convertDocV22(doc)
             doc = convertDocV23(doc)
             doc = convertDocV30(doc)
+            doc = convertDocV31(doc)
             break
         case 2.1: // Fidus Writer 3.4
             doc = convertDocV21(doc)
             doc = convertDocV22(doc)
             doc = convertDocV23(doc)
             doc = convertDocV30(doc)
+            doc = convertDocV31(doc)
             break
         case 2.2: // Fidus Writer 3.5.7
             doc = convertDocV22(doc)
             doc = convertDocV23(doc)
             doc = convertDocV30(doc)
+            doc = convertDocV31(doc)
             break
         case 2.3: // Fidus Writer 3.5.10
             doc = convertDocV23(doc)
             doc = convertDocV30(doc)
+            doc = convertDocV31(doc)
             break
         case 3.0: // Fidus Writer 3.6
             doc = convertDocV30(doc)
+            doc = convertDocV31(doc)
             break
         case 3.1: // Fidus Writer 3.7
+            doc = convertDocV31(doc)
+            break
+        case 3.2: // Fidus Writer 3.8
             break
     }
     return doc
@@ -815,5 +827,13 @@ const convertNodeV30 = function(node) {
 const convertDocV30 = function(doc) {
     const returnDoc = JSON.parse(JSON.stringify(doc))
     convertNodeV30(returnDoc.contents)
+    return returnDoc
+}
+
+const convertDocV31 = function(doc) {
+    // Conversion adds no new requirements. Version update is required so that
+    // users don't try to open file in a previous FW file. That won't work as
+    // additional syntax has been added (copyright + cross references).
+    const returnDoc = JSON.parse(JSON.stringify(doc))
     return returnDoc
 }

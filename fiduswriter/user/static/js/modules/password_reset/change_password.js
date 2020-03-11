@@ -2,9 +2,8 @@ import {escapeText, post, get} from "../common"
 import {PreloginPage} from "../prelogin"
 
 export class PasswordResetChangePassword extends PreloginPage {
-    constructor({app, isFree, language, registrationOpen, contactEmail, staticUrl}, key = false) {
-        super({app, isFree, language, registrationOpen, staticUrl})
-        this.contactEmail = contactEmail
+    constructor({app, language}, key = false) {
+        super({app, language})
         this.title = gettext('Change Password')
         this.key = key
         // Note: We do not currently support plugins targetting only the reset password page
@@ -73,9 +72,12 @@ export class PasswordResetChangePassword extends PreloginPage {
                 return
             }
             get(`/api/account/password/reset/key/${this.key}/`).then(
-                () => post('/api/account/password/reset/key/2-set-password/', {password1, password2})
+                response => {
+                    return post(response.url, {password1, password2})
+                }
             ).then(
-                () => document.querySelector('.fw-contents').innerHTML = document.querySelector('.fw-contents').innerHTML =
+                () => {
+                    document.querySelector('.fw-contents').innerHTML = document.querySelector('.fw-contents').innerHTML =
                     `<div class="fw-login-left">
                         <h1 class="fw-login-title">${gettext('Password reset')}</h1>
                         <p>
@@ -84,6 +86,7 @@ export class PasswordResetChangePassword extends PreloginPage {
                             }
                         </p>
                     </div>`
+                }
             ).catch(
                 response => response.json().then(
                     json => {

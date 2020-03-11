@@ -35,7 +35,7 @@ export class ModCommentStore {
         // Set a timeout so that the update can be combines with other updates
         // if they happen more or less simultaneously.
         window.setTimeout(
-            () => this.mod.editor.mod.collab.docChanges.sendToCollaborators(),
+            () => this.mod.editor.mod.collab.doc.sendToCollaborators(),
             100
         )
     }
@@ -384,7 +384,13 @@ export class ModCommentStore {
             } else if (event.type == "update") {
                 this.updateLocalComment(event, false)
             } else if (event.type == "add_answer") {
-                this.addLocalAnswer(event.id, event, false)
+                this.addLocalAnswer(event.id, {
+                    answer: event.answer,
+                    id: event.answerId,
+                    date: event.date,
+                    user: event.user,
+                    username: event.username
+                }, false)
             } else if (event.type == "delete_answer") {
                 this.deleteLocalAnswer(event.id, event.answerId,
                     false)

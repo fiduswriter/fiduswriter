@@ -6,6 +6,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import ElementClickInterceptedException
 from django.conf import settings
 from testing.testcases import LiveTornadoTestCase
 from .editor_helper import EditorHelper
@@ -26,7 +28,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
     @classmethod
     def setUpClass(cls):
-        super(OneUserTwoBrowsersTests, cls).setUpClass()
+        super().setUpClass()
         driver_data = cls.get_drivers(2)
         cls.driver = driver_data["drivers"][0]
         cls.driver2 = driver_data["drivers"][1]
@@ -38,7 +40,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
     def tearDownClass(cls):
         cls.driver.quit()
         cls.driver2.quit()
-        super(OneUserTwoBrowsersTests, cls).tearDownClass()
+        super().tearDownClass()
 
     def setUp(self):
         self.user = self.create_user()
@@ -57,13 +59,6 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             '.firstChild.textContent;'
         )
 
-    def get_contents(self, driver):
-        # Contents is child 5.
-        return driver.execute_script(
-            'return window.theApp.page.view.state.doc.firstChild'
-            '.child(5).textContent;'
-        )
-
     def test_typing(self):
         """
         Test typing in collaborative mode with one user using browser windows
@@ -72,29 +67,20 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver, self.doc)
         self.load_document_editor(self.driver2, self.doc)
 
-        document_input = self.driver.find_element_by_class_name(
-            'ProseMirror'
+        title_input = self.driver.find_element_by_class_name(
+            'article-title'
         )
-        document_input2 = self.driver2.find_element_by_class_name(
-            'ProseMirror'
+        title_input2 = self.driver2.find_element_by_class_name(
+            'article-title'
         )
-
-        # Chrome with selenium has problem with focusing elements, so we use
-        # the ProseMirror internal methods for this.
-        # First start tag is length 1, so placing after first start tag is
-        # position 1
-        self.driver.execute_script(
-            'window.testCaret.setSelection(2,2)')
-        self.driver2.execute_script(
-            'window.testCaret.setSelection(2,2)')
 
         first_part = "Here is "
         second_part = "my title"
 
         for i in range(8):
-            document_input.send_keys(second_part[i])
+            title_input.send_keys(second_part[i])
             time.sleep(randrange(30, 40) / 200.0)
-            document_input2.send_keys(first_part[i])
+            title_input2.send_keys(first_part[i])
             time.sleep(randrange(30, 40) / 200.0)
 
         # Wait for the two editors to be synched
@@ -110,22 +96,17 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             self.get_title(self.driver)
         )
 
-        # Chrome with selenium has problem with focusing elements, so we use
-        # the ProseMirror internal methods for this.
-        # Original document length was 16 (1 for each start/end tag of fields
-        # with plaintext and 2 for richtext fields - abstract and contents).
-        # Cursor needs to be in last element, so -2 for last end tag.
-        # Added content is 16 characters long, so + 16.
-        # Total: 30.
-        self.driver.execute_script(
-            'window.testCaret.setSelection(33,33)')
-        self.driver2.execute_script(
-            'window.testCaret.setSelection(33,33)')
+        body_input = self.driver.find_element_by_class_name(
+            'article-body'
+        )
+        body_input2 = self.driver2.find_element_by_class_name(
+            'article-body'
+        )
 
         for char in self.TEST_TEXT:
-            document_input.send_keys(char)
+            body_input.send_keys(char)
             time.sleep(randrange(30, 40) / 200.0)
-            document_input2.send_keys(char)
+            body_input2.send_keys(char)
             time.sleep(randrange(30, 40) / 200.0)
 
         # Wait for the two editors to be synched
@@ -149,31 +130,23 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver, self.doc)
         self.load_document_editor(self.driver2, self.doc)
 
-        document_input = self.driver.find_element_by_class_name(
-            'ProseMirror'
+        title_input = self.driver.find_element_by_class_name(
+            'article-title'
         )
-        document_input2 = self.driver2.find_element_by_class_name(
-            'ProseMirror'
+        title_input2 = self.driver2.find_element_by_class_name(
+            'article-title'
         )
-        # Chrome with selenium has problem with focusing elements, so we use
-        # the ProseMirror internal methods for this.
-        # First start tag is length 1, so placing after first start tag is
-        # position 1
-        self.driver.execute_script(
-            'window.testCaret.setSelection(2,2)')
-        self.driver2.execute_script(
-            'window.testCaret.setSelection(2,2)')
 
         first_part = "Here is "
         second_part = "my title"
 
         p1 = multiprocessing.Process(
             target=self.input_text,
-            args=(document_input, second_part)
+            args=(title_input, second_part)
         )
         p2 = multiprocessing.Process(
             target=self.input_text,
-            args=(document_input2, first_part)
+            args=(title_input2, first_part)
         )
         p1.start()
         p2.start()
@@ -193,25 +166,20 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             self.get_title(self.driver)
         )
 
-        # Chrome with selenium has problem with focusing elements, so we use
-        # the ProseMirror internal methods for this.
-        # Original document length was 16 (1 for each start/end tag of fields
-        # with plaintext and 2 for richtext fields - abstract and contents).
-        # Cursor needs to be in last element, so -2 for last end tag.
-        # Added content is 16 characters long, so + 16.
-        # Total: 30.
-        self.driver.execute_script(
-            'window.testCaret.setSelection(33,33)')
-        self.driver2.execute_script(
-            'window.testCaret.setSelection(33,33)')
+        body_input = self.driver.find_element_by_class_name(
+            'article-body'
+        )
+        body_input2 = self.driver2.find_element_by_class_name(
+            'article-body'
+        )
 
         p1 = multiprocessing.Process(
             target=self.input_text,
-            args=(document_input, self.TEST_TEXT)
+            args=(body_input, self.TEST_TEXT)
         )
         p2 = multiprocessing.Process(
             target=self.input_text,
-            args=(document_input2, self.TEST_TEXT)
+            args=(body_input2, self.TEST_TEXT)
         )
         p1.start()
         p2.start()
@@ -741,8 +709,9 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def perform_delete_undo(self, driver):
-        element = driver.find_element_by_class_name('ProseMirror')
-        element.send_keys(Keys.BACKSPACE)
+        actions = ActionChains(driver)
+        actions.send_keys(Keys.BACKSPACE)
+        actions.perform()
 
         button = driver.find_element_by_xpath('//*[@title="Undo"]')
         button.click()
@@ -783,7 +752,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
-            'ProseMirror'
+            'article-title'
         )
         content.click()
 
@@ -819,13 +788,9 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         insert_button = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "insert-math"))
         )
-
         # type formula
         math_field = driver.find_element_by_class_name('math-field')
         math_field.click()
-        driver.find_element_by_class_name(
-            'ML__virtual-keyboard-toggle'
-        ).click()
 
         # wait for keyboard
         WebDriverWait(driver, self.wait_time).until(
@@ -836,7 +801,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
                 )
             )
         )
-        WebDriverWait(driver, self.wait_time).until(
+        element = WebDriverWait(driver, self.wait_time).until(
             EC.element_to_be_clickable(
                 (
                     By.CSS_SELECTOR,
@@ -844,7 +809,19 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
                 )
             )
         )
-        driver.find_element_by_css_selector('li[data-alt-keys="2"]').click()
+        try:
+            element.click()
+        except ElementClickInterceptedException:
+            time.sleep(1)
+            WebDriverWait(driver, self.wait_time).until(
+                EC.element_to_be_clickable(
+                    (
+                        By.CSS_SELECTOR,
+                        'li[data-alt-keys="2"]'
+                    )
+                )
+            ).click()
+
         driver.find_element_by_css_selector(
             'li[data-alt-keys="x-var"]'
         ).click()
@@ -852,12 +829,10 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         driver.find_element_by_css_selector('li[data-alt-keys="3"]').click()
         driver.find_element_by_css_selector('li[data-alt-keys="="]').click()
         driver.find_element_by_css_selector('li[data-alt-keys="7"]').click()
-
         # close keyboard
         driver.find_element_by_class_name(
-            'ML__virtual-keyboard-toggle'
+            'ui-dialog-titlebar'
         ).click()
-
         insert_button.click()
 
     def get_mathequation(self, driver):
@@ -893,7 +868,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 30)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
@@ -1004,6 +979,104 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             len(self.get_comment(self.driver2))
         )
 
+        # Change comment
+        self.driver.find_element_by_css_selector(
+            '.margin-box.comment .show-marginbox-options'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            '.edit-comment'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            '#comment-editor p'
+        ).send_keys('MODIFICATION')
+        self.driver.find_element_by_css_selector(
+            '.comment-is-major'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            '#comment-editor .submit'
+        ).click()
+        WebDriverWait(self.driver2, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".margin-box.comment-is-major-bgc")
+            )
+        )
+        self.assertEqual(
+            22,
+            len(self.get_comment(self.driver2))
+        )
+        self.assertEqual(
+            len(self.get_comment(self.driver)),
+            len(self.get_comment(self.driver2))
+        )
+
+        # Add comment answer
+        self.driver2.find_element_by_css_selector(
+            '.margin-box.comment'
+        ).click()
+        self.driver2.find_element_by_css_selector(
+            '#answer-editor .ProseMirror'
+        ).send_keys('My answer')
+        self.driver2.find_element_by_css_selector(
+            '.comment-answer .submit'
+        ).click()
+        comment_answer = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".comment-answer .comment-text-wrapper p")
+            )
+        )
+        assert comment_answer.text == "My answer"
+
+        # Modify comment answer
+        comment_answer.click()
+        self.driver.find_element_by_css_selector(
+            '.comment-answer .show-marginbox-options'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            '.edit-comment-answer'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            '#answer-editor p'
+        ).send_keys('\nMODIFICATION')
+        self.driver.find_element_by_css_selector(
+            '.comment-answer .submit'
+        ).click()
+        answer_addition = WebDriverWait(self.driver2, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".comment-answer .comment-text-wrapper p+p")
+            )
+        )
+        assert answer_addition.text == "MODIFICATION"
+
+        # Delete comment answer
+        answer_addition.click()
+        self.driver2.find_element_by_css_selector(
+            '.comment-answer .show-marginbox-options'
+        ).click()
+        self.driver2.find_element_by_css_selector(
+            '.delete-comment-answer'
+        ).click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.invisibility_of_element_located(
+                (By.CSS_SELECTOR, ".comment-answer")
+            )
+        )
+
+        # Delete comment
+        self.driver.find_element_by_css_selector(
+            '.margin-box.comment'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            '.margin-box.comment .show-marginbox-options'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            '.delete-comment'
+        ).click()
+        WebDriverWait(self.driver2, self.wait_time).until(
+            EC.invisibility_of_element_located(
+                (By.CSS_SELECTOR, ".margin-box.comment")
+            )
+        )
+
     def add_figure(self, driver):
         button = driver.find_element_by_xpath('//*[@title="Figure"]')
         button.click()
@@ -1029,7 +1102,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         upload_button.click()
 
         # image path
-        imagePath = os.path.join(
+        image_path = os.path.join(
             settings.PROJECT_PATH,
             'document/tests/uploads/image.png'
         )
@@ -1041,7 +1114,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
                 (By.XPATH, '//*[@id="editimage"]/div[1]/input[2]')
             )
         )
-        upload_image_url.send_keys(imagePath)
+        upload_image_url.send_keys(image_path)
 
         # click on 'Upload' button
         driver.find_element_by_xpath(
@@ -1143,6 +1216,18 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             len(self.get_caption(self.driver2))
         )
 
+        # Check if image is still there after reload
+        self.driver.refresh()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, 'div.article-body figure')
+            )
+        )
+        self.assertEqual(
+            1,
+            len(self.get_image(self.driver))
+        )
+
     def add_citation(self, driver):
         button = driver.find_element_by_xpath('//*[@title="Cite"]')
         button.click()
@@ -1231,7 +1316,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         self.add_title(self.driver)
         document_input = self.driver.find_element_by_class_name(
-            'ProseMirror'
+            'article-body'
         )
 
         # Total: 22
@@ -1249,12 +1334,9 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
-            'ProseMirror'
+            'article-body'
         )
         content.click()
-
-        self.driver2.execute_script(
-            'window.testCaret.setSelection(28,28)')
 
         p2 = multiprocessing.Process(
             target=self.add_citation,
@@ -1267,7 +1349,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.wait_for_doc_sync(self.driver, self.driver2)
 
         self.assertEqual(
-            18,
+            11,
             len(self.get_citation_within_text(self.driver2))
         )
 
@@ -1277,7 +1359,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
         self.assertEqual(
-            52,
+            63,
             len(self.get_citation_bib(self.driver))
         )
 
@@ -1285,3 +1367,51 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             len(self.get_citation_bib(self.driver)),
             len(self.get_citation_bib(self.driver2))
         )
+
+        # We delete the citation again
+        ActionChains(self.driver).double_click(
+            self.driver.find_element_by_css_selector(
+                'div.article-body span.citation'
+            )
+        ).send_keys(
+            Keys.BACKSPACE
+        ).perform()
+
+        self.wait_for_doc_sync(self.driver, self.driver2)
+
+        self.assertEqual(
+            len(self.driver2.find_elements_by_css_selector(
+                'div.article-body span.citation'
+            )),
+            0
+        )
+
+        self.assertEqual(
+            0,
+            len(self.get_citation_bib(self.driver))
+        )
+
+        self.assertEqual(
+            len(self.get_citation_bib(self.driver)),
+            len(self.get_citation_bib(self.driver2))
+        )
+
+    def test_chat(self):
+        "Test whether chat messages can be delivered"
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
+        self.driver.find_element_by_id(
+            'messageform'
+        ).click()
+        actions = ActionChains(self.driver)
+        actions.send_keys('hello\n')
+        actions.perform()
+        message_body = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "message-body"))
+        )
+        assert message_body.text == "hello"
+
+        message_body2 = WebDriverWait(self.driver2, self.wait_time).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "message-body"))
+        )
+        assert message_body2.text == "hello"

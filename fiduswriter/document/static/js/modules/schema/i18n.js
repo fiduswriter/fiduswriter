@@ -51,7 +51,7 @@ export const BIBLIOGRAPHY_HEADERS = {
     'uk': 'Бібліографія'
 }
 
-export const FIGURE = {
+const FIGURE = {
     'af-ZA': 'Figuur',
     'sq-AL': 'figurë',
     'ar': 'الشكل',
@@ -73,9 +73,9 @@ export const FIGURE = {
     'eo': 'Figuro',
     'fr': 'Figure',
     'gl': 'Figura',
-    'de-DE': 'Figur',
-    'de-AU': 'Figur',
-    'de-CH': 'Figur',
+    'de-DE': 'Abbildung',
+    'de-AU': 'Abbildung',
+    'de-CH': 'Abbildung',
     'el': 'Φιγούρα',
     'he': 'דמות',
     'is': 'Mynd',
@@ -105,7 +105,7 @@ export const FIGURE = {
 }
 
 
-export const TABLE = {
+const TABLE = {
     'af-ZA': 'Tabel',
     'sq-AL': 'tabelë',
     'ar': 'الطاولة',
@@ -158,7 +158,7 @@ export const TABLE = {
     'uk': 'Таблиця'
 }
 
-export const PHOTO = {
+const PHOTO = {
     'af-ZA': 'Foto',
     'sq-AL': 'Foto',
     'ar': 'صورة فوتوغرافية',
@@ -213,7 +213,7 @@ export const PHOTO = {
 
 
 
-export const NONE = {
+const NONE = {
     'af-ZA': 'Geen',
     'sq-AL': 'Asnje',
     'ar': 'لا شيء',

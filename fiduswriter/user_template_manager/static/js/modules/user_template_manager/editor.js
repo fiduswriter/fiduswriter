@@ -3,11 +3,11 @@ import {whenReady, postJson, setDocTitle, findTarget, post, addAlert, ensureCSS}
 import {FeedbackTab} from "../feedback"
 
 export class DocTemplatesEditor {
-    constructor({app, staticUrl, user}, idString) {
+    constructor({app, user}, idString) {
         this.app = app
-        this.staticUrl = staticUrl
         this.user = user
-        this.idString = idString
+        this.id = parseInt(idString)
+        this.citationStyles = false
     }
 
     init() {
@@ -15,11 +15,16 @@ export class DocTemplatesEditor {
             'errorlist.css',
             'editor.css',
             'user_template_manager.css'
-        ], this.staticUrl)
-        return postJson('/api/user_template_manager/get/', {id: this.idString}).then(
+        ])
+        return this.app.csl.getStyles().then(
+            styles => {
+                this.citationStyles = styles
+                return postJson('/api/user_template_manager/get/', {id: this.id})
+            }
+        ).then(
             ({json}) => {
                 this.template = json.template
-                this.id = json.template.id
+                this.id = json.template.id // Updated if previously 0
                 this.template.definition = JSON.parse(this.template.definition)
 
                 return whenReady()
@@ -28,13 +33,13 @@ export class DocTemplatesEditor {
             () => {
                 this.render()
                 this.templateDesigner = new DocumentTemplateDesigner(
-                    {staticUrl: this.staticUrl},
                     this.id,
                     this.template.title,
                     this.template.definition,
                     this.template.document_styles,
+                    this.citationStyles,
                     this.template.export_templates,
-                    document.body.querySelector('#template-editor')
+                    this.dom.querySelector('#template-editor')
                 )
                 this.templateDesigner.init()
                 this.bind()
@@ -43,8 +48,9 @@ export class DocTemplatesEditor {
     }
 
     render() {
-        document.body = document.createElement('body')
-        document.body.innerHTML =
+        this.dom = document.createElement('body')
+        this.dom.classList.add('scrollable')
+        this.dom.innerHTML =
         `<div id="wait" class="">
             <i class="fa fa-spinner fa-pulse"></i>
         </div>
@@ -72,17 +78,18 @@ export class DocTemplatesEditor {
                 </div>
             </div>
         </div>`
+        document.body = this.dom
         setDocTitle(gettext('Template Editor'), this.app)
-        const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
+        const feedbackTab = new FeedbackTab()
         feedbackTab.init()
     }
 
     showErrors(errors) {
-        document.querySelector('.errorlist').innerHTML = Object.values(errors).map(error => `<li>${error}</li>`).join('')
+        this.dom.querySelector('.errorlist').innerHTML = Object.values(errors).map(error => `<li>${error}</li>`).join('')
     }
 
     save() {
-        document.querySelector('.errorlist').innerHTML = ''
+        this.dom.querySelector('.errorlist').innerHTML = ''
         const {valid, value, errors, import_id, title} = this.templateDesigner.getCurrentValue()
         if (!valid) {
             this.showErrors(errors)
@@ -99,7 +106,7 @@ export class DocTemplatesEditor {
     }
 
     bind() {
-        document.body.addEventListener('click', event => {
+        this.dom.addEventListener('click', event => {
             const el = {}
             switch (true) {
                 case findTarget(event, 'button.save', el):

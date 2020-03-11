@@ -16,10 +16,8 @@ export class SelectionMenuView {
         this.dd = new DiffDOM({
             valueDiffing: false
         })
-        this.selectionMenuEl = document.querySelector('#selection-menu').firstElementChild
         this.openedMenu = false
         this.listeners = {}
-
 
         this.bindEvents()
         this.update()

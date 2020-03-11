@@ -6,5 +6,5 @@ export const messageTemplate = ({message, theChatter}) =>
             <h5 class="comment-user-name">${escapeText(theChatter.name)}</h5>
             <p class="comment-date">${localizeDate(new Date())}</p>
         </div>
-        ${escapeText(message.body)}
+        <div class="message-body">${escapeText(message.body)}</div>
     </div>`

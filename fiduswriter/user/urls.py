@@ -11,6 +11,8 @@ urlpatterns = [
         views.list_team_members,
         name='list_team_members'
     ),
+    # Outdated but we need it to allow for update of 3.7 instances.
+    # Can be removed in 3.9.
     url(
         '^info/$',
         views.info,
@@ -34,11 +36,6 @@ urlpatterns = [
         '^teammember/add',
         views.add_team_member,
         name='add_team_member'
-    ),
-    url(
-        '^teammember/edit',
-        views.change_team_member_roles,
-        name='change_team_member_roles'
     ),
     url(
         '^teammember/remove',

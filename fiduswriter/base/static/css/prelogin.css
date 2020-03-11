@@ -1,5 +1,5 @@
 .fw-header.prelogin {
-    border-bottom: solid 1px #8e8e8e;
+    border-bottom: solid 1px var(--cs-white-border);
     height: 123px;
 }
 
@@ -12,10 +12,20 @@
 .prelogin #header-nav {
     position: absolute;
     right: 40px;
-    top: 2px;
+    top: 38px;
     font-size: 14px;
-    color: #fff;
+    color: var(--cs-5-text);
     line-height: 34px;
+}
+
+@media (max-width: 540px) {
+    .prelogin #header-nav {
+        top: 2px;
+    }
+}
+
+.submit-wrapper .fw-button {
+    margin-right: 15px;
 }
 
 .prelogin #header-nav .fw-button {
@@ -23,12 +33,12 @@
 }
 
 .fw-contents.prelogin {
-    top: 195px;
-    padding-bottom: 150px;
+    top: 45px;
+    padding-bottom: 160px;
     line-height: 2em;
 }
 
-.fw-contents.prelogin:after {
+.fw-contents.prelogin::after {
     display: block;
     content: ' ';
     clear: both;
@@ -37,7 +47,7 @@
 .fw-login-left {
     width: 340px;
     float: left;
-    margin-bottom: 100px;
+    margin-bottom: 65px;
 }
 
 .fw-login-title {
@@ -64,9 +74,10 @@
 .fw-login-right {
     width: 280px;
     padding: 25px;
-    margin: 0 0 0 auto;
-    background-color: #f9f9f9;
-    border: solid 1px #d3d3d3;
+    float: right;
+    background-color: var(--cs-light-background);
+    border: solid 1px var(--cs-light-border);
+    color: var(--cs-light-text);
 }
 
 .input-wrapper label {
@@ -88,12 +99,8 @@
 
 .submit-wrapper label {
     font-size: 14px;
-    color: #585757;
+    color: var(--cs-light-text-secondary);
     margin-left: 4px;
-}
-
-.submit-wrapper .fw-button {
-    margin-right: 15px;
 }
 
 #lost-passwd {
@@ -108,21 +115,15 @@ footer.prelogin {
     bottom: 0;
     width: 100%;
     height: auto;
-    border-top: solid 1px #cecece;
-    background-color: #fff;
+    border-top: solid 1px var(--cs-white-border);
+    background-color: var(--cs-white-background);
     text-align: right;
     padding: 27px 0;
     z-index: 2;
 }
 
 .fw-footer-links {
-    position: absolute;
-    left: 40px;
-    top: 0;
-}
-
-.prelogin .fw-footer-links {
-    top: 8px;
+    float: left;
 }
 
 .fw-footer-links > li {
@@ -135,9 +136,14 @@ footer.prelogin {
 }
 
 .fw-footer-links > li a {
-    color: #2c2723;
+    color: var(--cs-1-text);
 }
 
 .fw-footer-links > li a:hover {
-    color: #b73717;
+    color: var(--cs-1-hover);
+}
+
+#lang-selection {
+    vertical-align: top;
+    margin-bottom: 10px;
 }

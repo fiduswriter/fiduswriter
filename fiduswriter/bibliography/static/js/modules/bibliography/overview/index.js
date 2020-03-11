@@ -7,15 +7,14 @@ import {BibTypeTitles} from "../form/strings"
 import {SiteMenu} from "../../menu"
 import {OverviewMenuView, findTarget, whenReady, Dialog, baseBodyTemplate, ensureCSS, setDocTitle, escapeText, DatatableBulk} from "../../common"
 import {FeedbackTab} from "../../feedback"
-import {menuModel, bulkModel} from "./menu"
+import {menuModel, bulkMenuModel} from "./menu"
 import * as plugins from "../../../plugins/bibliography_overview"
 
 export class BibliographyOverview {
 
-    constructor({app, user, staticUrl}) {
+    constructor({app, user}) {
         this.app = app
         this.user = user
-        this.staticUrl = staticUrl
     }
 
     /** Bind the init function to doc loading.
@@ -36,21 +35,28 @@ export class BibliographyOverview {
     }
 
     render() {
-        document.body = document.createElement('body')
-        document.body.innerHTML = baseBodyTemplate({
+        this.dom = document.createElement('body')
+        this.dom.innerHTML = baseBodyTemplate({
             contents: '',
             user: this.user,
-            staticUrl: this.staticUrl,
             hasOverview: true
         })
+        document.body = this.dom
         ensureCSS([
             'bibliography.css',
             'prosemirror.css',
             'inline_tools.css'
-        ], this.staticUrl)
+        ])
         setDocTitle(gettext('Bibliography Manager'), this.app)
-        const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
+        const feedbackTab = new FeedbackTab()
         feedbackTab.init()
+    }
+
+    onResize() {
+        if (!this.table) {
+            return
+        }
+        this.initTable(Object.keys(this.app.bibDB.db))
     }
 
 
@@ -60,27 +66,38 @@ export class BibliographyOverview {
         tableEl.id = "bibliography"
         tableEl.classList.add('fw-data-table')
         tableEl.classList.add('fw-large')
-        document.querySelector('.fw-contents').appendChild(tableEl)
+        this.dom.querySelector('.fw-contents').innerHTML = ''
+        this.dom.querySelector('.fw-contents').appendChild(tableEl)
 
-        const dtBulk = new DatatableBulk(this, bulkModel)
+        this.dtBulk = new DatatableBulk(this, bulkMenuModel())
+
+        const hiddenCols = [0]
+
+        if (window.innerWidth < 500) {
+            hiddenCols.push(1)
+            if (window.innerWidth < 450) {
+                hiddenCols.push(3)
+            }
+        }
 
         this.table = new DataTable(tableEl, {
             searchable: true,
             paging: false,
-            scrollY: "calc(100vh - 240px)",
+            scrollY: `${Math.max(window.innerHeight - 360, 100)}px`,
             labels: {
                 noRows: gettext("No sources registered") // Message shown when there are no search results
             },
             layout: {
-                top: ""
+                top: "",
+                bottom: ""
             },
             data: {
-                headings: ['', dtBulk.getHTML(), gettext("Title"), gettext("Sourcetype"), gettext("Author"), gettext("Published"), ''],
+                headings: ['', this.dtBulk.getHTML(), gettext("Title"), gettext("Sourcetype"), gettext("Author"), gettext("Published"), ''],
                 data: ids.map(id => this.createTableRow(id))
             },
             columns: [
                 {
-                    select: 0,
+                    select: hiddenCols,
                     hidden: true
                 },
                 {
@@ -95,7 +112,7 @@ export class BibliographyOverview {
             this.lastSort = {column, dir}
         })
 
-        dtBulk.init(this.table.table)
+        this.dtBulk.init(this.table.table)
     }
 
     /** Adds a list of bibliography categories to current list of bibliography categories.
@@ -110,7 +127,7 @@ export class BibliographyOverview {
             title: cat.category_title,
             type: 'category',
             action: _overview => {
-                const trs = document.querySelectorAll('#bibliography > tbody > tr')
+                const trs = this.dom.querySelectorAll('#bibliography > tbody > tr')
                 trs.forEach(tr => {
                     if (tr.querySelector('.fw-data-table-title').classList.contains(`cat_${cat.id}`)) {
                         tr.style.display = ''
@@ -179,7 +196,7 @@ export class BibliographyOverview {
                 classes: "fw-dark",
                 click: () => {
                     const cats = {ids:[], titles:[]}
-                    document.querySelectorAll('#editCategories .category-form').forEach(
+                    this.dom.querySelectorAll('#editCategories .category-form').forEach(
                         el => {
                             const title = el.value.trim()
                             if (title.length) {
@@ -219,7 +236,7 @@ export class BibliographyOverview {
         const buttons = [
             {
                 text: gettext('Delete'),
-                class: "fw-dark",
+                classes: "fw-dark",
                 click: () => {
                     this.deleteBibEntries(ids)
                     dialog.close()
@@ -234,7 +251,6 @@ export class BibliographyOverview {
             id: 'confirmdeletion',
             title: gettext('Confirm deletion'),
             body: `<p>${gettext('Delete the bibliography item(s)')}?</p>`,
-            height: 180,
             buttons,
             icon: 'exclamation-triangle'
         })
@@ -244,7 +260,7 @@ export class BibliographyOverview {
     // get IDs of selected bib entries
     getSelected() {
         return Array.from(
-            document.querySelectorAll('.entry-select:checked:not(:disabled)')
+            this.dom.querySelectorAll('.entry-select:checked:not(:disabled)')
         ).map(el => parseInt(el.getAttribute('data-id')))
     }
 
@@ -264,7 +280,7 @@ export class BibliographyOverview {
      * @function bibEvents
           */
     bindEvents() {
-        document.body.addEventListener('click', event => {
+        this.dom.addEventListener('click', event => {
             const el = {}
             switch (true) {
                 case findTarget(event, '.delete-bib', el): {
@@ -308,7 +324,7 @@ export class BibliographyOverview {
         })
 
         // Allow pasting of bibtex data.
-        document.body.addEventListener('paste', event => {
+        this.dom.addEventListener('paste', event => {
             if (event.target.nodeName === 'INPUT') {
                 // We are inside of an input element, cancel.
                 return false
@@ -318,20 +334,20 @@ export class BibliographyOverview {
         })
 
         // The two drag events are needed to allow dropping
-        document.body.addEventListener('dragover', event => {
+        this.dom.addEventListener('dragover', event => {
             if (event.dataTransfer.types.includes('text/plain')) {
                 event.preventDefault()
             }
         })
 
-        document.body.addEventListener('dragenter', event => {
+        this.dom.addEventListener('dragenter', event => {
             if (event.dataTransfer.types.includes('text/plain')) {
                 event.preventDefault()
             }
         })
 
         // Allow dropping of bibtex data
-        document.body.addEventListener('drop', event => {
+        this.dom.addEventListener('drop', event => {
             if (event.target.nodeName === 'INPUT') {
                 // We are inside of an input element, cancel.
                 return false
@@ -348,8 +364,7 @@ export class BibliographyOverview {
                 text,
                 this.app.bibDB,
                 newIds => this.updateTable(newIds),
-                false,
-                this.staticUrl
+                false
             )
             importer.init()
         })

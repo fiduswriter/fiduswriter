@@ -45,6 +45,7 @@ ADMINS = (
 
 # Whether anyone surfing to the site can open an account.
 REGISTRATION_OPEN = True
+# ACCOUNT_EMAIL_VERIFICATION = 'optional'
 
 # This determines whether there is a star labeled "Free" on the login page
 IS_FREE = True

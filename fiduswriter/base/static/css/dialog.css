@@ -5,7 +5,7 @@
     z-index: 101;
     border-image: initial;
     overflow: hidden;
-    outline: 0px;
+    outline: 0;
     padding: 0 19px 19px;
     box-shadow: none;
     border: 0 none;
@@ -20,8 +20,11 @@
     position: relative;
     margin: 0 -19px;
     padding: 19px 40px 19px 19px;
-    background: #605f5f;
-    color: white;
+    background: var(--cs-dark-background);
+    color: var(--cs-dark-text);
+    cursor: move; /* fallback if grab cursor is unsupported */
+    cursor: grab;
+    user-select: none;
 }
 
 .ui-dialog-title {
@@ -32,11 +35,11 @@
 
 .ui-dialog-titlebar-close {
     right: 19px;
-    color: white;
+    color: var(--cs-dark-text);
 }
 
 .ui-dialog-titlebar-close:hover {
-    color: #e0e0e0;
+    color: var(--cs-dark-hover);
 }
 
 .ui-button-icon-only {
@@ -58,11 +61,13 @@
     position: relative;
     margin-top: 24px;
     overflow-y: auto;
-    max-height: calc(100vh - 206px);
+    max-height: calc(100vh - 60px);
     min-height: 20px;
+    max-width: calc(100vw - 38px);
+    overflow-x: hidden;
 }
 
-.input-list-wrapper tr:last-child td {
+.input-list-wrapper > tbody > tr:last-child > td {
     padding-bottom: 0;
 }
 
@@ -76,7 +81,8 @@
     display: inline;
 }
 
-.entry-field input[type=text] {
+.entry-field input[type=text],
+.entry-field input[type=number] {
     margin: 0;
 }
 
@@ -96,11 +102,11 @@
 
 .ui-widget-overlay {
     position: fixed;
-    left: 0px;
-    top: 0px;
+    left: 0;
+    top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(170, 170, 170, 0.3);
+    background-color: rgba(var(--overlay-color));
     z-index: 100;
 }
 

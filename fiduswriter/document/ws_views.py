@@ -1,26 +1,31 @@
 from builtins import str
 import uuid
 import atexit
+import json
 from time import mktime, time
 from copy import deepcopy
 
 from jsonpatch import apply_patch, JsonPatchConflict, JsonPointerException
 
+from django.db.utils import DatabaseError
 from document.helpers.session_user_info import SessionUserInfo
 from document.helpers.serializers import PythonWithURLSerializer
 from base.ws_handler import BaseWebSocketHandler
 import logging
 from tornado.escape import json_decode, json_encode
 from document.models import COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \
-    CAN_COMMUNICATE, FW_DOCUMENT_VERSION
+    CAN_COMMUNICATE, FW_DOCUMENT_VERSION, DocumentTemplate
 from usermedia.models import Image, DocumentImage, UserImage
 from user.util import get_user_avatar_url
+
+from django.db.models import F, Q
 
 logger = logging.getLogger(__name__)
 
 
 class WebSocket(BaseWebSocketHandler):
     sessions = dict()
+    history_length = 1000  # Only keep the last 1000 diffs
 
     def open(self, arg):
         super().open(arg)
@@ -97,12 +102,24 @@ class WebSocket(BaseWebSocketHandler):
             use_natural_foreign_keys=True,
             fields=['title', 'slug', 'contents', 'documentstylefile_set']
         )
+        document_templates = {}
+        for obj in DocumentTemplate.objects.filter(
+            Q(user=self.user) | Q(user=None)
+        ).order_by(F('user').desc(nulls_first=True)):
+            document_templates[obj.import_id] = {
+                'title': obj.title,
+                'id': obj.id
+            }
 
         response['styles'] = {
             'export_templates': [obj['fields'] for obj in export_temps],
-            'document_styles': [obj['fields'] for obj in document_styles]
+            'document_styles': [obj['fields'] for obj in document_styles],
+            'document_templates': document_templates
         }
         self.send_message(response)
+
+    def unfixable(self):
+        self.send_document()
 
     def send_document(self):
         response = dict()
@@ -133,6 +150,7 @@ class WebSocket(BaseWebSocketHandler):
             field_obj = {
                 'id': image.id,
                 'title': dimage.title,
+                'copyright': json.loads(dimage.copyright),
                 'image': image.image.url,
                 'file_type': image.file_type,
                 'added': mktime(image.added.timetuple()) * 1000,
@@ -223,15 +241,17 @@ class WebSocket(BaseWebSocketHandler):
                 doc_image = DocumentImage.objects.filter(
                     document_id=self.doc["id"],
                     image_id=id
-                )
-                if doc_image.exists():
+                ).first()
+                if doc_image:
                     doc_image.title = iu["image"]["title"]
+                    doc_image.copyright = json.dumps(iu["image"]["copyright"])
                     doc_image.save()
                 else:
                     DocumentImage.objects.create(
                         document_id=self.doc["id"],
                         image_id=id,
-                        title=iu["image"]["title"]
+                        title=iu["image"]["title"],
+                        copyright=json.dumps(iu["image"]["copyright"])
                     )
             elif iu["type"] == "delete":
                 DocumentImage.objects.filter(
@@ -342,8 +362,9 @@ class WebSocket(BaseWebSocketHandler):
             return
         if pv == dv:
             self.doc["last_diffs"].append(message)
-            # Only keep the last 1000 diffs
-            self.doc["last_diffs"] = self.doc["last_diffs"][-1000:]
+            self.doc["last_diffs"] = self.doc[
+                "last_diffs"
+            ][-self.history_length:]
             self.doc['version'] += 1
             if "jd" in message:  # jd = json diff
                 try:
@@ -356,7 +377,7 @@ class WebSocket(BaseWebSocketHandler):
                     logger.exception("Cannot apply json diff.")
                     logger.error(json_encode(message))
                     logger.error(json_encode(self.doc['contents']))
-                    self.send_document()
+                    self.unfixable()
                 # The json diff is only needed by the python backend which does
                 # not understand the steps. It can therefore be removed before
                 # broadcast to other clients.
@@ -391,7 +412,7 @@ class WebSocket(BaseWebSocketHandler):
             else:
                 logger.debug('unfixable')
                 # Client has a version that is too old to be fixed
-                self.send_document()
+                self.unfixable()
         else:
             # Client has a higher version than server. Something is fishy!
             logger.debug('unfixable')
@@ -419,7 +440,7 @@ class WebSocket(BaseWebSocketHandler):
         else:
             logger.debug('unfixable')
             # Client has a version that is too old
-            self.send_document()
+            self.unfixable()
             return
 
     def can_update_document(self):
@@ -495,7 +516,7 @@ class WebSocket(BaseWebSocketHandler):
                         # The reviewer should not receive comments updates from
                         # others than themselves, so we remove the comments
                         # from the copy of the message sent to the reviewer
-                        # that are not from them. We still need to sned the
+                        # that are not from them. We still need to send the
                         # rest of the message as it may contain other diff
                         # information.
                         message = deepcopy(message)
@@ -527,7 +548,24 @@ class WebSocket(BaseWebSocketHandler):
         doc_db.bibliography = json_encode(doc['bibliography'])
         logger.debug('saving document # %d' % doc_db.id)
         logger.debug('version %d' % doc_db.version)
-        doc_db.save()
+        try:
+            # this try block is to avoid a db exception
+            # in case the doc has been deleted from the db
+            # in fiduswriter the owner of a doc could delete a doc
+            # while an invited writer is editing the same doc
+            doc_db.save(update_fields=[
+                        'title',
+                        'version',
+                        'contents',
+                        'last_diffs',
+                        'comments',
+                        'bibliography'])
+        except DatabaseError as e:
+            expected_msg = 'Save with update_fields did not affect any rows.'
+            if str(e) == expected_msg:
+                doc_db.save()
+            else:
+                raise e
 
     @classmethod
     def save_all_docs(cls):

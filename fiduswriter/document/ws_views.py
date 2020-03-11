@@ -571,10 +571,12 @@ class WebSocket(BaseWebSocketHandler):
     def __insert_document(cls, doc: Document) -> None:
         """
         Purpose:
-        during plugin tests we experienced Integrity error at the end of tests
-         this exception occurs while handling another exception, so in order to
-         have a clean tests output we raise the exception in a way we don't
-         output misleading error messages related to different exceptions
+        during plugin tests we experienced Integrity errors
+         at the end of tests.
+        This exception occurs while handling another exception,
+         so in order to have a clean tests output
+          we raise the exception in a way we don't output
+           misleading error messages related to different exceptions
 
         :param doc: socket document model instance
         :return: None

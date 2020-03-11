@@ -17,7 +17,7 @@ export class citeprocSys {
     retrieveItem(id) {
         if (!this.items[id]) {
             if (this.bibDB.db[id]) {
-                const cslGetter = new CSLExporter(this.bibDB.db, [id], {escapeText: true})
+                const cslGetter = new CSLExporter(this.bibDB.db, [id])
                 const cslOutput = cslGetter.parse()
                 Object.assign(this.items, cslOutput)
             } else {

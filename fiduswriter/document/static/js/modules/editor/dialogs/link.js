@@ -24,10 +24,12 @@ export class LinkDialog {
         }
         this.internalTargets = getInternalTargets(
             this.editor.view.state,
+            this.editor.view.state.doc.firstChild.attrs.language,
             'main'
         ).concat(
             getInternalTargets(
                 this.editor.mod.footnotes.fnEditor.view.state,
+                this.editor.view.state.doc.firstChild.attrs.language,
                 'foot'
             )
         )

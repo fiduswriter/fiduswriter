@@ -180,24 +180,30 @@ RIGHTS_CHOICES = (
     ('write', 'Writer'),
     # Can write contents and can read+write comments.
     # Can chat with collaborators.
+    # Has read access to revisions.
     ('write-tracked', 'Write with tracked changes'),
     # Can write tracked contents and can read/write comments.
     # Cannot turn off tracked changes.
     # Can chat with collaborators.
+    # Has read access to revisions.
     ('comment', 'Commentator'),
     # Can read contents and can read+write comments.
     # Can chat with collaborators.
+    # Has read access to revisions.
     ('review', 'Reviewer'),
     # Can read the contents and can read/write his own comments.
     # Comments by users with this access right only show the user's
     # numeric ID, not their username.
     # Cannot chat with collaborators nor see that they are connected.
+    # Has no access to revisions.
     ('read', 'Reader'),
     # Can read contents, including comments
     # Can chat with collaborators.
+    # Has read access to revisions.
     ('read-without-comments', 'Reader without comment access'),
     # Can read contents, but not the comments.
     # Cannot chat with collaborators.
+    # Has no access to revisions.
 )
 
 # Editor and Reviewer can only comment and not edit document

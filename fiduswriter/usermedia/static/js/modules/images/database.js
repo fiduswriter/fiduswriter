@@ -41,7 +41,7 @@ export class ImageDB {
             ({json}) => {
                 deactivateWait()
                 if (Object.keys(json.errormsg).length) {
-                    return Promise.reject(new Error(json.errormsg))
+                    return Promise.reject(new Error(json.errormsg.error))
                 } else {
                     this.db[json.values.id] = json.values
                     return json.values.id
@@ -49,7 +49,12 @@ export class ImageDB {
             }
         ).catch(
             error => {
-                addAlert('error', gettext('Could not save image'))
+                if(error.message) {
+                    addAlert('error', gettext(error.message))
+                }
+                else{
+                    addAlert('error', gettext(error.statusText))
+                }
                 deactivateWait()
                 throw (error)
             }

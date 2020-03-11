@@ -570,9 +570,11 @@ class WebSocket(BaseWebSocketHandler):
     @classmethod
     def __insert_document(cls, doc: Document) -> None:
         """
-        Purpose: during plugin tests we experienced Integrity error at the end of tests.
-        this exception occurs while handling another exception, so in order to have a clean tests output
-        we raise the exception in a way we don t output misleading error messages related to different exceptions
+        Purpose:
+        during plugin tests we experienced Integrity error at the end of tests
+         this exception occurs while handling another exception, so in order to
+         have a clean tests output we raise the exception in a way we don't
+         output misleading error messages related to different exceptions
 
         :param doc: socket document model instance
         :return: None
@@ -582,7 +584,8 @@ class WebSocket(BaseWebSocketHandler):
             doc.save()
         except IntegrityError as e:
             raise IntegrityError(
-                'plugin test error when we try to save a doc already deleted along with the rest of db data so it '
+                'plugin test error when we try to save a doc already deleted '
+                'along with the rest of db data so it '
                 'raises an Integrity error: {}'.format(e)) from None
 
     @classmethod

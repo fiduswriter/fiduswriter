@@ -40,10 +40,8 @@ export class ImageDB {
         ).then(
             ({json}) => {
                 deactivateWait()
-                console.log("json ", json)
                 if (Object.keys(json.errormsg).length) {
                     return Promise.reject(new Error(json.errormsg.error))
-
                 } else {
                     this.db[json.values.id] = json.values
                     return json.values.id
@@ -51,14 +49,12 @@ export class ImageDB {
             }
         ).catch(
             error => {
-
                 if(error.message) {
                     addAlert('error', gettext(error.message))
                 }
                 else{
                     addAlert('error', gettext(error.statusText))
                 }
-
                 deactivateWait()
                 throw (error)
             }

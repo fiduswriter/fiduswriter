@@ -597,8 +597,7 @@ export const toolbarModel = () => ({
                 if (
                     READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
                     COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
-                    elementDisabled(editor, 'figure') ||
-                    !editor.ws.isOnline()
+                    elementDisabled(editor, 'figure')
                 ) {
                     return true
                 }

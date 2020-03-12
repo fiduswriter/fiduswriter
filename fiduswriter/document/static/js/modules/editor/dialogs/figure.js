@@ -230,7 +230,7 @@ export class FigureDialog {
                 width: this.width,
                 figureCategory: this.figureCategory,
                 caption: this.caption,
-                id: randomFigureId()
+                id: this.insideFigure ? this.node.attrs.id : randomFigureId()
             })
         )
         this.editor.currentView.dispatch(tr)

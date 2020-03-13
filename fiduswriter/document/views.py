@@ -19,7 +19,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from user.util import get_user_avatar_url
 from document.models import Document, AccessRight, DocumentRevision, \
     DocumentTemplate, AccessRightInvite, CAN_UPDATE_DOCUMENT, \
-    FW_DOCUMENT_VERSION
+    CAN_COMMUNICATE, FW_DOCUMENT_VERSION
 from usermedia.models import DocumentImage, Image
 from bibliography.models import Entry
 from document.helpers.serializers import PythonWithURLSerializer
@@ -83,16 +83,26 @@ def documents_list(request):
                 user=request.user,
                 document=document
             ).rights
-        revisions = DocumentRevision.objects.filter(document=document)
-        revision_list = []
-        for revision in revisions:
-            revision_list.append({
-                'date': time.mktime(revision.date.utctimetuple()),
-                'note': revision.note,
-                'file_name': revision.file_name,
-                'pk': revision.pk
-            })
-
+        if (
+            request.user.is_staff or
+            document.owner == request.user or
+            AccessRight.objects.filter(
+                document=document,
+                user=request.user,
+                rights__in=CAN_COMMUNICATE
+            ).first()
+        ):
+            revisions = DocumentRevision.objects.filter(document=document)
+            revision_list = []
+            for revision in revisions:
+                revision_list.append({
+                    'date': time.mktime(revision.date.utctimetuple()),
+                    'note': revision.note,
+                    'file_name': revision.file_name,
+                    'pk': revision.pk
+                })
+        else:
+            revision_list = []
         added = time.mktime(document.added.utctimetuple())
         updated = time.mktime(document.updated.utctimetuple())
         is_owner = False
@@ -730,12 +740,12 @@ def import_doc(request):
     # creating a new one.
     document = Document.objects.get(id=int(doc_id))
     if (
-        document.owner != request.user and
-        len(AccessRight.objects.filter(
+        document.owner != request.user and not
+        AccessRight.objects.filter(
             document_id=doc_id,
             user_id=request.user.id,
             rights__in=CAN_UPDATE_DOCUMENT
-        )) == 0
+        ).first()
     ):
         response['error'] = 'No access to file'
         status = 403
@@ -799,20 +809,25 @@ def upload_revision(request):
 # Download a revision that was previously uploaded
 @login_required
 def get_revision(request, revision_id):
-    if request.user.is_staff:
-        revision = DocumentRevision.objects.get(pk=int(revision_id))
-    else:
-        revision = DocumentRevision.objects.get(
-            pk=int(revision_id),
-            document__owner=request.user
+    revision = DocumentRevision.objects.filter(pk=int(revision_id)).first()
+    if revision and (
+        request.user.is_staff or
+        revision.document.owner == request.user or
+        AccessRight.objects.filter(
+            document=revision.document,
+            user=request.user,
+            rights__in=CAN_COMMUNICATE
+        ).first()
+    ):
+        http_response = HttpResponse(
+            revision.file_object.file,
+            content_type='application/zip; charset=x-user-defined',
+            status=200
         )
-    http_response = HttpResponse(
-        revision.file_object.file,
-        content_type='application/zip; charset=x-user-defined',
-        status=200
-    )
-    http_response[
-        'Content-Disposition'] = 'attachment; filename=some_name.zip'
+        http_response[
+            'Content-Disposition'] = 'attachment; filename=some_name.zip'
+    else:
+        http_response = HttpResponse(status=404)
     return http_response
 
 

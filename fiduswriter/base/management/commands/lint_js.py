@@ -27,6 +27,7 @@ class Command(BaseCommand):
                 settings.PROJECT_PATH,
                 ".transpile/node_modules/.bin/eslint"
             ),
+            "--max-warnings=0",
             "--ignore-path",
             os.path.join(
                 settings.SRC_PATH,

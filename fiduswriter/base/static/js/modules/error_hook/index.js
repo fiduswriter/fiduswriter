@@ -1,3 +1,5 @@
+import StackTrace from "stacktrace-js"
+
 import {getCookie} from "../common"
 
 export class ErrorHook {
@@ -13,7 +15,7 @@ export class ErrorHook {
         }
     }
 
-    logError(details) {
+    sendLog(details) {
         const xhr = new XMLHttpRequest()
 
 		xhr.open("POST", "/api/django_js_error_hook/", true)
@@ -33,6 +35,19 @@ export class ErrorHook {
     }
 
     onError(msg, url, lineNumber, columnNumber, errorObj) {
+        if (settings.SOURCE_MAPS && errorObj) {
+            StackTrace.fromError(errorObj).then(
+                stackFrames => this.logError(msg, url, lineNumber, columnNumber, errorObj, stackFrames.map(sf => sf.toString()).join('\n'))
+            ).catch(
+                () => this.logError(msg, url, lineNumber, columnNumber, errorObj)
+            )
+        } else {
+            this.logError(msg, url, lineNumber, columnNumber, errorObj)
+        }
+    }
+
+    logError(msg, url, lineNumber, columnNumber, errorObj, mappedStack = false) {
+
 		let logMessage = url + ': ' + lineNumber + ': ' + msg
 		if (columnNumber) {
 			logMessage += ", " + columnNumber
@@ -40,10 +55,25 @@ export class ErrorHook {
 		if (errorObj && errorObj.stack) {
 			logMessage += ", " + errorObj.stack
 		}
-		this.logError(logMessage)
+        if (mappedStack) {
+            logMessage += "\n" + mappedStack
+        }
+		this.sendLog(logMessage)
 	}
 
     onUnhandledRejection(rejection) {
+        if (settings.SOURCE_MAPS && rejection.reason && rejection.reason.stack) {
+            StackTrace.fromError(rejection.reason).then(
+                stackFrames => this.logUnhandledRejection(rejection, stackFrames.map(sf => sf.toString()).join('\n'))
+            ).catch(
+                () => this.logUnhandledRejection(rejection)
+            )
+        } else {
+            this.logUnhandledRejection(rejection)
+        }
+    }
+
+    logUnhandledRejection(rejection, mappedStack = false) {
         let logMessage = rejection.type
         if (rejection.reason) {
             if (rejection.reason.message) {
@@ -55,6 +85,9 @@ export class ErrorHook {
                 logMessage += ", " + rejection.reason.stack
             }
         }
-        this.logError(logMessage)
+        if (mappedStack) {
+            logMessage += "\n" + mappedStack
+        }
+        this.sendLog(logMessage)
     }
 }

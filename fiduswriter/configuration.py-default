@@ -10,6 +10,12 @@ import os
 # If you don't want to show debug messages, set DEBUG to False.
 
 DEBUG = True
+# SOURCE_MAPS - allows any value used by webpack devtool
+# https://webpack.js.org/configuration/devtool/
+# For example
+# SOURCE_MAPS = 'cheap-module-source-map' # fast - line numbers only
+# SOURCE_MAPS = 'source-map' # slow - line and column number
+SOURCE_MAPS = False 
 
 PROJECT_PATH = os.environ.get('PROJECT_PATH')
 # SRC_PATH is the root path of the FW sources.

@@ -33,7 +33,9 @@
     "w3c-keyname": "2.1.x",
     "stylelint": "13.2.1",
     "stylelint-config-standard": "20.0.0",
-    "stylelint-value-no-unknown-custom-properties": "2.0.0"
+    "stylelint-value-no-unknown-custom-properties": "2.0.0",
+    "source-map-loader": "0.2.4",
+    "stacktrace-js": "2.0.2"
   },
   "devDependencies": {
     "updates": "^10.2.0",

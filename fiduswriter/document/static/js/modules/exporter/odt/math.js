@@ -41,10 +41,10 @@ export class OdtExporterMath {
 
     latexToMathML(latex) {
         return this.mathLive.latexToMathML(latex)
-            .replace(/\&InvisibleTimes;/g, '&#8290;')
-            .replace(/\&ApplyFunction;/g, '&#x2061;')
-            .replace(/\&PlusMinus;/g, '&#177;')
-            .replace(/\&times;/g, '&#215;')
+            .replace(/&InvisibleTimes;/g, '&#8290;')
+            .replace(/&ApplyFunction;/g, '&#x2061;')
+            .replace(/&PlusMinus;/g, '&#177;')
+            .replace(/&times;/g, '&#215;')
     }
 
     addMath(latex) {

@@ -21,8 +21,14 @@ if (settings.DEBUG) {
 
 module.exports = { // eslint-disable-line no-undef
     mode: settings.DEBUG ? 'development' : 'production',
+    devtool: settings.SOURCE_MAPS || false,
     module: {
         rules: [
+            {
+                    test: /\.js$/,
+                    use: ["source-map-loader"],
+                    enforce: "pre"
+            },
             {
                 test: /\.(csljson)$/i,
                 use: [
@@ -49,6 +55,7 @@ module.exports = { // eslint-disable-line no-undef
             "settings.IS_FREE": settings.IS_FREE,
             "settings.TEST_SERVER": settings.TEST_SERVER,
             "settings.DEBUG": settings.DEBUG,
+            "settings.SOURCE_MAPS": JSON.stringify(settings.SOURCE_MAPS) || false,
             "transpile.VERSION": transpile.VERSION
         }),
         new OfflinePlugin({

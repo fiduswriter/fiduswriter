@@ -9,7 +9,7 @@
 <script type="text/javascript" src="/api/jsi18n/"></script>
 <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
 <!-- JS error handling -->
-<script type="text/javascript" src="{% url 'js-error-handler-js' %}"></script>
+<script type="text/javascript" src="{% static "js/error_hook.mjs" %}" crossorigin="anonymous"></script>
 <script type="text/javascript" src="{% static "js/maintenance.mjs" %}"></script>
 {% endblock %}
 {% block content %}

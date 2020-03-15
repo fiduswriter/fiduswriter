@@ -39,6 +39,7 @@ class Command(BaseCommand):
         command_array = [
             p / 'node_modules' / '.bin' / 'jest',
             '--no-cache',
+            '--passWithNoTests',
         ]
         return_value = call(command_array)
         if return_value > 0:

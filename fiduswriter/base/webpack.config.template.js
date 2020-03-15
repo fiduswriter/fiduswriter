@@ -44,6 +44,7 @@ module.exports = { // eslint-disable-line no-undef
         path: transpile.OUT_DIR,
         chunkFilename: "[id]-" + transpile.VERSION + ".js",
         publicPath: transpile.BASE_URL,
+        crossOriginLoading: 'anonymous'
     },
     plugins: [
         new webpack.DefinePlugin({

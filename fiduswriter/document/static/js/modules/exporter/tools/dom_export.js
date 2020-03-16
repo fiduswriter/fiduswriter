@@ -25,7 +25,7 @@ export class DOMExporter {
         this.fontFiles = []
         this.binaryFiles = []
         this.styleSheets = [
-            {url: `${settings.STATIC_URL}css/document.css?v=${transpile.VERSION}`}
+            {url: `${settings_STATIC_URL}css/document.css?v=${transpile_VERSION}`}
         ]
     }
 

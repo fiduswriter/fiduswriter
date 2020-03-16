@@ -48,16 +48,16 @@ module.exports = { // eslint-disable-line no-undef
     },
     plugins: [
         new webpack.DefinePlugin({
-            "settings.STATIC_URL": JSON.stringify(settings.STATIC_URL),
-            "settings.REGISTRATION_OPEN": settings.REGISTRATION_OPEN,
-            "settings.CONTACT_EMAIL": JSON.stringify(settings.CONTACT_EMAIL),
-            "settings.WS_SERVER": settings.WS_SERVER ? JSON.stringify(settings.WS_SERVER) : false,
-            "settings.WS_PORT": settings.WS_PORT,
-            "settings.IS_FREE": settings.IS_FREE,
-            "settings.TEST_SERVER": settings.TEST_SERVER,
-            "settings.DEBUG": settings.DEBUG,
-            "settings.SOURCE_MAPS": JSON.stringify(settings.SOURCE_MAPS) || false,
-            "transpile.VERSION": transpile.VERSION
+            "settings_STATIC_URL": JSON.stringify(settings.STATIC_URL),
+            "settings_REGISTRATION_OPEN": settings.REGISTRATION_OPEN,
+            "settings_CONTACT_EMAIL": JSON.stringify(settings.CONTACT_EMAIL),
+            "settings_WS_SERVER": settings.WS_SERVER ? JSON.stringify(settings.WS_SERVER) : false,
+            "settings_WS_PORT": settings.WS_PORT,
+            "settings_IS_FREE": settings.IS_FREE,
+            "settings_TEST_SERVER": settings.TEST_SERVER,
+            "settings_DEBUG": settings.DEBUG,
+            "settings_SOURCE_MAPS": JSON.stringify(settings.SOURCE_MAPS) || false,
+            "transpile_VERSION": transpile.VERSION
         }),
         new OfflinePlugin({
             cacheMaps: [

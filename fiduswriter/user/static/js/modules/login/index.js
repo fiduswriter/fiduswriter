@@ -8,7 +8,7 @@ export class LoginPage extends PreloginPage {
         this.socialaccount_providers = socialaccount_providers
         this.title = gettext('Login')
         this.pluginLoaders = pluginLoaders
-        this.headerLinks = settings.REGISTRATION_OPEN ? [
+        this.headerLinks = settings_REGISTRATION_OPEN ? [
             {
                 type: 'label',
                 text: gettext('New here?')
@@ -25,7 +25,7 @@ export class LoginPage extends PreloginPage {
         this.contents = `<div class="fw-login-left">
             <h1 class="fw-login-title">${gettext("Log in")}</h1>
             ${
-                settings.REGISTRATION_OPEN ?
+                settings_REGISTRATION_OPEN ?
                     `<p>${gettext("If you are new here, please <a href='/account/sign-up/' title='Sign up'>sign up</a> or use one of the login options below to create an account.")}</p>` +
                     (
                         this.socialaccount_providers.length ?

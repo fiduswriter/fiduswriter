@@ -35,7 +35,7 @@ export class ErrorHook {
     }
 
     onError(msg, url, lineNumber, columnNumber, errorObj) {
-        if (settings.SOURCE_MAPS && errorObj) {
+        if (settings_SOURCE_MAPS && errorObj) {
             StackTrace.fromError(errorObj).then(
                 stackFrames => this.logError(msg, url, lineNumber, columnNumber, errorObj, stackFrames.map(sf => sf.toString()).join('\n'))
             ).catch(
@@ -62,7 +62,7 @@ export class ErrorHook {
 	}
 
     onUnhandledRejection(rejection) {
-        if (settings.SOURCE_MAPS && rejection.reason && rejection.reason.stack) {
+        if (settings_SOURCE_MAPS && rejection.reason && rejection.reason.stack) {
             StackTrace.fromError(rejection.reason).then(
                 stackFrames => this.logUnhandledRejection(rejection, stackFrames.map(sf => sf.toString()).join('\n'))
             ).catch(

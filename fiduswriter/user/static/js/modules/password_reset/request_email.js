@@ -15,7 +15,7 @@ export class PasswordResetRequest extends PreloginPage {
             <p>${
                 interpolate(
                     gettext('If you have any trouble resetting your password, please <a href="mailto:%(contactEmail)s">contact us</a>.'),
-                    {contactEmail: settings.CONTACT_EMAIL},
+                    {contactEmail: settings_CONTACT_EMAIL},
                     true
                 )
             }</p>

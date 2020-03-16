@@ -52,7 +52,7 @@ export class EmailConfirm extends PreloginPage {
 
     render() {
         if (!this.verified) {
-            if (settings.TEST_SERVER) {
+            if (settings_TEST_SERVER) {
                 this.formChecks.push(
                     () => document.getElementById('test-check').matches(':checked')
                 )

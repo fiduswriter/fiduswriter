@@ -46,7 +46,7 @@ export class HTMLExporter extends DOMExporter {
         const math = this.contents.querySelectorAll('.equation, .figure-equation').length ? true : false
 
         if (math) {
-            this.styleSheets.push({url: `${settings.STATIC_URLl}css/libs/mathlive/mathlive.css?v=${transpile.VERSION}`})
+            this.styleSheets.push({url: `${settings_STATIC_URL}css/libs/mathlive/mathlive.css?v=${transpile_VERSION}`})
         }
 
         this.prepareBinaryFiles()
@@ -79,7 +79,7 @@ export class HTMLExporter extends DOMExporter {
         if (math) {
             includeZips.push({
                 'directory': '',
-                'url': `${settings.STATIC_URL}zip/mathlive_style.zip?v=${transpile.VERSION}`,
+                'url': `${settings_STATIC_URL}zip/mathlive_style.zip?v=${transpile_VERSION}`,
             })
         }
 

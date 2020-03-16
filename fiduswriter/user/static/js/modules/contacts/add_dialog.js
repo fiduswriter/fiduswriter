@@ -73,7 +73,7 @@ export class AddContactDialog  {
                         responseHtml = gettext('This person is already in your contacts')
                     } else if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userString)) { // regex taken from https://tylermcginnis.com/validate-email-address-javascript/
                         responseHtml = gettext('No user is registered with the given email address.')
-                        if (settings.REGISTRATION_OPEN) {
+                        if (settings_REGISTRATION_OPEN) {
                             if (this.returnUnregisteredEmail) {
                                 return {email: userString}
                             }

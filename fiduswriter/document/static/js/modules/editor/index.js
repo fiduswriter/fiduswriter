@@ -369,7 +369,7 @@ export class Editor {
                 <div id="chat-container"></div>
                 <div id="messageform" contentEditable="true" class="empty"></div>
                 <audio id="chat-notification">
-                    <source src="${settings.STATIC_URL}ogg/chat_notification.ogg?v=${transpile.VERSION}" type="audio/ogg">
+                    <source src="${settings_STATIC_URL}ogg/chat_notification.ogg?v=${transpile_VERSION}" type="audio/ogg">
                 </audio>
             </div>
         </div>

@@ -5,7 +5,7 @@ export class Signup extends PreloginPage {
     constructor({app, language}) {
         super({app, language})
         this.title = gettext('Signup')
-        if (settings.REGISTRATION_OPEN) {
+        if (settings_REGISTRATION_OPEN) {
             this.contents = `<div class="fw-login-left">
                 <h1 class="fw-login-title">${gettext("Sign up")}</h1>
                 <p>
@@ -57,7 +57,7 @@ export class Signup extends PreloginPage {
 
         const signupSubmit = document.querySelector('#signup-submit')
 
-        if (!settings.REGISTRATION_OPEN || !signupSubmit) {
+        if (!settings_REGISTRATION_OPEN || !signupSubmit) {
             return
         }
 

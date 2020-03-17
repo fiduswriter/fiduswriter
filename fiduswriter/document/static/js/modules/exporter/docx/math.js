@@ -50,14 +50,23 @@ export class DocxExporterMath {
             fontsEl.insertAdjacentHTML('beforeEnd', CAMBRIA_MATH_FONT_DECLARATION)
             this.addedCambriaMath = true
         }
-
         const mathml = this.domParser.parseFromString(
             `<math xmlns="http://www.w3.org/1998/Math/MathML"><semantics>${this.mathLive.latexToMathML(latex)}</semantics></math>`,
             "application/xml"
         ).documentElement
-
         const omml = this.processor.transformToDocument(mathml)
-        return omml.firstChild.outerHTML
+        let ommlString = omml.firstChild.outerHTML
+        // Firefox 73 doesn't wrap the omml properly, so we remove the transformiix:result and add the m:oMath
+        if (ommlString.startsWith('<transformiix:result')) {
+            ommlString = omml.firstChild.innerHTML
+        }
+        if (!ommlString.startsWith('<m:oMath')) {
+            ommlString = this.domParser.parseFromString(
+                `<m:oMath xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" xmlns:mml="http://www.w3.org/1998/Math/MathML">${ommlString}</m:oMath>`,
+                "application/xml"
+            ).documentElement.outerHTML
+        }
+        return ommlString
 
     }
 

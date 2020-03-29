@@ -54,6 +54,7 @@ def configuration(request):
             'last_name': request.user.last_name,
             'avatar': userutil.get_user_avatar_url(request.user),
             'emails': [],
+            'socialaccounts': [],
             'is_authenticated': True
         }
 
@@ -66,6 +67,14 @@ def configuration(request):
             if emailaddress.verified:
                 email['verified'] = True
             response['user']['emails'].append(email)
+        for account in request.user.socialaccount_set.all():
+            provider_account = account.get_provider_account()
+            response['user']['socialaccounts'].append({
+                'id': account.id,
+                'provider': account.provider,
+                'name': provider_account.to_str()
+            })
+
     else:
         response['user'] = {
             'is_authenticated': False

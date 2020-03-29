@@ -29,6 +29,11 @@ urlpatterns = [
     url('^emaildelete/$', views.delete_email, name="delete_email"),
     url('^emailprimary/$', views.primary_email, name="primary_email"),
 
+    url(
+        '^socialaccountdelete/$',
+        views.delete_socialaccount,
+        name="delete_socialaccount"
+    ),
     # Delete a user profile
     url('^delete/$', views.delete_user, name='delete_user'),
 

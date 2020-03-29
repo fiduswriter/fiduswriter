@@ -1,14 +1,15 @@
 import {addDropdownBox, whenReady, activateWait, deactivateWait, post, addAlert, baseBodyTemplate, findTarget, setDocTitle, ensureCSS} from "../common"
 import {SiteMenu} from "../menu"
-import {changeAvatarDialog, deleteAvatarDialog, changePwdDialog, addEmailDialog, changePrimaryEmailDialog, deleteEmailDialog} from "./dialogs"
+import {changeAvatarDialog, deleteAvatarDialog, changePwdDialog, addEmailDialog, changePrimaryEmailDialog, deleteEmailDialog, deleteSocialaccountDialog} from "./dialogs"
 import {profileContents} from "./templates"
 import {DeleteUserDialog} from "./delete_user"
 import {FeedbackTab} from "../feedback"
 
 export class Profile {
-    constructor({app, user}) {
+    constructor({app, user, socialaccount_providers}) {
         this.app = app
         this.user = user
+        this.socialaccount_providers = socialaccount_providers
     }
 
     init() {
@@ -42,6 +43,9 @@ export class Profile {
                     case findTarget(event, '.delete-email', el):
                         deleteEmailDialog(el.target, this.app)
                         break
+                    case findTarget(event, '.delete-socialaccount', el):
+                        deleteSocialaccountDialog(el.target, this.app)
+                        break
                     case findTarget(event, '.change-avatar', el):
                         changeAvatarDialog(this.app)
                         break
@@ -60,8 +64,9 @@ export class Profile {
 
     render() {
         this.dom = document.createElement('body')
+        this.dom.classList.add('scrollable')
         this.dom.innerHTML = baseBodyTemplate({
-            contents: profileContents(this.user),
+            contents: profileContents(this.user, this.socialaccount_providers),
             user: this.user
         })
         document.body = this.dom

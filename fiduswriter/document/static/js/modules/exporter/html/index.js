@@ -88,7 +88,7 @@ export class HTMLExporter extends DOMExporter {
             textFiles,
             this.binaryFiles,
             includeZips,
-            null,
+            undefined,
             this.updated
         )
 

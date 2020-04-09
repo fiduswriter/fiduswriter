@@ -15,7 +15,6 @@ export class ZipFileCreator {
         this.zipFiles = zipFiles
         this.mimeType = mimeType
         this.date = date
-        console.log({textFiles, binaryFiles, zipFiles, mimeType, date})
     }
 
     init() {

@@ -52,8 +52,8 @@ export class JATSExporter {
             const zipper = new ZipFileCreator(
                 this.textFiles,
                 this.httpFiles,
-                null,
-                null,
+                undefined,
+                undefined,
                 this.updated
             )
             return zipper.init()

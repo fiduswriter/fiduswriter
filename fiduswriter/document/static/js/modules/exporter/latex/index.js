@@ -46,8 +46,8 @@ export class LatexExporter {
         const zipper = new ZipFileCreator(
             this.textFiles,
             this.httpFiles,
-            null,
-            null,
+            undefined,
+            undefined,
             this.updated
         )
 

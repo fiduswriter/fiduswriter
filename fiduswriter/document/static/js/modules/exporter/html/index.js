@@ -63,10 +63,10 @@ export class HTMLExporter extends DOMExporter {
             title
         })
 
-        return {title, html, math}
+        return {html, math}
     }
 
-    save({title, html, math}) {
+    save({html, math}) {
         this.outputList.push({
             filename: 'document.html',
             contents: pretty(this.replaceImgSrc(html), {ocd: true})
@@ -77,8 +77,6 @@ export class HTMLExporter extends DOMExporter {
                 this.outputList.push(styleSheet)
             }
         })
-
-        const includeZips = []
 
         if (math) {
             this.includeZips.push({
@@ -105,7 +103,7 @@ export class HTMLExporter extends DOMExporter {
     }
 
     download(blob) {
-        return download(blob, createSlug(title) + '.html.zip', 'application/zip')
+        return download(blob, createSlug(this.doc.title) + '.html.zip', 'application/zip')
     }
 
 }

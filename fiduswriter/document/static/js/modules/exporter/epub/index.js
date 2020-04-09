@@ -209,6 +209,6 @@ export class EpubExporter extends DOMExporter {
     }
 
     download(blob) {
-        return download(blob, createSlug(title) + '.epub', 'application/epub+zip')
+        return download(blob, createSlug(this.doc.title) + '.epub', 'application/epub+zip')
     }
 }

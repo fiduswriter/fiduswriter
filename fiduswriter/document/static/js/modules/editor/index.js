@@ -136,6 +136,7 @@ export class Editor {
             owner: undefined,
             is_owner: false,
             confirmedDoc: false, // The latest doc as confirmed by the server.
+            updated: false, // Latest update time stamp
             dir: 'ltr' // standard direction, used in input fields, etc.
         }
         let id = parseInt(idString)
@@ -416,6 +417,9 @@ export class Editor {
                         this.mod.footnotes.fnEditor.view.dispatch(footTr)
                     }
                 })
+                if (tr.steps) {
+                    this.docInfo.updated = new Date()
+                }
 
                 this.mod.collab.doc.sendToCollaborators()
             }
@@ -469,7 +473,8 @@ export class Editor {
             title: title.substring(0, 255),
             version: this.docInfo.version,
             comments: this.mod.comments.store.comments,
-            id: this.docInfo.id
+            id: this.docInfo.id,
+            updated: this.docInfo.updated
         }
     }
 

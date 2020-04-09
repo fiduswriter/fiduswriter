@@ -11,11 +11,12 @@ import {darManifest} from "./templates"
 */
 
 export class JATSExporter {
-    constructor(doc, bibDB, imageDB, csl) {
+    constructor(doc, bibDB, imageDB, csl, updated) {
         this.doc = doc
         this.bibDB = bibDB
         this.imageDB = imageDB
         this.csl = csl
+        this.updated = updated
 
         this.docContents = false
         this.zipFileName = false
@@ -50,7 +51,10 @@ export class JATSExporter {
 
             const zipper = new ZipFileCreator(
                 this.textFiles,
-                this.httpFiles
+                this.httpFiles,
+                null,
+                null,
+                this.updated
             )
             return zipper.init()
         }).then(

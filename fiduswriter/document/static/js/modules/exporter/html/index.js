@@ -10,11 +10,12 @@ import {addAlert} from "../../common"
 import {DOMExporter} from "../tools/dom_export"
 
 export class HTMLExporter extends DOMExporter {
-    constructor(schema, csl, documentStyles, doc, bibDB, imageDB) {
+    constructor(schema, csl, documentStyles, doc, bibDB, imageDB, updated) {
         super(schema, csl, documentStyles)
         this.doc = doc
         this.bibDB = bibDB
         this.imageDB = imageDB
+        this.updated = updated
     }
 
     init() {
@@ -86,7 +87,9 @@ export class HTMLExporter extends DOMExporter {
         const zipper = new ZipFileCreator(
             textFiles,
             this.binaryFiles,
-            includeZips
+            includeZips,
+            null,
+            this.updated
         )
 
         zipper.init().then(

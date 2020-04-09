@@ -12,11 +12,12 @@ import {DOMExporter} from "../tools/dom_export"
 
 export class EpubExporter extends DOMExporter {
 
-    constructor(schema, csl, documentStyles, doc, bibDB, imageDB) {
+    constructor(schema, csl, documentStyles, doc, bibDB, imageDB, updated) {
         super(schema, csl, documentStyles)
         this.doc = doc
         this.bibDB = bibDB
         this.imageDB = imageDB
+        this.updated = updated
         this.shortLang = this.doc.settings.language.split('-')[0]
         this.lang = this.doc.settings.language
     }
@@ -77,7 +78,7 @@ export class EpubExporter extends DOMExporter {
 
         const containerCode = containerTemplate({})
 
-        const timestamp = getTimestamp()
+        const timestamp = getTimestamp(this.updated)
 
 
         const authors = this.docContents.content.reduce(
@@ -122,7 +123,7 @@ export class EpubExporter extends DOMExporter {
             keywords,
             idType: 'fidus',
             id: this.doc.id,
-            date: timestamp.slice(0, 10), // TODO: the date should probably be the original document creation date instead
+            date: timestamp.slice(0, 10),
             modified: timestamp,
             styleSheets: this.styleSheets,
             math,
@@ -191,7 +192,8 @@ export class EpubExporter extends DOMExporter {
             outputList,
             this.binaryFiles,
             includeZips,
-            'application/epub+zip'
+            'application/epub+zip',
+            this.updated
         )
 
         zipper.init().then(

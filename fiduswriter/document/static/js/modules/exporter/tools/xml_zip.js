@@ -99,7 +99,11 @@ export class XmlZip {
         this.allXMLToZip()
         this.allExtraToZip()
 
-        this.zip.generateAsync({type:"blob", mimeType: this.mimeType}).then(out => download(out, this.fileName, this.mimeType))
+        this.zip.generateAsync({type:"blob", mimeType: this.mimeType}).then(blob => this.download(blob))
+    }
+
+    download(blob) {
+        return download(blob, this.fileName, this.mimeType)
     }
 
 }

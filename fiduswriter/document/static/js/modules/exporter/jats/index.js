@@ -49,16 +49,24 @@ export class JATSExporter {
                 this.httpFiles.push({filename: image.filename, url: image.url})
             })
 
-            const zipper = new ZipFileCreator(
-                this.textFiles,
-                this.httpFiles,
-                undefined,
-                undefined,
-                this.updated
-            )
-            return zipper.init()
-        }).then(
-            blob => download(blob, this.zipFileName, 'application/zip')
+            return this.createZip()
+        })
+    }
+
+    createZip() {
+        const zipper = new ZipFileCreator(
+            this.textFiles,
+            this.httpFiles,
+            undefined,
+            undefined,
+            this.updated
         )
+        return zipper.init().then(
+            blob => this.download(blob)
+        )
+    }
+
+    download(blob) {
+        return download(blob, this.zipFileName, 'application/zip')
     }
 }

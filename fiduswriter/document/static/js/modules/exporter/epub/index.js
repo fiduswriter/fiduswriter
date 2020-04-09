@@ -18,8 +18,12 @@ export class EpubExporter extends DOMExporter {
         this.bibDB = bibDB
         this.imageDB = imageDB
         this.updated = updated
+
         this.shortLang = this.doc.settings.language.split('-')[0]
         this.lang = this.doc.settings.language
+
+        this.outputList = []
+        this.includeZips = []
     }
 
     init() {
@@ -145,7 +149,7 @@ export class EpubExporter extends DOMExporter {
             contentItems
         })
 
-        const outputList = [{
+        this.outputList.push({
             filename: 'META-INF/container.xml',
             contents: containerCode
         }, {
@@ -160,10 +164,10 @@ export class EpubExporter extends DOMExporter {
         }, {
             filename: 'EPUB/document.xhtml',
             contents: xhtmlCode
-        }]
+        })
 
         this.styleSheets.forEach(styleSheet => {
-            outputList.push({
+            this.outputList.push({
                 filename: 'EPUB/' + styleSheet.filename,
                 contents: styleSheet.contents
             })
@@ -181,24 +185,30 @@ export class EpubExporter extends DOMExporter {
             })
         })
 
-        const includeZips = []
         if (math) {
-            includeZips.push({
+            this.includeZips.push({
                 'directory': 'EPUB',
                 'url': `${settings_STATIC_URL}zip/mathlive_style.zip?v=${transpile_VERSION}`
             })
         }
+        return this.createZip()
+    }
+
+    createZip() {
         const zipper = new ZipFileCreator(
-            outputList,
+            this.outputList,
             this.binaryFiles,
-            includeZips,
+            this.includeZips,
             'application/epub+zip',
             this.updated
         )
 
-        zipper.init().then(
-            blob => download(blob, createSlug(title) + '.epub', 'application/epub+zip')
+        return zipper.init().then(
+            blob => this.download(blob)
         )
+    }
 
+    download(blob) {
+        return download(blob, createSlug(title) + '.epub', 'application/epub+zip')
     }
 }

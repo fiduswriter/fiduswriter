@@ -54,7 +54,7 @@ export class OdtExporter {
             this.templateUrl,
             'application/vnd.oasis.opendocument.text'
         )
-        this.xml.init().then(
+        return this.xml.init().then(
             () => this.styles.init()
         ).then(
             () => this.metadata.init()

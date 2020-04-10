@@ -62,7 +62,7 @@ export class DocxExporter {
             'application/msword'
         )
 
-        this.xml.init().then(
+        return this.xml.init().then(
             () => this.citations.init()
         ).then(
             () => {

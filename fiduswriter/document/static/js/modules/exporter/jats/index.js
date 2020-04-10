@@ -29,7 +29,7 @@ export class JATSExporter {
         this.docContents = removeHidden(this.doc.contents)
         this.converter = new JATSExporterConvert(this, this.imageDB, this.bibDB, this.doc.settings)
         this.citations = new JATSExporterCitations(this, this.bibDB, this.csl)
-        this.conversion = this.converter.init(this.docContents).then(({jats, imageIds}) => {
+        return this.converter.init(this.docContents).then(({jats, imageIds}) => {
             this.textFiles.push({filename: 'manuscript.xml', contents: jats})
             const images = imageIds.map(
                 id => {

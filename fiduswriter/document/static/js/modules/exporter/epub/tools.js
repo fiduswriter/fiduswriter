@@ -1,13 +1,12 @@
 import {FIG_CATS} from "../../schema/i18n"
 
-export function getTimestamp() {
-    const today = new Date()
-    let second = today.getUTCSeconds()
-    let minute = today.getUTCMinutes()
-    let hour = today.getUTCHours()
-    let day = today.getUTCDate()
-    let month = today.getUTCMonth() + 1 //January is 0!
-    const year = today.getUTCFullYear()
+export function getTimestamp(date) {
+    let second = date.getUTCSeconds()
+    let minute = date.getUTCMinutes()
+    let hour = date.getUTCHours()
+    let day = date.getUTCDate()
+    let month = date.getUTCMonth() + 1 //January is 0!
+    const year = date.getUTCFullYear()
 
     if (second < 10) {
         second = '0' + second
@@ -64,9 +63,10 @@ export function styleEpubFootnotes(htmlEl) {
     return htmlEl
 }
 
-export function setLinks(htmlEl, docNum) {
+export function setLinks(htmlEl, docNum = 1) {
     const contentItems = []
     let title
+    let idCount = 0
 
     htmlEl.querySelectorAll('div.article-title,h1,h2,h3,h4,h5,h6').forEach(el => {
         title = el.textContent.trim()
@@ -79,7 +79,7 @@ export function setLinks(htmlEl, docNum) {
             }
             if (!el.id) {
                 // The element has no ID, so we add one.
-                el.id = '_' + Math.random().toString(36).substr(2, 9)
+                el.id = `_${docNum}_${idCount++}`
             }
             contentItem.id = el.id
             contentItems.push(contentItem)

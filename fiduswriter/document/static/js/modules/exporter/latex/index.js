@@ -11,10 +11,12 @@ import {readMe} from "./readme"
 */
 
 export class LatexExporter {
-    constructor(doc, bibDB, imageDB) {
+    constructor(doc, bibDB, imageDB, updated) {
         this.doc = doc
         this.bibDB = bibDB
         this.imageDB = imageDB
+        this.updated = updated
+
         this.docContents = false
         this.zipFileName = false
         this.textFiles = []
@@ -40,15 +42,25 @@ export class LatexExporter {
                 })
             }
         )
+        return this.createZip()
+    }
 
+    createZip() {
         const zipper = new ZipFileCreator(
             this.textFiles,
-            this.httpFiles
+            this.httpFiles,
+            undefined,
+            undefined,
+            this.updated
         )
 
-        zipper.init().then(
-            blob => download(blob, this.zipFileName, 'application/zip')
+        return zipper.init().then(
+            blob => this.download(blob)
         )
+    }
+
+    download(blob) {
+        return download(blob, this.zipFileName, 'application/zip')
     }
 
 

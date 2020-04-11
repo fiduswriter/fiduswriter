@@ -10,11 +10,15 @@ import {addAlert} from "../../common"
 import {DOMExporter} from "../tools/dom_export"
 
 export class HTMLExporter extends DOMExporter {
-    constructor(schema, csl, documentStyles, doc, bibDB, imageDB) {
+    constructor(schema, csl, documentStyles, doc, bibDB, imageDB, updated) {
         super(schema, csl, documentStyles)
         this.doc = doc
         this.bibDB = bibDB
         this.imageDB = imageDB
+        this.updated = updated
+
+        this.outputList = []
+        this.includeZips = []
     }
 
     init() {
@@ -59,39 +63,47 @@ export class HTMLExporter extends DOMExporter {
             title
         })
 
-        return {title, html, math}
+        return {html, math}
     }
 
-    save({title, html, math}) {
-        const textFiles = [{
+    save({html, math}) {
+        this.outputList.push({
             filename: 'document.html',
             contents: pretty(this.replaceImgSrc(html), {ocd: true})
-        }]
+        })
 
         this.styleSheets.forEach(styleSheet => {
             if (styleSheet.filename) {
-                textFiles.push(styleSheet)
+                this.outputList.push(styleSheet)
             }
         })
 
-        const includeZips = []
-
         if (math) {
-            includeZips.push({
+            this.includeZips.push({
                 'directory': '',
                 'url': `${settings_STATIC_URL}zip/mathlive_style.zip?v=${transpile_VERSION}`,
             })
         }
 
+        return this.createZip()
+    }
+
+    createZip() {
         const zipper = new ZipFileCreator(
-            textFiles,
+            this.outputList,
             this.binaryFiles,
-            includeZips
+            this.includeZips,
+            undefined,
+            this.updated
         )
 
-        zipper.init().then(
-            blob => download(blob, createSlug(title) + '.html.zip', 'application/zip')
+        return zipper.init().then(
+            blob => this.download(blob)
         )
+    }
+
+    download(blob) {
+        return download(blob, createSlug(this.doc.title) + '.html.zip', 'application/zip')
     }
 
 }

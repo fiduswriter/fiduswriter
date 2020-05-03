@@ -10,9 +10,5 @@ blocks:
       jobs:
         - name: docker build
           commands:
-            - 'echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin'
-            - 'docker pull $DOCKER_USERNAME/fiduswriter:latest || true'
-            - 'docker build --cache-from=$DOCKER_USERNAME/fiduswriter:latest -t $DOCKER_USERNAME/fiduswriter:latest .'
-            - 'docker push $DOCKER_USERNAME/fiduswriter:latest'
-      secrets:
-        - name: dockerhub
+            - checkout
+            - docker build -t your-image .

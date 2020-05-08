@@ -231,6 +231,7 @@ export class ModCollabDoc {
         this.mod.editor.docInfo = data.doc_info
         this.mod.editor.docInfo.version = data.doc.v
         this.mod.editor.docInfo.template = data.doc.template
+        this.mod.editor.docInfo.updated = new Date()
         this.mod.editor.mod.db.bibDB.setDB(data.doc.bibliography)
         this.mod.editor.mod.db.imageDB.setDB(data.doc.images)
         this.mod.editor.docInfo.confirmedJson = JSON.parse(JSON.stringify(data.doc.contents))

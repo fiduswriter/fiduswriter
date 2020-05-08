@@ -69,7 +69,6 @@ export class DOMExporter {
         this.schema.cached.imageDB = this.imageDB
         const serializer = DOMSerializer.fromSchema(this.schema)
         this.contents = serializer.serializeNode(this.schema.nodeFromJSON(this.docContents))
-        this.addFigureLabels(this.doc.settings.language)
         const bibliographyHeader = this.doc.settings.bibliography_header[this.doc.settings.language] || BIBLIOGRAPHY_HEADERS[this.doc.settings.language]
         const citRenderer = new RenderCitations(
             this.contents,
@@ -164,6 +163,7 @@ export class DOMExporter {
         )
         this.contents.appendChild(footnotesContainer)
         this.cleanNode(this.contents)
+        this.addFigureLabels(this.doc.settings.language)
 
         // Replace nbsp spaces with normal ones
         this.replaceText(this.contents, '&nbsp;', ' ')

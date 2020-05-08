@@ -42,7 +42,8 @@ export class EpubExporter extends DOMExporter {
     }
 
     addFigureLabels(language) {
-        return addFigureLabels(this.contents, language)
+        addFigureLabels(this.contents.querySelector('section.fnlist'), language, true)
+        addFigureLabels(this.contents, language)
     }
 
     save() {
@@ -81,7 +82,6 @@ export class EpubExporter extends DOMExporter {
         xhtmlCode = this.replaceImgSrc(xhtmlCode)
 
         const containerCode = containerTemplate({})
-
         const timestamp = getTimestamp(this.updated)
 
 

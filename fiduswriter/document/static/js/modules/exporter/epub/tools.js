@@ -112,12 +112,12 @@ export function orderLinks(contentItems) {
     return contentItems
 }
 
-export function addFigureLabels(htmlEl, language) {
+export function addFigureLabels(htmlEl, language, footnote = false) {
     // Due to lacking CSS support in ereaders, figure numbers need to be hardcoded.
     htmlEl.querySelectorAll('figcaption .figure-cat-figure').forEach(
         (el, index) => {
             const suffix = el.parentElement.innerText.trim().length ? ': ' : ''
-            el.innerHTML = `${FIG_CATS['figure'][language]} ${(index + 1)}${suffix}`
+            el.innerHTML = `${FIG_CATS['figure'][language]} ${(index + 1)}${footnote ? 'A' : ''}${suffix}`
             el.classList.remove('figure-cat-figure')
         }
     )
@@ -125,7 +125,7 @@ export function addFigureLabels(htmlEl, language) {
     htmlEl.querySelectorAll('figcaption .figure-cat-photo').forEach(
         (el, index) => {
             const suffix = el.parentElement.innerText.trim().length ? ': ' : ''
-            el.innerHTML = `${FIG_CATS['photo'][language]} ${(index + 1)}${suffix}`
+            el.innerHTML = `${FIG_CATS['photo'][language]} ${(index + 1)}${footnote ? 'A' : ''}${suffix}`
             el.classList.remove('figure-cat-photo')
         }
     )
@@ -133,10 +133,9 @@ export function addFigureLabels(htmlEl, language) {
     htmlEl.querySelectorAll('figcaption .figure-cat-table').forEach(
         (el, index) => {
             const suffix = el.parentElement.innerText.trim().length ? ': ' : ''
-            el.innerHTML = `${FIG_CATS['table'][language]} ${(index + 1)}${suffix}`
+            el.innerHTML = `${FIG_CATS['table'][language]} ${(index + 1)}${footnote ? 'A' : ''}${suffix}`
             el.classList.remove('figure-cat-table')
         }
     )
     return htmlEl
-
 }

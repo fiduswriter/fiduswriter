@@ -63,7 +63,7 @@ export class HTMLExporter extends DOMExporter {
             title
         })
 
-        return {html, math}
+        return {html, title, math}
     }
 
     save({html, math}) {

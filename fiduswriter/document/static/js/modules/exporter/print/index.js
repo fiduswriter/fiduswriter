@@ -132,6 +132,10 @@ export class PrintExporter extends HTMLExporter {
         return Promise.resolve()
     }
 
+    addMathliveStylesheet() {
+        this.styleSheets.push({url: `${settings_STATIC_URL}css/libs/mathlive/mathlive.css?v=${transpile_VERSION}`})
+    }
+
     getFootnoteAnchor(counter) {
         const footnoteAnchor = super.getFootnoteAnchor(counter)
         // Add the counter directly into the footnote.

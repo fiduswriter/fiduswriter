@@ -1,4 +1,5 @@
 import download from "downloadjs"
+import pretty from "pretty"
 
 import {obj2Node, node2Obj} from "../tools/json"
 import {createSlug} from "../tools/file"
@@ -70,6 +71,7 @@ export class EpubExporter extends DOMExporter {
             contentsBody)
 
         let xhtmlCode = xhtmlTemplate({
+            currentPart: false,
             part: false,
             shortLang: this.shortLang,
             title,
@@ -150,19 +152,19 @@ export class EpubExporter extends DOMExporter {
 
         this.outputList.push({
             filename: 'META-INF/container.xml',
-            contents: containerCode
+            contents: pretty(containerCode, {ocd: true})
         }, {
             filename: 'EPUB/document.opf',
-            contents: opfCode
+            contents: pretty(opfCode, {ocd: true})
         }, {
             filename: 'EPUB/document.ncx',
-            contents: ncxCode
+            contents: pretty(ncxCode, {ocd: true})
         }, {
             filename: 'EPUB/document-nav.xhtml',
-            contents: navCode
+            contents: pretty(navCode, {ocd: true})
         }, {
             filename: 'EPUB/document.xhtml',
-            contents: xhtmlCode
+            contents: pretty(xhtmlCode, {ocd: true})
         })
 
         this.styleSheets.forEach(styleSheet => {

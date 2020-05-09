@@ -57,7 +57,6 @@ export class HTMLExporter extends DOMExporter {
 
         const html = htmlExportTemplate({
             contents: this.contents,
-            part: false,
             settings: this.doc.settings,
             styleSheets: this.styleSheets,
             title

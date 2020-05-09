@@ -43,10 +43,12 @@ ${
             `id="font${index}"`
         } href="${
             fontFile.filename
-        }" media-type="application/${
+        }" media-type="font/${
             fontFile.filename.split(".")[1]==="woff" ?
-            'font-woff' :
-            'font-sfnt'
+            'woff' :
+            fontFile.filename.split(".")[1]==="woff2" ?
+            'woff2' :
+            'sfnt'
         }" />\n`
     ).join('')
 }${
@@ -110,7 +112,7 @@ ${
 
 
 /** A template for a document in an epub. */
-export const xhtmlTemplate = ({shortLang, title, math, styleSheets, part, body, copyright}) =>
+export const xhtmlTemplate = ({shortLang, title, math, styleSheets, part, currentPart, body, copyright}) =>
 `<?xml version="1.0" encoding="UTF-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="${shortLang}" lang="${shortLang}"
         xmlns:epub="http://www.idpf.org/2007/ops">
@@ -119,17 +121,17 @@ export const xhtmlTemplate = ({shortLang, title, math, styleSheets, part, body, 
         <title>${escapeText(title)}</title>
 ${
     math ?
-    '\t\t<link rel="stylesheet" type="text/css" href="mathlive.css" />\n' :
+    '<link rel="stylesheet" type="text/css" href="css/mathlive.css" />\n' :
     ''
 }
 ${
-    styleSheets.map(sheet => `\t\t<link rel="stylesheet" type="text/css" href="${sheet.filename}" />\n`
+    styleSheets.map(sheet => `<link rel="stylesheet" type="text/css" href="${sheet.filename}" />\n`
     ).join('')
 }
     </head>
-    <body>${
+    <body${currentPart && currentPart.length ? ` class="${currentPart.toLowerCase().replace(/[^a-z]/g, '')}"` : ''}>${
         part && part.length ?
-        `\t\t<h1 class="part">${escapeText(part)}</h1>` :
+        `<h1 class="part">${escapeText(part)}</h1>` :
         ''
     }${
         body
@@ -152,6 +154,7 @@ export const navTemplate = ({shortLang, contentItems}) =>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="${shortLang}" lang="${shortLang}" xmlns:epub="http://www.idpf.org/2007/ops">
     <head>
         <meta charset="utf-8"></meta>
+        <title>Navigation</title>
     </head>
     <body>
         <nav epub:type="toc" id="toc">

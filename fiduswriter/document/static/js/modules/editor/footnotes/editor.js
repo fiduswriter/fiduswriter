@@ -12,17 +12,18 @@ import {buildKeymap} from "prosemirror-example-setup"
 import {fnSchema} from "../../schema/footnotes"
 import {
     citationRenderPlugin,
+    collabCaretsPlugin,
+    commentsPlugin,
     clipboardPlugin,
+    figurePlugin,
+    getFootnoteMarkerContents,
+    linksPlugin,
+    marginboxesPlugin,
+    searchPlugin,
     selectionMenuPlugin,
     toolbarPlugin,
-    collabCaretsPlugin,
-    linksPlugin,
-    getFootnoteMarkerContents,
-    updateFootnoteMarker,
     trackPlugin,
-    marginboxesPlugin,
-    commentsPlugin,
-    searchPlugin,
+    updateFootnoteMarker
 } from "../state_plugins"
 import {
     accessRightsPlugin
@@ -56,6 +57,7 @@ export class ModFootnoteEditor {
             [trackPlugin, () => ({editor: this.mod.editor})],
             [marginboxesPlugin, () => ({editor: this.mod.editor})],
             [searchPlugin],
+            [figurePlugin, () => ({editor: this.mod.editor})],
         ]
     }
 

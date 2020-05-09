@@ -1,8 +1,8 @@
 from django.core.management.base import BaseCommand
 import zipfile
 import os
+import shutil
 import magic
-from subprocess import call
 
 from django.conf import settings
 
@@ -32,8 +32,18 @@ def opf_entries(file_paths):
     )
     opf_text += 'export const mathliveOpfIncludes = `\n'
     for index, file_path in enumerate(file_paths):
-        opf_text += '<item id="mathlive-%d" href="%s" media-type="%s" />\n' % (
-            index, file_path['path'], file_path['mimetype'])
+        mimetype = file_path['mimetype']
+        path = file_path['path']
+        if path.split('.')[-1] == 'woff':
+            mimetype = 'font/woff'
+        elif path.split('.')[-1] == 'woff2':
+            mimetype = 'font/woff2'
+        opf_text += \
+            '<item id="mathlive-%d" href="css/%s" media-type="%s" />\n' % (
+                index,
+                path,
+                mimetype
+            )
     opf_text += '`'
     return opf_text
 
@@ -52,25 +62,30 @@ class Command(BaseCommand):
             settings.PROJECT_PATH, "static-libs/css/libs/mathlive/")
         if not os.path.exists(mathlive_css_path):
             os.makedirs(mathlive_css_path)
-        call([
-            "cp",
-            "--preserve=mode",
-            os.path.join(
-                settings.PROJECT_PATH,
-                ".transpile/node_modules/mathlive/dist/mathlive.css"
-            ),
-            mathlive_css_path
-        ])
-        call([
-            "cp",
-            "-r",
-            "--preserve=mode",
-            os.path.join(
-                settings.PROJECT_PATH,
-                ".transpile/node_modules/mathlive/dist/fonts"
-            ),
-            mathlive_css_path
-        ])
+        with open(os.path.join(
+            settings.PROJECT_PATH,
+            ".transpile/node_modules/mathlive/dist/mathlive.css"
+        )) as f:
+            with open(os.path.join(
+                mathlive_css_path,
+                "mathlive.css"
+            ), 'w') as g:
+                g.write(f.read().replace('url(fonts/', 'url(media/'))
+        mathlive_fonts_path = os.path.join(
+            settings.PROJECT_PATH, "static-libs/css/libs/mathlive/media/")
+        if not os.path.exists(mathlive_fonts_path):
+            os.makedirs(mathlive_fonts_path)
+        fontfiles_src_path = os.path.join(
+            settings.PROJECT_PATH,
+            ".transpile/node_modules/mathlive/dist/fonts/"
+        )
+        fontfiles = os.listdir(fontfiles_src_path)
+        for filename in fontfiles:
+            if filename[0] == '.':
+                continue
+            full_filename = os.path.join(fontfiles_src_path, filename)
+            if os.path.isfile(full_filename):
+                shutil.copy(full_filename, mathlive_fonts_path)
         zip_file_path = os.path.join(
             settings.PROJECT_PATH, 'static-libs/zip/mathlive_style.zip')
         zip_dir = os.path.dirname(zip_file_path)

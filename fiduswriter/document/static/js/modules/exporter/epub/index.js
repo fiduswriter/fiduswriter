@@ -1,4 +1,5 @@
 import download from "downloadjs"
+import pretty from "pretty"
 
 import {obj2Node, node2Obj} from "../tools/json"
 import {createSlug} from "../tools/file"
@@ -42,7 +43,8 @@ export class EpubExporter extends DOMExporter {
     }
 
     addFigureLabels(language) {
-        return addFigureLabels(this.contents, language)
+        addFigureLabels(this.contents.querySelector('section.fnlist'), language, true)
+        addFigureLabels(this.contents, language)
     }
 
     save() {
@@ -61,7 +63,6 @@ export class EpubExporter extends DOMExporter {
         const equations = contentsBody.querySelectorAll('.equation, .figure-equation')
 
         const math = equations.length ? true : false
-
         // Make links to all H1-3 and create a TOC list of them
         const contentItems = orderLinks(setLinks(
             contentsBody))
@@ -70,6 +71,7 @@ export class EpubExporter extends DOMExporter {
             contentsBody)
 
         let xhtmlCode = xhtmlTemplate({
+            currentPart: false,
             part: false,
             shortLang: this.shortLang,
             title,
@@ -81,7 +83,6 @@ export class EpubExporter extends DOMExporter {
         xhtmlCode = this.replaceImgSrc(xhtmlCode)
 
         const containerCode = containerTemplate({})
-
         const timestamp = getTimestamp(this.updated)
 
 
@@ -151,19 +152,19 @@ export class EpubExporter extends DOMExporter {
 
         this.outputList.push({
             filename: 'META-INF/container.xml',
-            contents: containerCode
+            contents: pretty(containerCode, {ocd: true})
         }, {
             filename: 'EPUB/document.opf',
-            contents: opfCode
+            contents: pretty(opfCode, {ocd: true})
         }, {
             filename: 'EPUB/document.ncx',
-            contents: ncxCode
+            contents: pretty(ncxCode, {ocd: true})
         }, {
             filename: 'EPUB/document-nav.xhtml',
-            contents: navCode
+            contents: pretty(navCode, {ocd: true})
         }, {
             filename: 'EPUB/document.xhtml',
-            contents: xhtmlCode
+            contents: pretty(xhtmlCode, {ocd: true})
         })
 
         this.styleSheets.forEach(styleSheet => {
@@ -187,7 +188,7 @@ export class EpubExporter extends DOMExporter {
 
         if (math) {
             this.includeZips.push({
-                'directory': 'EPUB',
+                'directory': 'EPUB/css',
                 'url': `${settings_STATIC_URL}zip/mathlive_style.zip?v=${transpile_VERSION}`
             })
         }

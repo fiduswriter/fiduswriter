@@ -119,7 +119,7 @@ export const xhtmlTemplate = ({shortLang, title, math, styleSheets, part, body, 
         <title>${escapeText(title)}</title>
 ${
     math ?
-    '\t\t<link rel="stylesheet" type="text/css" href="mathlive.css" />\n' :
+    '\t\t<link rel="stylesheet" type="text/css" href="css/mathlive.css" />\n' :
     ''
 }
 ${

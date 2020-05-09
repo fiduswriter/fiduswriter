@@ -87,6 +87,7 @@ export class DOMExporter {
             () => {
                 this.addBibliographyHTML(citRenderer.fm.bibHTML)
                 this.cleanHTML(citRenderer.fm)
+                this.addFigureLabels(this.doc.settings.language)
                 return Promise.resolve()
             }
         )
@@ -169,7 +170,6 @@ export class DOMExporter {
         )
         this.contents.appendChild(footnotesContainer)
         this.cleanNode(this.contents)
-        this.addFigureLabels(this.doc.settings.language)
 
         // Replace nbsp spaces with normal ones
         this.replaceText(this.contents, '&nbsp;', ' ')

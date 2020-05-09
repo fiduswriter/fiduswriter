@@ -32,8 +32,18 @@ def opf_entries(file_paths):
     )
     opf_text += 'export const mathliveOpfIncludes = `\n'
     for index, file_path in enumerate(file_paths):
-        opf_text += '<item id="mathlive-%d" href="%s" media-type="%s" />\n' % (
-            index, file_path['path'], file_path['mimetype'])
+        mimetype = file_path['mimetype']
+        path = file_path['path']
+        if path.split('.')[-1] == 'woff':
+            mimetype = 'font/woff'
+        elif path.split('.')[-1] == 'woff2':
+            mimetype = 'font/woff2'
+        opf_text += \
+            '<item id="mathlive-%d" href="css/%s" media-type="%s" />\n' % (
+                index,
+                path,
+                mimetype
+            )
     opf_text += '`'
     return opf_text
 

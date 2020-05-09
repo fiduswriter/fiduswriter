@@ -43,10 +43,12 @@ ${
             `id="font${index}"`
         } href="${
             fontFile.filename
-        }" media-type="application/${
+        }" media-type="font/${
             fontFile.filename.split(".")[1]==="woff" ?
-            'font-woff' :
-            'font-sfnt'
+            'woff' :
+            fontFile.filename.split(".")[1]==="woff2" ?
+            'woff2' :
+            'sfnt'
         }" />\n`
     ).join('')
 }${
@@ -152,6 +154,7 @@ export const navTemplate = ({shortLang, contentItems}) =>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="${shortLang}" lang="${shortLang}" xmlns:epub="http://www.idpf.org/2007/ops">
     <head>
         <meta charset="utf-8"></meta>
+        <title>Navigation</title>
     </head>
     <body>
         <nav epub:type="toc" id="toc">

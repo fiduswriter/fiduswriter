@@ -29,6 +29,7 @@ export function getTimestamp(date) {
 
 export function styleEpubFootnotes(htmlEl) {
     // Converts RASH style footnotes into epub footnotes.
+    htmlEl.querySelector('section.fnlist').setAttribute('role', 'doc-endnotes')
     const footnotes = htmlEl.querySelectorAll('section.fnlist section[role=doc-footnote]')
     let footnoteCounter = 1
     footnotes.forEach(footnote => {
@@ -63,7 +64,7 @@ export function styleEpubFootnotes(htmlEl) {
     return htmlEl
 }
 
-export function setLinks(htmlEl, docNum = 1) {
+export function setLinks(htmlEl, docNum = 0) {
     const contentItems = []
     let title
     let idCount = 0

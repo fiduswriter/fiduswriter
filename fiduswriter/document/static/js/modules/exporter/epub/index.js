@@ -62,7 +62,6 @@ export class EpubExporter extends DOMExporter {
         const equations = contentsBody.querySelectorAll('.equation, .figure-equation')
 
         const math = equations.length ? true : false
-
         // Make links to all H1-3 and create a TOC list of them
         const contentItems = orderLinks(setLinks(
             contentsBody))

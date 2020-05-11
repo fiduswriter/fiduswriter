@@ -50,7 +50,7 @@ export class HTMLExporter extends DOMExporter {
         const math = this.contents.querySelectorAll('.equation, .figure-equation').length ? true : false
 
         if (math) {
-            this.styleSheets.push({filename: `css/mathlive.css`})
+            this.addMathliveStylesheet()
         }
 
         this.prepareBinaryFiles()
@@ -85,6 +85,10 @@ export class HTMLExporter extends DOMExporter {
         }
 
         return this.createZip()
+    }
+
+    addMathliveStylesheet() {
+        this.styleSheets.push({filename: `css/mathlive.css`})
     }
 
     createZip() {

@@ -94,7 +94,10 @@ export class DOMExporter {
     }
 
     addFigureLabels(language) {
-        this.contents.querySelectorAll('*[class^="figure-cat-"]').forEach(el => el.innerHTML = FIG_CATS[el.dataset.figureCategory][language])
+        this.contents.querySelectorAll('*[class^="figure-cat-"]').forEach(el => {
+            el.innerHTML = FIG_CATS[el.dataset.figureCategory][language]
+            delete el.dataset.figureCategory
+        })
     }
 
     addBibliographyHTML(bibliographyHTML) {
@@ -199,10 +202,6 @@ export class DOMExporter {
             delete el.dataset.caption
             delete el.dataset.aligned
             delete el.dataset.width
-        })
-
-        this.contents.querySelectorAll('.figure-cat-figure').forEach(el => {
-            delete el.dataset.figureCategory
         })
 
         this.contents.querySelectorAll('.cross-reference').forEach(el => {

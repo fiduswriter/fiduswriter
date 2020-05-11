@@ -2,6 +2,7 @@ import {PAPER_SIZES} from "../../schema/const"
 import {HTMLExporter} from "../html"
 import {addAlert} from "../../common"
 import {removeHidden} from "../tools/doc_contents"
+import {printHTML} from "@vivliostyle/print"
 
 export class PrintExporter extends HTMLExporter {
 
@@ -95,12 +96,11 @@ export class PrintExporter extends HTMLExporter {
             () => this.postProcess()
         ).then(
             ({html, title}) => {
-                return import("vivliostyle-print").then(
-                ({vivliostylePrint}) => vivliostylePrint(
+                return printHTML(
                     html,
                     {title}
                 )
-            )}
+            }
         )
     }
 
@@ -130,6 +130,10 @@ export class PrintExporter extends HTMLExporter {
         })
 
         return Promise.resolve()
+    }
+
+    addMathliveStylesheet() {
+        this.styleSheets.push({url: `${settings_STATIC_URL}css/libs/mathlive/mathlive.css?v=${transpile_VERSION}`})
     }
 
     getFootnoteAnchor(counter) {

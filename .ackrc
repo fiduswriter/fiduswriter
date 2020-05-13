@@ -22,6 +22,7 @@
 --ignore-directory=is:node_modules
 --ignore-directory=is:CMakeFiles
 --ignore-directory=is:static-transpile
+--ignore-directory=is:static-collected
 --ignore-directory=is:static-libs
 --ignore-directory=is:.transpile-cache
 --ignore-directory=is:.transpile

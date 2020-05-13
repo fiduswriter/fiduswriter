@@ -1,7 +1,7 @@
 /** Get cookie to set as part of the request header of all AJAX requests to the server.
  * @param name The name of the token to look for in the cookie.
  */
-const getCookie = function(name) {
+export const getCookie = function(name) {
     if (!document.cookie || document.cookie === '') {
         return null
     }
@@ -125,7 +125,7 @@ export const ensureCSS = function(cssUrl) {
         cssUrl.forEach(url => ensureCSS(url))
         return
     }
-    const url = `${settings.STATIC_URL}css/${cssUrl}?v=${transpile.VERSION}`,
+    const url = `${settings_STATIC_URL}css/${cssUrl}?v=${transpile_VERSION}`,
         link = document.createElement("link")
     link.rel = "stylesheet"
     link.href = url

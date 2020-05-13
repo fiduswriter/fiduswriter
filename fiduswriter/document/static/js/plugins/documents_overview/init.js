@@ -1,1 +1,1 @@
-// Placeholder for citation dialog plugins
+// Placeholder for document overview plugins

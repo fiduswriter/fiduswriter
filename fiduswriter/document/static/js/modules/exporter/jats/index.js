@@ -11,11 +11,12 @@ import {darManifest} from "./templates"
 */
 
 export class JATSExporter {
-    constructor(doc, bibDB, imageDB, csl) {
+    constructor(doc, bibDB, imageDB, csl, updated) {
         this.doc = doc
         this.bibDB = bibDB
         this.imageDB = imageDB
         this.csl = csl
+        this.updated = updated
 
         this.docContents = false
         this.zipFileName = false
@@ -28,7 +29,7 @@ export class JATSExporter {
         this.docContents = removeHidden(this.doc.contents)
         this.converter = new JATSExporterConvert(this, this.imageDB, this.bibDB, this.doc.settings)
         this.citations = new JATSExporterCitations(this, this.bibDB, this.csl)
-        this.conversion = this.converter.init(this.docContents).then(({jats, imageIds}) => {
+        return this.converter.init(this.docContents).then(({jats, imageIds}) => {
             this.textFiles.push({filename: 'manuscript.xml', contents: jats})
             const images = imageIds.map(
                 id => {
@@ -48,13 +49,24 @@ export class JATSExporter {
                 this.httpFiles.push({filename: image.filename, url: image.url})
             })
 
-            const zipper = new ZipFileCreator(
-                this.textFiles,
-                this.httpFiles
-            )
-            return zipper.init()
-        }).then(
-            blob => download(blob, this.zipFileName, 'application/zip')
+            return this.createZip()
+        })
+    }
+
+    createZip() {
+        const zipper = new ZipFileCreator(
+            this.textFiles,
+            this.httpFiles,
+            undefined,
+            undefined,
+            this.updated
         )
+        return zipper.init().then(
+            blob => this.download(blob)
+        )
+    }
+
+    download(blob) {
+        return download(blob, this.zipFileName, 'application/zip')
     }
 }

@@ -298,6 +298,7 @@ export const title = {
     marks: "annotation track",
     group: "fixedpart",
     defining: true,
+    isolating: true,
     attrs : {
         id: {
             default: 'title'

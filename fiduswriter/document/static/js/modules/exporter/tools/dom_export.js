@@ -25,7 +25,7 @@ export class DOMExporter {
         this.fontFiles = []
         this.binaryFiles = []
         this.styleSheets = [
-            {url: `${settings.STATIC_URL}css/document.css?v=${transpile.VERSION}`}
+            {url: `${settings_STATIC_URL}css/document.css?v=${transpile_VERSION}`}
         ]
     }
 
@@ -37,9 +37,16 @@ export class DOMExporter {
         if (!docStyle) {
             return
         }
-        this.styleSheets.push({contents: docStyle.contents, filename: `${docStyle.slug}.css`})
+        let contents = docStyle.contents
+        docStyle.documentstylefile_set.forEach(
+            ([_url, filename]) => contents = contents.replace(
+                new RegExp(filename, 'g'),
+                `media/${filename}`
+            )
+        )
+        this.styleSheets.push({contents, filename: `css/${docStyle.slug}.css`})
         this.fontFiles = this.fontFiles.concat(docStyle.documentstylefile_set.map(([url, filename]) => ({
-            filename,
+            filename: `css/media/${filename}`,
             url
         })))
     }
@@ -54,9 +61,8 @@ export class DOMExporter {
                     ).then(
                         response => {
                             sheet.contents = response
-                            sheet.filename = sheet.url.split('/').pop().split('?')[0]
+                            sheet.filename = `css/${sheet.url.split('/').pop().split('?')[0]}`
                             delete sheet.url
-                            // TODO: include fonts/images included in files
                         }
                     )
                 )
@@ -69,7 +75,6 @@ export class DOMExporter {
         this.schema.cached.imageDB = this.imageDB
         const serializer = DOMSerializer.fromSchema(this.schema)
         this.contents = serializer.serializeNode(this.schema.nodeFromJSON(this.docContents))
-        this.addFigureLabels(this.doc.settings.language)
         const bibliographyHeader = this.doc.settings.bibliography_header[this.doc.settings.language] || BIBLIOGRAPHY_HEADERS[this.doc.settings.language]
         const citRenderer = new RenderCitations(
             this.contents,
@@ -82,13 +87,17 @@ export class DOMExporter {
             () => {
                 this.addBibliographyHTML(citRenderer.fm.bibHTML)
                 this.cleanHTML(citRenderer.fm)
+                this.addFigureLabels(this.doc.settings.language)
                 return Promise.resolve()
             }
         )
     }
 
     addFigureLabels(language) {
-        this.contents.querySelectorAll('*[class^="figure-cat-"]').forEach(el => el.innerHTML = FIG_CATS[el.dataset.figureCategory][language])
+        this.contents.querySelectorAll('*[class^="figure-cat-"]').forEach(el => {
+            el.innerHTML = FIG_CATS[el.dataset.figureCategory][language]
+            delete el.dataset.figureCategory
+        })
     }
 
     addBibliographyHTML(bibliographyHTML) {
@@ -185,16 +194,14 @@ export class DOMExporter {
         this.contents.querySelectorAll('.equation, .figure-equation').forEach(el => {
             delete el.dataset.equation
         })
-
-        this.contents.querySelectorAll('.figure').forEach(el => {
+        this.contents.querySelectorAll('figure').forEach(el => {
             delete el.dataset.equation
             delete el.dataset.image
+            delete el.dataset.imageSrc
             delete el.dataset.figureCategory
             delete el.dataset.caption
-        })
-
-        this.contents.querySelectorAll('.figure-cat-figure').forEach(el => {
-            delete el.dataset.figureCategory
+            delete el.dataset.aligned
+            delete el.dataset.width
         })
 
         this.contents.querySelectorAll('.cross-reference').forEach(el => {

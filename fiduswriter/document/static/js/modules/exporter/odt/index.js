@@ -1,3 +1,5 @@
+import download from "downloadjs"
+
 import {createSlug} from "../tools/file"
 import {XmlZip} from "../tools/xml_zip"
 
@@ -33,6 +35,7 @@ export class OdtExporter {
         this.pmBib = false
         this.docContents = false
         this.docTitle = false
+        this.mimeType = 'application/vnd.oasis.opendocument.text'
     }
 
 
@@ -50,11 +53,10 @@ export class OdtExporter {
         this.richtext = new OdtExporterRichtext(this, this.images)
 
         this.xml = new XmlZip(
-            createSlug(this.docTitle)+'.odt',
             this.templateUrl,
-            'application/vnd.oasis.opendocument.text'
+            this.mimeType
         )
-        this.xml.init().then(
+        return this.xml.init().then(
             () => this.styles.init()
         ).then(
             () => this.metadata.init()
@@ -75,9 +77,15 @@ export class OdtExporter {
             () => {
                 this.render.getTagData(this.pmBib)
                 this.render.render()
-                this.xml.prepareAndDownload()
+                this.xml.prepareBlob()
             }
+        ).then(
+            blob => this.download(blob)
         )
+    }
+
+    download(blob) {
+        return download(blob, createSlug(this.docTitle)+'.odt', this.mimeType)
     }
 
 }

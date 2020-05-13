@@ -299,6 +299,58 @@ export const deleteEmailDialog = function(target, app) {
         icon: 'exclamation-triangle'
     })
     dialog.open()
+}
+
+export const deleteSocialaccountDialog = function(target, app) {
+    const socialaccount = parseInt(target.dataset.socialaccount)
+    const provider = target.dataset.provider
+
+    const buttons = [
+        {
+            text: gettext('Remove'),
+            classes: "fw-dark",
+            click: () => {
+                activateWait()
+
+                post(
+                    '/api/user/socialaccountdelete/',
+                    {
+                        socialaccount
+                    }
+                ).then(
+                    () => {
+                        dialog.close()
+                        deactivateWait()
+                    }
+                ).then(
+                    () => app.getUserInfo()
+                ).then(
+                    () => app.selectPage()
+                ).then(
+                    () => addAlert('info', `${escapeText(provider)} ${gettext('account successfully deleted!')}`)
+                ).catch(
+                    () => {
+                        deactivateWait()
+                        addAlert('error', gettext('The account could not be deleted!'))
+                    }
+                )
+            }
+        },
+        {
+            type: 'cancel'
+        }
+    ]
+
+    const dialog = new Dialog({
+        id: 'fw-confirm-email-dialog',
+        title: gettext('Confirm remove'),
+        body: deleteEmailDialogTemplate({
+            'text':  `${gettext('Remove the link to the account at')} ${escapeText(provider)}?`
+        }),
+        buttons,
+        icon: 'exclamation-triangle'
+    })
+    dialog.open()
 
 }
 

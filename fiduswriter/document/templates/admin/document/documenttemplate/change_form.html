@@ -8,7 +8,7 @@
 <!--  Translations -->
 <script type="text/javascript" src="/api/jsi18n/"></script>
 <!-- JS error handling -->
-<script type="text/javascript" src="{% url 'js-error-handler-js' %}"></script>
+<script type="text/javascript" src="{% static "js/error_hook.mjs" %}" crossorigin="anonymous"></script>
 <script type="text/javascript" src="{% static "js/document_template_admin.mjs" %}"></script>
 {{ media }}
 {% endblock %}

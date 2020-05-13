@@ -1,5 +1,6 @@
 module.exports = {
     "env": {
+        "jest": true,
         "browser": true,
         "es6": true
     },
@@ -294,10 +295,18 @@ module.exports = {
         "yoda": "off"
     },
     "globals": {
-        "gettext": false,
-        "interpolate": false,
-        "settings": false,
-        "transpile": false,
-        "process": false
+        "gettext": "readonly",
+        "interpolate": "readonly",
+        "settings_STATIC_URL": "readonly",
+        "settings_REGISTRATION_OPEN": "readonly",
+        "settings_CONTACT_EMAIL": "readonly",
+        "settings_WS_SERVER": "readonly",
+        "settings_WS_PORT": "readonly",
+        "settings_IS_FREE": "readonly",
+        "settings_TEST_SERVER": "readonly",
+        "settings_DEBUG": "readonly",
+        "settings_SOURCE_MAPS": "readonly",
+        "transpile_VERSION":"readonly",
+        "process": "readonly"
     }
 };

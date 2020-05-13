@@ -11,6 +11,7 @@ function isFile(file) {
     return stat.isFile() || stat.isFIFO();
 }
 
+
 exports.interfaceVersion = 2;
 
 function resolveFilelocation(source, file, config, modifiedPath = false) {
@@ -23,34 +24,20 @@ function resolveFilelocation(source, file, config, modifiedPath = false) {
         return returnValue
     }
 
-    const djangoApps = [
-        'base',
-        'bibliography',
-        'browser_check',
-        'document',
-        'feedback',
-        'menu',
-        'style',
-        'user',
-        'usermedia'
-    ]
+    const djangoApps = JSON.parse(process.env.DJANGO_APPS_PATHS)
 
-
-    const triedPaths = []
-    djangoApps.find(appName => {
-        const resolvedPath = fullPath.replace(/\/\w*\/static\/js\//g, `/${appName}/static/js/`)
+    djangoApps.find(appPath => {
+        const resolvedPath = fullPath.replace(/.*\/static\/js\//g, `${appPath}/static/js/`)
         if (isFile(`${resolvedPath}.js`)) {
             returnValue.path = `${resolvedPath}.js`
             returnValue.found = true
             return true
         }
-        triedPaths.push(`${resolvedPath}.js`)
         if (isFile(`${resolvedPath}/index.js`)) {
             returnValue.path = `${resolvedPath}/index.js`
             returnValue.found = true
             return true
         }
-        triedPaths.push(`${resolvedPath}/index.js`)
         return false
     })
 

@@ -72,43 +72,43 @@ msgstr "\n"
 "                ordinateur de bureau.\n"
 "                        "
 
-#: base/default_settings.py:226
+#: base/default_settings.py:227
 msgid "English"
 msgstr "Anglais"
 
-#: base/default_settings.py:227
+#: base/default_settings.py:228
 msgid "Bulgarian"
 msgstr "Bulgare"
 
-#: base/default_settings.py:228
+#: base/default_settings.py:229
 msgid "German"
 msgstr "Allemand"
 
-#: base/default_settings.py:229
+#: base/default_settings.py:230
 msgid "French"
 msgstr "français"
 
-#: base/default_settings.py:230
+#: base/default_settings.py:231
 msgid "Italian"
 msgstr "Italien"
 
-#: base/default_settings.py:231
+#: base/default_settings.py:232
 msgid "Spanish"
 msgstr "Espagnol"
 
-#: base/default_settings.py:232
+#: base/default_settings.py:233
 msgid "Portuguese (Brazil)"
 msgstr "Portugais (Brésil)"
 
-#: base/default_settings.py:312
+#: base/default_settings.py:314
 msgid "Fidus Writer Admin"
 msgstr "Fidus Writer Admin"
 
-#: base/default_settings.py:313
+#: base/default_settings.py:315
 msgid "Fidus Writer Administration Site"
 msgstr "Site d'administration de Fidus Writer"
 
-#: base/default_settings.py:314
+#: base/default_settings.py:316
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "Bienvenue sur le site d'administration de Fidus Writer"
 
@@ -141,49 +141,49 @@ msgstr "\n"
 msgid "Update all documents (DANGER!)"
 msgstr "Mettre à jour tous les documents (DANGER!)"
 
-#: document/views.py:395 document/views.py:495 document/views.py:893
+#: document/views.py:405 document/views.py:505 document/views.py:908
 msgid "Untitled"
 msgstr "Sans Titre"
 
-#: document/views.py:467 document/views.py:571
+#: document/views.py:477 document/views.py:581
 msgid "shared"
 msgstr "partagé"
 
-#: document/views.py:469 document/views.py:573 document/views.py:979
+#: document/views.py:479 document/views.py:583 document/views.py:994
 msgid "Document"
 msgstr "Document"
 
-#: document/views.py:471 document/views.py:575 document/views.py:981
+#: document/views.py:481 document/views.py:585 document/views.py:996
 msgid "Author"
 msgstr "Auteur"
 
-#: document/views.py:473 document/views.py:577
+#: document/views.py:483 document/views.py:587
 msgid "Access Rights"
 msgstr "Des droits d'accès"
 
-#: document/views.py:476 document/views.py:986
+#: document/views.py:486 document/views.py:1001
 msgid "Access the document"
 msgstr "Accéder au document"
 
-#: document/views.py:479 document/views.py:583
+#: document/views.py:489 document/views.py:593
 msgid "Document shared:"
 msgstr "Document partagé:"
 
-#: document/views.py:580
+#: document/views.py:590
 msgid "Sign up or log in and access the document"
 msgstr "Inscrivez-vous ou connectez-vous et accédez au document"
 
 #. el espacio antes de los dos puntos se ve raro
-#: document/views.py:919
+#: document/views.py:934
 msgid "Comment on :"
 msgstr "Commenter :"
 
 #. el espacio antes de los dos puntos se ve raro
-#: document/views.py:940
+#: document/views.py:955
 msgid "Comment assignment on :"
 msgstr "Affectation des commentaires sur:"
 
-#: document/views.py:983
+#: document/views.py:998
 msgid "Comment"
 msgstr "Commentaire"
 
@@ -259,4 +259,20 @@ msgstr "Type de fichier non pris en charge"
 #: usermedia/views.py:63
 msgid "No file uploaded"
 msgstr "Aucun fichier téléchargé"
+
+#: base/templates/500.html:5 base/templates/500.html:8
+msgid "Error 500"
+msgstr "Erreur 500"
+
+#: base/templates/500.html:9
+msgid "We are sorry, but a server error occured. Our team will be looking into the issue shortly."
+msgstr "Nous sommes désolés, mais une erreur de serveur s'est produite. Notre équipe examinera le problème sous peu."
+
+#: base/templates/api_404.html:5 base/templates/api_404.html:8
+msgid "Error 404"
+msgstr "Erreur 404"
+
+#: base/templates/api_404.html:9
+msgid "We are sorry, but this page was not found."
+msgstr "Nous sommes désolés, mais cette page est introuvable."
 

@@ -34,13 +34,21 @@ export class DocxExporterMath {
     }
 
     setupXslt() {
-        return fetch(`${settings.STATIC_URL}xsl/mml2omml.xsl?v=${transpile.VERSION}`)
+        return fetch(`${settings_STATIC_URL}xsl/mml2omml.xsl?v=${transpile_VERSION}`)
             .then(response => response.text())
             .then(xmlString => {
                 const parser = new window.DOMParser()
                 const xsl = parser.parseFromString(xmlString, "text/xml").querySelector('stylesheet')
                 this.processor.importStylesheet(xsl)
             })
+    }
+
+    latexToMathML(latex) {
+        return this.mathLive.latexToMathML(latex)
+            .replace(/&InvisibleTimes;/g, '&#8290;')
+            .replace(/&ApplyFunction;/g, '&#x2061;')
+            .replace(/&PlusMinus;/g, '&#177;')
+            .replace(/&times;/g, '&#215;')
     }
 
 
@@ -51,7 +59,7 @@ export class DocxExporterMath {
             this.addedCambriaMath = true
         }
         const mathml = this.domParser.parseFromString(
-            `<math xmlns="http://www.w3.org/1998/Math/MathML"><semantics>${this.mathLive.latexToMathML(latex)}</semantics></math>`,
+            `<math xmlns="http://www.w3.org/1998/Math/MathML"><semantics>${this.latexToMathML(latex)}</semantics></math>`,
             "application/xml"
         ).documentElement
         const omml = this.processor.transformToDocument(mathml)

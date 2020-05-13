@@ -1,7 +1,9 @@
 import shutil
 import os
+import json
 from subprocess import call
 
+from django.apps import apps
 from django.core.management.base import BaseCommand
 from django.core.management import call_command
 from django.conf import settings
@@ -22,6 +24,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         call_command("npm_install")
         shutil.os.chdir(settings.PROJECT_PATH)
+        apps_paths = []
+        for app in list(apps.get_app_configs()):
+            apps_paths.append(app.path)
+        os.environ['DJANGO_APPS_PATHS'] = json.dumps(apps_paths)
         command_array = [
             os.path.join(
                 settings.PROJECT_PATH,

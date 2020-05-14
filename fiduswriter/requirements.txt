@@ -1,5 +1,5 @@
 bleach==3.1.4
-Django==2.2.10
+Django==2.2.12
 django-allauth==0.41.0
 django-avatar==5.0.0
 django-js-error-hook==0.8

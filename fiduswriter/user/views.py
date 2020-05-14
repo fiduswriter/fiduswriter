@@ -20,6 +20,8 @@ from allauth.account.models import (
 )
 from allauth.account.views import SignupView
 from allauth.account import signals
+from allauth.socialaccount.models import SocialAccount
+from allauth.socialaccount.signals import social_account_removed
 from django.contrib.auth.forms import PasswordChangeForm
 from allauth.account.forms import AddEmailForm
 
@@ -97,27 +99,23 @@ def delete_email(request):
     email = request.POST["email"]
     response['msg'] = "Removed e-mail address " + email
     status = 200
-    try:
-        email_address = EmailAddress.objects.get(
-            user=request.user,
-            email=email
+    email_address = EmailAddress.objects.filter(
+        user=request.user,
+        email=email,
+        primary=False
+    ).first()
+    if not email_address:
+        return JsonResponse(
+            {'msg': 'Cannot remove email.'},
+            status=404
         )
-        if email_address.primary:
-            status = 201
-            msg = "You cannot remove your primary e-mail address " + email
-            response['msg'] = msg
-
-        else:
-            email_address.delete()
-            signals.email_removed.send(
-                sender=request.user.__class__,
-                request=request,
-                user=request.user,
-                email_address=email_address
-            )
-    except EmailAddress.DoesNotExist:
-        pass
-
+    email_address.delete()
+    signals.email_removed.send(
+        sender=request.user.__class__,
+        request=request,
+        user=request.user,
+        email_address=email_address
+    )
     return JsonResponse(
         response,
         status=status
@@ -130,42 +128,54 @@ def delete_email(request):
 def primary_email(request):
     response = {}
     email = request.POST["email"]
-    try:
-        email_address = EmailAddress.objects.get(
-            user=request.user,
-            email=email,
-        )
-        if not email_address.verified:
-            status = 201
-            msg = "Your primary e-mail address must be verified"
-            response['msg'] = msg
-        else:
-            # Sending the old primary address to the signal
-            # adds a db query.
-            try:
-                from_email_address = EmailAddress.objects.get(
-                    user=request.user,
-                    primary=True
-                )
-            except EmailAddress.DoesNotExist:
-                from_email_address = None
-
-            status = 200
-            email_address.set_as_primary()
-            response['msg'] = "Primary e-mail address set"
-            signals.email_changed.send(
-                sender=request.user.__class__,
-                request=request, user=request.user,
-                from_email_address=from_email_address,
-                to_email_address=email_address
-            )
-    except EmailAddress.DoesNotExist:
-        status = 201
-        response['msg'] = "e-mail address does not exist"
-
+    email_address = EmailAddress.objects.filter(
+        user=request.user,
+        email=email,
+        verified=True
+    ).first()
+    if not email_address:
+        return JsonResponse({'msg': 'Cannot set primary email.'}, 404)
+    from_email_address = EmailAddress.objects.filter(
+        user=request.user,
+        primary=True
+    ).first()
+    status = 200
+    email_address.set_as_primary()
+    response['msg'] = "Primary e-mail address set"
+    signals.email_changed.send(
+        sender=request.user.__class__,
+        request=request, user=request.user,
+        from_email_address=from_email_address,
+        to_email_address=email_address
+    )
     return JsonResponse(
         response,
         status=status
+    )
+
+
+@login_required
+@ajax_required
+@require_POST
+def delete_socialaccount(request):
+    account = SocialAccount.objects.filter(
+        id=request.POST["socialaccount"],
+        user=request.user
+    ).first()
+    if not account:
+        return JsonResponse(
+            {'msg': 'Unknown account'},
+            status=404
+        )
+    account.delete()
+    social_account_removed.send(
+        sender=SocialAccount,
+        request=request,
+        socialaccount=account
+    )
+    return JsonResponse(
+        {'msg': 'Deleted account'},
+        status=200
     )
 
 

@@ -245,7 +245,8 @@ export class DocumentOverviewActions {
                         this.documentOverview.documentStyles,
                         doc,
                         {db:doc.bibliography},
-                        {db:doc.images}
+                        {db:doc.images},
+                        new Date(doc.updated*1000)
                     )
                     exporter.init()
                 })
@@ -303,7 +304,8 @@ export class DocumentOverviewActions {
                         const exporter = new LatexExporter(
                             doc,
                             {db:doc.bibliography},
-                            {db:doc.images}
+                            {db:doc.images},
+                            new Date(doc.updated*1000)
                         )
                         exporter.init()
                     })
@@ -325,7 +327,8 @@ export class DocumentOverviewActions {
                             doc,
                             {db:doc.bibliography},
                             {db:doc.images},
-                            this.documentOverview.app.csl
+                            this.documentOverview.app.csl,
+                            new Date(doc.updated*1000)
                         )
                         exporter.init()
                     })
@@ -349,7 +352,8 @@ export class DocumentOverviewActions {
                             this.documentOverview.documentStyles,
                             doc,
                             {db:doc.bibliography},
-                            {db:doc.images}
+                            {db:doc.images},
+                            new Date(doc.updated*1000)
                         )
                         exporter.init()
                     })

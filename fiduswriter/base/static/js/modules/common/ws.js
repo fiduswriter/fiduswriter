@@ -75,12 +75,12 @@ export class WebSocketConnector {
                     'wss://' :
                     'ws://'
             }${
-                settings.WS_SERVER ?
-                    settings.WS_SERVER :
+                settings_WS_SERVER ?
+                    settings_WS_SERVER :
                     location.host.split(':')[0]
             }${
-                settings.WS_PORT ?
-                    `:${settings.WS_PORT}` :
+                settings_WS_PORT ?
+                    `:${settings_WS_PORT}` :
                     location.port.length ?
                         `:${location.port}` :
                         ''

@@ -559,7 +559,8 @@ class WebSocket(BaseWebSocketHandler):
                         'contents',
                         'last_diffs',
                         'comments',
-                        'bibliography'])
+                        'bibliography',
+                        'updated'])
         except DatabaseError as e:
             expected_msg = 'Save with update_fields did not affect any rows.'
             if str(e) == expected_msg:

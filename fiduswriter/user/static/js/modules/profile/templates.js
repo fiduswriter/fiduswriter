@@ -66,7 +66,7 @@ export const changePwdDialogTemplate = ({username}) =>
         <tr><td><span id="fw-password-change-error" class="warning"></span></td></tr>
     </tbody></table>`
 
-export const profileContents = ({avatar, username, first_name, last_name, emails}) =>
+export const profileContents = ({avatar, username, first_name, last_name, emails, socialaccounts}, socialaccount_providers) =>
     `<div id="profile-wrapper" class="clearfix">
         <div id="profile-avatar">
             ${avatar.html}
@@ -144,7 +144,7 @@ export const profileContents = ({avatar, username, first_name, last_name, emails
                                         ${
                                             email.primary ?
                                                 '&nbsp;' :
-                                                '<span class="delete-email fw-link-text" data-email="' + email.address + '">' +
+                                                `<span class="delete-email fw-link-text" data-email="${email.address}">` +
                                                 '<i class="fa fa-trash-alt"></i>' +
                                                 '</span>'
                                         }
@@ -163,6 +163,47 @@ export const profileContents = ({avatar, username, first_name, last_name, emails
                     </tbody>
                 </table>
             </div>
+            ${
+                socialaccount_providers.length ?
+                    `<div class="profile-data-row">
+                        <table class="fw-data-table profile-social-accounts-table">
+                            <thead class="fw-data-table-header">
+                                <tr>
+                                    <th>${gettext('Social Account Provider')}</th>
+                                    <th>${gettext('Username')}</th>
+                                    <th>&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${
+                                    socialaccount_providers.map(
+                                        provider => {
+                                            const account = socialaccounts.find(saccount => saccount.provider === provider.id)
+                                            if (account) {
+                                                return `<tr>
+                                                    <td>${escapeText(provider.name)}</td>
+                                                    <td>${escapeText(account.name)}</td>
+                                                    <td>
+                                                        <span class="delete-socialaccount fw-link-text" data-socialaccount="${account.id}" data-provider="${escapeText(provider.name)}">
+                                                        <i class="fa fa-trash-alt"></i>
+                                                        </span>
+                                                    </td>
+                                                </tr>`
+                                            } else {
+                                                return `<tr>
+                                                    <td>${escapeText(provider.name)}</td>
+                                                    <td>&nbsp;</td>
+                                                    <td><a href="${provider.login_url}?process=connect">${gettext('Connect')}</a></td>
+                                                </tr>`
+                                            }
+                                        }
+                                    ).join('')
+                                }
+                            </tbody>
+                        </table>
+                    </div>` :
+                    ''
+            }
             <div id="profile-submit-wrapper">
                 <span id="submit-profile" class="fw-button fw-dark">
                     ${gettext('Submit')}

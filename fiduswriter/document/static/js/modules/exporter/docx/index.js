@@ -1,3 +1,5 @@
+import download from "downloadjs"
+
 import {createSlug} from "../tools/file"
 import {XmlZip} from "../tools/xml_zip"
 import {textContent, removeHidden, fixTables} from "../tools/doc_contents"
@@ -34,6 +36,7 @@ export class DocxExporter {
         this.pmBib = false
         this.docContents = false
         this.docTitle = false
+        this.mimeType = 'application/msword'
     }
 
 
@@ -57,12 +60,11 @@ export class DocxExporter {
         )
 
         this.xml = new XmlZip(
-            createSlug(this.docTitle)+'.docx',
             this.templateUrl,
-            'application/msword'
+            this.mimeType
         )
 
-        this.xml.init().then(
+        return this.xml.init().then(
             () => this.citations.init()
         ).then(
             () => {
@@ -87,9 +89,14 @@ export class DocxExporter {
             () => {
                 this.render.getTagData(this.pmBib)
                 this.render.render()
-                this.xml.prepareAndDownload()
+                return this.xml.prepareBlob()
             }
+        ).then(
+            blob => this.download(blob)
         )
+    }
+    download(blob) {
+        return download(blob, createSlug(this.docTitle)+'.docx', this.mimeType)
     }
 
 }

@@ -4,6 +4,7 @@ PORT = 8000
 
 # If you want to show debug messages, set DEBUG to True.
 DEBUG = True
+SOURCE_MAPS = False
 
 # This determines whether the server is used for testing and will let the
 # users know upon signup know that their documents may disappear.
@@ -266,6 +267,7 @@ LOGGING = {
     'handlers': {
         'mail_admins': {
             'level': 'ERROR',
+            'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
         },
         'console': {
@@ -288,7 +290,7 @@ LOGGING = {
             'propagate': False,
         },
         'javascript_error': {
-            'handlers': ['mail_admins'],
+            'handlers': ['mail_admins', 'console'],
             'level': 'ERROR',
             'propagate': True,
         },

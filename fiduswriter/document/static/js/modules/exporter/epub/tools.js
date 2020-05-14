@@ -1,13 +1,12 @@
 import {FIG_CATS} from "../../schema/i18n"
 
-export function getTimestamp() {
-    const today = new Date()
-    let second = today.getUTCSeconds()
-    let minute = today.getUTCMinutes()
-    let hour = today.getUTCHours()
-    let day = today.getUTCDate()
-    let month = today.getUTCMonth() + 1 //January is 0!
-    const year = today.getUTCFullYear()
+export function getTimestamp(date) {
+    let second = date.getUTCSeconds()
+    let minute = date.getUTCMinutes()
+    let hour = date.getUTCHours()
+    let day = date.getUTCDate()
+    let month = date.getUTCMonth() + 1 //January is 0!
+    const year = date.getUTCFullYear()
 
     if (second < 10) {
         second = '0' + second
@@ -30,6 +29,7 @@ export function getTimestamp() {
 
 export function styleEpubFootnotes(htmlEl) {
     // Converts RASH style footnotes into epub footnotes.
+    htmlEl.querySelector('section.fnlist').setAttribute('role', 'doc-endnotes')
     const footnotes = htmlEl.querySelectorAll('section.fnlist section[role=doc-footnote]')
     let footnoteCounter = 1
     footnotes.forEach(footnote => {
@@ -64,9 +64,10 @@ export function styleEpubFootnotes(htmlEl) {
     return htmlEl
 }
 
-export function setLinks(htmlEl, docNum) {
+export function setLinks(htmlEl, docNum = 0) {
     const contentItems = []
     let title
+    let idCount = 0
 
     htmlEl.querySelectorAll('div.article-title,h1,h2,h3,h4,h5,h6').forEach(el => {
         title = el.textContent.trim()
@@ -79,7 +80,7 @@ export function setLinks(htmlEl, docNum) {
             }
             if (!el.id) {
                 // The element has no ID, so we add one.
-                el.id = '_' + Math.random().toString(36).substr(2, 9)
+                el.id = `_${docNum}_${idCount++}`
             }
             contentItem.id = el.id
             contentItems.push(contentItem)
@@ -112,12 +113,12 @@ export function orderLinks(contentItems) {
     return contentItems
 }
 
-export function addFigureLabels(htmlEl, language) {
+export function addFigureLabels(htmlEl, language, footnote = false) {
     // Due to lacking CSS support in ereaders, figure numbers need to be hardcoded.
     htmlEl.querySelectorAll('figcaption .figure-cat-figure').forEach(
         (el, index) => {
             const suffix = el.parentElement.innerText.trim().length ? ': ' : ''
-            el.innerHTML = `${FIG_CATS['figure'][language]} ${(index + 1)}${suffix}`
+            el.innerHTML = `${FIG_CATS['figure'][language]} ${(index + 1)}${footnote ? 'A' : ''}${suffix}`
             el.classList.remove('figure-cat-figure')
         }
     )
@@ -125,7 +126,7 @@ export function addFigureLabels(htmlEl, language) {
     htmlEl.querySelectorAll('figcaption .figure-cat-photo').forEach(
         (el, index) => {
             const suffix = el.parentElement.innerText.trim().length ? ': ' : ''
-            el.innerHTML = `${FIG_CATS['photo'][language]} ${(index + 1)}${suffix}`
+            el.innerHTML = `${FIG_CATS['photo'][language]} ${(index + 1)}${footnote ? 'A' : ''}${suffix}`
             el.classList.remove('figure-cat-photo')
         }
     )
@@ -133,10 +134,9 @@ export function addFigureLabels(htmlEl, language) {
     htmlEl.querySelectorAll('figcaption .figure-cat-table').forEach(
         (el, index) => {
             const suffix = el.parentElement.innerText.trim().length ? ': ' : ''
-            el.innerHTML = `${FIG_CATS['table'][language]} ${(index + 1)}${suffix}`
+            el.innerHTML = `${FIG_CATS['table'][language]} ${(index + 1)}${footnote ? 'A' : ''}${suffix}`
             el.classList.remove('figure-cat-table')
         }
     )
     return htmlEl
-
 }

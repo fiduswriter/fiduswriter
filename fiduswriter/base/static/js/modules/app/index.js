@@ -107,7 +107,7 @@ export class App {
     }
 
     init() {
-        if (!settings.DEBUG) {
+        if (!settings_DEBUG) {
             OfflinePluginRuntime.install({
                 onUpdateReady: () => OfflinePluginRuntime.applyUpdate(),
                 onUpdated: () => window.location.reload()
@@ -130,7 +130,7 @@ export class App {
                         // We show a setup message instead.
                         this.page = this.openSetupPage()
                         this.page.init()
-                    } else if (settings.DEBUG) {
+                    } else if (settings_DEBUG) {
                         throw error
                     } else {
                         // We don't know what is going on, but we are in production

@@ -63,7 +63,7 @@ figure img {
 
 figure {
     width: calc(80% - 12px);
-    border: 1px solid var(--cs-white-border);
+    border: 1px solid black;
     padding: 5px;
     text-align: center;
     break-inside: avoid;
@@ -179,14 +179,8 @@ table {
     float: right;
 }
 
-.user-contents a,
-.user-contents a:hover {
-    color: var(--cs-1-text);
+.user-contents a {
     text-decoration: underline;
-}
-
-.user-contents a:hover {
-    color: var(--cs-1-hover);
 }
 
 .table-fixed {
@@ -209,7 +203,6 @@ table {
 .article .table-of-contents h6 {
     font-size: 1em;
     font-weight: normal;
-    font-family: 'Lato', sans-serif;
     margin-bottom: unset;
 }
 

@@ -1,4 +1,4 @@
-module.exports = {
+module.exports = { // eslint-disable-line no-undef
     "env": {
         "jest": true,
         "browser": true,
@@ -12,9 +12,9 @@ module.exports = {
     "settings": {
         "import/resolver": {
             "node": {
-                "moduleDirectory": '.transpile/node_modules'
+                "moduleDirectory": ".transpile/node_modules"
             },
-            [process.env.SRC_PATH + '/testing/eslint_import_resolver']: {}
+            [process.env.SRC_PATH + "/testing/eslint_import_resolver"]: {}
         }
     },
     "parser": "babel-eslint",
@@ -24,8 +24,7 @@ module.exports = {
       "ecmaFeatures": {
         "globalReturn": false,
       },
-      "ecmaVersion": 2018,
-      "sourceType": "module"
+      "ecmaVersion": 2018
     },
     "rules": {
         "accessor-pairs": "error",
@@ -86,7 +85,7 @@ module.exports = {
         "init-declarations": "off",
         "jsx-quotes": "error",
         "key-spacing": "off",
-        "keyword-spacing": ["warn", { "before": true, "after": true }],
+        "keyword-spacing": ["warn", {"before": true, "after": true}],
         "line-comment-position": "off",
         "linebreak-style": [
             "error",
@@ -206,7 +205,7 @@ module.exports = {
         "no-unmodified-loop-condition": "error",
         "no-unneeded-ternary": "off",
         "no-unused-expressions": "error",
-        "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+        "no-unused-vars": ["error", {"argsIgnorePattern": "^_"}],
         "no-use-before-define": "off",
         "no-useless-call": "error",
         "no-useless-catch": "off",
@@ -309,4 +308,4 @@ module.exports = {
         "transpile_VERSION":"readonly",
         "process": "readonly"
     }
-};
+}

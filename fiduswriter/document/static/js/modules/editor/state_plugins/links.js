@@ -178,7 +178,7 @@ export const linksPlugin = function(options) {
                             ''
                         }
                         <div class="link-href">
-                            <a class="href" ${linkType === 'external' ? 'target="_blank"' : ''} href="${linkHref}">
+                            <a class="href${linkType === 'internal' ? ' internal' : ''}" ${linkType === 'external' ? 'target="_blank"' : ''} href="${linkHref}">
             		            ${linkHref}
             		        </a>
                         </div>
@@ -225,6 +225,17 @@ export const linksPlugin = function(options) {
                     ''
                 }
             </div>`
+
+        if (linkType === 'internal') {
+            const el = dropUp.querySelector('a.internal')
+            el.addEventListener('click',
+                event => {
+                    event.preventDefault()
+                    event.stopImmediatePropagation()
+                    options.editor.scrollIdIntoView(linkMark.attrs.href.slice(1))
+                }
+            )
+        }
 
         const copyLinkHref = dropUp.querySelector('.copy-link')
         if (copyLinkHref) {

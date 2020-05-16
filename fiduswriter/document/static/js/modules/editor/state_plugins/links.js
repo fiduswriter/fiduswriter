@@ -228,11 +228,11 @@ export const linksPlugin = function(options) {
 
         if (linkType === 'internal') {
             const el = dropUp.querySelector('a.internal')
-            el.addEventListener('mousedown',
+            el.addEventListener('click',
                 event => {
                     event.preventDefault()
                     event.stopImmediatePropagation()
-                    options.editor.scrollIdIntoView(linkMark.attrs.href)
+                    options.editor.scrollIdIntoView(linkMark.attrs.href.slice(1))
                 }
             )
         }

@@ -419,7 +419,7 @@ export class ModMarginboxes {
             referrers.push(refPos)
         }
 
-        if (node.marks.find(mark => mark.type.name === 'link' && !mark.attrs.title)) {
+        if (node.marks.find(mark => mark.type.name === 'link' && mark.attrs.href.charAt(0) === '#' && !mark.attrs.title)) {
             const linkMark = node.marks.find(mark => mark.type.name === 'link')
             const warningBox = {
                 type: 'warning',

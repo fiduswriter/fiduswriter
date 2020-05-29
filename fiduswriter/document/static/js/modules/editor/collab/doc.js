@@ -109,6 +109,8 @@ export class ModCollabDoc {
         // Adjust the document when reconnecting after offline and many changes
         // happening on server.
         if (this.mod.editor.docInfo.version < data.doc.v) {
+            this.receiving = true
+            this.mod.editor.docInfo.confirmedJson = JSON.parse(JSON.stringify(data.doc.contents))
             const confirmedState = EditorState.create({doc: this.mod.editor.docInfo.confirmedDoc})
             const unconfirmedTr = confirmedState.tr
             sendableSteps(this.mod.editor.view.state).steps.forEach(step => unconfirmedTr.step(step))
@@ -119,8 +121,13 @@ export class ModCollabDoc {
             // We reset to there being no local changes to send.
             this.mod.editor.view.dispatch(receiveTransaction(
                 this.mod.editor.view.state,
+                unconfirmedTr.steps,
+                unconfirmedTr.steps.map(_step => this.mod.editor.client_id)
+            ))
+            this.mod.editor.view.dispatch(receiveTransaction(
+                this.mod.editor.view.state,
                 rollbackTr.steps,
-                rollbackTr.steps.map(_step => this.mod.editor.client_id)
+                rollbackTr.steps.map(_step => 'remote')
             ))
             const toDoc = this.mod.editor.schema.nodeFromJSON({type:'doc', content:[
                 data.doc.contents
@@ -128,7 +135,6 @@ export class ModCollabDoc {
             const lostTr = recreateTransform(this.mod.editor.view.state.doc, toDoc)
             let tracked
             let localTr // local steps to be reapplied
-            const lostState = EditorState.create({doc: toDoc})
             if (
                 ['write', 'write-tracked'].includes(this.mod.editor.docInfo.access_rights) &&
                 (
@@ -142,7 +148,7 @@ export class ModCollabDoc {
                 // to the changes of this user and ask user to clean up.
                 localTr = trackedTransaction(
                     unconfirmedTr,
-                    lostState,
+                    confirmedState,
                     this.mod.editor.user,
                     false,
                     Date.now() - this.mod.editor.clientTimeAdjustment
@@ -151,7 +157,7 @@ export class ModCollabDoc {
                 tracked = false
                 localTr = unconfirmedTr
             }
-            const rebasedTr = lostState.tr.setMeta('remote', true)
+            const rebasedTr = EditorState.create({doc: toDoc}).tr.setMeta('remote', true)
             const maps = localTr.mapping.maps.slice().reverse().map(map => map.invert()).concat(lostTr.mapping)
             localTr.steps.forEach(
                 (step, index) => {
@@ -210,7 +216,8 @@ export class ModCollabDoc {
                 )
             }
             this.mod.editor.mod.footnotes.fnEditor.renderAllFootnotes()
-
+            this.receiving = false
+            this.sendToCollaborators()
         } else {
             // The server seems to have lost some data. We reset.
             this.loadDocument(data)

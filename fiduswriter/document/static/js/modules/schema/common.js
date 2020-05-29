@@ -413,7 +413,7 @@ export const link = {
     ],
     toDOM(node) {
         const {href, title} = node.attrs
-        const attrs = title ? {href, title} : {href, title: gettext('Missing target'), class: 'missing-target'}
+        const attrs = title || href.charAt(0) !== '#' ? {href, title} : {href, title: gettext('Missing target'), class: 'missing-target'}
         return ["a", attrs, 0]
     }
 }

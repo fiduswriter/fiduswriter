@@ -1,12 +1,9 @@
-import download from "downloadjs"
-
 import {get} from "../../common"
 // Handle a zip file containing XML files. Make sure files are only opened once,
 // and provide a mechanism to save the file.
 
 export class XmlZip {
-    constructor(fileName, url, mimeType) {
-        this.fileName = fileName
+    constructor(url, mimeType) {
         this.url = url
         this.mimeType = mimeType
         this.docs = {}
@@ -95,11 +92,11 @@ export class XmlZip {
         this.zip.file(filePath, string)
     }
 
-    prepareAndDownload() {
+    prepareBlob() {
         this.allXMLToZip()
         this.allExtraToZip()
 
-        this.zip.generateAsync({type:"blob", mimeType: this.mimeType}).then(out => download(out, this.fileName, this.mimeType))
+        return this.zip.generateAsync({type:"blob", mimeType: this.mimeType})
     }
 
 }

@@ -55,17 +55,17 @@ export const figurePlugin = function(options) {
         props: {
             nodeViews: {}
         },
-        view(_view) {
+        view(view) {
             let userLanguage = options.editor.view.state.doc.firstChild.attrs.language
-            document.querySelectorAll('*[class^="figure-cat-"]').forEach(el => el.innerHTML = FIG_CATS[el.dataset.figureCategory][userLanguage])
+            view.dom.querySelectorAll('*[class^="figure-cat-"]').forEach(el => el.innerHTML = FIG_CATS[el.dataset.figureCategory][userLanguage])
             return {
-                update: (_view, _prevState) => {
+                update: (view, _prevState) => {
                     let selector = '*[class^="figure-cat-"]:empty'
                     if (options.editor.view.state.doc.firstChild.attrs.language !== userLanguage) {
                         selector = '*[class^="figure-cat-"]'
                         userLanguage = options.editor.view.state.doc.firstChild.attrs.language
                     }
-                    document.querySelectorAll(selector).forEach(el => el.innerHTML = FIG_CATS[el.dataset.figureCategory][userLanguage])
+                    view.dom.querySelectorAll(selector).forEach(el => el.innerHTML = FIG_CATS[el.dataset.figureCategory][userLanguage])
                 }
             }
         }

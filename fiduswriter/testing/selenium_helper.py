@@ -32,7 +32,7 @@ class SeleniumHelper(object):
             }
             options.add_experimental_option("prefs", prefs)
         if user_agent:
-            options.add_argument("user-agent=%s".format(user_agent))
+            options.add_argument("user-agent={}".format(user_agent))
         if os.getenv("CI"):
             options.binary_location = '/usr/bin/google-chrome-stable'
             options.add_argument('--headless')

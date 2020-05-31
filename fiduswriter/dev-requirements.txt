@@ -1,4 +1,4 @@
-flake8==3.7.9
+flake8==3.8.2
 selenium==3.141.0
-setuptools==41.6.0
+setuptools==47.1.1
 twine==2.0.0

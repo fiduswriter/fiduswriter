@@ -1,7 +1,7 @@
 {
     "browserslist": "> 0.5%, last 2 versions, Firefox ESR, not dead, not ie 11",
     "dependencies": {
-        "browserslist-useragent-regexp": "2.0.1",
+        "browserslist-useragent-regexp": "2.0.5",
         "bowser": "1.9.x" // In case a plugin uses it. It is no longer needed in 3.7.14+ and should be removed in 3.8
     },
     "scripts": {

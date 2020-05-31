@@ -18,26 +18,31 @@
   "license": "AGPL",
   "private": true,
   "dependencies": {
-    "file-loader": "^5.1.0",
+    "file-loader": "^6.0.0",
     "diff-dom": "4.1.6",
     "downloadjs": "1.4.7",
     "@fortawesome/fontawesome-free": "^5.12.1",
-    "simple-datatables": "^2.1.9",
-    "vivliostyle-print": "^1.2.2",
-    "eslint": "6.8.0",
+    "simple-datatables": "^2.1.10",
+    "@vivliostyle/print": "^2.0.0",
+    "eslint": "7.1.0",
     "eslint-global-patch": "1.0.4",
-    "eslint-plugin-import": "2.20.1",
+    "eslint-plugin-import": "2.20.2",
     "eslint-import-resolver-node": "0.3.3",
     "babel-eslint": "10.1.0",
     "offline-plugin": "5.0.x",
     "w3c-keyname": "2.1.x",
-    "stylelint": "13.2.1",
+    "stylelint": "13.5.0",
     "stylelint-config-standard": "20.0.0",
-    "stylelint-value-no-unknown-custom-properties": "2.0.0"
+    "stylelint-value-no-unknown-custom-properties": "3.0.0",
+    "source-map-loader": "1.0.0",
+    "stacktrace-js": "2.0.2"
   },
   "devDependencies": {
-    "updates": "^10.2.0",
+    "updates": "^10.2.13",
+    "eslint-plugin-jest": "^23.13.2",
+    "babel-jest": "^26.0.1",
+    "jest":"^26.0.1",
     "@babel/cli": "7.6.x",
-    "@babel/plugin-transform-template-literals": "^7.8.3"
+    "@babel/plugin-transform-template-literals": "^7.10.1"
   }
 }

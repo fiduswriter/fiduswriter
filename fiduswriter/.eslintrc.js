@@ -1,5 +1,6 @@
-module.exports = {
+module.exports = { // eslint-disable-line no-undef
     "env": {
+        "jest": true,
         "browser": true,
         "es6": true
     },
@@ -11,9 +12,9 @@ module.exports = {
     "settings": {
         "import/resolver": {
             "node": {
-                "moduleDirectory": '.transpile/node_modules'
+                "moduleDirectory": ".transpile/node_modules"
             },
-            [process.env.SRC_PATH + '/testing/eslint_import_resolver']: {}
+            [process.env.SRC_PATH + "/testing/eslint_import_resolver"]: {}
         }
     },
     "parser": "babel-eslint",
@@ -23,8 +24,7 @@ module.exports = {
       "ecmaFeatures": {
         "globalReturn": false,
       },
-      "ecmaVersion": 2018,
-      "sourceType": "module"
+      "ecmaVersion": 2018
     },
     "rules": {
         "accessor-pairs": "error",
@@ -85,7 +85,7 @@ module.exports = {
         "init-declarations": "off",
         "jsx-quotes": "error",
         "key-spacing": "off",
-        "keyword-spacing": ["warn", { "before": true, "after": true }],
+        "keyword-spacing": ["warn", {"before": true, "after": true}],
         "line-comment-position": "off",
         "linebreak-style": [
             "error",
@@ -205,7 +205,7 @@ module.exports = {
         "no-unmodified-loop-condition": "error",
         "no-unneeded-ternary": "off",
         "no-unused-expressions": "error",
-        "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+        "no-unused-vars": ["error", {"argsIgnorePattern": "^_"}],
         "no-use-before-define": "off",
         "no-useless-call": "error",
         "no-useless-catch": "off",
@@ -294,10 +294,18 @@ module.exports = {
         "yoda": "off"
     },
     "globals": {
-        "gettext": false,
-        "interpolate": false,
-        "settings": false,
-        "transpile": false,
-        "process": false
+        "gettext": "readonly",
+        "interpolate": "readonly",
+        "settings_STATIC_URL": "readonly",
+        "settings_REGISTRATION_OPEN": "readonly",
+        "settings_CONTACT_EMAIL": "readonly",
+        "settings_WS_SERVER": "readonly",
+        "settings_WS_PORT": "readonly",
+        "settings_IS_FREE": "readonly",
+        "settings_TEST_SERVER": "readonly",
+        "settings_DEBUG": "readonly",
+        "settings_SOURCE_MAPS": "readonly",
+        "transpile_VERSION":"readonly",
+        "process": "readonly"
     }
-};
+}

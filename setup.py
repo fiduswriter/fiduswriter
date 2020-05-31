@@ -190,7 +190,7 @@ setuptools.setup(
     python_requires='>=3',
     install_requires=read('fiduswriter/requirements.txt').splitlines(),
     extras_require={
-        "books": "fiduswriter-books ~= 3.8.0",
+        "books": "fiduswriter-books ~= 3.8.5",
         "citation-api-import": "fiduswriter-citation-api-import ~= 3.8.0",
         "languagetool": "fiduswriter-languagetool ~= 3.8.0",
         "ojs": "fiduswriter-ojs ~= 3.8.1",

@@ -12,6 +12,15 @@ body.editor header {
     z-index: 91;
 }
 
+.user-contents figure {
+    border: 1px solid var(--cs-white-border);
+}
+
+.user-contents a,
+.user-contents a:hover {
+    color: var(--cs-1-text);
+}
+
 
 .pagination-footnote-item {
     width: 100%;
@@ -810,6 +819,7 @@ html[hc=a5] #toolbar {
 
 .editor .article .table-of-contents {
     background-color: var(--editor-text-content-item-background-color);
+    font-family: 'Lato', sans-serif;
     padding: 10px;
 }
 

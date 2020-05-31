@@ -171,7 +171,8 @@ export const headerbarModel = () => ({
                                 editor.mod.documentTemplate.documentStyles,
                                 editor.getDoc({changes: 'acceptAllNoInsertions'}),
                                 editor.mod.db.bibDB,
-                                editor.mod.db.imageDB
+                                editor.mod.db.imageDB,
+                                editor.docInfo.updated
                             )
                             exporter.init()
                         })
@@ -190,7 +191,8 @@ export const headerbarModel = () => ({
                                 editor.mod.documentTemplate.documentStyles,
                                 editor.getDoc({changes: 'acceptAllNoInsertions'}),
                                 editor.mod.db.bibDB,
-                                editor.mod.db.imageDB
+                                editor.mod.db.imageDB,
+                                editor.docInfo.updated
                             )
                             exporter.init()
                         })
@@ -207,7 +209,8 @@ export const headerbarModel = () => ({
                             const exporter = new LatexExporter(
                                 editor.getDoc({changes: 'acceptAllNoInsertions'}),
                                 editor.mod.db.bibDB,
-                                editor.mod.db.imageDB
+                                editor.mod.db.imageDB,
+                                editor.docInfo.updated
                             )
                             exporter.init()
                         })
@@ -225,7 +228,8 @@ export const headerbarModel = () => ({
                                 editor.getDoc({changes: 'acceptAllNoInsertions'}),
                                 editor.mod.db.bibDB,
                                 editor.mod.db.imageDB,
-                                editor.app.csl
+                                editor.app.csl,
+                                editor.docInfo.updated
                             )
                             exporter.init()
                         })

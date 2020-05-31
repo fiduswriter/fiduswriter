@@ -1,4 +1,5 @@
 import download from "downloadjs"
+import pretty from "pretty"
 
 import {obj2Node, node2Obj} from "../tools/json"
 import {createSlug} from "../tools/file"
@@ -12,13 +13,18 @@ import {DOMExporter} from "../tools/dom_export"
 
 export class EpubExporter extends DOMExporter {
 
-    constructor(schema, csl, documentStyles, doc, bibDB, imageDB) {
+    constructor(schema, csl, documentStyles, doc, bibDB, imageDB, updated) {
         super(schema, csl, documentStyles)
         this.doc = doc
         this.bibDB = bibDB
         this.imageDB = imageDB
+        this.updated = updated
+
         this.shortLang = this.doc.settings.language.split('-')[0]
         this.lang = this.doc.settings.language
+
+        this.outputList = []
+        this.includeZips = []
     }
 
     init() {
@@ -37,7 +43,8 @@ export class EpubExporter extends DOMExporter {
     }
 
     addFigureLabels(language) {
-        return addFigureLabels(this.contents, language)
+        addFigureLabels(this.contents.querySelector('section.fnlist'), language, true)
+        addFigureLabels(this.contents, language)
     }
 
     save() {
@@ -56,7 +63,6 @@ export class EpubExporter extends DOMExporter {
         const equations = contentsBody.querySelectorAll('.equation, .figure-equation')
 
         const math = equations.length ? true : false
-
         // Make links to all H1-3 and create a TOC list of them
         const contentItems = orderLinks(setLinks(
             contentsBody))
@@ -65,6 +71,7 @@ export class EpubExporter extends DOMExporter {
             contentsBody)
 
         let xhtmlCode = xhtmlTemplate({
+            currentPart: false,
             part: false,
             shortLang: this.shortLang,
             title,
@@ -76,8 +83,7 @@ export class EpubExporter extends DOMExporter {
         xhtmlCode = this.replaceImgSrc(xhtmlCode)
 
         const containerCode = containerTemplate({})
-
-        const timestamp = getTimestamp()
+        const timestamp = getTimestamp(this.updated)
 
 
         const authors = this.docContents.content.reduce(
@@ -122,7 +128,7 @@ export class EpubExporter extends DOMExporter {
             keywords,
             idType: 'fidus',
             id: this.doc.id,
-            date: timestamp.slice(0, 10), // TODO: the date should probably be the original document creation date instead
+            date: timestamp.slice(0, 10),
             modified: timestamp,
             styleSheets: this.styleSheets,
             math,
@@ -144,25 +150,25 @@ export class EpubExporter extends DOMExporter {
             contentItems
         })
 
-        const outputList = [{
+        this.outputList.push({
             filename: 'META-INF/container.xml',
-            contents: containerCode
+            contents: pretty(containerCode, {ocd: true})
         }, {
             filename: 'EPUB/document.opf',
-            contents: opfCode
+            contents: pretty(opfCode, {ocd: true})
         }, {
             filename: 'EPUB/document.ncx',
-            contents: ncxCode
+            contents: pretty(ncxCode, {ocd: true})
         }, {
             filename: 'EPUB/document-nav.xhtml',
-            contents: navCode
+            contents: pretty(navCode, {ocd: true})
         }, {
             filename: 'EPUB/document.xhtml',
-            contents: xhtmlCode
-        }]
+            contents: pretty(xhtmlCode, {ocd: true})
+        })
 
         this.styleSheets.forEach(styleSheet => {
-            outputList.push({
+            this.outputList.push({
                 filename: 'EPUB/' + styleSheet.filename,
                 contents: styleSheet.contents
             })
@@ -180,23 +186,30 @@ export class EpubExporter extends DOMExporter {
             })
         })
 
-        const includeZips = []
         if (math) {
-            includeZips.push({
-                'directory': 'EPUB',
-                'url': `${settings.STATIC_URL}zip/mathlive_style.zip?v=${transpile.VERSION}`
+            this.includeZips.push({
+                'directory': 'EPUB/css',
+                'url': `${settings_STATIC_URL}zip/mathlive_style.zip?v=${transpile_VERSION}`
             })
         }
+        return this.createZip()
+    }
+
+    createZip() {
         const zipper = new ZipFileCreator(
-            outputList,
+            this.outputList,
             this.binaryFiles,
-            includeZips,
-            'application/epub+zip'
+            this.includeZips,
+            'application/epub+zip',
+            this.updated
         )
 
-        zipper.init().then(
-            blob => download(blob, createSlug(title) + '.epub', 'application/epub+zip')
+        return zipper.init().then(
+            blob => this.download(blob)
         )
+    }
 
+    download(blob) {
+        return download(blob, createSlug(this.doc.title) + '.epub', 'application/epub+zip')
     }
 }

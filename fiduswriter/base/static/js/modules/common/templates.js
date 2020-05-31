@@ -9,7 +9,7 @@ export const baseBodyTemplate = ({user, contents, hasOverview}) => `
         <a href="/">
             <h1 class="fw-logo">
                 <span class="fw-logo-text"></span>
-                <img src="${settings.STATIC_URL}svg/icon.svg?v=${transpile.VERSION}" />
+                <img src="${settings_STATIC_URL}svg/icon.svg?v=${transpile_VERSION}" />
             </h1>
         </a>
         <nav id="header-nav"></nav>

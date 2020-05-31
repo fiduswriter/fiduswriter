@@ -1,11 +1,11 @@
-bleach==3.1.1
-Django==2.2.10
-django-allauth==0.41.0
+bleach==3.1.5
+Django==2.2.12
+django-allauth==0.42.0
 django-avatar==5.0.0
 django-js-error-hook==0.8
 django-npm-mjs==2.0.1
 jsonpatch==1.25
 Pillow==7.0.0
 python-dateutil==2.8.1
-python-magic==0.4.15
-tornado==6.0.3
+python-magic==0.4.18
+tornado==6.0.4

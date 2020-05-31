@@ -159,7 +159,6 @@ export class ModMarginboxes {
             lastNode = this.editor.view.state.doc
 
         this.activeCommentStyle = ''
-
         this.editor.view.state.doc.descendants(
             (node, pos) => {
                 if (node.attrs.hidden) {
@@ -287,7 +286,7 @@ export class ModMarginboxes {
             fastdom.measure(() => {
                 // DOM read phase
                 let marginBoxesPlacementStyle = ''
-                if (getComputedStyle(marginBoxFilterElement).position) {
+                if (getComputedStyle(marginBoxFilterElement).position === 'fixed') {
                     // We are in mobile/tablet mode. We don't need to place margin boxes.
                 } else {
                     const marginBoxesDOM = document.querySelectorAll('#margin-box-container .margin-box')
@@ -350,7 +349,7 @@ export class ModMarginboxes {
                         let css = ''
                         if (pos !== totalOffset) {
                             const topMargin = parseInt(pos - totalOffset)
-                            css += `.margin-box:nth-of-type(${(index+1)}) {margin-top: ${topMargin}px;}\n`
+                            css += `#margin-box-container div.margin-box:nth-of-type(${(index+1)}) {margin-top: ${topMargin}px;}\n`
                             totalOffset += topMargin
                         }
                         totalOffset += mboxPlacement.height + 2
@@ -420,7 +419,7 @@ export class ModMarginboxes {
             referrers.push(refPos)
         }
 
-        if (node.marks.find(mark => mark.type.name === 'link' && !mark.attrs.title)) {
+        if (node.marks.find(mark => mark.type.name === 'link' && mark.attrs.href.charAt(0) === '#' && !mark.attrs.title)) {
             const linkMark = node.marks.find(mark => mark.type.name === 'link')
             const warningBox = {
                 type: 'warning',
@@ -493,7 +492,6 @@ export class ModMarginboxes {
         }
         commentIds.forEach(commentId => {
             const comment = this.editor.mod.comments.store.findComment(commentId)
-
             if (
                 !comment ||
                 (this.filterOptions.commentsOnlyMajor && !comment.isMajor) ||

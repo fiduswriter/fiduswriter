@@ -128,13 +128,34 @@ export class ModCollabDoc {
                 this.mod.editor.view.state,
                 rollbackTr.steps,
                 rollbackTr.steps.map(_step => 'remote')
-            ))
+            ).setMeta('remote', true))
             const toDoc = this.mod.editor.schema.nodeFromJSON({type:'doc', content:[
                 data.doc.contents
             ]})
+
+            // Apply the online Transaction
             const lostTr = recreateTransform(this.mod.editor.view.state.doc, toDoc)
+            this.mod.editor.view.dispatch(receiveTransaction(
+                this.mod.editor.view.state,
+                lostTr.steps,
+                lostTr.steps.map(_step => 'remote')
+            ).setMeta('remote', true))
+
+            const rebasedTr = EditorState.create({doc: toDoc}).tr.setMeta('remote', true)
+            const maps = new Mapping([].concat(unconfirmedTr.mapping.maps.slice().reverse().map(map=>map.invert())).concat(lostTr.mapping.maps.slice()))
+
+            unconfirmedTr.steps.forEach(
+                (step, index) => {
+                    const mapped = step.map(maps.slice(unconfirmedTr.steps.length - index))
+                    if (mapped && !rebasedTr.maybeStep(mapped).failed) {
+                        maps.appendMap(mapped.getMap())
+                        maps.setMirror(unconfirmedTr.steps.length-index-1, (unconfirmedTr.steps.length+lostTr.steps.length+rebasedTr.steps.length-1))
+                    }
+                }
+            )
+
             let tracked
-            let localTr // local steps to be reapplied
+            let rebasedTrackedTr // offline steps to be tracked
             if (
                 ['write', 'write-tracked'].includes(this.mod.editor.docInfo.access_rights) &&
                 (
@@ -146,27 +167,18 @@ export class ModCollabDoc {
                 // Either this user has made 50 changes since going offline,
                 // or the document has 20 changes to it. Therefore we add tracking
                 // to the changes of this user and ask user to clean up.
-                localTr = trackedTransaction(
-                    unconfirmedTr,
-                    confirmedState,
+                rebasedTrackedTr = trackedTransaction(
+                    rebasedTr,
+                    this.mod.editor.view.state,
                     this.mod.editor.user,
                     false,
                     Date.now() - this.mod.editor.clientTimeAdjustment
                 )
             } else {
                 tracked = false
-                localTr = unconfirmedTr
+                rebasedTrackedTr = rebasedTr
             }
-            const rebasedTr = EditorState.create({doc: toDoc}).tr.setMeta('remote', true)
-            const maps = localTr.mapping.maps.slice().reverse().map(map => map.invert()).concat(lostTr.mapping)
-            localTr.steps.forEach(
-                (step, index) => {
-                    const mapped = step.map(new Mapping(maps.slice(localTr.steps.length - index)))
-                    if (mapped && !rebasedTr.maybeStep(mapped).failed) {
-                        maps.push(mapped.getMap())
-                    }
-                }
-            )
+
             const usedImages = [],
                 usedBibs = []
             const footnoteFind = (node, usedImages, usedBibs) => {
@@ -201,13 +213,11 @@ export class ModCollabDoc {
                     this.mod.editor.mod.db.imageDB.setImage(id, oldImageDB[id])
                 }
             })
-            this.mod.editor.view.dispatch(receiveTransaction(
-                this.mod.editor.view.state,
-                lostTr.steps,
-                lostTr.steps.map(_step => 'remote')
-            ))
+
             this.mod.editor.docInfo.version = data.doc.v
-            this.mod.editor.view.dispatch(rebasedTr)
+            rebasedTrackedTr.setMeta('remote', true)
+            this.mod.editor.view.dispatch(rebasedTrackedTr)
+
             if (tracked) {
                 showSystemMessage(
                     gettext(

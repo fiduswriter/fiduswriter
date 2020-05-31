@@ -26,6 +26,12 @@ export class ModDocumentTemplate {
             const template = styles.export_templates[key]
             get(template.template_file)
         }
+        //Cache the required font related files too!
+        this.documentStyles.forEach(docStyle=>{
+            docStyle.documentstylefile_set.forEach(([url, _filename]) => {
+                get(url)
+            })
+        })
     }
 
     addDocPartSettings() {

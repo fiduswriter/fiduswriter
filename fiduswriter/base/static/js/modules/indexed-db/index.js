@@ -72,7 +72,7 @@ export class indexedDB {
       const objectStore = db.transaction(objectStoreName, 'readwrite').objectStore(objectStoreName)
       if (data !== undefined) {
         data.forEach(function(document) {
-          objectStore.add(document)
+          objectStore.put(document)
         })
       }
     }

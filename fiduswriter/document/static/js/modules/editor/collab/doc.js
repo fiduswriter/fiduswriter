@@ -47,6 +47,7 @@ export class ModCollabDoc {
 
         this.trackOfflineLimit = 50 // Limit of local changes while offline for tracking to kick in when multiple users edit
         this.remoteTrackOfflineLimit = 20 // Limit of remote changes while offline for tracking to kick in when multiple users edit
+        this.footnoteRender = false // If the offline user edited a footnote , it needs to be rendered properly to connected users too!
     }
 
     cancelCurrentlyCheckingVersion() {
@@ -411,6 +412,10 @@ export class ModCollabDoc {
                         s => s.toJSON()
                     )
                 }
+                if (this.footnoteRender) {
+                    unconfirmedDiff['footnoterender'] = true
+                    this.footnoteRender = false
+                }
                 if (commentUpdates.length) {
                     unconfirmedDiff["cu"] = commentUpdates
                 }
@@ -508,6 +513,9 @@ export class ModCollabDoc {
         }
         if (data["fs"]) { // footnote steps
             this.mod.editor.mod.footnotes.fnEditor.applyDiffs(data["fs"], data["cid"])
+        }
+        if (data["footnoterender"]) { // re-render footnotes properly
+            this.mod.editor.mod.footnotes.fnEditor.renderAllFootnotes()
         }
 
         if (data.server_fix) {

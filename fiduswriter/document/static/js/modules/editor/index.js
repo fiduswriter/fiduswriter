@@ -254,6 +254,9 @@ export class Editor {
                     return message
                 },
                 resubScribed: () => {
+                    if (sendableSteps(this.mod.footnotes.fnEditor.view.state)) {
+                        this.mod.collab.doc.footnoteRender = true
+                    }
                     this.mod.footnotes.fnEditor.renderAllFootnotes()
                     this.mod.collab.doc.checkVersion()
                 },

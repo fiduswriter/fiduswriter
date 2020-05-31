@@ -82,38 +82,41 @@ export class ModImageDB {
                 this.setImage(id, this.mod.editor.app.imageDB.db[id])
             } else {
                 // If image is not present in both the userImage DB and docDB we can safely assume that we have to upload again.
-                this.reUploadImage(id)
+                this.reUploadImage(id, this.db[id].image, this.db[id].title, this.db[id].copyright).then(id=>delete this.db[id])
             }
         }
     }
 
-    reUploadImage(id) {
-        // Depends on the fact that service worker is working and cached the image basically.
-        get(this.db[id].image).then(
-            response=>response.blob()
-        ).then(
-            blob => {
-                const filename = this.db[id].image.split('/').pop()
-                const file = new File([blob], filename, {type:blob.type})
-                const x = {"image":file, "title":this.db[id].title, "cats":[], "copyright":this.db[id].copyright}
-                this.mod.editor.app.imageDB.saveImage(x).then(
-                    new_id => {
-                        const imageData = JSON.parse(JSON.stringify(this.mod.editor.app.imageDB.db[new_id]))
-                        this.setImage(new_id, imageData)
-                        this.mod.editor.view.state.doc.descendants((node, pos) => {
-                            if (node.type.name==='figure' && node.attrs.image == id) {
-                                const attrs = Object.assign({}, node.attrs)
-                                attrs["image"] = new_id
-                                const nodeType = this.mod.editor.currentView.state.schema.nodes['figure']
-                                const transaction = this.mod.editor.view.state.tr.setNodeMarkup(pos, nodeType, attrs)
-                                this.mod.editor.view.dispatch(transaction)
-                            }
-                        })
-                        delete this.db[id]
-                    }
-                )
-            }
-        )
+    reUploadImage(id, image_url, title, copyright) {
+        const new_promise = new Promise((resolve, _reject)=>{
+            // Depends on the fact that service worker is working and cached the image basically.
+            get(image_url).then(
+                response=>response.blob()
+            ).then(
+                blob => {
+                    const filename = image_url.split('/').pop()
+                    const file = new File([blob], filename, {type:blob.type})
+                    const x = {"image":file, "title":title, "cats":[], "copyright":copyright}
+                    this.mod.editor.app.imageDB.saveImage(x).then(
+                        new_id => {
+                            const imageData = JSON.parse(JSON.stringify(this.mod.editor.app.imageDB.db[new_id]))
+                            this.setImage(new_id, imageData)
+                            this.mod.editor.view.state.doc.descendants((node, pos) => {
+                                if (node.type.name==='figure' && node.attrs.image == id) {
+                                    const attrs = Object.assign({}, node.attrs)
+                                    attrs["image"] = new_id
+                                    const nodeType = this.mod.editor.currentView.state.schema.nodes['figure']
+                                    const transaction = this.mod.editor.view.state.tr.setNodeMarkup(pos, nodeType, attrs)
+                                    this.mod.editor.view.dispatch(transaction)
+                                }
+                            })
+                            resolve(id)
+                        }
+                    )
+                }
+            )
+        })
+        return new_promise
     }
 
     hasUnsentEvents() {

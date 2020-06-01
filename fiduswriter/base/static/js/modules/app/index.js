@@ -1,5 +1,5 @@
 import {CSL} from 'citeproc-plus'
-import OfflinePluginRuntime from 'offline-plugin/runtime' //eslint-disable-line
+import OfflinePluginRuntime from 'offline-plugin/runtime'
 import {DocumentInvite} from "../documents/invite"
 import {ImageOverview} from "../images/overview"
 import {ContactsOverview} from "../contacts"

@@ -108,9 +108,10 @@ export class App {
 
     init() {
         if (!settings_DEBUG) {
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/sw2.js')
-            }
+            OfflinePluginRuntime.install({
+                onUpdateReady: () => OfflinePluginRuntime.applyUpdate(),
+                onUpdated: () => window.location.reload()
+            })
         }
         ensureCSS([
             'fontawesome/css/all.css'

@@ -48,14 +48,6 @@ urlpatterns = [
         'path': 'sw.js'
     }),
 
-    url('^sw2.js$', static_serve, {
-        'document_root': os.path.join(
-            settings.STATIC_ROOT,
-            'js'
-        ),
-        'path': 'sw2.js'
-    }),
-
     # I18n manual language switcher
     url('^api/i18n/', include('django.conf.urls.i18n')),
 

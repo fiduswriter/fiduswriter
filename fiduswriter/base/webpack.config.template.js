@@ -77,7 +77,8 @@ module.exports = { // eslint-disable-line no-undef
             ],
             ServiceWorker: {
                 publicPath: '/sw.js',
-                events: true
+                events: true,
+                entry:"./js/sw-template.js"
             },
             autoUpdate: true,
             appShell: "/",

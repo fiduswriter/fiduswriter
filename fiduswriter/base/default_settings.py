@@ -3,7 +3,7 @@ import os
 PORT = 8000
 
 # If you want to show debug messages, set DEBUG to True.
-DEBUG = True
+DEBUG = False
 SOURCE_MAPS = False
 
 # This determines whether the server is used for testing and will let the

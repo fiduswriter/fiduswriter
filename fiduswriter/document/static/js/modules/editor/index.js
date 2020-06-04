@@ -3,7 +3,8 @@ import {
     ensureCSS,
     WebSocketConnector,
     postJson,
-    activateWait
+    activateWait,
+    Dialog
 } from "../common"
 import {
     FeedbackTab
@@ -113,6 +114,9 @@ import {
 import {
     buildEditorKeymap
 } from "./keymap"
+import {
+    ExportFidusFile
+} from "../exporter/native/file"
 
 export const COMMENT_ONLY_ROLES = ['review', 'comment']
 export const READ_ONLY_ROLES = ['read', 'read-without-comments']
@@ -316,8 +320,28 @@ export class Editor {
                             this.mod.collab.doc.rejectDiff(data["rid"])
                             break
                     }
+                },
+                failedAuth: () => {
+                    this.ws.online = false // To avoid Websocket trying to reconnect.
+                    new ExportFidusFile(
+                        this.getDoc(),
+                        this.mod.db.bibDB,
+                        this.mod.db.imageDB
+                    )
+                    const sessionDialog = new Dialog({
+                        title:gettext('Session Expired'),
+                        body:gettext(' Your Session expired while you were offline. So we have downloaded the version of the document you were editing. Please consider importing it into a new document '),
+                        buttons:[{
+                            text:gettext('Proceed to Login page'),
+                            classes:'fw-dark',
+                            click:()=>{
+                                window.location.href='/'
+                            }
+                        }]
+                    })
+                    sessionDialog.open()
+                    sessionDialog.dialogEl.childNodes[1].childNodes[3].style.display = 'none' // Make the dialog non dismissable
                 }
-
             })
             this.render()
             activateWait(true)

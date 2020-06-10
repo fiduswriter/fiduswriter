@@ -104,7 +104,6 @@ export class App {
         this.openOfflinePage = () => new OfflinePage(this.config)
         this.openSetupPage = () => new SetupPage(this.config)
         this.open404Page = () => new Page404(this.config)
-        Object.defineProperty(window, 'isOnline', {get: () => navigator.onLine && (this.ws === undefined || this.ws.ws === undefined || this.ws.ws.readyState < 2)})
     }
 
     init() {
@@ -117,7 +116,10 @@ export class App {
         ensureCSS([
             'fontawesome/css/all.css'
         ])
-        if (window.isOnline) {
+        if (window.isOffline) {
+            this.page = this.openOfflinePage()
+            return this.page.init()
+        } else {
             return this.getUserInfo().catch(
                 error => {
                     if (error instanceof TypeError) {
@@ -151,11 +153,7 @@ export class App {
                     throw error
                 }
             )
-        } else {
-            this.page = this.openOfflinePage()
-            return this.page.init()
         }
-
     }
 
     setup() {
@@ -229,6 +227,7 @@ export class App {
 
         })
         this.ws.init()
+        Object.defineProperty(window, 'isOffline', {get: () => !navigator.onLine || this.ws.ws && this.ws.ws.readyState > 1})
     }
 
     activateFidusPlugins() {

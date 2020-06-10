@@ -2,7 +2,7 @@ import {escapeText} from "../../common"
 
 /** A template for HTML export of a document. */
 export const htmlExportTemplate = ({contents, settings, styleSheets, title}) =>
-`<!DOCTYPE html>
+    `<!DOCTYPE html>
 <html>
     <head>
         ${settings.copyright && settings.copyright.holder ? `<meta name="copyright" content="© ${settings.copyright.year ? settings.copyright.year : new Date().getFullYear()} ${escapeText(settings.copyright.holder)}" />` : ''}
@@ -18,14 +18,14 @@ ${
     <body class="article">
         ${contents.innerHTML}
         ${
-            settings.copyright && settings.copyright.holder ?
-                `<div>© ${settings.copyright.year ? settings.copyright.year : new Date().getFullYear()} ${settings.copyright.holder}</div>` :
-                ''
-        }
+    settings.copyright && settings.copyright.holder ?
+        `<div>© ${settings.copyright.year ? settings.copyright.year : new Date().getFullYear()} ${settings.copyright.holder}</div>` :
+        ''
+}
         ${
-            settings.copyright && settings.copyright.licenses.length ?
-                `<div>${settings.copyright.licenses.map(license => `<a rel="license" href="${escapeText(license.url)}">${escapeText(license.title)}${license.start ? ` (${license.start})` : ''}</a>`).join('</div><div>')}</div>` :
-                ''
-        }
+    settings.copyright && settings.copyright.licenses.length ?
+        `<div>${settings.copyright.licenses.map(license => `<a rel="license" href="${escapeText(license.url)}">${escapeText(license.title)}${license.start ? ` (${license.start})` : ''}</a>`).join('</div><div>')}</div>` :
+        ''
+}
     </body>
 </html>`

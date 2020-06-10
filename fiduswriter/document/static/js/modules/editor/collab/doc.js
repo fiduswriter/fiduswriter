@@ -183,20 +183,20 @@ export class ModCollabDoc {
             const usedImages = []
             const usedBibs = []
             const footnoteFind = (node, usedImages, usedBibs) => {
-                if (node.name==='citation') {
+                if (node.name === 'citation') {
                     node.attrs.references.forEach(ref => usedBibs.push(parseInt(ref.id)))
-                } else if (node.name==='figure' && node.attrs.image) {
+                } else if (node.name === 'figure' && node.attrs.image) {
                     usedImages.push(node.attrs.image)
                 } else if (node.content) {
                     node.content.forEach(subNode => footnoteFind(subNode, usedImages, usedBibs))
                 }
             }
             rebasedTr.doc.descendants(node => {
-                if (node.type.name==='citation') {
+                if (node.type.name === 'citation') {
                     node.attrs.references.forEach(ref => usedBibs.push(parseInt(ref.id)))
-                } else if (node.type.name==='figure' && node.attrs.image) {
+                } else if (node.type.name === 'figure' && node.attrs.image) {
                     usedImages.push(node.attrs.image)
-                } else if (node.type.name==='footnote' && node.attrs.footnote) {
+                } else if (node.type.name === 'footnote' && node.attrs.footnote) {
                     node.attrs.footnote.forEach(subNode => footnoteFind(subNode, usedImages, usedBibs))
                 }
             })
@@ -341,9 +341,9 @@ export class ModCollabDoc {
                     fnStepsToSend = sendableSteps(this.mod.editor.mod
                         .footnotes.fnEditor.view.state),
                     commentUpdates = this.mod.editor.mod.comments.store
-                    .unsentEvents(),
+                        .unsentEvents(),
                     bibliographyUpdates = this.mod.editor.mod.db.bibDB
-                    .unsentEvents(),
+                        .unsentEvents(),
                     imageUpdates = this.mod.editor.mod.db.imageDB.unsentEvents()
 
                 if (!stepsToSend &&
@@ -382,7 +382,7 @@ export class ModCollabDoc {
                     let newTitle = ""
                     this.mod.editor.view.state.doc.firstChild.firstChild.forEach(
                         child => {
-                            if (!child.marks.find(mark => mark.type.name==='deletion')) {
+                            if (!child.marks.find(mark => mark.type.name === 'deletion')) {
                                 newTitle += child.textContent
                             }
                         }
@@ -391,7 +391,7 @@ export class ModCollabDoc {
                     let oldTitle = ""
                     this.mod.editor.docInfo.confirmedDoc.firstChild.firstChild.forEach(
                         child => {
-                            if (!child.marks.find(mark => mark.type.name==='deletion')) {
+                            if (!child.marks.find(mark => mark.type.name === 'deletion')) {
                                 oldTitle += child.textContent
                             }
                         }
@@ -460,7 +460,7 @@ export class ModCollabDoc {
 
     receiveSelectionChange(data) {
         const participant = this.mod.participants.find(par => par.id === data
-                .id)
+            .id)
         let tr, fnTr
         if (!participant) {
             // participant is still unknown to us. Ignore

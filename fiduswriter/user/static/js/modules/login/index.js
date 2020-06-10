@@ -25,30 +25,30 @@ export class LoginPage extends PreloginPage {
         this.contents = `<div class="fw-login-left">
             <h1 class="fw-login-title">${gettext("Log in")}</h1>
             ${
-                settings_REGISTRATION_OPEN ?
-                    (
-                        this.socialaccount_providers.length ?
-                            `<p>${gettext("If you are new here, please <a href='/account/sign-up/' title='Sign up'>sign up</a> or use one of the login options below to create an account.")}</p>
+    settings_REGISTRATION_OPEN ?
+        (
+            this.socialaccount_providers.length ?
+                `<p>${gettext("If you are new here, please <a href='/account/sign-up/' title='Sign up'>sign up</a> or use one of the login options below to create an account.")}</p>
                             <div class="socialaccount_ballot">
                                 <ul class="socialaccount_providers">
                                 ${
-                                    this.socialaccount_providers.map(
-                                        provider => `<li>
+            this.socialaccount_providers.map(
+                provider => `<li>
                                             <a title="${provider.name}" class="fw-button fw-socialaccount fw-${provider.id}"
                                                 href="${provider.login_url}">
                                                 <span class="fab fa-${provider.id}"></span>
                                                 ${gettext("Login with")} ${provider.name}
                                             </a>
                                         </li>`
-                                    ).join('')
-                                }
+            ).join('')
+            }
                                 </ul>
                             </div>` :
-                            `<p>${gettext("If you are new here, please <a href='/account/sign-up/' title='Sign up'>sign up</a>.")}</p>`
-                    )
-                         :
-                        ''
-            }
+                `<p>${gettext("If you are new here, please <a href='/account/sign-up/' title='Sign up'>sign up</a>.")}</p>`
+        )
+        :
+        ''
+}
         </div>
         <div class="fw-login-right">
             <form>
@@ -148,12 +148,12 @@ export class LoginPage extends PreloginPage {
                                 <h1 class="fw-login-title">${gettext('Verify Your E-mail Address')}</h1>
                                 <p>
                                     ${
-                                        gettext('We have sent an e-mail to your email address for verification. Follow the link provided to finalize the signup process.')
-                                    }
+    gettext('We have sent an e-mail to your email address for verification. Follow the link provided to finalize the signup process.')
+}
                                     <br />
                                     ${
-                                        gettext('Please contact us if you do not receive it within a few minutes.')
-                                    }
+    gettext('Please contact us if you do not receive it within a few minutes.')
+}
                                 </p>
                             </div>`
                     } else {

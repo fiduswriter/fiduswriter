@@ -273,52 +273,52 @@ export class Editor {
                         return // user navigated away.
                     }
                     switch (data.type) {
-                        case 'chat':
-                            this.mod.collab.chat.newMessage(data)
-                            break
-                        case 'connections':
-                            this.mod.collab.updateParticipantList(data.participant_list)
-                            break
-                        case 'styles':
-                            this.mod.documentTemplate.setStyles(data.styles)
-                            break
-                        case 'doc_data':
-                            this.mod.collab.doc.receiveDocument(data)
-                            break
-                        case 'confirm_version':
-                            this.mod.collab.doc.cancelCurrentlyCheckingVersion()
-                            if (data["v"] !== this.docInfo.version) {
-                                this.mod.collab.doc.checkVersion()
-                                return
-                            }
-                            this.mod.collab.doc.enableDiffSending()
-                            break
-                        case 'selection_change':
-                            this.mod.collab.doc.cancelCurrentlyCheckingVersion()
-                            if (data["v"] !== this.docInfo.version) {
-                                this.mod.collab.doc.checkVersion()
-                                return
-                            }
-                            this.mod.collab.doc.receiveSelectionChange(data)
-                            break
-                        case 'diff':
-                            if (data["cid"] === this.client_id) {
-                                // The diff origins from the local user.
-                                this.mod.collab.doc.confirmDiff(data["rid"])
-                                return
-                            }
-                            if (data["v"] !== this.docInfo.version) {
-                                this.mod.collab.doc.checkVersion()
-                                return
-                            }
-                            this.mod.collab.doc.receiveFromCollaborators(data)
-                            break
-                        case 'confirm_diff':
+                    case 'chat':
+                        this.mod.collab.chat.newMessage(data)
+                        break
+                    case 'connections':
+                        this.mod.collab.updateParticipantList(data.participant_list)
+                        break
+                    case 'styles':
+                        this.mod.documentTemplate.setStyles(data.styles)
+                        break
+                    case 'doc_data':
+                        this.mod.collab.doc.receiveDocument(data)
+                        break
+                    case 'confirm_version':
+                        this.mod.collab.doc.cancelCurrentlyCheckingVersion()
+                        if (data["v"] !== this.docInfo.version) {
+                            this.mod.collab.doc.checkVersion()
+                            return
+                        }
+                        this.mod.collab.doc.enableDiffSending()
+                        break
+                    case 'selection_change':
+                        this.mod.collab.doc.cancelCurrentlyCheckingVersion()
+                        if (data["v"] !== this.docInfo.version) {
+                            this.mod.collab.doc.checkVersion()
+                            return
+                        }
+                        this.mod.collab.doc.receiveSelectionChange(data)
+                        break
+                    case 'diff':
+                        if (data["cid"] === this.client_id) {
+                            // The diff origins from the local user.
                             this.mod.collab.doc.confirmDiff(data["rid"])
-                            break
-                        case 'reject_diff':
-                            this.mod.collab.doc.rejectDiff(data["rid"])
-                            break
+                            return
+                        }
+                        if (data["v"] !== this.docInfo.version) {
+                            this.mod.collab.doc.checkVersion()
+                            return
+                        }
+                        this.mod.collab.doc.receiveFromCollaborators(data)
+                        break
+                    case 'confirm_diff':
+                        this.mod.collab.doc.confirmDiff(data["rid"])
+                        break
+                    case 'reject_diff':
+                        this.mod.collab.doc.rejectDiff(data["rid"])
+                        break
                     }
                 },
                 failedAuth: () => {

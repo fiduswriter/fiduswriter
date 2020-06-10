@@ -7,13 +7,13 @@ import {noSpaceTmp} from "../../../common"
 
 export class NameFieldForm {
     constructor(dom, initialValue = {
-            given: [],
-            family: [],
-            prefix: [],
-            suffix: [],
-            useprefix: false,
-            literal: []
-        }) {
+        given: [],
+        family: [],
+        prefix: [],
+        suffix: [],
+        useprefix: false,
+        literal: []
+    }) {
         this.currentValue = initialValue
         this.dom = dom
         // We set the mode based on whether there was a literal name.
@@ -79,7 +79,7 @@ export class NameFieldForm {
                 <div class='suffix field-part field-part-short'></div>
                 <div class='useprefix field-part'>
                     <input type='checkbox' class='useprefix'
-                        ${this.currentValue.useprefix? 'checked' : ''}>
+                        ${this.currentValue.useprefix ? 'checked' : ''}>
                     &nbsp;${gettext('Prefix used')}
                 </div>
             `
@@ -125,14 +125,14 @@ export class NameFieldForm {
 
     get value() {
         if (this.realPerson) {
-                if (
-                    !this.fields.family.value &&
+            if (
+                !this.fields.family.value &&
                     !this.fields.given.value &&
                     !this.fields.prefix.value &&
                     !this.fields.suffix.value
-                ) {
-                    return false
-                }
+            ) {
+                return false
+            }
             const returnObject = {
                 family: this.fields.family.value ? this.fields.family.value : [],
                 given: this.fields.given.value ? this.fields.given.value : [],

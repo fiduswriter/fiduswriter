@@ -44,7 +44,7 @@ export class KeyListForm {
                 return
             }
             this.currentValue = this.value
-            this.currentValue.splice(index+1, 0, '')
+            this.currentValue.splice(index + 1, 0, '')
             this.drawForm()
         })
 

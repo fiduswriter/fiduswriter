@@ -19,14 +19,14 @@ export class DocMaintenance {
             () => document.body.addEventListener('click', event => {
                 const el = {}
                 switch (true) {
-                    case findTarget(event, 'input#update:not(.disabled)', el):
-                        document.querySelector('input#update').disabled = true
-                        document.querySelector('input#update').value = gettext('Updating...')
-                        addAlert('info', gettext('Updating documents.'))
-                        this.getDocBatch()
-                        break
-                    default:
-                        break
+                case findTarget(event, 'input#update:not(.disabled)', el):
+                    document.querySelector('input#update').disabled = true
+                    document.querySelector('input#update').value = gettext('Updating...')
+                    addAlert('info', gettext('Updating documents.'))
+                    this.getDocBatch()
+                    break
+                default:
+                    break
                 }
             })
         )
@@ -109,16 +109,16 @@ export class DocMaintenance {
 
     saveDoc(doc) {
         const p1 = post(
-            '/api/document/admin/save_doc/',
-            {
-                id: doc.id,
-                contents: window.JSON.stringify(doc.contents),
-                bibliography: window.JSON.stringify(doc.bibliography),
-                comments: window.JSON.stringify(doc.comments),
-                version: doc.version,
-                last_diffs: window.JSON.stringify(doc.last_diffs)
-            }
-        ), promises = [p1]
+                '/api/document/admin/save_doc/',
+                {
+                    id: doc.id,
+                    contents: window.JSON.stringify(doc.contents),
+                    bibliography: window.JSON.stringify(doc.bibliography),
+                    comments: window.JSON.stringify(doc.comments),
+                    version: doc.version,
+                    last_diffs: window.JSON.stringify(doc.last_diffs)
+                }
+            ), promises = [p1]
         if (doc.imageIds) {
             const p2 = post(
                 '/api/document/admin/add_images_to_doc/',
@@ -267,7 +267,7 @@ export class DocMaintenance {
                 () => {
                     addAlert('success', gettext('The document revision has been updated: ') + id)
                     this.revSavesLeft--
-                    if (this.revSavesLeft===0) {
+                    if (this.revSavesLeft === 0) {
                         this.done()
                     }
                 }

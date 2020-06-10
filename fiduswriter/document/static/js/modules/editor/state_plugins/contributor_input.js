@@ -134,12 +134,12 @@ export const contributorInputPlugin = function(options) {
         },
         props: {
             decorations(state) {
-				const {
-					decos
-				} = this.getState(state)
+                const {
+                    decos
+                } = this.getState(state)
 
-				return decos
-			},
+                return decos
+            },
             nodeViews: {
 
             }

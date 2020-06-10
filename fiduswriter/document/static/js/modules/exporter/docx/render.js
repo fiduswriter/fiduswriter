@@ -21,62 +21,62 @@ export class DocxExporterRender {
         this.tags = this.docContents.content.map(node => {
             const tag = {}
             switch (node.type) {
-                case 'title':
-                    tag.title = 'title'
-                    tag.content = textContent(node)
-                    break
-                case 'heading_part':
-                    tag.title = node.attrs.id
-                    tag.content = textContent(node)
-                    break
-                case 'table_part':
-                case 'richtext_part':
-                    tag.title = `@${node.attrs.id}`
-                    tag.content = node.content
-                    break
-                case 'contributors_part':
-                    tag.title = node.attrs.id
-                    // TODO: This is a very basic reduction of the author info into
-                    // a simple string. We should expand the templating system so
-                    // that one can specify more about the output.
-                    tag.content = node.content ?
-                        node.content.map(
-                            node => {
-                                const contributor = node.attrs,
-                                    nameParts = []
-                                let affiliation = false
-                                if (contributor.firstname) {
-                                    nameParts.push(contributor.firstname)
-                                }
-                                if (contributor.lastname) {
-                                    nameParts.push(contributor.lastname)
-                                }
-                                if (contributor.institution) {
-                                    if (nameParts.length) {
-                                        affiliation = contributor.institution
-                                    } else {
-                                        // We have an institution but no names. Use institution as name.
-                                        nameParts.push(contributor.institution)
-                                    }
-                                }
-                                const parts = [nameParts.join(' ')]
-                                if (affiliation) {
-                                    parts.push(affiliation)
-                                }
-                                if (contributor.email) {
-                                    parts.push(contributor.email)
-                                }
-                                return parts.join(', ')
+            case 'title':
+                tag.title = 'title'
+                tag.content = textContent(node)
+                break
+            case 'heading_part':
+                tag.title = node.attrs.id
+                tag.content = textContent(node)
+                break
+            case 'table_part':
+            case 'richtext_part':
+                tag.title = `@${node.attrs.id}`
+                tag.content = node.content
+                break
+            case 'contributors_part':
+                tag.title = node.attrs.id
+                // TODO: This is a very basic reduction of the author info into
+                // a simple string. We should expand the templating system so
+                // that one can specify more about the output.
+                tag.content = node.content ?
+                    node.content.map(
+                        node => {
+                            const contributor = node.attrs,
+                                nameParts = []
+                            let affiliation = false
+                            if (contributor.firstname) {
+                                nameParts.push(contributor.firstname)
                             }
-                        ).join('; ') :
-                        ''
-                    break
-                case 'tags_part':
-                    tag.title = node.attrs.id
-                    tag.content = node.content ?
-                        node.content.map(node => node.attrs.tag).join(', ') :
-                        ''
-                    break
+                            if (contributor.lastname) {
+                                nameParts.push(contributor.lastname)
+                            }
+                            if (contributor.institution) {
+                                if (nameParts.length) {
+                                    affiliation = contributor.institution
+                                } else {
+                                    // We have an institution but no names. Use institution as name.
+                                    nameParts.push(contributor.institution)
+                                }
+                            }
+                            const parts = [nameParts.join(' ')]
+                            if (affiliation) {
+                                parts.push(affiliation)
+                            }
+                            if (contributor.email) {
+                                parts.push(contributor.email)
+                            }
+                            return parts.join(', ')
+                        }
+                    ).join('; ') :
+                    ''
+                break
+            case 'tags_part':
+                tag.title = node.attrs.id
+                tag.content = node.content ?
+                    node.content.map(node => node.attrs.tag).join(', ') :
+                    ''
+                break
             }
             return tag
         })
@@ -147,7 +147,7 @@ export class DocxExporterRender {
                     const colCount = cols ? parseInt(cols.getAttribute('w:num')) : 1
                     if (colCount > 1) {
                         const colSpace = parseInt(cols.getAttribute('w:space'))
-                        width = width - (colSpace * (colCount-1))
+                        width = width - (colSpace * (colCount - 1))
                         width = width / colCount
                     }
                     while (currentTags.length) {
@@ -166,7 +166,7 @@ export class DocxExporterRender {
             tag => {
                 if (!tag.title) {
                     return
-                } else if (tag.title[0]==='@') {
+                } else if (tag.title[0] === '@') {
                     this.parRender(tag)
                 } else {
                     this.inlineRender(tag)
@@ -187,7 +187,7 @@ export class DocxExporterRender {
         const r = rs[0]
         if (fullText.length) {
             let textAttr = ''
-            if (fullText[0] === ' ' || fullText[fullText.length-1] === ' ') {
+            if (fullText[0] === ' ' || fullText[fullText.length - 1] === ' ') {
                 textAttr += 'xml:space="preserve"'
             }
             r.innerHTML = `<w:t ${textAttr}>${fullText}</w:t>`

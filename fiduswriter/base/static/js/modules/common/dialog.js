@@ -3,7 +3,7 @@ import {keyName} from "w3c-keyname"
 import {findTarget} from "./basic"
 
 const dialogTemplate = ({id, classes, title, height, width, icon, buttons, zIndex, body, scroll}) =>
-`<div tabindex="-1" role="dialog"
+    `<div tabindex="-1" role="dialog"
         class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front ui-dialog-buttons"
         ${id ? `aria-describedby="${id}"` : ''} style="z-index: ${zIndex};">
     <div class="ui-dialog-titlebar ui-corner-all ui-widget-header ui-helper-clearfix">
@@ -22,7 +22,7 @@ const dialogTemplate = ({id, classes, title, height, width, icon, buttons, zInde
         <div class="ui-dialog-buttonset">${buttonsTemplate({buttons})}</div>
     </div>
 </div>
-<div class="ui-widget-overlay ui-front" style="z-index: ${zIndex-1}"></div>`
+<div class="ui-widget-overlay ui-front" style="z-index: ${zIndex - 1}"></div>`
 
 const buttonsTemplate = ({buttons}) => buttons.map(button => buttonTemplate(button)).join('')
 
@@ -119,8 +119,8 @@ export class Dialog {
             scrollTopOffset = window.pageYOffset,
             scrollLeftOffset = window.pageXOffset
 
-        this.dialogEl.style.top = `${(totalHeight - dialogHeight)/2 + scrollTopOffset}px`
-        this.dialogEl.style.left = `${(totalWidth - dialogWidth)/2 + scrollLeftOffset}px`
+        this.dialogEl.style.top = `${(totalHeight - dialogHeight) / 2 + scrollTopOffset}px`
+        this.dialogEl.style.left = `${(totalWidth - dialogWidth) / 2 + scrollLeftOffset}px`
     }
 
     adjustDialogToScroll() {
@@ -187,46 +187,46 @@ export class Dialog {
         this.dialogEl.addEventListener('click', event => {
             const el = {}
             switch (true) {
-                case findTarget(event, '.ui-dialog-buttonpane button', el): {
-                    event.preventDefault()
-                    let buttonNumber = 0
-                    let seekItem = el.target
-                    while (seekItem.previousElementSibling) {
-                        buttonNumber++
-                        seekItem = seekItem.previousElementSibling
-                    }
-                    this.buttons[buttonNumber].click()
-                    break
+            case findTarget(event, '.ui-dialog-buttonpane button', el): {
+                event.preventDefault()
+                let buttonNumber = 0
+                let seekItem = el.target
+                while (seekItem.previousElementSibling) {
+                    buttonNumber++
+                    seekItem = seekItem.previousElementSibling
                 }
-                case findTarget(event, '.ui-dialog-titlebar-close', el):
-                    event.preventDefault()
-                    this.close()
-                    break
-                default:
-                    break
+                this.buttons[buttonNumber].click()
+                break
+            }
+            case findTarget(event, '.ui-dialog-titlebar-close', el):
+                event.preventDefault()
+                this.close()
+                break
+            default:
+                break
             }
         })
         this.dialogEl.addEventListener('mousedown', event => {
             const el = {}
             switch (true) {
-                case findTarget(event, '.ui-dialog-titlebar', el):
-                    this.dragging = {
-                        x: event.clientX - this.dialogEl.offsetLeft,
-                        y: event.clientY - this.dialogEl.offsetTop
-                    }
-                    break
-                default:
-                    break
+            case findTarget(event, '.ui-dialog-titlebar', el):
+                this.dragging = {
+                    x: event.clientX - this.dialogEl.offsetLeft,
+                    y: event.clientY - this.dialogEl.offsetTop
+                }
+                break
+            default:
+                break
             }
         })
         this.dialogEl.addEventListener('mouseup', event => {
             const el = {}
             switch (true) {
-                case findTarget(event, '.ui-dialog-titlebar', el):
-                    this.dragging = false
-                    break
-                default:
-                    break
+            case findTarget(event, '.ui-dialog-titlebar', el):
+                this.dragging = false
+                break
+            default:
+                break
             }
         })
         this.dialogEl.addEventListener('mousemove', event => {

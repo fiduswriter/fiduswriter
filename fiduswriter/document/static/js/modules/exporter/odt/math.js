@@ -29,7 +29,7 @@ export class OdtExporterMath {
                 const fullPath = fileEntry.getAttribute('manifest:full-path')
                 const dir = fullPath.split('/')[0]
                 const dirParts = dir.split(' ')
-                if (dirParts.length===2 && dirParts[0] === 'Object') {
+                if (dirParts.length === 2 && dirParts[0] === 'Object') {
                     const objectNumber =  parseInt(dirParts[1])
                     if (objectNumber >= this.objectCounter) {
                         this.objectCounter = objectNumber + 1

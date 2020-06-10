@@ -80,10 +80,10 @@ export class ExportTemplateDialog {
                     <th><h4 class="fw-tablerow-title">${gettext("File")}</h4></th>
                     <td style="width: 250px;">
                         <span class="export-template-file">${
-                            this.template ?
-                            `<a href="${this.template.fields.template_file}">${escapeText(this.template.fields.title)}</a>` :
-                            ''
-                        }</span>
+    this.template ?
+        `<a href="${this.template.fields.template_file}">${escapeText(this.template.fields.title)}</a>` :
+        ''
+}</span>
                     </td><td style="width: 70px;">
                         <button type="button" class="fw-media-select-button fw-button fw-light">
                             ${ gettext('Select') }
@@ -95,10 +95,10 @@ export class ExportTemplateDialog {
                     <th><h4 class="fw-tablerow-title">${gettext("Filetype")}</h4></th>
                     <td colspan="2">
                         <span class="export-template-filetype">${
-                            this.template ?
-                            this.template.fields.file_type :
-                            ''
-                        }</span>
+    this.template ?
+        this.template.fields.file_type :
+        ''
+}</span>
                     </td>
                 </tr>
                 <tr>
@@ -240,17 +240,17 @@ export class ExportTemplateDialog {
                 const expectedTags = this.documentTemplateValue.content.map(
                     node => {
                         switch (node.type) {
-                            case 'title':
-                                return 'title'
-                            case 'richtext_part':
-                            case 'table_part':
-                                return `@${node.attrs.id}`
-                            case 'heading_part':
-                            case 'contributors_part':
-                            case 'tags_part':
-                                return node.attrs.id
-                            default:
-                                return false
+                        case 'title':
+                            return 'title'
+                        case 'richtext_part':
+                        case 'table_part':
+                            return `@${node.attrs.id}`
+                        case 'heading_part':
+                        case 'contributors_part':
+                        case 'tags_part':
+                            return node.attrs.id
+                        default:
+                            return false
                         }
                     }
                 ).concat(['@bibliography', '@copyright', '@licenses']).filter(tag => tag)
@@ -330,11 +330,11 @@ export class ExportTemplateDialog {
         this.dialog.dialogEl.addEventListener('click', event => {
             const el = {}
             switch (true) {
-                case findTarget(event, '.fw-media-select-button', el): {
-                    event.preventDefault()
-                    mediaInputSelector.click()
-                    break
-                }
+            case findTarget(event, '.fw-media-select-button', el): {
+                event.preventDefault()
+                mediaInputSelector.click()
+                break
+            }
             }
 
         })

@@ -95,7 +95,7 @@ export const footnoteMarkersPlugin = function(options) {
             init(config, state) {
                 const fnMarkers = []
                 state.doc.descendants((node, pos) => {
-                    if (node.type.name==='footnote') {
+                    if (node.type.name === 'footnote') {
                         fnMarkers.push({
                             from: pos,
                             to: pos + node.nodeSize
@@ -168,8 +168,8 @@ export const footnoteMarkersPlugin = function(options) {
                                 // will need to remove duplicates instead.
                                 newMarker =>
                                     fnMarkers.find(oldMarker => oldMarker.from === newMarker.from) ?
-                                    false :
-                                    true
+                                        false :
+                                        true
                             )
                         } else {
                             newFootnotes.forEach((footnote, index) => {

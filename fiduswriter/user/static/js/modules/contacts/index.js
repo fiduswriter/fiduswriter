@@ -82,14 +82,14 @@ export class ContactsOverview {
         this.dom.addEventListener('click', event => {
             const el = {}
             switch (true) {
-                case findTarget(event, '.delete-single-member', el): {
-                    //delete single user
-                    const dialog = new DeleteContactDialog([el.target.dataset.id])
-                    dialog.init()
-                    break
-                }
-                default:
-                    break
+            case findTarget(event, '.delete-single-member', el): {
+                //delete single user
+                const dialog = new DeleteContactDialog([el.target.dataset.id])
+                dialog.init()
+                break
+            }
+            default:
+                break
             }
         })
     }

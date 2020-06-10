@@ -94,13 +94,13 @@ export class ModCollabChat {
                         resizeButton.classList.remove('fa-angle-double-down')
                         resizeButton.classList.add('fa-angle-double-up')
                         chatEl.style.top = `${chatEl.getBoundingClientRect().top}px` // Set current height to get the animation working.
-                        setTimeout(() => chatEl.style.top = `${window.innerHeight-29}px`, 0)
+                        setTimeout(() => chatEl.style.top = `${window.innerHeight - 29}px`, 0)
                     }
                     else {
                         resizeButton.classList.remove('fa-angle-double-up')
                         resizeButton.classList.add('fa-angle-double-down')
                         // Add height teemporarily to make sliding animation.
-                        chatEl.style.top = `${Math.max(window.innerHeight-chatEl.scrollHeight-11, 0)}px` // 11px for padding
+                        chatEl.style.top = `${Math.max(window.innerHeight - chatEl.scrollHeight - 11, 0)}px` // 11px for padding
                         setTimeout(() => chatEl.style.top = '', 3000)
                     }
                 }

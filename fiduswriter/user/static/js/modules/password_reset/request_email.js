@@ -13,12 +13,12 @@ export class PasswordResetRequest extends PreloginPage {
             <h1 class="fw-login-title">${gettext('Password reset')}</h1>
             <p>${gettext('Forgotten your password? Enter your e-mail address in the form, and we\'ll send you an e-mail allowing you to reset it.')}</p>
             <p>${
-                interpolate(
-                    gettext('If you have any trouble resetting your password, please <a href="mailto:%(contactEmail)s">contact us</a>.'),
-                    {contactEmail: settings_CONTACT_EMAIL},
-                    true
-                )
-            }</p>
+    interpolate(
+        gettext('If you have any trouble resetting your password, please <a href="mailto:%(contactEmail)s">contact us</a>.'),
+        {contactEmail: settings_CONTACT_EMAIL},
+        true
+    )
+}</p>
         </div>
         <div class="fw-login-right">
             <form>
@@ -69,16 +69,16 @@ export class PasswordResetRequest extends PreloginPage {
                         <h1 class="fw-login-title">${gettext('Instructions emailed')}</h1>
                         <p>
                             ${
-                                interpolate(
-                                    gettext('We have sent an e-mail to <a href="mailto:%(email)s">%(email)s</a> with instructions on how to reset your password.'),
-                                    {email},
-                                    true
-                                )
-                            }
+    interpolate(
+        gettext('We have sent an e-mail to <a href="mailto:%(email)s">%(email)s</a> with instructions on how to reset your password.'),
+        {email},
+        true
+    )
+}
                             <br />
                             ${
-                                gettext('Please contact us if you do not receive it within a few minutes.')
-                            }
+    gettext('Please contact us if you do not receive it within a few minutes.')
+}
                         </p>
                     </div>`
             ).catch(

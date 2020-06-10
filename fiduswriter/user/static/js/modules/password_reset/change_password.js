@@ -82,8 +82,8 @@ export class PasswordResetChangePassword extends PreloginPage {
                         <h1 class="fw-login-title">${gettext('Password reset')}</h1>
                         <p>
                             ${
-                                gettext('Your password has been reset and you can now log in with the new password.')
-                            }
+    gettext('Your password has been reset and you can now log in with the new password.')
+}
                         </p>
                     </div>`
                 }

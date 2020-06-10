@@ -161,53 +161,53 @@ export class DocumentTemplateDesigner {
                             attrs.locking = locking
                         }
                         switch (type) {
-                            case 'richtext_part':
-                            case 'heading_part': {
-                                attrs.elements = Array.from(el.querySelectorAll('.elements:checked')).map(el => el.value)
-                                if (!attrs.elements.length) {
-                                    attrs.elements = ['paragraph']
-                                }
-                                attrs.marks = Array.from(el.querySelectorAll('.marks:checked')).map(el => el.value)
-                                const language = el.querySelector('.language').value
-                                if (language !== 'false') {
-                                    attrs.language = language
-                                }
-                                if (!node.content) {
-                                    node.content = [{type: attrs.elements[0]}]
-                                }
-                                const metadata = el.querySelector('select.metadata').value
-                                if (metadata !== 'false') {
-                                    attrs.metadata = metadata
-                                }
-                                break
+                        case 'richtext_part':
+                        case 'heading_part': {
+                            attrs.elements = Array.from(el.querySelectorAll('.elements:checked')).map(el => el.value)
+                            if (!attrs.elements.length) {
+                                attrs.elements = ['paragraph']
                             }
-                            case 'table_part': {
-                                attrs.elements = Array.from(el.querySelectorAll('.elements:checked')).map(el => el.value)
-                                if (!attrs.elements.includes('paragraph')) {
-                                    // tables need to allow paragraphs
-                                    attrs.elements.push('paragraph')
-                                }
-                                attrs.marks = Array.from(el.querySelectorAll('.marks:checked')).map(el => el.value)
-                                const language = el.querySelector('.language').value
-                                if (language !== 'false') {
-                                    attrs.language = language
-                                }
-                                if (!node.content) {
-                                    node.content = [{type: 'table', content: [{type: 'table_row', content: [{type: 'table_cell', content: [{type: 'paragraph'}]}]}]}]
-                                }
-                                break
+                            attrs.marks = Array.from(el.querySelectorAll('.marks:checked')).map(el => el.value)
+                            const language = el.querySelector('.language').value
+                            if (language !== 'false') {
+                                attrs.language = language
                             }
-                            case 'contributors_part':
-                            case 'tags_part': {
-                                attrs.item_title = el.querySelector('input.item_title').value
-                                const metadata = el.querySelector('select.metadata').value
-                                if (metadata !== 'false') {
-                                    attrs.metadata = metadata
-                                }
-                                break
+                            if (!node.content) {
+                                node.content = [{type: attrs.elements[0]}]
                             }
-                            default:
-                                break
+                            const metadata = el.querySelector('select.metadata').value
+                            if (metadata !== 'false') {
+                                attrs.metadata = metadata
+                            }
+                            break
+                        }
+                        case 'table_part': {
+                            attrs.elements = Array.from(el.querySelectorAll('.elements:checked')).map(el => el.value)
+                            if (!attrs.elements.includes('paragraph')) {
+                                // tables need to allow paragraphs
+                                attrs.elements.push('paragraph')
+                            }
+                            attrs.marks = Array.from(el.querySelectorAll('.marks:checked')).map(el => el.value)
+                            const language = el.querySelector('.language').value
+                            if (language !== 'false') {
+                                attrs.language = language
+                            }
+                            if (!node.content) {
+                                node.content = [{type: 'table', content: [{type: 'table_row', content: [{type: 'table_cell', content: [{type: 'paragraph'}]}]}]}]
+                            }
+                            break
+                        }
+                        case 'contributors_part':
+                        case 'tags_part': {
+                            attrs.item_title = el.querySelector('input.item_title').value
+                            const metadata = el.querySelector('select.metadata').value
+                            if (metadata !== 'false') {
+                                attrs.metadata = metadata
+                            }
+                            break
+                        }
+                        default:
+                            break
                         }
                         if (el.classList.contains("error-element")) {
                             el.classList.remove("error-element")
@@ -298,7 +298,7 @@ export class DocumentTemplateDesigner {
 
     setupInitialEditors() {
         Array.from(this.dom.querySelectorAll('.to-container .doc-part:not(.fixed)')).forEach((el, index) => {
-            const value = this.value.content[index+1], // offset by title
+            const value = this.value.content[index + 1], // offset by title
                 help = value.attrs.help,
                 initial = value.attrs.initial,
                 type = value.type
@@ -342,46 +342,46 @@ export class DocumentTemplateDesigner {
         })]
         let menuContent = [], schema
         switch (type) {
-            case 'richtext_part':
-                schema = richtextPartSchema
-                menuContent = richtextMenuContent
-                plugins.push(tableEditing())
-                break
-            case 'table_part':
-                schema = tablePartSchema
-                menuContent = tableMenuContent
-                plugins.push(tableEditing())
-                break
-            case 'heading_part':
-                schema = headingPartSchema
-                menuContent = headingMenuContent
-                break
-            case 'tags_part':
-                schema = tagsPartSchema
-                plugins.push(new Plugin({
-                    props: {
-                        nodeViews: {
-                            tags_part: (node, view, getPos) => new TagsPartView(node, view, getPos)
-                        }
+        case 'richtext_part':
+            schema = richtextPartSchema
+            menuContent = richtextMenuContent
+            plugins.push(tableEditing())
+            break
+        case 'table_part':
+            schema = tablePartSchema
+            menuContent = tableMenuContent
+            plugins.push(tableEditing())
+            break
+        case 'heading_part':
+            schema = headingPartSchema
+            menuContent = headingMenuContent
+            break
+        case 'tags_part':
+            schema = tagsPartSchema
+            plugins.push(new Plugin({
+                props: {
+                    nodeViews: {
+                        tags_part: (node, view, getPos) => new TagsPartView(node, view, getPos)
                     }
-                }))
-                break
-            case 'contributors_part':
-                schema = contributorsPartSchema
-                plugins.push(new Plugin({
-                    props: {
-                        nodeViews: {
-                            contributors_part: (node, view, getPos) => new ContributorsPartView(node, view, getPos)
-                        }
+                }
+            }))
+            break
+        case 'contributors_part':
+            schema = contributorsPartSchema
+            plugins.push(new Plugin({
+                props: {
+                    nodeViews: {
+                        contributors_part: (node, view, getPos) => new ContributorsPartView(node, view, getPos)
                     }
-                }))
-                break
-            default:
-                break
+                }
+            }))
+            break
+        default:
+            break
         }
 
         if (!schema) {
-           return
+            return
         }
         plugins.unshift(
             buildInputRules(schema),
@@ -405,9 +405,9 @@ export class DocumentTemplateDesigner {
                 }) :
                 schema.nodes.doc.createAndFill()
         let state = EditorState.create({
-                doc,
-                plugins
-            })
+            doc,
+            plugins
+        })
         const addedHeadings = addHeadingIds(state, state, this.editors)
         if (addedHeadings) {
             state = state.apply(addedHeadings)
@@ -418,7 +418,7 @@ export class DocumentTemplateDesigner {
     }
 
     getEditorValue(el, initial = false) {
-        const editor = this.editors.find(editor => editor[0]===el)
+        const editor = this.editors.find(editor => editor[0] === el)
         if (!editor) {
             return false
         }
@@ -484,60 +484,60 @@ export class DocumentTemplateDesigner {
         this.dom.addEventListener('click', event => {
             const el = {}
             switch (true) {
-                case findTarget(event, '.doc-part .configure', el):
-                    event.preventDefault()
-                    el.target.closest('.doc-part').querySelector('.attrs').classList.toggle('hidden')
-                    break
-                case findTarget(event, '.bibliography-header-value .fa-plus-circle', el):
-                    event.preventDefault()
-                    this.getCurrentValue()
-                    this.dom.querySelector('.bibliography-header-value').innerHTML =
+            case findTarget(event, '.doc-part .configure', el):
+                event.preventDefault()
+                el.target.closest('.doc-part').querySelector('.attrs').classList.toggle('hidden')
+                break
+            case findTarget(event, '.bibliography-header-value .fa-plus-circle', el):
+                event.preventDefault()
+                this.getCurrentValue()
+                this.dom.querySelector('.bibliography-header-value').innerHTML =
                         bibliographyHeaderTemplate({
                             bibliography_header: Object.assign({}, this.value.attrs.bibliography_header, {zzz: ''}) // 'zzz' so that the entry is added at the of the list
                         })
-                    break
-                case findTarget(event, '.bibliography-header-value .fa-minus-circle', el): {
-                    event.preventDefault()
-                    const trEl = el.target.closest('tr')
-                    trEl.parentElement.removeChild(trEl)
-                    break
-                }
-                case findTarget(event, 'button.document-style', el): {
-                    event.preventDefault()
-                    const id = parseInt(el.target.dataset.id)
-                    const style = this.documentStyles.find(style => style.pk === id)
-                    const dialog = new DocumentStyleDialog(
-                        id,
-                        style,
-                        this.id,
-                        this.documentStyles,
-                        () => this.dom.querySelector('.document-styles').innerHTML =
+                break
+            case findTarget(event, '.bibliography-header-value .fa-minus-circle', el): {
+                event.preventDefault()
+                const trEl = el.target.closest('tr')
+                trEl.parentElement.removeChild(trEl)
+                break
+            }
+            case findTarget(event, 'button.document-style', el): {
+                event.preventDefault()
+                const id = parseInt(el.target.dataset.id)
+                const style = this.documentStyles.find(style => style.pk === id)
+                const dialog = new DocumentStyleDialog(
+                    id,
+                    style,
+                    this.id,
+                    this.documentStyles,
+                    () => this.dom.querySelector('.document-styles').innerHTML =
                             documentStylesTemplate({documentStyles: this.documentStyles})
+                )
+                dialog.init()
+                break
+            }
+            case findTarget(event, 'button.export-template', el): {
+                event.preventDefault()
+                const id = parseInt(el.target.dataset.id)
+                const template = this.exportTemplates.find(template => template.pk === id)
+                const {value, valid} = this.getCurrentValue()
+                if (valid) {
+                    const dialog = new ExportTemplateDialog(
+                        id,
+                        template,
+                        this.id,
+                        this.exportTemplates,
+                        () => this.dom.querySelector('.export-templates').innerHTML =
+                                exportTemplatesTemplate({exportTemplates: this.exportTemplates}),
+                        value
                     )
                     dialog.init()
-                    break
                 }
-                case findTarget(event, 'button.export-template', el): {
-                    event.preventDefault()
-                    const id = parseInt(el.target.dataset.id)
-                    const template = this.exportTemplates.find(template => template.pk === id)
-                    const {value, valid} = this.getCurrentValue()
-                    if (valid) {
-                        const dialog = new ExportTemplateDialog(
-                            id,
-                            template,
-                            this.id,
-                            this.exportTemplates,
-                            () => this.dom.querySelector('.export-templates').innerHTML =
-                                exportTemplatesTemplate({exportTemplates: this.exportTemplates}),
-                            value
-                        )
-                        dialog.init()
-                    }
-                    break
-                }
-                default:
-                    break
+                break
+            }
+            default:
+                break
             }
         })
 
@@ -574,7 +574,7 @@ export class DocumentTemplateDesigner {
         if (toRect.height + 25 + fromRect.top > 0) {
             const contentSize = 6 * 61, // 61px for each content type.
                 maxPadding = toRect.height - contentSize - 20 // 20px for padding bottom
-            fromContainer.style.paddingTop = `${Math.min(10-Math.min(fromRect.top, 0), maxPadding)}px`
+            fromContainer.style.paddingTop = `${Math.min(10 - Math.min(fromRect.top, 0), maxPadding)}px`
         }
 
     }

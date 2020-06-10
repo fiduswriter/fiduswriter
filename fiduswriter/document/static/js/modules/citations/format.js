@@ -45,35 +45,35 @@ export class FormatCitations {
         return `<h1 class="article-bibliography-header">${escapeText(this.bibliographyHeader)}</h1>${bibHTML}`
     }
 
-        // CSS
+    // CSS
     get bibCSS()  {
         if (!this.bibliography || !this.bibliography[0].entry_ids.length) {
             return ''
         }
         const bibInfo = this.bibliography[0]
         let css = '\n'
-            css += `.csl-entry {padding-bottom: ${bibInfo.entryspacing+1}em;}\n`
-            css += `.csl-bib-body {line-height: ${bibInfo.linespacing};}\n`
-            if (bibInfo.hangingindent) {
-                css += `
+        css += `.csl-entry {padding-bottom: ${bibInfo.entryspacing + 1}em;}\n`
+        css += `.csl-bib-body {line-height: ${bibInfo.linespacing};}\n`
+        if (bibInfo.hangingindent) {
+            css += `
                     .csl-entry {
                         text-indent: -0.5in;
                         padding-left: 0.5in;
                     }\n`
-            } else if (bibInfo["second-field-align"] === 'margin') {
-                css += `
+        } else if (bibInfo["second-field-align"] === 'margin') {
+            css += `
                     .csl-left-margin {
                         text-indent: -${bibInfo.maxoffset}ch;
                         width: ${bibInfo.maxoffset}ch;
                     }
                 `
-            } else if (bibInfo["second-field-align"] === 'flush') {
-                css += `
+        } else if (bibInfo["second-field-align"] === 'flush') {
+            css += `
                     .csl-left-margin {
                         width: ${bibInfo.maxoffset}ch;
                     }
                 `
-            }
+        }
         return css
     }
 

@@ -37,7 +37,7 @@ class TableView {
                 menu: this.options.editor.menu.tableMenuModel,
                 width: 280,
                 page: this.options.editor,
-                menuPos: {X: parseInt(event.pageX)+20, Y: parseInt(event.pageY)-100},
+                menuPos: {X: parseInt(event.pageX) + 20, Y: parseInt(event.pageY) - 100},
                 onClose: () => {
                     this.view.focus()
                 }
@@ -52,7 +52,7 @@ class TableView {
 const isSelectedTableClicked = (state, $pos) => {
     const pathArr = state.selection.$anchor.path
     for (let i = 0; i < pathArr.length ; i++) {
-        if (pathArr[i].type && pathArr[i].type.name && pathArr[i].type.name === "table" && pathArr[i-1] === $pos) {
+        if (pathArr[i].type && pathArr[i].type.name && pathArr[i].type.name === "table" && pathArr[i - 1] === $pos) {
             return true
         }
     }

@@ -3,6 +3,7 @@ import {ShrinkFidus} from "./shrink"
 import {createSlug} from "../tools/file"
 import {addAlert, post} from "../../common"
 
+
 /** Create a Fidus Writer document and upload it to the server as a backup.
  * @function uploadNative
  * @param editor The editor from which to upload the document.
@@ -30,6 +31,11 @@ export class SaveRevision {
             }
         ).then(
             blob => this.uploadRevision(blob)
+        ).catch(
+            (error)=>{
+                addAlert('error', gettext("Revision file could not be generated."))
+                throw (error)
+            }
         )
     }
 
@@ -43,8 +49,14 @@ export class SaveRevision {
             },
             document_id: this.doc.id
         }).then(
-            () => addAlert('success', gettext('Revision saved')),
+            () => {
+                addAlert('success', gettext('Revision saved'))
+            },
             () => addAlert('error', gettext('Revision could not be saved.'))
+        ).catch(
+            (error)=>{
+                throw (error)
+            }
         )
     }
 

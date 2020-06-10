@@ -104,14 +104,75 @@ export class DocumentOverview {
     getDocumentListData() {
         return postJson(
             '/api/document/documentlist/'
-        ).catch(
-            error => {
-                addAlert('error', gettext('Cannot load data of documents.'))
-                throw (error)
-            }
         ).then(
             ({json}) => {
-                const ids = new Set()
+                this.updateIndexedDB(json)
+                this.initializeView(json)
+            }
+        ).catch(
+            error => {
+                if (error.message == "offline") {
+                    this.loaddatafromIndexedDB().then((json)=>{
+                        this.initializeView(json)
+                    })
+                } else {
+                    addAlert('error', gettext('Cannot load data of documents.'))
+                    throw (error)
+                }
+            }
+        ).then(
+            () => deactivateWait()
+        )
+
+    }
+
+    loaddatafromIndexedDB() {
+        const new_json = {}
+        const new_promise = new Promise((resolve, _reject)=>{
+            this.app.indexedDB.readAllData("documents").then((response)=>{
+                new_json['documents'] = response
+                this.app.indexedDB.readAllData("document_templates").then((response)=>{
+                    const dummy_dict={}
+                    for (const data in response) {
+                        const pk = response[data].pk
+                        delete response[data].pk
+                        dummy_dict[pk] = response[data]
+                    }
+                    new_json['document_templates'] = dummy_dict
+                    this.app.indexedDB.readAllData("document_styles").then((response)=>{
+                        new_json['document_styles'] = response
+                        this.app.indexedDB.readAllData("team_members").then((response)=>{
+                            new_json['team_members'] = response
+                            resolve(new_json)
+                        })
+                    })
+                })
+            })
+        })
+        return new_promise
+    }
+
+    updateIndexedDB(json) {
+        // Clear data if any present
+        this.app.indexedDB.clearData("documents")
+        this.app.indexedDB.clearData("team_members")
+        this.app.indexedDB.clearData("document_styles")
+        this.app.indexedDB.clearData("document_templates")
+
+        //Insert new data
+        this.app.indexedDB.insertData("documents", json.documents)
+        this.app.indexedDB.insertData("team_members", json.team_members)
+        this.app.indexedDB.insertData("document_styles", json.document_styles)
+        const dummy_json = []
+        for (const key in json.document_templates) {
+            json.document_templates[key]['pk'] = key
+            dummy_json.push(json.document_templates[key])
+        }
+        this.app.indexedDB.insertData("document_templates", dummy_json)
+    }
+
+    initializeView(json) {
+        const ids = new Set()
                 this.documentList = json.documents.filter(doc => {
                     if (ids.has(doc.id)) {return false}
                     ids.add(doc.id)
@@ -125,11 +186,6 @@ export class DocumentOverview {
                 if (Object.keys(this.documentTemplates).length > 1) {
                     this.multipleNewDocumentMenuItem()
                 }
-            }
-        ).then(
-            () => deactivateWait()
-        )
-
     }
 
     onResize() {
@@ -261,7 +317,6 @@ export class DocumentOverview {
     }
 
     multipleNewDocumentMenuItem() {
-
         const menuItem = this.menu.model.content.find(menuItem => menuItem.id==='new_document')
         menuItem.type = 'dropdown'
         menuItem.content = Object.values(this.documentTemplates).map(docTemplate => ({
@@ -279,7 +334,7 @@ export class DocumentOverview {
                     overview.mod.actions.copyFilesAs(ids)
                 }
             },
-            disabled: overview => !overview.getSelected().length,
+            disabled: overview => !overview.getSelected().length || !overview.app.ws.isOnline(),
             order: 2.5
         })
 

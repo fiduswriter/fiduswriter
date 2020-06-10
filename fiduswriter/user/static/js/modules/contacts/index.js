@@ -58,12 +58,22 @@ export class ContactsOverview {
 
         postJson('/api/user/team/list/').then(
             ({json}) => {
+                // Update data in the indexed DB
+                this.app.indexedDB.clearData("contacts_list")
+                this.app.indexedDB.insertData("contacts_list", json.team_members)
                 this.dom.querySelector('#team-table tbody').innerHTML += teammemberTemplate({members: json.team_members})
             }
         ).catch(
             error => {
-                addAlert('error', gettext('Could not obtain contacts list'))
-                throw (error)
+                if (error.message == "offline") {
+                    addAlert('info', gettext('You are viewing a cached version of the page.'))
+                    this.app.indexedDB.readAllData("contacts_list").then((response)=>{
+                        this.dom.querySelector('#team-table tbody').innerHTML += teammemberTemplate({members: response})
+                    })
+                } else {
+                    addAlert('error', gettext('Could not obtain contacts list'))
+                    throw (error)
+                }
             }
         )
     }

@@ -3,7 +3,8 @@ import {
     ensureCSS,
     WebSocketConnector,
     postJson,
-    activateWait
+    activateWait,
+    Dialog
 } from "../common"
 import {
     FeedbackTab
@@ -113,6 +114,9 @@ import {
 import {
     buildEditorKeymap
 } from "./keymap"
+import {
+    ExportFidusFile
+} from "../exporter/native/file"
 
 export const COMMENT_ONLY_ROLES = ['review', 'comment']
 export const READ_ONLY_ROLES = ['read', 'read-without-comments']
@@ -254,6 +258,9 @@ export class Editor {
                     return message
                 },
                 resubScribed: () => {
+                    if (sendableSteps(this.mod.footnotes.fnEditor.view.state)) {
+                        this.mod.collab.doc.footnoteRender = true
+                    }
                     this.mod.footnotes.fnEditor.renderAllFootnotes()
                     this.mod.collab.doc.checkVersion()
                 },
@@ -313,12 +320,42 @@ export class Editor {
                             this.mod.collab.doc.rejectDiff(data["rid"])
                             break
                     }
+                },
+                failedAuth: () => {
+                    if (this.view.state.plugins.length && sendableSteps(this.view.state) && this.ws.connectionCount>0) {
+                        this.ws.online = false // To avoid Websocket trying to reconnect.
+                        new ExportFidusFile(
+                            this.getDoc(),
+                            this.mod.db.bibDB,
+                            this.mod.db.imageDB
+                        )
+                        const sessionDialog = new Dialog({
+                            title:gettext('Session Expired'),
+                            body:gettext(' Your Session expired while you were offline. So we have downloaded the version of the document you were editing. Please consider importing it into a new document '),
+                            buttons:[{
+                                text:gettext('Proceed to Login page'),
+                                classes:'fw-dark',
+                                click:()=>{
+                                    window.location.href='/'
+                                }
+                            }]
+                        })
+                        sessionDialog.open()
+                        sessionDialog.dialogEl.childNodes[1].childNodes[3].style.display = 'none' // Make the dialog non dismissable
+                    } else {
+                        window.location.href='/'
+                    }
                 }
-
             })
             this.render()
             activateWait(true)
             this.initEditor()
+
+            this.ws.ws.addEventListener('close', () => {
+                // Listen to close event and update the headerbar and toolbar view.
+                this.menu.toolbarViews.forEach(view => view.update())
+                this.menu.headerView.update()
+            })
         })
     }
 
@@ -456,17 +493,25 @@ export class Editor {
     // Collect all components of the current doc. Needed for saving and export
     // filters
     getDoc(options={}) {
-        const pmArticle = options.changes === 'acceptAllNoInsertions' ?
+        let pmArticle
+        if (this.ws.connected) {
+            pmArticle = options.changes === 'acceptAllNoInsertions' ?
             acceptAllNoInsertions(this.docInfo.confirmedDoc).firstChild :
             this.docInfo.confirmedDoc.firstChild
-            let title = ""
-            pmArticle.firstChild.forEach(
-                child => {
-                    if (!child.marks.find(mark => mark.type.name==='deletion')) {
-                        title += child.textContent
-                    }
+        } else {
+            pmArticle = options.changes === 'acceptAllNoInsertions' ?
+            acceptAllNoInsertions(this.view.docView.node).firstChild :
+            this.view.docView.node.firstChild
+        }
+
+        let title = ""
+        pmArticle.firstChild.forEach(
+            child => {
+                if (!child.marks.find(mark => mark.type.name==='deletion')) {
+                    title += child.textContent
                 }
-            )
+            }
+        )
         return {
             contents: pmArticle.toJSON(),
             settings: getSettings(pmArticle),

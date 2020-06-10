@@ -47,6 +47,7 @@ export class ModCollabDoc {
 
         this.trackOfflineLimit = 50 // Limit of local changes while offline for tracking to kick in when multiple users edit
         this.remoteTrackOfflineLimit = 20 // Limit of remote changes while offline for tracking to kick in when multiple users edit
+        this.footnoteRender = false // If the offline user edited a footnote , it needs to be rendered properly to connected users too!
     }
 
     cancelCurrentlyCheckingVersion() {
@@ -128,13 +129,34 @@ export class ModCollabDoc {
                 this.mod.editor.view.state,
                 rollbackTr.steps,
                 rollbackTr.steps.map(_step => 'remote')
-            ))
+            ).setMeta('remote', true))
             const toDoc = this.mod.editor.schema.nodeFromJSON({type:'doc', content:[
                 data.doc.contents
             ]})
+
+            // Apply the online Transaction
             const lostTr = recreateTransform(this.mod.editor.view.state.doc, toDoc)
+            this.mod.editor.view.dispatch(receiveTransaction(
+                this.mod.editor.view.state,
+                lostTr.steps,
+                lostTr.steps.map(_step => 'remote')
+            ).setMeta('remote', true))
+
+            const rebasedTr = EditorState.create({doc: toDoc}).tr.setMeta('remote', true)
+            const maps = new Mapping([].concat(unconfirmedTr.mapping.maps.slice().reverse().map(map=>map.invert())).concat(lostTr.mapping.maps.slice()))
+
+            unconfirmedTr.steps.forEach(
+                (step, index) => {
+                    const mapped = step.map(maps.slice(unconfirmedTr.steps.length - index))
+                    if (mapped && !rebasedTr.maybeStep(mapped).failed) {
+                        maps.appendMap(mapped.getMap())
+                        maps.setMirror(unconfirmedTr.steps.length-index-1, (unconfirmedTr.steps.length+lostTr.steps.length+rebasedTr.steps.length-1))
+                    }
+                }
+            )
+
             let tracked
-            let localTr // local steps to be reapplied
+            let rebasedTrackedTr // offline steps to be tracked
             if (
                 ['write', 'write-tracked'].includes(this.mod.editor.docInfo.access_rights) &&
                 (
@@ -146,29 +168,20 @@ export class ModCollabDoc {
                 // Either this user has made 50 changes since going offline,
                 // or the document has 20 changes to it. Therefore we add tracking
                 // to the changes of this user and ask user to clean up.
-                localTr = trackedTransaction(
-                    unconfirmedTr,
-                    confirmedState,
+                rebasedTrackedTr = trackedTransaction(
+                    rebasedTr,
+                    this.mod.editor.view.state,
                     this.mod.editor.user,
                     false,
                     Date.now() - this.mod.editor.clientTimeAdjustment
                 )
             } else {
                 tracked = false
-                localTr = unconfirmedTr
+                rebasedTrackedTr = rebasedTr
             }
-            const rebasedTr = EditorState.create({doc: toDoc}).tr.setMeta('remote', true)
-            const maps = localTr.mapping.maps.slice().reverse().map(map => map.invert()).concat(lostTr.mapping)
-            localTr.steps.forEach(
-                (step, index) => {
-                    const mapped = step.map(new Mapping(maps.slice(localTr.steps.length - index)))
-                    if (mapped && !rebasedTr.maybeStep(mapped).failed) {
-                        maps.push(mapped.getMap())
-                    }
-                }
-            )
-            const usedImages = [],
-                usedBibs = []
+
+            let usedImages = []
+            const usedBibs = []
             const footnoteFind = (node, usedImages, usedBibs) => {
                 if (node.name==='citation') {
                     node.attrs.references.forEach(ref => usedBibs.push(parseInt(ref.id)))
@@ -196,18 +209,25 @@ export class ModCollabDoc {
             })
             const oldImageDB = this.mod.editor.mod.db.imageDB.db
             this.mod.editor.mod.db.imageDB.setDB(data.doc.images)
+            // Remove the Duplicated image ID's
+            usedImages = new Set(usedImages)
+            usedImages = Array.from(usedImages)
             usedImages.forEach(id => {
                 if (!this.mod.editor.mod.db.imageDB.db[id] && oldImageDB[id]) {
-                    this.mod.editor.mod.db.imageDB.setImage(id, oldImageDB[id])
+                    // If the image was uploaded by the offline user we know that he may not have deleted it so we can resend it normally
+                    if (Object.keys(this.mod.editor.app.imageDB.db).includes(id)) {
+                        this.mod.editor.mod.db.imageDB.setImage(id, oldImageDB[id])
+                    } else {
+                        // If the image was uploaded by someone else , to set the image we have to reupload it again as there is backend check to associate who can add an image with the image owner.
+                        this.mod.editor.mod.db.imageDB.reUploadImage(id, oldImageDB[id].image, oldImageDB[id].title, oldImageDB[id].copyright)
+                    }
                 }
             })
-            this.mod.editor.view.dispatch(receiveTransaction(
-                this.mod.editor.view.state,
-                lostTr.steps,
-                lostTr.steps.map(_step => 'remote')
-            ))
+
             this.mod.editor.docInfo.version = data.doc.v
-            this.mod.editor.view.dispatch(rebasedTr)
+            rebasedTrackedTr.setMeta('remote', true)
+            this.mod.editor.view.dispatch(rebasedTrackedTr)
+
             if (tracked) {
                 showSystemMessage(
                     gettext(
@@ -392,6 +412,10 @@ export class ModCollabDoc {
                         s => s.toJSON()
                     )
                 }
+                if (this.footnoteRender) {
+                    unconfirmedDiff['footnoterender'] = true
+                    this.footnoteRender = false
+                }
                 if (commentUpdates.length) {
                     unconfirmedDiff["cu"] = commentUpdates
                 }
@@ -489,6 +513,9 @@ export class ModCollabDoc {
         }
         if (data["fs"]) { // footnote steps
             this.mod.editor.mod.footnotes.fnEditor.applyDiffs(data["fs"], data["cid"])
+        }
+        if (data["footnoterender"]) { // re-render footnotes properly
+            this.mod.editor.mod.footnotes.fnEditor.renderAllFootnotes()
         }
 
         if (data.server_fix) {

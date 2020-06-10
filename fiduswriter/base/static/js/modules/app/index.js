@@ -1,6 +1,5 @@
-import OfflinePluginRuntime from 'offline-plugin/runtime'
 import {CSL} from 'citeproc-plus'
-
+import OfflinePluginRuntime from 'offline-plugin/runtime'
 import {DocumentInvite} from "../documents/invite"
 import {ImageOverview} from "../images/overview"
 import {ContactsOverview} from "../contacts"
@@ -17,6 +16,7 @@ import {OfflinePage} from "../offline"
 import {SetupPage} from "../setup"
 import {FlatPage} from "../flatpage"
 import * as plugins from "../../plugins/app"
+import {indexedDB} from '../indexed-db'
 
 export class App {
     constructor() {
@@ -168,6 +168,7 @@ export class App {
         this.imageDB = new ImageDB()
         this.csl = new CSL()
         this.connectWs()
+        this.indexedDB = new indexedDB(this)
         return Promise.all([
             this.bibDB.getDB(),
             this.imageDB.getDB(),
@@ -284,4 +285,5 @@ export class App {
         window.history.pushState({}, "", url)
         return this.selectPage()
     }
+
 }

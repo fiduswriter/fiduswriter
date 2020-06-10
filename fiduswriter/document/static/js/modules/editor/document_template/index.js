@@ -1,4 +1,4 @@
-import {Dialog, escapeText} from "../../common"
+import {Dialog, escapeText, addAlert, get} from "../../common"
 import {SaveCopy} from "../../exporter/native"
 
 export class ModDocumentTemplate {
@@ -21,6 +21,17 @@ export class ModDocumentTemplate {
         if (this.editor.menu.headerView) {
             this.editor.menu.headerView.update()
         }
+        //Cache the template files using Service Worker
+        for (const key in styles.export_templates) {
+            const template = styles.export_templates[key]
+            get(template.template_file)
+        }
+        //Cache the required font related files too!
+        this.documentStyles.forEach(docStyle=>{
+            docStyle.documentstylefile_set.forEach(([url, _filename]) => {
+                get(url)
+            })
+        })
     }
 
     addDocPartSettings() {
@@ -104,17 +115,23 @@ export class ModDocumentTemplate {
                             text: gettext('Copy'),
                             classes: "fw-dark",
                             click: () => {
-                                const copier = new SaveCopy(
+                                if (!editor.ws.isOnline()) {
+                                    addAlert('error', "You're offline. Please try again after you're Online.")
+                                    selectTemplateDialog.close()
+                                } else {
+                                    const copier = new SaveCopy(
                                         editor.getDoc(),
                                         editor.mod.db.bibDB,
                                         editor.mod.db.imageDB,
                                         editor.user,
                                         selectTemplateDialog.dialogEl.querySelector('select').value
                                     )
-                                copier.init().then(({docInfo}) =>
-                                    editor.app.goTo(`/document/${docInfo.id}/`)
-                                ).catch(() => false)
-                                selectTemplateDialog.close()
+                                    copier.init().then(({docInfo}) =>
+                                        editor.app.goTo(`/document/${docInfo.id}/`)
+                                    ).catch(() => false)
+                                    selectTemplateDialog.close()
+                                }
+
                             }
                         },
                         {
@@ -123,7 +140,8 @@ export class ModDocumentTemplate {
                     ]
                 })
                 selectTemplateDialog.open()
-            }
+            },
+            disabled:editor => !editor.ws.isOnline()
         })
 
         fileMenu.content = fileMenu.content.sort((a, b) => a.order - b.order)
@@ -178,7 +196,8 @@ export class ModDocumentTemplate {
                             )
                             exporter.init()
                         })
-                    }
+                    },
+                    disabled: editor => !editor.ws.isOnline()
                 }
             }
         })
@@ -203,7 +222,8 @@ export class ModDocumentTemplate {
                 },
                 selected: editor => {
                     return editor.view.state.doc.firstChild.attrs.documentstyle === docStyle.slug
-                }
+                },
+                disabled : editor=> !editor.ws.isOnline(),
             }
         })
     }

@@ -90,6 +90,8 @@ export class ImageOverview {
         ).catch(
             error => {
                 addAlert('error', gettext('The image(s) could not be deleted'))
+                if (error.message === "offline")
+                    deactivateWait()
                 throw (error)
             }
         ).then(

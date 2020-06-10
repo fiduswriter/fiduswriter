@@ -96,7 +96,7 @@ export class DocxExporter {
         )
     }
     download(blob) {
-        return download(blob, createSlug(this.docTitle)+'.docx', this.mimeType)
+        return download(blob, createSlug(this.docTitle) + '.docx', this.mimeType)
     }
 
 }

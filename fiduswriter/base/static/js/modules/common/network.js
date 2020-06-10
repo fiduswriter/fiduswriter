@@ -41,7 +41,7 @@ const removeDjangoMessages = function(response) {
     return response
 }
 
-export const get = function(url, params={}, csrfToken=false) {
+export const get = function(url, params = {}, csrfToken = false) {
     if (!csrfToken) {
         csrfToken = getCsrfToken() // Won't work in web worker.
     }
@@ -66,13 +66,13 @@ export const get = function(url, params={}, csrfToken=false) {
     )
 }
 
-export const getJson = function(url, params={}, csrfToken=false) {
+export const getJson = function(url, params = {}, csrfToken = false) {
     return get(url, params, csrfToken).then(
         response => response.json()
     )
 }
 
-export const postBare = function(url, params={}, csrfToken=false) {
+export const postBare = function(url, params = {}, csrfToken = false) {
     if (!csrfToken) {
         csrfToken = getCsrfToken() // Won't work in web worker.
     }
@@ -80,11 +80,11 @@ export const postBare = function(url, params={}, csrfToken=false) {
     body.append('csrfmiddlewaretoken', csrfToken)
     Object.keys(params).forEach(key => {
         const value = params[key]
-        if (typeof(value)==="object" && value.file && value.filename) {
+        if (typeof(value) === "object" && value.file && value.filename) {
             body.append(key, value.file, value.filename)
         } else if (Array.isArray(value)) {
             value.forEach(item => body.append(`${key}[]`, item))
-        } else if (typeof(value)==="object" && value.constructor.name !== 'File') {
+        } else if (typeof(value) === "object" && value.constructor.name !== 'File') {
             body.append(key, JSON.stringify(value))
         } else {
             body.append(key, value)
@@ -103,7 +103,7 @@ export const postBare = function(url, params={}, csrfToken=false) {
     })
 }
 
-export const post = function(url, params={}, csrfToken=false) {
+export const post = function(url, params = {}, csrfToken = false) {
     return postBare(url, params, csrfToken).then(
         removeDjangoMessages
     ).then(
@@ -112,7 +112,7 @@ export const post = function(url, params={}, csrfToken=false) {
 }
 
 // post and then return json and status
-export const postJson = function(url, params={}, csrfToken=false) {
+export const postJson = function(url, params = {}, csrfToken = false) {
     return post(url, params, csrfToken).then(
         response => response.json().then(
             json => ({json, status: response.status})

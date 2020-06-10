@@ -9,7 +9,7 @@ export class DocumentTemplateAdmin {
         this.templateExtras = false
         this.citationStyles = false
         const locationParts = window.location.href.split('/')
-        let id = parseInt(locationParts[locationParts.length-3])
+        let id = parseInt(locationParts[locationParts.length - 3])
         if (isNaN(id)) {
             id = 0
         }
@@ -66,9 +66,9 @@ export class DocumentTemplateAdmin {
     }
 
     modifyDOM() {
-        this.definitionBlock.style.display='none'
-        this.definitionImportIdBlock.style.display='none'
-        this.titleBlock.style.display='none'
+        this.definitionBlock.style.display = 'none'
+        this.definitionImportIdBlock.style.display = 'none'
+        this.titleBlock.style.display = 'none'
         this.titleBlock.insertAdjacentHTML(
             'beforebegin',
             `<div class="form-row"><ul class="object-tools right">
@@ -105,31 +105,31 @@ export class DocumentTemplateAdmin {
         document.body.addEventListener('click', event => {
             const el = {}
             switch (true) {
-                case findTarget(event, '#toggle-editor', el):
+            case findTarget(event, '#toggle-editor', el):
+                event.preventDefault()
+                if (this.definitionBlock.style.display === 'none') {
+                    this.definitionBlock.style.display = ''
+                    this.definitionImportIdBlock.style.display = ''
+                    this.titleBlock.style.display = ''
+                    this.setCurrentValue()
+                    this.templateDesigner.close()
+                    this.templateDesigner = false
+                    this.templateDesignerBlock.style.display = 'none'
+                } else {
+                    this.definitionBlock.style.display = 'none'
+                    this.definitionImportIdBlock.style.display = 'none'
+                    this.titleBlock.style.display = 'none'
+                    this.templateDesignerBlock.style.display = ''
+                    this.initDesigner()
+                }
+                break
+            case findTarget(event, 'div.submit-row input[type=submit]', el):
+                if (this.definitionBlock.style.display === 'none' && !this.setCurrentValue()) {
                     event.preventDefault()
-                    if (this.definitionBlock.style.display==='none') {
-                        this.definitionBlock.style.display=''
-                        this.definitionImportIdBlock.style.display=''
-                        this.titleBlock.style.display=''
-                        this.setCurrentValue()
-                        this.templateDesigner.close()
-                        this.templateDesigner = false
-                        this.templateDesignerBlock.style.display='none'
-                    } else {
-                        this.definitionBlock.style.display='none'
-                        this.definitionImportIdBlock.style.display='none'
-                        this.titleBlock.style.display='none'
-                        this.templateDesignerBlock.style.display=''
-                        this.initDesigner()
-                    }
-                    break
-                case findTarget(event, 'div.submit-row input[type=submit]', el):
-                    if (this.definitionBlock.style.display==='none' && !this.setCurrentValue()) {
-                        event.preventDefault()
-                    }
-                    break
-                default:
-                    break
+                }
+                break
+            default:
+                break
             }
         })
     }

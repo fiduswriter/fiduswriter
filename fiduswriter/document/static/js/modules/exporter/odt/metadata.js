@@ -11,7 +11,7 @@ export class OdtExporterMetadata {
             authors: this.docContents.content.reduce(
                 (authors, part) => {
                     if (
-                        part.type==='contributors_part' &&
+                        part.type === 'contributors_part' &&
                         part.attrs.metadata === 'authors' &&
                         part.content
                     ) {
@@ -20,11 +20,11 @@ export class OdtExporterMetadata {
                         return authors
                     }
                 },
-            []),
+                []),
             keywords: this.docContents.content.reduce(
                 (keywords, part) => {
                     if (
-                        part.type==='tags_part' &&
+                        part.type === 'tags_part' &&
                         part.attrs.metadata === 'keywords' &&
                         part.content
                     ) {
@@ -33,7 +33,7 @@ export class OdtExporterMetadata {
                         return keywords
                     }
                 },
-            []),
+                []),
             title: textContent(this.docContents.content[0]),
             language: this.exporter.doc.settings.language
         }

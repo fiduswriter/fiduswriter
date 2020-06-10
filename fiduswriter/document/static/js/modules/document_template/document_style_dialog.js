@@ -96,19 +96,19 @@ export class DocumentStyleDialog {
                     <th><h4 class="fw-tablerow-title">${gettext("Files")}</h4></th>
                     <td>
                         <table><tbody class="document-style-files">${
-                            this.style ?
-                            `${
-                                this.style.fields.documentstylefile_set.map(
-                                    ([url, title]) =>
-                                        `<tr>
+    this.style ?
+        `${
+            this.style.fields.documentstylefile_set.map(
+                ([url, title]) =>
+                    `<tr>
                                             <td><a href="${url}">${escapeText(title)}</a></td>
                                             <td><span class="fw-link-text"><i class="fas fa-trash-alt delete-document-style-file" data-filename="${escapeText(title)}"></i></span></td>
                                         </tr>`
-                                ).join('<br>')
-                            }`
-                             :
-                            ''
-                        }</tbody></table>
+            ).join('<br>')
+        }`
+        :
+        ''
+}</tbody></table>
                         <button type="button" class="fw-media-select-button fw-button fw-light">
                             ${gettext('Add a file')}
                         </button>
@@ -226,30 +226,30 @@ export class DocumentStyleDialog {
         this.dialog.dialogEl.addEventListener('click', event => {
             const el = {}
             switch (true) {
-                case findTarget(event, '.delete-document-style-file', el): {
-                    event.preventDefault()
-                    this.deletedFiles.push(el.target.dataset.filename)
-                    const tr = el.target.closest('tr')
-                    tr.parentElement.removeChild(tr)
-                    break
+            case findTarget(event, '.delete-document-style-file', el): {
+                event.preventDefault()
+                this.deletedFiles.push(el.target.dataset.filename)
+                const tr = el.target.closest('tr')
+                tr.parentElement.removeChild(tr)
+                break
+            }
+            case findTarget(event, '.delete-new-document-style-file', el): {
+                event.preventDefault()
+                const tr = el.target.closest('tr')
+                let count = 0, findTr = tr
+                while (findTr.previousElementSibling.classList.contains('new-document-style-file')) {
+                    findTr = findTr.previousElementSibling
+                    count++
                 }
-                case findTarget(event, '.delete-new-document-style-file', el): {
-                    event.preventDefault()
-                    const tr = el.target.closest('tr')
-                    let count = 0, findTr = tr
-                    while (findTr.previousElementSibling.classList.contains('new-document-style-file')) {
-                        findTr = findTr.previousElementSibling
-                        count++
-                    }
-                    this.addedFiles.splice(count, 1)
-                    tr.parentElement.removeChild(tr)
-                    break
-                }
-                case findTarget(event, '.fw-media-select-button', el): {
-                    event.preventDefault()
-                    mediaInputSelector.click()
-                    break
-                }
+                this.addedFiles.splice(count, 1)
+                tr.parentElement.removeChild(tr)
+                break
+            }
+            case findTarget(event, '.fw-media-select-button', el): {
+                event.preventDefault()
+                mediaInputSelector.click()
+                break
+            }
             }
 
         })

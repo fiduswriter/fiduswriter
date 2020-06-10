@@ -11,7 +11,7 @@ export class DocxExporterMetadata {
             authors: this.docContents.content.reduce(
                 (authors, part) => {
                     if (
-                        part.type==='contributors_part' &&
+                        part.type === 'contributors_part' &&
                         part.attrs.metadata === 'authors' &&
                         part.content
                     ) {
@@ -20,11 +20,11 @@ export class DocxExporterMetadata {
                         return authors
                     }
                 },
-            []),
+                []),
             keywords: this.docContents.content.reduce(
                 (keywords, part) => {
                     if (
-                        part.type==='tags_part' &&
+                        part.type === 'tags_part' &&
                         part.attrs.metadata === 'keywords' &&
                         part.content
                     ) {
@@ -33,7 +33,7 @@ export class DocxExporterMetadata {
                         return keywords
                     }
                 },
-            []),
+                []),
             title: textContent(this.docContents.content[0])
         }
     }
@@ -77,7 +77,7 @@ export class DocxExporterMetadata {
             return nameParts.join(' ')
         })
         const lastAuthor = authors.length ? escapeText(authors[0]) : gettext('Unknown')
-        const allAuthors = authors.length ? escapeText(authors.join(';')): gettext('Unknown')
+        const allAuthors = authors.length ? escapeText(authors.join(';')) : gettext('Unknown')
         let allAuthorsEl = this.coreXml.querySelector('creator')
         if (!allAuthorsEl) {
             corePropertiesEl.insertAdjacentHTML('beforeEnd', '<dc:creator></dc:creator>')
@@ -109,7 +109,7 @@ export class DocxExporterMetadata {
 
         // time
         const date = new Date()
-        const dateString = date.toISOString().split('.')[0]+'Z'
+        const dateString = date.toISOString().split('.')[0] + 'Z'
         const createdEl = this.coreXml.querySelector('created')
         createdEl.innerHTML = dateString
         let modifiedEl = this.coreXml.querySelector('modified')

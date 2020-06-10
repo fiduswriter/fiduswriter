@@ -241,11 +241,11 @@ export class BibEntryForm {
     }
 
     save() {
-        const isNew = this.itemId===false ? true : false,
-            itemId = this.itemId===false ? 0 : this.itemId,
+        const isNew = this.itemId === false ? true : false,
+            itemId = this.itemId === false ? 0 : this.itemId,
             item = this.value
 
-        if (item.entry_key==='FidusWriter') {
+        if (item.entry_key === 'FidusWriter') {
             this.createEntryKey(item)
         }
         const saveObj = {}

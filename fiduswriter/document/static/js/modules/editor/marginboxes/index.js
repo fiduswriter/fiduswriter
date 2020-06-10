@@ -51,88 +51,88 @@ export class ModMarginboxes {
         document.body.addEventListener('click', event => {
             const el = {}
             switch (true) {
-                case findTarget(event, '.margin-box-filter-check', el):
-                    // do not react to clicks on checkboxes within sub menus
-                    break
-                case findTarget(event, '.margin-box-filter-comments-author', el):
-                    this.filterOptions.author = parseInt(el.target.dataset.id)
-                    this.view(this.editor.currentView)
-                    break
-                case findTarget(event, '.margin-box-filter-comments-assigned', el):
-                    this.filterOptions.assigned = parseInt(el.target.dataset.id)
-                    this.view(this.editor.currentView)
-                    break
-                case findTarget(event, '.show-marginbox-options-submenu', el):
-                    this.closeAllMenus('.marginbox-options-submenu.fw-open')
-                    Array.from(el.target.parentElement.children).find(node => node.matches('.marginbox-options-submenu')).classList.add('fw-open')
-                    break
-                case findTarget(event, '.show-marginbox-options', el):
-                    this.closeAllMenus()
-                    Array.from(el.target.parentElement.children).find(node => node.matches('.marginbox-options')).classList.add('fw-open')
-                    break
-                case findTarget(event, '#margin-box-filter-track', el):
-                    this.filterOptions.track = !this.filterOptions.track
-                    this.view(this.editor.currentView)
-                    break
-                case findTarget(event, '#margin-box-filter-comments', el):
-                    this.filterOptions.comments = !this.filterOptions.comments
-                    this.view(this.editor.currentView)
-                    break
-                case findTarget(event, '#margin-box-filter-info', el):
-                    this.filterOptions.info = !this.filterOptions.info
-                    this.view(this.editor.currentView)
-                    break
-                case findTarget(event, '.margin-box.comment.inactive', el):
-                    this.editor.mod.comments.interactions.deactivateSelectedChanges()
-                    this.editor.mod.comments.interactions.activateComment(el.target.dataset.id)
-                    break
-                case findTarget(event, '.margin-box.track.inactive', el): {
-                    let boxNumber = 0
-                    let seekItem = el.target
-                    while (seekItem.previousElementSibling) {
-                        boxNumber += 1
-                        seekItem = seekItem.previousElementSibling
-                    }
-                    const box = this.marginBoxes[boxNumber]
-                    this.editor.mod.track.activateTrack(
-                        box.view,
-                        box.type,
-                        box.pos
-                    )
-                    break
+            case findTarget(event, '.margin-box-filter-check', el):
+                // do not react to clicks on checkboxes within sub menus
+                break
+            case findTarget(event, '.margin-box-filter-comments-author', el):
+                this.filterOptions.author = parseInt(el.target.dataset.id)
+                this.view(this.editor.currentView)
+                break
+            case findTarget(event, '.margin-box-filter-comments-assigned', el):
+                this.filterOptions.assigned = parseInt(el.target.dataset.id)
+                this.view(this.editor.currentView)
+                break
+            case findTarget(event, '.show-marginbox-options-submenu', el):
+                this.closeAllMenus('.marginbox-options-submenu.fw-open')
+                Array.from(el.target.parentElement.children).find(node => node.matches('.marginbox-options-submenu')).classList.add('fw-open')
+                break
+            case findTarget(event, '.show-marginbox-options', el):
+                this.closeAllMenus()
+                Array.from(el.target.parentElement.children).find(node => node.matches('.marginbox-options')).classList.add('fw-open')
+                break
+            case findTarget(event, '#margin-box-filter-track', el):
+                this.filterOptions.track = !this.filterOptions.track
+                this.view(this.editor.currentView)
+                break
+            case findTarget(event, '#margin-box-filter-comments', el):
+                this.filterOptions.comments = !this.filterOptions.comments
+                this.view(this.editor.currentView)
+                break
+            case findTarget(event, '#margin-box-filter-info', el):
+                this.filterOptions.info = !this.filterOptions.info
+                this.view(this.editor.currentView)
+                break
+            case findTarget(event, '.margin-box.comment.inactive', el):
+                this.editor.mod.comments.interactions.deactivateSelectedChanges()
+                this.editor.mod.comments.interactions.activateComment(el.target.dataset.id)
+                break
+            case findTarget(event, '.margin-box.track.inactive', el): {
+                let boxNumber = 0
+                let seekItem = el.target
+                while (seekItem.previousElementSibling) {
+                    boxNumber += 1
+                    seekItem = seekItem.previousElementSibling
                 }
-                default:
-                    this.closeAllMenus()
-                    break
+                const box = this.marginBoxes[boxNumber]
+                this.editor.mod.track.activateTrack(
+                    box.view,
+                    box.type,
+                    box.pos
+                )
+                break
+            }
+            default:
+                this.closeAllMenus()
+                break
             }
         })
 
         document.body.addEventListener('change', evt => {
             switch (evt.target.id) {
-                case "margin-box-filter-comments-resolved":
-                    this.filterOptions.commentsResolved = evt.target.checked
-                    this.view(this.editor.currentView)
-                    break
+            case "margin-box-filter-comments-resolved":
+                this.filterOptions.commentsResolved = evt.target.checked
+                this.view(this.editor.currentView)
+                break
 
-                case "margin-box-filter-comments-only-major":
-                    this.filterOptions.commentsOnlyMajor = evt.target.checked
-                    this.view(this.editor.currentView)
-                    break
+            case "margin-box-filter-comments-only-major":
+                this.filterOptions.commentsOnlyMajor = evt.target.checked
+                this.view(this.editor.currentView)
+                break
 
-                case "margin-box-filter-info-help":
-                    this.filterOptions.help = evt.target.checked
-                    this.view(this.editor.currentView)
-                    break
+            case "margin-box-filter-info-help":
+                this.filterOptions.help = evt.target.checked
+                this.view(this.editor.currentView)
+                break
 
-                case "margin-box-filter-info-warning":
-                    this.filterOptions.warning = evt.target.checked
-                    this.view(this.editor.currentView)
-                    break
+            case "margin-box-filter-info-warning":
+                this.filterOptions.warning = evt.target.checked
+                this.view(this.editor.currentView)
+                break
             }
         }, false)
     }
 
-    closeAllMenus(selector='.marginbox-options-submenu.fw-open, .marginbox-options.fw-open') {
+    closeAllMenus(selector = '.marginbox-options-submenu.fw-open, .marginbox-options.fw-open') {
         document.querySelectorAll(selector).forEach(
             el => el.classList.remove('fw-open')
         )
@@ -178,7 +178,7 @@ export class ModMarginboxes {
                 )
                 lastNode = node
 
-                if (node.type.name==='footnote') {
+                if (node.type.name === 'footnote') {
                     let lastFnNode = this.editor.mod.footnotes.fnEditor.view.state.doc,
                         lastFnNodeTracks = []
                     const footnote = lastFnNode.childCount > fnIndex ? lastFnNode.child(fnIndex) : false
@@ -187,7 +187,7 @@ export class ModMarginboxes {
                     }
                     this.editor.mod.footnotes.fnEditor.view.state.doc.nodesBetween(
                         fnPosCount,
-                        fnPosCount+footnote.nodeSize,
+                        fnPosCount + footnote.nodeSize,
                         (fnNode, fnPos) => {
                             if (fnPos < fnPosCount) {
                                 return false
@@ -313,13 +313,13 @@ export class ModMarginboxes {
                         const mboxPlacement = marginBoxPlacements[activeIndex]
                         if (mboxPlacement.height === 0) {
                             mboxPlacement.pos = currentPos
-                        } else if (mboxPlacement===firstActiveMboxPlacement) {
+                        } else if (mboxPlacement === firstActiveMboxPlacement) {
                             mboxPlacement.pos = mboxPlacement.refPos
                         } else {
                             mboxPlacement.pos = Math.min(
                                 currentPos - 2 - mboxPlacement.height,
                                 mboxPlacement.refPos
-                        )
+                            )
                         }
                         currentPos = mboxPlacement.pos
                         activeIndex--
@@ -349,7 +349,7 @@ export class ModMarginboxes {
                         let css = ''
                         if (pos !== totalOffset) {
                             const topMargin = parseInt(pos - totalOffset)
-                            css += `#margin-box-container div.margin-box:nth-of-type(${(index+1)}) {margin-top: ${topMargin}px;}\n`
+                            css += `#margin-box-container div.margin-box:nth-of-type(${(index + 1)}) {margin-top: ${topMargin}px;}\n`
                             totalOffset += topMargin
                         }
                         totalOffset += mboxPlacement.height + 2
@@ -437,14 +437,14 @@ export class ModMarginboxes {
         const nodeTracks = node.attrs.track ?
             node.attrs.track.map(track => {
                 const nodeTrack = {type: track.type, data: {user: track.user, username: track.username, date: track.date}}
-                if (track.type==='block_change') {
+                if (track.type === 'block_change') {
                     nodeTrack.data.before = track.before
                 }
                 return nodeTrack
             }) :
             node.marks.filter(mark =>
                 ['deletion', 'format_change'].includes(mark.type.name) ||
-                (mark.type.name==='insertion' && !mark.attrs.approved)
+                (mark.type.name === 'insertion' && !mark.attrs.approved)
             ).map(mark => ({type: mark.type.name, data: mark.attrs}))
 
         // Filter out trackmarks already present in the last node (if it's an inline node).
@@ -452,9 +452,9 @@ export class ModMarginboxes {
             nodeTracks.filter(track =>
                 !lastNodeTracks.find(
                     lastTrack =>
-                        track.type===lastTrack.type &&
-                        track.data.user===lastTrack.data.user &&
-                        track.data.date===lastTrack.data.date &&
+                        track.type === lastTrack.type &&
+                        track.data.user === lastTrack.data.user &&
+                        track.data.date === lastTrack.data.date &&
                         (
                             node.isInline || // block level changes almost always need new boxes
                             (node.type.name === 'paragraph' && lastNode.type.name === 'list_item' && lastTrack.type === 'insertion') // Don't show first paragraphs in list items.
@@ -463,15 +463,15 @@ export class ModMarginboxes {
                             ['insertion', 'deletion'].includes(track.type) ||
                             (
                                 track.type === 'format_change' &&
-                                track.data.before.length===lastTrack.data.before.length &&
-                                track.data.after.length===lastTrack.data.after.length &&
+                                track.data.before.length === lastTrack.data.before.length &&
+                                track.data.after.length === lastTrack.data.after.length &&
                                 track.data.before.every(markName => lastTrack.data.before.includes(markName)) &&
                                 track.data.after.every(markName => lastTrack.data.after.includes(markName))
                             ) ||
                             (
                                 track.type === 'block_change' &&
-                                track.data.before.type===lastTrack.data.before.type &&
-                                track.data.before.attrs.level===lastTrack.data.before.attrs.level
+                                track.data.before.type === lastTrack.data.before.type &&
+                                track.data.before.attrs.level === lastTrack.data.before.attrs.level
                             )
                         )
                 )
@@ -500,7 +500,7 @@ export class ModMarginboxes {
                 // We have no comment with this ID. Ignore the referrer.
                 return
             }
-            if (marginBoxes.find(marginBox => marginBox.data===comment)) {
+            if (marginBoxes.find(marginBox => marginBox.data === comment)) {
                 // comment already placed
                 return
             }

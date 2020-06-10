@@ -8,7 +8,7 @@ export class KeyFieldForm {
         this.dom = dom
         this.fieldType = fieldType
         // We set the mode based on the type of value
-        if (typeof initialValue==='object') {
+        if (typeof initialValue === 'object') {
             this.predefined = false
             this.currentValue['custom'] = initialValue
         } else {

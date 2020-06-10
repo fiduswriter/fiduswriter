@@ -36,7 +36,7 @@ export class ModFootnoteLayout {
 
             if (getComputedStyle(footnoteBoxContainer).display === 'block') {
                 // We are in mobile/tablet mode. We don't need to place footnotes.
-            } else if (this.mod.editor.mod.citations.citationType==='note') {
+            } else if (this.mod.editor.mod.citations.citationType === 'note') {
                 const totalOffset = footnoteBoxContainer.getBoundingClientRect().top
                 /* Citations are also in footnotes, so both citation footnotes
                  * and editor footnotes have to be placed. They should be placed
@@ -53,7 +53,7 @@ export class ModFootnoteLayout {
                         let topMargin = 10
                         if (node.type.name === 'footnote') {
                             const footnoteBox = footnoteBoxes[editorFootnoteIndex],
-                                selector = `.footnote-container:nth-of-type(${(editorFootnoteIndex+1)})`,
+                                selector = `.footnote-container:nth-of-type(${(editorFootnoteIndex + 1)})`,
                                 footnoteBoxCoords = footnoteBox.getBoundingClientRect(),
                                 footnoteBoxHeight = footnoteBoxCoords.height,
                                 referrerTop = this.mod.editor.view.coordsAtPos(pos).top
@@ -71,7 +71,7 @@ export class ModFootnoteLayout {
                         } else {
                             if (citationFootnotes.length > citationFootnoteIndex) {
                                 const footnoteBox = citationFootnotes[citationFootnoteIndex],
-                                    selector = '.footnote-citation:nth-of-type('+(citationFootnoteIndex+1)+')',
+                                    selector = '.footnote-citation:nth-of-type(' + (citationFootnoteIndex + 1) + ')',
                                     footnoteBoxCoords = footnoteBox.getBoundingClientRect(),
                                     footnoteBoxHeight = footnoteBoxCoords.height,
                                     referrerTop = this.mod.editor.view.coordsAtPos(pos).top
@@ -106,7 +106,7 @@ export class ModFootnoteLayout {
                     const footnoteBoxCoords = footnoteBox.getBoundingClientRect(),
                         footnoteBoxHeight = footnoteBoxCoords.height,
                         referrerTop = this.mod.editor.view.coordsAtPos(referrer.from).top,
-                        selector = `.footnote-container:nth-of-type(${(index+1)})`
+                        selector = `.footnote-container:nth-of-type(${(index + 1)})`
                     if (!referrerTop) {
                         // footnote is not shown. Also hide the footnote from the editor.
                         footnotePlacementStyle += `${selector} {display: none;}\n`

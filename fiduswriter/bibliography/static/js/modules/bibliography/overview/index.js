@@ -120,7 +120,7 @@ export class BibliographyOverview {
      * @param newBibCategories The new categories which will be added to the existing ones.
      */
     setBibCategoryList(bibCategories) {
-        const catSelector = this.menu.model.content.find(menuItem => menuItem.id==='cat_selector')
+        const catSelector = this.menu.model.content.find(menuItem => menuItem.id === 'cat_selector')
         catSelector.content = catSelector.content.filter(cat => cat.type !== 'category')
 
         catSelector.content = catSelector.content.concat(bibCategories.map(cat => ({
@@ -283,43 +283,43 @@ export class BibliographyOverview {
         this.dom.addEventListener('click', event => {
             const el = {}
             switch (true) {
-                case findTarget(event, '.delete-bib', el): {
-                    const bookId = parseInt(el.target.dataset.id)
-                    this.deleteBibEntryDialog([bookId])
-                    break
-                }
-                case findTarget(event, '.edit-bib', el): {
-                    const bookId = parseInt(el.target.dataset.id)
-                    import("../form").then(({BibEntryForm}) => {
-                        const form = new BibEntryForm(this.app.bibDB, bookId)
-                        form.init().then(
-                            idTranslations => {
-                                const ids = idTranslations.map(idTrans => idTrans[1])
-                                return this.updateTable(ids)
-                            }
-                        )
-                    })
-                    break
-                }
-                case findTarget(event, '.fw-add-input', el): {
-                    const itemEl = el.target.closest('.fw-list-input')
-                    if (!itemEl.nextElementSibling) {
-                        itemEl.insertAdjacentHTML(
-                            'afterend',
-                            `<tr class="fw-list-input">
+            case findTarget(event, '.delete-bib', el): {
+                const bookId = parseInt(el.target.dataset.id)
+                this.deleteBibEntryDialog([bookId])
+                break
+            }
+            case findTarget(event, '.edit-bib', el): {
+                const bookId = parseInt(el.target.dataset.id)
+                import("../form").then(({BibEntryForm}) => {
+                    const form = new BibEntryForm(this.app.bibDB, bookId)
+                    form.init().then(
+                        idTranslations => {
+                            const ids = idTranslations.map(idTrans => idTrans[1])
+                            return this.updateTable(ids)
+                        }
+                    )
+                })
+                break
+            }
+            case findTarget(event, '.fw-add-input', el): {
+                const itemEl = el.target.closest('.fw-list-input')
+                if (!itemEl.nextElementSibling) {
+                    itemEl.insertAdjacentHTML(
+                        'afterend',
+                        `<tr class="fw-list-input">
                                 <td>
                                     <input type="text" class="category-form">
                                     <span class="fw-add-input icon-addremove"></span>
                                 </td>
                             </tr>`
-                        )
-                    } else {
-                        itemEl.parentElement.removeChild(itemEl)
-                    }
-                    break
+                    )
+                } else {
+                    itemEl.parentElement.removeChild(itemEl)
                 }
-                default:
-                    break
+                break
+            }
+            default:
+                break
             }
         })
 

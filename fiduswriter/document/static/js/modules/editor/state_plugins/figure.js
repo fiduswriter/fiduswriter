@@ -23,9 +23,9 @@ class FigureView {
         this.menuButton.innerHTML = '<span class="dot-menu-icon"><i class="fa fa-ellipsis-v"></i></span>'
         this.dom.insertBefore(this.menuButton, this.dom.firstChild)
         this.menuButton.addEventListener('click', () => {
-           const editor = this.options.editor
-           const dialog = new FigureDialog(editor)
-           dialog.init()
+            const editor = this.options.editor
+            const dialog = new FigureDialog(editor)
+            dialog.init()
         })
 
     }

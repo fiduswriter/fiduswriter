@@ -43,21 +43,21 @@ export class DocumentRevisionsDialog {
                 const el = {}
                 let revisionId, revisionFilename
                 switch (true) {
-                    case findTarget(event, '.download-revision', el):
-                        revisionId = parseInt(el.target.dataset.id)
-                        revisionFilename = el.target.dataset.filename
-                        this.download(revisionId, revisionFilename)
-                        break
-                    case findTarget(event, '.recreate-revision', el):
-                        revisionId = parseInt(el.target.dataset.id)
-                        resolve(this.recreate(revisionId, this.user))
-                        break
-                    case findTarget(event, '.delete-revision', el):
-                        revisionId = parseInt(el.target.dataset.id)
-                        resolve(this.delete(revisionId))
-                        break
-                    default:
-                        break
+                case findTarget(event, '.download-revision', el):
+                    revisionId = parseInt(el.target.dataset.id)
+                    revisionFilename = el.target.dataset.filename
+                    this.download(revisionId, revisionFilename)
+                    break
+                case findTarget(event, '.recreate-revision', el):
+                    revisionId = parseInt(el.target.dataset.id)
+                    resolve(this.recreate(revisionId, this.user))
+                    break
+                case findTarget(event, '.delete-revision', el):
+                    revisionId = parseInt(el.target.dataset.id)
+                    resolve(this.delete(revisionId))
+                    break
+                default:
+                    break
                 }
             })
         })
@@ -158,8 +158,8 @@ export class DocumentRevisionsDialog {
         ).then(
             () => {
                 const thisTr = document.querySelector(`tr.revision-${id}`),
-                documentId = thisTr.dataset.document,
-                doc = this.documentList.find(doc => doc.id === parseInt(documentId))
+                    documentId = thisTr.dataset.document,
+                    doc = this.documentList.find(doc => doc.id === parseInt(documentId))
                 thisTr.parentElement.removeChild(thisTr)
                 addAlert('success', gettext('Revision deleted'))
                 return Promise.resolve({

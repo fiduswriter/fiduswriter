@@ -22,17 +22,17 @@ export class ModDB {
         const usedImages = [],
             usedBibs = []
         this.editor.view.state.doc.descendants(node => {
-            if (node.type.name==='citation') {
+            if (node.type.name === 'citation') {
                 node.attrs.references.forEach(ref => usedBibs.push(parseInt(ref.id)))
-            } else if (node.type.name==='figure' && node.attrs.image) {
+            } else if (node.type.name === 'figure' && node.attrs.image) {
                 usedImages.push(node.attrs.image)
             }
         })
 
         this.editor.mod.footnotes.fnEditor.view.state.doc.descendants(node => {
-            if (node.type.name==='citation') {
+            if (node.type.name === 'citation') {
                 node.attrs.references.forEach(ref => usedBibs.push(parseInt(ref.id)))
-            } else if (node.type.name==='figure' && node.attrs.image) {
+            } else if (node.type.name === 'figure' && node.attrs.image) {
                 usedImages.push(node.attrs.image)
             }
         })

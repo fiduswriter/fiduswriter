@@ -6,7 +6,7 @@ import {ShrinkFidus} from "./shrink"
   old document was owned by someone else than the current user.
 */
 export class SaveCopy {
-    constructor(doc, bibDB, imageDB, newUser, importId=null) {
+    constructor(doc, bibDB, imageDB, newUser, importId = null) {
         this.doc = doc
         this.bibDB = bibDB
         this.imageDB = imageDB
@@ -27,7 +27,7 @@ export class SaveCopy {
                     this.importId
                 )
                 return importer.init()
-        }).then(
+            }).then(
             ({doc, docInfo}) => {
                 addAlert('info', `${doc.title} ${gettext(' successfully copied.')}`)
                 return Promise.resolve({doc, docInfo})

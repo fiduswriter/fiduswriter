@@ -77,7 +77,7 @@ export class DocxExporterFootnotes {
 
     init() {
         this.findFootnotes()
-        if (this.footnotes.length || (this.exporter.citations.citFm.citationType==='note' && this.exporter.citations.citInfos.length)) {
+        if (this.footnotes.length || (this.exporter.citations.citFm.citationType === 'note' && this.exporter.citations.citInfos.length)) {
             this.convertFootnotes()
             this.rels = new DocxExporterRels(this.exporter, 'footnotes')
             // Include the citinfos from the main body document so that they will be
@@ -166,7 +166,7 @@ export class DocxExporterFootnotes {
     findFootnotes() {
         descendantNodes(this.docContents).forEach(
             node => {
-                if (node.type==='footnote') {
+                if (node.type === 'footnote') {
                     this.footnotes.push(node.attrs.footnote)
                 }
             }

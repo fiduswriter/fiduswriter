@@ -40,7 +40,7 @@ export class OdtExporterFootnotes {
         if (
             this.footnotes.length ||
             (
-                this.exporter.citations.citFm.citationType==='note' &&
+                this.exporter.citations.citFm.citationType === 'note' &&
                 this.exporter.citations.citInfos.length
             )
         ) {
@@ -110,7 +110,7 @@ export class OdtExporterFootnotes {
     findFootnotes() {
         descendantNodes(this.docContents).forEach(
             node => {
-                if (node.type==='footnote') {
+                if (node.type === 'footnote') {
                     this.footnotes.push(node.attrs.footnote)
                 }
             }

@@ -10,8 +10,8 @@ export class Signup extends PreloginPage {
                 <h1 class="fw-login-title">${gettext("Sign up")}</h1>
                 <p>
                     ${
-                        gettext('Already have an account? Then please <a href="/" title="Login">login</a>.')
-                    }
+    gettext('Already have an account? Then please <a href="/" title="Login">login</a>.')
+}
                 </p>
             </div>
             <div class="fw-login-right">
@@ -138,16 +138,16 @@ export class Signup extends PreloginPage {
                             <h1 class="fw-login-title">${gettext('Verify Your E-mail Address')}</h1>
                             <p>
                                 ${
-                                    interpolate(
-                                        gettext('We have sent an e-mail to <a href="mailto:%(email)s">%(email)s</a> for verification. Follow the link provided to finalize the signup process.'),
-                                        {email},
-                                        true
-                                    )
-                                }
+    interpolate(
+        gettext('We have sent an e-mail to <a href="mailto:%(email)s">%(email)s</a> for verification. Follow the link provided to finalize the signup process.'),
+        {email},
+        true
+    )
+}
                                 <br />
                                 ${
-                                    gettext('Please contact us if you do not receive it within a few minutes.')
-                                }
+    gettext('Please contact us if you do not receive it within a few minutes.')
+}
                             </p>
                         </div>`
                     } else {

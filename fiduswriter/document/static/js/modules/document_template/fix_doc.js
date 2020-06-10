@@ -143,12 +143,12 @@ export function adjustDocToTemplate(miniDoc, miniTemplate, documentStyles, schem
             }
             if (oldNode) {
                 const newNode = Object.assign(
-                        {},
-                        oldNode,
-                        {
-                            attrs: {}
-                        }
-                    )
+                    {},
+                    oldNode,
+                    {
+                        attrs: {}
+                    }
+                )
                 Object.entries(part.attrs).forEach(([key, value]) => {
                     newNode.attrs[key] = value
                 })

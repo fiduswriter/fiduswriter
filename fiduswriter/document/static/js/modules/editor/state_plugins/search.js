@@ -13,7 +13,7 @@ function findMatches(doc, term) {
 
     doc.descendants(
         (node, pos, parent) => {
-            if (!node.isInline || node.marks.find(mark => mark.type.name==='deletion')) {
+            if (!node.isInline || node.marks.find(mark => mark.type.name === 'deletion')) {
                 return
             }
             if (stringObj && (parent !== stringObj.parent || !node.isText)) {
@@ -79,18 +79,18 @@ export const setSearchTerm = function(state, term, selected = false, listener = 
     const matches = findMatches(state.doc, term),
         decos = matchesToDecos(state.doc, matches, selected)
 
-    selected = selected !== false && matches.length > selected ? selected : matches.length ? matches.length-1 : false
+    selected = selected !== false && matches.length > selected ? selected : matches.length ? matches.length - 1 : false
 
     const tr = state.tr.setMeta(
-            key,
-            {
-                term,
-                decos,
-                matches,
-                selected,
-                listener
-            }
-        )
+        key,
+        {
+            term,
+            decos,
+            matches,
+            selected,
+            listener
+        }
+    )
 
     return {tr, matches, selected}
 }
@@ -145,7 +145,7 @@ export const selectPreviousSearchMatch = function(state) {
     if (selected > 0) {
         selected--
     } else {
-        selected = matches.length -1
+        selected = matches.length - 1
     }
     const decos = matchesToDecos(state.doc, matches, selected)
     return state.tr.setMeta(
@@ -226,7 +226,7 @@ export const searchPlugin = function(_options) {
                 matches = findMatches(state.doc, term)
                 if (selected !== false && selected >= matches.length) {
                     if (matches.length) {
-                        selected = matches.length -1
+                        selected = matches.length - 1
                     } else {
                         selected = false
                     }
@@ -244,11 +244,11 @@ export const searchPlugin = function(_options) {
         },
         props: {
             decorations(state) {
-				const {
-					decos
-				} = this.getState(state)
-				return decos
-			}
+                const {
+                    decos
+                } = this.getState(state)
+                return decos
+            }
         },
         view(_editorState) {
             return {

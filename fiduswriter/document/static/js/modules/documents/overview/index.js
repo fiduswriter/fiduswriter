@@ -65,26 +65,26 @@ export class DocumentOverview {
             const el = {}
             let docId
             switch (true) {
-                case findTarget(event, '.revisions', el):
-                    docId = parseInt(el.target.dataset.id)
-                    this.mod.actions.revisionsDialog(docId)
-                    break
-                case findTarget(event, '.delete-document', el):
-                    docId = parseInt(el.target.dataset.id)
-                    this.mod.actions.deleteDocumentDialog([docId])
-                    break
-                case findTarget(event, '.owned-by-user.rights', el): {
-                    docId = parseInt(el.target.dataset.id)
-                    const dialog = new DocumentAccessRightsDialog(
-                        [docId],
-                        this.teamMembers,
-                        memberDetails => this.teamMembers.push(memberDetails)
-                    )
-                    dialog.init()
-                    break
-                }
-                default:
-                    break
+            case findTarget(event, '.revisions', el):
+                docId = parseInt(el.target.dataset.id)
+                this.mod.actions.revisionsDialog(docId)
+                break
+            case findTarget(event, '.delete-document', el):
+                docId = parseInt(el.target.dataset.id)
+                this.mod.actions.deleteDocumentDialog([docId])
+                break
+            case findTarget(event, '.owned-by-user.rights', el): {
+                docId = parseInt(el.target.dataset.id)
+                const dialog = new DocumentAccessRightsDialog(
+                    [docId],
+                    this.teamMembers,
+                    memberDetails => this.teamMembers.push(memberDetails)
+                )
+                dialog.init()
+                break
+            }
+            default:
+                break
             }
         })
     }
@@ -215,12 +215,12 @@ export class DocumentOverview {
                 </a>
             </span>`,
             doc.revisions.length ?
-            `<span class="revisions" data-id="${doc.id}">
+                `<span class="revisions" data-id="${doc.id}">
                 <i class="fas fa-history"></i>
             </span>` :
-            '',
-            `<span class="date">${localizeDate(doc.added*1000, 'sortable-date')}</span>`,
-            `<span class="date">${localizeDate(doc.updated*1000, 'sortable-date')}</span>`,
+                '',
+            `<span class="date">${localizeDate(doc.added * 1000, 'sortable-date')}</span>`,
+            `<span class="date">${localizeDate(doc.updated * 1000, 'sortable-date')}</span>`,
             `<span>
                 ${doc.owner.avatar.html}
             </span>
@@ -231,10 +231,10 @@ export class DocumentOverview {
             `<span class="delete-document fw-link-text" data-id="${doc.id}"
                     data-title="${escapeText(doc.title)}">
                 ${
-                    this.user.id === doc.owner.id ?
-                    '<i class="fa fa-trash-alt"></i>' :
-                    ''
-                }
+    this.user.id === doc.owner.id ?
+        '<i class="fa fa-trash-alt"></i>' :
+        ''
+}
             </span>`
         ]
     }
@@ -262,7 +262,7 @@ export class DocumentOverview {
 
     multipleNewDocumentMenuItem() {
 
-        const menuItem = this.menu.model.content.find(menuItem => menuItem.id==='new_document')
+        const menuItem = this.menu.model.content.find(menuItem => menuItem.id === 'new_document')
         menuItem.type = 'dropdown'
         menuItem.content = Object.values(this.documentTemplates).map(docTemplate => ({
             title: docTemplate.title || gettext('Undefined'),

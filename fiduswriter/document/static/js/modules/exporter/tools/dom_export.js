@@ -30,7 +30,7 @@ export class DOMExporter {
     }
 
     addDocStyle(doc) {
-        const docStyle = this.documentStyles.find(docStyle => docStyle.slug===doc.settings.documentstyle)
+        const docStyle = this.documentStyles.find(docStyle => docStyle.slug === doc.settings.documentstyle)
 
         // The files will be in the base directory. The filenames of
         // DocumentStyleFiles will therefore not need to replaced with their URLs.
@@ -136,7 +136,7 @@ export class DOMExporter {
 
     getFootnoteAnchor(counter) {
         const footnoteAnchor = document.createElement('a')
-        footnoteAnchor.setAttribute('href', '#fn'+counter)
+        footnoteAnchor.setAttribute('href', '#fn' + counter)
         // RASH 0.5 doesn't mark the footnote anchors, so we add this class
         footnoteAnchor.classList.add('fn')
         return footnoteAnchor

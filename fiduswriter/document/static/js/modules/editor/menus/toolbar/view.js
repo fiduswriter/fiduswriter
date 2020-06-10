@@ -80,7 +80,7 @@ export class ToolbarView {
             const menuItem = this.editor.menu.toolbarModel.content[menuNumber]
             // if it is a menu, open it. Otherwise execute an
             // associated action.
-            if (menuItem.type==='menu') {
+            if (menuItem.type === 'menu') {
                 menuItem.open = true
                 this.openedMenu = menuNumber
                 event.preventDefault()
@@ -135,7 +135,7 @@ export class ToolbarView {
             const menuItem = this.editor.menu.toolbarModel.content[menuNumber]
             // if it is a menu, open it. Otherwise execute an
             // associated action.
-            if (menuItem.type==='menu') {
+            if (menuItem.type === 'menu') {
                 menuItem.open = true
                 this.openedMenu = menuNumber
                 this.editor.menu.toolbarModel.openMore = false
@@ -168,14 +168,14 @@ export class ToolbarView {
         let menuIndexToDrop = false
         this.editor.menu.toolbarModel.content.some((menuItem, index) => {
             switch (menuItem.type) {
-                case 'info':
-                    spaceCounter -= 94
-                    break
-                case 'menu':
-                    spaceCounter -= 138
-                    break
-                default:
-                    spaceCounter -= 52
+            case 'info':
+                spaceCounter -= 94
+                break
+            case 'menu':
+                spaceCounter -= 138
+                break
+            default:
+                spaceCounter -= 52
             }
             if (spaceCounter < 0) {
                 menuIndexToDrop = Math.max(index - 2, 3) // We need the space of two buttons for the more button
@@ -194,16 +194,16 @@ export class ToolbarView {
         return `<div>
             <div class="editor-toolbar">
                 ${this.editor.menu.toolbarModel.content.map((menuItem, index) => {
-                    if (!menuIndexToDrop || index < menuIndexToDrop) {
-                        return `
+        if (!menuIndexToDrop || index < menuIndexToDrop) {
+            return `
                             <div class="ui-buttonset${menuItem.disabled && menuItem.disabled(this.editor) ? ' disabled' : ''}">
                                 ${this.getToolbarMenuItemHTML(menuItem, index)}
                             </div>
                         `
-                    } else {
-                        return ''
-                    }
-                }).join('')}
+        } else {
+            return ''
+        }
+    }).join('')}
                 ${this.getMoreButtonHTML(menuIndexToDrop)}
             </div>
         </div>`
@@ -212,18 +212,18 @@ export class ToolbarView {
     getToolbarMenuItemHTML(menuItem, _index) {
         let returnValue
         switch (menuItem.type) {
-            case 'info':
-                returnValue = this.getInfoHTML(menuItem)
-                break
-            case 'menu':
-                returnValue = this.getDropdownHTML(menuItem)
-                break
-            case 'button':
-                returnValue = this.getButtonHTML(menuItem)
-                break
-            default:
-                returnValue = ''
-                break
+        case 'info':
+            returnValue = this.getInfoHTML(menuItem)
+            break
+        case 'menu':
+            returnValue = this.getDropdownHTML(menuItem)
+            break
+        case 'button':
+            returnValue = this.getButtonHTML(menuItem)
+            break
+        default:
+            returnValue = ''
+            break
         }
         return returnValue
     }

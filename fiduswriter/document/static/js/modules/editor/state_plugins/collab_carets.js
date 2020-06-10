@@ -6,8 +6,8 @@ import {REVIEW_ROLES} from ".."
 const key = new PluginKey('collabCarets')
 
 export const getSelectionUpdate = function(state) {
-     const {caretUpdate} = key.getState(state)
-     return caretUpdate
+    const {caretUpdate} = key.getState(state)
+    return caretUpdate
 }
 
 export const updateCollaboratorSelection = function(state, collaborator, data) {
@@ -105,10 +105,10 @@ export const collabCaretsPlugin = function(options) {
                     return meta
                 }
                 let {
-                    decos,
-                    caretPositions
-                } = this.getState(oldState),
-                caretUpdate = false
+                        decos,
+                        caretPositions
+                    } = this.getState(oldState),
+                    caretUpdate = false
 
                 decos = decos.map(tr.mapping, tr.doc, {onRemove: decoSpec => {
                     caretPositions = caretPositions.filter(
@@ -134,11 +134,11 @@ export const collabCaretsPlugin = function(options) {
         },
         props: {
             decorations(state) {
-				const {
-					decos
-				} = this.getState(state)
-				return decos
-			}
+                const {
+                    decos
+                } = this.getState(state)
+                return decos
+            }
         }
     })
 }

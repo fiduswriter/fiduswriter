@@ -85,7 +85,7 @@ export class OdtExporter {
     }
 
     download(blob) {
-        return download(blob, createSlug(this.docTitle)+'.odt', this.mimeType)
+        return download(blob, createSlug(this.docTitle) + '.odt', this.mimeType)
     }
 
 }

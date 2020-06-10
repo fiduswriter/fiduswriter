@@ -3,7 +3,7 @@ import {escapeText} from "../../common"
 
 /** A template for the OPF file of an epub. */
 export const opfTemplate = ({id, idType, title, language, authors, keywords, date, modified, images, fontFiles, styleSheets, math, copyright}) =>
-`<?xml version="1.0" encoding="UTF-8"?>
+    `<?xml version="1.0" encoding="UTF-8"?>
 <package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="${idType}" xml:lang="${language}" prefix="cc: http://creativecommons.org/ns#">
     <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
         <dc:identifier id="${idType}">${id}</dc:identifier>
@@ -25,16 +25,16 @@ ${
     images.map((image, index) =>
         `\t\t\t<item ${
             image.coverImage ?
-            'id="cover-image" properties="cover-image"' :
-            `id="img${index}"`
+                'id="cover-image" properties="cover-image"' :
+                `id="img${index}"`
         } href="${
             image.filename
         }" media-type="image/${
-            image.filename.split(".")[1]==="png" ?
-            'png' :
-            image.filename.split(".")[1]==="svg" ?
-            'svg+xml' :
-            'jpeg'
+            image.filename.split(".")[1] === "png" ?
+                'png' :
+                image.filename.split(".")[1] === "svg" ?
+                    'svg+xml' :
+                    'jpeg'
         }" />\n`
     ).join('')
 }${
@@ -44,11 +44,11 @@ ${
         } href="${
             fontFile.filename
         }" media-type="font/${
-            fontFile.filename.split(".")[1]==="woff" ?
-            'woff' :
-            fontFile.filename.split(".")[1]==="woff2" ?
-            'woff2' :
-            'sfnt'
+            fontFile.filename.split(".")[1] === "woff" ?
+                'woff' :
+                fontFile.filename.split(".")[1] === "woff2" ?
+                    'woff2' :
+                    'sfnt'
         }" />\n`
     ).join('')
 }${
@@ -57,8 +57,8 @@ ${
     ).join('')
 }${
     math ?
-    mathliveOpfIncludes :
-    ''
+        mathliveOpfIncludes :
+        ''
 }
         <!-- ncx included for 2.0 reading system compatibility: -->
         <item id="ncx" href="document.ncx" media-type="application/x-dtbncx+xml" />
@@ -71,7 +71,7 @@ ${
 
 /** A template for the contianer XML of an epub file. */
 export const containerTemplate = () =>
-`<?xml version="1.0" encoding="UTF-8"?>
+    `<?xml version="1.0" encoding="UTF-8"?>
 <container xmlns="urn:oasis:names:tc:opendocument:xmlns:container" version="1.0">
     <rootfiles>
         <rootfile full-path="EPUB/document.opf" media-type="application/oebps-package+xml"/>
@@ -80,7 +80,7 @@ export const containerTemplate = () =>
 
 /** A template of the NCX file of an epub. */
 export const ncxTemplate = ({shortLang, idType, id, title, contentItems}) =>
-`<?xml version="1.0" encoding="UTF-8"?>
+    `<?xml version="1.0" encoding="UTF-8"?>
 <ncx xmlns:ncx="http://www.daisy.org/z3986/2005/ncx/" xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="${shortLang}">
     <head>
         <meta name="dtb:${idType}" content="${id}"/>
@@ -100,7 +100,7 @@ ${
 
 /** A template for each list item in the navMap of an epub's NCX file. */
 export const ncxItemTemplate = ({item}) =>
-`        <navPoint id="t${item.docNum ? `${item.id}-${item.docNum}` : item.id}">
+    `        <navPoint id="t${item.docNum ? `${item.id}-${item.docNum}` : item.id}">
             <navLabel><text>${escapeText(item.title)}</text></navLabel>
             <content src="${item.link ? item.link : item.docNum ? `document-${item.docNum}.xhtml#${item.id}` : `document.xhtml#${item.id}` }"/>
 ${
@@ -113,7 +113,7 @@ ${
 
 /** A template for a document in an epub. */
 export const xhtmlTemplate = ({shortLang, title, math, styleSheets, part, currentPart, body, copyright}) =>
-`<?xml version="1.0" encoding="UTF-8"?>
+    `<?xml version="1.0" encoding="UTF-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="${shortLang}" lang="${shortLang}"
         xmlns:epub="http://www.idpf.org/2007/ops">
     <head>
@@ -121,8 +121,8 @@ export const xhtmlTemplate = ({shortLang, title, math, styleSheets, part, curren
         <title>${escapeText(title)}</title>
 ${
     math ?
-    '<link rel="stylesheet" type="text/css" href="css/mathlive.css" />\n' :
-    ''
+        '<link rel="stylesheet" type="text/css" href="css/mathlive.css" />\n' :
+        ''
 }
 ${
     styleSheets.map(sheet => `<link rel="stylesheet" type="text/css" href="${sheet.filename}" />\n`
@@ -130,27 +130,27 @@ ${
 }
     </head>
     <body${currentPart && currentPart.length ? ` class="${currentPart.toLowerCase().replace(/[^a-z]/g, '')}"` : ''}>${
-        part && part.length ?
+    part && part.length ?
         `<h1 class="part">${escapeText(part)}</h1>` :
         ''
-    }${
-        body
-    }${
-        copyright && copyright.holder ?
-            `<div>© ${copyright.year ? copyright.year : new Date().getFullYear()} ${copyright.holder}</div>` :
-            ''
-    }
+}${
+    body
+}${
+    copyright && copyright.holder ?
+        `<div>© ${copyright.year ? copyright.year : new Date().getFullYear()} ${copyright.holder}</div>` :
+        ''
+}
     ${
-        copyright && copyright.licenses.length ?
-            `<div>${copyright.licenses.map(license => `<a rel="license" href="${escapeText(license.url)}">${escapeText(license.title)}${license.start ? ` (${license.start})` : ''}</a>`).join('</div><div>')}</div>` :
-            ''
-    }</body>
+    copyright && copyright.licenses.length ?
+        `<div>${copyright.licenses.map(license => `<a rel="license" href="${escapeText(license.url)}">${escapeText(license.title)}${license.start ? ` (${license.start})` : ''}</a>`).join('</div><div>')}</div>` :
+        ''
+}</body>
 </html>`
 
 
 /** A template for an epub's navigation document. */
 export const navTemplate = ({shortLang, contentItems}) =>
-`<?xml version="1.0" encoding="UTF-8"?>
+    `<?xml version="1.0" encoding="UTF-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="${shortLang}" lang="${shortLang}" xmlns:epub="http://www.idpf.org/2007/ops">
     <head>
         <meta charset="utf-8"></meta>
@@ -171,20 +171,20 @@ ${
 export const navItemTemplate = ({item}) =>
     `\t\t\t\t<li><a href="${
         item.link ?
-        item.link :
-        item.docNum ?
-        `document-${item.docNum}.xhtml#${item.id}` :
-        `document.xhtml#${item.id}`}">${escapeText(item.title)
+            item.link :
+            item.docNum ?
+                `document-${item.docNum}.xhtml#${item.id}` :
+                `document.xhtml#${item.id}`}">${escapeText(item.title)
     }</a>
 ${
     item.subItems.length ?
-    `<ol>
+        `<ol>
         ${
-            item.subItems.map(item =>
-                navItemTemplate({item})
-            ).join('')
-        }
+    item.subItems.map(item =>
+        navItemTemplate({item})
+    ).join('')
+}
     </ol>` :
-    ''
+        ''
 }
 </li>`

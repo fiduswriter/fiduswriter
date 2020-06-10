@@ -98,9 +98,9 @@ export class DocxExporterLists {
     findLists() {
         descendantNodes(this.docContents).forEach(
             node => {
-                if (node.type==='bullet_list') {
+                if (node.type === 'bullet_list') {
                     this.useBulletList = true
-                } else if (node.type==='ordered_list') {
+                } else if (node.type === 'ordered_list') {
                     this.usedNumberedList += 1
                 }
             }
@@ -142,11 +142,11 @@ export class DocxExporterLists {
                 // the numeric list.
                 const levelZeroFormat = abstractNum.querySelector('lvl[*|ilvl="0"] numFmt').getAttribute('w:val')
                 const abstractNumId = parseInt(abstractNum.getAttribute('w:abstractNumId'))
-                if (levelZeroFormat==='bullet' && !(this.bulletAbstractType)) {
+                if (levelZeroFormat === 'bullet' && !(this.bulletAbstractType)) {
                     const numEl = this.numberingXml.querySelector(`abstractNumId[*|val="${abstractNumId}"]`).parentElement
                     const numId = parseInt(numEl.getAttribute('w:numId'))
                     this.bulletType = numId
-                } else if (levelZeroFormat!=='bullet' && !(this.numberedAbstractType)) {
+                } else if (levelZeroFormat !== 'bullet' && !(this.numberedAbstractType)) {
                     this.numberedAbstractType = abstractNumId
                 }
                 if (this.maxAbstractNumId < abstractNumId) {
@@ -174,7 +174,7 @@ export class DocxExporterLists {
             this.addNumberedAbstractNumType(this.maxAbstractNumId)
             this.numberedAbstractType = this.maxAbstractNumId
         }
-        for (let i=0;i<this.usedNumberedList;i++) {
+        for (let i = 0;i < this.usedNumberedList;i++) {
             this.maxNumId++
             const numId = this.maxNumId
             this.addNumberedNumType(numId, this.numberedAbstractType)
@@ -213,7 +213,7 @@ export class DocxExporterLists {
                     <w:lvlText w:val="" />
                     <w:lvlJc w:val="left" />
                     <w:pPr>
-                        <w:ind w:left="${(level+1)*720}" w:hanging="360" />
+                        <w:ind w:left="${(level + 1) * 720}" w:hanging="360" />
                     </w:pPr>
                     <w:rPr>
                         <w:rFonts w:ascii="Symbol" w:hAnsi="Symbol" w:hint="default" />
@@ -249,10 +249,10 @@ export class DocxExporterLists {
                 <w:lvl w:ilvl="${level}" w:tplc="0409000F">
                     <w:start w:val="1" />
                     <w:numFmt w:val="decimal" />
-                    <w:lvlText w:val="%${level+1}." />
+                    <w:lvlText w:val="%${level + 1}." />
                     <w:lvlJc w:val="left" />
                     <w:pPr>
-                        <w:ind w:left="${(level+1)*720}" w:hanging="360" />
+                        <w:ind w:left="${(level + 1) * 720}" w:hanging="360" />
                     </w:pPr>
                 </w:lvl>
             `)

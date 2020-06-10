@@ -63,7 +63,7 @@ export class ImageEditDialog {
                 menu: imageEditModel(),
                 width: 220,
                 page: this,
-                menuPos: {X: event.pageX-50, Y: event.pageY+50},
+                menuPos: {X: event.pageX - 50, Y: event.pageY + 50},
             })
             contentMenu.open()
         })

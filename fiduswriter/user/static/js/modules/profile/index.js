@@ -25,35 +25,35 @@ export class Profile {
                 const el = {}
                 let dialog
                 switch (true) {
-                    case findTarget(event, '#add-profile-email', el):
-                        addEmailDialog(this.app)
-                        break
-                    case findTarget(event, '#fw-edit-profile-pwd', el):
-                        changePwdDialog({username: this.user.username})
-                        break
-                    case findTarget(event, '#delete-account', el):
-                        dialog = new DeleteUserDialog(
-                            this.dom.querySelector('#delete-account').dataset.username
-                        )
-                        dialog.init()
-                        break
-                    case findTarget(event, '#submit-profile', el):
-                        this.save()
-                        break
-                    case findTarget(event, '.delete-email', el):
-                        deleteEmailDialog(el.target, this.app)
-                        break
-                    case findTarget(event, '.delete-socialaccount', el):
-                        deleteSocialaccountDialog(el.target, this.app)
-                        break
-                    case findTarget(event, '.change-avatar', el):
-                        changeAvatarDialog(this.app)
-                        break
-                    case findTarget(event, '.delete-avatar', el):
-                        deleteAvatarDialog(this.app)
-                        break
-                    default:
-                        break
+                case findTarget(event, '#add-profile-email', el):
+                    addEmailDialog(this.app)
+                    break
+                case findTarget(event, '#fw-edit-profile-pwd', el):
+                    changePwdDialog({username: this.user.username})
+                    break
+                case findTarget(event, '#delete-account', el):
+                    dialog = new DeleteUserDialog(
+                        this.dom.querySelector('#delete-account').dataset.username
+                    )
+                    dialog.init()
+                    break
+                case findTarget(event, '#submit-profile', el):
+                    this.save()
+                    break
+                case findTarget(event, '.delete-email', el):
+                    deleteEmailDialog(el.target, this.app)
+                    break
+                case findTarget(event, '.delete-socialaccount', el):
+                    deleteSocialaccountDialog(el.target, this.app)
+                    break
+                case findTarget(event, '.change-avatar', el):
+                    changeAvatarDialog(this.app)
+                    break
+                case findTarget(event, '.delete-avatar', el):
+                    deleteAvatarDialog(this.app)
+                    break
+                default:
+                    break
                 }
             })
             this.dom.querySelectorAll('.primary-email-radio').forEach(el => el.addEventListener(

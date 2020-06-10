@@ -9,7 +9,7 @@ export class LibreOfficeWriterPasteHandler extends GeneralPasteHandler {
         if (node.tagName === 'A' &&
             node.classList.contains("sdfootnoteanc") &&
             this.pmType === "main") {
-                // Remove "sym" at the end of the selector
+            // Remove "sym" at the end of the selector
             const href = node.getAttribute("href")
             const fnSelector = href.length > 3 ? href.substring(0, href.length - 3) : href
             const footnote = this.dom.querySelector(fnSelector)

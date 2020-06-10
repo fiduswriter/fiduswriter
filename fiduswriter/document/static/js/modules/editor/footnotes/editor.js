@@ -184,7 +184,7 @@ export class ModFootnoteEditor {
     renderFootnote(contents, index = 0, tr) {
         const node = fnNodeToPmNode(contents)
         let pos = 0
-        for (let i=0; i<index;i++) {
+        for (let i = 0; i < index;i++) {
             pos += this.view.state.doc.child(i).nodeSize
         }
         tr.insert(pos, node)
@@ -196,7 +196,7 @@ export class ModFootnoteEditor {
         }
 
         let startPos = 0
-        for (let i=0;i<index;i++) {
+        for (let i = 0;i < index;i++) {
             startPos += this.view.state.doc.child(i).nodeSize
         }
         const endPos = startPos + this.view.state.doc.child(index).nodeSize

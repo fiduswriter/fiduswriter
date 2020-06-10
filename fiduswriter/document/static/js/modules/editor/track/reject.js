@@ -6,8 +6,8 @@ import {deleteNode} from "./delete"
 export const reject = function(type, pos, view) {
     const tr = view.state.tr.setMeta('track', true), map = new Mapping()
     let reachedEnd = false, inlineChange = false
-    const trackMark = view.state.doc.nodeAt(pos).marks.find(mark => mark.type.name===type)
-    view.state.doc.nodesBetween(pos, view.state.doc.nodeSize-2, (node, nodePos) => {
+    const trackMark = view.state.doc.nodeAt(pos).marks.find(mark => mark.type.name === type)
+    view.state.doc.nodesBetween(pos, view.state.doc.nodeSize - 2, (node, nodePos) => {
         if (nodePos < pos) {
             return true
         }
@@ -25,9 +25,9 @@ export const reject = function(type, pos, view) {
         } else {
             inlineChange = true
         }
-        if (type==='insertion') {
+        if (type === 'insertion') {
             deleteNode(tr, node, nodePos, map, false)
-        } else if (type==='deletion') {
+        } else if (type === 'deletion') {
             if (node.attrs.track) {
                 const track = node.attrs.track.filter(track => track.type !== 'deletion')
                 tr.setNodeMarkup(map.map(nodePos), null, Object.assign({}, node.attrs, {track}), node.marks)
@@ -35,16 +35,16 @@ export const reject = function(type, pos, view) {
             } else {
                 tr.removeMark(
                     map.map(nodePos),
-                    map.map(nodePos+node.nodeSize),
+                    map.map(nodePos + node.nodeSize),
                     view.state.schema.marks.deletion
                 )
             }
-        } else if (type==='format_change') {
+        } else if (type === 'format_change') {
             trackMark.attrs.before.forEach(oldMark =>
                 tr.step(
                     new AddMarkStep(
                         map.map(nodePos),
-                        map.map(nodePos+node.nodeSize),
+                        map.map(nodePos + node.nodeSize),
                         view.state.schema.marks[oldMark].create()
                     )
                 )
@@ -53,19 +53,19 @@ export const reject = function(type, pos, view) {
                 tr.step(
                     new RemoveMarkStep(
                         map.map(nodePos),
-                        map.map(nodePos+node.nodeSize),
-                        node.marks.find(mark => mark.type.name===newMark)
+                        map.map(nodePos + node.nodeSize),
+                        node.marks.find(mark => mark.type.name === newMark)
                     )
                 )
             })
             tr.step(
                 new RemoveMarkStep(
                     map.map(nodePos),
-                    map.map(nodePos+node.nodeSize),
+                    map.map(nodePos + node.nodeSize),
                     trackMark
                 )
             )
-        } else if (type==='block_change') {
+        } else if (type === 'block_change') {
             const blockChangeTrack = node.attrs.track.find(track => track.type === 'block_change'),
                 track = node.attrs.track.filter(track => track !== blockChangeTrack)
 

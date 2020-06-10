@@ -77,6 +77,9 @@ export const deactivateWait = function() {
  * @param alertMsg The message text.
  */
 export const addAlert = function(alertType, alertMsg) {
+    if (!document.body) {
+        return
+    }
     const iconNames = {
         'error': 'exclamation-circle',
         'warning': 'exclamation-circle',

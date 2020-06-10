@@ -104,7 +104,7 @@ export class App {
         this.openOfflinePage = () => new OfflinePage(this.config)
         this.openSetupPage = () => new SetupPage(this.config)
         this.open404Page = () => new Page404(this.config)
-        Object.defineProperty(window, 'isOnline', {get: () => this.ws !== undefined && this.ws.ws.readyState === 1 && this.ws.connected})
+        Object.defineProperty(window, 'isOnline', {get: () => navigator.onLine && (this.ws === undefined || this.ws.ws === undefined || this.ws.ws.readyState < 2)})
     }
 
     init() {
@@ -117,7 +117,7 @@ export class App {
         ensureCSS([
             'fontawesome/css/all.css'
         ])
-        if (navigator.onLine) {
+        if (window.isOnline) {
             return this.getUserInfo().catch(
                 error => {
                     if (error instanceof TypeError) {

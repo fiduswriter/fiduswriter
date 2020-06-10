@@ -5,6 +5,6 @@
       },
 
     "dependencies": {
-        "cropperjs": "^1.5.6"
+        "cropperjs": "^1.5.7"
     }
 }

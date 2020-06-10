@@ -41,7 +41,7 @@ export class CopyrightDialog {
                     title = el.matches('select') ? getLicenseTitle(url) : el.parentElement.parentElement.querySelector('.license-title').value,
                     returnValue = {url, title},
                     startDate = edtfParse(licenseStartDates[index])
-                if (startDate.valid && startDate.type==='Date' && !startDate.uncertain && !startDate.approximate && startDate.values.length === 3) {
+                if (startDate.valid && startDate.type === 'Date' && !startDate.uncertain && !startDate.approximate && startDate.values.length === 3) {
                     returnValue.start = startDate.cleanedString
                 }
                 return returnValue
@@ -88,35 +88,35 @@ export class CopyrightDialog {
         this.dialog.dialogEl.addEventListener('click', event => {
             const el = {}
             switch (true) {
-                case findTarget(event, '.type-switch', el): {
-                    const url = el.target.nextElementSibling.querySelector('.license').value
-                    if (el.target.classList.contains('value1')) {
-                        el.target.classList.add('value2')
-                        el.target.classList.remove('value1')
-                        const title = getLicenseTitle(url)
-                        el.target.nextElementSibling.innerHTML = licenseInputTemplate({url, title})
-                    } else {
-                        el.target.classList.add('value1')
-                        el.target.classList.remove('value2')
-                        el.target.nextElementSibling.innerHTML = licenseSelectTemplate({url})
-                    }
-                    break
+            case findTarget(event, '.type-switch', el): {
+                const url = el.target.nextElementSibling.querySelector('.license').value
+                if (el.target.classList.contains('value1')) {
+                    el.target.classList.add('value2')
+                    el.target.classList.remove('value1')
+                    const title = getLicenseTitle(url)
+                    el.target.nextElementSibling.innerHTML = licenseInputTemplate({url, title})
+                } else {
+                    el.target.classList.add('value1')
+                    el.target.classList.remove('value2')
+                    el.target.nextElementSibling.innerHTML = licenseSelectTemplate({url})
                 }
-                case findTarget(event, '.fa-plus-circle', el): {
-                    this.getCurrentValue()
-                    this.dialog.dialogEl.querySelector('#configure-copyright').innerHTML = copyrightTemplate(this.copyright)
-                    break
-                }
-                case findTarget(event, '.fa-minus-circle', el): {
-                    const tr = el.target.closest('tr')
-                    tr.parentElement.removeChild(tr)
-                    this.getCurrentValue()
+                break
+            }
+            case findTarget(event, '.fa-plus-circle', el): {
+                this.getCurrentValue()
+                this.dialog.dialogEl.querySelector('#configure-copyright').innerHTML = copyrightTemplate(this.copyright)
+                break
+            }
+            case findTarget(event, '.fa-minus-circle', el): {
+                const tr = el.target.closest('tr')
+                tr.parentElement.removeChild(tr)
+                this.getCurrentValue()
 
-                    this.dialog.dialogEl.querySelector('#configure-copyright').innerHTML = copyrightTemplate(this.copyright)
-                    break
-                }
-                default:
-                    break
+                this.dialog.dialogEl.querySelector('#configure-copyright').innerHTML = copyrightTemplate(this.copyright)
+                break
+            }
+            default:
+                break
             }
         })
     }

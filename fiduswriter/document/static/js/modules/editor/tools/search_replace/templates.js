@@ -5,10 +5,10 @@ export const searchDialogTemplate = ({canWrite}) => `<table class="fw-dialog-tab
             <td class="entry-field"><input type="text" class="search"></td>
         </tr>
         ${
-            canWrite ? `<tr>
+    canWrite ? `<tr>
                 <th><h4 class="fw-tablerow-title">${gettext('Replace with')}</h4></th>
                 <td class="entry-field"><input type="text" class="replace"></td>
             </tr>` : ''
-        }
+}
     </tbody>
 </table>`

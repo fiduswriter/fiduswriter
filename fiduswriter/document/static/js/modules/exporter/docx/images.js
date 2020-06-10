@@ -31,7 +31,7 @@ export class DocxExporterImages {
     // add a global contenttype declaration for an image type (if needed)
     addContentType(fileEnding) {
         const types = this.ctXml.querySelector('Types')
-        const contentDec = types.querySelector('Default[Extension='+fileEnding+']')
+        const contentDec = types.querySelector('Default[Extension=' + fileEnding + ']')
         if (!contentDec) {
             const string = `<Default ContentType="image/${fileEnding}" Extension="${fileEnding}"/>`
             types.insertAdjacentHTML('beforeEnd', string)
@@ -45,7 +45,7 @@ export class DocxExporterImages {
         const usedImgs = []
         descendantNodes(this.docContents).forEach(
             node => {
-                if (node.type==='figure' && node.attrs.image !== false) {
+                if (node.type === 'figure' && node.attrs.image !== false) {
                     if (!(node.attrs.image in usedImgs)) {
                         usedImgs.push(node.attrs.image)
                     }

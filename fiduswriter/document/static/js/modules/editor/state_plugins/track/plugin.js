@@ -90,11 +90,11 @@ export function trackPlugin(options) {
         },
         props: {
             decorations(state) {
-				const {
-					decos
-				} = this.getState(state)
-				return decos
-			},
+                const {
+                    decos
+                } = this.getState(state)
+                return decos
+            },
             handleDOMEvents: {
                 focus: (view, _event) => {
                     const otherView = view === options.editor.view ? options.editor.mod.footnotes.fnEditor.view : options.editor.view

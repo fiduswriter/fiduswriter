@@ -190,17 +190,17 @@ export const keywordInputPlugin = function(options) {
             side: 1,
             stopEvent: event => {
                 if (
-                    event.type==='keydown' &&
-                    event.key==='ArrowRight' &&
+                    event.type === 'keydown' &&
+                    event.key === 'ArrowRight' &&
                     keywordView.state.selection.from ===
-                        keywordView.state.doc.nodeSize-3
+                        keywordView.state.doc.nodeSize - 3
                 ) {
                     window.getSelection().removeAllRanges()
                     options.editor.view.focus()
                     return false
                 } else if (
-                    event.type==='keydown' &&
-                    event.key==='ArrowLeft' &&
+                    event.type === 'keydown' &&
+                    event.key === 'ArrowLeft' &&
                     keywordView.state.selection.to === 1
                 ) {
                     window.getSelection().removeAllRanges()
@@ -274,11 +274,11 @@ export const keywordInputPlugin = function(options) {
         },
         props: {
             decorations(state) {
-				const {
-					decos
-				} = this.getState(state)
-				return decos
-			}
+                const {
+                    decos
+                } = this.getState(state)
+                return decos
+            }
         }
     })
 }

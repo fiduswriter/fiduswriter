@@ -174,10 +174,10 @@ export class DocumentOverviewActions {
                         ${ids.length > 1 ? gettext('Select document template for copies') : gettext('Select document template for copy.')}
                         </p>
                         <select class="fw-button fw-large fw-light">${
-                            Object.entries(this.documentOverview.documentTemplates).map(
-                                ([importId, dt]) => `<option value="${escapeText(importId)}">${escapeText(dt.title)}</option>`
-                            ).join('')
-                        }</select>`,
+    Object.entries(this.documentOverview.documentTemplates).map(
+        ([importId, dt]) => `<option value="${escapeText(importId)}">${escapeText(dt.title)}</option>`
+    ).join('')
+}</select>`,
                     buttons: [
                         {
                             text: gettext('Copy'),
@@ -220,7 +220,7 @@ export class DocumentOverviewActions {
             this.documentOverview.schema
         ).then(
             () => ids.forEach(id => {
-                const doc = this.documentOverview.documentList.find(entry => entry.id===id)
+                const doc = this.documentOverview.documentList.find(entry => entry.id === id)
                 new ExportFidusFile(
                     doc,
                     {db:doc.bibliography},
@@ -237,7 +237,7 @@ export class DocumentOverviewActions {
             this.documentOverview.schema
         ).then(
             () => ids.forEach(id => {
-                const doc = this.documentOverview.documentList.find(entry => entry.id===id)
+                const doc = this.documentOverview.documentList.find(entry => entry.id === id)
                 import("../../exporter/html").then(({HTMLExporter}) => {
                     const exporter = new HTMLExporter(
                         this.documentOverview.schema,
@@ -246,7 +246,7 @@ export class DocumentOverviewActions {
                         doc,
                         {db:doc.bibliography},
                         {db:doc.images},
-                        new Date(doc.updated*1000)
+                        new Date(doc.updated * 1000)
                     )
                     exporter.init()
                 })
@@ -262,8 +262,8 @@ export class DocumentOverviewActions {
         ).then(
             () => {
                 ids.forEach(id => {
-                    const doc = this.documentOverview.documentList.find(entry => entry.id===id)
-                    if (templateType==='docx') {
+                    const doc = this.documentOverview.documentList.find(entry => entry.id === id)
+                    if (templateType === 'docx') {
                         import("../../exporter/docx").then(({DocxExporter}) => {
                             const exporter = new DocxExporter(
                                 doc,
@@ -299,13 +299,13 @@ export class DocumentOverviewActions {
         ).then(
             () =>
                 ids.forEach(id => {
-                    const doc = this.documentOverview.documentList.find(entry => entry.id===id)
+                    const doc = this.documentOverview.documentList.find(entry => entry.id === id)
                     import("../../exporter/latex").then(({LatexExporter}) => {
                         const exporter = new LatexExporter(
                             doc,
                             {db:doc.bibliography},
                             {db:doc.images},
-                            new Date(doc.updated*1000)
+                            new Date(doc.updated * 1000)
                         )
                         exporter.init()
                     })
@@ -321,14 +321,14 @@ export class DocumentOverviewActions {
         ).then(
             () =>
                 ids.forEach(id => {
-                    const doc = this.documentOverview.documentList.find(entry => entry.id===id)
+                    const doc = this.documentOverview.documentList.find(entry => entry.id === id)
                     import("../../exporter/jats").then(({JATSExporter}) => {
                         const exporter = new JATSExporter(
                             doc,
                             {db:doc.bibliography},
                             {db:doc.images},
                             this.documentOverview.app.csl,
-                            new Date(doc.updated*1000)
+                            new Date(doc.updated * 1000)
                         )
                         exporter.init()
                     })
@@ -344,7 +344,7 @@ export class DocumentOverviewActions {
         ).then(
             () =>
                 ids.forEach(id => {
-                    const doc = this.documentOverview.documentList.find(entry => entry.id===id)
+                    const doc = this.documentOverview.documentList.find(entry => entry.id === id)
                     import("../../exporter/epub").then(({EpubExporter}) => {
                         const exporter = new EpubExporter(
                             this.documentOverview.schema,
@@ -353,7 +353,7 @@ export class DocumentOverviewActions {
                             doc,
                             {db:doc.bibliography},
                             {db:doc.images},
-                            new Date(doc.updated*1000)
+                            new Date(doc.updated * 1000)
                         )
                         exporter.init()
                     })
@@ -368,8 +368,8 @@ export class DocumentOverviewActions {
             this.documentOverview.user
         )
         revDialog.init().then(
-          actionObject => {
-            switch (actionObject.action) {
+            actionObject => {
+                switch (actionObject.action) {
                 case 'added-document':
                     this.documentOverview.documentList.push(actionObject.doc)
                     this.documentOverview.addDocToTable(actionObject.doc)
@@ -379,7 +379,7 @@ export class DocumentOverviewActions {
                     this.documentOverview.removeTableRows([actionObject.doc.id])
                     this.documentOverview.addDocToTable(actionObject.doc)
                     break
-            }
-        })
+                }
+            })
     }
 }

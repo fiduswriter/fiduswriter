@@ -42,7 +42,7 @@ export const placeholdersPlugin = function(options) {
                 const placeHolder = document.createElement('span')
                 placeHolder.classList.add('placeholder')
                 placeHolder.setAttribute('data-placeholder', text)
-                if (currentPart===partElement) {
+                if (currentPart === partElement) {
                     placeHolder.classList.add('selected')
                 }
                 let position = 2 + offset

@@ -46,40 +46,40 @@ const doc = {
 }
 
 const spec = {
-  nodes: OrderedMap.from({
-    doc,
-    footnotecontainer,
-    paragraph,
-    heading1,
-    heading2,
-    heading3,
-    heading4,
-    heading5,
-    heading6,
-    blockquote,
-    horizontal_rule,
-    figure,
-    text: nodes.text,
-    hard_break: nodes.hard_break,
-    citation,
-    equation,
-    cross_reference,
-    ordered_list,
-    bullet_list,
-    list_item
-  }),
-  marks: OrderedMap.from({
-      em: marks.em,
-      strong: marks.strong,
-      link,
-      underline,
-      anchor,
-      comment,
-      annotation_tag,
-      deletion,
-      insertion,
-      format_change
-  })
+    nodes: OrderedMap.from({
+        doc,
+        footnotecontainer,
+        paragraph,
+        heading1,
+        heading2,
+        heading3,
+        heading4,
+        heading5,
+        heading6,
+        blockquote,
+        horizontal_rule,
+        figure,
+        text: nodes.text,
+        hard_break: nodes.hard_break,
+        citation,
+        equation,
+        cross_reference,
+        ordered_list,
+        bullet_list,
+        list_item
+    }),
+    marks: OrderedMap.from({
+        em: marks.em,
+        strong: marks.strong,
+        link,
+        underline,
+        anchor,
+        comment,
+        annotation_tag,
+        deletion,
+        insertion,
+        format_change
+    })
 }
 
 spec.nodes = spec.nodes.append(tableNodes({

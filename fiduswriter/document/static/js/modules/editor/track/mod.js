@@ -20,30 +20,30 @@ export class ModTrack {
         document.body.addEventListener('click', event => {
             const el = {}
             switch (true) {
-                case findTarget(event, '.track-accept', el): {
-                    let boxNumber = 0
-                    let seekItem = el.target.closest('.margin-box')
-                    while (seekItem.previousElementSibling) {
-                        boxNumber += 1
-                        seekItem = seekItem.previousElementSibling
-                    }
-                    const box = this.editor.mod.marginboxes.marginBoxes[boxNumber]
-                    accept(el.target.dataset.type, box.pos, box.view==='main' ? this.editor.view : this.editor.mod.footnotes.fnEditor.view)
-                    break
+            case findTarget(event, '.track-accept', el): {
+                let boxNumber = 0
+                let seekItem = el.target.closest('.margin-box')
+                while (seekItem.previousElementSibling) {
+                    boxNumber += 1
+                    seekItem = seekItem.previousElementSibling
                 }
-                case findTarget(event, '.track-reject', el): {
-                    let boxNumber = 0
-                    let seekItem = el.target.closest('.margin-box')
-                    while (seekItem.previousElementSibling) {
-                        boxNumber += 1
-                        seekItem = seekItem.previousElementSibling
-                    }
-                    const box = this.editor.mod.marginboxes.marginBoxes[boxNumber]
-                    reject(el.target.dataset.type, box.pos, box.view==='main' ? this.editor.view : this.editor.mod.footnotes.fnEditor.view)
-                    break
+                const box = this.editor.mod.marginboxes.marginBoxes[boxNumber]
+                accept(el.target.dataset.type, box.pos, box.view === 'main' ? this.editor.view : this.editor.mod.footnotes.fnEditor.view)
+                break
+            }
+            case findTarget(event, '.track-reject', el): {
+                let boxNumber = 0
+                let seekItem = el.target.closest('.margin-box')
+                while (seekItem.previousElementSibling) {
+                    boxNumber += 1
+                    seekItem = seekItem.previousElementSibling
                 }
-                default:
-                    break
+                const box = this.editor.mod.marginboxes.marginBoxes[boxNumber]
+                reject(el.target.dataset.type, box.pos, box.view === 'main' ? this.editor.view : this.editor.mod.footnotes.fnEditor.view)
+                break
+            }
+            default:
+                break
             }
         })
     }

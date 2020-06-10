@@ -49,9 +49,9 @@ export class DocumentAccessRightsDialog {
             } else {
                 if (docCollabs[ar.user_id].rights != ar.rights) {
                     // We use read rights if the user has different rights on different docs.
-                    docCollabs[ar.user_id].rights ='read'
+                    docCollabs[ar.user_id].rights = 'read'
                 }
-                docCollabs[ar.user_id].count +=1
+                docCollabs[ar.user_id].count += 1
             }
         })
 
@@ -195,28 +195,28 @@ export class DocumentAccessRightsDialog {
         this.dialog.dialogEl.addEventListener('click', event => {
             const el = {}
             switch (true) {
-                case findTarget(event, '.fw-checkable', el):
-                    setCheckableLabel(el.target)
-                    break
-                case findTarget(event, '.edit-right-wrapper .fw-pulldown-item, .delete-collaborator', el): {
-                    const newRight = el.target.dataset.rights
-                    const colRow = el.target.closest('.collaborator-tr,.invite-tr')
-                    colRow.dataset.rights = newRight
-                    colRow.querySelector('.icon-access-right').setAttribute(
-                        'class',
-                        `icon-access-right icon-access-${newRight}`
-                    )
-                    break
+            case findTarget(event, '.fw-checkable', el):
+                setCheckableLabel(el.target)
+                break
+            case findTarget(event, '.edit-right-wrapper .fw-pulldown-item, .delete-collaborator', el): {
+                const newRight = el.target.dataset.rights
+                const colRow = el.target.closest('.collaborator-tr,.invite-tr')
+                colRow.dataset.rights = newRight
+                colRow.querySelector('.icon-access-right').setAttribute(
+                    'class',
+                    `icon-access-right icon-access-${newRight}`
+                )
+                break
+            }
+            case findTarget(event, '.edit-right', el): {
+                const box = el.target.parentElement.querySelector('.fw-pulldown')
+                if (!box.clientWidth) {
+                    openDropdownBox(box)
                 }
-                case findTarget(event, '.edit-right', el): {
-                    const box = el.target.parentElement.querySelector('.fw-pulldown')
-                    if (!box.clientWidth) {
-                        openDropdownBox(box)
-                    }
-                    break
-                }
-                default:
-                    break
+                break
+            }
+            default:
+                break
             }
         })
 

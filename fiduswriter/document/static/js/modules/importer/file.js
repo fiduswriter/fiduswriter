@@ -14,7 +14,7 @@ export class ImportFidusFile {
     /* Process a packaged Fidus File, either through user upload, or by reloading
       a saved revision which was saved in the same ZIP-baseformat. */
 
-    constructor(file, user, check=false, teamMembers=[]) {
+    constructor(file, user, check = false, teamMembers = []) {
         this.file = file
         this.user = user
         this.check = check // Whether the file needs to be checked for compliance with ZIP-format and whether authors of comments/changes are team members of current user.
@@ -134,20 +134,20 @@ export class ImportFidusFile {
     checkDocUsers(doc) { // Check whether users mentioned in doc are known to current user and present on this server
         Object.values(doc.comments).forEach(comment => {
             if (!
-                (
-                    this.teamMembers.find(member => member.id === comment.user && member.username === comment.username) ||
+            (
+                this.teamMembers.find(member => member.id === comment.user && member.username === comment.username) ||
                     (this.user.id === comment.user && this.user.username === comment.username)
-                )
+            )
             ) {
                 // We could not find matching id/username accessible to current user, so we delete the user id from comment
                 comment.user = 0
             }
             if (!
-                (
-                    !comment.assignedUser ||
+            (
+                !comment.assignedUser ||
                     this.teamMembers.find(member => member.id === comment.assignedUser && member.username === comment.assignedUsername) ||
                     (this.user.id === comment.assignedUser && this.user.username === comment.assignedUsername)
-                )
+            )
             ) {
                 // We could not find matching id/username accessible to current user, so we delete the assignedUser id from comment
                 comment.assignedUser = 0
@@ -155,10 +155,10 @@ export class ImportFidusFile {
             if (comment.answers) {
                 comment.answers.forEach(answer => {
                     if (!
-                        (
-                            this.teamMembers.find(member => member.id === answer.user && member.username === answer.username) ||
+                    (
+                        this.teamMembers.find(member => member.id === answer.user && member.username === answer.username) ||
                             (this.user.id === answer.user && this.user.username === answer.username)
-                        )
+                    )
                     ) {
                         // We could not find matching id/username accessible to current user, so we delete the user id from comment answer
                         answer.user = 0
@@ -175,10 +175,10 @@ export class ImportFidusFile {
             node.marks.forEach(mark => {
                 if (['insertion', 'deletion'].includes(mark.type)) {
                     if (!
-                        (
-                            this.teamMembers.find(member => member.id === mark.attrs.user && member.username === mark.attrs.username) ||
+                    (
+                        this.teamMembers.find(member => member.id === mark.attrs.user && member.username === mark.attrs.username) ||
                             (this.user.id === mark.attrs.user && this.user.username === mark.attrs.username)
-                        )
+                    )
                     ) {
                         // We could not find matching id/username accessible to current user, so we delete the user id from comment answer
                         mark.attrs.user = 0

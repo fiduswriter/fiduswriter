@@ -99,11 +99,11 @@ export const headerbarModel = () => ({
                     order: 3,
                     action: editor => {
                         const copier = new SaveCopy(
-                                editor.getDoc(),
-                                editor.mod.db.bibDB,
-                                editor.mod.db.imageDB,
-                                editor.user
-                            )
+                            editor.getDoc(),
+                            editor.mod.db.bibDB,
+                            editor.mod.db.imageDB,
+                            editor.user
+                        )
                         copier.init().then(({docInfo}) =>
                             editor.app.goTo(`/document/${docInfo.id}/`)
                         ).catch(() => false)
@@ -350,19 +350,19 @@ export const headerbarModel = () => ({
                             },
                             available: editor => !!editor.view.state.doc.firstChild.attrs.languages.find(
                                 lang => ![
-                                        'en-US',
-                                        'en-GB',
-                                        'de-DE',
-                                        'zh-CN',
-                                        'es',
-                                        'fr',
-                                        'ja',
-                                        'it',
-                                        'pl',
-                                        'pt-BR',
-                                        'nl',
-                                        'ru'
-                                    ].includes(lang)
+                                    'en-US',
+                                    'en-GB',
+                                    'de-DE',
+                                    'zh-CN',
+                                    'es',
+                                    'fr',
+                                    'ja',
+                                    'it',
+                                    'pl',
+                                    'pt-BR',
+                                    'nl',
+                                    'ru'
+                                ].includes(lang)
                             )
                         }
                     ]

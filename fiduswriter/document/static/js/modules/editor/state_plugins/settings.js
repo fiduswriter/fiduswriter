@@ -14,24 +14,24 @@ export const settingsPlugin = function(options) {
         Object.keys(settings).forEach(key => {
             const value = settings[key]
             switch (key) {
-                case 'documentstyle':
-                    if (
-                        !options.editor.mod.documentTemplate.documentStyles.find(d => d.slug === value) &&
+            case 'documentstyle':
+                if (
+                    !options.editor.mod.documentTemplate.documentStyles.find(d => d.slug === value) &&
                         options.editor.mod.documentTemplate.documentStyles.length
-                    ) {
-                        fixedSettings[key] = options.editor.mod.documentTemplate.documentStyles[0].slug
-                        changed = true
-                    }
-                    break
-                case 'citationstyle':
-                    if (
-                        !settings.citationstyles.includes(value) &&
+                ) {
+                    fixedSettings[key] = options.editor.mod.documentTemplate.documentStyles[0].slug
+                    changed = true
+                }
+                break
+            case 'citationstyle':
+                if (
+                    !settings.citationstyles.includes(value) &&
                         settings.citationstyles.length
-                    ) {
-                        fixedSettings[key] = settings.citationstyles[0]
-                        changed = true
-                    }
-                    break
+                ) {
+                    fixedSettings[key] = settings.citationstyles[0]
+                    changed = true
+                }
+                break
             }
 
         })
@@ -48,29 +48,29 @@ export const settingsPlugin = function(options) {
             const newValue = newSettings[key]
             if (oldSettings[key] !== newValue) {
                 switch (key) {
-                    case 'documentstyle':
-                        if (newValue.length) {
-                            updateDocStyleCSS(newValue)
-                        } else {
-                            settingsValid = false
-                        }
-                        break
-                    case 'citationstyle':
-                        if (newValue.length) {
-                            options.editor.mod.citations.resetCitations()
-                        } else {
-                            settingsValid = false
-                        }
-                        break
-                    case 'language':
-                        if (newValue.length) {
-                            const lang = LANGUAGES.find(lang => lang[0] === newValue)
-                            document.querySelectorAll('.ProseMirror').forEach(el => el.dir = lang[2])
-                            options.editor.docInfo.dir = lang[2]
-                        } else {
-                            settingsValid = false
-                        }
-                        break
+                case 'documentstyle':
+                    if (newValue.length) {
+                        updateDocStyleCSS(newValue)
+                    } else {
+                        settingsValid = false
+                    }
+                    break
+                case 'citationstyle':
+                    if (newValue.length) {
+                        options.editor.mod.citations.resetCitations()
+                    } else {
+                        settingsValid = false
+                    }
+                    break
+                case 'language':
+                    if (newValue.length) {
+                        const lang = LANGUAGES.find(lang => lang[0] === newValue)
+                        document.querySelectorAll('.ProseMirror').forEach(el => el.dir = lang[2])
+                        options.editor.docInfo.dir = lang[2]
+                    } else {
+                        settingsValid = false
+                    }
+                    break
                 }
             }
         })
@@ -81,7 +81,7 @@ export const settingsPlugin = function(options) {
      */
     const updateDocStyleCSS = function(docStyleId) {
 
-        const docStyle = options.editor.mod.documentTemplate.documentStyles.find(doc_style => doc_style.slug===docStyleId)
+        const docStyle = options.editor.mod.documentTemplate.documentStyles.find(doc_style => doc_style.slug === docStyleId)
 
         let docStyleCSS = docStyle.contents
         docStyle.documentstylefile_set.forEach(
@@ -120,7 +120,7 @@ export const settingsPlugin = function(options) {
                 // All transactions are remote. Give up.
                 return false
             }
-            const lastTr = trs[trs.length-1]
+            const lastTr = trs[trs.length - 1]
             const attrs = lastTr.doc.firstChild.attrs
             const fixedSettings = fixSettings(attrs)
 

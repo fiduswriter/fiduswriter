@@ -7,25 +7,25 @@ function parseReferences(str) {
     try {
         references = JSON.parse(str)
     } catch (error) {
-       return []
-   }
-   if (!Array.isArray(references)) {
-       return []
-   }
-   return references.filter(
-       ref => ref.hasOwnProperty('id') // ensure there is an id.
-   ).map(
-       ref => {
-           const mRef = {id:ref.id}
-           if (ref.locator) {
-               mRef.locator = ref.locator
-           }
-           if (ref.prefix) {
-               mRef.prefix = ref.prefix
-           }
-           return mRef
-       }
-   )
+        return []
+    }
+    if (!Array.isArray(references)) {
+        return []
+    }
+    return references.filter(
+        ref => ref.hasOwnProperty('id') // ensure there is an id.
+    ).map(
+        ref => {
+            const mRef = {id:ref.id}
+            if (ref.locator) {
+                mRef.locator = ref.locator
+            }
+            if (ref.prefix) {
+                mRef.prefix = ref.prefix
+            }
+            return mRef
+        }
+    )
 }
 
 export const citation = {
@@ -116,7 +116,7 @@ export const cross_reference = {
 }
 
 export function randomFigureId() {
-    return 'F' + Math.round(Math.random()*10000000) + 1
+    return 'F' + Math.round(Math.random() * 10000000) + 1
 }
 
 
@@ -188,31 +188,31 @@ export const figure = {
         dom.dataset.width = node.attrs.width
 
         switch (node.attrs.aligned) {
-            case 'right':
-                dom.classList.add('aligned-right')
-                break
-            case 'left':
-                dom.classList.add('aligned-left')
-                break
-            case 'center':
-                dom.classList.add('aligned-center')
-                break
-            default:
-                dom.classList.add('aligned-center')
+        case 'right':
+            dom.classList.add('aligned-right')
+            break
+        case 'left':
+            dom.classList.add('aligned-left')
+            break
+        case 'center':
+            dom.classList.add('aligned-center')
+            break
+        default:
+            dom.classList.add('aligned-center')
         }
 
-         switch (node.attrs.width) {
-            case '100':
-                dom.classList.add('image-width-100')
-                break
-            case '75':
-                dom.classList.add('image-width-75')
-                break
-            case '50':
-                dom.classList.add('image-width-50')
-                break
-            default:
-                dom.classList.add('image-width-25')
+        switch (node.attrs.width) {
+        case '100':
+            dom.classList.add('image-width-100')
+            break
+        case '75':
+            dom.classList.add('image-width-75')
+            break
+        case '50':
+            dom.classList.add('image-width-50')
+            break
+        default:
+            dom.classList.add('image-width-25')
         }
 
         if (node.attrs.track && node.attrs.track.length) {
@@ -284,7 +284,7 @@ export const figure = {
 }
 
 export const randomHeadingId = () => {
-    return `H${Math.round(Math.random()*10000000) + 1}`
+    return `H${Math.round(Math.random() * 10000000) + 1}`
 }
 
 
@@ -419,7 +419,7 @@ export const link = {
 }
 
 // :: NodeSpec A plain paragraph textblock. Represented in the DOM
-  // as a `<p>` element.
+// as a `<p>` element.
 export const paragraph = {
     group: "block",
     content: "inline*",
@@ -475,7 +475,7 @@ export const horizontal_rule = {
 }
 
 export const randomAnchorId = () => {
-    return `A${Math.round(Math.random()*10000000) + 1}`
+    return `A${Math.round(Math.random() * 10000000) + 1}`
 }
 
 export const anchor = {
@@ -623,12 +623,12 @@ function parseFormatList(str) {
     try {
         formatList = JSON.parse(str)
     } catch (error) {
-       return []
-   }
-   if (!Array.isArray(formatList)) {
-       return []
-   }
-   return formatList.filter(format => typeof(format)==='string') // ensure there are only strings in list
+        return []
+    }
+    if (!Array.isArray(formatList)) {
+        return []
+    }
+    return formatList.filter(format => typeof(format) === 'string') // ensure there are only strings in list
 }
 
 export const format_change = {

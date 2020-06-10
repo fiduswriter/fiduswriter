@@ -8,7 +8,7 @@ export const bulkMenuModel = () => ({
             tooltip: gettext('Delete the documents that have been selected.'),
             action: overview => {
                 const ids = overview.getSelected()
-                const ownIds = ids.filter(id => overview.documentList.find(doc => doc.id===id).is_owner)
+                const ownIds = ids.filter(id => overview.documentList.find(doc => doc.id === id).is_owner)
                 if (ownIds.length !== ids.length) {
                     addAlert('error', gettext('You cannot delete documents of other users'))
                 }
@@ -24,7 +24,7 @@ export const bulkMenuModel = () => ({
             tooltip: gettext('Share the documents that have been selected.'),
             action: overview => {
                 const ids = overview.getSelected()
-                const ownIds = ids.filter(id => overview.documentList.find(doc => doc.id===id).is_owner)
+                const ownIds = ids.filter(id => overview.documentList.find(doc => doc.id === id).is_owner)
                 if (ownIds.length !== ids.length) {
                     addAlert('error', gettext('You cannot share documents of other users'))
                 }

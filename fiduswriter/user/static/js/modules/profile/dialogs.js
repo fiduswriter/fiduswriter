@@ -1,6 +1,6 @@
 import {changeAvatarDialogTemplate, confirmDeleteAvatarTemplate,
     changePwdDialogTemplate, changeEmailDialogTemplate,
-deleteEmailDialogTemplate, changePrimaryEmailDialogTemplate} from "./templates"
+    deleteEmailDialogTemplate, changePrimaryEmailDialogTemplate} from "./templates"
 import {activateWait, deactivateWait, post, postJson, addAlert, Dialog, escapeText} from "../common"
 
 export const changeAvatarDialog = function(app) {
@@ -49,8 +49,8 @@ export const changeAvatarDialog = function(app) {
     ]
 
     const avatarUploader = document.createElement('input')
-    avatarUploader.type='file'
-    avatarUploader.accept=".png, .jpg, .jpeg"
+    avatarUploader.type = 'file'
+    avatarUploader.accept = ".png, .jpg, .jpeg"
     avatarUploader.style.display = 'none'
 
     const dialog = new Dialog({
@@ -63,14 +63,14 @@ export const changeAvatarDialog = function(app) {
     dialog.dialogEl.appendChild(avatarUploader)
 
     avatarUploader.addEventListener('change', () => {
-         document.getElementById('uploaded-avatar-name').innerHTML = avatarUploader.value.replace(/C:\\fakepath\\/i, '')
+        document.getElementById('uploaded-avatar-name').innerHTML = avatarUploader.value.replace(/C:\\fakepath\\/i, '')
     })
     document.getElementById('upload-avatar-btn').addEventListener(
-         'click',
-         event => {
-             event.preventDefault()
-             avatarUploader.click()
-         }
+        'click',
+        event => {
+            event.preventDefault()
+            avatarUploader.click()
+        }
     )
 }
 

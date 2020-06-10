@@ -7,7 +7,7 @@ import {
 export const linkDialogTemplate = ({defaultLink, internalTargets, linkType, title, target, allowedContent}) =>
     `${
         allowedContent.cross_reference && internalTargets.length ?
-        `<div class="fw-radio">
+            `<div class="fw-radio">
             <input type="radio" name="link-type" value="cross_reference" class="cross-reference-check">
             <label class="cross-reference-label">${gettext("Cross reference")}</label>
         </div>
@@ -17,18 +17,18 @@ export const linkDialogTemplate = ({defaultLink, internalTargets, linkType, titl
                     ${gettext("Select Target")}
                 </option>
                 ${
-                    internalTargets.map(iTarget =>
-                        `<option class="cross-reference-item" type="text" value="${iTarget.id}" ${target === iTarget.id ? "selected" : ""}>
+    internalTargets.map(iTarget =>
+        `<option class="cross-reference-item" type="text" value="${iTarget.id}" ${target === iTarget.id ? "selected" : ""}>
                             ${escapeText(iTarget.text)}
                         </option>`
-                    ).join('')
-                }
+    ).join('')
+}
             </select>
             <div class="fw-select-arrow fa fa-caret-down"></div>
         </div><p></p>` : ''
     }${
         allowedContent.link && internalTargets.length ?
-        `<div class="fw-radio">
+            `<div class="fw-radio">
             <input type="radio" name="link-type" value="internal" class="link-internal-check">
             <label class="link-internal-label">${gettext("Internal")}</label>
         </div>
@@ -38,12 +38,12 @@ export const linkDialogTemplate = ({defaultLink, internalTargets, linkType, titl
                     ${gettext("Select Target")}
                 </option>
                 ${
-                    internalTargets.map(iTarget =>
-                        `<option class="link-item" type="text" value="${iTarget.id}" ${target === iTarget.id ? "selected" : ""}>
+    internalTargets.map(iTarget =>
+        `<option class="link-item" type="text" value="${iTarget.id}" ${target === iTarget.id ? "selected" : ""}>
                             ${escapeText(iTarget.text)}
                         </option>`
-                    ).join('')
-                }
+    ).join('')
+}
             </select>
             <div class="fw-select-arrow fa fa-caret-down"></div>
         </div>
@@ -52,14 +52,14 @@ export const linkDialogTemplate = ({defaultLink, internalTargets, linkType, titl
             <input type="radio" name="link-type" value="external" class="link-external-check">
             <label class="link-external-label">${gettext("External")}</label>
         </div>`
-        :
-        ''
+            :
+            ''
     }${
         allowedContent.link ?
-        `<input class="link-title" type="text" value="${escapeText(title)}" placeholder="${gettext("Link title")}"/>
+            `<input class="link-title" type="text" value="${escapeText(title)}" placeholder="${gettext("Link title")}"/>
         <p></p>
         <input class="link" type="text" value="${target && linkType === 'external' ? target : defaultLink}" placeholder="${gettext("URL")}"/>` :
-        ''
+            ''
     }`
 
 /** Dialog to add a note to a revision before saving. */
@@ -121,7 +121,7 @@ export const tableInsertTemplate = () => `
         </tr>
     </table>`
 
-export const tableResizeTemplate =() =>
+export const tableResizeTemplate = () =>
     `<div style="margin-top:25px;margin-left:20px">
         <p>${gettext("Position")}:</p>
         <div style="margin-left:95px;margin-top:-25px;display:inherit;width:60px;" id="table-alignment-btn" class="fw-button fw-light fw-large">
@@ -201,10 +201,10 @@ export const figureImageItemTemplate =  ({id, cats, image, thumbnail, title}) =>
     `<tr id="Image_${id}" class="${cats.map(cat => `cat_${escapeText(cat)} `)}" >
          <td class="type" style="width:100px;">
             ${
-                thumbnail === undefined ?
-                `<img src="${image}" style="max-heigth:30px;max-width:30px;">` :
-                `<img src="${thumbnail}" style="max-heigth:30px;max-width:30px;">`
-            }
+    thumbnail === undefined ?
+        `<img src="${image}" style="max-heigth:30px;max-width:30px;">` :
+        `<img src="${thumbnail}" style="max-heigth:30px;max-width:30px;">`
+}
         </td>
         <td class="title" style="width:212px;">
             <span class="fw-inline">
@@ -245,7 +245,7 @@ export const figureImageTemplate = ({imageDB}) =>
         </div>
     </div>`
 
-    /** A template to configure the display of a figure in the editor. */
+/** A template to configure the display of a figure in the editor. */
 export const configureFigureTemplate = ({caption, dir, language}) =>
     `<div class="fw-media-uploader">
             <input type="hidden" id="figure-category">
@@ -258,12 +258,12 @@ export const configureFigureTemplate = ({caption, dir, language}) =>
                         style="left: 10px;">
                     <ul id="figure-category-list">
                         ${
-                            Object.entries(FIG_CATS).map(([id, title_object]) =>
-                                `<li><span class="fw-pulldown-item" id="figure-category-${id}">
+    Object.entries(FIG_CATS).map(([id, title_object]) =>
+        `<li><span class="fw-pulldown-item" id="figure-category-${id}">
                                     ${title_object[language]}
                                 </span></li>`
-                            ).join('')
-                        }
+    ).join('')
+}
                     </ul>
                 </div>
                 <div id="figure-alignment-btn" class="fw-button fw-light fw-large">
@@ -318,7 +318,7 @@ export const configureFigureTemplate = ({caption, dir, language}) =>
 
 /** A template to configure citations in the editor */
 export const configureCitationTemplate = ({citedItemsHTML, citeFormat}) =>
-        `<div id="my-sources" class="fw-ar-container">
+    `<div id="my-sources" class="fw-ar-container">
             <h3 class="fw-green-title">${gettext("My sources")}</h3>
         </div>
         <span id="add-cite-source" class="fw-button fw-large fw-square fw-light fw-ar-button"><i class="fa fa-caret-right"></i></span>
@@ -326,8 +326,8 @@ export const configureCitationTemplate = ({citedItemsHTML, citeFormat}) =>
             <h3 class="fw-green-title">${gettext("Citation format")}</h3>
             <div class="fw-select-container">
                 <select id="citation-style-selector" class="fw-button fw-light fw-large" required="">
-                    <option value="autocite" ${citeFormat==="autocite" ? "selected" : ""}>${gettext("(Author, 1998)")}</option>
-                    <option value="textcite" ${citeFormat==="textcite" ? "selected" : ""}>${gettext("Author (1998)")}</option>
+                    <option value="autocite" ${citeFormat === "autocite" ? "selected" : ""}>${gettext("(Author, 1998)")}</option>
+                    <option value="textcite" ${citeFormat === "textcite" ? "selected" : ""}>${gettext("Author (1998)")}</option>
                 </select>
                 <div class="fw-select-arrow fa fa-caret-down"></div>
             </div>
@@ -396,10 +396,10 @@ export const contributorTemplate = ({contributor}) =>
 export const languageTemplate = ({currentLanguage, allowedLanguages}) =>
     `<select class="fw-button fw-light fw-large">
         ${
-            allowedLanguages.map(language =>
-                `<option value="${language[0]}" ${language[0]===currentLanguage ? 'selected' : ''}>
+    allowedLanguages.map(language =>
+        `<option value="${language[0]}" ${language[0] === currentLanguage ? 'selected' : ''}>
                     ${language[1]}
                 </option>`
-            ).join('')
-        }
+    ).join('')
+}
     </select>`

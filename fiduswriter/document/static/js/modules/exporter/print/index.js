@@ -11,10 +11,10 @@ export class PrintExporter extends HTMLExporter {
         this.styleSheets.push({contents:
             `a.fn {
                 -adapt-template: url(data:application/xml,${
-                    encodeURI(
-                        '<html xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://www.pyroxy.com/ns/shadow"><head><style>.footnote-content{float:footnote}</style></head><body><s:template id="footnote"><s:content/><s:include class="footnote-content"/></s:template></body></html>#footnote'
-                    )
-                });
+    encodeURI(
+        '<html xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://www.pyroxy.com/ns/shadow"><head><style>.footnote-content{float:footnote}</style></head><body><s:template id="footnote"><s:content/><s:include class="footnote-content"/></s:template></body></html>#footnote'
+    )
+});
                 text-decoration: none;
                 color: inherit;
                 vertical-align: baseline;
@@ -106,7 +106,7 @@ export class PrintExporter extends HTMLExporter {
 
     addDocStyle(doc) {
         // Override the default as we need to use the original URLs in print.
-        const docStyle = this.documentStyles.find(docStyle => docStyle.slug===doc.settings.documentstyle)
+        const docStyle = this.documentStyles.find(docStyle => docStyle.slug === doc.settings.documentstyle)
 
         if (!docStyle) {
             return

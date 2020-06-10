@@ -98,12 +98,12 @@ export class RangeFieldForm {
 
     get value() {
         if (this.range) {
-                if (
-                    !this.fields.from.value &&
+            if (
+                !this.fields.from.value &&
                     !this.fields.to.value
-                ) {
-                    return false
-                }
+            ) {
+                return false
+            }
             return [
                 this.fields.from.value ? this.fields.from.value : '',
                 this.fields.to.value ? this.fields.to.value : ''

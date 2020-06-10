@@ -2,7 +2,7 @@
 export function litToText(litStringArray) {
     let outText = ''
     litStringArray.forEach((litString) => {
-        if (litString.type==='text') {
+        if (litString.type === 'text') {
             outText += litString.text
         }
     })
@@ -11,7 +11,7 @@ export function litToText(litStringArray) {
 
 export function nameToText(nameList) {
     let nameString = ''
-    if (nameList.length===0) {
+    if (nameList.length === 0) {
         return nameString
     }
     if (nameList[0]['family']) {

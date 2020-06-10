@@ -493,16 +493,10 @@ export class Editor {
     // Collect all components of the current doc. Needed for saving and export
     // filters
     getDoc(options={}) {
-        let pmArticle
-        if (this.ws.connected) {
-            pmArticle = options.changes === 'acceptAllNoInsertions' ?
-            acceptAllNoInsertions(this.docInfo.confirmedDoc).firstChild :
-            this.docInfo.confirmedDoc.firstChild
-        } else {
-            pmArticle = options.changes === 'acceptAllNoInsertions' ?
-            acceptAllNoInsertions(this.view.docView.node).firstChild :
-            this.view.docView.node.firstChild
-        }
+        const doc = window.isOnline ? this.docInfo.confirmedDoc : this.view.docView.node
+        const pmArticle = options.changes === 'acceptAllNoInsertions' ?
+            acceptAllNoInsertions(doc).firstChild :
+            doc.firstChild
 
         let title = ""
         pmArticle.firstChild.forEach(

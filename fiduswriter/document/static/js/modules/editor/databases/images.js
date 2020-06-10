@@ -87,24 +87,24 @@ export class ModImageDB {
         }
     }
 
-    reUploadImage(id, image_url, title, copyright) {
-        const new_promise = new Promise((resolve, _reject)=>{
+    reUploadImage(id, imageUrl, title, copyright) {
+        const newPromise = new Promise((resolve, _reject)=>{
             // Depends on the fact that service worker is working and cached the image basically.
-            get(image_url).then(
-                response=>response.blob()
+            get(imageUrl).then(
+                response => response.blob()
             ).then(
                 blob => {
-                    const filename = image_url.split('/').pop()
+                    const filename = imageUrl.split('/').pop()
                     const file = new File([blob], filename, {type:blob.type})
                     const x = {"image":file, "title":title, "cats":[], "copyright":copyright}
                     this.mod.editor.app.imageDB.saveImage(x).then(
-                        new_id => {
-                            const imageData = JSON.parse(JSON.stringify(this.mod.editor.app.imageDB.db[new_id]))
-                            this.setImage(new_id, imageData)
+                        newId => {
+                            const imageData = JSON.parse(JSON.stringify(this.mod.editor.app.imageDB.db[newId]))
+                            this.setImage(newId, imageData)
                             this.mod.editor.view.state.doc.descendants((node, pos) => {
                                 if (node.type.name==='figure' && node.attrs.image == id) {
                                     const attrs = Object.assign({}, node.attrs)
-                                    attrs["image"] = new_id
+                                    attrs["image"] = newId
                                     const nodeType = this.mod.editor.currentView.state.schema.nodes['figure']
                                     const transaction = this.mod.editor.view.state.tr.setNodeMarkup(pos, nodeType, attrs)
                                     this.mod.editor.view.dispatch(transaction)
@@ -116,7 +116,7 @@ export class ModImageDB {
                 }
             )
         })
-        return new_promise
+        return newPromise
     }
 
     hasUnsentEvents() {

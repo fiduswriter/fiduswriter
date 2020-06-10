@@ -67,7 +67,7 @@ export const headerbarModel = () => ({
                     action: editor => {
                         editor.app.goTo('/')
                     },
-                    disabled:editor => !window.isOnline
+                    disabled: _editor => !window.isOnline
                 },
                 {
                     title: gettext('Save revision'),
@@ -90,10 +90,7 @@ export const headerbarModel = () => ({
                             }
                         )
                     },
-                    disabled: editor => {
-                        return editor.docInfo.access_rights !== 'write' || !window.isOnline
-                    }
-
+                    disabled: editor => editor.docInfo.access_rights !== 'write' || !window.isOnline
                 },
                 {
                     title: gettext('Create copy'),
@@ -112,7 +109,7 @@ export const headerbarModel = () => ({
                             editor.app.goTo(`/document/${docInfo.id}/`)
                         ).catch(() => false)
                     },
-                    disabled: editor => !window.isOnline,
+                    disabled: _editor => !window.isOnline,
                 },
                 {
                     title: gettext('Download'),
@@ -197,7 +194,7 @@ export const headerbarModel = () => ({
                             exporter.init()
                         })
                     },
-                    disabled : editor => !window.isOnline
+                    disabled: _editor => !window.isOnline
                 },
                 {
                     title: gettext('LaTeX'),
@@ -215,7 +212,7 @@ export const headerbarModel = () => ({
                             exporter.init()
                         })
                     },
-                    disabled : editor => !window.isOnline
+                    disabled: _editor => !window.isOnline
                 },
                 {
                     title: gettext('JATS'),
@@ -234,7 +231,7 @@ export const headerbarModel = () => ({
                             exporter.init()
                         })
                     },
-                    disabled : editor => !window.isOnline
+                    disabled: _editor => !window.isOnline
                 }
             ]
         },
@@ -447,9 +444,7 @@ export const headerbarModel = () => ({
                             }
                         )
                     },
-                    disabled: editor => {
-                        return editor.docInfo.access_rights !== 'write'
-                    }
+                    disabled: editor => editor.docInfo.access_rights !== 'write'
                 }
             ]
         },
@@ -499,9 +494,7 @@ export const headerbarModel = () => ({
             type: 'menu',
             tooltip: gettext('Tracking changes to the document'),
             order: 4,
-            disabled: editor => {
-                return editor.docInfo.access_rights !== 'write'
-            },
+            disabled: editor => editor.docInfo.access_rights !== 'write',
             content: [
                 {
                     title: gettext('Record'),

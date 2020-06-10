@@ -111,9 +111,7 @@ export const post = function(url, params={}, csrfToken=false) {
     // websocket is trying to establish a connection.
     if (!window.isOnline) {
         addAlert('error', gettext("You're offline now. Please try again after coming Online"))
-        return Promise.reject(new Error('offline')).then(()=>{}, (error)=> {
-            throw error
-        })
+        return Promise.reject(new Error('offline'))
     } else {
         return postBare(url, params, csrfToken).then(
             removeDjangoMessages

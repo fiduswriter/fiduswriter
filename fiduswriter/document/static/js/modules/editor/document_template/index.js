@@ -27,10 +27,8 @@ export class ModDocumentTemplate {
             get(template.template_file)
         }
         //Cache the required font related files too!
-        this.documentStyles.forEach(docStyle=>{
-            docStyle.documentstylefile_set.forEach(([url, _filename]) => {
-                get(url)
-            })
+        this.documentStyles.forEach(docStyle => {
+            docStyle.documentstylefile_set.forEach(([url, _filename]) => get(url))
         })
     }
 
@@ -141,7 +139,7 @@ export class ModDocumentTemplate {
                 })
                 selectTemplateDialog.open()
             },
-            disabled: editor => !window.isOnline
+            disabled: _editor => !window.isOnline
         })
 
         fileMenu.content = fileMenu.content.sort((a, b) => a.order - b.order)
@@ -197,7 +195,7 @@ export class ModDocumentTemplate {
                             exporter.init()
                         })
                     },
-                    disabled: editor => !window.isOnline
+                    disabled: _editor => !window.isOnline
                 }
             }
         })
@@ -220,10 +218,8 @@ export class ModDocumentTemplate {
                         editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta('settings', true)
                     )
                 },
-                selected: editor => {
-                    return editor.view.state.doc.firstChild.attrs.documentstyle === docStyle.slug
-                },
-                disabled : editor=> !window.isOnline,
+                selected: editor => editor.view.state.doc.firstChild.attrs.documentstyle === docStyle.slug,
+                disabled: _editor=> !window.isOnline,
             }
         })
     }

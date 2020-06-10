@@ -180,7 +180,7 @@ export class ModCollabDoc {
                 rebasedTrackedTr = rebasedTr
             }
 
-            let usedImages = []
+            const usedImages = []
             const usedBibs = []
             const footnoteFind = (node, usedImages, usedBibs) => {
                 if (node.name==='citation') {
@@ -210,9 +210,7 @@ export class ModCollabDoc {
             const oldImageDB = this.mod.editor.mod.db.imageDB.db
             this.mod.editor.mod.db.imageDB.setDB(data.doc.images)
             // Remove the Duplicated image ID's
-            usedImages = new Set(usedImages)
-            usedImages = Array.from(usedImages)
-            usedImages.forEach(id => {
+            Array.from(new Set(usedImages)).forEach(id => {
                 if (!this.mod.editor.mod.db.imageDB.db[id] && oldImageDB[id]) {
                     // If the image was uploaded by the offline user we know that he may not have deleted it so we can resend it normally
                     if (Object.keys(this.mod.editor.app.imageDB.db).includes(id)) {

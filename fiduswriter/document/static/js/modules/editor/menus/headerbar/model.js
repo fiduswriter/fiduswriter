@@ -55,7 +55,7 @@ export const headerbarModel = () => ({
                         dialog.init()
                     },
                     disabled: editor => {
-                        return !editor.docInfo.is_owner || !editor.ws.isOnline()
+                        return !editor.docInfo.is_owner || !window.isOnline
                     }
                 },
                 {
@@ -67,7 +67,7 @@ export const headerbarModel = () => ({
                     action: editor => {
                         editor.app.goTo('/')
                     },
-                    disabled:editor => !editor.ws.isOnline()
+                    disabled:editor => !window.isOnline
                 },
                 {
                     title: gettext('Save revision'),
@@ -91,7 +91,7 @@ export const headerbarModel = () => ({
                         )
                     },
                     disabled: editor => {
-                        return editor.docInfo.access_rights !== 'write' || !editor.ws.isOnline()
+                        return editor.docInfo.access_rights !== 'write' || !window.isOnline
                     }
 
                 },
@@ -112,7 +112,7 @@ export const headerbarModel = () => ({
                             editor.app.goTo(`/document/${docInfo.id}/`)
                         ).catch(() => false)
                     },
-                    disabled: editor => !editor.ws.isOnline(),
+                    disabled: editor => !window.isOnline,
                 },
                 {
                     title: gettext('Download'),
@@ -197,7 +197,7 @@ export const headerbarModel = () => ({
                             exporter.init()
                         })
                     },
-                    disabled : editor => !editor.ws.isOnline()
+                    disabled : editor => !window.isOnline
                 },
                 {
                     title: gettext('LaTeX'),
@@ -215,7 +215,7 @@ export const headerbarModel = () => ({
                             exporter.init()
                         })
                     },
-                    disabled : editor => !editor.ws.isOnline()
+                    disabled : editor => !window.isOnline
                 },
                 {
                     title: gettext('JATS'),
@@ -234,7 +234,7 @@ export const headerbarModel = () => ({
                             exporter.init()
                         })
                     },
-                    disabled : editor => !editor.ws.isOnline()
+                    disabled : editor => !window.isOnline
                 }
             ]
         },
@@ -263,7 +263,7 @@ export const headerbarModel = () => ({
                     tooltip: gettext('Choose your preferred document style.'),
                     order: 2,
                     disabled: editor => {
-                        return editor.docInfo.access_rights !== 'write' || !editor.ws.isOnline()
+                        return editor.docInfo.access_rights !== 'write' || !window.isOnline
                     },
                     content: []
                 },

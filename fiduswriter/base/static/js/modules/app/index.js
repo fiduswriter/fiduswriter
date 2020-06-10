@@ -104,6 +104,7 @@ export class App {
         this.openOfflinePage = () => new OfflinePage(this.config)
         this.openSetupPage = () => new SetupPage(this.config)
         this.open404Page = () => new Page404(this.config)
+        Object.defineProperty(window, 'isOnline', {get: () => this.ws !== undefined && this.ws.ws.readyState === 1 && this.ws.connected})
     }
 
     init() {

@@ -1950,8 +1950,6 @@ msgstr "Zelle teilen"
 msgid "Split selected cell"
 msgstr "Ausgewählte Zelle teilen"
 
-#. Prestar compu de Johannes sí o sí
-#. Encabezado de fila?
 #: document/static/js/modules/document_template/schema.js:180
 #: document/static/js/modules/editor/menus/table/model.js:186
 msgid "Toggle header row"
@@ -1961,8 +1959,6 @@ msgstr "Kopfzeile umschalten"
 msgid "Toggle header-status of currently selected row"
 msgstr "Kopfzeilenstatus der aktuell ausgewählten Zeile umschalten"
 
-#. Prestar compu de Johannes sí o sí
-#. Es Encabezado de columna?
 #: document/static/js/modules/document_template/schema.js:180
 #: document/static/js/modules/editor/menus/table/model.js:203
 msgid "Toggle header column"
@@ -2949,9 +2945,6 @@ msgstr "Zeile davor einfügen"
 msgid "Insert row after"
 msgstr "Zeile danach einfügen"
 
-#. Prestar compu de Johannes sí o sí
-#. 
-#. Encabezado de celda?
 #: document/static/js/modules/document_template/schema.js:180
 msgid "Toggle header cells"
 msgstr "Kopfzellen umschalten"
@@ -3308,11 +3301,11 @@ msgstr "Kontakt hinzufügen oder neuen Benutzer einladen"
 
 #: document/static/js/modules/documents/access_rights/templates.js:33
 msgid "Write with changes tracked"
-msgstr "Schreiben Sie mit Spuränderungen"
+msgstr "Schreiben Sie mit Änderungsverfolgung"
 
 #: document/static/js/modules/documents/access_rights/templates.js:33
 msgid "Write tracked"
-msgstr "Schreiben mit Spuränderungen"
+msgstr "Schreiben mit Änderungsverfolgung"
 
 #: document/static/js/modules/documents/access_rights/templates.js:47
 msgid "Invite"
@@ -3333,7 +3326,7 @@ msgstr "Export als JATS ausgewählt"
 
 #: document/static/js/modules/editor/citations/index.js:110
 msgid "No tracking"
-msgstr "Keine Spuränderungen"
+msgstr "Keine&nbsp;Änderungsverfolgung"
 
 #: document/static/js/modules/editor/citations/index.js:111
 msgid "Changes to citation sources are not being tracked!"
@@ -3592,7 +3585,7 @@ msgstr "Kommentare aufgelöst"
 #: document/static/js/modules/editor/marginboxes/templates.js:201
 #: document/static/js/modules/editor/menus/headerbar/model.js:358
 msgid "Track changes"
-msgstr "Änderungen nachverfolgen"
+msgstr "Änderungsverfolgung"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:185
 msgid "Export the document to a Journal Archiving and Interchange Tag Library NISO JATS Version 1.2 file."
@@ -3646,7 +3639,7 @@ msgstr "Alle in Auswahl ablehnen"
 #: document/static/js/modules/editor/menus/table/model.js:203
 #: document/static/js/modules/editor/menus/table/model.js:220
 msgid "Not tracked"
-msgstr "Keine Spuränderungen"
+msgstr "Keine&nbsp;Änderungsverfolgung"
 
 #: document/static/js/modules/editor/menus/table/model.js:166
 msgid "Split cells"
@@ -4366,4 +4359,3 @@ msgstr "Social Account Anbieter"
 #: user/static/js/modules/profile/templates.js:70
 msgid "Connect"
 msgstr "Verbinden"
-

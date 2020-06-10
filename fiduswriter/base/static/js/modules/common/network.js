@@ -105,7 +105,7 @@ export const postBare = function(url, params = {}, csrfToken = false) {
     })
 }
 
-export const post = function(url, params={}, csrfToken=false) {
+export const post = function(url, params = {}, csrfToken = false) {
     // If the base ws of the app is disconnected we assume that user is offline.
     // Moreover if the ws readystate is not 0 we consider to check the connected status as 0 means ,
     // websocket is trying to establish a connection.

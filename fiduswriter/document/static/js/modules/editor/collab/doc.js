@@ -150,7 +150,7 @@ export class ModCollabDoc {
                     const mapped = step.map(maps.slice(unconfirmedTr.steps.length - index))
                     if (mapped && !rebasedTr.maybeStep(mapped).failed) {
                         maps.appendMap(mapped.getMap())
-                        maps.setMirror(unconfirmedTr.steps.length-index-1, (unconfirmedTr.steps.length+lostTr.steps.length+rebasedTr.steps.length-1))
+                        maps.setMirror(unconfirmedTr.steps.length - index - 1, (unconfirmedTr.steps.length + lostTr.steps.length + rebasedTr.steps.length - 1))
                     }
                 }
             )

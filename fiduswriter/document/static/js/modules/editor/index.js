@@ -322,7 +322,7 @@ export class Editor {
                     }
                 },
                 failedAuth: () => {
-                    if (this.view.state.plugins.length && sendableSteps(this.view.state) && this.ws.connectionCount>0) {
+                    if (this.view.state.plugins.length && sendableSteps(this.view.state) && this.ws.connectionCount > 0) {
                         this.ws.online = false // To avoid Websocket trying to reconnect.
                         new ExportFidusFile(
                             this.getDoc(),
@@ -336,14 +336,14 @@ export class Editor {
                                 text:gettext('Proceed to Login page'),
                                 classes:'fw-dark',
                                 click:()=>{
-                                    window.location.href='/'
+                                    window.location.href = '/'
                                 }
                             }]
                         })
                         sessionDialog.open()
                         sessionDialog.dialogEl.childNodes[1].childNodes[3].style.display = 'none' // Make the dialog non dismissable
                     } else {
-                        window.location.href='/'
+                        window.location.href = '/'
                     }
                 }
             })
@@ -492,7 +492,7 @@ export class Editor {
 
     // Collect all components of the current doc. Needed for saving and export
     // filters
-    getDoc(options={}) {
+    getDoc(options = {}) {
         const doc = window.isOnline ? this.docInfo.confirmedDoc : this.view.docView.node
         const pmArticle = options.changes === 'acceptAllNoInsertions' ?
             acceptAllNoInsertions(doc).firstChild :
@@ -501,7 +501,7 @@ export class Editor {
         let title = ""
         pmArticle.firstChild.forEach(
             child => {
-                if (!child.marks.find(mark => mark.type.name==='deletion')) {
+                if (!child.marks.find(mark => mark.type.name === 'deletion')) {
                     title += child.textContent
                 }
             }

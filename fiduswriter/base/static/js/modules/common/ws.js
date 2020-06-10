@@ -12,7 +12,7 @@ export class WebSocketConnector {
         warningNotAllSent = gettext('Warning! Some data is unsaved'), // Info to show while disconnected WITH unsaved data
         infoDisconnected = gettext('Disconnected. Attempting to reconnect...'), // Info to show while disconnected WITHOUT unsaved data
         receiveData = _data => {},
-        failedAuth = ()=>{ window.location.href="/" },
+        failedAuth = ()=>{ window.location.href = "/" },
     }) {
         this.url = url
         this.appLoaded = appLoaded
@@ -25,7 +25,7 @@ export class WebSocketConnector {
         this.infoDisconnected = infoDisconnected
         this.receiveData = receiveData
         this.failedAuth = failedAuth
-            /* A list of messages to be sent. Only used when temporarily offline.
+        /* A list of messages to be sent. Only used when temporarily offline.
             Messages will be sent when returning back online. */
         this.messagesToSend = []
         /* A list of messages from a previous connection */
@@ -233,18 +233,18 @@ export class WebSocketConnector {
 
     receive(data) {
         switch (data.type) {
-            case 'welcome':
-                this.open()
-                break
-            case 'subscribed':
-                this.subscribed()
-                break
-            case 'access_denied':
-                this.failedAuth()
-                break
-            default:
-                this.receiveData(data)
-                break
+        case 'welcome':
+            this.open()
+            break
+        case 'subscribed':
+            this.subscribed()
+            break
+        case 'access_denied':
+            this.failedAuth()
+            break
+        default:
+            this.receiveData(data)
+            break
         }
     }
 

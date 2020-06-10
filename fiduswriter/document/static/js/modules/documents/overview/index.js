@@ -132,7 +132,7 @@ export class DocumentOverview {
             this.app.indexedDB.readAllData("documents").then((response)=>{
                 new_json['documents'] = response
                 this.app.indexedDB.readAllData("document_templates").then((response)=>{
-                    const dummy_dict={}
+                    const dummy_dict = {}
                     for (const data in response) {
                         const pk = response[data].pk
                         delete response[data].pk
@@ -173,19 +173,19 @@ export class DocumentOverview {
 
     initializeView(json) {
         const ids = new Set()
-                this.documentList = json.documents.filter(doc => {
-                    if (ids.has(doc.id)) {return false}
-                    ids.add(doc.id)
-                    return true
-                })
+        this.documentList = json.documents.filter(doc => {
+            if (ids.has(doc.id)) {return false}
+            ids.add(doc.id)
+            return true
+        })
 
-                this.teamMembers = json.team_members
-                this.documentStyles = json.document_styles
-                this.documentTemplates = json.document_templates
-                this.initTable()
-                if (Object.keys(this.documentTemplates).length > 1) {
-                    this.multipleNewDocumentMenuItem()
-                }
+        this.teamMembers = json.team_members
+        this.documentStyles = json.document_styles
+        this.documentTemplates = json.document_templates
+        this.initTable()
+        if (Object.keys(this.documentTemplates).length > 1) {
+            this.multipleNewDocumentMenuItem()
+        }
     }
 
     onResize() {
@@ -317,7 +317,7 @@ export class DocumentOverview {
     }
 
     multipleNewDocumentMenuItem() {
-        const menuItem = this.menu.model.content.find(menuItem => menuItem.id==='new_document')
+        const menuItem = this.menu.model.content.find(menuItem => menuItem.id === 'new_document')
         menuItem.type = 'dropdown'
         menuItem.content = Object.values(this.documentTemplates).map(docTemplate => ({
             title: docTemplate.title || gettext('Undefined'),

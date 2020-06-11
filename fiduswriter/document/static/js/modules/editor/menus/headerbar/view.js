@@ -85,7 +85,7 @@ export class HeaderbarView {
 
             switch (menuItem.type) {
             case 'action':
-                if (menuItem.disabled && menuItem.disabled(this.editor)) {
+                if (menuItem.disabled?.(this.editor)) {
                     return
                 }
                 menuItem.action(this.editor)
@@ -96,7 +96,7 @@ export class HeaderbarView {
                 break
             case 'setting':
                 // Similar to 'action' but not closing menu.
-                if (menuItem.disabled && menuItem.disabled(this.editor)) {
+                if (menuItem.disabled?.(this.editor)) {
                     return
                 }
                 menuItem.action(this.editor)
@@ -221,7 +221,7 @@ export class HeaderbarView {
 
     checkKeys(event, menu, nameKey) {
         menu.content.forEach(menuItem => {
-            if (menuItem.keys && menuItem.keys === nameKey) {
+            if (menuItem.keys === nameKey) {
                 event.preventDefault()
                 menuItem.action(this.editor)
             } else if (menuItem.content) {

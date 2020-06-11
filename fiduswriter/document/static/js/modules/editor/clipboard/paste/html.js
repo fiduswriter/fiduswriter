@@ -43,9 +43,9 @@ export class HTMLPaste {
             this.htmlDoc.getAttribute('xmlns:w') === "urn:schemas-microsoft-com:office:word"
         ) {
             this.handler = MicrosoftWordPasteHandler
-        } else if (generatorMetaTag && generatorMetaTag.content && generatorMetaTag.content.startsWith('LibreOffice')) {
+        } else if (generatorMetaTag?.content?.startsWith('LibreOffice')) {
             this.handler = LibreOfficeWriterPasteHandler
-        } else if (firstB && firstB.id.startsWith("docs-internal-guid")) {
+        } else if (firstB?.id.startsWith("docs-internal-guid")) {
             this.handler = GoogleDocsPasteHandler
         } else if (pmSlice) {
             this.handler = FidusWriterPasteHandler

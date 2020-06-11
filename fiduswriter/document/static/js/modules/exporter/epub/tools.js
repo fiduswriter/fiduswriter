@@ -105,7 +105,7 @@ export function orderLinks(contentItems) {
     }
 
     for (let i = contentItems.length; i > -1; i--) {
-        if (contentItems[i] && contentItems[i].delete) {
+        if (contentItems[i]?.delete) {
             delete contentItems[i].delete
             contentItems.splice(i, 1)
         }

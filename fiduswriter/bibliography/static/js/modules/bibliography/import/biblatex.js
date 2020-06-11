@@ -66,9 +66,7 @@ export class BibLatexImporter {
             break
         }
         if (message.done) {
-            if (this.callback) {
-                this.callback()
-            }
+            this.callback?.()
         }
     }
 

@@ -533,7 +533,7 @@ export class JATSExporterConvert {
                     end = '</disp-formula>' + end
                     content = `<tex-math><![CDATA[${node.attrs.equation}]]></tex-math>`
                 } else {
-                    if (copyright && copyright.holder) {
+                    if (copyright?.holder) {
                         start += '<permissions>'
                         const year = copyright.year ? copyright.year : new Date().getFullYear()
                         start += `<copyright-year>${year}</copyright-year>`

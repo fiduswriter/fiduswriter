@@ -141,7 +141,7 @@ export function parseTracks(str) {
 }
 
 function addTracks(node, attrs) {
-    if (node.attrs.track && node.attrs.track.length) {
+    if (node.attrs.track?.length) {
         attrs['data-track'] = JSON.stringify(node.attrs.track)
     }
 }
@@ -215,14 +215,13 @@ export const figure = {
             dom.classList.add('image-width-25')
         }
 
-        if (node.attrs.track && node.attrs.track.length) {
+        if (node.attrs.track?.length) {
             dom.dataset.track = JSON.stringify(node.attrs.track)
         }
         if (node.attrs.image !== false) {
             dom.appendChild(document.createElement("div"))
             if (node.type.schema.cached.imageDB) {
-                if (node.type.schema.cached.imageDB.db[node.attrs.image] &&
-                    node.type.schema.cached.imageDB.db[node.attrs.image].image) {
+                if (node.type.schema.cached.imageDB.db[node.attrs.image]?.image) {
                     const imgSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
                     const img = document.createElement("img")
                     img.setAttribute('src', imgSrc)
@@ -235,8 +234,7 @@ export const figure = {
                     found. */
                     if (!imageDBBroken) {
                         node.type.schema.cached.imageDB.getDB().then(() => {
-                            if (node.type.schema.cached.imageDB.db[node.attrs.image] &&
-                                node.type.schema.cached.imageDB.db[node.attrs.image].image) {
+                            if (node.type.schema.cached.imageDB.db[node.attrs.image]?.image) {
                                 const imgSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
                                 const img = document.createElement("img")
                                 img.setAttribute('src', imgSrc)
@@ -382,10 +380,10 @@ export const annotation_tag = {
             class: 'annotation-tag',
             'data-type': node.attrs.type
         }
-        if (node.attrs.key && node.attrs.key.length) {
+        if (node.attrs.key?.length) {
             attrs['data-key'] = node.attrs.key
         }
-        if (node.attrs.value && node.attrs.value.length) {
+        if (node.attrs.value?.length) {
             attrs['data-value'] = node.attrs.value
         }
         return ['span', attrs]

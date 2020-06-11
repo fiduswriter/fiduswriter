@@ -77,7 +77,7 @@ export class ImportNative {
                 }
                 break
             case 'footnote':
-                if (node.attrs && node.attrs.footnote) {
+                if (node.attrs?.footnote) {
                     node.attrs.footnote.forEach(childNode => {
                         walkTree(childNode)
                     })

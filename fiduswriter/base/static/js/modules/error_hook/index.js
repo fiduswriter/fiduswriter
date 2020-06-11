@@ -10,9 +10,7 @@ export class ErrorHook {
     init() {
         window.onerror = (msg, url, lineNumber, columnNumber, errorObj) => this.onError(msg, url, lineNumber, columnNumber, errorObj)
 
-        if (window.addEventListener) {
-            window.addEventListener('unhandledrejection', rejection => this.onUnhandledRejection(rejection))
-        }
+        window.addEventListener?.('unhandledrejection', rejection => this.onUnhandledRejection(rejection))
     }
 
     sendLog(details) {
@@ -52,7 +50,7 @@ export class ErrorHook {
         if (columnNumber) {
             logMessage += ", " + columnNumber
         }
-        if (errorObj && errorObj.stack) {
+        if (errorObj?.stack) {
             logMessage += ", " + errorObj.stack
         }
         if (mappedStack) {
@@ -62,7 +60,7 @@ export class ErrorHook {
     }
 
     onUnhandledRejection(rejection) {
-        if (settings_SOURCE_MAPS && rejection.reason && rejection.reason.stack) {
+        if (settings_SOURCE_MAPS && rejection.reason?.stack) {
             StackTrace.fromError(rejection.reason).then(
                 stackFrames => this.logUnhandledRejection(rejection, stackFrames.map(sf => sf.toString()).join('\n'))
             ).catch(
@@ -75,15 +73,13 @@ export class ErrorHook {
 
     logUnhandledRejection(rejection, mappedStack = false) {
         let logMessage = rejection.type
-        if (rejection.reason) {
-            if (rejection.reason.message) {
-                logMessage += ", " + rejection.reason.message
-            } else {
-                logMessage += ", " + JSON.stringify(rejection.reason)
-            }
-            if (rejection.reason.stack) {
-                logMessage += ", " + rejection.reason.stack
-            }
+        if (rejection.reason?.message) {
+            logMessage += ", " + rejection.reason.message
+        } else {
+            logMessage += ", " + JSON.stringify(rejection.reason)
+        }
+        if (rejection.reason?.stack) {
+            logMessage += ", " + rejection.reason.stack
         }
         if (mappedStack) {
             logMessage += "\n" + mappedStack

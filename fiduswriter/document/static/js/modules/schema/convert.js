@@ -120,10 +120,10 @@ const convertNodeV1 = function(node) {
         ids = node.attrs.bibEntry ? node.attrs.bibEntry.split(',') : []
         references = ids.map((id, index) => {
             const returnObj = {id: parseInt(id)}
-            if (prefixes[index] && prefixes[index] !== '') {
+            if (prefixes[index] !== '') {
                 returnObj['prefix'] = prefixes[index]
             }
-            if (locators[index] && locators[index] !== '') {
+            if (locators[index] !== '') {
                 returnObj['locator'] = locators[index]
             }
             return returnObj
@@ -134,7 +134,7 @@ const convertNodeV1 = function(node) {
         }
         break
     case 'footnote':
-        if (node.attrs && node.attrs.footnote) {
+        if (node.attrs?.footnote) {
             node.attrs.footnote.forEach(childNode => {
                 convertNodeV1(childNode)
             })
@@ -526,10 +526,10 @@ const convertDocV23 = function(doc) {
 }
 
 const convertNodeV30 = function(node) {
-    if (node.attrs && node.attrs.marks) {
+    if (node.attrs?.marks) {
         node.attrs.marks = node.attrs.marks.filter(mark => mark !== 'anchor')
     }
-    if (node.attrs && node.attrs.footnote_marks) {
+    if (node.attrs?.footnote_marks) {
         node.attrs.footnote_marks = node.attrs.footnote_marks.filter(mark => mark !== 'anchor')
     }
     let attrs

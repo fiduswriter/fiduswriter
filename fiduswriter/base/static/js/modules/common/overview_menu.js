@@ -36,9 +36,7 @@ export class OverviewMenuView {
                 seekItem = seekItem.previousElementSibling
             }
             const menuItem = this.model.content[menuNumber]
-            if (menuItem.input) {
-                menuItem.input(this.overview, target.value)
-            }
+            menuItem.input?.(this.overview, target.value)
         }
     }
 

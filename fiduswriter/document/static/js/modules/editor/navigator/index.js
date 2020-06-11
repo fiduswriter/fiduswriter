@@ -90,9 +90,7 @@ export class ModNavigator {
     scrollToActiveHeading() {
         const listDOM = document.getElementById("navigator-list")
         const activeHeading = listDOM.getElementsByClassName('active-heading')[0]
-        if (activeHeading) {
-            activeHeading.scrollIntoView()
-        }
+        activeHeading?.scrollIntoView()
     }
 
     closeNavigator() {
@@ -122,7 +120,7 @@ export class ModNavigator {
         const items = []
         let nearestHeader = ""
         this.editor.view.state.doc.descendants((node, pos) => {
-            if (node.attrs && node.attrs.hidden) {
+            if (node.attrs?.hidden) {
                 return false
             } else if (this.defaultFilters.includes(node.type.name) && node.textContent !== "") {
                 if (pos <= currentPos) {

@@ -33,12 +33,10 @@ class MenuView {
     update(view) {
         const activeMarks = []
 
-        if (view.state) {
-            const storedMarks = view.state.storedMarks || view.state.selection.$head.marks()
-            if (storedMarks) {
-                for (const mark of storedMarks) {
-                    activeMarks[mark.type.name] = true
-                }
+        const storedMarks = view.state?.storedMarks || view.state?.selection.$head.marks()
+        if (storedMarks) {
+            for (const mark of storedMarks) {
+                activeMarks[mark.type.name] = true
             }
         }
 

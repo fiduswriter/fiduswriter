@@ -484,10 +484,10 @@ export class LatexExporterConvert {
                 content += `${innerFigure}\\caption*{${caption}}\\label{${node.attrs.id}}\n`
                 end = `\\end{figure}\n` + end
             }
-            if (copyright && copyright.holder) {
+            if (copyright?.holder) {
                 content += `% © ${copyright.year ? copyright.year : new Date().getFullYear()} ${copyright.holder}\n`
             }
-            if (copyright && copyright.licenses.length) {
+            if (copyright?.licenses.length) {
                 copyright.licenses.forEach(
                     license => {
                         content += `% ${license.title}: ${license.url}${license.start ? ` (${license.start})\n` : ''}\n`
@@ -502,7 +502,7 @@ export class LatexExporterConvert {
             break
         }
         case 'table':
-            if (node.content && node.content.length) {
+            if (node.content?.length) {
                 const columns = node.content[0].content.reduce(
                     (columns, node) => columns + node.attrs.colspan,
                     0
@@ -560,8 +560,7 @@ export class LatexExporterConvert {
         }
         if (
             placeFootnotesAfterBlock &&
-            options.unplacedFootnotes &&
-            options.unplacedFootnotes.length
+            options.unplacedFootnotes?.length
         ) {
             // There are footnotes that needed to be placed behind the node.
             // This happens in the case of headlines and lists.

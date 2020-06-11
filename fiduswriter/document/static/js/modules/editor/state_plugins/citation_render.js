@@ -38,7 +38,7 @@ export const citationRenderPlugin = function(options) {
                                 }
                             )
                         }
-                        if (step.slice && step.slice.content) {
+                        if (step.slice?.content) {
                             step.slice.content.descendants(node => {
                                 if (node.type.name === 'citation') {
                                     // A citation was added. We need to reset

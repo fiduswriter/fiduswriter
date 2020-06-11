@@ -3,7 +3,7 @@ import deepEqual from "fast-deep-equal"
 import {toFullJSON} from "../schema/mini_json"
 
 function cleanFootnotes(node, elements, marks) {
-    if (node.attrs && node.attrs.footnote) {
+    if (node.attrs?.footnote) {
         // We remove forbidden block nodes
         node.attrs.footnote = node.attrs.footnote.filter(node => !elements.includes(node.type))
         // We remove forbidden marks + inline nodes

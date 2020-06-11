@@ -18,9 +18,7 @@ export class ModDocumentTemplate {
         if (Object.keys(this.documentTemplates).length) {
             this.addCopyAsMenuEntry()
         }
-        if (this.editor.menu.headerView) {
-            this.editor.menu.headerView.update()
-        }
+        this.editor.menu.headerView?.update()
     }
 
     addDocPartSettings() {

@@ -65,9 +65,7 @@ export class GeneralPasteHandler {
         // Remove all footnotes from document. Some footnotes may have several
         // markers, so only remove each footnote once.
         this.footnotes.forEach(fn => {
-            if (fn.parentNode) {
-                fn.parentNode.removeChild(fn)
-            }
+            fn.parentNode?.removeChild(fn)
         })
     }
 

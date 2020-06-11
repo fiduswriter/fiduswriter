@@ -42,7 +42,7 @@ export function styleEpubFootnotes(htmlEl) {
             }
             newFootnote.firstChild.innerHTML = footnoteCounter + ' ' + newFootnote.firstChild.innerHTML
         } else {
-            newFootnote.innerHTML = '<p>'+footnoteCounter+'</p>'
+            newFootnote.innerHTML = '<p>' + footnoteCounter + '</p>'
         }
 
         footnote.parentNode.replaceChild(newFootnote, footnote)

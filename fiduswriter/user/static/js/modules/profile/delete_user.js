@@ -14,7 +14,7 @@ export class DeleteUserDialog {
                 click: () => {
                     const usernamefieldValue = document.getElementById('username-confirmation').value
                     const passwordfieldValue = document.getElementById('password').value
-                    if (usernamefieldValue===this.username && passwordfieldValue.length) {
+                    if (usernamefieldValue === this.username && passwordfieldValue.length) {
                         this.deleteCurrentUser(passwordfieldValue)
                     }
                 }
@@ -35,30 +35,30 @@ export class DeleteUserDialog {
     }
 
     deleteCurrentUser(password) {
-       activateWait()
+        activateWait()
 
-       postBare(
-           '/api/user/delete/',
-           {password}
-       ).then(
-           response => {
-               switch (response.status) {
-                   case 204:
-                        window.location = '/'
-                        break
-                    case 403:
-                        addAlert('error', gettext('Staff accounts have to be deleted through the admin interface.'))
-                        break
-                    case 401:
-                        addAlert('error', gettext('Password incorrect.'))
-                        break
-                    default:
-                        addAlert('error', gettext('Could not delete user account.'))
-                        break
-               }
-               deactivateWait()
-           }
-       )
-   }
+        postBare(
+            '/api/user/delete/',
+            {password}
+        ).then(
+            response => {
+                switch (response.status) {
+                case 204:
+                    window.location = '/'
+                    break
+                case 403:
+                    addAlert('error', gettext('Staff accounts have to be deleted through the admin interface.'))
+                    break
+                case 401:
+                    addAlert('error', gettext('Password incorrect.'))
+                    break
+                default:
+                    addAlert('error', gettext('Could not delete user account.'))
+                    break
+                }
+                deactivateWait()
+            }
+        )
+    }
 
 }

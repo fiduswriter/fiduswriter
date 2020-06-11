@@ -109,16 +109,16 @@ export class DocTemplatesEditor {
         this.dom.addEventListener('click', event => {
             const el = {}
             switch (true) {
-                case findTarget(event, 'button.save', el):
-                    event.preventDefault()
-                    this.save()
-                    break
-                case findTarget(event, 'button.close, span.close', el):
-                    event.preventDefault()
-                    this.app.goTo('/templates/')
-                    break
-                default:
-                    break
+            case findTarget(event, 'button.save', el):
+                event.preventDefault()
+                this.save()
+                break
+            case findTarget(event, 'button.close, span.close', el):
+                event.preventDefault()
+                this.app.goTo('/templates/')
+                break
+            default:
+                break
             }
         })
     }

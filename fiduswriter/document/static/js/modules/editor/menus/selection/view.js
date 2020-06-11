@@ -105,10 +105,10 @@ export class SelectionMenuView {
         return `<div style="margin-top: ${offset}px;">
             <div class="editor-selection-menu">
                 ${this.editor.menu.selectionMenuModel.content.map((menuItem, index) =>
-                    `<div class="ui-buttonset${menuItem.disabled && menuItem.disabled(this.editor) ? ' disabled' : ''}">
+        `<div class="ui-buttonset${menuItem.disabled && menuItem.disabled(this.editor) ? ' disabled' : ''}">
                         ${this.getSelectionMenuItemHTML(menuItem, index)}
                     </div>`
-                ).join('')}
+    ).join('')}
             </div>
         </div>`
     }

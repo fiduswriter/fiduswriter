@@ -6,7 +6,7 @@ import {GapCursor} from "prosemirror-gapcursor"
 
 const posHidden = function($pos) {
     let hidden = false
-    for (let i=$pos.depth; i > 0; i--) {
+    for (let i = $pos.depth; i > 0; i--) {
         if ($pos.node(i).attrs.hidden) {
             hidden = true
         }

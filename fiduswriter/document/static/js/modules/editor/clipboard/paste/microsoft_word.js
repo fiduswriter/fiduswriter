@@ -15,11 +15,11 @@ export class MicrosoftWordPasteHandler extends GeneralPasteHandler {
 
     // Iterate over pasted nodes and their children
     iterateNode(node) {
-        if (node.tagName==="P" &! node.firstChild) {
+        if (node.tagName === "P" & ! node.firstChild) {
             node.parentNode.removeChild(node)
             return true
-        } else if (node.nodeType===8) {
-            if (node.textContent==="EndFragment") {
+        } else if (node.nodeType === 8) {
+            if (node.textContent === "EndFragment") {
                 // End of paste content. Remove all remaining sibling nodes.
                 while (node) {
                     const nextSibling = node.nextSibling

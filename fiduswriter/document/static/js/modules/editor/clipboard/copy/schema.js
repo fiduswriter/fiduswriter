@@ -9,7 +9,7 @@ const copyCitation = Object.assign({}, citation)
 copyCitation.toDOM = function(node) {
     const bibDB = node.type.schema.cached.bibDB,
         bibs = {}
-        node.attrs.references.forEach(ref => bibs[ref.id] = bibDB.db[ref.id])
+    node.attrs.references.forEach(ref => bibs[ref.id] = bibDB.db[ref.id])
     return ["span", {
         class: 'citation',
         'data-format': node.attrs.format,

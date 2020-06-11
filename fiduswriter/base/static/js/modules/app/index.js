@@ -33,24 +33,24 @@ export class App {
                 open: pathnameParts => {
                     let returnValue
                     switch (pathnameParts[2]) {
-                        case "confirm-email": {
-                            const key = pathnameParts[3]
-                            returnValue = new EmailConfirm(this.config, key)
-                            break
-                        }
-                        case "password-reset":
-                            returnValue = new PasswordResetRequest(this.config)
-                            break
-                        case "change-password": {
-                            const key = pathnameParts[3]
-                            returnValue = new PasswordResetChangePassword(this.config, key)
-                            break
-                        }
-                        case "sign-up":
-                            returnValue = new Signup(this.config)
-                            break
-                        default:
-                            returnValue = false
+                    case "confirm-email": {
+                        const key = pathnameParts[3]
+                        returnValue = new EmailConfirm(this.config, key)
+                        break
+                    }
+                    case "password-reset":
+                        returnValue = new PasswordResetRequest(this.config)
+                        break
+                    case "change-password": {
+                        const key = pathnameParts[3]
+                        returnValue = new PasswordResetChangePassword(this.config, key)
+                        break
+                    }
+                    case "sign-up":
+                        returnValue = new Signup(this.config)
+                        break
+                    default:
+                        returnValue = false
                     }
                     return returnValue
                 }
@@ -83,14 +83,14 @@ export class App {
                 open: pathnameParts => {
                     let returnValue
                     switch (pathnameParts[2]) {
-                        case "profile":
-                            returnValue = new Profile(this.config)
-                            break
-                        case "team":
-                            returnValue = new ContactsOverview(this.config)
-                            break
-                        default:
-                            returnValue = false
+                    case "profile":
+                        returnValue = new Profile(this.config)
+                        break
+                    case "team":
+                        returnValue = new ContactsOverview(this.config)
+                        break
+                    default:
+                        returnValue = false
                     }
                     return returnValue
                 }
@@ -186,18 +186,18 @@ export class App {
         document.addEventListener('click', event => {
             const el = {}
             switch (true) {
-                case findTarget(event, 'a', el):
-                    if (
-                        el.target.hostname === window.location.hostname &&
+            case findTarget(event, 'a', el):
+                if (
+                    el.target.hostname === window.location.hostname &&
                         el.target.getAttribute('href')[0] === '/' &&
                         el.target.getAttribute('href').slice(0, 7) !== '/media/' &&
                         el.target.getAttribute('href').slice(0, 5) !== '/api/'
-                    ) {
-                        event.preventDefault()
-                        event.stopImmediatePropagation()
-                        this.goTo(el.target.href)
-                    }
-                    break
+                ) {
+                    event.preventDefault()
+                    event.stopImmediatePropagation()
+                    this.goTo(el.target.href)
+                }
+                break
             }
         })
         let resizeDone
@@ -217,11 +217,11 @@ export class App {
             appLoaded: () => true,
             receiveData: data => {
                 switch (data.type) {
-                    case 'message':
-                            showSystemMessage(data.message)
-                        break
-                    default:
-                        break
+                case 'message':
+                    showSystemMessage(data.message)
+                    break
+                default:
+                    break
                 }
             }
 

@@ -21,16 +21,16 @@ export class TableDialog {
             colCount += 1
         }
         let rowCount = 1
-        countElement= countElement.parentElement
+        countElement = countElement.parentElement
         while (countElement.previousElementSibling) {
             countElement = countElement.previousElementSibling
             rowCount += 1
         }
         // add hover class.
         const rows = this.dialog.dialogEl.querySelectorAll('tr')
-        for (let i=0;i<rowCount;i++) {
+        for (let i = 0;i < rowCount;i++) {
             const cols = rows[i].querySelectorAll('td')
-            for (let j=0;j<colCount;j++) {
+            for (let j = 0;j < colCount;j++) {
                 cols[j].classList.add(className)
             }
         }
@@ -46,9 +46,9 @@ export class TableDialog {
             click: () => {
                 const table = {type: 'table', content: []}
 
-                for (let i=0;i<rowCount;i++) {
+                for (let i = 0;i < rowCount;i++) {
                     const row = {type: 'table_row', content: []}
-                    for (let j=0;j<colCount;j++) {
+                    for (let j = 0;j < colCount;j++) {
                         row.content.push({type: 'table_cell', content: [{type: 'paragraph'}]})
                     }
                     table.content.push(row)
@@ -101,7 +101,7 @@ export class TableResizeDialog {
     constructor(editor) {
         this.editor = editor
         this.dialogEl = false
-        this.aligned='center'
+        this.aligned = 'center'
         this.width = '100'
         this.layout = 'fixed'
     }

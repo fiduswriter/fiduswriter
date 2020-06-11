@@ -2,8 +2,8 @@ import {escapeText} from "../common"
 import {LANGUAGES, PAPER_SIZES} from "../schema/const"
 
 
-const allowedElementsTemplate = ({elements}, footnote=true, table=true) =>
-`<div class="label">
+const allowedElementsTemplate = ({elements}, footnote = true, table = true) =>
+    `<div class="label">
     ${gettext('Allowed elements')}
 </div>
 <label>
@@ -36,8 +36,8 @@ const allowedElementsTemplate = ({elements}, footnote=true, table=true) =>
 </label>
 ${
     footnote ?
-    '' :
-    `<label>
+        '' :
+        `<label>
         <input type="checkbox" class="elements" value="code_block" ${elements.includes('code_block') ? 'checked' : ''}/>
         ${gettext('Code')}
     </label>`
@@ -76,24 +76,24 @@ ${
 </label>
 ${
     footnote ?
-    `<label>
+        `<label>
         <input type="checkbox" class="elements" value="footnote" ${elements.includes('footnote') ? 'checked' : ''}/>
         ${gettext('Footnote')}
-    </label>`:
-    ''
+    </label>` :
+        ''
 }
 ${
     table ?
-    `<label>
+        `<label>
         <input type="checkbox" class="elements" value="table" ${elements.includes('table') ? 'checked' : ''}/>
         ${gettext('Table')}
-    </label>`:
-    ''
+    </label>` :
+        ''
 }`
 
 
 const allowedMarksTemplate = ({marks}) =>
-`<div class="label">
+    `<div class="label">
     ${gettext('Allowed marks')}
 </div>
 <label>
@@ -114,16 +114,16 @@ const allowedMarksTemplate = ({marks}) =>
 </label>`
 
 const headingTemplate = ({
-    id="",
-    title="",
-    elements=["heading1", "heading2", "heading3", "heading4", "heading5", "heading6"],
-    marks=["strong", "em", "underline", "link"],
-    locking="false",
-    optional="false",
-    language=false,
-    metadata=false
+    id = "",
+    title = "",
+    elements = ["heading1", "heading2", "heading3", "heading4", "heading5", "heading6"],
+    marks = ["strong", "em", "underline", "link"],
+    locking = "false",
+    optional = "false",
+    language = false,
+    metadata = false
 }) =>
-`<div class="doc-part" data-type="heading_part">
+    `<div class="doc-part" data-type="heading_part">
     <div class="doc-part-header">
         ${gettext('Heading')}
         <ul class="object-tools right">
@@ -139,23 +139,23 @@ const headingTemplate = ({
     <div class="attrs hidden">
         <div class="label">${gettext('Metadata function')}
             <select class="metadata">
-                <option value="false" ${metadata===false ? "selected" : ""}>${gettext('None')}</option>
-                <option value="subtitle" ${metadata==='subtitle' ? "selected" : ""}>${gettext('Subtitle')}</option>
-                <option value="title" ${metadata==='title' ? "selected" : ""}>${gettext('Title (translated)')}</option>
+                <option value="false" ${metadata === false ? "selected" : ""}>${gettext('None')}</option>
+                <option value="subtitle" ${metadata === 'subtitle' ? "selected" : ""}>${gettext('Subtitle')}</option>
+                <option value="title" ${metadata === 'title' ? "selected" : ""}>${gettext('Title (translated)')}</option>
             </select>
         </div>
         <div class="label">${gettext('Locking')}
             <select class="locking">
-                <option value="false" ${locking==='false' ? "selected" : ""}>${gettext('User can change contents')}</option>
-                <option value="fixed" ${locking==='fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
-                <option value="start" ${locking==='start' ? "selected" : ""}>${gettext('User can only add content')}</option>
+                <option value="false" ${locking === 'false' ? "selected" : ""}>${gettext('User can change contents')}</option>
+                <option value="fixed" ${locking === 'fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
+                <option value="start" ${locking === 'start' ? "selected" : ""}>${gettext('User can only add content')}</option>
             </select>
         </div>
         <div class="label">${gettext('Optional')}
             <select class="optional">
-                <option value="false" ${optional==='false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
-                <option value="shown" ${optional==='shown' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
-                <option value="hidden" ${optional==='hidden' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
+                <option value="false" ${optional === 'false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
+                <option value="shown" ${optional === 'shown' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
+                <option value="hidden" ${optional === 'hidden' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </div>
         <div class="label">
@@ -188,12 +188,12 @@ const headingTemplate = ({
         ${allowedMarksTemplate({marks})}
         <div class="label">${gettext('Language')}
             <select class="language">
-                <option value="false" ${language===false ? "selected" : ""}>${gettext('Document language')}</option>
+                <option value="false" ${language === false ? "selected" : ""}>${gettext('Document language')}</option>
                 ${
-                    LANGUAGES.map(([code, name]) =>
-                        `<option value="${code}" ${language===code ? "selected" : ""}>${name}</option>`
-                    ).join('')
-                }
+    LANGUAGES.map(([code, name]) =>
+        `<option value="${code}" ${language === code ? "selected" : ""}>${name}</option>`
+    ).join('')
+}
             </select>
         </div>
         <div>
@@ -208,14 +208,14 @@ const headingTemplate = ({
 </div>`
 
 const contributorsTemplate = ({
-    id="",
-    title="",
-    item_title="",
-    locking="false",
-    optional="false",
-    metadata=false
+    id = "",
+    title = "",
+    item_title = "",
+    locking = "false",
+    optional = "false",
+    metadata = false
 }) =>
-`<div class="doc-part" data-type="contributors_part">
+    `<div class="doc-part" data-type="contributors_part">
     <div class="doc-part-header">
         ${gettext('Namelist')}
         <ul class="object-tools right">
@@ -232,23 +232,23 @@ const contributorsTemplate = ({
         <div class="label">${gettext('Item title')} <input type="text" class="item_title fw-inline" value="${escapeText(item_title)}"></div>
         <div class="label">${gettext('Metadata function')}
             <select class="metadata">
-                <option value="false" ${metadata===false ? "selected" : ""}>${gettext('None')}</option>
-                <option value="authors" ${metadata==='authors' ? "selected" : ""}>${gettext('Authors')}</option>
-                <option value="editors" ${metadata==='editors' ? "selected" : ""}>${gettext('Editors')}</option>
+                <option value="false" ${metadata === false ? "selected" : ""}>${gettext('None')}</option>
+                <option value="authors" ${metadata === 'authors' ? "selected" : ""}>${gettext('Authors')}</option>
+                <option value="editors" ${metadata === 'editors' ? "selected" : ""}>${gettext('Editors')}</option>
             </select>
         </div>
         <div class="label">${gettext('Locking')}
             <select class="locking">
-                <option value="false" ${locking==='false' ? "selected" : ""}>${gettext('User can change contents')}</option>
-                <option value="fixed" ${locking==='fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
-                <option value="start" ${locking==='start' ? "selected" : ""}>${gettext('User can only add content')}</option>
+                <option value="false" ${locking === 'false' ? "selected" : ""}>${gettext('User can change contents')}</option>
+                <option value="fixed" ${locking === 'fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
+                <option value="start" ${locking === 'start' ? "selected" : ""}>${gettext('User can only add content')}</option>
             </select>
         </div>
         <div class="label">${gettext('Optional')}
             <select class="optional">
-                <option value="false" ${optional==='false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
-                <option value="shown" ${optional==='shown' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
-                <option value="hidden" ${optional==='hidden' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
+                <option value="false" ${optional === 'false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
+                <option value="shown" ${optional === 'shown' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
+                <option value="hidden" ${optional === 'hidden' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </div>
         <div>
@@ -263,14 +263,14 @@ const contributorsTemplate = ({
 </div>`
 
 const richtextTemplate = ({
-    id="",
-    title="",
-    elements=["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "cross_reference", "blockquote", "footnote"],
-    marks=["strong", "em", "underline", "link"],
-    locking="false",
-    optional="false",
-    language=false,
-    metadata=false
+    id = "",
+    title = "",
+    elements = ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "cross_reference", "blockquote", "footnote"],
+    marks = ["strong", "em", "underline", "link"],
+    locking = "false",
+    optional = "false",
+    language = false,
+    metadata = false
 }) => `<div class="doc-part" data-type="richtext_part">
     <div class="doc-part-header">
         ${gettext('Richtext')}
@@ -287,43 +287,43 @@ const richtextTemplate = ({
     <div class="attrs hidden">
         <div class="label">${gettext('Metadata function')}
             <select class="metadata">
-                <option value="false" ${metadata===false ? "selected" : ""}>${gettext('None')}</option>
-                <option value="abstract" ${metadata==='abstract' ? "selected" : ""}>${gettext('Abstract')}</option>
-                <option value="cases" ${metadata==='cases' ? "selected" : ""}>${gettext('Cases/Case Reports')}</option>
-                <option value="conclusions" ${metadata==='conclusions' ? "selected" : ""}>${gettext('Conclusions/Comment')}</option>
-                <option value="discussion" ${metadata==='discussion' ? "selected" : ""}>${gettext('Discussion/Interpretation')}</option>
-                <option value="intro" ${metadata==='intro' ? "selected" : ""}>${gettext('Introduction/Synopsis')}</option>
-                <option value="materials" ${metadata==='materials' ? "selected" : ""}>${gettext('Materials')}</option>
-                <option value="methods" ${metadata==='methods' ? "selected" : ""}>${gettext('Methods/Methodology/Procedures')}</option>
-                <option value="results" ${metadata==='results' ? "selected" : ""}>${gettext('Results/Statement of Findings')}</option>
-                <option value="subjects" ${metadata==='subjects' ? "selected" : ""}>${gettext('Subjects/Participants/Patients')}</option>
-                <option value="supplementary-material" ${metadata==='supplementary-material' ? "selected" : ""}>${gettext('Supplementary materials')}</option>
+                <option value="false" ${metadata === false ? "selected" : ""}>${gettext('None')}</option>
+                <option value="abstract" ${metadata === 'abstract' ? "selected" : ""}>${gettext('Abstract')}</option>
+                <option value="cases" ${metadata === 'cases' ? "selected" : ""}>${gettext('Cases/Case Reports')}</option>
+                <option value="conclusions" ${metadata === 'conclusions' ? "selected" : ""}>${gettext('Conclusions/Comment')}</option>
+                <option value="discussion" ${metadata === 'discussion' ? "selected" : ""}>${gettext('Discussion/Interpretation')}</option>
+                <option value="intro" ${metadata === 'intro' ? "selected" : ""}>${gettext('Introduction/Synopsis')}</option>
+                <option value="materials" ${metadata === 'materials' ? "selected" : ""}>${gettext('Materials')}</option>
+                <option value="methods" ${metadata === 'methods' ? "selected" : ""}>${gettext('Methods/Methodology/Procedures')}</option>
+                <option value="results" ${metadata === 'results' ? "selected" : ""}>${gettext('Results/Statement of Findings')}</option>
+                <option value="subjects" ${metadata === 'subjects' ? "selected" : ""}>${gettext('Subjects/Participants/Patients')}</option>
+                <option value="supplementary-material" ${metadata === 'supplementary-material' ? "selected" : ""}>${gettext('Supplementary materials')}</option>
             </select>
         </div>
         <div class="label">${gettext('Locking')}
             <select class="locking">
-                <option value="false" ${locking==='false' ? "selected" : ""}>${gettext('User can change contents')}</option>
-                <option value="fixed" ${locking==='fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
-                <option value="start" ${locking==='start' ? "selected" : ""}>${gettext('User can only add content')}</option>
+                <option value="false" ${locking === 'false' ? "selected" : ""}>${gettext('User can change contents')}</option>
+                <option value="fixed" ${locking === 'fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
+                <option value="start" ${locking === 'start' ? "selected" : ""}>${gettext('User can only add content')}</option>
             </select>
         </div>
         <div class="label">${gettext('Optional')}
             <select class="optional">
-                <option value="false" ${optional==='false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
-                <option value="shown" ${optional==='shown' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
-                <option value="hidden" ${optional==='hidden' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
+                <option value="false" ${optional === 'false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
+                <option value="shown" ${optional === 'shown' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
+                <option value="hidden" ${optional === 'hidden' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </div>
         ${allowedElementsTemplate({elements})}
         ${allowedMarksTemplate({marks})}
         <div class="label">${gettext('Language')}
             <select class="language">
-                <option value="false" ${language===false ? "selected" : ""}>${gettext('Document language')}</option>
+                <option value="false" ${language === false ? "selected" : ""}>${gettext('Document language')}</option>
                 ${
-                    LANGUAGES.map(([code, name]) =>
-                        `<option value="${code}" ${language===code ? "selected" : ""}>${name}</option>`
-                    ).join('')
-                }
+    LANGUAGES.map(([code, name]) =>
+        `<option value="${code}" ${language === code ? "selected" : ""}>${name}</option>`
+    ).join('')
+}
             </select>
         </div>
         <div>
@@ -339,9 +339,9 @@ const richtextTemplate = ({
 
 
 const separatorTemplate = ({
-    id=""
+    id = ""
 }) =>
-`<div class="doc-part" data-type="separator_part">
+    `<div class="doc-part" data-type="separator_part">
     <div class="doc-part-header">
         ${gettext('Separator')}
         <div class="label">
@@ -351,14 +351,14 @@ const separatorTemplate = ({
 </div>`
 
 const tagsTemplate = ({
-    id="",
-    title="",
-    item_title="",
-    locking="false",
-    optional="false",
-    metadata=false
+    id = "",
+    title = "",
+    item_title = "",
+    locking = "false",
+    optional = "false",
+    metadata = false
 }) =>
-`<div class="doc-part" data-type="tags_part">
+    `<div class="doc-part" data-type="tags_part">
     <div class="doc-part-header">
         ${gettext('Tags')}
         <ul class="object-tools right">
@@ -375,22 +375,22 @@ const tagsTemplate = ({
         <div class="label">${gettext('Item title')} <input type="text fw-inline" class="item_title" value="${escapeText(item_title)}"></div>
         <div class="label">${gettext('Metadata function')}
             <select class="metadata">
-                <option value="false" ${metadata===false ? "selected" : ""}>${gettext('None')}</option>
-                <option value="keywords" ${metadata==='keywords' ? "selected" : ""}>${gettext('Keywords')}</option>
+                <option value="false" ${metadata === false ? "selected" : ""}>${gettext('None')}</option>
+                <option value="keywords" ${metadata === 'keywords' ? "selected" : ""}>${gettext('Keywords')}</option>
             </select>
         </div>
         <div class="label">${gettext('Locking')}
             <select class="locking">
-                <option value="false" ${locking==='false' ? "selected" : ""}>${gettext('User can change contents')}</option>
-                <option value="fixed" ${locking==='fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
-                <option value="start" ${locking==='start' ? "selected" : ""}>${gettext('User can only add content')}</option>
+                <option value="false" ${locking === 'false' ? "selected" : ""}>${gettext('User can change contents')}</option>
+                <option value="fixed" ${locking === 'fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
+                <option value="start" ${locking === 'start' ? "selected" : ""}>${gettext('User can only add content')}</option>
             </select>
         </div>
         <div class="label">${gettext('Optional')}
             <select class="optional">
-                <option value="false" ${optional==='false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
-                <option value="shown" ${optional==='shown' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
-                <option value="hidden" ${optional==='hidden' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
+                <option value="false" ${optional === 'false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
+                <option value="shown" ${optional === 'shown' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
+                <option value="hidden" ${optional === 'hidden' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </div>
         <div>
@@ -405,15 +405,15 @@ const tagsTemplate = ({
 </div>`
 
 const tableTemplate = ({
-    id="",
-    title="",
-    elements= ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "cross_reference", "blockquote", "footnote"],
-    marks= ["strong", "em", "underline", "link"],
-    locking="false",
-    optional="false",
-    language=false
+    id = "",
+    title = "",
+    elements = ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "cross_reference", "blockquote", "footnote"],
+    marks = ["strong", "em", "underline", "link"],
+    locking = "false",
+    optional = "false",
+    language = false
 }) =>
-`<div class="doc-part" data-type="table_part">
+    `<div class="doc-part" data-type="table_part">
     <div class="doc-part-header">
         ${gettext('Table')}
         <ul class="object-tools right">
@@ -429,28 +429,28 @@ const tableTemplate = ({
     <div class="attrs hidden">
         <div class="label">${gettext('Locking')}
             <select class="locking">
-                <option value="false" ${locking==='false' ? "selected" : ""}>${gettext('User can change contents')}</option>
-                <option value="fixed" ${locking==='fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
-                <option value="header" ${locking==='header' ? "selected" : ""}>${gettext('User can not change first row')}</option>
+                <option value="false" ${locking === 'false' ? "selected" : ""}>${gettext('User can change contents')}</option>
+                <option value="fixed" ${locking === 'fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
+                <option value="header" ${locking === 'header' ? "selected" : ""}>${gettext('User can not change first row')}</option>
             </select>
         </div>
         <div class="label">${gettext('Optional')}
             <select class="optional">
-                <option value="false" ${optional==='false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
-                <option value="shown" ${optional==='shown' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
-                <option value="hidden" ${optional==='hidden' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
+                <option value="false" ${optional === 'false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
+                <option value="shown" ${optional === 'shown' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
+                <option value="hidden" ${optional === 'hidden' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </div>
         ${allowedElementsTemplate({elements}, true, false)}
         ${allowedMarksTemplate({marks})}
         <div class="label">${gettext('Language')}
             <select class="language">
-                <option value="false" ${language===false ? "selected" : ""}>${gettext('Document language')}</option>
+                <option value="false" ${language === false ? "selected" : ""}>${gettext('Document language')}</option>
                 ${
-                    LANGUAGES.map(([code, name]) =>
-                        `<option value="${code}" ${language===code ? "selected" : ""}>${name}</option>`
-                    ).join('')
-                }
+    LANGUAGES.map(([code, name]) =>
+        `<option value="${code}" ${language === code ? "selected" : ""}>${name}</option>`
+    ).join('')
+}
             </select>
         </div>
         <div>
@@ -465,11 +465,11 @@ const tableTemplate = ({
 </div>`
 
 const tocTemplate = ({
-    id="",
-    title="",
-    optional="false"
+    id = "",
+    title = "",
+    optional = "false"
 }) =>
-`<div class="doc-part" data-type="table_of_contents">
+    `<div class="doc-part" data-type="table_of_contents">
     <div class="doc-part-header">
         ${gettext('Table of Contents')}
         <ul class="object-tools right">
@@ -485,9 +485,9 @@ const tocTemplate = ({
     <div class="attrs hidden">
         <div class="label">${gettext('Optional')}
             <select class="optional">
-                <option value="false" ${optional==='false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
-                <option value="shown" ${optional==='shown' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
-                <option value="hidden" ${optional==='hidden' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
+                <option value="false" ${optional === 'false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
+                <option value="shown" ${optional === 'shown' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
+                <option value="hidden" ${optional === 'hidden' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </div>
     </div>
@@ -499,25 +499,25 @@ const footnoteTemplate = ({
 }) => `<div class="doc-part attrs">${allowedElementsTemplate({elements: footnote_elements}, false)}${allowedMarksTemplate({marks: footnote_marks})}</div>`
 
 const citationstylesTemplate = ({citationstyles = ['apa']}, allCitationStyles) =>
-`<select multiple size=5>
+    `<select multiple size=5>
 ${Object.entries(allCitationStyles).map(([key, value]) => `<option value="${key}"${citationstyles.includes(key) ? ' selected' : ''}>${value}</option>`).join('')}
 </select>`
 
-export const citationstyleTemplate = ({citationstyle = 'apa', citationstyles=['apa']}, allCitationStyles) => {
+export const citationstyleTemplate = ({citationstyle = 'apa', citationstyles = ['apa']}, allCitationStyles) => {
     if (!citationstyles.includes(citationstyle)) {
         citationstyle = citationstyles[0]
     }
     return `<select>
         ${
-            citationstyles.map(
-                key => `<option value="${key}"${citationstyle === key ? ' selected' : ''}>${
-                    allCitationStyles[key]
-                }</option>`).join('')}
+    citationstyles.map(
+        key => `<option value="${key}"${citationstyle === key ? ' selected' : ''}>${
+            allCitationStyles[key]
+        }</option>`).join('')}
     </select>`
 }
 
 const languagesTemplate = ({languages = LANGUAGES.map(lang => lang[0])}) =>
-`<select multiple size=5>
+    `<select multiple size=5>
 ${LANGUAGES.map(lang => `<option value="${lang[0]}"${languages.includes(lang[0]) ? ' selected' : ''}>${lang[1]}</option>`).join('')}
 </select>`
 
@@ -531,12 +531,12 @@ export const languageTemplate = ({language = 'en-US', languages = LANGUAGES.map(
 }
 
 const papersizesTemplate = ({papersizes = PAPER_SIZES.map(size => size[0])}) =>
-`<select multiple size=5>
+    `<select multiple size=5>
 ${PAPER_SIZES.map(size => `<option value="${size[0]}"${papersizes.includes(size[0]) ? ' selected' : ''}>${size[0]}</option>`).join('')}
 </select>`
 
 const languageSelector = language =>
-`<select>
+    `<select>
 ${LANGUAGES.map(lang => `<option value="${lang[0]}"${language === lang[0] ? ' selected' : ''}>${lang[1]}</option>`).join('')}
 </select>`
 
@@ -550,8 +550,8 @@ export const bibliographyHeaderTemplate = ({bibliography_header = {zzz: ''}}) =>
             translation =>
                 `<tr>
                     <td>${
-                        languageSelector(translation[0])
-                    }</td>
+    languageSelector(translation[0])
+}</td>
                     <td>
                         <input type="text" value="${escapeText(translation[1])}" >
                     </td>
@@ -567,22 +567,22 @@ export const bibliographyHeaderTemplate = ({bibliography_header = {zzz: ''}}) =>
 const templateEditorValueTemplate = ({content}) =>
     content.map(docPart => {
         switch (docPart.type) {
-            case 'heading_part':
-                return headingTemplate(docPart.attrs)
-            case 'contributors_part':
-                return contributorsTemplate(docPart.attrs)
-            case 'richtext_part':
-                return richtextTemplate(docPart.attrs)
-            case 'tags_part':
-                return tagsTemplate(docPart.attrs)
-            case 'table_part':
-                return tableTemplate(docPart.attrs)
-            case 'table_of_contents':
-                return tocTemplate(docPart.attrs)
-            case 'separator_part':
-                return separatorTemplate(docPart.attrs)
-            default:
-                return ''
+        case 'heading_part':
+            return headingTemplate(docPart.attrs)
+        case 'contributors_part':
+            return contributorsTemplate(docPart.attrs)
+        case 'richtext_part':
+            return richtextTemplate(docPart.attrs)
+        case 'tags_part':
+            return tagsTemplate(docPart.attrs)
+        case 'table_part':
+            return tableTemplate(docPart.attrs)
+        case 'table_of_contents':
+            return tocTemplate(docPart.attrs)
+        case 'separator_part':
+            return separatorTemplate(docPart.attrs)
+        default:
+            return ''
         }
     }).join('')
 
@@ -704,8 +704,8 @@ export const documentDesignerTemplate = ({id, value, title, documentStyles, expo
                 </td>
             </tr>
             ${
-                id ?
-                `<tr>
+    id ?
+        `<tr>
                     <td>
                         ${gettext('Document styles')}
                     </td>
@@ -725,7 +725,7 @@ export const documentDesignerTemplate = ({id, value, title, documentStyles, expo
                         </div>
                     </td>
                 </tr>` :
-                ''
-            }
+        ''
+}
         </tbody>
     </table>`

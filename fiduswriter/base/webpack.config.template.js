@@ -25,9 +25,9 @@ module.exports = { // eslint-disable-line no-undef
     module: {
         rules: [
             {
-                    test: /\.js$/,
-                    use: ["source-map-loader"],
-                    enforce: "pre"
+                test: /\.js$/,
+                use: ["source-map-loader"],
+                enforce: "pre"
             },
             {
                 test: /\.(csljson)$/i,

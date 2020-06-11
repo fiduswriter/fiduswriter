@@ -23,20 +23,20 @@ export function setSelectedChanges(state, type, pos) {
     const tr = state.tr,
         node = tr.doc.nodeAt(pos),
         mark = node.attrs.track ?
-            node.attrs.track.find(trackAttr => trackAttr.type===type) :
-            node.marks.find(mark => mark.type.name===type)
+            node.attrs.track.find(trackAttr => trackAttr.type === type) :
+            node.marks.find(mark => mark.type.name === type)
     if (!mark) {
         return
     }
     const selectedChange = node.isInline ? getFromToMark(tr.doc, pos, mark) : {from: pos, to: pos + node.nodeSize}
     let decos = DecorationSet.empty, spec
-    if (type==='insertion') {
+    if (type === 'insertion') {
         spec = selectedInsertionSpec
-    } else if (type==='deletion') {
+    } else if (type === 'deletion') {
         spec = selectedDeletionSpec
-    } else if (type==='format_change') {
+    } else if (type === 'format_change') {
         spec = selectedChangeFormatSpec
-    } else if (type==='block_change') {
+    } else if (type === 'block_change') {
         spec = selectedChangeBlockSpec
     }
     const decoType = node.isInline ? Decoration.inline : Decoration.node

@@ -15,7 +15,7 @@ const moveComment = function(doc, id, pos) {
         // position is 2
         pos = 2
     }
-    let posFrom = pos-1
+    let posFrom = pos - 1
     let posTo = pos
     // We move backward through the document, trying to pick a start position
     // the depth is 1 between document parts, and comments should be moved
@@ -141,13 +141,13 @@ export const commentsPlugin = function(options) {
         appendTransaction: (trs, oldState, state) => {
             // Check if any of the transactions are local.
             if (trs.every(tr => tr.getMeta(
-                    'remote'))) {
+                'remote'))) {
                 // All transactions are remote. Give up.
                 return
             }
 
             const deletedComments = {}
-                // Check what area is affected
+            // Check what area is affected
 
             trs.forEach(tr => {
                 Object.keys(deletedComments).forEach(commentId => {
@@ -222,11 +222,11 @@ export const commentsPlugin = function(options) {
         },
         props: {
             decorations(state) {
-				const {
-					decos
-				} = this.getState(state)
-				return decos
-			}
+                const {
+                    decos
+                } = this.getState(state)
+                return decos
+            }
         }
     })
 }

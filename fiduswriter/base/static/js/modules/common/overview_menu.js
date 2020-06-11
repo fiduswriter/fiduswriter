@@ -39,6 +39,7 @@ export class OverviewMenuView {
             if (menuItem.input) {
                 menuItem.input(this.overview, target.value)
             }
+
         }
     }
 

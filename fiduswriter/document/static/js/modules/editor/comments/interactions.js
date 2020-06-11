@@ -75,8 +75,8 @@ export class ModCommentInteractions {
             answerEditorDOM = document.querySelector('#answer-editor')
 
         if (
-            (commentEditorDOM  && commentEditorDOM.matches(':not(:empty)')) ||
-            (answerEditorDOM  && answerEditorDOM.matches(':not(:empty)'))
+            (commentEditorDOM?.matches(':not(:empty)')) ||
+            (answerEditorDOM?.matches(':not(:empty)'))
         ) {
             // Editor has been set up already. Abort.
             return
@@ -198,11 +198,11 @@ export class ModCommentInteractions {
             // a comment answer edit form is currently open
             return true
         }
-        if (this.editor && this.editor.view && this.editor.view.hasFocus()) {
+        if (this.editor?.view && this.editor?.view.hasFocus()) {
             // There is currently focus in the comment (answer) form
             return true
         }
-        if (this.editor && this.editor.view && this.editor.view.state.doc.content.content.length) {
+        if (this.editor?.view?.state.doc.content.content.length) {
             // Part of a comment (answer) has been entered.
             return true
         }
@@ -314,10 +314,7 @@ export class ModCommentInteractions {
         const id = this.activeCommentId
         if (
             id === '-1' ||
-            (
-                this.mod.store.comments[id] &&
-                this.mod.store.comments[id].comment.length === 0
-            )
+            this.mod.store.comments[id]?.comment.length === 0
         ) {
             this.deleteComment(id)
         } else {

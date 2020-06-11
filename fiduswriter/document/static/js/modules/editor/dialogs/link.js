@@ -61,8 +61,7 @@ export class LinkDialog {
     // Check if the selection spans over exactly one cross reference node. If so, use it.
     checkCrossReference() {
         if (
-            this.editor.currentView.state.selection.node &&
-            this.editor.currentView.state.selection.node.type.name === 'cross_reference'
+            this.editor.currentView.state.selection.node?.type.name === 'cross_reference'
         ) {
             this.submitButtonText = gettext('Update')
             this.target = this.editor.currentView.state.selection.node.attrs.id

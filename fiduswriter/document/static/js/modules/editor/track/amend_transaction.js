@@ -66,8 +66,7 @@ function markDeletion(tr, from, to, user, date1, date10) {
                     deletionMark
                 )
             } else if (
-                node.attrs.track &&
-                !node.attrs.track.find(trackAttr => trackAttr.type === 'deletion') &&
+                !node.attrs.track?.find(trackAttr => trackAttr.type === 'deletion') &&
                 !['bullet_list', 'ordered_list'].includes(node.type.name)
             ) {
                 if (node.attrs.track.find(trackAttr => trackAttr.type === 'insertion' && trackAttr.user === user.id)) {

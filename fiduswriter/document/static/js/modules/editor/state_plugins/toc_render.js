@@ -67,7 +67,7 @@ function getDecos(state) {
     const decoPos = [], tocItems = []
     let decos = DecorationSet.empty
     state.doc.descendants((node, offset) => {
-        if (node.attrs && node.attrs.hidden) {
+        if (node.attrs?.hidden) {
             return false
         } else if (node.type.name === 'table_of_contents') {
             decoPos.push(offset)
@@ -112,7 +112,7 @@ export const tocRenderPlugin = function(options) {
                                     return false
                                 } else if (node.type.groups.includes('heading')) {
                                     updateToc = true
-                                } else if (node.attrs && node.attrs.hidden) {
+                                } else if (node.attrs?.hidden) {
                                     hidden = true // was hidden
                                 }
                                 return true
@@ -122,7 +122,7 @@ export const tocRenderPlugin = function(options) {
                                     return false
                                 } else if (node.type.groups.includes('heading')) {
                                     updateToc = true
-                                } else if (node.attrs && node.attrs.hidden) {
+                                } else if (node.attrs?.hidden) {
                                     hidden = hidden ? false : true // is hidden
                                 }
                             })

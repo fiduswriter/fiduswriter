@@ -52,8 +52,8 @@ export class MicrosoftWordPasteHandler extends GeneralPasteHandler {
     convertNode(node) {
         // Footnote markers (only in main pm instance):
         if (node.tagName === 'A' &&
-            node.firstChild && node.firstChild.tagName === 'SPAN' &&
-            node.firstChild.classList.contains("MsoFootnoteReference") &&
+            node.firstChild?.tagName === 'SPAN' &&
+            node.firstChild?.classList.contains("MsoFootnoteReference") &&
             this.pmType === "main") {
             // Remove "#_ftn" from the selector (#_ftn1)
             const fnSelector = node.getAttribute("href")
@@ -66,7 +66,7 @@ export class MicrosoftWordPasteHandler extends GeneralPasteHandler {
                 if (footnoteCounter) {
                     const followingNode = footnoteCounter.nextSibling
                     footnoteCounter.parentNode.removeChild(footnoteCounter)
-                    if (followingNode && followingNode.nodeType === 3) {
+                    if (followingNode?.nodeType === 3) {
                         // If there is a text string right after the footnote
                         // marker, remove any leading spaces.
                         followingNode.nodeValue = followingNode.nodeValue.replace(/^\s+/, "")

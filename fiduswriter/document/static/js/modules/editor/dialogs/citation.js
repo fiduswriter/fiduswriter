@@ -17,7 +17,7 @@ export class CitationDialog {
     }
 
     init() {
-        if (this.node && this.node.type && this.node.type.name === 'citation') {
+        if (this.node?.type && this.node?.type.name === 'citation') {
             this.initialFormat = this.node.attrs.format
             this.initialReferences = this.node.attrs.references
         }
@@ -28,7 +28,7 @@ export class CitationDialog {
             classes: 'fw-light fw-add-button register-new-bib-source'
         })
 
-        if (this.node && this.node.type && this.node.type.name === 'citation') {
+        if (this.node?.type && this.node?.type.name === 'citation') {
             this.buttons.push({
                 text: gettext('Remove'),
                 click: () => {

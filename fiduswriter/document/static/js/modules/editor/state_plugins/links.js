@@ -42,7 +42,7 @@ export const getInternalTargets = function(state, language, editor) {
     const figures = {}
 
     state.doc.descendants(node => {
-        if (node.attrs.track && node.attrs.track.find(track => track.type === 'deletion')) {
+        if (node.attrs.track?.find(track => track.type === 'deletion')) {
             return true
         }
         if (node.type.groups.includes('heading')) {

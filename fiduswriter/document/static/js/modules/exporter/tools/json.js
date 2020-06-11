@@ -51,13 +51,13 @@ export const node2Obj = function(node) {
         obj.co = node.data
     } else {
         obj.nn = node.nodeName
-        if (node.attributes && node.attributes.length > 0) {
+        if (node.attributes?.length > 0) {
             obj.a = []
             for (let i = 0; i < node.attributes.length; i++) {
                 obj.a.push([node.attributes[i].name, node.attributes[i].value])
             }
         }
-        if (node.childNodes && node.childNodes.length > 0) {
+        if (node.childNodes?.length > 0) {
             obj.c = []
             for (let i = 0; i < node.childNodes.length; i++) {
                 if (node.childNodes[i]) {

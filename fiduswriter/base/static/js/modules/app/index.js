@@ -234,7 +234,6 @@ export class App {
 
         })
         this.ws.init()
-        Object.defineProperty(window, 'isOffline', {get: () => !navigator.onLine || this.ws.ws && this.ws.ws.readyState > 1})
     }
 
     activateFidusPlugins() {

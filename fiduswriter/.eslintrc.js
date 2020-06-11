@@ -24,7 +24,7 @@ module.exports = { // eslint-disable-line no-undef
         "ecmaFeatures": {
             "globalReturn": false,
         },
-        "ecmaVersion": 2018
+        "ecmaVersion": 2020
     },
     "rules": {
         "accessor-pairs": "error",

@@ -43,6 +43,7 @@
     "babel-jest": "^26.0.1",
     "jest":"^26.0.1",
     "@babel/cli": "7.6.x",
-    "@babel/plugin-transform-template-literals": "^7.10.1"
+    "@babel/plugin-transform-template-literals": "^7.10.1",
+    "@babel/plugin-proposal-optional-chaining": "^7.10.1"
   }
 }

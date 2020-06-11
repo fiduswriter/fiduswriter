@@ -37,7 +37,7 @@ export class DocxExporterRichtext {
             // We may need to add them later, if it turns out this is a problem
             // for other versions of Word. In that case we should also add
             // it to settings.xml as described in above link.
-            if (options.section === 'Normal' && !options.list_type && !(node.content && node.content.length)) {
+            if (options.section === 'Normal' && !options.list_type && !(node.content?.length)) {
                 start += '<w:p/>'
             } else {
                 start += noSpaceTmp`
@@ -266,7 +266,7 @@ export class DocxExporterRichtext {
         {
             // We take the first citation from the stack and remove it.
             const cit = this.citations.pmCits.shift()
-            if (options.citationType && options.citationType === 'note') {
+            if (options.citationType === 'note') {
                 // If the citations are in notes (footnotes), we need to
                 // put the contents of this citation in a footnote.
                 // We then add the footnote to the footnote file and
@@ -533,7 +533,7 @@ export class DocxExporterRichtext {
             const columns = node.content[0].content.length
             let cellWidth = 63500 // standard width
             options = Object.assign({}, options)
-            if (options.dimensions && options.dimensions.width) {
+            if (options.dimensions?.width) {
                 cellWidth = parseInt(options.dimensions.width / columns) - 2540 // subtracting for border width
             } else if (!options.dimensions) {
                 options.dimensions = {}

@@ -114,7 +114,7 @@ export class SelectionMenuView {
     }
 
     getSelectionMenuItemHTML(menuItem, _index) {
-        if (menuItem.disabled && menuItem.disabled(this.editor)) {
+        if (menuItem.disabled?.(this.editor)) {
             return ''
         } else {
             return this.getButtonHTML(menuItem)

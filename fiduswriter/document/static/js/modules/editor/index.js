@@ -492,7 +492,7 @@ export class Editor {
                 view = this.view
             } else {
                 const anchorMark = node.marks.find(mark => mark.type.name === 'anchor')
-                if (anchorMark && anchorMark.attrs.id === id) {
+                if (anchorMark?.attrs.id === id) {
                     foundPos = pos + 1
                     view = this.view
                 }
@@ -508,7 +508,7 @@ export class Editor {
                     view = this.mod.footnotes.fnEditor.view
                 } else {
                     const anchorMark = node.marks.find(mark => mark.type.name === 'anchor')
-                    if (anchorMark && anchorMark.attrs.id === id) {
+                    if (anchorMark?.attrs.id === id) {
                         foundPos = pos + 1
                         view = this.mod.footnotes.fnEditor.view
                     }

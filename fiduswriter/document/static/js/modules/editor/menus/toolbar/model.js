@@ -323,7 +323,7 @@ export const toolbarModel = () => ({
             selected: editor => {
                 const storedMarks = editor.currentView.state.storedMarks
                 if (
-                    storedMarks && storedMarks.some(mark => mark.type.name === 'strong') ||
+                    storedMarks?.some(mark => mark.type.name === 'strong') ||
                     editor.currentView.state.selection.$head.marks().some(mark => mark.type.name === 'strong')
                 ) {
                     return true
@@ -352,7 +352,7 @@ export const toolbarModel = () => ({
             selected: editor => {
                 const storedMarks = editor.currentView.state.storedMarks
                 if (
-                    storedMarks && storedMarks.some(mark => mark.type.name === 'em') ||
+                    storedMarks?.some(mark => mark.type.name === 'em') ||
                     editor.currentView.state.selection.$head.marks().some(mark => mark.type.name === 'em')
                 ) {
                     return true
@@ -386,7 +386,7 @@ export const toolbarModel = () => ({
             selected: editor => {
                 const storedMarks = editor.currentView.state.storedMarks
                 if (
-                    storedMarks && storedMarks.some(mark => mark.type.name === 'underline') ||
+                    storedMarks?.some(mark => mark.type.name === 'underline') ||
                     editor.currentView.state.selection.$head.marks().some(mark => mark.type.name === 'underline')
                 ) {
                     return true

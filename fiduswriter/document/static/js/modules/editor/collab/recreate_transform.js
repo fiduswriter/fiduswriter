@@ -205,7 +205,7 @@ class RecreateTransform {
         while (textDiffs.length) {
             const diff = textDiffs.shift()
             if (diff.added) {
-                if (textDiffs.length && textDiffs[0].removed) {
+                if (textDiffs[0]?.removed) {
                     const nextDiff = textDiffs.shift()
                     this.tr.replaceWith(
                         offset,
@@ -220,7 +220,7 @@ class RecreateTransform {
                 }
                 offset += diff.value.length
             } else if (diff.removed) {
-                if (textDiffs.length && textDiffs[0].added) {
+                if (textDiffs[0]?.added) {
                     const nextDiff = textDiffs.shift()
                     this.tr.replaceWith(
                         offset,

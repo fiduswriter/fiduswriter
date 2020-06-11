@@ -174,7 +174,7 @@ export class OdtExporterRichtext {
             } else {
                 cit = this.exporter.citations.pmCits.shift()
             }
-            if (options.citationType && options.citationType === 'note') {
+            if (options.citationType === 'note') {
                 // If the citations are in notes (footnotes), we need to
                 // put the contents of this citation in a footnote.
                 start += noSpaceTmp`

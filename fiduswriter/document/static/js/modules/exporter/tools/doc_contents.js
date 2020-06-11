@@ -14,7 +14,7 @@ export const removeHidden = function(
             returnNode[key] = node[key]
         }
     })
-    if (node.attrs && node.attrs.hidden) {
+    if (node.attrs?.hidden) {
         if (leaveStub) {
             return returnNode
         } else {

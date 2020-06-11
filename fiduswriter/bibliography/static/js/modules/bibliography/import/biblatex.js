@@ -65,8 +65,8 @@ export class BibLatexImporter {
         default:
             break
         }
-        if (message.done) {
-            this.callback?.()
+        if (message.done && this.callback) {
+            this.callback()
         }
     }
 

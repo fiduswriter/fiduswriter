@@ -109,7 +109,9 @@ export const toolbarModel = () => ({
             },
             action: editor => {
                 editor.menu.headerbarModel.open = !editor.menu.headerbarModel.open
-                editor.menu.headerView?.update()
+                if (editor.menu.headerView) {
+                    editor.menu.headerView.update()
+                }
             },
             class: editor => {
                 if (editor.menu.headerbarModel.open) {

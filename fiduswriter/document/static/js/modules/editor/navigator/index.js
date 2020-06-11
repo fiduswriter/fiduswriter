@@ -90,7 +90,9 @@ export class ModNavigator {
     scrollToActiveHeading() {
         const listDOM = document.getElementById("navigator-list")
         const activeHeading = listDOM.getElementsByClassName('active-heading')[0]
-        activeHeading?.scrollIntoView()
+        if (activeHeading) {
+            activeHeading.scrollIntoView()
+        }
     }
 
     closeNavigator() {

@@ -9,8 +9,10 @@ export class ErrorHook {
 
     init() {
         window.onerror = (msg, url, lineNumber, columnNumber, errorObj) => this.onError(msg, url, lineNumber, columnNumber, errorObj)
+        if (window.addEventListener) {
+            window.addEventListener('unhandledrejection', rejection => this.onUnhandledRejection(rejection))
+        }
 
-        window.addEventListener?.('unhandledrejection', rejection => this.onUnhandledRejection(rejection))
     }
 
     sendLog(details) {

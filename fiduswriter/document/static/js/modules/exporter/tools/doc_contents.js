@@ -14,7 +14,7 @@ export const removeHidden = function(
             returnNode[key] = node[key]
         }
     })
-    if (node.attrs && node.attrs.hidden) {
+    if (node.attrs?.hidden) {
         if (leaveStub) {
             return returnNode
         } else {
@@ -81,10 +81,10 @@ const addCoveredTableCells = function(node) {
             ) {
                 columnIndex++
             }
-            for (let i=0; i < cell.attrs.rowspan; i++) {
-                for (let j=0; j < cell.attrs.colspan; j++) {
+            for (let i = 0; i < cell.attrs.rowspan; i++) {
+                for (let j = 0; j < cell.attrs.colspan; j++) {
                     let fixedCell
-                    if (i===0 && j===0) {
+                    if (i === 0 && j === 0) {
                         fixedCell = cell
                     } else {
                         fixedCell = {
@@ -95,7 +95,7 @@ const addCoveredTableCells = function(node) {
                             }
                         }
                     }
-                    fixedTableMatrix[rowIndex+i].content[columnIndex+j] = fixedCell
+                    fixedTableMatrix[rowIndex + i].content[columnIndex + j] = fixedCell
                 }
             }
         })
@@ -104,7 +104,7 @@ const addCoveredTableCells = function(node) {
 }
 
 export const fixTables = function(node) {
-    if (node.type==='table') {
+    if (node.type === 'table') {
         addCoveredTableCells(node)
     }
     if (node.content) {

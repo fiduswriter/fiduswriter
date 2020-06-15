@@ -19,12 +19,12 @@ module.exports = { // eslint-disable-line no-undef
     },
     "parser": "babel-eslint",
     "parserOptions": {
-      "sourceType": "module",
-      "allowImportExportEverywhere": true,
-      "ecmaFeatures": {
-        "globalReturn": false,
-      },
-      "ecmaVersion": 2018
+        "sourceType": "module",
+        "allowImportExportEverywhere": true,
+        "ecmaFeatures": {
+            "globalReturn": false,
+        },
+        "ecmaVersion": 2020
     },
     "rules": {
         "accessor-pairs": "error",
@@ -80,7 +80,7 @@ module.exports = { // eslint-disable-line no-undef
         "id-length": "off",
         "id-match": "error",
         "implicit-arrow-linebreak": "off",
-        "indent": "off",
+        "indent": ["error", 4],
         "indent-legacy": "off",
         "init-declarations": "off",
         "jsx-quotes": "error",
@@ -271,7 +271,7 @@ module.exports = { // eslint-disable-line no-undef
         "space-before-blocks": "warn",
         "space-before-function-paren": ["warn", "never"],
         "space-in-parens": ["warn", "never"],
-        "space-infix-ops": "off",
+        "space-infix-ops": ["error", {"int32Hint": false}],
         "space-unary-ops": "off",
         "spaced-comment": "off",
         "strict": "error",

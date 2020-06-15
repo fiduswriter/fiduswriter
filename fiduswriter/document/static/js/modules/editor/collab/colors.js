@@ -45,7 +45,7 @@ export class ModCollabColors {
     provideUserColorStyles() {
         this.userColorStyle.innerHTML = this.colorIds.map((id, index) => {
             const color = index < CSS_COLORS.length ? CSS_COLORS[index] :
-                `${Math.round(Math.random()*255)},${Math.round(Math.random()*255)},${Math.round(Math.random()*255)}`
+                `${Math.round(Math.random() * 255)},${Math.round(Math.random() * 255)},${Math.round(Math.random() * 255)}`
             return noSpaceTmp`
                 span.user-${id} {
                     border-color: rgba(${color},1);

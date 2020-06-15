@@ -39,6 +39,7 @@ export class OverviewMenuView {
             if (menuItem.input) {
                 menuItem.input(this.overview, target.value)
             }
+
         }
     }
 
@@ -61,7 +62,7 @@ export class OverviewMenuView {
             this.model.content[menuNumber].content[itemNumber].action(this.overview)
             this.model.content[menuNumber].open = false
 
-            if (this.model.content[menuNumber].type==='dropdown') {
+            if (this.model.content[menuNumber].type === 'dropdown') {
                 this.model.content[menuNumber].title = this.model.content[menuNumber].content[itemNumber].title
                 this.openedMenu = false
                 this.update()
@@ -153,24 +154,24 @@ export class OverviewMenuView {
     getMenuItemHTML(menuItem) {
         let returnValue
         switch (menuItem.type) {
-            case 'dropdown':
-                returnValue = this.getDropdownHTML(menuItem)
-                break
-            case 'select-action-dropdown':
-                returnValue = this.getSelectionActionDropdownHTML(menuItem)
-                break
-            case 'text':
-                returnValue = this.getTextHTML(menuItem)
-                break
-            case 'button':
-                returnValue = this.getButtonHTML(menuItem)
-                break
-            case 'search':
-                returnValue = this.getSearchHTML(menuItem)
-                break
-            default:
-                returnValue = ''
-                break
+        case 'dropdown':
+            returnValue = this.getDropdownHTML(menuItem)
+            break
+        case 'select-action-dropdown':
+            returnValue = this.getSelectionActionDropdownHTML(menuItem)
+            break
+        case 'text':
+            returnValue = this.getTextHTML(menuItem)
+            break
+        case 'button':
+            returnValue = this.getButtonHTML(menuItem)
+            break
+        case 'search':
+            returnValue = this.getSearchHTML(menuItem)
+            break
+        default:
+            returnValue = ''
+            break
         }
         return returnValue
     }
@@ -180,10 +181,10 @@ export class OverviewMenuView {
         return `
         <div class="select-action fw-button fw-light fw-large">
             <input type="checkbox" ${
-                menuItem.checked ?
-                'checked' :
-                ''
-            }>
+    menuItem.checked ?
+        'checked' :
+        ''
+}>
             <span class="select-action-dropdown"><i class="fa fa-caret-down"></i></span>
         </div>
         ${this.getDropdownListHTML(menuItem)}
@@ -194,12 +195,12 @@ export class OverviewMenuView {
         return `
         <div class="dropdown fw-dropdown-menu">
             <label>${
-                menuItem.title ?
-                escapeText(menuItem.title) :
-                menuItem.content.length ?
-                escapeText(menuItem.content[0].title) :
-                ''
-            }</label>
+    menuItem.title ?
+        escapeText(menuItem.title) :
+        menuItem.content.length ?
+            escapeText(menuItem.content[0].title) :
+            ''
+}</label>
             <span class="dropdown"><i class="fa fa-caret-down"></i></span>
         </div>
         ${this.getDropdownListHTML(menuItem)}
@@ -231,10 +232,10 @@ export class OverviewMenuView {
         <button class="fw-button fw-light fw-large" title="${menuItem.title}">
             ${menuItem.title}
             ${
-                menuItem.icon ?
-                `<i class="fa fa-${menuItem.icon}"></i>` :
-                ''
-            }
+    menuItem.icon ?
+        `<i class="fa fa-${menuItem.icon}"></i>` :
+        ''
+}
         </button>`
     }
 

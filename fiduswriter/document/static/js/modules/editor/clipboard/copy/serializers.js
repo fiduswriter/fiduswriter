@@ -112,7 +112,7 @@ class ClipboardDOMSerializer {
     }
 
     getRandomID() {
-        return (0|Math.random()*9e6).toString(36)
+        return (0 | Math.random() * 9e6).toString(36)
     }
 
     getFootnoteAnchor(counter, id) {

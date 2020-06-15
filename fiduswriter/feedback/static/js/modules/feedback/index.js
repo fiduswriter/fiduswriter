@@ -36,21 +36,21 @@ export class FeedbackTab {
             </div>`
         )
 
-        let header_nav_wrapper = document.querySelector('#footer-menu.prelogin .fw-container')
+        let headerNavWrapper = document.querySelector('#footer-menu.prelogin .fw-container')
 
-        if (null === header_nav_wrapper) {
-            header_nav_wrapper = document.querySelector('.fw-header .fw-container')
+        if (null === headerNavWrapper) {
+            headerNavWrapper = document.querySelector('.fw-header .fw-container')
         }
 
-        if (null === header_nav_wrapper) {
-            header_nav_wrapper = document.querySelector('#headerbar')
+        if (null === headerNavWrapper) {
+            headerNavWrapper = document.querySelector('#headerbar')
         }
 
-        if (null === header_nav_wrapper) {
-            header_nav_wrapper = document.body
+        if (null === headerNavWrapper) {
+            headerNavWrapper = document.body
         }
 
-        header_nav_wrapper.insertAdjacentHTML(
+        headerNavWrapper.insertAdjacentHTML(
             'beforeend',
             `<a class="feedback-tab" aria-label="${gettext('Technical support')}" href="#"></a>`
         )

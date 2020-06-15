@@ -27,10 +27,8 @@ export class ModDocumentTemplate {
             get(template.template_file)
         }
         //Cache the required font related files too!
-        this.documentStyles.forEach(docStyle=>{
-            docStyle.documentstylefile_set.forEach(([url, _filename]) => {
-                get(url)
-            })
+        this.documentStyles.forEach(docStyle => {
+            docStyle.documentstylefile_set.forEach(([url, _filename]) => get(url))
         })
     }
 
@@ -60,7 +58,7 @@ export class ModDocumentTemplate {
                     let offset = 1, // We need to add one as we are looking at offset values within the firstChild
                         attrs
                     editor.view.state.doc.firstChild.forEach((docNode, docNodeOffset) => {
-                        if (docNode.attrs.id===node.attrs.id) {
+                        if (docNode.attrs.id === node.attrs.id) {
                             offset += docNodeOffset
                             attrs = Object.assign({}, docNode.attrs)
                             attrs.hidden = (!attrs.hidden)
@@ -73,7 +71,7 @@ export class ModDocumentTemplate {
                 selected: editor => !editor.view.state.doc.firstChild.child(index).attrs.hidden
             }))
         }
-        const settingsMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id==='settings')
+        const settingsMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id === 'settings')
         settingsMenu.content.unshift(metadataMenu)
     }
 
@@ -88,9 +86,9 @@ export class ModDocumentTemplate {
     }
 
     addCopyAsMenuEntry() {
-        const fileMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id==='file')
+        const fileMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id === 'file')
         // Cancel if run already
-        if (fileMenu.content.find(menuItem => menuItem.id==='copy_as')) {
+        if (fileMenu.content.find(menuItem => menuItem.id === 'copy_as')) {
             return
         }
         fileMenu.content.push({
@@ -106,16 +104,16 @@ export class ModDocumentTemplate {
                         ${gettext('Select document template for copy.')}
                         </p>
                         <select class="fw-button fw-large fw-light">${
-                            Object.entries(editor.mod.documentTemplate.documentTemplates).map(
-                                ([importId, dt]) => `<option value="${escapeText(importId)}">${escapeText(dt.title)}</option>`
-                            ).join('')
-                        }</select>`,
+    Object.entries(editor.mod.documentTemplate.documentTemplates).map(
+        ([importId, dt]) => `<option value="${escapeText(importId)}">${escapeText(dt.title)}</option>`
+    ).join('')
+}</select>`,
                     buttons: [
                         {
                             text: gettext('Copy'),
                             classes: "fw-dark",
                             click: () => {
-                                if (!editor.ws.isOnline()) {
+                                if (window.isOffline) {
                                     addAlert('error', "You're offline. Please try again after you're Online.")
                                     selectTemplateDialog.close()
                                 } else {
@@ -141,18 +139,18 @@ export class ModDocumentTemplate {
                 })
                 selectTemplateDialog.open()
             },
-            disabled:editor => !editor.ws.isOnline()
+            disabled: _editor => window.isOffline
         })
 
         fileMenu.content = fileMenu.content.sort((a, b) => a.order - b.order)
     }
 
     addExportTemplateMenuEntries() {
-        const exportMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id==='export')
+        const exportMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id === 'export')
         // Remove any previous entries in case we run this a second time
-        exportMenu.content = exportMenu.content.filter(menuItem => menuItem.class!=='export_template')
+        exportMenu.content = exportMenu.content.filter(menuItem => menuItem.class !== 'export_template')
         const exportMenuEntries = this.exportTemplates.map(template => {
-            if (template.file_type==='docx') {
+            if (template.file_type === 'docx') {
                 return {
                     class: 'export_template',
                     title: `${template.title} (DOCX)`,
@@ -197,7 +195,7 @@ export class ModDocumentTemplate {
                             exporter.init()
                         })
                     },
-                    disabled: editor => !editor.ws.isOnline()
+                    disabled: _editor => window.isOffline
                 }
             }
         })
@@ -205,8 +203,8 @@ export class ModDocumentTemplate {
     }
 
     addDocumentStylesMenuEntries() {
-        const settingsMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id==='settings'),
-            documentStyleMenu = settingsMenu.content.find(menu => menu.id==='document_style')
+        const settingsMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id === 'settings'),
+            documentStyleMenu = settingsMenu.content.find(menu => menu.id === 'document_style')
 
         documentStyleMenu.content = this.documentStyles.map(docStyle => {
             return {
@@ -220,10 +218,8 @@ export class ModDocumentTemplate {
                         editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta('settings', true)
                     )
                 },
-                selected: editor => {
-                    return editor.view.state.doc.firstChild.attrs.documentstyle === docStyle.slug
-                },
-                disabled : editor=> !editor.ws.isOnline(),
+                selected: editor => editor.view.state.doc.firstChild.attrs.documentstyle === docStyle.slug,
+                disabled: _editor=> window.isOffline,
             }
         })
     }
@@ -237,8 +233,8 @@ export class ModDocumentTemplate {
     }
 
     addCitationStylesMenuEntries() {
-        const settingsMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id==='settings'),
-            citationStyleMenu = settingsMenu.content.find(menu => menu.id==='citation_style')
+        const settingsMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id === 'settings'),
+            citationStyleMenu = settingsMenu.content.find(menu => menu.id === 'citation_style')
         citationStyleMenu.content = this.editor.view.state.doc.firstChild.attrs.citationstyles.map(citationstyle => {
             return {
                 title: this.citationStyles[citationstyle],

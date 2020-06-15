@@ -6,7 +6,7 @@ import {Dialog} from "./dialog"
  * @param preopen An optional function to be called before opening the dropdown box. Used to position dropdown box.
  */
 
-export const addDropdownBox = function(btn, box, preopen=false) {
+export const addDropdownBox = function(btn, box, preopen = false) {
     btn.addEventListener('click', event => {
         event.preventDefault()
         event.stopPropagation()
@@ -77,6 +77,9 @@ export const deactivateWait = function() {
  * @param alertMsg The message text.
  */
 export const addAlert = function(alertType, alertMsg) {
+    if (!document.body) {
+        return
+    }
     const iconNames = {
         'error': 'exclamation-circle',
         'warning': 'exclamation-circle',
@@ -117,7 +120,7 @@ const CACHED_DATES = {
     'minutes': {},
     'full': {}
 }
-export const localizeDate = function(milliseconds, type='full') {
+export const localizeDate = function(milliseconds, type = 'full') {
     if (milliseconds === 0) {
         return ''
     } else if (CACHED_DATES[type][milliseconds]) {
@@ -126,18 +129,18 @@ export const localizeDate = function(milliseconds, type='full') {
     const theDate = new Date(milliseconds)
     let returnValue
     switch (type) {
-        case 'sortable-date': {
-            const yyyy = theDate.getFullYear()
-            const mm = theDate.getMonth() + 1
-            const dd = theDate.getDate()
-            returnValue = `${yyyy}-${String(mm).padStart(2, '0')}-${String(dd).padStart(2, '0')}`
-            break
-        }
-        case 'minutes':
-            returnValue = theDate.toLocaleString([], {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'})
-            break
-        default:
-            returnValue = theDate.toLocaleString()
+    case 'sortable-date': {
+        const yyyy = theDate.getFullYear()
+        const mm = theDate.getMonth() + 1
+        const dd = theDate.getDate()
+        returnValue = `${yyyy}-${String(mm).padStart(2, '0')}-${String(dd).padStart(2, '0')}`
+        break
+    }
+    case 'minutes':
+        returnValue = theDate.toLocaleString([], {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'})
+        break
+    default:
+        returnValue = theDate.toLocaleString()
     }
     if (Object.keys(CACHED_DATES[type]).length > 5000) {
         CACHED_DATES[type] = {}
@@ -151,32 +154,32 @@ export const localizeDate = function(milliseconds, type='full') {
  */
 
 export const noSpaceTmp = function(_strings) {
-     const values = Array.from(arguments)
-     const tmpStrings = Array.from(values.shift())
+    const values = Array.from(arguments)
+    const tmpStrings = Array.from(values.shift())
 
-     let combined = ""
-     while (tmpStrings.length > 0 || values.length > 0) {
-         if (tmpStrings.length > 0) {
-             combined += tmpStrings.shift()
-         }
-         if (values.length > 0) {
-             combined += values.shift()
-         }
-     }
+    let combined = ""
+    while (tmpStrings.length > 0 || values.length > 0) {
+        if (tmpStrings.length > 0) {
+            combined += tmpStrings.shift()
+        }
+        if (values.length > 0) {
+            combined += values.shift()
+        }
+    }
 
-     let out = ""
-     combined.split('\n').forEach(line => {
-         out += line.replace(/^\s*/g, '')
-     })
-     return out
- }
+    let out = ""
+    combined.split('\n').forEach(line => {
+        out += line.replace(/^\s*/g, '')
+    })
+    return out
+}
 
 export const escapeText = function(text) {
-     return text
-         .replace(/&/g, '&amp;')
-         .replace(/</g, '&lt;')
-         .replace(/>/g, '&gt;')
- }
+    return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+}
 /**
  * Return a cancel promise if you need to cancel a promise chain. Import as
  * ES6 promises are not (yet) cancelable.
@@ -186,7 +189,7 @@ export const cancelPromise = () => new Promise(()=>{})
 
 // Check if selector matches one of the ancestors of the event target.
 // Used in switch statements of document event listeners.
-export const findTarget = function(event, selector, el={}) {
+export const findTarget = function(event, selector, el = {}) {
     el.target = event.target.closest(selector)
     if (el.target) {
         event.stopPropagation()

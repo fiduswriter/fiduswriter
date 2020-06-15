@@ -43,7 +43,7 @@ const removeDjangoMessages = function(response) {
     return response
 }
 
-export const get = function(url, params={}, csrfToken=false) {
+export const get = function(url, params = {}, csrfToken = false) {
     if (!csrfToken) {
         csrfToken = getCsrfToken() // Won't work in web worker.
     }
@@ -68,13 +68,13 @@ export const get = function(url, params={}, csrfToken=false) {
     )
 }
 
-export const getJson = function(url, params={}, csrfToken=false) {
+export const getJson = function(url, params = {}, csrfToken = false) {
     return get(url, params, csrfToken).then(
         response => response.json()
     )
 }
 
-export const postBare = function(url, params={}, csrfToken=false) {
+export const postBare = function(url, params = {}, csrfToken = false) {
     if (!csrfToken) {
         csrfToken = getCsrfToken() // Won't work in web worker.
     }
@@ -82,11 +82,11 @@ export const postBare = function(url, params={}, csrfToken=false) {
     body.append('csrfmiddlewaretoken', csrfToken)
     Object.keys(params).forEach(key => {
         const value = params[key]
-        if (typeof(value)==="object" && value.file && value.filename) {
+        if (typeof(value) === "object" && value.file && value.filename) {
             body.append(key, value.file, value.filename)
         } else if (Array.isArray(value)) {
             value.forEach(item => body.append(`${key}[]`, item))
-        } else if (typeof(value)==="object" && value.constructor.name !== 'File') {
+        } else if (typeof(value) === "object" && value.constructor.name !== 'File') {
             body.append(key, JSON.stringify(value))
         } else {
             body.append(key, value)
@@ -105,15 +105,13 @@ export const postBare = function(url, params={}, csrfToken=false) {
     })
 }
 
-export const post = function(url, params={}, csrfToken=false) {
+export const post = function(url, params = {}, csrfToken = false) {
     // If the base ws of the app is disconnected we assume that user is offline.
     // Moreover if the ws readystate is not 0 we consider to check the connected status as 0 means ,
     // websocket is trying to establish a connection.
-    if (window.isOnline !== undefined && !window.isOnline()) {
+    if (window.isOffline) {
         addAlert('error', gettext("You're offline now. Please try again after coming Online"))
-        return Promise.reject(new Error('offline')).then(()=>{}, (error)=> {
-            throw error
-        })
+        return Promise.reject(new Error('offline'))
     } else {
         return postBare(url, params, csrfToken).then(
             removeDjangoMessages
@@ -124,7 +122,7 @@ export const post = function(url, params={}, csrfToken=false) {
 }
 
 // post and then return json and status
-export const postJson = function(url, params={}, csrfToken=false) {
+export const postJson = function(url, params = {}, csrfToken = false) {
     return post(url, params, csrfToken).then(
         response => response.json().then(
             json => ({json, status: response.status})

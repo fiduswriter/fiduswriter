@@ -4,7 +4,7 @@ import {extractTemplate} from "../document_template"
 
 export class ImportNative {
     /* Save document information into the database */
-    constructor(doc, bibliography, images, otherFiles, user, importId=null) {
+    constructor(doc, bibliography, images, otherFiles, user, importId = null) {
         this.doc = doc
         this.docId = false
         this.bibliography = bibliography
@@ -30,13 +30,13 @@ export class ImportNative {
         ).then(
             () => {
             // We need to change some reference numbers in the document contents
-            this.translateReferenceIds(ImageTranslationTable)
-            // We are good to go. All the used images and bibliography entries
-            // exist in the DB for this user with the same numbers.
-            // We can go ahead and create the new document entry in the
-            // bibliography without any changes.
-            return this.saveDocument()
-        }).catch(
+                this.translateReferenceIds(ImageTranslationTable)
+                // We are good to go. All the used images and bibliography entries
+                // exist in the DB for this user with the same numbers.
+                // We can go ahead and create the new document entry in the
+                // bibliography without any changes.
+                return this.saveDocument()
+            }).catch(
             error => {
                 addAlert('error', 'Could not create document')
                 throw error
@@ -71,18 +71,18 @@ export class ImportNative {
     translateReferenceIds(ImageTranslationTable) {
         function walkTree(node) {
             switch (node.type) {
-                case 'figure':
-                    if (node.attrs.image !== false) {
-                        node.attrs.image = ImageTranslationTable[node.attrs.image]
-                    }
-                    break
-                case 'footnote':
-                    if (node.attrs && node.attrs.footnote) {
-                        node.attrs.footnote.forEach(childNode => {
-                            walkTree(childNode)
-                        })
-                    }
-                    break
+            case 'figure':
+                if (node.attrs.image !== false) {
+                    node.attrs.image = ImageTranslationTable[node.attrs.image]
+                }
+                break
+            case 'footnote':
+                if (node.attrs?.footnote) {
+                    node.attrs.footnote.forEach(childNode => {
+                        walkTree(childNode)
+                    })
+                }
+                break
             }
             if (node.content) {
                 node.content.forEach(childNode => {

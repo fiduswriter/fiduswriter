@@ -21,51 +21,51 @@ export class ModCommentInteractions {
             const el = {}
             let id
             switch (true) {
-                case findTarget(event, '.edit-comment', el):
-                    this.editComment = true
-                    this.activeCommentAnswerId = false
-                    id = el.target.dataset.id
-                    if (this.activeCommentId !== id) {
-                        this.deactivateSelectedChanges()
-                        this.activateComment(id)
-                    } else {
-                        this.updateDOM()
-                    }
-                    break
-                case findTarget(event, '.edit-comment-answer', el):
-                    this.editComment = false
-                    this.editAnswer(
-                        el.target.dataset.id,
-                        el.target.dataset.answer
-                    )
-                    break
-                case findTarget(event, '.resolve-comment', el):
-                    this.resolveComment(el.target.dataset.id)
-                    break
-                case findTarget(event, '.recreate-comment', el):
-                    this.recreateComment(el.target.dataset.id)
-                    break
-                case findTarget(event, '.assign-comment', el):
-                    this.assignComment(
-                        el.target.dataset.id,
-                        parseInt(el.target.dataset.user),
-                        el.target.dataset.username
-                    )
-                    break
-                case findTarget(event, '.unassign-comment', el):
-                    this.unassignComment(el.target.dataset.id)
-                    break
-                case findTarget(event, '.delete-comment', el):
-                    this.deleteComment(el.target.dataset.id)
-                    break
-                case findTarget(event, '.delete-comment-answer', el):
-                    this.deleteCommentAnswer(
-                        el.target.dataset.id,
-                        el.target.dataset.answer
-                    )
-                    break
-                default:
-                    break
+            case findTarget(event, '.edit-comment', el):
+                this.editComment = true
+                this.activeCommentAnswerId = false
+                id = el.target.dataset.id
+                if (this.activeCommentId !== id) {
+                    this.deactivateSelectedChanges()
+                    this.activateComment(id)
+                } else {
+                    this.updateDOM()
+                }
+                break
+            case findTarget(event, '.edit-comment-answer', el):
+                this.editComment = false
+                this.editAnswer(
+                    el.target.dataset.id,
+                    el.target.dataset.answer
+                )
+                break
+            case findTarget(event, '.resolve-comment', el):
+                this.resolveComment(el.target.dataset.id)
+                break
+            case findTarget(event, '.recreate-comment', el):
+                this.recreateComment(el.target.dataset.id)
+                break
+            case findTarget(event, '.assign-comment', el):
+                this.assignComment(
+                    el.target.dataset.id,
+                    parseInt(el.target.dataset.user),
+                    el.target.dataset.username
+                )
+                break
+            case findTarget(event, '.unassign-comment', el):
+                this.unassignComment(el.target.dataset.id)
+                break
+            case findTarget(event, '.delete-comment', el):
+                this.deleteComment(el.target.dataset.id)
+                break
+            case findTarget(event, '.delete-comment-answer', el):
+                this.deleteCommentAnswer(
+                    el.target.dataset.id,
+                    el.target.dataset.answer
+                )
+                break
+            default:
+                break
             }
         })
     }
@@ -75,8 +75,8 @@ export class ModCommentInteractions {
             answerEditorDOM = document.querySelector('#answer-editor')
 
         if (
-            (commentEditorDOM  && commentEditorDOM.matches(':not(:empty)')) ||
-            (answerEditorDOM  && answerEditorDOM.matches(':not(:empty)'))
+            (commentEditorDOM?.matches(':not(:empty)')) ||
+            (answerEditorDOM?.matches(':not(:empty)'))
         ) {
             // Editor has been set up already. Abort.
             return
@@ -173,7 +173,7 @@ export class ModCommentInteractions {
 
         if (comments.length) {
             if (this.activeCommentId !== comments[0].id) {
-              this.activateComment(comments[0].id)
+                this.activateComment(comments[0].id)
             }
         } else {
             this.deactivateAll()
@@ -198,11 +198,11 @@ export class ModCommentInteractions {
             // a comment answer edit form is currently open
             return true
         }
-        if (this.editor && this.editor.view && this.editor.view.hasFocus()) {
+        if (this.editor?.view && this.editor?.view.hasFocus()) {
             // There is currently focus in the comment (answer) form
             return true
         }
-        if (this.editor && this.editor.view && this.editor.view.state.doc.content.content.length) {
+        if (this.editor?.view?.state.doc.content.content.length) {
             // Part of a comment (answer) has been entered.
             return true
         }
@@ -231,7 +231,7 @@ export class ModCommentInteractions {
     }
 
     deleteComment(id) {
-        if (id==='-1') {
+        if (id === '-1') {
             this.deactivateAll()
         } else {
             // Handle the deletion of a comment.
@@ -276,7 +276,7 @@ export class ModCommentInteractions {
 
     updateComment({id, comment, isMajor}) {
         // Save the change to a comment and mark that the document has been changed
-        if (id==='-1') {
+        if (id === '-1') {
             const referrer = getCommentDuringCreationDecoration(this.mod.store.commentDuringCreation.view.state)
             // This is a new comment. We need to get an ID for it if it has contents.
 
@@ -293,7 +293,7 @@ export class ModCommentInteractions {
                 {
                     user: this.mod.editor.user.id,
                     username,
-                    date: Date.now()-this.mod.editor.clientTimeAdjustment, // We update the time to the time the comment was stored
+                    date: Date.now() - this.mod.editor.clientTimeAdjustment, // We update the time to the time the comment was stored
                     comment,
                     isMajor
                 },
@@ -313,11 +313,8 @@ export class ModCommentInteractions {
         // Handle a click on the cancel button of the comment submit form.
         const id = this.activeCommentId
         if (
-            id==='-1' ||
-            (
-                this.mod.store.comments[id] &&
-                this.mod.store.comments[id].comment.length === 0
-            )
+            id === '-1' ||
+            this.mod.store.comments[id]?.comment.length === 0
         ) {
             this.deleteComment(id)
         } else {
@@ -356,7 +353,7 @@ export class ModCommentInteractions {
             answer: answerText,
             user: this.mod.editor.user.id,
             username,
-            date: Date.now()-this.mod.editor.clientTimeAdjustment
+            date: Date.now() - this.mod.editor.clientTimeAdjustment
         }
 
         this.mod.store.addAnswer(id, answer)

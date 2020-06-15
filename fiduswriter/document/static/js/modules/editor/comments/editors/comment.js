@@ -91,7 +91,7 @@ export class CommentEditor {
             <label>${gettext("High priority")}</label>
             <div class="comment-btns">
                 <button class="submit fw-button fw-dark" type="submit">
-                    ${this.id !== '-1' ? gettext("Edit") :gettext("Submit")}
+                    ${this.id !== '-1' ? gettext("Edit") : gettext("Submit")}
                 </button>
                 <button class="cancel fw-button fw-orange" type="submit">
                     ${gettext("Cancel")}
@@ -124,20 +124,20 @@ export class CommentEditor {
         this.dom.addEventListener('click', event => {
             const el = {}
             switch (true) {
-                case findTarget(event, 'button.submit', el):
-                    this.submit()
-                    break
-                case findTarget(event, 'button.cancel', el):
-                    this.mod.interactions.cancelSubmit()
-                    break
-                case findTarget(event, '.ProseMirror-wrapper', el):
-                    this.view.focus()
-                    break
-                case findTarget(event, '.tag-user', el):
-                    this.selectedTag = parseInt(el.target.dataset.index)
-                    this.selectUserTag()
-                    this.view.focus()
-                    break
+            case findTarget(event, 'button.submit', el):
+                this.submit()
+                break
+            case findTarget(event, 'button.cancel', el):
+                this.mod.interactions.cancelSubmit()
+                break
+            case findTarget(event, '.ProseMirror-wrapper', el):
+                this.view.focus()
+                break
+            case findTarget(event, '.tag-user', el):
+                this.selectedTag = parseInt(el.target.dataset.index)
+                this.selectUserTag()
+                this.view.focus()
+                break
             }
         })
 
@@ -147,7 +147,7 @@ export class CommentEditor {
     submit() {
         const comment = this.view.state.doc.toJSON().content,
             isMajor = this.dom.querySelector('.comment-is-major').checked
-        if (comment && comment.length > 0) {
+        if (comment?.length > 0) {
             this.mod.interactions.updateComment({id: this.id, comment, isMajor})
             this.sendNotifications()
         } else {
@@ -200,7 +200,7 @@ export class CommentEditor {
     getUserTags() {
         const users = []
         this.view.state.doc.descendants(node => {
-            if (node.type.name==='collaborator') {
+            if (node.type.name === 'collaborator') {
                 users.push(node.attrs.id)
             }
         })

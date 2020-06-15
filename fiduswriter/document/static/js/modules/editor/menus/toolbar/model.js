@@ -26,16 +26,16 @@ const findTable = function(state) {
 }
 
 function elementAvailable(editor, elementName) {
-      let elementInDocParts = false
-      editor.view.state.doc.firstChild.forEach(docPart => {
-          if (docPart.attrs.elements && docPart.attrs.elements.includes(elementName)) {
-              elementInDocParts = true
-          }
-      })
-      return (
-          editor.view.state.doc.firstChild.attrs.footnote_elements.includes(elementName) ||
+    let elementInDocParts = false
+    editor.view.state.doc.firstChild.forEach(docPart => {
+        if (docPart.attrs.elements && docPart.attrs.elements.includes(elementName)) {
+            elementInDocParts = true
+        }
+    })
+    return (
+        editor.view.state.doc.firstChild.attrs.footnote_elements.includes(elementName) ||
           elementInDocParts
-      )
+    )
 }
 
 export function elementDisabled(editor, elementName) {
@@ -60,16 +60,16 @@ export function elementDisabled(editor, elementName) {
 }
 
 function markAvailable(editor, markName) {
-      let markInDocParts = false
-      editor.view.state.doc.firstChild.forEach(docPart => {
-          if (docPart.attrs.elements && docPart.attrs.marks.includes(markName)) {
-              markInDocParts = true
-          }
-      })
-      return (
-          editor.view.state.doc.firstChild.attrs.footnote_marks.includes(markName) ||
+    let markInDocParts = false
+    editor.view.state.doc.firstChild.forEach(docPart => {
+        if (docPart.attrs.elements && docPart.attrs.marks.includes(markName)) {
+            markInDocParts = true
+        }
+    })
+    return (
+        editor.view.state.doc.firstChild.attrs.footnote_marks.includes(markName) ||
           markInDocParts
-      )
+    )
 }
 
 function markDisabled(editor, markName) {
@@ -134,21 +134,21 @@ export const toolbarModel = () => ({
                         editor.currentView.state.selection.$head.node(2)
                 ) {
                     title = editor.currentView.state.selection.$anchor.node(2).attrs.title || gettext('Title')
-                    return title.length > 20 ? title.slice(0, 20)+"..." : title
+                    return title.length > 20 ? title.slice(0, 20) + "..." : title
                 } else if (
                     editor.currentView.state.selection.$anchor.depth === 1 &&
                     editor.currentView.state.selection.from ===
                         editor.currentView.state.selection.to
                 ) {
                     title = editor.currentView.state.selection.$anchor.nodeAfter.attrs.title
-                    return title.length > 20 ? title.slice(0, 20)+"..." : title
+                    return title.length > 20 ? title.slice(0, 20) + "..." : title
                 } else if (
                     editor.currentView.state.selection.jsonID === 'node' &&
                     editor.currentView.state.selection.node.isBlock &&
                     editor.currentView.state.selection.node.attrs.title
                 ) {
                     title = editor.currentView.state.selection.node.attrs.title
-                    return title.length > 20 ? title.slice(0, 20)+"..." : title
+                    return title.length > 20 ? title.slice(0, 20) + "..." : title
                 } else {
                     return ''
                 }
@@ -206,7 +206,7 @@ export const toolbarModel = () => ({
 
             },
             disabled: editor =>
-                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
                     COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
                     !editor.currentView.state.selection.$anchor.node(2) ||
                     !editor.currentView.state.selection.$anchor.node(2).attrs.elements ||
@@ -323,7 +323,7 @@ export const toolbarModel = () => ({
             selected: editor => {
                 const storedMarks = editor.currentView.state.storedMarks
                 if (
-                    storedMarks && storedMarks.some(mark => mark.type.name === 'strong') ||
+                    storedMarks?.some(mark => mark.type.name === 'strong') ||
                     editor.currentView.state.selection.$head.marks().some(mark => mark.type.name === 'strong')
                 ) {
                     return true
@@ -345,14 +345,14 @@ export const toolbarModel = () => ({
             },
             available: editor => markAvailable(editor, 'em'),
             disabled: editor =>
-                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
                     COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
                     editor.currentView.state.selection.jsonID === 'gapcursor' ||
                     markDisabled(editor, 'em'),
             selected: editor => {
                 const storedMarks = editor.currentView.state.storedMarks
                 if (
-                    storedMarks && storedMarks.some(mark => mark.type.name === 'em') ||
+                    storedMarks?.some(mark => mark.type.name === 'em') ||
                     editor.currentView.state.selection.$head.marks().some(mark => mark.type.name === 'em')
                 ) {
                     return true
@@ -386,7 +386,7 @@ export const toolbarModel = () => ({
             selected: editor => {
                 const storedMarks = editor.currentView.state.storedMarks
                 if (
-                    storedMarks && storedMarks.some(mark => mark.type.name === 'underline') ||
+                    storedMarks?.some(mark => mark.type.name === 'underline') ||
                     editor.currentView.state.selection.$head.marks().some(mark => mark.type.name === 'underline')
                 ) {
                     return true
@@ -528,7 +528,7 @@ export const toolbarModel = () => ({
                         editor.currentView.state.selection.jsonID === 'node' &&
                         editor.currentView.state.selection.node.type.name !== 'citation'
                     ) ||
-                    !editor.ws.isOnline()
+                    window.isOffline
                 ) {
                     return true
                 }

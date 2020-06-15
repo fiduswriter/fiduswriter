@@ -21,13 +21,13 @@ function getTocItems(decorations) {
 function tocHTML(tocItems, title) {
     return `<h1 class="toc">${escapeText(title)}</h1>
     ${
-        tocItems.map(
-            item => {
-                const level = item.type.name.substr(-1)
-                return `<h${level}><a href="#${item.id}">${escapeText(item.textContent)}</a></h${level}>`
-            }
-        ).join('')
-    }`
+    tocItems.map(
+        item => {
+            const level = item.type.name.substr(-1)
+            return `<h${level}><a href="#${item.id}">${escapeText(item.textContent)}</a></h${level}>`
+        }
+    ).join('')
+}`
 }
 
 class ToCView {
@@ -42,12 +42,12 @@ class ToCView {
         this.dom.addEventListener('click', event => {
             const el = {}
             switch (true) {
-                case findTarget(event, 'a', el):
-                    event.preventDefault()
-                    event.stopImmediatePropagation()
-                    el.id = el.target.getAttribute('href').slice(1)
-                    options.editor.scrollIdIntoView(el.id)
-                    break
+            case findTarget(event, 'a', el):
+                event.preventDefault()
+                event.stopImmediatePropagation()
+                el.id = el.target.getAttribute('href').slice(1)
+                options.editor.scrollIdIntoView(el.id)
+                break
             }
         })
     }
@@ -67,7 +67,7 @@ function getDecos(state) {
     const decoPos = [], tocItems = []
     let decos = DecorationSet.empty
     state.doc.descendants((node, offset) => {
-        if (node.attrs && node.attrs.hidden) {
+        if (node.attrs?.hidden) {
             return false
         } else if (node.type.name === 'table_of_contents') {
             decoPos.push(offset)
@@ -104,7 +104,7 @@ export const tocRenderPlugin = function(options) {
                     (map, index) => map.forEach(
                         (oldStart, oldEnd, newStart, newEnd) => {
                             const oldDoc = tr.docs[index],
-                                newDoc = tr.docs[index+1] || tr.doc // tr.doc if it is the last step
+                                newDoc = tr.docs[index + 1] || tr.doc // tr.doc if it is the last step
                             let hidden = false
 
                             oldDoc.nodesBetween(oldStart, oldEnd, node => {
@@ -112,7 +112,7 @@ export const tocRenderPlugin = function(options) {
                                     return false
                                 } else if (node.type.groups.includes('heading')) {
                                     updateToc = true
-                                } else if (node.attrs && node.attrs.hidden) {
+                                } else if (node.attrs?.hidden) {
                                     hidden = true // was hidden
                                 }
                                 return true
@@ -122,7 +122,7 @@ export const tocRenderPlugin = function(options) {
                                     return false
                                 } else if (node.type.groups.includes('heading')) {
                                     updateToc = true
-                                } else if (node.attrs && node.attrs.hidden) {
+                                } else if (node.attrs?.hidden) {
                                     hidden = hidden ? false : true // is hidden
                                 }
                             })
@@ -149,11 +149,11 @@ export const tocRenderPlugin = function(options) {
         },
         props: {
             decorations(state) {
-				const {
-					decos
-				} = this.getState(state)
-				return decos
-			},
+                const {
+                    decos
+                } = this.getState(state)
+                return decos
+            },
             nodeViews: {
                 'table_of_contents': (node, view, getPos, decorations) => new ToCView(node, view, getPos, decorations, options)
             }

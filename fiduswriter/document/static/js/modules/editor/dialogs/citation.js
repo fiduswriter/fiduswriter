@@ -17,7 +17,7 @@ export class CitationDialog {
     }
 
     init() {
-        if (this.node && this.node.type && this.node.type.name==='citation') {
+        if (this.node?.type && this.node?.type.name === 'citation') {
             this.initialFormat = this.node.attrs.format
             this.initialReferences = this.node.attrs.references
         }
@@ -28,7 +28,7 @@ export class CitationDialog {
             classes: 'fw-light fw-add-button register-new-bib-source'
         })
 
-        if (this.node && this.node.type && this.node.type.name==='citation') {
+        if (this.node?.type && this.node?.type.name === 'citation') {
             this.buttons.push({
                 text: gettext('Remove'),
                 click: () => {
@@ -116,7 +116,7 @@ export class CitationDialog {
         let citedItemsHTML = ''
 
         Object.keys(this.editor.mod.db.bibDB.db).forEach(id => {
-            const citEntry = this.initialReferences.find(bibRef => bibRef.id==id)
+            const citEntry = this.initialReferences.find(bibRef => bibRef.id == id)
 
             if (citEntry) {
                 const bibEntry = this.bibDBToBibEntry(this.editor.mod.db.bibDB.db[id], id, 'document')
@@ -246,11 +246,11 @@ export class CitationDialog {
         this.table.body.addEventListener('click', event => {
             const el = {}
             switch (true) {
-                case findTarget(event, 'tr', el):
-                    this.checkRow(el.target.dataIndex)
-                    break
-                default:
-                    break
+            case findTarget(event, 'tr', el):
+                this.checkRow(el.target.dataIndex)
+                break
+            default:
+                break
             }
         })
 
@@ -286,17 +286,17 @@ export class CitationDialog {
             const el = {}
             let documentEl
             switch (true) {
-                case findTarget(event, '.selected-source .delete', el):
-                    documentEl = document.getElementById(`selected-source-${el.target.dataset.db}-${el.target.dataset.id}`)
-                    if (documentEl) {
-                        documentEl.parentElement.removeChild(documentEl)
-                    }
-                    break
-                case findTarget(event, '.fw-checkable', el):
-                    setCheckableLabel(el.target)
-                    break
-                default:
-                    break
+            case findTarget(event, '.selected-source .delete', el):
+                documentEl = document.getElementById(`selected-source-${el.target.dataset.db}-${el.target.dataset.id}`)
+                if (documentEl) {
+                    documentEl.parentElement.removeChild(documentEl)
+                }
+                break
+            case findTarget(event, '.fw-checkable', el):
+                setCheckableLabel(el.target)
+                break
+            default:
+                break
             }
         })
     }

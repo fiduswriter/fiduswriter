@@ -61,8 +61,7 @@ export class LinkDialog {
     // Check if the selection spans over exactly one cross reference node. If so, use it.
     checkCrossReference() {
         if (
-            this.editor.currentView.state.selection.node &&
-            this.editor.currentView.state.selection.node.type.name === 'cross_reference'
+            this.editor.currentView.state.selection.node?.type.name === 'cross_reference'
         ) {
             this.submitButtonText = gettext('Update')
             this.target = this.editor.currentView.state.selection.node.attrs.id
@@ -128,32 +127,32 @@ export class LinkDialog {
                 let href, title, target, change
 
                 switch (linkType) {
-                    case 'internal': {
-                        target = this.dialog.dialogEl.querySelector('select.internal-link-selector').value
-                        href = `#${target}`
-                        title = this.internalTargets.find(iTarget => iTarget.id === target).text
-                        change = target && (this.linkType !== 'internal' || this.target !== target)
-                        break
+                case 'internal': {
+                    target = this.dialog.dialogEl.querySelector('select.internal-link-selector').value
+                    href = `#${target}`
+                    title = this.internalTargets.find(iTarget => iTarget.id === target).text
+                    change = target && (this.linkType !== 'internal' || this.target !== target)
+                    break
+                }
+                case 'external': {
+                    const linkEl = this.dialog.dialogEl.querySelector('input.link')
+                    if (!(new RegExp(/^\s*$/)).test(linkEl.value) && linkEl.value !== this.defaultLink) {
+                        href = linkEl.value
                     }
-                    case 'external': {
-                        const linkEl = this.dialog.dialogEl.querySelector('input.link')
-                        if (!(new RegExp(/^\s*$/)).test(linkEl.value) && linkEl.value !== this.defaultLink) {
-                            href = linkEl.value
-                        }
-                        title = this.dialog.dialogEl.querySelector('input.link-title').value
-                        if ((new RegExp(/^\s*$/)).test(title)) {
-                            // The link title is empty. Make it the same as the link itself.
-                            title = href
-                        }
-                        change = href && (this.linkType !== 'external' || this.target !== href || this.title !== title)
-                        break
+                    title = this.dialog.dialogEl.querySelector('input.link-title').value
+                    if ((new RegExp(/^\s*$/)).test(title)) {
+                        // The link title is empty. Make it the same as the link itself.
+                        title = href
                     }
-                    case 'cross_reference': {
-                        target = this.dialog.dialogEl.querySelector('select.cross-reference-selector').value
-                        title = this.internalTargets.find(iTarget => iTarget.id === target).text
-                        change = target && (this.linkType !== 'cross_reference' || this.target !== target)
-                        break
-                    }
+                    change = href && (this.linkType !== 'external' || this.target !== href || this.title !== title)
+                    break
+                }
+                case 'cross_reference': {
+                    target = this.dialog.dialogEl.querySelector('select.cross-reference-selector').value
+                    title = this.internalTargets.find(iTarget => iTarget.id === target).text
+                    change = target && (this.linkType !== 'cross_reference' || this.target !== target)
+                    break
+                }
                 }
                 this.dialog.close()
 
@@ -175,7 +174,7 @@ export class LinkDialog {
                 } else {
                     // There is an empty selection. We insert the link title into the editor
                     // and then add the link to that.
-                    if (posFrom===posTo) {
+                    if (posFrom === posTo) {
                         tr.insertText(title, posFrom, posTo)
                         posTo = tr.mapping.map(posFrom, 1)
                     }
@@ -232,23 +231,23 @@ export class LinkDialog {
 
 
             switch (this.linkType) {
-                case 'internal':
-                    externalEls.forEach(el => el.classList.add("disabled"))
-                    crossReferenceEls.forEach(el => el.classList.add("disabled"))
-                    radioInternal.checked = true
-                    break
-                case 'external':
-                    internalEls.forEach(el => el.classList.add("disabled"))
-                    externalEls.forEach(el => el.classList.add("disabled"))
-                    radioExternal.checked = true
-                    break
-                case 'cross_reference':
-                    internalEls.forEach(el => el.classList.add("disabled"))
-                    crossReferenceEls.forEach(el => el.classList.add("disabled"))
-                    radioCrossReference.checked = true
-                    break
-                default:
-                    break
+            case 'internal':
+                externalEls.forEach(el => el.classList.add("disabled"))
+                crossReferenceEls.forEach(el => el.classList.add("disabled"))
+                radioInternal.checked = true
+                break
+            case 'external':
+                internalEls.forEach(el => el.classList.add("disabled"))
+                externalEls.forEach(el => el.classList.add("disabled"))
+                radioExternal.checked = true
+                break
+            case 'cross_reference':
+                internalEls.forEach(el => el.classList.add("disabled"))
+                crossReferenceEls.forEach(el => el.classList.add("disabled"))
+                radioCrossReference.checked = true
+                break
+            default:
+                break
             }
 
             internalSwitchers.forEach(el => el.addEventListener('click', () => {

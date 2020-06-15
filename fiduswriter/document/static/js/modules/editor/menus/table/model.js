@@ -23,7 +23,7 @@ const tableAddedFromTemplate = function(state) {
 }
 
 const tableAddedByUser = function(table, userId) {
-    return table.attrs.track.find(track => (track.type==='insertion' && track.user === userId)) ? true : false
+    return table.attrs.track.find(track => (track.type === 'insertion' && track.user === userId)) ? true : false
 }
 export const tableMenuModel = () => ({
     content: [

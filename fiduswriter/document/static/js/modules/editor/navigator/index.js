@@ -22,46 +22,46 @@ export class ModNavigator {
         document.body.addEventListener('click', event => {
             const el = {}
             switch (true) {
-                case findTarget(event, '#navigator-button', el):
-                    if (this.navigatorEl.classList.contains('opened')) {
-                        this.closeNavigator()
-                    } else {
-                        document.querySelector('#navigator-list').innerHTML = this.populateNavigator() || ""   //Populating the list
-                        this.openNavigator()
-                    }
-                    break
-                case findTarget(event, '#navigator-list a', el):
-                    event.preventDefault()
-                    event.stopImmediatePropagation()
-                    this.editor.scrollIdIntoView(el.target.getAttribute('href').slice(1))
-                    this.switchActiveHeading(el.target.parentNode)
-                    break
-                case findTarget(event, '#navigator-filter-icon', el):
-                    if (document.getElementById("navigator-filter").classList.contains('hide')) {
-                        this.showFilters()
-                    } else {
-                        this.hideFilters()
-                    }
-                    break
-                case findTarget(event, '#navigator-filter-back', el):
-                    this.defaultFilters = []
-                    document.querySelectorAll('#navigator-filter input').forEach(
-                        item => {
-                            if (item.checked) {
-                                this.defaultFilters.push(item.id)
-                            }
-                        }
-                    )
-                    document.querySelector('#navigator-list').innerHTML = this.populateNavigator() || ""
-                    this.hideFilters()
-                    break
-                case findTarget(event, 'input', el):
-                    break
-                case findTarget(event, 'label', el):
-                    break
-                default:
+            case findTarget(event, '#navigator-button', el):
+                if (this.navigatorEl.classList.contains('opened')) {
                     this.closeNavigator()
-                    break
+                } else {
+                    document.querySelector('#navigator-list').innerHTML = this.populateNavigator() || ""   //Populating the list
+                    this.openNavigator()
+                }
+                break
+            case findTarget(event, '#navigator-list a', el):
+                event.preventDefault()
+                event.stopImmediatePropagation()
+                this.editor.scrollIdIntoView(el.target.getAttribute('href').slice(1))
+                this.switchActiveHeading(el.target.parentNode)
+                break
+            case findTarget(event, '#navigator-filter-icon', el):
+                if (document.getElementById("navigator-filter").classList.contains('hide')) {
+                    this.showFilters()
+                } else {
+                    this.hideFilters()
+                }
+                break
+            case findTarget(event, '#navigator-filter-back', el):
+                this.defaultFilters = []
+                document.querySelectorAll('#navigator-filter input').forEach(
+                    item => {
+                        if (item.checked) {
+                            this.defaultFilters.push(item.id)
+                        }
+                    }
+                )
+                document.querySelector('#navigator-list').innerHTML = this.populateNavigator() || ""
+                this.hideFilters()
+                break
+            case findTarget(event, 'input', el):
+                break
+            case findTarget(event, 'label', el):
+                break
+            default:
+                this.closeNavigator()
+                break
             }
         })
 
@@ -122,15 +122,15 @@ export class ModNavigator {
         const items = []
         let nearestHeader = ""
         this.editor.view.state.doc.descendants((node, pos) => {
-            if (node.attrs && node.attrs.hidden) {
+            if (node.attrs?.hidden) {
                 return false
             } else if (this.defaultFilters.includes(node.type.name) && node.textContent !== "") {
                 if (pos <= currentPos) {
                     nearestHeader = node
                 } else if (nearestHeader !== "") {
-                    items[items.length-1] = Object.assign(
+                    items[items.length - 1] = Object.assign(
                         {},
-                        items[items.length-1],
+                        items[items.length - 1],
                         {class: 'active-heading'}
                     )
                     nearestHeader = ""
@@ -163,7 +163,7 @@ export class ModNavigator {
     }
 
     inDefault(level) {
-        if (this.defaultFilters.includes('heading'+level)) {
+        if (this.defaultFilters.includes('heading' + level)) {
             return 'checked'
         } else {
             return ''
@@ -173,17 +173,17 @@ export class ModNavigator {
     navigatorHTML(items) {
         return `
         ${
-            items.map(
-                item => {
-                    const level = item.type.name.substr(-1)
-                    if (item.class) {
-                        return `<h${level} class="${item.class}"><a href="#${item.id}">${escapeText(item.textContent)}</a></h${level}>`
-                    } else {
-                        return `<h${level}><a href="#${item.id}">${escapeText(item.textContent)}</a></h${level}>`
-                    }
-                }
-            ).join('')
-        }`
+    items.map(
+        item => {
+            const level = item.type.name.substr(-1)
+            if (item.class) {
+                return `<h${level} class="${item.class}"><a href="#${item.id}">${escapeText(item.textContent)}</a></h${level}>`
+            } else {
+                return `<h${level}><a href="#${item.id}">${escapeText(item.textContent)}</a></h${level}>`
+            }
+        }
+    ).join('')
+}`
     }
 
     getNavigatorTemplate() {

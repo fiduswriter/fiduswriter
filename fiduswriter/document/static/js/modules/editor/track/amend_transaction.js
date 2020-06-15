@@ -25,7 +25,7 @@ function markInsertion(tr, from, to, user, date1, date10, approved) {
                 }
                 tr.setNodeMarkup(pos, null, Object.assign({}, node.attrs, {track}), node.marks)
             }
-            if (node.type.name==='table') {
+            if (node.type.name === 'table') {
                 // A table was inserted. We don't add track marks to elements inside of it.
                 return false
             }
@@ -42,7 +42,7 @@ function markDeletion(tr, from, to, user, date1, date10) {
         from,
         to,
         (node, pos) => {
-            if (pos < from && node.type.name==='table_cell') {
+            if (pos < from && node.type.name === 'table_cell') {
                 firstTableCellChild = true
                 return true
             } else if (pos < from && node.isBlock || firstTableCellChild) {
@@ -50,7 +50,7 @@ function markDeletion(tr, from, to, user, date1, date10) {
                 return true
             } else if (['table_row', 'table_cell'].includes(node.type.name)) {
                 return false
-            } else if (node.isInline && node.marks.find(mark => mark.type.name==='insertion' && mark.attrs.user===user.id && !mark.attrs.approved)) {
+            } else if (node.isInline && node.marks.find(mark => mark.type.name === 'insertion' && mark.attrs.user === user.id && !mark.attrs.approved)) {
                 const removeStep = new ReplaceStep(
                     deletionMap.map(Math.max(from, pos)),
                     deletionMap.map(Math.min(to, pos + node.nodeSize)),
@@ -59,18 +59,17 @@ function markDeletion(tr, from, to, user, date1, date10) {
                 if (!tr.maybeStep(removeStep).failed) {
                     deletionMap.appendMap(removeStep.getMap())
                 }
-            } else if (node.isInline && !node.marks.find(mark => mark.type.name==='deletion')) {
+            } else if (node.isInline && !node.marks.find(mark => mark.type.name === 'deletion')) {
                 tr.addMark(
                     deletionMap.map(Math.max(from, pos)),
                     deletionMap.map(Math.min(to, pos + node.nodeSize)),
                     deletionMark
                 )
             } else if (
-                node.attrs.track &&
-                !node.attrs.track.find(trackAttr => trackAttr.type === 'deletion') &&
+                !node.attrs.track?.find(trackAttr => trackAttr.type === 'deletion') &&
                 !['bullet_list', 'ordered_list'].includes(node.type.name)
             ) {
-                if (node.attrs.track.find(trackAttr => trackAttr.type === 'insertion' && trackAttr.user===user.id)) {
+                if (node.attrs.track.find(trackAttr => trackAttr.type === 'insertion' && trackAttr.user === user.id)) {
                     let removeStep
                     // user has created element. so (s)he is allowed to delete it again.
                     if (node.isTextblock && to < (pos + node.nodeSize)) {
@@ -115,7 +114,7 @@ function markWrapping(
     date1
 ) {
     let track = oldNode.attrs.track.slice(),
-        blockTrack = track.find(track => track.type==="block_change")
+        blockTrack = track.find(track => track.type === "block_change")
 
     if (blockTrack) {
         track = track.filter(track => track !== blockTrack)
@@ -140,7 +139,7 @@ function markWrapping(
 export function amendTransaction(tr, state, editor) {
 
     if (
-            !tr.steps.length ||
+        !tr.steps.length ||
             tr.meta && !Object.keys(tr.meta).every(
                 // Only replace TRs that have no metadata or only inputType metadata
                 metadata => ['inputType', 'uiEvent', 'paste'].includes(metadata)
@@ -165,8 +164,8 @@ export function amendTransaction(tr, state, editor) {
 export function trackedTransaction(tr, state, user, approved, date) {
     const newTr = state.tr,
         map = new Mapping(),
-        date10 = Math.floor(date/600000) * 10, // 10 minute interval
-        date1 = Math.floor(date/60000), // 1 minute interval
+        date10 = Math.floor(date / 600000) * 10, // 10 minute interval
+        date1 = Math.floor(date / 60000), // 1 minute interval
         // We only insert content if this is not directly a tr for cell deletion. This is because tables delete rows by deleting the
         // contents of each cell and replacing it with an empty paragraph.
         cellDeleteTr = ['deleteContentBackward', 'deleteContentForward'].includes(tr.getMeta('inputType')) && (state.selection instanceof CellSelection)
@@ -179,15 +178,15 @@ export function trackedTransaction(tr, state, user, approved, date) {
         }
         if (step instanceof ReplaceStep) {
             const newStep = approved ?
-                    step :
-                    step.slice.size && !cellDeleteTr ?
-                        new ReplaceStep(
-                            step.to, // We insert all the same steps, but with "from"/"to" both set to "to" in order not to delete content. Mapped as needed.
-                            step.to,
-                            step.slice,
-                            step.structure
-                        ) :
-                        false
+                step :
+                step.slice.size && !cellDeleteTr ?
+                    new ReplaceStep(
+                        step.to, // We insert all the same steps, but with "from"/"to" both set to "to" in order not to delete content. Mapped as needed.
+                        step.to,
+                        step.slice,
+                        step.structure
+                    ) :
+                    false
             // We didn't apply the original step in its original place. We adjust the map accordingly.
             map.appendMap(step.invert(doc).getMap())
             if (newStep) {
@@ -209,7 +208,7 @@ export function trackedTransaction(tr, state, user, approved, date) {
                 const condensedStep = new ReplaceStep(newStep.from, newStep.to, trTemp.doc.slice(newStep.from, mappedNewStepTo))
 
                 newTr.step(condensedStep)
-                const mirrorIndex = map.maps.length -1
+                const mirrorIndex = map.maps.length - 1
                 map.appendMap(condensedStep.getMap(), mirrorIndex)
                 if (!newTr.selection.eq(trTemp.selection)) {
                     newTr.setSelection(trTemp.selection)
@@ -223,7 +222,7 @@ export function trackedTransaction(tr, state, user, approved, date) {
         } else if (approved) {
             newTr.step(step)
         } else if (step instanceof ReplaceAroundStep) {
-            if (step.from===step.gapFrom && step.to===step.gapTo) { // wrapped in something
+            if (step.from === step.gapFrom && step.to === step.gapTo) { // wrapped in something
                 newTr.step(step)
                 const from = step.getMap().map(step.from, -1)
                 const to = step.getMap().map(step.gapFrom)
@@ -233,7 +232,7 @@ export function trackedTransaction(tr, state, user, approved, date) {
                 map.appendMap(
                     markDeletion(newTr, step.from, step.gapFrom, user, date1, date10)
                 )
-            } else if (step.slice.size===2 && step.gapFrom-step.from===1 && step.to-step.gapTo===1) { // Replaced one wrapping with another
+            } else if (step.slice.size === 2 && step.gapFrom - step.from === 1 && step.to - step.gapTo === 1) { // Replaced one wrapping with another
                 newTr.step(step)
                 const oldNode = doc.nodeAt(step.from)
                 if (oldNode.attrs.track) {
@@ -268,7 +267,7 @@ export function trackedTransaction(tr, state, user, approved, date) {
                 if (!node.isInline) {
                     return true
                 }
-                if (node.marks.find(mark => mark.type.name==='deletion')) {
+                if (node.marks.find(mark => mark.type.name === 'deletion')) {
                     return false
                 } else {
                     newTr.addMark(
@@ -281,7 +280,7 @@ export function trackedTransaction(tr, state, user, approved, date) {
                     ['em', 'strong', 'underline'].includes(step.mark.type.name) &&
                     !node.marks.find(mark => mark.type === step.mark.type)
                 ) {
-                    const formatChangeMark = node.marks.find(mark => mark.type.name==='format_change')
+                    const formatChangeMark = node.marks.find(mark => mark.type.name === 'format_change')
                     let after, before
                     if (formatChangeMark) {
                         if (formatChangeMark.attrs.before.includes(step.mark.type.name)) {
@@ -316,7 +315,7 @@ export function trackedTransaction(tr, state, user, approved, date) {
                 if (!node.isInline) {
                     return true
                 }
-                if (node.marks.find(mark => mark.type.name==='deletion')) {
+                if (node.marks.find(mark => mark.type.name === 'deletion')) {
                     return false
                 } else {
                     newTr.removeMark(
@@ -330,7 +329,7 @@ export function trackedTransaction(tr, state, user, approved, date) {
                     ['em', 'strong', 'underline'].includes(step.mark.type.name) &&
                     node.marks.find(mark => mark.type === step.mark.type)
                 ) {
-                    const formatChangeMark = node.marks.find(mark => mark.type.name==='format_change')
+                    const formatChangeMark = node.marks.find(mark => mark.type.name === 'format_change')
                     let after, before
                     if (formatChangeMark) {
                         if (formatChangeMark.attrs.after.includes(step.mark.type.name)) {

@@ -6,8 +6,8 @@ export const licenseSelectTemplate = ({url}) =>
     `<select class="license">
         <option value=""></option>
         ${
-            LICENSE_URLS.map(licenseUrl => `<option value="${licenseUrl[1]}"${url===licenseUrl[1] ? ' selected' : ''}>${licenseUrl[0]}</option>`).join('')
-        }
+    LICENSE_URLS.map(licenseUrl => `<option value="${licenseUrl[1]}"${url === licenseUrl[1] ? ' selected' : ''}>${licenseUrl[0]}</option>`).join('')
+}
     </select>
     <div class="fw-select-arrow fa fa-caret-down"></div>`
 
@@ -71,7 +71,7 @@ export const copyrightTemplate = ({holder, year, freeToRead, licenses}) =>
                     ${gettext('Available to read for free?')}
                     <span class="tooltip">${gettext('Specify whether the work can be accessed without paying a fee.')}</span>
                 </h4></th>
-                <td class="entry-field"><input type="checkbox" class="free-to-read"${freeToRead? ' checked' : ''}></td>
+                <td class="entry-field"><input type="checkbox" class="free-to-read"${freeToRead ? ' checked' : ''}></td>
             </tr>
             <tr>
                 <th><h4 class="fw-tablerow-title wtooltip">

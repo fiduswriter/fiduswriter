@@ -242,7 +242,7 @@ export class FigureDialog {
         // toolbar figure
         const buttons = []
 
-        if (this.node && this.node.type && this.node.type.name === 'figure') {
+        if (this.node?.type && this.node?.type.name === 'figure') {
             this.insideFigure = true
             this.submitMessage = gettext('Update')
             this.equation = this.node.attrs.equation

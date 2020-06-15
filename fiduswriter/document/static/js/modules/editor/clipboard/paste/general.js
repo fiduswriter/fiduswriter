@@ -26,10 +26,10 @@ export class GeneralPasteHandler {
 
     // Iterate over pasted nodes and their children
     iterateNode(node) {
-        if (node.tagName==="P" &! node.firstChild) {
+        if (node.tagName === "P" & ! node.firstChild) {
             node.parentNode.removeChild(node)
             return
-        } else if (node.nodeType===8) {
+        } else if (node.nodeType === 8) {
             node.parentNode.removeChild(node)
             return
         } else if (node.nodeType === 1) {

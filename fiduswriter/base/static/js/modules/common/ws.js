@@ -12,7 +12,7 @@ export class WebSocketConnector {
         warningNotAllSent = gettext('Warning! Some data is unsaved'), // Info to show while disconnected WITH unsaved data
         infoDisconnected = gettext('Disconnected. Attempting to reconnect...'), // Info to show while disconnected WITHOUT unsaved data
         receiveData = _data => {},
-        failedAuth = ()=>{ window.location.href="/" },
+        failedAuth = ()=>{ window.location.href = "/" },
     }) {
         this.url = url
         this.appLoaded = appLoaded
@@ -25,10 +25,10 @@ export class WebSocketConnector {
         this.infoDisconnected = infoDisconnected
         this.receiveData = receiveData
         this.failedAuth = failedAuth
-            /* A list of messages to be sent. Only used when temporarily offline.
+        /* A list of messages to be sent. Only used when temporarily offline.
             Messages will be sent when returning back online. */
         this.messagesToSend = []
-            /* A list of messages from a previous connection */
+        /* A list of messages from a previous connection */
         this.oldMessages = []
 
         this.online = true
@@ -42,10 +42,6 @@ export class WebSocketConnector {
 
     init() {
         this.createWSConnection()
-    }
-
-    isOnline() {
-        return this.connected
     }
 
     goOffline() {
@@ -127,7 +123,7 @@ export class WebSocketConnector {
                         this.send(this.restartMessage)
                         return
                     }
-                    this.messages['lastTen'].slice(0-clientDifference).forEach(data => {
+                    this.messages['lastTen'].slice(0 - clientDifference).forEach(data => {
                         this.messages.client += 1
                         data.c = this.messages.client
                         data.s = this.messages.server
@@ -214,7 +210,7 @@ export class WebSocketConnector {
             this.messagesToSend = []
             while (oldMessages.length > 0) {
                 const getData = oldMessages.shift()
-                this.send(getData, Math.min(timer*1.2, 10000))
+                this.send(getData, Math.min(timer * 1.2, 10000))
             }
         }, timer)
     }
@@ -227,7 +223,7 @@ export class WebSocketConnector {
             this.send(this.restartMessage)
             return
         }
-        this.messages.lastTen.slice(0-toSend).forEach(data => {
+        this.messages.lastTen.slice(0 - toSend).forEach(data => {
             this.messages.client += 1
             data.c = this.messages.client
             data.s = this.messages.server
@@ -237,18 +233,18 @@ export class WebSocketConnector {
 
     receive(data) {
         switch (data.type) {
-            case 'welcome':
-                this.open()
-                break
-            case 'subscribed':
-                this.subscribed()
-                break
-            case 'access_denied':
-                this.failedAuth()
-                break
-            default:
-                this.receiveData(data)
-                break
+        case 'welcome':
+            this.open()
+            break
+        case 'subscribed':
+            this.subscribed()
+            break
+        case 'access_denied':
+            this.failedAuth()
+            break
+        default:
+            this.receiveData(data)
+            break
         }
     }
 

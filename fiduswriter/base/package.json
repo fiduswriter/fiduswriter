@@ -22,16 +22,16 @@
     "diff-dom": "4.1.6",
     "downloadjs": "1.4.7",
     "@fortawesome/fontawesome-free": "^5.12.1",
-    "simple-datatables": "^2.1.10",
+    "simple-datatables": "^2.1.13",
     "@vivliostyle/print": "^2.0.0",
-    "eslint": "7.1.0",
+    "eslint": "7.2.0",
     "eslint-global-patch": "1.0.4",
-    "eslint-plugin-import": "2.20.2",
+    "eslint-plugin-import": "2.21.2",
     "eslint-import-resolver-node": "0.3.3",
     "babel-eslint": "10.1.0",
     "offline-plugin": "5.0.x",
     "w3c-keyname": "2.1.x",
-    "stylelint": "13.5.0",
+    "stylelint": "13.6.0",
     "stylelint-config-standard": "20.0.0",
     "stylelint-value-no-unknown-custom-properties": "3.0.0",
     "source-map-loader": "1.0.0",
@@ -43,6 +43,7 @@
     "babel-jest": "^26.0.1",
     "jest":"^26.0.1",
     "@babel/cli": "7.6.x",
-    "@babel/plugin-transform-template-literals": "^7.10.1"
+    "@babel/plugin-transform-template-literals": "^7.10.1",
+    "@babel/plugin-proposal-optional-chaining": "^7.10.1"
   }
 }

@@ -41,7 +41,7 @@ export const helpSchema = new Schema({
         },
         inclusive: false,
         parseDOM: [{tag: "a[href]", getAttrs(dom) {
-                return {href: dom.getAttribute("href"), title: dom.getAttribute("title")}
+            return {href: dom.getAttribute("href"), title: dom.getAttribute("title")}
         }}],
         toDOM(node) { return ["a", Object.assign({target: '_blank'}, node.attrs), 0] }
     })

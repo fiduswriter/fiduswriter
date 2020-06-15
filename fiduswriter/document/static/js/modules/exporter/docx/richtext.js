@@ -25,45 +25,45 @@ export class DocxExporterRichtext {
             end = ''
 
         switch (node.type) {
-            case 'paragraph':
-                if (!options.section) {
-                    options.section = 'Normal'
-                }
-                // This should really be something like
-                // '<w:p w:rsidR="A437D321" w:rsidRDefault="2B935ADC">'
-                // See: https://blogs.msdn.microsoft.com/brian_jones/2006/12/11/whats-up-with-all-those-rsids/
-                // But tests with Word 2016/LibreOffice seem to indicate that it
-                // doesn't care if the attributes are missing.
-                // We may need to add them later, if it turns out this is a problem
-                // for other versions of Word. In that case we should also add
-                // it to settings.xml as described in above link.
-                if (options.section === 'Normal' && !options.list_type && !(node.content && node.content.length)) {
-                    start += '<w:p/>'
-                } else {
-                    start += noSpaceTmp`
+        case 'paragraph':
+            if (!options.section) {
+                options.section = 'Normal'
+            }
+            // This should really be something like
+            // '<w:p w:rsidR="A437D321" w:rsidRDefault="2B935ADC">'
+            // See: https://blogs.msdn.microsoft.com/brian_jones/2006/12/11/whats-up-with-all-those-rsids/
+            // But tests with Word 2016/LibreOffice seem to indicate that it
+            // doesn't care if the attributes are missing.
+            // We may need to add them later, if it turns out this is a problem
+            // for other versions of Word. In that case we should also add
+            // it to settings.xml as described in above link.
+            if (options.section === 'Normal' && !options.list_type && !(node.content?.length)) {
+                start += '<w:p/>'
+            } else {
+                start += noSpaceTmp`
                         <w:p>
                             <w:pPr><w:pStyle w:val="${options.section}"/>`
-                    if (options.list_type) {
-                        start += `<w:numPr><w:ilvl w:val="${options.list_depth}"/>`
-                        start += `<w:numId w:val="${options.list_type}"/></w:numPr>`
-                    } else {
-                        start += '<w:rPr></w:rPr>'
-                    }
-                    start += '</w:pPr>'
-                    end = '</w:p>' + end
+                if (options.list_type) {
+                    start += `<w:numPr><w:ilvl w:val="${options.list_depth}"/>`
+                    start += `<w:numId w:val="${options.list_type}"/></w:numPr>`
+                } else {
+                    start += '<w:rPr></w:rPr>'
                 }
-                break
-            case 'bibliography_heading':
-                start += noSpaceTmp`
+                start += '</w:pPr>'
+                end = '</w:p>' + end
+            }
+            break
+        case 'bibliography_heading':
+            start += noSpaceTmp`
                     <w:p>
                         <w:pPr>
                             <w:pStyle w:val="BibliographyHeading"/>
                             <w:rPr></w:rPr>
                         </w:pPr>`
-                end = '</w:p>' + end
-                break
-            case 'heading1':
-                start += noSpaceTmp`
+            end = '</w:p>' + end
+            break
+        case 'heading1':
+            start += noSpaceTmp`
                     <w:p>
                         <w:pPr>
                             <w:pStyle w:val="Heading1"/>
@@ -71,10 +71,10 @@ export class DocxExporterRichtext {
                         </w:pPr>
                         <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
                         <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
-                end = '</w:p>' + end
-                break
-            case 'heading2':
-                start += noSpaceTmp`
+            end = '</w:p>' + end
+            break
+        case 'heading2':
+            start += noSpaceTmp`
                     <w:p>
                         <w:pPr>
                             <w:pStyle w:val="Heading2"/>
@@ -82,10 +82,10 @@ export class DocxExporterRichtext {
                         </w:pPr>
                         <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
                         <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
-                end = '</w:p>' + end
-                break
-            case 'heading3':
-                start += noSpaceTmp`
+            end = '</w:p>' + end
+            break
+        case 'heading3':
+            start += noSpaceTmp`
                     <w:p>
                         <w:pPr>
                             <w:pStyle w:val="Heading3"/>
@@ -93,10 +93,10 @@ export class DocxExporterRichtext {
                         </w:pPr>
                         <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
                         <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
-                end = '</w:p>' + end
-                break
-            case 'heading4':
-                start += noSpaceTmp`
+            end = '</w:p>' + end
+            break
+        case 'heading4':
+            start += noSpaceTmp`
                     <w:p>
                         <w:pPr>
                             <w:pStyle w:val="Heading4"/>
@@ -104,10 +104,10 @@ export class DocxExporterRichtext {
                         </w:pPr>
                         <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
                         <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
-                end = '</w:p>' + end
-                break
-            case 'heading5':
-                start += noSpaceTmp`
+            end = '</w:p>' + end
+            break
+        case 'heading5':
+            start += noSpaceTmp`
                     <w:p>
                         <w:pPr>
                             <w:pStyle w:val="Heading5"/>
@@ -115,10 +115,10 @@ export class DocxExporterRichtext {
                         </w:pPr>
                         <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
                         <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
-                end = '</w:p>' + end
-                break
-            case 'heading6':
-                start += noSpaceTmp`
+            end = '</w:p>' + end
+            break
+        case 'heading6':
+            start += noSpaceTmp`
                     <w:p>
                         <w:pPr>
                             <w:pStyle w:val="Heading6"/>
@@ -126,197 +126,197 @@ export class DocxExporterRichtext {
                         </w:pPr>
                         <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
                         <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
-                end = '</w:p>' + end
-                break
-            case 'code_block':
-                start += '<w:p>'
-                start += '<w:pPr><w:pStyle w:val="Code"/><w:rPr></w:rPr></w:pPr>'
-                end = '</w:p>' + end
-                break
-            case 'blockquote':
-                // This is imperfect, but Word doesn't seem to provide section/quotation nesting
-                options = Object.assign({}, options)
-                options.section = 'Quote'
-                break
-            case 'ordered_list':
-                options = Object.assign({}, options)
-                options.section = 'ListParagraph'
-                options.list_type = this.exporter.lists.getNumberedType()
-                if (options.list_depth === undefined) {
-                    options.list_depth = 0
-                } else {
-                    options.list_depth += 1
-                }
-                break
-            case 'bullet_list':
-                options = Object.assign({}, options)
-                options.section = 'ListParagraph'
-                options.list_type = this.exporter.lists.getBulletType()
-                if (options.list_depth === undefined) {
-                    options.list_depth = 0
-                } else {
-                    options.list_depth += 1
-                }
-                break
-            case 'list_item':
-                // Word seems to lack complex nesting options. The styling is applied
-                // to child paragraphs. This will deliver correct results in most
-                // cases.
-                break
-            case 'footnotecontainer':
-                options = Object.assign({}, options)
-                options.section = 'Footnote'
-                options.inFootnote = true
-                start += `<w:footnote w:id="${this.fnCounter++}">`
-                end = '</w:footnote>' + end
-                options.footnoteRefMissing = true
-                break
-            case 'footnote':
-                content += noSpaceTmp`
+            end = '</w:p>' + end
+            break
+        case 'code_block':
+            start += '<w:p>'
+            start += '<w:pPr><w:pStyle w:val="Code"/><w:rPr></w:rPr></w:pPr>'
+            end = '</w:p>' + end
+            break
+        case 'blockquote':
+            // This is imperfect, but Word doesn't seem to provide section/quotation nesting
+            options = Object.assign({}, options)
+            options.section = 'Quote'
+            break
+        case 'ordered_list':
+            options = Object.assign({}, options)
+            options.section = 'ListParagraph'
+            options.list_type = this.exporter.lists.getNumberedType()
+            if (options.list_depth === undefined) {
+                options.list_depth = 0
+            } else {
+                options.list_depth += 1
+            }
+            break
+        case 'bullet_list':
+            options = Object.assign({}, options)
+            options.section = 'ListParagraph'
+            options.list_type = this.exporter.lists.getBulletType()
+            if (options.list_depth === undefined) {
+                options.list_depth = 0
+            } else {
+                options.list_depth += 1
+            }
+            break
+        case 'list_item':
+            // Word seems to lack complex nesting options. The styling is applied
+            // to child paragraphs. This will deliver correct results in most
+            // cases.
+            break
+        case 'footnotecontainer':
+            options = Object.assign({}, options)
+            options.section = 'Footnote'
+            options.inFootnote = true
+            start += `<w:footnote w:id="${this.fnCounter++}">`
+            end = '</w:footnote>' + end
+            options.footnoteRefMissing = true
+            break
+        case 'footnote':
+            content += noSpaceTmp`
                     <w:r>
                         <w:rPr>
                             <w:rStyle w:val="FootnoteAnchor"/>
                         </w:rPr>
                         <w:footnoteReference w:id="${this.fnCounter++}"/>
                     </w:r>`
-                break
-            case 'text':
-                {
-                    let hyperlink, em, strong, underline, smallcaps, sup, sub
-                    // Check for hyperlink, bold/strong and italic/em
-                    if (node.marks) {
-                        hyperlink = node.marks.find(mark => mark.type === 'link')
-                        em = node.marks.find(mark => mark.type === 'em')
-                        strong = node.marks.find(mark => mark.type === 'strong')
-                        underline = node.marks.find(mark => mark.type === 'underline')
-                        smallcaps = node.marks.find(mark => mark.type === 'smallcaps')
-                        sup = node.marks.find(mark => mark.type === 'sup')
-                        sub = node.marks.find(mark => mark.type === 'sub')
-                    }
-
-                    if (hyperlink) {
-                        const href = hyperlink.attrs.href
-                        if (href[0] === '#') {
-                            // Internal link
-                            start += `<w:hyperlink w:anchor="${href.slice(1)}">`
-                        } else {
-                            // External link
-                            const refId = this.rels.addLinkRel(href)
-                            start += `<w:hyperlink r:id="rId${refId}">`
-                        }
-                        start += '<w:r>'
-                        end = '</w:t></w:r></w:hyperlink>' + end
-                    } else {
-                        start += '<w:r>'
-                        end = '</w:t></w:r>' + end
-                    }
-
-                    if (hyperlink || em || strong || underline || smallcaps || sup || sub) {
-                        start += '<w:rPr>'
-                        if (hyperlink) {
-                            start += '<w:rStyle w:val="Hyperlink"/>'
-                        }
-                        if (em) {
-                            start += '<w:i/><w:iCs/>'
-                        }
-                        if (strong) {
-                            start += '<w:b/><w:bCs/>'
-                        }
-                        if (underline) {
-                            start += '<w:u w:val="single"/>'
-                        }
-                        if (smallcaps) {
-                            start += '<w:smallCaps/>'
-                        }
-                        if (sup) {
-                            start += '<w:vertAlign w:val="superscript"/>'
-                        } else if (sub) {
-                            start += '<w:vertAlign w:val="subscript"/>'
-                        }
-
-                        start += '</w:rPr>'
-                    }
-                    if (options.footnoteRefMissing) {
-                        start += '<w:footnoteRef /><w:tab />'
-                        options.footnoteRefMissing = false
-                    }
-                    let textAttr = ''
-                    if (node.text[0] === ' ' || node.text[node.text.length - 1] === ' ') {
-                        textAttr += 'xml:space="preserve"'
-                    }
-                    start += `<w:t ${textAttr}>`
-
-                    content += escapeText(node.text)
-                    break
-                }
-            case 'cross_reference': {
-                const title = node.attrs.title
-                const id = node.attrs.id
-                if (title) {
-                    start += `<w:hyperlink w:anchor="${id}"><w:r><w:rPr><w:rStyle w:val="Hyperlink"/></w:rPr><w:t>`
-                    end = '</w:t></w:r></w:hyperlink>' + end
-                } else {
-                    start += '<w:r><w:t>'
-                    end = '</w:t></w:r>' + end
-                }
-                content += escapeText(title || 'MISSING TARGET')
-                break
+            break
+        case 'text':
+        {
+            let hyperlink, em, strong, underline, smallcaps, sup, sub
+            // Check for hyperlink, bold/strong and italic/em
+            if (node.marks) {
+                hyperlink = node.marks.find(mark => mark.type === 'link')
+                em = node.marks.find(mark => mark.type === 'em')
+                strong = node.marks.find(mark => mark.type === 'strong')
+                underline = node.marks.find(mark => mark.type === 'underline')
+                smallcaps = node.marks.find(mark => mark.type === 'smallcaps')
+                sup = node.marks.find(mark => mark.type === 'sup')
+                sub = node.marks.find(mark => mark.type === 'sub')
             }
-            case 'citation':
-                {
-                    // We take the first citation from the stack and remove it.
-                    const cit = this.citations.pmCits.shift()
-                    if (options.citationType && options.citationType === 'note') {
-                        // If the citations are in notes (footnotes), we need to
-                        // put the contents of this citation in a footnote.
-                        // We then add the footnote to the footnote file and
-                        // adjust the ids of all subsequent footnotes to be one higher
-                        // than what they were until now.
-                        content += noSpaceTmp`
+
+            if (hyperlink) {
+                const href = hyperlink.attrs.href
+                if (href[0] === '#') {
+                    // Internal link
+                    start += `<w:hyperlink w:anchor="${href.slice(1)}">`
+                } else {
+                    // External link
+                    const refId = this.rels.addLinkRel(href)
+                    start += `<w:hyperlink r:id="rId${refId}">`
+                }
+                start += '<w:r>'
+                end = '</w:t></w:r></w:hyperlink>' + end
+            } else {
+                start += '<w:r>'
+                end = '</w:t></w:r>' + end
+            }
+
+            if (hyperlink || em || strong || underline || smallcaps || sup || sub) {
+                start += '<w:rPr>'
+                if (hyperlink) {
+                    start += '<w:rStyle w:val="Hyperlink"/>'
+                }
+                if (em) {
+                    start += '<w:i/><w:iCs/>'
+                }
+                if (strong) {
+                    start += '<w:b/><w:bCs/>'
+                }
+                if (underline) {
+                    start += '<w:u w:val="single"/>'
+                }
+                if (smallcaps) {
+                    start += '<w:smallCaps/>'
+                }
+                if (sup) {
+                    start += '<w:vertAlign w:val="superscript"/>'
+                } else if (sub) {
+                    start += '<w:vertAlign w:val="subscript"/>'
+                }
+
+                start += '</w:rPr>'
+            }
+            if (options.footnoteRefMissing) {
+                start += '<w:footnoteRef /><w:tab />'
+                options.footnoteRefMissing = false
+            }
+            let textAttr = ''
+            if (node.text[0] === ' ' || node.text[node.text.length - 1] === ' ') {
+                textAttr += 'xml:space="preserve"'
+            }
+            start += `<w:t ${textAttr}>`
+
+            content += escapeText(node.text)
+            break
+        }
+        case 'cross_reference': {
+            const title = node.attrs.title
+            const id = node.attrs.id
+            if (title) {
+                start += `<w:hyperlink w:anchor="${id}"><w:r><w:rPr><w:rStyle w:val="Hyperlink"/></w:rPr><w:t>`
+                end = '</w:t></w:r></w:hyperlink>' + end
+            } else {
+                start += '<w:r><w:t>'
+                end = '</w:t></w:r>' + end
+            }
+            content += escapeText(title || 'MISSING TARGET')
+            break
+        }
+        case 'citation':
+        {
+            // We take the first citation from the stack and remove it.
+            const cit = this.citations.pmCits.shift()
+            if (options.citationType === 'note') {
+                // If the citations are in notes (footnotes), we need to
+                // put the contents of this citation in a footnote.
+                // We then add the footnote to the footnote file and
+                // adjust the ids of all subsequent footnotes to be one higher
+                // than what they were until now.
+                content += noSpaceTmp`
                         <w:r>
                             <w:rPr>
                                 <w:rStyle w:val="FootnoteAnchor"/>
                             </w:rPr>
                             <w:footnoteReference w:id="${this.fnCounter}"/>
                         </w:r>`
-                        const fnContents = this.transformRichtext(cit, {
-                            footnoteRefMissing: true,
-                            section: 'Footnote'
-                        })
-                        const fnXml = `<w:footnote w:id="${this.fnCounter}">${fnContents}</w:footnote>`
-                        const xml = this.exporter.footnotes.xml
-                        const lastId = this.fnCounter - 1
-                        const footnotes = xml.querySelectorAll('footnote')
-                        footnotes.forEach(
-                            footnote => {
-                                const id = parseInt(footnote.getAttribute('w:id'))
-                                if (id >= this.fnCounter) {
-                                    footnote.setAttribute('w:id', id + 1)
-                                }
-                                if (id === lastId) {
-                                    footnote.insertAdjacentHTML('afterend', fnXml)
-                                }
-                            }
-                        )
-                        this.fnCounter++
-                    } else {
-                        for (let i = 0; i < cit.content.length; i++) {
-                            content += this.transformRichtext(cit.content[i], options)
+                const fnContents = this.transformRichtext(cit, {
+                    footnoteRefMissing: true,
+                    section: 'Footnote'
+                })
+                const fnXml = `<w:footnote w:id="${this.fnCounter}">${fnContents}</w:footnote>`
+                const xml = this.exporter.footnotes.xml
+                const lastId = this.fnCounter - 1
+                const footnotes = xml.querySelectorAll('footnote')
+                footnotes.forEach(
+                    footnote => {
+                        const id = parseInt(footnote.getAttribute('w:id'))
+                        if (id >= this.fnCounter) {
+                            footnote.setAttribute('w:id', id + 1)
+                        }
+                        if (id === lastId) {
+                            footnote.insertAdjacentHTML('afterend', fnXml)
                         }
                     }
-                    break
+                )
+                this.fnCounter++
+            } else {
+                for (let i = 0; i < cit.content.length; i++) {
+                    content += this.transformRichtext(cit.content[i], options)
                 }
-            case 'figure':
-                {
-                    const figCat = node.attrs.figureCategory
-                    let caption = escapeText(node.attrs.caption)
-                    let figCountXml = ''
-                    if (figCat !== 'none') {
-                        const figureCounter = options.inFootnote ? this.fnFigureCounter : this.figureCounter
-                        if (!figureCounter[figCat]) {
-                            figureCounter[figCat] = 1
-                        }
-                        figCountXml = `<w:r>
+            }
+            break
+        }
+        case 'figure':
+        {
+            const figCat = node.attrs.figureCategory
+            let caption = escapeText(node.attrs.caption)
+            let figCountXml = ''
+            if (figCat !== 'none') {
+                const figureCounter = options.inFootnote ? this.fnFigureCounter : this.figureCounter
+                if (!figureCounter[figCat]) {
+                    figureCounter[figCat] = 1
+                }
+                figCountXml = `<w:r>
                         <w:t xml:space="preserve">${FIG_CATS[figCat][this.exporter.doc.settings.language]} </w:t>
                     </w:r>
                     <w:r>
@@ -339,36 +339,36 @@ export class DocxExporterRichtext {
                         <w:rPr></w:rPr>
                         <w:fldChar w:fldCharType="end" />
                     </w:r>`
-                        caption = caption.length ? ': ' + caption : ''
+                caption = caption.length ? ': ' + caption : ''
+            }
+            let cx, cy
+            if (node.attrs.image !== false) {
+                const imgDBEntry = this.images.imageDB.db[node.attrs.image]
+                cx = imgDBEntry.width * 9525 // width in EMU
+                cy = imgDBEntry.height * 9525 // height in EMU
+                const imgTitle = imgDBEntry.title
+                // Shrink image if too large for paper.
+                if (options.dimensions) {
+                    let width = options.dimensions.width
+                    if (options.tableSideMargins) {
+                        width = width - options.tableSideMargins
                     }
-                    let cx, cy
-                    if (node.attrs.image !== false) {
-                        const imgDBEntry = this.images.imageDB.db[node.attrs.image]
-                        cx = imgDBEntry.width * 9525 // width in EMU
-                        cy = imgDBEntry.height * 9525 // height in EMU
-                        const imgTitle = imgDBEntry.title
-                        // Shrink image if too large for paper.
-                        if (options.dimensions) {
-                            let width = options.dimensions.width
-                            if (options.tableSideMargins) {
-                                width = width - options.tableSideMargins
-                            }
-                            width = width * parseInt(node.attrs.width) / 100
-                            if (cx > width) {
-                                const rel = cy / cx
-                                cx = width
-                                cy = cx * rel
-                            }
-                            if (cy > options.dimensions.height) {
-                                const rel = cx / cy
-                                cy = options.dimensions.height
-                                cx = cy * rel
-                            }
-                        }
-                        cy = Math.round(cy)
-                        cx = Math.round(cx)
-                        const rId = this.images.imgIdTranslation[node.attrs.image]
-                        content += noSpaceTmp`<w:r>
+                    width = width * parseInt(node.attrs.width) / 100
+                    if (cx > width) {
+                        const rel = cy / cx
+                        cx = width
+                        cy = cx * rel
+                    }
+                    if (cy > options.dimensions.height) {
+                        const rel = cx / cy
+                        cy = options.dimensions.height
+                        cx = cy * rel
+                    }
+                }
+                cy = Math.round(cy)
+                cx = Math.round(cx)
+                const rId = this.images.imgIdTranslation[node.attrs.image]
+                content += noSpaceTmp`<w:r>
                       <w:rPr/>
                       <w:drawing>
                         <wp:inline distT="0" distB="0" distL="0" distR="0">
@@ -411,37 +411,37 @@ export class DocxExporterRichtext {
                         </wp:inline>
                       </w:drawing>
                     </w:r>`
-                    } else {
-                        cx = 9525 * 100 // We pick a random size of 100x100. We hope this will fit the formula
-                        cy = 9525 * 100
-                        const latex = node.attrs.equation
-                        content += this.exporter.math.getOmml(latex)
-                    }
-                    const captionSpace = !!(figCountXml.length || caption.length)
-                    if (node.attrs.aligned === 'center') {
-                        start += noSpaceTmp`
+            } else {
+                cx = 9525 * 100 // We pick a random size of 100x100. We hope this will fit the formula
+                cy = 9525 * 100
+                const latex = node.attrs.equation
+                content += this.exporter.math.getOmml(latex)
+            }
+            const captionSpace = !!(figCountXml.length || caption.length)
+            if (node.attrs.aligned === 'center') {
+                start += noSpaceTmp`
                     <w:p>
                       <w:pPr>
                         <w:jc w:val="center"/>
                       </w:pPr>
                       <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
                       <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
-                        end = `
+                end = `
                     </w:p>
                     ${ captionSpace ?
-                        noSpaceTmp`<w:p>
+        noSpaceTmp`<w:p>
                           <w:pPr><w:pStyle w:val="Caption"/><w:rPr></w:rPr></w:pPr>
                           ${figCountXml}
                           ${
-                              caption.length ?
-                              noSpaceTmp`<w:r>
+    caption.length ?
+        noSpaceTmp`<w:r>
                                   <w:rPr></w:rPr>
                                   <w:t>${caption}</w:t>
                               </w:r>` : ''
-                          }</w:p>` : ''
-                    }` + end
-                    } else {
-                        start += noSpaceTmp`
+}</w:p>` : ''
+}` + end
+            } else {
+                start += noSpaceTmp`
                     <w:p>
                       <w:pPr>
                         <w:jc w:val="center"/>
@@ -457,7 +457,7 @@ export class DocxExporterRichtext {
                                 <wp:positionV relativeFrom="paragraph">
                                     <wp:posOffset>0</wp:posOffset>
                                 </wp:positionV>
-                                <wp:extent cx="${cx}" cy="${captionSpace ? cy+350520 : cy}" />
+                                <wp:extent cx="${cx}" cy="${captionSpace ? cy + 350520 : cy}" />
                                 <wp:effectExtent l="0" t="0" r="0" b="0" />
                                 <wp:wrapSquare wrapText="largest" />
                                 <wp:docPr id="${this.docPrCount}" name="Frame${this.docPrCount++}" />
@@ -468,7 +468,7 @@ export class DocxExporterRichtext {
                                             <wps:spPr>
                                                 <a:xfrm>
                                                     <a:off x="0" y="0" />
-                                                    <a:ext cx="${cx}" cy="${captionSpace ? cy+350520 : cy}" />
+                                                    <a:ext cx="${cx}" cy="${captionSpace ? cy + 350520 : cy}" />
                                                 </a:xfrm>
                                                 <a:prstGeom prst="rect" />
                                             </wps:spPr>
@@ -483,16 +483,16 @@ export class DocxExporterRichtext {
                                                         <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
                                                         <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
 
-                        end = noSpaceTmp`
+                end = noSpaceTmp`
                                                         ${figCountXml}
                                                         ${
-                                                            caption.length ?
-                                                            `<w:r>
+    caption.length ?
+        `<w:r>
                                                                 <w:rPr></w:rPr>
                                                                 <w:t>${caption}</w:t>
                                                             </w:r>` :
-                                                            ''
-                                                        }
+        ''
+}
                                                     </w:p>
                                                 </w:txbxContent>
                                             </wps:txbx>
@@ -509,122 +509,122 @@ export class DocxExporterRichtext {
                         </w:drawing>
                       </w:r>
                     </w:p>` + end
-                    }
-                    break
-                }
-            case 'table':
-                {
-                    this.exporter.tables.addTableGridStyle()
-                    start += noSpaceTmp`
+            }
+            break
+        }
+        case 'table':
+        {
+            this.exporter.tables.addTableGridStyle()
+            start += noSpaceTmp`
                     <w:tbl>
                         <w:tblPr>
                             <w:tblStyle w:val="${this.exporter.tables.tableGridStyle}" />
                             ${
-                                node.attrs.width === '100' ?
-                                    '<w:tblW w:w="0" w:type="auto" />' :
-                                    noSpaceTmp`<w:tblW w:w="${
-                                        50 * parseInt(node.attrs.width)
-                                    }" w:type="pct" />
+    node.attrs.width === '100' ?
+        '<w:tblW w:w="0" w:type="auto" />' :
+        noSpaceTmp`<w:tblW w:w="${
+            50 * parseInt(node.attrs.width)
+        }" w:type="pct" />
                                     <w:jc w:val="${node.attrs.aligned}" />`
-                            }
+}
                             <w:tblLook w:val="04A0" w:firstRow="1" w:lastRow="0" w:firstColumn="1" w:lastColumn="0" w:noHBand="0" w:noVBand="1" />
                         </w:tblPr>
                         <w:tblGrid>`
-                    const columns = node.content[0].content.length
-                    let cellWidth = 63500 // standard width
-                    options = Object.assign({}, options)
-                    if (options.dimensions && options.dimensions.width) {
-                        cellWidth = parseInt(options.dimensions.width / columns) - 2540 // subtracting for border width
-                    } else if (!options.dimensions) {
-                        options.dimensions = {}
-                    }
+            const columns = node.content[0].content.length
+            let cellWidth = 63500 // standard width
+            options = Object.assign({}, options)
+            if (options.dimensions?.width) {
+                cellWidth = parseInt(options.dimensions.width / columns) - 2540 // subtracting for border width
+            } else if (!options.dimensions) {
+                options.dimensions = {}
+            }
 
-                    options.dimensions = Object.assign({}, options.dimensions)
-                    options.dimensions.width = cellWidth
-                    options.tableSideMargins = this.exporter.tables.getSideMargins()
-                    for (let i = 0; i < columns; i++) {
-                        start += `<w:gridCol w:w="${parseInt(cellWidth / 635)}" />`
-                    }
-                    start += '</w:tblGrid>'
-                    end = '</w:tbl>' + end
+            options.dimensions = Object.assign({}, options.dimensions)
+            options.dimensions.width = cellWidth
+            options.tableSideMargins = this.exporter.tables.getSideMargins()
+            for (let i = 0; i < columns; i++) {
+                start += `<w:gridCol w:w="${parseInt(cellWidth / 635)}" />`
+            }
+            start += '</w:tblGrid>'
+            end = '</w:tbl>' + end
 
-                    break
-                }
-            case 'table_row':
-                start += '<w:tr>'
-                end = '</w:tr>' + end
-                break
-            case 'table_cell':
-            case 'table_header':
-                start += noSpaceTmp`
+            break
+        }
+        case 'table_row':
+            start += '<w:tr>'
+            end = '</w:tr>' + end
+            break
+        case 'table_cell':
+        case 'table_header':
+            start += noSpaceTmp`
                     <w:tc>
                         <w:tcPr>
                             ${
-                                node.attrs.rowspan && node.attrs.colspan ?
-                                `<w:tcW w:w="${parseInt(options.dimensions.width  / 635)}" w:type="dxa" />` :
-                                '<w:tcW w:w="0" w:type="auto" />'
-                            }
+    node.attrs.rowspan && node.attrs.colspan ?
+        `<w:tcW w:w="${parseInt(options.dimensions.width  / 635)}" w:type="dxa" />` :
+        '<w:tcW w:w="0" w:type="auto" />'
+}
                             ${
-                                node.attrs.rowspan ?
-                                node.attrs.rowspan > 1 ?
-                                '<w:vMerge w:val="restart" />' :
-                                '' :
-                                '<w:vMerge/>'
-                            }
+    node.attrs.rowspan ?
+        node.attrs.rowspan > 1 ?
+            '<w:vMerge w:val="restart" />' :
+            '' :
+        '<w:vMerge/>'
+}
                             ${
-                                node.attrs.colspan ?
-                                node.attrs.colspan > 1 ?
-                                '<w:hMerge w:val="restart" />' :
-                                '' :
-                                '<w:hMerge/>'
-                            }
+    node.attrs.colspan ?
+        node.attrs.colspan > 1 ?
+            '<w:hMerge w:val="restart" />' :
+            '' :
+        '<w:hMerge/>'
+}
                         </w:tcPr>
                         ${
-                            node.content ?
-                            '' :
-                            '<w:p/>'
-                        }`
-                end = '</w:tc>' + end
+    node.content ?
+        '' :
+        '<w:p/>'
+}`
+            end = '</w:tc>' + end
 
-                break
-            case 'equation':
-                {
-                    const latex = node.attrs.equation
-                    content += this.exporter.math.getOmml(latex)
-                    break
-                }
-            case 'hard_break':
-                content += '<w:r><w:br/></w:r>'
-                break
-                // CSL bib entries
-            case 'cslbib':
-                options = Object.assign({}, options)
-                options.section = 'Bibliography1'
-                break
-            case 'cslblock':
-                end = '<w:r><w:br/></w:r>' + end
-                break
-            case 'cslleftmargin':
-                end = '<w:r><w:tab/></w:r>' + end
-                break
-            case 'cslindent':
-                start += '<w:r><w:tab/></w:r>'
-                end = '<w:r><w:br/></w:r>' + end
-                break
-            case 'cslentry':
-                start += noSpaceTmp`
+            break
+        case 'equation':
+        {
+            const latex = node.attrs.equation
+            content += this.exporter.math.getOmml(latex)
+            break
+        }
+        case 'hard_break':
+            content += '<w:r><w:br/></w:r>'
+            break
+            // CSL bib entries
+        case 'cslbib':
+            options = Object.assign({}, options)
+            options.section = 'Bibliography1'
+            break
+        case 'cslblock':
+            end = '<w:r><w:br/></w:r>' + end
+            break
+        case 'cslleftmargin':
+            end = '<w:r><w:tab/></w:r>' + end
+            break
+        case 'cslindent':
+            start += '<w:r><w:tab/></w:r>'
+            end = '<w:r><w:br/></w:r>' + end
+            break
+        case 'cslentry':
+            start += noSpaceTmp`
                     <w:p>
                         <w:pPr>
                             <w:pStyle w:val="${options.section}"/>
                             <w:rPr></w:rPr>
                         </w:pPr>`
-                end = '</w:p>' + end
-                break
-            case 'cslinline':
-            case 'cslrightinline':
-                break
-            default:
-                break
+            end = '</w:p>' + end
+            break
+        case 'cslinline':
+        case 'cslrightinline':
+            break
+        default:
+            break
         }
 
         if (node.content) {

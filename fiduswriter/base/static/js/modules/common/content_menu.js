@@ -1,37 +1,37 @@
 
 const menuTemplate = ({id, classes, height, width, zIndex, menu, scroll, page}) =>
-`<div tabindex="-1" role="incontent_menu"
+    `<div tabindex="-1" role="incontent_menu"
         class="ui-content_menu ui-corner-all ui-widget ui-widget-content ui-front"
         ${id ? `aria-describedby="${id}"` : ''} style="z-index: ${zIndex};">
     <div ${id ? `id="${id}"` : ''} class="ui-content_menu-content ui-widget-content${classes ? ` ${classes}` : ''}${scroll ? ` ui-scrollable` : ''}" style="width: ${width}; height: ${height};">
     <div>
         <ul class="content-menu-list">
         ${
-            menu.content.map((menuItem, index)=>
-                menuItem.type == "separator" ?
-                    '<hr class="content-menu-item-divider"/>' :
-                    `<li data-index="${index}" class="content-menu-item${
-                        menuItem.disabled && menuItem.disabled(page) ?
-                        ' disabled' :
-                        ''
-                    }" title='${menuItem.tooltip}'>
+    menu.content.map((menuItem, index)=>
+        menuItem.type == "separator" ?
+            '<hr class="content-menu-item-divider"/>' :
+            `<li data-index="${index}" class="content-menu-item${
+                menuItem.disabled && menuItem.disabled(page) ?
+                    ' disabled' :
+                    ''
+            }" title='${menuItem.tooltip}'>
                     ${
-                        typeof menuItem.title === 'function' ?
-                            menuItem.title(page) :
-                            menuItem.title
-                    } ${
-                        menuItem.icon ?
-                            `<span class="content-menu-item-icon"><i class="fa fa-${menuItem.icon}"></i></span>` :
-                            ''
-                    }
+    typeof menuItem.title === 'function' ?
+        menuItem.title(page) :
+        menuItem.title
+} ${
+    menuItem.icon ?
+        `<span class="content-menu-item-icon"><i class="fa fa-${menuItem.icon}"></i></span>` :
+        ''
+}
                     </li>`
-            ).join('')
-        }
+    ).join('')
+}
         </ul>
     </div>
     </div>
 </div>
-<div class="ui-widget-overlay ui-front" style="z-index: ${zIndex-1}"></div>`
+<div class="ui-widget-overlay ui-front" style="z-index: ${zIndex - 1}"></div>`
 
 export class ContentMenu {
     constructor({
@@ -79,7 +79,7 @@ export class ContentMenu {
         )
         this.backdropEl = document.body.lastElementChild
         this.dialogEl = this.backdropEl.previousElementSibling
-        if (this.menuPos && this.menuPos.X && this.menuPos.Y)
+        if (this.menuPos?.X && this.menuPos?.Y)
             this.positionDialog()
         else
             this.centerDialog()
@@ -94,8 +94,8 @@ export class ContentMenu {
             dialogHeight = dialogRect.height + 10,
             scrollTopOffset = window.pageYOffset,
             scrollLeftOffset = window.pageXOffset
-        this.dialogEl.style.top = `${(totalHeight - dialogHeight)/2 + scrollTopOffset}px`
-        this.dialogEl.style.left = `${(totalWidth - dialogWidth)/2 + scrollLeftOffset}px`
+        this.dialogEl.style.top = `${(totalHeight - dialogHeight) / 2 + scrollTopOffset}px`
+        this.dialogEl.style.left = `${(totalWidth - dialogWidth) / 2 + scrollLeftOffset}px`
     }
 
     positionDialog() {
@@ -149,7 +149,7 @@ export class ContentMenu {
         if (target.matches('li.content-menu-item')) {
             const menuNumber = target.dataset.index
             const menuItem = this.menu.content[menuNumber]
-            if (menuItem.disabled && menuItem.disabled(this.page)) {
+            if (menuItem.disabled?.(this.page)) {
                 return
             }
             menuItem.action(this.page)

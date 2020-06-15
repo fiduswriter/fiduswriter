@@ -8,7 +8,7 @@ export const bulkMenuModel = () => ({
             tooltip: gettext('Delete the documents that have been selected.'),
             action: overview => {
                 const ids = overview.getSelected()
-                const ownIds = ids.filter(id => overview.documentList.find(doc => doc.id===id).is_owner)
+                const ownIds = ids.filter(id => overview.documentList.find(doc => doc.id === id).is_owner)
                 if (ownIds.length !== ids.length) {
                     addAlert('error', gettext('You cannot delete documents of other users'))
                 }
@@ -16,7 +16,7 @@ export const bulkMenuModel = () => ({
                     overview.mod.actions.deleteDocumentDialog(ownIds)
                 }
             },
-            disabled: overview => !overview.getSelected().length || !overview.app.ws.isOnline(),
+            disabled: overview => !overview.getSelected().length || window.isOffline,
             order: 0
         },
         {
@@ -24,7 +24,7 @@ export const bulkMenuModel = () => ({
             tooltip: gettext('Share the documents that have been selected.'),
             action: overview => {
                 const ids = overview.getSelected()
-                const ownIds = ids.filter(id => overview.documentList.find(doc => doc.id===id).is_owner)
+                const ownIds = ids.filter(id => overview.documentList.find(doc => doc.id === id).is_owner)
                 if (ownIds.length !== ids.length) {
                     addAlert('error', gettext('You cannot share documents of other users'))
                 }
@@ -37,7 +37,7 @@ export const bulkMenuModel = () => ({
                     dialog.init()
                 }
             },
-            disabled: overview => !overview.getSelected().length || !overview.app.ws.isOnline(),
+            disabled: overview => !overview.getSelected().length || window.isOffline,
             order: 1
         },
         {
@@ -49,7 +49,7 @@ export const bulkMenuModel = () => ({
                     overview.mod.actions.copyFiles(ids)
                 }
             },
-            disabled: overview => !overview.getSelected().length || !overview.app.ws.isOnline(),
+            disabled: overview => !overview.getSelected().length || window.isOffline,
             order: 2
         },
         {
@@ -61,7 +61,7 @@ export const bulkMenuModel = () => ({
                     overview.mod.actions.downloadEpubFiles(ids)
                 }
             },
-            disabled: overview => !overview.getSelected().length || !overview.app.ws.isOnline(),
+            disabled: overview => !overview.getSelected().length || window.isOffline,
             order: 3
         },
         {
@@ -73,7 +73,7 @@ export const bulkMenuModel = () => ({
                     overview.mod.actions.downloadHtmlFiles(ids)
                 }
             },
-            disabled: overview => !overview.getSelected().length || !overview.app.ws.isOnline(),
+            disabled: overview => !overview.getSelected().length || window.isOffline,
             order: 4
         },
         {
@@ -85,7 +85,7 @@ export const bulkMenuModel = () => ({
                     overview.mod.actions.downloadLatexFiles(ids)
                 }
             },
-            disabled: overview => !overview.getSelected().length || !overview.app.ws.isOnline(),
+            disabled: overview => !overview.getSelected().length || window.isOffline,
             order: 5
         },
         {
@@ -97,7 +97,7 @@ export const bulkMenuModel = () => ({
                     overview.mod.actions.downloadJATSFiles(ids)
                 }
             },
-            disabled: overview => !overview.getSelected().length || !overview.app.ws.isOnline(),
+            disabled: overview => !overview.getSelected().length || window.isOffline,
             order: 6
         },
         {
@@ -109,7 +109,7 @@ export const bulkMenuModel = () => ({
                     overview.mod.actions.downloadNativeFiles(ids)
                 }
             },
-            disabled: overview => !overview.getSelected().length || !overview.app.ws.isOnline(),
+            disabled: overview => !overview.getSelected().length || window.isOffline,
             order: 7
         }
     ]

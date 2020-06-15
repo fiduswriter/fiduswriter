@@ -196,10 +196,10 @@ export class TagsPartView {
         if (['click', 'mousedown'].includes(event.type)) {
             return false
         } else if (
-            event.type==='keydown' &&
-            event.key==='ArrowRight' &&
+            event.type === 'keydown' &&
+            event.key === 'ArrowRight' &&
             this.tagInputView.state.selection.from ===
-                this.tagInputView.state.doc.nodeSize-3
+                this.tagInputView.state.doc.nodeSize - 3
         ) {
             this.view.focus()
             const startPos = this.getPos(),
@@ -210,8 +210,8 @@ export class TagsPartView {
             )
             return false
         } else if (
-            event.type==='keydown' &&
-            event.key==='ArrowLeft' &&
+            event.type === 'keydown' &&
+            event.key === 'ArrowLeft' &&
             this.tagInputView.state.selection.to === 1
         ) {
             this.view.focus()

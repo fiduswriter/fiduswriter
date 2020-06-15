@@ -20,7 +20,7 @@ import {SiteMenu} from "../../menu"
 import {FeedbackTab} from "../../feedback"
 import {menuModel, bulkMenuModel} from "./menu"
 import * as plugins from "../../../plugins/images_overview"
- /** Helper functions for user added images/SVGs.*/
+/** Helper functions for user added images/SVGs.*/
 
 export class ImageOverview {
     constructor({app, staticUrl, user}) {
@@ -257,42 +257,42 @@ export class ImageOverview {
         this.dom.addEventListener('click', event => {
             const el = {}
             switch (true) {
-                case findTarget(event, '.delete-image', el): {
-                    const imageId = el.target.dataset.id
-                    this.deleteImageDialog([imageId])
-                    break
-                }
-                case findTarget(event, '.edit-image', el): {
-                    const imageId = el.target.dataset.id
-                    import("../edit_dialog").then(({ImageEditDialog}) => {
-                        const dialog = new ImageEditDialog(this.app.imageDB, imageId)
-                        dialog.init().then(
-                            () => {
-                                this.updateTable([imageId])
-                            }
-                        )
-                    })
-                    break
-                }
-                case findTarget(event, '.fw-add-input', el): {
-                    const itemEl = el.target.closest('.fw-list-input')
-                    if (!itemEl.nextElementSibling) {
-                        itemEl.insertAdjacentHTML(
-                            'afterend',
-                            `<tr class="fw-list-input">
+            case findTarget(event, '.delete-image', el): {
+                const imageId = el.target.dataset.id
+                this.deleteImageDialog([imageId])
+                break
+            }
+            case findTarget(event, '.edit-image', el): {
+                const imageId = el.target.dataset.id
+                import("../edit_dialog").then(({ImageEditDialog}) => {
+                    const dialog = new ImageEditDialog(this.app.imageDB, imageId)
+                    dialog.init().then(
+                        () => {
+                            this.updateTable([imageId])
+                        }
+                    )
+                })
+                break
+            }
+            case findTarget(event, '.fw-add-input', el): {
+                const itemEl = el.target.closest('.fw-list-input')
+                if (!itemEl.nextElementSibling) {
+                    itemEl.insertAdjacentHTML(
+                        'afterend',
+                        `<tr class="fw-list-input">
                                 <td>
                                     <input type="text" class="category-form">
                                     <span class="fw-add-input icon-addremove"></span>
                                 </td>
                             </tr>`
-                        )
-                    } else {
-                        itemEl.parentElement.removeChild(itemEl)
-                    }
-                    break
+                    )
+                } else {
+                    itemEl.parentElement.removeChild(itemEl)
                 }
-                default:
-                    break
+                break
+            }
+            default:
+                break
             }
         })
     }

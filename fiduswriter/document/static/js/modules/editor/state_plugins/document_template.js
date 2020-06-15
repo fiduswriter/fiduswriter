@@ -75,14 +75,14 @@ export const documentTemplatePlugin = function(options) {
                 state.doc.firstChild.forEach((node, pos) => {
                     const from = pos + 1 // + 1 to get inside the article node
                     let to = from + 1 // + 1 for the part node
-                    if (node.attrs.locking==='fixed') {
+                    if (node.attrs.locking === 'fixed') {
                         to = from + node.nodeSize
-                    } else if (node.attrs.locking==='header') { // only relevant for tables
+                    } else if (node.attrs.locking === 'header') { // only relevant for tables
                         to = from + 1 + 1 + 1 + node.firstChild.firstChild.nodeSize // + 1 for the part node + 1 for the table + 1 for the first row
-                    } else if (node.attrs.locking==='start') {
+                    } else if (node.attrs.locking === 'start') {
                         let initialFragment = Fragment.fromJSON(options.editor.schema, node.attrs.initial)
                         let protectionSize = initialFragment.size
-                        if (initialFragment.lastChild && initialFragment.lastChild.isTextblock) {
+                        if (initialFragment.lastChild?.isTextblock) {
                             protectionSize -= 1 // We allow writing at the end of the last text block.
                             if (initialFragment.lastChild.nodeSize === 2) {
                                 // The last text block is empty, so we remove all protection from it, even node type
@@ -174,7 +174,7 @@ export const documentTemplatePlugin = function(options) {
             let allowedElements = false, allowedMarks = false
 
             changingRanges.forEach(range => state.doc.nodesBetween(range.from, range.to, (node, pos, parent, _index) => {
-                if (parent===tr.doc.firstChild) {
+                if (parent === tr.doc.firstChild) {
                     allowedElements = node.attrs.elements ?
                         node.attrs.elements.concat('table_row', 'table_cell', 'table_header', 'list_item', 'text') :
                         false

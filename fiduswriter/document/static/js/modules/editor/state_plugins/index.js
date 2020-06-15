@@ -1,38 +1,38 @@
 export {
     accessRightsPlugin
 }
-from "./access_rights"
+    from "./access_rights"
 export {
     contributorInputPlugin,
     ContributorsPartView
 }
-from "./contributor_input"
+    from "./contributor_input"
 export {
     citationRenderPlugin
 }
-from "./citation_render"
+    from "./citation_render"
 export {
     clipboardPlugin
 }
-from "./clipboard"
+    from "./clipboard"
 export {
     getSelectionUpdate,
     updateCollaboratorSelection,
     removeCollaboratorSelection,
     collabCaretsPlugin
 }
-from "./collab_carets"
+    from "./collab_carets"
 export {
     addCommentDuringCreationDecoration,
     removeCommentDuringCreationDecoration,
     getCommentDuringCreationDecoration,
     commentsPlugin
 }
-from "./comments"
+    from "./comments"
 export {
     documentTemplatePlugin
 }
-from "./document_template"
+    from "./document_template"
 export {
     findFootnoteMarkers,
     getFootnoteMarkerContents,
@@ -40,64 +40,64 @@ export {
     getFootnoteMarkers,
     footnoteMarkersPlugin
 }
-from "./footnote_markers"
+    from "./footnote_markers"
 export {
     headerbarPlugin
 }
-from "./headerbar"
+    from "./headerbar"
 export {
     jumpHiddenNodesPlugin
 }
-from "./jump_hidden_nodes"
+    from "./jump_hidden_nodes"
 export {
     linksPlugin,
     getInternalTargets
 }
-from "./links"
+    from "./links"
 export {
     marginboxesPlugin
 }
-from "./marginboxes"
+    from "./marginboxes"
 export {
     placeholdersPlugin
 }
-from "./placeholders"
+    from "./placeholders"
 export {
     selectionMenuPlugin
 }
-from "./selection_menu"
+    from "./selection_menu"
 export {
     settingsPlugin
 }
-from "./settings"
+    from "./settings"
 export {
     tableMenuPlugin
 }
-from "./table_menu"
+    from "./table_menu"
 export {
     figurePlugin
 }
-from "./figure"
+    from "./figure"
 export {
     tagInputPlugin,
     TagsPartView
 }
-from "./tag_input"
+    from "./tag_input"
 export {
     tocRenderPlugin
 }
-from "./toc_render"
+    from "./toc_render"
 export {
     toolbarPlugin
 }
-from "./toolbar"
+    from "./toolbar"
 export {
     trackPlugin,
     getSelectedChanges,
     setSelectedChanges,
     deactivateAllSelectedChanges
 }
-from "./track"
+    from "./track"
 export {
     searchPlugin,
     setSearchTerm,
@@ -107,4 +107,4 @@ export {
     deselectSearchMatch,
     endSearch
 }
-from "./search"
+    from "./search"

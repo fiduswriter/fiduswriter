@@ -48,19 +48,19 @@ export const deleteNode = function(tr, node, nodePos, map, accept) { // Delete a
             selection: Selection.findFrom(tr.doc.resolve(newNodePos), 1)
         })
         liftListItem(node.type)(state, newTr => {
-                newTr.steps.forEach(step => {
-                    tr.step(step)
-                    map.appendMap(step.getMap())
-                })
-            }
+            newTr.steps.forEach(step => {
+                tr.step(step)
+                map.appendMap(step.getMap())
+            })
+        }
         )
     } else {
         const end = map.map(nodePos + node.nodeSize)
         delStep = new ReplaceAroundStep(
             newNodePos,
             end,
-            newNodePos+1,
-            end-1,
+            newNodePos + 1,
+            end - 1,
             Slice.empty,
             0,
             true

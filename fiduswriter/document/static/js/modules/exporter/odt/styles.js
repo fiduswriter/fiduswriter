@@ -64,20 +64,20 @@ export class OdtExporterStyles {
         styles.forEach(style => {
             const styleNumber = parseInt(style.getAttribute('style:name').replace(/\D/g, ''))
             const styleFamily = style.getAttribute('style:family')
-            if (styleFamily==='text') {
-                if (styleNumber> this.inlineStyleCounter) {
+            if (styleFamily === 'text') {
+                if (styleNumber > this.inlineStyleCounter) {
                     this.inlineStyleCounter = styleNumber
                 }
-            } else if (styleFamily==='table') {
-                if (styleNumber> this.tableStyleCounter) {
+            } else if (styleFamily === 'table') {
+                if (styleNumber > this.tableStyleCounter) {
                     this.tableStyleCounter = styleNumber
                 }
-            } else if (styleFamily==='paragraph') {
-                if (styleNumber> this.blockStyleCounter) {
+            } else if (styleFamily === 'paragraph') {
+                if (styleNumber > this.blockStyleCounter) {
                     this.blockStyleCounter = styleNumber
                 }
-            } else if (styleFamily==='graphic') {
-                if (styleNumber> this.graphicStyleCounter) {
+            } else if (styleFamily === 'graphic') {
+                if (styleNumber > this.graphicStyleCounter) {
                     this.graphicStyleCounter = styleNumber
                 }
             }
@@ -85,7 +85,7 @@ export class OdtExporterStyles {
         const listStyles = this.contentXml.querySelectorAll('automatic-styles list-style')
         listStyles.forEach(style => {
             const styleNumber = parseInt(style.getAttribute('style:name').replace(/\D/g, ''))
-            if (styleNumber> this.listStyleCounter) {
+            if (styleNumber > this.listStyleCounter) {
                 this.listStyleCounter = styleNumber
             }
         })
@@ -140,11 +140,11 @@ export class OdtExporterStyles {
     width: '75'/'50'/'25' = percentage width - 100% doesn't need any style
     */
     getTableStyleId(aligned, width) {
-        if (this.tableStyleIds[aligned+width]) {
-            return this.tableStyleIds[aligned+width]
+        if (this.tableStyleIds[aligned + width]) {
+            return this.tableStyleIds[aligned + width]
         }
         const styleCounter = ++this.tableStyleCounter
-        this.tableStyleIds[aligned+width] = styleCounter
+        this.tableStyleIds[aligned + width] = styleCounter
         const autoStylesEl = this.contentXml.querySelector('automatic-styles')
         autoStylesEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
             <style:style style:name="Table${styleCounter}" style:family="table">
@@ -185,21 +185,21 @@ export class OdtExporterStyles {
     aligned: left/center/right (not used for Formula)
     */
     getGraphicStyleId(styleName, aligned = '') {
-        if (this.graphicStyleIds[styleName+aligned]) {
-            return this.graphicStyleIds[styleName+aligned]
+        if (this.graphicStyleIds[styleName + aligned]) {
+            return this.graphicStyleIds[styleName + aligned]
         }
         this.checkGraphicStyle(styleName)
 
         const styleCounter = ++this.graphicStyleCounter
-        this.graphicStyleIds[styleName+aligned] = styleCounter
+        this.graphicStyleIds[styleName + aligned] = styleCounter
         const autoStylesEl = this.contentXml.querySelector('automatic-styles')
         autoStylesEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
             <style:style style:name="fr${styleCounter}" style:family="graphic" style:parent-style-name="${styleName}">
                 ${
-                    styleName === 'Formula' ?
-                    `<style:graphic-properties style:vertical-pos="from-top" style:horizontal-pos="from-left" style:horizontal-rel="paragraph-content" draw:ole-draw-aspect="1" />` :
-                    `<style:graphic-properties fo:margin-left="0in" fo:margin-right="0in" fo:margin-top="0in" fo:margin-bottom="0in" ${ aligned === 'center' ? 'style:wrap="none"' : 'style:wrap="dynamic"  style:number-wrapped-paragraphs="no-limit"' } style:vertical-pos="top" style:vertical-rel="paragraph" style:horizontal-pos="${aligned}" style:horizontal-rel="paragraph" fo:padding="0in" fo:border="none" loext:rel-width-rel="paragraph" />`
-                } style:number-wrapped-paragraphs="no-limit"
+    styleName === 'Formula' ?
+        `<style:graphic-properties style:vertical-pos="from-top" style:horizontal-pos="from-left" style:horizontal-rel="paragraph-content" draw:ole-draw-aspect="1" />` :
+        `<style:graphic-properties fo:margin-left="0in" fo:margin-right="0in" fo:margin-top="0in" fo:margin-bottom="0in" ${ aligned === 'center' ? 'style:wrap="none"' : 'style:wrap="dynamic"  style:number-wrapped-paragraphs="no-limit"' } style:vertical-pos="top" style:vertical-rel="paragraph" style:horizontal-pos="${aligned}" style:horizontal-rel="paragraph" fo:padding="0in" fo:border="none" loext:rel-width-rel="paragraph" />`
+} style:number-wrapped-paragraphs="no-limit"
             </style:style>`)
         return styleCounter
     }
@@ -218,8 +218,8 @@ export class OdtExporterStyles {
 
         this.checkParStyle('Index')
 
-        const lineHeight = `${0.1665*bibInfo.linespacing}in`
-        const marginBottom = `${0.1667*bibInfo.entryspacing}in`
+        const lineHeight = `${0.1665 * bibInfo.linespacing}in`
+        const marginBottom = `${0.1667 * bibInfo.entryspacing}in`
         let marginLeft = "0in", textIndent = "0in", tabStops = '<style:tab-stops/>'
 
         if (bibInfo.hangingindent) {
@@ -227,7 +227,7 @@ export class OdtExporterStyles {
             textIndent = "-0.5in"
         } else if (bibInfo["second-field-align"]) {
             // We calculate 0.55em as roughly equivalent to one letter width.
-            const firstFieldWidth = `${(bibInfo.maxoffset + 1)*0.55}em`
+            const firstFieldWidth = `${(bibInfo.maxoffset + 1) * 0.55}em`
             if (bibInfo["second-field-align"] === 'margin') {
                 textIndent =  `-${firstFieldWidth}`
                 tabStops = '<style:tab-stops><style:tab-stop style:position="0in"/></style:tab-stops>'
@@ -259,11 +259,11 @@ export class OdtExporterStyles {
         `)
         const listStyleEl = autoStylesEl.lastChild
         // ODT files seem to contain ten levels of lists (1-10)
-        for (let level=1;level<11;level++) {
+        for (let level = 1;level < 11;level++) {
             listStyleEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
                 <text:list-level-style-bullet text:level="${level}" text:style-name="Bullet_20_Symbols" text:bullet-char="•">
                     <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-                        <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="${(level+1)*0.25}in" fo:text-indent="-0.25in" fo:margin-left="${(level+1)*0.25}in" />
+                        <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="${(level + 1) * 0.25}in" fo:text-indent="-0.25in" fo:margin-left="${(level + 1) * 0.25}in" />
                     </style:list-level-properties>
                 </text:list-level-style-bullet>
             `)
@@ -281,11 +281,11 @@ export class OdtExporterStyles {
         `)
         const listStyleEl = autoStylesEl.lastChild
         // ODT files seem to contain ten levels of lists (1-10)
-        for (let level=1;level<11;level++) {
+        for (let level = 1;level < 11;level++) {
             listStyleEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
                 <text:list-level-style-number text:level="${level}" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
                     <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-                        <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="${(level+1)*0.25}in" fo:text-indent="-0.25in" fo:margin-left="${(level+1)*0.25}in" />
+                        <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="${(level + 1) * 0.25}in" fo:text-indent="-0.25in" fo:margin-left="${(level + 1) * 0.25}in" />
                     </style:list-level-properties>
                 </text:list-level-style-number>
             `)

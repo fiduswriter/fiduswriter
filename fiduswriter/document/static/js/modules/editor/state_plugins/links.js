@@ -29,7 +29,7 @@ const copyLink = function(href) {
 const nonDeletedTextContent = node => {
     let text = ''
     node.descendants(subNode => {
-        if (subNode.isText && !subNode.marks.find(mark => mark.type.name==='deletion')) {
+        if (subNode.isText && !subNode.marks.find(mark => mark.type.name === 'deletion')) {
             text += subNode.text
         }
     })
@@ -42,7 +42,7 @@ export const getInternalTargets = function(state, language, editor) {
     const figures = {}
 
     state.doc.descendants(node => {
-        if (node.attrs.track && node.attrs.track.find(track => track.type==='deletion')) {
+        if (node.attrs.track?.find(track => track.type === 'deletion')) {
             return true
         }
         if (node.type.groups.includes('heading')) {
@@ -128,9 +128,9 @@ export const linksPlugin = function(options) {
         }
         let index = $head.index()
         while (
-            index < ($head.parent.childCount-1) &&
+            index < ($head.parent.childCount - 1) &&
             currentMarks.some(mark => mark.isInSet(
-                $head.parent.child(index+1).marks
+                $head.parent.child(index + 1).marks
             ))
         ) {
             index++
@@ -170,13 +170,13 @@ export const linksPlugin = function(options) {
         dropUp.innerHTML = noSpaceTmp`
             <div class="link drop-up-inner" style="top: -${requiredPx}px;">
                 ${
-                    linkMark ?
-                    `<div class="drop-up-head">
+    linkMark ?
+        `<div class="drop-up-head">
                         ${
-                            linkMark.attrs.title ?
-                            `<div class="link-title">${gettext('Title')}:&nbsp;${linkMark.attrs.title}</div>` :
-                            ''
-                        }
+    linkMark.attrs.title ?
+        `<div class="link-title">${gettext('Title')}:&nbsp;${linkMark.attrs.title}</div>` :
+        ''
+}
                         <div class="link-href">
                             <a class="href${linkType === 'internal' ? ' internal' : ''}" ${linkType === 'external' ? 'target="_blank"' : ''} href="${linkHref}">
             		            ${linkHref}
@@ -188,21 +188,21 @@ export const linksPlugin = function(options) {
                             ${gettext('Copy link')}
                         </li>
                         ${
-                            writeAccess ?
-                            `<li class="edit-link" title="${gettext('Edit link')}">
+    writeAccess ?
+        `<li class="edit-link" title="${gettext('Edit link')}">
                                 ${gettext('Edit')}
                             </li>
                             <li class="remove-link" title="${gettext('Remove link')}">
                                 ${gettext('Remove')}
                             </li>` :
-                            ''
-                        }
+        ''
+}
                     </ul>` :
-                    ''
-                }
+        ''
+}
                 ${
-                    anchorMark ?
-                    `<div class="drop-up-head">
+    anchorMark ?
+        `<div class="drop-up-head">
                         <div class="link-title">${gettext('Anchor')}</div>
                         <div class="link-href">
                         <a class="href" target="_blank" href="${anchorHref}">
@@ -215,15 +215,15 @@ export const linksPlugin = function(options) {
                             ${gettext('Copy anchor')}
                         </li>
                         ${
-                            writeAccess ?
-                            `<li class="remove-anchor" title="${gettext('Remove anchor')}">
+    writeAccess ?
+        `<li class="remove-anchor" title="${gettext('Remove anchor')}">
                                 ${gettext('Remove')}
                             </li>` :
-                            ''
-                        }
+        ''
+}
                     </ul>` :
-                    ''
-                }
+        ''
+}
             </div>`
 
         if (linkType === 'internal') {
@@ -481,9 +481,9 @@ export const linksPlugin = function(options) {
                     }
                 } else if (
                     node.type.name === 'cross_reference' &&
-                    !internalTargets.find(it => it.id===node.attrs.id && it.text===node.attrs.title)
+                    !internalTargets.find(it => it.id === node.attrs.id && it.text === node.attrs.title)
                 ) {
-                    const iTarget = internalTargets.find(it => it.id===node.attrs.id)
+                    const iTarget = internalTargets.find(it => it.id === node.attrs.id)
                     const attrs = Object.assign({}, node.attrs, {title: iTarget ? iTarget.text : null})
                     newTr.setNodeMarkup(pos, null, attrs)
                 }
@@ -491,9 +491,9 @@ export const linksPlugin = function(options) {
                     if (
                         mark.type.name === 'link' &&
                         mark.attrs.href[0] === '#' &&
-                        !internalTargets.find(it => it.id===mark.attrs.href.slice(1) && it.text===node.attrs.title)
+                        !internalTargets.find(it => it.id === mark.attrs.href.slice(1) && it.text === node.attrs.title)
                     ) {
-                        const iTarget = internalTargets.find(it => it.id===mark.attrs.href.slice(1))
+                        const iTarget = internalTargets.find(it => it.id === mark.attrs.href.slice(1))
                         const attrs = Object.assign({}, mark.attrs, {title: iTarget ? iTarget.text : null})
                         newTr.addMark(pos, pos + node.nodeSize, newState.schema.marks.link.create(attrs))
                     }

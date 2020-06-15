@@ -72,19 +72,19 @@ export class ShrinkFidus {
 
     walkTree(node) {
         switch (node.type) {
-            case 'citation':
-                this.citeList = this.citeList.concat(node.attrs.references.map(ref => ref.id))
-                break
-            case 'figure':
-                if (node.attrs.image !== false) {
-                    this.imageList.push(node.attrs.image)
-                }
-                break
-            case 'footnote':
-                if (node.attrs && node.attrs.footnote) {
-                    node.attrs.footnote.forEach(childNode => this.walkTree(childNode))
-                }
-                break
+        case 'citation':
+            this.citeList = this.citeList.concat(node.attrs.references.map(ref => ref.id))
+            break
+        case 'figure':
+            if (node.attrs.image !== false) {
+                this.imageList.push(node.attrs.image)
+            }
+            break
+        case 'footnote':
+            if (node.attrs?.footnote) {
+                node.attrs.footnote.forEach(childNode => this.walkTree(childNode))
+            }
+            break
         }
         if (node.content) {
             node.content.forEach(childNode => this.walkTree(childNode))

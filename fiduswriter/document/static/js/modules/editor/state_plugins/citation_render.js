@@ -38,7 +38,7 @@ export const citationRenderPlugin = function(options) {
                                 }
                             )
                         }
-                        if (step.slice && step.slice.content) {
+                        if (step.slice?.content) {
                             step.slice.content.descendants(node => {
                                 if (node.type.name === 'citation') {
                                     // A citation was added. We need to reset
@@ -60,11 +60,11 @@ export const citationRenderPlugin = function(options) {
             return {
                 update: (view, _prevState) => {
                     const {action} = key.getState(view.state)
-                    if (action==='reset') {
+                    if (action === 'reset') {
                         options.editor.mod.citations.resetCitations()
                         const tr = view.state.tr.setMeta(key, {action: false})
                         view.dispatch(tr)
-                    } else if (action==='numbers') {
+                    } else if (action === 'numbers') {
                         options.editor.mod.citations.footnoteNumberOverride()
                         const tr = view.state.tr.setMeta(key, {action: false})
                         view.dispatch(tr)

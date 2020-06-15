@@ -10,7 +10,7 @@ const baseRule = {
         loader: "babel-loader",
         options: {
             presets: ["@babel/preset-env"],
-            plugins: ["@babel/plugin-syntax-dynamic-import"]
+            plugins: ["@babel/plugin-syntax-dynamic-import", "@babel/plugin-proposal-optional-chaining"]
         }
     }
 }
@@ -25,9 +25,9 @@ module.exports = { // eslint-disable-line no-undef
     module: {
         rules: [
             {
-                    test: /\.js$/,
-                    use: ["source-map-loader"],
-                    enforce: "pre"
+                test: /\.js$/,
+                use: ["source-map-loader"],
+                enforce: "pre"
             },
             {
                 test: /\.(csljson)$/i,

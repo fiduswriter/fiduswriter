@@ -136,12 +136,12 @@ export class ImageSelectionDialog {
         return [
             `${image.db}-${image.image.id}`,
             image.image.thumbnail === undefined ?
-            `<img src="${image.image.image}" style="max-heigth:30px;max-width:30px;">` :
-            `<img src="${image.image.thumbnail}" style="max-heigth:30px;max-width:30px;">`,
+                `<img src="${image.image.image}" style="max-heigth:30px;max-width:30px;">` :
+                `<img src="${image.image.thumbnail}" style="max-heigth:30px;max-width:30px;">`,
             escapeText(image.image.title),
             image.db === this.imgDb && image.image.id === this.imgId ?
-            '<i class="fa fa-check" aria-hidden="true"></i>' :
-            '&emsp;'
+                '<i class="fa fa-check" aria-hidden="true"></i>' :
+                '&emsp;'
         ]
     }
 
@@ -156,7 +156,7 @@ export class ImageSelectionDialog {
         }
         this.imgDb = db
         this.table.data.forEach((data, index) => {
-            data.cells[3].innerHTML = index===dataIndex && this.imgId ? '<i class="fa fa-check" aria-hidden="true"></i>' : '&emsp;'
+            data.cells[3].innerHTML = index === dataIndex && this.imgId ? '<i class="fa fa-check" aria-hidden="true"></i>' : '&emsp;'
         })
         this.table.columns().rebuild()
     }
@@ -166,11 +166,11 @@ export class ImageSelectionDialog {
         this.table.body.addEventListener('click', event => {
             const el = {}
             switch (true) {
-                case findTarget(event, 'tr', el):
-                    this.checkRow(el.target.dataIndex)
-                    break
-                default:
-                    break
+            case findTarget(event, 'tr', el):
+                this.checkRow(el.target.dataIndex)
+                break
+            default:
+                break
             }
         })
     }

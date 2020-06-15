@@ -16,10 +16,10 @@ export class ModCitations {
          * citations to be numbered but they aren't in the same order in the DOM,
          * we need to organize the numbering manually.
          */
-         document.body.insertAdjacentHTML(
-             'beforeend',
-             '<style type="text/css" id="footnote-numbering-override"></style>'
-         )
+        document.body.insertAdjacentHTML(
+            'beforeend',
+            '<style type="text/css" id="footnote-numbering-override"></style>'
+        )
         this.fnOverrideElement = document.getElementById('footnote-numbering-override')
     }
 
@@ -41,7 +41,7 @@ export class ModCitations {
     }
 
     layoutCitations() {
-        if (!this.editor.mod.db || !this.editor.mod.db.bibDB.db) {
+        if (!this.editor.mod.db?.bibDB.db) {
             // bibliography hasn't been loaded yet
             return
         }
@@ -149,7 +149,7 @@ export class ModCitations {
         }
 
         const citationsContainer = document.getElementById('citation-footnote-box-container')
-        if (this.citationType==='note') {
+        if (this.citationType === 'note') {
 
             // Check if there is an empty citation in the main body text (not footnotes)
             const emptyBodyCitation = document.querySelector('#document-editable span.citation:empty')
@@ -185,32 +185,32 @@ export class ModCitations {
          * correspondingly. Update footnote-numbering-override correspondingly.
          */
 
-         let outputCSS = ''
+        let outputCSS = ''
 
-         if (this.citationType === 'note') {
-             let editorFootnoteCounter = 1,
-             citationFootnoteCounter = 1,
-             footnoteCounter = 1
+        if (this.citationType === 'note') {
+            let editorFootnoteCounter = 1,
+                citationFootnoteCounter = 1,
+                footnoteCounter = 1
 
-             this.editor.view.state.doc.descendants(node => {
-                 if (node.isInline && (node.type.name==='footnote' || node.type.name==='citation')) {
-                     if (node.type.name==='footnote') {
-                         outputCSS += `#footnote-box-container .footnote-container:nth-of-type(${editorFootnoteCounter}) > *:first-child::before {
+            this.editor.view.state.doc.descendants(node => {
+                if (node.isInline && (node.type.name === 'footnote' || node.type.name === 'citation')) {
+                    if (node.type.name === 'footnote') {
+                        outputCSS += `#footnote-box-container .footnote-container:nth-of-type(${editorFootnoteCounter}) > *:first-child::before {
                              content: "${footnoteCounter} ";
                          }\n`
-                         editorFootnoteCounter++
-                     } else {
-                         outputCSS += `.footnote-citation:nth-of-type(${citationFootnoteCounter})::before {
+                        editorFootnoteCounter++
+                    } else {
+                        outputCSS += `.footnote-citation:nth-of-type(${citationFootnoteCounter})::before {
                              content: "${footnoteCounter} ";
                          }\n`
-                         citationFootnoteCounter++
-                     }
-                     footnoteCounter++
-                 }
-             })
+                        citationFootnoteCounter++
+                    }
+                    footnoteCounter++
+                }
+            })
 
 
-         }
+        }
 
         if (this.fnOverrideElement.innerHTML !== outputCSS) {
             this.fnOverrideElement.innerHTML = outputCSS

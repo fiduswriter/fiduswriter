@@ -17,9 +17,9 @@ const tracksInSelection = view => {
                 return true
             } else if (tracks) {
                 return false
-            } else if (node.attrs.track && node.attrs.track.length) {
+            } else if (node.attrs.track?.length) {
                 tracks = true
-            } else if (node.marks && node.marks.find(mark => {
+            } else if (node.marks?.find(mark => {
                 if (
                     ['deletion', 'format_change'].includes(mark.type.name) ||
                     mark.type.name === 'insertion' && !mark.attrs.approved

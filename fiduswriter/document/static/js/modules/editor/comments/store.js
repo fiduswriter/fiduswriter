@@ -253,7 +253,7 @@ export class ModCommentStore {
     }
 
     deleteLocalAnswer(id, answerId, local) {
-        if (this.comments[id] && this.comments[id].answers) {
+        if (this.comments[id]?.answers) {
             this.comments[id].answers = this.comments[id].answers.filter(
                 answer => answer.id !== answerId)
         }
@@ -273,7 +273,7 @@ export class ModCommentStore {
     }
 
     updateLocalAnswer(id, answerId, answerText, local) {
-        if (this.comments[id] && this.comments[id].answers) {
+        if (this.comments[id]?.answers) {
             const answer = this.comments[id].answers.find(answer => answer.id ===
                 answerId)
             if (answer) {
@@ -306,7 +306,7 @@ export class ModCommentStore {
                 })
             } else if (event.type == "update") {
                 const found = this.comments[event.id]
-                if (found && found.id) {
+                if (found?.id) {
                     result.push(Object.assign({type: 'update'}, found))
                 } else {
                     result.push({
@@ -315,7 +315,7 @@ export class ModCommentStore {
                 }
             } else if (event.type == "create") {
                 const found = this.comments[event.id]
-                if (found && found.id) {
+                if (found?.id) {
                     result.push(Object.assign({type: 'create'}, found))
                 } else {
                     result.push({
@@ -325,7 +325,7 @@ export class ModCommentStore {
             } else if (event.type == "add_answer") {
                 const found = this.comments[event.id]
                 let foundAnswer
-                if (found && found.id && found.answers) {
+                if (found?.id && found?.answers) {
                     foundAnswer = found.answers.find(answer => answer.id === event.answerId)
                 }
                 if (foundAnswer) {
@@ -339,7 +339,7 @@ export class ModCommentStore {
                 }
             } else if (event.type == "delete_answer") {
                 const found = this.comments[event.id]
-                if (found && found.id && found.answers) {
+                if (found?.id && found?.answers) {
                     result.push({
                         type: "delete_answer",
                         id: event.id,
@@ -353,7 +353,7 @@ export class ModCommentStore {
             } else if (event.type == "update_answer") {
                 const found = this.comments[event.id]
                 let foundAnswer
-                if (found && found.id && found.answers) {
+                if (found?.id && found?.answers) {
                     foundAnswer = found.answers.find(answer => answer.id ===
                         event.answerId)
                 }

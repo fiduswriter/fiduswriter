@@ -113,18 +113,18 @@ export class DocTemplatesOverview {
             `<span class="${ docTemplate.is_owner ? 'fw-data-table-title ' : '' }fw-inline">
                 <i class="far fa-file"></i>
                 ${
-                    docTemplate.is_owner ?
-                    `<a href='/templates/${docTemplate.id}/'>
+    docTemplate.is_owner ?
+        `<a href='/templates/${docTemplate.id}/'>
                         ${
-                            docTemplate.title.length ?
-                            escapeText(docTemplate.title) :
-                            gettext('Untitled')
-                        }
+    docTemplate.title.length ?
+        escapeText(docTemplate.title) :
+        gettext('Untitled')
+}
                     </a>` :
-                    docTemplate.title.length ?
-                    escapeText(docTemplate.title) :
-                    gettext('Untitled')
-                }
+        docTemplate.title.length ?
+            escapeText(docTemplate.title) :
+            gettext('Untitled')
+}
             </span>`,
             docTemplate.added, // format?
             docTemplate.updated, // format ?
@@ -179,19 +179,19 @@ export class DocTemplatesOverview {
         this.dom.addEventListener('click', event => {
             const el = {}
             switch (true) {
-                case findTarget(event, '.delete-doc-template', el): {
-                    const docTemplateId = parseInt(el.target.dataset.id)
-                    this.mod.actions.deleteDocTemplatesDialog([docTemplateId])
-                    break
+            case findTarget(event, '.delete-doc-template', el): {
+                const docTemplateId = parseInt(el.target.dataset.id)
+                this.mod.actions.deleteDocTemplatesDialog([docTemplateId])
+                break
+            }
+            case findTarget(event, 'a', el):
+                if (el.target.hostname === window.location.hostname && el.target.getAttribute('href')[0] === '/') {
+                    event.preventDefault()
+                    this.app.goTo(el.target.href)
                 }
-                case findTarget(event, 'a', el):
-                    if (el.target.hostname === window.location.hostname && el.target.getAttribute('href')[0] === '/') {
-                        event.preventDefault()
-                        this.app.goTo(el.target.href)
-                    }
-                    break
-                default:
-                    break
+                break
+            default:
+                break
             }
         })
     }

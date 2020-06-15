@@ -55,7 +55,7 @@ export const headerbarModel = () => ({
                         dialog.init()
                     },
                     disabled: editor => {
-                        return !editor.docInfo.is_owner || !editor.ws.isOnline()
+                        return !editor.docInfo.is_owner || window.isOffline
                     }
                 },
                 {
@@ -67,7 +67,7 @@ export const headerbarModel = () => ({
                     action: editor => {
                         editor.app.goTo('/')
                     },
-                    disabled:editor => !editor.ws.isOnline()
+                    disabled: _editor => window.isOffline
                 },
                 {
                     title: gettext('Save revision'),
@@ -90,10 +90,7 @@ export const headerbarModel = () => ({
                             }
                         )
                     },
-                    disabled: editor => {
-                        return editor.docInfo.access_rights !== 'write' || !editor.ws.isOnline()
-                    }
-
+                    disabled: editor => editor.docInfo.access_rights !== 'write' || window.isOffline
                 },
                 {
                     title: gettext('Create copy'),
@@ -103,16 +100,16 @@ export const headerbarModel = () => ({
                     order: 3,
                     action: editor => {
                         const copier = new SaveCopy(
-                                editor.getDoc(),
-                                editor.mod.db.bibDB,
-                                editor.mod.db.imageDB,
-                                editor.user
-                            )
+                            editor.getDoc(),
+                            editor.mod.db.bibDB,
+                            editor.mod.db.imageDB,
+                            editor.user
+                        )
                         copier.init().then(({docInfo}) =>
                             editor.app.goTo(`/document/${docInfo.id}/`)
                         ).catch(() => false)
                     },
-                    disabled: editor => !editor.ws.isOnline(),
+                    disabled: _editor => window.isOffline,
                 },
                 {
                     title: gettext('Download'),
@@ -197,7 +194,7 @@ export const headerbarModel = () => ({
                             exporter.init()
                         })
                     },
-                    disabled : editor => !editor.ws.isOnline()
+                    disabled: _editor => window.isOffline
                 },
                 {
                     title: gettext('LaTeX'),
@@ -215,7 +212,7 @@ export const headerbarModel = () => ({
                             exporter.init()
                         })
                     },
-                    disabled : editor => !editor.ws.isOnline()
+                    disabled: _editor => window.isOffline
                 },
                 {
                     title: gettext('JATS'),
@@ -234,7 +231,7 @@ export const headerbarModel = () => ({
                             exporter.init()
                         })
                     },
-                    disabled : editor => !editor.ws.isOnline()
+                    disabled: _editor => window.isOffline
                 }
             ]
         },
@@ -263,7 +260,7 @@ export const headerbarModel = () => ({
                     tooltip: gettext('Choose your preferred document style.'),
                     order: 2,
                     disabled: editor => {
-                        return editor.docInfo.access_rights !== 'write' || !editor.ws.isOnline()
+                        return editor.docInfo.access_rights !== 'write' || window.isOffline
                     },
                     content: []
                 },
@@ -358,19 +355,19 @@ export const headerbarModel = () => ({
                             },
                             available: editor => !!editor.view.state.doc.firstChild.attrs.languages.find(
                                 lang => ![
-                                        'en-US',
-                                        'en-GB',
-                                        'de-DE',
-                                        'zh-CN',
-                                        'es',
-                                        'fr',
-                                        'ja',
-                                        'it',
-                                        'pl',
-                                        'pt-BR',
-                                        'nl',
-                                        'ru'
-                                    ].includes(lang)
+                                    'en-US',
+                                    'en-GB',
+                                    'de-DE',
+                                    'zh-CN',
+                                    'es',
+                                    'fr',
+                                    'ja',
+                                    'it',
+                                    'pl',
+                                    'pt-BR',
+                                    'nl',
+                                    'ru'
+                                ].includes(lang)
                             )
                         }
                     ]
@@ -447,9 +444,7 @@ export const headerbarModel = () => ({
                             }
                         )
                     },
-                    disabled: editor => {
-                        return editor.docInfo.access_rights !== 'write'
-                    }
+                    disabled: editor => editor.docInfo.access_rights !== 'write'
                 }
             ]
         },
@@ -499,9 +494,7 @@ export const headerbarModel = () => ({
             type: 'menu',
             tooltip: gettext('Tracking changes to the document'),
             order: 4,
-            disabled: editor => {
-                return editor.docInfo.access_rights !== 'write'
-            },
+            disabled: editor => editor.docInfo.access_rights !== 'write',
             content: [
                 {
                     title: gettext('Record'),

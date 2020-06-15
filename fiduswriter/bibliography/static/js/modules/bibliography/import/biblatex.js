@@ -11,7 +11,7 @@ const ERROR_MSG = {
 
 
 export class BibLatexImporter {
-    constructor(fileContents, bibDB, addToListCall, callback, showAlerts=true) {
+    constructor(fileContents, bibDB, addToListCall, callback, showAlerts = true) {
         this.fileContents = fileContents
         this.bibDB = bibDB
         this.addToListCall = addToListCall
@@ -28,47 +28,45 @@ export class BibLatexImporter {
     onMessage(message) {
         let errorMsg, data
         switch (message.type) {
-            case 'error':
-            case 'warning':
-                errorMsg = ERROR_MSG[message.errorCode]
-                if (!errorMsg) {
-                    errorMsg = gettext('There was an issue with the bibtex import')
-                }
-                if (message.errorType) {
-                    errorMsg += `, error_type: ${message.errorType}`
-                }
-                if (message.key) {
-                    errorMsg += `, key: ${message.key}`
-                }
-                if (message.type_name) {
-                    errorMsg += `, entry: ${message.type_name}`
-                }
-                if (message.field_name) {
-                    errorMsg += `, field_name: ${message.field_name}`
-                }
-                if (message.entry) {
-                    errorMsg += `, entry: ${message.entry}`
-                }
-                if (this.showAlerts) {
-                    addAlert(message.type, errorMsg)
-                }
-                break
-            case 'data':
-                data = message.data
-                this.bibDB.saveBibEntries(data, true).then(
-                    idTranslations => {
-                        const newIds = idTranslations.map(idTrans => idTrans[1])
-                        this.addToListCall(newIds)
-                    }
-                )
-                break
-            default:
-                break
-        }
-        if (message.done) {
-            if (this.callback) {
-                this.callback()
+        case 'error':
+        case 'warning':
+            errorMsg = ERROR_MSG[message.errorCode]
+            if (!errorMsg) {
+                errorMsg = gettext('There was an issue with the bibtex import')
             }
+            if (message.errorType) {
+                errorMsg += `, error_type: ${message.errorType}`
+            }
+            if (message.key) {
+                errorMsg += `, key: ${message.key}`
+            }
+            if (message.type_name) {
+                errorMsg += `, entry: ${message.type_name}`
+            }
+            if (message.field_name) {
+                errorMsg += `, field_name: ${message.field_name}`
+            }
+            if (message.entry) {
+                errorMsg += `, entry: ${message.entry}`
+            }
+            if (this.showAlerts) {
+                addAlert(message.type, errorMsg)
+            }
+            break
+        case 'data':
+            data = message.data
+            this.bibDB.saveBibEntries(data, true).then(
+                idTranslations => {
+                    const newIds = idTranslations.map(idTrans => idTrans[1])
+                    this.addToListCall(newIds)
+                }
+            )
+            break
+        default:
+            break
+        }
+        if (message.done && this.callback) {
+            this.callback()
         }
     }
 

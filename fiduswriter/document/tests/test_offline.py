@@ -329,8 +329,11 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         )
 
         # Check that session expiration dialog is displayed
-        self.driver2.implicitly_wait(3)
-        element = self.driver2.find_element_by_id('session_expiration_dialog')
+        element = WebDriverWait(self.driver2, self.wait_time).until(
+            EC.visibility_of_element_located(
+                (By.ID, 'session_expiration_dialog')
+            )
+        )
         self.assertEqual(element.is_displayed(), True)
 
     def test_conflicting_changes(self):
@@ -395,8 +398,11 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         )
 
         # Check whether the merge window is available in driver2
-        self.driver2.implicitly_wait(3)
-        element = self.driver2.find_element_by_id('editor-merge-view')
+        element = WebDriverWait(self.driver2, self.wait_time).until(
+            EC.visibility_of_element_located(
+                (By.ID, 'editor-merge-view')
+            )
+        )
         self.assertEqual(element.is_displayed(), True)
 
         # Check that the documents in main editors are synced!
@@ -522,8 +528,6 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
             'window.theApp.page.ws.goOffline()'
         )
 
-        self.driver.implicitly_wait(5)
-
         # Check that the html export works fine!
         # Click on the menu
         self.driver.find_element_by_xpath(
@@ -536,13 +540,14 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
         ).click()
 
         # Check that the alert box is displayed.
-        self.driver.implicitly_wait(2)
-        alert_element = self.driver.find_element_by_class_name('alerts-info')
+        alert_element = WebDriverWait(self.driver, self.wait_time).until(
+            EC.visibility_of_element_located(
+                (By.CLASS_NAME, 'alerts-info')
+            )
+        )
         self.assertEqual(alert_element.is_displayed(), True)
 
         # Check the same for PDF export too !
-        self.driver.implicitly_wait(5)
-
         # Click on the file menu
         self.driver.find_element_by_xpath(
             "//span[contains(@title,'File handling')]"
@@ -555,8 +560,11 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
         ).click()
 
         # Check that the alert box is displayed.
-        self.driver.implicitly_wait(2)
-        alert_element = self.driver.find_element_by_class_name('alerts-info')
+        alert_element = WebDriverWait(self.driver, self.wait_time).until(
+            EC.visibility_of_element_located(
+                (By.CLASS_NAME, 'alerts-info')
+            )
+        )
         self.assertEqual(alert_element.is_displayed(), True)
 
     def test_disabled_options(self):
@@ -698,8 +706,11 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
         ).click()
 
         # Check that the image upload threw an error/alert.
-        self.driver.implicitly_wait(2)
-        alert_element = self.driver.find_element_by_class_name('alerts-error')
+        alert_element = WebDriverWait(self.driver, self.wait_time).until(
+            EC.visibility_of_element_located(
+                (By.CLASS_NAME, 'alerts-error')
+            )
+        )
         self.assertEqual(alert_element.is_displayed(), True)
 
     def test_indexedDB(self):

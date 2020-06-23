@@ -22,7 +22,7 @@ export const accessRightsPlugin = function(options) {
                 allowed = false
             }
 
-            if (tr.docs[0]?.childCount !== tr.doc.childCount) {
+            if (tr.docs.length && tr.docs[0]?.childCount !== tr.doc.childCount) {
                 allowed = false
             }
 

@@ -6,8 +6,7 @@ import {
     receiveTransaction
 } from "prosemirror-collab"
 import {
-    Step,
-    Mapping
+    Step
 } from "prosemirror-transform"
 import {
     EditorState
@@ -21,8 +20,7 @@ import {
     adjustDocToTemplate
 } from "../../document_template"
 import {
-    showSystemMessage,
-    deactivateWait
+    deactivateWait,
 } from "../../common"
 import {
     toMiniJSON
@@ -31,22 +29,22 @@ import {
     recreateTransform
 } from "./recreate_transform"
 import {
-    trackedTransaction
-} from "../track"
+    Merge
+} from "./merge"
+import {
+    changeSet
+} from "./changeset"
 
 export class ModCollabDoc {
     constructor(mod) {
         mod.doc = this
         this.mod = mod
-
+        this.merge = new Merge(mod)
         this.unconfirmedDiffs = {}
         this.confirmStepsRequestCounter = 0
         this.awaitingDiffResponse = false
         this.receiving = false
         this.currentlyCheckingVersion = false
-
-        this.trackOfflineLimit = 50 // Limit of local changes while offline for tracking to kick in when multiple users edit
-        this.remoteTrackOfflineLimit = 20 // Limit of remote changes while offline for tracking to kick in when multiple users edit
         this.footnoteRender = false // If the offline user edited a footnote , it needs to be rendered properly to connected users too!
     }
 
@@ -106,10 +104,11 @@ export class ModCollabDoc {
         }
     }
 
+
     adjustDocument(data) {
         // Adjust the document when reconnecting after offline and many changes
         // happening on server.
-        if (this.mod.editor.docInfo.version < data.doc.v) {
+        if (this.mod.editor.docInfo.version < data.doc.v && sendableSteps(this.mod.editor.view.state)) {
             this.receiving = true
             this.mod.editor.docInfo.confirmedJson = JSON.parse(JSON.stringify(data.doc.contents))
             const confirmedState = EditorState.create({doc: this.mod.editor.docInfo.confirmedDoc})
@@ -142,100 +141,22 @@ export class ModCollabDoc {
                 lostTr.steps.map(_step => 'remote')
             ).setMeta('remote', true))
 
-            const rebasedTr = EditorState.create({doc: toDoc}).tr.setMeta('remote', true)
-            const maps = new Mapping([].concat(unconfirmedTr.mapping.maps.slice().reverse().map(map=>map.invert())).concat(lostTr.mapping.maps.slice()))
-
-            unconfirmedTr.steps.forEach(
-                (step, index) => {
-                    const mapped = step.map(maps.slice(unconfirmedTr.steps.length - index))
-                    if (mapped && !rebasedTr.maybeStep(mapped).failed) {
-                        maps.appendMap(mapped.getMap())
-                        maps.setMirror(unconfirmedTr.steps.length - index - 1, (unconfirmedTr.steps.length + lostTr.steps.length + rebasedTr.steps.length - 1))
-                    }
-                }
-            )
-
-            let tracked
-            let rebasedTrackedTr // offline steps to be tracked
-            if (
-                ['write', 'write-tracked'].includes(this.mod.editor.docInfo.access_rights) &&
-                (
-                    unconfirmedTr.steps.length > this.trackOfflineLimit ||
-                    lostTr.steps.length > this.remoteTrackOfflineLimit
-                )
-            ) {
-                tracked = true
-                // Either this user has made 50 changes since going offline,
-                // or the document has 20 changes to it. Therefore we add tracking
-                // to the changes of this user and ask user to clean up.
-                rebasedTrackedTr = trackedTransaction(
-                    rebasedTr,
-                    this.mod.editor.view.state,
-                    this.mod.editor.user,
-                    false,
-                    Date.now() - this.mod.editor.clientTimeAdjustment
-                )
-            } else {
-                tracked = false
-                rebasedTrackedTr = rebasedTr
-            }
-
-            const usedImages = []
-            const usedBibs = []
-            const footnoteFind = (node, usedImages, usedBibs) => {
-                if (node.name === 'citation') {
-                    node.attrs.references.forEach(ref => usedBibs.push(parseInt(ref.id)))
-                } else if (node.name === 'figure' && node.attrs.image) {
-                    usedImages.push(node.attrs.image)
-                } else if (node.content) {
-                    node.content.forEach(subNode => footnoteFind(subNode, usedImages, usedBibs))
-                }
-            }
-            rebasedTr.doc.descendants(node => {
-                if (node.type.name === 'citation') {
-                    node.attrs.references.forEach(ref => usedBibs.push(parseInt(ref.id)))
-                } else if (node.type.name === 'figure' && node.attrs.image) {
-                    usedImages.push(node.attrs.image)
-                } else if (node.type.name === 'footnote' && node.attrs.footnote) {
-                    node.attrs.footnote.forEach(subNode => footnoteFind(subNode, usedImages, usedBibs))
-                }
-            })
-            const oldBibDB = this.mod.editor.mod.db.bibDB.db
-            this.mod.editor.mod.db.bibDB.setDB(data.doc.bibliography)
-            usedBibs.forEach(id => {
-                if (!this.mod.editor.mod.db.bibDB.db[id] && oldBibDB[id]) {
-                    this.mod.editor.mod.db.bibDB.updateReference(id, oldBibDB[id])
-                }
-            })
-            const oldImageDB = this.mod.editor.mod.db.imageDB.db
-            this.mod.editor.mod.db.imageDB.setDB(data.doc.images)
-            // Remove the Duplicated image ID's
-            Array.from(new Set(usedImages)).forEach(id => {
-                if (!this.mod.editor.mod.db.imageDB.db[id] && oldImageDB[id]) {
-                    // If the image was uploaded by the offline user we know that he may not have deleted it so we can resend it normally
-                    if (Object.keys(this.mod.editor.app.imageDB.db).includes(id)) {
-                        this.mod.editor.mod.db.imageDB.setImage(id, oldImageDB[id])
-                    } else {
-                        // If the image was uploaded by someone else , to set the image we have to reupload it again as there is backend check to associate who can add an image with the image owner.
-                        this.mod.editor.mod.db.imageDB.reUploadImage(id, oldImageDB[id].image, oldImageDB[id].title, oldImageDB[id].copyright)
-                    }
-                }
-            })
-
+            // We split the complex steps that delete and insert into simple steps so that findinfg conflicts is more pronounced.
+            const modifiedLostTr = this.merge.modifyTr(lostTr)
+            const lostChangeSet = new changeSet(modifiedLostTr)
+            const conflicts = lostChangeSet.findConflicts(unconfirmedTr, modifiedLostTr)
+            // Set the version
             this.mod.editor.docInfo.version = data.doc.v
-            rebasedTrackedTr.setMeta('remote', true)
-            this.mod.editor.view.dispatch(rebasedTrackedTr)
 
-            if (tracked) {
-                showSystemMessage(
-                    gettext(
-                        'The document was modified substantially by other users while you were offline. We have merged your changes in as tracked changes. You should verify that your edits still make sense.'
-                    )
-                )
+            // If no conflicts arises auto-merge the document
+            if (conflicts.length > 0) {
+                this.merge.diffMerge(confirmedState.doc, unconfirmedTr.doc, toDoc, unconfirmedTr, lostTr, data)
+            } else {
+                this.merge.autoMerge(unconfirmedTr, lostTr, data)
             }
-            this.mod.editor.mod.footnotes.fnEditor.renderAllFootnotes()
+
             this.receiving = false
-            this.sendToCollaborators()
+            // this.sendToCollaborators()
         } else {
             // The server seems to have lost some data. We reset.
             this.loadDocument(data)
@@ -496,6 +417,7 @@ export class ModCollabDoc {
     }
 
     receiveFromCollaborators(data) {
+
         this.mod.editor.docInfo.version++
         if (data["bu"]) { // bibliography updates
             this.mod.editor.mod.db.bibDB.receive(data["bu"])

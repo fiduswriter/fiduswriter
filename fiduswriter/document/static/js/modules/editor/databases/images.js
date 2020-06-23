@@ -7,7 +7,7 @@
  copied to the doc's imageDB. The IDs used are the same for user and document,
  as they originate from the Image model (not UserImage or DocumentImage).
 */
-import {get} from "../../common"
+import {get, addAlert} from "../../common"
 export class ModImageDB {
     constructor(mod) {
         mod.imageDB = this
@@ -82,16 +82,32 @@ export class ModImageDB {
                 this.setImage(id, this.mod.editor.app.imageDB.db[id])
             } else {
                 // If image is not present in both the userImage DB and docDB we can safely assume that we have to upload again.
-                this.reUploadImage(id, this.db[id].image, this.db[id].title, this.db[id].copyright).then(id=>delete this.db[id])
+                this.reUploadImage(id, this.db[id].image, this.db[id].title, this.db[id].copyright).then(
+                    ({id, _newId})=>delete this.db[id],
+                    (id) => {
+                        delete this.db[id]
+                        const transaction = this.mod.editor.view.state.tr
+                        this.mod.editor.view.state.doc.descendants((node, pos) => {
+                            if (node.type.name === 'figure' && node.attrs.image == id) {
+                                const attrs = Object.assign({}, node.attrs)
+                                attrs["image"] = false
+                                const nodeType = this.mod.editor.currentView.state.schema.nodes['figure']
+                                transaction.setNodeMarkup(pos, nodeType, attrs)
+                            }
+                        })
+                        this.mod.editor.view.dispatch(transaction)
+                        addAlert('error', gettext("One of the Image(s) you copied could not be found on the server. Please try uploading it again."))
+                    }
+                )
             }
         }
     }
 
     reUploadImage(id, imageUrl, title, copyright) {
-        const newPromise = new Promise((resolve, _reject)=>{
+        const newPromise = new Promise((resolve, reject)=>{
             // Depends on the fact that service worker is working and cached the image basically.
             get(imageUrl).then(
-                response => response.blob()
+                response=>response.blob()
             ).then(
                 blob => {
                     const filename = imageUrl.split('/').pop()
@@ -110,11 +126,14 @@ export class ModImageDB {
                                     this.mod.editor.view.dispatch(transaction)
                                 }
                             })
-                            resolve(id)
-                        }
+                            resolve({id:id, newId:newId})
+                        },
+                        _error => reject(id),
                     )
                 }
-            )
+            ).catch(_error => {
+                reject(id)
+            })
         })
         return newPromise
     }

@@ -262,7 +262,7 @@ class RecreateTransform {
     }
 }
 
-export function recreateTransform(fromDoc, toDoc, complexSteps = true, wordDiffs = false) {
+export function recreateTransform(fromDoc, toDoc, complexSteps = true, wordDiffs = true) {
     const recreator = new RecreateTransform(fromDoc, toDoc, complexSteps, wordDiffs)
     return recreator.init()
 }

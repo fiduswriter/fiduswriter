@@ -110,7 +110,15 @@ export class App {
     }
 
     isOffline() {
-        return !navigator.onLine || this.ws?.ws?.readyState > 1
+        return !navigator.onLine || (this.ws?.connectionCount > 0 && !this.ws?.connected)
+    }
+
+    installServiceWorker() {
+        /* This function is used for testing SW with Django tests */
+        OfflinePluginRuntime.install({
+            onUpdateReady: () => OfflinePluginRuntime.applyUpdate(),
+            onUpdated: () => window.location.reload()
+        })
     }
 
     init() {

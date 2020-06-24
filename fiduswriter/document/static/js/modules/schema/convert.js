@@ -2,7 +2,8 @@
  We use the DOM import for ProseMirror as the JSON we store in the database is really jsonized HTML.
 */
 import deepEqual from "fast-deep-equal"
-import {randomHeadingId, randomFigureId} from "./common"
+import {randomHeadingId, randomFigureId, randomListId} from "./common"
+import {randomTableId} from "./document"
 
 export const getSettings = function(pmArticle) {
     const settings = JSON.parse(JSON.stringify(pmArticle.attrs))
@@ -35,6 +36,7 @@ export const updateDoc = function(doc, docVersion, bibliography = false) {
         doc = convertDocV23(doc)
         doc = convertDocV30(doc)
         doc = convertDocV31(doc)
+        doc = convertDocV32(doc)
         break
     case 1.1: // Fidus Writer 3.1
         doc = convertDocV11(doc)
@@ -46,6 +48,7 @@ export const updateDoc = function(doc, docVersion, bibliography = false) {
         doc = convertDocV23(doc)
         doc = convertDocV30(doc)
         doc = convertDocV31(doc)
+        doc = convertDocV32(doc)
         break
     case 1.2: // Fidus Writer 3.2
         doc = convertDocV12(doc)
@@ -56,6 +59,7 @@ export const updateDoc = function(doc, docVersion, bibliography = false) {
         doc = convertDocV23(doc)
         doc = convertDocV30(doc)
         doc = convertDocV31(doc)
+        doc = convertDocV32(doc)
         break
     case 1.3: // Fidus Writer 3.3 prerelease
         doc = convertDocV13(doc, bibliography)
@@ -65,6 +69,7 @@ export const updateDoc = function(doc, docVersion, bibliography = false) {
         doc = convertDocV23(doc)
         doc = convertDocV30(doc)
         doc = convertDocV31(doc)
+        doc = convertDocV32(doc)
         break
     case 2.0: // Fidus Writer 3.3
         doc = convertDocV20(doc)
@@ -73,6 +78,7 @@ export const updateDoc = function(doc, docVersion, bibliography = false) {
         doc = convertDocV23(doc)
         doc = convertDocV30(doc)
         doc = convertDocV31(doc)
+        doc = convertDocV32(doc)
         break
     case 2.1: // Fidus Writer 3.4
         doc = convertDocV21(doc)
@@ -80,26 +86,34 @@ export const updateDoc = function(doc, docVersion, bibliography = false) {
         doc = convertDocV23(doc)
         doc = convertDocV30(doc)
         doc = convertDocV31(doc)
+        doc = convertDocV32(doc)
         break
     case 2.2: // Fidus Writer 3.5.7
         doc = convertDocV22(doc)
         doc = convertDocV23(doc)
         doc = convertDocV30(doc)
         doc = convertDocV31(doc)
+        doc = convertDocV32(doc)
         break
     case 2.3: // Fidus Writer 3.5.10
         doc = convertDocV23(doc)
         doc = convertDocV30(doc)
         doc = convertDocV31(doc)
+        doc = convertDocV32(doc)
         break
     case 3.0: // Fidus Writer 3.6
         doc = convertDocV30(doc)
         doc = convertDocV31(doc)
+        doc = convertDocV32(doc)
         break
     case 3.1: // Fidus Writer 3.7
         doc = convertDocV31(doc)
+        doc = convertDocV32(doc)
         break
     case 3.2: // Fidus Writer 3.8
+        doc = convertDocV32(doc)
+        break
+    case 3.3: // Fidus Writer 3.9
         break
     }
     return doc
@@ -836,4 +850,42 @@ const convertDocV31 = function(doc) {
     // additional syntax has been added (copyright + cross references).
     const returnDoc = JSON.parse(JSON.stringify(doc))
     return returnDoc
+}
+
+const convertDocV32 = function(doc) {
+    const returnDoc = JSON.parse(JSON.stringify(doc))
+    convertNodeV32(returnDoc.contents)
+    return returnDoc
+}
+
+const convertNodeV32 = function(node, ids = []) {
+    let blockId, attrs
+    switch (node.type) {
+    case 'table':
+        attrs = node.attrs || {}
+        blockId = attrs.id
+        while (!blockId || ids.includes(blockId)) {
+            blockId = randomTableId()
+        }
+        attrs.id = blockId
+        node.attrs = attrs
+        ids.push(blockId)
+        break
+    case 'bullet_list':
+    case 'ordered_list':
+        attrs = node.attrs || {}
+        blockId = attrs.id
+        while (!blockId || ids.includes(blockId)) {
+            blockId = randomListId()
+        }
+        attrs.id = blockId
+        node.attrs = attrs
+        ids.push(blockId)
+        break
+    }
+    if (node.content) {
+        node.content.forEach(childNode => {
+            convertNodeV32(childNode, ids)
+        })
+    }
 }

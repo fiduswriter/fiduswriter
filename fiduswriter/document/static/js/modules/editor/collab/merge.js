@@ -357,14 +357,14 @@ export class Merge {
 
     createMergeDialog(offlineTr, onlineTr, onlineDoc) {
         const mergeButtons = [{
-            text: " Help ",
+            text: gettext(" Help "),
             classes: 'fw-orange',
             click: () => {
                 const helpDialog = new mergeHelpDialog()
                 helpDialog.open()
             }
         }, {
-            text: "Merge Complete",
+            text: gettext("Merge Complete"),
             classes: 'fw-dark',
             click: () => {
                 if (!this.checkResolution()) {
@@ -375,7 +375,7 @@ export class Merge {
                         title: gettext("Merge Resolution warning"),
                         body: gettext("Not all changes have been resolved. Please make sure to review all the changes to before proceeding."),
                         buttons:[{
-                            text: "Proceed to Merge",
+                            text: gettext("Proceed to Merge"),
                             classes: 'fw-dark',
                             click:()=>{
                                 this.startMerge(offlineTr, onlineTr, onlineDoc)
@@ -390,7 +390,7 @@ export class Merge {
         const dialog = new Dialog({
             id: 'editor-merge-view',
             title: gettext("Merging Offline Document"),
-            body: `<div style="display:flex"><div class="offline-heading">OFFLINE DOCUMENT</div><div class="merged-heading">MERGED DOCUMENT</div> <div class="online-heading">ONLINE DOCUMENT</div></div><div class= "user-contents" style="display:flex;"><div id="editor-diff-1" style="float:left;padding:15px;"></div><div id="editor-diff" class="merged-view" style="padding:15px;"></div><div id="editor-diff-2" style="float:right;padding:15px;"></div></div><div class="help-note"> Note : If this is your first time encountering this dialog please read the instructions for merging by clicking on the Help button.</div>`,
+            body: `<div style="display:flex"><div class="offline-heading">${gettext("OFFLINE DOCUMENT")}</div><div class="merged-heading">${gettext("MERGED DOCUMENT")}</div> <div class="online-heading">${gettext("ONLINE DOCUMENT")}</div></div><div class= "user-contents" style="display:flex;"><div id="editor-diff-1" style="float:left;padding:15px;"></div><div id="editor-diff" class="merged-view" style="padding:15px;"></div><div id="editor-diff-2" style="float:right;padding:15px;"></div></div><div class="help-note"> ${gettext('Note : If this is your first time encountering this dialog please read the instructions for merging by clicking on the Help button.')}</div>`,
             height:600,
             width:window.innerwidth,
             buttons:mergeButtons

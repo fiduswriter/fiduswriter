@@ -397,12 +397,12 @@ export class JATSExporterConvert {
             start += '<disp-quote>'
             end = '</disp-quote>' + end
             break
-        case 'ordered_list':
+        case 'ordered_list': {
             if (options.inFootnote) {
                 // only allows <p> block level elements https://jats.nlm.nih.gov/archiving/tag-library/1.2/element/fn.html
                 break
             }
-            const continuedListEndNumber = node.attrs.order -1
+            const continuedListEndNumber = node.attrs.order - 1
             let lastListIndex
             // TODO: deal with lists that have an order number other than 1 that do not continue previous lists. Currently not possible in JATS
             if (continuedListEndNumber) {
@@ -422,6 +422,7 @@ export class JATSExporterConvert {
             this.orderedListLengths[options.inOrderedList] = continuedListEndNumber
             end = '</list>' + end
             break
+        }
         case 'bullet_list':
             if (options.inFootnote) {
                 // only allows <p> block level elements https://jats.nlm.nih.gov/archiving/tag-library/1.2/element/fn.html

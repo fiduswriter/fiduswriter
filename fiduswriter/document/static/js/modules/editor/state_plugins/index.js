@@ -59,6 +59,10 @@ export {
 }
     from "./marginboxes"
 export {
+    orderedListMenuPlugin
+}
+    from "./ordered_list_menu"
+export {
     placeholdersPlugin
 }
     from "./placeholders"

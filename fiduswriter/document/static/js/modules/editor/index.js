@@ -70,11 +70,12 @@ import {
 } from './navigator'
 import {
     headerbarModel,
-    toolbarModel,
-    tableMenuModel,
     imageMenuModel,
     navigatorFilterModel,
-    selectionMenuModel
+    orderedListMenuModel,
+    selectionMenuModel,
+    tableMenuModel,
+    toolbarModel
 } from "./menus"
 import {
     ModMarginboxes
@@ -100,6 +101,7 @@ import {
     tagInputPlugin,
     linksPlugin,
     marginboxesPlugin,
+    orderedListMenuPlugin,
     placeholdersPlugin,
     selectionMenuPlugin,
     settingsPlugin,
@@ -153,11 +155,12 @@ export class Editor {
 
         this.menu = {
             headerbarModel: headerbarModel(),
-            toolbarModel: toolbarModel(),
-            tableMenuModel: tableMenuModel(),
             imageMenuModel: imageMenuModel(),
             navigatorFilterModel: navigatorFilterModel(),
-            selectionMenuModel: selectionMenuModel()
+            orderedListMenuModel: orderedListMenuModel(),
+            selectionMenuModel: selectionMenuModel(),
+            tableMenuModel: tableMenuModel(),
+            toolbarModel: toolbarModel()
         }
         this.client_id = Math.floor(Math.random() * 0xFFFFFFFF)
         this.clientTimeAdjustment = 0
@@ -190,6 +193,7 @@ export class Editor {
             [documentTemplatePlugin, () => ({editor: this})],
             [trackPlugin, () => ({editor: this})],
             [tableMenuPlugin, () => ({editor: this})],
+            [orderedListMenuPlugin, () => ({editor: this})],
             [figurePlugin, () => ({editor: this})],
             [tocRenderPlugin, () => ({editor: this})],
             [searchPlugin],

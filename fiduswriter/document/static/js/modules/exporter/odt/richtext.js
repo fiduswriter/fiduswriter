@@ -78,14 +78,11 @@ export class OdtExporterRichtext {
             options.section = 'Quote'
             break
         case 'ordered_list': {
-            const olId = options.inOrderedList ?
-                options.inOrderedList :
-                this.exporter.styles.getOrderedListStyleId()
+            const olId = this.exporter.styles.getOrderedListStyleId(node.attrs.order)
             start += `<text:list text:style-name="L${olId[0]}">`
             end = '</text:list>' + end
             options = Object.assign({}, options)
             options.section = `P${olId[1]}`
-            options.inOrderedList = olId
             break
         }
         case 'bullet_list': {

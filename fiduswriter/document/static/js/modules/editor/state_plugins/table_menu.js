@@ -11,6 +11,7 @@ class TableView {
         this.options = options
         this.dom = document.createElement("div")
         this.dom.classList.add(`table-${node.attrs.width}`, `table-${node.attrs.aligned}`, 'table-container')
+        this.dom.id = node.attrs.id
         this.menuButton = document.createElement("button")
         this.menuButton.classList.add('table-menu-btn')
         this.menuButton.innerHTML = '<span class="dot-menu-icon"><i class="fa fa-ellipsis-v"></i></span>'

@@ -112,7 +112,7 @@ specNodes = specNodes.update(
                     width = dom.dataset.width,
                     aligned = width === '100' ? 'center' : dom.dataset.aligned,
                     layout = dom.dataset.layout,
-                    id = dom.dataset.id
+                    id = dom.id || dom.dataset.id
                 return {
                     track,
                     width,

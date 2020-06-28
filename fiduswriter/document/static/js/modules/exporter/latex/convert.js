@@ -259,7 +259,12 @@ export class LatexExporterConvert {
             end = '\n\n\\end{quote}\n' + end
             break
         case 'ordered_list':
-            start += '\n\\begin{enumerate}'
+            if (node.attrs.order !== 1) {
+                start += `\n\\begin{enumerate}[start=${node.attrs.order}]`
+                this.features.orderedListStart = true
+            } else {
+                start += '\n\\begin{enumerate}'
+            }
             end = '\n\\end{enumerate}' + end
             if (!options.onlyFootnoteMarkers) {
                 placeFootnotesAfterBlock = true
@@ -712,6 +717,11 @@ export class LatexExporterConvert {
         if (this.features.tables) {
             preamble += '\n\\usepackage{tabu}'
         }
+
+        if (this.features.orderedListStart) {
+            preamble += '\n\\usepackage{enumitem}'
+        }
+
         if (this.features.rowspan) {
             preamble += '\n\\usepackage{multirow}'
         }

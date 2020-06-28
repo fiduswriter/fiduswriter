@@ -17,6 +17,7 @@ export class JATSExporterConvert {
         this.headingCounter = 0
         this.currentSectionLevel = 0
         this.listCounter = 0
+        this.orderedListLengths = []
         this.footnotes = []
         this.fnCounter = 0
         this.frontMatter = {
@@ -401,7 +402,24 @@ export class JATSExporterConvert {
                 // only allows <p> block level elements https://jats.nlm.nih.gov/archiving/tag-library/1.2/element/fn.html
                 break
             }
-            start += `<list list-type="order" id="list-${++this.listCounter}">`
+            const continuedListEndNumber = node.attrs.order -1
+            let lastListIndex
+            // TODO: deal with lists that have an order number other than 1 that do not continue previous lists. Currently not possible in JATS
+            if (continuedListEndNumber) {
+                lastListIndex = this.orderedListLengths.lastIndexOf(continuedListEndNumber)
+                // const lastListReverseIndex = this.orderedListLengths.slice().reverse().findIndex(length => length === continuedListEndNumber)
+                // if (lastListReverseIndex !== undefined) {
+                //     lastListIndex = this.orderedListLengths.length-lastListReverseIndex
+                // }
+            }
+            if (lastListIndex > -1) {
+                start += `<list list-type="order" id="list-${++this.listCounter}" continued-from="list-${lastListIndex}">`
+            } else {
+                start += `<list list-type="order" id="list-${++this.listCounter}">`
+            }
+            options = Object.assign({}, options)
+            options.inOrderedList = this.listCounter
+            this.orderedListLengths[options.inOrderedList] = continuedListEndNumber
             end = '</list>' + end
             break
         case 'bullet_list':
@@ -411,11 +429,16 @@ export class JATSExporterConvert {
             }
             start += `<list list-type="bullet" id="list-${++this.listCounter}">`
             end = '</list>' + end
+            options = Object.assign({}, options)
+            delete options.inOrderedList
             break
         case 'list_item':
             if (options.inFootnote) {
                 // only allows <p> block level elements https://jats.nlm.nih.gov/archiving/tag-library/1.2/element/fn.html
                 break
+            }
+            if (options.inOrderedList !== undefined) {
+                this.orderedListLengths[options.inOrderedList] += 1
             }
             start += '<list-item>'
             end = '</list-item>' + end

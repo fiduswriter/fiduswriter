@@ -141,12 +141,12 @@ export class DocxExporterRichtext {
         case 'ordered_list':
             options = Object.assign({}, options)
             options.section = 'ListParagraph'
-            options.list_type = this.exporter.lists.getNumberedType()
             if (options.list_depth === undefined) {
                 options.list_depth = 0
             } else {
                 options.list_depth += 1
             }
+            options.list_type = this.exporter.lists.getNumberedType()
             break
         case 'bullet_list':
             options = Object.assign({}, options)

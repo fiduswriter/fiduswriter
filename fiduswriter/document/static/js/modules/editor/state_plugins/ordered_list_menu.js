@@ -1,5 +1,6 @@
 import {Plugin, PluginKey, Selection} from "prosemirror-state"
 import {ContentMenu} from '../../common'
+import {WRITE_ROLES} from "../"
 
 const key = new PluginKey('tableMenu')
 
@@ -56,7 +57,7 @@ export const orderedListMenuPlugin = function(options) {
         key,
         state: {
             init(_config, _state) {
-                if (options.editor.docInfo.access_rights === 'write') {
+                if (WRITE_ROLES.includes(options.editor.docInfo.access_rights)) {
                     this.spec.props.nodeViews['ordered_list'] =
                         (node, view, getPos) => new OrderedListView(node, view, getPos, options)
                 }

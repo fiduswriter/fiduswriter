@@ -226,7 +226,8 @@ export class Editor {
             'bibliography.css',
             'dot_menu.css',
             'cropper.min.css',
-            'inline_tools.css'
+            'inline_tools.css',
+            'merge.css'
         ])
         new ModDocumentTemplate(this)
         const initPromises = [
@@ -336,6 +337,7 @@ export class Editor {
                         )
                         const sessionDialog = new Dialog({
                             title:gettext('Session Expired'),
+                            id:"session_expiration_dialog",
                             body:gettext(' Your Session expired while you were offline. So we have downloaded the version of the document you were editing. Please consider importing it into a new document '),
                             buttons:[{
                                 text:gettext('Proceed to Login page'),

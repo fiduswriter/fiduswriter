@@ -140,9 +140,31 @@ export function parseTracks(str) {
     )
 }
 
+export function parseDiff(str) {
+    if (!str) {
+        return []
+    }
+    let tracks
+    try {
+        tracks = JSON.parse(str)
+    } catch (error) {
+        return []
+    }
+    if (!Array.isArray(tracks)) {
+        return []
+    }
+}
+
 function addTracks(node, attrs) {
     if (node.attrs.track?.length) {
         attrs['data-track'] = JSON.stringify(node.attrs.track)
+    }
+}
+
+function addDiffs(node, attrs) {
+    if (node.attrs.diffdata && node.attrs.diffdata.length) {
+        attrs['data-diffdata'] = JSON.stringify(node.attrs.diffdata)
+        attrs.class = node.attrs.diffdata[0].type
     }
 }
 
@@ -158,7 +180,9 @@ export const figure = {
         id: {default: false},
         track: {default: []},
         aligned: {default: 'center'},
-        width:{default:"100"}
+        width:{default:"100"},
+        diffdata:{default:[]}
+
     },
     parseDOM: [{
         tag: 'figure',
@@ -173,7 +197,8 @@ export const figure = {
                 track: parseTracks(dom.dataset.track),
                 aligned: dom.dataset.aligned,
                 width: dom.dataset.width,
-
+                diff:dom.dataset.diff,
+                diffdata:parseDiff(dom.dataset.diffdata)
             }
         }
     }],
@@ -217,6 +242,10 @@ export const figure = {
 
         if (node.attrs.track?.length) {
             dom.dataset.track = JSON.stringify(node.attrs.track)
+        }
+        if (node.attrs.diffdata && node.attrs.diffdata.length) {
+            dom.dataset.diffdata = JSON.stringify(node.attrs.diffdata)
+            dom.classList.add(node.attrs.diffdata[0].type)
         }
         if (node.attrs.image !== false) {
             dom.appendChild(document.createElement("div"))
@@ -297,6 +326,9 @@ const createHeading = level => ({
         },
         track: {
             default: []
+        },
+        diffdata:{
+            default:[]
         }
     },
     parseDOM: [
@@ -305,7 +337,8 @@ const createHeading = level => ({
             getAttrs(dom) {
                 return {
                     id: dom.id,
-                    track: parseTracks(dom.dataset.track)
+                    track: parseTracks(dom.dataset.track),
+                    diffdata: parseDiff(dom.dataset.diffdata)
                 }
             }
         }
@@ -313,6 +346,7 @@ const createHeading = level => ({
     toDOM(node) {
         const attrs = {id: node.attrs.id}
         addTracks(node, attrs)
+        addDiffs(node, attrs)
         return [`h${level}`, attrs, 0]
     }
 })
@@ -424,13 +458,19 @@ export const paragraph = {
     attrs: {
         track: {
             default: []
+        },
+        diffdata:{
+            default:[]
         }
     },
     parseDOM: [{tag: "p", getAttrs(dom) {return {
-        track: parseTracks(dom.dataset.track)
+        track: parseTracks(dom.dataset.track),
+        diffdata: parseDiff(dom.dataset.diffdata)
     }}}],
     toDOM(node) {
         const attrs = node.attrs.track && node.attrs.track.length ? {'data-track': JSON.stringify(node.attrs.track)} : {}
+        if (node.attrs.diffdata)
+            addDiffs(node, attrs)
         return ['p', attrs, 0]
     }
 }
@@ -442,15 +482,21 @@ export const blockquote = {
     attrs: {
         track: {
             default: []
+        },
+        diffdata:{
+            default:[]
         }
     },
     marks: "annotation",
     defining: true,
     parseDOM: [{tag: "blockquote", getAttrs(dom) {return {
-        track: parseTracks(dom.dataset.track)
+        track: parseTracks(dom.dataset.track),
+        diffdata: parseDiff(dom.dataset.diffdata)
     }}}],
     toDOM(node) {
         const attrs = node.attrs.track && node.attrs.track.length ? {'data-track': JSON.stringify(node.attrs.track)} : {}
+        if (node.attrs.diffdata)
+            addDiffs(node, attrs)
         return ["blockquote", attrs, 0]
     }
 }
@@ -461,13 +507,19 @@ export const horizontal_rule = {
     attrs: {
         track: {
             default: []
+        },
+        diffdata:{
+            default:[]
         }
     },
     parseDOM: [{tag: "hr", getAttrs(dom) {return {
-        track: parseTracks(dom.dataset.track)
+        track: parseTracks(dom.dataset.track),
+        diffdata: parseTracks(dom.dataset.diffdata)
     }}}],
     toDOM(node) {
         const attrs = node.attrs.track && node.attrs.track.length ? {'data-track': JSON.stringify(node.attrs.track)} : {}
+        if (node.attrs.diffdata)
+            addDiffs(node, attrs)
         return ["hr", attrs]
     }
 }
@@ -511,13 +563,15 @@ export const ordered_list = {
     attrs: {
         id: {default: false},
         order: {default: 1},
-        track: {default: []}
+        track: {default: []},
+        diffdata: {default:[]}
     },
     parseDOM: [{tag: "ol", getAttrs(dom) {
         return {
             id: dom.id,
             order: dom.hasAttribute("start") ? +dom.getAttribute("start") : 1,
-            track: parseTracks(dom.dataset.track)
+            track: parseTracks(dom.dataset.track),
+            diffdata: parseDiff(dom.dataset.diffdata)
         }
     }}],
     toDOM(node) {
@@ -526,6 +580,7 @@ export const ordered_list = {
             attrs.start = node.attrs.order
         }
         addTracks(node, attrs)
+        addDiffs(node, attrs)
         return ["ol", attrs, 0]
     }
 }
@@ -541,17 +596,20 @@ export const bullet_list = {
     content: "list_item+",
     attrs: {
         id: {default: false},
-        track: {default: []}
+        track: {default: []},
+        diffdata: {default: []}
     },
     parseDOM: [{tag: "ul", getAttrs(dom) {
         return {
             id: dom.id,
-            track: parseTracks(dom.dataset.track)
+            track: parseTracks(dom.dataset.track),
+            diffdata: parseDiff(dom.dataset.diffdata)
         }
     }}],
     toDOM(node) {
         const attrs = {id: node.attrs.id}
         addTracks(node, attrs)
+        addDiffs(node, attrs)
         return ["ul", attrs, 0]
     }
 }
@@ -562,16 +620,19 @@ export const list_item = {
     content: "block+",
     marks: "annotation",
     attrs: {
-        track: {default: []}
+        track: {default: []},
+        diffdata: {default: []}
     },
     parseDOM: [{tag: "li", getAttrs(dom) {
         return {
-            track: parseTracks(dom.dataset.track)
+            track: parseTracks(dom.dataset.track),
+            diffdata: parseDiff(dom.dataset.diffdata)
         }
     }}],
     toDOM(node) {
         const attrs = {}
         addTracks(node, attrs)
+        addDiffs(node, attrs)
         return ["li", attrs, 0]
     },
     defining: true
@@ -734,4 +795,42 @@ export const insertion = {
             'data-date': node.attrs.date
         }]
     }
+}
+
+export const DiffMark = {
+    attrs: {
+        diff:{
+            default:""
+        },
+        steps:{
+            default:[]
+        },
+        from:{
+            default:''
+        },
+        to:{
+            default:''
+        }
+    },
+    parseDOM: [
+        {
+            tag: "span.diff",
+            getAttrs(dom) {
+                return {
+                    diff:dom.dataset.diff,
+                    steps:dom.dataset.steps,
+                }
+            }
+        }
+    ],
+    toDOM(node) {
+        return ['span', {
+            class: `diff ${node.attrs.diff}`,
+            'data-diff':node.attrs.diff,
+            'data-steps':node.attrs.steps,
+            'data-from':node.attrs.from,
+            'data-to':node.attrs.to
+        }]
+    }
+
 }

@@ -87,6 +87,10 @@ let specNodes = OrderedMap.from({
     cellContent: "block+"
 }))
 
+export function randomTableId() {
+    return 'T' + Math.round(Math.random() * 10000000) + 1
+}
+
 specNodes = specNodes.update(
     "table_cell",
     Object.assign({marks: "annotation"}, specNodes.get("table_cell"))
@@ -97,6 +101,7 @@ specNodes = specNodes.update(
         specNodes.get("table"),
         {
             attrs: {
+                id: {default: false},
                 track: {default: []},
                 width: {default: '100'},
                 aligned: {default: 'center'},
@@ -106,12 +111,14 @@ specNodes = specNodes.update(
                 const track = parseTracks(dom.dataset.track),
                     width = dom.dataset.width,
                     aligned = width === '100' ? 'center' : dom.dataset.aligned,
-                    layout = dom.dataset.layout
+                    layout = dom.dataset.layout,
+                    id = dom.id || dom.dataset.id
                 return {
                     track,
                     width,
                     aligned,
-                    layout
+                    layout,
+                    id
                 }
             }}],
             toDOM(node) {
@@ -119,6 +126,7 @@ specNodes = specNodes.update(
                 if (node.attrs.track.length) {
                     attrs['data-track'] = JSON.stringify(node.attrs.track)
                 }
+                attrs['id'] = node.attrs.id
                 attrs['data-width'] = node.attrs.width
                 attrs['data-aligned'] = node.attrs.aligned
                 attrs['data-layout'] = node.attrs.layout

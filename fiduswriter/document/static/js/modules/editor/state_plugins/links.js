@@ -3,7 +3,8 @@ import {Decoration, DecorationSet} from "prosemirror-view"
 import {RemoveMarkStep} from "prosemirror-transform"
 
 import {noSpaceTmp, addAlert} from "../../common"
-import {randomHeadingId, randomFigureId} from "../../schema/common"
+import {randomHeadingId, randomFigureId, randomListId} from "../../schema/common"
+import {randomTableId} from "../../schema/document"
 import {FIG_CATS} from "../../schema/i18n"
 import {LinkDialog} from "../dialogs"
 
@@ -359,7 +360,7 @@ export const linksPlugin = function(options) {
                                     !foundIdElement &&
                                     (
                                         node.type.groups.includes('heading') ||
-                                        node.type.name === 'figure'
+                                        ['figure', 'table', 'bullet_list', 'ordered_list'].includes(node.type.name)
                                     )
                                 ) {
                                     foundIdElement = true
@@ -430,27 +431,25 @@ export const linksPlugin = function(options) {
             //
             // If an ID is used more than once, add steps to change the ID of all
             // but the first occurence.
-            const headingIds = [],
-                figureIds = []
+            const ids = []
 
             otherState.doc.descendants(node => {
-                if (node.type.groups.includes('heading')) {
-                    headingIds.push(node.attrs.id)
-                } else if (node.type.name === 'figure') {
-                    figureIds.push(node.attrs.id)
+                if (node.type.groups.includes('heading') || ['figure', 'table', 'bullet_list', 'ordered_list'].includes(node.type.name)) {
+                    ids.push(node.attrs.id)
                 }
             })
 
             const newTr = newState.tr.setMeta('fixIds', true)
 
             newState.doc.descendants((node, pos) => {
-                if (node.type.groups.includes('heading')) {
-                    if (headingIds.includes(node.attrs.id) || !node.attrs.id) {
+                if (node.type.groups.includes('heading') || ['figure', 'table', 'bullet_list', 'ordered_list'].includes(node.type.name)) {
+                    if (ids.includes(node.attrs.id) || !node.attrs.id) {
                         // Add node if the id is false (default) or it is present twice
+                        const randomIdGenerator = node.type.groups.includes('heading') ? randomHeadingId : node.type.name === 'figure' ? randomFigureId : node.type.name === 'table' ? randomTableId : randomListId
                         let id
 
-                        while (!id || headingIds.includes(id)) {
-                            id = randomHeadingId()
+                        while (!id || ids.includes(id)) {
+                            id = randomIdGenerator()
                         }
 
                         const attrs = Object.assign({}, node.attrs, {id})
@@ -460,24 +459,9 @@ export const linksPlugin = function(options) {
                         // mapping of positions through these steps.
                         newTr.setNodeMarkup(pos, null, attrs)
 
-                        headingIds.push(id)
+                        ids.push(id)
                     } else {
-                        headingIds.push(node.attrs.id)
-                    }
-                } else if (node.type.name === 'figure') {
-                    // Add node if the id is false (default) or it is present twice
-                    if (figureIds.includes(node.attrs.id) || !node.attrs.id) {
-                        let id
-
-                        while (!id || figureIds.includes(id)) {
-                            id = randomFigureId()
-                        }
-
-                        const attrs = Object.assign({}, node.attrs, {id})
-                        newTr.setNodeMarkup(pos, null, attrs)
-                        figureIds.push(id)
-                    } else {
-                        figureIds.push(node.attrs.id)
+                        ids.push(node.attrs.id)
                     }
                 } else if (
                     node.type.name === 'cross_reference' &&

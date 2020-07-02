@@ -12,7 +12,7 @@ from django.core import checks
 # Also defined in frontend
 # document/static/js/modules/schema/index.js
 
-FW_DOCUMENT_VERSION = 3.2
+FW_DOCUMENT_VERSION = 3.3
 
 
 class DocumentTemplate(models.Model):

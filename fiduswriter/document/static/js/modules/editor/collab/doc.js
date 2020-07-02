@@ -18,6 +18,9 @@ import {
     updateCollaboratorSelection
 } from "../state_plugins"
 import {
+    WRITE_ROLES
+} from "../"
+import {
     adjustDocToTemplate
 } from "../../document_template"
 import {
@@ -158,7 +161,7 @@ export class ModCollabDoc {
             let tracked
             let rebasedTrackedTr // offline steps to be tracked
             if (
-                ['write', 'write-tracked'].includes(this.mod.editor.docInfo.access_rights) &&
+                WRITE_ROLES.includes(this.mod.editor.docInfo.access_rights) &&
                 (
                     unconfirmedTr.steps.length > this.trackOfflineLimit ||
                     lostTr.steps.length > this.remoteTrackOfflineLimit

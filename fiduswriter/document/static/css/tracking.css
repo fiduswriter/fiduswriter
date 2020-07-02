@@ -45,6 +45,11 @@ span.deletion {
     height: 22px;
 }
 
+li[data-track]::before {
+    content: inherit;
+}
+
+
 li[data-track]::before,
 li [data-track]::before {
     left: -5px;

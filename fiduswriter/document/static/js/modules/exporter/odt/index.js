@@ -77,7 +77,7 @@ export class OdtExporter {
             () => {
                 this.render.getTagData(this.pmBib)
                 this.render.render()
-                this.xml.prepareBlob()
+                return this.xml.prepareBlob()
             }
         ).then(
             blob => this.download(blob)

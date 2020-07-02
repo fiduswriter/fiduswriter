@@ -272,7 +272,7 @@ export class OdtExporterStyles {
         return this.bulletListStyleId
     }
 
-    getOrderedListStyleId() {
+    getOrderedListStyleId(start) {
         const orderedListStyleId = ++this.listStyleCounter
         const autoStylesEl = this.contentXml.querySelector('automatic-styles')
         autoStylesEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
@@ -283,7 +283,7 @@ export class OdtExporterStyles {
         // ODT files seem to contain ten levels of lists (1-10)
         for (let level = 1;level < 11;level++) {
             listStyleEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
-                <text:list-level-style-number text:level="${level}" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+                <text:list-level-style-number text:level="${level}" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1"${ start > 1 ? ` text:start-value="${start}"` : ''}>
                     <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
                         <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="${(level + 1) * 0.25}in" fo:text-indent="-0.25in" fo:margin-left="${(level + 1) * 0.25}in" />
                     </style:list-level-properties>

@@ -13,6 +13,27 @@ import {
     ReplaceAroundStep
 } from "prosemirror-transform"
 import {
+    baseKeymap
+} from "prosemirror-commands"
+import {
+    keymap
+} from "prosemirror-keymap"
+import {
+    collab
+} from "prosemirror-collab"
+import {
+    dropCursor
+} from "prosemirror-dropcursor"
+import {
+    gapCursor
+} from "prosemirror-gapcursor"
+import {
+    buildKeymap
+} from "prosemirror-example-setup"
+import {
+    FootnoteView
+} from "../footnotes/nodeview"
+import {
     showSystemMessage,
     Dialog,
     activateWait,
@@ -31,27 +52,6 @@ import {
     updateMarkData,
     checkPresenceOfDiffMark
 } from "../state_plugins/merge_diff"
-import {
-    FootnoteView
-} from "../footnotes/nodeview"
-import {
-    baseKeymap
-} from "prosemirror-commands"
-import {
-    keymap
-} from "prosemirror-keymap"
-import {
-    collab
-} from "prosemirror-collab"
-import {
-    dropCursor
-} from "prosemirror-dropcursor"
-import {
-    gapCursor
-} from "prosemirror-gapcursor"
-import {
-    buildKeymap
-} from "prosemirror-example-setup"
 import {
     jumpHiddenNodesPlugin,
     searchPlugin,

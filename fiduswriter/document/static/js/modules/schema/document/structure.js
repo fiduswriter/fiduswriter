@@ -277,7 +277,7 @@ export const separator_part = {
     marks: "annotation track",
     group: "part",
     defining: true,
-    attrs : {
+    attrs: {
         id: {
             default: 'separator'
         }
@@ -299,7 +299,7 @@ export const title = {
     group: "fixedpart",
     defining: true,
     isolating: true,
-    attrs : {
+    attrs: {
         id: {
             default: 'title'
         }

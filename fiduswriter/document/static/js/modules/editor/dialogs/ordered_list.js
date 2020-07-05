@@ -28,7 +28,7 @@ export class OrderedListStartDialog {
         const {orderedList, orderedListPos} = this.findOrderedList(this.editor.currentView.state)
         if (!orderedList) return
         const attrs = Object.assign({}, orderedList.attrs, {
-            order : this.order
+            order: this.order
         })
         this.editor.currentView.dispatch(this.editor.currentView.state.tr.setNodeMarkup(orderedListPos, false, attrs))
     }

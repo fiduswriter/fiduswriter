@@ -81,7 +81,7 @@ export class DocxExporterCitations {
         })
 
         // We create a standard body footnotecontainer node, add the citations into it, and parse it back.
-        const fnNode = fnSchema.nodeFromJSON({type:'footnotecontainer'})
+        const fnNode = fnSchema.nodeFromJSON({type: 'footnotecontainer'})
 
         const serializer = DOMSerializer.fromSchema(fnSchema)
         let dom = serializer.serializeNode(fnNode)
@@ -92,7 +92,7 @@ export class DocxExporterCitations {
         const cslBib = this.citFm.bibliography
         if (cslBib && cslBib[1].length > 0) {
             this.addReferenceStyle(cslBib[0])
-            const bibNode = cslBibSchema.nodeFromJSON({type:'cslbib'})
+            const bibNode = cslBibSchema.nodeFromJSON({type: 'cslbib'})
             const cslSerializer = DOMSerializer.fromSchema(cslBibSchema)
             dom = cslSerializer.serializeNode(bibNode)
             dom.innerHTML = cslBib[1].join('')

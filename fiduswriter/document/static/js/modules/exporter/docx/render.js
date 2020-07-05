@@ -86,13 +86,13 @@ export class DocxExporterRender {
             title: '@bibliography', // The '@' triggers handling as block
             content: pmBib ?
                 [{type: 'bibliography_heading', content: [{type: 'text', text: bibliographyHeader}]}].concat(pmBib.content) :
-                [{type: 'paragraph', content: [{type:'text', text: ' '}]}]
+                [{type: 'paragraph', content: [{type: 'text', text: ' '}]}]
         })
         this.tags.push({
             title: '@copyright', // The '@' triggers handling as block
             content: settings.copyright && settings.copyright.holder ?
                 [{type: 'paragraph', content: [{type: 'text', text: `© ${settings.copyright.year ? settings.copyright.year : new Date().getFullYear()} ${settings.copyright.holder}`}]}] :
-                [{type: 'paragraph', content: [{type:'text', text: ' '}]}]
+                [{type: 'paragraph', content: [{type: 'text', text: ' '}]}]
         })
         this.tags.push({
             title: '@licenses', // The '@' triggers handling as block
@@ -103,7 +103,7 @@ export class DocxExporterRender {
                         {type: 'text', text: license.start ? ` (${license.start})` : ''}
                     ]})
                 ) :
-                [{type: 'paragraph', content: [{type:'text', text: ' '}]}]
+                [{type: 'paragraph', content: [{type: 'text', text: ' '}]}]
         })
 
     }

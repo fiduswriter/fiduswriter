@@ -144,8 +144,8 @@ export class DocumentOverviewActions {
                     const doc = this.documentOverview.documentList.find(entry => entry.id === id)
                     const copier = new SaveCopy(
                         doc,
-                        {db:doc.bibliography},
-                        {db:doc.images},
+                        {db: doc.bibliography},
+                        {db: doc.images},
                         this.documentOverview.user
                     )
 
@@ -187,8 +187,8 @@ export class DocumentOverviewActions {
                                     const doc = this.documentOverview.documentList.find(entry => entry.id === id)
                                     const copier = new SaveCopy(
                                         doc,
-                                        {db:doc.bibliography},
-                                        {db:doc.images},
+                                        {db: doc.bibliography},
+                                        {db: doc.images},
                                         this.documentOverview.user,
                                         selectTemplateDialog.dialogEl.querySelector('select').value
                                     )
@@ -223,8 +223,8 @@ export class DocumentOverviewActions {
                 const doc = this.documentOverview.documentList.find(entry => entry.id === id)
                 new ExportFidusFile(
                     doc,
-                    {db:doc.bibliography},
-                    {db:doc.images}
+                    {db: doc.bibliography},
+                    {db: doc.images}
                 )
             })
         )
@@ -244,8 +244,8 @@ export class DocumentOverviewActions {
                         this.documentOverview.app.csl,
                         this.documentOverview.documentStyles,
                         doc,
-                        {db:doc.bibliography},
-                        {db:doc.images},
+                        {db: doc.bibliography},
+                        {db: doc.images},
                         new Date(doc.updated * 1000)
                     )
                     exporter.init()
@@ -268,8 +268,8 @@ export class DocumentOverviewActions {
                             const exporter = new DocxExporter(
                                 doc,
                                 templateUrl,
-                                {db:doc.bibliography},
-                                {db:doc.images},
+                                {db: doc.bibliography},
+                                {db: doc.images},
                                 this.documentOverview.app.csl
                             )
                             exporter.init()
@@ -279,8 +279,8 @@ export class DocumentOverviewActions {
                             const exporter = new OdtExporter(
                                 doc,
                                 templateUrl,
-                                {db:doc.bibliography},
-                                {db:doc.images},
+                                {db: doc.bibliography},
+                                {db: doc.images},
                                 this.documentOverview.app.csl
                             )
                             exporter.init()
@@ -303,8 +303,8 @@ export class DocumentOverviewActions {
                     import("../../exporter/latex").then(({LatexExporter}) => {
                         const exporter = new LatexExporter(
                             doc,
-                            {db:doc.bibliography},
-                            {db:doc.images},
+                            {db: doc.bibliography},
+                            {db: doc.images},
                             new Date(doc.updated * 1000)
                         )
                         exporter.init()
@@ -325,8 +325,8 @@ export class DocumentOverviewActions {
                     import("../../exporter/jats").then(({JATSExporter}) => {
                         const exporter = new JATSExporter(
                             doc,
-                            {db:doc.bibliography},
-                            {db:doc.images},
+                            {db: doc.bibliography},
+                            {db: doc.images},
                             this.documentOverview.app.csl,
                             new Date(doc.updated * 1000)
                         )
@@ -351,8 +351,8 @@ export class DocumentOverviewActions {
                             this.documentOverview.app.csl,
                             this.documentOverview.documentStyles,
                             doc,
-                            {db:doc.bibliography},
-                            {db:doc.images},
+                            {db: doc.bibliography},
+                            {db: doc.images},
                             new Date(doc.updated * 1000)
                         )
                         exporter.init()

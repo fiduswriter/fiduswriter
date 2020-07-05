@@ -195,7 +195,7 @@ export class BibliographyOverview {
                 text: gettext('Submit'),
                 classes: "fw-dark",
                 click: () => {
-                    const cats = {ids:[], titles:[]}
+                    const cats = {ids: [], titles: []}
                     this.dom.querySelectorAll('#editCategories .category-form').forEach(
                         el => {
                             const title = el.value.trim()

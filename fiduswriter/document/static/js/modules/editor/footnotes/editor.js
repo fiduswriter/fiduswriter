@@ -62,7 +62,7 @@ export class ModFootnoteEditor {
     }
 
     init() {
-        const doc = this.schema.nodeFromJSON({"type":"doc", "content":[]}),
+        const doc = this.schema.nodeFromJSON({"type": "doc", "content": []}),
             plugins = this.fnStatePlugins.map(plugin => {
                 if (plugin[1]) {
                     return plugin[0](plugin[1](doc))
@@ -77,7 +77,7 @@ export class ModFootnoteEditor {
                 doc,
                 plugins
             }),
-            handleDOMEvents : {
+            handleDOMEvents: {
                 focus: (_view, _event) => {
                     this.mod.editor.currentView = this.view
                 }
@@ -164,7 +164,7 @@ export class ModFootnoteEditor {
             content: fnContent
         }))
         const doc = this.schema.nodeFromJSON(
-                {type:"doc", content}
+                {type: "doc", content}
             ),
             plugins = this.fnStatePlugins.map(plugin => {
                 if (plugin[1]) {

@@ -487,7 +487,7 @@ export const linksPlugin = function(options) {
 
             // Remove anchor marks without ID
             if (foundAnchorWithoutId) {
-                const markType = newState.schema.marks.anchor.create({id : false})
+                const markType = newState.schema.marks.anchor.create({id: false})
                 newTr.step(
                     new RemoveMarkStep(
                         0,

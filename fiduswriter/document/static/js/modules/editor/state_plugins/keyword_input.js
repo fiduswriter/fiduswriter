@@ -131,7 +131,7 @@ export const keywordInputPlugin = function(options) {
                 schema,
                 doc: schema.nodeFromJSON({
                     type: 'doc',
-                    content:[{
+                    content: [{
                         type: 'keyword',
                         content: []
                     }]

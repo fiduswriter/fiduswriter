@@ -16,7 +16,7 @@ function parseReferences(str) {
         ref => ref.hasOwnProperty('id') // ensure there is an id.
     ).map(
         ref => {
-            const mRef = {id:ref.id}
+            const mRef = {id: ref.id}
             if (ref.locator) {
                 mRef.locator = ref.locator
             }
@@ -180,9 +180,8 @@ export const figure = {
         id: {default: false},
         track: {default: []},
         aligned: {default: 'center'},
-        width:{default:"100"},
-        diffdata:{default:[]}
-
+        width:{default: "100"},
+        diffdata:{default: []}
     },
     parseDOM: [{
         tag: 'figure',

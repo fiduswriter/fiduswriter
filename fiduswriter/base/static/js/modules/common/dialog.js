@@ -95,7 +95,7 @@ export class Dialog {
                 height: this.height,
                 width: this.width,
                 icon: this.icon,
-                buttons : this.buttons,
+                buttons: this.buttons,
                 zIndex: this.getHighestDialogZIndex() + 2,
                 body: this.body,
                 scroll: this.scroll

@@ -65,7 +65,7 @@ export class ZipFileCreator {
         return Promise.all(blobPromises).then(
             promises => {
                 promises.forEach(promise => this.zipFs.file(promise.filename, promise.blob, {binary: true, compression: 'DEFLATE'}))
-                return this.zipFs.generateAsync({type:"blob", mimeType: this.mimeType})
+                return this.zipFs.generateAsync({type: "blob", mimeType: this.mimeType})
             }
         )
     }

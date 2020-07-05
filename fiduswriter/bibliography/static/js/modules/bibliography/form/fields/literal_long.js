@@ -19,7 +19,7 @@ export class LiteralLongFieldForm {
                 schema: longLitSchema,
                 doc: longLitSchema.nodeFromJSON({
                     type: 'doc',
-                    content:[{
+                    content: [{
                         type: 'longliteral',
                         content: this.initialValue
                     }]

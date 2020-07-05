@@ -129,7 +129,7 @@ export class ModCollabDoc {
                 rollbackTr.steps,
                 rollbackTr.steps.map(_step => 'remote')
             ).setMeta('remote', true))
-            const toDoc = this.mod.editor.schema.nodeFromJSON({type:'doc', content:[
+            const toDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [
                 data.doc.contents
             ]})
 
@@ -183,7 +183,7 @@ export class ModCollabDoc {
         this.mod.editor.docInfo.confirmedJson = JSON.parse(JSON.stringify(data.doc.contents))
         let stateDoc
         if (data.doc.contents.type) {
-            stateDoc = this.mod.editor.schema.nodeFromJSON({type:'doc', content:[
+            stateDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [
                 adjustDocToTemplate(
                     data.doc.contents,
                     this.mod.editor.docInfo.template.definition,
@@ -199,7 +199,7 @@ export class ModCollabDoc {
             if (!definition.content) {
                 definition.content = [{type: 'title'}]
             }
-            stateDoc = this.mod.editor.schema.nodeFromJSON({type:'doc', content:[
+            stateDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [
                 definition
             ]})
         }

@@ -120,7 +120,7 @@ const createTagInputEditor = (view, getPos, node) => {
             schema,
             doc: schema.nodeFromJSON({
                 type: 'doc',
-                content:[{
+                content: [{
                     type: 'tag',
                     content: []
                 }]

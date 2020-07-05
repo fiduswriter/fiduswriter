@@ -96,7 +96,7 @@ export class XmlZip {
         this.allXMLToZip()
         this.allExtraToZip()
 
-        return this.zip.generateAsync({type:"blob", mimeType: this.mimeType})
+        return this.zip.generateAsync({type: "blob", mimeType: this.mimeType})
     }
 
 }

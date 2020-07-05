@@ -190,9 +190,12 @@ export const tableResizeTemplate = () =>
 
     </div>`
 
+export const orderedListStartTemplate = ({order}) =>
+    `<div title="${gettext("List start")}">
+        <p><input class="list-start" type="number" name="list-start" min="1" value="${order}"></p>
+    </div>`
 
 export const mathDialogTemplate = () =>
-
     `<div title="${gettext("Math")}">
         <p><span class="math-field" type="text" name="math" ></span></p>
     </div>`

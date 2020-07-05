@@ -169,7 +169,7 @@ export const figure = {
                 image: isNaN(image) ? false : image,
                 figureCategory: dom.dataset.figureCategory,
                 caption: dom.dataset.caption,
-                id: dom.dataset.id,
+                id: dom.id,
                 track: parseTracks(dom.dataset.track),
                 aligned: dom.dataset.aligned,
                 width: dom.dataset.width,
@@ -509,17 +509,19 @@ export const ordered_list = {
     group: "block",
     content: "list_item+",
     attrs: {
+        id: {default: false},
         order: {default: 1},
         track: {default: []}
     },
     parseDOM: [{tag: "ol", getAttrs(dom) {
         return {
+            id: dom.id,
             order: dom.hasAttribute("start") ? +dom.getAttribute("start") : 1,
             track: parseTracks(dom.dataset.track)
         }
     }}],
     toDOM(node) {
-        const attrs = {}
+        const attrs = {id: node.attrs.id}
         if (node.attrs.order !== 1) {
             attrs.start = node.attrs.order
         }
@@ -528,21 +530,27 @@ export const ordered_list = {
     }
 }
 
+export function randomListId() {
+    return 'L' + Math.round(Math.random() * 10000000) + 1
+}
+
 // :: NodeSpec
 // A bullet list node spec, represented in the DOM as `<ul>`.
 export const bullet_list = {
     group: "block",
     content: "list_item+",
     attrs: {
+        id: {default: false},
         track: {default: []}
     },
     parseDOM: [{tag: "ul", getAttrs(dom) {
         return {
+            id: dom.id,
             track: parseTracks(dom.dataset.track)
         }
     }}],
     toDOM(node) {
-        const attrs = {}
+        const attrs = {id: node.attrs.id}
         addTracks(node, attrs)
         return ["ul", attrs, 0]
     }

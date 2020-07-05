@@ -7,6 +7,7 @@ from .editor_helper import EditorHelper
 from document.ws_views import WebSocket
 from django.conf import settings
 import os
+import time
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 
@@ -276,9 +277,9 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
     def test_failed_authentication(self):
         """
         Test One Client Going offline, while the other client is still
-        editing the document.The client who is offline has his/her
-        session expired , while he/she is offline.
-        When he/she comes back online , they see a dialog explaining the
+        editing the document. The client that goes offline has its
+        session expired, while it is offline.
+        When it comes back online, the user sees a dialog explaining the
         situation and the offline version of the document is downloaded.
         """
         self.load_document_editor(self.driver, self.doc)
@@ -338,10 +339,10 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
 
     def test_conflicting_changes(self):
         """
-        Test One Client Going offline, while the other client is still
-        editing the document.The client who is offline adds
-        content to a paragraph. This paragraph is deleted by online user.
-        Because of this conflict merge window opens up.
+        Test one client going offline, while the other client is still
+        editing the document. The client that is offline adds
+        content to a paragraph. This paragraph is deleted by the online user.
+        Because of this conflict, the merge window opens up.
         """
         # The history length stored by the server is shortened from 1000 to 1.
         WebSocket.history_length = 1
@@ -392,7 +393,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
             actions.send_keys(Keys.BACKSPACE)
             actions.perform()
 
-        # driver 2 goes online
+        # Driver 2 goes online
         self.driver2.execute_script(
             'window.theApp.page.ws.goOnline()'
         )
@@ -414,10 +415,12 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         # Change the websocket history length back to its original value
         WebSocket.history_length = 1000
 
+        time.sleep(1000)
+
 
 class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
     """
-    Tests in which one user works offline.The Service Worker is
+    Tests in which one user works offline. The Service Worker is
     also installed in these tests.
     """
     user = None

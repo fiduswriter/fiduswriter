@@ -338,17 +338,17 @@ export class Editor {
                         const sessionDialog = new Dialog({
                             title: gettext('Session Expired'),
                             id: "session_expiration_dialog",
-                            body: gettext(' Your Session expired while you were offline. So we have downloaded the version of the document you were editing. Please consider importing it into a new document '),
+                            body: gettext('Your session expired while you were offline so we cannot save your work to the server and we download it to your computer instead. Please consider importing it into a new document.'),
                             buttons: [{
                                 text: gettext('Proceed to Login page'),
                                 classes: 'fw-dark',
                                 click: ()=>{
                                     window.location.href = '/'
                                 }
-                            }]
+                            }],
+                            canClose: false
                         })
                         sessionDialog.open()
-                        sessionDialog.dialogEl.childNodes[1].childNodes[3].style.display = 'none' // Make the dialog non dismissable
                     } else {
                         window.location.href = '/'
                     }

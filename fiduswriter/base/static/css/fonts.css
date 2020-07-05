@@ -96,7 +96,8 @@ tr.fw-checkable.checked > td:last-child::after {
     content: '\f0d7';
 }
 
-.ui-icon-closethick::before {
+.ui-icon-closethick::before,
+.ui-icon-help::before {
     display: inline-block;
     font-family: 'Font Awesome 5 Free', monospace;
     font-weight: 900;

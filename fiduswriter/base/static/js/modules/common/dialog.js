@@ -2,18 +2,24 @@ import {keyName} from "w3c-keyname"
 
 import {findTarget} from "./basic"
 
-const dialogTemplate = ({id, classes, title, height, width, icon, buttons, zIndex, body, scroll}) =>
+const dialogTemplate = ({id, classes, title, height, width, icon, buttons, zIndex, body, scroll, help, canClose}) =>
     `<div tabindex="-1" role="dialog"
         class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front ui-dialog-buttons"
         ${id ? `aria-describedby="${id}"` : ''} style="z-index: ${zIndex};">
     <div class="ui-dialog-titlebar ui-corner-all ui-widget-header ui-helper-clearfix">
         ${icon ? `<i class="fa fa-${icon}" aria-hidden="true"></i>` : ''}
         <span id="ui-id-2" class="ui-dialog-title">${title}</span>
-        <button type="button" class="ui-button ui-corner-all ui-widget ui-button-icon-only ui-dialog-titlebar-close" title="${gettext('Close')}">
+        ${help ? `<button type="button" class="ui-button ui-corner-all ui-widget ui-button-icon-only ui-dialog-titlebar-help" title="${gettext('Help')}">
+            <span class="ui-button-icon ui-icon ui-icon-help"> </span>
+            <span class="ui-button-icon-space"> </span>
+            ${gettext('Help')}
+        </button>` : ''}
+        ${canClose ? `<button type="button" class="ui-button ui-corner-all ui-widget ui-button-icon-only ui-dialog-titlebar-close" title="${gettext('Close')}">
             <span class="ui-button-icon ui-icon ui-icon-closethick"> </span>
             <span class="ui-button-icon-space"> </span>
             ${gettext('Close')}
-        </button>
+        </button>` : ''}
+
     </div>
     <div ${id ? `id="${id}"` : ''} class="ui-dialog-content ui-widget-content${classes ? ` ${classes}` : ''}${scroll ? ` ui-scrollable` : ''}" style="width: ${width}; height: ${height};">
         ${body}
@@ -57,6 +63,8 @@ export class Dialog {
         this.body = options.body || ''
         this.height = options.height ? `${options.height}px` : 'auto'
         this.width = options.width ? `${options.width}px` : 'auto'
+        this.canClose = 'canClose' in options ? options.canClose : true
+        this.help = 'help' in options ? options.help : false
         this.buttons = []
         if (options.buttons) {
             this.setButtons(options.buttons)
@@ -98,7 +106,9 @@ export class Dialog {
                 buttons: this.buttons,
                 zIndex: this.getHighestDialogZIndex() + 2,
                 body: this.body,
-                scroll: this.scroll
+                scroll: this.scroll,
+                canClose: this.canClose,
+                help: this.help
             })
         )
         this.backdropEl = document.body.lastElementChild
@@ -201,6 +211,10 @@ export class Dialog {
             case findTarget(event, '.ui-dialog-titlebar-close', el):
                 event.preventDefault()
                 this.close()
+                break
+            case findTarget(event, '.ui-dialog-titlebar-help', el):
+                event.preventDefault()
+                this.help()
                 break
             default:
                 break

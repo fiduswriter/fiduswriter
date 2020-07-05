@@ -152,33 +152,6 @@ footnote div.footnote-tooltip p { /* stylelint-disable-line */
 }
 
 /* Help Related CSS */
-.help-note,
-.instruction-note {
-    padding-top: 30px;
-    font-size: medium;
-    font-weight: bold;
-    line-height: 1.2em;
-}
-
-.merge-instruction {
-    line-height: 1.5em;
-}
-
-.merge-question {
-    padding: 5px;
-    font-size: medium;
-    font-weight: bold;
-    background: darkgray;
-}
-
-.merge-answer {
-    padding: 5px;
-    font-size: medium;
-}
-
-.merge-item {
-    padding: 10px;
-}
 
 .merge-img {
     padding: 5px;
@@ -190,8 +163,4 @@ footnote div.footnote-tooltip p { /* stylelint-disable-line */
     margin-top: 5px;
     margin-bottom: 5px;
     border: 1px solid black;
-}
-
-.merge-question i {
-    padding: 3px;
 }

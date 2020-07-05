@@ -38,7 +38,8 @@ import {
     Dialog,
     activateWait,
     deactivateWait,
-    addAlert
+    addAlert,
+    faqDialog
 } from "../../common"
 import {
     recreateTransform
@@ -66,9 +67,6 @@ import {
 import {
     RenderCitations
 } from "../../citations/render"
-import {
-    mergeHelpDialog
-} from "../dialogs/merge"
 import {
     Slice
 } from "prosemirror-model"
@@ -359,14 +357,7 @@ export class Merge {
     }
 
     createMergeDialog(offlineTr, onlineTr, onlineDoc) {
-        const mergeButtons = [{
-            text: gettext(" Help "),
-            classes: 'fw-orange',
-            click: () => {
-                const helpDialog = new mergeHelpDialog()
-                helpDialog.open()
-            }
-        }, {
+        const buttons = [{
             text: gettext("Merge Complete"),
             classes: 'fw-dark',
             click: () => {
@@ -393,10 +384,64 @@ export class Merge {
         const dialog = new Dialog({
             id: 'editor-merge-view',
             title: gettext("Merging Offline Document"),
-            body: `<div style="display:flex"><div class="offline-heading">${gettext("OFFLINE DOCUMENT")}</div><div class="merged-heading">${gettext("MERGED DOCUMENT")}</div> <div class="online-heading">${gettext("ONLINE DOCUMENT")}</div></div><div class= "user-contents" style="display:flex;"><div id="editor-diff-1" style="float:left;padding:15px;"></div><div id="editor-diff" class="merged-view" style="padding:15px;"></div><div id="editor-diff-2" style="float:right;padding:15px;"></div></div><div class="help-note"> ${gettext('Note : If this is your first time encountering this dialog please read the instructions for merging by clicking on the Help button.')}</div>`,
+            body: `<div style="display:flex"><div class="offline-heading">${gettext("Offline Document")}</div><div class="merged-heading">${gettext("Merged Document")}</div> <div class="online-heading">${gettext("Online Document")}</div></div><div class= "user-contents" style="display:flex;"><div id="editor-diff-1" style="float:left;padding:15px;"></div><div id="editor-diff" class="merged-view" style="padding:15px;"></div><div id="editor-diff-2" style="float:right;padding:15px;"></div></div>`,
             height: 600,
             width: window.innerwidth,
-            buttons: mergeButtons
+            canClose: false,
+            help: () => {
+                const helpDialog = new faqDialog({
+                    title: gettext('Merge Dialog Frequent Questions'),
+                    questions: [
+                        [
+                            gettext("Why am I seeing this merge window?"),
+                            gettext("You are seeing this merge window, because you were offline for a long time, and the changes you made to the document while you were offline, conflicted with the changes made by the online user. So it was not possible to resolve them automatically. So that is why you are seeing this window.")
+                        ],
+                        [
+                            gettext("Am I the only one seeing this window?"),
+                            gettext("Yes, you are the only one who can see this window. Therefore it would be great if you could ask your collaborators to stop editing the document, so that once you are finished with the merge, it will not lead to more conflicts once you try to merge with the document edited by the collaborators.")
+                        ],
+                        [
+                            gettext("What if my collaborators continue working on the document while I am merging?"),
+                            gettext("Do not worry, we can handle such a situation as we will simply show you another merge dialog.")
+                        ],
+                        [
+                            gettext("Why am I seeing three editors?"),
+                            gettext("The editor on the left will show the offline version of the document (the document resulting from your changes ), the editor on the middle contains the last synced version of the document, and the editor on the right contains the online version of the document (document resulting from the online users edits).")
+                        ],
+                        [
+                            gettext("What are the green and red highlights in the editors?"),
+                            gettext("The editors on left and right will show content that are highlighted in green, and the editor in the middle will contain text that are highlighted usually in red. The text marked in green corresponds to the text that got edited(added) by online user or you. The text marked in red corresponds to text that got deleted by either you or the online user. This deletion will be marked only in the middle editor and the insertions will be marked in the other editors only.")
+                        ],
+                        [
+                            gettext("How do I accept or reject a particular change?"),
+                            interpolate(
+                                gettext("Accepting or rejecting a change from editors, causes a change in the editor in the middle. You can accept a change by directly clicking on the highlighted text , which shows up a drop, where in you can either accept/reject a change. When you click on the highlighted text, it also highlights the changes that will get accepted. %(mergeImage)s As shown in the above image one can click on a highlighted change, and click on accept change. On accepting a change it will be reflected in the merged document editor in the middle. Rejecting a change works in the same way except on reject a change the highlight of the change will be lost, with it the ability to accept, reject or copy a change."),
+                                {mergeImage: `<img src="${settings_STATIC_URL}img/accept-change.png" class = "merge-img">`},
+                                true
+                            )
+
+                        ],
+                        [
+                            gettext("I cannot accept a particular change. What do I do?"),
+                            gettext("If you cannot automatically accept a change into the middle editor, do not worry. You can choose to copy the change either by clicking on the copy button or manually copy the change and then you can paste it in the middle editor. It is as simple as that!")
+                        ],
+                        [
+                            gettext("Can I edit content in all three editors?"),
+                            gettext("You can edit the content in all the editors. But do keep in mind that whatever you type in the left most and right most editor will not be tracked (you cannot accept or reject it). And moreover the edits made in these two editors will not be preserved once the merge is completed.")
+                        ],
+                        [
+                            gettext("Does the order in which I work on merging the changes matter?"),
+                            gettext("It is always better that you try to accept the changes in a linear fashion.")
+                        ],
+                        [
+                            gettext("What do I do after completing the merge?"),
+                            gettext("After the merge is completed, you can click on the button 'Merge Complete' which in turn will move your changes to the main editor. Do note if other users made significant changes to the document while you were merging the document, you might have to merge the documents together again.")
+                        ]
+                    ]
+                })
+                helpDialog.open()
+            },
+            buttons
         })
         return dialog
     }

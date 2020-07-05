@@ -79,7 +79,7 @@ export class OdtExporterCitations {
 
             // We create a standard footnote container DOM node,
             // add the citations into it, and parse it back.
-            const fnNode = fnSchema.nodeFromJSON({type:'footnotecontainer'})
+            const fnNode = fnSchema.nodeFromJSON({type: 'footnotecontainer'})
             const serializer = DOMSerializer.fromSchema(fnSchema)
             const dom = serializer.serializeNode(fnNode)
             dom.innerHTML = citationsHTML
@@ -92,7 +92,7 @@ export class OdtExporterCitations {
         const cslBib = this.citFm.bibliography
         if (cslBib && cslBib[1].length > 0) {
             this.exporter.styles.addReferenceStyle(cslBib[0])
-            const bibNode = cslBibSchema.nodeFromJSON({type:'cslbib'})
+            const bibNode = cslBibSchema.nodeFromJSON({type: 'cslbib'})
             const serializer = DOMSerializer.fromSchema(cslBibSchema)
             const dom = serializer.serializeNode(bibNode)
             dom.innerHTML = cslBib[1].join('')

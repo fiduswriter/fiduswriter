@@ -84,7 +84,7 @@ module.exports = { // eslint-disable-line no-undef
         "indent-legacy": "off",
         "init-declarations": "off",
         "jsx-quotes": "error",
-        "key-spacing": "off",
+        "key-spacing": ["error", {"beforeColon": false, "afterColon": true}],
         "keyword-spacing": ["warn", {"before": true, "after": true}],
         "line-comment-position": "off",
         "linebreak-style": [
@@ -305,7 +305,7 @@ module.exports = { // eslint-disable-line no-undef
         "settings_TEST_SERVER": "readonly",
         "settings_DEBUG": "readonly",
         "settings_SOURCE_MAPS": "readonly",
-        "transpile_VERSION":"readonly",
+        "transpile_VERSION": "readonly",
         "process": "readonly"
     }
 }

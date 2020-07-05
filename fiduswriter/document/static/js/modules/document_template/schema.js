@@ -76,7 +76,7 @@ for (let i = 1; i <= 6; i++) {
 const type = richtextPartSchema.nodes['table']
 richtextMenuContent[1][0].content.push(blockTypeItem(type, {
     title: gettext("Insert Table"),
-    label:  gettext("Insert Table"),
+    label: gettext("Insert Table"),
     enable(state) {
         return !findTable(state)
     },
@@ -91,7 +91,7 @@ richtextMenuContent[1][0].content.push(blockTypeItem(type, {
 
 richtextMenuContent[1][0].content.push(blockTypeItem(type, {
     title: gettext("Delete Table"),
-    label:  gettext("Delete Table"),
+    label: gettext("Delete Table"),
     enable(state) {
         return findTable(state)
     },

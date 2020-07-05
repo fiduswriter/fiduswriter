@@ -527,7 +527,7 @@ export class Editor {
         view.dispatch(view.state.tr.setSelection(new TextSelection($pos, $pos)))
         view.focus()
         const distanceFromTop = view.coordsAtPos(pos).top - topMenuHeight
-        window.scrollBy({left: 0, top: distanceFromTop, behavior:"smooth", block:"center"})
+        window.scrollBy({left: 0, top: distanceFromTop, behavior: "smooth", block: "center"})
         return
     }
 

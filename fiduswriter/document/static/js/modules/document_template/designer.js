@@ -106,7 +106,7 @@ export class DocumentTemplateDesigner {
             valid = false
             errors.empty_template_title = gettext('The template needs a title.')
             titleEl.classList.add("error-element")
-            titleEl.scrollIntoView({block:"center", behavior :"smooth"})
+            titleEl.scrollIntoView({block: "center", behavior: "smooth"})
         }
         const importIdEl = this.dom.querySelector('input.import-id')
         const importId = importIdEl.value
@@ -114,13 +114,13 @@ export class DocumentTemplateDesigner {
             valid = false
             errors.empty_import_id = gettext('The template needs an ID.')
             importIdEl.classList.add("error-element")
-            importIdEl.scrollIntoView({block:"center", behavior :"smooth"})
+            importIdEl.scrollIntoView({block: "center", behavior: "smooth"})
         }
         if (/\s/.test(importId)) {
             valid = false
             errors.no_spaces = gettext('The template ID cannot contain spaces.')
             importIdEl.classList.add("error-element")
-            importIdEl.scrollIntoView({block:"center", behavior :"smooth"})
+            importIdEl.scrollIntoView({block: "center", behavior: "smooth"})
         }
 
 
@@ -216,13 +216,13 @@ export class DocumentTemplateDesigner {
                             valid = false
                             errors.missing_id = gettext('All document parts need an ID.')
                             el.classList.add("error-element")
-                            el.scrollIntoView({block:"center", behavior :"smooth"})
+                            el.scrollIntoView({block: "center", behavior: "smooth"})
                         }
                         if (/\s/.test(id)) {
                             valid = false
                             errors.no_spaces = gettext('IDs cannot contain spaces.')
                             el.classList.add("error-element")
-                            el.scrollIntoView({block:"center", behavior :"smooth"})
+                            el.scrollIntoView({block: "center", behavior: "smooth"})
                         }
                         if (ids.includes(id)) {
                             valid = false
@@ -233,7 +233,7 @@ export class DocumentTemplateDesigner {
                                         el.classList.add("error-element")
                                     }
                                 })
-                            el.scrollIntoView({block:"center", behavior :"smooth"})
+                            el.scrollIntoView({block: "center", behavior: "smooth"})
                             errors.unique_id = gettext('IDs have to be unique.')
                         }
                         ids.push(id)
@@ -312,7 +312,7 @@ export class DocumentTemplateDesigner {
             return
         }
         const helpDoc = help ?
-                helpSchema.nodeFromJSON({type:'doc', content: help}) :
+                helpSchema.nodeFromJSON({type: 'doc', content: help}) :
                 helpSchema.nodes.doc.createAndFill(),
             helpView = new EditorView(helpEl, {
                 state: EditorState.create({
@@ -397,7 +397,7 @@ export class DocumentTemplateDesigner {
         const initialEl = el.querySelector('.initial'),
             doc = initial ?
                 schema.nodeFromJSON({
-                    type:'doc',
+                    type: 'doc',
                     content: [{
                         type: type,
                         content: initial

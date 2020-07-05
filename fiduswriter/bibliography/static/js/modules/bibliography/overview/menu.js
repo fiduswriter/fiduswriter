@@ -33,7 +33,7 @@ export const menuModel = () => ({
         {
             type: 'dropdown',
             id: 'cat_selector',
-            content : [
+            content: [
                 {
                     title: gettext('All categories'),
                     action: _overview => {

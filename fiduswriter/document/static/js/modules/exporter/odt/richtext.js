@@ -186,7 +186,7 @@ export class OdtExporterRichtext {
                     </text:note>` + end
                 options = Object.assign({}, options)
                 options.section = 'Footnote'
-                content += this.transformRichtext({type:'paragraph', content:cit.content}, options)
+                content += this.transformRichtext({type: 'paragraph', content: cit.content}, options)
             } else {
                 cit.content.forEach(citContent => {
                     content += this.transformRichtext(citContent, options)

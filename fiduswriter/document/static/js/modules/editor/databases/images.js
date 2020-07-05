@@ -111,8 +111,8 @@ export class ModImageDB {
             ).then(
                 blob => {
                     const filename = imageUrl.split('/').pop()
-                    const file = new File([blob], filename, {type:blob.type})
-                    const x = {"image":file, "title":title, "cats":[], "copyright":copyright}
+                    const file = new File([blob], filename, {type: blob.type})
+                    const x = {"image": file, "title": title, "cats": [], "copyright": copyright}
                     this.mod.editor.app.imageDB.saveImage(x).then(
                         newId => {
                             const imageData = JSON.parse(JSON.stringify(this.mod.editor.app.imageDB.db[newId]))
@@ -126,7 +126,7 @@ export class ModImageDB {
                                     this.mod.editor.view.dispatch(transaction)
                                 }
                             })
-                            resolve({id:id, newId:newId})
+                            resolve({id: id, newId: newId})
                         },
                         _error => reject(id),
                     )

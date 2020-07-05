@@ -93,7 +93,7 @@ export class Merge {
         this.onlineTr = false // The offline Transaction
         this.imageDataModified = {} // To hold data related to re-uploaded images.
         this.diffPlugin = [
-            [diffPlugin, () => ({editor:this.mod.editor})],
+            [diffPlugin, () => ({editor: this.mod.editor})],
             [keymap, () => buildEditorKeymap(this.mod.editor.schema)],
             [keymap, () => buildKeymap(this.mod.editor.schema)],
             [keymap, () => baseKeymap],
@@ -263,7 +263,7 @@ export class Merge {
                 }
                 if (node.attrs.diffdata) {
                     const diffdata = []
-                    diffdata.push({type : difftype, from:from, to:to, steps:steps_involved})
+                    diffdata.push({type: difftype, from: from, to: to, steps: steps_involved})
                     tr.setNodeMarkup(pos, null, Object.assign({}, node.attrs, {diffdata}), node.marks)
                 }
             }
@@ -377,10 +377,10 @@ export class Merge {
                         id: 'merge-res-warning',
                         title: gettext("Merge Resolution warning"),
                         body: gettext("Not all changes have been resolved. Please make sure to review all the changes to before proceeding."),
-                        buttons:[{
+                        buttons: [{
                             text: gettext("Proceed to Merge"),
                             classes: 'fw-dark',
-                            click:()=>{
+                            click: ()=>{
                                 this.startMerge(offlineTr, onlineTr, onlineDoc)
                                 warningDialog.close()
                             }
@@ -394,9 +394,9 @@ export class Merge {
             id: 'editor-merge-view',
             title: gettext("Merging Offline Document"),
             body: `<div style="display:flex"><div class="offline-heading">${gettext("OFFLINE DOCUMENT")}</div><div class="merged-heading">${gettext("MERGED DOCUMENT")}</div> <div class="online-heading">${gettext("ONLINE DOCUMENT")}</div></div><div class= "user-contents" style="display:flex;"><div id="editor-diff-1" style="float:left;padding:15px;"></div><div id="editor-diff" class="merged-view" style="padding:15px;"></div><div id="editor-diff-2" style="float:right;padding:15px;"></div></div><div class="help-note"> ${gettext('Note : If this is your first time encountering this dialog please read the instructions for merging by clicking on the Help button.')}</div>`,
-            height:600,
-            width:window.innerwidth,
-            buttons:mergeButtons
+            height: 600,
+            width: window.innerwidth,
+            buttons: mergeButtons
         })
         return dialog
     }
@@ -417,7 +417,7 @@ export class Merge {
                 state: EditorState.create({
                     schema: this.mod.editor.schema,
                     doc: doc,
-                    plugins:plugins,
+                    plugins: plugins,
                 }),
                 dispatchTransaction: tr => {
                     let mapTr = tr
@@ -451,7 +451,7 @@ export class Merge {
                 state: EditorState.create({
                     schema: this.mod.editor.schema,
                     doc: doc,
-                    plugins:plugins,
+                    plugins: plugins,
                 }),
                 dispatchTransaction: tr => {
                     const mapTr = updateMarkData(tr, this.imageDataModified, editorView)
@@ -497,7 +497,7 @@ export class Merge {
                 })
 
                 steps_involved.sort((a, b)=>a - b)
-                const insertionMark = this.mod.editor.schema.marks.DiffMark.create({diff:insertionClass, steps:JSON.stringify(steps_involved), from:change.fromB, to:change.toB})
+                const insertionMark = this.mod.editor.schema.marks.DiffMark.create({diff: insertionClass, steps: JSON.stringify(steps_involved), from: change.fromB, to: change.toB})
                 insertionMarksTr.addMark(change.fromB, change.toB, insertionMark)
                 this.markBlockDiffs(insertionMarksTr, change.fromB, change.toB, insertionClass, steps_involved)
                 if (checkPresenceOfDiffMark(insertionMarksTr.doc, change.fromB, change.toB, this.mod.editor))
@@ -508,7 +508,7 @@ export class Merge {
                 const stepsSet = new Set(steps_involved)
                 steps_involved = Array.from(stepsSet)
                 steps_involved.sort((a, b)=>a - b)
-                const deletionMark = this.mod.editor.schema.marks.DiffMark.create({diff:deletionClass, steps:JSON.stringify(steps_involved), from:change.fromA, to:change.toA})
+                const deletionMark = this.mod.editor.schema.marks.DiffMark.create({diff: deletionClass, steps: JSON.stringify(steps_involved), from: change.fromA, to: change.toA})
                 deletionMarksTr.addMark(change.fromA, change.toA, deletionMark)
                 this.markBlockDiffs(deletionMarksTr, change.fromA, change.toA, deletionClass, steps_involved)
                 if (checkPresenceOfDiffMark(deletionMarksTr.doc, change.fromA, change.toA, this.mod.editor))
@@ -524,11 +524,11 @@ export class Merge {
             if (step instanceof ReplaceStep && !stepsTrackedByChangeset.includes(index)) {
                 const Step1 = step.toJSON()
                 if (Step1.slice && Step1.slice.content.length == 1 && Step1.slice.content[0].type === "footnote") {
-                    const insertionMark = this.mod.editor.schema.marks.DiffMark.create({diff:insertionClass, steps:JSON.stringify([index]), from:from,  to:to})
+                    const insertionMark = this.mod.editor.schema.marks.DiffMark.create({diff: insertionClass, steps: JSON.stringify([index]), from: from,  to: to})
                     insertionMarksTr.addMark(from, to, insertionMark)
                     stepsTrackedByChangeset.push(index)
                 } else if (Step1.slice && Step1.slice.content.length == 1 && Step1.slice.content[0].type === "citation") {
-                    const insertionMark = this.mod.editor.schema.marks.DiffMark.create({diff:insertionClass, steps:JSON.stringify([index]), from:from, to:to})
+                    const insertionMark = this.mod.editor.schema.marks.DiffMark.create({diff: insertionClass, steps: JSON.stringify([index]), from: from, to: to})
                     insertionMarksTr.addMark(from, to, insertionMark)
                     stepsTrackedByChangeset.push(index)
                 }
@@ -545,11 +545,11 @@ export class Merge {
                 const Step1 = step.toJSON()
                 if (Step1.mark && ["strong", "em", "underline", "link", "deletion", "comment"].includes(Step1.mark.type)) {
                     if (step instanceof AddMarkStep) {
-                        const insertionMark = this.mod.editor.schema.marks.DiffMark.create({diff:insertionClass, steps:JSON.stringify([index]), from:from, to:to})
+                        const insertionMark = this.mod.editor.schema.marks.DiffMark.create({diff: insertionClass, steps: JSON.stringify([index]), from: from, to: to})
                         stepsTrackedByChangeset.push(index)
                         insertionMarksTr.addMark(from, to, insertionMark)
                     } else if (step instanceof RemoveMarkStep) {
-                        const deletionMark = this.mod.editor.schema.marks.DiffMark.create({diff:deletionClass, steps:JSON.stringify([index]), from:from, to:to})
+                        const deletionMark = this.mod.editor.schema.marks.DiffMark.create({diff: deletionClass, steps: JSON.stringify([index]), from: from, to: to})
                         deletionMarksTr.addMark(from, to, deletionMark)
                         stepsTrackedByChangeset.push(index)
                     }
@@ -698,7 +698,7 @@ export class Merge {
 
     autoMerge(unconfirmedTr, lostTr, data) {
         /* This automerges documents incase of no conflicts */
-        const toDoc = this.mod.editor.schema.nodeFromJSON({type:'doc', content:[
+        const toDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [
             data.doc.contents
         ]})
         const rebasedTr = EditorState.create({doc: toDoc}).tr.setMeta('remote', true)

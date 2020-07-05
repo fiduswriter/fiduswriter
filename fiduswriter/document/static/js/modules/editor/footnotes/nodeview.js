@@ -49,9 +49,9 @@ export class FootnoteView {
 
         const doc = fnSchema.nodeFromJSON({
             type: "doc",
-            content:[{
-                type:"footnotecontainer",
-                content:this.node.attrs.footnote
+            content: [{
+                type: "footnotecontainer",
+                content: this.node.attrs.footnote
             }]
         })
 

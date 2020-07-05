@@ -180,8 +180,8 @@ export const figure = {
         id: {default: false},
         track: {default: []},
         aligned: {default: 'center'},
-        width:{default: "100"},
-        diffdata:{default: []}
+        width: {default: "100"},
+        diffdata: {default: []}
     },
     parseDOM: [{
         tag: 'figure',
@@ -196,8 +196,8 @@ export const figure = {
                 track: parseTracks(dom.dataset.track),
                 aligned: dom.dataset.aligned,
                 width: dom.dataset.width,
-                diff:dom.dataset.diff,
-                diffdata:parseDiff(dom.dataset.diffdata)
+                diff: dom.dataset.diff,
+                diffdata: parseDiff(dom.dataset.diffdata)
             }
         }
     }],
@@ -326,8 +326,8 @@ const createHeading = level => ({
         track: {
             default: []
         },
-        diffdata:{
-            default:[]
+        diffdata: {
+            default: []
         }
     },
     parseDOM: [
@@ -458,8 +458,8 @@ export const paragraph = {
         track: {
             default: []
         },
-        diffdata:{
-            default:[]
+        diffdata: {
+            default: []
         }
     },
     parseDOM: [{tag: "p", getAttrs(dom) {return {
@@ -482,8 +482,8 @@ export const blockquote = {
         track: {
             default: []
         },
-        diffdata:{
-            default:[]
+        diffdata: {
+            default: []
         }
     },
     marks: "annotation",
@@ -507,8 +507,8 @@ export const horizontal_rule = {
         track: {
             default: []
         },
-        diffdata:{
-            default:[]
+        diffdata: {
+            default: []
         }
     },
     parseDOM: [{tag: "hr", getAttrs(dom) {return {
@@ -563,7 +563,7 @@ export const ordered_list = {
         id: {default: false},
         order: {default: 1},
         track: {default: []},
-        diffdata: {default:[]}
+        diffdata: {default: []}
     },
     parseDOM: [{tag: "ol", getAttrs(dom) {
         return {
@@ -798,17 +798,17 @@ export const insertion = {
 
 export const DiffMark = {
     attrs: {
-        diff:{
-            default:""
+        diff: {
+            default: ""
         },
-        steps:{
-            default:[]
+        steps: {
+            default: []
         },
-        from:{
-            default:''
+        from: {
+            default: ''
         },
-        to:{
-            default:''
+        to: {
+            default: ''
         }
     },
     parseDOM: [
@@ -816,8 +816,8 @@ export const DiffMark = {
             tag: "span.diff",
             getAttrs(dom) {
                 return {
-                    diff:dom.dataset.diff,
-                    steps:dom.dataset.steps,
+                    diff: dom.dataset.diff,
+                    steps: dom.dataset.steps,
                 }
             }
         }
@@ -825,10 +825,10 @@ export const DiffMark = {
     toDOM(node) {
         return ['span', {
             class: `diff ${node.attrs.diff}`,
-            'data-diff':node.attrs.diff,
-            'data-steps':node.attrs.steps,
-            'data-from':node.attrs.from,
-            'data-to':node.attrs.to
+            'data-diff': node.attrs.diff,
+            'data-steps': node.attrs.steps,
+            'data-from': node.attrs.from,
+            'data-to': node.attrs.to
         }]
     }
 

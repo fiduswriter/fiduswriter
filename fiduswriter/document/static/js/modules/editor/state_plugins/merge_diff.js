@@ -38,7 +38,7 @@ export const updateMarkData = function(tr, imageDataModified, view) {
                         tr.removeMark(pos, pos + node.nodeSize, tr.doc.type.schema.marks.DiffMark)
                         const from = tr.mapping.map(diffMark.from)
                         const to = tr.mapping.map(diffMark.to, -1)
-                        const mark = tr.doc.type.schema.marks.DiffMark.create({diff:diffMark.diff, steps:diffMark.steps, from:from, to:to})
+                        const mark = tr.doc.type.schema.marks.DiffMark.create({diff: diffMark.diff, steps: diffMark.steps, from: from, to: to})
                         tr.addMark(pos, pos + node.nodeSize, mark)
                     }
                 }
@@ -111,7 +111,7 @@ export const diffPlugin = function(options) {
     function createHiglightDecoration(from, to, state) {
         /* Creates a yellow coloured highlight decoration when the user
         tries to look at a change */
-        const inlineDeco = Decoration.inline(from, to, {class:'selected-dec'})
+        const inlineDeco = Decoration.inline(from, to, {class: 'selected-dec'})
         const deco = []
         deco.push(inlineDeco)
         state.doc.nodesBetween(
@@ -124,7 +124,7 @@ export const diffPlugin = function(options) {
                     return false
                 }
                 if (node && node.attrs.diffdata && node.attrs.diffdata.length > 0) {
-                    deco.push(Decoration.node(pos, pos + node.nodeSize, {class:'selected-dec'}, {}))
+                    deco.push(Decoration.node(pos, pos + node.nodeSize, {class: 'selected-dec'}, {}))
                 }
             }
         )
@@ -374,7 +374,7 @@ export const diffPlugin = function(options) {
         },
         view(_view) {
             return {
-                update:(view)=>{
+                update: (view)=>{
                     // Make sure that pop stays inside the view.
                     const changePopUp = view.dom.querySelector('.drop-up-outer')
                     if (changePopUp) {

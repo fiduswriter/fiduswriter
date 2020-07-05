@@ -69,9 +69,9 @@ export class mergeHelpDialog {
             id: 'editor-merge-help',
             title: gettext("Frequently Asked Questions"),
             body: mergeHelpTemplate,
-            height:600,
-            width:900,
-            buttons:[]
+            height: 600,
+            width: 900,
+            buttons: []
         })
     }
 

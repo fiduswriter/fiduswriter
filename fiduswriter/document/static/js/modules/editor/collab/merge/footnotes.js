@@ -4,10 +4,10 @@ import {
 import {
     EditorView
 } from "prosemirror-view"
-import {fnSchema} from "../../schema/footnotes"
+import {fnSchema} from "../../../schema/footnotes"
 import {
     trackedTransaction
-} from "../track"
+} from "../../track"
 export class FootnoteView {
     constructor(node, view, getPos, editor) {
         // We'll need these later

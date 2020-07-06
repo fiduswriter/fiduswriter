@@ -13,14 +13,16 @@ import {
     ReplaceAroundStep
 } from "prosemirror-transform"
 import {
+    collab,
+    sendableSteps,
+    receiveTransaction
+} from "prosemirror-collab"
+import {
     baseKeymap
 } from "prosemirror-commands"
 import {
     keymap
 } from "prosemirror-keymap"
-import {
-    collab
-} from "prosemirror-collab"
 import {
     dropCursor
 } from "prosemirror-dropcursor"
@@ -31,8 +33,8 @@ import {
     buildKeymap
 } from "prosemirror-example-setup"
 import {
-    FootnoteView
-} from "../footnotes/nodeview"
+    Slice
+} from "prosemirror-model"
 import {
     showSystemMessage,
     Dialog,
@@ -40,13 +42,33 @@ import {
     deactivateWait,
     addAlert,
     faqDialog
-} from "../../common"
+} from "../../../common"
+import {
+    BIBLIOGRAPHY_HEADERS
+} from "../../../schema/i18n"
+import {
+    RenderCitations
+} from "../../../citations/render"
+import {
+    WRITE_ROLES
+} from "../../"
+import {
+    trackedTransaction,
+} from "../../track"
+import {
+    jumpHiddenNodesPlugin,
+    searchPlugin,
+    clipboardPlugin
+} from "../../state_plugins"
+import {
+    buildEditorKeymap
+} from "../../keymap"
 import {
     recreateTransform
 } from "./recreate_transform"
 import {
-    trackedTransaction,
-} from "../track"
+    FootnoteView
+} from "./footnotes"
 import {
     diffPlugin,
     removeMarks,
@@ -54,28 +76,8 @@ import {
     checkPresenceOfDiffMark
 } from "./state_plugin"
 import {
-    jumpHiddenNodesPlugin,
-    searchPlugin,
-    clipboardPlugin
-} from "../state_plugins"
-import {
-    buildEditorKeymap
-} from "../keymap"
-import {
-    BIBLIOGRAPHY_HEADERS
-} from "../../schema/i18n"
-import {
-    RenderCitations
-} from "../../citations/render"
-import {
-    Slice
-} from "prosemirror-model"
-import {
     changeSet
 } from "./changeset"
-import {
-    WRITE_ROLES
-} from "../"
 
 export class Merge {
     constructor(mod) {
@@ -106,8 +108,68 @@ export class Merge {
         ]
     }
 
+    adjustDocument(data) {
+        // Adjust the document when reconnecting after offline and many changes
+        // happening on server.
+        if (this.mod.editor.docInfo.version < data.doc.v && sendableSteps(this.mod.editor.view.state)) {
+            this.mod.doc.receiving = true
+            this.mod.editor.docInfo.confirmedJson = JSON.parse(JSON.stringify(data.doc.contents))
+            const confirmedState = EditorState.create({doc: this.mod.editor.docInfo.confirmedDoc})
+            const unconfirmedTr = confirmedState.tr
+            sendableSteps(this.mod.editor.view.state).steps.forEach(step => unconfirmedTr.step(step))
+            const rollbackTr = this.mod.editor.view.state.tr
+            unconfirmedTr.steps.slice().reverse().forEach(
+                (step, index) => rollbackTr.step(step.invert(unconfirmedTr.docs[unconfirmedTr.docs.length - index - 1]))
+            )
+            // We reset to there being no local changes to send.
+            this.mod.editor.view.dispatch(receiveTransaction(
+                this.mod.editor.view.state,
+                unconfirmedTr.steps,
+                unconfirmedTr.steps.map(_step => this.mod.editor.client_id)
+            ))
+            this.mod.editor.view.dispatch(receiveTransaction(
+                this.mod.editor.view.state,
+                rollbackTr.steps,
+                rollbackTr.steps.map(_step => 'remote')
+            ).setMeta('remote', true))
+            const toDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [
+                data.doc.contents
+            ]})
+
+            // Apply the online Transaction
+            const lostTr = recreateTransform(this.mod.editor.view.state.doc, toDoc)
+            this.mod.editor.view.dispatch(receiveTransaction(
+                this.mod.editor.view.state,
+                lostTr.steps,
+                lostTr.steps.map(_step => 'remote')
+            ).setMeta('remote', true))
+
+            // We split the complex steps that delete and insert into simple steps so that finding conflicts is more pronounced.
+            const modifiedLostTr = this.modifyTr(lostTr)
+            const lostChangeSet = new changeSet(modifiedLostTr)
+            const conflicts = lostChangeSet.findConflicts(unconfirmedTr, modifiedLostTr)
+            // Set the version
+            this.mod.editor.docInfo.version = data.doc.v
+
+            // If no conflicts arises auto-merge the document
+            if (conflicts.length > 0) {
+                this.diffMerge(confirmedState.doc, unconfirmedTr.doc, toDoc, unconfirmedTr, lostTr, data)
+            } else {
+                this.autoMerge(unconfirmedTr, lostTr, data)
+            }
+
+            this.mod.doc.receiving = false
+            // this.mod.doc.sendToCollaborators()
+        } else {
+            // The server seems to have lost some data. We reset.
+            this.mod.doc.loadDocument(data)
+        }
+    }
+
+
+
     updateDB(doc, data) {
-        /* Used to update the image,bib DB and update the doc incase if missing/lost images
+        /* Used to update the image,bib DB and update the doc in case if missing/lost images
         (update the image data with re-uploaded images) */
         let usedImages = []
         const usedBibs = []

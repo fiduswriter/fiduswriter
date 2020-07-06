@@ -2,7 +2,7 @@ import {Plugin, PluginKey, TextSelection, NodeSelection} from "prosemirror-state
 import {Decoration, DecorationSet, __serializeForClipboard} from "prosemirror-view"
 import {Mapping} from "prosemirror-transform"
 
-import {noSpaceTmp, showSystemMessage} from "../../common"
+import {noSpaceTmp, showSystemMessage} from "../../../common"
 
 const key = new PluginKey('mergeDiff')
 

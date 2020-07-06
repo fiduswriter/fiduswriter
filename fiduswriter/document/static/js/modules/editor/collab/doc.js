@@ -26,14 +26,9 @@ import {
     toMiniJSON
 } from "../../schema/mini_json"
 import {
-    recreateTransform
-} from "./recreate_transform"
-import {
     Merge
 } from "./merge"
-import {
-    changeSet
-} from "./changeset"
+
 
 export class ModCollabDoc {
     constructor(mod) {
@@ -98,67 +93,8 @@ export class ModCollabDoc {
     receiveDocument(data) {
         this.cancelCurrentlyCheckingVersion()
         if (this.mod.editor.docInfo.confirmedDoc) {
-            this.adjustDocument(data)
+            this.merge.adjustDocument(data)
         } else {
-            this.loadDocument(data)
-        }
-    }
-
-
-    adjustDocument(data) {
-        // Adjust the document when reconnecting after offline and many changes
-        // happening on server.
-        if (this.mod.editor.docInfo.version < data.doc.v && sendableSteps(this.mod.editor.view.state)) {
-            this.receiving = true
-            this.mod.editor.docInfo.confirmedJson = JSON.parse(JSON.stringify(data.doc.contents))
-            const confirmedState = EditorState.create({doc: this.mod.editor.docInfo.confirmedDoc})
-            const unconfirmedTr = confirmedState.tr
-            sendableSteps(this.mod.editor.view.state).steps.forEach(step => unconfirmedTr.step(step))
-            const rollbackTr = this.mod.editor.view.state.tr
-            unconfirmedTr.steps.slice().reverse().forEach(
-                (step, index) => rollbackTr.step(step.invert(unconfirmedTr.docs[unconfirmedTr.docs.length - index - 1]))
-            )
-            // We reset to there being no local changes to send.
-            this.mod.editor.view.dispatch(receiveTransaction(
-                this.mod.editor.view.state,
-                unconfirmedTr.steps,
-                unconfirmedTr.steps.map(_step => this.mod.editor.client_id)
-            ))
-            this.mod.editor.view.dispatch(receiveTransaction(
-                this.mod.editor.view.state,
-                rollbackTr.steps,
-                rollbackTr.steps.map(_step => 'remote')
-            ).setMeta('remote', true))
-            const toDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [
-                data.doc.contents
-            ]})
-
-            // Apply the online Transaction
-            const lostTr = recreateTransform(this.mod.editor.view.state.doc, toDoc)
-            this.mod.editor.view.dispatch(receiveTransaction(
-                this.mod.editor.view.state,
-                lostTr.steps,
-                lostTr.steps.map(_step => 'remote')
-            ).setMeta('remote', true))
-
-            // We split the complex steps that delete and insert into simple steps so that findinfg conflicts is more pronounced.
-            const modifiedLostTr = this.merge.modifyTr(lostTr)
-            const lostChangeSet = new changeSet(modifiedLostTr)
-            const conflicts = lostChangeSet.findConflicts(unconfirmedTr, modifiedLostTr)
-            // Set the version
-            this.mod.editor.docInfo.version = data.doc.v
-
-            // If no conflicts arises auto-merge the document
-            if (conflicts.length > 0) {
-                this.merge.diffMerge(confirmedState.doc, unconfirmedTr.doc, toDoc, unconfirmedTr, lostTr, data)
-            } else {
-                this.merge.autoMerge(unconfirmedTr, lostTr, data)
-            }
-
-            this.receiving = false
-            // this.sendToCollaborators()
-        } else {
-            // The server seems to have lost some data. We reset.
             this.loadDocument(data)
         }
     }

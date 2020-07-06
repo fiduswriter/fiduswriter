@@ -1,7 +1,8 @@
 import {Plugin, PluginKey, TextSelection, NodeSelection} from "prosemirror-state"
 import {Decoration, DecorationSet, __serializeForClipboard} from "prosemirror-view"
-import {noSpaceTmp, showSystemMessage} from "../../common"
 import {Mapping} from "prosemirror-transform"
+
+import {noSpaceTmp, showSystemMessage} from "../../common"
 
 const key = new PluginKey('mergeDiff')
 
@@ -289,13 +290,13 @@ export const diffPlugin = function(options) {
 }
                     </div>
                     <ul class="drop-up-options">
-                        <li class="accept-change" title="${gettext('Accept Change')}">
+                        <li class="accept-change" title="${gettext('Accept change')}">
                             ${gettext('Accept Change')}
                         </li>
-                        <li class="reject-change" title="${gettext('Reject Change')}">
+                        <li class="reject-change" title="${gettext('Reject change')}">
                             ${gettext('Reject Change')}
                         </li>
-                        <li class="copy-data" title="${gettext('Copy')}">
+                        <li class="copy-data" title="${gettext('Copy content')}">
                             ${gettext('Copy')}
                         </li>
                     </ul>` :

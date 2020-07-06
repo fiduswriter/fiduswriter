@@ -52,7 +52,7 @@ import {
     removeMarks,
     updateMarkData,
     checkPresenceOfDiffMark
-} from "../state_plugins/merge_diff"
+} from "./state_plugin"
 import {
     jumpHiddenNodesPlugin,
     searchPlugin,
@@ -410,7 +410,7 @@ export class Merge {
                         ],
                         [
                             gettext("What are the green and red highlights in the editors?"),
-                            gettext("The editors on left and right will show content that are highlighted in green, and the editor in the middle will contain text that are highlighted usually in red. The text marked in green corresponds to the text that got edited(added) by online user or you. The text marked in red corresponds to text that got deleted by either you or the online user. This deletion will be marked only in the middle editor and the insertions will be marked in the other editors only.")
+                            gettext("The editors on left and right will show content that are highlighted in green, and the editor in the middle will contain text that are highlighted usually in red. The text marked in green corresponds to the text that was edited (added) by online users or you. The text marked in red corresponds to text that was deleted by either you or the online user. Deletions will be marked only in the middle editor and the insertions will be marked in the other editors only.")
                         ],
                         [
                             gettext("How do I accept or reject a particular change?"),

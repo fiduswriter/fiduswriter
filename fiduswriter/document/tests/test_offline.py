@@ -7,6 +7,7 @@ from .editor_helper import EditorHelper
 from document.ws_views import WebSocket
 from django.conf import settings
 import os
+import time
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 
@@ -413,6 +414,8 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
 
         # Change the websocket history length back to its original value
         WebSocket.history_length = 1000
+
+        time.sleep(1000)
 
 
 class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):

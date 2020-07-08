@@ -6,10 +6,10 @@ import {noSpaceTmp, showSystemMessage} from "../../../common"
 
 const key = new PluginKey('mergeDiff')
 
-export const checkPresenceOfDiffMark = function(doc, from, to, editor) {
+export const checkPresenceOfDiffMark = function(doc, from, to) {
     /* This function checks whether diff mark is present inside the given range */
     let diffAttrPresent = false
-    if (doc.rangeHasMark(from, to, editor.schema.marks.DiffMark)) {
+    if (doc.rangeHasMark(from, to, doc.type.schema.marks.DiffMark)) {
         return true
     }
     doc.nodesBetween(from, to, (node, _pos)=>{
@@ -20,7 +20,7 @@ export const checkPresenceOfDiffMark = function(doc, from, to, editor) {
     return diffAttrPresent
 }
 
-export const updateMarkData = function(tr, imageDataModified, view) {
+export const updateMarkData = function(tr, imageDataModified) {
     /* Update the range inside the marks and also if we have a image that
     was reuploaded , then while accepting it into the middle editor,
     update its attrs */
@@ -46,7 +46,7 @@ export const updateMarkData = function(tr, imageDataModified, view) {
                 if (node.type.name === 'figure' && Object.keys(imageDataModified).includes(String(node.attrs.image))) {
                     const attrs = Object.assign({}, node.attrs)
                     attrs["image"] = imageDataModified[String(node.attrs.image)]
-                    const nodeType = view.state.schema.nodes['figure']
+                    const nodeType = tr.doc.type.schema.nodes['figure']
                     tr.setNodeMarkup(pos, nodeType, attrs)
                 }
                 if (node.attrs.diffdata && node.attrs.diffdata.length > 0) {
@@ -61,11 +61,9 @@ export const updateMarkData = function(tr, imageDataModified, view) {
     return tr
 }
 
-export const removeMarks = function(view, from, to, mark, returnTr = false) {
-    /* This function removes all the diff marks in the given range or returns
-    a transaction that does this */
-    const trackedTr = view.state.tr
-    trackedTr.doc.nodesBetween(
+const removeDiffMark = function(tr, from, to) {
+    /* Adds steps to a tr to remove all the diff marks in the given range. */
+    tr.doc.nodesBetween(
         from,
         to,
         (node, pos) => {
@@ -75,18 +73,19 @@ export const removeMarks = function(view, from, to, mark, returnTr = false) {
                 return false
             }
             if (node.attrs.diffdata && node.attrs.diffdata.length > 0) {
-                const diffdata = []
-                trackedTr.setNodeMarkup(pos, null, Object.assign({}, node.attrs, {diffdata}), node.marks)
+                tr.setNodeMarkup(pos, null, Object.assign({}, node.attrs, {diffdata: []}), node.marks)
             }
         }
     )
-    trackedTr.removeMark(from, to, mark)
-    if (returnTr) {
-        return trackedTr
-    }
-    trackedTr.setMeta('initialDiffMap', true).setMeta('mapAppended', true)
-    trackedTr.setMeta('notrack', true)
-    view.dispatch(trackedTr)
+    tr.removeMark(from, to, tr.doc.schema.marks.DiffMark)
+    return tr
+}
+
+export const dispatchRemoveDiffMark = function(view, from, to) {
+    const tr = removeDiffMark(view.state.tr, from, to)
+    tr.setMeta('initialDiffMap', true).setMeta('mapAppended', true)
+    tr.setMeta('notrack', true)
+    view.dispatch(tr)
 }
 
 export const diffPlugin = function(options) {
@@ -171,12 +170,12 @@ export const diffPlugin = function(options) {
         return DecorationSet.create(state.doc, highlightDecos)
     }
 
-    function acceptChanges(mark, editor, mergeView, originalView, tr) {
+    function acceptChanges(mark, mergeView, originalView, tr) {
         /* This is used to accept a change either from the offline/online version or
         incase of deletion from the middle editor */
         try {
             const mergedDocMap = new Mapping()
-            mergedDocMap.appendMapping(editor.mod.collab.doc.merge.mergedDocMap)
+            mergedDocMap.appendMapping(options.merge.mergedDocMap)
             let insertionTr = mergeView.state.tr
             const from = mark.attrs.from
             const to = mark.attrs.to
@@ -195,29 +194,29 @@ export const diffPlugin = function(options) {
             }
             // Make sure that all the content steps are present in the new transaction
             if (insertionTr.steps.length < steps.length) {
-                showSystemMessage(gettext("The change could not be applied automatically.Please consider using the copy option to copy the changes."))
+                showSystemMessage(gettext("The change could not be applied automatically. Please consider using the copy option to copy the changes."))
             } else {
-                // Remove the diff mark.If we're looking at view2 it means we're deleting content for which we dont have to remove the marks seperately we can put both of the steps into a single transaction
+                // Remove the diff mark. If we're looking at view2 it means we're deleting content for which we dont have to remove the marks seperately we can put both of the steps into a single transaction
                 if (originalView === mergeView) {
-                    const markRemovalTr = removeMarks(originalView, from, to, editor.schema.marks.DiffMark, true)
+                    const markRemovalTr = removeDiffMark(originalView.state.tr, from, to)
                     insertionTr.steps.forEach(step => markRemovalTr.step(step))
                     insertionTr = markRemovalTr
                 } else {
-                    removeMarks(originalView, from, to, editor.schema.marks.DiffMark)
+                    dispatchRemoveDiffMark(originalView, from, to)
                 }
-                editor.mod.collab.doc.merge.mergedDocMap = mergedDocMap
+                options.merge.mergedDocMap = mergedDocMap
                 insertionTr.setMeta('mapAppended', true)
                 insertionTr.setMeta('notrack', true)
                 mergeView.dispatch(insertionTr)
             }
         } catch (exc) {
-            showSystemMessage(gettext("The change could not be applied automatically.Please consider using the copy option to copy the changes."))
+            showSystemMessage(gettext("The change could not be applied automatically. Please consider using the copy function to copy the changes."))
         }
     }
 
-    function rejectChanges(view, diffMark, editor) {
+    function rejectChanges(view, diffMark) {
         /* This function is used to reject a change */
-        removeMarks(view, diffMark.attrs.from, diffMark.attrs.to, editor.schema.marks.DiffMark)
+        dispatchRemoveDiffMark(view, diffMark.attrs.from, diffMark.attrs.to)
     }
 
     function copyChange(view, from, to) {
@@ -254,20 +253,20 @@ export const diffPlugin = function(options) {
     function createDropUp(diffMark, linkMark) {
         /* The actual function that creates a drop up */
         const dropUp = document.createElement('span'),
-            editor = options.editor, requiredPx = 10,
-            tr = diffMark.attrs.diff.search('offline') != -1 ? editor.mod.collab.doc.merge.offlineTr : editor.mod.collab.doc.merge.onlineTr
+            requiredPx = 10,
+            tr = diffMark.attrs.diff.search('offline') != -1 ? options.merge.offlineTr : options.merge.onlineTr
         let view
         if (diffMark.attrs.diff.search('offline') != -1) {
             if (diffMark.attrs.diff.search('inserted') != -1) {
-                view = editor.mod.collab.doc.merge.mergeView1
+                view = options.merge.mergeView1
             } else {
-                view = editor.mod.collab.doc.merge.mergeView2
+                view = options.merge.mergeView2
             }
         } else {
             if (diffMark.attrs.diff.search('inserted') != -1) {
-                view = editor.mod.collab.doc.merge.mergeView3
+                view = options.merge.mergeView3
             } else {
-                view = editor.mod.collab.doc.merge.mergeView2
+                view = options.merge.mergeView2
             }
         }
         linkMark = linkMark === undefined ? false : linkMark
@@ -279,7 +278,7 @@ export const diffPlugin = function(options) {
         `<div class="drop-up-head">
                         ${
     diffMark.attrs.diff ?
-        `<div class="link-title">${gettext('Change')}:&nbsp; ${ (diffMark.attrs.diff.search('deleted') != -1) ? (diffMark.attrs.diff.search('offline') != -1 ? gettext('Deleted by you') : gettext('Deleted by Online user')) : ''}</div>` :
+        `<div class="link-title">${gettext('Change')}:&nbsp; ${ (diffMark.attrs.diff.search('deleted') != -1) ? (diffMark.attrs.diff.search('offline') != -1 ? gettext('Deleted by you') : gettext('Deleted by online users')) : ''}</div>` :
         ''
 }
                         ${
@@ -310,7 +309,7 @@ export const diffPlugin = function(options) {
                 event => {
                     event.preventDefault()
                     event.stopImmediatePropagation()
-                    acceptChanges(diffMark, editor, editor.mod.collab.doc.merge.mergeView2, view, tr)
+                    acceptChanges(diffMark, options.merge.mergeView2, view, tr)
                 }
             )
         }
@@ -320,7 +319,7 @@ export const diffPlugin = function(options) {
                 () => {
                     event.preventDefault()
                     event.stopImmediatePropagation()
-                    rejectChanges(view, diffMark, editor)
+                    rejectChanges(view, diffMark)
                 }
             )
         }

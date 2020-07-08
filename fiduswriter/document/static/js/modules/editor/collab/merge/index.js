@@ -58,7 +58,7 @@ import {
 import {
     jumpHiddenNodesPlugin,
     searchPlugin,
-    clipboardPlugin
+//    clipboardPlugin
 } from "../../state_plugins"
 import {
     buildEditorKeymap
@@ -71,7 +71,7 @@ import {
 } from "./footnotes"
 import {
     diffPlugin,
-    removeMarks,
+    dispatchRemoveDiffMark,
     updateMarkData,
     checkPresenceOfDiffMark
 } from "./state_plugin"
@@ -92,10 +92,11 @@ export class Merge {
         this.offlineTr = false // The online transaction
         this.onlineTr = false // The offline Transaction
         this.imageDataModified = {} // To hold data related to re-uploaded images.
+        this.schema = this.mod.editor.schema
         this.diffPlugin = [
-            [diffPlugin, () => ({editor: this.mod.editor})],
-            [keymap, () => buildEditorKeymap(this.mod.editor.schema)],
-            [keymap, () => buildKeymap(this.mod.editor.schema)],
+            [diffPlugin, () => ({merge: this})],
+            [keymap, () => buildEditorKeymap(this.schema)],
+            [keymap, () => buildKeymap(this.schema)],
             [keymap, () => baseKeymap],
             [collab, () => ({clientID: this.mod.editor.client_id})],
             // [history],
@@ -104,7 +105,7 @@ export class Merge {
             // [tableEditing],
             [jumpHiddenNodesPlugin],
             [searchPlugin],
-            [clipboardPlugin, () => ({editor: this.mod.editor, viewType: 'main'})]
+            //[clipboardPlugin, () => ({editor: this.mod.editor, viewType: 'main'})]
         ]
     }
 
@@ -132,7 +133,7 @@ export class Merge {
                 rollbackTr.steps,
                 rollbackTr.steps.map(_step => 'remote')
             ).setMeta('remote', true))
-            const toDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [
+            const toDoc = this.schema.nodeFromJSON({type: 'doc', content: [
                 data.doc.contents
             ]})
 
@@ -309,7 +310,7 @@ export class Merge {
         return nonTrackedSteps
     }
 
-    markBlockDiffs(tr, from, to, difftype, steps_involved) {
+    markBlockDiffs(tr, from, to, difftype, stepsInvolved) {
         /* This Function is used to add diff data to Block Elements. */
         tr.doc.nodesBetween(
             from,
@@ -323,7 +324,7 @@ export class Merge {
                 }
                 if (node.attrs.diffdata) {
                     const diffdata = []
-                    diffdata.push({type: difftype, from: from, to: to, steps: steps_involved})
+                    diffdata.push({type: difftype, from: from, to: to, steps: stepsInvolved})
                     tr.setNodeMarkup(pos, null, Object.assign({}, node.attrs, {diffdata}), node.marks)
                 }
             }
@@ -333,7 +334,7 @@ export class Merge {
     startMerge(offlineTr, onlineTr, onlineDoc) {
         /* start the merge process of moving changes to the editor */
         // Remove all diff related marks
-        removeMarks(this.mergeView2, 0, this.mergeView2.state.doc.content.size, this.mod.editor.schema.marks.DiffMark)
+        dispatchRemoveDiffMark(this.mergeView2, 0, this.mergeView2.state.doc.content.size)
 
         // Apply all the marks that are not handled by recreate steps!
         const markTr = this.mergeView2.state.tr
@@ -391,9 +392,9 @@ export class Merge {
             onlineVersionDoc = this.mergeView3.state.doc,
             mergedVersionDoc = this.mergeView2.state.doc
         let diffAttrPresent = false
-        if (offlineVersionDoc.rangeHasMark(0, offlineVersionDoc.content.size, this.mod.editor.schema.marks.DiffMark) ||
-            onlineVersionDoc.rangeHasMark(0, onlineVersionDoc.content.size, this.mod.editor.schema.marks.DiffMark) ||
-            mergedVersionDoc.rangeHasMark(0, mergedVersionDoc.content.size, this.mod.editor.schema.marks.DiffMark)
+        if (offlineVersionDoc.rangeHasMark(0, offlineVersionDoc.content.size, this.schema.marks.DiffMark) ||
+            onlineVersionDoc.rangeHasMark(0, onlineVersionDoc.content.size, this.schema.marks.DiffMark) ||
+            mergedVersionDoc.rangeHasMark(0, mergedVersionDoc.content.size, this.schema.marks.DiffMark)
         ) {
             return true
         }
@@ -522,7 +523,7 @@ export class Merge {
         if (elementId == "editor-diff") {
             editorView = new EditorView(document.getElementById(elementId), {
                 state: EditorState.create({
-                    schema: this.mod.editor.schema,
+                    schema: this.schema,
                     doc: doc,
                     plugins: plugins,
                 }),
@@ -533,7 +534,7 @@ export class Merge {
                         const noTrack = tr.getMeta('notrack')
                         if (!mapAppended)
                             this.mergedDocMap.appendMapping(tr.mapping)
-                        mapTr = updateMarkData(mapTr, this.imageDataModified, editorView)
+                        mapTr = updateMarkData(mapTr, this.imageDataModified)
                         if (!noTrack) { // Track only manual insertions
                             mapTr = trackedTransaction(
                                 mapTr,
@@ -556,12 +557,12 @@ export class Merge {
         } else {
             editorView = new EditorView(document.getElementById(elementId), {
                 state: EditorState.create({
-                    schema: this.mod.editor.schema,
+                    schema: this.schema,
                     doc: doc,
                     plugins: plugins,
                 }),
                 dispatchTransaction: tr => {
-                    const mapTr = updateMarkData(tr, this.imageDataModified, editorView)
+                    const mapTr = updateMarkData(tr, this.imageDataModified)
                     const newState = editorView.state.apply(mapTr)
                     editorView.updateState(newState)
                     this.renderCitation(editorView, elementId)
@@ -583,43 +584,43 @@ export class Merge {
         // Use the changeset to create the marks
         changeset.changes.forEach(change=>{
             if (change.inserted.length > 0) {
-                let steps_involved = []
-                change.inserted.forEach(insertion=>steps_involved.push(parseInt(insertion.data.step)))
-                const stepsSet = new Set(steps_involved)
-                steps_involved = Array.from(stepsSet)
+                let stepsInvolved = []
+                change.inserted.forEach(insertion=>stepsInvolved.push(parseInt(insertion.data.step)))
+                const stepsSet = new Set(stepsInvolved)
+                stepsInvolved = Array.from(stepsSet)
 
                 // Add the footnote related steps because the changeset tracks change but misses some steps related to insertion of footnote node!
                 tr.steps.forEach((step, index)=>{
-                    if (step.from >= change.fromB && step.to <= change.toB && step instanceof ReplaceStep && !steps_involved.includes(index)) {
+                    if (step.from >= change.fromB && step.to <= change.toB && step instanceof ReplaceStep && !stepsInvolved.includes(index)) {
                         const Step1 = step.toJSON()
                         if (Step1.slice && Step1.from !== Step1.to && Step1.slice.content.length == 1 && (Step1.slice.content[0].type === "footnote" || Step1.slice.content[0].type === "citation")) {
-                            steps_involved.push(index)
+                            stepsInvolved.push(index)
                         }
-                    } else if (step.from >= change.fromB && step.to <= change.toB && step instanceof AddMarkStep && !steps_involved.includes(index)) {
+                    } else if (step.from >= change.fromB && step.to <= change.toB && step instanceof AddMarkStep && !stepsInvolved.includes(index)) {
                         const Step1 = step.toJSON()
                         if (Step1.mark && ["strong", "em", "underline", "link", "deletion", "insertion", "comment"].includes(Step1.mark.type)) {
-                            steps_involved.push(index)
+                            stepsInvolved.push(index)
                         }
                     }
                 })
 
-                steps_involved.sort((a, b)=>a - b)
-                const insertionMark = this.mod.editor.schema.marks.DiffMark.create({diff: insertionClass, steps: JSON.stringify(steps_involved), from: change.fromB, to: change.toB})
+                stepsInvolved.sort((a, b)=>a - b)
+                const insertionMark = this.schema.marks.DiffMark.create({diff: insertionClass, steps: JSON.stringify(stepsInvolved), from: change.fromB, to: change.toB})
                 insertionMarksTr.addMark(change.fromB, change.toB, insertionMark)
-                this.markBlockDiffs(insertionMarksTr, change.fromB, change.toB, insertionClass, steps_involved)
-                if (checkPresenceOfDiffMark(insertionMarksTr.doc, change.fromB, change.toB, this.mod.editor))
-                    stepsTrackedByChangeset = stepsTrackedByChangeset.concat(steps_involved)
+                this.markBlockDiffs(insertionMarksTr, change.fromB, change.toB, insertionClass, stepsInvolved)
+                if (checkPresenceOfDiffMark(insertionMarksTr.doc, change.fromB, change.toB))
+                    stepsTrackedByChangeset = stepsTrackedByChangeset.concat(stepsInvolved)
             } if (change.deleted.length > 0) {
-                let steps_involved = []
-                change.deleted.forEach(deletion=>steps_involved.push(parseInt(deletion.data.step)))
-                const stepsSet = new Set(steps_involved)
-                steps_involved = Array.from(stepsSet)
-                steps_involved.sort((a, b)=>a - b)
-                const deletionMark = this.mod.editor.schema.marks.DiffMark.create({diff: deletionClass, steps: JSON.stringify(steps_involved), from: change.fromA, to: change.toA})
+                let stepsInvolved = []
+                change.deleted.forEach(deletion=>stepsInvolved.push(parseInt(deletion.data.step)))
+                const stepsSet = new Set(stepsInvolved)
+                stepsInvolved = Array.from(stepsSet)
+                stepsInvolved.sort((a, b)=>a - b)
+                const deletionMark = this.schema.marks.DiffMark.create({diff: deletionClass, steps: JSON.stringify(stepsInvolved), from: change.fromA, to: change.toA})
                 deletionMarksTr.addMark(change.fromA, change.toA, deletionMark)
-                this.markBlockDiffs(deletionMarksTr, change.fromA, change.toA, deletionClass, steps_involved)
-                if (checkPresenceOfDiffMark(deletionMarksTr.doc, change.fromA, change.toA, this.mod.editor))
-                    stepsTrackedByChangeset = stepsTrackedByChangeset.concat(steps_involved)
+                this.markBlockDiffs(deletionMarksTr, change.fromA, change.toA, deletionClass, stepsInvolved)
+                if (checkPresenceOfDiffMark(deletionMarksTr.doc, change.fromA, change.toA))
+                    stepsTrackedByChangeset = stepsTrackedByChangeset.concat(stepsInvolved)
             }
         })
 
@@ -631,11 +632,11 @@ export class Merge {
             if (step instanceof ReplaceStep && !stepsTrackedByChangeset.includes(index)) {
                 const Step1 = step.toJSON()
                 if (Step1.slice && Step1.slice.content.length == 1 && Step1.slice.content[0].type === "footnote") {
-                    const insertionMark = this.mod.editor.schema.marks.DiffMark.create({diff: insertionClass, steps: JSON.stringify([index]), from: from,  to: to})
+                    const insertionMark = this.schema.marks.DiffMark.create({diff: insertionClass, steps: JSON.stringify([index]), from: from,  to: to})
                     insertionMarksTr.addMark(from, to, insertionMark)
                     stepsTrackedByChangeset.push(index)
                 } else if (Step1.slice && Step1.slice.content.length == 1 && Step1.slice.content[0].type === "citation") {
-                    const insertionMark = this.mod.editor.schema.marks.DiffMark.create({diff: insertionClass, steps: JSON.stringify([index]), from: from, to: to})
+                    const insertionMark = this.schema.marks.DiffMark.create({diff: insertionClass, steps: JSON.stringify([index]), from: from, to: to})
                     insertionMarksTr.addMark(from, to, insertionMark)
                     stepsTrackedByChangeset.push(index)
                 }
@@ -652,11 +653,11 @@ export class Merge {
                 const Step1 = step.toJSON()
                 if (Step1.mark && ["strong", "em", "underline", "link", "deletion", "comment"].includes(Step1.mark.type)) {
                     if (step instanceof AddMarkStep) {
-                        const insertionMark = this.mod.editor.schema.marks.DiffMark.create({diff: insertionClass, steps: JSON.stringify([index]), from: from, to: to})
+                        const insertionMark = this.schema.marks.DiffMark.create({diff: insertionClass, steps: JSON.stringify([index]), from: from, to: to})
                         stepsTrackedByChangeset.push(index)
                         insertionMarksTr.addMark(from, to, insertionMark)
                     } else if (step instanceof RemoveMarkStep) {
-                        const deletionMark = this.mod.editor.schema.marks.DiffMark.create({diff: deletionClass, steps: JSON.stringify([index]), from: from, to: to})
+                        const deletionMark = this.schema.marks.DiffMark.create({diff: deletionClass, steps: JSON.stringify([index]), from: from, to: to})
                         deletionMarksTr.addMark(from, to, deletionMark)
                         stepsTrackedByChangeset.push(index)
                     }
@@ -805,7 +806,7 @@ export class Merge {
 
     autoMerge(unconfirmedTr, lostTr, data) {
         /* This automerges documents incase of no conflicts */
-        const toDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [
+        const toDoc = this.schema.nodeFromJSON({type: 'doc', content: [
             data.doc.contents
         ]})
         const rebasedTr = EditorState.create({doc: toDoc}).tr.setMeta('remote', true)

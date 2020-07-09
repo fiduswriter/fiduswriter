@@ -75,6 +75,7 @@ export const createDiffSchema = function(docSchema) {
                 default: ''
             }
         },
+        inclusive: false,
         parseDOM: [
             {
                 tag: "span.diff",

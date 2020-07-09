@@ -8,6 +8,8 @@ import {fnSchema} from "../../../schema/footnotes"
 import {
     trackedTransaction
 } from "../../track"
+
+
 export class FootnoteView {
     constructor(node, view, getPos, editor) {
         // We'll need these later
@@ -22,9 +24,7 @@ export class FootnoteView {
         this.innerView = null
         // Updated main editor state
         this.updatedMainEditor = false
-
     }
-
 
     selectNode() {
         this.dom.classList.add("ProseMirror-selectednode")

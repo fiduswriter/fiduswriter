@@ -60,7 +60,6 @@ export const createDiffSchema = function(docSchema) {
     })
 
 
-
     const diffdata = {
         attrs: {
             diff: {

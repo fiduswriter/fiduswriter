@@ -9,7 +9,7 @@ export const bulkMenuModel = () => ({
                     overview.deleteImageDialog(ids)
                 }
             },
-            disabled: overview => !overview.getSelected().length
+            disabled: overview => !overview.getSelected().length || overview.app.isOffline()
         }
     ]
 })
@@ -34,7 +34,8 @@ export const menuModel = () => ({
             type: 'text',
             title: gettext('Edit categories'),
             action: overview => overview.mod.categories.editCategoryDialog(),
-            order: 2
+            order: 2,
+            disabled: overview => overview.app.isOffline()
         },
         {
             type: 'text',
@@ -51,7 +52,8 @@ export const menuModel = () => ({
                     )
                 })
             },
-            order: 3
+            order: 3,
+            disabled: overview => overview.app.isOffline()
         },
         {
             type: 'search',

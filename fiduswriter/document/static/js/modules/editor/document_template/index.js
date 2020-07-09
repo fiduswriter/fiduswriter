@@ -171,7 +171,8 @@ export class ModDocumentTemplate {
                             )
                             exporter.init()
                         })
-                    }
+                    },
+                    disabled: editor => editor.app.isOffline()
                 }
             } else {
                 return {

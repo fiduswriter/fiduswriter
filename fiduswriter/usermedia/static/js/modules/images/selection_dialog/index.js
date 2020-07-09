@@ -30,32 +30,34 @@ export class ImageSelectionDialog {
         })
         const buttons = []
         const p = new Promise(resolve => {
-            buttons.push(
-                {
-                    text: gettext('Add new image'),
-                    icon: "plus-circle",
-                    click: () => {
-                        import("../edit_dialog").then(({ImageEditDialog}) => {
-                            const imageUpload = new ImageEditDialog(
-                                this.userImageDB, // We can only upload to the user's image db
-                                false,
-                                this.editor
-                            )
-
-                            resolve(
-                                imageUpload.init().then(
-                                    imageId => {
-                                        this.imgId = imageId
-                                        this.imgDb = 'user'
-                                        this.imageDialog.close()
-                                        return this.init()
-                                    }
+            if (!this.editor.app.isOffline()) {
+                buttons.push(
+                    {
+                        text: gettext('Add new image'),
+                        icon: "plus-circle",
+                        click: () => {
+                            import("../edit_dialog").then(({ImageEditDialog}) => {
+                                const imageUpload = new ImageEditDialog(
+                                    this.userImageDB, // We can only upload to the user's image db
+                                    false,
+                                    this.editor
                                 )
-                            )
-                        })
+
+                                resolve(
+                                    imageUpload.init().then(
+                                        imageId => {
+                                            this.imgId = imageId
+                                            this.imgDb = 'user'
+                                            this.imageDialog.close()
+                                            return this.init()
+                                        }
+                                    )
+                                )
+                            })
+                        }
                     }
-                }
-            )
+                )
+            }
 
             buttons.push(
                 {

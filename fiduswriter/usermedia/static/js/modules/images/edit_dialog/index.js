@@ -19,9 +19,10 @@ export class ImageEditDialog {
 
     //open a dialog for uploading an image
     init() {
-
+        if (this.editor.app.isOffline()) {
+            return Promise.resolve()
+        }
         const returnPromise = new Promise(resolve => {
-
             this.dialog = new Dialog({
                 title: this.imageId ? gettext('Update Image Information') : gettext('Upload Image'),
                 id: 'editimage',
@@ -151,6 +152,10 @@ export class ImageEditDialog {
                     resolve(imageId)
                 },
                 errors => {
+                    if (this.editor.app.isOffline()) {
+                        addAlert('info', gettext('You are currently offline. Please try again after going online.'))
+                        return
+                    }
                     this.displayCreateImageError(errors)
                     addAlert('error', gettext('Some errors were found. Please examine the form.'))
                 }

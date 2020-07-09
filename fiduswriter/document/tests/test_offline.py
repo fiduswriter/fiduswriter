@@ -569,10 +569,10 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
 
     def test_disabled_options(self):
         """
-        Test one client going offline after writing some text.
-        While the client is offline tries different export
-        options which are disabled. Tries to upload an image
-        which is rejected.
+        Test one user going offline after writing some text.
+        While the user is offline, he tries different export
+        options which are disabled. He wants to upload an image,
+        but the button is gone.
         """
         self.load_document_editor(self.driver, self.doc)
         self.add_title(self.driver)
@@ -674,48 +674,26 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
         # click on 'Insert image' button
         self.driver.find_element_by_id('insert-figure-image').click()
 
-        upload_button = WebDriverWait(self.driver, self.wait_time).until(
+        WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
                 (
                     By.XPATH,
-                    '//*[normalize-space()="Add new image"]'
+                    '//*[normalize-space()="Use image"]'
                 )
             )
         )
 
-        upload_button.click()
-
-        # image path
-        image_path = os.path.join(
-            settings.PROJECT_PATH,
-            'document/tests/uploads/image.png'
+        upload_buttons = self.driver.find_elements_by_xpath(
+            '//*[normalize-space()="Add new image"]'
         )
-
-        # in order to select the image we send the image path in the
-        # LOCAL MACHINE to the input tag
-        upload_image_url = WebDriverWait(self.driver, self.wait_time).until(
-            EC.presence_of_element_located(
-                (By.XPATH, '//*[@id="editimage"]/div[1]/input[2]')
-            )
+        self.assertEqual(
+            len(upload_buttons),
+            0
         )
-        upload_image_url.send_keys(image_path)
-
-        # click on 'Upload' button
-        self.driver.find_element_by_xpath(
-            '//*[contains(@class, "ui-button") and normalize-space()="Upload"]'
-        ).click()
-
-        # Check that the image upload threw an error/alert.
-        alert_element = WebDriverWait(self.driver, self.wait_time).until(
-            EC.visibility_of_element_located(
-                (By.CLASS_NAME, 'alerts-error')
-            )
-        )
-        self.assertEqual(alert_element.is_displayed(), True)
 
     def test_indexedDB(self):
         """
-        Test one client going offline after logging in.
+        Testing a user going offline after logging in.
         Test that the documents overview page is
         rendered from indexed DB when the user is
         offline.
@@ -746,5 +724,5 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
         self.assertEqual(doc_row.is_displayed(), True)
 
         # Check that the alert regarding offline is shown.
-        alert_element = self.driver.find_element_by_class_name('alerts-error')
+        alert_element = self.driver.find_element_by_class_name('alerts-info')
         self.assertEqual(alert_element.is_displayed(), True)

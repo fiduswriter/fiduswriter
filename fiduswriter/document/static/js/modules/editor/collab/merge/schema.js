@@ -102,7 +102,5 @@ export const createDiffSchema = function(docSchema) {
         nodes: specNodes,
         marks: docSchema.spec.marks.addToEnd('diffdata', diffdata)
     }
-
-    //return docSchema
     return new Schema(spec)
 }

@@ -84,11 +84,11 @@ export class MergeEditor {
         this.cpDoc = this.schema.nodeFromJSON(cpDoc.toJSON())
         this.offlineDoc = this.schema.nodeFromJSON(offlineDoc.toJSON())
         this.onlineDoc = this.schema.nodeFromJSON(onlineDoc.toJSON())
-        this.mergeDialog  = this.createMergeDialog(offlineTr, onlineTr, this.onlineDoc)
-        this.offlineTr = simplifyTransform(offlineTr) // The online transaction
-        this.onlineTr = simplifyTransform(onlineTr) // The offline Transaction
+        this.offlineTr = simplifyTransform(offlineTr) // The offline transaction
+        this.onlineTr = simplifyTransform(onlineTr) // The online Transaction
+        this.mergeDialog  = this.createMergeDialog(this.offlineTr, this.onlineTr, this.onlineDoc)
         this.data = data
-        this.mergedDocMap = new Mapping() // the maps of the middle editor ,used for applying steps automatically
+        this.mergedDocMap = new Mapping() // the maps of the middle editor, used for applying steps automatically
 
         this.mergeView1 = false
         this.mergeView2 = false

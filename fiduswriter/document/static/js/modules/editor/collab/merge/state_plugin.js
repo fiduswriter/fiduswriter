@@ -1,6 +1,6 @@
 import {Plugin, PluginKey, TextSelection, NodeSelection} from "prosemirror-state"
 import {Decoration, DecorationSet, __serializeForClipboard} from "prosemirror-view"
-import {Mapping} from "prosemirror-transform"
+import {Mapping, Step} from "prosemirror-transform"
 
 import {noSpaceTmp, showSystemMessage} from "../../../common"
 import {removeDiffdata, dispatchRemoveDiffdata} from "./tools"
@@ -124,7 +124,7 @@ function copyChange(view, from, to) {
 function acceptChanges(merge, mark, mergeView, originalView, tr) {
     /* This is used to accept a change either from the offline/online version or
     incase of deletion from the middle editor */
-    try {
+    //try {
         const mergedDocMap = new Mapping()
         mergedDocMap.appendMapping(merge.mergedDocMap)
         let insertionTr = mergeView.state.tr
@@ -136,7 +136,10 @@ function acceptChanges(merge, mark, mergeView, originalView, tr) {
         rebasedMapping.appendMapping(mergedDocMap)
         for (const stepIndex of steps) {
             const maps = rebasedMapping.slice(tr.steps.length - stepIndex)
-            const mappedStep = tr.steps[stepIndex].map(maps)
+            const mappedStep = Step.fromJSON( // Switch from main editor schema to merge editor schema
+                insertionTr.doc.type.schema,
+                tr.steps[stepIndex].map(maps).toJSON()
+            )
             if (mappedStep && !insertionTr.maybeStep(mappedStep).failed) {
                 mergedDocMap.appendMap(mappedStep.getMap())
                 rebasedMapping.appendMap(mappedStep.getMap())
@@ -160,9 +163,9 @@ function acceptChanges(merge, mark, mergeView, originalView, tr) {
             insertionTr.setMeta('notrack', true)
             mergeView.dispatch(insertionTr)
         }
-    } catch (exc) {
-        showSystemMessage(gettext("The change could not be applied automatically. Please consider using the copy function to copy the changes."))
-    }
+    //} catch (exc) {
+    //    showSystemMessage(gettext("The change could not be applied automatically. Please consider using the copy function to copy the changes."))
+    //}
 }
 
 function createDropUp(merge, diffMark, linkMark) {

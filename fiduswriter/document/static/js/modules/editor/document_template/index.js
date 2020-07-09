@@ -113,8 +113,8 @@ export class ModDocumentTemplate {
                             text: gettext('Copy'),
                             classes: "fw-dark",
                             click: () => {
-                                if (window.isOffline) {
-                                    addAlert('error', "You're offline. Please try again after you're Online.")
+                                if (editor.app.isOffline()) {
+                                    addAlert('error', "You are offline. Please try again after you are online.")
                                     selectTemplateDialog.close()
                                 } else {
                                     const copier = new SaveCopy(
@@ -139,7 +139,7 @@ export class ModDocumentTemplate {
                 })
                 selectTemplateDialog.open()
             },
-            disabled: _editor => window.isOffline
+            disabled: editor => editor.app.isOffline()
         })
 
         fileMenu.content = fileMenu.content.sort((a, b) => a.order - b.order)
@@ -195,7 +195,7 @@ export class ModDocumentTemplate {
                             exporter.init()
                         })
                     },
-                    disabled: _editor => window.isOffline
+                    disabled: editor => editor.app.isOffline()
                 }
             }
         })
@@ -219,7 +219,7 @@ export class ModDocumentTemplate {
                     )
                 },
                 selected: editor => editor.view.state.doc.firstChild.attrs.documentstyle === docStyle.slug,
-                disabled: _editor => window.isOffline,
+                disabled: editor => editor.app.isOffline(),
             }
         })
     }

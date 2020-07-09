@@ -55,7 +55,7 @@ export const headerbarModel = () => ({
                         dialog.init()
                     },
                     disabled: editor => {
-                        return !editor.docInfo.is_owner || window.isOffline
+                        return !editor.docInfo.is_owner || editor.app.isOffline()
                     }
                 },
                 {
@@ -67,7 +67,7 @@ export const headerbarModel = () => ({
                     action: editor => {
                         editor.app.goTo('/')
                     },
-                    disabled: _editor => window.isOffline
+                    disabled: editor => editor.app.isOffline()
                 },
                 {
                     title: gettext('Save revision'),
@@ -90,7 +90,7 @@ export const headerbarModel = () => ({
                             }
                         )
                     },
-                    disabled: editor => editor.docInfo.access_rights !== 'write' || window.isOffline
+                    disabled: editor => editor.docInfo.access_rights !== 'write' || editor.app.isOffline()
                 },
                 {
                     title: gettext('Create copy'),
@@ -109,7 +109,7 @@ export const headerbarModel = () => ({
                             editor.app.goTo(`/document/${docInfo.id}/`)
                         ).catch(() => false)
                     },
-                    disabled: _editor => window.isOffline,
+                    disabled: editor => editor.app.isOffline(),
                 },
                 {
                     title: gettext('Download'),
@@ -194,7 +194,7 @@ export const headerbarModel = () => ({
                             exporter.init()
                         })
                     },
-                    disabled: _editor => window.isOffline
+                    disabled: editor => editor.app.isOffline()
                 },
                 {
                     title: gettext('LaTeX'),
@@ -212,7 +212,7 @@ export const headerbarModel = () => ({
                             exporter.init()
                         })
                     },
-                    disabled: _editor => window.isOffline
+                    disabled: editor => editor.app.isOffline()
                 },
                 {
                     title: gettext('JATS'),
@@ -231,7 +231,7 @@ export const headerbarModel = () => ({
                             exporter.init()
                         })
                     },
-                    disabled: _editor => window.isOffline
+                    disabled: editor => editor.app.isOffline()
                 }
             ]
         },
@@ -260,7 +260,7 @@ export const headerbarModel = () => ({
                     tooltip: gettext('Choose your preferred document style.'),
                     order: 2,
                     disabled: editor => {
-                        return editor.docInfo.access_rights !== 'write' || window.isOffline
+                        return editor.docInfo.access_rights !== 'write' || editor.app.isOffline()
                     },
                     content: []
                 },

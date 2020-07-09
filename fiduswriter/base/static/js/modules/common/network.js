@@ -112,7 +112,7 @@ export const post = function(url, params = {}, csrfToken = false) {
     // Moreover if the ws readystate is not 0 we consider to check the connected status as 0 means ,
     // websocket is trying to establish a connection.
     if (window.isOffline) {
-        addAlert('error', gettext("You're offline now. Please try again after coming Online"))
+        addAlert('error', gettext("You are offline now. Please try again after going online"))
         return Promise.reject(new Error('offline'))
     } else {
         return postBare(url, params, csrfToken).then(

@@ -499,7 +499,7 @@ export class Editor {
     // Collect all components of the current doc. Needed for saving and export
     // filters
     getDoc(options = {}) {
-        const doc = window.isOffline ? this.view.docView.node : this.docInfo.confirmedDoc
+        const doc = this.app.isOffline() ? this.view.docView.node : this.docInfo.confirmedDoc
         const pmArticle = options.changes === 'acceptAllNoInsertions' ?
             acceptAllNoInsertions(doc).firstChild :
             doc.firstChild

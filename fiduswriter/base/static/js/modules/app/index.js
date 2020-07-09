@@ -131,7 +131,7 @@ export class App {
         ensureCSS([
             'fontawesome/css/all.css'
         ])
-        if (window.isOffline) {
+        if (this.isOffline()) {
             this.page = this.openOfflinePage()
             return this.page.init()
         } else {

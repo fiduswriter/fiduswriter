@@ -67,7 +67,7 @@ export class ContactsOverview {
             error => {
                 if (error.message == "offline") {
                     addAlert('info', gettext('You are viewing a cached version of the page.'))
-                    this.app.indexedDB.readAllData("contacts_list").then((response)=>{
+                    this.app.indexedDB.readAllData("contacts_list").then((response) => {
                         this.dom.querySelector('#team-table tbody').innerHTML += teammemberTemplate({members: response})
                     })
                 } else {

@@ -131,7 +131,7 @@ function acceptChanges(merge, mark, mergeView, originalView, tr) {
         const from = mark.attrs.from
         const to = mark.attrs.to
         const steps = JSON.parse(mark.attrs.steps)
-        const stepMaps = tr.mapping.maps.slice().reverse().map(map=>map.invert())
+        const stepMaps = tr.mapping.maps.slice().reverse().map(map => map.invert())
         const rebasedMapping = new Mapping(stepMaps)
         rebasedMapping.appendMapping(mergedDocMap)
         for (const stepIndex of steps) {

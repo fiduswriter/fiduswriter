@@ -172,7 +172,7 @@ export class MergeEditor {
                         buttons: [{
                             text: gettext("Proceed to Merge"),
                             classes: 'fw-dark',
-                            click: ()=>{
+                            click: () => {
                                 this.startMerge(offlineTr, onlineTr, onlineDoc)
                                 warningDialog.close()
                             }
@@ -259,17 +259,17 @@ export class MergeEditor {
         ) {
             return true
         }
-        offlineVersionDoc.nodesBetween(0, offlineVersionDoc.content.size, (node, _pos)=>{
+        offlineVersionDoc.nodesBetween(0, offlineVersionDoc.content.size, (node, _pos) => {
             if (node.attrs.diffdata && node.attrs.diffdata.length > 0) {
                 diffAttrPresent = true
             }
         })
-        onlineVersionDoc.nodesBetween(0, onlineVersionDoc.content.size, (node, _pos)=>{
+        onlineVersionDoc.nodesBetween(0, onlineVersionDoc.content.size, (node, _pos) => {
             if (node.attrs.diffdata && node.attrs.diffdata.length > 0) {
                 diffAttrPresent = true
             }
         })
-        mergedVersionDoc.nodesBetween(0, mergedVersionDoc.content.size, (node, _pos)=>{
+        mergedVersionDoc.nodesBetween(0, mergedVersionDoc.content.size, (node, _pos) => {
             if (node.attrs.diffdata && node.attrs.diffdata.length > 0) {
                 diffAttrPresent = true
             }
@@ -287,15 +287,15 @@ export class MergeEditor {
         const deletionMarksTr = deletionView.state.tr
         let stepsTrackedByChangeset = []
         // Use the changeset to create the marks
-        changeset.changes.forEach(change=>{
+        changeset.changes.forEach(change => {
             if (change.inserted.length > 0) {
                 let stepsInvolved = []
-                change.inserted.forEach(insertion=>stepsInvolved.push(parseInt(insertion.data.step)))
+                change.inserted.forEach(insertion => stepsInvolved.push(parseInt(insertion.data.step)))
                 const stepsSet = new Set(stepsInvolved)
                 stepsInvolved = Array.from(stepsSet)
 
                 // Add the footnote related steps because the changeset tracks change but misses some steps related to insertion of footnote node!
-                tr.steps.forEach((step, index)=>{
+                tr.steps.forEach((step, index) => {
                     if (step.from >= change.fromB && step.to <= change.toB && step instanceof ReplaceStep && !stepsInvolved.includes(index)) {
                         const Step1 = step.toJSON()
                         if (Step1.slice && Step1.from !== Step1.to && Step1.slice.content.length == 1 && (Step1.slice.content[0].type === "footnote" || Step1.slice.content[0].type === "citation")) {
@@ -309,7 +309,7 @@ export class MergeEditor {
                     }
                 })
 
-                stepsInvolved.sort((a, b)=>a - b)
+                stepsInvolved.sort((a, b) => a - b)
                 const insertionMark = this.schema.marks.diffdata.create({diff: insertionClass, steps: JSON.stringify(stepsInvolved), from: change.fromB, to: change.toB})
                 insertionMarksTr.addMark(change.fromB, change.toB, insertionMark)
                 this.markBlockDiffs(insertionMarksTr, change.fromB, change.toB, insertionClass, stepsInvolved)
@@ -318,10 +318,10 @@ export class MergeEditor {
                 }
             } if (change.deleted.length > 0) {
                 let stepsInvolved = []
-                change.deleted.forEach(deletion=>stepsInvolved.push(parseInt(deletion.data.step)))
+                change.deleted.forEach(deletion => stepsInvolved.push(parseInt(deletion.data.step)))
                 const stepsSet = new Set(stepsInvolved)
                 stepsInvolved = Array.from(stepsSet)
-                stepsInvolved.sort((a, b)=>a - b)
+                stepsInvolved.sort((a, b) => a - b)
                 const deletionMark = this.schema.marks.diffdata.create({diff: deletionClass, steps: JSON.stringify(stepsInvolved), from: change.fromA, to: change.toA})
                 deletionMarksTr.addMark(change.fromA, change.toA, deletionMark)
                 this.markBlockDiffs(deletionMarksTr, change.fromA, change.toA, deletionClass, stepsInvolved)
@@ -333,7 +333,7 @@ export class MergeEditor {
 
 
         // Add all the footnote/mark/citation related steps that are not tracked by changeset!!!!!
-        tr.steps.forEach((step, index)=>{
+        tr.steps.forEach((step, index) => {
             const from = tr.mapping.slice(index).map(step.from)
             const to = tr.mapping.slice(index).map(step.to, -1)
             if (step instanceof ReplaceStep && !stepsTrackedByChangeset.includes(index)) {
@@ -382,7 +382,7 @@ export class MergeEditor {
 
     bindEditorView(elementId, doc) {
         /* Binds the editor view */
-        const plugins = this.diffEditorPlugins.map(plugin=>{
+        const plugins = this.diffEditorPlugins.map(plugin => {
             if (plugin[1]) {
                 return plugin[0](plugin[1](doc))
             } else {
@@ -470,10 +470,10 @@ export class MergeEditor {
 
         // Apply all the marks that are not handled by recreate steps!
         const markTr = this.mergeView2.state.tr
-        const onlineMaps = onlineTr.mapping.maps.slice().reverse().map(map=>map.invert())
+        const onlineMaps = onlineTr.mapping.maps.slice().reverse().map(map => map.invert())
         const onlineRebaseMapping = new Mapping(onlineMaps)
         onlineRebaseMapping.appendMapping(this.mergedDocMap)
-        this.onStepsNotTracked.forEach(markstep=>{
+        this.onStepsNotTracked.forEach(markstep => {
             const stepIndex = parseInt(onlineTr.steps.indexOf(markstep))
             const onlineRebaseMap = onlineRebaseMapping.slice(onlineTr.steps.length - stepIndex)
             const mappedMarkStep = markstep.map(onlineRebaseMap)
@@ -486,7 +486,7 @@ export class MergeEditor {
         const offlineRebaseMapping = new Mapping()
         offlineRebaseMapping.appendMappingInverted(offlineTr.mapping)
         offlineRebaseMapping.appendMapping(this.mergedDocMap)
-        this.offStepsNotTracked.forEach(markstep=>{
+        this.offStepsNotTracked.forEach(markstep => {
             const stepIndex = offlineTr.steps.indexOf(markstep)
             const offlineRebaseMap = offlineRebaseMapping.slice(offlineTr.steps.length - stepIndex)
             const mappedMarkStep = markstep.map(offlineRebaseMap)
@@ -543,10 +543,10 @@ export class MergeEditor {
             editor.init()
         } else {
             const newTr = this.editor.view.state.tr
-            const maps = new Mapping([].concat(tr.mapping.maps.slice().reverse().map(map=>map.invert())).concat(
+            const maps = new Mapping([].concat(tr.mapping.maps.slice().reverse().map(map => map.invert())).concat(
                 OnlineStepsLost.mapping.maps
             ))
-            tr.steps.forEach((step, index)=>{
+            tr.steps.forEach((step, index) => {
                 const mapped = step.map(maps.slice(tr.steps.length - index))
                 if (mapped && !newTr.maybeStep(mapped).failed) {
                     maps.appendMap(mapped.getMap())
@@ -562,7 +562,7 @@ export class MergeEditor {
     findNotTrackedSteps(tr, trackedSteps) {
         /* Find steps not tracked by PM , usually steps that cause change of attrs */
         const nonTrackedSteps = []
-        tr.steps.forEach((step, index)=>{
+        tr.steps.forEach((step, index) => {
             // mark steps other than replace steps as not tracked if not tracked by changeset
             // these steps should effectively only be the node attrs change steps.
             if (!trackedSteps.includes(index) && (step instanceof ReplaceAroundStep || step instanceof AddMarkStep || step instanceof RemoveMarkStep)) {
@@ -639,7 +639,7 @@ export class MergeEditor {
                 } else {
                     // If the image was uploaded by someone else , to set the image we have to reupload it again as there is backend check to associate who can add an image with the image owner.
                     this.editor.mod.db.imageDB.reUploadImage(id, oldImageDB[id].image, oldImageDB[id].title, oldImageDB[id].copyright).then(
-                        ({id, newId})=>{
+                        ({id, newId}) => {
                             this.imageDataModified[id] = newId
                             // Update the image node if there are any re uploaded images.
                             this.mergeView1.state.doc.descendants((node, pos) => {
@@ -663,7 +663,7 @@ export class MergeEditor {
                                 }
                             })
                         },
-                        (id)=>{
+                        (id) => {
                             // In case of failure make the id as false so the failed upload image is empty for the offline user too!
                             this.mergeView1.state.doc.descendants((node, pos) => {
                                 if (node.type.name === 'figure' && node.attrs.image == id) {

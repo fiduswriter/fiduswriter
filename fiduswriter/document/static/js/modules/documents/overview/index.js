@@ -112,7 +112,7 @@ export class DocumentOverview {
         ).catch(
             error => {
                 if (error.message == "offline") {
-                    this.loaddatafromIndexedDB().then((json)=>{
+                    this.loaddatafromIndexedDB().then((json) => {
                         this.initializeView(json)
                     })
                 } else {
@@ -128,10 +128,10 @@ export class DocumentOverview {
 
     loaddatafromIndexedDB() {
         const new_json = {}
-        const new_promise = new Promise((resolve, _reject)=>{
-            this.app.indexedDB.readAllData("documents").then((response)=>{
+        const new_promise = new Promise((resolve, _reject) => {
+            this.app.indexedDB.readAllData("documents").then((response) => {
                 new_json['documents'] = response
-                this.app.indexedDB.readAllData("document_templates").then((response)=>{
+                this.app.indexedDB.readAllData("document_templates").then((response) => {
                     const dummy_dict = {}
                     for (const data in response) {
                         const pk = response[data].pk
@@ -139,9 +139,9 @@ export class DocumentOverview {
                         dummy_dict[pk] = response[data]
                     }
                     new_json['document_templates'] = dummy_dict
-                    this.app.indexedDB.readAllData("document_styles").then((response)=>{
+                    this.app.indexedDB.readAllData("document_styles").then((response) => {
                         new_json['document_styles'] = response
-                        this.app.indexedDB.readAllData("team_members").then((response)=>{
+                        this.app.indexedDB.readAllData("team_members").then((response) => {
                             new_json['team_members'] = response
                             resolve(new_json)
                         })

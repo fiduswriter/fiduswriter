@@ -12,7 +12,7 @@ export class WebSocketConnector {
         warningNotAllSent = gettext('Warning! Some data is unsaved'), // Info to show while disconnected WITH unsaved data
         infoDisconnected = gettext('Disconnected. Attempting to reconnect...'), // Info to show while disconnected WITHOUT unsaved data
         receiveData = _data => {},
-        failedAuth = ()=>{
+        failedAuth = () => {
             window.location.href = "/"
         },
     }) {

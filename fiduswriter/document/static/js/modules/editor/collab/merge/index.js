@@ -113,7 +113,7 @@ export class Merge {
             data.doc.contents
         ]})
         const rebasedTr = EditorState.create({doc: toDoc}).tr.setMeta('remote', true)
-        const maps = new Mapping([].concat(unconfirmedTr.mapping.maps.slice().reverse().map(map=>map.invert())).concat(lostTr.mapping.maps.slice()))
+        const maps = new Mapping([].concat(unconfirmedTr.mapping.maps.slice().reverse().map(map => map.invert())).concat(lostTr.mapping.maps.slice()))
 
         unconfirmedTr.steps.forEach(
             (step, index) => {
@@ -190,8 +190,8 @@ export class Merge {
                 } else {
                     // If the image was uploaded by someone else , to set the image we have to reupload it again as there is backend check to associate who can add an image with the image owner.
                     this.mod.editor.mod.db.imageDB.reUploadImage(id, oldImageDB[id].image, oldImageDB[id].title, oldImageDB[id].copyright).then(
-                        ()=>{},
-                        (id)=>{
+                        () => {},
+                        (id) => {
                             const transaction = this.mod.editor.view.state.tr
                             this.mod.editor.view.state.doc.descendants((node, pos) => {
                                 if (node.type.name === 'figure' && node.attrs.image == id) {

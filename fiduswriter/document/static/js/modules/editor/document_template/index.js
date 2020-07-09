@@ -219,7 +219,7 @@ export class ModDocumentTemplate {
                     )
                 },
                 selected: editor => editor.view.state.doc.firstChild.attrs.documentstyle === docStyle.slug,
-                disabled: _editor=> window.isOffline,
+                disabled: _editor => window.isOffline,
             }
         })
     }

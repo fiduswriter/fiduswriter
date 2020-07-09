@@ -38,7 +38,7 @@ export class faqDialog {
     open() {
         this.faqDialog.open()
         this.faqDialog.dialogEl.querySelectorAll('.faq-question').forEach(element => {
-            element.addEventListener('click', ()=>{
+            element.addEventListener('click', () => {
                 const iconEle = element.firstElementChild
                 const answerEle = element.nextElementSibling
                 if (answerEle.style.display == "") {

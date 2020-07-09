@@ -341,7 +341,7 @@ export class Editor {
                             buttons: [{
                                 text: gettext('Proceed to Login page'),
                                 classes: 'fw-dark',
-                                click: ()=>{
+                                click: () => {
                                     window.location.href = '/'
                                 }
                             }],

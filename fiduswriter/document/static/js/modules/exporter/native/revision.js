@@ -32,7 +32,7 @@ export class SaveRevision {
         ).then(
             blob => this.uploadRevision(blob)
         ).catch(
-            (error)=>{
+            (error) => {
                 addAlert('error', gettext("Revision file could not be generated."))
                 throw (error)
             }
@@ -54,7 +54,7 @@ export class SaveRevision {
             },
             () => addAlert('error', gettext('Revision could not be saved.'))
         ).catch(
-            (error)=>{
+            (error) => {
                 throw (error)
             }
         )

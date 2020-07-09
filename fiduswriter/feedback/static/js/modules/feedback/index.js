@@ -94,7 +94,7 @@ export class FeedbackTab {
                 responseEl.style.display = 'block'
             }
         ).catch(
-            (_error)=>{
+            (_error) => {
                 messageEl.value = ''
                 closeFeedbackEl.style.display = 'block'
             }

@@ -14,7 +14,7 @@ export const checkPresenceOfdiffdata = function(doc, from, to) {
     if (doc.rangeHasMark(from, to, doc.type.schema.marks.diffdata)) {
         return true
     }
-    doc.nodesBetween(from, to, (node, _pos)=>{
+    doc.nodesBetween(from, to, (node, _pos) => {
         if (node.attrs.diffdata && node.attrs.diffdata.length > 0) {
             diffAttrPresent = true
         }
@@ -103,7 +103,7 @@ export const updateMarkData = function(tr, imageDataModified) {
                 if (['bullet_list', 'ordered_list'].includes(node.type.name)) {
                     return true
                 } else if (node.isInline) {
-                    let diffMark = node.marks.find(mark=>mark.type.name == "diffdata")
+                    let diffMark = node.marks.find(mark => mark.type.name == "diffdata")
                     if (diffMark !== undefined) {
                         diffMark = diffMark.attrs
                         tr.removeMark(pos, pos + node.nodeSize, tr.doc.type.schema.marks.diffdata)

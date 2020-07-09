@@ -47,14 +47,14 @@ export class changeSet {
         invertedMapping.appendMappingInverted(tr.mapping)
 
         const insertedsteps = [], deletedsteps = [], ins = [], del = []
-        changes.changes.forEach(change=>{
-            change.inserted.forEach(inserted=>{
+        changes.changes.forEach(change => {
+            change.inserted.forEach(inserted => {
                 if (!ins.includes(inserted.data.step)) {
                     insertedsteps.push({pos: invertedMapping.map(change.fromB), data: inserted.data})
                     ins.push(inserted.data.step)
                 }
             })
-            change.deleted.forEach(deleted=>{
+            change.deleted.forEach(deleted => {
                 if (!del.includes(deleted.data.step)) {
                     del.push(deleted.data.step)
                     deletedsteps.push({from: change.fromA, to: change.toA, data: deleted.data})

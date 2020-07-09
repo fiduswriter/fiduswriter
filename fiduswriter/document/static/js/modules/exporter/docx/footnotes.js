@@ -176,7 +176,7 @@ export class DocxExporterFootnotes {
     convertFootnotes() {
         const fnContent = []
         this.footnotes.forEach(
-            footnote =>{
+            footnote => {
                 fnContent.push({
                     type: 'footnotecontainer',
                     content: footnote

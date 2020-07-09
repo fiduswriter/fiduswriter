@@ -89,11 +89,11 @@ export const addAlert = function(alertType, alertMsg) {
     const alertsWrapper = document.getElementById('alerts-wrapper')
     alertsWrapper.insertAdjacentHTML('beforeend', `<li class="alerts-${alertType} fa fa-${iconNames[alertType]}">${alertMsg}</li>`)
     const alertBox = alertsWrapper.lastElementChild
-    setTimeout(()=>{
+    setTimeout(() => {
         alertBox.classList.add('visible')
-        setTimeout(()=>{
+        setTimeout(() => {
             alertBox.classList.remove('visible')
-            setTimeout(()=>alertsWrapper.removeChild(alertBox), 2000)
+            setTimeout(() => alertsWrapper.removeChild(alertBox), 2000)
         }, 4000)
     }, 1)
 }
@@ -183,7 +183,7 @@ export const escapeText = function(text) {
  * ES6 promises are not (yet) cancelable.
  */
 
-export const cancelPromise = () => new Promise(()=>{})
+export const cancelPromise = () => new Promise(() => {})
 
 // Check if selector matches one of the ancestors of the event target.
 // Used in switch statements of document event listeners.

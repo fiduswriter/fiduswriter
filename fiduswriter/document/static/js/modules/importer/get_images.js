@@ -31,7 +31,7 @@ export class GetImages {
                     {type: this.imageEntries[this.counter].file_type}
                 )
                 this.counter++
-                this.getImageZipEntry().then(()=>{
+                this.getImageZipEntry().then(() => {
                     resolve()
                 })
             })

@@ -100,7 +100,7 @@ export class DocumentOverviewActions {
                             importDialog.close()
                         }
                     ).catch(
-                        ()=>false
+                        () => false
                     )
 
                 }

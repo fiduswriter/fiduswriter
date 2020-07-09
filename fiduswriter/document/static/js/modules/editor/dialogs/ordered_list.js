@@ -19,14 +19,19 @@ export class OrderedListStartDialog {
 
     findOrderedList(state) {
         const $head = state.selection.$head
-        for (let d = $head.depth; d > 0; d--) if ($head.node(d).type.name == "ordered_list") {
-            return {orderedList: $head.node(d), orderedListPos: $head.before(d)}}
+        for (let d = $head.depth; d > 0; d--) {
+            if ($head.node(d).type.name == "ordered_list") {
+                return {orderedList: $head.node(d), orderedListPos: $head.before(d)}
+            }
+        }
         return {orderedList: false, orderedListPos: false}
     }
 
     submitForm() {
         const {orderedList, orderedListPos} = this.findOrderedList(this.editor.currentView.state)
-        if (!orderedList) return
+        if (!orderedList) {
+            return
+        }
         const attrs = Object.assign({}, orderedList.attrs, {
             order: this.order
         })

@@ -139,7 +139,9 @@ specNodes = specNodes.update(
     content: "(table_cell | table_header)+",
     tableRole: "row",
     parseDOM: [{tag: "tr"}],
-    toDOM() { return ["tr", 0] }
+    toDOM() {
+        return ["tr", 0]
+    }
 })
 
 const spec = {

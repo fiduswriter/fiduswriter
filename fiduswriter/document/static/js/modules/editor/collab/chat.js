@@ -34,8 +34,7 @@ export class ModCollabChat {
                 window.clearInterval(changeDocumentTitle)
                 document.title = origTitle
                 this.currentlyFlashing = false
-            }
-            else {
+            } else {
                 document.title = (document.title === origTitle) ?
                     messageTitle : origTitle
             }
@@ -64,8 +63,7 @@ export class ModCollabChat {
         // If only one machine is connected and nothing has been chatted, don't show chat
         if (participants.length === 1 && !document.querySelector('#chat-container .message')) {
             document.getElementById('chat').style.display = 'none'
-        }
-        else {
+        } else {
             document.getElementById('chat').style.display = 'block'
         }
     }
@@ -95,8 +93,7 @@ export class ModCollabChat {
                         resizeButton.classList.add('fa-angle-double-up')
                         chatEl.style.top = `${chatEl.getBoundingClientRect().top}px` // Set current height to get the animation working.
                         setTimeout(() => chatEl.style.top = `${window.innerHeight - 29}px`, 0)
-                    }
-                    else {
+                    } else {
                         resizeButton.classList.remove('fa-angle-double-up')
                         resizeButton.classList.add('fa-angle-double-down')
                         // Add height teemporarily to make sliding animation.

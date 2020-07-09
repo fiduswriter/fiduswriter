@@ -140,22 +140,28 @@ export class TableResizeDialog {
     setTableLayout() {
         this.dialog.dialogEl.querySelector('#table-layout-btn label').innerHTML =
             document.getElementById(`table-layout-${this.layout}`).innerText
-        if (this.layout === "auto")
+        if (this.layout === "auto") {
             this.dialog.dialogEl.querySelector('#table-layout-btn').style.width = "105px"
-        else
+        } else {
             this.dialog.dialogEl.querySelector('#table-layout-btn').style.width = "50px"
+        }
     }
 
     findTable(state) {
         const $head = state.selection.$head
-        for (let d = $head.depth; d > 0; d--) if ($head.node(d).type.spec.tableRole == "table") {
-            return {table: $head.node(d), tablePos: $head.before(d)}}
+        for (let d = $head.depth; d > 0; d--) {
+            if ($head.node(d).type.spec.tableRole == "table") {
+                return {table: $head.node(d), tablePos: $head.before(d)}
+            }
+        }
         return {table: false}
     }
 
     submitForm() {
         const {table, tablePos} = this.findTable(this.editor.currentView.state)
-        if (!table) return
+        if (!table) {
+            return
+        }
         const attrs = Object.assign({}, table.attrs, {
             width: this.width,
             aligned: this.width === "100" ? "center" : this.aligned,

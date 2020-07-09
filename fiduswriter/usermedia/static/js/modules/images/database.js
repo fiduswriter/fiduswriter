@@ -51,8 +51,7 @@ export class ImageDB {
             error => {
                 if (error.message) {
                     addAlert('error', gettext(error.message))
-                }
-                else {
+                } else {
                     addAlert('error', gettext(error.statusText))
                 }
                 deactivateWait()

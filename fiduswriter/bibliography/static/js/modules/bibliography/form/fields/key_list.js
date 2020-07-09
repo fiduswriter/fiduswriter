@@ -64,8 +64,12 @@ export class KeyListForm {
     }
 
     get value() {
-        const formValue = this.fields.map(field => {return field.value}).filter(
-            value => {return value !== false}
+        const formValue = this.fields.map(field => {
+            return field.value
+        }).filter(
+            value => {
+                return value !== false
+            }
         )
         if (formValue.length === 0) {
             return false

@@ -21,7 +21,11 @@ const BLOCK_LABELS = {
 // from https://github.com/ProseMirror/prosemirror-tables/blob/master/src/util.js
 const findTable = function(state) {
     const $head = state.selection.$head
-    for (let d = $head.depth; d > 0; d--) if ($head.node(d).type.spec.tableRole == "table") return $head.node(d)
+    for (let d = $head.depth; d > 0; d--) {
+        if ($head.node(d).type.spec.tableRole == "table") {
+            return $head.node(d)
+        }
+    }
     return false
 }
 

@@ -129,8 +129,9 @@ class ClipboardDOMSerializer {
     removeTrackingData(domFragment) {
         domFragment.querySelectorAll('.approved-insertion, .insertion').forEach(el => el.outerHTML = el.innerHTML)
         domFragment.querySelectorAll('.offline-inserted,.offline-deleted,.online-inserted,.online-deleted').forEach(el => {
-            if (!el.getAttributeNames().includes('data-diffdata'))
+            if (!el.getAttributeNames().includes('data-diffdata')) {
                 el.outerHTML = el.innerHTML
+            }
         })
         domFragment.querySelectorAll('.deletion').forEach(el => el.parentElement.removeChild(el))
     }

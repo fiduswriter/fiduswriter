@@ -7,8 +7,9 @@ const reg_exp_docx = new RegExp("(https?:\/\/.*\.(?:docx))") // eslint-disable-l
 
 self.addEventListener('activate', _event => {
     self.caches.keys().then((names) => {
-        if (names == secondary_cache_name)
+        if (names == secondary_cache_name) {
             caches.delete(names)
+        }
     })
 })
 

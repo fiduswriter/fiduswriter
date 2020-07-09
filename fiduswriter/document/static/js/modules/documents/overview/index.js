@@ -174,7 +174,9 @@ export class DocumentOverview {
     initializeView(json) {
         const ids = new Set()
         this.documentList = json.documents.filter(doc => {
-            if (ids.has(doc.id)) {return false}
+            if (ids.has(doc.id)) {
+                return false
+            }
             ids.add(doc.id)
             return true
         })

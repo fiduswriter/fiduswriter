@@ -28,12 +28,16 @@ export class FootnoteView {
 
     selectNode() {
         this.dom.classList.add("ProseMirror-selectednode")
-        if (!this.innerView) this.open()
+        if (!this.innerView) {
+            this.open()
+        }
     }
 
     deselectNode() {
         this.dom.classList.remove("ProseMirror-selectednode")
-        if (this.innerView) this.close()
+        if (this.innerView) {
+            this.close()
+        }
     }
 
     open() {
@@ -63,7 +67,9 @@ export class FootnoteView {
             dispatchTransaction: this.dispatchInner.bind(this),
             handleDOMEvents: {
                 mousedown: () => {
-                    if (this.outerView.hasFocus()) this.innerView.focus()
+                    if (this.outerView.hasFocus()) {
+                        this.innerView.focus()
+                    }
                 }
             }
         })
@@ -119,7 +125,9 @@ export class FootnoteView {
 
     destroy() {
         this.outerView = null
-        if (this.innerView) this.close()
+        if (this.innerView) {
+            this.close()
+        }
     }
 
     stopEvent(event) {

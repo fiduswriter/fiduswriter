@@ -201,7 +201,7 @@ export class Editor {
             [orderedListMenuPlugin, () => ({editor: this})],
             [figurePlugin, () => ({editor: this})],
             [tocRenderPlugin, () => ({editor: this})],
-            [searchPlugin],
+            [searchPlugin]
         ]
     }
 
@@ -226,8 +226,7 @@ export class Editor {
             'bibliography.css',
             'dot_menu.css',
             'cropper.min.css',
-            'inline_tools.css',
-            'merge.css'
+            'inline_tools.css'
         ])
         new ModDocumentTemplate(this)
         const initPromises = [

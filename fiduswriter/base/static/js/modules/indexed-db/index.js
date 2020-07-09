@@ -19,8 +19,9 @@ export class indexedDB {
             const database = event.target.result
             this.app.db_config['version'] = database.version
             database.close()
-            if (this.app.db_config.version < 2)
+            if (this.app.db_config.version < 2) {
                 this.createDBSchema()
+            }
         }
     }
 

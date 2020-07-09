@@ -48,8 +48,7 @@ import {
 } from "../../track"
 import {
     jumpHiddenNodesPlugin,
-    searchPlugin,
-//    clipboardPlugin
+    searchPlugin
 } from "../../state_plugins"
 import {
     buildEditorKeymap
@@ -61,8 +60,9 @@ import {
     FootnoteView
 } from "./footnotes"
 import {
-    diffPlugin
-} from "./state_plugin"
+    diffPlugin,
+    clipboardPlugin
+} from "./state_plugins"
 import {
     changeSet
 } from "./changeset"
@@ -107,7 +107,7 @@ export class MergeEditor {
             // [tableEditing],
             [jumpHiddenNodesPlugin],
             [searchPlugin],
-            //[clipboardPlugin, () => ({editor: this.editor, viewType: 'main'})]
+            [clipboardPlugin, () => ({editor: this.editor})]
         ]
     }
 

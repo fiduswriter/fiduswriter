@@ -2,8 +2,8 @@ import {Plugin, PluginKey, TextSelection, NodeSelection} from "prosemirror-state
 import {Decoration, DecorationSet, __serializeForClipboard} from "prosemirror-view"
 import {Mapping, Step} from "prosemirror-transform"
 
-import {noSpaceTmp, showSystemMessage} from "../../../common"
-import {removeDiffdata, dispatchRemoveDiffdata} from "./tools"
+import {noSpaceTmp, showSystemMessage, addAlert} from "../../../../common"
+import {removeDiffdata, dispatchRemoveDiffdata} from "../tools"
 
 function getdiffdata(state) {
     let markFound = state.selection.$head.marks().find(mark =>
@@ -112,7 +112,7 @@ function copyChange(view, from, to) {
     try {
         document.execCommand("copy") // Security exception may be thrown by some browsers.
         document.body.removeChild(dom)
-        showSystemMessage(gettext('Change copied to clipboard'))
+        addAlert('info', gettext('Change copied to clipboard'))
     } catch (ex) {
         showSystemMessage(gettext(
             'Copy to clipboard failed. Please copy manually.'
@@ -125,44 +125,44 @@ function acceptChanges(merge, mark, mergeView, originalView, tr) {
     /* This is used to accept a change either from the offline/online version or
     incase of deletion from the middle editor */
     //try {
-        const mergedDocMap = new Mapping()
-        mergedDocMap.appendMapping(merge.mergedDocMap)
-        let insertionTr = mergeView.state.tr
-        const from = mark.attrs.from
-        const to = mark.attrs.to
-        const steps = JSON.parse(mark.attrs.steps)
-        const stepMaps = tr.mapping.maps.slice().reverse().map(map => map.invert())
-        const rebasedMapping = new Mapping(stepMaps)
-        rebasedMapping.appendMapping(mergedDocMap)
-        for (const stepIndex of steps) {
-            const maps = rebasedMapping.slice(tr.steps.length - stepIndex)
-            const mappedStep = Step.fromJSON( // Switch from main editor schema to merge editor schema
-                insertionTr.doc.type.schema,
-                tr.steps[stepIndex].map(maps).toJSON()
-            )
-            if (mappedStep && !insertionTr.maybeStep(mappedStep).failed) {
-                mergedDocMap.appendMap(mappedStep.getMap())
-                rebasedMapping.appendMap(mappedStep.getMap())
-                rebasedMapping.setMirror(tr.steps.length - stepIndex - 1, (tr.steps.length + mergedDocMap.maps.length - 1))
-            }
+    const mergedDocMap = new Mapping()
+    mergedDocMap.appendMapping(merge.mergedDocMap)
+    let insertionTr = mergeView.state.tr
+    const from = mark.attrs.from
+    const to = mark.attrs.to
+    const steps = JSON.parse(mark.attrs.steps)
+    const stepMaps = tr.mapping.maps.slice().reverse().map(map => map.invert())
+    const rebasedMapping = new Mapping(stepMaps)
+    rebasedMapping.appendMapping(mergedDocMap)
+    for (const stepIndex of steps) {
+        const maps = rebasedMapping.slice(tr.steps.length - stepIndex)
+        const mappedStep = Step.fromJSON( // Switch from main editor schema to merge editor schema
+            insertionTr.doc.type.schema,
+            tr.steps[stepIndex].map(maps).toJSON()
+        )
+        if (mappedStep && !insertionTr.maybeStep(mappedStep).failed) {
+            mergedDocMap.appendMap(mappedStep.getMap())
+            rebasedMapping.appendMap(mappedStep.getMap())
+            rebasedMapping.setMirror(tr.steps.length - stepIndex - 1, (tr.steps.length + mergedDocMap.maps.length - 1))
         }
-        // Make sure that all the content steps are present in the new transaction
-        if (insertionTr.steps.length < steps.length) {
-            showSystemMessage(gettext("The change could not be applied automatically. Please consider using the copy option to copy the changes."))
+    }
+    // Make sure that all the content steps are present in the new transaction
+    if (insertionTr.steps.length < steps.length) {
+        showSystemMessage(gettext("The change could not be applied automatically. Please consider using the copy option to copy the changes."))
+    } else {
+        // Remove the diff mark. If we're looking at view2 it means we're deleting content for which we dont have to remove the marks seperately we can put both of the steps into a single transaction
+        if (originalView === mergeView) {
+            const markRemovalTr = removeDiffdata(originalView.state.tr, from, to)
+            insertionTr.steps.forEach(step => markRemovalTr.step(step))
+            insertionTr = markRemovalTr
         } else {
-            // Remove the diff mark. If we're looking at view2 it means we're deleting content for which we dont have to remove the marks seperately we can put both of the steps into a single transaction
-            if (originalView === mergeView) {
-                const markRemovalTr = removeDiffdata(originalView.state.tr, from, to)
-                insertionTr.steps.forEach(step => markRemovalTr.step(step))
-                insertionTr = markRemovalTr
-            } else {
-                dispatchRemoveDiffdata(originalView, from, to)
-            }
-            merge.mergedDocMap = mergedDocMap
-            insertionTr.setMeta('mapAppended', true)
-            insertionTr.setMeta('notrack', true)
-            mergeView.dispatch(insertionTr)
+            dispatchRemoveDiffdata(originalView, from, to)
         }
+        merge.mergedDocMap = mergedDocMap
+        insertionTr.setMeta('mapAppended', true)
+        insertionTr.setMeta('notrack', true)
+        mergeView.dispatch(insertionTr)
+    }
     //} catch (exc) {
     //    showSystemMessage(gettext("The change could not be applied automatically. Please consider using the copy function to copy the changes."))
     //}

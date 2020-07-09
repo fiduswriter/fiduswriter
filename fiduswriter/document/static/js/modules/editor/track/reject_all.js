@@ -30,7 +30,7 @@ export const rejectAll = function(view, from = 0, to = false) {
             map.appendMap(delStep.getMap())
             deletedNode = true
         } else if (node.attrs.track?.find(track => track.type === 'deletion')) {
-            const track = node.attrs.track.filter(track=> track.type !== 'deletion')
+            const track = node.attrs.track.filter(track => track.type !== 'deletion')
             tr.setNodeMarkup(map.map(pos), null, Object.assign({}, node.attrs, {track}), node.marks)
         } else if (node.marks?.find(mark => mark.type.name === 'deletion')) {
             tr.removeMark(

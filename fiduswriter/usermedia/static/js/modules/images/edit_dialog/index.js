@@ -79,11 +79,11 @@ export class ImageEditDialog {
         this.rotation = 0
         this.cropped = false
 
-        selectButton.addEventListener('click', () =>{
+        selectButton.addEventListener('click', () => {
             mediaInputSelector.click()
         })
 
-        mediaInputSelector.addEventListener('change', () =>{
+        mediaInputSelector.addEventListener('change', () => {
             this.mediaInput = mediaInputSelector.files[0]
             const fr = new window.FileReader()
             fr.onload = () => {

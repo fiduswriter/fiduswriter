@@ -13,7 +13,7 @@ export class DatatableBulk {
 
     init(table) {
         this.table = table
-        whenReady().then(()=>this.bindEvents())
+        whenReady().then(() => this.bindEvents())
     }
 
 

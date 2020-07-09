@@ -37,7 +37,7 @@ module.exports = { // eslint-disable-line no-undef
         "array-element-newline": "off",
         "arrow-body-style": "off",
         "arrow-parens": "off",
-        "arrow-spacing": "off",
+        "arrow-spacing": "error",
         "block-scoped-var": "error",
         "block-spacing": "off",
         "brace-style": 2,

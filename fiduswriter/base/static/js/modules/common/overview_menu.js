@@ -13,7 +13,7 @@ export class OverviewMenuView {
     }
 
     init() {
-        whenReady().then(()=>this.bindEvents())
+        whenReady().then(() => this.bindEvents())
     }
 
     bindEvents() {

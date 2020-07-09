@@ -594,7 +594,7 @@ export class LatexExporterConvert {
     // So here we need to make sure that the same key is not used twice in one
     // document.
     createUniqueCitationKey(suggestedKey) {
-        const usedKeys = Object.keys(this.usedBibDB).map(key=>{
+        const usedKeys = Object.keys(this.usedBibDB).map(key => {
             return this.usedBibDB[key].entry_key
         })
         if (usedKeys.includes(suggestedKey)) {

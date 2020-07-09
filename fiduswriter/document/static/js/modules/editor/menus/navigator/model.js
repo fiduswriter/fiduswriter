@@ -1,4 +1,4 @@
-export const navigatorFilterModel = ()=> ({
+export const navigatorFilterModel = () => ({
     content: [
         {
             title: gettext('Heading 1'),

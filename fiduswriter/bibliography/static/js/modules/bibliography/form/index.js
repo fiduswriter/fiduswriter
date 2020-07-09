@@ -231,7 +231,7 @@ export class BibEntryForm {
             entry_key: this.currentValues.entry_key, // is never updated.
             fields: {}
         }
-        Object.keys(this.fields).forEach(fieldName=>{
+        Object.keys(this.fields).forEach(fieldName => {
             const fieldValue = this.fields[fieldName].value
             if (fieldValue !== false) {
                 returnObj['fields'][fieldName] = fieldValue
@@ -261,7 +261,7 @@ export class BibEntryForm {
         if (!this.currentValues.bib_type) {
             return false
         }
-        Object.keys(this.fields).forEach(fieldName=>{
+        Object.keys(this.fields).forEach(fieldName => {
             if (this.fields[fieldName].check() !== true) {
                 passed = false
             }

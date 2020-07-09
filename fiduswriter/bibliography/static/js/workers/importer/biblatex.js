@@ -58,7 +58,7 @@ export class BibLatexImportWorker {
             const fromNumber = this.currentChunkNumber * 50
             const toNumber = fromNumber + 50
             const currentChunk = {}
-            this.bibKeys.slice(fromNumber, toNumber).forEach((bibKey)=>{
+            this.bibKeys.slice(fromNumber, toNumber).forEach((bibKey) => {
                 currentChunk[bibKey] = this.tmpDB[bibKey]
             })
             this.sendMessage({type: 'data', data: currentChunk})

@@ -206,7 +206,7 @@ export class WebSocketConnector {
 
     setRecentlySentTimer(timer) {
         this.recentlySent = true
-        window.setTimeout(()=> {
+        window.setTimeout(() => {
             this.recentlySent = false
             const oldMessages = this.messagesToSend
             this.messagesToSend = []

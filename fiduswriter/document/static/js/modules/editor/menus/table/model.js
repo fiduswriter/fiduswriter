@@ -5,13 +5,17 @@ import {TableResizeDialog} from "../../dialogs"
 // from https://github.com/ProseMirror/prosemirror-tables/blob/master/src/util.js
 const findTable = function(state) {
     const $head = state.selection.$head
-    for (let d = $head.depth; d > 0; d--) if ($head.node(d).type.spec.tableRole == "table") return $head.node(d)
+    for (let d = $head.depth; d > 0; d--) {
+        if ($head.node(d).type.spec.tableRole == "table") {
+            return $head.node(d)
+        }
+    }
     return false
 }
 
 const tableAddedFromTemplate = function(state) {
     const $head = state.selection.$head
-    for (let d = $head.depth; d > 0; d--)
+    for (let d = $head.depth; d > 0; d--) {
         if ($head.node(d).type.spec.tableRole == "table") {
             if ($head.node(d - 1).type.name === "table_part") {
                 return true
@@ -19,6 +23,7 @@ const tableAddedFromTemplate = function(state) {
                 return false
             }
         }
+    }
     return true
 }
 

@@ -17,7 +17,8 @@ export class DocxExporterRels {
 
     init() {
         return this.initCt().then(() => {
-            return this.exporter.xml.getXml(this.filePath, DEFAULT_XML)}).then(xml => {
+            return this.exporter.xml.getXml(this.filePath, DEFAULT_XML)
+        }).then(xml => {
             this.xml = xml
             this.findMaxRelId()
         })

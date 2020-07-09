@@ -79,10 +79,11 @@ export class ContentMenu {
         )
         this.backdropEl = document.body.lastElementChild
         this.dialogEl = this.backdropEl.previousElementSibling
-        if (this.menuPos?.X && this.menuPos?.Y)
+        if (this.menuPos?.X && this.menuPos?.Y) {
             this.positionDialog()
-        else
+        } else {
             this.centerDialog()
+        }
         this.bind()
     }
 

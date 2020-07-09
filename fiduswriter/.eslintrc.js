@@ -40,7 +40,7 @@ module.exports = { // eslint-disable-line no-undef
         "arrow-spacing": "off",
         "block-scoped-var": "error",
         "block-spacing": "off",
-        "brace-style": "off",
+        "brace-style": 2,
         "callback-return": "error",
         "camelcase": "off",
         "capitalized-comments": "off",
@@ -58,7 +58,7 @@ module.exports = { // eslint-disable-line no-undef
         ],
         "consistent-return": "off",
         "consistent-this": "error",
-        "curly": "off",
+        "curly": "error",
         "default-case": "off",
         "dot-location": [
             "error",

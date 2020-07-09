@@ -28,7 +28,11 @@ const doc = {
 // from https://github.com/ProseMirror/prosemirror-tables/blob/master/src/util.js
 const findTable = function(state) {
     const $head = state.selection.$head
-    for (let d = $head.depth; d > 0; d--) if ($head.node(d).type.spec.tableRole == "table") return $head.node(d)
+    for (let d = $head.depth; d > 0; d--) {
+        if ($head.node(d).type.spec.tableRole == "table") {
+            return $head.node(d)
+        }
+    }
     return false
 }
 
@@ -43,7 +47,9 @@ export const helpSchema = new Schema({
         parseDOM: [{tag: "a[href]", getAttrs(dom) {
             return {href: dom.getAttribute("href"), title: dom.getAttribute("title")}
         }}],
-        toDOM(node) { return ["a", Object.assign({target: '_blank'}, node.attrs), 0] }
+        toDOM(node) {
+            return ["a", Object.assign({target: '_blank'}, node.attrs), 0]
+        }
     })
 })
 
@@ -105,7 +111,9 @@ export const tablePartSchema = new Schema({
         content: "(table_cell | table_header)+",
         tableRole: "row",
         parseDOM: [{tag: "tr"}],
-        toDOM() { return ["tr", 0] }
+        toDOM() {
+            return ["tr", 0]
+        }
     }),
     marks: docSchema.spec.marks
 })

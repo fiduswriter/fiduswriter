@@ -107,16 +107,13 @@ export class HeaderbarView {
                     //simple case
                     this.parentChain = [menuItem]
                     this.closeOtherMenu(menu, menuItem)
-                }
-                else {
+                } else {
                     let flagCloseAllMenu = true
                     const isMenuItemInParentChain = this.parentChain[this.parentChain.length - 1].content.find(menu => menu.id === menuItem.id)
                     if (isMenuItemInParentChain) {
                         //Do not close all open menus
                         this.parentChain.push(menuItem)
-                    }
-
-                    else if (!isMenuItemInParentChain) {
+                    } else if (!isMenuItemInParentChain) {
 
                         for (let index = this.parentChain.length - 2; index >= 0; index--) {
 

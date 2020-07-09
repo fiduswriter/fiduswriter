@@ -22,8 +22,9 @@ class MenuView {
             e.preventDefault()
             view.focus()
             items.forEach(({command, dom}) => {
-                if (dom.contains(e.target))
+                if (dom.contains(e.target)) {
                     command(view.state, view.dispatch, view)
+                }
             })
         })
 
@@ -49,7 +50,9 @@ class MenuView {
         })
     }
 
-    destroy() { this.dom.remove() }
+    destroy() {
+        this.dom.remove()
+    }
 }
 
 export const InlineTools = (tools) => {

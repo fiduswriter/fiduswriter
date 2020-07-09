@@ -27,8 +27,7 @@ import {
     comment,
     annotation_tag,
     cross_reference,
-    link,
-    DiffMark
+    link
 } from "../common"
 import {
     contributor,
@@ -155,8 +154,7 @@ const spec = {
         anchor,
         deletion,
         insertion,
-        format_change,
-        DiffMark
+        format_change
     })
 }
 

@@ -40,7 +40,7 @@ export class FootnoteView {
         // Append a tooltip to the outer node
         const tooltip = this.dom.appendChild(document.createElement("div"))
         tooltip.className = "footnote-tooltip"
-        const diffMark = this.node.marks.find(mark => mark.type.name === 'DiffMark')
+        const diffMark = this.node.marks.find(mark => mark.type.name === 'diffdata')
         if (diffMark === undefined) {
             tooltip.classList.add('render-arrow')
         } else {

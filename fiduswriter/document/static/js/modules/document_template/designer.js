@@ -124,7 +124,6 @@ export class DocumentTemplateDesigner {
         }
 
 
-
         this.value = {
             type: 'article',
             content: [{type: 'title'}].concat(

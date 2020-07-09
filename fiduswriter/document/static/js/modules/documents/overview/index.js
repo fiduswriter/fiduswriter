@@ -288,8 +288,6 @@ export class DocumentOverview {
         this.dtBulk.update()
 
 
-
-
     }
 
     getSelected() {

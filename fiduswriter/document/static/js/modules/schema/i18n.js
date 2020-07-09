@@ -212,7 +212,6 @@ const PHOTO = {
 }
 
 
-
 const NONE = {
     'af-ZA': 'Geen',
     'sq-AL': 'Asnje',

@@ -151,7 +151,7 @@ module.exports = { // eslint-disable-line no-undef
         "no-multi-assign": "off",
         "no-multi-spaces": "off",
         "no-multi-str": "off",
-        "no-multiple-empty-lines": "off",
+        "no-multiple-empty-lines": "error",
         "no-native-reassign": "error",
         "no-negated-condition": "off",
         "no-negated-in-lhs": "error",

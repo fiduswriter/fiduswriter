@@ -43,7 +43,6 @@ export class BibliographyDBServerConnector {
     }
 
 
-
     saveBibEntries(tmpDB, isNew) {
         // Fields field need to be stringified for saving in database.
         // dbObject is a clone of tmpDB with a stringified fields-field, so

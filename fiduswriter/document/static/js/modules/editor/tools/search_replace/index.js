@@ -142,7 +142,6 @@ export class SearchReplaceDialog {
         }
 
 
-
         this.dialog = new Dialog({
             title: this.canWrite ? gettext('Search and replace') : gettext('Search'),
             body: searchDialogTemplate({canWrite: this.canWrite}),

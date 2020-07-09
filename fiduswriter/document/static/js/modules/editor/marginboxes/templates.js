@@ -397,7 +397,6 @@ export const marginboxFilterTemplate = ({marginBoxes, filterOptions, docInfo}) =
 }
 
 
-
 /** A template to display all the margin boxes (comments, deletion/insertion notifications) */
 export const marginBoxesTemplate = ({
     marginBoxes,

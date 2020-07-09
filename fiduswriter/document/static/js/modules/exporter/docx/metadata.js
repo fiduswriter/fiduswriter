@@ -106,7 +106,6 @@ export class DocxExporterMetadata {
         }
 
 
-
         // time
         const date = new Date()
         const dateString = date.toISOString().split('.')[0] + 'Z'

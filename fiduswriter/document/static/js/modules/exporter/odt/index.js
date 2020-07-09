@@ -39,7 +39,6 @@ export class OdtExporter {
     }
 
 
-
     init() {
         this.docContents = fixTables(removeHidden(this.doc.contents))
         this.docTitle = textContent(this.docContents.content[0])

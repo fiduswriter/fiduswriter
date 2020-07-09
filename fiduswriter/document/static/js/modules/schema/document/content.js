@@ -73,7 +73,6 @@ export const tag = {
 }
 
 
-
 export const footnote = {
     inline: true,
     group: "inline",

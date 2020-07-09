@@ -176,7 +176,6 @@ export class HeaderbarView {
     }
 
 
-
     closeAllMenu(menu) {
         menu.content.forEach(menuItem => {
             if (menuItem.type === 'menu' && menuItem.open) {

@@ -104,9 +104,6 @@ export class App {
         this.openOfflinePage = () => new OfflinePage(this.config)
         this.openSetupPage = () => new SetupPage(this.config)
         this.open404Page = () => new Page404(this.config)
-
-        // Link window.isOffline => this.isOffline()
-        Object.defineProperty(window, 'isOffline', {get: () => this.isOffline()})
     }
 
     isOffline() {

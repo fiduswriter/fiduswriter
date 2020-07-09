@@ -55,8 +55,10 @@ export class ContactsOverview {
     }
 
     getList() {
-
-        postJson('/api/user/team/list/').then(
+        if (this.app.isOffline()) {
+            return this.showCached()
+        }
+        return postJson('/api/user/team/list/').then(
             ({json}) => {
                 // Update data in the indexed DB
                 this.app.indexedDB.clearData("contacts_list")
@@ -65,17 +67,21 @@ export class ContactsOverview {
             }
         ).catch(
             error => {
-                if (error.message == "offline") {
-                    addAlert('info', gettext('You are viewing a cached version of the page.'))
-                    this.app.indexedDB.readAllData("contacts_list").then((response) => {
-                        this.dom.querySelector('#team-table tbody').innerHTML += teammemberTemplate({members: response})
-                    })
+                if (this.app.isOffline()) {
+                    return this.showCached()
                 } else {
                     addAlert('error', gettext('Could not obtain contacts list'))
                     throw (error)
                 }
             }
         )
+    }
+
+    showCached() {
+        addAlert('info', gettext('You are viewing a cached version of the page.'))
+        return this.app.indexedDB.readAllData("contacts_list").then((response) => {
+            this.dom.querySelector('#team-table tbody').innerHTML += teammemberTemplate({members: response})
+        })
     }
 
     bind() {

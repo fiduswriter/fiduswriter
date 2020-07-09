@@ -1,5 +1,3 @@
-import {addAlert} from './basic'
-
 /** Get cookie to set as part of the request header of all AJAX requests to the server.
  * @param name The name of the token to look for in the cookie.
  */
@@ -108,19 +106,11 @@ export const postBare = function(url, params = {}, csrfToken = false) {
 }
 
 export const post = function(url, params = {}, csrfToken = false) {
-    // If the base ws of the app is disconnected we assume that user is offline.
-    // Moreover if the ws readystate is not 0 we consider to check the connected status as 0 means ,
-    // websocket is trying to establish a connection.
-    if (window.isOffline) {
-        addAlert('error', gettext("You are offline now. Please try again after going online"))
-        return Promise.reject(new Error('offline'))
-    } else {
-        return postBare(url, params, csrfToken).then(
-            removeDjangoMessages
-        ).then(
-            handleFetchErrors
-        )
-    }
+    return postBare(url, params, csrfToken).then(
+        removeDjangoMessages
+    ).then(
+        handleFetchErrors
+    )
 }
 
 // post and then return json and status

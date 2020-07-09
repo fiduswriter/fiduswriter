@@ -38,7 +38,9 @@ export class DocumentOverview {
             this.dtBulkModel = bulkMenuModel()
             this.activateFidusPlugins()
             this.bind()
-            this.getDocumentListData()
+            return this.getDocumentListData().then(
+                () => deactivateWait()
+            )
         })
     }
 
@@ -102,6 +104,9 @@ export class DocumentOverview {
     }
 
     getDocumentListData() {
+        if (this.app.isOffline()) {
+            return this.showCached()
+        }
         return postJson(
             '/api/document/documentlist/'
         ).then(
@@ -111,19 +116,19 @@ export class DocumentOverview {
             }
         ).catch(
             error => {
-                if (error.message == "offline") {
-                    this.loaddatafromIndexedDB().then((json) => {
-                        this.initializeView(json)
-                    })
+                if (this.app.isOffline()) {
+                    return this.showCached()
                 } else {
                     addAlert('error', gettext('Cannot load data of documents.'))
                     throw (error)
                 }
             }
-        ).then(
-            () => deactivateWait()
         )
+    }
 
+    showCached() {
+        addAlert('info', gettext('You are viewing a cached version of the page.'))
+        return this.loaddatafromIndexedDB().then((json) => this.initializeView(json))
     }
 
     loaddatafromIndexedDB() {

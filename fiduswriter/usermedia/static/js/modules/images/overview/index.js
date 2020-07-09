@@ -82,7 +82,10 @@ export class ImageOverview {
     //delete image
     deleteImage(ids) {
         ids = ids.map(id => parseInt(id))
-
+        if (this.app.isOffline()) {
+            addAlert('error', gettext('You are currently offline. Please try again when you are back online.'))
+            return
+        }
         activateWait()
         post(
             '/api/usermedia/delete/',
@@ -90,10 +93,12 @@ export class ImageOverview {
         ).catch(
             error => {
                 addAlert('error', gettext('The image(s) could not be deleted'))
-                if (error.message === "offline") {
-                    deactivateWait()
+                deactivateWait()
+                if (this.app.isOffline()) {
+                    addAlert('error', gettext('You are currently offline. Please try again when you are back online.'))
+                } else {
+                    throw (error)
                 }
-                throw (error)
             }
         ).then(
             () => {

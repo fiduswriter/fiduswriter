@@ -414,9 +414,6 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         # Change the websocket history length back to its original value
         WebSocket.history_length = 1000
 
-        import time
-        time.sleep(10000)
-
 
 class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
     """

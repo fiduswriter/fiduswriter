@@ -43,7 +43,9 @@ export const menuModel = () => ({
             action: overview => {
                 import("../edit_dialog").then(({ImageEditDialog}) => {
                     const imageUpload = new ImageEditDialog(
-                        overview.app.imageDB
+                        overview.app.imageDB,
+                        false,
+                        overview
                     )
                     imageUpload.init().then(
                         imageId => {

@@ -271,7 +271,7 @@ export class ImageOverview {
             case findTarget(event, '.edit-image', el): {
                 const imageId = el.target.dataset.id
                 import("../edit_dialog").then(({ImageEditDialog}) => {
-                    const dialog = new ImageEditDialog(this.app.imageDB, imageId)
+                    const dialog = new ImageEditDialog(this.app.imageDB, imageId, this)
                     dialog.init().then(
                         () => {
                             this.updateTable([imageId])

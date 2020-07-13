@@ -35,7 +35,7 @@ export class SaveRevision {
         ).catch(
             (error) => {
                 addAlert('error', gettext("Revision file could not be generated."))
-                if(this.app.isOffline()) {
+                if (this.app.isOffline()) {
                     addAlert('info', gettext('You are currently offline. Please try again when you are back online.'))
                 } else {
                     throw (error)
@@ -59,7 +59,7 @@ export class SaveRevision {
             },
             () => {
                 addAlert('error', gettext('Revision could not be saved.'))
-                if(this.app.isOffline()) {
+                if (this.app.isOffline()) {
                     addAlert('info', gettext('You are currently offline. Please try again when you are back online.'))
                 }
             }

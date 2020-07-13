@@ -190,7 +190,7 @@ export class BibliographyOverview {
      * @function editCategoriesDialog
      */
     editCategoriesDialog() {
-        if(this.app.isOffline()) {
+        if (this.app.isOffline()) {
             addAlert('info', gettext('You are currently offline. Please try again when you are back online.'))
             return
         }
@@ -209,7 +209,7 @@ export class BibliographyOverview {
                             }
                         }
                     )
-                    if(this.app.isOffline()) {
+                    if (this.app.isOffline()) {
                         addAlert('info', gettext('You are currently offline. Please try again when you are back online.'))
                     } else {
                         this.saveCategories(cats)

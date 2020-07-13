@@ -16,7 +16,7 @@ span[data-diff='online-inserted'] {
 span.offline-deleted,
 span.online-deleted {
     text-decoration: line-through;
-    text-decoration-color:red;
+    text-decoration-color: red;
     background: #efc8c8;
 }
 

@@ -28,18 +28,18 @@ export class faqDialog {
         ensureCSS('faq_dialog.css')
         const escapedQuestions = []
 
-        questions.forEach(q=>{
+        questions.forEach(q => {
             const question = escapeText(q[0])
             let answer
             q[1] = escapeText(q[1])
-            if(q[q.length-1].hasImage){
-                answer = interpolate(...q.slice(1,q.length),true)
+            if (q[q.length - 1].hasImage) {
+                answer = interpolate(...q.slice(1, q.length), true)
             } else {
                 answer = q[1]
             }
-            escapedQuestions.push([question,answer])
+            escapedQuestions.push([question, answer])
         })
-        
+
         this.faqDialog = new Dialog({
             title: title,
             body: faqTemplate({escapedQuestions}),

@@ -43,7 +43,7 @@ export class BibEntryForm {
     }
 
     init() {
-        if (this.app && this.app.isOffline()) { 
+        if (this.app && this.app.isOffline()) {
             // Diable the editing of main user bibliography , since Document bibliography is stored in Editor/Document.
             addAlert('info', gettext('You are currently offline. Please try again when you are back online.'))
             return Promise.resolve()

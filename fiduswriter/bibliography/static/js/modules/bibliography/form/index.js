@@ -34,14 +34,19 @@ const FIELD_FORMS = {
 }
 
 export class BibEntryForm {
-    constructor(bibDB, itemId = false) {
+    constructor(bibDB, app, itemId = false) {
         this.bibDB = bibDB
         this.itemId = itemId
+        this.app = app
         this.fields = {}
         this.currentValues = {}
     }
 
     init() {
+        if (this.app.isOffline()) {
+            addAlert('info', gettext('You are currently offline. Please try again when you are back online.'))
+            return Promise.resolve()
+        }
         if (this.itemId !== false) {
             this.dialogHeader = gettext('Edit Source')
             const bibEntry = this.bibDB.db[this.itemId]

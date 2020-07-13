@@ -136,10 +136,13 @@ function acceptChanges(merge, mark, mergeView, originalView, tr) {
     rebasedMapping.appendMapping(mergedDocMap)
     for (const stepIndex of steps) {
         const maps = rebasedMapping.slice(tr.steps.length - stepIndex)
-        const mappedStep = Step.fromJSON( // Switch from main editor schema to merge editor schema
-            insertionTr.doc.type.schema,
-            tr.steps[stepIndex].map(maps).toJSON()
-        )
+        const mappedStep = tr.steps[stepIndex].map(maps)
+        if (mappedStep) {
+            mappedStep = Step.fromJSON( // Switch from main editor schema to merge editor schema
+                insertionTr.doc.type.schema,
+                mappedStep.toJSON()
+            )
+        }
         if (mappedStep && !insertionTr.maybeStep(mappedStep).failed) {
             mergedDocMap.appendMap(mappedStep.getMap())
             rebasedMapping.appendMap(mappedStep.getMap())

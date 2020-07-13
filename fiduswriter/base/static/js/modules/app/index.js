@@ -175,7 +175,7 @@ export class App {
                 () => this.bind()
             )
         }
-        this.bibDB = new BibliographyDB()
+        this.bibDB = new BibliographyDB(this)
         this.imageDB = new ImageDB()
         this.csl = new CSL()
         this.connectWs()

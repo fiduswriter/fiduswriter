@@ -72,7 +72,7 @@ export class ModCitations {
                     () => import("../../bibliography/form")
                 ).then(
                     ({BibEntryForm}) => {
-                        const form = new BibEntryForm(this.editor.mod.db.bibDB, eID)
+                        const form = new BibEntryForm(this.editor.mod.db.bibDB, this.editor.app, eID)
                         form.init()
                     }
                 )

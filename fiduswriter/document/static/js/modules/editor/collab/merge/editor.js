@@ -109,6 +109,10 @@ export class MergeEditor {
             [searchPlugin],
             [clipboardPlugin, () => ({editor: this.editor})]
         ]
+
+        // assign image DB & BibDB to be used in document schema.
+        this.schema.cached.bibDB = this.editor.mod.db.bibDB
+        this.schema.cached.imageDB = this.editor.mod.db.imageDB
     }
 
     init() {
@@ -390,6 +394,7 @@ export class MergeEditor {
             }
         })
         let editorView
+        const mainEditor = this.editor
         if (elementId == "editor-diff") {
             editorView = new EditorView(document.getElementById(elementId), {
                 state: EditorState.create({
@@ -422,7 +427,7 @@ export class MergeEditor {
                 },
                 nodeViews: {
                     footnote(node, view, getPos) {
-                        return new FootnoteView(node, view, getPos, this.editor)
+                        return new FootnoteView(node, view, getPos, mainEditor)
                     }
                 }
             })
@@ -442,7 +447,7 @@ export class MergeEditor {
                 },
                 nodeViews: {
                     footnote(node, view, getPos) {
-                        return new FootnoteView(node, view, getPos, this.editor)
+                        return new FootnoteView(node, view, getPos, mainEditor)
                     }
                 }
             })

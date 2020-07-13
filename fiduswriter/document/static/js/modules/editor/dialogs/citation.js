@@ -134,7 +134,7 @@ export class CitationDialog {
 
     registerNewSource() {
         import("../../bibliography/form").then(({BibEntryForm}) => {
-            const form = new BibEntryForm(this.editor.mod.db.bibDB)
+            const form = new BibEntryForm(this.editor.mod.db.bibDB, this.editor.app)
             form.init().then(
                 idTranslations => {
                     const ids = idTranslations.map(idTrans => idTrans[1])

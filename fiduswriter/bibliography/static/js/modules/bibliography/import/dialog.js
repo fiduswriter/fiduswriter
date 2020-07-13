@@ -31,6 +31,11 @@ export class BibLatexFileImportDialog {
                     if (10485760 < bibFile.size) {
                         return false
                     }
+                    if(this.app.isOffline()) {
+                        addAlert('info', gettext('You are currently offline. Please try again when you are back online.'))
+                        dialog.close()
+                        return false
+                    }
                     activateWait()
                     const reader = new window.FileReader()
                     reader.onload = event => {

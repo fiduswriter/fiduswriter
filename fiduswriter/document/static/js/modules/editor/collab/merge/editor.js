@@ -190,8 +190,8 @@ export class MergeEditor {
             id: 'editor-merge-view',
             title: gettext("Merging Offline Document"),
             body: `<div style="display:flex"><div class="offline-heading">${gettext("Offline Document")}</div><div class="merged-heading">${gettext("Merged Document")}</div> <div class="online-heading">${gettext("Online Document")}</div></div><div class= "user-contents" style="display:flex;"><div id="editor-diff-1" style="float:left;padding:15px;"></div><div id="editor-diff" class="merged-view" style="padding:15px;"></div><div id="editor-diff-2" style="float:right;padding:15px;"></div></div>`,
-            height: 600,
-            width: window.innerwidth,
+            height: window.innerHeight-150,
+            width: window.innerwidth-150,
             canClose: false,
             help: () => {
                 const helpDialog = new faqDialog({

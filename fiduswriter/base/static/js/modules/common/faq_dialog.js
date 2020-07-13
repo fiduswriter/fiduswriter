@@ -9,14 +9,14 @@ import {
 } from "./network"
 
 
-const faqTemplate = ({questions}) =>
+const faqTemplate = ({escapedQuestions}) =>
     `<div class="faq">
     <ol class="faq-list">
         ${
-    questions.map(question => `<li class="faq-item">
+    escapedQuestions.map(question => `<li class="faq-item">
                 <div>
-                    <div class="faq-question fw-button fw-light"><i class="fas fa-plus-circle"></i>${escapeText(question[0])}</div>
-                    <div class="faq-answer" style="display: none;">${escapeText(question[1])}</div>
+                    <div class="faq-question fw-button fw-light"><i class="fas fa-plus-circle"></i>${question[0]}</div>
+                    <div class="faq-answer" style="display: none;">${question[1]}</div>
                 </div>
             </li>`).join('')
 }
@@ -26,9 +26,23 @@ const faqTemplate = ({questions}) =>
 export class faqDialog {
     constructor({title = '', questions = []}) {
         ensureCSS('faq_dialog.css')
+        const escapedQuestions = []
+
+        questions.forEach(q=>{
+            const question = escapeText(q[0])
+            let answer
+            q[1] = escapeText(q[1])
+            if(q[q.length-1].hasImage){
+                answer = interpolate(...q.slice(1,q.length),true)
+            } else {
+                answer = q[1]
+            }
+            escapedQuestions.push([question,answer])
+        })
+        
         this.faqDialog = new Dialog({
             title: title,
-            body: faqTemplate({questions}),
+            body: faqTemplate({escapedQuestions}),
             height: 600,
             width: 900,
             buttons: []

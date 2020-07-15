@@ -5,7 +5,7 @@ import {litToText, nameToText} from "../tools"
 import {editCategoriesTemplate} from "./templates"
 import {BibTypeTitles} from "../form/strings"
 import {SiteMenu} from "../../menu"
-import {OverviewMenuView, findTarget, whenReady, Dialog, baseBodyTemplate, ensureCSS, setDocTitle, escapeText, DatatableBulk} from "../../common"
+import {OverviewMenuView, findTarget, whenReady, Dialog, baseBodyTemplate, ensureCSS, setDocTitle, escapeText, DatatableBulk, addAlert} from "../../common"
 import {FeedbackTab} from "../../feedback"
 import {menuModel, bulkMenuModel} from "./menu"
 import * as plugins from "../../../plugins/bibliography_overview"
@@ -190,6 +190,10 @@ export class BibliographyOverview {
      * @function editCategoriesDialog
      */
     editCategoriesDialog() {
+        if (this.app.isOffline()) {
+            addAlert('info', gettext('You are currently offline. Please try again when you are back online.'))
+            return
+        }
         const buttons = [
             {
                 text: gettext('Submit'),
@@ -205,7 +209,11 @@ export class BibliographyOverview {
                             }
                         }
                     )
-                    this.saveCategories(cats)
+                    if (this.app.isOffline()) {
+                        addAlert('info', gettext('You are currently offline. Please try again when you are back online.'))
+                    } else {
+                        this.saveCategories(cats)
+                    }
                     dialog.close()
                 }
             },
@@ -291,7 +299,7 @@ export class BibliographyOverview {
             case findTarget(event, '.edit-bib', el): {
                 const bookId = parseInt(el.target.dataset.id)
                 import("../form").then(({BibEntryForm}) => {
-                    const form = new BibEntryForm(this.app.bibDB, bookId)
+                    const form = new BibEntryForm(this.app.bibDB, this.app, bookId)
                     form.init().then(
                         idTranslations => {
                             const ids = idTranslations.map(idTrans => idTrans[1])

@@ -4,11 +4,6 @@ span[data-diff='online-inserted'] {
     background-color: lightgreen;
 }
 
-span[data-diff='offline-deleted'],
-span[data-diff='online-deleted'] {
-    background-color: lightcoral;
-}
-
 .selected-dec {
     background: yellow !important;
 }
@@ -16,6 +11,13 @@ span[data-diff='online-deleted'] {
 .offline-inserted,
 .online-inserted {
     background: #e1f5e1;
+}
+
+span.offline-deleted,
+span.online-deleted {
+    text-decoration: line-through;
+    text-decoration-color: red;
+    background: #efc8c8;
 }
 
 .offline-deleted,

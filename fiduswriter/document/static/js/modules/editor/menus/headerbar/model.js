@@ -84,7 +84,8 @@ export const headerbarModel = () => ({
                                     editor.getDoc(),
                                     editor.mod.db.imageDB,
                                     editor.mod.db.bibDB,
-                                    note
+                                    note,
+                                    editor.app
                                 )
                                 return saver.init()
                             }

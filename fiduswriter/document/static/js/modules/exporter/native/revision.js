@@ -10,11 +10,12 @@ import {addAlert, post} from "../../common"
  */
 
 export class SaveRevision {
-    constructor(doc, imageDB, bibDB, note) {
+    constructor(doc, imageDB, bibDB, note, app) {
         this.doc = doc
         this.imageDB = imageDB
         this.bibDB = bibDB
         this.note = note
+        this.app = app
     }
 
     init() {
@@ -34,7 +35,11 @@ export class SaveRevision {
         ).catch(
             (error) => {
                 addAlert('error', gettext("Revision file could not be generated."))
-                throw (error)
+                if (this.app.isOffline()) {
+                    addAlert('info', gettext('You are currently offline. Please try again when you are back online.'))
+                } else {
+                    throw (error)
+                }
             }
         )
     }
@@ -52,7 +57,12 @@ export class SaveRevision {
             () => {
                 addAlert('success', gettext('Revision saved'))
             },
-            () => addAlert('error', gettext('Revision could not be saved.'))
+            () => {
+                addAlert('error', gettext('Revision could not be saved.'))
+                if (this.app.isOffline()) {
+                    addAlert('info', gettext('You are currently offline. Please try again when you are back online.'))
+                }
+            }
         ).catch(
             (error) => {
                 throw (error)

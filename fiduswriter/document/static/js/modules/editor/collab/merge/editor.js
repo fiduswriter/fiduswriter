@@ -109,6 +109,10 @@ export class MergeEditor {
             [searchPlugin],
             [clipboardPlugin, () => ({editor: this.editor})]
         ]
+
+        // assign image DB & BibDB to be used in document schema.
+        this.schema.cached.bibDB = this.editor.mod.db.bibDB
+        this.schema.cached.imageDB = this.editor.mod.db.imageDB
     }
 
     init() {
@@ -186,8 +190,8 @@ export class MergeEditor {
             id: 'editor-merge-view',
             title: gettext("Merging Offline Document"),
             body: `<div style="display:flex"><div class="offline-heading">${gettext("Offline Document")}</div><div class="merged-heading">${gettext("Merged Document")}</div> <div class="online-heading">${gettext("Online Document")}</div></div><div class= "user-contents" style="display:flex;"><div id="editor-diff-1" style="float:left;padding:15px;"></div><div id="editor-diff" class="merged-view" style="padding:15px;"></div><div id="editor-diff-2" style="float:right;padding:15px;"></div></div>`,
-            height: 600,
-            width: window.innerwidth,
+            height: window.innerHeight - 150,
+            width: window.innerwidth - 150,
             canClose: false,
             help: () => {
                 const helpDialog = new faqDialog({
@@ -215,12 +219,10 @@ export class MergeEditor {
                         ],
                         [
                             gettext("How do I accept or reject a particular change?"),
-                            interpolate(
-                                gettext("Accepting or rejecting a change from editors, causes a change in the editor in the middle. You can accept a change by directly clicking on the highlighted text , which shows up a drop, where in you can either accept/reject a change. When you click on the highlighted text, it also highlights the changes that will get accepted. %(mergeImage)s As shown in the above image one can click on a highlighted change, and click on accept change. On accepting a change it will be reflected in the merged document editor in the middle. Rejecting a change works in the same way except on reject a change the highlight of the change will be lost, with it the ability to accept, reject or copy a change."),
-                                {mergeImage: `<img src="${settings_STATIC_URL}img/accept-change.png" class = "merge-img">`},
-                                true
-                            )
-
+                            // Add images in dictionary.They'd be interpolated later.
+                            gettext("Accepting or rejecting a change from editors, causes a change in the editor in the middle. You can accept a change by directly clicking on the highlighted text , which shows up a drop, where in you can either accept/reject a change. When you click on the highlighted text, it also highlights the changes that will get accepted. %(mergeImage)s As shown in the above image one can click on a highlighted change, and click on accept change. On accepting a change it will be reflected in the merged document editor in the middle. Rejecting a change works in the same way except on reject a change the highlight of the change will be lost, with it the ability to accept, reject or copy a change."),
+                            {mergeImage: `<img src="${settings_STATIC_URL}img/accept-change.png" class = "merge-img">`},
+                            {hasImage: true}
                         ],
                         [
                             gettext("I cannot accept a particular change. What do I do?"),
@@ -390,6 +392,7 @@ export class MergeEditor {
             }
         })
         let editorView
+        const mainEditor = this.editor
         if (elementId == "editor-diff") {
             editorView = new EditorView(document.getElementById(elementId), {
                 state: EditorState.create({
@@ -422,7 +425,7 @@ export class MergeEditor {
                 },
                 nodeViews: {
                     footnote(node, view, getPos) {
-                        return new FootnoteView(node, view, getPos, this.editor)
+                        return new FootnoteView(node, view, getPos, mainEditor)
                     }
                 }
             })
@@ -442,7 +445,7 @@ export class MergeEditor {
                 },
                 nodeViews: {
                     footnote(node, view, getPos) {
-                        return new FootnoteView(node, view, getPos, this.editor)
+                        return new FootnoteView(node, view, getPos, mainEditor)
                     }
                 }
             })

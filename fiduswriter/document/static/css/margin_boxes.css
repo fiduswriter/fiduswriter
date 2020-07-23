@@ -332,7 +332,7 @@ body.header-closed #margin-box-filter {
     background-color: var(--editor-major-comment-background-color);
 }
 
-.comment.resolved .comment-item {
+.comment.resolved .comment-item [class^=comment-] {
     opacity: var(--editor-comment-resolved-opacity);
 }
 

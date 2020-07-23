@@ -94,7 +94,9 @@ export class SelectionMenuView {
     getSelectionMenuHTML() {
         if (
             READ_ONLY_ROLES.includes(this.editor.docInfo.access_rights) ||
-            this.editorView.state.selection.empty
+            this.editorView.state.selection.empty ||
+            this.editor.mod.comments.store.commentDuringCreation ||
+            this.editor.mod.comments.interactions.isCurrentlyEditing()
         ) {
             return '<div></div>'
         }

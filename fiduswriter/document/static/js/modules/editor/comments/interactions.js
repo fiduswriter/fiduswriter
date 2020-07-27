@@ -245,6 +245,17 @@ export class ModCommentInteractions {
     }
 
     recreateComment(id) {
+        if(this.editor) {
+            this.editor.dom.childNodes.forEach(node => {
+                if (node.classList && node.classList.contains("comment-btns")) {
+                    node.childNodes.forEach(buttons => {
+                        if(buttons.classList && buttons.classList.contains("submit") && buttons.classList.contains("disabled")) {
+                                buttons.classList.remove("disabled")
+                        }
+                    })
+                }
+            })
+        }
         this.mod.store.updateComment({id, resolved: false})
     }
 

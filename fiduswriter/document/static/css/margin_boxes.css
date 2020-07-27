@@ -328,6 +328,10 @@ body.header-closed #margin-box-filter {
     border-bottom-color: var(--editor-active-comment-background-color);
 }
 
+.comment.active.resolved .comment-answer #answer-editor .ProseMirror-wrapper {
+    pointer-events: none;
+}
+
 .comment-is-major-bgc .comment-item:first-child {
     background-color: var(--editor-major-comment-background-color);
 }

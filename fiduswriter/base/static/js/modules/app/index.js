@@ -104,13 +104,14 @@ export class App {
         this.openOfflinePage = () => new OfflinePage(this.config)
         this.openSetupPage = () => new SetupPage(this.config)
         this.open404Page = () => new Page404(this.config)
+        this.handleSWUpdate = () => window.location.reload()
     }
 
     init() {
         if (!settings_DEBUG) {
             OfflinePluginRuntime.install({
                 onUpdateReady: () => OfflinePluginRuntime.applyUpdate(),
-                onUpdated: () => window.location.reload()
+                onUpdated: () => this.handleSWUpdate()
             })
         }
         ensureCSS([

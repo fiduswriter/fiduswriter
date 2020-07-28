@@ -47,10 +47,11 @@ export const selectionMenuModel = () => ({
                 editor.mod.comments.interactions.createNewComment()
                 return false
             },
-            disabled: editor => editor.currentView.state.selection.$anchor.depth < 2,
+            hidden: editor => editor.currentView.state.selection.$anchor.depth < 2,
             selected: editor => !!editor.currentView.state.selection.$head.marks().some(
                 mark => mark.type.name === 'comment'
             ),
+            disabled: false,
             order: 1
         },
         {
@@ -63,7 +64,7 @@ export const selectionMenuModel = () => ({
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
             available: editor => !COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights),
-            disabled: editor => editor.currentView.state.selection.$anchor.depth < 2,
+            hidden: editor => editor.currentView.state.selection.$anchor.depth < 2,
             selected: editor => !!editor.currentView.state.selection.$head.marks().some(
                 mark => mark.type.name === 'anchor'
             ),
@@ -79,7 +80,7 @@ export const selectionMenuModel = () => ({
                 editor.currentView.state.selection.to
             ),
             available: editor => !COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights),
-            disabled: editor => editor.currentView.state.selection.$anchor.depth < 2 || !tracksInSelection(editor.currentView),
+            hidden: editor => editor.currentView.state.selection.$anchor.depth < 2 || !tracksInSelection(editor.currentView),
             order: 3
         },
         {
@@ -92,7 +93,7 @@ export const selectionMenuModel = () => ({
                 editor.currentView.state.selection.to
             ),
             available: editor => !COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights),
-            disabled: editor => editor.currentView.state.selection.$anchor.depth < 2 || !tracksInSelection(editor.currentView),
+            hidden: editor => editor.currentView.state.selection.$anchor.depth < 2 || !tracksInSelection(editor.currentView),
             order: 4
         }
     ]

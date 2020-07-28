@@ -9,12 +9,6 @@ from django.core.management import call_command
 from django.conf import settings
 
 
-def dir_path(path):
-    if os.path.isdir(path):
-        return path
-    else:
-        raise argparse.ArgumentTypeError(f"readable_dir:{path} is not a valid path")
-
 class Command(BaseCommand):
     help = 'Check JavaScript files with ESLint'
 

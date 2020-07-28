@@ -9,10 +9,22 @@ from django.core.management import call_command
 from django.conf import settings
 
 
+def dir_path(path):
+    if os.path.isdir(path):
+        return path
+    else:
+        raise argparse.ArgumentTypeError(f"readable_dir:{path} is not a valid path")
+
 class Command(BaseCommand):
     help = 'Check JavaScript files with ESLint'
 
     def add_arguments(self, parser):
+        parser.add_argument(
+            'dir',
+            nargs='?',
+            default='.',
+            help='Directory to check'
+        )
         parser.add_argument(
             '--fix',
             action='store_true',
@@ -44,7 +56,7 @@ class Command(BaseCommand):
                 settings.SRC_PATH,
                 ".eslintrc.js"
             ),
-            "."
+            options['dir'],
         ]
         if options['fix']:
             command_array.append('--fix')

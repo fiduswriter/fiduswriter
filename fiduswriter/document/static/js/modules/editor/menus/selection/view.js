@@ -96,7 +96,7 @@ export class SelectionMenuView {
             READ_ONLY_ROLES.includes(this.editor.docInfo.access_rights) ||
             this.editorView.state.selection.empty ||
             this.editor.mod.comments.store.commentDuringCreation ||
-            this.editor.mod.comments.interactions.activeCommentId
+            this.editor.mod.comments.interactions.isCurrentlyEditing()
         ) {
             return '<div></div>'
         }
@@ -105,7 +105,7 @@ export class SelectionMenuView {
         return `<div style="margin-top: ${offset}px;">
             <div class="editor-selection-menu">
                 ${this.editor.menu.selectionMenuModel.content.map((menuItem, index) =>
-        `<div class="ui-buttonset${menuItem.disabled && menuItem.disabled(this.editor) ? ' disabled' : ''}">
+        `<div class="ui-buttonset${(menuItem.hidden && menuItem.hidden(this.editor)) || (menuItem.disabled && menuItem.disabled(this.editor)) ? ' disabled' : ''}">
                         ${this.getSelectionMenuItemHTML(menuItem, index)}
                     </div>`
     ).join('')}
@@ -114,7 +114,7 @@ export class SelectionMenuView {
     }
 
     getSelectionMenuItemHTML(menuItem, _index) {
-        if (menuItem.disabled && menuItem.disabled(this.editor)) {
+        if (menuItem.hidden && menuItem.hidden(this.editor)) {
             return ''
         } else {
             return this.getButtonHTML(menuItem)
@@ -123,7 +123,7 @@ export class SelectionMenuView {
 
     getButtonHTML(menuItem) {
         return `
-        <button aria-label="${menuItem.title}" class="fw-button fw-light fw-large fw-square edit-button${menuItem.selected && menuItem.selected(this.editor) ? ' ui-state-active' : ''}${menuItem.class ? ` ${menuItem.class(this.editor)}` : ''}" title="${menuItem.title}" >
+        <button aria-label="${menuItem.title}" class="fw-button fw-light fw-large fw-square edit-button${menuItem.selected && menuItem.selected(this.editor) ? ' ui-state-active' : ''}${menuItem.class ? ` ${menuItem.class(this.editor)}` : ''}${menuItem.disabled && menuItem.disabled(this.editor) ? ' disabled' : ''}" title="${menuItem.title}" >
             <span class="ui-button-text">
                 <i class="fa fa-${typeof(menuItem.icon) === 'function' ? menuItem.icon(this.editor) : menuItem.icon}"></i>
             </span>

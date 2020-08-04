@@ -54,9 +54,9 @@ hr.selected-dec {
     border: 2px solid black;
 }
 
-#editor-diff-1,
-#editor-diff,
-#editor-diff-2 {
+#editor-diff-offline,
+#editor-diff-common,
+#editor-diff-online {
     width: 33%;
     counter-reset: prosemirror-footnote;
 }
@@ -122,21 +122,21 @@ footnote div.footnote-tooltip p { /* stylelint-disable-line */
 }
 
 /* Citation Related CSS */
-#editor-diff-1 .citation,
+#editor-diff-offline .citation,
 #editor-diff .citation,
-#editor-diff-2 .citation {
+#editor-diff-online .citation {
     background-color: lightgray;
 }
 
-#editor-diff-1 .offline-inserted .citation,
-#editor-diff-2 .online-inserted .citation {
+#editor-diff-offline .offline-inserted .citation,
+#editor-diff-online .online-inserted .citation {
     padding-left: 5px;
     background-color: lightgreen;
 }
 
 #editor-diff .citation::before,
-#editor-diff-1 .citation::before,
-#editor-diff-2 .citation::before {
+#editor-diff-offline .citation::before,
+#editor-diff-online .citation::before {
     content: '\f02d';
     font-family: FontAwesome; /* stylelint-disable-line */
     font-style: normal;

@@ -1,11 +1,12 @@
-import {Plugin, PluginKey, TextSelection, NodeSelection} from "prosemirror-state"
+import {Plugin, PluginKey, NodeSelection} from "prosemirror-state"
 import {Decoration, DecorationSet, __serializeForClipboard} from "prosemirror-view"
-import {Mapping, Step} from "prosemirror-transform"
-
-import {noSpaceTmp, showSystemMessage, addAlert} from "../../../../common"
-import {removeDiffdata, dispatchRemoveDiffdata} from "../tools"
+import {noSpaceTmp} from "../../../../common"
+import {dispatchRemoveDiffdata, copyChange, acceptChanges , removeDecoration, deleteContent, addDeletedContentBack} from "../tools"
+import {changeSet} from "../changeset"
+import {DOMSerializer} from "prosemirror-model"
 
 function getdiffdata(state) {
+    console.log("Getting diff data!!!!",state,state.selection.$head.marks())
     let markFound = state.selection.$head.marks().find(mark =>
         mark.type.name === 'diffdata')
 
@@ -46,7 +47,7 @@ function createHiglightDecoration(from, to, state) {
     return deco
 }
 
-function getDecos(merge, state) {
+function getDecos(decos,merge, state) {
     /* Creates PM deco for the change popup */
     const $head = state.selection.$head
     const currentMarks = [],
@@ -73,123 +74,68 @@ function getDecos(merge, state) {
                 deco = Decoration.widget(startPos, dom)
             const highlightDecos = createHiglightDecoration(markFound['attrs']["from"], markFound['attrs']["to"], state)
             highlightDecos.push(deco)
-            return DecorationSet.create(state.doc, highlightDecos)
+            return decos.add(state.doc, highlightDecos)
         }
-        return DecorationSet.empty
+        decos = decos.remove(decos.find(null, null,
+            spec => spec.type !== "deletion"))
+        return decos
     }
     const startPos = diffMark.attrs.to
     const dom = createDropUp(merge, diffMark, linkMark),
         deco = Decoration.widget(startPos, dom)
     const highlightDecos = createHiglightDecoration(diffMark.attrs.from, diffMark.attrs.to, state)
     highlightDecos.push(deco)
-    return DecorationSet.create(state.doc, highlightDecos)
+    return decos.add(state.doc, highlightDecos)
 }
 
-function rejectChanges(view, diffMark) {
-    /* This function is used to reject a change */
-    dispatchRemoveDiffdata(view, diffMark.attrs.from, diffMark.attrs.to)
-}
-
-function copyChange(view, from, to) {
-    /* when a certain change cannot be applied automatically,
-    we give users the ability to copy a change */
-    const tr = view.state.tr
-    const resolvedFrom = view.state.doc.resolve(from)
-    const resolvedTo = view.state.doc.resolve(to)
-    const sel = new TextSelection(resolvedFrom, resolvedTo)
-    sel.visible = false
-    tr.setSelection(sel)
-    view.dispatch(tr)
-
-    const slice = view.state.selection.content()
-    const {dom} = (__serializeForClipboard(view, slice))
-
-    // Copy data to clipboard!!
-    document.body.appendChild(dom)
-    const range = document.createRange()
-    range.selectNode(dom)
-    window.getSelection().addRange(range)
-    try {
-        document.execCommand("copy") // Security exception may be thrown by some browsers.
-        document.body.removeChild(dom)
-        addAlert('info', gettext('Change copied to clipboard'))
-    } catch (ex) {
-        showSystemMessage(gettext(
-            'Copy to clipboard failed. Please copy manually.'
-        ))
-    }
-    window.getSelection().removeAllRanges()
-}
-
-function acceptChanges(merge, mark, mergeView, originalView, tr) {
-    /* This is used to accept a change either from the offline/online version or
-    incase of deletion from the middle editor */
-    //try {
-    const mergedDocMap = new Mapping()
-    mergedDocMap.appendMapping(merge.mergedDocMap)
-    let insertionTr = mergeView.state.tr
-    const from = mark.attrs.from
-    const to = mark.attrs.to
-    const steps = JSON.parse(mark.attrs.steps)
-    const stepMaps = tr.mapping.maps.slice().reverse().map(map => map.invert())
-    const rebasedMapping = new Mapping(stepMaps)
-    rebasedMapping.appendMapping(mergedDocMap)
-    for (const stepIndex of steps) {
-        const maps = rebasedMapping.slice(tr.steps.length - stepIndex)
-        let mappedStep = tr.steps[stepIndex].map(maps)
-        if (mappedStep) {
-            mappedStep = Step.fromJSON( // Switch from main editor schema to merge editor schema
-                insertionTr.doc.type.schema,
-                mappedStep.toJSON()
-            )
+function deletionDecorations(decos,changeset,schema,commonDoc,doc,mapping,merge,deletionClass) {
+    let index = 0
+    console.log("CHANGESET",changeset)
+    changeset.changes.forEach(change => {
+        if(change.deleted.length>0) {
+            let dom = document.createElement("span")
+            const slice = commonDoc.slice(change.fromA,change.toA) 
+            let deletedContent = DOMSerializer.fromSchema(schema).serializeFragment(slice.content) 
+            dom.appendChild(deletedContent)
+            dom.childNodes.forEach(children => {
+                console.log("C:",children)
+                children.classList.add(deletionClass)
+            })
+            // deletedContent = deletedContent.firstChild
+            dom.classList.add(deletionClass)
+            let stepsInvolved = []
+            change.deleted.forEach(deletion => stepsInvolved.push(parseInt(deletion.data.step)))
+            const stepsSet = new Set(stepsInvolved)
+            stepsInvolved = Array.from(stepsSet)
+            stepsInvolved.sort((a, b) => a - b)
+            const deletionMark = schema.marks.diffdata.create({diff: deletionClass, steps: JSON.stringify(stepsInvolved), from: change.fromA, to: change.toA})
+            const dropUp = createDropUp(merge,deletionMark,undefined)
+            dropUp.dataset.decoid = index
+            dropUp.style.display = "none"
+            dom.addEventListener("mouseenter",function toggleRead() {
+                dropUp.style.display = "block"
+            })
+            dom.addEventListener("mouseleave",function toggleHide(){
+                dropUp.style.display = "none"
+            })
+            dom.appendChild(dropUp)
+            decos = decos.add(doc, [
+                Decoration.widget(mapping.map(change.fromA), dom, {type: "deletion", id:index})
+            ])
+            index+=1
         }
-        if (mappedStep && !insertionTr.maybeStep(mappedStep).failed) {
-            mergedDocMap.appendMap(mappedStep.getMap())
-            rebasedMapping.appendMap(mappedStep.getMap())
-            rebasedMapping.setMirror(tr.steps.length - stepIndex - 1, (tr.steps.length + mergedDocMap.maps.length - 1))
-        }
-    }
-    // Make sure that all the content steps are present in the new transaction
-    if (insertionTr.steps.length < steps.length) {
-        showSystemMessage(gettext("The change could not be applied automatically. Please consider using the copy option to copy the changes."))
-    } else {
-        // Remove the diff mark. If we're looking at view2 it means we're deleting content for which we dont have to remove the marks seperately we can put both of the steps into a single transaction
-        if (originalView === mergeView) {
-            const markRemovalTr = removeDiffdata(originalView.state.tr, from, to)
-            insertionTr.steps.forEach(step => markRemovalTr.step(step))
-            insertionTr = markRemovalTr
-        } else {
-            dispatchRemoveDiffdata(originalView, from, to)
-        }
-        merge.mergedDocMap = mergedDocMap
-        insertionTr.setMeta('mapAppended', true)
-        insertionTr.setMeta('notrack', true)
-        mergeView.dispatch(insertionTr)
-    }
-    //} catch (exc) {
-    //    showSystemMessage(gettext("The change could not be applied automatically. Please consider using the copy function to copy the changes."))
-    //}
+    })
+    return decos
+
 }
 
-function createDropUp(merge, diffMark, linkMark) {
+function createDropUp (merge, diffMark, linkMark) {
     /* The actual function that creates a drop up */
     const dropUp = document.createElement('span'),
         requiredPx = 10,
-        tr = diffMark.attrs.diff.search('offline') != -1 ? merge.offlineTr : merge.onlineTr
-    let view
-    if (diffMark.attrs.diff.search('offline') != -1) {
-        if (diffMark.attrs.diff.search('inserted') != -1) {
-            view = merge.mergeView1
-        } else {
-            view = merge.mergeView2
-        }
-    } else {
-        if (diffMark.attrs.diff.search('inserted') != -1) {
-            view = merge.mergeView3
-        } else {
-            view = merge.mergeView2
-        }
-    }
+        tr = diffMark.attrs.diff.search('offline') != -1 ? merge.offlineTr : merge.onlineTr,
+        trType = diffMark.attrs.diff.search('offline') != -1 ? "offline" : "online",
+        opType = diffMark.attrs.diff.search('inserted') != -1 ? "insertion" : "deletion"
     linkMark = linkMark === undefined ? false : linkMark
     dropUp.classList.add('drop-up-outer')
     dropUp.innerHTML = noSpaceTmp`
@@ -230,7 +176,25 @@ function createDropUp(merge, diffMark, linkMark) {
             event => {
                 event.preventDefault()
                 event.stopImmediatePropagation()
-                acceptChanges(merge, diffMark, merge.mergeView2, view, tr)
+                if(trType == "online" ) {
+                    if(opType == "insertion") {
+                        dispatchRemoveDiffdata(merge.mergeView2, diffMark.attrs.from, diffMark.attrs.to)
+                    } else {
+                        // remove online deletion decoration
+                        const decorationId = dropUp.dataset.decoid
+                        removeDecoration(merge.mergeView2,decorationId)
+                    }
+                } else {
+                    if(opType == "insertion") {
+                        acceptChanges(merge, diffMark, merge.mergeView2, merge.mergeView3, tr)
+                    } else {
+                        // remove offline deletion decoration
+                        const decorationId = dropUp.dataset.decoid
+                        if(deleteContent(merge, merge.mergeView2, diffMark)){
+                            removeDecoration(merge.mergeView3,decorationId)
+                        }
+                    }
+                }
             }
         )
     }
@@ -240,7 +204,28 @@ function createDropUp(merge, diffMark, linkMark) {
             () => {
                 event.preventDefault()
                 event.stopImmediatePropagation()
-                rejectChanges(view, diffMark)
+                if(trType == "online" ) {
+                    if(opType == "insertion") {
+                        // Delete inserted content
+                        deleteContent(merge, merge.mergeView2, diffMark, true)
+                    } else {
+                        // remove online deletion decoration
+                        if(addDeletedContentBack(merge, merge.mergeView2, diffMark)) {
+                            const decorationId = dropUp.dataset.decoid
+                            removeDecoration(merge.mergeView2,decorationId)
+                        }
+                    }
+                } else {
+                    if(opType == "insertion") {
+                        dispatchRemoveDiffdata(merge.mergeView3, diffMark.attrs.from, diffMark.attrs.to)
+                    } else {
+                        // remove offline deletion decoration
+                        console.log("ParentNode:",dropUp.parentNode,dropUp)
+                        dropUp.parentNode.classList.remove("offline-deleted")
+                        dropUp.parentNode.removeEventListener("mouseenter",toggleRead)
+                        dropUp.parentNode.removeEventListener("mouseleave",toggleHide)
+                    }
+                }
             }
         )
     }
@@ -251,7 +236,11 @@ function createDropUp(merge, diffMark, linkMark) {
             event => {
                 event.preventDefault()
                 event.stopImmediatePropagation()
-                copyChange(view, diffMark.attrs.from, diffMark.attrs.to)
+                if(trType == "online") {
+                    copyChange(merge.mergeView2, diffMark.attrs.from, diffMark.attrs.to)
+                } else {
+                    copyChange(merge.mergeView3, diffMark.attrs.from, diffMark.attrs.to)
+                }
             }
         )
     }
@@ -259,16 +248,33 @@ function createDropUp(merge, diffMark, linkMark) {
 }
 
 
-const key = new PluginKey('mergeDiff')
+
+export const key = new PluginKey('mergeDiff')
 
 export const diffPlugin = function(options) {
 
     return new Plugin({
         key,
         state: {
-            init() {
+            init(state) {
+                let baseTr = false
+                let deletionClass = false
+                let decos = DecorationSet.empty
+                if(state.doc.eq(options.merge.offlineDoc)) {
+                    baseTr = options.merge.offlineTr
+                    deletionClass = "offline-deleted"
+                } else if (state.doc.eq(options.merge.onlineDoc)) {
+                    baseTr = options.merge.onlineTr
+                    deletionClass = "online-deleted"
+                }
+                if(baseTr) {
+                    const Changeset = new changeSet(baseTr).getChangeSet()
+                    decos =  deletionDecorations(decos,Changeset,options.merge.schema,options.merge.cpDoc,state.doc,baseTr.mapping,options.merge,deletionClass)
+                }
                 return {
-                    decos: DecorationSet.empty,
+                    baseTr: baseTr,
+                    deletionClass:deletionClass,
+                    decos: decos,
                     diffMark: false
                 }
             },
@@ -276,24 +282,35 @@ export const diffPlugin = function(options) {
                 let {
                     decos,
                     diffMark,
+                    baseTr,
+                    deletionClass
                 } = this.getState(oldState)
                 const newdiffdata = getdiffdata(state)
                 if (newdiffdata === diffMark) {
                     decos = decos.map(tr.mapping, tr.doc)
                 } else {
-                    decos = getDecos(options.merge, state)
+                    decos = getDecos(decos,options.merge, state)
                     diffMark = newdiffdata
+                }
+                if(tr.getMeta("decorationId")) {
+                    const decorationId = parseInt(tr.getMeta("decorationId"))
+                    console.log("Deco getting removed!!!",decos,decos.find(null, null,
+                        spec => spec.id == decorationId))
+                    decos = decos.remove(decos.find(null, null,
+                        spec => spec.id == decorationId))            
                 }
                 return {
                     decos,
                     diffMark,
+                    baseTr,
+                    deletionClass
                 }
             }
         },
         props: {
             decorations(state) {
                 const {
-                    decos
+                    decos,baseTr,deletionClass
                 } = this.getState(state)
                 return decos
             }

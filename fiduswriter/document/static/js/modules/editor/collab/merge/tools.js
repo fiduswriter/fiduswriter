@@ -3,7 +3,6 @@ import {ReplaceStep, Mapping, Step} from 'prosemirror-transform'
 import {Slice} from "prosemirror-model"
 import {__serializeForClipboard} from "prosemirror-view"
 import {showSystemMessage} from "../../../common"
-import {key} from "./state_plugins/diff" 
 
 export const checkPresenceOfdiffdata = function(doc, from, to) {
     /* This function checks whether diff mark is present inside the given range */
@@ -240,6 +239,8 @@ export const deleteContent = function (merge, view, diffMark, inverseMapping=fal
     if(rebasedFrom && rebasedTo) {
         tr.delete(rebasedFrom,rebasedTo)
         merge.mergedDocMap.appendMapping(tr.mapping)
+        tr.setMeta('mapAppended', true)
+        tr.setMeta('notrack', true)
         view.dispatch(tr)
         return true
     }
@@ -257,6 +258,8 @@ export const addDeletedContentBack  = function (merge, view, diffMark) {
     console.log(insertionPoint,slice)
     if(insertionPoint) {
         tr.insert(insertionPoint,slice.content)
+        tr.setMeta('mapAppended', true)
+        tr.setMeta('notrack', true)
         view.dispatch(tr)
         merge.mergedDocMap.appendMapping(tr.mapping)
         return true

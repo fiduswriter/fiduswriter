@@ -1,4 +1,4 @@
-import {Plugin, PluginKey, NodeSelection} from "prosemirror-state"
+import {Plugin, PluginKey, NodeSelection, EditorState} from "prosemirror-state"
 import {Decoration, DecorationSet, __serializeForClipboard} from "prosemirror-view"
 import {noSpaceTmp} from "../../../../common"
 import {dispatchRemoveDiffdata, copyChange, acceptChanges , removeDecoration, deleteContent, addDeletedContentBack} from "../tools"
@@ -8,6 +8,8 @@ import {DOMSerializer} from "prosemirror-model"
 function onClick(event) {
     if (event.target.matches('.offline-deleted')) {
         const parentEl = event.target.closest('.deletion-decoration')
+        recursivelyRemoveClass(document.body.querySelector("#editor-diff-offline"),"selected-dec")
+        recursivelyAddClass(parentEl,"selected-dec")
         const delPopup = document.body.querySelector("#editor-diff-offline").querySelectorAll(".drop-up-outer")
         if(delPopup) {
             delPopup.forEach(popUp => popUp.style.display = "none")
@@ -15,6 +17,8 @@ function onClick(event) {
         parentEl.querySelector(".drop-up-outer").style.display = "block"
     } else if (event.target.matches('.online-deleted')) {
         const parentEl = event.target.closest('.deletion-decoration')
+        recursivelyRemoveClass(document.body.querySelector("#editor-diff-online"),"selected-dec")
+        recursivelyAddClass(parentEl,"selected-dec")
         const delPopup = document.body.querySelector("#editor-diff-online").querySelectorAll(".drop-up-outer")
         if(delPopup) {
             delPopup.forEach(popUp => popUp.style.display = "none")
@@ -22,6 +26,10 @@ function onClick(event) {
         parentEl.querySelector(".drop-up-outer").style.display = "block"
     }
     else {
+        const delDeco = document.body.querySelectorAll(".deletion-decoration")
+        if(delDeco) {
+            delDeco.forEach(item => recursivelyRemoveClass(item,"selected-dec"))
+        }
         const delPopUp = document.body.querySelectorAll(".deletion-decoration .drop-up-outer")
         if(delPopUp) {
             delPopUp.forEach(popUp => popUp.style.display = "none")
@@ -120,18 +128,24 @@ function getDecos(decos,merge, state) {
     return decos.add(state.doc, highlightDecos)
 }
 
+function recursivelyAddClass(dom, CSSClass) {
+    dom.querySelectorAll("span:not(.drop-up-outer),p,figure,img").forEach(item => item.classList.add(CSSClass))
+}
+
+function recursivelyRemoveClass(dom,CSSClass) {
+    dom.querySelectorAll("span:not(.drop-up-outer),p,figure,img").forEach(item => item.classList.remove(CSSClass))
+}
+
 function deletionDecorations(decos,changeset,schema,commonDoc,doc,mapping,merge,deletionClass) {
     let index = 0
+    let stepsTrackedByChangeset = []
     changeset.changes.forEach(change => {
         if(change.deleted.length>0) {
             let dom = document.createElement("span")
             const slice = commonDoc.slice(change.fromA,change.toA) 
             let deletedContent = DOMSerializer.fromSchema(schema).serializeFragment(slice.content) 
             dom.appendChild(deletedContent)
-            
-            dom.childNodes.forEach(children => {
-                children.classList.add(deletionClass)
-            })
+            recursivelyAddClass(dom,deletionClass)
             
             dom.querySelectorAll("span.footnote-marker").forEach((footnoteElement)=>{
                 const newFnElement = document.createElement("footnote")
@@ -157,12 +171,16 @@ function deletionDecorations(decos,changeset,schema,commonDoc,doc,mapping,merge,
             // deletedContent = deletedContent.firstChild
             dom.classList.add(deletionClass)
             dom.classList.add("deletion-decoration")
+            
+            // Apply the maeks before trying to serialize!!!!
             let stepsInvolved = []
             change.deleted.forEach(deletion => stepsInvolved.push(parseInt(deletion.data.step)))
             const stepsSet = new Set(stepsInvolved)
             stepsInvolved = Array.from(stepsSet)
             stepsInvolved.sort((a, b) => a - b)
+            stepsTrackedByChangeset = stepsTrackedByChangeset.concat(stepsInvolved)
             const deletionMark = schema.marks.diffdata.create({diff: deletionClass, steps: JSON.stringify(stepsInvolved), from: change.fromA, to: change.toA})
+
             const dropUp = createDropUp(merge,deletionMark,undefined)
             dropUp.dataset.decoid = index
             dropUp.style.display = "none"
@@ -173,6 +191,11 @@ function deletionDecorations(decos,changeset,schema,commonDoc,doc,mapping,merge,
             index+=1
         }
     })
+    if(deletionClass == "offline-deleted") {
+        merge.offlineTrackedSteps = merge.offlineTrackedSteps.concat(stepsTrackedByChangeset) 
+    } else {
+        merge.onlineTrackedSteps = merge.onlineTrackedSteps.concat(stepsTrackedByChangeset)
+    }
     return decos
 
 }

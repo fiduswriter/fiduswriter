@@ -5,8 +5,40 @@ import {dispatchRemoveDiffdata, copyChange, acceptChanges , removeDecoration, de
 import {changeSet} from "../changeset"
 import {DOMSerializer} from "prosemirror-model"
 
+function onClick(event) {
+    if (event.target.matches('.offline-deleted')) {
+        const parentEl = event.target.closest('.deletion-decoration')
+        const delPopup = document.body.querySelector("#editor-diff-offline").querySelectorAll(".drop-up-outer")
+        if(delPopup) {
+            delPopup.forEach(popUp => popUp.style.display = "none")
+        }
+        parentEl.querySelector(".drop-up-outer").style.display = "block"
+    } else if (event.target.matches('.online-deleted')) {
+        const parentEl = event.target.closest('.deletion-decoration')
+        const delPopup = document.body.querySelector("#editor-diff-online").querySelectorAll(".drop-up-outer")
+        if(delPopup) {
+            delPopup.forEach(popUp => popUp.style.display = "none")
+        }
+        parentEl.querySelector(".drop-up-outer").style.display = "block"
+    }
+    else {
+        const delPopUp = document.body.querySelectorAll(".deletion-decoration .drop-up-outer")
+        if(delPopUp) {
+            delPopUp.forEach(popUp => popUp.style.display = "none")
+        }
+    }
+}
+
+
+function handleClick(offlineEditor) {
+    if(offlineEditor) {
+        document.body.querySelector("#editor-diff-offline").addEventListener("click",onClick)
+    } else {
+        document.body.querySelector("#editor-diff-online").addEventListener("click",onClick)    
+    }
+}
+
 function getdiffdata(state) {
-    console.log("Getting diff data!!!!",state,state.selection.$head.marks())
     let markFound = state.selection.$head.marks().find(mark =>
         mark.type.name === 'diffdata')
 
@@ -90,19 +122,41 @@ function getDecos(decos,merge, state) {
 
 function deletionDecorations(decos,changeset,schema,commonDoc,doc,mapping,merge,deletionClass) {
     let index = 0
-    console.log("CHANGESET",changeset)
     changeset.changes.forEach(change => {
         if(change.deleted.length>0) {
             let dom = document.createElement("span")
             const slice = commonDoc.slice(change.fromA,change.toA) 
             let deletedContent = DOMSerializer.fromSchema(schema).serializeFragment(slice.content) 
             dom.appendChild(deletedContent)
+            
             dom.childNodes.forEach(children => {
-                console.log("C:",children)
                 children.classList.add(deletionClass)
             })
+            
+            dom.querySelectorAll("span.footnote-marker").forEach((footnoteElement)=>{
+                const newFnElement = document.createElement("footnote")
+                newFnElement.dataset.footnote = footnoteElement.dataset.footnote
+                newFnElement.classList.add("deleted-footnote-element")
+                footnoteElement.parentNode.appendChild(newFnElement)
+                footnoteElement.remove()
+            })
+            
+            dom.querySelectorAll("tr").forEach((tableRow)=>{
+                tableRow.querySelectorAll("span").forEach(children =>{
+                    children.classList.add(deletionClass)
+                })
+                dom = tableRow
+            })
+            dom.querySelectorAll("td").forEach((tableRow)=>{
+                tableRow.querySelectorAll("span").forEach(children =>{
+                    children.classList.add(deletionClass)
+                })
+                dom = tableRow
+            })
+
             // deletedContent = deletedContent.firstChild
             dom.classList.add(deletionClass)
+            dom.classList.add("deletion-decoration")
             let stepsInvolved = []
             change.deleted.forEach(deletion => stepsInvolved.push(parseInt(deletion.data.step)))
             const stepsSet = new Set(stepsInvolved)
@@ -112,12 +166,6 @@ function deletionDecorations(decos,changeset,schema,commonDoc,doc,mapping,merge,
             const dropUp = createDropUp(merge,deletionMark,undefined)
             dropUp.dataset.decoid = index
             dropUp.style.display = "none"
-            dom.addEventListener("mouseenter",function toggleRead() {
-                dropUp.style.display = "block"
-            })
-            dom.addEventListener("mouseleave",function toggleHide(){
-                dropUp.style.display = "none"
-            })
             dom.appendChild(dropUp)
             decos = decos.add(doc, [
                 Decoration.widget(mapping.map(change.fromA), dom, {type: "deletion", id:index})
@@ -220,10 +268,11 @@ function createDropUp (merge, diffMark, linkMark) {
                         dispatchRemoveDiffdata(merge.mergeView3, diffMark.attrs.from, diffMark.attrs.to)
                     } else {
                         // remove offline deletion decoration
-                        console.log("ParentNode:",dropUp.parentNode,dropUp)
                         dropUp.parentNode.classList.remove("offline-deleted")
-                        dropUp.parentNode.removeEventListener("mouseenter",toggleRead)
-                        dropUp.parentNode.removeEventListener("mouseleave",toggleHide)
+                        dropUp.parentNode.querySelectorAll("span").forEach(ele => ele.classList.remove("offline-deleted"))
+                        dropUp.parentNode.childNodes.forEach(children => {
+                            children.classList.remove("offline-deleted")
+                        })
                     }
                 }
             }
@@ -259,10 +308,12 @@ export const diffPlugin = function(options) {
             init(state) {
                 let baseTr = false
                 let deletionClass = false
+                let isOfflineEditor = false
                 let decos = DecorationSet.empty
                 if(state.doc.eq(options.merge.offlineDoc)) {
                     baseTr = options.merge.offlineTr
                     deletionClass = "offline-deleted"
+                    isOfflineEditor = true
                 } else if (state.doc.eq(options.merge.onlineDoc)) {
                     baseTr = options.merge.onlineTr
                     deletionClass = "online-deleted"
@@ -271,6 +322,7 @@ export const diffPlugin = function(options) {
                     const Changeset = new changeSet(baseTr).getChangeSet()
                     decos =  deletionDecorations(decos,Changeset,options.merge.schema,options.merge.cpDoc,state.doc,baseTr.mapping,options.merge,deletionClass)
                 }
+                handleClick(isOfflineEditor)
                 return {
                     baseTr: baseTr,
                     deletionClass:deletionClass,

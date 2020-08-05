@@ -63,7 +63,7 @@ export const selectionMenuModel = () => ({
                 const command = toggleMark(mark, {id: randomAnchorId()})
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
-            available: editor => !COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights),
+            disabled: editor => COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights),
             hidden: editor => editor.currentView.state.selection.$anchor.depth < 2,
             selected: editor => !!editor.currentView.state.selection.$head.marks().some(
                 mark => mark.type.name === 'anchor'
@@ -79,7 +79,7 @@ export const selectionMenuModel = () => ({
                 editor.currentView.state.selection.from,
                 editor.currentView.state.selection.to
             ),
-            available: editor => !COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights),
+            disabled: editor => editor.docInfo.access_rights !== "write",
             hidden: editor => editor.currentView.state.selection.$anchor.depth < 2 || !tracksInSelection(editor.currentView),
             order: 3
         },
@@ -92,7 +92,7 @@ export const selectionMenuModel = () => ({
                 editor.currentView.state.selection.from,
                 editor.currentView.state.selection.to
             ),
-            available: editor => !COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights),
+            disabled: editor => editor.docInfo.access_rights !== "write",
             hidden: editor => editor.currentView.state.selection.$anchor.depth < 2 || !tracksInSelection(editor.currentView),
             order: 4
         }

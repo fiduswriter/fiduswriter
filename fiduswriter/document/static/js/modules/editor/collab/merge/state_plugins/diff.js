@@ -1,50 +1,12 @@
 import {Plugin, PluginKey, NodeSelection, EditorState} from "prosemirror-state"
-import {Decoration, DecorationSet, __serializeForClipboard} from "prosemirror-view"
+import {Decoration, DecorationSet, __serializeForClipboard, EditorView} from "prosemirror-view"
 import {noSpaceTmp} from "../../../../common"
 import {dispatchRemoveDiffdata, copyChange, acceptChanges , removeDecoration, deleteContent, addDeletedContentBack} from "../tools"
 import {changeSet} from "../changeset"
 import {DOMSerializer} from "prosemirror-model"
+import {fnSchema} from "../../../../schema/footnotes"
+import {htmlToFnNode} from "../../../../schema/footnotes_convert"
 
-function onClick(event) {
-    if (event.target.matches('.offline-deleted')) {
-        const parentEl = event.target.closest('.deletion-decoration')
-        recursivelyRemoveClass(document.body.querySelector("#editor-diff-offline"),"selected-dec")
-        recursivelyAddClass(parentEl,"selected-dec")
-        const delPopup = document.body.querySelector("#editor-diff-offline").querySelectorAll(".drop-up-outer")
-        if(delPopup) {
-            delPopup.forEach(popUp => popUp.style.display = "none")
-        }
-        parentEl.querySelector(".drop-up-outer").style.display = "block"
-    } else if (event.target.matches('.online-deleted')) {
-        const parentEl = event.target.closest('.deletion-decoration')
-        recursivelyRemoveClass(document.body.querySelector("#editor-diff-online"),"selected-dec")
-        recursivelyAddClass(parentEl,"selected-dec")
-        const delPopup = document.body.querySelector("#editor-diff-online").querySelectorAll(".drop-up-outer")
-        if(delPopup) {
-            delPopup.forEach(popUp => popUp.style.display = "none")
-        }
-        parentEl.querySelector(".drop-up-outer").style.display = "block"
-    }
-    else {
-        const delDeco = document.body.querySelectorAll(".deletion-decoration")
-        if(delDeco) {
-            delDeco.forEach(item => recursivelyRemoveClass(item,"selected-dec"))
-        }
-        const delPopUp = document.body.querySelectorAll(".deletion-decoration .drop-up-outer")
-        if(delPopUp) {
-            delPopUp.forEach(popUp => popUp.style.display = "none")
-        }
-    }
-}
-
-
-function handleClick(offlineEditor) {
-    if(offlineEditor) {
-        document.body.querySelector("#editor-diff-offline").addEventListener("click",onClick)
-    } else {
-        document.body.querySelector("#editor-diff-online").addEventListener("click",onClick)    
-    }
-}
 
 function getdiffdata(state) {
     let markFound = state.selection.$head.marks().find(mark =>
@@ -153,6 +115,25 @@ function deletionDecorations(decos,changeset,schema,commonDoc,doc,mapping,merge,
                 newFnElement.classList.add("deleted-footnote-element")
                 footnoteElement.parentNode.appendChild(newFnElement)
                 footnoteElement.remove()
+                const tooltip = newFnElement.appendChild(document.createElement("div"))
+                tooltip.className = "footnote-tooltip"
+                tooltip.classList.add('render-arrow')
+                // tooltip.style.top = '-30px'
+                tooltip.style.display = "none"
+                const doc = fnSchema.nodeFromJSON({
+                    type: "doc",
+                    content: [{
+                        type: "footnotecontainer",
+                        content: htmlToFnNode(footnoteElement.dataset.footnote)
+                    }]
+                })
+                // And put a sub-ProseMirror into that
+                new EditorView(tooltip, {
+                    state: EditorState.create({
+                        doc: doc,
+                    }),
+                    editable: () => false
+                })
             })
             
             dom.querySelectorAll("tr").forEach((tableRow)=>{
@@ -331,12 +312,10 @@ export const diffPlugin = function(options) {
             init(state) {
                 let baseTr = false
                 let deletionClass = false
-                let isOfflineEditor = false
                 let decos = DecorationSet.empty
                 if(state.doc.eq(options.merge.offlineDoc)) {
                     baseTr = options.merge.offlineTr
                     deletionClass = "offline-deleted"
-                    isOfflineEditor = true
                 } else if (state.doc.eq(options.merge.onlineDoc)) {
                     baseTr = options.merge.onlineTr
                     deletionClass = "online-deleted"
@@ -345,7 +324,6 @@ export const diffPlugin = function(options) {
                     const Changeset = new changeSet(baseTr).getChangeSet()
                     decos =  deletionDecorations(decos,Changeset,options.merge.schema,options.merge.cpDoc,state.doc,baseTr.mapping,options.merge,deletionClass)
                 }
-                handleClick(isOfflineEditor)
                 return {
                     baseTr: baseTr,
                     deletionClass:deletionClass,
@@ -369,8 +347,6 @@ export const diffPlugin = function(options) {
                 }
                 if(tr.getMeta("decorationId")) {
                     const decorationId = parseInt(tr.getMeta("decorationId"))
-                    console.log("Deco getting removed!!!",decos,decos.find(null, null,
-                        spec => spec.id == decorationId))
                     decos = decos.remove(decos.find(null, null,
                         spec => spec.id == decorationId))            
                 }
@@ -383,10 +359,34 @@ export const diffPlugin = function(options) {
             }
         },
         props: {
+            handleClick:(view,pos,event) => {
+                const delDeco = view.dom.querySelectorAll(".deletion-decoration")
+                if(delDeco) {
+                    delDeco.forEach(item => recursivelyRemoveClass(item,"selected-dec"))
+                }
+                const delPopUp = view.dom.querySelectorAll(".deletion-decoration .drop-up-outer")
+                if(delPopUp) {
+                    delPopUp.forEach(popUp => popUp.style.display = "none")
+                }
+                const delFnToolTip = view.dom.querySelectorAll(".deleted-footnote-element") 
+                if(delFnToolTip) {
+                    delFnToolTip.forEach(tooltip => tooltip.childNodes[0].style.display = "none")
+                }
+                // recursivelyRemoveClass(view.dom,"selected-dec")
+                if (event.target.matches('.offline-deleted')) {
+                    const parentEl = event.target.closest('.deletion-decoration')
+                    recursivelyAddClass(parentEl,"selected-dec")
+                    parentEl.querySelector(".drop-up-outer").style.display = "block"
+                } else if (event.target.matches('.online-deleted')) {
+                    const parentEl = event.target.closest('.deletion-decoration')
+                    recursivelyAddClass(parentEl,"selected-dec")
+                    parentEl.querySelector(".drop-up-outer").style.display = "block"
+                } else if (event.target.matches(".deleted-footnote-element")) {
+                    event.target.childNodes[0].style.display = "block"
+                }
+            },
             decorations(state) {
-                const {
-                    decos,baseTr,deletionClass
-                } = this.getState(state)
+                const {decos} = this.getState(state)
                 return decos
             }
         },

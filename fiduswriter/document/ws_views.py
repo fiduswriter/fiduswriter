@@ -388,8 +388,12 @@ class WebSocket(BaseWebSocketHandler):
                     logger.exception(
                         f"Action:Cannot apply json diff. "
                         f"URL:{self.endpoint} User:{self.user.id}")
-                    logger.error(json_encode(message))
-                    logger.error(json_encode(self.doc['contents']))
+                    logger.error(
+                        f"Action:Patch Exception URL:{self.endpoint} User:{self.user.id} "
+                        f"Message:{json_encode(message)}")
+                    logger.error(
+                        f"Action:Patch Exception URL:{self.endpoint} User:{self.user.id} "
+                        f"Document:{json_encode(self.doc['contents'])}")
                     self.unfixable()
                 # The json diff is only needed by the python backend which does
                 # not understand the steps. It can therefore be removed before

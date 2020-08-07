@@ -15,12 +15,12 @@ logger = logging.getLogger(__name__)
 
 
 class BaseWebSocketHandler(DjangoHandlerMixin, WebSocketHandler):
-    def initialize(self,app_name):
+    def initialize(self, app_name):
         self.app_name = app_name
 
     def open(self, arg):
         self.set_nodelay(True)
-        logger.debug('Websocket opened')
+        logger.debug("Action:Opening Websocket")
         self.id = 0
         self.user = self.get_current_user()
         self.endpoint = self.app_name+'/'+arg
@@ -33,7 +33,9 @@ class BaseWebSocketHandler(DjangoHandlerMixin, WebSocketHandler):
         if not self.user.is_authenticated:
             self.access_denied()
             return
-        logger.debug(f"Action:Opening Websocket URL:{self.endpoint} User:{self.user.id}")
+        logger.debug(
+            f"Action:Opening Websocket URL:{self.endpoint}"
+            f" User:{self.user.id}")
         response = dict()
         response['type'] = 'welcome'
         self.send_message(response)
@@ -59,17 +61,22 @@ class BaseWebSocketHandler(DjangoHandlerMixin, WebSocketHandler):
             })
             # Message doesn't contain needed client/server info. Ignore.
             return
-        logger.debug(f"Action:Message received URL:{self.endpoint} User:{self.user.id}"
-            f" Type:{message['type']} server count client:{message['s']} client count client:{message['c']}"
-            f" server count server:{self.messages['server']} client count server:{self.messages['client']}")
+        logger.debug(
+            f"Action:Message received URL:{self.endpoint} "
+            f"User:{self.user.id} Type:{message['type']} "
+            f"S count client:{message['s']} C count client:{message['c']} "
+            f"S count server:{self.messages['server']} "
+            f"C count server:{self.messages['client']}")
 
         if message["c"] < (self.messages["client"] + 1):
             # Receive a message already received at least once. Ignore.
             return
         elif message["c"] > (self.messages["client"] + 1):
             # Messages from the client have been lost.
-            logger.debug(f"Action:Requesting resending of lost messages from client"
-                f" URL:{self.endpoint} User:{self.user.id} from:{self.messages['client']}")
+            logger.debug(
+                f"Action:Requesting resending of lost messages from client"
+                f" URL:{self.endpoint} User:{self.user.id} "
+                f"from:{self.messages['client']}")
 
             self.send({
                 'type': 'request_resend',
@@ -80,8 +87,9 @@ class BaseWebSocketHandler(DjangoHandlerMixin, WebSocketHandler):
             # Message was sent either simultaneously with message from server
             # or a message from the server previously sent never arrived.
             # Resend the messages the client missed.
-            logger.debug(f"Action:Simultaneous server count value.Resending messages to client."
-                f" URL:{self.endpoint} User:{self.user.id} from:{message['s']}")
+            logger.debug(
+                f"Action:Simultaneous.Resend messages to client. "
+                f"URL:{self.endpoint} User:{self.user.id} from:{message['s']}")
 
             self.messages["client"] += 1
             self.resend_messages(message["s"])
@@ -103,8 +111,10 @@ class BaseWebSocketHandler(DjangoHandlerMixin, WebSocketHandler):
         message['s'] = self.messages['server']
         self.messages['last_ten'].append(message)
         self.messages['last_ten'] = self.messages['last_ten'][-10:]
-        logger.debug(f"Action:Sending Message. URL:{self.endpoint} User:{self.user.id} Type:{message['type']}"
-            f" Server count server:{message['s']} Client count server:{message['c']}")
+        logger.debug(
+            f"Action:Sending Message. URL:{self.endpoint} User:{self.user.id} "
+            f"Type:{message['type']} S count server:{message['s']} "
+            f"C count server:{message['c']}")
         self.send(message)
 
     @tornado.gen.coroutine
@@ -119,12 +129,15 @@ class BaseWebSocketHandler(DjangoHandlerMixin, WebSocketHandler):
 
     def resend_messages(self, from_no):
         to_send = self.messages["server"] - from_no
-        logger.debug(f"Action:Resending messages to User. URL:{self.endpoint} User:{self.user.id}"
-            f" number of messages to be resent:{to_send} Server count server:{self.messages['server']} messages to be sent from:{from_no}")
+        logger.debug(
+            f"Action:Resending messages to User. URL:{self.endpoint} "
+            f"User:{self.user.id} number of messages to be resent:{to_send} "
+            f"S count server:{self.messages['server']} from:{from_no}")
         if to_send > len(self.messages['last_ten']):
             # Too many messages requested. We have to abort.
-            logger.debug(f"Action:Lot of messages requested by User. URL:{self.endpoint} User:{self.user.id}"
-            f" number of messages requested:{to_send}")
+            logger.debug(
+                f"Action:Lot of messages requested. URL:{self.endpoint} "
+                f"User:{self.user.id} number of messages requested:{to_send}")
             self.unfixable()
             return
         self.messages['server'] -= to_send

@@ -35,7 +35,7 @@ class WebSocket(BaseWebSocketHandler):
         self.document_id = int(self.args[0])
         logger.debug(
             f"Action:Document socket opened by user. "
-            f"URL:{self.endpoint} User:{self.user.id}")
+            f"URL:{self.endpoint} User:{self.user.id} ParticipantID:{self.id}")
 
     def confirm_diff(self, rid):
         response = {
@@ -58,17 +58,16 @@ class WebSocket(BaseWebSocketHandler):
         ):
             logger.debug(
                 f"Action:Serving already opened document. "
-                f"URL:{self.endpoint} User:{self.user.id}")
+                f"URL:{self.endpoint} User:{self.user.id} "
+                f" ParticipantID:{self.id}")
             self.doc = WebSocket.sessions[doc_db.id]
             self.id = max(self.doc['participants']) + 1
             self.doc['participants'][self.id] = self
-            logger.debug(
-                f"Action:Participant ID Assigned. URL:{self.endpoint} "
-                f"User:{self.user.id} ParticipantID:{self.id}")
         else:
             logger.debug(
                 f"Action:Opening document from DB. "
-                f"URL:{self.endpoint} User:{self.user.id}")
+                f"URL:{self.endpoint} User:{self.user.id} "
+                f"ParticipantID:{self.id}")
             self.id = 0
             self.doc = {
                 'db': doc_db,
@@ -88,6 +87,9 @@ class WebSocket(BaseWebSocketHandler):
                 }
             }
             WebSocket.sessions[doc_db.id] = self.doc
+        logger.debug(
+            f"Action:Participant ID Assigned. URL:{self.endpoint} "
+            f"User:{self.user.id} ParticipantID:{self.id}")
         self.send_message({
             'type': 'subscribed'
         })
@@ -209,7 +211,8 @@ class WebSocket(BaseWebSocketHandler):
         if self.user_info.document_id not in WebSocket.sessions:
             logger.debug(
                 f"Action:Receiving message for closed document. "
-                f"URL:{self.endpoint} User:{self.user.id}")
+                f"URL:{self.endpoint} User:{self.user.id} "
+                f"ParticipantID:{self.id}")
             return
         if message["type"] == 'get_document':
             self.send_document()
@@ -361,7 +364,8 @@ class WebSocket(BaseWebSocketHandler):
         dv = self.doc['version']
         logger.debug(
             f"Action:Handling Diff. URL:{self.endpoint} User:{self.user.id} "
-            f"Client version:{pv} Server version:{dv} Message:{message}")
+            f"ParticipantID:{self.id} Client version:{pv} "
+            f"Server version:{dv} Message:{message}")
         if (
             self.user_info.access_rights in COMMENT_ONLY and
             not self.only_comments(message)
@@ -369,7 +373,7 @@ class WebSocket(BaseWebSocketHandler):
             logger.error(
                 f"Action:Received non-comment diff from comment-only "
                 f"collaborator.Discarding URL:{self.endpoint} "
-                f"User:{self.user.id}")
+                f"User:{self.user.id} ParticipantID:{self.id}")
             return
         if pv == dv:
             self.doc["last_diffs"].append(message)
@@ -387,12 +391,15 @@ class WebSocket(BaseWebSocketHandler):
                 except (JsonPatchConflict, JsonPointerException):
                     logger.exception(
                         f"Action:Cannot apply json diff. "
-                        f"URL:{self.endpoint} User:{self.user.id}")
+                        f"URL:{self.endpoint} User:{self.user.id} "
+                        f"ParticipantID:{self.id}")
                     logger.error(
-                        f"Action:Patch Exception URL:{self.endpoint} User:{self.user.id} "
+                        f"Action:Patch Exception URL:{self.endpoint} "
+                        f"User:{self.user.id} ParticipantID:{self.id} "
                         f"Message:{json_encode(message)}")
                     logger.error(
-                        f"Action:Patch Exception URL:{self.endpoint} User:{self.user.id} "
+                        f"Action:Patch Exception URL:{self.endpoint} "
+                        f"User:{self.user.id} ParticipantID:{self.id} "
                         f"Document:{json_encode(self.doc['contents'])}")
                     self.unfixable()
                 # The json diff is only needed by the python backend which does
@@ -422,7 +429,7 @@ class WebSocket(BaseWebSocketHandler):
                 number_diffs = pv - dv
                 logger.debug(
                     f"Action:Resending document diffs. URL:{self.endpoint} "
-                    f"User:{self.user.id} "
+                    f"User:{self.user.id} ParticipantID:{self.id} "
                     f"number of messages to be resent:{number_diffs}")
                 messages = self.doc["last_diffs"][number_diffs:]
                 for message in messages:
@@ -432,22 +439,24 @@ class WebSocket(BaseWebSocketHandler):
             else:
                 logger.debug(
                     f"Action:User is on a very old version of the document. "
-                    f"URL:{self.endpoint} User:{self.user.id}")
+                    f"URL:{self.endpoint} User:{self.user.id} "
+                    f"ParticipantID:{self.id}")
                 # Client has a version that is too old to be fixed
                 self.unfixable()
         else:
             # Client has a higher version than server. Something is fishy!
             logger.debug(
                 f"Action:User has higher document version than server.Fishy! "
-                f"URL:{self.endpoint} User:{self.user.id}")
+                f"URL:{self.endpoint} User:{self.user.id} "
+                f"ParticipantID:{self.id}")
 
     def check_version(self, message):
         pv = message["v"]
         dv = self.doc['version']
         logger.debug(
             f"Action:Checking version of document. URL:{self.endpoint} "
-            f"User:{self.user.id} Client document version:{pv} "
-            f"Server document version:{dv}")
+            f"User:{self.user.id} ParticipantID:{self.id} "
+            f"Client document version:{pv} Server document version:{dv}")
         if pv == dv:
             response = {
                 "type": "confirm_version",
@@ -459,7 +468,7 @@ class WebSocket(BaseWebSocketHandler):
             number_diffs = pv - dv
             logger.debug(
                 f"Action:Resending document diffs. URL:{self.endpoint} "
-                f"User:{self.user.id} "
+                f"User:{self.user.id} ParticipantID:{self.id}"
                 f"number of messages to be resent:{number_diffs}")
             messages = self.doc["last_diffs"][number_diffs:]
             for message in messages:
@@ -470,7 +479,8 @@ class WebSocket(BaseWebSocketHandler):
         else:
             logger.debug(
                 f"Action:User is on a very old version of the document. "
-                f"URL:{self.endpoint} User:{self.user.id}")
+                f"URL:{self.endpoint} User:{self.user.id} "
+                f"ParticipantID:{self.id}")
             # Client has a version that is too old
             self.unfixable()
             return
@@ -484,7 +494,7 @@ class WebSocket(BaseWebSocketHandler):
     def on_close(self):
         logger.debug(
             f"Action:Closing websocket. URL:{self.endpoint} "
-            f"User:{self.user.id}")
+            f"User:{self.user.id} ParticipantID:{self.id}")
         if (
             hasattr(self, 'user_info') and
             hasattr(self.user_info, 'document_id') and

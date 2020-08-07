@@ -39,7 +39,7 @@ def make_tornado_server():
             pass
         else:
             tornado_url_list += [
-                ('/ws/%s/([^?]*)' % app_name, ws_module.WebSocket)
+                ('/ws/%s/([^?]*)' % app_name, ws_module.WebSocket, dict(app_name=app_name))
             ]
     tornado_url_list += [
         ('.*', FallbackHandler, dict(fallback=wsgi_app))

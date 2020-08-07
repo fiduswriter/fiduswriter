@@ -198,7 +198,7 @@ export class MergeEditor {
         const dialog = new Dialog({
             id: 'editor-merge-view',
             title: gettext("Merging Offline Document"),
-            body: `<div style="display:flex"><div class="offline-heading">${gettext("Common Document")}</div><div class="merged-heading">${gettext("Online Document")}</div> <div class="online-heading">${gettext("Offline Document")}</div></div><div class= "user-contents" style="display:flex;"><div id="editor-diff-common" class="merged-view" style="padding:15px;"></div><div id="editor-diff-online" style="float:right;padding:15px;"></div><div id="editor-diff-offline" style="float:left;padding:15px;"></div></div>`,
+            body: `<div style="display:flex"><div class="offline-heading">${gettext("Common Document")}</div><div class="merged-heading">${gettext("Online Document")}</div> <div class="online-heading">${gettext("Offline Document")}</div></div><div class= "user-contents" style="display:flex;"><div id="editor-diff-common" style="float:left;padding:15px;"></div><div id="editor-diff-online" class="merged-view" style="padding:15px;"></div><div id="editor-diff-offline" style="float:right;padding:15px;"></div></div>`,
             fullScreen: true,
             canClose: false,
             help: () => {

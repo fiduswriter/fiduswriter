@@ -226,15 +226,14 @@ export const removeDecoration = function (view, decorationId) {
     view.dispatch(tr)
 }
 
-export const deleteContent = function (merge, view, diffMark, inverseMapping=false) {
-    const originalOnlineMapping = merge.onlineTr.mapping
+export const deleteContent = function (merge, view, diffMark, mappingNeeded=true) {
+    // const originalOnlineMapping = merge.onlineTr.mapping
     const rebasedMapping = new Mapping()
     const tr = view.state.tr
-    if(inverseMapping) {
-        rebasedMapping.appendMappingInverted(originalOnlineMapping)
+    if(mappingNeeded) {
+        rebasedMapping.appendMapping(merge.mergedDocMap)
     }
-    rebasedMapping.appendMapping(merge.mergedDocMap)
-    const rebasedFrom = rebasedMapping.map(diffMark.attrs.from,-1),
+    const rebasedFrom = rebasedMapping.map(diffMark.attrs.from),
     rebasedTo = rebasedMapping.map(diffMark.attrs.to)
     if(rebasedFrom && rebasedTo) {
         tr.delete(rebasedFrom,rebasedTo)

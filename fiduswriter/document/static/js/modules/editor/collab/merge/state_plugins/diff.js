@@ -259,7 +259,7 @@ function createDropUp (merge, diffMark, linkMark) {
                 if(trType == "online" ) {
                     if(opType == "insertion") {
                         // Delete inserted content
-                        deleteContent(merge, merge.mergeView2, diffMark, true)
+                        deleteContent(merge, merge.mergeView2, diffMark, false)
                     } else {
                         // remove online deletion decoration
                         if(addDeletedContentBack(merge, merge.mergeView2, diffMark)) {
@@ -277,6 +277,8 @@ function createDropUp (merge, diffMark, linkMark) {
                         dropUp.parentNode.childNodes.forEach(children => {
                             children.classList.remove("offline-deleted")
                         })
+                        recursivelyRemoveClass(dropUp.parentNode,"selected-dec")
+                        dropUp.remove()
                     }
                 }
             }

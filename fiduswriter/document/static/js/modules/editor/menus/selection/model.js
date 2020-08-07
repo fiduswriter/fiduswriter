@@ -5,6 +5,7 @@ import {randomAnchorId} from "../../../schema/common"
 import {acceptAll, rejectAll} from "../../track"
 
 const tracksInSelection = view => {
+    // Check whether track marks are present within the range of selection
     let tracks = false
     const from = view.state.selection.from,
         to = view.state.selection.to

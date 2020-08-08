@@ -19,6 +19,8 @@ export class SelectionMenuView {
         this.openedMenu = false
         this.listeners = {}
 
+        this.removeUnavailable(this.editor.menu.selectionMenuModel)
+
         this.bindEvents()
         this.update()
     }

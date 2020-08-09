@@ -3585,7 +3585,7 @@ msgstr "Kommentare aufgelöst"
 #: document/static/js/modules/editor/marginboxes/templates.js:201
 #: document/static/js/modules/editor/menus/headerbar/model.js:358
 msgid "Track changes"
-msgstr "Änderungsverfolgung"
+msgstr "Änderungen"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:185
 msgid "Export the document to a Journal Archiving and Interchange Tag Library NISO JATS Version 1.2 file."

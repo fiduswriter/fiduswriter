@@ -259,12 +259,10 @@ export class MergeEditor {
 
     checkResolution() {
         /* To Check if all the diffs are resolved */
-        const offlineVersionDoc = this.mergeView1.state.doc,
-            onlineVersionDoc = this.mergeView3.state.doc,
+        const offlineVersionDoc = this.mergeView3.state.doc,
             mergedVersionDoc = this.mergeView2.state.doc
         let diffAttrPresent = false
         if (offlineVersionDoc.rangeHasMark(0, offlineVersionDoc.content.size, this.schema.marks.diffdata) ||
-            onlineVersionDoc.rangeHasMark(0, onlineVersionDoc.content.size, this.schema.marks.diffdata) ||
             mergedVersionDoc.rangeHasMark(0, mergedVersionDoc.content.size, this.schema.marks.diffdata)
         ) {
             return true
@@ -274,23 +272,21 @@ export class MergeEditor {
                 diffAttrPresent = true
             }
         })
-        onlineVersionDoc.nodesBetween(0, onlineVersionDoc.content.size, (node, _pos) => {
-            if (node.attrs.diffdata && node.attrs.diffdata.length > 0) {
-                diffAttrPresent = true
-            }
-        })
         mergedVersionDoc.nodesBetween(0, mergedVersionDoc.content.size, (node, _pos) => {
             if (node.attrs.diffdata && node.attrs.diffdata.length > 0) {
                 diffAttrPresent = true
             }
         })
+        if(this.mergeView2.dom.querySelector(".deletion-decoration") || this.mergeView3.dom.querySelector(".deletion-decoration")) {
+            diffAttrPresent = true
+        }
         if (diffAttrPresent) {
             return true
         }
         return false
     }
 
-    markChangesinDiffEditor(changeset, view, insertionClass, deletionClass, tr) {
+    markChangesinDiffEditor(changeset, view, insertionClass, tr) {
         /* This marks all the changes in the diff editor */
         // Mark the insertions in insertion View & deletions in deletionView
         const insertionMarksTr = view.state.tr
@@ -350,21 +346,22 @@ export class MergeEditor {
                     }
                     stepsTrackedByChangeset.push(index)
                 }
-            } else if ((step instanceof AddMarkStep || step instanceof RemoveMarkStep) && !stepsTrackedByChangeset.includes(index)) {
-                const Step1 = step.toJSON()
-                if (Step1.mark && ["strong", "em", "underline", "link", "deletion", "comment"].includes(Step1.mark.type)) {
-                    if (step instanceof AddMarkStep) {
-                        const insertionMark = this.schema.marks.diffdata.create({diff: insertionClass, steps: JSON.stringify([index]), from: from, to: to})
-                        stepsTrackedByChangeset.push(index)
-                        insertionMarksTr.addMark(from, to, insertionMark)
-                    } 
-                    // else if (step instanceof RemoveMarkStep) {
-                    //     const deletionMark = this.schema.marks.diffdata.create({diff: deletionClass, steps: JSON.stringify([index]), from: from, to: to})
-                    //     deletionMarksTr.addMark(from, to, deletionMark)
-                    //     stepsTrackedByChangeset.push(index)
-                    // }
-                }
-            }
+            } 
+            // else if ((step instanceof AddMarkStep || step instanceof RemoveMarkStep) && !stepsTrackedByChangeset.includes(index)) {
+            //     const Step1 = step.toJSON()
+            //     if (Step1.mark && ["strong", "em", "underline", "link", "deletion", "comment"].includes(Step1.mark.type)) {
+            //         if (step instanceof AddMarkStep) {
+            //             const insertionMark = this.schema.marks.diffdata.create({diff: insertionClass, steps: JSON.stringify([index]), from: from, to: to})
+            //             stepsTrackedByChangeset.push(index)
+            //             insertionMarksTr.addMark(from, to, insertionMark)
+            //         } 
+            //         // else if (step instanceof RemoveMarkStep) {
+            //         //     const deletionMark = this.schema.marks.diffdata.create({diff: deletionClass, steps: JSON.stringify([index]), from: from, to: to})
+            //         //     deletionMarksTr.addMark(from, to, deletionMark)
+            //         //     stepsTrackedByChangeset.push(index)
+            //         // }
+            //     }
+            // }
         })
     
         // Dispatch the transactions

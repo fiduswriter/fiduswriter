@@ -84,7 +84,7 @@ function getDecos(decos,merge, state) {
             const highlightDecos = createHiglightDecoration(mark.attrs.from, mark.attrs.to, state)
             highlightDecos.push(deco)
             return decos.add(state.doc, highlightDecos)    
-        }\
+        }
         decos = decos.remove(decos.find(null, null,
             spec => spec.type !== "deletion"))
         return decos
@@ -97,9 +97,15 @@ function getDecos(decos,merge, state) {
     return decos.add(state.doc, highlightDecos)
 }
 
-function deletionDecorations(decos,changeset,schema,commonDoc,doc,mapping,merge,deletionClass) {
+function deletionDecorations(decos,merge,state,tr,deletionClass) {
     let index = 0
     let stepsTrackedByChangeset = []
+    const changeset = new changeSet(tr).getChangeSet(),
+    schema = merge.schema,
+    commonDoc = merge.cpDoc,
+    doc = state.doc,
+    mapping = tr.mapping
+
     changeset.changes.forEach(change => {
         if(change.deleted.length>0) {
             let dom = document.createElement("span")
@@ -142,8 +148,11 @@ function deletionDecorations(decos,changeset,schema,commonDoc,doc,mapping,merge,
             // Put decoration in proper place. In case foootnote change ,original content is put first,
             //decoration is shown after the content
             let pos = mapping.map(change.fromA)
-            if(change.lenA == change.lenB) {
-                pos+=1
+            if(change.lenA == change.lenB && stepsInvolved.length == 1) {
+                const JSONSlice = slice.toJSON()
+                if(JSONSlice.content && JSONSlice.content.length == 1 && JSONSlice.content[0].type === "footnote"){
+                    pos+=1
+                }
             }
             decos = decos.add(doc, [
                 Decoration.widget(pos, dom, {type: "deletion", id:index})
@@ -251,6 +260,7 @@ function createDropUp (merge, diffMark, linkMark) {
                     } else {
                         // remove offline deletion decoration
                         dropUp.parentNode.classList.remove("offline-deleted")
+                        dropUp.parentNode.classList.remove("deletion-decoration")
                         dropUp.parentNode.querySelectorAll(".offline-deleted").forEach(ele=> {
                             ele.classList.remove("offline-deleted")
                             ele.classList.remove("selected-dec")
@@ -298,10 +308,8 @@ export const diffPlugin = function(options) {
                     deletionClass = "online-deleted"
                 }
                 if(baseTr) {
-                    const Changeset = new changeSet(baseTr).getChangeSet()
                     console.log("Tr:",baseTr)
-                    console.log("Changeset",Changeset)
-                    decos =  deletionDecorations(decos,Changeset,options.merge.schema,options.merge.cpDoc,state.doc,baseTr.mapping,options.merge,deletionClass)
+                    decos =  deletionDecorations(decos,options.merge,state,baseTr,deletionClass)
                 }
                 return {
                     baseTr: baseTr,

@@ -142,8 +142,8 @@ export class MergeEditor {
         // Unhide All Sections in All the 3 views
         this.unHideSectionsinAllDoc()
 
-        const offlineTrackedSteps = this.markChangesinDiffEditor(offlineChangeset, this.mergeView3, "offline-inserted", "offline-deleted", this.offlineTr)
-        const onlineTrackedSteps = this.markChangesinDiffEditor(onlineChangeset, this.mergeView2, "online-inserted", "online-deleted", this.onlineTr)
+        const offlineTrackedSteps = this.markChangesinDiffEditor(offlineChangeset, this.mergeView3, "offline-inserted", this.offlineTr)
+        const onlineTrackedSteps = this.markChangesinDiffEditor(onlineChangeset, this.mergeView2, "online-inserted", this.onlineTr)
         this.offlineTrackedSteps = this.offlineTrackedSteps.concat(offlineTrackedSteps)
         this.onlineTrackedSteps = this.onlineTrackedSteps.concat(onlineTrackedSteps)
         

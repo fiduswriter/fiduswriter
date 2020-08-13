@@ -25,10 +25,15 @@ function getdiffdata(state) {
     return markFound
 }
 
-function createHiglightDecoration(from, to, state) {
+function createHiglightDecoration(from, to, state, addId=false) {
     /* Creates a yellow coloured highlight decoration when the user
     tries to look at a change */
-    const inlineDeco = Decoration.inline(from, to, {class: 'selected-dec'})
+    let inlineDeco
+    if(addId) {
+        inlineDeco = Decoration.inline(from, to, {class: 'selected-dec'},{type:"deletion-highlight"})
+    } else {
+        inlineDeco = Decoration.inline(from, to, {class: 'selected-dec'})
+    }
     const deco = []
     deco.push(inlineDeco)
     state.doc.nodesBetween(
@@ -41,7 +46,11 @@ function createHiglightDecoration(from, to, state) {
                 return false
             }
             if (node && node.attrs.diffdata && node.attrs.diffdata.length > 0) {
-                deco.push(Decoration.node(pos, pos + node.nodeSize, {class: 'selected-dec'}, {}))
+                if(addId) {
+                    deco.push(Decoration.node(pos, pos + node.nodeSize, {class: 'selected-dec'}, {type:"deletion-highlight"}))
+                } else {
+                    deco.push(Decoration.node(pos, pos + node.nodeSize, {class: 'selected-dec'}, {}))
+                }
             }
         }
     )
@@ -139,6 +148,8 @@ function deletionDecorations(decos,merge,state,tr,deletionClass) {
                 footnoteElement.remove()
             })
             dom.classList.add("deletion-decoration")
+            dom.dataset.delfrom = change.fromA
+            dom.dataset.delto = change.toA
             
             const dropUp = createDropUp(merge,deletionMark,undefined)
             dropUp.dataset.decoid = index
@@ -230,6 +241,7 @@ function createDropUp (merge, diffMark, linkMark) {
                         // remove offline deletion decoration
                         const decorationId = dropUp.dataset.decoid
                         if(deleteContent(merge, merge.mergeView2, diffMark)){
+                            merge.mergeView2.dispatch(merge.mergeView2.state.tr.setMeta("removeHighlight",true))
                             removeDecoration(merge.mergeView3,decorationId)
                         }
                     }
@@ -266,6 +278,7 @@ function createDropUp (merge, diffMark, linkMark) {
                             ele.classList.remove("selected-dec")
                         })
                         dropUp.remove()
+                        merge.mergeView2.dispatch(merge.mergeView2.state.tr.setMeta("removeHighlight",true))
                     }
                 }
             }
@@ -325,6 +338,10 @@ export const diffPlugin = function(options) {
                     baseTr,
                     deletionClass
                 } = this.getState(oldState)
+                if(tr.getMeta("removeHighlight")) {
+                    decos = decos.remove(decos.find(null, null,
+                        spec => spec.type == "deletion-highlight"))         
+                }
                 const newdiffdata = getdiffdata(state)
                 if (newdiffdata === diffMark) {
                     decos = decos.map(tr.mapping, tr.doc)
@@ -336,6 +353,13 @@ export const diffPlugin = function(options) {
                     const decorationId = parseInt(tr.getMeta("decorationId"))
                     decos = decos.remove(decos.find(null, null,
                         spec => spec.id == decorationId))            
+                }
+                if(tr.getMeta("highlight")) {
+                    const data = tr.getMeta("highlight")
+                    const from = baseTr.mapping.map(parseInt(data.from))
+                    const to = baseTr.mapping.map(parseInt(data.to))
+                    const deco = createHiglightDecoration(from,to,state,true)
+                    decos = decos.add(state.doc,deco)   
                 }
                 return {
                     decos,
@@ -359,12 +383,17 @@ export const diffPlugin = function(options) {
                 if(delFnToolTip) {
                     delFnToolTip.forEach(tooltip => tooltip.childNodes[0].style.display = "none")
                 }
+                options.merge.mergeView2.dispatch(options.merge.mergeView2.state.tr.setMeta("removeHighlight",true))
                 if (Boolean(event.target.closest('.offline-deleted'))) {
                     const parentEl = event.target.closest('.deletion-decoration')
                     const highlightEle = parentEl.querySelectorAll(".offline-deleted")
                     if(highlightEle)
                         highlightEle.forEach(ele => ele.classList.add("selected-dec"))
                     parentEl.querySelector(".drop-up-outer").style.display = "block"
+
+                    // Add a decoration to highlight decoration to the online/merged view
+                    options.merge.mergeView2.dispatch(options.merge.mergeView2.state.tr.setMeta("highlight",{from:parentEl.dataset.delfrom,to:parentEl.dataset.delto}))
+
                 } else if (Boolean(event.target.closest('.online-deleted'))) {
                     const parentEl = event.target.closest('.deletion-decoration')
                     const highlightEle = parentEl.querySelectorAll(".online-deleted")

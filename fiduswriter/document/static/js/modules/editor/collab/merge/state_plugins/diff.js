@@ -2,7 +2,7 @@ import {Plugin, PluginKey, NodeSelection} from "prosemirror-state"
 import {Decoration, DecorationSet, __serializeForClipboard} from "prosemirror-view"
 import {noSpaceTmp} from "../../../../common"
 import {dispatchRemoveDiffdata, addDeletionMarks} from "../tools"
-import {copyChange, acceptChanges , removeDecoration, deleteContent, addDeletedContentBack, removeMarks} from "./action"
+import {copyChange, acceptChanges , removeDecoration, deleteContent, addDeletedContentBack, handleMarks} from "./action"
 import {changeSet} from "../changeset"
 import {DOMSerializer} from "prosemirror-model"
 import {readOnlyFnEditor} from "../footnotes"
@@ -78,6 +78,16 @@ function getDecos(decos,merge, state) {
     const linkMark = $head.marks().find(
         mark => mark.type.name === 'link'
     )
+
+    decos = decos.remove(decos.find(null, null,
+        spec => {
+            if(spec.type && spec.type == "deletion") {
+                return false
+            } else {
+                return true
+            }
+        }))
+
     if (diffMark) {
         currentMarks.push(diffMark)
     }
@@ -106,14 +116,6 @@ function getDecos(decos,merge, state) {
             highlightDecos.push(deco)
             return decos.add(state.doc, highlightDecos)    
         }
-        decos = decos.remove(decos.find(null, null,
-            spec => {
-                if(spec.type && spec.type == "deletion") {
-                    return false
-                } else {
-                    return true
-                }
-            }))
         return decos
     }
     const startPos = diffMark.attrs.to
@@ -204,6 +206,25 @@ function createDropUp (merge, diffMark, linkMark) {
         tr = diffMark.attrs.diff.search('offline') != -1 ? merge.offlineTr : merge.onlineTr,
         trType = diffMark.attrs.diff.search('offline') != -1 ? "offline" : "online",
         opType = diffMark.attrs.diff.search('inserted') != -1 ? "insertion" : "deletion"
+    let textToBeDisplayed = ""
+
+    if(diffMark.attrs.markOnly) {
+        textToBeDisplayed = gettext("Format Change")
+    } else {
+        if(trType == "online") {
+            if(opType == "insertion") {
+                textToBeDisplayed = gettext("Inserted by online users")
+            } else {
+                textToBeDisplayed = gettext("Deleted by online users")
+            }
+        } else {
+            if(opType == "insertion") {
+                textToBeDisplayed = gettext("Inserted by you")
+            } else {
+                textToBeDisplayed = gettext("Deleted by you")
+            }
+        }
+    }
     linkMark = linkMark === undefined ? false : linkMark
     dropUp.classList.add('drop-up-outer')
     dropUp.innerHTML = noSpaceTmp`
@@ -213,7 +234,7 @@ function createDropUp (merge, diffMark, linkMark) {
         `<div class="drop-up-head">
                     ${
     diffMark.attrs.diff ?
-        `<div class="link-title">${gettext('Change')}:&nbsp; ${ (diffMark.attrs.diff.search('deleted') != -1) ? (diffMark.attrs.diff.search('offline') != -1 ? gettext('Deleted by you') : gettext('Deleted by online users')) : ''}</div>` :
+        `<div class="link-title">${gettext('Change')}:&nbsp; ${textToBeDisplayed}</div>`:
         ''
 }
                     ${
@@ -277,7 +298,7 @@ function createDropUp (merge, diffMark, linkMark) {
                     if(opType == "insertion") {
                         // Delete inserted content
                         if(diffMark.attrs.markOnly) {
-                            hanldeMarks(merge.mergeView2,diffMark,tr,merge.schema)
+                            handleMarks(merge.mergeView2,diffMark,tr,merge.schema)
                             dispatchRemoveDiffdata(merge.mergeView2,diffMark.attrs.from,diffMark.attrs.to)
                         } else {
                             deleteContent(merge, merge.mergeView2, diffMark, false)

@@ -5,9 +5,6 @@ import {
     EditorView
 } from "prosemirror-view"
 import {
-    DOMSerializer
-} from "prosemirror-model"
-import {
     Mapping,
     AddMarkStep,
     RemoveMarkStep,

@@ -14,6 +14,7 @@ export const copyChange = function (view, from, to) {
     sel.visible = false
     tr.setSelection(sel)
     view.dispatch(tr)
+    view.focus()
 
     const slice = view.state.selection.content()
     const {dom} = (__serializeForClipboard(view, slice))
@@ -130,7 +131,7 @@ export const addDeletedContentBack  = function (merge, view, diffMark) {
     return false
 }
 
-export const hanldeMarks = function (view, mark, tr, schema) {
+export const handleMarks = function (view, mark, tr, schema) {
     // This function is used to remove the marks that have been applied in the online editor
     const newTr = view.state.tr
     const steps = JSON.parse(mark.attrs.steps)

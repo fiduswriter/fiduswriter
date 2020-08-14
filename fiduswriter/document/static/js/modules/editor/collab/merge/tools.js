@@ -1,7 +1,6 @@
 import {EditorState} from "prosemirror-state"
 import {ReplaceStep} from 'prosemirror-transform'
 import {Slice, Fragment} from "prosemirror-model"
-import {__serializeForClipboard} from "prosemirror-view"
 
 export const checkPresenceOfdiffdata = function(doc, from, to) {
     /* This function checks whether diff mark is present inside the given range */

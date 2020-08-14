@@ -532,7 +532,7 @@ export class MergeEditor {
         const onlineStepsLostChangeset = new changeSet(OnlineStepsLost)
         const conflicts = onlineStepsLostChangeset.findConflicts(tr, OnlineStepsLost)
         if (conflicts.length > 0) {
-            const editor = new MergeEditor(this.editor, onlineDoc, tr.doc, OnlineStepsLost.doc, tr, OnlineStepsLost)
+            const editor = new MergeEditor(this.editor, onlineDoc, tr.doc, OnlineStepsLost.doc, tr, OnlineStepsLost,this.data)
             editor.init()
         } else {
             const newTr = this.editor.view.state.tr

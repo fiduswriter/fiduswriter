@@ -140,26 +140,33 @@ export const removeDiffFromJson = function(object) {
     return object
 }
 
-export const addDeletionMarks = function (slice,mark,schema) {
-    // This function adds a given mark to a piece of slice
-    const sliceJSON = slice.content.toJSON()
-    // reparse the slice to avoid changing the document directly where the slice came from.
-    const content = Fragment.fromJSON(schema, sliceJSON)    
-    content.nodesBetween(
-        0,
-        slice.content.size,
-        (node, pos) => {
-            if (pos < 0 || ['bullet_list', 'ordered_list'].includes(node.type.name)) {
-                return true
-            } else if (node.isInline) {
-                node.marks.push(mark)
-            }
-            if (node.attrs.diffdata) {
-                const diffdata = []
-                diffdata.push({type: mark.attrs.type, from: mark.attrs.from, to: mark.attrs.to, steps: mark.attrs.steps})
-                node.attrs = Object.assign({}, node.attrs, {diffdata})
-            }
+function mapFragment(fragment, f, parent, mark) {
+    let mapped = []
+    for (let i = 0; i < fragment.childCount; i++) {
+      let child = fragment.child(i)
+      if (child.attrs.diffdata) {
+        const diffdata = []
+        diffdata.push({type: mark.attrs.diff, from: mark.attrs.from, to: mark.attrs.to, steps: mark.attrs.steps})   
+        const attrs = Object.assign({},child.attrs,{diffdata})
+        let dummy =  child.type.create(attrs, null, child.marks)
+        child = dummy.copy(child.content)
+      }
+      if (child.content.size) child = child.copy(mapFragment(child.content, f, child, mark))
+      if (child.isInline) child = f(child, parent, i)
+      mapped.push(child)
+    }
+    return Fragment.fromArray(mapped)
+}
+
+export const addDeletionMarks = function (slice,mark) {
+    const content = mapFragment(slice.content, (node, parent) => {
+        if (parent.type && !parent.type.allowsMarkType(mark.type)) {
+            return node
         }
-    )
+        if(node.isInline) {
+            return node.mark(mark.addToSet(node.marks))
+        }
+        return node
+      }, parent, mark)
     return content
 }

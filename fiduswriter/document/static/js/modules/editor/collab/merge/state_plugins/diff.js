@@ -25,15 +25,11 @@ function getdiffdata(state) {
     return markFound
 }
 
-function createHiglightDecoration(from, to, state, addId=false) {
+function createHiglightDecoration(from, to, state) {
     /* Creates a yellow coloured highlight decoration when the user
     tries to look at a change */
     let inlineDeco
-    if(addId) {
-        inlineDeco = Decoration.inline(from, to, {class: 'selected-dec'},{type:"deletion-highlight"})
-    } else {
-        inlineDeco = Decoration.inline(from, to, {class: 'selected-dec'})
-    }
+    inlineDeco = Decoration.inline(from, to, {class: 'selected-dec'})
     const deco = []
     deco.push(inlineDeco)
     state.doc.nodesBetween(
@@ -46,15 +42,48 @@ function createHiglightDecoration(from, to, state, addId=false) {
                 return false
             }
             if (node && node.attrs.diffdata && node.attrs.diffdata.length > 0) {
-                if(addId) {
-                    deco.push(Decoration.node(pos, pos + node.nodeSize, {class: 'selected-dec'}, {type:"deletion-highlight"}))
-                } else {
-                    deco.push(Decoration.node(pos, pos + node.nodeSize, {class: 'selected-dec'}, {}))
-                }
+                deco.push(Decoration.node(pos, pos + node.nodeSize, {class: 'selected-dec'}, {}))
             }
         }
     )
     return deco
+}
+
+function createDeletionHighlight (decos, from, to, state,options) {
+    /* Creates a yellow coloured highlight decoration when the user
+    tries to look at a deletion change in offline editor */
+
+    decos.find(from+1,to).forEach(deco =>{
+        const decoId = deco.spec.id
+        if(decoId !== undefined) {
+            const specDecoration = options.merge.mergeView2.dom.querySelector('[data-decoid="'+decoId+'"]')
+            const parentEl = specDecoration.closest('.deletion-decoration')
+            parentEl.querySelectorAll(".online-deleted").forEach(ele=>{
+                ele.classList.add("selected-dec")
+                ele.classList.add("deletion-highlight")
+            })
+        }
+    })
+    let inlineDeco
+    inlineDeco = Decoration.inline(from, to, {class: 'selected-dec'},{type:"deletion-highlight"})
+    const deco = []
+    deco.push(inlineDeco)
+    state.doc.nodesBetween(
+        from,
+        to,
+        (node, pos) => {
+            if (pos < from || ['bullet_list', 'ordered_list'].includes(node.type.name)) {
+                return true
+            } else if (node.isInline) {
+                return false
+            }
+            if (node.attrs.diffdata) {
+                deco.push(Decoration.node(pos, pos + node.nodeSize, {class: 'selected-dec'}, {type:"deletion-highlight"}))
+            }
+        }
+    )
+    decos = decos.add(state.doc,deco)
+    return decos
 }
 
 function getDecos(decos,merge, state) {
@@ -340,7 +369,12 @@ export const diffPlugin = function(options) {
                 } = this.getState(oldState)
                 if(tr.getMeta("removeHighlight")) {
                     decos = decos.remove(decos.find(null, null,
-                        spec => spec.type == "deletion-highlight"))         
+                        spec => spec.type == "deletion-highlight"))  
+                    // Remove the class set on deletion decorations
+                    options.merge.mergeView2.dom.querySelectorAll(".selected-dec.deletion-highlight").forEach(ele => {
+                        ele.classList.remove("selected-dec")
+                        ele.classList.remove("deletion-highlight")
+                    })       
                 }
                 const newdiffdata = getdiffdata(state)
                 if (newdiffdata === diffMark) {
@@ -358,8 +392,9 @@ export const diffPlugin = function(options) {
                     const data = tr.getMeta("highlight")
                     const from = baseTr.mapping.map(parseInt(data.from))
                     const to = baseTr.mapping.map(parseInt(data.to))
-                    const deco = createHiglightDecoration(from,to,state,true)
-                    decos = decos.add(state.doc,deco)   
+                    if(from && to) {
+                        decos = createDeletionHighlight(decos,from,to,state,options)
+                    }   
                 }
                 return {
                     decos,

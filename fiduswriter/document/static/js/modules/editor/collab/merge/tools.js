@@ -104,7 +104,7 @@ export const updateMarkData = function(tr, imageDataModified) {
                         tr.removeMark(pos, pos + node.nodeSize, tr.doc.type.schema.marks.diffdata)
                         const from = tr.mapping.map(diffMark.from)
                         const to = tr.mapping.map(diffMark.to, -1)
-                        const mark = tr.doc.type.schema.marks.diffdata.create({diff: diffMark.diff, steps: diffMark.steps, from: from, to: to})
+                        const mark = tr.doc.type.schema.marks.diffdata.create({diff: diffMark.diff, steps: diffMark.steps, from: from, to: to, markOnly:diffMark.markOnly})
                         tr.addMark(pos, pos + node.nodeSize, mark)
                     }
                 }

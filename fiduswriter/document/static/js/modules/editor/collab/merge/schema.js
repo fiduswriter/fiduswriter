@@ -79,7 +79,8 @@ export const createDiffSchema = function(docSchema) {
             },
             to: {
                 default: ''
-            }
+            },
+            markOnly:false
         },
         inclusive: false,
         parseDOM: [
@@ -99,7 +100,8 @@ export const createDiffSchema = function(docSchema) {
                 'data-diff': node.attrs.diff,
                 'data-steps': node.attrs.steps,
                 'data-from': node.attrs.from,
-                'data-to': node.attrs.to
+                'data-to': node.attrs.to,
+                'data-markOnly':node.attrs.markOnly
             }]
         }
     }

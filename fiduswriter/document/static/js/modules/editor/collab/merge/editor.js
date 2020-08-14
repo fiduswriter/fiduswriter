@@ -315,7 +315,7 @@ export class MergeEditor {
                 })
     
                 stepsInvolved.sort((a, b) => a - b)
-                const insertionMark = this.schema.marks.diffdata.create({diff: insertionClass, steps: JSON.stringify(stepsInvolved), from: change.fromB, to: change.toB})
+                const insertionMark = this.schema.marks.diffdata.create({diff: insertionClass, steps: JSON.stringify(stepsInvolved), from: change.fromB, to: change.toB, markOnly:false})
                 insertionMarksTr.addMark(change.fromB, change.toB, insertionMark)
                 this.markBlockDiffs(insertionMarksTr, change.fromB, change.toB, insertionClass, stepsInvolved)
                 if (checkPresenceOfdiffdata(insertionMarksTr.doc, change.fromB, change.toB)) {
@@ -331,11 +331,12 @@ export class MergeEditor {
             if (step instanceof ReplaceStep && !stepsTrackedByChangeset.includes(index)) {
                 const Step1 = step.toJSON()
                 if (Step1.slice && Step1.slice.content.length == 1 && Step1.slice.content[0].type === "footnote") {
-                    const insertionMark = this.schema.marks.diffdata.create({diff: insertionClass, steps: JSON.stringify([index]), from: from,  to: to})
+                    const insertionMark = this.schema.marks.diffdata.create({diff: insertionClass, steps: JSON.stringify([index]), from: from,  to: to,
+                    markOnly:false})
                     insertionMarksTr.addMark(from, to, insertionMark)
                     stepsTrackedByChangeset.push(index)
                 } else if (Step1.slice && Step1.slice.content.length == 1 && Step1.slice.content[0].type === "citation") {
-                    const insertionMark = this.schema.marks.diffdata.create({diff: insertionClass, steps: JSON.stringify([index]), from: from, to: to})
+                    const insertionMark = this.schema.marks.diffdata.create({diff: insertionClass, steps: JSON.stringify([index]), from: from, to: to, markOnly:false})
                     insertionMarksTr.addMark(from, to, insertionMark)
                     stepsTrackedByChangeset.push(index)
                 } else if (Step1.slice && Step1.slice.content.length == 1 && Step1.slice.content[0].type === "figure") {
@@ -347,21 +348,15 @@ export class MergeEditor {
                     stepsTrackedByChangeset.push(index)
                 }
             } 
-            // else if ((step instanceof AddMarkStep || step instanceof RemoveMarkStep) && !stepsTrackedByChangeset.includes(index)) {
-            //     const Step1 = step.toJSON()
-            //     if (Step1.mark && ["strong", "em", "underline", "link", "deletion", "comment"].includes(Step1.mark.type)) {
-            //         if (step instanceof AddMarkStep) {
-            //             const insertionMark = this.schema.marks.diffdata.create({diff: insertionClass, steps: JSON.stringify([index]), from: from, to: to})
-            //             stepsTrackedByChangeset.push(index)
-            //             insertionMarksTr.addMark(from, to, insertionMark)
-            //         } 
-            //         // else if (step instanceof RemoveMarkStep) {
-            //         //     const deletionMark = this.schema.marks.diffdata.create({diff: deletionClass, steps: JSON.stringify([index]), from: from, to: to})
-            //         //     deletionMarksTr.addMark(from, to, deletionMark)
-            //         //     stepsTrackedByChangeset.push(index)
-            //         // }
-            //     }
-            // }
+            else if ((step instanceof AddMarkStep || step instanceof RemoveMarkStep) && !stepsTrackedByChangeset.includes(index)) {
+                const Step1 = step.toJSON()
+                if (Step1.mark && ["strong", "em", "underline", "link", "deletion"].includes(Step1.mark.type)) {
+                    const insertionMark = this.schema.marks.diffdata.create({diff: insertionClass, steps: JSON.stringify([index]), from: from, to: to,
+                    markOnly:true})
+                    stepsTrackedByChangeset.push(index)
+                    insertionMarksTr.addMark(from, to, insertionMark)
+                }
+            }
         })
     
         // Dispatch the transactions

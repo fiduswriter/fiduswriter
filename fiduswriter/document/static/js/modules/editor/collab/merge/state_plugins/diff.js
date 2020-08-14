@@ -2,28 +2,10 @@ import {Plugin, PluginKey, NodeSelection} from "prosemirror-state"
 import {Decoration, DecorationSet, __serializeForClipboard} from "prosemirror-view"
 import {noSpaceTmp} from "../../../../common"
 import {dispatchRemoveDiffdata, addDeletionMarks} from "../tools"
-import {copyChange, acceptChanges , removeDecoration, deleteContent, addDeletedContentBack} from "./action"
+import {copyChange, acceptChanges , removeDecoration, deleteContent, addDeletedContentBack, removeMarks} from "./action"
 import {changeSet} from "../changeset"
 import {DOMSerializer} from "prosemirror-model"
 import {readOnlyFnEditor} from "../footnotes"
-
-function getdiffdata(state) {
-    let markFound = state.selection.$head.marks().find(mark =>
-        mark.type.name === 'diffdata')
-
-    if (markFound === undefined) {
-        markFound = {}
-        const node = state.selection.$head.nodeBefore
-        if (node  && node.attrs.diffdata && node.attrs.diffdata.length > 0) {
-            markFound['attrs'] = {}
-            markFound['attrs']['diff'] = node.attrs.diffdata[0].type
-            markFound['attrs']['from'] = node.attrs.diffdata[0].from
-            markFound['attrs']['to'] = node.attrs.diffdata[0].to
-            markFound['attrs']['steps'] = node.attrs.diffdata[0].steps
-        }
-    }
-    return markFound
-}
 
 function createHiglightDecoration(from, to, state) {
     /* Creates a yellow coloured highlight decoration when the user
@@ -108,6 +90,7 @@ function getDecos(decos,merge, state) {
             markFound['attrs']['from'] = node.attrs.diffdata[0].from
             markFound['attrs']['to'] = node.attrs.diffdata[0].to
             markFound['attrs']['steps'] = JSON.stringify(node.attrs.diffdata[0].steps)
+
             const startPos = $head.pos// position of block start.
             const dom = createDropUp(merge, markFound, linkMark),
                 deco = Decoration.widget(startPos, dom)
@@ -124,7 +107,13 @@ function getDecos(decos,merge, state) {
             return decos.add(state.doc, highlightDecos)    
         }
         decos = decos.remove(decos.find(null, null,
-            spec => spec.type !== "deletion"))
+            spec => {
+                if(spec.type && spec.type == "deletion") {
+                    return false
+                } else {
+                    return true
+                }
+            }))
         return decos
     }
     const startPos = diffMark.attrs.to
@@ -156,7 +145,7 @@ function deletionDecorations(decos,merge,state,tr,deletionClass) {
             stepsInvolved = Array.from(stepsSet)
             stepsInvolved.sort((a, b) => a - b)
             stepsTrackedByChangeset = stepsTrackedByChangeset.concat(stepsInvolved)
-            const deletionMark = schema.marks.diffdata.create({diff: deletionClass, steps: JSON.stringify(stepsInvolved), from: change.fromA, to: change.toA})
+            const deletionMark = schema.marks.diffdata.create({diff: deletionClass, steps: JSON.stringify(stepsInvolved), from: change.fromA, to: change.toA, markOnly:false})
             
             // Slice with marked contents
             const content = addDeletionMarks(slice,deletionMark,schema)
@@ -287,7 +276,12 @@ function createDropUp (merge, diffMark, linkMark) {
                 if(trType == "online" ) {
                     if(opType == "insertion") {
                         // Delete inserted content
-                        deleteContent(merge, merge.mergeView2, diffMark, false)
+                        if(diffMark.attrs.markOnly) {
+                            hanldeMarks(merge.mergeView2,diffMark,tr,merge.schema)
+                            dispatchRemoveDiffdata(merge.mergeView2,diffMark.attrs.from,diffMark.attrs.to)
+                        } else {
+                            deleteContent(merge, merge.mergeView2, diffMark, false)
+                        }
                     } else {
                         // remove online deletion decoration
                         if(addDeletedContentBack(merge, merge.mergeView2, diffMark)) {
@@ -321,9 +315,17 @@ function createDropUp (merge, diffMark, linkMark) {
                 event.preventDefault()
                 event.stopImmediatePropagation()
                 if(trType == "online") {
-                    copyChange(merge.mergeView2, diffMark.attrs.from, diffMark.attrs.to)
+                    if(opType == "insertion") {
+                        copyChange(merge.mergeView2, diffMark.attrs.from, diffMark.attrs.to)
+                    } else {
+                        copyChange(merge.mergeView1, diffMark.attrs.from, diffMark.attrs.to)
+                    }
                 } else {
-                    copyChange(merge.mergeView3, diffMark.attrs.from, diffMark.attrs.to)
+                    if(opType == "insertion") {
+                        copyChange(merge.mergeView3, diffMark.attrs.from, diffMark.attrs.to)
+                    } else {
+                        copyChange(merge.mergeView1, diffMark.attrs.from, diffMark.attrs.to)
+                    }
                 }
             }
         )
@@ -356,14 +358,12 @@ export const diffPlugin = function(options) {
                 return {
                     baseTr: baseTr,
                     deletionClass:deletionClass,
-                    decos: decos,
-                    diffMark: false
+                    decos: decos
                 }
             },
             apply(tr, prev, oldState, state) {
                 let {
                     decos,
-                    diffMark,
                     baseTr,
                     deletionClass
                 } = this.getState(oldState)
@@ -376,13 +376,8 @@ export const diffPlugin = function(options) {
                         ele.classList.remove("deletion-highlight")
                     })       
                 }
-                const newdiffdata = getdiffdata(state)
-                if (newdiffdata === diffMark) {
-                    decos = decos.map(tr.mapping, tr.doc)
-                } else {
-                    decos = getDecos(decos,options.merge, state)
-                    diffMark = newdiffdata
-                }
+                decos = getDecos(decos,options.merge, state)
+                decos = decos.map(tr.mapping, tr.doc)
                 if(tr.getMeta("decorationId")) {
                     const decorationId = parseInt(tr.getMeta("decorationId"))
                     decos = decos.remove(decos.find(null, null,
@@ -397,10 +392,9 @@ export const diffPlugin = function(options) {
                     }   
                 }
                 return {
-                    decos,
-                    diffMark,
-                    baseTr,
-                    deletionClass
+                    baseTr: baseTr,
+                    deletionClass:deletionClass,
+                    decos: decos
                 }
             }
         },

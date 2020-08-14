@@ -1,5 +1,5 @@
 import {TextSelection} from "prosemirror-state"
-import {Mapping, Step} from 'prosemirror-transform'
+import {Mapping, Step, RemoveMarkStep, AddMarkStep} from 'prosemirror-transform'
 import {__serializeForClipboard} from "prosemirror-view"
 import {showSystemMessage} from "../../../../common"
 import {dispatchRemoveDiffdata} from "../tools"
@@ -128,4 +128,27 @@ export const addDeletedContentBack  = function (merge, view, diffMark) {
     }
     showSystemMessage(gettext("The change could not be applied automatically. Please consider using the copy option to copy the changes."))
     return false
+}
+
+export const hanldeMarks = function (view, mark, tr, schema) {
+    // This function is used to remove the marks that have been applied in the online editor
+    const newTr = view.state.tr
+    const steps = JSON.parse(mark.attrs.steps)
+    const marksToBeRemoved = [], marksToBeAdded = []
+    steps.forEach(index => {
+        const JSONStep = tr.steps[index].toJSON()
+        if(JSONStep.mark && JSONStep.mark.type) {
+            if(tr.steps[index] instanceof AddMarkStep) {
+                marksToBeRemoved.push(JSONStep.mark.type)
+            } else if(tr.steps[index] instanceof RemoveMarkStep) {
+                marksToBeAdded.push(tr.steps[index].mark)
+            }
+        }
+    })
+    marksToBeRemoved.forEach(removalMark => newTr.removeMark(mark.attrs.from,mark.attrs.to,schema.marks[removalMark]))
+    marksToBeAdded.forEach(AddMark => newTr.addMark(mark.attrs.from,mark.attrs.to,AddMark))
+    newTr.setMeta("notrack",true)
+    newTr.setMeta('mapAppended', true)
+    view.dispatch(newTr)
+
 }

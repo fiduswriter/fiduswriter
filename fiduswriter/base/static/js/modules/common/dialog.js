@@ -95,7 +95,7 @@ export class Dialog {
         if (this.dialogEl) {
             return
         }
-        if(this.fullScreen) {
+        if (this.fullScreen) {
             this.height = "85vh"
         }
         document.body.insertAdjacentHTML(
@@ -117,11 +117,11 @@ export class Dialog {
         )
         this.backdropEl = document.body.lastElementChild
         this.dialogEl = this.backdropEl.previousElementSibling
-        if(this.fullScreen) {
+        if (this.fullScreen) {
             this.dialogEl.style.width = '98%'
             this.dialogEl.style.height = '100%'
             this.dialogEl.style.position = 'fixed'
-            this.dialogEl.style.top = "0px"    
+            this.dialogEl.style.top = "0px"
         } else {
             this.centerDialog()
         }
@@ -229,7 +229,7 @@ export class Dialog {
                 break
             }
         })
-        if(!this.fullScreen){
+        if (!this.fullScreen) {
             this.listeners.onScroll = event => this.onScroll(event)
             window.addEventListener('scroll', this.listeners.onScroll, false)
             this.dialogEl.addEventListener('mousedown', event => {
@@ -275,7 +275,7 @@ export class Dialog {
         if (!this.dialogEl) {
             return
         }
-        if(!this.fullScreen){
+        if (!this.fullScreen) {
             window.removeEventListener("scroll",  this.listeners.onScroll, false)
         }
         document.body.removeEventListener("keydown", this.listeners.onKeydown)

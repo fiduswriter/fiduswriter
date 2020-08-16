@@ -103,7 +103,7 @@ export const updateMarkData = function(tr, imageDataModified) {
                         tr.removeMark(pos, pos + node.nodeSize, tr.doc.type.schema.marks.diffdata)
                         const from = tr.mapping.map(diffMark.from)
                         const to = tr.mapping.map(diffMark.to, -1)
-                        const mark = tr.doc.type.schema.marks.diffdata.create({diff: diffMark.diff, steps: diffMark.steps, from: from, to: to, markOnly:diffMark.markOnly})
+                        const mark = tr.doc.type.schema.marks.diffdata.create({diff: diffMark.diff, steps: diffMark.steps, from: from, to: to, markOnly: diffMark.markOnly})
                         tr.addMark(pos, pos + node.nodeSize, mark)
                     }
                 }
@@ -140,32 +140,36 @@ export const removeDiffFromJson = function(object) {
 }
 
 function mapFragment(fragment, f, parent, mark) {
-    let mapped = []
+    const mapped = []
     for (let i = 0; i < fragment.childCount; i++) {
-      let child = fragment.child(i)
-      if (child.attrs.diffdata) {
-        const diffdata = []
-        diffdata.push({type: mark.attrs.diff, from: mark.attrs.from, to: mark.attrs.to, steps: mark.attrs.steps})   
-        const attrs = Object.assign({},child.attrs,{diffdata})
-        let dummy =  child.type.create(attrs, null, child.marks)
-        child = dummy.copy(child.content)
-      }
-      if (child.content.size) child = child.copy(mapFragment(child.content, f, child, mark))
-      if (child.isInline) child = f(child, parent, i)
-      mapped.push(child)
+        let child = fragment.child(i)
+        if (child.attrs.diffdata) {
+            const diffdata = []
+            diffdata.push({type: mark.attrs.diff, from: mark.attrs.from, to: mark.attrs.to, steps: mark.attrs.steps})
+            const attrs = Object.assign({}, child.attrs, {diffdata})
+            const dummyNode =  child.type.create(attrs, null, child.marks)
+            child = dummyNode.copy(child.content)
+        }
+        if (child.content.size) {
+            child = child.copy(mapFragment(child.content, f, child, mark))
+        }
+        if (child.isInline) {
+            child = f(child, parent, i)
+        }
+        mapped.push(child)
     }
     return Fragment.fromArray(mapped)
 }
 
-export const addDeletionMarks = function (slice,mark) {
+export const addDeletionMarks = function(slice, mark) {
     const content = mapFragment(slice.content, (node, parent) => {
         if (parent.type && !parent.type.allowsMarkType(mark.type)) {
             return node
         }
-        if(node.isInline) {
+        if (node.isInline) {
             return node.mark(mark.addToSet(node.marks))
         }
         return node
-      }, parent, mark)
+    }, parent, mark)
     return content
 }

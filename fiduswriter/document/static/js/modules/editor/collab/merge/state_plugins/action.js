@@ -2,9 +2,9 @@ import {TextSelection} from "prosemirror-state"
 import {Mapping, Step, RemoveMarkStep, AddMarkStep} from 'prosemirror-transform'
 import {__serializeForClipboard} from "prosemirror-view"
 import {showSystemMessage} from "../../../../common"
-import {dispatchRemoveDiffdata} from "../tools"
+import {dispatchRemoveDiffdata, removeDiffdata} from "../tools"
 
-export const copyChange = function (view, from, to) {
+export const copyChange = function(view, from, to) {
     /* when a certain change cannot be applied automatically,
     we give users the ability to copy a change */
     const tr = view.state.tr
@@ -38,7 +38,7 @@ export const copyChange = function (view, from, to) {
     window.getSelection().removeAllRanges()
 }
 
-export const acceptChanges = function (merge, mark, mergeView, originalView, tr) {
+export const acceptChanges = function(merge, mark, mergeView, originalView, tr) {
     /* This is used to accept a change either from the offline/online version or
     incase of deletion from the middle editor */
     const mergedDocMap = new Mapping()
@@ -84,23 +84,23 @@ export const acceptChanges = function (merge, mark, mergeView, originalView, tr)
     }
 }
 
-export const removeDecoration = function (view, decorationId) {
+export const removeDecoration = function(view, decorationId) {
     const tr = view.state.tr
-    tr.setMeta("decorationId",decorationId)
+    tr.setMeta("decorationId", decorationId)
     view.dispatch(tr)
 }
 
-export const deleteContent = function (merge, view, diffMark, mappingNeeded=true) {
+export const deleteContent = function(merge, view, diffMark, mappingNeeded = true) {
     // const originalOnlineMapping = merge.onlineTr.mapping
     const rebasedMapping = new Mapping()
     const tr = view.state.tr
-    if(mappingNeeded) {
+    if (mappingNeeded) {
         rebasedMapping.appendMapping(merge.mergedDocMap)
     }
     const rebasedFrom = rebasedMapping.map(diffMark.attrs.from),
-    rebasedTo = rebasedMapping.map(diffMark.attrs.to)
-    if(rebasedFrom && rebasedTo) {
-        tr.delete(rebasedFrom,rebasedTo)
+        rebasedTo = rebasedMapping.map(diffMark.attrs.to)
+    if (rebasedFrom && rebasedTo) {
+        tr.delete(rebasedFrom, rebasedTo)
         merge.mergedDocMap.appendMapping(tr.mapping)
         tr.setMeta('mapAppended', true)
         tr.setMeta('notrack', true)
@@ -111,16 +111,15 @@ export const deleteContent = function (merge, view, diffMark, mappingNeeded=true
     return false
 }
 
-export const addDeletedContentBack  = function (merge, view, diffMark) {
+export const addDeletedContentBack  = function(merge, view, diffMark) {
     const commonDoc = merge.cpDoc
     const tr = view.state.tr
-    const slice = commonDoc.slice(diffMark.attrs.from,diffMark.attrs.to) 
+    const slice = commonDoc.slice(diffMark.attrs.from, diffMark.attrs.to)
     const rebasedMapping = new Mapping()
     rebasedMapping.appendMapping(merge.mergedDocMap)
     const insertionPoint = rebasedMapping.map(diffMark.attrs.from)
-    console.log(insertionPoint,slice)
-    if(insertionPoint) {
-        tr.insert(insertionPoint,slice.content)
+    if (insertionPoint) {
+        tr.insert(insertionPoint, slice.content)
         tr.setMeta('mapAppended', true)
         tr.setMeta('notrack', true)
         view.dispatch(tr)
@@ -131,24 +130,24 @@ export const addDeletedContentBack  = function (merge, view, diffMark) {
     return false
 }
 
-export const handleMarks = function (view, mark, tr, schema) {
+export const handleMarks = function(view, mark, tr, schema) {
     // This function is used to remove the marks that have been applied in the online editor
     const newTr = view.state.tr
     const steps = JSON.parse(mark.attrs.steps)
     const marksToBeRemoved = [], marksToBeAdded = []
     steps.forEach(index => {
         const JSONStep = tr.steps[index].toJSON()
-        if(JSONStep.mark && JSONStep.mark.type) {
-            if(tr.steps[index] instanceof AddMarkStep) {
+        if (JSONStep.mark && JSONStep.mark.type) {
+            if (tr.steps[index] instanceof AddMarkStep) {
                 marksToBeRemoved.push(JSONStep.mark.type)
-            } else if(tr.steps[index] instanceof RemoveMarkStep) {
+            } else if (tr.steps[index] instanceof RemoveMarkStep) {
                 marksToBeAdded.push(tr.steps[index].mark)
             }
         }
     })
-    marksToBeRemoved.forEach(removalMark => newTr.removeMark(mark.attrs.from,mark.attrs.to,schema.marks[removalMark]))
-    marksToBeAdded.forEach(AddMark => newTr.addMark(mark.attrs.from,mark.attrs.to,AddMark))
-    newTr.setMeta("notrack",true)
+    marksToBeRemoved.forEach(removalMark => newTr.removeMark(mark.attrs.from, mark.attrs.to, schema.marks[removalMark]))
+    marksToBeAdded.forEach(AddMark => newTr.addMark(mark.attrs.from, mark.attrs.to, AddMark))
+    newTr.setMeta("notrack", true)
     newTr.setMeta('mapAppended', true)
     view.dispatch(newTr)
 

@@ -96,7 +96,6 @@ export class MergeEditor {
         this.imageDataModified = {} // To hold data related to re-uploaded images.
 
         this.offlineTrackedSteps = []
-        this.onlineTrackedSteps = []
 
         this.diffEditorPlugins = [
             [diffPlugin, () => ({merge: this})],
@@ -140,9 +139,8 @@ export class MergeEditor {
         this.unHideSectionsinAllDoc()
 
         const offlineTrackedSteps = this.markChangesinDiffEditor(offlineChangeset, this.mergeView3, "offline-inserted", this.offlineTr)
-        const onlineTrackedSteps = this.markChangesinDiffEditor(onlineChangeset, this.mergeView2, "online-inserted", this.onlineTr)
+        this.markChangesinDiffEditor(onlineChangeset, this.mergeView2, "online-inserted", this.onlineTr)
         this.offlineTrackedSteps = this.offlineTrackedSteps.concat(offlineTrackedSteps)
-        this.onlineTrackedSteps = this.onlineTrackedSteps.concat(onlineTrackedSteps)
 
         if (this.mergeView2.state.doc.firstChild.attrs.tracked || this.mergeView3.state.doc.firstChild.attrs.tracked) {
             const article = this.mergeView2.state.doc.firstChild
@@ -159,7 +157,6 @@ export class MergeEditor {
         this.renderCitation(this.mergeView3, 'editor-diff-offline')
 
         this.offStepsNotTracked = this.findNotTrackedSteps(this.offlineTr, this.offlineTrackedSteps)
-        this.onStepsNotTracked = this.findNotTrackedSteps(this.onlineTr, this.onlineTrackedSteps)
 
         deactivateWait()
 
@@ -455,19 +452,6 @@ export class MergeEditor {
 
         // Apply all the marks that are not handled by recreate steps!
         const markTr = this.mergeView2.state.tr
-        const onlineMaps = onlineTr.mapping.maps.slice().reverse().map(map => map.invert())
-        const onlineRebaseMapping = new Mapping(onlineMaps)
-        onlineRebaseMapping.appendMapping(this.mergedDocMap)
-        this.onStepsNotTracked.forEach(markstep => {
-            const stepIndex = parseInt(onlineTr.steps.indexOf(markstep))
-            const onlineRebaseMap = onlineRebaseMapping.slice(onlineTr.steps.length - stepIndex)
-            const mappedMarkStep = markstep.map(onlineRebaseMap)
-            if (mappedMarkStep && !markTr.maybeStep(mappedMarkStep).failed) {
-                this.mergedDocMap.appendMap(mappedMarkStep.getMap())
-                onlineRebaseMapping.appendMap(mappedMarkStep.getMap())
-                onlineRebaseMapping.setMirror(onlineTr.steps.length - stepIndex - 1, (onlineTr.steps.length + this.mergedDocMap.maps.length - 1))
-            }
-        })
         const offlineRebaseMapping = new Mapping()
         offlineRebaseMapping.appendMappingInverted(offlineTr.mapping)
         offlineRebaseMapping.appendMapping(this.mergedDocMap)
@@ -637,14 +621,14 @@ export class MergeEditor {
                                     this.mergeView1.dispatch(transaction)
                                 }
                             })
-                            this.mergeView2.state.doc.descendants((node, pos) => {
+                            this.mergeView3.state.doc.descendants((node, pos) => {
                                 if (node.type.name === 'figure' && node.attrs.image == id) {
                                     const attrs = Object.assign({}, node.attrs)
                                     attrs["image"] = newId
-                                    const nodeType = this.mergeView2.state.schema.nodes['figure']
-                                    const transaction = this.mergeView2.state.tr.setNodeMarkup(pos, nodeType, attrs)
+                                    const nodeType = this.mergeView3.state.schema.nodes['figure']
+                                    const transaction = this.mergeView3.state.tr.setNodeMarkup(pos, nodeType, attrs)
                                     transaction.setMeta('mapAppended', true)
-                                    this.mergeView2.dispatch(transaction)
+                                    this.mergeView3.dispatch(transaction)
                                 }
                             })
                         },
@@ -660,14 +644,14 @@ export class MergeEditor {
                                     this.mergeView1.dispatch(transaction)
                                 }
                             })
-                            this.mergeView2.state.doc.descendants((node, pos) => {
+                            this.mergeView3.state.doc.descendants((node, pos) => {
                                 if (node.type.name === 'figure' && node.attrs.image == id) {
                                     const attrs = Object.assign({}, node.attrs)
                                     attrs["image"] = false
-                                    const nodeType = this.mergeView2.state.schema.nodes['figure']
-                                    const transaction = this.mergeView2.state.tr.setNodeMarkup(pos, nodeType, attrs)
+                                    const nodeType = this.mergeView3.state.schema.nodes['figure']
+                                    const transaction = this.mergeView3.state.tr.setNodeMarkup(pos, nodeType, attrs)
                                     transaction.setMeta('mapAppended', true)
-                                    this.mergeView2.dispatch(transaction)
+                                    this.mergeView3.dispatch(transaction)
                                 }
                             })
                             if (!imageUploadFailDialogShown) {

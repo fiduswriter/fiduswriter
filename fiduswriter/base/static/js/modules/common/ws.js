@@ -45,7 +45,7 @@ export class WebSocketConnector {
 
     init() {
         this.createWSConnection()
-        
+
         // Close the socket manually for now when the connection is lost. Sometimes the socket isn't closed on disconnection.
         this.listeners.onOffline = _event => this.ws.close()
         window.addEventListener('offline', this.listeners.onOffline)

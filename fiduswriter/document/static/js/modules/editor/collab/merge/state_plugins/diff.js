@@ -191,8 +191,6 @@ function deletionDecorations(decos, merge, state, tr, deletionClass) {
     })
     if (deletionClass == "offline-deleted") {
         merge.offlineTrackedSteps = merge.offlineTrackedSteps.concat(stepsTrackedByChangeset)
-    } else {
-        merge.onlineTrackedSteps = merge.onlineTrackedSteps.concat(stepsTrackedByChangeset)
     }
     return decos
 }

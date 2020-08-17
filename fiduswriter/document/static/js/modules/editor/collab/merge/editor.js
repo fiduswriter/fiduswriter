@@ -216,11 +216,11 @@ export class MergeEditor {
                         ],
                         [
                             gettext("Why am I seeing three editors?"),
-                            gettext("The editor on the left will show the offline version of the document (the document resulting from your changes ), the editor on the middle contains the last synced version of the document, and the editor on the right contains the online version of the document (document resulting from the online users edits).")
+                            gettext("The editor on the left will show the last synced version of the document, the editor on the middle contains the online version of the document (document resulting from the online users edits), and the editor on the right contains the offline version of the document (the document resulting from your changes).")
                         ],
                         [
                             gettext("What are the green and red highlights in the editors?"),
-                            gettext("The editors on left and right will show content that are highlighted in green, and the editor in the middle will contain text that are highlighted usually in red. The text marked in green corresponds to the text that was edited (added) by online users or you. The text marked in red corresponds to text that was deleted by either you or the online user. Deletions will be marked only in the middle editor and the insertions will be marked in the other editors only.")
+                            gettext("The editors on middle and right will show content that are highlighted in green, and also contain text that are highlighted in red. The text marked in green corresponds to the text that was edited (added) by online users or you. The text marked in red corresponds to text that was deleted by either you or the online user. The insertions and deletions made by the online users will be marked in the middle editor which contains the online version of the document.The insertions and deletions made by the offline users will be marked in the right-most editor which contains the offline version of the document.")
                         ],
                         [
                             gettext("How do I accept or reject a particular change?"),

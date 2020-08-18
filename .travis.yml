@@ -37,6 +37,7 @@ env:
     - TEST=document.tests.test_offline
     - TEST=document.tests.test_export
     - TEST=document.tests.test_admin
+    - TEST=document.tests.test_message_exchange
     - TEST=bibliography
     - TEST=usermedia
 

@@ -6,7 +6,6 @@ from django.core.files.storage import default_storage
 import django.core.serializers
 from django.db.models import signals
 from django.db.models.fields.files import FileField
-from django.utils._os import upath
 from django.apps import apps
 
 
@@ -78,10 +77,10 @@ class Command(django.core.management.commands.loaddata.Command):
             if hasattr(app, '__path__'):
                 # It's a 'models/' subpackage
                 for path in app.__path__:
-                    app_module_paths.append(upath(path))
+                    app_module_paths.append(path)
             else:
                 # It's a models.py module
-                app_module_paths.append(upath(app.__file__))
+                app_module_paths.append(app.__file__)
 
         app_fixtures = [join(dirname(path), 'fixtures')
                         for path in app_module_paths]

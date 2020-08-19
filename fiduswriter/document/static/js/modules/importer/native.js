@@ -29,7 +29,7 @@ export class ImportNative {
             () => this.saveImages(this.images, ImageTranslationTable)
         ).then(
             () => {
-            // We need to change some reference numbers in the document contents
+            // We need to change some reference numbers in the document content
                 this.translateReferenceIds(ImageTranslationTable)
                 // We are good to go. All the used images and bibliography entries
                 // exist in the DB for this user with the same numbers.
@@ -111,7 +111,7 @@ export class ImportNative {
             ({json}) => this.docId = json.id
         ).catch(error => {
             addAlert('error', gettext('Could not create document'))
-            throw (error)
+            throw error
         })
     }
 
@@ -151,7 +151,7 @@ export class ImportNative {
         ).catch(
             error => {
                 addAlert('error', `${gettext('Could not save ')} ${this.doc.title}`)
-                throw (error)
+                throw error
             }
         )
     }

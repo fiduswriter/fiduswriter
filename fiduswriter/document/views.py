@@ -2,7 +2,7 @@ import time
 import os
 import bleach
 import json
-from tornado.escape import json_decode, json_encode
+from tornado.escape import json_decode
 from django.core import serializers
 from django.http import HttpResponse, JsonResponse, HttpRequest
 from django.contrib.auth.decorators import login_required
@@ -673,7 +673,7 @@ def import_create(request):
                 et.save()
     if not document_template:
         title = request.POST['template_title']
-        content = json_encode(json_decode(request.POST['template']))
+        content = json_decode(request.POST['template'])
         document_template = DocumentTemplate()
         document_template.title = title
         document_template.import_id = import_id
@@ -754,9 +754,9 @@ def import_doc(request):
             status=status
         )
     document.title = request.POST['title']
-    document.content = request.POST['content']
-    document.comments = request.POST['comments']
-    document.bibliography = request.POST['bibliography']
+    document.content = json.loads(request.POST['content'])
+    document.comments = json.loads(request.POST['comments'])
+    document.bibliography = json.loads(request.POST['bibliography'])
     # document.doc_version should always be the current version, so don't
     # bother about it.
     document.save()

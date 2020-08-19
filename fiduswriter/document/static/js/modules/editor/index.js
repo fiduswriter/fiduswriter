@@ -113,6 +113,9 @@ import {
 import {
     buildEditorKeymap
 } from "./keymap"
+import {
+    imageEditModel
+} from "../images/edit_dialog/model"
 
 export const COMMENT_ONLY_ROLES = ['review', 'comment']
 export const READ_ONLY_ROLES = ['read', 'read-without-comments']
@@ -157,7 +160,8 @@ export class Editor {
             tableMenuModel: tableMenuModel(),
             imageMenuModel: imageMenuModel(),
             navigatorFilterModel: navigatorFilterModel(),
-            selectionMenuModel: selectionMenuModel()
+            selectionMenuModel: selectionMenuModel(),
+            imageEditModel:imageEditModel(),
         }
         this.client_id = Math.floor(Math.random() * 0xFFFFFFFF)
         this.clientTimeAdjustment = 0

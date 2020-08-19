@@ -673,12 +673,12 @@ def import_create(request):
                 et.save()
     if not document_template:
         title = request.POST['template_title']
-        definition = json_encode(json_decode(request.POST['template']))
+        content = json_encode(json_decode(request.POST['template']))
         document_template = DocumentTemplate()
         document_template.title = title
         document_template.import_id = import_id
         document_template.user = request.user
-        document_template.definition = definition
+        document_template.content = content
         document_template.save()
     document = Document.objects.create(
         owner=request.user,
@@ -1115,7 +1115,7 @@ def get_template(request):
     template = DocumentTemplate.objects.filter(pk=int(template_id)).first()
     if template:
         status = 200
-        response['definition'] = template.definition
+        response['content'] = template.content
         response['title'] = template.title
         response['doc_version'] = template.doc_version
     return JsonResponse(
@@ -1165,9 +1165,9 @@ def save_template(request):
     if template:
         status = 200
         # Only looking at fields that may have changed.
-        definition = request.POST.get('definition', False)
-        if definition:
-            template.definition = definition
+        content = request.POST.get('content', False)
+        if content:
+            template.content = content
         template.doc_version = FW_DOCUMENT_VERSION
         template.save()
     return JsonResponse(

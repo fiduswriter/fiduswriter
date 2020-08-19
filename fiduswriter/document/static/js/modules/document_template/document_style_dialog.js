@@ -89,7 +89,7 @@ export class DocumentStyleDialog {
                 <tr>
                     <th><h4 class="fw-tablerow-title">${gettext("CSS Style")}</h4></th>
                     <td>
-                        <textarea class="content">${this.style ? escapeText(this.style.fields.content) : ''}</textarea>
+                        <textarea class="content">${this.style ? escapeText(this.style.fields.contents) : ''}</textarea>
                     </td>
                 </tr>
                 <tr>

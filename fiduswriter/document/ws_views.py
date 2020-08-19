@@ -305,7 +305,7 @@ class WebSocket(BaseWebSocketHandler):
                     self.session["doc"].comments[id][
                         "resolved"] = cd["resolved"]
             elif cd["type"] == "add_answer":
-                if "answers" not in self.session["comments"][id]:
+                if "answers" not in self.session["doc"].comments[id]:
                     self.session["doc"].comments[id]["answers"] = []
                 self.session["doc"].comments[id]["answers"].append({
                     "id": cd["answerId"],

@@ -8,7 +8,6 @@ import threading
 
 from django.core.exceptions import ImproperlyConfigured
 from django.db import connections
-from django.utils import six
 from django.test.testcases import TransactionTestCase
 
 from tornado.ioloop import IOLoop
@@ -139,11 +138,8 @@ class LiveTornadoTestCase(TransactionTestCase):
                         possible_ports.append(port)
         except Exception:
             msg = 'Invalid address ("%s") for live server.' % specified_address
-            six.reraise(
-                ImproperlyConfigured,
-                ImproperlyConfigured(msg),
-                sys.exc_info()[2]
-            )
+            raise ImproperlyConfigured(msg)
+
         cls.server_thread = LiveTornadoThread(
             host,
             possible_ports,

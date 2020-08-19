@@ -15,6 +15,7 @@ export class ImageEditDialog {
                 freeToRead: true,
                 licenses: []
             }
+        this.menu = this.editor ? this.editor.menu.imageEditModel : imageEditModel()
     }
 
     //open a dialog for uploading an image
@@ -60,7 +61,7 @@ export class ImageEditDialog {
             event.stopImmediatePropagation()
 
             const contentMenu = new ContentMenu({
-                menu: imageEditModel(),
+                menu: this.menu,
                 width: 220,
                 page: this,
                 menuPos: {X: event.pageX - 50, Y: event.pageY + 50},

@@ -3,7 +3,6 @@ from builtins import range
 import errno
 import os
 import socket
-import sys
 import threading
 
 from django.core.exceptions import ImproperlyConfigured

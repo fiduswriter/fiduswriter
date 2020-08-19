@@ -6,6 +6,8 @@ import {copyChange, acceptChanges, removeDecoration, deleteContent, addDeletedCo
 import {changeSet} from "../changeset"
 import {DOMSerializer} from "prosemirror-model"
 import {readOnlyFnEditor} from "../footnotes"
+import {updateMarkData} from "../tools"
+import {Mapping} from "prosemirror-transform"
 
 function createHiglightDecoration(from, to, state) {
     /* Creates a yellow coloured highlight decoration when the user
@@ -124,15 +126,13 @@ function getDecos(decos, merge, state) {
     return decos.add(state.doc, highlightDecos)
 }
 
-function deletionDecorations(decos, merge, state, tr, deletionClass) {
+function deletionDecorations(decos, merge, doc, tr, deletionClass) {
     let index = 0
     let stepsTrackedByChangeset = []
     const changeset = new changeSet(tr).getChangeSet(),
         schema = merge.schema,
         commonDoc = merge.cpDoc,
-        doc = state.doc,
         mapping = tr.mapping
-
     changeset.changes.forEach(change => {
         if (change.deleted.length > 0) {
             let dom = document.createElement("span")
@@ -369,8 +369,7 @@ export const diffPlugin = function(options) {
                     deletionClass = "online-deleted"
                 }
                 if (baseTr) {
-                    console.log("Tr:", baseTr)
-                    decos =  deletionDecorations(decos, options.merge, state, baseTr, deletionClass)
+                    decos =  deletionDecorations(decos, options.merge, state.doc, baseTr, deletionClass)
                 }
                 return {
                     baseTr: baseTr,
@@ -396,7 +395,14 @@ export const diffPlugin = function(options) {
                     })
                 }
                 decos = getDecos(decos, options.merge, state)
-                decos = decos.map(tr.mapping, tr.doc)
+
+                if(tr.getMeta("initialDiffMap")) {
+                    // If it is initial diffMap we update mark data
+                    // So no need to update the deco's position.
+                    decos = decos.map(new Mapping(), tr.doc)
+                } else {
+                    decos = decos.map(tr.mapping, tr.doc)
+                }
                 if (tr.getMeta("decorationId")) {
                     const decorationId = parseInt(tr.getMeta("decorationId"))
                     decos = decos.remove(decos.find(null, null,
@@ -476,6 +482,16 @@ export const diffPlugin = function(options) {
                     }
                 }
             }
+        },
+        appendTransaction: (trs, _oldState, newState) => {
+            const updateMarkTr = newState.tr
+            trs.forEach(tr => {
+                if(tr.steps.length) {
+                    updateMarkData(tr, options.merge.imageDataModified, updateMarkTr)
+                }
+            })
+            updateMarkTr.setMeta("initialDiffMap", true)
+            return updateMarkTr
         }
     })
 }

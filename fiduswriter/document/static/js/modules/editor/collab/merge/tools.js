@@ -84,7 +84,7 @@ export const dispatchRemoveDiffdata = function(view, from, to) {
     view.dispatch(tr)
 }
 
-export const updateMarkData = function(tr, imageDataModified) {
+export const updateMarkData = function(tr, imageDataModified, newTr) {
     /* Update the range inside the marks and also if we have a image that
     was reuploaded , then while accepting it into the middle editor,
     update its attrs */
@@ -100,29 +100,29 @@ export const updateMarkData = function(tr, imageDataModified) {
                     let diffMark = node.marks.find(mark => mark.type.name == "diffdata")
                     if (diffMark !== undefined) {
                         diffMark = diffMark.attrs
-                        tr.removeMark(pos, pos + node.nodeSize, tr.doc.type.schema.marks.diffdata)
+                        newTr.removeMark(pos, pos + node.nodeSize, tr.doc.type.schema.marks.diffdata)
                         const from = tr.mapping.map(diffMark.from)
                         const to = tr.mapping.map(diffMark.to, -1)
                         const mark = tr.doc.type.schema.marks.diffdata.create({diff: diffMark.diff, steps: diffMark.steps, from: from, to: to, markOnly: diffMark.markOnly})
-                        tr.addMark(pos, pos + node.nodeSize, mark)
+                        newTr.addMark(pos, pos + node.nodeSize, mark)
                     }
                 }
                 if (node.type.name === 'figure' && Object.keys(imageDataModified).includes(String(node.attrs.image))) {
                     const attrs = Object.assign({}, node.attrs)
                     attrs["image"] = imageDataModified[String(node.attrs.image)]
                     const nodeType = tr.doc.type.schema.nodes['figure']
-                    tr.setNodeMarkup(pos, nodeType, attrs)
+                    newTr.setNodeMarkup(pos, nodeType, attrs)
                 }
                 if (node.attrs.diffdata && node.attrs.diffdata.length > 0) {
                     const diffdata = node.attrs.diffdata
                     diffdata[0].from = tr.mapping.map(diffdata[0].from)
                     diffdata[0].to = tr.mapping.map(diffdata[0].to)
-                    tr.setNodeMarkup(pos, null, Object.assign({}, node.attrs, {diffdata}), node.marks)
+                    newTr.setNodeMarkup(pos, null, Object.assign({}, node.attrs, {diffdata}), node.marks)
                 }
             }
         )
     }
-    return tr
+    return newTr
 }
 
 export const removeDiffFromJson = function(object) {

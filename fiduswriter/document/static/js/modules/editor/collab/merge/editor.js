@@ -73,7 +73,6 @@ import {
     dispatchRemoveDiffdata,
     simplifyTransform,
     checkPresenceOfdiffdata,
-    updateMarkData,
     removeDiffFromJson
 } from "./tools"
 
@@ -387,7 +386,6 @@ export class MergeEditor {
                         if (!mapAppended) {
                             this.mergedDocMap.appendMapping(tr.mapping)
                         }
-                        mapTr = updateMarkData(mapTr, this.imageDataModified)
                         if (!noTrack) { // Track only manual insertions
                             mapTr = trackedTransaction(
                                 mapTr,
@@ -417,11 +415,11 @@ export class MergeEditor {
                     plugins: plugins,
                 }),
                 dispatchTransaction: tr => {
-                    const mapTr = updateMarkData(tr, this.imageDataModified)
-                    const newState = editorView.state.apply(mapTr)
+                    const newState = editorView.state.apply(tr)
                     editorView.updateState(newState)
                     this.renderCitation(editorView, elementId)
                 },
+                editable:() => false,
                 nodeViews: {
                     footnote(node, view, getPos) {
                         return new FootnoteView(node, view, getPos, mainEditor)

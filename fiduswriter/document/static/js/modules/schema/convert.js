@@ -264,7 +264,7 @@ const convertNodeV13 = function(node, shrunkBib, fullBib, imageIds) {
                 }
             }
             item = Object.assign({}, item)
-            delete item.entry_cat
+            delete item.cats
             shrunkBib[ref.id] = item
         })
         break

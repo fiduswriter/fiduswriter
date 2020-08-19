@@ -32,33 +32,17 @@ export class BibliographyDBServerConnector {
      * @function serverBibItemToBibDB
      * @param item The bibliography item from the server.
      */
-    serverBibItemToBibDB(item) {
-        const id = item['id']
-        const bibDBEntry = {}
-        bibDBEntry['fields'] = JSON.parse(item['fields'])
-        bibDBEntry['bib_type'] = item['bib_type']
-        bibDBEntry['entry_key'] = item['entry_key']
-        bibDBEntry['entry_cat'] = JSON.parse(item['entry_cat'])
-        return {id, bibDBEntry}
+    serverBibItemToBibDB(bibDBEntry) {
+        return {id: bibDBEntry['id'], bibDBEntry}
     }
 
 
     saveBibEntries(tmpDB, isNew) {
-        // Fields field need to be stringified for saving in database.
-        // dbObject is a clone of tmpDB with a stringified fields-field, so
-        // the original tmpDB isn't destroyed.
-        const dbObject = {}
-        Object.keys(tmpDB).forEach(bibKey => {
-            dbObject[bibKey] = Object.assign({}, tmpDB[bibKey])
-            dbObject[bibKey].entry_cat = JSON.stringify(tmpDB[bibKey].entry_cat)
-            dbObject[bibKey].fields = JSON.stringify(tmpDB[bibKey].fields)
-        })
-
         return postJson(
             '/api/bibliography/save/',
             {
                 is_new: isNew,
-                bibs: JSON.stringify(dbObject)
+                bibs: JSON.stringify(tmpDB)
             }
         ).then(
             ({json}) => json['id_translations']

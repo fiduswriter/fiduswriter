@@ -55,7 +55,7 @@ def save(request):
         if 'copyright' in request.POST:
             user_image.copyright = request.POST['copyright']
         if 'cats' in request.POST:
-            user_image.image_cat = request.POST['cats']
+            user_image.cats = json.loads(request.POST['cats'])
         if 'image' in request.FILES:
             image.image = request.FILES['image']
         if status == 201 and 'image' not in request.FILES:
@@ -73,7 +73,7 @@ def save(request):
                 'file_type': image.file_type,
                 'added': mktime(image.added.timetuple()) * 1000,
                 'checksum': image.checksum,
-                'cats': json.loads(user_image.image_cat)
+                'cats': user_image.cats
             }
             if image.thumbnail:
                 response['values']['thumbnail'] = image.thumbnail.url
@@ -128,7 +128,7 @@ def images(request):
                 'file_type': image.file_type,
                 'added': mktime(image.added.timetuple()) * 1000,
                 'checksum': image.checksum,
-                'cats': json.loads(user_image.image_cat)
+                'cats': user_image.cats
             }
             if image.thumbnail:
                 field_obj['thumbnail'] = image.thumbnail.url

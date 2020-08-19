@@ -190,7 +190,7 @@ class UserImage(models.Model):
         null=True,
         on_delete=models.deletion.CASCADE
     )
-    image_cat = models.CharField(max_length=255, default='[]')
+    cats = models.JSONField(default=list)
     image = models.ForeignKey(
         Image,
         on_delete=models.deletion.CASCADE

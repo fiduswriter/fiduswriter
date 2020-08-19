@@ -42,9 +42,9 @@ export class ShrinkFidus {
         const shrunkBibDB = {}
         this.citeList.forEach(itemId => {
             shrunkBibDB[itemId] = Object.assign({}, this.bibDB.db[itemId])
-            // Remove the entry_cat, as it is only a list of IDs for one
+            // Remove the cats, as it is only a list of IDs for one
             // particular user/server.
-            delete shrunkBibDB[itemId].entry_cat
+            delete shrunkBibDB[itemId].cats
         })
 
         const docCopy = Object.assign({}, this.doc)

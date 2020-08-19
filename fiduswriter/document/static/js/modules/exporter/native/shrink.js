@@ -60,7 +60,7 @@ export class ShrinkFidus {
         delete(docCopy.updated)
         delete(docCopy.revisions)
 
-        docCopy.contents = toMiniJSON(docSchema.nodeFromJSON(docCopy.contents))
+        docCopy.content = toMiniJSON(docSchema.nodeFromJSON(docCopy.content))
 
         return new Promise(resolve => resolve({
             doc: docCopy,

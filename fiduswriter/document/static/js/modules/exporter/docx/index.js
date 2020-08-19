@@ -2,7 +2,7 @@ import download from "downloadjs"
 
 import {createSlug} from "../tools/file"
 import {XmlZip} from "../tools/xml_zip"
-import {textContent, removeHidden, fixTables} from "../tools/doc_contents"
+import {textContent, removeHidden, fixTables} from "../tools/doc_content"
 import {DocxExporterCitations} from "./citations"
 import {DocxExporterImages} from "./images"
 import {DocxExporterRender} from "./render"
@@ -34,24 +34,24 @@ export class DocxExporter {
         this.csl = csl
 
         this.pmBib = false
-        this.docContents = false
+        this.docContent = false
         this.docTitle = false
         this.mimeType = 'application/msword'
     }
 
 
     init() {
-        this.docContents = fixTables(removeHidden(this.doc.contents))
-        this.docTitle = textContent(this.docContents.content[0])
+        this.docContent = fixTables(removeHidden(this.doc.content))
+        this.docTitle = textContent(this.docContent.content[0])
         this.tables = new DocxExporterTables(this)
         this.math = new DocxExporterMath(this)
-        this.metadata = new DocxExporterMetadata(this, this.docContents)
-        this.footnotes = new DocxExporterFootnotes(this, this.docContents)
-        this.render = new DocxExporterRender(this, this.docContents)
+        this.metadata = new DocxExporterMetadata(this, this.docContent)
+        this.footnotes = new DocxExporterFootnotes(this, this.docContent)
+        this.render = new DocxExporterRender(this, this.docContent)
         this.rels = new DocxExporterRels(this, 'document')
-        this.images = new DocxExporterImages(this, this.imageDB, this.rels, this.docContents)
-        this.lists = new DocxExporterLists(this, this.rels, this.docContents)
-        this.citations = new DocxExporterCitations(this, this.bibDB, this.csl, this.docContents)
+        this.images = new DocxExporterImages(this, this.imageDB, this.rels, this.docContent)
+        this.lists = new DocxExporterLists(this, this.rels, this.docContent)
+        this.citations = new DocxExporterCitations(this, this.bibDB, this.csl, this.docContent)
         this.richtext = new DocxExporterRichtext(
             this,
             this.rels,

@@ -8,7 +8,7 @@ import {ZipFileCreator} from "../tools/zip"
 import {opfTemplate, containerTemplate, ncxTemplate, navTemplate, xhtmlTemplate} from "./templates"
 import {addAlert} from "../../common"
 import {styleEpubFootnotes, getTimestamp, setLinks, orderLinks, addFigureLabels} from "./tools"
-import {removeHidden} from "../tools/doc_contents"
+import {removeHidden} from "../tools/doc_content"
 import {DOMExporter} from "../tools/dom_export"
 
 export class EpubExporter extends DOMExporter {
@@ -30,7 +30,7 @@ export class EpubExporter extends DOMExporter {
     init() {
         addAlert('info', this.doc.title + ': ' + gettext(
             'Epub export has been initiated.'))
-        this.docContents = removeHidden(this.doc.contents, false)
+        this.docContent = removeHidden(this.doc.content, false)
         this.addDocStyle(this.doc)
 
         return this.loadStyles().then(
@@ -86,7 +86,7 @@ export class EpubExporter extends DOMExporter {
         const timestamp = getTimestamp(this.updated)
 
 
-        const authors = this.docContents.content.reduce(
+        const authors = this.docContent.content.reduce(
             (authors, part) => {
                 if (part.type === 'contributors_part' && part.attrs.metadata === 'authors' && part.content) {
                     return authors.concat(part.content.map(
@@ -110,7 +110,7 @@ export class EpubExporter extends DOMExporter {
                 }
             },
             [])
-        const keywords = this.docContents.content.reduce(
+        const keywords = this.docContent.content.reduce(
             (keywords, part) => {
                 if (part.type === 'tags_part' && part.attrs.metadata === 'keywords' && part.content) {
                     return keywords.concat(part.content.map(keywordNode => keywordNode.attrs.tag))

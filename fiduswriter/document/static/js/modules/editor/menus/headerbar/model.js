@@ -149,7 +149,7 @@ export const headerbarModel = () => ({
         {
             id: 'export',
             title: gettext('Export'),
-            tooltip: gettext('Export of the document contents'),
+            tooltip: gettext('Export of the document content'),
             type: 'menu',
             order: 1,
             content: [

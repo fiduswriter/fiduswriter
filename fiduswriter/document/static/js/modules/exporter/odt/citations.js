@@ -3,14 +3,14 @@ import {DOMSerializer, DOMParser} from "prosemirror-model"
 import {FormatCitations} from "../../citations/format"
 import {fnSchema} from "../../schema/footnotes"
 import {cslBibSchema} from "../../bibliography/schema/csl_bib"
-import {descendantNodes} from "../tools/doc_contents"
+import {descendantNodes} from "../tools/doc_content"
 
 export class OdtExporterCitations {
-    constructor(exporter, bibDB, csl, docContents, docTemplate, origCitInfos = []) {
+    constructor(exporter, bibDB, csl, docContent, docTemplate, origCitInfos = []) {
         this.exporter = exporter
         this.bibDB = bibDB
         this.csl = csl
-        this.docContents = docContents
+        this.docContent = docContent
         this.docTemplate = docTemplate
         // If citInfos were found in a previous run, they are stored here
         // (for example: first citations in main document, then in footnotes)
@@ -37,7 +37,7 @@ export class OdtExporterCitations {
             this.citInfos = this.citInfos.concat(this.origCitInfos)
         }
 
-        descendantNodes(this.docContents).forEach(
+        descendantNodes(this.docContent).forEach(
             node => {
                 if (node.type === 'citation') {
                     this.citInfos.push(JSON.parse(JSON.stringify(node.attrs)))

@@ -11,7 +11,7 @@ Base exporter class for dom-based exports. This is the deprecated way of creatin
 The epub, html and print export filters go over a DOM of a document which they change little
 by little, and they are all based on the BaseDOMExporter class.
 
-    New exporters should instead by walking the doc.contents tree.
+    New exporters should instead by walking the doc.content tree.
     This is how the LaTeX, ODT and DOCX export filters work.
 */
 
@@ -74,7 +74,7 @@ export class DOMExporter {
     joinDocumentParts() {
         this.schema.cached.imageDB = this.imageDB
         const serializer = DOMSerializer.fromSchema(this.schema)
-        this.contents = serializer.serializeNode(this.schema.nodeFromJSON(this.docContents))
+        this.contents = serializer.serializeNode(this.schema.nodeFromJSON(this.docContent))
         const bibliographyHeader = this.doc.settings.bibliography_header[this.doc.settings.language] || BIBLIOGRAPHY_HEADERS[this.doc.settings.language]
         const citRenderer = new RenderCitations(
             this.contents,

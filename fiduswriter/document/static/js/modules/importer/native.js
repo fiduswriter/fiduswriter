@@ -90,11 +90,11 @@ export class ImportNative {
                 })
             }
         }
-        walkTree(this.doc.contents)
+        walkTree(this.doc.content)
     }
 
     createDoc() {
-        const template = extractTemplate(this.doc.contents),
+        const template = extractTemplate(this.doc.content),
             template_title = template.attrs.template,
             import_id = this.importId ? this.importId : template.attrs.import_id
         // We create the document on the sever so that we have an ID for it and
@@ -121,9 +121,9 @@ export class ImportNative {
             {
                 id: this.docId,
                 title: this.doc.title,
-                contents: JSON.stringify(this.doc.contents),
-                comments: JSON.stringify(this.doc.comments),
-                bibliography: JSON.stringify(this.bibliography)
+                content: this.doc.content,
+                comments: this.doc.comments,
+                bibliography: this.bibliography
             }
         ).then(
             ({json}) => {

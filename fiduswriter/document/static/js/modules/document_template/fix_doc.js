@@ -119,7 +119,7 @@ export function adjustDocToTemplate(miniDoc, miniTemplate, documentStyles, schem
                             firstOldContent.content.length === 1
                         ) &&
                         !(
-                            // heading/richtext with just the default contents
+                            // heading/richtext with just the default content
                             firstOldContent.attrs.elements &&
                             firstOldContent.content.length === 1 &&
                             firstOldContent.content[0].type === firstOldContent.attrs.elements[0] &&

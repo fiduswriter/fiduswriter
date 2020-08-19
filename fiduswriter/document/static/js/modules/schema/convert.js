@@ -121,7 +121,7 @@ export const updateDoc = function(doc, docVersion, bibliography = false) {
 
 const convertDocV1 = function(doc) {
     const returnDoc = JSON.parse(JSON.stringify(doc))
-    convertNodeV1(returnDoc.contents)
+    convertNodeV1(returnDoc.content)
     return returnDoc
 }
 
@@ -164,7 +164,7 @@ const convertNodeV1 = function(node) {
 
 const convertDocV11 = function(doc) {
     const returnDoc = JSON.parse(JSON.stringify(doc))
-    convertNodeV11(returnDoc.contents)
+    convertNodeV11(returnDoc.content)
     return returnDoc
 }
 
@@ -189,7 +189,7 @@ const convertNodeV11 = function(node, ids = []) {
 
 const convertDocV12 = function(doc) {
     const returnDoc = JSON.parse(JSON.stringify(doc))
-    convertNodeV12(returnDoc.contents)
+    convertNodeV12(returnDoc.content)
     return returnDoc
 }
 
@@ -218,7 +218,7 @@ const convertDocV13 = function(doc, bibliography) {
     delete returnDoc.metadata
     returnDoc.bibliography = {}
     returnDoc.imageIds = []
-    convertNodeV13(returnDoc.contents, returnDoc.bibliography, bibliography, returnDoc.imageIds)
+    convertNodeV13(returnDoc.content, returnDoc.bibliography, bibliography, returnDoc.imageIds)
     return returnDoc
 }
 
@@ -311,8 +311,8 @@ const convertDocV20 = function(doc) {
     delete(returnDoc.revisions)
     delete(returnDoc.rights)
     delete(returnDoc.updated)
-    if (returnDoc.contents.attrs) {
-        returnDoc.contents.attrs.tracked = false
+    if (returnDoc.content.attrs) {
+        returnDoc.content.attrs.tracked = false
     }
     Object.values(returnDoc.comments).forEach(comment => {
         comment.username = comment.userName
@@ -343,8 +343,8 @@ const convertNodeV21 = function(node) {
 
 const convertDocV21 = function(doc) {
     const returnDoc = JSON.parse(JSON.stringify(doc))
-    convertNodeV21(returnDoc.contents)
-    Object.entries(returnDoc.comments).forEach(([commentId, comment]) => {
+    convertNodeV21(returnDoc.content)
+    Object.entries(returnDoc.comment).forEach(([commentId, comment]) => {
         delete(comment.id)
         comment.assignedUser = false
         comment.assignedUsername = false
@@ -393,8 +393,8 @@ const convertNodeV22 = function(node, imageIds) {
 const convertDocV22 = function(doc) {
     const returnDoc = JSON.parse(JSON.stringify(doc))
     returnDoc.imageIds = []
-    convertNodeV22(returnDoc.contents, returnDoc.imageIds)
-    Object.entries(returnDoc.comments).forEach(([_commentId, comment]) => {
+    convertNodeV22(returnDoc.content, returnDoc.imageIds)
+    Object.entries(returnDoc.comment).forEach(([_commentId, comment]) => {
         comment.comment.forEach(
             commentNode => convertNodeV22(commentNode, returnDoc.imageIds)
         )
@@ -534,7 +534,7 @@ const convertNodeV23 = function(node) {
 
 const convertDocV23 = function(doc) {
     const returnDoc = JSON.parse(JSON.stringify(doc))
-    convertNodeV23(returnDoc.contents)
+    convertNodeV23(returnDoc.content)
     returnDoc.settings = Object.assign({}, returnDoc.settings, v23ExtraAttrs)
     return returnDoc
 }
@@ -840,7 +840,7 @@ const convertNodeV30 = function(node) {
 
 const convertDocV30 = function(doc) {
     const returnDoc = JSON.parse(JSON.stringify(doc))
-    convertNodeV30(returnDoc.contents)
+    convertNodeV30(returnDoc.content)
     return returnDoc
 }
 
@@ -854,7 +854,7 @@ const convertDocV31 = function(doc) {
 
 const convertDocV32 = function(doc) {
     const returnDoc = JSON.parse(JSON.stringify(doc))
-    convertNodeV32(returnDoc.contents)
+    convertNodeV32(returnDoc.content)
     return returnDoc
 }
 

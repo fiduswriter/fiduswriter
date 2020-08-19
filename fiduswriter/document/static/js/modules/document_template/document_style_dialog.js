@@ -18,12 +18,12 @@ export class DocumentStyleDialog {
                 text: gettext('Save'),
                 classes: 'fw-dark',
                 click: () => {
-                    const {title, slug, contents, errors} = this.getCurrentValue()
+                    const {title, slug, content, errors} = this.getCurrentValue()
                     if (errors.length) {
                         this.showErrors(errors)
                         return
                     }
-                    this.save({title, slug, contents}).then(
+                    this.save({title, slug, content}).then(
                         ({json}) => {
                             const docStyle = json.doc_style[0]
                             const pk = docStyle.pk
@@ -89,7 +89,7 @@ export class DocumentStyleDialog {
                 <tr>
                     <th><h4 class="fw-tablerow-title">${gettext("CSS Style")}</h4></th>
                     <td>
-                        <textarea class="contents">${this.style ? escapeText(this.style.fields.contents) : ''}</textarea>
+                        <textarea class="content">${this.style ? escapeText(this.style.fields.content) : ''}</textarea>
                     </td>
                 </tr>
                 <tr>
@@ -192,9 +192,9 @@ export class DocumentStyleDialog {
 
         const title = this.dialog.dialogEl.querySelector('.title').value
         const slug = this.dialog.dialogEl.querySelector('.slug').value
-        const contents = this.dialog.dialogEl.querySelector('.contents').value
+        const content = this.dialog.dialogEl.querySelector('.content').value
 
-        if (!title.length || !slug.length || !contents.length) {
+        if (!title.length || !slug.length || !content.length) {
             errors.push(gettext('All fields need to be filled out.'))
         }
         if (!/^[A-Za-z0-9\-_]+$/.test(slug)) {
@@ -203,17 +203,17 @@ export class DocumentStyleDialog {
         if (this.allStyles.find(style => style.fields.slug === slug && style.pk !== this.id)) {
             errors.push(gettext('The slug has to be unique.'))
         }
-        return {title, slug, contents, errors}
+        return {title, slug, content, errors}
     }
 
-    save({title, slug, contents}) {
+    save({title, slug, content}) {
         return postJson(
             '/api/style/save_document_style/',
             {
                 id: this.id,
                 title,
                 slug,
-                contents,
+                content,
                 template_id: this.documentTemplateId,
                 added_files: this.addedFiles,
                 deleted_files: this.deletedFiles

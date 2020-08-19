@@ -113,7 +113,7 @@ export class ModCollabDoc {
         // happening on server.
         if (this.mod.editor.docInfo.version < data.doc.v) {
             this.receiving = true
-            this.mod.editor.docInfo.confirmedJson = JSON.parse(JSON.stringify(data.doc.contents))
+            this.mod.editor.docInfo.confirmedJson = JSON.parse(JSON.stringify(data.doc.content))
             const confirmedState = EditorState.create({doc: this.mod.editor.docInfo.confirmedDoc})
             const unconfirmedTr = confirmedState.tr
             sendableSteps(this.mod.editor.view.state).steps.forEach(step => unconfirmedTr.step(step))
@@ -133,7 +133,7 @@ export class ModCollabDoc {
                 rollbackTr.steps.map(_step => 'remote')
             ))
             const toDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [
-                data.doc.contents
+                data.doc.content
             ]})
             const lostTr = recreateTransform(this.mod.editor.view.state.doc, toDoc)
             let tracked
@@ -244,27 +244,27 @@ export class ModCollabDoc {
         this.mod.editor.docInfo.updated = new Date()
         this.mod.editor.mod.db.bibDB.setDB(data.doc.bibliography)
         this.mod.editor.mod.db.imageDB.setDB(data.doc.images)
-        this.mod.editor.docInfo.confirmedJson = JSON.parse(JSON.stringify(data.doc.contents))
+        this.mod.editor.docInfo.confirmedJson = JSON.parse(JSON.stringify(data.doc.content))
         let stateDoc
-        if (data.doc.contents.type) {
+        if (data.doc.content.type) {
             stateDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [
                 adjustDocToTemplate(
-                    data.doc.contents,
-                    this.mod.editor.docInfo.template.definition,
+                    data.doc.content,
+                    this.mod.editor.docInfo.template.content,
                     this.mod.editor.mod.documentTemplate.documentStyles,
                     this.mod.editor.schema
                 )
             ]})
         } else {
-            const definition = JSON.parse(JSON.stringify(this.mod.editor.docInfo.template.definition))
-            if (!definition.type) {
-                definition.type = 'article'
+            const content = JSON.parse(JSON.stringify(this.mod.editor.docInfo.template.content))
+            if (!content.type) {
+                content.type = 'article'
             }
-            if (!definition.content) {
-                definition.content = [{type: 'title'}]
+            if (!content.content) {
+                content.content = [{type: 'title'}]
             }
             stateDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [
-                definition
+                content
             ]})
         }
         const plugins = this.mod.editor.statePlugins.map(plugin => {

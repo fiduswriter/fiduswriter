@@ -166,7 +166,7 @@ export class ImportFidusFile {
                 })
             }
         })
-        this.checkDocUsersNode(doc.contents)
+        this.checkDocUsersNode(doc.content)
         return doc
     }
 

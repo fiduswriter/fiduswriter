@@ -21,9 +21,11 @@ class Entry(models.Model):
     entry_owner = models.ForeignKey(User, on_delete=models.deletion.CASCADE)
     # identifier of the entrytype for the entry.
     entry_cat = models.TextField(default='[]')
+    cats = models.JSONField(default=list)
     last_modified = models.DateTimeField(auto_now=True)
     bib_type = models.CharField(max_length=30, default='')
     fields = models.TextField(default='{}')  # json object with all the fields
+    content = models.JSONField(default=dict)  # all the fields
 
     def __str__(self):
         return self.entry_key

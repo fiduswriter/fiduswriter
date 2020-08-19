@@ -17,7 +17,7 @@ export class ShrinkFidus {
 
         addAlert('info', gettext('File export has been initiated.'))
 
-        this.walkTree(this.doc.contents)
+        this.walkTree(this.doc.content)
 
         this.imageList = [...new Set(this.imageList)] // unique values
 

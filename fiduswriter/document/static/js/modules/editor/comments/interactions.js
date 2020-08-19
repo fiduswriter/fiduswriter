@@ -289,7 +289,7 @@ export class ModCommentInteractions {
         // Save the change to a comment and mark that the document has been changed
         if (id === '-1') {
             const referrer = getCommentDuringCreationDecoration(this.mod.store.commentDuringCreation.view.state)
-            // This is a new comment. We need to get an ID for it if it has contents.
+            // This is a new comment. We need to get an ID for it if it has content.
 
             let username
 

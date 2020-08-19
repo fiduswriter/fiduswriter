@@ -181,8 +181,8 @@ export class ModFootnoteEditor {
         this.view.updateState(newState)
     }
 
-    renderFootnote(contents, index = 0, tr) {
-        const node = fnNodeToPmNode(contents)
+    renderFootnote(content, index = 0, tr) {
+        const node = fnNodeToPmNode(content)
         let pos = 0
         for (let i = 0; i < index;i++) {
             pos += this.view.state.doc.child(i).nodeSize

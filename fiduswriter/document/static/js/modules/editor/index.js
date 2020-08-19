@@ -473,7 +473,7 @@ export class Editor {
             }
         )
         return {
-            contents: pmArticle.toJSON(),
+            content: pmArticle.toJSON(),
             settings: getSettings(pmArticle),
             title: title.substring(0, 255),
             version: this.docInfo.version,

@@ -167,7 +167,7 @@ export function trackedTransaction(tr, state, user, approved, date) {
         date10 = Math.floor(date / 600000) * 10, // 10 minute interval
         date1 = Math.floor(date / 60000), // 1 minute interval
         // We only insert content if this is not directly a tr for cell deletion. This is because tables delete rows by deleting the
-        // contents of each cell and replacing it with an empty paragraph.
+        // content of each cell and replacing it with an empty paragraph.
         cellDeleteTr = ['deleteContentBackward', 'deleteContentForward'].includes(tr.getMeta('inputType')) && (state.selection instanceof CellSelection)
 
     tr.steps.forEach((originalStep) => {

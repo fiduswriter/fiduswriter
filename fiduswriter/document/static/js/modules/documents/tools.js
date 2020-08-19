@@ -26,11 +26,11 @@ export const getMissingDocumentListData = function(ids, documentList, schema) {
                         const doc = documentList.find(entry => entry.id === extraValues.id)
                         doc.contents = acceptAllNoInsertions(
                             schema.nodeFromJSON(
-                                {type: 'doc', content: [JSON.parse(extraValues.contents)]}
+                                {type: 'doc', content: [extraValues.content]}
                             )
                         ).firstChild.toJSON()
-                        doc.comments = JSON.parse(extraValues.comments)
-                        doc.bibliography = JSON.parse(extraValues.bibliography)
+                        doc.comments = extraValues.comments
+                        doc.bibliography = extraValues.bibliography
                         doc.images = extraValues.images
                         doc.settings = getSettings(doc.contents)
                     }

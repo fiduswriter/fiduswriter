@@ -57,7 +57,7 @@ def get_documentlist_extra(request):
             }
         response['documents'].append({
             'images': images,
-            'contents': doc.contents,
+            'content': doc.content,
             'comments': doc.comments,
             'bibliography': doc.bibliography,
             'id': doc.id
@@ -754,12 +754,9 @@ def import_doc(request):
             status=status
         )
     document.title = request.POST['title']
-    # We need to decode/encode the following so that it has the same
-    # character encoding as used the the save_document method in ws_views.
-    document.contents = json_encode(json_decode(request.POST['contents']))
-    document.comments = json_encode(json_decode(request.POST['comments']))
-    document.bibliography = \
-        json_encode(json_decode(request.POST['bibliography']))
+    document.content = request.POST['content']
+    document.comments = request.POST['comments']
+    document.bibliography = request.POST['bibliography']
     # document.doc_version should always be the current version, so don't
     # bother about it.
     document.save()
@@ -1044,21 +1041,21 @@ def save_doc(request):
     doc_id = request.POST['id']
     doc = Document.objects.get(pk=int(doc_id))
     # Only looking at fields that may have changed.
-    contents = request.POST.get('contents', False)
+    content = request.POST.get('content', False)
     bibliography = request.POST.get('bibliography', False)
     comments = request.POST.get('comments', False)
-    last_diffs = request.POST.get('last_diffs', False)
+    diffs = request.POST.get('diffs', False)
     version = request.POST.get('version', False)
-    if contents:
-        doc.contents = contents
+    if content:
+        doc.content = content
     if bibliography:
         doc.bibliography = bibliography
     if comments:
         doc.comments = comments
     if version:
         doc.version = version
-    if last_diffs:
-        doc.last_diffs = last_diffs
+    if diffs:
+        doc.diffs = diffs
     doc.doc_version = FW_DOCUMENT_VERSION
     doc.save()
     return JsonResponse(

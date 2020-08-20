@@ -194,7 +194,7 @@ export class DocumentStyleDialog {
         const slug = this.dialog.dialogEl.querySelector('.slug').value
         const contents = this.dialog.dialogEl.querySelector('.content').value
 
-        if (!title.length || !slug.length || !content.length) {
+        if (!title.length || !slug.length || !contents.length) {
             errors.push(gettext('All fields need to be filled out.'))
         }
         if (!/^[A-Za-z0-9\-_]+$/.test(slug)) {

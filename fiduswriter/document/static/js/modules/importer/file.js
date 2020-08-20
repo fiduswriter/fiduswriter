@@ -95,15 +95,14 @@ export class ImportFidusFile {
             filetypeVersion >= MIN_FW_DOCUMENT_VERSION &&
             filetypeVersion <= MAX_FW_DOCUMENT_VERSION) {
             // This seems to be a valid fidus file with current version number.
-            const images = JSON.parse(this.textFiles.find(file => file.filename === 'images.json').contents),
-                updatedFile =  updateFile(
+            const updatedFile =  updateFile(
                     JSON.parse(this.textFiles.find(file => file.filename === 'document.json').contents),
                     filetypeVersion,
-                    JSON.parse(
-                        this.textFiles.find(file => file.filename === 'bibliography.json').contents
-                    )
+                    JSON.parse(this.textFiles.find(file => file.filename === 'bibliography.json').contents),
+                    JSON.parse(this.textFiles.find(file => file.filename === 'images.json').contents)
                 ),
-                {bibliography} = updatedFile
+                {bibliography} = updatedFile,
+                {images} = updatedFile
             let {doc} = updatedFile
             if (this.check) {
                 doc = this.checkDocUsers(doc)

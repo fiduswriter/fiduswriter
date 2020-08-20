@@ -231,7 +231,7 @@ export class MergeEditor {
                         ],
                         [
                             gettext("Can I edit content in all three editors?"),
-                            gettext("You can edit the content in all the editors. But do keep in mind that whatever you type in the left most and right most editor will not be tracked (you cannot accept or reject it). And moreover the edits made in these two editors will not be preserved once the merge is completed.")
+                            gettext("You can edit the content only in the middle editor. You cannot edit content in the left most and right most editor.")
                         ],
                         [
                             gettext("Does the order in which I work on merging the changes matter?"),
@@ -240,7 +240,11 @@ export class MergeEditor {
                         [
                             gettext("What do I do after completing the merge?"),
                             gettext("After the merge is completed, you can click on the button 'Merge Complete' which in turn will move your changes to the main editor. Do note if other users made significant changes to the document while you were merging the document, you might have to merge the documents together again.")
-                        ]
+                        ],
+                        [
+                            gettext("What happens if I try to complete merge without resolving all the changes?"),
+                            gettext("You would get an warning when you try to complete a merge without resolving all the changes. You can still proceed to merge the document, in this case all the insertions and deletions in the middle editor will be accepted automatically, and all the insertions and deletions in the offline editor will be ignored.")
+                        ],
                     ]
                 })
                 helpDialog.open()

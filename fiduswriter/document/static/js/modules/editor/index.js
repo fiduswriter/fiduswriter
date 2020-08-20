@@ -359,8 +359,12 @@ export class Editor {
 
             this.ws.ws.addEventListener('close', () => {
                 // Listen to close event and update the headerbar and toolbar view.
-                this.menu.toolbarViews.forEach(view => view.update())
-                this.menu.headerView.update()
+                if (this.menu.toolbarViews) {
+                    this.menu.toolbarViews.forEach(view => view.update())
+                }
+                if (this.menu.headerView) {
+                    this.menu.headerView.update()
+                }
             })
         })
     }

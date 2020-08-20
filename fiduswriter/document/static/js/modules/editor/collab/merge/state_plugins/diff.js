@@ -1,12 +1,11 @@
 import {Plugin, PluginKey, NodeSelection} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
 import {noSpaceTmp} from "../../../../common"
-import {dispatchRemoveDiffdata, addDeletionMarks} from "../tools"
+import {dispatchRemoveDiffdata, addDeletionMarks, updateMarkData} from "../tools"
 import {copyChange, acceptChanges, removeDecoration, deleteContent, addDeletedContentBack, handleMarks} from "./action"
 import {changeSet} from "../changeset"
 import {DOMSerializer} from "prosemirror-model"
 import {readOnlyFnEditor} from "../footnotes"
-import {updateMarkData} from "../tools"
 import {Mapping} from "prosemirror-transform"
 
 function createHiglightDecoration(from, to, state) {
@@ -396,7 +395,7 @@ export const diffPlugin = function(options) {
                 }
                 decos = getDecos(decos, options.merge, state)
 
-                if(tr.getMeta("initialDiffMap")) {
+                if (tr.getMeta("initialDiffMap")) {
                     // If it is initial diffMap we update mark data
                     // So no need to update the deco's position.
                     decos = decos.map(new Mapping(), tr.doc)
@@ -486,7 +485,7 @@ export const diffPlugin = function(options) {
         appendTransaction: (trs, _oldState, newState) => {
             const updateMarkTr = newState.tr
             trs.forEach(tr => {
-                if(tr.steps.length) {
+                if (tr.steps.length) {
                     updateMarkData(tr, options.merge.imageDataModified, updateMarkTr)
                 }
             })

@@ -423,7 +423,7 @@ export class MergeEditor {
                     editorView.updateState(newState)
                     this.renderCitation(editorView, elementId)
                 },
-                editable:() => false,
+                editable: () => false,
                 nodeViews: {
                     footnote(node, view, getPos) {
                         return new FootnoteView(node, view, getPos, mainEditor)

@@ -40,14 +40,14 @@ export class HTMLExporter extends DOMExporter {
     }
 
     prepareBinaryFiles() {
-        this.binaryFiles = this.binaryFiles.concat(modifyImages(this.contents)).concat(this.fontFiles)
+        this.binaryFiles = this.binaryFiles.concat(modifyImages(this.content)).concat(this.fontFiles)
     }
 
     postProcess() {
 
         const title = this.doc.title
 
-        const math = this.contents.querySelectorAll('.equation, .figure-equation').length ? true : false
+        const math = this.content.querySelectorAll('.equation, .figure-equation').length ? true : false
 
         if (math) {
             this.addMathliveStylesheet()
@@ -56,7 +56,7 @@ export class HTMLExporter extends DOMExporter {
         this.prepareBinaryFiles()
 
         const html = htmlExportTemplate({
-            contents: this.contents,
+            contents: this.content,
             settings: this.doc.settings,
             styleSheets: this.styleSheets,
             title

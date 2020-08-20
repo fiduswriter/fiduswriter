@@ -43,14 +43,14 @@ export class EpubExporter extends DOMExporter {
     }
 
     addFigureLabels(language) {
-        addFigureLabels(this.contents.querySelector('section.fnlist'), language, true)
-        addFigureLabels(this.contents, language)
+        addFigureLabels(this.content.querySelector('section.fnlist'), language, true)
+        addFigureLabels(this.content, language)
     }
 
     save() {
         const title = this.doc.title
 
-        const contents = this.contents
+        const contents = this.content
 
         const images = modifyImages(contents)
 

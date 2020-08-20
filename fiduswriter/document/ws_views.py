@@ -1,23 +1,24 @@
-from builtins import str
 import uuid
 import atexit
+import logging
+# from builtins import str
+from tornado.escape import json_encode
 from time import mktime, time
 from copy import deepcopy
-
 from jsonpatch import apply_patch, JsonPatchConflict, JsonPointerException
 
 from django.db.utils import DatabaseError
+from django.db.models import F, Q
+from django.conf import settings
+
 from document.helpers.session_user_info import SessionUserInfo
 from document.helpers.serializers import PythonWithURLSerializer
 from base.ws_handler import BaseWebSocketHandler
-import logging
-from tornado.escape import json_encode
 from document.models import COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \
     CAN_COMMUNICATE, FW_DOCUMENT_VERSION, DocumentTemplate, Document
 from usermedia.models import Image, DocumentImage, UserImage
 from user.util import get_user_avatar_url
 
-from django.db.models import F, Q
 
 logger = logging.getLogger(__name__)
 
@@ -410,7 +411,7 @@ class WebSocket(BaseWebSocketHandler):
                 self.update_bibliography(message["bu"])
             if "iu" in message:  # iu = image updates
                 self.update_images(message["iu"])
-            if self.session["doc"].version % 10 == 0:
+            if self.session["doc"].version % settings.DOC_SAVE_INTERVAL == 0:
                 WebSocket.save_document(self.user_info.document_id)
             self.confirm_diff(message["rid"])
             WebSocket.send_updates(

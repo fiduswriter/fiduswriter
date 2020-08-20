@@ -52,7 +52,7 @@ def get_documentlist_extra(request):
                 'image': image.image.image.url,
                 'thumbnail': image.image.thumbnail.url,
                 'title': image.title,
-                'copyright': json.loads(image.copyright),
+                'copyright': image.copyright,
                 'width': image.image.width
             }
         response['documents'].append({
@@ -720,7 +720,7 @@ def import_image(request):
     doc_image = DocumentImage.objects.create(
         image=image,
         title=request.POST['title'],
-        copyright=json.dumps(request.POST['copyright']),
+        copyright=json.loads(request.POST['copyright']),
         document=document
     )
     response['id'] = doc_image.image.id

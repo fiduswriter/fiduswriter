@@ -53,7 +53,7 @@ def save(request):
                 image.checksum = request.POST['checksum']
         user_image.title = request.POST['title']
         if 'copyright' in request.POST:
-            user_image.copyright = request.POST['copyright']
+            user_image.copyright = json.loads(request.POST['copyright'])
         if 'cats' in request.POST:
             user_image.cats = json.loads(request.POST['cats'])
         if 'image' in request.FILES:
@@ -68,7 +68,7 @@ def save(request):
             response['values'] = {
                 'id': image.id,
                 'title': user_image.title,
-                'copyright': json.loads(user_image.copyright),
+                'copyright': user_image.copyright,
                 'image': image.image.url,
                 'file_type': image.file_type,
                 'added': mktime(image.added.timetuple()) * 1000,
@@ -123,7 +123,7 @@ def images(request):
             field_obj = {
                 'id': image.id,
                 'title': user_image.title,
-                'copyright': json.loads(user_image.copyright),
+                'copyright': user_image.copyright,
                 'image': image.image.url,
                 'file_type': image.file_type,
                 'added': mktime(image.added.timetuple()) * 1000,

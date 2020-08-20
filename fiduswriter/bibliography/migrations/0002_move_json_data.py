@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
             field=models.JSONField(default=list),
         ),
         migrations.RenameField(
-            model_name='bibliography',
+            model_name='entry',
             old_name='fields',
             new_name='fields_text'
         ),
@@ -42,11 +42,11 @@ class Migration(migrations.Migration):
         ),
         migrations.RunPython(text_to_json, json_to_text),
         migrations.RemoveField(
-            model_name='bibliography',
+            model_name='entry',
             name='entry_cat',
         ),
         migrations.RemoveField(
-            model_name='bibliography',
+            model_name='entry',
             name='fields_text',
         ),
     ]

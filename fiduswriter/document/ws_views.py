@@ -156,7 +156,7 @@ class WebSocket(BaseWebSocketHandler):
             field_obj = {
                 'id': image.id,
                 'title': dimage.title,
-                'copyright': json.loads(dimage.copyright),
+                'copyright': dimage.copyright,
                 'image': image.image.url,
                 'file_type': image.file_type,
                 'added': mktime(image.added.timetuple()) * 1000,
@@ -253,14 +253,14 @@ class WebSocket(BaseWebSocketHandler):
                 ).first()
                 if doc_image:
                     doc_image.title = iu["image"]["title"]
-                    doc_image.copyright = json.dumps(iu["image"]["copyright"])
+                    doc_image.copyright = iu["image"]["copyright"]
                     doc_image.save()
                 else:
                     DocumentImage.objects.create(
                         document_id=self.session["doc"].id,
                         image_id=id,
                         title=iu["image"]["title"],
-                        copyright=json.dumps(iu["image"]["copyright"])
+                        copyright=iu["image"]["copyright"]
                     )
             elif iu["type"] == "delete":
                 DocumentImage.objects.filter(

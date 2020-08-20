@@ -1,7 +1,6 @@
 from builtins import str
 import uuid
 import atexit
-import json
 from time import mktime, time
 from copy import deepcopy
 

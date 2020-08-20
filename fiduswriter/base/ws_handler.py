@@ -136,6 +136,7 @@ class BaseWebSocketHandler(DjangoHandlerMixin, WebSocketHandler):
             f"User:{self.user.id} ParticipantID:{self.id} "
             f"number of messages to be resent:{to_send} "
             f"S count server:{self.messages['server']} from:{from_no}")
+        self.messages['server'] -= to_send
         if to_send > len(self.messages['last_ten']):
             # Too many messages requested. We have to abort.
             logger.debug(
@@ -144,7 +145,6 @@ class BaseWebSocketHandler(DjangoHandlerMixin, WebSocketHandler):
                 f"number of messages requested:{to_send}")
             self.unfixable()
             return
-        self.messages['server'] -= to_send
         for message in self.messages['last_ten'][0-to_send:]:
             self.send_message(message)
 

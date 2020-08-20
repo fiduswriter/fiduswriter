@@ -384,23 +384,18 @@ export const diffPlugin = function(options) {
                     baseTr,
                     deletionClass
                 } = this.getState(oldState)
+
+                decos = getDecos(decos, options.merge, state)
+                
                 if (tr.getMeta("removeHighlight")) {
                     decos = decos.remove(decos.find(null, null,
                         spec => spec.type == "deletion-highlight"))
+                    
                     // Remove the class set on deletion decorations
                     options.merge.mergeView2.dom.querySelectorAll(".selected-dec.deletion-highlight").forEach(ele => {
                         ele.classList.remove("selected-dec")
                         ele.classList.remove("deletion-highlight")
                     })
-                }
-                decos = getDecos(decos, options.merge, state)
-
-                if (tr.getMeta("initialDiffMap")) {
-                    // If it is initial diffMap we update mark data
-                    // So no need to update the deco's position.
-                    decos = decos.map(new Mapping(), tr.doc)
-                } else {
-                    decos = decos.map(tr.mapping, tr.doc)
                 }
                 if (tr.getMeta("decorationId")) {
                     const decorationId = parseInt(tr.getMeta("decorationId"))
@@ -409,11 +404,19 @@ export const diffPlugin = function(options) {
                 }
                 if (tr.getMeta("highlight")) {
                     const data = tr.getMeta("highlight")
-                    const from = baseTr.mapping.map(parseInt(data.from))
-                    const to = baseTr.mapping.map(parseInt(data.to))
+                    const from = options.merge.mergedDocMap.map(parseInt(data.from))
+                    const to = options.merge.mergedDocMap.map(parseInt(data.to))
                     if (from && to) {
                         decos = createDeletionHighlight(decos, from, to, state, options)
                     }
+                }
+
+                if (tr.getMeta("initialDiffMap")) {
+                    // If it is initial diffMap we update mark data
+                    // So no need to update the deco's position.
+                    decos = decos.map(new Mapping(), tr.doc)
+                } else {
+                    decos = decos.map(tr.mapping, tr.doc)
                 }
                 return {
                     baseTr: baseTr,
@@ -479,10 +482,25 @@ export const diffPlugin = function(options) {
                             }
                         }
                     }
+
+                    // Make sure that the deletion decoration footnote stays inside the view
+                    const footnote = view.dom.querySelector('.offline-deleted.deleted-footnote-element .footnote-tooltip')
+                    if (footnote) {
+                        const bounding = footnote.getBoundingClientRect()
+                        const dialogBox = document.querySelector('#editor-merge-view')
+                        if (dialogBox) {
+                            if (bounding.right > dialogBox.offsetWidth || bounding.right > (window.innerWidth || document.documentElement.clientWidth)) {
+                                footnote.style.left = '-100px'
+                            }
+                        }
+                    }
                 }
             }
         },
         appendTransaction: (trs, _oldState, newState) => {
+            if (trs.every(tr => !tr.steps.length)) {
+                return
+            }
             const updateMarkTr = newState.tr
             trs.forEach(tr => {
                 if (tr.steps.length) {

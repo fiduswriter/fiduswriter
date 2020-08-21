@@ -163,7 +163,7 @@ export class Editor {
             navigatorFilterModel: navigatorFilterModel(),
             orderedListMenuModel: orderedListMenuModel(),
             selectionMenuModel: selectionMenuModel(),
-            imageEditModel:imageEditModel(),
+            imageEditModel: imageEditModel(),
             tableMenuModel: tableMenuModel(),
             toolbarModel: toolbarModel()
         }

@@ -81,7 +81,7 @@ class SimpleMessageExchangeTests(LiveTornadoTestCase, EditorHelper):
             if 'type' in message.keys():
                 if message['type'] == "doc_data":
                     doc_message_count += 1
-                    doc_data = message['doc']['contents']
+                    doc_data = message['doc']['content']
 
         # We should've only sent the doc_data message once .
         self.assertEqual(

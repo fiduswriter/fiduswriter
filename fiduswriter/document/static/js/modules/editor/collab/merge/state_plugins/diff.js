@@ -386,11 +386,11 @@ export const diffPlugin = function(options) {
                 } = this.getState(oldState)
 
                 decos = getDecos(decos, options.merge, state)
-                
+
                 if (tr.getMeta("removeHighlight")) {
                     decos = decos.remove(decos.find(null, null,
                         spec => spec.type == "deletion-highlight"))
-                    
+
                     // Remove the class set on deletion decorations
                     options.merge.mergeView2.dom.querySelectorAll(".selected-dec.deletion-highlight").forEach(ele => {
                         ele.classList.remove("selected-dec")

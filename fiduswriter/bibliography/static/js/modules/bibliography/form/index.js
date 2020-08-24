@@ -2,7 +2,7 @@ import {BibFieldTypes, BibTypes} from "biblatex-csl-converter"
 import {BibFieldTitles, BibTypeTitles, BibFieldHelp} from "./strings"
 import {bibDialog} from "./templates"
 import {addAlert, noSpaceTmp, Dialog} from "../../common"
-import {EntryCatForm} from "./entry_cat"
+import {CatsForm} from "./cats"
 import {DateFieldForm} from "./fields/date"
 import {LiteralFieldForm} from "./fields/literal"
 import {LiteralLongFieldForm} from "./fields/literal_long"
@@ -56,7 +56,7 @@ export class BibEntryForm {
             this.dialogHeader = gettext('Register New Source')
             this.currentValues = {
                 bib_type: false,
-                entry_cat: [],
+                cats: [],
                 entry_key: 'FidusWriter',
                 fields: {}
             }
@@ -186,9 +186,9 @@ export class BibEntryForm {
             BibTypes[this.currentValues.bib_type].optional.forEach(fieldName => {
                 this.addField(fieldName, optFields)
             })
-            const entryCatField = document.getElementById('categories-field')
-            this.entryCatForm = new EntryCatForm(entryCatField, this.currentValues.entry_cat, this.bibDB.cats)
-            this.entryCatForm.init()
+            const catsField = document.getElementById('categories-field')
+            this.catsForm = new CatsForm(catsField, this.currentValues.cats, this.bibDB.cats)
+            this.catsForm.init()
 
             if (!this.bibDB.cats.length) {
                 // There are no ctaegories to select from, so remove the categories tab.
@@ -205,7 +205,7 @@ export class BibEntryForm {
         // user still wants them.
         const formValue = this.value
         Object.assign(this.currentValues.fields, formValue.fields)
-        this.currentValues.entry_cat = formValue.entry_cat
+        this.currentValues.cats = formValue.cats
         this.currentValues.bib_type = formValue.bib_type
         // Reset fields and close dialog.
         this.fields = {}
@@ -233,7 +233,7 @@ export class BibEntryForm {
     get value() {
         const returnObj = {
             bib_type: document.querySelector('#select-bibtype').value,
-            entry_cat: this.entryCatForm ? this.entryCatForm.value : [],
+            cats: this.catsForm ? this.catsForm.value : [],
             entry_key: this.currentValues.entry_key, // is never updated.
             fields: {}
         }

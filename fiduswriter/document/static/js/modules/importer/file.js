@@ -78,8 +78,8 @@ export class ImportFidusFile {
                         fileType = 'blob'
                         fileList = this.otherFiles
                     }
-                    zipfs.files[filename].async(fileType).then(contents => {
-                        fileList.push({filename, contents})
+                    zipfs.files[filename].async(fileType).then(content => {
+                        fileList.push({filename, content})
                         resolve()
                     })
                 }))
@@ -89,21 +89,20 @@ export class ImportFidusFile {
     }
 
     processFidusFile() {
-        const filetypeVersion = parseFloat(this.textFiles.find(file => file.filename === 'filetype-version').contents),
-            mimeType = this.textFiles.find(file => file.filename === 'mimetype').contents
+        const filetypeVersion = parseFloat(this.textFiles.find(file => file.filename === 'filetype-version').content),
+            mimeType = this.textFiles.find(file => file.filename === 'mimetype').content
         if (mimeType === 'application/fidus+zip' &&
             filetypeVersion >= MIN_FW_DOCUMENT_VERSION &&
             filetypeVersion <= MAX_FW_DOCUMENT_VERSION) {
             // This seems to be a valid fidus file with current version number.
-            const images = JSON.parse(this.textFiles.find(file => file.filename === 'images.json').contents),
-                updatedFile =  updateFile(
-                    JSON.parse(this.textFiles.find(file => file.filename === 'document.json').contents),
+            const updatedFile =  updateFile(
+                    JSON.parse(this.textFiles.find(file => file.filename === 'document.json').content),
                     filetypeVersion,
-                    JSON.parse(
-                        this.textFiles.find(file => file.filename === 'bibliography.json').contents
-                    )
+                    JSON.parse(this.textFiles.find(file => file.filename === 'bibliography.json').content),
+                    JSON.parse(this.textFiles.find(file => file.filename === 'images.json').content)
                 ),
-                {bibliography} = updatedFile
+                {bibliography} = updatedFile,
+                {images} = updatedFile
             let {doc} = updatedFile
             if (this.check) {
                 doc = this.checkDocUsers(doc)
@@ -166,7 +165,7 @@ export class ImportFidusFile {
                 })
             }
         })
-        this.checkDocUsersNode(doc.contents)
+        this.checkDocUsersNode(doc.content)
         return doc
     }
 

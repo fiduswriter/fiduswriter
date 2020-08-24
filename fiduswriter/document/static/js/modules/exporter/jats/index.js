@@ -1,7 +1,7 @@
 import download from "downloadjs"
 
 import {createSlug} from "../tools/file"
-import {removeHidden} from "../tools/doc_contents"
+import {removeHidden} from "../tools/doc_content"
 import {JATSExporterConvert} from "./convert"
 import {JATSExporterCitations} from "./citations"
 import {ZipFileCreator} from "../tools/zip"
@@ -18,7 +18,7 @@ export class JATSExporter {
         this.csl = csl
         this.updated = updated
 
-        this.docContents = false
+        this.docContent = false
         this.zipFileName = false
         this.textFiles = []
         this.httpFiles = []
@@ -26,10 +26,10 @@ export class JATSExporter {
 
     init() {
         this.zipFileName = `${createSlug(this.doc.title)}.jats.zip`
-        this.docContents = removeHidden(this.doc.contents)
+        this.docContent = removeHidden(this.doc.content)
         this.converter = new JATSExporterConvert(this, this.imageDB, this.bibDB, this.doc.settings)
         this.citations = new JATSExporterCitations(this, this.bibDB, this.csl)
-        return this.converter.init(this.docContents).then(({jats, imageIds}) => {
+        return this.converter.init(this.docContent).then(({jats, imageIds}) => {
             this.textFiles.push({filename: 'manuscript.xml', contents: jats})
             const images = imageIds.map(
                 id => {

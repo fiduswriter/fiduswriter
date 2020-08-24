@@ -45,7 +45,7 @@ export class Merge {
         // happening on server.
         if (this.mod.editor.docInfo.version < data.doc.v && sendableSteps(this.mod.editor.view.state)) {
             this.mod.doc.receiving = true
-            this.mod.editor.docInfo.confirmedJson = JSON.parse(JSON.stringify(data.doc.contents))
+            this.mod.editor.docInfo.confirmedJson = JSON.parse(JSON.stringify(data.doc.content))
             const confirmedState = EditorState.create({doc: this.mod.editor.docInfo.confirmedDoc})
             const unconfirmedTr = confirmedState.tr
             sendableSteps(this.mod.editor.view.state).steps.forEach(step => unconfirmedTr.step(step))
@@ -65,7 +65,7 @@ export class Merge {
                 rollbackTr.steps.map(_step => 'remote')
             ).setMeta('remote', true))
             const toDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [
-                data.doc.contents
+                data.doc.content
             ]})
 
             // Apply the online Transaction
@@ -110,7 +110,7 @@ export class Merge {
     autoMerge(unconfirmedTr, lostTr, data) {
         /* This automerges documents incase of no conflicts */
         const toDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [
-            data.doc.contents
+            data.doc.content
         ]})
         const rebasedTr = EditorState.create({doc: toDoc}).tr.setMeta('remote', true)
         const maps = new Mapping([].concat(unconfirmedTr.mapping.maps.slice().reverse().map(map => map.invert())).concat(lostTr.mapping.maps.slice()))

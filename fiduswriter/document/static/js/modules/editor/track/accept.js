@@ -21,40 +21,43 @@ export const accept = function(type, pos, view) {
             reachedEnd = true
             return false
         }
-
-        if (type === 'deletion') {
-            deleteNode(tr, node, nodePos, map, true)
-        } else if (type === 'insertion') {
-            if (node.attrs.track) {
-                const track = node.attrs.track.filter(track => track.type !== 'insertion')
-                if (node.attrs.track.length === track) {
-                    return true
+        // Traverse only those nodes which have the track marks.
+        if (trackMark === undefined || (trackMark && trackMark.isInSet(node.marks))) {
+            if (type === 'deletion') {
+                deleteNode(tr, node, nodePos, map, true)
+            } else if (type === 'insertion') {
+                if (node.attrs.track) {
+                    const track = node.attrs.track.filter(track => track.type !== 'insertion')
+                    if (node.attrs.track.length === track) {
+                        return true
+                    }
+                    tr.setNodeMarkup(map.map(nodePos), null, Object.assign({}, node.attrs, {track}), node.marks)
+                    // Special case: first paragraph in list item by same user -- will also be accepted.
+                    if (node.type.name === 'list_item' && node.child(0) && node.child(0).type.name === 'paragraph') {
+                        reachedEnd = false
+                    }
+                } else {
+                    tr.step(
+                        new AddMarkStep(
+                            map.map(nodePos),
+                            map.map(nodePos + node.nodeSize),
+                            view.state.schema.marks.insertion.create(Object.assign({}, trackMark.attrs, {approved: true}))
+                        )
+                    )
                 }
-                tr.setNodeMarkup(map.map(nodePos), null, Object.assign({}, node.attrs, {track}), node.marks)
-                // Special case: first paragraph in list item by same user -- will also be accepted.
-                if (node.type.name === 'list_item' && node.child(0) && node.child(0).type.name === 'paragraph') {
-                    reachedEnd = false
-                }
-            } else {
+            } else if (type === 'format_change') {
                 tr.step(
-                    new AddMarkStep(
+                    new RemoveMarkStep(
                         map.map(nodePos),
                         map.map(nodePos + node.nodeSize),
-                        view.state.schema.marks.insertion.create(Object.assign({}, trackMark.attrs, {approved: true}))
+                        trackMark
                     )
                 )
+            } else if (type === 'block_change') {
+                const track = node.attrs.track.filter(track => track.type !== 'block_change')
+                tr.setNodeMarkup(map.map(nodePos), null, Object.assign({}, node.attrs, {track}), node.marks)
             }
-        } else if (type === 'format_change') {
-            tr.step(
-                new RemoveMarkStep(
-                    map.map(nodePos),
-                    map.map(nodePos + node.nodeSize),
-                    trackMark
-                )
-            )
-        } else if (type === 'block_change') {
-            const track = node.attrs.track.filter(track => track.type !== 'block_change')
-            tr.setNodeMarkup(map.map(nodePos), null, Object.assign({}, node.attrs, {track}), node.marks)
+            return true
         }
         return true
     })

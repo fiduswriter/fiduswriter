@@ -2,7 +2,7 @@ import time
 import os
 import bleach
 import json
-from tornado.escape import json_decode, json_encode
+from tornado.escape import json_decode
 from django.core import serializers
 from django.http import HttpResponse, JsonResponse, HttpRequest
 from django.contrib.auth.decorators import login_required
@@ -52,12 +52,12 @@ def get_documentlist_extra(request):
                 'image': image.image.image.url,
                 'thumbnail': image.image.thumbnail.url,
                 'title': image.title,
-                'copyright': json.loads(image.copyright),
+                'copyright': image.copyright,
                 'width': image.image.width
             }
         response['documents'].append({
             'images': images,
-            'contents': doc.contents,
+            'content': doc.content,
             'comments': doc.comments,
             'bibliography': doc.bibliography,
             'id': doc.id
@@ -673,12 +673,12 @@ def import_create(request):
                 et.save()
     if not document_template:
         title = request.POST['template_title']
-        definition = json_encode(json_decode(request.POST['template']))
+        content = json_decode(request.POST['template'])
         document_template = DocumentTemplate()
         document_template.title = title
         document_template.import_id = import_id
         document_template.user = request.user
-        document_template.definition = definition
+        document_template.content = content
         document_template.save()
     document = Document.objects.create(
         owner=request.user,
@@ -720,7 +720,7 @@ def import_image(request):
     doc_image = DocumentImage.objects.create(
         image=image,
         title=request.POST['title'],
-        copyright=json.dumps(request.POST['copyright']),
+        copyright=json.loads(request.POST['copyright']),
         document=document
     )
     response['id'] = doc_image.image.id
@@ -754,12 +754,9 @@ def import_doc(request):
             status=status
         )
     document.title = request.POST['title']
-    # We need to decode/encode the following so that it has the same
-    # character encoding as used the the save_document method in ws_views.
-    document.contents = json_encode(json_decode(request.POST['contents']))
-    document.comments = json_encode(json_decode(request.POST['comments']))
-    document.bibliography = \
-        json_encode(json_decode(request.POST['bibliography']))
+    document.content = json.loads(request.POST['content'])
+    document.comments = json.loads(request.POST['comments'])
+    document.bibliography = json.loads(request.POST['bibliography'])
     # document.doc_version should always be the current version, so don't
     # bother about it.
     document.save()
@@ -1044,21 +1041,21 @@ def save_doc(request):
     doc_id = request.POST['id']
     doc = Document.objects.get(pk=int(doc_id))
     # Only looking at fields that may have changed.
-    contents = request.POST.get('contents', False)
+    content = request.POST.get('content', False)
     bibliography = request.POST.get('bibliography', False)
     comments = request.POST.get('comments', False)
-    last_diffs = request.POST.get('last_diffs', False)
+    diffs = request.POST.get('diffs', False)
     version = request.POST.get('version', False)
-    if contents:
-        doc.contents = contents
+    if content:
+        doc.content = content
     if bibliography:
         doc.bibliography = bibliography
     if comments:
         doc.comments = comments
     if version:
         doc.version = version
-    if last_diffs:
-        doc.last_diffs = last_diffs
+    if diffs:
+        doc.diffs = diffs
     doc.doc_version = FW_DOCUMENT_VERSION
     doc.save()
     return JsonResponse(
@@ -1118,7 +1115,7 @@ def get_template(request):
     template = DocumentTemplate.objects.filter(pk=int(template_id)).first()
     if template:
         status = 200
-        response['definition'] = template.definition
+        response['content'] = template.content
         response['title'] = template.title
         response['doc_version'] = template.doc_version
     return JsonResponse(
@@ -1168,9 +1165,9 @@ def save_template(request):
     if template:
         status = 200
         # Only looking at fields that may have changed.
-        definition = request.POST.get('definition', False)
-        if definition:
-            template.definition = definition
+        content = request.POST.get('content', False)
+        if content:
+            template.content = content
         template.doc_version = FW_DOCUMENT_VERSION
         template.save()
     return JsonResponse(

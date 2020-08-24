@@ -72,6 +72,7 @@ export class ModDocumentTemplate {
             }))
         }
         const settingsMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id === 'settings')
+        settingsMenu.content = settingsMenu.content.filter(item => item.id !== "metadata")
         settingsMenu.content.unshift(metadataMenu)
     }
 

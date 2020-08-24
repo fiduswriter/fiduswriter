@@ -154,7 +154,7 @@ export class BibliographyOverview {
     createTableRow(id) {
         const bibInfo = this.app.bibDB.db[id]
         const bibauthors = bibInfo.fields.author || bibInfo.fields.editor
-        const cats = bibInfo.entry_cat.map(cat => `cat_${cat}`)
+        const cats = bibInfo.cats.map(cat => `cat_${cat}`)
         return [
             String(id),
             `<input type="checkbox" class="entry-select fw-check" data-id="${id}" id="bib-${id}"><label for="bib-${id}"></label>`, // checkbox

@@ -11,7 +11,7 @@ Base exporter class for dom-based exports. This is the deprecated way of creatin
 The epub, html and print export filters go over a DOM of a document which they change little
 by little, and they are all based on the BaseDOMExporter class.
 
-    New exporters should instead by walking the doc.contents tree.
+    New exporters should instead by walking the doc.content tree.
     This is how the LaTeX, ODT and DOCX export filters work.
 */
 
@@ -74,10 +74,10 @@ export class DOMExporter {
     joinDocumentParts() {
         this.schema.cached.imageDB = this.imageDB
         const serializer = DOMSerializer.fromSchema(this.schema)
-        this.contents = serializer.serializeNode(this.schema.nodeFromJSON(this.docContents))
+        this.content = serializer.serializeNode(this.schema.nodeFromJSON(this.docContent))
         const bibliographyHeader = this.doc.settings.bibliography_header[this.doc.settings.language] || BIBLIOGRAPHY_HEADERS[this.doc.settings.language]
         const citRenderer = new RenderCitations(
-            this.contents,
+            this.content,
             this.doc.settings.citationstyle,
             bibliographyHeader,
             this.bibDB,
@@ -94,7 +94,7 @@ export class DOMExporter {
     }
 
     addFigureLabels(language) {
-        this.contents.querySelectorAll('*[class^="figure-cat-"]').forEach(el => {
+        this.content.querySelectorAll('*[class^="figure-cat-"]').forEach(el => {
             el.innerHTML = FIG_CATS[el.dataset.figureCategory][language]
             delete el.dataset.figureCategory
         })
@@ -105,7 +105,7 @@ export class DOMExporter {
             const tempNode = document.createElement('div')
             tempNode.innerHTML = bibliographyHTML
             while (tempNode.firstChild) {
-                this.contents.appendChild(tempNode.firstChild)
+                this.content.appendChild(tempNode.firstChild)
             }
         }
     }
@@ -151,7 +151,7 @@ export class DOMExporter {
         // at the back of the document.
         // Also, link the footnote anchor with the footnote according to
         // https://rawgit.com/essepuntato/rash/master/documentation/index.html#footnotes.
-        const footnotes = this.contents.querySelectorAll(footnoteSelector)
+        const footnotes = this.content.querySelectorAll(footnoteSelector)
         const footnotesContainer = document.createElement('section')
         let citationCount = 0
         footnotesContainer.classList.add('fnlist')
@@ -171,13 +171,13 @@ export class DOMExporter {
                 footnotesContainer.appendChild(newFootnote)
             }
         )
-        this.contents.appendChild(footnotesContainer)
-        this.cleanNode(this.contents)
+        this.content.appendChild(footnotesContainer)
+        this.cleanNode(this.content)
 
         // Replace nbsp spaces with normal ones
-        this.replaceText(this.contents, '&nbsp;', ' ')
+        this.replaceText(this.content, '&nbsp;', ' ')
 
-        this.contents.querySelectorAll('.comment').forEach(el => {
+        this.content.querySelectorAll('.comment').forEach(el => {
             el.insertAdjacentHTML(
                 'afterend',
                 el.innerHTML
@@ -185,16 +185,16 @@ export class DOMExporter {
             el.parentElement.removeChild(el)
         })
 
-        this.contents.querySelectorAll('.citation').forEach(el => {
+        this.content.querySelectorAll('.citation').forEach(el => {
             delete el.dataset.references
             delete el.dataset.bibs
             delete el.dataset.format
         })
 
-        this.contents.querySelectorAll('.equation, .figure-equation').forEach(el => {
+        this.content.querySelectorAll('.equation, .figure-equation').forEach(el => {
             delete el.dataset.equation
         })
-        this.contents.querySelectorAll('figure').forEach(el => {
+        this.content.querySelectorAll('figure').forEach(el => {
             delete el.dataset.equation
             delete el.dataset.image
             delete el.dataset.imageSrc
@@ -204,15 +204,15 @@ export class DOMExporter {
             delete el.dataset.width
         })
 
-        this.contents.querySelectorAll('.cross-reference').forEach(el => {
+        this.content.querySelectorAll('.cross-reference').forEach(el => {
             el.innerHTML = `<a href="#${el.dataset.id}">${el.innerHTML}</a>`
         })
     }
 
     // Fill the contents of table of contents.
     fillToc() {
-        const headlines = Array.from(this.contents.querySelectorAll('h1,h2,h3,h4,h5,h6'))
-        const tocs = Array.from(this.contents.querySelectorAll('div.table-of-contents'))
+        const headlines = Array.from(this.content.querySelectorAll('h1,h2,h3,h4,h5,h6'))
+        const tocs = Array.from(this.content.querySelectorAll('div.table-of-contents'))
         tocs.forEach(toc => {
             toc.innerHTML += headlines.map(headline => {
                 if (!headline.id || !headline.textContent.length) {

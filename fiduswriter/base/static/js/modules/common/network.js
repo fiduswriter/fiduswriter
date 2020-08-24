@@ -86,7 +86,9 @@ export const postBare = function(url, params = {}, csrfToken = false) {
             body.append(key, value.file, value.filename)
         } else if (Array.isArray(value)) {
             value.forEach(item => body.append(`${key}[]`, item))
-        } else if (typeof(value) === "object" && value.constructor.name !== 'File') {
+        } else if (typeof(value) === "object" && (
+            value.constructor === undefined || value.constructor.name !== 'File'
+        )) {
             body.append(key, JSON.stringify(value))
         } else {
             body.append(key, value)

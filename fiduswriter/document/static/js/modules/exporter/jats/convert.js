@@ -35,12 +35,12 @@ export class JATSExporterConvert {
         this.citationCount = 0
     }
 
-    init(docContents) {
-        this.preWalkJson(docContents)
-        this.findAllCitations(docContents)
+    init(docContent) {
+        this.preWalkJson(docContent)
+        this.findAllCitations(docContent)
         return this.exporter.citations.init(this.citInfos).then(() => {
             const front = this.assembleFront()
-            const body = this.assembleBody(docContents)
+            const body = this.assembleBody(docContent)
             const back = this.assembleBack()
             const jats = articleTemplate({front, body, back})
             return {
@@ -124,7 +124,7 @@ export class JATSExporterConvert {
         }
     }
 
-    findAllCitations(docContents) {
+    findAllCitations(docContent) {
         // We need to look for citations in the same order they will be found in front + body
         // to get the formatting right.
         if (this.frontMatter.subtitle.default) {
@@ -142,7 +142,7 @@ export class JATSExporterConvert {
         Object.keys(this.frontMatter.abstract).filter(language => language !== 'default').forEach(language => {
             this.findCitations(this.frontMatter.abstract[language])
         })
-        this.findCitations(docContents)
+        this.findCitations(docContent)
     }
 
     findCitations(node) {
@@ -631,8 +631,8 @@ export class JATSExporterConvert {
         return returnValue
     }
 
-    assembleBody(docContents) {
-        return `<body id="body">${this.walkJson(docContents) + this.closeSections(0)}</body>`
+    assembleBody(docContent) {
+        return `<body id="body">${this.walkJson(docContent) + this.closeSections(0)}</body>`
     }
 
     assembleBack() {

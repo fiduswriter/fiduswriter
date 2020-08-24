@@ -15,6 +15,10 @@ os.environ.setdefault(
     SRC_PATH
 )
 
+# The following line is needed until Tornado suports ASGI or Tornado has been
+# replaced.
+os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
+
 
 def inner(default_project_path):
     sys.path.append(SRC_PATH)

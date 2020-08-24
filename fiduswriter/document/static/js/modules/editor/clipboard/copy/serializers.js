@@ -54,7 +54,7 @@ class ClipboardDOMSerializer {
         const footnoteSelector = citationFormatter && citationFormatter.citationType === 'note' ?
             '.footnote-marker, .citation' :
             '.footnote-marker'
-        // Inside of footnote markers add anchors and put footnotes with contents
+        // Inside of footnote markers add anchors and put footnotes with content
         // at the back of the document.
         // Also, link the footnote anchor with the footnote.
         const footnotes = domFragment.querySelectorAll(footnoteSelector)

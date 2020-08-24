@@ -35,7 +35,7 @@ export class ModBibliographyDB {
         const idTranslations = []
         Object.keys(tmpDB).forEach(bibKey => {
             const reference = tmpDB[bibKey], bibId = parseInt(bibKey)
-            delete reference.entry_cat
+            delete reference.cats
             const oldRef = this.findReference(reference)
             if (oldRef) {
                 idTranslations.push([bibId, oldRef])
@@ -46,7 +46,7 @@ export class ModBibliographyDB {
                 this.updateReference(bibId, reference)
                 idTranslations.push([bibId, bibId])
             }
-            // We don't use entry_cats in the document internal bibDB, so just
+            // We don't use cats in the document internal bibDB, so just
             // to make sure, we remove it.
         })
         return Promise.resolve(idTranslations)

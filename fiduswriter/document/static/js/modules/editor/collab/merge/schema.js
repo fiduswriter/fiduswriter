@@ -1,4 +1,6 @@
-import {Schema} from "prosemirror-model"
+import {
+    Schema
+} from "prosemirror-model"
 
 export function parseDiff(str) {
     if (!str) {

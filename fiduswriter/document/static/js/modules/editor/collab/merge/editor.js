@@ -346,11 +346,24 @@ export class MergeEditor {
                     stepsTrackedByChangeset.push(index)
                 }
             } else if ((step instanceof AddMarkStep || step instanceof RemoveMarkStep) && !stepsTrackedByChangeset.includes(index)) {
-                const Step1 = step.toJSON()
+                const Step1 = step.toJSON(),
+                    stepsInvolved = []
+                stepsInvolved.push(index)
                 if (Step1.mark && ["strong", "em", "underline", "link", "deletion"].includes(Step1.mark.type)) {
-                    const insertionMark = this.schema.marks.diffdata.create({diff: insertionClass, steps: JSON.stringify([index]), from: from, to: to,
-                        markOnly: true})
-                    stepsTrackedByChangeset.push(index)
+                    tr.steps.forEach((trStep, trIndex) => { // Check for other format changes within this range.
+                        if ((trStep instanceof AddMarkStep || trStep instanceof RemoveMarkStep) && !stepsTrackedByChangeset.includes(trIndex)) {
+                            const mapFrom = tr.mapping.slice(trIndex).map(trStep.from)
+                            const mapTo = tr.mapping.slice(trIndex).map(trStep.to)
+                            if (mapFrom >= from && mapTo <= to && !stepsInvolved.includes(trIndex)) {
+                                const Step2 = trStep.toJSON()
+                                if (Step2.mark && ["strong", "em", "underline", "link", "deletion"].includes(Step2.mark.type)) {
+                                    stepsInvolved.push(trIndex)
+                                }
+                            }
+                        }
+                    })
+                    const insertionMark = this.schema.marks.diffdata.create({diff: insertionClass, steps: JSON.stringify(stepsInvolved), from: from, to: to, markOnly: true})
+                    stepsTrackedByChangeset = stepsTrackedByChangeset.concat(stepsInvolved)
                     insertionMarksTr.addMark(from, to, insertionMark)
                 }
             }

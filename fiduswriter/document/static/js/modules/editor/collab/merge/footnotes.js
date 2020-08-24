@@ -1,8 +1,18 @@
-import {EditorState} from "prosemirror-state"
-import {EditorView} from "prosemirror-view"
-import {fnSchema} from "../../../schema/footnotes"
-import {trackedTransaction} from "../../track"
-import {htmlToFnNode} from "../../../schema/footnotes_convert"
+import {
+    EditorState
+} from "prosemirror-state"
+import {
+    EditorView
+} from "prosemirror-view"
+import {
+    fnSchema
+} from "../../../schema/footnotes"
+import {
+    trackedTransaction
+} from "../../track"
+import {
+    htmlToFnNode
+} from "../../../schema/footnotes_convert"
 
 export class FootnoteView {
     constructor(node, view, getPos, editor) {

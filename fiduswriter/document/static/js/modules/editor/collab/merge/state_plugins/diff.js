@@ -1,12 +1,40 @@
-import {Plugin, PluginKey, NodeSelection} from "prosemirror-state"
-import {Decoration, DecorationSet} from "prosemirror-view"
-import {noSpaceTmp} from "../../../../common"
-import {dispatchRemoveDiffdata, addDeletionMarks, updateMarkData} from "../tools"
-import {copyChange, acceptChanges, removeDecoration, deleteContent, addDeletedContentBack, handleMarks} from "./action"
-import {changeSet} from "../changeset"
-import {DOMSerializer} from "prosemirror-model"
-import {readOnlyFnEditor} from "../footnotes"
-import {Mapping} from "prosemirror-transform"
+import {
+    Plugin,
+    PluginKey,
+    NodeSelection
+} from "prosemirror-state"
+import {
+    Decoration,
+    DecorationSet
+} from "prosemirror-view"
+import {
+    noSpaceTmp
+} from "../../../../common"
+import {
+    dispatchRemoveDiffdata,
+    addDeletionMarks,
+    updateMarkData
+} from "../tools"
+import {
+    copyChange,
+    acceptChanges,
+    removeDecoration,
+    deleteContent,
+    addDeletedContentBack,
+    handleMarks
+} from "./action"
+import {
+    changeSet
+} from "../changeset"
+import {
+    DOMSerializer
+} from "prosemirror-model"
+import {
+    readOnlyFnEditor
+} from "../footnotes"
+import {
+    Mapping
+} from "prosemirror-transform"
 
 function createHiglightDecoration(from, to, state) {
     /* Creates a yellow coloured highlight decoration when the user

@@ -1,8 +1,21 @@
-import {TextSelection} from "prosemirror-state"
-import {Mapping, Step, RemoveMarkStep, AddMarkStep} from 'prosemirror-transform'
-import {__serializeForClipboard} from "prosemirror-view"
-import {showSystemMessage} from "../../../../common"
-import {dispatchRemoveDiffdata, removeDiffdata} from "../tools"
+import {
+    TextSelection
+} from "prosemirror-state"
+import {
+    Mapping,
+    Step,
+    RemoveMarkStep,
+    AddMarkStep
+} from 'prosemirror-transform'
+import {
+    __serializeForClipboard
+} from "prosemirror-view"
+import {
+    showSystemMessage
+} from "../../../../common"
+import {
+    dispatchRemoveDiffdata
+} from "../tools"
 
 export const copyChange = function(view, from, to) {
     /* when a certain change cannot be applied automatically,
@@ -43,7 +56,7 @@ export const acceptChanges = function(merge, mark, mergeView, originalView, tr) 
     incase of deletion from the middle editor */
     const mergedDocMap = new Mapping()
     mergedDocMap.appendMapping(merge.mergedDocMap)
-    let insertionTr = mergeView.state.tr
+    const insertionTr = mergeView.state.tr
     const from = mark.attrs.from
     const to = mark.attrs.to
     const steps = JSON.parse(mark.attrs.steps)
@@ -69,14 +82,7 @@ export const acceptChanges = function(merge, mark, mergeView, originalView, tr) 
     if (insertionTr.steps.length < steps.length) {
         showSystemMessage(gettext("The change could not be applied automatically. Please consider using the copy option to copy the changes."))
     } else {
-        // Remove the diff mark. If we're looking at view2 it means we're deleting content for which we dont have to remove the marks seperately we can put both of the steps into a single transaction
-        if (originalView === mergeView) {
-            const markRemovalTr = removeDiffdata(originalView.state.tr, from, to)
-            insertionTr.steps.forEach(step => markRemovalTr.step(step))
-            insertionTr = markRemovalTr
-        } else {
-            dispatchRemoveDiffdata(originalView, from, to)
-        }
+        dispatchRemoveDiffdata(originalView, from, to)
         merge.mergedDocMap = mergedDocMap
         insertionTr.setMeta('mapAppended', true)
         insertionTr.setMeta('notrack', true)

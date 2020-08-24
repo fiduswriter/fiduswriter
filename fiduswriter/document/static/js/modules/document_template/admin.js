@@ -4,7 +4,7 @@ import {CSL} from "citeproc-plus"
 
 export class DocumentTemplateAdmin {
     constructor() {
-        this.definitionTextarea = false
+        this.contentTextarea = false
         this.templateDesigner = false
         this.templateExtras = false
         this.citationStyles = false
@@ -42,10 +42,10 @@ export class DocumentTemplateAdmin {
         Promise.all(initialTasks).then(() => {
             this.titleInput = document.querySelector('#id_title')
             this.titleBlock = document.querySelector('div.field-title')
-            this.definitionTextarea = document.querySelector('textarea[name=definition]')
-            this.definitionImportIdInput = document.querySelector('#id_import_id')
-            this.definitionImportIdBlock = document.querySelector('div.field-import_id')
-            this.definitionBlock = document.querySelector('div.field-definition')
+            this.contentTextarea = document.querySelector('textarea[name=content]')
+            this.contentImportIdInput = document.querySelector('#id_import_id')
+            this.contentImportIdBlock = document.querySelector('div.field-import_id')
+            this.contentBlock = document.querySelector('div.field-content')
             this.modifyDOM()
             this.initDesigner()
             this.bind()
@@ -56,7 +56,7 @@ export class DocumentTemplateAdmin {
         this.templateDesigner = new DocumentTemplateDesigner(
             this.id,
             this.titleInput.value,
-            JSON.parse(this.definitionTextarea.value),
+            JSON.parse(this.contentTextarea.value),
             this.templateExtras.document_styles || [],
             this.citationStyles,
             this.templateExtras.export_templates || [],
@@ -66,8 +66,8 @@ export class DocumentTemplateAdmin {
     }
 
     modifyDOM() {
-        this.definitionBlock.style.display = 'none'
-        this.definitionImportIdBlock.style.display = 'none'
+        this.contentBlock.style.display = 'none'
+        this.contentImportIdBlock.style.display = 'none'
         this.titleBlock.style.display = 'none'
         this.titleBlock.insertAdjacentHTML(
             'beforebegin',
@@ -87,8 +87,8 @@ export class DocumentTemplateAdmin {
 
     setCurrentValue() {
         const {valid, value, errors, import_id, title} = this.templateDesigner.getCurrentValue()
-        this.definitionTextarea.value = JSON.stringify(value)
-        this.definitionImportIdInput.value = import_id
+        this.contentTextarea.value = JSON.stringify(value)
+        this.contentImportIdInput.value = import_id
         this.titleInput.value = title
         this.showErrors(errors)
         return valid
@@ -107,24 +107,24 @@ export class DocumentTemplateAdmin {
             switch (true) {
             case findTarget(event, '#toggle-editor', el):
                 event.preventDefault()
-                if (this.definitionBlock.style.display === 'none') {
-                    this.definitionBlock.style.display = ''
-                    this.definitionImportIdBlock.style.display = ''
+                if (this.contentBlock.style.display === 'none') {
+                    this.contentBlock.style.display = ''
+                    this.contentImportIdBlock.style.display = ''
                     this.titleBlock.style.display = ''
                     this.setCurrentValue()
                     this.templateDesigner.close()
                     this.templateDesigner = false
                     this.templateDesignerBlock.style.display = 'none'
                 } else {
-                    this.definitionBlock.style.display = 'none'
-                    this.definitionImportIdBlock.style.display = 'none'
+                    this.contentBlock.style.display = 'none'
+                    this.contentImportIdBlock.style.display = 'none'
                     this.titleBlock.style.display = 'none'
                     this.templateDesignerBlock.style.display = ''
                     this.initDesigner()
                 }
                 break
             case findTarget(event, 'div.submit-row input[type=submit]', el):
-                if (this.definitionBlock.style.display === 'none' && !this.setCurrentValue()) {
+                if (this.contentBlock.style.display === 'none' && !this.setCurrentValue()) {
                     event.preventDefault()
                 }
                 break

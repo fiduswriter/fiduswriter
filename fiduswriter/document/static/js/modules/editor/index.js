@@ -115,6 +115,9 @@ import {
 import {
     buildEditorKeymap
 } from "./keymap"
+import {
+    imageEditModel
+} from "../images/edit_dialog/model"
 
 export const COMMENT_ONLY_ROLES = ['review', 'comment']
 export const READ_ONLY_ROLES = ['read', 'read-without-comments']
@@ -160,6 +163,7 @@ export class Editor {
             navigatorFilterModel: navigatorFilterModel(),
             orderedListMenuModel: orderedListMenuModel(),
             selectionMenuModel: selectionMenuModel(),
+            imageEditModel: imageEditModel(),
             tableMenuModel: tableMenuModel(),
             toolbarModel: toolbarModel()
         }
@@ -473,7 +477,7 @@ export class Editor {
             }
         )
         return {
-            contents: pmArticle.toJSON(),
+            content: pmArticle.toJSON(),
             settings: getSettings(pmArticle),
             title: title.substring(0, 255),
             version: this.docInfo.version,

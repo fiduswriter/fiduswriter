@@ -3,15 +3,15 @@ import {DOMSerializer, DOMParser} from "prosemirror-model"
 import {FormatCitations} from "../../citations/format"
 import {fnSchema} from "../../schema/footnotes"
 import {cslBibSchema} from "../../bibliography/schema/csl_bib"
-import {descendantNodes} from "../tools/doc_contents"
+import {descendantNodes} from "../tools/doc_content"
 import {noSpaceTmp} from "../../common"
 
 export class DocxExporterCitations {
-    constructor(exporter, bibDB, csl, docContents, origCitInfos = []) {
+    constructor(exporter, bibDB, csl, docContent, origCitInfos = []) {
         this.exporter = exporter
         this.bibDB = bibDB
         this.csl = csl
-        this.docContents = docContents
+        this.docContent = docContent
         this.origCitInfos = origCitInfos
 
         this.citInfos = []
@@ -44,7 +44,7 @@ export class DocxExporterCitations {
             this.citInfos = this.citInfos.concat(this.origCitInfos)
         }
 
-        descendantNodes(this.docContents).forEach(
+        descendantNodes(this.docContent).forEach(
             node => {
                 if (node.type === 'citation') {
                     this.citInfos.push(JSON.parse(JSON.stringify(node.attrs)))

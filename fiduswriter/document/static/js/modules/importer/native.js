@@ -29,7 +29,7 @@ export class ImportNative {
             () => this.saveImages(this.images, ImageTranslationTable)
         ).then(
             () => {
-            // We need to change some reference numbers in the document contents
+            // We need to change some reference numbers in the document content
                 this.translateReferenceIds(ImageTranslationTable)
                 // We are good to go. All the used images and bibliography entries
                 // exist in the DB for this user with the same numbers.
@@ -90,11 +90,11 @@ export class ImportNative {
                 })
             }
         }
-        walkTree(this.doc.contents)
+        walkTree(this.doc.content)
     }
 
     createDoc() {
-        const template = extractTemplate(this.doc.contents),
+        const template = extractTemplate(this.doc.content),
             template_title = template.attrs.template,
             import_id = this.importId ? this.importId : template.attrs.import_id
         // We create the document on the sever so that we have an ID for it and
@@ -111,7 +111,7 @@ export class ImportNative {
             ({json}) => this.docId = json.id
         ).catch(error => {
             addAlert('error', gettext('Could not create document'))
-            throw (error)
+            throw error
         })
     }
 
@@ -121,9 +121,9 @@ export class ImportNative {
             {
                 id: this.docId,
                 title: this.doc.title,
-                contents: JSON.stringify(this.doc.contents),
-                comments: JSON.stringify(this.doc.comments),
-                bibliography: JSON.stringify(this.bibliography)
+                content: this.doc.content,
+                comments: this.doc.comments,
+                bibliography: this.bibliography
             }
         ).then(
             ({json}) => {
@@ -151,7 +151,7 @@ export class ImportNative {
         ).catch(
             error => {
                 addAlert('error', `${gettext('Could not save ')} ${this.doc.title}`)
-                throw (error)
+                throw error
             }
         )
     }

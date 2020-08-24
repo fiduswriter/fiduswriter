@@ -860,6 +860,10 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.ID,
             'id_email'
         ).send_keys('yeti3@snowman.com')
+        # Scroll all the way down in case we are on a small screen
+        self.driver.execute_script(
+            "window.scrollTo(0, document.body.scrollHeight);"
+        )
         self.driver.find_element(
             By.ID,
             'signup-submit'

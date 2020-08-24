@@ -17,7 +17,7 @@ export class ShrinkFidus {
 
         addAlert('info', gettext('File export has been initiated.'))
 
-        this.walkTree(this.doc.contents)
+        this.walkTree(this.doc.content)
 
         this.imageList = [...new Set(this.imageList)] // unique values
 
@@ -42,9 +42,9 @@ export class ShrinkFidus {
         const shrunkBibDB = {}
         this.citeList.forEach(itemId => {
             shrunkBibDB[itemId] = Object.assign({}, this.bibDB.db[itemId])
-            // Remove the entry_cat, as it is only a list of IDs for one
+            // Remove the cats, as it is only a list of IDs for one
             // particular user/server.
-            delete shrunkBibDB[itemId].entry_cat
+            delete shrunkBibDB[itemId].cats
         })
 
         const docCopy = Object.assign({}, this.doc)
@@ -60,7 +60,7 @@ export class ShrinkFidus {
         delete(docCopy.updated)
         delete(docCopy.revisions)
 
-        docCopy.contents = toMiniJSON(docSchema.nodeFromJSON(docCopy.contents))
+        docCopy.content = toMiniJSON(docSchema.nodeFromJSON(docCopy.content))
 
         return new Promise(resolve => resolve({
             doc: docCopy,

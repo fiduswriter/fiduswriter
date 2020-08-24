@@ -1,5 +1,5 @@
 import {noSpaceTmp} from "../../common"
-import {descendantNodes} from "../tools/doc_contents"
+import {descendantNodes} from "../tools/doc_content"
 
 const DEFAULT_LISTPARAGRAPH_XML = noSpaceTmp`
     <w:style w:type="paragraph" w:styleId="ListParagraph">
@@ -22,10 +22,10 @@ const DEFAULT_NUMBERING_XML = '<?xml version="1.0" encoding="UTF-8" standalone="
 
 
 export class DocxExporterLists {
-    constructor(exporter, rels, docContents) {
+    constructor(exporter, rels, docContent) {
         this.exporter = exporter
         this.rels = rels
-        this.docContents = docContents
+        this.docContent = docContent
         this.useBulletList = false
         this.usedNumberedList = []
         this.styleXml = false
@@ -96,7 +96,7 @@ export class DocxExporterLists {
     }
 
     findLists() {
-        descendantNodes(this.docContents).forEach(
+        descendantNodes(this.docContent).forEach(
             node => {
                 if (node.type === 'bullet_list') {
                     this.useBulletList = true

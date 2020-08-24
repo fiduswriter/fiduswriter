@@ -25,7 +25,7 @@ export class DocTemplatesEditor {
             ({json}) => {
                 this.template = json.template
                 this.id = json.template.id // Updated if previously 0
-                this.template.definition = JSON.parse(this.template.definition)
+                this.template.content = this.template.content
 
                 return whenReady()
             }
@@ -35,7 +35,7 @@ export class DocTemplatesEditor {
                 this.templateDesigner = new DocumentTemplateDesigner(
                     this.id,
                     this.template.title,
-                    this.template.definition,
+                    this.template.content,
                     this.template.document_styles,
                     this.citationStyles,
                     this.template.export_templates,

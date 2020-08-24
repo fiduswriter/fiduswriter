@@ -61,7 +61,7 @@ import {
 } from "./footnotes"
 import {
     diffPlugin,
-    clipboardPlugin
+    clipboardPlugin,
 } from "./state_plugins"
 import {
     changeSet
@@ -73,7 +73,6 @@ import {
     dispatchRemoveDiffdata,
     simplifyTransform,
     checkPresenceOfdiffdata,
-    updateMarkData,
     removeDiffFromJson
 } from "./tools"
 
@@ -86,14 +85,16 @@ export class MergeEditor {
         this.onlineDoc = this.schema.nodeFromJSON(onlineDoc.toJSON())
         this.offlineTr = simplifyTransform(offlineTr) // The offline transaction
         this.onlineTr = simplifyTransform(onlineTr) // The online Transaction
-        this.mergeDialog  = this.createMergeDialog(this.offlineTr, this.onlineTr, this.onlineDoc)
+        this.mergeDialog  = this.createMergeDialog(this.offlineTr, this.onlineDoc)
         this.data = data
-        this.mergedDocMap = new Mapping() // the maps of the middle editor, used for applying steps automatically
+        this.mergedDocMap = this.onlineTr.mapping // the maps of the middle editor, used for applying steps automatically
 
         this.mergeView1 = false
         this.mergeView2 = false
         this.mergeView3 = false
         this.imageDataModified = {} // To hold data related to re-uploaded images.
+
+        this.offlineTrackedSteps = []
 
         this.diffEditorPlugins = [
             [diffPlugin, () => ({merge: this})],
@@ -126,9 +127,9 @@ export class MergeEditor {
         this.mergeDialog.open()
 
         // Create multiple editor views
-        this.mergeView1 = this.bindEditorView('editor-diff-1', this.offlineDoc)
-        this.mergeView2 = this.bindEditorView('editor-diff', this.cpDoc)
-        this.mergeView3 = this.bindEditorView('editor-diff-2', this.onlineDoc)
+        this.mergeView1 = this.bindEditorView('editor-diff-common', this.cpDoc)
+        this.mergeView2 = this.bindEditorView('editor-diff-online', this.onlineDoc)
+        this.mergeView3 = this.bindEditorView('editor-diff-offline', this.offlineDoc)
 
         const offlineChangeset = new changeSet(this.offlineTr).getChangeSet()
         const onlineChangeset = new changeSet(this.onlineTr).getChangeSet()
@@ -136,10 +137,11 @@ export class MergeEditor {
         // Unhide All Sections in All the 3 views
         this.unHideSectionsinAllDoc()
 
-        const offlineTrackedSteps = this.markChangesinDiffEditor(offlineChangeset, this.mergeView1, this.mergeView2, "offline-inserted", "offline-deleted", this.offlineTr)
-        const onlineTrackedSteps = this.markChangesinDiffEditor(onlineChangeset, this.mergeView3, this.mergeView2, "online-inserted", "online-deleted", this.onlineTr)
+        const offlineTrackedSteps = this.markChangesinDiffEditor(offlineChangeset, this.mergeView3, "offline-inserted", this.offlineTr)
+        this.markChangesinDiffEditor(onlineChangeset, this.mergeView2, "online-inserted", this.onlineTr)
+        this.offlineTrackedSteps = this.offlineTrackedSteps.concat(offlineTrackedSteps)
 
-        if (this.mergeView1.state.doc.firstChild.attrs.tracked || this.mergeView3.state.doc.firstChild.attrs.tracked) {
+        if (this.mergeView2.state.doc.firstChild.attrs.tracked || this.mergeView3.state.doc.firstChild.attrs.tracked) {
             const article = this.mergeView2.state.doc.firstChild
             const attrs = Object.assign({}, article.attrs)
             attrs.tracked = true
@@ -148,12 +150,12 @@ export class MergeEditor {
             )
         }
 
-        this.renderCitation(this.mergeView1, 'editor-diff-1')
-        this.renderCitation(this.mergeView2, 'editor-diff')
-        this.renderCitation(this.mergeView3, 'editor-diff-2')
 
-        this.offStepsNotTracked = this.findNotTrackedSteps(this.offlineTr, offlineTrackedSteps)
-        this.onStepsNotTracked = this.findNotTrackedSteps(this.onlineTr, onlineTrackedSteps)
+        this.renderCitation(this.mergeView1, 'editor-diff-common')
+        this.renderCitation(this.mergeView2, 'editor-diff-online')
+        this.renderCitation(this.mergeView3, 'editor-diff-offline')
+
+        this.offStepsNotTracked = this.findNotTrackedSteps(this.offlineTr, this.offlineTrackedSteps)
 
         deactivateWait()
 
@@ -161,13 +163,13 @@ export class MergeEditor {
         this.updateDB(this.offlineDoc, this.data) // Updating the editor DB is one-time operation.
     }
 
-    createMergeDialog(offlineTr, onlineTr, onlineDoc) {
+    createMergeDialog(offlineTr, onlineDoc) {
         const buttons = [{
             text: gettext("Merge Complete"),
             classes: 'fw-dark',
             click: () => {
                 if (!this.checkResolution()) {
-                    this.startMerge(offlineTr, onlineTr, onlineDoc)
+                    this.startMerge(offlineTr, onlineDoc)
                 } else {
                     const warningDialog = new Dialog({
                         id: 'merge-res-warning',
@@ -177,7 +179,7 @@ export class MergeEditor {
                             text: gettext("Proceed to Merge"),
                             classes: 'fw-dark',
                             click: () => {
-                                this.startMerge(offlineTr, onlineTr, onlineDoc)
+                                this.startMerge(offlineTr, onlineDoc)
                                 warningDialog.close()
                             }
                         }]
@@ -189,9 +191,8 @@ export class MergeEditor {
         const dialog = new Dialog({
             id: 'editor-merge-view',
             title: gettext("Merging Offline Document"),
-            body: `<div style="display:flex"><div class="offline-heading">${gettext("Offline Document")}</div><div class="merged-heading">${gettext("Merged Document")}</div> <div class="online-heading">${gettext("Online Document")}</div></div><div class= "user-contents" style="display:flex;"><div id="editor-diff-1" style="float:left;padding:15px;"></div><div id="editor-diff" class="merged-view" style="padding:15px;"></div><div id="editor-diff-2" style="float:right;padding:15px;"></div></div>`,
-            height: window.innerHeight - 150,
-            width: window.innerwidth - 150,
+            body: `<div style="display:flex"><div class="offline-heading">${gettext("Common Document")}</div><div class="merged-heading">${gettext("Online Document")}</div> <div class="online-heading">${gettext("Offline Document")}</div></div><div class= "user-contents" style="display:flex;"><div id="editor-diff-common" style="float:left;padding:15px;"></div><div id="editor-diff-online" class="merged-view" style="padding:15px;"></div><div id="editor-diff-offline" style="float:right;padding:15px;"></div></div>`,
+            fullScreen: true,
             canClose: false,
             help: () => {
                 const helpDialog = new faqDialog({
@@ -211,11 +212,11 @@ export class MergeEditor {
                         ],
                         [
                             gettext("Why am I seeing three editors?"),
-                            gettext("The editor on the left will show the offline version of the document (the document resulting from your changes ), the editor on the middle contains the last synced version of the document, and the editor on the right contains the online version of the document (document resulting from the online users edits).")
+                            gettext("The editor on the left will show the last synced version of the document, the editor on the middle contains the online version of the document (document resulting from the online users edits), and the editor on the right contains the offline version of the document (the document resulting from your changes).")
                         ],
                         [
                             gettext("What are the green and red highlights in the editors?"),
-                            gettext("The editors on left and right will show content that are highlighted in green, and the editor in the middle will contain text that are highlighted usually in red. The text marked in green corresponds to the text that was edited (added) by online users or you. The text marked in red corresponds to text that was deleted by either you or the online user. Deletions will be marked only in the middle editor and the insertions will be marked in the other editors only.")
+                            gettext("The editors on middle and right will show content that are highlighted in green, and also contain text that are highlighted in red. The text marked in green corresponds to the text that was edited (added) by online users or you. The text marked in red corresponds to text that was deleted by either you or the online user. The insertions and deletions made by the online users will be marked in the middle editor which contains the online version of the document.The insertions and deletions made by the offline users will be marked in the right-most editor which contains the offline version of the document.")
                         ],
                         [
                             gettext("How do I accept or reject a particular change?"),
@@ -230,7 +231,7 @@ export class MergeEditor {
                         ],
                         [
                             gettext("Can I edit content in all three editors?"),
-                            gettext("You can edit the content in all the editors. But do keep in mind that whatever you type in the left most and right most editor will not be tracked (you cannot accept or reject it). And moreover the edits made in these two editors will not be preserved once the merge is completed.")
+                            gettext("You can edit the content only in the middle editor. You cannot edit content in the left most and right most editor.")
                         ],
                         [
                             gettext("Does the order in which I work on merging the changes matter?"),
@@ -239,7 +240,11 @@ export class MergeEditor {
                         [
                             gettext("What do I do after completing the merge?"),
                             gettext("After the merge is completed, you can click on the button 'Merge Complete' which in turn will move your changes to the main editor. Do note if other users made significant changes to the document while you were merging the document, you might have to merge the documents together again.")
-                        ]
+                        ],
+                        [
+                            gettext("What happens if I try to complete merge without resolving all the changes?"),
+                            gettext("You would get an warning when you try to complete a merge without resolving all the changes. You can still proceed to merge the document, in this case all the insertions and deletions in the middle editor will be accepted automatically, and all the insertions and deletions in the offline editor will be ignored.")
+                        ],
                     ]
                 })
                 helpDialog.open()
@@ -251,12 +256,10 @@ export class MergeEditor {
 
     checkResolution() {
         /* To Check if all the diffs are resolved */
-        const offlineVersionDoc = this.mergeView1.state.doc,
-            onlineVersionDoc = this.mergeView3.state.doc,
+        const offlineVersionDoc = this.mergeView3.state.doc,
             mergedVersionDoc = this.mergeView2.state.doc
         let diffAttrPresent = false
         if (offlineVersionDoc.rangeHasMark(0, offlineVersionDoc.content.size, this.schema.marks.diffdata) ||
-            onlineVersionDoc.rangeHasMark(0, onlineVersionDoc.content.size, this.schema.marks.diffdata) ||
             mergedVersionDoc.rangeHasMark(0, mergedVersionDoc.content.size, this.schema.marks.diffdata)
         ) {
             return true
@@ -266,27 +269,24 @@ export class MergeEditor {
                 diffAttrPresent = true
             }
         })
-        onlineVersionDoc.nodesBetween(0, onlineVersionDoc.content.size, (node, _pos) => {
-            if (node.attrs.diffdata && node.attrs.diffdata.length > 0) {
-                diffAttrPresent = true
-            }
-        })
         mergedVersionDoc.nodesBetween(0, mergedVersionDoc.content.size, (node, _pos) => {
             if (node.attrs.diffdata && node.attrs.diffdata.length > 0) {
                 diffAttrPresent = true
             }
         })
+        if (this.mergeView2.dom.querySelector(".deletion-decoration") || this.mergeView3.dom.querySelector(".deletion-decoration")) {
+            diffAttrPresent = true
+        }
         if (diffAttrPresent) {
             return true
         }
         return false
     }
 
-    markChangesinDiffEditor(changeset, insertionView, deletionView, insertionClass, deletionClass, tr) {
+    markChangesinDiffEditor(changeset, view, insertionClass, tr) {
         /* This marks all the changes in the diff editor */
         // Mark the insertions in insertion View & deletions in deletionView
-        const insertionMarksTr = insertionView.state.tr
-        const deletionMarksTr = deletionView.state.tr
+        const insertionMarksTr = view.state.tr
         let stepsTrackedByChangeset = []
         // Use the changeset to create the marks
         changeset.changes.forEach(change => {
@@ -312,27 +312,14 @@ export class MergeEditor {
                 })
 
                 stepsInvolved.sort((a, b) => a - b)
-                const insertionMark = this.schema.marks.diffdata.create({diff: insertionClass, steps: JSON.stringify(stepsInvolved), from: change.fromB, to: change.toB})
+                const insertionMark = this.schema.marks.diffdata.create({diff: insertionClass, steps: JSON.stringify(stepsInvolved), from: change.fromB, to: change.toB, markOnly: false})
                 insertionMarksTr.addMark(change.fromB, change.toB, insertionMark)
                 this.markBlockDiffs(insertionMarksTr, change.fromB, change.toB, insertionClass, stepsInvolved)
                 if (checkPresenceOfdiffdata(insertionMarksTr.doc, change.fromB, change.toB)) {
                     stepsTrackedByChangeset = stepsTrackedByChangeset.concat(stepsInvolved)
                 }
-            } if (change.deleted.length > 0) {
-                let stepsInvolved = []
-                change.deleted.forEach(deletion => stepsInvolved.push(parseInt(deletion.data.step)))
-                const stepsSet = new Set(stepsInvolved)
-                stepsInvolved = Array.from(stepsSet)
-                stepsInvolved.sort((a, b) => a - b)
-                const deletionMark = this.schema.marks.diffdata.create({diff: deletionClass, steps: JSON.stringify(stepsInvolved), from: change.fromA, to: change.toA})
-                deletionMarksTr.addMark(change.fromA, change.toA, deletionMark)
-                this.markBlockDiffs(deletionMarksTr, change.fromA, change.toA, deletionClass, stepsInvolved)
-                if (checkPresenceOfdiffdata(deletionMarksTr.doc, change.fromA, change.toA)) {
-                    stepsTrackedByChangeset = stepsTrackedByChangeset.concat(stepsInvolved)
-                }
             }
         })
-
 
         // Add all the footnote/mark/citation related steps that are not tracked by changeset!!!!!
         tr.steps.forEach((step, index) => {
@@ -341,11 +328,13 @@ export class MergeEditor {
             if (step instanceof ReplaceStep && !stepsTrackedByChangeset.includes(index)) {
                 const Step1 = step.toJSON()
                 if (Step1.slice && Step1.slice.content.length == 1 && Step1.slice.content[0].type === "footnote") {
-                    const insertionMark = this.schema.marks.diffdata.create({diff: insertionClass, steps: JSON.stringify([index]), from: from,  to: to})
+                    const insertionMark = this.schema.marks.diffdata.create({diff: insertionClass, steps: JSON.stringify([index]), from: from,  to: to,
+                        markOnly: false})
                     insertionMarksTr.addMark(from, to, insertionMark)
                     stepsTrackedByChangeset.push(index)
                 } else if (Step1.slice && Step1.slice.content.length == 1 && Step1.slice.content[0].type === "citation") {
-                    const insertionMark = this.schema.marks.diffdata.create({diff: insertionClass, steps: JSON.stringify([index]), from: from, to: to})
+                    const insertionMark = this.schema.marks.diffdata.create({diff: insertionClass, steps: JSON.stringify([index]), from: from, to: to,
+                        markOnly: false})
                     insertionMarksTr.addMark(from, to, insertionMark)
                     stepsTrackedByChangeset.push(index)
                 } else if (Step1.slice && Step1.slice.content.length == 1 && Step1.slice.content[0].type === "figure") {
@@ -357,26 +346,32 @@ export class MergeEditor {
                     stepsTrackedByChangeset.push(index)
                 }
             } else if ((step instanceof AddMarkStep || step instanceof RemoveMarkStep) && !stepsTrackedByChangeset.includes(index)) {
-                const Step1 = step.toJSON()
-                if (Step1.mark && ["strong", "em", "underline", "link", "deletion", "comment"].includes(Step1.mark.type)) {
-                    if (step instanceof AddMarkStep) {
-                        const insertionMark = this.schema.marks.diffdata.create({diff: insertionClass, steps: JSON.stringify([index]), from: from, to: to})
-                        stepsTrackedByChangeset.push(index)
-                        insertionMarksTr.addMark(from, to, insertionMark)
-                    } else if (step instanceof RemoveMarkStep) {
-                        const deletionMark = this.schema.marks.diffdata.create({diff: deletionClass, steps: JSON.stringify([index]), from: from, to: to})
-                        deletionMarksTr.addMark(from, to, deletionMark)
-                        stepsTrackedByChangeset.push(index)
-                    }
+                const Step1 = step.toJSON(),
+                    stepsInvolved = []
+                stepsInvolved.push(index)
+                if (Step1.mark && ["strong", "em", "underline", "link", "deletion"].includes(Step1.mark.type)) {
+                    tr.steps.forEach((trStep, trIndex) => { // Check for other format changes within this range.
+                        if ((trStep instanceof AddMarkStep || trStep instanceof RemoveMarkStep) && !stepsTrackedByChangeset.includes(trIndex)) {
+                            const mapFrom = tr.mapping.slice(trIndex).map(trStep.from)
+                            const mapTo = tr.mapping.slice(trIndex).map(trStep.to)
+                            if (mapFrom >= from && mapTo <= to && !stepsInvolved.includes(trIndex)) {
+                                const Step2 = trStep.toJSON()
+                                if (Step2.mark && ["strong", "em", "underline", "link", "deletion"].includes(Step2.mark.type)) {
+                                    stepsInvolved.push(trIndex)
+                                }
+                            }
+                        }
+                    })
+                    const insertionMark = this.schema.marks.diffdata.create({diff: insertionClass, steps: JSON.stringify(stepsInvolved), from: from, to: to, markOnly: true})
+                    stepsTrackedByChangeset = stepsTrackedByChangeset.concat(stepsInvolved)
+                    insertionMarksTr.addMark(from, to, insertionMark)
                 }
             }
         })
 
         // Dispatch the transactions
         insertionMarksTr.setMeta('initialDiffMap', true).setMeta('mapAppended', true).setMeta('notrack', true)
-        deletionMarksTr.setMeta('initialDiffMap', true).setMeta('mapAppended', true).setMeta('notrack', true)
-        insertionView.dispatch(insertionMarksTr)
-        deletionView.dispatch(deletionMarksTr)
+        view.dispatch(insertionMarksTr)
 
         //Return steps that are tracked in the diff editor
         return stepsTrackedByChangeset
@@ -393,7 +388,7 @@ export class MergeEditor {
         })
         let editorView
         const mainEditor = this.editor
-        if (elementId == "editor-diff") {
+        if (elementId == "editor-diff-online") {
             editorView = new EditorView(document.getElementById(elementId), {
                 state: EditorState.create({
                     schema: this.schema,
@@ -408,7 +403,6 @@ export class MergeEditor {
                         if (!mapAppended) {
                             this.mergedDocMap.appendMapping(tr.mapping)
                         }
-                        mapTr = updateMarkData(mapTr, this.imageDataModified)
                         if (!noTrack) { // Track only manual insertions
                             mapTr = trackedTransaction(
                                 mapTr,
@@ -438,11 +432,11 @@ export class MergeEditor {
                     plugins: plugins,
                 }),
                 dispatchTransaction: tr => {
-                    const mapTr = updateMarkData(tr, this.imageDataModified)
-                    const newState = editorView.state.apply(mapTr)
+                    const newState = editorView.state.apply(tr)
                     editorView.updateState(newState)
                     this.renderCitation(editorView, elementId)
                 },
+                editable: () => false,
                 nodeViews: {
                     footnote(node, view, getPos) {
                         return new FootnoteView(node, view, getPos, mainEditor)
@@ -466,26 +460,13 @@ export class MergeEditor {
         citRenderer.init()
     }
 
-    startMerge(offlineTr, onlineTr, onlineDoc) {
+    startMerge(offlineTr, onlineDoc) {
         /* start the merge process of moving changes to the editor */
         // Remove all diff related marks
         dispatchRemoveDiffdata(this.mergeView2, 0, this.mergeView2.state.doc.content.size)
 
         // Apply all the marks that are not handled by recreate steps!
         const markTr = this.mergeView2.state.tr
-        const onlineMaps = onlineTr.mapping.maps.slice().reverse().map(map => map.invert())
-        const onlineRebaseMapping = new Mapping(onlineMaps)
-        onlineRebaseMapping.appendMapping(this.mergedDocMap)
-        this.onStepsNotTracked.forEach(markstep => {
-            const stepIndex = parseInt(onlineTr.steps.indexOf(markstep))
-            const onlineRebaseMap = onlineRebaseMapping.slice(onlineTr.steps.length - stepIndex)
-            const mappedMarkStep = markstep.map(onlineRebaseMap)
-            if (mappedMarkStep && !markTr.maybeStep(mappedMarkStep).failed) {
-                this.mergedDocMap.appendMap(mappedMarkStep.getMap())
-                onlineRebaseMapping.appendMap(mappedMarkStep.getMap())
-                onlineRebaseMapping.setMirror(onlineTr.steps.length - stepIndex - 1, (onlineTr.steps.length + this.mergedDocMap.maps.length - 1))
-            }
-        })
         const offlineRebaseMapping = new Mapping()
         offlineRebaseMapping.appendMappingInverted(offlineTr.mapping)
         offlineRebaseMapping.appendMapping(this.mergedDocMap)
@@ -542,7 +523,7 @@ export class MergeEditor {
         const onlineStepsLostChangeset = new changeSet(OnlineStepsLost)
         const conflicts = onlineStepsLostChangeset.findConflicts(tr, OnlineStepsLost)
         if (conflicts.length > 0) {
-            const editor = new MergeEditor(this.editor, onlineDoc, tr.doc, OnlineStepsLost.doc, tr, OnlineStepsLost)
+            const editor = new MergeEditor(this.editor, onlineDoc, tr.doc, OnlineStepsLost.doc, tr, OnlineStepsLost, this.data)
             editor.init()
         } else {
             const newTr = this.editor.view.state.tr
@@ -655,14 +636,14 @@ export class MergeEditor {
                                     this.mergeView1.dispatch(transaction)
                                 }
                             })
-                            this.mergeView2.state.doc.descendants((node, pos) => {
+                            this.mergeView3.state.doc.descendants((node, pos) => {
                                 if (node.type.name === 'figure' && node.attrs.image == id) {
                                     const attrs = Object.assign({}, node.attrs)
                                     attrs["image"] = newId
-                                    const nodeType = this.mergeView2.state.schema.nodes['figure']
-                                    const transaction = this.mergeView2.state.tr.setNodeMarkup(pos, nodeType, attrs)
+                                    const nodeType = this.mergeView3.state.schema.nodes['figure']
+                                    const transaction = this.mergeView3.state.tr.setNodeMarkup(pos, nodeType, attrs)
                                     transaction.setMeta('mapAppended', true)
-                                    this.mergeView2.dispatch(transaction)
+                                    this.mergeView3.dispatch(transaction)
                                 }
                             })
                         },
@@ -678,14 +659,14 @@ export class MergeEditor {
                                     this.mergeView1.dispatch(transaction)
                                 }
                             })
-                            this.mergeView2.state.doc.descendants((node, pos) => {
+                            this.mergeView3.state.doc.descendants((node, pos) => {
                                 if (node.type.name === 'figure' && node.attrs.image == id) {
                                     const attrs = Object.assign({}, node.attrs)
                                     attrs["image"] = false
-                                    const nodeType = this.mergeView2.state.schema.nodes['figure']
-                                    const transaction = this.mergeView2.state.tr.setNodeMarkup(pos, nodeType, attrs)
+                                    const nodeType = this.mergeView3.state.schema.nodes['figure']
+                                    const transaction = this.mergeView3.state.tr.setNodeMarkup(pos, nodeType, attrs)
                                     transaction.setMeta('mapAppended', true)
-                                    this.mergeView2.dispatch(transaction)
+                                    this.mergeView3.dispatch(transaction)
                                 }
                             })
                             if (!imageUploadFailDialogShown) {

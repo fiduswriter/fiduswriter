@@ -4,11 +4,15 @@ import {
 import {
     EditorView
 } from "prosemirror-view"
-import {fnSchema} from "../../../schema/footnotes"
+import {
+    fnSchema
+} from "../../../schema/footnotes"
 import {
     trackedTransaction
 } from "../../track"
-
+import {
+    htmlToFnNode
+} from "../../../schema/footnotes_convert"
 
 export class FootnoteView {
     constructor(node, view, getPos, editor) {
@@ -137,4 +141,34 @@ export class FootnoteView {
     ignoreMutation() {
         return true
     }
+}
+
+export const readOnlyFnEditor = function(footnoteElement) {
+    // This function creates a read only footnote editor for the purpose of showing the
+    // footnote nodes which are drawn as part of deletion decoration.
+    const newFnElement = document.createElement("footnote")
+    newFnElement.dataset.footnote = footnoteElement.dataset.footnote
+    const tooltip = newFnElement.appendChild(document.createElement("div"))
+    tooltip.className = "footnote-tooltip"
+    tooltip.classList.add('render-arrow')
+    tooltip.style.display = "none"
+
+    // Parse Footnote node's data
+    const doc = fnSchema.nodeFromJSON({
+        type: "doc",
+        content: [{
+            type: "footnotecontainer",
+            content: htmlToFnNode(footnoteElement.dataset.footnote)
+        }]
+    })
+
+    // Put a reado only sub-ProseMirror into that
+    new EditorView(tooltip, {
+        state: EditorState.create({
+            doc: doc,
+        }),
+        editable: () => false
+    })
+
+    return newFnElement
 }

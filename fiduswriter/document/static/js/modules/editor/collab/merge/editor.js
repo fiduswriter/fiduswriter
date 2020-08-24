@@ -85,7 +85,7 @@ export class MergeEditor {
         this.onlineDoc = this.schema.nodeFromJSON(onlineDoc.toJSON())
         this.offlineTr = simplifyTransform(offlineTr) // The offline transaction
         this.onlineTr = simplifyTransform(onlineTr) // The online Transaction
-        this.mergeDialog  = this.createMergeDialog(this.offlineTr, this.onlineTr, this.onlineDoc)
+        this.mergeDialog  = this.createMergeDialog(this.offlineTr, this.onlineDoc)
         this.data = data
         this.mergedDocMap = this.onlineTr.mapping // the maps of the middle editor, used for applying steps automatically
 
@@ -163,13 +163,13 @@ export class MergeEditor {
         this.updateDB(this.offlineDoc, this.data) // Updating the editor DB is one-time operation.
     }
 
-    createMergeDialog(offlineTr, onlineTr, onlineDoc) {
+    createMergeDialog(offlineTr, onlineDoc) {
         const buttons = [{
             text: gettext("Merge Complete"),
             classes: 'fw-dark',
             click: () => {
                 if (!this.checkResolution()) {
-                    this.startMerge(offlineTr, onlineTr, onlineDoc)
+                    this.startMerge(offlineTr, onlineDoc)
                 } else {
                     const warningDialog = new Dialog({
                         id: 'merge-res-warning',
@@ -179,7 +179,7 @@ export class MergeEditor {
                             text: gettext("Proceed to Merge"),
                             classes: 'fw-dark',
                             click: () => {
-                                this.startMerge(offlineTr, onlineTr, onlineDoc)
+                                this.startMerge(offlineTr, onlineDoc)
                                 warningDialog.close()
                             }
                         }]
@@ -460,7 +460,7 @@ export class MergeEditor {
         citRenderer.init()
     }
 
-    startMerge(offlineTr, onlineTr, onlineDoc) {
+    startMerge(offlineTr, onlineDoc) {
         /* start the merge process of moving changes to the editor */
         // Remove all diff related marks
         dispatchRemoveDiffdata(this.mergeView2, 0, this.mergeView2.state.doc.content.size)

@@ -97,7 +97,7 @@ export class Merge {
             steps,
             clientIds
         )
-        remoteTr.setMeta('remote', true)
+        this.mod.editor.view.dispatch(remoteTr.setMeta('remote', true))
         this.mergeTr(
             unconfirmedTr,
             remoteTr,
@@ -229,7 +229,6 @@ export class Merge {
                 }
             })
         }
-
 
         // this.mod.editor.docInfo.version = doc.v
         rebasedTrackedTr.setMeta('remote', true)

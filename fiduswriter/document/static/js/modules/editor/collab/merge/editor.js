@@ -77,7 +77,7 @@ import {
 } from "./tools"
 
 export class MergeEditor {
-    constructor(editor, cpDoc, offlineDoc, onlineDoc, offlineTr, onlineTr, data) {
+    constructor(editor, cpDoc, offlineDoc, onlineDoc, offlineTr, onlineTr, db) {
         this.editor = editor
         this.schema = createDiffSchema(editor.schema)
         this.cpDoc = this.schema.nodeFromJSON(cpDoc.toJSON())
@@ -86,7 +86,7 @@ export class MergeEditor {
         this.offlineTr = simplifyTransform(offlineTr) // The offline transaction
         this.onlineTr = simplifyTransform(onlineTr) // The online Transaction
         this.mergeDialog  = this.createMergeDialog(this.offlineTr, this.onlineDoc)
-        this.data = data
+        this.db = db
         this.mergedDocMap = this.onlineTr.mapping // the maps of the middle editor, used for applying steps automatically
 
         this.mergeView1 = false
@@ -160,7 +160,7 @@ export class MergeEditor {
         deactivateWait()
 
         // Update the Bib and image DB before hand with the data from the offline document and the socket data.
-        this.updateDB(this.offlineDoc, this.data) // Updating the editor DB is one-time operation.
+        this.updateDB(this.offlineDoc, this.db) // Updating the editor DB is one-time operation.
     }
 
     createMergeDialog(offlineTr, onlineDoc) {
@@ -523,7 +523,7 @@ export class MergeEditor {
         const onlineStepsLostChangeset = new changeSet(OnlineStepsLost)
         const conflicts = onlineStepsLostChangeset.findConflicts(tr, OnlineStepsLost)
         if (conflicts.length > 0) {
-            const editor = new MergeEditor(this.editor, onlineDoc, tr.doc, OnlineStepsLost.doc, tr, OnlineStepsLost, this.data)
+            const editor = new MergeEditor(this.editor, onlineDoc, tr.doc, OnlineStepsLost.doc, tr, OnlineStepsLost, this.db)
             editor.init()
         } else {
             const newTr = this.editor.view.state.tr
@@ -576,7 +576,7 @@ export class MergeEditor {
         )
     }
 
-    updateDB(doc, data) {
+    updateDB(offlineDoc, db) {
         /* Used to update the image,bib DB and update the doc in case if missing/lost images
         (update the image data with re-uploaded images) */
         let usedImages = []
@@ -592,7 +592,7 @@ export class MergeEditor {
         }
 
         // Looking at rebased doc so that it contains the merged document !!!
-        doc.descendants(node => {
+        offlineDoc.descendants(node => {
             if (node.type.name === 'citation') {
                 node.attrs.references.forEach(ref => usedBibs.push(parseInt(ref.id)))
             } else if (node.type.name === 'figure' && node.attrs.image) {
@@ -603,7 +603,7 @@ export class MergeEditor {
         })
 
         const oldBibDB = this.editor.mod.db.bibDB.db
-        this.editor.mod.db.bibDB.setDB(data.doc.bibliography)
+        this.editor.mod.db.bibDB.setDB(db.bibliography)
         usedBibs.forEach(id => {
             if (!this.editor.mod.db.bibDB.db[id] && oldBibDB[id]) {
                 this.editor.mod.db.bibDB.updateReference(id, oldBibDB[id])
@@ -611,7 +611,7 @@ export class MergeEditor {
         })
         const oldImageDB = this.editor.mod.db.imageDB.db
         let imageUploadFailDialogShown = false
-        this.editor.mod.db.imageDB.setDB(data.doc.images)
+        this.editor.mod.db.imageDB.setDB(db.images)
         usedImages = new Set(usedImages)
         usedImages = Array.from(usedImages)
         usedImages.forEach(id => {

@@ -92,14 +92,15 @@ export class ModCollabDoc {
 
     receiveDocument(data) {
         this.cancelCurrentlyCheckingVersion()
-        if (this.mod.editor.docInfo.confirmedDoc) {
-            this.merge.adjustDocument(data)
+        if (this.mod.editor.docInfo.reconnecting && sendableSteps(this.mod.editor.view.state) && this.mod.editor.docInfo.version < data.doc.v) {
+            this.merge.mergeDoc(data.doc)
         } else {
             this.loadDocument(data)
         }
+        delete this.mod.editor.docInfo.reconnecting
     }
 
-    loadDocument(data) {
+    loadDocument({doc, time, doc_info}) {
         // Reset collaboration
         this.unconfirmedDiffs = {}
         if (this.awaitingDiffResponse) {
@@ -108,20 +109,20 @@ export class ModCollabDoc {
         // Remember location hash to scroll there subsequently.
         const locationHash = window.location.hash
 
-        this.mod.editor.clientTimeAdjustment = Date.now() - data.time
+        this.mod.editor.clientTimeAdjustment = Date.now() - time
 
-        this.mod.editor.docInfo = data.doc_info
-        this.mod.editor.docInfo.version = data.doc.v
-        this.mod.editor.docInfo.template = data.doc.template
+        this.mod.editor.docInfo = doc_info
+        this.mod.editor.docInfo.version = doc.v
+        this.mod.editor.docInfo.template = doc.template
         this.mod.editor.docInfo.updated = new Date()
-        this.mod.editor.mod.db.bibDB.setDB(data.doc.bibliography)
-        this.mod.editor.mod.db.imageDB.setDB(data.doc.images)
-        this.mod.editor.docInfo.confirmedJson = JSON.parse(JSON.stringify(data.doc.content))
+        this.mod.editor.mod.db.bibDB.setDB(doc.bibliography)
+        this.mod.editor.mod.db.imageDB.setDB(doc.images)
+        this.mod.editor.docInfo.confirmedJson = JSON.parse(JSON.stringify(doc.content))
         let stateDoc
-        if (data.doc.content.type) {
+        if (doc.content.type) {
             stateDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [
                 adjustDocToTemplate(
-                    data.doc.content,
+                    doc.content,
                     this.mod.editor.docInfo.template.content,
                     this.mod.editor.mod.documentTemplate.documentStyles,
                     this.mod.editor.schema
@@ -141,7 +142,7 @@ export class ModCollabDoc {
         }
         const plugins = this.mod.editor.statePlugins.map(plugin => {
             if (plugin[1]) {
-                return plugin[0](plugin[1](data.doc))
+                return plugin[0](plugin[1](doc))
             } else {
                 return plugin[0]()
             }
@@ -164,7 +165,7 @@ export class ModCollabDoc {
 
         //  Setup comment handling
         this.mod.editor.mod.comments.store.reset()
-        this.mod.editor.mod.comments.store.loadComments(data.doc.comments)
+        this.mod.editor.mod.comments.store.loadComments(doc.comments)
         this.mod.editor.mod.marginboxes.view(this.mod.editor.view)
         // Set part specific settings
         this.mod.editor.mod.documentTemplate.addDocPartSettings()
@@ -352,8 +353,7 @@ export class ModCollabDoc {
         }
     }
 
-    receiveFromCollaborators(data) {
-
+    receiveDiff(data) {
         this.mod.editor.docInfo.version++
         if (data["bu"]) { // bibliography updates
             this.mod.editor.mod.db.bibDB.receive(data["bu"])
@@ -463,16 +463,23 @@ export class ModCollabDoc {
 
     applyDiffs(diffs, cid) {
         this.receiving = true
+
         const steps = diffs.map(j => Step.fromJSON(this.mod.editor.schema, j))
         const clientIds = diffs.map(_ => cid)
-        const tr = receiveTransaction(
-            this.mod.editor.view.state,
-            steps,
-            clientIds
-        )
-        tr.setMeta('remote', true)
-        this.mod.editor.view.dispatch(tr)
-        this.setConfirmedDoc(tr, steps.length)
+        if (this.mod.editor.docInfo.reconnecting && sendableSteps(this.mod.editor.view.state)) {
+            this.merge.mergeDiff(steps, clientIds)
+        } else {
+            const tr = receiveTransaction(
+                this.mod.editor.view.state,
+                steps,
+                clientIds
+            )
+            tr.setMeta('remote', true)
+
+            this.mod.editor.view.dispatch(tr)
+            this.setConfirmedDoc(tr, steps.length)
+        }
+        delete this.mod.editor.docInfo.reconnecting
         this.receiving = false
         this.sendToCollaborators()
     }

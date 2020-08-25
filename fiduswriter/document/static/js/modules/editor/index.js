@@ -271,6 +271,7 @@ export class Editor {
                         this.mod.collab.doc.footnoteRender = true
                     }
                     this.mod.footnotes.fnEditor.renderAllFootnotes()
+                    this.docInfo.reconnecting = true
                     this.mod.collab.doc.checkVersion()
                 },
                 restartMessage: () => ({type: 'get_document'}), // Too many messages have been lost and we need to restart
@@ -320,7 +321,7 @@ export class Editor {
                             this.mod.collab.doc.checkVersion()
                             return
                         }
-                        this.mod.collab.doc.receiveFromCollaborators(data)
+                        this.mod.collab.doc.receiveDiff(data)
                         break
                     case 'confirm_diff':
                         this.mod.collab.doc.confirmDiff(data["rid"])

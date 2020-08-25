@@ -268,7 +268,7 @@ export class DocxExporterRichtext {
             const cit = this.citations.pmCits.shift()
             if (options.citationType === 'note') {
                 // If the citations are in notes (footnotes), we need to
-                // put the contents of this citation in a footnote.
+                // put the content of this citation in a footnote.
                 // We then add the footnote to the footnote file and
                 // adjust the ids of all subsequent footnotes to be one higher
                 // than what they were until now.

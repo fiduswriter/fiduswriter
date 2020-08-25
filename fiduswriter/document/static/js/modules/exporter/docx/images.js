@@ -1,12 +1,12 @@
 import {get} from "../../common"
-import {descendantNodes} from "../tools/doc_contents"
+import {descendantNodes} from "../tools/doc_content"
 
 export class DocxExporterImages {
-    constructor(exporter, imageDB, rels, docContents) {
+    constructor(exporter, imageDB, rels, docContent) {
         this.exporter = exporter
         this.imageDB = imageDB
         this.rels = rels
-        this.docContents = docContents
+        this.docContent = docContent
         this.imgIdTranslation = {}
         this.ctXml = false
     }
@@ -43,7 +43,7 @@ export class DocxExporterImages {
     // Try out and fix.
     exportImages() {
         const usedImgs = []
-        descendantNodes(this.docContents).forEach(
+        descendantNodes(this.docContent).forEach(
             node => {
                 if (node.type === 'figure' && node.attrs.image !== false) {
                     if (!(node.attrs.image in usedImgs)) {

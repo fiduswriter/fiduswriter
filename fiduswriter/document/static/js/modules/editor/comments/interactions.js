@@ -245,6 +245,17 @@ export class ModCommentInteractions {
     }
 
     recreateComment(id) {
+        if (this.editor) {
+            this.editor.dom.childNodes.forEach(node => {
+                if (node.classList && node.classList.contains("comment-btns")) {
+                    node.childNodes.forEach(buttons => {
+                        if (buttons.classList && buttons.classList.contains("submit") && buttons.classList.contains("disabled")) {
+                            buttons.classList.remove("disabled")
+                        }
+                    })
+                }
+            })
+        }
         this.mod.store.updateComment({id, resolved: false})
     }
 
@@ -278,7 +289,7 @@ export class ModCommentInteractions {
         // Save the change to a comment and mark that the document has been changed
         if (id === '-1') {
             const referrer = getCommentDuringCreationDecoration(this.mod.store.commentDuringCreation.view.state)
-            // This is a new comment. We need to get an ID for it if it has contents.
+            // This is a new comment. We need to get an ID for it if it has content.
 
             let username
 

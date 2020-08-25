@@ -2,7 +2,7 @@ import {BibLatexExporter} from "biblatex-csl-converter"
 import download from "downloadjs"
 
 import {createSlug} from "../tools/file"
-import {removeHidden, fixTables} from "../tools/doc_contents"
+import {removeHidden, fixTables} from "../tools/doc_content"
 import {LatexExporterConvert} from "./convert"
 import {ZipFileCreator} from "../tools/zip"
 import {readMe} from "./readme"
@@ -17,7 +17,7 @@ export class LatexExporter {
         this.imageDB = imageDB
         this.updated = updated
 
-        this.docContents = false
+        this.docContent = false
         this.zipFileName = false
         this.textFiles = []
         this.httpFiles = []
@@ -25,9 +25,9 @@ export class LatexExporter {
 
     init() {
         this.zipFileName = `${createSlug(this.doc.title)}.latex.zip`
-        this.docContents = fixTables(removeHidden(this.doc.contents))
+        this.docContent = fixTables(removeHidden(this.doc.content))
         this.converter = new LatexExporterConvert(this, this.imageDB, this.bibDB, this.doc.settings)
-        this.conversion = this.converter.init(this.docContents)
+        this.conversion = this.converter.init(this.docContent)
         if (Object.keys(this.conversion.usedBibDB).length > 0) {
             const bibExport = new BibLatexExporter(this.conversion.usedBibDB)
             this.textFiles.push({filename: 'bibliography.bib', contents: bibExport.parse()})

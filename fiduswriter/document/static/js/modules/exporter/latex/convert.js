@@ -17,9 +17,9 @@ export class LatexExporterConvert {
         this.figureCounter = {} // counters for each type of figure (figure/table/photo)
     }
 
-    init(docContents) {
-        this.preWalkJson(docContents)
-        const rawTransformation = this.walkJson(docContents)
+    init(docContent) {
+        this.preWalkJson(docContent)
+        const rawTransformation = this.walkJson(docContent)
         const body = this.postProcess(rawTransformation)
         const copyright = this.assembleCopyright()
         const preamble = this.assemblePreamble()

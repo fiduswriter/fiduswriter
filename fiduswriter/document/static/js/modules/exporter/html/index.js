@@ -4,7 +4,7 @@ import pretty from "pretty"
 import {createSlug} from "../tools/file"
 import {modifyImages} from "../tools/html"
 import {ZipFileCreator} from "../tools/zip"
-import {removeHidden} from "../tools/doc_contents"
+import {removeHidden} from "../tools/doc_content"
 import {htmlExportTemplate} from "../html/templates"
 import {addAlert} from "../../common"
 import {DOMExporter} from "../tools/dom_export"
@@ -23,7 +23,7 @@ export class HTMLExporter extends DOMExporter {
 
     init() {
         addAlert('info', `${this.doc.title}: ${gettext('HTML export has been initiated.')}`)
-        this.docContents = removeHidden(this.doc.contents, false)
+        this.docContent = removeHidden(this.doc.content, false)
 
         this.addDocStyle(this.doc)
 
@@ -40,14 +40,14 @@ export class HTMLExporter extends DOMExporter {
     }
 
     prepareBinaryFiles() {
-        this.binaryFiles = this.binaryFiles.concat(modifyImages(this.contents)).concat(this.fontFiles)
+        this.binaryFiles = this.binaryFiles.concat(modifyImages(this.content)).concat(this.fontFiles)
     }
 
     postProcess() {
 
         const title = this.doc.title
 
-        const math = this.contents.querySelectorAll('.equation, .figure-equation').length ? true : false
+        const math = this.content.querySelectorAll('.equation, .figure-equation').length ? true : false
 
         if (math) {
             this.addMathliveStylesheet()
@@ -56,7 +56,7 @@ export class HTMLExporter extends DOMExporter {
         this.prepareBinaryFiles()
 
         const html = htmlExportTemplate({
-            contents: this.contents,
+            contents: this.content,
             settings: this.doc.settings,
             styleSheets: this.styleSheets,
             title

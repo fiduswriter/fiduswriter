@@ -91,13 +91,14 @@ export class ModCollabDoc {
     }
 
     receiveDocument(data) {
+        const reconnecting = this.mod.editor.docInfo.reconnecting
+        delete this.mod.editor.docInfo.reconnecting
         this.cancelCurrentlyCheckingVersion()
-        if (this.mod.editor.docInfo.reconnecting && sendableSteps(this.mod.editor.view.state) && this.mod.editor.docInfo.version < data.doc.v) {
+        if (reconnecting && sendableSteps(this.mod.editor.view.state) && this.mod.editor.docInfo.version < data.doc.v) {
             this.merge.mergeDoc(data.doc)
         } else {
             this.loadDocument(data)
         }
-        delete this.mod.editor.docInfo.reconnecting
     }
 
     loadDocument({doc, time, doc_info}) {
@@ -463,10 +464,11 @@ export class ModCollabDoc {
 
     applyDiffs(diffs, cid) {
         this.receiving = true
-
+        const reconnecting = this.mod.editor.docInfo.reconnecting
+        delete this.mod.editor.docInfo.reconnecting
         const steps = diffs.map(j => Step.fromJSON(this.mod.editor.schema, j))
         const clientIds = diffs.map(_ => cid)
-        if (this.mod.editor.docInfo.reconnecting && sendableSteps(this.mod.editor.view.state)) {
+        if (reconnecting && sendableSteps(this.mod.editor.view.state)) {
             this.merge.mergeDiff(steps, clientIds)
         } else {
             const tr = receiveTransaction(
@@ -479,7 +481,6 @@ export class ModCollabDoc {
             this.mod.editor.view.dispatch(tr)
             this.setConfirmedDoc(tr, steps.length)
         }
-        delete this.mod.editor.docInfo.reconnecting
         this.receiving = false
         this.sendToCollaborators()
     }

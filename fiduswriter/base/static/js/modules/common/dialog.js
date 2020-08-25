@@ -79,6 +79,7 @@ export class Dialog {
         this.dragging = false
         this.hasBeenMoved = false
         this.listeners = {}
+        this.fullScreen = options.fullScreen ? options.fullScreen : false
     }
 
     setButtons(buttons) {
@@ -93,6 +94,9 @@ export class Dialog {
     open() {
         if (this.dialogEl) {
             return
+        }
+        if (this.fullScreen) {
+            this.height = "85vh"
         }
         document.body.insertAdjacentHTML(
             'beforeend',
@@ -113,7 +117,14 @@ export class Dialog {
         )
         this.backdropEl = document.body.lastElementChild
         this.dialogEl = this.backdropEl.previousElementSibling
-        this.centerDialog()
+        if (this.fullScreen) {
+            this.dialogEl.style.width = '98%'
+            this.dialogEl.style.height = '100%'
+            this.dialogEl.style.position = 'fixed'
+            this.dialogEl.style.top = "0px"
+        } else {
+            this.centerDialog()
+        }
         this.bind()
     }
 
@@ -190,8 +201,6 @@ export class Dialog {
     }
 
     bind() {
-        this.listeners.onScroll = event => this.onScroll(event)
-        window.addEventListener('scroll', this.listeners.onScroll, false)
         this.listeners.onKeydown = event => this.onKeydown(event)
         document.body.addEventListener('keydown', this.listeners.onKeydown)
         this.dialogEl.addEventListener('click', event => {
@@ -220,35 +229,39 @@ export class Dialog {
                 break
             }
         })
-        this.dialogEl.addEventListener('mousedown', event => {
-            const el = {}
-            switch (true) {
-            case findTarget(event, '.ui-dialog-titlebar', el):
-                this.dragging = {
-                    x: event.clientX - this.dialogEl.offsetLeft,
-                    y: event.clientY - this.dialogEl.offsetTop
+        if (!this.fullScreen) {
+            this.listeners.onScroll = event => this.onScroll(event)
+            window.addEventListener('scroll', this.listeners.onScroll, false)
+            this.dialogEl.addEventListener('mousedown', event => {
+                const el = {}
+                switch (true) {
+                case findTarget(event, '.ui-dialog-titlebar', el):
+                    this.dragging = {
+                        x: event.clientX - this.dialogEl.offsetLeft,
+                        y: event.clientY - this.dialogEl.offsetTop
+                    }
+                    break
+                default:
+                    break
                 }
-                break
-            default:
-                break
-            }
-        })
-        this.dialogEl.addEventListener('mouseup', event => {
-            const el = {}
-            switch (true) {
-            case findTarget(event, '.ui-dialog-titlebar', el):
-                this.dragging = false
-                break
-            default:
-                break
-            }
-        })
-        this.dialogEl.addEventListener('mousemove', event => {
-            if (!this.dragging) {
-                return
-            }
-            this.moveDialog(event.clientX, event.clientY)
-        })
+            })
+            this.dialogEl.addEventListener('mouseup', event => {
+                const el = {}
+                switch (true) {
+                case findTarget(event, '.ui-dialog-titlebar', el):
+                    this.dragging = false
+                    break
+                default:
+                    break
+                }
+            })
+            this.dialogEl.addEventListener('mousemove', event => {
+                if (!this.dragging) {
+                    return
+                }
+                this.moveDialog(event.clientX, event.clientY)
+            })
+        }
 
     }
 
@@ -262,7 +275,9 @@ export class Dialog {
         if (!this.dialogEl) {
             return
         }
-        window.removeEventListener("scroll",  this.listeners.onScroll, false)
+        if (!this.fullScreen) {
+            window.removeEventListener("scroll",  this.listeners.onScroll, false)
+        }
         document.body.removeEventListener("keydown", this.listeners.onKeydown)
         if (this.beforeClose) {
             this.beforeClose()

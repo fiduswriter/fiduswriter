@@ -1,4 +1,6 @@
-import {Schema} from "prosemirror-model"
+import {
+    Schema
+} from "prosemirror-model"
 
 export function parseDiff(str) {
     if (!str) {
@@ -34,14 +36,20 @@ export const createDiffSchema = function(docSchema) {
                     toDOM: function(node) {
                         let dom = nodeType.toDOM(node)
                         if (node.attrs.diffdata && node.attrs.diffdata.length) {
-                            dom = [
-                                dom[0],
-                                Object.assign({
-                                    'data-diffdata': JSON.stringify(node.attrs.diffdata),
-                                    'class': node.attrs.diffdata[0].type
-                                }, dom[1]),
-                                dom[2]
-                            ]
+                            if (node.type.name == "figure") {
+                                dom.dataset.diffdata = JSON.stringify(node.attrs.diffdata)
+                                dom.classList.add(node.attrs.diffdata[0].type)
+                                return dom
+                            } else {
+                                dom = [
+                                    dom[0],
+                                    Object.assign({
+                                        'data-diffdata': JSON.stringify(node.attrs.diffdata),
+                                        'class': node.attrs.diffdata[0].type
+                                    }, dom[1]),
+                                    dom[2]
+                                ]
+                            }
                         }
                         return dom
                     },
@@ -73,7 +81,8 @@ export const createDiffSchema = function(docSchema) {
             },
             to: {
                 default: ''
-            }
+            },
+            markOnly: false
         },
         inclusive: false,
         parseDOM: [
@@ -93,7 +102,8 @@ export const createDiffSchema = function(docSchema) {
                 'data-diff': node.attrs.diff,
                 'data-steps': node.attrs.steps,
                 'data-from': node.attrs.from,
-                'data-to': node.attrs.to
+                'data-to': node.attrs.to,
+                'data-markOnly': node.attrs.markOnly
             }]
         }
     }

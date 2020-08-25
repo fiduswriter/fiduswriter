@@ -1,12 +1,6 @@
-import {
-    EditorState
-} from "prosemirror-state"
-import {
-    ReplaceStep
-} from 'prosemirror-transform'
-import {
-    Slice
-} from "prosemirror-model"
+import {EditorState} from "prosemirror-state"
+import {ReplaceStep} from 'prosemirror-transform'
+import {Slice, Fragment} from "prosemirror-model"
 
 export const checkPresenceOfdiffdata = function(doc, from, to) {
     /* This function checks whether diff mark is present inside the given range */
@@ -90,7 +84,7 @@ export const dispatchRemoveDiffdata = function(view, from, to) {
     view.dispatch(tr)
 }
 
-export const updateMarkData = function(tr, imageDataModified) {
+export const updateMarkData = function(tr, imageDataModified, newTr) {
     /* Update the range inside the marks and also if we have a image that
     was reuploaded , then while accepting it into the middle editor,
     update its attrs */
@@ -106,31 +100,30 @@ export const updateMarkData = function(tr, imageDataModified) {
                     let diffMark = node.marks.find(mark => mark.type.name == "diffdata")
                     if (diffMark !== undefined) {
                         diffMark = diffMark.attrs
-                        tr.removeMark(pos, pos + node.nodeSize, tr.doc.type.schema.marks.diffdata)
+                        newTr.removeMark(pos, pos + node.nodeSize, tr.doc.type.schema.marks.diffdata)
                         const from = tr.mapping.map(diffMark.from)
                         const to = tr.mapping.map(diffMark.to, -1)
-                        const mark = tr.doc.type.schema.marks.diffdata.create({diff: diffMark.diff, steps: diffMark.steps, from: from, to: to})
-                        tr.addMark(pos, pos + node.nodeSize, mark)
+                        const mark = tr.doc.type.schema.marks.diffdata.create({diff: diffMark.diff, steps: diffMark.steps, from: from, to: to, markOnly: diffMark.markOnly})
+                        newTr.addMark(pos, pos + node.nodeSize, mark)
                     }
                 }
                 if (node.type.name === 'figure' && Object.keys(imageDataModified).includes(String(node.attrs.image))) {
                     const attrs = Object.assign({}, node.attrs)
                     attrs["image"] = imageDataModified[String(node.attrs.image)]
                     const nodeType = tr.doc.type.schema.nodes['figure']
-                    tr.setNodeMarkup(pos, nodeType, attrs)
+                    newTr.setNodeMarkup(pos, nodeType, attrs)
                 }
                 if (node.attrs.diffdata && node.attrs.diffdata.length > 0) {
                     const diffdata = node.attrs.diffdata
                     diffdata[0].from = tr.mapping.map(diffdata[0].from)
                     diffdata[0].to = tr.mapping.map(diffdata[0].to)
-                    tr.setNodeMarkup(pos, null, Object.assign({}, node.attrs, {diffdata}), node.marks)
+                    newTr.setNodeMarkup(pos, null, Object.assign({}, node.attrs, {diffdata}), node.marks)
                 }
             }
         )
     }
-    return tr
+    return newTr
 }
-
 
 export const removeDiffFromJson = function(object) {
     /* Used to convert a document from the merge editor to a doc that complies with the schema of the main editor */
@@ -144,4 +137,39 @@ export const removeDiffFromJson = function(object) {
         object.content.forEach(child => removeDiffFromJson(child))
     }
     return object
+}
+
+function mapFragment(fragment, f, parent, mark) {
+    const mapped = []
+    for (let i = 0; i < fragment.childCount; i++) {
+        let child = fragment.child(i)
+        if (child.attrs.diffdata) {
+            const diffdata = []
+            diffdata.push({type: mark.attrs.diff, from: mark.attrs.from, to: mark.attrs.to, steps: mark.attrs.steps})
+            const attrs = Object.assign({}, child.attrs, {diffdata})
+            const dummyNode =  child.type.create(attrs, null, child.marks)
+            child = dummyNode.copy(child.content)
+        }
+        if (child.content.size) {
+            child = child.copy(mapFragment(child.content, f, child, mark))
+        }
+        if (child.isInline) {
+            child = f(child, parent, i)
+        }
+        mapped.push(child)
+    }
+    return Fragment.fromArray(mapped)
+}
+
+export const addDeletionMarks = function(slice, mark) {
+    const content = mapFragment(slice.content, (node, parent) => {
+        if (parent.type && !parent.type.allowsMarkType(mark.type)) {
+            return node
+        }
+        if (node.isInline) {
+            return node.mark(mark.addToSet(node.marks))
+        }
+        return node
+    }, parent, mark)
+    return content
 }

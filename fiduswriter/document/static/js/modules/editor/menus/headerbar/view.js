@@ -56,7 +56,7 @@ export class HeaderbarView {
             if (this.editor.app.isOffline()) {
                 event.preventDefault()
                 event.stopPropagation()
-                addAlert("info",gettext("Cannot close a document when you're offline."))
+                addAlert("info", gettext("Cannot close a document when you're offline."))
             }
         } else if (target.matches('#headerbar #header-navigation .fw-pulldown-item')) {
             // A header nav menu item was clicked. Now we just need to find

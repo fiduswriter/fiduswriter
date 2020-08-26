@@ -68,7 +68,7 @@ export class DocumentOverview {
             let docId
             switch (true) {
             case findTarget(event, '.revisions', el):
-                if(this.app.isOffline()) {
+                if (this.app.isOffline()) {
                     addAlert('info', gettext("Cannot access revisions of a document when you're offline."))
                     event.preventDefault()
                 } else {
@@ -77,7 +77,7 @@ export class DocumentOverview {
                 }
                 break
             case findTarget(event, '.delete-document', el):
-                if(this.app.isOffline()) {
+                if (this.app.isOffline()) {
                     addAlert('info', gettext("Cannot delete a document when you're offline."))
                     event.preventDefault()
                 } else {
@@ -86,7 +86,7 @@ export class DocumentOverview {
                 }
                 break
             case findTarget(event, '.owned-by-user.rights', el): {
-                if(this.app.isOffline()) {
+                if (this.app.isOffline()) {
                     addAlert('info', gettext("Cannot access access right data of a document when you're offline."))
                     event.preventDefault()
                 } else {
@@ -101,10 +101,10 @@ export class DocumentOverview {
                 break
             }
             case findTarget(event, 'a.doc-title', el):
-                if(this.app.isOffline()) {
+                if (this.app.isOffline()) {
                     addAlert('info', gettext("Cannot open a document when you're offline."))
                     event.preventDefault()
-                } 
+                }
                 break
             default:
                 break

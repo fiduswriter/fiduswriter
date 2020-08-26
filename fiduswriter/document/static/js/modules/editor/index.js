@@ -389,8 +389,8 @@ export class Editor {
         if (this.ws) {
             this.ws.close()
         }
-        if(this.listeners.onBeforeUnload) {
-            window.removeEventListener("beforeunload",this.listeners.onBeforeUnload)
+        if (this.listeners.onBeforeUnload) {
+            window.removeEventListener("beforeunload", this.listeners.onBeforeUnload)
         }
     }
 
@@ -499,15 +499,15 @@ export class Editor {
                 showSystemMessage(gettext(
                     "The changes you made to the document will not be saved, if you close/refresh the tab or close the browser."
                 ))
-                event.preventDefault() 
+                event.preventDefault()
                 // To stop the event for chrome and safari
                 event.returnValue = 'Sure?'
                 return 'Sure?'
             }
-        };
+        }
         this.activateFidusPlugins()
         this.ws.init()
-        window.addEventListener("beforeunload",this.listeners.onBeforeUnload)
+        window.addEventListener("beforeunload", this.listeners.onBeforeUnload)
     }
 
     activateFidusPlugins() {

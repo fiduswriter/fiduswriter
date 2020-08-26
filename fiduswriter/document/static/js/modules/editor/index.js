@@ -497,7 +497,7 @@ export class Editor {
         this.listeners.onBeforeUnload = (event) => {
             if (this.app.isOffline()) {
                 showSystemMessage(gettext(
-                    "The changes you made to the document will not be saved, if you close/refresh the tab or close the browser."
+                    " Since you're offline the changes you made to the document will not be saved, if you choose to close/refresh the tab or close the browser."
                 ))
                 event.preventDefault()
                 // To stop the event for chrome and safari

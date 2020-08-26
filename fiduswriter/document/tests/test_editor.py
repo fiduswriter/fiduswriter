@@ -104,7 +104,8 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
                 "ul > li:nth-child(4) > span > label"
             )
         ).click()
-        # We type in th body
+        # We type in the body
+        self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
         self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
             "Body"
         )

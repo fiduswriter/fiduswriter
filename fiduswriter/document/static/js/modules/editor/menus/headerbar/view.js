@@ -1,7 +1,6 @@
 import {DiffDOM} from "diff-dom"
 import {keyName} from "w3c-keyname"
-
-import {escapeText} from "../../../common"
+import {escapeText, addAlert} from "../../../common"
 
 export class HeaderbarView {
     constructor(editorView, options) {
@@ -52,8 +51,14 @@ export class HeaderbarView {
 
     onclick(event) {
         const target = event.target
-
-        if (target.matches('#headerbar #header-navigation .fw-pulldown-item')) {
+        if (target.matches("div#close-document-top a i.fa-times")) {
+            // If the user is offline prevent the closing of the document.
+            if (this.editor.app.isOffline()) {
+                event.preventDefault()
+                event.stopPropagation()
+                addAlert("info",gettext("Cannot close a document when you're offline."))
+            }
+        } else if (target.matches('#headerbar #header-navigation .fw-pulldown-item')) {
             // A header nav menu item was clicked. Now we just need to find
             // which one and execute the corresponding action.
             const searchPath = []

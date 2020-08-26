@@ -4,7 +4,8 @@ import {
     WebSocketConnector,
     postJson,
     activateWait,
-    Dialog
+    Dialog,
+    showSystemMessage
 } from "../common"
 import {
     FeedbackTab
@@ -207,6 +208,8 @@ export class Editor {
             [tocRenderPlugin, () => ({editor: this})],
             [searchPlugin]
         ]
+
+        this.listeners = {}
     }
 
     init() {
@@ -386,6 +389,9 @@ export class Editor {
         if (this.ws) {
             this.ws.close()
         }
+        if(this.listeners.onBeforeUnload) {
+            window.removeEventListener("beforeunload",this.listeners.onBeforeUnload)
+        }
     }
 
     render() {
@@ -488,8 +494,20 @@ export class Editor {
         new ModComments(this)
         new ModNavigator(this)
         this.mod.navigator.init()
+        this.listeners.onBeforeUnload = (event) => {
+            if (this.app.isOffline()) {
+                showSystemMessage(gettext(
+                    "The changes you made to the document will not be saved, if you close/refresh the tab or close the browser."
+                ))
+                event.preventDefault() 
+                // To stop the event for chrome and safari
+                event.returnValue = 'Sure?'
+                return 'Sure?'
+            }
+        };
         this.activateFidusPlugins()
         this.ws.init()
+        window.addEventListener("beforeunload",this.listeners.onBeforeUnload)
     }
 
     activateFidusPlugins() {

@@ -70,7 +70,6 @@ export class DocumentOverview {
             case findTarget(event, '.revisions', el):
                 if (this.app.isOffline()) {
                     addAlert('info', gettext("Cannot access revisions of a document when you're offline."))
-                    event.preventDefault()
                 } else {
                     docId = parseInt(el.target.dataset.id)
                     this.mod.actions.revisionsDialog(docId)
@@ -79,7 +78,6 @@ export class DocumentOverview {
             case findTarget(event, '.delete-document', el):
                 if (this.app.isOffline()) {
                     addAlert('info', gettext("Cannot delete a document when you're offline."))
-                    event.preventDefault()
                 } else {
                     docId = parseInt(el.target.dataset.id)
                     this.mod.actions.deleteDocumentDialog([docId])
@@ -88,7 +86,6 @@ export class DocumentOverview {
             case findTarget(event, '.owned-by-user.rights', el): {
                 if (this.app.isOffline()) {
                     addAlert('info', gettext("Cannot access access right data of a document when you're offline."))
-                    event.preventDefault()
                 } else {
                     docId = parseInt(el.target.dataset.id)
                     const dialog = new DocumentAccessRightsDialog(

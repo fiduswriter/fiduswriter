@@ -1,8 +1,8 @@
 language: python
 python:
-  - "3.7"
+  - "3.8"
 node_js:
-  - "10"
+  - "12"
 
 dist: bionic
 sudo: required

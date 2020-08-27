@@ -176,6 +176,9 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             'article-body'
         )
 
+        body_input.click()
+        body_input2.click()
+
         p1 = multiprocessing.Process(
             target=self.input_text,
             args=(body_input, self.TEST_TEXT)

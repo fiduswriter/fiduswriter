@@ -68,12 +68,11 @@ def get_documentlist_extra(request):
     )
 
 
-@login_required
 def documents_list(request):
     documents = Document.objects.filter(
         Q(owner=request.user) | Q(accessright__user=request.user),
         listed=True
-    ).order_by('-updated')
+    ).distinct().order_by('-updated')
     output_list = []
     for document in documents:
         if document.owner == request.user:

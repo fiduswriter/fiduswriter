@@ -68,12 +68,16 @@ def configuration(request):
                 email['verified'] = True
             response['user']['emails'].append(email)
         for account in request.user.socialaccount_set.all():
-            provider_account = account.get_provider_account()
-            response['user']['socialaccounts'].append({
-                'id': account.id,
-                'provider': account.provider,
-                'name': provider_account.to_str()
-            })
+            try:
+                provider_account = account.get_provider_account()
+                response['user']['socialaccounts'].append({
+                    'id': account.id,
+                    'provider': account.provider,
+                    'name': provider_account.to_str()
+                })
+            except KeyError:
+                # Social account provider has been removed.
+                pass
 
     else:
         response['user'] = {

@@ -691,6 +691,19 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
             0
         )
 
+        # Come back online to prevent pop up from showing up.
+        self.driver.execute_script(
+            'window.theApp.page.ws.goOnline()'
+        )
+        self.driver.execute_script(
+            'window.theApp.ws.goOnline()'
+        )
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda driver: driver.execute_script(
+                'return window.theApp.ws.connected'
+            )
+        )
+
     def test_indexedDB(self):
         """
         Testing a user going offline after logging in.

@@ -68,23 +68,41 @@ export class DocumentOverview {
             let docId
             switch (true) {
             case findTarget(event, '.revisions', el):
-                docId = parseInt(el.target.dataset.id)
-                this.mod.actions.revisionsDialog(docId)
+                if (this.app.isOffline()) {
+                    addAlert('info', gettext("Cannot access revisions of a document when you're offline."))
+                } else {
+                    docId = parseInt(el.target.dataset.id)
+                    this.mod.actions.revisionsDialog(docId)
+                }
                 break
             case findTarget(event, '.delete-document', el):
-                docId = parseInt(el.target.dataset.id)
-                this.mod.actions.deleteDocumentDialog([docId])
+                if (this.app.isOffline()) {
+                    addAlert('info', gettext("Cannot delete a document when you're offline."))
+                } else {
+                    docId = parseInt(el.target.dataset.id)
+                    this.mod.actions.deleteDocumentDialog([docId])
+                }
                 break
             case findTarget(event, '.owned-by-user.rights', el): {
-                docId = parseInt(el.target.dataset.id)
-                const dialog = new DocumentAccessRightsDialog(
-                    [docId],
-                    this.teamMembers,
-                    memberDetails => this.teamMembers.push(memberDetails)
-                )
-                dialog.init()
+                if (this.app.isOffline()) {
+                    addAlert('info', gettext("Cannot access access right data of a document when you're offline."))
+                } else {
+                    docId = parseInt(el.target.dataset.id)
+                    const dialog = new DocumentAccessRightsDialog(
+                        [docId],
+                        this.teamMembers,
+                        memberDetails => this.teamMembers.push(memberDetails)
+                    )
+                    dialog.init()
+                }
                 break
             }
+            case findTarget(event, 'a.doc-title', el):
+                if (this.app.isOffline()) {
+                    addAlert('info', gettext("Cannot open a document when you're offline."))
+                    event.preventDefault()
+                }
+                break
             default:
                 break
             }

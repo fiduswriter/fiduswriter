@@ -85,7 +85,10 @@ export class Merge {
         this.mergeTr(
             unconfirmedTr,
             simplifyTransform(remoteTr), // We split the complex steps that delete and insert into simple steps so that finding conflicts is more pronounced.
-            doc
+            {
+                images: doc.images,
+                bibliography: doc.bibliography
+            }
         )
         this.mod.doc.receiving = false
     }

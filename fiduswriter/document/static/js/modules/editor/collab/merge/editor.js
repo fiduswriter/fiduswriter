@@ -612,7 +612,7 @@ export class MergeEditor {
         })
         const oldImageDB = this.editor.mod.db.imageDB.db
         let imageUploadFailDialogShown = false
-        this.editor.mod.db.imageDB.setDB(offlineDoc.images)
+        this.editor.mod.db.imageDB.setDB(db.images)
         usedImages = new Set(usedImages)
         usedImages = Array.from(usedImages)
         usedImages.forEach(id => {

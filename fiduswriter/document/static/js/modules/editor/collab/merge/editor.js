@@ -576,6 +576,7 @@ export class MergeEditor {
         )
     }
 
+
     updateDB(offlineDoc, db) {
         /* Used to update the image,bib DB and update the doc in case if missing/lost images
         (update the image data with re-uploaded images) */
@@ -611,7 +612,7 @@ export class MergeEditor {
         })
         const oldImageDB = this.editor.mod.db.imageDB.db
         let imageUploadFailDialogShown = false
-        this.editor.mod.db.imageDB.setDB(db.images)
+        this.editor.mod.db.imageDB.setDB(offlineDoc.images)
         usedImages = new Set(usedImages)
         usedImages = Array.from(usedImages)
         usedImages.forEach(id => {

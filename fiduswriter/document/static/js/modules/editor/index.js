@@ -208,8 +208,6 @@ export class Editor {
             [tocRenderPlugin, () => ({editor: this})],
             [searchPlugin]
         ]
-
-        this.listeners = {}
     }
 
     init() {
@@ -389,9 +387,6 @@ export class Editor {
         if (this.ws) {
             this.ws.close()
         }
-        if (this.listeners.onBeforeUnload) {
-            window.removeEventListener("beforeunload", this.listeners.onBeforeUnload)
-        }
     }
 
     render() {
@@ -436,6 +431,8 @@ export class Editor {
         feedbackTab.init()
     }
 
+window.addEventListener('onbeforeunload', event => event.preventDefault())
+
     onResize() {
         if (!this.view || !this.mod.marginboxes) {
             // Editor not yet set up
@@ -444,6 +441,13 @@ export class Editor {
         this.mod.marginboxes.updateDOM()
         this.mod.footnotes.layout.updateDOM()
         this.menu.toolbarViews.forEach(view => view.onResize())
+    }
+
+    onBeforeUnload() {
+        if (this.app.isOffline()) {
+            showSystemMessage(gettext("Changes you made to the document since going offline will be lost, if you choose to close/refresh the tab or close the browser."))
+            return true
+        }
     }
 
     initEditor() {
@@ -494,20 +498,9 @@ export class Editor {
         new ModComments(this)
         new ModNavigator(this)
         this.mod.navigator.init()
-        this.listeners.onBeforeUnload = (event) => {
-            if (this.app.isOffline()) {
-                showSystemMessage(gettext(
-                    " Since you're offline the changes you made to the document will not be saved, if you choose to close/refresh the tab or close the browser."
-                ))
-                event.preventDefault()
-                // To stop the event for chrome and safari
-                event.returnValue = 'Sure?'
-                return 'Sure?'
-            }
-        }
         this.activateFidusPlugins()
         this.ws.init()
-        window.addEventListener("beforeunload", this.listeners.onBeforeUnload)
+
     }
 
     activateFidusPlugins() {

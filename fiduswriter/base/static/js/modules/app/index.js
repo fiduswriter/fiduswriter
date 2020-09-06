@@ -222,6 +222,16 @@ export class App {
                 }
             }, 250)
         })
+        window.addEventListener('beforeunload', event => {
+            if (this.page && this.page.onBeforeUnload) {
+                if (this.page.onBeforeUnload()) {
+                    event.preventDefault()
+                    // To stop the event for chrome and safari
+                    event.returnValue = ''
+                    return ''
+                }
+            }
+        })
     }
 
     connectWs() {

@@ -431,8 +431,6 @@ export class Editor {
         feedbackTab.init()
     }
 
-window.addEventListener('onbeforeunload', event => event.preventDefault())
-
     onResize() {
         if (!this.view || !this.mod.marginboxes) {
             // Editor not yet set up

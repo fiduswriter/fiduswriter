@@ -50,11 +50,12 @@ def get_documentlist_extra(request):
                 'height': image.image.height,
                 'id': image.image.id,
                 'image': image.image.image.url,
-                'thumbnail': image.image.thumbnail.url,
                 'title': image.title,
                 'copyright': json.loads(image.copyright),
                 'width': image.image.width
             }
+            if image.image.thumbnail:
+                images[image.image.id]['thumbnail'] = image.image.thumbnail.url
         response['documents'].append({
             'images': images,
             'contents': doc.contents,

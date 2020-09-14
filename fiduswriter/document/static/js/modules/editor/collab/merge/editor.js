@@ -576,7 +576,6 @@ export class MergeEditor {
         )
     }
 
-
     updateDB(offlineDoc, db) {
         /* Used to update the image,bib DB and update the doc in case if missing/lost images
         (update the image data with re-uploaded images) */

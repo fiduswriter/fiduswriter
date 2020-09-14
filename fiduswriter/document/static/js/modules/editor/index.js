@@ -321,7 +321,7 @@ export class Editor {
                             this.mod.collab.doc.checkVersion()
                             return
                         }
-                        this.mod.collab.doc.receiveFromCollaborators(data)
+                        this.mod.collab.doc.receiveDiff(data)
                         break
                     case 'confirm_diff':
                         this.mod.collab.doc.confirmDiff(data["rid"])

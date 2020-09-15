@@ -361,12 +361,11 @@ export class Editor {
                                             combinedDiffMessage["fs"] = (combinedDiffMessage["fs"] || []).concat(message["fs"])
                                         }
                                     }
-                                    version = data["v"]
                                     break
                                 case 'doc_data':
                                     // We received the entire doc again,
                                     combinedDiffMessage = false
-                                    version = messaeg["v"]
+                                    version = message["v"]
                                     messages.push(message)
                                 default:
                                     messages.push(message)

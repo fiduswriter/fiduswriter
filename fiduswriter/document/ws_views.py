@@ -468,10 +468,13 @@ class WebSocket(BaseWebSocketHandler):
                 f"User:{self.user.id} ParticipantID:{self.id}"
                 f"number of messages to be resent:{number_diffs}")
             messages = self.session["doc"].diffs[number_diffs:]
+            response = {
+                "type": "server_fix",
+                "m": []
+            }
             for message in messages:
-                new_message = message.copy()
-                new_message["server_fix"] = True
-                self.send_message(new_message)
+                response["m"].append(message)
+            self.send_message(response)
             return
         else:
             logger.debug(

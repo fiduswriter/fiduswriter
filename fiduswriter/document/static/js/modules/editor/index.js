@@ -272,14 +272,13 @@ export class Editor {
                         this.mod.collab.doc.footnoteRender = true
                     }
                     this.mod.footnotes.fnEditor.renderAllFootnotes()
-                    this.docInfo.reconnecting = true
                     this.mod.collab.doc.checkVersion()
                 },
                 restartMessage: () => ({type: 'get_document'}), // Too many messages have been lost and we need to restart
                 messagesElement: () => this.dom.querySelector('#unobtrusive_messages'),
                 warningNotAllSent: gettext('Warning! Not all your changes have been saved! You could suffer data loss. Attempting to reconnect...'),
                 infoDisconnected: gettext('Disconnected. Attempting to reconnect...'),
-                receiveData: data => {
+                receiveData: (data, serverFix=false) => {
                     if (document.body !== this.dom) {
                         return // user navigated away.
                     }
@@ -290,11 +289,8 @@ export class Editor {
                     case 'connections':
                         this.mod.collab.updateParticipantList(data.participant_list)
                         break
-                    case 'styles':
-                        this.mod.documentTemplate.setStyles(data.styles)
-                        break
                     case 'doc_data':
-                        this.mod.collab.doc.receiveDocument(data)
+                        this.mod.collab.doc.receiveDocument(data, serverFix)
                         break
                     case 'confirm_version':
                         this.mod.collab.doc.cancelCurrentlyCheckingVersion()
@@ -329,6 +325,60 @@ export class Editor {
                         break
                     case 'reject_diff':
                         this.mod.collab.doc.rejectDiff(data["rid"])
+                        break
+                    case 'server_fix': {
+                        this.mod.collab.doc.serverFix(data)
+                        const messages = []
+                        let combinedDiffMessage = false, version = this.docInfo.version
+                        // We bundle all diffs
+                        data["m"].forEach(message => {
+                            switch (message.type) {
+                                case 'diff':
+                                    if (data["cid"] === this.client_id) {
+                                        // confirmation of this user's own diff. This can only happen at the very beginning of the
+                                        // array of messages, as the user subsequently went offline
+                                        message["v"] = version++
+                                        messages.push(message)
+                                    } else if (!combinedDiffMessage) {
+                                        combinedDiffMessage = message
+                                        combinedDiffMessage["v"] = version++
+                                        messages.push(combinedDiffMessage)
+                                    } else {
+                                        // We combine the message with a previous diff message. It is already in the messages array, so we do not add it another time.
+                                        if (message["bu"]) { // bibliography updates
+                                            combinedDiffMessage["bu"] = (combinedDiffMessage["bu"] || []).concat(message["bu"])
+                                        }
+                                        if (message["iu"]) { // images updates
+                                            combinedDiffMessage["iu"] = (combinedDiffMessage["iu"] || []).concat(message["iu"])
+                                        }
+                                        if (message["cu"]) { // comment updates
+                                            combinedDiffMessage["cu"] = (combinedDiffMessage["cu"] || []).concat(message["cu"])
+                                        }
+                                        if (message["ds"]) { // document steps
+                                            combinedDiffMessage["ds"] = (combinedDiffMessage["ds"] || []).concat(message["ds"])
+                                        }
+                                        if (message["fs"]) { // footnote steps
+                                            combinedDiffMessage["fs"] = (combinedDiffMessage["fs"] || []).concat(message["fs"])
+                                        }
+                                    }
+                                    version = data["v"]
+                                    break
+                                case 'doc_data':
+                                    // We received the entire doc again,
+                                    combinedDiffMessage = false
+                                    version = messaeg["v"]
+                                    messages.push(message)
+                                default:
+                                    messages.push(message)
+                                    break
+                            }
+                        })
+                        messages.forEach(message => this.ws.receiveData(message, true))
+                        this.mod.editor.docInfo.version = version
+                        break
+                    }
+                    case 'styles':
+                        this.mod.documentTemplate.setStyles(data.styles)
                         break
                     }
                 },

@@ -90,11 +90,9 @@ export class ModCollabDoc {
         this.sendToCollaborators()
     }
 
-    receiveDocument(data) {
-        const reconnecting = this.mod.editor.docInfo.reconnecting
-        delete this.mod.editor.docInfo.reconnecting
+    receiveDocument(data, serverFix=false) {
         this.cancelCurrentlyCheckingVersion()
-        if (reconnecting && sendableSteps(this.mod.editor.view.state) && this.mod.editor.docInfo.version < data.doc.v) {
+        if (serverFix && sendableSteps(this.mod.editor.view.state) && this.mod.editor.docInfo.version < data.doc.v) {
             this.merge.mergeDoc(data.doc)
         } else {
             this.loadDocument(data)
@@ -354,7 +352,7 @@ export class ModCollabDoc {
         }
     }
 
-    receiveDiff(data) {
+    receiveDiff(data, serverFix=false) {
         this.mod.editor.docInfo.version++
         if (data["bu"]) { // bibliography updates
             this.mod.editor.mod.db.bibDB.receive(data["bu"])
@@ -366,7 +364,7 @@ export class ModCollabDoc {
             this.mod.editor.mod.comments.store.receive(data["cu"])
         }
         if (data["ds"]) { // document steps
-            this.applyDiffs(data["ds"], data["cid"])
+            this.applyDiffs(data["ds"], data["cid"], serverFix)
         }
         if (data["fs"]) { // footnote steps
             this.mod.editor.mod.footnotes.fnEditor.applyDiffs(data["fs"], data["cid"])
@@ -375,7 +373,7 @@ export class ModCollabDoc {
             this.mod.editor.mod.footnotes.fnEditor.renderAllFootnotes()
         }
 
-        if (data.server_fix) {
+        if (serverFix) {
             // Diff is a fix created by server due to missing diffs.
             if ('reject_request_id' in data) {
                 delete this.unconfirmedDiffs[data.reject_request_id]
@@ -462,13 +460,11 @@ export class ModCollabDoc {
         this.enableDiffSending()
     }
 
-    applyDiffs(diffs, cid) {
+    applyDiffs(diffs, cid, serverFix=false) {
         this.receiving = true
-        const reconnecting = this.mod.editor.docInfo.reconnecting
-        delete this.mod.editor.docInfo.reconnecting
         const steps = diffs.map(j => Step.fromJSON(this.mod.editor.schema, j))
         const clientIds = diffs.map(_ => cid)
-        if (reconnecting && sendableSteps(this.mod.editor.view.state)) {
+        if (serverFix && sendableSteps(this.mod.editor.view.state)) {
             this.merge.mergeDiff(steps, clientIds)
         } else {
             const tr = receiveTransaction(

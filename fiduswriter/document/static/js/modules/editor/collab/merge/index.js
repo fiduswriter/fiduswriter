@@ -3,7 +3,9 @@ import {
     EditorState
 } from "prosemirror-state"
 import {
-    Mapping
+    Mapping,
+    Step,
+    Transform
 } from "prosemirror-transform"
 import {
     sendableSteps,
@@ -19,6 +21,9 @@ import {
 import {
     trackedTransaction
 } from "../../track"
+import {
+    adjustDocToTemplate
+} from "../../../document_template"
 import {
     recreateTransform
 } from "./recreate_transform"
@@ -36,7 +41,7 @@ import {
 export class Merge {
     constructor(mod) {
         this.mod = mod
-        this.trackOfflineLimit = 50// Limit of local changes while offline for tracking to kick in when multiple users edit
+        this.trackOfflineLimit = 50 // Limit of local changes while offline for tracking to kick in when multiple users edit
         this.remoteTrackOfflineLimit = 20 // Limit of remote changes while offline for tracking to kick in when multiple users edit
     }
 
@@ -45,6 +50,7 @@ export class Merge {
         // happening on server.
         if (this.mod.editor.docInfo.version < data.doc.v && sendableSteps(this.mod.editor.view.state)) {
             this.mod.doc.receiving = true
+
             this.mod.editor.docInfo.confirmedJson = JSON.parse(JSON.stringify(data.doc.content))
             const confirmedState = EditorState.create({doc: this.mod.editor.docInfo.confirmedDoc})
             const unconfirmedTr = confirmedState.tr
@@ -65,11 +71,29 @@ export class Merge {
                 rollbackTr.steps.map(_step => 'remote')
             ).setMeta('remote', true))
             const toDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [
-                data.doc.content
+                adjustDocToTemplate(
+                    data.doc.content,
+                    this.mod.editor.docInfo.template.content,
+                    this.mod.editor.mod.documentTemplate.documentStyles,
+                    this.mod.editor.schema
+                )
             ]})
-
             // Apply the online Transaction
-            const lostTr = recreateTransform(this.mod.editor.view.state.doc, toDoc)
+            let lostTr
+            if (data.m) {
+                lostTr = new Transform(this.mod.editor.view.state.doc)
+                data.m.forEach(message => {
+                    if (message.ds && message.cid !== this.mod.editor.client_id) {
+                        message.ds.forEach(j => lostTr.maybeStep(Step.fromJSON(this.mod.editor.schema, j)))
+                    }
+                })
+                if (!lostTr.doc.eq(toDoc)) {
+                    // We were not able to recreate the document using the steps in the diffs. So instead we recreate the steps artificially.
+                    lostTr = recreateTransform(this.mod.editor.view.state.doc, toDoc)
+                }
+            } else {
+                lostTr = recreateTransform(this.mod.editor.view.state.doc, toDoc)
+            }
             this.mod.editor.view.dispatch(receiveTransaction(
                 this.mod.editor.view.state,
                 lostTr.steps,
@@ -101,6 +125,9 @@ export class Merge {
 
             this.mod.doc.receiving = false
             // this.mod.doc.sendToCollaborators()
+        } else if (data.m) {
+            // There are no local changes, so we can just receive all the remote messages directly
+            data.m.forEach(message => this.mod.doc.receiveDiff(message, true))
         } else {
             // The server seems to have lost some data. We reset.
             this.mod.doc.loadDocument(data)
@@ -110,7 +137,12 @@ export class Merge {
     autoMerge(unconfirmedTr, lostTr, data) {
         /* This automerges documents incase of no conflicts */
         const toDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [
-            data.doc.content
+            adjustDocToTemplate(
+                data.doc.content,
+                this.mod.editor.docInfo.template.content,
+                this.mod.editor.mod.documentTemplate.documentStyles,
+                this.mod.editor.schema
+            )
         ]})
         const rebasedTr = EditorState.create({doc: toDoc}).tr.setMeta('remote', true)
         const maps = new Mapping([].concat(unconfirmedTr.mapping.maps.slice().reverse().map(map => map.invert())).concat(lostTr.mapping.maps.slice()))
@@ -202,7 +234,7 @@ export class Merge {
                                 }
                             })
                             this.mod.editor.view.dispatch(transaction)
-                            addAlert('error', gettext("One of the Image(s) you copied could not be found on the server. Please try uploading it again."))
+                            addAlert('error', gettext("One of the image(s) you copied could not be found on the server. Please try uploading it again."))
                         }
                     )
                 }

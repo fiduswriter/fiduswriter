@@ -352,7 +352,7 @@ export class ModCollabDoc {
         }
     }
 
-    receiveDiff(data) {
+    receiveDiff(data, serverFix = false) {
 
         this.mod.editor.docInfo.version++
         if (data["bu"]) { // bibliography updates
@@ -374,7 +374,7 @@ export class ModCollabDoc {
             this.mod.editor.mod.footnotes.fnEditor.renderAllFootnotes()
         }
 
-        if (data.server_fix) {
+        if (serverFix) {
             // Diff is a fix created by server due to missing diffs.
             if ('reject_request_id' in data) {
                 delete this.unconfirmedDiffs[data.reject_request_id]

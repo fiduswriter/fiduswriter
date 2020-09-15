@@ -92,7 +92,7 @@ export class Merge {
                     toDoc,
                     unconfirmedTr,
                     lostTr,
-                    db: {bibliography: data.doc.bibliography, images: data.doc.images}
+                    {bibliography: data.doc.bibliography, images: data.doc.images}
                 )
                 editor.init()
             } else {

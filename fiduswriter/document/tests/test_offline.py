@@ -185,8 +185,8 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         """
         Test one client going offline in collaborative mode while both clients
         continue to write with the disconnected clients adding enough items to
-        the history so that tracking kicks in. The limit of steps is set so that
-        tracking kicks in.
+        the history so that tracking kicks in. The limit of steps is set so
+        that tracking kicks in.
         """
 
         self.load_document_editor(self.driver, self.doc)
@@ -276,8 +276,8 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         """
         Test one client going offline in collaborative mode while both clients
         continue to write with the connected clients adding enough items to
-        the history so that tracking kicks in. The limit of steps is set so that
-        tracking kicks in.
+        the history so that tracking kicks in. The limit of steps is set so
+        that tracking kicks in.
         """
 
         self.load_document_editor(self.driver, self.doc)

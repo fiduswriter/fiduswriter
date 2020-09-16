@@ -113,7 +113,10 @@ export class ModCollabDoc {
             this.mod.editor.docInfo.confirmedJson = JSON.parse(JSON.stringify(data.doc.contents))
             const confirmedState = EditorState.create({doc: this.mod.editor.docInfo.confirmedDoc})
             const unconfirmedTr = confirmedState.tr
-            sendableSteps(this.mod.editor.view.state).steps.forEach(step => unconfirmedTr.step(step))
+            const sendable = sendableSteps(this.mod.editor.view.state)
+            if (sendable) {
+                sendable.steps.forEach(step => unconfirmedTr.step(step))
+            }
             const rollbackTr = this.mod.editor.view.state.tr
             unconfirmedTr.steps.slice().reverse().forEach(
                 (step, index) => rollbackTr.step(step.invert(unconfirmedTr.docs[unconfirmedTr.docs.length - index - 1]))

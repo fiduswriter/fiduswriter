@@ -57,6 +57,10 @@ class SimpleMessageExchangeTests(LiveTornadoTestCase, EditorHelper):
         self.type_text(self.driver, self.TEST_TEXT)
         self.type_text(self.driver, self.TEST_TEXT)
 
+        # Assert that the server count changed in client
+        old_server_count = self.driver.execute_script(
+            'return window.theApp.page.ws.messages.server'
+        )
         # We simulate lost messages by changing the counter manually.
         self.driver.execute_script(
             'window.theApp.page.ws.messages.server = 1'
@@ -66,6 +70,12 @@ class SimpleMessageExchangeTests(LiveTornadoTestCase, EditorHelper):
         server_count = self.driver.execute_script(
             'return window.theApp.page.ws.messages.server'
         )
+
+        self.assertNotEqual(
+            old_server_count,
+            server_count
+        )
+
         self.assertEqual(
             server_count,
             1

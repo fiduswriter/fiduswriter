@@ -119,6 +119,9 @@ class WebSocket(BaseWebSocketHandler):
         }
         self.send_message(response)
 
+    def unfixable(self):
+        self.send_document()
+
     def send_document(self, messages=False):
         response = dict()
         response['type'] = 'doc_data'
@@ -372,11 +375,6 @@ class WebSocket(BaseWebSocketHandler):
                 f"User:{self.user.id} ParticipantID:{self.id}")
             return
         if pv == dv:
-            self.session["doc"].diffs.append(message)
-            self.session["doc"].diffs = self.session["doc"].diffs[
-                -self.history_length:
-            ]
-            self.session["doc"].version += 1
             if "jd" in message:  # jd = json diff
                 try:
                     apply_patch(
@@ -397,11 +395,17 @@ class WebSocket(BaseWebSocketHandler):
                         f"Action:Patch Exception URL:{self.endpoint} "
                         f"User:{self.user.id} ParticipantID:{self.id} "
                         f"Document:{json_encode(self.session['doc'].content)}")
-                    self.send_document()
+                    self.unfixable()
+                    return
                 # The json diff is only needed by the python backend which does
                 # not understand the steps. It can therefore be removed before
                 # broadcast to other clients.
                 del message["jd"]
+                self.session["doc"].diffs.append(message)
+                self.session["doc"].diffs = self.session["doc"].diffs[
+                    -self.history_length:
+                ]
+                self.session["doc"].version += 1
             if "ti" in message:  # ti = title
                 self.session["doc"].title = message["ti"][-255:]
             if "cu" in message:  # cu = comment updates
@@ -438,7 +442,8 @@ class WebSocket(BaseWebSocketHandler):
                     f"URL:{self.endpoint} User:{self.user.id} "
                     f"ParticipantID:{self.id}")
                 # Client has a version that is too old to be fixed
-                self.send_document()
+                self.unfixable()
+                return
         else:
             # Client has a higher version than server. Something is fishy!
             logger.debug(
@@ -475,7 +480,7 @@ class WebSocket(BaseWebSocketHandler):
                 f"URL:{self.endpoint} User:{self.user.id} "
                 f"ParticipantID:{self.id}")
             # Client has a version that is too old
-            self.send_document()
+            self.unfixable()
             return
 
     def can_update_document(self):

@@ -401,11 +401,11 @@ class WebSocket(BaseWebSocketHandler):
                 # not understand the steps. It can therefore be removed before
                 # broadcast to other clients.
                 del message["jd"]
-                self.session["doc"].diffs.append(message)
-                self.session["doc"].diffs = self.session["doc"].diffs[
-                    -self.history_length:
-                ]
-                self.session["doc"].version += 1
+            self.session["doc"].diffs.append(message)
+            self.session["doc"].diffs = self.session["doc"].diffs[
+                -self.history_length:
+            ]
+            self.session["doc"].version += 1
             if "ti" in message:  # ti = title
                 self.session["doc"].title = message["ti"][-255:]
             if "cu" in message:  # cu = comment updates

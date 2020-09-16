@@ -2,8 +2,8 @@
     "dependencies": {
         "citeproc-plus": "0.1.6",
         "fastdom": "1.0.9",
-        "fast-deep-equal": "2.0.x",
-        "fast-json-patch": "2.0.x",
+        "fast-deep-equal": "3.1.3",
+        "fast-json-patch": "3.0.0-1",
         "fix-utf8": "1.1.1",
         "jszip": "3.2.2",
         "mathlive": "0.34.0",

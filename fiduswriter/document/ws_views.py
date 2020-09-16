@@ -1,11 +1,13 @@
 import uuid
 import atexit
 import logging
-# from builtins import str
-from tornado.escape import json_encode
+import os
+import json
+import copy
 from time import mktime, time
 from copy import deepcopy
-from jsonpatch import apply_patch, JsonPatchConflict, JsonPointerException
+from prosemirror.model import Node, Schema
+from prosemirror.transform import Step
 
 from django.db.utils import DatabaseError
 from django.db.models import F, Q
@@ -21,6 +23,17 @@ from user.util import get_user_avatar_url
 
 
 logger = logging.getLogger(__name__)
+
+schema_json_path = os.path.join(
+    settings.PROJECT_PATH,
+    "static-libs/json/schema.json"
+)
+
+if os.path.exists(schema_json_path):
+    with open(schema_json_path) as schema_file:
+        schema = Schema(json.loads(schema_file.read()))
+else:
+    schema = None
 
 
 class WebSocket(BaseWebSocketHandler):
@@ -69,8 +82,20 @@ class WebSocket(BaseWebSocketHandler):
                 f"URL:{self.endpoint} User:{self.user.id} "
                 f"ParticipantID:{self.id}")
             self.id = 0
+            if 'type' in doc_db.content:
+                content = doc_db.content
+            else:
+                content = copy.deepcopy(doc_db.template.content)
+                if 'type' not in content:
+                    content['type'] = 'article'
+                if 'content' not in content:
+                    content['content'] = [{type: 'title'}]
+            node = Node.from_json(schema, {'type': 'doc', 'content': [
+                content
+            ]})
             self.session = {
                 'doc': doc_db,
+                'node': node,
                 'participants': {
                     0: self
                 },
@@ -375,32 +400,18 @@ class WebSocket(BaseWebSocketHandler):
                 f"User:{self.user.id} ParticipantID:{self.id}")
             return
         if pv == dv:
-            if "jd" in message:  # jd = json diff
-                try:
-                    apply_patch(
-                       self.session["doc"].content,
-                       message["jd"],
-                       True
-                    )
-                except (JsonPatchConflict, JsonPointerException):
-                    logger.exception(
-                        f"Action:Cannot apply json diff. "
-                        f"URL:{self.endpoint} User:{self.user.id} "
-                        f"ParticipantID:{self.id}")
-                    logger.error(
-                        f"Action:Patch Exception URL:{self.endpoint} "
-                        f"User:{self.user.id} ParticipantID:{self.id} "
-                        f"Message:{json_encode(message)}")
-                    logger.error(
-                        f"Action:Patch Exception URL:{self.endpoint} "
-                        f"User:{self.user.id} ParticipantID:{self.id} "
-                        f"Document:{json_encode(self.session['doc'].content)}")
-                    self.unfixable()
-                    return
-                # The json diff is only needed by the python backend which does
-                # not understand the steps. It can therefore be removed before
-                # broadcast to other clients.
-                del message["jd"]
+            if "ds" in message:  # ds = document steps
+                for s in message["ds"]:
+                    step = Step.from_json(schema, s)
+                    step_result = step.apply(self.session["node"])
+                    if step_result.ok:
+                        self.session["node"] = step_result.doc
+                    else:
+                        self.unfixable()
+                        return
+                self.session["doc"].content = self.session[
+                    "node"
+                ].first_child.to_json()
             self.session["doc"].diffs.append(message)
             self.session["doc"].diffs = self.session["doc"].diffs[
                 -self.history_length:

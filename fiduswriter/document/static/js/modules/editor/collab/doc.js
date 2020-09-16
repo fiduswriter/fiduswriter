@@ -1,7 +1,4 @@
 import {
-    compare
-} from "fast-json-patch"
-import {
     sendableSteps,
     receiveTransaction
 } from "prosemirror-collab"
@@ -22,9 +19,6 @@ import {
 import {
     deactivateWait,
 } from "../../common"
-import {
-    toMiniJSON
-} from "../../schema/mini_json"
 import {
     Merge
 } from "./merge"
@@ -116,7 +110,6 @@ export class ModCollabDoc {
         this.mod.editor.docInfo.updated = new Date()
         this.mod.editor.mod.db.bibDB.setDB(doc.bibliography)
         this.mod.editor.mod.db.imageDB.setDB(doc.images)
-        this.mod.editor.docInfo.confirmedJson = JSON.parse(JSON.stringify(doc.content))
         let stateDoc
         if (doc.content.type) {
             stateDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [
@@ -224,14 +217,6 @@ export class ModCollabDoc {
                 if (stepsToSend) {
                     unconfirmedDiff['ds'] = stepsToSend.steps.map(
                         s => s.toJSON()
-                    )
-                    // We add a json diff in a format understandable by the
-                    // server.
-                    unconfirmedDiff['jd'] = compare(
-                        this.mod.editor.docInfo.confirmedJson,
-                        toMiniJSON(
-                            this.mod.editor.view.state.doc.firstChild
-                        )
                     )
                     // In case the title changed, we also add a title field to
                     // update the title field instantly - important for the
@@ -398,7 +383,6 @@ export class ModCollabDoc {
         this.mod.editor.docInfo.confirmedDoc = docNumber === tr.docs.length ?
             tr.doc :
             tr.docs[docNumber]
-        this.mod.editor.docInfo.confirmedJson = toMiniJSON(this.mod.editor.docInfo.confirmedDoc.firstChild)
     }
 
     confirmDiff(request_id) {
@@ -420,9 +404,6 @@ export class ModCollabDoc {
             )
             this.mod.editor.view.dispatch(tr)
             this.mod.editor.docInfo.confirmedDoc = unconfirmedDiffs["doc"]
-            this.mod.editor.docInfo.confirmedJson = toMiniJSON(
-                this.mod.editor.docInfo.confirmedDoc.firstChild
-            )
         }
 
         const sentFnSteps = unconfirmedDiffs["fs"] // footnote steps

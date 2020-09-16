@@ -21,7 +21,9 @@ class Command(BaseCommand):
                     password = getenv('ADMIN_PASSWORD')
                 else:
                     password = 'admin'
-                print('Creating account for %s (%s)' % (username, email))
+                self.stdout.write(
+                    'Creating account for %s (%s)' % (username, email)
+                )
                 admin = User.objects.create_superuser(
                     username=username,
                     email=email,
@@ -31,6 +33,6 @@ class Command(BaseCommand):
                 admin.is_admin = True
                 admin.save()
         else:
-            print(
-                'Admin accounts can only be initialized if no Accounts exist'
+            self.stdout.write(
+                'Admin accounts can only be initialized if no accounts exist'
             )

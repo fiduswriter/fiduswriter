@@ -56,7 +56,7 @@ class Command(BaseCommand):
     )
 
     def handle(self, *args, **options):
-        print("Bundling MathLive")
+        self.stdout.write("Bundling MathLive")
         # Copy MathLive CSS
         mathlive_css_path = os.path.join(
             settings.PROJECT_PATH, "static-libs/css/libs/mathlive/")

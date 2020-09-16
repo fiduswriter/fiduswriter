@@ -33,7 +33,7 @@ class Command(BaseCommand):
         conf_file = p / 'babel.config.js'
 
         if not conf_file.exists():
-            print(f'Creating "babel.config.js" at {p}.')
+            self.stdout.write(f'Creating "babel.config.js" at {p}.')
             conf_file.write_text(BABEL_CONF)
 
         command_array = [

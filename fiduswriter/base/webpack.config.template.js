@@ -94,6 +94,7 @@ module.exports = { // eslint-disable-line no-undef
             excludes: [
                 'admin_console.js',
                 'maintenance.js',
+                'schema_export.js',
                 'test_caret.js',
                 'document_template_admin.js',
                 '**/.*',

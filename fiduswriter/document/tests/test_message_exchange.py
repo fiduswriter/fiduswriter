@@ -101,7 +101,8 @@ class SimpleMessageExchangeTests(LiveTornadoTestCase, EditorHelper):
 
         # Now assert that the document reloaded in front end too !
         doc_content = self.driver.execute_script(
-            'return window.theApp.page.docInfo.confirmedJson'
+            'return window.theApp.page.docInfo.'
+            'confirmedDoc.firstChild.toJSON()'
         )
         self.assertEqual(
             doc_data,

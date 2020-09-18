@@ -492,7 +492,7 @@ export class Editor {
             if (foundPos) {
                 return
             } else if ((node.type.groups.includes('heading') || node.type.name === 'figure') && node.attrs.id === id) {
-                foundPos = pos + 1
+                foundPos = node.type.name === 'figure' ? pos : pos + 1
                 view = this.view
             } else {
                 const anchorMark = node.marks.find(mark => mark.type.name === 'anchor')
@@ -508,7 +508,7 @@ export class Editor {
                 if (foundPos) {
                     return
                 } else if ((node.type.groups.includes('heading') || node.type.name === 'figure') && node.attrs.id === id) {
-                    foundPos = pos + 1
+                    foundPos = node.type.name === 'figure' ? pos : pos + 1
                     view = this.mod.footnotes.fnEditor.view
                 } else {
                     const anchorMark = node.marks.find(mark => mark.type.name === 'anchor')

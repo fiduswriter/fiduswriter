@@ -69,7 +69,7 @@ export class DocumentOverview {
             switch (true) {
             case findTarget(event, '.revisions', el):
                 if (this.app.isOffline()) {
-                    addAlert('info', gettext("Cannot access revisions of a document when you're offline."))
+                    addAlert('info', gettext("You cannot access revisions of a document while you are offline."))
                 } else {
                     docId = parseInt(el.target.dataset.id)
                     this.mod.actions.revisionsDialog(docId)
@@ -77,7 +77,7 @@ export class DocumentOverview {
                 break
             case findTarget(event, '.delete-document', el):
                 if (this.app.isOffline()) {
-                    addAlert('info', gettext("Cannot delete a document when you're offline."))
+                    addAlert('info', gettext("You cannot delete a document while you are offline."))
                 } else {
                     docId = parseInt(el.target.dataset.id)
                     this.mod.actions.deleteDocumentDialog([docId])
@@ -85,7 +85,7 @@ export class DocumentOverview {
                 break
             case findTarget(event, '.owned-by-user.rights', el): {
                 if (this.app.isOffline()) {
-                    addAlert('info', gettext("Cannot access access right data of a document when you're offline."))
+                    addAlert('info', gettext("You cannot access rights data of a document while you are offline."))
                 } else {
                     docId = parseInt(el.target.dataset.id)
                     const dialog = new DocumentAccessRightsDialog(
@@ -99,7 +99,7 @@ export class DocumentOverview {
             }
             case findTarget(event, 'a.doc-title', el):
                 if (this.app.isOffline()) {
-                    addAlert('info', gettext("Cannot open a document when you're offline."))
+                    addAlert('info', gettext("You cannot open a document while you are offline."))
                     event.preventDefault()
                 }
                 break
@@ -137,7 +137,7 @@ export class DocumentOverview {
                 if (this.app.isOffline()) {
                     return this.showCached()
                 } else {
-                    addAlert('error', gettext('Cannot load data of documents.'))
+                    addAlert('error', gettext('Document data loading failed.'))
                     throw (error)
                 }
             }

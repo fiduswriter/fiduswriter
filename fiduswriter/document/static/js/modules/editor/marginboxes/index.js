@@ -355,6 +355,15 @@ export class ModMarginboxes {
                         totalOffset += mboxPlacement.height + 2
                         return css
                     }).join('')
+                    if (firstActiveIndex > -1) {
+                        const topMenuHeight = this.editor.dom.querySelector('header').offsetHeight
+                        const refDistanceFromTop = this.editor.view.coordsAtPos(referrers[firstActiveIndex]).top
+
+                        if (refDistanceFromTop - topMenuHeight < 0 || refDistanceFromTop > window.innerHeight - 30) {
+                            const scrollTop = refDistanceFromTop - (topMenuHeight + 90)
+                            window.scrollBy({left: 0, top: scrollTop, behavior: "smooth", block: "center"})
+                        }
+                    }
                 }
 
                 fastdom.mutate(() => {

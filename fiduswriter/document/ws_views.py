@@ -373,11 +373,6 @@ class WebSocket(BaseWebSocketHandler):
                 f"User:{self.user.id} ParticipantID:{self.id}")
             return
         if pv == dv:
-            self.session["doc"].diffs.append(message)
-            self.session["doc"].diffs = self.session["doc"].diffs[
-                -self.history_length:
-            ]
-            self.session["doc"].version += 1
             if "jd" in message:  # jd = json diff
                 try:
                     apply_patch(
@@ -399,10 +394,16 @@ class WebSocket(BaseWebSocketHandler):
                         f"User:{self.user.id} ParticipantID:{self.id} "
                         f"Document:{json_encode(self.session['doc'].content)}")
                     self.unfixable()
+                    return
                 # The json diff is only needed by the python backend which does
                 # not understand the steps. It can therefore be removed before
                 # broadcast to other clients.
                 del message["jd"]
+            self.doc["last_diffs"].append(message)
+            self.doc["last_diffs"] = self.doc[
+                "last_diffs"
+            ][-self.history_length:]
+            self.doc['version'] += 1
             if "ti" in message:  # ti = title
                 self.session["doc"].title = message["ti"][-255:]
             if "cu" in message:  # cu = comment updates

@@ -74,6 +74,12 @@ export class DatatableBulk {
                 this.table.querySelectorAll('input.entry-select[type=checkbox]').forEach(checkbox => checkbox.checked = !isChecked)
                 this.onTableCheckChange()
             }
+        } else if (target.matches('.fw-data-table .entry-select + label')) {
+            // The browser will try to scroll the checkbox into view and that will break the page layout.
+            event.preventDefault()
+            event.stopImmediatePropagation()
+            event.stopPropagation()
+            target.previousElementSibling.checked = !target.previousElementSibling.checked
         }
     }
 

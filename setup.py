@@ -191,7 +191,7 @@ setuptools.setup(
     install_requires=read('fiduswriter/requirements.txt').splitlines(),
     extras_require={
         "books": "fiduswriter-books ~= 3.8.7",
-        "citation-api-import": "fiduswriter-citation-api-import ~= 3.8.0",
+        "citation-api-import": "fiduswriter-citation-api-import ~= 3.8.2",
         "languagetool": "fiduswriter-languagetool ~= 3.8.0",
         "ojs": "fiduswriter-ojs ~= 3.8.1",
         "phplist": "fiduswriter-phplist ~= 3.8.0",

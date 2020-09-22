@@ -50,7 +50,6 @@ export class Merge {
         // happening on server.
         if (this.mod.editor.docInfo.version < data.doc.v && sendableSteps(this.mod.editor.view.state)) {
             this.mod.doc.receiving = true
-
             this.mod.editor.docInfo.confirmedJson = JSON.parse(JSON.stringify(data.doc.content))
             const confirmedState = EditorState.create({doc: this.mod.editor.docInfo.confirmedDoc})
             const unconfirmedTr = confirmedState.tr
@@ -58,7 +57,6 @@ export class Merge {
             if (sendable) {
                 sendable.steps.forEach(step => unconfirmedTr.step(step))
             }
-
             const rollbackTr = this.mod.editor.view.state.tr
             unconfirmedTr.steps.slice().reverse().forEach(
                 (step, index) => rollbackTr.step(step.invert(unconfirmedTr.docs[unconfirmedTr.docs.length - index - 1]))
@@ -98,6 +96,7 @@ export class Merge {
             } else {
                 lostTr = recreateTransform(this.mod.editor.view.state.doc, toDoc)
             }
+
             this.mod.editor.view.dispatch(receiveTransaction(
                 this.mod.editor.view.state,
                 lostTr.steps,

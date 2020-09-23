@@ -57,7 +57,6 @@ export class Merge {
             if (sendable) {
                 sendable.steps.forEach(step => unconfirmedTr.step(step))
             }
-
             const rollbackTr = this.mod.editor.view.state.tr
             unconfirmedTr.steps.slice().reverse().forEach(
                 (step, index) => rollbackTr.step(step.invert(unconfirmedTr.docs[unconfirmedTr.docs.length - index - 1]))
@@ -97,6 +96,7 @@ export class Merge {
             } else {
                 lostTr = recreateTransform(this.mod.editor.view.state.doc, toDoc)
             }
+
             this.mod.editor.view.dispatch(receiveTransaction(
                 this.mod.editor.view.state,
                 lostTr.steps,

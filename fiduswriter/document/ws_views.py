@@ -122,7 +122,7 @@ class WebSocket(BaseWebSocketHandler):
     def unfixable(self):
         self.send_document()
 
-    def send_document(self):
+    def send_document(self, messages=False):
         response = dict()
         response['type'] = 'doc_data'
         doc_owner = self.session["doc"].owner
@@ -148,6 +148,8 @@ class WebSocket(BaseWebSocketHandler):
             },
             'images': {}
         }
+        if messages:
+            response['m'] = messages
         response['time'] = int(time()) * 1000
         for dimage in DocumentImage.objects.filter(
             document_id=self.session["doc"].id
@@ -441,6 +443,7 @@ class WebSocket(BaseWebSocketHandler):
                     f"ParticipantID:{self.id}")
                 # Client has a version that is too old to be fixed
                 self.unfixable()
+                return
         else:
             # Client has a higher version than server. Something is fishy!
             logger.debug(
@@ -469,10 +472,7 @@ class WebSocket(BaseWebSocketHandler):
                 f"User:{self.user.id} ParticipantID:{self.id}"
                 f"number of messages to be resent:{number_diffs}")
             messages = self.session["doc"].diffs[number_diffs:]
-            for message in messages:
-                new_message = message.copy()
-                new_message["server_fix"] = True
-                self.send_message(new_message)
+            self.send_document(messages)
             return
         else:
             logger.debug(

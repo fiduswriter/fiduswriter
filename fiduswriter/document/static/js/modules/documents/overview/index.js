@@ -151,7 +151,7 @@ export class DocumentOverview {
     loaddatafromIndexedDB() {
         const newJson = {}
         return this.app.indexedDB.readAllData("document_list").then(
-            response => newJson['document_list'] = response
+            response => newJson['documents'] = response
         ).then(
             () => this.app.indexedDB.readAllData("document_templates")
         ).then(

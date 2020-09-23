@@ -36,7 +36,7 @@ export class ImageOverview {
             'dot_menu.css'
         ], this.staticUrl)
 
-        whenReady().then(() => {
+        return whenReady().then(() => {
             this.render()
             new ImageOverviewCategories(this)
             const smenu = new SiteMenu("images")

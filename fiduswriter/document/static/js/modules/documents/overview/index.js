@@ -145,53 +145,56 @@ export class DocumentOverview {
     }
 
     showCached() {
-        addAlert('info', gettext('You are viewing a cached version of the page.'))
         return this.loaddatafromIndexedDB().then((json) => this.initializeView(json))
     }
 
     loaddatafromIndexedDB() {
-        const new_json = {}
-        const new_promise = new Promise((resolve, _reject) => {
-            this.app.indexedDB.readAllData("documents").then((response) => {
-                new_json['documents'] = response
-                this.app.indexedDB.readAllData("document_templates").then((response) => {
-                    const dummy_dict = {}
-                    for (const data in response) {
-                        const pk = response[data].pk
-                        delete response[data].pk
-                        dummy_dict[pk] = response[data]
-                    }
-                    new_json['document_templates'] = dummy_dict
-                    this.app.indexedDB.readAllData("document_styles").then((response) => {
-                        new_json['document_styles'] = response
-                        this.app.indexedDB.readAllData("team_members").then((response) => {
-                            new_json['team_members'] = response
-                            resolve(new_json)
-                        })
-                    })
-                })
-            })
-        })
-        return new_promise
+        const newJson = {}
+        return this.app.indexedDB.readAllData("document_list").then(
+            response => newJson['document_list'] = response
+        ).then(
+            () => this.app.indexedDB.readAllData("document_templates")
+        ).then(
+            response => {
+                const dummyDict = {}
+                for (const data in response) {
+                    const pk = response[data].pk
+                    delete response[data].pk
+                    dummyDict[pk] = response[data]
+                }
+                newJson['document_templates'] = dummyDict
+            }
+        ).then(
+            () => this.app.indexedDB.readAllData("document_styles")
+        ).then(
+            response => newJson['document_styles'] = response
+        ).then(
+            () => this.app.indexedDB.readAllData("document_teammembers")
+        ).then(
+            response => {
+                newJson['team_members'] = response
+                return newJson
+            }
+        )
     }
 
     updateIndexedDB(json) {
         // Clear data if any present
-        this.app.indexedDB.clearData("documents")
-        this.app.indexedDB.clearData("team_members")
+        this.app.indexedDB.clearData("document_list")
+        this.app.indexedDB.clearData("document_teammembers")
         this.app.indexedDB.clearData("document_styles")
         this.app.indexedDB.clearData("document_templates")
 
         //Insert new data
-        this.app.indexedDB.insertData("documents", json.documents)
-        this.app.indexedDB.insertData("team_members", json.team_members)
+        this.app.indexedDB.insertData("document_list", json.documents)
+        this.app.indexedDB.insertData("document_teammembers", json.team_members)
         this.app.indexedDB.insertData("document_styles", json.document_styles)
-        const dummy_json = []
+        const dummyJson = []
         for (const key in json.document_templates) {
             json.document_templates[key]['pk'] = key
-            dummy_json.push(json.document_templates[key])
+            dummyJson.push(json.document_templates[key])
         }
-        this.app.indexedDB.insertData("document_templates", dummy_json)
+        this.app.indexedDB.insertData("document_templates", dummyJson)
     }
 
     initializeView(json) {

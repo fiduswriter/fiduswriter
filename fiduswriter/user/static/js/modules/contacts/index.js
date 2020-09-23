@@ -12,7 +12,7 @@ export class ContactsOverview {
     }
 
     init() {
-        whenReady().then(() => {
+        return whenReady().then(() => {
             this.render()
             const smenu = new SiteMenu("") // Nothing highlighted.
             smenu.init()
@@ -61,8 +61,8 @@ export class ContactsOverview {
         return postJson('/api/user/team/list/').then(
             ({json}) => {
                 // Update data in the indexed DB
-                this.app.indexedDB.clearData("contacts_list")
-                this.app.indexedDB.insertData("contacts_list", json.team_members)
+                this.app.indexedDB.clearData("user_contacts")
+                this.app.indexedDB.insertData("user_contacts", json.team_members)
                 this.dom.querySelector('#team-table tbody').innerHTML += teammemberTemplate({members: json.team_members})
             }
         ).catch(
@@ -78,8 +78,7 @@ export class ContactsOverview {
     }
 
     showCached() {
-        addAlert('info', gettext('You are viewing a cached version of the page.'))
-        return this.app.indexedDB.readAllData("contacts_list").then((response) => {
+        return this.app.indexedDB.readAllData("user_contacts").then(response => {
             this.dom.querySelector('#team-table tbody').innerHTML += teammemberTemplate({members: response})
         })
     }

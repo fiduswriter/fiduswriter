@@ -21,7 +21,7 @@ export class BibliographyOverview {
      * @function bind
      */
     init() {
-        whenReady().then(() => {
+        return whenReady().then(() => {
             this.render()
             const smenu = new SiteMenu("bibliography")
             smenu.init()

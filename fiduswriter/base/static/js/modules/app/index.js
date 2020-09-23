@@ -4,7 +4,7 @@ import {DocumentInvite} from "../documents/invite"
 import {ImageOverview} from "../images/overview"
 import {ContactsOverview} from "../contacts"
 import {Profile} from "../profile"
-import {findTarget, WebSocketConnector, showSystemMessage, postJson, ensureCSS} from "../common"
+import {findTarget, WebSocketConnector, showSystemMessage, postJson, ensureCSS, addAlert} from "../common"
 import {LoginPage} from "../login"
 import {EmailConfirm} from "../email_confirm"
 import {PasswordResetRequest, PasswordResetChangePassword} from "../password_reset"
@@ -16,7 +16,7 @@ import {OfflinePage} from "../offline"
 import {SetupPage} from "../setup"
 import {FlatPage} from "../flatpage"
 import * as plugins from "../../plugins/app"
-import {indexedDB} from '../indexed-db'
+import {IndexedDB} from '../indexed_db'
 
 export class App {
     constructor() {
@@ -64,6 +64,20 @@ export class App {
                 open: pathnameParts => {
                     const id = pathnameParts[2]
                     return import(/* webpackPrefetch: true *//* webpackChunkName: "editor" */'../editor').then(({Editor}) => new Editor(this.config, id))
+                },
+                dbTables: {
+                    "list": {
+                        keyPath: "id"
+                    },
+                    "templates": {
+                        keyPath: "pk"
+                    },
+                    "styles": {
+                        keyPath: "title"
+                    },
+                    "teammembers": {
+                        keyPath: "id"
+                    }
                 }
             },
             "invite": {
@@ -93,6 +107,11 @@ export class App {
                         returnValue = false
                     }
                     return returnValue
+                },
+                dbTables: {
+                    "contacts": {
+                        keyPath: "id"
+                    }
                 }
             },
             "usermedia": {
@@ -109,6 +128,10 @@ export class App {
 
     isOffline() {
         return !navigator.onLine || (this.ws?.connectionCount > 0 && !this.ws?.connected)
+    }
+
+    alertCached() {
+        addAlert('info', gettext('You are viewing a cached version of this page.'))
     }
 
     installServiceWorker() {
@@ -180,7 +203,8 @@ export class App {
         this.imageDB = new ImageDB()
         this.csl = new CSL()
         this.connectWs()
-        this.indexedDB = new indexedDB(this)
+        this.indexedDB = new IndexedDB(this)
+        this.indexedDB.init()
         return Promise.all([
             this.bibDB.getDB(),
             this.imageDB.getDB(),
@@ -286,11 +310,23 @@ export class App {
             if (page.then) {
                 return page.then(thisPage => {
                     this.page = thisPage
-                    return this.page.init()
+                    return this.page.init().then(
+                        () => {
+                            if (this.isOffline()) {
+                                this.alertCached()
+                            }
+                        }
+                    )
                 })
             } else if (page) {
                 this.page = page
-                return this.page.init()
+                return this.page.init().then(
+                    () => {
+                        if (this.isOffline()) {
+                            this.alertCached()
+                        }
+                    }
+                )
             }
         }
         this.page = this.open404Page()

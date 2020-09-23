@@ -1,7 +1,6 @@
-export class indexedDB {
+export class IndexedDB {
     constructor(app) {
         this.app = app
-        this.init()
     }
 
     init() {
@@ -27,32 +26,26 @@ export class indexedDB {
 
     createDBSchema() {
         this.app.db_config.version += 1
-        const new_request = window.indexedDB.open(this.app.db_config.db_name, this.app.db_config.version)
-        new_request.onupgradeneeded = function(event) {
+        const newRequest = window.indexedDB.open(this.app.db_config.db_name, this.app.db_config.version)
+        newRequest.onupgradeneeded = event => {
             const db = event.target.result
-            db.createObjectStore("documents", {
-                keyPath: "id"
-            })
-            db.createObjectStore("document_templates", {
-                keyPath: "pk"
-            })
-            db.createObjectStore("team_members", {
-                keyPath: "id"
-            })
-            db.createObjectStore("document_styles", {
-                keyPath: "title"
-            })
-            db.createObjectStore("contacts_list", {
-                keyPath: "id"
-            })
+            Object.entries(this.app.routes).forEach(
+                ([route, props]) => {
+                    if (props.dbTables) {
+                        Object.entries(props.dbTables).forEach(
+                            ([tableName, tableProperties]) => db.createObjectStore(`${route}_${tableName}`, tableProperties)
+                        )
+                    }
+                }
+            )
             db.close()
         }
     }
 
     createObjectStore(name, options) {
         this.app.db_config.version += 1
-        const new_request = window.indexedDB.open(this.app.db_config.db_name, this.app.db_config.version)
-        new_request.onupgradeneeded = function(event) {
+        const newRequest = window.indexedDB.open(this.app.db_config.db_name, this.app.db_config.version)
+        newRequest.onupgradeneeded = function(event) {
             const db = event.target.result
             db.createObjectStore(name, options)
         }
@@ -73,7 +66,7 @@ export class indexedDB {
         }
     }
 
-    insertData(objectStoreName, data) {
+    insertData(objectStoreName, data, retry = true) {
         const request = window.indexedDB.open(this.app.db_config.db_name)
         request.onerror = function(_event) {
             //
@@ -82,22 +75,51 @@ export class indexedDB {
             const db = event.target.result
             const objectStore = db.transaction(objectStoreName, 'readwrite').objectStore(objectStoreName)
             if (data !== undefined) {
-                data.forEach(function(document) {
-                    objectStore.put(document)
+                data.forEach(document => {
+                    try {
+                        objectStore.put(document)
+                    } catch (error) {
+                        if (retry) {
+                            this.reset().then(
+                                this.insertData(objectStoreName, data, false)
+                            )
+                        } else {
+                            throw error
+                        }
+                    }
+
                 })
             }
         }
     }
 
+    reset() {
+        return new Promise(resolve => {
+            const delRequest = window.indexedDB.deleteDatabase(this.app.db_config.db_name)
+            delRequest.onsuccess = () => {
+                this.createDBSchema()
+                resolve()
+            }
+        })
+
+    }
+
     clearData(objectStoreName) {
         const request = window.indexedDB.open(this.app.db_config.db_name)
-        request.onerror = function(_event) {
-            //
-        }
-        request.onsuccess = (event) => {
+        request.onerror = () => {}
+        request.onsuccess = event => {
             const db = event.target.result
-            const objectStore = db.transaction(objectStoreName, 'readwrite').objectStore(objectStoreName)
-            objectStore.clear()
+            try {
+                const objectStore = db.transaction(objectStoreName, 'readwrite').objectStore(objectStoreName)
+                objectStore.clear()
+            } catch (error) {
+                if (error.name === 'NotFoundError') {
+                    this.reset()
+                } else {
+                    throw error
+                }
+            }
+
         }
     }
 

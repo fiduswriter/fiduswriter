@@ -1,3 +1,5 @@
+import json
+
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
@@ -88,7 +90,7 @@ def save(request):
         return JsonResponse({}, status=405)
     response = {}
     status = 200
-    doc_template.content = request.POST['value']
+    doc_template.content = json.loads(request.POST['value'])
     doc_template.title = request.POST['title']
     doc_template.import_id = request.POST['import_id']
     doc_template.save()

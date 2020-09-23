@@ -192,7 +192,7 @@ export class DocumentStyleDialog {
 
         const title = this.dialog.dialogEl.querySelector('.title').value
         const slug = this.dialog.dialogEl.querySelector('.slug').value
-        const contents = JSON.parse(this.dialog.dialogEl.querySelector('.contents').value)
+        const contents = this.dialog.dialogEl.querySelector('.contents').value
 
         if (!title.length || !slug.length || !contents.length) {
             errors.push(gettext('All fields need to be filled out.'))

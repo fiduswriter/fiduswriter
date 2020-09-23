@@ -96,7 +96,7 @@ export class DocTemplatesEditor {
         } else {
             post('/api/user_template_manager/save/', {
                 id: this.id,
-                value: JSON.stringify(value),
+                value,
                 import_id,
                 title
             }).then(

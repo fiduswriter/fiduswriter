@@ -12,7 +12,7 @@ export const bulkMenuModel = () => ({
                     overview.deleteBibEntryDialog(ids)
                 }
             },
-            disabled: overview => !overview.getSelected().length
+            disabled: overview => !overview.getSelected().length || overview.app.isOffline()
         }, {
             title: gettext('Export selected'),
             tooltip: gettext('Export selected bibliography entries.'),
@@ -23,7 +23,7 @@ export const bulkMenuModel = () => ({
                     exporter.init()
                 }
             },
-            disabled: overview => !overview.getSelected().length
+            disabled: overview => !overview.getSelected().length || overview.app.isOffline()
         }
     ]
 })
@@ -55,7 +55,7 @@ export const menuModel = () => ({
             title: gettext('Register new source'),
             action: overview => {
                 import("../form").then(({BibEntryForm}) => {
-                    const form = new BibEntryForm(overview.app.bibDB)
+                    const form = new BibEntryForm(overview.app.bibDB, overview.app)
                     form.init().then(
                         idTranslations => {
                             const ids = idTranslations.map(idTrans => idTrans[1])
@@ -72,7 +72,8 @@ export const menuModel = () => ({
             action: overview => {
                 const fileImporter = new BibLatexFileImportDialog(
                     overview.app.bibDB,
-                    ids => overview.updateTable(ids)
+                    ids => overview.updateTable(ids),
+                    overview.app
                 )
                 fileImporter.init()
             },

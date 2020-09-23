@@ -68,6 +68,10 @@
     color: var(--cs-white-text);
 }
 
+.fw-dropdown-menu label {
+    cursor: pointer;
+}
+
 div.select-action {
     cursor: pointer;
     min-width: 38px;

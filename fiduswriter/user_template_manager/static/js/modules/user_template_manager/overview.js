@@ -1,7 +1,7 @@
 import {DataTable} from "simple-datatables"
 
 import {DocTemplatesActions} from "./actions"
-import {OverviewMenuView, escapeText, findTarget, whenReady, postJson, activateWait, deactivateWait, addAlert, baseBodyTemplate, ensureCSS, setDocTitle, DatatableBulk} from "../common"
+import {OverviewMenuView, escapeText, findTarget, whenReady, postJson, addAlert, baseBodyTemplate, ensureCSS, setDocTitle, DatatableBulk} from "../common"
 import {SiteMenu} from "../menu"
 import {menuModel, bulkMenuModel} from "./menu"
 import {FeedbackTab} from "../feedback"
@@ -28,7 +28,7 @@ export class DocTemplatesOverview {
             this.menu = new OverviewMenuView(this, menuModel)
             this.menu.init()
             this.bind()
-            return this.gettemplateListData()
+            return this.getTemplateListData()
         })
     }
 
@@ -155,25 +155,48 @@ export class DocTemplatesOverview {
         this.table.columns().sort(this.lastSort.column, this.lastSort.dir)
     }
 
-    gettemplateListData() {
-        activateWait()
+    getTemplateListData() {
+        if (this.app.isOffline()) {
+            return this.showCached()
+        }
         return postJson(
             '/api/user_template_manager/list/'
-        ).catch(
-            error => {
-                addAlert('error', gettext('Cannot load data of document templates.'))
-                throw (error)
-            }
         ).then(
             ({json}) => {
-                this.templateList = json.document_templates
-
-                this.initTable()
+                this.updateIndexedDB(json)
+                this.initializeView(json)
             }
-        ).then(
-            () => deactivateWait()
+        ).catch(
+            error => {
+                if (this.app.isOffline()) {
+                    return this.showCached()
+                } else {
+                    addAlert('error', gettext('Document templates loading failed.'))
+                    throw (error)
+                }
+            }
         )
     }
+
+    initializeView(json) {
+        this.templateList = json.document_templates
+        this.initTable()
+    }
+
+    showCached() {
+        return this.loaddatafromIndexedDB().then(json => this.initializeView(json))
+    }
+
+    loaddatafromIndexedDB() {
+        return this.app.indexedDB.readAllData("templates_list").then(response => ({document_templates: response}))
+    }
+
+    updateIndexedDB(json) {
+        // Clear data if any present
+        this.app.indexedDB.clearData("templates_list")
+        this.app.indexedDB.insertData("templates_list", json.document_templates)
+    }
+
 
     bind() {
         this.dom.addEventListener('click', event => {

@@ -38,7 +38,9 @@ export class DocumentOverview {
             this.dtBulkModel = bulkMenuModel()
             this.activateFidusPlugins()
             this.bind()
-            this.getDocumentListData()
+            return this.getDocumentListData().then(
+                () => deactivateWait()
+            )
         })
     }
 
@@ -66,23 +68,41 @@ export class DocumentOverview {
             let docId
             switch (true) {
             case findTarget(event, '.revisions', el):
-                docId = parseInt(el.target.dataset.id)
-                this.mod.actions.revisionsDialog(docId)
+                if (this.app.isOffline()) {
+                    addAlert('info', gettext("You cannot access revisions of a document while you are offline."))
+                } else {
+                    docId = parseInt(el.target.dataset.id)
+                    this.mod.actions.revisionsDialog(docId)
+                }
                 break
             case findTarget(event, '.delete-document', el):
-                docId = parseInt(el.target.dataset.id)
-                this.mod.actions.deleteDocumentDialog([docId])
+                if (this.app.isOffline()) {
+                    addAlert('info', gettext("You cannot delete a document while you are offline."))
+                } else {
+                    docId = parseInt(el.target.dataset.id)
+                    this.mod.actions.deleteDocumentDialog([docId])
+                }
                 break
             case findTarget(event, '.owned-by-user.rights', el): {
-                docId = parseInt(el.target.dataset.id)
-                const dialog = new DocumentAccessRightsDialog(
-                    [docId],
-                    this.teamMembers,
-                    memberDetails => this.teamMembers.push(memberDetails)
-                )
-                dialog.init()
+                if (this.app.isOffline()) {
+                    addAlert('info', gettext("You cannot access rights data of a document while you are offline."))
+                } else {
+                    docId = parseInt(el.target.dataset.id)
+                    const dialog = new DocumentAccessRightsDialog(
+                        [docId],
+                        this.teamMembers,
+                        memberDetails => this.teamMembers.push(memberDetails)
+                    )
+                    dialog.init()
+                }
                 break
             }
+            case findTarget(event, 'a.doc-title', el):
+                if (this.app.isOffline()) {
+                    addAlert('info', gettext("You cannot open a document while you are offline."))
+                    event.preventDefault()
+                }
+                break
             default:
                 break
             }
@@ -102,36 +122,98 @@ export class DocumentOverview {
     }
 
     getDocumentListData() {
+        if (this.app.isOffline()) {
+            return this.showCached()
+        }
         return postJson(
             '/api/document/documentlist/'
-        ).catch(
-            error => {
-                addAlert('error', gettext('Cannot load data of documents.'))
-                throw (error)
-            }
         ).then(
             ({json}) => {
-                const ids = new Set()
-                this.documentList = json.documents.filter(doc => {
-                    if (ids.has(doc.id)) {
-                        return false
-                    }
-                    ids.add(doc.id)
-                    return true
-                })
-
-                this.teamMembers = json.team_members
-                this.documentStyles = json.document_styles
-                this.documentTemplates = json.document_templates
-                this.initTable()
-                if (Object.keys(this.documentTemplates).length > 1) {
-                    this.multipleNewDocumentMenuItem()
+                this.updateIndexedDB(json)
+                this.initializeView(json)
+            }
+        ).catch(
+            error => {
+                if (this.app.isOffline()) {
+                    return this.showCached()
+                } else {
+                    addAlert('error', gettext('Document data loading failed.'))
+                    throw (error)
                 }
             }
-        ).then(
-            () => deactivateWait()
         )
+    }
 
+    showCached() {
+        return this.loaddatafromIndexedDB().then((json) => this.initializeView(json))
+    }
+
+    loaddatafromIndexedDB() {
+        const newJson = {}
+        return this.app.indexedDB.readAllData("document_list").then(
+            response => newJson['documents'] = response
+        ).then(
+            () => this.app.indexedDB.readAllData("document_templates")
+        ).then(
+            response => {
+                const dummyDict = {}
+                for (const data in response) {
+                    const pk = response[data].pk
+                    delete response[data].pk
+                    dummyDict[pk] = response[data]
+                }
+                newJson['document_templates'] = dummyDict
+            }
+        ).then(
+            () => this.app.indexedDB.readAllData("document_styles")
+        ).then(
+            response => newJson['document_styles'] = response
+        ).then(
+            () => this.app.indexedDB.readAllData("document_teammembers")
+        ).then(
+            response => {
+                newJson['team_members'] = response
+                return newJson
+            }
+        )
+    }
+
+    updateIndexedDB(json) {
+        // Clear data if any present
+        this.app.indexedDB.clearData("document_list")
+        this.app.indexedDB.clearData("document_teammembers")
+        this.app.indexedDB.clearData("document_styles")
+        this.app.indexedDB.clearData("document_templates")
+
+        //Insert new data
+        this.app.indexedDB.insertData("document_list", json.documents)
+        this.app.indexedDB.insertData("document_teammembers", json.team_members)
+        this.app.indexedDB.insertData("document_styles", json.document_styles)
+        const dummyJson = []
+        for (const key in json.document_templates) {
+            json.document_templates[key]['pk'] = key
+            dummyJson.push(json.document_templates[key])
+        }
+        this.app.indexedDB.insertData("document_templates", dummyJson)
+    }
+
+    initializeView(json) {
+        const ids = new Set()
+        this.documentList = json.documents.filter(doc => {
+            if (ids.has(doc.id)) {
+                return false
+            }
+            ids.add(doc.id)
+            return true
+        })
+
+        this.teamMembers = json.team_members
+        this.documentStyles = json.document_styles
+        this.documentTemplates = json.document_templates
+        this.initTable()
+        if (Object.keys(this.documentTemplates).length > 1) {
+            this.multipleNewDocumentMenuItem()
+        }
     }
 
     onResize() {
@@ -263,7 +345,6 @@ export class DocumentOverview {
     }
 
     multipleNewDocumentMenuItem() {
-
         const menuItem = this.menu.model.content.find(menuItem => menuItem.id === 'new_document')
         menuItem.type = 'dropdown'
         menuItem.content = Object.values(this.documentTemplates).map(docTemplate => ({
@@ -281,7 +362,7 @@ export class DocumentOverview {
                     overview.mod.actions.copyFilesAs(ids)
                 }
             },
-            disabled: overview => !overview.getSelected().length,
+            disabled: overview => !overview.getSelected().length || overview.app.isOffline(),
             order: 2.5
         })
 

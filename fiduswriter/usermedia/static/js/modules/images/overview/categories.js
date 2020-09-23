@@ -21,6 +21,7 @@ export class ImageOverviewCategories {
         ).catch(
             error => {
                 addAlert('error', gettext('Could not update categories'))
+                deactivateWait()
                 throw (error)
             }
         ).then(

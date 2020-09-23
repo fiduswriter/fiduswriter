@@ -77,7 +77,8 @@ module.exports = { // eslint-disable-line no-undef
             ],
             ServiceWorker: {
                 publicPath: '/sw.js',
-                events: true
+                events: true,
+                entry: "./js/sw-template.js"
             },
             autoUpdate: true,
             appShell: "/",
@@ -93,6 +94,7 @@ module.exports = { // eslint-disable-line no-undef
             excludes: [
                 'admin_console.js',
                 'maintenance.js',
+                'schema_export.js',
                 'test_caret.js',
                 'document_template_admin.js',
                 '**/.*',

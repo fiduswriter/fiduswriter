@@ -138,11 +138,13 @@ export const settingsPlugin = function(options) {
         },
         view(view) {
             if (!updateSettings(view.state.doc.firstChild.attrs, {})) {
-                const tr = view.state.tr
-                tr.setNodeMarkup(0, false, fixSettings(view.state.doc.firstChild.attrs))
-                tr.setMeta('settings', true)
                 setTimeout(
-                    () => view.dispatch(tr),
+                    () => {
+                        const tr = view.state.tr
+                        tr.setNodeMarkup(0, false, fixSettings(view.state.doc.firstChild.attrs))
+                        tr.setMeta('settings', true)
+                        view.dispatch(tr)
+                    },
                     0
                 )
 

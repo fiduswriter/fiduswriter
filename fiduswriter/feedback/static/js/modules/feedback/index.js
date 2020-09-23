@@ -93,6 +93,11 @@ export class FeedbackTab {
                 closeFeedbackEl.style.display = 'block'
                 responseEl.style.display = 'block'
             }
+        ).catch(
+            (_error) => {
+                messageEl.value = ''
+                closeFeedbackEl.style.display = 'block'
+            }
         )
         return false
     }

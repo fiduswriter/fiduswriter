@@ -1,0 +1,168 @@
+/* Styles for showing diff changes */
+span[data-diff='offline-inserted'],
+span[data-diff='online-inserted'] {
+    background-color: lightgreen;
+}
+
+.selected-dec {
+    background: yellow !important;
+}
+
+.offline-inserted,
+.online-inserted {
+    background: #e1f5e1;
+}
+
+span.offline-deleted,
+span.online-deleted {
+    text-decoration: line-through;
+    text-decoration-color: red;
+    background: #efc8c8;
+}
+
+.offline-deleted,
+.online-deleted {
+    background: #efc8c8;
+}
+
+hr.online-inserted,
+hr.offline-inserted {
+    border: 3px solid lightgreen;
+}
+
+hr.online-deleted,
+hr.offline-deleted {
+    border: 3px solid lightcoral;
+}
+
+hr.selected-dec {
+    background: yellow !important;
+    border: 3px solid yellow;
+}
+
+/* Styles for the dialog box */
+.offline-heading,
+.merged-heading,
+.online-heading {
+    width: 33%;
+    padding: 15px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.merged-view {
+    border: 2px solid black;
+}
+
+#editor-diff-offline,
+#editor-diff-common,
+#editor-diff-online {
+    width: 33%;
+    counter-reset: prosemirror-footnote;
+}
+
+/* Footnote Node View Related CSS */
+span.footnote-change {
+    background: rgb(140, 191, 250);
+}
+
+footnote { /* stylelint-disable-line */
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+}
+
+footnote::after { /* stylelint-disable-line */
+    content: counter(prosemirror-footnote);
+    vertical-align: super;
+    font-size: 75%;
+    counter-increment: prosemirror-footnote;
+}
+
+.ProseMirror-hideselection .footnote-tooltip *::selection {
+    background-color: transparent;
+}
+
+.ProseMirror-hideselection .footnote-tooltip *::-moz-selection {
+    background-color: transparent;
+}
+
+.footnote-tooltip {
+    cursor: auto;
+    position: absolute;
+    left: -30px;
+    top: calc(100% + 10px);
+    background: rgb(140, 191, 250);
+    padding: 3px;
+    border-radius: 2px;
+    width: auto;
+    min-width: 250px;
+    z-index: 100;
+}
+
+.footnote-tooltip.render-arrow::before {
+    border: 5px solid silver;
+    border-top-width: 0;
+    border-left-color: transparent;
+    border-right-color: transparent;
+    position: absolute;
+    top: -5px;
+    left: 27px;
+    content: ' ';
+    height: 0;
+    width: 0;
+}
+
+footnote div.footnote-tooltip p { /* stylelint-disable-line */
+    margin-bottom: 0 !important;
+}
+
+.footnote-tooltip .footnote-container {
+    margin-top: 0 !important;
+}
+
+/* Citation Related CSS */
+#editor-diff-offline .citation,
+#editor-diff .citation,
+#editor-diff-online .citation {
+    background-color: lightgray;
+}
+
+#editor-diff-offline .offline-inserted .citation,
+#editor-diff-online .online-inserted .citation {
+    padding-left: 5px;
+    background-color: lightgreen;
+}
+
+#editor-diff .citation::before,
+#editor-diff-offline .citation::before,
+#editor-diff-online .citation::before {
+    content: '\f02d';
+    font-family: FontAwesome; /* stylelint-disable-line */
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: inherit;
+    color: #000000;
+    font-size: 18px;
+    padding-left: 5px;
+}
+
+#editor-diff .online-deleted .citation,
+#editor-diff .offline-deleted .citation {
+    padding-left: 5px;
+    background-color: lightcoral;
+}
+
+/* Help Related CSS */
+
+.merge-img {
+    padding: 5px;
+    float: none;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    align-content: center;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border: 1px solid black;
+}

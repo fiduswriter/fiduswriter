@@ -2,9 +2,9 @@ import {imageEditTemplate} from "./templates"
 import {setCheckableLabel, addAlert, Dialog, ContentMenu} from "../../common"
 import {imageEditModel} from './model'
 export class ImageEditDialog {
-    constructor(imageDB, imageId = false, editor) {
+    constructor(imageDB, imageId = false, page) {
         this.imageDB = imageDB
-        this.editor = editor
+        this.page = page
         this.imageId = imageId
         this.dialog = false
         this.copyright = this.imageId ?
@@ -20,9 +20,11 @@ export class ImageEditDialog {
 
     //open a dialog for uploading an image
     init() {
-
+        if (this.page.app.isOffline()) {
+            this.showOffline()
+            return Promise.resolve()
+        }
         const returnPromise = new Promise(resolve => {
-
             this.dialog = new Dialog({
                 title: this.imageId ? gettext('Update Image Information') : gettext('Upload Image'),
                 id: 'editimage',
@@ -152,11 +154,19 @@ export class ImageEditDialog {
                     resolve(imageId)
                 },
                 errors => {
+                    if (this.page.app.isOffline()) {
+                        this.showOffline()
+                        return
+                    }
                     this.displayCreateImageError(errors)
                     addAlert('error', gettext('Some errors were found. Please examine the form.'))
                 }
             )
         })
+    }
+
+    showOffline() {
+        addAlert('info', gettext('You are currently offline. Please try again after going online.'))
     }
 
 }

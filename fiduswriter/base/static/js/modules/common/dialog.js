@@ -2,18 +2,24 @@ import {keyName} from "w3c-keyname"
 
 import {findTarget} from "./basic"
 
-const dialogTemplate = ({id, classes, title, height, width, icon, buttons, zIndex, body, scroll}) =>
+const dialogTemplate = ({id, classes, title, height, width, icon, buttons, zIndex, body, scroll, help, canClose}) =>
     `<div tabindex="-1" role="dialog"
         class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front ui-dialog-buttons"
         ${id ? `aria-describedby="${id}"` : ''} style="z-index: ${zIndex};">
     <div class="ui-dialog-titlebar ui-corner-all ui-widget-header ui-helper-clearfix">
         ${icon ? `<i class="fa fa-${icon}" aria-hidden="true"></i>` : ''}
         <span id="ui-id-2" class="ui-dialog-title">${title}</span>
-        <button type="button" class="ui-button ui-corner-all ui-widget ui-button-icon-only ui-dialog-titlebar-close" title="${gettext('Close')}">
+        ${help ? `<button type="button" class="ui-button ui-corner-all ui-widget ui-button-icon-only ui-dialog-titlebar-help" title="${gettext('Help')}">
+            <span class="ui-button-icon ui-icon ui-icon-help"> </span>
+            <span class="ui-button-icon-space"> </span>
+            ${gettext('Help')}
+        </button>` : ''}
+        ${canClose ? `<button type="button" class="ui-button ui-corner-all ui-widget ui-button-icon-only ui-dialog-titlebar-close" title="${gettext('Close')}">
             <span class="ui-button-icon ui-icon ui-icon-closethick"> </span>
             <span class="ui-button-icon-space"> </span>
             ${gettext('Close')}
-        </button>
+        </button>` : ''}
+
     </div>
     <div ${id ? `id="${id}"` : ''} class="ui-dialog-content ui-widget-content${classes ? ` ${classes}` : ''}${scroll ? ` ui-scrollable` : ''}" style="width: ${width}; height: ${height};">
         ${body}
@@ -57,6 +63,8 @@ export class Dialog {
         this.body = options.body || ''
         this.height = options.height ? `${options.height}px` : 'auto'
         this.width = options.width ? `${options.width}px` : 'auto'
+        this.canClose = 'canClose' in options ? options.canClose : true
+        this.help = 'help' in options ? options.help : false
         this.buttons = []
         if (options.buttons) {
             this.setButtons(options.buttons)
@@ -71,6 +79,7 @@ export class Dialog {
         this.dragging = false
         this.hasBeenMoved = false
         this.listeners = {}
+        this.fullScreen = options.fullScreen ? options.fullScreen : false
     }
 
     setButtons(buttons) {
@@ -86,6 +95,9 @@ export class Dialog {
         if (this.dialogEl) {
             return
         }
+        if (this.fullScreen) {
+            this.height = "85vh"
+        }
         document.body.insertAdjacentHTML(
             'beforeend',
             dialogTemplate({
@@ -98,12 +110,21 @@ export class Dialog {
                 buttons: this.buttons,
                 zIndex: this.getHighestDialogZIndex() + 2,
                 body: this.body,
-                scroll: this.scroll
+                scroll: this.scroll,
+                canClose: this.canClose,
+                help: this.help
             })
         )
         this.backdropEl = document.body.lastElementChild
         this.dialogEl = this.backdropEl.previousElementSibling
-        this.centerDialog()
+        if (this.fullScreen) {
+            this.dialogEl.style.width = '98%'
+            this.dialogEl.style.height = '100%'
+            this.dialogEl.style.position = 'fixed'
+            this.dialogEl.style.top = "0px"
+        } else {
+            this.centerDialog()
+        }
         this.bind()
     }
 
@@ -180,8 +201,6 @@ export class Dialog {
     }
 
     bind() {
-        this.listeners.onScroll = event => this.onScroll(event)
-        window.addEventListener('scroll', this.listeners.onScroll, false)
         this.listeners.onKeydown = event => this.onKeydown(event)
         document.body.addEventListener('keydown', this.listeners.onKeydown)
         this.dialogEl.addEventListener('click', event => {
@@ -202,39 +221,47 @@ export class Dialog {
                 event.preventDefault()
                 this.close()
                 break
+            case findTarget(event, '.ui-dialog-titlebar-help', el):
+                event.preventDefault()
+                this.help()
+                break
             default:
                 break
             }
         })
-        this.dialogEl.addEventListener('mousedown', event => {
-            const el = {}
-            switch (true) {
-            case findTarget(event, '.ui-dialog-titlebar', el):
-                this.dragging = {
-                    x: event.clientX - this.dialogEl.offsetLeft,
-                    y: event.clientY - this.dialogEl.offsetTop
+        if (!this.fullScreen) {
+            this.listeners.onScroll = event => this.onScroll(event)
+            window.addEventListener('scroll', this.listeners.onScroll, false)
+            this.dialogEl.addEventListener('mousedown', event => {
+                const el = {}
+                switch (true) {
+                case findTarget(event, '.ui-dialog-titlebar', el):
+                    this.dragging = {
+                        x: event.clientX - this.dialogEl.offsetLeft,
+                        y: event.clientY - this.dialogEl.offsetTop
+                    }
+                    break
+                default:
+                    break
                 }
-                break
-            default:
-                break
-            }
-        })
-        this.dialogEl.addEventListener('mouseup', event => {
-            const el = {}
-            switch (true) {
-            case findTarget(event, '.ui-dialog-titlebar', el):
-                this.dragging = false
-                break
-            default:
-                break
-            }
-        })
-        this.dialogEl.addEventListener('mousemove', event => {
-            if (!this.dragging) {
-                return
-            }
-            this.moveDialog(event.clientX, event.clientY)
-        })
+            })
+            this.dialogEl.addEventListener('mouseup', event => {
+                const el = {}
+                switch (true) {
+                case findTarget(event, '.ui-dialog-titlebar', el):
+                    this.dragging = false
+                    break
+                default:
+                    break
+                }
+            })
+            this.dialogEl.addEventListener('mousemove', event => {
+                if (!this.dragging) {
+                    return
+                }
+                this.moveDialog(event.clientX, event.clientY)
+            })
+        }
 
     }
 
@@ -248,7 +275,9 @@ export class Dialog {
         if (!this.dialogEl) {
             return
         }
-        window.removeEventListener("scroll",  this.listeners.onScroll, false)
+        if (!this.fullScreen) {
+            window.removeEventListener("scroll",  this.listeners.onScroll, false)
+        }
         document.body.removeEventListener("keydown", this.listeners.onKeydown)
         if (this.beforeClose) {
             this.beforeClose()

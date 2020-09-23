@@ -41,7 +41,7 @@ export function adjustDocToTemplate(miniDoc, miniTemplate, documentStyles, schem
         removedFootnoteMarks = doc.attrs.footnote_marks.filter(
             mark => !template.attrs.footnote_marks.includes(mark)
         ),
-        attrs = ['footnote_marks', 'footnote_elements', 'languages', 'citationstyles', 'papersizes', 'bibliography_header', 'template']
+        attrs = ['footnote_marks', 'footnote_elements', 'languages', 'citationstyles', 'papersizes', 'bibliography_header', 'template', 'import_id']
     attrs.forEach(attr => doc.attrs[attr] = template.attrs[attr])
 
     if (!doc.attrs.citationstyles.includes(doc.attrs.citationstyle)) {

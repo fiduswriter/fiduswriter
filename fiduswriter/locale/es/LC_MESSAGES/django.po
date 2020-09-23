@@ -203,49 +203,26 @@ msgstr "\n"
 "        Saludos de %(site_name)s!\n"
 "    "
 
-#. Se entiende?
 #: user/templates/account/email/email_confirmation_message.html:14
-msgid "\n"
-"        You're receiving this e-mail because user %(user_display)s has given yours as an e-mail address to connect their account.\n"
-"    "
-msgstr "\n"
-"       Ha recibido este correo electrónico porque el usuario %(user_display)s dio esta dirección de correo electrónico para conectarse a su cuenta.\n"
-"   "
+msgid "You are receiving this e-mail because user %(user_display)s has given yours as an e-mail address to connect their account."
+msgstr "Ha recibido este correo electrónico porque el usuario %(user_display)s dio esta dirección de correo electrónico para conectarse a su cuenta."
 
 #: user/templates/account/email/email_confirmation_message.html:20
-msgid "\n"
-"        To confirm this is correct, go to <a href=\"%(url)s\">%(url)s</a>.\n"
-"    "
-msgstr "\n"
-"       Para confirmar que esto es correcto, diríjase a <a href=\"%(url)s\">%(url)s</a>.\n"
-"    "
+msgid "To confirm this is correct, go to <a href=\"%(url)s\">%(url)s</a>."
+msgstr "Para confirmar que esto es correcto, diríjase a <a href=\"%(url)s\">%(url)s</a>."
 
 #: user/templates/account/email/email_confirmation_message.html:26
 #: user/templates/account/email/password_reset_key_message.html:32
-msgid "\n"
-"        Thank you from %(site_name)s!\n"
-"    "
-msgstr "\n"
-"        Muchas Gracias de parte de %(site_name)s!\n"
-"    "
+msgid "Thank you from %(site_name)s!"
+msgstr "Muchas gracias de parte de %(site_name)s!"
 
-#. Bien?
 #: user/templates/account/email/password_reset_key_message.html:13
-msgid "\n"
-"        You're receiving this e-mail because you or someone else has requested a password for your user account.\n"
-"    "
-msgstr "\n"
-"        Está recibiendo este correo electrónico porque usted u otra persona ha solicitado una contraseña para su cuenta de usuario.\n"
-"    "
+msgid "You are receiving this e-mail because you or someone else has requested a password for your user account."
+msgstr "Está recibiendo este correo electrónico porque usted u otra persona ha solicitado una contraseña para su cuenta de usuario."
 
-#. En español generalmente no se usa safely en este tipo de mensajes de restablecimiento de contraseña.
 #: user/templates/account/email/password_reset_key_message.html:18
-msgid "\n"
-"        It can be safely ignored if you did not request a password reset. Click the link below to reset your password.\n"
-"    "
-msgstr "\n"
-"        Ignore este mensaje si no ha solicitado el restablecimiento de su contraseña. Haga clic en el enlace de abajo para restablecer su contraseña.\n"
-"    "
+msgid "It can be safely ignored if you did not request a password reset. Click the link below to reset your password."
+msgstr "Ignore este mensaje si no ha solicitado el restablecimiento de su contraseña. Haga clic en el enlace de abajo para restablecer su contraseña."
 
 #: user/templates/account/email/password_reset_key_message.html:27
 msgid "In case you forgot, your username is %(username)s."
@@ -274,4 +251,3 @@ msgstr "Error 404"
 #: base/templates/api_404.html:9
 msgid "We are sorry, but this page was not found."
 msgstr "Lo sentimos, pero esta página no ha sido encontrada."
-

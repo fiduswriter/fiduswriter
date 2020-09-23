@@ -173,7 +173,7 @@ export const figure = {
                 track: parseTracks(dom.dataset.track),
                 aligned: dom.dataset.aligned,
                 width: dom.dataset.width,
-
+                diff: dom.dataset.diff
             }
         }
     }],
@@ -517,7 +517,8 @@ export const ordered_list = {
     attrs: {
         id: {default: false},
         order: {default: 1},
-        track: {default: []}
+        track: {default: []},
+
     },
     parseDOM: [{tag: "ol", getAttrs(dom) {
         return {

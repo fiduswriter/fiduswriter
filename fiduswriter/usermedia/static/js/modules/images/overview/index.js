@@ -36,7 +36,7 @@ export class ImageOverview {
             'dot_menu.css'
         ], this.staticUrl)
 
-        whenReady().then(() => {
+        return whenReady().then(() => {
             this.render()
             new ImageOverviewCategories(this)
             const smenu = new SiteMenu("images")
@@ -82,7 +82,10 @@ export class ImageOverview {
     //delete image
     deleteImage(ids) {
         ids = ids.map(id => parseInt(id))
-
+        if (this.app.isOffline()) {
+            addAlert('error', gettext('You are currently offline. Please try again when you are back online.'))
+            return
+        }
         activateWait()
         post(
             '/api/usermedia/delete/',
@@ -90,7 +93,12 @@ export class ImageOverview {
         ).catch(
             error => {
                 addAlert('error', gettext('The image(s) could not be deleted'))
-                throw (error)
+                deactivateWait()
+                if (this.app.isOffline()) {
+                    addAlert('error', gettext('You are currently offline. Please try again when you are back online.'))
+                } else {
+                    throw (error)
+                }
             }
         ).then(
             () => {
@@ -263,7 +271,7 @@ export class ImageOverview {
             case findTarget(event, '.edit-image', el): {
                 const imageId = el.target.dataset.id
                 import("../edit_dialog").then(({ImageEditDialog}) => {
-                    const dialog = new ImageEditDialog(this.app.imageDB, imageId)
+                    const dialog = new ImageEditDialog(this.app.imageDB, imageId, this)
                     dialog.init().then(
                         () => {
                             this.updateTable([imageId])

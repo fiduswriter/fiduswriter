@@ -1,11 +1,13 @@
 import uuid
 import atexit
 import logging
-# from builtins import str
-from tornado.escape import json_encode
+import os
+import json
+import copy
 from time import mktime, time
 from copy import deepcopy
-from jsonpatch import apply_patch, JsonPatchConflict, JsonPointerException
+from prosemirror.model import Node, Schema
+from prosemirror.transform import Step
 
 from django.db.utils import DatabaseError
 from django.db.models import F, Q
@@ -21,6 +23,17 @@ from user.util import get_user_avatar_url
 
 
 logger = logging.getLogger(__name__)
+
+schema_json_path = os.path.join(
+    settings.PROJECT_PATH,
+    "static-libs/json/schema.json"
+)
+
+if os.path.exists(schema_json_path):
+    with open(schema_json_path) as schema_file:
+        schema = Schema(json.loads(schema_file.read()))
+else:
+    schema = None
 
 
 class WebSocket(BaseWebSocketHandler):
@@ -63,20 +76,39 @@ class WebSocket(BaseWebSocketHandler):
             self.session = WebSocket.sessions[doc_db.id]
             self.id = max(self.session['participants']) + 1
             self.session['participants'][self.id] = self
+            template = False
         else:
             logger.debug(
                 f"Action:Opening document from DB. "
                 f"URL:{self.endpoint} User:{self.user.id} "
                 f"ParticipantID:{self.id}")
             self.id = 0
+            if 'type' in doc_db.content:
+                content = doc_db.content
+            else:
+                content = copy.deepcopy(doc_db.template.content)
+                if 'type' not in content:
+                    content['type'] = 'article'
+                if 'content' not in content:
+                    content['content'] = [{type: 'title'}]
+                doc_db.content = content
+                doc_db.save()
+            node = Node.from_json(schema, {'type': 'doc', 'content': [
+                content
+            ]})
             self.session = {
                 'doc': doc_db,
+                'node': node,
                 'participants': {
                     0: self
                 },
                 'last_saved_version': doc_db.version
             }
             WebSocket.sessions[doc_db.id] = self.session
+            if self.user_info.access_rights == 'write':
+                template = True
+            else:
+                template = False
         logger.debug(
             f"Action:Participant ID Assigned. URL:{self.endpoint} "
             f"User:{self.user.id} ParticipantID:{self.id}")
@@ -85,7 +117,7 @@ class WebSocket(BaseWebSocketHandler):
         })
         if connection_count < 1:
             self.send_styles()
-            self.send_document()
+            self.send_document(False, template)
         if self.can_communicate():
             self.handle_participant_update()
 
@@ -122,7 +154,7 @@ class WebSocket(BaseWebSocketHandler):
     def unfixable(self):
         self.send_document()
 
-    def send_document(self):
+    def send_document(self, messages=False, template=False):
         response = dict()
         response['type'] = 'doc_data'
         doc_owner = self.session["doc"].owner
@@ -142,12 +174,15 @@ class WebSocket(BaseWebSocketHandler):
             'v': self.session["doc"].version,
             'content': self.session["doc"].content,
             'bibliography': self.session["doc"].bibliography,
-            'template': {
-                'id': self.session["doc"].template.id,
-                'content': self.session["doc"].template.content
-            },
             'images': {}
         }
+        if template:
+            response['doc']['template'] = {
+                'id': self.session["doc"].template.id,
+                'content': self.session["doc"].template.content
+            }
+        if messages:
+            response['m'] = messages
         response['time'] = int(time()) * 1000
         for dimage in DocumentImage.objects.filter(
             document_id=self.session["doc"].id
@@ -373,36 +408,23 @@ class WebSocket(BaseWebSocketHandler):
                 f"User:{self.user.id} ParticipantID:{self.id}")
             return
         if pv == dv:
+            if "ds" in message:  # ds = document steps
+                for s in message["ds"]:
+                    step = Step.from_json(schema, s)
+                    step_result = step.apply(self.session["node"])
+                    if step_result.ok:
+                        self.session["node"] = step_result.doc
+                    else:
+                        self.unfixable()
+                        return
+                self.session["doc"].content = self.session[
+                    "node"
+                ].first_child.to_json()
             self.session["doc"].diffs.append(message)
             self.session["doc"].diffs = self.session["doc"].diffs[
                 -self.history_length:
             ]
             self.session["doc"].version += 1
-            if "jd" in message:  # jd = json diff
-                try:
-                    apply_patch(
-                       self.session["doc"].content,
-                       message["jd"],
-                       True
-                    )
-                except (JsonPatchConflict, JsonPointerException):
-                    logger.exception(
-                        f"Action:Cannot apply json diff. "
-                        f"URL:{self.endpoint} User:{self.user.id} "
-                        f"ParticipantID:{self.id}")
-                    logger.error(
-                        f"Action:Patch Exception URL:{self.endpoint} "
-                        f"User:{self.user.id} ParticipantID:{self.id} "
-                        f"Message:{json_encode(message)}")
-                    logger.error(
-                        f"Action:Patch Exception URL:{self.endpoint} "
-                        f"User:{self.user.id} ParticipantID:{self.id} "
-                        f"Document:{json_encode(self.session['doc'].content)}")
-                    self.unfixable()
-                # The json diff is only needed by the python backend which does
-                # not understand the steps. It can therefore be removed before
-                # broadcast to other clients.
-                del message["jd"]
             if "ti" in message:  # ti = title
                 self.session["doc"].title = message["ti"][-255:]
             if "cu" in message:  # cu = comment updates
@@ -440,6 +462,7 @@ class WebSocket(BaseWebSocketHandler):
                     f"ParticipantID:{self.id}")
                 # Client has a version that is too old to be fixed
                 self.unfixable()
+                return
         else:
             # Client has a higher version than server. Something is fishy!
             logger.debug(
@@ -468,10 +491,7 @@ class WebSocket(BaseWebSocketHandler):
                 f"User:{self.user.id} ParticipantID:{self.id}"
                 f"number of messages to be resent:{number_diffs}")
             messages = self.session["doc"].diffs[number_diffs:]
-            for message in messages:
-                new_message = message.copy()
-                new_message["server_fix"] = True
-                self.send_message(new_message)
+            self.send_document(messages)
             return
         else:
             logger.debug(

@@ -1,13 +1,9 @@
 import {
-    compare
-} from "fast-json-patch"
-import {
     sendableSteps,
     receiveTransaction
 } from "prosemirror-collab"
 import {
-    Step,
-    Mapping
+    Step
 } from "prosemirror-transform"
 import {
     EditorState
@@ -18,38 +14,30 @@ import {
     updateCollaboratorSelection
 } from "../state_plugins"
 import {
-    WRITE_ROLES
-} from "../"
-import {
     adjustDocToTemplate
 } from "../../document_template"
 import {
-    showSystemMessage,
-    deactivateWait
+    deactivateWait,
 } from "../../common"
 import {
-    toMiniJSON
-} from "../../schema/mini_json"
+    Merge
+} from "./merge"
 import {
     recreateTransform
-} from "./recreate_transform"
-import {
-    trackedTransaction
-} from "../track"
+} from "./merge/recreate_transform"
+
 
 export class ModCollabDoc {
     constructor(mod) {
         mod.doc = this
         this.mod = mod
-
+        this.merge = new Merge(mod)
         this.unconfirmedDiffs = {}
         this.confirmStepsRequestCounter = 0
         this.awaitingDiffResponse = false
         this.receiving = false
         this.currentlyCheckingVersion = false
-
-        this.trackOfflineLimit = 50 // Limit of local changes while offline for tracking to kick in when multiple users edit
-        this.remoteTrackOfflineLimit = 20 // Limit of remote changes while offline for tracking to kick in when multiple users edit
+        this.footnoteRender = false // If the offline user edited a footnote , it needs to be rendered properly to connected users too!
     }
 
     cancelCurrentlyCheckingVersion() {
@@ -102,132 +90,13 @@ export class ModCollabDoc {
     receiveDocument(data) {
         this.cancelCurrentlyCheckingVersion()
         if (this.mod.editor.docInfo.confirmedDoc) {
-            this.adjustDocument(data)
+            this.merge.adjustDocument(data)
         } else {
             this.loadDocument(data)
         }
     }
 
-    adjustDocument(data) {
-        // Adjust the document when reconnecting after offline and many changes
-        // happening on server.
-        if (this.mod.editor.docInfo.version < data.doc.v) {
-            this.receiving = true
-            this.mod.editor.docInfo.confirmedJson = JSON.parse(JSON.stringify(data.doc.content))
-            const confirmedState = EditorState.create({doc: this.mod.editor.docInfo.confirmedDoc})
-            const unconfirmedTr = confirmedState.tr
-            sendableSteps(this.mod.editor.view.state).steps.forEach(step => unconfirmedTr.step(step))
-            const rollbackTr = this.mod.editor.view.state.tr
-            unconfirmedTr.steps.slice().reverse().forEach(
-                (step, index) => rollbackTr.step(step.invert(unconfirmedTr.docs[unconfirmedTr.docs.length - index - 1]))
-            )
-            // We reset to there being no local changes to send.
-            this.mod.editor.view.dispatch(receiveTransaction(
-                this.mod.editor.view.state,
-                unconfirmedTr.steps,
-                unconfirmedTr.steps.map(_step => this.mod.editor.client_id)
-            ))
-            this.mod.editor.view.dispatch(receiveTransaction(
-                this.mod.editor.view.state,
-                rollbackTr.steps,
-                rollbackTr.steps.map(_step => 'remote')
-            ))
-            const toDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [
-                data.doc.content
-            ]})
-            const lostTr = recreateTransform(this.mod.editor.view.state.doc, toDoc)
-            let tracked
-            let localTr // local steps to be reapplied
-            if (
-                WRITE_ROLES.includes(this.mod.editor.docInfo.access_rights) &&
-                (
-                    unconfirmedTr.steps.length > this.trackOfflineLimit ||
-                    lostTr.steps.length > this.remoteTrackOfflineLimit
-                )
-            ) {
-                tracked = true
-                // Either this user has made 50 changes since going offline,
-                // or the document has 20 changes to it. Therefore we add tracking
-                // to the changes of this user and ask user to clean up.
-                localTr = trackedTransaction(
-                    unconfirmedTr,
-                    confirmedState,
-                    this.mod.editor.user,
-                    false,
-                    Date.now() - this.mod.editor.clientTimeAdjustment
-                )
-            } else {
-                tracked = false
-                localTr = unconfirmedTr
-            }
-            const rebasedTr = EditorState.create({doc: toDoc}).tr.setMeta('remote', true)
-            const maps = localTr.mapping.maps.slice().reverse().map(map => map.invert()).concat(lostTr.mapping)
-            localTr.steps.forEach(
-                (step, index) => {
-                    const mapped = step.map(new Mapping(maps.slice(localTr.steps.length - index)))
-                    if (mapped && !rebasedTr.maybeStep(mapped).failed) {
-                        maps.push(mapped.getMap())
-                    }
-                }
-            )
-            const usedImages = [],
-                usedBibs = []
-            const footnoteFind = (node, usedImages, usedBibs) => {
-                if (node.name === 'citation') {
-                    node.attrs.references.forEach(ref => usedBibs.push(parseInt(ref.id)))
-                } else if (node.name === 'figure' && node.attrs.image) {
-                    usedImages.push(node.attrs.image)
-                } else if (node.content) {
-                    node.content.forEach(subNode => footnoteFind(subNode, usedImages, usedBibs))
-                }
-            }
-            rebasedTr.doc.descendants(node => {
-                if (node.type.name === 'citation') {
-                    node.attrs.references.forEach(ref => usedBibs.push(parseInt(ref.id)))
-                } else if (node.type.name === 'figure' && node.attrs.image) {
-                    usedImages.push(node.attrs.image)
-                } else if (node.type.name === 'footnote' && node.attrs.footnote) {
-                    node.attrs.footnote.forEach(subNode => footnoteFind(subNode, usedImages, usedBibs))
-                }
-            })
-            const oldBibDB = this.mod.editor.mod.db.bibDB.db
-            this.mod.editor.mod.db.bibDB.setDB(data.doc.bibliography)
-            usedBibs.forEach(id => {
-                if (!this.mod.editor.mod.db.bibDB.db[id] && oldBibDB[id]) {
-                    this.mod.editor.mod.db.bibDB.updateReference(id, oldBibDB[id])
-                }
-            })
-            const oldImageDB = this.mod.editor.mod.db.imageDB.db
-            this.mod.editor.mod.db.imageDB.setDB(data.doc.images)
-            usedImages.forEach(id => {
-                if (!this.mod.editor.mod.db.imageDB.db[id] && oldImageDB[id]) {
-                    this.mod.editor.mod.db.imageDB.setImage(id, oldImageDB[id])
-                }
-            })
-            this.mod.editor.view.dispatch(receiveTransaction(
-                this.mod.editor.view.state,
-                lostTr.steps,
-                lostTr.steps.map(_step => 'remote')
-            ))
-            this.mod.editor.docInfo.version = data.doc.v
-            this.mod.editor.view.dispatch(rebasedTr)
-            if (tracked) {
-                showSystemMessage(
-                    gettext(
-                        'The document was modified substantially by other users while you were offline. We have merged your changes in as tracked changes. You should verify that your edits still make sense.'
-                    )
-                )
-            }
-            this.mod.editor.mod.footnotes.fnEditor.renderAllFootnotes()
-            this.receiving = false
-            this.sendToCollaborators()
-        } else {
-            // The server seems to have lost some data. We reset.
-            this.loadDocument(data)
-        }
-    }
-
-    loadDocument(data) {
+    loadDocument({doc, time, doc_info}) {
         // Reset collaboration
         this.unconfirmedDiffs = {}
         if (this.awaitingDiffResponse) {
@@ -236,40 +105,17 @@ export class ModCollabDoc {
         // Remember location hash to scroll there subsequently.
         const locationHash = window.location.hash
 
-        this.mod.editor.clientTimeAdjustment = Date.now() - data.time
+        this.mod.editor.clientTimeAdjustment = Date.now() - time
 
-        this.mod.editor.docInfo = data.doc_info
-        this.mod.editor.docInfo.version = data.doc.v
-        this.mod.editor.docInfo.template = data.doc.template
+        this.mod.editor.docInfo = doc_info
+        this.mod.editor.docInfo.version = doc.v
         this.mod.editor.docInfo.updated = new Date()
-        this.mod.editor.mod.db.bibDB.setDB(data.doc.bibliography)
-        this.mod.editor.mod.db.imageDB.setDB(data.doc.images)
-        this.mod.editor.docInfo.confirmedJson = JSON.parse(JSON.stringify(data.doc.content))
-        let stateDoc
-        if (data.doc.content.type) {
-            stateDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [
-                adjustDocToTemplate(
-                    data.doc.content,
-                    this.mod.editor.docInfo.template.content,
-                    this.mod.editor.mod.documentTemplate.documentStyles,
-                    this.mod.editor.schema
-                )
-            ]})
-        } else {
-            const content = JSON.parse(JSON.stringify(this.mod.editor.docInfo.template.content))
-            if (!content.type) {
-                content.type = 'article'
-            }
-            if (!content.content) {
-                content.content = [{type: 'title'}]
-            }
-            stateDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [
-                content
-            ]})
-        }
+        this.mod.editor.mod.db.bibDB.setDB(doc.bibliography)
+        this.mod.editor.mod.db.imageDB.setDB(doc.images)
+        const stateDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [doc.content]})
         const plugins = this.mod.editor.statePlugins.map(plugin => {
             if (plugin[1]) {
-                return plugin[0](plugin[1](data.doc))
+                return plugin[0](plugin[1](doc))
             } else {
                 return plugin[0]()
             }
@@ -292,16 +138,34 @@ export class ModCollabDoc {
 
         //  Setup comment handling
         this.mod.editor.mod.comments.store.reset()
-        this.mod.editor.mod.comments.store.loadComments(data.doc.comments)
+        this.mod.editor.mod.comments.store.loadComments(doc.comments)
         this.mod.editor.mod.marginboxes.view(this.mod.editor.view)
-        // Set part specific settings
-        this.mod.editor.mod.documentTemplate.addDocPartSettings()
-        this.mod.editor.mod.documentTemplate.addCitationStylesMenuEntries()
-        this.mod.editor.waitingForDocument = false
         deactivateWait()
         if (locationHash.length) {
             this.mod.editor.scrollIdIntoView(locationHash.slice(1))
         }
+        this.mod.editor.waitingForDocument = false
+        if (doc.template) {
+            // We received the template. That means we are the first user present with write access.
+            // We will adjust the document to the template if necessary.
+            const newStateDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [adjustDocToTemplate(
+                doc.content,
+                doc.template.content,
+                this.mod.editor.mod.documentTemplate.documentStyles,
+                this.mod.editor.schema
+            )]})
+            const transform = recreateTransform(stateDoc, newStateDoc)
+            if (transform.steps.length) {
+                const tr = this.mod.editor.view.state.tr
+                transform.steps.forEach(step => tr.step(step))
+                tr.setMeta('remote', true)
+                this.mod.editor.view.dispatch(tr)
+            }
+
+        }
+        // Set part specific settings
+        this.mod.editor.mod.documentTemplate.addDocPartSettings()
+        this.mod.editor.mod.documentTemplate.addCitationStylesMenuEntries()
     }
 
     sendToCollaborators() {
@@ -353,14 +217,6 @@ export class ModCollabDoc {
                     unconfirmedDiff['ds'] = stepsToSend.steps.map(
                         s => s.toJSON()
                     )
-                    // We add a json diff in a format understandable by the
-                    // server.
-                    unconfirmedDiff['jd'] = compare(
-                        this.mod.editor.docInfo.confirmedJson,
-                        toMiniJSON(
-                            this.mod.editor.view.state.doc.firstChild
-                        )
-                    )
                     // In case the title changed, we also add a title field to
                     // update the title field instantly - important for the
                     // document overview page.
@@ -394,6 +250,10 @@ export class ModCollabDoc {
                     unconfirmedDiff['fs'] = fnStepsToSend.steps.map(
                         s => s.toJSON()
                     )
+                }
+                if (this.footnoteRender) {
+                    unconfirmedDiff['footnoterender'] = true
+                    this.footnoteRender = false
                 }
                 if (commentUpdates.length) {
                     unconfirmedDiff["cu"] = commentUpdates
@@ -476,7 +336,8 @@ export class ModCollabDoc {
         }
     }
 
-    receiveFromCollaborators(data) {
+    receiveDiff(data, serverFix = false) {
+
         this.mod.editor.docInfo.version++
         if (data["bu"]) { // bibliography updates
             this.mod.editor.mod.db.bibDB.receive(data["bu"])
@@ -493,8 +354,11 @@ export class ModCollabDoc {
         if (data["fs"]) { // footnote steps
             this.mod.editor.mod.footnotes.fnEditor.applyDiffs(data["fs"], data["cid"])
         }
+        if (data["footnoterender"]) { // re-render footnotes properly
+            this.mod.editor.mod.footnotes.fnEditor.renderAllFootnotes()
+        }
 
-        if (data.server_fix) {
+        if (serverFix) {
             // Diff is a fix created by server due to missing diffs.
             if ('reject_request_id' in data) {
                 delete this.unconfirmedDiffs[data.reject_request_id]
@@ -518,7 +382,6 @@ export class ModCollabDoc {
         this.mod.editor.docInfo.confirmedDoc = docNumber === tr.docs.length ?
             tr.doc :
             tr.docs[docNumber]
-        this.mod.editor.docInfo.confirmedJson = toMiniJSON(this.mod.editor.docInfo.confirmedDoc.firstChild)
     }
 
     confirmDiff(request_id) {
@@ -540,9 +403,6 @@ export class ModCollabDoc {
             )
             this.mod.editor.view.dispatch(tr)
             this.mod.editor.docInfo.confirmedDoc = unconfirmedDiffs["doc"]
-            this.mod.editor.docInfo.confirmedJson = toMiniJSON(
-                this.mod.editor.docInfo.confirmedDoc.firstChild
-            )
         }
 
         const sentFnSteps = unconfirmedDiffs["fs"] // footnote steps

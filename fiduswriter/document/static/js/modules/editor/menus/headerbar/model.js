@@ -55,7 +55,7 @@ export const headerbarModel = () => ({
                         dialog.init()
                     },
                     disabled: editor => {
-                        return !editor.docInfo.is_owner
+                        return !editor.docInfo.is_owner || editor.app.isOffline()
                     }
                 },
                 {
@@ -66,7 +66,8 @@ export const headerbarModel = () => ({
                     order: 1,
                     action: editor => {
                         editor.app.goTo('/')
-                    }
+                    },
+                    disabled: editor => editor.app.isOffline()
                 },
                 {
                     title: gettext('Save revision'),
@@ -83,13 +84,14 @@ export const headerbarModel = () => ({
                                     editor.getDoc(),
                                     editor.mod.db.imageDB,
                                     editor.mod.db.bibDB,
-                                    note
+                                    note,
+                                    editor.app
                                 )
                                 return saver.init()
                             }
                         )
                     },
-                    disabled: editor => editor.docInfo.access_rights !== 'write'
+                    disabled: editor => editor.docInfo.access_rights !== 'write' || editor.app.isOffline()
                 },
                 {
                     title: gettext('Create copy'),
@@ -107,7 +109,8 @@ export const headerbarModel = () => ({
                         copier.init().then(({docInfo}) =>
                             editor.app.goTo(`/document/${docInfo.id}/`)
                         ).catch(() => false)
-                    }
+                    },
+                    disabled: editor => editor.app.isOffline(),
                 },
                 {
                     title: gettext('Download'),
@@ -191,7 +194,8 @@ export const headerbarModel = () => ({
                             )
                             exporter.init()
                         })
-                    }
+                    },
+                    disabled: editor => editor.app.isOffline()
                 },
                 {
                     title: gettext('LaTeX'),
@@ -208,7 +212,8 @@ export const headerbarModel = () => ({
                             )
                             exporter.init()
                         })
-                    }
+                    },
+                    disabled: editor => editor.app.isOffline()
                 },
                 {
                     title: gettext('JATS'),
@@ -226,7 +231,8 @@ export const headerbarModel = () => ({
                             )
                             exporter.init()
                         })
-                    }
+                    },
+                    disabled: editor => editor.app.isOffline()
                 }
             ]
         },
@@ -255,7 +261,7 @@ export const headerbarModel = () => ({
                     tooltip: gettext('Choose your preferred document style.'),
                     order: 2,
                     disabled: editor => {
-                        return editor.docInfo.access_rights !== 'write'
+                        return editor.docInfo.access_rights !== 'write' || editor.app.isOffline()
                     },
                     content: []
                 },
@@ -439,9 +445,7 @@ export const headerbarModel = () => ({
                             }
                         )
                     },
-                    disabled: editor => {
-                        return editor.docInfo.access_rights !== 'write'
-                    }
+                    disabled: editor => editor.docInfo.access_rights !== 'write'
                 }
             ]
         },
@@ -491,9 +495,7 @@ export const headerbarModel = () => ({
             type: 'menu',
             tooltip: gettext('Tracking changes to the document'),
             order: 4,
-            disabled: editor => {
-                return editor.docInfo.access_rights !== 'write'
-            },
+            disabled: editor => editor.docInfo.access_rights !== 'write',
             content: [
                 {
                     title: gettext('Record'),

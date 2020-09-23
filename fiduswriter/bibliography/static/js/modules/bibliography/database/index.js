@@ -4,7 +4,8 @@ import {BibliographyDBServerConnector} from "./server_connector"
 const FW_LOCALSTORAGE_VERSION = "1.1"
 
 export class BibliographyDB {
-    constructor() {
+    constructor(app) {
+        this.app = app
         this.db = {}
         this.cats = []
         this.sc = new BibliographyDBServerConnector()
@@ -86,7 +87,11 @@ export class BibliographyDB {
         ).catch(
             error => {
                 addAlert('error', gettext('The bibliography could not be updated'))
-                throw (error)
+                if (this.app.isOffline()) {
+                    addAlert('info', gettext('You are currently offline. Please try again when you are back online.'))
+                } else {
+                    throw (error)
+                }
             }
         )
 
@@ -125,7 +130,11 @@ export class BibliographyDB {
             error => {
                 addAlert('error', gettext('The categories could not be updated'))
                 deactivateWait()
-                throw (error)
+                if (this.app.isOffline()) {
+                    addAlert('info', gettext('You are currently offline. Please try again when you are back online.'))
+                } else {
+                    throw (error)
+                }
             }
         )
     }
@@ -176,7 +185,11 @@ export class BibliographyDB {
             error => {
                 addAlert('error', 'The bibliography item(s) could not be deleted')
                 deactivateWait()
-                throw (error)
+                if (this.app.isOffline()) {
+                    addAlert('info', gettext('You are currently offline. Please try again when you are back online.'))
+                } else {
+                    throw (error)
+                }
             }
         )
 

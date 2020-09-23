@@ -102,6 +102,11 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         body_input2 = self.driver2.find_element_by_class_name(
             'article-body'
         )
+        body_input.click()
+        body_input2.click()
+
+        body_input.click()
+        body_input2.click()
 
         for char in self.TEST_TEXT:
             body_input.send_keys(char)
@@ -172,6 +177,11 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         body_input2 = self.driver2.find_element_by_class_name(
             'article-body'
         )
+        body_input.click()
+        body_input2.click()
+
+        body_input.click()
+        body_input2.click()
 
         p1 = multiprocessing.Process(
             target=self.input_text,

@@ -27,7 +27,6 @@ class FigureView {
             const dialog = new FigureDialog(editor)
             dialog.init()
         })
-
     }
 }
 

@@ -11,7 +11,10 @@ export class WebSocketConnector {
         restartMessage = () => ({type: 'restart'}), // Too many messages have been lost and we need to restart
         warningNotAllSent = gettext('Warning! Some data is unsaved'), // Info to show while disconnected WITH unsaved data
         infoDisconnected = gettext('Disconnected. Attempting to reconnect...'), // Info to show while disconnected WITHOUT unsaved data
-        receiveData = _data => {}
+        receiveData = _data => {},
+        failedAuth = () => {
+            window.location.href = "/"
+        },
     }) {
         this.url = url
         this.appLoaded = appLoaded
@@ -23,6 +26,7 @@ export class WebSocketConnector {
         this.warningNotAllSent = warningNotAllSent
         this.infoDisconnected = infoDisconnected
         this.receiveData = receiveData
+        this.failedAuth = failedAuth
         /* A list of messages to be sent. Only used when temporarily offline.
             Messages will be sent when returning back online. */
         this.messagesToSend = []
@@ -36,10 +40,15 @@ export class WebSocketConnector {
         /* 1 = first connection established, etc. */
         this.connectionCount = 0
         this.recentlySent = false
+        this.listeners = {}
     }
 
     init() {
         this.createWSConnection()
+
+        // Close the socket manually for now when the connection is lost. Sometimes the socket isn't closed on disconnection.
+        this.listeners.onOffline = _event => this.ws.close()
+        window.addEventListener('offline', this.listeners.onOffline)
     }
 
     goOffline() {
@@ -60,6 +69,7 @@ export class WebSocketConnector {
             this.ws.onclose = () => {}
             this.ws.close()
         }
+        window.removeEventListener('offline', this.listeners.onOffline)
     }
 
     createWSConnection() {
@@ -238,7 +248,7 @@ export class WebSocketConnector {
             this.subscribed()
             break
         case 'access_denied':
-            window.location.href = '/'
+            this.failedAuth()
             break
         default:
             this.receiveData(data)

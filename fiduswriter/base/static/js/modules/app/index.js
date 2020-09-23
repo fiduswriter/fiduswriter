@@ -1,11 +1,10 @@
-import OfflinePluginRuntime from 'offline-plugin/runtime'
 import {CSL} from 'citeproc-plus'
-
+import OfflinePluginRuntime from 'offline-plugin/runtime'
 import {DocumentInvite} from "../documents/invite"
 import {ImageOverview} from "../images/overview"
 import {ContactsOverview} from "../contacts"
 import {Profile} from "../profile"
-import {findTarget, WebSocketConnector, showSystemMessage, postJson, ensureCSS} from "../common"
+import {findTarget, WebSocketConnector, showSystemMessage, postJson, ensureCSS, addAlert} from "../common"
 import {LoginPage} from "../login"
 import {EmailConfirm} from "../email_confirm"
 import {PasswordResetRequest, PasswordResetChangePassword} from "../password_reset"
@@ -17,6 +16,7 @@ import {OfflinePage} from "../offline"
 import {SetupPage} from "../setup"
 import {FlatPage} from "../flatpage"
 import * as plugins from "../../plugins/app"
+import {IndexedDB} from '../indexed_db'
 
 export class App {
     constructor() {
@@ -64,6 +64,20 @@ export class App {
                 open: pathnameParts => {
                     const id = pathnameParts[2]
                     return import(/* webpackPrefetch: true *//* webpackChunkName: "editor" */'../editor').then(({Editor}) => new Editor(this.config, id))
+                },
+                dbTables: {
+                    "list": {
+                        keyPath: "id"
+                    },
+                    "templates": {
+                        keyPath: "pk"
+                    },
+                    "styles": {
+                        keyPath: "title"
+                    },
+                    "teammembers": {
+                        keyPath: "id"
+                    }
                 }
             },
             "invite": {
@@ -93,6 +107,11 @@ export class App {
                         returnValue = false
                     }
                     return returnValue
+                },
+                dbTables: {
+                    "contacts": {
+                        keyPath: "id"
+                    }
                 }
             },
             "usermedia": {
@@ -108,7 +127,19 @@ export class App {
     }
 
     isOffline() {
-        return !navigator.onLine || this.ws?.ws?.readyState > 1
+        return !navigator.onLine || (this.ws?.connectionCount > 0 && !this.ws?.connected)
+    }
+
+    alertCached() {
+        addAlert('info', gettext('You are viewing a cached version of this page.'))
+    }
+
+    installServiceWorker() {
+        /* This function is used for testing SW with Django tests */
+        OfflinePluginRuntime.install({
+            onUpdateReady: () => OfflinePluginRuntime.applyUpdate(),
+            onUpdated: () => window.location.reload()
+        })
     }
 
     init() {
@@ -121,7 +152,10 @@ export class App {
         ensureCSS([
             'fontawesome/css/all.css'
         ])
-        if (navigator.onLine) {
+        if (this.isOffline()) {
+            this.page = this.openOfflinePage()
+            return this.page.init()
+        } else {
             return this.getUserInfo().catch(
                 error => {
                     if (error instanceof TypeError) {
@@ -155,11 +189,7 @@ export class App {
                     throw error
                 }
             )
-        } else {
-            this.page = this.openOfflinePage()
-            return this.page.init()
         }
-
     }
 
     setup() {
@@ -169,10 +199,12 @@ export class App {
                 () => this.bind()
             )
         }
-        this.bibDB = new BibliographyDB()
+        this.bibDB = new BibliographyDB(this)
         this.imageDB = new ImageDB()
         this.csl = new CSL()
         this.connectWs()
+        this.indexedDB = new IndexedDB(this)
+        this.indexedDB.init()
         return Promise.all([
             this.bibDB.getDB(),
             this.imageDB.getDB(),
@@ -213,6 +245,16 @@ export class App {
                     this.page.onResize()
                 }
             }, 250)
+        })
+        window.addEventListener('beforeunload', event => {
+            if (this.page && this.page.onBeforeUnload) {
+                if (this.page.onBeforeUnload()) {
+                    event.preventDefault()
+                    // To stop the event for chrome and safari
+                    event.returnValue = ''
+                    return ''
+                }
+            }
         })
     }
 
@@ -268,11 +310,23 @@ export class App {
             if (page.then) {
                 return page.then(thisPage => {
                     this.page = thisPage
-                    return this.page.init()
+                    return this.page.init().then(
+                        () => {
+                            if (this.isOffline()) {
+                                this.alertCached()
+                            }
+                        }
+                    )
                 })
             } else if (page) {
                 this.page = page
-                return this.page.init()
+                return this.page.init().then(
+                    () => {
+                        if (this.isOffline()) {
+                            this.alertCached()
+                        }
+                    }
+                )
             }
         }
         this.page = this.open404Page()
@@ -289,4 +343,5 @@ export class App {
         window.history.pushState({}, "", url)
         return this.selectPage()
     }
+
 }

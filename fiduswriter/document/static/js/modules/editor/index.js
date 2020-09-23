@@ -3,7 +3,9 @@ import {
     ensureCSS,
     WebSocketConnector,
     postJson,
-    activateWait
+    activateWait,
+    Dialog,
+    showSystemMessage
 } from "../common"
 import {
     FeedbackTab
@@ -116,6 +118,9 @@ import {
     buildEditorKeymap
 } from "./keymap"
 import {
+    ExportFidusFile
+} from "../exporter/native/file"
+import {
     imageEditModel
 } from "../images/edit_dialog/model"
 
@@ -201,7 +206,7 @@ export class Editor {
             [orderedListMenuPlugin, () => ({editor: this})],
             [figurePlugin, () => ({editor: this})],
             [tocRenderPlugin, () => ({editor: this})],
-            [searchPlugin],
+            [searchPlugin]
         ]
     }
 
@@ -263,6 +268,9 @@ export class Editor {
                     return message
                 },
                 resubScribed: () => {
+                    if (sendableSteps(this.mod.footnotes.fnEditor.view.state)) {
+                        this.mod.collab.doc.footnoteRender = true
+                    }
                     this.mod.footnotes.fnEditor.renderAllFootnotes()
                     this.mod.collab.doc.checkVersion()
                 },
@@ -313,7 +321,7 @@ export class Editor {
                             this.mod.collab.doc.checkVersion()
                             return
                         }
-                        this.mod.collab.doc.receiveFromCollaborators(data)
+                        this.mod.collab.doc.receiveDiff(data)
                         break
                     case 'confirm_diff':
                         this.mod.collab.doc.confirmDiff(data["rid"])
@@ -322,12 +330,47 @@ export class Editor {
                         this.mod.collab.doc.rejectDiff(data["rid"])
                         break
                     }
+                },
+                failedAuth: () => {
+                    if (this.view.state.plugins.length && sendableSteps(this.view.state) && this.ws.connectionCount > 0) {
+                        this.ws.online = false // To avoid Websocket trying to reconnect.
+                        new ExportFidusFile(
+                            this.getDoc(),
+                            this.mod.db.bibDB,
+                            this.mod.db.imageDB
+                        )
+                        const sessionDialog = new Dialog({
+                            title: gettext('Session Expired'),
+                            id: "session_expiration_dialog",
+                            body: gettext('Your session expired while you were offline so we cannot save your work to the server and we download it to your computer instead. Please consider importing it into a new document.'),
+                            buttons: [{
+                                text: gettext('Proceed to Login page'),
+                                classes: 'fw-dark',
+                                click: () => {
+                                    window.location.href = '/'
+                                }
+                            }],
+                            canClose: false
+                        })
+                        sessionDialog.open()
+                    } else {
+                        window.location.href = '/'
+                    }
                 }
-
             })
             this.render()
             activateWait(true)
             this.initEditor()
+
+            this.ws.ws.addEventListener('close', () => {
+                // Listen to close event and update the headerbar and toolbar view.
+                if (this.menu.toolbarViews) {
+                    this.menu.toolbarViews.forEach(view => view.update())
+                }
+                if (this.menu.headerView) {
+                    this.menu.headerView.update()
+                }
+            })
         })
     }
 
@@ -398,6 +441,13 @@ export class Editor {
         this.menu.toolbarViews.forEach(view => view.onResize())
     }
 
+    onBeforeUnload() {
+        if (this.app.isOffline()) {
+            showSystemMessage(gettext("Changes you made to the document since going offline will be lost, if you choose to close/refresh the tab or close the browser."))
+            return true
+        }
+    }
+
     initEditor() {
         let setFocus = false
         this.view = new EditorView(this.dom.querySelector('#document-editable'), {
@@ -448,6 +498,7 @@ export class Editor {
         this.mod.navigator.init()
         this.activateFidusPlugins()
         this.ws.init()
+
     }
 
     activateFidusPlugins() {
@@ -465,9 +516,11 @@ export class Editor {
     // Collect all components of the current doc. Needed for saving and export
     // filters
     getDoc(options = {}) {
+        const doc = this.app.isOffline() ? this.view.docView.node : this.docInfo.confirmedDoc
         const pmArticle = options.changes === 'acceptAllNoInsertions' ?
-            acceptAllNoInsertions(this.docInfo.confirmedDoc).firstChild :
-            this.docInfo.confirmedDoc.firstChild
+            acceptAllNoInsertions(doc).firstChild :
+            doc.firstChild
+
         let title = ""
         pmArticle.firstChild.forEach(
             child => {
@@ -497,7 +550,7 @@ export class Editor {
             if (foundPos) {
                 return
             } else if ((node.type.groups.includes('heading') || node.type.name === 'figure') && node.attrs.id === id) {
-                foundPos = pos + 1
+                foundPos = node.type.name === 'figure' ? pos : pos + 1
                 view = this.view
             } else {
                 const anchorMark = node.marks.find(mark => mark.type.name === 'anchor')
@@ -513,7 +566,7 @@ export class Editor {
                 if (foundPos) {
                     return
                 } else if ((node.type.groups.includes('heading') || node.type.name === 'figure') && node.attrs.id === id) {
-                    foundPos = pos + 1
+                    foundPos = node.type.name === 'figure' ? pos : pos + 1
                     view = this.mod.footnotes.fnEditor.view
                 } else {
                     const anchorMark = node.marks.find(mark => mark.type.name === 'anchor')

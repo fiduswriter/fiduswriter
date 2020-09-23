@@ -108,3 +108,5 @@ INSTALLED_APPS = [
 ALLOWED_HOSTS = [
     'localhost',
 ]
+
+USE_SERVICE_WORKER = True

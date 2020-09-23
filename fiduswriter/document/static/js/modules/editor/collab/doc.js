@@ -22,6 +22,9 @@ import {
 import {
     Merge
 } from "./merge"
+import {
+    recreateTransform
+} from "./merge/recreate_transform"
 
 
 export class ModCollabDoc {
@@ -106,32 +109,10 @@ export class ModCollabDoc {
 
         this.mod.editor.docInfo = doc_info
         this.mod.editor.docInfo.version = doc.v
-        this.mod.editor.docInfo.template = doc.template
         this.mod.editor.docInfo.updated = new Date()
         this.mod.editor.mod.db.bibDB.setDB(doc.bibliography)
         this.mod.editor.mod.db.imageDB.setDB(doc.images)
-        let stateDoc
-        if (doc.content.type) {
-            stateDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [
-                adjustDocToTemplate(
-                    doc.content,
-                    this.mod.editor.docInfo.template.content,
-                    this.mod.editor.mod.documentTemplate.documentStyles,
-                    this.mod.editor.schema
-                )
-            ]})
-        } else {
-            const content = JSON.parse(JSON.stringify(this.mod.editor.docInfo.template.content))
-            if (!content.type) {
-                content.type = 'article'
-            }
-            if (!content.content) {
-                content.content = [{type: 'title'}]
-            }
-            stateDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [
-                content
-            ]})
-        }
+        const stateDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [doc.content]})
         const plugins = this.mod.editor.statePlugins.map(plugin => {
             if (plugin[1]) {
                 return plugin[0](plugin[1](doc))
@@ -159,14 +140,32 @@ export class ModCollabDoc {
         this.mod.editor.mod.comments.store.reset()
         this.mod.editor.mod.comments.store.loadComments(doc.comments)
         this.mod.editor.mod.marginboxes.view(this.mod.editor.view)
-        // Set part specific settings
-        this.mod.editor.mod.documentTemplate.addDocPartSettings()
-        this.mod.editor.mod.documentTemplate.addCitationStylesMenuEntries()
-        this.mod.editor.waitingForDocument = false
         deactivateWait()
         if (locationHash.length) {
             this.mod.editor.scrollIdIntoView(locationHash.slice(1))
         }
+        this.mod.editor.waitingForDocument = false
+        if (doc.template) {
+            // We received the template. That means we are the first user present with write access.
+            // We will adjust the document to the template if necessary.
+            const newStateDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [adjustDocToTemplate(
+                doc.content,
+                doc.template.content,
+                this.mod.editor.mod.documentTemplate.documentStyles,
+                this.mod.editor.schema
+            )]})
+            const transform = recreateTransform(stateDoc, newStateDoc)
+            if (transform.steps.length) {
+                const tr = this.mod.editor.view.state.tr
+                transform.steps.forEach(step => tr.step(step))
+                tr.setMeta('remote', true)
+                this.mod.editor.view.dispatch(tr)
+            }
+
+        }
+        // Set part specific settings
+        this.mod.editor.mod.documentTemplate.addDocPartSettings()
+        this.mod.editor.mod.documentTemplate.addCitationStylesMenuEntries()
     }
 
     sendToCollaborators() {

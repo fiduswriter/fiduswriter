@@ -22,9 +22,6 @@ import {
     trackedTransaction
 } from "../../track"
 import {
-    adjustDocToTemplate
-} from "../../../document_template"
-import {
     recreateTransform
 } from "./recreate_transform"
 import {
@@ -72,14 +69,7 @@ export class Merge {
                 rollbackTr.steps,
                 rollbackTr.steps.map(_step => 'remote')
             ).setMeta('remote', true))
-            const toDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [
-                adjustDocToTemplate(
-                    data.doc.content,
-                    this.mod.editor.docInfo.template.content,
-                    this.mod.editor.mod.documentTemplate.documentStyles,
-                    this.mod.editor.schema
-                )
-            ]})
+            const toDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [data.doc.content]})
             // Apply the online Transaction
             let lostTr
             if (data.m) {
@@ -139,14 +129,7 @@ export class Merge {
 
     autoMerge(unconfirmedTr, lostTr, data) {
         /* This automerges documents incase of no conflicts */
-        const toDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [
-            adjustDocToTemplate(
-                data.doc.content,
-                this.mod.editor.docInfo.template.content,
-                this.mod.editor.mod.documentTemplate.documentStyles,
-                this.mod.editor.schema
-            )
-        ]})
+        const toDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [data.doc.content]})
         const rebasedTr = EditorState.create({doc: toDoc}).tr.setMeta('remote', true)
         const maps = new Mapping([].concat(unconfirmedTr.mapping.maps.slice().reverse().map(map => map.invert())).concat(lostTr.mapping.maps.slice()))
 

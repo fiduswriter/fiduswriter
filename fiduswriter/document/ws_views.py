@@ -76,6 +76,7 @@ class WebSocket(BaseWebSocketHandler):
             self.session = WebSocket.sessions[doc_db.id]
             self.id = max(self.session['participants']) + 1
             self.session['participants'][self.id] = self
+            template = False
         else:
             logger.debug(
                 f"Action:Opening document from DB. "
@@ -90,6 +91,8 @@ class WebSocket(BaseWebSocketHandler):
                     content['type'] = 'article'
                 if 'content' not in content:
                     content['content'] = [{type: 'title'}]
+                doc_db.content = content
+                doc_db.save()
             node = Node.from_json(schema, {'type': 'doc', 'content': [
                 content
             ]})
@@ -102,6 +105,10 @@ class WebSocket(BaseWebSocketHandler):
                 'last_saved_version': doc_db.version
             }
             WebSocket.sessions[doc_db.id] = self.session
+            if self.user_info.access_rights == 'write':
+                template = True
+            else:
+                template = False
         logger.debug(
             f"Action:Participant ID Assigned. URL:{self.endpoint} "
             f"User:{self.user.id} ParticipantID:{self.id}")
@@ -110,7 +117,7 @@ class WebSocket(BaseWebSocketHandler):
         })
         if connection_count < 1:
             self.send_styles()
-            self.send_document()
+            self.send_document(False, template)
         if self.can_communicate():
             self.handle_participant_update()
 
@@ -147,7 +154,7 @@ class WebSocket(BaseWebSocketHandler):
     def unfixable(self):
         self.send_document()
 
-    def send_document(self, messages=False):
+    def send_document(self, messages=False, template=False):
         response = dict()
         response['type'] = 'doc_data'
         doc_owner = self.session["doc"].owner
@@ -167,12 +174,13 @@ class WebSocket(BaseWebSocketHandler):
             'v': self.session["doc"].version,
             'content': self.session["doc"].content,
             'bibliography': self.session["doc"].bibliography,
-            'template': {
-                'id': self.session["doc"].template.id,
-                'content': self.session["doc"].template.content
-            },
             'images': {}
         }
+        if template:
+            response['doc']['template'] = {
+                'id': self.session["doc"].template.id,
+                'content': self.session["doc"].template.content
+            }
         if messages:
             response['m'] = messages
         response['time'] = int(time()) * 1000

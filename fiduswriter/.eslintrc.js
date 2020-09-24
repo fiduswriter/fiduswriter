@@ -306,6 +306,7 @@ module.exports = { // eslint-disable-line no-undef
         "settings_DEBUG": "readonly",
         "settings_SOURCE_MAPS": "readonly",
         "transpile_VERSION":"readonly",
-        "process": "readonly"
+        "process": "readonly",
+        "settings_USE_SERVICE_WORKER": "readonly"
     }
 }

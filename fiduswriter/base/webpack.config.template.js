@@ -57,7 +57,8 @@ module.exports = { // eslint-disable-line no-undef
             "settings_TEST_SERVER": settings.TEST_SERVER,
             "settings_DEBUG": settings.DEBUG,
             "settings_SOURCE_MAPS": JSON.stringify(settings.SOURCE_MAPS) || false,
-            "transpile_VERSION": transpile.VERSION
+            "transpile_VERSION": transpile.VERSION,
+            "settings_USE_SERVICE_WORKER": settings.USE_SERVICE_WORKER
         }),
         new OfflinePlugin({
             cacheMaps: [

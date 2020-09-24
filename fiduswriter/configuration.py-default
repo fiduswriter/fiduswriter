@@ -15,7 +15,7 @@ DEBUG = True
 # For example
 # SOURCE_MAPS = 'cheap-module-source-map' # fast - line numbers only
 # SOURCE_MAPS = 'source-map' # slow - line and column number
-SOURCE_MAPS = False 
+SOURCE_MAPS = False
 
 PROJECT_PATH = os.environ.get('PROJECT_PATH')
 # SRC_PATH is the root path of the FW sources.
@@ -108,3 +108,6 @@ INSTALLED_APPS = [
 ALLOWED_HOSTS = [
     'localhost',
 ]
+
+# Disable service worker (default is True)
+# USE_SERVICE_WORKER = False

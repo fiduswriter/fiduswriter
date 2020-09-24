@@ -3,7 +3,8 @@ import {
     ensureCSS,
     WebSocketConnector,
     postJson,
-    activateWait
+    activateWait,
+    showSystemMessage
 } from "../common"
 import {
     FeedbackTab
@@ -315,6 +316,11 @@ export class Editor {
                         break
                     case 'reject_diff':
                         this.mod.collab.doc.rejectDiff(data["rid"])
+                        break
+                    case 'patch_error':
+                        showSystemMessage(gettext('Your document was out of sync and has been reset.'))
+                        break
+                    default:
                         break
                     }
                 }

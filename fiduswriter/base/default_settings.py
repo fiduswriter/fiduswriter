@@ -337,3 +337,6 @@ JAVASCRIPT_ERROR_BLACKLIST = [
 
 # The page to show while transpilation takes place.
 SETUP_PAGE_PATH = os.path.join(SRC_PATH, 'base/setup_page/')
+
+# Whether to create a service worker on production sites
+USE_SERVICE_WORKER = True

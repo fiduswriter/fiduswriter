@@ -397,7 +397,7 @@ class WebSocket(BaseWebSocketHandler):
                         f"User:{self.user.id} ParticipantID:{self.id} "
                         f"Document:{json_encode(self.doc['contents'])}")
                     self.unfixable()
-                    self.send_message({"type":"patch_error"})
+                    self.send_message({'type': 'patch_error'})
                     return
                 # The json diff is only needed by the python backend which does
                 # not understand the steps. It can therefore be removed before

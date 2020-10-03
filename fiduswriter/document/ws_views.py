@@ -436,6 +436,7 @@ class WebSocket(BaseWebSocketHandler):
                             f"{json_encode(self.session['doc'].content)}"
                         )
                         self.unfixable()
+                        self.send_message({'type': 'patch_error'})
                         return
                     # The json diff is only needed by the python backend which
                     # does not understand the steps. It can therefore be
@@ -449,6 +450,7 @@ class WebSocket(BaseWebSocketHandler):
                         self.session["node"] = step_result.doc
                     else:
                         self.unfixable()
+                        self.send_message({'type': 'patch_error'})
                         return
                 self.session["doc"].content = self.session[
                     "node"

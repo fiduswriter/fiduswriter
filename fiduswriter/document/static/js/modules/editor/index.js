@@ -329,6 +329,11 @@ export class Editor {
                     case 'reject_diff':
                         this.mod.collab.doc.rejectDiff(data["rid"])
                         break
+                    case 'patch_error':
+                        showSystemMessage(gettext('Your document was out of sync and has been reset.'))
+                        break
+                    default:
+                        break
                     }
                 },
                 failedAuth: () => {

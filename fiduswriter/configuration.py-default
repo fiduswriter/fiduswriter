@@ -111,3 +111,6 @@ INSTALLED_APPS = [
 ALLOWED_HOSTS = [
     'localhost',
 ]
+
+# Disable service worker (default is True)
+# USE_SERVICE_WORKER = False

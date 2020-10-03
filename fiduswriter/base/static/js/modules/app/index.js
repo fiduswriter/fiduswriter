@@ -143,7 +143,7 @@ export class App {
     }
 
     init() {
-        if (!settings_DEBUG) {
+        if (!settings_DEBUG && settings_USE_SERVICE_WORKER) {
             OfflinePluginRuntime.install({
                 onUpdateReady: () => OfflinePluginRuntime.applyUpdate(),
                 onUpdated: () => this.handleSWUpdate()

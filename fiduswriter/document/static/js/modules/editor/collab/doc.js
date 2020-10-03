@@ -25,7 +25,14 @@ import {
 import {
     recreateTransform
 } from "./merge/recreate_transform"
-
+// settings_JSONPATCH
+import {
+    compare
+} from "fast-json-patch"
+import {
+    toMiniJSON
+} from "../../schema/mini_json"
+// End settings_JSONPATCH
 
 export class ModCollabDoc {
     constructor(mod) {
@@ -110,6 +117,9 @@ export class ModCollabDoc {
         this.mod.editor.docInfo = doc_info
         this.mod.editor.docInfo.version = doc.v
         this.mod.editor.docInfo.updated = new Date()
+        if (settings_JSONPATCH) {
+            this.confirmedJson = JSON.parse(JSON.stringify(doc.content))
+        }
         this.mod.editor.mod.db.bibDB.setDB(doc.bibliography)
         this.mod.editor.mod.db.imageDB.setDB(doc.images)
         const stateDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [doc.content]})
@@ -217,6 +227,14 @@ export class ModCollabDoc {
                     unconfirmedDiff['ds'] = stepsToSend.steps.map(
                         s => s.toJSON()
                     )
+                    if (settings_JSONPATCH) {
+                        unconfirmedDiff['jd'] = compare(
+                            this.confirmedJson,
+                            toMiniJSON(
+                                this.mod.editor.view.state.doc.firstChild
+                            )
+                        )
+                    }
                     // In case the title changed, we also add a title field to
                     // update the title field instantly - important for the
                     // document overview page.
@@ -382,6 +400,10 @@ export class ModCollabDoc {
         this.mod.editor.docInfo.confirmedDoc = docNumber === tr.docs.length ?
             tr.doc :
             tr.docs[docNumber]
+        if (settings_JSONPATCH) {
+            this.confirmedJson = toMiniJSON(this.mod.editor.docInfo.confirmedDoc.firstChild)
+        }
+
     }
 
     confirmDiff(request_id) {
@@ -403,6 +425,9 @@ export class ModCollabDoc {
             )
             this.mod.editor.view.dispatch(tr)
             this.mod.editor.docInfo.confirmedDoc = unconfirmedDiffs["doc"]
+            if (settings_JSONPATCH) {
+                this.confirmedJson = toMiniJSON(this.mod.editor.docInfo.confirmedDoc.firstChild)
+            }
         }
 
         const sentFnSteps = unconfirmedDiffs["fs"] // footnote steps

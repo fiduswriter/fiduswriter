@@ -21,6 +21,10 @@ from document.models import COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \
 from usermedia.models import Image, DocumentImage, UserImage
 from user.util import get_user_avatar_url
 
+# settings_JSONPATCH
+from jsonpatch import apply_patch, JsonPatchConflict, JsonPointerException
+from tornado.escape import json_encode
+# end settings_JSONPATCH
 
 logger = logging.getLogger(__name__)
 
@@ -408,7 +412,36 @@ class WebSocket(BaseWebSocketHandler):
                 f"User:{self.user.id} ParticipantID:{self.id}")
             return
         if pv == dv:
-            if "ds" in message:  # ds = document steps
+            if settings.JSONPATCH:
+                if "jd" in message:  # jd = json diff
+                    try:
+                        apply_patch(
+                            self.session["doc"].content,
+                            message["jd"],
+                            True
+                        )
+                    except (JsonPatchConflict, JsonPointerException):
+                        logger.exception(
+                            f"Action:Cannot apply json diff. "
+                            f"URL:{self.endpoint} User:{self.user.id} "
+                            f"ParticipantID:{self.id}")
+                        logger.error(
+                            f"Action:Patch Exception URL:{self.endpoint} "
+                            f"User:{self.user.id} ParticipantID:{self.id} "
+                            f"Message:{json_encode(message)}")
+                        logger.error(
+                            f"Action:Patch Exception URL:{self.endpoint} "
+                            f"User:{self.user.id} ParticipantID:{self.id} "
+                            f"Document:"
+                            f"{json_encode(self.session['doc'].content)}"
+                        )
+                        self.unfixable()
+                        return
+                    # The json diff is only needed by the python backend which
+                    # does not understand the steps. It can therefore be
+                    # removed before broadcast to other clients.
+                    del message["jd"]
+            elif "ds" in message:  # ds = document steps
                 for s in message["ds"]:
                     step = Step.from_json(schema, s)
                     step_result = step.apply(self.session["node"])

@@ -9,3 +9,6 @@ python-dateutil==2.8.1
 python-magic==0.4.18
 tornado==6.0.4
 prosemirror-py==0.1.5
+# settings_JSONPATCH
+jsonpatch==1.26
+# end settings_JSONPATCH

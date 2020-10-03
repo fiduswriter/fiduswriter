@@ -339,3 +339,8 @@ JAVASCRIPT_ERROR_BLACKLIST = [
 
 # The page to show while transpilation takes place.
 SETUP_PAGE_PATH = os.path.join(SRC_PATH, 'base/setup_page/')
+
+# Whether to use the old JSON patch method rather than prosemirror-py.
+# Deprecated and will be remove din the next minor version update after
+# Fidus Writer 3.9
+JSONPATCH = False

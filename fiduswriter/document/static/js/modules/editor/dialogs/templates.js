@@ -249,7 +249,7 @@ export const figureImageTemplate = ({imageDB}) =>
     </div>`
 
 /** A template to configure the display of a figure in the editor. */
-export const configureFigureTemplate = ({caption, dir, language}) =>
+export const configureFigureTemplate = ({language}) =>
     `<div class="fw-media-uploader">
             <input type="hidden" id="figure-category">
             <div style="margin-top: 10px;">
@@ -313,9 +313,7 @@ export const configureFigureTemplate = ({caption, dir, language}) =>
                 <div class="inner-figure-preview"></div>
             </div>
             <div style="margin-top: 10px;">
-                <input style="width: 402px;" class="caption"
-                        type="text" name="figure-caption" value="${escapeText(caption)}"
-                        placeholder="${gettext("Insert caption")}" dir="${dir}" />
+                <div class="caption input" style="width: 402px;"></div>
             </div>
         </div>`
 

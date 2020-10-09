@@ -882,6 +882,23 @@ const convertNodeV32 = function(node, ids = []) {
         node.attrs = attrs
         ids.push(blockId)
         break
+    case 'figure':
+        attrs = node.attrs || {}
+        if (attrs.figureCategory) {
+            attrs.category = attrs.figureCategory
+            delete attrs.figureCategory
+        }
+        if (attrs.caption) {
+            const caption = []
+            if (attrs.caption.length) {
+                caption.push({type: 'text', text: attrs.caption})
+            }
+            attrs.caption = caption
+        }
+        if (attrs.keys().length) {
+            node.attrs = attrs
+        }
+        break
     }
     if (node.content) {
         node.content.forEach(childNode => {

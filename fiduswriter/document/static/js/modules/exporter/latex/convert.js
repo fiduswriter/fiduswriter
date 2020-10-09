@@ -436,7 +436,7 @@ export class LatexExporterConvert {
             break
         }
         case 'figure': {
-            const figureType = node.attrs.figureCategory
+            const figureType = node.attrs.category
             let caption = node.attrs.caption
             if (figureType !== 'none') {
                 if (!this.figureCounter[figureType]) {
@@ -445,7 +445,7 @@ export class LatexExporterConvert {
                 const figCount = this.figureCounter[figureType]++
                 const figLabel = `${FIG_CATS[figureType][this.settings.language]} ${figCount}`
                 if (caption.length) {
-                    caption = `${figLabel}: ${caption}`
+                    caption = `${figLabel}: ${caption.map(node => this.walkJson(node)).join('')}`
                 } else {
                     caption = figLabel
                 }

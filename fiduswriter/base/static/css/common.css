@@ -161,3 +161,15 @@ table .fw-inline {
     clear: both;
     display: block;
 }
+
+div.input {
+    box-sizing: border-box;
+    font-size: 14px;
+    line-height: 1.33em;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 11px 10px 0;
+    min-height: 38px;
+    color: var(--cs-light-text);
+    background-color: var(--cs-light-background);
+}

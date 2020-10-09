@@ -51,7 +51,7 @@ export const figurePlugin = function(options) {
         },
         view(view) {
             let userLanguage = options.editor.view.state.doc.firstChild.attrs.language
-            view.dom.querySelectorAll('*[class^="figure-cat-"]').forEach(el => el.innerHTML = FIG_CATS[el.dataset.figureCategory][userLanguage])
+            view.dom.querySelectorAll('*[class^="figure-cat-"]').forEach(el => el.innerHTML = FIG_CATS[el.dataset.category][userLanguage])
             return {
                 update: (view, _prevState) => {
                     let selector = '*[class^="figure-cat-"]:empty'
@@ -59,7 +59,7 @@ export const figurePlugin = function(options) {
                         selector = '*[class^="figure-cat-"]'
                         userLanguage = options.editor.view.state.doc.firstChild.attrs.language
                     }
-                    view.dom.querySelectorAll(selector).forEach(el => el.innerHTML = FIG_CATS[el.dataset.figureCategory][userLanguage])
+                    view.dom.querySelectorAll(selector).forEach(el => el.innerHTML = FIG_CATS[el.dataset.category][userLanguage])
                 }
             }
         }

@@ -1,3 +1,9 @@
+import {EditorState, Plugin} from "prosemirror-state"
+import {EditorView, Decoration, DecorationSet} from "prosemirror-view"
+import {history, redo, undo} from "prosemirror-history"
+import {baseKeymap} from "prosemirror-commands"
+import {keymap} from "prosemirror-keymap"
+
 import deepEqual from "fast-deep-equal"
 
 import {
@@ -14,6 +20,9 @@ import {
 import {
     randomFigureId
 } from "../../schema/common"
+import {
+    captionSchema
+} from "../../schema/captions"
 
 export class FigureDialog {
     constructor(editor) {
@@ -26,8 +35,8 @@ export class FigureDialog {
         this.insideFigure = false
         this.figureNode = false
         this.contentNode = false
-        this.caption = ''
-        this.figureCategory = 'none'
+        this.caption = []
+        this.category = 'none'
         this.aligned = 'center'
         this.width = "50"
         this.equation = ''
@@ -165,7 +174,7 @@ export class FigureDialog {
 
     setFigureLabel() {
         this.dialog.dialogEl.querySelector('#figure-category-btn .label').innerHTML =
-            document.getElementById(`figure-category-${this.figureCategory}`).innerText
+            document.getElementById(`figure-category-${this.category}`).innerText
     }
 
     setFigureAlignment() {
@@ -180,8 +189,7 @@ export class FigureDialog {
     }
 
     submitForm() {
-        const captionInput = this.dialog.dialogEl.querySelector('input[name=figure-caption]')
-        this.caption = captionInput.value
+        this.caption = this.captionView.state.doc.firstChild.toJSON().content
 
         if ((new RegExp(/^\s*$/)).test(this.equation) && (!this.imgId)) {
             // The math input is empty. Delete a math node if it exist. Then close the dialog.
@@ -210,8 +218,8 @@ export class FigureDialog {
             this.equation === this.node.attrs.equation &&
             (this.imgId === this.node.attrs.image) &&
             this.imgDb === 'document' &&
-            this.caption === this.node.attrs.caption &&
-            this.figureCategory === this.node.attrs.figureCategory &&
+            deepEqual(this.caption, this.node.attrs.caption) &&
+            this.category === this.node.attrs.category &&
             this.aligned === this.node.attrs.aligned &&
             this.width === this.node.attrs.width
         ) {
@@ -228,7 +236,7 @@ export class FigureDialog {
                 image: this.imgId,
                 aligned: this.aligned,
                 width: this.width,
-                figureCategory: this.figureCategory,
+                category: this.category,
                 caption: this.caption,
                 id: this.insideFigure ? this.node.attrs.id : randomFigureId()
             })
@@ -248,7 +256,7 @@ export class FigureDialog {
             this.equation = this.node.attrs.equation
             this.imgId = this.node.attrs.image
             this.imgDb = 'document'
-            this.figureCategory = this.node.attrs.figureCategory
+            this.category = this.node.attrs.category
             this.caption = this.node.attrs.caption
             this.aligned = this.node.attrs.aligned
             this.width = this.node.attrs.width
@@ -280,10 +288,8 @@ export class FigureDialog {
             id: 'figure-dialog',
             title: gettext("Enter latex math or insert an image"),
             body: configureFigureTemplate({
-                caption: this.caption,
                 aligned: this.aligned,
                 width: this.width,
-                dir: this.editor.docInfo.dir,
                 language: this.editor.view.state.doc.firstChild.attrs.language
             }),
             buttons,
@@ -297,9 +303,7 @@ export class FigureDialog {
 
         this.dialog.open()
 
-        const captionInput = this.dialog.dialogEl.querySelector('input[name=figure-caption]')
-
-        captionInput.focus()
+        this.initCaption()
 
         this.setFigureLabel()
         this.setFigureAlignment()
@@ -350,10 +354,64 @@ export class FigureDialog {
             'click',
             event => {
                 event.preventDefault()
-                this.figureCategory = el.id.split('-')[2]
+                this.category = el.id.split('-')[2]
                 this.setFigureLabel()
             }
         ))
 
+    }
+
+    initCaption() {
+        const dom = this.dialog.dialogEl.querySelector('div.caption')
+        const doc = captionSchema.nodeFromJSON({
+            type: 'doc',
+            content: [{
+                type: 'caption',
+                content: this.caption
+            }]
+        })
+
+        this.captionView = new EditorView(dom, {
+            state: EditorState.create({
+                schema: captionSchema,
+                doc,
+                plugins: [
+                    history(),
+                    keymap(baseKeymap),
+                    keymap({
+                        "Mod-z": undo,
+                        "Mod-shift-z": undo,
+                        "Mod-y": redo
+                    }),
+                    this.captionPlaceholderPlugin()
+                ]
+            }),
+            dispatchTransaction: tr => {
+                const newState = this.captionView.state.apply(tr)
+                this.captionView.updateState(newState)
+            }
+        })
+    }
+
+    captionPlaceholderPlugin() {
+        return new Plugin({
+            props: {
+                decorations: (state) => {
+                    const doc = state.doc
+                    if (
+                        doc.childCount === 1 &&
+                        doc.firstChild.isTextblock &&
+                        doc.firstChild.content.size === 0
+                    ) {
+                        const placeHolder = document.createElement('span')
+                        placeHolder.classList.add('placeholder')
+                        // There is only one field, so we know the selection is there
+                        placeHolder.classList.add('selected')
+                        placeHolder.setAttribute('data-placeholder', gettext('Insert caption'))
+                        return DecorationSet.create(doc, [Decoration.widget(1, placeHolder)])
+                    }
+                }
+            }
+        })
     }
 }

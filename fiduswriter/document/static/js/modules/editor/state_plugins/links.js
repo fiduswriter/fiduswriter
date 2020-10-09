@@ -57,17 +57,17 @@ export const getInternalTargets = function(state, language, editor) {
             return true
         }
 
-        if (node.type.name === 'figure' && node.attrs.figureCategory && node.attrs.figureCategory !== 'none') {
-            if (!figures[node.attrs.figureCategory]) {
-                figures[node.attrs.figureCategory] = 0
+        if (node.type.name === 'figure' && node.attrs.category && node.attrs.category !== 'none') {
+            if (!figures[node.attrs.category]) {
+                figures[node.attrs.category] = 0
             }
-            figures[node.attrs.figureCategory]++
+            figures[node.attrs.category]++
 
             internalTargets.push({
                 id: node.attrs.id,
                 text: editor === 'main' ?
-                    `${FIG_CATS[node.attrs.figureCategory][language]} ${figures[node.attrs.figureCategory]}` :
-                    `${FIG_CATS[node.attrs.figureCategory][language]} ${figures[node.attrs.figureCategory]}A`
+                    `${FIG_CATS[node.attrs.category][language]} ${figures[node.attrs.category]}` :
+                    `${FIG_CATS[node.attrs.category][language]} ${figures[node.attrs.category]}A`
             })
             return true
         }

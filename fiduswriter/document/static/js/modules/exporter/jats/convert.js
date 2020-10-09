@@ -530,7 +530,7 @@ export class JATSExporterConvert {
                 imageFilename = filePathName.split('/').pop()
             }
             if (
-                node.attrs.figureCategory === 'none' &&
+                node.attrs.category === 'none' &&
                     imageFilename &&
                     !node.attrs.caption.length &&
                     (!copyright || !copyright.holder)
@@ -540,7 +540,7 @@ export class JATSExporterConvert {
                 start += `<fig id="${node.attrs.id}">`
                 end = '</fig>' + end
 
-                const figureType = node.attrs.figureCategory
+                const figureType = node.attrs.category
                 if (figureType !== 'none') {
                     if (!this.figureCounter[figureType]) {
                         this.figureCounter[figureType] = 0
@@ -550,7 +550,7 @@ export class JATSExporterConvert {
                     start += `<label>${escapeText(figLabel)}</label>`
                 }
                 if (node.attrs.caption.length) {
-                    start += `<caption><p>${escapeText(node.attrs.caption)}</p></caption>`
+                    start += `<caption><p>${node.attrs.caption.map(node => this.walkJson(node)).join('')}</p></caption>`
                 }
                 if (node.attrs.equation) {
                     start += '<disp-formula>'

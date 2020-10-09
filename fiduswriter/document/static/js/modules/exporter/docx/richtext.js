@@ -308,8 +308,8 @@ export class DocxExporterRichtext {
         }
         case 'figure':
         {
-            const figCat = node.attrs.figureCategory
-            let caption = escapeText(node.attrs.caption)
+            const figCat = node.attrs.category
+            let caption = node.attrs.caption
             let figCountXml = ''
             if (figCat !== 'none') {
                 const figureCounter = options.inFootnote ? this.fnFigureCounter : this.figureCounter
@@ -339,7 +339,9 @@ export class DocxExporterRichtext {
                         <w:rPr></w:rPr>
                         <w:fldChar w:fldCharType="end" />
                     </w:r>`
-                caption = caption.length ? ': ' + caption : ''
+                if (caption.length) {
+                    caption = [{type: 'text', text: ': '}].concat(caption)
+                }
             }
             let cx, cy
             if (node.attrs.image !== false) {
@@ -432,13 +434,8 @@ export class DocxExporterRichtext {
         noSpaceTmp`<w:p>
                           <w:pPr><w:pStyle w:val="Caption"/><w:rPr></w:rPr></w:pPr>
                           ${figCountXml}
-                          ${
-    caption.length ?
-        noSpaceTmp`<w:r>
-                                  <w:rPr></w:rPr>
-                                  <w:t>${caption}</w:t>
-                              </w:r>` : ''
-}</w:p>` : ''
+                          ${caption.map(node => this.transformRichtext(node)).join('')}
+                    </w:p>` : ''
 }` + end
             } else {
                 start += noSpaceTmp`
@@ -485,14 +482,7 @@ export class DocxExporterRichtext {
 
                 end = noSpaceTmp`
                                                         ${figCountXml}
-                                                        ${
-    caption.length ?
-        `<w:r>
-                                                                <w:rPr></w:rPr>
-                                                                <w:t>${caption}</w:t>
-                                                            </w:r>` :
-        ''
-}
+                                                        ${caption.map(node => this.transformRichtext(node)).join('')}
                                                     </w:p>
                                                 </w:txbxContent>
                                             </wps:txbx>

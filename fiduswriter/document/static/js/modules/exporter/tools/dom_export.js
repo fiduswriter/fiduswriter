@@ -95,8 +95,8 @@ export class DOMExporter {
 
     addFigureLabels(language) {
         this.content.querySelectorAll('*[class^="figure-cat-"]').forEach(el => {
-            el.innerHTML = FIG_CATS[el.dataset.figureCategory][language]
-            delete el.dataset.figureCategory
+            el.innerHTML = FIG_CATS[el.dataset.category][language]
+            delete el.dataset.category
         })
     }
 
@@ -198,7 +198,7 @@ export class DOMExporter {
             delete el.dataset.equation
             delete el.dataset.image
             delete el.dataset.imageSrc
-            delete el.dataset.figureCategory
+            delete el.dataset.category
             delete el.dataset.caption
             delete el.dataset.aligned
             delete el.dataset.width

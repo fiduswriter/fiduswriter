@@ -206,10 +206,10 @@ export class OdtExporterRichtext {
                 end = end + '<text:p text:style-name="Standard"></text:p>'
             }
 
-            let caption = escapeText(node.attrs.caption)
+            let caption = node.attrs.caption
             // The figure category should not be in the
             // user's language but rather the document language
-            const figCat = node.attrs.figureCategory
+            const figCat = node.attrs.category
             if (figCat !== 'none') {
                 const figureCounter = options.inFootnote ? this.fnFigureCounter : this.figureCounter
                 if (!figureCounter[figCat]) {
@@ -218,7 +218,7 @@ export class OdtExporterRichtext {
                 const figCount = figureCounter[figCat]++
                 const figCountXml = `<text:sequence text:ref-name="ref${figCat}${figCount - 1}${options.inFootnote ? 'A' : ''}" text:name="${figCat}" text:formula="ooow:${figCat}+1" style:num-format="1">${figCount}${options.inFootnote ? 'A' : ''}</text:sequence>`
                 if (caption.length) {
-                    caption = `<text:bookmark-start text:name="${node.attrs.id}"/>${FIG_CATS[figCat][this.exporter.doc.settings.language]} ${figCountXml}<text:bookmark-end text:name="${node.attrs.id}"/>: ${caption}`
+                    caption = `<text:bookmark-start text:name="${node.attrs.id}"/>${FIG_CATS[figCat][this.exporter.doc.settings.language]} ${figCountXml}<text:bookmark-end text:name="${node.attrs.id}"/>: ${caption.map(node => this.transformRichtext(node)).join('')}`
                 } else {
                     caption = `<text:bookmark-start text:name="${node.attrs.id}"/>${FIG_CATS[figCat][this.exporter.doc.settings.language]} ${figCountXml}<text:bookmark-end text:name="${node.attrs.id}"/>`
                 }
@@ -244,7 +244,7 @@ export class OdtExporterRichtext {
                         </draw:text-box>
                     </draw:frame>` + end
                 if (caption.length) {
-                    end = `<text:line-break />${caption}` + end
+                    end = `<text:line-break />${caption.map(node => this.transformRichtext(node)).join('')}` + end
                 }
             }
             if (node.attrs.image !== false) {

@@ -652,7 +652,7 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
         button.click()
 
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "caption"))
+            EC.presence_of_element_located((By.CSS_SELECTOR, "span.caption"))
         ).send_keys('Caption')
         self.driver.find_element_by_id("figure-category-btn").click()
         self.driver.find_element_by_id("figure-category-photo").click()
@@ -848,7 +848,7 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
         button.click()
 
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "caption"))
+            EC.presence_of_element_located((By.CSS_SELECTOR, "span.caption"))
         ).send_keys('Caption')
         self.driver.find_element_by_id("figure-category-btn").click()
         self.driver.find_element_by_id("figure-category-photo").click()

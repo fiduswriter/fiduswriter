@@ -291,7 +291,9 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         button = self.driver.find_element_by_xpath('//*[@title="Figure"]')
         button.click()
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "#figure-dialog span.caption"))
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, "#figure-dialog span.caption")
+            )
         ).send_keys('Caption 2')
         self.driver.find_element_by_id("figure-category-btn").click()
         self.driver.find_element_by_id("figure-category-photo").click()

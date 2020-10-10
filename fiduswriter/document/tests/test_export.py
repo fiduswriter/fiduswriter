@@ -246,7 +246,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         button.click()
 
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "span.caption"))
+            EC.presence_of_element_located((By.CSS_SELECTOR, "#figure-dialog span.caption"))
         ).send_keys('Figure')
 
         # click on 'Insert image' button

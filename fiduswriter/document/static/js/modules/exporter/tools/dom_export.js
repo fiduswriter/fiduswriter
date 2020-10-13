@@ -1,6 +1,6 @@
 import {DOMSerializer} from "prosemirror-model"
 import {RenderCitations} from "../../citations/render"
-import {BIBLIOGRAPHY_HEADERS, FIG_CATS} from "../../schema/i18n"
+import {BIBLIOGRAPHY_HEADERS, CATS} from "../../schema/i18n"
 import {get} from "../../common"
 
 /*
@@ -94,8 +94,8 @@ export class DOMExporter {
     }
 
     addFigureLabels(language) {
-        this.content.querySelectorAll('*[class^="figure-cat-"]').forEach(el => {
-            el.innerHTML = FIG_CATS[el.dataset.category][language]
+        this.content.querySelectorAll('*[class^="cat-"]').forEach(el => {
+            el.innerHTML = CATS[el.dataset.category][language]
             delete el.dataset.category
         })
     }

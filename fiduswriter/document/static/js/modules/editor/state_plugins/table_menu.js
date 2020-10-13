@@ -1,11 +1,13 @@
 import {Plugin, PluginKey, Selection} from "prosemirror-state"
 import {ContentMenu} from '../../common'
+import {captionSchema, captionSerializer} from '../../schema/captions'
 import {WRITE_ROLES} from "../"
 
 const key = new PluginKey('tableMenu')
 
 class TableView {
     constructor(node, view, getPos, options) {
+        console.log('tableView')
         this.node = node
         this.view = view
         this.getPos = getPos
@@ -18,11 +20,25 @@ class TableView {
         this.menuButton.innerHTML = '<span class="dot-menu-icon"><i class="fa fa-ellipsis-v"></i></span>'
         this.dom.appendChild(this.menuButton)
         const table = document.createElement("table")
-        const tbody = document.createElement("tbody")
-        table.append(tbody)
-        this.contentDOM = this.dom.appendChild(table)
+        if (node.attrs.caption.length || node.attrs.category !== 'none') {
+            const captionNode = document.createElement("caption")
+            if (node.attrs.category !== 'none') {
+                const tableCatNode = document.createElement('span')
+                tableCatNode.classList.add(`cat-${node.attrs.category}`)
+                tableCatNode.setAttribute('data-category', node.attrs.category)
+                captionNode.appendChild(tableCatNode)
+            }
+            if (node.attrs.caption.length) {
+                const captionTextNode = captionSerializer.serializeNode(captionSchema.nodeFromJSON({type: 'caption', content: node.attrs.caption}))
+                captionNode.appendChild(captionTextNode)
+            }
+            table.appendChild(captionNode)
+            console.log({captionNode})
+        }
+        this.contentDOM = document.createElement("tbody")
         this.contentDOM.classList.add(`table-${node.attrs.layout}`)
-        this.dom.appendChild(this.contentDOM)
+        table.appendChild(this.contentDOM)
+        this.dom.appendChild(table)
     }
 
     stopEvent(event) {

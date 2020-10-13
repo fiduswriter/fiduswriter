@@ -1,6 +1,6 @@
 import {escapeText} from "../../common"
 import {
-    FIG_CATS
+    CATS
 } from "../../schema/i18n"
 
 
@@ -131,7 +131,7 @@ export const tableResizeTemplate = () =>
         </div>
         <div id="table-alignment-pulldown" class="fw-pulldown fw-left"
                 style="left: 115px;">
-            <ul id="table-category-list">
+            <ul id="table-alignment-list">
                 <li><span class="fw-pulldown-item" id="table-alignment-center">
                     ${gettext("Center")}
                 </span></li>
@@ -153,7 +153,7 @@ export const tableResizeTemplate = () =>
         </div>
         <div id="table-width-pulldown" class="fw-pulldown fw-left"
                 style="left: 115px;">
-            <ul id="table-category-list">
+            <ul id="table-width-list">
                 <li><span class="fw-pulldown-item" id="table-width-100">
                     ${gettext('100 %')}
                 </span></li>
@@ -178,7 +178,7 @@ export const tableResizeTemplate = () =>
         </div>
         <div id="table-layout-pulldown" class="fw-pulldown fw-left"
                 style="left: 115px;">
-            <ul id="table-category-list">
+            <ul id="table-layout-list">
                 <li><span class="fw-pulldown-item" id="table-layout-fixed">
                     ${gettext("Fixed")}
                 </span></li>
@@ -188,6 +188,30 @@ export const tableResizeTemplate = () =>
             </ul>
         </div>
 
+    </div>`
+
+export const tableCaptionTemplate = ({language}) =>
+    `<div style="margin-top:25px;margin-left:20px">
+        <p>${gettext("Category")}:</p>
+        <div style="margin-left:95px;margin-top:-25px;display:inherit;width:60px;" id="table-category-btn" class="fw-button fw-light fw-large">
+            <input type="hidden" id="table-category" />
+            <label></label>
+            <span class="fa fa-caret-down"></span>
+        </div>
+        <div id="table-category-pulldown" class="fw-pulldown fw-left"
+                style="left: 115px;">
+            <ul id="table-category-list">
+                <li><span class="fw-pulldown-item" id="table-category-none">
+                    ${gettext("None")}
+                </span></li>
+                <li><span class="fw-pulldown-item" id="table-category-table">
+                    ${CATS['table'][language]}
+                </span></li>
+            </ul>
+        </div>
+        <div style="margin-top: 10px;">
+            <div class="caption input" style="width: 402px;"></div>
+        </div>
     </div>`
 
 export const orderedListStartTemplate = ({order}) =>
@@ -260,11 +284,12 @@ export const configureFigureTemplate = ({language}) =>
                 <div id="figure-category-pulldown" class="fw-pulldown fw-left"
                         style="left: 10px;">
                     <ul id="figure-category-list">
+                        <li><span class="fw-pulldown-item" id="figure-category-none">
+                            ${gettext('None')}
+                        </span></li>
                         ${
-    Object.entries(FIG_CATS).map(([id, title_object]) =>
-        `<li><span class="fw-pulldown-item" id="figure-category-${id}">
-                                    ${title_object[language]}
-                                </span></li>`
+    Object.entries(CATS).map(([id, title_object]) =>
+        `<li><span class="fw-pulldown-item" id="figure-category-${id}">${title_object[language]}</span></li>`
     ).join('')
 }
                     </ul>

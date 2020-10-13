@@ -1,5 +1,14 @@
+import {EditorState, Plugin} from "prosemirror-state"
+import {EditorView, Decoration, DecorationSet} from "prosemirror-view"
+import {history, redo, undo} from "prosemirror-history"
+import {baseKeymap} from "prosemirror-commands"
+import {keymap} from "prosemirror-keymap"
+
 import {Dialog, addDropdownBox} from "../../common"
-import {tableResizeTemplate, tableInsertTemplate} from "./templates"
+import {
+    captionSchema
+} from "../../schema/captions"
+import {tableResizeTemplate, tableInsertTemplate, tableCaptionTemplate} from "./templates"
 
 
 export class TableDialog {
@@ -93,6 +102,156 @@ export class TableDialog {
             rowCount = newCounts.rowCount
             colCount = newCounts.colCount
         }))
+
+    }
+}
+
+export class TableCaptionDialog {
+    constructor(editor) {
+        this.editor = editor
+        this.dialogEl = false
+        this.category = 'none'
+        this.caption = []
+    }
+
+    init() {
+        const {table} = this.findTable(this.editor.currentView.state)
+        if (table) {
+            this.category = table.attrs.category
+            this.caption = table.attrs.caption
+        }
+        this.insertDialog()
+    }
+
+    setTableCategory() {
+        this.dialog.dialogEl.querySelector('#table-category-btn label').innerHTML =
+            document.getElementById(`table-category-${this.category}`).innerText
+
+    }
+
+    initCaption() {
+        const dom = this.dialog.dialogEl.querySelector('div.caption')
+        const doc = captionSchema.nodeFromJSON({
+            type: 'doc',
+            content: [{
+                type: 'caption',
+                content: this.caption
+            }]
+        })
+
+        this.captionView = new EditorView(dom, {
+            state: EditorState.create({
+                schema: captionSchema,
+                doc,
+                plugins: [
+                    history(),
+                    keymap(baseKeymap),
+                    keymap({
+                        "Mod-z": undo,
+                        "Mod-shift-z": undo,
+                        "Mod-y": redo
+                    }),
+                    this.captionPlaceholderPlugin()
+                ]
+            }),
+            dispatchTransaction: tr => {
+                const newState = this.captionView.state.apply(tr)
+                this.captionView.updateState(newState)
+            }
+        })
+    }
+
+    captionPlaceholderPlugin() {
+        return new Plugin({
+            props: {
+                decorations: (state) => {
+                    const doc = state.doc
+                    if (
+                        doc.childCount === 1 &&
+                        doc.firstChild.isTextblock &&
+                        doc.firstChild.content.size === 0
+                    ) {
+                        const placeHolder = document.createElement('span')
+                        placeHolder.classList.add('placeholder')
+                        // There is only one field, so we know the selection is there
+                        placeHolder.classList.add('selected')
+                        placeHolder.setAttribute('data-placeholder', gettext('Insert caption'))
+                        return DecorationSet.create(doc, [Decoration.widget(1, placeHolder)])
+                    }
+                }
+            }
+        })
+    }
+
+    findTable(state) {
+        const $head = state.selection.$head
+        for (let d = $head.depth; d > 0; d--) {
+            if ($head.node(d).type.spec.tableRole == "table") {
+                return {table: $head.node(d), tablePos: $head.before(d)}
+            }
+        }
+        return {table: false}
+    }
+
+    submitForm() {
+        this.caption = this.captionView.state.doc.firstChild.toJSON().content
+        const {table, tablePos} = this.findTable(this.editor.currentView.state)
+        if (!table) {
+            return
+        }
+        const attrs = Object.assign({}, table.attrs, {
+            caption: this.caption,
+            category: this.category
+        })
+        this.editor.currentView.dispatch(this.editor.currentView.state.tr.setNodeMarkup(tablePos, false, attrs))
+    }
+
+    insertDialog() {
+        const buttons = []
+        buttons.push({
+            text: gettext('Update'),
+            classes: 'fw-dark',
+            click: () => {
+                this.submitForm()
+                this.dialog.close()
+            }
+        })
+        buttons.push({
+            type: 'cancel'
+        })
+
+        this.dialog = new Dialog({
+            title: gettext('Table caption'),
+            body: tableCaptionTemplate({
+                language: this.editor.view.state.doc.firstChild.attrs.language
+            }),
+            width: 300,
+            height: 260,
+            buttons,
+            onClose: () => this.editor.currentView.focus()
+        })
+
+        this.dialog.open()
+
+        console.log({dialog: this.dialog})
+
+        this.initCaption()
+
+        this.setTableCategory()
+
+        addDropdownBox(
+            document.getElementById('table-category-btn'),
+            document.getElementById('table-category-pulldown')
+        )
+
+        document.querySelectorAll('#table-category-pulldown li span').forEach(el => el.addEventListener(
+            'click',
+            event => {
+                event.preventDefault()
+                this.category = el.id.split('-')[2]
+                this.setTableCategory()
+            }
+        ))
 
     }
 }

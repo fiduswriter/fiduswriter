@@ -288,8 +288,6 @@ export class FigureDialog {
             id: 'figure-dialog',
             title: gettext("Enter latex math or insert an image"),
             body: configureFigureTemplate({
-                aligned: this.aligned,
-                width: this.width,
                 language: this.editor.view.state.doc.firstChild.attrs.language
             }),
             buttons,

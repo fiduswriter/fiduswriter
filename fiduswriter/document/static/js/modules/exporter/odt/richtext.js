@@ -1,6 +1,6 @@
 import {noSpaceTmp, escapeText} from "../../common"
 import {
-    FIG_CATS
+    CATS
 } from "../../schema/i18n"
 
 export class OdtExporterRichtext {
@@ -218,9 +218,9 @@ export class OdtExporterRichtext {
                 const figCount = figureCounter[figCat]++
                 const figCountXml = `<text:sequence text:ref-name="ref${figCat}${figCount - 1}${options.inFootnote ? 'A' : ''}" text:name="${figCat}" text:formula="ooow:${figCat}+1" style:num-format="1">${figCount}${options.inFootnote ? 'A' : ''}</text:sequence>`
                 if (caption.length) {
-                    caption = `<text:bookmark-start text:name="${node.attrs.id}"/>${FIG_CATS[figCat][this.exporter.doc.settings.language]} ${figCountXml}<text:bookmark-end text:name="${node.attrs.id}"/>: ${caption}`
+                    caption = `<text:bookmark-start text:name="${node.attrs.id}"/>${CATS[figCat][this.exporter.doc.settings.language]} ${figCountXml}<text:bookmark-end text:name="${node.attrs.id}"/>: ${caption}`
                 } else {
-                    caption = `<text:bookmark-start text:name="${node.attrs.id}"/>${FIG_CATS[figCat][this.exporter.doc.settings.language]} ${figCountXml}<text:bookmark-end text:name="${node.attrs.id}"/>`
+                    caption = `<text:bookmark-start text:name="${node.attrs.id}"/>${CATS[figCat][this.exporter.doc.settings.language]} ${figCountXml}<text:bookmark-end text:name="${node.attrs.id}"/>`
                 }
             }
             let relWidth = node.attrs.width

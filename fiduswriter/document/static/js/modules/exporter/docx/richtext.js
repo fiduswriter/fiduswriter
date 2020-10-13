@@ -3,7 +3,7 @@ import {
     escapeText
 } from "../../common"
 import {
-    FIG_CATS
+    CATS
 } from "../../schema/i18n"
 
 export class DocxExporterRichtext {
@@ -317,7 +317,7 @@ export class DocxExporterRichtext {
                     figureCounter[figCat] = 1
                 }
                 figCountXml = `<w:r>
-                        <w:t xml:space="preserve">${FIG_CATS[figCat][this.exporter.doc.settings.language]} </w:t>
+                        <w:t xml:space="preserve">${CATS[figCat][this.exporter.doc.settings.language]} </w:t>
                     </w:r>
                     <w:r>
                         <w:rPr></w:rPr>

@@ -13,7 +13,7 @@ export const figure = {
     attrs: {
         equation: {default: ""},
         image: {default: false},
-        category: {default: ""},
+        category: {default: "none"},
         caption: {default: []},
         id: {default: false},
         track: {default: []},
@@ -119,7 +119,7 @@ export const figure = {
         const captionNode = document.createElement("figcaption")
         if (node.attrs.category !== 'none') {
             const figureCatNode = document.createElement('span')
-            figureCatNode.classList.add(`figure-cat-${node.attrs.category}`)
+            figureCatNode.classList.add(`cat-${node.attrs.category}`)
             figureCatNode.setAttribute('data-category', node.attrs.category)
             captionNode.appendChild(figureCatNode)
         }

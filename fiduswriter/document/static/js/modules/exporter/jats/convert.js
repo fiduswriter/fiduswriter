@@ -1,5 +1,5 @@
 import {escapeText} from "../../common"
-import {FIG_CATS} from "../../schema/i18n"
+import {CATS} from "../../schema/i18n"
 
 import {articleTemplate} from "./templates"
 
@@ -546,7 +546,7 @@ export class JATSExporterConvert {
                         this.figureCounter[figureType] = 0
                     }
                     const figCount = ++this.figureCounter[figureType]
-                    const figLabel = `${FIG_CATS[figureType][this.settings.language]} ${figCount}`
+                    const figLabel = `${CATS[figureType][this.settings.language]} ${figCount}`
                     start += `<label>${escapeText(figLabel)}</label>`
                 }
                 if (node.attrs.caption.length) {

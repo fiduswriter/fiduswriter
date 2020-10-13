@@ -1,5 +1,5 @@
 import {escapeLatexText} from "./escape_latex"
-import {BIBLIOGRAPHY_HEADERS, FIG_CATS} from "../../schema/i18n"
+import {BIBLIOGRAPHY_HEADERS, CATS} from "../../schema/i18n"
 
 export class LatexExporterConvert {
     constructor(exporter, imageDB, bibDB, settings) {
@@ -443,7 +443,7 @@ export class LatexExporterConvert {
                     this.figureCounter[figureType] = 1
                 }
                 const figCount = this.figureCounter[figureType]++
-                const figLabel = `${FIG_CATS[figureType][this.settings.language]} ${figCount}`
+                const figLabel = `${CATS[figureType][this.settings.language]} ${figCount}`
                 if (caption.length) {
                     caption = `${figLabel}: ${caption.map(node => this.walkJson(node)).join('')}`
                 } else {

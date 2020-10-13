@@ -88,19 +88,19 @@ class ClipboardDOMSerializer {
     }
 
     addFigureNumbers(domFragment) {
-        domFragment.querySelectorAll('figcaption .figure-cat-figure').forEach(
+        domFragment.querySelectorAll('figcaption .cat-figure').forEach(
             (el, index) => {
                 el.innerHTML += ' ' + (index + 1) + ': '
             }
         )
 
-        domFragment.querySelectorAll('figcaption .figure-cat-photo').forEach(
+        domFragment.querySelectorAll('figcaption .cat-photo').forEach(
             (el, index) => {
                 el.innerHTML += ' ' + (index + 1) + ': '
             }
         )
 
-        domFragment.querySelectorAll('figcaption .figure-cat-table').forEach(
+        domFragment.querySelectorAll('figcaption .cat-table, caption .cat-table').forEach(
             (el, index) => {
                 el.innerHTML += ' ' + (index + 1) + ': '
             }

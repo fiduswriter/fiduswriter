@@ -24,20 +24,20 @@ export class PrintExporter extends HTMLExporter {
 
             }
             body, section[role=doc-footnotes] {
-                counter-reset: figure-cat-0 figure-cat-1 figure-cat-2 footnote-counter footnote-marker-counter;
+                counter-reset: cat-0 cat-1 cat-2 footnote-counter footnote-marker-counter;
             }
             section[role=doc-footnote] > *:first-child:before {
                 counter-increment: footnote-counter;
                 content: counter(footnote-counter) ". ";
             }
-            section[role=doc-footnote] .figure-cat-figure::after {
-                content: ' ' counter(figure-cat-0) 'A';
+            section[role=doc-footnote] .cat-figure::after {
+                content: ' ' counter(cat-0) 'A';
             }
-            section[role=doc-footnote] .figure-cat-photo::after {
-                content: ' ' counter(figure-cat-1) 'A';
+            section[role=doc-footnote] .cat-photo::after {
+                content: ' ' counter(cat-1) 'A';
             }
-            section[role=doc-footnote] .figure-cat-table::after {
-                content: ' ' counter(figure-cat-2) 'A';
+            section[role=doc-footnote] .cat-table::after {
+                content: ' ' counter(cat-2) 'A';
             }
             section.fnlist {
                 display: none;

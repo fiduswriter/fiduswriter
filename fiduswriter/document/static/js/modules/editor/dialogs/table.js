@@ -225,6 +225,7 @@ export class TableCaptionDialog {
             body: tableCaptionTemplate({
                 language: this.editor.view.state.doc.firstChild.attrs.language
             }),
+            height: 260,
             width: 400,
             buttons,
             onClose: () => this.editor.currentView.focus()

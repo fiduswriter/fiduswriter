@@ -357,6 +357,32 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(
             By.CSS_SELECTOR,
             "tr:nth-child(2) > td:nth-child(2)").send_keys('four')
+        # Add table caption
+        self.driver.find_element(
+            By.CSS_SELECTOR, "div.table-100 > button").click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "body > div.ui-content_menu > div > div > ul > li:nth-child(16)"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#table-category-btn > label"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#table-category-table"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "div.caption span.caption"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "div.caption span.caption").send_keys('Table Caption')
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "button.fw-dark"
+        ).click()
         # Document with many features has been created let's see if we can
         # export it from the editor.
 

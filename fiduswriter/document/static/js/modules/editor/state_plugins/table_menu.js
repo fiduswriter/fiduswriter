@@ -7,7 +7,6 @@ const key = new PluginKey('tableMenu')
 
 class TableView {
     constructor(node, view, getPos, options) {
-        console.log('tableView')
         this.node = node
         this.view = view
         this.getPos = getPos
@@ -33,7 +32,6 @@ class TableView {
                 captionNode.appendChild(captionTextNode)
             }
             table.appendChild(captionNode)
-            console.log({captionNode})
         }
         this.contentDOM = document.createElement("tbody")
         this.contentDOM.classList.add(`table-${node.attrs.layout}`)

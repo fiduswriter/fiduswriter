@@ -87,13 +87,13 @@ export class DOMExporter {
             () => {
                 this.addBibliographyHTML(citRenderer.fm.bibHTML)
                 this.cleanHTML(citRenderer.fm)
-                this.addFigureLabels(this.doc.settings.language)
+                this.addCategoryLabels(this.doc.settings.language)
                 return Promise.resolve()
             }
         )
     }
 
-    addFigureLabels(language) {
+    addCategoryLabels(language) {
         this.content.querySelectorAll('*[class^="cat-"]').forEach(el => {
             el.innerHTML = CATS[el.dataset.category][language]
             delete el.dataset.category
@@ -202,6 +202,11 @@ export class DOMExporter {
             delete el.dataset.caption
             delete el.dataset.aligned
             delete el.dataset.width
+        })
+
+        this.content.querySelectorAll('table').forEach(el => {
+            delete el.dataset.category
+            delete el.dataset.caption
         })
 
         this.content.querySelectorAll('.cross-reference').forEach(el => {

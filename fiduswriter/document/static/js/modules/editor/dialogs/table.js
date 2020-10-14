@@ -225,15 +225,12 @@ export class TableCaptionDialog {
             body: tableCaptionTemplate({
                 language: this.editor.view.state.doc.firstChild.attrs.language
             }),
-            width: 300,
-            height: 260,
+            width: 400,
             buttons,
             onClose: () => this.editor.currentView.focus()
         })
 
         this.dialog.open()
-
-        console.log({dialog: this.dialog})
 
         this.initCaption()
 

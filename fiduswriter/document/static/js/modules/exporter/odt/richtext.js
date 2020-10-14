@@ -10,8 +10,8 @@ export class OdtExporterRichtext {
         this.imgCounter = 1
         this.fnCounter = 0 // real footnotes
         this.fnAlikeCounter = 0 // real footnotes and citations as footnotes
-        this.figureCounter = {} // counters for each type of figure (figure/table/photo)
-        this.fnFigureCounter = {} // counters for each type of figure (figure/table/photo)
+        this.categoryCounter = {} // counters for each type of table/figure category (figure/table/photo)
+        this.fnCategoryCounter = {} // counters for each type of table/figure category (figure/table/photo)
         this.zIndex = 0
     }
 
@@ -209,18 +209,18 @@ export class OdtExporterRichtext {
             let caption = node.attrs.caption.map(node => this.transformRichtext(node)).join('')
             // The figure category should not be in the
             // user's language but rather the document language
-            const figCat = node.attrs.category
-            if (figCat !== 'none') {
-                const figureCounter = options.inFootnote ? this.fnFigureCounter : this.figureCounter
-                if (!figureCounter[figCat]) {
-                    figureCounter[figCat] = 1
+            const category = node.attrs.category
+            if (category !== 'none') {
+                const categoryCounter = options.inFootnote ? this.fnCategoryCounter : this.categoryCounter
+                if (!categoryCounter[category]) {
+                    categoryCounter[category] = 1
                 }
-                const figCount = figureCounter[figCat]++
-                const figCountXml = `<text:sequence text:ref-name="ref${figCat}${figCount - 1}${options.inFootnote ? 'A' : ''}" text:name="${figCat}" text:formula="ooow:${figCat}+1" style:num-format="1">${figCount}${options.inFootnote ? 'A' : ''}</text:sequence>`
+                const catCount = categoryCounter[category]++
+                const catCountXml = `<text:sequence text:ref-name="ref${category}${catCount - 1}${options.inFootnote ? 'A' : ''}" text:name="${category}" text:formula="ooow:${category}+1" style:num-format="1">${catCount}${options.inFootnote ? 'A' : ''}</text:sequence>`
                 if (caption.length) {
-                    caption = `<text:bookmark-start text:name="${node.attrs.id}"/>${CATS[figCat][this.exporter.doc.settings.language]} ${figCountXml}<text:bookmark-end text:name="${node.attrs.id}"/>: ${caption}`
+                    caption = `<text:bookmark-start text:name="${node.attrs.id}"/>${CATS[category][this.exporter.doc.settings.language]} ${catCountXml}<text:bookmark-end text:name="${node.attrs.id}"/>: ${caption}`
                 } else {
-                    caption = `<text:bookmark-start text:name="${node.attrs.id}"/>${CATS[figCat][this.exporter.doc.settings.language]} ${figCountXml}<text:bookmark-end text:name="${node.attrs.id}"/>`
+                    caption = `<text:bookmark-start text:name="${node.attrs.id}"/>${CATS[category][this.exporter.doc.settings.language]} ${catCountXml}<text:bookmark-end text:name="${node.attrs.id}"/>`
                 }
             }
             let relWidth = node.attrs.width
@@ -267,12 +267,36 @@ export class OdtExporterRichtext {
                             <svg:desc>formula</svg:desc>
                         </draw:frame>`
             }
-            if (figCat === 'none') {
+            if (category === 'none') {
                 content += `<text:bookmark text:name="${node.attrs.id}"/>`
             }
             break
         }
         case 'table': {
+            let caption = node.attrs.caption.map(node => this.transformRichtext(node)).join('')
+            // The table category should not be in the
+            // user's language but rather the document language
+            const category = node.attrs.category
+            if (category !== 'none') {
+                const categoryCounter = options.inFootnote ? this.fnCategoryCounter : this.categoryCounter
+                if (!categoryCounter[category]) {
+                    categoryCounter[category] = 1
+                }
+                const catCount = categoryCounter[category]++
+                const catCountXml = `<text:sequence text:ref-name="ref${category}${catCount - 1}${options.inFootnote ? 'A' : ''}" text:name="${category}" text:formula="ooow:${category}+1" style:num-format="1">${catCount}${options.inFootnote ? 'A' : ''}</text:sequence>`
+                if (caption.length) {
+                    caption = `<text:bookmark-start text:name="${node.attrs.id}"/>${CATS[category][this.exporter.doc.settings.language]} ${catCountXml}<text:bookmark-end text:name="${node.attrs.id}"/>: ${caption}`
+                } else {
+                    caption = `<text:bookmark-start text:name="${node.attrs.id}"/>${CATS[category][this.exporter.doc.settings.language]} ${catCountXml}<text:bookmark-end text:name="${node.attrs.id}"/>`
+                }
+            }
+            if (caption.length) {
+                if (!options.section) {
+                    options.section = 'Text_20_body'
+                }
+                this.exporter.styles.checkParStyle(options.section)
+                start += `<text:p text:style-name="${options.section}">${caption}</text:p>`
+            }
             const columns = node.content[0].content.length
             if (node.attrs.width === '100') {
                 start += '<table:table>'

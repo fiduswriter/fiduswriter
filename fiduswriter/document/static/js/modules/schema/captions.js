@@ -1,8 +1,6 @@
 import {DOMSerializer, Schema} from "prosemirror-model"
 import {nodes} from "prosemirror-schema-basic"
 
-import {equation} from "./common/equation"
-
 const doc = {
     content: "caption",
     selectable: false
@@ -22,8 +20,7 @@ const spec = {
     nodes: {
         doc,
         caption,
-        text: nodes.text,
-        equation
+        text: nodes.text
     },
     marks: {}
 }

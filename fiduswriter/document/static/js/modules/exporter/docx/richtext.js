@@ -14,8 +14,8 @@ export class DocxExporterRichtext {
         this.images = images
         this.fnCounter = 2 // footnotes 0 and 1 are occupied by separators by default.
         this.bookmarkCounter = 0
-        this.figureCounter = {} // counters for each type of figure (figure/table/photo)
-        this.fnFigureCounter = {}
+        this.categoryCounter = {} // counters for each type of figure (figure/table/photo)
+        this.fncategoryCounter = {}
         this.docPrCount = 0
     }
 
@@ -308,16 +308,16 @@ export class DocxExporterRichtext {
         }
         case 'figure':
         {
-            const figCat = node.attrs.category
+            const category = node.attrs.category
             let caption = node.attrs.caption
-            let figCountXml = ''
-            if (figCat !== 'none') {
-                const figureCounter = options.inFootnote ? this.fnFigureCounter : this.figureCounter
-                if (!figureCounter[figCat]) {
-                    figureCounter[figCat] = 1
+            let catCountXml = ''
+            if (category !== 'none') {
+                const categoryCounter = options.inFootnote ? this.fncategoryCounter : this.categoryCounter
+                if (!categoryCounter[category]) {
+                    categoryCounter[category] = 1
                 }
-                figCountXml = `<w:r>
-                        <w:t xml:space="preserve">${CATS[figCat][this.exporter.doc.settings.language]} </w:t>
+                catCountXml = `<w:r>
+                        <w:t xml:space="preserve">${CATS[category][this.exporter.doc.settings.language]} </w:t>
                     </w:r>
                     <w:r>
                         <w:rPr></w:rPr>
@@ -325,7 +325,7 @@ export class DocxExporterRichtext {
                     </w:r>
                     <w:r>
                         <w:rPr></w:rPr>
-                        <w:instrText> SEQ ${figCat} \\* ARABIC </w:instrText>
+                        <w:instrText> SEQ ${category} \\* ARABIC </w:instrText>
                     </w:r>
                     <w:r>
                         <w:rPr></w:rPr>
@@ -333,7 +333,7 @@ export class DocxExporterRichtext {
                     </w:r>
                     <w:r>
                         <w:rPr></w:rPr>
-                        <w:t>${figureCounter[figCat]++}${ options.inFootnote ? 'A' : ''}</w:t>
+                        <w:t>${categoryCounter[category]++}${ options.inFootnote ? 'A' : ''}</w:t>
                     </w:r>
                     <w:r>
                         <w:rPr></w:rPr>
@@ -419,7 +419,7 @@ export class DocxExporterRichtext {
                 const latex = node.attrs.equation
                 content += this.exporter.math.getOmml(latex)
             }
-            const captionSpace = !!(figCountXml.length || caption.length)
+            const captionSpace = !!(catCountXml.length || caption.length)
             if (node.attrs.aligned === 'center') {
                 start += noSpaceTmp`
                     <w:p>
@@ -433,7 +433,7 @@ export class DocxExporterRichtext {
                     ${ captionSpace ?
         noSpaceTmp`<w:p>
                           <w:pPr><w:pStyle w:val="Caption"/><w:rPr></w:rPr></w:pPr>
-                          ${figCountXml}
+                          ${catCountXml}
                           ${caption.map(node => this.transformRichtext(node)).join('')}
                     </w:p>` : ''
 }` + end
@@ -481,7 +481,7 @@ export class DocxExporterRichtext {
                                                         <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
 
                 end = noSpaceTmp`
-                                                        ${figCountXml}
+                                                        ${catCountXml}
                                                         ${caption.map(node => this.transformRichtext(node)).join('')}
                                                     </w:p>
                                                 </w:txbxContent>
@@ -504,6 +504,55 @@ export class DocxExporterRichtext {
         }
         case 'table':
         {
+            const category = node.attrs.category
+            let caption = node.attrs.caption
+            let catCountXml = ''
+            if (category !== 'none') {
+                const categoryCounter = options.inFootnote ? this.fncategoryCounter : this.categoryCounter
+                if (!categoryCounter[category]) {
+                    categoryCounter[category] = 1
+                }
+                catCountXml = `<w:r>
+                        <w:t xml:space="preserve">${CATS[category][this.exporter.doc.settings.language]} </w:t>
+                    </w:r>
+                    <w:r>
+                        <w:rPr></w:rPr>
+                        <w:fldChar w:fldCharType="begin"></w:fldChar>
+                    </w:r>
+                    <w:r>
+                        <w:rPr></w:rPr>
+                        <w:instrText> SEQ ${category} \\* ARABIC </w:instrText>
+                    </w:r>
+                    <w:r>
+                        <w:rPr></w:rPr>
+                        <w:fldChar w:fldCharType="separate" />
+                    </w:r>
+                    <w:r>
+                        <w:rPr></w:rPr>
+                        <w:t>${categoryCounter[category]++}${ options.inFootnote ? 'A' : ''}</w:t>
+                    </w:r>
+                    <w:r>
+                        <w:rPr></w:rPr>
+                        <w:fldChar w:fldCharType="end" />
+                    </w:r>`
+                if (caption.length) {
+                    caption = [{type: 'text', text: ': '}].concat(caption)
+                }
+            }
+            const captionSpace = !!(catCountXml.length || caption.length)
+            if (captionSpace) {
+                start += noSpaceTmp`
+                    <w:p>
+                        <w:pPr>
+                            <w:pStyle w:val="Caption"/>
+                            <w:keepNext/>
+                        </w:pPr>
+                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
+                        <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>
+                        ${catCountXml}
+                        ${caption.map(node => this.transformRichtext(node)).join('')}
+                    </w:p>`
+            }
             this.exporter.tables.addTableGridStyle()
             start += noSpaceTmp`
                     <w:tbl>
@@ -512,9 +561,7 @@ export class DocxExporterRichtext {
                             ${
     node.attrs.width === '100' ?
         '<w:tblW w:w="0" w:type="auto" />' :
-        noSpaceTmp`<w:tblW w:w="${
-            50 * parseInt(node.attrs.width)
-        }" w:type="pct" />
+        noSpaceTmp`<w:tblW w:w="${50 * parseInt(node.attrs.width)}" w:type="pct" />
                                     <w:jc w:val="${node.attrs.aligned}" />`
 }
                             <w:tblLook w:val="04A0" w:firstRow="1" w:lastRow="0" w:firstColumn="1" w:lastColumn="0" w:noHBand="0" w:noVBand="1" />

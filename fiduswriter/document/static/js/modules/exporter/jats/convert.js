@@ -10,7 +10,7 @@ export class JATSExporterConvert {
         this.imageDB = imageDB
         this.bibDB = bibDB
         this.imageIds = []
-        this.figureCounter = {} // counters for each type of figure (figure/table/photo)
+        this.categoryCounter = {} // counters for each type of figure (figure/table/photo)
         this.affiliations = {} // affiliations of authors and editors
         this.affCounter = 0
         this.parCounter = 0
@@ -540,14 +540,14 @@ export class JATSExporterConvert {
                 start += `<fig id="${node.attrs.id}">`
                 end = '</fig>' + end
 
-                const figureType = node.attrs.category
-                if (figureType !== 'none') {
-                    if (!this.figureCounter[figureType]) {
-                        this.figureCounter[figureType] = 0
+                const category = node.attrs.category
+                if (category !== 'none') {
+                    if (!this.categoryCounter[category]) {
+                        this.categoryCounter[category] = 0
                     }
-                    const figCount = ++this.figureCounter[figureType]
-                    const figLabel = `${CATS[figureType][this.settings.language]} ${figCount}`
-                    start += `<label>${escapeText(figLabel)}</label>`
+                    const catCount = ++this.categoryCounter[category]
+                    const catLabel = `${CATS[category][this.settings.language]} ${catCount}`
+                    start += `<label>${escapeText(catLabel)}</label>`
                 }
                 if (node.attrs.caption.length) {
                     start += `<caption><p>${node.attrs.caption.map(node => this.walkJson(node)).join('')}</p></caption>`
@@ -575,15 +575,30 @@ export class JATSExporterConvert {
             }
             break
         }
-        case 'table':
+        case 'table': {
             // Note: We ignore right/left/center aligned and table layout
             if (options.inFootnote) {
                 // only allows <p> block level elements https://jats.nlm.nih.gov/archiving/tag-library/1.2/element/fn.html
                 break
             }
-            start += `<table-wrap><table width="${node.attrs.width}%"><tbody>`
-            end = `</tbody></table></table-wrap>` + end
+            start += '<table-wrap>'
+            end = '</table-wrap>' + end
+            const category = node.attrs.category
+            if (category !== 'none') {
+                if (!this.categoryCounter[category]) {
+                    this.categoryCounter[category] = 0
+                }
+                const catCount = ++this.categoryCounter[category]
+                const catLabel = `${CATS[category][this.settings.language]} ${catCount}`
+                start += `<label>${escapeText(catLabel)}</label>`
+            }
+            if (node.attrs.caption.length) {
+                start += `<caption><p>${node.attrs.caption.map(node => this.walkJson(node)).join('')}</p></caption>`
+            }
+            start += `<table width="${node.attrs.width}%"><tbody>`
+            end = `</tbody></table>` + end
             break
+        }
         case 'table_row':
             start += '<tr>'
             end = '</tr>' + end

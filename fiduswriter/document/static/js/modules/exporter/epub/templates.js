@@ -156,9 +156,9 @@ export const navTemplate = ({shortLang, contentItems, styleSheets}) =>
         <meta charset="utf-8"></meta>
         <title>Navigation</title>
         ${
-            styleSheets.map(sheet => `<link rel="stylesheet" type="text/css" href="${sheet.filename}" />\n`
-            ).join('')
-        }
+    styleSheets.map(sheet => `<link rel="stylesheet" type="text/css" href="${sheet.filename}" />\n`
+    ).join('')
+}
     </head>
     <body class="navigation">
         <nav epub:type="toc" id="toc">

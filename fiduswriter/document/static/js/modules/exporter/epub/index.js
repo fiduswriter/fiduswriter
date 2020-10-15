@@ -147,7 +147,8 @@ export class EpubExporter extends DOMExporter {
 
         const navCode = navTemplate({
             shortLang: this.shortLang,
-            contentItems
+            contentItems,
+            styleSheets: this.styleSheets
         })
 
         this.outputList.push({

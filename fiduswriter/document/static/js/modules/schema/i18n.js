@@ -211,63 +211,7 @@ const PHOTO = {
     'uk': 'Фото'
 }
 
-
-const NONE = {
-    'af-ZA': 'Geen',
-    'sq-AL': 'Asnje',
-    'ar': 'لا شيء',
-    'ast': 'Ninguno',
-    'be': 'Няма',
-    'br': 'Netra',
-    'bg': 'Нито един',
-    'ca': 'Cap',
-    'ca-ES-Valencia': 'Cap',
-    'zh-CN': '没有',
-    'da': 'Ingen',
-    'nl': 'Geen',
-    'en-AU': 'None',
-    'en-CA': 'None',
-    'en-NZ': 'None',
-    'en-ZA': 'None',
-    'en-GB': 'None',
-    'en-US': 'None',
-    'eo': 'Neniu',
-    'fr': 'Aucun',
-    'gl': 'Ningún',
-    'de-DE': 'Keine',
-    'de-AU': 'Keine',
-    'de-CH': 'Keine',
-    'el': 'Κανένας',
-    'he': 'אף אחד',
-    'is': 'Enginn',
-    'it': 'Nessuna',
-    'ja': '無し',
-    'km': 'គ្មាន',
-    'lt': 'Nė vienas',
-    'ml': 'ഒന്നുമില്ല',
-    'nb-NO': 'Ingen',
-    'nn-NO': 'Ingen',
-    'fa': 'هیچ یک',
-    'pl': 'Żaden',
-    'pt-BR': 'Nenhum',
-    'pt-PT': 'Nenhum',
-    'ro': 'Nici unul',
-    'ru': 'Фото',
-    'tr': 'Yok',
-    'sr-SP-Cy': 'Ниједан',
-    'sr-SP-Lt': 'Nihil',
-    'sk': 'Nikto',
-    'sl': 'Jih ni',
-    'es': 'Ninguno',
-    'sv': 'Ingen',
-    'ta': 'யாரும்',
-    'tl': 'Wala',
-    'uk': 'Немає'
-}
-
-
-export const FIG_CATS = {
-    'none': NONE,
+export const CATS = {
     'figure': FIGURE,
     'table': TABLE,
     'photo': PHOTO

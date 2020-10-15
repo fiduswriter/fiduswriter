@@ -1,6 +1,6 @@
 import {DOMSerializer} from "prosemirror-model"
 import {RenderCitations} from "../../citations/render"
-import {BIBLIOGRAPHY_HEADERS, FIG_CATS} from "../../schema/i18n"
+import {BIBLIOGRAPHY_HEADERS, CATS} from "../../schema/i18n"
 import {get} from "../../common"
 
 /*
@@ -87,16 +87,16 @@ export class DOMExporter {
             () => {
                 this.addBibliographyHTML(citRenderer.fm.bibHTML)
                 this.cleanHTML(citRenderer.fm)
-                this.addFigureLabels(this.doc.settings.language)
+                this.addCategoryLabels(this.doc.settings.language)
                 return Promise.resolve()
             }
         )
     }
 
-    addFigureLabels(language) {
-        this.content.querySelectorAll('*[class^="figure-cat-"]').forEach(el => {
-            el.innerHTML = FIG_CATS[el.dataset.figureCategory][language]
-            delete el.dataset.figureCategory
+    addCategoryLabels(language) {
+        this.content.querySelectorAll('*[class^="cat-"]').forEach(el => {
+            el.innerHTML = CATS[el.dataset.category][language]
+            delete el.dataset.category
         })
     }
 
@@ -198,10 +198,15 @@ export class DOMExporter {
             delete el.dataset.equation
             delete el.dataset.image
             delete el.dataset.imageSrc
-            delete el.dataset.figureCategory
+            delete el.dataset.category
             delete el.dataset.caption
             delete el.dataset.aligned
             delete el.dataset.width
+        })
+
+        this.content.querySelectorAll('table').forEach(el => {
+            delete el.dataset.category
+            delete el.dataset.caption
         })
 
         this.content.querySelectorAll('.cross-reference').forEach(el => {

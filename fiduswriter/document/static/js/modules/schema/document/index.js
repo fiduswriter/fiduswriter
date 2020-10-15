@@ -47,6 +47,10 @@ import {
     table_of_contents,
     separator_part
 } from "./structure"
+import {
+    captionSchema,
+    captionSerializer
+} from "../captions"
 
 
 let specNodes = OrderedMap.from({
@@ -105,7 +109,9 @@ specNodes = specNodes.update(
                 track: {default: []},
                 width: {default: '100'},
                 aligned: {default: 'center'},
-                layout: {default: 'fixed'}
+                layout: {default: 'fixed'},
+                category: {default: "none"},
+                caption: {default: []},
             },
             parseDOM: [{tag: "table", getAttrs(dom) {
                 const track = parseTracks(dom.dataset.track),
@@ -118,20 +124,40 @@ specNodes = specNodes.update(
                     width,
                     aligned,
                     layout,
-                    id
+                    id,
+                    category: dom.dataset.category,
+                    caption: dom.dataset.caption
                 }
             }}],
             toDOM(node) {
-                const attrs = {}
+                const dom = document.createElement('table')
                 if (node.attrs.track.length) {
-                    attrs['data-track'] = JSON.stringify(node.attrs.track)
+                    dom.dataset.track = JSON.stringify(node.attrs.track)
                 }
-                attrs['id'] = node.attrs.id
-                attrs['data-width'] = node.attrs.width
-                attrs['data-aligned'] = node.attrs.aligned
-                attrs['data-layout'] = node.attrs.layout
-                attrs['class'] = `table-${node.attrs.width} table-${node.attrs.aligned} table-${node.attrs.layout}`
-                return ["table", attrs, ["tbody", 0]]
+                dom.id = node.attrs.id
+                dom.dataset.width = node.attrs.width
+                dom.dataset.aligned = node.attrs.aligned
+                dom.dataset.layout = node.attrs.layout
+                dom.class = `table-${node.attrs.width} table-${node.attrs.aligned} table-${node.attrs.layout}`
+                dom.dataset.category = node.attrs.category
+                dom.dataset.caption = node.attrs.caption
+                if (node.attrs.caption.length || node.attrs.category !== 'none') {
+                    const captionNode = document.createElement("caption")
+                    if (node.attrs.category !== 'none') {
+                        const tableCatNode = document.createElement('span')
+                        tableCatNode.classList.add(`cat-${node.attrs.category}`)
+                        tableCatNode.setAttribute('data-category', node.attrs.category)
+                        captionNode.appendChild(tableCatNode)
+                    }
+                    if (node.attrs.caption.length) {
+                        const captionTextNode = captionSerializer.serializeNode(captionSchema.nodeFromJSON({type: 'caption', content: node.attrs.caption}))
+                        captionNode.appendChild(captionTextNode)
+                    }
+                    dom.appendChild(captionNode)
+                }
+                const contentDOM = document.createElement('tbody')
+                dom.appendChild(contentDOM)
+                return {dom, contentDOM}
             }
         }
     )

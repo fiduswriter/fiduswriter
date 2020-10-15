@@ -1092,7 +1092,9 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         button.click()
 
         caption = WebDriverWait(driver, self.wait_time).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "caption"))
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, "#figure-dialog span.caption")
+            )
         )
 
         self.input_text(caption, "My figure")
@@ -1155,7 +1157,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
     def get_caption(self, driver):
         caption = driver.find_element_by_css_selector(
-            'div.article-body figure figcaption span[data-caption]'
+            'div.article-body figure figcaption span.caption'
         )
 
         return caption.text

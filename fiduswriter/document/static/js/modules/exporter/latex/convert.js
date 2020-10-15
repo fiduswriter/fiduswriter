@@ -1,5 +1,5 @@
 import {escapeLatexText} from "./escape_latex"
-import {BIBLIOGRAPHY_HEADERS, FIG_CATS} from "../../schema/i18n"
+import {BIBLIOGRAPHY_HEADERS, CATS} from "../../schema/i18n"
 
 export class LatexExporterConvert {
     constructor(exporter, imageDB, bibDB, settings) {
@@ -14,7 +14,7 @@ export class LatexExporterConvert {
         // epilogue based on our findings.
         this.features = {}
         this.internalLinks = []
-        this.figureCounter = {} // counters for each type of figure (figure/table/photo)
+        this.categoryCounter = {} // counters for each type of figure (figure/table/photo)
     }
 
     init(docContent) {
@@ -436,18 +436,18 @@ export class LatexExporterConvert {
             break
         }
         case 'figure': {
-            const figureType = node.attrs.figureCategory
+            const category = node.attrs.category
             let caption = node.attrs.caption
-            if (figureType !== 'none') {
-                if (!this.figureCounter[figureType]) {
-                    this.figureCounter[figureType] = 1
+            if (category !== 'none') {
+                if (!this.categoryCounter[category]) {
+                    this.categoryCounter[category] = 1
                 }
-                const figCount = this.figureCounter[figureType]++
-                const figLabel = `${FIG_CATS[figureType][this.settings.language]} ${figCount}`
+                const catCount = this.categoryCounter[category]++
+                const catLabel = `${CATS[category][this.settings.language]} ${catCount}`
                 if (caption.length) {
-                    caption = `${figLabel}: ${caption}`
+                    caption = `${catLabel}: ${escapeLatexText(caption.map(node => this.walkJson(node)).join(''))}`
                 } else {
-                    caption = figLabel
+                    caption = catLabel
                 }
             }
             let innerFigure = ''
@@ -480,7 +480,7 @@ export class LatexExporterConvert {
                 const equation = node.attrs.equation
                 innerFigure += `\\begin{displaymath}\n${equation}\n\\end{displaymath}\n`
             }
-            if (figureType === 'table') {
+            if (category === 'table') {
                 start += `\n\\begin{table}\n`
                 content += `\\caption*{${caption}}\\label{${node.attrs.id}}\n${innerFigure}`
                 end = `\\end{table}\n` + end
@@ -508,6 +508,20 @@ export class LatexExporterConvert {
         }
         case 'table':
             if (node.content?.length) {
+                const category = node.attrs.category
+                let caption = node.attrs.caption
+                if (category !== 'none') {
+                    if (!this.categoryCounter[category]) {
+                        this.categoryCounter[category] = 1
+                    }
+                    const catCount = this.categoryCounter[category]++
+                    const catLabel = `${CATS[category][this.settings.language]} ${catCount}`
+                    if (caption.length) {
+                        caption = `${catLabel}: ${escapeLatexText(caption.map(node => this.walkJson(node)).join(''))}`
+                    } else {
+                        caption = catLabel
+                    }
+                }
                 const columns = node.content[0].content.reduce(
                     (columns, node) => columns + node.attrs.colspan,
                     0
@@ -523,6 +537,12 @@ export class LatexExporterConvert {
                     start += '\n\n{\\raggedleft' // This is not a typo - raggedleft = aligned: right
                     end = '\n\n}\n'
                 } // aligned === 'left' is default
+                if (caption.length) {
+                    start += `\n\\begin{table}\n`
+                    start += `\\caption*{${caption}}\\label{${node.attrs.id}}`
+                    end = `\\end{table}\n` + end
+                    this.features.captions = true
+                }
                 start += `\n\n\\begin{tabu} to ${
                     node.attrs.width === '100' ? '' : parseInt(node.attrs.width) / 100
                 }\\textwidth { |${'X|'.repeat(columns)} }\n\\hline\n\n`

@@ -7,7 +7,7 @@ import {modifyImages} from "../tools/html"
 import {ZipFileCreator} from "../tools/zip"
 import {opfTemplate, containerTemplate, ncxTemplate, navTemplate, xhtmlTemplate} from "./templates"
 import {addAlert} from "../../common"
-import {styleEpubFootnotes, getTimestamp, setLinks, orderLinks, addFigureLabels} from "./tools"
+import {styleEpubFootnotes, getTimestamp, setLinks, orderLinks, addCategoryLabels} from "./tools"
 import {removeHidden} from "../tools/doc_content"
 import {DOMExporter} from "../tools/dom_export"
 
@@ -42,9 +42,9 @@ export class EpubExporter extends DOMExporter {
         )
     }
 
-    addFigureLabels(language) {
-        addFigureLabels(this.content.querySelector('section.fnlist'), language, true)
-        addFigureLabels(this.content, language)
+    addCategoryLabels(language) {
+        addCategoryLabels(this.content.querySelector('section.fnlist'), language, true)
+        addCategoryLabels(this.content, language)
     }
 
     save() {
@@ -147,7 +147,8 @@ export class EpubExporter extends DOMExporter {
 
         const navCode = navTemplate({
             shortLang: this.shortLang,
-            contentItems
+            contentItems,
+            styleSheets: this.styleSheets
         })
 
         this.outputList.push({

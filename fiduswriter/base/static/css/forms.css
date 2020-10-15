@@ -39,6 +39,7 @@ input[type='number']:focus,
 input[type='password']:focus,
 input[type='search']:focus,
 input[type='email']:focus,
+div.input:focus-within,
 textarea:focus {
     background-color: var(--input-focus-background-color);
 }
@@ -544,4 +545,3 @@ tr.fw-checkable.checked > td:last-child::after {
         overflow-x: hidden;
     }
 }
-

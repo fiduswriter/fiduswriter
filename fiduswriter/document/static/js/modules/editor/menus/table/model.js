@@ -1,6 +1,6 @@
 import {addColumnAfter, addColumnBefore, deleteColumn, addRowBefore, addRowAfter, deleteRow, deleteTable,
     mergeCells, splitCell, toggleHeaderRow, toggleHeaderColumn, toggleHeaderCell} from "prosemirror-tables"
-import {TableResizeDialog} from "../../dialogs"
+import {TableCaptionDialog, TableResizeDialog} from "../../dialogs"
 
 // from https://github.com/ProseMirror/prosemirror-tables/blob/master/src/util.js
 const findTable = function(state) {
@@ -313,10 +313,22 @@ export const tableMenuModel = () => ({
             order: 14,
         },
         {
+            title: gettext('Add/edit caption'),
+            type: 'action',
+            tooltip: gettext('Add or edit the a tables caption.'),
+            order: 15,
+            action: editor => {
+                const dialog = new TableCaptionDialog(editor)
+                dialog.init()
+                return false
+            },
+            disabled: editor => !findTable(editor.currentView.state)
+        },
+        {
             title: gettext('Resize/Reposition'),
             type: 'action',
             tooltip: gettext('Resize/Reposition a table.'),
-            order: 15,
+            order: 16,
             action: editor => {
                 const dialog = new TableResizeDialog(editor)
                 dialog.init()
@@ -329,7 +341,7 @@ export const tableMenuModel = () => ({
             type: 'action',
             icon: 'trash-alt',
             tooltip: gettext('Delete currently selected table'),
-            order: 16,
+            order: 17,
             action: editor => {
                 deleteTable(editor.currentView.state, editor.currentView.dispatch)
             },

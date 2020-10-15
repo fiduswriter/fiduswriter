@@ -5,7 +5,7 @@ import {RemoveMarkStep} from "prosemirror-transform"
 import {noSpaceTmp, addAlert} from "../../common"
 import {randomHeadingId, randomFigureId, randomListId} from "../../schema/common"
 import {randomTableId} from "../../schema/document"
-import {FIG_CATS} from "../../schema/i18n"
+import {CATS} from "../../schema/i18n"
 import {LinkDialog} from "../dialogs"
 
 const key = new PluginKey('links')
@@ -40,7 +40,7 @@ const nonDeletedTextContent = node => {
 export const getInternalTargets = function(state, language, editor) {
     const internalTargets = []
 
-    const figures = {}
+    const categories = {}
 
     state.doc.descendants(node => {
         if (node.attrs.track?.find(track => track.type === 'deletion')) {
@@ -57,17 +57,17 @@ export const getInternalTargets = function(state, language, editor) {
             return true
         }
 
-        if (node.type.name === 'figure' && node.attrs.figureCategory && node.attrs.figureCategory !== 'none') {
-            if (!figures[node.attrs.figureCategory]) {
-                figures[node.attrs.figureCategory] = 0
+        if (['figure', 'table'].includes(node.type.name) && node.attrs.category && node.attrs.category !== 'none') {
+            if (!categories[node.attrs.category]) {
+                categories[node.attrs.category] = 0
             }
-            figures[node.attrs.figureCategory]++
+            categories[node.attrs.category]++
 
             internalTargets.push({
                 id: node.attrs.id,
                 text: editor === 'main' ?
-                    `${FIG_CATS[node.attrs.figureCategory][language]} ${figures[node.attrs.figureCategory]}` :
-                    `${FIG_CATS[node.attrs.figureCategory][language]} ${figures[node.attrs.figureCategory]}A`
+                    `${CATS[node.attrs.category][language]} ${categories[node.attrs.category]}` :
+                    `${CATS[node.attrs.category][language]} ${categories[node.attrs.category]}A`
             })
             return true
         }

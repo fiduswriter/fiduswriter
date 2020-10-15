@@ -114,7 +114,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         button.click()
 
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "caption"))
+            EC.presence_of_element_located((By.CSS_SELECTOR, "span.caption"))
         ).send_keys('Caption')
         self.driver.find_element_by_id("figure-category-btn").click()
         self.driver.find_element_by_id("figure-category-photo").click()
@@ -290,9 +290,10 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         ).perform()
         button = self.driver.find_element_by_xpath('//*[@title="Figure"]')
         button.click()
-
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "caption"))
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, "#figure-dialog span.caption")
+            )
         ).send_keys('Caption 2')
         self.driver.find_element_by_id("figure-category-btn").click()
         self.driver.find_element_by_id("figure-category-photo").click()

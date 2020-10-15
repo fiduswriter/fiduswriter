@@ -2,7 +2,7 @@ import {Plugin, PluginKey} from "prosemirror-state"
 import {DOMSerializer} from "prosemirror-model"
 import {FigureDialog} from "../dialogs"
 import {
-    FIG_CATS
+    CATS
 } from "../../schema/i18n"
 
 const key = new PluginKey('figureMenu')
@@ -51,15 +51,15 @@ export const figurePlugin = function(options) {
         },
         view(view) {
             let userLanguage = options.editor.view.state.doc.firstChild.attrs.language
-            view.dom.querySelectorAll('*[class^="figure-cat-"]').forEach(el => el.innerHTML = FIG_CATS[el.dataset.figureCategory][userLanguage])
+            view.dom.querySelectorAll('*[class^="cat-"]').forEach(el => el.innerHTML = CATS[el.dataset.category][userLanguage])
             return {
                 update: (view, _prevState) => {
-                    let selector = '*[class^="figure-cat-"]:empty'
+                    let selector = '*[class^="cat-"]:empty'
                     if (options.editor.view.state.doc.firstChild.attrs.language !== userLanguage) {
-                        selector = '*[class^="figure-cat-"]'
+                        selector = '*[class^="cat-"]'
                         userLanguage = options.editor.view.state.doc.firstChild.attrs.language
                     }
-                    view.dom.querySelectorAll(selector).forEach(el => el.innerHTML = FIG_CATS[el.dataset.figureCategory][userLanguage])
+                    view.dom.querySelectorAll(selector).forEach(el => el.innerHTML = CATS[el.dataset.category][userLanguage])
                 }
             }
         }

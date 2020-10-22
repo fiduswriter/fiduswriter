@@ -18,12 +18,12 @@ export class DocumentStyleDialog {
                 text: gettext('Save'),
                 classes: 'fw-dark',
                 click: () => {
-                    const {title, slug, content, errors} = this.getCurrentValue()
+                    const {title, slug, contents, errors} = this.getCurrentValue()
                     if (errors.length) {
                         this.showErrors(errors)
                         return
                     }
-                    this.save({title, slug, content}).then(
+                    this.save({title, slug, contents}).then(
                         ({json}) => {
                             const docStyle = json.doc_style[0]
                             const pk = docStyle.pk

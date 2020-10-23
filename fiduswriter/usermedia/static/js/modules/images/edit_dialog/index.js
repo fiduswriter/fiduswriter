@@ -15,7 +15,7 @@ export class ImageEditDialog {
                 freeToRead: true,
                 licenses: []
             }
-        this.menu = this.editor ? this.editor.menu.imageEditModel : imageEditModel()
+        this.menu = this.page.menu?.imageEditModel || imageEditModel()
     }
 
     //open a dialog for uploading an image

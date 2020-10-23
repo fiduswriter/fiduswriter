@@ -148,6 +148,29 @@ ${
 </html>`
 
 
+/** A template for each item in an epub's navigation document. */
+const navItemTemplate = ({item}) =>
+    `\t\t\t\t<li><a href="${
+        item.link ?
+            item.link :
+            item.docNum ?
+                `document-${item.docNum}.xhtml#${item.id}` :
+                `document.xhtml#${item.id}`}">${escapeText(item.title)
+    }</a>
+${
+    item.subItems.length ?
+        `<ol>
+        ${
+    item.subItems.map(item =>
+        navItemTemplate({item})
+    ).join('')
+}
+    </ol>` :
+        ''
+}
+</li>`
+
+
 /** A template for an epub's navigation document. */
 export const navTemplate = ({shortLang, contentItems, styleSheets}) =>
     `<?xml version="1.0" encoding="UTF-8"?>
@@ -170,25 +193,3 @@ ${
         </nav>
     </body>
 </html>`
-
-/** A template for each item in an epub's navigation document. */
-export const navItemTemplate = ({item}) =>
-    `\t\t\t\t<li><a href="${
-        item.link ?
-            item.link :
-            item.docNum ?
-                `document-${item.docNum}.xhtml#${item.id}` :
-                `document.xhtml#${item.id}`}">${escapeText(item.title)
-    }</a>
-${
-    item.subItems.length ?
-        `<ol>
-        ${
-    item.subItems.map(item =>
-        navItemTemplate({item})
-    ).join('')
-}
-    </ol>` :
-        ''
-}
-</li>`

@@ -211,7 +211,7 @@ export function trackedTransaction(tr, state, user, approved, date) {
                 const mirrorIndex = map.maps.length - 1
                 map.appendMap(condensedStep.getMap(), mirrorIndex)
                 if (!newTr.selection.eq(trTemp.selection)) {
-                    newTr.setSelection(trTemp.selection)
+                    newTr.setSelection(newTr.doc, Selection.fromJSON(trTemp.selection.toJSON()))
                 }
             }
             if (!approved && step.from !== step.to) {

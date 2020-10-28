@@ -34,7 +34,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(PROJECT_PATH, 'fiduswriter.sql'),
-        'CONN_MAX_AGE': 15
+        'CONN_MAX_AGE': None
     }
 }
 

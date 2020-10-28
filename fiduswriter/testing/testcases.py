@@ -109,10 +109,9 @@ class LiveTornadoTestCase(TransactionTestCase):
         for conn in connections.all():
             # If using in-memory sqlite databases, pass the connections to
             # the server thread.
-            if (conn.vendor == 'sqlite' and
-                    conn.settings_dict['NAME'] == ':memory:'):
+            if conn.vendor == 'sqlite' and conn.is_in_memory_db():
                 # Explicitly enable thread-shareability for this connection
-                conn.allow_thread_sharing = True
+                conn.inc_thread_sharing()
                 connections_override[conn.alias] = conn
 
         # Launch the live server's thread

@@ -4,6 +4,8 @@ import sys
 from importlib import import_module
 
 from django.conf import settings
+from django.db import connections
+
 
 if "COVERAGE_PROCESS_START" in os.environ:
     import coverage
@@ -15,9 +17,15 @@ os.environ.setdefault(
     SRC_PATH
 )
 
-# The following line is needed until Tornado suports ASGI or Tornado has been
-# replaced.
+
+# The following lines are needed until Tornado supports ASGI or Tornado has
+# been replaced.
+class Connections:
+    pass
+
+
 os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
+setattr(connections, '_connections', Connections)
 
 
 def inner(default_project_path):

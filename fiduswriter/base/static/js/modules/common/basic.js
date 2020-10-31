@@ -1,4 +1,103 @@
 import {Dialog} from "./dialog"
+import {ContentMenu} from "./content_menu"
+
+/** Creates a styled select with a contentmenu from a select tag.
+ * TODO: replace all instances of addDropdownBox with dropdownSelect as it is not being restrained by scroll bars, etc. in the same way.
+ * @param select The select-tag which is tyo be replaced.
+ * @param options
+ */
+
+export const dropdownSelect = function(
+    selectDOM, {
+        onChange = _newValue => {},
+        width = false,
+        value = false
+    }
+) {
+    const btn = document.createElement('div')
+    btn.innerHTML = '<label></label>&nbsp;<span class="fa fa-caret-down"></span>'
+    btn.classList.add('fw-button')
+    btn.classList.add('fw-light')
+    btn.classList.add('fw-large')
+    btn.classList.add('fw-dropdown')
+    if (width) {
+        btn.style.width = Number.isInteger(width) ? `${width}px` : width
+    }
+    selectDOM.classList.forEach(className => btn.classList.add(className))
+    if (selectDOM.id) {
+        btn.id = selectDOM.id
+    }
+    selectDOM.parentElement.replaceChild(btn, selectDOM) // Remove the <select> from the main dom.
+    const options = Array.from(selectDOM.children)
+    if (!options.length) {
+        // There are no options, so we only create the button.
+        return {
+            setValue: () => {},
+            getValue: () => false
+        }
+    }
+    let selected
+    const menu = {
+        content: options.map((option, order) => {
+            if (option.selected || option.value === value) {
+                selected = option
+            }
+            return {
+                title: option.innerText,
+                type: 'action',
+                tooltip: option.title || '',
+                order,
+                action: () => {
+                    btn.firstElementChild.innerText = option.innerText
+                    onChange(option.value)
+                    value = option.value
+                    menu.content.forEach(item => item.selected = false)
+                    menu.content[order].selected = true
+                    return false
+                },
+                selected: !!option.selected
+            }
+
+        })
+    }
+    if (!selected) {
+        selected = selectDOM.firstElementChild
+        menu.content[0].selected = true
+    }
+
+    btn.firstElementChild.innerText = selected.innerText
+    value = selected.value
+
+    btn.addEventListener('click', event => {
+        event.preventDefault()
+        event.stopPropagation()
+        if (btn.classList.contains('disabled')) {
+            return
+        }
+        const contentMenu = new ContentMenu({
+            menu,
+            menuPos: {X: event.pageX, Y: event.pageY}
+        })
+        contentMenu.open()
+    })
+
+    return {
+        setValue: newValue => {
+            const optionIndex = options.findIndex(option => option.value === newValue)
+            if (optionIndex === undefined) {
+                return
+            }
+            menu.content.forEach(item => item.selected = false)
+            menu.content[optionIndex].selected = true
+            const option = options[optionIndex]
+            btn.firstElementChild.innerText = option.innerText
+            value = newValue
+        },
+        getValue: () => value,
+        enable: () => btn.classList.remove('disabled'),
+        disable: () => btn.classList.add('disabled')
+    }
+}
 
 /** Creates a dropdown box.
  * @param btn The button to open and close the dropdown box.

@@ -407,6 +407,9 @@ font {
     display: none;
 }
 
+table[data-caption-hidden] caption {
+    display: none;
+}
 
 /* For default contents of title and contents field */
 

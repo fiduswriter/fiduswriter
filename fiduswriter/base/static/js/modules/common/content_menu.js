@@ -13,7 +13,9 @@ const menuTemplate = ({id, classes, height, width, zIndex, menu, scroll, page}) 
             `<li data-index="${index}" class="content-menu-item${
                 menuItem.disabled && menuItem.disabled(page) ?
                     ' disabled' :
-                    ''
+                    menuItem.selected ?
+                        ' selected' :
+                        ''
             }" title='${menuItem.tooltip}'>
                     ${
     typeof menuItem.title === 'function' ?

@@ -5,6 +5,7 @@ export {
 export {
     addDropdownBox,
     openDropdownBox,
+    dropdownSelect,
     setCheckableLabel,
     activateWait,
     deactivateWait,

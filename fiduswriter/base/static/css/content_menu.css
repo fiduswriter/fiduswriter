@@ -53,6 +53,11 @@
     opacity: .6;
 }
 
+.content-menu-item.selected {
+    color: var(--cs-white-selected);
+    background-color: var(--cs-white-background-selected);
+}
+
 .content-menu-item:hover {
     color: var(--cs-white-hover);
     background-color: var(--cs-white-background-hover);

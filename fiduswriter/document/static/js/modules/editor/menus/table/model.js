@@ -6,7 +6,7 @@ import {TableConfigurationDialog} from "../../dialogs"
 const findTable = function(state) {
     const $head = state.selection.$head
     for (let d = $head.depth; d > 0; d--) {
-        if ($head.node(d).type.spec.tableRole == "table") {
+        if ($head.node(d).type.name == "table") {
             return $head.node(d)
         }
     }
@@ -313,7 +313,7 @@ export const tableMenuModel = () => ({
             order: 14,
         },
         {
-            title: gettext('Configure'),
+            title: gettext('Configure ...'),
             type: 'action',
             tooltip: gettext('Configure the table.'),
             order: 15,

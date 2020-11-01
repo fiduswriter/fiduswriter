@@ -75,9 +75,9 @@ export {
 }
     from "./settings"
 export {
-    tableMenuPlugin
+    tablePlugin
 }
-    from "./table_menu"
+    from "./table"
 export {
     figurePlugin
 }

@@ -401,13 +401,41 @@ font {
     color: inherit !important;
 }
 
+/* Borders in editor */
+
+.ProseMirror {
+    border: none !important;
+    padding: 0 !important;
+    line-height: inherit !important;
+}
+
+.ProseMirror table {
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.ProseMirror td,
+.ProseMirror th,
+.ProseMirror caption {
+    vertical-align: top;
+    border: 1px solid #dddddd;
+    padding: 3px 5px;
+}
+
+.ProseMirror th {
+    background-color: var(--cs-6-background);
+    color: var(--cs-6-text);
+}
+
 /* Don't show parts marked as hidden */
 
-.article-part[data-hidden] {
+.ProseMirror .article-part[data-hidden] {
     display: none;
 }
 
-table[data-caption-hidden] caption {
+.ProseMirror table[data-caption-hidden][data-category='none'] caption,
+.ProseMirror table[data-caption-hidden] caption span.text,
+.ProseMirror table[data-category='none'] caption span.label {
     display: none;
 }
 
@@ -466,29 +494,6 @@ span.delete {
 
 #flow.hide {
     display: none;
-}
-
-.ProseMirror {
-    border: none !important;
-    padding: 0 !important;
-    line-height: inherit !important;
-}
-
-.ProseMirror table {
-    border-collapse: collapse;
-    table-layout: fixed;
-}
-
-.ProseMirror td,
-.ProseMirror th {
-    vertical-align: top;
-    border: 1px solid #dddddd;
-    padding: 3px 5px;
-}
-
-.ProseMirror th {
-    background-color: var(--cs-6-background);
-    color: var(--cs-6-text);
 }
 
 #comments-filter {

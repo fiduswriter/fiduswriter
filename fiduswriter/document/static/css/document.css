@@ -130,18 +130,21 @@ figure {
     content: ' ' counter(cat-1) 'A';
 }
 
-.cat-table::after {
+.cat-table::after,
+table[data-category='table'] caption span.label::after {
     counter-increment: cat-2;
     content: ' ' counter(cat-2);
 }
 
-#footnote-box-container .cat-table::after {
+#footnote-box-container .cat-table::after,
+#footnote-box-container table[data-category='table'] caption span.label::after {
     content: ' ' counter(cat-2) 'A';
 }
 
 .cat-figure + span::before,
 .cat-photo + span::before,
-.cat-table + span::before {
+.cat-table + span::before,
+table[data-category='table'] caption span.text::before {
     content: ': ';
 }
 

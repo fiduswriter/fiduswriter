@@ -1,8 +1,11 @@
 import {Plugin, PluginKey, Selection} from "prosemirror-state"
 import {ContentMenu} from '../../common'
 import {WRITE_ROLES} from "../"
+import {
+    CATS
+} from "../../schema/i18n"
 
-const key = new PluginKey('tableMenu')
+const key = new PluginKey('table')
 
 class TableView {
     constructor(node, view, getPos, options) {
@@ -38,7 +41,9 @@ class TableView {
         let stopped = false
         if (event.type === 'mousedown' && event.composedPath().includes(this.menuButton)) {
             stopped = true
+            console.log('STOPPED')
             if (!isSelectedTableClicked(this.view.state, this.getPos())) {
+                console.log('not selected clicked')
                 const tr = this.view.state.tr
                 const $pos = this.view.state.doc.resolve(this.getPos())
                 tr.setSelection(Selection.findFrom($pos, 1, true))
@@ -60,8 +65,21 @@ class TableView {
 
 }
 
+class TableCaptionView {
+    constructor(node, view, getPos, options) {
+        this.node = node
+        this.view = view
+        this.getPos = getPos
+        this.options = options
+
+        this.dom = document.createElement("caption")
+        this.dom.innerHTML = '<span class="label" contenteditable="false"></span><span class="text"></span>'
+        this.contentDOM = this.dom.lastElementChild
+    }
+}
+
 const isSelectedTableClicked = (state, $pos) => {
-    const pathArr = state.selection.$anchor.path
+    const pathArr = state.selection.$head.path
     for (let i = 0; i < pathArr.length ; i++) {
         if (pathArr[i].type && pathArr[i].type.name && pathArr[i].type.name === "table" && pathArr[i - 1] === $pos) {
             return true
@@ -70,7 +88,7 @@ const isSelectedTableClicked = (state, $pos) => {
     return false
 }
 
-export const tableMenuPlugin = function(options) {
+export const tablePlugin = function(options) {
     return new Plugin({
         key,
         state: {
@@ -79,6 +97,8 @@ export const tableMenuPlugin = function(options) {
                     this.spec.props.nodeViews['table'] =
                         (node, view, getPos) => new TableView(node, view, getPos, options)
                 }
+                this.spec.props.nodeViews['table_caption'] =
+                    (node, view, getPos) => new TableCaptionView(node, view, getPos, options)
                 return {}
             },
             apply(tr, prev) {
@@ -87,6 +107,34 @@ export const tableMenuPlugin = function(options) {
         },
         props: {
             nodeViews: {}
+        },
+        view(view) {
+            let userLanguage = options.editor.view.state.doc.firstChild.attrs.language
+            view.dom.querySelectorAll('table').forEach(el => {
+                const category = el.dataset.category
+                const labelEl = el.querySelector('caption span.label')
+                if (category === 'none') {
+                    labelEl.innerHTML = '&nbsp;'
+                    return
+                }
+                labelEl.innerHTML = CATS[category][userLanguage]
+            })
+            return {
+                update: (view, _prevState) => {
+                    let selector = 'caption span.label:empty'
+                    if (options.editor.view.state.doc.firstChild.attrs.language !== userLanguage) {
+                        selector = 'caption span.label'
+                        userLanguage = options.editor.view.state.doc.firstChild.attrs.language
+                    }
+                    view.dom.querySelectorAll(selector).forEach(el => {
+                        const category = el.parentElement.parentElement.dataset.category
+                        if (category === 'none') {
+                            return
+                        }
+                        el.innerHTML = CATS[category][userLanguage]
+                    })
+                }
+            }
         }
     })
 }

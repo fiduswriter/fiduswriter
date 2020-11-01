@@ -164,11 +164,11 @@ export const tableConfigurationTemplate = ({language}) =>
                 </td>
             </tr>
             <tr>
-                <th><h4 class="fw-tablerow-title">${gettext("Enable caption")}</h4></th>
+                <th><h4 class="fw-tablerow-title">${gettext("Caption")}</h4></th>
                 <td>
                     <select class="table-caption">
-                        <option value="true">${gettext("Yes")}</option>
-                        <option value="false">${gettext("No")}</option>
+                        <option value="true">${gettext("Enable")}</option>
+                        <option value="false">${gettext("Disable")}</option>
                     </select>
                 </td>
             </tr>

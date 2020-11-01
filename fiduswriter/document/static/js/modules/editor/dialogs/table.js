@@ -110,7 +110,6 @@ export class TableConfigurationDialog {
 
     init() {
         const {table} = this.findTable(this.editor.currentView.state)
-        console.log({table})
         if (!table) {
             return
         }
@@ -125,7 +124,6 @@ export class TableConfigurationDialog {
     findTable(state) {
         const $head = state.selection.$head
         for (let d = $head.depth; d > 0; d--) {
-            console.log($head.node(d).type)
             if ($head.node(d).type.name == "table") {
                 return {table: $head.node(d), tablePos: $head.before(d)}
             }
@@ -135,7 +133,6 @@ export class TableConfigurationDialog {
 
     submitForm() {
         const {table, tablePos} = this.findTable(this.editor.currentView.state)
-        console.log({table, tablePos})
         if (!table) {
             return
         }
@@ -146,7 +143,6 @@ export class TableConfigurationDialog {
             category: this.category,
             caption: this.caption
         })
-        console.log({attrs})
         this.editor.currentView.dispatch(this.editor.currentView.state.tr.setNodeMarkup(tablePos, false, attrs))
     }
 
@@ -240,7 +236,6 @@ export class TableConfigurationDialog {
             {
                 onChange: newValue => {
                     this.caption = newValue === "true"
-                    console.log({newValue})
                 },
                 width: '80%',
                 value: String(this.caption)

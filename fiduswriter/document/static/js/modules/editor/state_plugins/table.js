@@ -99,6 +99,7 @@ export const tablePlugin = function(options) {
                 }
                 this.spec.props.nodeViews['table_caption'] =
                     (node, view, getPos) => new TableCaptionView(node, view, getPos, options)
+
                 return {}
             },
             apply(tr, prev) {

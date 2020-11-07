@@ -4,6 +4,9 @@ import {nodes, marks} from "prosemirror-schema-basic"
 import {tableNodes} from "prosemirror-tables"
 import {
     figure,
+    image,
+    figure_equation,
+    figure_caption,
     citation,
     equation,
     heading1,
@@ -59,6 +62,9 @@ const spec = {
         blockquote,
         horizontal_rule,
         figure,
+        image,
+        figure_equation,
+        figure_caption,
         text: nodes.text,
         hard_break: nodes.hard_break,
         citation,

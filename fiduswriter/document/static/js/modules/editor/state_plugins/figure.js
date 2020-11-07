@@ -1,6 +1,6 @@
-import {Plugin, PluginKey} from "prosemirror-state"
+import {Plugin, PluginKey, NodeSelection} from "prosemirror-state"
 import {DOMSerializer} from "prosemirror-model"
-import {FigureDialog} from "../dialogs"
+import {ContentMenu} from '../../common'
 import {
     CATS
 } from "../../schema/i18n"
@@ -14,19 +14,54 @@ class FigureView {
         this.view = view
         this.getPos = getPos
         this.options = options
-
+        this.dom = document.createElement("div")
+        this.dom.classList.add('figure')
         this.serializer = DOMSerializer.fromSchema(node.type.schema)
-
-        this.dom = this.serializer.serializeNode(this.node)
+        this.contentDOM = this.serializer.serializeNode(this.node)
+        this.contentDOM.classList.forEach(className => this.dom.classList.add(className))
+        this.contentDOM.classList.value = ''
+        this.dom.appendChild(this.contentDOM)
         this.menuButton = document.createElement("button")
         this.menuButton.classList.add('figure-menu-btn')
         this.menuButton.innerHTML = '<span class="dot-menu-icon"><i class="fa fa-ellipsis-v"></i></span>'
         this.dom.insertBefore(this.menuButton, this.dom.firstChild)
-        this.menuButton.addEventListener('click', () => {
-            const editor = this.options.editor
-            const dialog = new FigureDialog(editor)
-            dialog.init()
-        })
+    }
+
+    stopEvent(event) {
+        let stopped = false
+        if (event.type === 'mousedown' && event.composedPath().includes(this.menuButton)) {
+            stopped = true
+            const tr = this.view.state.tr
+            const $pos = this.view.state.doc.resolve(this.getPos())
+            tr.setSelection(new NodeSelection($pos))
+            this.view.dispatch(tr)
+            const contentMenu = new ContentMenu({
+                menu: this.options.editor.menu.figureMenuModel,
+                width: 280,
+                page: this.options.editor,
+                menuPos: {X: parseInt(event.pageX) + 20, Y: parseInt(event.pageY) - 100},
+                onClose: () => {
+                    this.view.focus()
+                }
+            })
+            contentMenu.open()
+        }
+        return stopped
+    }
+
+
+}
+
+class FigureCaptionView {
+    constructor(node, view, getPos, options) {
+        this.node = node
+        this.view = view
+        this.getPos = getPos
+        this.options = options
+
+        this.dom = document.createElement("figcaption")
+        this.dom.innerHTML = '<span class="label"></span><span class="text"></span>'
+        this.contentDOM = this.dom.lastElementChild
     }
 }
 
@@ -40,6 +75,8 @@ export const figurePlugin = function(options) {
                     this.spec.props.nodeViews['figure'] =
                         (node, view, getPos) => new FigureView(node, view, getPos, options)
                 }
+                this.spec.props.nodeViews['figure_caption'] =
+                    (node, view, getPos) => new FigureCaptionView(node, view, getPos, options)
                 return {}
             },
             apply(tr, prev) {

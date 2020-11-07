@@ -3,8 +3,7 @@ import {Decoration, DecorationSet} from "prosemirror-view"
 import {RemoveMarkStep} from "prosemirror-transform"
 
 import {noSpaceTmp, addAlert} from "../../common"
-import {randomHeadingId, randomFigureId, randomListId} from "../../schema/common"
-import {randomTableId} from "../../schema/document"
+import {randomHeadingId, randomFigureId, randomListId, randomTableId} from "../../schema/common"
 import {CATS} from "../../schema/i18n"
 import {LinkDialog} from "../dialogs"
 

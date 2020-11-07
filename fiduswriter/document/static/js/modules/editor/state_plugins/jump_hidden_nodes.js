@@ -8,7 +8,7 @@ const posHidden = function($pos) {
     let hidden = false
     for (let i = $pos.depth; i > 0; i--) {
         const node = $pos.node(i)
-        if (node.attrs.hidden || node.type.name === 'table_caption' && $pos.node(i-1).attrs.caption === false) {
+        if (node.attrs.hidden || ['table_caption', 'figure_caption'].includes(node.type.name) && $pos.node(i - 1).attrs.caption === false) {
             hidden = true
         }
     }

@@ -1,4 +1,3 @@
-import {captionSchema, captionSerializer} from "../captions"
 import {parseTracks} from "./track"
 
 export function randomFigureId() {
@@ -9,24 +8,22 @@ export function randomFigureId() {
 let imageDBBroken = false
 
 export const figure = {
+    allowGapCursor: false,
+    selectable: true,
     group: "block",
     attrs: {
-        equation: {default: ""},
-        image: {default: false},
         category: {default: "none"},
-        caption: {default: []},
+        caption: {default: false},
         id: {default: false},
         track: {default: []},
-        aligned: {default: 'center'},
+        aligned: {default: "center"},
         width: {default: "100"}
     },
+    content: "figure_caption image|figure_caption figure_equation|image figure_caption|figure_equation figure_caption",
     parseDOM: [{
         tag: 'figure',
         getAttrs(dom) {
-            const image = parseInt(dom.dataset.image)
             return {
-                equation: dom.dataset.equation,
-                image: isNaN(image) ? false : image,
                 category: dom.dataset.category,
                 caption: dom.dataset.caption,
                 id: dom.id,
@@ -39,8 +36,6 @@ export const figure = {
     }],
     toDOM(node) {
         const dom = document.createElement('figure')
-        dom.dataset.equation = node.attrs.equation
-        dom.dataset.image = node.attrs.image
         dom.dataset.category = node.attrs.category
         dom.dataset.caption = node.attrs.caption
         dom.id = node.attrs.id
@@ -78,14 +73,34 @@ export const figure = {
         if (node.attrs.track?.length) {
             dom.dataset.track = JSON.stringify(node.attrs.track)
         }
+        dom.dataset.category = node.attrs.category
+
+        return dom
+    }
+}
+
+
+export const image = {
+    attrs: {
+        image: {default: false},
+    },
+    parseDOM: [{
+        tag: 'img',
+        getAttrs(dom) {
+            const image = parseInt(dom.dataset.image)
+            return {
+                image: isNaN(image) ? false : image,
+            }
+        }
+    }],
+    toDOM(node) {
+        const dom = document.createElement('img')
         if (node.attrs.image !== false) {
-            dom.appendChild(document.createElement("div"))
+            dom.dataset.image = node.attrs.image
             if (node.type.schema.cached.imageDB) {
                 if (node.type.schema.cached.imageDB.db[node.attrs.image]?.image) {
                     const imgSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
-                    const img = document.createElement("img")
-                    img.setAttribute('src', imgSrc)
-                    dom.firstChild.appendChild(img)
+                    dom.setAttribute('src', imgSrc)
                     dom.dataset.imageSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
                 } else {
                     /* The image was not present in the imageDB -- possibly because a collaborator just added ut.
@@ -96,9 +111,7 @@ export const figure = {
                         node.type.schema.cached.imageDB.getDB().then(() => {
                             if (node.type.schema.cached.imageDB.db[node.attrs.image]?.image) {
                                 const imgSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
-                                const img = document.createElement("img")
-                                img.setAttribute('src', imgSrc)
-                                dom.firstChild.appendChild(img)
+                                dom.setAttribute('src', imgSrc)
                                 dom.dataset.imageSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
                             } else {
                                 imageDBBroken = true
@@ -107,33 +120,46 @@ export const figure = {
                     }
                 }
             }
-        } else {
-            const domEquation = document.createElement('div')
-            domEquation.classList.add('figure-equation')
-            domEquation.setAttribute('data-equation', node.attrs.equation)
-            import("mathlive").then(MathLive => {
-                domEquation.innerHTML = MathLive.latexToMarkup(node.attrs.equation, 'displaystyle')
-            })
-            dom.appendChild(domEquation)
         }
-        const captionNode = document.createElement("figcaption")
-        if (node.attrs.category !== 'none') {
-            const figureCatNode = document.createElement('span')
-            figureCatNode.classList.add(`cat-${node.attrs.category}`)
-            figureCatNode.setAttribute('data-category', node.attrs.category)
-            captionNode.appendChild(figureCatNode)
-        }
-        if (node.attrs.caption.length) {
-            const captionTextNode = captionSerializer.serializeNode(captionSchema.nodeFromJSON({type: 'caption', content: node.attrs.caption}))
-            captionNode.appendChild(captionTextNode)
-        }
-        // Add table captions above the table, other captions below.
-        if (node.attrs.category === 'table') {
-            dom.insertBefore(captionNode, dom.lastChild)
-        } else {
-            dom.appendChild(captionNode)
-        }
-
         return dom
+    }
+}
+
+export const figure_equation = {
+    selectable: false,
+    draggable: false,
+    attrs: {
+        equation: {
+            default: false
+        }
+    },
+    parseDOM: [{
+        tag: 'div.equation[data-equation]',
+        getAttrs(dom) {
+            return {
+                equation: dom.dataset.equation
+            }
+        }
+    }],
+    toDOM(node) {
+        const dom = document.createElement('div')
+        dom.dataset.equation = node.attrs.equation
+        dom.classList.add('equation')
+        if (node.attrs.equation !== false) {
+            import("mathlive").then(MathLive => {
+                dom.innerHTML = MathLive.latexToMarkup(node.attrs.equation, 'displaystyle')
+            })
+        }
+        return dom
+    }
+}
+
+export const figure_caption = {
+    isolating: true,
+    defining: true,
+    content: "inline*",
+    parseDOM: [{tag: "figcaption"}],
+    toDOM() {
+        return ["figcaption", 0]
     }
 }

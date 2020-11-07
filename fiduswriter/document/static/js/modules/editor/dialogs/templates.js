@@ -298,9 +298,6 @@ export const configureFigureTemplate = ({language}) =>
             <div class="figure-preview">
                 <div class="inner-figure-preview"></div>
             </div>
-            <div style="margin-top: 10px;">
-                <div class="caption input" style="width: 402px;"></div>
-            </div>
         </div>`
 
 /** A template to configure citations in the editor */

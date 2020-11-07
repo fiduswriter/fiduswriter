@@ -41,9 +41,7 @@ class TableView {
         let stopped = false
         if (event.type === 'mousedown' && event.composedPath().includes(this.menuButton)) {
             stopped = true
-            console.log('STOPPED')
             if (!isSelectedTableClicked(this.view.state, this.getPos())) {
-                console.log('not selected clicked')
                 const tr = this.view.state.tr
                 const $pos = this.view.state.doc.resolve(this.getPos())
                 tr.setSelection(Selection.findFrom($pos, 1, true))

@@ -1,0 +1,1 @@
+export {figureMenuModel} from './model'

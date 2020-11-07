@@ -7,7 +7,7 @@ import {
     ImageSelectionDialog
 } from "../../images/selection_dialog"
 import {
-    addDropdownBox,
+    dropdownSelect,
     Dialog,
     ContentMenu
 } from "../../common"
@@ -163,21 +163,6 @@ export class FigureDialog {
         }
     }
 
-    setFigureLabel() {
-        this.dialog.dialogEl.querySelector('#figure-category-btn .label').innerHTML =
-            document.getElementById(`figure-category-${this.category}`).innerText
-    }
-
-    setFigureAlignment() {
-        this.dialog.dialogEl.querySelector('#figure-alignment-btn .label').innerHTML =
-            document.getElementById(`figure-alignment-${this.aligned}`).innerText
-    }
-
-    setFigureWidth() {
-        this.dialog.dialogEl.querySelector('#figure-width-btn .label').innerHTML =
-            document.getElementById(`figure-width-${this.width}`).innerText
-    }
-
     submitForm() {
 
         if ((new RegExp(/^\s*$/)).test(this.equation) && (!this.imgId)) {
@@ -264,6 +249,11 @@ export class FigureDialog {
     init() {
         this.node = this.editor.currentView.state.selection.node || false
 
+        if (this.node?.attrs.track.find(track => track.type === 'deletion')) {
+            // The figure is marked as deleted so we don't allow editing it.
+            return true
+        }
+
         const buttons = []
 
         if (this.node?.type && this.node?.type.name === 'figure') {
@@ -315,9 +305,62 @@ export class FigureDialog {
 
         this.dialog.open()
 
-        this.setFigureLabel()
-        this.setFigureAlignment()
-        this.setFigureWidth()
+        const alignmentSelector = dropdownSelect(
+            this.dialog.dialogEl.querySelector('.figure-alignment'),
+            {
+                onChange: newValue => {
+                    this.aligned = newValue
+                },
+                width: '80%',
+                value: this.aligned
+            }
+        )
+
+        if (this.width == "100") {
+            alignmentSelector.setValue('center')
+            alignmentSelector.disable()
+            this.aligned = 'center'
+        }
+
+        dropdownSelect(
+            this.dialog.dialogEl.querySelector('.figure-width'),
+            {
+                onChange: newValue => {
+                    this.width = newValue
+                    if (this.width == "100") {
+                        alignmentSelector.setValue('center')
+                        alignmentSelector.disable()
+                        this.aligned = 'center'
+                    } else {
+                        alignmentSelector.enable()
+                    }
+                },
+                width: '80%',
+                value: this.width
+            }
+        )
+
+        dropdownSelect(
+            this.dialog.dialogEl.querySelector('.figure-category'),
+            {
+                onChange: newValue => {
+                    this.category = newValue
+                },
+                width: '80%',
+                value: this.category
+            }
+        )
+
+        dropdownSelect(
+            this.dialog.dialogEl.querySelector('.figure-caption'),
+            {
+                onChange: newValue => {
+                    this.caption = newValue === "true"
+                },
+                width: '80%',
+                value: String(this.caption)
+            }
+        )
 
         if (this.imgId) {
             this.copyright = this.imageDB.db[this.imgId].copyright
@@ -325,49 +368,6 @@ export class FigureDialog {
         } else {
             this.layoutMathEditor()
         }
-
-        addDropdownBox(
-            document.getElementById('figure-category-btn'),
-            document.getElementById('figure-category-pulldown')
-        )
-
-
-        addDropdownBox(
-            document.getElementById('figure-alignment-btn'),
-            document.getElementById('figure-alignment-pulldown')
-        )
-
-        addDropdownBox(
-            document.getElementById('figure-width-btn'),
-            document.getElementById('figure-width-pulldown')
-        )
-        document.querySelectorAll('#figure-alignment-pulldown li span').forEach(el => el.addEventListener(
-            'click',
-            event => {
-                event.preventDefault()
-                this.aligned = el.id.split('-')[2]
-                this.setFigureAlignment()
-            }
-        ))
-
-        document.querySelectorAll('#figure-width-pulldown li span').forEach(el => el.addEventListener(
-            'click',
-            event => {
-                event.preventDefault()
-                this.width = el.id.split('-')[2]
-                this.setFigureWidth()
-            }
-        ))
-
-
-        document.querySelectorAll('#figure-category-pulldown li span').forEach(el => el.addEventListener(
-            'click',
-            event => {
-                event.preventDefault()
-                this.category = el.id.split('-')[2]
-                this.setFigureLabel()
-            }
-        ))
 
     }
 }

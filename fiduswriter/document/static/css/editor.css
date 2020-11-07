@@ -16,6 +16,12 @@ body.editor header {
     border: 1px solid var(--cs-white-border);
 }
 
+.user-contents .figure figure {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 .user-contents a,
 .user-contents a:hover {
     color: var(--cs-1-text);
@@ -433,8 +439,11 @@ font {
 }
 
 .ProseMirror table[data-caption-hidden][data-category='none'] caption,
+.ProseMirror figure[data-caption-hidden][data-category='none'] figcaption,
 .ProseMirror table[data-caption-hidden] caption span.text,
-.ProseMirror table[data-category='none'] caption span.label {
+.ProseMirror table[data-category='none'] caption span.label,
+.ProseMirror figure[data-caption-hidden] figcaption span.text,
+.ProseMirror figure[data-category='none'] figcaption span.label {
     display: none;
 }
 

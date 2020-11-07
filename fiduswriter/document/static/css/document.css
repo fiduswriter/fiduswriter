@@ -112,7 +112,7 @@ figure {
     box-sizing: border-box;
 }
 
-.cat-figure::after {
+figure[data-category='figure'] figcaption span.label::after {
     counter-increment: cat-0;
     content: ' ' counter(cat-0);
 }
@@ -121,7 +121,7 @@ figure {
     content: ' ' counter(cat-0) 'A';
 }
 
-.cat-photo::after {
+figure[data-category='photo'] figcaption span.label::after {
     counter-increment: cat-1;
     content: ' ' counter(cat-1);
 }
@@ -130,7 +130,7 @@ figure {
     content: ' ' counter(cat-1) 'A';
 }
 
-.cat-table::after,
+figure[data-category='table'] figcaption span.label::after,
 table[data-category='table'] caption span.label::after {
     counter-increment: cat-2;
     content: ' ' counter(cat-2);

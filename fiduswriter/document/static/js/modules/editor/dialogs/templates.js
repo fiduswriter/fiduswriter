@@ -237,67 +237,56 @@ export const figureImageTemplate = ({imageDB}) =>
 export const configureFigureTemplate = ({language}) =>
     `<div class="fw-media-uploader">
             <input type="hidden" id="figure-category">
-            <div style="margin-top: 10px;">
-                <div id="figure-category-btn" class="fw-button fw-light fw-large">
-                    <span class="label"></span>
-                    <span class="fa fa-caret-down"></span>
-                </div>
-                <div id="figure-category-pulldown" class="fw-pulldown fw-left"
-                        style="left: 10px;">
-                    <ul id="figure-category-list">
-                        <li><span class="fw-pulldown-item" id="figure-category-none">
-                            ${gettext('None')}
-                        </span></li>
-                        ${
-    Object.entries(CATS).map(([id, title_object]) =>
-        `<li><span class="fw-pulldown-item" id="figure-category-${id}">${title_object[language]}</span></li>`
-    ).join('')
-}
-                    </ul>
-                </div>
-                <div id="figure-alignment-btn" class="fw-button fw-light fw-large">
-                    <span class="label"></span>
-                    <span class="fa fa-caret-down"></span>
-                </div>
-                <div id="figure-alignment-pulldown" class="fw-pulldown fw-left"
-                        style="left: 70px;">
-                    <ul id="figure-category-list">
-                        <li><span class="fw-pulldown-item" id="figure-alignment-left">
-                            ${gettext('Left')}
-                        </span></li>
-                        <li><span class="fw-pulldown-item" id="figure-alignment-center">
-                            ${gettext('Center')}
-                        </span></li>
-                        <li><span class="fw-pulldown-item" id="figure-alignment-right">
-                            ${gettext('Right')}
-                        </span></li>
-                    </ul>
-                </div>
-                <div id="figure-width-btn" class="fw-button fw-light fw-large">
-                    <span class="label"></span>
-                    <span class="fa fa-caret-down"></span>
-                </div>
-                <div id="figure-width-pulldown" class="fw-pulldown fw-left"
-                        style="left: 150px;">
-                    <ul id="figure-category-list">
-                        <li><span class="fw-pulldown-item" id="figure-width-100">
-                           Size: ${gettext('100')} %
-                        </span></li>
-                        <li><span class="fw-pulldown-item" id="figure-width-75">
-                           Size: ${gettext('75')} %
-                        </span></li>
-                        <li><span class="fw-pulldown-item" id="figure-width-50">
-                            Size : ${gettext('50')} %
-                        </span></li>
-                       <li><span class="fw-pulldown-item" id="figure-width-25">
-                            Size : ${gettext('25')} %
-                        </span></li>
-                    </ul>
-                </div>
-            </div>
             <div class="figure-preview">
                 <div class="inner-figure-preview"></div>
             </div>
+            <table class="fw-dialog-table">
+                <tbody>
+                    <tr>
+                        <th><h4 class="fw-tablerow-title">${gettext("Alignment")}</h4></th>
+                        <td>
+                            <select class="figure-alignment">
+                                <option value="left">${gettext("Left")}</option>
+                                <option value="center">${gettext("Center")}</option>
+                                <option value="right">${gettext("Right")}</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><h4 class="fw-tablerow-title">${gettext("Width")}</h4></th>
+                        <td>
+                            <select class="figure-width">
+                                <option value="100">${gettext("100 %")}</option>
+                                <option value="75">${gettext("75 %")}</option>
+                                <option value="50">${gettext("50 %")}</option>
+                                <option value="25">${gettext("25 %")}</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><h4 class="fw-tablerow-title">${gettext("Listed as")}</h4></th>
+                        <td>
+                            <select class="figure-category">
+                                <option value="none">${gettext("None")}</option>
+                                ${
+    Object.entries(CATS).map(([id, titleObject]) =>
+        `<option value="${id}">${titleObject[language]}</option>`
+    ).join('')
+}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><h4 class="fw-tablerow-title">${gettext("Caption")}</h4></th>
+                        <td>
+                            <select class="figure-caption">
+                                <option value="true">${gettext("Enable")}</option>
+                                <option value="false">${gettext("Disable")}</option>
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>`
 
 /** A template to configure citations in the editor */

@@ -25,7 +25,7 @@ export const figure = {
         getAttrs(dom) {
             return {
                 category: dom.dataset.category,
-                caption: dom.dataset.caption,
+                caption: !!(dom.dataset.captionHidden),
                 id: dom.id,
                 track: parseTracks(dom.dataset.track),
                 aligned: dom.dataset.aligned,
@@ -37,7 +37,9 @@ export const figure = {
     toDOM(node) {
         const dom = document.createElement('figure')
         dom.dataset.category = node.attrs.category
-        dom.dataset.caption = node.attrs.caption
+        if (!node.attrs.caption) {
+            dom.dataset.captionHidden = true
+        }
         dom.id = node.attrs.id
         dom.dataset.aligned = node.attrs.aligned
         dom.dataset.width = node.attrs.width

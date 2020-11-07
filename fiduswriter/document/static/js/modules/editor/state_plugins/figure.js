@@ -88,10 +88,9 @@ export const figurePlugin = function(options) {
         },
         view(view) {
             let userLanguage = options.editor.view.state.doc.firstChild.attrs.language
-            view.dom.querySelectorAll('*[class^="cat-"]').forEach(el => el.innerHTML = CATS[el.dataset.category][userLanguage])
-            view.dom.querySelectorAll('table').forEach(el => {
+            view.dom.querySelectorAll('figure').forEach(el => {
                 const category = el.dataset.category
-                const labelEl = el.querySelector('caption span.label')
+                const labelEl = el.querySelector('figcaption span.label')
                 if (category === 'none') {
                     labelEl.innerHTML = '&nbsp;'
                     return
@@ -100,12 +99,18 @@ export const figurePlugin = function(options) {
             })
             return {
                 update: (view, _prevState) => {
-                    let selector = '*[class^="cat-"]:empty'
+                    let selector = 'figcaption span.label:empty'
                     if (options.editor.view.state.doc.firstChild.attrs.language !== userLanguage) {
-                        selector = '*[class^="cat-"]'
+                        selector = 'figcaption span.label'
                         userLanguage = options.editor.view.state.doc.firstChild.attrs.language
                     }
-                    view.dom.querySelectorAll(selector).forEach(el => el.innerHTML = CATS[el.dataset.category][userLanguage])
+                    view.dom.querySelectorAll(selector).forEach(el => {
+                        const category = el.parentElement.parentElement.dataset.category
+                        if (category === 'none') {
+                            return
+                        }
+                        el.innerHTML = CATS[category][userLanguage]
+                    })
                 }
             }
         }

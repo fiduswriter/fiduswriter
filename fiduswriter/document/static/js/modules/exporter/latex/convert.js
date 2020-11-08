@@ -437,7 +437,7 @@ export class LatexExporterConvert {
         }
         case 'figure': {
             const category = node.attrs.category
-            let caption = node.attrs.caption
+            let caption = node.attrs.caption ? node.content.find(node => node.type === 'figure_caption')?.content || [] : []
             if (category !== 'none') {
                 if (!this.categoryCounter[category]) {
                     this.categoryCounter[category] = 1
@@ -463,9 +463,10 @@ export class LatexExporterConvert {
                 end = '\n\n}\n' + end
             } // aligned === 'left' is default
             let copyright
-            if (node.attrs.image) {
-                this.imageIds.push(node.attrs.image)
-                const imageDBEntry = this.imageDB.db[node.attrs.image],
+            const image = node.content.find(node => node.type === 'image')?.attrs.image || false
+            if (image) {
+                this.imageIds.push(image)
+                const imageDBEntry = this.imageDB.db[image],
                     filePathName = imageDBEntry.image,
                     filename = filePathName.split('/').pop()
                 copyright = imageDBEntry.copyright
@@ -477,7 +478,7 @@ export class LatexExporterConvert {
                     this.features.images = true
                 }
             } else {
-                const equation = node.attrs.equation
+                const equation = node.content.find(node => node.type === 'figure_equation')?.attrs.equation || ''
                 innerFigure += `\\begin{displaymath}\n${equation}\n\\end{displaymath}\n`
             }
             if (category === 'table') {
@@ -506,10 +507,20 @@ export class LatexExporterConvert {
             this.features.captions = true
             break
         }
+        case 'figure_caption':
+            // We are already dealing with this in the figure. Prevent content from being added a second time.
+            return ''
+        case 'figure_equation':
+            // We are already dealing with this in the figure.
+            break
+        case 'image':
+            // We are already dealing with this in the figure.
+            break
         case 'table':
             if (node.content?.length) {
                 const category = node.attrs.category
-                let caption = node.attrs.caption
+
+                let caption = node.attrs.caption ? node.content[0].content : []
                 if (category !== 'none') {
                     if (!this.categoryCounter[category]) {
                         this.categoryCounter[category] = 1
@@ -522,7 +533,7 @@ export class LatexExporterConvert {
                         caption = catLabel
                     }
                 }
-                const columns = node.content[0].content.reduce(
+                const columns = node.content[1].content[0].content.reduce(
                     (columns, node) => columns + node.attrs.colspan,
                     0
                 )
@@ -550,6 +561,12 @@ export class LatexExporterConvert {
                 this.features.tables = true
             }
             break
+        case 'table_body':
+            // Pass through to table.
+            break
+        case 'table_caption':
+            // We already deal with this in 'table'.
+            return ''
         case 'table_row':
             end += ' \\\\\n'
             break

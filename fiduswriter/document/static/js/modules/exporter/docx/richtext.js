@@ -309,7 +309,7 @@ export class DocxExporterRichtext {
         case 'figure':
         {
             const category = node.attrs.category
-            let caption = node.attrs.caption
+            let caption = node.attrs.caption ? node.content.find(node => node.type === 'figure_caption')?.content || [] : []
             let catCountXml = ''
             if (category !== 'none') {
                 const categoryCounter = options.inFootnote ? this.fncategoryCounter : this.categoryCounter
@@ -344,8 +344,9 @@ export class DocxExporterRichtext {
                 }
             }
             let cx, cy
-            if (node.attrs.image !== false) {
-                const imgDBEntry = this.images.imageDB.db[node.attrs.image]
+            const image = node.content.find(node => node.type === 'image')?.attrs.image || false
+            if (image !== false) {
+                const imgDBEntry = this.images.imageDB.db[image]
                 cx = imgDBEntry.width * 9525 // width in EMU
                 cy = imgDBEntry.height * 9525 // height in EMU
                 const imgTitle = imgDBEntry.title
@@ -369,7 +370,7 @@ export class DocxExporterRichtext {
                 }
                 cy = Math.round(cy)
                 cx = Math.round(cx)
-                const rId = this.images.imgIdTranslation[node.attrs.image]
+                const rId = this.images.imgIdTranslation[image]
                 content += noSpaceTmp`<w:r>
                       <w:rPr/>
                       <w:drawing>
@@ -416,7 +417,7 @@ export class DocxExporterRichtext {
             } else {
                 cx = 9525 * 100 // We pick a random size of 100x100. We hope this will fit the formula
                 cy = 9525 * 100
-                const latex = node.attrs.equation
+                const latex = node.content.find(node => node.type === 'figure_equation')?.attrs.equation || ''
                 content += this.exporter.math.getOmml(latex)
             }
             const captionSpace = !!(catCountXml.length || caption.length)
@@ -502,10 +503,19 @@ export class DocxExporterRichtext {
             }
             break
         }
+        case 'figure_caption':
+            // We are already dealing with this in the figure. Prevent content from being added a second time.
+            return ''
+        case 'figure_equation':
+            // We are already dealing with this in the figure.
+            break
+        case 'image':
+            // We are already dealing with this in the figure.
+            break
         case 'table':
         {
             const category = node.attrs.category
-            let caption = node.attrs.caption
+            let caption = node.attrs.caption ? node.content[0].content : []
             let catCountXml = ''
             if (category !== 'none') {
                 const categoryCounter = options.inFootnote ? this.fncategoryCounter : this.categoryCounter
@@ -567,7 +577,7 @@ export class DocxExporterRichtext {
                             <w:tblLook w:val="04A0" w:firstRow="1" w:lastRow="0" w:firstColumn="1" w:lastColumn="0" w:noHBand="0" w:noVBand="1" />
                         </w:tblPr>
                         <w:tblGrid>`
-            const columns = node.content[0].content.length
+            const columns = node.content[1].content[0].content.length
             let cellWidth = 63500 // standard width
             options = Object.assign({}, options)
             if (options.dimensions?.width) {
@@ -587,6 +597,12 @@ export class DocxExporterRichtext {
 
             break
         }
+        case 'table_body':
+            // Pass through to table.
+            break
+        case 'table_caption':
+            // We already deal with this in 'table'.
+            return ''
         case 'table_row':
             start += '<w:tr>'
             end = '</w:tr>' + end

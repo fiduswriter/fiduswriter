@@ -212,7 +212,7 @@ export class FigureDialog {
                 this.editor.currentView.state.schema.nodes['figure_equation'].create({equation: this.equation})
             )
         }
-        const captionNode = this.node?.content.content.find(node => node.type.name === 'figure_caption') ||
+        const captionNode = this.node.content?.content.find(node => node.type.name === 'figure_caption') ||
             this.editor.currentView.state.schema.nodes['figure_caption'].create()
         if (this.category === 'table') {
             content.unshift(captionNode)
@@ -249,7 +249,7 @@ export class FigureDialog {
     init() {
         this.node = this.editor.currentView.state.selection.node || false
 
-        if (this.node?.attrs.track.find(track => track.type === 'deletion')) {
+        if (this.node?.attrs?.track.find(track => track.type === 'deletion')) {
             // The figure is marked as deleted so we don't allow editing it.
             return true
         }

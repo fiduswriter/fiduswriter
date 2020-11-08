@@ -71,7 +71,7 @@ export class ImportNative {
     translateReferenceIds(ImageTranslationTable) {
         function walkTree(node) {
             switch (node.type) {
-            case 'figure':
+            case 'image':
                 if (node.attrs.image !== false) {
                     node.attrs.image = ImageTranslationTable[node.attrs.image]
                 }

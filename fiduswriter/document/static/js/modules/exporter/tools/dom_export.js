@@ -94,8 +94,8 @@ export class DOMExporter {
     }
 
     addCategoryLabels(language) {
-        this.content.querySelectorAll('*[class^="cat-"]').forEach(el => {
-            el.innerHTML = CATS[el.dataset.category][language]
+        this.content.querySelectorAll('figcaption span.label,caption span.label').forEach(el => {
+            el.innerHTML = CATS[el.parentElement.parentElement.dataset.category][language]
             delete el.dataset.category
         })
     }
@@ -190,23 +190,17 @@ export class DOMExporter {
             delete el.dataset.bibs
             delete el.dataset.format
         })
-
-        this.content.querySelectorAll('.equation, .figure-equation').forEach(el => {
-            delete el.dataset.equation
-        })
-        this.content.querySelectorAll('figure').forEach(el => {
-            delete el.dataset.equation
+        this.content.querySelectorAll('img').forEach(el => {
             delete el.dataset.image
             delete el.dataset.imageSrc
-            delete el.dataset.category
-            delete el.dataset.caption
-            delete el.dataset.aligned
-            delete el.dataset.width
         })
 
         this.content.querySelectorAll('table').forEach(el => {
-            delete el.dataset.category
-            delete el.dataset.caption
+            delete el.dataset.captionHidden
+        })
+
+        this.content.querySelectorAll('figcaption span.text:empty,caption span.text:empty').forEach(el => {
+            el.parentElement.removeChild(el)
         })
 
         this.content.querySelectorAll('.cross-reference').forEach(el => {

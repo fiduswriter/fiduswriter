@@ -1,9 +1,6 @@
 import {Plugin, PluginKey, Selection} from "prosemirror-state"
 import {ContentMenu} from '../../common'
 import {WRITE_ROLES} from "../"
-import {
-    CATS
-} from "../../schema/i18n"
 
 const key = new PluginKey('table')
 
@@ -71,7 +68,7 @@ class TableCaptionView {
         this.options = options
 
         this.dom = document.createElement("caption")
-        this.dom.innerHTML = '<span class="label" contenteditable="false"></span><span class="text"></span>'
+        this.dom.innerHTML = '<span class="text"></span>'
         this.contentDOM = this.dom.lastElementChild
     }
 }
@@ -106,34 +103,6 @@ export const tablePlugin = function(options) {
         },
         props: {
             nodeViews: {}
-        },
-        view(view) {
-            let userLanguage = options.editor.view.state.doc.firstChild.attrs.language
-            view.dom.querySelectorAll('table').forEach(el => {
-                const category = el.dataset.category
-                const labelEl = el.querySelector('caption span.label')
-                if (category === 'none') {
-                    labelEl.innerHTML = '&nbsp;'
-                    return
-                }
-                labelEl.innerHTML = CATS[category][userLanguage]
-            })
-            return {
-                update: (view, _prevState) => {
-                    let selector = 'caption span.label:empty'
-                    if (options.editor.view.state.doc.firstChild.attrs.language !== userLanguage) {
-                        selector = 'caption span.label'
-                        userLanguage = options.editor.view.state.doc.firstChild.attrs.language
-                    }
-                    view.dom.querySelectorAll(selector).forEach(el => {
-                        const category = el.parentElement.parentElement.dataset.category
-                        if (category === 'none') {
-                            return
-                        }
-                        el.innerHTML = CATS[category][userLanguage]
-                    })
-                }
-            }
         }
     })
 }

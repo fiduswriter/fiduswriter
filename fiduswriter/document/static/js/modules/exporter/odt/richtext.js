@@ -205,8 +205,7 @@ export class OdtExporterRichtext {
                 // Needed to prevent subsequent image from overlapping
                 end = end + '<text:p text:style-name="Standard"></text:p>'
             }
-
-            let caption = node.attrs.caption.map(node => this.transformRichtext(node)).join('')
+            let caption = node.attrs.caption ? node.content.find(node => node.type === 'figure_caption')?.content.map(node => this.transformRichtext(node)).join('') || '' : ''
             // The figure category should not be in the
             // user's language but rather the document language
             const category = node.attrs.category
@@ -226,9 +225,10 @@ export class OdtExporterRichtext {
             let relWidth = node.attrs.width
             let aligned = node.attrs.aligned
             let frame
+            const image = node.content.find(node => node.type === 'image')?.attrs.image || false
             if (
                 caption.length ||
-                    node.attrs.image === false
+                    image === false
             ) {
                 frame = true
                 this.exporter.styles.checkParStyle('Caption')
@@ -247,9 +247,9 @@ export class OdtExporterRichtext {
                     end = `<text:line-break />${caption}` + end
                 }
             }
-            if (node.attrs.image !== false) {
-                const imgDBEntry = this.images.imageDB.db[node.attrs.image]
-                const imgFileName = this.images.imgIdTranslation[node.attrs.image]
+            if (image !== false) {
+                const imgDBEntry = this.images.imageDB.db[image]
+                const imgFileName = this.images.imgIdTranslation[image]
                 const height = imgDBEntry.height * 3 / 4 // more or less px to point
                 const width = imgDBEntry.width * 3 / 4 // more or less px to point
                 const graphicStyleId = this.exporter.styles.getGraphicStyleId('Graphics', aligned)
@@ -258,7 +258,7 @@ export class OdtExporterRichtext {
                             <draw:image xlink:href="Pictures/${imgFileName}" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/>
                         </draw:frame>`
             } else {
-                const latex = node.attrs.equation
+                const latex = node.content.find(node => node.type === 'figure_equation')?.attrs.equation
                 const objectNumber = this.exporter.math.addMath(latex)
                 const graphicStyleId = this.exporter.styles.getGraphicStyleId('Formula')
                 content += noSpaceTmp`
@@ -272,8 +272,17 @@ export class OdtExporterRichtext {
             }
             break
         }
+        case 'figure_caption':
+            // We are already dealing with this in the figure. Prevent content from being added a second time.
+            return ''
+        case 'figure_equation':
+            // We are already dealing with this in the figure.
+            break
+        case 'image':
+            // We are already dealing with this in the figure.
+            break
         case 'table': {
-            let caption = node.attrs.caption.map(node => this.transformRichtext(node)).join('')
+            let caption = node.attrs.caption ? node.content[0].content.map(node => this.transformRichtext(node)).join('') : ''
             // The table category should not be in the
             // user's language but rather the document language
             const category = node.attrs.category
@@ -297,7 +306,7 @@ export class OdtExporterRichtext {
                 this.exporter.styles.checkParStyle(options.section)
                 start += `<text:p text:style-name="${options.section}">${caption}</text:p>`
             }
-            const columns = node.content[0].content.length
+            const columns = node.content[1].content[0].content.length
             if (node.attrs.width === '100') {
                 start += '<table:table>'
             } else {
@@ -311,6 +320,12 @@ export class OdtExporterRichtext {
             end = '</table:table>' + end
             break
         }
+        case 'table_body':
+            // Pass through to table.
+            break
+        case 'table_caption':
+            // We already deal with this in 'table'.
+            return ''
         case 'table_row':
             start += '<table:table-row>'
             end = '</table:table-row>' + end

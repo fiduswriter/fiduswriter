@@ -32,31 +32,31 @@ export const table = {
         }
     }}],
     toDOM(node) {
-        const dom = document.createElement('table')
+        const attrs = {
+            id: node.attrs.id,
+            class: `table-${node.attrs.width} table-${node.attrs.aligned} table-${node.attrs.layout}`,
+            'data-width': node.attrs.width,
+            'data-aligned': node.attrs.aligned,
+            'data-layout': node.attrs.layout,
+            'data-category': node.attrs.category
+        }
         if (node.attrs.track.length) {
-            dom.dataset.track = JSON.stringify(node.attrs.track)
+            attrs['data-track'] = JSON.stringify(node.attrs.track)
         }
-        dom.id = node.attrs.id
-        dom.dataset.width = node.attrs.width
-        dom.dataset.aligned = node.attrs.aligned
-        dom.dataset.layout = node.attrs.layout
-        dom.class = `table-${node.attrs.width} table-${node.attrs.aligned} table-${node.attrs.layout}`
-        dom.dataset.category = node.attrs.category
         if (!node.attrs.caption) {
-            dom.dataset.captionHidden = true
+            attrs['data-caption-hidden'] = true
         }
-        return dom
+        return ["table", attrs, 0]
     }
 }
 
 export const table_caption = {
     content: "inline*",
-    parseDOM: [{tag: 'caption'}],
+    parseDOM: [{tag: 'caption span.text'}],
     toDOM() {
-        return ["caption", 0]
+        return ["caption", ["span", {class: "label"}], ["span", {class: "text"}, 0]]
     }
 }
-
 
 const origTableNodes = tableNodes({
     cellContent: "block+"

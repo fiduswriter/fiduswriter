@@ -1,9 +1,6 @@
 import {Plugin, PluginKey, NodeSelection} from "prosemirror-state"
 import {DOMSerializer} from "prosemirror-model"
 import {ContentMenu} from '../../common'
-import {
-    CATS
-} from "../../schema/i18n"
 
 const key = new PluginKey('figureMenu')
 
@@ -17,10 +14,11 @@ class FigureView {
         this.dom = document.createElement("div")
         this.dom.classList.add('figure')
         this.serializer = DOMSerializer.fromSchema(node.type.schema)
-        this.contentDOM = this.serializer.serializeNode(this.node)
-        this.contentDOM.classList.forEach(className => this.dom.classList.add(className))
-        this.contentDOM.classList.value = ''
-        this.dom.appendChild(this.contentDOM)
+        const contentDOM = this.serializer.serializeNode(this.node)
+        contentDOM.classList.forEach(className => this.dom.classList.add(className))
+        contentDOM.classList.value = ''
+        this.dom.appendChild(contentDOM)
+        this.contentDOM = contentDOM
         this.menuButton = document.createElement("button")
         this.menuButton.classList.add('figure-menu-btn')
         this.menuButton.innerHTML = '<span class="dot-menu-icon"><i class="fa fa-ellipsis-v"></i></span>'
@@ -60,7 +58,7 @@ class FigureCaptionView {
         this.options = options
 
         this.dom = document.createElement("figcaption")
-        this.dom.innerHTML = '<span class="label"></span><span class="text"></span>'
+        this.dom.innerHTML = '<span class="text"></span>'
         this.contentDOM = this.dom.lastElementChild
     }
 }
@@ -85,34 +83,6 @@ export const figurePlugin = function(options) {
         },
         props: {
             nodeViews: {}
-        },
-        view(view) {
-            let userLanguage = options.editor.view.state.doc.firstChild.attrs.language
-            view.dom.querySelectorAll('figure').forEach(el => {
-                const category = el.dataset.category
-                const labelEl = el.querySelector('figcaption span.label')
-                if (category === 'none') {
-                    labelEl.innerHTML = '&nbsp;'
-                    return
-                }
-                labelEl.innerHTML = CATS[category][userLanguage]
-            })
-            return {
-                update: (view, _prevState) => {
-                    let selector = 'figcaption span.label:empty'
-                    if (options.editor.view.state.doc.firstChild.attrs.language !== userLanguage) {
-                        selector = 'figcaption span.label'
-                        userLanguage = options.editor.view.state.doc.firstChild.attrs.language
-                    }
-                    view.dom.querySelectorAll(selector).forEach(el => {
-                        const category = el.parentElement.parentElement.dataset.category
-                        if (category === 'none') {
-                            return
-                        }
-                        el.innerHTML = CATS[category][userLanguage]
-                    })
-                }
-            }
         }
     })
 }

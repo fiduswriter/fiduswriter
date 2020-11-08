@@ -917,6 +917,14 @@ const convertNodeV32 = function(node, ids = []) {
         node.attrs = attrs
         break
     }
+    case 'footnote':
+        if (node.attrs?.footnote) {
+            node.attrs.footnote.forEach(childNode => {
+                convertNodeV32(childNode, ids)
+            })
+        }
+        break
+    }
     }
     if (node.content) {
         node.content.forEach(childNode => {

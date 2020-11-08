@@ -22,7 +22,7 @@ export const placeholdersPlugin = function(options) {
 
         articleNode.forEach((partElement, offset) => {
             if (
-                (partElement.isTextblock && partElement.nodeSize === 2) ||
+                (partElement.isTextblock && partElement.childCount === 0) ||
                 (!partElement.isTextblock && partElement.nodeSize === 4)
             ) {
                 if (
@@ -59,7 +59,19 @@ export const placeholdersPlugin = function(options) {
                         side: 1
                     }
                 ))
+            } else if (['richtext_part', 'table_part'].includes(partElement.type.name)) {
+                partElement.descendants((node, pos) => {
+                    if (['figure_caption', 'table_caption'].includes(node.type.name) && node.childCount === 0 && state.selection.$anchor.parent !== node) {
+                        decorations.push(
+                            Decoration.node(2 + offset + pos, 2 + offset + pos + node.nodeSize, {
+                                class: "empty",
+                                'data-placeholder': `${gettext('Caption')}...`
+                            })
+                        )
+                    }
+                })
             }
+
         })
 
         return decorations.length ? DecorationSet.create(state.doc, decorations) : false

@@ -925,7 +925,6 @@ const convertNodeV32 = function(node, ids = []) {
         }
         break
     }
-    }
     if (node.content) {
         node.content.forEach(childNode => {
             convertNodeV32(childNode, ids)

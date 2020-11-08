@@ -22,6 +22,18 @@ body.editor header {
     padding: 0;
 }
 
+.ProseMirror figcaption.empty span.text,
+.ProseMirror caption.empty span.text {
+    display: inline-block;
+}
+
+.ProseMirror figcaption.empty::after,
+.ProseMirror caption.empty::after {
+    color: var(--cs-white-placeholder-text);
+    content: attr(data-placeholder);
+    cursor: text;
+}
+
 .user-contents a,
 .user-contents a:hover {
     color: var(--cs-1-text);

@@ -117,17 +117,9 @@ figure[data-category='figure'] figcaption span.label::after {
     content: ' ' counter(cat-0);
 }
 
-#footnote-box-container figure[data-category='figure'] figcaption span.label::after {
-    content: ' ' counter(cat-0) 'A';
-}
-
 figure[data-category='photo'] figcaption span.label::after {
     counter-increment: cat-1;
     content: ' ' counter(cat-1);
-}
-
-#footnote-box-container figure[data-category='photo'] figcaption span.label::after {
-    content: ' ' counter(cat-1) 'A';
 }
 
 figure[data-category='table'] figcaption span.label::after,
@@ -136,7 +128,15 @@ table[data-category='table'] caption span.label::after {
     content: ' ' counter(cat-2);
 }
 
-#footnote-box-container figure[data-category='table'] figcaption span.label::after ,
+#footnote-box-container figure[data-category='figure'] figcaption span.label::after {
+    content: ' ' counter(cat-0) 'A';
+}
+
+#footnote-box-container figure[data-category='photo'] figcaption span.label::after {
+    content: ' ' counter(cat-1) 'A';
+}
+
+#footnote-box-container figure[data-category='table'] figcaption span.label::after,
 #footnote-box-container table[data-category='table'] caption span.label::after {
     content: ' ' counter(cat-2) 'A';
 }

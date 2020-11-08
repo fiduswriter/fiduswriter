@@ -1,4 +1,4 @@
-import {addColumnAfter, addColumnBefore, deleteColumn, addRowBefore, addRowAfter, deleteRow, deleteTable,
+import {addColumnAfter, addColumnBefore, deleteColumn, addRowBefore, addRowAfter, deleteRow,
     mergeCells, splitCell, toggleHeaderRow, toggleHeaderColumn, toggleHeaderCell} from "prosemirror-tables"
 import {TableConfigurationDialog} from "../../dialogs"
 
@@ -8,6 +8,21 @@ const findTable = function(state) {
     for (let d = $head.depth; d > 0; d--) {
         if ($head.node(d).type.name == "table") {
             return $head.node(d)
+        }
+    }
+    return false
+}
+
+// Adjusted from https://github.com/ProseMirror/prosemirror-tables/blob/master/src/commands.js
+export function deleteTable(state, dispatch) {
+    const $pos = state.selection.$anchor
+    for (let d = $pos.depth; d > 0; d--) {
+        const node = $pos.node(d)
+        if (node.type.name == "table") {
+            if (dispatch) {
+                dispatch(state.tr.delete($pos.before(d), $pos.after(d)).scrollIntoView())
+            }
+            return true
         }
     }
     return false

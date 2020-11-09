@@ -419,9 +419,8 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
                 (By.CSS_SELECTOR, ".collaborator-tr .fa-caret-down")
             )
         ).click()
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".fw-pulldown-item[data-rights=write]"
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Write"]'
         ).click()
         self.driver.find_element(
             By.CSS_SELECTOR,

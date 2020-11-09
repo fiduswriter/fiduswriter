@@ -11,23 +11,31 @@ export const dropdownSelect = function(
     selectDOM, {
         onChange = _newValue => {},
         width = false,
-        value = false
+        value = false,
+        button = false
     }
 ) {
-    const btn = document.createElement('div')
-    btn.innerHTML = '<label></label>&nbsp;<span class="fa fa-caret-down"></span>'
-    btn.classList.add('fw-button')
-    btn.classList.add('fw-light')
-    btn.classList.add('fw-large')
-    btn.classList.add('fw-dropdown')
-    if (width) {
-        btn.style.width = Number.isInteger(width) ? `${width}px` : width
+    let buttonDOM
+    if (button) {
+        buttonDOM = button
+        selectDOM.parentElement.removeChild(selectDOM) // Remove the <select> from the main dom.
+    } else {
+        buttonDOM = document.createElement('div')
+        buttonDOM.innerHTML = '<label></label>&nbsp;<span class="fa fa-caret-down"></span>'
+        buttonDOM.classList.add('fw-button')
+        buttonDOM.classList.add('fw-light')
+        buttonDOM.classList.add('fw-large')
+        buttonDOM.classList.add('fw-dropdown')
+        if (width) {
+            buttonDOM.style.width = Number.isInteger(width) ? `${width}px` : width
+        }
+        selectDOM.classList.forEach(className => buttonDOM.classList.add(className))
+        if (selectDOM.id) {
+            buttonDOM.id = selectDOM.id
+        }
+        selectDOM.parentElement.replaceChild(buttonDOM, selectDOM) // Remove the <select> from the main dom.
     }
-    selectDOM.classList.forEach(className => btn.classList.add(className))
-    if (selectDOM.id) {
-        btn.id = selectDOM.id
-    }
-    selectDOM.parentElement.replaceChild(btn, selectDOM) // Remove the <select> from the main dom.
+
     const options = Array.from(selectDOM.children)
     if (!options.length) {
         // There are no options, so we only create the button.
@@ -48,7 +56,9 @@ export const dropdownSelect = function(
                 tooltip: option.title || '',
                 order,
                 action: () => {
-                    btn.firstElementChild.innerText = option.innerText
+                    if (!button) {
+                        buttonDOM.firstElementChild.innerText = option.innerText
+                    }
                     onChange(option.value)
                     value = option.value
                     menu.content.forEach(item => item.selected = false)
@@ -65,13 +75,16 @@ export const dropdownSelect = function(
         menu.content[0].selected = true
     }
 
-    btn.firstElementChild.innerText = selected.innerText
+    if (!button) {
+        buttonDOM.firstElementChild.innerText = selected.innerText
+    }
+
     value = selected.value
 
-    btn.addEventListener('click', event => {
+    buttonDOM.addEventListener('click', event => {
         event.preventDefault()
         event.stopPropagation()
-        if (btn.classList.contains('disabled')) {
+        if (buttonDOM.classList.contains('disabled')) {
             return
         }
         const contentMenu = new ContentMenu({
@@ -90,12 +103,14 @@ export const dropdownSelect = function(
             menu.content.forEach(item => item.selected = false)
             menu.content[optionIndex].selected = true
             const option = options[optionIndex]
-            btn.firstElementChild.innerText = option.innerText
+            if (!button) {
+                buttonDOM.firstElementChild.innerText = option.innerText
+            }
             value = newValue
         },
         getValue: () => value,
-        enable: () => btn.classList.remove('disabled'),
-        disable: () => btn.classList.add('disabled')
+        enable: () => buttonDOM.classList.remove('disabled'),
+        disable: () => buttonDOM.classList.add('disabled')
     }
 }
 

@@ -252,7 +252,14 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         )
 
         # click on 'Insert image' button
-        self.driver.find_element_by_id('insert-figure-image').click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.XPATH,
+                    '//*[normalize-space()="Insert image"]'
+                )
+            )
+        ).click()
 
         upload_button = WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(

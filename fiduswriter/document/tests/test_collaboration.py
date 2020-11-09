@@ -1092,7 +1092,14 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         button.click()
 
         # click on 'Insert image' button
-        driver.find_element_by_id('insert-figure-image').click()
+        WebDriverWait(driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.XPATH,
+                    '//*[normalize-space()="Insert image"]'
+                )
+            )
+        ).click()
 
         upload_button = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located(

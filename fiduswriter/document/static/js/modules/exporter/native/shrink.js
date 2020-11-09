@@ -75,7 +75,7 @@ export class ShrinkFidus {
         case 'citation':
             this.citeList = this.citeList.concat(node.attrs.references.map(ref => ref.id))
             break
-        case 'figure':
+        case 'image':
             if (node.attrs.image !== false) {
                 this.imageList.push(node.attrs.image)
             }

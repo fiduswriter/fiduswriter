@@ -1,9 +1,8 @@
 import {Plugin, PluginKey, Selection} from "prosemirror-state"
 import {ContentMenu} from '../../common'
-import {captionSchema, captionSerializer} from '../../schema/captions'
 import {WRITE_ROLES} from "../"
 
-const key = new PluginKey('tableMenu')
+const key = new PluginKey('table')
 
 class TableView {
     constructor(node, view, getPos, options) {
@@ -18,25 +17,21 @@ class TableView {
         this.menuButton.classList.add('content-menu-btn')
         this.menuButton.innerHTML = '<span class="dot-menu-icon"><i class="fa fa-ellipsis-v"></i></span>'
         this.dom.appendChild(this.menuButton)
-        const table = document.createElement("table")
-        if (node.attrs.caption.length || node.attrs.category !== 'none') {
-            const captionNode = document.createElement("caption")
-            if (node.attrs.category !== 'none') {
-                const tableCatNode = document.createElement('span')
-                tableCatNode.classList.add(`cat-${node.attrs.category}`)
-                tableCatNode.setAttribute('data-category', node.attrs.category)
-                captionNode.appendChild(tableCatNode)
-            }
-            if (node.attrs.caption.length) {
-                const captionTextNode = captionSerializer.serializeNode(captionSchema.nodeFromJSON({type: 'caption', content: node.attrs.caption}))
-                captionNode.appendChild(captionTextNode)
-            }
-            table.appendChild(captionNode)
+        const dom = document.createElement('table')
+        if (node.attrs.track.length) {
+            dom.dataset.track = JSON.stringify(node.attrs.track)
         }
-        this.contentDOM = document.createElement("tbody")
-        this.contentDOM.classList.add(`table-${node.attrs.layout}`)
-        table.appendChild(this.contentDOM)
-        this.dom.appendChild(table)
+        dom.id = node.attrs.id
+        dom.dataset.width = node.attrs.width
+        dom.dataset.aligned = node.attrs.aligned
+        dom.dataset.layout = node.attrs.layout
+        dom.class = `table-${node.attrs.width} table-${node.attrs.aligned} table-${node.attrs.layout}`
+        dom.dataset.category = node.attrs.category
+        if (!node.attrs.caption) {
+            dom.dataset.captionHidden = true
+        }
+        this.contentDOM = dom
+        this.dom.appendChild(this.contentDOM)
     }
 
     stopEvent(event) {
@@ -65,8 +60,21 @@ class TableView {
 
 }
 
+class TableCaptionView {
+    constructor(node, view, getPos, options) {
+        this.node = node
+        this.view = view
+        this.getPos = getPos
+        this.options = options
+
+        this.dom = document.createElement("caption")
+        this.dom.innerHTML = '<span class="text"></span>'
+        this.contentDOM = this.dom.lastElementChild
+    }
+}
+
 const isSelectedTableClicked = (state, $pos) => {
-    const pathArr = state.selection.$anchor.path
+    const pathArr = state.selection.$head.path
     for (let i = 0; i < pathArr.length ; i++) {
         if (pathArr[i].type && pathArr[i].type.name && pathArr[i].type.name === "table" && pathArr[i - 1] === $pos) {
             return true
@@ -75,7 +83,7 @@ const isSelectedTableClicked = (state, $pos) => {
     return false
 }
 
-export const tableMenuPlugin = function(options) {
+export const tablePlugin = function(options) {
     return new Plugin({
         key,
         state: {
@@ -84,6 +92,9 @@ export const tableMenuPlugin = function(options) {
                     this.spec.props.nodeViews['table'] =
                         (node, view, getPos) => new TableView(node, view, getPos, options)
                 }
+                this.spec.props.nodeViews['table_caption'] =
+                    (node, view, getPos) => new TableCaptionView(node, view, getPos, options)
+
                 return {}
             },
             apply(tr, prev) {

@@ -83,8 +83,6 @@ class SendFeedbackTest(LiveTornadoTestCase, SeleniumHelper):
         ).text == "Thank you for your report!"
         self.driver.find_element(By.ID, "closeFeedback").click()
         self.driver.find_element(By.ID, "preferences-btn").click()
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            "#preferences-btn > .fw-string-avatar"
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Log out"]'
         ).click()
-        self.driver.find_element(By.CSS_SELECTOR, ".fw-logout-button").click()

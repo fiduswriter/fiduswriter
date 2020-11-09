@@ -4,18 +4,20 @@ import {ReplaceStep, ReplaceAroundStep, AddMarkStep, RemoveMarkStep, Mapping} fr
 import {CellSelection} from "prosemirror-tables"
 
 function markInsertion(tr, from, to, user, date1, date10, approved) {
-    tr.removeMark(from, to, tr.doc.type.schema.marks.deletion)
-    tr.removeMark(from, to, tr.doc.type.schema.marks.insertion)
     const insertionMark = tr.doc.type.schema.marks.insertion.create({user: user.id, username: user.username, date: date10, approved})
-    tr.addMark(from, to, insertionMark)
     // Add insertion mark also to block nodes (figures, text blocks) but not table cells/rows and lists.
     tr.doc.nodesBetween(
         from,
         to,
         (node, pos) => {
-            if (pos < from || ['bullet_list', 'ordered_list'].includes(node.type.name)) {
+            if (node.isInline) {
+                tr.removeMark(Math.max(from, pos), Math.min(pos + node.nodeSize, to), tr.doc.type.schema.marks.deletion)
+                tr.removeMark(Math.max(from, pos), Math.min(pos + node.nodeSize, to), tr.doc.type.schema.marks.insertion)
+                tr.addMark(Math.max(from, pos), Math.min(pos + node.nodeSize, to), insertionMark)
+                return false
+            } else if (pos < from || ['bullet_list', 'ordered_list'].includes(node.type.name)) {
                 return true
-            } else if (node.isInline || ['table_row', 'table_cell'].includes(node.type.name)) {
+            } else if (['table_row', 'table_cell'].includes(node.type.name)) {
                 return false
             }
             if (node.attrs.track) {
@@ -25,8 +27,8 @@ function markInsertion(tr, from, to, user, date1, date10, approved) {
                 }
                 tr.setNodeMarkup(pos, null, Object.assign({}, node.attrs, {track}), node.marks)
             }
-            if (node.type.name === 'table') {
-                // A table was inserted. We don't add track marks to elements inside of it.
+            if (['figure', 'table'].includes(node.type.name)) {
+                // A table or figure was inserted. We don't add track marks to elements inside of it.
                 return false
             }
         }
@@ -97,6 +99,9 @@ function markDeletion(tr, from, to, user, date1, date10) {
                     const track = node.attrs.track.slice()
                     track.push({type: 'deletion', user: user.id, username: user.username, date: date1})
                     tr.setNodeMarkup(deletionMap.map(pos), null, Object.assign({}, node.attrs, {track}), node.marks)
+                }
+                if (node.type.name === 'figure') {
+                    return false
                 }
             }
         }

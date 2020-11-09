@@ -1,4 +1,3 @@
-import {captionSchema, captionSerializer} from "../captions"
 import {parseTracks} from "./track"
 
 export function randomFigureId() {
@@ -9,26 +8,24 @@ export function randomFigureId() {
 let imageDBBroken = false
 
 export const figure = {
+    allowGapCursor: false,
+    selectable: true,
     group: "block",
     attrs: {
-        equation: {default: ""},
-        image: {default: false},
         category: {default: "none"},
-        caption: {default: []},
+        caption: {default: false},
         id: {default: false},
         track: {default: []},
-        aligned: {default: 'center'},
+        aligned: {default: "center"},
         width: {default: "100"}
     },
+    content: "figure_caption image|figure_caption figure_equation|image figure_caption|figure_equation figure_caption",
     parseDOM: [{
         tag: 'figure',
         getAttrs(dom) {
-            const image = parseInt(dom.dataset.image)
             return {
-                equation: dom.dataset.equation,
-                image: isNaN(image) ? false : image,
                 category: dom.dataset.category,
-                caption: dom.dataset.caption,
+                caption: !!(dom.dataset.captionHidden),
                 id: dom.id,
                 track: parseTracks(dom.dataset.track),
                 aligned: dom.dataset.aligned,
@@ -38,54 +35,45 @@ export const figure = {
         }
     }],
     toDOM(node) {
-        const dom = document.createElement('figure')
-        dom.dataset.equation = node.attrs.equation
-        dom.dataset.image = node.attrs.image
-        dom.dataset.category = node.attrs.category
-        dom.dataset.caption = node.attrs.caption
-        dom.id = node.attrs.id
-        dom.dataset.aligned = node.attrs.aligned
-        dom.dataset.width = node.attrs.width
-
-        switch (node.attrs.aligned) {
-        case 'right':
-            dom.classList.add('aligned-right')
-            break
-        case 'left':
-            dom.classList.add('aligned-left')
-            break
-        case 'center':
-            dom.classList.add('aligned-center')
-            break
-        default:
-            dom.classList.add('aligned-center')
+        const attrs = {
+            id: node.attrs.id,
+            class: `aligned-${node.attrs.aligned} image-width-${node.attrs.width}`,
+            'data-aligned': node.attrs.aligned,
+            'data-width': node.attrs.width,
+            'data-category': node.attrs.category
         }
-
-        switch (node.attrs.width) {
-        case '100':
-            dom.classList.add('image-width-100')
-            break
-        case '75':
-            dom.classList.add('image-width-75')
-            break
-        case '50':
-            dom.classList.add('image-width-50')
-            break
-        default:
-            dom.classList.add('image-width-25')
+        if (!node.attrs.caption) {
+            attrs['data-caption-hidden'] = true
         }
-
         if (node.attrs.track?.length) {
-            dom.dataset.track = JSON.stringify(node.attrs.track)
+            attrs['data-track'] = JSON.stringify(node.attrs.track)
         }
+        return ["figure", attrs, 0]
+    }
+}
+
+
+export const image = {
+    attrs: {
+        image: {default: false},
+    },
+    parseDOM: [{
+        tag: 'img',
+        getAttrs(dom) {
+            const image = parseInt(dom.dataset.image)
+            return {
+                image: isNaN(image) ? false : image,
+            }
+        }
+    }],
+    toDOM(node) {
+        const dom = document.createElement('img')
         if (node.attrs.image !== false) {
-            dom.appendChild(document.createElement("div"))
+            dom.dataset.image = node.attrs.image
             if (node.type.schema.cached.imageDB) {
                 if (node.type.schema.cached.imageDB.db[node.attrs.image]?.image) {
                     const imgSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
-                    const img = document.createElement("img")
-                    img.setAttribute('src', imgSrc)
-                    dom.firstChild.appendChild(img)
+                    dom.setAttribute('src', imgSrc)
                     dom.dataset.imageSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
                 } else {
                     /* The image was not present in the imageDB -- possibly because a collaborator just added ut.
@@ -96,9 +84,7 @@ export const figure = {
                         node.type.schema.cached.imageDB.getDB().then(() => {
                             if (node.type.schema.cached.imageDB.db[node.attrs.image]?.image) {
                                 const imgSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
-                                const img = document.createElement("img")
-                                img.setAttribute('src', imgSrc)
-                                dom.firstChild.appendChild(img)
+                                dom.setAttribute('src', imgSrc)
                                 dom.dataset.imageSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
                             } else {
                                 imageDBBroken = true
@@ -107,33 +93,46 @@ export const figure = {
                     }
                 }
             }
-        } else {
-            const domEquation = document.createElement('div')
-            domEquation.classList.add('figure-equation')
-            domEquation.setAttribute('data-equation', node.attrs.equation)
-            import("mathlive").then(MathLive => {
-                domEquation.innerHTML = MathLive.latexToMarkup(node.attrs.equation, 'displaystyle')
-            })
-            dom.appendChild(domEquation)
         }
-        const captionNode = document.createElement("figcaption")
-        if (node.attrs.category !== 'none') {
-            const figureCatNode = document.createElement('span')
-            figureCatNode.classList.add(`cat-${node.attrs.category}`)
-            figureCatNode.setAttribute('data-category', node.attrs.category)
-            captionNode.appendChild(figureCatNode)
-        }
-        if (node.attrs.caption.length) {
-            const captionTextNode = captionSerializer.serializeNode(captionSchema.nodeFromJSON({type: 'caption', content: node.attrs.caption}))
-            captionNode.appendChild(captionTextNode)
-        }
-        // Add table captions above the table, other captions below.
-        if (node.attrs.category === 'table') {
-            dom.insertBefore(captionNode, dom.lastChild)
-        } else {
-            dom.appendChild(captionNode)
-        }
-
         return dom
+    }
+}
+
+export const figure_equation = {
+    selectable: false,
+    draggable: false,
+    attrs: {
+        equation: {
+            default: false
+        }
+    },
+    parseDOM: [{
+        tag: 'div.figure-equation[data-equation]',
+        getAttrs(dom) {
+            return {
+                equation: dom.dataset.equation
+            }
+        }
+    }],
+    toDOM(node) {
+        const dom = document.createElement('div')
+        dom.dataset.equation = node.attrs.equation
+        dom.classList.add('figure-equation')
+        if (node.attrs.equation !== false) {
+            import("mathlive").then(MathLive => {
+                dom.innerHTML = MathLive.convertLatexToMarkup(node.attrs.equation, {mathstyle: 'displaystyle'})
+            })
+        }
+        return dom
+    }
+}
+
+export const figure_caption = {
+    isolating: true,
+    defining: true,
+    content: "inline*",
+    parseDOM: [{tag: "figcaption span.text"}],
+    toDOM() {
+        return ["figcaption", ["span", {class: "label"}], ["span", {class: "text"}, 0]]
     }
 }

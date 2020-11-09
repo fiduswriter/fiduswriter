@@ -77,6 +77,7 @@ import {
     orderedListMenuModel,
     selectionMenuModel,
     tableMenuModel,
+    figureMenuModel,
     toolbarModel
 } from "./menus"
 import {
@@ -107,7 +108,7 @@ import {
     placeholdersPlugin,
     selectionMenuPlugin,
     settingsPlugin,
-    tableMenuPlugin,
+    tablePlugin,
     figurePlugin,
     tocRenderPlugin,
     toolbarPlugin,
@@ -170,6 +171,7 @@ export class Editor {
             selectionMenuModel: selectionMenuModel(),
             imageEditModel: imageEditModel(),
             tableMenuModel: tableMenuModel(),
+            figureMenuModel: figureMenuModel(),
             toolbarModel: toolbarModel()
         }
         this.client_id = Math.floor(Math.random() * 0xFFFFFFFF)
@@ -202,7 +204,7 @@ export class Editor {
             [settingsPlugin, () => ({editor: this})],
             [documentTemplatePlugin, () => ({editor: this})],
             [trackPlugin, () => ({editor: this})],
-            [tableMenuPlugin, () => ({editor: this})],
+            [tablePlugin, () => ({editor: this})],
             [orderedListMenuPlugin, () => ({editor: this})],
             [figurePlugin, () => ({editor: this})],
             [tocRenderPlugin, () => ({editor: this})],

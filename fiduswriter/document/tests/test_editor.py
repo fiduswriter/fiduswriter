@@ -114,10 +114,16 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         button.click()
 
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "span.caption"))
-        ).send_keys('Caption')
-        self.driver.find_element_by_id("figure-category-btn").click()
-        self.driver.find_element_by_id("figure-category-photo").click()
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, "span.math-field")
+            )
+        )
+        self.driver.find_element_by_css_selector(
+            "div.figure-category"
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Photo"]'
+        ).click()
 
         # click on 'Insert image' button
         self.driver.find_element_by_id('insert-figure-image').click()
@@ -164,6 +170,17 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             '//*[normalize-space()="Use image"]'
         ).click()
         self.driver.find_element_by_css_selector("button.fw-dark").click()
+
+        caption = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, "div.article-body figure figcaption")
+            )
+        )
+
+        caption.click()
+
+        caption.send_keys("Caption")
+
         ActionChains(self.driver).send_keys(
             Keys.RIGHT
         ).perform()
@@ -292,11 +309,15 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         button.click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
-                (By.CSS_SELECTOR, "#figure-dialog span.caption")
+                (By.CSS_SELECTOR, "span.math-field")
             )
-        ).send_keys('Caption 2')
-        self.driver.find_element_by_id("figure-category-btn").click()
-        self.driver.find_element_by_id("figure-category-photo").click()
+        )
+        self.driver.find_element_by_css_selector(
+            "div.figure-category"
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Photo"]'
+        ).click()
 
         # click on 'Insert image' button
         self.driver.find_element_by_id('insert-figure-image').click()
@@ -625,9 +646,8 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
                 (By.CSS_SELECTOR, ".collaborator-tr .fa-caret-down")
             )
         ).click()
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".fw-pulldown-item[data-rights=write]"
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Write"]'
         ).click()
         self.driver.find_element(
             By.CSS_SELECTOR,
@@ -637,9 +657,8 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             "tr:nth-child(3) .fa-caret-down"
         ).click()
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            "tr:nth-child(3) .fw-pulldown-item[data-rights=write]"
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Write"]'
         ).click()
         self.driver.find_element(
             By.CSS_SELECTOR,
@@ -682,9 +701,8 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             "tr:nth-child(3) .fa-caret-down.edit-right"
         ).click()
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            "tr:nth-child(3) .fw-pulldown-item[data-rights=read]"
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Read"]'
         ).click()
         self.driver.find_element(
             By.CSS_SELECTOR,
@@ -705,9 +723,8 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.ID, 'preferences-btn'))
         ).click()
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".fw-logout-button"
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Log out"]'
         ).click()
         # Second user logs in, verifies that he has access
         self.driver.find_element(By.ID, "id_login").send_keys("Yeti2")
@@ -759,9 +776,8 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.ID, 'preferences-btn'))
         ).click()
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".fw-logout-button"
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Log out"]'
         ).click()
         # First user logs in again, removes access rights of second user
         self.driver.find_element(By.ID, "id_login").send_keys("Yeti")
@@ -811,9 +827,8 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.ID, 'preferences-btn'))
         ).click()
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".fw-logout-button"
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Log out"]'
         ).click()
         # Second user logs in again to verify that access rights are gone
         self.driver.find_element(By.ID, "id_login").send_keys("Yeti2")
@@ -837,9 +852,8 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.ID, 'preferences-btn'))
         ).click()
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".fw-logout-button"
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Log out"]'
         ).click()
         # Third user signs up
         self.driver.find_element(
@@ -996,9 +1010,8 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
                 (By.CSS_SELECTOR, ".collaborator-tr .fa-caret-down")
             )
         ).click()
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".fw-pulldown-item[data-rights=write]"
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Write"]'
         ).click()
         self.driver.find_element(
             By.CSS_SELECTOR,
@@ -1047,9 +1060,8 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.ID, 'preferences-btn'))
         ).click()
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".fw-logout-button"
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Log out"]'
         ).click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable(
@@ -1143,9 +1155,8 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             "#preferences-btn"
         ).click()
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".fw-logout-button"
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Log out"]'
         ).click()
         # User 5 signs up with a different email first and then clicks the
         # invitation link. This should land user 5 directly in the editor.

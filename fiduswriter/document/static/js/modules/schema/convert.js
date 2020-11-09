@@ -2,8 +2,7 @@
  We use the DOM import for ProseMirror as the JSON we store in the database is really jsonized HTML.
 */
 import deepEqual from "fast-deep-equal"
-import {randomHeadingId, randomFigureId, randomListId} from "./common"
-import {randomTableId} from "./document"
+import {randomHeadingId, randomFigureId, randomListId, randomTableId} from "./common"
 
 export const getSettings = function(pmArticle) {
     const settings = JSON.parse(JSON.stringify(pmArticle.attrs))
@@ -852,12 +851,6 @@ const convertDocV31 = function(doc) {
     return returnDoc
 }
 
-const convertDocV32 = function(doc) {
-    const returnDoc = JSON.parse(JSON.stringify(doc))
-    convertNodeV32(returnDoc.content)
-    return returnDoc
-}
-
 const convertNodeV32 = function(node, ids = []) {
     let blockId, attrs
     switch (node.type) {
@@ -868,8 +861,16 @@ const convertNodeV32 = function(node, ids = []) {
             blockId = randomTableId()
         }
         attrs.id = blockId
+        attrs.caption = false
         node.attrs = attrs
         ids.push(blockId)
+        node.content = [
+            {type: 'table_caption'},
+            {
+                type: 'table_body',
+                content: node.content
+            }
+        ]
         break
     case 'bullet_list':
     case 'ordered_list':
@@ -882,21 +883,45 @@ const convertNodeV32 = function(node, ids = []) {
         node.attrs = attrs
         ids.push(blockId)
         break
-    case 'figure':
+    case 'figure': {
         attrs = node.attrs || {}
         if (attrs.figureCategory) {
             attrs.category = attrs.figureCategory
             delete attrs.figureCategory
         }
-        if (attrs.caption) {
-            const caption = []
-            if (attrs.caption.length) {
-                caption.push({type: 'text', text: attrs.caption})
-            }
-            attrs.caption = caption
+        node.content = []
+        if (attrs.image) {
+            node.content.push({type: 'image', attrs: {image: attrs.image}})
+        } else {
+            node.content.push({type: 'figure_equation', attrs: {equation: attrs.equation}})
         }
-        if (attrs.keys().length) {
-            node.attrs = attrs
+        delete attrs.image
+        delete attrs.equation
+
+        const caption = {type: 'figure_caption'}
+        if (attrs.caption) {
+            if (attrs.caption.length) {
+                caption.content = [{type: 'text', text: attrs.caption}]
+                attrs.caption = true
+            } else {
+                attrs.caption = false
+            }
+        } else {
+            attrs.caption = false
+        }
+        if (attrs.category === 'table') {
+            node.content.unshift(caption)
+        } else {
+            node.content.push(caption)
+        }
+        node.attrs = attrs
+        break
+    }
+    case 'footnote':
+        if (node.attrs?.footnote) {
+            node.attrs.footnote.forEach(childNode => {
+                convertNodeV32(childNode, ids)
+            })
         }
         break
     }
@@ -905,4 +930,10 @@ const convertNodeV32 = function(node, ids = []) {
             convertNodeV32(childNode, ids)
         })
     }
+}
+
+const convertDocV32 = function(doc) {
+    const returnDoc = JSON.parse(JSON.stringify(doc))
+    convertNodeV32(returnDoc.content)
+    return returnDoc
 }

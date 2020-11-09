@@ -121,98 +121,59 @@ export const tableInsertTemplate = () => `
         </tr>
     </table>`
 
-export const tableResizeTemplate = () =>
-    `<div style="margin-top:25px;margin-left:20px">
-        <p>${gettext("Position")}:</p>
-        <div style="margin-left:95px;margin-top:-25px;display:inherit;width:60px;" id="table-alignment-btn" class="fw-button fw-light fw-large">
-            <input type="hidden" id="table-alignment" />
-            <label></label>
-            <span class="fa fa-caret-down"></span>
-        </div>
-        <div id="table-alignment-pulldown" class="fw-pulldown fw-left"
-                style="left: 115px;">
-            <ul id="table-alignment-list">
-                <li><span class="fw-pulldown-item" id="table-alignment-center">
-                    ${gettext("Center")}
-                </span></li>
-                <li><span class="fw-pulldown-item" id="table-alignment-right">
-                    ${gettext("Right")}
-                </span></li>
-                <li><span class="fw-pulldown-item" id="table-alignment-left">
-                    ${gettext("Left")}
-                </span></li>
-
-            </ul>
-        </div>
-
-        <p style="margin-top:35px;"> ${gettext("Size")}:</p>
-        <div style="margin-left:95px;margin-top:-25px;display:inherit;width:50px;" id="table-width-btn" class="fw-button fw-light fw-large">
-            <input type="hidden" id="table-width" />
-            <label></label>
-            <span class="fa fa-caret-down"></span>
-        </div>
-        <div id="table-width-pulldown" class="fw-pulldown fw-left"
-                style="left: 115px;">
-            <ul id="table-width-list">
-                <li><span class="fw-pulldown-item" id="table-width-100">
-                    ${gettext('100 %')}
-                </span></li>
-                <li><span class="fw-pulldown-item" id="table-width-75">
-                    ${gettext('75 %')}
-                </span></li>
-                <li><span class="fw-pulldown-item" id="table-width-50">
-                     ${gettext('50 %')}
-                </span></li>
-            <li><span class="fw-pulldown-item" id="table-width-25">
-                     ${gettext('25 %')}
-                </span></li>
-
-            </ul>
-        </div>
-
-        <p style="margin-top:35px;">${gettext("Column Width")}:</p>
-        <div style="margin-left:95px;margin-top:-25px;display:inherit;width:50px;" id="table-layout-btn" class="fw-button fw-light fw-large">
-            <input type="hidden" id="table-layout" />
-            <label></label>
-            <span class="fa fa-caret-down"></span>
-        </div>
-        <div id="table-layout-pulldown" class="fw-pulldown fw-left"
-                style="left: 115px;">
-            <ul id="table-layout-list">
-                <li><span class="fw-pulldown-item" id="table-layout-fixed">
-                    ${gettext("Fixed")}
-                </span></li>
-                <li><span class="fw-pulldown-item" id="table-layout-auto">
-                    ${gettext("Fit the content")}
-                </span></li>
-            </ul>
-        </div>
-
-    </div>`
-
-export const tableCaptionTemplate = ({language}) =>
-    `<div style="margin-top:25px;margin-left:20px">
-        <p>${gettext("Category")}:</p>
-        <div style="margin-left:95px;margin-top:-25px;display:inherit;width:60px;" id="table-category-btn" class="fw-button fw-light fw-large">
-            <input type="hidden" id="table-category" />
-            <label></label>
-            <span class="fa fa-caret-down"></span>
-        </div>
-        <div id="table-category-pulldown" class="fw-pulldown fw-left"
-                style="left: 115px;">
-            <ul id="table-category-list">
-                <li><span class="fw-pulldown-item" id="table-category-none">
-                    ${gettext("None")}
-                </span></li>
-                <li><span class="fw-pulldown-item" id="table-category-table">
-                    ${CATS['table'][language]}
-                </span></li>
-            </ul>
-        </div>
-        <div style="margin-top: 10px;">
-            <div class="caption input" style="width: 402px;"></div>
-        </div>
-    </div>`
+export const tableConfigurationTemplate = ({language}) =>
+    `<table class="fw-dialog-table">
+        <tbody>
+            <tr>
+                <th><h4 class="fw-tablerow-title">${gettext("Alignment")}</h4></th>
+                <td>
+                    <select class="table-alignment">
+                        <option value="left">${gettext("Left")}</option>
+                        <option value="center">${gettext("Center")}</option>
+                        <option value="right">${gettext("Right")}</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th><h4 class="fw-tablerow-title">${gettext("Width")}</h4></th>
+                <td>
+                    <select class="table-width">
+                        <option value="100">${gettext("100 %")}</option>
+                        <option value="75">${gettext("75 %")}</option>
+                        <option value="50">${gettext("50 %")}</option>
+                        <option value="25">${gettext("25 %")}</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th><h4 class="fw-tablerow-title">${gettext("Column style")}</h4></th>
+                <td>
+                    <select class="table-layout">
+                        <option value="fixed">${gettext("Fixed width")}</option>
+                        <option value="auto">${gettext("Fit content")}</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th><h4 class="fw-tablerow-title">${gettext("Listed as")}</h4></th>
+                <td>
+                    <select class="table-category">
+                        <option value="none">${gettext("None")}</option>
+                        <option value="table">${CATS['table'][language]}</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th><h4 class="fw-tablerow-title">${gettext("Caption")}</h4></th>
+                <td>
+                    <select class="table-caption">
+                        <option value="true">${gettext("Enable")}</option>
+                        <option value="false">${gettext("Disable")}</option>
+                    </select>
+                </td>
+            </tr>
+        </tbody>
+    </table>`
 
 export const orderedListStartTemplate = ({order}) =>
     `<div title="${gettext("List start")}">
@@ -276,70 +237,56 @@ export const figureImageTemplate = ({imageDB}) =>
 export const configureFigureTemplate = ({language}) =>
     `<div class="fw-media-uploader">
             <input type="hidden" id="figure-category">
-            <div style="margin-top: 10px;">
-                <div id="figure-category-btn" class="fw-button fw-light fw-large">
-                    <span class="label"></span>
-                    <span class="fa fa-caret-down"></span>
-                </div>
-                <div id="figure-category-pulldown" class="fw-pulldown fw-left"
-                        style="left: 10px;">
-                    <ul id="figure-category-list">
-                        <li><span class="fw-pulldown-item" id="figure-category-none">
-                            ${gettext('None')}
-                        </span></li>
-                        ${
-    Object.entries(CATS).map(([id, title_object]) =>
-        `<li><span class="fw-pulldown-item" id="figure-category-${id}">${title_object[language]}</span></li>`
-    ).join('')
-}
-                    </ul>
-                </div>
-                <div id="figure-alignment-btn" class="fw-button fw-light fw-large">
-                    <span class="label"></span>
-                    <span class="fa fa-caret-down"></span>
-                </div>
-                <div id="figure-alignment-pulldown" class="fw-pulldown fw-left"
-                        style="left: 70px;">
-                    <ul id="figure-category-list">
-                        <li><span class="fw-pulldown-item" id="figure-alignment-left">
-                            ${gettext('Left')}
-                        </span></li>
-                        <li><span class="fw-pulldown-item" id="figure-alignment-center">
-                            ${gettext('Center')}
-                        </span></li>
-                        <li><span class="fw-pulldown-item" id="figure-alignment-right">
-                            ${gettext('Right')}
-                        </span></li>
-                    </ul>
-                </div>
-                <div id="figure-width-btn" class="fw-button fw-light fw-large">
-                    <span class="label"></span>
-                    <span class="fa fa-caret-down"></span>
-                </div>
-                <div id="figure-width-pulldown" class="fw-pulldown fw-left"
-                        style="left: 150px;">
-                    <ul id="figure-category-list">
-                        <li><span class="fw-pulldown-item" id="figure-width-100">
-                           Size: ${gettext('100')} %
-                        </span></li>
-                        <li><span class="fw-pulldown-item" id="figure-width-75">
-                           Size: ${gettext('75')} %
-                        </span></li>
-                        <li><span class="fw-pulldown-item" id="figure-width-50">
-                            Size : ${gettext('50')} %
-                        </span></li>
-                       <li><span class="fw-pulldown-item" id="figure-width-25">
-                            Size : ${gettext('25')} %
-                        </span></li>
-                    </ul>
-                </div>
-            </div>
             <div class="figure-preview">
                 <div class="inner-figure-preview"></div>
             </div>
-            <div style="margin-top: 10px;">
-                <div class="caption input" style="width: 402px;"></div>
-            </div>
+            <table class="fw-dialog-table">
+                <tbody>
+                    <tr>
+                        <th><h4 class="fw-tablerow-title">${gettext("Alignment")}</h4></th>
+                        <td>
+                            <select class="figure-alignment">
+                                <option value="left">${gettext("Left")}</option>
+                                <option value="center">${gettext("Center")}</option>
+                                <option value="right">${gettext("Right")}</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><h4 class="fw-tablerow-title">${gettext("Width")}</h4></th>
+                        <td>
+                            <select class="figure-width">
+                                <option value="100">${gettext("100 %")}</option>
+                                <option value="75">${gettext("75 %")}</option>
+                                <option value="50">${gettext("50 %")}</option>
+                                <option value="25">${gettext("25 %")}</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><h4 class="fw-tablerow-title">${gettext("Listed as")}</h4></th>
+                        <td>
+                            <select class="figure-category">
+                                <option value="none">${gettext("None")}</option>
+                                ${
+    Object.entries(CATS).map(([id, titleObject]) =>
+        `<option value="${id}">${titleObject[language]}</option>`
+    ).join('')
+}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><h4 class="fw-tablerow-title">${gettext("Caption")}</h4></th>
+                        <td>
+                            <select class="figure-caption">
+                                <option value="true">${gettext("Enable")}</option>
+                                <option value="false">${gettext("Disable")}</option>
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>`
 
 /** A template to configure citations in the editor */

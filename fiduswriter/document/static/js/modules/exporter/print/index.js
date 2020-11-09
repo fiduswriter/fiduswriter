@@ -30,13 +30,13 @@ export class PrintExporter extends HTMLExporter {
                 counter-increment: footnote-counter;
                 content: counter(footnote-counter) ". ";
             }
-            section[role=doc-footnote] .cat-figure::after {
+            section[role=doc-footnote] figure[data-category='figure'] caption label::after {
                 content: ' ' counter(cat-0) 'A';
             }
-            section[role=doc-footnote] .cat-photo::after {
+            section[role=doc-footnote] figure[data-category='photo']::after {
                 content: ' ' counter(cat-1) 'A';
             }
-            section[role=doc-footnote] .cat-table::after {
+            section[role=doc-footnote] figure[data-category='table']::after {
                 content: ' ' counter(cat-2) 'A';
             }
             section.fnlist {

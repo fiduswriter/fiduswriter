@@ -39,7 +39,7 @@ export class ImageOverview {
         return whenReady().then(() => {
             this.render()
             new ImageOverviewCategories(this)
-            const smenu = new SiteMenu("images")
+            const smenu = new SiteMenu(this.app, "images")
             smenu.init()
             this.menu = new OverviewMenuView(this, menuModel)
             this.menu.init()

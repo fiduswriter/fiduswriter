@@ -5,7 +5,9 @@ export const removeHidden = function(
     node,
     // Whether to leave the outer part of the removed node.
     // True for tree-walking exporters, false for DOM-changing exporters.
-    leaveStub = true
+    leaveStub = true,
+    removeCaption = false,
+    removeCaptionText = false
 ) {
     const returnNode = {}
 
@@ -15,16 +17,27 @@ export const removeHidden = function(
         }
     })
     if (node.attrs?.hidden) {
-        if (leaveStub) {
+        return leaveStub ? returnNode : false
+    } else if (['table_caption', 'figure_caption'].includes(node.type)) {
+        if (removeCaption) {
+            return leaveStub ? returnNode : false
+        } else if (removeCaptionText) {
             return returnNode
-        } else {
-            return false
         }
+
+    }
+    if (node.attrs?.caption === false) {
+        if (node.attrs.category === 'none') {
+            removeCaption = true
+        } else {
+            removeCaptionText = true
+        }
+
     }
     if (node.content) {
         returnNode.content = []
         node.content.forEach(child => {
-            const cleanedChild = removeHidden(child, leaveStub)
+            const cleanedChild = removeHidden(child, leaveStub, removeCaption, removeCaptionText)
             if (cleanedChild) {
                 returnNode.content.push(cleanedChild)
             }
@@ -104,7 +117,7 @@ const addCoveredTableCells = function(node) {
 }
 
 export const fixTables = function(node) {
-    if (node.type === 'table') {
+    if (node.type === 'table_body') {
         addCoveredTableCells(node)
     }
     if (node.content) {

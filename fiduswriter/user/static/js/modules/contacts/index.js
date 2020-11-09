@@ -14,7 +14,7 @@ export class ContactsOverview {
     init() {
         return whenReady().then(() => {
             this.render()
-            const smenu = new SiteMenu("") // Nothing highlighted.
+            const smenu = new SiteMenu(this.app, "") // Nothing highlighted.
             smenu.init()
             this.menu = new OverviewMenuView(this, menuModel)
             this.menu.init()

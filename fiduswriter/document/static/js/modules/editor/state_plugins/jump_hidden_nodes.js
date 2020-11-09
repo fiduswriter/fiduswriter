@@ -7,7 +7,8 @@ import {GapCursor} from "prosemirror-gapcursor"
 const posHidden = function($pos) {
     let hidden = false
     for (let i = $pos.depth; i > 0; i--) {
-        if ($pos.node(i).attrs.hidden) {
+        const node = $pos.node(i)
+        if (node.attrs.hidden || ['table_caption', 'figure_caption'].includes(node.type.name) && $pos.node(i - 1).attrs.caption === false) {
             hidden = true
         }
     }

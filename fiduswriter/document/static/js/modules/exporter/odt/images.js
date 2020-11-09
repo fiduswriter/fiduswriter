@@ -52,7 +52,7 @@ export class OdtExporterImages {
 
         descendantNodes(this.docContent).forEach(
             node => {
-                if (node.type === 'figure' && node.attrs.image !== false) {
+                if (node.type === 'image' && node.attrs.image !== false) {
                     if (!(node.attrs.image in usedImgs)) {
                         usedImgs.push(node.attrs.image)
                     }

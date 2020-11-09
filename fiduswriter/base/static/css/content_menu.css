@@ -53,6 +53,11 @@
     opacity: .6;
 }
 
+.content-menu-item.selected {
+    color: var(--cs-white-selected);
+    background-color: var(--cs-white-background-selected);
+}
+
 .content-menu-item:hover {
     color: var(--cs-white-hover);
     background-color: var(--cs-white-background-hover);
@@ -61,6 +66,14 @@
 .content-menu-item-divider {
     border: 0 none;
     border-top: 1px solid var(--pulldown-separator-color) !important;
+}
+
+.content-menu-item-header {
+    line-height: 18px;
+    background-color: var(--pulldown-header-background-color);
+    color: var(--pulldown-header-text-color);
+    display: block;
+    text-align: center;
 }
 
 .content-menu-item-icon {

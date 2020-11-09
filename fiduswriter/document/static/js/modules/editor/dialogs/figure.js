@@ -1,9 +1,3 @@
-import {EditorState, Plugin} from "prosemirror-state"
-import {EditorView, Decoration, DecorationSet} from "prosemirror-view"
-import {history, redo, undo} from "prosemirror-history"
-import {baseKeymap} from "prosemirror-commands"
-import {keymap} from "prosemirror-keymap"
-
 import deepEqual from "fast-deep-equal"
 
 import {
@@ -13,16 +7,13 @@ import {
     ImageSelectionDialog
 } from "../../images/selection_dialog"
 import {
-    addDropdownBox,
+    dropdownSelect,
     Dialog,
     ContentMenu
 } from "../../common"
 import {
     randomFigureId
 } from "../../schema/common"
-import {
-    captionSchema
-} from "../../schema/captions"
 
 export class FigureDialog {
     constructor(editor) {
@@ -35,12 +26,12 @@ export class FigureDialog {
         this.insideFigure = false
         this.figureNode = false
         this.contentNode = false
-        this.caption = []
+        this.caption = true
         this.category = 'none'
         this.aligned = 'center'
         this.width = "50"
         this.equation = ''
-        this.node = this.editor.currentView.state.selection.node
+        this.node = false
         this.submitMessage = gettext('Insert')
         this.dialog = false
     }
@@ -79,11 +70,11 @@ export class FigureDialog {
                     }
                 },
                 onContentDidChange: () => {
-                    this.equation = this.mathField.$latex()
+                    this.equation = this.mathField.getValue()
                     this.showHideNonMathElements()
                 }
             })
-            this.mathField.$latex(this.equation)
+            this.mathField.setValue(this.equation)
             this.showPlaceHolder()
             this.showHideNonMathElements()
             this.dialog.dialogEl.querySelector('#insert-figure-image').addEventListener(
@@ -95,7 +86,7 @@ export class FigureDialog {
     }
 
     showPlaceHolder() {
-        if (!this.mathField.$latex().length) {
+        if (!this.mathField.getValue().length) {
             this.mathliveDOM.insertAdjacentHTML('beforeend', `<span class="placeholder" >${gettext('Type formula')}</span>`)
         }
     }
@@ -148,7 +139,6 @@ export class FigureDialog {
     layoutImagePreview() {
         if (this.imgId) {
             if (this.mathField) {
-                this.mathField.$revertToOriginalContent()
                 this.mathField = false
             }
             const db = this.imgDb === 'document' ? this.imageDB.db : this.userImageDB.db
@@ -172,24 +162,7 @@ export class FigureDialog {
         }
     }
 
-    setFigureLabel() {
-        this.dialog.dialogEl.querySelector('#figure-category-btn .label').innerHTML =
-            document.getElementById(`figure-category-${this.category}`).innerText
-    }
-
-    setFigureAlignment() {
-        this.dialog.dialogEl.querySelector('#figure-alignment-btn .label').innerHTML =
-            document.getElementById(`figure-alignment-${this.aligned}`).innerText
-    }
-
-    setFigureWidth() {
-        this.dialog.dialogEl.querySelector('#figure-width-btn .label').innerHTML =
-            document.getElementById(`figure-width-${this.width}`).innerText
-
-    }
-
     submitForm() {
-        this.caption = this.captionView.state.doc.firstChild.toJSON().content
 
         if ((new RegExp(/^\s*$/)).test(this.equation) && (!this.imgId)) {
             // The math input is empty. Delete a math node if it exist. Then close the dialog.
@@ -213,12 +186,13 @@ export class FigureDialog {
             this.imageDB.setImage(this.imgId, imageEntry)
         }
 
+
         if (
             this.insideFigure &&
-            this.equation === this.node.attrs.equation &&
-            (this.imgId === this.node.attrs.image) &&
+            this.equation === (this.node.content.content.find(node => node.type.name === 'figure_equation')?.attrs.equation || '') &&
+            this.imgId === (this.node.content.content.find(node => node.type.name === 'image')?.attrs.image || false) &&
             this.imgDb === 'document' &&
-            deepEqual(this.caption, this.node.attrs.caption) &&
+            this.caption === this.node.attrs.caption &&
             this.category === this.node.attrs.category &&
             this.aligned === this.node.attrs.aligned &&
             this.width === this.node.attrs.width
@@ -227,34 +201,68 @@ export class FigureDialog {
             this.dialog.close()
             return false
         }
-
-        // This is the node wherein figureAlignment will affect the attribute
-        const nodeType = this.editor.currentView.state.schema.nodes['figure']
+        const content = []
+        if (this.imgId) {
+            content.push(
+                this.editor.currentView.state.schema.nodes['image'].create({image: this.imgId})
+            )
+        } else {
+            content.push(
+                this.editor.currentView.state.schema.nodes['figure_equation'].create({equation: this.equation})
+            )
+        }
+        const captionNode = this.node.content?.content.find(node => node.type.name === 'figure_caption') ||
+            this.editor.currentView.state.schema.nodes['figure_caption'].create()
+        if (this.category === 'table') {
+            content.unshift(captionNode)
+        } else {
+            content.push(captionNode)
+        }
         const tr = this.editor.currentView.state.tr.replaceSelectionWith(
-            nodeType.createAndFill({
-                equation: this.equation,
-                image: this.imgId,
-                aligned: this.aligned,
-                width: this.width,
-                category: this.category,
-                caption: this.caption,
-                id: this.insideFigure ? this.node.attrs.id : randomFigureId()
-            })
+            this.editor.currentView.state.schema.nodes['figure'].createAndFill(
+                {
+                    aligned: this.aligned,
+                    width: this.width,
+                    category: this.category,
+                    caption: this.caption,
+                    id: this.insideFigure ? this.node.attrs.id : randomFigureId()
+                },
+                content
+            )
         )
         this.editor.currentView.dispatch(tr)
 
         this.dialog.close()
     }
 
+    findFigure(state) {
+        if (state.selection.node && state.selection.node.type.name == "figure") {
+            return state.selection.node
+        }
+        const $head = state.selection.$head
+        for (let d = $head.depth; d > 0; d--) {
+            if ($head.node(d).type.name == "figure") {
+                return $head.node(d)
+            }
+        }
+        return false
+    }
+
     init() {
-        // toolbar figure
+        this.node = this.findFigure(this.editor.currentView.state)
+
+        if (this.node?.attrs?.track?.find(track => track.type === 'deletion')) {
+            // The figure is marked as deleted so we don't allow editing it.
+            return true
+        }
+
         const buttons = []
 
         if (this.node?.type && this.node?.type.name === 'figure') {
             this.insideFigure = true
             this.submitMessage = gettext('Update')
-            this.equation = this.node.attrs.equation
-            this.imgId = this.node.attrs.image
+            this.equation = this.node.content.content.find(node => node.type.name === 'figure_equation')?.attrs.equation || ''
+            this.imgId = this.node.content.content.find(node => node.type.name === 'image')?.attrs.image || false
             this.imgDb = 'document'
             this.category = this.node.attrs.category
             this.caption = this.node.attrs.caption
@@ -278,11 +286,9 @@ export class FigureDialog {
             click: () => this.submitForm()
         })
 
-
         buttons.push({
             type: 'cancel'
         })
-
 
         this.dialog = new Dialog({
             id: 'figure-dialog',
@@ -301,11 +307,62 @@ export class FigureDialog {
 
         this.dialog.open()
 
-        this.initCaption()
+        const alignmentSelector = dropdownSelect(
+            this.dialog.dialogEl.querySelector('.figure-alignment'),
+            {
+                onChange: newValue => {
+                    this.aligned = newValue
+                },
+                width: '80%',
+                value: this.aligned
+            }
+        )
 
-        this.setFigureLabel()
-        this.setFigureAlignment()
-        this.setFigureWidth()
+        if (this.width == "100") {
+            alignmentSelector.setValue('center')
+            alignmentSelector.disable()
+            this.aligned = 'center'
+        }
+
+        dropdownSelect(
+            this.dialog.dialogEl.querySelector('.figure-width'),
+            {
+                onChange: newValue => {
+                    this.width = newValue
+                    if (this.width == "100") {
+                        alignmentSelector.setValue('center')
+                        alignmentSelector.disable()
+                        this.aligned = 'center'
+                    } else {
+                        alignmentSelector.enable()
+                    }
+                },
+                width: '80%',
+                value: this.width
+            }
+        )
+
+        dropdownSelect(
+            this.dialog.dialogEl.querySelector('.figure-category'),
+            {
+                onChange: newValue => {
+                    this.category = newValue
+                },
+                width: '80%',
+                value: this.category
+            }
+        )
+
+        dropdownSelect(
+            this.dialog.dialogEl.querySelector('.figure-caption'),
+            {
+                onChange: newValue => {
+                    this.caption = newValue === "true"
+                },
+                width: '80%',
+                value: String(this.caption)
+            }
+        )
 
         if (this.imgId) {
             this.copyright = this.imageDB.db[this.imgId].copyright
@@ -314,102 +371,5 @@ export class FigureDialog {
             this.layoutMathEditor()
         }
 
-        addDropdownBox(
-            document.getElementById('figure-category-btn'),
-            document.getElementById('figure-category-pulldown')
-        )
-
-
-        addDropdownBox(
-            document.getElementById('figure-alignment-btn'),
-            document.getElementById('figure-alignment-pulldown')
-        )
-
-        addDropdownBox(
-            document.getElementById('figure-width-btn'),
-            document.getElementById('figure-width-pulldown')
-        )
-        document.querySelectorAll('#figure-alignment-pulldown li span').forEach(el => el.addEventListener(
-            'click',
-            event => {
-                event.preventDefault()
-                this.aligned = el.id.split('-')[2]
-                this.setFigureAlignment()
-            }
-        ))
-
-        document.querySelectorAll('#figure-width-pulldown li span').forEach(el => el.addEventListener(
-            'click',
-            event => {
-                event.preventDefault()
-                this.width = el.id.split('-')[2]
-                this.setFigureWidth()
-            }
-        ))
-
-
-        document.querySelectorAll('#figure-category-pulldown li span').forEach(el => el.addEventListener(
-            'click',
-            event => {
-                event.preventDefault()
-                this.category = el.id.split('-')[2]
-                this.setFigureLabel()
-            }
-        ))
-
-    }
-
-    initCaption() {
-        const dom = this.dialog.dialogEl.querySelector('div.caption')
-        const doc = captionSchema.nodeFromJSON({
-            type: 'doc',
-            content: [{
-                type: 'caption',
-                content: this.caption
-            }]
-        })
-
-        this.captionView = new EditorView(dom, {
-            state: EditorState.create({
-                schema: captionSchema,
-                doc,
-                plugins: [
-                    history(),
-                    keymap(baseKeymap),
-                    keymap({
-                        "Mod-z": undo,
-                        "Mod-shift-z": undo,
-                        "Mod-y": redo
-                    }),
-                    this.captionPlaceholderPlugin()
-                ]
-            }),
-            dispatchTransaction: tr => {
-                const newState = this.captionView.state.apply(tr)
-                this.captionView.updateState(newState)
-            }
-        })
-    }
-
-    captionPlaceholderPlugin() {
-        return new Plugin({
-            props: {
-                decorations: (state) => {
-                    const doc = state.doc
-                    if (
-                        doc.childCount === 1 &&
-                        doc.firstChild.isTextblock &&
-                        doc.firstChild.content.size === 0
-                    ) {
-                        const placeHolder = document.createElement('span')
-                        placeHolder.classList.add('placeholder')
-                        // There is only one field, so we know the selection is there
-                        placeHolder.classList.add('selected')
-                        placeHolder.setAttribute('data-placeholder', gettext('Insert caption'))
-                        return DecorationSet.create(doc, [Decoration.widget(1, placeHolder)])
-                    }
-                }
-            }
-        })
     }
 }

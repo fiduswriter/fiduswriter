@@ -16,11 +16,28 @@ body.editor header {
     border: 1px solid var(--cs-white-border);
 }
 
+.user-contents .figure figure {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.ProseMirror figcaption.empty span.text,
+.ProseMirror caption.empty span.text {
+    display: inline-block;
+}
+
+.ProseMirror figcaption.empty::after,
+.ProseMirror caption.empty::after {
+    color: var(--cs-white-placeholder-text);
+    content: attr(data-placeholder);
+    cursor: text;
+}
+
 .user-contents a,
 .user-contents a:hover {
     color: var(--cs-1-text);
 }
-
 
 .pagination-footnote-item {
     width: 100%;
@@ -401,12 +418,46 @@ font {
     color: inherit !important;
 }
 
+/* Borders in editor */
+
+.ProseMirror {
+    border: none !important;
+    padding: 0 !important;
+    line-height: inherit !important;
+}
+
+.ProseMirror table {
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.ProseMirror td,
+.ProseMirror th,
+.ProseMirror caption {
+    vertical-align: top;
+    border: 1px solid #dddddd;
+    padding: 3px 5px;
+}
+
+.ProseMirror th {
+    background-color: var(--cs-6-background);
+    color: var(--cs-6-text);
+}
+
 /* Don't show parts marked as hidden */
 
-.article-part[data-hidden] {
+.ProseMirror .article-part[data-hidden] {
     display: none;
 }
 
+.ProseMirror table[data-caption-hidden][data-category='none'] caption,
+.ProseMirror figure[data-caption-hidden][data-category='none'] figcaption,
+.ProseMirror table[data-caption-hidden] caption span.text,
+.ProseMirror table[data-category='none'] caption span.label,
+.ProseMirror figure[data-caption-hidden] figcaption span.text,
+.ProseMirror figure[data-category='none'] figcaption span.label {
+    display: none;
+}
 
 /* For default contents of title and contents field */
 
@@ -463,29 +514,6 @@ span.delete {
 
 #flow.hide {
     display: none;
-}
-
-.ProseMirror {
-    border: none !important;
-    padding: 0 !important;
-    line-height: inherit !important;
-}
-
-.ProseMirror table {
-    border-collapse: collapse;
-    table-layout: fixed;
-}
-
-.ProseMirror td,
-.ProseMirror th {
-    vertical-align: top;
-    border: 1px solid #dddddd;
-    padding: 3px 5px;
-}
-
-.ProseMirror th {
-    background-color: var(--cs-6-background);
-    color: var(--cs-6-text);
 }
 
 #comments-filter {

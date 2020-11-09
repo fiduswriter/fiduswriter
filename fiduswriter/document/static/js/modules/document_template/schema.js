@@ -13,8 +13,7 @@ import {
     splitCell,
     toggleHeaderRow,
     toggleHeaderColumn,
-    toggleHeaderCell,
-    deleteTable
+    toggleHeaderCell
 }  from "prosemirror-tables"
 
 import {docSchema} from "../schema/document"
@@ -82,12 +81,12 @@ for (let i = 1; i <= 6; i++) {
 const type = richtextPartSchema.nodes['table']
 richtextMenuContent[1][0].content.push(blockTypeItem(type, {
     title: gettext("Insert Table"),
-    label: gettext("Insert Table"),
+    label: gettext("Table"),
     enable(state) {
         return !findTable(state)
     },
     run(state, dispatch) {
-        const table = {type: 'table', content: [{type: 'table_row', content: [{type: 'table_cell', content: [{type: 'paragraph'}]}]}]}
+        const table = {type: 'table', content: [{type: 'table_caption'}, {type: 'table_body', content: [{type: 'table_row', content: [{type: 'table_cell', content: [{type: 'paragraph'}]}]}]}]}
         const schema = state.schema
         dispatch(state.tr.replaceSelectionWith(
             schema.nodeFromJSON(table))
@@ -95,16 +94,6 @@ richtextMenuContent[1][0].content.push(blockTypeItem(type, {
     }
 }))
 
-richtextMenuContent[1][0].content.push(blockTypeItem(type, {
-    title: gettext("Delete Table"),
-    label: gettext("Delete Table"),
-    enable(state) {
-        return findTable(state)
-    },
-    run(state, dispatch) {
-        deleteTable(state, dispatch)
-    }
-}))
 
 export const tablePartSchema = new Schema({
     nodes: docSchema.spec.nodes.update('doc', {content: 'table_part'}).update('table_row', {
@@ -130,6 +119,7 @@ function tableMenuItem(label, cmd) {
     return new MenuItem({label, select: cmd, run: cmd})
 }
 const tableMenu = [
+    tableMenuItem(gettext("Insert column after"), addColumnAfter),
     tableMenuItem(gettext("Insert column before"), addColumnBefore),
     tableMenuItem(gettext("Insert column after"), addColumnAfter),
     tableMenuItem(gettext("Delete column"), deleteColumn),
@@ -140,7 +130,21 @@ const tableMenu = [
     tableMenuItem(gettext("Merge cells"), mergeCells),
     tableMenuItem(gettext("Toggle header column"), toggleHeaderColumn),
     tableMenuItem(gettext("Toggle header row"), toggleHeaderRow),
-    tableMenuItem(gettext("Toggle header cells"), toggleHeaderCell)
+    tableMenuItem(gettext("Toggle header cells"), toggleHeaderCell),
+    tableMenuItem(gettext("Delete table"), (state, dispatch) => {
+        // Adjusted from https://github.com/ProseMirror/prosemirror-tables/blob/master/src/commands.js
+        const $pos = state.selection.$anchor
+        for (let d = $pos.depth; d > 0; d--) {
+            const node = $pos.node(d)
+            if (node.type.name == "table") {
+                if (dispatch) {
+                    dispatch(state.tr.delete($pos.before(d), $pos.after(d)).scrollIntoView())
+                }
+                return true
+            }
+        }
+        return false
+    })
 ]
 tableMenuContent.splice(2, 0, [new Dropdown(tableMenu, {label: gettext("Table")})])
 

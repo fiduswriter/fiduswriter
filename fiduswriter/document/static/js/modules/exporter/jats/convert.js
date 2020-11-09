@@ -522,9 +522,10 @@ export class JATSExporterConvert {
                 break
             }
             let imageFilename, copyright
-            if (node.attrs.image) {
-                this.imageIds.push(node.attrs.image)
-                const imageDBEntry = this.imageDB.db[node.attrs.image],
+            const image = node.content.find(node => node.type === 'image')?.attrs.image || false
+            if (image !== false) {
+                this.imageIds.push(image)
+                const imageDBEntry = this.imageDB.db[image],
                     filePathName = imageDBEntry.image
                 copyright = imageDBEntry.copyright
                 imageFilename = filePathName.split('/').pop()
@@ -549,13 +550,15 @@ export class JATSExporterConvert {
                     const catLabel = `${CATS[category][this.settings.language]} ${catCount}`
                     start += `<label>${escapeText(catLabel)}</label>`
                 }
-                if (node.attrs.caption.length) {
-                    start += `<caption><p>${node.attrs.caption.map(node => this.walkJson(node)).join('')}</p></caption>`
+                const caption = node.content.find(node => node.type === 'figure_caption')?.content || []
+                if (caption.length) {
+                    start += `<caption><p>${caption.map(node => this.walkJson(node)).join('')}</p></caption>`
                 }
-                if (node.attrs.equation) {
+                const equation = node.content.find(node => node.type === 'figure_equation')?.attrs.equation
+                if (equation) {
                     start += '<disp-formula>'
                     end = '</disp-formula>' + end
-                    content = `<tex-math><![CDATA[${node.attrs.equation}]]></tex-math>`
+                    content = `<tex-math><![CDATA[${equation}]]></tex-math>`
                 } else {
                     if (copyright?.holder) {
                         start += '<permissions>'
@@ -570,11 +573,22 @@ export class JATSExporterConvert {
                         ).join('')
                         start += '</permissions>'
                     }
-                    content += `<graphic position="anchor" xlink:href="${imageFilename}"/>`
+                    if (imageFilename) {
+                        content += `<graphic position="anchor" xlink:href="${imageFilename}"/>`
+                    }
                 }
             }
             break
         }
+        case 'figure_caption':
+            // We are already dealing with this in the figure. Prevent content from being added a second time.
+            return ''
+        case 'figure_equation':
+            // We are already dealing with this in the figure.
+            break
+        case 'image':
+            // We are already dealing with this in the figure.
+            break
         case 'table': {
             // Note: We ignore right/left/center aligned and table layout
             if (options.inFootnote) {
@@ -592,13 +606,20 @@ export class JATSExporterConvert {
                 const catLabel = `${CATS[category][this.settings.language]} ${catCount}`
                 start += `<label>${escapeText(catLabel)}</label>`
             }
-            if (node.attrs.caption.length) {
-                start += `<caption><p>${node.attrs.caption.map(node => this.walkJson(node)).join('')}</p></caption>`
+            const caption = node.attrs.caption ? node.content[0].content : []
+            if (caption.length) {
+                start += `<caption><p>${caption.map(node => this.walkJson(node)).join('')}</p></caption>`
             }
             start += `<table width="${node.attrs.width}%"><tbody>`
             end = `</tbody></table>` + end
             break
         }
+        case 'table_body':
+            // Pass through to table.
+            break
+        case 'table_caption':
+            // We already deal with this in 'table'.
+            return ''
         case 'table_row':
             start += '<tr>'
             end = '</tr>' + end

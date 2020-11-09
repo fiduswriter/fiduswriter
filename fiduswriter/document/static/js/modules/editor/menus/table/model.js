@@ -1,13 +1,28 @@
-import {addColumnAfter, addColumnBefore, deleteColumn, addRowBefore, addRowAfter, deleteRow, deleteTable,
+import {addColumnAfter, addColumnBefore, deleteColumn, addRowBefore, addRowAfter, deleteRow,
     mergeCells, splitCell, toggleHeaderRow, toggleHeaderColumn, toggleHeaderCell} from "prosemirror-tables"
-import {TableCaptionDialog, TableResizeDialog} from "../../dialogs"
+import {TableConfigurationDialog} from "../../dialogs"
 
 // from https://github.com/ProseMirror/prosemirror-tables/blob/master/src/util.js
 const findTable = function(state) {
     const $head = state.selection.$head
     for (let d = $head.depth; d > 0; d--) {
-        if ($head.node(d).type.spec.tableRole == "table") {
+        if ($head.node(d).type.name == "table") {
             return $head.node(d)
+        }
+    }
+    return false
+}
+
+// Adjusted from https://github.com/ProseMirror/prosemirror-tables/blob/master/src/commands.js
+export function deleteTable(state, dispatch) {
+    const $pos = state.selection.$anchor
+    for (let d = $pos.depth; d > 0; d--) {
+        const node = $pos.node(d)
+        if (node.type.name == "table") {
+            if (dispatch) {
+                dispatch(state.tr.delete($pos.before(d), $pos.after(d)).scrollIntoView())
+            }
+            return true
         }
     }
     return false
@@ -16,7 +31,7 @@ const findTable = function(state) {
 const tableAddedFromTemplate = function(state) {
     const $head = state.selection.$head
     for (let d = $head.depth; d > 0; d--) {
-        if ($head.node(d).type.spec.tableRole == "table") {
+        if ($head.node(d).type.name == "table") {
             if ($head.node(d - 1).type.name === "table_part") {
                 return true
             } else {
@@ -313,24 +328,12 @@ export const tableMenuModel = () => ({
             order: 14,
         },
         {
-            title: gettext('Add/edit caption'),
+            title: `${gettext('Configure')} ...`,
             type: 'action',
-            tooltip: gettext('Add or edit the a tables caption.'),
+            tooltip: gettext('Configure the table.'),
             order: 15,
             action: editor => {
-                const dialog = new TableCaptionDialog(editor)
-                dialog.init()
-                return false
-            },
-            disabled: editor => !findTable(editor.currentView.state)
-        },
-        {
-            title: gettext('Resize/Reposition'),
-            type: 'action',
-            tooltip: gettext('Resize/Reposition a table.'),
-            order: 16,
-            action: editor => {
-                const dialog = new TableResizeDialog(editor)
+                const dialog = new TableConfigurationDialog(editor)
                 dialog.init()
                 return false
             },
@@ -341,7 +344,7 @@ export const tableMenuModel = () => ({
             type: 'action',
             icon: 'trash-alt',
             tooltip: gettext('Delete currently selected table'),
-            order: 17,
+            order: 16,
             action: editor => {
                 deleteTable(editor.currentView.state, editor.currentView.dispatch)
             },

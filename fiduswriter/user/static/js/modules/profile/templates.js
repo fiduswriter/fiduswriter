@@ -74,24 +74,10 @@ export const profileContents = ({avatar, username, first_name, last_name, emails
                 <span id="edit-avatar-btn" class="fw-link-text">
                     ${gettext('Edit profile picture')}
                 </span>
-                <div id="edit-avatar-pulldown" class="fw-pulldown">
-                    <ul>
-                        <li>
-                            <span class="fw-pulldown-item change-avatar">
-                                ${gettext('Change picture')}
-                            </span>
-                        </li>
-                        ${
-    avatar.uploaded ?
-        `<li>
-                                <span class="fw-pulldown-item delete-avatar">
-                                    ${gettext('Delete picture')}
-                                </span>
-                            </li>` :
-        ''
-}
-                    </ul>
-                </div>
+                <select id="edit-avatar-pulldown">
+                    <option value="change">${gettext('Change picture')}</option>
+                    ${avatar.uploaded ? `<option value="delete">${gettext('Delete picture')}</option>` : ''}
+                </select>
             </div>
         </div>
         <div id="profile-data">

@@ -115,27 +115,27 @@ export function orderLinks(contentItems) {
 
 export function addCategoryLabels(htmlEl, language, footnote = false) {
     // Due to lacking CSS support in ereaders, figure numbers need to be hardcoded.
-    htmlEl.querySelectorAll('.cat-figure').forEach(
+    htmlEl.querySelectorAll("figure[data-category='figure'] figcaption span.label").forEach(
         (el, index) => {
             const suffix = el.parentElement.innerText.trim().length ? ': ' : ''
             el.innerHTML = `${CATS['figure'][language]} ${(index + 1)}${footnote ? 'A' : ''}${suffix}`
-            el.classList.remove('cat-figure')
+            el.classList.remove('label')
         }
     )
 
-    htmlEl.querySelectorAll('.cat-photo').forEach(
+    htmlEl.querySelectorAll("figure[data-category='photo'] figcaption span.label").forEach(
         (el, index) => {
             const suffix = el.parentElement.innerText.trim().length ? ': ' : ''
             el.innerHTML = `${CATS['photo'][language]} ${(index + 1)}${footnote ? 'A' : ''}${suffix}`
-            el.classList.remove('cat-photo')
+            el.classList.remove('label')
         }
     )
 
-    htmlEl.querySelectorAll('.cat-table').forEach(
+    htmlEl.querySelectorAll("figure[data-category='table'] figcaption span.label,table[data-category='table'] caption span.label").forEach(
         (el, index) => {
             const suffix = el.parentElement.innerText.trim().length ? ': ' : ''
             el.innerHTML = `${CATS['table'][language]} ${(index + 1)}${footnote ? 'A' : ''}${suffix}`
-            el.classList.remove('cat-table')
+            el.classList.remove('label')
         }
     )
     return htmlEl

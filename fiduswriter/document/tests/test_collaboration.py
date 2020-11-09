@@ -798,8 +798,16 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         insert_button = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "insert-math"))
         )
+
         # type formula
-        math_field = driver.find_element_by_class_name('math-field')
+        math_field = WebDriverWait(driver, self.wait_time).until(
+            EC.visibility_of_element_located(
+                (
+                    By.CSS_SELECTOR,
+                    '.math-field'
+                )
+            )
+        )
         math_field.click()
 
         # wait for keyboard

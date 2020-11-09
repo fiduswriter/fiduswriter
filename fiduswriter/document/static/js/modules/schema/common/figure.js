@@ -120,7 +120,7 @@ export const figure_equation = {
         dom.classList.add('figure-equation')
         if (node.attrs.equation !== false) {
             import("mathlive").then(MathLive => {
-                dom.innerHTML = MathLive.latexToMarkup(node.attrs.equation, 'displaystyle')
+                dom.innerHTML = MathLive.convertLatexToMarkup(node.attrs.equation, {mathstyle: 'displaystyle'})
             })
         }
         return dom

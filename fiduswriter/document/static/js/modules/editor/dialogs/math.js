@@ -85,7 +85,7 @@ export class MathDialog {
                     }
                 }
             })
-            this.mathField.$latex(this.equation)
+            this.mathField.setValue(this.equation)
         })
     }
 
@@ -94,6 +94,6 @@ export class MathDialog {
      * @returns {string} latex formula
      */
     getLatex() {
-        return this.mathField.$latex()
+        return this.mathField.getValue()
     }
 }

@@ -70,11 +70,11 @@ export class FigureDialog {
                     }
                 },
                 onContentDidChange: () => {
-                    this.equation = this.mathField.$latex()
+                    this.equation = this.mathField.getValue()
                     this.showHideNonMathElements()
                 }
             })
-            this.mathField.$latex(this.equation)
+            this.mathField.setValue(this.equation)
             this.showPlaceHolder()
             this.showHideNonMathElements()
             this.dialog.dialogEl.querySelector('#insert-figure-image').addEventListener(
@@ -86,7 +86,7 @@ export class FigureDialog {
     }
 
     showPlaceHolder() {
-        if (!this.mathField.$latex().length) {
+        if (!this.mathField.getValue().length) {
             this.mathliveDOM.insertAdjacentHTML('beforeend', `<span class="placeholder" >${gettext('Type formula')}</span>`)
         }
     }

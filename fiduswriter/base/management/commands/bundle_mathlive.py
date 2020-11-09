@@ -64,7 +64,7 @@ class Command(BaseCommand):
             os.makedirs(mathlive_css_path)
         with open(os.path.join(
             settings.PROJECT_PATH,
-            ".transpile/node_modules/mathlive/dist/mathlive.css"
+            ".transpile/node_modules/mathlive/dist/mathlive-static.css"
         )) as f:
             with open(os.path.join(
                 mathlive_css_path,

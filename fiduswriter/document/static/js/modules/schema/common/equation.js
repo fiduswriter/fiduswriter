@@ -19,7 +19,7 @@ export const equation = {
         dom.dataset.equation = node.attrs.equation
         dom.classList.add('equation')
         import("mathlive").then(MathLive => {
-            dom.innerHTML = MathLive.latexToMarkup(node.attrs.equation, 'textstyle')
+            dom.innerHTML = MathLive.convertLatexToMarkup(node.attrs.equation, {mathstyle: 'textstyle'})
         })
         dom.setAttribute('contenteditable', 'false')
         return dom

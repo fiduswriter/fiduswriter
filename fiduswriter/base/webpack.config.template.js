@@ -10,7 +10,7 @@ const baseRule = {
         loader: "babel-loader",
         options: {
             presets: ["@babel/preset-env"],
-            plugins: ["@babel/plugin-syntax-dynamic-import"]
+            plugins: ["@babel/plugin-syntax-dynamic-import", "@babel/plugin-proposal-optional-chaining"]
         }
     }
 }
@@ -57,8 +57,9 @@ module.exports = { // eslint-disable-line no-undef
             "settings_TEST_SERVER": settings.TEST_SERVER,
             "settings_DEBUG": settings.DEBUG,
             "settings_SOURCE_MAPS": JSON.stringify(settings.SOURCE_MAPS) || false,
-            "transpile_VERSION": transpile.VERSION,
-            "settings_USE_SERVICE_WORKER": settings.USE_SERVICE_WORKER
+            "settings_USE_SERVICE_WORKER": settings.USE_SERVICE_WORKER,
+            "settings_JSONPATCH": settings.JSONPATCH,
+            "transpile_VERSION": transpile.VERSION
         }),
         new OfflinePlugin({
             cacheMaps: [
@@ -78,7 +79,8 @@ module.exports = { // eslint-disable-line no-undef
             ],
             ServiceWorker: {
                 publicPath: '/sw.js',
-                events: true
+                events: true,
+                entry: "./js/sw-template.js"
             },
             autoUpdate: true,
             appShell: "/",
@@ -94,6 +96,7 @@ module.exports = { // eslint-disable-line no-undef
             excludes: [
                 'admin_console.js',
                 'maintenance.js',
+                'schema_export.js',
                 'test_caret.js',
                 'document_template_admin.js',
                 '**/.*',

@@ -14,6 +14,11 @@ export class DocTemplatesAppItem {
                     const id = pathnameParts[2]
                     return import("../../modules/user_template_manager/editor").then(({DocTemplatesEditor}) => new DocTemplatesEditor(this.app.config, id))
                 }
+            },
+            dbTables: {
+                'list': {
+                    keyPath: "id"
+                }
             }
         }
     }

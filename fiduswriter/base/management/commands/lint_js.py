@@ -14,6 +14,12 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
+            'dir',
+            nargs='?',
+            default='.',
+            help='Directory to check'
+        )
+        parser.add_argument(
             '--fix',
             action='store_true',
             dest='fix',
@@ -22,6 +28,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        self.stdout.write("Linting JavaScript code...")
         call_command("npm_install")
         shutil.os.chdir(settings.PROJECT_PATH)
         apps_paths = []
@@ -44,7 +51,7 @@ class Command(BaseCommand):
                 settings.SRC_PATH,
                 ".eslintrc.js"
             ),
-            "."
+            options['dir'],
         ]
         if options['fix']:
             command_array.append('--fix')

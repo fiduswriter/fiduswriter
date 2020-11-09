@@ -1,6 +1,6 @@
 import {accessRightOverviewTemplate, contactsTemplate, collaboratorsTemplate, invitesTemplate} from "./templates"
 import {AddContactDialog} from "../../contacts/add_dialog"
-import {openDropdownBox, findTarget, setCheckableLabel, addAlert, postJson, Dialog, escapeText} from "../../common"
+import {findTarget, setCheckableLabel, addAlert, postJson, Dialog, escapeText, ContentMenu} from "../../common"
 
 /**
 * Functions for the document access rights dialog.
@@ -30,6 +30,33 @@ export class DocumentAccessRightsDialog {
                 this.createAccessRightsDialog()
             }
         )
+    }
+
+    getDropdownMenu(currentRight, onChange) {
+        return {
+            content: [
+                {type: 'header', title: gettext('Basic'), tooltip: gettext("Basic access rights")},
+                {type: 'action', title: gettext('Write'), icon: 'pencil-alt', tooltip: gettext("Write"), action: () => {
+                    onChange('write')
+                }, selected: currentRight === 'write'},
+                {type: 'action', title: gettext('Write tracked'), icon: 'pencil-alt', tooltip: gettext("Write with changes tracked"), action: () => {
+                    onChange('write-tracked')
+                }, selected: currentRight === 'write-tracked'},
+                {type: 'action', title: gettext('Comment'), icon: 'comment', tooltip: gettext("Comment"), action: () => {
+                    onChange('comment')
+                }, selected: currentRight === 'comment'},
+                {type: 'action', title: gettext('Read'), icon: 'eye', tooltip: gettext("Read"), action: () => {
+                    onChange('read')
+                }, selected: currentRight === 'read'},
+                {type: 'header', title: gettext('Review'), tooltip: gettext("Access rights used within document review")},
+                {type: 'action', title: gettext('No comments'), icon: 'eye', tooltip: gettext("Read document but not see comments and chats of others"), action: () => {
+                    onChange('read-without-comments')
+                }, selected: currentRight === 'read-without-comments'},
+                {type: 'action', title: gettext('Review'), icon: 'comment', tooltip: gettext("Comment, but not see comments and chats of others"), action: () => {
+                    onChange('review')
+                }, selected: currentRight === 'review'}
+            ]
+        }
     }
 
     createAccessRightsDialog() {
@@ -198,21 +225,31 @@ export class DocumentAccessRightsDialog {
             case findTarget(event, '.fw-checkable', el):
                 setCheckableLabel(el.target)
                 break
-            case findTarget(event, '.edit-right-wrapper .fw-pulldown-item, .delete-collaborator', el): {
-                const newRight = el.target.dataset.rights
+            case findTarget(event, '.delete-collaborator', el): {
                 const colRow = el.target.closest('.collaborator-tr,.invite-tr')
-                colRow.dataset.rights = newRight
+                colRow.dataset.rights = 'delete'
                 colRow.querySelector('.icon-access-right').setAttribute(
                     'class',
-                    `icon-access-right icon-access-${newRight}`
+                    'icon-access-right icon-access-delete'
                 )
                 break
             }
             case findTarget(event, '.edit-right', el): {
-                const box = el.target.parentElement.querySelector('.fw-pulldown')
-                if (!box.clientWidth) {
-                    openDropdownBox(box)
-                }
+                const colRow = el.target.closest('.collaborator-tr,.invite-tr')
+                const currentRight = colRow.dataset.rights
+                const menu = this.getDropdownMenu(currentRight, newRight => {
+                    colRow.dataset.rights = newRight
+                    colRow.querySelector('.icon-access-right').setAttribute(
+                        'class',
+                        `icon-access-right icon-access-${newRight}`
+                    )
+                })
+                const contentMenu = new ContentMenu({
+                    menu,
+                    menuPos: {X: event.pageX, Y: event.pageY},
+                    width: 200
+                })
+                contentMenu.open()
                 break
             }
             default:

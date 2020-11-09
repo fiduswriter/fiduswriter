@@ -46,7 +46,8 @@
     cursor: pointer;
 }
 
-.ui-dialog-titlebar-close {
+.ui-dialog-titlebar-close,
+.ui-dialog-titlebar-help {
     position: absolute;
     right: .3em;
     top: 50%;
@@ -75,7 +76,8 @@
     text-indent: 5019px;
 }
 
-.ui-dialog-titlebar-close:hover {
+.ui-dialog-titlebar-close:hover,
+.ui-dialog-titlebar-help:hover {
     color: var(--cs-dark-hover);
 }
 
@@ -84,6 +86,13 @@
     height: 1em;
     padding-top: 5px;
     content: '\f00d';
+}
+
+.ui-icon-help::before {
+    width: .7em;
+    height: 1em;
+    padding-top: 5px;
+    content: '\f128';
 }
 
 .ui-dialog-content {

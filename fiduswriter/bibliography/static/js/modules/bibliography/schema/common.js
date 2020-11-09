@@ -17,7 +17,7 @@ export const variable = {
     inline: true,
     group: "inline",
     attrs: {
-        variable: {default:""}
+        variable: {default: ""}
     },
     parseDOM: [{
         tag: 'span[data-variable]',
@@ -28,7 +28,7 @@ export const variable = {
         }
     }],
     toDOM(node) {
-        return ["span", {'data-variable':node.attrs.variable}, node.attrs.variable]
+        return ["span", {'data-variable': node.attrs.variable}, node.attrs.variable]
     }
 }
 
@@ -58,7 +58,7 @@ export const smallcaps = {
         {style: "font-variant", getAttrs: value => value == "small-caps" && null}
     ],
     toDOM() {
-        return ["span", {class:"smallcaps"}]
+        return ["span", {class: "smallcaps"}]
     }
 }
 
@@ -67,13 +67,13 @@ export const smallcaps = {
 export const url = {
     parseDOM: [{tag: 'span.url'}],
     toDOM() {
-        return ["span", {class:"url"}]
+        return ["span", {class: "url"}]
     }
 }
 
 export const enquote = {
     parseDOM: [{tag: 'span.enquote'}],
     toDOM() {
-        return ["span", {class:"enquote"}]
+        return ["span", {class: "enquote"}]
     }
 }

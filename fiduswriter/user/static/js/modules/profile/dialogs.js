@@ -293,7 +293,7 @@ export const deleteEmailDialog = function(target, app) {
         id: 'fw-confirm-email-dialog',
         title: gettext('Confirm remove'),
         body: deleteEmailDialogTemplate({
-            'text':  `${gettext('Remove the email address')}: ${escapeText(email)}?`
+            'text': `${gettext('Remove the email address')}: ${escapeText(email)}?`
         }),
         buttons,
         icon: 'exclamation-triangle'
@@ -345,7 +345,7 @@ export const deleteSocialaccountDialog = function(target, app) {
         id: 'fw-confirm-email-dialog',
         title: gettext('Confirm remove'),
         body: deleteEmailDialogTemplate({
-            'text':  `${gettext('Remove the link to the account at')} ${escapeText(provider)}?`
+            'text': `${gettext('Remove the link to the account at')} ${escapeText(provider)}?`
         }),
         buttons,
         icon: 'exclamation-triangle'
@@ -396,7 +396,7 @@ export const changePrimaryEmailDialog = function(app) {
         id: 'change-primary-email',
         title: gettext('Confirm set primary'),
         body: changePrimaryEmailDialogTemplate({
-            'text':  `${gettext('Set this email as the address primary')}: ${email}?`
+            'text': `${gettext('Set this email as the address primary')}: ${email}?`
         }),
         buttons
     })

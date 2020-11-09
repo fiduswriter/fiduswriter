@@ -116,7 +116,7 @@ export class SelectionMenuView {
     }
 
     getSelectionMenuItemHTML(menuItem, _index) {
-        if (menuItem.hidden && menuItem.hidden(this.editor)) {
+        if (menuItem.hidden?.(this.editor)) {
             return ''
         } else {
             return this.getButtonHTML(menuItem)

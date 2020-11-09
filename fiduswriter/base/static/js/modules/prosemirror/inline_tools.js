@@ -22,8 +22,9 @@ class MenuView {
             e.preventDefault()
             view.focus()
             items.forEach(({command, dom}) => {
-                if (dom.contains(e.target))
+                if (dom.contains(e.target)) {
                     command(view.state, view.dispatch, view)
+                }
             })
         })
 
@@ -33,12 +34,10 @@ class MenuView {
     update(view) {
         const activeMarks = []
 
-        if (view.state) {
-            const storedMarks = view.state.storedMarks || view.state.selection.$head.marks()
-            if (storedMarks) {
-                for (const mark of storedMarks) {
-                    activeMarks[mark.type.name] = true
-                }
+        const storedMarks = view.state?.storedMarks || view.state?.selection.$head.marks()
+        if (storedMarks) {
+            for (const mark of storedMarks) {
+                activeMarks[mark.type.name] = true
             }
         }
 
@@ -51,7 +50,9 @@ class MenuView {
         })
     }
 
-    destroy() { this.dom.remove() }
+    destroy() {
+        this.dom.remove()
+    }
 }
 
 export const InlineTools = (tools) => {

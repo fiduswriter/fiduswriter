@@ -127,7 +127,9 @@ class ProfileTest(LiveTornadoTestCase, SeleniumHelper):
             0
         )
         driver.find_element_by_id("edit-avatar-btn").click()
-        driver.find_element_by_css_selector(".change-avatar").click()
+        driver.find_element_by_xpath(
+            '//*[normalize-space()="Change picture"]'
+        ).click()
 
         image_path = os.path.join(
             settings.PROJECT_PATH,
@@ -148,7 +150,9 @@ class ProfileTest(LiveTornadoTestCase, SeleniumHelper):
             1
         )
         driver.find_element_by_id("edit-avatar-btn").click()
-        driver.find_element_by_css_selector(".delete-avatar").click()
+        driver.find_element_by_xpath(
+            '//*[normalize-space()="Delete picture"]'
+        ).click()
         driver.find_element_by_css_selector(
             ".ui-dialog .fw-dark"
         ).click()
@@ -266,8 +270,8 @@ class ProfileTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element_by_id(
             "preferences-btn"
         ).click()
-        self.driver.find_element_by_css_selector(
-            ".fw-logout-button"
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Log out"]'
         ).click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.title_is(

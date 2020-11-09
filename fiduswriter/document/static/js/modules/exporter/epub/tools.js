@@ -1,4 +1,4 @@
-import {FIG_CATS} from "../../schema/i18n"
+import {CATS} from "../../schema/i18n"
 
 export function getTimestamp(date) {
     let second = date.getUTCSeconds()
@@ -105,7 +105,7 @@ export function orderLinks(contentItems) {
     }
 
     for (let i = contentItems.length; i > -1; i--) {
-        if (contentItems[i] && contentItems[i].delete) {
+        if (contentItems[i]?.delete) {
             delete contentItems[i].delete
             contentItems.splice(i, 1)
         }
@@ -113,29 +113,29 @@ export function orderLinks(contentItems) {
     return contentItems
 }
 
-export function addFigureLabels(htmlEl, language, footnote = false) {
+export function addCategoryLabels(htmlEl, language, footnote = false) {
     // Due to lacking CSS support in ereaders, figure numbers need to be hardcoded.
-    htmlEl.querySelectorAll('figcaption .figure-cat-figure').forEach(
+    htmlEl.querySelectorAll("figure[data-category='figure'] figcaption span.label").forEach(
         (el, index) => {
             const suffix = el.parentElement.innerText.trim().length ? ': ' : ''
-            el.innerHTML = `${FIG_CATS['figure'][language]} ${(index + 1)}${footnote ? 'A' : ''}${suffix}`
-            el.classList.remove('figure-cat-figure')
+            el.innerHTML = `${CATS['figure'][language]} ${(index + 1)}${footnote ? 'A' : ''}${suffix}`
+            el.classList.remove('label')
         }
     )
 
-    htmlEl.querySelectorAll('figcaption .figure-cat-photo').forEach(
+    htmlEl.querySelectorAll("figure[data-category='photo'] figcaption span.label").forEach(
         (el, index) => {
             const suffix = el.parentElement.innerText.trim().length ? ': ' : ''
-            el.innerHTML = `${FIG_CATS['photo'][language]} ${(index + 1)}${footnote ? 'A' : ''}${suffix}`
-            el.classList.remove('figure-cat-photo')
+            el.innerHTML = `${CATS['photo'][language]} ${(index + 1)}${footnote ? 'A' : ''}${suffix}`
+            el.classList.remove('label')
         }
     )
 
-    htmlEl.querySelectorAll('figcaption .figure-cat-table').forEach(
+    htmlEl.querySelectorAll("figure[data-category='table'] figcaption span.label,table[data-category='table'] caption span.label").forEach(
         (el, index) => {
             const suffix = el.parentElement.innerText.trim().length ? ': ' : ''
-            el.innerHTML = `${FIG_CATS['table'][language]} ${(index + 1)}${footnote ? 'A' : ''}${suffix}`
-            el.classList.remove('figure-cat-table')
+            el.innerHTML = `${CATS['table'][language]} ${(index + 1)}${footnote ? 'A' : ''}${suffix}`
+            el.classList.remove('label')
         }
     )
     return htmlEl

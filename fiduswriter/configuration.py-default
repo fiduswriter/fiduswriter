@@ -30,6 +30,9 @@ DATABASES = {
 
 }
 
+# Interval between document saves
+# DOC_SAVE_INTERVAL = 1
+
 # Migrate, transpile JavaScript and install required fixtures automatically
 # when starting runserver. You might want to turn this off on a production
 # server. The default is the opposite of DEBUG

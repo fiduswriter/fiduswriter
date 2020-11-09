@@ -4,7 +4,7 @@ import {DocxExporterImages} from "./images"
 import {DocxExporterLists} from "./lists"
 import {DocxExporterRichtext} from "./richtext"
 import {noSpaceTmp} from "../../common"
-import {descendantNodes} from "../tools/doc_contents"
+import {descendantNodes} from "../tools/doc_content"
 
 const DEFAULT_XML = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' + noSpaceTmp`
     <w:footnotes xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:w10="urn:schemas-microsoft-com:office:word" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:wps="http://schemas.microsoft.com/office/word/2010/wordprocessingShape" xmlns:wpg="http://schemas.microsoft.com/office/word/2010/wordprocessingGroup" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:wp14="http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing" xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml" mc:Ignorable="w14 wp14">
@@ -59,9 +59,9 @@ const DEFAULT_STYLE_FOOTNOTE_ANCHOR = noSpaceTmp`
 
 
 export class DocxExporterFootnotes {
-    constructor(exporter, docContents) {
+    constructor(exporter, docContent) {
         this.exporter = exporter
-        this.docContents = docContents
+        this.docContent = docContent
         this.fnPmJSON = false
         this.images = false
         this.citations = false
@@ -164,7 +164,7 @@ export class DocxExporterFootnotes {
     }
 
     findFootnotes() {
-        descendantNodes(this.docContents).forEach(
+        descendantNodes(this.docContent).forEach(
             node => {
                 if (node.type === 'footnote') {
                     this.footnotes.push(node.attrs.footnote)
@@ -176,7 +176,7 @@ export class DocxExporterFootnotes {
     convertFootnotes() {
         const fnContent = []
         this.footnotes.forEach(
-            footnote =>{
+            footnote => {
                 fnContent.push({
                     type: 'footnotecontainer',
                     content: footnote

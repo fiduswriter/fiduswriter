@@ -3,8 +3,7 @@ export {
 }
     from "./overview_menu"
 export {
-    addDropdownBox,
-    openDropdownBox,
+    dropdownSelect,
     setCheckableLabel,
     activateWait,
     deactivateWait,
@@ -30,39 +29,30 @@ export {
     getCookie
 }
     from "./network"
-
 export {
     setLanguage
-}
-    from "./user"
-
+} from "./user"
 export {
     Dialog,
-}
-    from "./dialog"
-
+} from "./dialog"
 export {
     ContentMenu
-}
-    from "./content_menu"
-
+} from "./content_menu"
 export {
     makeWorker
-}
-    from "./worker"
-
+} from "./worker"
 export {
     baseBodyTemplate
-}
-    from "./templates"
+} from "./templates"
 export {
     WebSocketConnector
-}
-    from "./ws"
+} from "./ws"
 export {
     filterPrimaryEmail
-}
-    from "./user_util"
+} from "./user_util"
 export {
     DatatableBulk
 } from "./datatable_bulk"
+export {
+    faqDialog
+} from "./faq_dialog"

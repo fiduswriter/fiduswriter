@@ -25,13 +25,13 @@ export class GetImages {
             return new Promise(resolve => {
                 const fc = this.entries.find(entry => entry.filename === this.imageEntries[
                     this.counter
-                ].image.split('/').pop()).contents
+                ].image.split('/').pop()).content
                 this.imageEntries[this.counter]['file'] = new window.Blob(
                     [fc],
                     {type: this.imageEntries[this.counter].file_type}
                 )
                 this.counter++
-                this.getImageZipEntry().then(()=>{
+                this.getImageZipEntry().then(() => {
                     resolve()
                 })
             })

@@ -36,7 +36,7 @@ export const deleteNode = function(tr, node, nodePos, map, accept) { // Delete a
             const track = node.attrs.track.filter(track => track.type !== trackType)
             tr.setNodeMarkup(newNodePos, null, Object.assign({}, node.attrs, {track}), node.marks)
         }
-    } else if (node.isLeaf || node.type === tr.doc.type.schema.nodes['table']) {
+    } else if (node.isLeaf || ['figure', 'table'].includes(node.type.name)) {
         delStep = new ReplaceStep(
             newNodePos,
             map.map(nodePos + node.nodeSize),

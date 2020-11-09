@@ -12,13 +12,13 @@ from django.core import checks
 # Also defined in frontend
 # document/static/js/modules/schema/index.js
 
-FW_DOCUMENT_VERSION = 3.2
+FW_DOCUMENT_VERSION = 3.3
 
 
 class DocumentTemplate(models.Model):
     title = models.CharField(max_length=255, default='', blank=True)
     import_id = models.CharField(max_length=255, default='', blank=True)
-    definition = models.TextField(default='{}')
+    content = models.JSONField(default=dict)
     doc_version = models.DecimalField(
         max_digits=3,
         decimal_places=1,
@@ -82,19 +82,19 @@ class DocumentTemplate(models.Model):
 
 class Document(models.Model):
     title = models.CharField(max_length=255, default='', blank=True)
-    contents = models.TextField(default='{}')  # json object of content
+    content = models.JSONField(default=dict)
     doc_version = models.DecimalField(
         max_digits=3,
         decimal_places=1,
         default=FW_DOCUMENT_VERSION
     )
-    # The doc_version is the version of the data format in the contents field.
-    # We upgrade the contents field in JavaScript and not migrations so that
+    # The doc_version is the version of the data format in the content field.
+    # We upgrade the content field in JavaScript and not migrations so that
     # the same code can be used for migrations and for importing old fidus
     # files that are being uploaded. This field is only used for upgrading data
     # and is therefore not handed to the editor or document overview page.
     version = models.PositiveIntegerField(default=0)
-    last_diffs = models.TextField(default='[]')
+    diffs = models.JSONField(default=list)
     # The last few diffs that were received and approved. The number of stored
     # diffs should always be equivalent to or more than all the diffs since the
     # last full save of the document.
@@ -105,8 +105,8 @@ class Document(models.Model):
     )
     added = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    comments = models.TextField(default='{}')
-    bibliography = models.TextField(default='{}')
+    comments = models.JSONField(default=dict, blank=True)
+    bibliography = models.JSONField(default=dict, blank=True)
     # Whether or not document is listed on document overview list page.
     # True by default and for all normal documents. Can be set to False when
     # documents are added in plugins that list these documents somewhere else.
@@ -124,6 +124,16 @@ class Document(models.Model):
 
     class Meta(object):
         ordering = ['-id']
+
+    def clean(self, *args, **kwargs):
+        if self.comments is None:
+            self.comments = "{}"
+        if self.bibliography is None:
+            self.bibliography = "{}"
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
 
     def get_absolute_url(self):
         return "/document/%i/" % self.id
@@ -178,30 +188,30 @@ class Document(models.Model):
 
 RIGHTS_CHOICES = (
     ('write', 'Writer'),
-    # Can write contents and can read+write comments.
+    # Can write content and can read+write comments.
     # Can chat with collaborators.
     # Has read access to revisions.
     ('write-tracked', 'Write with tracked changes'),
-    # Can write tracked contents and can read/write comments.
+    # Can write tracked content and can read/write comments.
     # Cannot turn off tracked changes.
     # Can chat with collaborators.
     # Has read access to revisions.
     ('comment', 'Commentator'),
-    # Can read contents and can read+write comments.
+    # Can read content and can read+write comments.
     # Can chat with collaborators.
     # Has read access to revisions.
     ('review', 'Reviewer'),
-    # Can read the contents and can read/write his own comments.
+    # Can read the content and can read/write his own comments.
     # Comments by users with this access right only show the user's
     # numeric ID, not their username.
     # Cannot chat with collaborators nor see that they are connected.
     # Has no access to revisions.
     ('read', 'Reader'),
-    # Can read contents, including comments
+    # Can read content, including comments
     # Can chat with collaborators.
     # Has read access to revisions.
     ('read-without-comments', 'Reader without comment access'),
-    # Can read contents, but not the comments.
+    # Can read content, but not the comments.
     # Cannot chat with collaborators.
     # Has no access to revisions.
 )

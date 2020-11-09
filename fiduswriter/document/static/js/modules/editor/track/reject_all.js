@@ -16,11 +16,11 @@ export const rejectAll = function(view, from = 0, to = false) {
         }
         let deletedNode = false
         if (
-            node.attrs.track && node.attrs.track.find(track => track.type === 'insertion')
+            node.attrs.track?.find(track => track.type === 'insertion')
         ) {
             deleteNode(tr, node, pos, map, false)
             deletedNode = true
-        } else if (node.marks && node.marks.find(mark => mark.type.name === 'insertion' && !mark.attrs.approved)) {
+        } else if (node.marks?.find(mark => mark.type.name === 'insertion' && !mark.attrs.approved)) {
             const delStep = new ReplaceStep(
                 map.map(Math.max(pos, from)),
                 map.map(Math.min(pos + node.nodeSize, to)),
@@ -29,10 +29,10 @@ export const rejectAll = function(view, from = 0, to = false) {
             tr.step(delStep)
             map.appendMap(delStep.getMap())
             deletedNode = true
-        } else if (node.attrs.track && node.attrs.track.find(track => track.type === 'deletion')) {
-            const track = node.attrs.track.filter(track=> track.type !== 'deletion')
+        } else if (node.attrs.track?.find(track => track.type === 'deletion')) {
+            const track = node.attrs.track.filter(track => track.type !== 'deletion')
             tr.setNodeMarkup(map.map(pos), null, Object.assign({}, node.attrs, {track}), node.marks)
-        } else if (node.marks && node.marks.find(mark => mark.type.name === 'deletion')) {
+        } else if (node.marks?.find(mark => mark.type.name === 'deletion')) {
             tr.removeMark(
                 map.map(Math.max(pos, from)),
                 map.map(Math.min(pos + node.nodeSize, to)),

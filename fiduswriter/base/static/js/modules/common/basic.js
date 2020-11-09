@@ -1,43 +1,117 @@
 import {Dialog} from "./dialog"
+import {ContentMenu} from "./content_menu"
 
-/** Creates a dropdown box.
- * @param btn The button to open and close the dropdown box.
- * @param box The node containing the contents of the dropdown box.
- * @param preopen An optional function to be called before opening the dropdown box. Used to position dropdown box.
+/** Creates a styled select with a contentmenu from a select tag.
+ * @param select The select-tag which is to be replaced.
+ * @param options
  */
 
-export const addDropdownBox = function(btn, box, preopen = false) {
-    btn.addEventListener('click', event => {
+export const dropdownSelect = function(
+    selectDOM, {
+        onChange = _newValue => {},
+        width = false,
+        value = false,
+        button = false
+    }
+) {
+    let buttonDOM
+    if (button) {
+        buttonDOM = button
+        selectDOM.parentElement.removeChild(selectDOM) // Remove the <select> from the main dom.
+    } else {
+        buttonDOM = document.createElement('div')
+        buttonDOM.innerHTML = '<label></label>&nbsp;<span class="fa fa-caret-down"></span>'
+        buttonDOM.classList.add('fw-button')
+        buttonDOM.classList.add('fw-light')
+        buttonDOM.classList.add('fw-large')
+        buttonDOM.classList.add('fw-dropdown')
+        if (width) {
+            buttonDOM.style.width = Number.isInteger(width) ? `${width}px` : width
+        }
+        selectDOM.classList.forEach(className => buttonDOM.classList.add(className))
+        if (selectDOM.id) {
+            buttonDOM.id = selectDOM.id
+        }
+        selectDOM.parentElement.replaceChild(buttonDOM, selectDOM) // Remove the <select> from the main dom.
+    }
+
+    const options = Array.from(selectDOM.children)
+    if (!options.length) {
+        // There are no options, so we only create the button.
+        return {
+            setValue: () => {},
+            getValue: () => false
+        }
+    }
+    let selected
+    const menu = {
+        content: options.map((option, order) => {
+            if (option.selected || option.value === value) {
+                selected = option
+            }
+            return {
+                title: option.innerHTML,
+                type: 'action',
+                tooltip: option.title || '',
+                order,
+                action: () => {
+                    if (!button) {
+                        buttonDOM.firstElementChild.innerText = option.innerText
+                    }
+                    value = option.value || option.dataset.value
+                    onChange(value)
+                    menu.content.forEach(item => item.selected = false)
+                    menu.content[order].selected = true
+                    return false
+                },
+                selected: !!(option.selected || option.dataset.selected)
+            }
+
+        })
+    }
+    if (!selected && !button) {
+        selected = selectDOM.firstElementChild
+        menu.content[0].selected = true
+    }
+
+    if (!button) {
+        buttonDOM.firstElementChild.innerText = selected.innerText
+    }
+
+    value = selected ? selected.value : false
+
+    buttonDOM.addEventListener('click', event => {
         event.preventDefault()
         event.stopPropagation()
-        if (btn.classList.contains('disabled')) {
+        if (buttonDOM.classList.contains('disabled')) {
             return
         }
-        if (!box.clientWidth) {
-            if (preopen) {
-                preopen()
-            }
-            openDropdownBox(box)
-        }
+        const contentMenu = new ContentMenu({
+            menu,
+            menuPos: {X: event.pageX, Y: event.pageY}
+        })
+        contentMenu.open()
     })
-}
 
-/** Opens a dropdown box.
- * @param box The node containing the contents of the dropdown box.
- */
-
-export const openDropdownBox = function(box) {
-    // Show this box
-    box.style.display = 'block'
-
-    function closeDropdownBox(event) {
-        event.preventDefault()
-        box.style.display = ''
-        document.body.removeEventListener('click', closeDropdownBox, false)
+    return {
+        setValue: newValue => {
+            const optionIndex = options.findIndex(option => option.value === newValue)
+            if (optionIndex === undefined) {
+                return
+            }
+            menu.content.forEach(item => item.selected = false)
+            menu.content[optionIndex].selected = true
+            const option = options[optionIndex]
+            if (!button) {
+                buttonDOM.firstElementChild.innerText = option.innerText
+            }
+            value = newValue
+        },
+        getValue: () => value,
+        enable: () => buttonDOM.classList.remove('disabled'),
+        disable: () => buttonDOM.classList.add('disabled')
     }
-    document.body.addEventListener('click', closeDropdownBox, false)
 }
-
 
 /** Checks or unchecks a checkable label. This is used for example for bibliography categories when editing bibliography items.
  * @param label The node who's parent has to be checked or unchecked.
@@ -77,22 +151,26 @@ export const deactivateWait = function() {
  * @param alertMsg The message text.
  */
 export const addAlert = function(alertType, alertMsg) {
+    if (!document.body) {
+        return
+    }
     const iconNames = {
         'error': 'exclamation-circle',
         'warning': 'exclamation-circle',
         'info': 'info-circle',
         'success': 'check-circle'
     }
-    if (!document.getElementById('#alerts-outer-wrapper'))
+    if (!document.getElementById('#alerts-outer-wrapper')) {
         document.body.insertAdjacentHTML('beforeend', '<div id="alerts-outer-wrapper"><ul id="alerts-wrapper"></ul></div>')
+    }
     const alertsWrapper = document.getElementById('alerts-wrapper')
     alertsWrapper.insertAdjacentHTML('beforeend', `<li class="alerts-${alertType} fa fa-${iconNames[alertType]}">${alertMsg}</li>`)
     const alertBox = alertsWrapper.lastElementChild
-    setTimeout(()=>{
+    setTimeout(() => {
         alertBox.classList.add('visible')
-        setTimeout(()=>{
+        setTimeout(() => {
             alertBox.classList.remove('visible')
-            setTimeout(()=>alertsWrapper.removeChild(alertBox), 2000)
+            setTimeout(() => alertsWrapper.removeChild(alertBox), 2000)
         }, 4000)
     }, 1)
 }
@@ -182,7 +260,7 @@ export const escapeText = function(text) {
  * ES6 promises are not (yet) cancelable.
  */
 
-export const cancelPromise = () => new Promise(()=>{})
+export const cancelPromise = () => new Promise(() => {})
 
 // Check if selector matches one of the ancestors of the event target.
 // Used in switch statements of document event listeners.

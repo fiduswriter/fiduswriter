@@ -1,5 +1,5 @@
 import {noSpaceTmp} from "../../common"
-import {descendantNodes} from "../tools/doc_contents"
+import {descendantNodes} from "../tools/doc_content"
 
 const DEFAULT_LISTPARAGRAPH_XML = noSpaceTmp`
     <w:style w:type="paragraph" w:styleId="ListParagraph">
@@ -22,12 +22,12 @@ const DEFAULT_NUMBERING_XML = '<?xml version="1.0" encoding="UTF-8" standalone="
 
 
 export class DocxExporterLists {
-    constructor(exporter, rels, docContents) {
+    constructor(exporter, rels, docContent) {
         this.exporter = exporter
         this.rels = rels
-        this.docContents = docContents
+        this.docContent = docContent
         this.useBulletList = false
-        this.usedNumberedList = 0
+        this.usedNumberedList = []
         this.styleXml = false
         this.numberingXml = false
         this.maxAbstractNumId = -1
@@ -36,7 +36,7 @@ export class DocxExporterLists {
         // numberedType for each numbered list so that the numbering starts in 1
         // each time.
         this.bulletType = false
-        this.numberedAbstractType = false
+        this.numberFormat = 'decimal'
         this.numberedTypes = []
         this.styleFilePath = 'word/styles.xml'
         this.numberingFilePath = 'word/numbering.xml'
@@ -45,7 +45,7 @@ export class DocxExporterLists {
 
     init() {
         this.findLists()
-        if (this.usedNumberedList > 0 || this.useBulletList) {
+        if (this.usedNumberedList.length > 0 || this.useBulletList) {
             const p = []
 
             p.push(
@@ -96,12 +96,12 @@ export class DocxExporterLists {
     }
 
     findLists() {
-        descendantNodes(this.docContents).forEach(
+        descendantNodes(this.docContent).forEach(
             node => {
                 if (node.type === 'bullet_list') {
                     this.useBulletList = true
                 } else if (node.type === 'ordered_list') {
-                    this.usedNumberedList += 1
+                    this.usedNumberedList.push(node.attrs.order)
                 }
             }
         )
@@ -146,8 +146,8 @@ export class DocxExporterLists {
                     const numEl = this.numberingXml.querySelector(`abstractNumId[*|val="${abstractNumId}"]`).parentElement
                     const numId = parseInt(numEl.getAttribute('w:numId'))
                     this.bulletType = numId
-                } else if (levelZeroFormat !== 'bullet' && !(this.numberedAbstractType)) {
-                    this.numberedAbstractType = abstractNumId
+                } else if (levelZeroFormat !== 'bullet' && !(this.numberFormat)) {
+                    this.numberFormat = levelZeroFormat
                 }
                 if (this.maxAbstractNumId < abstractNumId) {
                     this.maxAbstractNumId = abstractNumId
@@ -169,15 +169,15 @@ export class DocxExporterLists {
             this.addBulletNumType(this.maxNumId, this.maxAbstractNumId)
             this.bulletType = this.maxNumId
         }
-        if (!(this.numberedAbstractType) && this.usedNumberedList > 0) {
+        if (this.usedNumberedList.length > 0) {
             this.maxAbstractNumId++
-            this.addNumberedAbstractNumType(this.maxAbstractNumId)
+
             this.numberedAbstractType = this.maxAbstractNumId
         }
-        for (let i = 0;i < this.usedNumberedList;i++) {
+        for (let i = 0;i < this.usedNumberedList.length;i++) {
             this.maxNumId++
             const numId = this.maxNumId
-            this.addNumberedNumType(numId, this.numberedAbstractType)
+            this.addNumberedNumType(numId, this.usedNumberedList[i])
             this.numberedTypes.push(numId)
         }
 
@@ -224,16 +224,18 @@ export class DocxExporterLists {
 
     }
 
-    addNumberedNumType(numId, abstractNumId) {
+    addNumberedNumType(numId, start) {
+        this.maxAbstractNumId++
+        this.addNumberedAbstractNumType(this.maxAbstractNumId, start)
         const numberingEl = this.numberingXml.querySelector('numbering')
         numberingEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
             <w:num w:numId="${numId}">
-                <w:abstractNumId w:val="${abstractNumId}" />
+                <w:abstractNumId w:val="${this.maxAbstractNumId}" />
             </w:num>
         `)
     }
 
-    addNumberedAbstractNumType(abstractNumId) {
+    addNumberedAbstractNumType(abstractNumId, start) {
         const numberingEl = this.numberingXml.querySelector('numbering')
         numberingEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
             <w:abstractNum w:abstractNumId="${abstractNumId}" w15:restartNumberingAfterBreak="0">
@@ -247,8 +249,8 @@ export class DocxExporterLists {
         for (let level = 0; level < 9; level++) {
             newAbstractNum.insertAdjacentHTML('beforeEnd', noSpaceTmp`
                 <w:lvl w:ilvl="${level}" w:tplc="0409000F">
-                    <w:start w:val="1" />
-                    <w:numFmt w:val="decimal" />
+                    <w:start w:val="${start}" />
+                    <w:numFmt w:val="${this.numberFormat}" />
                     <w:lvlText w:val="%${level + 1}." />
                     <w:lvlJc w:val="left" />
                     <w:pPr>

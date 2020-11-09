@@ -1,26 +1,43 @@
-from builtins import str
 import uuid
 import atexit
+import logging
+import os
 import json
+import copy
 from time import mktime, time
 from copy import deepcopy
-
-from jsonpatch import apply_patch, JsonPatchConflict, JsonPointerException
+from prosemirror.model import Node, Schema
+from prosemirror.transform import Step
 
 from django.db.utils import DatabaseError
+from django.db.models import F, Q
+from django.conf import settings
+
 from document.helpers.session_user_info import SessionUserInfo
 from document.helpers.serializers import PythonWithURLSerializer
 from base.ws_handler import BaseWebSocketHandler
-import logging
-from tornado.escape import json_decode, json_encode
 from document.models import COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \
     CAN_COMMUNICATE, FW_DOCUMENT_VERSION, DocumentTemplate, Document
 from usermedia.models import Image, DocumentImage, UserImage
 from user.util import get_user_avatar_url
 
-from django.db.models import F, Q
+# settings_JSONPATCH
+from jsonpatch import apply_patch, JsonPatchConflict, JsonPointerException
+from tornado.escape import json_encode
+# end settings_JSONPATCH
 
 logger = logging.getLogger(__name__)
+
+schema_json_path = os.path.join(
+    settings.PROJECT_PATH,
+    "static-libs/json/schema.json"
+)
+
+if os.path.exists(schema_json_path):
+    with open(schema_json_path) as schema_file:
+        schema = Schema(json.loads(schema_file.read()))
+else:
+    schema = None
 
 
 class WebSocket(BaseWebSocketHandler):
@@ -32,7 +49,7 @@ class WebSocket(BaseWebSocketHandler):
         if len(self.args) < 2:
             self.access_denied()
             return
-        self.document_id = int(self.args[0])
+        self.sessionument_id = int(self.args[0])
         logger.debug(
             f"Action:Document socket opened by user. "
             f"URL:{self.endpoint} User:{self.user.id} ParticipantID:{self.id}")
@@ -47,7 +64,7 @@ class WebSocket(BaseWebSocketHandler):
     def subscribe_doc(self, connection_count=0):
         self.user_info = SessionUserInfo(self.user)
         doc_db, can_access = self.user_info.init_access(
-            self.document_id
+            self.sessionument_id
         )
         if not can_access or float(doc_db.doc_version) != FW_DOCUMENT_VERSION:
             self.access_denied()
@@ -60,33 +77,42 @@ class WebSocket(BaseWebSocketHandler):
                 f"Action:Serving already opened document. "
                 f"URL:{self.endpoint} User:{self.user.id} "
                 f" ParticipantID:{self.id}")
-            self.doc = WebSocket.sessions[doc_db.id]
-            self.id = max(self.doc['participants']) + 1
-            self.doc['participants'][self.id] = self
+            self.session = WebSocket.sessions[doc_db.id]
+            self.id = max(self.session['participants']) + 1
+            self.session['participants'][self.id] = self
+            template = False
         else:
             logger.debug(
                 f"Action:Opening document from DB. "
                 f"URL:{self.endpoint} User:{self.user.id} "
                 f"ParticipantID:{self.id}")
             self.id = 0
-            self.doc = {
-                'db': doc_db,
+            if 'type' in doc_db.content:
+                content = doc_db.content
+            else:
+                content = copy.deepcopy(doc_db.template.content)
+                if 'type' not in content:
+                    content['type'] = 'article'
+                if 'content' not in content:
+                    content['content'] = [{type: 'title'}]
+                doc_db.content = content
+                doc_db.save()
+            node = Node.from_json(schema, {'type': 'doc', 'content': [
+                content
+            ]})
+            self.session = {
+                'doc': doc_db,
+                'node': node,
                 'participants': {
                     0: self
                 },
-                'last_diffs': json_decode(doc_db.last_diffs),
-                'comments': json_decode(doc_db.comments),
-                'bibliography': json_decode(doc_db.bibliography),
-                'contents': json_decode(doc_db.contents),
-                'version': doc_db.version,
-                'title': doc_db.title,
-                'id': doc_db.id,
-                'template': {
-                    'id': doc_db.template.id,
-                    'definition': json_decode(doc_db.template.definition)
-                }
+                'last_saved_version': doc_db.version
             }
-            WebSocket.sessions[doc_db.id] = self.doc
+            WebSocket.sessions[doc_db.id] = self.session
+            if self.user_info.access_rights == 'write':
+                template = True
+            else:
+                template = False
         logger.debug(
             f"Action:Participant ID Assigned. URL:{self.endpoint} "
             f"User:{self.user.id} ParticipantID:{self.id}")
@@ -95,12 +121,12 @@ class WebSocket(BaseWebSocketHandler):
         })
         if connection_count < 1:
             self.send_styles()
-            self.send_document()
+            self.send_document(False, template)
         if self.can_communicate():
             self.handle_participant_update()
 
     def send_styles(self):
-        doc_db = self.doc['db']
+        doc_db = self.session["doc"]
         response = dict()
         response['type'] = 'styles'
         serializer = PythonWithURLSerializer()
@@ -132,12 +158,12 @@ class WebSocket(BaseWebSocketHandler):
     def unfixable(self):
         self.send_document()
 
-    def send_document(self):
+    def send_document(self, messages=False, template=False):
         response = dict()
         response['type'] = 'doc_data'
-        doc_owner = self.doc['db'].owner
+        doc_owner = self.session["doc"].owner
         response['doc_info'] = {
-            'id': self.doc['id'],
+            'id': self.session["doc"].id,
             'is_owner': self.user_info.is_owner,
             'access_rights': self.user_info.access_rights,
             'owner': {
@@ -149,19 +175,27 @@ class WebSocket(BaseWebSocketHandler):
             }
         }
         response['doc'] = {
-            'v': self.doc['version'],
-            'contents': self.doc['contents'],
-            'bibliography': self.doc['bibliography'],
-            'template': self.doc['template'],
+            'v': self.session["doc"].version,
+            'content': self.session["doc"].content,
+            'bibliography': self.session["doc"].bibliography,
             'images': {}
         }
+        if template:
+            response['doc']['template'] = {
+                'id': self.session["doc"].template.id,
+                'content': self.session["doc"].template.content
+            }
+        if messages:
+            response['m'] = messages
         response['time'] = int(time()) * 1000
-        for dimage in DocumentImage.objects.filter(document_id=self.doc['id']):
+        for dimage in DocumentImage.objects.filter(
+            document_id=self.session["doc"].id
+        ):
             image = dimage.image
             field_obj = {
                 'id': image.id,
                 'title': dimage.title,
-                'copyright': json.loads(dimage.copyright),
+                'copyright': dimage.copyright,
                 'image': image.image.url,
                 'file_type': image.file_type,
                 'added': mktime(image.added.timetuple()) * 1000,
@@ -178,12 +212,12 @@ class WebSocket(BaseWebSocketHandler):
         elif self.user_info.access_rights == 'review':
             # Reviewer should only get his/her own comments
             filtered_comments = {}
-            for key, value in list(self.doc["comments"].items()):
+            for key, value in list(self.session["doc"].comments.items()):
                 if value["user"] == self.user_info.user.id:
                     filtered_comments[key] = value
             response['doc']['comments'] = filtered_comments
         else:
-            response['doc']['comments'] = self.doc["comments"]
+            response['doc']['comments'] = self.session["doc"].comments
         for team_member in doc_owner.leader.all():
             tm_object = dict()
             tm_object['id'] = team_member.member.id
@@ -236,9 +270,9 @@ class WebSocket(BaseWebSocketHandler):
                 continue
             id = bu["id"]
             if bu["type"] == "update":
-                self.doc["bibliography"][id] = bu["reference"]
+                self.session["doc"].bibliography[id] = bu["reference"]
             elif bu["type"] == "delete":
-                del self.doc["bibliography"][id]
+                del self.session["doc"].bibliography[id]
 
     def update_images(self, image_updates):
         for iu in image_updates:
@@ -253,23 +287,23 @@ class WebSocket(BaseWebSocketHandler):
                 ).exists():
                     continue
                 doc_image = DocumentImage.objects.filter(
-                    document_id=self.doc["id"],
+                    document_id=self.session["doc"].id,
                     image_id=id
                 ).first()
                 if doc_image:
                     doc_image.title = iu["image"]["title"]
-                    doc_image.copyright = json.dumps(iu["image"]["copyright"])
+                    doc_image.copyright = iu["image"]["copyright"]
                     doc_image.save()
                 else:
                     DocumentImage.objects.create(
-                        document_id=self.doc["id"],
+                        document_id=self.session["doc"].id,
                         image_id=id,
                         title=iu["image"]["title"],
-                        copyright=json.dumps(iu["image"]["copyright"])
+                        copyright=iu["image"]["copyright"]
                     )
             elif iu["type"] == "delete":
                 DocumentImage.objects.filter(
-                    document_id=self.doc["id"],
+                    document_id=self.session["doc"].id,
                     image_id=id
                 ).delete()
                 for image in Image.objects.filter(id=id):
@@ -284,7 +318,7 @@ class WebSocket(BaseWebSocketHandler):
                 continue
             id = cd["id"]
             if cd["type"] == "create":
-                self.doc["comments"][id] = {
+                self.session["doc"].comments[id] = {
                     "user": cd["user"],
                     "username": cd["username"],
                     "assignedUser": cd["assignedUser"],
@@ -295,24 +329,24 @@ class WebSocket(BaseWebSocketHandler):
                     "resolved": cd["resolved"],
                 }
             elif cd["type"] == "delete":
-                del self.doc["comments"][id]
+                del self.session["doc"].comments[id]
             elif cd["type"] == "update":
-                self.doc["comments"][id]["comment"] = cd["comment"]
+                self.session["doc"].comments[id]["comment"] = cd["comment"]
                 if "isMajor" in cd:
-                    self.doc["comments"][id][
+                    self.session["doc"].comments[id][
                         "isMajor"] = cd["isMajor"]
                 if "assignedUser" in cd and "assignedUsername" in cd:
-                    self.doc["comments"][id][
+                    self.session["doc"].comments[id][
                         "assignedUser"] = cd["assignedUser"]
-                    self.doc["comments"][id][
+                    self.session["doc"].comments[id][
                         "assignedUsername"] = cd["assignedUsername"]
                 if "resolved" in cd:
-                    self.doc["comments"][id][
+                    self.session["doc"].comments[id][
                         "resolved"] = cd["resolved"]
             elif cd["type"] == "add_answer":
-                if "answers" not in self.doc["comments"][id]:
-                    self.doc["comments"][id]["answers"] = []
-                self.doc["comments"][id]["answers"].append({
+                if "answers" not in self.session["doc"].comments[id]:
+                    self.session["doc"].comments[id]["answers"] = []
+                self.session["doc"].comments[id]["answers"].append({
                     "id": cd["answerId"],
                     "user": cd["user"],
                     "username": cd["username"],
@@ -321,12 +355,14 @@ class WebSocket(BaseWebSocketHandler):
                 })
             elif cd["type"] == "delete_answer":
                 answer_id = cd["answerId"]
-                for answer in self.doc["comments"][id]["answers"]:
+                for answer in self.session["doc"].comments[id]["answers"]:
                     if answer["id"] == answer_id:
-                        self.doc["comments"][id]["answers"].remove(answer)
+                        self.session["doc"].comments[id]["answers"].remove(
+                            answer
+                        )
             elif cd["type"] == "update_answer":
                 answer_id = cd["answerId"]
-                for answer in self.doc["comments"][id]["answers"]:
+                for answer in self.session["doc"].comments[id]["answers"]:
                     if answer["id"] == answer_id:
                         answer["answer"] = cd["answer"]
 
@@ -344,7 +380,7 @@ class WebSocket(BaseWebSocketHandler):
 
     def handle_selection_change(self, message):
         if self.user_info.document_id in WebSocket.sessions and message[
-                "v"] == self.doc['version']:
+                "v"] == self.session["doc"].version:
             WebSocket.send_updates(
                 message, self.user_info.document_id, self.id)
 
@@ -361,7 +397,7 @@ class WebSocket(BaseWebSocketHandler):
 
     def handle_diff(self, message):
         pv = message["v"]
-        dv = self.doc['version']
+        dv = self.session["doc"].version
         logger.debug(
             f"Action:Handling Diff. URL:{self.endpoint} User:{self.user.id} "
             f"ParticipantID:{self.id} Client version:{pv} "
@@ -376,47 +412,63 @@ class WebSocket(BaseWebSocketHandler):
                 f"User:{self.user.id} ParticipantID:{self.id}")
             return
         if pv == dv:
-            if "jd" in message:  # jd = json diff
-                try:
-                    apply_patch(
-                       self.doc['contents'],
-                       message["jd"],
-                       True
-                    )
-                except (JsonPatchConflict, JsonPointerException):
-                    logger.exception(
-                        f"Action:Cannot apply json diff. "
-                        f"URL:{self.endpoint} User:{self.user.id} "
-                        f"ParticipantID:{self.id}")
-                    logger.error(
-                        f"Action:Patch Exception URL:{self.endpoint} "
-                        f"User:{self.user.id} ParticipantID:{self.id} "
-                        f"Message:{json_encode(message)}")
-                    logger.error(
-                        f"Action:Patch Exception URL:{self.endpoint} "
-                        f"User:{self.user.id} ParticipantID:{self.id} "
-                        f"Document:{json_encode(self.doc['contents'])}")
-                    self.unfixable()
-                    self.send_message({'type': 'patch_error'})
-                    return
-                # The json diff is only needed by the python backend which does
-                # not understand the steps. It can therefore be removed before
-                # broadcast to other clients.
-                del message["jd"]
-            self.doc["last_diffs"].append(message)
-            self.doc["last_diffs"] = self.doc[
-                "last_diffs"
-            ][-self.history_length:]
-            self.doc['version'] += 1
+            if settings.JSONPATCH:
+                if "jd" in message:  # jd = json diff
+                    try:
+                        apply_patch(
+                            self.session["doc"].content,
+                            message["jd"],
+                            True
+                        )
+                    except (JsonPatchConflict, JsonPointerException):
+                        logger.exception(
+                            f"Action:Cannot apply json diff. "
+                            f"URL:{self.endpoint} User:{self.user.id} "
+                            f"ParticipantID:{self.id}")
+                        logger.error(
+                            f"Action:Patch Exception URL:{self.endpoint} "
+                            f"User:{self.user.id} ParticipantID:{self.id} "
+                            f"Message:{json_encode(message)}")
+                        logger.error(
+                            f"Action:Patch Exception URL:{self.endpoint} "
+                            f"User:{self.user.id} ParticipantID:{self.id} "
+                            f"Document:"
+                            f"{json_encode(self.session['doc'].content)}"
+                        )
+                        self.unfixable()
+                        self.send_message({'type': 'patch_error'})
+                        return
+                    # The json diff is only needed by the python backend which
+                    # does not understand the steps. It can therefore be
+                    # removed before broadcast to other clients.
+                    del message["jd"]
+            elif "ds" in message:  # ds = document steps
+                for s in message["ds"]:
+                    step = Step.from_json(schema, s)
+                    step_result = step.apply(self.session["node"])
+                    if step_result.ok:
+                        self.session["node"] = step_result.doc
+                    else:
+                        self.unfixable()
+                        self.send_message({'type': 'patch_error'})
+                        return
+                self.session["doc"].content = self.session[
+                    "node"
+                ].first_child.to_json()
+            self.session["doc"].diffs.append(message)
+            self.session["doc"].diffs = self.session["doc"].diffs[
+                -self.history_length:
+            ]
+            self.session["doc"].version += 1
             if "ti" in message:  # ti = title
-                self.doc["title"] = message["ti"]
+                self.session["doc"].title = message["ti"][-255:]
             if "cu" in message:  # cu = comment updates
                 self.update_comments(message["cu"])
             if "bu" in message:  # bu = bibliography updates
                 self.update_bibliography(message["bu"])
             if "iu" in message:  # iu = image updates
                 self.update_images(message["iu"])
-            if self.doc['version'] % 10 == 0:
+            if self.session["doc"].version % settings.DOC_SAVE_INTERVAL == 0:
                 WebSocket.save_document(self.user_info.document_id)
             self.confirm_diff(message["rid"])
             WebSocket.send_updates(
@@ -426,14 +478,14 @@ class WebSocket(BaseWebSocketHandler):
                 self.user_info.user.id
             )
         elif pv < dv:
-            if pv + len(self.doc["last_diffs"]) >= dv:
-                # We have enough last_diffs stored to fix it.
+            if pv + len(self.session["doc"].diffs) >= dv:
+                # We have enough diffs stored to fix it.
                 number_diffs = pv - dv
                 logger.debug(
                     f"Action:Resending document diffs. URL:{self.endpoint} "
                     f"User:{self.user.id} ParticipantID:{self.id} "
                     f"number of messages to be resent:{number_diffs}")
-                messages = self.doc["last_diffs"][number_diffs:]
+                messages = self.session["doc"].diffs[number_diffs:]
                 for message in messages:
                     new_message = message.copy()
                     new_message["server_fix"] = True
@@ -445,6 +497,7 @@ class WebSocket(BaseWebSocketHandler):
                     f"ParticipantID:{self.id}")
                 # Client has a version that is too old to be fixed
                 self.unfixable()
+                return
         else:
             # Client has a higher version than server. Something is fishy!
             logger.debug(
@@ -454,7 +507,7 @@ class WebSocket(BaseWebSocketHandler):
 
     def check_version(self, message):
         pv = message["v"]
-        dv = self.doc['version']
+        dv = self.session["doc"].version
         logger.debug(
             f"Action:Checking version of document. URL:{self.endpoint} "
             f"User:{self.user.id} ParticipantID:{self.id} "
@@ -466,17 +519,14 @@ class WebSocket(BaseWebSocketHandler):
             }
             self.send_message(response)
             return
-        elif pv + len(self.doc["last_diffs"]) >= dv:
+        elif pv + len(self.session["doc"].diffs) >= dv:
             number_diffs = pv - dv
             logger.debug(
                 f"Action:Resending document diffs. URL:{self.endpoint} "
                 f"User:{self.user.id} ParticipantID:{self.id}"
                 f"number of messages to be resent:{number_diffs}")
-            messages = self.doc["last_diffs"][number_diffs:]
-            for message in messages:
-                new_message = message.copy()
-                new_message["server_fix"] = True
-                self.send_message(new_message)
+            messages = self.session["doc"].diffs[number_diffs:]
+            self.send_document(messages)
             return
         else:
             logger.debug(
@@ -506,8 +556,8 @@ class WebSocket(BaseWebSocketHandler):
                 self.user_info.document_id
             ]['participants']
         ):
-            del self.doc['participants'][self.id]
-            if len(self.doc['participants']) == 0:
+            del self.session['participants'][self.id]
+            if len(self.session['participants']) == 0:
                 WebSocket.save_document(self.user_info.document_id)
                 del WebSocket.sessions[self.user_info.document_id]
                 logger.debug(
@@ -583,38 +633,33 @@ class WebSocket(BaseWebSocketHandler):
 
     @classmethod
     def save_document(cls, document_id):
-        doc = cls.sessions[document_id]
-        doc_db = doc['db']
-        if doc_db.version == doc['version']:
+        session = cls.sessions[document_id]
+        if session['doc'].version == session['last_saved_version']:
             return
-        doc_db.title = doc['title'][-255:]
-        doc_db.version = doc['version']
-        doc_db.contents = json_encode(doc['contents'])
-        doc_db.last_diffs = json_encode(doc['last_diffs'])
-        doc_db.comments = json_encode(doc['comments'])
-        doc_db.bibliography = json_encode(doc['bibliography'])
         logger.debug(
-            f"Action:Saving document to DB. DocumentID:{doc_db.id} "
-            f"Doc version:{doc_db.version}")
+            f"Action:Saving document to DB. DocumentID:{session['doc'].id} "
+            f"Doc version:{session['doc'].version}")
         try:
             # this try block is to avoid a db exception
             # in case the doc has been deleted from the db
             # in fiduswriter the owner of a doc could delete a doc
             # while an invited writer is editing the same doc
-            doc_db.save(update_fields=[
+            session["doc"].save(update_fields=[
                         'title',
                         'version',
-                        'contents',
-                        'last_diffs',
+                        'content',
+                        'diffs',
                         'comments',
                         'bibliography',
                         'updated'])
+
         except DatabaseError as e:
             expected_msg = 'Save with update_fields did not affect any rows.'
             if str(e) == expected_msg:
-                cls.__insert_document(doc=doc_db)
+                cls.__insert_document(doc=session['doc'])
             else:
                 raise e
+        session["last_saved_version"] = session['doc'].version
 
     @classmethod
     def __insert_document(cls, doc: Document) -> None:

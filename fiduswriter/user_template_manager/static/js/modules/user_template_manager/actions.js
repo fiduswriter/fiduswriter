@@ -24,7 +24,7 @@ export class DocTemplatesActions {
                 addAlert('error', `${gettext('Could not delete document template')}: '${docTemplate.title}'`)
                 throw (error)
             }
-        ).then(({json})=> {
+        ).then(({json}) => {
             if (json.done) {
                 addAlert('success', `${gettext('Document template successfully deleted')}: '${docTemplate.title}'`)
                 this.docTemplatesOverview.removeTableRows([id])

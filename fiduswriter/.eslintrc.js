@@ -24,7 +24,7 @@ module.exports = { // eslint-disable-line no-undef
         "ecmaFeatures": {
             "globalReturn": false,
         },
-        "ecmaVersion": 2018
+        "ecmaVersion": 2020
     },
     "rules": {
         "accessor-pairs": "error",
@@ -37,10 +37,10 @@ module.exports = { // eslint-disable-line no-undef
         "array-element-newline": "off",
         "arrow-body-style": "off",
         "arrow-parens": "off",
-        "arrow-spacing": "off",
+        "arrow-spacing": "error",
         "block-scoped-var": "error",
         "block-spacing": "off",
-        "brace-style": "off",
+        "brace-style": 2,
         "callback-return": "error",
         "camelcase": "off",
         "capitalized-comments": "off",
@@ -58,7 +58,7 @@ module.exports = { // eslint-disable-line no-undef
         ],
         "consistent-return": "off",
         "consistent-this": "error",
-        "curly": "off",
+        "curly": "error",
         "default-case": "off",
         "dot-location": [
             "error",
@@ -84,7 +84,7 @@ module.exports = { // eslint-disable-line no-undef
         "indent-legacy": "off",
         "init-declarations": "off",
         "jsx-quotes": "error",
-        "key-spacing": "off",
+        "key-spacing": ["error", {"beforeColon": false, "afterColon": true}],
         "keyword-spacing": ["warn", {"before": true, "after": true}],
         "line-comment-position": "off",
         "linebreak-style": [
@@ -151,7 +151,7 @@ module.exports = { // eslint-disable-line no-undef
         "no-multi-assign": "off",
         "no-multi-spaces": "off",
         "no-multi-str": "off",
-        "no-multiple-empty-lines": "off",
+        "no-multiple-empty-lines": "error",
         "no-native-reassign": "error",
         "no-negated-condition": "off",
         "no-negated-in-lhs": "error",
@@ -305,8 +305,9 @@ module.exports = { // eslint-disable-line no-undef
         "settings_TEST_SERVER": "readonly",
         "settings_DEBUG": "readonly",
         "settings_SOURCE_MAPS": "readonly",
-        "transpile_VERSION":"readonly",
-        "process": "readonly",
-        "settings_USE_SERVICE_WORKER": "readonly"
+        "settings_USE_SERVICE_WORKER": "readonly",
+        "settings_JSONPATCH": "readonly",
+        "transpile_VERSION": "readonly",
+        "process": "readonly"
     }
 }

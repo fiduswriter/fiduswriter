@@ -15,7 +15,7 @@ export function debounced(delay, fn) {
 }
 
 export function noTrack(node) {
-    if (node.attrs && node.attrs.track) {
+    if (node.attrs?.track) {
         delete node.attrs.track
         if (!Object.keys(node.attrs).length) {
             delete node.attrs

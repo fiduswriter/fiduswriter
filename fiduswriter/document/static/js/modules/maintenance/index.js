@@ -64,10 +64,10 @@ export class DocMaintenance {
 
     fixDoc(doc) {
         const oldDoc = {
-            contents: window.JSON.parse(doc.fields.contents),
-            last_diffs: window.JSON.parse(doc.fields.last_diffs),
-            bibliography: window.JSON.parse(doc.fields.bibliography),
-            comments: window.JSON.parse(doc.fields.comments),
+            content: doc.fields.content,
+            diffs: doc.fields.diffs,
+            bibliography: doc.fields.bibliography,
+            comments: doc.fields.comments,
             title: doc.fields.title,
             version: doc.fields.version,
             id: doc.pk
@@ -112,11 +112,11 @@ export class DocMaintenance {
                 '/api/document/admin/save_doc/',
                 {
                     id: doc.id,
-                    contents: window.JSON.stringify(doc.contents),
-                    bibliography: window.JSON.stringify(doc.bibliography),
-                    comments: window.JSON.stringify(doc.comments),
+                    content: doc.content,
+                    bibliography: doc.bibliography,
+                    comments: doc.comments,
                     version: doc.version,
-                    last_diffs: window.JSON.stringify(doc.last_diffs)
+                    diffs: doc.last_diffs
                 }
             ), promises = [p1]
         if (doc.imageIds) {
@@ -157,7 +157,7 @@ export class DocMaintenance {
         postJson(
             `/api/document/admin/get_template/`, {id}
         ).then(
-            // The field 'definition' of the document template module has the same
+            // The field 'content' of the document template module has the same
             // structure as the field 'contents' of the document module.
             // Therefore we can use the same update procedure for both of them.
             // We are creating a doc from the fields of the template to upgrade it.
@@ -166,7 +166,7 @@ export class DocMaintenance {
             // used for templates.
             ({json}) => {
                 const oldDoc = {
-                    contents: window.JSON.parse(json.definition),
+                    content: json.content,
                     last_diffs: [],
                     bibliography: {},
                     comments: {},
@@ -188,7 +188,7 @@ export class DocMaintenance {
             '/api/document/admin/save_template/',
             {
                 id: doc.id,
-                definition: window.JSON.stringify(doc.contents)
+                content: doc.content
             }
         ).then(() => {
             addAlert('success', `${gettext('The document template has been updated')}: ${doc.id}`)
@@ -252,7 +252,7 @@ export class DocMaintenance {
     }
 
     saveRevision(id, zipfs) {
-        zipfs.generateAsync({type:"blob", mimeType: "application/fidus+zip"}).then(blob => {
+        zipfs.generateAsync({type: "blob", mimeType: "application/fidus+zip"}).then(blob => {
 
             post(
                 '/api/document/admin/update_revision/',

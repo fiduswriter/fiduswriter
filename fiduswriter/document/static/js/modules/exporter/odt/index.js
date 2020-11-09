@@ -3,7 +3,7 @@ import download from "downloadjs"
 import {createSlug} from "../tools/file"
 import {XmlZip} from "../tools/xml_zip"
 
-import {textContent, removeHidden, fixTables} from "../tools/doc_contents"
+import {textContent, removeHidden, fixTables} from "../tools/doc_content"
 import {OdtExporterCitations} from "./citations"
 import {OdtExporterImages} from "./images"
 import {OdtExporterRender} from "./render"
@@ -33,23 +33,22 @@ export class OdtExporter {
 
         this.pmCits = false
         this.pmBib = false
-        this.docContents = false
+        this.docContent = false
         this.docTitle = false
         this.mimeType = 'application/vnd.oasis.opendocument.text'
     }
 
 
-
     init() {
-        this.docContents = fixTables(removeHidden(this.doc.contents))
-        this.docTitle = textContent(this.docContents.content[0])
-        this.metadata = new OdtExporterMetadata(this, this.docContents)
-        this.footnotes = new OdtExporterFootnotes(this, this.docContents)
-        this.render = new OdtExporterRender(this, this.docContents)
+        this.docContent = fixTables(removeHidden(this.doc.content))
+        this.docTitle = textContent(this.docContent.content[0])
+        this.metadata = new OdtExporterMetadata(this, this.docContent)
+        this.footnotes = new OdtExporterFootnotes(this, this.docContent)
+        this.render = new OdtExporterRender(this, this.docContent)
         this.styles = new OdtExporterStyles(this)
         this.math = new OdtExporterMath(this)
-        this.images = new OdtExporterImages(this, this.imageDB, this.docContents)
-        this.citations = new OdtExporterCitations(this, this.bibDB, this.csl, this.docContents)
+        this.images = new OdtExporterImages(this, this.imageDB, this.docContent)
+        this.citations = new OdtExporterCitations(this, this.bibDB, this.csl, this.docContent)
         this.richtext = new OdtExporterRichtext(this, this.images)
 
         this.xml = new XmlZip(

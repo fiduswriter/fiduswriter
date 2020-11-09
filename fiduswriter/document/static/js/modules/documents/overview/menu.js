@@ -16,7 +16,7 @@ export const bulkMenuModel = () => ({
                     overview.mod.actions.deleteDocumentDialog(ownIds)
                 }
             },
-            disabled: overview => !overview.getSelected().length,
+            disabled: overview => !overview.getSelected().length || overview.app.isOffline(),
             order: 0
         },
         {
@@ -37,7 +37,7 @@ export const bulkMenuModel = () => ({
                     dialog.init()
                 }
             },
-            disabled: overview => !overview.getSelected().length,
+            disabled: overview => !overview.getSelected().length || overview.app.isOffline(),
             order: 1
         },
         {
@@ -49,7 +49,7 @@ export const bulkMenuModel = () => ({
                     overview.mod.actions.copyFiles(ids)
                 }
             },
-            disabled: overview => !overview.getSelected().length,
+            disabled: overview => !overview.getSelected().length || overview.app.isOffline(),
             order: 2
         },
         {
@@ -61,7 +61,7 @@ export const bulkMenuModel = () => ({
                     overview.mod.actions.downloadEpubFiles(ids)
                 }
             },
-            disabled: overview => !overview.getSelected().length,
+            disabled: overview => !overview.getSelected().length || overview.app.isOffline(),
             order: 3
         },
         {
@@ -73,7 +73,7 @@ export const bulkMenuModel = () => ({
                     overview.mod.actions.downloadHtmlFiles(ids)
                 }
             },
-            disabled: overview => !overview.getSelected().length,
+            disabled: overview => !overview.getSelected().length || overview.app.isOffline(),
             order: 4
         },
         {
@@ -85,7 +85,7 @@ export const bulkMenuModel = () => ({
                     overview.mod.actions.downloadLatexFiles(ids)
                 }
             },
-            disabled: overview => !overview.getSelected().length,
+            disabled: overview => !overview.getSelected().length || overview.app.isOffline(),
             order: 5
         },
         {
@@ -97,7 +97,7 @@ export const bulkMenuModel = () => ({
                     overview.mod.actions.downloadJATSFiles(ids)
                 }
             },
-            disabled: overview => !overview.getSelected().length,
+            disabled: overview => !overview.getSelected().length || overview.app.isOffline(),
             order: 6
         },
         {
@@ -109,7 +109,7 @@ export const bulkMenuModel = () => ({
                     overview.mod.actions.downloadNativeFiles(ids)
                 }
             },
-            disabled: overview => !overview.getSelected().length,
+            disabled: overview => !overview.getSelected().length || overview.app.isOffline(),
             order: 7
         }
     ]

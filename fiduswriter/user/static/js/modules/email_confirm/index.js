@@ -47,7 +47,7 @@ export class EmailConfirm extends PreloginPage {
                     this.app.config.user = {is_authenticated: false}
                 }
             }
-        ).catch(()=> {})
+        ).catch(() => {})
     }
 
     render() {

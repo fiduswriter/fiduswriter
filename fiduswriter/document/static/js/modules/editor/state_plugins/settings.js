@@ -1,6 +1,9 @@
 import {Plugin, PluginKey} from "prosemirror-state"
 
 import {LANGUAGES} from "../../schema/const"
+import {
+    CATS
+} from "../../schema/i18n"
 import {setDocTitle} from "../../common"
 
 const key = new PluginKey('settings')
@@ -67,6 +70,7 @@ export const settingsPlugin = function(options) {
                         const lang = LANGUAGES.find(lang => lang[0] === newValue)
                         document.querySelectorAll('.ProseMirror').forEach(el => el.dir = lang[2])
                         options.editor.docInfo.dir = lang[2]
+                        updateLanguageCSS(newValue)
                     } else {
                         settingsValid = false
                     }
@@ -110,6 +114,47 @@ export const settingsPlugin = function(options) {
 
     }
 
+    const updateLanguageCSS = function(language) {
+        let langStyleEl = document.getElementById('language-style')
+        if (!langStyleEl) {
+            langStyleEl = document.createElement('style')
+            langStyleEl.id = 'language-style'
+            document.body.appendChild(langStyleEl)
+        }
+
+        langStyleEl.innerHTML = `
+        /* Numbering in editor */
+
+        figure[data-category='figure'] figcaption::before {
+            counter-increment: cat-0;
+            content: '${CATS['figure'][language]} ' counter(cat-0);
+        }
+
+        #footnote-box-container figure[data-category='figure'] figcaption::before {
+            content: '${CATS['figure'][language]} ' counter(cat-0) 'A';
+        }
+
+        figure[data-category='photo'] figcaption::before {
+            counter-increment: cat-1;
+            content: '${CATS['photo'][language]} ' counter(cat-1);
+        }
+
+        #footnote-box-container figure[data-category='photo'] figcaption::before {
+            content: '${CATS['photo'][language]} ' counter(cat-1) 'A';
+        }
+
+        figure[data-category='table'] figcaption::before,
+        table[data-category='table'] caption::before {
+            counter-increment: cat-2;
+            content: '${CATS['table'][language]} ' counter(cat-2);
+        }
+
+        #footnote-box-container figure[data-category='table'] figcaption::before ,
+        #footnote-box-container table[data-category='table'] caption::before {
+            content: '${CATS['table'][language]} ' counter(cat-2) 'A';
+        }`
+    }
+
 
     return new Plugin({
         key,
@@ -138,11 +183,13 @@ export const settingsPlugin = function(options) {
         },
         view(view) {
             if (!updateSettings(view.state.doc.firstChild.attrs, {})) {
-                const tr = view.state.tr
-                tr.setNodeMarkup(0, false, fixSettings(view.state.doc.firstChild.attrs))
-                tr.setMeta('settings', true)
                 setTimeout(
-                    () => view.dispatch(tr),
+                    () => {
+                        const tr = view.state.tr
+                        tr.setNodeMarkup(0, false, fixSettings(view.state.doc.firstChild.attrs))
+                        tr.setMeta('settings', true)
+                        view.dispatch(tr)
+                    },
                     0
                 )
 

@@ -73,7 +73,6 @@ export const tag = {
 }
 
 
-
 export const footnote = {
     inline: true,
     group: "inline",
@@ -115,9 +114,11 @@ export const code_block = {
     parseDOM: [{
         tag: "pre",
         preserveWhitespace: "full",
-        getAttrs(dom) {return {
-            track: parseTracks(dom.dataset.track)
-        }}
+        getAttrs(dom) {
+            return {
+                track: parseTracks(dom.dataset.track)
+            }
+        }
     }],
     toDOM(node) {
         const attrs = node.attrs.track.length ? {'data-track': JSON.stringify(node.attrs.track)} : {}

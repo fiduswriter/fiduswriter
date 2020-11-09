@@ -1,9 +1,6 @@
-import {Plugin, PluginKey} from "prosemirror-state"
+import {Plugin, PluginKey, NodeSelection} from "prosemirror-state"
 import {DOMSerializer} from "prosemirror-model"
-import {FigureDialog} from "../dialogs"
-import {
-    FIG_CATS
-} from "../../schema/i18n"
+import {ContentMenu} from '../../common'
 
 const key = new PluginKey('figureMenu')
 
@@ -14,20 +11,65 @@ class FigureView {
         this.view = view
         this.getPos = getPos
         this.options = options
-
+        this.dom = document.createElement("div")
+        this.dom.classList.add('figure')
         this.serializer = DOMSerializer.fromSchema(node.type.schema)
-
-        this.dom = this.serializer.serializeNode(this.node)
+        const contentDOM = this.serializer.serializeNode(this.node)
+        contentDOM.classList.forEach(className => this.dom.classList.add(className))
+        contentDOM.classList.value = ''
+        this.dom.appendChild(contentDOM)
+        this.contentDOM = contentDOM
         this.menuButton = document.createElement("button")
         this.menuButton.classList.add('figure-menu-btn')
         this.menuButton.innerHTML = '<span class="dot-menu-icon"><i class="fa fa-ellipsis-v"></i></span>'
         this.dom.insertBefore(this.menuButton, this.dom.firstChild)
-        this.menuButton.addEventListener('click', () => {
-            const editor = this.options.editor
-            const dialog = new FigureDialog(editor)
-            dialog.init()
-        })
+    }
 
+    stopEvent(event) {
+        let stopped = false
+        if (event.type === 'mousedown') {
+            const composedPath = event.composedPath()
+            if (composedPath.includes(this.menuButton)) {
+                stopped = true
+                const tr = this.view.state.tr
+                const $pos = this.view.state.doc.resolve(this.getPos())
+                tr.setSelection(new NodeSelection($pos))
+                this.view.dispatch(tr)
+                const contentMenu = new ContentMenu({
+                    menu: this.options.editor.menu.figureMenuModel,
+                    width: 280,
+                    page: this.options.editor,
+                    menuPos: {X: parseInt(event.pageX) + 20, Y: parseInt(event.pageY) - 100},
+                    onClose: () => {
+                        this.view.focus()
+                    }
+                })
+                contentMenu.open()
+            } else if (composedPath.includes(this.dom) && !composedPath.find(el => el.matches && el.matches('figcaption'))) {
+                stopped = true
+                const tr = this.view.state.tr
+                const $pos = this.view.state.doc.resolve(this.getPos())
+                tr.setSelection(new NodeSelection($pos))
+                this.view.dispatch(tr)
+            }
+        }
+
+        return stopped
+    }
+
+
+}
+
+class FigureCaptionView {
+    constructor(node, view, getPos, options) {
+        this.node = node
+        this.view = view
+        this.getPos = getPos
+        this.options = options
+
+        this.dom = document.createElement("figcaption")
+        this.dom.innerHTML = '<span class="text"></span>'
+        this.contentDOM = this.dom.lastElementChild
     }
 }
 
@@ -41,6 +83,8 @@ export const figurePlugin = function(options) {
                     this.spec.props.nodeViews['figure'] =
                         (node, view, getPos) => new FigureView(node, view, getPos, options)
                 }
+                this.spec.props.nodeViews['figure_caption'] =
+                    (node, view, getPos) => new FigureCaptionView(node, view, getPos, options)
                 return {}
             },
             apply(tr, prev) {
@@ -49,20 +93,6 @@ export const figurePlugin = function(options) {
         },
         props: {
             nodeViews: {}
-        },
-        view(view) {
-            let userLanguage = options.editor.view.state.doc.firstChild.attrs.language
-            view.dom.querySelectorAll('*[class^="figure-cat-"]').forEach(el => el.innerHTML = FIG_CATS[el.dataset.figureCategory][userLanguage])
-            return {
-                update: (view, _prevState) => {
-                    let selector = '*[class^="figure-cat-"]:empty'
-                    if (options.editor.view.state.doc.firstChild.attrs.language !== userLanguage) {
-                        selector = '*[class^="figure-cat-"]'
-                        userLanguage = options.editor.view.state.doc.firstChild.attrs.language
-                    }
-                    view.dom.querySelectorAll(selector).forEach(el => el.innerHTML = FIG_CATS[el.dataset.figureCategory][userLanguage])
-                }
-            }
         }
     })
 }

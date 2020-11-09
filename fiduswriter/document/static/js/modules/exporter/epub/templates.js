@@ -129,7 +129,7 @@ ${
     ).join('')
 }
     </head>
-    <body${currentPart && currentPart.length ? ` class="${currentPart.toLowerCase().replace(/[^a-z]/g, '')}"` : ''}>${
+    <body class="${currentPart && currentPart.length ? `${currentPart.toLowerCase().replace(/[^a-z]/g, '')} content` : 'content'}"${currentPart && currentPart.length ? ` data-part="${escapeText(currentPart)}"` : ''} data-title="${escapeText(title)}">${
     part && part.length ?
         `<h1 class="part">${escapeText(part)}</h1>` :
         ''
@@ -148,27 +148,8 @@ ${
 </html>`
 
 
-/** A template for an epub's navigation document. */
-export const navTemplate = ({shortLang, contentItems}) =>
-    `<?xml version="1.0" encoding="UTF-8"?>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="${shortLang}" lang="${shortLang}" xmlns:epub="http://www.idpf.org/2007/ops">
-    <head>
-        <meta charset="utf-8"></meta>
-        <title>Navigation</title>
-    </head>
-    <body>
-        <nav epub:type="toc" id="toc">
-            <ol>
-${
-    contentItems.map(item => navItemTemplate({item})).join('')
-}
-            </ol>
-        </nav>
-    </body>
-</html>`
-
 /** A template for each item in an epub's navigation document. */
-export const navItemTemplate = ({item}) =>
+const navItemTemplate = ({item}) =>
     `\t\t\t\t<li><a href="${
         item.link ?
             item.link :
@@ -188,3 +169,27 @@ ${
         ''
 }
 </li>`
+
+
+/** A template for an epub's navigation document. */
+export const navTemplate = ({shortLang, contentItems, styleSheets}) =>
+    `<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="${shortLang}" lang="${shortLang}" xmlns:epub="http://www.idpf.org/2007/ops">
+    <head>
+        <meta charset="utf-8"></meta>
+        <title>Navigation</title>
+        ${
+    styleSheets.map(sheet => `<link rel="stylesheet" type="text/css" href="${sheet.filename}" />\n`
+    ).join('')
+}
+    </head>
+    <body class="navigation">
+        <nav epub:type="toc" id="toc">
+            <ol>
+${
+    contentItems.map(item => navItemTemplate({item})).join('')
+}
+            </ol>
+        </nav>
+    </body>
+</html>`

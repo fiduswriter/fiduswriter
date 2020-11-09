@@ -65,9 +65,20 @@ export class ZipFileCreator {
         return Promise.all(blobPromises).then(
             promises => {
                 promises.forEach(promise => this.zipFs.file(promise.filename, promise.blob, {binary: true, compression: 'DEFLATE'}))
-                return this.zipFs.generateAsync({type:"blob", mimeType: this.mimeType})
+                return this.zipFs.generateAsync({type: "blob", mimeType: this.mimeType})
             }
         )
+    }
+
+    convertDataURIToBlob(datauri) {
+        const byteString = atob(datauri.split(',')[1])
+        const mimeString = datauri.split(',')[0].split(':')[1].split(';')[0]
+        const ab = new ArrayBuffer(byteString.length)
+        const ia = new Uint8Array(ab)
+        for (let i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i)
+        }
+        return new Blob([ab], {type: mimeString})
     }
 
 }

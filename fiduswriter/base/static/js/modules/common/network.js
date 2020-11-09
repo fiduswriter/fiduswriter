@@ -28,7 +28,9 @@ const getCsrfToken = function() {
 
 /* from https://www.tjvantoll.com/2015/09/13/fetch-and-errors/ */
 const handleFetchErrors = function(response) {
-    if (!response.ok) { throw response }
+    if (!response.ok) {
+        throw response
+    }
     return response
 }
 
@@ -84,7 +86,9 @@ export const postBare = function(url, params = {}, csrfToken = false) {
             body.append(key, value.file, value.filename)
         } else if (Array.isArray(value)) {
             value.forEach(item => body.append(`${key}[]`, item))
-        } else if (typeof(value) === "object" && value.constructor.name !== 'File') {
+        } else if (typeof(value) === "object" && (
+            value.constructor === undefined || value.constructor.name !== 'File'
+        )) {
             body.append(key, JSON.stringify(value))
         } else {
             body.append(key, value)

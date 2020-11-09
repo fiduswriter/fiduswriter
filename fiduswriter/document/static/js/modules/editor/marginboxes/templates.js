@@ -263,10 +263,12 @@ const BLOCK_NAMES = {
     heading4: gettext('Heading 4'),
     heading5: gettext('Heading 5'),
     heading6: gettext('Heading 6'),
-    code_block: gettext('Code block')
+    code_block: gettext('Code block'),
+    ordered_list: gettext('Ordered list'),
+    bullet_list: gettext('Bullet list'),
 }
 
-const blockChangeTemplate = ({before}) => `<div class="format-change-info"><b>${gettext('Was')}:</b> ${BLOCK_NAMES[before.type]}</div>`
+const blockChangeTemplate = ({before}, node) => `<div class="format-change-info"><b>${gettext('Was')}:</b> ${BLOCK_NAMES[before.type]}${before.type === 'ordered_list' && node.type.name === 'ordered_list' ? `, ${gettext('start')}: ${before.attrs.order}` : ''}</div>`
 
 const trackTemplate = ({type, data, node, active, docInfo, filterOptions}) => {
     if (!filterOptions.track) {
@@ -287,7 +289,7 @@ const trackTemplate = ({type, data, node, active, docInfo, filterOptions}) => {
                 <div class="track-title">
                     ${interpolate(ACTIONS[nodeActionType] ? ACTIONS[nodeActionType] : ACTIONS[type], node.attrs, true)}
                 </div>
-                ${type === 'format_change' ? formatChangeTemplate(data) : type === 'block_change' ? blockChangeTemplate(data) : ''}
+                ${type === 'format_change' ? formatChangeTemplate(data) : type === 'block_change' ? blockChangeTemplate(data, node) : ''}
             </div>
             ${
     docInfo.access_rights === 'write' ?
@@ -393,7 +395,6 @@ export const marginboxFilterTemplate = ({marginBoxes, filterOptions, docInfo}) =
     }
     return filterHTML
 }
-
 
 
 /** A template to display all the margin boxes (comments, deletion/insertion notifications) */

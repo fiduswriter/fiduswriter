@@ -1,5 +1,5 @@
 import {escapeText} from "../../common"
-import {FIG_CATS} from "../../schema/i18n"
+import {CATS} from "../../schema/i18n"
 
 import {articleTemplate} from "./templates"
 
@@ -10,13 +10,14 @@ export class JATSExporterConvert {
         this.imageDB = imageDB
         this.bibDB = bibDB
         this.imageIds = []
-        this.figureCounter = {} // counters for each type of figure (figure/table/photo)
+        this.categoryCounter = {} // counters for each type of figure (figure/table/photo)
         this.affiliations = {} // affiliations of authors and editors
         this.affCounter = 0
         this.parCounter = 0
         this.headingCounter = 0
         this.currentSectionLevel = 0
         this.listCounter = 0
+        this.orderedListLengths = []
         this.footnotes = []
         this.fnCounter = 0
         this.frontMatter = {
@@ -34,12 +35,12 @@ export class JATSExporterConvert {
         this.citationCount = 0
     }
 
-    init(docContents) {
-        this.preWalkJson(docContents)
-        this.findAllCitations(docContents)
+    init(docContent) {
+        this.preWalkJson(docContent)
+        this.findAllCitations(docContent)
         return this.exporter.citations.init(this.citInfos).then(() => {
             const front = this.assembleFront()
-            const body = this.assembleBody(docContents)
+            const body = this.assembleBody(docContent)
             const back = this.assembleBack()
             const jats = articleTemplate({front, body, back})
             return {
@@ -123,7 +124,7 @@ export class JATSExporterConvert {
         }
     }
 
-    findAllCitations(docContents) {
+    findAllCitations(docContent) {
         // We need to look for citations in the same order they will be found in front + body
         // to get the formatting right.
         if (this.frontMatter.subtitle.default) {
@@ -141,7 +142,7 @@ export class JATSExporterConvert {
         Object.keys(this.frontMatter.abstract).filter(language => language !== 'default').forEach(language => {
             this.findCitations(this.frontMatter.abstract[language])
         })
-        this.findCitations(docContents)
+        this.findCitations(docContent)
     }
 
     findCitations(node) {
@@ -396,14 +397,32 @@ export class JATSExporterConvert {
             start += '<disp-quote>'
             end = '</disp-quote>' + end
             break
-        case 'ordered_list':
+        case 'ordered_list': {
             if (options.inFootnote) {
                 // only allows <p> block level elements https://jats.nlm.nih.gov/archiving/tag-library/1.2/element/fn.html
                 break
             }
-            start += `<list list-type="order" id="list-${++this.listCounter}">`
+            const continuedListEndNumber = node.attrs.order - 1
+            let lastListIndex
+            // TODO: deal with lists that have an order number other than 1 that do not continue previous lists. Currently not possible in JATS
+            if (continuedListEndNumber) {
+                lastListIndex = this.orderedListLengths.lastIndexOf(continuedListEndNumber)
+                // const lastListReverseIndex = this.orderedListLengths.slice().reverse().findIndex(length => length === continuedListEndNumber)
+                // if (lastListReverseIndex !== undefined) {
+                //     lastListIndex = this.orderedListLengths.length-lastListReverseIndex
+                // }
+            }
+            if (lastListIndex > -1) {
+                start += `<list list-type="order" id="list-${++this.listCounter}" continued-from="list-${lastListIndex}">`
+            } else {
+                start += `<list list-type="order" id="list-${++this.listCounter}">`
+            }
+            options = Object.assign({}, options)
+            options.inOrderedList = this.listCounter
+            this.orderedListLengths[options.inOrderedList] = continuedListEndNumber
             end = '</list>' + end
             break
+        }
         case 'bullet_list':
             if (options.inFootnote) {
                 // only allows <p> block level elements https://jats.nlm.nih.gov/archiving/tag-library/1.2/element/fn.html
@@ -411,11 +430,16 @@ export class JATSExporterConvert {
             }
             start += `<list list-type="bullet" id="list-${++this.listCounter}">`
             end = '</list>' + end
+            options = Object.assign({}, options)
+            delete options.inOrderedList
             break
         case 'list_item':
             if (options.inFootnote) {
                 // only allows <p> block level elements https://jats.nlm.nih.gov/archiving/tag-library/1.2/element/fn.html
                 break
+            }
+            if (options.inOrderedList !== undefined) {
+                this.orderedListLengths[options.inOrderedList] += 1
             }
             start += '<list-item>'
             end = '</list-item>' + end
@@ -498,15 +522,16 @@ export class JATSExporterConvert {
                 break
             }
             let imageFilename, copyright
-            if (node.attrs.image) {
-                this.imageIds.push(node.attrs.image)
-                const imageDBEntry = this.imageDB.db[node.attrs.image],
+            const image = node.content.find(node => node.type === 'image')?.attrs.image || false
+            if (image !== false) {
+                this.imageIds.push(image)
+                const imageDBEntry = this.imageDB.db[image],
                     filePathName = imageDBEntry.image
                 copyright = imageDBEntry.copyright
                 imageFilename = filePathName.split('/').pop()
             }
             if (
-                node.attrs.figureCategory === 'none' &&
+                node.attrs.category === 'none' &&
                     imageFilename &&
                     !node.attrs.caption.length &&
                     (!copyright || !copyright.holder)
@@ -516,24 +541,26 @@ export class JATSExporterConvert {
                 start += `<fig id="${node.attrs.id}">`
                 end = '</fig>' + end
 
-                const figureType = node.attrs.figureCategory
-                if (figureType !== 'none') {
-                    if (!this.figureCounter[figureType]) {
-                        this.figureCounter[figureType] = 0
+                const category = node.attrs.category
+                if (category !== 'none') {
+                    if (!this.categoryCounter[category]) {
+                        this.categoryCounter[category] = 0
                     }
-                    const figCount = ++this.figureCounter[figureType]
-                    const figLabel = `${FIG_CATS[figureType][this.settings.language]} ${figCount}`
-                    start += `<label>${escapeText(figLabel)}</label>`
+                    const catCount = ++this.categoryCounter[category]
+                    const catLabel = `${CATS[category][this.settings.language]} ${catCount}`
+                    start += `<label>${escapeText(catLabel)}</label>`
                 }
-                if (node.attrs.caption.length) {
-                    start += `<caption><p>${escapeText(node.attrs.caption)}</p></caption>`
+                const caption = node.content.find(node => node.type === 'figure_caption')?.content || []
+                if (caption.length) {
+                    start += `<caption><p>${caption.map(node => this.walkJson(node)).join('')}</p></caption>`
                 }
-                if (node.attrs.equation) {
+                const equation = node.content.find(node => node.type === 'figure_equation')?.attrs.equation
+                if (equation) {
                     start += '<disp-formula>'
                     end = '</disp-formula>' + end
-                    content = `<tex-math><![CDATA[${node.attrs.equation}]]></tex-math>`
+                    content = `<tex-math><![CDATA[${equation}]]></tex-math>`
                 } else {
-                    if (copyright && copyright.holder) {
+                    if (copyright?.holder) {
                         start += '<permissions>'
                         const year = copyright.year ? copyright.year : new Date().getFullYear()
                         start += `<copyright-year>${year}</copyright-year>`
@@ -546,20 +573,53 @@ export class JATSExporterConvert {
                         ).join('')
                         start += '</permissions>'
                     }
-                    content += `<graphic position="anchor" xlink:href="${imageFilename}"/>`
+                    if (imageFilename) {
+                        content += `<graphic position="anchor" xlink:href="${imageFilename}"/>`
+                    }
                 }
             }
             break
         }
-        case 'table':
+        case 'figure_caption':
+            // We are already dealing with this in the figure. Prevent content from being added a second time.
+            return ''
+        case 'figure_equation':
+            // We are already dealing with this in the figure.
+            break
+        case 'image':
+            // We are already dealing with this in the figure.
+            break
+        case 'table': {
             // Note: We ignore right/left/center aligned and table layout
             if (options.inFootnote) {
                 // only allows <p> block level elements https://jats.nlm.nih.gov/archiving/tag-library/1.2/element/fn.html
                 break
             }
-            start += `<table-wrap><table width="${node.attrs.width}%"><tbody>`
-            end = `</tbody></table></table-wrap>` + end
+            start += '<table-wrap>'
+            end = '</table-wrap>' + end
+            const category = node.attrs.category
+            if (category !== 'none') {
+                if (!this.categoryCounter[category]) {
+                    this.categoryCounter[category] = 0
+                }
+                const catCount = ++this.categoryCounter[category]
+                const catLabel = `${CATS[category][this.settings.language]} ${catCount}`
+                start += `<label>${escapeText(catLabel)}</label>`
+            }
+            const caption = node.attrs.caption ? node.content[0].content : []
+            if (caption.length) {
+                start += `<caption><p>${caption.map(node => this.walkJson(node)).join('')}</p></caption>`
+            }
+            start += `<table width="${node.attrs.width}%"><tbody>`
+            end = `</tbody></table>` + end
             break
+        }
+        case 'table_body':
+            // Pass through to table.
+            break
+        case 'table_caption':
+            // We already deal with this in 'table'.
+            return ''
         case 'table_row':
             start += '<tr>'
             end = '</tr>' + end
@@ -607,8 +667,8 @@ export class JATSExporterConvert {
         return returnValue
     }
 
-    assembleBody(docContents) {
-        return `<body id="body">${this.walkJson(docContents) + this.closeSections(0)}</body>`
+    assembleBody(docContent) {
+        return `<body id="body">${this.walkJson(docContent) + this.closeSections(0)}</body>`
     }
 
     assembleBack() {

@@ -2,7 +2,7 @@
  We use the DOM import for ProseMirror as the JSON we store in the database is really jsonized HTML.
 */
 import deepEqual from "fast-deep-equal"
-import {randomHeadingId, randomFigureId} from "./common"
+import {randomHeadingId, randomFigureId, randomListId, randomTableId} from "./common"
 
 export const getSettings = function(pmArticle) {
     const settings = JSON.parse(JSON.stringify(pmArticle.attrs))
@@ -35,6 +35,7 @@ export const updateDoc = function(doc, docVersion, bibliography = false) {
         doc = convertDocV23(doc)
         doc = convertDocV30(doc)
         doc = convertDocV31(doc)
+        doc = convertDocV32(doc)
         break
     case 1.1: // Fidus Writer 3.1
         doc = convertDocV11(doc)
@@ -46,6 +47,7 @@ export const updateDoc = function(doc, docVersion, bibliography = false) {
         doc = convertDocV23(doc)
         doc = convertDocV30(doc)
         doc = convertDocV31(doc)
+        doc = convertDocV32(doc)
         break
     case 1.2: // Fidus Writer 3.2
         doc = convertDocV12(doc)
@@ -56,6 +58,7 @@ export const updateDoc = function(doc, docVersion, bibliography = false) {
         doc = convertDocV23(doc)
         doc = convertDocV30(doc)
         doc = convertDocV31(doc)
+        doc = convertDocV32(doc)
         break
     case 1.3: // Fidus Writer 3.3 prerelease
         doc = convertDocV13(doc, bibliography)
@@ -65,6 +68,7 @@ export const updateDoc = function(doc, docVersion, bibliography = false) {
         doc = convertDocV23(doc)
         doc = convertDocV30(doc)
         doc = convertDocV31(doc)
+        doc = convertDocV32(doc)
         break
     case 2.0: // Fidus Writer 3.3
         doc = convertDocV20(doc)
@@ -73,6 +77,7 @@ export const updateDoc = function(doc, docVersion, bibliography = false) {
         doc = convertDocV23(doc)
         doc = convertDocV30(doc)
         doc = convertDocV31(doc)
+        doc = convertDocV32(doc)
         break
     case 2.1: // Fidus Writer 3.4
         doc = convertDocV21(doc)
@@ -80,26 +85,34 @@ export const updateDoc = function(doc, docVersion, bibliography = false) {
         doc = convertDocV23(doc)
         doc = convertDocV30(doc)
         doc = convertDocV31(doc)
+        doc = convertDocV32(doc)
         break
     case 2.2: // Fidus Writer 3.5.7
         doc = convertDocV22(doc)
         doc = convertDocV23(doc)
         doc = convertDocV30(doc)
         doc = convertDocV31(doc)
+        doc = convertDocV32(doc)
         break
     case 2.3: // Fidus Writer 3.5.10
         doc = convertDocV23(doc)
         doc = convertDocV30(doc)
         doc = convertDocV31(doc)
+        doc = convertDocV32(doc)
         break
     case 3.0: // Fidus Writer 3.6
         doc = convertDocV30(doc)
         doc = convertDocV31(doc)
+        doc = convertDocV32(doc)
         break
     case 3.1: // Fidus Writer 3.7
         doc = convertDocV31(doc)
+        doc = convertDocV32(doc)
         break
     case 3.2: // Fidus Writer 3.8
+        doc = convertDocV32(doc)
+        break
+    case 3.3: // Fidus Writer 3.9
         break
     }
     return doc
@@ -107,7 +120,7 @@ export const updateDoc = function(doc, docVersion, bibliography = false) {
 
 const convertDocV1 = function(doc) {
     const returnDoc = JSON.parse(JSON.stringify(doc))
-    convertNodeV1(returnDoc.contents)
+    convertNodeV1(returnDoc.content)
     return returnDoc
 }
 
@@ -120,10 +133,10 @@ const convertNodeV1 = function(node) {
         ids = node.attrs.bibEntry ? node.attrs.bibEntry.split(',') : []
         references = ids.map((id, index) => {
             const returnObj = {id: parseInt(id)}
-            if (prefixes[index] && prefixes[index] !== '') {
+            if (prefixes[index] !== '') {
                 returnObj['prefix'] = prefixes[index]
             }
-            if (locators[index] && locators[index] !== '') {
+            if (locators[index] !== '') {
                 returnObj['locator'] = locators[index]
             }
             return returnObj
@@ -134,7 +147,7 @@ const convertNodeV1 = function(node) {
         }
         break
     case 'footnote':
-        if (node.attrs && node.attrs.footnote) {
+        if (node.attrs?.footnote) {
             node.attrs.footnote.forEach(childNode => {
                 convertNodeV1(childNode)
             })
@@ -150,7 +163,7 @@ const convertNodeV1 = function(node) {
 
 const convertDocV11 = function(doc) {
     const returnDoc = JSON.parse(JSON.stringify(doc))
-    convertNodeV11(returnDoc.contents)
+    convertNodeV11(returnDoc.content)
     return returnDoc
 }
 
@@ -175,7 +188,7 @@ const convertNodeV11 = function(node, ids = []) {
 
 const convertDocV12 = function(doc) {
     const returnDoc = JSON.parse(JSON.stringify(doc))
-    convertNodeV12(returnDoc.contents)
+    convertNodeV12(returnDoc.content)
     return returnDoc
 }
 
@@ -204,7 +217,7 @@ const convertDocV13 = function(doc, bibliography) {
     delete returnDoc.metadata
     returnDoc.bibliography = {}
     returnDoc.imageIds = []
-    convertNodeV13(returnDoc.contents, returnDoc.bibliography, bibliography, returnDoc.imageIds)
+    convertNodeV13(returnDoc.content, returnDoc.bibliography, bibliography, returnDoc.imageIds)
     return returnDoc
 }
 
@@ -244,13 +257,13 @@ const convertNodeV13 = function(node, shrunkBib, fullBib, imageIds) {
             let item = fullBib[ref.id]
             if (!item) {
                 item = {
-                    fields: {"title":[{"type":"text", "text":"Deleted"}]},
+                    fields: {"title": [{"type": "text", "text": "Deleted"}]},
                     bib_type: "misc",
                     entry_key: "FidusWriter"
                 }
             }
             item = Object.assign({}, item)
-            delete item.entry_cat
+            delete item.cats
             shrunkBib[ref.id] = item
         })
         break
@@ -297,8 +310,8 @@ const convertDocV20 = function(doc) {
     delete(returnDoc.revisions)
     delete(returnDoc.rights)
     delete(returnDoc.updated)
-    if (returnDoc.contents.attrs) {
-        returnDoc.contents.attrs.tracked = false
+    if (returnDoc.content.attrs) {
+        returnDoc.content.attrs.tracked = false
     }
     Object.values(returnDoc.comments).forEach(comment => {
         comment.username = comment.userName
@@ -329,8 +342,8 @@ const convertNodeV21 = function(node) {
 
 const convertDocV21 = function(doc) {
     const returnDoc = JSON.parse(JSON.stringify(doc))
-    convertNodeV21(returnDoc.contents)
-    Object.entries(returnDoc.comments).forEach(([commentId, comment]) => {
+    convertNodeV21(returnDoc.content)
+    Object.entries(returnDoc.comment).forEach(([commentId, comment]) => {
         delete(comment.id)
         comment.assignedUser = false
         comment.assignedUsername = false
@@ -379,8 +392,8 @@ const convertNodeV22 = function(node, imageIds) {
 const convertDocV22 = function(doc) {
     const returnDoc = JSON.parse(JSON.stringify(doc))
     returnDoc.imageIds = []
-    convertNodeV22(returnDoc.contents, returnDoc.imageIds)
-    Object.entries(returnDoc.comments).forEach(([_commentId, comment]) => {
+    convertNodeV22(returnDoc.content, returnDoc.imageIds)
+    Object.entries(returnDoc.comment).forEach(([_commentId, comment]) => {
         comment.comment.forEach(
             commentNode => convertNodeV22(commentNode, returnDoc.imageIds)
         )
@@ -520,16 +533,16 @@ const convertNodeV23 = function(node) {
 
 const convertDocV23 = function(doc) {
     const returnDoc = JSON.parse(JSON.stringify(doc))
-    convertNodeV23(returnDoc.contents)
+    convertNodeV23(returnDoc.content)
     returnDoc.settings = Object.assign({}, returnDoc.settings, v23ExtraAttrs)
     return returnDoc
 }
 
 const convertNodeV30 = function(node) {
-    if (node.attrs && node.attrs.marks) {
+    if (node.attrs?.marks) {
         node.attrs.marks = node.attrs.marks.filter(mark => mark !== 'anchor')
     }
-    if (node.attrs && node.attrs.footnote_marks) {
+    if (node.attrs?.footnote_marks) {
         node.attrs.footnote_marks = node.attrs.footnote_marks.filter(mark => mark !== 'anchor')
     }
     let attrs
@@ -826,7 +839,7 @@ const convertNodeV30 = function(node) {
 
 const convertDocV30 = function(doc) {
     const returnDoc = JSON.parse(JSON.stringify(doc))
-    convertNodeV30(returnDoc.contents)
+    convertNodeV30(returnDoc.content)
     return returnDoc
 }
 
@@ -835,5 +848,92 @@ const convertDocV31 = function(doc) {
     // users don't try to open file in a previous FW file. That won't work as
     // additional syntax has been added (copyright + cross references).
     const returnDoc = JSON.parse(JSON.stringify(doc))
+    return returnDoc
+}
+
+const convertNodeV32 = function(node, ids = []) {
+    let blockId, attrs
+    switch (node.type) {
+    case 'table':
+        attrs = node.attrs || {}
+        blockId = attrs.id
+        while (!blockId || ids.includes(blockId)) {
+            blockId = randomTableId()
+        }
+        attrs.id = blockId
+        attrs.caption = false
+        node.attrs = attrs
+        ids.push(blockId)
+        node.content = [
+            {type: 'table_caption'},
+            {
+                type: 'table_body',
+                content: node.content
+            }
+        ]
+        break
+    case 'bullet_list':
+    case 'ordered_list':
+        attrs = node.attrs || {}
+        blockId = attrs.id
+        while (!blockId || ids.includes(blockId)) {
+            blockId = randomListId()
+        }
+        attrs.id = blockId
+        node.attrs = attrs
+        ids.push(blockId)
+        break
+    case 'figure': {
+        attrs = node.attrs || {}
+        if (attrs.figureCategory) {
+            attrs.category = attrs.figureCategory
+            delete attrs.figureCategory
+        }
+        node.content = []
+        if (attrs.image) {
+            node.content.push({type: 'image', attrs: {image: attrs.image}})
+        } else {
+            node.content.push({type: 'figure_equation', attrs: {equation: attrs.equation}})
+        }
+        delete attrs.image
+        delete attrs.equation
+
+        const caption = {type: 'figure_caption'}
+        if (attrs.caption) {
+            if (attrs.caption.length) {
+                caption.content = [{type: 'text', text: attrs.caption}]
+                attrs.caption = true
+            } else {
+                attrs.caption = false
+            }
+        } else {
+            attrs.caption = false
+        }
+        if (attrs.category === 'table') {
+            node.content.unshift(caption)
+        } else {
+            node.content.push(caption)
+        }
+        node.attrs = attrs
+        break
+    }
+    case 'footnote':
+        if (node.attrs?.footnote) {
+            node.attrs.footnote.forEach(childNode => {
+                convertNodeV32(childNode, ids)
+            })
+        }
+        break
+    }
+    if (node.content) {
+        node.content.forEach(childNode => {
+            convertNodeV32(childNode, ids)
+        })
+    }
+}
+
+const convertDocV32 = function(doc) {
+    const returnDoc = JSON.parse(JSON.stringify(doc))
+    convertNodeV32(returnDoc.content)
     return returnDoc
 }

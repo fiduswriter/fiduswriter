@@ -19,7 +19,7 @@ export class TitleFieldForm {
                 schema: titleSchema,
                 doc: titleSchema.nodeFromJSON({
                     type: 'doc',
-                    content:[{
+                    content: [{
                         type: 'literal',
                         content: this.initialValue
                     }]

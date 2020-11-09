@@ -1,18 +1,23 @@
 import {importBibFileTemplate} from "./templates"
-import {activateWait, deactivateWait, Dialog} from "../../common"
+import {activateWait, deactivateWait, Dialog, addAlert} from "../../common"
 /** First step of the BibTeX file import. Creates a dialog box to specify upload file.
  */
 
 
 export class BibLatexFileImportDialog {
 
-    constructor(bibDB, addToListCall) {
+    constructor(bibDB, addToListCall, app) {
         this.bibDB = bibDB
         this.addToListCall = addToListCall
         this.tmpDB = false
+        this.app = app
     }
 
     init() {
+        if (this.app.isOffline()) {
+            addAlert('info', gettext('You are currently offline. Please try again when you are back online.'))
+            return
+        }
         const buttons = [
             {
                 text: gettext('Import'),
@@ -24,6 +29,11 @@ export class BibLatexFileImportDialog {
                     }
                     bibFile = bibFile[0]
                     if (10485760 < bibFile.size) {
+                        return false
+                    }
+                    if (this.app.isOffline()) {
+                        addAlert('info', gettext('You are currently offline. Please try again when you are back online.'))
+                        dialog.close()
                         return false
                     }
                     activateWait()
@@ -66,7 +76,6 @@ export class BibLatexFileImportDialog {
             () => document.getElementById('bib-uploader').click()
         )
     }
-
 
 
 }

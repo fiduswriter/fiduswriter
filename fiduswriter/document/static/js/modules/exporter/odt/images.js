@@ -1,11 +1,11 @@
 import {get} from "../../common"
-import {descendantNodes} from "../tools/doc_contents"
+import {descendantNodes} from "../tools/doc_content"
 
 export class OdtExporterImages {
-    constructor(exporter, imageDB, docContents) {
+    constructor(exporter, imageDB, docContent) {
         this.exporter = exporter
         this.imageDB = imageDB
-        this.docContents = docContents
+        this.docContent = docContent
         this.imgIdTranslation = {}
         this.manifestXml = false
     }
@@ -50,9 +50,9 @@ export class OdtExporterImages {
     exportImages() {
         const usedImgs = []
 
-        descendantNodes(this.docContents).forEach(
+        descendantNodes(this.docContent).forEach(
             node => {
-                if (node.type === 'figure' && node.attrs.image !== false) {
+                if (node.type === 'image' && node.attrs.image !== false) {
                     if (!(node.attrs.image in usedImgs)) {
                         usedImgs.push(node.attrs.image)
                     }

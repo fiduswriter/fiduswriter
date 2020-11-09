@@ -58,7 +58,7 @@ def biblist(request):
                     'entry_key',
                     'entry_owner',
                     'bib_type',
-                    'entry_cat',
+                    'cats',
                     'fields'
                 )
             )
@@ -91,7 +91,7 @@ def save(request):
                 'entry_owner_id': request.user.id,
                 'entry_key': bib['entry_key'][-64:],
                 'bib_type': bib['bib_type'],
-                'entry_cat': bib['entry_cat'],
+                'cats': bib['cats'],
                 'fields': bib['fields']
             }
             similar = Entry.objects.filter(**inserting_obj).first()
@@ -106,7 +106,7 @@ def save(request):
             the_entry = Entry.objects.get(id=b_id)
             the_entry.entry_key = bib['entry_key'][-64:]
             the_entry.bib_type = bib['bib_type']
-            the_entry.entry_cat = bib['entry_cat']
+            the_entry.cats = bib['cats']
             the_entry.fields = bib['fields']
             the_entry.save()
             response['id_translations'].append([b_id, the_entry.id])

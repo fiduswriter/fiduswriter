@@ -246,11 +246,20 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         button.click()
 
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "caption"))
-        ).send_keys('Figure')
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, "#figure-dialog span.math-field")
+            )
+        )
 
         # click on 'Insert image' button
-        self.driver.find_element_by_id('insert-figure-image').click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.XPATH,
+                    '//*[normalize-space()="Insert image"]'
+                )
+            )
+        ).click()
 
         upload_button = WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
@@ -325,6 +334,15 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
 
         # click on 'Insert' button
         self.driver.find_element_by_css_selector("button.fw-dark").click()
+
+        caption = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, "div.article-body figure figcaption")
+            )
+        )
+        caption.click()
+        caption.send_keys("Figure")
+
         ActionChains(self.driver).send_keys(
             Keys.RIGHT
         ).perform()
@@ -355,6 +373,38 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(
             By.CSS_SELECTOR,
             "tr:nth-child(2) > td:nth-child(2)").send_keys('four')
+        # Add table caption
+        self.driver.find_element(
+            By.CSS_SELECTOR, "div.table-100 > button").click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "body > div.ui-content_menu > div > div > ul > li:nth-child(16)"
+        ).click()
+        self.driver.find_element_by_css_selector(
+            "div.table-category"
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Table"]'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            "div.table-caption"
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Enable"]'
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "button.fw-dark"
+        ).click()
+        caption = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, "div.article-body table caption")
+            )
+        )
+
+        caption.click()
+
+        caption.send_keys("Table Caption")
         # Document with many features has been created let's see if we can
         # export it from the editor.
 

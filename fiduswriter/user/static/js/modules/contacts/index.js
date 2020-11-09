@@ -12,9 +12,9 @@ export class ContactsOverview {
     }
 
     init() {
-        whenReady().then(() => {
+        return whenReady().then(() => {
             this.render()
-            const smenu = new SiteMenu("") // Nothing highlighted.
+            const smenu = new SiteMenu(this.app, "") // Nothing highlighted.
             smenu.init()
             this.menu = new OverviewMenuView(this, menuModel)
             this.menu.init()
@@ -55,17 +55,32 @@ export class ContactsOverview {
     }
 
     getList() {
-
-        postJson('/api/user/team/list/').then(
+        if (this.app.isOffline()) {
+            return this.showCached()
+        }
+        return postJson('/api/user/team/list/').then(
             ({json}) => {
+                // Update data in the indexed DB
+                this.app.indexedDB.clearData("user_contacts")
+                this.app.indexedDB.insertData("user_contacts", json.team_members)
                 this.dom.querySelector('#team-table tbody').innerHTML += teammemberTemplate({members: json.team_members})
             }
         ).catch(
             error => {
-                addAlert('error', gettext('Could not obtain contacts list'))
-                throw (error)
+                if (this.app.isOffline()) {
+                    return this.showCached()
+                } else {
+                    addAlert('error', gettext('Could not obtain contacts list'))
+                    throw (error)
+                }
             }
         )
+    }
+
+    showCached() {
+        return this.app.indexedDB.readAllData("user_contacts").then(response => {
+            this.dom.querySelector('#team-table tbody').innerHTML += teammemberTemplate({members: response})
+        })
     }
 
     bind() {

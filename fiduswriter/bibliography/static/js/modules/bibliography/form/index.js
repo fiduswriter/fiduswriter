@@ -2,7 +2,7 @@ import {BibFieldTypes, BibTypes} from "biblatex-csl-converter"
 import {BibFieldTitles, BibTypeTitles, BibFieldHelp} from "./strings"
 import {bibDialog} from "./templates"
 import {addAlert, noSpaceTmp, Dialog} from "../../common"
-import {EntryCatForm} from "./entry_cat"
+import {CatsForm} from "./cats"
 import {DateFieldForm} from "./fields/date"
 import {LiteralFieldForm} from "./fields/literal"
 import {LiteralLongFieldForm} from "./fields/literal_long"
@@ -34,14 +34,20 @@ const FIELD_FORMS = {
 }
 
 export class BibEntryForm {
-    constructor(bibDB, itemId = false) {
+    constructor(bibDB, app = false, itemId = false) {
         this.bibDB = bibDB
         this.itemId = itemId
+        this.app = app
         this.fields = {}
         this.currentValues = {}
     }
 
     init() {
+        if (this.app && this.app.isOffline()) {
+            // Diable the editing of main user bibliography , since Document bibliography is stored in Editor/Document.
+            addAlert('info', gettext('You are currently offline. Please try again when you are back online.'))
+            return Promise.resolve()
+        }
         if (this.itemId !== false) {
             this.dialogHeader = gettext('Edit Source')
             const bibEntry = this.bibDB.db[this.itemId]
@@ -50,7 +56,7 @@ export class BibEntryForm {
             this.dialogHeader = gettext('Register New Source')
             this.currentValues = {
                 bib_type: false,
-                entry_cat: [],
+                cats: [],
                 entry_key: 'FidusWriter',
                 fields: {}
             }
@@ -180,9 +186,9 @@ export class BibEntryForm {
             BibTypes[this.currentValues.bib_type].optional.forEach(fieldName => {
                 this.addField(fieldName, optFields)
             })
-            const entryCatField = document.getElementById('categories-field')
-            this.entryCatForm = new EntryCatForm(entryCatField, this.currentValues.entry_cat, this.bibDB.cats)
-            this.entryCatForm.init()
+            const catsField = document.getElementById('categories-field')
+            this.catsForm = new CatsForm(catsField, this.currentValues.cats, this.bibDB.cats)
+            this.catsForm.init()
 
             if (!this.bibDB.cats.length) {
                 // There are no ctaegories to select from, so remove the categories tab.
@@ -199,7 +205,7 @@ export class BibEntryForm {
         // user still wants them.
         const formValue = this.value
         Object.assign(this.currentValues.fields, formValue.fields)
-        this.currentValues.entry_cat = formValue.entry_cat
+        this.currentValues.cats = formValue.cats
         this.currentValues.bib_type = formValue.bib_type
         // Reset fields and close dialog.
         this.fields = {}
@@ -227,11 +233,11 @@ export class BibEntryForm {
     get value() {
         const returnObj = {
             bib_type: document.querySelector('#select-bibtype').value,
-            entry_cat: this.entryCatForm ? this.entryCatForm.value : [],
+            cats: this.catsForm ? this.catsForm.value : [],
             entry_key: this.currentValues.entry_key, // is never updated.
             fields: {}
         }
-        Object.keys(this.fields).forEach(fieldName=>{
+        Object.keys(this.fields).forEach(fieldName => {
             const fieldValue = this.fields[fieldName].value
             if (fieldValue !== false) {
                 returnObj['fields'][fieldName] = fieldValue
@@ -261,7 +267,7 @@ export class BibEntryForm {
         if (!this.currentValues.bib_type) {
             return false
         }
-        Object.keys(this.fields).forEach(fieldName=>{
+        Object.keys(this.fields).forEach(fieldName => {
             if (this.fields[fieldName].check() !== true) {
                 passed = false
             }

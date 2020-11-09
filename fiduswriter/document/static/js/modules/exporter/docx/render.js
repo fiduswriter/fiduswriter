@@ -1,11 +1,11 @@
-import {textContent} from "../tools/doc_contents"
+import {textContent} from "../tools/doc_content"
 import {escapeText} from "../../common"
 import {BIBLIOGRAPHY_HEADERS} from "../../schema/i18n"
 
 export class DocxExporterRender {
-    constructor(exporter, docContents) {
+    constructor(exporter, docContent) {
         this.exporter = exporter
-        this.docContents = docContents
+        this.docContent = docContent
         this.filePath = "word/document.xml"
         this.xml = false
     }
@@ -18,7 +18,7 @@ export class DocxExporterRender {
 
     // Define the tags that are to be looked for in the document
     getTagData(pmBib) {
-        this.tags = this.docContents.content.map(node => {
+        this.tags = this.docContent.content.map(node => {
             const tag = {}
             switch (node.type) {
             case 'title':
@@ -86,13 +86,13 @@ export class DocxExporterRender {
             title: '@bibliography', // The '@' triggers handling as block
             content: pmBib ?
                 [{type: 'bibliography_heading', content: [{type: 'text', text: bibliographyHeader}]}].concat(pmBib.content) :
-                [{type: 'paragraph', content: [{type:'text', text: ' '}]}]
+                [{type: 'paragraph', content: [{type: 'text', text: ' '}]}]
         })
         this.tags.push({
             title: '@copyright', // The '@' triggers handling as block
             content: settings.copyright && settings.copyright.holder ?
                 [{type: 'paragraph', content: [{type: 'text', text: `© ${settings.copyright.year ? settings.copyright.year : new Date().getFullYear()} ${settings.copyright.holder}`}]}] :
-                [{type: 'paragraph', content: [{type:'text', text: ' '}]}]
+                [{type: 'paragraph', content: [{type: 'text', text: ' '}]}]
         })
         this.tags.push({
             title: '@licenses', // The '@' triggers handling as block
@@ -103,7 +103,7 @@ export class DocxExporterRender {
                         {type: 'text', text: license.start ? ` (${license.start})` : ''}
                     ]})
                 ) :
-                [{type: 'paragraph', content: [{type:'text', text: ' '}]}]
+                [{type: 'paragraph', content: [{type: 'text', text: ' '}]}]
         })
 
     }

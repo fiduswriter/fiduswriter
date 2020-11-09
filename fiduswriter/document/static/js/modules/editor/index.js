@@ -4,6 +4,7 @@ import {
     WebSocketConnector,
     postJson,
     activateWait,
+    Dialog,
     showSystemMessage
 } from "../common"
 import {
@@ -71,11 +72,13 @@ import {
 } from './navigator'
 import {
     headerbarModel,
-    toolbarModel,
-    tableMenuModel,
     imageMenuModel,
     navigatorFilterModel,
-    selectionMenuModel
+    orderedListMenuModel,
+    selectionMenuModel,
+    tableMenuModel,
+    figureMenuModel,
+    toolbarModel
 } from "./menus"
 import {
     ModMarginboxes
@@ -101,10 +104,11 @@ import {
     tagInputPlugin,
     linksPlugin,
     marginboxesPlugin,
+    orderedListMenuPlugin,
     placeholdersPlugin,
     selectionMenuPlugin,
     settingsPlugin,
-    tableMenuPlugin,
+    tablePlugin,
     figurePlugin,
     tocRenderPlugin,
     toolbarPlugin,
@@ -115,12 +119,16 @@ import {
     buildEditorKeymap
 } from "./keymap"
 import {
+    ExportFidusFile
+} from "../exporter/native/file"
+import {
     imageEditModel
 } from "../images/edit_dialog/model"
 
 export const COMMENT_ONLY_ROLES = ['review', 'comment']
 export const READ_ONLY_ROLES = ['read', 'read-without-comments']
 export const REVIEW_ROLES = ['review']
+export const WRITE_ROLES = ['write', 'write-tracked']
 
 export class Editor {
     // A class that contains everything that happens on the editor page.
@@ -157,12 +165,14 @@ export class Editor {
 
         this.menu = {
             headerbarModel: headerbarModel(),
-            toolbarModel: toolbarModel(),
-            tableMenuModel: tableMenuModel(),
             imageMenuModel: imageMenuModel(),
             navigatorFilterModel: navigatorFilterModel(),
+            orderedListMenuModel: orderedListMenuModel(),
             selectionMenuModel: selectionMenuModel(),
-            imageEditModel:imageEditModel(),
+            imageEditModel: imageEditModel(),
+            tableMenuModel: tableMenuModel(),
+            figureMenuModel: figureMenuModel(),
+            toolbarModel: toolbarModel()
         }
         this.client_id = Math.floor(Math.random() * 0xFFFFFFFF)
         this.clientTimeAdjustment = 0
@@ -194,10 +204,11 @@ export class Editor {
             [settingsPlugin, () => ({editor: this})],
             [documentTemplatePlugin, () => ({editor: this})],
             [trackPlugin, () => ({editor: this})],
-            [tableMenuPlugin, () => ({editor: this})],
+            [tablePlugin, () => ({editor: this})],
+            [orderedListMenuPlugin, () => ({editor: this})],
             [figurePlugin, () => ({editor: this})],
             [tocRenderPlugin, () => ({editor: this})],
-            [searchPlugin],
+            [searchPlugin]
         ]
     }
 
@@ -259,6 +270,9 @@ export class Editor {
                     return message
                 },
                 resubScribed: () => {
+                    if (sendableSteps(this.mod.footnotes.fnEditor.view.state)) {
+                        this.mod.collab.doc.footnoteRender = true
+                    }
                     this.mod.footnotes.fnEditor.renderAllFootnotes()
                     this.mod.collab.doc.checkVersion()
                 },
@@ -309,7 +323,7 @@ export class Editor {
                             this.mod.collab.doc.checkVersion()
                             return
                         }
-                        this.mod.collab.doc.receiveFromCollaborators(data)
+                        this.mod.collab.doc.receiveDiff(data)
                         break
                     case 'confirm_diff':
                         this.mod.collab.doc.confirmDiff(data["rid"])
@@ -323,12 +337,47 @@ export class Editor {
                     default:
                         break
                     }
+                },
+                failedAuth: () => {
+                    if (this.view.state.plugins.length && sendableSteps(this.view.state) && this.ws.connectionCount > 0) {
+                        this.ws.online = false // To avoid Websocket trying to reconnect.
+                        new ExportFidusFile(
+                            this.getDoc(),
+                            this.mod.db.bibDB,
+                            this.mod.db.imageDB
+                        )
+                        const sessionDialog = new Dialog({
+                            title: gettext('Session Expired'),
+                            id: "session_expiration_dialog",
+                            body: gettext('Your session expired while you were offline so we cannot save your work to the server and we download it to your computer instead. Please consider importing it into a new document.'),
+                            buttons: [{
+                                text: gettext('Proceed to Login page'),
+                                classes: 'fw-dark',
+                                click: () => {
+                                    window.location.href = '/'
+                                }
+                            }],
+                            canClose: false
+                        })
+                        sessionDialog.open()
+                    } else {
+                        window.location.href = '/'
+                    }
                 }
-
             })
             this.render()
             activateWait(true)
             this.initEditor()
+
+            this.ws.ws.addEventListener('close', () => {
+                // Listen to close event and update the headerbar and toolbar view.
+                if (this.menu.toolbarViews) {
+                    this.menu.toolbarViews.forEach(view => view.update())
+                }
+                if (this.menu.headerView) {
+                    this.menu.headerView.update()
+                }
+            })
         })
     }
 
@@ -399,6 +448,13 @@ export class Editor {
         this.menu.toolbarViews.forEach(view => view.onResize())
     }
 
+    onBeforeUnload() {
+        if (this.app.isOffline()) {
+            showSystemMessage(gettext("Changes you made to the document since going offline will be lost, if you choose to close/refresh the tab or close the browser."))
+            return true
+        }
+    }
+
     initEditor() {
         let setFocus = false
         this.view = new EditorView(this.dom.querySelector('#document-editable'), {
@@ -449,6 +505,7 @@ export class Editor {
         this.mod.navigator.init()
         this.activateFidusPlugins()
         this.ws.init()
+
     }
 
     activateFidusPlugins() {
@@ -466,9 +523,11 @@ export class Editor {
     // Collect all components of the current doc. Needed for saving and export
     // filters
     getDoc(options = {}) {
+        const doc = this.app.isOffline() ? this.view.docView.node : this.docInfo.confirmedDoc
         const pmArticle = options.changes === 'acceptAllNoInsertions' ?
-            acceptAllNoInsertions(this.docInfo.confirmedDoc).firstChild :
-            this.docInfo.confirmedDoc.firstChild
+            acceptAllNoInsertions(doc).firstChild :
+            doc.firstChild
+
         let title = ""
         pmArticle.firstChild.forEach(
             child => {
@@ -478,7 +537,7 @@ export class Editor {
             }
         )
         return {
-            contents: pmArticle.toJSON(),
+            content: pmArticle.toJSON(),
             settings: getSettings(pmArticle),
             title: title.substring(0, 255),
             version: this.docInfo.version,
@@ -502,7 +561,7 @@ export class Editor {
                 view = this.view
             } else {
                 const anchorMark = node.marks.find(mark => mark.type.name === 'anchor')
-                if (anchorMark && anchorMark.attrs.id === id) {
+                if (anchorMark?.attrs.id === id) {
                     foundPos = pos + 1
                     view = this.view
                 }
@@ -518,7 +577,7 @@ export class Editor {
                     view = this.mod.footnotes.fnEditor.view
                 } else {
                     const anchorMark = node.marks.find(mark => mark.type.name === 'anchor')
-                    if (anchorMark && anchorMark.attrs.id === id) {
+                    if (anchorMark?.attrs.id === id) {
                         foundPos = pos + 1
                         view = this.mod.footnotes.fnEditor.view
                     }
@@ -537,7 +596,7 @@ export class Editor {
         view.dispatch(view.state.tr.setSelection(new TextSelection($pos, $pos)))
         view.focus()
         const distanceFromTop = view.coordsAtPos(pos).top - topMenuHeight
-        window.scrollBy({left: 0, top: distanceFromTop, behavior:"smooth", block:"center"})
+        window.scrollBy({left: 0, top: distanceFromTop, behavior: "smooth", block: "center"})
         return
     }
 

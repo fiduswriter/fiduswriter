@@ -1,14 +1,14 @@
-import {textContent} from "../tools/doc_contents"
+import {textContent} from "../tools/doc_content"
 import {escapeText} from "../../common"
 
 
 export class DocxExporterMetadata {
-    constructor(exporter, docContents) {
+    constructor(exporter, docContent) {
         this.exporter = exporter
-        this.docContents = docContents
+        this.docContent = docContent
         this.coreXml = false
         this.metadata = {
-            authors: this.docContents.content.reduce(
+            authors: this.docContent.content.reduce(
                 (authors, part) => {
                     if (
                         part.type === 'contributors_part' &&
@@ -21,7 +21,7 @@ export class DocxExporterMetadata {
                     }
                 },
                 []),
-            keywords: this.docContents.content.reduce(
+            keywords: this.docContent.content.reduce(
                 (keywords, part) => {
                     if (
                         part.type === 'tags_part' &&
@@ -34,7 +34,7 @@ export class DocxExporterMetadata {
                     }
                 },
                 []),
-            title: textContent(this.docContents.content[0])
+            title: textContent(this.docContent.content[0])
         }
     }
 
@@ -104,7 +104,6 @@ export class DocxExporterMetadata {
             }
             keywordsEl.innerHTML = keywordsString
         }
-
 
 
         // time

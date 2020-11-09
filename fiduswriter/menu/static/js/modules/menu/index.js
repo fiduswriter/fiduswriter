@@ -1,11 +1,12 @@
 import * as plugins from "../../plugins/menu"
-import {addDropdownBox, whenReady, post} from "../common"
+import {dropdownSelect, whenReady, post} from "../common"
 import {headerNavTemplate} from "./templates"
 
 // Bindings for the top menu on overview pages
 
 export class SiteMenu {
-    constructor(activeItem) {
+    constructor(app, activeItem) {
+        this.app = app
         this.activeItem = activeItem
         this.navItems = [
             {
@@ -56,19 +57,27 @@ export class SiteMenu {
     }
 
     bindPreferencePullDown() {
-        const box = document.getElementById('user-preferences-pulldown')
-        const button = document.getElementById('preferences-btn')
-        addDropdownBox(
-            button,
-            box
+        dropdownSelect(
+            document.getElementById('user-preferences-pulldown'),
+            {
+                button: document.getElementById('preferences-btn'),
+                onChange: value => {
+                    switch (value) {
+                    case 'profile':
+                        this.app.goTo('/user/profile/')
+                        break
+                    case 'team':
+                        this.app.goTo('/user/team/')
+                        break
+                    case 'logout':
+                        post('/api/user/logout/').then(
+                            () => window.location = '/'
+                        )
+                        break
+                    }
+                }
+            }
         )
-
-        // Same for logout button
-        document.querySelector('.fw-logout-button').addEventListener('click', () => {
-            post('/api/user/logout/').then(
-                () => window.location = '/'
-            )
-        })
     }
 
     activatePlugins() {

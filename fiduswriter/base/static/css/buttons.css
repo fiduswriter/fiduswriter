@@ -13,6 +13,11 @@
     background: none;
     box-shadow: none;
     box-sizing: content-box;
+    position: relative;
+}
+
+.fw-button label {
+    cursor: pointer;
 }
 
 .fw-button:focus {
@@ -57,6 +62,17 @@
 
 .fw-button.fw-small .fw-button-icon::before {
     line-height: 26px;
+}
+
+.fw-button.fw-large.fw-dropdown {
+    padding-right: 22px;
+}
+
+.fw-button.fw-large.fw-dropdown .fa-caret-down {
+    display: block;
+    position: absolute;
+    right: 10px;
+    top: 12px;
 }
 
 .fw-button.fw-light {

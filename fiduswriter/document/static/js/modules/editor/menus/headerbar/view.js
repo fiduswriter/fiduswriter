@@ -1,7 +1,6 @@
 import {DiffDOM} from "diff-dom"
 import {keyName} from "w3c-keyname"
-
-import {escapeText} from "../../../common"
+import {escapeText, addAlert} from "../../../common"
 
 export class HeaderbarView {
     constructor(editorView, options) {
@@ -52,8 +51,14 @@ export class HeaderbarView {
 
     onclick(event) {
         const target = event.target
-
-        if (target.matches('#headerbar #header-navigation .fw-pulldown-item')) {
+        if (target.matches("div#close-document-top a i.fa-times")) {
+            // If the user is offline prevent the closing of the document.
+            if (this.editor.app.isOffline()) {
+                event.preventDefault()
+                event.stopPropagation()
+                addAlert("info", gettext("Cannot close a document when you're offline."))
+            }
+        } else if (target.matches('#headerbar #header-navigation .fw-pulldown-item')) {
             // A header nav menu item was clicked. Now we just need to find
             // which one and execute the corresponding action.
             const searchPath = []
@@ -85,7 +90,7 @@ export class HeaderbarView {
 
             switch (menuItem.type) {
             case 'action':
-                if (menuItem.disabled && menuItem.disabled(this.editor)) {
+                if (menuItem.disabled?.(this.editor)) {
                     return
                 }
                 menuItem.action(this.editor)
@@ -96,7 +101,7 @@ export class HeaderbarView {
                 break
             case 'setting':
                 // Similar to 'action' but not closing menu.
-                if (menuItem.disabled && menuItem.disabled(this.editor)) {
+                if (menuItem.disabled?.(this.editor)) {
                     return
                 }
                 menuItem.action(this.editor)
@@ -107,16 +112,13 @@ export class HeaderbarView {
                     //simple case
                     this.parentChain = [menuItem]
                     this.closeOtherMenu(menu, menuItem)
-                }
-                else {
+                } else {
                     let flagCloseAllMenu = true
                     const isMenuItemInParentChain = this.parentChain[this.parentChain.length - 1].content.find(menu => menu.id === menuItem.id)
                     if (isMenuItemInParentChain) {
                         //Do not close all open menus
                         this.parentChain.push(menuItem)
-                    }
-
-                    else if (!isMenuItemInParentChain) {
+                    } else if (!isMenuItemInParentChain) {
 
                         for (let index = this.parentChain.length - 2; index >= 0; index--) {
 
@@ -179,7 +181,6 @@ export class HeaderbarView {
     }
 
 
-
     closeAllMenu(menu) {
         menu.content.forEach(menuItem => {
             if (menuItem.type === 'menu' && menuItem.open) {
@@ -221,7 +222,7 @@ export class HeaderbarView {
 
     checkKeys(event, menu, nameKey) {
         menu.content.forEach(menuItem => {
-            if (menuItem.keys && menuItem.keys === nameKey) {
+            if (menuItem.keys === nameKey) {
                 event.preventDefault()
                 menuItem.action(this.editor)
             } else if (menuItem.content) {

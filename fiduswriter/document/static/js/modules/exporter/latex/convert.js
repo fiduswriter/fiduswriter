@@ -1,5 +1,5 @@
 import {escapeLatexText} from "./escape_latex"
-import {BIBLIOGRAPHY_HEADERS, FIG_CATS} from "../../schema/i18n"
+import {BIBLIOGRAPHY_HEADERS, CATS} from "../../schema/i18n"
 
 export class LatexExporterConvert {
     constructor(exporter, imageDB, bibDB, settings) {
@@ -14,12 +14,12 @@ export class LatexExporterConvert {
         // epilogue based on our findings.
         this.features = {}
         this.internalLinks = []
-        this.figureCounter = {} // counters for each type of figure (figure/table/photo)
+        this.categoryCounter = {} // counters for each type of figure (figure/table/photo)
     }
 
-    init(docContents) {
-        this.preWalkJson(docContents)
-        const rawTransformation = this.walkJson(docContents)
+    init(docContent) {
+        this.preWalkJson(docContent)
+        const rawTransformation = this.walkJson(docContent)
         const body = this.postProcess(rawTransformation)
         const copyright = this.assembleCopyright()
         const preamble = this.assemblePreamble()
@@ -259,7 +259,12 @@ export class LatexExporterConvert {
             end = '\n\n\\end{quote}\n' + end
             break
         case 'ordered_list':
-            start += '\n\\begin{enumerate}'
+            if (node.attrs.order !== 1) {
+                start += `\n\\begin{enumerate}[start=${node.attrs.order}]`
+                this.features.orderedListStart = true
+            } else {
+                start += '\n\\begin{enumerate}'
+            }
             end = '\n\\end{enumerate}' + end
             if (!options.onlyFootnoteMarkers) {
                 placeFootnotesAfterBlock = true
@@ -431,18 +436,18 @@ export class LatexExporterConvert {
             break
         }
         case 'figure': {
-            const figureType = node.attrs.figureCategory
-            let caption = node.attrs.caption
-            if (figureType !== 'none') {
-                if (!this.figureCounter[figureType]) {
-                    this.figureCounter[figureType] = 1
+            const category = node.attrs.category
+            let caption = node.attrs.caption ? node.content.find(node => node.type === 'figure_caption')?.content || [] : []
+            if (category !== 'none') {
+                if (!this.categoryCounter[category]) {
+                    this.categoryCounter[category] = 1
                 }
-                const figCount = this.figureCounter[figureType]++
-                const figLabel = `${FIG_CATS[figureType][this.settings.language]} ${figCount}`
+                const catCount = this.categoryCounter[category]++
+                const catLabel = `${CATS[category][this.settings.language]} ${catCount}`
                 if (caption.length) {
-                    caption = `${figLabel}: ${caption}`
+                    caption = `${catLabel}: ${escapeLatexText(caption.map(node => this.walkJson(node)).join(''))}`
                 } else {
-                    caption = figLabel
+                    caption = catLabel
                 }
             }
             let innerFigure = ''
@@ -458,9 +463,10 @@ export class LatexExporterConvert {
                 end = '\n\n}\n' + end
             } // aligned === 'left' is default
             let copyright
-            if (node.attrs.image) {
-                this.imageIds.push(node.attrs.image)
-                const imageDBEntry = this.imageDB.db[node.attrs.image],
+            const image = node.content.find(node => node.type === 'image')?.attrs.image || false
+            if (image) {
+                this.imageIds.push(image)
+                const imageDBEntry = this.imageDB.db[image],
                     filePathName = imageDBEntry.image,
                     filename = filePathName.split('/').pop()
                 copyright = imageDBEntry.copyright
@@ -472,10 +478,10 @@ export class LatexExporterConvert {
                     this.features.images = true
                 }
             } else {
-                const equation = node.attrs.equation
+                const equation = node.content.find(node => node.type === 'figure_equation')?.attrs.equation || ''
                 innerFigure += `\\begin{displaymath}\n${equation}\n\\end{displaymath}\n`
             }
-            if (figureType === 'table') {
+            if (category === 'table') {
                 start += `\n\\begin{table}\n`
                 content += `\\caption*{${caption}}\\label{${node.attrs.id}}\n${innerFigure}`
                 end = `\\end{table}\n` + end
@@ -484,10 +490,10 @@ export class LatexExporterConvert {
                 content += `${innerFigure}\\caption*{${caption}}\\label{${node.attrs.id}}\n`
                 end = `\\end{figure}\n` + end
             }
-            if (copyright && copyright.holder) {
+            if (copyright?.holder) {
                 content += `% © ${copyright.year ? copyright.year : new Date().getFullYear()} ${copyright.holder}\n`
             }
-            if (copyright && copyright.licenses.length) {
+            if (copyright?.licenses.length) {
                 copyright.licenses.forEach(
                     license => {
                         content += `% ${license.title}: ${license.url}${license.start ? ` (${license.start})\n` : ''}\n`
@@ -501,9 +507,33 @@ export class LatexExporterConvert {
             this.features.captions = true
             break
         }
+        case 'figure_caption':
+            // We are already dealing with this in the figure. Prevent content from being added a second time.
+            return ''
+        case 'figure_equation':
+            // We are already dealing with this in the figure.
+            break
+        case 'image':
+            // We are already dealing with this in the figure.
+            break
         case 'table':
-            if (node.content && node.content.length) {
-                const columns = node.content[0].content.reduce(
+            if (node.content?.length) {
+                const category = node.attrs.category
+
+                let caption = node.attrs.caption ? node.content[0].content : []
+                if (category !== 'none') {
+                    if (!this.categoryCounter[category]) {
+                        this.categoryCounter[category] = 1
+                    }
+                    const catCount = this.categoryCounter[category]++
+                    const catLabel = `${CATS[category][this.settings.language]} ${catCount}`
+                    if (caption.length) {
+                        caption = `${catLabel}: ${escapeLatexText(caption.map(node => this.walkJson(node)).join(''))}`
+                    } else {
+                        caption = catLabel
+                    }
+                }
+                const columns = node.content[1].content[0].content.reduce(
                     (columns, node) => columns + node.attrs.colspan,
                     0
                 )
@@ -518,6 +548,12 @@ export class LatexExporterConvert {
                     start += '\n\n{\\raggedleft' // This is not a typo - raggedleft = aligned: right
                     end = '\n\n}\n'
                 } // aligned === 'left' is default
+                if (caption.length) {
+                    start += `\n\\begin{table}\n`
+                    start += `\\caption*{${caption}}\\label{${node.attrs.id}}`
+                    end = `\\end{table}\n` + end
+                    this.features.captions = true
+                }
                 start += `\n\n\\begin{tabu} to ${
                     node.attrs.width === '100' ? '' : parseInt(node.attrs.width) / 100
                 }\\textwidth { |${'X|'.repeat(columns)} }\n\\hline\n\n`
@@ -525,6 +561,12 @@ export class LatexExporterConvert {
                 this.features.tables = true
             }
             break
+        case 'table_body':
+            // Pass through to table.
+            break
+        case 'table_caption':
+            // We already deal with this in 'table'.
+            return ''
         case 'table_row':
             end += ' \\\\\n'
             break
@@ -560,8 +602,7 @@ export class LatexExporterConvert {
         }
         if (
             placeFootnotesAfterBlock &&
-            options.unplacedFootnotes &&
-            options.unplacedFootnotes.length
+            options.unplacedFootnotes?.length
         ) {
             // There are footnotes that needed to be placed behind the node.
             // This happens in the case of headlines and lists.
@@ -590,7 +631,7 @@ export class LatexExporterConvert {
     // So here we need to make sure that the same key is not used twice in one
     // document.
     createUniqueCitationKey(suggestedKey) {
-        const usedKeys = Object.keys(this.usedBibDB).map(key=>{
+        const usedKeys = Object.keys(this.usedBibDB).map(key => {
             return this.usedBibDB[key].entry_key
         })
         if (usedKeys.includes(suggestedKey)) {
@@ -713,6 +754,11 @@ export class LatexExporterConvert {
         if (this.features.tables) {
             preamble += '\n\\usepackage{tabu}'
         }
+
+        if (this.features.orderedListStart) {
+            preamble += '\n\\usepackage{enumitem}'
+        }
+
         if (this.features.rowspan) {
             preamble += '\n\\usepackage{multirow}'
         }

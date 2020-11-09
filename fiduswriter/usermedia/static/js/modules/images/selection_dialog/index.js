@@ -3,10 +3,10 @@ import {DataTable} from "simple-datatables"
 import {cancelPromise, Dialog, escapeText, findTarget} from "../../common"
 
 export class ImageSelectionDialog {
-    constructor(imageDB, userImageDB, imgId, editor) {
+    constructor(imageDB, userImageDB, imgId, page) {
         this.imageDB = imageDB
         this.userImageDB = userImageDB
-        this.editor = editor
+        this.page = page
         this.imgId = imgId // a preselected image
         this.imgDb = 'document' // the preselection image will always come from the document
         this.images = [] // images from both databases
@@ -30,32 +30,34 @@ export class ImageSelectionDialog {
         })
         const buttons = []
         const p = new Promise(resolve => {
-            buttons.push(
-                {
-                    text: gettext('Add new image'),
-                    icon: "plus-circle",
-                    click: () => {
-                        import("../edit_dialog").then(({ImageEditDialog}) => {
-                            const imageUpload = new ImageEditDialog(
-                                this.userImageDB, // We can only upload to the user's image db
-                                false,
-                                this.editor
-                            )
-
-                            resolve(
-                                imageUpload.init().then(
-                                    imageId => {
-                                        this.imgId = imageId
-                                        this.imgDb = 'user'
-                                        this.imageDialog.close()
-                                        return this.init()
-                                    }
+            if (!this.page.app.isOffline()) {
+                buttons.push(
+                    {
+                        text: gettext('Add new image'),
+                        icon: "plus-circle",
+                        click: () => {
+                            import("../edit_dialog").then(({ImageEditDialog}) => {
+                                const imageUpload = new ImageEditDialog(
+                                    this.userImageDB, // We can only upload to the user's image db
+                                    false,
+                                    this.page
                                 )
-                            )
-                        })
+
+                                resolve(
+                                    imageUpload.init().then(
+                                        imageId => {
+                                            this.imgId = imageId
+                                            this.imgDb = 'user'
+                                            this.imageDialog.close()
+                                            return this.init()
+                                        }
+                                    )
+                                )
+                            })
+                        }
                     }
-                }
-            )
+                )
+            }
 
             buttons.push(
                 {

@@ -3,8 +3,8 @@ import {Decoration, DecorationSet} from "prosemirror-view"
 import {RemoveMarkStep} from "prosemirror-transform"
 
 import {noSpaceTmp, addAlert} from "../../common"
-import {randomHeadingId, randomFigureId} from "../../schema/common"
-import {FIG_CATS} from "../../schema/i18n"
+import {randomHeadingId, randomFigureId, randomListId, randomTableId} from "../../schema/common"
+import {CATS} from "../../schema/i18n"
 import {LinkDialog} from "../dialogs"
 
 const key = new PluginKey('links')
@@ -39,10 +39,10 @@ const nonDeletedTextContent = node => {
 export const getInternalTargets = function(state, language, editor) {
     const internalTargets = []
 
-    const figures = {}
+    const categories = {}
 
     state.doc.descendants(node => {
-        if (node.attrs.track && node.attrs.track.find(track => track.type === 'deletion')) {
+        if (node.attrs.track?.find(track => track.type === 'deletion')) {
             return true
         }
         if (node.type.groups.includes('heading')) {
@@ -56,17 +56,17 @@ export const getInternalTargets = function(state, language, editor) {
             return true
         }
 
-        if (node.type.name === 'figure' && node.attrs.figureCategory && node.attrs.figureCategory !== 'none') {
-            if (!figures[node.attrs.figureCategory]) {
-                figures[node.attrs.figureCategory] = 0
+        if (['figure', 'table'].includes(node.type.name) && node.attrs.category && node.attrs.category !== 'none') {
+            if (!categories[node.attrs.category]) {
+                categories[node.attrs.category] = 0
             }
-            figures[node.attrs.figureCategory]++
+            categories[node.attrs.category]++
 
             internalTargets.push({
                 id: node.attrs.id,
                 text: editor === 'main' ?
-                    `${FIG_CATS[node.attrs.figureCategory][language]} ${figures[node.attrs.figureCategory]}` :
-                    `${FIG_CATS[node.attrs.figureCategory][language]} ${figures[node.attrs.figureCategory]}A`
+                    `${CATS[node.attrs.category][language]} ${categories[node.attrs.category]}` :
+                    `${CATS[node.attrs.category][language]} ${categories[node.attrs.category]}A`
             })
             return true
         }
@@ -359,7 +359,7 @@ export const linksPlugin = function(options) {
                                     !foundIdElement &&
                                     (
                                         node.type.groups.includes('heading') ||
-                                        node.type.name === 'figure'
+                                        ['figure', 'table', 'bullet_list', 'ordered_list'].includes(node.type.name)
                                     )
                                 ) {
                                     foundIdElement = true
@@ -430,27 +430,25 @@ export const linksPlugin = function(options) {
             //
             // If an ID is used more than once, add steps to change the ID of all
             // but the first occurence.
-            const headingIds = [],
-                figureIds = []
+            const ids = []
 
             otherState.doc.descendants(node => {
-                if (node.type.groups.includes('heading')) {
-                    headingIds.push(node.attrs.id)
-                } else if (node.type.name === 'figure') {
-                    figureIds.push(node.attrs.id)
+                if (node.type.groups.includes('heading') || ['figure', 'table', 'bullet_list', 'ordered_list'].includes(node.type.name)) {
+                    ids.push(node.attrs.id)
                 }
             })
 
             const newTr = newState.tr.setMeta('fixIds', true)
 
             newState.doc.descendants((node, pos) => {
-                if (node.type.groups.includes('heading')) {
-                    if (headingIds.includes(node.attrs.id) || !node.attrs.id) {
+                if (node.type.groups.includes('heading') || ['figure', 'table', 'bullet_list', 'ordered_list'].includes(node.type.name)) {
+                    if (ids.includes(node.attrs.id) || !node.attrs.id) {
                         // Add node if the id is false (default) or it is present twice
+                        const randomIdGenerator = node.type.groups.includes('heading') ? randomHeadingId : node.type.name === 'figure' ? randomFigureId : node.type.name === 'table' ? randomTableId : randomListId
                         let id
 
-                        while (!id || headingIds.includes(id)) {
-                            id = randomHeadingId()
+                        while (!id || ids.includes(id)) {
+                            id = randomIdGenerator()
                         }
 
                         const attrs = Object.assign({}, node.attrs, {id})
@@ -460,24 +458,9 @@ export const linksPlugin = function(options) {
                         // mapping of positions through these steps.
                         newTr.setNodeMarkup(pos, null, attrs)
 
-                        headingIds.push(id)
+                        ids.push(id)
                     } else {
-                        headingIds.push(node.attrs.id)
-                    }
-                } else if (node.type.name === 'figure') {
-                    // Add node if the id is false (default) or it is present twice
-                    if (figureIds.includes(node.attrs.id) || !node.attrs.id) {
-                        let id
-
-                        while (!id || figureIds.includes(id)) {
-                            id = randomFigureId()
-                        }
-
-                        const attrs = Object.assign({}, node.attrs, {id})
-                        newTr.setNodeMarkup(pos, null, attrs)
-                        figureIds.push(id)
-                    } else {
-                        figureIds.push(node.attrs.id)
+                        ids.push(node.attrs.id)
                     }
                 } else if (
                     node.type.name === 'cross_reference' &&
@@ -503,7 +486,7 @@ export const linksPlugin = function(options) {
 
             // Remove anchor marks without ID
             if (foundAnchorWithoutId) {
-                const markType = newState.schema.marks.anchor.create({id : false})
+                const markType = newState.schema.marks.anchor.create({id: false})
                 newTr.step(
                     new RemoveMarkStep(
                         0,

@@ -15,7 +15,9 @@ export function setBlockType(nodeType, attrs = {}) {
         } = state.selection
         const tr = state.tr
         state.doc.nodesBetween(from, to, (node, pos) => {
-            if (!node.isTextblock || node.hasMarkup(nodeType, attrs)) return
+            if (!node.isTextblock || node.hasMarkup(nodeType, attrs)) {
+                return
+            }
             let applicable = false
             if (node.type == nodeType) {
                 applicable = true
@@ -33,8 +35,12 @@ export function setBlockType(nodeType, attrs = {}) {
                 )
             }
         })
-        if (!tr.steps.length) return false
-        if (dispatch) dispatch(tr.scrollIntoView())
+        if (!tr.steps.length) {
+            return false
+        }
+        if (dispatch) {
+            dispatch(tr.scrollIntoView())
+        }
         return true
     }
 }

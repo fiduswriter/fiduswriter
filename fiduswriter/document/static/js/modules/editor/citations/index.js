@@ -41,7 +41,7 @@ export class ModCitations {
     }
 
     layoutCitations() {
-        if (!this.editor.mod.db || !this.editor.mod.db.bibDB.db) {
+        if (!this.editor.mod.db?.bibDB.db) {
             // bibliography hasn't been loaded yet
             return
         }
@@ -72,7 +72,7 @@ export class ModCitations {
                     () => import("../../bibliography/form")
                 ).then(
                     ({BibEntryForm}) => {
-                        const form = new BibEntryForm(this.editor.mod.db.bibDB, eID)
+                        const form = new BibEntryForm(this.editor.mod.db.bibDB, false, eID)
                         form.init()
                     }
                 )

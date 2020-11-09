@@ -1,6 +1,6 @@
 #document-editable,
 #footnote-box-container {
-    counter-reset: figure-cat-0 figure-cat-1 figure-cat-2 footnote-counter footnote-marker-counter;
+    counter-reset: cat-0 cat-1 cat-2 footnote-counter footnote-marker-counter;
 }
 
 /* CSL */
@@ -112,36 +112,39 @@ figure {
     box-sizing: border-box;
 }
 
-.figure-cat-figure::after {
-    counter-increment: figure-cat-0;
-    content: ' ' counter(figure-cat-0);
+figure[data-category='figure'] figcaption span.label::after {
+    counter-increment: cat-0;
+    content: ' ' counter(cat-0);
 }
 
-#footnote-box-container .figure-cat-figure::after {
-    content: ' ' counter(figure-cat-0) 'A';
+figure[data-category='photo'] figcaption span.label::after {
+    counter-increment: cat-1;
+    content: ' ' counter(cat-1);
 }
 
-.figure-cat-photo::after {
-    counter-increment: figure-cat-1;
-    content: ' ' counter(figure-cat-1);
+figure[data-category='table'] figcaption span.label::after,
+table[data-category='table'] caption span.label::after {
+    counter-increment: cat-2;
+    content: ' ' counter(cat-2);
 }
 
-#footnote-box-container .figure-cat-photo::after {
-    content: ' ' counter(figure-cat-1) 'A';
+#footnote-box-container figure[data-category='figure'] figcaption span.label::after {
+    content: ' ' counter(cat-0) 'A';
 }
 
-.figure-cat-table::after {
-    counter-increment: figure-cat-2;
-    content: ' ' counter(figure-cat-2);
+#footnote-box-container figure[data-category='photo'] figcaption span.label::after {
+    content: ' ' counter(cat-1) 'A';
 }
 
-#footnote-box-container .figure-cat-table::after {
-    content: ' ' counter(figure-cat-2) 'A';
+#footnote-box-container figure[data-category='table'] figcaption span.label::after,
+#footnote-box-container table[data-category='table'] caption span.label::after {
+    content: ' ' counter(cat-2) 'A';
 }
 
-.figure-cat-figure + span::before,
-.figure-cat-photo + span::before,
-.figure-cat-table + span::before {
+figure[data-category='table'] figcaption span.text::before,
+figure[data-category='photo'] figcaption span.text::before,
+figure[data-category='figure'] figcaption span.text::before,
+table[data-category='table'] caption span.text::before {
     content: ': ';
 }
 

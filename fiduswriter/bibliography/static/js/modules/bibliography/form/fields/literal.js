@@ -19,7 +19,7 @@ export class LiteralFieldForm {
 
         const doc = litSchema.nodeFromJSON({
             type: 'doc',
-            content:[{
+            content: [{
                 type: 'literal',
                 content: this.initialValue
             }]

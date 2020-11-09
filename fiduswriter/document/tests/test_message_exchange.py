@@ -57,6 +57,10 @@ class SimpleMessageExchangeTests(LiveTornadoTestCase, EditorHelper):
         self.type_text(self.driver, self.TEST_TEXT)
         self.type_text(self.driver, self.TEST_TEXT)
 
+        # Assert that the server count changed in client
+        old_server_count = self.driver.execute_script(
+            'return window.theApp.page.ws.messages.server'
+        )
         # We simulate lost messages by changing the counter manually.
         self.driver.execute_script(
             'window.theApp.page.ws.messages.server = 1'
@@ -66,6 +70,12 @@ class SimpleMessageExchangeTests(LiveTornadoTestCase, EditorHelper):
         server_count = self.driver.execute_script(
             'return window.theApp.page.ws.messages.server'
         )
+
+        self.assertNotEqual(
+            old_server_count,
+            server_count
+        )
+
         self.assertEqual(
             server_count,
             1
@@ -81,7 +91,7 @@ class SimpleMessageExchangeTests(LiveTornadoTestCase, EditorHelper):
             if 'type' in message.keys():
                 if message['type'] == "doc_data":
                     doc_message_count += 1
-                    doc_data = message['doc']['contents']
+                    doc_data = message['doc']['content']
 
         # We should've only sent the doc_data message once .
         self.assertEqual(
@@ -91,7 +101,8 @@ class SimpleMessageExchangeTests(LiveTornadoTestCase, EditorHelper):
 
         # Now assert that the document reloaded in front end too !
         doc_content = self.driver.execute_script(
-            'return window.theApp.page.docInfo.confirmedJson'
+            'return window.theApp.page.docInfo.'
+            'confirmedDoc.firstChild.toJSON()'
         )
         self.assertEqual(
             doc_data,

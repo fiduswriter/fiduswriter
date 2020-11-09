@@ -1,7 +1,7 @@
 import {OdtExporterCitations} from "./citations"
 import {OdtExporterImages} from "./images"
 import {noSpaceTmp} from "../../common"
-import {descendantNodes} from "../tools/doc_contents"
+import {descendantNodes} from "../tools/doc_content"
 
 
 const DEFAULT_STYLE_FOOTNOTE = noSpaceTmp`
@@ -25,9 +25,9 @@ const DEFAULT_STYLE_FOOTNOTE_CONFIGURATION = noSpaceTmp`
     `
 
 export class OdtExporterFootnotes {
-    constructor(exporter, docContents) {
+    constructor(exporter, docContent) {
         this.exporter = exporter
-        this.docContents = docContents
+        this.docContent = docContent
         this.fnPmJSON = false
         this.images = false
         this.citations = false
@@ -108,7 +108,7 @@ export class OdtExporterFootnotes {
     }
 
     findFootnotes() {
-        descendantNodes(this.docContents).forEach(
+        descendantNodes(this.docContent).forEach(
             node => {
                 if (node.type === 'footnote') {
                     this.footnotes.push(node.attrs.footnote)

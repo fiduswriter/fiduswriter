@@ -35,11 +35,10 @@
 
 .ui-dialog-titlebar-close {
     right: 19px;
-    color: var(--cs-dark-text);
 }
 
-.ui-dialog-titlebar-close:hover {
-    color: var(--cs-dark-hover);
+.ui-dialog-titlebar-help {
+    right: 39px;
 }
 
 .ui-button-icon-only {
@@ -47,6 +46,14 @@
     box-sizing: border-box;
     text-indent: -9999px;
     white-space: nowrap;
+}
+
+.ui-dialog-titlebar .ui-button-icon-only {
+    color: var(--cs-dark-text);
+}
+
+.ui-dialog-titlebar .ui-button-icon-only:hover {
+    color: var(--cs-dark-hover);
 }
 
 .ui-button-icon-only .ui-icon {

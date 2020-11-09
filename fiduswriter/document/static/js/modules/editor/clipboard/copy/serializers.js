@@ -54,7 +54,7 @@ class ClipboardDOMSerializer {
         const footnoteSelector = citationFormatter && citationFormatter.citationType === 'note' ?
             '.footnote-marker, .citation' :
             '.footnote-marker'
-        // Inside of footnote markers add anchors and put footnotes with contents
+        // Inside of footnote markers add anchors and put footnotes with content
         // at the back of the document.
         // Also, link the footnote anchor with the footnote.
         const footnotes = domFragment.querySelectorAll(footnoteSelector)
@@ -88,19 +88,19 @@ class ClipboardDOMSerializer {
     }
 
     addFigureNumbers(domFragment) {
-        domFragment.querySelectorAll('figcaption .figure-cat-figure').forEach(
+        domFragment.querySelectorAll("figure[data-category='figure'] figcaption span.label").forEach(
             (el, index) => {
                 el.innerHTML += ' ' + (index + 1) + ': '
             }
         )
 
-        domFragment.querySelectorAll('figcaption .figure-cat-photo').forEach(
+        domFragment.querySelectorAll("figure[data-category='photo'] figcaption span.label").forEach(
             (el, index) => {
                 el.innerHTML += ' ' + (index + 1) + ': '
             }
         )
 
-        domFragment.querySelectorAll('figcaption .figure-cat-table').forEach(
+        domFragment.querySelectorAll("figure[data-category='table'] figcaption span.label").forEach(
             (el, index) => {
                 el.innerHTML += ' ' + (index + 1) + ': '
             }
@@ -123,7 +123,6 @@ class ClipboardDOMSerializer {
         footnoteAnchor.innerHTML = `<sup>${counter}</sup>`
         return footnoteAnchor
     }
-
 
 
     removeTrackingData(domFragment) {

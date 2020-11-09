@@ -1,4 +1,4 @@
-import {addDropdownBox, whenReady, activateWait, deactivateWait, post, addAlert, baseBodyTemplate, findTarget, setDocTitle, ensureCSS} from "../common"
+import {dropdownSelect, whenReady, activateWait, deactivateWait, post, addAlert, baseBodyTemplate, findTarget, setDocTitle, ensureCSS} from "../common"
 import {SiteMenu} from "../menu"
 import {changeAvatarDialog, deleteAvatarDialog, changePwdDialog, addEmailDialog, changePrimaryEmailDialog, deleteEmailDialog, deleteSocialaccountDialog} from "./dialogs"
 import {profileContents} from "./templates"
@@ -15,11 +15,23 @@ export class Profile {
     init() {
         return whenReady().then(() => {
             this.render()
-            const smenu = new SiteMenu("") // Nothing highlighted
+            const smenu = new SiteMenu(this.app, "") // Nothing highlighted
             smenu.init()
-            addDropdownBox(
-                this.dom.querySelector('#edit-avatar-btn'),
-                this.dom.querySelector('#edit-avatar-pulldown')
+            dropdownSelect(
+                this.dom.querySelector('#edit-avatar-pulldown'),
+                {
+                    onChange: value => {
+                        switch (value) {
+                        case 'change':
+                            changeAvatarDialog(this.app)
+                            break
+                        case 'delete':
+                            deleteAvatarDialog(this.app)
+                            break
+                        }
+                    },
+                    button: this.dom.querySelector('#edit-avatar-btn')
+                }
             )
             this.dom.addEventListener('click', event => {
                 const el = {}
@@ -45,12 +57,6 @@ export class Profile {
                     break
                 case findTarget(event, '.delete-socialaccount', el):
                     deleteSocialaccountDialog(el.target, this.app)
-                    break
-                case findTarget(event, '.change-avatar', el):
-                    changeAvatarDialog(this.app)
-                    break
-                case findTarget(event, '.delete-avatar', el):
-                    deleteAvatarDialog(this.app)
                     break
                 default:
                     break

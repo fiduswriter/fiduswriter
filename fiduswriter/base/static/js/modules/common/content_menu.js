@@ -7,15 +7,25 @@ const menuTemplate = ({id, classes, height, width, zIndex, menu, scroll, page}) 
     <div>
         <ul class="content-menu-list">
         ${
-    menu.content.map((menuItem, index)=>
-        menuItem.type == "separator" ?
-            '<hr class="content-menu-item-divider"/>' :
-            `<li data-index="${index}" class="content-menu-item${
+    menu.content.map((menuItem, index) => {
+        switch (menuItem.type) {
+        case 'header':
+            return `<li><span class="content-menu-item-header" title="${menuItem.tooltip}">${
+                typeof menuItem.title === 'function' ?
+                    menuItem.title(page) :
+                    menuItem.title
+            }</span></li>`
+        case 'separator':
+            return '<li><hr class="content-menu-item-divider"/></li>'
+        default:
+            return `<li data-index="${index}" class="content-menu-item${
                 menuItem.disabled && menuItem.disabled(page) ?
                     ' disabled' :
-                    ''
+                    menuItem.selected ?
+                        ' selected' :
+                        ''
             }" title='${menuItem.tooltip}'>
-                    ${
+                        ${
     typeof menuItem.title === 'function' ?
         menuItem.title(page) :
         menuItem.title
@@ -24,8 +34,10 @@ const menuTemplate = ({id, classes, height, width, zIndex, menu, scroll, page}) 
         `<span class="content-menu-item-icon"><i class="fa fa-${menuItem.icon}"></i></span>` :
         ''
 }
-                    </li>`
-    ).join('')
+                        </li>`
+        }
+
+    }).join('')
 }
         </ul>
     </div>
@@ -79,10 +91,11 @@ export class ContentMenu {
         )
         this.backdropEl = document.body.lastElementChild
         this.dialogEl = this.backdropEl.previousElementSibling
-        if (this.menuPos && this.menuPos.X && this.menuPos.Y)
+        if (this.menuPos?.X && this.menuPos?.Y) {
             this.positionDialog()
-        else
+        } else {
             this.centerDialog()
+        }
         this.bind()
     }
 
@@ -100,12 +113,15 @@ export class ContentMenu {
 
     positionDialog() {
         const dialogHeight = this.dialogEl.getBoundingClientRect().height + 10,
+            dialogWidth = this.dialogEl.getBoundingClientRect().width + 10,
             scrollTopOffset = window.pageYOffset,
             clientHeight = window.document.documentElement.clientHeight,
-            left = this.menuPos.X
+            clientWidth = window.document.documentElement.clientWidth
+
         // We try to ensure that the menu is seen in the browser at the preferred location.
         // Adjustments are made in case it doesn't fit.
-        let top = this.menuPos.Y
+        let top = this.menuPos.Y,
+            left = this.menuPos.X
 
         if ((top + dialogHeight) > (scrollTopOffset + clientHeight)) {
             top -= ((top + dialogHeight) - (scrollTopOffset + clientHeight))
@@ -113,6 +129,10 @@ export class ContentMenu {
 
         if (top < scrollTopOffset) {
             top = scrollTopOffset + 10
+        }
+
+        if ((left + dialogWidth) > clientWidth) {
+            left -= left + dialogWidth - clientWidth
         }
 
         this.dialogEl.style.top = `${top}px`
@@ -145,11 +165,11 @@ export class ContentMenu {
     onclick(event) {
         event.preventDefault()
         event.stopImmediatePropagation()
-        const target = event.target
-        if (target.matches('li.content-menu-item')) {
+        const target = event.target.closest('li.content-menu-item')
+        if (target) {
             const menuNumber = target.dataset.index
             const menuItem = this.menu.content[menuNumber]
-            if (menuItem.disabled && menuItem.disabled(this.page)) {
+            if (menuItem.disabled?.(this.page)) {
                 return
             }
             menuItem.action(this.page)

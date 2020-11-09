@@ -3,12 +3,10 @@ from builtins import range
 import errno
 import os
 import socket
-import sys
 import threading
 
 from django.core.exceptions import ImproperlyConfigured
 from django.db import connections
-from django.utils import six
 from django.test.testcases import TransactionTestCase
 
 from tornado.ioloop import IOLoop
@@ -111,10 +109,9 @@ class LiveTornadoTestCase(TransactionTestCase):
         for conn in connections.all():
             # If using in-memory sqlite databases, pass the connections to
             # the server thread.
-            if (conn.vendor == 'sqlite' and
-                    conn.settings_dict['NAME'] == ':memory:'):
+            if conn.vendor == 'sqlite' and conn.is_in_memory_db():
                 # Explicitly enable thread-shareability for this connection
-                conn.allow_thread_sharing = True
+                conn.inc_thread_sharing()
                 connections_override[conn.alias] = conn
 
         # Launch the live server's thread
@@ -139,11 +136,8 @@ class LiveTornadoTestCase(TransactionTestCase):
                         possible_ports.append(port)
         except Exception:
             msg = 'Invalid address ("%s") for live server.' % specified_address
-            six.reraise(
-                ImproperlyConfigured,
-                ImproperlyConfigured(msg),
-                sys.exc_info()[2]
-            )
+            raise ImproperlyConfigured(msg)
+
         cls.server_thread = LiveTornadoThread(
             host,
             possible_ports,

@@ -21,7 +21,7 @@ export class BibLatexImportWorker {
             this.bibKeys.forEach((bibKey) => {
                 const bibEntry = this.tmpDB[bibKey]
                 // We add an empty category list for all newly imported bib entries.
-                bibEntry.entry_cat = []
+                bibEntry.cats = []
                 // If the entry has no title, add an empty title
                 if (!bibEntry.fields.title) {
                     bibEntry.fields.title = []
@@ -58,7 +58,7 @@ export class BibLatexImportWorker {
             const fromNumber = this.currentChunkNumber * 50
             const toNumber = fromNumber + 50
             const currentChunk = {}
-            this.bibKeys.slice(fromNumber, toNumber).forEach((bibKey)=>{
+            this.bibKeys.slice(fromNumber, toNumber).forEach((bibKey) => {
                 currentChunk[bibKey] = this.tmpDB[bibKey]
             })
             this.sendMessage({type: 'data', data: currentChunk})

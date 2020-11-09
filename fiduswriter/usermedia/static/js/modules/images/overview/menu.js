@@ -9,7 +9,7 @@ export const bulkMenuModel = () => ({
                     overview.deleteImageDialog(ids)
                 }
             },
-            disabled: overview => !overview.getSelected().length
+            disabled: overview => !overview.getSelected().length || overview.app.isOffline()
         }
     ]
 })
@@ -19,7 +19,7 @@ export const menuModel = () => ({
         {
             type: 'dropdown',
             id: 'cat_selector',
-            content : [
+            content: [
                 {
                     title: gettext('All categories'),
                     action: _overview => {
@@ -34,7 +34,8 @@ export const menuModel = () => ({
             type: 'text',
             title: gettext('Edit categories'),
             action: overview => overview.mod.categories.editCategoryDialog(),
-            order: 2
+            order: 2,
+            disabled: overview => overview.app.isOffline()
         },
         {
             type: 'text',
@@ -42,7 +43,9 @@ export const menuModel = () => ({
             action: overview => {
                 import("../edit_dialog").then(({ImageEditDialog}) => {
                     const imageUpload = new ImageEditDialog(
-                        overview.app.imageDB
+                        overview.app.imageDB,
+                        false,
+                        overview
                     )
                     imageUpload.init().then(
                         imageId => {
@@ -51,7 +54,8 @@ export const menuModel = () => ({
                     )
                 })
             },
-            order: 3
+            order: 3,
+            disabled: overview => overview.app.isOffline()
         },
         {
             type: 'search',

@@ -1,6 +1,6 @@
 import {noSpaceTmp, escapeText} from "../../common"
 import {
-    FIG_CATS
+    CATS
 } from "../../schema/i18n"
 
 export class OdtExporterRichtext {
@@ -10,8 +10,8 @@ export class OdtExporterRichtext {
         this.imgCounter = 1
         this.fnCounter = 0 // real footnotes
         this.fnAlikeCounter = 0 // real footnotes and citations as footnotes
-        this.figureCounter = {} // counters for each type of figure (figure/table/photo)
-        this.fnFigureCounter = {} // counters for each type of figure (figure/table/photo)
+        this.categoryCounter = {} // counters for each type of table/figure category (figure/table/photo)
+        this.fnCategoryCounter = {} // counters for each type of table/figure category (figure/table/photo)
         this.zIndex = 0
     }
 
@@ -78,14 +78,11 @@ export class OdtExporterRichtext {
             options.section = 'Quote'
             break
         case 'ordered_list': {
-            const olId = options.inOrderedList ?
-                options.inOrderedList :
-                this.exporter.styles.getOrderedListStyleId()
+            const olId = this.exporter.styles.getOrderedListStyleId(node.attrs.order)
             start += `<text:list text:style-name="L${olId[0]}">`
             end = '</text:list>' + end
             options = Object.assign({}, options)
             options.section = `P${olId[1]}`
-            options.inOrderedList = olId
             break
         }
         case 'bullet_list': {
@@ -174,7 +171,7 @@ export class OdtExporterRichtext {
             } else {
                 cit = this.exporter.citations.pmCits.shift()
             }
-            if (options.citationType && options.citationType === 'note') {
+            if (options.citationType === 'note') {
                 // If the citations are in notes (footnotes), we need to
                 // put the contents of this citation in a footnote.
                 start += noSpaceTmp`
@@ -186,7 +183,7 @@ export class OdtExporterRichtext {
                     </text:note>` + end
                 options = Object.assign({}, options)
                 options.section = 'Footnote'
-                content += this.transformRichtext({type:'paragraph', content:cit.content}, options)
+                content += this.transformRichtext({type: 'paragraph', content: cit.content}, options)
             } else {
                 cit.content.forEach(citContent => {
                     content += this.transformRichtext(citContent, options)
@@ -208,30 +205,30 @@ export class OdtExporterRichtext {
                 // Needed to prevent subsequent image from overlapping
                 end = end + '<text:p text:style-name="Standard"></text:p>'
             }
-
-            let caption = escapeText(node.attrs.caption)
+            let caption = node.attrs.caption ? node.content.find(node => node.type === 'figure_caption')?.content.map(node => this.transformRichtext(node)).join('') || '' : ''
             // The figure category should not be in the
             // user's language but rather the document language
-            const figCat = node.attrs.figureCategory
-            if (figCat !== 'none') {
-                const figureCounter = options.inFootnote ? this.fnFigureCounter : this.figureCounter
-                if (!figureCounter[figCat]) {
-                    figureCounter[figCat] = 1
+            const category = node.attrs.category
+            if (category !== 'none') {
+                const categoryCounter = options.inFootnote ? this.fnCategoryCounter : this.categoryCounter
+                if (!categoryCounter[category]) {
+                    categoryCounter[category] = 1
                 }
-                const figCount = figureCounter[figCat]++
-                const figCountXml = `<text:sequence text:ref-name="ref${figCat}${figCount - 1}${options.inFootnote ? 'A' : ''}" text:name="${figCat}" text:formula="ooow:${figCat}+1" style:num-format="1">${figCount}${options.inFootnote ? 'A' : ''}</text:sequence>`
+                const catCount = categoryCounter[category]++
+                const catCountXml = `<text:sequence text:ref-name="ref${category}${catCount - 1}${options.inFootnote ? 'A' : ''}" text:name="${category}" text:formula="ooow:${category}+1" style:num-format="1">${catCount}${options.inFootnote ? 'A' : ''}</text:sequence>`
                 if (caption.length) {
-                    caption = `<text:bookmark-start text:name="${node.attrs.id}"/>${FIG_CATS[figCat][this.exporter.doc.settings.language]} ${figCountXml}<text:bookmark-end text:name="${node.attrs.id}"/>: ${caption}`
+                    caption = `<text:bookmark-start text:name="${node.attrs.id}"/>${CATS[category][this.exporter.doc.settings.language]} ${catCountXml}<text:bookmark-end text:name="${node.attrs.id}"/>: ${caption}`
                 } else {
-                    caption = `<text:bookmark-start text:name="${node.attrs.id}"/>${FIG_CATS[figCat][this.exporter.doc.settings.language]} ${figCountXml}<text:bookmark-end text:name="${node.attrs.id}"/>`
+                    caption = `<text:bookmark-start text:name="${node.attrs.id}"/>${CATS[category][this.exporter.doc.settings.language]} ${catCountXml}<text:bookmark-end text:name="${node.attrs.id}"/>`
                 }
             }
             let relWidth = node.attrs.width
             let aligned = node.attrs.aligned
             let frame
+            const image = node.content.find(node => node.type === 'image')?.attrs.image || false
             if (
                 caption.length ||
-                    node.attrs.image === false
+                    image === false
             ) {
                 frame = true
                 this.exporter.styles.checkParStyle('Caption')
@@ -250,9 +247,9 @@ export class OdtExporterRichtext {
                     end = `<text:line-break />${caption}` + end
                 }
             }
-            if (node.attrs.image !== false) {
-                const imgDBEntry = this.images.imageDB.db[node.attrs.image]
-                const imgFileName = this.images.imgIdTranslation[node.attrs.image]
+            if (image !== false) {
+                const imgDBEntry = this.images.imageDB.db[image]
+                const imgFileName = this.images.imgIdTranslation[image]
                 const height = imgDBEntry.height * 3 / 4 // more or less px to point
                 const width = imgDBEntry.width * 3 / 4 // more or less px to point
                 const graphicStyleId = this.exporter.styles.getGraphicStyleId('Graphics', aligned)
@@ -261,7 +258,7 @@ export class OdtExporterRichtext {
                             <draw:image xlink:href="Pictures/${imgFileName}" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/>
                         </draw:frame>`
             } else {
-                const latex = node.attrs.equation
+                const latex = node.content.find(node => node.type === 'figure_equation')?.attrs.equation
                 const objectNumber = this.exporter.math.addMath(latex)
                 const graphicStyleId = this.exporter.styles.getGraphicStyleId('Formula')
                 content += noSpaceTmp`
@@ -270,13 +267,46 @@ export class OdtExporterRichtext {
                             <svg:desc>formula</svg:desc>
                         </draw:frame>`
             }
-            if (figCat === 'none') {
+            if (category === 'none') {
                 content += `<text:bookmark text:name="${node.attrs.id}"/>`
             }
             break
         }
+        case 'figure_caption':
+            // We are already dealing with this in the figure. Prevent content from being added a second time.
+            return ''
+        case 'figure_equation':
+            // We are already dealing with this in the figure.
+            break
+        case 'image':
+            // We are already dealing with this in the figure.
+            break
         case 'table': {
-            const columns = node.content[0].content.length
+            let caption = node.attrs.caption ? node.content[0].content.map(node => this.transformRichtext(node)).join('') : ''
+            // The table category should not be in the
+            // user's language but rather the document language
+            const category = node.attrs.category
+            if (category !== 'none') {
+                const categoryCounter = options.inFootnote ? this.fnCategoryCounter : this.categoryCounter
+                if (!categoryCounter[category]) {
+                    categoryCounter[category] = 1
+                }
+                const catCount = categoryCounter[category]++
+                const catCountXml = `<text:sequence text:ref-name="ref${category}${catCount - 1}${options.inFootnote ? 'A' : ''}" text:name="${category}" text:formula="ooow:${category}+1" style:num-format="1">${catCount}${options.inFootnote ? 'A' : ''}</text:sequence>`
+                if (caption.length) {
+                    caption = `<text:bookmark-start text:name="${node.attrs.id}"/>${CATS[category][this.exporter.doc.settings.language]} ${catCountXml}<text:bookmark-end text:name="${node.attrs.id}"/>: ${caption}`
+                } else {
+                    caption = `<text:bookmark-start text:name="${node.attrs.id}"/>${CATS[category][this.exporter.doc.settings.language]} ${catCountXml}<text:bookmark-end text:name="${node.attrs.id}"/>`
+                }
+            }
+            if (caption.length) {
+                if (!options.section) {
+                    options.section = 'Text_20_body'
+                }
+                this.exporter.styles.checkParStyle(options.section)
+                start += `<text:p text:style-name="${options.section}">${caption}</text:p>`
+            }
+            const columns = node.content[1].content[0].content.length
             if (node.attrs.width === '100') {
                 start += '<table:table>'
             } else {
@@ -290,6 +320,12 @@ export class OdtExporterRichtext {
             end = '</table:table>' + end
             break
         }
+        case 'table_body':
+            // Pass through to table.
+            break
+        case 'table_caption':
+            // We already deal with this in 'table'.
+            return ''
         case 'table_row':
             start += '<table:table-row>'
             end = '</table:table-row>' + end

@@ -102,6 +102,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         body_input2 = self.driver2.find_element_by_class_name(
             'article-body'
         )
+        body_input.click()
+        body_input2.click()
 
         body_input.click()
         body_input2.click()
@@ -175,6 +177,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         body_input2 = self.driver2.find_element_by_class_name(
             'article-body'
         )
+        body_input.click()
+        body_input2.click()
 
         body_input.click()
         body_input2.click()
@@ -794,8 +798,16 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         insert_button = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "insert-math"))
         )
+
         # type formula
-        math_field = driver.find_element_by_class_name('math-field')
+        math_field = WebDriverWait(driver, self.wait_time).until(
+            EC.visibility_of_element_located(
+                (
+                    By.CSS_SELECTOR,
+                    '.math-field'
+                )
+            )
+        )
         math_field.click()
 
         # wait for keyboard
@@ -1087,14 +1099,15 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         button = driver.find_element_by_xpath('//*[@title="Figure"]')
         button.click()
 
-        caption = WebDriverWait(driver, self.wait_time).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "caption"))
-        )
-
-        self.input_text(caption, "My figure")
-
         # click on 'Insert image' button
-        driver.find_element_by_id('insert-figure-image').click()
+        WebDriverWait(driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.XPATH,
+                    '//*[normalize-space()="Insert image"]'
+                )
+            )
+        ).click()
 
         upload_button = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located(
@@ -1141,6 +1154,14 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         # click on 'Insert' button
         driver.find_element_by_css_selector("button.fw-dark").click()
 
+        caption = WebDriverWait(driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, "div.article-body figure figcaption")
+            )
+        )
+        caption.click()
+        self.input_text(caption, "My figure")
+
     def get_image(self, driver):
         figure = driver.find_element_by_css_selector(
             'div.article-body figure'
@@ -1151,7 +1172,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
     def get_caption(self, driver):
         caption = driver.find_element_by_css_selector(
-            'div.article-body figure figcaption span[data-caption]'
+            'div.article-body figure figcaption'
         )
 
         return caption.text

@@ -3,7 +3,7 @@ import deepEqual from "fast-deep-equal"
 import {toFullJSON} from "../schema/mini_json"
 
 function cleanFootnotes(node, elements, marks) {
-    if (node.attrs && node.attrs.footnote) {
+    if (node.attrs?.footnote) {
         // We remove forbidden block nodes
         node.attrs.footnote = node.attrs.footnote.filter(node => !elements.includes(node.type))
         // We remove forbidden marks + inline nodes
@@ -41,7 +41,7 @@ export function adjustDocToTemplate(miniDoc, miniTemplate, documentStyles, schem
         removedFootnoteMarks = doc.attrs.footnote_marks.filter(
             mark => !template.attrs.footnote_marks.includes(mark)
         ),
-        attrs = ['footnote_marks', 'footnote_elements', 'languages', 'citationstyles', 'papersizes', 'bibliography_header', 'template']
+        attrs = ['footnote_marks', 'footnote_elements', 'languages', 'citationstyles', 'papersizes', 'bibliography_header', 'template', 'import_id']
     attrs.forEach(attr => doc.attrs[attr] = template.attrs[attr])
 
     if (!doc.attrs.citationstyles.includes(doc.attrs.citationstyle)) {
@@ -119,7 +119,7 @@ export function adjustDocToTemplate(miniDoc, miniTemplate, documentStyles, schem
                             firstOldContent.content.length === 1
                         ) &&
                         !(
-                            // heading/richtext with just the default contents
+                            // heading/richtext with just the default content
                             firstOldContent.attrs.elements &&
                             firstOldContent.content.length === 1 &&
                             firstOldContent.content[0].type === firstOldContent.attrs.elements[0] &&

@@ -4,7 +4,9 @@ import {Schema} from "prosemirror-model"
 
 const nocase = {
     parseDOM: [{tag: 'span.nocase'}],
-    toDOM() { return ["span", {class:"nocase"}] }
+    toDOM() {
+        return ["span", {class: "nocase"}]
+    }
 }
 
 const doc = {

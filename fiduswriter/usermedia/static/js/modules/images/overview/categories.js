@@ -21,6 +21,7 @@ export class ImageOverviewCategories {
         ).catch(
             error => {
                 addAlert('error', gettext('Could not update categories'))
+                deactivateWait()
                 throw (error)
             }
         ).then(
@@ -69,7 +70,9 @@ export class ImageOverviewCategories {
                     document.querySelectorAll('#editCategories .category-form').forEach(el => {
                         const thisVal = el.value.trim()
                         let thisId = el.dataset.id
-                        if ('undefined' == typeof (thisId)) thisId = 0
+                        if ('undefined' == typeof (thisId)) {
+                            thisId = 0
+                        }
                         if ('' !== thisVal) {
                             cats.ids.push(thisId)
                             cats.titles.push(thisVal)

@@ -14,6 +14,8 @@ TEST_SERVER = True
 CONTACT_EMAIL = 'mail@email.com'
 # If websockets is running on a non-standard port, add it here:
 WS_PORT = False
+# Interval between document saves
+DOC_SAVE_INTERVAL = 1
 
 ADMINS = (
     ('Your Name', 'your_email@example.com'),
@@ -32,7 +34,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(PROJECT_PATH, 'fiduswriter.sql'),
-        'CONN_MAX_AGE': 15
+        'CONN_MAX_AGE': None
     }
 }
 
@@ -337,6 +339,11 @@ JAVASCRIPT_ERROR_BLACKLIST = [
 
 # The page to show while transpilation takes place.
 SETUP_PAGE_PATH = os.path.join(SRC_PATH, 'base/setup_page/')
+
+# Whether to use the old JSON patch method rather than prosemirror-py.
+# Deprecated and will be remove din the next minor version update after
+# Fidus Writer 3.9.
+JSONPATCH = False
 
 # Whether to create a service worker on production sites
 USE_SERVICE_WORKER = True

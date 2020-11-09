@@ -3,7 +3,7 @@ import {
     escapeText
 } from "../../common"
 import {
-    FIG_CATS
+    CATS
 } from "../../schema/i18n"
 
 export class DocxExporterRichtext {
@@ -14,8 +14,8 @@ export class DocxExporterRichtext {
         this.images = images
         this.fnCounter = 2 // footnotes 0 and 1 are occupied by separators by default.
         this.bookmarkCounter = 0
-        this.figureCounter = {} // counters for each type of figure (figure/table/photo)
-        this.fnFigureCounter = {}
+        this.categoryCounter = {} // counters for each type of figure (figure/table/photo)
+        this.fncategoryCounter = {}
         this.docPrCount = 0
     }
 
@@ -37,7 +37,7 @@ export class DocxExporterRichtext {
             // We may need to add them later, if it turns out this is a problem
             // for other versions of Word. In that case we should also add
             // it to settings.xml as described in above link.
-            if (options.section === 'Normal' && !options.list_type && !(node.content && node.content.length)) {
+            if (options.section === 'Normal' && !options.list_type && !(node.content?.length)) {
                 start += '<w:p/>'
             } else {
                 start += noSpaceTmp`
@@ -141,12 +141,12 @@ export class DocxExporterRichtext {
         case 'ordered_list':
             options = Object.assign({}, options)
             options.section = 'ListParagraph'
-            options.list_type = this.exporter.lists.getNumberedType()
             if (options.list_depth === undefined) {
                 options.list_depth = 0
             } else {
                 options.list_depth += 1
             }
+            options.list_type = this.exporter.lists.getNumberedType()
             break
         case 'bullet_list':
             options = Object.assign({}, options)
@@ -266,9 +266,9 @@ export class DocxExporterRichtext {
         {
             // We take the first citation from the stack and remove it.
             const cit = this.citations.pmCits.shift()
-            if (options.citationType && options.citationType === 'note') {
+            if (options.citationType === 'note') {
                 // If the citations are in notes (footnotes), we need to
-                // put the contents of this citation in a footnote.
+                // put the content of this citation in a footnote.
                 // We then add the footnote to the footnote file and
                 // adjust the ids of all subsequent footnotes to be one higher
                 // than what they were until now.
@@ -308,16 +308,16 @@ export class DocxExporterRichtext {
         }
         case 'figure':
         {
-            const figCat = node.attrs.figureCategory
-            let caption = escapeText(node.attrs.caption)
-            let figCountXml = ''
-            if (figCat !== 'none') {
-                const figureCounter = options.inFootnote ? this.fnFigureCounter : this.figureCounter
-                if (!figureCounter[figCat]) {
-                    figureCounter[figCat] = 1
+            const category = node.attrs.category
+            let caption = node.attrs.caption ? node.content.find(node => node.type === 'figure_caption')?.content || [] : []
+            let catCountXml = ''
+            if (category !== 'none') {
+                const categoryCounter = options.inFootnote ? this.fncategoryCounter : this.categoryCounter
+                if (!categoryCounter[category]) {
+                    categoryCounter[category] = 1
                 }
-                figCountXml = `<w:r>
-                        <w:t xml:space="preserve">${FIG_CATS[figCat][this.exporter.doc.settings.language]} </w:t>
+                catCountXml = `<w:r>
+                        <w:t xml:space="preserve">${CATS[category][this.exporter.doc.settings.language]} </w:t>
                     </w:r>
                     <w:r>
                         <w:rPr></w:rPr>
@@ -325,7 +325,7 @@ export class DocxExporterRichtext {
                     </w:r>
                     <w:r>
                         <w:rPr></w:rPr>
-                        <w:instrText> SEQ ${figCat} \\* ARABIC </w:instrText>
+                        <w:instrText> SEQ ${category} \\* ARABIC </w:instrText>
                     </w:r>
                     <w:r>
                         <w:rPr></w:rPr>
@@ -333,17 +333,20 @@ export class DocxExporterRichtext {
                     </w:r>
                     <w:r>
                         <w:rPr></w:rPr>
-                        <w:t>${figureCounter[figCat]++}${ options.inFootnote ? 'A' : ''}</w:t>
+                        <w:t>${categoryCounter[category]++}${ options.inFootnote ? 'A' : ''}</w:t>
                     </w:r>
                     <w:r>
                         <w:rPr></w:rPr>
                         <w:fldChar w:fldCharType="end" />
                     </w:r>`
-                caption = caption.length ? ': ' + caption : ''
+                if (caption.length) {
+                    caption = [{type: 'text', text: ': '}].concat(caption)
+                }
             }
             let cx, cy
-            if (node.attrs.image !== false) {
-                const imgDBEntry = this.images.imageDB.db[node.attrs.image]
+            const image = node.content.find(node => node.type === 'image')?.attrs.image || false
+            if (image !== false) {
+                const imgDBEntry = this.images.imageDB.db[image]
                 cx = imgDBEntry.width * 9525 // width in EMU
                 cy = imgDBEntry.height * 9525 // height in EMU
                 const imgTitle = imgDBEntry.title
@@ -367,7 +370,7 @@ export class DocxExporterRichtext {
                 }
                 cy = Math.round(cy)
                 cx = Math.round(cx)
-                const rId = this.images.imgIdTranslation[node.attrs.image]
+                const rId = this.images.imgIdTranslation[image]
                 content += noSpaceTmp`<w:r>
                       <w:rPr/>
                       <w:drawing>
@@ -414,10 +417,10 @@ export class DocxExporterRichtext {
             } else {
                 cx = 9525 * 100 // We pick a random size of 100x100. We hope this will fit the formula
                 cy = 9525 * 100
-                const latex = node.attrs.equation
+                const latex = node.content.find(node => node.type === 'figure_equation')?.attrs.equation || ''
                 content += this.exporter.math.getOmml(latex)
             }
-            const captionSpace = !!(figCountXml.length || caption.length)
+            const captionSpace = !!(catCountXml.length || caption.length)
             if (node.attrs.aligned === 'center') {
                 start += noSpaceTmp`
                     <w:p>
@@ -431,14 +434,9 @@ export class DocxExporterRichtext {
                     ${ captionSpace ?
         noSpaceTmp`<w:p>
                           <w:pPr><w:pStyle w:val="Caption"/><w:rPr></w:rPr></w:pPr>
-                          ${figCountXml}
-                          ${
-    caption.length ?
-        noSpaceTmp`<w:r>
-                                  <w:rPr></w:rPr>
-                                  <w:t>${caption}</w:t>
-                              </w:r>` : ''
-}</w:p>` : ''
+                          ${catCountXml}
+                          ${caption.map(node => this.transformRichtext(node)).join('')}
+                    </w:p>` : ''
 }` + end
             } else {
                 start += noSpaceTmp`
@@ -484,15 +482,8 @@ export class DocxExporterRichtext {
                                                         <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
 
                 end = noSpaceTmp`
-                                                        ${figCountXml}
-                                                        ${
-    caption.length ?
-        `<w:r>
-                                                                <w:rPr></w:rPr>
-                                                                <w:t>${caption}</w:t>
-                                                            </w:r>` :
-        ''
-}
+                                                        ${catCountXml}
+                                                        ${caption.map(node => this.transformRichtext(node)).join('')}
                                                     </w:p>
                                                 </w:txbxContent>
                                             </wps:txbx>
@@ -512,8 +503,66 @@ export class DocxExporterRichtext {
             }
             break
         }
+        case 'figure_caption':
+            // We are already dealing with this in the figure. Prevent content from being added a second time.
+            return ''
+        case 'figure_equation':
+            // We are already dealing with this in the figure.
+            break
+        case 'image':
+            // We are already dealing with this in the figure.
+            break
         case 'table':
         {
+            const category = node.attrs.category
+            let caption = node.attrs.caption ? node.content[0].content : []
+            let catCountXml = ''
+            if (category !== 'none') {
+                const categoryCounter = options.inFootnote ? this.fncategoryCounter : this.categoryCounter
+                if (!categoryCounter[category]) {
+                    categoryCounter[category] = 1
+                }
+                catCountXml = `<w:r>
+                        <w:t xml:space="preserve">${CATS[category][this.exporter.doc.settings.language]} </w:t>
+                    </w:r>
+                    <w:r>
+                        <w:rPr></w:rPr>
+                        <w:fldChar w:fldCharType="begin"></w:fldChar>
+                    </w:r>
+                    <w:r>
+                        <w:rPr></w:rPr>
+                        <w:instrText> SEQ ${category} \\* ARABIC </w:instrText>
+                    </w:r>
+                    <w:r>
+                        <w:rPr></w:rPr>
+                        <w:fldChar w:fldCharType="separate" />
+                    </w:r>
+                    <w:r>
+                        <w:rPr></w:rPr>
+                        <w:t>${categoryCounter[category]++}${ options.inFootnote ? 'A' : ''}</w:t>
+                    </w:r>
+                    <w:r>
+                        <w:rPr></w:rPr>
+                        <w:fldChar w:fldCharType="end" />
+                    </w:r>`
+                if (caption.length) {
+                    caption = [{type: 'text', text: ': '}].concat(caption)
+                }
+            }
+            const captionSpace = !!(catCountXml.length || caption.length)
+            if (captionSpace) {
+                start += noSpaceTmp`
+                    <w:p>
+                        <w:pPr>
+                            <w:pStyle w:val="Caption"/>
+                            <w:keepNext/>
+                        </w:pPr>
+                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
+                        <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>
+                        ${catCountXml}
+                        ${caption.map(node => this.transformRichtext(node)).join('')}
+                    </w:p>`
+            }
             this.exporter.tables.addTableGridStyle()
             start += noSpaceTmp`
                     <w:tbl>
@@ -522,18 +571,16 @@ export class DocxExporterRichtext {
                             ${
     node.attrs.width === '100' ?
         '<w:tblW w:w="0" w:type="auto" />' :
-        noSpaceTmp`<w:tblW w:w="${
-            50 * parseInt(node.attrs.width)
-        }" w:type="pct" />
+        noSpaceTmp`<w:tblW w:w="${50 * parseInt(node.attrs.width)}" w:type="pct" />
                                     <w:jc w:val="${node.attrs.aligned}" />`
 }
                             <w:tblLook w:val="04A0" w:firstRow="1" w:lastRow="0" w:firstColumn="1" w:lastColumn="0" w:noHBand="0" w:noVBand="1" />
                         </w:tblPr>
                         <w:tblGrid>`
-            const columns = node.content[0].content.length
+            const columns = node.content[1].content[0].content.length
             let cellWidth = 63500 // standard width
             options = Object.assign({}, options)
-            if (options.dimensions && options.dimensions.width) {
+            if (options.dimensions?.width) {
                 cellWidth = parseInt(options.dimensions.width / columns) - 2540 // subtracting for border width
             } else if (!options.dimensions) {
                 options.dimensions = {}
@@ -550,6 +597,12 @@ export class DocxExporterRichtext {
 
             break
         }
+        case 'table_body':
+            // Pass through to table.
+            break
+        case 'table_caption':
+            // We already deal with this in 'table'.
+            return ''
         case 'table_row':
             start += '<w:tr>'
             end = '</w:tr>' + end

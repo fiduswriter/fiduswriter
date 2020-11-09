@@ -197,56 +197,30 @@ msgstr "Шаблонът се нуждае от поне 1 стил на док�
 
 #: user/templates/account/email/email_confirmation_message.html:7
 #: user/templates/account/email/password_reset_key_message.html:7
-msgid "\n"
-"        Hello from %(site_name)s!\n"
-"    "
-msgstr "\n"
-"        Здравейте от %(site_name)s!\n"
-"        "
+msgid "Hello from %(site_name)s!"
+msgstr "Здравейте от %(site_name)s!"
 
-#. Se entiende?
 #: user/templates/account/email/email_confirmation_message.html:14
-msgid "\n"
-"        You're receiving this e-mail because user %(user_display)s has given yours as an e-mail address to connect their account.\n"
-"    "
-msgstr "\n"
-"        Получавате този имейл, защото потребител %(user_display)s е дал вашия като имейл адрес за свързване на акаунта им.\n"
-"        "
+msgid "You are receiving this e-mail because user %(user_display)s has given yours as an e-mail address to connect their account."
+msgstr "Получавате този имейл, защото потребител %(user_display)s е дал вашия като имейл адрес за свързване на акаунта им."
 
 #: user/templates/account/email/email_confirmation_message.html:20
-msgid "\n"
-"        To confirm this is correct, go to <a href=\"%(url)s\">%(url)s</a>.\n"
-"    "
-msgstr "\n"
-"        За да потвърдите, че това е правилно, отидете на <a href=\"%(url)s\">%(url)s </a>.\n"
-"        "
+msgid "To confirm this is correct, go to <a href=\"%(url)s\">%(url)s</a>."
+msgstr "За да потвърдите, че това е правилно, отидете на <a href=\"%(url)s\">%(url)s </a>."
 
 #: user/templates/account/email/email_confirmation_message.html:26
 #: user/templates/account/email/password_reset_key_message.html:32
-msgid "\n"
-"        Thank you from %(site_name)s!\n"
-"    "
-msgstr "\n"
-"        Благодаря ви от %(site_name)s!\n"
-"        "
+msgid "Thank you from %(site_name)s!"
+msgstr "Благодаря ви от %(site_name)s!"
 
-#. Bien?
 #: user/templates/account/email/password_reset_key_message.html:13
-msgid "\n"
-"        You're receiving this e-mail because you or someone else has requested a password for your user account.\n"
-"    "
-msgstr "\n"
-"        Получавате този имейл, защото вие или някой друг сте поискали парола за вашия потребителски акаунт.\n"
-"        "
+msgid "You are receiving this e-mail because you or someone else has requested a password for your user account."
+msgstr "Получавате този имейл, защото вие или някой друг сте поискали парола за вашия потребителски акаунт."
 
 #. En español generalmente no se usa safely en este tipo de mensajes de restablecimiento de contraseña.
 #: user/templates/account/email/password_reset_key_message.html:18
-msgid "\n"
-"        It can be safely ignored if you did not request a password reset. Click the link below to reset your password.\n"
-"    "
-msgstr "\n"
-"        Може безопасно да се игнорира, ако не сте поискали нулиране на парола. Кликнете върху връзката по-долу, за да нулирате паролата си.\n"
-"        "
+msgid "It can be safely ignored if you did not request a password reset. Click the link below to reset your password."
+msgstr "Може безопасно да се игнорира, ако не сте поискали нулиране на парола. Кликнете върху връзката по-долу, за да нулирате паролата си."
 
 #: user/templates/account/email/password_reset_key_message.html:27
 msgid "In case you forgot, your username is %(username)s."
@@ -275,4 +249,3 @@ msgstr "Грешка 404"
 #: base/templates/api_404.html:9
 msgid "We are sorry, but this page was not found."
 msgstr "Съжаляваме, но тази страница не беше намерена."
-

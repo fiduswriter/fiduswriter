@@ -1,11 +1,65 @@
 msgid ""
 msgstr ""
+"Project-Id-Version: Fidus Writer backend\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-11-09 21:52+0000\n"
+"Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: POEditor.com\n"
-"Project-Id-Version: Fidus Writer backend\n"
-"Language: bg\n"
+
+#: base/default_settings.py:229
+msgid "English"
+msgstr "Английски"
+
+#: base/default_settings.py:230
+msgid "Bulgarian"
+msgstr "Български"
+
+#: base/default_settings.py:231
+msgid "German"
+msgstr "Немски"
+
+#: base/default_settings.py:232
+msgid "French"
+msgstr "Френски"
+
+#: base/default_settings.py:233
+msgid "Italian"
+msgstr "Италиански"
+
+#: base/default_settings.py:234
+msgid "Spanish"
+msgstr "Испански"
+
+#: base/default_settings.py:235
+msgid "Portuguese (Brazil)"
+msgstr "Португалски (Бразилия)"
+
+#: base/default_settings.py:316
+msgid "Fidus Writer Admin"
+msgstr "Fidus Writer Admin"
+
+#: base/default_settings.py:317
+msgid "Fidus Writer Administration Site"
+msgstr "Сайт за администрация на Fidus Writer"
+
+#: base/default_settings.py:318
+msgid "Welcome to the Fidus Writer Administration Site"
+msgstr "Добре дошли в сайта за администрация на Fidus Writer"
+
+#: base/templates/500.html:5 base/templates/500.html:8
+msgid "Error 500"
+msgstr "Грешка 500"
+
+#: base/templates/500.html:9
+msgid ""
+"We are sorry, but a server error occured. Our team will be looking into the "
+"issue shortly."
+msgstr ""
+"Съжаляваме, но възникна грешка в сървъра. Екипът ни ще разгледа въпроса "
+"скоро."
 
 #: base/templates/admin/console.html:4 base/templates/admin/console.html:16
 #: base/templates/admin/overview.html:14
@@ -25,8 +79,12 @@ msgid "Message"
 msgstr "съобщение"
 
 #: base/templates/admin/console.html:26
-msgid "This system will go offline for scheduled maintenance in 30 minutes. All your work will be saved automatically and we will be back shortly."
-msgstr "Тази система ще премине офлайн за планирана поддръжка след 30 минути. Цялата ви работа ще бъде запазена автоматично и скоро ще се върнем."
+msgid ""
+"This system will go offline for scheduled maintenance in 30 minutes. All "
+"your work will be saved automatically and we will be back shortly."
+msgstr ""
+"Тази система ще премине офлайн за планирана поддръжка след 30 минути. Цялата "
+"ви работа ще бъде запазена автоматично и скоро ще се върнем."
 
 #: base/templates/admin/console.html:33
 msgid "Send to connected users"
@@ -40,6 +98,14 @@ msgstr "Екстри"
 #: document/templates/admin/document/maintenance.html:17
 msgid "Document Maintenance"
 msgstr "Поддръжка на документи"
+
+#: base/templates/api_404.html:5 base/templates/api_404.html:8
+msgid "Error 404"
+msgstr "Грешка 404"
+
+#: base/templates/api_404.html:9
+msgid "We are sorry, but this page was not found."
+msgstr "Съжаляваме, но тази страница не беше намерена."
 
 #: base/templates/app.html:9
 msgid "The all in one solution for collaborative academic writing."
@@ -59,64 +125,27 @@ msgid "Browser not supported"
 msgstr "Браузърът не се поддържа"
 
 #: browser_check/templates/browser_check/browser_not_supported.html:28
-msgid "\n"
+msgid ""
+"\n"
 "                Your browser is not supported by Fidus Writer.\n"
 "                Please update! We recommend using a current\n"
 "                version of Chrome/Chromium or Firefox on a\n"
 "                desktop computer.\n"
 "            "
-msgstr "\n"
+msgstr ""
+"\n"
 "                Вашият браузър не се поддържа от Fidus Writer.\n"
 "                Моля обновете! Препоръчваме да използвате ток\n"
 "                версия на Chrome / Chromium или Firefox на a\n"
 "                настолен компютър.\n"
 "                        "
 
-#: base/default_settings.py:227
-msgid "English"
-msgstr "Английски"
-
-#: base/default_settings.py:228
-msgid "Bulgarian"
-msgstr "Български"
-
-#: base/default_settings.py:229
-msgid "German"
-msgstr "Немски"
-
-#: base/default_settings.py:230
-msgid "French"
-msgstr "Френски"
-
-#: base/default_settings.py:231
-msgid "Italian"
-msgstr "Италиански"
-
-#: base/default_settings.py:232
-msgid "Spanish"
-msgstr "Испански"
-
-#: base/default_settings.py:233
-msgid "Portuguese (Brazil)"
-msgstr "Португалски (Бразилия)"
-
-#: base/default_settings.py:314
-msgid "Fidus Writer Admin"
-msgstr "Fidus Writer Admin"
-
-#: base/default_settings.py:315
-msgid "Fidus Writer Administration Site"
-msgstr "Сайт за администрация на Fidus Writer"
-
-#: base/default_settings.py:316
-msgid "Welcome to the Fidus Writer Administration Site"
-msgstr "Добре дошли в сайта за администрация на Fidus Writer"
-
 #: document/admin.py:51
 msgid "Duplicate selected document templates"
 msgstr "Дублирайте избраните шаблони за документи"
 
 #: document/templates/admin/document/document/change_list_object_tools.html:8
+#, python-format
 msgid "Add %(name)s"
 msgstr "Добавете %(name)s"
 
@@ -126,14 +155,20 @@ msgid "Maintenance"
 msgstr "Поддръжка"
 
 #: document/templates/admin/document/maintenance.html:19
-msgid "\n"
-"            Before and after upgrading Fidus Writer, you should update all the documents\n"
-"            of all users to the newest document version. Only do this if you know that\n"
+msgid ""
+"\n"
+"            Before and after upgrading Fidus Writer, you should update all "
+"the documents\n"
+"            of all users to the newest document version. Only do this if you "
+"know that\n"
 "            no user is currently editing any document!\n"
 "            "
-msgstr "\n"
-"            Преди и след надграждането на Fidus Writer трябва да актуализирате всички документи\n"
-"            на всички потребители до най-новата версия на документа. Правете това само ако знаете това\n"
+msgstr ""
+"\n"
+"            Преди и след надграждането на Fidus Writer трябва да "
+"актуализирате всички документи\n"
+"            на всички потребители до най-новата версия на документа. Правете "
+"това само ако знаете това\n"
 "            в момента никой потребител не редактира никакъв документ!\n"
 "                        "
 
@@ -141,7 +176,7 @@ msgstr "\n"
 msgid "Update all documents (DANGER!)"
 msgstr "Актуализирайте всички документи (ОПАСНОСТ!)"
 
-#: document/views.py:405 document/views.py:505 document/views.py:908
+#: document/views.py:405 document/views.py:505 document/views.py:905
 msgid "Untitled"
 msgstr "неозаглавен"
 
@@ -149,11 +184,11 @@ msgstr "неозаглавен"
 msgid "shared"
 msgstr "споделено"
 
-#: document/views.py:479 document/views.py:583 document/views.py:994
+#: document/views.py:479 document/views.py:583 document/views.py:991
 msgid "Document"
 msgstr "документ"
 
-#: document/views.py:481 document/views.py:585 document/views.py:996
+#: document/views.py:481 document/views.py:585 document/views.py:993
 msgid "Author"
 msgstr "Автор"
 
@@ -161,7 +196,7 @@ msgstr "Автор"
 msgid "Access Rights"
 msgstr "Права за достъп"
 
-#: document/views.py:486 document/views.py:1001
+#: document/views.py:486 document/views.py:998
 msgid "Access the document"
 msgstr "Достъп до документа"
 
@@ -173,17 +208,15 @@ msgstr "Документът е споделен:"
 msgid "Sign up or log in and access the document"
 msgstr "Регистрирайте се или влезте и получите достъп до документа"
 
-#. el espacio antes de los dos puntos se ve raro
-#: document/views.py:934
+#: document/views.py:931
 msgid "Comment on :"
 msgstr "Коментар за:"
 
-#. el espacio antes de los dos puntos se ve raro
-#: document/views.py:955
+#: document/views.py:952
 msgid "Comment assignment on :"
 msgstr "Задание за коментар на:"
 
-#: document/views.py:998
+#: document/views.py:995
 msgid "Comment"
 msgstr "коментар"
 
@@ -197,32 +230,50 @@ msgstr "Шаблонът се нуждае от поне 1 стил на док�
 
 #: user/templates/account/email/email_confirmation_message.html:7
 #: user/templates/account/email/password_reset_key_message.html:7
+#, python-format
 msgid "Hello from %(site_name)s!"
 msgstr "Здравейте от %(site_name)s!"
 
-#: user/templates/account/email/email_confirmation_message.html:14
-msgid "You are receiving this e-mail because user %(user_display)s has given yours as an e-mail address to connect their account."
-msgstr "Получавате този имейл, защото потребител %(user_display)s е дал вашия като имейл адрес за свързване на акаунта им."
+#: user/templates/account/email/email_confirmation_message.html:12
+#, python-format
+msgid ""
+"You are receiving this e-mail because user %(user_display)s has given yours "
+"as an e-mail address to connect their account."
+msgstr ""
+"Получавате този имейл, защото потребител %(user_display)s е дал вашия като "
+"имейл адрес за свързване на акаунта им."
+
+#: user/templates/account/email/email_confirmation_message.html:16
+#, python-format
+msgid "To confirm this is correct, go to <a href=\"%(url)s\">%(url)s</a>."
+msgstr ""
+"За да потвърдите, че това е правилно, отидете на <a href=\"%(url)s\">%(url)s "
+"</a>."
 
 #: user/templates/account/email/email_confirmation_message.html:20
-msgid "To confirm this is correct, go to <a href=\"%(url)s\">%(url)s</a>."
-msgstr "За да потвърдите, че това е правилно, отидете на <a href=\"%(url)s\">%(url)s </a>."
-
-#: user/templates/account/email/email_confirmation_message.html:26
-#: user/templates/account/email/password_reset_key_message.html:32
+#: user/templates/account/email/password_reset_key_message.html:26
+#, python-format
 msgid "Thank you from %(site_name)s!"
 msgstr "Благодаря ви от %(site_name)s!"
 
-#: user/templates/account/email/password_reset_key_message.html:13
-msgid "You are receiving this e-mail because you or someone else has requested a password for your user account."
-msgstr "Получавате този имейл, защото вие или някой друг сте поискали парола за вашия потребителски акаунт."
+#: user/templates/account/email/password_reset_key_message.html:11
+msgid ""
+"You are receiving this e-mail because you or someone else has requested a "
+"password for your user account."
+msgstr ""
+"Получавате този имейл, защото вие или някой друг сте поискали парола за "
+"вашия потребителски акаунт."
 
-#. En español generalmente no se usa safely en este tipo de mensajes de restablecimiento de contraseña.
-#: user/templates/account/email/password_reset_key_message.html:18
-msgid "It can be safely ignored if you did not request a password reset. Click the link below to reset your password."
-msgstr "Може безопасно да се игнорира, ако не сте поискали нулиране на парола. Кликнете върху връзката по-долу, за да нулирате паролата си."
+#: user/templates/account/email/password_reset_key_message.html:14
+msgid ""
+"It can be safely ignored if you did not request a password reset. Click the "
+"link below to reset your password."
+msgstr ""
+"Може безопасно да се игнорира, ако не сте поискали нулиране на парола. "
+"Кликнете върху връзката по-долу, за да нулирате паролата си."
 
-#: user/templates/account/email/password_reset_key_message.html:27
+#: user/templates/account/email/password_reset_key_message.html:21
+#, python-format
 msgid "In case you forgot, your username is %(username)s."
 msgstr "В случай, че сте забравили, вашето потребителско име е %(username)s."
 
@@ -233,19 +284,3 @@ msgstr "Типът файл не се поддържа"
 #: usermedia/views.py:63
 msgid "No file uploaded"
 msgstr "Не е качен файл"
-
-#: base/templates/500.html:5 base/templates/500.html:8
-msgid "Error 500"
-msgstr "Грешка 500"
-
-#: base/templates/500.html:9
-msgid "We are sorry, but a server error occured. Our team will be looking into the issue shortly."
-msgstr "Съжаляваме, но възникна грешка в сървъра. Екипът ни ще разгледа въпроса скоро."
-
-#: base/templates/api_404.html:5 base/templates/api_404.html:8
-msgid "Error 404"
-msgstr "Грешка 404"
-
-#: base/templates/api_404.html:9
-msgid "We are sorry, but this page was not found."
-msgstr "Съжаляваме, но тази страница не беше намерена."

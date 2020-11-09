@@ -139,7 +139,6 @@ export class FigureDialog {
     layoutImagePreview() {
         if (this.imgId) {
             if (this.mathField) {
-                this.mathField.$revertToOriginalContent()
                 this.mathField = false
             }
             const db = this.imgDb === 'document' ? this.imageDB.db : this.userImageDB.db

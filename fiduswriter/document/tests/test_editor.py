@@ -726,9 +726,8 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.ID, 'preferences-btn'))
         ).click()
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".fw-logout-button"
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Log out"]'
         ).click()
         # Second user logs in, verifies that he has access
         self.driver.find_element(By.ID, "id_login").send_keys("Yeti2")
@@ -780,9 +779,8 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.ID, 'preferences-btn'))
         ).click()
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".fw-logout-button"
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Log out"]'
         ).click()
         # First user logs in again, removes access rights of second user
         self.driver.find_element(By.ID, "id_login").send_keys("Yeti")
@@ -832,9 +830,8 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.ID, 'preferences-btn'))
         ).click()
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".fw-logout-button"
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Log out"]'
         ).click()
         # Second user logs in again to verify that access rights are gone
         self.driver.find_element(By.ID, "id_login").send_keys("Yeti2")
@@ -858,9 +855,8 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.ID, 'preferences-btn'))
         ).click()
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".fw-logout-button"
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Log out"]'
         ).click()
         # Third user signs up
         self.driver.find_element(
@@ -1068,9 +1064,8 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.ID, 'preferences-btn'))
         ).click()
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".fw-logout-button"
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Log out"]'
         ).click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable(
@@ -1164,9 +1159,8 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             "#preferences-btn"
         ).click()
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".fw-logout-button"
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Log out"]'
         ).click()
         # User 5 signs up with a different email first and then clicks the
         # invitation link. This should land user 5 directly in the editor.

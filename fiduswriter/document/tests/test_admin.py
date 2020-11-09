@@ -434,9 +434,8 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.ID, 'preferences-btn'))
         ).click()
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".fw-logout-button"
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Log out"]'
         ).click()
         # Login as User2
         self.driver.find_element(By.ID, "id_login").send_keys("User2")

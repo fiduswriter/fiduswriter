@@ -103,12 +103,15 @@ export class ContentMenu {
 
     positionDialog() {
         const dialogHeight = this.dialogEl.getBoundingClientRect().height + 10,
+            dialogWidth = this.dialogEl.getBoundingClientRect().width + 10,
             scrollTopOffset = window.pageYOffset,
             clientHeight = window.document.documentElement.clientHeight,
-            left = this.menuPos.X
+            clientWidth = window.document.documentElement.clientWidth
+
         // We try to ensure that the menu is seen in the browser at the preferred location.
         // Adjustments are made in case it doesn't fit.
-        let top = this.menuPos.Y
+        let top = this.menuPos.Y,
+            left = this.menuPos.X
 
         if ((top + dialogHeight) > (scrollTopOffset + clientHeight)) {
             top -= ((top + dialogHeight) - (scrollTopOffset + clientHeight))
@@ -116,6 +119,10 @@ export class ContentMenu {
 
         if (top < scrollTopOffset) {
             top = scrollTopOffset + 10
+        }
+
+        if ((left + dialogWidth) > clientWidth) {
+            left -= left + dialogWidth - clientWidth
         }
 
         this.dialogEl.style.top = `${top}px`
@@ -148,8 +155,8 @@ export class ContentMenu {
     onclick(event) {
         event.preventDefault()
         event.stopImmediatePropagation()
-        const target = event.target
-        if (target.matches('li.content-menu-item')) {
+        const target = event.target.closest('li.content-menu-item')
+        if (target) {
             const menuNumber = target.dataset.index
             const menuItem = this.menu.content[menuNumber]
             if (menuItem.disabled?.(this.page)) {

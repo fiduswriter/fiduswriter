@@ -22,7 +22,7 @@ export class DocTemplatesOverview {
     init() {
         return whenReady().then(() => {
             this.render()
-            const smenu = new SiteMenu("templates")
+            const smenu = new SiteMenu(this.app, "templates")
             smenu.init()
             new DocTemplatesActions(this)
             this.menu = new OverviewMenuView(this, menuModel)

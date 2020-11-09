@@ -2,8 +2,7 @@ import {Dialog} from "./dialog"
 import {ContentMenu} from "./content_menu"
 
 /** Creates a styled select with a contentmenu from a select tag.
- * TODO: replace all instances of addDropdownBox with dropdownSelect as it is not being restrained by scroll bars, etc. in the same way.
- * @param select The select-tag which is tyo be replaced.
+ * @param select The select-tag which is to be replaced.
  * @param options
  */
 
@@ -51,7 +50,7 @@ export const dropdownSelect = function(
                 selected = option
             }
             return {
-                title: option.innerText,
+                title: option.innerHTML,
                 type: 'action',
                 tooltip: option.title || '',
                 order,
@@ -59,18 +58,18 @@ export const dropdownSelect = function(
                     if (!button) {
                         buttonDOM.firstElementChild.innerText = option.innerText
                     }
-                    onChange(option.value)
-                    value = option.value
+                    value = option.value || option.dataset.value
+                    onChange(value)
                     menu.content.forEach(item => item.selected = false)
                     menu.content[order].selected = true
                     return false
                 },
-                selected: !!option.selected
+                selected: !!(option.selected || option.dataset.selected)
             }
 
         })
     }
-    if (!selected) {
+    if (!selected && !button) {
         selected = selectDOM.firstElementChild
         menu.content[0].selected = true
     }
@@ -79,7 +78,7 @@ export const dropdownSelect = function(
         buttonDOM.firstElementChild.innerText = selected.innerText
     }
 
-    value = selected.value
+    value = selected ? selected.value : false
 
     buttonDOM.addEventListener('click', event => {
         event.preventDefault()
@@ -114,30 +113,9 @@ export const dropdownSelect = function(
     }
 }
 
-/** Creates a dropdown box.
- * @param btn The button to open and close the dropdown box.
- * @param box The node containing the contents of the dropdown box.
- * @param preopen An optional function to be called before opening the dropdown box. Used to position dropdown box.
- */
-
-export const addDropdownBox = function(btn, box, preopen = false) {
-    btn.addEventListener('click', event => {
-        event.preventDefault()
-        event.stopPropagation()
-        if (btn.classList.contains('disabled')) {
-            return
-        }
-        if (!box.clientWidth) {
-            if (preopen) {
-                preopen()
-            }
-            openDropdownBox(box)
-        }
-    })
-}
-
 /** Opens a dropdown box.
  * @param box The node containing the contents of the dropdown box.
+ * DEPRECATED. TODO: replace with dropdownSelect/ContentMenu
  */
 
 export const openDropdownBox = function(box) {

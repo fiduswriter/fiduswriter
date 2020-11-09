@@ -87,4 +87,6 @@ class SendFeedbackTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             "#preferences-btn > .fw-string-avatar"
         ).click()
-        self.driver.find_element(By.CSS_SELECTOR, ".fw-logout-button").click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Log out"]'
+        ).click()

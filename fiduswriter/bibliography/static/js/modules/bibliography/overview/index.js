@@ -23,7 +23,7 @@ export class BibliographyOverview {
     init() {
         return whenReady().then(() => {
             this.render()
-            const smenu = new SiteMenu("bibliography")
+            const smenu = new SiteMenu(this.app, "bibliography")
             smenu.init()
             this.menu = new OverviewMenuView(this, menuModel)
             this.menu.init()

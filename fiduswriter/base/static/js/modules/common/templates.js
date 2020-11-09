@@ -18,27 +18,17 @@ export const baseBodyTemplate = ({user, contents, hasOverview}) => `
                 ${user.avatar.html}
             </div>
             <div id="user-preferences-pulldown" class="fw-pulldown fw-right">
-                <ul>
-                    <li>
-                        <a class="fw-pulldown-item" href="/user/profile/">
-                            <span class="fw-avatar-card">
-                                <span class="fw-avatar-card-avatar">${user.avatar.html}</span>
-                                <span class="fw-avatar-card-name">
-                                    ${user.username}
-                                    <span class="fw-avatar-card-email">${filterPrimaryEmail(user.emails)}</span>
-                                </span>
-                            </span>
-                        </a>
-                    </li>
-                    <li>
-                        <a class="fw-pulldown-item" href="/user/team/">
-                            ${gettext("Contacts")}
-                        </a>
-                    </li>
-                    <li>
-                        <button class="fw-pulldown-item fw-logout-button" type="submit">${gettext("Log out")}</button>
-                    </li>
-                </ul>
+                <div data-value="profile">
+                    <span class='fw-avatar-card'>
+                        <span class='fw-avatar-card-avatar'>${user.avatar.html}</span>
+                        <span class='fw-avatar-card-name'>
+                            ${user.username}
+                            <span class='fw-avatar-card-email'>${filterPrimaryEmail(user.emails)}</span>
+                        </span>
+                    </span>
+                </div>
+                <div data-value="team">${gettext("Contacts")}</div>
+                <div data-value="logout">${gettext("Log out")}</div>
             </div>
         </div><!-- end user preference -->
     </div><!-- end container -->

@@ -270,8 +270,8 @@ class ProfileTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element_by_id(
             "preferences-btn"
         ).click()
-        self.driver.find_element_by_css_selector(
-            ".fw-logout-button"
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Log out"]'
         ).click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.title_is(

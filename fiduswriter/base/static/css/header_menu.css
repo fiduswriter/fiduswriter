@@ -85,13 +85,6 @@
     color: rgba(var(--nagivation-link-active-text-color));
 }
 
-.fw-logout-button {
-    background: none;
-    border: none;
-    font-family: inherit;
-    width: 100%;
-}
-
 #user-preferences {
     z-index: 2;
     margin-left: 8px;
@@ -111,9 +104,4 @@
 #preferences-btn .fw-avatar:hover,
 #preferences-btn .fw-string-avatar:hover {
     opacity: .7;
-}
-
-#user-preferences-pulldown a,
-#user-preferences-pulldown .fw-logout-button {
-    color: var(--cs-1-hover);
 }

@@ -30,7 +30,7 @@ export class DocumentOverview {
         return whenReady().then(() => {
             this.render()
             activateWait(true)
-            const smenu = new SiteMenu("documents")
+            const smenu = new SiteMenu(this.app, "documents")
             smenu.init()
             new DocumentOverviewActions(this)
             this.menu = new OverviewMenuView(this, menuModel)

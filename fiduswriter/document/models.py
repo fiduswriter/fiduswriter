@@ -105,8 +105,8 @@ class Document(models.Model):
     )
     added = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    comments = models.JSONField(default=dict)
-    bibliography = models.JSONField(default=dict)
+    comments = models.JSONField(default=dict, blank=True)
+    bibliography = models.JSONField(default=dict, blank=True)
     # Whether or not document is listed on document overview list page.
     # True by default and for all normal documents. Can be set to False when
     # documents are added in plugins that list these documents somewhere else.
@@ -124,6 +124,16 @@ class Document(models.Model):
 
     class Meta(object):
         ordering = ['-id']
+
+    def clean(self, *args, **kwargs):
+        if self.comments is None:
+            self.comments = "{}"
+        if self.bibliography is None:
+            self.bibliography = "{}"
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
 
     def get_absolute_url(self):
         return "/document/%i/" % self.id

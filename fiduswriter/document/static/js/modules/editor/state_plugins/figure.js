@@ -27,23 +27,33 @@ class FigureView {
 
     stopEvent(event) {
         let stopped = false
-        if (event.type === 'mousedown' && event.composedPath().includes(this.menuButton)) {
-            stopped = true
-            const tr = this.view.state.tr
-            const $pos = this.view.state.doc.resolve(this.getPos())
-            tr.setSelection(new NodeSelection($pos))
-            this.view.dispatch(tr)
-            const contentMenu = new ContentMenu({
-                menu: this.options.editor.menu.figureMenuModel,
-                width: 280,
-                page: this.options.editor,
-                menuPos: {X: parseInt(event.pageX) + 20, Y: parseInt(event.pageY) - 100},
-                onClose: () => {
-                    this.view.focus()
-                }
-            })
-            contentMenu.open()
+        if (event.type === 'mousedown') {
+            const composedPath = event.composedPath()
+            if (composedPath.includes(this.menuButton)) {
+                stopped = true
+                const tr = this.view.state.tr
+                const $pos = this.view.state.doc.resolve(this.getPos())
+                tr.setSelection(new NodeSelection($pos))
+                this.view.dispatch(tr)
+                const contentMenu = new ContentMenu({
+                    menu: this.options.editor.menu.figureMenuModel,
+                    width: 280,
+                    page: this.options.editor,
+                    menuPos: {X: parseInt(event.pageX) + 20, Y: parseInt(event.pageY) - 100},
+                    onClose: () => {
+                        this.view.focus()
+                    }
+                })
+                contentMenu.open()
+            } else if (composedPath.includes(this.dom) && !composedPath.find(el => el.matches && el.matches('figcaption'))) {
+                stopped = true
+                const tr = this.view.state.tr
+                const $pos = this.view.state.doc.resolve(this.getPos())
+                tr.setSelection(new NodeSelection($pos))
+                this.view.dispatch(tr)
+            }
         }
+
         return stopped
     }
 

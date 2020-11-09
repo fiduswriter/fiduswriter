@@ -237,19 +237,22 @@ export class FigureDialog {
     }
 
     findFigure(state) {
+        if (state.selection.node && state.selection.node.type.name == "figure") {
+            return state.selection.node
+        }
         const $head = state.selection.$head
         for (let d = $head.depth; d > 0; d--) {
             if ($head.node(d).type.name == "figure") {
-                return {node: $head.node(d), pos: $head.before(d)}
+                return $head.node(d)
             }
         }
-        return {table: false}
+        return false
     }
 
     init() {
-        this.node = this.editor.currentView.state.selection.node || false
+        this.node = this.findFigure(this.editor.currentView.state)
 
-        if (this.node?.attrs?.track.find(track => track.type === 'deletion')) {
+        if (this.node?.attrs?.track?.find(track => track.type === 'deletion')) {
             // The figure is marked as deleted so we don't allow editing it.
             return true
         }

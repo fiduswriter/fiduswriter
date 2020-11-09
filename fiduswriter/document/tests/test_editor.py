@@ -114,10 +114,16 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         button.click()
 
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "span.caption"))
-        ).send_keys('Caption')
-        self.driver.find_element_by_id("figure-category-btn").click()
-        self.driver.find_element_by_id("figure-category-photo").click()
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, "span.math-field")
+            )
+        )
+        self.driver.find_element_by_css_selector(
+            "div.figure-category"
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Photo"]'
+        ).click()
 
         # click on 'Insert image' button
         self.driver.find_element_by_id('insert-figure-image').click()
@@ -164,6 +170,17 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             '//*[normalize-space()="Use image"]'
         ).click()
         self.driver.find_element_by_css_selector("button.fw-dark").click()
+
+        caption = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, "div.article-body figure figcaption")
+            )
+        )
+
+        caption.click()
+
+        caption.send_keys("Caption")
+
         ActionChains(self.driver).send_keys(
             Keys.RIGHT
         ).perform()
@@ -292,11 +309,15 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         button.click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
-                (By.CSS_SELECTOR, "#figure-dialog span.caption")
+                (By.CSS_SELECTOR, "span.math-field")
             )
-        ).send_keys('Caption 2')
-        self.driver.find_element_by_id("figure-category-btn").click()
-        self.driver.find_element_by_id("figure-category-photo").click()
+        )
+        self.driver.find_element_by_css_selector(
+            "div.figure-category"
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Photo"]'
+        ).click()
 
         # click on 'Insert image' button
         self.driver.find_element_by_id('insert-figure-image').click()

@@ -95,7 +95,8 @@ export class DOMExporter {
 
     addCategoryLabels(language) {
         this.content.querySelectorAll('figcaption span.label,caption span.label').forEach(el => {
-            el.innerHTML = CATS[el.parentElement.parentElement.dataset.category][language]
+            const category = el.parentElement.parentElement.dataset.category
+            el.innerHTML = category === 'none' ? '' : CATS[category][language]
             delete el.dataset.category
         })
     }

@@ -100,8 +100,8 @@ class ContactsTest(LiveTornadoTestCase, SeleniumHelper):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.ID, 'preferences-btn'))
         ).click()
-        self.driver.find_element_by_css_selector(
-            "a[href='/user/team/']"
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Contacts"]'
         ).click()
         self.assertEqual(
             len(self.driver.find_elements_by_css_selector(

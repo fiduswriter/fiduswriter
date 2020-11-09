@@ -17,15 +17,83 @@ def update_node(node):
     global ID_COUNTER
     if "contents" in node:  # revision
         update_node(node["contents"])
-    if "type" in node and node["type"] in ["table", "bullet_list", "ordered_list"]:
-        if node["type"] == "table":
-            prefix = "T"
-        else:
-            prefix = "L"
-        if not "attrs" in node:
-            node["attrs"] = {}
-        ID_COUNTER += 1
-        node["attrs"]["id"] = "{}{:0>8d}".format(prefix, ID_COUNTER)
+    if "type" in node:
+        if node["type"] in ["bullet_list", "ordered_list"]:
+            if not "attrs" in node:
+                node["attrs"] = {}
+            ID_COUNTER += 1
+            node["attrs"]["id"] = "{}{:0>8d}".format("L", ID_COUNTER)
+        elif node["type"] == "table" and "content" in node:
+            if not "attrs" in node:
+                node["attrs"] = {}
+            ID_COUNTER += 1
+            node["attrs"]["id"] = "{}{:0>8d}".format("L", ID_COUNTER)
+            node["attrs"]["caption"] = False
+            if "content" in node:
+                node["content"] = [
+                    {
+                        "type": "table_caption"
+                    },
+                    {
+                        "type": "table_body",
+                        "content" : node["content"]
+                    }
+                ]
+        elif node["type"] == "figure":
+            if not "attrs" in node:
+                node["attrs"] = {}
+            attrs = node["attrs"]
+            if "figureCategory" in attrs:
+                attrs["category"] = attrs["figureCategory"]
+                del attrs["figureCategory"]
+            else:
+                attrs["category"] = "none"
+            node["content"] = []
+            if "image" in attrs and attrs["image"] is not False:
+                node["content"].append({
+                    "type": "image",
+                    "attrs": {
+                        "image": attrs["image"]
+                    }
+                })
+            else:
+                node["content"].append({
+                    "type": "figure_equation",
+                    "attrs": {
+                        "equation": attrs["equation"]
+                    }
+                })
+            if "image" in attrs:
+                del attrs["image"]
+            if "equation" in attrs:
+                del attrs["equation"]
+            caption = {
+                "type": "figure_caption"
+            }
+            if (
+                "caption" in attrs and
+                attrs["caption"] is not False and
+                len(attrs["caption"]) > 0
+            ):
+                caption["content"] = [{
+                    "type": "text",
+                    "text": attrs["caption"]
+                }]
+                attrs["caption"] = True
+            else:
+                attrs["caption"] = False
+            if attrs["category"] == "table":
+                node["content"].insert(0, caption)
+            else:
+                node["content"].append(caption)
+            node["attrs"] = attrs
+        elif (
+            node["type"] == "footnote" and
+            "attrs" in node and
+            "footnote" in node["attrs"]
+        ):
+            for sub_node in node["attrs"]["footnote"]:
+                update_node(sub_node)
     if "content" in node:
         for sub_node in node["content"]:
             update_node(sub_node)

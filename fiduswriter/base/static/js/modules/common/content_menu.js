@@ -7,17 +7,25 @@ const menuTemplate = ({id, classes, height, width, zIndex, menu, scroll, page}) 
     <div>
         <ul class="content-menu-list">
         ${
-    menu.content.map((menuItem, index) =>
-        menuItem.type == "separator" ?
-            '<hr class="content-menu-item-divider"/>' :
-            `<li data-index="${index}" class="content-menu-item${
+    menu.content.map((menuItem, index) => {
+        switch (menuItem.type) {
+        case 'header':
+            return `<li><span class="content-menu-item-header" title="${menuItem.tooltip}">${
+                typeof menuItem.title === 'function' ?
+                    menuItem.title(page) :
+                    menuItem.title
+            }</span></li>`
+        case 'separator':
+            return '<li><hr class="content-menu-item-divider"/></li>'
+        default:
+            return `<li data-index="${index}" class="content-menu-item${
                 menuItem.disabled && menuItem.disabled(page) ?
                     ' disabled' :
                     menuItem.selected ?
                         ' selected' :
                         ''
             }" title='${menuItem.tooltip}'>
-                    ${
+                        ${
     typeof menuItem.title === 'function' ?
         menuItem.title(page) :
         menuItem.title
@@ -26,8 +34,10 @@ const menuTemplate = ({id, classes, height, width, zIndex, menu, scroll, page}) 
         `<span class="content-menu-item-icon"><i class="fa fa-${menuItem.icon}"></i></span>` :
         ''
 }
-                    </li>`
-    ).join('')
+                        </li>`
+        }
+
+    }).join('')
 }
         </ul>
     </div>

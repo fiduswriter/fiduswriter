@@ -113,24 +113,6 @@ export const dropdownSelect = function(
     }
 }
 
-/** Opens a dropdown box.
- * @param box The node containing the contents of the dropdown box.
- * DEPRECATED. TODO: replace with dropdownSelect/ContentMenu
- */
-
-export const openDropdownBox = function(box) {
-    // Show this box
-    box.style.display = 'block'
-
-    function closeDropdownBox(event) {
-        event.preventDefault()
-        box.style.display = ''
-        document.body.removeEventListener('click', closeDropdownBox, false)
-    }
-    document.body.addEventListener('click', closeDropdownBox, false)
-}
-
-
 /** Checks or unchecks a checkable label. This is used for example for bibliography categories when editing bibliography items.
  * @param label The node who's parent has to be checked or unchecked.
  */

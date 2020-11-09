@@ -3,7 +3,6 @@ export {
 }
     from "./overview_menu"
 export {
-    openDropdownBox,
     dropdownSelect,
     setCheckableLabel,
     activateWait,

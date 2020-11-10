@@ -5,7 +5,7 @@ import time
 import shutil
 import subprocess
 import urllib.request
-
+from urllib.error import URLError
 from pathlib import Path
 from tempfile import mkdtemp
 import socket
@@ -47,10 +47,19 @@ class ManageTest(unittest.TestCase):
         sql_file = Path(os.path.join(temp_dir, 'fiduswriter.sql'))
         assert sql_file.exists()
         # Get page during transpile to see if we get setup page
-        page = urllib.request.urlopen(
-            'http://localhost:{}/'.format(self.port)
-        ).read().decode('utf-8')
-        assert "Fidus Writer is currently being updated." in page
+        try:
+            page = urllib.request.urlopen(
+                'http://localhost:{}/'.format(self.port)
+            ).read().decode('utf-8')
+            assert "Fidus Writer is currently being updated." in page
+        except URLError as err:
+            if self.port < END_PORT:
+                self.port += 1
+                shutil.rmtree(temp_dir)
+                p1.join()
+                return self.test_startserver()
+            else:
+                raise err
         # We remove the project dir. The process should then finish as well.
         shutil.rmtree(temp_dir)
         p1.join()

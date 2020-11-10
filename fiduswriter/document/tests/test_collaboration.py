@@ -1098,7 +1098,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
     def add_figure(self, driver):
         button = driver.find_element_by_xpath('//*[@title="Figure"]')
         button.click()
-
+        time.sleep(1)
         # click on 'Insert image' button
         WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located(

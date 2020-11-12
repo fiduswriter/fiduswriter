@@ -200,7 +200,7 @@ export class MergeEditor {
                     questions: [
                         [
                             gettext("Why am I seeing this merge dialog?"),
-                            gettext("You are seeing this merge dialog, because you were offline for a long time, and the changes you made to the document while you were offline conflicted with the changes made by the online user. So it was not possible to resolve them automatically. That is why you are seeing this dialog.")
+                            gettext("You are seeing this merge dialog, because you were offline for a long time, and the changes you made to the document while you were offline conflicted with the changes made by other users. So it was not possible to resolve them automatically. That is why you are seeing this dialog.")
                         ],
                         [
                             gettext("Am I the only one seeing this dialog?"),
@@ -212,7 +212,7 @@ export class MergeEditor {
                         ],
                         [
                             gettext("Why am I seeing three editors?"),
-                            gettext("The editor on the left will show the last common version of the document. It is shown for reference only. The editor on the middle editor is the merge editor and it initially contains the document resulting from other users' editrs. The editor on the right is the offline editor and it contains the document resulting from your changes while you were offline.")
+                            gettext("The editor on the left will show the last common version of the document. It is shown for reference only. The editor on the middle editor is the merge editor and it initially contains the document resulting from other users' edits. The editor on the right is the offline editor and it contains the document resulting from your changes while you were offline.")
                         ],
                         [
                             gettext("What are the green and red highlights in the editors?"),

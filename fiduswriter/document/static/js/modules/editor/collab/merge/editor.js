@@ -216,12 +216,12 @@ export class MergeEditor {
                         ],
                         [
                             gettext("What are the green and red highlights in the editors?"),
-                            gettext("The editors in the middle and on the right will show content that is highlighted in green, and also contain text that is highlighted in red. The text marked in green corresponds to the text that was edited (added) by you or other users. The text marked in red corresponds to text that was deleted by either you or other users. The insertions and deletions made by other users will be marked in the merge editor. The insertions and deletions made by you will be marked in the editor on the right.")
+                            gettext("The editors in the middle and on the right will show content that is highlighted in green. They also contain text that is highlighted in red. The text marked in green corresponds to the text that was edited (added) by you or other users. The text marked in red corresponds to text that was deleted by either you or other users. The insertions and deletions made by other users will be marked in the merge editor. The insertions and deletions made by you will be marked in the offline editor on the right.")
                         ],
                         [
                             gettext("How do I accept or reject a particular change?"),
                             // Add images in dictionary.They'd be interpolated later.
-                            gettext("Accepting or rejecting a change in the merge editor in the middle or the offline editor on the right, causes a change in the merge editor. You can accept a change by directly clicking on the highlighted text. A dropdown menu will appear and you can then either accept or reject the change. When you click on the highlighted text, it also highlights the changes that will get accepted. %(mergeImage)s As shown in the above image one can click on a highlighted change, and click on accept change. On accepting a change it will be reflected in the merged document editor in the middle. Rejecting a change works in the same way except on reject a change the highlight of the change will be lost, with it the ability to accept, reject or copy a change."),
+                            gettext("Accepting or rejecting a change in the merge editor in the middle or the offline editor on the right causes a change in the merge editor. You can accept a change by directly clicking on the highlighted text. A dropdown menu will appear and you can then either accept or reject the change. When you click on the highlighted text, it also highlights the changes that will get accepted. %(mergeImage)s As shown in the above image one can click on a highlighted change, and click on accept change. On accepting a change it will be reflected in the merged document editor in the middle. Rejecting a change works in the same way except on reject a change the highlight of the change will be lost, with it the ability to accept, reject or copy a change."),
                             {mergeImage: `<img src="${settings_STATIC_URL}img/accept-change.png" class = "merge-img">`},
                             {hasImage: true}
                         ],
@@ -243,7 +243,7 @@ export class MergeEditor {
                         ],
                         [
                             gettext("What happens if I try to complete merge without resolving all the changes?"),
-                            gettext("You will receive a warning when you try to complete a merge without resolving all the changes. You can still proceed to merge the document. If you do that, all the insertions and deletions in the merge editor in the middle will be accepted automatically, and all the insertions and deletions in the offline editor will be ignored.")
+                            gettext("You will receive a warning when you try to complete a merge without accepting or rejecting all the changes. You can still proceed to merge the document. If you do that, all the insertions and deletions in the merge editor in the middle will be accepted automatically, and all the insertions and deletions in the offline editor on the right will be ignored.")
                         ],
                     ]
                 })

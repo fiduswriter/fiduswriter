@@ -231,7 +231,7 @@ export class MergeEditor {
                         ],
                         [
                             gettext("Can I edit content in all three editors?"),
-                            gettext("You can edit the content only in the merge editor in the middle. You cannot edit content in the left other two editors.")
+                            gettext("You can edit the content only in the merge editor in the middle. You cannot edit content in the other two editors.")
                         ],
                         [
                             gettext("Does the order in which I work on merging the changes matter?"),

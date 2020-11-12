@@ -221,29 +221,29 @@ export class MergeEditor {
                         [
                             gettext("How do I accept or reject a particular change?"),
                             // Add images in dictionary.They'd be interpolated later.
-                            gettext("Accepting or rejecting a change in the merge editor in the middle or the offline editor on the right, causes a change in the middle editor. You can accept a change by directly clicking on the highlighted text, which shows a dropdown menu, in which you can either accept/reject a change. When you click on the highlighted text, it also highlights the changes that will get accepted. %(mergeImage)s As shown in the above image one can click on a highlighted change, and click on accept change. On accepting a change it will be reflected in the merged document editor in the middle. Rejecting a change works in the same way except on reject a change the highlight of the change will be lost, with it the ability to accept, reject or copy a change."),
+                            gettext("Accepting or rejecting a change in the merge editor in the middle or the offline editor on the right, causes a change in the merge editor. You can accept a change by directly clicking on the highlighted text. A dropdown menu will appear and you can then either accept or reject the change. When you click on the highlighted text, it also highlights the changes that will get accepted. %(mergeImage)s As shown in the above image one can click on a highlighted change, and click on accept change. On accepting a change it will be reflected in the merged document editor in the middle. Rejecting a change works in the same way except on reject a change the highlight of the change will be lost, with it the ability to accept, reject or copy a change."),
                             {mergeImage: `<img src="${settings_STATIC_URL}img/accept-change.png" class = "merge-img">`},
                             {hasImage: true}
                         ],
                         [
                             gettext("I cannot accept a particular change. What do I do?"),
-                            gettext("If you cannot automatically accept a change into the middle editor, do not worry. You can choose to copy the change either by clicking on the copy button or manually copy the change and then you can paste it in the middle editor. It is as simple as that!")
+                            gettext("If you cannot automatically accept a change into the merge editor, do not worry. You can choose to copy the change either by clicking on the copy button or manually copy the change and then you can paste it in the middle editor. It is as simple as that!")
                         ],
                         [
                             gettext("Can I edit content in all three editors?"),
-                            gettext("You can edit the content only in the middle editor. You cannot edit content in the left most and right most editor.")
+                            gettext("You can edit the content only in the merge editor in the middle. You cannot edit content in the left most and right most editor.")
                         ],
                         [
                             gettext("Does the order in which I work on merging the changes matter?"),
-                            gettext("It is always better that you try to accept the changes in a linear fashion.")
+                            gettext("It is always better to try to accept the changes in a linear fashion.")
                         ],
                         [
                             gettext("What do I do after completing the merge?"),
-                            gettext("After the merge is completed, you can click on the button 'Merge Complete' which in turn will move your changes to the main editor. Do note if other users made significant changes to the document while you were merging the document, you might have to merge the documents together again.")
+                            gettext("After the merge is completed, you can click on the button 'Merge Complete' which in turn will move your changes from the middle editor to the main editor. Do note if other users made significant changes to the document while you were merging the document, you might have to merge the documents together again.")
                         ],
                         [
                             gettext("What happens if I try to complete merge without resolving all the changes?"),
-                            gettext("You would get an warning when you try to complete a merge without resolving all the changes. You can still proceed to merge the document, in this case all the insertions and deletions in the middle editor will be accepted automatically, and all the insertions and deletions in the offline editor will be ignored.")
+                            gettext("You will receive a warning when you try to complete a merge without resolving all the changes. You can still proceed to merge the document. If you do that, all the insertions and deletions in the middle editor will be accepted automatically, and all the insertions and deletions in the offline editor will be ignored.")
                         ],
                     ]
                 })

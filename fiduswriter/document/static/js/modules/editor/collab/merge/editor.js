@@ -200,11 +200,11 @@ export class MergeEditor {
                     questions: [
                         [
                             gettext("Why am I seeing this merge dialog?"),
-                            gettext("You are seeing this merge dialog, because you were offline for a long time, and the changes you made to the document while you were offline conflicted with the changes made by other users. So it was not possible to resolve them automatically. That is why you are seeing this dialog.")
+                            gettext("You are seeing this merge dialog because you were offline for a long time, and the changes you made to the document while you were offline conflicted with the changes made by other users. So it was not possible to merge your edits in automatically.")
                         ],
                         [
                             gettext("Am I the only one seeing this dialog?"),
-                            gettext("Yes, you are the only one who can see this dialog. Therefore it would be great if you could ask your collaborators to stop editing the document, so that once you are finished with the merge, it will not lead to more conflicts once you try to merge with the document edited by the collaborators.")
+                            gettext("Yes, you are the only one who can see this dialog. Therefore it would be great if you could ask your collaborators to stop editing the document, so that once you are finished with the merge, it will not lead to more conflicts.")
                         ],
                         [
                             gettext("What if my collaborators continue working on the document while I am merging?"),
@@ -212,11 +212,11 @@ export class MergeEditor {
                         ],
                         [
                             gettext("Why am I seeing three editors?"),
-                            gettext("The editor on the left will show the last common version of the document. It is shown for reference only. The editor on the middle editor is the merge editor and it initially contains the document resulting from other users' edits. The editor on the right is the offline editor and it contains the document resulting from your changes while you were offline.")
+                            gettext("The editor on the left will show the last common version of the document. It is shown for reference only. The editor in the middle is the merge editor and it initially contains the document resulting from other users' edits. The editor on the right is the offline editor and it contains the document resulting from your changes while you were offline.")
                         ],
                         [
                             gettext("What are the green and red highlights in the editors?"),
-                            gettext("The editors on middle and right will show content that are highlighted in green, and also contain text that are highlighted in red. The text marked in green corresponds to the text that was edited (added) by you or other users. The text marked in red corresponds to text that was deleted by either you or other users. The insertions and deletions made by other users will be marked in the middle editor. The insertions and deletions made by you will be marked in the editor on the right.")
+                            gettext("The editors in the middle and on the right will show content that is highlighted in green, and also contain text that is highlighted in red. The text marked in green corresponds to the text that was edited (added) by you or other users. The text marked in red corresponds to text that was deleted by either you or other users. The insertions and deletions made by other users will be marked in the merge editor. The insertions and deletions made by you will be marked in the editor on the right.")
                         ],
                         [
                             gettext("How do I accept or reject a particular change?"),
@@ -227,11 +227,11 @@ export class MergeEditor {
                         ],
                         [
                             gettext("I cannot accept a particular change. What do I do?"),
-                            gettext("If you cannot automatically accept a change into the merge editor, do not worry. You can choose to copy the change either by clicking on the copy button or manually copy the change and then you can paste it in the middle editor. It is as simple as that!")
+                            gettext("If you cannot automatically accept a change into the merge editor, do not worry. You can choose to copy the change either by clicking on the copy button or manually copy the change and then paste it in the merge editor in the middle. It is as simple as that!")
                         ],
                         [
                             gettext("Can I edit content in all three editors?"),
-                            gettext("You can edit the content only in the merge editor in the middle. You cannot edit content in the left most and right most editor.")
+                            gettext("You can edit the content only in the merge editor in the middle. You cannot edit content in the left other two editors.")
                         ],
                         [
                             gettext("Does the order in which I work on merging the changes matter?"),
@@ -239,11 +239,11 @@ export class MergeEditor {
                         ],
                         [
                             gettext("What do I do after completing the merge?"),
-                            gettext("After the merge is completed, you can click on the button 'Merge Complete' which in turn will move your changes from the middle editor to the main editor. Do note if other users made significant changes to the document while you were merging the document, you might have to merge the documents together again.")
+                            gettext("After the merge is completed, you can click on the button 'Merge Complete' which in turn will move your changes from the merge editor in the middle to the main editor. Do note if other users made significant changes to the document while you were merging the document, you might have to merge the documents together again.")
                         ],
                         [
                             gettext("What happens if I try to complete merge without resolving all the changes?"),
-                            gettext("You will receive a warning when you try to complete a merge without resolving all the changes. You can still proceed to merge the document. If you do that, all the insertions and deletions in the middle editor will be accepted automatically, and all the insertions and deletions in the offline editor will be ignored.")
+                            gettext("You will receive a warning when you try to complete a merge without resolving all the changes. You can still proceed to merge the document. If you do that, all the insertions and deletions in the merge editor in the middle will be accepted automatically, and all the insertions and deletions in the offline editor will be ignored.")
                         ],
                     ]
                 })

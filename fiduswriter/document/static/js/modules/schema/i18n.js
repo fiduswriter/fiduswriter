@@ -57,7 +57,7 @@ const FIGURE = {
     'ar': 'الشكل',
     'ast': 'Figura',
     'be': 'Малюнак',
-    'br': 'Restr KmPlotComment',
+    'br': 'Sifr',
     'bg': 'Фигура',
     'ca': 'Figura',
     'ca-ES-Valencia': 'Figura',

@@ -199,12 +199,12 @@ export class MergeEditor {
                     title: gettext('Merge Dialog Frequent Questions'),
                     questions: [
                         [
-                            gettext("Why am I seeing this merge window?"),
-                            gettext("You are seeing this merge window, because you were offline for a long time, and the changes you made to the document while you were offline, conflicted with the changes made by the online user. So it was not possible to resolve them automatically. So that is why you are seeing this window.")
+                            gettext("Why am I seeing this merge dialog?"),
+                            gettext("You are seeing this merge dialog, because you were offline for a long time, and the changes you made to the document while you were offline conflicted with the changes made by the online user. So it was not possible to resolve them automatically. That is why you are seeing this dialog.")
                         ],
                         [
-                            gettext("Am I the only one seeing this window?"),
-                            gettext("Yes, you are the only one who can see this window. Therefore it would be great if you could ask your collaborators to stop editing the document, so that once you are finished with the merge, it will not lead to more conflicts once you try to merge with the document edited by the collaborators.")
+                            gettext("Am I the only one seeing this dialog?"),
+                            gettext("Yes, you are the only one who can see this dialog. Therefore it would be great if you could ask your collaborators to stop editing the document, so that once you are finished with the merge, it will not lead to more conflicts once you try to merge with the document edited by the collaborators.")
                         ],
                         [
                             gettext("What if my collaborators continue working on the document while I am merging?"),
@@ -212,16 +212,16 @@ export class MergeEditor {
                         ],
                         [
                             gettext("Why am I seeing three editors?"),
-                            gettext("The editor on the left will show the last synced version of the document, the editor on the middle contains the online version of the document (document resulting from the online users edits), and the editor on the right contains the offline version of the document (the document resulting from your changes).")
+                            gettext("The editor on the left will show the last common version of the document. It is shown for reference only. The editor on the middle editor is the merge editor and it initially contains the document resulting from other users' editrs. The editor on the right is the offline editor and it contains the document resulting from your changes while you were offline.")
                         ],
                         [
                             gettext("What are the green and red highlights in the editors?"),
-                            gettext("The editors on middle and right will show content that are highlighted in green, and also contain text that are highlighted in red. The text marked in green corresponds to the text that was edited (added) by online users or you. The text marked in red corresponds to text that was deleted by either you or the online user. The insertions and deletions made by the online users will be marked in the middle editor which contains the online version of the document.The insertions and deletions made by the offline users will be marked in the right-most editor which contains the offline version of the document.")
+                            gettext("The editors on middle and right will show content that are highlighted in green, and also contain text that are highlighted in red. The text marked in green corresponds to the text that was edited (added) by you or other users. The text marked in red corresponds to text that was deleted by either you or other users. The insertions and deletions made by other users will be marked in the middle editor. The insertions and deletions made by you will be marked in the editor on the right.")
                         ],
                         [
                             gettext("How do I accept or reject a particular change?"),
                             // Add images in dictionary.They'd be interpolated later.
-                            gettext("Accepting or rejecting a change from editors, causes a change in the editor in the middle. You can accept a change by directly clicking on the highlighted text, which shows a dropdown menu, in which you can either accept/reject a change. When you click on the highlighted text, it also highlights the changes that will get accepted. %(mergeImage)s As shown in the above image one can click on a highlighted change, and click on accept change. On accepting a change it will be reflected in the merged document editor in the middle. Rejecting a change works in the same way except on reject a change the highlight of the change will be lost, with it the ability to accept, reject or copy a change."),
+                            gettext("Accepting or rejecting a change in the merge editor in the middle or the offline editor on the right, causes a change in the middle editor. You can accept a change by directly clicking on the highlighted text, which shows a dropdown menu, in which you can either accept/reject a change. When you click on the highlighted text, it also highlights the changes that will get accepted. %(mergeImage)s As shown in the above image one can click on a highlighted change, and click on accept change. On accepting a change it will be reflected in the merged document editor in the middle. Rejecting a change works in the same way except on reject a change the highlight of the change will be lost, with it the ability to accept, reject or copy a change."),
                             {mergeImage: `<img src="${settings_STATIC_URL}img/accept-change.png" class = "merge-img">`},
                             {hasImage: true}
                         ],

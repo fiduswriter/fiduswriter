@@ -221,7 +221,7 @@ export class MergeEditor {
                         [
                             gettext("How do I accept or reject a particular change?"),
                             // Add images in dictionary.They'd be interpolated later.
-                            gettext("Accepting or rejecting a change from editors, causes a change in the editor in the middle. You can accept a change by directly clicking on the highlighted text , which shows up a drop, where in you can either accept/reject a change. When you click on the highlighted text, it also highlights the changes that will get accepted. %(mergeImage)s As shown in the above image one can click on a highlighted change, and click on accept change. On accepting a change it will be reflected in the merged document editor in the middle. Rejecting a change works in the same way except on reject a change the highlight of the change will be lost, with it the ability to accept, reject or copy a change."),
+                            gettext("Accepting or rejecting a change from editors, causes a change in the editor in the middle. You can accept a change by directly clicking on the highlighted text, which shows a dropdown menu, in which you can either accept/reject a change. When you click on the highlighted text, it also highlights the changes that will get accepted. %(mergeImage)s As shown in the above image one can click on a highlighted change, and click on accept change. On accepting a change it will be reflected in the merged document editor in the middle. Rejecting a change works in the same way except on reject a change the highlight of the change will be lost, with it the ability to accept, reject or copy a change."),
                             {mergeImage: `<img src="${settings_STATIC_URL}img/accept-change.png" class = "merge-img">`},
                             {hasImage: true}
                         ],
@@ -544,7 +544,7 @@ export class MergeEditor {
     }
 
     findNotTrackedSteps(tr, trackedSteps) {
-        /* Find steps not tracked by PM , usually steps that cause change of attrs */
+        /* Find steps not tracked by PM, usually steps that cause change of attrs */
         const nonTrackedSteps = []
         tr.steps.forEach((step, index) => {
             // mark steps other than replace steps as not tracked if not tracked by changeset
@@ -621,7 +621,7 @@ export class MergeEditor {
                     String(id))) {
                     this.editor.mod.db.imageDB.setImage(id, oldImageDB[id])
                 } else {
-                    // If the image was uploaded by someone else , to set the image we have to reupload it again as there is backend check to associate who can add an image with the image owner.
+                    // If the image was uploaded by someone else, to set the image we have to reupload it again as there is backend check to associate who can add an image with the image owner.
                     this.editor.mod.db.imageDB.reUploadImage(id, oldImageDB[id].image, oldImageDB[id].title, oldImageDB[id].copyright).then(
                         ({id, newId}) => {
                             this.imageDataModified[id] = newId

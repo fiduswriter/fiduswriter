@@ -192,7 +192,7 @@ setuptools.setup(
     extras_require={
         "books": "fiduswriter-books ~= 3.9.0",
         "citation-api-import": "fiduswriter-citation-api-import ~= 3.9.0",
-        "languagetool": "fiduswriter-languagetool ~= 3.9.0",
+        "languagetool": "fiduswriter-languagetool ~= 3.9.1",
         "ojs": "fiduswriter-ojs ~= 3.9.0",
         "phplist": "fiduswriter-phplist ~= 3.9.0",
         "github-export": "fiduswriter-github-export ~= 3.9.0",

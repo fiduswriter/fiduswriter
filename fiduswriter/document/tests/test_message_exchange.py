@@ -1,6 +1,7 @@
 from testing.testcases import LiveTornadoTestCase
 from .editor_helper import EditorHelper
 from document.ws_views import WebSocket
+from document import prosemirror
 
 
 class SimpleMessageExchangeTests(LiveTornadoTestCase, EditorHelper):
@@ -100,11 +101,13 @@ class SimpleMessageExchangeTests(LiveTornadoTestCase, EditorHelper):
         )
 
         # Now assert that the document reloaded in front end too !
-        doc_content = self.driver.execute_script(
-            'return window.theApp.page.docInfo.'
-            'confirmedDoc.firstChild.toJSON()'
+        doc_content = prosemirror.to_mini_json(
+            prosemirror.from_json(
+                self.driver.execute_script(
+                    'return window.theApp.page.docInfo.'
+                    'confirmedDoc.firstChild.toJSON()'
+                )
+            )
         )
-        self.assertEqual(
-            doc_data,
-            doc_content
-        )
+
+        self.assertEqual(doc_data, doc_content)

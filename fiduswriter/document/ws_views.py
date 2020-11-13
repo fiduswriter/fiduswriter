@@ -1,19 +1,17 @@
 import uuid
 import atexit
 import logging
-import os
-import json
 import copy
 from time import mktime, time
 from copy import deepcopy
-from prosemirror.model import Node, Schema
-from prosemirror.transform import Step
+
 
 from django.db.utils import DatabaseError
 from django.db.models import F, Q
 from django.conf import settings
 
 from document.helpers.session_user_info import SessionUserInfo
+from document import prosemirror
 from document.helpers.serializers import PythonWithURLSerializer
 from base.ws_handler import BaseWebSocketHandler
 from document.models import COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \
@@ -27,17 +25,6 @@ from tornado.escape import json_encode
 # end settings_JSONPATCH
 
 logger = logging.getLogger(__name__)
-
-schema_json_path = os.path.join(
-    settings.PROJECT_PATH,
-    "static-libs/json/schema.json"
-)
-
-if os.path.exists(schema_json_path):
-    with open(schema_json_path) as schema_file:
-        schema = Schema(json.loads(schema_file.read()))
-else:
-    schema = None
 
 
 class WebSocket(BaseWebSocketHandler):
@@ -97,7 +84,7 @@ class WebSocket(BaseWebSocketHandler):
                     content['content'] = [{type: 'title'}]
                 doc_db.content = content
                 doc_db.save()
-            node = Node.from_json(schema, {'type': 'doc', 'content': [
+            node = prosemirror.from_json({'type': 'doc', 'content': [
                 content
             ]})
             self.session = {
@@ -443,18 +430,19 @@ class WebSocket(BaseWebSocketHandler):
                     # removed before broadcast to other clients.
                     del message["jd"]
             elif "ds" in message:  # ds = document steps
-                for s in message["ds"]:
-                    step = Step.from_json(schema, s)
-                    step_result = step.apply(self.session["node"])
-                    if step_result.ok:
-                        self.session["node"] = step_result.doc
-                    else:
-                        self.unfixable()
-                        self.send_message({'type': 'patch_error'})
-                        return
-                self.session["doc"].content = self.session[
-                    "node"
-                ].first_child.to_json()
+                updated_node = prosemirror.apply(
+                    message["ds"],
+                    self.session["node"]
+                )
+                if updated_node:
+                    self.session["node"] = updated_node
+                else:
+                    self.unfixable()
+                    self.send_message({'type': 'patch_error'})
+                    return
+                self.session["doc"].content = prosemirror.to_mini_json(
+                    self.session["node"].first_child
+                )
             self.session["doc"].diffs.append(message)
             self.session["doc"].diffs = self.session["doc"].diffs[
                 -self.history_length:

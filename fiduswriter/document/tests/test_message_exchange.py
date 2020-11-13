@@ -1,3 +1,5 @@
+import time
+import logging
 from testing.testcases import LiveTornadoTestCase
 from .editor_helper import EditorHelper
 from document.ws_views import WebSocket
@@ -111,3 +113,64 @@ class SimpleMessageExchangeTests(LiveTornadoTestCase, EditorHelper):
         )
 
         self.assertEqual(doc_data, doc_content)
+
+    def test_server_receives_failing_patch(self):
+        """
+        The server receives a patch from the server that is failing. It should
+        be stopped at the server and not be applied. If the patch has one part
+        that is valid and another that is invalid, none of them should be
+        applied.
+        """
+        self.load_document_editor(self.driver, self.doc)
+
+        self.add_title(self.driver)
+        self.driver.find_element_by_css_selector(
+            '#header-navigation > div:nth-child(3) > span'  # Settings
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Text Language"]'
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Spanish"]'
+        ).click()
+        socket_object = WebSocket.sessions[self.doc.id]['participants'][0]
+        diff_script = (
+            "theApp.page.ws.send(()=>({"
+            "type: 'diff',"
+            "v: theApp.page.docInfo.version,"
+            "rid: theApp.page.mod.collab.doc.confirmStepsRequestCounter++,"
+            "cid: theApp.page.client_id,"
+            "jd: ["
+            "{op: 'add', path: '/attrs/language', value: 'de-DE'},"  # valid
+            "{op: 'remove', path: '/fish'}"  # invalid
+            "]"
+            "}))"
+        )
+        with self.settings(JSONPATCH=True):
+            logging.disable(logging.CRITICAL)
+            self.driver.execute_script(diff_script)
+            time.sleep(1)
+            logging.disable(logging.NOTSET)
+        doc_data = False
+        patch_error = 0
+        for message in socket_object.messages['last_ten']:
+            if message["type"] == "doc_data":
+                doc_data = message['doc']['content']
+            elif message["type"] == "patch_error":
+                patch_error += 1
+        # The language should still be Spanish
+        self.assertEqual(
+            doc_data["attrs"]["language"],
+            "es"
+        )
+        # There should be one patch error
+        self.assertEqual(
+            patch_error,
+            1
+        )
+        system_message = self.driver.find_element_by_css_selector(
+            'div.ui-dialog-content.ui-widget-content > p'
+        )
+        assert system_message.text == (
+            "Your document was out of sync and has been reset."
+        )

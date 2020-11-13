@@ -401,6 +401,13 @@ class WebSocket(BaseWebSocketHandler):
         if pv == dv:
             if settings.JSONPATCH:
                 if "jd" in message:  # jd = json diff
+                    backup = False
+                    if len(message["jd"]) > 1:
+                        # There is more than one patch operation so if the
+                        # patch fails, we might already have applied a previous
+                        # patch operation. Therefore we take a backup now so
+                        # that we can roll back if needed.
+                        backup = deepcopy(self.session["doc"].content)
                     try:
                         apply_patch(
                             self.session["doc"].content,
@@ -408,6 +415,8 @@ class WebSocket(BaseWebSocketHandler):
                             True
                         )
                     except (JsonPatchConflict, JsonPointerException):
+                        if backup:
+                            self.session["doc"].content = backup
                         logger.exception(
                             f"Action:Cannot apply json diff. "
                             f"URL:{self.endpoint} User:{self.user.id} "

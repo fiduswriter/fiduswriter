@@ -7,6 +7,7 @@ exclude fiduswriter/testing.py
 exclude fiduswriter/configuration.py
 exclude fiduswriter/.coveragerc
 exclude fiduswriter/.editorconfig
+exclude fiduswriter/.envrc
 exclude fiduswriter/chromedriver
 prune fiduswriter/media
 prune fiduswriter/.transpile
@@ -14,6 +15,7 @@ prune fiduswriter/static-transpile
 prune fiduswriter/static-collected
 prune fiduswriter/static-libs
 prune fiduswriter/venv
+prune fiduswriter/.direnv
 prune fiduswriter/media
 prune fiduswriter/book
 prune fiduswriter/citation_api_import

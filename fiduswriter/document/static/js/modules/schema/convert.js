@@ -893,7 +893,7 @@ const convertNodeV32 = function(node, ids = []) {
         if (attrs.image) {
             node.content.push({type: 'image', attrs: {image: attrs.image}})
         } else {
-            node.content.push({type: 'figure_equation', attrs: {equation: attrs.equation}})
+            node.content.push({type: 'figure_equation', attrs: {equation: attrs.equation || ''}})
         }
         delete attrs.image
         delete attrs.equation

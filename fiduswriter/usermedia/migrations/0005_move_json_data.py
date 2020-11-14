@@ -6,13 +6,32 @@ def text_to_json(apps, schema_editor):
     UserImage = apps.get_model('usermedia', 'UserImage')
     uimages = UserImage.objects.all()
     for image in uimages:
-        image.cats = json.loads(image.image_cat)
-        image.copyright = json.loads(image.copyright_text)
+        try:
+            image.cats = json.loads(image.image_cat)
+        except ValueError:
+            pass
+        try:
+            image.copyright = json.loads(image.copyright_text)
+        except ValueError:
+            image.copyright = {
+                "holder": False,
+                "year": False,
+                "freeToRead": True,
+                "licenses": []
+            }
         image.save()
     DocumentImage = apps.get_model('usermedia', 'DocumentImage')
     dimages = DocumentImage.objects.all()
     for image in dimages:
-        image.copyright = json.loads(image.copyright_text)
+        try:
+            image.copyright = json.loads(image.copyright_text)
+        except ValueError:
+            image.copyright = {
+                "holder": False,
+                "year": False,
+                "freeToRead": True,
+                "licenses": []
+            }
         image.save()
 
 def json_to_text(apps, schema_editor):

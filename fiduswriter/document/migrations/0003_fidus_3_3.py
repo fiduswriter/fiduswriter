@@ -57,10 +57,13 @@ def update_node(node):
                     }
                 })
             else:
+                equation = ""
+                if "equation" in attrs:
+                    equation = attrs["equation"]
                 node["content"].append({
                     "type": "figure_equation",
                     "attrs": {
-                        "equation": attrs["equation"]
+                        "equation": equation
                     }
                 })
             if "image" in attrs:

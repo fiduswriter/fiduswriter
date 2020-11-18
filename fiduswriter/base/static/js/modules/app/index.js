@@ -203,14 +203,15 @@ export class App {
         this.imageDB = new ImageDB()
         this.csl = new CSL()
         this.connectWs()
-        this.indexedDB = new IndexedDB(this)
-        this.indexedDB.init()
         return Promise.all([
             this.bibDB.getDB(),
             this.imageDB.getDB(),
         ]).then(
             () => {
                 this.activateFidusPlugins()
+                // Initialize the indexedDB after the plugins have loaded.
+                this.indexedDB = new IndexedDB(this)
+                this.indexedDB.init()
                 return this.selectPage()
             }
         ).then(

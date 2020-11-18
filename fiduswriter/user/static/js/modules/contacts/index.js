@@ -61,8 +61,9 @@ export class ContactsOverview {
         return postJson('/api/user/team/list/').then(
             ({json}) => {
                 // Update data in the indexed DB
-                this.app.indexedDB.clearData("user_contacts")
-                this.app.indexedDB.insertData("user_contacts", json.team_members)
+                this.app.indexedDB.clearData("user_contacts").then(
+                    this.app.indexedDB.insertData("user_contacts", json.team_members)
+                )
                 this.dom.querySelector('#team-table tbody').innerHTML += teammemberTemplate({members: json.team_members})
             }
         ).catch(

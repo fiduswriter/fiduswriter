@@ -25,21 +25,26 @@ export class IndexedDB {
     }
 
     createDBSchema() {
-        this.app.db_config.version += 1
-        const newRequest = window.indexedDB.open(this.app.db_config.db_name, this.app.db_config.version)
-        newRequest.onupgradeneeded = event => {
-            const db = event.target.result
-            Object.entries(this.app.routes).forEach(
-                ([route, props]) => {
-                    if (props.dbTables) {
-                        Object.entries(props.dbTables).forEach(
-                            ([tableName, tableProperties]) => db.createObjectStore(`${route}_${tableName}`, tableProperties)
-                        )
+        // Return a promise which will be resolved after the Indexed DB
+        // and the object stores are created.
+        return new Promise(resolve => {
+            this.app.db_config.version += 1
+            const newRequest = window.indexedDB.open(this.app.db_config.db_name, this.app.db_config.version)
+            newRequest.onupgradeneeded = event => {
+                const db = event.target.result
+                Object.entries(this.app.routes).forEach(
+                    ([route, props]) => {
+                        if (props.dbTables) {
+                            Object.entries(props.dbTables).forEach(
+                                ([tableName, tableProperties]) => db.createObjectStore(`${route}_${tableName}`, tableProperties)
+                            )
+                        }
                     }
-                }
-            )
-            db.close()
-        }
+                )
+                db.close()
+                resolve()
+            }
+        })
     }
 
     createObjectStore(name, options) {
@@ -73,22 +78,27 @@ export class IndexedDB {
         }
         request.onsuccess = (event) => {
             const db = event.target.result
-            const objectStore = db.transaction(objectStoreName, 'readwrite').objectStore(objectStoreName)
-            if (data !== undefined) {
-                data.forEach(document => {
-                    try {
+            try {
+                const transaction = db.transaction(objectStoreName, 'readwrite')
+                const objectStore = transaction.objectStore(objectStoreName)
+                if (data !== undefined) {
+                    data.forEach(document => {
                         objectStore.put(document)
-                    } catch (error) {
-                        if (retry) {
-                            this.reset().then(
-                                this.insertData(objectStoreName, data, false)
-                            )
-                        } else {
-                            throw error
-                        }
-                    }
+                    })
+                }
+            } catch(error) {
+                if (retry) {
+                    // Before resetting IndexedDB make sure to close connections to avoid blocking the
+                    // delete IndexedDB process
+                    db.close()
+                    this.reset().then(() =>
+                        this.insertData(objectStoreName, data, false)
+                    )
+                    return
+                } else {
+                    throw error
+                }
 
-                })
             }
         }
     }
@@ -97,30 +107,40 @@ export class IndexedDB {
         return new Promise(resolve => {
             const delRequest = window.indexedDB.deleteDatabase(this.app.db_config.db_name)
             delRequest.onsuccess = () => {
-                this.createDBSchema()
-                resolve()
+                // Resolve the promise after the indexedDB is set up.
+                this.createDBSchema().then(() => resolve())
             }
         })
 
     }
 
     clearData(objectStoreName) {
-        const request = window.indexedDB.open(this.app.db_config.db_name)
-        request.onerror = () => {}
-        request.onsuccess = event => {
-            const db = event.target.result
-            try {
-                const objectStore = db.transaction(objectStoreName, 'readwrite').objectStore(objectStoreName)
-                objectStore.clear()
-            } catch (error) {
-                if (error.name === 'NotFoundError') {
-                    this.reset()
-                } else {
-                    throw error
+        return new Promise(resolve => {
+            const request = window.indexedDB.open(this.app.db_config.db_name)
+            request.onerror = () => {}
+            request.onsuccess = event => {
+                const db = event.target.result
+                try {
+                    const objectStore = db.transaction(objectStoreName, 'readwrite').objectStore(objectStoreName)
+                    const objectStoreReq = objectStore.clear()
+                    objectStoreReq.onsuccess = () => {
+                        db.close()
+                        // Resolve the promise after the ObjectStore has been cleared.
+                        resolve()   
+                    }
+                } catch (error) {
+                    // Before resetting IndexedDB make sure to close connections to avoid blocking the
+                    // delete IndexedDB process
+                    db.close()
+                    if (error.name === 'NotFoundError') {
+                        // Resolve the promise after indexed DB is set up.
+                        this.reset().then(() => resolve())
+                    } else {
+                        throw error
+                    }
                 }
             }
-
-        }
+        })
     }
 
     readAllData(objectStoreName) {

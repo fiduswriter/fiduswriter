@@ -66,9 +66,11 @@ export const reject = function(type, pos, view) {
                 )
             )
         } else if (type === 'block_change') {
-            const blockChangeTrack = node.attrs.track.find(track => track.type === 'block_change'),
-                track = node.attrs.track.filter(track => track !== blockChangeTrack)
-
+            const blockChangeTrack = node.attrs.track?.find(track => track.type === 'block_change'),
+                track = node.attrs.track?.filter(track => track !== blockChangeTrack)
+            if (!blockChangeTrack) {
+                return true
+            }
             tr.setNodeMarkup(
                 map.map(nodePos),
                 view.state.schema.nodes[blockChangeTrack.before.type],

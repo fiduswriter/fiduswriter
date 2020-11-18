@@ -176,6 +176,7 @@ TEMPLATES = [
 # The following are the apps needed by Fidus Writer.
 
 BASE_INSTALLED_APPS = [
+    'npm_mjs',
     'base',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -187,7 +188,6 @@ BASE_INSTALLED_APPS = [
     'django.contrib.admindocs',
     'django.contrib.flatpages',
     'django_js_error_hook',
-    'npm_mjs',
     'fixturemedia',
     'browser_check',
     'menu',

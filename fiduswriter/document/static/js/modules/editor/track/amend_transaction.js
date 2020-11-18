@@ -71,7 +71,7 @@ function markDeletion(tr, from, to, user, date1, date10) {
                 !node.attrs.track?.find(trackAttr => trackAttr.type === 'deletion') &&
                 !['bullet_list', 'ordered_list'].includes(node.type.name)
             ) {
-                if (node.attrs.track.find(trackAttr => trackAttr.type === 'insertion' && trackAttr.user === user.id)) {
+                if (node.attrs.track?.find(trackAttr => trackAttr.type === 'insertion' && trackAttr.user === user.id)) {
                     let removeStep
                     // user has created element. so (s)he is allowed to delete it again.
                     if (node.isTextblock && to < (pos + node.nodeSize)) {

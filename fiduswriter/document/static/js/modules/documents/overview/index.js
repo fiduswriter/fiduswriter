@@ -188,16 +188,16 @@ export class DocumentOverview {
             () => this.app.indexedDB.clearData("document_templates")
         ).then(
             () => {
-                    //Insert new data
-                    this.app.indexedDB.insertData("document_list", json.documents)
-                    this.app.indexedDB.insertData("document_teammembers", json.team_members)
-                    this.app.indexedDB.insertData("document_styles", json.document_styles)
-                    const dummyJson = []
-                    for (const key in json.document_templates) {
-                        json.document_templates[key]['pk'] = key
-                        dummyJson.push(json.document_templates[key])
-                    }
-                    this.app.indexedDB.insertData("document_templates", dummyJson)
+                //Insert new data
+                this.app.indexedDB.insertData("document_list", json.documents)
+                this.app.indexedDB.insertData("document_teammembers", json.team_members)
+                this.app.indexedDB.insertData("document_styles", json.document_styles)
+                const dummyJson = []
+                for (const key in json.document_templates) {
+                    json.document_templates[key]['pk'] = key
+                    dummyJson.push(json.document_templates[key])
+                }
+                this.app.indexedDB.insertData("document_templates", dummyJson)
             }
         )
     }

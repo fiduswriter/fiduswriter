@@ -86,7 +86,7 @@ export class IndexedDB {
                         objectStore.put(document)
                     })
                 }
-            } catch(error) {
+            } catch (error) {
                 if (retry) {
                     // Before resetting IndexedDB make sure to close connections to avoid blocking the
                     // delete IndexedDB process
@@ -126,7 +126,7 @@ export class IndexedDB {
                     objectStoreReq.onsuccess = () => {
                         db.close()
                         // Resolve the promise after the ObjectStore has been cleared.
-                        resolve()   
+                        resolve()
                     }
                 } catch (error) {
                     // Before resetting IndexedDB make sure to close connections to avoid blocking the

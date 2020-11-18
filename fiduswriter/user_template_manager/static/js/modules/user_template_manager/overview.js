@@ -193,8 +193,9 @@ export class DocTemplatesOverview {
 
     updateIndexedDB(json) {
         // Clear data if any present
-        this.app.indexedDB.clearData("templates_list")
-        this.app.indexedDB.insertData("templates_list", json.document_templates)
+        this.app.indexedDB.clearData("templates_list").then(() => {
+            this.app.indexedDB.insertData("templates_list", json.document_templates)
+        })
     }
 
 

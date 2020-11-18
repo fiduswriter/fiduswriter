@@ -180,21 +180,26 @@ export class DocumentOverview {
 
     updateIndexedDB(json) {
         // Clear data if any present
-        this.app.indexedDB.clearData("document_list")
-        this.app.indexedDB.clearData("document_teammembers")
-        this.app.indexedDB.clearData("document_styles")
-        this.app.indexedDB.clearData("document_templates")
-
-        //Insert new data
-        this.app.indexedDB.insertData("document_list", json.documents)
-        this.app.indexedDB.insertData("document_teammembers", json.team_members)
-        this.app.indexedDB.insertData("document_styles", json.document_styles)
-        const dummyJson = []
-        for (const key in json.document_templates) {
-            json.document_templates[key]['pk'] = key
-            dummyJson.push(json.document_templates[key])
-        }
-        this.app.indexedDB.insertData("document_templates", dummyJson)
+        this.app.indexedDB.clearData("document_list").then(
+            () => this.app.indexedDB.clearData("document_teammembers")
+        ).then(
+            () => this.app.indexedDB.clearData("document_styles")
+        ).then(
+            () => this.app.indexedDB.clearData("document_templates")
+        ).then(
+            () => {
+                //Insert new data
+                this.app.indexedDB.insertData("document_list", json.documents)
+                this.app.indexedDB.insertData("document_teammembers", json.team_members)
+                this.app.indexedDB.insertData("document_styles", json.document_styles)
+                const dummyJson = []
+                for (const key in json.document_templates) {
+                    json.document_templates[key]['pk'] = key
+                    dummyJson.push(json.document_templates[key])
+                }
+                this.app.indexedDB.insertData("document_templates", dummyJson)
+            }
+        )
     }
 
     initializeView(json) {

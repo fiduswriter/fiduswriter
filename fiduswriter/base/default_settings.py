@@ -334,7 +334,8 @@ JAVASCRIPT_ERROR_USERAGENT_BLACKLIST = ['googlebot', 'bingbot', 'cutycapt']
 JAVASCRIPT_ERROR_BLACKLIST = [
     'script error',
     'the operation is insecure',
-    'parse error'
+    'parse error',
+    'unhandledrejection, {}',
 ]
 
 # The page to show while transpilation takes place.

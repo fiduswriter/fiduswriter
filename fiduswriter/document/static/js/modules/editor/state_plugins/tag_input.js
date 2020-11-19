@@ -54,7 +54,7 @@ const placeholderPlugin = function(nodeTitle) {
 const pastePlugin = view => {
     const submitTags = tags => {
         const eState = view.state,
-            pos = view.state.selection.from || view.state.doc.nodeSize-1,
+            pos = view.state.selection.from || view.state.doc.nodeSize - 1,
             nodes = tags.map(tag => eState.schema.nodes.tag.create({tag}))
         view.dispatch(
             view.state.tr.insert(pos, nodes)

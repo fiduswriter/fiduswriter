@@ -44,7 +44,7 @@ export class DocxExporterMath {
     }
 
     latexToMathML(latex) {
-        return this.mathLive.latexToMathML(latex)
+        return this.mathLive.convertLatexToMathMl(latex)
             .replace(/&InvisibleTimes;/g, '&#8290;')
             .replace(/&ApplyFunction;/g, '&#x2061;')
             .replace(/&PlusMinus;/g, '&#177;')

@@ -764,6 +764,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         ).send_keys(
             Keys.ENTER
         ).perform()
+        time.sleep(1)
         assert self.driver.find_element(
             By.CSS_SELECTOR,
             ".article-title"

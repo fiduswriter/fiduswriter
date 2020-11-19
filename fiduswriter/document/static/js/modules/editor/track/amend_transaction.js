@@ -95,7 +95,7 @@ function markDeletion(tr, from, to, user, date1, date10) {
                     if (!tr.maybeStep(removeStep).failed) {
                         deletionMap.appendMap(removeStep.getMap())
                     }
-                } else {
+                } else if (node.attrs.track) {
                     const track = node.attrs.track.slice()
                     track.push({type: 'deletion', user: user.id, username: user.username, date: date1})
                     tr.setNodeMarkup(deletionMap.map(pos), null, Object.assign({}, node.attrs, {track}), node.marks)

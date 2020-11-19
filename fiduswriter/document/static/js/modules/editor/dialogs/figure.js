@@ -364,7 +364,7 @@ export class FigureDialog {
             }
         )
 
-        if (this.imgId) {
+        if (this.imgId && this.imageDB.db[this.imgId]) {
             this.copyright = this.imageDB.db[this.imgId].copyright
             this.layoutImagePreview()
         } else {

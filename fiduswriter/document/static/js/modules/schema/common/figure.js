@@ -54,6 +54,8 @@ export const figure = {
 
 
 export const image = {
+    selectable: false,
+    draggable: false,
     attrs: {
         image: {default: false},
     },

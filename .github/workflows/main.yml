@@ -17,10 +17,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Set up Python 3.6.9
+    - name: Set up Python 3.8.6
       uses: actions/setup-python@v1
       with:
-        python-version: 3.6.9
+        python-version: 3.8.6
     - uses: actions/checkout@v2
     - name: Install dependencies
       run: |
@@ -33,4 +33,4 @@ jobs:
          pip3 install coveralls
          coverage run manage.py setup --no-static
     - name: Run tests
-      run: travis_retry coverage run --concurrency=multiprocessing manage.py test 
+      run: travis_retry coverage run --concurrency=multiprocessing manage.py test

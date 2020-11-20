@@ -49,7 +49,7 @@ class SeleniumHelper(object):
                     options=options
                 )
             else:
-                webdriver.Chrome(
+                driver = webdriver.Chrome(
                     options=options
                 )
             drivers.append(driver)

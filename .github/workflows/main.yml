@@ -21,21 +21,18 @@ jobs:
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v2
-
       - name: Set up Python
         uses: actions/setup-python@v1
         with:
           python-version: 3.8
-
       - name: Install Python dependencies
-        run: pip install black flake8
-
+        run: |
+          cd  fiduswriter
+          pip install flake8
+          pip install -r requirements.txt
       - name: Run linters
-        uses: wearerequired/lint-action@v1
-        with:
-          github_token: ${{ secrets.github_token }}
-          # Enable linters
-          flake8: true
+        run: |
+          ./manage.py lint
   test:
     runs-on: ubuntu-latest
     strategy:
@@ -71,7 +68,7 @@ jobs:
     - name: Run test ${{ matrix.test }}
       run: coverage run --concurrency=multiprocessing manage.py test ${{ matrix.test }}
     - name: Coveralls
-      uses: coverallsapp/github-action@master
+      uses: AndreMiras/coveralls-python-action@develop
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         flag-name: run-${{ matrix.test }}
@@ -81,7 +78,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Coveralls Finished
-      uses: coverallsapp/github-action@master
+      uses: AndreMiras/coveralls-python-action@develop
       with:
-        github-token: ${{ secrets.github_token }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
         parallel-finished: true

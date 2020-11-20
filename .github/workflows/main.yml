@@ -27,11 +27,12 @@ jobs:
           python-version: 3.8
       - name: Install Python dependencies
         run: |
-          cd  fiduswriter
+          cd fiduswriter
           pip install flake8
           pip install -r requirements.txt
       - name: Run linters
         run: |
+          cd fiduswriter
           ./manage.py lint
   test:
     runs-on: ubuntu-latest
@@ -66,7 +67,9 @@ jobs:
         pip3 install coverage
         coverage run manage.py setup --no-static
     - name: Run test ${{ matrix.test }}
-      run: coverage run --concurrency=multiprocessing manage.py test ${{ matrix.test }}
+      run: |
+        cd fiduswriter
+        coverage run --concurrency=multiprocessing manage.py test ${{ matrix.test }}
     - name: Coveralls
       uses: AndreMiras/coveralls-python-action@develop
       with:

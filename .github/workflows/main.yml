@@ -56,6 +56,7 @@ jobs:
       with:
         python-version: 3.8
     - uses: actions/checkout@v2
+    - uses: nanasess/setup-chromedriver@master
     - name: Install dependencies
       run: |
         sudo apt install libjpeg-dev python3-dev python3-pip gettext zlib1g-dev git npm nodejs build-essential

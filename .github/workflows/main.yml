@@ -75,7 +75,6 @@ jobs:
       uses: AndreMiras/coveralls-python-action@develop
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        flag-name: run-${{ matrix.test }}
         parallel: true
   finish:
     needs: test

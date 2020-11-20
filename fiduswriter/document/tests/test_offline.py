@@ -114,7 +114,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
     def test_too_many_diffs(self):
         """
         Test one client going offline in collaborative mode while both clients
-        continue to write with the cionnected clients adding too many items to
+        continue to write with the connected clients adding too many items to
         the history so that the server no longer can provide it with all
         missing steps. The client therefore needs to recretae the missing steps
         by itself.

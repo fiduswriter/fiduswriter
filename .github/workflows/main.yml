@@ -14,24 +14,74 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  run-linters:
+    name: Run linters
     runs-on: ubuntu-latest
+
     steps:
-    - name: Set up Python 3.8.6
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+
+      - name: Install Python dependencies
+        run: pip install black flake8
+
+      - name: Run linters
+        uses: wearerequired/lint-action@v1
+        with:
+          github_token: ${{ secrets.github_token }}
+          # Enable linters
+          flake8: true
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        test:
+        - 'browser_check base'
+        - user
+        - feedback
+        - document.tests.test_collaboration
+        - document.tests.test_editor
+        - document.tests.test_offline
+        - document.tests.test_export
+        - document.tests.test_admin
+        - document.tests.test_message_exchange
+        - bibliography
+        - usermedia
+    steps:
+    - name: Set up Python
       uses: actions/setup-python@v1
       with:
-        python-version: 3.8.6
+        python-version: 3.8
     - uses: actions/checkout@v2
     - name: Install dependencies
       run: |
         sudo apt install libjpeg-dev python3-dev python3-pip gettext zlib1g-dev git npm nodejs build-essential
         cd fiduswriter
-        mv ../travis/configuration.py ./
+        mv ../ci/configuration.py ./
         pip3 install requests[security]
         pip3 install -r requirements.txt
         pip3 install -r dev-requirements.txt
         pip3 install coverage
-         pip3 install coveralls
-         coverage run manage.py setup --no-static
-    - name: Run tests
-      run: travis_retry coverage run --concurrency=multiprocessing manage.py test
+        coverage run manage.py setup --no-static
+    - name: Run test ${{ matrix.test }}
+      run: coverage run --concurrency=multiprocessing manage.py test ${{ matrix.test }}
+    - name: Coveralls
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        flag-name: run-${{ matrix.test }}
+        parallel: true
+  finish:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Coveralls Finished
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.github_token }}
+        parallel-finished: true

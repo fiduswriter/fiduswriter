@@ -68,10 +68,14 @@ jobs:
         pip3 install coverage
         coverage run manage.py setup --no-static
     - name: Run test ${{ matrix.test }}
-      run: |
-        source ci/retry.bash
-        cd fiduswriter
-        retry_run coverage run --concurrency=multiprocessing manage.py test ${{ matrix.test }}
+      uses: nick-invision/retry@v2
+      with:
+        timeout_minutes: 8
+        max_attempts: 3
+        retry_on: error
+        command: |
+          cd fiduswriter
+          coverage run --concurrency=multiprocessing manage.py test ${{ matrix.test }}
     - name: Coveralls
       uses: AndreMiras/coveralls-python-action@develop
       with:

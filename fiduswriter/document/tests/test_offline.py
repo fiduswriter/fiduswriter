@@ -751,6 +751,7 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
         self.driver.find_element_by_xpath(
             "//span[contains(@title,'File handling')]"
         ).click()
+        time.sleep(1)
 
         # Click on the Print PDF button
         self.driver.find_element_by_xpath(
@@ -796,6 +797,7 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
             "//span[contains(@title,'File handling')]"
         )
         file_menu.click()
+        time.sleep(1)
 
         share_button = self.driver.find_element_by_xpath(
             "//span[contains(@title,'Share the document with other users.')]"

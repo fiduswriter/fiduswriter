@@ -69,8 +69,9 @@ jobs:
         coverage run manage.py setup --no-static
     - name: Run test ${{ matrix.test }}
       run: |
+        source ci/retry.bash
         cd fiduswriter
-        coverage run --concurrency=multiprocessing manage.py test ${{ matrix.test }}
+        retry coverage run --concurrency=multiprocessing manage.py test ${{ matrix.test }}
     - name: Coveralls
       uses: AndreMiras/coveralls-python-action@develop
       with:

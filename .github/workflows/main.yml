@@ -74,7 +74,8 @@ jobs:
         max_attempts: 3
         retry_on: error
         command: |
-          coverage run --concurrency=multiprocessing fiduswriter/manage.py test ${{ matrix.test }}
+          cd fiduswriter
+          coverage run --concurrency=multiprocessing manage.py test ${{ matrix.test }}
     - name: Coveralls
       uses: AndreMiras/coveralls-python-action@develop
       with:

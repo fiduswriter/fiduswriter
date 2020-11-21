@@ -13,8 +13,8 @@ import errno
 
 from django.conf import settings
 
-START_PORT = 8000
-END_PORT = 8500
+START_PORT = 8025
+END_PORT = 8040
 
 
 class ManageTest(unittest.TestCase):
@@ -43,7 +43,7 @@ class ManageTest(unittest.TestCase):
             args=(temp_dir,)
         )
         p1.start()
-        time.sleep(5)
+        time.sleep(2)
         sql_file = Path(os.path.join(temp_dir, 'fiduswriter.sql'))
         assert sql_file.exists()
         # Get page during transpile to see if we get setup page

@@ -746,7 +746,7 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
             )
         )
         self.assertEqual(alert_element.is_displayed(), True)
-
+        time.sleep(1)
         # Check the same for PDF export too !
         # Click on the file menu
         self.driver.find_element_by_xpath(

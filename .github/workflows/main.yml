@@ -60,12 +60,13 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt install libjpeg-dev python3-dev python3-pip gettext zlib1g-dev git npm nodejs build-essential
-        mv ci/configuration.py ./
+        cd fiduswriter
+        mv ../ci/configuration.py ./
         pip3 install requests[security]
-        pip3 install -r fiduswriter/requirements.txt
-        pip3 install -r fiduswriter/dev-requirements.txt
+        pip3 install -r requirements.txt
+        pip3 install -r dev-requirements.txt
         pip3 install coverage
-        coverage run fiduswriter/manage.py setup --no-static
+        coverage run manage.py setup --no-static
     - name: Run test ${{ matrix.test }}
       uses: nick-invision/retry@v2
       with:

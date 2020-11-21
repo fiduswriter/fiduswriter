@@ -43,7 +43,7 @@ class ManageTest(unittest.TestCase):
             args=(temp_dir,)
         )
         p1.start()
-        time.sleep(1)
+        time.sleep(5)
         sql_file = Path(os.path.join(temp_dir, 'fiduswriter.sql'))
         assert sql_file.exists()
         # Get page during transpile to see if we get setup page

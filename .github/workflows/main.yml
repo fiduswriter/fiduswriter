@@ -71,7 +71,7 @@ jobs:
       run: |
         source ci/retry.bash
         cd fiduswriter
-        retry coverage run --concurrency=multiprocessing manage.py test ${{ matrix.test }}
+        retry_run coverage run --concurrency=multiprocessing manage.py test ${{ matrix.test }}
     - name: Coveralls
       uses: AndreMiras/coveralls-python-action@develop
       with:

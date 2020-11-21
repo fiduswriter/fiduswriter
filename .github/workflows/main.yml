@@ -79,7 +79,6 @@ jobs:
     - name: Coveralls
       uses: AndreMiras/coveralls-python-action@develop
       with:
-        github-token: ${{ secrets.COVERALLS_REPO_TOKEN }}
         parallel: true
   finish:
     needs: test
@@ -88,5 +87,4 @@ jobs:
     - name: Coveralls Finished
       uses: AndreMiras/coveralls-python-action@develop
       with:
-        github-token: ${{ secrets.COVERALLS_REPO_TOKEN }}
         parallel-finished: true

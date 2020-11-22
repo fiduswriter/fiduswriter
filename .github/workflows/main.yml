@@ -77,9 +77,11 @@ jobs:
         command: |
           cd fiduswriter
           coverage run --concurrency=multiprocessing manage.py test ${{ matrix.test }}
-          export COVERALLS_PARALLEL=true
-          export COVERALLS_FLAG_NAME=${{ matrix.test }}
           coveralls --service=github
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            COVERALLS_PARALLEL: true
+            COVERALLS_FLAG_NAME: ${{ matrix.test }}
     # - name: Coveralls
     #   uses: johanneswilm/coveralls-python-action@develop
     #   with:

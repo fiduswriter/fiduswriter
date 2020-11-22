@@ -77,17 +77,19 @@ jobs:
           cd fiduswriter
           coverage run --concurrency=multiprocessing manage.py test ${{ matrix.test }}
     - name: Coveralls
-      uses: johanneswilm/coveralls-python-action@develop
+      uses: coverallsapp/github-action@master
       with:
         parallel: true
         flag-name: ${{ matrix.test }}
         base-path: fiduswriter
+        github-token: ${{ secrets.GITHUB_TOKEN }}
         debug: true
   finish:
     needs: test
     runs-on: ubuntu-latest
     steps:
     - name: Coveralls Finished
-      uses: johanneswilm/coveralls-python-action@develop
+      uses: coverallsapp/github-action@master
+      github-token: ${{ secrets.GITHUB_TOKEN }}
       with:
         parallel-finished: true

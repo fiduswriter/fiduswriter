@@ -90,6 +90,6 @@ jobs:
     steps:
     - name: Coveralls Finished
       uses: coverallsapp/github-action@master
-      github-token: ${{ secrets.GITHUB_TOKEN }}
       with:
         parallel-finished: true
+        github-token: ${{ secrets.GITHUB_TOKEN }}

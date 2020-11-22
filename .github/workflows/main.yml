@@ -66,7 +66,7 @@ jobs:
         pip3 install -r requirements.txt
         pip3 install -r dev-requirements.txt
         pip3 install coverage
-        coverage run manage.py setup --no-static
+        coverage run --concurrency=multiprocessing manage.py setup --no-static
     - name: Run test ${{ matrix.test }}
       uses: nick-invision/retry@v2
       with:
@@ -77,19 +77,17 @@ jobs:
           cd fiduswriter
           coverage run --concurrency=multiprocessing manage.py test ${{ matrix.test }}
     - name: Coveralls
-      uses: coverallsapp/github-action@master
+      uses: johanneswilm/coveralls-python-action@develop
       with:
         parallel: true
         flag-name: ${{ matrix.test }}
         base-path: fiduswriter
-        github-token: ${{ secrets.GITHUB_TOKEN }}
         debug: true
   finish:
     needs: test
     runs-on: ubuntu-latest
     steps:
     - name: Coveralls Finished
-      uses: coverallsapp/github-action@master
+      uses: johanneswilm/coveralls-python-action@develop
       with:
         parallel-finished: true
-        github-token: ${{ secrets.GITHUB_TOKEN }}

@@ -82,6 +82,7 @@ jobs:
         parallel: true
         flag-name: ${{ matrix.test }}
         base-path: fiduswriter
+        debug: true
   finish:
     needs: test
     runs-on: ubuntu-latest

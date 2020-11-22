@@ -62,10 +62,11 @@ jobs:
         sudo apt install libjpeg-dev python3-dev python3-pip gettext zlib1g-dev git npm nodejs build-essential
         cd fiduswriter
         mv ../ci/configuration.py ./
-        pip3 install requests[security]
-        pip3 install -r requirements.txt
-        pip3 install -r dev-requirements.txt
-        pip3 install coverage==5.1
+        pip install requests[security]
+        pip install -r requirements.txt
+        pip install -r dev-requirements.txt
+        pip install coverage
+        pip install coveralls
         ./manage.py setup --no-static
     - name: Run test ${{ matrix.test }}
       uses: nick-invision/retry@v2
@@ -76,13 +77,14 @@ jobs:
         command: |
           cd fiduswriter
           coverage run --concurrency=multiprocessing manage.py test ${{ matrix.test }}
-    - name: Coveralls
-      uses: johanneswilm/coveralls-python-action@develop
-      with:
-        parallel: true
-        flag-name: ${{ matrix.test }}
-        base-path: fiduswriter
-        debug: true
+          COVERALLS_FLAG_NAME=${{ matrix.test }} coveralls
+    # - name: Coveralls
+    #   uses: johanneswilm/coveralls-python-action@develop
+    #   with:
+    #     parallel: true
+    #     flag-name: ${{ matrix.test }}
+    #     base-path: fiduswriter
+    #     debug: true
   finish:
     needs: test
     runs-on: ubuntu-latest

@@ -36,7 +36,6 @@ DATABASES = {
 # Migrate, transpile JavaScript and install required fixtures automatically
 # when starting runserver. You might want to turn this off on a production
 # server. The default is the opposite of DEBUG
-
 # AUTO_SETUP = False
 
 # This determines whether the server is used for testing and will let the

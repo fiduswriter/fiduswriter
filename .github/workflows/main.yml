@@ -67,7 +67,7 @@ jobs:
         pip install -r dev-requirements.txt
         pip install coverage
         pip install coveralls
-        ./manage.py setup --no-static
+        coverage run manage.py setup --no-static
     - name: Run test ${{ matrix.test }}
       uses: nick-invision/retry@v2
       with:
@@ -77,6 +77,7 @@ jobs:
         command: |
           cd fiduswriter
           coverage run --concurrency=multiprocessing manage.py test ${{ matrix.test }}
+          coverage combine
           coveralls --service=github
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -78,18 +78,18 @@ jobs:
           cd fiduswriter
           coverage run --concurrency=multiprocessing manage.py test ${{ matrix.test }}
           coverage combine
-          coveralls --service=github
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        COVERALLS_PARALLEL: true
-        COVERALLS_FLAG_NAME: ${{ matrix.test }}
-    # - name: Coveralls
-    #   uses: johanneswilm/coveralls-python-action@develop
-    #   with:
-    #     parallel: true
-    #     flag-name: ${{ matrix.test }}
-    #     base-path: fiduswriter
-    #     debug: true
+      #     coveralls --service=github
+      # env:
+      #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   COVERALLS_PARALLEL: true
+      #   COVERALLS_FLAG_NAME: ${{ matrix.test }}
+    - name: Coveralls
+      uses: johanneswilm/coveralls-python-action@develop
+      with:
+        parallel: true
+        flag-name: ${{ matrix.test }}
+        base-path: fiduswriter
+        debug: true
   finish:
     needs: test
     runs-on: ubuntu-latest

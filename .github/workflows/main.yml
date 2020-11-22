@@ -77,13 +77,16 @@ jobs:
           cd fiduswriter
           coverage run --concurrency=multiprocessing manage.py test ${{ matrix.test }}
     - name: Coveralls
-      uses: AndreMiras/coveralls-python-action@develop
+      uses: johanneswilm/coveralls-python-action@develop
       with:
         parallel: true
+        flag-name: ${{ matrix.test }}
+        base-path: fiduswriter
   finish:
     needs: test
     runs-on: ubuntu-latest
     steps:
     - name: Coveralls Finished
-      run: |
-        curl "https://coveralls.io/webhook?repo_token=${{ secrets.GITHUB_TOKEN }}&repo_name=${{ github.repository }}" -d "payload[build_num]=${{ github.run_id }}&payload[status]=done"
+      uses: johanneswilm/coveralls-python-action@develop
+      with:
+        parallel-finished: true

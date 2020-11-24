@@ -1,0 +1,93 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+    branches:
+      - master
+      - develop
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  run-linters:
+    name: Run linters
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+      - name: Install Python dependencies
+        run: |
+          cd fiduswriter
+          pip install flake8
+          pip install -r requirements.txt
+      - name: Run linters
+        run: |
+          cd fiduswriter
+          ./manage.py lint
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        test:
+        - 'browser_check base'
+        - user
+        - feedback
+        - document.tests.test_collaboration
+        - document.tests.test_editor
+        - document.tests.test_offline
+        - document.tests.test_export
+        - document.tests.test_admin
+        - document.tests.test_message_exchange
+        - bibliography
+        - usermedia
+    steps:
+    - name: Set up Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+    - uses: actions/checkout@v2
+    - uses: nanasess/setup-chromedriver@master
+    - name: Install dependencies
+      run: |
+        sudo apt install libjpeg-dev python3-dev python3-pip gettext zlib1g-dev git npm nodejs build-essential
+        cd fiduswriter
+        mv ../ci/configuration.py ./
+        pip install requests[security]
+        pip install -r requirements.txt
+        pip install -r dev-requirements.txt
+        pip install coverage
+        pip install coveralls
+        coverage run manage.py setup --no-static
+    - name: Run test ${{ matrix.test }}
+      uses: nick-invision/retry@v2
+      with:
+        timeout_minutes: 8
+        max_attempts: 3
+        retry_on: error
+        command: |
+          cd fiduswriter
+          coverage run --concurrency=multiprocessing manage.py test ${{ matrix.test }}
+    - name: Coveralls
+      run: |
+          cd fiduswriter
+          coverage combine
+          coveralls --service=github
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        COVERALLS_PARALLEL: true
+  finish:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Coveralls Finished
+      run: curl "https://coveralls.io/webhook?repo_token=${{ secrets.GITHUB_TOKEN }}&repo_name=${{ github.repository }}" -d "payload[build_num]=${{ github.run_id }}&payload[status]=done"

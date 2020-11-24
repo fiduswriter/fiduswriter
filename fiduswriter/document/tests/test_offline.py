@@ -1,3 +1,4 @@
+import time
 import multiprocessing
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -114,7 +115,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
     def test_too_many_diffs(self):
         """
         Test one client going offline in collaborative mode while both clients
-        continue to write with the cionnected clients adding too many items to
+        continue to write with the connected clients adding too many items to
         the history so that the server no longer can provide it with all
         missing steps. The client therefore needs to recretae the missing steps
         by itself.
@@ -745,12 +746,13 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
             )
         )
         self.assertEqual(alert_element.is_displayed(), True)
-
+        time.sleep(1)
         # Check the same for PDF export too !
         # Click on the file menu
         self.driver.find_element_by_xpath(
             "//span[contains(@title,'File handling')]"
         ).click()
+        time.sleep(1)
 
         # Click on the Print PDF button
         self.driver.find_element_by_xpath(
@@ -796,6 +798,7 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
             "//span[contains(@title,'File handling')]"
         )
         file_menu.click()
+        time.sleep(1)
 
         share_button = self.driver.find_element_by_xpath(
             "//span[contains(@title,'Share the document with other users.')]"

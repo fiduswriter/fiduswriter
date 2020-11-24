@@ -77,6 +77,9 @@ jobs:
         command: |
           cd fiduswriter
           coverage run --concurrency=multiprocessing manage.py test ${{ matrix.test }}
+    - name: Coveralls
+      run: |
+          cd fiduswriter
           coverage combine
           coveralls --service=github
       env:

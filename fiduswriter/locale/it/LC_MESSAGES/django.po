@@ -250,7 +250,7 @@ msgstr "\n"
 
 #: user/templates/account/email/password_reset_key_message.html:21
 msgid "In case you forgot, your username is %(username)s."
-msgstr "Nel caso in cui hai dimenticato, il tuo nome utente è% (nome utente) s."
+msgstr "Nel caso in cui hai dimenticato, il tuo nome utente è %(username)s."
 
 #: usermedia/views.py:35
 msgid "Filetype not supported"
@@ -279,20 +279,20 @@ msgstr "Siamo spiacenti, ma questa pagina non è stata trovata."
 #: user/templates/account/email/email_confirmation_message.html:7
 #: user/templates/account/email/password_reset_key_message.html:7
 msgid "Hello from %(site_name)s!"
-msgstr "Ciao da% (nome_sito) s!"
+msgstr "Ciao da %(site_name)s!"
 
 #: user/templates/account/email/email_confirmation_message.html:12
 msgid "You are receiving this e-mail because user %(user_display)s has given yours as an e-mail address to connect their account."
-msgstr "Hai ricevuto questa e-mail perché l'utente% (user_display) s ha fornito il tuo come indirizzo e-mail per collegare il proprio account."
+msgstr "Hai ricevuto questa e-mail perché l'utente %(user_display)s ha fornito il tuo come indirizzo e-mail per collegare il proprio account."
 
 #: user/templates/account/email/email_confirmation_message.html:16
 msgid "To confirm this is correct, go to <a href=\"%(url)s\">%(url)s</a>."
-msgstr "Per confermare che sia corretto, vai a <a href=\"%(url)s\">% (url) s </a>."
+msgstr "Per confermare che sia corretto, vai a <a href=\"%(url)s\">%(url)s </a>."
 
 #: user/templates/account/email/email_confirmation_message.html:20
 #: user/templates/account/email/password_reset_key_message.html:26
 msgid "Thank you from %(site_name)s!"
-msgstr "Grazie da% (site_name) s!"
+msgstr "Grazie da %(site_name)s!"
 
 #: user/templates/account/email/password_reset_key_message.html:11
 msgid "You are receiving this e-mail because you or someone else has requested a password for your user account."

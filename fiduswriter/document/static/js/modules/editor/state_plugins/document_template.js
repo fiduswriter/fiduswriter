@@ -1,6 +1,9 @@
 import {Plugin, PluginKey} from "prosemirror-state"
 import {Fragment} from "prosemirror-model"
 
+
+const key = new PluginKey('documentTemplate')
+
 export function addDeletedPartWidget(dom, view, getPos) {
     dom.classList.add('article-deleted')
     dom.insertAdjacentHTML(
@@ -16,6 +19,28 @@ export function addDeletedPartWidget(dom, view, getPos) {
         tr.setMeta('deleteUnusedSection', true)
         view.dispatch(tr)
     })
+}
+
+export function checkProtectedinSelection(state) {
+    // Checks whether there is a protected range
+    // within a selection
+    const anchorDocPart = state.selection.$anchor.node(2),
+        headDocPart = state.selection.$head.node(2)
+
+    // If the protection is of header/start check if selection falls within the
+    // protected range
+    if (['start', 'header'].includes(anchorDocPart.attrs.locking) || ['start', 'header'].includes(headDocPart.attrs.locking)) {
+        const protectedRanges = key.getState(state).protectedRanges,
+            start = state.selection.from,
+            end = state.selection.to
+        if (protectedRanges.find(({from, to}) => !(
+            (start <= from && end <= from) ||
+            (start >= to && end >= to)
+        ))) {
+            return true
+        }
+    }
+    return anchorDocPart.attrs.locking === "fixed" || headDocPart.attrs.locking === "fixed"
 }
 
 export class PartView {
@@ -43,7 +68,6 @@ export class PartView {
     }
 }
 
-const key = new PluginKey('documentTemplate')
 export const documentTemplatePlugin = function(options) {
     return new Plugin({
         key,
@@ -149,18 +173,21 @@ export const documentTemplatePlugin = function(options) {
             let changingRanges = []
 
             // We map all changes back to the document before changes have been applied.
-            tr.mapping.maps.slice().reverse().forEach(map => {
+            tr.steps.slice().reverse().forEach(step => {
+                const map = step.getMap()
                 if (changingRanges.length) {
                     const mapInv = map.invert()
                     changingRanges = changingRanges.map(range => (
                         {start: mapInv.map(range.start, -1), end: mapInv.map(range.end, 1)}
                     ))
                 }
+                if (['removeMark', 'addMark'].includes(step.jsonID)) {
+                    changingRanges.push({start: step.from, end: step.to})
+                }
                 map.forEach((start, end) => {
                     changingRanges.push({start, end})
                 })
             })
-
             changingRanges.forEach(({start, end}) => {
                 if (protectedRanges.find(({from, to}) => !(
                     (start <= from && end <= from) ||

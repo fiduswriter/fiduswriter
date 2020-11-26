@@ -12,7 +12,7 @@ const answerCommentTemplate = ({
     active,
     user
 }) =>
-    `<div class="comment-item comment-answer" id="comment-answer-${answer.id}">
+    `<div class="comment-item comment-answer collapse ${active ? 'show': ''}" id="comment-answer-${answer.id}">
         <div class="comment-user">
             ${author ? author.avatar.html : `<span class="fw-string-avatar"></span>`}
             <h5 class="comment-user-name">${escapeText(author ? author.name : answer.username)}</h5>
@@ -27,6 +27,10 @@ const answerCommentTemplate = ({
            </div>` :
         `<div class="comment-text-wrapper">
                <p class="comment-p">${serializeComment(answer.answer).html}</p>
+               <div class="comment-collapsible-buttons">
+                ${serializeComment(answer.answer).text.length > 68 ?
+                    `<a type="button" class="comment-expand-compress show-more-less">show more</a>`: ''}
+                </div>
            </div>
            ${
     answer.user === user.id ?
@@ -61,9 +65,16 @@ const singleCommentTemplate = ({
         </div>
         <div class="comment-text-wrapper">
             ${ active && editComment ?
-        `<div id="comment-editor"></div>` :
-        `<p class="comment-p">${serializeComment(comment.comment).html}</p>`
-}
+            `<div id="comment-editor"></div>` :
+            `<p class="comment-p">${serializeComment(comment.comment).html}</p>`
+    }
+            <div class="comment-collapsible-buttons">
+                ${serializeComment(comment.comment).text.length > 68 ?
+                `<a type="button" class="comment-expand-compress show-more-less">show more</a>`: ''}
+                ${!active && comment.answers.length > 0 ? 
+                `<a type="button" class="comment-expand-compress replies">+${comment.answers.length} replies</a>`: ''}
+            </div>    
+            
         </div>
     </div>`
 
@@ -151,13 +162,6 @@ const commentTemplate = ({comment, view, active, editComment, activeCommentAnswe
         ''
 }
     ${
-    active && !activeCommentAnswerId && !editComment && 0 < comment.comment.length && !READ_ONLY_ROLES.includes(docInfo.access_rights) ?
-        `<div class="comment-item comment-answer">
-            <div id="answer-editor"></div>
-        </div>` :
-        ''
-}
-    ${
     comment.id > 0 && (
         (
             comment.user === user.id
@@ -207,7 +211,15 @@ const commentTemplate = ({comment, view, active, editComment, activeCommentAnswe
         ` :
         ''
 }
-    </div>`
+    </div>
+    ${
+        active && !activeCommentAnswerId && !editComment && 0 < comment.comment.length && !READ_ONLY_ROLES.includes(docInfo.access_rights) ?
+            `<div class="comment-item comment-answer comment-answer-editor">
+                <div id="answer-editor"></div>
+            </div>` :
+            ''
+    }
+</div>`
 }
 
 const ACTIONS = {

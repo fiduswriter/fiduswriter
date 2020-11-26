@@ -125,6 +125,7 @@ export class CommentEditor {
             const el = {}
             switch (true) {
             case findTarget(event, 'button.submit:not(.disabled)', el):
+                console.log("--**", event, el)
                 this.submit()
                 break
             case findTarget(event, 'button.cancel', el):

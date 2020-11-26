@@ -64,6 +64,20 @@ export class ModCommentInteractions {
                     el.target.dataset.answer
                 )
                 break
+                case findTarget(event, '.margin-box.comment.active .show-more-less', el):
+                    console.log(event, el)
+                    try{
+                        el.target.parentElement.previousElementSibling.classList.toggle('show-more')
+                        if (el.target.parentElement.previousElementSibling.classList.contains('show-more')) {
+                            el.target.innerText = 'show less';
+                        } else {
+                            el.target.innerText = 'show more';
+                        }
+                    }catch (error) {
+                        console.log(error)
+                    }
+
+                    break
             default:
                 break
             }
@@ -371,11 +385,13 @@ export class ModCommentInteractions {
 
         this.deactivateAll()
         this.updateDOM()
+        this.activateComment(id)
     }
 
     submitAnswerUpdate(id, answerId, commentText) {
         this.mod.store.updateAnswer(id, answerId, commentText)
         this.deactivateAll()
         this.updateDOM()
+        this.activateComment(id)
     }
 }

@@ -535,7 +535,6 @@ export class ModMarginboxes {
     }
 
      closeAllLongComments(selector = '.comment-expand-compress.show-more-less') {
-        console.log("978")
         document.querySelectorAll(selector).forEach(
             el => {
                 el.parentElement.previousElementSibling.classList.remove('show-more')

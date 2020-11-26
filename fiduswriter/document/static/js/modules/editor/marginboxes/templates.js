@@ -218,8 +218,7 @@ const commentTemplate = ({comment, view, active, editComment, activeCommentAnswe
                 <div id="answer-editor"></div>
             </div>` :
             ''
-    }
-</div>`
+    }`
 }
 
 const ACTIONS = {

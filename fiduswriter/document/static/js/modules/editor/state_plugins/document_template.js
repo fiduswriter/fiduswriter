@@ -149,18 +149,21 @@ export const documentTemplatePlugin = function(options) {
             let changingRanges = []
 
             // We map all changes back to the document before changes have been applied.
-            tr.mapping.maps.slice().reverse().forEach(map => {
+            tr.steps.slice().reverse().forEach(step => {
+                const map = step.getMap()
                 if (changingRanges.length) {
                     const mapInv = map.invert()
                     changingRanges = changingRanges.map(range => (
                         {start: mapInv.map(range.start, -1), end: mapInv.map(range.end, 1)}
                     ))
                 }
+                if (['removeMark', 'addMark'].includes(step.jsonID)) {
+                    changingRanges.push({start: step.from, end: step.to})
+                }
                 map.forEach((start, end) => {
                     changingRanges.push({start, end})
                 })
             })
-
             changingRanges.forEach(({start, end}) => {
                 if (protectedRanges.find(({from, to}) => !(
                     (start <= from && end <= from) ||

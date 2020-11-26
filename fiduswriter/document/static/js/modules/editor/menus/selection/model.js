@@ -52,7 +52,12 @@ export const selectionMenuModel = () => ({
             selected: editor => !!editor.currentView.state.selection.$head.marks().some(
                 mark => mark.type.name === 'comment'
             ),
-            disabled: false,
+            disabled: editor => {
+                const anchorDocPart = editor.currentView.state.selection.$anchor.node(2),
+                headDocPart = editor.currentView.state.selection.$head.node(2)
+
+                return anchorDocPart.attrs.locking === 'fixed' || headDocPart.attrs.locking === 'fixed'
+            },
             order: 1
         },
         {
@@ -64,7 +69,14 @@ export const selectionMenuModel = () => ({
                 const command = toggleMark(mark, {id: randomAnchorId()})
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
-            disabled: editor => COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights),
+            disabled: editor => {
+                const anchorDocPart = editor.currentView.state.selection.$anchor.node(2),
+                headDocPart = editor.currentView.state.selection.$head.node(2)
+
+                return anchorDocPart.attrs.locking === 'fixed' ||
+                    headDocPart.attrs.locking === 'fixed' ||
+                    COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)
+            },
             hidden: editor => editor.currentView.state.selection.$anchor.depth < 2,
             selected: editor => !!editor.currentView.state.selection.$head.marks().some(
                 mark => mark.type.name === 'anchor'

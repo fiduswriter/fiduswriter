@@ -3,6 +3,7 @@ import {toggleMark} from "prosemirror-commands"
 import {COMMENT_ONLY_ROLES} from "../.."
 import {randomAnchorId} from "../../../schema/common"
 import {acceptAll, rejectAll} from "../../track"
+import { key as documentTemplatePluginKey} from "../../state_plugins/document_template" // documentTemplate plugin key
 
 const tracksInSelection = view => {
     // Check whether track marks are present within the range of selection
@@ -56,8 +57,21 @@ export const selectionMenuModel = () => ({
                 const anchorDocPart = editor.currentView.state.selection.$anchor.node(2),
                     headDocPart = editor.currentView.state.selection.$head.node(2)
 
-                return ['fixed', 'start', 'header'].includes(anchorDocPart.attrs.locking) ||
-                    ['fixed', 'start', 'header'].includes(headDocPart.attrs.locking)
+                // If the protection is of header/start type disable buttons only if it falls within the
+                // protected range
+                if(['start', 'header'].includes(anchorDocPart.attrs.locking) || ['start', 'header'].includes(headDocPart.attrs.locking)) {
+                    const protectedRanges = documentTemplatePluginKey.getState(editor.view.state).protectedRanges,
+                        start = editor.currentView.state.selection.from,
+                        end = editor.currentView.state.selection.to
+                    if (protectedRanges.find(({from, to}) => !(
+                        (start <= from && end <= from) ||
+                        (start >= to && end >= to)
+                    ))) {
+                        return true
+                    }
+                }
+
+                return anchorDocPart.attrs.locking === "fixed" || headDocPart.attrs.locking === "fixed"
             },
             order: 1
         },
@@ -74,8 +88,20 @@ export const selectionMenuModel = () => ({
                 const anchorDocPart = editor.currentView.state.selection.$anchor.node(2),
                     headDocPart = editor.currentView.state.selection.$head.node(2)
 
-                return ['fixed', 'start', 'header'].includes(anchorDocPart.attrs.locking) ||
-                    ['fixed', 'start', 'header'].includes(headDocPart.attrs.locking) ||
+                if(['start', 'header'].includes(anchorDocPart.attrs.locking) || ['start', 'header'].includes(headDocPart.attrs.locking) ) {
+                    const protectedRanges = documentTemplatePluginKey.getState(editor.view.state).protectedRanges,
+                        start = editor.currentView.state.selection.from,
+                        end = editor.currentView.state.selection.to
+                    if (protectedRanges.find(({from, to}) => !(
+                        (start <= from && end <= from) ||
+                        (start >= to && end >= to)
+                    ))) {
+                        return true
+                    }
+                }
+
+                return anchorDocPart.attrs.locking === "fixed" ||
+                    headDocPart.attrs.locking === "fixed" ||
                     COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)
             },
             hidden: editor => editor.currentView.state.selection.$anchor.depth < 2,

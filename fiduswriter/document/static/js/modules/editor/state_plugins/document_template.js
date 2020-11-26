@@ -43,7 +43,7 @@ export class PartView {
     }
 }
 
-const key = new PluginKey('documentTemplate')
+export const key = new PluginKey('documentTemplate')
 export const documentTemplatePlugin = function(options) {
     return new Plugin({
         key,

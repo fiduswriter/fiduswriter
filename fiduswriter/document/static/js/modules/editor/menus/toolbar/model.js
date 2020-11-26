@@ -47,7 +47,7 @@ export function elementDisabled(editor, elementName) {
             headDocPart !== anchorDocPart ||
             !anchorDocPart.attrs.elements ||
             !anchorDocPart.attrs.elements.includes(elementName) ||
-            (anchorDocPart.attrs.locking === 'fixed')
+            ['fixed', 'start', 'header'].includes(anchorDocPart.attrs.locking)
     } else {
         // footnote editor
         const anchorFootnote = editor.currentView.state.selection.$anchor.node(1),
@@ -83,7 +83,7 @@ function markDisabled(editor, markName) {
             headDocPart !== anchorDocPart ||
             !anchorDocPart.attrs.marks ||
             !anchorDocPart.attrs.marks.includes(markName) ||
-            (anchorDocPart.attrs.locking === 'fixed')
+            ['fixed', 'start', 'header'].includes(anchorDocPart.attrs.locking)
     } else {
         // footnote editor
         const anchorFootnote = editor.currentView.state.selection.$anchor.node(1),

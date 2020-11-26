@@ -54,9 +54,10 @@ export const selectionMenuModel = () => ({
             ),
             disabled: editor => {
                 const anchorDocPart = editor.currentView.state.selection.$anchor.node(2),
-                headDocPart = editor.currentView.state.selection.$head.node(2)
+                    headDocPart = editor.currentView.state.selection.$head.node(2)
 
-                return anchorDocPart.attrs.locking === 'fixed' || headDocPart.attrs.locking === 'fixed'
+                return ['fixed', 'start', 'header'].includes(anchorDocPart.attrs.locking) ||
+                    ['fixed', 'start', 'header'].includes(headDocPart.attrs.locking)
             },
             order: 1
         },
@@ -71,10 +72,10 @@ export const selectionMenuModel = () => ({
             },
             disabled: editor => {
                 const anchorDocPart = editor.currentView.state.selection.$anchor.node(2),
-                headDocPart = editor.currentView.state.selection.$head.node(2)
+                    headDocPart = editor.currentView.state.selection.$head.node(2)
 
-                return anchorDocPart.attrs.locking === 'fixed' ||
-                    headDocPart.attrs.locking === 'fixed' ||
+                return ['fixed', 'start', 'header'].includes(anchorDocPart.attrs.locking) ||
+                    ['fixed', 'start', 'header'].includes(headDocPart.attrs.locking) ||
                     COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)
             },
             hidden: editor => editor.currentView.state.selection.$anchor.depth < 2,

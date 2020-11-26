@@ -5,6 +5,7 @@ import {undo, redo, undoDepth, redoDepth} from "prosemirror-history"
 import {CitationDialog, FigureDialog, LinkDialog, MathDialog, TableDialog} from "../../dialogs"
 import {READ_ONLY_ROLES, COMMENT_ONLY_ROLES} from "../.."
 import {setBlockType} from "../../keymap"
+import {checkProtectedinSelection} from "../../state_plugins"
 
 const BLOCK_LABELS = {
     'paragraph': gettext('Normal Text'),
@@ -43,10 +44,12 @@ export function elementDisabled(editor, elementName) {
         // main editor
         const anchorDocPart = editor.currentView.state.selection.$anchor.node(2),
             headDocPart = editor.currentView.state.selection.$head.node(2)
+
         return !anchorDocPart ||
             headDocPart !== anchorDocPart ||
             !anchorDocPart.attrs.elements ||
-            !anchorDocPart.attrs.elements.includes(elementName)
+            !anchorDocPart.attrs.elements.includes(elementName) ||
+            checkProtectedinSelection(editor.view.state)
     } else {
         // footnote editor
         const anchorFootnote = editor.currentView.state.selection.$anchor.node(1),
@@ -81,7 +84,8 @@ function markDisabled(editor, markName) {
         return !anchorDocPart ||
             headDocPart !== anchorDocPart ||
             !anchorDocPart.attrs.marks ||
-            !anchorDocPart.attrs.marks.includes(markName)
+            !anchorDocPart.attrs.marks.includes(markName) ||
+            checkProtectedinSelection(editor.view.state)
     } else {
         // footnote editor
         const anchorFootnote = editor.currentView.state.selection.$anchor.node(1),

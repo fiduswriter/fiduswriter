@@ -3,7 +3,7 @@ import {toggleMark} from "prosemirror-commands"
 import {COMMENT_ONLY_ROLES} from "../.."
 import {randomAnchorId} from "../../../schema/common"
 import {acceptAll, rejectAll} from "../../track"
-import {checkProtectedinSelection} from "../../state_plugins"
+import {checkProtectedInSelection} from "../../state_plugins"
 
 const tracksInSelection = view => {
     // Check whether track marks are present within the range of selection
@@ -56,7 +56,7 @@ export const selectionMenuModel = () => ({
             disabled: editor => {
                 if (editor.currentView === editor.view) {
                     //  main editor
-                    return checkProtectedinSelection(editor.view.state)
+                    return checkProtectedInSelection(editor.view.state)
                 } else {
                     // footnote editor
                     return false
@@ -76,7 +76,7 @@ export const selectionMenuModel = () => ({
             disabled: editor => {
                 if (editor.currentView === editor.view) {
                     //  main editor
-                    return checkProtectedinSelection(editor.view.state) ||
+                    return checkProtectedInSelection(editor.view.state) ||
                         COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)
                 } else {
                     // footnote editor

@@ -21,7 +21,7 @@ export function addDeletedPartWidget(dom, view, getPos) {
     })
 }
 
-export function checkProtectedinSelection(state) {
+export function checkProtectedInSelection(state) {
     // Checks whether there is a protected range
     // within a selection
     const anchorDocPart = state.selection.$anchor.node(2),

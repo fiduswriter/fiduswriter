@@ -31,7 +31,7 @@ export {
     from "./comments"
 export {
     documentTemplatePlugin,
-    checkProtectedinSelection
+    checkProtectedInSelection
 }
     from "./document_template"
 export {

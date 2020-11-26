@@ -5,7 +5,7 @@ import {undo, redo, undoDepth, redoDepth} from "prosemirror-history"
 import {CitationDialog, FigureDialog, LinkDialog, MathDialog, TableDialog} from "../../dialogs"
 import {READ_ONLY_ROLES, COMMENT_ONLY_ROLES} from "../.."
 import {setBlockType} from "../../keymap"
-import { key as documentTemplatePluginKey} from "../../state_plugins/document_template" // documentTemplate plugin key
+import {key as documentTemplatePluginKey} from "../../state_plugins/document_template" // documentTemplate plugin key
 
 const BLOCK_LABELS = {
     'paragraph': gettext('Normal Text'),
@@ -44,10 +44,10 @@ export function elementDisabled(editor, elementName) {
         // main editor
         const anchorDocPart = editor.currentView.state.selection.$anchor.node(2),
             headDocPart = editor.currentView.state.selection.$head.node(2)
-        
+
         // If the protection is of header/start type disable buttons only if it falls within the
         // protected range
-        if(['start', 'header'].includes(anchorDocPart.attrs.locking)) {
+        if (['start', 'header'].includes(anchorDocPart.attrs.locking)) {
             const protectedRanges = documentTemplatePluginKey.getState(editor.view.state).protectedRanges,
                 start = editor.currentView.state.selection.from,
                 end = editor.currentView.state.selection.to
@@ -94,10 +94,10 @@ function markDisabled(editor, markName) {
         // main editor
         const anchorDocPart = editor.currentView.state.selection.$anchor.node(2),
             headDocPart = editor.currentView.state.selection.$head.node(2)
-        
+
         // If the protection is of header/start type disable buttons only if it falls within the
         // protected range
-        if(['start', 'header'].includes(anchorDocPart.attrs.locking)) {
+        if (['start', 'header'].includes(anchorDocPart.attrs.locking)) {
             const protectedRanges = documentTemplatePluginKey.getState(editor.view.state).protectedRanges,
                 start = editor.currentView.state.selection.from,
                 end = editor.currentView.state.selection.to

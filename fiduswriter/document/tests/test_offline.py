@@ -117,7 +117,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         Test one client going offline in collaborative mode while both clients
         continue to write with the connected clients adding too many items to
         the history so that the server no longer can provide it with all
-        missing steps. The client therefore needs to recretae the missing steps
+        missing steps. The client therefore needs to recreate the missing steps
         by itself.
         """
 
@@ -587,7 +587,6 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
             )
         )
         self.assertEqual(element.is_displayed(), True)
-
         # Check that the documents in main editors are synced!
         self.assertEqual(
             self.get_contents(self.driver2),

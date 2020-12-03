@@ -64,20 +64,20 @@ export class ModCommentInteractions {
                     el.target.dataset.answer
                 )
                 break
-                case findTarget(event, '.margin-box.comment.active .show-more-less', el):
-                    console.log(event, el)
-                    try{
-                        el.target.parentElement.previousElementSibling.classList.toggle('show-more')
-                        if (el.target.parentElement.previousElementSibling.classList.contains('show-more')) {
-                            el.target.innerText = 'show less';
-                        } else {
-                            el.target.innerText = 'show more';
-                        }
-                    }catch (error) {
-                        console.log(error)
+            case findTarget(event, '.margin-box.comment.active .show-more-less', el):
+                console.log(event, el)
+                try{
+                    el.target.parentElement.previousElementSibling.classList.toggle('show-more')
+                    if (el.target.parentElement.previousElementSibling.classList.contains('show-more')) {
+                        el.target.innerText = 'show less';
+                    } else {
+                        el.target.innerText = 'show more';
                     }
+                }catch (error) {
+                    console.log(error)
+                }
 
-                    break
+                break
             default:
                 break
             }

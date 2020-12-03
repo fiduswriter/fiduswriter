@@ -2,7 +2,7 @@ import fastdom from "fastdom"
 import {DiffDOM, stringToObj} from "diff-dom"
 
 import {findTarget, cancelPromise} from "../../common"
-import {marginBoxesTemplate, marginboxFilterTemplate} from "./templates"
+import {marginBoxesTemplate, marginboxFilterTemplate, marginBoxOptions} from "./templates"
 import {getCommentDuringCreationDecoration, getSelectedChanges, getFootnoteMarkers} from "../state_plugins"
 
 /* Functions related to layouting of comments */
@@ -68,7 +68,24 @@ export class ModMarginboxes {
                 break
             case findTarget(event, '.show-marginbox-options', el):
                 this.closeAllMenus()
-                Array.from(el.target.parentElement.children).find(node => node.matches('.marginbox-options')).classList.add('fw-open')
+                if(el.target.parentElement.id === "margin-box-filter-comments"){
+                    Array.from(el.target.parentElement.children).find(node => node.matches('.marginbox-options')).classList.add('fw-open')
+                }else {
+                    const user = this.editor.docInfo.owner
+                    const docInfo = this.editor.docInfo
+                    const elData = el.target.dataset
+                    const comment = {
+                        'answer': elData.hasOwnProperty('answer'),
+                        'id': elData.id,
+                        'commentId': elData.commentid,
+                        'user': Number(elData.commentuser)
+                    }
+
+                    document.body.insertAdjacentHTML('beforeend', marginBoxOptions(comment, user, docInfo))
+                    const marginboxOptions = document.body.querySelector('.comment-answer-options.marginbox-options')
+                    this.positionMarginBoxOptions(marginboxOptions, event.pageX, event.pageY)
+                    marginboxOptions.classList.add('fw-open')
+                }
                 break
             case findTarget(event, '#margin-box-filter-track', el):
                 this.filterOptions.track = !this.filterOptions.track
@@ -135,7 +152,13 @@ export class ModMarginboxes {
 
     closeAllMenus(selector = '.marginbox-options-submenu.fw-open, .marginbox-options.fw-open') {
         document.querySelectorAll(selector).forEach(
-            el => el.classList.remove('fw-open')
+            el => {
+                if(el.classList.contains('comment-answer-options')){
+                    el.parentElement.removeChild(el)
+                }else{
+                    el.classList.remove('fw-open')
+                }
+            }
         )
     }
 
@@ -542,4 +565,31 @@ export class ModMarginboxes {
         )
     }
 
+    positionMarginBoxOptions(marginBoxDialog, pageX, pageY){
+        const dialogHeight = marginBoxDialog.getBoundingClientRect().height + 10,
+            dialogWidth = marginBoxDialog.getBoundingClientRect().width + 10,
+            scrollTopOffset = window.pageYOffset,
+            clientHeight = window.document.documentElement.clientHeight,
+            clientWidth = window.document.documentElement.clientWidth
+
+        // We try to ensure that the menu is seen in the browser at the preferred location.
+        // Adjustments are made in case it doesn't fit.
+        let top = pageY,
+            left = pageX
+
+        if ((top + dialogHeight) > (scrollTopOffset + clientHeight)) {
+            top -= ((top + dialogHeight) - (scrollTopOffset + clientHeight))
+        }
+
+        if (top < scrollTopOffset) {
+            top = scrollTopOffset + 10
+        }
+
+        if ((left + dialogWidth) > clientWidth) {
+            left -= left + dialogWidth - clientWidth
+        }
+
+        marginBoxDialog.style.top = `${top}px`
+        marginBoxDialog.style.left = `${left}px`
+    }
 }

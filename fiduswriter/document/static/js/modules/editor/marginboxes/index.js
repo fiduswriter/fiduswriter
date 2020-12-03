@@ -68,9 +68,9 @@ export class ModMarginboxes {
                 break
             case findTarget(event, '.show-marginbox-options', el):
                 this.closeAllMenus()
-                if(el.target.parentElement.id === "margin-box-filter-comments"){
+                if (el.target.parentElement.id === "margin-box-filter-comments") {
                     Array.from(el.target.parentElement.children).find(node => node.matches('.marginbox-options')).classList.add('fw-open')
-                }else {
+                } else {
                     const user = this.editor.docInfo.owner
                     const docInfo = this.editor.docInfo
                     const elData = el.target.dataset
@@ -153,9 +153,9 @@ export class ModMarginboxes {
     closeAllMenus(selector = '.marginbox-options-submenu.fw-open, .marginbox-options.fw-open') {
         document.querySelectorAll(selector).forEach(
             el => {
-                if(el.classList.contains('comment-answer-options')){
+                if (el.classList.contains('comment-answer-options')) {
                     el.parentElement.removeChild(el)
-                }else{
+                } else {
                     el.classList.remove('fw-open')
                 }
             }
@@ -557,7 +557,7 @@ export class ModMarginboxes {
         return nodeTracks
     }
 
-     closeAllLongComments(selector = '.comment-expand-compress.show-more-less') {
+    closeAllLongComments(selector = '.comment-expand-compress.show-more-less') {
         document.querySelectorAll(selector).forEach(
             el => {
                 el.parentElement.previousElementSibling.classList.remove('show-more')
@@ -565,7 +565,7 @@ export class ModMarginboxes {
         )
     }
 
-    positionMarginBoxOptions(marginBoxDialog, pageX, pageY){
+    positionMarginBoxOptions(marginBoxDialog, pageX, pageY) {
         const dialogHeight = marginBoxDialog.getBoundingClientRect().height + 10,
             dialogWidth = marginBoxDialog.getBoundingClientRect().width + 10,
             scrollTopOffset = window.pageYOffset,

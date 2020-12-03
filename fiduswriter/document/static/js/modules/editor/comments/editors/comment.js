@@ -214,9 +214,9 @@ export class CommentEditor {
         this.userTaggerList = []
     }
 
-    scrollToBottom(){
+    scrollToBottom() {
         const active_margin_box = document.querySelector(".margin-box.comment.active")
-        if(active_margin_box){
+        if (active_margin_box) {
             active_margin_box.scrollTop = active_margin_box.scrollHeight
         }
     }

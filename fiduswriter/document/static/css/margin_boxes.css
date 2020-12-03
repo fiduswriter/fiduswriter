@@ -271,8 +271,7 @@ body.header-closed #margin-box-filter {
 }
 
 .margin-box .ProseMirror-wrapper,
-.comment-answer-editor #answer-editor .ProseMirror-wrapper
-{
+.comment-answer-editor #answer-editor .ProseMirror-wrapper {
     width: 194px;
     background-color: var(--cs-white-background);
     min-height: 40px;
@@ -440,7 +439,7 @@ body.header-closed #margin-box-filter {
     padding-left: 5px;
 }
 
-.comment-expand-compress{
+.comment-expand-compress {
     text-decoration: none;
     font-weight: bolder;
 }
@@ -457,37 +456,40 @@ body.header-closed #margin-box-filter {
 
 /* Handle */
 .margin-box.comment.active::-webkit-scrollbar-thumb {
-    background: #999;
+    background: #999999;
 }
 
 /* Handle on hover */
 .margin-box.comment.active::-webkit-scrollbar-thumb:hover {
-    background: #777;
+    background: #777777;
 }
 
-.show-more:not(.inactive){
+.show-more:not(.inactive) {
     max-height: 1000px;
 }
 
-.comment-collapsible-buttons{
+.comment-collapsible-buttons {
     display: flex;
     justify-content: flex-end;
-    /*margin-top: 3px;*/
+
+    /* margin-top: 3px; */
 }
 
-.comment-collapsible-buttons .replies{
+.comment-collapsible-buttons .replies {
     margin-left: 77px;
 }
 
-/*.margin-box.comment.active .comment-collapsible-buttons{*/
-/*    justify-content: flex-end;*/
-/*}*/
+/* .margin-box.comment.active .comment-collapsible-buttons{ */
+
+/*    justify-content: flex-end; */
+
+/* } */
 
 .collapse:not(.show) {
-  display: none;
+    display: none;
 }
 
-.comment-answer-editor{
+.comment-answer-editor {
     background-color: var(--editor-active-comment-background-color);
     color: var(--cs-white-text);
     border: 1px solid var(--cs-white-border);

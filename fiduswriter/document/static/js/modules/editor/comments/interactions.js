@@ -65,15 +65,14 @@ export class ModCommentInteractions {
                 )
                 break
             case findTarget(event, '.margin-box.comment.active .show-more-less', el):
-                console.log(event, el)
-                try{
+                try {
                     el.target.parentElement.previousElementSibling.classList.toggle('show-more')
                     if (el.target.parentElement.previousElementSibling.classList.contains('show-more')) {
-                        el.target.innerText = 'show less';
+                        el.target.innerText = 'show less'
                     } else {
-                        el.target.innerText = 'show more';
+                        el.target.innerText = 'show more'
                     }
-                }catch (error) {
+                } catch (error) {
                     console.log(error)
                 }
 

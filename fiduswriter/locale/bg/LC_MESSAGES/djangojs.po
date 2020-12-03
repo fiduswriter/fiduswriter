@@ -3728,7 +3728,7 @@ msgstr "Моля, потвърдете, че притежавате имейл <
 
 #: user/static/js/modules/email_confirm/templates.js:22
 msgid "Please confirm that you own the email <a href=\"mailto:%(email)s\">%(email)s</a>, that you apply for the username %(username)s, and that you have read and agree to our <a href=\"/pages/terms/\" target=\"_blank\">Terms and Conditions</a> and <a href=\"/pages/privacy/\" target=\"_blank\">Privacy Policy</a>."
-msgstr "Моля, потвърдете, че притежавате имейл <a href=\"mailto:%(email)s\">%(email)s</a>, че кандидатствате за потребителското име% (потребителско име) s и че сте прочели и се съгласили към нашите <a href=\"/pages/terms/\" target=\"_blank\"> Общи условия </a> и <a href=\"/pages/privacy/\" target=\"_blank\"> Декларация за поверителност </a> ,"
+msgstr "Моля, потвърдете, че притежавате имейл <a href=\"mailto:%(email)s\">%(email)s</a>, че кандидатствате за потребителското име %(потребителско име)s и че сте прочели и се съгласили към нашите <a href=\"/pages/terms/\" target=\"_blank\"> Общи условия </a> и <a href=\"/pages/privacy/\" target=\"_blank\"> Декларация за поверителност </a> ,"
 
 #: user/static/js/modules/email_confirm/templates.js:30
 msgid "This e-mail confirmation link expired or is invalid. Please try to open another account."

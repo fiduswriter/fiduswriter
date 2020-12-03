@@ -37,19 +37,22 @@ class SeleniumHelper(object):
             options.binary_location = '/usr/bin/google-chrome-stable'
             options.add_argument('--headless')
             options.add_argument('--disable-gpu')
-            chromedriver_filename = '/home/travis/bin/chromedriver'
-            os.environ["PATH"] += os.pathsep + '/home/travis/bin'
+            chromedriver_filename = None
             wait_time = 10
         else:
             from chromedriver_binary import chromedriver_filename
             wait_time = 6
         for i in range(number):
-            drivers.append(
-                webdriver.Chrome(
+            if chromedriver_filename:
+                driver = webdriver.Chrome(
                     chromedriver_filename,
                     options=options
                 )
-            )
+            else:
+                driver = webdriver.Chrome(
+                    options=options
+                )
+            drivers.append(driver)
         for driver in drivers:
             # Set sizes of browsers so that all buttons are visible.
             driver.set_window_position(0, 0)

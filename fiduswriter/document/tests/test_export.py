@@ -251,6 +251,8 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
             )
         )
 
+        time.sleep(1)  # Needed to ensure next lines work
+
         # click on 'Insert image' button
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(

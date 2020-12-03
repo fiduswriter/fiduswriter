@@ -180,7 +180,7 @@ export class FigureDialog {
             imageEntry.copyright = this.copyright
             this.imageDB.setImage(this.imgId, imageEntry)
             this.imgDb = 'document'
-        } else if (this.imgId && !deepEqual(this.copyright, this.imageDB.db[this.imgId].copyright)) {
+        } else if (this.imgId && this.imageDB.db[this.imgId] && !deepEqual(this.copyright, this.imageDB.db[this.imgId].copyright)) {
             const imageEntry = JSON.parse(JSON.stringify(this.imageDB.db[this.imgId]))
             imageEntry.copyright = this.copyright
             this.imageDB.setImage(this.imgId, imageEntry)
@@ -364,7 +364,7 @@ export class FigureDialog {
             }
         )
 
-        if (this.imgId) {
+        if (this.imgId && this.imageDB.db[this.imgId]) {
             this.copyright = this.imageDB.db[this.imgId].copyright
             this.layoutImagePreview()
         } else {

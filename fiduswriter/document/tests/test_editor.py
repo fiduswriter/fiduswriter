@@ -93,6 +93,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         ).send_keys(
             "An abstract title"
         ).perform()
+        time.sleep(1)
         self.driver.find_element(
             By.CSS_SELECTOR,
             "#toolbar > div > div > div:nth-child(3) > div"
@@ -764,6 +765,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         ).send_keys(
             Keys.ENTER
         ).perform()
+        time.sleep(1)
         assert self.driver.find_element(
             By.CSS_SELECTOR,
             ".article-title"

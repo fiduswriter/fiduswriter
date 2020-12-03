@@ -85,7 +85,12 @@ export const settingsPlugin = function(options) {
      */
     const updateDocStyleCSS = function(docStyleId) {
 
-        const docStyle = options.editor.mod.documentTemplate.documentStyles.find(doc_style => doc_style.slug === docStyleId)
+        const docStyle = options.editor.mod.documentTemplate.documentStyles.find(
+            doc_style => doc_style.slug === docStyleId
+        ) ||
+            (options.editor.mod.documentTemplate.documentStyles.length ?
+                options.editor.mod.documentTemplate.documentStyles[0] :
+                {contents: '', documentstylefile_set: []})
 
         let docStyleCSS = docStyle.contents
         docStyle.documentstylefile_set.forEach(

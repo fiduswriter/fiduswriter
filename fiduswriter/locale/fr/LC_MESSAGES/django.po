@@ -201,7 +201,7 @@ msgid "\n"
 "        Hello from %(site_name)s!\n"
 "    "
 msgstr "\n"
-"        Bonjour de% (nom_site) s!\n"
+"        Bonjour de %(site_name)s!\n"
 "        "
 
 #. Se entiende?
@@ -210,8 +210,7 @@ msgid "\n"
 "        You're receiving this e-mail because user %(user_display)s has given yours as an e-mail address to connect their account.\n"
 "    "
 msgstr "\n"
-"        Vous recevez cet e-mail car l'utilisateur% (user_display) s a donné la vôtre comme adresse e-mail pour connecter son compte.\n"
-"        "
+"        Vous recevez cet e-mail car l'utilisateur %(user_display)s a donné la vôtre comme adresse e-mail pour connecter son compte.       "
 
 #: user/templates/account/email/email_confirmation_message.html:20
 msgid "\n"
@@ -279,20 +278,20 @@ msgstr "Nous sommes désolés, mais cette page est introuvable."
 #: user/templates/account/email/email_confirmation_message.html:7
 #: user/templates/account/email/password_reset_key_message.html:7
 msgid "Hello from %(site_name)s!"
-msgstr "Bonjour de% (site_name) s!"
+msgstr "Bonjour de %(site_name)s!"
 
 #: user/templates/account/email/email_confirmation_message.html:12
 msgid "You are receiving this e-mail because user %(user_display)s has given yours as an e-mail address to connect their account."
-msgstr "Vous recevez cet e-mail car l'utilisateur% (user_display) s a donné la vôtre comme adresse e-mail pour connecter son compte."
+msgstr "Vous recevez cet e-mail car l'utilisateur %(user_display)s a donné la vôtre comme adresse e-mail pour connecter son compte."
 
 #: user/templates/account/email/email_confirmation_message.html:16
 msgid "To confirm this is correct, go to <a href=\"%(url)s\">%(url)s</a>."
-msgstr "Pour confirmer que c'est correct, accédez à <a href=\"%(url)s\">% (url) s </a>."
+msgstr "Pour confirmer que c'est correct, accédez à <a href=\"%(url)s\">%(url)s </a>."
 
 #: user/templates/account/email/email_confirmation_message.html:20
 #: user/templates/account/email/password_reset_key_message.html:26
 msgid "Thank you from %(site_name)s!"
-msgstr "Merci de% (site_name) s!"
+msgstr "Merci de %(site_name)s!"
 
 #: user/templates/account/email/password_reset_key_message.html:11
 msgid "You are receiving this e-mail because you or someone else has requested a password for your user account."

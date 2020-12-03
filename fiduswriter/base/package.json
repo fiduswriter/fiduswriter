@@ -24,27 +24,30 @@
     "@fortawesome/fontawesome-free": "^5.13.1",
     "simple-datatables": "^2.1.13",
     "@vivliostyle/print": "^2.1.4",
-    "eslint": "7.11.0",
-    "eslint-global-patch": "1.0.4",
+    "eslint": "7.13.0",
+    "eslint-global-patch": "7.12.1",
     "eslint-plugin-import": "^2.22.1",
     "eslint-import-resolver-node": "^0.3.4",
     "babel-eslint": "10.1.0",
     "offline-plugin": "5.0.x",
-    "w3c-keyname": "2.1.x",
-    "stylelint": "^13.7.2",
+    "w3c-keyname": "2.2.4",
+    "stylelint": "^13.8.0",
     "stylelint-config-standard": "20.0.0",
     "stylelint-value-no-unknown-custom-properties": "3.0.0",
-    "source-map-loader": "1.1.1",
+    "source-map-loader": "1.1.2",
     "stacktrace-js": "2.0.2",
-    "regenerator-runtime": "0.13.7"
+    "regenerator-runtime": "0.13.7",
+    "@babel/core": "7.12.3",
+    "@babel/plugin-syntax-dynamic-import": "7.8.3",
+    "@babel/plugin-transform-template-literals": "^7.12.1",
+    "@babel/plugin-proposal-optional-chaining": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
+    "babel-loader": "8.2.1"
   },
   "devDependencies": {
-    "updates": "^11.2.5",
-    "eslint-plugin-jest": "^24.1.0",
+    "eslint-plugin-jest": "^24.1.3",
     "babel-jest": "^26.5.2",
     "jest":"^26.5.3",
-    "@babel/cli": "7.6.x",
-    "@babel/plugin-transform-template-literals": "^7.10.5",
-    "@babel/plugin-proposal-optional-chaining": "^7.11.0"
+    "@babel/cli": "7.12.1"
   }
 }

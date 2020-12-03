@@ -29,6 +29,7 @@
 --ignore-directory=is:fiduswriter.egg-info
 --ignore-directory=is:fixtures
 --ignore-directory=is:venv
+--ignore-directory=is:.direnv
 --ignore-directory=is:build
 --ignore-file=ext:bak
 --ignore-file=match:/~$/

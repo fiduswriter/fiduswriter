@@ -61,6 +61,9 @@ export const placeholdersPlugin = function(options) {
                 ))
             } else if (['richtext_part', 'table_part'].includes(partElement.type.name)) {
                 partElement.descendants((node, pos) => {
+                    if (['figure', 'table'].includes(node.type.name) && !node.attrs.caption) {
+                        return false
+                    }
                     if (['figure_caption', 'table_caption'].includes(node.type.name) && node.childCount === 0 && state.selection.$anchor.parent !== node) {
                         decorations.push(
                             Decoration.node(2 + offset + pos, 2 + offset + pos + node.nodeSize, {

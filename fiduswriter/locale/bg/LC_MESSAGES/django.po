@@ -279,20 +279,20 @@ msgstr "Съжаляваме, но тази страница не беше на�
 #: user/templates/account/email/email_confirmation_message.html:7
 #: user/templates/account/email/password_reset_key_message.html:7
 msgid "Hello from %(site_name)s!"
-msgstr "Здравейте от% (site_name) s!"
+msgstr "Здравейте от %(site_name)s!"
 
 #: user/templates/account/email/email_confirmation_message.html:12
 msgid "You are receiving this e-mail because user %(user_display)s has given yours as an e-mail address to connect their account."
-msgstr "Получавате този имейл, защото потребителят% (user_display) s е дал вашия като имейл адрес, за да свърже своя акаунт."
+msgstr "Получавате този имейл, защото потребителят %(user_display)s е дал вашия като имейл адрес, за да свърже своя акаунт."
 
 #: user/templates/account/email/email_confirmation_message.html:16
 msgid "To confirm this is correct, go to <a href=\"%(url)s\">%(url)s</a>."
-msgstr "За да потвърдите, че това е правилно, отидете на <a href=\"%(url)s\">% (url) s </a>."
+msgstr "За да потвърдите, че това е правилно, отидете на <a href=\"%(url)s\">%(url)s</a>."
 
 #: user/templates/account/email/email_confirmation_message.html:20
 #: user/templates/account/email/password_reset_key_message.html:26
 msgid "Thank you from %(site_name)s!"
-msgstr "Благодаря ви от% (site_name) s!"
+msgstr "Благодаря ви от %(site_name)s!"
 
 #: user/templates/account/email/password_reset_key_message.html:11
 msgid "You are receiving this e-mail because you or someone else has requested a password for your user account."

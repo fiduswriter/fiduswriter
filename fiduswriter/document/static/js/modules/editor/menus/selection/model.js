@@ -3,6 +3,7 @@ import {toggleMark} from "prosemirror-commands"
 import {COMMENT_ONLY_ROLES} from "../.."
 import {randomAnchorId} from "../../../schema/common"
 import {acceptAll, rejectAll} from "../../track"
+import {checkProtectedInSelection} from "../../state_plugins"
 
 const tracksInSelection = view => {
     // Check whether track marks are present within the range of selection
@@ -52,7 +53,15 @@ export const selectionMenuModel = () => ({
             selected: editor => !!editor.currentView.state.selection.$head.marks().some(
                 mark => mark.type.name === 'comment'
             ),
-            disabled: false,
+            disabled: editor => {
+                if (editor.currentView === editor.view) {
+                    //  main editor
+                    return checkProtectedInSelection(editor.view.state)
+                } else {
+                    // footnote editor
+                    return false
+                }
+            },
             order: 1
         },
         {
@@ -64,7 +73,16 @@ export const selectionMenuModel = () => ({
                 const command = toggleMark(mark, {id: randomAnchorId()})
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
-            disabled: editor => COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights),
+            disabled: editor => {
+                if (editor.currentView === editor.view) {
+                    //  main editor
+                    return checkProtectedInSelection(editor.view.state) ||
+                        COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)
+                } else {
+                    // footnote editor
+                    return COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)
+                }
+            },
             hidden: editor => editor.currentView.state.selection.$anchor.depth < 2,
             selected: editor => !!editor.currentView.state.selection.$head.marks().some(
                 mark => mark.type.name === 'anchor'

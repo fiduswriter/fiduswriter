@@ -27,11 +27,11 @@ const answerCommentTemplate = ({
            </div>` :
         `<div class="comment-text-wrapper">
                <p class="comment-p">${serializeComment(answer.answer).html}</p>
-               <div class="comment-collapsible-buttons">
+           </div>
+           <div class="comment-collapsible-buttons">
                 ${serializeComment(answer.answer).text.length > 68 ?
         `<a type="button" class="comment-expand-compress show-more-less">show more</a>` : ''}
                 </div>
-           </div>
            ${
     answer.user === user.id ?
         `<span class="show-marginbox-options fa fa-ellipsis-v" data-id="${answer.id}" data-commentId="${commentId}" data-answer=${true}></span>` :
@@ -58,14 +58,13 @@ const singleCommentTemplate = ({
         `<div id="comment-editor"></div>` :
         `<p class="comment-p">${serializeComment(comment.comment).html}</p>`
 }
-            <div class="comment-collapsible-buttons">
+        </div>
+        <div class="comment-collapsible-buttons">
                 ${serializeComment(comment.comment).text.length > 68 ?
         `<a type="button" class="comment-expand-compress show-more-less">show more</a>` : ''}
                 ${!active && comment.answers.length > 0 ?
         `<a type="button" class="comment-expand-compress replies">+${comment.answers.length} replies</a>` : ''}
-            </div>    
-            
-        </div>
+            </div>
     </div>`
 
 
@@ -126,7 +125,8 @@ const commentTemplate = ({comment, view, active, editComment, activeCommentAnswe
     return `
         <div id="margin-box-${comment.id}" data-view="${view}" data-id="${comment.id}" data-user-id="${comment.user}"
             class="margin-box comment ${active ? 'active' : 'inactive'} ${comment.resolved ? 'resolved' : ''} ${comment.isMajor === true ? 'comment-is-major-bgc' : ''}">
-    ${
+<div class="comment-answer-container">    
+${
     comment.comment.length === 0 ?
         firstCommentTemplate({comment, author}) :
         singleCommentTemplate({comment, user, author, active, editComment})
@@ -170,7 +170,9 @@ const commentTemplate = ({comment, view, active, editComment, activeCommentAnswe
                 <div id="answer-editor"></div>
             </div>` :
         ''
-}`
+}
+    </div>
+`
 }
 
 const ACTIONS = {

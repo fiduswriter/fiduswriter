@@ -68,7 +68,7 @@ export class ModMarginboxes {
                 break
             case findTarget(event, '.show-marginbox-options', el):
                 this.closeAllMenus()
-                if (el.target.parentElement.id === "margin-box-filter-comments") {
+                if (el.target.parentElement.classList.contains('margin-box-filter-button')) {
                     Array.from(el.target.parentElement.children).find(node => node.matches('.marginbox-options')).classList.add('fw-open')
                 } else {
                     const user = this.editor.docInfo.owner
@@ -557,10 +557,11 @@ export class ModMarginboxes {
         return nodeTracks
     }
 
-    closeAllLongComments(selector = '.comment-expand-compress.show-more-less') {
+    closeAllLongComments(selector = '.comment-p.show-more') {
         document.querySelectorAll(selector).forEach(
             el => {
-                el.parentElement.previousElementSibling.classList.remove('show-more')
+                el.classList.remove('show-more')
+                el.parentElement.parentElement.querySelector(".show-more-less").innerText = "show more"
             }
         )
     }

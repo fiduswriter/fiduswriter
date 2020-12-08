@@ -65,13 +65,7 @@ export class ModCommentInteractions {
                 )
                 break
             case findTarget(event, '.margin-box.comment.active .show-more-less', el):
-                const commentText = el.target.parentElement.parentElement.querySelector(".comment-p")
-                commentText.classList.toggle('show-more')
-                if (commentText.classList.contains('show-more')) {
-                    el.target.innerText = 'show less'
-                } else {
-                    el.target.innerText = 'show more'
-                }
+                this.toggleShowMore(el)
                 break
             default:
                 break
@@ -388,5 +382,15 @@ export class ModCommentInteractions {
         this.deactivateAll()
         this.updateDOM()
         this.activateComment(id)
+    }
+
+    toggleShowMore(element) {
+        const commentText = element.target.parentElement.parentElement.querySelector(".comment-p")
+        commentText.classList.toggle('show-more')
+        if (commentText.classList.contains('show-more')) {
+            element.target.innerText = 'show less'
+        } else {
+            element.target.innerText = 'show more'
+        }
     }
 }

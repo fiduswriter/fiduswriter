@@ -267,8 +267,7 @@ body.header-closed #margin-box-filter {
     word-break: break-word;
 }
 
-.margin-box .ProseMirror-wrapper,
-.comment-answer-editor #answer-editor .ProseMirror-wrapper {
+.margin-box .ProseMirror-wrapper {
     width: 194px;
     background-color: var(--cs-white-background);
     min-height: 40px;
@@ -478,4 +477,8 @@ body.header-closed #margin-box-filter {
     max-height: 325px;
     overflow-y: scroll;
     overflow-x: hidden;
+}
+
+.comment-option {
+    right: 8px;
 }

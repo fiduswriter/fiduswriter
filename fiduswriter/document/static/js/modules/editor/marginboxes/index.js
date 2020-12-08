@@ -148,6 +148,9 @@ export class ModMarginboxes {
                 break
             }
         }, false)
+
+        setTimeout(this.commentOptionsOnScroll, 100)
+
     }
 
     closeAllMenus(selector = '.marginbox-options-submenu.fw-open, .marginbox-options.fw-open') {
@@ -558,7 +561,7 @@ export class ModMarginboxes {
     }
 
     closeAllLongComments(selector = '.comment-p.show-more') {
-        document.querySelectorAll(selector).forEach(
+        document.body.querySelectorAll(selector).forEach(
             el => {
                 el.classList.remove('show-more')
                 el.parentElement.parentElement.querySelector(".show-more-less").innerText = "show more"
@@ -592,5 +595,21 @@ export class ModMarginboxes {
 
         marginBoxDialog.style.top = `${top}px`
         marginBoxDialog.style.left = `${left}px`
+    }
+
+    commentOptionsOnScroll() {
+        document.querySelectorAll(".comment-answer-container").forEach(
+            element => {
+                element.addEventListener("scroll", () => {
+                    const scrollTop = element.scrollTop
+                    const marginBoxOption = Array.from(element.children).find(node => node.matches(".show-marginbox-options"))
+                    if (scrollTop > 50) {
+                        marginBoxOption.classList.add("hide")
+                    } else {
+                        marginBoxOption.classList.remove('hide')
+                    }
+                })
+            }
+        )
     }
 }

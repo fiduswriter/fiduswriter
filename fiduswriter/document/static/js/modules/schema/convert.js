@@ -872,6 +872,11 @@ const convertNodeV32 = function(node, ids = []) {
             }
         ]
         break
+    case 'table_cell':
+        if (!node.content || !node.content.length) {
+            node.content = {type: 'paragraph'}
+        }
+        break
     case 'bullet_list':
     case 'ordered_list':
         attrs = node.attrs || {}
@@ -930,6 +935,12 @@ const convertNodeV32 = function(node, ids = []) {
             convertNodeV32(childNode, ids)
         })
     }
+    if (node.attrs?.initial) {
+        node.attrs.initial.forEach(childNode => {
+            convertNodeV32(childNode, ids)
+        })
+    }
+
 }
 
 const convertDocV32 = function(doc) {

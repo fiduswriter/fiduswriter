@@ -39,6 +39,14 @@ def update_node(node):
                         "content" : node["content"]
                     }
                 ]
+        elif (
+            node["type"] == "table_cell" and
+            (
+                not "content" in node or
+                len(node["content"]) == 0
+            )
+        ):
+            node["content"] = [{"type": "paragraph"}]
         elif node["type"] == "figure":
             if not "attrs" in node:
                 node["attrs"] = {}
@@ -99,6 +107,13 @@ def update_node(node):
                 update_node(sub_node)
     if "content" in node:
         for sub_node in node["content"]:
+            update_node(sub_node)
+    if (
+        "attrs" in node and
+        "initial" in node["attrs"] and
+        bool(node["attrs"]["initial"])
+    ):
+        for sub_node in node["attrs"]["initial"]:
             update_node(sub_node)
 
 def update_document_string(doc_string):

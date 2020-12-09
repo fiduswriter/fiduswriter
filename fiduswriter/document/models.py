@@ -94,7 +94,7 @@ class Document(models.Model):
     # files that are being uploaded. This field is only used for upgrading data
     # and is therefore not handed to the editor or document overview page.
     version = models.PositiveIntegerField(default=0)
-    diffs = models.JSONField(default=list)
+    diffs = models.JSONField(default=list, blank=True)
     # The last few diffs that were received and approved. The number of stored
     # diffs should always be equivalent to or more than all the diffs since the
     # last full save of the document.

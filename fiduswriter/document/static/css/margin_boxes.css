@@ -446,11 +446,7 @@ body.header-closed #margin-box-filter {
 
 .comment-collapsible-buttons {
     display: flex;
-    justify-content: flex-end;
-}
-
-.comment-collapsible-buttons .replies {
-    margin-left: 77px;
+    justify-content: space-between;
 }
 
 .collapse:not(.show) {

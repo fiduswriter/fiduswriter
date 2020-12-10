@@ -617,7 +617,7 @@ export class ModMarginboxes {
     }
 
     toggleShowMore(element) {
-        let commentText = element.target.parentElement.parentElement.querySelector(".comment-p")
+        const commentText = element.target.parentElement.parentElement.querySelector(".comment-p")
         commentText.classList.toggle('show-more')
         if (commentText.classList.contains('show-more')) {
             element.target.innerText = 'show less'

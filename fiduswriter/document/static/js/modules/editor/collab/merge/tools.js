@@ -107,10 +107,10 @@ export const updateMarkData = function(tr, imageDataModified, newTr) {
                         newTr.addMark(pos, pos + node.nodeSize, mark)
                     }
                 }
-                if (node.type.name === 'figure' && Object.keys(imageDataModified).includes(String(node.attrs.image))) {
+                if (node.type.name === 'image' && Object.keys(imageDataModified).includes(String(node.attrs.image))) {
                     const attrs = Object.assign({}, node.attrs)
                     attrs["image"] = imageDataModified[String(node.attrs.image)]
-                    const nodeType = tr.doc.type.schema.nodes['figure']
+                    const nodeType = tr.doc.type.schema.nodes['image']
                     newTr.setNodeMarkup(pos, nodeType, attrs)
                 }
                 if (node.attrs.diffdata && node.attrs.diffdata.length > 0) {

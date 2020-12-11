@@ -299,13 +299,13 @@ export class MergeEditor {
                 // Add the footnote related steps because the changeset tracks change but misses some steps related to insertion of footnote node!
                 tr.steps.forEach((step, index) => {
                     if (step.from >= change.fromB && step.to <= change.toB && step instanceof ReplaceStep && !stepsInvolved.includes(index)) {
-                        const Step1 = step.toJSON()
-                        if (Step1.slice && Step1.from !== Step1.to && Step1.slice.content.length == 1 && (Step1.slice.content[0].type === "footnote" || Step1.slice.content[0].type === "citation")) {
+                        const stepOne = step.toJSON()
+                        if (stepOne.slice && stepOne.from !== stepOne.to && stepOne.slice.content.length == 1 && (stepOne.slice.content[0].type === "footnote" || stepOne.slice.content[0].type === "citation")) {
                             stepsInvolved.push(index)
                         }
                     } else if (step.from >= change.fromB && step.to <= change.toB && step instanceof AddMarkStep && !stepsInvolved.includes(index)) {
-                        const Step1 = step.toJSON()
-                        if (Step1.mark && ["strong", "em", "underline", "link", "deletion", "insertion", "comment"].includes(Step1.mark.type)) {
+                        const stepOne = step.toJSON()
+                        if (stepOne.mark && ["strong", "em", "underline", "link", "deletion", "insertion", "comment"].includes(stepOne.mark.type)) {
                             stepsInvolved.push(index)
                         }
                     }
@@ -321,42 +321,42 @@ export class MergeEditor {
             }
         })
 
-        // Add all the footnote/mark/citation related steps that are not tracked by changeset!!!!!
+        // Add all the footnote/mark/citation related steps that are not tracked by changeset.
         tr.steps.forEach((step, index) => {
             const from = tr.mapping.slice(index).map(step.from)
             const to = tr.mapping.slice(index).map(step.to, -1)
             if (step instanceof ReplaceStep && !stepsTrackedByChangeset.includes(index)) {
-                const Step1 = step.toJSON()
-                if (Step1.slice && Step1.slice.content.length == 1 && Step1.slice.content[0].type === "footnote") {
+                const stepOne = step.toJSON()
+                if (stepOne.slice && stepOne.slice.content.length == 1 && stepOne.slice.content[0].type === "footnote") {
                     const insertionMark = this.schema.marks.diffdata.create({diff: insertionClass, steps: JSON.stringify([index]), from: from,  to: to,
                         markOnly: false})
                     insertionMarksTr.addMark(from, to, insertionMark)
                     stepsTrackedByChangeset.push(index)
-                } else if (Step1.slice && Step1.slice.content.length == 1 && Step1.slice.content[0].type === "citation") {
+                } else if (stepOne.slice && stepOne.slice.content.length == 1 && stepOne.slice.content[0].type === "citation") {
                     const insertionMark = this.schema.marks.diffdata.create({diff: insertionClass, steps: JSON.stringify([index]), from: from, to: to,
                         markOnly: false})
                     insertionMarksTr.addMark(from, to, insertionMark)
                     stepsTrackedByChangeset.push(index)
-                } else if (Step1.slice && Step1.slice.content.length == 1 && Step1.slice.content[0].type === "figure") {
-                    if (Step1.from == Step1.to) {
-                        this.markBlockDiffs(insertionMarksTr, Step1.from, Step1.to + 1, insertionClass, [index])
+                } else if (stepOne.slice && stepOne.slice.content.length == 1 && stepOne.slice.content[0].type === "figure") {
+                    if (stepOne.from == stepOne.to) {
+                        this.markBlockDiffs(insertionMarksTr, stepOne.from, stepOne.to + 1, insertionClass, [index])
                     } else {
-                        this.markBlockDiffs(insertionMarksTr, Step1.from, Step1.to, insertionClass, [index])
+                        this.markBlockDiffs(insertionMarksTr, stepOne.from, stepOne.to, insertionClass, [index])
                     }
                     stepsTrackedByChangeset.push(index)
                 }
             } else if ((step instanceof AddMarkStep || step instanceof RemoveMarkStep) && !stepsTrackedByChangeset.includes(index)) {
-                const Step1 = step.toJSON(),
+                const stepOne = step.toJSON(),
                     stepsInvolved = []
                 stepsInvolved.push(index)
-                if (Step1.mark && ["strong", "em", "underline", "link", "deletion"].includes(Step1.mark.type)) {
+                if (stepOne.mark && ["strong", "em", "underline", "link", "deletion"].includes(stepOne.mark.type)) {
                     tr.steps.forEach((trStep, trIndex) => { // Check for other format changes within this range.
                         if ((trStep instanceof AddMarkStep || trStep instanceof RemoveMarkStep) && !stepsTrackedByChangeset.includes(trIndex)) {
                             const mapFrom = tr.mapping.slice(trIndex).map(trStep.from)
                             const mapTo = tr.mapping.slice(trIndex).map(trStep.to)
                             if (mapFrom >= from && mapTo <= to && !stepsInvolved.includes(trIndex)) {
-                                const Step2 = trStep.toJSON()
-                                if (Step2.mark && ["strong", "em", "underline", "link", "deletion"].includes(Step2.mark.type)) {
+                                const stepTwo = trStep.toJSON()
+                                if (stepTwo.mark && ["strong", "em", "underline", "link", "deletion"].includes(stepTwo.mark.type)) {
                                     stepsInvolved.push(trIndex)
                                 }
                             }
@@ -584,7 +584,7 @@ export class MergeEditor {
         const footnoteFind = (node, usedImages, usedBibs) => {
             if (node.name === 'citation') {
                 node.attrs.references.forEach(ref => usedBibs.push(parseInt(ref.id)))
-            } else if (node.name === 'figure' && node.attrs.image) {
+            } else if (node.name === 'image' && node.attrs.image) {
                 usedImages.push(node.attrs.image)
             } else if (node.content) {
                 node.content.forEach(subNode => footnoteFind(subNode, usedImages, usedBibs))
@@ -595,7 +595,7 @@ export class MergeEditor {
         offlineDoc.descendants(node => {
             if (node.type.name === 'citation') {
                 node.attrs.references.forEach(ref => usedBibs.push(parseInt(ref.id)))
-            } else if (node.type.name === 'figure' && node.attrs.image) {
+            } else if (node.type.name === 'image' && node.attrs.image) {
                 usedImages.push(node.attrs.image)
             } else if (node.type.name === 'footnote' && node.attrs.footnote) {
                 node.attrs.footnote.forEach(subNode => footnoteFind(subNode, usedImages, usedBibs))
@@ -627,10 +627,10 @@ export class MergeEditor {
                             this.imageDataModified[id] = newId
                             // Update the image node if there are any re uploaded images.
                             this.mergeView1.state.doc.descendants((node, pos) => {
-                                if (node.type.name === 'figure' && node.attrs.image == id) {
+                                if (node.type.name === 'image' && node.attrs.image == id) {
                                     const attrs = Object.assign({}, node.attrs)
                                     attrs["image"] = newId
-                                    const nodeType = this.mergeView1.state.schema.nodes['figure']
+                                    const nodeType = this.mergeView1.state.schema.nodes['image']
                                     const transaction = this.mergeView1.state.tr.setNodeMarkup(pos, nodeType, attrs)
                                     transaction.setMeta('mapAppended', true)
                                     this.mergeView1.dispatch(transaction)
@@ -640,7 +640,7 @@ export class MergeEditor {
                                 if (node.type.name === 'figure' && node.attrs.image == id) {
                                     const attrs = Object.assign({}, node.attrs)
                                     attrs["image"] = newId
-                                    const nodeType = this.mergeView3.state.schema.nodes['figure']
+                                    const nodeType = this.mergeView3.state.schema.nodes['image']
                                     const transaction = this.mergeView3.state.tr.setNodeMarkup(pos, nodeType, attrs)
                                     transaction.setMeta('mapAppended', true)
                                     this.mergeView3.dispatch(transaction)
@@ -650,20 +650,20 @@ export class MergeEditor {
                         (id) => {
                             // In case of failure make the id as false so the failed upload image is empty for the offline user too!
                             this.mergeView1.state.doc.descendants((node, pos) => {
-                                if (node.type.name === 'figure' && node.attrs.image == id) {
+                                if (node.type.name === 'image' && node.attrs.image == id) {
                                     const attrs = Object.assign({}, node.attrs)
                                     attrs["image"] = false
-                                    const nodeType = this.mergeView1.state.schema.nodes['figure']
+                                    const nodeType = this.mergeView1.state.schema.nodes['image']
                                     const transaction = this.mergeView1.state.tr.setNodeMarkup(pos, nodeType, attrs)
                                     transaction.setMeta('mapAppended', true)
                                     this.mergeView1.dispatch(transaction)
                                 }
                             })
                             this.mergeView3.state.doc.descendants((node, pos) => {
-                                if (node.type.name === 'figure' && node.attrs.image == id) {
+                                if (node.type.name === 'image' && node.attrs.image == id) {
                                     const attrs = Object.assign({}, node.attrs)
                                     attrs["image"] = false
-                                    const nodeType = this.mergeView3.state.schema.nodes['figure']
+                                    const nodeType = this.mergeView3.state.schema.nodes['image']
                                     const transaction = this.mergeView3.state.tr.setNodeMarkup(pos, nodeType, attrs)
                                     transaction.setMeta('mapAppended', true)
                                     this.mergeView3.dispatch(transaction)

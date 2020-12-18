@@ -31,15 +31,17 @@ setattr(connections, '_connections', Connections)
 def inner(default_project_path):
     sys.path.append(SRC_PATH)
     sys_argv = sys.argv
-    if '--pythonpath' in sys_argv:
+    PROJECT_PATH = False
+    while '--pythonpath' in sys_argv:
         index = sys_argv.index('--pythonpath')
         PROJECT_PATH = os.path.join(os.getcwd(), sys_argv[index + 1])
+        sys.path.insert(0, PROJECT_PATH)
         # We prevent the pythonpath to be handled later on by removing it from
         # sys_argv
         sys_argv = sys_argv[:index] + sys_argv[index+2:]
-    else:
+    if not PROJECT_PATH:
         PROJECT_PATH = default_project_path
-    sys.path.insert(0, PROJECT_PATH)
+        sys.path.insert(0, PROJECT_PATH)
     os.environ.setdefault(
         "PROJECT_PATH",
         PROJECT_PATH

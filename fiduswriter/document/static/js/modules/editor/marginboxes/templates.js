@@ -12,7 +12,7 @@ const answerCommentTemplate = ({
     active,
     user
 }) =>
-    `<div class="comment-item comment-answer" id="comment-answer-${answer.id}">
+    `<div class="comment-item comment-answer collapse ${active ? 'show' : ''}" id="comment-answer-${answer.id}">
         <div class="comment-user">
             ${author ? author.avatar.html : `<span class="fw-string-avatar"></span>`}
             <h5 class="comment-user-name">${escapeText(author ? author.name : answer.username)}</h5>
@@ -28,21 +28,14 @@ const answerCommentTemplate = ({
         `<div class="comment-text-wrapper">
                <p class="comment-p">${serializeComment(answer.answer).html}</p>
            </div>
+        <div class="comment-collapsible-buttons">
+                ${serializeComment(answer.answer).text.length > 68 ?
+        `<a type="button" class="comment-expand-compress show-more-less">show more</a>` : ''}
+                </div>
            ${
     answer.user === user.id ?
-        `<span class="show-marginbox-options fa fa-ellipsis-v"></span>
-               <div class="marginbox-options fw-pulldown fw-right">
-                   <ul>
-                      <li><span class="fw-pulldown-item edit-comment-answer" data-id="${commentId}" data-answer="${answer.id}" title="${gettext('Edit')}">
-                        ${gettext('Edit')}
-                      </span></li>
-                      <li><span class="fw-pulldown-item delete-comment-answer" data-id="${commentId}" data-answer="${answer.id}" title="${gettext('Delete')}">
-                        ${gettext('Delete')}
-                      </span></li>
-                   </ul>
-               </div>` :
-        ''
-}`
+        `<span class="show-marginbox-options fa fa-ellipsis-v" data-id="${answer.id}" data-commentId="${commentId}" data-answer=${true}></span>` :
+        ''}`
 }
     </div>`
 
@@ -65,6 +58,12 @@ const singleCommentTemplate = ({
         `<p class="comment-p">${serializeComment(comment.comment).html}</p>`
 }
         </div>
+        <div class="comment-collapsible-buttons">
+                ${!editComment && serializeComment(comment.comment).text.length > 68 ?
+        `<a type="button" class="comment-expand-compress show-more-less">show more</a>` : ''}
+                ${!active && comment.answers.length > 0 ?
+        `<a type="button" class="comment-expand-compress replies">+${comment.answers.length} replies</a>` : ''}
+            </div>
     </div>`
 
 
@@ -125,7 +124,8 @@ const commentTemplate = ({comment, view, active, editComment, activeCommentAnswe
     return `
         <div id="margin-box-${comment.id}" data-view="${view}" data-id="${comment.id}" data-user-id="${comment.user}"
             class="margin-box comment ${active ? 'active' : 'inactive'} ${comment.resolved ? 'resolved' : ''} ${comment.isMajor === true ? 'comment-is-major-bgc' : ''}">
-    ${
+<div class="comment-answer-container">    
+${
     comment.comment.length === 0 ?
         firstCommentTemplate({comment, author}) :
         singleCommentTemplate({comment, user, author, active, editComment})
@@ -151,13 +151,6 @@ const commentTemplate = ({comment, view, active, editComment, activeCommentAnswe
         ''
 }
     ${
-    active && !activeCommentAnswerId && !editComment && 0 < comment.comment.length && !READ_ONLY_ROLES.includes(docInfo.access_rights) ?
-        `<div class="comment-item comment-answer">
-            <div id="answer-editor"></div>
-        </div>` :
-        ''
-}
-    ${
     comment.id > 0 && (
         (
             comment.user === user.id
@@ -165,49 +158,20 @@ const commentTemplate = ({comment, view, active, editComment, activeCommentAnswe
         ) ||
             docInfo.access_rights === "write"
     ) && !editComment ?
-        `<span class="show-marginbox-options fa fa-ellipsis-v" data-id="${comment.id}"></span>
-        <div class="marginbox-options fw-pulldown fw-right">
-            <ul>
-                ${
-    comment.user === user.id ?
-        `<li><span class="fw-pulldown-item edit-comment" data-id="${comment.id}" title="${gettext("Edit")}">
-                        ${gettext("Edit")}
-                    </span></li>` :
+        `<span class="show-marginbox-options comment-option fas fa-bars" data-id="${comment.id}" data-commentUser="${comment.user}"
+></span>` :
         ''
 }
-                <li>
-                    <span class="fw-pulldown-item show-marginbox-options-submenu" title="${gettext('Assign comment to user')}">
-                        ${gettext('Assign to')}
-                        <span class="fw-icon-right"><i class="fa fa-caret-right"></i></span>
-                    </span>
-                    <div class="fw-pulldown marginbox-options-submenu">
-                        <ul>
-                            <li><span class="fw-pulldown-item unassign-comment" data-id="${comment.id}" title="${gettext('Remove user assignment from comment')}">${gettext('No-one')}</span></li>
-                        ${
-    docInfo.owner.team_members.concat(docInfo.owner).map(
-        user => `<li><span class="fw-pulldown-item assign-comment" data-id="${comment.id}" data-user="${user.id}" data-username="${escapeText(user.name)}" title="${gettext('Assign comment to')} ${escapeText(user.name)}">${escapeText(user.name)}</span></li>`
-    ).join('')
-}
-                        </ul>
-                    </div>
-                </li>
-                <li>
-                    ${
-    comment.resolved ?
-        `<span class="fw-pulldown-item recreate-comment" data-id="${comment.id}" title="${gettext('Recreate comment')}">${gettext('Recreate')}</span>` :
-        `<span class="fw-pulldown-item resolve-comment" data-id="${comment.id}" title="${gettext('Resolve comment')}">${gettext('Resolve')}</span>`
-}
-
-                </li>
-                <li>
-                    <span class="fw-pulldown-item delete-comment" data-id="${comment.id}" title="${gettext('Delete comment')}">${gettext('Delete')}</span>
-                </li>
-            </ul>
-        </div>
-        ` :
+    </div>
+    ${
+    active && !activeCommentAnswerId && !editComment && 0 < comment.comment.length && !READ_ONLY_ROLES.includes(docInfo.access_rights) ?
+        `<div class="comment-item comment-answer comment-answer-editor">
+                <div id="answer-editor"></div>
+            </div>` :
         ''
 }
-    </div>`
+    </div>
+`
 }
 
 const ACTIONS = {
@@ -446,3 +410,51 @@ export const marginBoxesTemplate = ({
         return returnValue
     }).join('')
 }</div></div>`
+
+export const marginBoxOptions = (comment, user, docInfo) => {
+    return `<div class="comment-answer-options marginbox-options fw-pulldown">
+                ${!comment.answer ? `<ul>
+                    ${ comment.user === user.id ?
+        `<li><span class="fw-pulldown-item edit-comment" data-id="${comment.id}" title="${gettext("Edit")}">
+                                    ${gettext("Edit")}
+                                </span></li>` :
+        ''
+}
+                <li>
+                    <span class="fw-pulldown-item show-marginbox-options-submenu" title="${gettext('Assign comment to user')}">
+                        ${gettext('Assign to')}
+                        <span class="fw-icon-right"><i class="fa fa-caret-right"></i></span>
+                    </span>
+                    <div class="fw-pulldown marginbox-options-submenu">
+                        <ul>
+                            <li><span class="fw-pulldown-item unassign-comment" data-id="${comment.id}" title="${gettext('Remove user assignment from comment')}">${gettext('No-one')}</span></li>
+                        ${
+    docInfo.owner.team_members.concat(docInfo.owner).map(
+        user => `<li><span class="fw-pulldown-item assign-comment" data-id="${comment.id}" data-user="${user.id}" data-username="${escapeText(user.name)}" title="${gettext('Assign comment to')} ${escapeText(user.name)}">${escapeText(user.name)}</span></li>`
+    ).join('')
+}
+                        </ul>
+                    </div>
+                </li>
+                <li>
+                    ${
+    comment.resolved ?
+        `<span class="fw-pulldown-item recreate-comment" data-id="${comment.id}" title="${gettext('Recreate comment')}">${gettext('Recreate')}</span>` :
+        `<span class="fw-pulldown-item resolve-comment" data-id="${comment.id}" title="${gettext('Resolve comment')}">${gettext('Resolve')}</span>`
+}
+
+                </li>
+                <li>
+                    <span class="fw-pulldown-item delete-comment" data-id="${comment.id}" title="${gettext('Delete comment')}">${gettext('Delete')}</span>
+                </li>
+            </ul>` :
+        `<ul>
+                <li><span class="fw-pulldown-item edit-comment-answer" data-id="${comment.commentId}" data-answer="${comment.id}" title="${gettext('Edit')}">
+                ${gettext('Edit')}
+                </span></li>
+                <li><span class="fw-pulldown-item delete-comment-answer" data-id="${comment.commentId}" data-answer="${comment.id}" title="${gettext('Delete')}">
+                ${gettext('Delete')}
+                </span></li>
+           </ul>` }
+            </div>`
+}

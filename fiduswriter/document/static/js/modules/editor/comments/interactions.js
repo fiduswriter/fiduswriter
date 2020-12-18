@@ -25,9 +25,12 @@ export class ModCommentInteractions {
                 this.editComment = true
                 this.activeCommentAnswerId = false
                 id = el.target.dataset.id
+
                 if (this.activeCommentId !== id) {
                     this.deactivateSelectedChanges()
-                    this.activateComment(id)
+                    this.activeCommentId = id
+                    this.editComment = true
+                    this.updateDOM()
                 } else {
                     this.updateDOM()
                 }
@@ -371,11 +374,13 @@ export class ModCommentInteractions {
 
         this.deactivateAll()
         this.updateDOM()
+        this.activateComment(id)
     }
 
     submitAnswerUpdate(id, answerId, commentText) {
         this.mod.store.updateAnswer(id, answerId, commentText)
         this.deactivateAll()
         this.updateDOM()
+        this.activateComment(id)
     }
 }

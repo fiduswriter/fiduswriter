@@ -126,6 +126,7 @@ export class CommentEditor {
             switch (true) {
             case findTarget(event, 'button.submit:not(.disabled)', el):
                 this.submit()
+                this.scrollToBottom()
                 break
             case findTarget(event, 'button.cancel', el):
                 this.mod.interactions.cancelSubmit()
@@ -211,5 +212,12 @@ export class CommentEditor {
         this.dom.querySelector('div.tagger').innerHTML = ''
         this.tagRange = false
         this.userTaggerList = []
+    }
+
+    scrollToBottom() {
+        const active_margin_box = document.querySelector(".margin-box.comment.active .comment-answer-container")
+        if (active_margin_box) {
+            active_margin_box.scrollTop = active_margin_box.scrollHeight
+        }
     }
 }

@@ -475,10 +475,10 @@ class FidusSignupView(SignupView):
             if inv:
                 apply_invite(inv, self.user)
         else:
-            inv = AccessRightInvite.objects.filter(
+            invites = AccessRightInvite.objects.filter(
                 email=self.user.email
-            ).first()
-            if inv:
+            )
+            for inv in invites:
                 apply_invite(inv, self.user)
         return ret
 

@@ -298,6 +298,7 @@ module.exports = { // eslint-disable-line no-undef
         "interpolate": "readonly",
         "settings_STATIC_URL": "readonly",
         "settings_REGISTRATION_OPEN": "readonly",
+        "settings_SOCIALACCOUNT_OPEN": "readonly",
         "settings_CONTACT_EMAIL": "readonly",
         "settings_WS_SERVER": "readonly",
         "settings_WS_PORT": "readonly",

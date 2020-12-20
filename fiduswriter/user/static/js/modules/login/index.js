@@ -25,26 +25,25 @@ export class LoginPage extends PreloginPage {
         this.contents = `<div class="fw-login-left">
             <h1 class="fw-login-title">${gettext("Log in")}</h1>
             ${
-    settings_REGISTRATION_OPEN ?
+    settings_SOCIALACCOUNT_OPEN ?
         (
             this.socialaccount_providers.length ?
-                `<p>${gettext("If you are new here, please <a href='/account/sign-up/' title='Sign up'>sign up</a> or use one of the login options below to create an account.")}</p>
-                            <div class="socialaccount_ballot">
-                                <ul class="socialaccount_providers">
-                                ${
+                `<div class="socialaccount_ballot">
+                    <ul class="socialaccount_providers">
+                        ${
             this.socialaccount_providers.map(
                 provider => `<li>
-                                            <a title="${provider.name}" class="fw-button fw-socialaccount fw-${provider.id}"
-                                                href="${provider.login_url}">
-                                                <span class="fab fa-${provider.id}"></span>
-                                                ${gettext("Login with")} ${provider.name}
-                                            </a>
-                                        </li>`
+                                <a title="${provider.name}" class="fw-button fw-socialaccount fw-${provider.id}"
+                                    href="${provider.login_url}">
+                                        <span class="fab fa-${provider.id}"></span>
+                                            ${gettext("Login with")} ${provider.name}
+                                </a>
+                            </li>`
             ).join('')
             }
-                                </ul>
-                            </div>` :
-                `<p>${gettext("If you are new here, please <a href='/account/sign-up/' title='Sign up'>sign up</a>.")}</p>`
+                    </ul>
+                </div>` :
+                ''
         )
         :
         ''

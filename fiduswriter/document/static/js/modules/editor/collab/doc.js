@@ -17,6 +17,7 @@ import {
     adjustDocToTemplate
 } from "../../document_template"
 import {
+    activateWait,
     deactivateWait,
 } from "../../common"
 import {
@@ -164,6 +165,7 @@ export class ModCollabDoc {
                 this.mod.editor.mod.documentTemplate.documentStyles,
                 this.mod.editor.schema
             )]})
+            activateWait(true, "Updating document. Please wait..")
             const transform = recreateTransform(stateDoc, newStateDoc)
             if (transform.steps.length) {
                 const tr = this.mod.editor.view.state.tr
@@ -176,6 +178,8 @@ export class ModCollabDoc {
         // Set part specific settings
         this.mod.editor.mod.documentTemplate.addDocPartSettings()
         this.mod.editor.mod.documentTemplate.addCitationStylesMenuEntries()
+
+        deactivateWait()
     }
 
     sendToCollaborators() {

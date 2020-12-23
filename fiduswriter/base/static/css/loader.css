@@ -26,3 +26,15 @@
     margin-top: -.5em;
     margin-left: -.5em;
 }
+
+#wait span {
+    display: none;
+}
+
+#wait.active span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 105vh;
+    font-size: 15px;
+}

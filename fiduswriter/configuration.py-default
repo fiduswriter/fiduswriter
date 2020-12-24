@@ -119,3 +119,7 @@ ALLOWED_HOSTS = [
 
 # Disable service worker (default is True)
 # USE_SERVICE_WORKER = False
+
+# The maximum size of user uploaded images in bytes. If you use NGINX, note
+# that also it needs to support at least this size.
+MEDIA_MAX_SIZE = False

@@ -49,7 +49,9 @@ export class ImageDB {
             }
         ).catch(
             error => {
-                if (error.message) {
+                if (error.status === 413) {
+                    addAlert('error', `${gettext('Image is larger than the maximum permitted size')}${settings_MEDIA_MAX_SIZE ? `: ${parseInt(settings_MEDIA_MAX_SIZE / 1000000)}MB` : '.'}`)
+                } else if (error.message) {
                     addAlert('error', gettext(error.message))
                 } else {
                     addAlert('error', gettext(error.statusText))

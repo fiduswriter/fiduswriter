@@ -166,20 +166,20 @@ export class ModCollabDoc {
                 this.mod.editor.schema
             )]})
             activateWait(true, "Updating document. Please wait..")
-            const transform = recreateTransform(stateDoc, newStateDoc)
-            if (transform.steps.length) {
-                const tr = this.mod.editor.view.state.tr
-                transform.steps.forEach(step => tr.step(step))
-                tr.setMeta('remote', true)
-                this.mod.editor.view.dispatch(tr)
-            }
-
+            setTimeout(() => {
+                const transform = recreateTransform(stateDoc, newStateDoc)
+                if (transform.steps.length) {
+                    const tr = this.mod.editor.view.state.tr
+                    transform.steps.forEach(step => tr.step(step))
+                    tr.setMeta('remote', true)
+                    this.mod.editor.view.dispatch(tr)
+                }
+                deactivateWait()
+            }, 0)
         }
         // Set part specific settings
         this.mod.editor.mod.documentTemplate.addDocPartSettings()
         this.mod.editor.mod.documentTemplate.addCitationStylesMenuEntries()
-
-        deactivateWait()
     }
 
     sendToCollaborators() {

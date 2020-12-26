@@ -156,6 +156,9 @@ export class ModCollabDoc {
             // We received the template. That means we are the first user present with write access.
             // We will adjust the document to the template if necessary.
             activateWait(true, gettext("Updating document. Please wait..."))
+            const activateWaitTimer = setTimeout(() => {
+                activateWait(true, gettext("It's taking a bit longer than usual, but it should be ready soon. Please wait..."))
+            }, 60000)
             const adjustWorker = makeWorker(`${settings_STATIC_URL}js/adjust_doc_to_template_worker.js?v=${transpile_VERSION}`)
             adjustWorker.onmessage = message => {
                 if (message.data.type === 'result') {
@@ -165,6 +168,8 @@ export class ModCollabDoc {
                         tr.setMeta('remote', true)
                         this.mod.editor.view.dispatch(tr)
                     }
+                    // clearing timer for updating message since operation is completed
+                    clearTimeout(activateWaitTimer)
                     deactivateWait()
                 }
             }

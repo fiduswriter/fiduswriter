@@ -32,7 +32,7 @@ function cleanNode(node, elements, marks) {
     }
 }
 
-export function adjustDocToTemplate(miniDoc, miniTemplate, documentStyles, schema) {
+export function adjustDocToTemplate(miniDoc, miniTemplate, documentStyleSlugs, schema) {
     const doc = toFullJSON(miniDoc, schema),
         template = toFullJSON(miniTemplate, schema),
         removedFootnoteElements = doc.attrs.footnote_elements.filter(
@@ -65,11 +65,11 @@ export function adjustDocToTemplate(miniDoc, miniTemplate, documentStyles, schem
         doc.attrs.papersize = doc.attrs.papersizes[0]
     }
 
-    if (!documentStyles.map(style => style.slug).includes(doc.attrs.documentstyle)) {
-        if (!documentStyles.length) {
+    if (!documentStyleSlugs.includes(doc.attrs.documentstyle)) {
+        if (!documentStyleSlugs.length) {
             doc.attrs.documentstyle = false
         } else {
-            doc.attrs.documentstyle = documentStyles[0].slug
+            doc.attrs.documentstyle = documentStyleSlugs[0]
         }
     }
 

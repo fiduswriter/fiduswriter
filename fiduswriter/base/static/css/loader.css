@@ -31,10 +31,11 @@
     display: none;
 }
 
-#wait.active span {
+#wait.active span.message {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 105vh;
     font-size: 15px;
+    margin-top: 20px;
 }

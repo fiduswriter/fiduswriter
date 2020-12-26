@@ -19,6 +19,7 @@ import {
 import {
     activateWait,
     deactivateWait,
+    makeWorker
 } from "../../common"
 import {
     Merge
@@ -166,16 +167,22 @@ export class ModCollabDoc {
                 this.mod.editor.schema
             )]})
             activateWait(true, "Updating document. Please wait..")
-            setTimeout(() => {
-                const transform = recreateTransform(stateDoc, newStateDoc)
-                if (transform.steps.length) {
-                    const tr = this.mod.editor.view.state.tr
-                    transform.steps.forEach(step => tr.step(step))
-                    tr.setMeta('remote', true)
-                    this.mod.editor.view.dispatch(tr)
-                }
+
+
+                const wor = makeWorker(`${settings_STATIC_URL}js/recreate_transform_worker.js?v=${transpile_VERSION}`)
+
+                wor.postMessage({"stateDoc": JSON.stringify(stateDoc),"newStateDoc":JSON.stringify(newStateDoc)})
+
+                //const transform = recreateTransform(stateDoc, newStateDoc)
+                // if (transform.steps.length) {
+                //     const tr = this.mod.editor.view.state.tr
+                //     transform.steps.forEach(step => tr.step(step))
+                //     tr.setMeta('remote', true)
+                //     this.mod.editor.view.dispatch(tr)
+                // }
+
+
                 deactivateWait()
-            }, 0)
         }
         // Set part specific settings
         this.mod.editor.mod.documentTemplate.addDocPartSettings()

@@ -1,4 +1,4 @@
-from django.core.management.base import BaseCommand
+from base.management import BaseCommand
 import zipfile
 import os
 import shutil

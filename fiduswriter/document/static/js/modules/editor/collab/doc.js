@@ -14,17 +14,14 @@ import {
     updateCollaboratorSelection
 } from "../state_plugins"
 import {
-    adjustDocToTemplate
-} from "../../document_template"
-import {
+    activateWait,
     deactivateWait,
+    makeWorker
 } from "../../common"
 import {
     Merge
 } from "./merge"
-import {
-    recreateTransform
-} from "./merge/recreate_transform"
+import {SchemaExport} from "../../schema/export"
 // settings_JSONPATCH
 import {
     compare
@@ -158,20 +155,31 @@ export class ModCollabDoc {
         if (doc.template) {
             // We received the template. That means we are the first user present with write access.
             // We will adjust the document to the template if necessary.
-            const newStateDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [adjustDocToTemplate(
-                doc.content,
-                doc.template.content,
-                this.mod.editor.mod.documentTemplate.documentStyles,
-                this.mod.editor.schema
-            )]})
-            const transform = recreateTransform(stateDoc, newStateDoc)
-            if (transform.steps.length) {
-                const tr = this.mod.editor.view.state.tr
-                transform.steps.forEach(step => tr.step(step))
-                tr.setMeta('remote', true)
-                this.mod.editor.view.dispatch(tr)
+            activateWait(true, gettext("Updating document. Please wait..."))
+            const activateWaitTimer = setTimeout(() => {
+                activateWait(true, gettext("It's taking a bit longer than usual, but it should be ready soon. Please wait..."))
+            }, 60000)
+            const adjustWorker = makeWorker(`${settings_STATIC_URL}js/adjust_doc_to_template_worker.js?v=${transpile_VERSION}`)
+            adjustWorker.onmessage = message => {
+                if (message.data.type === 'result') {
+                    if (message.data.steps.length) {
+                        const tr = this.mod.editor.view.state.tr
+                        message.data.steps.forEach(step => tr.step(Step.fromJSON(this.mod.editor.schema, step)))
+                        tr.setMeta('remote', true)
+                        this.mod.editor.view.dispatch(tr)
+                    }
+                    // clearing timer for updating message since operation is completed
+                    clearTimeout(activateWaitTimer)
+                    deactivateWait()
+                }
             }
-
+            const schemaExporter = new SchemaExport()
+            adjustWorker.postMessage({
+                schemaSpec: JSON.parse(schemaExporter.init()),
+                doc: doc.content,
+                template: doc.template.content,
+                documentStyleSlugs: this.mod.editor.mod.documentTemplate.documentStyles.map(style => style.slug)
+            })
         }
         // Set part specific settings
         this.mod.editor.mod.documentTemplate.addDocPartSettings()

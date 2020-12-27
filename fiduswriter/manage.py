@@ -83,6 +83,10 @@ def inner(default_project_path):
         list(CONFIGURATION.MIDDLEWARE)
     )
     os.environ['TZ'] = settings.TIME_ZONE
+    if sys_argv[1] in ['version', '--version']:
+        from base import get_version
+        sys.stdout.write(get_version() + '\n')
+        return
     from django.core.management import execute_from_command_line
     execute_from_command_line(sys_argv)
 

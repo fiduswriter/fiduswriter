@@ -5,7 +5,7 @@
 # Create admins accounts if no users exists.
 # Password 'admin' is used unless defined by ADMIN_PASSWORD
 from django.conf import settings
-from django.core.management.base import BaseCommand
+from base.management import BaseCommand
 from django.contrib.auth.models import User
 from os import getenv
 

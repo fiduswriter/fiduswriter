@@ -4,7 +4,7 @@ from django.db import migrations, models
 
 def text_to_json(apps, schema_editor):
     UserImage = apps.get_model('usermedia', 'UserImage')
-    uimages = UserImage.objects.all()
+    uimages = UserImage.objects.all().iterator()
     for image in uimages:
         try:
             image.cats = json.loads(image.image_cat)
@@ -21,7 +21,7 @@ def text_to_json(apps, schema_editor):
             }
         image.save()
     DocumentImage = apps.get_model('usermedia', 'DocumentImage')
-    dimages = DocumentImage.objects.all()
+    dimages = DocumentImage.objects.all().iterator()
     for image in dimages:
         try:
             image.copyright = json.loads(image.copyright_text)
@@ -36,13 +36,13 @@ def text_to_json(apps, schema_editor):
 
 def json_to_text(apps, schema_editor):
     UserImage = apps.get_model('usermedia', 'UserImage')
-    images = UserImage.objects.all()
+    images = UserImage.objects.all().iterator()
     for image in images:
         image.image_cat = json.dumps(image.cats)
         image.copyright_text = json.dumps(image.copyright)
         image.save()
     DocumentImage = apps.get_model('usermedia', 'DocumentImage')
-    dimages = DocumentImage.objects.all()
+    dimages = DocumentImage.objects.all().iterator()
     for image in dimages:
         image.copyright_text = json.dumps(image.copyright)
         image.save()

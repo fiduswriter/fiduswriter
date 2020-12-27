@@ -23,6 +23,7 @@ class Command(makemessages.Command):
         call_command("transpile")
         options['ignore_patterns'] += [
             'venv',
+            '.direnv',
             'node_modules',
             'static-transpile'
         ]

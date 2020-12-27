@@ -5,6 +5,7 @@ from npm_mjs.management.commands.collectstatic import (
 
 from base.management import BaseCommand
 
+
 class Command(CollectStaticCommand, BaseCommand):
     def handle(self, *args, **options):
         call_command("transpile")

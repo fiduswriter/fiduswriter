@@ -1,13 +1,8 @@
-import os
-from django.conf import settings
 from django.core.management.base import BaseCommand as DjangoBaseCommand
+
+from base import get_version
+
 
 class BaseCommand(DjangoBaseCommand):
     def get_version(self):
-        with open(
-            os.path.join(
-                settings.SRC_PATH,
-                "version.txt"
-            )
-        ) as f:
-            return f.read().splitlines()[0]
+        return get_version()

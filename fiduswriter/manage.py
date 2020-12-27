@@ -84,19 +84,12 @@ def inner(default_project_path):
     )
     os.environ['TZ'] = settings.TIME_ZONE
     if sys_argv[1] in ['version', '--version']:
-        sys.stdout.write(get_version())
+        from base import get_version
+        sys.stdout.write(get_version() + '\n')
         return
     from django.core.management import execute_from_command_line
     execute_from_command_line(sys_argv)
 
-def get_version():
-    with open(
-        os.path.join(
-            settings.SRC_PATH,
-            "version.txt"
-        )
-    ) as f:
-        return f.read()
 
 def entry():
     os.environ.setdefault(

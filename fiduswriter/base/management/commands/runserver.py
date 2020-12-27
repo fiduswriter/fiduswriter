@@ -1,4 +1,5 @@
 import re
+import os
 import threading
 
 from datetime import datetime
@@ -8,12 +9,13 @@ import tornado.ioloop
 from tornado.web import Application
 
 from django.core.management import call_command
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import CommandError
 from django.utils import translation
 from django.conf import settings
 
 from base.servers.tornado_django_hybrid import run as run_server
 from base.handlers import SetupStaticFilesHandler
+from base.management import BaseCommand
 
 try:
     from asyncio import set_event_loop_policy
@@ -82,8 +84,8 @@ class Command(BaseCommand):
             ioloop.add_callback(ioloop.stop)
         self.stdout.write((
             "%(started_at)s\n"
-            "Django version %(version)s, using settings %(settings)r\n"
-            "Django tornado server is running at http://%(addr)s:%(port)s/\n"
+            "Fidus Writer version %(version)s, using settings %(settings)r\n"
+            "Fidus Writer server is running at http://%(addr)s:%(port)s/\n"
             "Quit the server with %(quit_command)s.\n"
         ) % {
             "started_at": datetime.now().strftime('%B %d, %Y - %X'),

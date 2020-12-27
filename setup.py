@@ -141,7 +141,7 @@ except ImportError:
 setuptools.setup(
     cmdclass=cmdclass,
     name="fiduswriter",
-    version=read('version.txt').splitlines()[0],
+    version=read('fiduswriter/version.txt').splitlines()[0],
     description="A semantic wordprocessor for academic purposes",
     license="AGPL",
     author="Lund Info AB",

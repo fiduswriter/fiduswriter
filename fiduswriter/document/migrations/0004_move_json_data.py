@@ -3,7 +3,7 @@ from django.db import migrations, models
 
 def text_to_json(apps, schema_editor):
     Document = apps.get_model('document', 'Document')
-    documents = Document.objects.all()
+    documents = Document.objects.all().iterator()
     for document in documents:
         document.content = json.loads(document.contents)
         document.diffs = json.loads(document.last_diffs)
@@ -18,7 +18,7 @@ def text_to_json(apps, schema_editor):
 
 def json_to_text(apps, schema_editor):
     Document = apps.get_model('document', 'Document')
-    documents = Document.objects.all()
+    documents = Document.objects.all().iterator()
     for document in documents:
         document.contents = json.dumps(document.content)
         document.last_diffs = json.dumps(document.diffs)

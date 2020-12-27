@@ -148,7 +148,7 @@ def update_revision_zip(file_field, file_name):
 
 def update_documents(apps, schema_editor):
     Document = apps.get_model('document', 'Document')
-    documents = Document.objects.all()
+    documents = Document.objects.all().iterator()
     for document in documents:
         if document.doc_version == Decimal(str(OLD_FW_DOCUMENT_VERSION)):
             document.contents = update_document_string(document.contents)

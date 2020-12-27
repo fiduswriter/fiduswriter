@@ -33,7 +33,7 @@ def update_revision_zip(file_field, file_name):
 
 def set_document_version(apps, schema_editor):
     Document = apps.get_model('document', 'Document')
-    documents = Document.objects.all()
+    documents = Document.objects.all().iterator()
     for document in documents:
         if document.doc_version == Decimal(str(OLD_FW_DOCUMENT_VERSION)):
             document.doc_version = FW_DOCUMENT_VERSION

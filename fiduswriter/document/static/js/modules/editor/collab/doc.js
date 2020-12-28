@@ -171,6 +171,7 @@ export class ModCollabDoc {
                     // clearing timer for updating message since operation is completed
                     clearTimeout(activateWaitTimer)
                     deactivateWait()
+                    this.setDocSettings()
                 }
             }
             const schemaExporter = new SchemaExport()
@@ -180,7 +181,13 @@ export class ModCollabDoc {
                 template: doc.template.content,
                 documentStyleSlugs: this.mod.editor.mod.documentTemplate.documentStyles.map(style => style.slug)
             })
+        } else {
+            this.setDocSettings()
         }
+
+    }
+
+    setDocSettings() {
         // Set part specific settings
         this.mod.editor.mod.documentTemplate.addDocPartSettings()
         this.mod.editor.mod.documentTemplate.addCitationStylesMenuEntries()

@@ -140,7 +140,10 @@ def update_revision_zip(file_field, file_name):
                 if item.filename == 'document.json':
                     doc_string = zin.read(item.filename)
                     doc = json.loads(doc_string)
-                    update_node(doc)
+                    if 'contents' in doc:
+                        doc['content'] = doc['contents']
+                        del doc['contents']
+                    update_node(doc['content'])
                     zout.writestr(
                         item,
                         json.dumps(doc)

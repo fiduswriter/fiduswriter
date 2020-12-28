@@ -9,6 +9,9 @@ def text_to_json(apps, schema_editor):
         document.diffs = json.loads(document.last_diffs)
         document.comments = json.loads(document.comments_text)
         document.bibliography = json.loads(document.bibliography_text)
+        for field in document._meta.local_fields:
+            if field.name == "updated":
+                field.auto_now = False
         document.save()
     DocumentTemplate = apps.get_model('document', 'DocumentTemplate')
     templates = DocumentTemplate.objects.all()
@@ -24,6 +27,9 @@ def json_to_text(apps, schema_editor):
         document.last_diffs = json.dumps(document.diffs)
         document.comments_text = json.dumps(document.comments)
         document.bibliography_text = json.dumps(document.bibliography)
+        for field in document._meta.local_fields:
+            if field.name == "updated":
+                field.auto_now = False
         document.save()
     DocumentTemplate = apps.get_model('document', 'DocumentTemplate')
     templates = DocumentTemplate.objects.all()

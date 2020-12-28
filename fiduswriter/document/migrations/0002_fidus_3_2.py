@@ -37,6 +37,9 @@ def set_document_version(apps, schema_editor):
     for document in documents:
         if document.doc_version == Decimal(str(OLD_FW_DOCUMENT_VERSION)):
             document.doc_version = FW_DOCUMENT_VERSION
+            for field in document._meta.local_fields:
+                if field.name == "updated":
+                    field.auto_now = False
             document.save()
 
     DocumentTemplate = apps.get_model('document', 'DocumentTemplate')

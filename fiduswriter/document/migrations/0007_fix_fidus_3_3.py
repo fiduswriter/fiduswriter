@@ -161,6 +161,9 @@ def update_documents(apps, schema_editor):
     for document in documents:
         if document.doc_version == Decimal(str(FW_DOCUMENT_VERSION)):
             update_node(document.content)
+            for field in document._meta.local_fields:
+                if field.name == "updated":
+                    field.auto_now = False
             document.save()
 
     DocumentTemplate = apps.get_model('document', 'DocumentTemplate')

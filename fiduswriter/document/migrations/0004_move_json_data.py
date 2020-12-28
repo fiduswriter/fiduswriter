@@ -3,12 +3,15 @@ from django.db import migrations, models
 
 def text_to_json(apps, schema_editor):
     Document = apps.get_model('document', 'Document')
-    documents = Document.objects.all()
+    documents = Document.objects.all().iterator()
     for document in documents:
         document.content = json.loads(document.contents)
         document.diffs = json.loads(document.last_diffs)
         document.comments = json.loads(document.comments_text)
         document.bibliography = json.loads(document.bibliography_text)
+        for field in document._meta.local_fields:
+            if field.name == "updated":
+                field.auto_now = False
         document.save()
     DocumentTemplate = apps.get_model('document', 'DocumentTemplate')
     templates = DocumentTemplate.objects.all()
@@ -18,12 +21,15 @@ def text_to_json(apps, schema_editor):
 
 def json_to_text(apps, schema_editor):
     Document = apps.get_model('document', 'Document')
-    documents = Document.objects.all()
+    documents = Document.objects.all().iterator()
     for document in documents:
         document.contents = json.dumps(document.content)
         document.last_diffs = json.dumps(document.diffs)
         document.comments_text = json.dumps(document.comments)
         document.bibliography_text = json.dumps(document.bibliography)
+        for field in document._meta.local_fields:
+            if field.name == "updated":
+                field.auto_now = False
         document.save()
     DocumentTemplate = apps.get_model('document', 'DocumentTemplate')
     templates = DocumentTemplate.objects.all()

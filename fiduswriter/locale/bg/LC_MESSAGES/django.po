@@ -72,43 +72,43 @@ msgstr "\n"
 "                настолен компютър.\n"
 "                        "
 
-#: base/default_settings.py:229
+#: base/default_settings.py:237
 msgid "English"
 msgstr "Английски"
 
-#: base/default_settings.py:230
+#: base/default_settings.py:238
 msgid "Bulgarian"
 msgstr "Български"
 
-#: base/default_settings.py:231
+#: base/default_settings.py:239
 msgid "German"
 msgstr "Немски"
 
-#: base/default_settings.py:232
+#: base/default_settings.py:240
 msgid "French"
 msgstr "Френски"
 
-#: base/default_settings.py:233
+#: base/default_settings.py:241
 msgid "Italian"
 msgstr "Италиански"
 
-#: base/default_settings.py:234
+#: base/default_settings.py:242
 msgid "Spanish"
 msgstr "Испански"
 
-#: base/default_settings.py:235
+#: base/default_settings.py:243
 msgid "Portuguese (Brazil)"
 msgstr "Португалски (Бразилия)"
 
-#: base/default_settings.py:316
+#: base/default_settings.py:324
 msgid "Fidus Writer Admin"
 msgstr "Fidus Writer Admin"
 
-#: base/default_settings.py:317
+#: base/default_settings.py:325
 msgid "Fidus Writer Administration Site"
 msgstr "Сайт за администрация на Fidus Writer"
 
-#: base/default_settings.py:318
+#: base/default_settings.py:326
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "Добре дошли в сайта за администрация на Fidus Writer"
 
@@ -252,11 +252,11 @@ msgstr "\n"
 msgid "In case you forgot, your username is %(username)s."
 msgstr "В случай, че сте забравили, вашето потребителско име е %(username)s."
 
-#: usermedia/views.py:35
+#: usermedia/views.py:36
 msgid "Filetype not supported"
 msgstr "Типът файл не се поддържа"
 
-#: usermedia/views.py:63
+#: usermedia/views.py:68
 msgid "No file uploaded"
 msgstr "Не е качен файл"
 
@@ -301,4 +301,8 @@ msgstr "Получавате този имейл, защото вие или н�
 #: user/templates/account/email/password_reset_key_message.html:14
 msgid "It can be safely ignored if you did not request a password reset. Click the link below to reset your password."
 msgstr "Той може безопасно да бъде игнориран, ако не сте поискали нулиране на парола. Щракнете върху връзката по-долу, за да нулирате паролата си."
+
+#: usermedia/views.py:40
+msgid "Image too large"
+msgstr "Изображението е твърде голямо"
 

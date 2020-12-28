@@ -7,6 +7,8 @@ from django.core.management.commands import makemessages
 from django.core.management import call_command
 from django.core.management.utils import popen_wrapper
 
+from base.management import BaseCommand
+
 # This makes makemessages create both translations for Python and JavaScript
 # code in one go.
 #
@@ -17,12 +19,13 @@ from django.core.management.utils import popen_wrapper
 # [1] https://savannah.gnu.org/bugs/?50920
 
 
-class Command(makemessages.Command):
+class Command(makemessages.Command, BaseCommand):
 
     def handle(self, *args, **options):
         call_command("transpile")
         options['ignore_patterns'] += [
             'venv',
+            '.direnv',
             'node_modules',
             'static-transpile'
         ]

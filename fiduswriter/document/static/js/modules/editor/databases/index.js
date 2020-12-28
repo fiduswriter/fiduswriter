@@ -24,7 +24,7 @@ export class ModDB {
         this.editor.view.state.doc.descendants(node => {
             if (node.type.name === 'citation') {
                 node.attrs.references.forEach(ref => usedBibs.push(parseInt(ref.id)))
-            } else if (node.type.name === 'figure' && node.attrs.image) {
+            } else if (node.type.name === 'image' && node.attrs.image) {
                 usedImages.push(node.attrs.image)
             }
         })
@@ -32,7 +32,7 @@ export class ModDB {
         this.editor.mod.footnotes.fnEditor.view.state.doc.descendants(node => {
             if (node.type.name === 'citation') {
                 node.attrs.references.forEach(ref => usedBibs.push(parseInt(ref.id)))
-            } else if (node.type.name === 'figure' && node.attrs.image) {
+            } else if (node.type.name === 'image' && node.attrs.image) {
                 usedImages.push(node.attrs.image)
             }
         })
@@ -45,5 +45,17 @@ export class ModDB {
             )
         unusedImages.forEach(id => this.imageDB.deleteImage(id))
         unusedBibs.forEach(id => this.bibDB.deleteReference(id))
+
+        const imageDbKeys = Object.keys(this.imageDB.db)
+        const missingImages = usedImages.filter(id => !imageDbKeys.includes(id))
+        missingImages.forEach(id => {
+            const userImage = this.editor.app.imageDB.db[id]
+            if (!userImage) {
+                // Image is not present. Give up.
+                return
+            }
+            const imageEntry = JSON.parse(JSON.stringify(userImage))
+            this.imageDB.setImage(id, imageEntry)
+        })
     }
 }

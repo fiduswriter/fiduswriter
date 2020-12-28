@@ -50,6 +50,7 @@ module.exports = { // eslint-disable-line no-undef
         new webpack.DefinePlugin({
             "settings_STATIC_URL": JSON.stringify(settings.STATIC_URL),
             "settings_REGISTRATION_OPEN": settings.REGISTRATION_OPEN,
+            "settings_SOCIALACCOUNT_OPEN": settings.SOCIALACCOUNT_OPEN,
             "settings_CONTACT_EMAIL": JSON.stringify(settings.CONTACT_EMAIL),
             "settings_WS_SERVER": settings.WS_SERVER ? JSON.stringify(settings.WS_SERVER) : false,
             "settings_WS_PORT": settings.WS_PORT,
@@ -59,6 +60,7 @@ module.exports = { // eslint-disable-line no-undef
             "settings_SOURCE_MAPS": JSON.stringify(settings.SOURCE_MAPS) || false,
             "settings_USE_SERVICE_WORKER": settings.USE_SERVICE_WORKER,
             "settings_JSONPATCH": settings.JSONPATCH,
+            "settings_MEDIA_MAX_SIZE": settings.MEDIA_MAX_SIZE,
             "transpile_VERSION": transpile.VERSION
         }),
         new OfflinePlugin({

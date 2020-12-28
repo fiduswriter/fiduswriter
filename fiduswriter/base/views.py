@@ -10,6 +10,7 @@ from allauth.socialaccount.models import providers
 from user import util as userutil
 
 from .decorators import ajax_required
+from . import get_version
 
 
 @ensure_csrf_cookie
@@ -18,7 +19,7 @@ def app(request):
     Load a page controlled by the JavaScript app.
     Used all user facing pages after login.
     """
-    return render(request, 'app.html')
+    return render(request, 'app.html', {'version': get_version()})
 
 
 def api_404(request):

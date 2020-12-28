@@ -42,8 +42,12 @@ DATABASES = {
 # simultaneously
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000
 
-# Whether anyone surfing to the site can open an account.
+# Whether anyone surfing to the site can open an account with a login/password.
 REGISTRATION_OPEN = True
+
+# Whether anyone surfing to the site can open an account or login with a
+# socialaccount.
+SOCIALACCOUNT_OPEN = True
 
 # This determines whether there is a star labeled "Free" on the login page
 IS_FREE = True
@@ -99,6 +103,10 @@ MEDIA_ROOT = os.path.join(PROJECT_PATH, 'media/')
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 MEDIA_URL = '/media/'
+
+# The maximum size of user uploaded images in bytes. If you use NGINX, note
+# that also it needs to support at least this size.
+MEDIA_MAX_SIZE = False
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files

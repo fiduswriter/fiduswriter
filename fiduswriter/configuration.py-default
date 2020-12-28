@@ -52,8 +52,13 @@ ADMINS = (
     ('Your Name', 'your_email@example.com'),
 )
 
-# Whether anyone surfing to the site can open an account.
+# Whether anyone surfing to the site can open an account with a login/password.
 REGISTRATION_OPEN = True
+
+# Whether anyone surfing to the site can open an account or login with a
+# socialaccount.
+SOCIALACCOUNT_OPEN = True
+
 # ACCOUNT_EMAIL_VERIFICATION = 'optional'
 
 # This determines whether there is a star labeled "Free" on the login page
@@ -114,3 +119,7 @@ ALLOWED_HOSTS = [
 
 # Disable service worker (default is True)
 # USE_SERVICE_WORKER = False
+
+# The maximum size of user uploaded images in bytes. If you use NGINX, note
+# that also it needs to support at least this size.
+MEDIA_MAX_SIZE = False

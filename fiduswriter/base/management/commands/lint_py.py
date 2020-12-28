@@ -1,6 +1,6 @@
 import shutil
 from subprocess import call
-from django.core.management.base import BaseCommand
+from base.management import BaseCommand
 from django.conf import settings
 
 

@@ -186,11 +186,11 @@ table {
     text-decoration: underline;
 }
 
-.table-fixed {
+table[data-layout='fixed'] {
     table-layout: fixed !important;
 }
 
-.table-auto {
+table[data-layout='auto'] {
     table-layout: auto !important;
 }
 

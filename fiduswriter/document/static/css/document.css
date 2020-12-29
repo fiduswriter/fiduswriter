@@ -186,11 +186,11 @@ table {
     text-decoration: underline;
 }
 
-.article table[data-layout="fixed"] {
+.article table[data-layout='fixed'] {
     table-layout: fixed !important;
 }
 
-.article table[data-layout="auto"] {
+.article table[data-layout='auto'] {
     table-layout: auto !important;
 }
 

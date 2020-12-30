@@ -569,7 +569,7 @@ export class ModMarginboxes {
                 el.classList.remove('show-more')
                 const showMoreButton = el.parentElement.parentElement.querySelector(".show-more-less")
                 if (showMoreButton) {
-                    showMoreButton.innerText = "show more"
+                    showMoreButton.innerText = `${gettext("show more")}`
                 }
             }
         )
@@ -627,9 +627,9 @@ export class ModMarginboxes {
         const commentText = element.target.parentElement.parentElement.querySelector(".comment-p")
         commentText.classList.toggle('show-more')
         if (commentText.classList.contains('show-more')) {
-            element.target.innerText = 'show less'
+            element.target.innerText = `${gettext('show less')}`
         } else {
-            element.target.innerText = 'show more'
+            element.target.innerText = `${gettext('show more')}`
         }
     }
 }

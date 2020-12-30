@@ -30,7 +30,7 @@ const answerCommentTemplate = ({
            </div>
         <div class="comment-collapsible-buttons">
                 ${serializeComment(answer.answer).text.length > 68 ?
-        `<a type="button" class="comment-expand-compress show-more-less">show more</a>` : ''}
+        `<a type="button" class="comment-expand-compress show-more-less">${gettext('show more')}</a>` : ''}
                 </div>
            ${
     answer.user === user.id ?
@@ -60,9 +60,9 @@ const singleCommentTemplate = ({
         </div>
         <div class="comment-collapsible-buttons">
                 ${!editComment && serializeComment(comment.comment).text.length > 68 ?
-        `<a type="button" class="comment-expand-compress show-more-less">show more</a>` : ''}
+        `<a type="button" class="comment-expand-compress show-more-less">${gettext('show more')}</a>` : ''}
                 ${!active && comment.answers.length > 0 ?
-        `<a type="button" class="comment-expand-compress replies">+${comment.answers.length} replies</a>` : ''}
+        `<a type="button" class="comment-expand-compress replies">+${comment.answers.length} ${gettext('replies')}</a>` : ''}
             </div>
     </div>`
 

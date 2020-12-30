@@ -5,7 +5,7 @@ from django.db import migrations, models
 
 def update_cat_field(apps, schema_editor):
     UserImage = apps.get_model('usermedia', 'UserImage')
-    images = UserImage.objects.all()
+    images = UserImage.objects.all().iterator()
     for image in images:
         image.image_cat = '[' + image.image_cat + ']'
         image.save()

@@ -59,7 +59,8 @@ jobs:
     - uses: nanasess/setup-chromedriver@master
     - name: Install dependencies
       run: |
-        sudo apt install libjpeg-dev python3-dev python3-pip gettext zlib1g-dev git npm nodejs build-essential
+        sudo apt update
+        sudo apt install libjpeg-dev python3-dev python3-pip gettext zlib1g-dev git nodejs build-essential
         cd fiduswriter
         mv ../ci/configuration.py ./
         pip install requests[security]

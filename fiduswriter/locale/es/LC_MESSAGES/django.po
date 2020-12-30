@@ -71,43 +71,43 @@ msgstr "\n"
 "                actual de Chrome/Chromium o de Firefox en una computadora.\n"
 "                "
 
-#: base/default_settings.py:229
+#: base/default_settings.py:237
 msgid "English"
 msgstr "Inglés"
 
-#: base/default_settings.py:230
+#: base/default_settings.py:238
 msgid "Bulgarian"
 msgstr "Búlgaro"
 
-#: base/default_settings.py:231
+#: base/default_settings.py:239
 msgid "German"
 msgstr "Alemán"
 
-#: base/default_settings.py:232
+#: base/default_settings.py:240
 msgid "French"
 msgstr "Francés"
 
-#: base/default_settings.py:233
+#: base/default_settings.py:241
 msgid "Italian"
 msgstr "Italiano"
 
-#: base/default_settings.py:234
+#: base/default_settings.py:242
 msgid "Spanish"
 msgstr "Español"
 
-#: base/default_settings.py:235
+#: base/default_settings.py:243
 msgid "Portuguese (Brazil)"
 msgstr "Portugués (Brasil)"
 
-#: base/default_settings.py:316
+#: base/default_settings.py:324
 msgid "Fidus Writer Admin"
 msgstr "Administrar Fidus Writer"
 
-#: base/default_settings.py:317
+#: base/default_settings.py:325
 msgid "Fidus Writer Administration Site"
 msgstr "Sitio de Administración de Fidus Writer"
 
-#: base/default_settings.py:318
+#: base/default_settings.py:326
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "Bienvenido al Sitio de Administración de Fidus Writer"
 
@@ -251,11 +251,11 @@ msgstr "\n"
 msgid "In case you forgot, your username is %(username)s."
 msgstr "En caso de que lo haya olvidado, su nombre de usuario es %(username)s."
 
-#: usermedia/views.py:35
+#: usermedia/views.py:36
 msgid "Filetype not supported"
 msgstr "No se admite el tipo de archivo"
 
-#: usermedia/views.py:63
+#: usermedia/views.py:68
 msgid "No file uploaded"
 msgstr "Ningún archivo subido"
 
@@ -300,4 +300,8 @@ msgstr "Está recibiendo este correo electrónico porque usted u otra persona ha
 #: user/templates/account/email/password_reset_key_message.html:14
 msgid "It can be safely ignored if you did not request a password reset. Click the link below to reset your password."
 msgstr "Se puede ignorar con seguridad si no solicitó un restablecimiento de contraseña. Haga clic en el enlace de abajo para restablecer su contraseña."
+
+#: usermedia/views.py:40
+msgid "Image too large"
+msgstr "Imagen demasiado grande"
 

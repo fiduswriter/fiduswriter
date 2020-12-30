@@ -72,43 +72,43 @@ msgstr "\n"
 "                computer desktop.\n"
 "                        "
 
-#: base/default_settings.py:229
+#: base/default_settings.py:237
 msgid "English"
 msgstr "Inglese"
 
-#: base/default_settings.py:230
+#: base/default_settings.py:238
 msgid "Bulgarian"
 msgstr "Bulgaro"
 
-#: base/default_settings.py:231
+#: base/default_settings.py:239
 msgid "German"
 msgstr "Tedesco"
 
-#: base/default_settings.py:232
+#: base/default_settings.py:240
 msgid "French"
 msgstr "francese"
 
-#: base/default_settings.py:233
+#: base/default_settings.py:241
 msgid "Italian"
 msgstr "italiano"
 
-#: base/default_settings.py:234
+#: base/default_settings.py:242
 msgid "Spanish"
 msgstr "Spagnolo"
 
-#: base/default_settings.py:235
+#: base/default_settings.py:243
 msgid "Portuguese (Brazil)"
 msgstr "Portoghese (Brasile)"
 
-#: base/default_settings.py:316
+#: base/default_settings.py:324
 msgid "Fidus Writer Admin"
 msgstr "Fidus Writer Admin"
 
-#: base/default_settings.py:317
+#: base/default_settings.py:325
 msgid "Fidus Writer Administration Site"
 msgstr "Sito di amministrazione di Fidus Writer"
 
-#: base/default_settings.py:318
+#: base/default_settings.py:326
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "Benvenuti nel sito di amministrazione di Fidus Writer"
 
@@ -252,11 +252,11 @@ msgstr "\n"
 msgid "In case you forgot, your username is %(username)s."
 msgstr "Nel caso in cui hai dimenticato, il tuo nome utente è %(username)s."
 
-#: usermedia/views.py:35
+#: usermedia/views.py:36
 msgid "Filetype not supported"
 msgstr "Tipo di file non supportato"
 
-#: usermedia/views.py:63
+#: usermedia/views.py:68
 msgid "No file uploaded"
 msgstr "Nessun file caricato"
 
@@ -301,4 +301,8 @@ msgstr "Ricevi questa e-mail perché tu o qualcun altro avete richiesto una pass
 #: user/templates/account/email/password_reset_key_message.html:14
 msgid "It can be safely ignored if you did not request a password reset. Click the link below to reset your password."
 msgstr "Può essere tranquillamente ignorato se non hai richiesto la reimpostazione della password. Fare clic sul collegamento sottostante per reimpostare la password."
+
+#: usermedia/views.py:40
+msgid "Image too large"
+msgstr "Immagine troppo grande"
 

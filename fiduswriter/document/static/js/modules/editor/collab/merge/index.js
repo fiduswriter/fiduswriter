@@ -173,7 +173,7 @@ export class Merge {
         const footnoteFind = (node, usedImages, usedBibs) => {
             if (node.name === 'citation') {
                 node.attrs.references.forEach(ref => usedBibs.push(parseInt(ref.id)))
-            } else if (node.name === 'figure' && node.attrs.image) {
+            } else if (node.name === 'image' && node.attrs.image) {
                 usedImages.push(node.attrs.image)
             } else if (node.content) {
                 node.content.forEach(subNode => footnoteFind(subNode, usedImages, usedBibs))
@@ -182,7 +182,7 @@ export class Merge {
         rebasedTr.doc.descendants(node => {
             if (node.type.name === 'citation') {
                 node.attrs.references.forEach(ref => usedBibs.push(parseInt(ref.id)))
-            } else if (node.type.name === 'figure' && node.attrs.image) {
+            } else if (node.type.name === 'image' && node.attrs.image) {
                 usedImages.push(node.attrs.image)
             } else if (node.type.name === 'footnote' && node.attrs.footnote) {
                 node.attrs.footnote.forEach(subNode => footnoteFind(subNode, usedImages, usedBibs))
@@ -212,10 +212,10 @@ export class Merge {
                         (id) => {
                             const transaction = this.mod.editor.view.state.tr
                             this.mod.editor.view.state.doc.descendants((node, pos) => {
-                                if (node.type.name === 'figure' && node.attrs.image == id) {
+                                if (node.type.name === 'image' && node.attrs.image == id) {
                                     const attrs = Object.assign({}, node.attrs)
                                     attrs["image"] = false
-                                    const nodeType = this.mod.editor.currentView.state.schema.nodes['figure']
+                                    const nodeType = this.mod.editor.currentView.state.schema.nodes['image']
                                     transaction.setNodeMarkup(pos, nodeType, attrs)
                                 }
                             })

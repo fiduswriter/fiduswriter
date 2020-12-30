@@ -4,7 +4,7 @@ import json
 from subprocess import call
 
 from django.apps import apps
-from django.core.management.base import BaseCommand
+from base.management import BaseCommand
 from django.core.management import call_command
 from django.conf import settings
 

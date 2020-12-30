@@ -567,8 +567,8 @@ export class ModMarginboxes {
         document.body.querySelectorAll(selector).forEach(
             el => {
                 el.classList.remove('show-more')
-                let showMoreButton = el.parentElement.parentElement.querySelector(".show-more-less")
-                if(showMoreButton){
+                const showMoreButton = el.parentElement.parentElement.querySelector(".show-more-less")
+                if (showMoreButton) {
                     showMoreButton.innerText = "show more"
                 }
             }

@@ -596,6 +596,10 @@ export class ModMarginboxes {
             left -= left + dialogWidth - clientWidth
         }
 
+        if ((left + dialogWidth) < clientWidth) {
+            left -= dialogWidth + 164 // dialogWidth is always coming as 10. Added 164 as offset for it.
+        }
+
         marginBoxDialog.style.top = `${top}px`
         marginBoxDialog.style.left = `${left}px`
     }

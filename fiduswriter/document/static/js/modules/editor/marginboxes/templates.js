@@ -158,7 +158,7 @@ ${
         ) ||
             docInfo.access_rights === "write"
     ) && !editComment ?
-        `<span class="show-marginbox-options comment-option fas fa-bars" data-id="${comment.id}" data-commentUser="${comment.user}"
+        `<span class="show-marginbox-options comment-option fas fa-ellipsis-v" data-id="${comment.id}" data-commentUser="${comment.user}"
 ></span>` :
         ''
 }

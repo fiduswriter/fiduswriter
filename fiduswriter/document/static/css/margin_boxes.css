@@ -275,6 +275,8 @@ body.header-closed #margin-box-filter {
     padding: 2px;
     margin-bottom: 6px;
     cursor: text;
+    max-height: 120px;
+    overflow: auto;
 }
 
 .margin-box .btn {
@@ -453,19 +455,23 @@ body.header-closed #margin-box-filter {
     display: none;
 }
 
-.comment-answer-container::-webkit-scrollbar {
+.comment-answer-container::-webkit-scrollbar,
+.margin-box .ProseMirror-wrapper::-webkit-scrollbar {
     width: 5px;
 }
 
-.comment-answer-container::-webkit-scrollbar-track {
+.comment-answer-container::-webkit-scrollbar-track,
+.margin-box .ProseMirror-wrapper::-webkit-scrollbar-track {
     background: var(--editor-active-comment-background-color);
 }
 
-.comment-answer-container::-webkit-scrollbar-thumb {
+.comment-answer-container::-webkit-scrollbar-thumb,
+.margin-box .ProseMirror-wrapper::-webkit-scrollbar-thumb{
     background: #999999;
 }
 
-.comment-answer-container::-webkit-scrollbar-thumb:hover {
+.comment-answer-container::-webkit-scrollbar-thumb:hover,
+.margin-box .ProseMirror-wrapper::-webkit-scrollbar-thumb:hover {
     background: #777777;
 }
 

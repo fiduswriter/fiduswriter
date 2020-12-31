@@ -262,6 +262,9 @@ body.header-closed #margin-box-filter {
 
 .comment-p {
     line-height: 18px;
+    max-height: 35px;
+    overflow: hidden;
+    word-break: break-word;
 }
 
 .margin-box .ProseMirror-wrapper {
@@ -272,6 +275,8 @@ body.header-closed #margin-box-filter {
     padding: 2px;
     margin-bottom: 6px;
     cursor: text;
+    max-height: 120px;
+    overflow: auto;
 }
 
 .margin-box .btn {
@@ -326,6 +331,26 @@ body.header-closed #margin-box-filter {
 .comment-is-major-bgc.active .comment-item:first-child::after,
 .comment.resolved.active .comment-item:first-child::after {
     border-bottom-color: var(--editor-active-comment-background-color);
+}
+
+.margin-box .ProseMirror-wrapper::-webkit-scrollbar,
+.comment-answer-container::-webkit-scrollbar {
+    width: 5px;
+}
+
+.margin-box .ProseMirror-wrapper::-webkit-scrollbar-track,
+.comment-answer-container::-webkit-scrollbar-track {
+    background: var(--editor-active-comment-background-color);
+}
+
+.margin-box .ProseMirror-wrapper::-webkit-scrollbar-thumb,
+.comment-answer-container::-webkit-scrollbar-thumb {
+    background: #999999;
+}
+
+.margin-box .ProseMirror-wrapper::-webkit-scrollbar-thumb:hover,
+.comment-answer-container::-webkit-scrollbar-thumb:hover {
+    background: #777777;
 }
 
 .comment.active.resolved .comment-answer #answer-editor .ProseMirror-wrapper {
@@ -430,4 +455,32 @@ body.header-closed #margin-box-filter {
     border-left: 2px solid var(--cs-white-border);
     margin-left: 5px;
     padding-left: 5px;
+}
+
+.comment-expand-compress {
+    text-decoration: none;
+    font-weight: bolder;
+}
+
+.show-more:not(.inactive) {
+    max-height: 1000px;
+}
+
+.comment-collapsible-buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.collapse:not(.show) {
+    display: none;
+}
+
+.margin-box.comment.active .comment-answer-container {
+    max-height: 325px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.comment-option {
+    right: 8px;
 }

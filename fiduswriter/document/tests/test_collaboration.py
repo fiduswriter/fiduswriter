@@ -1037,6 +1037,9 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.driver2.find_element_by_css_selector(
             '.comment-answer .submit'
         ).click()
+        self.driver.find_element_by_css_selector(
+            '.margin-box.comment'
+        ).click()
         comment_answer = WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
                 (By.CSS_SELECTOR, ".comment-answer .comment-text-wrapper p")
@@ -1075,7 +1078,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         ).click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.invisibility_of_element_located(
-                (By.CSS_SELECTOR, ".comment-answer")
+                (By.CSS_SELECTOR, ".comment-answer.collapse")
             )
         )
 

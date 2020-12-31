@@ -215,9 +215,9 @@ export class CommentEditor {
     }
 
     scrollToBottom() {
-        const active_margin_box = document.querySelector(".margin-box.comment.active .comment-answer-container")
-        if (active_margin_box) {
-            active_margin_box.scrollTop = active_margin_box.scrollHeight
+        const activeMarginBox = document.querySelector(".margin-box.comment.active .comment-answer-container")
+        if (activeMarginBox) {
+            activeMarginBox.scrollTop = activeMarginBox.scrollHeight
         }
     }
 }

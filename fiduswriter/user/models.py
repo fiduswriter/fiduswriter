@@ -1,6 +1,7 @@
 from builtins import object
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.translation import ugettext as _
 
 
 class UserProfile(models.Model):
@@ -9,6 +10,17 @@ class UserProfile(models.Model):
         on_delete=models.deletion.CASCADE
     )
     about = models.TextField(max_length=500, blank=True)
+
+
+class LoginAs(models.Model):
+
+    class Meta:
+        managed = False
+        default_permissions = ()
+
+        permissions = (
+            ('can_login_as', _('Can login as another user')),
+        )
 
 
 User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])

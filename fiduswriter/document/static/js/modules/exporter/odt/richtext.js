@@ -205,7 +205,7 @@ export class OdtExporterRichtext {
                 // Needed to prevent subsequent image from overlapping
                 end = end + '<text:p text:style-name="Standard"></text:p>'
             }
-            let caption = node.attrs.caption ? node.content.find(node => node.type === 'figure_caption')?.content.map(node => this.transformRichtext(node)).join('') || '' : ''
+            let caption = node.attrs.caption ? node.content.find(node => node.type === 'figure_caption')?.content?.map(node => this.transformRichtext(node)).join('') || '' : ''
             // The figure category should not be in the
             // user's language but rather the document language
             const category = node.attrs.category

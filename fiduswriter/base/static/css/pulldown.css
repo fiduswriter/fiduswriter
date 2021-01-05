@@ -25,8 +25,13 @@
 /* sub menu */
 .fw-pulldown .fw-pulldown {
     top: 0;
-    left: 100%;
+    right: 100%;
     margin-top: 0;
+}
+
+.marginbox-options.fw-pulldown .fw-pulldown {
+    right: 100%;
+    left: auto;
 }
 
 .fw-pulldown.fw-right .fw-pulldown {

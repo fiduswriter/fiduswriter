@@ -6,12 +6,11 @@ import {cslBibSchema} from "../../bibliography/schema/csl_bib"
 import {descendantNodes} from "../tools/doc_content"
 
 export class OdtExporterCitations {
-    constructor(exporter, bibDB, csl, docContent, docTemplate, origCitInfos = []) {
+    constructor(exporter, bibDB, csl, docContent, origCitInfos = []) {
         this.exporter = exporter
         this.bibDB = bibDB
         this.csl = csl
         this.docContent = docContent
-        this.docTemplate = docTemplate
         // If citInfos were found in a previous run, they are stored here
         // (for example: first citations in main document, then in footnotes)
         this.origCitInfos = origCitInfos

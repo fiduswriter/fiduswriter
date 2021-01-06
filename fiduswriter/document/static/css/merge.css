@@ -123,7 +123,7 @@ footnote div.footnote-tooltip p { /* stylelint-disable-line */
 
 /* Citation Related CSS */
 #editor-diff-offline .citation,
-#editor-diff .citation,
+#editor-diff-common .citation,
 #editor-diff-online .citation {
     background-color: lightgray;
 }
@@ -134,7 +134,7 @@ footnote div.footnote-tooltip p { /* stylelint-disable-line */
     background-color: lightgreen;
 }
 
-#editor-diff .citation::before,
+#editor-diff-common .citation::before,
 #editor-diff-offline .citation::before,
 #editor-diff-online .citation::before {
     content: '\f02d';

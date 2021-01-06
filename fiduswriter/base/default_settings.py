@@ -196,6 +196,7 @@ BASE_INSTALLED_APPS = [
     'django.contrib.admindocs',
     'django.contrib.flatpages',
     'django_js_error_hook',
+    'loginas',
     'fixturemedia',
     'browser_check',
     'menu',
@@ -210,6 +211,7 @@ BASE_INSTALLED_APPS = [
     'feedback',
     'style'
 ]
+
 # These are additional apps to be overriden by configuration.py
 INSTALLED_APPS = []
 
@@ -243,8 +245,15 @@ LANGUAGES = (
     ('pt-br', gettext('Portuguese (Brazil)')),
 )
 
-
 LOGIN_REDIRECT_URL = '/'
+
+
+# Allow users with login_as permission to log in as different user
+def can_login_as(request, target_user):
+    return request.user.has_perm('user.can_login_as')
+
+
+CAN_LOGIN_AS = can_login_as
 
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"

@@ -83,8 +83,8 @@ export class ModMarginboxes {
 
                     document.body.insertAdjacentHTML('beforeend', marginBoxOptions(comment, user, docInfo))
                     const marginboxOptions = document.body.querySelector('.comment-answer-options.marginbox-options')
-                    this.positionMarginBoxOptions(marginboxOptions, event.pageX, event.pageY)
                     marginboxOptions.classList.add('fw-open')
+                    this.positionMarginBoxOptions(marginboxOptions, el.target)
                 }
                 break
             case findTarget(event, '#margin-box-filter-track', el):
@@ -575,36 +575,13 @@ export class ModMarginboxes {
         )
     }
 
-    positionMarginBoxOptions(marginBoxDialog, pageX, pageY) {
-        const dialogHeight = marginBoxDialog.getBoundingClientRect().height + 10,
-            dialogWidth = marginBoxDialog.getBoundingClientRect().width + 10,
+    positionMarginBoxOptions(marginBoxDialog, showMarginboxOptionsBtn) {
+        const btnTop = showMarginboxOptionsBtn.getBoundingClientRect().top,
             scrollTopOffset = window.pageYOffset,
-            clientHeight = window.document.documentElement.clientHeight,
-            clientWidth = window.document.documentElement.clientWidth
+            mBoxRight = showMarginboxOptionsBtn.closest(".comment-answer-container").getBoundingClientRect().right
 
-        // We try to ensure that the menu is seen in the browser at the preferred location.
-        // Adjustments are made in case it doesn't fit.
-        let top = pageY,
-            left = pageX
-
-        if ((top + dialogHeight) > (scrollTopOffset + clientHeight)) {
-            top -= ((top + dialogHeight) - (scrollTopOffset + clientHeight))
-        }
-
-        if (top < scrollTopOffset) {
-            top = scrollTopOffset + 10
-        }
-
-        if ((left + dialogWidth) > clientWidth) {
-            left -= left + dialogWidth - clientWidth
-        }
-
-        if ((left + dialogWidth) < clientWidth) {
-            left -= dialogWidth + 164 // dialogWidth is always coming as 10. Added 164 as offset for it.
-        }
-
-        marginBoxDialog.style.top = `${top}px`
-        marginBoxDialog.style.left = `${left}px`
+        marginBoxDialog.style.top = `${btnTop + scrollTopOffset + 30}px`
+        marginBoxDialog.style.left = `${mBoxRight - marginBoxDialog.getBoundingClientRect().width - 10}px`
     }
 
     commentOptionsOnScroll() {

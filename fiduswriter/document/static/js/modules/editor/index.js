@@ -255,6 +255,7 @@ export class Editor {
         return Promise.all(initPromises).then(() => {
             new ModCitations(this)
             new ModFootnotes(this)
+            let resubScribed = false
             this.ws = new WebSocketConnector({
                 url: `/ws/document/${this.docInfo.id}/`,
                 appLoaded: () => this.view.state.plugins.length,
@@ -273,8 +274,9 @@ export class Editor {
                     if (sendableSteps(this.mod.footnotes.fnEditor.view.state)) {
                         this.mod.collab.doc.footnoteRender = true
                     }
+                    resubScribed = true
                     this.mod.footnotes.fnEditor.renderAllFootnotes()
-                    this.mod.collab.doc.checkVersion()
+                    this.mod.collab.doc.awaitingDiffResponse = true // wait sending diffs till the version is confirmed
                 },
                 restartMessage: () => ({type: 'get_document'}), // Too many messages have been lost and we need to restart
                 messagesElement: () => this.dom.querySelector('#unobtrusive_messages'),
@@ -290,6 +292,11 @@ export class Editor {
                         break
                     case 'connections':
                         this.mod.collab.updateParticipantList(data.participant_list)
+                        if(resubScribed) { // check version if only reconnected after being offline
+                            this.mod.collab.doc.awaitingDiffResponse = false 
+                            this.mod.collab.doc.checkVersion() // check version to sync the doc
+                            resubScribed = false
+                        }
                         break
                     case 'styles':
                         this.mod.documentTemplate.setStyles(data.styles)

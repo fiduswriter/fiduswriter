@@ -112,5 +112,22 @@ export const createDiffSchema = function(docSchema) {
         nodes: specNodes,
         marks: docSchema.spec.marks.addToEnd('diffdata', diffdata)
     }
+
+    // Update link mark toDom to render a span instead of anchor tag
+    // Since editable false PM Editor treats anchor tag as a normal a tag
+    // and redirects
+    const linkMarkSpec = spec.marks.get("link")
+    spec.marks = spec.marks.update(
+        "link",
+        Object.assign({}, linkMarkSpec, {
+            toDOM: node => {
+                const dom = linkMarkSpec.toDOM(node)
+                console.log("DOM",dom)
+                dom[0] = "span"
+                return dom
+            }
+        })
+    )
+
     return new Schema(spec)
 }

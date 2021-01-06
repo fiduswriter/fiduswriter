@@ -237,22 +237,24 @@ export class ModDocumentTemplate {
     addCitationStylesMenuEntries() {
         const settingsMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id === 'settings'),
             citationStyleMenu = settingsMenu.content.find(menu => menu.id === 'citation_style')
-        citationStyleMenu.content = this.editor.view.state.doc.firstChild.attrs.citationstyles.map(citationstyle => {
-            return {
-                title: this.citationStyles[citationstyle],
-                type: 'setting',
-                action: editor => {
-                    const article = editor.view.state.doc.firstChild
-                    const attrs = Object.assign({}, article.attrs, {citationstyle})
-                    editor.view.dispatch(
-                        editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta('settings', true)
-                    )
-                },
-                selected: editor => {
-                    return editor.view.state.doc.firstChild.attrs.citationstyle === citationstyle
+        if(citationStyleMenu) {
+            citationStyleMenu.content = this.editor.view.state.doc.firstChild.attrs.citationstyles.map(citationstyle => {
+                return {
+                    title: this.citationStyles[citationstyle],
+                    type: 'setting',
+                    action: editor => {
+                        const article = editor.view.state.doc.firstChild
+                        const attrs = Object.assign({}, article.attrs, {citationstyle})
+                        editor.view.dispatch(
+                            editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta('settings', true)
+                        )
+                    },
+                    selected: editor => {
+                        return editor.view.state.doc.firstChild.attrs.citationstyle === citationstyle
+                    }
                 }
-            }
-        })
+            })
+        }
     }
 
 }

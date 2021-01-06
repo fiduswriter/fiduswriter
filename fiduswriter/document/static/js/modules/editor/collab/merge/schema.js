@@ -122,7 +122,6 @@ export const createDiffSchema = function(docSchema) {
         Object.assign({}, linkMarkSpec, {
             toDOM: node => {
                 const dom = linkMarkSpec.toDOM(node)
-                console.log("DOM",dom)
                 dom[0] = "span"
                 return dom
             }

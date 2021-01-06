@@ -237,7 +237,7 @@ export class ModDocumentTemplate {
     addCitationStylesMenuEntries() {
         const settingsMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id === 'settings'),
             citationStyleMenu = settingsMenu.content.find(menu => menu.id === 'citation_style')
-        if(citationStyleMenu) {
+        if (citationStyleMenu) {
             citationStyleMenu.content = this.editor.view.state.doc.firstChild.attrs.citationstyles.map(citationstyle => {
                 return {
                     title: this.citationStyles[citationstyle],

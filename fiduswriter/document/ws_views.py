@@ -432,10 +432,17 @@ class WebSocket(BaseWebSocketHandler):
                             f"{json_encode(self.session['doc'].content)}"
                         )
                         self.unfixable()
-                        patch_msg = {'type': 'patch_error','user_id':self.user.id}
+                        patch_msg = {
+                            'type': 'patch_error',
+                            'user_id': self.user.id
+                        }
                         self.send_message(patch_msg)
                         # Reset collaboration to avoid any data loss issues.
-                        self.reset_collaboration(patch_msg,self.user_info.document_id,self.id)
+                        self.reset_collaboration(
+                            patch_msg,
+                            self.user_info.document_id,
+                            self.id
+                        )
                         return
                     # The json diff is only needed by the python backend which
                     # does not understand the steps. It can therefore be
@@ -450,10 +457,17 @@ class WebSocket(BaseWebSocketHandler):
                     self.session["node"] = updated_node
                 else:
                     self.unfixable()
-                    patch_msg = {'type': 'patch_error','user_id':self.user.id}
+                    patch_msg = {
+                        'type': 'patch_error',
+                        'user_id': self.user.id
+                    }
                     self.send_message(patch_msg)
                     # Reset collaboration to avoid any data loss issues.
-                    self.reset_collaboration(patch_msg,self.user_info.document_id,self.id)
+                    self.reset_collaboration(
+                        patch_msg,
+                        self.user_info.document_id,
+                        self.id
+                    )
                     return
                 self.session["doc"].content = prosemirror.to_mini_json(
                     self.session["node"].first_child
@@ -592,7 +606,7 @@ class WebSocket(BaseWebSocketHandler):
             WebSocket.send_updates(message, document_id)
 
     @classmethod
-    def reset_collaboration(cls, patch_exception_message, document_id, sender_id):
+    def reset_collaboration(cls, patch_exception_msg, document_id, sender_id):
         logger.debug(
             f"Action:Resetting collaboration. DocumentID:{document_id} "
             f"Patch conflict triggered. UserID:{sender_id}"
@@ -600,7 +614,7 @@ class WebSocket(BaseWebSocketHandler):
         for waiter in list(cls.sessions[document_id]['participants'].values()):
             if waiter.id != sender_id:
                 waiter.unfixable()
-                waiter.send_message(patch_exception_message)
+                waiter.send_message(patch_exception_msg)
 
     @classmethod
     def send_updates(cls, message, document_id, sender_id=None, user_id=None):

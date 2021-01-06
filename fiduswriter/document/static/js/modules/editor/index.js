@@ -292,7 +292,7 @@ export class Editor {
                         break
                     case 'connections':
                         this.mod.collab.updateParticipantList(data.participant_list)
-                        if(resubScribed) { // check version if only reconnected after being offline
+                        if (resubScribed) { // check version if only reconnected after being offline
                             this.mod.collab.doc.checkVersion() // check version to sync the doc
                             resubScribed = false
                         }

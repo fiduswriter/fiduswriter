@@ -95,7 +95,7 @@ function createDeletionHighlight(decos, from, to, state, options) {
     return decos
 }
 function createLinkDropUp(mark) {
-    let dom = document.createElement("span")
+    const dom = document.createElement("span")
     dom.classList.add("link-drop-up-outer")
     dom.innerHTML = noSpaceTmp`
         <div class="link-drop-up-inner">
@@ -153,7 +153,7 @@ function getDecos(decos, merge, state) {
             const highlightDecos = createHiglightDecoration(mark.attrs.from, mark.attrs.to, state)
             highlightDecos.push(deco)
             return decos.add(state.doc, highlightDecos)
-        } else if(linkMark) {
+        } else if (linkMark) {
             const startPos = $head.pos
             const dom = createLinkDropUp(linkMark),
                 deco = Decoration.widget(startPos, dom)

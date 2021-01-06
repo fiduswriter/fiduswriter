@@ -169,7 +169,7 @@ footnote div.footnote-tooltip p { /* stylelint-disable-line */
 
 /* For making span elements look like anchor tags */
 span[href] {
-    color:var(--cs-1-text);
+    color: var(--cs-1-text);
     cursor: pointer;
     outline: none;
     text-decoration: underline;
@@ -193,5 +193,5 @@ span[href] {
 }
 
 .link-drop-up-outer {
-    position:absolute;
+    position: absolute;
 }

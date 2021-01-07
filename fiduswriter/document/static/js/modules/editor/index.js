@@ -5,7 +5,8 @@ import {
     postJson,
     activateWait,
     Dialog,
-    showSystemMessage
+    showSystemMessage,
+    addAlert
 } from "../common"
 import {
     FeedbackTab
@@ -340,6 +341,18 @@ export class Editor {
                     case 'patch_error':
                         showSystemMessage(gettext('Your document was out of sync and has been reset.'))
                         break
+                    case 'access_right':
+                        if (data.access_right !== this.docInfo.access_rights) {
+                            if (sendableSteps(this.view.state) && !(WRITE_ROLES).includes(data.access_right)) {
+                                // If the user's new rights does not allow him to update document , then download a copy of the
+                                // same and ask him to re-open the document.
+                                this.handleAccessRightModification()
+                            } else {
+                                addAlert('info', gettext(`Your Access rights have been modified. You now have ${data.access_right} access to this document.`))
+                                this.docInfo.access_rights = data.access_right
+                            }
+                        }
+                        break
                     default:
                         break
                     }
@@ -348,7 +361,7 @@ export class Editor {
                     if (this.view.state.plugins.length && sendableSteps(this.view.state) && this.ws.connectionCount > 0) {
                         this.ws.online = false // To avoid Websocket trying to reconnect.
                         new ExportFidusFile(
-                            this.getDoc(),
+                            this.getDoc({'use_current_view': true}),
                             this.mod.db.bibDB,
                             this.mod.db.imageDB
                         )
@@ -385,6 +398,31 @@ export class Editor {
                 }
             })
         })
+    }
+
+
+    handleAccessRightModification() {
+        // This function when invoked creates a copy of document in FW format and closes editor operation.
+        new ExportFidusFile(
+            this.getDoc({'use_current_view': true}),
+            this.mod.db.bibDB,
+            this.mod.db.imageDB
+        )
+        const accessRightModifiedDialog = new Dialog({
+            title: gettext('Access rights modified'),
+            id: "access_rights_modified",
+            body: gettext('Your access rights were modified while you were offline so we cannot save your work to the server and we download it to your computer instead. Please consider importing it into a new document.'),
+            buttons: [{
+                text: gettext('Proceed to dashboard'),
+                classes: 'fw-dark',
+                click: () => {
+                    window.location.href = '/'
+                }
+            }],
+            canClose: false
+        })
+        accessRightModifiedDialog.open()
+        this.close() // Close the editor operations.
     }
 
     close() {
@@ -529,7 +567,7 @@ export class Editor {
     // Collect all components of the current doc. Needed for saving and export
     // filters
     getDoc(options = {}) {
-        const doc = this.app.isOffline() ? this.view.docView.node : this.docInfo.confirmedDoc
+        const doc = (this.app.isOffline() || Boolean(options.use_current_view)) ? this.view.docView.node : this.docInfo.confirmedDoc
         const pmArticle = options.changes === 'acceptAllNoInsertions' ?
             acceptAllNoInsertions(doc).firstChild :
             doc.firstChild

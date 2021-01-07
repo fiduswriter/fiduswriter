@@ -109,6 +109,13 @@ class WebSocket(BaseWebSocketHandler):
         if connection_count < 1:
             self.send_styles()
             self.send_document(False, template)
+        if connection_count >= 1:
+            # If the user is reconnecting pass along access_rights to
+            # front end to compare it with previous rights.
+            self.send_message({
+                'type': 'access_right',
+                'access_right': self.user_info.access_rights
+            })
         if self.can_communicate():
             self.handle_participant_update()
 

@@ -219,5 +219,15 @@ export class CommentEditor {
         if (activeMarginBox) {
             activeMarginBox.scrollTop = activeMarginBox.scrollHeight
         }
+
+        // Code below executed for screens with width less than 1024px. At this resolution the the comments
+        // are at the bottom of screen
+        const currentScreenWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+        if (currentScreenWidth < 1024){
+            const activeMarginBoxContainer = document.querySelector("#margin-box-container")
+            if(activeMarginBoxContainer){
+                activeMarginBoxContainer.scrollTop = activeMarginBoxContainer.scrollHeight
+            }
+        }
     }
 }

@@ -609,7 +609,7 @@ class WebSocket(BaseWebSocketHandler):
     def reset_collaboration(cls, patch_exception_msg, document_id, sender_id):
         logger.debug(
             f"Action:Resetting collaboration. DocumentID:{document_id} "
-            f"Patch conflict triggered. UserID:{sender_id}"
+            f"Patch conflict triggered. ParticipantID:{sender_id} "
             f"waiters:{len(cls.sessions[document_id]['participants'])}")
         for waiter in list(cls.sessions[document_id]['participants'].values()):
             if waiter.id != sender_id:

@@ -1167,6 +1167,10 @@ body.no-scroll {
     .footnote-container {
         margin-top: 0 !important;
     }
+
+    .margin-box.comment.active .comment-answer-container {
+        max-height: none !important;
+    }
 }
 
 @media screen and (max-width: 420px) {

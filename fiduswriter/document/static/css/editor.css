@@ -1150,6 +1150,7 @@ body.no-scroll {
         left: -1px;
         right: 0;
         max-height: 35vh;
+        z-index: 2;
     }
 
     .comment-btns {

@@ -219,5 +219,15 @@ export class CommentEditor {
         if (activeMarginBox) {
             activeMarginBox.scrollTop = activeMarginBox.scrollHeight
         }
+
+        // scroll to bottom of the margin-box-container when new comments are added when the screens width is less
+        // than 1024px
+        const currentScreenWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
+        if (currentScreenWidth < 1024) {
+            const activeMarginBoxContainer = document.querySelector("#margin-box-container")
+            if (activeMarginBoxContainer) {
+                activeMarginBoxContainer.scrollTop = activeMarginBoxContainer.scrollHeight
+            }
+        }
     }
 }

@@ -268,7 +268,8 @@ body.header-closed #margin-box-filter {
 }
 
 .margin-box .ProseMirror-wrapper {
-    width: 194px;
+    width: auto;
+    max-width: 97%;
     background-color: var(--cs-white-background);
     min-height: 40px;
     border: 1px solid var(--cs-white-border);

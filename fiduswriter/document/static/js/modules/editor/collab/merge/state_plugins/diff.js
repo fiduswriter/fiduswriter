@@ -94,6 +94,17 @@ function createDeletionHighlight(decos, from, to, state, options) {
     decos = decos.add(state.doc, deco)
     return decos
 }
+function createLinkDropUp(mark) {
+    const dom = document.createElement("span")
+    dom.classList.add("link-drop-up-outer")
+    dom.innerHTML = noSpaceTmp`
+        <div class="link-drop-up-inner">
+            <span>Link:${mark.attrs.href}</span>
+        </div>
+        `
+    return dom
+}
+
 
 function getDecos(decos, merge, state) {
     /* Creates PM deco for the change popup */
@@ -142,6 +153,12 @@ function getDecos(decos, merge, state) {
             const highlightDecos = createHiglightDecoration(mark.attrs.from, mark.attrs.to, state)
             highlightDecos.push(deco)
             return decos.add(state.doc, highlightDecos)
+        } else if (linkMark) {
+            const startPos = $head.pos
+            const dom = createLinkDropUp(linkMark),
+                deco = Decoration.widget(startPos, dom)
+            return decos.add(state.doc, [deco])
+
         }
         return decos
     }

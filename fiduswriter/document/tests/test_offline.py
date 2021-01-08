@@ -10,6 +10,7 @@ from django.conf import settings
 import os
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
+from document.models import AccessRight
 
 
 class OfflineTests(LiveTornadoTestCase, EditorHelper):
@@ -946,3 +947,263 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
         # Check that the alert regarding offline is shown.
         alert_element = self.driver.find_element_by_class_name('alerts-info')
         self.assertEqual(alert_element.is_displayed(), True)
+
+
+class AccessRightsOfflineTests(LiveTornadoTestCase, EditorHelper):
+    """
+    Tests in which one user works offline. During which the
+    access rights of the user has been modified/deleted.
+    """
+
+    user = None
+    TEST_TEXT = "Lorem ipsum dolor sit amet."
+    fixtures = [
+        'initial_documenttemplates.json',
+        'initial_styles.json',
+    ]
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        driver_data = cls.get_drivers(2)
+        cls.driver = driver_data["drivers"][0]
+        cls.driver2 = driver_data["drivers"][1]
+        cls.client = driver_data["clients"][0]
+        cls.client2 = driver_data["clients"][1]
+        cls.wait_time = driver_data["wait_time"]
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.driver.quit()
+        cls.driver2.quit()
+        super().tearDownClass()
+
+    def setUp(self):
+        self.user = self.create_user()
+        self.user2 = self.create_user(
+            username='UserB',
+            email='testB@example.com'
+        )
+        self.login_user(self.user, self.driver, self.client)
+        self.login_user(self.user2, self.driver2, self.client2)
+        self.doc = self.create_new_document()
+        # Since the test uses 2 different users ,
+        # add access rights for the 2nd user.
+        AccessRight.objects.create(
+            user=self.user2,
+            document=self.doc,
+            rights='write'
+        )
+
+    def tearDown(self):
+        self.leave_site(self.driver)
+        self.leave_site(self.driver2)
+
+    def test_access_rights_deletion(self):
+        """
+        Test One Client Going offline, while the other client is still
+        editing the document. The client that goes offline has their
+        access rights removed, while it is offline.
+        When it comes back online, the user sees a dialog explaining the
+        situation and the offline version of the document is downloaded.
+        """
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
+
+        self.add_title(self.driver)
+        self.driver.find_element_by_class_name(
+            'article-body'
+        ).click()
+
+        p1 = multiprocessing.Process(
+            target=self.type_text,
+            args=(self.driver, self.TEST_TEXT)
+        )
+        p1.start()
+
+        # Wait for the first processor to write some text
+        self.wait_for_doc_size(self.driver2, 34)
+
+        # driver 2 goes offline
+        self.driver2.execute_script(
+            'window.theApp.page.ws.goOffline()'
+        )
+
+        self.driver2.find_element_by_class_name(
+            'article-body'
+        ).click()
+
+        # Total: 25
+        self.driver2.execute_script(
+            'window.testCaret.setSelection(25,25)'
+        )
+
+        p2 = multiprocessing.Process(
+            target=self.type_text,
+            args=(self.driver2, self.TEST_TEXT)
+        )
+        p2.start()
+        p1.join()
+        p2.join()
+
+        # Delete access rights of the user before coming back online
+        AccessRight.objects.filter(user=self.user2, document=self.doc).delete()
+
+        # driver 2 goes online
+        self.driver2.execute_script(
+            'window.theApp.page.ws.goOnline()'
+        )
+
+        # Check that dialog is displayed
+        element = WebDriverWait(self.driver2, self.wait_time).until(
+            EC.visibility_of_element_located(
+                (By.ID, 'session_expiration_dialog')
+            )
+        )
+        self.assertEqual(element.is_displayed(), True)
+
+    def test_simple_access_rights_change(self):
+        """
+        Test One Client Going offline, while the other client is still
+        editing the document. The client that goes offline has their
+        access rights modified, while it is offline.
+        When it comes back online, the user sees a alert
+        explaining the access rights change and the document
+        can be edited by it afterwards.
+        """
+        # Initialize user2 with read rights.
+        AccessRight.objects.filter(
+            user=self.user2,
+            document=self.doc
+        ).update(rights='read')
+
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
+
+        # Add some test text
+        self.add_title(self.driver)
+        self.driver.find_element_by_class_name(
+            'article-body'
+        ).click()
+
+        self.type_text(self.driver, self.TEST_TEXT)
+
+        # driver 2 goes offline
+        self.driver2.execute_script(
+            'window.theApp.page.ws.goOffline()'
+        )
+
+        # Modify access rights of the user before coming back online
+        AccessRight.objects.filter(
+            user=self.user2,
+            document=self.doc
+        ).update(rights='write')
+
+        # driver 2 goes online
+        self.driver2.execute_script(
+            'window.theApp.page.ws.goOnline()'
+        )
+
+        # Check that the alert box is displayed.
+        alert_element = WebDriverWait(self.driver2, self.wait_time).until(
+            EC.visibility_of_element_located(
+                (By.CLASS_NAME, 'alerts-info')
+            )
+        )
+        self.assertEqual(alert_element.is_displayed(), True)
+
+        # Write some test text wuith user2
+        self.driver2.find_element_by_class_name(
+            'article-body'
+        ).click()
+
+        self.driver2.execute_script(
+            'window.testCaret.setSelection(25,25)'
+        )
+        self.type_text(self.driver2, self.TEST_TEXT)
+
+        # Check that access rights is changed in front end
+        access_rights = self.driver2.execute_script(
+            'return window.theApp.page.docInfo.access_rights'
+        )
+        self.assertEqual(access_rights, 'write')
+
+        # Check that the entered text is present
+        self.wait_for_doc_sync(self.driver, self.driver2)
+
+        self.assertEqual(
+            len(self.TEST_TEXT) * 2,
+            len(self.get_contents(self.driver))
+        )
+
+        self.assertEqual(
+            self.get_contents(self.driver2),
+            self.get_contents(self.driver)
+        )
+
+    def test_access_rights_change_non_editable_rights(self):
+        """
+        Test One Client Going offline, while the other client is still
+        editing the document. The client that goes offline has their
+        access rights changed to read(non-editable right access rights),
+        while it is offline. When it comes back online, the
+        user sees a dialog explaining the situation and the
+        offline version of the document is downloaded.
+        """
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
+
+        self.add_title(self.driver)
+        self.driver.find_element_by_class_name(
+            'article-body'
+        ).click()
+
+        p1 = multiprocessing.Process(
+            target=self.type_text,
+            args=(self.driver, self.TEST_TEXT)
+        )
+        p1.start()
+
+        # Wait for the first processor to write some text
+        self.wait_for_doc_size(self.driver2, 34)
+
+        # driver 2 goes offline
+        self.driver2.execute_script(
+            'window.theApp.page.ws.goOffline()'
+        )
+
+        self.driver2.find_element_by_class_name(
+            'article-body'
+        ).click()
+
+        # Total: 25
+        self.driver2.execute_script(
+            'window.testCaret.setSelection(25,25)'
+        )
+
+        p2 = multiprocessing.Process(
+            target=self.type_text,
+            args=(self.driver2, self.TEST_TEXT)
+        )
+        p2.start()
+        p1.join()
+        p2.join()
+
+        # Modify access rights of the user to read before coming back online
+        AccessRight.objects.filter(
+            user=self.user2,
+            document=self.doc
+        ).update(rights='read')
+
+        # driver 2 goes online
+        self.driver2.execute_script(
+            'window.theApp.page.ws.goOnline()'
+        )
+
+        # Check that dialog is displayed
+        element = WebDriverWait(self.driver2, self.wait_time).until(
+            EC.visibility_of_element_located(
+                (By.ID, 'access_rights_modified')
+            )
+        )
+        self.assertEqual(element.is_displayed(), True)

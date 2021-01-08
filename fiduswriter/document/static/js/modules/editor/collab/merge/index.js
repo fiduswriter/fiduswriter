@@ -47,7 +47,9 @@ export class Merge {
         // happening on server.
         if (this.mod.editor.docInfo.version < data.doc.v && sendableSteps(this.mod.editor.view.state)) {
             this.mod.doc.receiving = true
-
+            if (settings_JSONPATCH) {
+                this.mod.doc.confirmedJson = JSON.parse(JSON.stringify(data.doc.content))
+            }
             const confirmedState = EditorState.create({doc: this.mod.editor.docInfo.confirmedDoc})
             const unconfirmedTr = confirmedState.tr
             const sendable = sendableSteps(this.mod.editor.view.state)

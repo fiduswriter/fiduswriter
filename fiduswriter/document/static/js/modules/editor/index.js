@@ -348,7 +348,14 @@ export class Editor {
                                 // same and ask him to re-open the document.
                                 this.handleAccessRightModification()
                             } else {
-                                addAlert('info', gettext(`Your Access rights have been modified. You now have ${data.access_right} access to this document.`))
+                                addAlert(
+                                    'info',
+                                    interpolate(
+                                        gettext('Your Access rights have been modified. You now have %(accessRight)s access to this document.'),
+                                        {accessRight: data.access_right},
+                                        true
+                                    )
+                                )
                                 this.docInfo.access_rights = data.access_right
                             }
                         }
@@ -368,7 +375,7 @@ export class Editor {
                         const sessionDialog = new Dialog({
                             title: gettext('Session Expired'),
                             id: "session_expiration_dialog",
-                            body: gettext('Your session expired while you were offline so we cannot save your work to the server and we download it to your computer instead. Please consider importing it into a new document.'),
+                            body: gettext('Your session expired while you were offline, so we cannot save your work to the server any longer, and it is downloaded to your computer instead. Please consider importing it into a new document.'),
                             buttons: [{
                                 text: gettext('Proceed to Login page'),
                                 classes: 'fw-dark',
@@ -411,7 +418,7 @@ export class Editor {
         const accessRightModifiedDialog = new Dialog({
             title: gettext('Access rights modified'),
             id: "access_rights_modified",
-            body: gettext('Your access rights were modified while you were offline so we cannot save your work to the server and we download it to your computer instead. Please consider importing it into a new document.'),
+            body: gettext('Your access rights were modified while you were offline, so we cannot save your work to the server any longer, and it is downloaded to your computer instead. Please consider importing it into a new document.'),
             buttons: [{
                 text: gettext('Proceed to dashboard'),
                 classes: 'fw-dark',

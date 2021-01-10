@@ -29,6 +29,11 @@
     margin-top: 0;
 }
 
+.marginbox-options.fw-pulldown .fw-pulldown {
+    right: 100%;
+    left: auto;
+}
+
 .fw-pulldown.fw-right .fw-pulldown {
     left: auto;
     right: 100%;

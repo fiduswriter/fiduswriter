@@ -124,10 +124,30 @@ export const setCheckableLabel = function(labelEl) {
     }
 }
 
+let messageWaiter = false
+let waitMessage = ''
 /** Cover the page signaling to the user to wait.
  */
-export const activateWait = function(full = false) {
+export const activateWait = function(full = false, message = '') {
     const waitEl = document.getElementById('wait')
+    if (message) {
+        let messageEl = waitEl.querySelector('span.message')
+        if (messageEl) {
+            // Another message is already showing. We update directly.
+            messageEl.innerText = message
+        } else {
+            waitMessage = message // We update the message if there is one waiting already
+            if (!messageWaiter) {
+                messageWaiter = setTimeout(() => {
+                    messageEl = document.createElement("span")
+                    messageEl.classList.add('message')
+                    messageEl.innerText = waitMessage
+                    waitEl.appendChild(messageEl)
+                    messageWaiter = false
+                }, 2000)
+            }
+        }
+    }
     if (waitEl) {
         waitEl.classList.add('active')
         if (full) {
@@ -143,6 +163,14 @@ export const deactivateWait = function() {
     if (waitEl) {
         waitEl.classList.remove('active')
         waitEl.classList.remove('full')
+    }
+    const messageEl = waitEl.querySelector('span.message')
+    if (messageEl) {
+        messageEl.parentElement.removeChild(messageEl)
+    }
+    if (messageWaiter) {
+        clearTimeout(messageWaiter)
+        messageWaiter = false
     }
 }
 

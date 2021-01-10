@@ -43,15 +43,15 @@ msgstr "Maintenance des documents"
 
 #: base/templates/app.html:9
 msgid "The all in one solution for collaborative academic writing."
-msgstr "La solution tout en un pour l'écriture académique collaborative."
+msgstr "La solution tout en un pour la publication académique collaborative."
 
-#: base/templates/app.html:44
+#: base/templates/app.html:45
 msgid "JavaScript disabled"
 msgstr "JavaScript désactivé"
 
-#: base/templates/app.html:45
+#: base/templates/app.html:46
 msgid "Fidus Writer requires you to enable JavaScript."
-msgstr "Fidus Writer vous demande d'activer JavaScript."
+msgstr "Fidus Writer nécessite d'activer JavaScript."
 
 #: browser_check/templates/browser_check/browser_not_supported.html:4
 #: browser_check/templates/browser_check/browser_not_supported.html:27
@@ -67,48 +67,47 @@ msgid "\n"
 "            "
 msgstr "\n"
 "                Votre navigateur n'est pas pris en charge par Fidus Writer.\n"
-"                Veuillez mettre à jour! Nous vous recommandons d'utiliser un courant\n"
-"                version de Chrome / Chromium ou Firefox sur un\n"
+"                Veuillez mettre à jour! Nous vous recommandons d'utiliser une version à jour  courant de Chrome / Chromium ou Firefox sur un\n"
 "                ordinateur de bureau.\n"
 "                        "
 
-#: base/default_settings.py:229
+#: base/default_settings.py:239
 msgid "English"
 msgstr "Anglais"
 
-#: base/default_settings.py:230
+#: base/default_settings.py:240
 msgid "Bulgarian"
 msgstr "Bulgare"
 
-#: base/default_settings.py:231
+#: base/default_settings.py:241
 msgid "German"
 msgstr "Allemand"
 
-#: base/default_settings.py:232
+#: base/default_settings.py:242
 msgid "French"
 msgstr "français"
 
-#: base/default_settings.py:233
+#: base/default_settings.py:243
 msgid "Italian"
 msgstr "Italien"
 
-#: base/default_settings.py:234
+#: base/default_settings.py:244
 msgid "Spanish"
 msgstr "Espagnol"
 
-#: base/default_settings.py:235
+#: base/default_settings.py:245
 msgid "Portuguese (Brazil)"
 msgstr "Portugais (Brésil)"
 
-#: base/default_settings.py:316
+#: base/default_settings.py:333
 msgid "Fidus Writer Admin"
 msgstr "Fidus Writer Admin"
 
-#: base/default_settings.py:317
+#: base/default_settings.py:334
 msgid "Fidus Writer Administration Site"
 msgstr "Site d'administration de Fidus Writer"
 
-#: base/default_settings.py:318
+#: base/default_settings.py:335
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "Bienvenue sur le site d'administration de Fidus Writer"
 
@@ -123,7 +122,7 @@ msgstr "Ajouter %(name)s"
 #: document/templates/admin/document/document/change_list_object_tools.html:13
 #: document/templates/admin/document/maintenance.html:4
 msgid "Maintenance"
-msgstr "Entretien"
+msgstr "Maintenance"
 
 #: document/templates/admin/document/maintenance.html:19
 msgid "\n"
@@ -143,7 +142,7 @@ msgstr "Mettre à jour tous les documents (DANGER!)"
 
 #: document/views.py:405 document/views.py:505 document/views.py:905
 msgid "Untitled"
-msgstr "Sans Titre"
+msgstr "Sans titre"
 
 #: document/views.py:477 document/views.py:581
 msgid "shared"
@@ -210,7 +209,7 @@ msgid "\n"
 "        You're receiving this e-mail because user %(user_display)s has given yours as an e-mail address to connect their account.\n"
 "    "
 msgstr "\n"
-"        Vous recevez cet e-mail car l'utilisateur %(user_display)s a donné la vôtre comme adresse e-mail pour connecter son compte.       "
+"        Vous recevez cet e-mail car l'utilisateur %(user_display)s a donné la votre comme adresse e-mail pour connecter son compte.       "
 
 #: user/templates/account/email/email_confirmation_message.html:20
 msgid "\n"
@@ -251,11 +250,11 @@ msgstr "\n"
 msgid "In case you forgot, your username is %(username)s."
 msgstr "Si vous avez oublié, votre nom d'utilisateur est %(username)s."
 
-#: usermedia/views.py:35
+#: usermedia/views.py:36
 msgid "Filetype not supported"
 msgstr "Type de fichier non pris en charge"
 
-#: usermedia/views.py:63
+#: usermedia/views.py:68
 msgid "No file uploaded"
 msgstr "Aucun fichier téléchargé"
 
@@ -300,4 +299,12 @@ msgstr "Vous recevez cet e-mail car vous ou quelqu'un d'autre avez demandé un m
 #: user/templates/account/email/password_reset_key_message.html:14
 msgid "It can be safely ignored if you did not request a password reset. Click the link below to reset your password."
 msgstr "Il peut être ignoré en toute sécurité si vous n'avez pas demandé de réinitialisation de mot de passe. Cliquez sur le lien ci-dessous pour réinitialiser votre mot de passe."
+
+#: usermedia/views.py:40
+msgid "Image too large"
+msgstr "Image trop grande"
+
+#: user/models.py:22
+msgid "Can login as another user"
+msgstr "Peut se connecter en tant qu'autre utilisateur"
 

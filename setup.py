@@ -141,7 +141,7 @@ except ImportError:
 setuptools.setup(
     cmdclass=cmdclass,
     name="fiduswriter",
-    version=read('version.txt').splitlines()[0],
+    version=read('fiduswriter/version.txt').splitlines()[0],
     description="A semantic wordprocessor for academic purposes",
     license="AGPL",
     author="Lund Info AB",
@@ -152,7 +152,7 @@ setuptools.setup(
     classifiers = [
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Science/Research",
-        "Framework :: Django :: 2.2",
+        "Framework :: Django :: 3.1",
         "License :: OSI Approved :: GNU Affero General Public License v3",
         "Programming Language :: Python :: 3",
         "Topic :: Scientific/Engineering",
@@ -190,7 +190,7 @@ setuptools.setup(
     python_requires='>=3',
     install_requires=read('fiduswriter/requirements.txt').splitlines(),
     extras_require={
-        "books": "fiduswriter-books ~= 3.9.0",
+        "books": "fiduswriter-books ~= 3.9.2",
         "citation-api-import": "fiduswriter-citation-api-import ~= 3.9.0",
         "languagetool": "fiduswriter-languagetool ~= 3.9.1",
         "ojs": "fiduswriter-ojs ~= 3.9.0",

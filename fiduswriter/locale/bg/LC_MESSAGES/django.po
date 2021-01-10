@@ -45,11 +45,11 @@ msgstr "Поддръжка на документи"
 msgid "The all in one solution for collaborative academic writing."
 msgstr "Комплексно решение за съвместно създаване на академични документи."
 
-#: base/templates/app.html:44
+#: base/templates/app.html:45
 msgid "JavaScript disabled"
 msgstr "JavaScript е деактивиран"
 
-#: base/templates/app.html:45
+#: base/templates/app.html:46
 msgid "Fidus Writer requires you to enable JavaScript."
 msgstr "Fidus Writer изисква от вас да активирате JavaScript."
 
@@ -72,43 +72,43 @@ msgstr "\n"
 "                настолен компютър.\n"
 "                        "
 
-#: base/default_settings.py:229
+#: base/default_settings.py:239
 msgid "English"
 msgstr "Английски"
 
-#: base/default_settings.py:230
+#: base/default_settings.py:240
 msgid "Bulgarian"
 msgstr "Български"
 
-#: base/default_settings.py:231
+#: base/default_settings.py:241
 msgid "German"
 msgstr "Немски"
 
-#: base/default_settings.py:232
+#: base/default_settings.py:242
 msgid "French"
 msgstr "Френски"
 
-#: base/default_settings.py:233
+#: base/default_settings.py:243
 msgid "Italian"
 msgstr "Италиански"
 
-#: base/default_settings.py:234
+#: base/default_settings.py:244
 msgid "Spanish"
 msgstr "Испански"
 
-#: base/default_settings.py:235
+#: base/default_settings.py:245
 msgid "Portuguese (Brazil)"
 msgstr "Португалски (Бразилия)"
 
-#: base/default_settings.py:316
+#: base/default_settings.py:333
 msgid "Fidus Writer Admin"
 msgstr "Fidus Writer Admin"
 
-#: base/default_settings.py:317
+#: base/default_settings.py:334
 msgid "Fidus Writer Administration Site"
 msgstr "Сайт за администрация на Fidus Writer"
 
-#: base/default_settings.py:318
+#: base/default_settings.py:335
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "Добре дошли в сайта за администрация на Fidus Writer"
 
@@ -252,11 +252,11 @@ msgstr "\n"
 msgid "In case you forgot, your username is %(username)s."
 msgstr "В случай, че сте забравили, вашето потребителско име е %(username)s."
 
-#: usermedia/views.py:35
+#: usermedia/views.py:36
 msgid "Filetype not supported"
 msgstr "Типът файл не се поддържа"
 
-#: usermedia/views.py:63
+#: usermedia/views.py:68
 msgid "No file uploaded"
 msgstr "Не е качен файл"
 
@@ -301,4 +301,12 @@ msgstr "Получавате този имейл, защото вие или н�
 #: user/templates/account/email/password_reset_key_message.html:14
 msgid "It can be safely ignored if you did not request a password reset. Click the link below to reset your password."
 msgstr "Той може безопасно да бъде игнориран, ако не сте поискали нулиране на парола. Щракнете върху връзката по-долу, за да нулирате паролата си."
+
+#: usermedia/views.py:40
+msgid "Image too large"
+msgstr "Изображението е твърде голямо"
+
+#: user/models.py:22
+msgid "Can login as another user"
+msgstr "Може да влезе като друг потребител"
 

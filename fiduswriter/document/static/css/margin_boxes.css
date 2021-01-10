@@ -268,13 +268,16 @@ body.header-closed #margin-box-filter {
 }
 
 .margin-box .ProseMirror-wrapper {
-    width: 194px;
+    width: auto;
+    max-width: 97%;
     background-color: var(--cs-white-background);
     min-height: 40px;
     border: 1px solid var(--cs-white-border);
     padding: 2px;
     margin-bottom: 6px;
     cursor: text;
+    max-height: 120px;
+    overflow: auto;
 }
 
 .margin-box .btn {
@@ -329,6 +332,26 @@ body.header-closed #margin-box-filter {
 .comment-is-major-bgc.active .comment-item:first-child::after,
 .comment.resolved.active .comment-item:first-child::after {
     border-bottom-color: var(--editor-active-comment-background-color);
+}
+
+.margin-box .ProseMirror-wrapper::-webkit-scrollbar,
+.comment-answer-container::-webkit-scrollbar {
+    width: 5px;
+}
+
+.margin-box .ProseMirror-wrapper::-webkit-scrollbar-track,
+.comment-answer-container::-webkit-scrollbar-track {
+    background: var(--editor-active-comment-background-color);
+}
+
+.margin-box .ProseMirror-wrapper::-webkit-scrollbar-thumb,
+.comment-answer-container::-webkit-scrollbar-thumb {
+    background: #999999;
+}
+
+.margin-box .ProseMirror-wrapper::-webkit-scrollbar-thumb:hover,
+.comment-answer-container::-webkit-scrollbar-thumb:hover {
+    background: #777777;
 }
 
 .comment.active.resolved .comment-answer #answer-editor .ProseMirror-wrapper {

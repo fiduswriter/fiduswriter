@@ -45,11 +45,11 @@ msgstr "Manutenção de Documentos"
 msgid "The all in one solution for collaborative academic writing."
 msgstr "A ferramenta perfeita para escrever textos acadêmicos."
 
-#: base/templates/app.html:44
+#: base/templates/app.html:45
 msgid "JavaScript disabled"
 msgstr "JavaScript desativado"
 
-#: base/templates/app.html:45
+#: base/templates/app.html:46
 msgid "Fidus Writer requires you to enable JavaScript."
 msgstr "O Fidus Writer requer que você ative o JavaScript."
 
@@ -72,43 +72,43 @@ msgstr "\n"
 "                computador.\n"
 "            "
 
-#: base/default_settings.py:229
+#: base/default_settings.py:239
 msgid "English"
 msgstr "Inglês"
 
-#: base/default_settings.py:230
+#: base/default_settings.py:240
 msgid "Bulgarian"
 msgstr "Búlgaro"
 
-#: base/default_settings.py:231
+#: base/default_settings.py:241
 msgid "German"
 msgstr "Alemão"
 
-#: base/default_settings.py:232
+#: base/default_settings.py:242
 msgid "French"
 msgstr "Francês"
 
-#: base/default_settings.py:233
+#: base/default_settings.py:243
 msgid "Italian"
 msgstr "Italiano"
 
-#: base/default_settings.py:234
+#: base/default_settings.py:244
 msgid "Spanish"
 msgstr "Espanhol"
 
-#: base/default_settings.py:235
+#: base/default_settings.py:245
 msgid "Portuguese (Brazil)"
 msgstr "Português (Brasil)"
 
-#: base/default_settings.py:316
+#: base/default_settings.py:333
 msgid "Fidus Writer Admin"
 msgstr "Administração do Fidus Writer"
 
-#: base/default_settings.py:317
+#: base/default_settings.py:334
 msgid "Fidus Writer Administration Site"
 msgstr "Site de Administração do Fidus Writer"
 
-#: base/default_settings.py:318
+#: base/default_settings.py:335
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "Bem Vindo ao site de Administração do Fidus Writer"
 
@@ -252,11 +252,11 @@ msgstr "\n"
 msgid "In case you forgot, your username is %(username)s."
 msgstr "No caso de ter esquecido, seu nome de usuário é %(username)s."
 
-#: usermedia/views.py:35
+#: usermedia/views.py:36
 msgid "Filetype not supported"
 msgstr "Tipo de arquivo não suportado"
 
-#: usermedia/views.py:63
+#: usermedia/views.py:68
 msgid "No file uploaded"
 msgstr "Nenhum arquivo carregado"
 
@@ -301,4 +301,12 @@ msgstr "Você está recebendo este e-mail porque você ou outra pessoa solicitou
 #: user/templates/account/email/password_reset_key_message.html:14
 msgid "It can be safely ignored if you did not request a password reset. Click the link below to reset your password."
 msgstr "Ele pode ser ignorado com segurança se você não solicitou uma redefinição de senha. Clique no link abaixo para redefinir sua senha."
+
+#: usermedia/views.py:40
+msgid "Image too large"
+msgstr "Imagem muito grande"
+
+#: user/models.py:22
+msgid "Can login as another user"
+msgstr "Pode entrar como outro usuário"
 

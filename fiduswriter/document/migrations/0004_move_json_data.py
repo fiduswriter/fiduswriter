@@ -1,38 +1,48 @@
 import json
-from django.db import migrations, models
+from django.db import migrations, models, transaction
 
 def text_to_json(apps, schema_editor):
     Document = apps.get_model('document', 'Document')
-    documents = Document.objects.all()
-    for document in documents:
-        document.content = json.loads(document.contents)
-        document.diffs = json.loads(document.last_diffs)
-        document.comments = json.loads(document.comments_text)
-        document.bibliography = json.loads(document.bibliography_text)
-        document.save()
+    documents = Document.objects.all().iterator()
+    with transaction.atomic():
+        for document in documents:
+            document.content = json.loads(document.contents)
+            document.diffs = json.loads(document.last_diffs)
+            document.comments = json.loads(document.comments_text)
+            document.bibliography = json.loads(document.bibliography_text)
+            for field in document._meta.local_fields:
+                if field.name == "updated":
+                    field.auto_now = False
+            document.save()
     DocumentTemplate = apps.get_model('document', 'DocumentTemplate')
     templates = DocumentTemplate.objects.all()
-    for template in templates:
-        template.content = json.loads(template.definition)
-        template.save()
+    with transaction.atomic():
+        for template in templates:
+            template.content = json.loads(template.definition)
+            template.save()
 
 def json_to_text(apps, schema_editor):
     Document = apps.get_model('document', 'Document')
-    documents = Document.objects.all()
-    for document in documents:
-        document.contents = json.dumps(document.content)
-        document.last_diffs = json.dumps(document.diffs)
-        document.comments_text = json.dumps(document.comments)
-        document.bibliography_text = json.dumps(document.bibliography)
-        document.save()
+    documents = Document.objects.all().iterator()
+    with transaction.atomic():
+        for document in documents:
+            document.contents = json.dumps(document.content)
+            document.last_diffs = json.dumps(document.diffs)
+            document.comments_text = json.dumps(document.comments)
+            document.bibliography_text = json.dumps(document.bibliography)
+            for field in document._meta.local_fields:
+                if field.name == "updated":
+                    field.auto_now = False
+            document.save()
     DocumentTemplate = apps.get_model('document', 'DocumentTemplate')
     templates = DocumentTemplate.objects.all()
-    for template in templates:
-        template.definition = json.dumps(template.content)
-        template.save()
+    with transaction.atomic():
+        for template in templates:
+            template.definition = json.dumps(template.content)
+            template.save()
 
 class Migration(migrations.Migration):
-
+    atomic = False  # to prevent migrations running in single transaction
     dependencies = [
         ('document', '0003_fidus_3_3'),
     ]

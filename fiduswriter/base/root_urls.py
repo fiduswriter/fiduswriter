@@ -60,7 +60,8 @@ urlpatterns = [
 
     # Admin interface
     path('admin/', admin_site_urls),
-
+    # Login as other user
+    path('admin/', include('loginas.urls')),
 ]
 
 for app in settings.INSTALLED_APPS:

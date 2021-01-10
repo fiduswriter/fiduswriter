@@ -42,8 +42,12 @@ DATABASES = {
 # simultaneously
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000
 
-# Whether anyone surfing to the site can open an account.
+# Whether anyone surfing to the site can open an account with a login/password.
 REGISTRATION_OPEN = True
+
+# Whether anyone surfing to the site can open an account or login with a
+# socialaccount.
+SOCIALACCOUNT_OPEN = True
 
 # This determines whether there is a star labeled "Free" on the login page
 IS_FREE = True
@@ -99,6 +103,10 @@ MEDIA_ROOT = os.path.join(PROJECT_PATH, 'media/')
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 MEDIA_URL = '/media/'
+
+# The maximum size of user uploaded images in bytes. If you use NGINX, note
+# that also it needs to support at least this size.
+MEDIA_MAX_SIZE = False
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -188,6 +196,7 @@ BASE_INSTALLED_APPS = [
     'django.contrib.admindocs',
     'django.contrib.flatpages',
     'django_js_error_hook',
+    'loginas',
     'fixturemedia',
     'browser_check',
     'menu',
@@ -202,6 +211,7 @@ BASE_INSTALLED_APPS = [
     'feedback',
     'style'
 ]
+
 # These are additional apps to be overriden by configuration.py
 INSTALLED_APPS = []
 
@@ -235,8 +245,15 @@ LANGUAGES = (
     ('pt-br', gettext('Portuguese (Brazil)')),
 )
 
-
 LOGIN_REDIRECT_URL = '/'
+
+
+# Allow users with login_as permission to log in as different user
+def can_login_as(request, target_user):
+    return request.user.has_perm('user.can_login_as')
+
+
+CAN_LOGIN_AS = can_login_as
 
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"

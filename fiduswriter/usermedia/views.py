@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from django.core.serializers.python import Serializer
 from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_POST
+from django.conf import settings
 
 from base.decorators import ajax_required
 from usermedia.models import Image, ImageCategory, UserImage
@@ -33,6 +34,10 @@ def save(request):
             request.FILES['image'].content_type not in ALLOWED_FILETYPES:
         status = 200  # Not implemented
         response['errormsg']['error'] = _('Filetype not supported')
+    elif settings.MEDIA_MAX_SIZE and 'image' in request.FILES and \
+            request.FILES['image'].size > settings.MEDIA_MAX_SIZE:
+        status = 413
+        response['errormsg']['error'] = _('Image too large')
     else:
         image = False
         if 'id' in request.POST and 'image' not in request.FILES:

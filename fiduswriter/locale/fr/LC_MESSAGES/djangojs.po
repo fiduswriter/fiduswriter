@@ -84,7 +84,7 @@ msgstr "Enregistrer une nouvelle source"
 #: bibliography/static/js/modules/bibliography/form/fields/title.js:41
 #: document/static/js/modules/document_template/templates.js:10
 #: document/static/js/modules/editor/marginboxes/templates.js:122
-#: document/static/js/modules/editor/menus/toolbar/model.js:248
+#: document/static/js/modules/editor/menus/toolbar/model.js:249
 msgid "Strong"
 msgstr "Fort"
 
@@ -93,7 +93,7 @@ msgstr "Fort"
 #: bibliography/static/js/modules/bibliography/form/fields/title.js:44
 #: document/static/js/modules/document_template/templates.js:10
 #: document/static/js/modules/editor/marginboxes/templates.js:121
-#: document/static/js/modules/editor/menus/toolbar/model.js:273
+#: document/static/js/modules/editor/menus/toolbar/model.js:274
 msgid "Emphasis"
 msgstr "Accentuation"
 
@@ -101,7 +101,7 @@ msgstr "Accentuation"
 #: bibliography/static/js/modules/bibliography/form/fields/literal_long.js:47
 #: bibliography/static/js/modules/bibliography/form/fields/title.js:47
 msgid "Small caps"
-msgstr "En minuscule"
+msgstr "Petites majuscules"
 
 #: bibliography/static/js/modules/bibliography/form/fields/literal.js:53
 #: bibliography/static/js/modules/bibliography/form/fields/literal_long.js:50
@@ -303,7 +303,7 @@ msgstr "Auteur (s) d'une introduction à l'œuvre"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:41
 msgid "ISAN"
-msgstr "EST UN"
+msgstr "ISAN"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:42
 msgid "ISBN"
@@ -327,7 +327,7 @@ msgstr "Problème"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:47
 msgid "Issue subtitle"
-msgstr "Émettre un sous-titre"
+msgstr "Sous-titre du problème"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:48
 msgid "Issue title"
@@ -387,9 +387,11 @@ msgstr "Annexe au maintitle"
 msgid "author name addon"
 msgstr "addon de nom d'auteur"
 
+#. To keep close to the original word
+#. (Remarque is ok)
 #: bibliography/static/js/modules/bibliography/form/strings.js:62
 msgid "Note"
-msgstr "Remarque"
+msgstr "Note"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:63
 msgid "Number of the work in a series"
@@ -444,6 +446,7 @@ msgstr "Éditeur (s)"
 msgid "Publication state of the work"
 msgstr "État de publication de l'œuvre"
 
+#. réimpression == réédition
 #: bibliography/static/js/modules/bibliography/form/strings.js:76
 msgid "Title of reprint"
 msgstr "Titre de la réimpression"
@@ -462,7 +465,7 @@ msgstr "Éditeur (s) abrégé (s)"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:80
 msgid "Shorthand"
-msgstr "Sténographie"
+msgstr "Abrégé"
 
 #. Está bien?
 #: bibliography/static/js/modules/bibliography/form/strings.js:81
@@ -485,7 +488,7 @@ msgstr "Titre abrégé"
 #: bibliography/static/js/modules/bibliography/form/strings.js:85
 #: document/static/js/modules/document_template/templates.js:21
 msgid "Subtitle"
-msgstr "Sous Titre"
+msgstr "Sous-titre"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:86
 #: bibliography/static/js/modules/bibliography/overview/index.js:93
@@ -497,11 +500,11 @@ msgstr "Sous Titre"
 #: document/static/js/modules/document_template/templates.js:70
 #: document/static/js/modules/document_template/templates.js:80
 #: document/static/js/modules/document_template/templates.js:184
-#: document/static/js/modules/documents/overview/index.js:245
+#: document/static/js/modules/documents/overview/index.js:243
 #: document/static/js/modules/editor/dialogs/citation.js:195
 #: document/static/js/modules/editor/dialogs/templates.js:35
 #: document/static/js/modules/editor/dialogs/templates.js:46
-#: document/static/js/modules/editor/menus/toolbar/model.js:115
+#: document/static/js/modules/editor/menus/toolbar/model.js:116
 #: document/static/js/modules/editor/state_plugins/links.js:176
 #: document/static/js/modules/editor/state_plugins/placeholders.js:32
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:84
@@ -513,7 +516,7 @@ msgstr "Titre"
 #. no se que es postfix.
 #: bibliography/static/js/modules/bibliography/form/strings.js:87
 msgid "Title addon"
-msgstr "Addon de titre"
+msgstr "Titre de addon"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:88
 msgid "Translator(s)"
@@ -542,7 +545,7 @@ msgstr "Version"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:94
 msgid "Volume"
-msgstr "Le volume"
+msgstr "Volume"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:95
 msgid "Total number of volumes"
@@ -630,18 +633,20 @@ msgstr "Périodiques"
 msgid "Supplemental material in a periodical"
 msgstr "Matériel supplémentaire dans un périodique"
 
+#. Better to keep the original word than having a wrong translation
+#. (maybe "Recueil", but french scientist also use "Proceedings")
 #: bibliography/static/js/modules/bibliography/form/strings.js:130
 msgid "Proceedings"
-msgstr "Procédure"
+msgstr "Proceedings"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:131
 msgid "Multi-volume proceedings"
-msgstr "Procédures en plusieurs volumes"
+msgstr "Proceedings en plusieurs volumes"
 
 #. bien?
 #: bibliography/static/js/modules/bibliography/form/strings.js:132
 msgid "Article in a proceedings"
-msgstr "Article dans une procédure"
+msgstr "Article dans des proceedings"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:133
 msgid "Reference"
@@ -684,7 +689,7 @@ msgstr "Article de journal"
 #. no es entrada "de"....
 #: bibliography/static/js/modules/bibliography/form/strings.js:142
 msgid "Encyclopedia entry"
-msgstr "entrée de l'encyclopédie"
+msgstr "entrée d'encyclopédie"
 
 #. No es entrada "de" diccionario?
 #: bibliography/static/js/modules/bibliography/form/strings.js:143
@@ -1086,7 +1091,7 @@ msgstr "Importation"
 
 #: bibliography/static/js/modules/bibliography/import/dialog.js:62
 msgid "Import a BibTex library"
-msgstr "Importer une bibliothèque BibTex"
+msgstr "Importer une bibliothèque BibTeX"
 
 #: bibliography/static/js/modules/bibliography/import/templates.js:2
 #: document/static/js/modules/documents/overview/templates.js:2
@@ -1130,8 +1135,7 @@ msgstr "Modifier les catégories"
 #: document/static/js/modules/documents/overview/actions.js:42
 #: document/static/js/modules/documents/revisions/index.js:121
 #: document/static/js/modules/documents/revisions/templates.js:6
-#: document/static/js/modules/editor/marginboxes/templates.js:14
-#: document/static/js/modules/editor/marginboxes/templates.js:90
+#: document/static/js/modules/editor/marginboxes/templates.js:263
 #: user/static/js/modules/contacts/delete_dialog.js:10
 #: user/static/js/modules/contacts/index.js:33
 #: user/static/js/modules/profile/delete_user.js:10
@@ -1203,7 +1207,7 @@ msgstr "Ajouter un nouveau contact"
 
 #: document/static/js/modules/documents/access_rights/index.js:198
 msgid "Share your document with others"
-msgstr "Partagez votre document avec les autres"
+msgstr "Partagez votre document avec  d'autres"
 
 #: document/static/js/modules/documents/access_rights/index.js:289
 msgid "Access rights have been saved"
@@ -1229,12 +1233,13 @@ msgstr "Écrire"
 #: document/static/js/modules/documents/access_rights/index.js:65
 #: document/static/js/modules/documents/access_rights/index.js:67
 msgid "Read"
-msgstr "Lis"
+msgstr "Lire"
 
 #: document/static/js/modules/documents/access_rights/index.js:75
 msgid "Access rights used within document review"
 msgstr "Droits d'accès utilisés dans la révision des documents"
 
+#. Relecture should be better
 #: document/static/js/modules/documents/access_rights/index.js:74
 #: document/static/js/modules/documents/access_rights/index.js:87
 msgid "Review"
@@ -1254,32 +1259,32 @@ msgstr "Le document a été supprimé"
 
 #: document/static/js/modules/documents/overview/actions.js:38
 msgid "Delete the document(s)?"
-msgstr "Supprimer le ou les documents?"
+msgstr "Supprimer le(s) document(s)?"
 
-#: document/static/js/modules/documents/overview/index.js:237
+#: document/static/js/modules/documents/overview/index.js:235
 msgid "No documents available"
 msgstr "Aucun document disponible"
 
-#: document/static/js/modules/documents/overview/index.js:245
+#: document/static/js/modules/documents/overview/index.js:243
 msgid "Revisions"
 msgstr "Révisions"
 
-#: document/static/js/modules/documents/overview/index.js:245
+#: document/static/js/modules/documents/overview/index.js:243
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:84
 msgid "Created"
 msgstr "Créé"
 
-#: document/static/js/modules/documents/overview/index.js:245
+#: document/static/js/modules/documents/overview/index.js:243
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:84
 msgid "Last changed"
 msgstr "Dernière modification"
 
-#: document/static/js/modules/documents/overview/index.js:245
+#: document/static/js/modules/documents/overview/index.js:243
 msgid "Owner"
 msgstr "Propriétaire"
 
 #: document/static/js/modules/documents/access_rights/templates.js:10
-#: document/static/js/modules/documents/overview/index.js:245
+#: document/static/js/modules/documents/overview/index.js:243
 msgid "Rights"
 msgstr "Droits"
 
@@ -1345,7 +1350,7 @@ msgid "Time"
 msgstr "Temps"
 
 #: document/static/js/modules/documents/revisions/templates.js:6
-#: document/static/js/modules/editor/marginboxes/templates.js:90
+#: document/static/js/modules/editor/marginboxes/templates.js:263
 msgid "Recreate"
 msgstr "Recréer"
 
@@ -1353,8 +1358,8 @@ msgstr "Recréer"
 msgid "Could not obtain extra document data"
 msgstr "Impossible d'obtenir des données de document supplémentaires"
 
-#: document/static/js/modules/editor/comments/interactions.js:319
-#: document/static/js/modules/editor/comments/interactions.js:377
+#: document/static/js/modules/editor/comments/interactions.js:321
+#: document/static/js/modules/editor/comments/interactions.js:379
 #: document/static/js/modules/editor/comments/store.js:50
 msgid "Reviewer"
 msgstr "Critique"
@@ -1408,7 +1413,7 @@ msgid "Configure Citation"
 msgstr "Configurer la citation"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:161
-#: document/static/js/modules/documents/overview/index.js:270
+#: document/static/js/modules/documents/overview/index.js:268
 #: document/static/js/modules/editor/dialogs/citation.js:97
 #: document/static/js/modules/editor/dialogs/citation.js:138
 #: document/static/js/modules/exporter/tools/file.js:3
@@ -1428,7 +1433,7 @@ msgstr "Veuillez sélectionner au moins une source de citation!"
 
 #: document/static/js/modules/editor/dialogs/figure.js:247
 msgid "Enter latex math or insert an image"
-msgstr "Entrez les mathématiques du latex ou insérez une image"
+msgstr "Entrez les mathématiques en LaTeX ou insérez une image"
 
 #: document/static/js/modules/schema/const.js:1
 msgid "Albanian"
@@ -1552,7 +1557,7 @@ msgid "Tagalog"
 msgstr "Tagalog"
 
 #: base/static/js/modules/copyright_dialog/index.js:52
-#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:251
+#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:273
 #: document/static/js/modules/editor/dialogs/language.js:14
 msgid "Change"
 msgstr "Changement"
@@ -1563,7 +1568,7 @@ msgstr "Changer la langue du document"
 
 #: document/static/js/modules/document_template/templates.js:10
 #: document/static/js/modules/editor/dialogs/link.js:202
-#: document/static/js/modules/editor/menus/toolbar/model.js:368
+#: document/static/js/modules/editor/menus/toolbar/model.js:369
 msgid "Link"
 msgstr "Lien"
 
@@ -1576,7 +1581,7 @@ msgstr "Formule mathématique"
 #: document/static/js/modules/editor/dialogs/revision.js:13
 #: user_template_manager/static/js/modules/user_template_manager/editor.js:41
 msgid "Save"
-msgstr "sauver"
+msgstr "Sauver"
 
 #: document/static/js/modules/editor/dialogs/revision.js:26
 msgid "Revision description"
@@ -1616,8 +1621,8 @@ msgid "None"
 msgstr "Aucun"
 
 #: document/static/js/modules/document_template/templates.js:6
-#: document/static/js/modules/editor/menus/toolbar/model.js:16
-#: document/static/js/modules/editor/menus/toolbar/model.js:449
+#: document/static/js/modules/editor/menus/toolbar/model.js:17
+#: document/static/js/modules/editor/menus/toolbar/model.js:450
 msgid "Figure"
 msgstr "Figure"
 
@@ -1626,7 +1631,7 @@ msgstr "Figure"
 #: document/static/js/modules/document_template/schema.js:176
 #: document/static/js/modules/document_template/templates.js:6
 #: document/static/js/modules/document_template/templates.js:70
-#: document/static/js/modules/editor/menus/toolbar/model.js:465
+#: document/static/js/modules/editor/menus/toolbar/model.js:466
 msgid "Table"
 msgstr "Table"
 
@@ -1644,12 +1649,11 @@ msgstr "Auteur (1998)"
 
 #: document/static/js/modules/editor/comments/editors/answer.js:11
 #: document/static/js/modules/editor/comments/editors/comment.js:87
-#: document/static/js/modules/editor/marginboxes/templates.js:14
-#: document/static/js/modules/editor/marginboxes/templates.js:90
+#: document/static/js/modules/editor/marginboxes/templates.js:263
 #: document/static/js/modules/editor/state_plugins/contributor_input.js:58
 #: document/static/js/modules/editor/state_plugins/links.js:176
 msgid "Edit"
-msgstr "modifier"
+msgstr "Éditer"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:98
 msgid "New paragraph"
@@ -1715,7 +1719,7 @@ msgstr "Changement de format"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:133
 msgid "Removed"
-msgstr "Supprimé"
+msgstr "Retiré"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:137
 #: usermedia/static/js/modules/images/overview/index.js:192
@@ -1792,7 +1796,7 @@ msgstr "Exporter le document en Epub liseuse de document. "
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:155
 msgid "LaTeX"
-msgstr "Latex"
+msgstr "LaTeX"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:157
 msgid "Export the document to an LaTeX file."
@@ -1836,7 +1840,7 @@ msgstr "Autre"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:246
 msgid "Paper Size"
-msgstr "Format de Papier"
+msgstr "Format de papier"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:248
 msgid "Choose a papersize for print and PDF generation."
@@ -1857,7 +1861,7 @@ msgstr "US Letter"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:273
 msgid "The format used by the USA and some other American countries."
-msgstr "Le format est utilisé par les États-Unis et quelques autres pays d'Amérique."
+msgstr "Le format  utilisé par les États-Unis et quelques autres pays d'Amérique."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:310
 msgid "Tools"
@@ -1870,7 +1874,7 @@ msgstr "Sélectionnez l'outil d'édition de documents."
 #: document/static/js/modules/editor/menus/headerbar/model.js:315
 #: document/static/js/modules/editor/tools/word_count/index.js:10
 msgid "Word counter"
-msgstr "Compteur de Mots"
+msgstr "Compteur de mots"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:317
 msgid "See document statistics."
@@ -1884,7 +1888,7 @@ msgstr "Raccourcis clavier"
 msgid "Show an overview of available keyboard shortcuts."
 msgstr "Afficher un aperçu des raccourcis clavier disponibles."
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:466
+#: document/static/js/modules/editor/menus/toolbar/model.js:467
 msgid "Insert a table into the document."
 msgstr "Insérez un tableau dans le document."
 
@@ -1993,46 +1997,48 @@ msgstr "Supprimer le tableau actuellement sélectionné"
 msgid "Authors"
 msgstr "Auteurs"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:8
+#: document/static/js/modules/editor/menus/toolbar/model.js:9
 msgid "Normal Text"
 msgstr "Texte Normal"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:9
-msgid "1st Heading"
-msgstr "1ère rubrique"
-
+#. rubrique (french) == category
+#. heading is more related to the title level (niveau), thus "niveau" seems better
 #: document/static/js/modules/editor/menus/toolbar/model.js:10
-msgid "2nd Heading"
-msgstr "2e titre"
+msgid "1st Heading"
+msgstr "1er niveau"
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:11
-msgid "3rd Heading"
-msgstr "3e titre"
+msgid "2nd Heading"
+msgstr "2e niveau"
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:12
-msgid "4th Heading"
-msgstr "4ème rubrique"
+msgid "3rd Heading"
+msgstr "3e niveau"
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:13
-msgid "5th Heading"
-msgstr "5ème rubrique"
+msgid "4th Heading"
+msgstr "4ème niveau"
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:14
+msgid "5th Heading"
+msgstr "5ème niveau"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:15
 msgid "6th Heading"
-msgstr "6e titre"
+msgstr "6e niveau"
 
 #: document/static/js/modules/document_template/templates.js:6
-#: document/static/js/modules/editor/menus/toolbar/model.js:15
+#: document/static/js/modules/editor/menus/toolbar/model.js:16
 msgid "Code"
 msgstr "Code"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:84
+#: document/static/js/modules/editor/menus/toolbar/model.js:85
 msgid "Open/close header menu"
 msgstr "Ouvrir / fermer le menu d'en-tête"
 
 #: document/static/js/modules/document_template/templates.js:6
-#: document/static/js/modules/editor/menus/toolbar/model.js:113
-#: document/static/js/modules/editor/menus/toolbar/model.js:384
+#: document/static/js/modules/editor/menus/toolbar/model.js:114
+#: document/static/js/modules/editor/menus/toolbar/model.js:385
 msgid "Footnote"
 msgstr "Note de bas de page"
 
@@ -2040,55 +2046,55 @@ msgstr "Note de bas de page"
 msgid "Bold"
 msgstr "Gras"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:319
+#: document/static/js/modules/editor/menus/toolbar/model.js:320
 msgid "Numbered list"
 msgstr "Liste numérotée"
 
 #: document/static/js/modules/document_template/templates.js:6
 #: document/static/js/modules/editor/marginboxes/templates.js:153
-#: document/static/js/modules/editor/menus/toolbar/model.js:335
+#: document/static/js/modules/editor/menus/toolbar/model.js:336
 msgid "Bullet list"
 msgstr "Liste à puces"
 
 #: document/static/js/modules/document_template/templates.js:6
-#: document/static/js/modules/editor/menus/toolbar/model.js:351
+#: document/static/js/modules/editor/menus/toolbar/model.js:352
 msgid "Blockquote"
 msgstr "Bloc de citation"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:402
+#: document/static/js/modules/editor/menus/toolbar/model.js:403
 msgid "Cite"
 msgstr "Citer"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:418
+#: document/static/js/modules/editor/menus/toolbar/model.js:419
 msgid "Horizontal line"
 msgstr "Ligne horizontale"
 
 #: document/static/js/modules/editor/dialogs/templates.js:23
-#: document/static/js/modules/editor/menus/toolbar/model.js:434
+#: document/static/js/modules/editor/menus/toolbar/model.js:435
 msgid "Math"
 msgstr "Math"
 
 #: document/static/js/modules/editor/dialogs/figure.js:47
 #: document/static/js/modules/editor/dialogs/math.js:77
-#: document/static/js/modules/editor/menus/toolbar/model.js:482
+#: document/static/js/modules/editor/menus/toolbar/model.js:483
 #: document/static/js/modules/editor/tools/key_bindings/templates.js:1
 msgid "Undo"
 msgstr "Annuler"
 
 #: document/static/js/modules/editor/dialogs/figure.js:45
 #: document/static/js/modules/editor/dialogs/math.js:75
-#: document/static/js/modules/editor/menus/toolbar/model.js:489
+#: document/static/js/modules/editor/menus/toolbar/model.js:490
 #: document/static/js/modules/editor/tools/key_bindings/templates.js:1
 msgid "Redo"
 msgstr "Rétablir"
 
 #: document/static/js/modules/documents/access_rights/index.js:56
 #: document/static/js/modules/documents/access_rights/index.js:58
-#: document/static/js/modules/editor/menus/selection/model.js:34
+#: document/static/js/modules/editor/menus/selection/model.js:35
 msgid "Comment"
 msgstr "Commentaire"
 
-#: document/static/js/modules/editor/menus/selection/model.js:46
+#: document/static/js/modules/editor/menus/selection/model.js:55
 #: document/static/js/modules/editor/state_plugins/links.js:176
 msgid "Anchor"
 msgstr "Ancre"
@@ -2097,7 +2103,7 @@ msgstr "Ancre"
 msgid "More"
 msgstr "Plus"
 
-#: document/static/js/modules/editor/index.js:183
+#: document/static/js/modules/editor/index.js:185
 msgid "Warning! Not all your changes have been saved! You could suffer data loss. Attempting to reconnect..."
 msgstr "Attention! Toutes vos modifications n'ont pas été enregistrées! Vous pourriez subir une perte de données. Tentative de reconnexion..."
 
@@ -2162,11 +2168,11 @@ msgstr "Inconnu"
 
 #: document/static/js/modules/exporter/epub/index.js:26
 msgid "Epub export has been initiated."
-msgstr "L'exportation epub a été lancée."
+msgstr "L'exportation epub a été initiée."
 
 #: document/static/js/modules/exporter/html/index.js:22
 msgid "HTML export has been initiated."
-msgstr "L'exportation HTML a été lancée."
+msgstr "L'exportation HTML a été initiée."
 
 #: document/static/js/modules/exporter/native/copy.js:31
 msgid " successfully copied."
@@ -2182,7 +2188,7 @@ msgstr "La révision n'a pas pu être enregistrée."
 
 #: document/static/js/modules/exporter/native/shrink.js:17
 msgid "File export has been initiated."
-msgstr "L'exportation de fichier a été lancée."
+msgstr "L'exportation de fichier a été initiée."
 
 #: document/static/js/modules/importer/file.js:42
 #: document/static/js/modules/importer/file.js:67
@@ -2237,7 +2243,7 @@ msgstr "Email"
 
 #: menu/static/js/modules/menu/index.js:10
 msgid "Documents"
-msgstr "Les documents"
+msgstr "Documents"
 
 #: menu/static/js/modules/menu/index.js:12
 msgid "edit documents"
@@ -2263,13 +2269,13 @@ msgstr "gérer les fichiers images"
 
 #: base/static/js/modules/common/dialog.js:43
 msgid "OK"
-msgstr "D'accord"
+msgstr "OK"
 
 #. esta bien?
 #: base/static/js/modules/copyright_dialog/templates.js:17
 #: bibliography/static/js/modules/bibliography/form/fields/key.js:57
 msgid "Custom"
-msgstr "Douane"
+msgstr "Personnalisé"
 
 #: bibliography/static/js/modules/bibliography/form/fields/name.js:92
 msgid "Prefix used"
@@ -2380,7 +2386,7 @@ msgstr "Merci d'avoir vérifié!"
 msgid "You can now log in."
 msgstr "Vous pouvez maintenant vous connecter."
 
-#: user/static/js/modules/contacts/index.js:62
+#: user/static/js/modules/contacts/index.js:61
 msgid "Could not obtain contacts list"
 msgstr "Impossible d'obtenir la liste des contacts"
 
@@ -2464,7 +2470,7 @@ msgstr "importé avec succès."
 
 #: document/static/js/modules/documents/revisions/templates.js:6
 msgid "Description"
-msgstr "La description"
+msgstr "Description"
 
 #: document/static/js/modules/documents/revisions/templates.js:6
 #: document/static/js/modules/editor/menus/headerbar/model.js:91
@@ -2481,18 +2487,20 @@ msgstr "Titre du lien"
 
 #: document/static/js/modules/editor/dialogs/templates.js:15
 msgid "Description (optional)"
-msgstr "description (facultatif)"
+msgstr "Description (facultatif)"
 
 #: document/static/js/modules/editor/dialogs/templates.js:35
 #: usermedia/static/js/modules/images/selection_dialog/index.js:108
 msgid "Image"
 msgstr "Image"
 
+#. Téléverser=Upload
+#. Télécharger=Download
 #: document/static/js/modules/editor/dialogs/templates.js:35
 #: user/static/js/modules/profile/dialogs.js:5
 #: usermedia/static/js/modules/images/edit_dialog/index.js:36
 msgid "Upload"
-msgstr "Télécharger"
+msgstr "Téléverser"
 
 #: document/static/js/modules/editor/dialogs/figure.js:28
 msgid "Insert image"
@@ -2521,7 +2529,7 @@ msgstr "Californie."
 
 #: document/static/js/modules/editor/marginboxes/templates.js:174
 msgid "Accept"
-msgstr "Acceptez"
+msgstr "Accepter"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:94
 msgid "Download the current document."
@@ -2536,7 +2544,7 @@ msgid "Untitled Document"
 msgstr "Document sans titre"
 
 #: base/static/js/modules/common/ws.js:24
-#: document/static/js/modules/editor/index.js:184
+#: document/static/js/modules/editor/index.js:186
 msgid "Disconnected. Attempting to reconnect..."
 msgstr "Débranché. Tentative de reconnexion..."
 
@@ -2743,7 +2751,7 @@ msgstr "Message délivré"
 msgid "Sending..."
 msgstr "Envoi..."
 
-#: base/static/js/modules/common/basic.js:201
+#: base/static/js/modules/common/basic.js:235
 msgid "System message"
 msgstr "Message système"
 
@@ -2833,9 +2841,10 @@ msgstr "Les identifiants doivent être uniques."
 msgid "Document style"
 msgstr "Style de document"
 
+#. ??
 #: document/static/js/modules/document_template/document_style_dialog.js:80
 msgid "Slug"
-msgstr "Limace"
+msgstr "Slug"
 
 #: document/static/js/modules/document_template/document_style_dialog.js:80
 msgid "CSS Style"
@@ -2863,7 +2872,7 @@ msgstr "Un slug ne peut contenir que des lettres, des chiffres, des tirets et de
 
 #: document/static/js/modules/document_template/document_style_dialog.js:157
 msgid "The slug has to be unique."
-msgstr "La limace doit être unique."
+msgstr "Le slug doit être unique."
 
 #: document/static/js/modules/document_template/document_style_dialog.js:239
 msgid "A file with the same name exists already."
@@ -2958,42 +2967,42 @@ msgstr "Éléments autorisés"
 #: document/static/js/modules/editor/marginboxes/templates.js:145
 #: document/static/js/modules/editor/menus/navigator/model.js:3
 msgid "Heading 1"
-msgstr "Rubrique 1"
+msgstr "Niveau 1"
 
 #: document/static/js/modules/document_template/templates.js:6
 #: document/static/js/modules/document_template/templates.js:21
 #: document/static/js/modules/editor/marginboxes/templates.js:146
 #: document/static/js/modules/editor/menus/navigator/model.js:6
 msgid "Heading 2"
-msgstr "Rubrique 2"
+msgstr "Niveau 2"
 
 #: document/static/js/modules/document_template/templates.js:6
 #: document/static/js/modules/document_template/templates.js:21
 #: document/static/js/modules/editor/marginboxes/templates.js:147
 #: document/static/js/modules/editor/menus/navigator/model.js:9
 msgid "Heading 3"
-msgstr "Rubrique 3"
+msgstr "Niveau 3"
 
 #: document/static/js/modules/document_template/templates.js:6
 #: document/static/js/modules/document_template/templates.js:21
 #: document/static/js/modules/editor/marginboxes/templates.js:148
 #: document/static/js/modules/editor/menus/navigator/model.js:12
 msgid "Heading 4"
-msgstr "Rubrique 4"
+msgstr "Niveau 4"
 
 #: document/static/js/modules/document_template/templates.js:6
 #: document/static/js/modules/document_template/templates.js:21
 #: document/static/js/modules/editor/marginboxes/templates.js:149
 #: document/static/js/modules/editor/menus/navigator/model.js:15
 msgid "Heading 5"
-msgstr "Rubrique 5"
+msgstr "Niveau 5"
 
 #: document/static/js/modules/document_template/templates.js:6
 #: document/static/js/modules/document_template/templates.js:21
 #: document/static/js/modules/editor/marginboxes/templates.js:150
 #: document/static/js/modules/editor/menus/navigator/model.js:18
 msgid "Heading 6"
-msgstr "Rubrique 6"
+msgstr "Niveau 6"
 
 #: document/static/js/modules/document_template/templates.js:6
 #: document/static/js/modules/editor/marginboxes/templates.js:152
@@ -3018,7 +3027,7 @@ msgstr "Marques autorisées"
 
 #: document/static/js/modules/document_template/templates.js:10
 #: document/static/js/modules/editor/marginboxes/templates.js:123
-#: document/static/js/modules/editor/menus/toolbar/model.js:294
+#: document/static/js/modules/editor/menus/toolbar/model.js:295
 msgid "Underline"
 msgstr "Souligner"
 
@@ -3138,7 +3147,7 @@ msgstr "Rubriques autorisées"
 #: document/static/js/modules/document_template/templates.js:47
 #: document/static/js/modules/document_template/templates.js:74
 msgid "Language"
-msgstr "La langue"
+msgstr "Langue"
 
 #: document/static/js/modules/document_template/templates.js:23
 #: document/static/js/modules/document_template/templates.js:47
@@ -3319,7 +3328,7 @@ msgstr "Inviter"
 msgid "Document Overview"
 msgstr "Aperçu du document"
 
-#: document/static/js/modules/documents/overview/index.js:301
+#: document/static/js/modules/documents/overview/index.js:299
 msgid "Undefined"
 msgstr "Indéfini"
 
@@ -3433,39 +3442,39 @@ msgstr "Afficher / masquer"
 msgid "Assigned to"
 msgstr "Assigné à"
 
-#: document/static/js/modules/editor/marginboxes/templates.js:90
+#: document/static/js/modules/editor/marginboxes/templates.js:263
 msgid "Assign comment to user"
 msgstr "Attribuer un commentaire à l'utilisateur"
 
-#: document/static/js/modules/editor/marginboxes/templates.js:90
+#: document/static/js/modules/editor/marginboxes/templates.js:263
 msgid "Assign to"
 msgstr "Affecter à"
 
-#: document/static/js/modules/editor/marginboxes/templates.js:90
+#: document/static/js/modules/editor/marginboxes/templates.js:263
 msgid "Remove user assignment from comment"
 msgstr "Supprimer l'affectation d'utilisateur du commentaire"
 
-#: document/static/js/modules/editor/marginboxes/templates.js:90
+#: document/static/js/modules/editor/marginboxes/templates.js:263
 msgid "No-one"
 msgstr "Personne"
 
-#: document/static/js/modules/editor/marginboxes/templates.js:90
+#: document/static/js/modules/editor/marginboxes/templates.js:263
 msgid "Assign comment to"
 msgstr "Attribuer un commentaire à"
 
-#: document/static/js/modules/editor/marginboxes/templates.js:90
+#: document/static/js/modules/editor/marginboxes/templates.js:263
 msgid "Recreate comment"
 msgstr "Recréer un commentaire"
 
-#: document/static/js/modules/editor/marginboxes/templates.js:90
+#: document/static/js/modules/editor/marginboxes/templates.js:263
 msgid "Resolve comment"
 msgstr "Résoudre le commentaire"
 
-#: document/static/js/modules/editor/marginboxes/templates.js:90
+#: document/static/js/modules/editor/marginboxes/templates.js:263
 msgid "Resolve"
 msgstr "Résoudre"
 
-#: document/static/js/modules/editor/marginboxes/templates.js:90
+#: document/static/js/modules/editor/marginboxes/templates.js:263
 msgid "Delete comment"
 msgstr "Supprimer le commentaire"
 
@@ -3586,11 +3595,11 @@ msgstr "Tout rejeter"
 msgid "Reject all tracked changes."
 msgstr "Refuser toutes les modifications suivies."
 
-#: document/static/js/modules/editor/menus/selection/model.js:61
+#: document/static/js/modules/editor/menus/selection/model.js:78
 msgid "Accept all in selection"
 msgstr "Accepter tout en sélection"
 
-#: document/static/js/modules/editor/menus/selection/model.js:69
+#: document/static/js/modules/editor/menus/selection/model.js:86
 msgid "Reject all in selection"
 msgstr "Tout rejeter dans la sélection"
 
@@ -3765,7 +3774,7 @@ msgstr "Se souvenir de moi"
 
 #: user/static/js/modules/login/index.js:28
 msgid "Forgot Password?"
-msgstr "Mot de Passe Oublié?"
+msgstr "Mot de passe oublié?"
 
 #: user/static/js/modules/login/index.js:74
 #: user/static/js/modules/login/index.js:79
@@ -4119,12 +4128,12 @@ msgid "Select document template for copy."
 msgstr "Sélectionnez le modèle de document à copier."
 
 #: document/static/js/modules/documents/overview/actions.js:143
-#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:251
+#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:273
 #: document/static/js/modules/editor/document_template/index.js:113
 msgid "Copy"
 msgstr "Copie"
 
-#: document/static/js/modules/documents/overview/index.js:306
+#: document/static/js/modules/documents/overview/index.js:304
 msgid "Copy selected as..."
 msgstr "Copie sélectionnée comme ..."
 
@@ -4164,7 +4173,7 @@ msgstr "Exporter sélectionné comme FIDUS"
 msgid "Export the documents that have been selected as FIDUS files."
 msgstr "Exportez les documents sélectionnés en tant que fichiers FIDUS."
 
-#: document/static/js/modules/editor/collab/merge/index.js:184
+#: document/static/js/modules/editor/collab/merge/index.js:189
 msgid "The document was modified substantially by other users while you were offline. We have merged your changes in as tracked changes. You should verify that your edits still make sense."
 msgstr "Le document a été considérablement modifié par d'autres utilisateurs lorsque vous étiez hors ligne. Nous avons fusionné vos modifications en tant que modifications suivies. Vous devez vérifier que vos modifications ont toujours un sens."
 
@@ -4176,11 +4185,11 @@ msgstr "Créer une copie en tant que ..."
 msgid "Create copy of the current document with a specific template."
 msgstr "Créez une copie du document actuel avec un modèle spécifique."
 
-#: document/static/js/modules/editor/marginboxes/index.js:406
+#: document/static/js/modules/editor/marginboxes/index.js:436
 msgid "A cross reference has lost its target."
 msgstr "Une référence croisée a perdu sa cible."
 
-#: document/static/js/modules/editor/marginboxes/index.js:419
+#: document/static/js/modules/editor/marginboxes/index.js:449
 msgid "An internal link has lost its target."
 msgstr "Un lien interne a perdu sa cible."
 
@@ -4288,7 +4297,7 @@ msgstr "Éditer l'image"
 msgid "Delete selected images."
 msgstr "Supprimez les images sélectionnées."
 
-#: document/static/js/modules/documents/overview/index.js:307
+#: document/static/js/modules/documents/overview/index.js:305
 msgid "Copy the documents and assign them to a specific template."
 msgstr "Copiez les documents et affectez-les à un modèle spécifique."
 
@@ -4439,7 +4448,7 @@ msgstr "Que se passe-t-il si j'essaie de terminer la fusion sans résoudre toute
 msgid "One or more of the image(s) you copied could not be found on the server. Consider re-uploading them once the document is merged."
 msgstr "Une ou plusieurs des images que vous avez copiées sont introuvables sur le serveur. Envisagez de les télécharger à nouveau une fois le document fusionné."
 
-#: document/static/js/modules/editor/collab/merge/index.js:174
+#: document/static/js/modules/editor/collab/merge/index.js:179
 msgid "One of the image(s) you copied could not be found on the server. Please try uploading it again."
 msgstr "L'une des images que vous avez copiées est introuvable sur le serveur. Veuillez réessayer de le télécharger."
 
@@ -4453,43 +4462,43 @@ msgstr "Changement copié dans le presse-papiers."
 msgid "The change could not be applied automatically. Please consider using the copy option to copy the changes."
 msgstr "La modification n'a pas pu être appliquée automatiquement. Veuillez envisager d'utiliser l'option de copie pour copier les modifications."
 
-#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:232
+#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:254
 msgid "Format Change"
 msgstr "Changement de format"
 
-#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:236
+#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:258
 msgid "Inserted by online users"
 msgstr "Inséré par les utilisateurs en ligne"
 
-#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:238
+#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:260
 msgid "Deleted by online users"
 msgstr "Supprimé par les utilisateurs en ligne"
 
-#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:242
+#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:264
 msgid "Inserted by you"
 msgstr "Inséré par vous"
 
-#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:244
+#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:266
 msgid "Deleted by you"
 msgstr "Supprimé par vous"
 
-#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:251
+#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:273
 msgid "Accept change"
 msgstr "Accepter le changement"
 
-#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:251
+#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:273
 msgid "Accept Change"
 msgstr "Accepter le changement"
 
-#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:251
+#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:273
 msgid "Reject change"
 msgstr "Rejeter le changement"
 
-#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:251
+#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:273
 msgid "Reject Change"
 msgstr "Rejeter le changement"
 
-#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:251
+#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:273
 msgid "Copy content"
 msgstr "Copier le contenu"
 
@@ -4535,7 +4544,7 @@ msgstr "Répertorié comme"
 
 #: document/static/js/modules/editor/dialogs/templates.js:19
 #: document/static/js/modules/editor/dialogs/templates.js:40
-#: document/static/js/modules/editor/state_plugins/placeholders.js:57
+#: document/static/js/modules/editor/state_plugins/placeholders.js:61
 msgid "Caption"
 msgstr "Légende"
 
@@ -4553,11 +4562,11 @@ msgstr "Désactiver"
 msgid "List start"
 msgstr "Début de la liste"
 
-#: document/static/js/modules/editor/index.js:253
+#: document/static/js/modules/editor/index.js:263
 msgid "Your document was out of sync and has been reset."
 msgstr "Votre document n'était pas synchronisé et a été réinitialisé."
 
-#: document/static/js/modules/editor/index.js:266
+#: document/static/js/modules/editor/index.js:294
 msgid "Session Expired"
 msgstr "La session a expiré"
 
@@ -4565,11 +4574,11 @@ msgstr "La session a expiré"
 msgid "Your session expired while you were offline so we cannot save your work to the server and we download it to your computer instead. Please consider importing it into a new document."
 msgstr "Votre session a expiré pendant que vous étiez hors ligne, nous ne pouvons donc pas enregistrer votre travail sur le serveur et nous le téléchargeons sur votre ordinateur à la place. Veuillez envisager de l'importer dans un nouveau document."
 
-#: document/static/js/modules/editor/index.js:270
+#: document/static/js/modules/editor/index.js:298
 msgid "Proceed to Login page"
 msgstr "Accédez à la page de connexion"
 
-#: document/static/js/modules/editor/index.js:341
+#: document/static/js/modules/editor/index.js:391
 msgid "Changes you made to the document since going offline will be lost, if you choose to close/refresh the tab or close the browser."
 msgstr "Les modifications que vous avez apportées au document depuis la mise hors ligne seront perdues si vous choisissez de fermer / actualiser l'onglet ou de fermer le navigateur."
 
@@ -4661,4 +4670,52 @@ msgstr "Vous recevrez un avertissement lorsque vous tenterez de terminer une fus
 #: document/static/js/modules/editor/collab/merge/editor.js:130
 msgid "You can edit the content only in the merge editor in the middle. You cannot edit content in the other two editors."
 msgstr "Vous ne pouvez modifier le contenu que dans l'éditeur de fusion au milieu. Vous ne pouvez pas modifier le contenu des deux autres éditeurs."
+
+#: document/static/js/modules/editor/collab/doc.js:146
+msgid "Updating document. Please wait..."
+msgstr "Mise à jour du document. S'il vous plaît, attendez..."
+
+#: document/static/js/modules/editor/collab/doc.js:148
+msgid "It's taking a bit longer than usual, but it should be ready soon. Please wait..."
+msgstr "Cela prend un peu plus de temps que d'habitude, mais il devrait être prêt bientôt. S'il vous plaît, attendez..."
+
+#: usermedia/static/js/modules/images/database.js:44
+msgid "Image is larger than the maximum permitted size"
+msgstr "L'image est plus grande que la taille maximale autorisée"
+
+#: document/static/js/modules/editor/marginboxes/index.js:537
+#: document/static/js/modules/editor/marginboxes/index.js:572
+#: document/static/js/modules/editor/marginboxes/templates.js:14
+#: document/static/js/modules/editor/marginboxes/templates.js:23
+msgid "show more"
+msgstr "montre plus"
+
+#: document/static/js/modules/editor/marginboxes/index.js:570
+msgid "show less"
+msgstr "Montrer moins"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:23
+msgid "replies"
+msgstr "réponses"
+
+#: document/static/js/modules/editor/index.js:273
+#, fuzzy
+msgid "Your Access rights have been modified. You now have %(accessRight)s access to this document."
+msgstr "Vos droits d'accès ont été modifiés. Vous avez maintenant l'accès de %(accessRight)s à ce document."
+
+#: document/static/js/modules/editor/index.js:296
+msgid "Your session expired while you were offline, so we cannot save your work to the server any longer, and it is downloaded to your computer instead. Please consider importing it into a new document."
+msgstr "Votre session a expiré pendant que vous étiez hors ligne, nous ne pouvons donc plus enregistrer votre travail sur le serveur et il est téléchargé sur votre ordinateur à la place. Veuillez envisager de l'importer dans un nouveau document."
+
+#: document/static/js/modules/editor/index.js:334
+msgid "Access rights modified"
+msgstr "Droits d'accès modifiés"
+
+#: document/static/js/modules/editor/index.js:336
+msgid "Your access rights were modified while you were offline, so we cannot save your work to the server any longer, and it is downloaded to your computer instead. Please consider importing it into a new document."
+msgstr "Vos droits d'accès ont été modifiés lorsque vous étiez hors ligne, nous ne pouvons donc plus enregistrer votre travail sur le serveur, et il est téléchargé sur votre ordinateur à la place. Veuillez envisager de l'importer dans un nouveau document."
+
+#: document/static/js/modules/editor/index.js:338
+msgid "Proceed to dashboard"
+msgstr "Passer au tableau de bord"
 

@@ -515,7 +515,7 @@ export class DocxExporterRichtext {
         case 'table':
         {
             const category = node.attrs.category
-            let caption = node.attrs.caption ? node.content[0].content : []
+            let caption = node.attrs.caption ? node.content[0].content || [] : []
             let catCountXml = ''
             if (category !== 'none') {
                 const categoryCounter = options.inFootnote ? this.fncategoryCounter : this.categoryCounter

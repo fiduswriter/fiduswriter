@@ -530,10 +530,11 @@ export class JATSExporterConvert {
                 copyright = imageDBEntry.copyright
                 imageFilename = filePathName.split('/').pop()
             }
+            const caption = node.attrs.caption ? node.content.find(node => node.type === 'figure_caption')?.content || [] : []
             if (
                 node.attrs.category === 'none' &&
                     imageFilename &&
-                    !node.attrs.caption.length &&
+                    !caption.length &&
                     (!copyright || !copyright.holder)
             ) {
                 content += `<graphic id="${node.attrs.id}" position="anchor" xlink:href="${imageFilename}"/>`
@@ -550,7 +551,6 @@ export class JATSExporterConvert {
                     const catLabel = `${CATS[category][this.settings.language]} ${catCount}`
                     start += `<label>${escapeText(catLabel)}</label>`
                 }
-                const caption = node.content.find(node => node.type === 'figure_caption')?.content || []
                 if (caption.length) {
                     start += `<caption><p>${caption.map(node => this.walkJson(node)).join('')}</p></caption>`
                 }
@@ -606,7 +606,7 @@ export class JATSExporterConvert {
                 const catLabel = `${CATS[category][this.settings.language]} ${catCount}`
                 start += `<label>${escapeText(catLabel)}</label>`
             }
-            const caption = node.attrs.caption ? node.content[0].content : []
+            const caption = node.attrs.caption ? node.content[0].content || [] : []
             if (caption.length) {
                 start += `<caption><p>${caption.map(node => this.walkJson(node)).join('')}</p></caption>`
             }

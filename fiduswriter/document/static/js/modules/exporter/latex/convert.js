@@ -437,18 +437,21 @@ export class LatexExporterConvert {
         }
         case 'figure': {
             const category = node.attrs.category
-            let caption = node.attrs.caption ? node.content.find(node => node.type === 'figure_caption')?.content || [] : []
+            const captionContent = node.attrs.caption ? node.content.find(node => node.type === 'figure_caption')?.content || [] : []
+            let caption
             if (category !== 'none') {
                 if (!this.categoryCounter[category]) {
                     this.categoryCounter[category] = 1
                 }
                 const catCount = this.categoryCounter[category]++
                 const catLabel = `${CATS[category][this.settings.language]} ${catCount}`
-                if (caption.length) {
-                    caption = `${catLabel}: ${escapeLatexText(caption.map(node => this.walkJson(node)).join(''))}`
+                if (captionContent.length) {
+                    caption = `${catLabel}: ${escapeLatexText(captionContent.map(node => this.walkJson(node)).join(''))}`
                 } else {
                     caption = catLabel
                 }
+            } else {
+                caption = escapeLatexText(captionContent.map(node => this.walkJson(node)).join(''))
             }
             let innerFigure = ''
             let aligned = 'left'
@@ -483,11 +486,12 @@ export class LatexExporterConvert {
             }
             if (category === 'table') {
                 start += `\n\\begin{table}\n`
-                content += `\\caption*{${caption}}\\label{${node.attrs.id}}\n${innerFigure}`
+                content += caption.length ? `\\caption*{${caption.map()}}` : ''
+                content += `\\label{${node.attrs.id}}\n${innerFigure}`
                 end = `\\end{table}\n` + end
             } else { // TODO: handle photo figure types in a special way
                 start += `\n\\begin{figure}\n`
-                content += `${innerFigure}\\caption*{${caption}}\\label{${node.attrs.id}}\n`
+                content += `${innerFigure}${caption.length ? `\\caption*{${caption}}` : ''}\\label{${node.attrs.id}}\n`
                 end = `\\end{figure}\n` + end
             }
             if (copyright?.holder) {
@@ -520,19 +524,23 @@ export class LatexExporterConvert {
             if (node.content?.length) {
                 const category = node.attrs.category
 
-                let caption = node.attrs.caption ? node.content[0].content : []
+                const captionContent = node.attrs.caption ? node.content[0].content || [] : []
+                let caption
                 if (category !== 'none') {
                     if (!this.categoryCounter[category]) {
                         this.categoryCounter[category] = 1
                     }
                     const catCount = this.categoryCounter[category]++
                     const catLabel = `${CATS[category][this.settings.language]} ${catCount}`
-                    if (caption.length) {
-                        caption = `${catLabel}: ${escapeLatexText(caption.map(node => this.walkJson(node)).join(''))}`
+                    if (captionContent.length) {
+                        caption = `${catLabel}: ${escapeLatexText(captionContent.map(node => this.walkJson(node)).join(''))}`
                     } else {
                         caption = catLabel
                     }
+                } else {
+                    caption = escapeLatexText(captionContent.map(node => this.walkJson(node)).join(''))
                 }
+
                 const columns = node.content[1].content[0].content.reduce(
                     (columns, node) => columns + node.attrs.colspan,
                     0

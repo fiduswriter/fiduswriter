@@ -282,7 +282,7 @@ export class OdtExporterRichtext {
             // We are already dealing with this in the figure.
             break
         case 'table': {
-            let caption = node.attrs.caption ? node.content[0].content.map(node => this.transformRichtext(node)).join('') : ''
+            let caption = node.attrs.caption ? node.content[0].content?.map(node => this.transformRichtext(node)).join('') || '' : ''
             // The table category should not be in the
             // user's language but rather the document language
             const category = node.attrs.category

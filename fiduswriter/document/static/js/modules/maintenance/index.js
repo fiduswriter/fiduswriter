@@ -116,7 +116,7 @@ export class DocMaintenance {
                     bibliography: doc.bibliography,
                     comments: doc.comments,
                     version: doc.version,
-                    diffs: doc.last_diffs
+                    diffs: doc.diffs
                 }
             ), promises = [p1]
         if (doc.imageIds) {
@@ -167,7 +167,7 @@ export class DocMaintenance {
             ({json}) => {
                 const oldDoc = {
                     content: json.content,
-                    last_diffs: [],
+                    diffs: [],
                     bibliography: {},
                     comments: {},
                     title: json.title,

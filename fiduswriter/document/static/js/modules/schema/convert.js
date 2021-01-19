@@ -874,7 +874,12 @@ const convertNodeV32 = function(node, ids = []) {
         break
     case 'table_cell':
         if (!node.content || !node.content.length) {
-            node.content = {type: 'paragraph'}
+            node.content = [{type: 'paragraph'}]
+        }
+        break
+    case 'table_header':
+        if (!node.content || !node.content.length) {
+            node.content = [{type: 'paragraph'}]
         }
         break
     case 'bullet_list':

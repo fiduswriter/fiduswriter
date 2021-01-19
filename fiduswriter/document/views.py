@@ -1047,15 +1047,15 @@ def save_doc(request):
     diffs = request.POST.get('diffs', False)
     version = request.POST.get('version', False)
     if content:
-        doc.content = content
+        doc.content = json.loads(content)
     if bibliography:
-        doc.bibliography = bibliography
+        doc.bibliography = json.loads(bibliography)
     if comments:
-        doc.comments = comments
+        doc.comments = json.loads(comments)
     if version:
         doc.version = version
     if diffs:
-        doc.diffs = diffs
+        doc.diffs = json.loads(diffs)
     doc.doc_version = FW_DOCUMENT_VERSION
     doc.save()
     return JsonResponse(
@@ -1167,7 +1167,7 @@ def save_template(request):
         # Only looking at fields that may have changed.
         content = request.POST.get('content', False)
         if content:
-            template.content = content
+            template.content = json.loads(content)
         template.doc_version = FW_DOCUMENT_VERSION
         template.save()
     return JsonResponse(

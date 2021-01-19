@@ -10,22 +10,6 @@ from django.core.files import File
 # Some Fidus Writer 3.9.0 and 3.9.1 installations will have empty table header cells
 FW_DOCUMENT_VERSION = 3.3
 
-ID_COUNTER = 0
-
-def update_initial_node(node):
-    global ID_COUNTER
-    if "type" in node:
-        if (
-            node["type"] == "table_header" and
-            (
-                not "content" in node or
-                len(node["content"]) == 0
-            )
-        ):  
-            node["content"] = [{"type": "paragraph"}]
-    if "content" in node:
-        for sub_node in node["content"]:
-            update_initial_node(sub_node)
 
 def update_node(node):
     if "contents" in node:  # revision
@@ -48,7 +32,7 @@ def update_node(node):
         bool(node["attrs"]["initial"])
     ):
         for sub_node in node["attrs"]["initial"]:
-            update_initial_node(sub_node)
+            update_node(sub_node)
 
 # from https://stackoverflow.com/questions/25738523/how-to-update-one-file-inside-zip-file-using-python
 def update_revision_zip(file_field, file_name):
@@ -63,9 +47,6 @@ def update_revision_zip(file_field, file_name):
                 if item.filename == 'document.json':
                     doc_string = zin.read(item.filename)
                     doc = json.loads(doc_string)
-                    if 'contents' in doc:
-                        doc['content'] = doc['contents']
-                        del doc['contents']
                     update_node(doc['content'])
                     zout.writestr(
                         item,

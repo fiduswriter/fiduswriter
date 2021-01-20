@@ -39,7 +39,7 @@ export class Merge {
     constructor(mod) {
         this.mod = mod
         this.trackOfflineLimit = 50 // Limit of local changes while offline for tracking to kick in when multiple users edit
-        this.remoteTrackOfflineLimit = 20 // Limit of remote changes while offline for tracking to kick in when multiple users edit
+        this.remoteTrackOfflineLimit = 50 // Limit of remote changes while offline for tracking to kick in when multiple users edit
     }
 
     adjustDocument(data) {
@@ -101,6 +101,11 @@ export class Merge {
             const conflicts = lostChangeSet.findConflicts(unconfirmedTr, modifiedLostTr)
             // Set the version
             this.mod.editor.docInfo.version = data.doc.v
+            
+            
+            // Before starting the merge process update the fn editor to be in sync
+            // with main editor
+            this.mod.editor.mod.footnotes.fnEditor.renderAllFootnotes()
 
             // If no conflicts arises auto-merge the document
             if (conflicts.length > 0) {

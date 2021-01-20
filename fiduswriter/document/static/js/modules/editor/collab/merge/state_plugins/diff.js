@@ -472,6 +472,14 @@ export const diffPlugin = function(options) {
         },
         props: {
             handleClick: (view, _pos, event) => {
+                const $pos = view.state.doc.resolve(_pos)
+                if($pos.node && $pos.parent && $pos.parent.type.name == "figure") {
+                    const tr = view.state.tr
+                    const $updatedPos = view.state.doc.resolve(_pos-($pos.parentOffset+1))
+                    tr.setSelection(new NodeSelection($updatedPos))
+                    view.dispatch(tr)
+                }
+
                 const delDeco = view.dom.querySelectorAll(".offline-deleted,.online-deleted")
                 if (delDeco) {
                     delDeco.forEach(item => item.classList.remove("selected-dec"))

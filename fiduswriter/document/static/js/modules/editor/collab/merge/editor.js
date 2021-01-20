@@ -337,7 +337,7 @@ export class MergeEditor {
                         markOnly: false})
                     insertionMarksTr.addMark(from, to, insertionMark)
                     stepsTrackedByChangeset.push(index)
-                } else if (stepOne.slice && stepOne.slice.content.length == 1 && stepOne.slice.content[0].type === "figure") {
+                } else if (stepOne.slice && stepOne.slice.content[0].type === "figure") {
                     if (stepOne.from == stepOne.to) {
                         this.markBlockDiffs(insertionMarksTr, stepOne.from, stepOne.to + 1, insertionClass, [index])
                     } else {
@@ -366,6 +366,13 @@ export class MergeEditor {
                     stepsTrackedByChangeset = stepsTrackedByChangeset.concat(stepsInvolved)
                     insertionMarksTr.addMark(from, to, insertionMark)
                 }
+            } else if(step instanceof ReplaceAroundStep && !stepsTrackedByChangeset.includes(index)) {
+                const stepOne = step.toJSON()
+                if (stepOne.slice && stepOne.slice.content[0].type === "figure") {
+                    this.markBlockDiffs(insertionMarksTr, stepOne.from, stepOne.to , insertionClass, [index])
+                    stepsTrackedByChangeset.push(index)
+                }
+
             }
         })
 

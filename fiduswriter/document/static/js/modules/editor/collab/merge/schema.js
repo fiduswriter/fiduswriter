@@ -36,20 +36,18 @@ export const createDiffSchema = function(docSchema) {
                     toDOM: function(node) {
                         let dom = nodeType.toDOM(node)
                         if (node.attrs.diffdata && node.attrs.diffdata.length) {
-                            if (node.type.name == "figure") {
-                                dom.dataset.diffdata = JSON.stringify(node.attrs.diffdata)
-                                dom.classList.add(node.attrs.diffdata[0].type)
-                                return dom
+                            if(dom[1].class) {
+                                dom[1].class = dom[1].class + ' ' + node.attrs.diffdata[0].type
                             } else {
-                                dom = [
-                                    dom[0],
-                                    Object.assign({
-                                        'data-diffdata': JSON.stringify(node.attrs.diffdata),
-                                        'class': node.attrs.diffdata[0].type
-                                    }, dom[1]),
-                                    dom[2]
-                                ]
+                                dom[1]['class'] = node.attrs.diffdata[0].type
                             }
+                            dom = [
+                                dom[0],
+                                Object.assign({
+                                    'data-diffdata': JSON.stringify(node.attrs.diffdata),
+                                }, dom[1]),
+                                dom[2]
+                            ]
                         }
                         return dom
                     },

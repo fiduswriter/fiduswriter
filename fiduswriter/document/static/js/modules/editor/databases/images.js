@@ -118,10 +118,10 @@ export class ModImageDB {
                             const imageData = JSON.parse(JSON.stringify(this.mod.editor.app.imageDB.db[newId]))
                             this.setImage(newId, imageData)
                             this.mod.editor.view.state.doc.descendants((node, pos) => {
-                                if (node.type.name === 'figure' && node.attrs.image == id) {
+                                if (node.type.name === 'image' && node.attrs.image == id) {
                                     const attrs = Object.assign({}, node.attrs)
                                     attrs["image"] = newId
-                                    const nodeType = this.mod.editor.currentView.state.schema.nodes['figure']
+                                    const nodeType = this.mod.editor.currentView.state.schema.nodes['image']
                                     const transaction = this.mod.editor.view.state.tr.setNodeMarkup(pos, nodeType, attrs)
                                     this.mod.editor.view.dispatch(transaction)
                                 }

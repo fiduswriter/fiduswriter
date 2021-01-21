@@ -233,7 +233,11 @@ export class ModCommentStore {
             if (!this.comments[id].answers) {
                 this.comments[id].answers = []
             }
-            this.comments[id].answers.push(answer)
+            const answerFound = this.comments[id].answers.find(Answer => Answer.id ===
+                answer.id)
+            if (!answerFound) {
+                this.comments[id].answers.push(answer)
+            }
         }
 
         if (local || (!this.mod.interactions.isCurrentlyEditing())) {

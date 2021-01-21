@@ -58,7 +58,12 @@ hr.selected-dec {
 #editor-diff-common,
 #editor-diff-online {
     width: 33%;
-    counter-reset: prosemirror-footnote;
+    counter-reset: prosemirror-footnote cat-0 cat-1 cat-2;
+}
+
+figure figcaption span.label::after, table[data-category='table'] caption span.label::after {
+    content: none !important;
+    display: none;
 }
 
 /* Footnote Node View Related CSS */

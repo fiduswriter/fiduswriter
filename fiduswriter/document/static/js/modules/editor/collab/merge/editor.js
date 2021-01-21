@@ -644,7 +644,7 @@ export class MergeEditor {
                                 }
                             })
                             this.mergeView3.state.doc.descendants((node, pos) => {
-                                if (node.type.name === 'figure' && node.attrs.image == id) {
+                                if (node.type.name === 'image' && node.attrs.image == id) {
                                     const attrs = Object.assign({}, node.attrs)
                                     attrs["image"] = newId
                                     const nodeType = this.mergeView3.state.schema.nodes['image']

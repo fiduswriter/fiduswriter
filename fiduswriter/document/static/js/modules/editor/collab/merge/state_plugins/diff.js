@@ -474,6 +474,8 @@ export const diffPlugin = function(options) {
             handleClick: (view, _pos, event) => {
                 const $pos = view.state.doc.resolve(_pos)
                 if($pos.node && $pos.parent && $pos.parent.type.name == "figure") {
+                    // If the click is on a Fig element set up a node selection 
+                    // so that accept/reject options are shown properly.
                     const tr = view.state.tr
                     const $updatedPos = view.state.doc.resolve(_pos-($pos.parentOffset+1))
                     tr.setSelection(new NodeSelection($updatedPos))

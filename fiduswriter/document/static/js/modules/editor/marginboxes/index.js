@@ -72,7 +72,7 @@ export class ModMarginboxes {
                     Array.from(el.target.parentElement.children).find(node => node.matches('.marginbox-options')).classList.add('fw-open')
                 } else {
                     let resolved = false
-                    if(el.target.parentElement?.parentElement) {
+                    if (el.target.parentElement?.parentElement) {
                         resolved =  el.target.parentElement.parentElement.classList.contains('resolved')
                     }
                     const user = this.editor.user

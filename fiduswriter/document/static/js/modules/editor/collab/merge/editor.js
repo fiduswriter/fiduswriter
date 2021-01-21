@@ -366,10 +366,10 @@ export class MergeEditor {
                     stepsTrackedByChangeset = stepsTrackedByChangeset.concat(stepsInvolved)
                     insertionMarksTr.addMark(from, to, insertionMark)
                 }
-            } else if(step instanceof ReplaceAroundStep && !stepsTrackedByChangeset.includes(index)) {
+            } else if (step instanceof ReplaceAroundStep && !stepsTrackedByChangeset.includes(index)) {
                 const stepOne = step.toJSON()
                 if (stepOne.slice && stepOne.slice.content[0].type === "figure") {
-                    this.markBlockDiffs(insertionMarksTr, stepOne.from, stepOne.to , insertionClass, [index])
+                    this.markBlockDiffs(insertionMarksTr, stepOne.from, stepOne.to, insertionClass, [index])
                     stepsTrackedByChangeset.push(index)
                 }
 

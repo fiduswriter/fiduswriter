@@ -36,7 +36,7 @@ export const createDiffSchema = function(docSchema) {
                     toDOM: function(node) {
                         let dom = nodeType.toDOM(node)
                         if (node.attrs.diffdata && node.attrs.diffdata.length) {
-                            if(dom[1].class) {
+                            if (dom[1].class) {
                                 dom[1].class = dom[1].class + ' ' + node.attrs.diffdata[0].type
                             } else {
                                 dom[1]['class'] = node.attrs.diffdata[0].type

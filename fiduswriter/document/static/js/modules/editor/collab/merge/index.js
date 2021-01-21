@@ -101,8 +101,7 @@ export class Merge {
             const conflicts = lostChangeSet.findConflicts(unconfirmedTr, modifiedLostTr)
             // Set the version
             this.mod.editor.docInfo.version = data.doc.v
-            
-            
+
             // Before starting the merge process update the fn editor to be in sync
             // with main editor
             this.mod.editor.mod.footnotes.fnEditor.renderAllFootnotes()

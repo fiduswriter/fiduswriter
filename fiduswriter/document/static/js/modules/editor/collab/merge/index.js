@@ -107,6 +107,9 @@ export class Merge {
             // with main editor
             this.mod.editor.mod.footnotes.fnEditor.renderAllFootnotes()
 
+            // Load all the newly added comments from online users.
+            this.mod.editor.mod.comments.store.loadComments(data.doc.comments)
+
             // If no conflicts arises auto-merge the document
             if (conflicts.length > 0) {
                 const editor = new MergeEditor(

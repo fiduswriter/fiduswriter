@@ -71,16 +71,20 @@ export class ModMarginboxes {
                 if (el.target.parentElement.classList.contains('margin-box-filter-button')) {
                     Array.from(el.target.parentElement.children).find(node => node.matches('.marginbox-options')).classList.add('fw-open')
                 } else {
-                    const user = this.editor.docInfo.owner
+                    let resolved = false
+                    if(el.target.parentElement?.parentElement) {
+                        resolved =  el.target.parentElement.parentElement.classList.contains('resolved')
+                    }
+                    const user = this.editor.user
                     const docInfo = this.editor.docInfo
                     const elData = el.target.dataset
                     const comment = {
                         'answer': elData.hasOwnProperty('answer'),
                         'id': elData.id,
                         'commentId': elData.commentid,
-                        'user': Number(elData.commentuser)
+                        'user': Number(elData.commentuser),
+                        'resolved': resolved
                     }
-
                     document.body.insertAdjacentHTML('beforeend', marginBoxOptions(comment, user, docInfo))
                     const marginboxOptions = document.body.querySelector('.comment-answer-options.marginbox-options')
                     marginboxOptions.classList.add('fw-open')

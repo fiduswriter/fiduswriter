@@ -61,8 +61,8 @@ hr.selected-dec {
     counter-reset: prosemirror-footnote cat-0 cat-1 cat-2;
 }
 
-figure figcaption span.label::after,
-table[data-category='table'] caption span.label::after {
+#editor-merge-view figure figcaption span.label::after,
+#editor-merge-view table[data-category='table'] caption span.label::after {
     content: none !important;
     display: none;
 }

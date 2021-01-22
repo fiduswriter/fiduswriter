@@ -38,8 +38,8 @@ import {
 export class Merge {
     constructor(mod) {
         this.mod = mod
-        this.trackOfflineLimit = 0 // Limit of local changes while offline for tracking to kick in when multiple users edit
-        this.remoteTrackOfflineLimit = 0 // Limit of remote changes while offline for tracking to kick in when multiple users edit
+        this.trackOfflineLimit = 50 // Limit of local changes while offline for tracking to kick in when multiple users edit
+        this.remoteTrackOfflineLimit = 50 // Limit of remote changes while offline for tracking to kick in when multiple users edit
     }
 
     adjustDocument(data) {

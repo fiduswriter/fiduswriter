@@ -38,12 +38,13 @@ function markInsertion(tr, from, to, user, date1, date10, approved) {
 function markDeletion(tr, from, to, user, date1, date10) {
     const deletionMark = tr.doc.type.schema.marks.deletion.create({user: user.id, username: user.username, date: date10})
     let firstTableCellChild = false
+    let firstListItem = false
     const deletionMap = new Mapping()
     // Add deletion mark to block nodes (figures, text blocks) and find already deleted inline nodes (and leave them alone)
     tr.doc.nodesBetween(
         from,
         to,
-        (node, pos) => {
+        (node, pos, _parent, index) => {
             if (pos < from && node.type.name === 'table_cell') {
                 firstTableCellChild = true
                 return true
@@ -95,7 +96,23 @@ function markDeletion(tr, from, to, user, date1, date10) {
                     if (!tr.maybeStep(removeStep).failed) {
                         deletionMap.appendMap(removeStep.getMap())
                     }
+                    if (node.type.name === 'list_item' && firstListItem) {
+                        firstListItem = false
+                    }
                 } else if (node.attrs.track) {
+                    if (node.type.name === 'list_item') {
+                        if (index) {
+                            // For any list item beyond the first one, we merge the first paragraph instead.
+                            return
+                        } else {
+                            firstListItem = true
+                        }
+                    } else if (firstListItem) {
+                        // The first child of the first list item (likely a par) will not be merged with the paragraph
+                        // before it.
+                        firstListItem = false
+                        return
+                    }
                     const track = node.attrs.track.slice()
                     track.push({type: 'deletion', user: user.id, username: user.username, date: date1})
                     tr.setNodeMarkup(deletionMap.map(pos), null, Object.assign({}, node.attrs, {track}), node.marks)
@@ -174,8 +191,7 @@ export function trackedTransaction(tr, state, user, approved, date) {
         // We only insert content if this is not directly a tr for cell deletion. This is because tables delete rows by deleting the
         // content of each cell and replacing it with an empty paragraph.
         cellDeleteTr = ['deleteContentBackward', 'deleteContentForward'].includes(tr.getMeta('inputType')) && (state.selection instanceof CellSelection)
-
-    tr.steps.forEach((originalStep) => {
+    tr.steps.forEach((originalStep, originalStepIndex) => {
         const step = originalStep.map(map),
             doc = newTr.doc
         if (!step) {
@@ -193,31 +209,31 @@ export function trackedTransaction(tr, state, user, approved, date) {
                     ) :
                     false
             // We didn't apply the original step in its original place. We adjust the map accordingly.
-            map.appendMap(step.invert(doc).getMap())
+            const invertStep = originalStep.invert(tr.docs[originalStepIndex]).map(map)
+            map.appendMap(invertStep.getMap())
             if (newStep) {
                 const trTemp = state.apply(newTr).tr
-                if (trTemp.maybeStep(newStep).failed) {
-                    return
+                if (!trTemp.maybeStep(newStep).failed) {
+                    const mappedNewStepTo = newStep.getMap().map(newStep.to)
+                    markInsertion(
+                        trTemp,
+                        newStep.from,
+                        mappedNewStepTo,
+                        user,
+                        date1,
+                        date10,
+                        approved
+                    )
+                    // We condense it down to a single replace step.
+                    const condensedStep = new ReplaceStep(newStep.from, newStep.to, trTemp.doc.slice(newStep.from, mappedNewStepTo))
+                    newTr.step(condensedStep)
+                    const mirrorIndex = map.maps.length - 1
+                    map.appendMap(condensedStep.getMap(), mirrorIndex)
+                    if (!newTr.selection.eq(trTemp.selection)) {
+                        newTr.setSelection(newTr.doc, Selection.fromJSON(trTemp.selection.toJSON()))
+                    }
                 }
-                const mappedNewStepTo = newStep.getMap().map(newStep.to)
-                markInsertion(
-                    trTemp,
-                    newStep.from,
-                    mappedNewStepTo,
-                    user,
-                    date1,
-                    date10,
-                    approved
-                )
-                // We condense it down to a single replace step.
-                const condensedStep = new ReplaceStep(newStep.from, newStep.to, trTemp.doc.slice(newStep.from, mappedNewStepTo))
 
-                newTr.step(condensedStep)
-                const mirrorIndex = map.maps.length - 1
-                map.appendMap(condensedStep.getMap(), mirrorIndex)
-                if (!newTr.selection.eq(trTemp.selection)) {
-                    newTr.setSelection(newTr.doc, Selection.fromJSON(trTemp.selection.toJSON()))
-                }
             }
             if (!approved && step.from !== step.to) {
                 map.appendMap(
@@ -233,7 +249,8 @@ export function trackedTransaction(tr, state, user, approved, date) {
                 const to = step.getMap().map(step.gapFrom)
                 markInsertion(newTr, from, to, user, date1, date10, false)
             } else if (!step.slice.size) {// unwrapped from something
-                map.appendMap(step.invert(doc).getMap())
+                const invertStep = originalStep.invert(tr.docs[originalStepIndex]).map(map)
+                map.appendMap(invertStep.getMap())
                 map.appendMap(
                     markDeletion(newTr, step.from, step.gapFrom, user, date1, date10)
                 )

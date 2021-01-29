@@ -67,7 +67,7 @@ class Command(BaseCommand):
                 )
             )
         if (
-            os.environ.get('NO_COMPILEMESSAGES') or
+            os.environ.get('NO_COMPILEMESSAGES') == 'true' or
             (
                 os.path.isfile(os.path.join(
                     settings.SRC_PATH,

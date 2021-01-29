@@ -8,7 +8,7 @@ from base.management import BaseCommand
 
 class Command(CompilemessagesCommand, BaseCommand):
     def handle(self, *args, **options):
-        if os.environ.get('NO_COMPILEMESSAGES'):
+        if os.environ.get('NO_COMPILEMESSAGES') == 'true':
             self.stdout.write(
                 'Using packaged version. Skipping compile messages.'
             )

@@ -86,3 +86,18 @@ class EditorHelper(SeleniumHelper):
             # The strings don't match.
             time.sleep(0.1)
             self.wait_for_doc_sync(driver, driver2, seconds - 0.1)
+
+    def add_footnote(self, driver, footnote_pos, footnote_content, footnote_num):
+        driver.execute_script(
+            f'window.testCaret.setSelection({footnote_pos},{footnote_pos})'
+        )
+        driver.find_element_by_xpath('//*[@title="Footnote"]').click()
+
+        driver.find_element_by_xpath(
+            f'//*[@id="footnote-box-container"]/div[2]/div[{footnote_num}]'
+        ).send_keys(footnote_content)
+
+        driver.find_element_by_class_name(
+            'article-body'
+        ).click()
+

@@ -87,7 +87,13 @@ class EditorHelper(SeleniumHelper):
             time.sleep(0.1)
             self.wait_for_doc_sync(driver, driver2, seconds - 0.1)
 
-    def add_footnote(self, driver, footnote_pos, footnote_content, footnote_num):
+    def add_footnote(
+        self,
+        driver,
+        footnote_pos,
+        footnote_content,
+        footnote_num
+    ):
         driver.execute_script(
             f'window.testCaret.setSelection({footnote_pos},{footnote_pos})'
         )
@@ -100,4 +106,3 @@ class EditorHelper(SeleniumHelper):
         driver.find_element_by_class_name(
             'article-body'
         ).click()
-

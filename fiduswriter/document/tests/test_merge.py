@@ -1,21 +1,13 @@
-import time
 import multiprocessing
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from testing.testcases import LiveTornadoTestCase
 from .editor_helper import EditorHelper
-from document.ws_views import WebSocket
-from django.conf import settings
-import os
-from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
-from document.models import AccessRight
 
 
 class AutoMergeTests(LiveTornadoTestCase, EditorHelper):
     """
     Tests in which two browsers collaborate and the connection is interrupted.
+    Auto merge would be triggered when the connection is restored.
     """
     user = None
     TEST_TEXT = "Lorem ipsum dolor sit amet."
@@ -54,10 +46,10 @@ class AutoMergeTests(LiveTornadoTestCase, EditorHelper):
 
     def test_footnotes_automerge(self):
         """
-        Test one client going offline in collaborative mode while both clients
-        continue to write and add footnotes, and other text
-        such that auto merge would be triggered and tracking changes would
-        be triggered.
+        Test one client going offline in collaborative mode while both
+        clients continue to write and add footnotes, and other text
+        such that auto merge would be triggered and tracking of offline
+        changes would be triggered.
         """
 
         self.load_document_editor(self.driver, self.doc)
@@ -71,7 +63,7 @@ class AutoMergeTests(LiveTornadoTestCase, EditorHelper):
         # Add some initial text and wait for doc to be synced.
         self.type_text(self.driver, self.TEST_TEXT)
         self.wait_for_doc_sync(self.driver, self.driver2)
-        
+
         # driver 2 goes offline
         self.driver2.execute_script(
             'window.theApp.page.ws.goOffline()'
@@ -98,12 +90,12 @@ class AutoMergeTests(LiveTornadoTestCase, EditorHelper):
         # Add some footnotes by the offline user at the end of the document
         self.add_footnote(self.driver2, 69, "Test", 1)
         self.add_footnote(self.driver2, 74, "Test", 2)
-                
+
         # Online user adds some footnote
         self.add_footnote(self.driver, 30, "Test", 1)
         self.add_footnote(self.driver, 37, "Test", 2)
         self.add_footnote(self.driver, 44, "Test", 3)
-        
+
         # Reset the tracking limits to allow tracking of user edits
         self.driver2.execute_script(
             'window.theApp.page.mod.collab.doc.merge.trackOfflineLimit = 0'
@@ -121,7 +113,7 @@ class AutoMergeTests(LiveTornadoTestCase, EditorHelper):
             self.get_contents(self.driver)
         )
 
-        ## Check that the footnote counters and editor is aligned.
+        # Check that the footnote counters and editor is aligned.
         footnote_containers = self.driver2.find_elements_by_class_name(
             'footnote-marker'
         )
@@ -141,9 +133,9 @@ class AutoMergeTests(LiveTornadoTestCase, EditorHelper):
     def test_list_item_automerge(self):
         """
         Test one client going offline in collaborative mode while both clients
-        continue to write and add footnotes, and other text
-        such that auto merge would be triggered and tracking changes would
-        be triggered.
+        continue to write and delete list item in a
+        specific way such that auto merge would be triggered
+        and tracking of offline changes would be triggered.
         """
 
         self.load_document_editor(self.driver, self.doc)
@@ -157,21 +149,25 @@ class AutoMergeTests(LiveTornadoTestCase, EditorHelper):
         # Add some initial text and wait for doc to be synced.
         self.type_text(self.driver, self.TEST_TEXT)
         self.type_text(self.driver, self.NEWLINE)
-        
+
         # Add a list item
-        button = self.driver.find_element_by_xpath('//*[@title="Numbered list"]')
+        button = self.driver.find_element_by_xpath(
+            '//*[@title="Numbered list"]'
+        )
         button.click()
         self.type_text(self.driver, self.MULTILINE_TEST_TEXT)
 
         self.wait_for_doc_sync(self.driver, self.driver2)
-        
+
         # driver 2 goes offline
         self.driver2.execute_script(
             'window.theApp.page.ws.goOffline()'
         )
 
-
         # Offline user deletes list item in a specific way
+        # Select all the list item except the last one
+        # delete them and then delete the remaining
+        # one too.
         self.driver2.execute_script(
             'window.testCaret.setSelection(86,86)'
         )
@@ -185,13 +181,11 @@ class AutoMergeTests(LiveTornadoTestCase, EditorHelper):
             'article-body'
         ).send_keys(Keys.BACKSPACE)
 
-
         # Online user adds some text
         self.driver.execute_script(
             'window.testCaret.setSelection(25,25)'
         )
         self.type_text(self.driver, self.TEST_TEXT)
-        
 
         # Reset the tracking limits to allow tracking of user edits
         self.driver2.execute_script(
@@ -223,3 +217,10 @@ class AutoMergeTests(LiveTornadoTestCase, EditorHelper):
             4
         )
 
+        change_tracking_boxes = self.driver2.find_elements_by_css_selector(
+            '.margin-box.track'
+        )
+        self.assertEqual(
+            len(change_tracking_boxes),
+            7
+        )

@@ -13,7 +13,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from document.models import Document
 
 ALLOWED_FILETYPES = ['image/jpeg', 'image/png', 'image/svg+xml']
-ALLOWED_EXTENSIONS = ['jpeg', 'jpg', 'png', 'svg','jfif']
+ALLOWED_EXTENSIONS = ['jpeg', 'jpg', 'png', 'svg', 'jfif']
 
 
 def get_file_path(instance, filename):

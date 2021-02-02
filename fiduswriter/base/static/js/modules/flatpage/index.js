@@ -25,7 +25,7 @@ export class FlatPage extends PreloginPage {
         return postJson(`/api/base/flatpage/`, {url: this.url}).then(
             ({json}) => {
                 this.title = json.title
-                this.contents = `<div>
+                this.contents = `<div class="fw-flatpage">
                     <h1 class="fw-login-title">${json.title}</h1>
                     ${json.content}
                 </div>`

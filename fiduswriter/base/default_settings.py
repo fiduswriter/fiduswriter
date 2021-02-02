@@ -45,6 +45,10 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000
 # Whether anyone surfing to the site can open an account with a login/password.
 REGISTRATION_OPEN = True
 
+# Whether user's can login using passwords (if not, they will only be able to
+# sign in using social accounts).
+PASSWORD_LOGIN = True
+
 # Whether anyone surfing to the site can open an account or login with a
 # socialaccount.
 SOCIALACCOUNT_OPEN = True

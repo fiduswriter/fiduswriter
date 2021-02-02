@@ -1,44 +1,44 @@
-.fw-contents h1 {
+.fw-contents .fw-flatpage h1 {
     font-size: 2em;
     margin: .67em 0;
     font-weight: 700;
 }
 
-.fw-contents h2 {
+.fw-contents .fw-flatpage h2 {
     font-size: 1.5em;
     margin: .75em 0;
     font-weight: 700;
 }
 
-.fw-contents h3 {
+.fw-contents .fw-flatpage h3 {
     font-size: 1.17em;
     margin: .83em 0;
     font-weight: 700;
 }
 
-.fw-contents h4 {
+.fw-contents .fw-flatpage h4 {
     margin: 1.12em 0;
     font-weight: 700;
 }
 
-.fw-contents h5 {
+.fw-contents .fw-flatpage h5 {
     font-size: .83em;
     margin: 1.5em 0;
     font-weight: 700;
 }
 
-.fw-contents h6 {
+.fw-contents .fw-flatpage h6 {
     font-size: .75em;
     margin: 1.67em 0;
     font-weight: 700;
 }
 
-.fw-contents ul {
+.fw-contents .fw-flatpage ul {
     list-style-type: disc;
     list-style-position: inside;
 }
 
-.fw-contents ol {
+.fw-contents .fw-flatpage ol {
     list-style-type: decimal;
     list-style-position: inside;
 }

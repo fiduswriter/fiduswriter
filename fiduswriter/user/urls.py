@@ -1,6 +1,7 @@
 from django.conf.urls import include, url
+from django.conf import settings
+from django.views.generic import RedirectView
 from . import views
-
 
 urlpatterns = [
     url('^save/$', views.save_profile, name='save_profile'),
@@ -62,3 +63,9 @@ urlpatterns = [
     # Authentication handling
     url('', include('allauth.urls')),
 ]
+
+if not settings.PASSWORD_LOGIN:
+    urlpatterns.insert(0, url(
+        '^login/$',
+        RedirectView.as_view(url='/')
+    ))

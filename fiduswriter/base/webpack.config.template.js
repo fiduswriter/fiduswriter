@@ -51,6 +51,7 @@ module.exports = { // eslint-disable-line no-undef
             "settings_STATIC_URL": JSON.stringify(settings.STATIC_URL),
             "settings_REGISTRATION_OPEN": settings.REGISTRATION_OPEN,
             "settings_SOCIALACCOUNT_OPEN": settings.SOCIALACCOUNT_OPEN,
+            "settings_PASSWORD_LOGIN": settings.PASSWORD_LOGIN,
             "settings_CONTACT_EMAIL": JSON.stringify(settings.CONTACT_EMAIL),
             "settings_WS_SERVER": settings.WS_SERVER ? JSON.stringify(settings.WS_SERVER) : false,
             "settings_WS_PORT": settings.WS_PORT,

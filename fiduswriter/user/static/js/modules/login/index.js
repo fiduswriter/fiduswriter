@@ -8,7 +8,7 @@ export class LoginPage extends PreloginPage {
         this.socialaccount_providers = socialaccount_providers
         this.title = gettext('Login')
         this.pluginLoaders = pluginLoaders
-        this.headerLinks = settings_REGISTRATION_OPEN ? [
+        this.headerLinks = settings_REGISTRATION_OPEN && settings_PASSWORD_LOGIN ? [
             {
                 type: 'label',
                 text: gettext('New here?')
@@ -49,28 +49,32 @@ export class LoginPage extends PreloginPage {
         ''
 }
         </div>
-        <div class="fw-login-right">
+            ${
+    settings_PASSWORD_LOGIN ?
+        `<div class="fw-login-right">
             <form>
-                <ul id="non_field_errors" class="errorlist"></ul>
-                <div class="input-wrapper">
-                    <label for="id_login">${gettext("Username")}</label>
-                    <input type="text" name="login" placeholder="${gettext("Username or e-mail")}" autofocus="autofocus" required="" id="id_login" autocomplete="username email">
-                    <ul id="id_login_errors" class="errorlist"></ul>
-                </div>
-                <div class="input-wrapper">
-                    <label for="id_password">${gettext("Password")}</label>
-                    <input type="password" name="password" placeholder="${gettext("Password")}" required="" id="id_password" autocomplete="current-password">
-                    <ul id="id_password_errors" class="errorlist"></ul>
-                </div>
-                <div class="submit-wrapper">
-                    <button class="fw-button fw-dark fw-uppercase" type="submit" id="login-submit">${gettext("Log in")}</button>
-                    <br>
-                    <input type="checkbox" name="remember" id="id_remember">
-                    <label for="id_remember">${gettext("Remember me")}</label>
-                </div>
-                <a id="lost-passwd" href="/account/password-reset/">${gettext("Forgot Password?")}</a>
-            </form>
-        </div>`
+                    <ul id="non_field_errors" class="errorlist"></ul>
+                    <div class="input-wrapper">
+                        <label for="id_login">${gettext("Username")}</label>
+                        <input type="text" name="login" placeholder="${gettext("Username or e-mail")}" autofocus="autofocus" required="" id="id_login" autocomplete="username email">
+                        <ul id="id_login_errors" class="errorlist"></ul>
+                    </div>
+                    <div class="input-wrapper">
+                        <label for="id_password">${gettext("Password")}</label>
+                        <input type="password" name="password" placeholder="${gettext("Password")}" required="" id="id_password" autocomplete="current-password">
+                        <ul id="id_password_errors" class="errorlist"></ul>
+                    </div>
+                    <div class="submit-wrapper">
+                        <button class="fw-button fw-dark fw-uppercase" type="submit" id="login-submit">${gettext("Log in")}</button>
+                        <br>
+                        <input type="checkbox" name="remember" id="id_remember">
+                        <label for="id_remember">${gettext("Remember me")}</label>
+                    </div>
+                    <a id="lost-passwd" href="/account/password-reset/">${gettext("Forgot Password?")}</a>
+                </form>
+            </div>` :
+        ''
+}`
         super.render()
     }
 

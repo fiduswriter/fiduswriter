@@ -130,17 +130,16 @@ export class Merge {
                         {bibliography: data.doc.bibliography, images: data.doc.images}
                     )
                     editor.init()
-                } catch(error) {
+                } catch (error) {
                     this.handleMergeFailure(error, unconfirmedTr.doc, toDoc, editor)
                 }
             } else {
                 try {
                     this.autoMerge(unconfirmedTr, lostTr, data)
-                } catch(error) {
+                } catch (error) {
                     this.handleMergeFailure(error, unconfirmedTr.doc, toDoc)
                 }
             }
-            
 
             this.mod.doc.receiving = false
             // this.mod.doc.sendToCollaborators()
@@ -268,15 +267,15 @@ export class Merge {
 
     }
 
-    handleMergeFailure(error, offlineDoc, _onlineDoc, mergeEditor = false ) {
+    handleMergeFailure(error, offlineDoc, _onlineDoc, mergeEditor = false) {
         // In case the auto-merge or manual merge failed due to JS Errors,
         // make a copy of the offline doc available for download.
 
         // Close the merge window if open
-        if(mergeEditor && document.querySelector('#editor-merge-view')) {
+        if (mergeEditor && document.querySelector('#editor-merge-view')) {
             mergeEditor.mergeDialog.close()
-            // Close merge res warning if open
-            if(document.querySelector('#merge-res-warning')) {
+            // Close merge resolution warning if open
+            if (document.querySelector('#merge-res-warning')) {
                 mergeEditor.warningDialog.close()
             }
         }

@@ -560,7 +560,7 @@ export class MergeEditor {
 
             // Re-render the fn editor for all the users.
             this.editor.mod.collab.doc.footnoteRender = true
-            
+
             this.editor.view.dispatch(newTr)
             this.editor.mod.footnotes.fnEditor.renderAllFootnotes()
         }

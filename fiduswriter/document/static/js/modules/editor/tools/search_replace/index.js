@@ -1,4 +1,8 @@
-import {Dialog,addAlert} from "../../../common"
+import {
+    Dialog,
+    addAlert
+}
+    from "../../../common"
 import {
     endSearch,
     setSearchTerm,
@@ -110,7 +114,7 @@ export class SearchReplaceDialog {
                             this.editor.view.dispatch(tr)
                             // In case there was a match within protected range , the change
                             // would be rejected. Show alert when replace is successfull.
-                            if(!this.editor.view.state.doc.eq(originalDoc) ) {
+                            if (!this.editor.view.state.doc.eq(originalDoc)) {
                                 addAlert('info', gettext('Text replaced successfully'))
                             }
                         } else if (this.fnMatches.selected !== false) {
@@ -120,7 +124,7 @@ export class SearchReplaceDialog {
                             this.editor.mod.footnotes.fnEditor.view.dispatch(tr)
                             // In case there was a match within protected range , the change
                             // would be rejected. Show alert when replace is successfull.
-                            if(!this.editor.mod.footnotes.fnEditor.view.state.doc.eq(originalDoc) ) {
+                            if (!this.editor.mod.footnotes.fnEditor.view.state.doc.eq(originalDoc)) {
                                 addAlert('info', gettext('Text replaced successfully'))
                             }
                         }
@@ -141,7 +145,7 @@ export class SearchReplaceDialog {
                             this.editor.view.dispatch(tr)
                             // In case there was a match within protected range , the change
                             // would be rejected. Show alert when replace is successfull.
-                            if(!this.editor.view.state.doc.eq(originalDoc) ) {
+                            if (!this.editor.view.state.doc.eq(originalDoc)) {
                                 addAlert('info', gettext('Text replaced successfully'))
                             }
                         }
@@ -156,7 +160,7 @@ export class SearchReplaceDialog {
                             this.editor.mod.footnotes.fnEditor.view.dispatch(tr)
                             // In case there was a match within protected range , the change
                             // would be rejected. Show alert when replace is successfull.
-                            if(!this.editor.mod.footnotes.fnEditor.view.state.doc.eq(originalDoc) ) {
+                            if (!this.editor.mod.footnotes.fnEditor.view.state.doc.eq(originalDoc)) {
                                 addAlert('info', gettext('Text replaced successfully'))
                             }
                         }

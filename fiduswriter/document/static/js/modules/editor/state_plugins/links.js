@@ -129,7 +129,7 @@ export const linksPlugin = function(options) {
         if (anchorMark) {
             currentMarks.push(anchorMark)
         }
-        if(crossRef) {
+        if (crossRef) {
             currentMarks.push(crossRef)
         }
         if (!currentMarks.length) {
@@ -137,7 +137,7 @@ export const linksPlugin = function(options) {
         }
 
         let startPos = $head.start() // position of block start.
-        if(crossRef) { // For cross ref , take the end pos of the node
+        if (crossRef) { // For cross ref , take the end pos of the node
             startPos = state.selection.from + crossRef.nodeSize
         } else {
             let index = $head.index()
@@ -162,7 +162,7 @@ export const linksPlugin = function(options) {
         const dropUp = document.createElement('span'),
             editor = options.editor,
             writeAccess = editor.docInfo.access_rights === 'write' ? true : false,
-            editAccess = ['write', 'write-tracked'].includes(editor.docInfo.access_rights) ? true : false 
+            editAccess = ['write', 'write-tracked'].includes(editor.docInfo.access_rights) ? true : false
         let linkType, linkHref, anchorHref, requiredPx = 10
 
         if (linkMark) {
@@ -240,7 +240,7 @@ export const linksPlugin = function(options) {
 }
 ${
     crossRef ?
-        `<div class="drop-up-head" ${ editAccess ? '' :'style="border-radius:6px;"'}>
+        `<div class="drop-up-head" ${ editAccess ? '' : 'style="border-radius:6px;"'}>
                         <div class="link-title">${gettext('Cross Reference')}</div>
                         <div class="link-href">
                         <span>

@@ -1,4 +1,4 @@
-import {Dialog} from "../../../common"
+import {Dialog,addAlert} from "../../../common"
 import {
     endSearch,
     setSearchTerm,
@@ -105,12 +105,24 @@ export class SearchReplaceDialog {
                     click: () => {
                         if (this.matches.selected !== false) {
                             const match = this.matches.matches[this.matches.selected]
+                            const originalDoc = this.editor.view.state.doc
                             const tr = this.editor.view.state.tr.insertText(this.replaceInput.value, match.from, match.to)
                             this.editor.view.dispatch(tr)
+                            // In case there was a match within protected range , the change
+                            // would be rejected. Show alert when replace is successfull.
+                            if(!this.editor.view.state.doc.eq(originalDoc) ) {
+                                addAlert('info', gettext('Text replaced successfully'))
+                            }
                         } else if (this.fnMatches.selected !== false) {
                             const match = this.fnMatches.matches[this.fnMatches.selected]
+                            const originalDoc = this.editor.mod.footnotes.fnEditor.view.state.doc
                             const tr = this.editor.mod.footnotes.fnEditor.view.state.tr.insertText(this.replaceInput.value, match.from, match.to)
                             this.editor.mod.footnotes.fnEditor.view.dispatch(tr)
+                            // In case there was a match within protected range , the change
+                            // would be rejected. Show alert when replace is successfull.
+                            if(!this.editor.mod.footnotes.fnEditor.view.state.doc.eq(originalDoc) ) {
+                                addAlert('info', gettext('Text replaced successfully'))
+                            }
                         }
                     }
                 },
@@ -120,21 +132,33 @@ export class SearchReplaceDialog {
                     click: () => {
                         if (this.matches.matches.length) {
                             const tr = this.editor.view.state.tr
+                            const originalDoc = this.editor.view.state.doc
                             const matches = this.matches.matches.slice()
                             while (matches.length) {
                                 const match = matches.pop() // We take them backward so that there is no need for mapping steps
                                 tr.insertText(this.replaceInput.value, match.from, match.to)
                             }
                             this.editor.view.dispatch(tr)
+                            // In case there was a match within protected range , the change
+                            // would be rejected. Show alert when replace is successfull.
+                            if(!this.editor.view.state.doc.eq(originalDoc) ) {
+                                addAlert('info', gettext('Text replaced successfully'))
+                            }
                         }
                         if (this.fnMatches.matches.length) {
                             const tr = this.editor.mod.footnotes.fnEditor.view.state.tr
+                            const originalDoc = this.editor.mod.footnotes.fnEditor.view.state.doc
                             const matches = this.fnMatches.matches.slice()
                             while (matches.length) {
                                 const match = matches.pop() // We take them backward so that there is no need for mapping steps
                                 tr.insertText(this.replaceInput.value, match.from, match.to)
                             }
                             this.editor.mod.footnotes.fnEditor.view.dispatch(tr)
+                            // In case there was a match within protected range , the change
+                            // would be rejected. Show alert when replace is successfull.
+                            if(!this.editor.mod.footnotes.fnEditor.view.state.doc.eq(originalDoc) ) {
+                                addAlert('info', gettext('Text replaced successfully'))
+                            }
                         }
                     }
                 }

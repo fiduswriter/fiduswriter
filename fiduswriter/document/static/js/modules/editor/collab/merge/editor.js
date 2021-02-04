@@ -86,6 +86,7 @@ export class MergeEditor {
         this.offlineTr = simplifyTransform(offlineTr) // The offline transaction
         this.onlineTr = simplifyTransform(onlineTr) // The online Transaction
         this.mergeDialog  = this.createMergeDialog(this.offlineTr, this.onlineDoc)
+        this.warningDialog = false
         this.db = db
         this.mergedDocMap = this.onlineTr.mapping // the maps of the middle editor, used for applying steps automatically
 
@@ -171,7 +172,7 @@ export class MergeEditor {
                 if (!this.checkResolution()) {
                     this.startMerge(offlineTr, onlineDoc)
                 } else {
-                    const warningDialog = new Dialog({
+                    this.warningDialog = new Dialog({
                         id: 'merge-res-warning',
                         title: gettext("Merge Resolution warning"),
                         body: gettext("Not all changes have been resolved. Please make sure to review all the changes to before proceeding."),
@@ -180,11 +181,11 @@ export class MergeEditor {
                             classes: 'fw-dark',
                             click: () => {
                                 this.startMerge(offlineTr, onlineDoc)
-                                warningDialog.close()
+                                this.warningDialog.close()
                             }
                         }]
                     })
-                    warningDialog.open()
+                    this.warningDialog.open()
                 }
             }
         }]
@@ -468,34 +469,45 @@ export class MergeEditor {
     }
 
     startMerge(offlineTr, onlineDoc) {
-        /* start the merge process of moving changes to the editor */
-        // Remove all diff related marks
-        dispatchRemoveDiffdata(this.mergeView2, 0, this.mergeView2.state.doc.content.size)
+        try {
+            /* start the merge process of moving changes to the editor */
+            // Remove all diff related marks
+            dispatchRemoveDiffdata(this.mergeView2, 0, this.mergeView2.state.doc.content.size)
 
-        // Apply all the marks that are not handled by recreate steps!
-        const markTr = this.mergeView2.state.tr
-        const offlineRebaseMapping = new Mapping()
-        offlineRebaseMapping.appendMappingInverted(offlineTr.mapping)
-        offlineRebaseMapping.appendMapping(this.mergedDocMap)
-        this.offStepsNotTracked.forEach(markstep => {
-            const stepIndex = offlineTr.steps.indexOf(markstep)
-            const offlineRebaseMap = offlineRebaseMapping.slice(offlineTr.steps.length - stepIndex)
-            const mappedMarkStep = markstep.map(offlineRebaseMap)
-            if (mappedMarkStep && !markTr.maybeStep(mappedMarkStep).failed) {
-                this.mergedDocMap.appendMap(mappedMarkStep.getMap())
-                offlineRebaseMapping.appendMap(mappedMarkStep.getMap())
-                offlineRebaseMapping.setMirror(offlineTr.steps.length - stepIndex - 1, (offlineTr.steps.length + this.mergedDocMap.maps.length - 1))
-            }
-        })
-        this.mergeView2.dispatch(markTr)
-        this.mergeDialog.close()
-        const mergedDoc = this.mergeView2.state.doc
-        //CleanUp
-        this.mergeView1.destroy()
-        this.mergeView2.destroy()
-        this.mergeView3.destroy()
+            // Apply all the marks that are not handled by recreate steps!
+            const markTr = this.mergeView2.state.tr
+            const offlineRebaseMapping = new Mapping()
+            offlineRebaseMapping.appendMappingInverted(offlineTr.mapping)
+            offlineRebaseMapping.appendMapping(this.mergedDocMap)
+            this.offStepsNotTracked.forEach(markstep => {
+                const stepIndex = offlineTr.steps.indexOf(markstep)
+                const offlineRebaseMap = offlineRebaseMapping.slice(offlineTr.steps.length - stepIndex)
+                const mappedMarkStep = markstep.map(offlineRebaseMap)
+                if (mappedMarkStep && !markTr.maybeStep(mappedMarkStep).failed) {
+                    this.mergedDocMap.appendMap(mappedMarkStep.getMap())
+                    offlineRebaseMapping.appendMap(mappedMarkStep.getMap())
+                    offlineRebaseMapping.setMirror(offlineTr.steps.length - stepIndex - 1, (offlineTr.steps.length + this.mergedDocMap.maps.length - 1))
+                }
+            })
+            this.mergeView2.dispatch(markTr)
+            this.mergeDialog.close()
 
-        this.applyChangesToMainEditor(onlineDoc, mergedDoc)
+            const mergedDoc = this.mergeView2.state.doc
+            //CleanUp
+            this.mergeView1.destroy()
+            this.mergeView2.destroy()
+            this.mergeView3.destroy()
+
+            this.applyChangesToMainEditor(onlineDoc, mergedDoc)
+
+        } catch (error) {
+            // Convert the doc to main editor schema
+            const onlineDoc = this.editor.schema.nodeFromJSON(removeDiffFromJson(this.onlineDoc.toJSON()))
+            const offlineDoc = this.editor.schema.nodeFromJSON(removeDiffFromJson(this.offlineDoc.toJSON()))
+
+            // Handle merge failure
+            this.editor.mod.collab.doc.merge.handleMergeFailure(error, offlineDoc, onlineDoc, this)
+        }
     }
 
     unHideSections(view) {
@@ -545,6 +557,10 @@ export class MergeEditor {
                 }
             })
             newTr.setMeta('remote', true)
+
+            // Re-render the fn editor for all the users.
+            this.editor.mod.collab.doc.footnoteRender = true
+            
             this.editor.view.dispatch(newTr)
             this.editor.mod.footnotes.fnEditor.renderAllFootnotes()
         }

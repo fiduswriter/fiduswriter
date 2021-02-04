@@ -97,7 +97,11 @@ export class WebSocketConnector {
             }${
                 this.url
             }` :
-            'ws://offline'
+            `${
+                location.protocol === 'https:' ?
+                    'wss://offline' :
+                    'ws://offline'
+            }`
         this.ws = new window.WebSocket(url)
 
         this.ws.onmessage = event => {

@@ -16,8 +16,10 @@ export const accessRightsPlugin = function(options) {
             }
 
             if (
-                COMMENT_ONLY_ROLES.includes(options.editor.docInfo.access_rights) ||
-                READ_ONLY_ROLES.includes(options.editor.docInfo.access_rights)
+                (
+                    COMMENT_ONLY_ROLES.includes(options.editor.docInfo.access_rights) ||
+                    READ_ONLY_ROLES.includes(options.editor.docInfo.access_rights)
+                ) && tr.docChanged
             ) {
                 allowed = false
             }

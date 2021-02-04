@@ -267,6 +267,29 @@ export class Merge {
 
     }
 
+    getDocData(offlineDoc) {
+        const pmArticle = acceptAllNoInsertions(offlineDoc).firstChild
+        let title = ""
+        pmArticle.firstChild.forEach(
+            child => {
+                if (!child.marks.find(mark => mark.type.name === 'deletion')) {
+                    title += child.textContent
+                }
+            }
+        )
+
+        return {
+            content: pmArticle.toJSON(),
+            settings: getSettings(pmArticle),
+            title: title,
+            version: this.mod.editor.docInfo.version,
+            comments: this.mod.editor.mod.comments.store.comments,
+            id: this.mod.editor.docInfo.id,
+            updated: this.mod.editor.docInfo.updated
+        }
+
+    }
+
     handleMergeFailure(error, offlineDoc, _onlineDoc, mergeEditor = false) {
         // In case the auto-merge or manual merge failed due to JS Errors,
         // make a copy of the offline doc available for download.
@@ -280,27 +303,9 @@ export class Merge {
             }
         }
 
-        const pmArticle = acceptAllNoInsertions(offlineDoc).firstChild
-        let title = ""
-        pmArticle.firstChild.forEach(
-            child => {
-                if (!child.marks.find(mark => mark.type.name === 'deletion')) {
-                    title += child.textContent
-                }
-            }
-        )
-
-        const exportData =  {
-            content: pmArticle.toJSON(),
-            settings: getSettings(offlineDoc),
-            title: title,
-            version: this.mod.editor.docInfo.version,
-            comments: this.mod.editor.mod.comments.store.comments,
-            id: this.mod.editor.docInfo.id,
-            updated: this.mod.editor.docInfo.updated
-        }
+        // Prepare Export
         new ExportFidusFile(
-            exportData,
+            this.getDocData(offlineDoc),
             this.mod.editor.mod.db.bibDB,
             this.mod.editor.mod.db.imageDB
         )

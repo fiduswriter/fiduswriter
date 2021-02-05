@@ -844,6 +844,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
                 )
             )
         )
+        time.sleep(1)
         documents = self.driver.find_elements_by_css_selector(
             '.fw-contents tbody tr a.doc-title'
         )

@@ -1,4 +1,4 @@
-import {Plugin, PluginKey} from "prosemirror-state"
+import {Plugin, PluginKey, NodeSelection} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
 import {RemoveMarkStep} from "prosemirror-transform"
 
@@ -108,6 +108,10 @@ export const linksPlugin = function(options) {
             mark.type.name === 'anchor')
     }
 
+    function getCrossReference(state) {
+        return state.selection instanceof NodeSelection ? (state.selection.node.type.name == "cross_reference" ? state.selection.node : undefined) : undefined
+    }
+
     function getDecos(state) {
         const $head = state.selection.$head
         const currentMarks = [],
@@ -117,38 +121,48 @@ export const linksPlugin = function(options) {
             anchorMark = $head.marks().find(
                 mark => mark.type.name === 'anchor'
             )
+        const crossRef = state.selection instanceof NodeSelection ? (state.selection.node.type.name == "cross_reference" ? state.selection.node : undefined) : undefined
+
         if (linkMark) {
             currentMarks.push(linkMark)
         }
         if (anchorMark) {
             currentMarks.push(anchorMark)
         }
+        if (crossRef) {
+            currentMarks.push(crossRef)
+        }
         if (!currentMarks.length) {
             return DecorationSet.empty
         }
-        let index = $head.index()
-        while (
-            index < ($head.parent.childCount - 1) &&
-            currentMarks.some(mark => mark.isInSet(
-                $head.parent.child(index + 1).marks
-            ))
-        ) {
-            index++
-        }
-        let startPos = $head.start() // position of block start.
-        for (let i = 0; i <= index; i++) {
-            startPos += $head.parent.child(i).nodeSize
-        }
 
-        const dom = createDropUp(linkMark, anchorMark, $head),
+        let startPos = $head.start() // position of block start.
+        if (crossRef) { // For cross ref , take the end pos of the node
+            startPos = state.selection.from + crossRef.nodeSize
+        } else {
+            let index = $head.index()
+            while (
+                index < ($head.parent.childCount - 1) &&
+                currentMarks.some(mark => mark.isInSet(
+                    $head.parent.child(index + 1).marks
+                ))
+            ) {
+                index++
+            }
+            for (let i = 0; i <= index; i++) {
+                startPos += $head.parent.child(i).nodeSize
+            }
+        }
+        const dom = createDropUp(linkMark, anchorMark, crossRef, $head),
             deco = Decoration.widget(startPos, dom)
         return DecorationSet.create(state.doc, [deco])
     }
 
-    function createDropUp(linkMark, anchorMark, $head) {
+    function createDropUp(linkMark, anchorMark, crossRef, $head) {
         const dropUp = document.createElement('span'),
             editor = options.editor,
-            writeAccess = editor.docInfo.access_rights === 'write' ? true : false
+            writeAccess = editor.docInfo.access_rights === 'write' ? true : false,
+            editAccess = ['write', 'write-tracked'].includes(editor.docInfo.access_rights) ? true : false
         let linkType, linkHref, anchorHref, requiredPx = 10
 
         if (linkMark) {
@@ -224,6 +238,31 @@ export const linksPlugin = function(options) {
                     </ul>` :
         ''
 }
+${
+    crossRef ?
+        `<div class="drop-up-head" ${ editAccess ? '' : 'style="border-radius:6px;"'}>
+                        <div class="link-title">${gettext('Cross Reference')}</div>
+                        <div class="link-href">
+                        <span>
+                            ${crossRef.attrs.title ? crossRef.attrs.title : `Target Lost`}
+                        </a>
+                        </div>
+                    </div>
+                        ${
+    editAccess ?
+        `<ul class="drop-up-options">
+        <li class="edit-crossRef" title="${gettext('Edit cross reference')}">
+                                ${gettext('Edit')}
+                            </li>
+                            <li class="remove-crossRef" title="${gettext('Remove cross reference')}">
+                                ${gettext('Remove')}
+                            </li>
+                            </ul>` :
+        ''
+}
+                    ` :
+        ''
+}
             </div>`
 
         if (linkType === 'internal') {
@@ -270,6 +309,18 @@ export const linksPlugin = function(options) {
             )
         }
 
+        const editCrossRef = dropUp.querySelector('.edit-crossRef')
+        if (editCrossRef) {
+            editCrossRef.addEventListener('mousedown',
+                event => {
+                    event.preventDefault()
+                    event.stopImmediatePropagation()
+                    const dialog = new LinkDialog(editor)
+                    dialog.init()
+                }
+            )
+        }
+
         const removeLink = dropUp.querySelector('.remove-link')
         if (removeLink) {
             removeLink.addEventListener('mousedown',
@@ -294,6 +345,17 @@ export const linksPlugin = function(options) {
             )
         }
 
+        const removeCrossRef = dropUp.querySelector('.remove-crossRef')
+        if (removeCrossRef) {
+            removeCrossRef.addEventListener('mousedown',
+                event => {
+                    event.preventDefault()
+                    event.stopImmediatePropagation()
+                    editor.view.dispatch(editor.view.state.tr.delete(
+                        $head.pos - 1, $head.pos))
+                }
+            )
+        }
         return dropUp
     }
 
@@ -312,17 +374,20 @@ export const linksPlugin = function(options) {
                     url,
                     decos,
                     linkMark,
-                    anchorMark
+                    anchorMark,
+                    crossReference
                 } = this.getState(oldState)
                 url = getUrl(state, oldState, url)
                 const newLinkMark = getLinkMark(state)
                 const newAnchorMark = getAnchorMark(state)
-                if (newLinkMark === linkMark && newAnchorMark === anchorMark) {
+                const newCrossReference = getCrossReference(state)
+                if (newLinkMark === linkMark && newAnchorMark === anchorMark && newCrossReference === crossReference) {
                     decos = decos.map(tr.mapping, tr.doc)
                 } else {
                     decos = getDecos(state)
                     linkMark = newLinkMark
                     anchorMark = newAnchorMark
+                    crossReference = newCrossReference
                 }
                 if (!tr.getMeta('remote')) {
                     // We look for changes to figures or headings.
@@ -391,7 +456,8 @@ export const linksPlugin = function(options) {
                     url,
                     decos,
                     linkMark,
-                    anchorMark
+                    anchorMark,
+                    crossReference
                 }
             }
         },

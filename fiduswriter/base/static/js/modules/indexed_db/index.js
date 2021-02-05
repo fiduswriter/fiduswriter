@@ -147,10 +147,10 @@ export class IndexedDB {
     }
 
     readAllData(objectStoreName) {
-        const new_promise = new Promise((resolve, _reject) => {
+        const readPromise = new Promise((resolve, reject) => {
             const request = window.indexedDB.open(this.app.db_config.db_name)
-            request.onerror = function(_event) {
-                //
+            request.onerror = function(event) {
+                reject(event)
             }
             request.onsuccess = (event) => {
                 const db = event.target.result
@@ -158,19 +158,21 @@ export class IndexedDB {
                     db.close()
                     return this.reset().then(
                         () => this.readAllData(objectStoreName)
+                    ).then(
+                        readPromise => resolve(readPromise)
                     )
                 }
                 const objectStore = db.transaction(objectStoreName, 'readwrite').objectStore(objectStoreName)
-                const read_all_request = objectStore.getAll()
-                read_all_request.onerror = function(_event) {
-                    // Handle errors!
+                const readAllRequest = objectStore.getAll()
+                readAllRequest.onerror = function(event) {
+                    reject(event)
                 }
-                read_all_request.onsuccess = function(_event) {
+                readAllRequest.onsuccess = function(_event) {
                     // Do something with the request.result!
-                    resolve(read_all_request.result)
+                    resolve(readAllRequest.result)
                 }
             }
         })
-        return new_promise
+        return readPromise
     }
 }

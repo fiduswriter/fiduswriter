@@ -82,6 +82,7 @@ class DocumentTemplate(models.Model):
 
 class Document(models.Model):
     title = models.CharField(max_length=255, default='', blank=True)
+    path = models.TextField(default='', blank=True)
     content = models.JSONField(default=dict)
     doc_version = models.DecimalField(
         max_digits=3,

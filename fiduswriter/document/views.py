@@ -111,6 +111,7 @@ def documents_list(request):
         output_list.append({
             'id': document.id,
             'title': document.title,
+            'path': document.path,
             'is_owner': is_owner,
             'owner': {
                 'id': document.owner.id,

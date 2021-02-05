@@ -13,13 +13,15 @@ import {
 } from "prosemirror-collab"
 import {
     showSystemMessage,
-    addAlert
+    addAlert,
+    Dialog
 } from "../../../common"
 import {
     WRITE_ROLES
 } from "../../"
 import {
-    trackedTransaction
+    trackedTransaction,
+    acceptAllNoInsertions
 } from "../../track"
 import {
     recreateTransform
@@ -33,7 +35,12 @@ import {
 import {
     simplifyTransform
 } from "./tools"
-
+import {
+    ExportFidusFile
+} from "../../../exporter/native"
+import {
+    getSettings
+} from "../../../schema/convert"
 
 export class Merge {
     constructor(mod) {
@@ -110,19 +117,28 @@ export class Merge {
             this.mod.editor.mod.comments.store.loadComments(data.doc.comments)
 
             // If no conflicts arises auto-merge the document
+            let editor
             if (conflicts.length > 0) {
-                const editor = new MergeEditor(
-                    this.mod.editor,
-                    confirmedState.doc,
-                    unconfirmedTr.doc,
-                    toDoc,
-                    unconfirmedTr,
-                    lostTr,
-                    {bibliography: data.doc.bibliography, images: data.doc.images}
-                )
-                editor.init()
+                try {
+                    editor = new MergeEditor(
+                        this.mod.editor,
+                        confirmedState.doc,
+                        unconfirmedTr.doc,
+                        toDoc,
+                        unconfirmedTr,
+                        lostTr,
+                        {bibliography: data.doc.bibliography, images: data.doc.images}
+                    )
+                    editor.init()
+                } catch (error) {
+                    this.handleMergeFailure(error, unconfirmedTr.doc, toDoc, editor)
+                }
             } else {
-                this.autoMerge(unconfirmedTr, lostTr, data)
+                try {
+                    this.autoMerge(unconfirmedTr, lostTr, data)
+                } catch (error) {
+                    this.handleMergeFailure(error, unconfirmedTr.doc, toDoc)
+                }
             }
 
             this.mod.doc.receiving = false
@@ -251,4 +267,69 @@ export class Merge {
 
     }
 
+    getDocData(offlineDoc) {
+        const pmArticle = acceptAllNoInsertions(offlineDoc).firstChild
+        let title = ""
+        pmArticle.firstChild.forEach(
+            child => {
+                if (!child.marks.find(mark => mark.type.name === 'deletion')) {
+                    title += child.textContent
+                }
+            }
+        )
+
+        return {
+            content: pmArticle.toJSON(),
+            settings: getSettings(pmArticle),
+            title: title,
+            version: this.mod.editor.docInfo.version,
+            comments: this.mod.editor.mod.comments.store.comments,
+            id: this.mod.editor.docInfo.id,
+            updated: this.mod.editor.docInfo.updated
+        }
+
+    }
+
+    handleMergeFailure(error, offlineDoc, _onlineDoc, mergeEditor = false) {
+        // In case the auto-merge or manual merge failed due to JS Errors,
+        // make a copy of the offline doc available for download.
+
+        // Close the merge window if open
+        if (mergeEditor && document.querySelector('#editor-merge-view')) {
+            mergeEditor.mergeDialog.close()
+            // Close merge resolution warning if open
+            if (document.querySelector('#merge-res-warning')) {
+                mergeEditor.warningDialog.close()
+            }
+        }
+
+        // Prepare Export
+        new ExportFidusFile(
+            this.getDocData(offlineDoc),
+            this.mod.editor.mod.db.bibDB,
+            this.mod.editor.mod.db.imageDB
+        )
+
+        // Show up proper message
+        const mergeFailedDialog = new Dialog({
+            title: gettext('Merge failed'),
+            id: "merge_failed",
+            body: gettext('An error occurred during the merge process, so we cannot save your work to the server any longer, and it is downloaded to your computer instead. Please consider importing it into a new document.'),
+            buttons: [{
+                text: gettext('Proceed to dashboard'),
+                classes: 'fw-dark',
+                click: () => {
+                    window.location.href = '/'
+                }
+            }],
+            canClose: false
+        })
+        mergeFailedDialog.open()
+
+        // Close the editor operations.
+        this.mod.editor.close()
+
+        // Throw the error so it is logged.
+        throw error
+    }
 }

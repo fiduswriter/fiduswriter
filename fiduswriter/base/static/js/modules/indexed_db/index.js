@@ -1,3 +1,6 @@
+// Changing this number will make clients flush their database.
+const DB_VERSION = 3
+
 export class IndexedDB {
     constructor(app) {
         this.app = app
@@ -18,7 +21,7 @@ export class IndexedDB {
             const database = event.target.result
             this.app.db_config['version'] = database.version
             database.close()
-            if (this.app.db_config.version < 2) {
+            if (this.app.db_config.version !== DB_VERSION) {
                 this.createDBSchema()
             }
         }
@@ -28,7 +31,7 @@ export class IndexedDB {
         // Return a promise which will be resolved after the Indexed DB
         // and the object stores are created.
         return new Promise(resolve => {
-            this.app.db_config.version += 1
+            this.app.db_config.version = DB_VERSION
             const newRequest = window.indexedDB.open(this.app.db_config.db_name, this.app.db_config.version)
             newRequest.onupgradeneeded = event => {
                 const db = event.target.result
@@ -48,7 +51,7 @@ export class IndexedDB {
     }
 
     createObjectStore(name, options) {
-        this.app.db_config.version += 1
+        this.app.db_config.version = DB_VERSION
         const newRequest = window.indexedDB.open(this.app.db_config.db_name, this.app.db_config.version)
         newRequest.onupgradeneeded = function(event) {
             const db = event.target.result
@@ -151,6 +154,12 @@ export class IndexedDB {
             }
             request.onsuccess = (event) => {
                 const db = event.target.result
+                if (!Array.from(db.objectStoreNames).includes(objectStoreName)) {
+                    db.close()
+                    return this.reset().then(
+                        () => this.readAllData(objectStoreName)
+                    )
+                }
                 const objectStore = db.transaction(objectStoreName, 'readwrite').objectStore(objectStoreName)
                 const read_all_request = objectStore.getAll()
                 read_all_request.onerror = function(_event) {

@@ -1,5 +1,5 @@
 import {DataTable} from "simple-datatables"
-
+import deepEqual from "fast-deep-equal"
 import * as plugins from "../../../plugins/documents_overview"
 import {DocumentOverviewActions} from "./actions"
 import {DocumentAccessRightsDialog} from "../access_rights"
@@ -29,7 +29,6 @@ export class DocumentOverview {
     init() {
         return whenReady().then(() => {
             this.render()
-            activateWait(true)
             const smenu = new SiteMenu(this.app, "documents")
             smenu.init()
             new DocumentOverviewActions(this)
@@ -51,12 +50,12 @@ export class DocumentOverview {
             user: this.user,
             hasOverview: true
         })
-        document.body = this.dom
         ensureCSS([
             'document_overview.css',
             'add_remove_dialog.css',
             'access_rights_dialog.css'
         ])
+        document.body = this.dom
         setDocTitle(gettext('Document Overview'), this.app)
         const feedbackTab = new FeedbackTab()
         feedbackTab.init()
@@ -122,20 +121,27 @@ export class DocumentOverview {
     }
 
     getDocumentListData() {
+        const cachedPromise = this.showCached()
         if (this.app.isOffline()) {
-            return this.showCached()
+            return cachedPromise
         }
         return postJson(
             '/api/document/documentlist/'
         ).then(
             ({json}) => {
-                this.updateIndexedDB(json)
-                this.initializeView(json)
+                return cachedPromise.then(
+                    () => this.loaddatafromIndexedDB()
+                ).then(oldJson => {
+                    if (!deepEqual(json, oldJson)) {
+                        this.updateIndexedDB(json)
+                        this.initializeView(json)
+                    }
+                })
             }
         ).catch(
             error => {
                 if (this.app.isOffline()) {
-                    return this.showCached()
+                    return cachedPromise
                 } else {
                     addAlert('error', gettext('Document data loading failed.'))
                     throw (error)
@@ -145,60 +151,34 @@ export class DocumentOverview {
     }
 
     showCached() {
-        return this.loaddatafromIndexedDB().then((json) => this.initializeView(json))
+        return this.loaddatafromIndexedDB().then(json => {
+            if (!json) {
+                activateWait(true)
+                return
+            }
+            return this.initializeView(json)
+        })
     }
 
     loaddatafromIndexedDB() {
-        const newJson = {}
-        return this.app.indexedDB.readAllData("document_list").then(
-            response => newJson['documents'] = response
-        ).then(
-            () => this.app.indexedDB.readAllData("document_templates")
-        ).then(
+        return this.app.indexedDB.readAllData("document_data").then(
             response => {
-                const dummyDict = {}
-                for (const data in response) {
-                    const pk = response[data].pk
-                    delete response[data].pk
-                    dummyDict[pk] = response[data]
+                if (!response.length) {
+                    return false
                 }
-                newJson['document_templates'] = dummyDict
-            }
-        ).then(
-            () => this.app.indexedDB.readAllData("document_styles")
-        ).then(
-            response => newJson['document_styles'] = response
-        ).then(
-            () => this.app.indexedDB.readAllData("document_teammembers")
-        ).then(
-            response => {
-                newJson['team_members'] = response
-                return newJson
+                const data = response[0]
+                delete data.id
+                return data
             }
         )
+
     }
 
     updateIndexedDB(json) {
+        json.id = 1
         // Clear data if any present
-        this.app.indexedDB.clearData("document_list").then(
-            () => this.app.indexedDB.clearData("document_teammembers")
-        ).then(
-            () => this.app.indexedDB.clearData("document_styles")
-        ).then(
-            () => this.app.indexedDB.clearData("document_templates")
-        ).then(
-            () => {
-                //Insert new data
-                this.app.indexedDB.insertData("document_list", json.documents)
-                this.app.indexedDB.insertData("document_teammembers", json.team_members)
-                this.app.indexedDB.insertData("document_styles", json.document_styles)
-                const dummyJson = []
-                for (const key in json.document_templates) {
-                    json.document_templates[key]['pk'] = key
-                    dummyJson.push(json.document_templates[key])
-                }
-                this.app.indexedDB.insertData("document_templates", dummyJson)
-            }
+        return this.app.indexedDB.clearData("document_data").then(
+            () => this.app.indexedDB.insertData("document_data", [json])
         )
     }
 
@@ -215,7 +195,7 @@ export class DocumentOverview {
         this.teamMembers = json.team_members
         this.documentStyles = json.document_styles
         this.documentTemplates = json.document_templates
-        this.initTable()
+        return this.initTable()
         if (Object.keys(this.documentTemplates).length > 1) {
             this.multipleNewDocumentMenuItem()
         }
@@ -225,7 +205,7 @@ export class DocumentOverview {
         if (!this.table) {
             return
         }
-        this.initTable()
+        return this.initTable()
     }
 
     /* Initialize the overview table */

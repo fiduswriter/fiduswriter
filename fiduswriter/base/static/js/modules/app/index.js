@@ -66,16 +66,7 @@ export class App {
                     return import(/* webpackPrefetch: true *//* webpackChunkName: "editor" */'../editor').then(({Editor}) => new Editor(this.config, id))
                 },
                 dbTables: {
-                    "list": {
-                        keyPath: "id"
-                    },
-                    "templates": {
-                        keyPath: "pk"
-                    },
-                    "styles": {
-                        keyPath: "title"
-                    },
-                    "teammembers": {
+                    "data": {
                         keyPath: "id"
                     }
                 }

@@ -56,21 +56,12 @@ class DjangoStaticFilesHandler(StaticFileHandler):
         return m
 
     def set_extra_headers(self, path):
-        if settings.DEBUG:
-            self.set_header(
-                'Cache-Control',
-                'no-store, no-cache, must-revalidate, max-age=0'
-            )
-            self.set_header('Expires', '0')
-            expiration = datetime.now() - timedelta(days=366)
-            self.set_header('Last-Modified', expiration)
-        else:
-            self.set_header(
-                'Expires',
-                datetime.utcnow() + timedelta(days=365*10)
-            )
-            self.set_header('Cache-Control', "max-age=" + str(86400*365*10))
-            self.set_header('Last-Modified', datetime.utcnow())
+        self.set_header(
+            'Expires',
+            datetime.utcnow() + timedelta(days=365*10)
+        )
+        self.set_header('Cache-Control', "max-age=" + str(86400*365*10))
+        self.set_header('Last-Modified', datetime.utcnow())
 
 
 class SetupStaticFilesHandler(StaticFileHandler):

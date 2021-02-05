@@ -195,7 +195,7 @@ export class DocumentOverview {
         this.teamMembers = json.team_members
         this.documentStyles = json.document_styles
         this.documentTemplates = json.document_templates
-        return this.initTable()
+        this.initTable()
         if (Object.keys(this.documentTemplates).length > 1) {
             this.multipleNewDocumentMenuItem()
         }
@@ -205,7 +205,7 @@ export class DocumentOverview {
         if (!this.table) {
             return
         }
-        return this.initTable()
+        this.initTable()
     }
 
     /* Initialize the overview table */

@@ -13,7 +13,8 @@ import {
 import {
     dispatchRemoveDiffdata,
     addDeletionMarks,
-    updateMarkData
+    updateMarkData,
+    removeDiffFromJson
 } from "../tools"
 import {
     copyChange,
@@ -305,25 +306,33 @@ function createDropUp(merge, diffMark, linkMark) {
             event => {
                 event.preventDefault()
                 event.stopImmediatePropagation()
-                if (trType == "online") {
-                    if (opType == "insertion") {
-                        dispatchRemoveDiffdata(merge.mergeView2, diffMark.attrs.from, diffMark.attrs.to)
+                try {
+                    if (trType == "online") {
+                        if (opType == "insertion") {
+                            dispatchRemoveDiffdata(merge.mergeView2, diffMark.attrs.from, diffMark.attrs.to)
+                        } else {
+                            // remove online deletion decoration
+                            const decorationId = dropUp.dataset.decoid
+                            removeDecoration(merge.mergeView2, decorationId)
+                        }
                     } else {
-                        // remove online deletion decoration
-                        const decorationId = dropUp.dataset.decoid
-                        removeDecoration(merge.mergeView2, decorationId)
-                    }
-                } else {
-                    if (opType == "insertion") {
-                        acceptChanges(merge, diffMark, merge.mergeView2, merge.mergeView3, tr)
-                    } else {
-                        // remove offline deletion decoration
-                        const decorationId = dropUp.dataset.decoid
-                        if (deleteContent(merge, merge.mergeView2, diffMark)) {
-                            merge.mergeView2.dispatch(merge.mergeView2.state.tr.setMeta("removeHighlight", true))
-                            removeDecoration(merge.mergeView3, decorationId)
+                        if (opType == "insertion") {
+                            acceptChanges(merge, diffMark, merge.mergeView2, merge.mergeView3, tr)
+                        } else {
+                            // remove offline deletion decoration
+                            const decorationId = dropUp.dataset.decoid
+                            if (deleteContent(merge, merge.mergeView2, diffMark)) {
+                                merge.mergeView2.dispatch(merge.mergeView2.state.tr.setMeta("removeHighlight", true))
+                                removeDecoration(merge.mergeView3, decorationId)
+                            }
                         }
                     }
+                } catch (error) {
+                    const onlineDoc = merge.editor.schema.nodeFromJSON(removeDiffFromJson(merge.onlineDoc.toJSON()))
+                    const offlineDoc = merge.editor.schema.nodeFromJSON(removeDiffFromJson(merge.offlineDoc.toJSON()))
+
+                    // Handle merge failure
+                    merge.editor.mod.collab.doc.merge.handleMergeFailure(error, offlineDoc, onlineDoc, merge)
                 }
             }
         )
@@ -331,39 +340,47 @@ function createDropUp(merge, diffMark, linkMark) {
     const rejectChange = dropUp.querySelector('.reject-change')
     if (rejectChange) {
         rejectChange.addEventListener('mousedown',
-            () => {
+            (event) => {
                 event.preventDefault()
                 event.stopImmediatePropagation()
-                if (trType == "online") {
-                    if (opType == "insertion") {
-                        // Delete inserted content
-                        if (diffMark.attrs.markOnly) {
-                            handleMarks(merge.mergeView2, diffMark, tr, merge.schema)
-                            dispatchRemoveDiffdata(merge.mergeView2, diffMark.attrs.from, diffMark.attrs.to)
+                try {
+                    if (trType == "online") {
+                        if (opType == "insertion") {
+                            // Delete inserted content
+                            if (diffMark.attrs.markOnly) {
+                                handleMarks(merge.mergeView2, diffMark, tr, merge.schema)
+                                dispatchRemoveDiffdata(merge.mergeView2, diffMark.attrs.from, diffMark.attrs.to)
+                            } else {
+                                deleteContent(merge, merge.mergeView2, diffMark, false)
+                            }
                         } else {
-                            deleteContent(merge, merge.mergeView2, diffMark, false)
+                            // remove online deletion decoration
+                            if (addDeletedContentBack(merge, merge.mergeView2, diffMark)) {
+                                const decorationId = dropUp.dataset.decoid
+                                removeDecoration(merge.mergeView2, decorationId)
+                            }
                         }
                     } else {
-                        // remove online deletion decoration
-                        if (addDeletedContentBack(merge, merge.mergeView2, diffMark)) {
-                            const decorationId = dropUp.dataset.decoid
-                            removeDecoration(merge.mergeView2, decorationId)
+                        if (opType == "insertion") {
+                            dispatchRemoveDiffdata(merge.mergeView3, diffMark.attrs.from, diffMark.attrs.to)
+                        } else {
+                            // remove offline deletion decoration
+                            dropUp.parentNode.classList.remove("offline-deleted")
+                            dropUp.parentNode.classList.remove("deletion-decoration")
+                            dropUp.parentNode.querySelectorAll(".offline-deleted").forEach(ele => {
+                                ele.classList.remove("offline-deleted")
+                                ele.classList.remove("selected-dec")
+                            })
+                            dropUp.remove()
+                            merge.mergeView2.dispatch(merge.mergeView2.state.tr.setMeta("removeHighlight", true))
                         }
                     }
-                } else {
-                    if (opType == "insertion") {
-                        dispatchRemoveDiffdata(merge.mergeView3, diffMark.attrs.from, diffMark.attrs.to)
-                    } else {
-                        // remove offline deletion decoration
-                        dropUp.parentNode.classList.remove("offline-deleted")
-                        dropUp.parentNode.classList.remove("deletion-decoration")
-                        dropUp.parentNode.querySelectorAll(".offline-deleted").forEach(ele => {
-                            ele.classList.remove("offline-deleted")
-                            ele.classList.remove("selected-dec")
-                        })
-                        dropUp.remove()
-                        merge.mergeView2.dispatch(merge.mergeView2.state.tr.setMeta("removeHighlight", true))
-                    }
+                } catch (error) {
+                    const onlineDoc = merge.editor.schema.nodeFromJSON(removeDiffFromJson(merge.onlineDoc.toJSON()))
+                    const offlineDoc = merge.editor.schema.nodeFromJSON(removeDiffFromJson(merge.offlineDoc.toJSON()))
+
+                    // Handle merge failure
+                    merge.editor.mod.collab.doc.merge.handleMergeFailure(error, offlineDoc, onlineDoc, merge)
                 }
             }
         )

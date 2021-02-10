@@ -22,7 +22,7 @@
     "diff-dom": "4.2.1",
     "downloadjs": "1.4.7",
     "@fortawesome/fontawesome-free": "^5.13.1",
-    "simple-datatables": "^2.1.13",
+    "simple-datatables": "^3.0.1",
     "@vivliostyle/print": "^2.4.1",
     "eslint": "7.13.0",
     "eslint-global-patch": "7.12.1",

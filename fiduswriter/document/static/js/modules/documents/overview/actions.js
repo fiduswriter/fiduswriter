@@ -1,4 +1,4 @@
-import {getMissingDocumentListData} from "../tools"
+import {getMissingDocumentListData, getDocTitle} from "../tools"
 import {importFidusTemplate} from "./templates"
 import {SaveCopy, ExportFidusFile} from "../../exporter/native"
 import {ImportFidusFile} from "../../importer/file"
@@ -22,11 +22,11 @@ export class DocumentOverviewActions {
         ).then(
             ({json}) => {
                 if (json.done) {
-                    addAlert('success', `${gettext('Document has been deleted')}: '${doc.title}'`)
+                    addAlert('success', `${gettext('Document has been deleted')}: '${getDocTitle(doc)}'`)
                     this.documentOverview.removeTableRows([id])
                     this.documentOverview.documentList = this.documentOverview.documentList.filter(doc => doc.id !== id)
                 } else {
-                    addAlert('error', `${gettext('Could not delete document')}: '${doc.title}'`)
+                    addAlert('error', `${gettext('Could not delete document')}: '${getDocTitle(doc)}'`)
                 }
             }
         )

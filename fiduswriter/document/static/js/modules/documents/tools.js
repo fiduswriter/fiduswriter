@@ -47,5 +47,11 @@ export const getMissingDocumentListData = function(ids, documentList, schema) {
     } else {
         return Promise.resolve()
     }
+}
 
+export const getDocTitle = function(doc) {
+    if (!doc.path.length || doc.path.endsWith('/')) {
+        return doc.title
+    }
+    return doc.path.split('/').pop()
 }

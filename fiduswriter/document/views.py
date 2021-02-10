@@ -395,6 +395,24 @@ def delete(request):
     )
 
 
+@login_required
+@ajax_required
+@require_POST
+def move(request):
+    response = {}
+    status = 200
+    doc_id = int(request.POST['id'])
+    path = request.POST['path']
+    document = Document.objects.get(pk=doc_id, owner=request.user)
+    document.path = path
+    document.save()
+    response['done'] = True
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
 def send_share_notification(request, doc_id, collaborator_id, rights, change):
     owner = request.user.readable_name
     document = Document.objects.get(id=doc_id)

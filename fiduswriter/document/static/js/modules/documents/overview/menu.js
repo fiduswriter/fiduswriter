@@ -1,23 +1,29 @@
 import {DocumentAccessRightsDialog} from "../access_rights"
+import {DocumentMoveDialog} from "../move"
 import {addAlert} from "../../common"
 
 export const bulkMenuModel = () => ({
     content: [
         {
-            title: gettext('Delete selected'),
-            tooltip: gettext('Delete the documents that have been selected.'),
+            title: gettext('Move selected'),
+            tooltip: gettext('Move the documents that have been selected.'),
             action: overview => {
                 const ids = overview.getSelected()
-                const ownIds = ids.filter(id => overview.documentList.find(doc => doc.id === id).is_owner)
-                if (ownIds.length !== ids.length) {
-                    addAlert('error', gettext('You cannot delete documents of other users'))
+                const docs = ids.map(id => overview.documentList.find(doc => doc.id === id))
+                const ownDocs = docs.filter(doc => doc.is_owner)
+                if (ownDocs.length !== docs.length) {
+                    addAlert('error', gettext('You cannot move documents of other users'))
                 }
-                if (ownIds.length) {
-                    overview.mod.actions.deleteDocumentDialog(ownIds)
+                if (ownDocs.length) {
+                    const dialog = new DocumentMoveDialog(
+                        overview,
+                        ownDocs
+                    )
+                    dialog.init()
                 }
             },
             disabled: overview => !overview.getSelected().length || overview.app.isOffline(),
-            order: 0
+            order: 1
         },
         {
             title: gettext('Share selected'),
@@ -111,6 +117,22 @@ export const bulkMenuModel = () => ({
             },
             disabled: overview => !overview.getSelected().length || overview.app.isOffline(),
             order: 7
+        },
+        {
+            title: gettext('Delete selected'),
+            tooltip: gettext('Delete the documents that have been selected.'),
+            action: overview => {
+                const ids = overview.getSelected()
+                const ownIds = ids.filter(id => overview.documentList.find(doc => doc.id === id).is_owner)
+                if (ownIds.length !== ids.length) {
+                    addAlert('error', gettext('You cannot delete documents of other users'))
+                }
+                if (ownIds.length) {
+                    overview.mod.actions.deleteDocumentDialog(ownIds)
+                }
+            },
+            disabled: overview => !overview.getSelected().length || overview.app.isOffline(),
+            order: 8
         }
     ]
 })

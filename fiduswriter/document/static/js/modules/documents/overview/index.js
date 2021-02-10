@@ -24,6 +24,8 @@ export class DocumentOverview {
         this.documentList = []
         this.teamMembers = []
         this.mod = {}
+        this.path = '/'
+        this.subdirs = []
     }
 
     init() {
@@ -102,6 +104,18 @@ export class DocumentOverview {
                     event.preventDefault()
                 }
                 break
+            case findTarget(event, '.fw-data-table-title .subdir', el):
+                this.path += el.target.dataset.subdir + '/'
+                this.initTable()
+                break
+            case findTarget(event, '.fw-data-table-title .parentdir', el): {
+                const pathParts = this.path.split('/')
+                pathParts.pop()
+                pathParts.pop()
+                this.path = pathParts.join('/') + '/'
+                this.initTable()
+                break
+            }
             default:
                 break
             }
@@ -210,6 +224,11 @@ export class DocumentOverview {
 
     /* Initialize the overview table */
     initTable() {
+        if (this.table) {
+            this.table.destroy()
+            this.table = false
+        }
+        this.subdirs = []
         const tableEl = document.createElement('table')
         tableEl.classList.add('fw-data-table')
         tableEl.classList.add('fw-document-table')
@@ -226,6 +245,24 @@ export class DocumentOverview {
             if (window.innerWidth < 400) {
                 hiddenCols.push(5)
             }
+        }
+
+        const fileList = this.documentList.map(doc => this.createTableRow(doc)).filter(row => !!row)
+        if (this.path !== '/') {
+            fileList.unshift([
+                '',
+                '',
+                `<span class="fw-data-table-title">
+                    <i class="fas fa-folder"></i>
+                    <span class="fw-link-text parentdir">..</span>
+                </span>`,
+                '',
+                '',
+                '',
+                '',
+                '',
+                ''
+            ])
         }
 
         this.table = new DataTable(tableEl, {
@@ -251,7 +288,7 @@ export class DocumentOverview {
                     gettext("Rights"),
                     ''
                 ],
-                data: this.documentList.map(doc => this.createTableRow(doc))
+                data: fileList
             },
             columns: [
                 {
@@ -274,13 +311,51 @@ export class DocumentOverview {
     }
 
     createTableRow(doc) {
+        let path = doc.path
+        if (!path.startsWith('/')) {
+            path = '/' + path
+        }
+        if (!path.startsWith(this.path)) {
+            return false
+        }
+        if (path.endsWith('/')) {
+            path += doc.title
+        }
+
+        const currentPath = path.slice(this.path.length)
+        if (currentPath.includes('/')) {
+            // There is a subdir
+            const subdir = currentPath.split('/').shift()
+            if (this.subdirs.includes(subdir)) {
+                // subdir has been covered already
+                return false
+            }
+            this.subdirs.push(subdir)
+            // Display subdir
+            return [
+                '',
+                '',
+                `<span class="fw-data-table-title">
+                    <i class="fas fa-folder"></i>
+                    <span class="fw-link-text subdir" data-subdir="${escapeText(subdir)}">${escapeText(subdir)}</span>
+                </span>`,
+                '',
+                '',
+                '',
+                '',
+                '',
+                ''
+            ]
+        }
+
+        // This is the folder of the file. Return the file.
         return [
             String(doc.id),
             `<input type="checkbox" class="entry-select fw-check" data-id="${doc.id}" id="doc-${doc.id}"><label for="doc-${doc.id}"></label>`,
             `<span class="fw-data-table-title">
                 <i class="far fa-file-alt"></i>
                 <a class="doc-title fw-link-text fw-searchable" href="/document/${doc.id}/">
-                    ${doc.title.length ? escapeText(doc.title) : gettext('Untitled')}
+                    ${currentPath.length ? escapeText(currentPath) : gettext('Untitled')}
                 </a>
             </span>`,
             doc.revisions.length ?
@@ -298,7 +373,7 @@ export class DocumentOverview {
                 <i data-id="${doc.id}" class="icon-access-right icon-access-${doc.rights}"></i>
             </span>`,
             `<span class="delete-document fw-link-text" data-id="${doc.id}"
-                    data-title="${escapeText(doc.title)}">
+                    data-title="${escapeText(currentPath)}">
                 ${
     this.user.id === doc.owner.id ?
         '<i class="fa fa-trash-alt"></i>' :
@@ -306,6 +381,8 @@ export class DocumentOverview {
 }
             </span>`
         ]
+
+
     }
 
     removeTableRows(ids) {

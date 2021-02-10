@@ -11,6 +11,7 @@ export {
     localizeDate,
     noSpaceTmp,
     escapeText,
+    unescapeText,
     cancelPromise,
     findTarget,
     whenReady,

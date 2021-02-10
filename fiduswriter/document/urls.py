@@ -14,6 +14,7 @@ urlpatterns = [
         name='get_documentlist_extra'
     ),
     url('^delete/$', views.delete, name='delete'),
+    url('^move/$', views.move, name='move'),
     url(
         '^create_doc/(?P<template_id>[0-9]+)/$',
         views.create_doc,

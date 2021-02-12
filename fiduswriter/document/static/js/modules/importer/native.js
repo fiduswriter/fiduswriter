@@ -145,6 +145,7 @@ export class ImportNative {
                 this.doc.updated = json.updated
                 this.doc.revisions = []
                 this.doc.rights = "write"
+                this.doc.path = ""
                 return {doc: this.doc, docInfo}
 
             }

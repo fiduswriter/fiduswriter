@@ -1,6 +1,7 @@
 import download from "downloadjs"
 
 import {documentrevisionsTemplate} from "./templates"
+import {getDocTitle} from "../tools"
 import {ImportFidusFile} from "../../importer/file"
 import {deactivateWait, addAlert, get, post, cancelPromise, findTarget, Dialog, escapeText} from "../../common"
 
@@ -23,7 +24,7 @@ export class DocumentRevisionsDialog {
     init() {
         const doc = this.documentList.find(doc => doc.id === this.documentId)
         this.dialog = new Dialog({
-            title: `${gettext('Saved revisions of')} ${escapeText(doc.title)}`,
+            title: `${gettext('Saved revisions of')} ${escapeText(getDocTitle(doc))}`,
             id: 'revisions-dialog',
             width: 620,
             height: 480,

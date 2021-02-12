@@ -216,7 +216,6 @@ export class Editor {
     init() {
         ensureCSS([
             'mathlive.css',
-            'mathlive.core.css',
             'editor.css',
             'tags.css',
             'contributors.css',

@@ -31,7 +31,8 @@ export {
     from "./comments"
 export {
     documentTemplatePlugin,
-    checkProtectedInSelection
+    checkProtectedInSelection,
+    getProtectedRanges
 }
     from "./document_template"
 export {

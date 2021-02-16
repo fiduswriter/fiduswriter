@@ -9,7 +9,8 @@ import {
     getSearchMatches,
     selectPreviousSearchMatch,
     selectNextSearchMatch,
-    deselectSearchMatch
+    deselectSearchMatch,
+    getProtectedRanges
 }
     from "../../state_plugins"
 import {
@@ -137,10 +138,18 @@ export class SearchReplaceDialog {
                         if (this.matches.matches.length) {
                             const tr = this.editor.view.state.tr
                             const originalDoc = this.editor.view.state.doc
+                            const protectedRanges = getProtectedRanges(this.editor.view.state)
                             const matches = this.matches.matches.slice()
                             while (matches.length) {
                                 const match = matches.pop() // We take them backward so that there is no need for mapping steps
-                                tr.insertText(this.replaceInput.value, match.from, match.to)
+                                if (
+                                    !protectedRanges.find(({from, to}) => !(
+                                        (match.from <= from && match.to <= from) ||
+                                            (match.from >= to && match.to >= to)
+                                    ))
+                                ) { // Ignore matches within protected ranges.
+                                    tr.insertText(this.replaceInput.value, match.from, match.to)
+                                }
                             }
                             this.editor.view.dispatch(tr)
                             // In case there was a match within protected range , the change
@@ -178,7 +187,11 @@ export class SearchReplaceDialog {
                 this.endSearch()
                 this.editor.currentView.focus()
             },
-            canEscape: true
+            canEscape: true,
+            note: {
+                display: false,
+                text: gettext("Please note that there are match(es) within non-editable parts of the document, these match(es) won't be replaced when using 'replace' or 'replace all'")
+            }
         })
 
         this.dialog.open()
@@ -212,9 +225,34 @@ export class SearchReplaceDialog {
         this.dialog.refreshButtons()
     }
 
+    setNoteState() {
+        const protectedRanges = getProtectedRanges(this.editor.view.state)
+        const matches = this.matches.matches.slice()
+        let matchWithinPR = false
+        while (matches.length && !matchWithinPR) {
+            const match = matches.pop()
+            if (
+                protectedRanges.find(({from, to}) => !(
+                    (match.from <= from && match.to <= from) ||
+                        (match.from >= to && match.to >= to)
+                ))
+            ) {
+                matchWithinPR = true
+            }
+        }
+
+        if (matchWithinPR) {
+            this.dialog.note.display = true
+        } else {
+            this.dialog.note.display = false
+        }
+        this.dialog.refreshNote()
+    }
+
     bind() {
         this.searchInput.addEventListener('input', () => {
             this.search(this.searchInput.value)
+            this.setNoteState()
         })
         if (this.canWrite) {
             this.replaceInput.addEventListener('input', () => {

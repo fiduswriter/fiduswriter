@@ -78,11 +78,14 @@ def documents_list(request):
     for document in documents:
         if document.owner == request.user:
             access_right = 'write'
+            path = document.path
         else:
-            access_right = AccessRight.objects.get(
+            access_object = AccessRight.objects.get(
                 user=request.user,
                 document=document
-            ).rights
+            )
+            access_right = access_object.rights
+            path = access_object.path
         if (
             request.user.is_staff or
             document.owner == request.user or
@@ -111,7 +114,7 @@ def documents_list(request):
         output_list.append({
             'id': document.id,
             'title': document.title,
-            'path': document.path,
+            'path': path,
             'is_owner': is_owner,
             'owner': {
                 'id': document.owner.id,
@@ -403,10 +406,23 @@ def move(request):
     status = 200
     doc_id = int(request.POST['id'])
     path = request.POST['path']
-    document = Document.objects.get(pk=doc_id, owner=request.user)
-    document.path = path
-    document.save()
-    response['done'] = True
+    document = Document.objects.filter(pk=doc_id).first()
+    if not document:
+        response['done'] = False
+    elif document.owner==request.user:
+        document.path = path
+        document.save()
+        response['done'] = True
+    else:
+        access_right = AccessRights.objects.filter(
+            document=document,
+            user=request.user
+        ).first()
+        if not access_right:
+            response['done'] = False
+        else:
+            access_right.path = path
+            response['done'] = True
     return JsonResponse(
         response,
         status=status

@@ -22,7 +22,7 @@ const dialogTemplate = ({id, classes, title, height, width, icon, buttons, zInde
 
     </div>
     <div ${id ? `id="${id}"` : ''} class="ui-dialog-content ui-widget-content${classes ? ` ${classes}` : ''}${scroll ? ` ui-scrollable` : ''}" style="width: ${width}; height: ${height};">
-        <div class="note-container">${noteTemplate(note)}</div>
+        ${note.text ? `<div class="note-container">${noteTemplate(note)}</div>` : ''}
         ${body}
     </div>
     <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">

@@ -57,3 +57,6 @@ export {
 export {
     faqDialog
 } from "./faq_dialog"
+export {
+    FileSelector
+} from "./file_selector"

@@ -409,12 +409,12 @@ def move(request):
     document = Document.objects.filter(pk=doc_id).first()
     if not document:
         response['done'] = False
-    elif document.owner==request.user:
+    elif document.owner == request.user:
         document.path = path
         document.save()
         response['done'] = True
     else:
-        access_right = AccessRights.objects.filter(
+        access_right = AccessRight.objects.filter(
             document=document,
             user=request.user
         ).first()

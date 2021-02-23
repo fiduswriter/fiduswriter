@@ -1,0 +1,11 @@
+.fw-file-selector .fa-plus-square,
+.fw-file-selector .fa-minus-square,
+.fw-file-selector .file-name,
+.fw-file-selector .folder-name {
+    cursor: pointer;
+}
+
+.fw-file-selector .file-name.selected,
+.fw-file-selector .folder-name.selected {
+    text-decoration: underline;
+}

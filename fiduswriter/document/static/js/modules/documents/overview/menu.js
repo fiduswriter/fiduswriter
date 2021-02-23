@@ -10,14 +10,11 @@ export const bulkMenuModel = () => ({
             action: overview => {
                 const ids = overview.getSelected()
                 const docs = ids.map(id => overview.documentList.find(doc => doc.id === id))
-                const ownDocs = docs.filter(doc => doc.is_owner)
-                if (ownDocs.length !== docs.length) {
-                    addAlert('error', gettext('You cannot move documents of other users'))
-                }
-                if (ownDocs.length) {
+                if (docs.length) {
                     const dialog = new DocumentMoveDialog(
                         overview,
-                        ownDocs
+                        docs,
+                        overview.documentList
                     )
                     dialog.init()
                 }

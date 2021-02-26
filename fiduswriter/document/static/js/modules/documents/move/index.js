@@ -1,6 +1,6 @@
 import {moveTemplate, newFolderTemplate} from "./templates"
 import {addAlert, postJson, Dialog, FileSelector} from "../../common"
-import {getDocTitle} from "../tools"
+import {getDocTitle, moveDoc} from "../tools"
 /**
 * Functions for the document move dialog.
 */
@@ -94,8 +94,6 @@ export class DocumentMoveDialog {
                             if (!path.endsWith('/')) {
                                 path += '/'
                             }
-                        } else if (path.endsWith(this.movingDocs[0].title || gettext('Untitled'))) {
-                            path = path.split('/').slice(0, -1).join('/') + '/'
                         }
                         this.movingDocs.forEach(doc => this.moveDocument(doc, path))
                     }
@@ -113,23 +111,16 @@ export class DocumentMoveDialog {
         this.fileSelector.init()
     }
 
-    moveDocument(doc, path) {
-        if (path.length && !path.startsWith('/')) {
-            path = '/' + path
-        }
-        path = path.replace(/\/{2,}/g, '/') // replace multiple backslashes
-        postJson(
-            '/api/document/move/',
-            {id: doc.id, path}
-        ).then(
-            ({json}) => {
-                if (json.done) {
-                    addAlert('success', `${gettext('Document has been moved')}: '${getDocTitle(doc)}'`)
-                    doc.path = path
-                    this.documentOverview.initTable()
-                } else {
-                    addAlert('error', `${gettext('Could not move document')}: '${getDocTitle(doc)}'`)
-                }
+    moveDocument(doc, requestedPath) {
+        return moveDoc(doc.id, doc.title, requestedPath).then(
+            path => {
+                addAlert('success', `${gettext('Document has been moved')}: '${getDocTitle(doc)}'`)
+                doc.path = path
+                this.documentOverview.initTable()
+            }
+        ).catch(
+            () => {
+                addAlert('error', `${gettext('Could not move document')}: '${getDocTitle(doc)}'`)
             }
         )
     }

@@ -55,3 +55,31 @@ export const getDocTitle = function(doc) {
     }
     return doc.path.split('/').pop()
 }
+
+export const moveDoc = function(docId, title, path) {
+    path = path.replace(/\/{2,}/g, '/') // replace multiple backslashes
+    if (path.endsWith(title || gettext('Untitled'))) {
+        path = path.split('/').slice(0, -1).join('/') + '/'
+    }
+    if (!path.startsWith('/')) {
+        path = '/' + path
+    }
+    if (path === '/') {
+        path = ''
+    }
+    return new Promise((resolve, reject) => {
+        postJson(
+            '/api/document/move/',
+            {id: docId, path}
+        ).then(
+            ({json}) => {
+                if (json.done) {
+                    resolve(path)
+                } else {
+                    reject()
+                }
+            }
+        )
+    })
+
+}

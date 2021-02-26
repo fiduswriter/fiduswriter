@@ -14,6 +14,7 @@ class SessionUserInfo():
         self.access_rights = 'read'
         self.document_id = 0
         self.access_rights = dict()
+        self.path = ''
 
     def create_doc(self, template_id):
         template = DocumentTemplate.objects.filter(
@@ -49,6 +50,7 @@ class SessionUserInfo():
             if document.owner == self.user:
                 self.access_rights = 'write'
                 self.is_owner = True
+                self.path = document.path
                 can_access = True
             else:
                 self.is_owner = False
@@ -58,5 +60,6 @@ class SessionUserInfo():
                 ).first()
                 if access_rights:
                     self.access_rights = access_rights.rights
+                    self.path = access_rights.path
                     can_access = True
         return (document, can_access)

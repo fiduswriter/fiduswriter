@@ -1,6 +1,7 @@
 import {DiffDOM} from "diff-dom"
 import {keyName} from "w3c-keyname"
-import {escapeText, addAlert} from "../../../common"
+import {escapeText, addAlert, findTarget} from "../../../common"
+import {moveDoc} from "../../../documents/tools"
 
 export class HeaderbarView {
     constructor(editorView, options) {
@@ -42,11 +43,17 @@ export class HeaderbarView {
         document.body.addEventListener('click', this.listeners.onclick)
         this.listeners.onKeydown = event => this.onKeydown(event)
         document.body.addEventListener('keydown', this.listeners.onKeydown)
+        this.listeners.onKeyup = event => this.onKeyup(event)
+        document.body.addEventListener('keyup', this.listeners.onKeyup)
+        this.listeners.onFocusout = event => this.onFocusout(event)
+        document.body.addEventListener('focusout', this.listeners.onFocusout)
     }
 
     destroy() {
         document.body.removeEventListener('click', this.listeners.onclick)
         document.removeEventListener('keydown', this.listeners.onKeydown)
+        document.removeEventListener('keyup', this.listeners.onKeyup)
+        document.removeEventListener('focusout', this.listeners.onFocusout)
     }
 
     onclick(event) {
@@ -203,6 +210,9 @@ export class HeaderbarView {
 
 
     onKeydown(event) {
+        if (findTarget(event, "h1#document-title")) {
+            return
+        }
         let name = keyName(event)
         if (event.altKey) {
             name = "Alt-" + name
@@ -220,6 +230,39 @@ export class HeaderbarView {
         this.editor.menu.headerbarModel.content.forEach(menu => this.checkKeys(event, menu, name))
     }
 
+    onKeyup(event) {
+        if (!findTarget(event, "h1#document-title")) {
+            return
+        }
+        const docTitleEl = document.body.querySelector('h1#document-title')
+        if (!docTitleEl.childNodes.length ||
+            (docTitleEl.childNodes.length === 1 && docTitleEl.firstChild.nodeType === 3)
+        ) {
+            return
+        }
+            // Special key was pressed, we reset to text only and blur
+        docTitleEl.innerHTML = docTitleEl.innerText.trim().replace(/\r?\n|\r/g, '')
+        docTitleEl.blur()
+    }
+
+    onFocusout(event) {
+        if (!findTarget(event, "h1#document-title")) {
+            return
+        }
+        const docTitleEl = document.body.querySelector('h1#document-title')
+        moveDoc(
+            this.editor.docInfo.id,
+            this.getTitle(),
+            docTitleEl.innerText.trim()
+        ).then(
+            path => this.editor.docInfo.path = path
+        ).catch(
+            () => addAlert('error', gettext('Could not update document title.'))
+        ).then(
+            () => this.update()
+        )
+    }
+
     checkKeys(event, menu, nameKey) {
         menu.content.forEach(menuItem => {
             if (menuItem.keys === nameKey) {
@@ -232,6 +275,9 @@ export class HeaderbarView {
     }
 
     update() {
+        if (document.activeElement && document.activeElement.matches('h1#document-title')) {
+            return
+        }
         const diff = this.dd.diff(this.headerEl, this.getHeaderHTML())
         this.dd.apply(this.headerEl, diff)
         if (this.editor.menu.headerbarModel.open) {
@@ -241,12 +287,20 @@ export class HeaderbarView {
         }
     }
 
-    getHeaderHTML() {
-        const doc = this.editor.view.state.doc
-        if (!this.editor.menu.headerbarModel.open) {
-            // header is closed
-            return '<div></div>'
+    getTitleText() {
+        let title = this.editor.docInfo.path
+        if (title.length && !title.endsWith('/')) {
+            return title
         }
+        title += this.getTitle()
+        if (!title.length) {
+            title = gettext('Untitled')
+        }
+        return title
+    }
+
+    getTitle() {
+        const doc = this.editor.view.state.doc
         let title = ""
         doc.firstChild.firstChild.forEach(
             child => {
@@ -255,8 +309,13 @@ export class HeaderbarView {
                 }
             }
         )
-        if (!title.length) {
-            title = gettext('Untitled Document')
+        return title.trim()
+    }
+
+    getHeaderHTML() {
+        if (!this.editor.menu.headerbarModel.open) {
+            // header is closed
+            return '<div></div>'
         }
 
         return `<div>
@@ -266,7 +325,7 @@ export class HeaderbarView {
                 </a>
             </div>
             <div id="document-top">
-                <h1>${title}</h1>
+                <h1 id="document-title" contenteditable="true">${this.getTitleText()}</h1>
                 <nav id="header-navigation">
                     ${this.getHeaderNavHTML()}
                 </nav>

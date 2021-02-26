@@ -150,7 +150,8 @@ export class Editor {
             is_owner: false,
             confirmedDoc: false, // The latest doc as confirmed by the server.
             updated: false, // Latest update time stamp
-            dir: 'ltr' // standard direction, used in input fields, etc.
+            dir: 'ltr', // standard direction, used in input fields, etc.
+            path: '' // Default doc path.
         }
         let id = parseInt(idString)
         if (isNaN(id)) {

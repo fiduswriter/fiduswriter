@@ -160,6 +160,7 @@ class WebSocket(BaseWebSocketHandler):
             'id': self.session["doc"].id,
             'is_owner': self.user_info.is_owner,
             'access_rights': self.user_info.access_rights,
+            'path': self.user_info.path,
             'owner': {
                 'id': doc_owner.id,
                 'name': doc_owner.readable_name,

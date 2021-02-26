@@ -1,9 +1,8 @@
 import download from "downloadjs"
 
 import {documentrevisionsTemplate} from "./templates"
-import {getDocTitle} from "../tools"
 import {ImportFidusFile} from "../../importer/file"
-import {deactivateWait, addAlert, get, post, cancelPromise, findTarget, Dialog, escapeText} from "../../common"
+import {deactivateWait, addAlert, get, post, cancelPromise, findTarget, Dialog, escapeText, shortFileTitle} from "../../common"
 
 /**
  * Functions for the recovering previously created document revisions.
@@ -24,7 +23,7 @@ export class DocumentRevisionsDialog {
     init() {
         const doc = this.documentList.find(doc => doc.id === this.documentId)
         this.dialog = new Dialog({
-            title: `${gettext('Saved revisions of')} ${escapeText(getDocTitle(doc))}`,
+            title: `${gettext('Saved revisions of')} ${escapeText(shortFileTitle(doc.title, doc.path))}`,
             id: 'revisions-dialog',
             width: 620,
             height: 480,

@@ -58,5 +58,8 @@ export {
     faqDialog
 } from "./faq_dialog"
 export {
-    FileSelector
-} from "./file_selector"
+    FileDialog,
+    FileSelector,
+    moveFile,
+    shortFileTitle
+} from "./file"

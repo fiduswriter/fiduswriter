@@ -48,38 +48,3 @@ export const getMissingDocumentListData = function(ids, documentList, schema) {
         return Promise.resolve()
     }
 }
-
-export const getDocTitle = function(doc) {
-    if (!doc.path.length || doc.path.endsWith('/')) {
-        return doc.title
-    }
-    return doc.path.split('/').pop()
-}
-
-export const moveFile = function(fileId, title, path, moveUrl) {
-    path = path.replace(/\/{2,}/g, '/') // replace multiple backslashes
-    if (path.endsWith(title || gettext('Untitled'))) {
-        path = path.split('/').slice(0, -1).join('/') + '/'
-    }
-    if (!path.startsWith('/')) {
-        path = '/' + path
-    }
-    if (path === '/') {
-        path = ''
-    }
-    return new Promise((resolve, reject) => {
-        postJson(
-            moveUrl,
-            {id: fileId, path}
-        ).then(
-            ({json}) => {
-                if (json.done) {
-                    resolve(path)
-                } else {
-                    reject()
-                }
-            }
-        )
-    })
-
-}

@@ -1,31 +1,46 @@
 import {moveTemplate, newFolderTemplate} from "./templates"
 import {addAlert, Dialog, FileSelector} from "../../common"
-import {getDocTitle, moveFile} from "../tools"
+import {shortFileTitle, moveFile} from "./tools"
 /**
 * Functions for the document move dialog.
 */
 
-export class DocumentMoveDialog {
+export class FileDialog {
 
-    constructor(documentOverview, movingDocs, allDocs) {
-        this.documentOverview = documentOverview
-        this.movingDocs = movingDocs
-        this.allDocs = allDocs
+    constructor({
+        title = '', // Dialog title
+        movingFiles = [], // Array of all files that are to be moved.
+        allFiles = [], // Array of all existing files.
+        moveUrl = '', // URL to use for moving files
+        successMessage = '', // Message for success
+        errorMessage = '', // Message for failure
+        succcessCallback = (_file, _path) => {}, // Callback on success
+        fileIcon = 'far fa-file-alt'
+    }) {
+        this.title = title
+        this.movingFiles = movingFiles
+        this.allFiles = allFiles
+        this.moveUrl = moveUrl
+        this.successMessage = successMessage
+        this.errorMessage = errorMessage
+        this.succcessCallback = succcessCallback
+        this.fileIcon = fileIcon
+
         this.path = this.getPath()
         this.fileSelector = false
     }
 
     getPath() {
-        if (this.movingDocs.length === 1) {
-            let path = this.movingDocs[0].path
+        if (this.movingFiles.length === 1) {
+            let path = this.movingFiles[0].path
             if (path.endsWith('/')) {
-                path += this.movingDocs[0].title || gettext('Untitled')
+                path += this.movingFiles[0].title || gettext('Untitled')
             }
             return path
         }
         // We are moving several files. We assume they are all in the same directory
         // so we only need to take the file of the first file.
-        return this.movingDocs[0].path.split('/').slice(0, -1).join('/') + '/'
+        return this.movingFiles[0].path.split('/').slice(0, -1).join('/') + '/'
     }
 
     updatePathDir(path) {
@@ -36,7 +51,7 @@ export class DocumentMoveDialog {
     init() {
 
         this.dialog = new Dialog({
-            title: this.movingDocs.length > 1 ? gettext('Move documents') : gettext('Move document'),
+            title: this.title,
             id: 'move-dialog',
             width: 820,
             height: 440,
@@ -90,12 +105,12 @@ export class DocumentMoveDialog {
                         if (path === this.path) {
                             // No change
                         }
-                        if (this.movingDocs.length > 1) {
+                        if (this.movingFiles.length > 1) {
                             if (!path.endsWith('/')) {
                                 path += '/'
                             }
                         }
-                        this.movingDocs.forEach(doc => this.moveDocument(doc, path))
+                        this.movingFiles.forEach(doc => this.moveFile(doc, path))
                     }
                 }
             ]
@@ -104,23 +119,23 @@ export class DocumentMoveDialog {
 
         this.fileSelector = new FileSelector({
             dom: this.dialog.dialogEl.querySelector('.file-selector'),
-            files: this.allDocs,
+            files: this.allFiles,
             showFiles: false,
-            selectDir: path => this.updatePathDir(path)
+            selectDir: path => this.updatePathDir(path),
+            fileIcon: this.fileIcon
         })
         this.fileSelector.init()
     }
 
-    moveDocument(doc, requestedPath) {
-        return moveFile(doc.id, doc.title, requestedPath, '/api/document/move/').then(
+    moveFile(file, requestedPath) {
+        return moveFile(file.id, file.title, requestedPath, this.moveUrl).then(
             path => {
-                addAlert('success', `${gettext('Document has been moved')}: '${getDocTitle(doc)}'`)
-                doc.path = path
-                this.documentOverview.initTable()
+                addAlert('success', `${this.successMessage}: '${shortFileTitle(file.title, path)}'`)
+                this.succcessCallback(file, path)
             }
         ).catch(
             () => {
-                addAlert('error', `${gettext('Could not move document')}: '${getDocTitle(doc)}'`)
+                addAlert('error', `${this.errorMessage}: '${shortFileTitle(file.title, file.path)}'`)
             }
         )
     }

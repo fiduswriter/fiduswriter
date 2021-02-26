@@ -1,6 +1,5 @@
 import {DocumentAccessRightsDialog} from "../access_rights"
-import {DocumentMoveDialog} from "../move"
-import {addAlert} from "../../common"
+import {addAlert, FileDialog} from "../../common"
 
 export const bulkMenuModel = () => ({
     content: [
@@ -11,11 +10,18 @@ export const bulkMenuModel = () => ({
                 const ids = overview.getSelected()
                 const docs = ids.map(id => overview.documentList.find(doc => doc.id === id))
                 if (docs.length) {
-                    const dialog = new DocumentMoveDialog(
-                        overview,
-                        docs,
-                        overview.documentList
-                    )
+                    const dialog = new FileDialog({
+                        title: docs.length > 1 ? gettext('Move documents') : gettext('Move document'),
+                        movingFiles: docs,
+                        allFiles: overview.documentList,
+                        moveUrl: '/api/document/move/',
+                        successMessage: gettext('Document has been moved'),
+                        errorMessage: gettext('Could not move document'),
+                        succcessCallback: (file, path) => {
+                            file.path = path
+                            overview.initTable()
+                        }
+                    })
                     dialog.init()
                 }
             },

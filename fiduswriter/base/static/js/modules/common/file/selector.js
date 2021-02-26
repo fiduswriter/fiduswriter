@@ -1,5 +1,5 @@
-import {escapeText, findTarget} from "./basic"
-import {ensureCSS} from "./network"
+import {escapeText, findTarget} from "../basic"
+import {ensureCSS} from "../network"
 
 export class FileSelector {
     constructor({

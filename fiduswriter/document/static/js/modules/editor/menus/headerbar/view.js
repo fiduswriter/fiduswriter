@@ -1,7 +1,6 @@
 import {DiffDOM} from "diff-dom"
 import {keyName} from "w3c-keyname"
-import {escapeText, addAlert, findTarget} from "../../../common"
-import {moveFile} from "../../../documents/tools"
+import {addAlert, escapeText, findTarget, moveFile} from "../../../common"
 
 export class HeaderbarView {
     constructor(editorView, options) {

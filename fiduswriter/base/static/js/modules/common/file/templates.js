@@ -1,4 +1,4 @@
-import {escapeText} from "../../common"
+import {escapeText} from "../"
 
 export const moveTemplate = ({path}) =>
     `<div>

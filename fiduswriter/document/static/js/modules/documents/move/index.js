@@ -1,5 +1,5 @@
 import {moveTemplate, newFolderTemplate} from "./templates"
-import {addAlert, postJson, Dialog, FileSelector} from "../../common"
+import {addAlert, Dialog, FileSelector} from "../../common"
 import {getDocTitle, moveDoc} from "../tools"
 /**
 * Functions for the document move dialog.

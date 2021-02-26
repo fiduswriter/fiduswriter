@@ -240,7 +240,7 @@ export class HeaderbarView {
         ) {
             return
         }
-            // Special key was pressed, we reset to text only and blur
+        // Special key was pressed, we reset to text only and blur
         docTitleEl.innerHTML = docTitleEl.innerText.trim().replace(/\r?\n|\r/g, '')
         docTitleEl.blur()
     }

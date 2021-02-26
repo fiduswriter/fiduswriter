@@ -1,7 +1,7 @@
 import {DiffDOM} from "diff-dom"
 import {keyName} from "w3c-keyname"
 import {escapeText, addAlert, findTarget} from "../../../common"
-import {moveDoc} from "../../../documents/tools"
+import {moveFile} from "../../../documents/tools"
 
 export class HeaderbarView {
     constructor(editorView, options) {
@@ -250,10 +250,11 @@ export class HeaderbarView {
             return
         }
         const docTitleEl = document.body.querySelector('h1#document-title')
-        moveDoc(
+        moveFile(
             this.editor.docInfo.id,
             this.getTitle(),
-            docTitleEl.innerText.trim()
+            docTitleEl.innerText.trim(),
+            '/api/document/move/'
         ).then(
             path => this.editor.docInfo.path = path
         ).catch(

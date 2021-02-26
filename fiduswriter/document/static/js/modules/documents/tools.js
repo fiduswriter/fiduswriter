@@ -56,7 +56,7 @@ export const getDocTitle = function(doc) {
     return doc.path.split('/').pop()
 }
 
-export const moveDoc = function(docId, title, path) {
+export const moveFile = function(fileId, title, path, moveUrl) {
     path = path.replace(/\/{2,}/g, '/') // replace multiple backslashes
     if (path.endsWith(title || gettext('Untitled'))) {
         path = path.split('/').slice(0, -1).join('/') + '/'
@@ -69,8 +69,8 @@ export const moveDoc = function(docId, title, path) {
     }
     return new Promise((resolve, reject) => {
         postJson(
-            '/api/document/move/',
-            {id: docId, path}
+            moveUrl,
+            {id: fileId, path}
         ).then(
             ({json}) => {
                 if (json.done) {

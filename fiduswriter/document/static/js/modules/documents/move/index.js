@@ -1,6 +1,6 @@
 import {moveTemplate, newFolderTemplate} from "./templates"
 import {addAlert, Dialog, FileSelector} from "../../common"
-import {getDocTitle, moveDoc} from "../tools"
+import {getDocTitle, moveFile} from "../tools"
 /**
 * Functions for the document move dialog.
 */
@@ -112,7 +112,7 @@ export class DocumentMoveDialog {
     }
 
     moveDocument(doc, requestedPath) {
-        return moveDoc(doc.id, doc.title, requestedPath).then(
+        return moveFile(doc.id, doc.title, requestedPath, '/api/document/move/').then(
             path => {
                 addAlert('success', `${gettext('Document has been moved')}: '${getDocTitle(doc)}'`)
                 doc.path = path

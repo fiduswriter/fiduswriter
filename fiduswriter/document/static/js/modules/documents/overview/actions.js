@@ -82,6 +82,7 @@ export class DocumentOverviewActions {
                     const importer = new ImportFidusFile(
                         fidusFile,
                         this.documentOverview.user,
+                        undefined,
                         true,
                         this.documentOverview.teamMembers
                     )

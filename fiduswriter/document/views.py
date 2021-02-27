@@ -715,15 +715,16 @@ def import_create(request):
         document_template.user = request.user
         document_template.content = content
         document_template.save()
-    base_path = request.POST['path']
-    path = base_path
-    counter = 0
-    while (
-        Document.objects.filter(owner=request.user, path=path).first() or
-        AccessRight.objects.filter(user=request.user, path=path).first()
-    ):
-        counter += 1
-        path = base_path + ' ' + str(counter)
+    path = request.POST['path']
+    if len(path):
+        counter = 0
+        base_path = path
+        while (
+            Document.objects.filter(owner=request.user, path=path).first() or
+            AccessRight.objects.filter(user=request.user, path=path).first()
+        ):
+            counter += 1
+            path = base_path + ' ' + str(counter)
     document = Document.objects.create(
         owner=request.user,
         template=document_template,

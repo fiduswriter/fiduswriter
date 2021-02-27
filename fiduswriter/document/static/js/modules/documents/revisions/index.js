@@ -2,7 +2,7 @@ import download from "downloadjs"
 
 import {documentrevisionsTemplate} from "./templates"
 import {ImportFidusFile} from "../../importer/file"
-import {deactivateWait, addAlert, get, post, cancelPromise, findTarget, Dialog, escapeText, shortFileTitle} from "../../common"
+import {deactivateWait, addAlert, get, post, cancelPromise, findTarget, Dialog, escapeText, shortFileTitle, longFilePath} from "../../common"
 
 /**
  * Functions for the recovering previously created document revisions.
@@ -70,13 +70,15 @@ export class DocumentRevisionsDialog {
      */
 
     recreate(id, user) {
+        const doc = this.documentList.find(doc => doc.id === this.documentId)
         return get(`/api/document/get_revision/${id}/`).then(
             response => response.blob()
         ).then(
             blob => {
                 const importer = new ImportFidusFile(
                     blob,
-                    user
+                    user,
+                    longFilePath(doc.title, doc.path, `${gettext('Revision of')} `)
                 )
                 return importer.init()
             }

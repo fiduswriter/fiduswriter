@@ -416,7 +416,7 @@ def move(request):
         response['done'] = False
     elif document.owner == request.user:
         document.path = path
-        document.save(update_fields=['path',])
+        document.save(update_fields=['path', ])
         response['done'] = True
     else:
         access_right = AccessRight.objects.filter(

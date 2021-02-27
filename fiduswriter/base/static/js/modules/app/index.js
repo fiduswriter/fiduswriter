@@ -71,6 +71,13 @@ export class App {
                     }
                 }
             },
+            "documents": {
+                requireLogin: true,
+                open: pathnameParts => {
+                    const path = '/' + pathnameParts.slice(2).join('/').replace(/\/?$/, '/')
+                    return import(/* webpackPrefetch: true */"../documents/overview").then(({DocumentOverview}) => new DocumentOverview(this.config, path))
+                }
+            },
             "invite": {
                 open: pathnameParts => {
                     const id = pathnameParts[2]

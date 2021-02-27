@@ -205,7 +205,7 @@ def save_access_rights(request):
                             True
                         )
                 else:
-                    # Make the shared path the "/filename" or ""
+                    # Make the shared path "/filename" or ""
                     path = '/' + doc.path.split('/').pop()
                     if len(path) == 1:
                         path = ''

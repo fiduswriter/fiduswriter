@@ -17,14 +17,14 @@ import {
 
 export class DocumentOverview {
 
-    constructor({app, user}) {
+    constructor({app, user}, path = '/') {
         this.app = app
         this.user = user
+        this.path = path
         this.schema = docSchema
         this.documentList = []
         this.teamMembers = []
         this.mod = {}
-        this.path = '/'
         this.subdirs = []
     }
 
@@ -106,6 +106,11 @@ export class DocumentOverview {
                 break
             case findTarget(event, '.fw-data-table-title .subdir', el):
                 this.path += el.target.dataset.subdir + '/'
+                if (this.path === '/') {
+                    window.history.pushState({}, "", '/')
+                } else {
+                    window.history.pushState({}, "", '/documents' + this.path)
+                }
                 this.initTable()
                 break
             case findTarget(event, '.fw-data-table-title .parentdir', el): {
@@ -113,6 +118,11 @@ export class DocumentOverview {
                 pathParts.pop()
                 pathParts.pop()
                 this.path = pathParts.join('/') + '/'
+                if (this.path === '/') {
+                    window.history.pushState({}, "", '/')
+                } else {
+                    window.history.pushState({}, "", '/documents' + this.path)
+                }
                 this.initTable()
                 break
             }

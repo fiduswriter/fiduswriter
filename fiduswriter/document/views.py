@@ -205,10 +205,15 @@ def save_access_rights(request):
                             True
                         )
                 else:
+                    # Make the shared path the "/filename" or ""
+                    path = '/' + doc.path.split('/').pop()
+                    if len(path) == 1:
+                        path = ''
                     access_right = AccessRight.objects.create(
                         document_id=doc_id,
                         user_id=right['user_id'],
-                        rights=right['rights']
+                        rights=right['rights'],
+                        path=path
                     )
                     send_share_notification(
                         request,
@@ -411,7 +416,7 @@ def move(request):
         response['done'] = False
     elif document.owner == request.user:
         document.path = path
-        document.save()
+        document.save(update_fields=['path',])
         response['done'] = True
     else:
         access_right = AccessRight.objects.filter(

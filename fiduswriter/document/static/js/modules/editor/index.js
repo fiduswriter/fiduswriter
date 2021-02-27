@@ -591,6 +591,7 @@ export class Editor {
             content: pmArticle.toJSON(),
             settings: getSettings(pmArticle),
             title: title.substring(0, 255),
+            path: this.docInfo.path,
             version: this.docInfo.version,
             comments: this.mod.comments.store.comments,
             id: this.docInfo.id,

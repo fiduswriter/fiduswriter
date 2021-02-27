@@ -7,6 +7,23 @@ export const shortFileTitle = function(title, path) {
     return path.split('/').pop()
 }
 
+export const longFilePath = function(title, path, prefix = '') {
+    if (!path.length) {
+        path = '/'
+    }
+    if (path.endsWith('/')) {
+        path += title || gettext('Untitled')
+    }
+    if (prefix.length) {
+        const pathParts = path.split('/')
+        const fileName = pathParts.pop()
+        pathParts.push(prefix + fileName)
+        path = pathParts.join('/')
+    }
+
+    return path
+}
+
 export const moveFile = function(fileId, title, path, moveUrl) {
     path = path.replace(/\/{2,}/g, '/') // replace multiple backslashes
     if (path.endsWith(title || gettext('Untitled'))) {

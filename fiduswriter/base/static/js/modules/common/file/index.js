@@ -8,6 +8,7 @@ export {
     from "./selector"
 export {
     moveFile,
-    shortFileTitle
+    shortFileTitle,
+    longFilePath
 }
     from "./tools"

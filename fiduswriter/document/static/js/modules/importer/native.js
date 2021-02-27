@@ -1,17 +1,19 @@
-import {addAlert, postJson} from "../common"
+import {addAlert, postJson, shortFileTitle} from "../common"
 import {GetImages} from "./get_images"
 import {extractTemplate} from "../document_template"
 
 export class ImportNative {
     /* Save document information into the database */
-    constructor(doc, bibliography, images, otherFiles, user, importId = null) {
+    constructor(doc, bibliography, images, otherFiles, user, importId = null, requestedPath = '') {
         this.doc = doc
         this.docId = false
+        this.path = false
         this.bibliography = bibliography
         this.images = images
         this.otherFiles = otherFiles // Data of image files
         this.user = user
         this.importId = importId
+        this.requestedPath = requestedPath
     }
 
     init() {
@@ -105,10 +107,14 @@ export class ImportNative {
             {
                 template: JSON.stringify(template),
                 import_id,
-                template_title
+                template_title,
+                path: this.requestedPath
             }
         ).then(
-            ({json}) => this.docId = json.id
+            ({json}) => {
+                this.docId = json.id
+                this.path = json.path
+            }
         ).catch(error => {
             addAlert('error', gettext('Could not create document'))
             throw error
@@ -145,13 +151,13 @@ export class ImportNative {
                 this.doc.updated = json.updated
                 this.doc.revisions = []
                 this.doc.rights = "write"
-                this.doc.path = ""
+                this.doc.path = this.path
                 return {doc: this.doc, docInfo}
 
             }
         ).catch(
             error => {
-                addAlert('error', `${gettext('Could not save ')} ${this.doc.title}`)
+                addAlert('error', `${gettext('Could not save ')} ${shortFileTitle(this.doc.title, this.doc.path)}`)
                 throw error
             }
         )

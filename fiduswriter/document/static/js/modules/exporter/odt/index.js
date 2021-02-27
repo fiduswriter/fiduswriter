@@ -1,9 +1,11 @@
 import download from "downloadjs"
 
+import {shortFileTitle} from "../../common"
+
 import {createSlug} from "../tools/file"
 import {XmlZip} from "../tools/xml_zip"
 
-import {textContent, removeHidden, fixTables} from "../tools/doc_content"
+import {removeHidden, fixTables} from "../tools/doc_content"
 import {OdtExporterCitations} from "./citations"
 import {OdtExporterImages} from "./images"
 import {OdtExporterRender} from "./render"
@@ -41,7 +43,7 @@ export class OdtExporter {
 
     init() {
         this.docContent = fixTables(removeHidden(this.doc.content))
-        this.docTitle = textContent(this.docContent.content[0])
+        this.docTitle = shortFileTitle(this.doc.title, this.doc.path)
         this.metadata = new OdtExporterMetadata(this, this.docContent)
         this.footnotes = new OdtExporterFootnotes(this, this.docContent)
         this.render = new OdtExporterRender(this, this.docContent)

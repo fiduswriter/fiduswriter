@@ -25,7 +25,8 @@ export class DocumentOverview {
         this.documentList = []
         this.teamMembers = []
         this.mod = {}
-        this.subdirs = []
+        this.subdirs = {}
+        this.lastSort = {column: 0, dir: 'asc'}
     }
 
     init() {
@@ -238,7 +239,7 @@ export class DocumentOverview {
             this.table.destroy()
             this.table = false
         }
-        this.subdirs = []
+        this.subdirs = {}
         const tableEl = document.createElement('table')
         tableEl.classList.add('fw-data-table')
         tableEl.classList.add('fw-document-table')
@@ -248,21 +249,25 @@ export class DocumentOverview {
 
         this.dtBulk = new DatatableBulk(this, this.dtBulkModel)
 
-        const hiddenCols = [0]
+        const hiddenCols = [0, 1]
 
         if (window.innerWidth < 500) {
-            hiddenCols.push(1, 4)
+            hiddenCols.push(2, 5)
             if (window.innerWidth < 400) {
-                hiddenCols.push(5)
+                hiddenCols.push(6)
             }
         }
 
-        const fileList = this.documentList.map(doc => this.createTableRow(doc)).filter(row => !!row)
+        const fileList = this.documentList.map(
+            doc => this.createTableRow(doc)
+        ).filter(row => !!row)//.sort((a, b) => a[1] > b[1] ? -1 : 1)
+
         if (this.path !== '/') {
             fileList.unshift([
+                '-1',
+                'top',
                 '',
-                '',
-                `<span class="fw-data-table-title">
+                `<span class="fw-data-table-title sort0">
                     <i class="fas fa-folder"></i>
                     <span class="fw-link-text parentdir">..</span>
                 </span>`,
@@ -289,6 +294,7 @@ export class DocumentOverview {
             data: {
                 headings: [
                     '',
+                    '',
                     this.dtBulk.getHTML(),
                     gettext("Title"),
                     gettext("Revisions"),
@@ -306,13 +312,16 @@ export class DocumentOverview {
                     hidden: true
                 },
                 {
-                    select: [1, 3, 7, 8],
+                    select: [2, 4, 8, 9],
                     sortable: false
+                },
+                {
+                    select: [this.lastSort.column],
+                    sort: this.lastSort.dir
                 }
             ]
         })
-        this.lastSort = {column: 0, dir: 'asc'}
-
+        // Redo last sort
         this.table.on('datatable.sort', (column, dir) => {
             this.lastSort = {column, dir}
         })
@@ -336,33 +345,45 @@ export class DocumentOverview {
         if (currentPath.includes('/')) {
             // There is a subdir
             const subdir = currentPath.split('/').shift()
-            if (this.subdirs.includes(subdir)) {
+            if (this.subdirs[subdir]) {
                 // subdir has been covered already
+                // We only update the update/added columns if needed.
+                if (doc.added < this.subdirs[subdir].added) {
+                    this.subdirs[subdir].added = doc.added
+                    this.subdirs[subdir].row[5] = `<span class="date">${localizeDate(doc.added * 1000, 'sortable-date')}</span>`
+                }
+                if (doc.updated > this.subdirs[subdir].updated) {
+                    this.subdirs[subdir].updated = doc.updated
+                    this.subdirs[subdir].row[6] = `<span class="date">${localizeDate(doc.updated * 1000, 'sortable-date')}</span>`
+                }
                 return false
             }
-            this.subdirs.push(subdir)
             // Display subdir
-            return [
+            const row = [
+                '0',
+                'folder',
                 '',
-                '',
-                `<span class="fw-data-table-title">
+                `<span class="fw-data-table-title sort1">
                     <i class="fas fa-folder"></i>
                     <span class="fw-link-text subdir" data-subdir="${escapeText(subdir)}">${escapeText(subdir)}</span>
                 </span>`,
                 '',
-                '',
-                '',
+                `<span class="date">${localizeDate(doc.added * 1000, 'sortable-date')}</span>`,
+                `<span class="date">${localizeDate(doc.updated * 1000, 'sortable-date')}</span>`,
                 '',
                 '',
                 ''
             ]
+            this.subdirs[subdir] = {row, added: doc.added, updated: doc.updated}
+            return row
         }
 
         // This is the folder of the file. Return the file.
         return [
             String(doc.id),
+            'file',
             `<input type="checkbox" class="entry-select fw-check" data-id="${doc.id}" id="doc-${doc.id}"><label for="doc-${doc.id}"></label>`,
-            `<span class="fw-data-table-title">
+            `<span class="fw-data-table-title sort2">
                 <i class="far fa-file-alt"></i>
                 <a class="doc-title fw-link-text fw-searchable" href="/document/${doc.id}/">
                     ${currentPath.length ? escapeText(currentPath) : gettext('Untitled')}

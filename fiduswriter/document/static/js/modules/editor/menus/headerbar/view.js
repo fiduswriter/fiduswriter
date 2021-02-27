@@ -248,6 +248,10 @@ export class HeaderbarView {
         if (!findTarget(event, "h1#document-title")) {
             return
         }
+        if (this.editor.app.isOffline()) {
+            // We are offline. Just reset.
+            return this.update()
+        }
         const docTitleEl = document.body.querySelector('h1#document-title')
         moveFile(
             this.editor.docInfo.id,
@@ -317,15 +321,19 @@ export class HeaderbarView {
             // header is closed
             return '<div></div>'
         }
-
+        const folderPath = this.editor.docInfo.path.slice(
+            0,
+            this.editor.docInfo.path.lastIndexOf('/')
+        )
+        const exitUrl = folderPath.length ? `/documents${folderPath}/` : '/'
         return `<div>
             <div id="close-document-top" title="${gettext("Close the document and return to the document overview menu.")}">
-                <a href="/">
+                <a href="${exitUrl}">
                     <i class="fa fa-times"></i>
                 </a>
             </div>
             <div id="document-top">
-                <h1 id="document-title" contenteditable="true">${this.getTitleText()}</h1>
+                <h1 id="document-title"${this.editor.app.isOffline() ? '' : ' contenteditable="true"'}>${this.getTitleText()}</h1>
                 <nav id="header-navigation">
                     ${this.getHeaderNavHTML()}
                 </nav>

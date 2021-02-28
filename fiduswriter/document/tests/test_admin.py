@@ -503,6 +503,8 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
                 )
             )
         ).text
+
+        time.sleep(1)
         self.assertEqual(
             body_text,
             'Initial text'

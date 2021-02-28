@@ -2,7 +2,7 @@ import {keyName} from "w3c-keyname"
 
 import {findTarget} from "./basic"
 
-const dialogTemplate = ({id, classes, title, height, width, icon, buttons, zIndex, body, scroll, help, canClose}) =>
+const dialogTemplate = ({id, classes, title, height, width, icon, buttons, zIndex, body, scroll, help, canClose, note}) =>
     `<div tabindex="-1" role="dialog"
         class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front ui-dialog-buttons"
         ${id ? `aria-describedby="${id}"` : ''} style="z-index: ${zIndex};">
@@ -22,6 +22,7 @@ const dialogTemplate = ({id, classes, title, height, width, icon, buttons, zInde
 
     </div>
     <div ${id ? `id="${id}"` : ''} class="ui-dialog-content ui-widget-content${classes ? ` ${classes}` : ''}${scroll ? ` ui-scrollable` : ''}" style="width: ${width}; height: ${height};">
+        ${note.text ? `<div class="note-container">${noteTemplate(note)}</div>` : ''}
         ${body}
     </div>
     <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
@@ -29,6 +30,10 @@ const dialogTemplate = ({id, classes, title, height, width, icon, buttons, zInde
     </div>
 </div>
 <div class="ui-widget-overlay ui-front" style="z-index: ${zIndex - 1}"></div>`
+
+const noteTemplate = (note) => {
+    return note.text ? `<p class="noteEl ${note.display ? `` : `hide`}">${note.text}</p>` : ``
+}
 
 const buttonsTemplate = ({buttons}) => buttons.map(button => buttonTemplate(button)).join('')
 
@@ -65,6 +70,7 @@ export class Dialog {
         this.width = options.width ? `${options.width}px` : 'auto'
         this.canClose = 'canClose' in options ? options.canClose : true
         this.help = 'help' in options ? options.help : false
+        this.note = 'note' in options ? options.note : {}
         this.buttons = []
         if (options.buttons) {
             this.setButtons(options.buttons)
@@ -98,6 +104,7 @@ export class Dialog {
         if (this.fullScreen) {
             this.height = "85vh"
         }
+
         document.body.insertAdjacentHTML(
             'beforeend',
             dialogTemplate({
@@ -112,7 +119,8 @@ export class Dialog {
                 body: this.body,
                 scroll: this.scroll,
                 canClose: this.canClose,
-                help: this.help
+                help: this.help,
+                note: this.note
             })
         )
         this.backdropEl = document.body.lastElementChild
@@ -130,6 +138,10 @@ export class Dialog {
 
     refreshButtons() {
         this.dialogEl.querySelector('.ui-dialog-buttonset').innerHTML = buttonsTemplate({buttons: this.buttons})
+    }
+
+    refreshNote() {
+        this.dialogEl.querySelector(".note-container").innerHTML = noteTemplate(this.note)
     }
 
     centerDialog() {

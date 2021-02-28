@@ -63,8 +63,8 @@ export class FileSelector {
         })
     }
 
-    sortDirStructure(entries=this.root.children) {
-        entries.sort((a,b) => {
+    sortDirStructure(entries = this.root.children) {
+        entries.sort((a, b) => {
             if (a.type !== b.type) {
                 return a.type === 'folder' ? -1 : 1
             }
@@ -114,7 +114,7 @@ export class FileSelector {
     renderFolder(folder, indentLevel = 0) {
         let returnString = ''
         returnString += `<div class="folder${folder.open ? '' : ' closed'}">`
-        returnString += `<p style="margin-left:${indentLevel*10}px;">${
+        returnString += `<p style="margin-left:${indentLevel * 10}px;">${
             folder.children.length ? `<i class="far fa-${folder.open ? 'minus' : 'plus'}-square"></i>&nbsp;` : ''
         }<span class="folder-name${folder.selected ? ' selected' : ''}"><i class="fas fa-folder"></i>&nbsp;${escapeText(folder.name)}</span></p>`
         if (folder.open) {
@@ -123,7 +123,7 @@ export class FileSelector {
                 if (child.type === 'folder') {
                     return this.renderFolder(child, indentLevel + 1)
                 } else {
-                    return `<p class="file" style="margin-left:${(indentLevel + 1)*10+20}px;"><span class="file-name${child.selected ? ' selected' : ''}"><i class="${this.fileIcon}"></i>&nbsp;${escapeText(child.name)}</span></p>`
+                    return `<p class="file" style="margin-left:${(indentLevel + 1) * 10 + 20}px;"><span class="file-name${child.selected ? ' selected' : ''}"><i class="${this.fileIcon}"></i>&nbsp;${escapeText(child.name)}</span></p>`
                 }
             }).join('')
             returnString += '</div>'

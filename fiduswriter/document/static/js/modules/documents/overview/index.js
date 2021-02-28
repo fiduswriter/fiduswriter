@@ -4,7 +4,7 @@ import * as plugins from "../../../plugins/documents_overview"
 import {DocumentOverviewActions} from "./actions"
 import {DocumentAccessRightsDialog} from "../access_rights"
 import {menuModel, bulkMenuModel} from "./menu"
-import {activateWait, deactivateWait, addAlert, postJson, OverviewMenuView, findTarget, whenReady, escapeText, localizeDate, baseBodyTemplate, ensureCSS, setDocTitle, DatatableBulk} from "../../common"
+import {activateWait, deactivateWait, addAlert, postJson, OverviewMenuView, findTarget, whenReady, escapeText, localizeDate, baseBodyTemplate, ensureCSS, setDocTitle, DatatableBulk, shortFileTitle} from "../../common"
 import {SiteMenu} from "../../menu"
 import {FeedbackTab} from "../../feedback"
 import {
@@ -321,7 +321,6 @@ export class DocumentOverview {
                 }
             ]
         })
-        // Redo last sort
         this.table.on('datatable.sort', (column, dir) => {
             this.lastSort = {column, dir}
         })
@@ -386,7 +385,7 @@ export class DocumentOverview {
             `<span class="fw-data-table-title">
                 <i class="far fa-file-alt"></i>
                 <a class="doc-title fw-link-text fw-searchable" href="/document/${doc.id}/">
-                    ${currentPath.length ? escapeText(currentPath) : gettext('Untitled')}
+                    ${shortFileTitle(doc.title, doc.path)}
                 </a>
             </span>`,
             doc.revisions.length ?

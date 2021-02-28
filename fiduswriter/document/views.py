@@ -427,6 +427,7 @@ def move(request):
             response['done'] = False
         else:
             access_right.path = path
+            access_right.save()
             response['done'] = True
     return JsonResponse(
         response,

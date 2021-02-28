@@ -260,14 +260,14 @@ export class DocumentOverview {
 
         const fileList = this.documentList.map(
             doc => this.createTableRow(doc)
-        ).filter(row => !!row)//.sort((a, b) => a[1] > b[1] ? -1 : 1)
+        ).filter(row => !!row)
 
         if (this.path !== '/') {
             fileList.unshift([
                 '-1',
                 'top',
                 '',
-                `<span class="fw-data-table-title sort0">
+                `<span class="fw-data-table-title">
                     <i class="fas fa-folder"></i>
                     <span class="fw-link-text parentdir">..</span>
                 </span>`,
@@ -363,7 +363,7 @@ export class DocumentOverview {
                 '0',
                 'folder',
                 '',
-                `<span class="fw-data-table-title sort1">
+                `<span class="fw-data-table-title">
                     <i class="fas fa-folder"></i>
                     <span class="fw-link-text subdir" data-subdir="${escapeText(subdir)}">${escapeText(subdir)}</span>
                 </span>`,
@@ -383,7 +383,7 @@ export class DocumentOverview {
             String(doc.id),
             'file',
             `<input type="checkbox" class="entry-select fw-check" data-id="${doc.id}" id="doc-${doc.id}"><label for="doc-${doc.id}"></label>`,
-            `<span class="fw-data-table-title sort2">
+            `<span class="fw-data-table-title">
                 <i class="far fa-file-alt"></i>
                 <a class="doc-title fw-link-text fw-searchable" href="/document/${doc.id}/">
                     ${currentPath.length ? escapeText(currentPath) : gettext('Untitled')}

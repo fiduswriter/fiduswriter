@@ -6,6 +6,8 @@ export class FileSelector {
         dom,
         files,
         showFiles = true,
+        selectFolders = true,
+        multiSelect = false,
         selectDir = _path => {},
         selectFile = _path => {},
         fileIcon = 'far fa-file-alt'
@@ -13,15 +15,22 @@ export class FileSelector {
         this.dom = dom
         this.files = files
         this.showFiles = showFiles // Whether to show existing files or only folders
+        this.selectFolders = selectFolders // Whether to allow the selection of folders
+        this.multiSelect = multiSelect // Whether to allow the selectioj of multiple entries
         this.selectDir = selectDir
         this.selectFile = selectFile
         this.fileIcon = fileIcon // File icon to use
-        this.root = {name: '/', type: 'folder', open: true, selected: true, path: '/', children: []}
-        this.selected = this.root
+        this.root = {name: '/', type: 'folder', open: true, selected: false, path: '/', children: []}
+        this.selected = []
+        if (this.selectFolders && !this.multiSelect) {
+            this.root.selected = true
+            this.selected.push(this.root)
+        }
     }
 
     init() {
         this.readDirStructure()
+        this.sortDirStructure()
         ensureCSS('file_selector.css')
         this.dom.classList.add('fw-file-selector')
         this.render()
@@ -39,7 +48,7 @@ export class FileSelector {
                 }
                 if (pathIndex === (pathParts.length - 1)) {
                     if (this.showFiles) {
-                        treeWalker.push({name: pathPart, type: 'file', path: pathParts.slice(0, pathIndex + 1).join('/')})
+                        treeWalker.push({name: pathPart, type: 'file', path: pathParts.slice(0, pathIndex + 1).join('/'), file})
                     }
                     return
                 }
@@ -54,23 +63,47 @@ export class FileSelector {
         })
     }
 
+    sortDirStructure(entries=this.root.children) {
+        entries.sort((a,b) => {
+            if (a.type !== b.type) {
+                return a.type === 'folder' ? -1 : 1
+            }
+            return a.name > b.name ? 1 : -1
+        })
+        entries.forEach(entry => {
+            if (entry.type === 'folder' && entry.children.length) {
+                this.sortDirStructure(entry.children)
+            }
+        })
+    }
+
     addFolder(rawName) {
         const name = rawName.replace(/\//g, '')
         // Add a new folder as a subfolder to the currently selected folder
         if (
-            !this.selected ||
-            this.selected.type !== 'folder' ||
-            this.selected.children.find(child => child.type === 'folder' && child.name === name)
+            !this.selected.length ||
+            this.selected[0].type !== 'folder' ||
+            this.selected[0].children.find(child => child.type === 'folder' && child.name === name)
         ) {
             // A file is selected. Give up.
             return
         }
-        const newFolder = {name, type: 'folder', open: true, selected: true, path: this.selected.path + name + '/', children: []}
-        this.selected.children.push(newFolder)
-        this.selected.open = true
-        this.selected.selected = false
-        this.selected = newFolder
+        const newFolder = {name, type: 'folder', open: true, selected: true, path: this.selected[0].path + name + '/', children: []}
+        this.selected[0].children.push(newFolder)
+        this.sortDirStructure(this.selected[0].children)
+        this.selected[0].open = true
+        if (!this.multiSelect) {
+            this.selected[0].selected = false
+            this.selected = []
+        }
+        this.selected.push(newFolder)
         this.selectDir(newFolder.path)
+        this.render()
+    }
+
+    deselectAll() {
+        this.selected.forEach(entry => entry.selected = false)
+        this.selected = []
         this.render()
     }
 
@@ -81,18 +114,16 @@ export class FileSelector {
     renderFolder(folder, indentLevel = 0) {
         let returnString = ''
         returnString += `<div class="folder${folder.open ? '' : ' closed'}">`
-        returnString += `<p>${
-            '&nbsp;&nbsp;&nbsp;'.repeat(indentLevel)
-        }${
+        returnString += `<p style="margin-left:${indentLevel*10}px;">${
             folder.children.length ? `<i class="far fa-${folder.open ? 'minus' : 'plus'}-square"></i>&nbsp;` : ''
-        }<span class="folder-name${folder.selected ? ' selected' : ''}"><i class="fas fa-folder"></i>${escapeText(folder.name)}</span></p>`
+        }<span class="folder-name${folder.selected ? ' selected' : ''}"><i class="fas fa-folder"></i>&nbsp;${escapeText(folder.name)}</span></p>`
         if (folder.open) {
             returnString += '<div class="folder-content">'
             returnString += folder.children.map(child => {
                 if (child.type === 'folder') {
                     return this.renderFolder(child, indentLevel + 1)
                 } else {
-                    return `<p>${'&nbsp;&nbsp;&nbsp;'.repeat(indentLevel)}<span class="file-name${child.selected ? ' selected' : ''}"><i class="${this.fileIcon}"></i>${escapeText(child.name)}</span></p>`
+                    return `<p class="file" style="margin-left:${(indentLevel + 1)*10+20}px;"><span class="file-name${child.selected ? ' selected' : ''}"><i class="${this.fileIcon}"></i>&nbsp;${escapeText(child.name)}</span></p>`
                 }
             }).join('')
             returnString += '</div>'
@@ -104,9 +135,9 @@ export class FileSelector {
     findEntry(dom) {
         const searchPath = []
         let seekItem = dom
-        while (seekItem.closest('div.folder')) {
+        while (seekItem.closest('div.folder, p.file')) {
             let itemNumber = 0
-            seekItem = seekItem.closest('div.folder')
+            seekItem = seekItem.closest('div.folder, p.file')
             while (seekItem.previousElementSibling) {
                 itemNumber++
                 seekItem = seekItem.previousElementSibling
@@ -142,26 +173,42 @@ export class FileSelector {
             }
             case findTarget(event, '.folder-name', el): {
                 event.preventDefault()
-                const entry = this.findEntry(el.target)
-                if (this.selected) {
-                    this.selected.selected = false
+                if (!this.selectFolders) {
+                    // Folders cannot be selected
+                    return
                 }
-                entry.selected = true
-                this.selected = entry
-                this.render()
-                this.selectDir(entry.path)
+                const entry = this.findEntry(el.target)
+                if (this.selected.includes(entry)) {
+                    entry.selected = false
+                    this.selected = this.selected.filter(e => e !== entry)
+                    this.render()
+                } else {
+                    entry.selected = true
+                    if (!this.multiSelect && this.selected.length) {
+                        this.selected[0].selected = false
+                    }
+                    this.selected.push(entry)
+                    this.render()
+                    this.selectDir(entry.path)
+                }
                 break
             }
             case findTarget(event, '.file-name', el): {
                 event.preventDefault()
                 const entry = this.findEntry(el.target)
-                if (this.selected) {
-                    this.selected.selected = false
+                if (this.selected.includes(entry)) {
+                    entry.selected = false
+                    this.selected = this.selected.filter(e => e !== entry)
+                    this.render()
+                } else {
+                    entry.selected = true
+                    if (!this.multiSelect && this.selected.length) {
+                        this.selected[0].selected = false
+                    }
+                    this.selected.push(entry)
+                    this.render()
+                    this.selectFile(entry.path)
                 }
-                entry.selected = true
-                this.selected = entry
-                this.render()
-                this.selectFile(entry.path)
                 break
             }
             }

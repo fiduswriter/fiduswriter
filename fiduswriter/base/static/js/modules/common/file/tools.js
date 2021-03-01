@@ -2,7 +2,7 @@ import {postJson} from "../network"
 
 export const shortFileTitle = function(title, path) {
     if (!path.length || path.endsWith('/')) {
-        return title
+        return title || gettext('Untitled')
     }
     return path.split('/').pop()
 }

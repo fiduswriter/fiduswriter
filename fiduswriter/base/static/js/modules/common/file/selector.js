@@ -41,7 +41,11 @@ export class FileSelector {
         // Read directory structure from existing file paths
         this.files.forEach(file => {
             let treeWalker = this.root.children
-            const pathParts = file.path.split('/')
+            let path = file.path
+            if (!path.length || path.endsWith('/')) {
+                path += file.title
+            }
+            const pathParts = path.split('/')
             pathParts.forEach((pathPart, pathIndex) => {
                 if (!pathPart.length) {
                     return

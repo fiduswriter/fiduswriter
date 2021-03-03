@@ -645,8 +645,10 @@ def send_invite_notification(request, doc_id, email, rights, invite, change):
 @login_required
 @ajax_required
 @require_POST
-def create_doc(request, template_id):
+def create_doc(request):
     response = {}
+    template_id = request.POST['template_id']
+    path = request.POST['path']
     document_template = DocumentTemplate.objects.filter(
         Q(user=request.user) | Q(user=None),
         id=template_id
@@ -658,7 +660,8 @@ def create_doc(request, template_id):
         )
     document = Document.objects.create(
         owner_id=request.user.pk,
-        template_id=template_id
+        template_id=template_id,
+        path=path
     )
     response['id'] = document.id
     return JsonResponse(

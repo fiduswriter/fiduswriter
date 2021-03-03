@@ -470,7 +470,7 @@ export class DocumentOverview {
     }
 
     goToNewDocument(id) {
-        this.app.goTo(`/document/${id}/`)
+        this.app.goTo(`/document${this.path}${id}`)
     }
 
 }

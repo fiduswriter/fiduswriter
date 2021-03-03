@@ -62,8 +62,9 @@ export class App {
             "document": {
                 requireLogin: true,
                 open: pathnameParts => {
-                    const id = pathnameParts[2]
-                    return import(/* webpackPrefetch: true *//* webpackChunkName: "editor" */'../editor').then(({Editor}) => new Editor(this.config, id))
+                    const id = pathnameParts.pop()
+                    const path = ('/' + pathnameParts.slice(2).join('/')).replace(/\/?$/, '/')
+                    return import(/* webpackPrefetch: true *//* webpackChunkName: "editor" */'../editor').then(({Editor}) => new Editor(this.config, id, path))
                 },
                 dbTables: {
                     "data": {
@@ -74,7 +75,8 @@ export class App {
             "documents": {
                 requireLogin: true,
                 open: pathnameParts => {
-                    const path = '/' + pathnameParts.slice(2).join('/').replace(/\/?$/, '/')
+                    const path = ('/' + pathnameParts.slice(2).join('/')).replace(/\/?$/, '/')
+                    console.log({path})
                     return import(/* webpackPrefetch: true */"../documents/overview").then(({DocumentOverview}) => new DocumentOverview(this.config, path))
                 }
             },

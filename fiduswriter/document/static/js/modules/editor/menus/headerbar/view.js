@@ -291,16 +291,13 @@ export class HeaderbarView {
         }
     }
 
-    getTitleText() {
-        let title = this.editor.docInfo.path
-        if (title.length && !title.endsWith('/')) {
-            return title
+    getPathText() {
+        let text = this.editor.docInfo.path
+        if (text.length && !text.endsWith('/')) {
+            return text
         }
-        title += this.getTitle()
-        if (!title.length) {
-            title = gettext('Untitled')
-        }
-        return title
+        text += this.getTitle() || gettext('Untitled')
+        return text
     }
 
     getTitle() {
@@ -333,7 +330,7 @@ export class HeaderbarView {
                 </a>
             </div>
             <div id="document-top">
-                <h1 id="document-title"${this.editor.app.isOffline() ? '' : ' contenteditable="true"'}>${this.getTitleText()}</h1>
+                <h1 id="document-title"${this.editor.app.isOffline() ? '' : ' contenteditable="true"'}>${this.getPathText()}</h1>
                 <nav id="header-navigation">
                     ${this.getHeaderNavHTML()}
                 </nav>

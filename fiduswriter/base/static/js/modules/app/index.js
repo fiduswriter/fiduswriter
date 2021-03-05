@@ -62,9 +62,12 @@ export class App {
             "document": {
                 requireLogin: true,
                 open: pathnameParts => {
-                    const id = pathnameParts.pop()
+                    let id = pathnameParts.pop()
+                    if (!id.length) {
+                        id = pathnameParts.pop()
+                    }
                     const path = ('/' + pathnameParts.slice(2).join('/')).replace(/\/?$/, '/')
-                    return import(/* webpackPrefetch: true *//* webpackChunkName: "editor" */'../editor').then(({Editor}) => new Editor(this.config, id, path))
+                    return import(/* webpackPrefetch: true *//* webpackChunkName: "editor" */'../editor').then(({Editor}) => new Editor(this.config, path, id))
                 },
                 dbTables: {
                     "data": {

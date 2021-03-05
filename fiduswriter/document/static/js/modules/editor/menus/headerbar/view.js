@@ -295,6 +295,8 @@ export class HeaderbarView {
         let text = this.editor.docInfo.path
         if (text.length && !text.endsWith('/')) {
             return text
+        } else if (text === '/') {
+            text = ''
         }
         text += this.getTitle() || gettext('Untitled')
         return text

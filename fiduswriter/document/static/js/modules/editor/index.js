@@ -135,7 +135,8 @@ export class Editor {
     // A class that contains everything that happens on the editor page.
     // It is currently not possible to initialize more than one editor class, as it
     // contains bindings to menu items, etc. that are uniquely defined.
-    constructor({app, user}, idString, path) {
+    constructor({app, user}, path, idString) {
+        console.log({path, idString})
         this.app = app
         this.user = user
         this.mod = {}

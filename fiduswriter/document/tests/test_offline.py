@@ -940,7 +940,7 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
             EC.presence_of_element_located((By.CLASS_NAME, 'fw-contents'))
         )
         doc_row = self.driver.find_element_by_xpath(
-            "//a[@href='/document/"+str(self.doc.id)+"/']"
+            "//a[@href='/document/"+str(self.doc.id)+"']"
         )
         self.assertEqual(doc_row.is_displayed(), True)
 

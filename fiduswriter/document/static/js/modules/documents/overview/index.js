@@ -100,9 +100,11 @@ export class DocumentOverview {
                 break
             }
             case findTarget(event, 'a.doc-title', el):
+                event.preventDefault()
                 if (this.app.isOffline()) {
                     addAlert('info', gettext("You cannot open a document while you are offline."))
-                    event.preventDefault()
+                } else {
+                    this.app.goTo(el.target.getAttribute('href'))
                 }
                 break
             case findTarget(event, '.fw-data-table-title .subdir', el):

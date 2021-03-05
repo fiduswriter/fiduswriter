@@ -79,7 +79,6 @@ export class App {
                 requireLogin: true,
                 open: pathnameParts => {
                     const path = ('/' + pathnameParts.slice(2).join('/')).replace(/\/?$/, '/')
-                    console.log({path})
                     return import(/* webpackPrefetch: true */"../documents/overview").then(({DocumentOverview}) => new DocumentOverview(this.config, path))
                 }
             },

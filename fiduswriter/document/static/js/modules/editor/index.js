@@ -136,7 +136,6 @@ export class Editor {
     // It is currently not possible to initialize more than one editor class, as it
     // contains bindings to menu items, etc. that are uniquely defined.
     constructor({app, user}, path, idString) {
-        console.log({path, idString})
         this.app = app
         this.user = user
         this.mod = {}

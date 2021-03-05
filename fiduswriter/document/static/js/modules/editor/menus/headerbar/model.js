@@ -71,8 +71,9 @@ export const headerbarModel = () => ({
                         )
                         if (!folderPath.length) {
                             editor.app.goTo('/')
+                        } else {
+                            editor.app.goTo(`/documents${folderPath}/`)
                         }
-                        editor.app.goTo(`/documents${folderPath}/`)
                     },
                     disabled: editor => editor.app.isOffline()
                 },

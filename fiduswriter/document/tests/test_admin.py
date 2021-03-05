@@ -444,7 +444,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
             EC.element_to_be_clickable(
                 (
                     By.CSS_SELECTOR,
-                    "a[href='/document/1/']"
+                    "a[href='/document/1']"
                 )
             )
         ).click()

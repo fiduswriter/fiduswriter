@@ -4,12 +4,16 @@ import * as plugins from "../../../plugins/documents_overview"
 import {DocumentOverviewActions} from "./actions"
 import {DocumentAccessRightsDialog} from "../access_rights"
 import {menuModel, bulkMenuModel} from "./menu"
-import {activateWait, deactivateWait, addAlert, postJson, OverviewMenuView, findTarget, whenReady, escapeText, localizeDate, baseBodyTemplate, ensureCSS, setDocTitle, DatatableBulk, shortFileTitle} from "../../common"
+import {activateWait, deactivateWait, addAlert, escapeText, postJson, OverviewMenuView, findTarget, whenReady, baseBodyTemplate, ensureCSS, setDocTitle, DatatableBulk, shortFileTitle} from "../../common"
 import {SiteMenu} from "../../menu"
 import {FeedbackTab} from "../../feedback"
 import {
     docSchema
 } from "../../schema/document"
+import {
+    dateCell,
+    deleteFolderCell
+} from "./templates"
 
 /*
 * Helper functions for the document overview page.
@@ -83,6 +87,14 @@ export class DocumentOverview {
                 } else {
                     docId = parseInt(el.target.dataset.id)
                     this.mod.actions.deleteDocumentDialog([docId])
+                }
+                break
+            case findTarget(event, '.delete-folder', el):
+                if (this.app.isOffline()) {
+                    addAlert('info', gettext("You cannot delete documents while you are offline."))
+                } else {
+                    const ids = el.target.dataset.ids.split(',').map(id => parseInt(id))
+                    this.mod.actions.deleteDocumentDialog(ids)
                 }
                 break
             case findTarget(event, '.owned-by-user.rights', el): {
@@ -246,8 +258,15 @@ export class DocumentOverview {
         tableEl.classList.add('fw-data-table')
         tableEl.classList.add('fw-document-table')
         tableEl.classList.add('fw-large')
-        document.querySelector('.fw-contents').innerHTML = '' // Delete any old table
-        document.querySelector('.fw-contents').appendChild(tableEl)
+        const contentsEl = document.querySelector('.fw-contents')
+        contentsEl.innerHTML = '' // Delete any old table
+        contentsEl.appendChild(tableEl)
+
+        if (this.path !== '/') {
+            const headerEl = document.createElement('h1')
+            headerEl.innerHTML = escapeText(this.path)
+            contentsEl.insertBefore(headerEl, tableEl)
+        }
 
         this.dtBulk = new DatatableBulk(this, this.dtBulkModel)
 
@@ -351,14 +370,20 @@ export class DocumentOverview {
                 // We only update the update/added columns if needed.
                 if (doc.added < this.subdirs[subdir].added) {
                     this.subdirs[subdir].added = doc.added
-                    this.subdirs[subdir].row[5] = `<span class="date">${localizeDate(doc.added * 1000, 'sortable-date')}</span>`
+                    this.subdirs[subdir].row[5] = dateCell({date: doc.added})
                 }
                 if (doc.updated > this.subdirs[subdir].updated) {
                     this.subdirs[subdir].updated = doc.updated
-                    this.subdirs[subdir].row[6] = `<span class="date">${localizeDate(doc.updated * 1000, 'sortable-date')}</span>`
+                    this.subdirs[subdir].row[6] = dateCell({date: doc.updated})
+                }
+                if (this.user.id === doc.owner.id) {
+                    this.subdirs[subdir].ownedIds.push(doc.id)
+                    this.subdirs[subdir].row[9] = deleteFolderCell({subdir, ids: this.subdirs[subdir].ownedIds})
                 }
                 return false
             }
+
+            const ownedIds = this.user.id === doc.owner.id ? [doc.id] : []
             // Display subdir
             const row = [
                 '0',
@@ -369,13 +394,13 @@ export class DocumentOverview {
                     <span class="fw-link-text subdir" data-subdir="${escapeText(subdir)}">${escapeText(subdir)}</span>
                 </span>`,
                 '',
-                `<span class="date">${localizeDate(doc.added * 1000, 'sortable-date')}</span>`,
-                `<span class="date">${localizeDate(doc.updated * 1000, 'sortable-date')}</span>`,
+                dateCell({date: doc.added}),
+                dateCell({date: doc.updated}),
                 '',
                 '',
-                ''
+                ownedIds.length ? deleteFolderCell({subdir, ids: ownedIds}) : ''
             ]
-            this.subdirs[subdir] = {row, added: doc.added, updated: doc.updated}
+            this.subdirs[subdir] = {row, added: doc.added, updated: doc.updated, ownedIds}
             return row
         }
 
@@ -395,8 +420,8 @@ export class DocumentOverview {
                 <i class="fas fa-history"></i>
             </span>` :
                 '',
-            `<span class="date">${localizeDate(doc.added * 1000, 'sortable-date')}</span>`,
-            `<span class="date">${localizeDate(doc.updated * 1000, 'sortable-date')}</span>`,
+            dateCell({date: doc.added}),
+            dateCell({date: doc.updated}),
             `<span>
                 ${doc.owner.avatar.html}
             </span>

@@ -1,5 +1,5 @@
 import {DocumentAccessRightsDialog} from "../access_rights"
-import {addAlert, FileDialog} from "../../common"
+import {addAlert, FileDialog, NewFolderDialog} from "../../common"
 
 export const bulkMenuModel = () => ({
     content: [
@@ -151,16 +151,29 @@ export const menuModel = () => ({
         },
         {
             type: 'text',
+            title: gettext('Create new folder'),
+            action: overview => {
+                const dialog = new NewFolderDialog(folderName => {
+                    overview.path = overview.path + folderName + '/'
+                    window.history.pushState({}, "", '/documents' + overview.path)
+                    overview.initTable()
+                })
+                dialog.open()
+            },
+            order: 2
+        },
+        {
+            type: 'text',
             title: gettext('Upload Fidus document'),
             action: overview => overview.mod.actions.importFidus(),
-            order: 2
+            order: 3
         },
         {
             type: 'search',
             icon: 'search',
             title: gettext('Search documents'),
             input: (overview, text) => overview.table.search(text),
-            order: 3
+            order: 4
         }
     ]
 })

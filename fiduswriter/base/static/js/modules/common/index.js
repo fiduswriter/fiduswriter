@@ -62,5 +62,6 @@ export {
     FileSelector,
     moveFile,
     shortFileTitle,
-    longFilePath
+    longFilePath,
+    NewFolderDialog
 } from "./file"

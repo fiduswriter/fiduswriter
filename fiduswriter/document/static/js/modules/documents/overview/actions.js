@@ -14,9 +14,9 @@ export class DocumentOverviewActions {
     deleteDocument(id) {
         const doc = this.documentOverview.documentList.find(doc => doc.id === id)
         if (!doc) {
-            return
+            return Promise.resolve()
         }
-        postJson(
+        return postJson(
             '/api/document/delete/',
             {id}
         ).then(
@@ -33,11 +33,20 @@ export class DocumentOverviewActions {
     }
 
     deleteDocumentDialog(ids) {
-
+        const docTitles = ids.map(id => {
+            const doc = this.documentOverview.documentList.find(doc => doc.id === id)
+            return escapeText(shortFileTitle(doc.title, doc.path))
+        })
         const confirmDeletionDialog = new Dialog({
             title: gettext('Confirm deletion'),
             body: `<p>
-                ${gettext('Delete the document(s)?')}
+                ${  ids.length > 1 ?
+        gettext('Do you really want to delete the following documents?') :
+        gettext('Do you really want to delete the following document?')
+}
+                </p>
+                <p>
+                ${docTitles.join('<br>')}
                 </p>`,
             id: 'confirmdeletion',
             icon: 'exclamation-triangle',
@@ -45,12 +54,15 @@ export class DocumentOverviewActions {
                 {
                     text: gettext('Delete'),
                     classes: "fw-dark",
-                    height: 180,
+                    height: Math.max(180 + 15 * ids.length, 500),
                     click: () => {
-                        for (let i = 0; i < ids.length; i++) {
-                            this.deleteDocument(ids[i])
-                        }
-                        confirmDeletionDialog.close()
+                        Promise.all(ids.map(id => this.deleteDocument(id))).then(
+                            () => {
+                                confirmDeletionDialog.close()
+                                this.documentOverview.initTable()
+                            }
+                        )
+
                     }
                 },
                 {

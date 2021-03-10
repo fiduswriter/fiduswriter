@@ -1,3 +1,5 @@
+import {localizeDate, escapeText} from "../../common"
+
 /** A template for the Fidus Writer document import dialog */
 export const importFidusTemplate = () =>
     `<form id="import-fidus-form" method="post" enctype="multipart/form-data" class="ajax-upload">
@@ -7,3 +9,12 @@ export const importFidusTemplate = () =>
             </button>
             <label id="import-fidus-name" class="ajax-upload-label"></label>
         </form>`
+
+export const deleteFolderCell = ({subdir, ids}) =>
+    `<span class="delete-folder fw-link-text" data-ids="${ids.join(',')}"
+        data-title="${escapeText(subdir)}">
+        '<i class="fa fa-trash-alt"></i>
+</span>`
+
+export const dateCell = ({date}) =>
+    `<span class="date">${localizeDate(date * 1000, 'sortable-date')}</span>`

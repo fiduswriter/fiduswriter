@@ -1,6 +1,7 @@
-import {moveTemplate, newFolderTemplate} from "./templates"
+import {moveTemplate} from "./templates"
 import {addAlert, Dialog, FileSelector} from "../../common"
 import {shortFileTitle, moveFile} from "./tools"
+import {NewFolderDialog} from "./new_folder_dialog"
 /**
 * Functions for the document move dialog.
 */
@@ -63,33 +64,14 @@ export class FileDialog {
                     text: gettext('New folder'),
                     classes: "fw-dark",
                     click: () => {
-                        const newFolderDialog = new Dialog({
-                            title: gettext('New folder'),
-                            id: 'new-folder',
-                            width: 400,
-                            height: 150,
-                            body: newFolderTemplate(),
-                            buttons: [
-                                {type: 'cancel'},
-                                {
-                                    text: gettext('Create folder'),
-                                    classes: "fw-dark",
-                                    click: () => {
-                                        const folderName = newFolderDialog.dialogEl.querySelector('#new-folder-name').value
-                                        newFolderDialog.close()
-                                        if (
-                                            !folderName.length ||
-                                            !this.fileSelector
-                                        ) {
-                                            return
-                                        }
-                                        this.fileSelector.addFolder(folderName)
-                                    }
+                        const dialog = new NewFolderDialog(
+                            folderName => {
+                                if (!this.fileSelector) {
+                                    return
                                 }
-                            ]
-                        })
-
-                        newFolderDialog.open()
+                                this.fileSelector.addFolder(folderName)
+                            })
+                        dialog.open()
 
                     }
                 },

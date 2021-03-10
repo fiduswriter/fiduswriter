@@ -12,3 +12,7 @@ export {
     longFilePath
 }
     from "./tools"
+export {
+    NewFolderDialog
+}
+    from "./new_folder_dialog"

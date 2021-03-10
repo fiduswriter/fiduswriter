@@ -326,6 +326,10 @@ export class Editor {
                         }
                         this.mod.collab.doc.receiveSelectionChange(data)
                         break
+                    case 'path_change':
+                        this.docInfo.path = data["path"]
+                        this.menu.headerView.update()
+                        break
                     case 'diff':
                         if (data["cid"] === this.client_id) {
                             // The diff origins from the local user.

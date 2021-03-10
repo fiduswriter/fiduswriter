@@ -7,6 +7,7 @@ export {
 }
     from "./selector"
 export {
+    cleanPath,
     moveFile,
     shortFileTitle,
     longFilePath

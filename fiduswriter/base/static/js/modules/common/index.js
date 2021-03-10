@@ -60,6 +60,7 @@ export {
 export {
     FileDialog,
     FileSelector,
+    cleanPath,
     moveFile,
     shortFileTitle,
     longFilePath,

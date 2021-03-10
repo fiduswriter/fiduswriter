@@ -1,6 +1,6 @@
 import {DiffDOM} from "diff-dom"
 import {keyName} from "w3c-keyname"
-import {addAlert, escapeText, findTarget, moveFile} from "../../../common"
+import {addAlert, escapeText, findTarget, cleanPath} from "../../../common"
 
 export class HeaderbarView {
     constructor(editorView, options) {
@@ -253,18 +253,15 @@ export class HeaderbarView {
             return this.update()
         }
         const docTitleEl = document.body.querySelector('h1#document-title')
-        moveFile(
-            this.editor.docInfo.id,
-            this.getTitle(),
-            docTitleEl.innerText.trim(),
-            '/api/document/move/'
-        ).then(
-            path => this.editor.docInfo.path = path
-        ).catch(
-            () => addAlert('error', gettext('Could not update document title.'))
-        ).then(
-            () => this.update()
-        )
+        const path = cleanPath(this.getTitle(), docTitleEl.innerText.trim())
+        this.editor.docInfo.path = path
+        this.editor.ws.send(() => {
+            return {
+                type: 'path_change',
+                path
+            }
+        })
+        this.update()
     }
 
     checkKeys(event, menu, nameKey) {

@@ -24,7 +24,7 @@ export const longFilePath = function(title, path, prefix = '') {
     return path
 }
 
-export const moveFile = function(fileId, title, path, moveUrl) {
+export const cleanPath = function(title, path) {
     path = path.replace(/\/{2,}/g, '/') // replace multiple backslashes
     if (path.endsWith(title || gettext('Untitled'))) {
         path = path.split('/').slice(0, -1).join('/') + '/'
@@ -35,6 +35,11 @@ export const moveFile = function(fileId, title, path, moveUrl) {
     if (path === '/') {
         path = ''
     }
+    return path
+}
+
+export const moveFile = function(fileId, title, path, moveUrl) {
+    path = cleanPath(title, path)
     return new Promise((resolve, reject) => {
         postJson(
             moveUrl,
@@ -49,5 +54,4 @@ export const moveFile = function(fileId, title, path, moveUrl) {
             }
         )
     })
-
 }

@@ -258,6 +258,8 @@ class WebSocket(BaseWebSocketHandler):
             self.handle_selection_change(message)
         elif message["type"] == 'diff' and self.can_update_document():
             self.handle_diff(message)
+        elif message["type"] == 'path_change':
+            self.handle_path_change(message)
 
     def update_bibliography(self, bibliography_updates):
         for bu in bibliography_updates:
@@ -377,7 +379,25 @@ class WebSocket(BaseWebSocketHandler):
         if self.user_info.document_id in WebSocket.sessions and message[
                 "v"] == self.session["doc"].version:
             WebSocket.send_updates(
-                message, self.user_info.document_id, self.id)
+                message,
+                self.user_info.document_id,
+                self.id,
+                self.user_info.user.id
+            )
+
+    def handle_path_change(self, message):
+        if (
+            self.user_info.document_id in WebSocket.sessions and
+            self.user_info.path_object
+        ):
+            self.user_info.path_object.path = message['path']
+            self.user_info.path_object.save(update_fields=['path', ])
+            WebSocket.send_updates(
+                message,
+                self.user_info.document_id,
+                self.id,
+                self.user_info.user.id
+            )
 
     # Checks if the diff only contains changes to comments.
     def only_comments(self, message):
@@ -663,6 +683,11 @@ class WebSocket(BaseWebSocketHandler):
                 elif (
                     message['type'] == "selection_change" and
                     access_rights not in CAN_COMMUNICATE and
+                    user_id != waiter.user_info.user.id
+                ):
+                    continue
+                elif (
+                    message['type'] == "path_change" and
                     user_id != waiter.user_info.user.id
                 ):
                     continue

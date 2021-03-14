@@ -14,7 +14,7 @@ export class IndexedDB {
         // Open/Create db if it doesn't exist
         const request = window.indexedDB.open(this.app.db_config.db_name, DB_VERSION)
         request.onerror = (_event) => this.reset()
-        return new Promise((resolve, reject) => {
+        return new Promise(resolve => {
             request.onsuccess = (event) => {
                 const database = event.target.result
                 database.close()
@@ -56,7 +56,7 @@ export class IndexedDB {
             }
         }
 
-        request.onupgradeneeded = event => this.onUpgradeNeeded
+        request.onupgradeneeded = event => this.onUpgradeNeeded(event)
     }
 
     insertData(objectStoreName, data, retry = true) {
@@ -92,7 +92,7 @@ export class IndexedDB {
             }
         }
 
-        request.onupgradeneeded = event => this.onUpgradeNeeded
+        request.onupgradeneeded = event => this.onUpgradeNeeded(event)
     }
 
     reset() {

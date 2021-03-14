@@ -111,15 +111,7 @@ export class DocumentOverview {
                 }
                 break
             }
-            case findTarget(event, 'a.doc-title', el):
-                event.preventDefault()
-                if (this.app.isOffline()) {
-                    addAlert('info', gettext("You cannot open a document while you are offline."))
-                } else {
-                    this.app.goTo(el.target.getAttribute('href'))
-                }
-                break
-            case findTarget(event, '.fw-data-table-title .subdir', el):
+            case findTarget(event, '.fw-data-table-title.subdir', el):
                 this.path += el.target.dataset.subdir + '/'
                 if (this.path === '/') {
                     window.history.pushState({}, "", '/')
@@ -128,7 +120,7 @@ export class DocumentOverview {
                 }
                 this.initTable()
                 break
-            case findTarget(event, '.fw-data-table-title .parentdir', el): {
+            case findTarget(event, '.fw-data-table-title.parentdir', el): {
                 const pathParts = this.path.split('/')
                 pathParts.pop()
                 pathParts.pop()
@@ -141,6 +133,14 @@ export class DocumentOverview {
                 this.initTable()
                 break
             }
+            case findTarget(event, '.fw-data-table-title', el):
+                event.preventDefault()
+                if (this.app.isOffline()) {
+                    addAlert('info', gettext("You cannot open a document while you are offline."))
+                } else {
+                    this.app.goTo(el.target.dataset.url)
+                }
+                break
             default:
                 break
             }
@@ -288,9 +288,9 @@ export class DocumentOverview {
                 '-1',
                 'top',
                 '',
-                `<span class="fw-data-table-title">
+                `<span class="fw-data-table-title fw-link-text parentdir">
                     <i class="fas fa-folder"></i>
-                    <span class="fw-link-text parentdir">..</span>
+                    <span>..</span>
                 </span>`,
                 '',
                 '',
@@ -389,9 +389,9 @@ export class DocumentOverview {
                 '0',
                 'folder',
                 '',
-                `<span class="fw-data-table-title">
+                `<span class="fw-data-table-title fw-link-text subdir" data-subdir="${escapeText(subdir)}">
                     <i class="fas fa-folder"></i>
-                    <span class="fw-link-text subdir" data-subdir="${escapeText(subdir)}">${escapeText(subdir)}</span>
+                    <span>${escapeText(subdir)}</span>
                 </span>`,
                 '',
                 dateCell({date: doc.added}),
@@ -409,11 +409,11 @@ export class DocumentOverview {
             String(doc.id),
             'file',
             `<input type="checkbox" class="entry-select fw-check" data-id="${doc.id}" id="doc-${doc.id}"><label for="doc-${doc.id}"></label>`,
-            `<span class="fw-data-table-title">
+            `<span class="fw-data-table-title fw-link-text" data-url="/document/${doc.id}">
                 <i class="far fa-file-alt"></i>
-                <a class="doc-title fw-link-text fw-searchable" href="/document/${doc.id}">
+                <span class="fw-searchable">
                     ${shortFileTitle(doc.title, doc.path)}
-                </a>
+                </span>
             </span>`,
             doc.revisions.length ?
                 `<span class="revisions" data-id="${doc.id}">

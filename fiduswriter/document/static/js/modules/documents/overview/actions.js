@@ -3,7 +3,7 @@ import {importFidusTemplate} from "./templates"
 import {SaveCopy, ExportFidusFile} from "../../exporter/native"
 import {ImportFidusFile} from "../../importer/file"
 import {DocumentRevisionsDialog} from "../revisions"
-import {activateWait, deactivateWait, addAlert, postJson, Dialog, escapeText, shortFileTitle} from "../../common"
+import {activateWait, deactivateWait, addAlert, postJson, Dialog, escapeText, longFilePath} from "../../common"
 
 export class DocumentOverviewActions {
     constructor(documentOverview) {
@@ -22,20 +22,20 @@ export class DocumentOverviewActions {
         ).then(
             ({json}) => {
                 if (json.done) {
-                    addAlert('success', `${gettext('Document has been deleted')}: '${shortFileTitle(doc.title, doc.path)}'`)
+                    addAlert('success', `${gettext('Document has been deleted')}: '${longFilePath(doc.title, doc.path)}'`)
                     this.documentOverview.removeTableRows([id])
                     this.documentOverview.documentList = this.documentOverview.documentList.filter(doc => doc.id !== id)
                 } else {
-                    addAlert('error', `${gettext('Could not delete document')}: '${shortFileTitle(doc.title, doc.path)}'`)
+                    addAlert('error', `${gettext('Could not delete document')}: '${longFilePath(doc.title, doc.path)}'`)
                 }
             }
         )
     }
 
     deleteDocumentDialog(ids) {
-        const docTitles = ids.map(id => {
+        const docPaths = ids.map(id => {
             const doc = this.documentOverview.documentList.find(doc => doc.id === id)
-            return escapeText(shortFileTitle(doc.title, doc.path))
+            return escapeText(longFilePath(doc.title, doc.path))
         })
         const confirmDeletionDialog = new Dialog({
             title: gettext('Confirm deletion'),
@@ -46,7 +46,7 @@ export class DocumentOverviewActions {
 }
                 </p>
                 <p>
-                ${docTitles.join('<br>')}
+                ${docPaths.join('<br>')}
                 </p>`,
             id: 'confirmdeletion',
             icon: 'exclamation-triangle',
@@ -54,7 +54,7 @@ export class DocumentOverviewActions {
                 {
                     text: gettext('Delete'),
                     classes: "fw-dark",
-                    height: Math.max(180 + 15 * ids.length, 500),
+                    height: Math.min(50 + 15 * ids.length, 500),
                     click: () => {
                         Promise.all(ids.map(id => this.deleteDocument(id))).then(
                             () => {

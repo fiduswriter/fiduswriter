@@ -111,34 +111,18 @@ export class DocumentOverview {
                 }
                 break
             }
-            case findTarget(event, '.fw-data-table-title.subdir', el):
-                this.path += el.target.dataset.subdir + '/'
-                if (this.path === '/') {
-                    window.history.pushState({}, "", '/')
-                } else {
-                    window.history.pushState({}, "", '/documents' + this.path)
-                }
+            case findTarget(event, 'a.fw-data-table-title.subdir, a.fw-data-table-title.parentdir', el):
+                event.preventDefault()
+                this.path = el.target.dataset.path
+                window.history.pushState({}, "", el.target.getAttribute('href'))
                 this.initTable()
                 break
-            case findTarget(event, '.fw-data-table-title.parentdir', el): {
-                const pathParts = this.path.split('/')
-                pathParts.pop()
-                pathParts.pop()
-                this.path = pathParts.join('/') + '/'
-                if (this.path === '/') {
-                    window.history.pushState({}, "", '/')
-                } else {
-                    window.history.pushState({}, "", '/documents' + this.path)
-                }
-                this.initTable()
-                break
-            }
-            case findTarget(event, '.fw-data-table-title', el):
+            case findTarget(event, 'a.fw-data-table-title', el):
                 event.preventDefault()
                 if (this.app.isOffline()) {
                     addAlert('info', gettext("You cannot open a document while you are offline."))
                 } else {
-                    this.app.goTo(el.target.dataset.url)
+                    this.app.goTo(el.target.getAttribute('href'))
                 }
                 break
             default:
@@ -284,14 +268,19 @@ export class DocumentOverview {
         ).filter(row => !!row)
 
         if (this.path !== '/') {
+            const pathParts = this.path.split('/')
+            pathParts.pop()
+            pathParts.pop()
+            const parentPath = pathParts.join('/') + '/'
+            const href = parentPath === "/" ? parentPath : `/documents${parentPath}`
             fileList.unshift([
                 '-1',
                 'top',
                 '',
-                `<span class="fw-data-table-title fw-link-text parentdir">
+                `<a class="fw-data-table-title fw-link-text parentdir" href="${href}" data-path="${parentPath}">
                     <i class="fas fa-folder"></i>
                     <span>..</span>
-                </span>`,
+                </a>`,
                 '',
                 '',
                 '',
@@ -389,10 +378,10 @@ export class DocumentOverview {
                 '0',
                 'folder',
                 '',
-                `<span class="fw-data-table-title fw-link-text subdir" data-subdir="${escapeText(subdir)}">
+                `<a class="fw-data-table-title fw-link-text subdir" href="/documents${this.path}${subdir}/" data-path="${this.path}${subdir}/">
                     <i class="fas fa-folder"></i>
                     <span>${escapeText(subdir)}</span>
-                </span>`,
+                </a>`,
                 '',
                 dateCell({date: doc.added}),
                 dateCell({date: doc.updated}),
@@ -409,12 +398,12 @@ export class DocumentOverview {
             String(doc.id),
             'file',
             `<input type="checkbox" class="entry-select fw-check" data-id="${doc.id}" id="doc-${doc.id}"><label for="doc-${doc.id}"></label>`,
-            `<span class="fw-data-table-title fw-link-text" data-url="/document/${doc.id}">
+            `<a class="fw-data-table-title fw-link-text" href="/document/${doc.id}">
                 <i class="far fa-file-alt"></i>
                 <span class="fw-searchable">
                     ${shortFileTitle(doc.title, doc.path)}
                 </span>
-            </span>`,
+            </a>`,
             doc.revisions.length ?
                 `<span class="revisions" data-id="${doc.id}">
                 <i class="fas fa-history"></i>

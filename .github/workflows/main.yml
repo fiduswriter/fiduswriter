@@ -49,6 +49,7 @@ jobs:
         - document.tests.test_admin
         - document.tests.test_message_exchange
         - document.tests.test_merge
+        - document.tests.test_path
         - bibliography
         - usermedia
     steps:

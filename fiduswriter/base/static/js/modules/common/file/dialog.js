@@ -86,13 +86,22 @@ export class FileDialog {
 
                         if (path === this.path) {
                             // No change
+                            return
                         }
                         if (this.movingFiles.length > 1) {
                             if (!path.endsWith('/')) {
                                 path += '/'
                             }
+                            this.movingFiles.forEach(doc => {
+                                this.moveFile(
+                                    doc,
+                                    doc.path.endsWith('/') ? path : path + doc.path.split('/').pop()
+                                )
+                            })
+                        } else {
+                            this.moveFile(this.movingFiles[0], path)
                         }
-                        this.movingFiles.forEach(doc => this.moveFile(doc, path))
+
                     }
                 }
             ]

@@ -1445,3 +1445,121 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             EC.presence_of_element_located((By.CLASS_NAME, "message-body"))
         )
         assert message_body2.text == "hello"
+
+    def test_modify_path(self):
+        "Test whether changing the path in one editor changes it in the other"
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".article-title"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".article-title"
+        ).send_keys('Test Article')
+        self.wait_for_doc_sync(self.driver, self.driver2)
+        self.assertEqual(
+            self.driver2.find_element(
+                By.CSS_SELECTOR,
+                "#document-title"
+            ).text,
+            "Test Article"
+        )
+        # Delete existing path and insert just path
+        self.driver2.find_element(
+            By.CSS_SELECTOR,
+            "#document-title"
+        ).click()
+        self.driver2.find_element(
+            By.CSS_SELECTOR,
+            "#document-title"
+        ).send_keys(Keys.CONTROL, "a")
+        self.driver2.find_element(
+            By.CSS_SELECTOR,
+            "#document-title"
+        ).send_keys(Keys.DELETE)
+        self.driver2.find_element(
+            By.CSS_SELECTOR,
+            "#document-title"
+        ).send_keys('/Reports/2019/')
+        self.driver2.find_element(
+            By.CSS_SELECTOR,
+            ".article-title"
+        ).click()
+        self.wait_for_doc_sync(self.driver, self.driver2)
+        self.assertEqual(
+            self.driver.find_element(
+                By.CSS_SELECTOR,
+                "#document-title"
+            ).text,
+            "/Reports/2019/Test Article"
+        )
+        # Delete existing path and insert path including filename
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#document-title"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#document-title"
+        ).send_keys(Keys.CONTROL, "a")
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#document-title"
+        ).send_keys(Keys.DELETE)
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#document-title"
+        ).send_keys('/Reports/2019/Report 23')
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".article-title"
+        ).click()
+        self.wait_for_doc_sync(self.driver, self.driver2)
+        self.assertEqual(
+            self.driver2.find_element(
+                By.CSS_SELECTOR,
+                "#document-title"
+            ).text,
+            "/Reports/2019/Report 23"
+        )
+        # Reload page and check if path is still the same.
+        self.driver.refresh()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, '#document-title')
+            )
+        )
+        self.assertEqual(
+            self.driver.find_element(
+                By.CSS_SELECTOR,
+                "#document-title"
+            ).text,
+            "/Reports/2019/Report 23"
+        )
+        # Delete entire path to obtain article title again.
+        self.driver2.find_element(
+            By.CSS_SELECTOR,
+            "#document-title"
+        ).click()
+        self.driver2.find_element(
+            By.CSS_SELECTOR,
+            "#document-title"
+        ).send_keys(Keys.CONTROL, "a")
+        self.driver2.find_element(
+            By.CSS_SELECTOR,
+            "#document-title"
+        ).send_keys(Keys.DELETE)
+        self.driver2.find_element(
+            By.CSS_SELECTOR,
+            ".article-title"
+        ).click()
+        self.wait_for_doc_sync(self.driver, self.driver2)
+        self.assertEqual(
+            self.driver.find_element(
+                By.CSS_SELECTOR,
+                "#document-title"
+            ).text,
+            "Test Article"
+        )

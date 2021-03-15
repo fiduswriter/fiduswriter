@@ -329,7 +329,7 @@ export class HeaderbarView {
                 </a>
             </div>
             <div id="document-top">
-                <h1 id="document-title"${this.editor.app.isOffline() ? '' : ' contenteditable="true"'}>${this.getPathText()}</h1>
+                <h1 id="document-title"${this.editor.app.isOffline() || !this.editor.pathEditable ? '' : ' contenteditable="true"'}>${this.getPathText()}</h1>
                 <nav id="header-navigation">
                     ${this.getHeaderNavHTML()}
                 </nav>

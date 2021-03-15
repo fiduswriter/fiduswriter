@@ -179,6 +179,8 @@ export class Editor {
         this.client_id = Math.floor(Math.random() * 0xFFFFFFFF)
         this.clientTimeAdjustment = 0
 
+        this.pathEditable = true // Set to false through plugin to disable path editing.
+
         this.statePlugins = [
             [keymap, () => buildEditorKeymap(this.schema)],
             [keymap, () => buildKeymap(this.schema)],

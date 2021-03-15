@@ -6,13 +6,14 @@ import {modifyImages} from "../tools/html"
 import {ZipFileCreator} from "../tools/zip"
 import {removeHidden} from "../tools/doc_content"
 import {htmlExportTemplate} from "../html/templates"
-import {addAlert} from "../../common"
+import {addAlert, shortFileTitle} from "../../common"
 import {DOMExporter} from "../tools/dom_export"
 
 export class HTMLExporter extends DOMExporter {
     constructor(schema, csl, documentStyles, doc, bibDB, imageDB, updated) {
         super(schema, csl, documentStyles)
         this.doc = doc
+        this.docTitle = shortFileTitle(this.doc.title, this.doc.path)
         this.bibDB = bibDB
         this.imageDB = imageDB
         this.updated = updated
@@ -22,7 +23,7 @@ export class HTMLExporter extends DOMExporter {
     }
 
     init() {
-        addAlert('info', `${this.doc.title}: ${gettext('HTML export has been initiated.')}`)
+        addAlert('info', `${this.docTitle}: ${gettext('HTML export has been initiated.')}`)
         this.docContent = removeHidden(this.doc.content, false)
 
         this.addDocStyle(this.doc)
@@ -45,7 +46,7 @@ export class HTMLExporter extends DOMExporter {
 
     postProcess() {
 
-        const title = this.doc.title
+        const title = this.docTitle
 
         const math = this.content.querySelectorAll('.equation, .figure-equation').length ? true : false
 
@@ -106,7 +107,7 @@ export class HTMLExporter extends DOMExporter {
     }
 
     download(blob) {
-        return download(blob, createSlug(this.doc.title) + '.html.zip', 'application/zip')
+        return download(blob, createSlug(this.docTitle) + '.html.zip', 'application/zip')
     }
 
 }

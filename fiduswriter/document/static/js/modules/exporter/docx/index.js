@@ -1,8 +1,9 @@
 import download from "downloadjs"
 
+import {shortFileTitle} from "../../common"
 import {createSlug} from "../tools/file"
 import {XmlZip} from "../tools/xml_zip"
-import {textContent, removeHidden, fixTables} from "../tools/doc_content"
+import {removeHidden, fixTables} from "../tools/doc_content"
 import {DocxExporterCitations} from "./citations"
 import {DocxExporterImages} from "./images"
 import {DocxExporterRender} from "./render"
@@ -42,7 +43,7 @@ export class DocxExporter {
 
     init() {
         this.docContent = fixTables(removeHidden(this.doc.content))
-        this.docTitle = textContent(this.docContent.content[0])
+        this.docTitle = shortFileTitle(this.doc.title, this.doc.path)
         this.tables = new DocxExporterTables(this)
         this.math = new DocxExporterMath(this)
         this.metadata = new DocxExporterMetadata(this, this.docContent)

@@ -617,7 +617,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
 
         # Delete document
         documents = self.driver.find_elements_by_css_selector(
-            '.fw-contents tbody tr a.doc-title'
+            '.fw-contents tbody tr a.fw-data-table-title'
         )
         self.assertEqual(
             len(documents),
@@ -637,7 +637,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         time.sleep(1)
         documents = self.driver.find_elements_by_css_selector(
-            '.fw-contents tbody tr a.doc-title'
+            '.fw-contents tbody tr a.fw-data-table-title'
         )
         self.assertEqual(
             len(documents),
@@ -651,7 +651,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         time.sleep(1)
         documents = self.driver.find_elements_by_css_selector(
-            '.fw-contents tbody tr a.doc-title'
+            '.fw-contents tbody tr a.fw-data-table-title'
         )
         self.assertEqual(
             len(documents),
@@ -681,7 +681,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
             ".fw-dark"
         ).click()
         documents = self.driver.find_elements_by_css_selector(
-            '.fw-contents tbody tr a.doc-title'
+            '.fw-contents tbody tr a.fw-data-table-title'
         )
         self.assertEqual(
             len(documents),

@@ -11,6 +11,7 @@ export {
     localizeDate,
     noSpaceTmp,
     escapeText,
+    unescapeText,
     cancelPromise,
     findTarget,
     whenReady,
@@ -56,3 +57,12 @@ export {
 export {
     faqDialog
 } from "./faq_dialog"
+export {
+    FileDialog,
+    FileSelector,
+    cleanPath,
+    moveFile,
+    shortFileTitle,
+    longFilePath,
+    NewFolderDialog
+} from "./file"

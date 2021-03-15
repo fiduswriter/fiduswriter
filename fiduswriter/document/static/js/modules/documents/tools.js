@@ -47,5 +47,4 @@ export const getMissingDocumentListData = function(ids, documentList, schema) {
     } else {
         return Promise.resolve()
     }
-
 }

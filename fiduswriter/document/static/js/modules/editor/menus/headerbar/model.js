@@ -65,7 +65,15 @@ export const headerbarModel = () => ({
                     tooltip: gettext('Close the document and return to the document overview menu.'),
                     order: 1,
                     action: editor => {
-                        editor.app.goTo('/')
+                        const folderPath = editor.docInfo.path.slice(
+                            0,
+                            editor.docInfo.path.lastIndexOf('/')
+                        )
+                        if (!folderPath.length) {
+                            editor.app.goTo('/')
+                        } else {
+                            editor.app.goTo(`/documents${folderPath}/`)
+                        }
                     },
                     disabled: editor => editor.app.isOffline()
                 },

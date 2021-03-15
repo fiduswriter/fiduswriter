@@ -135,7 +135,7 @@ export class Editor {
     // A class that contains everything that happens on the editor page.
     // It is currently not possible to initialize more than one editor class, as it
     // contains bindings to menu items, etc. that are uniquely defined.
-    constructor({app, user}, idString) {
+    constructor({app, user}, path, idString) {
         this.app = app
         this.user = user
         this.mod = {}
@@ -150,7 +150,8 @@ export class Editor {
             is_owner: false,
             confirmedDoc: false, // The latest doc as confirmed by the server.
             updated: false, // Latest update time stamp
-            dir: 'ltr' // standard direction, used in input fields, etc.
+            dir: 'ltr', // standard direction, used in input fields, etc.
+            path // Default doc path.
         }
         let id = parseInt(idString)
         if (isNaN(id)) {
@@ -177,6 +178,8 @@ export class Editor {
         }
         this.client_id = Math.floor(Math.random() * 0xFFFFFFFF)
         this.clientTimeAdjustment = 0
+
+        this.pathEditable = true // Set to false through plugin to disable path editing.
 
         this.statePlugins = [
             [keymap, () => buildEditorKeymap(this.schema)],
@@ -216,7 +219,6 @@ export class Editor {
     init() {
         ensureCSS([
             'mathlive.css',
-            'mathlive.core.css',
             'editor.css',
             'tags.css',
             'contributors.css',
@@ -243,7 +245,13 @@ export class Editor {
         ]
         if (this.docInfo.hasOwnProperty('templateId')) {
             initPromises.push(
-                postJson(`/api/document/create_doc/${this.docInfo.templateId}/`).then(
+                postJson(
+                    '/api/document/create_doc/',
+                    {
+                        template_id: this.docInfo.templateId,
+                        path: this.docInfo.path
+                    }
+                ).then(
                     ({json}) => {
                         this.docInfo.id = json.id
                         window.history.replaceState("", "", `/document/${this.docInfo.id}/`)
@@ -319,6 +327,10 @@ export class Editor {
                             return
                         }
                         this.mod.collab.doc.receiveSelectionChange(data)
+                        break
+                    case 'path_change':
+                        this.docInfo.path = data["path"]
+                        this.menu.headerView.update()
                         break
                     case 'diff':
                         if (data["cid"] === this.client_id) {
@@ -591,6 +603,7 @@ export class Editor {
             content: pmArticle.toJSON(),
             settings: getSettings(pmArticle),
             title: title.substring(0, 255),
+            path: this.docInfo.path,
             version: this.docInfo.version,
             comments: this.mod.comments.store.comments,
             id: this.docInfo.id,

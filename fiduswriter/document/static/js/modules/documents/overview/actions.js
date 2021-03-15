@@ -3,7 +3,7 @@ import {importFidusTemplate} from "./templates"
 import {SaveCopy, ExportFidusFile} from "../../exporter/native"
 import {ImportFidusFile} from "../../importer/file"
 import {DocumentRevisionsDialog} from "../revisions"
-import {activateWait, deactivateWait, addAlert, postJson, Dialog, escapeText} from "../../common"
+import {activateWait, deactivateWait, addAlert, postJson, Dialog, escapeText, longFilePath} from "../../common"
 
 export class DocumentOverviewActions {
     constructor(documentOverview) {
@@ -14,30 +14,39 @@ export class DocumentOverviewActions {
     deleteDocument(id) {
         const doc = this.documentOverview.documentList.find(doc => doc.id === id)
         if (!doc) {
-            return
+            return Promise.resolve()
         }
-        postJson(
+        return postJson(
             '/api/document/delete/',
             {id}
         ).then(
             ({json}) => {
                 if (json.done) {
-                    addAlert('success', `${gettext('Document has been deleted')}: '${doc.title}'`)
-                    this.documentOverview.removeTableRows([id])
+                    addAlert('success', `${gettext('Document has been deleted')}: '${longFilePath(doc.title, doc.path)}'`)
                     this.documentOverview.documentList = this.documentOverview.documentList.filter(doc => doc.id !== id)
+                    this.documentOverview.initTable()
                 } else {
-                    addAlert('error', `${gettext('Could not delete document')}: '${doc.title}'`)
+                    addAlert('error', `${gettext('Could not delete document')}: '${longFilePath(doc.title, doc.path)}'`)
                 }
             }
         )
     }
 
     deleteDocumentDialog(ids) {
-
+        const docPaths = ids.map(id => {
+            const doc = this.documentOverview.documentList.find(doc => doc.id === id)
+            return escapeText(longFilePath(doc.title, doc.path))
+        })
         const confirmDeletionDialog = new Dialog({
             title: gettext('Confirm deletion'),
             body: `<p>
-                ${gettext('Delete the document(s)?')}
+                ${  ids.length > 1 ?
+        gettext('Do you really want to delete the following documents?') :
+        gettext('Do you really want to delete the following document?')
+}
+                </p>
+                <p>
+                ${docPaths.join('<br>')}
                 </p>`,
             id: 'confirmdeletion',
             icon: 'exclamation-triangle',
@@ -45,12 +54,15 @@ export class DocumentOverviewActions {
                 {
                     text: gettext('Delete'),
                     classes: "fw-dark",
-                    height: 180,
+                    height: Math.min(50 + 15 * ids.length, 500),
                     click: () => {
-                        for (let i = 0; i < ids.length; i++) {
-                            this.deleteDocument(ids[i])
-                        }
-                        confirmDeletionDialog.close()
+                        Promise.all(ids.map(id => this.deleteDocument(id))).then(
+                            () => {
+                                confirmDeletionDialog.close()
+                                this.documentOverview.initTable()
+                            }
+                        )
+
                     }
                 },
                 {
@@ -82,6 +94,7 @@ export class DocumentOverviewActions {
                     const importer = new ImportFidusFile(
                         fidusFile,
                         this.documentOverview.user,
+                        this.documentOverview.path,
                         true,
                         this.documentOverview.teamMembers
                     )
@@ -96,7 +109,7 @@ export class DocumentOverviewActions {
                                 return
                             }
                             this.documentOverview.documentList.push(doc)
-                            this.documentOverview.addDocToTable(doc)
+                            this.documentOverview.initTable()
                             importDialog.close()
                         }
                     ).catch(
@@ -152,7 +165,7 @@ export class DocumentOverviewActions {
                     copier.init().then(
                         ({doc}) => {
                             this.documentOverview.documentList.push(doc)
-                            this.documentOverview.addDocToTable(doc)
+                            this.documentOverview.initTable()
                         }
                     ).catch(() => false)
                 })
@@ -196,7 +209,7 @@ export class DocumentOverviewActions {
                                     copier.init().then(
                                         ({doc}) => {
                                             this.documentOverview.documentList.push(doc)
-                                            this.documentOverview.addDocToTable(doc)
+                                            this.documentOverview.initTable()
                                         }
                                     ).catch(() => false)
                                 })
@@ -372,12 +385,11 @@ export class DocumentOverviewActions {
                 switch (actionObject.action) {
                 case 'added-document':
                     this.documentOverview.documentList.push(actionObject.doc)
-                    this.documentOverview.addDocToTable(actionObject.doc)
+                    this.documentOverview.initTable()
                     break
                 case 'deleted-revision':
                     actionObject.doc.revisions = actionObject.doc.revisions.filter(rev => rev.pk !== actionObject.id)
-                    this.documentOverview.removeTableRows([actionObject.doc.id])
-                    this.documentOverview.addDocToTable(actionObject.doc)
+                    this.documentOverview.initTable()
                     break
                 }
             })

@@ -282,6 +282,15 @@ export const escapeText = function(text) {
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+}
+
+export const unescapeText = function(text) {
+    return text
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&amp;/g, '&')
 }
 /**
  * Return a cancel promise if you need to cancel a promise chain. Import as

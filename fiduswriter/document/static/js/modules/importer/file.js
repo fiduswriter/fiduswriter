@@ -14,9 +14,10 @@ export class ImportFidusFile {
     /* Process a packaged Fidus File, either through user upload, or by reloading
       a saved revision which was saved in the same ZIP-baseformat. */
 
-    constructor(file, user, check = false, teamMembers = []) {
+    constructor(file, user, path =  '', check = false, teamMembers = []) {
         this.file = file
         this.user = user
+        this.path = path
         this.check = check // Whether the file needs to be checked for compliance with ZIP-format and whether authors of comments/changes are team members of current user.
         this.teamMembers = teamMembers
         this.textFiles = []
@@ -112,7 +113,9 @@ export class ImportFidusFile {
                 bibliography,
                 images,
                 this.otherFiles,
-                this.user
+                this.user,
+                null,
+                this.path
             )
             return importer.init().then(({doc, docInfo}) => {
                 this.ok = true

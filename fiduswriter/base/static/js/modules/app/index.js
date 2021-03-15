@@ -62,22 +62,24 @@ export class App {
             "document": {
                 requireLogin: true,
                 open: pathnameParts => {
-                    const id = pathnameParts[2]
-                    return import(/* webpackPrefetch: true *//* webpackChunkName: "editor" */'../editor').then(({Editor}) => new Editor(this.config, id))
+                    let id = pathnameParts.pop()
+                    if (!id.length) {
+                        id = pathnameParts.pop()
+                    }
+                    const path = ('/' + pathnameParts.slice(2).join('/')).replace(/\/?$/, '/')
+                    return import(/* webpackPrefetch: true *//* webpackChunkName: "editor" */'../editor').then(({Editor}) => new Editor(this.config, path, id))
                 },
                 dbTables: {
-                    "list": {
-                        keyPath: "id"
-                    },
-                    "templates": {
-                        keyPath: "pk"
-                    },
-                    "styles": {
-                        keyPath: "title"
-                    },
-                    "teammembers": {
+                    "data": {
                         keyPath: "id"
                     }
+                }
+            },
+            "documents": {
+                requireLogin: true,
+                open: pathnameParts => {
+                    const path = ('/' + pathnameParts.slice(2).join('/')).replace(/\/?$/, '/')
+                    return import(/* webpackPrefetch: true */"../documents/overview").then(({DocumentOverview}) => new DocumentOverview(this.config, path))
                 }
             },
             "invite": {

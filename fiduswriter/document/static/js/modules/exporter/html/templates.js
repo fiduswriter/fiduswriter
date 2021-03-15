@@ -5,6 +5,7 @@ export const htmlExportTemplate = ({contents, settings, styleSheets, title}) =>
     `<!DOCTYPE html>
 <html>
     <head>
+        <meta charset="UTF-8">
         ${settings.copyright && settings.copyright.holder ? `<meta name="copyright" content="© ${settings.copyright.year ? settings.copyright.year : new Date().getFullYear()} ${escapeText(settings.copyright.holder)}" />` : ''}
         <title>${escapeText(title)}</title>
 ${

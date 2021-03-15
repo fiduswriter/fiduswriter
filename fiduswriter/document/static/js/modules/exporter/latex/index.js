@@ -1,6 +1,7 @@
 import {BibLatexExporter} from "biblatex-csl-converter"
 import download from "downloadjs"
 
+import {shortFileTitle} from "../../common"
 import {createSlug} from "../tools/file"
 import {removeHidden, fixTables} from "../tools/doc_content"
 import {LatexExporterConvert} from "./convert"
@@ -13,6 +14,7 @@ import {readMe} from "./readme"
 export class LatexExporter {
     constructor(doc, bibDB, imageDB, updated) {
         this.doc = doc
+        this.docTitle = shortFileTitle(this.doc.title, this.doc.path)
         this.bibDB = bibDB
         this.imageDB = imageDB
         this.updated = updated
@@ -24,7 +26,7 @@ export class LatexExporter {
     }
 
     init() {
-        this.zipFileName = `${createSlug(this.doc.title)}.latex.zip`
+        this.zipFileName = `${createSlug(this.docTitle)}.latex.zip`
         this.docContent = fixTables(removeHidden(this.doc.content))
         this.converter = new LatexExporterConvert(this, this.imageDB, this.bibDB, this.doc.settings)
         this.conversion = this.converter.init(this.docContent)

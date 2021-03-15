@@ -78,11 +78,14 @@ def documents_list(request):
     for document in documents:
         if document.owner == request.user:
             access_right = 'write'
+            path = document.path
         else:
-            access_right = AccessRight.objects.get(
+            access_object = AccessRight.objects.get(
                 user=request.user,
                 document=document
-            ).rights
+            )
+            access_right = access_object.rights
+            path = access_object.path
         if (
             request.user.is_staff or
             document.owner == request.user or
@@ -111,6 +114,7 @@ def documents_list(request):
         output_list.append({
             'id': document.id,
             'title': document.title,
+            'path': path,
             'is_owner': is_owner,
             'owner': {
                 'id': document.owner.id,
@@ -201,10 +205,15 @@ def save_access_rights(request):
                             True
                         )
                 else:
+                    # Make the shared path "/filename" or ""
+                    path = '/' + doc.path.split('/').pop()
+                    if len(path) == 1:
+                        path = ''
                     access_right = AccessRight.objects.create(
                         document_id=doc_id,
                         user_id=right['user_id'],
-                        rights=right['rights']
+                        rights=right['rights'],
+                        path=path
                     )
                     send_share_notification(
                         request,
@@ -388,6 +397,38 @@ def delete(request):
         response['done'] = True
     else:
         response['done'] = False
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@login_required
+@ajax_required
+@require_POST
+def move(request):
+    response = {}
+    status = 200
+    doc_id = int(request.POST['id'])
+    path = request.POST['path']
+    document = Document.objects.filter(pk=doc_id).first()
+    if not document:
+        response['done'] = False
+    elif document.owner == request.user:
+        document.path = path
+        document.save(update_fields=['path', ])
+        response['done'] = True
+    else:
+        access_right = AccessRight.objects.filter(
+            document=document,
+            user=request.user
+        ).first()
+        if not access_right:
+            response['done'] = False
+        else:
+            access_right.path = path
+            access_right.save()
+            response['done'] = True
     return JsonResponse(
         response,
         status=status
@@ -604,8 +645,10 @@ def send_invite_notification(request, doc_id, email, rights, invite, change):
 @login_required
 @ajax_required
 @require_POST
-def create_doc(request, template_id):
+def create_doc(request):
     response = {}
+    template_id = request.POST['template_id']
+    path = request.POST['path']
     document_template = DocumentTemplate.objects.filter(
         Q(user=request.user) | Q(user=None),
         id=template_id
@@ -617,7 +660,8 @@ def create_doc(request, template_id):
         )
     document = Document.objects.create(
         owner_id=request.user.pk,
-        template_id=template_id
+        template_id=template_id,
+        path=path
     )
     response['id'] = document.id
     return JsonResponse(
@@ -680,11 +724,23 @@ def import_create(request):
         document_template.user = request.user
         document_template.content = content
         document_template.save()
+    path = request.POST['path']
+    if len(path):
+        counter = 0
+        base_path = path
+        while (
+            Document.objects.filter(owner=request.user, path=path).first() or
+            AccessRight.objects.filter(user=request.user, path=path).first()
+        ):
+            counter += 1
+            path = base_path + ' ' + str(counter)
     document = Document.objects.create(
         owner=request.user,
-        template=document_template
+        template=document_template,
+        path=path
     )
     response['id'] = document.id
+    response['path'] = document.path
     return JsonResponse(
         response,
         status=status

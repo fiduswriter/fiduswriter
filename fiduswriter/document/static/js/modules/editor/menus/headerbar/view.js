@@ -1,6 +1,6 @@
 import {DiffDOM} from "diff-dom"
 import {keyName} from "w3c-keyname"
-import {escapeText, addAlert} from "../../../common"
+import {addAlert, escapeText, findTarget, cleanPath} from "../../../common"
 
 export class HeaderbarView {
     constructor(editorView, options) {
@@ -42,11 +42,17 @@ export class HeaderbarView {
         document.body.addEventListener('click', this.listeners.onclick)
         this.listeners.onKeydown = event => this.onKeydown(event)
         document.body.addEventListener('keydown', this.listeners.onKeydown)
+        this.listeners.onKeyup = event => this.onKeyup(event)
+        document.body.addEventListener('keyup', this.listeners.onKeyup)
+        this.listeners.onFocusout = event => this.onFocusout(event)
+        document.body.addEventListener('focusout', this.listeners.onFocusout)
     }
 
     destroy() {
         document.body.removeEventListener('click', this.listeners.onclick)
         document.removeEventListener('keydown', this.listeners.onKeydown)
+        document.removeEventListener('keyup', this.listeners.onKeyup)
+        document.removeEventListener('focusout', this.listeners.onFocusout)
     }
 
     onclick(event) {
@@ -203,6 +209,9 @@ export class HeaderbarView {
 
 
     onKeydown(event) {
+        if (findTarget(event, "h1#document-title")) {
+            return
+        }
         let name = keyName(event)
         if (event.altKey) {
             name = "Alt-" + name
@@ -220,6 +229,41 @@ export class HeaderbarView {
         this.editor.menu.headerbarModel.content.forEach(menu => this.checkKeys(event, menu, name))
     }
 
+    onKeyup(event) {
+        if (!findTarget(event, "h1#document-title")) {
+            return
+        }
+        const docTitleEl = document.body.querySelector('h1#document-title')
+        if (!docTitleEl.childNodes.length ||
+            (docTitleEl.childNodes.length === 1 && docTitleEl.firstChild.nodeType === 3)
+        ) {
+            return
+        }
+        // Special key was pressed, we reset to text only and blur
+        docTitleEl.innerHTML = docTitleEl.innerText.trim().replace(/\r?\n|\r/g, '')
+        docTitleEl.blur()
+    }
+
+    onFocusout(event) {
+        if (!findTarget(event, "h1#document-title")) {
+            return
+        }
+        if (this.editor.app.isOffline()) {
+            // We are offline. Just reset.
+            return this.update()
+        }
+        const docTitleEl = document.body.querySelector('h1#document-title')
+        const path = cleanPath(this.getTitle(), docTitleEl.innerText.trim())
+        this.editor.docInfo.path = path
+        this.editor.ws.send(() => {
+            return {
+                type: 'path_change',
+                path
+            }
+        })
+        this.update()
+    }
+
     checkKeys(event, menu, nameKey) {
         menu.content.forEach(menuItem => {
             if (menuItem.keys === nameKey) {
@@ -232,6 +276,9 @@ export class HeaderbarView {
     }
 
     update() {
+        if (document.activeElement && document.activeElement.matches('h1#document-title')) {
+            return
+        }
         const diff = this.dd.diff(this.headerEl, this.getHeaderHTML())
         this.dd.apply(this.headerEl, diff)
         if (this.editor.menu.headerbarModel.open) {
@@ -241,12 +288,19 @@ export class HeaderbarView {
         }
     }
 
-    getHeaderHTML() {
-        const doc = this.editor.view.state.doc
-        if (!this.editor.menu.headerbarModel.open) {
-            // header is closed
-            return '<div></div>'
+    getPathText() {
+        let text = this.editor.docInfo.path
+        if (text.length && !text.endsWith('/')) {
+            return text
+        } else if (text === '/') {
+            text = ''
         }
+        text += this.getTitle() || gettext('Untitled')
+        return text
+    }
+
+    getTitle() {
+        const doc = this.editor.view.state.doc
         let title = ""
         doc.firstChild.firstChild.forEach(
             child => {
@@ -255,18 +309,27 @@ export class HeaderbarView {
                 }
             }
         )
-        if (!title.length) {
-            title = gettext('Untitled Document')
-        }
+        return title.trim()
+    }
 
+    getHeaderHTML() {
+        if (!this.editor.menu.headerbarModel.open) {
+            // header is closed
+            return '<div></div>'
+        }
+        const folderPath = this.editor.docInfo.path.slice(
+            0,
+            this.editor.docInfo.path.lastIndexOf('/')
+        )
+        const exitUrl = folderPath.length ? `/documents${folderPath}/` : '/'
         return `<div>
             <div id="close-document-top" title="${gettext("Close the document and return to the document overview menu.")}">
-                <a href="/">
+                <a href="${exitUrl}">
                     <i class="fa fa-times"></i>
                 </a>
             </div>
             <div id="document-top">
-                <h1>${title}</h1>
+                <h1 id="document-title"${this.editor.app.isOffline() || !this.editor.pathEditable ? '' : ' contenteditable="true"'}>${this.getPathText()}</h1>
                 <nav id="header-navigation">
                     ${this.getHeaderNavHTML()}
                 </nav>

@@ -1,6 +1,6 @@
 import {PAPER_SIZES} from "../../schema/const"
 import {HTMLExporter} from "../html"
-import {addAlert} from "../../common"
+import {addAlert, shortFileTitle} from "../../common"
 import {removeHidden} from "../tools/doc_content"
 import {printHTML} from "@vivliostyle/print"
 
@@ -71,6 +71,9 @@ export class PrintExporter extends HTMLExporter {
             	flex: none;
             	order: 2;
             }
+            body {
+                background-color: white;
+            }
             @page {
                 size: ${PAPER_SIZES.find(size => size[0] === this.doc.settings.papersize)[1]};
                 @top-center {
@@ -84,7 +87,7 @@ export class PrintExporter extends HTMLExporter {
     }
 
     init() {
-        addAlert('info', `${this.doc.title}: ${gettext('Printing has been initiated.')}`)
+        addAlert('info', `${shortFileTitle(this.doc.title, this.doc.path)}: ${gettext('Printing has been initiated.')}`)
         this.docContent = removeHidden(this.doc.content, false)
         this.addDocStyle(this.doc)
 
@@ -96,9 +99,27 @@ export class PrintExporter extends HTMLExporter {
             () => this.postProcess()
         ).then(
             ({html, title}) => {
+                const config = {title}
+
+                if (navigator.userAgent.includes('Gecko/')) {
+                    // Firefox has issues printing images when in iframe. This workaround can be
+                    // removed once that has been fixed. TODO: Add gecko bug number if there is one.
+                    config.printCallback = iframeWin => {
+                        const oldBody = document.body
+                        document.body.parentElement.dataset.vivliostylePaginated = true
+                        document.body = iframeWin.document.body
+                        iframeWin.document.querySelectorAll('style').forEach(el => document.body.appendChild(el))
+                        const backgroundStyle = document.createElement('style')
+                        backgroundStyle.innerHTML = 'body {background-color: white;}'
+                        document.body.appendChild(backgroundStyle)
+                        window.print()
+                        document.body = oldBody
+                        delete document.body.parentElement.dataset.vivliostylePaginated
+                    }
+                }
                 return printHTML(
                     html,
-                    {title}
+                    config
                 )
             }
         )

@@ -20,6 +20,9 @@ export function addDeletedPartWidget(dom, view, getPos) {
         view.dispatch(tr)
     })
 }
+export function getProtectedRanges(state) {
+    return key.getState(state).protectedRanges
+}
 
 export function checkProtectedInSelection(state) {
     // Checks whether there is a protected range

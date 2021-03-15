@@ -126,3 +126,13 @@
 .fw-media-file-input {
     display: none;
 }
+
+.ui-dialog-content .noteEl {
+    margin-bottom: 10px;
+    font-size: smaller;
+    color: var(--error-background-color);
+}
+
+.ui-dialog-content .noteEl.hide {
+    display: none;
+}

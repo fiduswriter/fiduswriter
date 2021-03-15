@@ -1,5 +1,5 @@
 import {ImportNative} from "../../importer/native"
-import {addAlert} from "../../common"
+import {addAlert, longFilePath} from "../../common"
 import {ShrinkFidus} from "./shrink"
 
 /* Saves a copy of the document. The owner may change in that process, if the
@@ -24,7 +24,8 @@ export class SaveCopy {
                     shrunkImageDB,
                     httpIncludes,
                     this.newUser,
-                    this.importId
+                    this.importId,
+                    longFilePath(doc.title, doc.path, `${gettext('Copy of')} `)
                 )
                 return importer.init()
             }).then(

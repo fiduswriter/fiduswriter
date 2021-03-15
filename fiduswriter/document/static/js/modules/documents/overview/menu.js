@@ -178,11 +178,16 @@ export const menuModel = () => ({
                 if (text.length && !currentlySearching) {
                     overview.initTable(true)
                     currentlySearching = true
+                    overview.table.on(
+                        'datatable.init',
+                        () => overview.table.search(text)
+                    )
                 } else if (!text.length && currentlySearching) {
                     overview.initTable(false)
                     currentlySearching = false
+                } else if (text.length) {
+                    overview.table.search(text)
                 }
-                overview.table.search(text)
             },
             order: 4
         }

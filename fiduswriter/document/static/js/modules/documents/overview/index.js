@@ -29,7 +29,6 @@ export class DocumentOverview {
         this.documentList = []
         this.teamMembers = []
         this.mod = {}
-        this.subdirs = {}
         this.lastSort = {column: 0, dir: 'asc'}
     }
 
@@ -232,12 +231,12 @@ export class DocumentOverview {
     }
 
     /* Initialize the overview table */
-    initTable() {
+    initTable(searching = false) {
         if (this.table) {
             this.table.destroy()
             this.table = false
         }
-        this.subdirs = {}
+        const subdirs = {}
         const tableEl = document.createElement('table')
         tableEl.classList.add('fw-data-table')
         tableEl.classList.add('fw-document-table')
@@ -262,12 +261,11 @@ export class DocumentOverview {
                 hiddenCols.push(6)
             }
         }
-
         const fileList = this.documentList.map(
-            doc => this.createTableRow(doc)
+            doc => this.createTableRow(doc, subdirs, searching)
         ).filter(row => !!row)
 
-        if (this.path !== '/') {
+        if (!searching && this.path !== '/') {
             const pathParts = this.path.split('/')
             pathParts.pop()
             pathParts.pop()
@@ -291,7 +289,7 @@ export class DocumentOverview {
         }
 
         this.table = new DataTable(tableEl, {
-            searchable: true,
+            searchable: searching,
             paging: false,
             scrollY: `${Math.max(window.innerHeight - 360, 100)}px`,
             labels: {
@@ -338,7 +336,7 @@ export class DocumentOverview {
         this.dtBulk.init(this.table.table)
     }
 
-    createTableRow(doc) {
+    createTableRow(doc, subdirs, searching) {
         let path = doc.path
         if (!path.startsWith('/')) {
             path = '/' + path
@@ -349,25 +347,24 @@ export class DocumentOverview {
         if (path.endsWith('/')) {
             path += doc.title
         }
-
         const currentPath = path.slice(this.path.length)
-        if (currentPath.includes('/')) {
+        if (!searching && currentPath.includes('/')) {
             // There is a subdir
             const subdir = currentPath.split('/').shift()
-            if (this.subdirs[subdir]) {
+            if (subdirs[subdir]) {
                 // subdir has been covered already
                 // We only update the update/added columns if needed.
-                if (doc.added < this.subdirs[subdir].added) {
-                    this.subdirs[subdir].added = doc.added
-                    this.subdirs[subdir].row[5] = dateCell({date: doc.added})
+                if (doc.added < subdirs[subdir].added) {
+                    subdirs[subdir].added = doc.added
+                    subdirs[subdir].row[5] = dateCell({date: doc.added})
                 }
-                if (doc.updated > this.subdirs[subdir].updated) {
-                    this.subdirs[subdir].updated = doc.updated
-                    this.subdirs[subdir].row[6] = dateCell({date: doc.updated})
+                if (doc.updated > subdirs[subdir].updated) {
+                    subdirs[subdir].updated = doc.updated
+                    subdirs[subdir].row[6] = dateCell({date: doc.updated})
                 }
                 if (this.user.id === doc.owner.id) {
-                    this.subdirs[subdir].ownedIds.push(doc.id)
-                    this.subdirs[subdir].row[9] = deleteFolderCell({subdir, ids: this.subdirs[subdir].ownedIds})
+                    subdirs[subdir].ownedIds.push(doc.id)
+                    subdirs[subdir].row[9] = deleteFolderCell({subdir, ids: subdirs[subdir].ownedIds})
                 }
                 return false
             }
@@ -389,7 +386,7 @@ export class DocumentOverview {
                 '',
                 ownedIds.length ? deleteFolderCell({subdir, ids: ownedIds}) : ''
             ]
-            this.subdirs[subdir] = {row, added: doc.added, updated: doc.updated, ownedIds}
+            subdirs[subdir] = {row, added: doc.added, updated: doc.updated, ownedIds}
             return row
         }
 
@@ -429,27 +426,6 @@ export class DocumentOverview {
         ]
 
 
-    }
-
-    removeTableRows(ids) {
-        const existingRows = this.table.data.map((data, index) => {
-            const id = parseInt(data.cells[0].textContent)
-            if (ids.includes(id)) {
-                return index
-            } else {
-                return false
-            }
-        }).filter(rowIndex => rowIndex !== false)
-
-        if (existingRows.length) {
-            this.table.rows().remove(existingRows)
-        }
-    }
-
-    addDocToTable(doc) {
-        this.table.insert({data: [this.createTableRow(doc)]})
-        // Redo last sort
-        this.table.columns().sort(this.lastSort.column, this.lastSort.dir)
     }
 
     multipleNewDocumentMenuItem() {

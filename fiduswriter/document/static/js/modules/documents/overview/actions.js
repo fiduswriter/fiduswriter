@@ -23,8 +23,8 @@ export class DocumentOverviewActions {
             ({json}) => {
                 if (json.done) {
                     addAlert('success', `${gettext('Document has been deleted')}: '${longFilePath(doc.title, doc.path)}'`)
-                    this.documentOverview.removeTableRows([id])
                     this.documentOverview.documentList = this.documentOverview.documentList.filter(doc => doc.id !== id)
+                    this.documentOverview.initTable()
                 } else {
                     addAlert('error', `${gettext('Could not delete document')}: '${longFilePath(doc.title, doc.path)}'`)
                 }
@@ -109,7 +109,7 @@ export class DocumentOverviewActions {
                                 return
                             }
                             this.documentOverview.documentList.push(doc)
-                            this.documentOverview.addDocToTable(doc)
+                            this.documentOverview.initTable()
                             importDialog.close()
                         }
                     ).catch(
@@ -165,7 +165,7 @@ export class DocumentOverviewActions {
                     copier.init().then(
                         ({doc}) => {
                             this.documentOverview.documentList.push(doc)
-                            this.documentOverview.addDocToTable(doc)
+                            this.documentOverview.initTable()
                         }
                     ).catch(() => false)
                 })
@@ -209,7 +209,7 @@ export class DocumentOverviewActions {
                                     copier.init().then(
                                         ({doc}) => {
                                             this.documentOverview.documentList.push(doc)
-                                            this.documentOverview.addDocToTable(doc)
+                                            this.documentOverview.initTable()
                                         }
                                     ).catch(() => false)
                                 })
@@ -385,12 +385,11 @@ export class DocumentOverviewActions {
                 switch (actionObject.action) {
                 case 'added-document':
                     this.documentOverview.documentList.push(actionObject.doc)
-                    this.documentOverview.addDocToTable(actionObject.doc)
+                    this.documentOverview.initTable()
                     break
                 case 'deleted-revision':
                     actionObject.doc.revisions = actionObject.doc.revisions.filter(rev => rev.pk !== actionObject.id)
-                    this.documentOverview.removeTableRows([actionObject.doc.id])
-                    this.documentOverview.addDocToTable(actionObject.doc)
+                    this.documentOverview.initTable()
                     break
                 }
             })

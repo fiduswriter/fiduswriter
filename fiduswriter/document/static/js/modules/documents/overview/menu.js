@@ -140,6 +140,8 @@ export const bulkMenuModel = () => ({
     ]
 })
 
+let currentlySearching = false
+
 export const menuModel = () => ({
     content: [
         {
@@ -172,7 +174,16 @@ export const menuModel = () => ({
             type: 'search',
             icon: 'search',
             title: gettext('Search documents'),
-            input: (overview, text) => overview.table.search(text),
+            input: (overview, text) => {
+                if (text.length && !currentlySearching) {
+                    overview.initTable(true)
+                    currentlySearching = true
+                } else if (!text.length && currentlySearching) {
+                    overview.initTable(false)
+                    currentlySearching = false
+                }
+                overview.table.search(text)
+            },
             order: 4
         }
     ]

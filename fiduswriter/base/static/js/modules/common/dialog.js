@@ -95,7 +95,7 @@ export class Dialog {
             classes: button.classes ? button.classes : button.type ? BUTTON_TYPES[button.type].classes : false,
             click: button.click ? button.click : button.type ? BUTTON_TYPES[button.type].click(this) : '',
             icon: button.icon ? button.icon : false,
-            dropdown: button.dropdown? true : false
+            dropdown: button.dropdown ? true : false
         }))
     }
 

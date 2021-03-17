@@ -37,9 +37,10 @@ const noteTemplate = (note) => {
 
 const buttonsTemplate = ({buttons}) => buttons.map(button => buttonTemplate(button)).join('')
 
-const buttonTemplate = ({text, classes, icon}) => `<button type="button" class="${classes ? classes : 'fw-light'} fw-button ui-button ui-corner-all ui-widget">
+const buttonTemplate = ({text, classes, icon, dropdown}) => `<button type="button" class="${classes ? classes : 'fw-light'} fw-button ui-button ui-corner-all ui-widget">
     ${icon ? `<i class="fa fa-${icon}" aria-hidden="true"></i>` : ''}
     ${text}
+    ${dropdown ? `<i class="fa fa-caret-down" aria-hidden="true"></i>` : ''}
 </button>`
 
 const BUTTON_TYPES = {
@@ -93,7 +94,8 @@ export class Dialog {
             text: button.text ? button.text : button.type ? BUTTON_TYPES[button.type].text : '',
             classes: button.classes ? button.classes : button.type ? BUTTON_TYPES[button.type].classes : false,
             click: button.click ? button.click : button.type ? BUTTON_TYPES[button.type].click(this) : '',
-            icon: button.icon ? button.icon : false
+            icon: button.icon ? button.icon : false,
+            dropdown: button.dropdown ? true : false
         }))
     }
 
@@ -226,7 +228,7 @@ export class Dialog {
                     buttonNumber++
                     seekItem = seekItem.previousElementSibling
                 }
-                this.buttons[buttonNumber].click()
+                this.buttons[buttonNumber].click(event)
                 break
             }
             case findTarget(event, '.ui-dialog-titlebar-close', el):

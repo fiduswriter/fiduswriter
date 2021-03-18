@@ -105,8 +105,8 @@ export class RangeFieldForm {
                 return false
             }
             return [
-                this.fields.from.value ? this.fields.from.value : '',
-                this.fields.to.value ? this.fields.to.value : ''
+                this.fields.from.value ? this.fields.from.value : [{type: 'text', text: ''}],
+                this.fields.to.value ? this.fields.to.value : [{type: 'text', text: ''}]
             ]
         } else {
             if (!this.fields.single.value) {

@@ -30,10 +30,10 @@ export const getMissingDocumentListData = function(ids, documentList, schema, ra
                             doc.rawContent = JSON.parse(JSON.stringify(extraValues.content))
                         }
                         doc.content = acceptAllNoInsertions(
-                                schema.nodeFromJSON(
-                                    {type: 'doc', content: [extraValues.content]}
-                                )
-                            ).firstChild.toJSON()
+                            schema.nodeFromJSON(
+                                {type: 'doc', content: [extraValues.content]}
+                            )
+                        ).firstChild.toJSON()
                         doc.comments = extraValues.comments
                         doc.bibliography = extraValues.bibliography
                         doc.images = extraValues.images

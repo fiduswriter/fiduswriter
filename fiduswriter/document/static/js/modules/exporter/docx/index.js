@@ -37,7 +37,7 @@ export class DocxExporter {
         this.pmBib = false
         this.docContent = false
         this.docTitle = false
-        this.mimeType = 'application/msword'
+        this.mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     }
 
 

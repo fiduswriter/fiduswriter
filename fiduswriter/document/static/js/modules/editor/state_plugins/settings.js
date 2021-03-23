@@ -131,32 +131,41 @@ export const settingsPlugin = function(options) {
         /* Numbering in editor */
 
         figure[data-category='figure'] figcaption::before {
-            counter-increment: cat-0;
-            content: '${CATS['figure'][language]} ' counter(cat-0);
+            counter-increment: cat-figure;
+            content: '${CATS['figure'][language]} ' counter(cat-figure);
         }
 
         #footnote-box-container figure[data-category='figure'] figcaption::before {
-            content: '${CATS['figure'][language]} ' counter(cat-0) 'A';
+            content: '${CATS['figure'][language]} ' counter(cat-figure) 'A';
+        }
+
+        figure[data-category='equation'] figcaption::before {
+            counter-increment: cat-equation;
+            content: '${CATS['equation'][language]} ' counter(cat-equation);
+        }
+
+        #footnote-box-container figure[data-category='euqation'] figcaption::before {
+            content: '${CATS['equation'][language]} ' counter(cat-equation) 'A';
         }
 
         figure[data-category='photo'] figcaption::before {
-            counter-increment: cat-1;
-            content: '${CATS['photo'][language]} ' counter(cat-1);
+            counter-increment: cat-photo;
+            content: '${CATS['photo'][language]} ' counter(cat-photo);
         }
 
         #footnote-box-container figure[data-category='photo'] figcaption::before {
-            content: '${CATS['photo'][language]} ' counter(cat-1) 'A';
+            content: '${CATS['photo'][language]} ' counter(cat-photo) 'A';
         }
 
         figure[data-category='table'] figcaption::before,
         table[data-category='table'] caption::before {
-            counter-increment: cat-2;
-            content: '${CATS['table'][language]} ' counter(cat-2);
+            counter-increment: cat-table;
+            content: '${CATS['table'][language]} ' counter(cat-table);
         }
 
         #footnote-box-container figure[data-category='table'] figcaption::before ,
         #footnote-box-container table[data-category='table'] caption::before {
-            content: '${CATS['table'][language]} ' counter(cat-2) 'A';
+            content: '${CATS['table'][language]} ' counter(cat-table) 'A';
         }`
     }
 

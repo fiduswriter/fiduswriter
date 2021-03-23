@@ -1,6 +1,6 @@
 #document-editable,
 #footnote-box-container {
-    counter-reset: cat-0 cat-1 cat-2 footnote-counter footnote-marker-counter;
+    counter-reset: cat-figure cat-equation cat-photo cat-table footnote-counter footnote-marker-counter;
 }
 
 /* CSL */
@@ -113,32 +113,37 @@ figure {
 }
 
 figure[data-category='figure'] figcaption span.label::after {
-    counter-increment: cat-0;
-    content: ' ' counter(cat-0);
+    counter-increment: cat-figure;
+    content: ' ' counter(cat-figure);
+}
+
+figure[data-category='equation'] figcaption span.label::after {
+    counter-increment: cat-equation;
+    content: ' ' counter(cat-equation);
 }
 
 figure[data-category='photo'] figcaption span.label::after {
-    counter-increment: cat-1;
-    content: ' ' counter(cat-1);
+    counter-increment: cat-photo;
+    content: ' ' counter(cat-photo);
 }
 
 figure[data-category='table'] figcaption span.label::after,
 table[data-category='table'] caption span.label::after {
-    counter-increment: cat-2;
-    content: ' ' counter(cat-2);
+    counter-increment: cat-table;
+    content: ' ' counter(cat-table);
 }
 
 #footnote-box-container figure[data-category='figure'] figcaption span.label::after {
-    content: ' ' counter(cat-0) 'A';
+    content: ' ' counter(cat-figure) 'A';
 }
 
 #footnote-box-container figure[data-category='photo'] figcaption span.label::after {
-    content: ' ' counter(cat-1) 'A';
+    content: ' ' counter(cat-photo) 'A';
 }
 
 #footnote-box-container figure[data-category='table'] figcaption span.label::after,
 #footnote-box-container table[data-category='table'] caption span.label::after {
-    content: ' ' counter(cat-2) 'A';
+    content: ' ' counter(cat-table) 'A';
 }
 
 figure[data-category='table'] figcaption span.text::before,

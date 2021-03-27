@@ -26,12 +26,10 @@ export const menuModel = () => ({
             title: gettext('Add new contact'),
             action: _overview => {
                 const dialog = new AddContactDialog()
-                dialog.init().then(memberData => {
+                dialog.init().then(members => {
                     document.querySelector('#team-table tbody').insertAdjacentHTML(
                         'beforeend',
-                        teammemberTemplate({
-                            members: [memberData]
-                        })
+                        teammemberTemplate({members})
                     )
                 })
             },

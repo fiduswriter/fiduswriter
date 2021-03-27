@@ -1,5 +1,5 @@
 import {addTeammemberTemplate} from "./templates"
-import {postJson, cancelPromise, Dialog} from "../common"
+import {postJson, cancelPromise, Dialog, escapeText} from "../common"
 
 //dialog for adding a user to contacts
 export class AddContactDialog  {
@@ -15,11 +15,19 @@ export class AddContactDialog  {
                     text: gettext('Submit'),
                     classes: "fw-dark",
                     click: () => {
-                        this.addContact(document.getElementById('new-member-user-string').value, dialog).then(
+                        const userString = document.getElementById('new-member-user-string').value
+                        document.querySelectorAll('#add-new-member .warning').forEach(el => el.parentElement.removeChild(el))
+                        return Promise.all(userString.split(/[\s,;]+/).map(singleUserString => {
+                            if (!singleUserString.length) {
+                                return false
+                            }
+                            return this.addContact(singleUserString)
+                        }).filter(promise => !!promise)).then(
                             memberData => {
-                                dialog.close()
-                                resolve(memberData)
-                                return
+                                if (memberData.length) {
+                                    dialog.close()
+                                    resolve(memberData)
+                                }
                             }
                         )
                     }
@@ -51,7 +59,6 @@ export class AddContactDialog  {
         }
 
         userString = userString.trim()
-        document.querySelectorAll('#add-new-member .warning').forEach(el => el.parentElement.removeChild(el))
         if ('' === userString) {
             return cancelPromise()
         }
@@ -90,7 +97,7 @@ export class AddContactDialog  {
                     }
                     document.getElementById('add-new-member').insertAdjacentHTML(
                         'beforeend',
-                        `<div class="warning" style="padding: 8px;">${responseHtml}</div>`
+                        `<div class="warning" style="padding: 8px;">${escapeText(userString)}: ${responseHtml}</div>`
                     )
                     return cancelPromise()
                 }

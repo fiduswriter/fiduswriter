@@ -310,7 +310,7 @@ def list_contacts(request):
     status = 200
     response['contacts'] = []
 
-    for profile in User.profile.contacts():
+    for profile in request.user.profile.contacts.all():
         contact = {
             'id': profile.user.id,
             'name': profile.user.readable_name,

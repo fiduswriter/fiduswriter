@@ -111,11 +111,11 @@ const commentTemplate = ({comment, view, active, editComment, activeCommentAnswe
     ) {
         return '<div class="margin-box comment hidden"></div>'
     }
-    const author = comment.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === comment.user),
+    const author = comment.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.contacts.find(contact => contact.id === comment.user),
         assignedUser = comment.assignedUser ?
             comment.assignedUser === docInfo.owner.id ?
                 docInfo.owner :
-                docInfo.owner.team_members.find(member => member.id === comment.assignedUser)  ||
+                docInfo.owner.contacts.find(contact => contact.id === comment.assignedUser)  ||
                 {
                     name: comment.assignedUsername || ''
                 } :
@@ -124,7 +124,7 @@ const commentTemplate = ({comment, view, active, editComment, activeCommentAnswe
     return `
         <div id="margin-box-${comment.id}" data-view="${view}" data-id="${comment.id}" data-user-id="${comment.user}"
             class="margin-box comment ${active ? 'active' : 'inactive'} ${comment.resolved ? 'resolved' : ''} ${comment.isMajor === true ? 'comment-is-major-bgc' : ''}">
-<div class="comment-answer-container">    
+<div class="comment-answer-container">
 ${
     comment.comment.length === 0 ?
         firstCommentTemplate({comment, author}) :
@@ -140,7 +140,7 @@ ${
         comment.answers.map(answer =>
             answerCommentTemplate({
                 answer,
-                author: answer.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === answer.user),
+                author: answer.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.contacts.find(contact => contact.id === answer.user),
                 commentId: comment.id,
                 active,
                 activeCommentAnswerId,
@@ -239,7 +239,7 @@ const trackTemplate = ({type, data, node, active, docInfo, filterOptions}) => {
         return '<div class="margin-box track hidden"></div>'
     }
 
-    const author = data.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === data.user),
+    const author = data.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.contacts.find(contact => contact.id === data.user),
         nodeActionType = `${type}_${node.type.name}`
 
     return `
@@ -288,7 +288,7 @@ export const marginboxFilterTemplate = ({marginBoxes, filterOptions, docInfo}) =
                                 ${gettext('Any')}
                             </span></li>
                         ${
-    docInfo.owner.team_members.concat(docInfo.owner).map(
+    docInfo.owner.contacts.concat(docInfo.owner).map(
         user => `<li><span class="fw-pulldown-item margin-box-filter-comments-author${filterOptions.author === user.id ? ' selected' : ''}" data-id="${user.id}" title="${gettext('Show comments of ')} ${escapeText(user.name)}">
                                     ${escapeText(user.name)}
                                 </span></li>`
@@ -308,7 +308,7 @@ export const marginboxFilterTemplate = ({marginBoxes, filterOptions, docInfo}) =
                                 ${gettext('Any/None')}
                             </span></li>
                         ${
-    docInfo.owner.team_members.concat(docInfo.owner).map(
+    docInfo.owner.contacts.concat(docInfo.owner).map(
         user => `<li><span class="fw-pulldown-item margin-box-filter-comments-assigned${filterOptions.assigned === user.id ? ' selected' : ''}" data-id="${user.id}" title="${gettext('Show comments of ')} ${escapeText(user.name)}">
                                     ${escapeText(user.name)}
                                 </span></li>`
@@ -429,7 +429,7 @@ export const marginBoxOptions = (comment, user, docInfo) => {
                         <ul>
                             <li><span class="fw-pulldown-item unassign-comment" data-id="${comment.id}" title="${gettext('Remove user assignment from comment')}">${gettext('No-one')}</span></li>
                         ${
-    docInfo.owner.team_members.concat(docInfo.owner).map(
+    docInfo.owner.contacts.concat(docInfo.owner).map(
         user => `<li><span class="fw-pulldown-item assign-comment" data-id="${comment.id}" data-user="${user.id}" data-username="${escapeText(user.name)}" title="${gettext('Assign comment to')} ${escapeText(user.name)}">${escapeText(user.name)}</span></li>`
     ).join('')
 }

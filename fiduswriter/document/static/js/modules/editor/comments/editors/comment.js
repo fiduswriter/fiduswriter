@@ -167,7 +167,7 @@ export class CommentEditor {
 
     setUserTaggerList(search) {
         const owner = this.mod.editor.docInfo.owner
-        this.userTaggerList = owner.team_members.concat(owner).filter(
+        this.userTaggerList = owner.contacts.concat(owner).filter(
             user => user.name.includes(search) || user.username.includes(search)
         )
     }

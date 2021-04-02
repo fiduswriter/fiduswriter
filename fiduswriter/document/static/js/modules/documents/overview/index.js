@@ -27,7 +27,7 @@ export class DocumentOverview {
         this.path = path
         this.schema = docSchema
         this.documentList = []
-        this.teamMembers = []
+        this.contacts = []
         this.mod = {}
         this.lastSort = {column: 0, dir: 'asc'}
     }
@@ -103,8 +103,8 @@ export class DocumentOverview {
                     docId = parseInt(el.target.dataset.id)
                     const dialog = new DocumentAccessRightsDialog(
                         [docId],
-                        this.teamMembers,
-                        memberDetails => this.teamMembers.push(memberDetails)
+                        this.contacts,
+                        memberDetails => this.contacts.push(memberDetails)
                     )
                     dialog.init()
                 }
@@ -214,7 +214,7 @@ export class DocumentOverview {
             return true
         })
 
-        this.teamMembers = json.team_members
+        this.contacts = json.contacts
         this.documentStyles = json.document_styles
         this.documentTemplates = json.document_templates
         this.initTable()

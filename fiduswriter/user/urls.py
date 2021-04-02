@@ -6,19 +6,6 @@ from . import views
 urlpatterns = [
     url('^save/$', views.save_profile, name='save_profile'),
 
-    # Show user profiles
-    url(
-        '^team/list/$',
-        views.list_team_members,
-        name='list_team_members'
-    ),
-    # Outdated but we need it to allow for update of 3.7 instances.
-    # Can be removed in 3.9.
-    url(
-        '^info/$',
-        views.info,
-        name='info'
-    ),
     url('^avatar/delete/$', views.delete_avatar, name="delete_avatar"),
     url('^avatar/upload/$', views.upload_avatar, name="upload_avatar"),
     url(
@@ -35,18 +22,24 @@ urlpatterns = [
         views.delete_socialaccount,
         name="delete_socialaccount"
     ),
-    # Delete a user profile
+    # Delete a user
     url('^delete/$', views.delete_user, name='delete_user'),
 
+    # Show contacts
     url(
-        '^teammember/add',
-        views.add_team_member,
-        name='add_team_member'
+        '^contact/list/$',
+        views.list_contacts,
+        name='list_contacts'
     ),
     url(
-        '^teammember/remove',
-        views.remove_team_member,
-        name='remove_team_member'
+        '^contact/add',
+        views.add_contact,
+        name='add_contact'
+    ),
+    url(
+        '^contact/remove',
+        views.remove_contact,
+        name='remove_contact'
     ),
 
     # User avatar handling

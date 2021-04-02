@@ -166,7 +166,7 @@ class WebSocket(BaseWebSocketHandler):
                 'name': doc_owner.readable_name,
                 'username': doc_owner.username,
                 'avatar': get_user_avatar_url(doc_owner),
-                'team_members': []
+                'contacts': []
             }
         }
         response['doc'] = {
@@ -213,13 +213,13 @@ class WebSocket(BaseWebSocketHandler):
             response['doc']['comments'] = filtered_comments
         else:
             response['doc']['comments'] = self.session["doc"].comments
-        for team_member in doc_owner.leader.all():
-            tm_object = dict()
-            tm_object['id'] = team_member.member.id
-            tm_object['name'] = team_member.member.readable_name
-            tm_object['username'] = team_member.member.get_username()
-            tm_object['avatar'] = get_user_avatar_url(team_member.member)
-            response['doc_info']['owner']['team_members'].append(tm_object)
+        for contact in doc_owner.profile.contacts.all():
+            contact_object = dict()
+            contact_object['id'] = contact.user.id
+            contact_object['name'] = contact.user.readable_name
+            contact_object['username'] = contact.user.get_username()
+            contact_object['avatar'] = get_user_avatar_url(contact.user)
+            response['doc_info']['owner']['contacts'].append(contact_object)
         response['doc_info']['session_id'] = self.id
         self.send_message(response)
 

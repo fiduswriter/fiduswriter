@@ -27,7 +27,6 @@ from bibliography.views import serializer
 from style.models import DocumentStyle
 from base.html_email import html_email
 from base.decorators import ajax_required
-from user.models import TeamMember
 
 
 @login_required
@@ -297,24 +296,8 @@ def apply_invite(inv, user):
             rights=inv.rights
         )
         ar.save()
-        if not TeamMember.objects.filter(
-            leader=inv.document.owner,
-            member=user
-        ).first():
-            tm1 = TeamMember.objects.create(
-                leader=inv.document.owner,
-                member=user
-            )
-            tm1.save()
-        if not TeamMember.objects.filter(
-            leader=user,
-            member=inv.document.owner,
-        ).first():
-            tm2 = TeamMember.objects.create(
-                leader=user,
-                member=inv.document.owner
-            )
-            tm2.save()
+        if not inv.document.owner.profile.contacts.filter(user=user).first():
+            inv.document.owner.profile.contacts.add(user.profile)
     inv.delete()
 
 
@@ -344,14 +327,14 @@ def get_documentlist(request):
     response = {}
     status = 200
     response['documents'] = documents_list(request)
-    response['team_members'] = []
-    for team_member in request.user.leader.all():
-        tm_object = {}
-        tm_object['id'] = team_member.member.id
-        tm_object['name'] = team_member.member.readable_name
-        tm_object['username'] = team_member.member.get_username()
-        tm_object['avatar'] = get_user_avatar_url(team_member.member)
-        response['team_members'].append(tm_object)
+    response['contacts'] = []
+    for contact in request.user.profile.contacts.all():
+        contact_object = {}
+        contact_object['id'] = contact.user.id
+        contact_object['name'] = contact.user.readable_name
+        contact_object['username'] = contact.user.get_username()
+        contact_object['avatar'] = get_user_avatar_url(contact.user)
+        response['contacts'].append(contact_object)
     serializer = PythonWithURLSerializer()
     doc_styles = serializer.serialize(
         DocumentStyle.objects.filter(

@@ -43,7 +43,7 @@ export class FileSelector {
             let treeWalker = this.root.children
             let path = file.path
             if (!path.length || path.endsWith('/')) {
-                path += file.title
+                path += file.title || gettext('Untitled')
             }
             const pathParts = path.split('/')
             pathParts.forEach((pathPart, pathIndex) => {

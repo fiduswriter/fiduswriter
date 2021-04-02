@@ -27,19 +27,19 @@ urlpatterns = [
 
     # Show contacts
     url(
-        '^contact/list/$',
+        '^contacts/list/$',
         views.list_contacts,
         name='list_contacts'
     ),
     url(
-        '^contact/add',
-        views.add_contact,
-        name='add_contact'
+        '^contacts/add',
+        views.add_contacts,
+        name='add_contacts'
     ),
     url(
-        '^contact/remove',
-        views.remove_contact,
-        name='remove_contact'
+        '^contacts/remove',
+        views.remove_contacts,
+        name='remove_contacts'
     ),
 
     # User avatar handling

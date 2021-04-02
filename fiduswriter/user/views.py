@@ -328,7 +328,7 @@ def list_contacts(request):
 @login_required
 @ajax_required
 @require_POST
-def add_contact(request):
+def add_contacts(request):
     """
     Add a user as a contact of the current user
     """
@@ -378,7 +378,7 @@ def add_contact(request):
 @login_required
 @ajax_required
 @require_POST
-def remove_contact(request):
+def remove_contacts(request):
     """
     Remove a contact
     """

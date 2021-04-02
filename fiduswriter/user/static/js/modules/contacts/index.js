@@ -58,7 +58,7 @@ export class ContactsOverview {
         if (this.app.isOffline()) {
             return this.showCached()
         }
-        return postJson('/api/user/contact/list/').then(
+        return postJson('/api/user/contacts/list/').then(
             ({json}) => {
                 // Update data in the indexed DB
                 this.app.indexedDB.clearData("user_contacts").then(

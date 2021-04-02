@@ -46,7 +46,7 @@ export class ContactsOverview {
             hasOverview: true
         })
         document.body = this.dom
-        setDocTitle(gettext('Team Members'), this.app)
+        setDocTitle(gettext('Contacts'), this.app)
         const feedbackTab = new FeedbackTab()
         feedbackTab.init()
 

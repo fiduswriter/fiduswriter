@@ -405,7 +405,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         self.driver.find_element(
             By.ID,
-            "new-member-user-string"
+            "new-contact-user-string"
         ).click()
         ActionChains(self.driver).send_keys(
             "user2@user.com"

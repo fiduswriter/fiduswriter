@@ -77,9 +77,9 @@ class ContactsTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         self.driver.find_element(
             By.ID,
-            "new-member-user-string"
+            "new-contact-user-string"
         ).click()
-        self.driver.find_element(By.ID, "new-member-user-string").send_keys(
+        self.driver.find_element(By.ID, "new-contact-user-string").send_keys(
             "contact1@snowman.com"
         )
         ActionChains(self.driver).send_keys(
@@ -113,7 +113,7 @@ class ContactsTest(LiveTornadoTestCase, SeleniumHelper):
             "button[title='Add new contact']"
         ).click()
         self.driver.find_element_by_id(
-            "new-member-user-string"
+            "new-contact-user-string"
         ).send_keys('contact2@snowman.com')
         self.driver.find_element_by_css_selector(
             "button.fw-dark"
@@ -127,7 +127,7 @@ class ContactsTest(LiveTornadoTestCase, SeleniumHelper):
         )
         # Delete individual
         self.driver.find_element_by_css_selector(
-            ".delete-single-member"
+            ".delete-single-contact"
         ).click()
         self.driver.find_element_by_css_selector(
             "button.fw-dark"

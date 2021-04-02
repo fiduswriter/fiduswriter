@@ -122,31 +122,35 @@ export class DocumentAccessRightsDialog {
                         true
                     )
                     dialog.init().then(
-                        contactData => {
-                            if (contactData.id) {
-                                document.querySelector('#my-contacts .fw-data-table-body').insertAdjacentHTML(
-                                    'beforeend',
-                                    contactsTemplate({contacts: [contactData]})
-                                )
-                                document.querySelector('#share-member table tbody').insertAdjacentHTML(
-                                    'beforeend',
-                                    collaboratorsTemplate({'collaborators': [{
-                                        user_id: contactData.id,
-                                        user_name: contactData.name,
-                                        avatar: contactData.avatar,
-                                        rights: 'read'
-                                    }]})
-                                )
-                                this.newContactCall(contactData)
-                            } else if (
-                                contactData.email &&
-                                !document.querySelector(`.invite-tr[data-email="${escapeText(contactData.email)}"]`)
-                            ) {
-                                document.querySelector('#share-member table tbody').insertAdjacentHTML(
-                                    'beforeend',
-                                    invitesTemplate({'invites': [{'email': contactData.email, rights: 'read'}]})
-                                )
-                            }
+                        contactsData => {
+                            contactsData.forEach(
+                                contactData => {
+                                    if (contactData.id) {
+                                        document.querySelector('#my-contacts .fw-data-table-body').insertAdjacentHTML(
+                                            'beforeend',
+                                            contactsTemplate({contacts: [contactData]})
+                                        )
+                                        document.querySelector('#share-member table tbody').insertAdjacentHTML(
+                                            'beforeend',
+                                            collaboratorsTemplate({'collaborators': [{
+                                                user_id: contactData.id,
+                                                user_name: contactData.name,
+                                                avatar: contactData.avatar,
+                                                rights: 'read'
+                                            }]})
+                                        )
+                                        this.newContactCall(contactData)
+                                    } else if (
+                                        contactData.email &&
+                                        !document.querySelector(`.invite-tr[data-email="${escapeText(contactData.email)}"]`)
+                                    ) {
+                                        document.querySelector('#share-member table tbody').insertAdjacentHTML(
+                                            'beforeend',
+                                            invitesTemplate({'invites': [{'email': contactData.email, rights: 'read'}]})
+                                        )
+                                    }
+                                }
+                            )
                         }
                     )
                 }

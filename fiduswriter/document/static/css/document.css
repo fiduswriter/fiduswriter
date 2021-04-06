@@ -93,8 +93,23 @@ figure {
     box-sizing: border-box;
 }
 
-.image-width-75 {
+.image-width-90 {
+    width: 70%;
+    box-sizing: border-box;
+}
+
+.image-width-80 {
+    width: 65%;
+    box-sizing: border-box;
+}
+
+.image-width-70 {
     width: 55%;
+    box-sizing: border-box;
+}
+
+.image-width-60 {
+    width: 45%;
     box-sizing: border-box;
 }
 
@@ -102,6 +117,39 @@ figure {
     width: 40%;
     margin-left: 5%;
     margin-right: 5%;
+    box-sizing: border-box;
+}
+
+.image-width-40 {
+    width: 35%;
+    margin-left: 2%;
+    margin-right: 2%;
+    box-sizing: border-box;
+}
+
+.image-width-30 {
+    width: 25%;
+    margin-left: 2%;
+    margin-right: 2%;
+    box-sizing: border-box;
+}
+
+.image-width-20 {
+    width: 20%;
+    margin-left: 2%;
+    margin-right: 2%;
+    box-sizing: border-box;
+}
+
+.image-width-10 {
+    width: 12%;
+    margin-left: 2%;
+    margin-right: 2%;
+    box-sizing: border-box;
+}
+
+.image-width-75 {
+    width: 55%;
     box-sizing: border-box;
 }
 

@@ -339,19 +339,15 @@ export class FigureDialog {
                             alignmentSelector.setValue('center')
                             alignmentSelector.disable()
                             this.aligned = 'center'
-                        }else{
+                        } else {
                             alignmentSelector.enable()
                         }
                     }
                 })
-                // const selectedMenuItem = contentMenu.menu.content.find(item => item.value === this.width)
-                // if (selectedMenuItem){
-                //     selectedMenuItem.selected = true
-                // }
                 contentMenu.open()
             }
         )
-        
+
         dropdownSelect(
             this.dialog.dialogEl.querySelector('.figure-category'),
             {

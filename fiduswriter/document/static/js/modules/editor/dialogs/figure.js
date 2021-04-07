@@ -324,21 +324,27 @@ export class FigureDialog {
             this.aligned = 'center'
         }
 
-        dropdownSelect(
-            this.dialog.dialogEl.querySelector('.figure-width'),
-            {
-                onChange: newValue => {
-                    this.width = newValue
-                    if (this.width == "100") {
-                        alignmentSelector.setValue('center')
-                        alignmentSelector.disable()
-                        this.aligned = 'center'
-                    } else {
-                        alignmentSelector.enable()
+        const figureWidthDOM = this.dialog.dialogEl.querySelector('.figure-width')
+        figureWidthDOM.style.width = "80%"
+        figureWidthDOM.firstElementChild.innerText = `${this.width} %`
+        figureWidthDOM.addEventListener(
+            'click',
+            event => {
+                const contentMenu = new ContentMenu({
+                    menu: this.editor.menu.figureWidthMenuModel,
+                    page: this,
+                    menuPos: {X: event.pageX, Y: event.pageY},
+                    onClose: () => {
+                        if (this.width == "100") {
+                            alignmentSelector.setValue('center')
+                            alignmentSelector.disable()
+                            this.aligned = 'center'
+                        } else {
+                            alignmentSelector.enable()
+                        }
                     }
-                },
-                width: '80%',
-                value: this.width
+                })
+                contentMenu.open()
             }
         )
 

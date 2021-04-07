@@ -255,12 +255,7 @@ export const configureFigureTemplate = ({language}) =>
                     <tr>
                         <th><h4 class="fw-tablerow-title">${gettext("Width")}</h4></th>
                         <td>
-                            <select class="figure-width">
-                                <option value="100">${gettext("100 %")}</option>
-                                <option value="75">${gettext("75 %")}</option>
-                                <option value="50">${gettext("50 %")}</option>
-                                <option value="25">${gettext("25 %")}</option>
-                            </select>
+                            <div class="figure-width fw-dropdown fw-large fw-light fw-button"><label></label>&nbsp;<span class="fa fa-caret-down"></span></div>
                         </td>
                     </tr>
                     <tr>

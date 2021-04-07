@@ -79,7 +79,8 @@ import {
     selectionMenuModel,
     tableMenuModel,
     figureMenuModel,
-    toolbarModel
+    toolbarModel,
+    figureWidthMenuModel
 } from "./menus"
 import {
     ModMarginboxes
@@ -173,7 +174,8 @@ export class Editor {
             imageEditModel: imageEditModel(),
             tableMenuModel: tableMenuModel(),
             figureMenuModel: figureMenuModel(),
-            toolbarModel: toolbarModel()
+            toolbarModel: toolbarModel(),
+            figureWidthMenuModel: figureWidthMenuModel()
         }
         this.client_id = Math.floor(Math.random() * 0xFFFFFFFF)
         this.clientTimeAdjustment = 0

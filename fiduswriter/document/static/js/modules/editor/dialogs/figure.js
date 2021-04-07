@@ -326,7 +326,7 @@ export class FigureDialog {
 
         const figureWidthDOM = this.dialog.dialogEl.querySelector('.figure-width')
         figureWidthDOM.style.width = "80%"
-        figureWidthDOM.firstElementChild.innerText = `${this.width}%`
+        figureWidthDOM.firstElementChild.innerText = `${this.width} %`
         figureWidthDOM.addEventListener(
             'click',
             event => {

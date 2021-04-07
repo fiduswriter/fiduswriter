@@ -34,7 +34,7 @@ export const figureMenuModel = () => ({
 export const figureWidthMenuModel = () => ({
     content: [
         {
-            title: '100%',
+            title: '100 %',
             type: 'action',
             order: 0,
             value: '100',
@@ -44,7 +44,7 @@ export const figureWidthMenuModel = () => ({
             selected: false
         },
         {
-            title: '75%',
+            title: '75 %',
             type: 'action',
             order: 1,
             value: '75',
@@ -54,7 +54,7 @@ export const figureWidthMenuModel = () => ({
             selected: false
         },
         {
-            title: '50%',
+            title: '50 %',
             type: 'action',
             order: 2,
             value: '50',
@@ -64,7 +64,7 @@ export const figureWidthMenuModel = () => ({
             selected: false
         },
         {
-            title: '25%',
+            title: '25 %',
             type: 'action',
             order: 3,
             value: '25',

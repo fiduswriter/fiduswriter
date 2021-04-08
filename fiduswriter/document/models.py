@@ -5,8 +5,12 @@ from builtins import object
 
 from django.db import models
 from django.db.utils import OperationalError, ProgrammingError
-from django.contrib.auth.models import User
 from django.core import checks
+from django.conf import settings
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
+
+from user import util as userutil
 
 # FW_DOCUMENT_VERSION:
 # Also defined in frontend
@@ -25,7 +29,7 @@ class DocumentTemplate(models.Model):
         default=FW_DOCUMENT_VERSION
     )
     user = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         null=True,
         blank=True,
         on_delete=models.deletion.CASCADE
@@ -100,7 +104,7 @@ class Document(models.Model):
     # diffs should always be equivalent to or more than all the diffs since the
     # last full save of the document.
     owner = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         related_name='owner',
         on_delete=models.deletion.CASCADE
     )
@@ -230,20 +234,27 @@ CAN_COMMUNICATE = ['read', 'write', 'comment', 'write-tracked']
 class AccessRight(models.Model):
     document = models.ForeignKey(Document, on_delete=models.deletion.CASCADE)
     path = models.TextField(default='', blank=True)
-    user = models.ForeignKey(User, on_delete=models.deletion.CASCADE)
+    holder_choices = models.Q(app_label='user', model='userprofile')
+    holder_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
+        limit_choices_to=holder_choices
+    )
+    holder_id = models.PositiveIntegerField()
+    holder_obj = GenericForeignKey('holder_type', 'holder_id')
     rights = models.CharField(
         max_length=21,
         choices=RIGHTS_CHOICES,
         blank=False)
 
     class Meta(object):
-        unique_together = (("document", "user"),)
+        unique_together = (("document", "holder_type", "holder_id"),)
 
     def __str__(self):
         return (
             '%(name)s %(rights)s on %(doc_id)d' %
             {
-                'name': self.user.readable_name,
+                'name': userutil.get_readable_name(self.user),
                 'rights': self.rights,
                 'doc_id': self.document.id
             }

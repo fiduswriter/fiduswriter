@@ -5,14 +5,16 @@
 # Create admins accounts if no users exists.
 # Password 'admin' is used unless defined by ADMIN_PASSWORD
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from base.management import BaseCommand
-from django.contrib.auth.models import User
+
 from os import getenv
 
 
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
+        User = get_user_model()
         if User.objects.count() == 0:
             for user in settings.ADMINS:
                 username = user[0].replace(' ', '')

@@ -7,7 +7,7 @@ from django.test import Client
 from selenium import webdriver
 from allauth.account.models import EmailAddress
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 
 
 class SeleniumHelper(object):
@@ -79,6 +79,7 @@ class SeleniumHelper(object):
         email='test@example.com',
         passtext='p4ssw0rd'
     ):
+        User = get_user_model()
         user = User.objects.create(
             username=username,
             email=email,

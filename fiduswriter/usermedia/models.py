@@ -7,7 +7,7 @@ from PIL import Image as PilImage
 from io import BytesIO
 
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.db import IntegrityError
 from django.core.files.uploadedfile import SimpleUploadedFile
 from document.models import Document
@@ -26,7 +26,7 @@ def get_file_path(instance, filename):
 
 class Image(models.Model):
     uploader = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         related_name='image_uploader',
         on_delete=models.deletion.SET_NULL,
         blank=True,
@@ -191,7 +191,7 @@ class UserImage(models.Model):
     title = models.CharField(max_length=128)
     copyright = models.JSONField(default=default_copyright)
     owner = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         related_name='image_owner',
         blank=True,
         null=True,
@@ -234,7 +234,7 @@ class DocumentImage(models.Model):
 class ImageCategory(models.Model):
     category_title = models.CharField(max_length=100)
     category_owner = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.deletion.CASCADE
     )
 

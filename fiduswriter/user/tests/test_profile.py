@@ -11,7 +11,7 @@ from selenium.common.exceptions import StaleElementReferenceException
 
 from django.core import mail
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 
 
 class ProfileTest(LiveTornadoTestCase, SeleniumHelper):
@@ -62,6 +62,7 @@ class ProfileTest(LiveTornadoTestCase, SeleniumHelper):
         self.assertTrue(message_found)
 
     def test_edit_profile(self):
+        User = get_user_model()
         driver = self.driver
         driver.get(self.base_url + "/")
         driver.find_element_by_id("preferences-btn").click()

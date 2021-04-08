@@ -58,7 +58,7 @@ class SessionUserInfo():
                 self.is_owner = False
                 access_right = AccessRight.objects.filter(
                     document=document,
-                    user=self.user
+                    holder__user=self.user
                 ).first()
                 if access_right:
                     self.access_rights = access_right.rights

@@ -1,12 +1,15 @@
 from builtins import object
 
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 
 
 class EntryCategory(models.Model):
     category_title = models.CharField(max_length=100)
-    category_owner = models.ForeignKey(User, on_delete=models.deletion.CASCADE)
+    category_owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.deletion.CASCADE
+    )
 
     def __str__(self):
         return self.category_title
@@ -18,7 +21,10 @@ class EntryCategory(models.Model):
 class Entry(models.Model):
     entry_key = models.CharField(max_length=64)
     # identifier of the user, who created the entry.
-    entry_owner = models.ForeignKey(User, on_delete=models.deletion.CASCADE)
+    entry_owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.deletion.CASCADE
+    )
     # identifier of the entrytype for the entry.
     cats = models.JSONField(default=list)
     last_modified = models.DateTimeField(auto_now=True)

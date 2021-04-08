@@ -17,7 +17,7 @@ from base.ws_handler import BaseWebSocketHandler
 from document.models import COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \
     CAN_COMMUNICATE, FW_DOCUMENT_VERSION, DocumentTemplate, Document
 from usermedia.models import Image, DocumentImage, UserImage
-from user.util import get_user_avatar_url
+from user import util as userutil
 
 # settings_JSONPATCH
 from jsonpatch import apply_patch, JsonPatchConflict, JsonPointerException
@@ -163,9 +163,9 @@ class WebSocket(BaseWebSocketHandler):
             'path': self.user_info.path,
             'owner': {
                 'id': doc_owner.id,
-                'name': doc_owner.readable_name,
+                'name': userutil.get_readable_name(doc_owner),
                 'username': doc_owner.username,
-                'avatar': get_user_avatar_url(doc_owner),
+                'avatar': userutil.get_user_avatar_url(doc_owner),
                 'contacts': []
             }
         }
@@ -213,12 +213,14 @@ class WebSocket(BaseWebSocketHandler):
             response['doc']['comments'] = filtered_comments
         else:
             response['doc']['comments'] = self.session["doc"].comments
-        for contact in doc_owner.profile.contacts.all():
+        for contact in userutil.get_profile(doc_owner).contacts.all():
             contact_object = dict()
             contact_object['id'] = contact.user.id
-            contact_object['name'] = contact.user.readable_name
+            contact_object['name'] = userutil.get_readable_name(contact.user)
             contact_object['username'] = contact.user.get_username()
-            contact_object['avatar'] = get_user_avatar_url(contact.user)
+            contact_object['avatar'] = userutil.get_user_avatar_url(
+                contact.user
+            )
             response['doc_info']['owner']['contacts'].append(contact_object)
         response['doc_info']['session_id'] = self.id
         self.send_message(response)
@@ -625,8 +627,10 @@ class WebSocket(BaseWebSocketHandler):
                 participant_list.append({
                     'session_id': session_id,
                     'id': waiter.user_info.user.id,
-                    'name': waiter.user_info.user.readable_name,
-                    'avatar': get_user_avatar_url(waiter.user_info.user)
+                    'name': userutil.get_readable_name(waiter.user_info.user),
+                    'avatar': userutil.get_user_avatar_url(
+                        waiter.user_info.user
+                    )
                 })
             message = {
                 "participant_list": participant_list,

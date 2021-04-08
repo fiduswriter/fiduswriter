@@ -11,6 +11,7 @@ import os
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 from document.models import AccessRight
+from user import util as userutil
 
 
 class OfflineTests(LiveTornadoTestCase, EditorHelper):
@@ -990,7 +991,7 @@ class AccessRightsOfflineTests(LiveTornadoTestCase, EditorHelper):
         # Since the test uses 2 different users ,
         # add access rights for the 2nd user.
         AccessRight.objects.create(
-            user=self.user2,
+            holder_obj=userutil.get_profile(self.user2),
             document=self.doc,
             rights='write'
         )
@@ -1047,7 +1048,10 @@ class AccessRightsOfflineTests(LiveTornadoTestCase, EditorHelper):
         p2.join()
 
         # Delete access rights of the user before coming back online
-        AccessRight.objects.filter(user=self.user2, document=self.doc).delete()
+        AccessRight.objects.filter(
+            holder__user=self.user2,
+            document=self.doc
+        ).delete()
 
         # driver 2 goes online
         self.driver2.execute_script(
@@ -1073,7 +1077,7 @@ class AccessRightsOfflineTests(LiveTornadoTestCase, EditorHelper):
         """
         # Initialize user2 with read rights.
         AccessRight.objects.filter(
-            user=self.user2,
+            holder__user=self.user2,
             document=self.doc
         ).update(rights='read')
 
@@ -1095,7 +1099,7 @@ class AccessRightsOfflineTests(LiveTornadoTestCase, EditorHelper):
 
         # Modify access rights of the user before coming back online
         AccessRight.objects.filter(
-            user=self.user2,
+            holder__user=self.user2,
             document=self.doc
         ).update(rights='write')
 
@@ -1191,7 +1195,7 @@ class AccessRightsOfflineTests(LiveTornadoTestCase, EditorHelper):
 
         # Modify access rights of the user to read before coming back online
         AccessRight.objects.filter(
-            user=self.user2,
+            holder__user=self.user2,
             document=self.doc
         ).update(rights='read')
 

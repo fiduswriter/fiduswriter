@@ -3,10 +3,10 @@ import json
 from django.http import JsonResponse
 from django.contrib.auth import logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.conf import settings
 from django.shortcuts import HttpResponseRedirect
 from django.views.decorators.http import require_POST
+from django.contrib.auth import get_user_model
 
 from base.decorators import ajax_required
 from .forms import UserForm
@@ -31,12 +31,6 @@ from avatar.forms import UploadAvatarForm
 from avatar.signals import avatar_updated
 
 from document.views import apply_invite
-
-
-# Outdated but we need it to allow for update of 3.7 instances.
-# Can be removed in 3.9.
-def info(request):
-    return JsonResponse({'is_authenticated': False})
 
 
 @login_required
@@ -287,6 +281,7 @@ def save_profile(request):
     """
     response = {}
     form_data = json.loads(request.POST['form_data'])
+    User = get_user_model()
     user_object = User.objects.get(pk=request.user.pk)
     user_form = UserForm(form_data['user'], instance=user_object)
     if user_form.is_valid():
@@ -309,11 +304,10 @@ def list_contacts(request):
     response = {}
     status = 200
     response['contacts'] = []
-
-    for profile in request.user.profile.contacts.all():
+    for profile in userutil.get_profile(request.user).contacts.all():
         contact = {
             'id': profile.user.id,
-            'name': profile.user.readable_name,
+            'name': userutil.get_readable_name(profile.user),
             'username': profile.user.get_username(),
             'email': profile.user.email,
             'avatar': userutil.get_user_avatar_url(profile.user)
@@ -341,22 +335,24 @@ def add_contacts(request):
             email=user_string
         ).first()
         if email_address:
-            new_contact = email_address.user.profile
+            new_contact = userutil.get_profile(email_address.user)
     else:
+        User = get_user_model()
         user = User.objects.filter(username=user_string).first()
         if user:
-            new_contact = user.profile
+            new_contact = userutil.get_profile(user)
     if new_contact:
-        if new_contact.pk is request.user.profile.pk:
+        user_profile = userutil.get_profile(request.user)
+        if new_contact.pk is user_profile.pk:
             # 'You cannot add yourself to your contacts!'
             response['error'] = 1
-        elif request.user.profile.contacts.filter(
+        elif user_profile.contacts.filter(
             user=new_contact.user
         ).first():
             # 'This person is already in your contacts!'
             response['error'] = 2
         else:
-            request.user.profile.contacts.add(new_contact)
+            user_profile.contacts.add(new_contact)
             the_avatar = userutil.get_user_avatar_url(new_contact.user)
             response['contact'] = {
                 'id': new_contact.user.pk,
@@ -388,16 +384,20 @@ def remove_contacts(request):
         former_contact = int(former_contact)
         # Revoke all permissions given to this user
         AccessRight.objects.filter(
-            user_id=former_contact,
+            holder_type__name='userprofile',
+            holder__user_id=former_contact,
             document__owner=request.user
         ).delete()
         # Revoke all permissions received from this user
         AccessRight.objects.filter(
-            user=request.user,
+            holder_type__name='userprofile',
+            holder__user=request.user,
             document__owner_id=former_contact
         ).delete()
         # Delete the user from the contacts
-        request.user.profile.contacts.filter(user_id=former_contact).delete()
+        userutil.get_profile(
+            request.user
+        ).contacts.filter(user_id=former_contact).delete()
     status = 200
     return JsonResponse(
         response,

@@ -1,20 +1,24 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.utils.translation import ugettext as _
+from django.contrib.contenttypes.fields import GenericRelation
 
 
 class UserProfile(models.Model):
     user = models.OneToOneField(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.deletion.CASCADE
     )
     contacts = models.ManyToManyField("self", symmetrical=True)
+    document_rights = GenericRelation(
+        'document.AccessRight',
+        content_type_field='holder_type',
+        object_id_field='holder_id',
+        related_query_name="holder"
+    )
 
     def __str__(self):
         return self.user.__str__()
-
-
-User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
 
 
 class LoginAs(models.Model):
@@ -26,13 +30,3 @@ class LoginAs(models.Model):
         permissions = (
             ('can_login_as', _('Can login as another user')),
         )
-
-
-def get_readable_name(user):
-    readable_name = user.get_full_name()
-    if readable_name == '':
-        readable_name = user.username
-    return readable_name
-
-
-User.readable_name = property(lambda u: get_readable_name(u))

@@ -51,7 +51,7 @@ def configuration(request):
             'id': request.user.id,
             'username': request.user.username,
             'first_name': request.user.first_name,
-            'name': request.user.readable_name,
+            'name': userutil.get_readable_name(request.user),
             'last_name': request.user.last_name,
             'avatar': userutil.get_user_avatar_url(request.user),
             'emails': [],

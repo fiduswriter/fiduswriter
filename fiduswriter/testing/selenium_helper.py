@@ -9,6 +9,8 @@ from allauth.account.models import EmailAddress
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import get_user_model
 
+from user.models import Profile
+
 
 class SeleniumHelper(object):
     """
@@ -87,6 +89,11 @@ class SeleniumHelper(object):
             is_active=True
         )
         user.save()
+
+        profile = Profile.objects.create(
+            user=user
+        )
+        profile.save()
 
         # avoid the unverified-email login trap
         EmailAddress.objects.create(

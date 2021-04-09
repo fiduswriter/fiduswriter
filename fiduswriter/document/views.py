@@ -38,7 +38,7 @@ def get_documentlist_extra(request):
     status = 200
     ids = request.POST['ids'].split(',')
     docs = Document.objects.filter(Q(owner=request.user) | Q(
-        accessright__user=request.user)).filter(id__in=ids)
+        accessright__holder__user=request.user)).filter(id__in=ids)
     response['documents'] = []
     for doc in docs:
         images = {}

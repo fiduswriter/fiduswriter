@@ -11,7 +11,6 @@ import os
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 from document.models import AccessRight
-from user import util as userutil
 
 
 class OfflineTests(LiveTornadoTestCase, EditorHelper):
@@ -991,7 +990,7 @@ class AccessRightsOfflineTests(LiveTornadoTestCase, EditorHelper):
         # Since the test uses 2 different users ,
         # add access rights for the 2nd user.
         AccessRight.objects.create(
-            holder_obj=userutil.get_profile(self.user2),
+            holder_obj=self.user2.profile,
             document=self.doc,
             rights='write'
         )

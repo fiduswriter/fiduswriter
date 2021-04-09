@@ -17,6 +17,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import get_user_model
 
 from user import util as userutil
+from user.models import Profile
 from document.models import Document, AccessRight, DocumentRevision, \
     DocumentTemplate, AccessRightInvite, CAN_UPDATE_DOCUMENT, \
     CAN_COMMUNICATE, FW_DOCUMENT_VERSION
@@ -208,9 +209,8 @@ def save_access_rights(request):
                     path = '/' + doc.path.split('/').pop()
                     if len(path) == 1:
                         path = ''
-                    User = get_user_model()
-                    user_profile = userutil.get_profile(
-                        User.objects.get(id=right['user_id'])
+                    user_profile = Profile.objects.get(
+                        user_id=right['user_id']
                     )
                     access_right = AccessRight.objects.create(
                         document_id=doc_id,
@@ -296,13 +296,13 @@ def apply_invite(inv, user):
     else:
         ar = AccessRight.objects.create(
             document=inv.document,
-            holder_obj=userutil.get_profile(user),
+            holder_obj=user.profile,
             rights=inv.rights
         )
         ar.save()
-        owner_profile = userutil.get_profile(inv.document.owner)
+        owner_profile = inv.document.owner.profile
         if not owner_profile.contacts.filter(user=user).first():
-            owner_profile.contacts.add(userutil.get_profile(user))
+            owner_profile.contacts.add(user.profile)
     inv.delete()
 
 
@@ -333,7 +333,7 @@ def get_documentlist(request):
     status = 200
     response['documents'] = documents_list(request)
     response['contacts'] = []
-    for contact in userutil.get_profile(request.user).contacts.all():
+    for contact in request.user.profile.contacts.all():
         contact_object = {}
         contact_object['id'] = contact.user.id
         contact_object['name'] = userutil.get_readable_name(contact.user)

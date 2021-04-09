@@ -6,33 +6,32 @@ from django.db import migrations
 def change_access_right_to_generic_key(apps, schema_editor):
     AccessRight  = apps.get_model('document', 'AccessRight')
     ContentType = apps.get_model('contenttypes', 'ContentType')
-    UserProfile = apps.get_model('user', 'UserProfile')
     user_profile_ct = ContentType.objects.filter(
         app_label='user',
-        model='userprofile'
+        model='profile'
     ).first()
     access_rights = AccessRight.objects.all()
     for access_right in access_rights:
-        up = UserProfile.objects.get_or_create(user=access_right.user)[0]
-        access_right.holder_id = up.id
+        access_right.holder_id = access_right.user.profile.id
         access_right.holder_type = user_profile_ct
         access_right.save()
 
 
 def reverse_change_access_right_to_generic_key(apps, schema_editor):
     AccessRight  = apps.get_model('document', 'AccessRight')
+    Profile  = apps.get_model('user', 'Profile')
     access_rights = AccessRight.objects.all()
     user_profile_ct = ContentType.objects.filter(
         app_label='user',
-        model='userprofile'
+        model='profile'
     ).first()
     for access_right in access_rights:
         if access_right.holder_type != user_profile_ct:
             # This is not a regular user. Don't try to revert
             continue
-        up = UserProfile.objects.filter(id=access_right.holder_id).first()
+        up = Profile.objects.filter(id=access_right.holder_id).first()
         if not up:
-            # UserProfile could not be found
+            # Profile could not be found
             continue
         access_right.user = up.user
         access_right.save()
@@ -42,7 +41,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('document', '0011_auto_20210405_1820'),
-        ('user', '0001_squashed_0003_auto_20151226_1110')
+        ('user', '0004_auto_20210402_2049')
     ]
 
     operations = [

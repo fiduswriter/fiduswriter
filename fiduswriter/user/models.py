@@ -4,7 +4,7 @@ from django.utils.translation import ugettext as _
 from django.contrib.contenttypes.fields import GenericRelation
 
 
-class UserProfile(models.Model):
+class Profile(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.deletion.CASCADE

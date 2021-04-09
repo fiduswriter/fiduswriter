@@ -1,8 +1,6 @@
 from django.core.files import File
 from avatar.utils import get_default_avatar_url
 
-from .models import UserProfile
-
 
 def string_to_color(username):
     hash = 0
@@ -64,7 +62,3 @@ def get_readable_name(user):
     if readable_name == '':
         readable_name = user.username
     return readable_name
-
-
-def get_profile(user):
-    return UserProfile.objects.get_or_create(user=user)[0]

@@ -304,7 +304,7 @@ def list_contacts(request):
     response = {}
     status = 200
     response['contacts'] = []
-    for profile in userutil.get_profile(request.user).contacts.all():
+    for profile in request.user.profile.contacts.all():
         contact = {
             'id': profile.user.id,
             'name': userutil.get_readable_name(profile.user),
@@ -335,14 +335,14 @@ def add_contacts(request):
             email=user_string
         ).first()
         if email_address:
-            new_contact = userutil.get_profile(email_address.user)
+            new_contact = email_address.user.profile
     else:
         User = get_user_model()
         user = User.objects.filter(username=user_string).first()
         if user:
-            new_contact = userutil.get_profile(user)
+            new_contact = user.profile
     if new_contact:
-        user_profile = userutil.get_profile(request.user)
+        user_profile = request.user.profile
         if new_contact.pk is user_profile.pk:
             # 'You cannot add yourself to your contacts!'
             response['error'] = 1
@@ -384,20 +384,18 @@ def remove_contacts(request):
         former_contact = int(former_contact)
         # Revoke all permissions given to this user
         AccessRight.objects.filter(
-            holder_type__name='userprofile',
+            holder_type__name='profile',
             holder__user_id=former_contact,
             document__owner=request.user
         ).delete()
         # Revoke all permissions received from this user
         AccessRight.objects.filter(
-            holder_type__name='userprofile',
+            holder_type__name='profile',
             holder__user=request.user,
             document__owner_id=former_contact
         ).delete()
         # Delete the user from the contacts
-        userutil.get_profile(
-            request.user
-        ).contacts.filter(user_id=former_contact).delete()
+        request.user.profile.contacts.filter(user_id=former_contact).delete()
     status = 200
     return JsonResponse(
         response,

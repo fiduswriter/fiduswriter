@@ -266,7 +266,7 @@ ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 ACCOUNT_ADAPTER = "user.adapter.AccountAdapter"
 
-AUTH_PROFILE_MODULE = "account.UserProfile"
+AUTH_PROFILE_MODULE = "account.Profile"
 
 LOGGING = {
     'version': 1,

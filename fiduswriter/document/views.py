@@ -81,7 +81,7 @@ def documents_list(request):
             path = document.path
         else:
             access_object = AccessRight.objects.get(
-                holder=request.user,
+                holder=request.user.profile,
                 document=document
             )
             access_right = access_object.rights
@@ -91,7 +91,7 @@ def documents_list(request):
             document.owner == request.user or
             AccessRight.objects.filter(
                 document=document,
-                holder=request.user,
+                holder=request.user.profile,
                 rights__in=CAN_COMMUNICATE
             ).first()
         ):

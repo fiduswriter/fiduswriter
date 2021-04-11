@@ -10,8 +10,6 @@ from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
-from user import util as userutil
-
 # FW_DOCUMENT_VERSION:
 # Also defined in frontend
 # document/static/js/modules/schema/index.js
@@ -254,7 +252,7 @@ class AccessRight(models.Model):
         return (
             '%(name)s %(rights)s on %(doc_id)d' %
             {
-                'name': userutil.get_readable_name(self.user),
+                'name': self.user.readable_name,
                 'rights': self.rights,
                 'doc_id': self.document.id
             }

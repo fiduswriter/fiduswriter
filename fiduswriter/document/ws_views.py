@@ -17,7 +17,6 @@ from base.ws_handler import BaseWebSocketHandler
 from document.models import COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \
     CAN_COMMUNICATE, FW_DOCUMENT_VERSION, DocumentTemplate, Document
 from usermedia.models import Image, DocumentImage, UserImage
-from user import util as userutil
 
 # settings_JSONPATCH
 from jsonpatch import apply_patch, JsonPatchConflict, JsonPointerException
@@ -163,9 +162,9 @@ class WebSocket(BaseWebSocketHandler):
             'path': self.user_info.path,
             'owner': {
                 'id': doc_owner.id,
-                'name': userutil.get_readable_name(doc_owner),
+                'name': doc_owner.readable_name,
                 'username': doc_owner.username,
-                'avatar': userutil.get_user_avatar_url(doc_owner),
+                'avatar': doc_owner.avatar_url,
                 'contacts': []
             }
         }
@@ -216,11 +215,9 @@ class WebSocket(BaseWebSocketHandler):
         for contact in doc_owner.contacts.all():
             contact_object = dict()
             contact_object['id'] = contact.id
-            contact_object['name'] = userutil.get_readable_name(contact)
+            contact_object['name'] = contact.readable_name
             contact_object['username'] = contact.get_username()
-            contact_object['avatar'] = userutil.get_user_avatar_url(
-                contact
-            )
+            contact_object['avatar'] = contact.avatar_url
             response['doc_info']['owner']['contacts'].append(contact_object)
         response['doc_info']['session_id'] = self.id
         self.send_message(response)
@@ -627,10 +624,8 @@ class WebSocket(BaseWebSocketHandler):
                 participant_list.append({
                     'session_id': session_id,
                     'id': waiter.user_info.user.id,
-                    'name': userutil.get_readable_name(waiter.user_info.user),
-                    'avatar': userutil.get_user_avatar_url(
-                        waiter.user_info.user
-                    )
+                    'name': waiter.user_info.user.readable_name,
+                    'avatar': waiter.user_info.user.avatar_url
                 })
             message = {
                 "participant_list": participant_list,

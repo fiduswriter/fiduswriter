@@ -16,7 +16,6 @@ from django.db.models import F, Q
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import get_user_model
 
-from user import util as userutil
 from document.models import Document, AccessRight, DocumentRevision, \
     DocumentTemplate, AccessRightInvite, CAN_UPDATE_DOCUMENT, \
     CAN_COMMUNICATE, FW_DOCUMENT_VERSION
@@ -117,8 +116,8 @@ def documents_list(request):
             'is_owner': is_owner,
             'owner': {
                 'id': document.owner.id,
-                'name': userutil.get_readable_name(document.owner),
-                'avatar': userutil.get_user_avatar_url(document.owner)
+                'name': document.owner.readable_name,
+                'avatar': document.owner.avatar_url
             },
             'added': added,
             'updated': updated,
@@ -145,9 +144,9 @@ def get_access_rights(request):
         access_rights.append({
             'document_id': ar.document.id,
             'user_id': ar.holder_id,
-            'user_name': userutil.get_readable_name(ar.holder_obj),
+            'user_name': ar.holder_obj.readable_name,
             'rights': ar.rights,
-            'avatar': userutil.get_user_avatar_url(ar.holder_obj)
+            'avatar': ar.holder_obj.avatar_url
         })
     response['access_rights'] = access_rights
     invites = []
@@ -335,9 +334,9 @@ def get_documentlist(request):
     for contact in request.user.contacts.all():
         contact_object = {}
         contact_object['id'] = contact.id
-        contact_object['name'] = userutil.get_readable_name(contact)
+        contact_object['name'] = contact.readable_name
         contact_object['username'] = contact.get_username()
-        contact_object['avatar'] = userutil.get_user_avatar_url(contact)
+        contact_object['avatar'] = contact.avatar_url
         response['contacts'].append(contact_object)
     serializer = PythonWithURLSerializer()
     doc_styles = serializer.serialize(
@@ -423,11 +422,11 @@ def move(request):
 
 
 def send_share_notification(request, doc_id, collaborator_id, rights, change):
-    owner = userutil.get_readable_name(request.user)
+    owner = request.user.readable_name
     document = Document.objects.get(id=doc_id)
     User = get_user_model()
     collaborator = User.objects.get(id=collaborator_id)
-    collaborator_name = userutil.get_readable_name(collaborator)
+    collaborator_name = collaborator.readable_name
     collaborator_email = collaborator.email
     document_title = document.title
     if len(document_title) == 0:
@@ -527,7 +526,7 @@ def send_share_notification(request, doc_id, collaborator_id, rights, change):
 
 
 def send_invite_notification(request, doc_id, email, rights, invite, change):
-    owner = userutil.get_readable_name(request.user)
+    owner = request.user.readable_name
     document = Document.objects.get(id=doc_id)
     document_title = document.title
     if len(document_title) == 0:
@@ -948,8 +947,8 @@ def comment_notify(request):
             response,
             status=200
         )
-    commentator = userutil.get_readable_name(request.user)
-    collaborator_name = userutil.get_readable_name(collaborator)
+    commentator = request.user.readable_name
+    collaborator_name = collaborator.readable_name
     collaborator_email = collaborator.email
     document_title = document.title
     if len(document_title) == 0:

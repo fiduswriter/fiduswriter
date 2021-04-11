@@ -10,7 +10,6 @@ from django.contrib.auth import get_user_model
 
 from base.decorators import ajax_required
 from .forms import UserForm
-from . import util as userutil
 from document.models import AccessRight, AccessRightInvite
 
 from allauth.account.models import (
@@ -202,9 +201,7 @@ def upload_avatar(request):
             user=request.user,
             avatar=avatar
         )
-        response['avatar'] = userutil.get_user_avatar_url(
-            request.user
-        )['url']
+        response['avatar'] = request.user.avatar_url['url']
         status = 200
     return JsonResponse(
         response,
@@ -237,9 +234,7 @@ def delete_avatar(request):
                 )
                 break
         Avatar.objects.filter(pk=aid).delete()
-        response['avatar'] = userutil.get_user_avatar_url(
-            request.user
-        )['url']
+        response['avatar'] = request.user.avatar_url['url']
         status = 200
     return JsonResponse(
         response,
@@ -307,10 +302,10 @@ def list_contacts(request):
     for user in request.user.contacts.all():
         contact = {
             'id': user.id,
-            'name': userutil.get_readable_name(user),
+            'name': user.readable_name,
             'username': user.get_username(),
             'email': user.email,
-            'avatar': userutil.get_user_avatar_url(user)
+            'avatar': user.avatar_url
         }
         response['contacts'].append(contact)
     return JsonResponse(
@@ -352,7 +347,7 @@ def add_contacts(request):
             response['error'] = 2
         else:
             request.user.contacts.add(new_contact)
-            the_avatar = userutil.get_user_avatar_url(new_contact)
+            the_avatar = new_contact.avatar_url
             response['contact'] = {
                 'id': new_contact.pk,
                 'name': new_contact.username,

@@ -1,6 +1,4 @@
-from django.core.management import call_command
 from django.core.management.commands import migrate
-from django.db import connection
 from django.db.utils import OperationalError
 from django.contrib.contenttypes.models import ContentType
 from base.management import BaseCommand

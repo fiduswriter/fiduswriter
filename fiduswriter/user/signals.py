@@ -5,7 +5,6 @@ from urllib.parse import urlparse
 from django.template.defaultfilters import slugify
 from django.core.files.base import ContentFile
 from django.dispatch import receiver
-from django.contrib.auth import get_user_model
 
 from avatar.models import Avatar
 from allauth.account.signals import user_signed_up

@@ -3,49 +3,37 @@
 from django.db import migrations
 from django.conf import settings
 
-def add_profiles(apps, schema_editor):
-    User = apps.get_model(*settings.AUTH_USER_MODEL.split('.'))
-    Profile = apps.get_model('user', 'Profile')
-    for user in User.objects.all():
-        Profile.objects.get_or_create(user=user)
-
-
-def remove_profiles(apps, schema_editor):
-    pass
-
 
 def teammembers_to_contacts(apps, schema_editor):
-    Profile = apps.get_model('user', 'Profile')
     TeamMember = apps.get_model('user', 'TeamMember')
     team_members = TeamMember.objects.all().iterator()
     for team_member in team_members:
-        member = team_member.member.profile
-        leader = team_member.leader.profile
+        member = team_member.member
+        leader = team_member.leader
         leader.contacts.add(member)
         member.contacts.add(leader)
     TeamMember.objects.all().delete()
 
 
 def contacts_to_teammembers(apps, schema_editor):
-    Profile = apps.get_model('user', 'Profile')
+    User = apps.get_model('user', 'User')
     TeamMember = apps.get_model('user', 'TeamMember')
-    profiles = Profile.objects.all().iterator()
-    for profile in profiles:
-        for contact in profile.contacts.all():
+    users = User.objects.all().iterator()
+    for user in users:
+        for contact in user.contacts.all():
             TeamMember.objects.get_or_create(
-                leader=profile.user,
-                member=contact.user
+                leader=user,
+                member=contact
             )
-        profile.contacts.all().delete()
+        user.contacts.all().delete()
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('user', '0003_auto_20210402_2048'),
+        ('user', '0003_auto_20210411_1440'),
     ]
 
     operations = [
-        migrations.RunPython(add_profiles, remove_profiles),
         migrations.RunPython(teammembers_to_contacts, contacts_to_teammembers),
     ]

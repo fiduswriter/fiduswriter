@@ -234,7 +234,7 @@ CAN_COMMUNICATE = ['read', 'write', 'comment', 'write-tracked']
 class AccessRight(models.Model):
     document = models.ForeignKey(Document, on_delete=models.deletion.CASCADE)
     path = models.TextField(default='', blank=True)
-    holder_choices = models.Q(app_label='user', model='userprofile')
+    holder_choices = models.Q(app_label='user', model='user')
     holder_type = models.ForeignKey(
         ContentType,
         on_delete=models.CASCADE,

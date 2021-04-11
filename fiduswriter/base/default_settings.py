@@ -267,6 +267,7 @@ ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 ACCOUNT_ADAPTER = "user.adapter.AccountAdapter"
 
 AUTH_PROFILE_MODULE = "account.Profile"
+AUTH_USER_MODEL = "user.User"
 
 LOGGING = {
     'version': 1,

@@ -2,23 +2,17 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.auth.models import AbstractUser
 
 
-class Profile(models.Model):
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.deletion.CASCADE
-    )
+class User(AbstractUser):
     contacts = models.ManyToManyField("self", symmetrical=True)
     document_rights = GenericRelation(
         'document.AccessRight',
         content_type_field='holder_type',
         object_id_field='holder_id',
-        related_query_name="holder"
+        related_query_name="user"
     )
-
-    def __str__(self):
-        return self.user.__str__()
 
 
 class LoginAs(models.Model):

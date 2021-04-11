@@ -6,34 +6,29 @@ from django.db import migrations
 def change_access_right_to_generic_key(apps, schema_editor):
     AccessRight  = apps.get_model('document', 'AccessRight')
     ContentType = apps.get_model('contenttypes', 'ContentType')
-    user_profile_ct = ContentType.objects.filter(
+    user_ct = ContentType.objects.filter(
         app_label='user',
-        model='profile'
+        model='user'
     ).first()
     access_rights = AccessRight.objects.all()
     for access_right in access_rights:
-        access_right.holder_id = access_right.user.profile.id
-        access_right.holder_type = user_profile_ct
+        access_right.holder_id = access_right.user_id
+        access_right.holder_type = user_ct
         access_right.save()
 
 
 def reverse_change_access_right_to_generic_key(apps, schema_editor):
     AccessRight  = apps.get_model('document', 'AccessRight')
-    Profile  = apps.get_model('user', 'Profile')
     access_rights = AccessRight.objects.all()
-    user_profile_ct = ContentType.objects.filter(
+    user_ct = ContentType.objects.filter(
         app_label='user',
-        model='profile'
+        model='user'
     ).first()
     for access_right in access_rights:
-        if access_right.holder_type != user_profile_ct:
+        if access_right.holder_type != user_ct:
             # This is not a regular user. Don't try to revert
             continue
-        up = Profile.objects.filter(id=access_right.holder_id).first()
-        if not up:
-            # Profile could not be found
-            continue
-        access_right.user = up.user
+        access_right.user_id = up.holder_id
         access_right.save()
 
 

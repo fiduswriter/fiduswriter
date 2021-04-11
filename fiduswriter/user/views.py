@@ -304,13 +304,13 @@ def list_contacts(request):
     response = {}
     status = 200
     response['contacts'] = []
-    for profile in request.user.profile.contacts.all():
+    for user in request.user.contacts.all():
         contact = {
-            'id': profile.user.id,
-            'name': userutil.get_readable_name(profile.user),
-            'username': profile.user.get_username(),
-            'email': profile.user.email,
-            'avatar': userutil.get_user_avatar_url(profile.user)
+            'id': user.id,
+            'name': userutil.get_readable_name(user),
+            'username': user.get_username(),
+            'email': user.email,
+            'avatar': userutil.get_user_avatar_url(user)
         }
         response['contacts'].append(contact)
     return JsonResponse(
@@ -335,29 +335,28 @@ def add_contacts(request):
             email=user_string
         ).first()
         if email_address:
-            new_contact = email_address.user.profile
+            new_contact = email_address.user
     else:
         User = get_user_model()
         user = User.objects.filter(username=user_string).first()
         if user:
-            new_contact = user.profile
+            new_contact = user
     if new_contact:
-        user_profile = request.user.profile
-        if new_contact.pk is user_profile.pk:
+        if new_contact.pk is request.user.pk:
             # 'You cannot add yourself to your contacts!'
             response['error'] = 1
-        elif user_profile.contacts.filter(
-            user=new_contact.user
+        elif request.user.contacts.filter(
+            user=new_contact
         ).first():
             # 'This person is already in your contacts!'
             response['error'] = 2
         else:
-            user_profile.contacts.add(new_contact)
-            the_avatar = userutil.get_user_avatar_url(new_contact.user)
+            request.user.contacts.add(new_contact)
+            the_avatar = userutil.get_user_avatar_url(new_contact)
             response['contact'] = {
-                'id': new_contact.user.pk,
-                'name': new_contact.user.username,
-                'email': new_contact.user.email,
+                'id': new_contact.pk,
+                'name': new_contact.username,
+                'email': new_contact.email,
                 'avatar': the_avatar
             }
             status = 201
@@ -384,16 +383,16 @@ def remove_contacts(request):
         former_contact = int(former_contact)
         # Revoke all permissions given to this user
         AccessRight.objects.filter(
-            holder__user_id=former_contact,
+            user_id=former_contact,
             document__owner=request.user
         ).delete()
         # Revoke all permissions received from this user
         AccessRight.objects.filter(
-            holder__user=request.user,
+            user=request.user,
             document__owner_id=former_contact
         ).delete()
         # Delete the user from the contacts
-        request.user.profile.contacts.filter(user_id=former_contact).delete()
+        request.user.contacts.filter(user_id=former_contact).delete()
     status = 200
     return JsonResponse(
         response,

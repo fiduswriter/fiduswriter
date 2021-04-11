@@ -6,7 +6,6 @@ from django.template.defaultfilters import slugify
 from django.core.files.base import ContentFile
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
-from django.db.models.signals import post_save
 
 from avatar.models import Avatar
 from allauth.account.signals import user_signed_up
@@ -14,7 +13,6 @@ from allauth.account.signals import user_signed_up
 from document.views import apply_invite
 from document.models import AccessRightInvite
 
-from .models import Profile
 # This file is split of from django-allauth and is licensed as:
 
 # Copyright (c) 2010 Raymond Penners and contributors
@@ -93,17 +91,3 @@ def on_user_signed_up(sender, request, *args, **kwargs):
         )
         for inv in invites:
             apply_invite(inv, sociallogin.account.user)
-
-
-User = get_user_model()
-
-
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.create(user=instance)
-
-
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    instance.profile.save()

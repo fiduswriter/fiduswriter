@@ -1,10 +1,10 @@
 from django.contrib import admin
 
-from .models import Profile
+from .models import User
 
 
-class ProfileAdmin(admin.ModelAdmin):
+class UserAdmin(admin.ModelAdmin):
     pass
 
 
-admin.site.register(Profile, ProfileAdmin)
+admin.site.register(User, UserAdmin)

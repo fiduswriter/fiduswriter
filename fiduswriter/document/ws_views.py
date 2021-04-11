@@ -213,7 +213,7 @@ class WebSocket(BaseWebSocketHandler):
             response['doc']['comments'] = filtered_comments
         else:
             response['doc']['comments'] = self.session["doc"].comments
-        for contact in doc_owner.profile.contacts.all():
+        for contact in doc_owner.contacts.all():
             contact_object = dict()
             contact_object['id'] = contact.user.id
             contact_object['name'] = userutil.get_readable_name(contact.user)

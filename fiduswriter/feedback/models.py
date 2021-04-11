@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.conf import settings
 
@@ -7,7 +6,7 @@ from django.conf import settings
 class Feedback(models.Model):
     message = models.TextField()
     owner = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         blank=True,
         null=True,
         on_delete=models.deletion.CASCADE

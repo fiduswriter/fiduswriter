@@ -130,7 +130,7 @@ export class DocumentAccessRightsDialog {
                                             'beforeend',
                                             contactsTemplate({contacts: [contactData]})
                                         )
-                                        document.querySelector('#share-member table tbody').insertAdjacentHTML(
+                                        document.querySelector('#share-contact table tbody').insertAdjacentHTML(
                                             'beforeend',
                                             collaboratorsTemplate({'collaborators': [{
                                                 user_id: contactData.id,
@@ -144,7 +144,7 @@ export class DocumentAccessRightsDialog {
                                         contactData.email &&
                                         !document.querySelector(`.invite-tr[data-email="${escapeText(contactData.email)}"]`)
                                     ) {
-                                        document.querySelector('#share-member table tbody').insertAdjacentHTML(
+                                        document.querySelector('#share-contact table tbody').insertAdjacentHTML(
                                             'beforeend',
                                             invitesTemplate({'invites': [{'email': contactData.email, rights: 'read'}]})
                                         )
@@ -161,11 +161,11 @@ export class DocumentAccessRightsDialog {
                 click: () => {
                     //apply the current state to server
                     const accessRights = []
-                    document.querySelectorAll('#share-member .collaborator-tr').forEach(el => {
+                    document.querySelectorAll('#share-contact .collaborator-tr').forEach(el => {
                         accessRights.push({user_id: parseInt(el.dataset.id), rights: el.dataset.rights})
                     })
                     const invites = []
-                    document.querySelectorAll('#share-member .invite-tr').forEach(el => {
+                    document.querySelectorAll('#share-contact .invite-tr').forEach(el => {
                         invites.push({email: el.dataset.email, rights: el.dataset.rights})
                     })
                     this.submitAccessRight(accessRights, invites)
@@ -193,11 +193,11 @@ export class DocumentAccessRightsDialog {
     }
 
     bindDialogEvents() {
-        this.dialog.dialogEl.querySelector('#add-share-member').addEventListener('click', () => {
+        this.dialog.dialogEl.querySelector('#add-share-contact').addEventListener('click', () => {
             const selectedData = []
             document.querySelectorAll('#my-contacts .fw-checkable.checked').forEach(el => {
-                const memberId = parseInt(el.dataset.id)
-                const collaboratorEl = document.getElementById(`collaborator-${memberId}`)
+                const contactId = parseInt(el.dataset.id)
+                const collaboratorEl = document.getElementById(`collaborator-${contactId}`)
                 if (collaboratorEl) {
                     if (collaboratorEl.dataset.rights === 'delete') {
                         collaboratorEl.classList.remove('delete')
@@ -205,9 +205,9 @@ export class DocumentAccessRightsDialog {
                         collaboratorEl.dataset.rights = 'read'
                     }
                 } else {
-                    const collaborator = this.contacts.find(contact => contact.id === memberId)
+                    const collaborator = this.contacts.find(contact => contact.id === contactId)
                     selectedData.push({
-                        user_id: memberId,
+                        user_id: contactId,
                         user_name: collaborator.name,
                         avatar: collaborator.avatar,
                         rights: 'read'
@@ -216,7 +216,7 @@ export class DocumentAccessRightsDialog {
             })
 
             document.querySelectorAll('#my-contacts .checkable-label.checked').forEach(el => el.classList.remove('checked'))
-            document.querySelector('#share-member table tbody').insertAdjacentHTML(
+            document.querySelector('#share-contact table tbody').insertAdjacentHTML(
                 'beforeend',
                 collaboratorsTemplate({
                     'collaborators': selectedData

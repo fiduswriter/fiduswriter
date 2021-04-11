@@ -47,9 +47,9 @@ export const headerbarModel = () => ({
                     action: editor => {
                         const dialog = new DocumentAccessRightsDialog(
                             [editor.docInfo.id],
-                            editor.docInfo.owner.team_members,
-                            memberData => {
-                                editor.docInfo.owner.team_members.push(memberData)
+                            editor.docInfo.owner.contacts,
+                            contactData => {
+                                editor.docInfo.owner.contacts.push(contactData)
                             }
                         )
                         dialog.init()

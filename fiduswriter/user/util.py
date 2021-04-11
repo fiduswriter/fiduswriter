@@ -55,3 +55,10 @@ def get_user_avatar_url(user):
                 '</span></span>'
             )
         }
+
+
+def get_readable_name(user):
+    readable_name = user.get_full_name()
+    if readable_name == '':
+        readable_name = user.username
+    return readable_name

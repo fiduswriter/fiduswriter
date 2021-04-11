@@ -600,9 +600,9 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         self.driver.find_element(
             By.ID,
-            "new-member-user-string"
+            "new-contact-user-string"
         ).click()
-        self.driver.find_element(By.ID, "new-member-user-string").send_keys(
+        self.driver.find_element(By.ID, "new-contact-user-string").send_keys(
             "yeti2@snowman.com"
         )
         ActionChains(self.driver).send_keys(
@@ -616,9 +616,9 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         self.driver.find_element(
             By.ID,
-            "new-member-user-string"
+            "new-contact-user-string"
         ).click()
-        self.driver.find_element(By.ID, "new-member-user-string").send_keys(
+        self.driver.find_element(By.ID, "new-contact-user-string").send_keys(
             "yeti3@snowman.com"
         )
         ActionChains(self.driver).send_keys(
@@ -632,9 +632,9 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         self.driver.find_element(
             By.ID,
-            "new-member-user-string"
+            "new-contact-user-string"
         ).click()
-        self.driver.find_element(By.ID, "new-member-user-string").send_keys(
+        self.driver.find_element(By.ID, "new-contact-user-string").send_keys(
             "yeti4@snowman.com"
         )
         ActionChains(self.driver).send_keys(
@@ -687,9 +687,9 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         self.driver.find_element(
             By.ID,
-            "new-member-user-string"
+            "new-contact-user-string"
         ).click()
-        self.driver.find_element(By.ID, "new-member-user-string").send_keys(
+        self.driver.find_element(By.ID, "new-contact-user-string").send_keys(
             "yeti5@snowman.com"
         )
         ActionChains(self.driver).send_keys(
@@ -1006,7 +1006,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         self.driver.find_element(
             By.ID,
-            "add-share-member"
+            "add-share-contact"
         ).click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable(

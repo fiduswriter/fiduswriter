@@ -11,10 +11,10 @@ export const accessRightOverviewTemplate = ({contacts, collaborators, invites}) 
             </tbody>
         </table>
     </div>
-    <span id="add-share-member" class="fw-button fw-large fw-square fw-light fw-ar-button">
+    <span id="add-share-contact" class="fw-button fw-large fw-square fw-light fw-ar-button">
         <i class="fa fa-caret-right"></i>
     </span>
-    <div id="share-member" class="fw-ar-container">
+    <div id="share-contact" class="fw-ar-container">
         <h3 class="fw-green-title">${gettext("My collaborators")}</h3>
         <table class="fw-data-table tablesorter">
             <thead class="fw-data-table-header"><tr>

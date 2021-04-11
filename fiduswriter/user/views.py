@@ -3,13 +3,13 @@ import json
 from django.http import JsonResponse
 from django.contrib.auth import logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.conf import settings
 from django.shortcuts import HttpResponseRedirect
 from django.views.decorators.http import require_POST
+from django.contrib.auth import get_user_model
 
 from base.decorators import ajax_required
-from .forms import UserForm, TeamMemberForm
+from .forms import UserForm
 from . import util as userutil
 from document.models import AccessRight, AccessRightInvite
 
@@ -31,12 +31,6 @@ from avatar.forms import UploadAvatarForm
 from avatar.signals import avatar_updated
 
 from document.views import apply_invite
-
-
-# Outdated but we need it to allow for update of 3.7 instances.
-# Can be removed in 3.9.
-def info(request):
-    return JsonResponse({'is_authenticated': False})
 
 
 @login_required
@@ -287,6 +281,7 @@ def save_profile(request):
     """
     response = {}
     form_data = json.loads(request.POST['form_data'])
+    User = get_user_model()
     user_object = User.objects.get(pk=request.user.pk)
     user_form = UserForm(form_data['user'], instance=user_object)
     if user_form.is_valid():
@@ -295,24 +290,6 @@ def save_profile(request):
     else:
         response['errors'] = user_form.errors
         status = 422
-    '''
-    currently not used
-    profile_object = user_object.profile
-    profile_form = UserProfileForm(
-        form_data['profile'],
-        instance=profile_object
-    )
-    if profile_form.is_valid():
-        if status == 200:
-            user_form.save()
-            profile_form.save()
-    else:
-        if status == 200:
-            response['errors']=profile_form.errors
-            status = 422
-        else:
-            response['errors']+=profile_form.errors
-    '''
 
     return JsonResponse(
         response,
@@ -323,20 +300,19 @@ def save_profile(request):
 @login_required
 @ajax_required
 @require_POST
-def list_team_members(request):
+def list_contacts(request):
     response = {}
     status = 200
-    response['team_members'] = []
-
-    for member in User.objects.filter(member__leader=request.user):
-        team_member = {
-            'id': member.id,
-            'name': member.readable_name,
-            'username': member.get_username(),
-            'email': member.email,
-            'avatar': userutil.get_user_avatar_url(member)
+    response['contacts'] = []
+    for profile in request.user.profile.contacts.all():
+        contact = {
+            'id': profile.user.id,
+            'name': userutil.get_readable_name(profile.user),
+            'username': profile.user.get_username(),
+            'email': profile.user.email,
+            'avatar': userutil.get_user_avatar_url(profile.user)
         }
-        response['team_members'].append(team_member)
+        response['contacts'].append(contact)
     return JsonResponse(
         response,
         status=status
@@ -346,12 +322,12 @@ def list_team_members(request):
 @login_required
 @ajax_required
 @require_POST
-def add_team_member(request):
+def add_contacts(request):
     """
-    Add a user as a team member of the current user
+    Add a user as a contact of the current user
     """
     response = {}
-    new_member = False
+    new_contact = False
     status = 202
     user_string = request.POST['user_string']
     if "@" in user_string and "." in user_string:
@@ -359,34 +335,32 @@ def add_team_member(request):
             email=user_string
         ).first()
         if email_address:
-            new_member = email_address.user
+            new_contact = email_address.user.profile
     else:
+        User = get_user_model()
         user = User.objects.filter(username=user_string).first()
         if user:
-            new_member = user
-    if new_member:
-        if new_member.pk is request.user.pk:
+            new_contact = user.profile
+    if new_contact:
+        user_profile = request.user.profile
+        if new_contact.pk is user_profile.pk:
             # 'You cannot add yourself to your contacts!'
             response['error'] = 1
+        elif user_profile.contacts.filter(
+            user=new_contact.user
+        ).first():
+            # 'This person is already in your contacts!'
+            response['error'] = 2
         else:
-            form_data = {
-                'leader': request.user.pk,
-                'member': new_member.pk
+            user_profile.contacts.add(new_contact)
+            the_avatar = userutil.get_user_avatar_url(new_contact.user)
+            response['contact'] = {
+                'id': new_contact.user.pk,
+                'name': new_contact.user.username,
+                'email': new_contact.user.email,
+                'avatar': the_avatar
             }
-            team_member_form = TeamMemberForm(form_data)
-            if team_member_form.is_valid():
-                team_member_form.save()
-                the_avatar = userutil.get_user_avatar_url(new_member)
-                response['member'] = {
-                    'id': new_member.pk,
-                    'name': new_member.username,
-                    'email': new_member.email,
-                    'avatar': the_avatar
-                }
-                status = 201
-            else:
-                # 'This person is already in your contacts!'
-                response['error'] = 2
+            status = 201
     else:
         # 'User cannot be found'
         response['error'] = 3
@@ -400,24 +374,26 @@ def add_team_member(request):
 @login_required
 @ajax_required
 @require_POST
-def remove_team_member(request):
+def remove_contacts(request):
     """
-    Remove a team member
+    Remove a contact
     """
     response = {}
-    former_members = request.POST.getlist('members[]')
-    for former_member in former_members:
-        former_member = int(former_member)
-        # Revoke all permissions given to this person
+    former_contacts = request.POST.getlist('contacts[]')
+    for former_contact in former_contacts:
+        former_contact = int(former_contact)
+        # Revoke all permissions given to this user
         AccessRight.objects.filter(
-            user_id=former_member,
+            holder__user_id=former_contact,
             document__owner=request.user
         ).delete()
-        # Now delete the user from the team
-        team_member_object_instance = request.user.leader.filter(
-            member_id=former_member
-        ).first()
-        team_member_object_instance.delete()
+        # Revoke all permissions received from this user
+        AccessRight.objects.filter(
+            holder__user=request.user,
+            document__owner_id=former_contact
+        ).delete()
+        # Delete the user from the contacts
+        request.user.profile.contacts.filter(user_id=former_contact).delete()
     status = 200
     return JsonResponse(
         response,

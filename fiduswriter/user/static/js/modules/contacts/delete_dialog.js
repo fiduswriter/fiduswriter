@@ -2,8 +2,8 @@ import {postJson, Dialog} from "../common"
 
 //dialog for removing a user from contacts
 export class DeleteContactDialog {
-    constructor(memberIds) {
-        this.memberIds = memberIds
+    constructor(contactIds) {
+        this.contactIds = contactIds
     }
 
     init() {
@@ -12,11 +12,11 @@ export class DeleteContactDialog {
                 text: gettext('Delete'),
                 classes: "fw-dark",
                 click: () => {
-                    const ids = this.memberIds
+                    const ids = this.contactIds
                     postJson(
-                        '/api/user/teammember/remove',
+                        '/api/user/contacts/remove',
                         {
-                            'members': ids
+                            'contacts': ids
                         }
                     ).then(
                         ({status}) => {

@@ -1,4 +1,4 @@
-import {teammemberTemplate} from "./templates"
+import {contactTemplate} from "./templates"
 import {DeleteContactDialog} from "./delete_dialog"
 import {postJson, addAlert, OverviewMenuView, findTarget, whenReady, baseBodyTemplate, setDocTitle, DatatableBulk} from "../common"
 import {FeedbackTab} from "../feedback"
@@ -46,7 +46,7 @@ export class ContactsOverview {
             hasOverview: true
         })
         document.body = this.dom
-        setDocTitle(gettext('Team Members'), this.app)
+        setDocTitle(gettext('Contacts'), this.app)
         const feedbackTab = new FeedbackTab()
         feedbackTab.init()
 
@@ -58,13 +58,13 @@ export class ContactsOverview {
         if (this.app.isOffline()) {
             return this.showCached()
         }
-        return postJson('/api/user/team/list/').then(
+        return postJson('/api/user/contacts/list/').then(
             ({json}) => {
                 // Update data in the indexed DB
                 this.app.indexedDB.clearData("user_contacts").then(
-                    this.app.indexedDB.insertData("user_contacts", json.team_members)
+                    this.app.indexedDB.insertData("user_contacts", json.contacts)
                 )
-                this.dom.querySelector('#team-table tbody').innerHTML += teammemberTemplate({members: json.team_members})
+                this.dom.querySelector('#team-table tbody').innerHTML += contactTemplate({contacts: json.contacts})
             }
         ).catch(
             error => {
@@ -80,7 +80,7 @@ export class ContactsOverview {
 
     showCached() {
         return this.app.indexedDB.readAllData("user_contacts").then(response => {
-            this.dom.querySelector('#team-table tbody').innerHTML += teammemberTemplate({members: response})
+            this.dom.querySelector('#team-table tbody').innerHTML += contactTemplate({contacts: response})
         })
     }
 
@@ -88,7 +88,7 @@ export class ContactsOverview {
         this.dom.addEventListener('click', event => {
             const el = {}
             switch (true) {
-            case findTarget(event, '.delete-single-member', el): {
+            case findTarget(event, '.delete-single-contact', el): {
                 //delete single user
                 const dialog = new DeleteContactDialog([el.target.dataset.id])
                 dialog.init()

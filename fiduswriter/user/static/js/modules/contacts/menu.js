@@ -1,6 +1,6 @@
 import {AddContactDialog} from "./add_dialog"
 import {DeleteContactDialog} from "./delete_dialog"
-import {teammemberTemplate} from "./templates"
+import {contactTemplate} from "./templates"
 
 export const bulkMenuModel = () => ({
     content: [
@@ -26,10 +26,10 @@ export const menuModel = () => ({
             title: gettext('Add new contact'),
             action: _overview => {
                 const dialog = new AddContactDialog()
-                dialog.init().then(members => {
+                dialog.init().then(contacts => {
                     document.querySelector('#team-table tbody').insertAdjacentHTML(
                         'beforeend',
-                        teammemberTemplate({members})
+                        contactTemplate({contacts})
                     )
                 })
             },

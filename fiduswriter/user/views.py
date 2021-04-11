@@ -384,13 +384,11 @@ def remove_contacts(request):
         former_contact = int(former_contact)
         # Revoke all permissions given to this user
         AccessRight.objects.filter(
-            holder_type__name='profile',
             holder__user_id=former_contact,
             document__owner=request.user
         ).delete()
         # Revoke all permissions received from this user
         AccessRight.objects.filter(
-            holder_type__name='profile',
             holder__user=request.user,
             document__owner_id=former_contact
         ).delete()

@@ -274,8 +274,9 @@ def save_access_rights(request):
 
 
 def apply_invite(inv, user):
+    user_profile = Profile.objects.get_or_create(user=user)[0]
     old_ar = AccessRight.objects.filter(
-        holder__user=user,
+        holder=user_profile,
         document=inv.document
     ).first()
     if old_ar:

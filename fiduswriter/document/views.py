@@ -187,12 +187,12 @@ def save_access_rights(request):
                 # deletion.
                 AccessRight.objects.filter(
                     document_id=doc_id,
-                    user_id=right['user_id'],
+                    user__id=right['user_id'],
                 ).delete()
             else:
                 access_right = AccessRight.objects.filter(
                     document_id=doc_id,
-                    user_id=right['user_id']
+                    user__id=right['user_id']
                 ).first()
                 if access_right:
                     if access_right.rights != right['rights']:
@@ -334,10 +334,10 @@ def get_documentlist(request):
     response['contacts'] = []
     for contact in request.user.contacts.all():
         contact_object = {}
-        contact_object['id'] = contact.user.id
-        contact_object['name'] = userutil.get_readable_name(contact.user)
-        contact_object['username'] = contact.user.get_username()
-        contact_object['avatar'] = userutil.get_user_avatar_url(contact.user)
+        contact_object['id'] = contact.id
+        contact_object['name'] = userutil.get_readable_name(contact)
+        contact_object['username'] = contact.get_username()
+        contact_object['avatar'] = userutil.get_user_avatar_url(contact)
         response['contacts'].append(contact_object)
     serializer = PythonWithURLSerializer()
     doc_styles = serializer.serialize(

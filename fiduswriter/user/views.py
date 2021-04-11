@@ -346,7 +346,7 @@ def add_contacts(request):
             # 'You cannot add yourself to your contacts!'
             response['error'] = 1
         elif request.user.contacts.filter(
-            user=new_contact
+            id=new_contact.id
         ).first():
             # 'This person is already in your contacts!'
             response['error'] = 2
@@ -383,7 +383,7 @@ def remove_contacts(request):
         former_contact = int(former_contact)
         # Revoke all permissions given to this user
         AccessRight.objects.filter(
-            user_id=former_contact,
+            user__id=former_contact,
             document__owner=request.user
         ).delete()
         # Revoke all permissions received from this user
@@ -392,7 +392,7 @@ def remove_contacts(request):
             document__owner_id=former_contact
         ).delete()
         # Delete the user from the contacts
-        request.user.contacts.filter(user_id=former_contact).delete()
+        request.user.contacts.filter(id=former_contact).delete()
     status = 200
     return JsonResponse(
         response,

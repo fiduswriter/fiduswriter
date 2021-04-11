@@ -215,11 +215,11 @@ class WebSocket(BaseWebSocketHandler):
             response['doc']['comments'] = self.session["doc"].comments
         for contact in doc_owner.contacts.all():
             contact_object = dict()
-            contact_object['id'] = contact.user.id
-            contact_object['name'] = userutil.get_readable_name(contact.user)
-            contact_object['username'] = contact.user.get_username()
+            contact_object['id'] = contact.id
+            contact_object['name'] = userutil.get_readable_name(contact)
+            contact_object['username'] = contact.get_username()
             contact_object['avatar'] = userutil.get_user_avatar_url(
-                contact.user
+                contact
             )
             response['doc_info']['owner']['contacts'].append(contact_object)
         response['doc_info']['session_id'] = self.id

@@ -31,8 +31,8 @@ class User(AbstractUser):
     def avatar_url(self):
         size = 80
         # We use our own method to find the avatar to instead of
-        # "get_primary_avatar" as this way we can minimize the reading from disk
-        # and set a default thumbnail in case we could not create on.
+        # "get_primary_avatar" as this way we can minimize the reading from
+        # disk and set a default thumbnail in case we could not create on.
         # See https://github.com/grantmcconnaughey/django-avatar/pull/187
         avatar = self.avatar_set.order_by("-primary", "-date_uploaded").first()
         if avatar:
@@ -44,7 +44,10 @@ class User(AbstractUser):
                     # with this image type. We store the original file instead.
                     avatar.avatar.storage.save(
                         avatar.avatar_name(size),
-                        File(avatar.avatar.storage.open(avatar.avatar.name, 'rb'))
+                        File(avatar.avatar.storage.open(
+                            avatar.avatar.name,
+                            'rb'
+                        ))
                     )
             url = avatar.avatar_url(size)
             return {
@@ -62,9 +65,11 @@ class User(AbstractUser):
                 'url': get_default_avatar_url(),
                 'uploaded': False,
                 'html': (
-                    '<span class="fw-string-avatar" style="background-color: ' +
+                    '<span class="fw-string-avatar" '
+                    'style="background-color: ' +
                     cl +
-                    ';"><span>' +
+                    ';">' +
+                    '<span>' +
                     self.username[0] +
                     '</span></span>'
                 )

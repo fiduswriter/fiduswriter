@@ -4,6 +4,17 @@ from django.conf import settings
 from django.db import migrations, models
 
 
+def change_user_type(apps, schema_editor):
+    ContentType = apps.get_model('contenttypes', 'ContentType')
+    ct = ContentType.objects.filter(
+        app_label='auth',
+        model='user'
+    ).first()
+    if ct:
+        ct.app_label = 'user'
+        ct.save()
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -11,6 +22,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunPython(change_user_type),
         migrations.RemoveField(
             model_name='userprofile',
             name='user',

@@ -1041,9 +1041,10 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         ActionChains(self.driver).send_keys(
             'Hello @Yeti'
         ).perform()
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".tag-user"
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, '.tag-user')
+            )
         ).click()
         emails_sent_before_comment = len(mail.outbox)
         self.driver.find_element(

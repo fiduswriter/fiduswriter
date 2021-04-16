@@ -127,3 +127,6 @@ ALLOWED_HOSTS = [
 # The maximum size of user uploaded images in bytes. If you use NGINX, note
 # that also it needs to support at least this size.
 MEDIA_MAX_SIZE = False
+
+# Disable https (required for social media login)
+# ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'

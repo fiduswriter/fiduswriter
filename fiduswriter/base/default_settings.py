@@ -261,6 +261,7 @@ CAN_LOGIN_AS = can_login_as
 
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = "http"
 
 # allow login either with email or username
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"

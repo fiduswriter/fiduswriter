@@ -161,7 +161,7 @@ export class BibliographyOverview {
             `<span class="fw-data-table-title ${cats.join(' ')}">
                 <i class="fa fa-book"></i>
                 <span class="edit-bib fw-link-text fw-searchable" data-id="${id}">
-                    ${bibInfo.fields.title ? escapeText(litToText(bibInfo.fields.title)) : gettext('Untitled')}
+                    ${bibInfo.fields.title?.length ? escapeText(litToText(bibInfo.fields.title)) : gettext('Untitled')}
                 </span>
             </span>`, // title
             BibTypeTitles[bibInfo.bib_type], // sourcetype

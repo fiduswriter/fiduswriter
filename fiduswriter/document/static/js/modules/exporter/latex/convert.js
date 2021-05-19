@@ -486,7 +486,7 @@ export class LatexExporterConvert {
             }
             if (category === 'table') {
                 start += `\n\\begin{table}\n`
-                content += caption.length ? `\\caption*{${caption.map()}}` : ''
+                content += caption.length ? `\\caption*{${caption}}` : ''
                 content += `\\label{${node.attrs.id}}\n${innerFigure}`
                 end = `\\end{table}\n` + end
             } else { // TODO: handle photo figure types in a special way

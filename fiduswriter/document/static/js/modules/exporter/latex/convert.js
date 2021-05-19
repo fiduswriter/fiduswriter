@@ -446,12 +446,12 @@ export class LatexExporterConvert {
                 const catCount = this.categoryCounter[category]++
                 const catLabel = `${CATS[category][this.settings.language]} ${catCount}`
                 if (captionContent.length) {
-                    caption = `${catLabel}: ${escapeLatexText(captionContent.map(node => this.walkJson(node)).join(''))}`
+                    caption = `${catLabel}: ${captionContent.map(node => this.walkJson(node)).join('')}`
                 } else {
                     caption = catLabel
                 }
             } else {
-                caption = escapeLatexText(captionContent.map(node => this.walkJson(node)).join(''))
+                caption = captionContent.map(node => this.walkJson(node)).join('')
             }
             let innerFigure = ''
             let aligned = 'left'
@@ -533,12 +533,12 @@ export class LatexExporterConvert {
                     const catCount = this.categoryCounter[category]++
                     const catLabel = `${CATS[category][this.settings.language]} ${catCount}`
                     if (captionContent.length) {
-                        caption = `${catLabel}: ${escapeLatexText(captionContent.map(node => this.walkJson(node)).join(''))}`
+                        caption = `${catLabel}: ${captionContent.map(node => this.walkJson(node)).join('')}`
                     } else {
                         caption = catLabel
                     }
                 } else {
-                    caption = escapeLatexText(captionContent.map(node => this.walkJson(node)).join(''))
+                    caption = captionContent.map(node => this.walkJson(node)).join('')
                 }
 
                 const columns = node.content[1].content[0].content.reduce(

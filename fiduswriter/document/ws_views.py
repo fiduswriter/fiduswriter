@@ -572,6 +572,7 @@ class WebSocket(BaseWebSocketHandler):
             f"Action:Closing websocket. URL:{self.endpoint} "
             f"User:{self.user.id} ParticipantID:{self.id}")
         if (
+            hasattr(self, 'session') and
             hasattr(self, 'user_info') and
             hasattr(self.user_info, 'document_id') and
             self.user_info.document_id in WebSocket.sessions and

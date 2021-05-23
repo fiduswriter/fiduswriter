@@ -16,8 +16,6 @@ from django.db.models import F, Q
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import get_user_model
 
-from user import util as userutil
-from user.models import Profile
 from document.models import Document, AccessRight, DocumentRevision, \
     DocumentTemplate, AccessRightInvite, CAN_UPDATE_DOCUMENT, \
     CAN_COMMUNICATE, FW_DOCUMENT_VERSION
@@ -38,7 +36,7 @@ def get_documentlist_extra(request):
     status = 200
     ids = request.POST['ids'].split(',')
     docs = Document.objects.filter(Q(owner=request.user) | Q(
-        accessright__holder__user=request.user)).filter(id__in=ids)
+        accessright__user=request.user)).filter(id__in=ids)
     response['documents'] = []
     for doc in docs:
         images = {}
@@ -71,7 +69,7 @@ def get_documentlist_extra(request):
 
 def documents_list(request):
     documents = Document.objects.filter(
-        Q(owner=request.user) | Q(accessright__holder__user=request.user),
+        Q(owner=request.user) | Q(accessright__user=request.user),
         listed=True
     ).distinct().order_by('-updated')
     output_list = []
@@ -81,7 +79,7 @@ def documents_list(request):
             path = document.path
         else:
             access_object = AccessRight.objects.get(
-                holder=request.user.profile,
+                user=request.user,
                 document=document
             )
             access_right = access_object.rights
@@ -91,7 +89,7 @@ def documents_list(request):
             document.owner == request.user or
             AccessRight.objects.filter(
                 document=document,
-                holder=request.user.profile,
+                user=request.user,
                 rights__in=CAN_COMMUNICATE
             ).first()
         ):
@@ -118,8 +116,8 @@ def documents_list(request):
             'is_owner': is_owner,
             'owner': {
                 'id': document.owner.id,
-                'name': userutil.get_readable_name(document.owner),
-                'avatar': userutil.get_user_avatar_url(document.owner)
+                'name': document.owner.readable_name,
+                'avatar': document.owner.avatar_url
             },
             'added': added,
             'updated': updated,
@@ -145,10 +143,10 @@ def get_access_rights(request):
     for ar in ar_qs:
         access_rights.append({
             'document_id': ar.document.id,
-            'user_id': ar.holder_obj.user.id,
-            'user_name': userutil.get_readable_name(ar.holder_obj.user),
+            'user_id': ar.holder_id,
+            'user_name': ar.holder_obj.readable_name,
             'rights': ar.rights,
-            'avatar': userutil.get_user_avatar_url(ar.holder_obj.user)
+            'avatar': ar.holder_obj.avatar_url
         })
     response['access_rights'] = access_rights
     invites = []
@@ -170,6 +168,7 @@ def get_access_rights(request):
 @require_POST
 @transaction.atomic
 def save_access_rights(request):
+    User = get_user_model()
     response = {}
     doc_ids = json_decode(request.POST['document_ids'])
     rights = json_decode(request.POST['access_rights'])
@@ -187,12 +186,12 @@ def save_access_rights(request):
                 # deletion.
                 AccessRight.objects.filter(
                     document_id=doc_id,
-                    holder__user_id=right['user_id'],
+                    user__id=right['user_id'],
                 ).delete()
             else:
                 access_right = AccessRight.objects.filter(
                     document_id=doc_id,
-                    holder__user_id=right['user_id']
+                    user__id=right['user_id']
                 ).first()
                 if access_right:
                     if access_right.rights != right['rights']:
@@ -209,12 +208,12 @@ def save_access_rights(request):
                     path = '/' + doc.path.split('/').pop()
                     if len(path) == 1:
                         path = ''
-                    user_profile = Profile.objects.get(
-                        user_id=right['user_id']
+                    user = User.objects.get(
+                        id=right['user_id']
                     )
                     access_right = AccessRight.objects.create(
                         document_id=doc_id,
-                        holder_obj=user_profile,
+                        holder_obj=user,
                         rights=right['rights'],
                         path=path
                     )
@@ -274,9 +273,8 @@ def save_access_rights(request):
 
 
 def apply_invite(inv, user):
-    user_profile = Profile.objects.get_or_create(user=user)[0]
     old_ar = AccessRight.objects.filter(
-        holder=user_profile,
+        user=user,
         document=inv.document
     ).first()
     if old_ar:
@@ -297,13 +295,12 @@ def apply_invite(inv, user):
     else:
         ar = AccessRight.objects.create(
             document=inv.document,
-            holder_obj=user.profile,
+            holder_obj=user,
             rights=inv.rights
         )
         ar.save()
-        owner_profile = inv.document.owner.profile
-        if not owner_profile.contacts.filter(user=user).first():
-            owner_profile.contacts.add(user.profile)
+        if not inv.document.owner.contacts.filter(id=user.id).first():
+            inv.document.owner.contacts.add(user)
     inv.delete()
 
 
@@ -334,12 +331,12 @@ def get_documentlist(request):
     status = 200
     response['documents'] = documents_list(request)
     response['contacts'] = []
-    for contact in request.user.profile.contacts.all():
+    for contact in request.user.contacts.all():
         contact_object = {}
-        contact_object['id'] = contact.user.id
-        contact_object['name'] = userutil.get_readable_name(contact.user)
-        contact_object['username'] = contact.user.get_username()
-        contact_object['avatar'] = userutil.get_user_avatar_url(contact.user)
+        contact_object['id'] = contact.id
+        contact_object['name'] = contact.readable_name
+        contact_object['username'] = contact.get_username()
+        contact_object['avatar'] = contact.avatar_url
         response['contacts'].append(contact_object)
     serializer = PythonWithURLSerializer()
     doc_styles = serializer.serialize(
@@ -410,7 +407,7 @@ def move(request):
     else:
         access_right = AccessRight.objects.filter(
             document=document,
-            holder__user=request.user
+            user=request.user
         ).first()
         if not access_right:
             response['done'] = False
@@ -425,11 +422,11 @@ def move(request):
 
 
 def send_share_notification(request, doc_id, collaborator_id, rights, change):
-    owner = userutil.get_readable_name(request.user)
+    owner = request.user.readable_name
     document = Document.objects.get(id=doc_id)
     User = get_user_model()
     collaborator = User.objects.get(id=collaborator_id)
-    collaborator_name = userutil.get_readable_name(collaborator)
+    collaborator_name = collaborator.readable_name
     collaborator_email = collaborator.email
     document_title = document.title
     if len(document_title) == 0:
@@ -529,7 +526,7 @@ def send_share_notification(request, doc_id, collaborator_id, rights, change):
 
 
 def send_invite_notification(request, doc_id, email, rights, invite, change):
-    owner = userutil.get_readable_name(request.user)
+    owner = request.user.readable_name
     document = Document.objects.get(id=doc_id)
     document_title = document.title
     if len(document_title) == 0:
@@ -679,7 +676,7 @@ def import_create(request):
         # having to create an entirely new template without styles or
         # exporter templates
         access_right = AccessRight.objects.filter(
-            holder__user=request.user,
+            user=request.user,
             document__template__import_id=import_id
         ).first()
         if access_right:
@@ -722,7 +719,7 @@ def import_create(request):
         while (
             Document.objects.filter(owner=request.user, path=path).first() or
             AccessRight.objects.filter(
-                holder__user=request.user,
+                user=request.user,
                 path=path
             ).first()
         ):
@@ -793,7 +790,7 @@ def import_doc(request):
         document.owner != request.user and not
         AccessRight.objects.filter(
             document_id=doc_id,
-            holder__user=request.user,
+            user=request.user,
             rights__in=CAN_UPDATE_DOCUMENT
         ).first()
     ):
@@ -835,7 +832,7 @@ def upload_revision(request):
         else:
             access_rights = AccessRight.objects.filter(
                 document=document,
-                holder__user=request.user
+                user=request.user
             )
             if len(access_rights) > 0 and access_rights[
                 0
@@ -864,7 +861,7 @@ def get_revision(request, revision_id):
         revision.document.owner == request.user or
         AccessRight.objects.filter(
             document=revision.document,
-            holder__user=request.user,
+            user=request.user,
             rights__in=CAN_COMMUNICATE
         ).first()
     ):
@@ -905,7 +902,7 @@ def has_doc_access(doc, user):
         return True
     access_rights = AccessRight.objects.filter(
         document=doc,
-        holder__user=user
+        user=user
     ).first()
     if access_rights:
         return True
@@ -950,8 +947,8 @@ def comment_notify(request):
             response,
             status=200
         )
-    commentator = userutil.get_readable_name(request.user)
-    collaborator_name = userutil.get_readable_name(collaborator)
+    commentator = request.user.readable_name
+    collaborator_name = collaborator.readable_name
     collaborator_email = collaborator.email
     document_title = document.title
     if len(document_title) == 0:

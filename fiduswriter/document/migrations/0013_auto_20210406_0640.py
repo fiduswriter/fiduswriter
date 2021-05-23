@@ -24,6 +24,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='accessright',
             name='holder_type',
-            field=models.ForeignKey(limit_choices_to=models.Q(('app_label', 'user'), ('model', 'userprofile')), on_delete=django.db.models.deletion.CASCADE, to='contenttypes.contenttype'),
+            field=models.ForeignKey(limit_choices_to=models.Q(('app_label', 'user'), ('model', 'user')), on_delete=django.db.models.deletion.CASCADE, to='contenttypes.contenttype'),
         ),
     ]

@@ -10,8 +10,6 @@ from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
-from user import util as userutil
-
 # FW_DOCUMENT_VERSION:
 # Also defined in frontend
 # document/static/js/modules/schema/index.js
@@ -234,7 +232,7 @@ CAN_COMMUNICATE = ['read', 'write', 'comment', 'write-tracked']
 class AccessRight(models.Model):
     document = models.ForeignKey(Document, on_delete=models.deletion.CASCADE)
     path = models.TextField(default='', blank=True)
-    holder_choices = models.Q(app_label='user', model='userprofile')
+    holder_choices = models.Q(app_label='user', model='user')
     holder_type = models.ForeignKey(
         ContentType,
         on_delete=models.CASCADE,
@@ -254,7 +252,7 @@ class AccessRight(models.Model):
         return (
             '%(name)s %(rights)s on %(doc_id)d' %
             {
-                'name': userutil.get_readable_name(self.user),
+                'name': self.user.readable_name,
                 'rights': self.rights,
                 'doc_id': self.document.id
             }

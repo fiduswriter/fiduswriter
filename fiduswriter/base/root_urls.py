@@ -78,9 +78,12 @@ if hasattr(settings, 'EXTRA_URLS'):
         urlpatterns += [
             url(extra_url[0], include(extra_url[1])),
         ]
+if not settings.DEBUG:
+    urlpatterns += [
+        url('^api/.*', api_404_view, name='api_404'),
+    ]
 
 urlpatterns += [
-    url('^api/.*', api_404_view, name='api_404'),
     url('^.*/$', app_view, name='app'),
     url('^$', app_view, name='app')
 ]

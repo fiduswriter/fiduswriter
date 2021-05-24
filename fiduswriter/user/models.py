@@ -86,8 +86,8 @@ class User(AbstractUser):
 
 
 class UserInvite(models.Model):
-    id = models.UUIDField(
-        primary_key=True,
+    key = models.UUIDField(
+        unique=True,
         default=uuid.uuid4,
         editable=False,
     )

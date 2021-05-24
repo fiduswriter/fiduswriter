@@ -308,7 +308,7 @@ def list_contacts(request):
             'username': user.get_username(),
             'email': user.email,
             'avatar': user.avatar_url,
-            'is_invite': False,
+            'type': 'user',
         }
         response['contacts'].append(contact)
     for invite in request.user.invites.all():
@@ -318,7 +318,7 @@ def list_contacts(request):
             'username': invite.username,
             'email': invite.email,
             'avatar': invite.avatar_url,
-            'is_invite': True,
+            'type': 'invite',
         }
         response['contacts'].append(contact)
     return JsonResponse(
@@ -377,11 +377,12 @@ def add_contacts(request):
             by=request.user,
         )
         request.user.invites.add(invite)
-        response['contact_invite'] = {
+        response['contact'] = {
             'id': invite.pk,
             'name': invite.username,
             'email': invite.email,
             'avatar': invite.avatar_url,
+            'type': 'invite',
         }
         status = 201
     return JsonResponse(

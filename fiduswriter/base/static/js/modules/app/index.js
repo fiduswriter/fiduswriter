@@ -111,7 +111,7 @@ export class App {
                     return returnValue
                 },
                 dbTables: {
-                    "contacts": {
+                    "data": {
                         keyPath: "id"
                     }
                 }

@@ -10,6 +10,11 @@ export const contactTemplate = ({contacts}) =>
             <td width="350">
                 <span>${contact.avatar.html}</span>
                 ${escapeText(contact.name)}
+                ${
+                    contact.type === 'invite' ?
+                    `&nbsp;(${gettext('Invitation')})</i>` :
+                    ''
+                }
             </td>
             <td width="350">
                 ${escapeText(contact.email)}

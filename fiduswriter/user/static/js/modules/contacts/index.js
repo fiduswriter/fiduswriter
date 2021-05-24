@@ -1,3 +1,4 @@
+import deepEqual from "fast-deep-equal"
 import {contactTemplate} from "./templates"
 import {DeleteContactDialog} from "./delete_dialog"
 import {postJson, addAlert, OverviewMenuView, findTarget, whenReady, baseBodyTemplate, setDocTitle, DatatableBulk} from "../common"
@@ -55,22 +56,23 @@ export class ContactsOverview {
     }
 
     getList() {
+        const cachedPromise = this.showCached()
         if (this.app.isOffline()) {
-            return this.showCached()
+            return cachedPromise
         }
         return postJson('/api/user/contacts/list/').then(
             ({json}) => {
-                // Update data in the indexed DB
-                this.app.indexedDB.clearData("user_contacts").then(
-                    this.app.indexedDB.insertData("user_contacts", json.contacts)
-                )
-                this.dom.querySelector('#team-table tbody').innerHTML += contactTemplate({contacts: json.contacts})
+                return cachedPromise.then(oldJson => {
+                    if (!deepEqual(json, oldJson)) {
+                        this.updateIndexedDB(json)
+                        this.initializeView(json)
+                    }
+                })
+
             }
         ).catch(
             error => {
-                if (this.app.isOffline()) {
-                    return this.showCached()
-                } else {
+                if (!this.app.isOffline()) {
                     addAlert('error', gettext('Could not obtain contacts list'))
                     throw (error)
                 }
@@ -78,10 +80,39 @@ export class ContactsOverview {
         )
     }
 
+    initializeView(json) {
+        this.dom.querySelector('#team-table tbody').innerHTML += contactTemplate({contacts: json.contacts})
+        return json
+    }
+
     showCached() {
-        return this.app.indexedDB.readAllData("user_contacts").then(response => {
-            this.dom.querySelector('#team-table tbody').innerHTML += contactTemplate({contacts: response})
+        return this.loaddatafromIndexedDB().then(json => {
+            if (!json) {
+                return
+            }
+            return this.initializeView(json)
         })
+    }
+
+    loaddatafromIndexedDB() {
+        return this.app.indexedDB.readAllData("user_data").then(
+            response => {
+                if (!response.length) {
+                    return false
+                }
+                const data = response[0]
+                delete data.id
+                return data
+            }
+        )
+
+    }
+
+    updateIndexedDB(json) {
+        // Update data in the indexed DB
+        this.app.indexedDB.clearData("user_data").then(
+            this.app.indexedDB.insertData("user_data", json)
+        )
     }
 
     bind() {

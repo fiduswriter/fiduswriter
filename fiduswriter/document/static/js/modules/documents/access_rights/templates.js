@@ -33,9 +33,16 @@ export const accessRightOverviewTemplate = ({contacts, collaborators, invites}) 
 export const contactsTemplate = ({contacts}) =>
     contacts.map(contact =>
         `<tr>
-            <td width="337" data-id="${contact.id}" class="fw-checkable fw-checkable-td">
+            <td width="337" data-id="${contact.id}" data-type="${contact.type}" class="fw-checkable fw-checkable-td">
                 <span>${contact.avatar.html}</span>
-                <span class="fw-inline">${escapeText(contact.name)}</span>
+                <span class="fw-inline">
+                    ${escapeText(contact.name)}
+                    ${
+                        contact.type === 'invite' ?
+                        `&nbsp;(${gettext('Invitation')})</i>` :
+                        ''
+                    }
+                </span>
             </td>
         </tr>`
     ).join('')

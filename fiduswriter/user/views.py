@@ -374,7 +374,7 @@ def add_contacts(request):
         invite = UserInvite.objects.create(
             username=user_string,
             email=email,
-            by=request.user.id,
+            by=request.user,
         )
         request.user.invites.add(invite)
         response['contact_invite'] = {

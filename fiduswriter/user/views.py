@@ -1,4 +1,5 @@
 import json
+import re
 
 from django.http import JsonResponse
 from django.contrib.auth import logout, update_session_auth_hash
@@ -11,6 +12,7 @@ from django.contrib.auth import get_user_model
 from base.decorators import ajax_required
 from .forms import UserForm
 from document.models import AccessRight, AccessRightInvite
+from .models import UserInvite
 
 from allauth.account.models import (
     EmailAddress,
@@ -305,13 +307,29 @@ def list_contacts(request):
             'name': user.readable_name,
             'username': user.get_username(),
             'email': user.email,
-            'avatar': user.avatar_url
+            'avatar': user.avatar_url,
+            'is_invite': False,
+        }
+        response['contacts'].append(contact)
+    for invite in request.user.invites.all():
+        contact = {
+            'id': invite.id,
+            'name': invite.username,
+            'username': invite.username,
+            'email': invite.email,
+            'avatar': invite.avatar_url,
+            'is_invite': True,
         }
         response['contacts'].append(contact)
     return JsonResponse(
         response,
         status=status
     )
+
+
+# Source: https://www.c-sharpcorner.com/article/
+# how-to-validate-an-email-address-in-python/
+email_regex = re.compile(r"^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$")
 
 
 @login_required
@@ -322,43 +340,50 @@ def add_contacts(request):
     Add a user as a contact of the current user
     """
     response = {}
-    new_contact = False
+    contact_user = False
+    errored = False
     status = 202
     user_string = request.POST['user_string']
-    if "@" in user_string and "." in user_string:
+    User = get_user_model()
+    contact_user = User.objects.filter(username=user_string).first()
+    if contact_user:
+        email = contact_user.email
+    elif email_regex.search(user_string):
+        email = user_string
         email_address = EmailAddress.objects.filter(
             email=user_string
         ).first()
         if email_address:
-            new_contact = email_address.user
-    else:
-        User = get_user_model()
-        user = User.objects.filter(username=user_string).first()
-        if user:
-            new_contact = user
-    if new_contact:
-        if new_contact.pk is request.user.pk:
+            contact_user = email_address.user
+    if contact_user:
+        if contact_user.pk is request.user.pk:
             # 'You cannot add yourself to your contacts!'
             response['error'] = 1
+            errored = True
         elif request.user.contacts.filter(
-            id=new_contact.id
+            id=contact_user.id
         ).first():
             # 'This person is already in your contacts!'
             response['error'] = 2
-        else:
-            request.user.contacts.add(new_contact)
-            the_avatar = new_contact.avatar_url
-            response['contact'] = {
-                'id': new_contact.pk,
-                'name': new_contact.username,
-                'email': new_contact.email,
-                'avatar': the_avatar
-            }
-            status = 201
-    else:
-        # 'User cannot be found'
+            errored = True
+    elif not email:
+        # 'Invalid email!'
         response['error'] = 3
-
+        errored = True
+    if not errored:
+        invite = UserInvite.objects.create(
+            username=user_string,
+            email=email,
+            by=request.user.id,
+        )
+        request.user.invites.add(invite)
+        response['contact_invite'] = {
+            'id': invite.pk,
+            'name': invite.username,
+            'email': invite.email,
+            'avatar': invite.avatar_url,
+        }
+        status = 201
     return JsonResponse(
         response,
         status=status

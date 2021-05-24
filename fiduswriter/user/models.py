@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 from django.utils.translation import ugettext as _
 from django.contrib.contenttypes.fields import GenericRelation
@@ -6,7 +8,7 @@ from django.core.files import File
 from avatar.utils import get_default_avatar_url
 
 
-def string_to_color(username):
+def auto_avatar(username):
     hash = 0
     for ch in username:
         hash = ord(ch) + ((hash << 5) - hash)
@@ -15,7 +17,20 @@ def string_to_color(username):
     g = str((hash >> (1 * 8)) & 255)
     b = str((hash >> (2 * 8)) & 255)
 
-    return 'rgb(' + r + ',' + g + ',' + b + ')'
+    cl = 'rgb(' + r + ',' + g + ',' + b + ')'
+    return {
+        'url': get_default_avatar_url(),
+        'uploaded': False,
+        'html': (
+            '<span class="fw-string-avatar" '
+            'style="background-color: ' +
+            cl +
+            ';">' +
+            '<span>' +
+            username[0] +
+            '</span></span>'
+        )
+    }
 
 
 class User(AbstractUser):
@@ -32,7 +47,7 @@ class User(AbstractUser):
         size = 80
         # We use our own method to find the avatar to instead of
         # "get_primary_avatar" as this way we can minimize the reading from
-        # disk and set a default thumbnail in case we could not create on.
+        # disk and set a default thumbnail in case we could not create one.
         # See https://github.com/grantmcconnaughey/django-avatar/pull/187
         avatar = self.avatar_set.order_by("-primary", "-date_uploaded").first()
         if avatar:
@@ -60,20 +75,7 @@ class User(AbstractUser):
                 )
             }
         else:
-            cl = string_to_color(self.username)
-            return {
-                'url': get_default_avatar_url(),
-                'uploaded': False,
-                'html': (
-                    '<span class="fw-string-avatar" '
-                    'style="background-color: ' +
-                    cl +
-                    ';">' +
-                    '<span>' +
-                    self.username[0] +
-                    '</span></span>'
-                )
-            }
+            return auto_avatar(self.username)
 
     @property
     def readable_name(self):
@@ -81,6 +83,33 @@ class User(AbstractUser):
         if readable_name == '':
             readable_name = self.username
         return readable_name
+
+
+class UserInvite(models.Model):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+    email = models.EmailField(_('email address'))
+    username = models.CharField(
+        max_length=150,
+    )
+    by = models.ForeignKey(
+        User,
+        related_name='invites',
+        on_delete=models.CASCADE,
+    )
+    document_rights = GenericRelation(
+        'document.AccessRight',
+        content_type_field='holder_type',
+        object_id_field='holder_id',
+        related_query_name="userinvite"
+    )
+
+    @property
+    def avatar_url(self):
+        return auto_avatar(self.username)
 
 
 class LoginAs(models.Model):

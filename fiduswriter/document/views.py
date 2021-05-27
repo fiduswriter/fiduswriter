@@ -17,7 +17,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import get_user_model
 
 from document.models import Document, AccessRight, DocumentRevision, \
-    DocumentTemplate, AccessRightInvite, CAN_UPDATE_DOCUMENT, \
+    DocumentTemplate, CAN_UPDATE_DOCUMENT, \
     CAN_COMMUNICATE, FW_DOCUMENT_VERSION
 from usermedia.models import DocumentImage, Image
 from bibliography.models import Entry
@@ -26,6 +26,7 @@ from bibliography.views import serializer
 from style.models import DocumentStyle
 from base.html_email import html_email
 from base.decorators import ajax_required
+from user.models import UserInvite
 
 
 @login_required
@@ -134,29 +135,22 @@ def get_access_rights(request):
     response = {}
     status = 200
     ar_qs = AccessRight.objects.filter(document__owner=request.user)
-    in_qs = AccessRightInvite.objects.filter(document__owner=request.user)
     doc_ids = request.POST.getlist('document_ids[]')
     if len(doc_ids) > 0:
         ar_qs = ar_qs.filter(document_id__in=doc_ids)
-        in_qs = in_qs.filter(document_id__in=doc_ids)
     access_rights = []
     for ar in ar_qs:
         access_rights.append({
             'document_id': ar.document.id,
-            'user_id': ar.holder_id,
-            'user_name': ar.holder_obj.readable_name,
             'rights': ar.rights,
-            'avatar': ar.holder_obj.avatar_url
+            'holder': {
+                'id': ar.holder_id,
+                'type': ar.holder_type.model,
+                'name': ar.holder_obj.readable_name,
+                'avatar': ar.holder_obj.avatar_url
+            }
         })
     response['access_rights'] = access_rights
-    invites = []
-    for inv in in_qs:
-        invites.append({
-            'document_id': inv.document.id,
-            'email': inv.email,
-            'rights': inv.rights
-        })
-    response['invites'] = invites
     return JsonResponse(
         response,
         status=status
@@ -172,7 +166,6 @@ def save_access_rights(request):
     response = {}
     doc_ids = json_decode(request.POST['document_ids'])
     rights = json_decode(request.POST['access_rights'])
-    invites = json_decode(request.POST['invites'])
     for doc_id in doc_ids:
         doc = Document.objects.filter(
             pk=doc_id,
@@ -181,25 +174,26 @@ def save_access_rights(request):
         if not doc:
             continue
         for right in rights:
+            holder_selector = right['holder']['type'] + '__id'
             if right['rights'] == 'delete':
                 # Status 'delete' means the access right is marked for
                 # deletion.
-                AccessRight.objects.filter(
-                    document_id=doc_id,
-                    user__id=right['user_id'],
-                ).delete()
+                AccessRight.objects.filter(**{
+                    'document_id': doc_id,
+                    holder_selector: right['holder']['id']
+                }).delete()
             else:
-                access_right = AccessRight.objects.filter(
-                    document_id=doc_id,
-                    user__id=right['user_id']
-                ).first()
+                access_right = AccessRight.objects.filter(**{
+                    'document_id': doc_id,
+                    holder_selector: right['holder']['id']
+                }).first()
                 if access_right:
                     if access_right.rights != right['rights']:
                         access_right.rights = right['rights']
                         send_share_notification(
                             request,
                             doc_id,
-                            right['user_id'],
+                            right['holder']['id'],
                             right['rights'],
                             True
                         )
@@ -208,63 +202,69 @@ def save_access_rights(request):
                     path = '/' + doc.path.split('/').pop()
                     if len(path) == 1:
                         path = ''
-                    user = User.objects.get(
-                        id=right['user_id']
-                    )
+                    if right['holder']['type'] == 'userinvite':
+                        holder = UserInvite.objects.get(
+                            id=right['holder']['id']
+                        )
+                    else:
+                        holder = User.objects.get(
+                            id=right['holder']['id']
+                        )
                     access_right = AccessRight.objects.create(
                         document_id=doc_id,
-                        holder_obj=user,
+                        holder_obj=holder,
                         rights=right['rights'],
                         path=path
                     )
-                    send_share_notification(
-                        request,
-                        doc_id,
-                        right['user_id'],
-                        right['rights'],
-                        False
-                    )
-                access_right.save()
-        for invite in invites:
-            if invite['rights'] == 'delete':
-                # Status 'delete' means the invite is marked for
-                # deletion.
-                AccessRightInvite.objects.filter(
-                    document_id=doc_id,
-                    email=invite['email']
-                ).delete()
-            else:
-                old_invite = AccessRightInvite.objects.filter(
-                    document_id=doc_id,
-                    email=invite['email']
-                ).first()
-                if old_invite:
-                    if old_invite.rights != invite['rights']:
-                        old_invite.rights = invite['rights']
-                        old_invite.save()
-                        send_invite_notification(
+                    if right['holder']['id'] == 'user':
+                        send_share_notification(
                             request,
                             doc_id,
-                            invite['email'],
-                            invite['rights'],
-                            old_invite,
-                            True
+                            right['holder']['id'],
+                            right['rights'],
+                            False
                         )
-                else:
-                    new_invite = AccessRightInvite.objects.create(
-                        document_id=doc_id,
-                        email=invite['email'],
-                        rights=invite['rights']
-                    )
-                    new_invite.save()
-                    send_invite_notification(
-                        request,
-                        doc_id,
-                        invite['email'],
-                        invite['rights'],
-                        new_invite,
-                        False
-                    )
+                access_right.save()
+        # for invite in invites:
+        #     if invite['rights'] == 'delete':
+        #         # Status 'delete' means the invite is marked for
+        #         # deletion.
+        #         AccessRightInvite.objects.filter(
+        #             document_id=doc_id,
+        #             email=invite['email']
+        #         ).delete()
+        #     else:
+        #         old_invite = AccessRightInvite.objects.filter(
+        #             document_id=doc_id,
+        #             email=invite['email']
+        #         ).first()
+        #         if old_invite:
+        #             if old_invite.rights != invite['rights']:
+        #                 old_invite.rights = invite['rights']
+        #                 old_invite.save()
+        #                 send_invite_notification(
+        #                     request,
+        #                     doc_id,
+        #                     invite['email'],
+        #                     invite['rights'],
+        #                     old_invite,
+        #                     True
+        #                 )
+        #         else:
+        #             new_invite = AccessRightInvite.objects.create(
+        #                 document_id=doc_id,
+        #                 email=invite['email'],
+        #                 rights=invite['rights']
+        #             )
+        #             new_invite.save()
+        #             send_invite_notification(
+        #                 request,
+        #                 doc_id,
+        #                 invite['email'],
+        #                 invite['rights'],
+        #                 new_invite,
+        #                 False
+        #             )
     status = 201
     return JsonResponse(
         response,
@@ -304,23 +304,23 @@ def apply_invite(inv, user):
     inv.delete()
 
 
-@login_required
-@ajax_required
-@require_POST
-def invite(request):
-    response = {}
-    status = 200
-    id = int(request.POST['id'])
-    inv = AccessRightInvite.objects.filter(id=id).first()
-    if inv:
-        response['redirect'] = inv.document.get_absolute_url()
-        apply_invite(inv, request.user)
-    else:
-        response['redirect'] = ''
-    return JsonResponse(
-        response,
-        status=status
-    )
+# @login_required
+# @ajax_required
+# @require_POST
+# def invite(request):
+#     response = {}
+#     status = 200
+#     id = int(request.POST['id'])
+#     inv = AccessRightInvite.objects.filter(id=id).first()
+#     if inv:
+#         response['redirect'] = inv.document.get_absolute_url()
+#         apply_invite(inv, request.user)
+#     else:
+#         response['redirect'] = ''
+#     return JsonResponse(
+#         response,
+#         status=status
+#     )
 
 
 @login_required

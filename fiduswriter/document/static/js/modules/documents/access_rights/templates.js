@@ -1,7 +1,7 @@
 import {escapeText} from "../../common"
 
 /** The access rights dialogue template */
-export const accessRightOverviewTemplate = ({contacts, collaborators, invites}) =>
+export const accessRightOverviewTemplate = ({contacts, collaborators}) =>
     `<div id="my-contacts" class="fw-ar-container">
         <h3 class="fw-green-title">${gettext("My contacts")}</h3>
         <table class="fw-data-table">
@@ -24,7 +24,6 @@ export const accessRightOverviewTemplate = ({contacts, collaborators, invites}) 
             </tr></thead>
             <tbody class="fw-data-table-body fw-small">
                 ${collaboratorsTemplate({collaborators})}
-                ${invitesTemplate({invites})}
             </tbody>
         </table>
     </div>`
@@ -36,12 +35,13 @@ export const contactsTemplate = ({contacts}) =>
             <td width="337" data-id="${contact.id}" data-type="${contact.type}" class="fw-checkable fw-checkable-td">
                 <span>${contact.avatar.html}</span>
                 <span class="fw-inline">
+                ${
+    contact.type === 'userinvite' ?
+        `${gettext('Invite')}:&nbsp;` :
+        ''
+}
                     ${escapeText(contact.name)}
-                    ${
-                        contact.type === 'invite' ?
-                        `&nbsp;(${gettext('Invitation')})</i>` :
-                        ''
-                    }
+
                 </span>
             </td>
         </tr>`
@@ -50,11 +50,16 @@ export const contactsTemplate = ({contacts}) =>
 /** The template for the right hand side list of users (the collaborators of the current document) of the access rights dialogue. */
 export const collaboratorsTemplate = ({collaborators}) =>
     collaborators.map(collaborator =>
-        `<tr id="collaborator-${collaborator.user_id}" data-id="${collaborator.user_id}"
+        `<tr id="collaborator-${collaborator.holder.type}-${collaborator.holder.id}"
+    data-type="${collaborator.holder.type}" data-id="${collaborator.holder.id}"
     class="collaborator-tr" data-rights="${collaborator.rights}">
         <td width="215">
-            <span>${collaborator.avatar.html}</span>
-            <span class="fw-inline">${escapeText(collaborator.user_name)}</span>
+            <span>${collaborator.holder.avatar.html}</span>
+            <span class="fw-inline">${
+    collaborator.holder.type === 'userinvite' ?
+        `${gettext('Invite')}: ` :
+        ''
+}${escapeText(collaborator.holder.name)}</span>
         </td>
         <td width="50" align="center">
             <div class="fw-inline edit-right-wrapper">
@@ -68,27 +73,4 @@ export const collaboratorsTemplate = ({collaborators}) =>
             </span>
         </td>
     </tr>`
-    ).join('')
-
-
-/** The template for the right hand side list of users (the invites of the current document) of the access rights dialogue. */
-export const invitesTemplate = ({invites}) =>
-    invites.map(invite =>
-        `<tr data-email="${escapeText(invite.email)}"
-        class="invite-tr" data-rights="${invite.rights}">
-            <td width="215">
-                <span class="fw-inline"><em>${gettext('Invite')}: ${escapeText(invite.email)}</em></span>
-            </td>
-            <td width="50" align="center">
-                <div class="fw-inline edit-right-wrapper">
-                    <i class="icon-access-right icon-access-${invite.rights}"></i>
-                    <i class="fa fa-caret-down edit-right"></i>
-                </div>
-            </td>
-            <td width="50" align="center">
-                <span class="delete-collaborator fw-inline" data-rights="delete">
-                    <i class="fas fa-trash-alt fw-link-text"></i>
-                </span>
-            </td>
-        </tr>`
     ).join('')

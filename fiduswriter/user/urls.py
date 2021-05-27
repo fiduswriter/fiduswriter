@@ -13,9 +13,9 @@ urlpatterns = [
         views.password_change,
         name="password_change"
     ),
-    url('^emailadd/$', views.add_email, name="add_email"),
-    url('^emaildelete/$', views.delete_email, name="delete_email"),
-    url('^emailprimary/$', views.primary_email, name="primary_email"),
+    url('^email/add/$', views.add_email, name="add_email"),
+    url('^email/delete/$', views.delete_email, name="delete_email"),
+    url('^email/primary/$', views.primary_email, name="primary_email"),
 
     url(
         '^socialaccountdelete/$',
@@ -32,14 +32,14 @@ urlpatterns = [
         name='list_contacts'
     ),
     url(
-        '^contacts/add',
+        '^contacts/add/$',
         views.add_contacts,
         name='add_contacts'
     ),
     url(
-        '^contacts/remove',
-        views.remove_contacts,
-        name='remove_contacts'
+        '^contacts/delete/$',
+        views.delete_contacts,
+        name='delete_contacts'
     ),
 
     # User avatar handling

@@ -1,5 +1,4 @@
 import json
-import re
 
 from django.http import JsonResponse
 from django.contrib.auth import logout, update_session_auth_hash
@@ -8,10 +7,12 @@ from django.conf import settings
 from django.shortcuts import HttpResponseRedirect
 from django.views.decorators.http import require_POST
 from django.contrib.auth import get_user_model
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 
 from base.decorators import ajax_required
 from .forms import UserForm
-from document.models import AccessRight, AccessRightInvite
+from document.models import AccessRight
 from .models import UserInvite
 
 from allauth.account.models import (
@@ -31,7 +32,7 @@ from avatar import views as avatarviews
 from avatar.forms import UploadAvatarForm
 from avatar.signals import avatar_updated
 
-from document.views import apply_invite
+# from document.views import apply_invite
 
 
 @login_required
@@ -318,7 +319,7 @@ def list_contacts(request):
             'username': invite.username,
             'email': invite.email,
             'avatar': invite.avatar_url,
-            'type': 'invite',
+            'type': 'userinvite',
         }
         response['contacts'].append(contact)
     return JsonResponse(
@@ -327,9 +328,12 @@ def list_contacts(request):
     )
 
 
-# Source: https://www.c-sharpcorner.com/article/
-# how-to-validate-an-email-address-in-python/
-email_regex = re.compile(r"^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$")
+def is_email(string):
+    try:
+        validate_email(string)
+        return True
+    except ValidationError:
+        return False
 
 
 @login_required
@@ -341,6 +345,7 @@ def add_contacts(request):
     """
     response = {}
     contact_user = False
+    email = False
     errored = False
     status = 202
     user_string = request.POST['user_string']
@@ -348,7 +353,7 @@ def add_contacts(request):
     contact_user = User.objects.filter(username=user_string).first()
     if contact_user:
         email = contact_user.email
-    elif email_regex.search(user_string):
+    elif is_email(user_string):
         email = user_string
         email_address = EmailAddress.objects.filter(
             email=user_string
@@ -382,7 +387,7 @@ def add_contacts(request):
             'name': invite.username,
             'email': invite.email,
             'avatar': invite.avatar_url,
-            'type': 'invite',
+            'type': 'userinvite',
         }
         status = 201
     return JsonResponse(
@@ -394,26 +399,36 @@ def add_contacts(request):
 @login_required
 @ajax_required
 @require_POST
-def remove_contacts(request):
+def delete_contacts(request):
     """
-    Remove a contact
+    Delete a contact
     """
     response = {}
     former_contacts = request.POST.getlist('contacts[]')
     for former_contact in former_contacts:
-        former_contact = int(former_contact)
-        # Revoke all permissions given to this user
-        AccessRight.objects.filter(
-            user__id=former_contact,
-            document__owner=request.user
-        ).delete()
-        # Revoke all permissions received from this user
-        AccessRight.objects.filter(
-            user=request.user,
-            document__owner_id=former_contact
-        ).delete()
-        # Delete the user from the contacts
-        request.user.contacts.filter(id=former_contact).delete()
+        contact_type = former_contact[0]
+        former_contact_id = int(former_contact[1:])
+        if contact_type == 'u':
+            # Revoke all permissions given to this user
+            AccessRight.objects.filter(
+                user__id=former_contact_id,
+                document__owner=request.user
+            ).delete()
+            # Revoke all permissions received from this user
+            AccessRight.objects.filter(
+                user=request.user,
+                document__owner_id=former_contact
+            ).delete()
+            # Delete the user from the contacts
+            request.user.contacts.filter(id=former_contact).delete()
+        elif contact_type == 'i':
+            # Revoke all permissions given to this invite
+            AccessRight.objects.filter(
+                userinvite__id=former_contact_id,
+                document__owner=request.user
+            ).delete()
+            # Delete the user from the invites
+            request.user.invites.filter(id=former_contact).delete()
     status = 200
     return JsonResponse(
         response,
@@ -465,17 +480,17 @@ class FidusSignupView(SignupView):
         ret = super().form_valid(form)
         if ret.status_code > 399:
             return ret
-        if 'invite_id' in self.request.POST:
-            invite_id = int(self.request.POST['invite_id'])
-            inv = AccessRightInvite.objects.filter(id=invite_id).first()
-            if inv:
-                apply_invite(inv, self.user)
-        else:
-            invites = AccessRightInvite.objects.filter(
-                email=self.user.email
-            )
-            for inv in invites:
-                apply_invite(inv, self.user)
+        # if 'invite_id' in self.request.POST:
+        #     invite_id = int(self.request.POST['invite_id'])
+        #     inv = AccessRightInvite.objects.filter(id=invite_id).first()
+        #     if inv:
+        #         apply_invite(inv, self.user)
+        # else:
+        #     invites = AccessRightInvite.objects.filter(
+        #         email=self.user.email
+        #     )
+        #     for inv in invites:
+        #         apply_invite(inv, self.user)
         return ret
 
 

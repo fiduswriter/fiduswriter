@@ -111,6 +111,10 @@ class UserInvite(models.Model):
     def avatar_url(self):
         return auto_avatar(self.username)
 
+    @property
+    def readable_name(self):
+        return self.username
+
 
 class LoginAs(models.Model):
 

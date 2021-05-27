@@ -9,8 +9,7 @@ from django.dispatch import receiver
 from avatar.models import Avatar
 from allauth.account.signals import user_signed_up
 
-from document.views import apply_invite
-from document.models import AccessRightInvite
+# from document.views import apply_invite
 
 # This file is split of from django-allauth and is licensed as:
 
@@ -85,8 +84,3 @@ def on_user_signed_up(sender, request, *args, **kwargs):
         copy_avatar(request,
                     sociallogin.account.user,
                     sociallogin.account)
-        invites = AccessRightInvite.objects.filter(
-            email=sociallogin.account.user.email
-        )
-        for inv in invites:
-            apply_invite(inv, sociallogin.account.user)

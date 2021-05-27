@@ -227,7 +227,7 @@ class WebSocket(BaseWebSocketHandler):
                 'name': contact.username,
                 'username': contact.username,
                 'avatar': contact.avatar_url,
-                'type': 'invite'
+                'type': 'userinvite'
             }
             response['doc_info']['owner']['contacts'].append(contact_object)
         response['doc_info']['session_id'] = self.id

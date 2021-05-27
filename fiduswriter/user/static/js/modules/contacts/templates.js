@@ -5,16 +5,16 @@ export const contactTemplate = ({contacts}) =>
     contacts.map(contact =>
         `<tr id="user-${contact.id}">
             <td width="30">
-                <input type="checkbox" class="entry-select fw-check" id="contact-${contact.id}" data-id="${contact.id}"/><label for="contact-${contact.id}"></label>
+                <input type="checkbox" class="entry-select fw-check" id="contact-${contact.type}-${contact.id}" data-type="${contact.type}" data-id="${contact.id}"/><label for="contact-${contact.type}-${contact.id}"></label>
             </td>
             <td width="350">
                 <span>${contact.avatar.html}</span>
-                ${escapeText(contact.name)}
                 ${
-                    contact.type === 'invite' ?
-                    `&nbsp;(${gettext('Invitation')})</i>` :
-                    ''
-                }
+    contact.type === 'userinvite' ?
+        `${gettext('Invite')}:&nbsp;` :
+        ''
+}
+                ${escapeText(contact.name)}
             </td>
             <td width="350">
                 ${escapeText(contact.email)}

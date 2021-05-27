@@ -14,7 +14,7 @@ export class DeleteContactDialog {
                 click: () => {
                     const ids = this.contactIds
                     postJson(
-                        '/api/user/contacts/remove',
+                        '/api/user/contacts/delete/',
                         {
                             'contacts': ids
                         }

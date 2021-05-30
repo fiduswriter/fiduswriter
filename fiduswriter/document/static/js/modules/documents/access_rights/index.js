@@ -90,10 +90,7 @@ export class DocumentAccessRightsDialog {
                 text: (settings_REGISTRATION_OPEN || settings_SOCIALACCOUNT_OPEN) ? gettext('Add contact or invite new user') : gettext('Add contact'),
                 classes: "fw-light fw-add-button",
                 click: () => {
-                    const dialog = new AddContactDialog(
-                        (settings_REGISTRATION_OPEN || settings_SOCIALACCOUNT_OPEN) ? gettext('Add contact or invite new user') : gettext('Add contact'),
-                        true
-                    )
+                    const dialog = new AddContactDialog()
                     dialog.init().then(
                         contactsData => {
                             contactsData.forEach(

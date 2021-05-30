@@ -221,15 +221,18 @@ class WebSocket(BaseWebSocketHandler):
                 'type': 'user'
             }
             response['doc_info']['owner']['contacts'].append(contact_object)
-        for contact in doc_owner.invites.all():
-            contact_object = {
-                'id': contact.id,
-                'name': contact.username,
-                'username': contact.username,
-                'avatar': contact.avatar_url,
-                'type': 'userinvite'
-            }
-            response['doc_info']['owner']['contacts'].append(contact_object)
+        if self.user_info.is_owner:
+            for contact in doc_owner.invites_by.all():
+                contact_object = {
+                    'id': contact.id,
+                    'name': contact.username,
+                    'username': contact.username,
+                    'avatar': contact.avatar_url,
+                    'type': 'userinvite'
+                }
+                response['doc_info']['owner']['contacts'].append(
+                    contact_object
+                )
         response['doc_info']['session_id'] = self.id
         self.send_message(response)
 

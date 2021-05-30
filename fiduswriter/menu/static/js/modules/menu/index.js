@@ -66,8 +66,8 @@ export class SiteMenu {
                     case 'profile':
                         this.app.goTo('/user/profile/')
                         break
-                    case 'team':
-                        this.app.goTo('/user/team/')
+                    case 'contacts':
+                        this.app.goTo('/user/contacts/')
                         break
                     case 'logout':
                         post('/api/user/logout/').then(

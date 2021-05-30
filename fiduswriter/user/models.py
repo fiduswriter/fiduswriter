@@ -97,8 +97,15 @@ class UserInvite(models.Model):
     )
     by = models.ForeignKey(
         User,
-        related_name='invites',
+        related_name='invites_by',
         on_delete=models.CASCADE,
+    )
+    to = models.ForeignKey(
+        User,
+        related_name='invites_to',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True
     )
     document_rights = GenericRelation(
         'document.AccessRight',
@@ -114,6 +121,9 @@ class UserInvite(models.Model):
     @property
     def readable_name(self):
         return self.username
+
+    def get_absolute_url(self):
+        return "/contacts/%i/" % self.key
 
 
 class LoginAs(models.Model):

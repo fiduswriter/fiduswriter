@@ -102,7 +102,7 @@ export class App {
                     case "profile":
                         returnValue = new Profile(this.config)
                         break
-                    case "team":
+                    case "contacts":
                         returnValue = new ContactsOverview(this.config)
                         break
                     default:

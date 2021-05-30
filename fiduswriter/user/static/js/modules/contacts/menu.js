@@ -1,6 +1,5 @@
 import {AddContactDialog} from "./add_dialog"
 import {DeleteContactDialog} from "./delete_dialog"
-import {contactTemplate} from "./templates"
 
 export const bulkMenuModel = () => ({
     content: [
@@ -8,10 +7,18 @@ export const bulkMenuModel = () => ({
             title: gettext('Delete selected'),
             tooltip: gettext('Delete selected contacts.'),
             action: overview => {
-                const ids = overview.getSelected()
-                if (ids.length) {
-                    const dialog = new DeleteContactDialog(ids)
-                    dialog.init()
+                const selected = overview.getSelected()
+                if (selected.length) {
+                    const dialog = new DeleteContactDialog(selected)
+                    dialog.init().then(() => {
+                        overview.contacts = overview.contacts.filter(
+                            ocontact => !selected.some(
+                                scontact => scontact.id == ocontact.id &&
+                                    scontact.type == ocontact.type
+                            )
+                        )
+                        overview.initializeView()
+                    })
                 }
             },
             disabled: overview => !overview.getSelected().length
@@ -23,14 +30,12 @@ export const menuModel = () => ({
     content: [
         {
             type: 'text',
-            title: gettext('Add new contact'),
-            action: _overview => {
+            title: (settings_REGISTRATION_OPEN || settings_SOCIALACCOUNT_OPEN) ? gettext('Add contact or invite new user') : gettext('Add contact'),
+            action: overview => {
                 const dialog = new AddContactDialog()
                 dialog.init().then(contacts => {
-                    document.querySelector('#team-table tbody').insertAdjacentHTML(
-                        'beforeend',
-                        contactTemplate({contacts})
-                    )
+                    contacts.forEach(contact => overview.contacts.push(contact))
+                    overview.initializeView()
                 })
             },
             order: 0

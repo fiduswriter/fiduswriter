@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 ('key', models.UUIDField(default=uuid.uuid4, editable=False, unique=True)),
                 ('email', models.EmailField(max_length=254, verbose_name='email address')),
                 ('username', models.CharField(max_length=150)),
-                ('by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='invites', to=settings.AUTH_USER_MODEL)),
+                ('by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='invites_by', to=settings.AUTH_USER_MODEL)),
             ],
         ),
     ]

@@ -105,7 +105,7 @@ class ContactsTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         self.assertEqual(
             len(self.driver.find_elements_by_css_selector(
-                '#team-table .entry-select'
+                '#contacts-table .entry-select'
             )),
             1
         )
@@ -121,7 +121,7 @@ class ContactsTest(LiveTornadoTestCase, SeleniumHelper):
         time.sleep(1)
         self.assertEqual(
             len(self.driver.find_elements_by_css_selector(
-                '#team-table .entry-select'
+                '#contacts-table .entry-select'
             )),
             2
         )
@@ -135,12 +135,12 @@ class ContactsTest(LiveTornadoTestCase, SeleniumHelper):
         time.sleep(1)
         self.assertEqual(
             len(self.driver.find_elements_by_css_selector(
-                '#team-table .entry-select'
+                '#contacts-table .entry-select'
             )),
             1
         )
         self.driver.find_element_by_css_selector(
-            "#team-table td:nth-child(1) > label"
+            "#contacts-table td:nth-child(1) > label"
         ).click()
         self.driver.find_element_by_css_selector(
             ".dt-bulk-dropdown"
@@ -154,7 +154,7 @@ class ContactsTest(LiveTornadoTestCase, SeleniumHelper):
         time.sleep(1)
         self.assertEqual(
             len(self.driver.find_elements_by_css_selector(
-                '#team-table .entry-select'
+                '#contacts-table .entry-select'
             )),
             0
         )

@@ -2,7 +2,7 @@ import time
 import os
 import bleach
 import json
-from tornado.escape import json_decode
+
 from django.core import serializers
 from django.http import HttpResponse, JsonResponse, HttpRequest
 from django.contrib.auth.decorators import login_required
@@ -164,8 +164,8 @@ def get_access_rights(request):
 def save_access_rights(request):
     User = get_user_model()
     response = {}
-    doc_ids = json_decode(request.POST['document_ids'])
-    rights = json_decode(request.POST['access_rights'])
+    doc_ids = json.loads(request.POST['document_ids'])
+    rights = json.loads(request.POST['access_rights'])
     for doc_id in doc_ids:
         doc = Document.objects.filter(
             pk=doc_id,
@@ -525,110 +525,6 @@ def send_share_notification(request, doc_id, collaborator_id, rights, change):
     )
 
 
-def send_invite_notification(request, doc_id, email, rights, invite, change):
-    owner = request.user.readable_name
-    document = Document.objects.get(id=doc_id)
-    document_title = document.title
-    if len(document_title) == 0:
-        document_title = _('Untitled')
-    link = HttpRequest.build_absolute_uri(request, invite.get_absolute_url())
-    if change:
-        message_text = _(
-            ('Hey %(email)s,\nas we told you previously, %(owner)s has '
-             'invited you to join Fidus Writer and shared the document '
-             '\'%(document_title)s\' with you. '
-             '\n%(owner)s has now changed your access rights to %(rights)s.'
-             '\nAccess the document through this link: %(link)s')
-        ) % {
-            'owner': owner,
-            'rights': rights,
-            'email': email,
-            'link': link,
-            'document_title': document_title
-        }
-        body_html_intro = _(
-            ('<p>Hey %(email)s,<br>as we told you previously, '
-             '%(owner)s has invited you to join Fidus Writer and shared the '
-             '\'%(document_title)s\' with you.</p>'
-             '<p>%(owner)s has now changed your access rights to %(rights)s. '
-             '</p>')
-        ) % {
-            'owner': owner,
-            'rights': rights,
-            'email': email,
-            'document_title': document_title
-        }
-    else:
-        message_text = _(
-            ('Hey %(email)s,\n%(owner)s has invited you to Fidus '
-             ' Writer, shared the document \'%(document_title)s\' with you, '
-             'and given you %(rights)s access rights. '
-             '\nAccess the document through this link: %(link)s')
-        ) % {
-            'owner': owner,
-            'rights': rights,
-            'email': email,
-            'link': link,
-            'document_title': document_title
-        }
-        body_html_intro = _(
-            ('<p>Hey %(email)s,<br>%(owner)s has invited you to '
-             'Fidus Writer, shared the document \'%(document_title)s\' with '
-             'you, and given you %(rights)s access rights.</p>')
-        ) % {
-            'owner': owner,
-            'rights': rights,
-            'email': email,
-            'document_title': document_title
-        }
-
-    body_html = (
-        '<h1>%(document_title)s %(shared)s</h1>'
-        '%(body_html_intro)s'
-        '<table>'
-        '<tr><td>'
-        '%(Document)s'
-        '</td><td>'
-        '<b>%(document_title)s</b>'
-        '</td></tr>'
-        '<tr><td>'
-        '%(Author)s'
-        '</td><td>'
-        '%(owner)s'
-        '</td></tr>'
-        '<tr><td>'
-        '%(AccessRights)s'
-        '</td><td>'
-        '%(rights)s'
-        '</td></tr>'
-        '</table>'
-        '<div class="actions"><a class="button" href="%(link)s">'
-        '%(AccessTheDocument)s'
-        '</a></div>'
-    ) % {
-        'shared': _('shared'),
-        'body_html_intro': body_html_intro,
-        'Document': _('Document'),
-        'document_title': document_title,
-        'Author': _('Author'),
-        'owner': owner,
-        'AccessRights': _('Access Rights'),
-        'rights': rights,
-        'link': link,
-        'AccessTheDocument': _('Sign up or log in and access the document')
-    }
-    send_mail(
-        _('Document shared:') +
-        ' ' +
-        document_title,
-        message_text,
-        settings.DEFAULT_FROM_EMAIL,
-        [email],
-        fail_silently=True,
-        html_message=html_email(body_html)
-    )
-
-
 @login_required
 @ajax_required
 @require_POST
@@ -705,7 +601,7 @@ def import_create(request):
                 et.save()
     if not document_template:
         title = request.POST['template_title']
-        content = json_decode(request.POST['template'])
+        content = json.loads(request.POST['template'])
         document_template = DocumentTemplate()
         document_template.title = title
         document_template.import_id = import_id

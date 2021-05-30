@@ -1,7 +1,8 @@
 import deepEqual from "fast-deep-equal"
-import {contactTemplate} from "./templates"
+import {DataTable} from "simple-datatables"
+import {deleteContactCell, displayContactType} from "./templates"
 import {DeleteContactDialog} from "./delete_dialog"
-import {postJson, addAlert, OverviewMenuView, findTarget, whenReady, baseBodyTemplate, setDocTitle, DatatableBulk} from "../common"
+import {postJson, addAlert, OverviewMenuView, findTarget, whenReady, baseBodyTemplate, setDocTitle, DatatableBulk, escapeText} from "../common"
 import {FeedbackTab} from "../feedback"
 import {SiteMenu} from "../menu"
 import {menuModel, bulkMenuModel} from "./menu"
@@ -10,6 +11,9 @@ export class ContactsOverview {
     constructor({app, user}) {
         this.app = app
         this.user = user
+
+        this.contacts = []
+        this.invites = []
     }
 
     init() {
@@ -29,20 +33,7 @@ export class ContactsOverview {
 
         this.dom = document.createElement('body')
         this.dom.innerHTML = baseBodyTemplate({
-            contents: `<div class="fw-table-wrapper">
-                <table id="team-table" class="tablesorter fw-data-table">
-                    <thead class="fw-data-table-header">
-                        <tr>
-                            <td width="30">${this.dtBulk.getHTML()}</td>
-                            <th width="350">${gettext("Contacts")}</th>
-                            <th width="350">${gettext("E-mail address")}</th>
-                            <th width="50" align="center">${gettext("Delete")}</th>
-                        </tr>
-                    </thead>
-                    <tbody class="fw-data-table-body fw-large">
-                    </tbody>
-                </table>
-            </div>`,
+            contents: '',
             user: this.user,
             hasOverview: true
         })
@@ -51,9 +42,73 @@ export class ContactsOverview {
         const feedbackTab = new FeedbackTab()
         feedbackTab.init()
 
-        this.dtBulk.init(
-            this.dom.querySelector('#team-table'))
     }
+
+    /* Initialize the overview table */
+    initTable() {
+        if (this.table) {
+            this.table.destroy()
+            this.table = false
+        }
+        const tableEl = document.createElement('table')
+        tableEl.classList.add('fw-data-table')
+        tableEl.classList.add('fw-document-table')
+        tableEl.classList.add('fw-large')
+        const contentsEl = document.querySelector('.fw-contents')
+        contentsEl.innerHTML = '' // Delete any old table
+        contentsEl.appendChild(tableEl)
+
+        this.dtBulk = new DatatableBulk(this, bulkMenuModel())
+
+        this.table = new DataTable(tableEl, {
+            paging: false,
+            scrollY: `${Math.max(window.innerHeight - 360, 100)}px`,
+            labels: {
+                noRows: gettext("No contacts available") // Message shown when there are no search results
+            },
+            layout: {
+                top: "",
+                bottom: ""
+            },
+            data: {
+                headings: [
+                    '',
+                    '',
+                    this.dtBulk.getHTML(),
+                    gettext("Name"),
+                    gettext("Type"),
+                    gettext("Email address"),
+                    '',
+                ],
+                data: this.contacts.map(contact => this.createTableRow(contact))
+            },
+            columns: [
+                {
+                    select: [0, 1],
+                    hidden: true
+                },
+                {
+                    select: [2],
+                    sortable: false
+                },
+            ],
+        })
+
+        this.dtBulk.init(this.table.table)
+    }
+
+    createTableRow(contact) {
+        return [
+            String(contact.id),
+            contact.type,
+            `<input type="checkbox" class="entry-select fw-check" id="contact-${contact.type}-${contact.id}" data-id="${contact.id}" data-type="${contact.type}"><label for="contact-${contact.type}-${contact.id}"></label`,
+            `${contact.avatar.html} ${escapeText(contact.name)}`,
+            displayContactType(contact),
+            contact.email,
+            deleteContactCell(contact)
+        ]
+    }
+
 
     getList() {
         const cachedPromise = this.showCached()
@@ -65,7 +120,8 @@ export class ContactsOverview {
                 return cachedPromise.then(oldJson => {
                     if (!deepEqual(json, oldJson)) {
                         this.updateIndexedDB(json)
-                        this.initializeView(json)
+                        this.loadData(json)
+                        this.initializeView()
                     }
                 })
 
@@ -80,17 +136,23 @@ export class ContactsOverview {
         )
     }
 
-    initializeView(json) {
-        this.dom.querySelector('#team-table tbody').innerHTML += contactTemplate({contacts: json.contacts})
-        return json
+    loadData(json) {
+        this.contacts = json.contacts
+        this.invites = json.invites
+    }
+
+    initializeView() {
+        this.initTable()
     }
 
     showCached() {
         return this.loaddatafromIndexedDB().then(json => {
             if (!json) {
-                return
+                return Promise.resolve(false)
             }
-            return this.initializeView(json)
+            this.loadData(json)
+            this.initializeView(json)
+            return json
         })
     }
 
@@ -109,9 +171,10 @@ export class ContactsOverview {
     }
 
     updateIndexedDB(json) {
-        // Update data in the indexed DB
-        this.app.indexedDB.clearData("user_data").then(
-            this.app.indexedDB.insertData("user_data", json)
+        json.id = 1
+        // Clear data if any present
+        return this.app.indexedDB.clearData("user_data").then(
+            () => this.app.indexedDB.insertData("user_data", [json])
         )
     }
 
@@ -121,8 +184,15 @@ export class ContactsOverview {
             switch (true) {
             case findTarget(event, '.delete-single-contact', el): {
                 //delete single user
-                const dialog = new DeleteContactDialog([el.target.dataset.id])
-                dialog.init()
+                const id = parseInt(el.target.dataset.id)
+                const type = el.target.dataset.type
+                const dialog = new DeleteContactDialog([{id, type}])
+                dialog.init().then(() => {
+                    this.contacts = this.contacts.filter(
+                        ocontact => ocontact.id !== id || ocontact.type !== type
+                    )
+                    this.initializeView()
+                })
                 break
             }
             default:
@@ -135,7 +205,7 @@ export class ContactsOverview {
     getSelected() {
         return Array.from(
             this.dom.querySelectorAll('.entry-select:checked:not(:disabled)')
-        ).map(el => parseInt(el.getAttribute('data-id')))
+        ).map(el => ({id: parseInt(el.dataset.id), type: el.dataset.type}))
     }
 
 

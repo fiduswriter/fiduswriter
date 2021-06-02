@@ -218,6 +218,8 @@ export class App {
             }
         ).then(
             () => this.bind()
+        ).then(
+            () => this.showNews()
         )
     }
 
@@ -259,6 +261,24 @@ export class App {
                 }
             }
         })
+    }
+
+    showNews() {
+        if (this.config.user.waiting_invites) {
+            showSystemMessage(
+                gettext('Other users have requested to connect with you. Go to the contacts page to accept their invites.'),
+                [
+                    {
+                        text: gettext('Go to contacts'),
+                        classes: 'fw-dark',
+                        click: _event => {
+                            return this.goTo('/user/contacts/')
+                        }
+                    },
+                    {type: 'close'}
+                ]
+            )
+        }
     }
 
     connectWs() {

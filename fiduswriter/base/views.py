@@ -77,6 +77,8 @@ def configuration(request):
             except KeyError:
                 # Social account provider has been removed.
                 pass
+        response['user']['waiting_invites'] = \
+            request.user.invites_to.exists()
 
     else:
         response['user'] = {

@@ -7,6 +7,8 @@ from django.contrib.auth.models import AbstractUser
 from django.core.files import File
 from avatar.utils import get_default_avatar_url
 
+from document.models import AccessRight
+
 
 def auto_avatar(username):
     hash = 0
@@ -113,6 +115,7 @@ class UserInvite(models.Model):
         object_id_field='holder_id',
         related_query_name="userinvite"
     )
+    _apply = False
 
     @property
     def avatar_url(self):
@@ -130,9 +133,31 @@ class UserInvite(models.Model):
             # Cannot apply
             return
         for right in self.document_rights.all():
-            right.holder = self.to
-            right.save()
-        self.by.contacts.add(self.to)
+            old_ar = AccessRight.objects.filter(
+                holder=self.to,
+                document=right.document
+            ).first()
+            if old_ar:
+                # If the user already has rights, we should only be upgrading
+                # them, not downgrade. Unfortuantely it is not easy to
+                # say how each right compares. So unless the invite gives read
+                # access, or the user already has write access, we change to
+                # the access right of the invite.
+                if right.rights == 'read':
+                    pass
+                elif old_ar.rights == 'write':
+                    pass
+                else:
+                    old_ar.rights = self.rights
+                    old_ar.save()
+            elif right.document.owner == self.to:
+                pass
+            else:
+                right.holder = self.to
+                right.save()
+        if self.to not in list(self.by.contacts.all()):
+            self.by.contacts.add(self.to)
+        self._apply = True
         self.delete()
 
 

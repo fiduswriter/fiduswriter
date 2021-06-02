@@ -1,6 +1,7 @@
 from django.db import models
-from django.core.mail import send_mail
 from django.conf import settings
+
+from . import emails
 
 
 class Feedback(models.Model):
@@ -26,9 +27,5 @@ class Feedback(models.Model):
                 reply_to = ' (' + self.owner.email + ')'
         else:
             from_sender = 'Anonymous'
-        send_mail('Feedback from ' + from_sender + reply_to,
-                  self.message,
-                  settings.DEFAULT_FROM_EMAIL,
-                  [settings.CONTACT_EMAIL],
-                  fail_silently=True)
+        emails.send_feedback(from_sender, reply_to, self.message)
         super().save(*args, **kwargs)

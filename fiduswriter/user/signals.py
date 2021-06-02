@@ -10,7 +10,7 @@ from django.conf import settings
 from avatar.models import Avatar
 from allauth.account.signals import user_signed_up, email_confirmed
 
-from user.views import connect_invites
+from user.views import invites_connect
 
 # This file is split of from django-allauth and is licensed as:
 
@@ -85,11 +85,11 @@ def on_user_signed_up(sender, request, user, *args, **kwargs):
         copy_avatar(request,
                     sociallogin.account.user,
                     sociallogin.account)
-        connect_invites(sociallogin.account.user)
+        invites_connect(sociallogin.account.user)
     if settings.ACCOUNT_EMAIL_VERIFICATION != 'mandatory':
-        connect_invites(user)
+        invites_connect(user)
 
 
 @receiver(email_confirmed)
 def on_email_confirmed(sender, request, email_address, *args, **kwargs):
-    connect_invites(email_address.user)
+    invites_connect(email_address.user)

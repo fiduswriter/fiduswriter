@@ -125,6 +125,16 @@ class UserInvite(models.Model):
     def get_absolute_url(self):
         return "/contacts/%i/" % self.key
 
+    def apply(self):
+        if not self.to:
+            # Cannot apply
+            return
+        for right in self.document_rights.all():
+            right.holder = self.to
+            right.save()
+        self.by.contacts.add(self.to)
+        self.delete()
+
 
 class LoginAs(models.Model):
 

@@ -1,6 +1,7 @@
 import json
 
 from django.http import JsonResponse, HttpRequest
+from django.db.models import Q
 from django.contrib.auth import logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
@@ -9,14 +10,12 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth import get_user_model
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
-from django.core.mail import send_mail
-from django.utils.translation import ugettext as _
 
 from base.decorators import ajax_required
-from base.html_email import html_email
 from .forms import UserForm
 from document.models import AccessRight
 from .models import UserInvite
+from . import emails
 
 from allauth.account.models import (
     EmailAddress,
@@ -336,50 +335,6 @@ def list_contacts(request):
     )
 
 
-def send_invite_notification(request, invite):
-    sender = request.user.readable_name
-    email = invite.email
-    link = HttpRequest.build_absolute_uri(request, invite.get_absolute_url())
-    message_text = _(
-        ('Hey %(email)s,%(sender)s has invited you to connect on Fidus '
-         'Writer. '
-         '\nAccept or reject the invite through this link: %(link)s')
-    ) % {
-        'sender': sender,
-        'email': email,
-        'link': link,
-    }
-    body_html_intro = _(
-        ('<p>Hey %(email)s,<br> %(sender)s has '
-         'invited you to connect on Fidus Writer.</p>')
-    ) % {
-        'sender': sender,
-        'email': email,
-        'link': link,
-    }
-
-    body_html = (
-        '<h1>%(invite)s</h1>'
-        '%(body_html_intro)s'
-        '<div class="actions"><a class="button" href="%(link)s">'
-        '%(Accept)s'
-        '</a></div>'
-    ) % {
-        'invite': _('Invite for Fidus Writer'),
-        'body_html_intro': body_html_intro,
-        'link': link,
-        'Accept': _('Sign up/log in and accept/reject the invite')
-    }
-    send_mail(
-        _('Fidus Writer contact invite'),
-        message_text,
-        settings.DEFAULT_FROM_EMAIL,
-        [email],
-        fail_silently=True,
-        html_message=html_email(body_html)
-    )
-
-
 def is_email(string):
     try:
         validate_email(string)
@@ -391,7 +346,7 @@ def is_email(string):
 @login_required
 @ajax_required
 @require_POST
-def add_contacts(request):
+def invites_add(request):
     """
     Add a userinvite as a contact of the current user
     """
@@ -445,9 +400,16 @@ def add_contacts(request):
             by=request.user,
             to=contact_user,
         )
-        send_invite_notification(
+        sender = request.user.readable_name
+        email = invite.email
+        link = HttpRequest.build_absolute_uri(
             request,
-            invite,
+            invite.get_absolute_url()
+        )
+        emails.send_invite_notification(
+            sender,
+            email,
+            link
         )
         response['contact'] = {
             'id': invite.pk,
@@ -463,7 +425,7 @@ def add_contacts(request):
     )
 
 
-def connect_invites(user, key=None):
+def invites_connect(user, key=None):
     invites = UserInvite.objects.filter(to__isnull=True)
     if key:
         invites = invites.filter(
@@ -471,10 +433,10 @@ def connect_invites(user, key=None):
         )
     else:
         invites = invites.filter(
-            email__in=user.emailaddress_set.all(),
-            email=user.email,
+            Q(email__in=user.emailaddress_set.all()) |
+            Q(email=user.email)
         )
-    if len(invites) < 0:
+    if len(invites) == 0:
         return False
     for invite in invites:
         invite.to = user
@@ -489,11 +451,80 @@ def invite(request):
     response = {}
     status = 200
     key = request.POST['key']
-    connected = connect_invites(request.user, key)
+    connected = invites_connect(request.user, key)
     if connected:
         response['redirect'] = '/user/contacts/'
     else:
-        response['redirect'] = ''
+        response['redirect'] = '/'
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@login_required
+@ajax_required
+@require_POST
+def invites_accept(request):
+    response = {}
+    status = 200
+    invites = json.loads(request.POST['invites'])
+    response['contacts'] = []
+    for invite in invites:
+        ui = UserInvite.objects.filter(
+            id=invite['id'],
+            to=request.user
+        ).first()
+        if ui:
+            response['contacts'].append({
+                'id': ui.by.id,
+                'name': ui.by.readable_name,
+                'email': ui.by.email,
+                'avatar': ui.by.avatar_url,
+                'type': 'user',
+            })
+            link = HttpRequest.build_absolute_uri(
+                request,
+                '/user/contacts/'
+            )
+            emails.send_accept_notification(
+                ui.by.readable_name,
+                ui.by.email,
+                ui.to.readable_name,
+                link
+            )
+            ui.apply()
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@login_required
+@ajax_required
+@require_POST
+def invites_decline(request):
+    """
+    Decline an invite
+    """
+    response = {}
+    invites = json.loads(request.POST['invites'])
+    for invite in invites:
+        # Remove this invite. All connected access rights will be deleted
+        # automatically.
+        for ui in request.user.invites_to.filter(id=invite['id']):
+            link = HttpRequest.build_absolute_uri(
+                request,
+                '/user/contacts/'
+            )
+            emails.send_decline_notification(
+                ui.by.readable_name,
+                ui.by.email,
+                ui.to.readable_name,
+                link
+            )
+            ui.delete()
+    status = 200
     return JsonResponse(
         response,
         status=status
@@ -521,16 +552,21 @@ def delete_contacts(request):
                 user=request.user,
                 document__owner_id=former_contact['id']
             ).delete()
-            # Delete the user from the contacts
-            request.user.contacts.filter(id=former_contact['id']).delete()
+            # Remove the user from the contacts
+            request.user.contacts.remove(
+                request.user.contacts.filter(
+                    id=former_contact['id'],
+                    type='user'
+                )
+            )
         elif former_contact['type'] == 'userinvite':
-            # Revoke all permissions given to this invite
-            AccessRight.objects.filter(
-                userinvite__id=former_contact['id'],
-                document__owner=request.user
-            ).delete()
-            # Delete the user from the invites
+            # Delete the userinvite. All connected access rights will be
+            # deleted automatically.
             request.user.invites_by.filter(id=former_contact['id']).delete()
+        elif former_contact['type'] == 'to_userinvite':
+            # Remove this invite. All connected access rights will be deleted
+            # automatically.
+            request.user.invites_to.filter(id=former_contact['id']).delete()
     status = 200
     return JsonResponse(
         response,
@@ -584,7 +620,7 @@ class FidusSignupView(SignupView):
             return ret
         if 'invite_id' in self.request.POST:
             invite_id = self.request.POST['invite_id']
-            connect_invites(self.user, invite_id)
+            invites_connect(self.user, invite_id)
         else:
             invite_id = None
         return ret

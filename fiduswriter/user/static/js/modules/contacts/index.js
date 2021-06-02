@@ -1,7 +1,8 @@
 import deepEqual from "fast-deep-equal"
 import {DataTable} from "simple-datatables"
-import {deleteContactCell, displayContactType} from "./templates"
+import {deleteContactCell, acceptInviteCell, displayContactType} from "./templates"
 import {DeleteContactDialog} from "./delete_dialog"
+import {AcceptInviteDialog} from "./accept_invite"
 import {postJson, addAlert, OverviewMenuView, findTarget, whenReady, baseBodyTemplate, setDocTitle, DatatableBulk, escapeText} from "../common"
 import {FeedbackTab} from "../feedback"
 import {SiteMenu} from "../menu"
@@ -13,7 +14,6 @@ export class ContactsOverview {
         this.user = user
 
         this.contacts = []
-        this.invites = []
     }
 
     init() {
@@ -105,7 +105,7 @@ export class ContactsOverview {
             `${contact.avatar.html} ${escapeText(contact.name)}`,
             displayContactType(contact),
             contact.email,
-            deleteContactCell(contact)
+            contact.type === 'to_userinvite' ? acceptInviteCell(contact) : deleteContactCell(contact)
         ]
     }
 
@@ -138,7 +138,6 @@ export class ContactsOverview {
 
     loadData(json) {
         this.contacts = json.contacts
-        this.invites = json.invites
     }
 
     initializeView() {
@@ -193,6 +192,23 @@ export class ContactsOverview {
                     )
                     this.initializeView()
                 })
+                break
+            }
+            case findTarget(event, '.accept-invite', el): {
+                //delete single user
+                const id = parseInt(el.target.dataset.id)
+                const invite = this.contacts.find(contact => contact.id === id && contact.type === 'to_userinvite')
+                const dialog = new AcceptInviteDialog(
+                    [invite],
+                    contacts => this.contacts = this.contacts.concat(contacts),
+                    invites => this.contacts = this.contacts.filter(
+                        contact => !invites.find(
+                            invite => invite.type === contact.type && invite.id === contact.id
+                        )
+                    ),
+                    () => this.initializeView()
+                )
+                dialog.init()
                 break
             }
             default:

@@ -1,6 +1,6 @@
 import {postJson} from "../common"
 
-export class DocumentInvite {
+export class ContactInvite {
 
     constructor({app}, id) {
         this.app = app
@@ -20,7 +20,7 @@ export class DocumentInvite {
         }
 
         return postJson(
-            '/api/document/invite/',
+            '/api/user/invite/',
             {id: this.id}
         ).then(
             ({json}) => {

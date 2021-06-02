@@ -62,7 +62,7 @@ export class AddContactDialog  {
         }
 
         return postJson(
-            '/api/user/contacts/add/',
+            '/api/user/invites/add/',
             {
                 user_string: userString
             }

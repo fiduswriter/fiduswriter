@@ -32,16 +32,30 @@ urlpatterns = [
         name='list_contacts'
     ),
     url(
-        '^contacts/add/$',
-        views.add_contacts,
-        name='add_contacts'
-    ),
-    url(
         '^contacts/delete/$',
         views.delete_contacts,
         name='delete_contacts'
     ),
-
+    url(
+        '^invite/$',
+        views.invite,
+        name='invite'
+    ),
+    url(
+        '^invites/add/$',
+        views.invites_add,
+        name='invites_add'
+    ),
+    url(
+        '^invites/accept/$',
+        views.invites_accept,
+        name='invites_accept'
+    ),
+    url(
+        '^invites/decline/$',
+        views.invites_decline,
+        name='invites_decline'
+    ),
     # User avatar handling
     url('^avatar/', include('avatar.urls')),
 

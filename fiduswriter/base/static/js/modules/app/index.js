@@ -1,6 +1,6 @@
 import {CSL} from 'citeproc-plus'
 import OfflinePluginRuntime from 'offline-plugin/runtime'
-import {DocumentInvite} from "../documents/invite"
+import {ContactInvite} from "../contacts/invite"
 import {ImageOverview} from "../images/overview"
 import {ContactsOverview} from "../contacts"
 import {Profile} from "../profile"
@@ -82,12 +82,6 @@ export class App {
                     return import(/* webpackPrefetch: true */"../documents/overview").then(({DocumentOverview}) => new DocumentOverview(this.config, path))
                 }
             },
-            "invite": {
-                open: pathnameParts => {
-                    const id = pathnameParts[2]
-                    return new DocumentInvite(this.config, id)
-                }
-            },
             "pages": {
                 open: pathnameParts => {
                     const url = `/${pathnameParts[2]}/`
@@ -114,6 +108,12 @@ export class App {
                     "data": {
                         keyPath: "id"
                     }
+                }
+            },
+            "invite": {
+                open: pathnameParts => {
+                    const id = pathnameParts[2]
+                    return new ContactInvite(this.config, id)
                 }
             },
             "usermedia": {

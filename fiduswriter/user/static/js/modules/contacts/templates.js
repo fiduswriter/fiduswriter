@@ -22,11 +22,7 @@ export const displayContactType = ({type}) => {
     }
 }
 
-export const acceptInviteCell = (contact) =>
-    `<span class="fw-link-text accept-invite" data-id="${contact.id}">
-    <i class="fas fa-check"></i>
-</span>&nbsp;
-<span class="fw-link-text delete-single-contact" data-type="${contact.type}" data-id="${contact.id}">
-    <i class="fa fa-trash-alt"></i>
-</span>
-`
+export const respondInviteCell = (contact) =>
+    `<button class="fw-button fw-small fw-dark respond-invite" data-id="${contact.id}">
+    ${gettext('Respond')}
+</button>`

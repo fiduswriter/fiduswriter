@@ -1,6 +1,6 @@
 import {postJson, Dialog} from "../common"
 
-export class AcceptInviteDialog {
+export class RespondInviteDialog {
     constructor(invites, addCallback = _contacts => {}, deleteCallback = _invites => {}, doneCallback = () => {}) {
         this.invites = invites
         this.addCallback = addCallback

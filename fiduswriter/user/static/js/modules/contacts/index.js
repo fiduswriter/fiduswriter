@@ -1,8 +1,8 @@
 import deepEqual from "fast-deep-equal"
 import {DataTable} from "simple-datatables"
-import {deleteContactCell, acceptInviteCell, displayContactType} from "./templates"
+import {deleteContactCell, respondInviteCell, displayContactType} from "./templates"
 import {DeleteContactDialog} from "./delete_dialog"
-import {AcceptInviteDialog} from "./accept_invite"
+import {RespondInviteDialog} from "./respond_invite"
 import {postJson, addAlert, OverviewMenuView, findTarget, whenReady, baseBodyTemplate, setDocTitle, DatatableBulk, escapeText} from "../common"
 import {FeedbackTab} from "../feedback"
 import {SiteMenu} from "../menu"
@@ -88,7 +88,7 @@ export class ContactsOverview {
                     hidden: true
                 },
                 {
-                    select: [2],
+                    select: [2, 6],
                     sortable: false
                 },
             ],
@@ -105,7 +105,7 @@ export class ContactsOverview {
             `${contact.avatar.html} ${escapeText(contact.name)}`,
             displayContactType(contact),
             contact.email,
-            contact.type === 'to_userinvite' ? acceptInviteCell(contact) : deleteContactCell(contact)
+            contact.type === 'to_userinvite' ? respondInviteCell(contact) : deleteContactCell(contact)
         ]
     }
 
@@ -194,11 +194,10 @@ export class ContactsOverview {
                 })
                 break
             }
-            case findTarget(event, '.accept-invite', el): {
-                //delete single user
+            case findTarget(event, '.respond-invite', el): {
                 const id = parseInt(el.target.dataset.id)
                 const invite = this.contacts.find(contact => contact.id === id && contact.type === 'to_userinvite')
-                const dialog = new AcceptInviteDialog(
+                const dialog = new RespondInviteDialog(
                     [invite],
                     contacts => this.contacts = this.contacts.concat(contacts),
                     invites => this.contacts = this.contacts.filter(

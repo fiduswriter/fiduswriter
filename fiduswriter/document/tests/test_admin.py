@@ -445,7 +445,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         self.driver.find_element(
             By.CSS_SELECTOR,
-            ".accept-invite"
+            ".respond-invite"
         ).click()
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Accept invite"]'

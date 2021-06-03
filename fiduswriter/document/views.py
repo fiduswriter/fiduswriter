@@ -206,7 +206,6 @@ def save_access_rights(request):
                             link,
                             collaborator_name,
                             collaborator_email,
-                            right['holder']['id'],
                             right['rights'],
                             True
                         )
@@ -238,7 +237,6 @@ def save_access_rights(request):
                             link,
                             collaborator_name,
                             collaborator_email,
-                            right['holder']['id'],
                             right['rights'],
                             False
                         )

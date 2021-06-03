@@ -134,7 +134,7 @@ class UserInvite(models.Model):
             return
         for right in self.document_rights.all():
             old_ar = AccessRight.objects.filter(
-                holder=self.to,
+                user=self.to,
                 document=right.document
             ).first()
             if old_ar:
@@ -153,7 +153,7 @@ class UserInvite(models.Model):
             elif right.document.owner == self.to:
                 pass
             else:
-                right.holder = self.to
+                right.holder_obj = self.to
                 right.save()
         if self.to not in list(self.by.contacts.all()):
             self.by.contacts.add(self.to)

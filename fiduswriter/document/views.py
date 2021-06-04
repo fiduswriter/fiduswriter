@@ -195,20 +195,21 @@ def save_access_rights(request):
                 if access_right:
                     if access_right.rights != right['rights']:
                         access_right.rights = right['rights']
-                        collaborator = User.objects.get(
-                            id=right['holder']['id']
-                        )
-                        collaborator_name = collaborator.readable_name
-                        collaborator_email = collaborator.email
-                        emails.send_share_notification(
-                            document_title,
-                            owner,
-                            link,
-                            collaborator_name,
-                            collaborator_email,
-                            right['rights'],
-                            True
-                        )
+                        if right['holder']['type'] == 'user':
+                            collaborator = User.objects.get(
+                                id=right['holder']['id']
+                            )
+                            collaborator_name = collaborator.readable_name
+                            collaborator_email = collaborator.email
+                            emails.send_share_notification(
+                                document_title,
+                                owner,
+                                link,
+                                collaborator_name,
+                                collaborator_email,
+                                right['rights'],
+                                True
+                            )
                 else:
                     # Make the shared path "/filename" or ""
                     path = '/' + doc.path.split('/').pop()

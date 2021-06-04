@@ -91,7 +91,6 @@ class UserInvite(models.Model):
     key = models.UUIDField(
         unique=True,
         default=uuid.uuid4,
-        editable=False,
     )
     email = models.EmailField(_('email address'))
     username = models.CharField(
@@ -125,8 +124,8 @@ class UserInvite(models.Model):
     def readable_name(self):
         return self.username
 
-    def get_absolute_url(self):
-        return "/contacts/%i/" % self.key
+    def get_relative_url(self):
+        return "/invite/%s/" % self.key
 
     def apply(self):
         if not self.to:

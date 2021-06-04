@@ -734,11 +734,21 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
                 (
-                    By.CSS_SELECTOR,
-                    ".new_document button"
+                    By.XPATH,
+                    '//*[normalize-space()="Go to contacts"]'
                 )
             )
-        )
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".respond-invite"
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Accept invite"]'
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Documents"]'
+        ).click()
         documents = self.driver.find_elements_by_css_selector(
             '.fw-contents tbody tr'
         )
@@ -932,6 +942,24 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(By.ID, "id_login").send_keys("Yeti3")
         self.driver.find_element(By.ID, "id_password").send_keys("password")
         self.driver.find_element(By.ID, "login-submit").click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.XPATH,
+                    '//*[normalize-space()="Go to contacts"]'
+                )
+            )
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".respond-invite"
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Accept invite"]'
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Documents"]'
+        ).click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
                 (

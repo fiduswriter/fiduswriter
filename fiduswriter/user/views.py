@@ -404,7 +404,7 @@ def invites_add(request):
         email = invite.email
         link = HttpRequest.build_absolute_uri(
             request,
-            invite.get_absolute_url()
+            invite.get_relative_url()
         )
         emails.send_invite_notification(
             sender,

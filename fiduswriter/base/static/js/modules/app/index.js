@@ -264,7 +264,10 @@ export class App {
     }
 
     showNews() {
-        if (this.config.user.waiting_invites) {
+        if (
+            window.location.pathname !== '/user/contacts/' &&
+            this.config.user.waiting_invites
+        ) {
             showSystemMessage(
                 gettext('Other users have requested to connect with you. Go to the contacts page to accept their invites.'),
                 [

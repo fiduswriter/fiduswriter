@@ -1341,7 +1341,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             '//*[normalize-space()="Log out"]'
         ).click()
         # User 3 signs in and accepts the invite of user 7. Access rights
-        # should bu upgraded to write access.
+        # should be upgraded to write access.
         self.driver.find_element(By.ID, "id_login").send_keys("Yeti3")
         self.driver.find_element(By.ID, "id_password").send_keys("password")
         self.driver.find_element(By.ID, "login-submit").click()
@@ -1405,6 +1405,135 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         self.assertEqual(
             len(write_access_rights),
             2
+        )
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#preferences-btn"
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Log out"]'
+        ).click()
+        # Log in as document owner and downgrade access right of user 3.
+        self.driver.find_element(By.ID, "id_login").send_keys("Yeti")
+        self.driver.find_element(By.ID, "id_password").send_keys("otter")
+        self.driver.find_element(By.ID, "login-submit").click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (
+                    By.CSS_SELECTOR,
+                    ".new_document button"
+                )
+            )
+        )
+        documents = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr a.fw-data-table-title'
+        )
+        self.assertEqual(
+            len(documents),
+            2
+        )
+        self.driver.find_element_by_css_selector(
+            '.fw-contents tbody tr .icon-access-write'
+        ).click()
+        # Downgrade the write rights to read rights for user 3
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "tr:nth-child(1) .fa-caret-down.edit-right"
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Read"]'
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#my-contacts"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".ui-dialog .fw-dark"
+        ).click()
+        # Enter contacts page and check number of contacts
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable((By.ID, 'preferences-btn'))
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Contacts"]'
+        ).click()
+        self.assertEqual(
+            len(self.driver.find_elements_by_css_selector(
+                '.contacts-table .entry-select.user'
+            )),
+            4
+        )
+        # Delete contact connection of user 4 - doc access should be gone.
+        self.driver.find_elements_by_css_selector(
+            ".delete-single-contact"
+        )[2].click()
+        self.driver.find_element_by_css_selector(
+            "button.fw-dark"
+        ).click()
+        time.sleep(1)
+        self.assertEqual(
+            len(self.driver.find_elements_by_css_selector(
+                '.contacts-table .entry-select.user'
+            )),
+            3
+        )
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#preferences-btn"
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Log out"]'
+        ).click()
+        self.driver.find_element(By.ID, "id_login").send_keys("Yeti3")
+        self.driver.find_element(By.ID, "id_password").send_keys("password")
+        self.driver.find_element(By.ID, "login-submit").click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (
+                    By.CSS_SELECTOR,
+                    ".new_document button"
+                )
+            )
+        )
+        documents = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr a.fw-data-table-title'
+        )
+        self.assertEqual(
+            len(documents),
+            2
+        )
+        read_access_rights = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr .icon-access-read'
+        )
+        self.assertEqual(
+            len(read_access_rights),
+            1
+        )
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#preferences-btn"
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Log out"]'
+        ).click()
+        self.driver.find_element(By.ID, "id_login").send_keys("Yeti4")
+        self.driver.find_element(By.ID, "id_password").send_keys("password")
+        self.driver.find_element(By.ID, "login-submit").click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (
+                    By.CSS_SELECTOR,
+                    ".new_document button"
+                )
+            )
+        )
+        documents = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr a.fw-data-table-title'
+        )
+        self.assertEqual(
+            len(documents),
+            0
         )
         self.driver.find_element(
             By.CSS_SELECTOR,

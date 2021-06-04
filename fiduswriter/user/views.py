@@ -500,6 +500,18 @@ def invites_accept(request):
     )
 
 
+def invite_decline(ui, link):
+    # Remove this invite. All connected access rights will be deleted
+    # automatically.
+    emails.send_decline_notification(
+        ui.by.readable_name,
+        ui.by.email,
+        ui.to.readable_name,
+        link
+    )
+    ui.delete()
+
+
 @login_required
 @ajax_required
 @require_POST
@@ -510,20 +522,12 @@ def invites_decline(request):
     response = {}
     invites = json.loads(request.POST['invites'])
     for invite in invites:
-        # Remove this invite. All connected access rights will be deleted
-        # automatically.
         for ui in request.user.invites_to.filter(id=invite['id']):
             link = HttpRequest.build_absolute_uri(
                 request,
                 '/user/contacts/'
             )
-            emails.send_decline_notification(
-                ui.by.readable_name,
-                ui.by.email,
-                ui.to.readable_name,
-                link
-            )
-            ui.delete()
+            invite_decline(ui, link)
     status = 200
     return JsonResponse(
         response,
@@ -554,10 +558,7 @@ def delete_contacts(request):
             ).delete()
             # Remove the user from the contacts
             request.user.contacts.remove(
-                request.user.contacts.filter(
-                    id=former_contact['id'],
-                    type='user'
-                )
+                request.user.contacts.filter(id=former_contact['id']).first()
             )
         elif former_contact['type'] == 'userinvite':
             # Delete the userinvite. All connected access rights will be
@@ -566,7 +567,12 @@ def delete_contacts(request):
         elif former_contact['type'] == 'to_userinvite':
             # Remove this invite. All connected access rights will be deleted
             # automatically.
-            request.user.invites_to.filter(id=former_contact['id']).delete()
+            for ui in request.user.invites_to.filter(id=former_contact['id']):
+                link = HttpRequest.build_absolute_uri(
+                    request,
+                    '/user/contacts/'
+                )
+                invite_decline(ui, link)
     status = 200
     return JsonResponse(
         response,

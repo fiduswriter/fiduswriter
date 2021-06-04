@@ -101,7 +101,7 @@ export class ContactsOverview {
         return [
             String(contact.id),
             contact.type,
-            `<input type="checkbox" class="entry-select fw-check" id="contact-${contact.type}-${contact.id}" data-id="${contact.id}" data-type="${contact.type}"><label for="contact-${contact.type}-${contact.id}"></label`,
+            `<input type="checkbox" class="entry-select fw-check ${contact.type}" id="contact-${contact.type}-${contact.id}" data-id="${contact.id}" data-type="${contact.type}"><label for="contact-${contact.type}-${contact.id}"></label`,
             `${contact.avatar.html} ${escapeText(contact.name)}`,
             displayContactType(contact),
             contact.email,

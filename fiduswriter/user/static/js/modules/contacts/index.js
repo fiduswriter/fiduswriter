@@ -52,8 +52,8 @@ export class ContactsOverview {
         }
         const tableEl = document.createElement('table')
         tableEl.classList.add('fw-data-table')
-        tableEl.classList.add('fw-document-table')
         tableEl.classList.add('fw-large')
+        tableEl.classList.add('contacts-table')
         const contentsEl = document.querySelector('.fw-contents')
         contentsEl.innerHTML = '' // Delete any old table
         contentsEl.appendChild(tableEl)

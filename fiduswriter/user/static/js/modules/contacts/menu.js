@@ -30,7 +30,7 @@ export const menuModel = () => ({
     content: [
         {
             type: 'text',
-            title: (settings_REGISTRATION_OPEN || settings_SOCIALACCOUNT_OPEN) ? gettext('Add contact or invite new user') : gettext('Add contact'),
+            title: gettext('Invite contact'),
             action: overview => {
                 const dialog = new AddContactDialog()
                 dialog.init().then(contacts => {

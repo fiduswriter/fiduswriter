@@ -128,8 +128,8 @@ export class Signup extends PreloginPage {
                 return
             }
             const sendData  = {username, password1, password2, email}
-            if (this.app.inviteId) {
-                sendData['invite_id'] = this.app.inviteId
+            if (this.app.inviteKey) {
+                sendData['invite_key'] = this.app.inviteKey
             }
             postJson('/api/user/signup/', sendData).then(
                 ({json}) => {

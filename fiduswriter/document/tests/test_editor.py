@@ -1171,6 +1171,24 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
                 (
+                    By.XPATH,
+                    '//*[normalize-space()="Go to contacts"]'
+                )
+            )
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".respond-invite"
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Accept invite"]'
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Documents"]'
+        ).click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
                     By.CSS_SELECTOR,
                     ".new_document button"
                 )
@@ -1217,15 +1235,23 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         )
         invitation_link = self.find_urls(user5_invitation_email)[0]
         self.driver.get(invitation_link)
-        WebDriverWait(self.driver, self.wait_time).until(
-            EC.presence_of_element_located((By.CLASS_NAME, 'editor-toolbar'))
-        )
         self.driver.find_element(
-            By.ID,
-            "close-document-top"
+            By.CSS_SELECTOR,
+            ".respond-invite"
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Accept invite"]'
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Documents"]'
         ).click()
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.element_to_be_clickable((By.ID, 'preferences-btn'))
+            EC.presence_of_element_located(
+                (
+                    By.CSS_SELECTOR,
+                    ".new_document button"
+                )
+            )
         )
         documents = self.driver.find_elements_by_css_selector(
             '.fw-contents tbody tr a.fw-data-table-title'

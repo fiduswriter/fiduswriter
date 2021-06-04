@@ -618,11 +618,11 @@ class FidusSignupView(SignupView):
         ret = super().form_valid(form)
         if ret.status_code > 399:
             return ret
-        if 'invite_id' in self.request.POST:
-            invite_id = self.request.POST['invite_id']
-            invites_connect(self.user, invite_id)
-        else:
-            invite_id = None
+        if 'invite_key' in self.request.POST:
+            invites_connect(
+                self.user,
+                self.request.POST['invite_key']
+            )
         return ret
 
 

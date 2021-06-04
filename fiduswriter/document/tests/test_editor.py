@@ -690,7 +690,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             "new-contact-user-string"
         ).click()
         self.driver.find_element(By.ID, "new-contact-user-string").send_keys(
-            "yeti5@snowman.com,yeti6@snowman.com"
+            "yeti5@snowman.com,yeti6@snowman.com;yeti7@snowman.com"
         )
         ActionChains(self.driver).send_keys(
             Keys.TAB
@@ -709,14 +709,27 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             "#my-contacts"
         ).click()
+        # Upgrade the read rights to write rights for user7
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "tr:nth-child(6) .fa-caret-down.edit-right"
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Write"]'
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#my-contacts"
+        ).click()
         self.driver.find_element(
             By.CSS_SELECTOR,
             ".ui-dialog .fw-dark"
         ).click()
         time.sleep(1)
         # We keep track of the invitation email to open it later.
-        user5_invitation_email = mail.outbox[-2].body
-        user6_invitation_email = mail.outbox[-1].body
+        user5_invitation_email = mail.outbox[-3].body
+        user6_invitation_email = mail.outbox[-2].body
+        user7_invitation_email = mail.outbox[-1].body
         # We close the editor
         self.driver.find_element(
             By.ID,
@@ -1320,3 +1333,78 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             len(documents),
             0
         )
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#preferences-btn"
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Log out"]'
+        ).click()
+        # User 3 signs in and accepts the invite of user 7. Access rights
+        # should bu upgraded to write access.
+        self.driver.find_element(By.ID, "id_login").send_keys("Yeti3")
+        self.driver.find_element(By.ID, "id_password").send_keys("password")
+        self.driver.find_element(By.ID, "login-submit").click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.CSS_SELECTOR,
+                    ".new_document button"
+                )
+            )
+        )
+        documents = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr a.fw-data-table-title'
+        )
+        self.assertEqual(
+            len(documents),
+            2
+        )
+        read_access_rights = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr .icon-access-read'
+        )
+        self.assertEqual(
+            len(read_access_rights),
+            1
+        )
+        invitation_link = self.find_urls(user7_invitation_email)[0]
+        self.driver.get(invitation_link)
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".respond-invite"
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Accept invite"]'
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Documents"]'
+        ).click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.CSS_SELECTOR,
+                    ".new_document button"
+                )
+            )
+        )
+        documents = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr a.fw-data-table-title'
+        )
+        self.assertEqual(
+            len(documents),
+            2
+        )
+        write_access_rights = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr .icon-access-write'
+        )
+        self.assertEqual(
+            len(write_access_rights),
+            2
+        )
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#preferences-btn"
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Log out"]'
+        ).click()

@@ -147,7 +147,7 @@ class UserInvite(models.Model):
                 elif old_ar.rights == 'write':
                     pass
                 else:
-                    old_ar.rights = self.rights
+                    old_ar.rights = right.rights
                     old_ar.save()
             elif right.document.owner == self.to:
                 pass

@@ -2,7 +2,7 @@ import time
 import os
 import bleach
 import json
-from tornado.escape import json_decode
+
 from django.core import serializers
 from django.http import HttpResponse, JsonResponse, HttpRequest
 from django.contrib.auth.decorators import login_required
@@ -11,21 +11,21 @@ from django.db import transaction
 from django.core.files import File
 from django.utils.translation import ugettext as _
 from django.conf import settings
-from django.core.mail import send_mail
 from django.db.models import F, Q
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import get_user_model
 
 from document.models import Document, AccessRight, DocumentRevision, \
-    DocumentTemplate, AccessRightInvite, CAN_UPDATE_DOCUMENT, \
+    DocumentTemplate, CAN_UPDATE_DOCUMENT, \
     CAN_COMMUNICATE, FW_DOCUMENT_VERSION
 from usermedia.models import DocumentImage, Image
 from bibliography.models import Entry
 from document.helpers.serializers import PythonWithURLSerializer
 from bibliography.views import serializer
 from style.models import DocumentStyle
-from base.html_email import html_email
 from base.decorators import ajax_required
+from user.models import UserInvite
+from . import emails
 
 
 @login_required
@@ -134,29 +134,22 @@ def get_access_rights(request):
     response = {}
     status = 200
     ar_qs = AccessRight.objects.filter(document__owner=request.user)
-    in_qs = AccessRightInvite.objects.filter(document__owner=request.user)
     doc_ids = request.POST.getlist('document_ids[]')
     if len(doc_ids) > 0:
         ar_qs = ar_qs.filter(document_id__in=doc_ids)
-        in_qs = in_qs.filter(document_id__in=doc_ids)
     access_rights = []
     for ar in ar_qs:
         access_rights.append({
             'document_id': ar.document.id,
-            'user_id': ar.holder_id,
-            'user_name': ar.holder_obj.readable_name,
             'rights': ar.rights,
-            'avatar': ar.holder_obj.avatar_url
+            'holder': {
+                'id': ar.holder_id,
+                'type': ar.holder_type.model,
+                'name': ar.holder_obj.readable_name,
+                'avatar': ar.holder_obj.avatar_url
+            }
         })
     response['access_rights'] = access_rights
-    invites = []
-    for inv in in_qs:
-        invites.append({
-            'document_id': inv.document.id,
-            'email': inv.email,
-            'rights': inv.rights
-        })
-    response['invites'] = invites
     return JsonResponse(
         response,
         status=status
@@ -170,9 +163,8 @@ def get_access_rights(request):
 def save_access_rights(request):
     User = get_user_model()
     response = {}
-    doc_ids = json_decode(request.POST['document_ids'])
-    rights = json_decode(request.POST['access_rights'])
-    invites = json_decode(request.POST['invites'])
+    doc_ids = json.loads(request.POST['document_ids'])
+    rights = json.loads(request.POST['access_rights'])
     for doc_id in doc_ids:
         doc = Document.objects.filter(
             pk=doc_id,
@@ -181,142 +173,76 @@ def save_access_rights(request):
         if not doc:
             continue
         for right in rights:
+            holder_selector = right['holder']['type'] + '__id'
             if right['rights'] == 'delete':
                 # Status 'delete' means the access right is marked for
                 # deletion.
-                AccessRight.objects.filter(
-                    document_id=doc_id,
-                    user__id=right['user_id'],
-                ).delete()
+                AccessRight.objects.filter(**{
+                    'document_id': doc_id,
+                    holder_selector: right['holder']['id']
+                }).delete()
             else:
-                access_right = AccessRight.objects.filter(
-                    document_id=doc_id,
-                    user__id=right['user_id']
-                ).first()
+                owner = request.user.readable_name
+                link = HttpRequest.build_absolute_uri(
+                    request,
+                    doc.get_absolute_url()
+                )
+                access_right = AccessRight.objects.filter(**{
+                    'document_id': doc_id,
+                    holder_selector: right['holder']['id']
+                }).first()
+                document_title = doc.title
                 if access_right:
                     if access_right.rights != right['rights']:
                         access_right.rights = right['rights']
-                        send_share_notification(
-                            request,
-                            doc_id,
-                            right['user_id'],
-                            right['rights'],
-                            True
-                        )
+                        if right['holder']['type'] == 'user':
+                            collaborator = User.objects.get(
+                                id=right['holder']['id']
+                            )
+                            collaborator_name = collaborator.readable_name
+                            collaborator_email = collaborator.email
+                            emails.send_share_notification(
+                                document_title,
+                                owner,
+                                link,
+                                collaborator_name,
+                                collaborator_email,
+                                right['rights'],
+                                True
+                            )
                 else:
                     # Make the shared path "/filename" or ""
                     path = '/' + doc.path.split('/').pop()
                     if len(path) == 1:
                         path = ''
-                    user = User.objects.get(
-                        id=right['user_id']
-                    )
+                    if right['holder']['type'] == 'userinvite':
+                        holder = UserInvite.objects.get(
+                            id=right['holder']['id']
+                        )
+                    else:
+                        holder = User.objects.get(
+                            id=right['holder']['id']
+                        )
                     access_right = AccessRight.objects.create(
                         document_id=doc_id,
-                        holder_obj=user,
+                        holder_obj=holder,
                         rights=right['rights'],
                         path=path
                     )
-                    send_share_notification(
-                        request,
-                        doc_id,
-                        right['user_id'],
-                        right['rights'],
-                        False
-                    )
-                access_right.save()
-        for invite in invites:
-            if invite['rights'] == 'delete':
-                # Status 'delete' means the invite is marked for
-                # deletion.
-                AccessRightInvite.objects.filter(
-                    document_id=doc_id,
-                    email=invite['email']
-                ).delete()
-            else:
-                old_invite = AccessRightInvite.objects.filter(
-                    document_id=doc_id,
-                    email=invite['email']
-                ).first()
-                if old_invite:
-                    if old_invite.rights != invite['rights']:
-                        old_invite.rights = invite['rights']
-                        old_invite.save()
-                        send_invite_notification(
-                            request,
-                            doc_id,
-                            invite['email'],
-                            invite['rights'],
-                            old_invite,
-                            True
+                    if right['holder']['id'] == 'user':
+                        collaborator_name = holder.readable_name
+                        collaborator_email = holder.email
+                        emails.send_share_notification(
+                            document_title,
+                            owner,
+                            link,
+                            collaborator_name,
+                            collaborator_email,
+                            right['rights'],
+                            False
                         )
-                else:
-                    new_invite = AccessRightInvite.objects.create(
-                        document_id=doc_id,
-                        email=invite['email'],
-                        rights=invite['rights']
-                    )
-                    new_invite.save()
-                    send_invite_notification(
-                        request,
-                        doc_id,
-                        invite['email'],
-                        invite['rights'],
-                        new_invite,
-                        False
-                    )
+                access_right.save()
     status = 201
-    return JsonResponse(
-        response,
-        status=status
-    )
-
-
-def apply_invite(inv, user):
-    old_ar = AccessRight.objects.filter(
-        user=user,
-        document=inv.document
-    ).first()
-    if old_ar:
-        # If the user already has rights, we should only be upgrading
-        # them, not downgrade. Unfortuantely it is not easy to
-        # say how each right compares. So unless the invite gives read
-        # access, or the user already has write access, we change to
-        # the access right of the invite.
-        if inv.rights == 'read':
-            pass
-        elif old_ar.rights == 'write':
-            pass
-        else:
-            old_ar.rights = inv.rights
-            old_ar.save()
-    elif inv.document.owner == user:
-        pass
-    else:
-        ar = AccessRight.objects.create(
-            document=inv.document,
-            holder_obj=user,
-            rights=inv.rights
-        )
-        ar.save()
-        if not inv.document.owner.contacts.filter(id=user.id).first():
-            inv.document.owner.contacts.add(user)
-    inv.delete()
-
-
-@login_required
-@ajax_required
-@require_POST
-def invite(request):
-    response = {}
-    status = 200
-    id = int(request.POST['id'])
-    inv = AccessRightInvite.objects.filter(id=id).first()
-    if inv:
-        response['redirect'] = inv.document.get_absolute_url()
-        apply_invite(inv, request.user)
-    else:
-        response['redirect'] = ''
     return JsonResponse(
         response,
         status=status
@@ -421,214 +347,6 @@ def move(request):
     )
 
 
-def send_share_notification(request, doc_id, collaborator_id, rights, change):
-    owner = request.user.readable_name
-    document = Document.objects.get(id=doc_id)
-    User = get_user_model()
-    collaborator = User.objects.get(id=collaborator_id)
-    collaborator_name = collaborator.readable_name
-    collaborator_email = collaborator.email
-    document_title = document.title
-    if len(document_title) == 0:
-        document_title = _('Untitled')
-    link = HttpRequest.build_absolute_uri(request, document.get_absolute_url())
-    if change:
-        message_text = _(
-            ('Hey %(collaborator_name)s,\n%(owner)s has changed your access '
-             'rights to %(rights)s on the document \'%(document_title)s\'. '
-             '\nAccess the document through this link: %(link)s')
-        ) % {
-            'owner': owner,
-            'rights': rights,
-            'collaborator_name': collaborator_name,
-            'link': link,
-            'document_title': document_title
-        }
-        body_html_intro = _(
-            ('<p>Hey %(collaborator_name)s,<br>%(owner)s has changed your '
-             'access rights to %(rights)s on the document '
-             '\'%(document_title)s\'.</p>')
-        ) % {
-            'owner': owner,
-            'rights': rights,
-            'collaborator_name': collaborator_name,
-            'document_title': document_title
-        }
-    else:
-        message_text = _(
-            ('Hey %(collaborator_name)s,\n%(owner)s has shared the document '
-             '\'%(document_title)s\' with you and given you %(rights)s access '
-             'rights. '
-             '\nAccess the document through this link: %(link)s')
-        ) % {
-            'owner': owner,
-            'rights': rights,
-            'collaborator_name': collaborator_name,
-            'link': link,
-            'document_title': document_title
-        }
-        body_html_intro = _(
-            ('<p>Hey %(collaborator_name)s,<br>%(owner)s has shared the '
-             'document \'%(document_title)s\' with you and given you '
-             '%(rights)s access rights.</p>')
-        ) % {
-            'owner': owner,
-            'rights': rights,
-            'collaborator_name': collaborator_name,
-            'document_title': document_title
-        }
-
-    body_html = (
-        '<h1>%(document_title)s %(shared)s</h1>'
-        '%(body_html_intro)s'
-        '<table>'
-        '<tr><td>'
-        '%(Document)s'
-        '</td><td>'
-        '<b>%(document_title)s</b>'
-        '</td></tr>'
-        '<tr><td>'
-        '%(Author)s'
-        '</td><td>'
-        '%(owner)s'
-        '</td></tr>'
-        '<tr><td>'
-        '%(AccessRights)s'
-        '</td><td>'
-        '%(rights)s'
-        '</td></tr>'
-        '</table>'
-        '<div class="actions"><a class="button" href="%(link)s">'
-        '%(AccessTheDocument)s'
-        '</a></div>'
-    ) % {
-        'shared': _('shared'),
-        'body_html_intro': body_html_intro,
-        'Document': _('Document'),
-        'document_title': document_title,
-        'Author': _('Author'),
-        'owner': owner,
-        'AccessRights': _('Access Rights'),
-        'rights': rights,
-        'link': link,
-        'AccessTheDocument': _('Access the document')
-    }
-    send_mail(
-        _('Document shared:') +
-        ' ' +
-        document_title,
-        message_text,
-        settings.DEFAULT_FROM_EMAIL,
-        [collaborator_email],
-        fail_silently=True,
-        html_message=html_email(body_html)
-    )
-
-
-def send_invite_notification(request, doc_id, email, rights, invite, change):
-    owner = request.user.readable_name
-    document = Document.objects.get(id=doc_id)
-    document_title = document.title
-    if len(document_title) == 0:
-        document_title = _('Untitled')
-    link = HttpRequest.build_absolute_uri(request, invite.get_absolute_url())
-    if change:
-        message_text = _(
-            ('Hey %(email)s,\nas we told you previously, %(owner)s has '
-             'invited you to join Fidus Writer and shared the document '
-             '\'%(document_title)s\' with you. '
-             '\n%(owner)s has now changed your access rights to %(rights)s.'
-             '\nAccess the document through this link: %(link)s')
-        ) % {
-            'owner': owner,
-            'rights': rights,
-            'email': email,
-            'link': link,
-            'document_title': document_title
-        }
-        body_html_intro = _(
-            ('<p>Hey %(email)s,<br>as we told you previously, '
-             '%(owner)s has invited you to join Fidus Writer and shared the '
-             '\'%(document_title)s\' with you.</p>'
-             '<p>%(owner)s has now changed your access rights to %(rights)s. '
-             '</p>')
-        ) % {
-            'owner': owner,
-            'rights': rights,
-            'email': email,
-            'document_title': document_title
-        }
-    else:
-        message_text = _(
-            ('Hey %(email)s,\n%(owner)s has invited you to Fidus '
-             ' Writer, shared the document \'%(document_title)s\' with you, '
-             'and given you %(rights)s access rights. '
-             '\nAccess the document through this link: %(link)s')
-        ) % {
-            'owner': owner,
-            'rights': rights,
-            'email': email,
-            'link': link,
-            'document_title': document_title
-        }
-        body_html_intro = _(
-            ('<p>Hey %(email)s,<br>%(owner)s has invited you to '
-             'Fidus Writer, shared the document \'%(document_title)s\' with '
-             'you, and given you %(rights)s access rights.</p>')
-        ) % {
-            'owner': owner,
-            'rights': rights,
-            'email': email,
-            'document_title': document_title
-        }
-
-    body_html = (
-        '<h1>%(document_title)s %(shared)s</h1>'
-        '%(body_html_intro)s'
-        '<table>'
-        '<tr><td>'
-        '%(Document)s'
-        '</td><td>'
-        '<b>%(document_title)s</b>'
-        '</td></tr>'
-        '<tr><td>'
-        '%(Author)s'
-        '</td><td>'
-        '%(owner)s'
-        '</td></tr>'
-        '<tr><td>'
-        '%(AccessRights)s'
-        '</td><td>'
-        '%(rights)s'
-        '</td></tr>'
-        '</table>'
-        '<div class="actions"><a class="button" href="%(link)s">'
-        '%(AccessTheDocument)s'
-        '</a></div>'
-    ) % {
-        'shared': _('shared'),
-        'body_html_intro': body_html_intro,
-        'Document': _('Document'),
-        'document_title': document_title,
-        'Author': _('Author'),
-        'owner': owner,
-        'AccessRights': _('Access Rights'),
-        'rights': rights,
-        'link': link,
-        'AccessTheDocument': _('Sign up or log in and access the document')
-    }
-    send_mail(
-        _('Document shared:') +
-        ' ' +
-        document_title,
-        message_text,
-        settings.DEFAULT_FROM_EMAIL,
-        [email],
-        fail_silently=True,
-        html_message=html_email(body_html)
-    )
-
-
 @login_required
 @ajax_required
 @require_POST
@@ -705,7 +423,7 @@ def import_create(request):
                 et.save()
     if not document_template:
         title = request.POST['template_title']
-        content = json_decode(request.POST['template'])
+        content = json.loads(request.POST['template'])
         document_template = DocumentTemplate()
         document_template.title = title
         document_template.import_id = import_id
@@ -954,107 +672,15 @@ def comment_notify(request):
     if len(document_title) == 0:
         document_title = _('Untitled')
     link = HttpRequest.build_absolute_uri(request, document.get_absolute_url())
-
-    if notification_type == 'mention':
-
-        message_text = _(
-            ('Hey %(collaborator_name)s,\n%(commentator)s has mentioned you '
-             'in a comment in the document \'%(document)s\':'
-             '\n\n%(comment_text)s'
-             '\n\nGo to the document here: %(link)s')
-        ) % {
-               'commentator': commentator,
-               'collaborator_name': collaborator_name,
-               'link': link,
-               'document': document_title,
-               'comment_text': comment_text
-        }
-
-        body_html_title = _(
-            ('Hey %(collaborator_name)s,<br>%(commentator)s has mentioned '
-             'you in a comment in the document \'%(document_title)s\'.')
-        ) % {
-            'commentator': commentator,
-            'collaborator_name': collaborator_name,
-            'document_title': document_title
-        }
-        message_title = _('Comment on :') + ' ' + document_title
-    else:
-        message_text = _(
-            ('Hey %(collaborator_name)s,\n%(commentator)s has assigned you to '
-             'a comment in the document \'%(document)s\':\n\n%(comment_text)s'
-             '\n\nGo to the document here: %(link)s')
-        ) % {
-               'commentator': commentator,
-               'collaborator_name': collaborator_name,
-               'link': link,
-               'document': document_title,
-               'comment_text': comment_text
-        }
-        body_html_title = _(
-            ('Hey %(collaborator_name)s,<br>%(commentator)s has assigned you '
-             'to a comment in the document \'%(document_title)s\'.')
-        ) % {
-            'commentator': commentator,
-            'collaborator_name': collaborator_name,
-            'document_title': document_title
-        }
-        message_title = _('Comment assignment on :') + ' ' + document_title
-
-    body_html = _(
-        ('<p>Hey %(collaborator_name)s,<br>%(commentator)s has assigned '
-         'you to a comment in the document \'%(document)s\':</p>'
-         '%(comment_html)s'
-         '<p>Go to the document <a href="%(link)s">here</a>.</p>')
-    ) % {
-        'commentator': commentator,
-        'collaborator_name': collaborator_name,
-        'link': link,
-        'document': document_title,
-        'comment_html': comment_html
-    }
-
-    body_html = (
-        '<h1>%(body_html_title)s</h1>'
-        '<table>'
-        '<tr><td>'
-        '%(Document)s'
-        '</td><td>'
-        '<b>%(document_title)s</b>'
-        '</td></tr>'
-        '<tr><td>'
-        '%(Author)s'
-        '</td><td>'
-        '%(commentator)s'
-        '</td></tr>'
-        '<tr><td>'
-        '%(Comment)s'
-        '</td><td>'
-        '%(comment_html)s'
-        '</td></tr>'
-        '</table>'
-        '<div class="actions"><a class="button" href="%(link)s">'
-        '%(AccessTheDocument)s'
-        '</a></div>'
-    ) % {
-        'body_html_title': body_html_title,
-        'Document': _('Document'),
-        'document_title': document_title,
-        'Author': _('Author'),
-        'commentator': commentator,
-        'Comment': _('Comment'),
-        'comment_html': comment_html,
-        'link': link,
-        'AccessTheDocument': _('Access the document')
-    }
-
-    send_mail(
-        message_title,
-        message_text,
-        settings.DEFAULT_FROM_EMAIL,
-        [collaborator_email],
-        fail_silently=True,
-        html_message=html_email(body_html)
+    emails.send_comment_notification(
+        notification_type,
+        commentator,
+        collaborator_name,
+        collaborator_email,
+        link,
+        document_title,
+        comment_text,
+        comment_html
     )
     return JsonResponse(
         response,

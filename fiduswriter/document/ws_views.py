@@ -213,12 +213,26 @@ class WebSocket(BaseWebSocketHandler):
         else:
             response['doc']['comments'] = self.session["doc"].comments
         for contact in doc_owner.contacts.all():
-            contact_object = dict()
-            contact_object['id'] = contact.id
-            contact_object['name'] = contact.readable_name
-            contact_object['username'] = contact.get_username()
-            contact_object['avatar'] = contact.avatar_url
+            contact_object = {
+                'id': contact.id,
+                'name': contact.readable_name,
+                'username': contact.get_username(),
+                'avatar': contact.avatar_url,
+                'type': 'user'
+            }
             response['doc_info']['owner']['contacts'].append(contact_object)
+        if self.user_info.is_owner:
+            for contact in doc_owner.invites_by.all():
+                contact_object = {
+                    'id': contact.id,
+                    'name': contact.username,
+                    'username': contact.username,
+                    'avatar': contact.avatar_url,
+                    'type': 'userinvite'
+                }
+                response['doc_info']['owner']['contacts'].append(
+                    contact_object
+                )
         response['doc_info']['session_id'] = self.id
         self.send_message(response)
 

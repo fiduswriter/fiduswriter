@@ -1,5 +1,3 @@
-import uuid
-
 from builtins import str
 from builtins import object
 
@@ -232,7 +230,8 @@ CAN_COMMUNICATE = ['read', 'write', 'comment', 'write-tracked']
 class AccessRight(models.Model):
     document = models.ForeignKey(Document, on_delete=models.deletion.CASCADE)
     path = models.TextField(default='', blank=True)
-    holder_choices = models.Q(app_label='user', model='user')
+    holder_choices = models.Q(app_label='user', model='user') | \
+        models.Q(app_label='user', model='userinvite')
     holder_type = models.ForeignKey(
         ContentType,
         on_delete=models.CASCADE,
@@ -252,35 +251,11 @@ class AccessRight(models.Model):
         return (
             '%(name)s %(rights)s on %(doc_id)d' %
             {
-                'name': self.user.readable_name,
+                'name': self.holder_obj.readable_name,
                 'rights': self.rights,
                 'doc_id': self.document.id
             }
         )
-
-
-class AccessRightInvite(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    email = models.EmailField()  # The email where the invite was sent
-    document = models.ForeignKey(Document, on_delete=models.deletion.CASCADE)
-    rights = models.CharField(
-        max_length=21,
-        choices=RIGHTS_CHOICES,
-        blank=False)
-
-    def __str__(self):
-        return (
-            '%(email)s %(rights)s on %(doc_id)d: %(id)d' %
-            {
-                'email': self.email,
-                'rights': self.rights,
-                'doc_id': self.document.id,
-                'id': self.id
-            }
-        )
-
-    def get_absolute_url(self):
-        return "/invite/%i/" % self.id
 
 
 def revision_filename(instance, filename):

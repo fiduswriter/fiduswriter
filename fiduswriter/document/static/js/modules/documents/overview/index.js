@@ -151,9 +151,7 @@ export class DocumentOverview {
             '/api/document/documentlist/'
         ).then(
             ({json}) => {
-                return cachedPromise.then(
-                    () => this.loaddatafromIndexedDB()
-                ).then(oldJson => {
+                return cachedPromise.then(oldJson => {
                     if (!deepEqual(json, oldJson)) {
                         this.updateIndexedDB(json)
                         this.initializeView(json)
@@ -221,6 +219,7 @@ export class DocumentOverview {
         if (Object.keys(this.documentTemplates).length > 1) {
             this.multipleNewDocumentMenuItem()
         }
+        return json
     }
 
     onResize() {

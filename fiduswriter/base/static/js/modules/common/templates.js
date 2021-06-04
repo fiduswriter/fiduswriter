@@ -27,7 +27,7 @@ export const baseBodyTemplate = ({user, contents, hasOverview}) => `
                         </span>
                     </span>
                 </div>
-                <div data-value="team">${gettext("Contacts")}</div>
+                <div data-value="contacts">${gettext("Contacts")}</div>
                 <div data-value="logout">${gettext("Log out")}</div>
             </div>
         </div><!-- end user preference -->

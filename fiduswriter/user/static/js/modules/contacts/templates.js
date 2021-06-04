@@ -1,27 +1,8 @@
-import {escapeText} from "../common"
-
-//template for the list of contacts
-export const contactTemplate = ({contacts}) =>
-    contacts.map(contact =>
-        `<tr id="user-${contact.id}">
-            <td width="30">
-                <input type="checkbox" class="entry-select fw-check" id="contact-${contact.id}" data-id="${contact.id}"/><label for="contact-${contact.id}"></label>
-            </td>
-            <td width="350">
-                <span>${contact.avatar.html}</span>
-                ${escapeText(contact.name)}
-            </td>
-            <td width="350">
-                ${escapeText(contact.email)}
-            </td>
-            <td width="50" align="center">
-                <span class="fw-link-text delete-single-contact"
-                        data-id="${contact.id}">
-                    <i class="fa fa-trash-alt"></i>
-                </span>
-            </td>
-        </tr>`
-    ).join('')
+export const deleteContactCell = (contact) =>
+    `<span class="fw-link-text delete-single-contact"
+            data-type="${contact.type}" data-id="${contact.id}">
+        <i class="fa fa-trash-alt"></i>
+    </span>`
 
 //template for contact adding dialog
 export const addContactTemplate = () =>
@@ -29,3 +10,19 @@ export const addContactTemplate = () =>
         <input type="text" name="user_string" id="new-contact-user-string"
                 placeholder="${gettext('E-mail address or username')}" />
     </td></tr></tbody></table>`
+
+export const displayContactType = ({type}) => {
+    switch (type) {
+    case 'user':
+        return gettext('User')
+    case 'userinvite':
+        return gettext('Invite you sent')
+    case 'to_userinvite':
+        return gettext('Invite you received')
+    }
+}
+
+export const respondInviteCell = (contact) =>
+    `<button class="fw-button fw-small fw-dark respond-invite" data-id="${contact.id}">
+    ${gettext('Respond')}
+</button>`

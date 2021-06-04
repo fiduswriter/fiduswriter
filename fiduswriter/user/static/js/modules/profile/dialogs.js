@@ -209,7 +209,7 @@ export const addEmailDialog = function(app) {
                 document.getElementById('new-profile-email').value = email
 
                 postJson(
-                    '/api/user/emailadd/',
+                    '/api/user/email/add/',
                     {
                         email
                     }
@@ -261,7 +261,7 @@ export const deleteEmailDialog = function(target, app) {
                 activateWait()
 
                 post(
-                    '/api/user/emaildelete/',
+                    '/api/user/email/delete/',
                     {
                         email
                     }
@@ -365,7 +365,7 @@ export const changePrimaryEmailDialog = function(app) {
                 activateWait()
 
                 post(
-                    '/api/user/emailprimary/',
+                    '/api/user/email/primary/',
                     {
                         email
                     }

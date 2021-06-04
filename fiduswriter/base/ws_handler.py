@@ -1,3 +1,5 @@
+import json
+
 from urllib.parse import urlparse
 from tornado.websocket import WebSocketHandler
 from tornado.websocket import WebSocketClosedError
@@ -7,7 +9,6 @@ from django.db import connection
 import logging
 from logging import info, debug
 from tornado.ioloop import IOLoop
-from tornado.escape import json_decode
 
 from .django_handler_mixin import DjangoHandlerMixin
 
@@ -51,7 +52,7 @@ class BaseWebSocketHandler(DjangoHandlerMixin, WebSocketHandler):
         self.close()
 
     def on_message(self, data):
-        message = json_decode(data)
+        message = json.loads(data)
         if message["type"] == 'request_resend':
             self.resend_messages(message["from"])
             return

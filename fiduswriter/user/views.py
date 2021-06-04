@@ -1,16 +1,21 @@
 import json
 
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpRequest
+from django.db.models import Q
 from django.contrib.auth import logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.shortcuts import HttpResponseRedirect
 from django.views.decorators.http import require_POST
 from django.contrib.auth import get_user_model
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 
 from base.decorators import ajax_required
 from .forms import UserForm
-from document.models import AccessRight, AccessRightInvite
+from document.models import AccessRight
+from .models import UserInvite
+from . import emails
 
 from allauth.account.models import (
     EmailAddress,
@@ -28,8 +33,6 @@ from avatar.models import Avatar
 from avatar import views as avatarviews
 from avatar.forms import UploadAvatarForm
 from avatar.signals import avatar_updated
-
-from document.views import apply_invite
 
 
 @login_required
@@ -300,65 +303,159 @@ def list_contacts(request):
     status = 200
     response['contacts'] = []
     for user in request.user.contacts.all():
-        contact = {
+        response['contacts'].append({
             'id': user.id,
             'name': user.readable_name,
             'username': user.get_username(),
             'email': user.email,
-            'avatar': user.avatar_url
-        }
-        response['contacts'].append(contact)
+            'avatar': user.avatar_url,
+            'type': 'user',
+        })
+    for invite in request.user.invites_by.all():
+        response['contacts'].append({
+            'id': invite.id,
+            'name': invite.username,
+            'username': invite.username,
+            'email': invite.email,
+            'avatar': invite.avatar_url,
+            'type': 'userinvite',
+        })
+    for invite in request.user.invites_to.select_related('by').all():
+        response['contacts'].append({
+            'id': invite.id,
+            'name': invite.by.readable_name,
+            'username': invite.by.get_username(),
+            'email': invite.by.email,
+            'avatar': invite.by.avatar_url,
+            'type': 'to_userinvite',
+        })
     return JsonResponse(
         response,
         status=status
     )
 
 
+def is_email(string):
+    try:
+        validate_email(string)
+        return True
+    except ValidationError:
+        return False
+
+
 @login_required
 @ajax_required
 @require_POST
-def add_contacts(request):
+def invites_add(request):
     """
-    Add a user as a contact of the current user
+    Add a userinvite as a contact of the current user
     """
     response = {}
-    new_contact = False
+    contact_user = False
+    email = False
+    errored = False
     status = 202
     user_string = request.POST['user_string']
-    if "@" in user_string and "." in user_string:
+    if UserInvite.objects.filter(
+        username=user_string
+    ).filter(
+        by=request.user
+    ).exists():
+        # 'This person is already in your invites!'
+        response['error'] = 2
+        return JsonResponse(
+            response,
+            status=status
+        )
+    User = get_user_model()
+    contact_user = User.objects.filter(username=user_string).first()
+    if contact_user:
+        email = contact_user.email
+    elif is_email(user_string):
+        email = user_string
         email_address = EmailAddress.objects.filter(
             email=user_string
         ).first()
         if email_address:
-            new_contact = email_address.user
-    else:
-        User = get_user_model()
-        user = User.objects.filter(username=user_string).first()
-        if user:
-            new_contact = user
-    if new_contact:
-        if new_contact.pk is request.user.pk:
+            contact_user = email_address.user
+    if contact_user:
+        if contact_user.pk is request.user.pk:
             # 'You cannot add yourself to your contacts!'
             response['error'] = 1
+            errored = True
         elif request.user.contacts.filter(
-            id=new_contact.id
+            id=contact_user.id
         ).first():
             # 'This person is already in your contacts!'
             response['error'] = 2
-        else:
-            request.user.contacts.add(new_contact)
-            the_avatar = new_contact.avatar_url
-            response['contact'] = {
-                'id': new_contact.pk,
-                'name': new_contact.username,
-                'email': new_contact.email,
-                'avatar': the_avatar
-            }
-            status = 201
-    else:
-        # 'User cannot be found'
+            errored = True
+    elif not email:
+        # 'Invalid email!'
         response['error'] = 3
+        errored = True
+    if not errored:
+        invite = UserInvite.objects.create(
+            username=user_string,
+            email=email,
+            by=request.user,
+            to=contact_user,
+        )
+        sender = request.user.readable_name
+        email = invite.email
+        link = HttpRequest.build_absolute_uri(
+            request,
+            invite.get_relative_url()
+        )
+        emails.send_invite_notification(
+            sender,
+            email,
+            link
+        )
+        response['contact'] = {
+            'id': invite.pk,
+            'name': invite.username,
+            'email': invite.email,
+            'avatar': invite.avatar_url,
+            'type': 'userinvite',
+        }
+        status = 201
+    return JsonResponse(
+        response,
+        status=status
+    )
 
+
+def invites_connect(user, key=None):
+    invites = UserInvite.objects.filter(to__isnull=True)
+    if key:
+        invites = invites.filter(
+            key=key,
+        )
+    else:
+        invites = invites.filter(
+            Q(email__in=user.emailaddress_set.all()) |
+            Q(email=user.email)
+        )
+    if len(invites) == 0:
+        return False
+    for invite in invites:
+        invite.to = user
+        invite.save()
+    return True
+
+
+@login_required
+@ajax_required
+@require_POST
+def invite(request):
+    response = {}
+    status = 200
+    key = request.POST['key']
+    connected = invites_connect(request.user, key)
+    if connected:
+        response['redirect'] = '/user/contacts/'
+    else:
+        response['redirect'] = '/'
     return JsonResponse(
         response,
         status=status
@@ -368,26 +465,114 @@ def add_contacts(request):
 @login_required
 @ajax_required
 @require_POST
-def remove_contacts(request):
+def invites_accept(request):
+    response = {}
+    status = 200
+    invites = json.loads(request.POST['invites'])
+    response['contacts'] = []
+    for invite in invites:
+        ui = UserInvite.objects.filter(
+            id=invite['id'],
+            to=request.user
+        ).first()
+        if ui:
+            response['contacts'].append({
+                'id': ui.by.id,
+                'name': ui.by.readable_name,
+                'email': ui.by.email,
+                'avatar': ui.by.avatar_url,
+                'type': 'user',
+            })
+            link = HttpRequest.build_absolute_uri(
+                request,
+                '/user/contacts/'
+            )
+            emails.send_accept_notification(
+                ui.by.readable_name,
+                ui.by.email,
+                ui.to.readable_name,
+                link
+            )
+            ui.apply()
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+def invite_decline(ui, link):
+    # Remove this invite. All connected access rights will be deleted
+    # automatically.
+    emails.send_decline_notification(
+        ui.by.readable_name,
+        ui.by.email,
+        ui.to.readable_name,
+        link
+    )
+    ui.delete()
+
+
+@login_required
+@ajax_required
+@require_POST
+def invites_decline(request):
     """
-    Remove a contact
+    Decline an invite
     """
     response = {}
-    former_contacts = request.POST.getlist('contacts[]')
+    invites = json.loads(request.POST['invites'])
+    for invite in invites:
+        for ui in request.user.invites_to.filter(id=invite['id']):
+            link = HttpRequest.build_absolute_uri(
+                request,
+                '/user/contacts/'
+            )
+            invite_decline(ui, link)
+    status = 200
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@login_required
+@ajax_required
+@require_POST
+def delete_contacts(request):
+    """
+    Delete a contact
+    """
+    response = {}
+    former_contacts = json.loads(request.POST['contacts'])
     for former_contact in former_contacts:
-        former_contact = int(former_contact)
-        # Revoke all permissions given to this user
-        AccessRight.objects.filter(
-            user__id=former_contact,
-            document__owner=request.user
-        ).delete()
-        # Revoke all permissions received from this user
-        AccessRight.objects.filter(
-            user=request.user,
-            document__owner_id=former_contact
-        ).delete()
-        # Delete the user from the contacts
-        request.user.contacts.filter(id=former_contact).delete()
+        if former_contact['type'] == 'user':
+            # Revoke all permissions given to this user
+            AccessRight.objects.filter(
+                user__id=former_contact['id'],
+                document__owner=request.user
+            ).delete()
+            # Revoke all permissions received from this user
+            AccessRight.objects.filter(
+                user=request.user,
+                document__owner_id=former_contact['id']
+            ).delete()
+            # Remove the user from the contacts
+            request.user.contacts.remove(
+                request.user.contacts.filter(id=former_contact['id']).first()
+            )
+        elif former_contact['type'] == 'userinvite':
+            # Delete the userinvite. All connected access rights will be
+            # deleted automatically.
+            request.user.invites_by.filter(id=former_contact['id']).delete()
+        elif former_contact['type'] == 'to_userinvite':
+            # Remove this invite. All connected access rights will be deleted
+            # automatically.
+            for ui in request.user.invites_to.filter(id=former_contact['id']):
+                link = HttpRequest.build_absolute_uri(
+                    request,
+                    '/user/contacts/'
+                )
+                invite_decline(ui, link)
     status = 200
     return JsonResponse(
         response,
@@ -439,17 +624,11 @@ class FidusSignupView(SignupView):
         ret = super().form_valid(form)
         if ret.status_code > 399:
             return ret
-        if 'invite_id' in self.request.POST:
-            invite_id = int(self.request.POST['invite_id'])
-            inv = AccessRightInvite.objects.filter(id=invite_id).first()
-            if inv:
-                apply_invite(inv, self.user)
-        else:
-            invites = AccessRightInvite.objects.filter(
-                email=self.user.email
+        if 'invite_key' in self.request.POST:
+            invites_connect(
+                self.user,
+                self.request.POST['invite_key']
             )
-            for inv in invites:
-                apply_invite(inv, self.user)
         return ret
 
 

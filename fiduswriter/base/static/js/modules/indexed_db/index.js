@@ -50,7 +50,9 @@ export class IndexedDB {
 
         request.onsuccess = (event) => {
             const db = event.target.result
-            const objectStore = db.transaction(objectStoreName, 'readwrite').objectStore(objectStoreName)
+            const objectStore = db.transaction(objectStoreName, 'readwrite').objectStore(
+                objectStoreName
+            )
             for (const d in data) {
                 objectStore.put(d)
             }
@@ -137,7 +139,7 @@ export class IndexedDB {
     }
 
     readAllData(objectStoreName) {
-        const readPromise = new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             const request = window.indexedDB.open(this.app.db_config.db_name, DB_VERSION)
             request.onerror = function(event) {
                 reject(event)
@@ -164,6 +166,5 @@ export class IndexedDB {
             }
             request.onupgradeneeded = event => this.onUpgradeNeeded(event)
         })
-        return readPromise
     }
 }

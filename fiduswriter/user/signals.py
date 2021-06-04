@@ -5,12 +5,12 @@ from urllib.parse import urlparse
 from django.template.defaultfilters import slugify
 from django.core.files.base import ContentFile
 from django.dispatch import receiver
+from django.conf import settings
 
 from avatar.models import Avatar
-from allauth.account.signals import user_signed_up
+from allauth.account.signals import user_signed_up, email_confirmed
 
-from document.views import apply_invite
-from document.models import AccessRightInvite
+from user.views import invites_connect
 
 # This file is split of from django-allauth and is licensed as:
 
@@ -79,14 +79,17 @@ def copy_avatar(request, user, account):
 
 
 @receiver(user_signed_up)
-def on_user_signed_up(sender, request, *args, **kwargs):
+def on_user_signed_up(sender, request, user, *args, **kwargs):
     sociallogin = kwargs.get('sociallogin')
     if sociallogin:
         copy_avatar(request,
                     sociallogin.account.user,
                     sociallogin.account)
-        invites = AccessRightInvite.objects.filter(
-            email=sociallogin.account.user.email
-        )
-        for inv in invites:
-            apply_invite(inv, sociallogin.account.user)
+        invites_connect(sociallogin.account.user)
+    if settings.ACCOUNT_EMAIL_VERIFICATION != 'mandatory':
+        invites_connect(user)
+
+
+@receiver(email_confirmed)
+def on_email_confirmed(sender, request, email_address, *args, **kwargs):
+    invites_connect(email_address.user)

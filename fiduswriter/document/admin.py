@@ -61,13 +61,6 @@ class AccessRightAdmin(admin.ModelAdmin):
 admin.site.register(models.AccessRight, AccessRightAdmin)
 
 
-class AccessRightInviteAdmin(admin.ModelAdmin):
-    pass
-
-
-admin.site.register(models.AccessRightInvite, AccessRightInviteAdmin)
-
-
 class DocumentRevisionAdmin(admin.ModelAdmin):
     pass
 

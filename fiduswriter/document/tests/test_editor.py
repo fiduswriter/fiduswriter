@@ -690,7 +690,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             "new-contact-user-string"
         ).click()
         self.driver.find_element(By.ID, "new-contact-user-string").send_keys(
-            "yeti5@snowman.com"
+            "yeti5@snowman.com,yeti6@snowman.com"
         )
         ActionChains(self.driver).send_keys(
             Keys.TAB
@@ -715,7 +715,8 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         time.sleep(1)
         # We keep track of the invitation email to open it later.
-        user5_invitation_email = mail.outbox[-1].body
+        user5_invitation_email = mail.outbox[-2].body
+        user6_invitation_email = mail.outbox[-1].body
         # We close the editor
         self.driver.find_element(
             By.ID,
@@ -1209,7 +1210,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             '//*[normalize-space()="Log out"]'
         ).click()
         # User 5 signs up with a different email first and then clicks the
-        # invitation link. This should land user 5 directly in the editor.
+        # invitation link and accepts the invite.
         self.create_user(
             username='Yeti5',
             email='yeti5a@snowman.com',
@@ -1259,4 +1260,63 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         self.assertEqual(
             len(documents),
             1
+        )
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#preferences-btn"
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Log out"]'
+        ).click()
+        # User 6 signs up with a different email first and then clicks the
+        # invitation link and declines the invite.
+        self.create_user(
+            username='Yeti6',
+            email='yeti6a@snowman.com',
+            passtext='password'
+        )
+        self.driver.find_element(By.ID, "id_login").send_keys("Yeti6")
+        self.driver.find_element(By.ID, "id_password").send_keys("password")
+        self.driver.find_element(By.ID, "login-submit").click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.CSS_SELECTOR,
+                    ".new_document button"
+                )
+            )
+        )
+        documents = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr a.fw-data-table-title'
+        )
+        self.assertEqual(
+            len(documents),
+            0
+        )
+        invitation_link = self.find_urls(user6_invitation_email)[0]
+        self.driver.get(invitation_link)
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".respond-invite"
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Decline invite"]'
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Documents"]'
+        ).click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.CSS_SELECTOR,
+                    ".new_document button"
+                )
+            )
+        )
+        documents = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr a.fw-data-table-title'
+        )
+        self.assertEqual(
+            len(documents),
+            0
         )

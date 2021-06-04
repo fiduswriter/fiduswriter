@@ -1369,9 +1369,14 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         )
         invitation_link = self.find_urls(user7_invitation_email)[0]
         self.driver.get(invitation_link)
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".respond-invite"
+        time.sleep(1)
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.CSS_SELECTOR,
+                    ".respond-invite"
+                )
+            )
         ).click()
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Accept invite"]'

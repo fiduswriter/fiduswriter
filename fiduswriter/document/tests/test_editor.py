@@ -1381,6 +1381,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Accept invite"]'
         ).click()
+        time.sleep(1)
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Documents"]'
         ).click()

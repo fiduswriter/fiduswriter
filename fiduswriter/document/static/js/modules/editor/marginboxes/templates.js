@@ -105,7 +105,7 @@ const commentTemplate = ({comment, view, active, editComment, activeCommentAnswe
         !filterOptions.comments ||
         (filterOptions.commentsOnlyMajor && !comment.isMajor) ||
         (!filterOptions.commentsResolved && comment.resolved) ||
-        (filterOptions.author && comment.user !== filterOptions.author) ||
+        (filterOptions.commentsAuthor && comment.user !== filterOptions.commentsAuthor) ||
         (filterOptions.assigned && comment.assignedUser !== filterOptions.assigned) ||
         comment.hidden
     ) {
@@ -235,7 +235,10 @@ const BLOCK_NAMES = {
 const blockChangeTemplate = ({before}, node) => `<div class="format-change-info"><b>${gettext('Was')}:</b> ${BLOCK_NAMES[before.type]}${before.type === 'ordered_list' && node.type.name === 'ordered_list' ? `, ${gettext('start')}: ${before.attrs.order}` : ''}</div>`
 
 const trackTemplate = ({type, data, node, active, docInfo, filterOptions}) => {
-    if (!filterOptions.track) {
+    if (
+        !filterOptions.track ||
+        (filterOptions.trackAuthor && data.user !== filterOptions.trackAuthor)
+    ) {
         return '<div class="margin-box track hidden"></div>'
     }
 
@@ -284,12 +287,12 @@ export const marginboxFilterTemplate = ({marginBoxes, filterOptions, docInfo}) =
                     </span>
                     <div class="fw-pulldown marginbox-options-submenu">
                         <ul>
-                            <li><span class="fw-pulldown-item margin-box-filter-comments-author${filterOptions.author === 0 ? ' selected' : ''}" data-id="0" title="${gettext('Show comments from all authors.')}">
+                            <li><span class="fw-pulldown-item margin-box-filter-comments-author${filterOptions.commentsAuthor === 0 ? ' selected' : ''}" data-id="0" title="${gettext('Show comments from all authors.')}">
                                 ${gettext('Any')}
                             </span></li>
                         ${
     docInfo.owner.contacts.concat(docInfo.owner).map(
-        user => `<li><span class="fw-pulldown-item margin-box-filter-comments-author${filterOptions.author === user.id ? ' selected' : ''}" data-id="${user.id}" title="${gettext('Show comments of ')} ${escapeText(user.name)}">
+        user => `<li><span class="fw-pulldown-item margin-box-filter-comments-author${filterOptions.commentsAuthor === user.id ? ' selected' : ''}" data-id="${user.id}" title="${gettext('Show comments of ')} ${escapeText(user.name)}">
                                     ${escapeText(user.name)}
                                 </span></li>`
     ).join('')
@@ -334,7 +337,29 @@ export const marginboxFilterTemplate = ({marginBoxes, filterOptions, docInfo}) =
     }
     if (tracks) {
         filterHTML += `<div id="margin-box-filter-track" class="margin-box-filter-button${filterOptions.track ? '' : ' disabled'}">
-            <span class="label">${gettext('Track changes')}</span>
+            <span class="label">${gettext('Tracking')}</span><span class="show-marginbox-options fa fa-ellipsis-v"></span>
+            <div class="marginbox-options fw-pulldown fw-right"><ul>
+                <li>
+                    <span class="fw-pulldown-item show-marginbox-options-submenu" title="${gettext('Author')}">
+                        ${gettext('Author')}
+                        <span class="fw-icon-right"><i class="fa fa-caret-right"></i></span>
+                    </span>
+                    <div class="fw-pulldown marginbox-options-submenu">
+                        <ul>
+                            <li><span class="fw-pulldown-item margin-box-filter-track-author${filterOptions.trackAuthor === 0 ? ' selected' : ''}" data-id="0" title="${gettext('Show track changes from all authors.')}">
+                                ${gettext('Any')}
+                            </span></li>
+                        ${
+    docInfo.owner.contacts.concat(docInfo.owner).map(
+        user => `<li><span class="fw-pulldown-item margin-box-filter-track-author${filterOptions.trackAuthor === user.id ? ' selected' : ''}" data-id="${user.id}" title="${gettext('Show track changes of ')} ${escapeText(user.name)}">
+                                    ${escapeText(user.name)}
+                                </span></li>`
+    ).join('')
+}
+                        </ul>
+                    </div>
+                </li>
+            </ul></div>
         </div>`
     }
     if (help || warning) {

@@ -1069,10 +1069,10 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             "#margin-box-filter-track .show-marginbox-options-submenu"
         ).click()
-        self.driver.find_element(
+        self.driver.find_elements(
             By.CSS_SELECTOR,
-            '.margin-box-filter-track-author[data-id="1"]'
-        ).click()
+            '.margin-box-filter-track-author'
+        )[1].click()
         change_tracking_boxes = self.driver.find_elements_by_css_selector(
             '.margin-box.track:not(.hidden)'
         )
@@ -1088,10 +1088,10 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             "#margin-box-filter-track .show-marginbox-options-submenu"
         ).click()
-        self.driver.find_element(
+        self.driver.find_elements(
             By.CSS_SELECTOR,
-            '.margin-box-filter-track-author[data-id="2"]'
-        ).click()
+            '.margin-box-filter-track-author'
+        )[2].click()
         change_tracking_boxes = self.driver.find_elements_by_css_selector(
             '.margin-box.track:not(.hidden)'
         )

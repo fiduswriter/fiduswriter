@@ -203,7 +203,7 @@ class WebSocket(BaseWebSocketHandler):
             response['doc']['images'][image.id] = field_obj
         if self.user_info.access_rights == 'read-without-comments':
             response['doc']['comments'] = []
-        elif self.user_info.access_rights == 'review':
+        elif self.user_info.access_rights in ['review', 'review-tracked']:
             # Reviewer should only get his/her own comments
             filtered_comments = {}
             for key, value in list(self.session["doc"].comments.items()):
@@ -677,7 +677,7 @@ class WebSocket(BaseWebSocketHandler):
                         message = deepcopy(message)
                         message['comments'] = []
                     elif (
-                        access_rights == 'review' and
+                        access_rights in ['review', 'review-tracked'] and
                         user_id != waiter.user_info.user.id
                     ):
                         # The reviewer should not receive comments updates from

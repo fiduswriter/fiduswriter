@@ -129,8 +129,8 @@ import {
 
 export const COMMENT_ONLY_ROLES = ['review', 'comment']
 export const READ_ONLY_ROLES = ['read', 'read-without-comments']
-export const REVIEW_ROLES = ['review']
-export const WRITE_ROLES = ['write', 'write-tracked']
+export const REVIEW_ROLES = ['review', 'review-tracked']
+export const WRITE_ROLES = ['write', 'write-tracked', 'review-tracked']
 
 export class Editor {
     // A class that contains everything that happens on the editor page.

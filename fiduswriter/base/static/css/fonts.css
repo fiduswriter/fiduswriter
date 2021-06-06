@@ -27,6 +27,7 @@
 /* Review related user rights */
 .icon-access-read-without-comments::before { content: '\f06e'; } /* '' */
 .icon-access-review::before { content: '\f075'; } /* '' */
+.icon-access-review-tracked::before { content: '\f303'; } /* '✎' */
 
 .icon-access-read-without-comments::before,
 .icon-access-review::before,

@@ -1,5 +1,4 @@
 import {getCommentDuringCreationDecoration, deactivateAllSelectedChanges} from "../state_plugins"
-import {REVIEW_ROLES} from ".."
 import {findTarget, post} from "../../common"
 import {CommentEditor, CommentAnswerEditor, serializeComment} from "./editors"
 
@@ -296,7 +295,7 @@ export class ModCommentInteractions {
 
             let username
 
-            if (REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
+            if (['review', 'review-tracked'].includes(this.mod.editor.docInfo.access_rights)) {
                 username = `${gettext('Reviewer')} ${this.mod.editor.user.id}`
             } else {
                 username = this.mod.editor.user.username
@@ -357,7 +356,7 @@ export class ModCommentInteractions {
 
         let username
 
-        if (REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
+        if (['review', 'review-tracked'].includes(this.mod.editor.docInfo.access_rights)) {
             username = `${gettext('Reviewer')} ${this.mod.editor.user.id}`
         } else {
             username = this.mod.editor.user.username

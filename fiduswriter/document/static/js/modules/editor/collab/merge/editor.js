@@ -416,7 +416,7 @@ export class MergeEditor {
                                 mapTr,
                                 this.mergeView2.state,
                                 this.editor.user,
-                                !this.mergeView2.state.doc.firstChild.attrs.tracked && this.editor.docInfo.access_rights !== 'write-tracked',
+                                !this.mergeView2.state.doc.firstChild.attrs.tracked && !['write-tracked', 'review-tracked'].includes(this.editor.docInfo.access_rights),
                                 Date.now() - this.editor.clientTimeAdjustment
                             )
                         }

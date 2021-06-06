@@ -201,6 +201,11 @@ RIGHTS_CHOICES = (
     # Can read content and can read+write comments.
     # Can chat with collaborators.
     # Has read access to revisions.
+    ('review-tracked', 'Reviewer who can write with tracked changes'),
+    # Can write tracked content and can read/write his own comments.
+    # Cannot turn off tracked changes.
+    # Cannot chat with collaborators.
+    # Has no access to revisions.
     ('review', 'Reviewer'),
     # Can read the content and can read/write his own comments.
     # Comments by users with this access right only show the user's
@@ -220,7 +225,13 @@ RIGHTS_CHOICES = (
 # Editor and Reviewer can only comment and not edit document
 COMMENT_ONLY = ('review', 'comment')
 
-CAN_UPDATE_DOCUMENT = ['write', 'write-tracked', 'review', 'comment']
+CAN_UPDATE_DOCUMENT = [
+    'write',
+    'write-tracked',
+    'review',
+    'review-tracked',
+    'comment'
+]
 
 # Whether the collaborator is allowed to know about other collaborators
 # and communicate with them.

@@ -2,9 +2,6 @@ import {
     Comment
 } from "./comment"
 import {
-    REVIEW_ROLES
-} from ".."
-import {
     addCommentDuringCreationDecoration,
     removeCommentDuringCreationDecoration
 } from "../state_plugins"
@@ -56,7 +53,7 @@ export class ModCommentStore {
 
         let username
 
-        if (REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
+        if (['review', 'review-tracked'].includes(this.mod.editor.docInfo.access_rights)) {
             username = `${gettext('Reviewer')} ${this.mod.editor.user.id}`
         } else {
             username = this.mod.editor.user.username

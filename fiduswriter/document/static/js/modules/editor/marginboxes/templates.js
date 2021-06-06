@@ -269,7 +269,7 @@ const trackTemplate = ({type, data, node, active, docInfo, filterOptions}) => {
         </div>`
 }
 
-export const marginboxFilterTemplate = ({marginBoxes, filterOptions, docInfo}) => {
+export const marginboxFilterTemplate = ({marginBoxes, filterOptions, pastParticipants}) => {
     const comments = marginBoxes.find(box => box.type === 'comment')
     const tracks = marginBoxes.find(box => ['insertion', 'deletion', 'format_change', 'block_change'].includes(box.type))
     const help = marginBoxes.find(box => box.type === 'help')
@@ -291,7 +291,7 @@ export const marginboxFilterTemplate = ({marginBoxes, filterOptions, docInfo}) =
                                 ${gettext('Any')}
                             </span></li>
                         ${
-    docInfo.owner.contacts.concat(docInfo.owner).map(
+    pastParticipants.map(
         user => `<li><span class="fw-pulldown-item margin-box-filter-comments-author${filterOptions.commentsAuthor === user.id ? ' selected' : ''}" data-id="${user.id}" title="${gettext('Show comments of ')} ${escapeText(user.name)}">
                                     ${escapeText(user.name)}
                                 </span></li>`
@@ -311,7 +311,7 @@ export const marginboxFilterTemplate = ({marginBoxes, filterOptions, docInfo}) =
                                 ${gettext('Any/None')}
                             </span></li>
                         ${
-    docInfo.owner.contacts.concat(docInfo.owner).map(
+    pastParticipants.map(
         user => `<li><span class="fw-pulldown-item margin-box-filter-comments-assigned${filterOptions.assigned === user.id ? ' selected' : ''}" data-id="${user.id}" title="${gettext('Show comments of ')} ${escapeText(user.name)}">
                                     ${escapeText(user.name)}
                                 </span></li>`
@@ -350,7 +350,7 @@ export const marginboxFilterTemplate = ({marginBoxes, filterOptions, docInfo}) =
                                 ${gettext('Any')}
                             </span></li>
                         ${
-    docInfo.owner.contacts.concat(docInfo.owner).map(
+    pastParticipants.map(
         user => `<li><span class="fw-pulldown-item margin-box-filter-track-author${filterOptions.trackAuthor === user.id ? ' selected' : ''}" data-id="${user.id}" title="${gettext('Show track changes of ')} ${escapeText(user.name)}">
                                     ${escapeText(user.name)}
                                 </span></li>`

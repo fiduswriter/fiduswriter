@@ -6,7 +6,6 @@ export class RespondInviteDialog {
         this.addCallback = addCallback
         this.deleteCallback = deleteCallback
         this.doneCallback = doneCallback
-        console.log(this.invites)
     }
 
     init() {

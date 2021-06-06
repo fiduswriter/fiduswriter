@@ -489,6 +489,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
             " here.\nI'll even write a second paragraph."
         )
+        # Turn on tracked changes
         self.driver.find_element(
             By.CSS_SELECTOR,
             ".header-menu:nth-child(5) > .header-nav-item"
@@ -497,6 +498,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             "li:nth-child(1) > .fw-pulldown-item"
         ).click()
+        # Make changes
         self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
         ActionChains(self.driver).double_click(
             self.driver.find_element(By.CSS_SELECTOR, ".article-body strong")
@@ -585,6 +587,20 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(By.CSS_SELECTOR, ".article-title").send_keys(
             "A test article to share"
         )
+        # Turn on tracked changes
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".header-menu:nth-child(5) > .header-nav-item"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "li:nth-child(1) > .fw-pulldown-item"
+        ).click()
+        self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+            "With tracked changes\n"
+        )
+
         # Open share dialog
         self.driver.find_element(
             By.CSS_SELECTOR,
@@ -672,7 +688,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         time.sleep(1)
         # We keep track of the invitation email to open it later.
         user4_invitation_email = mail.outbox[-1].body
-        #  Reopen the share dialog and add a fifth user
+        #  Reopen the share dialog and add users 5-7
         self.driver.find_element(
             By.CSS_SELECTOR,
             ".header-menu:nth-child(1) > .header-nav-item"
@@ -785,7 +801,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         )
         self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
         ActionChains(self.driver).send_keys(
-            "The body"
+            "... in the body"
         ).send_keys(
             Keys.ENTER
         ).perform()
@@ -794,7 +810,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             ".article-title"
         ).text == "A test article to share"
-        self.check_body(self.driver, 'The body')
+        self.check_body(self.driver, 'With tracked changes... in the body')
         self.driver.find_element(
             By.ID,
             "close-document-top"
@@ -1010,7 +1026,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             ".article-title"
         ).text == "A test article to share"
-        self.check_body(self.driver, 'The body')
+        self.check_body(self.driver, 'With tracked changes... in the body')
         # Make a copy of the file
         old_body = self.driver.find_element(By.CSS_SELECTOR, ".article-body")
         self.driver.find_element(
@@ -1031,7 +1047,67 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         )
         self.check_body(
             self.driver,
-            'The bodySome extra content that does show'
+            (
+                'With tracked changes... in the body'
+                'Some extra content that does show'
+            )
+        )
+        # Filter tracks by users
+        change_tracking_boxes = self.driver.find_elements_by_css_selector(
+            '.margin-box.track:not(.hidden)'
+        )
+        self.assertEqual(
+            len(change_tracking_boxes),
+            5
+        )
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#margin-box-filter-track .show-marginbox-options"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#margin-box-filter-track .show-marginbox-options-submenu"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            '.margin-box-filter-track-author[data-id="1"]'
+        ).click()
+        change_tracking_boxes = self.driver.find_elements_by_css_selector(
+            '.margin-box.track:not(.hidden)'
+        )
+        self.assertEqual(
+            len(change_tracking_boxes),
+            2
+        )
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#margin-box-filter-track .show-marginbox-options"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#margin-box-filter-track .show-marginbox-options-submenu"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            '.margin-box-filter-track-author[data-id="2"]'
+        ).click()
+        change_tracking_boxes = self.driver.find_elements_by_css_selector(
+            '.margin-box.track:not(.hidden)'
+        )
+        self.assertEqual(
+            len(change_tracking_boxes),
+            2
+        )
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#margin-box-filter-track"
+        ).click()
+        change_tracking_boxes = self.driver.find_elements_by_css_selector(
+            '.margin-box.track:not(.hidden)'
+        )
+        self.assertEqual(
+            len(change_tracking_boxes),
+            0
         )
         # Give user 1 write access to document
         self.driver.find_element(

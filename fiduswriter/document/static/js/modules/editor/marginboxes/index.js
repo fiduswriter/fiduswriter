@@ -308,7 +308,7 @@ export class ModMarginboxes {
         const marginBoxFilterHTML = marginboxFilterTemplate({
             marginBoxes,
             filterOptions: this.filterOptions,
-            docInfo: this.editor.docInfo
+            pastParticipants: this.editor.mod.collab.pastParticipants
         })
 
         const marginBoxFilterElement = document.getElementById('margin-box-filter')

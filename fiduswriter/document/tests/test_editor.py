@@ -713,6 +713,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         ).send_keys(
             Keys.RETURN
         ).perform()
+        time.sleep(1)
         # Downgrade the write rights to read rights for user4
         self.driver.find_element(
             By.CSS_SELECTOR,

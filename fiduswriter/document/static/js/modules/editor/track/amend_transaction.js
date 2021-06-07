@@ -177,7 +177,7 @@ export function amendTransaction(tr, state, editor) {
             tr,
             state,
             editor.user,
-            !editor.view.state.doc.firstChild.attrs.tracked && editor.docInfo.access_rights !== 'write-tracked',
+            !editor.view.state.doc.firstChild.attrs.tracked && !['write-tracked', 'review-tracked'].includes(editor.docInfo.access_rights),
             Date.now() - editor.clientTimeAdjustment
         )
     }

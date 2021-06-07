@@ -162,7 +162,7 @@ export const linksPlugin = function(options) {
         const dropUp = document.createElement('span'),
             editor = options.editor,
             writeAccess = editor.docInfo.access_rights === 'write' ? true : false,
-            editAccess = ['write', 'write-tracked'].includes(editor.docInfo.access_rights) ? true : false
+            editAccess = ['write', 'write-tracked', 'review-tracked'].includes(editor.docInfo.access_rights) ? true : false
         let linkType, linkHref, anchorHref, requiredPx = 10
 
         if (linkMark) {

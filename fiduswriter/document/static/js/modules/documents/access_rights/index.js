@@ -53,7 +53,10 @@ export class DocumentAccessRightsDialog {
                 }, selected: currentRight === 'read-without-comments'},
                 {type: 'action', title: gettext('Review'), icon: 'comment', tooltip: gettext("Comment, but not see comments and chats of others"), action: () => {
                     onChange('review')
-                }, selected: currentRight === 'review'}
+                }, selected: currentRight === 'review'},
+                {type: 'action', title: gettext('Review tracked'), icon: 'pencil-alt', tooltip: gettext("Write with tracked changes, but not see comments and chats of others"), action: () => {
+                    onChange('review-tracked')
+                }, selected: currentRight === 'review-tracked'},
             ]
         }
     }

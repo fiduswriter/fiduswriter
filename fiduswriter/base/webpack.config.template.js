@@ -1,5 +1,5 @@
 const webpack = require("webpack") // eslint-disable-line no-undef
-const OfflinePlugin = require("offline-plugin") // eslint-disable-line no-undef
+const OfflinePlugin = require("@lcdp/offline-plugin") // eslint-disable-line no-undef
 
 const settings = window.settings // Replaced by django-npm-mjs
 const transpile = window.transpile // Replaced by django-npm-mjs

@@ -1,5 +1,5 @@
 import {CSL} from 'citeproc-plus'
-import OfflinePluginRuntime from 'offline-plugin/runtime'
+import * as OfflinePluginRuntime from '@lcdp/offline-plugin/runtime'
 import {ContactInvite} from "../contacts/invite"
 import {ImageOverview} from "../images/overview"
 import {ContactsOverview} from "../contacts"

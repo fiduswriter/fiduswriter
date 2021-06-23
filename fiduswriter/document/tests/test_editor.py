@@ -834,6 +834,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
                 )
             )
         )
+        time.sleep(1)
         documents = self.driver.find_elements_by_css_selector(
             '.fw-contents tbody tr a.fw-data-table-title'
         )
@@ -841,9 +842,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             len(documents),
             1
         )
-        self.driver.find_element_by_css_selector(
-            '.fw-contents tbody tr a.fw-data-table-title'
-        ).click()
+        documents[0].click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, 'editor-toolbar'))
         )

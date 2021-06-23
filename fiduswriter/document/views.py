@@ -258,12 +258,25 @@ def get_documentlist(request):
     response['documents'] = documents_list(request)
     response['contacts'] = []
     for contact in request.user.contacts.all():
-        contact_object = {}
-        contact_object['id'] = contact.id
-        contact_object['name'] = contact.readable_name
-        contact_object['username'] = contact.get_username()
-        contact_object['avatar'] = contact.avatar_url
+        contact_object = {
+            'id': contact.id,
+            'name': contact.readable_name,
+            'username': contact.get_username(),
+            'avatar': contact.avatar_url,
+            'type': 'user'
+        }
         response['contacts'].append(contact_object)
+    for contact in request.user.invites_by.all():
+        contact_object = {
+            'id': contact.id,
+            'name': contact.username,
+            'username': contact.username,
+            'avatar': contact.avatar_url,
+            'type': 'userinvite'
+        }
+        response['contacts'].append(
+            contact_object
+        )
     serializer = PythonWithURLSerializer()
     doc_styles = serializer.serialize(
         DocumentStyle.objects.filter(

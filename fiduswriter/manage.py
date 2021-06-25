@@ -53,12 +53,12 @@ def inner(default_project_path):
         SETTINGS_MODULE = 'configuration'
     mod = False
     # There are three levels of settings, each overiding the previous one:
-    # global_settings.py, default_settings.py and configuration.py
+    # global_settings.py, settings.py and configuration.py
     from django.conf import global_settings as CONFIGURATION
-    from base import default_settings
-    SETTINGS_PATHS = [default_settings.__file__]
-    for setting in dir(default_settings):
-        setting_value = getattr(default_settings, setting)
+    from base import settings
+    SETTINGS_PATHS = [settings.__file__]
+    for setting in dir(settings):
+        setting_value = getattr(settings, setting)
         setattr(CONFIGURATION, setting, setting_value)
     try:
         mod = import_module(SETTINGS_MODULE)

@@ -372,3 +372,6 @@ JSONPATCH = True
 
 # Whether to create a service worker on production sites
 USE_SERVICE_WORKER = True
+
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

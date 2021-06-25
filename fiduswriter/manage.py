@@ -3,7 +3,6 @@ import os
 import sys
 from importlib import import_module
 
-from django.conf import settings
 from django.db import connections
 
 
@@ -55,10 +54,10 @@ def inner(default_project_path):
     # There are three levels of settings, each overiding the previous one:
     # global_settings.py, settings.py and configuration.py
     from django.conf import global_settings as CONFIGURATION
-    from base import settings
-    SETTINGS_PATHS = [settings.__file__]
-    for setting in dir(settings):
-        setting_value = getattr(settings, setting)
+    from base import settings as SETTINGS
+    SETTINGS_PATHS = [SETTINGS.__file__]
+    for setting in dir(SETTINGS):
+        setting_value = getattr(SETTINGS, setting)
         setattr(CONFIGURATION, setting, setting_value)
     try:
         mod = import_module(SETTINGS_MODULE)
@@ -74,6 +73,7 @@ def inner(default_project_path):
     )
     for app in CONFIGURATION.REMOVED_APPS:
         INSTALLED_APPS.remove(app)
+    from django.conf import settings
     settings.configure(
         CONFIGURATION,
         SETTINGS_MODULE=SETTINGS_MODULE,

@@ -1476,6 +1476,25 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             len(documents),
             2
         )
+        doc_texts = self.driver.find_elements_by_css_selector(
+            '.fw-searchable'
+        )
+        self.assertEqual(
+            doc_texts[0].text,
+            'A test article to share'
+        )
+        self.assertEqual(
+            doc_texts[1].text,
+            'Yeti'
+        )
+        self.assertEqual(
+            doc_texts[2].text,
+            'Copy of A test article to share'
+        )
+        self.assertEqual(
+            doc_texts[3].text,
+            'Yeti3'
+        )
         write_access_rights = self.driver.find_elements_by_css_selector(
             '.fw-contents tbody tr .icon-access-write'
         )

@@ -15,6 +15,7 @@ export class LatexExporterConvert {
         this.features = {}
         this.internalLinks = []
         this.categoryCounter = {} // counters for each type of figure (figure/table/photo)
+        this.authorsTex = ''
     }
 
     init(docContent) {
@@ -24,7 +25,7 @@ export class LatexExporterConvert {
         const copyright = this.assembleCopyright()
         const preamble = this.assemblePreamble()
         const epilogue = this.assembleEpilogue()
-        const latex = copyright + this.docDeclaration + preamble + '\n\\begin{document}\n' + body + epilogue + '\n\\end{document}\n'
+        const latex = copyright + this.docDeclaration + preamble + this.authorsTex + '\n\\begin{document}\n' + body + epilogue + '\n\\end{document}\n'
         const returnObject = {
             latex,
             imageIds: this.imageIds,
@@ -121,7 +122,7 @@ export class LatexExporterConvert {
                         affil => {
                             affil.forEach(
                                 author => {
-                                    content +=
+                                    this.authorsTex +=
                                             `\n\\author{${escapeLatexText(author.name)}${
                                                 author.email ?
                                                     `\\thanks{${
@@ -132,13 +133,14 @@ export class LatexExporterConvert {
                                 }
                             )
 
-                            content += `\n\\affil{${
+                            this.authorsTex += `\n\\affil{${
                                 affil[0].affiliation ?
                                     escapeLatexText(affil[0].affiliation) :
                                     ''
                             }}`
                         }
                     )
+                    this.authorsTex += "\n\n"
                     this.features.authors = true
                 } else {
                     if (!options.madeTitle) {
@@ -162,9 +164,9 @@ export class LatexExporterConvert {
                             return nameParts.join(' ')
                         }
                     ).join(', ')
-
+                    content += "\n\n"
                 }
-                content += "\n\n"
+
             }
 
             break
@@ -239,11 +241,12 @@ export class LatexExporterConvert {
             // entry into the PDF TOC.
             if (this.internalLinks.includes(node.attrs.id)) {
                 // Add a link target
-                end = `\\texorpdfstring{\\protect\\hypertarget{${node.attrs.id}}{}}{}` + end
+                end = end + `\\texorpdfstring{\\protect\\hypertarget{${node.attrs.id}}{}}{}`
             }
+            options = Object.assign({}, options)
+            options.noLineBreak = true
             if (!options.onlyFootnoteMarkers) {
                 placeFootnotesAfterBlock = true
-                options = Object.assign({}, options)
                 options.onlyFootnoteMarkers = true
                 options.unplacedFootnotes = []
             }
@@ -597,7 +600,9 @@ export class LatexExporterConvert {
             content += `$${node.attrs.equation}$`
             break
         case 'hard_break':
-            content += '\n\n'
+            if (!options.noLineBreak) {
+                content += '\n\n'
+            }
             break
         default:
             break

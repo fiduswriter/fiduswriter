@@ -375,3 +375,4 @@ USE_SERVICE_WORKER = True
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+SILENCED_SYSTEM_CHECKS = ["models.W042"]

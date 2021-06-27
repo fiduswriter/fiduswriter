@@ -1446,6 +1446,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         )
         invitation_link = self.find_urls(user7_invitation_email)[0]
         self.driver.get(invitation_link)
+        time.sleep(1)
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
                 (

@@ -1481,6 +1481,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             len(documents),
             2
         )
+        time.sleep(1)
         doc_texts = self.driver.find_elements_by_css_selector(
             '.fw-searchable'
         )

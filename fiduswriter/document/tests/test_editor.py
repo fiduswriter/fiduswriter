@@ -1134,6 +1134,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Write"]'
         ).click()
+        time.sleep(1)
         self.driver.find_element(
             By.CSS_SELECTOR,
             ".ui-dialog .fw-dark"
@@ -1445,7 +1446,6 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         )
         invitation_link = self.find_urls(user7_invitation_email)[0]
         self.driver.get(invitation_link)
-        time.sleep(1)
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
                 (
@@ -1457,9 +1457,13 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Accept invite"]'
         ).click()
-        time.sleep(1)
-        self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Documents"]'
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.XPATH,
+                    '//*[normalize-space()="Documents"]'
+                )
+            )
         ).click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(

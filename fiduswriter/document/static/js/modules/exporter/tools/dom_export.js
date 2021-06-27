@@ -97,7 +97,6 @@ export class DOMExporter {
         this.content.querySelectorAll('figcaption span.label,caption span.label').forEach(el => {
             const category = el.parentElement.parentElement.dataset.category
             el.innerHTML = category === 'none' ? '' : CATS[category][language]
-            delete el.dataset.category
         })
     }
 

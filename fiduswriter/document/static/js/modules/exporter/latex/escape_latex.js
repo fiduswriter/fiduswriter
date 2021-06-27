@@ -5,10 +5,8 @@ export const escapeLatexText = function(text) {
     // Remove line breaks
         .replace(/\r|\n/g, '')
     // Escape characters that are protected in some way.
-        .replace(/\\\\/g, '\\textbackslash')
         .replace(/\{/g, '\\{')
         .replace(/\}/g, '\\}')
-        .replace(/\\\\textbackslash/g, '\\textbackslash{}')
         .replace(/\^/g, '\\textasciicircum{}')
         .replace(/\$/g, '\\$')
         .replace(/_/g, '\\_')
@@ -16,6 +14,7 @@ export const escapeLatexText = function(text) {
         .replace(/#/g, '\\#')
         .replace(/%/g, '\\%')
         .replace(/&/g, '\\&')
+        .replace(/\\\\/g, '\\textbackslash')
 
     // Remove control characters that somehow have ended up in the document
         .replace(/\u000B/g, '')

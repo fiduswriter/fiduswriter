@@ -834,6 +834,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
                 )
             )
         )
+        time.sleep(1)
         documents = self.driver.find_elements_by_css_selector(
             '.fw-contents tbody tr a.fw-data-table-title'
         )
@@ -841,9 +842,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             len(documents),
             1
         )
-        self.driver.find_element_by_css_selector(
-            '.fw-contents tbody tr a.fw-data-table-title'
-        ).click()
+        documents[0].click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, 'editor-toolbar'))
         )
@@ -1135,6 +1134,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Write"]'
         ).click()
+        time.sleep(1)
         self.driver.find_element(
             By.CSS_SELECTOR,
             ".ui-dialog .fw-dark"
@@ -1458,9 +1458,13 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Accept invite"]'
         ).click()
-        time.sleep(1)
-        self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Documents"]'
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.XPATH,
+                    '//*[normalize-space()="Documents"]'
+                )
+            )
         ).click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
@@ -1476,6 +1480,26 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         self.assertEqual(
             len(documents),
             2
+        )
+        time.sleep(1)
+        doc_texts = self.driver.find_elements_by_css_selector(
+            '.fw-searchable'
+        )
+        self.assertEqual(
+            doc_texts[0].text,
+            'A test article to share'
+        )
+        self.assertEqual(
+            doc_texts[1].text,
+            'Yeti'
+        )
+        self.assertEqual(
+            doc_texts[2].text,
+            'Copy of A test article to share'
+        )
+        self.assertEqual(
+            doc_texts[3].text,
+            'Yeti3'
         )
         write_access_rights = self.driver.find_elements_by_css_selector(
             '.fw-contents tbody tr .icon-access-write'

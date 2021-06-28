@@ -180,6 +180,10 @@ export class DocumentAccessRightsDialog {
                     const collaborator = this.contacts.find(
                         contact => contact.type === el.dataset.type && contact.id === parseInt(el.dataset.id)
                     )
+                    if (!collaborator) {
+                        console.warn(`No contact found of type: ${el.dataset.type} id: ${el.dataset.id}.`)
+                        return
+                    }
                     selectedData.push({
                         holder: {
                             id: collaborator.id,

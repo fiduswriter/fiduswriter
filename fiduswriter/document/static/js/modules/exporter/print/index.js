@@ -111,6 +111,7 @@ export class PrintExporter extends HTMLExporter {
                         const oldBody = document.body
                         document.body.parentElement.dataset.vivliostylePaginated = true
                         document.body = iframeWin.document.body
+                        document.body.querySelectorAll('figure, table').forEach(el => delete el.dataset.category)
                         iframeWin.document.querySelectorAll('style').forEach(el => document.body.appendChild(el))
                         const backgroundStyle = document.createElement('style')
                         backgroundStyle.innerHTML = 'body {background-color: white;}'

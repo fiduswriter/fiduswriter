@@ -19,14 +19,13 @@ admin.site.site_header = settings.ADMIN_SITE_HEADER
 admin.site.site_title = settings.ADMIN_SITE_TITLE
 admin.site.index_title = settings.ADMIN_INDEX_TITLE
 admin.site.index_template = 'admin/overview.html'
-admin_site_urls = (admin.site.urls[0] + [
+admin_site_urls = ([
     url(
-        r'console/$',
+        'console/',
         admin.site.admin_view(admin_console_view, cacheable=True),
         name="admin_console"
     ),
-], admin.site.urls[1], admin.site.urls[2])
-
+] + admin.site.urls[0], admin.site.urls[1], admin.site.urls[2])
 # Django URLs -- Notice that these are only consulted after the
 # tornado_url_list found in base/servers/tornado_django_hybrid.py
 urlpatterns = [

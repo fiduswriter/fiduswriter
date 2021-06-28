@@ -96,7 +96,7 @@ export class DocumentOverviewActions {
                         this.documentOverview.user,
                         this.documentOverview.path,
                         true,
-                        this.documentOverview.teamMembers
+                        this.documentOverview.contacts
                     )
 
                     importer.init().then(

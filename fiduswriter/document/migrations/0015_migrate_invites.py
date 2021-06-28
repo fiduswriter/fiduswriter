@@ -8,7 +8,7 @@ def accessrightinvites_to_userinvites(apps, schema_editor):
     UserInvite  = apps.get_model('user', 'UserInvite')
     ContentType = apps.get_model('contenttypes', 'ContentType')
     user_app_config = apps.get_app_config('user')
-    user_app_config.models_module = user_app_config.models_module or True
+    user_app_config.models_module = True
     create_contenttypes(user_app_config)
     userinvite_ct = ContentType.objects.get(
         app_label='user',

@@ -17,7 +17,7 @@ export class CommentEditor {
         this.mod = mod
         this.id = id
         this.dom = dom
-        this.text = text.length ? text : [{type: 'paragraph'}]
+        this.text = text
         this.options = options
 
         this.isMajor = this.options.isMajor
@@ -135,14 +135,12 @@ export class CommentEditor {
             case findTarget(event, 'button.submit:not(.disabled)', el):
                 this.submit()
                 if (this.keepOpenAfterSubmit) {
-                    console.log('scroll')
                     this.scrollToBottom()
                 } else {
-                    console.log('deactivate')
+                    this.mod.interactions.activeCommentId = false
                     this.mod.interactions.deactivateAll()
-                    this.mod.interactions.updateDOM()
+                    this.mod.interactions.collapseSelectionToEnd()
                 }
-
                 break
             case findTarget(event, 'button.cancel', el):
                 this.mod.interactions.cancelSubmit()
@@ -163,14 +161,18 @@ export class CommentEditor {
         })
     }
 
+    hasChanged() {
+        return (!deepEqual(
+            this.text.length ? this.text : [{type: 'paragraph'}],
+            this.view.state.doc.toJSON().content || [{type: 'paragraph'}]
+        ) || this.options.isMajor !== this.isMajor)
+    }
+
     updateButtons() {
-        if (
-            deepEqual(this.text, this.view.state.doc.toJSON().content) &&
-            this.options.isMajor === this.isMajor
-        ) {
-            this.dom.querySelector('button.submit').classList.add('disabled')
-        } else {
+        if (this.hasChanged()) {
             this.dom.querySelector('button.submit').classList.remove('disabled')
+        } else {
+            this.dom.querySelector('button.submit').classList.add('disabled')
         }
     }
 

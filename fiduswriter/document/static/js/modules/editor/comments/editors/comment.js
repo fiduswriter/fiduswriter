@@ -1,21 +1,26 @@
+import deepEqual from "fast-deep-equal"
 import {EditorState} from "prosemirror-state"
 import {EditorView} from "prosemirror-view"
 import {history, redo, undo} from "prosemirror-history"
 import {baseKeymap} from "prosemirror-commands"
 import {keymap} from "prosemirror-keymap"
 import {suggestionsPlugin, triggerCharacter} from "prosemirror-suggestions"
+
+import {escapeText, findTarget} from "../../../common"
+
 import {commentSchema} from "./schema"
 import {notifyMentionedUser} from "./notify"
-import {escapeText, findTarget} from "../../../common"
+
 
 export class CommentEditor {
     constructor(mod, id, dom, text, options = {}) {
         this.mod = mod
         this.id = id
         this.dom = dom
-        this.text = text
+        this.text = text.length ? text : [{type: 'paragraph'}]
         this.options = options
 
+        this.isMajor = this.options.isMajor
         this.selectedTag = 0
         this.userTaggerList = []
         this.plugins = [
@@ -90,11 +95,11 @@ export class CommentEditor {
                 ${this.options.isMajor ? 'checked' : ''}/>
             <label>${gettext("High priority")}</label>
             <div class="comment-btns">
-                <button class="submit fw-button fw-dark" type="submit">
+                <button class="submit fw-button fw-dark disabled" type="submit">
                     ${this.id !== '-1' ? gettext("Edit") : gettext("Submit")}
                 </button>
                 <button class="cancel fw-button fw-orange" type="submit">
-                    ${gettext("Cancel")}
+                    ${gettext("Close")}
                 </button>
             </div>
             <div class="tagger"></div>`
@@ -114,6 +119,7 @@ export class CommentEditor {
             dispatchTransaction: tr => {
                 const newState = this.view.state.apply(tr)
                 this.view.updateState(newState)
+                this.updateButtons()
             }
         })
         this.oldUserTags = this.getUserTags()
@@ -126,7 +132,8 @@ export class CommentEditor {
             switch (true) {
             case findTarget(event, 'button.submit:not(.disabled)', el):
                 this.submit()
-                this.scrollToBottom()
+                this.mod.interactions.deactivateAll()
+                this.mod.interactions.updateDOM()
                 break
             case findTarget(event, 'button.cancel', el):
                 this.mod.interactions.cancelSubmit()
@@ -139,17 +146,31 @@ export class CommentEditor {
                 this.selectUserTag()
                 this.view.focus()
                 break
+            case findTarget(event, '.comment-is-major', el):
+                this.isMajor = !this.isMajor
+                this.updateButtons()
+                break
             }
         })
+    }
 
-
+    updateButtons() {
+        if (
+            deepEqual(this.text, this.view.state.doc.toJSON().content) &&
+            this.options.isMajor === this.isMajor
+        ) {
+            this.dom.querySelector('button.cancel').innerHTML = gettext('Close')
+            this.dom.querySelector('button.submit').classList.add('disabled')
+        } else {
+            this.dom.querySelector('button.cancel').innerHTML = gettext('Cancel')
+            this.dom.querySelector('button.submit').classList.remove('disabled')
+        }
     }
 
     submit() {
-        const comment = this.view.state.doc.toJSON().content,
-            isMajor = this.dom.querySelector('.comment-is-major').checked
+        const comment = this.view.state.doc.toJSON().content
         if (comment?.length > 0) {
-            this.mod.interactions.updateComment({id: this.id, comment, isMajor})
+            this.mod.interactions.updateComment({id: this.id, comment, isMajor: this.isMajor})
             this.sendNotifications()
         } else {
             this.mod.interactions.deleteComment(this.id)

@@ -1,8 +1,8 @@
-// Fidus Writer will combine this file with package.json files in other installed
-// apps before executing npm commands. Different from a regular package.json, comments
-// are allowed in this file.
-
 {
+  "__comment": [
+    "Fidus Writer will combine this file with package.json files in other installed",
+    "apps before executing npm commands."
+  ],
   "name": "fidus-writer",
   "description": "Install dependencies for ES6 transpilation",
   "scripts": {

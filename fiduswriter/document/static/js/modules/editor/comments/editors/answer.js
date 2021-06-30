@@ -3,6 +3,8 @@ import {CommentEditor} from "./comment"
 export class CommentAnswerEditor extends CommentEditor {
     constructor(mod, id, dom, text, options = {}) {
         super(mod, id, dom, text, options)
+
+        this.keepOpenAfterSubmit = true
     }
 
     initViewDOM() {
@@ -16,7 +18,7 @@ export class CommentAnswerEditor extends CommentEditor {
                     ${this.options.answerId ? gettext("Edit") : gettext("Submit")}
                 </button>
                 <button class="cancel fw-button fw-orange" type="submit">
-                    ${gettext("Close")}
+                    ${gettext("Cancel")}
                 </button>
             </div>
             <div class="tagger"></div>`

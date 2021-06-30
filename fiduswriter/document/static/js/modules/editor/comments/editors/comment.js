@@ -21,6 +21,8 @@ export class CommentEditor {
         this.options = options
 
         this.isMajor = this.options.isMajor
+
+        this.keepOpenAfterSubmit = false
         this.selectedTag = 0
         this.userTaggerList = []
         this.plugins = [
@@ -99,7 +101,7 @@ export class CommentEditor {
                     ${this.id !== '-1' ? gettext("Edit") : gettext("Submit")}
                 </button>
                 <button class="cancel fw-button fw-orange" type="submit">
-                    ${gettext("Close")}
+                    ${gettext("Cancel")}
                 </button>
             </div>
             <div class="tagger"></div>`
@@ -132,8 +134,15 @@ export class CommentEditor {
             switch (true) {
             case findTarget(event, 'button.submit:not(.disabled)', el):
                 this.submit()
-                this.mod.interactions.deactivateAll()
-                this.mod.interactions.updateDOM()
+                if (this.keepOpenAfterSubmit) {
+                    console.log('scroll')
+                    this.scrollToBottom()
+                } else {
+                    console.log('deactivate')
+                    this.mod.interactions.deactivateAll()
+                    this.mod.interactions.updateDOM()
+                }
+
                 break
             case findTarget(event, 'button.cancel', el):
                 this.mod.interactions.cancelSubmit()
@@ -159,10 +168,8 @@ export class CommentEditor {
             deepEqual(this.text, this.view.state.doc.toJSON().content) &&
             this.options.isMajor === this.isMajor
         ) {
-            this.dom.querySelector('button.cancel').innerHTML = gettext('Close')
             this.dom.querySelector('button.submit').classList.add('disabled')
         } else {
-            this.dom.querySelector('button.cancel').innerHTML = gettext('Cancel')
             this.dom.querySelector('button.submit').classList.remove('disabled')
         }
     }

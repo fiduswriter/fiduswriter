@@ -1,4 +1,5 @@
 import {addAlert, postJson, Dialog} from "../common"
+import {DocumentTemplateDownloader} from "../document_template"
 
 
 export class DocTemplatesActions {
@@ -81,5 +82,10 @@ export class DocTemplatesActions {
                 this.docTemplatesOverview.addDocTemplateToTable(docTemplate)
             }
         )
+    }
+
+    downloadDocTemplate(id) {
+        const downloader = new DocumentTemplateDownloader(id)
+        downloader.init()
     }
 }

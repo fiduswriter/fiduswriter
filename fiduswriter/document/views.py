@@ -794,19 +794,41 @@ def get_all_template_ids(request):
     )
 
 
-@staff_member_required
+@login_required
 @ajax_required
 @require_POST
 def get_template(request):
-    response = {}
-    status = 405
-    template_id = request.POST['id']
-    template = DocumentTemplate.objects.filter(pk=int(template_id)).first()
-    if template:
+    id = int(request.POST['id'])
+    if id == 0:
+        doc_template = DocumentTemplate()
+        doc_template.user = request.user
+        doc_template.save()
+        status = 201
+    else:
+        doc_template = DocumentTemplate.objects.filter(
+            id=id,
+            user=request.user
+        ).first()
         status = 200
-        response['content'] = template.content
-        response['title'] = template.title
-        response['doc_version'] = template.doc_version
+    if doc_template is None:
+        return JsonResponse({}, status=405)
+    serializer = PythonWithURLSerializer()
+    export_templates = serializer.serialize(
+        doc_template.exporttemplate_set.all()
+    )
+    document_styles = serializer.serialize(
+        doc_template.documentstyle_set.all(),
+        use_natural_foreign_keys=True,
+        fields=['title', 'slug', 'contents', 'documentstylefile_set']
+    )
+    response = {
+        'id': doc_template.id,
+        'title': doc_template.title,
+        'content': doc_template.content,
+        'doc_version': doc_template.doc_version,
+        'export_templates': export_templates,
+        'document_styles': document_styles
+    }
     return JsonResponse(
         response,
         status=status
@@ -816,7 +838,29 @@ def get_template(request):
 @staff_member_required
 @ajax_required
 @require_POST
-def get_template_extras(request):
+def get_template_admin(request):
+    response = {}
+    status = 405
+    template_id = request.POST['id']
+    doc_template = DocumentTemplate.objects.filter(pk=int(template_id)).first()
+    if doc_template:
+        status = 200
+        response = {
+            'id': doc_template.id,
+            'title': doc_template.title,
+            'content': doc_template.content,
+            'doc_version': doc_template.doc_version
+        }
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@staff_member_required
+@ajax_required
+@require_POST
+def get_template_admin_extras(request):
     id = request.POST['id']
     doc_template = DocumentTemplate.objects.filter(
         id=id

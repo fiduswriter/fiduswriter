@@ -50,9 +50,14 @@ urlpatterns = [
         name='comment_notify'
     ),
     url(
-        '^admin/get_template_extras/$',
-        views.get_template_extras,
-        name='get_template_extras'
+        '^get_template/$',
+        views.get_template,
+        name='get_template'
+    ),
+    url(
+        '^admin/get_template_admin_extras/$',
+        views.get_template_admin_extras,
+        name='get_template_admin_extras'
     ),
     url(
         '^admin/get_all_old/$',
@@ -81,8 +86,8 @@ urlpatterns = [
     ),
     url(
         '^admin/get_template/$',
-        views.get_template,
-        name='get_template'
+        views.get_template_admin,
+        name='get_template_admin'
     ),
     url(
         '^admin/save_template/$',

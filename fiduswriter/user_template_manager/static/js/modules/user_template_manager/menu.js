@@ -44,6 +44,17 @@ export const bulkMenuModel = () => ({
                 )
             },
             disabled: overview => !overview.getSelected().length
+        },
+        {
+            title: gettext('Download selected'),
+            tooltip: gettext('Download selected document templates.'),
+            action: overview => {
+                const ids = overview.getSelected()
+                ids.forEach(id =>
+                    overview.mod.actions.downloadDocTemplate(id)
+                )
+            },
+            disabled: overview => !overview.getSelected().length
         }
     ]
 })

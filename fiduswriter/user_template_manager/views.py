@@ -7,7 +7,6 @@ from django.views.decorators.http import require_POST
 
 from base.decorators import ajax_required
 from document.models import DocumentTemplate
-from document.helpers.serializers import PythonWithURLSerializer
 
 
 @login_required
@@ -29,48 +28,6 @@ def list(request):
             'updated': obj.updated.strftime(date_format)
         } for obj in doc_templates
     ]
-    return JsonResponse(
-        response,
-        status=status
-    )
-
-
-@login_required
-@ajax_required
-@require_POST
-def get(request):
-    id = int(request.POST['id'])
-    if id == 0:
-        doc_template = DocumentTemplate()
-        doc_template.user = request.user
-        doc_template.save()
-        status = 201
-    else:
-        doc_template = DocumentTemplate.objects.filter(
-            id=id,
-            user=request.user
-        ).first()
-        status = 200
-    if doc_template is None:
-        return JsonResponse({}, status=405)
-    serializer = PythonWithURLSerializer()
-    export_templates = serializer.serialize(
-        doc_template.exporttemplate_set.all()
-    )
-    document_styles = serializer.serialize(
-        doc_template.documentstyle_set.all(),
-        use_natural_foreign_keys=True,
-        fields=['title', 'slug', 'contents', 'documentstylefile_set']
-    )
-    response = {
-        'template': {
-            'id': doc_template.id,
-            'title': doc_template.title,
-            'content': doc_template.content,
-            'export_templates': export_templates,
-            'document_styles': document_styles
-        },
-    }
     return JsonResponse(
         response,
         status=status

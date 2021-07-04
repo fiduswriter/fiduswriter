@@ -85,7 +85,10 @@ export class DocTemplatesActions {
     }
 
     downloadDocTemplate(id) {
-        const downloader = new DocumentTemplateDownloader(id)
+        const downloader = new DocumentTemplateDownloader(
+            id,
+            '/api/user_template_manager/get/'
+        )
         downloader.init()
     }
 }

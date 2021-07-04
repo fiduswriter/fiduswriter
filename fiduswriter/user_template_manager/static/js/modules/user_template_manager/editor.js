@@ -19,7 +19,7 @@ export class DocTemplatesEditor {
         return this.app.csl.getStyles().then(
             styles => {
                 this.citationStyles = styles
-                return postJson('/api/document/get_template/', {id: this.id})
+                return postJson('/api/user_template_manager/get/', {id: this.id})
             }
         ).then(
             ({json}) => {
@@ -111,7 +111,10 @@ export class DocTemplatesEditor {
     download() {
         this.save().then(
             () => {
-                const downloader = new DocumentTemplateDownloader(this.id)
+                const downloader = new DocumentTemplateDownloader(
+                    this.id,
+                    '/api/user_template_manager/get/'
+                )
                 downloader.init()
             }
         )

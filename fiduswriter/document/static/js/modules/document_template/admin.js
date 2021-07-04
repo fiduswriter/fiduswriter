@@ -33,7 +33,7 @@ export class DocumentTemplateAdmin {
         ]
         if (this.id) {
             initialTasks.push(
-                postJson('/api/document/admin/get_template_extras/', {id: this.id}).then(
+                postJson('/api/document/admin/get_template/extras/', {id: this.id}).then(
                     ({json}) => this.templateExtras = json
                 )
             )

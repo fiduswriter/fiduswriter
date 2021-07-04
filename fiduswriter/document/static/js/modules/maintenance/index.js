@@ -155,7 +155,7 @@ export class DocMaintenance {
 
     updateDocumentTemplate(id) {
         postJson(
-            `/api/document/admin/get_template/`, {id}
+            `/api/document/admin/get_template/base/`, {id}
         ).then(
             // The field 'content' of the document template module has the same
             // structure as the field 'contents' of the document module.

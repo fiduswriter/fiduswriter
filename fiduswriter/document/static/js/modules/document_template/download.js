@@ -6,8 +6,9 @@ import {ZipFileCreator} from "../exporter/tools/zip"
 
 
 export class DocumentTemplateDownloader {
-    constructor(id) {
+    constructor(id, getUrl = '/api/document/admin/get_template/') {
         this.id = id
+        this.getUrl = getUrl
 
         this.zipFileName = false
         this.textFiles = []
@@ -16,10 +17,9 @@ export class DocumentTemplateDownloader {
 
     init() {
         return postJson(
-            '/api/document/get_template/',
+            this.getUrl,
             {id: this.id}
         ).then(({json}) => {
-            console.log({json})
             this.zipFileName = `${createSlug(json.title)}.fidustemplate`
             this.textFiles.push({filename: 'content.json', contents: JSON.stringify(json.content)})
             this.textFiles.push({filename: 'filetype-version', contents: json.doc_version})

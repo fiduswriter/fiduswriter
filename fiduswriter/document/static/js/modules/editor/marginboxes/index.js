@@ -555,6 +555,7 @@ export class ModMarginboxes {
                 return
             }
             const active = comment.id === this.editor.mod.comments.interactions.activeCommentId
+
             if (this.filterOptions.comments) {
                 if (active) {
                     this.activeCommentStyle +=

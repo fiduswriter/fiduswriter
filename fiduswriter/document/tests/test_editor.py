@@ -1422,6 +1422,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(By.ID, "id_login").send_keys("Yeti3")
         self.driver.find_element(By.ID, "id_password").send_keys("password")
         self.driver.find_element(By.ID, "login-submit").click()
+        time.sleep(1)
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
                 (
@@ -1466,6 +1467,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
                 )
             )
         ).click()
+        time.sleep(1)
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
                 (
@@ -1519,6 +1521,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(By.ID, "id_login").send_keys("Yeti")
         self.driver.find_element(By.ID, "id_password").send_keys("otter")
         self.driver.find_element(By.ID, "login-submit").click()
+        time.sleep(1)
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable(
                 (

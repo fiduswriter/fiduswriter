@@ -57,9 +57,11 @@ export class DocumentTemplateListAdmin {
             {
                 event.preventDefault()
                 const fileSelector = document.createElement('input')
+                fileSelector.id = 'fidus-template-uploader'
                 fileSelector.setAttribute('type', 'file')
                 fileSelector.setAttribute('multiple', '')
                 fileSelector.setAttribute('accept', '.fidustemplate')
+                document.body.appendChild(fileSelector)
                 fileSelector.click()
                 fileSelector.addEventListener('change', () => {
                     const files = Array.from(fileSelector.files).filter(file => {

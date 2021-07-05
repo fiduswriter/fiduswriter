@@ -798,7 +798,7 @@ def get_all_template_ids(request):
 @ajax_required
 @require_POST
 def get_template_admin(request, type='all'):
-    template_id = ['id']
+    template_id = request.POST.get('id')
     doc_template = DocumentTemplate.objects.filter(pk=int(template_id)).first()
     if doc_template is None:
         return JsonResponse({}, status=405)
@@ -862,8 +862,7 @@ def create_template(request):
         title=title,
         content=content,
         doc_version=FW_DOCUMENT_VERSION,
-        import_id=import_id,
-        user=request.user
+        import_id=import_id
     )
     response['id'] = template.id
     date_format = '%Y-%m-%d'

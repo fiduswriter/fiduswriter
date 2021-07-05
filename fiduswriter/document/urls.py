@@ -55,6 +55,11 @@ urlpatterns = [
         name='get_template_admin'
     ),
     url(
+        '^admin/create_template/$',
+        views.create_template_admin,
+        name='create_template_admin'
+    ),
+    url(
         '^admin/get_template/(?P<type>base|extras)/$',
         views.get_template_admin,
         name='get_template_admin'
@@ -88,11 +93,6 @@ urlpatterns = [
         '^admin/save_template/$',
         views.save_template,
         name='save_template'
-    ),
-    url(
-        '^admin/create_template/$',
-        views.create_template,
-        name='create_template'
     ),
     url(
         '^admin/get_user_biblist/$',

@@ -4,6 +4,7 @@ import {CSL} from "citeproc-plus"
 
 export class DocumentTemplateAdmin {
     constructor() {
+        this.objectTools = false
         this.contentTextarea = false
         this.templateDesigner = false
         this.templateExtras = false
@@ -25,7 +26,7 @@ export class DocumentTemplateAdmin {
         }
         ensureCSS([
             'colors.css',
-            'document_template_designer_admin.css',
+            'document_template_admin.css',
             'admin.css',
             'ui_dialogs.css',
             'buttons.css'
@@ -76,7 +77,6 @@ export class DocumentTemplateAdmin {
         this.contentBlock.style.display = 'none'
         this.contentImportIdBlock.style.display = 'none'
         this.titleBlock.style.display = 'none'
-        console.log('inserting source/editor link')
         this.objectTools.insertAdjacentHTML(
             'beforeend',
             `<li>

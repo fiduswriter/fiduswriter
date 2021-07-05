@@ -7,7 +7,7 @@ import {updateTemplateFile} from "./update"
 const TEXT_FILENAMES = ['mimetype', 'filetype-version', 'title.txt', 'content.json', 'exporttemplates.json', 'documentstyles.json']
 
 export class DocumentTemplateUploader {
-    constructor(file, createUrl = '/api/document/create_template/') {
+    constructor(file, createUrl = '/api/document/admin/create_template/') {
         this.file = file
         this.createUrl = createUrl
 

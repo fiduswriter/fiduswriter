@@ -14,6 +14,8 @@ form .aligned ul.object-tools.right {
     text-transform: uppercase;
     letter-spacing: .5px;
     border-radius: 15px;
+    padding: 3px 12px;
+    cursor: pointer;
 }
 
 .object-tools span.link:focus,

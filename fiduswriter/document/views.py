@@ -851,7 +851,7 @@ def save_template(request):
 @staff_member_required
 @ajax_required
 @require_POST
-def create_template(request):
+def create_template_admin(request):
     response = {}
     title = request.POST.get('title')
     content = json.loads(request.POST.get('content'))

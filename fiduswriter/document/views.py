@@ -22,7 +22,7 @@ from usermedia.models import DocumentImage, Image
 from bibliography.models import Entry
 from document.helpers.serializers import PythonWithURLSerializer
 from bibliography.views import serializer
-from style.models import DocumentStyle
+from style.models import DocumentStyle, DocumentStyleFile, ExportTemplate
 from base.decorators import ajax_required
 from user.models import UserInvite
 from . import emails
@@ -845,6 +845,57 @@ def save_template(request):
     return JsonResponse(
         response,
         status=status
+    )
+
+
+@staff_member_required
+@ajax_required
+@require_POST
+def create_template(request):
+    response = {}
+    title = request.POST.get('title')
+    content = json.loads(request.POST.get('content'))
+    import_id = request.POST.get('import_id')
+    document_styles = json.loads(request.POST.get('document_styles'))
+    export_templates = json.loads(request.POST.get('export_templates'))
+    template = DocumentTemplate.objects.create(
+        title=title,
+        content=content,
+        doc_version=FW_DOCUMENT_VERSION,
+        import_id=import_id,
+        user=request.user
+    )
+    response['id'] = template.id
+    date_format = '%Y-%m-%d'
+    response['added'] = template.added.strftime(date_format)
+    response['updated'] = template.updated.strftime(date_format)
+    files = request.FILES.getlist('files[]')
+    for style in document_styles:
+        doc_style = DocumentStyle.objects.create(
+            title=style['title'],
+            slug=style['slug'],
+            contents=style['contents'],
+            document_template=template
+        )
+        for filename in style['files']:
+            file = next((x for x in files if x.name == filename), None)
+            if file:
+                DocumentStyleFile.objects.create(
+                    file=file,
+                    style=doc_style
+                )
+    for e_template in export_templates:
+        filename = e_template['file']
+        file = next((x for x in files if x.name == filename), None)
+        if file:
+            ExportTemplate.objects.create(
+                document_template=template,
+                template_file=file,
+                file_type=e_template['file_type']
+            )
+    return JsonResponse(
+        response,
+        status=201
     )
 
 

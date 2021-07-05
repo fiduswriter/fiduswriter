@@ -90,6 +90,11 @@ urlpatterns = [
         name='save_template'
     ),
     url(
+        '^admin/create_template/$',
+        views.create_template,
+        name='create_template'
+    ),
+    url(
         '^admin/get_user_biblist/$',
         views.get_user_biblist,
         name='get_user_biblist'

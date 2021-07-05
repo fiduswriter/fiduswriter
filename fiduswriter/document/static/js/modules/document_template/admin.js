@@ -17,6 +17,12 @@ export class DocumentTemplateAdmin {
     }
 
     init() {
+        if (
+            window.location.search.length &&
+            window.location.search.includes('debug=true')
+        ) {
+            return
+        }
         ensureCSS([
             'colors.css',
             'document_template_designer_admin.css',
@@ -40,6 +46,7 @@ export class DocumentTemplateAdmin {
         }
 
         Promise.all(initialTasks).then(() => {
+            this.objectTools = document.querySelector('ul.object-tools')
             this.titleInput = document.querySelector('#id_title')
             this.titleBlock = document.querySelector('div.field-title')
             this.contentTextarea = document.querySelector('textarea[name=content]')
@@ -69,14 +76,16 @@ export class DocumentTemplateAdmin {
         this.contentBlock.style.display = 'none'
         this.contentImportIdBlock.style.display = 'none'
         this.titleBlock.style.display = 'none'
+        console.log('inserting source/editor link')
+        this.objectTools.insertAdjacentHTML(
+            'beforeend',
+            `<li>
+                <span class="link" id="toggle-editor">${gettext('Source/Editor')}</span>
+            </li>`
+        )
         this.titleBlock.insertAdjacentHTML(
             'beforebegin',
-            `<div class="form-row"><ul class="object-tools right">
-                <li>
-                    <span class="link" id="toggle-editor">${gettext('Source/Editor')}</span>
-                </li>
-            </ul></div>
-            <div class="form-row template-editor">
+            `<div class="form-row template-editor">
                 <ul class="errorlist"></ul>
                 <div id="template-editor"></div>
             </div>`

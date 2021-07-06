@@ -125,7 +125,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         )
         self.driver.find_element(
             By.CSS_SELECTOR,
-            "a[href='/admin/document/documenttemplate/2/change/']"
+            '.field-title a'
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, "input.title").click()
         ActionChains(self.driver).send_keys(

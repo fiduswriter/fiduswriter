@@ -21,7 +21,7 @@ def send_share_notification(
         message_text = _(
             ('Hey %(collaborator_name)s,\n%(owner)s has changed your access '
              'rights to %(rights)s on the document \'%(document_title)s\'. '
-             '\nAccess the document through this link: %(link)s')
+             '\nOpen the document: %(link)s')
         ) % {
             'owner': owner,
             'rights': rights,
@@ -44,7 +44,7 @@ def send_share_notification(
             ('Hey %(collaborator_name)s,\n%(owner)s has shared the document '
              '\'%(document_title)s\' with you and given you %(rights)s access '
              'rights. '
-             '\nAccess the document through this link: %(link)s')
+             '\nOpen document: %(link)s')
         ) % {
             'owner': owner,
             'rights': rights,

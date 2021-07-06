@@ -167,9 +167,16 @@ export class ModCitations {
                 citationNodes.forEach(citationNode => citationNode.innerHTML = '<span class="citation-footnote-marker"></span>')
 
                 const footnoteCitationNodes = document.querySelectorAll('#footnote-box-container span.citation')
+                const footnoteCitTexts = citRenderer.fm.citationTexts.slice(citationNodes.length)
 
-                citRenderer.fm.citationTexts.slice(citationNodes.length).forEach(
-                    (citText, index) => footnoteCitationNodes[index].innerHTML = citText
+                footnoteCitTexts.forEach(
+                    (citText, index) => {
+                        const citationNode = footnoteCitationNodes[index]
+                        if (citationNode) {
+                            citationNode.innerHTML = citText
+                        }
+
+                    }
                 )
 
             }

@@ -38,13 +38,13 @@ function markInsertion(tr, from, to, user, date1, date10, approved) {
 function markDeletion(tr, from, to, user, date1, date10) {
     const deletionMark = tr.doc.type.schema.marks.deletion.create({user: user.id, username: user.username, date: date10})
     let firstTableCellChild = false
-    let firstListItem = false
+    let listItem = false
     const deletionMap = new Mapping()
     // Add deletion mark to block nodes (figures, text blocks) and find already deleted inline nodes (and leave them alone)
     tr.doc.nodesBetween(
         from,
         to,
-        (node, pos, _parent, index) => {
+        (node, pos, _parent, _index) => {
             if (pos < from && node.type.name === 'table_cell') {
                 firstTableCellChild = true
                 return true
@@ -72,11 +72,14 @@ function markDeletion(tr, from, to, user, date1, date10) {
                 !node.attrs.track?.find(trackAttr => trackAttr.type === 'deletion') &&
                 !['bullet_list', 'ordered_list'].includes(node.type.name)
             ) {
-                if (node.attrs.track?.find(trackAttr => trackAttr.type === 'insertion' && trackAttr.user === user.id)) {
+                if (node.attrs.track?.find(
+                    trackAttr => trackAttr.type === 'insertion' && trackAttr.user === user.id
+                )) {
                     let removeStep
                     // user has created element. so (s)he is allowed to delete it again.
                     if (node.isTextblock && to < (pos + node.nodeSize)) {
-                        // The node is a textblock. So we need to merge into the last possible position inside the last text block.
+                        // The node is a textblock. So we need to merge into the last possible
+                        // position inside the last text block.
                         const selectionBefore = Selection.findFrom(tr.doc.resolve(pos), -1)
                         if (selectionBefore instanceof TextSelection) {
                             removeStep = new ReplaceStep(
@@ -96,21 +99,16 @@ function markDeletion(tr, from, to, user, date1, date10) {
                     if (!tr.maybeStep(removeStep).failed) {
                         deletionMap.appendMap(removeStep.getMap())
                     }
-                    if (node.type.name === 'list_item' && firstListItem) {
-                        firstListItem = false
+                    if (node.type.name === 'list_item' && listItem) {
+                        listItem = false
                     }
                 } else if (node.attrs.track) {
                     if (node.type.name === 'list_item') {
-                        if (index) {
-                            // For any list item beyond the first one, we merge the first paragraph instead.
-                            return
-                        } else {
-                            firstListItem = true
-                        }
-                    } else if (firstListItem) {
+                        listItem = true
+                    } else if (listItem) {
                         // The first child of the first list item (likely a par) will not be merged with the paragraph
                         // before it.
-                        firstListItem = false
+                        listItem = false
                         return
                     }
                     const track = node.attrs.track.slice()
@@ -154,7 +152,9 @@ function markWrapping(
         }
         track.push(blockTrack)
     }
-    tr.setNodeMarkup(pos, null, Object.assign({}, newNode.attrs, {track}))
+    if (tr.doc.nodeAt(pos)) {
+        tr.setNodeMarkup(pos, null, Object.assign({}, newNode.attrs, {track}))
+    }
 }
 
 
@@ -248,7 +248,7 @@ export function trackedTransaction(tr, state, user, approved, date) {
                 const from = step.getMap().map(step.from, -1)
                 const to = step.getMap().map(step.gapFrom)
                 markInsertion(newTr, from, to, user, date1, date10, false)
-            } else if (!step.slice.size) {// unwrapped from something
+            } else if (!step.slice.size || step.slice.content.content.length === 2) {// unwrapped from something
                 const invertStep = originalStep.invert(tr.docs[originalStepIndex]).map(map)
                 map.appendMap(invertStep.getMap())
                 map.appendMap(

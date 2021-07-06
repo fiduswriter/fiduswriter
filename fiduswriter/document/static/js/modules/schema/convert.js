@@ -113,6 +113,9 @@ export const updateDoc = function(doc, docVersion, bibliography = false) {
         doc = convertDocV32(doc)
         break
     case 3.3: // Fidus Writer 3.9
+        doc = convertDocV33(doc)
+        break
+    case 3.4: // Fidus Writer 3.10
         break
     }
     return doc
@@ -952,4 +955,11 @@ const convertDocV32 = function(doc) {
     const returnDoc = JSON.parse(JSON.stringify(doc))
     convertNodeV32(returnDoc.content)
     return returnDoc
+}
+
+const convertDocV33 = function(doc) {
+    // We just need to increase the version number so that documents cannot
+    // be moved from a 3.10 to an 3.9 system, but 3.3 files should be readable
+    // as 3.4 files.
+    return JSON.parse(JSON.stringify(doc))
 }

@@ -13,7 +13,7 @@ export class KeyBindingsDialog {
         const dialog = new Dialog({
             title: gettext('Keyboard Shortcuts'),
             body: keyBindingsTemplate(),
-            width: 800,
+            width: 850,
             buttons: [{type: 'close'}],
             canEscape: true
         })

@@ -13,3 +13,6 @@
 #         },
 #     },
 # }
+INSTALLED_APPS = [
+    'user_template_manager',
+]

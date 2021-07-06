@@ -22,7 +22,7 @@ from usermedia.models import DocumentImage, Image
 from bibliography.models import Entry
 from document.helpers.serializers import PythonWithURLSerializer
 from bibliography.views import serializer
-from style.models import DocumentStyle
+from style.models import DocumentStyle, DocumentStyleFile, ExportTemplate
 from base.decorators import ajax_required
 from user.models import UserInvite
 from . import emails
@@ -797,49 +797,32 @@ def get_all_template_ids(request):
 @staff_member_required
 @ajax_required
 @require_POST
-def get_template(request):
-    response = {}
-    status = 405
-    template_id = request.POST['id']
-    template = DocumentTemplate.objects.filter(pk=int(template_id)).first()
-    if template:
-        status = 200
-        response['content'] = template.content
-        response['title'] = template.title
-        response['doc_version'] = template.doc_version
-    return JsonResponse(
-        response,
-        status=status
-    )
-
-
-@staff_member_required
-@ajax_required
-@require_POST
-def get_template_extras(request):
-    id = request.POST['id']
-    doc_template = DocumentTemplate.objects.filter(
-        id=id
-    ).first()
-    status = 200
+def get_template_admin(request, type='all'):
+    template_id = request.POST.get('id')
+    doc_template = DocumentTemplate.objects.filter(pk=int(template_id)).first()
     if doc_template is None:
         return JsonResponse({}, status=405)
-    serializer = PythonWithURLSerializer()
-    export_templates = serializer.serialize(
-        doc_template.exporttemplate_set.all()
-    )
-    document_styles = serializer.serialize(
-        doc_template.documentstyle_set.all(),
-        use_natural_foreign_keys=True,
-        fields=['title', 'slug', 'contents', 'documentstylefile_set']
-    )
-    response = {
-        'export_templates': export_templates,
-        'document_styles': document_styles,
-    }
+    response = {}
+    if type in ['all', 'base']:
+        response['id'] = doc_template.id
+        response['title'] = doc_template.title
+        response['content'] = doc_template.content
+        response['doc_version'] = doc_template.doc_version
+    if type in ['all', 'extras']:
+        serializer = PythonWithURLSerializer()
+        export_templates = serializer.serialize(
+            doc_template.exporttemplate_set.all()
+        )
+        document_styles = serializer.serialize(
+            doc_template.documentstyle_set.all(),
+            use_natural_foreign_keys=True,
+            fields=['title', 'slug', 'contents', 'documentstylefile_set']
+        )
+        response['export_templates'] = export_templates
+        response['document_styles'] = document_styles
     return JsonResponse(
         response,
-        status=status
+        status=200
     )
 
 
@@ -862,6 +845,56 @@ def save_template(request):
     return JsonResponse(
         response,
         status=status
+    )
+
+
+@staff_member_required
+@ajax_required
+@require_POST
+def create_template_admin(request):
+    response = {}
+    title = request.POST.get('title')
+    content = json.loads(request.POST.get('content'))
+    import_id = request.POST.get('import_id')
+    document_styles = json.loads(request.POST.get('document_styles'))
+    export_templates = json.loads(request.POST.get('export_templates'))
+    template = DocumentTemplate.objects.create(
+        title=title,
+        content=content,
+        doc_version=FW_DOCUMENT_VERSION,
+        import_id=import_id
+    )
+    response['id'] = template.id
+    date_format = '%Y-%m-%d'
+    response['added'] = template.added.strftime(date_format)
+    response['updated'] = template.updated.strftime(date_format)
+    files = request.FILES.getlist('files[]')
+    for style in document_styles:
+        doc_style = DocumentStyle.objects.create(
+            title=style['title'],
+            slug=style['slug'],
+            contents=style['contents'],
+            document_template=template
+        )
+        for filename in style['files']:
+            file = next((x for x in files if x.name == filename), None)
+            if file:
+                DocumentStyleFile.objects.create(
+                    file=file,
+                    style=doc_style
+                )
+    for e_template in export_templates:
+        filename = e_template['file']
+        file = next((x for x in files if x.name == filename), None)
+        if file:
+            ExportTemplate.objects.create(
+                document_template=template,
+                template_file=file,
+                file_type=e_template['file_type']
+            )
+    return JsonResponse(
+        response,
+        status=201
     )
 
 

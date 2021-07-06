@@ -4,7 +4,7 @@ import {updateFile} from "./update"
 /** The current Fidus Writer filetype version. The importer will not import from
  * a different version and the exporter will include this number in all exports.
  */
-const MIN_FW_DOCUMENT_VERSION = 1.6, MAX_FW_DOCUMENT_VERSION = parseFloat(FW_DOCUMENT_VERSION)
+export const MIN_FW_DOCUMENT_VERSION = 1.6, MAX_FW_DOCUMENT_VERSION = parseFloat(FW_DOCUMENT_VERSION)
 
 const TEXT_FILENAMES = ['mimetype', 'filetype-version', 'document.json', 'images.json', 'bibliography.json']
 
@@ -14,12 +14,13 @@ export class ImportFidusFile {
     /* Process a packaged Fidus File, either through user upload, or by reloading
       a saved revision which was saved in the same ZIP-baseformat. */
 
-    constructor(file, user, path =  '', check = false, teamMembers = []) {
+    constructor(file, user, path =  '', check = false, contacts = []) {
         this.file = file
         this.user = user
         this.path = path
         this.check = check // Whether the file needs to be checked for compliance with ZIP-format and whether authors of comments/changes are team members of current user.
-        this.teamMembers = teamMembers
+        this.contacts = contacts
+
         this.textFiles = []
         this.otherFiles = []
         this.ok = false
@@ -137,7 +138,7 @@ export class ImportFidusFile {
         Object.values(doc.comments).forEach(comment => {
             if (!
             (
-                this.teamMembers.find(member => member.id === comment.user && member.username === comment.username) ||
+                this.contacts.find(member => member.id === comment.user && member.username === comment.username) ||
                     (this.user.id === comment.user && this.user.username === comment.username)
             )
             ) {
@@ -147,7 +148,7 @@ export class ImportFidusFile {
             if (!
             (
                 !comment.assignedUser ||
-                    this.teamMembers.find(member => member.id === comment.assignedUser && member.username === comment.assignedUsername) ||
+                    this.contacts.find(member => member.id === comment.assignedUser && member.username === comment.assignedUsername) ||
                     (this.user.id === comment.assignedUser && this.user.username === comment.assignedUsername)
             )
             ) {
@@ -158,7 +159,7 @@ export class ImportFidusFile {
                 comment.answers.forEach(answer => {
                     if (!
                     (
-                        this.teamMembers.find(member => member.id === answer.user && member.username === answer.username) ||
+                        this.contacts.find(member => member.id === answer.user && member.username === answer.username) ||
                             (this.user.id === answer.user && this.user.username === answer.username)
                     )
                     ) {
@@ -178,7 +179,7 @@ export class ImportFidusFile {
                 if (['insertion', 'deletion'].includes(mark.type)) {
                     if (!
                     (
-                        this.teamMembers.find(member => member.id === mark.attrs.user && member.username === mark.attrs.username) ||
+                        this.contacts.find(member => member.id === mark.attrs.user && member.username === mark.attrs.username) ||
                             (this.user.id === mark.attrs.user && this.user.username === mark.attrs.username)
                     )
                     ) {

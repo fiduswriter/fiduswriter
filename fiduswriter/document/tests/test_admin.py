@@ -125,7 +125,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         )
         self.driver.find_element(
             By.CSS_SELECTOR,
-            "a[href='/admin/document/documenttemplate/2/change/']"
+            '.field-title a'
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, "input.title").click()
         ActionChains(self.driver).send_keys(
@@ -575,3 +575,76 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
             0,
             len(instruction_boxes)
         )
+
+    def test_template_export_import(self):
+        self.driver.get(self.base_admin_url)
+        username = self.driver.find_element(By.ID, "id_username")
+        username.send_keys("Admin")
+        self.driver.find_element(By.ID, "id_password").send_keys("password")
+        self.driver.find_element(By.CSS_SELECTOR, "input[type=submit]").click()
+        time.sleep(2)
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "a[href='/admin/document/documenttemplate/']"
+        ).click()
+        # Download template
+        template_links = self.driver.find_elements_by_css_selector(
+            '#result_list tbody a'
+        )
+        self.assertEqual(
+            1,
+            len(template_links)
+        )
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "input[type=checkbox].action-select"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "select[name=action]"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "option[value=download]"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "button[type=submit]"
+        ).click()
+        time.sleep(1)
+        assert os.path.isfile(os.path.join(
+            self.download_dir,
+            'standard-article.fidustemplate'
+        ))
+
+        # Disable file dialog
+        self.driver.execute_script((
+            "HTMLInputElement.prototype.click = function() {"
+            "if(this.type !== 'file') {HTMLElement.prototype.click.call(this)}"
+            "}"
+        ))
+        # Upload template again
+        self.driver.find_element_by_css_selector(
+            "#upload-template"
+        ).click()
+        time.sleep(1)
+        self.driver.find_element_by_css_selector(
+            "#fidus-template-uploader"
+        ).send_keys(os.path.join(
+            self.download_dir,
+            'standard-article.fidustemplate'
+        ))
+        # Check whether there now are two templates
+        time.sleep(1)
+        template_links = self.driver.find_elements_by_css_selector(
+            '#result_list tbody a'
+        )
+        self.assertEqual(
+            2,
+            len(template_links)
+        )
+        # Delete file
+        os.remove(os.path.join(
+            self.download_dir,
+            'standard-article.fidustemplate'
+        ))

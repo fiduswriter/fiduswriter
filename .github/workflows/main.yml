@@ -52,6 +52,7 @@ jobs:
         - document.tests.test_path
         - bibliography
         - usermedia
+        - user_template_manager
     steps:
     - name: Set up Python
       uses: actions/setup-python@v1

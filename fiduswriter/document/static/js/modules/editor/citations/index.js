@@ -152,12 +152,12 @@ export class ModCitations {
         if (this.citationType === 'note') {
 
             // Check if there is an empty citation in the main body text (not footnotes)
-            const emptyBodyCitation = document.querySelector('#document-editable span.citation:empty')
+            const emptyCitations = document.querySelector('span.citation:empty')
 
-            if (emptyBodyCitation) {
+            if (emptyCitations) {
                 // Find all the citations in the main body text (not footnotes)
                 const citationNodes = document.querySelectorAll('#document-editable span.citation'),
-                    citationsHTML = citRenderer.fm.citationTexts.map(
+                    citationsHTML = citRenderer.fm.citationTexts.slice(0, citationNodes.length).map(
                         citText => `<div class="footnote-citation">${citText}</div>`
                     ).join('')
                 if (citationsContainer.innerHTML !== citationsHTML) {
@@ -165,6 +165,20 @@ export class ModCitations {
                 }
                 // The citations have not been filled, so we do so manually.
                 citationNodes.forEach(citationNode => citationNode.innerHTML = '<span class="citation-footnote-marker"></span>')
+
+                const footnoteCitationNodes = document.querySelectorAll('#footnote-box-container span.citation')
+                const footnoteCitTexts = citRenderer.fm.citationTexts.slice(citationNodes.length)
+
+                footnoteCitTexts.forEach(
+                    (citText, index) => {
+                        const citationNode = footnoteCitationNodes[index]
+                        if (citationNode) {
+                            citationNode.innerHTML = citText
+                        }
+
+                    }
+                )
+
             }
 
         } else {

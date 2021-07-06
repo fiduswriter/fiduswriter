@@ -12,7 +12,7 @@ export const menuModel = () => ({
         },
         {
             type: 'text',
-            title: gettext('Upload Fidus Document template'),
+            title: gettext('Upload Fidus document template'),
             action: overview => overview.mod.actions.uploadDocTemplate(),
             order: 2
         },

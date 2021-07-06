@@ -489,6 +489,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
             " here.\nI'll even write a second paragraph."
         )
+        # Turn on tracked changes
         self.driver.find_element(
             By.CSS_SELECTOR,
             ".header-menu:nth-child(5) > .header-nav-item"
@@ -497,6 +498,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             "li:nth-child(1) > .fw-pulldown-item"
         ).click()
+        # Make changes
         self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
         ActionChains(self.driver).double_click(
             self.driver.find_element(By.CSS_SELECTOR, ".article-body strong")
@@ -585,6 +587,20 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(By.CSS_SELECTOR, ".article-title").send_keys(
             "A test article to share"
         )
+        # Turn on tracked changes
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".header-menu:nth-child(5) > .header-nav-item"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "li:nth-child(1) > .fw-pulldown-item"
+        ).click()
+        self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+            "With tracked changes\n"
+        )
+
         # Open share dialog
         self.driver.find_element(
             By.CSS_SELECTOR,
@@ -600,9 +616,9 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         self.driver.find_element(
             By.ID,
-            "new-member-user-string"
+            "new-contact-user-string"
         ).click()
-        self.driver.find_element(By.ID, "new-member-user-string").send_keys(
+        self.driver.find_element(By.ID, "new-contact-user-string").send_keys(
             "yeti2@snowman.com"
         )
         ActionChains(self.driver).send_keys(
@@ -616,9 +632,9 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         self.driver.find_element(
             By.ID,
-            "new-member-user-string"
+            "new-contact-user-string"
         ).click()
-        self.driver.find_element(By.ID, "new-member-user-string").send_keys(
+        self.driver.find_element(By.ID, "new-contact-user-string").send_keys(
             "yeti3@snowman.com"
         )
         ActionChains(self.driver).send_keys(
@@ -632,9 +648,9 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         self.driver.find_element(
             By.ID,
-            "new-member-user-string"
+            "new-contact-user-string"
         ).click()
-        self.driver.find_element(By.ID, "new-member-user-string").send_keys(
+        self.driver.find_element(By.ID, "new-contact-user-string").send_keys(
             "yeti4@snowman.com"
         )
         ActionChains(self.driver).send_keys(
@@ -672,7 +688,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         time.sleep(1)
         # We keep track of the invitation email to open it later.
         user4_invitation_email = mail.outbox[-1].body
-        #  Reopen the share dialog and add a fifth user
+        #  Reopen the share dialog and add users 5-7
         self.driver.find_element(
             By.CSS_SELECTOR,
             ".header-menu:nth-child(1) > .header-nav-item"
@@ -687,16 +703,17 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         self.driver.find_element(
             By.ID,
-            "new-member-user-string"
+            "new-contact-user-string"
         ).click()
-        self.driver.find_element(By.ID, "new-member-user-string").send_keys(
-            "yeti5@snowman.com"
+        self.driver.find_element(By.ID, "new-contact-user-string").send_keys(
+            "yeti5@snowman.com,yeti6@snowman.com;yeti7@snowman.com"
         )
         ActionChains(self.driver).send_keys(
             Keys.TAB
         ).send_keys(
             Keys.RETURN
         ).perform()
+        time.sleep(1)
         # Downgrade the write rights to read rights for user4
         self.driver.find_element(
             By.CSS_SELECTOR,
@@ -709,13 +726,27 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             "#my-contacts"
         ).click()
+        # Upgrade the read rights to write rights for user7
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "tr:nth-child(6) .fa-caret-down.edit-right"
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Write"]'
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#my-contacts"
+        ).click()
         self.driver.find_element(
             By.CSS_SELECTOR,
             ".ui-dialog .fw-dark"
         ).click()
         time.sleep(1)
         # We keep track of the invitation email to open it later.
-        user5_invitation_email = mail.outbox[-1].body
+        user5_invitation_email = mail.outbox[-3].body
+        user6_invitation_email = mail.outbox[-2].body
+        user7_invitation_email = mail.outbox[-1].body
         # We close the editor
         self.driver.find_element(
             By.ID,
@@ -734,11 +765,21 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
                 (
-                    By.CSS_SELECTOR,
-                    ".new_document button"
+                    By.XPATH,
+                    '//*[normalize-space()="Go to contacts"]'
                 )
             )
-        )
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".respond-invite"
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Accept invite"]'
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Documents"]'
+        ).click()
         documents = self.driver.find_elements_by_css_selector(
             '.fw-contents tbody tr'
         )
@@ -754,14 +795,14 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             1
         )
         self.driver.find_element_by_css_selector(
-            '.fw-contents tbody tr a.doc-title'
+            '.fw-contents tbody tr a.fw-data-table-title'
         ).click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, 'editor-toolbar'))
         )
         self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
         ActionChains(self.driver).send_keys(
-            "The body"
+            "... in the body"
         ).send_keys(
             Keys.ENTER
         ).perform()
@@ -770,7 +811,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             ".article-title"
         ).text == "A test article to share"
-        self.check_body(self.driver, 'The body')
+        self.check_body(self.driver, 'With tracked changes... in the body')
         self.driver.find_element(
             By.ID,
             "close-document-top"
@@ -793,16 +834,15 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
                 )
             )
         )
+        time.sleep(1)
         documents = self.driver.find_elements_by_css_selector(
-            '.fw-contents tbody tr a.doc-title'
+            '.fw-contents tbody tr a.fw-data-table-title'
         )
         self.assertEqual(
             len(documents),
             1
         )
-        self.driver.find_element_by_css_selector(
-            '.fw-contents tbody tr a.doc-title'
-        ).click()
+        documents[0].click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, 'editor-toolbar'))
         )
@@ -844,8 +884,9 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
                 )
             )
         )
+        time.sleep(1)
         documents = self.driver.find_elements_by_css_selector(
-            '.fw-contents tbody tr a.doc-title'
+            '.fw-contents tbody tr a.fw-data-table-title'
         )
         self.assertEqual(
             len(documents),
@@ -934,6 +975,24 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
                 (
+                    By.XPATH,
+                    '//*[normalize-space()="Go to contacts"]'
+                )
+            )
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".respond-invite"
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Accept invite"]'
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Documents"]'
+        ).click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
                     By.CSS_SELECTOR,
                     ".new_document button"
                 )
@@ -954,7 +1013,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             1
         )
         self.driver.find_element_by_css_selector(
-            '.fw-contents tbody tr a.doc-title'
+            '.fw-contents tbody tr a.fw-data-table-title'
         ).click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, 'editor-toolbar'))
@@ -967,7 +1026,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             ".article-title"
         ).text == "A test article to share"
-        self.check_body(self.driver, 'The body')
+        self.check_body(self.driver, 'With tracked changes... in the body')
         # Make a copy of the file
         old_body = self.driver.find_element(By.CSS_SELECTOR, ".article-body")
         self.driver.find_element(
@@ -988,7 +1047,67 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         )
         self.check_body(
             self.driver,
-            'The bodySome extra content that does show'
+            (
+                'With tracked changes... in the body'
+                'Some extra content that does show'
+            )
+        )
+        # Filter tracks by users
+        change_tracking_boxes = self.driver.find_elements_by_css_selector(
+            '.margin-box.track:not(.hidden)'
+        )
+        self.assertEqual(
+            len(change_tracking_boxes),
+            5
+        )
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#margin-box-filter-track .show-marginbox-options"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#margin-box-filter-track .show-marginbox-options-submenu"
+        ).click()
+        self.driver.find_elements(
+            By.CSS_SELECTOR,
+            '.margin-box-filter-track-author'
+        )[1].click()
+        change_tracking_boxes = self.driver.find_elements_by_css_selector(
+            '.margin-box.track:not(.hidden)'
+        )
+        self.assertEqual(
+            len(change_tracking_boxes),
+            2
+        )
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#margin-box-filter-track .show-marginbox-options"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#margin-box-filter-track .show-marginbox-options-submenu"
+        ).click()
+        self.driver.find_elements(
+            By.CSS_SELECTOR,
+            '.margin-box-filter-track-author'
+        )[2].click()
+        change_tracking_boxes = self.driver.find_elements_by_css_selector(
+            '.margin-box.track:not(.hidden)'
+        )
+        self.assertEqual(
+            len(change_tracking_boxes),
+            2
+        )
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#margin-box-filter-track"
+        ).click()
+        change_tracking_boxes = self.driver.find_elements_by_css_selector(
+            '.margin-box.track:not(.hidden)'
+        )
+        self.assertEqual(
+            len(change_tracking_boxes),
+            0
         )
         # Give user 1 write access to document
         self.driver.find_element(
@@ -1005,7 +1124,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         self.driver.find_element(
             By.ID,
-            "add-share-member"
+            "add-share-contact"
         ).click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable(
@@ -1015,6 +1134,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Write"]'
         ).click()
+        time.sleep(1)
         self.driver.find_element(
             By.CSS_SELECTOR,
             ".ui-dialog .fw-dark"
@@ -1142,13 +1262,31 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
                 (
+                    By.XPATH,
+                    '//*[normalize-space()="Go to contacts"]'
+                )
+            )
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".respond-invite"
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Accept invite"]'
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Documents"]'
+        ).click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
                     By.CSS_SELECTOR,
                     ".new_document button"
                 )
             )
         )
         documents = self.driver.find_elements_by_css_selector(
-            '.fw-contents tbody tr a.doc-title'
+            '.fw-contents tbody tr a.fw-data-table-title'
         )
         self.assertEqual(
             len(documents),
@@ -1162,7 +1300,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             '//*[normalize-space()="Log out"]'
         ).click()
         # User 5 signs up with a different email first and then clicks the
-        # invitation link. This should land user 5 directly in the editor.
+        # invitation link and accepts the invite.
         self.create_user(
             username='Yeti5',
             email='yeti5a@snowman.com',
@@ -1180,7 +1318,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             )
         )
         documents = self.driver.find_elements_by_css_selector(
-            '.fw-contents tbody tr a.doc-title'
+            '.fw-contents tbody tr a.fw-data-table-title'
         )
         self.assertEqual(
             len(documents),
@@ -1188,20 +1326,324 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         )
         invitation_link = self.find_urls(user5_invitation_email)[0]
         self.driver.get(invitation_link)
-        WebDriverWait(self.driver, self.wait_time).until(
-            EC.presence_of_element_located((By.CLASS_NAME, 'editor-toolbar'))
-        )
         self.driver.find_element(
-            By.ID,
-            "close-document-top"
+            By.CSS_SELECTOR,
+            ".respond-invite"
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Accept invite"]'
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Documents"]'
         ).click()
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.element_to_be_clickable((By.ID, 'preferences-btn'))
+            EC.presence_of_element_located(
+                (
+                    By.CSS_SELECTOR,
+                    ".new_document button"
+                )
+            )
         )
         documents = self.driver.find_elements_by_css_selector(
-            '.fw-contents tbody tr a.doc-title'
+            '.fw-contents tbody tr a.fw-data-table-title'
         )
         self.assertEqual(
             len(documents),
             1
         )
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#preferences-btn"
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Log out"]'
+        ).click()
+        # User 6 signs up with a different email first and then clicks the
+        # invitation link and declines the invite.
+        self.create_user(
+            username='Yeti6',
+            email='yeti6a@snowman.com',
+            passtext='password'
+        )
+        self.driver.find_element(By.ID, "id_login").send_keys("Yeti6")
+        self.driver.find_element(By.ID, "id_password").send_keys("password")
+        self.driver.find_element(By.ID, "login-submit").click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.CSS_SELECTOR,
+                    ".new_document button"
+                )
+            )
+        )
+        documents = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr a.fw-data-table-title'
+        )
+        self.assertEqual(
+            len(documents),
+            0
+        )
+        invitation_link = self.find_urls(user6_invitation_email)[0]
+        self.driver.get(invitation_link)
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".respond-invite"
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Decline invite"]'
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Documents"]'
+        ).click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.CSS_SELECTOR,
+                    ".new_document button"
+                )
+            )
+        )
+        documents = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr a.fw-data-table-title'
+        )
+        self.assertEqual(
+            len(documents),
+            0
+        )
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#preferences-btn"
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Log out"]'
+        ).click()
+        # User 3 signs in and accepts the invite of user 7. Access rights
+        # should be upgraded to write access.
+        self.driver.find_element(By.ID, "id_login").send_keys("Yeti3")
+        self.driver.find_element(By.ID, "id_password").send_keys("password")
+        self.driver.find_element(By.ID, "login-submit").click()
+        time.sleep(1)
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.CSS_SELECTOR,
+                    ".new_document button"
+                )
+            )
+        )
+        documents = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr a.fw-data-table-title'
+        )
+        self.assertEqual(
+            len(documents),
+            2
+        )
+        read_access_rights = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr .icon-access-read'
+        )
+        self.assertEqual(
+            len(read_access_rights),
+            1
+        )
+        invitation_link = self.find_urls(user7_invitation_email)[0]
+        self.driver.get(invitation_link)
+        time.sleep(1)
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.CSS_SELECTOR,
+                    ".respond-invite"
+                )
+            )
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Accept invite"]'
+        ).click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.XPATH,
+                    '//*[normalize-space()="Documents"]'
+                )
+            )
+        ).click()
+        time.sleep(1)
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.CSS_SELECTOR,
+                    ".new_document button"
+                )
+            )
+        )
+        documents = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr a.fw-data-table-title'
+        )
+        self.assertEqual(
+            len(documents),
+            2
+        )
+        time.sleep(1)
+        doc_texts = self.driver.find_elements_by_css_selector(
+            '.fw-searchable'
+        )
+        self.assertEqual(
+            doc_texts[0].text,
+            'A test article to share'
+        )
+        self.assertEqual(
+            doc_texts[1].text,
+            'Yeti'
+        )
+        self.assertEqual(
+            doc_texts[2].text,
+            'Copy of A test article to share'
+        )
+        self.assertEqual(
+            doc_texts[3].text,
+            'Yeti3'
+        )
+        write_access_rights = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr .icon-access-write'
+        )
+        self.assertEqual(
+            len(write_access_rights),
+            2
+        )
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#preferences-btn"
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Log out"]'
+        ).click()
+        # Log in as document owner and downgrade access right of user 3.
+        self.driver.find_element(By.ID, "id_login").send_keys("Yeti")
+        self.driver.find_element(By.ID, "id_password").send_keys("otter")
+        self.driver.find_element(By.ID, "login-submit").click()
+        time.sleep(1)
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (
+                    By.CSS_SELECTOR,
+                    ".new_document button"
+                )
+            )
+        )
+        documents = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr a.fw-data-table-title'
+        )
+        self.assertEqual(
+            len(documents),
+            2
+        )
+        self.driver.find_element_by_css_selector(
+            '.fw-contents tbody tr .icon-access-write'
+        ).click()
+        # Downgrade the write rights to read rights for user 3
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "tr:nth-child(1) .fa-caret-down.edit-right"
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Read"]'
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#my-contacts"
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            ".ui-dialog .fw-dark"
+        ).click()
+        # Enter contacts page and check number of contacts
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable((By.ID, 'preferences-btn'))
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Contacts"]'
+        ).click()
+        self.assertEqual(
+            len(self.driver.find_elements_by_css_selector(
+                '.contacts-table .entry-select.user'
+            )),
+            4
+        )
+        # Delete contact connection of user 4 - doc access should be gone.
+        self.driver.find_elements_by_css_selector(
+            ".delete-single-contact"
+        )[2].click()
+        self.driver.find_element_by_css_selector(
+            "button.fw-dark"
+        ).click()
+        time.sleep(1)
+        self.assertEqual(
+            len(self.driver.find_elements_by_css_selector(
+                '.contacts-table .entry-select.user'
+            )),
+            3
+        )
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#preferences-btn"
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Log out"]'
+        ).click()
+        self.driver.find_element(By.ID, "id_login").send_keys("Yeti3")
+        self.driver.find_element(By.ID, "id_password").send_keys("password")
+        self.driver.find_element(By.ID, "login-submit").click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (
+                    By.CSS_SELECTOR,
+                    ".new_document button"
+                )
+            )
+        )
+        documents = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr a.fw-data-table-title'
+        )
+        self.assertEqual(
+            len(documents),
+            2
+        )
+        read_access_rights = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr .icon-access-read'
+        )
+        self.assertEqual(
+            len(read_access_rights),
+            1
+        )
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#preferences-btn"
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Log out"]'
+        ).click()
+        self.driver.find_element(By.ID, "id_login").send_keys("Yeti4")
+        self.driver.find_element(By.ID, "id_password").send_keys("password")
+        self.driver.find_element(By.ID, "login-submit").click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (
+                    By.CSS_SELECTOR,
+                    ".new_document button"
+                )
+            )
+        )
+        documents = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr a.fw-data-table-title'
+        )
+        self.assertEqual(
+            len(documents),
+            0
+        )
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#preferences-btn"
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Log out"]'
+        ).click()

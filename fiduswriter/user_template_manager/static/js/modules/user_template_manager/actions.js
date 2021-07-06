@@ -1,5 +1,7 @@
-import {addAlert, postJson, Dialog} from "../common"
+import {addAlert, postJson, Dialog, activateWait, deactivateWait} from "../common"
+import {DocumentTemplateDownloader, DocumentTemplateUploader} from "../document_template"
 
+import {importFidusTemplateTemplate} from "./templates"
 
 export class DocTemplatesActions {
 
@@ -81,5 +83,85 @@ export class DocTemplatesActions {
                 this.docTemplatesOverview.addDocTemplateToTable(docTemplate)
             }
         )
+    }
+
+    downloadDocTemplate(id) {
+        const downloader = new DocumentTemplateDownloader(
+            id,
+            '/api/user_template_manager/get/'
+        )
+        downloader.init()
+    }
+
+    uploadDocTemplate() {
+        const buttons = [
+            {
+                text: gettext('Import'),
+                classes: "fw-dark",
+                click: () => {
+                    let fidusTemplateFile = document.getElementById('fidus-template-uploader').files
+                    if (0 === fidusTemplateFile.length) {
+                        return false
+                    }
+                    fidusTemplateFile = fidusTemplateFile[0]
+                    if (104857600 < fidusTemplateFile.size) {
+                        //TODO: This is an arbitrary size. What should be done with huge import files?
+                        return false
+                    }
+                    activateWait()
+
+                    const importer = new DocumentTemplateUploader(
+                        fidusTemplateFile,
+                        '/api/user_template_manager/create/'
+                    )
+
+                    importer.init().then(
+                        ({ok, statusText, docTemplate}) => {
+                            deactivateWait()
+                            if (ok) {
+                                addAlert('info', statusText)
+                            } else {
+                                addAlert('error', statusText)
+                                return
+                            }
+
+                            docTemplate.is_owner = true
+
+                            this.docTemplatesOverview.templateList.push(docTemplate)
+                            this.docTemplatesOverview.addDocTemplateToTable(docTemplate)
+                            importDialog.close()
+                        }
+                    ).catch(
+                        () => false
+                    )
+
+                }
+            },
+            {
+                type: 'cancel'
+            }
+        ]
+        const importDialog = new Dialog({
+            id: 'importfidustemplate',
+            title: gettext('Import a Fidus Template file'),
+            body: importFidusTemplateTemplate(),
+            height: 100,
+            buttons
+        })
+        importDialog.open()
+
+        document.getElementById('fidus-template-uploader').addEventListener(
+            'change',
+            () => {
+                document.getElementById('import-fidus-template-name').innerHTML =
+                    document.getElementById('fidus-template-uploader').value.replace(/C:\\fakepath\\/i, '')
+            }
+        )
+
+        document.getElementById('import-fidus-template-btn').addEventListener('click', event => {
+            document.getElementById('fidus-template-uploader').click()
+            event.preventDefault()
+        })
+
     }
 }

@@ -1,5 +1,6 @@
 import download from "downloadjs"
 
+import {shortFileTitle} from "../../common"
 import {createSlug} from "../tools/file"
 import {removeHidden} from "../tools/doc_content"
 import {JATSExporterConvert} from "./convert"
@@ -13,6 +14,7 @@ import {darManifest} from "./templates"
 export class JATSExporter {
     constructor(doc, bibDB, imageDB, csl, updated) {
         this.doc = doc
+        this.docTitle = shortFileTitle(this.doc.title, this.doc.path)
         this.bibDB = bibDB
         this.imageDB = imageDB
         this.csl = csl
@@ -25,7 +27,7 @@ export class JATSExporter {
     }
 
     init() {
-        this.zipFileName = `${createSlug(this.doc.title)}.jats.zip`
+        this.zipFileName = `${createSlug(this.docTitle)}.jats.zip`
         this.docContent = removeHidden(this.doc.content)
         this.converter = new JATSExporterConvert(this, this.imageDB, this.bibDB, this.doc.settings)
         this.citations = new JATSExporterCitations(this, this.bibDB, this.csl)
@@ -43,7 +45,7 @@ export class JATSExporter {
             )
             this.textFiles.push({
                 filename: 'manifest.xml',
-                contents: darManifest({title: this.doc.title, images})
+                contents: darManifest({title: this.docTitle, images})
             })
             images.forEach(image => {
                 this.httpFiles.push({filename: image.filename, url: image.url})

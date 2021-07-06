@@ -6,19 +6,6 @@ from . import views
 urlpatterns = [
     url('^save/$', views.save_profile, name='save_profile'),
 
-    # Show user profiles
-    url(
-        '^team/list/$',
-        views.list_team_members,
-        name='list_team_members'
-    ),
-    # Outdated but we need it to allow for update of 3.7 instances.
-    # Can be removed in 3.9.
-    url(
-        '^info/$',
-        views.info,
-        name='info'
-    ),
     url('^avatar/delete/$', views.delete_avatar, name="delete_avatar"),
     url('^avatar/upload/$', views.upload_avatar, name="upload_avatar"),
     url(
@@ -26,29 +13,49 @@ urlpatterns = [
         views.password_change,
         name="password_change"
     ),
-    url('^emailadd/$', views.add_email, name="add_email"),
-    url('^emaildelete/$', views.delete_email, name="delete_email"),
-    url('^emailprimary/$', views.primary_email, name="primary_email"),
+    url('^email/add/$', views.add_email, name="add_email"),
+    url('^email/delete/$', views.delete_email, name="delete_email"),
+    url('^email/primary/$', views.primary_email, name="primary_email"),
 
     url(
         '^socialaccountdelete/$',
         views.delete_socialaccount,
         name="delete_socialaccount"
     ),
-    # Delete a user profile
+    # Delete a user
     url('^delete/$', views.delete_user, name='delete_user'),
 
+    # Show contacts
     url(
-        '^teammember/add',
-        views.add_team_member,
-        name='add_team_member'
+        '^contacts/list/$',
+        views.list_contacts,
+        name='list_contacts'
     ),
     url(
-        '^teammember/remove',
-        views.remove_team_member,
-        name='remove_team_member'
+        '^contacts/delete/$',
+        views.delete_contacts,
+        name='delete_contacts'
     ),
-
+    url(
+        '^invite/$',
+        views.invite,
+        name='invite'
+    ),
+    url(
+        '^invites/add/$',
+        views.invites_add,
+        name='invites_add'
+    ),
+    url(
+        '^invites/accept/$',
+        views.invites_accept,
+        name='invites_accept'
+    ),
+    url(
+        '^invites/decline/$',
+        views.invites_decline,
+        name='invites_decline'
+    ),
     # User avatar handling
     url('^avatar/', include('avatar.urls')),
 

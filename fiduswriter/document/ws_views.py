@@ -17,7 +17,6 @@ from base.ws_handler import BaseWebSocketHandler
 from document.models import COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \
     CAN_COMMUNICATE, FW_DOCUMENT_VERSION, DocumentTemplate, Document
 from usermedia.models import Image, DocumentImage, UserImage
-from user.util import get_user_avatar_url
 
 # settings_JSONPATCH
 from jsonpatch import apply_patch, JsonPatchConflict, JsonPointerException
@@ -160,12 +159,13 @@ class WebSocket(BaseWebSocketHandler):
             'id': self.session["doc"].id,
             'is_owner': self.user_info.is_owner,
             'access_rights': self.user_info.access_rights,
+            'path': self.user_info.path,
             'owner': {
                 'id': doc_owner.id,
                 'name': doc_owner.readable_name,
                 'username': doc_owner.username,
-                'avatar': get_user_avatar_url(doc_owner),
-                'team_members': []
+                'avatar': doc_owner.avatar_url,
+                'contacts': []
             }
         }
         response['doc'] = {
@@ -203,7 +203,7 @@ class WebSocket(BaseWebSocketHandler):
             response['doc']['images'][image.id] = field_obj
         if self.user_info.access_rights == 'read-without-comments':
             response['doc']['comments'] = []
-        elif self.user_info.access_rights == 'review':
+        elif self.user_info.access_rights in ['review', 'review-tracked']:
             # Reviewer should only get his/her own comments
             filtered_comments = {}
             for key, value in list(self.session["doc"].comments.items()):
@@ -212,13 +212,27 @@ class WebSocket(BaseWebSocketHandler):
             response['doc']['comments'] = filtered_comments
         else:
             response['doc']['comments'] = self.session["doc"].comments
-        for team_member in doc_owner.leader.all():
-            tm_object = dict()
-            tm_object['id'] = team_member.member.id
-            tm_object['name'] = team_member.member.readable_name
-            tm_object['username'] = team_member.member.get_username()
-            tm_object['avatar'] = get_user_avatar_url(team_member.member)
-            response['doc_info']['owner']['team_members'].append(tm_object)
+        for contact in doc_owner.contacts.all():
+            contact_object = {
+                'id': contact.id,
+                'name': contact.readable_name,
+                'username': contact.get_username(),
+                'avatar': contact.avatar_url,
+                'type': 'user'
+            }
+            response['doc_info']['owner']['contacts'].append(contact_object)
+        if self.user_info.is_owner:
+            for contact in doc_owner.invites_by.all():
+                contact_object = {
+                    'id': contact.id,
+                    'name': contact.username,
+                    'username': contact.username,
+                    'avatar': contact.avatar_url,
+                    'type': 'userinvite'
+                }
+                response['doc_info']['owner']['contacts'].append(
+                    contact_object
+                )
         response['doc_info']['session_id'] = self.id
         self.send_message(response)
 
@@ -257,6 +271,8 @@ class WebSocket(BaseWebSocketHandler):
             self.handle_selection_change(message)
         elif message["type"] == 'diff' and self.can_update_document():
             self.handle_diff(message)
+        elif message["type"] == 'path_change':
+            self.handle_path_change(message)
 
     def update_bibliography(self, bibliography_updates):
         for bu in bibliography_updates:
@@ -376,7 +392,25 @@ class WebSocket(BaseWebSocketHandler):
         if self.user_info.document_id in WebSocket.sessions and message[
                 "v"] == self.session["doc"].version:
             WebSocket.send_updates(
-                message, self.user_info.document_id, self.id)
+                message,
+                self.user_info.document_id,
+                self.id,
+                self.user_info.user.id
+            )
+
+    def handle_path_change(self, message):
+        if (
+            self.user_info.document_id in WebSocket.sessions and
+            self.user_info.path_object
+        ):
+            self.user_info.path_object.path = message['path']
+            self.user_info.path_object.save(update_fields=['path', ])
+            WebSocket.send_updates(
+                message,
+                self.user_info.document_id,
+                self.id,
+                self.user_info.user.id
+            )
 
     # Checks if the diff only contains changes to comments.
     def only_comments(self, message):
@@ -605,7 +639,7 @@ class WebSocket(BaseWebSocketHandler):
                     'session_id': session_id,
                     'id': waiter.user_info.user.id,
                     'name': waiter.user_info.user.readable_name,
-                    'avatar': get_user_avatar_url(waiter.user_info.user)
+                    'avatar': waiter.user_info.user.avatar_url
                 })
             message = {
                 "participant_list": participant_list,
@@ -643,7 +677,7 @@ class WebSocket(BaseWebSocketHandler):
                         message = deepcopy(message)
                         message['comments'] = []
                     elif (
-                        access_rights == 'review' and
+                        access_rights in ['review', 'review-tracked'] and
                         user_id != waiter.user_info.user.id
                     ):
                         # The reviewer should not receive comments updates from
@@ -662,6 +696,11 @@ class WebSocket(BaseWebSocketHandler):
                 elif (
                     message['type'] == "selection_change" and
                     access_rights not in CAN_COMMUNICATE and
+                    user_id != waiter.user_info.user.id
+                ):
+                    continue
+                elif (
+                    message['type'] == "path_change" and
                     user_id != waiter.user_info.user.id
                 ):
                     continue

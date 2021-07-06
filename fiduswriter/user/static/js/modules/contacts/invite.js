@@ -1,10 +1,10 @@
 import {postJson} from "../common"
 
-export class DocumentInvite {
+export class ContactInvite {
 
-    constructor({app}, id) {
+    constructor({app}, key) {
         this.app = app
-        this.id = id
+        this.key = key
     }
 
     init() {
@@ -14,14 +14,14 @@ export class DocumentInvite {
             // We store the invite id in the app so that it can be found there
             // and used if the user ends up signing up later during this
             // browsing session.
-            this.app.inviteId = this.id
+            this.app.inviteKey = this.key
             this.app.page = this.app.openLoginPage()
             return this.app.page.init()
         }
 
         return postJson(
-            '/api/document/invite/',
-            {id: this.id}
+            '/api/user/invite/',
+            {key: this.key}
         ).then(
             ({json}) => {
                 window.history.replaceState({}, "", json.redirect)

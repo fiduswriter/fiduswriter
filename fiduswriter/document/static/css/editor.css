@@ -85,6 +85,7 @@ body.editor header {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    height: 1.45em;
 }
 
 #header-navigation {
@@ -562,7 +563,7 @@ span.delete {
     padding: 0 0 10px 0;
     overflow: hidden;
     float: left;
-    width: 330px;
+    width: 420px;
 }
 
 .help-list li {
@@ -578,6 +579,7 @@ span.delete {
 .help-key-def {
     display: inline-block;
     margin-left: 1em;
+    float: right;
 }
 
 

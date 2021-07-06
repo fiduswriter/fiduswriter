@@ -1,5 +1,7 @@
+import {TextSelection} from "prosemirror-state"
+import {GapCursor} from "prosemirror-gapcursor"
+
 import {getCommentDuringCreationDecoration, deactivateAllSelectedChanges} from "../state_plugins"
-import {REVIEW_ROLES} from ".."
 import {findTarget, post} from "../../common"
 import {CommentEditor, CommentAnswerEditor, serializeComment} from "./editors"
 
@@ -135,6 +137,16 @@ export class ModCommentInteractions {
         }
     }
 
+    collapseSelectionToEnd() {
+        const $pos = this.mod.editor.currentView.state.selection.$to
+        const validTextSelection = $pos.parent.inlineContent
+        const selection = validTextSelection ? new TextSelection($pos) : new GapCursor($pos)
+        const tr = this.mod.editor.currentView.state.tr.setSelection(selection)
+        if (tr) {
+            this.mod.editor.currentView.dispatch(tr)
+        }
+    }
+
     activateComment(id) {
         this.deactivateAll()
         this.activeCommentId = id
@@ -205,8 +217,8 @@ export class ModCommentInteractions {
             // There is currently focus in the comment (answer) form
             return true
         }
-        if (this.editor?.view?.state.doc.content.content.length) {
-            // Part of a comment (answer) has been entered.
+        if (this.editor?.hasChanged()) {
+            // Part of a comment (answer) has been entered/changed.
             return true
         }
         if (document.querySelector('div.marginbox-options.fw-open')) {
@@ -220,7 +232,6 @@ export class ModCommentInteractions {
         }
         return false
     }
-
 
     // Create a temporary empty comment for the current user that is not shared
     // with collaborators.
@@ -296,7 +307,7 @@ export class ModCommentInteractions {
 
             let username
 
-            if (REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
+            if (['review', 'review-tracked'].includes(this.mod.editor.docInfo.access_rights)) {
                 username = `${gettext('Reviewer')} ${this.mod.editor.user.id}`
             } else {
                 username = this.mod.editor.user.username
@@ -357,7 +368,7 @@ export class ModCommentInteractions {
 
         let username
 
-        if (REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
+        if (['review', 'review-tracked'].includes(this.mod.editor.docInfo.access_rights)) {
             username = `${gettext('Reviewer')} ${this.mod.editor.user.id}`
         } else {
             username = this.mod.editor.user.username

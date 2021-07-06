@@ -47,9 +47,9 @@ export const headerbarModel = () => ({
                     action: editor => {
                         const dialog = new DocumentAccessRightsDialog(
                             [editor.docInfo.id],
-                            editor.docInfo.owner.team_members,
-                            memberData => {
-                                editor.docInfo.owner.team_members.push(memberData)
+                            editor.docInfo.owner.contacts,
+                            contactData => {
+                                editor.docInfo.owner.contacts.push(contactData)
                             }
                         )
                         dialog.init()
@@ -65,7 +65,15 @@ export const headerbarModel = () => ({
                     tooltip: gettext('Close the document and return to the document overview menu.'),
                     order: 1,
                     action: editor => {
-                        editor.app.goTo('/')
+                        const folderPath = editor.docInfo.path.slice(
+                            0,
+                            editor.docInfo.path.lastIndexOf('/')
+                        )
+                        if (!folderPath.length) {
+                            editor.app.goTo('/')
+                        } else {
+                            editor.app.goTo(`/documents${folderPath}/`)
+                        }
                     },
                     disabled: editor => editor.app.isOffline()
                 },

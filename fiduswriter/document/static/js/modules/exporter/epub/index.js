@@ -6,7 +6,7 @@ import {createSlug} from "../tools/file"
 import {modifyImages} from "../tools/html"
 import {ZipFileCreator} from "../tools/zip"
 import {opfTemplate, containerTemplate, ncxTemplate, navTemplate, xhtmlTemplate} from "./templates"
-import {addAlert} from "../../common"
+import {addAlert, shortFileTitle} from "../../common"
 import {styleEpubFootnotes, getTimestamp, setLinks, orderLinks, addCategoryLabels} from "./tools"
 import {removeHidden} from "../tools/doc_content"
 import {DOMExporter} from "../tools/dom_export"
@@ -16,6 +16,7 @@ export class EpubExporter extends DOMExporter {
     constructor(schema, csl, documentStyles, doc, bibDB, imageDB, updated) {
         super(schema, csl, documentStyles)
         this.doc = doc
+        this.docTitle = shortFileTitle(this.doc.title, this.doc.path)
         this.bibDB = bibDB
         this.imageDB = imageDB
         this.updated = updated
@@ -28,7 +29,7 @@ export class EpubExporter extends DOMExporter {
     }
 
     init() {
-        addAlert('info', this.doc.title + ': ' + gettext(
+        addAlert('info', this.docTitle + ': ' + gettext(
             'Epub export has been initiated.'))
         this.docContent = removeHidden(this.doc.content, false)
         this.addDocStyle(this.doc)
@@ -48,7 +49,7 @@ export class EpubExporter extends DOMExporter {
     }
 
     save() {
-        const title = this.doc.title
+        const title = this.docTitle
 
         const contents = this.content
 
@@ -211,6 +212,6 @@ export class EpubExporter extends DOMExporter {
     }
 
     download(blob) {
-        return download(blob, createSlug(this.doc.title) + '.epub', 'application/epub+zip')
+        return download(blob, createSlug(this.docTitle) + '.epub', 'application/epub+zip')
     }
 }

@@ -104,6 +104,59 @@ const FIGURE = {
     'uk': 'Малюнок'
 }
 
+const EQUATION = {
+    'af-ZA': 'Vergelyking',
+    'sq-AL': 'Ekuacioni',
+    'ar': 'معادلة',
+    'ast': 'Ecuación',
+    'be': 'Yраўненне',
+    'br': 'Kevatalenn',
+    'bg': 'Yравнение',
+    'ca': 'Equació',
+    'ca-ES-Valencia': 'Equació',
+    'zh-CN': '方程',
+    'da': 'Ligning',
+    'nl': 'Vergelijking',
+    'en-AU': 'Equation',
+    'en-CA': 'Equation',
+    'en-NZ': 'Equation',
+    'en-ZA': 'Equation',
+    'en-GB': 'Equation',
+    'en-US': 'Equation',
+    'eo': 'Ekvacio',
+    'fr': 'Équation',
+    'gl': 'Ecuación',
+    'de-DE': 'Gleichung',
+    'de-AU': 'Gleichung',
+    'de-CH': 'Gleichung',
+    'el': 'εξίσωση ',
+    'he': 'משוואה',
+    'is': 'Jöfnu',
+    'it': 'Equazione',
+    'ja': '方程式',
+    'km': 'សមីការ',
+    'lt': 'Lygtis',
+    'ml': 'സമവാക്യം',
+    'nb-NO': 'Ligning',
+    'nn-NO': 'Likning',
+    'fa': 'معادله',
+    'pl': 'Równanie',
+    'pt-BR': 'Equação',
+    'pt-PT': 'Equação',
+    'ro': 'Ecuaţie',
+    'ru': 'Yравнение',
+    'tr': 'Denklem',
+    'sr-SP-Cy': 'Једначина',
+    'sr-SP-Lt': 'Jednačina',
+    'sk': 'Rovnica',
+    'sl': 'Enačba',
+    'es': 'Ecuación',
+    'sv': 'Ekvation',
+    'ta': 'சமன்பாடு',
+    'tl': 'Equation',
+    'uk': 'Pівняння'
+}
+
 
 const TABLE = {
     'af-ZA': 'Tabel',
@@ -131,6 +184,7 @@ const TABLE = {
     'de-AU': 'Tabelle',
     'de-CH': 'Tabelle',
     'el': 'Τραπέζι',
+    'es': 'Tabla',
     'he': 'שולחן',
     'is': 'Tafla',
     'it': 'Tavolo',
@@ -151,7 +205,6 @@ const TABLE = {
     'sr-SP-Lt': 'Tabela',
     'sk': 'Stôl',
     'sl': 'Tabela',
-    'es': 'Tabla',
     'sv': 'Tabell',
     'ta': 'மேசை',
     'tl': 'Table',
@@ -213,6 +266,7 @@ const PHOTO = {
 
 export const CATS = {
     'figure': FIGURE,
+    'equation': EQUATION,
     'table': TABLE,
-    'photo': PHOTO
+    'photo': PHOTO,
 }

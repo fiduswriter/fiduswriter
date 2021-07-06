@@ -58,7 +58,7 @@ hr.selected-dec {
 #editor-diff-common,
 #editor-diff-online {
     width: 33%;
-    counter-reset: prosemirror-footnote cat-0 cat-1 cat-2;
+    counter-reset: prosemirror-footnote cat-figure cat-equation cat-photo cat-table;
 }
 
 #editor-merge-view figure figcaption span.label::after,

@@ -39,10 +39,11 @@ export class ModMarginboxes {
         // Add two elements to hold dynamic CSS info about comments.
         document.body.insertAdjacentHTML(
             'beforeend',
-            '<style type="text/css" id="active-comment-style"></style><style type="text/css" id="margin-box-placement-style"></style>'
+            '<style type="text/css" id="active-comment-style"></style><style type="text/css" id="track-options-style"></style><style type="text/css" id="margin-box-placement-style"></style>'
         )
         this.marginBoxesContainer = document.getElementById('margin-box-container')
         this.activeCommentStyleElement = document.getElementById('active-comment-style')
+        this.trackOptionsStyleElement = document.getElementById('track-options-style')
         this.bindEvents()
     }
 
@@ -55,7 +56,7 @@ export class ModMarginboxes {
                 // do not react to clicks on checkboxes within sub menus
                 break
             case findTarget(event, '.margin-box-filter-comments-author', el):
-                this.filterOptions.author = parseInt(el.target.dataset.id)
+                this.filterOptions.commentsAuthor = parseInt(el.target.dataset.id)
                 this.view(this.editor.currentView)
                 break
             case findTarget(event, '.margin-box-filter-comments-assigned', el):
@@ -91,8 +92,14 @@ export class ModMarginboxes {
                     this.positionMarginBoxOptions(marginboxOptions, el.target)
                 }
                 break
+            case findTarget(event, '.margin-box-filter-track-author', el):
+                this.filterOptions.trackAuthor = parseInt(el.target.dataset.id)
+                this.setTrackStyle()
+                this.view(this.editor.currentView)
+                break
             case findTarget(event, '#margin-box-filter-track', el):
                 this.filterOptions.track = !this.filterOptions.track
+                this.setTrackStyle()
                 this.view(this.editor.currentView)
                 break
             case findTarget(event, '#margin-box-filter-comments', el):
@@ -301,7 +308,7 @@ export class ModMarginboxes {
         const marginBoxFilterHTML = marginboxFilterTemplate({
             marginBoxes,
             filterOptions: this.filterOptions,
-            docInfo: this.editor.docInfo
+            pastParticipants: this.editor.mod.collab.pastParticipants
         })
 
         const marginBoxFilterElement = document.getElementById('margin-box-filter')
@@ -548,6 +555,7 @@ export class ModMarginboxes {
                 return
             }
             const active = comment.id === this.editor.mod.comments.interactions.activeCommentId
+
             if (this.filterOptions.comments) {
                 if (active) {
                     this.activeCommentStyle +=
@@ -612,5 +620,33 @@ export class ModMarginboxes {
         } else {
             element.target.innerText = `${gettext('show more')}`
         }
+    }
+
+    setTrackStyle() {
+        if (!this.filterOptions.track) {
+            this.trackOptionsStyleElement.innerHTML =
+            `span.insertion, .selected-insertion, .selected-format_change, .selected-block_change {
+                color: inherit !important;
+                background-color: inherit !important;
+            }
+            span.deletion {
+                display: none;
+            }`
+        } else if (this.filterOptions.trackAuthor) {
+            this.trackOptionsStyleElement.innerHTML =
+            `span.insertion:not([data-user="${this.filterOptions.trackAuthor}"]),
+            span.insertion:not([data-user="${this.filterOptions.trackAuthor}"]) .selected-insertion,
+            .selected-format_change:not([data-user="${this.filterOptions.trackAuthor}"]),
+            .selected-block_change:not([data-user="${this.filterOptions.trackAuthor}"]) {
+                color: inherit !important;
+                background-color: inherit !important;
+            }
+            span.deletion:not([data-user="${this.filterOptions.trackAuthor}"]) {
+                display: none;
+            }`
+        } else {
+            this.trackOptionsStyleElement.innerHTML = ''
+        }
+
     }
 }

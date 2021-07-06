@@ -38,7 +38,7 @@ const nonDeletedTextContent = node => {
 
 export const getInternalTargets = function(state, language, editor) {
     const internalTargets = []
-
+    const anchors = {}
     const categories = {}
 
     state.doc.descendants(node => {
@@ -70,10 +70,15 @@ export const getInternalTargets = function(state, language, editor) {
             })
             return true
         }
-        if (node.isTextblock) {
-            return true
+        if (node.type.name === 'text') {
+            const anchor = node.marks.find(mark => mark.type.name === 'anchor')
+            if (anchor) {
+                anchors[anchor.attrs.id] = (anchors[anchor.attrs.id] || '') + node.text
+            }
         }
     })
+    Object.entries(anchors).forEach(([id, text]) => internalTargets.push({id, text}))
+
     return internalTargets
 }
 
@@ -162,7 +167,7 @@ export const linksPlugin = function(options) {
         const dropUp = document.createElement('span'),
             editor = options.editor,
             writeAccess = editor.docInfo.access_rights === 'write' ? true : false,
-            editAccess = ['write', 'write-tracked'].includes(editor.docInfo.access_rights) ? true : false
+            editAccess = ['write', 'write-tracked', 'review-tracked'].includes(editor.docInfo.access_rights) ? true : false
         let linkType, linkHref, anchorHref, requiredPx = 10
 
         if (linkMark) {

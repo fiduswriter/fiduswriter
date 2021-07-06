@@ -1,6 +1,6 @@
 import {CSL} from 'citeproc-plus'
-import OfflinePluginRuntime from 'offline-plugin/runtime'
-import {DocumentInvite} from "../documents/invite"
+import * as OfflinePluginRuntime from '@lcdp/offline-plugin/runtime'
+import {ContactInvite} from "../contacts/invite"
 import {ImageOverview} from "../images/overview"
 import {ContactsOverview} from "../contacts"
 import {Profile} from "../profile"
@@ -62,28 +62,24 @@ export class App {
             "document": {
                 requireLogin: true,
                 open: pathnameParts => {
-                    const id = pathnameParts[2]
-                    return import(/* webpackPrefetch: true *//* webpackChunkName: "editor" */'../editor').then(({Editor}) => new Editor(this.config, id))
+                    let id = pathnameParts.pop()
+                    if (!id.length) {
+                        id = pathnameParts.pop()
+                    }
+                    const path = ('/' + pathnameParts.slice(2).join('/')).replace(/\/?$/, '/')
+                    return import(/* webpackPrefetch: true *//* webpackChunkName: "editor" */'../editor').then(({Editor}) => new Editor(this.config, path, id))
                 },
                 dbTables: {
-                    "list": {
-                        keyPath: "id"
-                    },
-                    "templates": {
-                        keyPath: "pk"
-                    },
-                    "styles": {
-                        keyPath: "title"
-                    },
-                    "teammembers": {
+                    "data": {
                         keyPath: "id"
                     }
                 }
             },
-            "invite": {
+            "documents": {
+                requireLogin: true,
                 open: pathnameParts => {
-                    const id = pathnameParts[2]
-                    return new DocumentInvite(this.config, id)
+                    const path = ('/' + pathnameParts.slice(2).join('/')).replace(/\/?$/, '/')
+                    return import(/* webpackPrefetch: true */"../documents/overview").then(({DocumentOverview}) => new DocumentOverview(this.config, path))
                 }
             },
             "pages": {
@@ -100,7 +96,7 @@ export class App {
                     case "profile":
                         returnValue = new Profile(this.config)
                         break
-                    case "team":
+                    case "contacts":
                         returnValue = new ContactsOverview(this.config)
                         break
                     default:
@@ -109,9 +105,15 @@ export class App {
                     return returnValue
                 },
                 dbTables: {
-                    "contacts": {
+                    "data": {
                         keyPath: "id"
                     }
+                }
+            },
+            "invite": {
+                open: pathnameParts => {
+                    const id = pathnameParts[2]
+                    return new ContactInvite(this.config, id)
                 }
             },
             "usermedia": {
@@ -216,6 +218,8 @@ export class App {
             }
         ).then(
             () => this.bind()
+        ).then(
+            () => this.showNews()
         )
     }
 
@@ -257,6 +261,27 @@ export class App {
                 }
             }
         })
+    }
+
+    showNews() {
+        if (
+            window.location.pathname !== '/user/contacts/' &&
+            this.config.user.waiting_invites
+        ) {
+            showSystemMessage(
+                gettext('Other users have requested to connect with you. Go to the contacts page to accept their invites.'),
+                [
+                    {
+                        text: gettext('Go to contacts'),
+                        classes: 'fw-dark',
+                        click: _event => {
+                            return this.goTo('/user/contacts/')
+                        }
+                    },
+                    {type: 'close'}
+                ]
+            )
+        }
     }
 
     connectWs() {

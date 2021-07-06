@@ -7,8 +7,6 @@ from django.views.decorators.http import require_POST
 
 from allauth.socialaccount.models import providers
 
-from user import util as userutil
-
 from .decorators import ajax_required
 from . import get_version
 
@@ -53,7 +51,7 @@ def configuration(request):
             'first_name': request.user.first_name,
             'name': request.user.readable_name,
             'last_name': request.user.last_name,
-            'avatar': userutil.get_user_avatar_url(request.user),
+            'avatar': request.user.avatar_url,
             'emails': [],
             'socialaccounts': [],
             'is_authenticated': True
@@ -79,6 +77,8 @@ def configuration(request):
             except KeyError:
                 # Social account provider has been removed.
                 pass
+        response['user']['waiting_invites'] = \
+            request.user.invites_to.exists()
 
     else:
         response['user'] = {

@@ -1,15 +1,19 @@
 import {DataTable} from "simple-datatables"
-
+import deepEqual from "fast-deep-equal"
 import * as plugins from "../../../plugins/documents_overview"
 import {DocumentOverviewActions} from "./actions"
 import {DocumentAccessRightsDialog} from "../access_rights"
 import {menuModel, bulkMenuModel} from "./menu"
-import {activateWait, deactivateWait, addAlert, postJson, OverviewMenuView, findTarget, whenReady, escapeText, localizeDate, baseBodyTemplate, ensureCSS, setDocTitle, DatatableBulk} from "../../common"
+import {activateWait, deactivateWait, addAlert, escapeText, postJson, OverviewMenuView, findTarget, whenReady, baseBodyTemplate, ensureCSS, setDocTitle, DatatableBulk, shortFileTitle} from "../../common"
 import {SiteMenu} from "../../menu"
 import {FeedbackTab} from "../../feedback"
 import {
     docSchema
 } from "../../schema/document"
+import {
+    dateCell,
+    deleteFolderCell
+} from "./templates"
 
 /*
 * Helper functions for the document overview page.
@@ -17,19 +21,20 @@ import {
 
 export class DocumentOverview {
 
-    constructor({app, user}) {
+    constructor({app, user}, path = '/') {
         this.app = app
         this.user = user
+        this.path = path
         this.schema = docSchema
         this.documentList = []
-        this.teamMembers = []
+        this.contacts = []
         this.mod = {}
+        this.lastSort = {column: 0, dir: 'asc'}
     }
 
     init() {
         return whenReady().then(() => {
             this.render()
-            activateWait(true)
             const smenu = new SiteMenu(this.app, "documents")
             smenu.init()
             new DocumentOverviewActions(this)
@@ -51,12 +56,12 @@ export class DocumentOverview {
             user: this.user,
             hasOverview: true
         })
-        document.body = this.dom
         ensureCSS([
             'document_overview.css',
             'add_remove_dialog.css',
             'access_rights_dialog.css'
         ])
+        document.body = this.dom
         setDocTitle(gettext('Document Overview'), this.app)
         const feedbackTab = new FeedbackTab()
         feedbackTab.init()
@@ -83,6 +88,14 @@ export class DocumentOverview {
                     this.mod.actions.deleteDocumentDialog([docId])
                 }
                 break
+            case findTarget(event, '.delete-folder', el):
+                if (this.app.isOffline()) {
+                    addAlert('info', gettext("You cannot delete documents while you are offline."))
+                } else {
+                    const ids = el.target.dataset.ids.split(',').map(id => parseInt(id))
+                    this.mod.actions.deleteDocumentDialog(ids)
+                }
+                break
             case findTarget(event, '.owned-by-user.rights', el): {
                 if (this.app.isOffline()) {
                     addAlert('info', gettext("You cannot access rights data of a document while you are offline."))
@@ -90,17 +103,25 @@ export class DocumentOverview {
                     docId = parseInt(el.target.dataset.id)
                     const dialog = new DocumentAccessRightsDialog(
                         [docId],
-                        this.teamMembers,
-                        memberDetails => this.teamMembers.push(memberDetails)
+                        this.contacts,
+                        memberDetails => this.contacts.push(memberDetails)
                     )
                     dialog.init()
                 }
                 break
             }
-            case findTarget(event, 'a.doc-title', el):
+            case findTarget(event, 'a.fw-data-table-title.subdir, a.fw-data-table-title.parentdir', el):
+                event.preventDefault()
+                this.path = el.target.dataset.path
+                window.history.pushState({}, "", el.target.getAttribute('href'))
+                this.initTable()
+                break
+            case findTarget(event, 'a.fw-data-table-title', el):
+                event.preventDefault()
                 if (this.app.isOffline()) {
                     addAlert('info', gettext("You cannot open a document while you are offline."))
-                    event.preventDefault()
+                } else {
+                    this.app.goTo(el.target.getAttribute('href'))
                 }
                 break
             default:
@@ -122,20 +143,25 @@ export class DocumentOverview {
     }
 
     getDocumentListData() {
+        const cachedPromise = this.showCached()
         if (this.app.isOffline()) {
-            return this.showCached()
+            return cachedPromise
         }
         return postJson(
             '/api/document/documentlist/'
         ).then(
             ({json}) => {
-                this.updateIndexedDB(json)
-                this.initializeView(json)
+                return cachedPromise.then(oldJson => {
+                    if (!deepEqual(json, oldJson)) {
+                        this.updateIndexedDB(json)
+                        this.initializeView(json)
+                    }
+                })
             }
         ).catch(
             error => {
                 if (this.app.isOffline()) {
-                    return this.showCached()
+                    return cachedPromise
                 } else {
                     addAlert('error', gettext('Document data loading failed.'))
                     throw (error)
@@ -145,60 +171,34 @@ export class DocumentOverview {
     }
 
     showCached() {
-        return this.loaddatafromIndexedDB().then((json) => this.initializeView(json))
+        return this.loaddatafromIndexedDB().then(json => {
+            if (!json) {
+                activateWait(true)
+                return
+            }
+            return this.initializeView(json)
+        })
     }
 
     loaddatafromIndexedDB() {
-        const newJson = {}
-        return this.app.indexedDB.readAllData("document_list").then(
-            response => newJson['documents'] = response
-        ).then(
-            () => this.app.indexedDB.readAllData("document_templates")
-        ).then(
+        return this.app.indexedDB.readAllData("document_data").then(
             response => {
-                const dummyDict = {}
-                for (const data in response) {
-                    const pk = response[data].pk
-                    delete response[data].pk
-                    dummyDict[pk] = response[data]
+                if (!response.length) {
+                    return false
                 }
-                newJson['document_templates'] = dummyDict
-            }
-        ).then(
-            () => this.app.indexedDB.readAllData("document_styles")
-        ).then(
-            response => newJson['document_styles'] = response
-        ).then(
-            () => this.app.indexedDB.readAllData("document_teammembers")
-        ).then(
-            response => {
-                newJson['team_members'] = response
-                return newJson
+                const data = response[0]
+                delete data.id
+                return data
             }
         )
+
     }
 
     updateIndexedDB(json) {
+        json.id = 1
         // Clear data if any present
-        this.app.indexedDB.clearData("document_list").then(
-            () => this.app.indexedDB.clearData("document_teammembers")
-        ).then(
-            () => this.app.indexedDB.clearData("document_styles")
-        ).then(
-            () => this.app.indexedDB.clearData("document_templates")
-        ).then(
-            () => {
-                //Insert new data
-                this.app.indexedDB.insertData("document_list", json.documents)
-                this.app.indexedDB.insertData("document_teammembers", json.team_members)
-                this.app.indexedDB.insertData("document_styles", json.document_styles)
-                const dummyJson = []
-                for (const key in json.document_templates) {
-                    json.document_templates[key]['pk'] = key
-                    dummyJson.push(json.document_templates[key])
-                }
-                this.app.indexedDB.insertData("document_templates", dummyJson)
-            }
+        return this.app.indexedDB.clearData("document_data").then(
+            () => this.app.indexedDB.insertData("document_data", [json])
         )
     }
 
@@ -212,13 +212,14 @@ export class DocumentOverview {
             return true
         })
 
-        this.teamMembers = json.team_members
+        this.contacts = json.contacts
         this.documentStyles = json.document_styles
         this.documentTemplates = json.document_templates
         this.initTable()
         if (Object.keys(this.documentTemplates).length > 1) {
             this.multipleNewDocumentMenuItem()
         }
+        return json
     }
 
     onResize() {
@@ -229,27 +230,65 @@ export class DocumentOverview {
     }
 
     /* Initialize the overview table */
-    initTable() {
+    initTable(searching = false) {
+        if (this.table) {
+            this.table.destroy()
+            this.table = false
+        }
+        const subdirs = {}
         const tableEl = document.createElement('table')
         tableEl.classList.add('fw-data-table')
         tableEl.classList.add('fw-document-table')
         tableEl.classList.add('fw-large')
-        document.querySelector('.fw-contents').innerHTML = '' // Delete any old table
-        document.querySelector('.fw-contents').appendChild(tableEl)
+        const contentsEl = document.querySelector('.fw-contents')
+        contentsEl.innerHTML = '' // Delete any old table
+        contentsEl.appendChild(tableEl)
+
+        if (this.path !== '/') {
+            const headerEl = document.createElement('h1')
+            headerEl.innerHTML = escapeText(this.path)
+            contentsEl.insertBefore(headerEl, tableEl)
+        }
 
         this.dtBulk = new DatatableBulk(this, this.dtBulkModel)
 
-        const hiddenCols = [0]
+        const hiddenCols = [0, 1]
 
         if (window.innerWidth < 500) {
-            hiddenCols.push(1, 4)
+            hiddenCols.push(2, 5)
             if (window.innerWidth < 400) {
-                hiddenCols.push(5)
+                hiddenCols.push(6)
             }
+        }
+        const fileList = this.documentList.map(
+            doc => this.createTableRow(doc, subdirs, searching)
+        ).filter(row => !!row)
+
+        if (!searching && this.path !== '/') {
+            const pathParts = this.path.split('/')
+            pathParts.pop()
+            pathParts.pop()
+            const parentPath = pathParts.join('/') + '/'
+            const href = parentPath === "/" ? parentPath : `/documents${parentPath}`
+            fileList.unshift([
+                '-1',
+                'top',
+                '',
+                `<a class="fw-data-table-title fw-link-text parentdir" href="${href}" data-path="${parentPath}">
+                    <i class="fas fa-folder"></i>
+                    <span>..</span>
+                </a>`,
+                '',
+                '',
+                '',
+                '',
+                '',
+                ''
+            ])
         }
 
         this.table = new DataTable(tableEl, {
-            searchable: true,
+            searchable: searching,
             paging: false,
             scrollY: `${Math.max(window.innerHeight - 360, 100)}px`,
             labels: {
@@ -262,6 +301,7 @@ export class DocumentOverview {
             data: {
                 headings: [
                     '',
+                    '',
                     this.dtBulk.getHTML(),
                     gettext("Title"),
                     gettext("Revisions"),
@@ -271,7 +311,7 @@ export class DocumentOverview {
                     gettext("Rights"),
                     ''
                 ],
-                data: this.documentList.map(doc => this.createTableRow(doc))
+                data: fileList
             },
             columns: [
                 {
@@ -279,13 +319,15 @@ export class DocumentOverview {
                     hidden: true
                 },
                 {
-                    select: [1, 3, 7, 8],
+                    select: [2, 4, 8, 9],
                     sortable: false
+                },
+                {
+                    select: [this.lastSort.column],
+                    sort: this.lastSort.dir
                 }
             ]
         })
-        this.lastSort = {column: 0, dir: 'asc'}
-
         this.table.on('datatable.sort', (column, dir) => {
             this.lastSort = {column, dir}
         })
@@ -293,23 +335,78 @@ export class DocumentOverview {
         this.dtBulk.init(this.table.table)
     }
 
-    createTableRow(doc) {
+    createTableRow(doc, subdirs, searching) {
+        let path = doc.path
+        if (!path.startsWith('/')) {
+            path = '/' + path
+        }
+        if (!path.startsWith(this.path)) {
+            return false
+        }
+        if (path.endsWith('/')) {
+            path += doc.title
+        }
+        const currentPath = path.slice(this.path.length)
+        if (!searching && currentPath.includes('/')) {
+            // There is a subdir
+            const subdir = currentPath.split('/').shift()
+            if (subdirs[subdir]) {
+                // subdir has been covered already
+                // We only update the update/added columns if needed.
+                if (doc.added < subdirs[subdir].added) {
+                    subdirs[subdir].added = doc.added
+                    subdirs[subdir].row[5] = dateCell({date: doc.added})
+                }
+                if (doc.updated > subdirs[subdir].updated) {
+                    subdirs[subdir].updated = doc.updated
+                    subdirs[subdir].row[6] = dateCell({date: doc.updated})
+                }
+                if (this.user.id === doc.owner.id) {
+                    subdirs[subdir].ownedIds.push(doc.id)
+                    subdirs[subdir].row[9] = deleteFolderCell({subdir, ids: subdirs[subdir].ownedIds})
+                }
+                return false
+            }
+
+            const ownedIds = this.user.id === doc.owner.id ? [doc.id] : []
+            // Display subdir
+            const row = [
+                '0',
+                'folder',
+                '',
+                `<a class="fw-data-table-title fw-link-text subdir" href="/documents${this.path}${subdir}/" data-path="${this.path}${subdir}/">
+                    <i class="fas fa-folder"></i>
+                    <span>${escapeText(subdir)}</span>
+                </a>`,
+                '',
+                dateCell({date: doc.added}),
+                dateCell({date: doc.updated}),
+                '',
+                '',
+                ownedIds.length ? deleteFolderCell({subdir, ids: ownedIds}) : ''
+            ]
+            subdirs[subdir] = {row, added: doc.added, updated: doc.updated, ownedIds}
+            return row
+        }
+
+        // This is the folder of the file. Return the file.
         return [
             String(doc.id),
+            'file',
             `<input type="checkbox" class="entry-select fw-check" data-id="${doc.id}" id="doc-${doc.id}"><label for="doc-${doc.id}"></label>`,
-            `<span class="fw-data-table-title">
+            `<a class="fw-data-table-title fw-link-text" href="/document/${doc.id}">
                 <i class="far fa-file-alt"></i>
-                <a class="doc-title fw-link-text fw-searchable" href="/document/${doc.id}/">
-                    ${doc.title.length ? escapeText(doc.title) : gettext('Untitled')}
-                </a>
-            </span>`,
+                <span class="fw-searchable">
+                    ${shortFileTitle(doc.title, doc.path)}
+                </span>
+            </a>`,
             doc.revisions.length ?
                 `<span class="revisions" data-id="${doc.id}">
                 <i class="fas fa-history"></i>
             </span>` :
                 '',
-            `<span class="date">${localizeDate(doc.added * 1000, 'sortable-date')}</span>`,
-            `<span class="date">${localizeDate(doc.updated * 1000, 'sortable-date')}</span>`,
+            dateCell({date: doc.added}),
+            dateCell({date: doc.updated}),
             `<span>
                 ${doc.owner.avatar.html}
             </span>
@@ -318,7 +415,7 @@ export class DocumentOverview {
                 <i data-id="${doc.id}" class="icon-access-right icon-access-${doc.rights}"></i>
             </span>`,
             `<span class="delete-document fw-link-text" data-id="${doc.id}"
-                    data-title="${escapeText(doc.title)}">
+                    data-title="${escapeText(currentPath)}">
                 ${
     this.user.id === doc.owner.id ?
         '<i class="fa fa-trash-alt"></i>' :
@@ -326,27 +423,8 @@ export class DocumentOverview {
 }
             </span>`
         ]
-    }
 
-    removeTableRows(ids) {
-        const existingRows = this.table.data.map((data, index) => {
-            const id = parseInt(data.cells[0].textContent)
-            if (ids.includes(id)) {
-                return index
-            } else {
-                return false
-            }
-        }).filter(rowIndex => rowIndex !== false)
 
-        if (existingRows.length) {
-            this.table.rows().remove(existingRows)
-        }
-    }
-
-    addDocToTable(doc) {
-        this.table.insert({data: [this.createTableRow(doc)]})
-        // Redo last sort
-        this.table.columns().sort(this.lastSort.column, this.lastSort.dir)
     }
 
     multipleNewDocumentMenuItem() {
@@ -383,7 +461,7 @@ export class DocumentOverview {
     }
 
     goToNewDocument(id) {
-        this.app.goTo(`/document/${id}/`)
+        this.app.goTo(`/document${this.path}${id}`)
     }
 
 }

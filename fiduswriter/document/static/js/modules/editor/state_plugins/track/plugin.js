@@ -15,33 +15,42 @@ export function trackPlugin(options) {
         key,
         state: {
             init(config, state) {
-                // Make sure there are colors for all users who have left marks in the document
-                const userIds = [options.editor.user.id]
+                // Make sure there are colors for all users who have left marks
+                // in the document and that they are registered as past
+                // participants for the marginbox filter.
+                const users = {}
+                users[options.editor.user.id] = options.editor.user.name
                 state.doc.descendants(node => {
                     if (node.attrs.track) {
                         node.attrs.track.forEach(track => {
                             if (
-                                !userIds.includes(track.user) && track.user !== 0
+                                !users[track.user] && track.user !== 0
                             ) {
-                                userIds.push(track.user)
+                                users[track.user] = track.username
                             }
                         })
                     } else {
                         node.marks.forEach(mark => {
                             if (
                                 ['deletion', 'insertion', 'format_change'].includes(mark.type.name) &&
-                                !userIds.includes(mark.attrs.user) && mark.attrs.user !== 0
+                                !users[mark.attrs.user] && mark.attrs.user !== 0
                             ) {
-                                userIds.push(mark.attrs.user)
+                                users[mark.attrs.user] = mark.attrs.username
                             }
                         })
                     }
                 })
 
                 if (options.editor.mod.collab) {
-                    userIds.forEach(userId => options.editor.mod.collab.colors.ensureUserColor(userId))
-                }
+                    Object.entries(users).forEach(([id, userName]) => {
+                        const userId = parseInt(id)
+                        options.editor.mod.collab.colors.ensureUserColor(userId)
+                        if (!options.editor.mod.collab.pastParticipants.find(participant => participant.id === userId)) {
+                            options.editor.mod.collab.pastParticipants.push({id: userId, name: userName})
+                        }
+                    })
 
+                }
 
                 return {
                     decos: DecorationSet.empty

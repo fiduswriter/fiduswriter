@@ -6,8 +6,50 @@ from django.db.models import Q
 from django.views.decorators.http import require_POST
 
 from base.decorators import ajax_required
-from document.models import DocumentTemplate
+from document.models import DocumentTemplate, FW_DOCUMENT_VERSION
 from document.helpers.serializers import PythonWithURLSerializer
+from style.models import DocumentStyle, DocumentStyleFile, ExportTemplate
+
+
+@login_required
+@ajax_required
+@require_POST
+def get_template(request):
+    id = int(request.POST['id'])
+    if id == 0:
+        doc_template = DocumentTemplate()
+        doc_template.user = request.user
+        doc_template.save()
+        status = 201
+    else:
+        doc_template = DocumentTemplate.objects.filter(
+            id=id,
+            user=request.user
+        ).first()
+        status = 200
+    if doc_template is None:
+        return JsonResponse({}, status=405)
+    serializer = PythonWithURLSerializer()
+    export_templates = serializer.serialize(
+        doc_template.exporttemplate_set.all()
+    )
+    document_styles = serializer.serialize(
+        doc_template.documentstyle_set.all(),
+        use_natural_foreign_keys=True,
+        fields=['title', 'slug', 'contents', 'documentstylefile_set']
+    )
+    response = {
+        'id': doc_template.id,
+        'title': doc_template.title,
+        'content': doc_template.content,
+        'doc_version': doc_template.doc_version,
+        'export_templates': export_templates,
+        'document_styles': document_styles
+    }
+    return JsonResponse(
+        response,
+        status=status
+    )
 
 
 @login_required
@@ -38,48 +80,6 @@ def list(request):
 @login_required
 @ajax_required
 @require_POST
-def get(request):
-    id = int(request.POST['id'])
-    if id == 0:
-        doc_template = DocumentTemplate()
-        doc_template.user = request.user
-        doc_template.save()
-        status = 201
-    else:
-        doc_template = DocumentTemplate.objects.filter(
-            id=id,
-            user=request.user
-        ).first()
-        status = 200
-    if doc_template is None:
-        return JsonResponse({}, status=405)
-    serializer = PythonWithURLSerializer()
-    export_templates = serializer.serialize(
-        doc_template.exporttemplate_set.all()
-    )
-    document_styles = serializer.serialize(
-        doc_template.documentstyle_set.all(),
-        use_natural_foreign_keys=True,
-        fields=['title', 'slug', 'contents', 'documentstylefile_set']
-    )
-    response = {
-        'template': {
-            'id': doc_template.id,
-            'title': doc_template.title,
-            'content': doc_template.content,
-            'export_templates': export_templates,
-            'document_styles': document_styles
-        },
-    }
-    return JsonResponse(
-        response,
-        status=status
-    )
-
-
-@login_required
-@ajax_required
-@require_POST
 def save(request):
     id = request.POST['id']
     doc_template = DocumentTemplate.objects.filter(
@@ -97,6 +97,57 @@ def save(request):
     return JsonResponse(
         response,
         status=status
+    )
+
+
+@login_required
+@ajax_required
+@require_POST
+def create(request):
+    response = {}
+    title = request.POST.get('title')
+    content = json.loads(request.POST.get('content'))
+    import_id = request.POST.get('import_id')
+    document_styles = json.loads(request.POST.get('document_styles'))
+    export_templates = json.loads(request.POST.get('export_templates'))
+    template = DocumentTemplate.objects.create(
+        title=title,
+        content=content,
+        doc_version=FW_DOCUMENT_VERSION,
+        import_id=import_id,
+        user=request.user
+    )
+    response['id'] = template.id
+    date_format = '%Y-%m-%d'
+    response['added'] = template.added.strftime(date_format)
+    response['updated'] = template.updated.strftime(date_format)
+    files = request.FILES.getlist('files[]')
+    for style in document_styles:
+        doc_style = DocumentStyle.objects.create(
+            title=style['title'],
+            slug=style['slug'],
+            contents=style['contents'],
+            document_template=template
+        )
+        for filename in style['files']:
+            file = next((x for x in files if x.name == filename), None)
+            if file:
+                DocumentStyleFile.objects.create(
+                    file=file,
+                    style=doc_style
+                )
+    for e_template in export_templates:
+        filename = e_template['file']
+        file = next((x for x in files if x.name == filename), None)
+        if file:
+            ExportTemplate.objects.create(
+                document_template=template,
+                template_file=file,
+                file_type=e_template['file_type']
+            )
+    return JsonResponse(
+        response,
+        status=201
     )
 
 

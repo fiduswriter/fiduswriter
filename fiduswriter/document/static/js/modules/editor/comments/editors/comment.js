@@ -1,12 +1,16 @@
+import deepEqual from "fast-deep-equal"
 import {EditorState} from "prosemirror-state"
 import {EditorView} from "prosemirror-view"
 import {history, redo, undo} from "prosemirror-history"
 import {baseKeymap} from "prosemirror-commands"
 import {keymap} from "prosemirror-keymap"
 import {suggestionsPlugin, triggerCharacter} from "prosemirror-suggestions"
+
+import {escapeText, findTarget} from "../../../common"
+
 import {commentSchema} from "./schema"
 import {notifyMentionedUser} from "./notify"
-import {escapeText, findTarget} from "../../../common"
+
 
 export class CommentEditor {
     constructor(mod, id, dom, text, options = {}) {
@@ -16,6 +20,9 @@ export class CommentEditor {
         this.text = text
         this.options = options
 
+        this.isMajor = this.options.isMajor
+
+        this.keepOpenAfterSubmit = false
         this.selectedTag = 0
         this.userTaggerList = []
         this.plugins = [
@@ -90,7 +97,7 @@ export class CommentEditor {
                 ${this.options.isMajor ? 'checked' : ''}/>
             <label>${gettext("High priority")}</label>
             <div class="comment-btns">
-                <button class="submit fw-button fw-dark" type="submit">
+                <button class="submit fw-button fw-dark disabled" type="submit">
                     ${this.id !== '-1' ? gettext("Edit") : gettext("Submit")}
                 </button>
                 <button class="cancel fw-button fw-orange" type="submit">
@@ -114,6 +121,7 @@ export class CommentEditor {
             dispatchTransaction: tr => {
                 const newState = this.view.state.apply(tr)
                 this.view.updateState(newState)
+                this.updateButtons()
             }
         })
         this.oldUserTags = this.getUserTags()
@@ -126,7 +134,13 @@ export class CommentEditor {
             switch (true) {
             case findTarget(event, 'button.submit:not(.disabled)', el):
                 this.submit()
-                this.scrollToBottom()
+                if (this.keepOpenAfterSubmit) {
+                    this.scrollToBottom()
+                } else {
+                    this.mod.interactions.activeCommentId = false
+                    this.mod.interactions.deactivateAll()
+                    this.mod.interactions.collapseSelectionToEnd()
+                }
                 break
             case findTarget(event, 'button.cancel', el):
                 this.mod.interactions.cancelSubmit()
@@ -139,17 +153,33 @@ export class CommentEditor {
                 this.selectUserTag()
                 this.view.focus()
                 break
+            case findTarget(event, '.comment-is-major', el):
+                this.isMajor = !this.isMajor
+                this.updateButtons()
+                break
             }
         })
+    }
 
+    hasChanged() {
+        return (!deepEqual(
+            this.text.length ? this.text : [{type: 'paragraph'}],
+            this.view.state.doc.toJSON().content || [{type: 'paragraph'}]
+        ) || this.options.isMajor !== this.isMajor)
+    }
 
+    updateButtons() {
+        if (this.hasChanged()) {
+            this.dom.querySelector('button.submit').classList.remove('disabled')
+        } else {
+            this.dom.querySelector('button.submit').classList.add('disabled')
+        }
     }
 
     submit() {
-        const comment = this.view.state.doc.toJSON().content,
-            isMajor = this.dom.querySelector('.comment-is-major').checked
+        const comment = this.view.state.doc.toJSON().content
         if (comment?.length > 0) {
-            this.mod.interactions.updateComment({id: this.id, comment, isMajor})
+            this.mod.interactions.updateComment({id: this.id, comment, isMajor: this.isMajor})
             this.sendNotifications()
         } else {
             this.mod.interactions.deleteComment(this.id)
@@ -167,7 +197,7 @@ export class CommentEditor {
 
     setUserTaggerList(search) {
         const owner = this.mod.editor.docInfo.owner
-        this.userTaggerList = owner.team_members.concat(owner).filter(
+        this.userTaggerList = owner.contacts.concat(owner).filter(
             user => user.name.includes(search) || user.username.includes(search)
         )
     }

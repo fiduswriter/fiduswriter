@@ -171,7 +171,10 @@ export class DocTemplatesOverview {
                 if (this.app.isOffline()) {
                     return this.showCached()
                 } else {
-                    addAlert('error', gettext('Document templates loading failed.'))
+                    addAlert(
+                        'error',
+                        gettext('Document templates loading failed.')
+                    )
                     throw (error)
                 }
             }

@@ -940,7 +940,7 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
             EC.presence_of_element_located((By.CLASS_NAME, 'fw-contents'))
         )
         doc_row = self.driver.find_element_by_xpath(
-            "//a[@href='/document/"+str(self.doc.id)+"/']"
+            "//a[@href='/document/"+str(self.doc.id)+"']"
         )
         self.assertEqual(doc_row.is_displayed(), True)
 
@@ -990,7 +990,7 @@ class AccessRightsOfflineTests(LiveTornadoTestCase, EditorHelper):
         # Since the test uses 2 different users ,
         # add access rights for the 2nd user.
         AccessRight.objects.create(
-            user=self.user2,
+            holder_obj=self.user2,
             document=self.doc,
             rights='write'
         )
@@ -1047,7 +1047,10 @@ class AccessRightsOfflineTests(LiveTornadoTestCase, EditorHelper):
         p2.join()
 
         # Delete access rights of the user before coming back online
-        AccessRight.objects.filter(user=self.user2, document=self.doc).delete()
+        AccessRight.objects.filter(
+            user=self.user2,
+            document=self.doc
+        ).delete()
 
         # driver 2 goes online
         self.driver2.execute_script(

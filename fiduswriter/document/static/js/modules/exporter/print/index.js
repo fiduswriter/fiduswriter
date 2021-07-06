@@ -1,6 +1,6 @@
 import {PAPER_SIZES} from "../../schema/const"
 import {HTMLExporter} from "../html"
-import {addAlert} from "../../common"
+import {addAlert, shortFileTitle} from "../../common"
 import {removeHidden} from "../tools/doc_content"
 import {printHTML} from "@vivliostyle/print"
 
@@ -24,20 +24,23 @@ export class PrintExporter extends HTMLExporter {
 
             }
             body, section[role=doc-footnotes] {
-                counter-reset: cat-0 cat-1 cat-2 footnote-counter footnote-marker-counter;
+                counter-reset: cat-figure cat-equation cat-photo cat-table footnote-counter footnote-marker-counter;
             }
             section[role=doc-footnote] > *:first-child:before {
                 counter-increment: footnote-counter;
                 content: counter(footnote-counter) ". ";
             }
             section[role=doc-footnote] figure[data-category='figure'] caption label::after {
-                content: ' ' counter(cat-0) 'A';
+                content: ' ' counter(cat-figure) 'A';
+            }
+            section[role=doc-footnote] figure[data-category='equation']::after {
+                content: ' ' counter(cat-equation) 'A';
             }
             section[role=doc-footnote] figure[data-category='photo']::after {
-                content: ' ' counter(cat-1) 'A';
+                content: ' ' counter(cat-photo) 'A';
             }
             section[role=doc-footnote] figure[data-category='table']::after {
-                content: ' ' counter(cat-2) 'A';
+                content: ' ' counter(cat-table) 'A';
             }
             section.fnlist {
                 display: none;
@@ -87,7 +90,7 @@ export class PrintExporter extends HTMLExporter {
     }
 
     init() {
-        addAlert('info', `${this.doc.title}: ${gettext('Printing has been initiated.')}`)
+        addAlert('info', `${shortFileTitle(this.doc.title, this.doc.path)}: ${gettext('Printing has been initiated.')}`)
         this.docContent = removeHidden(this.doc.content, false)
         this.addDocStyle(this.doc)
 

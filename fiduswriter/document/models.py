@@ -1,18 +1,18 @@
-import uuid
-
 from builtins import str
 from builtins import object
 
 from django.db import models
 from django.db.utils import OperationalError, ProgrammingError
-from django.contrib.auth.models import User
 from django.core import checks
+from django.conf import settings
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 
 # FW_DOCUMENT_VERSION:
 # Also defined in frontend
 # document/static/js/modules/schema/index.js
 
-FW_DOCUMENT_VERSION = 3.3
+FW_DOCUMENT_VERSION = 3.4
 
 
 class DocumentTemplate(models.Model):
@@ -25,7 +25,7 @@ class DocumentTemplate(models.Model):
         default=FW_DOCUMENT_VERSION
     )
     user = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         null=True,
         blank=True,
         on_delete=models.deletion.CASCADE
@@ -82,6 +82,7 @@ class DocumentTemplate(models.Model):
 
 class Document(models.Model):
     title = models.CharField(max_length=255, default='', blank=True)
+    path = models.TextField(default='', blank=True)
     content = models.JSONField(default=dict)
     doc_version = models.DecimalField(
         max_digits=3,
@@ -99,7 +100,7 @@ class Document(models.Model):
     # diffs should always be equivalent to or more than all the diffs since the
     # last full save of the document.
     owner = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         related_name='owner',
         on_delete=models.deletion.CASCADE
     )
@@ -200,6 +201,11 @@ RIGHTS_CHOICES = (
     # Can read content and can read+write comments.
     # Can chat with collaborators.
     # Has read access to revisions.
+    ('review-tracked', 'Reviewer who can write with tracked changes'),
+    # Can write tracked content and can read/write his own comments.
+    # Cannot turn off tracked changes.
+    # Cannot chat with collaborators.
+    # Has no access to revisions.
     ('review', 'Reviewer'),
     # Can read the content and can read/write his own comments.
     # Comments by users with this access right only show the user's
@@ -219,7 +225,13 @@ RIGHTS_CHOICES = (
 # Editor and Reviewer can only comment and not edit document
 COMMENT_ONLY = ('review', 'comment')
 
-CAN_UPDATE_DOCUMENT = ['write', 'write-tracked', 'review', 'comment']
+CAN_UPDATE_DOCUMENT = [
+    'write',
+    'write-tracked',
+    'review',
+    'review-tracked',
+    'comment'
+]
 
 # Whether the collaborator is allowed to know about other collaborators
 # and communicate with them.
@@ -228,48 +240,33 @@ CAN_COMMUNICATE = ['read', 'write', 'comment', 'write-tracked']
 
 class AccessRight(models.Model):
     document = models.ForeignKey(Document, on_delete=models.deletion.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.deletion.CASCADE)
+    path = models.TextField(default='', blank=True)
+    holder_choices = models.Q(app_label='user', model='user') | \
+        models.Q(app_label='user', model='userinvite')
+    holder_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
+        limit_choices_to=holder_choices
+    )
+    holder_id = models.PositiveIntegerField()
+    holder_obj = GenericForeignKey('holder_type', 'holder_id')
     rights = models.CharField(
         max_length=21,
         choices=RIGHTS_CHOICES,
         blank=False)
 
     class Meta(object):
-        unique_together = (("document", "user"),)
+        unique_together = (("document", "holder_type", "holder_id"),)
 
     def __str__(self):
         return (
             '%(name)s %(rights)s on %(doc_id)d' %
             {
-                'name': self.user.readable_name,
+                'name': self.holder_obj.readable_name,
                 'rights': self.rights,
                 'doc_id': self.document.id
             }
         )
-
-
-class AccessRightInvite(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    email = models.EmailField()  # The email where the invite was sent
-    document = models.ForeignKey(Document, on_delete=models.deletion.CASCADE)
-    rights = models.CharField(
-        max_length=21,
-        choices=RIGHTS_CHOICES,
-        blank=False)
-
-    def __str__(self):
-        return (
-            '%(email)s %(rights)s on %(doc_id)d: %(id)d' %
-            {
-                'email': self.email,
-                'rights': self.rights,
-                'doc_id': self.document.id,
-                'id': self.id
-            }
-        )
-
-    def get_absolute_url(self):
-        return "/invite/%i/" % self.id
 
 
 def revision_filename(instance, filename):

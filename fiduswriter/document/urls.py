@@ -14,8 +14,9 @@ urlpatterns = [
         name='get_documentlist_extra'
     ),
     url('^delete/$', views.delete, name='delete'),
+    url('^move/$', views.move, name='move'),
     url(
-        '^create_doc/(?P<template_id>[0-9]+)/$',
+        '^create_doc/$',
         views.create_doc,
         name='create_doc'
     ),
@@ -44,19 +45,24 @@ urlpatterns = [
         name='save_access_rights'
     ),
     url(
-        '^invite/$',
-        views.invite,
-        name='invite'
-    ),
-    url(
         '^comment_notify/$',
         views.comment_notify,
         name='comment_notify'
     ),
     url(
-        '^admin/get_template_extras/$',
-        views.get_template_extras,
-        name='get_template_extras'
+        '^admin/get_template/$',
+        views.get_template_admin,
+        name='get_template_admin'
+    ),
+    url(
+        '^admin/create_template/$',
+        views.create_template_admin,
+        name='create_template_admin'
+    ),
+    url(
+        '^admin/get_template/(?P<type>base|extras)/$',
+        views.get_template_admin,
+        name='get_template_admin'
     ),
     url(
         '^admin/get_all_old/$',
@@ -82,11 +88,6 @@ urlpatterns = [
         '^admin/get_all_template_ids/$',
         views.get_all_template_ids,
         name='get_all_template_ids'
-    ),
-    url(
-        '^admin/get_template/$',
-        views.get_template,
-        name='get_template'
     ),
     url(
         '^admin/save_template/$',

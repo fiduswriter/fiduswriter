@@ -2,9 +2,6 @@ import {
     Comment
 } from "./comment"
 import {
-    REVIEW_ROLES
-} from ".."
-import {
     addCommentDuringCreationDecoration,
     removeCommentDuringCreationDecoration
 } from "../state_plugins"
@@ -56,7 +53,7 @@ export class ModCommentStore {
 
         let username
 
-        if (REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
+        if (['review', 'review-tracked'].includes(this.mod.editor.docInfo.access_rights)) {
             username = `${gettext('Reviewer')} ${this.mod.editor.user.id}`
         } else {
             username = this.mod.editor.user.username
@@ -157,6 +154,20 @@ export class ModCommentStore {
         commentData,
         local
     ) {
+        if (!this.mod.editor.mod.collab.pastParticipants.find(
+            participant => participant.id === commentData.user
+        )) {
+            this.mod.editor.mod.collab.pastParticipants.push(
+                {id: commentData.user, name: commentData.username}
+            )
+        }
+        if (commentData.assignedUser && !this.mod.editor.mod.collab.pastParticipants.find(
+            participant => participant.id === commentData.assignedUser
+        )) {
+            this.mod.editor.mod.collab.pastParticipants.push(
+                {id: commentData.assignedUser, name: commentData.assignedUsername || ''}
+            )
+        }
         if (!this.comments[commentData.id]) {
             this.comments[commentData.id] = new Comment(commentData)
         }
@@ -175,6 +186,13 @@ export class ModCommentStore {
     }
 
     updateLocalComment(commentData, local) {
+        if (commentData.assignedUser && !this.mod.editor.mod.collab.pastParticipants.find(
+            participant => participant.id === commentData.assignedUser
+        )) {
+            this.mod.editor.mod.collab.pastParticipants.push(
+                {id: commentData.assignedUser, name: commentData.assignedUsername || ''}
+            )
+        }
         if (this.comments[commentData.id]) {
             Object.assign(this.comments[commentData.id], commentData)
         }

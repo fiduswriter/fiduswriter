@@ -1,3 +1,6 @@
+// Changing this number will make clients flush their database.
+const DB_VERSION = 4
+
 export class IndexedDB {
     constructor(app) {
         this.app = app
@@ -9,72 +12,61 @@ export class IndexedDB {
         }
 
         // Open/Create db if it doesn't exist
-        const request = window.indexedDB.open(this.app.db_config.db_name)
-        request.onerror = function(_event) {
-            //
-        }
-
-        request.onsuccess = (event) => {
-            const database = event.target.result
-            this.app.db_config['version'] = database.version
-            database.close()
-            if (this.app.db_config.version < 2) {
-                this.createDBSchema()
-            }
-        }
-    }
-
-    createDBSchema() {
-        // Return a promise which will be resolved after the Indexed DB
-        // and the object stores are created.
+        const request = window.indexedDB.open(this.app.db_config.db_name, DB_VERSION)
+        request.onerror = (_event) => this.reset()
         return new Promise(resolve => {
-            this.app.db_config.version += 1
-            const newRequest = window.indexedDB.open(this.app.db_config.db_name, this.app.db_config.version)
-            newRequest.onupgradeneeded = event => {
-                const db = event.target.result
-                Object.entries(this.app.routes).forEach(
-                    ([route, props]) => {
-                        if (props.dbTables) {
-                            Object.entries(props.dbTables).forEach(
-                                ([tableName, tableProperties]) => db.createObjectStore(`${route}_${tableName}`, tableProperties)
-                            )
-                        }
-                    }
-                )
-                db.close()
+            request.onsuccess = (event) => {
+                const database = event.target.result
+                database.close()
                 resolve()
             }
+
+            request.onupgradeneeded = event => this.onUpgradeNeeded(event)
         })
+
     }
 
-    createObjectStore(name, options) {
-        this.app.db_config.version += 1
-        const newRequest = window.indexedDB.open(this.app.db_config.db_name, this.app.db_config.version)
-        newRequest.onupgradeneeded = function(event) {
-            const db = event.target.result
-            db.createObjectStore(name, options)
-        }
+    onUpgradeNeeded(event) {
+        const db = event.target.result
+        Array.from(db.objectStoreNames).forEach(name => db.deleteObjectStore(name))
+        Object.entries(this.app.routes).forEach(
+            ([route, props]) => {
+                if (props.dbTables) {
+                    Object.entries(props.dbTables).forEach(
+                        ([tableName, tableProperties]) => db.createObjectStore(`${route}_${tableName}`, tableProperties)
+                    )
+                }
+            }
+        )
     }
 
     updateData(objectStoreName, data) {
-        const request = window.indexedDB.open(this.app.db_config.db_name)
-        request.onerror = function(_event) {
-            //
+        const request = window.indexedDB.open(this.app.db_config.db_name, DB_VERSION)
+        request.onerror = (_event) => {
+            this.reset().then(
+                () => this.updateData(objectStoreName, data)
+            )
         }
 
         request.onsuccess = (event) => {
             const db = event.target.result
-            const objectStore = db.transaction(objectStoreName, 'readwrite').objectStore(objectStoreName)
+            const objectStore = db.transaction(objectStoreName, 'readwrite').objectStore(
+                objectStoreName
+            )
             for (const d in data) {
                 objectStore.put(d)
             }
         }
+
+        request.onupgradeneeded = event => this.onUpgradeNeeded(event)
     }
 
     insertData(objectStoreName, data, retry = true) {
-        const request = window.indexedDB.open(this.app.db_config.db_name)
+        const request = window.indexedDB.open(this.app.db_config.db_name, DB_VERSION)
         request.onerror = function(_event) {
-            //
+            return this.reset().then(
+                () => this.insertData(objectStoreName, data, false)
+            )
         }
         request.onsuccess = (event) => {
             const db = event.target.result
@@ -101,6 +93,8 @@ export class IndexedDB {
 
             }
         }
+
+        request.onupgradeneeded = event => this.onUpgradeNeeded(event)
     }
 
     reset() {
@@ -108,7 +102,7 @@ export class IndexedDB {
             const delRequest = window.indexedDB.deleteDatabase(this.app.db_config.db_name)
             delRequest.onsuccess = () => {
                 // Resolve the promise after the indexedDB is set up.
-                this.createDBSchema().then(() => resolve())
+                this.init().then(() => resolve())
             }
         })
 
@@ -116,7 +110,7 @@ export class IndexedDB {
 
     clearData(objectStoreName) {
         return new Promise(resolve => {
-            const request = window.indexedDB.open(this.app.db_config.db_name)
+            const request = window.indexedDB.open(this.app.db_config.db_name, DB_VERSION)
             request.onerror = () => {}
             request.onsuccess = event => {
                 const db = event.target.result
@@ -140,28 +134,37 @@ export class IndexedDB {
                     }
                 }
             }
+            request.onupgradeneeded = event => this.onUpgradeNeeded(event)
         })
     }
 
     readAllData(objectStoreName) {
-        const new_promise = new Promise((resolve, _reject) => {
-            const request = window.indexedDB.open(this.app.db_config.db_name)
-            request.onerror = function(_event) {
-                //
+        return new Promise((resolve, reject) => {
+            const request = window.indexedDB.open(this.app.db_config.db_name, DB_VERSION)
+            request.onerror = function(event) {
+                reject(event)
             }
             request.onsuccess = (event) => {
                 const db = event.target.result
-                const objectStore = db.transaction(objectStoreName, 'readwrite').objectStore(objectStoreName)
-                const read_all_request = objectStore.getAll()
-                read_all_request.onerror = function(_event) {
-                    // Handle errors!
+                if (!Array.from(db.objectStoreNames).includes(objectStoreName)) {
+                    db.close()
+                    return this.reset().then(
+                        () => this.readAllData(objectStoreName)
+                    ).then(
+                        readPromise => resolve(readPromise)
+                    )
                 }
-                read_all_request.onsuccess = function(_event) {
+                const objectStore = db.transaction(objectStoreName, 'readwrite').objectStore(objectStoreName)
+                const readAllRequest = objectStore.getAll()
+                readAllRequest.onerror = function(event) {
+                    reject(event)
+                }
+                readAllRequest.onsuccess = function(_event) {
                     // Do something with the request.result!
-                    resolve(read_all_request.result)
+                    resolve(readAllRequest.result)
                 }
             }
+            request.onupgradeneeded = event => this.onUpgradeNeeded(event)
         })
-        return new_promise
     }
 }

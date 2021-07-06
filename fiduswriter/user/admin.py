@@ -1,17 +1,17 @@
 from django.contrib import admin
 
-from .models import UserProfile, TeamMember
+from . import models
 
 
-class UserProfileAdmin(admin.ModelAdmin):
+class UserAdmin(admin.ModelAdmin):
     pass
 
 
-admin.site.register(UserProfile, UserProfileAdmin)
+admin.site.register(models.User, UserAdmin)
 
 
-class TeamMemberAdmin(admin.ModelAdmin):
+class UserInviteAdmin(admin.ModelAdmin):
     pass
 
 
-admin.site.register(TeamMember, TeamMemberAdmin)
+admin.site.register(models.UserInvite, UserInviteAdmin)

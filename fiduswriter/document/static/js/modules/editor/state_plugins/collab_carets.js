@@ -1,7 +1,6 @@
 import {Plugin, PluginKey} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
 import {sendableSteps} from "prosemirror-collab"
-import {REVIEW_ROLES} from ".."
 
 const key = new PluginKey('collabCarets')
 
@@ -120,7 +119,7 @@ export const collabCaretsPlugin = function(options) {
                 if (
                     tr.selectionSet &&
                     !sendableSteps(state) &&
-                    !REVIEW_ROLES.includes(options.editor.docInfo.access_rights)
+                    !['review', 'review-tracked'].includes(options.editor.docInfo.access_rights)
                 ) {
                     caretUpdate = {anchor: tr.selection.anchor, head: tr.selection.head}
                 }

@@ -267,7 +267,8 @@ ACCOUNT_DEFAULT_HTTP_PROTOCOL = "http"
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 ACCOUNT_ADAPTER = "user.adapter.AccountAdapter"
 
-AUTH_PROFILE_MODULE = "account.UserProfile"
+AUTH_PROFILE_MODULE = "account.Profile"
+AUTH_USER_MODEL = "user.User"
 
 LOGGING = {
     'version': 1,
@@ -371,3 +372,7 @@ JSONPATCH = True
 
 # Whether to create a service worker on production sites
 USE_SERVICE_WORKER = True
+
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+SILENCED_SYSTEM_CHECKS = ["models.W042"]

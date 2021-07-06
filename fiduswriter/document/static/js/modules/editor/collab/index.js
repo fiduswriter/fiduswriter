@@ -9,6 +9,7 @@ export class ModCollab {
         editor.mod.collab = this
         this.editor = editor
         this.participants = []
+        this.pastParticipants = [] // Participants who have left comments or tracked changes.
         this.sessionIds = false
         this.collaborativeMode = false
 

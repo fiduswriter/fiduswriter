@@ -24,7 +24,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v1
         with:
-          python-version: 3.8
+          python-version: 3.9
       - name: Install Python dependencies
         run: |
           cd fiduswriter
@@ -49,13 +49,15 @@ jobs:
         - document.tests.test_admin
         - document.tests.test_message_exchange
         - document.tests.test_merge
+        - document.tests.test_path
         - bibliography
         - usermedia
+        - user_template_manager
     steps:
     - name: Set up Python
       uses: actions/setup-python@v1
       with:
-        python-version: 3.8
+        python-version: 3.9
     - uses: actions/checkout@v2
     - uses: nanasess/setup-chromedriver@master
     - name: Install dependencies

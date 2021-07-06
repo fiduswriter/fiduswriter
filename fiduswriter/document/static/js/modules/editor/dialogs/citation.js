@@ -103,7 +103,7 @@ export class CitationDialog {
             `${db}-${id}`,
             `<span class="fw-data-table-title fw-inline">
                 <i class="fa fa-book"></i>
-                <span class="fw-searchable">${bib.fields.title ? escapeText(litToText(bib.fields.title)) : gettext('Untitled')}</span>
+                <span class="fw-searchable">${bib.fields.title?.length ? escapeText(litToText(bib.fields.title)) : gettext('Untitled')}</span>
             </span>`,
             bibauthors ? escapeText(nameToText(bibauthors)) : '',
             checked ? '<i class="fa fa-check" aria-hidden="true"></i>' : ''
@@ -150,7 +150,7 @@ export class CitationDialog {
             id,
             db,
             bib_type: bib.bib_type,
-            title: bib.fields.title ? litToText(bib.fields.title) : gettext('Untitled'),
+            title: bib.fields.title?.length ? litToText(bib.fields.title) : gettext('Untitled'),
             author: bibauthors ? nameToText(bibauthors) : ''
         }
     }

@@ -1,4 +1,4 @@
-import {DocumentTemplateDesigner} from "../document_template"
+import {DocumentTemplateDesigner, DocumentTemplateDownloader} from "../document_template"
 import {whenReady, postJson, setDocTitle, findTarget, post, addAlert, ensureCSS} from "../common"
 import {FeedbackTab} from "../feedback"
 
@@ -23,9 +23,8 @@ export class DocTemplatesEditor {
             }
         ).then(
             ({json}) => {
-                this.template = json.template
-                this.id = json.template.id // Updated if previously 0
-                this.template.content = this.template.content
+                this.template = json
+                this.id = json.id // Updated if previously 0
 
                 return whenReady()
             }
@@ -72,6 +71,9 @@ export class DocTemplatesEditor {
                     <button type="button" class="fw-dark fw-button ui-button ui-corner-all ui-widget save">
                         ${gettext('Save')}
                     </button>
+                    <button type="button" class="fw-dark fw-button ui-button ui-corner-all ui-widget download">
+                        ${gettext('Download')}
+                    </button>
                     <button type="button" class="fw-orange fw-button ui-button ui-corner-all ui-widget close">
                         ${gettext('Close')}
                     </button>
@@ -93,8 +95,9 @@ export class DocTemplatesEditor {
         const {valid, value, errors, import_id, title} = this.templateDesigner.getCurrentValue()
         if (!valid) {
             this.showErrors(errors)
+            return Promise.reject()
         } else {
-            post('/api/user_template_manager/save/', {
+            return post('/api/user_template_manager/save/', {
                 id: this.id,
                 value,
                 import_id,
@@ -105,6 +108,18 @@ export class DocTemplatesEditor {
         }
     }
 
+    download() {
+        this.save().then(
+            () => {
+                const downloader = new DocumentTemplateDownloader(
+                    this.id,
+                    '/api/user_template_manager/get/'
+                )
+                downloader.init()
+            }
+        )
+    }
+
     bind() {
         this.dom.addEventListener('click', event => {
             const el = {}
@@ -112,6 +127,10 @@ export class DocTemplatesEditor {
             case findTarget(event, 'button.save', el):
                 event.preventDefault()
                 this.save()
+                break
+            case findTarget(event, 'button.download', el):
+                event.preventDefault()
+                this.download()
                 break
             case findTarget(event, 'button.close, span.close', el):
                 event.preventDefault()

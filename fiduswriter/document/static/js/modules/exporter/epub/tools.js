@@ -123,6 +123,14 @@ export function addCategoryLabels(htmlEl, language, footnote = false) {
         }
     )
 
+    htmlEl.querySelectorAll("figure[data-category='equation'] figcaption span.label").forEach(
+        (el, index) => {
+            const suffix = el.parentElement.innerText.trim().length ? ': ' : ''
+            el.innerHTML = `${CATS['equation'][language]} ${(index + 1)}${footnote ? 'A' : ''}${suffix}`
+            el.classList.remove('label')
+        }
+    )
+
     htmlEl.querySelectorAll("figure[data-category='photo'] figcaption span.label").forEach(
         (el, index) => {
             const suffix = el.parentElement.innerText.trim().length ? ': ' : ''

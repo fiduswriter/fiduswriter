@@ -7,8 +7,15 @@ export const menuModel = () => ({
             title: gettext('Create new document template'),
             action: overview => {
                 overview.app.goTo('/templates/0/')
-            }
-        }
+            },
+            order: 1
+        },
+        {
+            type: 'text',
+            title: gettext('Upload Fidus document template'),
+            action: overview => overview.mod.actions.uploadDocTemplate(),
+            order: 2
+        },
     ]
 })
 
@@ -41,6 +48,17 @@ export const bulkMenuModel = () => ({
                     overview.mod.actions.copyDocTemplate(
                         overview.templateList.find(docTemplate => docTemplate.id === id)
                     )
+                )
+            },
+            disabled: overview => !overview.getSelected().length
+        },
+        {
+            title: gettext('Download selected'),
+            tooltip: gettext('Download selected document templates.'),
+            action: overview => {
+                const ids = overview.getSelected()
+                ids.forEach(id =>
+                    overview.mod.actions.downloadDocTemplate(id)
                 )
             },
             disabled: overview => !overview.getSelected().length

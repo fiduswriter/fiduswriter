@@ -1,17 +1,21 @@
 import json
 
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpRequest
+from django.db.models import Q
 from django.contrib.auth import logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.conf import settings
 from django.shortcuts import HttpResponseRedirect
 from django.views.decorators.http import require_POST
+from django.contrib.auth import get_user_model
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 
 from base.decorators import ajax_required
-from .forms import UserForm, TeamMemberForm
-from . import util as userutil
-from document.models import AccessRight, AccessRightInvite
+from .forms import UserForm
+from document.models import AccessRight
+from .models import UserInvite
+from . import emails
 
 from allauth.account.models import (
     EmailAddress,
@@ -29,14 +33,6 @@ from avatar.models import Avatar
 from avatar import views as avatarviews
 from avatar.forms import UploadAvatarForm
 from avatar.signals import avatar_updated
-
-from document.views import apply_invite
-
-
-# Outdated but we need it to allow for update of 3.7 instances.
-# Can be removed in 3.9.
-def info(request):
-    return JsonResponse({'is_authenticated': False})
 
 
 @login_required
@@ -208,9 +204,7 @@ def upload_avatar(request):
             user=request.user,
             avatar=avatar
         )
-        response['avatar'] = userutil.get_user_avatar_url(
-            request.user
-        )['url']
+        response['avatar'] = request.user.avatar_url['url']
         status = 200
     return JsonResponse(
         response,
@@ -243,9 +237,7 @@ def delete_avatar(request):
                 )
                 break
         Avatar.objects.filter(pk=aid).delete()
-        response['avatar'] = userutil.get_user_avatar_url(
-            request.user
-        )['url']
+        response['avatar'] = request.user.avatar_url['url']
         status = 200
     return JsonResponse(
         response,
@@ -287,6 +279,7 @@ def save_profile(request):
     """
     response = {}
     form_data = json.loads(request.POST['form_data'])
+    User = get_user_model()
     user_object = User.objects.get(pk=request.user.pk)
     user_form = UserForm(form_data['user'], instance=user_object)
     if user_form.is_valid():
@@ -295,24 +288,6 @@ def save_profile(request):
     else:
         response['errors'] = user_form.errors
         status = 422
-    '''
-    currently not used
-    profile_object = user_object.profile
-    profile_form = UserProfileForm(
-        form_data['profile'],
-        instance=profile_object
-    )
-    if profile_form.is_valid():
-        if status == 200:
-            user_form.save()
-            profile_form.save()
-    else:
-        if status == 200:
-            response['errors']=profile_form.errors
-            status = 422
-        else:
-            response['errors']+=profile_form.errors
-    '''
 
     return JsonResponse(
         response,
@@ -323,74 +298,164 @@ def save_profile(request):
 @login_required
 @ajax_required
 @require_POST
-def list_team_members(request):
+def list_contacts(request):
     response = {}
     status = 200
-    response['team_members'] = []
-
-    for member in User.objects.filter(member__leader=request.user):
-        team_member = {
-            'id': member.id,
-            'name': member.readable_name,
-            'username': member.get_username(),
-            'email': member.email,
-            'avatar': userutil.get_user_avatar_url(member)
-        }
-        response['team_members'].append(team_member)
+    response['contacts'] = []
+    for user in request.user.contacts.all():
+        response['contacts'].append({
+            'id': user.id,
+            'name': user.readable_name,
+            'username': user.get_username(),
+            'email': user.email,
+            'avatar': user.avatar_url,
+            'type': 'user',
+        })
+    for invite in request.user.invites_by.all():
+        response['contacts'].append({
+            'id': invite.id,
+            'name': invite.username,
+            'username': invite.username,
+            'email': invite.email,
+            'avatar': invite.avatar_url,
+            'type': 'userinvite',
+        })
+    for invite in request.user.invites_to.select_related('by').all():
+        response['contacts'].append({
+            'id': invite.id,
+            'name': invite.by.readable_name,
+            'username': invite.by.get_username(),
+            'email': invite.by.email,
+            'avatar': invite.by.avatar_url,
+            'type': 'to_userinvite',
+        })
     return JsonResponse(
         response,
         status=status
     )
 
 
+def is_email(string):
+    try:
+        validate_email(string)
+        return True
+    except ValidationError:
+        return False
+
+
 @login_required
 @ajax_required
 @require_POST
-def add_team_member(request):
+def invites_add(request):
     """
-    Add a user as a team member of the current user
+    Add a userinvite as a contact of the current user
     """
     response = {}
-    new_member = False
+    contact_user = False
+    email = False
+    errored = False
     status = 202
     user_string = request.POST['user_string']
-    if "@" in user_string and "." in user_string:
+    if UserInvite.objects.filter(
+        username=user_string
+    ).filter(
+        by=request.user
+    ).exists():
+        # 'This person is already in your invites!'
+        response['error'] = 2
+        return JsonResponse(
+            response,
+            status=status
+        )
+    User = get_user_model()
+    contact_user = User.objects.filter(username=user_string).first()
+    if contact_user:
+        email = contact_user.email
+    elif is_email(user_string):
+        email = user_string
         email_address = EmailAddress.objects.filter(
             email=user_string
         ).first()
         if email_address:
-            new_member = email_address.user
-    else:
-        user = User.objects.filter(username=user_string).first()
-        if user:
-            new_member = user
-    if new_member:
-        if new_member.pk is request.user.pk:
+            contact_user = email_address.user
+    if contact_user:
+        if contact_user.pk is request.user.pk:
             # 'You cannot add yourself to your contacts!'
             response['error'] = 1
-        else:
-            form_data = {
-                'leader': request.user.pk,
-                'member': new_member.pk
-            }
-            team_member_form = TeamMemberForm(form_data)
-            if team_member_form.is_valid():
-                team_member_form.save()
-                the_avatar = userutil.get_user_avatar_url(new_member)
-                response['member'] = {
-                    'id': new_member.pk,
-                    'name': new_member.username,
-                    'email': new_member.email,
-                    'avatar': the_avatar
-                }
-                status = 201
-            else:
-                # 'This person is already in your contacts!'
-                response['error'] = 2
-    else:
-        # 'User cannot be found'
+            errored = True
+        elif request.user.contacts.filter(
+            id=contact_user.id
+        ).first():
+            # 'This person is already in your contacts!'
+            response['error'] = 2
+            errored = True
+    elif not email:
+        # 'Invalid email!'
         response['error'] = 3
+        errored = True
+    if not errored:
+        invite = UserInvite.objects.create(
+            username=user_string,
+            email=email,
+            by=request.user,
+            to=contact_user,
+        )
+        sender = request.user.readable_name
+        email = invite.email
+        link = HttpRequest.build_absolute_uri(
+            request,
+            invite.get_relative_url()
+        )
+        emails.send_invite_notification(
+            sender,
+            email,
+            link
+        )
+        response['contact'] = {
+            'id': invite.pk,
+            'name': invite.username,
+            'email': invite.email,
+            'avatar': invite.avatar_url,
+            'type': 'userinvite',
+        }
+        status = 201
+    return JsonResponse(
+        response,
+        status=status
+    )
 
+
+def invites_connect(user, key=None):
+    invites = UserInvite.objects.filter(to__isnull=True)
+    if key:
+        invites = invites.filter(
+            key=key,
+        )
+    else:
+        invites = invites.filter(
+            Q(email__in=user.emailaddress_set.all()) |
+            Q(email=user.email)
+        )
+    if len(invites) == 0:
+        return False
+    for invite in invites:
+        invite.to = user
+        invite.save()
+    return True
+
+
+@login_required
+@ajax_required
+@require_POST
+def invite(request):
+    response = {}
+    status = 200
+    key = request.POST['key']
+    connected = invites_connect(request.user, key)
+    if connected:
+        response['redirect'] = '/user/contacts/'
+    else:
+        response['redirect'] = '/'
     return JsonResponse(
         response,
         status=status
@@ -400,24 +465,114 @@ def add_team_member(request):
 @login_required
 @ajax_required
 @require_POST
-def remove_team_member(request):
+def invites_accept(request):
+    response = {}
+    status = 200
+    invites = json.loads(request.POST['invites'])
+    response['contacts'] = []
+    for invite in invites:
+        ui = UserInvite.objects.filter(
+            id=invite['id'],
+            to=request.user
+        ).first()
+        if ui:
+            response['contacts'].append({
+                'id': ui.by.id,
+                'name': ui.by.readable_name,
+                'email': ui.by.email,
+                'avatar': ui.by.avatar_url,
+                'type': 'user',
+            })
+            link = HttpRequest.build_absolute_uri(
+                request,
+                '/user/contacts/'
+            )
+            emails.send_accept_notification(
+                ui.by.readable_name,
+                ui.by.email,
+                ui.to.readable_name,
+                link
+            )
+            ui.apply()
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+def invite_decline(ui, link):
+    # Remove this invite. All connected access rights will be deleted
+    # automatically.
+    emails.send_decline_notification(
+        ui.by.readable_name,
+        ui.by.email,
+        ui.to.readable_name,
+        link
+    )
+    ui.delete()
+
+
+@login_required
+@ajax_required
+@require_POST
+def invites_decline(request):
     """
-    Remove a team member
+    Decline an invite
     """
     response = {}
-    former_members = request.POST.getlist('members[]')
-    for former_member in former_members:
-        former_member = int(former_member)
-        # Revoke all permissions given to this person
-        AccessRight.objects.filter(
-            user_id=former_member,
-            document__owner=request.user
-        ).delete()
-        # Now delete the user from the team
-        team_member_object_instance = request.user.leader.filter(
-            member_id=former_member
-        ).first()
-        team_member_object_instance.delete()
+    invites = json.loads(request.POST['invites'])
+    for invite in invites:
+        for ui in request.user.invites_to.filter(id=invite['id']):
+            link = HttpRequest.build_absolute_uri(
+                request,
+                '/user/contacts/'
+            )
+            invite_decline(ui, link)
+    status = 200
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@login_required
+@ajax_required
+@require_POST
+def delete_contacts(request):
+    """
+    Delete a contact
+    """
+    response = {}
+    former_contacts = json.loads(request.POST['contacts'])
+    for former_contact in former_contacts:
+        if former_contact['type'] == 'user':
+            # Revoke all permissions given to this user
+            AccessRight.objects.filter(
+                user__id=former_contact['id'],
+                document__owner=request.user
+            ).delete()
+            # Revoke all permissions received from this user
+            AccessRight.objects.filter(
+                user=request.user,
+                document__owner_id=former_contact['id']
+            ).delete()
+            # Remove the user from the contacts
+            request.user.contacts.remove(
+                request.user.contacts.filter(id=former_contact['id']).first()
+            )
+        elif former_contact['type'] == 'userinvite':
+            # Delete the userinvite. All connected access rights will be
+            # deleted automatically.
+            request.user.invites_by.filter(id=former_contact['id']).delete()
+        elif former_contact['type'] == 'to_userinvite':
+            # Remove this invite. All connected access rights will be deleted
+            # automatically.
+            for ui in request.user.invites_to.filter(id=former_contact['id']):
+                link = HttpRequest.build_absolute_uri(
+                    request,
+                    '/user/contacts/'
+                )
+                invite_decline(ui, link)
     status = 200
     return JsonResponse(
         response,
@@ -469,17 +624,11 @@ class FidusSignupView(SignupView):
         ret = super().form_valid(form)
         if ret.status_code > 399:
             return ret
-        if 'invite_id' in self.request.POST:
-            invite_id = int(self.request.POST['invite_id'])
-            inv = AccessRightInvite.objects.filter(id=invite_id).first()
-            if inv:
-                apply_invite(inv, self.user)
-        else:
-            invites = AccessRightInvite.objects.filter(
-                email=self.user.email
+        if 'invite_key' in self.request.POST:
+            invites_connect(
+                self.user,
+                self.request.POST['invite_key']
             )
-            for inv in invites:
-                apply_invite(inv, self.user)
         return ret
 
 

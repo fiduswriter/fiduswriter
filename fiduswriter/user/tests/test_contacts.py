@@ -77,9 +77,9 @@ class ContactsTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         self.driver.find_element(
             By.ID,
-            "new-member-user-string"
+            "new-contact-user-string"
         ).click()
-        self.driver.find_element(By.ID, "new-member-user-string").send_keys(
+        self.driver.find_element(By.ID, "new-contact-user-string").send_keys(
             "contact1@snowman.com"
         )
         ActionChains(self.driver).send_keys(
@@ -105,15 +105,15 @@ class ContactsTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         self.assertEqual(
             len(self.driver.find_elements_by_css_selector(
-                '#team-table .entry-select'
+                '.contacts-table .entry-select'
             )),
             1
         )
         self.driver.find_element_by_css_selector(
-            "button[title='Add new contact']"
+            "button[title='Invite contact']"
         ).click()
         self.driver.find_element_by_id(
-            "new-member-user-string"
+            "new-contact-user-string"
         ).send_keys('contact2@snowman.com')
         self.driver.find_element_by_css_selector(
             "button.fw-dark"
@@ -121,13 +121,13 @@ class ContactsTest(LiveTornadoTestCase, SeleniumHelper):
         time.sleep(1)
         self.assertEqual(
             len(self.driver.find_elements_by_css_selector(
-                '#team-table .entry-select'
+                '.contacts-table .entry-select'
             )),
             2
         )
         # Delete individual
         self.driver.find_element_by_css_selector(
-            ".delete-single-member"
+            ".delete-single-contact"
         ).click()
         self.driver.find_element_by_css_selector(
             "button.fw-dark"
@@ -135,12 +135,12 @@ class ContactsTest(LiveTornadoTestCase, SeleniumHelper):
         time.sleep(1)
         self.assertEqual(
             len(self.driver.find_elements_by_css_selector(
-                '#team-table .entry-select'
+                '.contacts-table .entry-select'
             )),
             1
         )
         self.driver.find_element_by_css_selector(
-            "#team-table td:nth-child(1) > label"
+            ".contacts-table td:nth-child(1) > label"
         ).click()
         self.driver.find_element_by_css_selector(
             ".dt-bulk-dropdown"
@@ -154,7 +154,7 @@ class ContactsTest(LiveTornadoTestCase, SeleniumHelper):
         time.sleep(1)
         self.assertEqual(
             len(self.driver.find_elements_by_css_selector(
-                '#team-table .entry-select'
+                '.contacts-table .entry-select'
             )),
             0
         )

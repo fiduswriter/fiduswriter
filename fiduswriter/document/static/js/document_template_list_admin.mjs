@@ -1,4 +1,4 @@
-import {DocumentTemplateListAdmin} from "./modules/document_template"
+import {DocumentTemplateListAdmin} from "./modules/document_template/index.js"
 
 const theDocumentTemplateListAdmin = new DocumentTemplateListAdmin()
 

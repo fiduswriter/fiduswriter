@@ -26,19 +26,22 @@ class Command(BaseCommand):
             json_path,
             "schema.json"
         )
-        js_file = open(os.path.join(
+        with open(os.path.join(
             settings.PROJECT_PATH,
             "static-transpile/js/schema_export.js"
-        ))
-        js = js_file.read()
-        js_file.close()
+        )) as js_file:
+            js = js_file.read()
         node_file, node_file_path = mkstemp()
         with open(node_file, 'w') as f:
-            f.write('global.window = {}; global.gettext = ()=>{};\n' + js)
+            f.write(
+                'global.window = {}; ' +
+                'global.gettext = ()=>{}; ' +
+                'global.self = {};\n' +
+                js
+            )
         json = subprocess.check_output(["node", node_file_path]).decode(
             'utf-8'
         )
         os.unlink(node_file_path)
-        schema_json = open(schema_json_path, 'w')
-        schema_json.write(json)
-        schema_json.close()
+        with open(schema_json_path, 'w') as schema_json:
+            schema_json.write(json)

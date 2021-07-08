@@ -1,4 +1,4 @@
-import {setSelection} from "./modules/test_caret"
+import {setSelection} from "./modules/test_caret/index.js"
 
 const testCaret = {setSelection}
 

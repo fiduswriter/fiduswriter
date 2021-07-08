@@ -1,4 +1,4 @@
-import {DocMaintenance} from "./modules/maintenance"
+import {DocMaintenance} from "./modules/maintenance/index.js"
 
 const theMaintainer = new DocMaintenance()
 

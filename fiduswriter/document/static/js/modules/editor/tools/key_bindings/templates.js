@@ -45,6 +45,7 @@ export const keyBindingsTemplate = () =>
           </li>
           <li class="help-key-unit">
             <kbd class="fw-button fw-light fw-small"><span>CTRL+[</span></kbd>
+            <kbd class="fw-button fw-light fw-small"><span>CTRL+&lt;</span></kbd>
             <span class="help-key-def">${gettext('Lift')}</span>
           </li>
           <li class="help-key-unit">

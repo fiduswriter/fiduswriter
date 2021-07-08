@@ -2,6 +2,7 @@ from builtins import range
 from builtins import object
 import re
 import os
+import time
 
 from django.test import Client
 from selenium import webdriver
@@ -114,3 +115,12 @@ class SeleniumHelper(object):
 
     def leave_site(self, driver):
         driver.get('data:,')
+
+    def wait_until_file_exists(self, path):
+        max_wait = 8
+        count = 0
+        while not os.path.exists(path):
+            time.sleep(1)
+            count += 1
+            if count > max_wait:
+                break

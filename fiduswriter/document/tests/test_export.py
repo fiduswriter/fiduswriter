@@ -418,10 +418,10 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="HTML"]'
         ).click()
-        time.sleep(1)
-        assert os.path.isfile(os.path.join(
-            self.download_dir, 'title.html.zip'))
-        os.remove(os.path.join(self.download_dir, 'title.html.zip'))
+        path = os.path.join(self.download_dir, 'title.html.zip')
+        self.wait_until_file_exists(path)
+        assert os.path.isfile(path)
+        os.remove(path)
 
         # EPUB
         self.driver.find_element(
@@ -431,9 +431,10 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Epub"]'
         ).click()
-        time.sleep(1)
-        assert os.path.isfile(os.path.join(self.download_dir, 'title.epub'))
-        os.remove(os.path.join(self.download_dir, 'title.epub'))
+        path = os.path.join(self.download_dir, 'title.epub')
+        self.wait_until_file_exists(path)
+        assert os.path.isfile(path)
+        os.remove(path)
 
         # LaTeX
         self.driver.find_element(
@@ -443,10 +444,10 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="LaTeX"]'
         ).click()
-        time.sleep(1)
-        assert os.path.isfile(os.path.join(
-            self.download_dir, 'title.latex.zip'))
-        os.remove(os.path.join(self.download_dir, 'title.latex.zip'))
+        path = os.path.join(self.download_dir, 'title.latex.zip')
+        self.wait_until_file_exists(path)
+        assert os.path.isfile(path)
+        os.remove(path)
 
         # JATS
         self.driver.find_element(
@@ -456,10 +457,10 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="JATS"]'
         ).click()
-        time.sleep(1)
-        assert os.path.isfile(os.path.join(
-            self.download_dir, 'title.jats.zip'))
-        os.remove(os.path.join(self.download_dir, 'title.jats.zip'))
+        path = os.path.join(self.download_dir, 'title.jats.zip')
+        self.wait_until_file_exists(path)
+        assert os.path.isfile(path)
+        os.remove(path)
 
         # DOCX
         self.driver.find_element(
@@ -469,9 +470,10 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Classic (DOCX)"]'
         ).click()
-        time.sleep(1)
-        assert os.path.isfile(os.path.join(self.download_dir, 'title.docx'))
-        os.remove(os.path.join(self.download_dir, 'title.docx'))
+        path = os.path.join(self.download_dir, 'title.docx')
+        self.wait_until_file_exists(path)
+        assert os.path.isfile(path)
+        os.remove(path)
 
         # ODT
         self.driver.find_element(
@@ -481,9 +483,10 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Free (ODT)"]'
         ).click()
-        time.sleep(1)
-        assert os.path.isfile(os.path.join(self.download_dir, 'title.odt'))
-        os.remove(os.path.join(self.download_dir, 'title.odt'))
+        path = os.path.join(self.download_dir, 'title.odt')
+        self.wait_until_file_exists(path)
+        assert os.path.isfile(path)
+        os.remove(path)
 
         # Save a revision
         self.driver.find_element(
@@ -519,11 +522,10 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Export selected as FIDUS"]'
         ).click()
-        time.sleep(1)
-        assert os.path.isfile(
-            os.path.join(self.download_dir, 'title.fidus')
-        )
-        os.remove(os.path.join(self.download_dir, 'title.fidus'))
+        path = os.path.join(self.download_dir, 'title.fidus')
+        self.wait_until_file_exists(path)
+        assert os.path.isfile(path)
+        os.remove(path)
 
         # EPUB
         WebDriverWait(self.driver, self.wait_time).until(
@@ -532,11 +534,10 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Export selected as Epub"]'
         ).click()
-        time.sleep(1)
-        assert os.path.isfile(
-            os.path.join(self.download_dir, 'title.epub')
-        )
-        os.remove(os.path.join(self.download_dir, 'title.epub'))
+        path = os.path.join(self.download_dir, 'title.epub')
+        self.wait_until_file_exists(path)
+        assert os.path.isfile(path)
+        os.remove(path)
 
         # HTML
         WebDriverWait(self.driver, self.wait_time).until(
@@ -545,11 +546,10 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Export selected as HTML"]'
         ).click()
-        time.sleep(1)
-        assert os.path.isfile(
-            os.path.join(self.download_dir, 'title.html.zip')
-        )
-        os.remove(os.path.join(self.download_dir, 'title.html.zip'))
+        path = os.path.join(self.download_dir, 'title.html.zip')
+        self.wait_until_file_exists(path)
+        assert os.path.isfile(path)
+        os.remove(path)
 
         # LaTeX
         WebDriverWait(self.driver, self.wait_time).until(
@@ -558,11 +558,10 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Export selected as LaTeX"]'
         ).click()
-        time.sleep(1)
-        assert os.path.isfile(
-            os.path.join(self.download_dir, 'title.latex.zip')
-        )
-        os.remove(os.path.join(self.download_dir, 'title.latex.zip'))
+        path = os.path.join(self.download_dir, 'title.latex.zip')
+        self.wait_until_file_exists(path)
+        assert os.path.isfile(path)
+        os.remove(path)
 
         # JATS
         WebDriverWait(self.driver, self.wait_time).until(
@@ -571,11 +570,10 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Export selected as JATS"]'
         ).click()
-        time.sleep(1)
-        assert os.path.isfile(
-            os.path.join(self.download_dir, 'title.jats.zip')
-        )
-        os.remove(os.path.join(self.download_dir, 'title.jats.zip'))
+        path = os.path.join(self.download_dir, 'title.jats.zip')
+        self.wait_until_file_exists(path)
+        assert os.path.isfile(path)
+        os.remove(path)
 
         # Revision
         self.driver.find_element_by_css_selector(
@@ -584,10 +582,9 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element_by_css_selector(
             '.download-revision'
         ).click()
-        time.sleep(1)
-        assert os.path.isfile(
-            os.path.join(self.download_dir, 'title.fidus')
-        )
+        path = os.path.join(self.download_dir, 'title.fidus')
+        self.wait_until_file_exists(path)
+        assert os.path.isfile(path)
         # We keep the file to test import below
         self.driver.find_element_by_css_selector(
             '.recreate-revision'

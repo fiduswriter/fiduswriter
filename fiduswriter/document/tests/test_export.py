@@ -500,7 +500,12 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Save"]'
         ).click()
-
+        # Wait for revision save to be done
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.visibility_of_element_located(
+                (By.CLASS_NAME, 'alerts-info')
+            )
+        )
         # Exit the editor
         self.driver.find_element(
             By.ID,

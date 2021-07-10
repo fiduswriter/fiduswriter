@@ -25,7 +25,7 @@ export class DocumentTemplateExporter {
             this.textFiles.push({filename: 'filetype-version', contents: json.doc_version})
             const exportTemplates = []
             json.export_templates.forEach(template => {
-                const filename = template.fields.template_file.split('/').slice(-1)[0]
+                const filename = `exporttemplates/${template.fields.template_file.split('/').slice(-1)[0]}`
                 this.httpFiles.push({
                     filename,
                     url: template.fields.template_file
@@ -36,7 +36,10 @@ export class DocumentTemplateExporter {
                     title: template.fields.title
                 })
             })
-            this.textFiles.push({filename: 'exporttemplates.json', contents: JSON.stringify(exportTemplates)})
+            this.textFiles.push({
+                filename: 'exporttemplates.json',
+                contents: JSON.stringify(exportTemplates)
+            })
             const documentStyles = []
             json.document_styles.forEach(docStyle => {
                 const style = {
@@ -46,11 +49,12 @@ export class DocumentTemplateExporter {
                     files: []
                 }
                 docStyle.fields.documentstylefile_set.forEach(docstyleFile => {
+                    const filename = `documentstyles/${docstyleFile[1]}`
                     this.httpFiles.push({
-                        filename: docstyleFile[1],
+                        filename,
                         url: docstyleFile[0]
                     })
-                    style.files.push(docstyleFile[1])
+                    style.files.push(filename)
                 })
                 documentStyles.push(style)
             })

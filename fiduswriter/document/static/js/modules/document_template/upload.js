@@ -4,7 +4,7 @@ import {postJson} from "../common"
 
 import {updateTemplateFile} from "./update"
 
-const TEXT_FILENAMES = ['mimetype', 'filetype-version', 'title.txt', 'content.json', 'exporttemplates.json', 'documentstyles.json']
+const TEXT_FILENAMES = ['mimetype', 'filetype-version', 'template.json', 'exporttemplates.json', 'documentstyles.json']
 
 export class DocumentTemplateUploader {
     constructor(file, createUrl = '/api/document/admin/create_template/') {
@@ -82,9 +82,10 @@ export class DocumentTemplateUploader {
             filetypeVersion >= MIN_FW_DOCUMENT_VERSION &&
             filetypeVersion <= MAX_FW_DOCUMENT_VERSION
         ) {
+            const template = JSON.parse(this.textFiles.find(file => file.filename === 'template.json').content)
             const {title, content, exportTemplates, documentStyles} = updateTemplateFile(
-                this.textFiles.find(file => file.filename === 'title.txt').content,
-                JSON.parse(this.textFiles.find(file => file.filename === 'content.json').content),
+                template.attrs.template,
+                template,
                 JSON.parse(this.textFiles.find(file => file.filename === 'exporttemplates.json').content),
                 JSON.parse(this.textFiles.find(file => file.filename === 'documentstyles.json').content),
                 filetypeVersion

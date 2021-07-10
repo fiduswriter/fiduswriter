@@ -290,7 +290,7 @@ export class DocumentOverview {
         this.table = new DataTable(tableEl, {
             searchable: searching,
             paging: false,
-            scrollY: `${Math.max(window.innerHeight - 360, 100)}px`,
+            scrollY: `${Math.max(window.innerHeight - 360, 200)}px`,
             labels: {
                 noRows: gettext("No documents available") // Message shown when there are no search results
             },

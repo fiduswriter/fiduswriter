@@ -21,8 +21,7 @@ export class DocumentTemplateDownloader {
             {id: this.id}
         ).then(({json}) => {
             this.zipFileName = `${createSlug(json.title)}.fidustemplate`
-            this.textFiles.push({filename: 'title.txt', contents: json.title})
-            this.textFiles.push({filename: 'content.json', contents: JSON.stringify(json.content)})
+            this.textFiles.push({filename: 'template.json', contents: JSON.stringify(json.content)})
             this.textFiles.push({filename: 'filetype-version', contents: json.doc_version})
             const exportTemplates = []
             json.export_templates.forEach(template => {

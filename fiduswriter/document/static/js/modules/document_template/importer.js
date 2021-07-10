@@ -55,10 +55,17 @@ export class DocumentTemplateImporter {
                 return
             }
 
-            filenames.forEach(filename => {
+            filenames.filter(
+                filename => !filename.endsWith('/')
+            ).forEach(filename => {
                 p.push(new Promise(resolve => {
                     let fileType, fileList
-                    if (TEXT_FILENAMES.indexOf(filename) !== -1) {
+                    if (
+                        ['mimetype', 'filetype-version'].includes(
+                            filename
+                        ) ||
+                        filename.endsWith('.json')
+                    ) {
                         fileType = 'string'
                         fileList = this.textFiles
                     } else {

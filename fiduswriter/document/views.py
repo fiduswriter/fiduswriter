@@ -443,6 +443,33 @@ def import_create(request):
         document_template.user = request.user
         document_template.content = content
         document_template.save()
+        files = request.FILES.getlist('files[]')
+        document_styles = json.loads(request.POST.get('document_styles'))
+        export_templates = json.loads(request.POST.get('export_templates'))
+        for style in document_styles:
+            doc_style = DocumentStyle.objects.create(
+                title=style['title'],
+                slug=style['slug'],
+                contents=style['contents'],
+                document_template=document_template
+            )
+            for filepath in style['files']:
+                filename = filepath.split('/').pop()
+                file = next((x for x in files if x.name == filename), None)
+                if file:
+                    DocumentStyleFile.objects.create(
+                        file=file,
+                        style=doc_style
+                    )
+        for e_template in export_templates:
+            filename = e_template['file'].split('/').pop()
+            file = next((x for x in files if x.name == filename), None)
+            if file:
+                ExportTemplate.objects.create(
+                    document_template=document_template,
+                    template_file=file,
+                    file_type=e_template['file_type']
+                )
     path = request.POST['path']
     if len(path):
         counter = 0
@@ -701,6 +728,43 @@ def comment_notify(request):
     )
 
 
+@login_required
+@ajax_required
+@require_POST
+def get_template_for_doc(request):
+    doc_id = request.POST.get('id')
+    doc = Document.objects.filter(
+        id=doc_id
+    ).filter(
+        Q(owner=request.user) |
+        Q(accessright__user=request.user)
+    ).first()
+    if doc is None:
+        return JsonResponse({}, status=405)
+    doc_template = doc.template
+    serializer = PythonWithURLSerializer()
+    export_templates = serializer.serialize(
+        doc_template.exporttemplate_set.all()
+    )
+    document_styles = serializer.serialize(
+        doc_template.documentstyle_set.all(),
+        use_natural_foreign_keys=True,
+        fields=['title', 'slug', 'contents', 'documentstylefile_set']
+    )
+    response = {
+        'id': doc_template.id,
+        'title': doc_template.title,
+        'content': doc_template.content,
+        'doc_version': doc_template.doc_version,
+        'export_templates': export_templates,
+        'document_styles': document_styles
+    }
+    return JsonResponse(
+        response,
+        status=200
+    )
+
+
 # maintenance views
 @staff_member_required
 @ajax_required
@@ -876,7 +940,8 @@ def create_template_admin(request):
             contents=style['contents'],
             document_template=template
         )
-        for filename in style['files']:
+        for filepath in style['files']:
+            filename = filepath.split('/').pop()
             file = next((x for x in files if x.name == filename), None)
             if file:
                 DocumentStyleFile.objects.create(
@@ -884,7 +949,7 @@ def create_template_admin(request):
                     style=doc_style
                 )
     for e_template in export_templates:
-        filename = e_template['file']
+        filename = e_template['file'].split('/').pop()
         file = next((x for x in files if x.name == filename), None)
         if file:
             ExportTemplate.objects.create(

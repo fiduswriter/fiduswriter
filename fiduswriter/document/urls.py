@@ -55,6 +55,11 @@ urlpatterns = [
         name='get_template_admin'
     ),
     url(
+        '^get_template_for_doc/$',
+        views.get_template_for_doc,
+        name='get_template_for_doc'
+    ),
+    url(
         '^admin/create_template/$',
         views.create_template_admin,
         name='create_template_admin'

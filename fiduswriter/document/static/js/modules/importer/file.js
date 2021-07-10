@@ -116,7 +116,7 @@ export class ImportFidusFile {
                 this.otherFiles,
                 this.user,
                 null,
-                this.path
+                this.path.endsWith('/') ? this.path + doc.title : this.path
             )
             return importer.init().then(({doc, docInfo}) => {
                 this.ok = true

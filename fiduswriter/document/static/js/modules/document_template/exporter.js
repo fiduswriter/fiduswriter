@@ -5,7 +5,7 @@ import {createSlug} from "../exporter/tools/file"
 import {ZipFileCreator} from "../exporter/tools/zip"
 
 
-export class DocumentTemplateDownloader {
+export class DocumentTemplateExporter {
     constructor(id, getUrl = '/api/document/admin/get_template/') {
         this.id = id
         this.getUrl = getUrl

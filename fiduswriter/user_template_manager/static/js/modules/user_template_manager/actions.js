@@ -1,5 +1,5 @@
 import {addAlert, postJson, Dialog, activateWait, deactivateWait} from "../common"
-import {DocumentTemplateDownloader, DocumentTemplateUploader} from "../document_template"
+import {DocumentTemplateImporter, DocumentTemplateExporter} from "../document_template"
 
 import {importFidusTemplateTemplate} from "./templates"
 
@@ -86,11 +86,11 @@ export class DocTemplatesActions {
     }
 
     downloadDocTemplate(id) {
-        const downloader = new DocumentTemplateDownloader(
+        const exporter = new DocumentTemplateExporter(
             id,
             '/api/user_template_manager/get/'
         )
-        downloader.init()
+        exporter.init()
     }
 
     uploadDocTemplate() {
@@ -110,7 +110,7 @@ export class DocTemplatesActions {
                     }
                     activateWait()
 
-                    const importer = new DocumentTemplateUploader(
+                    const importer = new DocumentTemplateImporter(
                         fidusTemplateFile,
                         '/api/user_template_manager/create/'
                     )

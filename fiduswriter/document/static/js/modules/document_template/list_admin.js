@@ -1,6 +1,6 @@
 import {whenReady, findTarget, escapeText, ensureCSS} from "../common"
-import {DocumentTemplateDownloader} from "./download"
-import {DocumentTemplateUploader} from "./upload"
+import {DocumentTemplateImporter} from "./importer"
+import {DocumentTemplateExporter} from "./exporter"
 
 
 export class DocumentTemplateListAdmin {
@@ -72,8 +72,8 @@ export class DocumentTemplateListAdmin {
                         return true
                     })
                     Promise.all(files.map(file => {
-                        const uploader = new DocumentTemplateUploader(file)
-                        return uploader.init()
+                        const importer = new DocumentTemplateImporter(file)
+                        return importer.init()
                     })).then(
                         () => window.location.reload()
                     )
@@ -87,8 +87,8 @@ export class DocumentTemplateListAdmin {
                         el => parseInt(el.value)
                     )
                     ids.forEach(id => {
-                        const downloader = new DocumentTemplateDownloader(id)
-                        downloader.init()
+                        const exporter = new DocumentTemplateExporter(id)
+                        exporter.init()
                     })
                 }
                 break

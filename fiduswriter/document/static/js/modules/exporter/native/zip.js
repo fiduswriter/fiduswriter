@@ -5,12 +5,20 @@ import {ZipFileCreator} from "../tools/zip"
 */
 
 export class ZipFidus {
-    constructor(docId, doc, shrunkImageDB, shrunkBibDB, httpFiles) {
+    constructor(
+        docId,
+        doc,
+        shrunkImageDB,
+        shrunkBibDB,
+        httpFiles,
+        includeTemplate = true
+    ) {
         this.docId = docId
         this.doc = doc
         this.shrunkImageDB = shrunkImageDB
         this.shrunkBibDB = shrunkBibDB
         this.httpFiles = httpFiles
+        this.includeTemplate = includeTemplate
 
         this.textFiles = [{
             filename: 'document.json',
@@ -28,6 +36,9 @@ export class ZipFidus {
     }
 
     init() {
+        if (!this.includeTemplate) {
+            return this.createZip()
+        }
         const templateExporter = new DocumentTemplateExporter(
             this.docId,
             '/api/document/get_template_for_doc/',

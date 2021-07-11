@@ -6,10 +6,11 @@ import {createSlug} from "../tools/file"
 import {shortFileTitle} from "../../common"
 
 export class ExportFidusFile {
-    constructor(doc, bibDB, imageDB) {
+    constructor(doc, bibDB, imageDB, includeTemplate = true) {
         this.doc = doc
         this.bibDB = bibDB
         this.imageDB = imageDB
+        this.includeTemplate = includeTemplate
         this.init()
     }
 
@@ -22,7 +23,8 @@ export class ExportFidusFile {
                     doc,
                     shrunkImageDB,
                     shrunkBibDB,
-                    httpIncludes
+                    httpIncludes,
+                    this.includeTemplate
                 )
                 return zipper.init()
             }

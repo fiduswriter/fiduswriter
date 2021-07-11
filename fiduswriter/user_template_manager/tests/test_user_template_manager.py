@@ -131,7 +131,7 @@ class UserTemplateManagerTest(LiveTornadoTestCase, SeleniumHelper):
             EC.presence_of_element_located(
                 (
                     By.XPATH,
-                    '//*[normalize-space()="Upload Fidus document template"]'
+                    '//*[normalize-space()="Upload FIDUSTEMPLATE file"]'
                 )
             )
         )

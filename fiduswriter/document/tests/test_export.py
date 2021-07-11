@@ -532,6 +532,20 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         assert os.path.isfile(path)
         os.remove(path)
 
+        # Slim native
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, '.dt-bulk-dropdown'))
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Export selected as slim FIDUS"]'
+        ).click()
+        path = os.path.join(self.download_dir, 'title.fidus')
+        self.wait_until_file_exists(path)
+        assert os.path.isfile(path)
+        # We keep the file for the upload test below
+        upload_slim_path = os.path.join(self.download_dir, 'upload_slim.fidus')
+        os.rename(path, upload_slim_path)
+
         # EPUB
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, '.dt-bulk-dropdown'))
@@ -590,6 +604,8 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         path = os.path.join(self.download_dir, 'title.fidus')
         self.wait_until_file_exists(path)
         assert os.path.isfile(path)
+        upload_full_path = os.path.join(self.download_dir, 'upload_full.fidus')
+        os.rename(path, upload_full_path)
         # We keep the file to test import below
         self.driver.find_element_by_css_selector(
             '.recreate-revision'
@@ -674,11 +690,11 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
             "a[href='/']"
         ).click()
         self.driver.find_element_by_css_selector(
-            "button[title='Upload Fidus document']"
+            "button[title='Upload FIDUS document']"
         ).click()
         self.driver.find_element_by_css_selector(
             "#fidus-uploader"
-        ).send_keys(os.path.join(self.download_dir, 'title.fidus'))
+        ).send_keys(upload_full_path)
         self.driver.find_element_by_css_selector(
             ".fw-dark"
         ).click()
@@ -690,4 +706,23 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
             1
         )
         # We delete our downloaded fidus file
-        os.remove(os.path.join(self.download_dir, 'title.fidus'))
+        os.remove(upload_full_path)
+        # Upload slim file
+        self.driver.find_element_by_css_selector(
+            "button[title='Upload FIDUS document']"
+        ).click()
+        self.driver.find_element_by_css_selector(
+            "#fidus-uploader"
+        ).send_keys(upload_slim_path)
+        self.driver.find_element_by_css_selector(
+            ".fw-dark"
+        ).click()
+        documents = self.driver.find_elements_by_css_selector(
+            '.fw-contents tbody tr a.fw-data-table-title'
+        )
+        self.assertEqual(
+            len(documents),
+            2
+        )
+        # We delete our downloaded fidus file
+        os.remove(upload_slim_path)

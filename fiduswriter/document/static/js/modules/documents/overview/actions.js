@@ -243,6 +243,24 @@ export class DocumentOverviewActions {
         )
     }
 
+    downloadSlimNativeFiles(ids) {
+        getMissingDocumentListData(
+            ids,
+            this.documentOverview.documentList,
+            this.documentOverview.schema
+        ).then(
+            () => ids.forEach(id => {
+                const doc = this.documentOverview.documentList.find(entry => entry.id === id)
+                new ExportFidusFile(
+                    doc,
+                    {db: doc.bibliography},
+                    {db: doc.images},
+                    false
+                )
+            })
+        )
+    }
+
     downloadHtmlFiles(ids) {
         getMissingDocumentListData(
             ids,

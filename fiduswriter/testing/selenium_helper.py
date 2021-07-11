@@ -116,11 +116,10 @@ class SeleniumHelper(object):
     def leave_site(self, driver):
         driver.get('data:,')
 
-    def wait_until_file_exists(self, path):
-        max_wait = 8
+    def wait_until_file_exists(self, path, wait_time):
         count = 0
         while not os.path.exists(path):
             time.sleep(1)
             count += 1
-            if count > max_wait:
+            if count > wait_time:
                 break

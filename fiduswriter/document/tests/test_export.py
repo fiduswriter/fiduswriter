@@ -419,7 +419,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
             '//*[normalize-space()="HTML"]'
         ).click()
         path = os.path.join(self.download_dir, 'title.html.zip')
-        self.wait_until_file_exists(path)
+        self.wait_until_file_exists(path, self.wait_time)
         assert os.path.isfile(path)
         os.remove(path)
 
@@ -432,7 +432,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
             '//*[normalize-space()="Epub"]'
         ).click()
         path = os.path.join(self.download_dir, 'title.epub')
-        self.wait_until_file_exists(path)
+        self.wait_until_file_exists(path, self.wait_time)
         assert os.path.isfile(path)
         os.remove(path)
 
@@ -445,7 +445,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
             '//*[normalize-space()="LaTeX"]'
         ).click()
         path = os.path.join(self.download_dir, 'title.latex.zip')
-        self.wait_until_file_exists(path)
+        self.wait_until_file_exists(path, self.wait_time)
         assert os.path.isfile(path)
         os.remove(path)
 
@@ -458,7 +458,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
             '//*[normalize-space()="JATS"]'
         ).click()
         path = os.path.join(self.download_dir, 'title.jats.zip')
-        self.wait_until_file_exists(path)
+        self.wait_until_file_exists(path, self.wait_time)
         assert os.path.isfile(path)
         os.remove(path)
 
@@ -471,7 +471,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
             '//*[normalize-space()="Classic (DOCX)"]'
         ).click()
         path = os.path.join(self.download_dir, 'title.docx')
-        self.wait_until_file_exists(path)
+        self.wait_until_file_exists(path, self.wait_time)
         assert os.path.isfile(path)
         os.remove(path)
 
@@ -484,7 +484,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
             '//*[normalize-space()="Free (ODT)"]'
         ).click()
         path = os.path.join(self.download_dir, 'title.odt')
-        self.wait_until_file_exists(path)
+        self.wait_until_file_exists(path, self.wait_time)
         assert os.path.isfile(path)
         os.remove(path)
 
@@ -528,7 +528,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
             '//*[normalize-space()="Export selected as FIDUS"]'
         ).click()
         path = os.path.join(self.download_dir, 'title.fidus')
-        self.wait_until_file_exists(path)
+        self.wait_until_file_exists(path, self.wait_time)
         assert os.path.isfile(path)
         os.remove(path)
 
@@ -540,7 +540,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
             '//*[normalize-space()="Export selected as slim FIDUS"]'
         ).click()
         path = os.path.join(self.download_dir, 'title.fidus')
-        self.wait_until_file_exists(path)
+        self.wait_until_file_exists(path, self.wait_time)
         assert os.path.isfile(path)
         # We keep the file for the upload test below
         upload_slim_path = os.path.join(self.download_dir, 'upload_slim.fidus')
@@ -554,7 +554,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
             '//*[normalize-space()="Export selected as Epub"]'
         ).click()
         path = os.path.join(self.download_dir, 'title.epub')
-        self.wait_until_file_exists(path)
+        self.wait_until_file_exists(path, self.wait_time)
         assert os.path.isfile(path)
         os.remove(path)
 
@@ -566,7 +566,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
             '//*[normalize-space()="Export selected as HTML"]'
         ).click()
         path = os.path.join(self.download_dir, 'title.html.zip')
-        self.wait_until_file_exists(path)
+        self.wait_until_file_exists(path, self.wait_time)
         assert os.path.isfile(path)
         os.remove(path)
 
@@ -578,7 +578,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
             '//*[normalize-space()="Export selected as LaTeX"]'
         ).click()
         path = os.path.join(self.download_dir, 'title.latex.zip')
-        self.wait_until_file_exists(path)
+        self.wait_until_file_exists(path, self.wait_time)
         assert os.path.isfile(path)
         os.remove(path)
 
@@ -590,7 +590,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
             '//*[normalize-space()="Export selected as JATS"]'
         ).click()
         path = os.path.join(self.download_dir, 'title.jats.zip')
-        self.wait_until_file_exists(path)
+        self.wait_until_file_exists(path, self.wait_time)
         assert os.path.isfile(path)
         os.remove(path)
 
@@ -602,7 +602,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
             '.download-revision'
         ).click()
         path = os.path.join(self.download_dir, 'title.fidus')
-        self.wait_until_file_exists(path)
+        self.wait_until_file_exists(path, self.wait_time)
         assert os.path.isfile(path)
         upload_full_path = os.path.join(self.download_dir, 'upload_full.fidus')
         os.rename(path, upload_full_path)

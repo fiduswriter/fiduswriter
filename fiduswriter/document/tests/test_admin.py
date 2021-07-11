@@ -615,7 +615,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
             self.download_dir,
             'standard-article.fidustemplate'
         )
-        self.wait_until_file_exists(path)
+        self.wait_until_file_exists(path, self.wait_time)
         assert os.path.isfile(path)
 
         # Disable file dialog

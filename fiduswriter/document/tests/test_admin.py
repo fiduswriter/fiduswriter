@@ -611,11 +611,12 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             "button[type=submit]"
         ).click()
-        time.sleep(1)
-        assert os.path.isfile(os.path.join(
+        path = os.path.join(
             self.download_dir,
             'standard-article.fidustemplate'
-        ))
+        )
+        self.wait_until_file_exists(path)
+        assert os.path.isfile(path)
 
         # Disable file dialog
         self.driver.execute_script((
@@ -630,10 +631,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         time.sleep(1)
         self.driver.find_element_by_css_selector(
             "#fidus-template-uploader"
-        ).send_keys(os.path.join(
-            self.download_dir,
-            'standard-article.fidustemplate'
-        ))
+        ).send_keys(path)
         # Check whether there now are two templates
         time.sleep(1)
         template_links = self.driver.find_elements_by_css_selector(
@@ -644,7 +642,4 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
             len(template_links)
         )
         # Delete file
-        os.remove(os.path.join(
-            self.download_dir,
-            'standard-article.fidustemplate'
-        ))
+        os.remove(path)

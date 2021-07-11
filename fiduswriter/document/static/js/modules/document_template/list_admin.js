@@ -33,12 +33,12 @@ export class DocumentTemplateListAdmin {
         this.objectTools.insertAdjacentHTML(
             'beforeend',
             `<li>
-                <span class="link" id="upload-template">${gettext('Upload Document Template')}</span>
+                <span class="link" id="upload-template">${gettext('Upload FIDUSTEMPLATE')}</span>
             </li>`
         )
         this.actionDropdown.insertAdjacentHTML(
             'beforeend',
-            `<option value="download">${gettext('Download selected document templates')}</option>`
+            `<option value="download">${gettext('Download selected as FIDUSTEMPLATE')}</option>`
         )
     }
 

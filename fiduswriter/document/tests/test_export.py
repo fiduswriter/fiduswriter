@@ -503,7 +503,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         # Wait for revision save to be done
         WebDriverWait(self.driver, self.wait_time).until(
             EC.visibility_of_element_located(
-                (By.CLASS_NAME, 'alerts-info')
+                (By.CLASS_NAME, 'alerts-success')
             )
         )
         # Exit the editor

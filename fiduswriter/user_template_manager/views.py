@@ -156,12 +156,23 @@ def create(request):
 @require_POST
 def copy(request):
     id = request.POST['id']
+    title = request.POST['title']
     doc_template = DocumentTemplate.objects.filter(
         Q(id=id),
         Q(user=request.user) | Q(user=None)
     ).first()
     if doc_template is None:
         return JsonResponse({}, status=405)
+    counter = 0
+    base_title = title
+    while (
+        DocumentTemplate.objects.filter(
+            Q(title=title),
+            Q(user=request.user) | Q(user=None)
+        ).first()
+    ):
+        counter += 1
+        title = base_title + ' ' + str(counter)
     response = {}
     status = 201
     document_styles = [style for style in doc_template.documentstyle_set.all()]
@@ -169,6 +180,7 @@ def copy(request):
         template for template in doc_template.exporttemplate_set.all()
     ]
     doc_template.pk = None
+    doc_template.title = title
     doc_template.user = request.user
     doc_template.save()
     for ds in document_styles:
@@ -184,7 +196,8 @@ def copy(request):
         et.pk = None
         et.document_template = doc_template
         et.save()
-    response['new_id'] = doc_template.id
+    response['id'] = doc_template.id
+    response['title'] = doc_template.title
     return JsonResponse(
         response,
         status=status

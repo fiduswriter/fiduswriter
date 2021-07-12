@@ -68,7 +68,10 @@ export class DocTemplatesActions {
     copyDocTemplate(oldDocTemplate) {
         return postJson(
             '/api/user_template_manager/copy/',
-            {id: oldDocTemplate.id}
+            {
+                id: oldDocTemplate.id,
+                title: `${gettext('Copy of')} ${oldDocTemplate.title}`
+            }
         ).catch(
             error => {
                 addAlert('error', gettext('The document template could not be copied'))
@@ -78,7 +81,8 @@ export class DocTemplatesActions {
             ({json}) => {
                 const docTemplate = JSON.parse(JSON.stringify(oldDocTemplate))
                 docTemplate.is_owner = true
-                docTemplate.id = json['new_id']
+                docTemplate.id = json['id']
+                docTemplate.title = json['title']
                 this.docTemplatesOverview.templateList.push(docTemplate)
                 this.docTemplatesOverview.addDocTemplateToTable(docTemplate)
             }

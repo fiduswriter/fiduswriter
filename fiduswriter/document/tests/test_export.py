@@ -717,6 +717,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element_by_css_selector(
             ".fw-dark"
         ).click()
+        time.sleep(1)
         documents = self.driver.find_elements_by_css_selector(
             '.fw-contents tbody tr a.fw-data-table-title'
         )

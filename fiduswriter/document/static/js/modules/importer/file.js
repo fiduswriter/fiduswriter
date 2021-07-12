@@ -27,9 +27,9 @@ export class ImportFidusFile {
         this.otherFiles = []
         this.ok = false
         this.statusText = ""
-        this.doc = false
-        this.docInfo = false
-        this.template = false
+        this.doc = null
+        this.docInfo = null
+        this.template = null
     }
 
     init() {

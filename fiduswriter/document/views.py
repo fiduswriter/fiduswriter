@@ -439,23 +439,22 @@ def import_create(request):
                 et.document_template = document_template
                 et.save()
     if not document_template:
-        title = request.POST['template_title']
+        template_title = request.POST['template_title']
         counter = 0
-        base_title = title
+        base_template_title = template_title
         while (
             DocumentTemplate.objects.filter(
-                Q(title=title),
+                Q(title=template_title),
                 Q(user=request.user) | Q(user=None)
             ).first()
         ):
             counter += 1
-            title = '%(base_title)s %(counter)s' % {
-                'base_title': base_title,
-                'counter': counter
-            }
+            template_title = f"{base_template_title} {counter}"
+        print('template_title')
+        print(template_title)
         content = json.loads(request.POST['template'])
         document_template = DocumentTemplate()
-        document_template.title = title
+        document_template.title = template_title
         document_template.import_id = import_id
         document_template.user = request.user
         document_template.content = content
@@ -499,10 +498,7 @@ def import_create(request):
             ).first()
         ):
             counter += 1
-            title = '%(base_path)s %(counter)s' % {
-                'base_path': base_path,
-                'counter': counter
-            }
+            path = f"{base_path} {counter}"
     document = Document.objects.create(
         owner=request.user,
         template=document_template,

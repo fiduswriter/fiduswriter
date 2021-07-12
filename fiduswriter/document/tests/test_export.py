@@ -537,7 +537,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
             EC.element_to_be_clickable((By.CSS_SELECTOR, '.dt-bulk-dropdown'))
         ).click()
         self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Export selected as slim FIDUS"]'
+            '//*[normalize-space()="Export selected as Slim FIDUS"]'
         ).click()
         path = os.path.join(self.download_dir, 'title.fidus')
         self.wait_until_file_exists(path, self.wait_time)

@@ -111,7 +111,7 @@ export const bulkMenuModel = () => ({
         },
         {
             title: gettext('Export selected as FIDUS'),
-            tooltip: gettext('Export the documents that have been selected as FIDUS files including the template files.'),
+            tooltip: gettext('Export the documents that have been selected as FIDUS files including their templates.'),
             action: overview => {
                 const ids = overview.getSelected()
                 if (ids.length) {
@@ -122,8 +122,8 @@ export const bulkMenuModel = () => ({
             order: 7
         },
         {
-            title: gettext('Export selected as slim FIDUS'),
-            tooltip: gettext('Export the documents that have been selected as FIDUS files without the template files.'),
+            title: gettext('Export selected as Slim FIDUS'),
+            tooltip: gettext('Export the documents that have been selected as FIDUS files without their templates.'),
             action: overview => {
                 const ids = overview.getSelected()
                 if (ids.length) {

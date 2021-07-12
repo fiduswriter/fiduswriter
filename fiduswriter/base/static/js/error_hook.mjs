@@ -1,4 +1,4 @@
-import {ErrorHook} from "./modules/error_hook"
+import {ErrorHook} from "./modules/error_hook/index.js"
 
 const theErrorHook = new ErrorHook()
 theErrorHook.init()

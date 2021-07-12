@@ -266,7 +266,7 @@ export class DocxExporterRichtext {
         {
             // We take the first citation from the stack and remove it.
             const cit = this.citations.pmCits.shift()
-            if (options.citationType === 'note') {
+            if (options.citationType === 'note'  && !options.inFootnote) {
                 // If the citations are in notes (footnotes), we need to
                 // put the content of this citation in a footnote.
                 // We then add the footnote to the footnote file and

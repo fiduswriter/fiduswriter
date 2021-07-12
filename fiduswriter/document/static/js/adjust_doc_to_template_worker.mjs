@@ -1,4 +1,4 @@
-import {AdjustDocToTemplateWorker} from "./workers/document_template/adjust_doc"
+import {AdjustDocToTemplateWorker} from "./workers/document_template/adjust_doc.js"
 
 onmessage = function(message) {
     let adjuster = new AdjustDocToTemplateWorker(

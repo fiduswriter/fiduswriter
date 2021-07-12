@@ -68,7 +68,8 @@ class Image(models.Model):
             from time import time
             if hasattr(self.image.file, 'size'):
                 self.checksum = int(
-                    str(self.image.file.size) + str(time()).split('.')[0])
+                    f"{self.image.file.size}{time()}".split('.')[0]
+                )
             else:
                 self.checksum = time()
 

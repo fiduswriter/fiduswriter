@@ -119,7 +119,10 @@ class Document(models.Model):
 
     def __str__(self):
         if len(self.title) > 0:
-            return self.title + ' (' + str(self.id) + ')'
+            return '%(title)s (%(id)s)' % {
+                'title': self.title,
+                'id': self.id
+            }
         else:
             return str(self.id)
 
@@ -298,10 +301,16 @@ class DocumentRevision(models.Model):
 
     def __str__(self):
         if len(self.note) > 0:
-            return self.note + ' (' + str(self.id) + ') of ' + \
-                str(self.document.id)
+            return '%(note)s (%(id)s) of %(doc_id)s' % {
+                'note': self.note,
+                'id': self.id,
+                'doc_id': self.document.id
+            }
         else:
-            return str(self.id) + ' of ' + str(self.document.id)
+            return '%(id)s of %(doc_id)s' % {
+                'id': self.id,
+                'doc_id': self.document.id
+            }
 
     @classmethod
     def check(cls, **kwargs):

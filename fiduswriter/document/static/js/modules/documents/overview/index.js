@@ -218,6 +218,8 @@ export class DocumentOverview {
         this.initTable()
         if (Object.keys(this.documentTemplates).length > 1) {
             this.multipleNewDocumentMenuItem()
+        } else {
+            this.singleNewDocumentMenuItem()
         }
         return json
     }
@@ -290,7 +292,7 @@ export class DocumentOverview {
         this.table = new DataTable(tableEl, {
             searchable: searching,
             paging: false,
-            scrollY: `${Math.max(window.innerHeight - 360, 100)}px`,
+            scrollY: `${Math.max(window.innerHeight - 360, 200)}px`,
             labels: {
                 noRows: gettext("No documents available") // Message shown when there are no search results
             },
@@ -436,7 +438,13 @@ export class DocumentOverview {
         }))
         this.menu.update()
 
+        if (this.dtBulkModel.content.find(item => item.id === 'copy_as')) {
+            // Menuitem already present
+            return
+        }
+
         this.dtBulkModel.content.push({
+            id: 'copy_as',
             title: gettext('Copy selected as...'),
             tooltip: gettext('Copy the documents and assign them to a specific template.'),
             action: overview => {
@@ -450,7 +458,20 @@ export class DocumentOverview {
         })
 
         this.dtBulk.update()
+    }
 
+    singleNewDocumentMenuItem() {
+        const menuItem = this.menu.model.content.find(menuItem => menuItem.id === 'new_document')
+        if (menuItem.type === 'text') {
+            // Already correctly set
+            return
+        }
+        menuItem.type = 'text'
+        delete menuItem.content
+        this.menu.update()
+
+        this.dtBulkModel.content = this.dtBulkModel.content.filter(item => item.id !== 'copy_as')
+        this.dtBulk.update()
 
     }
 

@@ -1,4 +1,5 @@
 import {chainCommands, deleteSelection, joinBackward, selectNodeBackward} from "prosemirror-commands"
+import {liftListItem} from "prosemirror-schema-list"
 import {undo, redo} from "prosemirror-history"
 const mac = typeof navigator != "undefined" ? /Mac/.test(navigator.platform) : false
 
@@ -51,7 +52,8 @@ export const buildEditorKeymap = schema => {
         "Mod-z": (state, dispatch, view) => undo(state, tr => dispatch(addInputType(tr, 'historyUndo')), view),
         "Shift-Mod-z": (state, dispatch, view) => redo(state, tr => dispatch(addInputType(tr, 'historyRedo')), view),
         "Shift-Ctrl-0": setBlockType(schema.nodes.paragraph),
-        "Shift-Ctrl-\\": setBlockType(schema.nodes.code_block)
+        "Shift-Ctrl-\\": setBlockType(schema.nodes.code_block),
+        "Ctrl-<": liftListItem(schema.nodes.list_item)
     }
     for (let i = 1; i <= 6; i++) {
         editorKeymap["Shift-Ctrl-" + i] = setBlockType(schema.nodes.heading, {level: i})

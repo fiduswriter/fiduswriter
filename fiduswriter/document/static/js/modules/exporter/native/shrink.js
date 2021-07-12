@@ -29,11 +29,11 @@ export class ShrinkFidus {
             delete shrunkImageDB[itemId].pk
             delete shrunkImageDB[itemId].added
             const imageUrl = shrunkImageDB[itemId].image
-            const filename = imageUrl.split('/').pop()
+            const filename = `images/${imageUrl.split('/').pop()}`
             shrunkImageDB[itemId].image = filename
             httpIncludes.push({
                 url: imageUrl,
-                filename: filename
+                filename
             })
         })
 

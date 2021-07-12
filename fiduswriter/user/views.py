@@ -93,7 +93,7 @@ def add_email(request):
 def delete_email(request):
     response = {}
     email = request.POST["email"]
-    response['msg'] = "Removed e-mail address " + email
+    response['msg'] = f"Removed e-mail address {email}"
     status = 200
     email_address = EmailAddress.objects.filter(
         user=request.user,

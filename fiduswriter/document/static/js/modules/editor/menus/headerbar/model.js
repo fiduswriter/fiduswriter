@@ -81,7 +81,7 @@ export const headerbarModel = () => ({
                     title: gettext('Save revision'),
                     type: 'action',
                     //icon: 'save',
-                    tooltip: gettext('Save a revision of the current document.'),
+                    tooltip: gettext('Save a revision of the document.'),
                     order: 2,
                     keys: 'Ctrl-s',
                     action: editor => {
@@ -105,7 +105,7 @@ export const headerbarModel = () => ({
                     title: gettext('Create copy'),
                     type: 'action',
                     //icon: 'copy',
-                    tooltip: gettext('Create copy of the current document.'),
+                    tooltip: gettext('Create a copy of the document.'),
                     order: 3,
                     action: editor => {
                         const copier = new SaveCopy(
@@ -124,7 +124,7 @@ export const headerbarModel = () => ({
                     title: gettext('Download'),
                     type: 'action',
                     //icon: 'download',
-                    tooltip: gettext('Download the current document.'),
+                    tooltip: gettext('Export the document as a FIDUS file including its template.'),
                     order: 4,
                     action: editor => {
                         new ExportFidusFile(
@@ -132,7 +132,8 @@ export const headerbarModel = () => ({
                             editor.mod.db.bibDB,
                             editor.mod.db.imageDB
                         )
-                    }
+                    },
+                    disabled: editor => editor.app.isOffline(),
                 },
                 {
                     title: gettext('Print/PDF'),
@@ -241,7 +242,21 @@ export const headerbarModel = () => ({
                         })
                     },
                     disabled: editor => editor.app.isOffline()
-                }
+                },
+                {
+                    title: gettext('Slim FIDUS'),
+                    type: 'action',
+                    tooltip: gettext('Export the document to a FIDUS file without its template.'),
+                    order: 3,
+                    action: editor => {
+                        new ExportFidusFile(
+                            editor.getDoc(),
+                            editor.mod.db.bibDB,
+                            editor.mod.db.imageDB,
+                            false
+                        )
+                    }
+                },
             ]
         },
         {

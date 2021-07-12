@@ -22,7 +22,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         super().setUpClass()
         cls.base_url = cls.live_server_url
         cls.download_dir = mkdtemp()
-        cls.base_admin_url = cls.base_url + '/admin/'
+        cls.base_admin_url = f"{cls.base_url}/admin/"
         driver_data = cls.get_drivers(1, cls.download_dir)
         cls.driver = driver_data["drivers"][0]
         cls.client = driver_data["clients"][0]
@@ -495,6 +495,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         ).send_keys(
             'text'
         ).perform()
+        time.sleep(1)
         # Create regular copy
         old_body = self.driver.find_element(By.CSS_SELECTOR, ".article-body")
         self.driver.find_element(
@@ -611,11 +612,12 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             "button[type=submit]"
         ).click()
-        time.sleep(1)
-        assert os.path.isfile(os.path.join(
+        path = os.path.join(
             self.download_dir,
             'standard-article.fidustemplate'
-        ))
+        )
+        self.wait_until_file_exists(path, self.wait_time)
+        assert os.path.isfile(path)
 
         # Disable file dialog
         self.driver.execute_script((
@@ -630,10 +632,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         time.sleep(1)
         self.driver.find_element_by_css_selector(
             "#fidus-template-uploader"
-        ).send_keys(os.path.join(
-            self.download_dir,
-            'standard-article.fidustemplate'
-        ))
+        ).send_keys(path)
         # Check whether there now are two templates
         time.sleep(1)
         template_links = self.driver.find_elements_by_css_selector(
@@ -644,7 +643,4 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
             len(template_links)
         )
         # Delete file
-        os.remove(os.path.join(
-            self.download_dir,
-            'standard-article.fidustemplate'
-        ))
+        os.remove(path)

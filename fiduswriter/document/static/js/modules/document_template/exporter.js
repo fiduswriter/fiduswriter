@@ -5,12 +5,18 @@ import {createSlug} from "../exporter/tools/file"
 import {ZipFileCreator} from "../exporter/tools/zip"
 
 
-export class DocumentTemplateDownloader {
-    constructor(id, getUrl = '/api/document/admin/get_template/') {
+export class DocumentTemplateExporter {
+    constructor(
+        id,
+        getUrl = '/api/document/admin/get_template/',
+        download = true
+    ) {
         this.id = id
         this.getUrl = getUrl
+        this.download = download
 
         this.zipFileName = false
+        this.docVersion = false
         this.textFiles = []
         this.httpFiles = []
     }
@@ -20,13 +26,12 @@ export class DocumentTemplateDownloader {
             this.getUrl,
             {id: this.id}
         ).then(({json}) => {
+            this.docVersion = json.doc_version
             this.zipFileName = `${createSlug(json.title)}.fidustemplate`
-            this.textFiles.push({filename: 'title.txt', contents: json.title})
-            this.textFiles.push({filename: 'content.json', contents: JSON.stringify(json.content)})
-            this.textFiles.push({filename: 'filetype-version', contents: json.doc_version})
+            this.textFiles.push({filename: 'template.json', contents: JSON.stringify(json.content)})
             const exportTemplates = []
             json.export_templates.forEach(template => {
-                const filename = template.fields.template_file.split('/').slice(-1)[0]
+                const filename = `exporttemplates/${template.fields.template_file.split('/').slice(-1)[0]}`
                 this.httpFiles.push({
                     filename,
                     url: template.fields.template_file
@@ -37,7 +42,10 @@ export class DocumentTemplateDownloader {
                     title: template.fields.title
                 })
             })
-            this.textFiles.push({filename: 'exporttemplates.json', contents: JSON.stringify(exportTemplates)})
+            this.textFiles.push({
+                filename: 'exporttemplates.json',
+                contents: JSON.stringify(exportTemplates)
+            })
             const documentStyles = []
             json.document_styles.forEach(docStyle => {
                 const style = {
@@ -47,20 +55,25 @@ export class DocumentTemplateDownloader {
                     files: []
                 }
                 docStyle.fields.documentstylefile_set.forEach(docstyleFile => {
+                    const filename = `documentstyles/${docstyleFile[1]}`
                     this.httpFiles.push({
-                        filename: docstyleFile[1],
+                        filename,
                         url: docstyleFile[0]
                     })
-                    style.files.push(docstyleFile[1])
+                    style.files.push(filename)
                 })
                 documentStyles.push(style)
             })
             this.textFiles.push({filename: 'documentstyles.json', contents: JSON.stringify(documentStyles)})
-            return this.createZip()
+            if (this.download) {
+                return this.createZip()
+            }
+            return Promise.resolve()
         })
     }
 
     createZip() {
+        this.textFiles.push({filename: 'filetype-version', contents: this.docVersion})
         const zipper = new ZipFileCreator(
             this.textFiles,
             this.httpFiles,
@@ -68,12 +81,8 @@ export class DocumentTemplateDownloader {
             'application/fidustemplate+zip'
         )
         return zipper.init().then(
-            blob => this.download(blob)
+            blob => download(blob, this.zipFileName, 'application/zip')
         )
-    }
-
-    download(blob) {
-        return download(blob, this.zipFileName, 'application/zip')
     }
 
 }

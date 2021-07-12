@@ -4,9 +4,9 @@ import {postJson} from "../common"
 
 import {updateTemplateFile} from "./update"
 
-const TEXT_FILENAMES = ['mimetype', 'filetype-version', 'title.txt', 'content.json', 'exporttemplates.json', 'documentstyles.json']
+const TEXT_FILENAMES = ['mimetype', 'filetype-version', 'template.json', 'exporttemplates.json', 'documentstyles.json']
 
-export class DocumentTemplateUploader {
+export class DocumentTemplateImporter {
     constructor(file, createUrl = '/api/document/admin/create_template/') {
         this.file = file
         this.createUrl = createUrl
@@ -55,10 +55,17 @@ export class DocumentTemplateUploader {
                 return
             }
 
-            filenames.forEach(filename => {
+            filenames.filter(
+                filename => !filename.endsWith('/')
+            ).forEach(filename => {
                 p.push(new Promise(resolve => {
                     let fileType, fileList
-                    if (TEXT_FILENAMES.indexOf(filename) !== -1) {
+                    if (
+                        ['mimetype', 'filetype-version'].includes(
+                            filename
+                        ) ||
+                        filename.endsWith('.json')
+                    ) {
                         fileType = 'string'
                         fileList = this.textFiles
                     } else {
@@ -82,9 +89,10 @@ export class DocumentTemplateUploader {
             filetypeVersion >= MIN_FW_DOCUMENT_VERSION &&
             filetypeVersion <= MAX_FW_DOCUMENT_VERSION
         ) {
+            const template = JSON.parse(this.textFiles.find(file => file.filename === 'template.json').content)
             const {title, content, exportTemplates, documentStyles} = updateTemplateFile(
-                this.textFiles.find(file => file.filename === 'title.txt').content,
-                JSON.parse(this.textFiles.find(file => file.filename === 'content.json').content),
+                template.attrs.template,
+                template,
                 JSON.parse(this.textFiles.find(file => file.filename === 'exporttemplates.json').content),
                 JSON.parse(this.textFiles.find(file => file.filename === 'documentstyles.json').content),
                 filetypeVersion
@@ -101,7 +109,7 @@ export class DocumentTemplateUploader {
                     this.ok = true
                     this.docTemplate = {
                         id: json.id,
-                        title,
+                        title: json.title,
                         added: json.added,
                         updated: json.updated
                     }

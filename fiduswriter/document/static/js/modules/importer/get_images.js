@@ -25,7 +25,7 @@ export class GetImages {
             return new Promise(resolve => {
                 const fc = this.entries.find(entry => entry.filename === this.imageEntries[
                     this.counter
-                ].image.split('/').pop()).content
+                ].image).content
                 this.imageEntries[this.counter]['file'] = new window.Blob(
                     [fc],
                     {type: this.imageEntries[this.counter].file_type}

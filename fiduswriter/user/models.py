@@ -19,18 +19,14 @@ def auto_avatar(username):
     g = str((hash >> (1 * 8)) & 255)
     b = str((hash >> (2 * 8)) & 255)
 
-    cl = 'rgb(' + r + ',' + g + ',' + b + ')'
+    cl = f"rgb({r},{g},{b})"
     return {
         'url': get_default_avatar_url(),
         'uploaded': False,
         'html': (
-            '<span class="fw-string-avatar" '
-            'style="background-color: ' +
-            cl +
-            ';">' +
-            '<span>' +
-            username[0] +
-            '</span></span>'
+            f'<span class="fw-string-avatar" style="background-color: {cl};">'
+            f'<span>{username[0]}</span>'
+            '</span>'
         )
     }
 
@@ -71,9 +67,8 @@ class User(AbstractUser):
                 'url': url,
                 'uploaded': True,
                 'html': (
-                    '<img class="fw-avatar" src="' +
-                    url +
-                    '" alt="' + self.username + '">'
+                    f'<img class="fw-avatar" src="{url}" '
+                    f'alt="{self.username}">'
                 )
             }
         else:

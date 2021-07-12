@@ -1,4 +1,4 @@
-import {BibLatexImportWorker} from "./workers/importer/biblatex"
+import {BibLatexImportWorker} from "./workers/importer/biblatex.js"
 
 onmessage = function(message) {
     let importer = new BibLatexImportWorker(

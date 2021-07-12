@@ -2,6 +2,7 @@ from builtins import range
 from builtins import object
 import re
 import os
+import time
 
 from django.test import Client
 from selenium import webdriver
@@ -38,7 +39,7 @@ class SeleniumHelper(object):
             options.add_argument('--headless')
             options.add_argument('--disable-gpu')
             chromedriver_filename = None
-            wait_time = 10
+            wait_time = 13
         else:
             from chromedriver_binary import chromedriver_filename
             wait_time = 6
@@ -114,3 +115,11 @@ class SeleniumHelper(object):
 
     def leave_site(self, driver):
         driver.get('data:,')
+
+    def wait_until_file_exists(self, path, wait_time):
+        count = 0
+        while not os.path.exists(path):
+            time.sleep(1)
+            count += 1
+            if count > wait_time:
+                break

@@ -110,6 +110,16 @@ def create(request):
     import_id = request.POST.get('import_id')
     document_styles = json.loads(request.POST.get('document_styles'))
     export_templates = json.loads(request.POST.get('export_templates'))
+    counter = 0
+    base_title = title
+    while (
+        DocumentTemplate.objects.filter(
+            Q(title=title),
+            Q(user=request.user) | Q(user=None)
+        ).first()
+    ):
+        counter += 1
+        title = f"{base_title} {counter}"
     template = DocumentTemplate.objects.create(
         title=title,
         content=content,
@@ -118,6 +128,7 @@ def create(request):
         user=request.user
     )
     response['id'] = template.id
+    response['title'] = template.title
     date_format = '%Y-%m-%d'
     response['added'] = template.added.strftime(date_format)
     response['updated'] = template.updated.strftime(date_format)
@@ -129,7 +140,8 @@ def create(request):
             contents=style['contents'],
             document_template=template
         )
-        for filename in style['files']:
+        for filepath in style['files']:
+            filename = filepath.split('/').pop()
             file = next((x for x in files if x.name == filename), None)
             if file:
                 DocumentStyleFile.objects.create(
@@ -137,7 +149,7 @@ def create(request):
                     style=doc_style
                 )
     for e_template in export_templates:
-        filename = e_template['file']
+        filename = e_template['file'].split('/').pop()
         file = next((x for x in files if x.name == filename), None)
         if file:
             ExportTemplate.objects.create(
@@ -156,12 +168,23 @@ def create(request):
 @require_POST
 def copy(request):
     id = request.POST['id']
+    title = request.POST['title']
     doc_template = DocumentTemplate.objects.filter(
         Q(id=id),
         Q(user=request.user) | Q(user=None)
     ).first()
     if doc_template is None:
         return JsonResponse({}, status=405)
+    counter = 0
+    base_title = title
+    while (
+        DocumentTemplate.objects.filter(
+            Q(title=title),
+            Q(user=request.user) | Q(user=None)
+        ).first()
+    ):
+        counter += 1
+        title = f"{base_title} {counter}"
     response = {}
     status = 201
     document_styles = [style for style in doc_template.documentstyle_set.all()]
@@ -169,6 +192,7 @@ def copy(request):
         template for template in doc_template.exporttemplate_set.all()
     ]
     doc_template.pk = None
+    doc_template.title = title
     doc_template.user = request.user
     doc_template.save()
     for ds in document_styles:
@@ -184,7 +208,8 @@ def copy(request):
         et.pk = None
         et.document_template = doc_template
         et.save()
-    response['new_id'] = doc_template.id
+    response['id'] = doc_template.id
+    response['title'] = doc_template.title
     return JsonResponse(
         response,
         status=status

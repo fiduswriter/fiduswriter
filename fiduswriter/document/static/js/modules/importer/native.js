@@ -4,7 +4,7 @@ import {extractTemplate} from "../document_template"
 
 export class ImportNative {
     /* Save document information into the database */
-    constructor(doc, bibliography, images, otherFiles, user, importId = null, requestedPath = '') {
+    constructor(doc, bibliography, images, otherFiles, user, importId = null, requestedPath = '', template = null) {
         this.doc = doc
         this.docId = false
         this.path = false
@@ -14,6 +14,7 @@ export class ImportNative {
         this.user = user
         this.importId = importId
         this.requestedPath = requestedPath
+        this.template = template
     }
 
     init() {
@@ -96,18 +97,23 @@ export class ImportNative {
     }
 
     createDoc() {
-        const template = extractTemplate(this.doc.content),
-            template_title = template.attrs.template,
-            import_id = this.importId ? this.importId : template.attrs.import_id
+        const template = this.template ? this.template.content : extractTemplate(this.doc.content)
+
         // We create the document on the sever so that we have an ID for it and
         // can link the images to it.
-
         return postJson(
             '/api/document/import/create/',
             {
                 template: JSON.stringify(template),
-                import_id,
-                template_title,
+                export_templates: JSON.stringify(
+                    this.template?.exportTemplates || []
+                ),
+                document_styles: JSON.stringify(
+                    this.template?.documentStyles || []
+                ),
+                files: this.template?.files.map(({filename, content}) => new File([content], filename)) || [],
+                import_id: this.importId ? this.importId : template.attrs.import_id,
+                template_title: template.attrs.template,
                 path: this.requestedPath
             }
         ).then(

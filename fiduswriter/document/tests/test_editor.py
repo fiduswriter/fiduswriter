@@ -939,10 +939,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         self.assertIsNotNone(email)
         confirmation_key = EmailConfirmationHMAC(email).key
         self.driver.get(
-            self.base_url +
-            "/account/confirm-email/" +
-            confirmation_key +
-            "/"
+            f"{self.base_url}/account/confirm-email/{confirmation_key}/"
         )
         self.driver.find_element(
             By.ID,

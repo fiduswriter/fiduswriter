@@ -1,6 +1,8 @@
-import {ImportNative} from "./native"
 import {FW_DOCUMENT_VERSION} from "../schema"
+import {updateTemplateFile} from "../document_template"
+import {ImportNative} from "./native"
 import {updateFile} from "./update"
+
 /** The current Fidus Writer filetype version. The importer will not import from
  * a different version and the exporter will include this number in all exports.
  */
@@ -25,8 +27,9 @@ export class ImportFidusFile {
         this.otherFiles = []
         this.ok = false
         this.statusText = ""
-        this.doc = false
-        this.docInfo = false
+        this.doc = null
+        this.docInfo = null
+        this.template = null
     }
 
     init() {
@@ -70,22 +73,31 @@ export class ImportFidusFile {
                 return
             }
 
-            filenames.forEach(filename => {
-                p.push(new Promise(resolve => {
-                    let fileType, fileList
-                    if (TEXT_FILENAMES.indexOf(filename) !== -1) {
-                        fileType = 'string'
-                        fileList = this.textFiles
-                    } else {
-                        fileType = 'blob'
-                        fileList = this.otherFiles
-                    }
-                    zipfs.files[filename].async(fileType).then(content => {
-                        fileList.push({filename, content})
-                        resolve()
-                    })
-                }))
-            })
+            filenames.filter(
+                filename => !filename.endsWith('/')
+            ).forEach(
+                filename => {
+                    p.push(new Promise(resolve => {
+                        let fileType, fileList
+                        if (
+                            ['mimetype', 'filetype-version'].includes(
+                                filename
+                            ) ||
+                            filename.endsWith('.json')
+                        ) {
+                            fileType = 'string'
+                            fileList = this.textFiles
+                        } else {
+                            fileType = 'blob'
+                            fileList = this.otherFiles
+                        }
+                        zipfs.files[filename].async(fileType).then(content => {
+                            fileList.push({filename, content})
+                            resolve()
+                        })
+                    }))
+                }
+            )
             return Promise.all(p).then(() => this.processFidusFile())
         })
     }
@@ -109,6 +121,24 @@ export class ImportFidusFile {
             if (this.check) {
                 doc = this.checkDocUsers(doc)
             }
+            const templateFile = this.textFiles.find(file => file.filename === 'template.json')
+            if (templateFile) {
+                // A template is included in the file
+                const templateDef = JSON.parse(templateFile.content)
+                this.template = updateTemplateFile(
+                    templateDef.attrs.template,
+                    templateDef,
+                    JSON.parse(this.textFiles.find(file => file.filename === 'exporttemplates.json').content),
+                    JSON.parse(this.textFiles.find(file => file.filename === 'documentstyles.json').content),
+                    filetypeVersion
+                )
+                this.template.files = this.otherFiles.filter(
+                    file => file.filename.startsWith('exporttemplates/') || file.filename.startsWith('documentstyles/')
+                )
+                this.otherFiles = this.otherFiles.filter(
+                    file => !this.template.files.includes(file)
+                )
+            }
             const importer = new ImportNative(
                 doc,
                 bibliography,
@@ -116,7 +146,8 @@ export class ImportFidusFile {
                 this.otherFiles,
                 this.user,
                 null,
-                this.path
+                this.path.endsWith('/') ? this.path + doc.title : this.path,
+                this.template
             )
             return importer.init().then(({doc, docInfo}) => {
                 this.ok = true

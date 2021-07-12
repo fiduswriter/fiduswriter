@@ -808,7 +808,7 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
 
         save_revision_button = self.driver.find_element_by_xpath(
             "//span[contains(@title,'Save a revision of " +
-            "the current document.')]"
+            "the document.')]"
         )
         save_revision_button_classes = save_revision_button.get_attribute(
             "class"
@@ -840,8 +840,8 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
         self.assertEqual('disabled' in latex_export_button_classes, True)
 
         jats_export_button = self.driver.find_element_by_xpath(
-            "//span[contains(@title,'Export the document to a Journal" +
-            " Archiving and Interchange Tag Library NISO JATS Version 1.2 " +
+            "//span[contains(@title,'Export the document to a Journal " +
+            "Archiving and Interchange Tag Library NISO JATS Version 1.2 " +
             "file.')]"
         )
         jats_export_button_classes = jats_export_button.get_attribute(
@@ -940,7 +940,7 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
             EC.presence_of_element_located((By.CLASS_NAME, 'fw-contents'))
         )
         doc_row = self.driver.find_element_by_xpath(
-            "//a[@href='/document/"+str(self.doc.id)+"']"
+            f"//a[@href='/document/{self.doc.id}']"
         )
         self.assertEqual(doc_row.is_displayed(), True)
 

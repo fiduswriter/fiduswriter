@@ -1,4 +1,4 @@
-import {DocumentTemplateDesigner, DocumentTemplateDownloader} from "../document_template"
+import {DocumentTemplateDesigner, DocumentTemplateExporter} from "../document_template"
 import {whenReady, postJson, setDocTitle, findTarget, post, addAlert, ensureCSS} from "../common"
 import {FeedbackTab} from "../feedback"
 
@@ -64,7 +64,7 @@ export class DocTemplatesEditor {
             </div>
         </div>
         <div>
-            <div class="fw-contents">
+            <div class="fw-contents template-editor-wrapper">
                 <div id="template-editor"></div>
                 <ul class="errorlist"></ul>
                 <div class="ui-dialog-buttonset">
@@ -111,11 +111,11 @@ export class DocTemplatesEditor {
     download() {
         this.save().then(
             () => {
-                const downloader = new DocumentTemplateDownloader(
+                const exporter = new DocumentTemplateExporter(
                     this.id,
                     '/api/user_template_manager/get/'
                 )
-                downloader.init()
+                exporter.init()
             }
         )
     }

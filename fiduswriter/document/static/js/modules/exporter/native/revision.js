@@ -27,7 +27,13 @@ export class SaveRevision {
 
         shrinker.init().then(
             ({shrunkImageDB, shrunkBibDB, httpIncludes}) => {
-                const zipper = new ZipFidus(this.doc, shrunkImageDB, shrunkBibDB, httpIncludes)
+                const zipper = new ZipFidus(
+                    this.doc.id,
+                    this.doc,
+                    shrunkImageDB,
+                    shrunkBibDB,
+                    httpIncludes
+                )
                 return zipper.init()
             }
         ).then(

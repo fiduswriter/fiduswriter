@@ -111,7 +111,7 @@ export const bulkMenuModel = () => ({
         },
         {
             title: gettext('Export selected as FIDUS'),
-            tooltip: gettext('Export the documents that have been selected as FIDUS files.'),
+            tooltip: gettext('Export the documents that have been selected as FIDUS files including their templates.'),
             action: overview => {
                 const ids = overview.getSelected()
                 if (ids.length) {
@@ -120,6 +120,18 @@ export const bulkMenuModel = () => ({
             },
             disabled: overview => !overview.getSelected().length || overview.app.isOffline(),
             order: 7
+        },
+        {
+            title: gettext('Export selected as Slim FIDUS'),
+            tooltip: gettext('Export the documents that have been selected as FIDUS files without their templates.'),
+            action: overview => {
+                const ids = overview.getSelected()
+                if (ids.length) {
+                    overview.mod.actions.downloadSlimNativeFiles(ids)
+                }
+            },
+            disabled: overview => !overview.getSelected().length || overview.app.isOffline(),
+            order: 8
         },
         {
             title: gettext('Delete selected'),
@@ -135,7 +147,7 @@ export const bulkMenuModel = () => ({
                 }
             },
             disabled: overview => !overview.getSelected().length || overview.app.isOffline(),
-            order: 8
+            order: 9
         }
     ]
 })
@@ -166,7 +178,7 @@ export const menuModel = () => ({
         },
         {
             type: 'text',
-            title: gettext('Upload Fidus document'),
+            title: gettext('Upload FIDUS document'),
             action: overview => overview.mod.actions.importFidus(),
             order: 3
         },

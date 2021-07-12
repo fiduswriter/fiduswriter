@@ -1,4 +1,4 @@
-import {SchemaExport} from "./modules/schema/export"
+import {SchemaExport} from "./modules/schema/export.js"
 
 const theSchemaExporter = new SchemaExport()
 

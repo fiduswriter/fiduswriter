@@ -1,6 +1,6 @@
 import {whenReady, findTarget, escapeText, ensureCSS} from "../common"
-import {DocumentTemplateDownloader} from "./download"
-import {DocumentTemplateUploader} from "./upload"
+import {DocumentTemplateImporter} from "./importer"
+import {DocumentTemplateExporter} from "./exporter"
 
 
 export class DocumentTemplateListAdmin {
@@ -33,12 +33,12 @@ export class DocumentTemplateListAdmin {
         this.objectTools.insertAdjacentHTML(
             'beforeend',
             `<li>
-                <span class="link" id="upload-template">${gettext('Upload Document Template')}</span>
+                <span class="link" id="upload-template">${gettext('Upload FIDUSTEMPLATE')}</span>
             </li>`
         )
         this.actionDropdown.insertAdjacentHTML(
             'beforeend',
-            `<option value="download">${gettext('Download selected document templates')}</option>`
+            `<option value="download">${gettext('Download selected as FIDUSTEMPLATE')}</option>`
         )
     }
 
@@ -72,8 +72,8 @@ export class DocumentTemplateListAdmin {
                         return true
                     })
                     Promise.all(files.map(file => {
-                        const uploader = new DocumentTemplateUploader(file)
-                        return uploader.init()
+                        const importer = new DocumentTemplateImporter(file)
+                        return importer.init()
                     })).then(
                         () => window.location.reload()
                     )
@@ -87,8 +87,8 @@ export class DocumentTemplateListAdmin {
                         el => parseInt(el.value)
                     )
                     ids.forEach(id => {
-                        const downloader = new DocumentTemplateDownloader(id)
-                        downloader.init()
+                        const exporter = new DocumentTemplateExporter(id)
+                        exporter.init()
                     })
                 }
                 break

@@ -64,7 +64,7 @@ export class DocTemplatesEditor {
             </div>
         </div>
         <div>
-            <div class="fw-contents">
+            <div class="fw-contents template-editor-wrapper">
                 <div id="template-editor"></div>
                 <ul class="errorlist"></ul>
                 <div class="ui-dialog-buttonset">

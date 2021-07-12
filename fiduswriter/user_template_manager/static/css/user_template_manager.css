@@ -11,3 +11,7 @@
 #template-editor table.title_id input[type='text'] {
     margin-bottom: 4px;
 }
+
+.fw-contents.template-editor-wrapper {
+    margin-bottom: 80px;
+}

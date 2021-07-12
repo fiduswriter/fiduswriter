@@ -808,7 +808,7 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
 
         save_revision_button = self.driver.find_element_by_xpath(
             "//span[contains(@title,'Save a revision of " +
-            "the current document.')]"
+            "the document.')]"
         )
         save_revision_button_classes = save_revision_button.get_attribute(
             "class"

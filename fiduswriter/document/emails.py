@@ -99,9 +99,9 @@ def send_share_notification(
         'AccessTheDocument': _('Access the document')
     }
     send_mail(
-        _('Document shared:') +
-        ' ' +
-        document_title,
+        _('Document shared: %(document_title)s') % {
+            'document_title': document_title
+        },
         message_text,
         settings.DEFAULT_FROM_EMAIL,
         [collaborator_email],
@@ -143,7 +143,9 @@ def send_comment_notification(
             'collaborator_name': collaborator_name,
             'document_title': document_title
         }
-        message_title = _('Comment on :') + ' ' + document_title
+        message_title = _('Comment on : %(document_title)s') % {
+            'document_title': document_title
+        }
     else:
         message_text = _(
             ('Hey %(collaborator_name)s,\n%(commentator)s has assigned you to '
@@ -164,7 +166,9 @@ def send_comment_notification(
             'collaborator_name': collaborator_name,
             'document_title': document_title
         }
-        message_title = _('Comment assignment on :') + ' ' + document_title
+        message_title = _('Comment assignment on : %(document_title)s') % {
+            'document_title': document_title
+        }
 
     body_html = _(
         ('<p>Hey %(collaborator_name)s,<br>%(commentator)s has assigned '

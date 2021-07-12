@@ -119,7 +119,7 @@ def create(request):
         ).first()
     ):
         counter += 1
-        title = base_title + ' ' + str(counter)
+        title = f"{base_title} {counter}"
     template = DocumentTemplate.objects.create(
         title=title,
         content=content,
@@ -183,7 +183,7 @@ def copy(request):
         ).first()
     ):
         counter += 1
-        title = base_title + ' ' + str(counter)
+        title = f"{base_title} {counter}"
     response = {}
     status = 201
     document_styles = [style for style in doc_template.documentstyle_set.all()]

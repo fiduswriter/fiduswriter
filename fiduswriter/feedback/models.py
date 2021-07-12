@@ -15,16 +15,16 @@ class Feedback(models.Model):
 
     def __str__(self):
         if self.owner:
-            return self.owner.username + ': ' + self.message
+            return f"{self.owner.username}: f{self.message}"
         else:
-            return 'Anonymous: ' + self.message
+            return f"Anonymous: {self.message}"
 
     def save(self, *args, **kwargs):
         reply_to = ''
         if self.owner:
             from_sender = self.owner.username
             if self.owner.email:
-                reply_to = ' (' + self.owner.email + ')'
+                reply_to = f" ({self.owner.email})"
         else:
             from_sender = 'Anonymous'
         emails.send_feedback(from_sender, reply_to, self.message)

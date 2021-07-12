@@ -25,7 +25,7 @@ class PythonWithURLSerializer(PythonSerializer):
                 if field.related_name:
                     related_name = field.related_name
                 else:
-                    related_name = field.name + '_set'
+                    related_name = f"{field.name}_set"
                 if related_name not in self.selected_fields:
                     continue
                 if self.use_natural_foreign_keys and hasattr(

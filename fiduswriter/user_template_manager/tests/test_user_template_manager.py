@@ -45,7 +45,7 @@ class UserTemplateManagerTest(LiveTornadoTestCase, SeleniumHelper):
 
     def test_template_export_import(self):
         driver = self.driver
-        driver.get(self.base_url + "/templates/")
+        driver.get(f"{self.base_url}/templates/")
         templates = self.driver.find_elements_by_css_selector(
             '.fw-contents tbody tr .far.fa-file'
         )

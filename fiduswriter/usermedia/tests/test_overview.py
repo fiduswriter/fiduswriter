@@ -38,7 +38,7 @@ class UsermediaOverviewTest(LiveTornadoTestCase, SeleniumHelper):
 
     def test_overview(self):
         driver = self.driver
-        driver.get(self.base_url + "/usermedia/")
+        driver.get(f"{self.base_url}/usermedia/")
         driver.find_element_by_xpath(
             "(.//*[normalize-space(text()) and normalize-space(.)="
             "'All categories'])[1]/following::button[1]"

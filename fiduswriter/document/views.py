@@ -173,7 +173,9 @@ def save_access_rights(request):
         if not doc:
             continue
         for right in rights:
-            holder_selector = right['holder']['type'] + '__id'
+            holder_selector = '%(type)s__id' % {
+                'type': right['holder']['type']
+            }
             if right['rights'] == 'delete':
                 # Status 'delete' means the access right is marked for
                 # deletion.
@@ -212,7 +214,9 @@ def save_access_rights(request):
                             )
                 else:
                     # Make the shared path "/filename" or ""
-                    path = '/' + doc.path.split('/').pop()
+                    path = '/%(last_path_part)s' % {
+                        'last_path_part': doc.path.split('/').pop()
+                    }
                     if len(path) == 1:
                         path = ''
                     if right['holder']['type'] == 'userinvite':
@@ -445,7 +449,10 @@ def import_create(request):
             ).first()
         ):
             counter += 1
-            title = base_title + ' ' + str(counter)
+            title = '%(base_title)s %(counter)s' % {
+                'base_title': base_title,
+                'counter': counter
+            }
         content = json.loads(request.POST['template'])
         document_template = DocumentTemplate()
         document_template.title = title
@@ -492,7 +499,10 @@ def import_create(request):
             ).first()
         ):
             counter += 1
-            path = base_path + ' ' + str(counter)
+            title = '%(base_path)s %(counter)s' % {
+                'base_path': base_path,
+                'counter': counter
+            }
     document = Document.objects.create(
         owner=request.user,
         template=document_template,

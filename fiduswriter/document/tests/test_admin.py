@@ -22,7 +22,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         super().setUpClass()
         cls.base_url = cls.live_server_url
         cls.download_dir = mkdtemp()
-        cls.base_admin_url = cls.base_url + '/admin/'
+        cls.base_admin_url = f"{cls.base_url}/admin/"
         driver_data = cls.get_drivers(1, cls.download_dir)
         cls.driver = driver_data["drivers"][0]
         cls.client = driver_data["clients"][0]

@@ -109,7 +109,7 @@ export class DocumentTemplateImporter {
                     this.ok = true
                     this.docTemplate = {
                         id: json.id,
-                        title,
+                        title: json.title,
                         added: json.added,
                         updated: json.updated
                     }

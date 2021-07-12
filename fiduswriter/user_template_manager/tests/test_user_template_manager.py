@@ -118,10 +118,11 @@ class UserTemplateManagerTest(LiveTornadoTestCase, SeleniumHelper):
         )
         self.assertEqual(alert_element.is_displayed(), True)
         time.sleep(1)
-        assert os.path.isfile(os.path.join(
+        file_path = os.path.join(
             self.download_dir,
-            'standard-article-copy.fidustemplate'
-        ))
+            'copy-of-standard-article-copy.fidustemplate'
+        )
+        assert os.path.isfile(file_path)
         self.driver.refresh()
         self.driver.find_element_by_css_selector(
             'button.close'
@@ -138,10 +139,7 @@ class UserTemplateManagerTest(LiveTornadoTestCase, SeleniumHelper):
         upload_button.click()
         self.driver.find_element_by_css_selector(
             '#fidus-template-uploader'
-        ).send_keys(os.path.join(
-            self.download_dir,
-            'standard-article-copy.fidustemplate'
-        ))
+        ).send_keys(file_path)
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Import"]'
         ).click()
@@ -153,7 +151,4 @@ class UserTemplateManagerTest(LiveTornadoTestCase, SeleniumHelper):
             len(editable_templates),
             2
         )
-        os.remove(os.path.join(
-            self.download_dir,
-            'standard-article-copy.fidustemplate'
-        ))
+        os.remove(file_path)

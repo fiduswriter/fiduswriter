@@ -436,6 +436,16 @@ def import_create(request):
                 et.save()
     if not document_template:
         title = request.POST['template_title']
+        counter = 0
+        base_title = title
+        while (
+            DocumentTemplate.objects.filter(
+                Q(title=title),
+                Q(user=request.user) | Q(user=None)
+            ).first()
+        ):
+            counter += 1
+            title = base_title + ' ' + str(counter)
         content = json.loads(request.POST['template'])
         document_template = DocumentTemplate()
         document_template.title = title
@@ -929,6 +939,7 @@ def create_template_admin(request):
         import_id=import_id
     )
     response['id'] = template.id
+    response['title'] = template.title
     date_format = '%Y-%m-%d'
     response['added'] = template.added.strftime(date_format)
     response['updated'] = template.updated.strftime(date_format)

@@ -110,6 +110,16 @@ def create(request):
     import_id = request.POST.get('import_id')
     document_styles = json.loads(request.POST.get('document_styles'))
     export_templates = json.loads(request.POST.get('export_templates'))
+    counter = 0
+    base_title = title
+    while (
+        DocumentTemplate.objects.filter(
+            Q(title=title),
+            Q(user=request.user) | Q(user=None)
+        ).first()
+    ):
+        counter += 1
+        title = base_title + ' ' + str(counter)
     template = DocumentTemplate.objects.create(
         title=title,
         content=content,
@@ -118,6 +128,7 @@ def create(request):
         user=request.user
     )
     response['id'] = template.id
+    response['title'] = template.title
     date_format = '%Y-%m-%d'
     response['added'] = template.added.strftime(date_format)
     response['updated'] = template.updated.strftime(date_format)

@@ -132,7 +132,8 @@ export const headerbarModel = () => ({
                             editor.mod.db.bibDB,
                             editor.mod.db.imageDB
                         )
-                    }
+                    },
+                    disabled: editor => editor.app.isOffline(),
                 },
                 {
                     title: gettext('Print/PDF'),

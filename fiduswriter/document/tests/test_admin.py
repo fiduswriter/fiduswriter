@@ -495,6 +495,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         ).send_keys(
             'text'
         ).perform()
+        time.sleep(1)
         # Create regular copy
         old_body = self.driver.find_element(By.CSS_SELECTOR, ".article-body")
         self.driver.find_element(

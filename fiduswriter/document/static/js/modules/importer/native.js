@@ -4,7 +4,7 @@ import {extractTemplate} from "../document_template"
 
 export class ImportNative {
     /* Save document information into the database */
-    constructor(doc, bibliography, images, otherFiles, user, importId = null, requestedPath = '', template = false) {
+    constructor(doc, bibliography, images, otherFiles, user, importId = null, requestedPath = '', template = null) {
         this.doc = doc
         this.docId = false
         this.path = false

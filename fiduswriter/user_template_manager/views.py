@@ -140,7 +140,8 @@ def create(request):
             contents=style['contents'],
             document_template=template
         )
-        for filename in style['files']:
+        for filepath in style['files']:
+            filename = filepath.split('/').pop()
             file = next((x for x in files if x.name == filename), None)
             if file:
                 DocumentStyleFile.objects.create(
@@ -148,7 +149,7 @@ def create(request):
                     style=doc_style
                 )
     for e_template in export_templates:
-        filename = e_template['file']
+        filename = e_template['file'].split('/').pop()
         file = next((x for x in files if x.name == filename), None)
         if file:
             ExportTemplate.objects.create(

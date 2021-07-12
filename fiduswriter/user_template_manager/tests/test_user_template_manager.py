@@ -97,6 +97,10 @@ class UserTemplateManagerTest(LiveTornadoTestCase, SeleniumHelper):
             'input.title'
         )
         title_field.send_keys(' COPY')
+        import_id_field = self.driver.find_element_by_css_selector(
+            'input.import-id'
+        )
+        import_id_field.send_keys('-1')
         self.driver.find_element_by_css_selector(
             'button.save'
         ).click()
@@ -122,6 +126,7 @@ class UserTemplateManagerTest(LiveTornadoTestCase, SeleniumHelper):
             self.download_dir,
             'copy-of-standard-article-copy.fidustemplate'
         )
+        self.wait_until_file_exists(file_path, self.wait_time)
         assert os.path.isfile(file_path)
         self.driver.refresh()
         self.driver.find_element_by_css_selector(
@@ -152,3 +157,200 @@ class UserTemplateManagerTest(LiveTornadoTestCase, SeleniumHelper):
             2
         )
         os.remove(file_path)
+        editable_templates[1].click()
+        export_template_buttons = self.driver.find_elements_by_css_selector(
+            '.export-templates button'
+        )
+        self.assertEqual(
+            len(export_template_buttons),
+            3
+        )
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Close"]'
+        ).click()
+        # Create file based on copied template
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Documents"]'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            'li.new_document .dropdown'
+        ).click()
+        self.driver.find_elements_by_css_selector(
+            '.fw-pulldown-item'
+        )[1].click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.CLASS_NAME, 'editor-toolbar'))
+        )
+        self.driver.find_element(By.CSS_SELECTOR, ".article-title").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".article-title").send_keys(
+            "Article"
+        )
+        time.sleep(1)
+        # Export full
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            '.header-nav-item[title="File handling"]'
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Download"]'
+        ).click()
+        path = os.path.join(self.download_dir, 'article.fidus')
+        self.wait_until_file_exists(path, self.wait_time)
+        assert os.path.isfile(path)
+        fat_file_path = os.path.join(self.download_dir, 'fat.fidus')
+        os.rename(path, fat_file_path)
+        # Export slim
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            '.header-nav-item[title="Export of the document contents"]'
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Slim FIDUS"]'
+        ).click()
+        self.wait_until_file_exists(path, self.wait_time)
+        assert os.path.isfile(path)
+        slim_file_path = os.path.join(self.download_dir, 'slim.fidus')
+        os.rename(path, slim_file_path)
+        # Exit editor
+        self.driver.find_element(
+            By.ID,
+            "close-document-top"
+        ).click()
+        # Delete document
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, '.delete-document'))
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Delete"]'
+        ).click()
+        alert_element = WebDriverWait(self.driver, self.wait_time).until(
+            EC.visibility_of_element_located(
+                (By.CLASS_NAME, 'alerts-success')
+            )
+        )
+        self.assertEqual(alert_element.is_displayed(), True)
+        # Delete templates
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Templates"]'
+        ).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            '.delete-doc-template'
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Delete"]'
+        ).click()
+        time.sleep(1)
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            '.delete-doc-template'
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Delete"]'
+        ).click()
+        time.sleep(1)
+        # Import slim document
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Documents"]'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            "button[title='Upload FIDUS document']"
+        ).click()
+        self.driver.find_element_by_css_selector(
+            "#fidus-uploader"
+        ).send_keys(slim_file_path)
+        self.driver.find_element_by_css_selector(
+            ".fw-dark"
+        ).click()
+        # Delete document
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, '.delete-document'))
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Delete"]'
+        ).click()
+        alert_element = WebDriverWait(self.driver, self.wait_time).until(
+            EC.visibility_of_element_located(
+                (By.CLASS_NAME, 'alerts-success')
+            )
+        )
+        self.assertEqual(alert_element.is_displayed(), True)
+        # Check that document template has no export templates
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Templates"]'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            '.fw-data-table-title'
+        ).click()
+        export_template_buttons = self.driver.find_elements_by_css_selector(
+            '.export-templates button'
+        )
+        self.assertEqual(
+            len(export_template_buttons),
+            1
+        )
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Close"]'
+        ).click()
+        # Delete template
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            '.delete-doc-template'
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Delete"]'
+        ).click()
+        # Import fat file
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Documents"]'
+        ).click()
+        self.driver.find_element_by_css_selector(
+            "button[title='Upload FIDUS document']"
+        ).click()
+        self.driver.find_element_by_css_selector(
+            "#fidus-uploader"
+        ).send_keys(fat_file_path)
+        self.driver.find_element_by_css_selector(
+            ".fw-dark"
+        ).click()
+        # Import slim file
+        self.driver.find_element_by_css_selector(
+            "button[title='Upload FIDUS document']"
+        ).click()
+        self.driver.find_element_by_css_selector(
+            "#fidus-uploader"
+        ).send_keys(slim_file_path)
+        self.driver.find_element_by_css_selector(
+            ".fw-dark"
+        ).click()
+        time.sleep(1)
+        # Check number of documents
+        delete_links = self.driver.find_elements_by_css_selector(
+            ".delete-document"
+        )
+        self.assertEqual(
+            len(delete_links),
+            2
+        )
+        # Check number of templates
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Templates"]'
+        ).click()
+        template_links = self.driver.find_elements_by_css_selector(
+            '.fw-data-table-title a'
+        )
+        self.assertEqual(
+            len(template_links),
+            1
+        )
+        # Check export templates in template
+        template_links[0].click()
+        export_template_buttons = self.driver.find_elements_by_css_selector(
+            '.export-templates button'
+        )
+        self.assertEqual(
+            len(export_template_buttons),
+            3
+        )
+        os.remove(slim_file_path)
+        os.remove(fat_file_path)

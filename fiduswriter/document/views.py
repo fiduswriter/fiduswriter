@@ -450,8 +450,6 @@ def import_create(request):
         ):
             counter += 1
             template_title = f"{base_template_title} {counter}"
-        print('template_title')
-        print(template_title)
         content = json.loads(request.POST['template'])
         document_template = DocumentTemplate()
         document_template.title = template_title

@@ -244,7 +244,7 @@ export const headerbarModel = () => ({
                     disabled: editor => editor.app.isOffline()
                 },
                 {
-                    title: gettext('Slim Fidus'),
+                    title: gettext('Slim FIDUS'),
                     type: 'action',
                     tooltip: gettext('Export the document to a FIDUS file without its template.'),
                     order: 3,

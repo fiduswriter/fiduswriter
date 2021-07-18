@@ -276,17 +276,14 @@ msgid "email address"
 msgstr "endereço de e-mail"
 
 #: document/emails.py:110
-#, fuzzy
 msgid "Document shared: %(document_title)s"
 msgstr "Documento compartilhado: %(document_title)s"
 
 #: document/emails.py:157
-#, fuzzy
 msgid "Comment on : %(document_title)s"
 msgstr "Comentário em: %(document_title)s"
 
 #: document/emails.py:184
-#, fuzzy
 msgid "Comment assignment on : %(document_title)s"
 msgstr "Atribuição de comentário em: %(document_title)s"
 

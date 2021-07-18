@@ -1,11 +1,65 @@
 msgid ""
 msgstr ""
+"Project-Id-Version: Fidus Writer backend\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-07-18 16:57+0000\n"
+"Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: POEditor.com\n"
-"Project-Id-Version: Fidus Writer backend\n"
-"Language: bg\n"
+
+#: base/settings.py:239
+msgid "English"
+msgstr "Английски"
+
+#: base/settings.py:240
+msgid "Bulgarian"
+msgstr "Български"
+
+#: base/settings.py:241
+msgid "German"
+msgstr "Немски"
+
+#: base/settings.py:242
+msgid "French"
+msgstr "Френски"
+
+#: base/settings.py:243
+msgid "Italian"
+msgstr "Италиански"
+
+#: base/settings.py:244
+msgid "Spanish"
+msgstr "Испански"
+
+#: base/settings.py:245
+msgid "Portuguese (Brazil)"
+msgstr "Португалски (Бразилия)"
+
+#: base/settings.py:331
+msgid "Fidus Writer Admin"
+msgstr "Fidus Writer Admin"
+
+#: base/settings.py:332
+msgid "Fidus Writer Administration Site"
+msgstr "Сайт за администрация на Fidus Writer"
+
+#: base/settings.py:333
+msgid "Welcome to the Fidus Writer Administration Site"
+msgstr "Добре дошли в сайта за администрация на Fidus Writer"
+
+#: base/templates/500.html:5 base/templates/500.html:8
+msgid "Error 500"
+msgstr "Грешка 500"
+
+#: base/templates/500.html:9
+msgid ""
+"We are sorry, but a server error occured. Our team will be looking into the "
+"issue shortly."
+msgstr ""
+"Съжаляваме, но възникна грешка в сървъра. Екипът ни ще разгледа въпроса "
+"скоро."
 
 #: base/templates/admin/console.html:4 base/templates/admin/console.html:16
 #: base/templates/admin/overview.html:14
@@ -25,8 +79,12 @@ msgid "Message"
 msgstr "съобщение"
 
 #: base/templates/admin/console.html:26
-msgid "This system will go offline for scheduled maintenance in 30 minutes. All your work will be saved automatically and we will be back shortly."
-msgstr "Тази система ще премине офлайн за планирана поддръжка след 30 минути. Цялата ви работа ще бъде запазена автоматично и скоро ще се върнем."
+msgid ""
+"This system will go offline for scheduled maintenance in 30 minutes. All "
+"your work will be saved automatically and we will be back shortly."
+msgstr ""
+"Тази система ще премине офлайн за планирана поддръжка след 30 минути. Цялата "
+"ви работа ще бъде запазена автоматично и скоро ще се върнем."
 
 #: base/templates/admin/console.html:33
 msgid "Send to connected users"
@@ -40,6 +98,14 @@ msgstr "Екстри"
 #: document/templates/admin/document/maintenance.html:17
 msgid "Document Maintenance"
 msgstr "Поддръжка на документи"
+
+#: base/templates/api_404.html:5 base/templates/api_404.html:8
+msgid "Error 404"
+msgstr "Грешка 404"
+
+#: base/templates/api_404.html:9
+msgid "We are sorry, but this page was not found."
+msgstr "Съжаляваме, но тази страница не беше намерена."
 
 #: base/templates/app.html:9
 msgid "The all in one solution for collaborative academic writing."
@@ -59,64 +125,73 @@ msgid "Browser not supported"
 msgstr "Браузърът не се поддържа"
 
 #: browser_check/templates/browser_check/browser_not_supported.html:28
-msgid "\n"
+msgid ""
+"\n"
 "                Your browser is not supported by Fidus Writer.\n"
 "                Please update! We recommend using a current\n"
 "                version of Chrome/Chromium or Firefox on a\n"
 "                desktop computer.\n"
 "            "
-msgstr "\n"
+msgstr ""
+"\n"
 "                Вашият браузър не се поддържа от Fidus Writer.\n"
 "                Моля обновете! Препоръчваме да използвате ток\n"
 "                версия на Chrome / Chromium или Firefox на a\n"
 "                настолен компютър.\n"
 "                        "
 
-#: base/settings.py:243
-msgid "English"
-msgstr "Английски"
-
-#: base/settings.py:244
-msgid "Bulgarian"
-msgstr "Български"
-
-#: base/settings.py:245
-msgid "German"
-msgstr "Немски"
-
-#: base/settings.py:246
-msgid "French"
-msgstr "Френски"
-
-#: base/settings.py:247
-msgid "Italian"
-msgstr "Италиански"
-
-#: base/settings.py:248
-msgid "Spanish"
-msgstr "Испански"
-
-#: base/settings.py:249
-msgid "Portuguese (Brazil)"
-msgstr "Португалски (Бразилия)"
-
-#: base/settings.py:339
-msgid "Fidus Writer Admin"
-msgstr "Fidus Writer Admin"
-
-#: base/settings.py:340
-msgid "Fidus Writer Administration Site"
-msgstr "Сайт за администрация на Fidus Writer"
-
-#: base/settings.py:341
-msgid "Welcome to the Fidus Writer Administration Site"
-msgstr "Добре дошли в сайта за администрация на Fidus Writer"
-
-#: document/admin.py:51
+#: document/admin.py:57
 msgid "Duplicate selected document templates"
 msgstr "Дублирайте избраните шаблони за документи"
 
+#: document/emails.py:19 document/views.py:669
+msgid "Untitled"
+msgstr "неозаглавен"
+
+#: document/emails.py:98
+msgid "shared"
+msgstr "споделено"
+
+#: document/emails.py:100 document/emails.py:227
+msgid "Document"
+msgstr "документ"
+
+#: document/emails.py:102 document/emails.py:229
+msgid "Author"
+msgstr "Автор"
+
+#: document/emails.py:104
+msgid "Access Rights"
+msgstr "Права за достъп"
+
+#: document/emails.py:107 document/emails.py:234
+msgid "Access the document"
+msgstr "Достъп до документа"
+
+#: document/emails.py:110
+#, fuzzy, python-format
+#| msgid "Document shared: %(document_title)s"
+msgid "Document shared: %(document_title)s"
+msgstr "Споделен документ:% (document_title) s"
+
+#: document/emails.py:157
+#, fuzzy, python-format
+#| msgid "Comment on : %(document_title)s"
+msgid "Comment on : %(document_title)s"
+msgstr "Коментирайте:% (document_title) s"
+
+#: document/emails.py:184
+#, fuzzy, python-format
+#| msgid "Comment assignment on : %(document_title)s"
+msgid "Comment assignment on : %(document_title)s"
+msgstr "Присвояване на коментар на:% (document_title) s"
+
+#: document/emails.py:231
+msgid "Comment"
+msgstr "коментар"
+
 #: document/templates/admin/document/document/change_list_object_tools.html:8
+#, python-format
 msgid "Add %(name)s"
 msgstr "Добавете %(name)s"
 
@@ -126,14 +201,20 @@ msgid "Maintenance"
 msgstr "Поддръжка"
 
 #: document/templates/admin/document/maintenance.html:19
-msgid "\n"
-"            Before and after upgrading Fidus Writer, you should update all the documents\n"
-"            of all users to the newest document version. Only do this if you know that\n"
+msgid ""
+"\n"
+"            Before and after upgrading Fidus Writer, you should update all "
+"the documents\n"
+"            of all users to the newest document version. Only do this if you "
+"know that\n"
 "            no user is currently editing any document!\n"
 "            "
-msgstr "\n"
-"            Преди и след надграждането на Fidus Writer трябва да актуализирате всички документи\n"
-"            на всички потребители до най-новата версия на документа. Правете това само ако знаете това\n"
+msgstr ""
+"\n"
+"            Преди и след надграждането на Fidus Writer трябва да "
+"актуализирате всички документи\n"
+"            на всички потребители до най-новата версия на документа. Правете "
+"това само ако знаете това\n"
 "            в момента никой потребител не редактира никакъв документ!\n"
 "                        "
 
@@ -141,53 +222,7 @@ msgstr "\n"
 msgid "Update all documents (DANGER!)"
 msgstr "Актуализирайте всички документи (ОПАСНОСТ!)"
 
-#: document/emails.py:19 document/views.py:727
-msgid "Untitled"
-msgstr "неозаглавен"
-
-#: document/emails.py:90
-msgid "shared"
-msgstr "споделено"
-
-#: document/emails.py:92 document/emails.py:210
-msgid "Document"
-msgstr "документ"
-
-#: document/emails.py:94 document/emails.py:212
-msgid "Author"
-msgstr "Автор"
-
-#: document/emails.py:96
-msgid "Access Rights"
-msgstr "Права за достъп"
-
-#: document/emails.py:99 document/emails.py:217
-msgid "Access the document"
-msgstr "Достъп до документа"
-
-#: document/emails.py:102
-msgid "Document shared:"
-msgstr "Документът е споделен:"
-
-#: document/views.py:590
-msgid "Sign up or log in and access the document"
-msgstr "Регистрирайте се или влезте и получите достъп до документа"
-
-#. el espacio antes de los dos puntos se ve raro
-#: document/emails.py:146
-msgid "Comment on :"
-msgstr "Коментар за:"
-
-#. el espacio antes de los dos puntos se ve raro
-#: document/emails.py:167
-msgid "Comment assignment on :"
-msgstr "Задание за коментар на:"
-
-#: document/emails.py:214
-msgid "Comment"
-msgstr "коментар"
-
-#: style/models.py:81
+#: style/models.py:74
 msgid "Default"
 msgstr "По подразбиране"
 
@@ -195,166 +230,177 @@ msgstr "По подразбиране"
 msgid "The template needs at least 1 document style"
 msgstr "Шаблонът се нуждае от поне 1 стил на документ"
 
-#: user/templates/account/email/email_confirmation_message.html:7
-#: user/templates/account/email/password_reset_key_message.html:7
-msgid "\n"
-"        Hello from %(site_name)s!\n"
-"    "
-msgstr "\n"
-"        Здравейте от %(site_name)s!\n"
-"        "
+#: user/emails.py:38
+msgid "Invite for Fidus Writer"
+msgstr "Поканете за Fidus Writer"
 
-#. Se entiende?
-#: user/templates/account/email/email_confirmation_message.html:14
-msgid "\n"
-"        You're receiving this e-mail because user %(user_display)s has given yours as an e-mail address to connect their account.\n"
-"    "
-msgstr "\n"
-"        Получавате този имейл, защото потребител %(user_display)s е дал вашия като имейл адрес за свързване на акаунта им.\n"
-"        "
+#: user/emails.py:41
+msgid "Sign up/log in and accept/reject the invite"
+msgstr "Регистрирайте се / влезте и приемете / отхвърлете поканата"
 
-#: user/templates/account/email/email_confirmation_message.html:20
-msgid "\n"
-"        To confirm this is correct, go to <a href=\"%(url)s\">%(url)s</a>.\n"
-"    "
-msgstr "\n"
-"        За да потвърдите, че това е правилно, отидете на <a href=\"%(url)s\">%(url)s </a>.\n"
-"        "
+#: user/emails.py:44
+msgid "Fidus Writer contact invite"
+msgstr "Покана за контакт на Fidus Writer"
 
-#: user/templates/account/email/email_confirmation_message.html:26
-#: user/templates/account/email/password_reset_key_message.html:32
-msgid "\n"
-"        Thank you from %(site_name)s!\n"
-"    "
-msgstr "\n"
-"        Благодаря ви от %(site_name)s!\n"
-"        "
+#: user/emails.py:84
+msgid "Invite for Fidus Writer declined"
+msgstr "Поканата за Fidus Writer отказа"
 
-#. Bien?
-#: user/templates/account/email/password_reset_key_message.html:13
-msgid "\n"
-"        You're receiving this e-mail because you or someone else has requested a password for your user account.\n"
-"    "
-msgstr "\n"
-"        Получавате този имейл, защото вие или някой друг сте поискали парола за вашия потребителски акаунт.\n"
-"        "
+#: user/emails.py:87 user/emails.py:133
+msgid "See your list of contacts"
+msgstr "Вижте списъка си с контакти"
 
-#. En español generalmente no se usa safely en este tipo de mensajes de restablecimiento de contraseña.
-#: user/templates/account/email/password_reset_key_message.html:18
-msgid "\n"
-"        It can be safely ignored if you did not request a password reset. Click the link below to reset your password.\n"
-"    "
-msgstr "\n"
-"        Може безопасно да се игнорира, ако не сте поискали нулиране на парола. Кликнете върху връзката по-долу, за да нулирате паролата си.\n"
-"        "
+#: user/emails.py:90
+msgid "Fidus Writer invite declined"
+msgstr "Поканата за Fidus Writer е отхвърлена"
 
-#: user/templates/account/email/password_reset_key_message.html:21
-msgid "In case you forgot, your username is %(username)s."
-msgstr "В случай, че сте забравили, вашето потребителско име е %(username)s."
+#: user/emails.py:130
+msgid "Invite for Fidus Writer accepted"
+msgstr "Поканата за Fidus Writer е приета"
 
-#: usermedia/views.py:36
-msgid "Filetype not supported"
-msgstr "Типът файл не се поддържа"
+#: user/emails.py:136
+msgid "Fidus Writer invite accepted"
+msgstr "Поканата за Fidus Writer е приета"
 
-#: usermedia/views.py:68
-msgid "No file uploaded"
-msgstr "Не е качен файл"
+#: user/models.py:91
+msgid "email address"
+msgstr "имейл адрес"
 
-#: base/templates/500.html:5 base/templates/500.html:8
-msgid "Error 500"
-msgstr "Грешка 500"
-
-#: base/templates/500.html:9
-msgid "We are sorry, but a server error occured. Our team will be looking into the issue shortly."
-msgstr "Съжаляваме, но възникна грешка в сървъра. Екипът ни ще разгледа въпроса скоро."
-
-#: base/templates/api_404.html:5 base/templates/api_404.html:8
-msgid "Error 404"
-msgstr "Грешка 404"
-
-#: base/templates/api_404.html:9
-msgid "We are sorry, but this page was not found."
-msgstr "Съжаляваме, но тази страница не беше намерена."
+#: user/models.py:163
+msgid "Can login as another user"
+msgstr "Може да влезе като друг потребител"
 
 #: user/templates/account/email/email_confirmation_message.html:7
 #: user/templates/account/email/password_reset_key_message.html:7
+#, python-format
 msgid "Hello from %(site_name)s!"
 msgstr "Здравейте от %(site_name)s!"
 
 #: user/templates/account/email/email_confirmation_message.html:12
-msgid "You are receiving this e-mail because user %(user_display)s has given yours as an e-mail address to connect their account."
-msgstr "Получавате този имейл, защото потребителят %(user_display)s е дал вашия като имейл адрес, за да свърже своя акаунт."
+#, python-format
+msgid ""
+"You are receiving this e-mail because user %(user_display)s has given yours "
+"as an e-mail address to connect their account."
+msgstr ""
+"Получавате този имейл, защото потребителят %(user_display)s е дал вашия като "
+"имейл адрес, за да свърже своя акаунт."
 
 #: user/templates/account/email/email_confirmation_message.html:16
+#, python-format
 msgid "To confirm this is correct, go to <a href=\"%(url)s\">%(url)s</a>."
-msgstr "За да потвърдите, че това е правилно, отидете на <a href=\"%(url)s\">%(url)s</a>."
+msgstr ""
+"За да потвърдите, че това е правилно, отидете на <a href=\"%(url)s\">"
+"%(url)s</a>."
 
 #: user/templates/account/email/email_confirmation_message.html:20
 #: user/templates/account/email/password_reset_key_message.html:26
+#, python-format
 msgid "Thank you from %(site_name)s!"
 msgstr "Благодаря ви от %(site_name)s!"
 
 #: user/templates/account/email/password_reset_key_message.html:11
-msgid "You are receiving this e-mail because you or someone else has requested a password for your user account."
-msgstr "Получавате този имейл, защото вие или някой друг е поискал парола за вашия потребителски акаунт."
+msgid ""
+"You are receiving this e-mail because you or someone else has requested a "
+"password for your user account."
+msgstr ""
+"Получавате този имейл, защото вие или някой друг е поискал парола за вашия "
+"потребителски акаунт."
 
 #: user/templates/account/email/password_reset_key_message.html:14
-msgid "It can be safely ignored if you did not request a password reset. Click the link below to reset your password."
-msgstr "Той може безопасно да бъде игнориран, ако не сте поискали нулиране на парола. Щракнете върху връзката по-долу, за да нулирате паролата си."
+msgid ""
+"It can be safely ignored if you did not request a password reset. Click the "
+"link below to reset your password."
+msgstr ""
+"Той може безопасно да бъде игнориран, ако не сте поискали нулиране на "
+"парола. Щракнете върху връзката по-долу, за да нулирате паролата си."
 
-#: usermedia/views.py:40
+#: user/templates/account/email/password_reset_key_message.html:21
+#, python-format
+msgid "In case you forgot, your username is %(username)s."
+msgstr "В случай, че сте забравили, вашето потребителско име е %(username)s."
+
+#: usermedia/views.py:37
+msgid "Filetype not supported"
+msgstr "Типът файл не се поддържа"
+
+#: usermedia/views.py:44
 msgid "Image too large"
 msgstr "Изображението е твърде голямо"
 
-#: user/models.py:165
-msgid "Can login as another user"
-msgstr "Може да влезе като друг потребител"
+#: usermedia/views.py:71
+msgid "No file uploaded"
+msgstr "Не е качен файл"
 
-#: user/emails.py:34
-msgid "Invite for Fidus Writer"
-msgstr "Поканете за Fidus Writer"
+#~ msgid "Document shared:"
+#~ msgstr "Документът е споделен:"
 
-#: user/emails.py:37
-msgid "Sign up/log in and accept/reject the invite"
-msgstr "Регистрирайте се / влезте и приемете / отхвърлете поканата"
+#~ msgid "Sign up or log in and access the document"
+#~ msgstr "Регистрирайте се или влезте и получите достъп до документа"
 
-#: user/emails.py:40
-msgid "Fidus Writer contact invite"
-msgstr "Покана за контакт на Fidus Writer"
+#~ msgid "Comment on :"
+#~ msgstr "Коментар за:"
 
-#: user/emails.py:79
-msgid "Invite for Fidus Writer declined"
-msgstr "Поканата за Fidus Writer отказа"
+#~ msgid "Comment assignment on :"
+#~ msgstr "Задание за коментар на:"
 
-#: user/emails.py:82 user/emails.py:127
-msgid "See your list of contacts"
-msgstr "Вижте списъка си с контакти"
+#~ msgid ""
+#~ "\n"
+#~ "        Hello from %(site_name)s!\n"
+#~ "    "
+#~ msgstr ""
+#~ "\n"
+#~ "        Здравейте от %(site_name)s!\n"
+#~ "        "
 
-#: user/emails.py:85
-msgid "Fidus Writer invite declined"
-msgstr "Поканата за Fidus Writer е отхвърлена"
+#~ msgid ""
+#~ "\n"
+#~ "        You're receiving this e-mail because user %(user_display)s has "
+#~ "given yours as an e-mail address to connect their account.\n"
+#~ "    "
+#~ msgstr ""
+#~ "\n"
+#~ "        Получавате този имейл, защото потребител %(user_display)s е дал "
+#~ "вашия като имейл адрес за свързване на акаунта им.\n"
+#~ "        "
 
-#: user/emails.py:124
-msgid "Invite for Fidus Writer accepted"
-msgstr "Поканата за Fidus Writer е приета"
+#~ msgid ""
+#~ "\n"
+#~ "        To confirm this is correct, go to <a href=\"%(url)s\">%(url)s</"
+#~ "a>.\n"
+#~ "    "
+#~ msgstr ""
+#~ "\n"
+#~ "        За да потвърдите, че това е правилно, отидете на <a href=\"%(url)s"
+#~ "\">%(url)s </a>.\n"
+#~ "        "
 
-#: user/emails.py:130
-msgid "Fidus Writer invite accepted"
-msgstr "Поканата за Fidus Writer е приета"
+#~ msgid ""
+#~ "\n"
+#~ "        Thank you from %(site_name)s!\n"
+#~ "    "
+#~ msgstr ""
+#~ "\n"
+#~ "        Благодаря ви от %(site_name)s!\n"
+#~ "        "
 
-#: user/models.py:90
-msgid "email address"
-msgstr "имейл адрес"
+#~ msgid ""
+#~ "\n"
+#~ "        You're receiving this e-mail because you or someone else has "
+#~ "requested a password for your user account.\n"
+#~ "    "
+#~ msgstr ""
+#~ "\n"
+#~ "        Получавате този имейл, защото вие или някой друг сте поискали "
+#~ "парола за вашия потребителски акаунт.\n"
+#~ "        "
 
-#: document/emails.py:102
-msgid "Document shared: %(document_title)s"
-msgstr "Споделен документ:% (document_title) s"
-
-#: document/emails.py:146
-msgid "Comment on : %(document_title)s"
-msgstr "Коментирайте:% (document_title) s"
-
-#: document/emails.py:169
-msgid "Comment assignment on : %(document_title)s"
-msgstr "Присвояване на коментар на:% (document_title) s"
-
+#~ msgid ""
+#~ "\n"
+#~ "        It can be safely ignored if you did not request a password reset. "
+#~ "Click the link below to reset your password.\n"
+#~ "    "
+#~ msgstr ""
+#~ "\n"
+#~ "        Може безопасно да се игнорира, ако не сте поискали нулиране на "
+#~ "парола. Кликнете върху връзката по-долу, за да нулирате паролата си.\n"
+#~ "        "

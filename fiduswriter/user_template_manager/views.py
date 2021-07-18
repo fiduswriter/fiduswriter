@@ -15,7 +15,7 @@ from style.models import DocumentStyle, DocumentStyleFile, ExportTemplate
 @ajax_required
 @require_POST
 def get_template(request):
-    id = int(request.POST['id'])
+    id = int(request.POST["id"])
     if id == 0:
         doc_template = DocumentTemplate()
         doc_template.user = request.user
@@ -23,8 +23,7 @@ def get_template(request):
         status = 201
     else:
         doc_template = DocumentTemplate.objects.filter(
-            id=id,
-            user=request.user
+            id=id, user=request.user
         ).first()
         status = 200
     if doc_template is None:
@@ -36,20 +35,17 @@ def get_template(request):
     document_styles = serializer.serialize(
         doc_template.documentstyle_set.all(),
         use_natural_foreign_keys=True,
-        fields=['title', 'slug', 'contents', 'documentstylefile_set']
+        fields=["title", "slug", "contents", "documentstylefile_set"],
     )
     response = {
-        'id': doc_template.id,
-        'title': doc_template.title,
-        'content': doc_template.content,
-        'doc_version': doc_template.doc_version,
-        'export_templates': export_templates,
-        'document_styles': document_styles
+        "id": doc_template.id,
+        "title": doc_template.title,
+        "content": doc_template.content,
+        "doc_version": doc_template.doc_version,
+        "export_templates": export_templates,
+        "document_styles": document_styles,
     }
-    return JsonResponse(
-        response,
-        status=status
-    )
+    return JsonResponse(response, status=status)
 
 
 @login_required
@@ -61,43 +57,37 @@ def list(request):
     doc_templates = DocumentTemplate.objects.filter(
         Q(user=request.user) | Q(user=None)
     )
-    date_format = '%Y-%m-%d'
-    response['document_templates'] = [
+    date_format = "%Y-%m-%d"
+    response["document_templates"] = [
         {
-            'id': obj.id,
-            'title': obj.title,
-            'is_owner': (obj.user is not None),
-            'added': obj.added.strftime(date_format),
-            'updated': obj.updated.strftime(date_format)
-        } for obj in doc_templates
+            "id": obj.id,
+            "title": obj.title,
+            "is_owner": (obj.user is not None),
+            "added": obj.added.strftime(date_format),
+            "updated": obj.updated.strftime(date_format),
+        }
+        for obj in doc_templates
     ]
-    return JsonResponse(
-        response,
-        status=status
-    )
+    return JsonResponse(response, status=status)
 
 
 @login_required
 @ajax_required
 @require_POST
 def save(request):
-    id = request.POST['id']
+    id = request.POST["id"]
     doc_template = DocumentTemplate.objects.filter(
-        id=id,
-        user=request.user
+        id=id, user=request.user
     ).first()
     if doc_template is None:
         return JsonResponse({}, status=405)
     response = {}
     status = 200
-    doc_template.content = json.loads(request.POST['value'])
-    doc_template.title = request.POST['title']
-    doc_template.import_id = request.POST['import_id']
+    doc_template.content = json.loads(request.POST["value"])
+    doc_template.title = request.POST["title"]
+    doc_template.import_id = request.POST["import_id"]
     doc_template.save()
-    return JsonResponse(
-        response,
-        status=status
-    )
+    return JsonResponse(response, status=status)
 
 
 @login_required
@@ -105,19 +95,16 @@ def save(request):
 @require_POST
 def create(request):
     response = {}
-    title = request.POST.get('title')
-    content = json.loads(request.POST.get('content'))
-    import_id = request.POST.get('import_id')
-    document_styles = json.loads(request.POST.get('document_styles'))
-    export_templates = json.loads(request.POST.get('export_templates'))
+    title = request.POST.get("title")
+    content = json.loads(request.POST.get("content"))
+    import_id = request.POST.get("import_id")
+    document_styles = json.loads(request.POST.get("document_styles"))
+    export_templates = json.loads(request.POST.get("export_templates"))
     counter = 0
     base_title = title
-    while (
-        DocumentTemplate.objects.filter(
-            Q(title=title),
-            Q(user=request.user) | Q(user=None)
-        ).first()
-    ):
+    while DocumentTemplate.objects.filter(
+        Q(title=title), Q(user=request.user) | Q(user=None)
+    ).first():
         counter += 1
         title = f"{base_title} {counter}"
     template = DocumentTemplate.objects.create(
@@ -125,64 +112,54 @@ def create(request):
         content=content,
         doc_version=FW_DOCUMENT_VERSION,
         import_id=import_id,
-        user=request.user
+        user=request.user,
     )
-    response['id'] = template.id
-    response['title'] = template.title
-    date_format = '%Y-%m-%d'
-    response['added'] = template.added.strftime(date_format)
-    response['updated'] = template.updated.strftime(date_format)
-    files = request.FILES.getlist('files[]')
+    response["id"] = template.id
+    response["title"] = template.title
+    date_format = "%Y-%m-%d"
+    response["added"] = template.added.strftime(date_format)
+    response["updated"] = template.updated.strftime(date_format)
+    files = request.FILES.getlist("files[]")
     for style in document_styles:
         doc_style = DocumentStyle.objects.create(
-            title=style['title'],
-            slug=style['slug'],
-            contents=style['contents'],
-            document_template=template
+            title=style["title"],
+            slug=style["slug"],
+            contents=style["contents"],
+            document_template=template,
         )
-        for filepath in style['files']:
-            filename = filepath.split('/').pop()
+        for filepath in style["files"]:
+            filename = filepath.split("/").pop()
             file = next((x for x in files if x.name == filename), None)
             if file:
-                DocumentStyleFile.objects.create(
-                    file=file,
-                    style=doc_style
-                )
+                DocumentStyleFile.objects.create(file=file, style=doc_style)
     for e_template in export_templates:
-        filename = e_template['file'].split('/').pop()
+        filename = e_template["file"].split("/").pop()
         file = next((x for x in files if x.name == filename), None)
         if file:
             ExportTemplate.objects.create(
                 document_template=template,
                 template_file=file,
-                file_type=e_template['file_type']
+                file_type=e_template["file_type"],
             )
-    return JsonResponse(
-        response,
-        status=201
-    )
+    return JsonResponse(response, status=201)
 
 
 @login_required
 @ajax_required
 @require_POST
 def copy(request):
-    id = request.POST['id']
-    title = request.POST['title']
+    id = request.POST["id"]
+    title = request.POST["title"]
     doc_template = DocumentTemplate.objects.filter(
-        Q(id=id),
-        Q(user=request.user) | Q(user=None)
+        Q(id=id), Q(user=request.user) | Q(user=None)
     ).first()
     if doc_template is None:
         return JsonResponse({}, status=405)
     counter = 0
     base_title = title
-    while (
-        DocumentTemplate.objects.filter(
-            Q(title=title),
-            Q(user=request.user) | Q(user=None)
-        ).first()
-    ):
+    while DocumentTemplate.objects.filter(
+        Q(title=title), Q(user=request.user) | Q(user=None)
+    ).first():
         counter += 1
         title = f"{base_title} {counter}"
     response = {}
@@ -208,12 +185,9 @@ def copy(request):
         et.pk = None
         et.document_template = doc_template
         et.save()
-    response['id'] = doc_template.id
-    response['title'] = doc_template.title
-    return JsonResponse(
-        response,
-        status=status
-    )
+    response["id"] = doc_template.id
+    response["title"] = doc_template.title
+    return JsonResponse(response, status=status)
 
 
 @login_required
@@ -222,19 +196,15 @@ def copy(request):
 def delete(request):
     response = {}
     status = 405
-    id = int(request.POST['id'])
+    id = int(request.POST["id"])
     doc_template = DocumentTemplate.objects.filter(
-        pk=id,
-        user=request.user
+        pk=id, user=request.user
     ).first()
     if doc_template:
         status = 200
         if doc_template.is_deletable():
             doc_template.delete()
-            response['done'] = True
+            response["done"] = True
         else:
-            response['done'] = False
-    return JsonResponse(
-        response,
-        status=status
-    )
+            response["done"] = False
+    return JsonResponse(response, status=status)

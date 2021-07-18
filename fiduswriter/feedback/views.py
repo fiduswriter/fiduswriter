@@ -10,14 +10,11 @@ from feedback.models import Feedback
 def feedback(request):
     response = {}
     status = 200
-    feedback_message = request.POST['message']
+    feedback_message = request.POST["message"]
     new_feedback = Feedback()
     new_feedback.message = feedback_message
     if request.user.is_authenticated:
         new_feedback.owner = request.user
     new_feedback.save()
 
-    return JsonResponse(
-        response,
-        status=status
-    )
+    return JsonResponse(response, status=status)

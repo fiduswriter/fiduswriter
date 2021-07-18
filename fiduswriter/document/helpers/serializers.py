@@ -7,13 +7,10 @@ PythonSerializer = serializers.get_serializer("python")
 class PythonWithURLSerializer(PythonSerializer):
     def handle_field(self, obj, field):
         value = field.value_from_object(obj)
-        if isinstance(field, models.FileField) and hasattr(value, 'url'):
+        if isinstance(field, models.FileField) and hasattr(value, "url"):
             self._current[field.name] = value.url
         else:
-            return super().handle_field(
-                obj,
-                field
-            )
+            return super().handle_field(obj, field)
 
     def end_object(self, obj):
         # We add reverse foreign key relations if they are explicitly added.
@@ -29,17 +26,20 @@ class PythonWithURLSerializer(PythonSerializer):
                 if related_name not in self.selected_fields:
                     continue
                 if self.use_natural_foreign_keys and hasattr(
-                    field.remote_field.model, 'natural_key'
+                    field.remote_field.model, "natural_key"
                 ):
+
                     def o2m_value(value):
                         return value.natural_key()
+
                 else:
+
                     def o2m_value(value):
                         return self._value_from_field(value, value._meta.pk)
+
                 self._current[related_name] = [
-                    o2m_value(related) for related in getattr(
-                        obj, related_name
-                    ).iterator()
+                    o2m_value(related)
+                    for related in getattr(obj, related_name).iterator()
                 ]
 
         return super().end_object(obj)

@@ -10,8 +10,8 @@ class DocumentAdmin(admin.ModelAdmin):
         urls = super().get_urls()
         extra_urls = [
             path(
-                'maintenance/',
-                self.admin_site.admin_view(self.maintenance_view)
+                "maintenance/",
+                self.admin_site.admin_view(self.maintenance_view),
             )
         ]
         urls = extra_urls + urls
@@ -19,15 +19,20 @@ class DocumentAdmin(admin.ModelAdmin):
 
     def maintenance_view(self, request):
         response = {}
-        return render(request, 'admin/document/maintenance.html', response)
+        return render(request, "admin/document/maintenance.html", response)
 
 
 admin.site.register(models.Document, DocumentAdmin)
 
 
 class DocumentTemplateAdmin(admin.ModelAdmin):
-    actions = ['duplicate', ]
-    list_display = ('title', 'user',)
+    actions = [
+        "duplicate",
+    ]
+    list_display = (
+        "title",
+        "user",
+    )
 
     def duplicate(self, request, queryset):
         for template in queryset:
@@ -48,6 +53,7 @@ class DocumentTemplateAdmin(admin.ModelAdmin):
                 et.pk = None
                 et.document_template = template
                 et.save()
+
     duplicate.short_description = _("Duplicate selected document templates")
 
 

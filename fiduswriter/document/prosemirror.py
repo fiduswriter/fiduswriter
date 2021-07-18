@@ -8,8 +8,7 @@ from prosemirror.transform import Step
 from django.conf import settings
 
 schema_json_path = os.path.join(
-    settings.PROJECT_PATH,
-    "static-libs/json/schema.json"
+    settings.PROJECT_PATH, "static-libs/json/schema.json"
 )
 
 if os.path.exists(schema_json_path):
@@ -40,9 +39,7 @@ def to_mini_json(node):
     # attributes that are objects.
     # Adapted from https://github.com/ProseMirror/prosemirror-model/blob/
     # 6d970507cd0da48653d3b72f2731a71a144a364b/src/node.js#L340-L351
-    obj = {
-        'type': node.type.name
-    }
+    obj = {"type": node.type.name}
 
     for attr in node.attrs:
         if node.type.attrs[attr].default != node.attrs[attr]:
@@ -61,9 +58,7 @@ def to_mini_json(node):
 def to_mini_mark_json(mark):
     # Adapted from https://github.com/ProseMirror/prosemirror-model/blob/
     # 6d970507cd0da48653d3b72f2731a71a144a364b/src/mark.js#L76-L83
-    obj = {
-        'type': mark.type.name
-    }
+    obj = {"type": mark.type.name}
     for attr in mark.attrs:
         if mark.type.attrs[attr].default != mark.attrs[attr]:
             if "attrs" not in obj:

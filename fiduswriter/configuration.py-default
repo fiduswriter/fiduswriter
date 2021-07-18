@@ -17,17 +17,16 @@ DEBUG = True
 # SOURCE_MAPS = 'source-map' # slow - line and column number
 SOURCE_MAPS = False
 
-PROJECT_PATH = os.environ.get('PROJECT_PATH')
+PROJECT_PATH = os.environ.get("PROJECT_PATH")
 # SRC_PATH is the root path of the FW sources.
-SRC_PATH = os.environ.get('SRC_PATH')
+SRC_PATH = os.environ.get("SRC_PATH")
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(PROJECT_PATH, 'fiduswriter.sql'),
-        'CONN_MAX_AGE': 15
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": os.path.join(PROJECT_PATH, "fiduswriter.sql"),
+        "CONN_MAX_AGE": 15,
     }
-
 }
 
 # Interval between document saves
@@ -44,13 +43,11 @@ DATABASES = {
 TEST_SERVER = True
 # This is the contact email that will be shown in various places all over
 # the site.
-CONTACT_EMAIL = 'mail@email.com'
+CONTACT_EMAIL = "mail@email.com"
 # If websockets is running on a non-standard port, add it here:
 WS_PORT = False
 
-ADMINS = (
-    ('Your Name', 'your_email@example.com'),
-)
+ADMINS = (("Your Name", "your_email@example.com"),)
 
 # Whether anyone surfing to the site can open an account with a login/password.
 REGISTRATION_OPEN = True
@@ -118,7 +115,7 @@ INSTALLED_APPS = [
 
 # A list of allowed hostnames of this Fidus Writer installation
 ALLOWED_HOSTS = [
-    'localhost',
+    "localhost",
 ]
 
 # Disable service worker (default is True)

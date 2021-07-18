@@ -52,7 +52,10 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                ("title", models.CharField(blank=True, default="", max_length=255)),
+                (
+                    "title",
+                    models.CharField(blank=True, default="", max_length=255),
+                ),
                 ("definition", models.TextField(default="{}")),
                 (
                     "user",
@@ -65,11 +68,16 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "doc_version",
-                    models.DecimalField(decimal_places=1, default=3.1, max_digits=3),
+                    models.DecimalField(
+                        decimal_places=1, default=3.1, max_digits=3
+                    ),
                 ),
                 ("added", models.DateTimeField(auto_now_add=True)),
                 ("updated", models.DateTimeField(auto_now=True)),
-                ("import_id", models.CharField(blank=True, default="", max_length=255)),
+                (
+                    "import_id",
+                    models.CharField(blank=True, default="", max_length=255),
+                ),
             ],
         ),
         migrations.CreateModel(
@@ -84,7 +92,10 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                ("title", models.CharField(blank=True, default="", max_length=255)),
+                (
+                    "title",
+                    models.CharField(blank=True, default="", max_length=255),
+                ),
                 ("contents", models.TextField(default="{}")),
                 ("added", models.DateTimeField(auto_now_add=True)),
                 ("updated", models.DateTimeField(auto_now=True)),
@@ -101,7 +112,9 @@ class Migration(migrations.Migration):
                 ("comments", models.TextField(default="{}")),
                 (
                     "doc_version",
-                    models.DecimalField(decimal_places=1, default=3.1, max_digits=3),
+                    models.DecimalField(
+                        decimal_places=1, default=3.1, max_digits=3
+                    ),
                 ),
                 ("bibliography", models.TextField(default="{}")),
                 ("listed", models.BooleanField(default=True)),
@@ -138,7 +151,10 @@ class Migration(migrations.Migration):
                             ("comment", "Commentator"),
                             ("review", "Reviewer"),
                             ("read", "Reader"),
-                            ("read-without-comments", "Reader without comment access"),
+                            (
+                                "read-without-comments",
+                                "Reader without comment access",
+                            ),
                         ],
                         max_length=21,
                     ),
@@ -184,7 +200,10 @@ class Migration(migrations.Migration):
                             ("comment", "Commentator"),
                             ("review", "Reviewer"),
                             ("read", "Reader"),
-                            ("read-without-comments", "Reader without comment access"),
+                            (
+                                "read-without-comments",
+                                "Reader without comment access",
+                            ),
                         ],
                         max_length=21,
                     ),
@@ -210,13 +229,21 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                ("note", models.CharField(blank=True, default="", max_length=255)),
+                (
+                    "note",
+                    models.CharField(blank=True, default="", max_length=255),
+                ),
                 ("date", models.DateTimeField(auto_now=True)),
                 (
                     "file_object",
-                    models.FileField(upload_to=document.models.revision_filename),
+                    models.FileField(
+                        upload_to=document.models.revision_filename
+                    ),
                 ),
-                ("file_name", models.CharField(blank=True, default="", max_length=255)),
+                (
+                    "file_name",
+                    models.CharField(blank=True, default="", max_length=255),
+                ),
                 (
                     "document",
                     models.ForeignKey(
@@ -226,7 +253,9 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "doc_version",
-                    models.DecimalField(decimal_places=1, default=3.1, max_digits=3),
+                    models.DecimalField(
+                        decimal_places=1, default=3.1, max_digits=3
+                    ),
                 ),
             ],
         ),

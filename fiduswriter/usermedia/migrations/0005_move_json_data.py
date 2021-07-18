@@ -66,7 +66,9 @@ class Migration(migrations.Migration):
             field=models.JSONField(default=list),
         ),
         migrations.RenameField(
-            model_name="userimage", old_name="copyright", new_name="copyright_text"
+            model_name="userimage",
+            old_name="copyright",
+            new_name="copyright_text",
         ),
         migrations.AddField(
             model_name="userimage",
@@ -74,7 +76,9 @@ class Migration(migrations.Migration):
             field=models.JSONField(default=dict),
         ),
         migrations.RenameField(
-            model_name="documentimage", old_name="copyright", new_name="copyright_text"
+            model_name="documentimage",
+            old_name="copyright",
+            new_name="copyright_text",
         ),
         migrations.AddField(
             model_name="documentimage",

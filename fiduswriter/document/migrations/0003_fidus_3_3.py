@@ -58,7 +58,10 @@ def update_node(node):
                 if "equation" in attrs:
                     equation = attrs["equation"]
                 node["content"].append(
-                    {"type": "figure_equation", "attrs": {"equation": equation}}
+                    {
+                        "type": "figure_equation",
+                        "attrs": {"equation": equation},
+                    }
                 )
             if "image" in attrs:
                 del attrs["image"]
@@ -70,7 +73,9 @@ def update_node(node):
                 and attrs["caption"] is not False
                 and len(attrs["caption"]) > 0
             ):
-                caption["content"] = [{"type": "text", "text": attrs["caption"]}]
+                caption["content"] = [
+                    {"type": "text", "text": attrs["caption"]}
+                ]
                 attrs["caption"] = True
             else:
                 attrs["caption"] = False
@@ -170,17 +175,23 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="document",
             name="doc_version",
-            field=models.DecimalField(decimal_places=1, default=3.3, max_digits=3),
+            field=models.DecimalField(
+                decimal_places=1, default=3.3, max_digits=3
+            ),
         ),
         migrations.AlterField(
             model_name="documentrevision",
             name="doc_version",
-            field=models.DecimalField(decimal_places=1, default=3.3, max_digits=3),
+            field=models.DecimalField(
+                decimal_places=1, default=3.3, max_digits=3
+            ),
         ),
         migrations.AlterField(
             model_name="documenttemplate",
             name="doc_version",
-            field=models.DecimalField(decimal_places=1, default=3.3, max_digits=3),
+            field=models.DecimalField(
+                decimal_places=1, default=3.3, max_digits=3
+            ),
         ),
         migrations.RunPython(update_documents),
     ]

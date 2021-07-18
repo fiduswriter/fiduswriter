@@ -12,29 +12,26 @@ from os import getenv
 
 
 class Command(BaseCommand):
-
     def handle(self, *args, **options):
         User = get_user_model()
         if User.objects.count() == 0:
             for user in settings.ADMINS:
-                username = user[0].replace(' ', '')
+                username = user[0].replace(" ", "")
                 email = user[1]
-                if getenv('ADMIN_PASSWORD') != '':
-                    password = getenv('ADMIN_PASSWORD')
+                if getenv("ADMIN_PASSWORD") != "":
+                    password = getenv("ADMIN_PASSWORD")
                 else:
-                    password = 'admin'
+                    password = "admin"
                 self.stdout.write(
-                    'Creating account for %s (%s)' % (username, email)
+                    "Creating account for %s (%s)" % (username, email)
                 )
                 admin = User.objects.create_superuser(
-                    username=username,
-                    email=email,
-                    password=password
+                    username=username, email=email, password=password
                 )
                 admin.is_active = True
                 admin.is_admin = True
                 admin.save()
         else:
             self.stdout.write(
-                'Admin accounts can only be initialized if no accounts exist'
+                "Admin accounts can only be initialized if no accounts exist"
             )

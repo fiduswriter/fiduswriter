@@ -24,7 +24,9 @@ class Migration(migrations.Migration):
                 ),
             ],
             options={
-                "permissions": (("can_login_as", "Can login as another user"),),
+                "permissions": (
+                    ("can_login_as", "Can login as another user"),
+                ),
                 "managed": False,
                 "default_permissions": (),
             },

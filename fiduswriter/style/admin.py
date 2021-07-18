@@ -16,7 +16,9 @@ class DocumentStyleFileInline(admin.TabularInline):
 
 
 class DocumentStyleAdmin(admin.ModelAdmin):
-    inlines = [DocumentStyleFileInline, ]
+    inlines = [
+        DocumentStyleFileInline,
+    ]
 
 
 admin.site.register(models.DocumentStyle, DocumentStyleAdmin)

@@ -56,9 +56,7 @@ def name_from_url(url):
     u'file.ext'
     """
     p = urlparse(url)
-    for base in (p.path.split('/')[-1],
-                 p.path,
-                 p.netloc):
+    for base in (p.path.split("/")[-1], p.path, p.netloc):
         name = ".".join([s for s in map(slugify, base.split(".")) if s])
         if name:
             return name
@@ -80,13 +78,11 @@ def copy_avatar(request, user, account):
 
 @receiver(user_signed_up)
 def on_user_signed_up(sender, request, user, *args, **kwargs):
-    sociallogin = kwargs.get('sociallogin')
+    sociallogin = kwargs.get("sociallogin")
     if sociallogin:
-        copy_avatar(request,
-                    sociallogin.account.user,
-                    sociallogin.account)
+        copy_avatar(request, sociallogin.account.user, sociallogin.account)
         invites_connect(sociallogin.account.user)
-    if settings.ACCOUNT_EMAIL_VERIFICATION != 'mandatory':
+    if settings.ACCOUNT_EMAIL_VERIFICATION != "mandatory":
         invites_connect(user)
 
 

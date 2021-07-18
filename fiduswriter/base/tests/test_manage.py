@@ -18,7 +18,6 @@ END_PORT = 8040
 
 
 class ManageTest(unittest.TestCase):
-
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -38,19 +37,20 @@ class ManageTest(unittest.TestCase):
     def test_startserver(self):
         os.chdir(settings.PROJECT_PATH)
         temp_dir = mkdtemp()
-        p1 = multiprocessing.Process(
-            target=self.start_fidus,
-            args=(temp_dir,)
-        )
+        p1 = multiprocessing.Process(target=self.start_fidus, args=(temp_dir,))
         p1.start()
         time.sleep(2)
-        sql_file = Path(os.path.join(temp_dir, 'fiduswriter.sql'))
+        sql_file = Path(os.path.join(temp_dir, "fiduswriter.sql"))
         assert sql_file.exists()
         # Get page during transpile to see if we get setup page
         try:
-            page = urllib.request.urlopen(
-                'http://localhost:{}/'.format(self.port)
-            ).read().decode('utf-8')
+            page = (
+                urllib.request.urlopen(
+                    "http://localhost:{}/".format(self.port)
+                )
+                .read()
+                .decode("utf-8")
+            )
             assert "Fidus Writer is currently being updated." in page
         except URLError as err:
             if self.port < END_PORT:
@@ -67,15 +67,15 @@ class ManageTest(unittest.TestCase):
     def start_fidus(self, temp_dir):
         os.environ.pop("PROJECT_PATH")
         if os.getenv("COVERAGE_RCFILE"):
-            os.environ['COVERAGE_PROCESS_START'] = '.coveragerc'
+            os.environ["COVERAGE_PROCESS_START"] = ".coveragerc"
         subprocess.call(
             [
                 "./manage.py",
                 "--pythonpath",
                 temp_dir,
                 "runserver",
-                str(self.port)
+                str(self.port),
             ],
-            stdout=open(os.devnull, 'w'),
-            stderr=subprocess.STDOUT
+            stdout=open(os.devnull, "w"),
+            stderr=subprocess.STDOUT,
         )

@@ -74,17 +74,23 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="document",
             name="doc_version",
-            field=models.DecimalField(decimal_places=1, default=3.2, max_digits=3),
+            field=models.DecimalField(
+                decimal_places=1, default=3.2, max_digits=3
+            ),
         ),
         migrations.AlterField(
             model_name="documentrevision",
             name="doc_version",
-            field=models.DecimalField(decimal_places=1, default=3.2, max_digits=3),
+            field=models.DecimalField(
+                decimal_places=1, default=3.2, max_digits=3
+            ),
         ),
         migrations.AlterField(
             model_name="documenttemplate",
             name="doc_version",
-            field=models.DecimalField(decimal_places=1, default=3.2, max_digits=3),
+            field=models.DecimalField(
+                decimal_places=1, default=3.2, max_digits=3
+            ),
         ),
         migrations.RunPython(set_document_version),
     ]

@@ -55,7 +55,9 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "contents",
-                    models.TextField(default="", help_text="The CSS style definiton."),
+                    models.TextField(
+                        default="", help_text="The CSS style definiton."
+                    ),
                 ),
                 (
                     "document_template",
@@ -92,7 +94,8 @@ class Migration(migrations.Migration):
                 (
                     "file_type",
                     models.CharField(
-                        choices=[("docx", "DOCX"), ("odt", "ODT")], max_length=5
+                        choices=[("docx", "DOCX"), ("odt", "ODT")],
+                        max_length=5,
                     ),
                 ),
                 (

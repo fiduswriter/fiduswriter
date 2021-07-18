@@ -7,7 +7,7 @@ from testing.selenium_helper import SeleniumHelper
 
 class PreloginTest(LiveTornadoTestCase, SeleniumHelper):
     fixtures = [
-        'initial_terms.json',
+        "initial_terms.json",
     ]
 
     @classmethod
@@ -28,67 +28,48 @@ class PreloginTest(LiveTornadoTestCase, SeleniumHelper):
     def test_flatpage(self):
         self.driver.get(self.base_url + "/")
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            "a[href='/pages/terms/']"
+            By.CSS_SELECTOR, "a[href='/pages/terms/']"
         ).click()
         h3 = WebDriverWait(self.driver, self.wait_time).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, 'h3'))
+            EC.presence_of_element_located((By.CSS_SELECTOR, "h3"))
         )
-        self.assertEqual(
-            h3.text,
-            'Your Account and Documents on the Website'
-        )
+        self.assertEqual(h3.text, "Your Account and Documents on the Website")
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            "a[href='/pages/privacy/']"
+            By.CSS_SELECTOR, "a[href='/pages/privacy/']"
         ).click()
         h3 = WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
-                (By.CSS_SELECTOR, 'h3:nth-child(4)')
+                (By.CSS_SELECTOR, "h3:nth-child(4)")
             )
         )
-        self.assertEqual(
-            h3.text,
-            'B. Collecting personal information'
-        )
+        self.assertEqual(h3.text, "B. Collecting personal information")
 
     def test_language_switch(self):
         driver = self.driver
         driver.get(self.base_url + "/")
+        self.driver.find_element(By.ID, "lang-selection").click()
         self.driver.find_element(
-            By.ID,
-            "lang-selection"
-        ).click()
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            "#lang-selection option[value=es]"
+            By.CSS_SELECTOR, "#lang-selection option[value=es]"
         ).click()
         self.assertEqual(
             self.driver.find_element(
-                By.CSS_SELECTOR,
-                "html[lang=es] h1.fw-login-title"
+                By.CSS_SELECTOR, "html[lang=es] h1.fw-login-title"
             ).text,
-            'INICIAR SESIÓN'
+            "INICIAR SESIÓN",
         )
         self.assertEqual(
-            self.driver.find_element(
-                By.ID,
-                "lang-selection"
-            ).get_attribute('value'),
-            'es'
+            self.driver.find_element(By.ID, "lang-selection").get_attribute(
+                "value"
+            ),
+            "es",
         )
+        self.driver.find_element(By.ID, "lang-selection").click()
         self.driver.find_element(
-            By.ID,
-            "lang-selection"
-        ).click()
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            "#lang-selection option[value=en]"
+            By.CSS_SELECTOR, "#lang-selection option[value=en]"
         ).click()
         self.assertEqual(
             self.driver.find_element(
-                By.CSS_SELECTOR,
-                "html[lang=en] h1.fw-login-title"
+                By.CSS_SELECTOR, "html[lang=en] h1.fw-login-title"
             ).text,
-            'LOG IN'
+            "LOG IN",
         )

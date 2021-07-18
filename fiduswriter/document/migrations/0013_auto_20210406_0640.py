@@ -25,7 +25,9 @@ class Migration(migrations.Migration):
             model_name="accessright",
             name="holder_type",
             field=models.ForeignKey(
-                limit_choices_to=models.Q(("app_label", "user"), ("model", "user")),
+                limit_choices_to=models.Q(
+                    ("app_label", "user"), ("model", "user")
+                ),
                 on_delete=django.db.models.deletion.CASCADE,
                 to="contenttypes.contenttype",
             ),

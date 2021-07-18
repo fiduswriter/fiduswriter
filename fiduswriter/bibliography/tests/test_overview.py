@@ -14,7 +14,6 @@ from testing.selenium_helper import SeleniumHelper
 
 
 class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
-
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -36,9 +35,7 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
         self.verificationErrors = []
         self.accept_next_alert = True
         self.user = self.create_user(
-            username='Yeti',
-            email='yeti@snowman.com',
-            passtext='otter1'
+            username="Yeti", email="yeti@snowman.com", passtext="otter1"
         )
         self.login_user(self.user, self.driver, self.client)
 
@@ -102,13 +99,21 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
             "'All categories'])[1]/following::button[1]"
         ).click()
         try:
-            self.assertEqual("Fish", driver.find_element_by_id(
-                "categoryTitle_1").get_attribute("value"))
+            self.assertEqual(
+                "Fish",
+                driver.find_element_by_id("categoryTitle_1").get_attribute(
+                    "value"
+                ),
+            )
         except AssertionError as e:
             self.verificationErrors.append(str(e))
         try:
-            self.assertEqual("Table", driver.find_element_by_id(
-                "categoryTitle_2").get_attribute("value"))
+            self.assertEqual(
+                "Table",
+                driver.find_element_by_id("categoryTitle_2").get_attribute(
+                    "value"
+                ),
+            )
         except AssertionError as e:
             self.verificationErrors.append(str(e))
         driver.find_element_by_xpath(
@@ -121,9 +126,11 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         driver.find_element_by_id("select-bibtype").click()
         driver.find_element_by_css_selector(
-            "#select-bibtype option[value=article]").click()
+            "#select-bibtype option[value=article]"
+        ).click()
         title_of_publication = driver.find_element_by_css_selector(
-            ".journaltitle .ProseMirror")
+            ".journaltitle .ProseMirror"
+        )
         title_of_publication.click()
         title_of_publication.send_keys("Title of publication")
         title = driver.find_element_by_css_selector(".title .ProseMirror")
@@ -149,31 +156,29 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
             "'Table'])[1]/following::div[1]"
         ).click()
         try:
-            self.assertEqual("Jungle", driver.find_element_by_xpath(
-                "(.//*[normalize-space(text()) and normalize-space(.)="
-                "'Table'])[1]/following::div[1]"
-            ).text)
+            self.assertEqual(
+                "Jungle",
+                driver.find_element_by_xpath(
+                    "(.//*[normalize-space(text()) and normalize-space(.)="
+                    "'Table'])[1]/following::div[1]"
+                ).text,
+            )
         except AssertionError as e:
             self.verificationErrors.append(str(e))
-        driver.find_element_by_css_selector(
-            "button.fw-dark"
-        ).click()
+        driver.find_element_by_css_selector("button.fw-dark").click()
         # Make change to citation source
-        driver.find_element_by_css_selector(
-            ".edit-bib"
-        ).click()
+        driver.find_element_by_css_selector(".edit-bib").click()
         date_input = driver.find_element_by_css_selector(
             ".entry-field.date input"
         )
         date_input.click()
         date_input.send_keys(Keys.BACKSPACE)
-        date_input.send_keys('5')
-        driver.find_element_by_css_selector(
-            "button.fw-dark"
-        ).click()
+        date_input.send_keys("5")
+        driver.find_element_by_css_selector("button.fw-dark").click()
         # Closed citation dialog
         search_input = driver.find_element_by_css_selector(
-            ".fw-overview-menu-item .fw-button input[type=text]")
+            ".fw-overview-menu-item .fw-button input[type=text]"
+        )
         search_input.click()
         search_input.send_keys("women")
         try:
@@ -181,7 +186,7 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
                 "No sources registered",
                 driver.find_element_by_css_selector(
                     ".fw-data-table.fw-large.dataTable-table td"
-                ).text
+                ).text,
             )
         except AssertionError as e:
             self.verificationErrors.append(str(e))
@@ -194,112 +199,95 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
             self.assertEqual(
                 "The title",
                 driver.find_element_by_css_selector(
-                    ".fw-data-table-title .edit-bib").text
+                    ".fw-data-table-title .edit-bib"
+                ).text,
             )
         except AssertionError as e:
             self.verificationErrors.append(str(e))
         driver.find_element_by_css_selector(
-            "button[title='Upload BibTeX file']").click()
+            "button[title='Upload BibTeX file']"
+        ).click()
         # bibliography path
         bib_path = os.path.join(
             settings.PROJECT_PATH,
-            'bibliography/tests/uploads/bibliography.bib'
+            "bibliography/tests/uploads/bibliography.bib",
         )
         driver.find_element_by_id("bib-uploader").send_keys(bib_path)
-        driver.find_element_by_css_selector(
-            "button.submit-import").click()
+        driver.find_element_by_css_selector("button.submit-import").click()
         book_title_el = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located(
-                (
-                    By.CSS_SELECTOR,
-                    ".fw-data-table tr:nth-child(2) .edit-bib"
-                )
+                (By.CSS_SELECTOR, ".fw-data-table tr:nth-child(2) .edit-bib")
             )
         )
         self.assertEqual(
-            'Lean UX: Applying lean principles to improve user experience',
-            book_title_el.text
+            "Lean UX: Applying lean principles to improve user experience",
+            book_title_el.text,
         )
 
         # Export through dropdown menu
         self.driver.find_element_by_css_selector(
-            'tr:nth-child(1) > td > label'
+            "tr:nth-child(1) > td > label"
         ).click()
+        driver.find_element_by_css_selector(".dt-bulk-dropdown").click()
         driver.find_element_by_css_selector(
-            ".dt-bulk-dropdown").click()
-        driver.find_element_by_css_selector(
-            "li.content-menu-item:nth-child(2)").click()
+            "li.content-menu-item:nth-child(2)"
+        ).click()
         time.sleep(1)
-        assert os.path.isfile(os.path.join(
-            self.download_dir, 'bibliography.zip'))
-        os.remove(os.path.join(self.download_dir, 'bibliography.zip'))
+        assert os.path.isfile(
+            os.path.join(self.download_dir, "bibliography.zip")
+        )
+        os.remove(os.path.join(self.download_dir, "bibliography.zip"))
 
         # Delete bib entry
         entries = self.driver.find_elements_by_css_selector(
-            '.fw-data-table .edit-bib'
+            ".fw-data-table .edit-bib"
         )
-        self.assertEqual(
-            len(entries),
-            2
-        )
-        driver.find_element_by_css_selector(
-            ".delete-bib").click()
-        driver.find_element_by_css_selector(
-            "button.fw-dark").click()
+        self.assertEqual(len(entries), 2)
+        driver.find_element_by_css_selector(".delete-bib").click()
+        driver.find_element_by_css_selector("button.fw-dark").click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.staleness_of(entries[0])
         )
         entries = self.driver.find_elements_by_css_selector(
-            '.fw-data-table .edit-bib'
+            ".fw-data-table .edit-bib"
         )
-        self.assertEqual(
-            len(entries),
-            1
-        )
+        self.assertEqual(len(entries), 1)
 
         # Delete through dropdown menu
         self.driver.find_element_by_css_selector(
-            'tr:nth-child(1) > td > label'
+            "tr:nth-child(1) > td > label"
         ).click()
+        driver.find_element_by_css_selector(".dt-bulk-dropdown").click()
         driver.find_element_by_css_selector(
-            ".dt-bulk-dropdown").click()
-        driver.find_element_by_css_selector(
-            "li.content-menu-item:nth-child(1)").click()
-        driver.find_element_by_css_selector(
-            "button.fw-dark").click()
+            "li.content-menu-item:nth-child(1)"
+        ).click()
+        driver.find_element_by_css_selector("button.fw-dark").click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.staleness_of(entries[0])
         )
         entries = self.driver.find_elements_by_css_selector(
-            '.fw-data-table .edit-bib'
+            ".fw-data-table .edit-bib"
         )
-        self.assertEqual(
-            len(entries),
-            0
-        )
+        self.assertEqual(len(entries), 0)
         # Delete category
         driver.find_element_by_css_selector(
-            "button[title='Edit categories']").click()
+            "button[title='Edit categories']"
+        ).click()
         category_inputs = self.driver.find_elements_by_css_selector(
-            '#editCategoryList tr'
+            "#editCategoryList tr"
         )
-        self.assertEqual(
-            len(category_inputs),
-            4
-        )
+        self.assertEqual(len(category_inputs), 4)
         driver.find_element_by_css_selector(
-            ".fw-add-input.icon-addremove").click()
+            ".fw-add-input.icon-addremove"
+        ).click()
+        driver.find_element_by_css_selector("button.fw-dark").click()
         driver.find_element_by_css_selector(
-            "button.fw-dark").click()
-        driver.find_element_by_css_selector(
-            "button[title='Edit categories']").click()
+            "button[title='Edit categories']"
+        ).click()
         category_inputs = self.driver.find_elements_by_css_selector(
-            '#editCategoryList tr'
+            "#editCategoryList tr"
         )
-        self.assertEqual(
-            len(category_inputs),
-            3
-        )
+        self.assertEqual(len(category_inputs), 3)
 
     def tearDown(self):
         self.assertEqual([], self.verificationErrors)

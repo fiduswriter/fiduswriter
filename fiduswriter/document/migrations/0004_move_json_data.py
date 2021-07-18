@@ -52,7 +52,9 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RenameField(
-            model_name="document", old_name="comments", new_name="comments_text"
+            model_name="document",
+            old_name="comments",
+            new_name="comments_text",
         ),
         migrations.AddField(
             model_name="document",
@@ -60,7 +62,9 @@ class Migration(migrations.Migration):
             field=models.JSONField(default=dict),
         ),
         migrations.RenameField(
-            model_name="document", old_name="bibliography", new_name="bibliography_text"
+            model_name="document",
+            old_name="bibliography",
+            new_name="bibliography_text",
         ),
         migrations.AddField(
             model_name="document",

@@ -16,19 +16,17 @@ FW_DOCUMENT_VERSION = 3.4
 
 
 class DocumentTemplate(models.Model):
-    title = models.CharField(max_length=255, default='', blank=True)
-    import_id = models.CharField(max_length=255, default='', blank=True)
+    title = models.CharField(max_length=255, default="", blank=True)
+    import_id = models.CharField(max_length=255, default="", blank=True)
     content = models.JSONField(default=dict)
     doc_version = models.DecimalField(
-        max_digits=3,
-        decimal_places=1,
-        default=FW_DOCUMENT_VERSION
+        max_digits=3, decimal_places=1, default=FW_DOCUMENT_VERSION
     )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         null=True,
         blank=True,
-        on_delete=models.deletion.CASCADE
+        on_delete=models.deletion.CASCADE,
     )
     added = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -39,10 +37,12 @@ class DocumentTemplate(models.Model):
 
     def is_deletable(self):
         reverse_relations = [
-            f for f in self._meta.model._meta.get_fields()
-            if (f.one_to_many or f.one_to_one) and
-            f.auto_created and not f.concrete and
-            f.name not in ['documentstyle', 'exporttemplate']
+            f
+            for f in self._meta.model._meta.get_fields()
+            if (f.one_to_many or f.one_to_one)
+            and f.auto_created
+            and not f.concrete
+            and f.name not in ["documentstyle", "exporttemplate"]
         ]
 
         for r in reverse_relations:
@@ -66,11 +66,11 @@ class DocumentTemplate(models.Model):
             ):
                 return [
                     checks.Warning(
-                        'Document templates need to be upgraded. Please '
-                        'navigate to /admin/document/document/maintenance/ '
-                        'with a browser as a superuser and upgrade all '
-                        'document templates on this server.',
-                        obj=cls
+                        "Document templates need to be upgraded. Please "
+                        "navigate to /admin/document/document/maintenance/ "
+                        "with a browser as a superuser and upgrade all "
+                        "document templates on this server.",
+                        obj=cls,
                     )
                 ]
             else:
@@ -81,13 +81,11 @@ class DocumentTemplate(models.Model):
 
 
 class Document(models.Model):
-    title = models.CharField(max_length=255, default='', blank=True)
-    path = models.TextField(default='', blank=True)
+    title = models.CharField(max_length=255, default="", blank=True)
+    path = models.TextField(default="", blank=True)
     content = models.JSONField(default=dict)
     doc_version = models.DecimalField(
-        max_digits=3,
-        decimal_places=1,
-        default=FW_DOCUMENT_VERSION
+        max_digits=3, decimal_places=1, default=FW_DOCUMENT_VERSION
     )
     # The doc_version is the version of the data format in the content field.
     # We upgrade the content field in JavaScript and not migrations so that
@@ -101,8 +99,8 @@ class Document(models.Model):
     # last full save of the document.
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        related_name='owner',
-        on_delete=models.deletion.CASCADE
+        related_name="owner",
+        on_delete=models.deletion.CASCADE,
     )
     added = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -113,21 +111,17 @@ class Document(models.Model):
     # documents are added in plugins that list these documents somewhere else.
     listed = models.BooleanField(default=True)
     template = models.ForeignKey(
-        DocumentTemplate,
-        on_delete=models.deletion.CASCADE
+        DocumentTemplate, on_delete=models.deletion.CASCADE
     )
 
     def __str__(self):
         if len(self.title) > 0:
-            return '%(title)s (%(id)s)' % {
-                'title': self.title,
-                'id': self.id
-            }
+            return "%(title)s (%(id)s)" % {"title": self.title, "id": self.id}
         else:
             return str(self.id)
 
     class Meta(object):
-        ordering = ['-id']
+        ordering = ["-id"]
 
     def clean(self, *args, **kwargs):
         if self.comments is None:
@@ -144,14 +138,17 @@ class Document(models.Model):
 
     def is_deletable(self):
         reverse_relations = [
-            f for f in self._meta.model._meta.get_fields()
-            if (f.one_to_many or f.one_to_one) and
-            f.auto_created and not f.concrete and
-            f.name not in [
-                'accessright',
-                'accessrightinvite',
-                'documentrevision',
-                'documentimage'
+            f
+            for f in self._meta.model._meta.get_fields()
+            if (f.one_to_many or f.one_to_one)
+            and f.auto_created
+            and not f.concrete
+            and f.name
+            not in [
+                "accessright",
+                "accessrightinvite",
+                "documentrevision",
+                "documentimage",
             ]
         ]
 
@@ -176,11 +173,11 @@ class Document(models.Model):
             ):
                 return [
                     checks.Warning(
-                        'Documents need to be upgraded. Please navigate to '
-                        '/admin/document/document/maintenance/ with a browser '
-                        'as a superuser and upgrade all documents on this '
-                        'server.',
-                        obj=cls
+                        "Documents need to be upgraded. Please navigate to "
+                        "/admin/document/document/maintenance/ with a browser "
+                        "as a superuser and upgrade all documents on this "
+                        "server.",
+                        obj=cls,
                     )
                 ]
             else:
@@ -191,85 +188,80 @@ class Document(models.Model):
 
 
 RIGHTS_CHOICES = (
-    ('write', 'Writer'),
+    ("write", "Writer"),
     # Can write content and can read+write comments.
     # Can chat with collaborators.
     # Has read access to revisions.
-    ('write-tracked', 'Write with tracked changes'),
+    ("write-tracked", "Write with tracked changes"),
     # Can write tracked content and can read/write comments.
     # Cannot turn off tracked changes.
     # Can chat with collaborators.
     # Has read access to revisions.
-    ('comment', 'Commentator'),
+    ("comment", "Commentator"),
     # Can read content and can read+write comments.
     # Can chat with collaborators.
     # Has read access to revisions.
-    ('review-tracked', 'Reviewer who can write with tracked changes'),
+    ("review-tracked", "Reviewer who can write with tracked changes"),
     # Can write tracked content and can read/write his own comments.
     # Cannot turn off tracked changes.
     # Cannot chat with collaborators.
     # Has no access to revisions.
-    ('review', 'Reviewer'),
+    ("review", "Reviewer"),
     # Can read the content and can read/write his own comments.
     # Comments by users with this access right only show the user's
     # numeric ID, not their username.
     # Cannot chat with collaborators nor see that they are connected.
     # Has no access to revisions.
-    ('read', 'Reader'),
+    ("read", "Reader"),
     # Can read content, including comments
     # Can chat with collaborators.
     # Has read access to revisions.
-    ('read-without-comments', 'Reader without comment access'),
+    ("read-without-comments", "Reader without comment access"),
     # Can read content, but not the comments.
     # Cannot chat with collaborators.
     # Has no access to revisions.
 )
 
 # Editor and Reviewer can only comment and not edit document
-COMMENT_ONLY = ('review', 'comment')
+COMMENT_ONLY = ("review", "comment")
 
 CAN_UPDATE_DOCUMENT = [
-    'write',
-    'write-tracked',
-    'review',
-    'review-tracked',
-    'comment'
+    "write",
+    "write-tracked",
+    "review",
+    "review-tracked",
+    "comment",
 ]
 
 # Whether the collaborator is allowed to know about other collaborators
 # and communicate with them.
-CAN_COMMUNICATE = ['read', 'write', 'comment', 'write-tracked']
+CAN_COMMUNICATE = ["read", "write", "comment", "write-tracked"]
 
 
 class AccessRight(models.Model):
     document = models.ForeignKey(Document, on_delete=models.deletion.CASCADE)
-    path = models.TextField(default='', blank=True)
-    holder_choices = models.Q(app_label='user', model='user') | \
-        models.Q(app_label='user', model='userinvite')
+    path = models.TextField(default="", blank=True)
+    holder_choices = models.Q(app_label="user", model="user") | models.Q(
+        app_label="user", model="userinvite"
+    )
     holder_type = models.ForeignKey(
-        ContentType,
-        on_delete=models.CASCADE,
-        limit_choices_to=holder_choices
+        ContentType, on_delete=models.CASCADE, limit_choices_to=holder_choices
     )
     holder_id = models.PositiveIntegerField()
-    holder_obj = GenericForeignKey('holder_type', 'holder_id')
+    holder_obj = GenericForeignKey("holder_type", "holder_id")
     rights = models.CharField(
-        max_length=21,
-        choices=RIGHTS_CHOICES,
-        blank=False)
+        max_length=21, choices=RIGHTS_CHOICES, blank=False
+    )
 
     class Meta(object):
         unique_together = (("document", "holder_type", "holder_id"),)
 
     def __str__(self):
-        return (
-            '%(name)s %(rights)s on %(doc_id)d' %
-            {
-                'name': self.holder_obj.readable_name,
-                'rights': self.rights,
-                'doc_id': self.document.id
-            }
-        )
+        return "%(name)s %(rights)s on %(doc_id)d" % {
+            "name": self.holder_obj.readable_name,
+            "rights": self.rights,
+            "doc_id": self.document.id,
+        }
 
 
 def revision_filename(instance, filename):
@@ -279,14 +271,12 @@ def revision_filename(instance, filename):
 class DocumentRevision(models.Model):
     document = models.ForeignKey(Document, on_delete=models.deletion.CASCADE)
     doc_version = models.DecimalField(
-        max_digits=3,
-        decimal_places=1,
-        default=FW_DOCUMENT_VERSION
+        max_digits=3, decimal_places=1, default=FW_DOCUMENT_VERSION
     )
-    note = models.CharField(max_length=255, default='', blank=True)
+    note = models.CharField(max_length=255, default="", blank=True)
     date = models.DateTimeField(auto_now=True)
     file_object = models.FileField(upload_to=revision_filename)
-    file_name = models.CharField(max_length=255, default='', blank=True)
+    file_name = models.CharField(max_length=255, default="", blank=True)
 
     def save(self, *args, **kwargs):
         if self.pk is None:
@@ -296,20 +286,20 @@ class DocumentRevision(models.Model):
             self.file_object = None
             super().save(*args, **kwargs)
             self.file_object = file_object
-            kwargs.pop('force_insert', None)
+            kwargs.pop("force_insert", None)
         super(DocumentRevision, self).save(*args, **kwargs)
 
     def __str__(self):
         if len(self.note) > 0:
-            return '%(note)s (%(id)s) of %(doc_id)s' % {
-                'note': self.note,
-                'id': self.id,
-                'doc_id': self.document.id
+            return "%(note)s (%(id)s) of %(doc_id)s" % {
+                "note": self.note,
+                "id": self.id,
+                "doc_id": self.document.id,
             }
         else:
-            return '%(id)s of %(doc_id)s' % {
-                'id': self.id,
-                'doc_id': self.document.id
+            return "%(id)s of %(doc_id)s" % {
+                "id": self.id,
+                "doc_id": self.document.id,
             }
 
     @classmethod
@@ -326,11 +316,11 @@ class DocumentRevision(models.Model):
             ):
                 return [
                     checks.Warning(
-                        'Document revisions need to be upgraded. Please '
-                        'navigate to /admin/document/document/maintenance/ '
-                        'with a browser as a superuser and upgrade all '
-                        'document revisions on this server.',
-                        obj=cls
+                        "Document revisions need to be upgraded. Please "
+                        "navigate to /admin/document/document/maintenance/ "
+                        "with a browser as a superuser and upgrade all "
+                        "document revisions on this server.",
+                        obj=cls,
                     )
                 ]
             else:

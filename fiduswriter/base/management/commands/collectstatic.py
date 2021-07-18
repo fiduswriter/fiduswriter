@@ -1,6 +1,6 @@
 from django.core.management import call_command
 from npm_mjs.management.commands.collectstatic import (
-    Command as CollectStaticCommand
+    Command as CollectStaticCommand,
 )
 
 from base.management import BaseCommand

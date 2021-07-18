@@ -10,21 +10,18 @@ from django.conf import settings
 
 
 class Command(BaseCommand):
-    help = 'Check JavaScript files with ESLint'
+    help = "Check JavaScript files with ESLint"
 
     def add_arguments(self, parser):
         parser.add_argument(
-            'dir',
-            nargs='?',
-            default='.',
-            help='Directory to check'
+            "dir", nargs="?", default=".", help="Directory to check"
         )
         parser.add_argument(
-            '--fix',
-            action='store_true',
-            dest='fix',
+            "--fix",
+            action="store_true",
+            dest="fix",
             default=False,
-            help='Whether to also attempt to fix files'
+            help="Whether to also attempt to fix files",
         )
 
     def handle(self, *args, **options):
@@ -34,27 +31,20 @@ class Command(BaseCommand):
         apps_paths = []
         for app in list(apps.get_app_configs()):
             apps_paths.append(app.path)
-        os.environ['DJANGO_APPS_PATHS'] = json.dumps(apps_paths)
+        os.environ["DJANGO_APPS_PATHS"] = json.dumps(apps_paths)
         command_array = [
             os.path.join(
-                settings.PROJECT_PATH,
-                ".transpile/node_modules/.bin/eslint"
+                settings.PROJECT_PATH, ".transpile/node_modules/.bin/eslint"
             ),
             "--max-warnings=0",
             "--ignore-path",
-            os.path.join(
-                settings.SRC_PATH,
-                ".eslintignore"
-            ),
+            os.path.join(settings.SRC_PATH, ".eslintignore"),
             "-c",
-            os.path.join(
-                settings.SRC_PATH,
-                ".eslintrc.js"
-            ),
-            options['dir'],
+            os.path.join(settings.SRC_PATH, ".eslintrc.js"),
+            options["dir"],
         ]
-        if options['fix']:
-            command_array.append('--fix')
+        if options["fix"]:
+            command_array.append("--fix")
         return_value = call(command_array)
         if return_value > 0:
             exit(return_value)

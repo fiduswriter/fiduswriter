@@ -1,8 +1,5 @@
 from django.contrib import admin
-from bibliography.models import (
-    Entry,
-    EntryCategory
-)
+from bibliography.models import Entry, EntryCategory
 
 
 class EntryCategoryAdmin(admin.ModelAdmin):

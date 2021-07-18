@@ -11,7 +11,9 @@ def accessrightinvites_to_userinvites(apps, schema_editor):
     user_app_config = apps.get_app_config("user")
     user_app_config.models_module = True
     create_contenttypes(user_app_config)
-    userinvite_ct = ContentType.objects.get(app_label="user", model="userinvite")
+    userinvite_ct = ContentType.objects.get(
+        app_label="user", model="userinvite"
+    )
     for ari in AccessRightInvite.objects.all():
         ui = UserInvite.objects.create(
             email=ari.email,
@@ -39,6 +41,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(
-            accessrightinvites_to_userinvites, userinvites_to_accessrightinvites
+            accessrightinvites_to_userinvites,
+            userinvites_to_accessrightinvites,
         ),
     ]

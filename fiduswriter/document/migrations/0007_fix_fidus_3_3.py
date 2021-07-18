@@ -60,7 +60,10 @@ def update_initial_node(node):
                 if "equation" in attrs:
                     equation = attrs["equation"]
                 node["content"].append(
-                    {"type": "figure_equation", "attrs": {"equation": equation}}
+                    {
+                        "type": "figure_equation",
+                        "attrs": {"equation": equation},
+                    }
                 )
             if "image" in attrs:
                 del attrs["image"]
@@ -72,7 +75,9 @@ def update_initial_node(node):
                 and attrs["caption"] is not False
                 and len(attrs["caption"]) > 0
             ):
-                caption["content"] = [{"type": "text", "text": attrs["caption"]}]
+                caption["content"] = [
+                    {"type": "text", "text": attrs["caption"]}
+                ]
                 attrs["caption"] = True
             else:
                 attrs["caption"] = False

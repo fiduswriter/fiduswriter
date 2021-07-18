@@ -41,7 +41,10 @@ class Migration(migrations.Migration):
                 ),
                 ("title", models.CharField(max_length=128)),
                 ("added", models.DateTimeField(auto_now_add=True)),
-                ("image", models.FileField(upload_to=usermedia.models.get_file_path)),
+                (
+                    "image",
+                    models.FileField(upload_to=usermedia.models.get_file_path),
+                ),
                 (
                     "thumbnail",
                     models.ImageField(
@@ -52,7 +55,10 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 ("image_cat", models.CharField(default="", max_length=255)),
-                ("file_type", models.CharField(blank=True, max_length=20, null=True)),
+                (
+                    "file_type",
+                    models.CharField(blank=True, max_length=20, null=True),
+                ),
                 ("height", models.IntegerField(blank=True, null=True)),
                 ("width", models.IntegerField(blank=True, null=True)),
                 ("checksum", models.BigIntegerField(default=0)),

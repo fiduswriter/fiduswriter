@@ -27,11 +27,15 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "key",
-                    models.UUIDField(default=uuid.uuid4, editable=False, unique=True),
+                    models.UUIDField(
+                        default=uuid.uuid4, editable=False, unique=True
+                    ),
                 ),
                 (
                     "email",
-                    models.EmailField(max_length=254, verbose_name="email address"),
+                    models.EmailField(
+                        max_length=254, verbose_name="email address"
+                    ),
                 ),
                 ("username", models.CharField(max_length=150)),
                 (

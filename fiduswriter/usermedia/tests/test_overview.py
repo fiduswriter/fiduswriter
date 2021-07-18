@@ -10,7 +10,6 @@ from django.conf import settings
 
 
 class UsermediaOverviewTest(LiveTornadoTestCase, SeleniumHelper):
-
     @classmethod
     def setUpClass(cls):
         super(UsermediaOverviewTest, cls).setUpClass()
@@ -30,9 +29,7 @@ class UsermediaOverviewTest(LiveTornadoTestCase, SeleniumHelper):
         self.verificationErrors = []
         self.accept_next_alert = True
         self.user = self.create_user(
-            username='Yeti',
-            email='yeti@snowman.com',
-            passtext='otter1'
+            username="Yeti", email="yeti@snowman.com", passtext="otter1"
         )
         self.login_user(self.user, self.driver, self.client)
 
@@ -42,14 +39,15 @@ class UsermediaOverviewTest(LiveTornadoTestCase, SeleniumHelper):
         driver.find_element_by_xpath(
             "(.//*[normalize-space(text()) and normalize-space(.)="
             "'All categories'])[1]/following::button[1]"
-            ).click()
+        ).click()
         driver.find_element_by_xpath(
             "(.//*[normalize-space(text()) and normalize-space(.)="
             "'Edit Categories'])[1]/following::input[1]"
-            ).click()
+        ).click()
         driver.find_element_by_xpath(
             "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::input[1]").clear()
+            "'Edit Categories'])[1]/following::input[1]"
+        ).clear()
         driver.find_element_by_xpath(
             "(.//*[normalize-space(text()) and normalize-space(.)="
             "'Edit Categories'])[1]/following::input[1]"
@@ -95,12 +93,24 @@ class UsermediaOverviewTest(LiveTornadoTestCase, SeleniumHelper):
             "(.//*[normalize-space(text()) and normalize-space(.)="
             "'All categories'])[1]/following::button[1]"
         ).click()
-        self.assertEqual("landscape", driver.find_element_by_id(
-            "categoryTitle_1").get_attribute("value"))
-        self.assertEqual("people", driver.find_element_by_id(
-            "categoryTitle_2").get_attribute("value"))
-        self.assertEqual("scientific", driver.find_element_by_id(
-            "categoryTitle_3").get_attribute("value"))
+        self.assertEqual(
+            "landscape",
+            driver.find_element_by_id("categoryTitle_1").get_attribute(
+                "value"
+            ),
+        )
+        self.assertEqual(
+            "people",
+            driver.find_element_by_id("categoryTitle_2").get_attribute(
+                "value"
+            ),
+        )
+        self.assertEqual(
+            "scientific",
+            driver.find_element_by_id("categoryTitle_3").get_attribute(
+                "value"
+            ),
+        )
         driver.find_element_by_xpath(
             "(.//*[normalize-space(text()) and normalize-space(.)="
             "'Submit'])[1]/following::button[1]"
@@ -125,8 +135,7 @@ class UsermediaOverviewTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         # image path
         imagePath = os.path.join(
-            settings.PROJECT_PATH,
-            'usermedia/tests/uploads/image.png'
+            settings.PROJECT_PATH, "usermedia/tests/uploads/image.png"
         )
         driver.find_element_by_name("image").send_keys(imagePath)
         driver.find_element_by_xpath(
@@ -138,21 +147,28 @@ class UsermediaOverviewTest(LiveTornadoTestCase, SeleniumHelper):
         )
         self.assertEqual("An image", image_title.text)
         search_input = driver.find_element_by_css_selector(
-            ".fw-overview-menu-item .fw-button input[type=text]")
+            ".fw-overview-menu-item .fw-button input[type=text]"
+        )
         search_input.click()
         search_input.send_keys("fish")
-        self.assertEqual("No images available", driver.find_element_by_xpath(
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Size (px)'])[1]/following::td[1]"
-        ).text)
+        self.assertEqual(
+            "No images available",
+            driver.find_element_by_xpath(
+                "(.//*[normalize-space(text()) and normalize-space(.)="
+                "'Size (px)'])[1]/following::td[1]"
+            ).text,
+        )
         search_input.send_keys(Keys.BACKSPACE)
         search_input.send_keys(Keys.BACKSPACE)
         search_input.send_keys(Keys.BACKSPACE)
         search_input.send_keys(Keys.BACKSPACE)
-        self.assertEqual("An image", driver.find_element_by_xpath(
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Size (px)'])[1]/following::span[3]"
-        ).text)
+        self.assertEqual(
+            "An image",
+            driver.find_element_by_xpath(
+                "(.//*[normalize-space(text()) and normalize-space(.)="
+                "'Size (px)'])[1]/following::span[3]"
+            ).text,
+        )
         driver.find_element_by_xpath(
             "(.//*[normalize-space(text()) and normalize-space(.)="
             "'PNG'])[1]/following::i[1]"

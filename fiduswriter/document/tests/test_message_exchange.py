@@ -11,11 +11,12 @@ class SimpleMessageExchangeTests(LiveTornadoTestCase, EditorHelper):
     Tests in which one user works on the document and simulates
     loss of socket messages.
     """
+
     user = None
     TEST_TEXT = "Lorem ipsum dolor sit amet."
     fixtures = [
-        'initial_documenttemplates.json',
-        'initial_styles.json',
+        "initial_documenttemplates.json",
+        "initial_styles.json",
     ]
 
     @classmethod
@@ -49,12 +50,10 @@ class SimpleMessageExchangeTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element_by_class_name(
-            'article-body'
-        ).click()
+        self.driver.find_element_by_class_name("article-body").click()
 
         # Type lots of text to increment the server message count.
-        socket_object = WebSocket.sessions[self.doc.id]['participants'][0]
+        socket_object = WebSocket.sessions[self.doc.id]["participants"][0]
         self.type_text(self.driver, self.TEST_TEXT)
         self.type_text(self.driver, self.TEST_TEXT)
         self.type_text(self.driver, self.TEST_TEXT)
@@ -62,27 +61,19 @@ class SimpleMessageExchangeTests(LiveTornadoTestCase, EditorHelper):
 
         # Assert that the server count changed in client
         old_server_count = self.driver.execute_script(
-            'return window.theApp.page.ws.messages.server'
+            "return window.theApp.page.ws.messages.server"
         )
         # We simulate lost messages by changing the counter manually.
-        self.driver.execute_script(
-            'window.theApp.page.ws.messages.server = 1'
-        )
+        self.driver.execute_script("window.theApp.page.ws.messages.server = 1")
 
         # Assert that the server count changed in client
         server_count = self.driver.execute_script(
-            'return window.theApp.page.ws.messages.server'
+            "return window.theApp.page.ws.messages.server"
         )
 
-        self.assertNotEqual(
-            old_server_count,
-            server_count
-        )
+        self.assertNotEqual(old_server_count, server_count)
 
-        self.assertEqual(
-            server_count,
-            1
-        )
+        self.assertEqual(server_count, 1)
 
         # Now try typing text again to see if server goes into loop.
         self.type_text(self.driver, self.TEST_TEXT)
@@ -90,24 +81,21 @@ class SimpleMessageExchangeTests(LiveTornadoTestCase, EditorHelper):
         # Check the Socket object to verify that server isn't going in a loop.
         doc_message_count = 0
         doc_data = None
-        for message in socket_object.messages['last_ten']:
-            if 'type' in message.keys():
-                if message['type'] == "doc_data":
+        for message in socket_object.messages["last_ten"]:
+            if "type" in message.keys():
+                if message["type"] == "doc_data":
                     doc_message_count += 1
-                    doc_data = message['doc']['content']
+                    doc_data = message["doc"]["content"]
 
         # We should've only sent the doc_data message once .
-        self.assertEqual(
-            doc_message_count,
-            1
-        )
+        self.assertEqual(doc_message_count, 1)
 
         # Now assert that the document reloaded in front end too !
         doc_content = prosemirror.to_mini_json(
             prosemirror.from_json(
                 self.driver.execute_script(
-                    'return window.theApp.page.docInfo.'
-                    'confirmedDoc.firstChild.toJSON()'
+                    "return window.theApp.page.docInfo."
+                    "confirmedDoc.firstChild.toJSON()"
                 )
             )
         )
@@ -125,7 +113,7 @@ class SimpleMessageExchangeTests(LiveTornadoTestCase, EditorHelper):
 
         self.add_title(self.driver)
         self.driver.find_element_by_css_selector(
-            '#header-navigation > div:nth-child(3) > span'  # Settings
+            "#header-navigation > div:nth-child(3) > span"  # Settings
         ).click()
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Text Language"]'
@@ -133,7 +121,7 @@ class SimpleMessageExchangeTests(LiveTornadoTestCase, EditorHelper):
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Spanish"]'
         ).click()
-        socket_object = WebSocket.sessions[self.doc.id]['participants'][0]
+        socket_object = WebSocket.sessions[self.doc.id]["participants"][0]
         diff_script = (
             "theApp.page.ws.send(()=>({"
             "type: 'diff',"
@@ -153,23 +141,17 @@ class SimpleMessageExchangeTests(LiveTornadoTestCase, EditorHelper):
             logging.disable(logging.NOTSET)
         doc_data = False
         patch_error = 0
-        for message in socket_object.messages['last_ten']:
+        for message in socket_object.messages["last_ten"]:
             if message["type"] == "doc_data":
-                doc_data = message['doc']['content']
+                doc_data = message["doc"]["content"]
             elif message["type"] == "patch_error":
                 patch_error += 1
         # The language should still be Spanish
-        self.assertEqual(
-            doc_data["attrs"]["language"],
-            "es"
-        )
+        self.assertEqual(doc_data["attrs"]["language"], "es")
         # There should be one patch error
-        self.assertEqual(
-            patch_error,
-            1
-        )
+        self.assertEqual(patch_error, 1)
         system_message = self.driver.find_element_by_css_selector(
-            'div.ui-dialog-content.ui-widget-content > p'
+            "div.ui-dialog-content.ui-widget-content > p"
         )
         assert system_message.text == (
             "Your document was out of sync and has been reset."

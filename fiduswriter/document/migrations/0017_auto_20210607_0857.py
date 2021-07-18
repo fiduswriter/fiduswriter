@@ -18,7 +18,10 @@ class Migration(migrations.Migration):
                     ("write", "Writer"),
                     ("write-tracked", "Write with tracked changes"),
                     ("comment", "Commentator"),
-                    ("review-tracked", "Reviewer who can write with tracked changes"),
+                    (
+                        "review-tracked",
+                        "Reviewer who can write with tracked changes",
+                    ),
                     ("review", "Reviewer"),
                     ("read", "Reader"),
                     ("read-without-comments", "Reader without comment access"),

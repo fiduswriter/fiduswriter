@@ -72,15 +72,16 @@ export class DocumentAccessRightsDialog {
             if (!this.documentIds.includes(ar.document_id)) {
                 return
             }
-            if (!docCollabs[ar.holder.type + ar.holder.id]) {
-                docCollabs[ar.holder.type + ar.holder.id] = Object.assign({}, ar)
-                docCollabs[ar.holder.type + ar.holder.id].count = 1
-            } else {
-                if (docCollabs[ar.holder.type + ar.holder.id].rights != ar.rights) {
+            const holderIdent = ar.holder.type + ar.holder.id
+            if (docCollabs[holderIdent]) {
+                if (docCollabs[holderIdent].rights != ar.rights) {
                     // We use read rights if the user has different rights on different docs.
-                    docCollabs[ar.holder.type + ar.holder.id].rights = 'read'
+                    docCollabs[holderIdent].rights = 'read'
                 }
-                docCollabs[ar.holder.type + ar.holder.id].count += 1
+                docCollabs[holderIdent].count += 1
+            } else {
+                docCollabs[holderIdent] = Object.assign({}, ar)
+                docCollabs[holderIdent].count = 1
             }
         })
 

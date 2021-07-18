@@ -29,6 +29,7 @@ jobs:
         run: |
           cd fiduswriter
           pip install flake8
+          pip install black
           pip install -r requirements.txt
       - name: Run linters
         run: |

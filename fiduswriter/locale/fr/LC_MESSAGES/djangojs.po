@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-18 16:57+0000\n"
+"POT-Creation-Date: 2021-07-18 20:45+0000\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2844,8 +2844,10 @@ msgstr ""
 
 #: document/static/js/modules/editor/collab/merge/index.js:251
 #: document/static/js/modules/editor/index.js:351
-msgid "Proceed to dashboard"
-msgstr "Passer au tableau de bord"
+#, fuzzy
+#| msgid "Template Editor"
+msgid "Leave editor"
+msgstr "Éditeur de modèles"
 
 #: document/static/js/modules/editor/collab/merge/state_plugins/action.js:33
 msgid "Change copied to clipboard."
@@ -5199,6 +5201,9 @@ msgstr "Ajouter une nouvelle image"
 #: usermedia/static/js/modules/images/selection_dialog/index.js:56
 msgid "Use image"
 msgstr "Utiliser l'image"
+
+#~ msgid "Proceed to dashboard"
+#~ msgstr "Passer au tableau de bord"
 
 #~ msgid "Add new contact"
 #~ msgstr "Ajouter un nouveau contact"

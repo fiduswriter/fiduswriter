@@ -434,7 +434,7 @@ export class Editor {
             id: "access_rights_modified",
             body: gettext('Your access rights were modified while you were offline, so we cannot save your work to the server any longer, and it is downloaded to your computer instead. Please consider importing it into a new document.'),
             buttons: [{
-                text: gettext('Proceed to dashboard'),
+                text: gettext('Leave editor'),
                 classes: 'fw-dark',
                 click: () => {
                     window.location.href = '/'

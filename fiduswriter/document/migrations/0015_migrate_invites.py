@@ -2,18 +2,16 @@
 from django.db import migrations
 from django.contrib.contenttypes.management import create_contenttypes
 
+
 def accessrightinvites_to_userinvites(apps, schema_editor):
-    AccessRightInvite  = apps.get_model('document', 'AccessRightInvite')
-    AccessRight  = apps.get_model('document', 'AccessRight')
-    UserInvite  = apps.get_model('user', 'UserInvite')
-    ContentType = apps.get_model('contenttypes', 'ContentType')
-    user_app_config = apps.get_app_config('user')
+    AccessRightInvite = apps.get_model("document", "AccessRightInvite")
+    AccessRight = apps.get_model("document", "AccessRight")
+    UserInvite = apps.get_model("user", "UserInvite")
+    ContentType = apps.get_model("contenttypes", "ContentType")
+    user_app_config = apps.get_app_config("user")
     user_app_config.models_module = True
     create_contenttypes(user_app_config)
-    userinvite_ct = ContentType.objects.get(
-        app_label='user',
-        model='userinvite'
-    )
+    userinvite_ct = ContentType.objects.get(app_label="user", model="userinvite")
     for ari in AccessRightInvite.objects.all():
         ui = UserInvite.objects.create(
             email=ari.email,
@@ -21,12 +19,13 @@ def accessrightinvites_to_userinvites(apps, schema_editor):
             username=ari.email,
             by=ari.document.owner,
         )
-        ar = AccessRight.objects.create(
+        AccessRight.objects.create(
             document=ari.document,
             holder_id=ui.id,
             holder_type=userinvite_ct,
             rights=ari.rights,
         )
+
 
 def userinvites_to_accessrightinvites(apps, schema_editor):
     pass
@@ -35,12 +34,11 @@ def userinvites_to_accessrightinvites(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('document', '0014_allow_userinvite_accessrightholder'),
+        ("document", "0014_allow_userinvite_accessrightholder"),
     ]
 
     operations = [
         migrations.RunPython(
-            accessrightinvites_to_userinvites,
-            userinvites_to_accessrightinvites
+            accessrightinvites_to_userinvites, userinvites_to_accessrightinvites
         ),
     ]

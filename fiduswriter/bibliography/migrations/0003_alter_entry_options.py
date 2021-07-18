@@ -6,12 +6,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('bibliography', '0002_move_json_data'),
+        ("bibliography", "0002_move_json_data"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='entry',
-            options={'verbose_name_plural': 'Entries'},
+            name="entry",
+            options={"verbose_name_plural": "Entries"},
         ),
     ]

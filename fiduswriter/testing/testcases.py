@@ -57,8 +57,10 @@ class LiveTornadoThread(threading.Thread):
                 try:
                     self.httpd.listen(int(port))
                 except socket.error as e:
-                    if (index + 1 < len(self.possible_ports) and
-                            e.errno == errno.EADDRINUSE):
+                    if (
+                        index + 1 < len(self.possible_ports)
+                        and e.errno == errno.EADDRINUSE
+                    ):
                         # This port is already in use, so we go on and try with
                         # the next one in the list.
                         continue

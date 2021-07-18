@@ -10,14 +10,29 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Feedback',
+            name="Feedback",
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('message', models.TextField()),
-                ('owner', models.ForeignKey(on_delete=models.deletion.CASCADE, blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
+                    ),
+                ),
+                ("message", models.TextField()),
+                (
+                    "owner",
+                    models.ForeignKey(
+                        on_delete=models.deletion.CASCADE,
+                        blank=True,
+                        to=settings.AUTH_USER_MODEL,
+                        null=True,
+                    ),
+                ),
             ],
-            options={
-            },
+            options={},
             bases=(models.Model,),
         ),
     ]

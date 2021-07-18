@@ -152,7 +152,7 @@ setuptools.setup(
     classifiers = [
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Science/Research",
-        "Framework :: Django :: 3.1",
+        "Framework :: Django :: 3.2",
         "License :: OSI Approved :: GNU Affero General Public License v3",
         "Programming Language :: Python :: 3",
         "Topic :: Scientific/Engineering",

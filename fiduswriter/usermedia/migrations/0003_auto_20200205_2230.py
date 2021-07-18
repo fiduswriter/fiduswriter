@@ -6,18 +6,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('usermedia', '0002_auto_20200205_2140'),
+        ("usermedia", "0002_auto_20200205_2140"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='documentimage',
-            name='copyright',
-            field=models.TextField(default='{"holder":false,"year":false,"freeToRead":true,"licenses":[]}'),
+            model_name="documentimage",
+            name="copyright",
+            field=models.TextField(
+                default='{"holder":false,"year":false,"freeToRead":true,"licenses":[]}'
+            ),
         ),
         migrations.AddField(
-            model_name='userimage',
-            name='copyright',
-            field=models.TextField(default='{"holder":false,"year":false,"freeToRead":true,"licenses":[]}'),
+            model_name="userimage",
+            name="copyright",
+            field=models.TextField(
+                default='{"holder":false,"year":false,"freeToRead":true,"licenses":[]}'
+            ),
         ),
     ]

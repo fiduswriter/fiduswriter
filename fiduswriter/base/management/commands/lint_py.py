@@ -18,3 +18,13 @@ class Command(BaseCommand):
         ])
         if return_value > 0:
             exit(return_value)
+        return_value = call([
+            "flake8",
+            "--exclude",
+            "node_modules/*,venv/*,.direnv/*,configuration.py",
+            "--extend-ignore",
+            "E501",
+            "./"
+        ])
+        if return_value > 0:
+            exit(return_value)

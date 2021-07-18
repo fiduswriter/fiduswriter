@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('document', '0004_move_json_data'),
+        ("document", "0004_move_json_data"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='document',
-            name='bibliography',
+            model_name="document",
+            name="bibliography",
             field=models.JSONField(blank=True, default=dict),
         ),
         migrations.AlterField(
-            model_name='document',
-            name='comments',
+            model_name="document",
+            name="comments",
             field=models.JSONField(blank=True, default=dict),
         ),
     ]

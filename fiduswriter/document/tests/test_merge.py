@@ -9,13 +9,14 @@ class AutoMergeTests(LiveTornadoTestCase, EditorHelper):
     Tests in which two browsers collaborate and the connection is interrupted.
     Auto merge would be triggered when the connection is restored.
     """
+
     user = None
     TEST_TEXT = "Lorem ipsum dolor sit amet."
     NEWLINE = "\n"
     MULTILINE_TEST_TEXT = "Item 1\nItem 2\nItem 3\nItem 4"
     fixtures = [
-        'initial_documenttemplates.json',
-        'initial_styles.json',
+        "initial_documenttemplates.json",
+        "initial_styles.json",
     ]
 
     @classmethod
@@ -56,33 +57,24 @@ class AutoMergeTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element_by_class_name(
-            'article-body'
-        ).click()
+        self.driver.find_element_by_class_name("article-body").click()
 
         # Add some initial text and wait for doc to be synced.
         self.type_text(self.driver, self.TEST_TEXT)
         self.wait_for_doc_sync(self.driver, self.driver2)
 
         # driver 2 goes offline
-        self.driver2.execute_script(
-            'window.theApp.page.ws.goOffline()'
-        )
+        self.driver2.execute_script("window.theApp.page.ws.goOffline()")
 
         # Online user adds some text
-        self.driver.execute_script(
-            'window.testCaret.setSelection(25,25)'
-        )
+        self.driver.execute_script("window.testCaret.setSelection(25,25)")
         p1 = multiprocessing.Process(
-            target=self.type_text,
-            args=(self.driver, self.TEST_TEXT)
+            target=self.type_text, args=(self.driver, self.TEST_TEXT)
         )
         p1.start()
 
         # Client 2 adds some text at the end.
-        self.driver2.execute_script(
-            'window.testCaret.setSelection(52,52)'
-        )
+        self.driver2.execute_script("window.testCaret.setSelection(52,52)")
         self.type_text(self.driver2, self.TEST_TEXT)
 
         p1.join()
@@ -98,37 +90,28 @@ class AutoMergeTests(LiveTornadoTestCase, EditorHelper):
 
         # Reset the tracking limits to allow tracking of user edits
         self.driver2.execute_script(
-            'window.theApp.page.mod.collab.doc.merge.trackOfflineLimit = 0'
+            "window.theApp.page.mod.collab.doc.merge.trackOfflineLimit = 0"
         )
 
         # driver 2 goes online
-        self.driver2.execute_script(
-            'window.theApp.page.ws.goOnline()'
-        )
+        self.driver2.execute_script("window.theApp.page.ws.goOnline()")
 
         self.wait_for_doc_sync(self.driver, self.driver2)
 
         self.assertEqual(
-            self.get_contents(self.driver2),
-            self.get_contents(self.driver)
+            self.get_contents(self.driver2), self.get_contents(self.driver)
         )
 
         # Check that the footnote counters and editor is aligned.
         footnote_containers = self.driver2.find_elements_by_class_name(
-            'footnote-marker'
+            "footnote-marker"
         )
-        self.assertEqual(
-            len(footnote_containers),
-            5
-        )
+        self.assertEqual(len(footnote_containers), 5)
 
         footnote_containers = self.driver.find_elements_by_class_name(
-            'footnote-marker'
+            "footnote-marker"
         )
-        self.assertEqual(
-            len(footnote_containers),
-            5
-        )
+        self.assertEqual(len(footnote_containers), 5)
 
     def test_list_item_automerge(self):
         """
@@ -142,9 +125,7 @@ class AutoMergeTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element_by_class_name(
-            'article-body'
-        ).click()
+        self.driver.find_element_by_class_name("article-body").click()
 
         # Add some initial text and wait for doc to be synced.
         self.type_text(self.driver, self.TEST_TEXT)
@@ -160,67 +141,49 @@ class AutoMergeTests(LiveTornadoTestCase, EditorHelper):
         self.wait_for_doc_sync(self.driver, self.driver2)
 
         # driver 2 goes offline
-        self.driver2.execute_script(
-            'window.theApp.page.ws.goOffline()'
-        )
+        self.driver2.execute_script("window.theApp.page.ws.goOffline()")
 
         # Offline user deletes list item in a specific way
         # Select all the list item except the last one
         # delete them and then delete the remaining
         # one too.
-        self.driver2.execute_script(
-            'window.testCaret.setSelection(86,86)'
+        self.driver2.execute_script("window.testCaret.setSelection(86,86)")
+        self.driver2.execute_script("window.testCaret.setSelection(56,86)")
+        self.driver2.find_element_by_class_name("article-body").send_keys(
+            Keys.BACKSPACE
         )
-        self.driver2.execute_script(
-            'window.testCaret.setSelection(56,86)'
+        self.driver2.find_element_by_class_name("article-body").send_keys(
+            Keys.BACKSPACE
         )
-        self.driver2.find_element_by_class_name(
-            'article-body'
-        ).send_keys(Keys.BACKSPACE)
-        self.driver2.find_element_by_class_name(
-            'article-body'
-        ).send_keys(Keys.BACKSPACE)
 
         # Online user adds some text
-        self.driver.execute_script(
-            'window.testCaret.setSelection(25,25)'
-        )
+        self.driver.execute_script("window.testCaret.setSelection(25,25)")
         self.type_text(self.driver, self.TEST_TEXT)
 
         # Reset the tracking limits to allow tracking of user edits
         self.driver2.execute_script(
-            'window.theApp.page.mod.collab.doc.merge.trackOfflineLimit = 0'
+            "window.theApp.page.mod.collab.doc.merge.trackOfflineLimit = 0"
         )
         # driver 2 goes online
-        self.driver2.execute_script(
-            'window.theApp.page.ws.goOnline()'
-        )
+        self.driver2.execute_script("window.theApp.page.ws.goOnline()")
 
         self.wait_for_doc_sync(self.driver, self.driver2)
 
         self.assertEqual(
-            self.get_contents(self.driver2),
-            self.get_contents(self.driver)
+            self.get_contents(self.driver2), self.get_contents(self.driver)
         )
 
         # Check that the list items aren't deleted
         numberedTags = self.driver.find_elements_by_xpath(
-            '//*[contains(@class, "article-body")]//ol//li')
-        self.assertEqual(
-            len(numberedTags),
-            4
+            '//*[contains(@class, "article-body")]//ol//li'
         )
+        self.assertEqual(len(numberedTags), 4)
         numberedTags = self.driver2.find_elements_by_xpath(
-            '//*[contains(@class, "article-body")]//ol//li')
-        self.assertEqual(
-            len(numberedTags),
-            4
+            '//*[contains(@class, "article-body")]//ol//li'
         )
+        self.assertEqual(len(numberedTags), 4)
 
         change_tracking_boxes = self.driver2.find_elements_by_css_selector(
-            '.margin-box.track'
+            ".margin-box.track"
         )
-        self.assertEqual(
-            len(change_tracking_boxes),
-            7
-        )
+        self.assertEqual(len(change_tracking_boxes), 7)

@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('document', '0009_document_path'),
+        ("document", "0009_document_path"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='accessright',
-            name='path',
-            field=models.TextField(blank=True, default=''),
+            model_name="accessright",
+            name="path",
+            field=models.TextField(blank=True, default=""),
         ),
     ]

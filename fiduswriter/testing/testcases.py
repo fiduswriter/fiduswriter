@@ -24,11 +24,9 @@ class LiveTornadoThread(threading.Thread):
     Thread for running a live http server while the tests are running.
     """
 
-    def __init__(self,
-                 host,
-                 possible_ports,
-                 static_handler,
-                 connections_override=None):
+    def __init__(
+        self, host, possible_ports, static_handler, connections_override=None
+    ):
         self.host = host
         self.port = None
         self.possible_ports = possible_ports
@@ -57,8 +55,10 @@ class LiveTornadoThread(threading.Thread):
                 try:
                     self.httpd.listen(int(port))
                 except socket.error as e:
-                    if (index + 1 < len(self.possible_ports) and
-                            e.errno == errno.EADDRINUSE):
+                    if (
+                        index + 1 < len(self.possible_ports)
+                        and e.errno == errno.EADDRINUSE
+                    ):
                         # This port is already in use, so we go on and try with
                         # the next one in the list.
                         continue
@@ -81,10 +81,10 @@ class LiveTornadoThread(threading.Thread):
             raise
 
     def terminate(self):
-        if hasattr(self, 'httpd'):
+        if hasattr(self, "httpd"):
             self.httpd.stop()
 
-        if hasattr(self, 'ioloop'):
+        if hasattr(self, "ioloop"):
             self.ioloop.stop()
 
 
@@ -109,23 +109,24 @@ class LiveTornadoTestCase(TransactionTestCase):
         for conn in connections.all():
             # If using in-memory sqlite databases, pass the connections to
             # the server thread.
-            if conn.vendor == 'sqlite' and conn.is_in_memory_db():
+            if conn.vendor == "sqlite" and conn.is_in_memory_db():
                 # Explicitly enable thread-shareability for this connection
                 conn.inc_thread_sharing()
                 connections_override[conn.alias] = conn
 
         # Launch the live server's thread
         specified_address = os.environ.get(
-            'DJANGO_LIVE_TEST_SERVER_ADDRESS', 'localhost:8081-8140')
+            "DJANGO_LIVE_TEST_SERVER_ADDRESS", "localhost:8081-8140"
+        )
         # The specified ports may be of the form '8000-8010,8080,9200-9300'
         # i.e. a comma-separated list of ports or ranges of ports, so we break
         # it down into a detailed list of all possible ports.
         possible_ports = []
         try:
-            host, port_ranges = specified_address.split(':')
-            for port_range in port_ranges.split(','):
+            host, port_ranges = specified_address.split(":")
+            for port_range in port_ranges.split(","):
                 # A port range can be of either form: '8000' or '8000-8010'.
-                extremes = list(map(int, port_range.split('-')))
+                extremes = list(map(int, port_range.split("-")))
                 assert len(extremes) in [1, 2]
                 if len(extremes) == 1:
                     # Port range of the form '8000'
@@ -142,7 +143,7 @@ class LiveTornadoTestCase(TransactionTestCase):
             host,
             possible_ports,
             cls.static_handler,
-            connections_override=connections_override
+            connections_override=connections_override,
         )
         cls.server_thread.daemon = True
         cls.server_thread.start()
@@ -155,8 +156,10 @@ class LiveTornadoTestCase(TransactionTestCase):
             cls._tearDownClassInternal()
             raise cls.server_thread.error
 
-        cls.live_server_url = 'http://%s:%s' % (
-            cls.server_thread.host, cls.server_thread.port)
+        cls.live_server_url = "http://%s:%s" % (
+            cls.server_thread.host,
+            cls.server_thread.port,
+        )
 
         super().setUpClass()
 
@@ -164,13 +167,15 @@ class LiveTornadoTestCase(TransactionTestCase):
     def _tearDownClassInternal(cls):
         # There may not be a 'server_thread' attribute if setUpClass() for some
         # reasons has raised an exception.
-        if hasattr(cls, 'server_thread'):
+        if hasattr(cls, "server_thread"):
             # Terminate the live server's thread
             cls.server_thread.terminate()
         # Restore sqlite connections' non-shareability
         for conn in connections.all():
-            if (conn.vendor == 'sqlite' and
-                    conn.settings_dict['NAME'] == ':memory:'):
+            if (
+                conn.vendor == "sqlite"
+                and conn.settings_dict["NAME"] == ":memory:"
+            ):
                 conn.allow_thread_sharing = False
 
     @classmethod

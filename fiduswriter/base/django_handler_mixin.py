@@ -6,11 +6,9 @@ from importlib import import_module
 
 class DjangoHandlerMixin(object):
     def get_django_session(self):
-        if not hasattr(self, '_session'):
-            engine = \
-                import_module(settings.SESSION_ENGINE)
-            session_key = \
-                self.get_cookie(settings.SESSION_COOKIE_NAME)
+        if not hasattr(self, "_session"):
+            engine = import_module(settings.SESSION_ENGINE)
+            session_key = self.get_cookie(settings.SESSION_COOKIE_NAME)
             self._session = engine.SessionStore(session_key)
         return self._session
 

@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('document', '0008_fix_fidus_3_3_table_header'),
+        ("document", "0008_fix_fidus_3_3_table_header"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='document',
-            name='path',
-            field=models.TextField(blank=True, default=''),
+            model_name="document",
+            name="path",
+            field=models.TextField(blank=True, default=""),
         ),
     ]

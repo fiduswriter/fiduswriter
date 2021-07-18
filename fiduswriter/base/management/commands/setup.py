@@ -9,27 +9,27 @@ from style.models import DocumentStyle
 
 
 class Command(BaseCommand):
-    help = ('Setup Fidus Writer installation.')
+    help = "Setup Fidus Writer installation."
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--restart',
-            action='store_true',
-            dest='restart',
+            "--restart",
+            action="store_true",
+            dest="restart",
             default=False,
-            help='Flush database before initialization.',
+            help="Flush database before initialization.",
         )
         parser.add_argument(
-            '--no-static',
-            action='store_false',
-            dest='static',
-            help='Do not collect static files.',
+            "--no-static",
+            action="store_false",
+            dest="static",
+            help="Do not collect static files.",
         )
         parser.add_argument(
-            '--no-force-transpile',
-            action='store_false',
-            dest='force_transpile',
-            help='Force a transpile if nothing has changed.',
+            "--no-force-transpile",
+            action="store_false",
+            dest="force_transpile",
+            help="Force a transpile if nothing has changed.",
         )
 
     def handle(self, *args, **options):
@@ -47,48 +47,43 @@ class Command(BaseCommand):
                 "loaddata",
                 os.path.join(
                     settings.SRC_PATH,
-                    "document/fixtures/initial_documenttemplates.json"
-                )
+                    "document/fixtures/initial_documenttemplates.json",
+                ),
             )
         if DocumentStyle.objects.count() == 0:
             call_command(
                 "loaddata",
                 os.path.join(
-                    settings.SRC_PATH,
-                    "style/fixtures/initial_styles.json"
-                )
+                    settings.SRC_PATH, "style/fixtures/initial_styles.json"
+                ),
             )
         if FlatPage.objects.count() == 0:
             call_command(
                 "loaddata",
                 os.path.join(
-                    settings.SRC_PATH,
-                    "base/fixtures/initial_terms.json"
+                    settings.SRC_PATH, "base/fixtures/initial_terms.json"
+                ),
+            )
+        if os.environ.get("NO_COMPILEMESSAGES") == "true" or (
+            os.path.isfile(
+                os.path.join(
+                    settings.SRC_PATH, "locale/es/LC_MESSAGES/django.mo"
                 )
             )
-        if (
-            os.environ.get('NO_COMPILEMESSAGES') == 'true' or
-            (
-                os.path.isfile(os.path.join(
-                    settings.SRC_PATH,
-                    "locale/es/LC_MESSAGES/django.mo"
-                )) and
-                os.path.getmtime(os.path.join(
-                    settings.SRC_PATH,
-                    "locale/es/LC_MESSAGES/django.mo"
-                )) > os.path.getmtime(os.path.join(
-                    settings.SRC_PATH,
-                    "locale/es/LC_MESSAGES/django.po"
-                ))
+            and os.path.getmtime(
+                os.path.join(
+                    settings.SRC_PATH, "locale/es/LC_MESSAGES/django.mo"
+                )
             )
-
+            > os.path.getmtime(
+                os.path.join(
+                    settings.SRC_PATH, "locale/es/LC_MESSAGES/django.po"
+                )
+            )
         ):
             pass
         else:
             call_command("compilemessages")
         call_command("transpile", force=force_transpile)
-        if (
-            options["static"] and
-            not settings.DEBUG
-        ):
+        if options["static"] and not settings.DEBUG:
             call_command("collectstatic", interactive=False)

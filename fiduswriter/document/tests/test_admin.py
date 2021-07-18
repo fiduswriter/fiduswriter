@@ -13,8 +13,8 @@ from selenium.webdriver.common.action_chains import ActionChains
 
 class AdminTest(LiveTornadoTestCase, SeleniumHelper):
     fixtures = [
-        'initial_documenttemplates.json',
-        'initial_styles.json',
+        "initial_documenttemplates.json",
+        "initial_styles.json",
     ]
 
     @classmethod
@@ -39,22 +39,16 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         self.verificationErrors = []
         self.accept_next_alert = True
         self.admin = self.create_user(
-            username='Admin',
-            email='admin@admin.com',
-            passtext='password'
+            username="Admin", email="admin@admin.com", passtext="password"
         )
         self.admin.is_superuser = True
         self.admin.is_staff = True
         self.admin.save()
         self.user1 = self.create_user(
-            username='User1',
-            email='user1@user.com',
-            passtext='password'
+            username="User1", email="user1@user.com", passtext="password"
         )
         self.user2 = self.create_user(
-            username='User2',
-            email='user2@user.com',
-            passtext='password'
+            username="User2", email="user2@user.com", passtext="password"
         )
 
     def tearDown(self):
@@ -68,18 +62,14 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(By.CSS_SELECTOR, "input[type=submit]").click()
         time.sleep(2)
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            "a[href='/admin/document/document/maintenance/']"
+            By.CSS_SELECTOR, "a[href='/admin/document/document/maintenance/']"
         ).click()
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            "#update"
-        ).click()
+        self.driver.find_element(By.CSS_SELECTOR, "#update").click()
         self.assertEqual(
             1,
-            len(self.driver.find_elements_by_css_selector(
-                '#update[disabled]'
-            ))
+            len(
+                self.driver.find_elements_by_css_selector("#update[disabled]")
+            ),
         )
 
     def test_templates(self):
@@ -90,45 +80,33 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(By.CSS_SELECTOR, "input[type=submit]").click()
         time.sleep(2)
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            "a[href='/admin/document/documenttemplate/']"
+            By.CSS_SELECTOR, "a[href='/admin/document/documenttemplate/']"
         ).click()
         template_links = self.driver.find_elements_by_css_selector(
-            '#result_list tbody a'
+            "#result_list tbody a"
         )
-        self.assertEqual(
-            1,
-            len(template_links)
-        )
+        self.assertEqual(1, len(template_links))
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            "input[type=checkbox].action-select"
+            By.CSS_SELECTOR, "input[type=checkbox].action-select"
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            "select[name=action]"
+            By.CSS_SELECTOR, "select[name=action]"
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            "option[value=duplicate]"
+            By.CSS_SELECTOR, "option[value=duplicate]"
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            "button[type=submit]"
+            By.CSS_SELECTOR, "button[type=submit]"
         ).click()
         template_links = self.driver.find_elements_by_css_selector(
-            '#result_list tbody a'
+            "#result_list tbody a"
         )
-        self.assertEqual(
-            2,
-            len(template_links)
-        )
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            '.field-title a'
-        ).click()
+        self.assertEqual(2, len(template_links))
+        self.driver.find_element(By.CSS_SELECTOR, ".field-title a").click()
         self.driver.find_element(By.CSS_SELECTOR, "input.title").click()
-        ActionChains(self.driver).send_keys(
+        ActionChains(self.driver).send_keys(Keys.BACKSPACE).send_keys(
+            Keys.BACKSPACE
+        ).send_keys(Keys.BACKSPACE).send_keys(Keys.BACKSPACE).send_keys(
             Keys.BACKSPACE
         ).send_keys(
             Keys.BACKSPACE
@@ -153,18 +131,12 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         ).send_keys(
             Keys.BACKSPACE
         ).send_keys(
-            Keys.BACKSPACE
-        ).send_keys(
-            Keys.BACKSPACE
-        ).send_keys(
-            Keys.BACKSPACE
-        ).send_keys(
-            Keys.BACKSPACE
-        ).send_keys(
-            'Special Article'
+            "Special Article"
         ).perform()
         self.driver.find_element(By.CSS_SELECTOR, "input.import-id").click()
-        ActionChains(self.driver).send_keys(
+        ActionChains(self.driver).send_keys(Keys.BACKSPACE).send_keys(
+            Keys.BACKSPACE
+        ).send_keys(Keys.BACKSPACE).send_keys(Keys.BACKSPACE).send_keys(
             Keys.BACKSPACE
         ).send_keys(
             Keys.BACKSPACE
@@ -189,15 +161,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         ).send_keys(
             Keys.BACKSPACE
         ).send_keys(
-            Keys.BACKSPACE
-        ).send_keys(
-            Keys.BACKSPACE
-        ).send_keys(
-            Keys.BACKSPACE
-        ).send_keys(
-            Keys.BACKSPACE
-        ).send_keys(
-            'special-article'
+            "special-article"
         ).perform()
         self.driver.find_element(
             By.CSS_SELECTOR,
@@ -205,7 +169,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
                 "#template-editor > table:nth-child(2) > tbody > tr > "
                 "td.to-column > div.to-container > div:nth-child(5) > "
                 "div.doc-part-header > ul > li > span"
-            )
+            ),
         ).click()
         self.driver.find_element(
             By.CSS_SELECTOR,
@@ -214,11 +178,9 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
                 "td.to-column > div.to-container > div:nth-child(5) > "
                 "div.attrs > div:nth-child(28) > div.initial > div > "
                 "div.ProseMirror > div > p"
-            )
+            ),
         ).click()
-        ActionChains(self.driver).send_keys(
-            "Initial body"
-        ).perform()
+        ActionChains(self.driver).send_keys("Initial body").perform()
         self.driver.find_element(
             By.CSS_SELECTOR,
             (
@@ -226,88 +188,63 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
                 "td.to-column > div.to-container > div:nth-child(5) > "
                 "div.attrs > div:nth-child(29) > div.instructions > div > "
                 "div.ProseMirror > p"
-            )
+            ),
         ).click()
-        ActionChains(self.driver).send_keys(
-            "Body instructions"
-        ).perform()
+        ActionChains(self.driver).send_keys("Body instructions").perform()
+        self.driver.find_element(By.ID, "id_user").click()
         self.driver.find_element(
-            By.ID,
-            "id_user"
-        ).click()
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            "#id_user > option:nth-child(3)"
+            By.CSS_SELECTOR, "#id_user > option:nth-child(3)"
         ).click()
         # Modify a document style
+        self.driver.find_element(By.CSS_SELECTOR, ".document-style").click()
+        self.driver.find_element(By.CSS_SELECTOR, "input.slug").send_keys(
+            "fish"
+        )
         self.driver.find_element(
             By.CSS_SELECTOR,
-            ".document-style"
-        ).click()
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            "input.slug"
-        ).send_keys('fish')
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            "[aria-describedby=document-style-dialog] button.fw-dark"
+            "[aria-describedby=document-style-dialog] button.fw-dark",
         ).click()
         time.sleep(1)
         # Delete a document style
+        self.driver.find_element(By.CSS_SELECTOR, ".document-style").click()
         self.driver.find_element(
             By.CSS_SELECTOR,
-            ".document-style"
+            "[aria-describedby=document-style-dialog] button.fw-orange",
         ).click()
         self.driver.find_element(
             By.CSS_SELECTOR,
-            "[aria-describedby=document-style-dialog] button.fw-orange"
-        ).click()
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            "[aria-describedby=confirmdeletion] button.fw-dark"
+            "[aria-describedby=confirmdeletion] button.fw-dark",
         ).click()
         # Download export template file
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".export-template"
-        ).click()
+        self.driver.find_element(By.CSS_SELECTOR, ".export-template").click()
         export_template_link = self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".export-template-file a"
+            By.CSS_SELECTOR, ".export-template-file a"
         )
-        et_file = export_template_link.get_attribute("href").split('/')[-1]
+        et_file = export_template_link.get_attribute("href").split("/")[-1]
         export_template_link.click()
         time.sleep(1)
-        assert os.path.isfile(
-            os.path.join(self.download_dir, et_file)
-        )
+        assert os.path.isfile(os.path.join(self.download_dir, et_file))
         # Delete export template
         old_len_export_templates = len(
-            self.driver.find_elements_by_css_selector(
-                '.export-template'
-            )
+            self.driver.find_elements_by_css_selector(".export-template")
         )
         self.driver.find_element(
             By.CSS_SELECTOR,
-            "[aria-describedby=export-template-dialog] button.fw-orange"
+            "[aria-describedby=export-template-dialog] button.fw-orange",
         ).click()
         self.driver.find_element(
             By.CSS_SELECTOR,
-            "[aria-describedby=confirmdeletion] button.fw-dark"
+            "[aria-describedby=confirmdeletion] button.fw-dark",
         ).click()
         time.sleep(1)
-        len_export_templates = len(self.driver.find_elements_by_css_selector(
-            '.export-template'
-        ))
-        self.assertEqual(
-            old_len_export_templates - 1,
-            len_export_templates
+        len_export_templates = len(
+            self.driver.find_elements_by_css_selector(".export-template")
         )
+        self.assertEqual(old_len_export_templates - 1, len_export_templates)
         old_len_export_templates = len_export_templates
         # Upload export template file
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".export-template .fa-plus-circle"
+            By.CSS_SELECTOR, ".export-template .fa-plus-circle"
         ).click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
@@ -316,39 +253,25 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         ).send_keys(os.path.join(self.download_dir, et_file))
         time.sleep(1)
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".ui-dialog .fw-dark"
+            By.CSS_SELECTOR, ".ui-dialog .fw-dark"
         ).click()
         time.sleep(1)
-        len_export_templates = len(self.driver.find_elements_by_css_selector(
-            '.export-template'
-        ))
-        self.assertEqual(
-            old_len_export_templates + 1,
-            len_export_templates
+        len_export_templates = len(
+            self.driver.find_elements_by_css_selector(".export-template")
         )
+        self.assertEqual(old_len_export_templates + 1, len_export_templates)
         os.remove(os.path.join(self.download_dir, et_file))
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            "input[type=submit]"
-        ).click()
+        self.driver.find_element(By.CSS_SELECTOR, "input[type=submit]").click()
         self.assertEqual(
-            self.driver.find_element(
-                By.CSS_SELECTOR,
-                "td.field-user"
-            ).text,
-            'User1'
+            self.driver.find_element(By.CSS_SELECTOR, "td.field-user").text,
+            "User1",
         )
         self.assertEqual(
-            self.driver.find_element(
-                By.CSS_SELECTOR,
-                "th.field-title"
-            ).text,
-            'Special Article'
+            self.driver.find_element(By.CSS_SELECTOR, "th.field-title").text,
+            "Special Article",
         )
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            "a[href='/admin/logout/']"
+            By.CSS_SELECTOR, "a[href='/admin/logout/']"
         ).click()
         self.driver.get(self.base_url)
         # Logging in as User 1
@@ -357,10 +280,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable(
-                (
-                    By.CSS_SELECTOR,
-                    ".new_document.dropdown"
-                )
+                (By.CSS_SELECTOR, ".new_document.dropdown")
             )
         ).click()
         self.driver.find_element(
@@ -369,51 +289,34 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
                 "#fw-overview-menu > li.fw-overview-menu-item.new_document."
                 "dropdown > div.fw-pulldown.fw-left > ul > li:nth-child(2) > "
                 "span"
-            )
+            ),
         ).click()
-        body_text = WebDriverWait(self.driver, self.wait_time).until(
-            EC.element_to_be_clickable(
-                (
-                    By.CSS_SELECTOR,
-                    ".article-body"
-                )
+        body_text = (
+            WebDriverWait(self.driver, self.wait_time)
+            .until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, ".article-body"))
             )
-        ).text
-        self.assertEqual(
-            body_text,
-            'Initial body'
+            .text
         )
+        self.assertEqual(body_text, "Initial body")
         self.assertEqual(
-            self.driver.find_element(
-                By.CSS_SELECTOR,
-                ".margin-box.help"
-            ).text,
-            'Body instructions'
+            self.driver.find_element(By.CSS_SELECTOR, ".margin-box.help").text,
+            "Body instructions",
         )
         # Open share dialog
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".header-menu:nth-child(1) > .header-nav-item"
+            By.CSS_SELECTOR, ".header-menu:nth-child(1) > .header-nav-item"
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            "li:nth-child(1) > .fw-pulldown-item"
+            By.CSS_SELECTOR, "li:nth-child(1) > .fw-pulldown-item"
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".ui-dialog .fw-add-button"
+            By.CSS_SELECTOR, ".ui-dialog .fw-add-button"
         ).click()
-        self.driver.find_element(
-            By.ID,
-            "new-contact-user-string"
-        ).click()
-        ActionChains(self.driver).send_keys(
-            "user2@user.com"
-        ).send_keys(
+        self.driver.find_element(By.ID, "new-contact-user-string").click()
+        ActionChains(self.driver).send_keys("user2@user.com").send_keys(
             Keys.TAB
-        ).send_keys(
-            Keys.RETURN
-        ).perform()
+        ).send_keys(Keys.RETURN).perform()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable(
                 (By.CSS_SELECTOR, ".collaborator-tr .fa-caret-down")
@@ -423,15 +326,11 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
             '//*[normalize-space()="Write"]'
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".ui-dialog .fw-dark"
+            By.CSS_SELECTOR, ".ui-dialog .fw-dark"
         ).click()
-        self.driver.find_element(
-            By.ID,
-            "close-document-top"
-        ).click()
+        self.driver.find_element(By.ID, "close-document-top").click()
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.element_to_be_clickable((By.ID, 'preferences-btn'))
+            EC.element_to_be_clickable((By.ID, "preferences-btn"))
         ).click()
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Log out"]'
@@ -443,10 +342,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Go to contacts"]'
         ).click()
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".respond-invite"
-        ).click()
+        self.driver.find_element(By.CSS_SELECTOR, ".respond-invite").click()
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Accept invite"]'
         ).click()
@@ -455,127 +351,87 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable(
-                (
-                    By.CSS_SELECTOR,
-                    "a[href='/document/1']"
-                )
+                (By.CSS_SELECTOR, "a[href='/document/1']")
             )
         ).click()
-        body_text = WebDriverWait(self.driver, self.wait_time).until(
-            EC.element_to_be_clickable(
-                (
-                    By.CSS_SELECTOR,
-                    ".article-body"
-                )
+        body_text = (
+            WebDriverWait(self.driver, self.wait_time)
+            .until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, ".article-body"))
             )
-        ).text
-        self.assertEqual(
-            body_text,
-            'Initial body'
+            .text
         )
+        self.assertEqual(body_text, "Initial body")
         self.assertEqual(
-            self.driver.find_element(
-                By.CSS_SELECTOR,
-                ".margin-box.help"
-            ).text,
-            'Body instructions'
+            self.driver.find_element(By.CSS_SELECTOR, ".margin-box.help").text,
+            "Body instructions",
         )
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".article-body"
-        ).click()
-        ActionChains(self.driver).send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
+        ActionChains(self.driver).send_keys(Keys.BACKSPACE).send_keys(
             Keys.BACKSPACE
-        ).send_keys(
-            Keys.BACKSPACE
-        ).send_keys(
-            Keys.BACKSPACE
-        ).send_keys(
-            Keys.BACKSPACE
-        ).send_keys(
-            'text'
+        ).send_keys(Keys.BACKSPACE).send_keys(Keys.BACKSPACE).send_keys(
+            "text"
         ).perform()
         time.sleep(1)
         # Create regular copy
         old_body = self.driver.find_element(By.CSS_SELECTOR, ".article-body")
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".header-menu:nth-child(1) > .header-nav-item"
+            By.CSS_SELECTOR, ".header-menu:nth-child(1) > .header-nav-item"
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            "li:nth-child(4) > .fw-pulldown-item"
+            By.CSS_SELECTOR, "li:nth-child(4) > .fw-pulldown-item"
         ).click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.staleness_of(old_body)
         )
-        body_text = WebDriverWait(self.driver, self.wait_time).until(
-            EC.element_to_be_clickable(
-                (
-                    By.CSS_SELECTOR,
-                    ".article-body"
-                )
+        body_text = (
+            WebDriverWait(self.driver, self.wait_time)
+            .until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, ".article-body"))
             )
-        ).text
+            .text
+        )
 
         time.sleep(1)
+        self.assertEqual(body_text, "Initial text")
         self.assertEqual(
-            body_text,
-            'Initial text'
-        )
-        self.assertEqual(
-            self.driver.find_element(
-                By.CSS_SELECTOR,
-                ".margin-box.help"
-            ).text,
-            'Body instructions'
+            self.driver.find_element(By.CSS_SELECTOR, ".margin-box.help").text,
+            "Body instructions",
         )
         # Create copy with different template
         old_body = self.driver.find_element(By.CSS_SELECTOR, ".article-body")
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".header-menu:nth-child(1) > .header-nav-item"
+            By.CSS_SELECTOR, ".header-menu:nth-child(1) > .header-nav-item"
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            "li:nth-child(5) > .fw-pulldown-item"
+            By.CSS_SELECTOR, "li:nth-child(5) > .fw-pulldown-item"
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".ui-dialog select.fw-button"
+            By.CSS_SELECTOR, ".ui-dialog select.fw-button"
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            "option[value='standard-article']"
+            By.CSS_SELECTOR, "option[value='standard-article']"
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".ui-dialog button.fw-dark"
+            By.CSS_SELECTOR, ".ui-dialog button.fw-dark"
         ).click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.staleness_of(old_body)
         )
-        body_text = WebDriverWait(self.driver, self.wait_time).until(
-            EC.element_to_be_clickable(
-                (
-                    By.CSS_SELECTOR,
-                    ".article-body"
-                )
+        body_text = (
+            WebDriverWait(self.driver, self.wait_time)
+            .until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, ".article-body"))
             )
-        ).text
+            .text
+        )
         # The text should still be the same, but there should be no
         # instruction boxes in this template.
-        self.assertEqual(
-            body_text,
-            'Initial text'
-        )
+        self.assertEqual(body_text, "Initial text")
         instruction_boxes = self.driver.find_elements_by_css_selector(
-            '.margin-box.help'
+            ".margin-box.help"
         )
-        self.assertEqual(
-            0,
-            len(instruction_boxes)
-        )
+        self.assertEqual(0, len(instruction_boxes))
 
     def test_template_export_import(self):
         self.driver.get(self.base_admin_url)
@@ -585,50 +441,41 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(By.CSS_SELECTOR, "input[type=submit]").click()
         time.sleep(2)
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            "a[href='/admin/document/documenttemplate/']"
+            By.CSS_SELECTOR, "a[href='/admin/document/documenttemplate/']"
         ).click()
         # Download template
         template_links = self.driver.find_elements_by_css_selector(
-            '#result_list tbody a'
+            "#result_list tbody a"
         )
-        self.assertEqual(
-            1,
-            len(template_links)
-        )
+        self.assertEqual(1, len(template_links))
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            "input[type=checkbox].action-select"
+            By.CSS_SELECTOR, "input[type=checkbox].action-select"
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            "select[name=action]"
+            By.CSS_SELECTOR, "select[name=action]"
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            "option[value=download]"
+            By.CSS_SELECTOR, "option[value=download]"
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            "button[type=submit]"
+            By.CSS_SELECTOR, "button[type=submit]"
         ).click()
         path = os.path.join(
-            self.download_dir,
-            'standard-article.fidustemplate'
+            self.download_dir, "standard-article.fidustemplate"
         )
         self.wait_until_file_exists(path, self.wait_time)
         assert os.path.isfile(path)
 
         # Disable file dialog
-        self.driver.execute_script((
-            "HTMLInputElement.prototype.click = function() {"
-            "if(this.type !== 'file') {HTMLElement.prototype.click.call(this)}"
-            "}"
-        ))
+        self.driver.execute_script(
+            (
+                "HTMLInputElement.prototype.click = function() {"
+                "if(this.type !== 'file') {HTMLElement.prototype.click.call(this)}"
+                "}"
+            )
+        )
         # Upload template again
-        self.driver.find_element_by_css_selector(
-            "#upload-template"
-        ).click()
+        self.driver.find_element_by_css_selector("#upload-template").click()
         time.sleep(1)
         self.driver.find_element_by_css_selector(
             "#fidus-template-uploader"
@@ -636,11 +483,8 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         # Check whether there now are two templates
         time.sleep(1)
         template_links = self.driver.find_elements_by_css_selector(
-            '#result_list tbody a'
+            "#result_list tbody a"
         )
-        self.assertEqual(
-            2,
-            len(template_links)
-        )
+        self.assertEqual(2, len(template_links))
         # Delete file
         os.remove(path)

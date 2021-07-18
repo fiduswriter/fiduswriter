@@ -6,19 +6,19 @@ class WebSocket(BaseWebSocketHandler):
     admin_sessions = dict()
 
     def handle_message(self, message):
-        if message["type"] == 'subscribe':
+        if message["type"] == "subscribe":
             self.subscribe()
             return
-        if message["type"] == 'subscribe_admin':
+        if message["type"] == "subscribe_admin":
             self.subscribe_admin()
             return
-        if message["type"] == 'message' and self.type == 'admin':
+        if message["type"] == "message" and self.type == "admin":
             WebSocket.send_message_to_users(message)
-            self.send_message({'type': 'message_delivered'})
+            self.send_message({"type": "message_delivered"})
             return
 
     def subscribe(self):
-        self.type = 'user'
+        self.type = "user"
         if len(WebSocket.sessions) == 0:
             self.id = 1
         else:
@@ -31,7 +31,7 @@ class WebSocket(BaseWebSocketHandler):
             # User does not have access
             self.access_denied()
             return
-        self.type = 'admin'
+        self.type = "admin"
         if len(WebSocket.admin_sessions) == 0:
             self.id = 1
         else:
@@ -44,10 +44,7 @@ class WebSocket(BaseWebSocketHandler):
         WebSocket.send_message_to_admins(connection_info_message)
 
     def get_connection_info_message(self):
-        return {
-            'type': 'connection_info',
-            'sessions': len(WebSocket.sessions)
-        }
+        return {"type": "connection_info", "sessions": len(WebSocket.sessions)}
 
     @classmethod
     def send_message_to_users(cls, message):
@@ -60,10 +57,10 @@ class WebSocket(BaseWebSocketHandler):
             waiter.send_message(message)
 
     def on_close(self):
-        if not hasattr(self, 'type'):
+        if not hasattr(self, "type"):
             return
-        if self.type == 'user' and self.id in WebSocket.sessions:
+        if self.type == "user" and self.id in WebSocket.sessions:
             del WebSocket.sessions[self.id]
             self.send_connection_info_update()
-        elif self.type == 'admin' and self.id in WebSocket.admin_sessions:
+        elif self.type == "admin" and self.id in WebSocket.admin_sessions:
             del WebSocket.admin_sessions[self.id]

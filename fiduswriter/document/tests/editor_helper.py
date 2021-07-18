@@ -15,31 +15,22 @@ class EditorHelper(SeleniumHelper):
 
     def create_new_document(self):
         doc = Document.objects.create(
-            owner=self.user,
-            template_id=1  # from fixture
-        )
+            owner=self.user, template_id=1
+        )  # from fixture
         doc.save()
         return doc
 
     def load_document_editor(self, driver, doc):
-        driver.get("%s%s" % (
-            self.live_server_url,
-            doc.get_absolute_url()
-        ))
+        driver.get("%s%s" % (self.live_server_url, doc.get_absolute_url()))
         WebDriverWait(driver, self.wait_time).until(
-            EC.presence_of_element_located((By.CLASS_NAME, 'editor-toolbar'))
+            EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))
         )
         self.inject_helpers(driver)
 
     def inject_helpers(self, driver):
-        with open(
-            'static-transpile/js/test_caret.js',
-            'r'
-        ) as file:
+        with open("static-transpile/js/test_caret.js", "r") as file:
             test_caret_script = file.read()
-        driver.execute_script(
-            test_caret_script
-        )
+        driver.execute_script(test_caret_script)
 
     def input_text(self, document_input, text):
         for char in text:
@@ -55,22 +46,23 @@ class EditorHelper(SeleniumHelper):
 
     def add_title(self, driver):
         title = "My title"
-        self.driver.find_element_by_class_name(
-            'article-title'
-        ).send_keys(title)
+        self.driver.find_element_by_class_name("article-title").send_keys(
+            title
+        )
 
     def get_contents(self, driver):
         # Contents is child 5.
         return driver.execute_script(
-            'return window.theApp.page.view.state.doc.firstChild'
-            '.child(5).textContent;'
+            "return window.theApp.page.view.state.doc.firstChild"
+            ".child(5).textContent;"
         )
 
     def wait_for_doc_size(self, driver, size, seconds=False):
         if seconds is False:
             seconds = self.wait_time
         doc_size = driver.execute_script(
-            'return window.theApp.page.view.state.doc.content.size')
+            "return window.theApp.page.view.state.doc.content.size"
+        )
         if doc_size < size and seconds > 0:
             time.sleep(0.1)
             self.wait_for_doc_size(driver, size, seconds - 0.1)
@@ -79,23 +71,21 @@ class EditorHelper(SeleniumHelper):
         if seconds is False:
             seconds = self.wait_time
         doc_str = driver.execute_script(
-            'return window.theApp.page.view.state.doc.toString()')
+            "return window.theApp.page.view.state.doc.toString()"
+        )
         doc2_str = driver2.execute_script(
-            'return window.theApp.page.view.state.doc.toString()')
-        if (doc_str != doc2_str):
+            "return window.theApp.page.view.state.doc.toString()"
+        )
+        if doc_str != doc2_str:
             # The strings don't match.
             time.sleep(0.1)
             self.wait_for_doc_sync(driver, driver2, seconds - 0.1)
 
     def add_footnote(
-        self,
-        driver,
-        footnote_pos,
-        footnote_content,
-        footnote_num
+        self, driver, footnote_pos, footnote_content, footnote_num
     ):
         driver.execute_script(
-            f'window.testCaret.setSelection({footnote_pos},{footnote_pos})'
+            f"window.testCaret.setSelection({footnote_pos},{footnote_pos})"
         )
         driver.find_element_by_xpath('//*[@title="Footnote"]').click()
 
@@ -103,6 +93,4 @@ class EditorHelper(SeleniumHelper):
             f'//*[@id="footnote-box-container"]/div[2]/div[{footnote_num}]'
         ).send_keys(footnote_content)
 
-        driver.find_element_by_class_name(
-            'article-body'
-        ).click()
+        driver.find_element_by_class_name("article-body").click()

@@ -7,18 +7,18 @@ import usermedia.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('usermedia', '0005_move_json_data'),
+        ("usermedia", "0005_move_json_data"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='documentimage',
-            name='copyright',
+            model_name="documentimage",
+            name="copyright",
             field=models.JSONField(default=usermedia.models.default_copyright),
         ),
         migrations.AlterField(
-            model_name='userimage',
-            name='copyright',
+            model_name="userimage",
+            name="copyright",
             field=models.JSONField(default=usermedia.models.default_copyright),
         ),
     ]

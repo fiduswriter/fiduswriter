@@ -10,7 +10,7 @@ class Feedback(models.Model):
         settings.AUTH_USER_MODEL,
         blank=True,
         null=True,
-        on_delete=models.deletion.CASCADE
+        on_delete=models.deletion.CASCADE,
     )
 
     def __str__(self):
@@ -20,12 +20,12 @@ class Feedback(models.Model):
             return f"Anonymous: {self.message}"
 
     def save(self, *args, **kwargs):
-        reply_to = ''
+        reply_to = ""
         if self.owner:
             from_sender = self.owner.username
             if self.owner.email:
                 reply_to = f" ({self.owner.email})"
         else:
-            from_sender = 'Anonymous'
+            from_sender = "Anonymous"
         emails.send_feedback(from_sender, reply_to, self.message)
         super().save(*args, **kwargs)

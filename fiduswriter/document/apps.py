@@ -9,9 +9,10 @@ def export_schema(sender, **kwargs):
 
 
 class DocumentConfig(AppConfig):
-    name = 'document'
-    default_auto_field = 'django.db.models.AutoField'
+    name = "document"
+    default_auto_field = "django.db.models.AutoField"
 
     def ready(self):
         import document.signals  # noqa
+
         post_transpile.connect(export_schema)

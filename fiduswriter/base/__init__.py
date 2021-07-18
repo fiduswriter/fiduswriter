@@ -1,5 +1,6 @@
 import os
 from django.conf import settings as django_settings
+
 """
 Application that contains main app settings
 (Hosts, middleware, templates, installed apps)
@@ -10,12 +11,7 @@ Also contains helper for starting tornado server and management commands
 
 
 def read_version():
-    with open(
-        os.path.join(
-            django_settings.SRC_PATH,
-            "version.txt"
-        )
-    ) as f:
+    with open(os.path.join(django_settings.SRC_PATH, "version.txt")) as f:
         return f.read().splitlines()[0]
 
 

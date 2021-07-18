@@ -21,23 +21,23 @@ def auto_avatar(username):
 
     cl = f"rgb({r},{g},{b})"
     return {
-        'url': get_default_avatar_url(),
-        'uploaded': False,
-        'html': (
+        "url": get_default_avatar_url(),
+        "uploaded": False,
+        "html": (
             f'<span class="fw-string-avatar" style="background-color: {cl};">'
-            f'<span>{username[0]}</span>'
-            '</span>'
-        )
+            f"<span>{username[0]}</span>"
+            "</span>"
+        ),
     }
 
 
 class User(AbstractUser):
     contacts = models.ManyToManyField("self", symmetrical=True)
     document_rights = GenericRelation(
-        'document.AccessRight',
-        content_type_field='holder_type',
-        object_id_field='holder_id',
-        related_query_name="user"
+        "document.AccessRight",
+        content_type_field="holder_type",
+        object_id_field="holder_id",
+        related_query_name="user",
     )
 
     @property
@@ -57,19 +57,20 @@ class User(AbstractUser):
                     # with this image type. We store the original file instead.
                     avatar.avatar.storage.save(
                         avatar.avatar_name(size),
-                        File(avatar.avatar.storage.open(
-                            avatar.avatar.name,
-                            'rb'
-                        ))
+                        File(
+                            avatar.avatar.storage.open(
+                                avatar.avatar.name, "rb"
+                            )
+                        ),
                     )
             url = avatar.avatar_url(size)
             return {
-                'url': url,
-                'uploaded': True,
-                'html': (
+                "url": url,
+                "uploaded": True,
+                "html": (
                     f'<img class="fw-avatar" src="{url}" '
                     f'alt="{self.username}">'
-                )
+                ),
             }
         else:
             return auto_avatar(self.username)
@@ -77,7 +78,7 @@ class User(AbstractUser):
     @property
     def readable_name(self):
         readable_name = self.get_full_name()
-        if readable_name == '':
+        if readable_name == "":
             readable_name = self.username
         return readable_name
 
@@ -87,27 +88,27 @@ class UserInvite(models.Model):
         unique=True,
         default=uuid.uuid4,
     )
-    email = models.EmailField(_('email address'))
+    email = models.EmailField(_("email address"))
     username = models.CharField(
         max_length=150,
     )
     by = models.ForeignKey(
         User,
-        related_name='invites_by',
+        related_name="invites_by",
         on_delete=models.CASCADE,
     )
     to = models.ForeignKey(
         User,
-        related_name='invites_to',
+        related_name="invites_to",
         on_delete=models.CASCADE,
         blank=True,
-        null=True
+        null=True,
     )
     document_rights = GenericRelation(
-        'document.AccessRight',
-        content_type_field='holder_type',
-        object_id_field='holder_id',
-        related_query_name="userinvite"
+        "document.AccessRight",
+        content_type_field="holder_type",
+        object_id_field="holder_id",
+        related_query_name="userinvite",
     )
     _apply = False
 
@@ -128,8 +129,7 @@ class UserInvite(models.Model):
             return
         for right in self.document_rights.all():
             old_ar = AccessRight.objects.filter(
-                user=self.to,
-                document=right.document
+                user=self.to, document=right.document
             ).first()
             if old_ar:
                 # If the user already has rights, we should only be upgrading
@@ -137,9 +137,9 @@ class UserInvite(models.Model):
                 # say how each right compares. So unless the invite gives read
                 # access, or the user already has write access, we change to
                 # the access right of the invite.
-                if right.rights == 'read':
+                if right.rights == "read":
                     pass
-                elif old_ar.rights == 'write':
+                elif old_ar.rights == "write":
                     pass
                 else:
                     old_ar.rights = right.rights
@@ -156,11 +156,8 @@ class UserInvite(models.Model):
 
 
 class LoginAs(models.Model):
-
     class Meta:
         managed = False
         default_permissions = ()
 
-        permissions = (
-            ('can_login_as', _('Can login as another user')),
-        )
+        permissions = (("can_login_as", _("Can login as another user")),)

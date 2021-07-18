@@ -15,9 +15,10 @@ from django.conf import settings
 class ExportTest(LiveTornadoTestCase, SeleniumHelper):
     """Test whether Fidus Writer exports files in all the formats.
     Note that it does not validate the export files."""
+
     fixtures = [
-        'initial_documenttemplates.json',
-        'initial_styles.json',
+        "initial_documenttemplates.json",
+        "initial_styles.json",
     ]
 
     @classmethod
@@ -41,9 +42,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         self.verificationErrors = []
         self.accept_next_alert = True
         self.user1 = self.create_user(
-            username='Yeti',
-            email='yeti@snowman.com',
-            passtext='otter'
+            username="Yeti", email="yeti@snowman.com", passtext="otter"
         )
 
     def tearDown(self):
@@ -56,41 +55,36 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable(
-                (
-                    By.CSS_SELECTOR,
-                    ".new_document button"
-                )
+                (By.CSS_SELECTOR, ".new_document button")
             )
         ).click()
         # Set copyright
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.presence_of_element_located((
-                By.CSS_SELECTOR,
-                '#header-navigation > div:nth-child(3) > span'
-            ))
+            EC.presence_of_element_located(
+                (
+                    By.CSS_SELECTOR,
+                    "#header-navigation > div:nth-child(3) > span",
+                )
+            )
         ).click()
         self.driver.find_element(
             By.CSS_SELECTOR,
             (
                 "#header-navigation > div:nth-child(3) > "
                 "div > ul > li:nth-child(6) > span"
-            )
+            ),
         ).click()
+        self.driver.find_element_by_css_selector(".holder").send_keys(
+            "The Big Company"
+        )
+        self.driver.find_element_by_css_selector(".year").send_keys("2003")
+        self.driver.find_element_by_css_selector(".license").click()
         self.driver.find_element_by_css_selector(
-            '.holder'
-        ).send_keys('The Big Company')
-        self.driver.find_element_by_css_selector(
-            '.year'
-        ).send_keys('2003')
-        self.driver.find_element_by_css_selector(
-            '.license'
+            ".license > option:nth-child(4)"
         ).click()
-        self.driver.find_element_by_css_selector(
-            '.license > option:nth-child(4)'
-        ).click()
-        self.driver.find_element_by_css_selector(
-            '.license-start'
-        ).send_keys('2001-04-06')
+        self.driver.find_element_by_css_selector(".license-start").send_keys(
+            "2001-04-06"
+        )
         self.driver.find_element_by_css_selector(
             "[aria-describedby=configure-copyright] button.fw-dark"
         ).click()
@@ -104,26 +98,22 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
             "No styling"
         )
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            "button[title=Strong]"
+            By.CSS_SELECTOR, "button[title=Strong]"
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
             "strong"
         )
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            "button[title=Strong]"
+            By.CSS_SELECTOR, "button[title=Strong]"
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            "button[title=Emphasis]"
+            By.CSS_SELECTOR, "button[title=Emphasis]"
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
             "emph"
         )
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            "button[title=Emphasis]"
+            By.CSS_SELECTOR, "button[title=Emphasis]"
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
             Keys.ENTER
@@ -146,8 +136,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
             Keys.ENTER
         )
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            "button[title=Blockquote]"
+            By.CSS_SELECTOR, "button[title=Blockquote]"
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
             "block quote"
@@ -167,22 +156,24 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(By.CSS_SELECTOR, ".fw-dark").click()
         self.driver.find_element(By.CSS_SELECTOR, ".fa-asterisk").click()
         self.driver.find_element(
-            By.CSS_SELECTOR, ".footnote-container > p").click()
+            By.CSS_SELECTOR, ".footnote-container > p"
+        ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR, ".footnote-container > p").send_keys('A footnote')
+            By.CSS_SELECTOR, ".footnote-container > p"
+        ).send_keys("A footnote")
         self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
         self.driver.find_element(By.CSS_SELECTOR, ".fa-book").click()
         # click on 'Register new source' button
         register_new_source = WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
-                (By.CLASS_NAME, 'register-new-bib-source')
+                (By.CLASS_NAME, "register-new-bib-source")
             )
         )
         register_new_source.click()
 
         # select source
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.presence_of_element_located((By.ID, 'select-bibtype'))
+            EC.presence_of_element_located((By.ID, "select-bibtype"))
         )
 
         # click on article
@@ -192,28 +183,29 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
 
         # fill the values
         title_of_publication = self.driver.find_element_by_css_selector(
-            '.journaltitle .ProseMirror'
+            ".journaltitle .ProseMirror"
         )
         title_of_publication.click()
         title_of_publication.send_keys("My publication title")
 
-        title = self.driver.find_element_by_css_selector(
-            '.title .ProseMirror')
+        title = self.driver.find_element_by_css_selector(".title .ProseMirror")
         title.click()
         title.send_keys("My title")
 
         author_firstName = self.driver.find_element_by_css_selector(
-            '.author .given .ProseMirror')
+            ".author .given .ProseMirror"
+        )
         author_firstName.click()
         author_firstName.send_keys("John")
 
         author_lastName = self.driver.find_element_by_css_selector(
-            '.family .ProseMirror')
+            ".family .ProseMirror"
+        )
         author_lastName.click()
         author_lastName.send_keys("Doe")
 
         publication_date = self.driver.find_element_by_css_selector(
-            '.date .date'
+            ".date .date"
         )
         publication_date.click()
         publication_date.send_keys("2012")
@@ -228,15 +220,14 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
             EC.element_to_be_clickable(
                 (
                     By.CSS_SELECTOR,
-                    '#selected-cite-source-table .selected-source'
+                    "#selected-cite-source-table .selected-source",
                 )
             )
         )
         # click on Insert button
-        self.driver.find_element_by_css_selector('.insert-citation').click()
+        self.driver.find_element_by_css_selector(".insert-citation").click()
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            'button[title="Horizontal line"]'
+            By.CSS_SELECTOR, 'button[title="Horizontal line"]'
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
             Keys.DOWN
@@ -256,19 +247,13 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         # click on 'Insert image' button
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
-                (
-                    By.XPATH,
-                    '//*[normalize-space()="Insert image"]'
-                )
+                (By.XPATH, '//*[normalize-space()="Insert image"]')
             )
         ).click()
 
         upload_button = WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
-                (
-                    By.XPATH,
-                    '//*[normalize-space()="Add new image"]'
-                )
+                (By.XPATH, '//*[normalize-space()="Add new image"]')
             )
         )
 
@@ -276,8 +261,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
 
         # image path
         image_path = os.path.join(
-            settings.PROJECT_PATH,
-            'document/tests/uploads/image.png'
+            settings.PROJECT_PATH, "document/tests/uploads/image.png"
         )
 
         # in order to select the image we send the image path in the
@@ -297,7 +281,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         # click on 'Use image' button
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable(
-                (By.CSS_SELECTOR, '.fw-data-table i.fa-check')
+                (By.CSS_SELECTOR, ".fw-data-table i.fa-check")
             )
         )
 
@@ -315,21 +299,17 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
                 "ui-widget-content.ui-front > div > div > ul > li:nth-child(1)"
             )
         ).click()
+        self.driver.find_element_by_css_selector(".holder").send_keys(
+            "Johannes Wilm"
+        )
+        self.driver.find_element_by_css_selector(".year").send_keys("1998")
+        self.driver.find_element_by_css_selector(".license").click()
         self.driver.find_element_by_css_selector(
-            '.holder'
-        ).send_keys('Johannes Wilm')
-        self.driver.find_element_by_css_selector(
-            '.year'
-        ).send_keys('1998')
-        self.driver.find_element_by_css_selector(
-            '.license'
+            ".license > option:nth-child(2)"
         ).click()
-        self.driver.find_element_by_css_selector(
-            '.license > option:nth-child(2)'
-        ).click()
-        self.driver.find_element_by_css_selector(
-            '.license-start'
-        ).send_keys('1998-04-23')
+        self.driver.find_element_by_css_selector(".license-start").send_keys(
+            "1998-04-23"
+        )
         self.driver.find_element_by_css_selector(
             "[aria-describedby=configure-copyright] button.fw-dark"
         ).click()
@@ -345,59 +325,55 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         caption.click()
         caption.send_keys("Figure")
 
-        ActionChains(self.driver).send_keys(
-            Keys.RIGHT
-        ).perform()
+        ActionChains(self.driver).send_keys(Keys.RIGHT).perform()
         # Add table
         self.driver.find_element(By.CSS_SELECTOR, ".fa-table").click()
         self.driver.find_element(
             By.CSS_SELECTOR,
-            "table.insert-table-selection tr:nth-child(2) > td:nth-child(2)"
+            "table.insert-table-selection tr:nth-child(2) > td:nth-child(2)",
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, ".fw-dark").click()
         self.driver.find_element(
-            By.CSS_SELECTOR, "tr:nth-child(1) > td:nth-child(1) > p").click()
+            By.CSS_SELECTOR, "tr:nth-child(1) > td:nth-child(1) > p"
+        ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            "tr:nth-child(1) > td:nth-child(1) > p").send_keys('one')
+            By.CSS_SELECTOR, "tr:nth-child(1) > td:nth-child(1) > p"
+        ).send_keys("one")
         self.driver.find_element(
-            By.CSS_SELECTOR, "tr:nth-child(1) > td:nth-child(2) > p").click()
+            By.CSS_SELECTOR, "tr:nth-child(1) > td:nth-child(2) > p"
+        ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            "tr:nth-child(1) > td:nth-child(2) > p").send_keys('two')
+            By.CSS_SELECTOR, "tr:nth-child(1) > td:nth-child(2) > p"
+        ).send_keys("two")
         self.driver.find_element(
-            By.CSS_SELECTOR, "tr:nth-child(2) > td:nth-child(1) > p").click()
+            By.CSS_SELECTOR, "tr:nth-child(2) > td:nth-child(1) > p"
+        ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            "tr:nth-child(2) > td:nth-child(1) > p").send_keys('three')
+            By.CSS_SELECTOR, "tr:nth-child(2) > td:nth-child(1) > p"
+        ).send_keys("three")
         self.driver.find_element(
-            By.CSS_SELECTOR, "tr:nth-child(2) > td:nth-child(2)").click()
+            By.CSS_SELECTOR, "tr:nth-child(2) > td:nth-child(2)"
+        ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            "tr:nth-child(2) > td:nth-child(2)").send_keys('four')
+            By.CSS_SELECTOR, "tr:nth-child(2) > td:nth-child(2)"
+        ).send_keys("four")
         # Add table caption
         self.driver.find_element(
-            By.CSS_SELECTOR, "div.table-100 > button").click()
+            By.CSS_SELECTOR, "div.table-100 > button"
+        ).click()
         self.driver.find_element(
             By.CSS_SELECTOR,
-            "body > div.ui-content_menu > div > div > ul > li:nth-child(16)"
+            "body > div.ui-content_menu > div > div > ul > li:nth-child(16)",
         ).click()
-        self.driver.find_element_by_css_selector(
-            "div.table-category"
-        ).click()
+        self.driver.find_element_by_css_selector("div.table-category").click()
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Table"]'
         ).click()
-        self.driver.find_element_by_css_selector(
-            "div.table-caption"
-        ).click()
+        self.driver.find_element_by_css_selector("div.table-caption").click()
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Enable"]'
         ).click()
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            "button.fw-dark"
-        ).click()
+        self.driver.find_element(By.CSS_SELECTOR, "button.fw-dark").click()
         caption = WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
                 (By.CSS_SELECTOR, "div.article-body table caption")
@@ -413,12 +389,12 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         # HTML
         self.driver.find_element(
             By.CSS_SELECTOR,
-            '.header-nav-item[title="Export of the document contents"]'
+            '.header-nav-item[title="Export of the document contents"]',
         ).click()
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="HTML"]'
         ).click()
-        path = os.path.join(self.download_dir, 'title.html.zip')
+        path = os.path.join(self.download_dir, "title.html.zip")
         self.wait_until_file_exists(path, self.wait_time)
         assert os.path.isfile(path)
         os.remove(path)
@@ -426,12 +402,12 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         # EPUB
         self.driver.find_element(
             By.CSS_SELECTOR,
-            '.header-nav-item[title="Export of the document contents"]'
+            '.header-nav-item[title="Export of the document contents"]',
         ).click()
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Epub"]'
         ).click()
-        path = os.path.join(self.download_dir, 'title.epub')
+        path = os.path.join(self.download_dir, "title.epub")
         self.wait_until_file_exists(path, self.wait_time)
         assert os.path.isfile(path)
         os.remove(path)
@@ -439,12 +415,12 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         # LaTeX
         self.driver.find_element(
             By.CSS_SELECTOR,
-            '.header-nav-item[title="Export of the document contents"]'
+            '.header-nav-item[title="Export of the document contents"]',
         ).click()
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="LaTeX"]'
         ).click()
-        path = os.path.join(self.download_dir, 'title.latex.zip')
+        path = os.path.join(self.download_dir, "title.latex.zip")
         self.wait_until_file_exists(path, self.wait_time)
         assert os.path.isfile(path)
         os.remove(path)
@@ -452,12 +428,12 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         # JATS
         self.driver.find_element(
             By.CSS_SELECTOR,
-            '.header-nav-item[title="Export of the document contents"]'
+            '.header-nav-item[title="Export of the document contents"]',
         ).click()
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="JATS"]'
         ).click()
-        path = os.path.join(self.download_dir, 'title.jats.zip')
+        path = os.path.join(self.download_dir, "title.jats.zip")
         self.wait_until_file_exists(path, self.wait_time)
         assert os.path.isfile(path)
         os.remove(path)
@@ -465,12 +441,12 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         # DOCX
         self.driver.find_element(
             By.CSS_SELECTOR,
-            '.header-nav-item[title="Export of the document contents"]'
+            '.header-nav-item[title="Export of the document contents"]',
         ).click()
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Classic (DOCX)"]'
         ).click()
-        path = os.path.join(self.download_dir, 'title.docx')
+        path = os.path.join(self.download_dir, "title.docx")
         self.wait_until_file_exists(path, self.wait_time)
         assert os.path.isfile(path)
         os.remove(path)
@@ -478,252 +454,211 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         # ODT
         self.driver.find_element(
             By.CSS_SELECTOR,
-            '.header-nav-item[title="Export of the document contents"]'
+            '.header-nav-item[title="Export of the document contents"]',
         ).click()
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Free (ODT)"]'
         ).click()
-        path = os.path.join(self.download_dir, 'title.odt')
+        path = os.path.join(self.download_dir, "title.odt")
         self.wait_until_file_exists(path, self.wait_time)
         assert os.path.isfile(path)
         os.remove(path)
 
         # Save a revision
         self.driver.find_element(
-            By.CSS_SELECTOR, '.header-nav-item[title="File handling"]').click()
+            By.CSS_SELECTOR, '.header-nav-item[title="File handling"]'
+        ).click()
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Save revision"]'
         ).click()
-        self.driver.find_element_by_css_selector(
-            '.revision-note'
-        ).send_keys('First revision')
+        self.driver.find_element_by_css_selector(".revision-note").send_keys(
+            "First revision"
+        )
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Save"]'
         ).click()
         # Wait for revision save to be done
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.visibility_of_element_located(
-                (By.CLASS_NAME, 'alerts-success')
-            )
+            EC.visibility_of_element_located((By.CLASS_NAME, "alerts-success"))
         )
         # Exit the editor
-        self.driver.find_element(
-            By.ID,
-            "close-document-top"
-        ).click()
+        self.driver.find_element(By.ID, "close-document-top").click()
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.element_to_be_clickable((By.ID, 'preferences-btn'))
+            EC.element_to_be_clickable((By.ID, "preferences-btn"))
         )
 
         # Export from overview
         self.driver.find_element_by_css_selector(
-            'tr:nth-child(1) > td > label'
+            "tr:nth-child(1) > td > label"
         ).click()
 
         # Native
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, '.dt-bulk-dropdown'))
+            EC.element_to_be_clickable((By.CSS_SELECTOR, ".dt-bulk-dropdown"))
         ).click()
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Export selected as FIDUS"]'
         ).click()
-        path = os.path.join(self.download_dir, 'title.fidus')
+        path = os.path.join(self.download_dir, "title.fidus")
         self.wait_until_file_exists(path, self.wait_time)
         assert os.path.isfile(path)
         os.remove(path)
 
         # Slim native
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, '.dt-bulk-dropdown'))
+            EC.element_to_be_clickable((By.CSS_SELECTOR, ".dt-bulk-dropdown"))
         ).click()
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Export selected as Slim FIDUS"]'
         ).click()
-        path = os.path.join(self.download_dir, 'title.fidus')
+        path = os.path.join(self.download_dir, "title.fidus")
         self.wait_until_file_exists(path, self.wait_time)
         assert os.path.isfile(path)
         # We keep the file for the upload test below
-        upload_slim_path = os.path.join(self.download_dir, 'upload_slim.fidus')
+        upload_slim_path = os.path.join(self.download_dir, "upload_slim.fidus")
         os.rename(path, upload_slim_path)
 
         # EPUB
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, '.dt-bulk-dropdown'))
+            EC.element_to_be_clickable((By.CSS_SELECTOR, ".dt-bulk-dropdown"))
         ).click()
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Export selected as Epub"]'
         ).click()
-        path = os.path.join(self.download_dir, 'title.epub')
+        path = os.path.join(self.download_dir, "title.epub")
         self.wait_until_file_exists(path, self.wait_time)
         assert os.path.isfile(path)
         os.remove(path)
 
         # HTML
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, '.dt-bulk-dropdown'))
+            EC.element_to_be_clickable((By.CSS_SELECTOR, ".dt-bulk-dropdown"))
         ).click()
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Export selected as HTML"]'
         ).click()
-        path = os.path.join(self.download_dir, 'title.html.zip')
+        path = os.path.join(self.download_dir, "title.html.zip")
         self.wait_until_file_exists(path, self.wait_time)
         assert os.path.isfile(path)
         os.remove(path)
 
         # LaTeX
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, '.dt-bulk-dropdown'))
+            EC.element_to_be_clickable((By.CSS_SELECTOR, ".dt-bulk-dropdown"))
         ).click()
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Export selected as LaTeX"]'
         ).click()
-        path = os.path.join(self.download_dir, 'title.latex.zip')
+        path = os.path.join(self.download_dir, "title.latex.zip")
         self.wait_until_file_exists(path, self.wait_time)
         assert os.path.isfile(path)
         os.remove(path)
 
         # JATS
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, '.dt-bulk-dropdown'))
+            EC.element_to_be_clickable((By.CSS_SELECTOR, ".dt-bulk-dropdown"))
         ).click()
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Export selected as JATS"]'
         ).click()
-        path = os.path.join(self.download_dir, 'title.jats.zip')
+        path = os.path.join(self.download_dir, "title.jats.zip")
         self.wait_until_file_exists(path, self.wait_time)
         assert os.path.isfile(path)
         os.remove(path)
 
         # Revision
-        self.driver.find_element_by_css_selector(
-            '.revisions'
-        ).click()
-        self.driver.find_element_by_css_selector(
-            '.download-revision'
-        ).click()
-        path = os.path.join(self.download_dir, 'title.fidus')
+        self.driver.find_element_by_css_selector(".revisions").click()
+        self.driver.find_element_by_css_selector(".download-revision").click()
+        path = os.path.join(self.download_dir, "title.fidus")
         self.wait_until_file_exists(path, self.wait_time)
         assert os.path.isfile(path)
-        upload_full_path = os.path.join(self.download_dir, 'upload_full.fidus')
+        upload_full_path = os.path.join(self.download_dir, "upload_full.fidus")
         os.rename(path, upload_full_path)
         # We keep the file to test import below
-        self.driver.find_element_by_css_selector(
-            '.recreate-revision'
-        ).click()
+        self.driver.find_element_by_css_selector(".recreate-revision").click()
         self.assertEqual(
-            len(self.driver.find_elements_by_css_selector(
-                '#revisions-dialog > table > tbody tr'
-            )),
-            1
+            len(
+                self.driver.find_elements_by_css_selector(
+                    "#revisions-dialog > table > tbody tr"
+                )
+            ),
+            1,
         )
-        self.driver.find_element_by_css_selector(
-            '.delete-revision'
-        ).click()
-        self.driver.find_element_by_css_selector(
-            'button.fw-dark'
-        ).click()
+        self.driver.find_element_by_css_selector(".delete-revision").click()
+        self.driver.find_element_by_css_selector("button.fw-dark").click()
         time.sleep(1)
         self.assertEqual(
-            len(self.driver.find_elements_by_css_selector(
-                '#revisions-dialog > table > tbody tr'
-            )),
-            0
+            len(
+                self.driver.find_elements_by_css_selector(
+                    "#revisions-dialog > table > tbody tr"
+                )
+            ),
+            0,
         )
-        self.driver.find_element_by_css_selector(
-            'button.fw-orange'
-        ).click()
+        self.driver.find_element_by_css_selector("button.fw-orange").click()
 
         # Delete document
         documents = self.driver.find_elements_by_css_selector(
-            '.fw-contents tbody tr a.fw-data-table-title'
+            ".fw-contents tbody tr a.fw-data-table-title"
         )
-        self.assertEqual(
-            len(documents),
-            2
-        )
+        self.assertEqual(len(documents), 2)
         self.driver.find_element_by_css_selector(
-            'tr:nth-child(1) > td > label'
+            "tr:nth-child(1) > td > label"
         ).click()
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, '.dt-bulk-dropdown'))
+            EC.element_to_be_clickable((By.CSS_SELECTOR, ".dt-bulk-dropdown"))
         ).click()
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Delete selected"]'
         ).click()
-        self.driver.find_element_by_css_selector(
-            'button.fw-dark'
-        ).click()
+        self.driver.find_element_by_css_selector("button.fw-dark").click()
         time.sleep(1)
         documents = self.driver.find_elements_by_css_selector(
-            '.fw-contents tbody tr a.fw-data-table-title'
+            ".fw-contents tbody tr a.fw-data-table-title"
         )
-        self.assertEqual(
-            len(documents),
-            1
-        )
+        self.assertEqual(len(documents), 1)
         self.driver.find_element_by_css_selector(
-            '.fw-contents tbody tr .delete-document'
+            ".fw-contents tbody tr .delete-document"
         ).click()
-        self.driver.find_element_by_css_selector(
-            'button.fw-dark'
-        ).click()
+        self.driver.find_element_by_css_selector("button.fw-dark").click()
         time.sleep(1)
         documents = self.driver.find_elements_by_css_selector(
-            '.fw-contents tbody tr a.fw-data-table-title'
+            ".fw-contents tbody tr a.fw-data-table-title"
         )
-        self.assertEqual(
-            len(documents),
-            0
-        )
+        self.assertEqual(len(documents), 0)
         # We delete the image so our import will cause an image import
         self.driver.find_element_by_css_selector(
             "a[href='/usermedia/']"
         ).click()
-        self.driver.find_element_by_css_selector(
-            ".delete-image"
-        ).click()
-        self.driver.find_element_by_css_selector(
-            ".fw-dark"
-        ).click()
+        self.driver.find_element_by_css_selector(".delete-image").click()
+        self.driver.find_element_by_css_selector(".fw-dark").click()
         # We import the fidus file
-        self.driver.find_element_by_css_selector(
-            "a[href='/']"
-        ).click()
+        self.driver.find_element_by_css_selector("a[href='/']").click()
         self.driver.find_element_by_css_selector(
             "button[title='Upload FIDUS document']"
         ).click()
-        self.driver.find_element_by_css_selector(
-            "#fidus-uploader"
-        ).send_keys(upload_full_path)
-        self.driver.find_element_by_css_selector(
-            ".fw-dark"
-        ).click()
+        self.driver.find_element_by_css_selector("#fidus-uploader").send_keys(
+            upload_full_path
+        )
+        self.driver.find_element_by_css_selector(".fw-dark").click()
         documents = self.driver.find_elements_by_css_selector(
-            '.fw-contents tbody tr a.fw-data-table-title'
+            ".fw-contents tbody tr a.fw-data-table-title"
         )
-        self.assertEqual(
-            len(documents),
-            1
-        )
+        self.assertEqual(len(documents), 1)
         # We delete our downloaded fidus file
         os.remove(upload_full_path)
         # Upload slim file
         self.driver.find_element_by_css_selector(
             "button[title='Upload FIDUS document']"
         ).click()
-        self.driver.find_element_by_css_selector(
-            "#fidus-uploader"
-        ).send_keys(upload_slim_path)
-        self.driver.find_element_by_css_selector(
-            ".fw-dark"
-        ).click()
+        self.driver.find_element_by_css_selector("#fidus-uploader").send_keys(
+            upload_slim_path
+        )
+        self.driver.find_element_by_css_selector(".fw-dark").click()
         time.sleep(1)
         documents = self.driver.find_elements_by_css_selector(
-            '.fw-contents tbody tr a.fw-data-table-title'
+            ".fw-contents tbody tr a.fw-data-table-title"
         )
-        self.assertEqual(
-            len(documents),
-            2
-        )
+        self.assertEqual(len(documents), 2)
         # We delete our downloaded fidus file
         os.remove(upload_slim_path)

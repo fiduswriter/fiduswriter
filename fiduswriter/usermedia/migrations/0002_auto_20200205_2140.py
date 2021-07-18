@@ -8,13 +8,19 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('usermedia', '0001_squashed_0009_auto_20170908_0953'),
+        ("usermedia", "0001_squashed_0009_auto_20170908_0953"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='image',
-            name='uploader',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='image_uploader', to=settings.AUTH_USER_MODEL),
+            model_name="image",
+            name="uploader",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="image_uploader",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

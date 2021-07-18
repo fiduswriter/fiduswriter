@@ -19,40 +19,43 @@ from base.management import BaseCommand
 try:
     from asyncio import set_event_loop_policy
     from tornado.platform.asyncio import AnyThreadEventLoopPolicy
+
     set_event_loop_policy(AnyThreadEventLoopPolicy())
 except ImportError:
     pass
 
-naiveip_re = re.compile(r"""^(?:
+naiveip_re = re.compile(
+    r"""^(?:
 (?P<addr>
     (?P<ipv4>\d{1,3}(?:\.\d{1,3}){3}) |         # IPv4 address
     (?P<ipv6>\[[a-fA-F0-9:]+\]) |               # IPv6 address
     (?P<fqdn>[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*) # FQDN
-):)?(?P<port>\d+)$""", re.X)
+):)?(?P<port>\d+)$""",
+    re.X,
+)
 
 
 class Command(BaseCommand):
-    help = 'Run django using the tornado server'
+    help = "Run django using the tornado server"
     requires_migrations_checks = True
     requires_system_checks = True
     leave_locale_alone = True
-    default_addr = '127.0.0.1'
+    default_addr = "127.0.0.1"
     default_port = str(settings.PORT)
     compile_server = False
 
     def add_arguments(self, parser):
         parser.add_argument(
-            'addrport', nargs='?',
-            help='Optional port number, or ipaddr:port'
+            "addrport", nargs="?", help="Optional port number, or ipaddr:port"
         )
 
     def handle(self, *args, **options):
-        if options['addrport']:
-            m = re.match(naiveip_re, options['addrport'])
+        if options["addrport"]:
+            m = re.match(naiveip_re, options["addrport"])
             if m is None:
                 raise CommandError(
                     '"%s" is not a valid port number '
-                    'or address:port pair.' % options['addrport']
+                    "or address:port pair." % options["addrport"]
                 )
             self.addr, _ipv4, _ipv6, _fqdn, self.port = m.groups()
             if not self.addr:
@@ -65,11 +68,9 @@ class Command(BaseCommand):
         self.inner_run(*args, **options)
 
     def inner_run(self, *args, **options):
-        quit_command = (platform == 'win32') and 'CTRL-BREAK' or 'CONTROL-C'
-        if (
-            hasattr(settings, 'AUTO_SETUP') and settings.AUTO_SETUP
-        ) or (
-            not hasattr(settings, 'AUTO_SETUP') and settings.DEBUG
+        quit_command = (platform == "win32") and "CTRL-BREAK" or "CONTROL-C"
+        if (hasattr(settings, "AUTO_SETUP") and settings.AUTO_SETUP) or (
+            not hasattr(settings, "AUTO_SETUP") and settings.DEBUG
         ):
             server = self.get_setup_server()
             loop_thread = threading.Thread(
@@ -81,19 +82,22 @@ class Command(BaseCommand):
             server.stop()
             ioloop = tornado.ioloop.IOLoop.current()
             ioloop.add_callback(ioloop.stop)
-        self.stdout.write((
-            "%(started_at)s\n"
-            "Fidus Writer version %(version)s, using settings %(settings)r\n"
-            "Fidus Writer server is running at http://%(addr)s:%(port)s/\n"
-            "Quit the server with %(quit_command)s.\n"
-        ) % {
-            "started_at": datetime.now().strftime('%B %d, %Y - %X'),
-            "version": self.get_version(),
-            "settings": settings.SETTINGS_MODULE,
-            "addr": self.addr,
-            "port": self.port,
-            "quit_command": quit_command,
-        })
+        self.stdout.write(
+            (
+                "%(started_at)s\n"
+                "Fidus Writer version %(version)s, using settings %(settings)r\n"
+                "Fidus Writer server is running at http://%(addr)s:%(port)s/\n"
+                "Quit the server with %(quit_command)s.\n"
+            )
+            % {
+                "started_at": datetime.now().strftime("%B %d, %Y - %X"),
+                "version": self.get_version(),
+                "settings": settings.SETTINGS_MODULE,
+                "addr": self.addr,
+                "port": self.port,
+                "quit_command": quit_command,
+            }
+        )
         # django.core.management.base forces the locale to en-us. We should
         # set it up correctly for the first request (particularly important
         # in the "--noreload" case).
@@ -106,17 +110,17 @@ class Command(BaseCommand):
         tornado_app = Application(
             [
                 (
-                    r'/(.*)',
+                    r"/(.*)",
                     SetupStaticFilesHandler,
                     {
-                        'path': settings.SETUP_PAGE_PATH,
-                        'default_filename': "index.html"
-                    }
+                        "path": settings.SETUP_PAGE_PATH,
+                        "default_filename": "index.html",
+                    },
                 ),
             ],
             debug=settings.DEBUG,
             websocket_ping_interval=settings.WEBSOCKET_PING_INTERVAL,
-            compress_response=True
+            compress_response=True,
         )
         server = HTTPServer(tornado_app, no_keep_alive=True)
         server.xheaders = True

@@ -18,21 +18,22 @@ def update_revision_zip(file_field, file_name):
     tmpfd, tmpname = tempfile.mkstemp()
     os.close(tmpfd)
     # create a temp copy of the archive without filename
-    with zipfile.ZipFile(file_field.open(), 'r') as zin:
-        with zipfile.ZipFile(tmpname, 'w') as zout:
-            zout.comment = zin.comment # preserve the comment
+    with zipfile.ZipFile(file_field.open(), "r") as zin:
+        with zipfile.ZipFile(tmpname, "w") as zout:
+            zout.comment = zin.comment  # preserve the comment
             for item in zin.infolist():
-                if item.filename == 'filetype-version':
+                if item.filename == "filetype-version":
                     zout.writestr(item, str(FW_DOCUMENT_VERSION))
                 else:
                     zout.writestr(item, zin.read(item.filename))
     # replace with the temp archive
-    with open(tmpname, 'rb') as tmp_file:
+    with open(tmpname, "rb") as tmp_file:
         file_field.save(file_name, File(tmp_file))
     os.remove(tmpname)
 
+
 def update_documents(apps, schema_editor):
-    Document = apps.get_model('document', 'Document')
+    Document = apps.get_model("document", "Document")
     documents = Document.objects.all().iterator()
     for document in documents:
         if document.doc_version == Decimal(str(OLD_FW_DOCUMENT_VERSION)):
@@ -42,14 +43,14 @@ def update_documents(apps, schema_editor):
                     field.auto_now = False
             document.save()
 
-    DocumentTemplate = apps.get_model('document', 'DocumentTemplate')
+    DocumentTemplate = apps.get_model("document", "DocumentTemplate")
     templates = DocumentTemplate.objects.all()
     for template in templates:
         if template.doc_version == Decimal(str(OLD_FW_DOCUMENT_VERSION)):
             template.doc_version = FW_DOCUMENT_VERSION
             template.save()
 
-    DocumentRevision = apps.get_model('document', 'DocumentRevision')
+    DocumentRevision = apps.get_model("document", "DocumentRevision")
     revisions = DocumentRevision.objects.all()
     for revision in revisions:
         if not revision.file_object:
@@ -61,27 +62,34 @@ def update_documents(apps, schema_editor):
             # Set the version number also in the zip file.
             update_revision_zip(revision.file_object, revision.file_name)
 
+
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('document', '0017_auto_20210607_0857'),
+        ("document", "0017_auto_20210607_0857"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='document',
-            name='doc_version',
-            field=models.DecimalField(decimal_places=1, default=3.4, max_digits=3),
+            model_name="document",
+            name="doc_version",
+            field=models.DecimalField(
+                decimal_places=1, default=3.4, max_digits=3
+            ),
         ),
         migrations.AlterField(
-            model_name='documentrevision',
-            name='doc_version',
-            field=models.DecimalField(decimal_places=1, default=3.4, max_digits=3),
+            model_name="documentrevision",
+            name="doc_version",
+            field=models.DecimalField(
+                decimal_places=1, default=3.4, max_digits=3
+            ),
         ),
         migrations.AlterField(
-            model_name='documenttemplate',
-            name='doc_version',
-            field=models.DecimalField(decimal_places=1, default=3.4, max_digits=3),
+            model_name="documenttemplate",
+            name="doc_version",
+            field=models.DecimalField(
+                decimal_places=1, default=3.4, max_digits=3
+            ),
         ),
         migrations.RunPython(update_documents),
     ]

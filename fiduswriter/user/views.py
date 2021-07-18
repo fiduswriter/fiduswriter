@@ -20,7 +20,7 @@ from . import emails
 from allauth.account.models import (
     EmailAddress,
     EmailConfirmation,
-    EmailConfirmationHMAC
+    EmailConfirmationHMAC,
 )
 from allauth.account.views import SignupView
 from allauth.account import signals
@@ -39,9 +39,9 @@ from avatar.signals import avatar_updated
 @ajax_required
 @require_POST
 def password_change(request):
-    '''
+    """
     Change password
-    '''
+    """
     response = {}
     form = PasswordChangeForm(user=request.user, data=request.POST)
     if form.is_valid():
@@ -51,22 +51,19 @@ def password_change(request):
         # except the current one.
         update_session_auth_hash(request, form.user)
     else:
-        response['msg'] = form.errors
+        response["msg"] = form.errors
         status = 201
 
-    return JsonResponse(
-        response,
-        status=status
-    )
+    return JsonResponse(response, status=status)
 
 
 @login_required
 @ajax_required
 @require_POST
 def add_email(request):
-    '''
+    """
     Add email address
-    '''
+    """
     response = {}
     add_email_form = AddEmailForm(request.user, request.POST)
     if add_email_form.is_valid():
@@ -74,17 +71,15 @@ def add_email(request):
         email_address = add_email_form.save(request)
         signals.email_added.send(
             sender=request.user.__class__,
-            request=request, user=request.user,
-            email_address=email_address
+            request=request,
+            user=request.user,
+            email_address=email_address,
         )
     else:
         status = 201
-        response['msg'] = add_email_form.errors
+        response["msg"] = add_email_form.errors
 
-    return JsonResponse(
-        response,
-        status=status
-    )
+    return JsonResponse(response, status=status)
 
 
 @login_required
@@ -93,29 +88,21 @@ def add_email(request):
 def delete_email(request):
     response = {}
     email = request.POST["email"]
-    response['msg'] = f"Removed e-mail address {email}"
+    response["msg"] = f"Removed e-mail address {email}"
     status = 200
     email_address = EmailAddress.objects.filter(
-        user=request.user,
-        email=email,
-        primary=False
+        user=request.user, email=email, primary=False
     ).first()
     if not email_address:
-        return JsonResponse(
-            {'msg': 'Cannot remove email.'},
-            status=404
-        )
+        return JsonResponse({"msg": "Cannot remove email."}, status=404)
     email_address.delete()
     signals.email_removed.send(
         sender=request.user.__class__,
         request=request,
         user=request.user,
-        email_address=email_address
+        email_address=email_address,
     )
-    return JsonResponse(
-        response,
-        status=status
-    )
+    return JsonResponse(response, status=status)
 
 
 @login_required
@@ -125,29 +112,24 @@ def primary_email(request):
     response = {}
     email = request.POST["email"]
     email_address = EmailAddress.objects.filter(
-        user=request.user,
-        email=email,
-        verified=True
+        user=request.user, email=email, verified=True
     ).first()
     if not email_address:
-        return JsonResponse({'msg': 'Cannot set primary email.'}, 404)
+        return JsonResponse({"msg": "Cannot set primary email."}, 404)
     from_email_address = EmailAddress.objects.filter(
-        user=request.user,
-        primary=True
+        user=request.user, primary=True
     ).first()
     status = 200
     email_address.set_as_primary()
-    response['msg'] = "Primary e-mail address set"
+    response["msg"] = "Primary e-mail address set"
     signals.email_changed.send(
         sender=request.user.__class__,
-        request=request, user=request.user,
+        request=request,
+        user=request.user,
         from_email_address=from_email_address,
-        to_email_address=email_address
+        to_email_address=email_address,
     )
-    return JsonResponse(
-        response,
-        status=status
-    )
+    return JsonResponse(response, status=status)
 
 
 @login_required
@@ -155,75 +137,57 @@ def primary_email(request):
 @require_POST
 def delete_socialaccount(request):
     account = SocialAccount.objects.filter(
-        id=request.POST["socialaccount"],
-        user=request.user
+        id=request.POST["socialaccount"], user=request.user
     ).first()
     if not account:
-        return JsonResponse(
-            {'msg': 'Unknown account'},
-            status=404
-        )
+        return JsonResponse({"msg": "Unknown account"}, status=404)
     account.delete()
     social_account_removed.send(
-        sender=SocialAccount,
-        request=request,
-        socialaccount=account
+        sender=SocialAccount, request=request, socialaccount=account
     )
-    return JsonResponse(
-        {'msg': 'Deleted account'},
-        status=200
-    )
+    return JsonResponse({"msg": "Deleted account"}, status=200)
 
 
 @login_required
 @ajax_required
 @require_POST
 def upload_avatar(request):
-    '''
+    """
     Upload avatar image
-    '''
+    """
     response = {}
     status = 405
 
     avatar, avatars = avatarviews._get_avatars(request.user)
     upload_avatar_form = UploadAvatarForm(
-        None,
-        request.FILES,
-        user=request.user
+        None, request.FILES, user=request.user
     )
     if upload_avatar_form.is_valid():
         avatar = Avatar(
             user=request.user,
             primary=True,
         )
-        image_file = request.FILES['avatar']
+        image_file = request.FILES["avatar"]
         avatar.avatar.save(image_file.name, image_file)
         avatar.save()
-        avatar_updated.send(
-            sender=Avatar,
-            user=request.user,
-            avatar=avatar
-        )
-        response['avatar'] = request.user.avatar_url['url']
+        avatar_updated.send(sender=Avatar, user=request.user, avatar=avatar)
+        response["avatar"] = request.user.avatar_url["url"]
         status = 200
-    return JsonResponse(
-        response,
-        status=status
-    )
+    return JsonResponse(response, status=status)
 
 
 @login_required
 @ajax_required
 @require_POST
 def delete_avatar(request):
-    '''
+    """
     Delete avatar image
-    '''
+    """
     response = {}
     status = 405
     avatar, avatars = avatarviews._get_avatars(request.user)
     if avatar is None:
-        response['error'] = 'User has no avatar'
+        response["error"] = "User has no avatar"
     else:
         aid = avatar.id
         for a in avatars:
@@ -231,18 +195,13 @@ def delete_avatar(request):
                 a.primary = True
                 a.save()
                 avatar_updated.send(
-                    sender=Avatar,
-                    user=request.user,
-                    avatar=avatar
+                    sender=Avatar, user=request.user, avatar=avatar
                 )
                 break
         Avatar.objects.filter(pk=aid).delete()
-        response['avatar'] = request.user.avatar_url['url']
+        response["avatar"] = request.user.avatar_url["url"]
         status = 200
-    return JsonResponse(
-        response,
-        status=status
-    )
+    return JsonResponse(response, status=status)
 
 
 @login_required
@@ -256,7 +215,7 @@ def delete_user(request):
     user = request.user
     # Only remove users who are not marked as having staff status
     # to prevent administratoras from deleting themselves accidentally.
-    if not user.check_password(request.POST['password']):
+    if not user.check_password(request.POST["password"]):
         status = 401
     elif user.is_staff:
         status = 403
@@ -264,10 +223,7 @@ def delete_user(request):
         logout(request)
         user.delete()
         status = 204
-    return JsonResponse(
-        response,
-        status=status
-    )
+    return JsonResponse(response, status=status)
 
 
 @login_required
@@ -278,21 +234,18 @@ def save_profile(request):
     Save user profile information
     """
     response = {}
-    form_data = json.loads(request.POST['form_data'])
+    form_data = json.loads(request.POST["form_data"])
     User = get_user_model()
     user_object = User.objects.get(pk=request.user.pk)
-    user_form = UserForm(form_data['user'], instance=user_object)
+    user_form = UserForm(form_data["user"], instance=user_object)
     if user_form.is_valid():
         user_form.save()
         status = 200
     else:
-        response['errors'] = user_form.errors
+        response["errors"] = user_form.errors
         status = 422
 
-    return JsonResponse(
-        response,
-        status=status
-    )
+    return JsonResponse(response, status=status)
 
 
 @login_required
@@ -301,38 +254,41 @@ def save_profile(request):
 def list_contacts(request):
     response = {}
     status = 200
-    response['contacts'] = []
+    response["contacts"] = []
     for user in request.user.contacts.all():
-        response['contacts'].append({
-            'id': user.id,
-            'name': user.readable_name,
-            'username': user.get_username(),
-            'email': user.email,
-            'avatar': user.avatar_url,
-            'type': 'user',
-        })
+        response["contacts"].append(
+            {
+                "id": user.id,
+                "name": user.readable_name,
+                "username": user.get_username(),
+                "email": user.email,
+                "avatar": user.avatar_url,
+                "type": "user",
+            }
+        )
     for invite in request.user.invites_by.all():
-        response['contacts'].append({
-            'id': invite.id,
-            'name': invite.username,
-            'username': invite.username,
-            'email': invite.email,
-            'avatar': invite.avatar_url,
-            'type': 'userinvite',
-        })
-    for invite in request.user.invites_to.select_related('by').all():
-        response['contacts'].append({
-            'id': invite.id,
-            'name': invite.by.readable_name,
-            'username': invite.by.get_username(),
-            'email': invite.by.email,
-            'avatar': invite.by.avatar_url,
-            'type': 'to_userinvite',
-        })
-    return JsonResponse(
-        response,
-        status=status
-    )
+        response["contacts"].append(
+            {
+                "id": invite.id,
+                "name": invite.username,
+                "username": invite.username,
+                "email": invite.email,
+                "avatar": invite.avatar_url,
+                "type": "userinvite",
+            }
+        )
+    for invite in request.user.invites_to.select_related("by").all():
+        response["contacts"].append(
+            {
+                "id": invite.id,
+                "name": invite.by.readable_name,
+                "username": invite.by.get_username(),
+                "email": invite.by.email,
+                "avatar": invite.by.avatar_url,
+                "type": "to_userinvite",
+            }
+        )
+    return JsonResponse(response, status=status)
 
 
 def is_email(string):
@@ -355,43 +311,36 @@ def invites_add(request):
     email = False
     errored = False
     status = 202
-    user_string = request.POST['user_string']
-    if UserInvite.objects.filter(
-        username=user_string
-    ).filter(
-        by=request.user
-    ).exists():
+    user_string = request.POST["user_string"]
+    if (
+        UserInvite.objects.filter(username=user_string)
+        .filter(by=request.user)
+        .exists()
+    ):
         # 'This person is already in your invites!'
-        response['error'] = 2
-        return JsonResponse(
-            response,
-            status=status
-        )
+        response["error"] = 2
+        return JsonResponse(response, status=status)
     User = get_user_model()
     contact_user = User.objects.filter(username=user_string).first()
     if contact_user:
         email = contact_user.email
     elif is_email(user_string):
         email = user_string
-        email_address = EmailAddress.objects.filter(
-            email=user_string
-        ).first()
+        email_address = EmailAddress.objects.filter(email=user_string).first()
         if email_address:
             contact_user = email_address.user
     if contact_user:
         if contact_user.pk is request.user.pk:
             # 'You cannot add yourself to your contacts!'
-            response['error'] = 1
+            response["error"] = 1
             errored = True
-        elif request.user.contacts.filter(
-            id=contact_user.id
-        ).first():
+        elif request.user.contacts.filter(id=contact_user.id).first():
             # 'This person is already in your contacts!'
-            response['error'] = 2
+            response["error"] = 2
             errored = True
     elif not email:
         # 'Invalid email!'
-        response['error'] = 3
+        response["error"] = 3
         errored = True
     if not errored:
         invite = UserInvite.objects.create(
@@ -403,26 +352,18 @@ def invites_add(request):
         sender = request.user.readable_name
         email = invite.email
         link = HttpRequest.build_absolute_uri(
-            request,
-            invite.get_relative_url()
+            request, invite.get_relative_url()
         )
-        emails.send_invite_notification(
-            sender,
-            email,
-            link
-        )
-        response['contact'] = {
-            'id': invite.pk,
-            'name': invite.username,
-            'email': invite.email,
-            'avatar': invite.avatar_url,
-            'type': 'userinvite',
+        emails.send_invite_notification(sender, email, link)
+        response["contact"] = {
+            "id": invite.pk,
+            "name": invite.username,
+            "email": invite.email,
+            "avatar": invite.avatar_url,
+            "type": "userinvite",
         }
         status = 201
-    return JsonResponse(
-        response,
-        status=status
-    )
+    return JsonResponse(response, status=status)
 
 
 def invites_connect(user, key=None):
@@ -433,8 +374,7 @@ def invites_connect(user, key=None):
         )
     else:
         invites = invites.filter(
-            Q(email__in=user.emailaddress_set.all()) |
-            Q(email=user.email)
+            Q(email__in=user.emailaddress_set.all()) | Q(email=user.email)
         )
     if len(invites) == 0:
         return False
@@ -450,16 +390,13 @@ def invites_connect(user, key=None):
 def invite(request):
     response = {}
     status = 200
-    key = request.POST['key']
+    key = request.POST["key"]
     connected = invites_connect(request.user, key)
     if connected:
-        response['redirect'] = '/user/contacts/'
+        response["redirect"] = "/user/contacts/"
     else:
-        response['redirect'] = '/'
-    return JsonResponse(
-        response,
-        status=status
-    )
+        response["redirect"] = "/"
+    return JsonResponse(response, status=status)
 
 
 @login_required
@@ -468,46 +405,35 @@ def invite(request):
 def invites_accept(request):
     response = {}
     status = 200
-    invites = json.loads(request.POST['invites'])
-    response['contacts'] = []
+    invites = json.loads(request.POST["invites"])
+    response["contacts"] = []
     for invite in invites:
         ui = UserInvite.objects.filter(
-            id=invite['id'],
-            to=request.user
+            id=invite["id"], to=request.user
         ).first()
         if ui:
-            response['contacts'].append({
-                'id': ui.by.id,
-                'name': ui.by.readable_name,
-                'email': ui.by.email,
-                'avatar': ui.by.avatar_url,
-                'type': 'user',
-            })
-            link = HttpRequest.build_absolute_uri(
-                request,
-                '/user/contacts/'
+            response["contacts"].append(
+                {
+                    "id": ui.by.id,
+                    "name": ui.by.readable_name,
+                    "email": ui.by.email,
+                    "avatar": ui.by.avatar_url,
+                    "type": "user",
+                }
             )
+            link = HttpRequest.build_absolute_uri(request, "/user/contacts/")
             emails.send_accept_notification(
-                ui.by.readable_name,
-                ui.by.email,
-                ui.to.readable_name,
-                link
+                ui.by.readable_name, ui.by.email, ui.to.readable_name, link
             )
             ui.apply()
-    return JsonResponse(
-        response,
-        status=status
-    )
+    return JsonResponse(response, status=status)
 
 
 def invite_decline(ui, link):
     # Remove this invite. All connected access rights will be deleted
     # automatically.
     emails.send_decline_notification(
-        ui.by.readable_name,
-        ui.by.email,
-        ui.to.readable_name,
-        link
+        ui.by.readable_name, ui.by.email, ui.to.readable_name, link
     )
     ui.delete()
 
@@ -520,19 +446,13 @@ def invites_decline(request):
     Decline an invite
     """
     response = {}
-    invites = json.loads(request.POST['invites'])
+    invites = json.loads(request.POST["invites"])
     for invite in invites:
-        for ui in request.user.invites_to.filter(id=invite['id']):
-            link = HttpRequest.build_absolute_uri(
-                request,
-                '/user/contacts/'
-            )
+        for ui in request.user.invites_to.filter(id=invite["id"]):
+            link = HttpRequest.build_absolute_uri(request, "/user/contacts/")
             invite_decline(ui, link)
     status = 200
-    return JsonResponse(
-        response,
-        status=status
-    )
+    return JsonResponse(response, status=status)
 
 
 @login_required
@@ -543,41 +463,35 @@ def delete_contacts(request):
     Delete a contact
     """
     response = {}
-    former_contacts = json.loads(request.POST['contacts'])
+    former_contacts = json.loads(request.POST["contacts"])
     for former_contact in former_contacts:
-        if former_contact['type'] == 'user':
+        if former_contact["type"] == "user":
             # Revoke all permissions given to this user
             AccessRight.objects.filter(
-                user__id=former_contact['id'],
-                document__owner=request.user
+                user__id=former_contact["id"], document__owner=request.user
             ).delete()
             # Revoke all permissions received from this user
             AccessRight.objects.filter(
-                user=request.user,
-                document__owner_id=former_contact['id']
+                user=request.user, document__owner_id=former_contact["id"]
             ).delete()
             # Remove the user from the contacts
             request.user.contacts.remove(
-                request.user.contacts.filter(id=former_contact['id']).first()
+                request.user.contacts.filter(id=former_contact["id"]).first()
             )
-        elif former_contact['type'] == 'userinvite':
+        elif former_contact["type"] == "userinvite":
             # Delete the userinvite. All connected access rights will be
             # deleted automatically.
-            request.user.invites_by.filter(id=former_contact['id']).delete()
-        elif former_contact['type'] == 'to_userinvite':
+            request.user.invites_by.filter(id=former_contact["id"]).delete()
+        elif former_contact["type"] == "to_userinvite":
             # Remove this invite. All connected access rights will be deleted
             # automatically.
-            for ui in request.user.invites_to.filter(id=former_contact['id']):
+            for ui in request.user.invites_to.filter(id=former_contact["id"]):
                 link = HttpRequest.build_absolute_uri(
-                    request,
-                    '/user/contacts/'
+                    request, "/user/contacts/"
                 )
                 invite_decline(ui, link)
     status = 200
-    return JsonResponse(
-        response,
-        status=status
-    )
+    return JsonResponse(response, status=status)
 
 
 @ajax_required
@@ -587,7 +501,7 @@ def get_confirmkey_data(request):
     Get data for an email confirmation key
     """
     response = {}
-    key = request.POST['key']
+    key = request.POST["key"]
     confirmation = EmailConfirmationHMAC.from_key(key)
     if not confirmation:
         qs = EmailConfirmation.objects.all_valid()
@@ -595,40 +509,34 @@ def get_confirmkey_data(request):
         confirmation = qs.filter(key=key.lower()).first()
     if confirmation:
         status = 200
-        response['username'] = confirmation.email_address.user.username
-        response['email'] = confirmation.email_address.email
+        response["username"] = confirmation.email_address.user.username
+        response["email"] = confirmation.email_address.email
         if request.user:
             if request.user != confirmation.email_address.user:
-                response['logout'] = True
+                response["logout"] = True
                 logout(request)
         # We check if the user has another verified email already. If yes,
         # we don't need to display the terms and test server warning again.
         if confirmation.email_address.user.emailaddress_set.filter(
             verified=True
         ).first():
-            response['verified'] = True
+            response["verified"] = True
         else:
-            response['verified'] = False
+            response["verified"] = False
     else:
         status = 404
-    return JsonResponse(
-        response,
-        status=status
-    )
+    return JsonResponse(response, status=status)
 
 
 class FidusSignupView(SignupView):
     def form_valid(self, form):
         if not settings.REGISTRATION_OPEN:
-            return HttpResponseRedirect('/')
+            return HttpResponseRedirect("/")
         ret = super().form_valid(form)
         if ret.status_code > 399:
             return ret
-        if 'invite_key' in self.request.POST:
-            invites_connect(
-                self.user,
-                self.request.POST['invite_key']
-            )
+        if "invite_key" in self.request.POST:
+            invites_connect(self.user, self.request.POST["invite_key"])
         return ret
 
 

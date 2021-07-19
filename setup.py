@@ -190,12 +190,12 @@ setuptools.setup(
     python_requires='>=3',
     install_requires=read('fiduswriter/requirements.txt').splitlines(),
     extras_require={
-        "books": "fiduswriter-books ~= 3.10.0",
-        "citation-api-import": "fiduswriter-citation-api-import ~= 3.10.1",
-        "languagetool": "fiduswriter-languagetool ~= 3.10.1",
-        "ojs": "fiduswriter-ojs ~= 3.10.1",
-        "phplist": "fiduswriter-phplist ~= 3.10.1",
-        "github-export": "fiduswriter-github-export ~= 3.10.0",
+        "books": "fiduswriter-books ~= 3.10.1",
+        "citation-api-import": "fiduswriter-citation-api-import ~= 3.10.2",
+        "languagetool": "fiduswriter-languagetool ~= 3.10.2",
+        "ojs": "fiduswriter-ojs ~= 3.10.2",
+        "phplist": "fiduswriter-phplist ~= 3.10.2",
+        "github-export": "fiduswriter-github-export ~= 3.10.1",
         "mysql": read('fiduswriter/mysql-requirements.txt').splitlines(),
         "postgresql": read(
             'fiduswriter/postgresql-requirements.txt'

@@ -295,7 +295,7 @@ export class HeaderbarView {
         } else if (text === '/') {
             text = ''
         }
-        text += this.getTitle() || gettext('Untitled')
+        text += this.getTitle().replace(/\//g, '') || gettext('Untitled')
         return text
     }
 

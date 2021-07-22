@@ -35,7 +35,7 @@ export class FileDialog {
         if (this.movingFiles.length === 1) {
             let path = this.movingFiles[0].path
             if (path.endsWith('/')) {
-                path += this.movingFiles[0].title || gettext('Untitled')
+                path += this.movingFiles[0].title.replace(/\//g, '') || gettext('Untitled')
             }
             return path
         }

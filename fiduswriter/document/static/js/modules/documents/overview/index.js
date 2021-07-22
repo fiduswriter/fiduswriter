@@ -113,7 +113,7 @@ export class DocumentOverview {
             case findTarget(event, 'a.fw-data-table-title.subdir, a.fw-data-table-title.parentdir', el):
                 event.preventDefault()
                 this.path = el.target.dataset.path
-                window.history.pushState({}, "", el.target.getAttribute('href'))
+                window.history.pushState({}, "", encodeURI(el.target.getAttribute('href')))
                 this.initTable()
                 break
             case findTarget(event, 'a.fw-data-table-title', el):
@@ -346,7 +346,7 @@ export class DocumentOverview {
             return false
         }
         if (path.endsWith('/')) {
-            path += doc.title
+            path += doc.title.replace(/\//g, '')
         }
         const currentPath = path.slice(this.path.length)
         if (!searching && currentPath.includes('/')) {

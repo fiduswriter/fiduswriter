@@ -195,7 +195,7 @@ setuptools.setup(
         "languagetool": "fiduswriter-languagetool ~= 3.10.2",
         "ojs": "fiduswriter-ojs ~= 3.10.2",
         "phplist": "fiduswriter-phplist ~= 3.10.2",
-        "github-export": "fiduswriter-github-export ~= 3.10.1",
+        "github-export": "fiduswriter-github-export ~= 3.10.2",
         "mysql": read('fiduswriter/mysql-requirements.txt').splitlines(),
         "postgresql": read(
             'fiduswriter/postgresql-requirements.txt'

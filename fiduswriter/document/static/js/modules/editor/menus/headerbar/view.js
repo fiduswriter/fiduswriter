@@ -49,6 +49,9 @@ export class HeaderbarView {
     }
 
     destroy() {
+        if (document.activeElement.id === 'document-title') {
+            this.saveFileName()
+        }
         document.body.removeEventListener('click', this.listeners.onclick)
         document.removeEventListener('keydown', this.listeners.onKeydown)
         document.removeEventListener('keyup', this.listeners.onKeyup)
@@ -244,10 +247,7 @@ export class HeaderbarView {
         docTitleEl.blur()
     }
 
-    onFocusout(event) {
-        if (!findTarget(event, "h1#document-title")) {
-            return
-        }
+    saveFileName() {
         if (this.editor.app.isOffline()) {
             // We are offline. Just reset.
             return this.update()
@@ -262,6 +262,13 @@ export class HeaderbarView {
             }
         })
         this.update()
+    }
+
+    onFocusout(event) {
+        if (!findTarget(event, "h1#document-title")) {
+            return
+        }
+        this.saveFileName()
     }
 
     checkKeys(event, menu, nameKey) {

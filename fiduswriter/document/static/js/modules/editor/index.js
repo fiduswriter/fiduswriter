@@ -518,6 +518,7 @@ export class Editor {
             showSystemMessage(gettext("Changes you made to the document since going offline will be lost, if you choose to close/refresh the tab or close the browser."))
             return true
         }
+        this.close()
     }
 
     initEditor() {

@@ -666,4 +666,12 @@ export class Editor {
         return
     }
 
+    scrollBibliographyIntoView() {
+        const topMenuHeight = this.dom.querySelector('header').offsetHeight + 10
+        const bibliographyHeaderEl = document.querySelector('h1.article-bibliography-header')
+        const distanceFromTop = bibliographyHeaderEl.getBoundingClientRect().top - topMenuHeight
+        window.scrollBy({left: 0, top: distanceFromTop, behavior: "smooth", block: "center"})
+        return
+    }
+
 }

@@ -9,24 +9,45 @@ export function litToText(litStringArray) {
     return outText
 }
 
-export function nameToText(nameList) {
+function nameListItemToString(nameListItem) {
     let nameString = ''
-    if (nameList.length === 0) {
-        return nameString
-    }
-    if (nameList[0]['family']) {
-        nameString += litToText(nameList[0]['family'])
-        if (nameList[0]['given']) {
-            nameString += `, ${litToText(nameList[0]['given'])}`
+    if (nameListItem['family']) {
+        nameString += litToText(nameListItem['family'])
+        if (nameListItem['given']) {
+            nameString += `, ${litToText(nameListItem['given'])}`
         }
-    } else if (nameList[0]['literal']) {
-        nameString += litToText(nameList[0]['literal'])
+    } else if (nameListItem['literal']) {
+        nameString += litToText(nameListItem['literal'])
     }
-
-    if (1 < nameList.length) {
-        //if there are more authors, add "and others" behind.
-        nameString += gettext(' and others')
-    }
-
     return nameString
+}
+
+export function nameToText(nameList) {
+    let nameString
+    switch (nameList.length) {
+    case 0:
+        nameString = ''
+        break
+    case 1:
+        nameString = nameListItemToString(nameList[0])
+        break
+    case 2:
+        nameString = `${
+            nameListItemToString(nameList[0])
+        } ${
+            gettext('and')
+        } ${
+            nameListItemToString(nameList[1])
+        }`
+        break
+    default:
+        nameString = `${
+            nameListItemToString(nameList[0])
+        } ${
+            gettext('and others')
+        }`
+        break
+    }
+    return nameString
+
 }

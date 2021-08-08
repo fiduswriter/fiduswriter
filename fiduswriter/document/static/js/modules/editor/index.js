@@ -518,6 +518,7 @@ export class Editor {
             showSystemMessage(gettext("Changes you made to the document since going offline will be lost, if you choose to close/refresh the tab or close the browser."))
             return true
         }
+        this.close()
     }
 
     initEditor() {
@@ -662,6 +663,14 @@ export class Editor {
         view.dispatch(view.state.tr.setSelection(new TextSelection($pos, $pos)))
         view.focus()
         const distanceFromTop = view.coordsAtPos(pos).top - topMenuHeight
+        window.scrollBy({left: 0, top: distanceFromTop, behavior: "smooth", block: "center"})
+        return
+    }
+
+    scrollBibliographyIntoView() {
+        const topMenuHeight = this.dom.querySelector('header').offsetHeight + 10
+        const bibliographyHeaderEl = document.querySelector('h1.article-bibliography-header')
+        const distanceFromTop = bibliographyHeaderEl.getBoundingClientRect().top - topMenuHeight
         window.scrollBy({left: 0, top: distanceFromTop, behavior: "smooth", block: "center"})
         return
     }

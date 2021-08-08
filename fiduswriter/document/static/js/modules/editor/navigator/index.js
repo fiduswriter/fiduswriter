@@ -30,12 +30,18 @@ export class ModNavigator {
                     this.openNavigator()
                 }
                 break
-            case findTarget(event, '#navigator-list a', el):
+            case findTarget(event, '#navigator-list a', el): {
                 event.preventDefault()
                 event.stopImmediatePropagation()
-                this.editor.scrollIdIntoView(el.target.getAttribute('href').slice(1))
-                this.switchActiveHeading(el.target.parentNode)
+                const target = el.target.getAttribute('href').slice(1)
+                if (target == "bibliography") {
+                    this.editor.scrollBibliographyIntoView(target)
+                } else {
+                    this.editor.scrollIdIntoView(target)
+                    this.switchActiveHeading(el.target.parentNode)
+                }
                 break
+            }
             case findTarget(event, '#navigator-filter-icon', el):
                 if (document.getElementById("navigator-filter").classList.contains('hide')) {
                     this.showFilters()

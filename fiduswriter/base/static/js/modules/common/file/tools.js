@@ -26,7 +26,7 @@ export const longFilePath = function(title, path, prefix = '') {
 
 export const cleanPath = function(title, path) {
     path = path.replace(/\/{2,}/g, '/') // replace multiple backslashes
-    if (path.endsWith(title.replace(/\//g, '') || gettext('Untitled'))) {
+    if (path.endsWith(`/${title.replace(/\//g, '')}` || `/${gettext('Untitled')}`)) {
         path = path.split('/').slice(0, -1).join('/') + '/'
     }
     if (!path.startsWith('/')) {

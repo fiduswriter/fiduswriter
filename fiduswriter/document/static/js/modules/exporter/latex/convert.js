@@ -495,7 +495,7 @@ export class LatexExporterConvert {
                     end = `\\end{figure}\n` + end
                 } else {
                     const aligned = node.attrs.aligned[0]
-                    start += `\n\\begin{wrapfigure}{${aligned}}{${parseInt(node.attrs.width)/100}\\textwidth}\n`
+                    start += `\n\\begin{wrapfigure}{${aligned}}{${parseInt(node.attrs.width) / 100}\\textwidth}\n`
                     end = `\\end{wrapfigure}\n` + end
                     this.features.wrapfig = true
                 }

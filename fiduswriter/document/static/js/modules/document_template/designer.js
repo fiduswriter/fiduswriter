@@ -1,4 +1,4 @@
-import Sortable from "sortablejs"
+import sortable from "sortablejs"
 import {EditorState, Plugin} from "prosemirror-state"
 import {EditorView} from "prosemirror-view"
 import {keymap} from "prosemirror-keymap"
@@ -439,7 +439,7 @@ export class DocumentTemplateDesigner {
     }
 
     bind() {
-        new Sortable(
+        new sortable(
             this.dom.querySelector('.from-container'),
             {
                 group: {
@@ -451,7 +451,7 @@ export class DocumentTemplateDesigner {
                 handle: '.doc-part-header'
             }
         )
-        new Sortable(
+        new sortable(
             this.dom.querySelector('.to-container'),
             {
                 group: {
@@ -468,7 +468,7 @@ export class DocumentTemplateDesigner {
                 }
             }
         )
-        new Sortable(
+        new sortable(
             this.dom.querySelector('.trash'),
             {
                 group: {

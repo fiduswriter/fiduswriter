@@ -1,5 +1,8 @@
 export const readMe =
-`In order to compile the latex file, you need to use at least TeXLive 2016. If
+`We strongly recommend using LuaTeX instead of PDFTeX or XeLaTeX for document
+compilation.
+
+In order to compile the LaTeX file, you need to use at least TeXLive 2016. If
 there are citations, you additionally need Biber 2.7/BibLaTeX 3.7.
 
 On Ubuntu 18.04+ install these packages:

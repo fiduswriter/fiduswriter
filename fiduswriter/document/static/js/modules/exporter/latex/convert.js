@@ -457,17 +457,6 @@ export class LatexExporterConvert {
                 caption = captionContent.map(node => this.walkJson(node)).join('')
             }
             let innerFigure = ''
-            let aligned = 'left'
-            if (node.attrs.width !== '100') {
-                aligned = node.attrs.aligned
-            }
-            if (aligned === 'center') {
-                start += '\n\n\\begin{center}'
-                end = '\n\n\\end{center}\n' + end
-            } else if (aligned === 'right') {
-                start += '\n\n{\\raggedleft' // This is not a typo - raggedleft = aligned: right
-                end = '\n\n}\n' + end
-            } // aligned === 'left' is default
             let copyright
             const image = node.content.find(node => node.type === 'image')?.attrs.image || false
             if (image) {
@@ -488,14 +477,29 @@ export class LatexExporterConvert {
                 innerFigure += `\\begin{displaymath}\n${equation}\n\\end{displaymath}\n`
             }
             if (category === 'table') {
+                const aligned = node.attrs.width === '100' ? 'left' : node.attrs.aligned
+                if (aligned === 'center') {
+                    start += '\n\n\\begin{center}'
+                    end = '\n\n\\end{center}\n' + end
+                } else if (aligned === 'right') {
+                    start += '\n\n{\\raggedleft' // This is not a typo - raggedleft = aligned: right
+                    end = '\n\n}\n' + end
+                } // aligned === 'left' is default
                 start += `\n\\begin{table}\n`
                 content += caption.length ? `\\caption*{${caption}}` : ''
                 content += `\\label{${node.attrs.id}}\n${innerFigure}`
                 end = `\\end{table}\n` + end
             } else { // TODO: handle photo figure types in a special way
-                start += `\n\\begin{figure}\n`
+                if (node.attrs.width === '100' || node.attrs.aligned === 'center') {
+                    start += `\n\\begin{figure}\n`
+                    end = `\\end{figure}\n` + end
+                } else {
+                    const aligned = node.attrs.aligned[0]
+                    start += `\n\\begin{wrapfigure}{${aligned}}{${parseInt(node.attrs.width) / 100}\\textwidth}\n`
+                    end = `\\end{wrapfigure}\n` + end
+                    this.features.wrapfig = true
+                }
                 content += `${innerFigure}${caption.length ? `\\caption*{${caption}}` : ''}\\label{${node.attrs.id}}\n`
-                end = `\\end{figure}\n` + end
             }
             if (copyright?.holder) {
                 content += `% © ${copyright.year ? copyright.year : new Date().getFullYear()} ${copyright.holder}\n`
@@ -548,10 +552,7 @@ export class LatexExporterConvert {
                     (columns, node) => columns + node.attrs.colspan,
                     0
                 )
-                let aligned = 'left'
-                if (node.attrs.width !== '100') {
-                    aligned = node.attrs.aligned
-                }
+                const aligned = node.attrs.width === '100' ? 'left' : node.attrs.aligned
                 if (aligned === 'center') {
                     start += '\n\n\\begin{center}'
                     end = '\n\n\\end{center}\n' + end
@@ -737,6 +738,10 @@ export class LatexExporterConvert {
 
         if (this.features.captions) {
             preamble += '\n\\usepackage{caption}'
+        }
+
+        if (this.features.wrapfig) {
+            preamble += '\n\\usepackage{wrapfig}'
         }
 
         if (this.features.citations) {

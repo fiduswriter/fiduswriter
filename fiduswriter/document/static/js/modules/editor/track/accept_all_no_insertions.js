@@ -19,7 +19,27 @@ export function acceptAllNoInsertions(doc) {
             blockChangeTrack = node.attrs.track ?
                 node.attrs.track.find(track => track.name === 'block_change') :
                 false
-
+        if (node.type.name === 'footnote' && node.attrs.footnote) {
+            const fnDoc = fnSchema.nodeFromJSON({
+                type: "doc",
+                content: [{
+                    type: "footnotecontainer",
+                    content: node.attrs.footnote
+                }]
+            }),
+                cleanFnDoc = acceptAllNoInsertions(fnDoc),
+                fnChange = !fnDoc.eq(cleanFnDoc)
+            if (fnChange) {
+                tr.setNodeMarkup(
+                    map.map(pos),
+                    null,
+                    Object.assign({}, node.attrs, {
+                        footnote: cleanFnDoc.firstChild.toJSON().content
+                    }),
+                    node.marks
+                )
+            }
+        }
         if (deletionTrack) {
             deleteNode(tr, node, pos, map, true)
             return false
@@ -49,27 +69,6 @@ export function acceptAllNoInsertions(doc) {
         if (blockChangeTrack) {
             const track = node.attrs.track.filter(track => track.type !== blockChangeTrack)
             tr.setNodeMarkup(map.map(pos), null, Object.assign({}, node.attrs, {track}), node.marks)
-        }
-        if (node.type.name === 'footnote' && node.attrs.footnote) {
-            const fnDoc = fnSchema.nodeFromJSON({
-                type: "doc",
-                content: [{
-                    type: "footnotecontainer",
-                    content: node.attrs.footnote
-                }]
-            }),
-                cleanFnDoc = acceptAllNoInsertions(fnDoc),
-                fnChange = !fnDoc.eq(cleanFnDoc)
-            if (fnChange) {
-                tr.setNodeMarkup(
-                    map.map(pos),
-                    null,
-                    Object.assign({}, node.attrs, {
-                        footnote: cleanFnDoc.toJSON().content
-                    }),
-                    node.marks
-                )
-            }
         }
         return true
     })

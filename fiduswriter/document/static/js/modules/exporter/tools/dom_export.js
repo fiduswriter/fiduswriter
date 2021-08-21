@@ -75,6 +75,8 @@ export class DOMExporter {
         this.schema.cached.imageDB = this.imageDB
         const serializer = DOMSerializer.fromSchema(this.schema)
         this.content = serializer.serializeNode(this.schema.nodeFromJSON(this.docContent))
+
+        this.addFootnotes()
         const bibliographyHeader = this.doc.settings.bibliography_header[this.doc.settings.language] || BIBLIOGRAPHY_HEADERS[this.doc.settings.language]
         const citRenderer = new RenderCitations(
             this.content,
@@ -105,7 +107,8 @@ export class DOMExporter {
             const tempNode = document.createElement('div')
             tempNode.innerHTML = bibliographyHTML
             while (tempNode.firstChild) {
-                this.content.appendChild(tempNode.firstChild)
+                const footnotesContainer = this.content.querySelector('section.fnlist')
+                this.content.insertBefore(tempNode.firstChild, footnotesContainer)
             }
         }
     }
@@ -142,18 +145,13 @@ export class DOMExporter {
         return footnoteAnchor
     }
 
-    cleanHTML(citationFormatter) {
-
-        const footnoteSelector = citationFormatter.citationType === 'note' ?
-            '.footnote-marker, .citation' :
-            '.footnote-marker'
+    addFootnotes() {
         // Replace the footnote markers with anchors and put footnotes with contents
         // at the back of the document.
         // Also, link the footnote anchor with the footnote according to
         // https://rawgit.com/essepuntato/rash/master/documentation/index.html#footnotes.
-        const footnotes = this.content.querySelectorAll(footnoteSelector)
+        const footnotes = this.content.querySelectorAll('.footnote-marker')
         const footnotesContainer = document.createElement('section')
-        let citationCount = 0
         footnotesContainer.classList.add('fnlist')
         footnotesContainer.setAttribute('role', 'doc-footnotes')
 
@@ -165,13 +163,60 @@ export class DOMExporter {
                 const newFootnote = document.createElement('section')
                 newFootnote.id = 'fn' + counter
                 newFootnote.setAttribute('role', 'doc-footnote')
-                newFootnote.innerHTML = footnote.matches('.footnote-marker') ?
-                    footnote.dataset.footnote :
-                    `<p>${citationFormatter.citationTexts[citationCount++] || " "}</p>`
+                newFootnote.innerHTML = footnote.dataset.footnote
                 footnotesContainer.appendChild(newFootnote)
             }
         )
         this.content.appendChild(footnotesContainer)
+    }
+
+    moveCitationFootnotes(citationFormatter) {
+        const footnotes = this.content.querySelectorAll('a.fn, .citation')
+        const footnotesContainer = this.content.querySelector('section.fnlist')
+        const fnCountOffset = this.content.querySelectorAll('a.fn').length
+
+        if (footnotes.length === fnCountOffset) {
+            // There are no citations to move
+            return
+        }
+
+        let counter = 0
+
+        footnotes.forEach(
+            (footnote, index) => {
+                if (footnote.matches('a.fn')) {
+                    // Regular footnote - skip
+                    return
+                }
+                if (footnote.matches('section.fnlist .citation')) {
+                    // The citation is already in a footnote. Do not add a second footnote.
+                    footnote.innerHTML = `<p><span class="citation">${citationFormatter.citationTexts[
+                        counter
+                    ] || " "}</span></p>`
+                    return
+                }
+                const id = fnCountOffset + counter + 1
+                const footnoteAnchor = this.getFootnoteAnchor(id)
+                footnote.parentNode.replaceChild(footnoteAnchor, footnote)
+                const newFootnote = document.createElement('section')
+                newFootnote.id = 'fn' + (id)
+                newFootnote.setAttribute('role', 'doc-footnote')
+                newFootnote.innerHTML = `<p><span class="citation">${citationFormatter.citationTexts[
+                    counter
+                ] || " "}</span></p>`
+                footnotesContainer.insertBefore(
+                    newFootnote, footnotesContainer.childNodes[index]
+                )
+                counter += 1
+            }
+        )
+    }
+
+    cleanHTML(citationFormatter) {
+        if (citationFormatter.citationType === 'note') {
+            this.moveCitationFootnotes(citationFormatter)
+        }
+
         this.cleanNode(this.content)
 
         // Replace nbsp spaces with normal ones

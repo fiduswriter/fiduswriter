@@ -1,5 +1,9 @@
 import {Mapping, RemoveMarkStep, Transform} from "prosemirror-transform"
 
+import {
+    fnSchema
+} from "../../schema/footnotes"
+
 import {deleteNode} from "./delete"
 
 export function acceptAllNoInsertions(doc) {
@@ -18,6 +22,7 @@ export function acceptAllNoInsertions(doc) {
 
         if (deletionTrack) {
             deleteNode(tr, node, pos, map, true)
+            return false
         } else if (insertionTrack) {
             if (node.isInline) {
                 tr.step(
@@ -32,7 +37,7 @@ export function acceptAllNoInsertions(doc) {
                 tr.setNodeMarkup(map.map(pos), null, Object.assign({}, node.attrs, {track}), node.marks)
             }
         }
-        if (!deletionTrack && node.isInline && formatChangeMark) {
+        if (node.isInline && formatChangeMark) {
             tr.step(
                 new RemoveMarkStep(
                     map.map(pos),
@@ -44,6 +49,27 @@ export function acceptAllNoInsertions(doc) {
         if (blockChangeTrack) {
             const track = node.attrs.track.filter(track => track.type !== blockChangeTrack)
             tr.setNodeMarkup(map.map(pos), null, Object.assign({}, node.attrs, {track}), node.marks)
+        }
+        if (node.type.name === 'footnote' && node.attrs.footnote) {
+            const fnDoc = fnSchema.nodeFromJSON({
+                type: "doc",
+                content: [{
+                    type: "footnotecontainer",
+                    content: node.attrs.footnote
+                }]
+            }),
+                cleanFnDoc = acceptAllNoInsertions(fnDoc),
+                fnChange = !fnDoc.eq(cleanFnDoc)
+            if (fnChange) {
+                tr.setNodeMarkup(
+                    map.map(pos),
+                    null,
+                    Object.assign({}, node.attrs, {
+                        footnote: cleanFnDoc.toJSON().content
+                    }),
+                    node.marks
+                )
+            }
         }
         return true
     })

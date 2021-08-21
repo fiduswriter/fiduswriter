@@ -12,7 +12,7 @@ The epub, html and print export filters go over a DOM of a document which they c
 by little, and they are all based on the BaseDOMExporter class.
 
     New exporters should instead by walking the doc.content tree.
-    This is how the LaTeX, ODT and DOCX export filters work.
+    This is how the JATS, LaTeX, ODT and DOCX export filters work.
 */
 
 export class DOMExporter {

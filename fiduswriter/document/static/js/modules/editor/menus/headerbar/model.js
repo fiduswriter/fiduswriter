@@ -306,10 +306,10 @@ export const headerbarModel = () => ({
                         languageItem('fr', gettext('French'), 5),
                         languageItem('ja', gettext('Japanese'), 6),
                         languageItem('it', gettext('Italian'), 7),
-                        languageItem('pl', gettext('Polish'), 8),
+                        //languageItem('pl', gettext('Polish'), 8),
                         languageItem('pt-BR', gettext('Portuguese (Brazil)'), 9),
-                        languageItem('nl', gettext('Dutch'), 10),
-                        languageItem('ru', gettext('Russian'), 11),
+                        //languageItem('nl', gettext('Dutch'), 10),
+                        //languageItem('ru', gettext('Russian'), 11),
                         {
                             type: 'separator',
                             order: 12,

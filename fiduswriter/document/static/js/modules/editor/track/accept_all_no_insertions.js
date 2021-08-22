@@ -1,5 +1,9 @@
 import {Mapping, RemoveMarkStep, Transform} from "prosemirror-transform"
 
+import {
+    fnSchema
+} from "../../schema/footnotes"
+
 import {deleteNode} from "./delete"
 
 export function acceptAllNoInsertions(doc) {
@@ -15,9 +19,30 @@ export function acceptAllNoInsertions(doc) {
             blockChangeTrack = node.attrs.track ?
                 node.attrs.track.find(track => track.name === 'block_change') :
                 false
-
+        if (node.type.name === 'footnote' && node.attrs.footnote) {
+            const fnDoc = fnSchema.nodeFromJSON({
+                    type: "doc",
+                    content: [{
+                        type: "footnotecontainer",
+                        content: node.attrs.footnote
+                    }]
+                }),
+                cleanFnDoc = acceptAllNoInsertions(fnDoc),
+                fnChange = !fnDoc.eq(cleanFnDoc)
+            if (fnChange) {
+                tr.setNodeMarkup(
+                    map.map(pos),
+                    null,
+                    Object.assign({}, node.attrs, {
+                        footnote: cleanFnDoc.firstChild.toJSON().content
+                    }),
+                    node.marks
+                )
+            }
+        }
         if (deletionTrack) {
             deleteNode(tr, node, pos, map, true)
+            return false
         } else if (insertionTrack) {
             if (node.isInline) {
                 tr.step(
@@ -32,7 +57,7 @@ export function acceptAllNoInsertions(doc) {
                 tr.setNodeMarkup(map.map(pos), null, Object.assign({}, node.attrs, {track}), node.marks)
             }
         }
-        if (!deletionTrack && node.isInline && formatChangeMark) {
+        if (node.isInline && formatChangeMark) {
             tr.step(
                 new RemoveMarkStep(
                     map.map(pos),

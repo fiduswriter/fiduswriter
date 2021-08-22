@@ -21,12 +21,12 @@ export function acceptAllNoInsertions(doc) {
                 false
         if (node.type.name === 'footnote' && node.attrs.footnote) {
             const fnDoc = fnSchema.nodeFromJSON({
-                type: "doc",
-                content: [{
-                    type: "footnotecontainer",
-                    content: node.attrs.footnote
-                }]
-            }),
+                    type: "doc",
+                    content: [{
+                        type: "footnotecontainer",
+                        content: node.attrs.footnote
+                    }]
+                }),
                 cleanFnDoc = acceptAllNoInsertions(fnDoc),
                 fnChange = !fnDoc.eq(cleanFnDoc)
             if (fnChange) {

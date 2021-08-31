@@ -22,6 +22,7 @@
 
 body.header-closed #margin-box-filter {
     top: 72px;
+    z-index: 100;
 }
 
 .margin-box-filter-button {

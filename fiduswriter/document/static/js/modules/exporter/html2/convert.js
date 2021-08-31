@@ -3,7 +3,7 @@ import {convertLatexToMarkup} from "mathlive"
 import {escapeText} from "../../common"
 import {CATS} from "../../schema/i18n"
 
-import {articleTemplate} from "./templates"
+import {htmlExportTemplate} from "./templates"
 
 export class HTMLExporterConvert {
     constructor(exporter, imageDB, bibDB, settings, xhtml = false) {
@@ -12,6 +12,7 @@ export class HTMLExporterConvert {
         this.imageDB = imageDB
         this.bibDB = bibDB
         this.xhtml = xhtml
+        this.endSlash = this.xhtml ? '/' : ''
 
         this.imageIds = []
         this.categoryCounter = {} // counters for each type of figure (figure/table/photo)
@@ -26,11 +27,9 @@ export class HTMLExporterConvert {
         this.fnCounter = 0
         this.metaData = {
             title: {},
-            subtitle: {},
             contributors: [],
-            abstract: {},
+            abstract: false,
             keywords: [],
-            tags: [],
             copyright: {
                 licenses: []
             }
@@ -41,12 +40,21 @@ export class HTMLExporterConvert {
 
     init(docContent) {
         this.preWalkJson(docContent)
-        this.findAllCitations(docContent)
+        this.findCitations(docContent)
         return this.exporter.citations.init(this.citInfos).then(() => {
-            const front = this.assembleFront()
+            const head = this.assembleHead()
             const body = this.assembleBody(docContent)
             const back = this.assembleBack()
-            const html = articleTemplate({front, body, back})
+            const html = htmlExportTemplate({
+                head,
+                body,
+                back,
+                settings: this.exporter.doc.settings,
+                styleSheets: this.exporter.styleSheets,
+                title: this.metaData.title,
+                lang: this.exporter.doc.settings.language.split('-')[0],
+                xhtml: this.xhtml
+            })
             return {
                 html,
                 imageIds: this.imageIds
@@ -61,60 +69,25 @@ export class HTMLExporterConvert {
             this.metaData.copyright = node.attrs.copyright
             break
         case 'title':
-            this.metaData.title['default'] = node
-            parentNode.content = parentNode.content.filter(child => child !== node)
-            break
-        case 'heading_part':
-            if (
-                ['title', 'subtitle'].includes(node.attrs.metadata) &&
-                    !this.metaData[node.attrs.metadata][node.attrs.language || 'default'] &&
-                    node.content &&
-                    node.content.length
-            ) {
-                // We only take the first instance of title/subtitle per language
-                this.metaData[node.attrs.metadata][node.attrs.language || 'default'] = {
-                    type: node.attrs.language ? `trans_${node.attrs.metadata}` : node.attrs.metadata,
-                    attrs: {
-                        id: node.content[0].attrs.id,
-                        language: node.attrs.language
-                    },
-                    content: node.content[0].content
-                }
-                parentNode.content = parentNode.content.filter(child => child !== node)
-            }
+            this.metaData.title = this.walkJson(node)
             break
         case 'richtext_part':
             if (
                 node.attrs.metadata === 'abstract' &&
-                    !this.metaData.abstract[node.attrs.language || 'default']
+                    !node.attrs.language &&
+                    this.metaData.abstract
             ) {
-                // We only take the first instance of abstract per language
-                this.metaData.abstract[node.attrs.language || 'default'] = {
-                    type: node.attrs.language ? 'trans_abstract' : 'abstract',
-                    attrs: {
-                        id: node.attrs.id,
-                        language: node.attrs.language
-                    },
-                    content: node.content
-                }
-                parentNode.content = parentNode.content.filter(child => child !== node)
+                this.metaData.abstract = this.walkJson(node)
             }
             break
         case 'tags_part':
             if (
                 node.attrs.metadata === 'keywords'
             ) {
-                this.metaData.keywords.push({
-                    type: 'keywords',
-                    attrs: {
-                        language: node.attrs.language
-                    },
-                    content: node.content
+                node.content.forEach(tag => {
+                    this.metaData.keywords.push(tag.attrs.tag)
                 })
-            } else {
-                this.metaData.tags.push(node)
             }
-            parentNode.content = parentNode.content.filter(child => child !== node)
             break
         case 'contributors_part':
             this.metaData.contributors.push(node)
@@ -126,27 +99,6 @@ export class HTMLExporterConvert {
         if (node.content) {
             node.content.forEach(child => this.preWalkJson(child, node))
         }
-    }
-
-    findAllCitations(docContent) {
-        // We need to look for citations in the same order they will be found in front + body
-        // to get the formatting right.
-        if (this.metaData.subtitle.default) {
-            this.findCitations(this.metaData.subtitle.default)
-        }
-        Object.keys(this.metaData.title).filter(language => language !== 'default').forEach(language => {
-            this.findCitations(this.metaData.title[language])
-            if (this.metaData.subtitle[language]) {
-                this.findCitations(this.metaData.subtitle[language])
-            }
-        })
-        if (this.metaData.abstract.default) {
-            this.findCitations(this.metaData.abstract.default)
-        }
-        Object.keys(this.metaData.abstract).filter(language => language !== 'default').forEach(language => {
-            this.findCitations(this.metaData.abstract[language])
-        })
-        this.findCitations(docContent)
     }
 
     findCitations(node) {
@@ -165,64 +117,36 @@ export class HTMLExporterConvert {
         }
     }
 
-    assembleFront() {
-        let front = '<front><article-meta>'
-        if (this.metaData.tags.length) {
-            front += `<article-categories>${this.metaData.tags.map(node => this.walkJson(node)).join('')}</article-categories>`
-        }
-        Object.keys(this.metaData.subtitle).filter(language => language !== 'default').forEach(language => {
-            // Making sure there is a title for each subtitle
-            if (!this.metaData.title[language]) {
-                this.metaData.title[language] = {type: 'trans_title', attrs: {language}}
-            }
+    assembleHead() {
+        let head = '<head>'
+        head += `<title>${escapeText(this.metaData.title)})</title>`
+        this.metaData.authorss.forEach(contributors => {
+            head += this.walkJson(contributors)
         })
-        front += '<title-group>'
-        front += this.walkJson(this.metaData.title.default)
-        if (this.metaData.subtitle.default) {
-            front += this.walkJson(this.metaData.subtitle.default)
-        }
-        Object.keys(this.metaData.title).filter(language => language !== 'default').forEach(language => {
-            front += `<trans-title-group @xml:lang="${language}">`
-            front += this.walkJson(this.metaData.title[language])
-            if (this.metaData.subtitle[language]) {
-                front += this.walkJson(this.metaData.subtitle[language])
-            }
-            front += '</trans-title-group>'
-        })
-        front += '</title-group>'
-        this.metaData.contributors.forEach(contributors => {
-            front += this.walkJson(contributors)
-        })
-        Object.entries(this.affiliations).forEach(([institution, index]) => front += `<aff id="aff${index}"><institution>${escapeText(institution)}</institution></aff>`)
+        Object.entries(this.affiliations).forEach(([institution, index]) => head += `<aff id="aff${index}"><institution>${escapeText(institution)}</institution></aff>`)
         // https://validator.jats4r.org/ requires a <permissions> element here, but is OK with it being empty.
         if (this.metaData.copyright.holder) {
-            front += '<permissions>'
+            head  += `<link rel="schema.dcterms" href="http://purl.org/dc/terms/"${this.endSlash}>`
             const year = this.metaData.copyright.year ? this.metaData.copyright.year : new Date().getFullYear()
-            front += `<copyright-year>${year}</copyright-year>`
-            front += `<copyright-holder>${escapeText(this.metaData.copyright.holder)}</copyright-holder>`
-            if (this.metaData.copyright.freeToRead) {
-                front += '<ali:free_to_read/>'
-            }
-            front += this.metaData.copyright.licenses.map(license =>
-                `<license><ali:license_ref${license.start ? ` start_date="${license.start}"` : ''}>${escapeText(license.url)}</ali:license_ref></license>`
+            head += `<meta name="dcterms.dateCopyrighted" content="${year}"${this.endSlash}>`
+            head += `<meta name="dcterms.rightsHolder" content="${escapeText(this.metaData.copyright.holder)}"${this.endSlash}>`
+            // TODO: Add this.metaData.copyright.freeToRead if present
+
+            head += this.metaData.copyright.licenses.map(license =>
+                `<link rel="license" href="${escapeText(license.url)}"${this.endSlash}>` // TODO: Add this.metaData.copyright.license.start info if present
             ).join('')
-            front += '</permissions>'
-        } else {
-            front += '<permissions/>'
         }
         if (this.metaData.abstract.default) {
-            front += this.walkJson(this.metaData.abstract.default)
-            front += this.closeSections(0)
+            head += this.walkJson(this.metaData.abstract.default)
         }
         Object.keys(this.metaData.abstract).filter(language => language !== 'default').forEach(language => {
-            front += this.walkJson(this.metaData.abstract[language])
-            front += this.closeSections(0)
+            head += this.walkJson(this.metaData.abstract[language])
         })
-        this.metaData.keywords.forEach(keywords => {
-            front += this.walkJson(keywords)
-        })
-        front += '</article-meta></front>'
-        return front
+        if (this.metaData.keywords.length) {
+            head += `<meta name="keywords" content="${escapeText(this.metaData.keywords.join(', '))}"${this.endSlash}>`
+        }
+        head += '</head>'
+        return head
     }
 
 
@@ -232,24 +156,8 @@ export class HTMLExporterConvert {
         case 'article':
             break
         case 'title':
-            start += '<article-title>'
-            end = '</article-title>' + end
-            break
-        case 'trans_title':
-            start += '<trans-title>'
-            end = '</trans-title>' + end
-            break
-        case 'subtitle':
-            if (node.content) {
-                start += '<subtitle>'
-                end = '</subtitle>' + end
-            }
-            break
-        case 'trans_subtitle':
-            if (node.content) {
-                start += '<trans-subtitle>'
-                end = '</trans-subtitle>' + end
-            }
+            start += '<div class="article-part article-title" id="title">'
+            end = '</div>' + end
             break
         case 'heading_part':
             // Ignore - we deal with the heading inside
@@ -259,27 +167,26 @@ export class HTMLExporterConvert {
             break
         case 'contributors_part':
             if (node.content) {
-                const contributorTypes = {
-                    authors: 'author',
-                    editors: 'editor'
-                }
-                const contributorType = contributorTypes[node.attrs.metadata] || 'other' // TODO: Figure out if 'other' is legal
-                start += `<contrib-group content-type="${contributorType}">`
-                end = '</contrib-group>' + end
+                start += `<div class="article-part article-contributors ${node.attrs.metadata || 'other'}">`
+                end = '</div>' + end
                 const contributorTypeId = node.attrs.id
                 let counter = 1
+                const contributorOutputs = []
                 node.content.forEach(childNode => {
                     const contributor = childNode.attrs
+                    let output = ''
                     if (contributor.firstname || contributor.lastname) {
-                        content += `<contrib id="${contributorTypeId}-${counter++}" contrib-type="person">`
-                        content += '<name>'
+                        output += `<span id="${contributorTypeId}-${counter++}" class="person">`
+                        const nameParts = []
                         if (contributor.lastname) {
-                            content += `<surname>${escapeText(contributor.lastname)}</surname>`
+                            nameParts.push(`<span class="lastname">${escapeText(contributor.lastname)}</span>`)
                         }
                         if (contributor.firstname) {
-                            content += `<given-names>${escapeText(contributor.firstname)}</given-names>`
+                            nameParts.push(`<span class="firstname">${escapeText(contributor.firstname)}</span>`)
                         }
-                        content += '</name>'
+                        if (nameParts.length) {
+                            output += `<span class="name">${nameParts.join(' ')}</span>`
+                        }
                         if (contributor.institution) {
                             let affNumber
                             if (this.affiliations[contributor.institution]) {
@@ -288,54 +195,32 @@ export class HTMLExporterConvert {
                                 affNumber = ++this.affCounter
                                 this.affiliations[contributor.institution] = affNumber
                             }
-                            content += `<xref ref-type="aff" rid="aff${affNumber}" />`
+                            output += `<a class="affiliation" href="#aff${affNumber}">${affNumber}</a>`
                         }
-                        content += '</contrib>'
+                        output += '</span>'
                     } else if (contributor.institution) {
                         // There is an affiliation but no first/last name. We take this
                         // as a group collaboration.
-                        content += `<contrib id="${contributorTypeId}-${counter++}" contrib-type="group">`
-                        content += `<collab><named-content content-type="name">${escapeText(contributor.institution)}</named-content></collab>`
-                        content += '</contrib>'
+                        output += `<span id="${contributorTypeId}-${counter++}" class="group">`
+                        output += `<span class="name">${escapeText(contributor.institution)}</span>`
+                        output += '</span>'
                     }
+                    contributorOutputs.push(output)
                 })
+                content += contributorOutputs.join(' ')
             }
             break
         case 'tags_part':
             if (node.content) {
-                start += `<subj-group subj-group-type="${node.attrs.id}"${ node.attrs.language ? ` xml:lang="${node.attrs.language}"` : ''}>`
-                end = '</subj-group>' + end
-            }
-            break
-        case 'keywords':
-            if (node.content) {
-                start += `<kwd-group${ node.attrs.language ? ` xml:lang="${node.attrs.language}"` : ''}>`
-                end = '</kwd-group>' + end
-                options = Object.assign({}, options)
-                options.inKeywords = true
+                start += `<div class="article-part article-tags" id="${node.attrs.id}"${ node.attrs.language ? ` lang="${node.attrs.language}"` : ''}>`
+                end = '</div>' + end
             }
             break
         case 'tag':
-            if (options.inKeywords) {
-                content += `<kwd>${node.attrs.tag}</kwd>`
-            } else {
-                content += `<subject>${node.attrs.tag}</subject>`
-            }
-            break
-        case 'abstract':
-            if (node.content) {
-                start += `<abstract>`
-                end = '</abstract>' + end
-            }
-            break
-        case 'trans_abstract':
-            if (node.content) {
-                start += `<trans-abstract xml:lang="${node.attrs.language}">`
-                end = '</trans-abstract>' + end
-            }
+            content += `<span class='tag'>${escapeText(node.attrs.tag)}</span>`
             break
         case 'richtext_part':
-            start += `<div class="article-part article-richtext article-${node.attrs.id}">`
+            start += `<div class="article-part article-richtext article-${node.attrs.id}"${ node.attrs.language ? ` lang="${node.attrs.language}"` : ''}>`
             end = '</div>' + end
             break
         case 'table_of_contents':
@@ -414,36 +299,28 @@ export class HTMLExporterConvert {
                 hyperlink = node.marks.find(mark => mark.type === 'link')
             }
             if (em) {
-                start += '<italic>'
-                end = '</italic>' + end
+                start += '<em>'
+                end = '</em>' + end
             }
             if (strong) {
-                start += '<bold>'
-                end = '</bold>' + end
+                start += '<strong>'
+                end = '</strong>' + end
             }
             if (underline) {
-                start += '<underline>'
-                end = '</underline>' + end
+                start += '<span class="underline">'
+                end = '</span>' + end
             }
             if (hyperlink) {
-                const href = hyperlink.attrs.href
-                if (href[0] === '#') {
-                    // Internal link
-                    start += `<xref rid="${href.substring(1)}">`
-                    end = '</xref>' + end
-                } else {
-                    // External link
-                    start += `<ext-link xlink:href="${href}" ext-link-type="uri" xlink:title="${hyperlink.attrs.title}">`
-                    end = '</ext-link>' + end
-                }
+                start += `<a href="${hyperlink.attrs.href}">`
+                end = "</a>" + end
             }
             content += escapeText(node.text)
             break
         }
         case 'cross_reference': {
-            start += `<xref rid="${node.attrs.id}">`
+            start += `<a href="#${node.attrs.id}">`
             content += escapeText(node.attrs.title || 'MISSING TARGET')
-            end = '</xref>' + end
+            end = '</a>' + end
             break
         }
         case 'citation': {
@@ -480,7 +357,7 @@ export class HTMLExporterConvert {
                     !caption.length &&
                     (!copyright || !copyright.holder)
             ) {
-                content += `<graphic id="${node.attrs.id}" position="anchor" xlink:href="${imageFilename}"/>`
+                content += `<img id="${node.attrs.id}" position="anchor" src="${imageFilename}"${this.endSlash}>`
             } else {
                 start += `<fig id="${node.attrs.id}">`
                 end = '</fig>' + end
@@ -577,7 +454,7 @@ export class HTMLExporterConvert {
             content = convertLatexToMarkup(node.attrs.equation, {mathstyle: 'textstyle'})
             break
         case 'hard_break':
-            content += this.xhtml ? '<br/>' : '<br>'
+            content += `<br${this.endSlash}>`
             break
         default:
             break
@@ -592,18 +469,8 @@ export class HTMLExporterConvert {
         return start + content + end
     }
 
-    closeSections(targetLevel) {
-        let returnValue = ''
-        while (this.currentSectionLevel > targetLevel) {
-            returnValue += '</section>'
-            this.currentSectionLevel--
-        }
-
-        return returnValue
-    }
-
     assembleBody(docContent) {
-        return `<body id="body">${this.walkJson(docContent) + this.closeSections(0)}</body>`
+        return `<body id="body">${this.walkJson(docContent)}</body>`
     }
 
     assembleBack() {

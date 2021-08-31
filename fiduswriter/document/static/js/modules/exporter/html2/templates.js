@@ -1,9 +1,40 @@
 import {noSpaceTmp, escapeText} from "../../common"
 
-export const articleTemplate = ({front, body, back}) =>
-    `<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2 20190208//EN" "https://jats.nlm.nih.gov/archiving/1.2/JATS-archivearticle1.dtd">
-<article xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ali="http://www.niso.org/schemas/ali/1.0/">${front}${body}${back}</article>`
+/** A template for HTML export of a document. */
+export const htmlExportTemplate = ({head, body, back, settings, styleSheets, title, lang, xhtml}) =>
+    `${
+        xhtml ?
+            '<?xml version="1.0" encoding="UTF-8"?>' :
+            '<!DOCTYPE html>'
+    }
+    <html lang="${lang}"${xhtml ? ` xmlns="http://www.w3.org/1999/xhtml" xml:lang="${lang}"` : ''}>
+        <meta charset="UTF-8">
+        ${settings.copyright && settings.copyright.holder ? `<meta name="copyright" content="© ${settings.copyright.year ? settings.copyright.year : new Date().getFullYear()} ${escapeText(settings.copyright.holder)}" />` : ''}
+        <title>${escapeText(title)}</title>
+        ${head}
+${
+    styleSheets.map(
+        sheet => sheet.filename ?
+            `<link rel="stylesheet" type="text/css" href="${sheet.filename}" />` :
+            `<style>${sheet.contents}</style>`
+    ).join('')
+}
+    </head>
+    <body class="article">
+        ${body}
+        ${back}
+        ${
+    settings.copyright && settings.copyright.holder ?
+        `<div>© ${settings.copyright.year ? settings.copyright.year : new Date().getFullYear()} ${settings.copyright.holder}</div>` :
+        ''
+}
+        ${
+    settings.copyright && settings.copyright.licenses.length ?
+        `<div>${settings.copyright.licenses.map(license => `<a rel="license" href="${escapeText(license.url)}">${escapeText(license.title)}${license.start ? ` (${license.start})` : ''}</a>`).join('</div><div>')}</div>` :
+        ''
+}
+    </body>
+</html>`
 
 export const darManifest = ({images, title}) =>
     '<?xml version="1.0" encoding="UTF-8"?>\n' +

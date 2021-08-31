@@ -1,6 +1,6 @@
 import download from "downloadjs"
 
-import {shortFileTitle} from "../../common"
+import {shortFileTitle, get} from "../../common"
 import {createSlug} from "../tools/file"
 import {removeHidden} from "../tools/doc_content"
 import {HTMLExporterConvert} from "./convert"
@@ -12,26 +12,35 @@ import {darManifest} from "./templates"
 */
 
 export class HTMLExporter {
-    constructor(doc, bibDB, imageDB, csl, updated) {
+    constructor(doc, bibDB, imageDB, csl, updated, documentStyles) {
         this.doc = doc
-        this.docTitle = shortFileTitle(this.doc.title, this.doc.path)
         this.bibDB = bibDB
         this.imageDB = imageDB
         this.csl = csl
         this.updated = updated
+        this.documentStyles = documentStyles
+
+        this.docTitle = shortFileTitle(this.doc.title, this.doc.path)
 
         this.docContent = false
         this.zipFileName = false
         this.textFiles = []
         this.httpFiles = []
+        this.fontFiles = []
+        this.styleSheets = [
+            {url: `${settings_STATIC_URL}css/document.css?v=${transpile_VERSION}`}
+        ]
     }
 
     init() {
         this.zipFileName = `${createSlug(this.docTitle)}.html.zip`
         this.docContent = removeHidden(this.doc.content)
+        this.addDocStyle(this.doc)
         this.converter = new HTMLExporterConvert(this, this.imageDB, this.bibDB, this.doc.settings)
         this.citations = new HTMLExporterCitations(this, this.bibDB, this.csl)
-        return this.converter.init(this.docContent).then(({html, imageIds}) => {
+        return this.loadStyles().then(
+            () => this.converter.init(this.docContent)
+        ).then(({html, imageIds}) => {
             this.textFiles.push({filename: 'document.html', contents: html})
             const images = imageIds.map(
                 id => {
@@ -53,6 +62,52 @@ export class HTMLExporter {
 
             return this.createZip()
         })
+    }
+
+    addDocStyle(doc) {
+        const docStyle = this.documentStyles.find(docStyle => docStyle.slug === doc.settings.documentstyle)
+
+        // The files will be in the base directory. The filenames of
+        // DocumentStyleFiles will therefore not need to replaced with their URLs.
+        if (!docStyle) {
+            return
+        }
+        let contents = docStyle.contents
+        docStyle.documentstylefile_set.forEach(
+            ([_url, filename]) => contents = contents.replace(
+                new RegExp(filename, 'g'),
+                `media/${filename}`
+            )
+        )
+        this.styleSheets.push({contents, filename: `css/${docStyle.slug}.css`})
+        this.fontFiles = this.fontFiles.concat(docStyle.documentstylefile_set.map(([url, filename]) => ({
+            filename: `css/media/${filename}`,
+            url
+        })))
+    }
+
+    loadStyles() {
+        const p = []
+        this.styleSheets.forEach(sheet => {
+            if (sheet.url) {
+                p.push(
+                    get(sheet.url).then(
+                        response => response.text()
+                    ).then(
+                        response => {
+                            sheet.contents = response
+                            sheet.filename = `css/${sheet.url.split('/').pop().split('?')[0]}`
+                            delete sheet.url
+                        }
+                    )
+                )
+            }
+        })
+        return Promise.all(p)
+    }
+
+    addMathliveStylesheet() {
+        this.styleSheets.push({filename: `css/mathlive.css`})
     }
 
     createZip() {

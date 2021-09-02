@@ -44,7 +44,10 @@ export class EpubExporter extends DOMExporter {
     }
 
     addCategoryLabels(language) {
-        addCategoryLabels(this.content.querySelector('section.fnlist'), language, true)
+        const fnListEl = this.content.querySelector('section.fnlist')
+        if (fnListEl) {
+            addCategoryLabels(fnListEl, language, true)
+        }
         addCategoryLabels(this.content, language)
     }
 

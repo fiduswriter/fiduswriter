@@ -1,7 +1,6 @@
 import uuid
 import atexit
 import logging
-import copy
 from time import mktime, time
 from copy import deepcopy
 
@@ -78,17 +77,16 @@ class WebSocket(BaseWebSocketHandler):
                 f"ParticipantID:{self.id}"
             )
             self.id = 0
-            if "type" in doc_db.content:
-                content = doc_db.content
-            else:
-                content = copy.deepcopy(doc_db.template.content)
-                if "type" not in content:
-                    content["type"] = "article"
-                if "content" not in content:
-                    content["content"] = [{type: "title"}]
-                doc_db.content = content
+            if "type" not in doc_db.content:
+                doc_db.content = deepcopy(doc_db.template.content)
+                if "type" not in doc_db.content:
+                    doc_db.content["type"] = "article"
+                if "content" not in doc_db.content:
+                    doc_db.content["content"] = [{type: "title"}]
                 doc_db.save()
-            node = prosemirror.from_json({"type": "doc", "content": [content]})
+            node = prosemirror.from_json(
+                {"type": "doc", "content": [doc_db.content]}
+            )
             self.session = {
                 "doc": doc_db,
                 "node": node,

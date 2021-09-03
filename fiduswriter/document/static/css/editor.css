@@ -882,7 +882,7 @@ html[hc=a5] #toolbar {
 }
 
 #navigator-list {
-    max-height: 550px;
+    max-height: min(550px, 100vh - 315px);
     overflow-y: scroll;
     -ms-overflow-style: none;
     overflow: -moz-scrollbars-none;

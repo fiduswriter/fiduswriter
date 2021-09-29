@@ -5,7 +5,7 @@ django-avatar==5.0.0
 django-js-error-hook==0.8
 django-npm-mjs==2.0.9
 django-loginas==0.3.9
-Pillow==8.2.0
+Pillow==8.3.2
 python-dateutil==2.8.1
 python-magic==0.4.18
 tornado==6.0.4

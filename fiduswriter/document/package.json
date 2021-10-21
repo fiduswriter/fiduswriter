@@ -1,6 +1,6 @@
 {
     "dependencies": {
-        "citeproc-plus": "0.1.8",
+        "citeproc-plus": "0.2.7",
         "diff": "^5.0.0",
         "fastdom": "1.0.10",
         "fast-deep-equal": "3.1.3",

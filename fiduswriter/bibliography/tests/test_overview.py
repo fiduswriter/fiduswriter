@@ -183,7 +183,7 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
         search_input.send_keys("women")
         try:
             self.assertEqual(
-                "No sources registered",
+                "No sources found",
                 driver.find_element_by_css_selector(
                     ".fw-data-table.fw-large.dataTable-table td"
                 ).text,

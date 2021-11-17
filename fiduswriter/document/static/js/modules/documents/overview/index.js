@@ -294,7 +294,8 @@ export class DocumentOverview {
             paging: false,
             scrollY: `${Math.max(window.innerHeight - 360, 200)}px`,
             labels: {
-                noRows: gettext("No documents available") // Message shown when there are no search results
+                noRows: gettext("No documents available"), // Message shown when there are no entries
+                noResults: gettext("No documents found") // Message shown when there are no search results
             },
             layout: {
                 top: "",

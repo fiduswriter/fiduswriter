@@ -64,7 +64,8 @@ export class ContactsOverview {
             paging: false,
             scrollY: `${Math.max(window.innerHeight - 360, 100)}px`,
             labels: {
-                noRows: gettext("No contacts available") // Message shown when there are no search results
+                noRows: gettext("No contacts available"),
+                noResults: gettext("No contacts found") // Message shown when there are no search results
             },
             layout: {
                 top: "",

@@ -41,5 +41,6 @@ build
 /fiduswriter/payment
 /fiduswriter/github_export
 /fiduswriter/gitlab_export
+/fiduswriter/gitrepo_export
 /fiduswriter/tum
 .history

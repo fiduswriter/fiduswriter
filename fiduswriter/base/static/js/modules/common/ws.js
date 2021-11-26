@@ -147,6 +147,9 @@ export class WebSocketConnector {
         }
 
         this.ws.onclose = () => {
+            if (!this.connected) {
+                return
+            }
             this.connected = false
             window.setTimeout(() => {
                 this.createWSConnection()

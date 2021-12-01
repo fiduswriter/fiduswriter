@@ -3,7 +3,7 @@ Django==3.2.5
 django-allauth==0.42.0
 django-avatar==5.0.0
 django-js-error-hook==0.8
-django-npm-mjs==2.0.9
+django-npm-mjs==2.1.0
 django-loginas==0.3.9
 Pillow==8.3.2
 python-dateutil==2.8.1

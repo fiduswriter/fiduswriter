@@ -123,7 +123,7 @@ msgstr "Proteção de Caso"
 
 #: base/static/js/modules/common/file/dialog.js:85
 #: bibliography/static/js/modules/bibliography/form/index.js:79
-#: bibliography/static/js/modules/bibliography/overview/index.js:196
+#: bibliography/static/js/modules/bibliography/overview/index.js:197
 #: document/static/js/modules/documents/access_rights/index.js:161
 #: document/static/js/modules/editor/comments/editors/answer.js:12
 #: document/static/js/modules/editor/comments/editors/comment.js:90
@@ -489,7 +489,7 @@ msgid "Subtitle"
 msgstr "Subtítulo"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:86
-#: bibliography/static/js/modules/bibliography/overview/index.js:93
+#: bibliography/static/js/modules/bibliography/overview/index.js:94
 #: document/static/js/modules/document_template/document_style_dialog.js:80
 #: document/static/js/modules/document_template/templates.js:21
 #: document/static/js/modules/document_template/templates.js:32
@@ -498,15 +498,15 @@ msgstr "Subtítulo"
 #: document/static/js/modules/document_template/templates.js:70
 #: document/static/js/modules/document_template/templates.js:80
 #: document/static/js/modules/document_template/templates.js:184
-#: document/static/js/modules/documents/overview/index.js:293
-#: document/static/js/modules/editor/dialogs/citation.js:195
+#: document/static/js/modules/documents/overview/index.js:295
+#: document/static/js/modules/editor/dialogs/citation.js:196
 #: document/static/js/modules/editor/dialogs/templates.js:35
 #: document/static/js/modules/editor/dialogs/templates.js:46
 #: document/static/js/modules/editor/menus/toolbar/model.js:116
 #: document/static/js/modules/editor/state_plugins/links.js:192
 #: document/static/js/modules/editor/state_plugins/placeholders.js:32
-#: user_template_manager/static/js/modules/user_template_manager/overview.js:84
-#: usermedia/static/js/modules/images/selection_dialog/index.js:108
+#: user_template_manager/static/js/modules/user_template_manager/overview.js:85
+#: usermedia/static/js/modules/images/selection_dialog/index.js:110
 msgid "Title"
 msgstr "Título"
 
@@ -857,7 +857,6 @@ msgid "Danish"
 msgstr "Dinamarquês"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:189
-#: document/static/js/modules/editor/menus/headerbar/model.js:237
 #: document/static/js/modules/schema/const.js:1
 msgid "Dutch"
 msgstr "Holandês"
@@ -975,7 +974,6 @@ msgid "New Norwegian"
 msgstr "Novo Norueguês"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:217
-#: document/static/js/modules/editor/menus/headerbar/model.js:237
 #: document/static/js/modules/schema/const.js:1
 msgid "Polish"
 msgstr "Polonês"
@@ -995,7 +993,6 @@ msgid "Romanian"
 msgstr "Romeno"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:222
-#: document/static/js/modules/editor/menus/headerbar/model.js:237
 #: document/static/js/modules/schema/const.js:1
 msgid "Russian"
 msgstr "Russo"
@@ -1103,28 +1100,28 @@ msgstr "Selecione um arquivo"
 msgid "No sources registered"
 msgstr "Nenhuma fonte registrada"
 
-#: bibliography/static/js/modules/bibliography/overview/index.js:93
+#: bibliography/static/js/modules/bibliography/overview/index.js:94
 msgid "Sourcetype"
 msgstr "FonteTipo"
 
-#: bibliography/static/js/modules/bibliography/overview/index.js:93
-#: document/static/js/modules/editor/dialogs/citation.js:195
+#: bibliography/static/js/modules/bibliography/overview/index.js:94
+#: document/static/js/modules/editor/dialogs/citation.js:196
 #: document/static/js/modules/editor/dialogs/templates.js:46
 #: document/static/js/modules/editor/marginboxes/templates.js:189
 #: document/static/js/modules/editor/marginboxes/templates.js:193
 msgid "Author"
 msgstr "Autor"
 
-#: bibliography/static/js/modules/bibliography/overview/index.js:93
+#: bibliography/static/js/modules/bibliography/overview/index.js:94
 msgid "Published"
 msgstr "Publicado"
 
-#: bibliography/static/js/modules/bibliography/overview/index.js:227
+#: bibliography/static/js/modules/bibliography/overview/index.js:228
 #: usermedia/static/js/modules/images/overview/categories.js:80
 msgid "Edit Categories"
 msgstr "Editar categorias"
 
-#: bibliography/static/js/modules/bibliography/overview/index.js:243
+#: bibliography/static/js/modules/bibliography/overview/index.js:244
 #: document/static/js/modules/document_template/document_style_dialog.js:71
 #: document/static/js/modules/document_template/document_style_dialog.js:122
 #: document/static/js/modules/document_template/export_template_dialog.js:66
@@ -1143,7 +1140,7 @@ msgstr "Editar categorias"
 msgid "Delete"
 msgstr "Excluir"
 
-#: bibliography/static/js/modules/bibliography/overview/index.js:254
+#: bibliography/static/js/modules/bibliography/overview/index.js:255
 #: document/static/js/modules/document_template/document_style_dialog.js:134
 #: document/static/js/modules/document_template/export_template_dialog.js:134
 #: document/static/js/modules/documents/overview/actions.js:41
@@ -1156,7 +1153,7 @@ msgstr "Excluir"
 msgid "Confirm deletion"
 msgstr "Confirmar exclusão"
 
-#: bibliography/static/js/modules/bibliography/overview/index.js:255
+#: bibliography/static/js/modules/bibliography/overview/index.js:256
 msgid "Delete the bibliography item(s)"
 msgstr "Excluir as bibliografias"
 
@@ -1254,27 +1251,27 @@ msgstr "Documento foi excluído"
 msgid "No documents available"
 msgstr "Nenhum documento disponível"
 
-#: document/static/js/modules/documents/overview/index.js:293
+#: document/static/js/modules/documents/overview/index.js:295
 msgid "Revisions"
 msgstr "Revisões"
 
-#: document/static/js/modules/documents/overview/index.js:293
-#: user_template_manager/static/js/modules/user_template_manager/overview.js:84
+#: document/static/js/modules/documents/overview/index.js:295
+#: user_template_manager/static/js/modules/user_template_manager/overview.js:85
 msgid "Created"
 msgstr "Criado"
 
 #. Johannes?
-#: document/static/js/modules/documents/overview/index.js:293
-#: user_template_manager/static/js/modules/user_template_manager/overview.js:84
+#: document/static/js/modules/documents/overview/index.js:295
+#: user_template_manager/static/js/modules/user_template_manager/overview.js:85
 msgid "Last changed"
 msgstr "Última "
 
-#: document/static/js/modules/documents/overview/index.js:293
+#: document/static/js/modules/documents/overview/index.js:295
 msgid "Owner"
 msgstr "Proprietário"
 
 #: document/static/js/modules/documents/access_rights/templates.js:9
-#: document/static/js/modules/documents/overview/index.js:293
+#: document/static/js/modules/documents/overview/index.js:295
 msgid "Rights"
 msgstr "Direitos"
 
@@ -1402,23 +1399,23 @@ msgstr "Configurar Citação"
 #: base/static/js/modules/common/file/selector.js:58
 #: base/static/js/modules/common/file/tools.js:4
 #: base/static/js/modules/common/file/tools.js:15
-#: base/static/js/modules/common/file/tools.js:30
-#: bibliography/static/js/modules/bibliography/overview/index.js:161
+#: base/static/js/modules/common/file/tools.js:34
+#: bibliography/static/js/modules/bibliography/overview/index.js:162
 #: document/static/js/modules/editor/dialogs/citation.js:97
 #: document/static/js/modules/editor/dialogs/citation.js:138
-#: document/static/js/modules/editor/menus/headerbar/view.js:328
+#: document/static/js/modules/editor/menus/headerbar/view.js:336
 #: document/static/js/modules/exporter/tools/file.js:3
-#: user_template_manager/static/js/modules/user_template_manager/overview.js:109
+#: user_template_manager/static/js/modules/user_template_manager/overview.js:110
 #: usermedia/static/js/modules/images/overview/index.js:136
 msgid "Untitled"
 msgstr "Sem título"
 
-#: document/static/js/modules/editor/dialogs/citation.js:188
-#: usermedia/static/js/modules/images/selection_dialog/index.js:101
+#: document/static/js/modules/editor/dialogs/citation.js:189
+#: usermedia/static/js/modules/images/selection_dialog/index.js:103
 msgid "Search..."
 msgstr "Localizar..."
 
-#: document/static/js/modules/editor/dialogs/citation.js:328
+#: document/static/js/modules/editor/dialogs/citation.js:329
 msgid "Please select at least one citation source!"
 msgstr "Por favor, selecione pelo menos uma fonte de citação!"
 
@@ -1518,7 +1515,7 @@ msgstr "Norueguês (nynorsk)"
 msgid "Persian"
 msgstr "Persa"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:237
+#: document/static/js/modules/editor/menus/headerbar/model.js:238
 #: document/static/js/modules/schema/const.js:1
 msgid "Portuguese (Brazil)"
 msgstr "Português (Brasil)"
@@ -1713,7 +1710,7 @@ msgid "Removed"
 msgstr "Removido"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:137
-#: usermedia/static/js/modules/images/overview/index.js:192
+#: usermedia/static/js/modules/images/overview/index.js:194
 msgid "Added"
 msgstr "Adicionado"
 
@@ -1723,7 +1720,7 @@ msgstr "Rejeitar"
 
 #: document/static/js/modules/document_template/export_template_dialog.js:76
 #: document/static/js/modules/editor/menus/headerbar/model.js:33
-#: usermedia/static/js/modules/images/overview/index.js:192
+#: usermedia/static/js/modules/images/overview/index.js:194
 msgid "File"
 msgstr "Arquivo"
 
@@ -1740,7 +1737,7 @@ msgid "Share the document with other users."
 msgstr "Compartilhar o documento com outros usuários."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:56
-#: document/static/js/modules/editor/menus/headerbar/view.js:351
+#: document/static/js/modules/editor/menus/headerbar/view.js:359
 msgid "Close the document and return to the document overview menu."
 msgstr "Feche o documento e retorne para o menu de síntese do documento."
 
@@ -1817,57 +1814,57 @@ msgstr "Idioma do Texto"
 msgid "Choose the language of the document."
 msgstr "Escolha o idioma do documento."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:246
+#: document/static/js/modules/editor/menus/headerbar/model.js:249
 msgid "Other"
 msgstr "Outro"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:261
+#: document/static/js/modules/editor/menus/headerbar/model.js:264
 msgid "Paper Size"
 msgstr "Tamanho do papel"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:263
+#: document/static/js/modules/editor/menus/headerbar/model.js:266
 msgid "Choose a papersize for print and PDF generation."
 msgstr "Escolha um tamanho de papel para impressão e geração de PDF."
 
 #. es solo A4? no se si bien sobre "din"
-#: document/static/js/modules/editor/menus/headerbar/model.js:269
+#: document/static/js/modules/editor/menus/headerbar/model.js:272
 msgid "DIN A4"
 msgstr "DIN A4"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:271
+#: document/static/js/modules/editor/menus/headerbar/model.js:274
 msgid "A4 (DIN A4/ISO 216) which is used in most of the world."
 msgstr "A4 (DIN A4/ISO 216), que é utilizado na maior parte do mundo."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:286
+#: document/static/js/modules/editor/menus/headerbar/model.js:289
 msgid "US Letter"
 msgstr "Tipo Carta"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:288
+#: document/static/js/modules/editor/menus/headerbar/model.js:291
 msgid "The format used by the USA and some other American countries."
 msgstr "Formato usado pelos EUA e alguns países da América."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:325
+#: document/static/js/modules/editor/menus/headerbar/model.js:328
 msgid "Tools"
 msgstr "Ferramentas"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:326
+#: document/static/js/modules/editor/menus/headerbar/model.js:329
 msgid "Select document editing tool."
 msgstr "Selecione a ferramenta de edição de documentos."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:330
+#: document/static/js/modules/editor/menus/headerbar/model.js:333
 #: document/static/js/modules/editor/tools/word_count/index.js:10
 msgid "Word counter"
 msgstr "Contador de palavras"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:332
+#: document/static/js/modules/editor/menus/headerbar/model.js:335
 msgid "See document statistics."
 msgstr "Ver estatístcas do documento."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:349
+#: document/static/js/modules/editor/menus/headerbar/model.js:352
 msgid "Keyboard shortcuts"
 msgstr "Atalhos de teclado"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:351
+#: document/static/js/modules/editor/menus/headerbar/model.js:354
 msgid "Show an overview of available keyboard shortcuts."
 msgstr "Exibir uma visão geral dos atalhos de teclado disponíveis."
 
@@ -2365,7 +2362,7 @@ msgstr "Obrigado por fazer a verificação!"
 msgid "You can now log in."
 msgstr "Agora você pode entrar."
 
-#: user/static/js/modules/contacts/index.js:113
+#: user/static/js/modules/contacts/index.js:114
 msgid "Could not obtain contacts list"
 msgstr "Não foi possível obter a lista de contatos"
 
@@ -2435,7 +2432,7 @@ msgid "Description (optional)"
 msgstr "Descrição (opcional)"
 
 #: document/static/js/modules/editor/dialogs/templates.js:35
-#: usermedia/static/js/modules/images/selection_dialog/index.js:108
+#: usermedia/static/js/modules/images/selection_dialog/index.js:110
 msgid "Image"
 msgstr "Imagem"
 
@@ -2560,7 +2557,7 @@ msgstr "As imagens foram excluídas"
 msgid "Delete the image(s)"
 msgstr "Excluir as imagens"
 
-#: usermedia/static/js/modules/images/overview/index.js:192
+#: usermedia/static/js/modules/images/overview/index.js:194
 msgid "Size (px)"
 msgstr "Tamanho (px)"
 
@@ -3263,7 +3260,7 @@ msgstr "Convite"
 msgid "Document Overview"
 msgstr "Visão geral do documento"
 
-#: document/static/js/modules/documents/overview/index.js:396
+#: document/static/js/modules/documents/overview/index.js:398
 msgid "Undefined"
 msgstr "Indefinido"
 
@@ -3490,7 +3487,7 @@ msgstr "Somente comentários importantes"
 msgid "Resolved comments"
 msgstr "Comentários resolvidos"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:360
+#: document/static/js/modules/editor/menus/headerbar/model.js:363
 msgid "Track changes"
 msgstr "Registrar alterações"
 
@@ -3498,31 +3495,31 @@ msgstr "Registrar alterações"
 msgid "Export the document to a Journal Archiving and Interchange Tag Library NISO JATS Version 1.2 file."
 msgstr "Exporte o documento para um arquivo Journal Archiving and Interchange Tag Library NISO JATS Version 1.2."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:362
+#: document/static/js/modules/editor/menus/headerbar/model.js:365
 msgid "Tracking changes to the document"
 msgstr "Registrando alterações no documento"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:366
+#: document/static/js/modules/editor/menus/headerbar/model.js:369
 msgid "Record"
 msgstr "Gravar"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:368
+#: document/static/js/modules/editor/menus/headerbar/model.js:371
 msgid "Record document changes"
 msgstr "Registrar alterações no documento"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:383
+#: document/static/js/modules/editor/menus/headerbar/model.js:386
 msgid "Accept all"
 msgstr "Aceitar tudo"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:385
+#: document/static/js/modules/editor/menus/headerbar/model.js:388
 msgid "Accept all tracked changes."
 msgstr "Aceite todos os comentários rastreados."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:391
+#: document/static/js/modules/editor/menus/headerbar/model.js:394
 msgid "Reject all"
 msgstr "Rejeitar tudo"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:393
+#: document/static/js/modules/editor/menus/headerbar/model.js:396
 msgid "Reject all tracked changes."
 msgstr "Rejeitar todas comentários rastreados."
 
@@ -3552,7 +3549,7 @@ msgstr "Não registrado"
 msgid "Split cells"
 msgstr "Dividir células"
 
-#: document/static/js/modules/editor/navigator/index.js:198
+#: document/static/js/modules/editor/navigator/index.js:207
 msgid "Document Navigator"
 msgstr "Navegador de Documento"
 
@@ -4055,7 +4052,7 @@ msgstr "Selecione o modelo de documento para cópia."
 msgid "Copy"
 msgstr "Copiar"
 
-#: document/static/js/modules/documents/overview/index.js:408
+#: document/static/js/modules/documents/overview/index.js:410
 msgid "Copy selected as..."
 msgstr "Cópia selecionada como ..."
 
@@ -4127,17 +4124,17 @@ msgstr "Criar cópia"
 msgid "JATS"
 msgstr "JATS"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:304
+#: document/static/js/modules/editor/menus/headerbar/model.js:307
 msgid "Copyright Information"
 msgstr "Informações sobre direitos autorais"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:339
+#: document/static/js/modules/editor/menus/headerbar/model.js:342
 #: document/static/js/modules/editor/tools/key_bindings/templates.js:1
 #: document/static/js/modules/editor/tools/search_replace/index.js:143
 msgid "Search and replace"
 msgstr "Pesquisar e substituir"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:341
+#: document/static/js/modules/editor/menus/headerbar/model.js:344
 msgid "Show a search and replace dialog."
 msgstr "Mostrar uma caixa de diálogo de pesquisa e substituição."
 
@@ -4215,7 +4212,7 @@ msgstr "Editar imagem"
 msgid "Delete selected images."
 msgstr "Exclua as imagens selecionadas."
 
-#: document/static/js/modules/documents/overview/index.js:409
+#: document/static/js/modules/documents/overview/index.js:411
 msgid "Copy the documents and assign them to a specific template."
 msgstr "Copie os documentos e atribua-os a um modelo específico."
 
@@ -4253,8 +4250,8 @@ msgstr "Ajuda"
 #: bibliography/static/js/modules/bibliography/form/index.js:50
 #: bibliography/static/js/modules/bibliography/import/dialog.js:16
 #: bibliography/static/js/modules/bibliography/import/dialog.js:37
-#: bibliography/static/js/modules/bibliography/overview/index.js:191
-#: bibliography/static/js/modules/bibliography/overview/index.js:213
+#: bibliography/static/js/modules/bibliography/overview/index.js:192
+#: bibliography/static/js/modules/bibliography/overview/index.js:214
 #: document/static/js/modules/exporter/native/revision.js:32
 #: document/static/js/modules/exporter/native/revision.js:53
 #: usermedia/static/js/modules/images/overview/index.js:71
@@ -4509,7 +4506,7 @@ msgstr "Excluir figura"
 msgid "Delete the figure"
 msgstr "Exclua a figura"
 
-#: document/static/js/modules/editor/menus/headerbar/view.js:69
+#: document/static/js/modules/editor/menus/headerbar/view.js:73
 msgid "Cannot close a document when you're offline."
 msgstr "Não é possível fechar um documento quando você está offline."
 
@@ -4525,7 +4522,7 @@ msgstr "Configure a tabela."
 msgid "Revision file could not be generated."
 msgstr "Não foi possível gerar o arquivo de revisão."
 
-#: user_template_manager/static/js/modules/user_template_manager/overview.js:152
+#: user_template_manager/static/js/modules/user_template_manager/overview.js:153
 msgid "Document templates loading failed."
 msgstr "O carregamento dos modelos de documento falhou."
 
@@ -4786,15 +4783,15 @@ msgstr "E-mail inválido!"
 msgid "No contacts available"
 msgstr "Nenhum contato disponível"
 
-#: user/static/js/modules/contacts/index.js:76
+#: user/static/js/modules/contacts/index.js:77
 msgid "Name"
 msgstr "Nome"
 
-#: user/static/js/modules/contacts/index.js:76
+#: user/static/js/modules/contacts/index.js:77
 msgid "Type"
 msgstr "Tipo"
 
-#: user/static/js/modules/contacts/index.js:76
+#: user/static/js/modules/contacts/index.js:77
 msgid "Email address"
 msgstr "Endereço de e-mail"
 
@@ -4910,4 +4907,34 @@ msgstr "Carregar arquivo FIDUSTEMPLATE"
 #: document/static/js/modules/editor/index.js:351
 msgid "Leave editor"
 msgstr "Sair do editor"
+
+#: bibliography/static/js/modules/bibliography/overview/index.js:86
+#: document/static/js/modules/editor/dialogs/citation.js:187
+msgid "No sources found"
+msgstr "Nenhuma fonte encontrada"
+
+#: bibliography/static/js/modules/bibliography/tools.js:41
+msgid "and"
+msgstr "e"
+
+#: bibliography/static/js/modules/bibliography/tools.js:45
+msgid "and others"
+msgstr "e outros"
+
+#: document/static/js/modules/documents/overview/index.js:287
+msgid "No documents found"
+msgstr "Nenhum documento encontrado"
+
+#: user/static/js/modules/contacts/index.js:69
+msgid "No contacts found"
+msgstr "Nenhum contato encontrado"
+
+#: user_template_manager/static/js/modules/user_template_manager/overview.js:78
+msgid "No document templates found"
+msgstr "Nenhum modelo de documento encontrado"
+
+#: usermedia/static/js/modules/images/overview/index.js:187
+#: usermedia/static/js/modules/images/selection_dialog/index.js:101
+msgid "No images found"
+msgstr "Nenhuma imagem encontrada"
 

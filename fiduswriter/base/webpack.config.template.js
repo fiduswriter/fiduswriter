@@ -104,8 +104,7 @@ module.exports = { // eslint-disable-line no-undef
                 'document_template_admin.js',
                 '**/.*',
                 '**/*.map',
-                '**/*.gz',
-                '**/*.csljson'
+                '**/*.gz'
             ]
         })
     ],

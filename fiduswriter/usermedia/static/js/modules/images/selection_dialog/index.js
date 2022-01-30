@@ -106,7 +106,8 @@ export class ImageSelectionDialog {
             paging: false,
             scrollY: "270px",
             labels: {
-                noRows: gettext("No images available"), // Message shown when there are no search results
+                noRows: gettext("No images available"), // Message shown when there are no images
+                noResults: gettext("No images found"), // Message shown when no images are found after search
                 placeholder: gettext("Search...") // placeholder for search field
             },
             layout: {

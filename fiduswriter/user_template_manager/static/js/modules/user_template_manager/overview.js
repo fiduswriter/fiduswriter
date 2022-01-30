@@ -77,7 +77,8 @@ export class DocTemplatesOverview {
             paging: false,
             scrollY: `${Math.max(window.innerHeight - 360, 100)}px`,
             labels: {
-                noRows: gettext("No document templates available") // Message shown when there are no search results
+                noRows: gettext("No document templates available"),
+                noResults: gettext("No document templates found") // Message shown when there are no search results
             },
             layout: {
                 top: ""

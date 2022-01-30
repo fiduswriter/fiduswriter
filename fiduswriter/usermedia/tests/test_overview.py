@@ -152,7 +152,7 @@ class UsermediaOverviewTest(LiveTornadoTestCase, SeleniumHelper):
         search_input.click()
         search_input.send_keys("fish")
         self.assertEqual(
-            "No images available",
+            "No images found",
             driver.find_element_by_xpath(
                 "(.//*[normalize-space(text()) and normalize-space(.)="
                 "'Size (px)'])[1]/following::td[1]"

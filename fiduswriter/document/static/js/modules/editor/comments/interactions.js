@@ -217,7 +217,7 @@ export class ModCommentInteractions {
             // There is currently focus in the comment (answer) form
             return true
         }
-        if (this.editor?.hasChanged()) {
+        if (this.editor?.hasChanged?.()) {
             // Part of a comment (answer) has been entered/changed.
             return true
         }

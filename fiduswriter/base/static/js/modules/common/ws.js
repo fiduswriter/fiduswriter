@@ -196,6 +196,9 @@ export class WebSocketConnector {
 
     /** Sends data to server or keeps it in a list if currently offline. */
     send(getData, timer = 80) {
+        if (this.connected && this.ws.readyState !== this.ws.OPEN) {
+            this.ws.onclose()
+        }
         if (this.connected && !this.recentlySent) {
             const data = getData()
             if (!data) {

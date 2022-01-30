@@ -85,7 +85,8 @@ export class BibliographyOverview {
             paging: false,
             scrollY: `${Math.max(window.innerHeight - 360, 100)}px`,
             labels: {
-                noRows: gettext("No sources registered") // Message shown when there are no search results
+                noRows: gettext("No sources registered"),
+                noResults: gettext("No sources found") // Message shown when there are no search results
             },
             layout: {
                 top: "",

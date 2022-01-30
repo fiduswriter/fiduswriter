@@ -28,9 +28,14 @@ export function getTimestamp(date) {
 }
 
 export function styleEpubFootnotes(htmlEl) {
-    // Converts RASH style footnotes into epub footnotes.
-    htmlEl.querySelector('section.fnlist').setAttribute('role', 'doc-endnotes')
-    const footnotes = htmlEl.querySelectorAll('section.fnlist section[role=doc-footnote]')
+    // Converts RASH style footnotes into epub footnotes
+    const fnListEl = htmlEl.querySelector('section.fnlist')
+    if (!fnListEl) {
+        // There are no footnotes.
+        return htmlEl
+    }
+    fnListEl.setAttribute('role', 'doc-endnotes')
+    const footnotes = fnListEl.querySelectorAll('section[role=doc-footnote]')
     let footnoteCounter = 1
     footnotes.forEach(footnote => {
         const newFootnote = document.createElement('aside')

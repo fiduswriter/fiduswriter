@@ -2,6 +2,7 @@ import time
 import os
 import bleach
 import json
+from copy import deepcopy
 
 from django.core import serializers
 from django.http import HttpResponse, JsonResponse, HttpRequest
@@ -61,6 +62,13 @@ def get_documentlist_extra(request):
             }
             if image.image.thumbnail:
                 images[image.image.id]["thumbnail"] = image.image.thumbnail.url
+        if "type" not in doc.content:
+            doc.content = deepcopy(doc.template.content)
+            if "type" not in doc.content:
+                doc.content["type"] = "article"
+            if "content" not in doc.content:
+                doc.content["content"] = [{type: "title"}]
+            doc.save()
         response["documents"].append(
             {
                 "images": images,

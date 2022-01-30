@@ -141,7 +141,7 @@ msgstr "\n"
 msgid "Update all documents (DANGER!)"
 msgstr "Atualizar todos os documentos (PERIGO!)"
 
-#: document/emails.py:19 document/views.py:669
+#: document/emails.py:19 document/views.py:677
 msgid "Untitled"
 msgstr "Sem título"
 
@@ -286,4 +286,8 @@ msgstr "Comentário em: %(document_title)s"
 #: document/emails.py:184
 msgid "Comment assignment on : %(document_title)s"
 msgstr "Atribuição de comentário em: %(document_title)s"
+
+#: user/admin.py:10
+msgid "Connections"
+msgstr "Conexões"
 

@@ -98,7 +98,8 @@ export class JATSExporterConvert {
             break
         case 'tags_part':
             if (
-                node.attrs.metadata === 'keywords'
+                node.attrs.metadata === 'keywords' &&
+                node.content
             ) {
                 this.frontMatter.keywords.push({
                     type: 'keywords',

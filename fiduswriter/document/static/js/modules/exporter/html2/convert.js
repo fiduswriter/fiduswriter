@@ -26,13 +26,16 @@ export class HTMLExporterConvert {
         this.footnotes = []
         this.fnCounter = 0
         this.metaData = {
-            title: {},
+            title: this.exporter.docTitle,
             contributors: [],
             abstract: false,
             keywords: [],
             copyright: {
                 licenses: []
             }
+        }
+        this.features = {
+            math: false
         }
         this.citInfos = []
         this.citationCount = 0
@@ -50,8 +53,6 @@ export class HTMLExporterConvert {
                 body,
                 back,
                 settings: this.exporter.doc.settings,
-                styleSheets: this.exporter.styleSheets,
-                title: this.metaData.title,
                 lang: this.exporter.doc.settings.language.split('-')[0],
                 xhtml: this.xhtml
             })
@@ -69,8 +70,13 @@ export class HTMLExporterConvert {
             this.metaData.copyright = node.attrs.copyright
             break
         case 'title':
-            this.metaData.title = this.walkJson(node)
+        {
+            const title = this.textWalkJson(node)
+            if (title.length) {
+                this.metaData.title = title
+            }
             break
+        }
         case 'richtext_part':
             if (
                 node.attrs.metadata === 'abstract' &&
@@ -82,7 +88,8 @@ export class HTMLExporterConvert {
             break
         case 'tags_part':
             if (
-                node.attrs.metadata === 'keywords'
+                node.attrs.metadata === 'keywords' &&
+                node.content
             ) {
                 node.content.forEach(tag => {
                     this.metaData.keywords.push(tag.attrs.tag)
@@ -92,6 +99,11 @@ export class HTMLExporterConvert {
         case 'contributors_part':
             this.metaData.contributors.push(node)
             parentNode.content = parentNode.content.filter(child => child !== node)
+            break
+        case 'equation':
+        case 'figure_equation':
+            this.features.math = true
+            this.exporter.addMathliveStylesheet()
             break
         default:
             break
@@ -120,7 +132,7 @@ export class HTMLExporterConvert {
     assembleHead() {
         let head = '<head>'
         head += `<title>${escapeText(this.metaData.title)})</title>`
-        this.metaData.authorss.forEach(contributors => {
+        this.metaData.contributors.forEach(contributors => {
             head += this.walkJson(contributors)
         })
         Object.entries(this.affiliations).forEach(([institution, index]) => head += `<aff id="aff${index}"><institution>${escapeText(institution)}</institution></aff>`)
@@ -145,8 +157,27 @@ export class HTMLExporterConvert {
         if (this.metaData.keywords.length) {
             head += `<meta name="keywords" content="${escapeText(this.metaData.keywords.join(', '))}"${this.endSlash}>`
         }
+        head += this.exporter.styleSheets.map(
+            sheet => sheet.filename ?
+                `<link rel="stylesheet" type="text/css" href="${sheet.filename}" />` :
+                `<style>${sheet.contents}</style>`
+        ).join('')
+
         head += '</head>'
         return head
+    }
+
+    // Only allow for text output
+    textWalkJson(node) {
+        let content = ''
+        if (node.type === 'text') {
+            content += escapeText(node.text)
+        } else if (node.content) {
+            node.content.forEach(child => {
+                content += this.textWalkJson(child)
+            })
+        }
+        return content
     }
 
 
@@ -220,8 +251,10 @@ export class HTMLExporterConvert {
             content += `<span class='tag'>${escapeText(node.attrs.tag)}</span>`
             break
         case 'richtext_part':
-            start += `<div class="article-part article-richtext article-${node.attrs.id}"${ node.attrs.language ? ` lang="${node.attrs.language}"` : ''}>`
-            end = '</div>' + end
+            if (node.content) {
+                start += `<div class="article-part article-richtext article-${node.attrs.id}"${ node.attrs.language ? ` lang="${node.attrs.language}"` : ''}>`
+                end = '</div>' + end
+            }
             break
         case 'table_of_contents':
             content += `<div class="article-part table-of-contents"><h1>${escapeText(node.attrs.title)}</h1></div>`
@@ -470,7 +503,7 @@ export class HTMLExporterConvert {
     }
 
     assembleBody(docContent) {
-        return `<body id="body">${this.walkJson(docContent)}</body>`
+        return `<div id="body">${this.walkJson(docContent)}</div>`
     }
 
     assembleBack() {

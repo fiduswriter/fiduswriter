@@ -6,7 +6,6 @@ import {removeHidden} from "../tools/doc_content"
 import {HTMLExporterConvert} from "./convert"
 import {HTMLExporterCitations} from "./citations"
 import {ZipFileCreator} from "../tools/zip"
-import {darManifest} from "./templates"
 /*
  Exporter to HTML
 */
@@ -27,6 +26,7 @@ export class HTMLExporter {
         this.textFiles = []
         this.httpFiles = []
         this.fontFiles = []
+        this.includeZips = []
         this.styleSheets = [
             {url: `${settings_STATIC_URL}css/document.css?v=${transpile_VERSION}`}
         ]
@@ -40,28 +40,42 @@ export class HTMLExporter {
         this.citations = new HTMLExporterCitations(this, this.bibDB, this.csl)
         return this.loadStyles().then(
             () => this.converter.init(this.docContent)
-        ).then(({html, imageIds}) => {
-            this.textFiles.push({filename: 'document.html', contents: html})
-            const images = imageIds.map(
-                id => {
-                    const imageEntry = this.imageDB.db[id]
-                    return {
-                        title: imageEntry.title,
-                        filename: imageEntry.image.split('/').pop(),
-                        url: imageEntry.image
+        ).then(
+            ({html, imageIds}) => {
+                this.textFiles.push({filename: 'document.html', contents: html})
+                const images = imageIds.map(
+                    id => {
+                        const imageEntry = this.imageDB.db[id]
+                        return {
+                            title: imageEntry.title,
+                            filename: imageEntry.image.split('/').pop(),
+                            url: imageEntry.image
+                        }
                     }
-                }
-            )
-            this.textFiles.push({
-                filename: 'manifest.xml',
-                contents: darManifest({title: this.docTitle, images})
-            })
-            images.forEach(image => {
-                this.httpFiles.push({filename: image.filename, url: image.url})
-            })
+                )
+                images.forEach(image => {
+                    this.httpFiles.push({filename: image.filename, url: image.url})
+                })
+            }
+        ).then(
+            () => {
+                this.styleSheets.forEach(styleSheet => {
+                    if (styleSheet.filename) {
+                        this.textFiles.push(styleSheet)
+                    }
+                })
 
-            return this.createZip()
-        })
+                if (this.converter.features.math) {
+                    this.styleSheets.push({filename: `css/mathlive.css`})
+                    this.includeZips.push({
+                        'directory': 'css',
+                        'url': `${settings_STATIC_URL}zip/mathlive_style.zip?v=${transpile_VERSION}`,
+                    })
+                }
+
+                return this.createZip()
+            }
+        )
     }
 
     addDocStyle(doc) {
@@ -106,15 +120,12 @@ export class HTMLExporter {
         return Promise.all(p)
     }
 
-    addMathliveStylesheet() {
-        this.styleSheets.push({filename: `css/mathlive.css`})
-    }
-
     createZip() {
+
         const zipper = new ZipFileCreator(
             this.textFiles,
             this.httpFiles,
-            undefined,
+            this.includeZips,
             undefined,
             this.updated
         )

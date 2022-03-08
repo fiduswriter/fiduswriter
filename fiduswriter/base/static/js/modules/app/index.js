@@ -322,7 +322,7 @@ export class App {
         if (this.page && this.page.close) {
             this.page.close()
         }
-        const pathnameParts = window.location.pathname.split('/')
+        const pathnameParts = decodeURI(window.location.pathname).split('/')
         const route = this.routes[pathnameParts[1]]
         if (route) {
             if (

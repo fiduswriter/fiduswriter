@@ -78,7 +78,7 @@ export class App {
             "documents": {
                 requireLogin: true,
                 open: pathnameParts => {
-                    const path = decodeURI(('/' + pathnameParts.slice(2).join('/')).replace(/\/?$/, '/'))
+                    const path = ('/' + pathnameParts.slice(2).join('/').replace(/\/?$/, '/'))
                     return import(/* webpackPrefetch: true */"../documents/overview").then(({DocumentOverview}) => new DocumentOverview(this.config, path))
                 }
             },
@@ -237,7 +237,7 @@ export class App {
                 ) {
                     event.preventDefault()
                     event.stopImmediatePropagation()
-                    this.goTo(el.target.href)
+                    this.goTo(decodeURI(el.target.href))
                 }
                 break
             }
@@ -366,7 +366,7 @@ export class App {
     }
 
     goTo(url) {
-        window.history.pushState({}, "", url)
+        window.history.pushState({}, "", encodeURI(url))
         return this.selectPage()
     }
 

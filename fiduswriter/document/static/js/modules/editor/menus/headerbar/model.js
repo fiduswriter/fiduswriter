@@ -72,6 +72,7 @@ export const headerbarModel = () => ({
                         if (!folderPath.length) {
                             editor.app.goTo('/')
                         } else {
+                            console.log({folderPath})
                             editor.app.goTo(`/documents${folderPath}/`)
                         }
                     },

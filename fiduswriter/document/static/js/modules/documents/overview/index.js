@@ -4,7 +4,7 @@ import * as plugins from "../../../plugins/documents_overview"
 import {DocumentOverviewActions} from "./actions"
 import {DocumentAccessRightsDialog} from "../access_rights"
 import {menuModel, bulkMenuModel} from "./menu"
-import {activateWait, deactivateWait, addAlert, escapeText, postJson, OverviewMenuView, findTarget, whenReady, baseBodyTemplate, ensureCSS, setDocTitle, DatatableBulk, shortFileTitle} from "../../common"
+import {activateWait, deactivateWait, addAlert, escapeText, postJson, OverviewMenuView, findTarget, whenReady, baseBodyTemplate, ensureCSS, setDocTitle, DatatableBulk, shortFileTitle, Dialog} from "../../common"
 import {SiteMenu} from "../../menu"
 import {FeedbackTab} from "../../feedback"
 import {
@@ -110,10 +110,46 @@ export class DocumentOverview {
                 }
                 break
             }
-            case findTarget(event, 'a.fw-data-table-title.subdir, a.fw-data-table-title.parentdir', el):
+            case findTarget(event, 'a.fw-data-table-title.parentdir', el):
+                event.preventDefault()
+                if (this.table.data.length > 1) {
+                    this.path = el.target.dataset.path
+                    window.history.pushState({}, "", el.target.getAttribute('href'))
+                    this.initTable()
+                } else {
+                    const confirmFolderDeletionDialog = new Dialog({
+                        title: gettext('Confirm deletion'),
+                        body: `<p>
+                    ${gettext('Leaving an empty folder will delete it. Do you really want to delete this folder?')}
+                            </p>`,
+                        id: 'confirmfolderdeletion',
+                        icon: 'exclamation-triangle',
+                        buttons: [
+                            {
+                                text: gettext('Delete'),
+                                classes: "fw-dark",
+                                height: 70,
+                                click: () => {
+                                    confirmFolderDeletionDialog.close()
+                                    this.path = el.target.dataset.path
+                                    window.history.pushState({}, "", el.target.getAttribute('href'))
+                                    this.initTable()
+                                }
+                            },
+                            {
+                                type: 'cancel'
+                            }
+                        ]
+                    })
+
+                    confirmFolderDeletionDialog.open()
+                }
+
+                break
+            case findTarget(event, 'a.fw-data-table-title.subdir', el):
                 event.preventDefault()
                 this.path = el.target.dataset.path
-                window.history.pushState({}, "", encodeURI(el.target.getAttribute('href')))
+                window.history.pushState({}, "", el.target.getAttribute('href'))
                 this.initTable()
                 break
             case findTarget(event, 'a.fw-data-table-title', el):
@@ -271,7 +307,7 @@ export class DocumentOverview {
             pathParts.pop()
             pathParts.pop()
             const parentPath = pathParts.join('/') + '/'
-            const href = parentPath === "/" ? parentPath : `/documents${parentPath}`
+            const href = parentPath === "/" ? parentPath : `/documents${encodeURI(parentPath)}`
             fileList.unshift([
                 '-1',
                 'top',
@@ -377,7 +413,7 @@ export class DocumentOverview {
                 '0',
                 'folder',
                 '',
-                `<a class="fw-data-table-title fw-link-text subdir" href="/documents${this.path}${subdir}/" data-path="${this.path}${subdir}/">
+                `<a class="fw-data-table-title fw-link-text subdir" href="/documents${encodeURI(this.path + subdir)}/" data-path="${this.path}${subdir}/">
                     <i class="fas fa-folder"></i>
                     <span>${escapeText(subdir)}</span>
                 </a>`,

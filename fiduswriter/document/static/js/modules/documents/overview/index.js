@@ -127,7 +127,7 @@ export class DocumentOverview {
                         buttons: [
                             {
                                 text: gettext('Delete'),
-                                classes: "fw-dark",
+                                classes: "fw-dark delete-folder",
                                 height: 70,
                                 click: () => {
                                     confirmFolderDeletionDialog.close()

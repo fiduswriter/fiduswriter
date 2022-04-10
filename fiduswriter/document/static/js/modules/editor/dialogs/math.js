@@ -1,5 +1,7 @@
 import {mathDialogTemplate} from "./templates"
 import {Dialog} from "../../common"
+import {sub, sup, subChars, supChars} from "./subsup"
+
 
 /**
  * Class to work with formula dialog
@@ -34,6 +36,26 @@ export class MathDialog {
                             if (this.equationSelected) {
                                 view.dispatch(state.tr.deleteSelection())
                             }
+                            this.dialog.close()
+                            return
+                        } else if (
+                            (new RegExp(`^\\^({[${supChars}]*}|[${supChars}]?)$`)
+                            ).test(this.equation)) {
+                            // The math input is pure superscript and
+                            // can be converted to ordinary characters.
+                            view.dispatch(
+                                state.tr.insertText(sup(this.equation.slice(1)))
+                            )
+                            this.dialog.close()
+                            return
+                        } else if (
+                            (new RegExp(`^\\_({[${subChars}]*}|[${subChars}]?)$`)
+                            ).test(this.equation)) {
+                            // The math input is pure subscript and
+                            // can be converted to ordinary characters.
+                            view.dispatch(
+                                state.tr.insertText(sub(this.equation.slice(1)))
+                            )
                             this.dialog.close()
                             return
                         } else if (this.equationSelected && this.equation === this.node.attrs.equation) {

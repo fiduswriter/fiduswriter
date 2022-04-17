@@ -90,8 +90,10 @@ export class MathDialog {
         this.mathliveDOM = this.dialog.dialogEl.querySelector(".math-field")
 
         import("mathlive").then(MathLive => {
-            this.mathField = MathLive.makeMathField(this.mathliveDOM, {
+            this.mathField = new MathLive.MathfieldElement({
                 virtualKeyboardMode: 'onfocus',
+                keypressSound: null,
+                plonkSound: null,
                 locale: 'int',
                 strings: {
                     'int': {
@@ -107,7 +109,8 @@ export class MathDialog {
                     }
                 }
             })
-            this.mathField.setValue(this.equation)
+            this.mathField.value = this.equation
+            this.mathliveDOM.appendChild(this.mathField)
         })
     }
 

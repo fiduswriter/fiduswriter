@@ -7,7 +7,7 @@
         "fast-json-patch": "3.0.0-1", // settings_JSONPATCH
         "fix-utf8": "1.1.1",
         "jszip": "3.7.1",
-        "mathlive": "0.59.0",
+        "mathlive": "0.70.0",
         "orderedmap": "1.1.1",
         "prosemirror-changeset": "2.1.2",
         "prosemirror-collab": "1.2.2",

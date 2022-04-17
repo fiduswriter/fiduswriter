@@ -51,8 +51,10 @@ export class FigureDialog {
             this.dialog.dialogEl.querySelector(".formula-or-figure")
         ]
         import("mathlive").then(MathLive => {
-            this.mathField = MathLive.makeMathField(this.mathliveDOM, {
+            this.mathField = new MathLive.MathfieldElement({
                 virtualKeyboardMode: 'manual',
+                keypressSound: null,
+                plonkSound: null,
                 onBlur: () => this.showPlaceHolder(),
                 onFocus: () => this.hidePlaceHolder(),
                 locale: 'int',
@@ -74,7 +76,8 @@ export class FigureDialog {
                     this.showHideNonMathElements()
                 }
             })
-            this.mathField.setValue(this.equation)
+            this.mathField.value = this.equation
+            this.mathliveDOM.appendChild(this.mathField)
             this.showPlaceHolder()
             this.showHideNonMathElements()
             this.dialog.dialogEl.querySelector('#insert-figure-image').addEventListener(

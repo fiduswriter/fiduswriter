@@ -10,14 +10,13 @@ from setuptools.command.build_py import build_py as _build_py
 
 
 def read(name):
-    with open(
-        os.path.join(os.path.dirname(os.path.realpath(__file__)), name)
-    ) as f:
+    with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), name)) as f:
         return f.read()
 
 
 class compilemessages(distutils.cmd.Command):
     """A custom command to create *.mo files for each language."""
+
     description = "Create *.mo files to be included in the final package."
     user_options = []
 
@@ -32,26 +31,19 @@ class compilemessages(distutils.cmd.Command):
     def run(self):
         import subprocess
         from pathlib import Path
+
         for path in Path(
             os.path.join(
-                os.path.dirname(os.path.realpath(__file__)),
-                'fiduswriter/locale'
+                os.path.dirname(os.path.realpath(__file__)), "fiduswriter/locale"
             )
-        ).rglob('*.po'):
-            command = [
-                'msgfmt',
-                '-o',
-                path.name.replace('.po', '.mo'),
-                path.name
-            ]
+        ).rglob("*.po"):
+            command = ["msgfmt", "-o", path.name.replace(".po", ".mo"), path.name]
             self.announce(
-                'Running command: %s in %s' % (
-                    str(' '.join(command)),
-                    path.parent
-                ),
-                level=distutils.log.INFO
+                "Running command: %s in %s" % (str(" ".join(command)), path.parent),
+                level=distutils.log.INFO,
             )
             subprocess.check_call(command, cwd=path.parent)
+
 
 # From https://github.com/pypa/setuptools/pull/1574
 class build_py(_build_py):
@@ -74,7 +66,6 @@ class build_py(_build_py):
         return modules
 
 
-
 class install(_install):
     def run(self):
         call(["pip install wheel --no-clean"], shell=True)
@@ -92,10 +83,10 @@ class install(_install):
         # work.
         #
         caller = sys._getframe(2)
-        caller_module = caller.f_globals.get('__name__','')
+        caller_module = caller.f_globals.get("__name__", "")
         caller_name = caller.f_code.co_name
 
-        if caller_module != 'distutils.dist' or caller_name != 'run_commands':
+        if caller_module != "distutils.dist" or caller_name != "run_commands":
             # We weren't called from the command line or setup(), so we
             # should run in backward-compatibility mode to support bdist_*
             # commands.
@@ -106,7 +97,7 @@ class install(_install):
 
 class bdist_egg(_bdist_egg):
     def run(self):
-        self.run_command('compilemessages')
+        self.run_command("compilemessages")
         _bdist_egg.run(self)
 
 
@@ -114,26 +105,29 @@ class sdist(_sdist):
     """Custom build command."""
 
     def run(self):
-        self.run_command('compilemessages')
+        self.run_command("compilemessages")
         _sdist.run(self)
 
+
 cmdclass = {
-    'compilemessages': compilemessages,
-    'sdist': sdist,
-    'build_py': build_py,
-    'bdist_egg': bdist_egg,
-    'install': install
+    "compilemessages": compilemessages,
+    "sdist": sdist,
+    "build_py": build_py,
+    "bdist_egg": bdist_egg,
+    "install": install,
 }
 
 try:
     from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
+
     class bdist_wheel(_bdist_wheel):
         """Custom build command."""
 
         def run(self):
-            self.run_command('compilemessages')
+            self.run_command("compilemessages")
             _bdist_wheel.run(self)
-    cmdclass['bdist_wheel'] = bdist_wheel
+
+    cmdclass["bdist_wheel"] = bdist_wheel
 except ImportError:
     pass
 
@@ -141,15 +135,15 @@ except ImportError:
 setuptools.setup(
     cmdclass=cmdclass,
     name="fiduswriter",
-    version=read('fiduswriter/version.txt').splitlines()[0],
+    version=read("fiduswriter/version.txt").splitlines()[0],
     description="A semantic wordprocessor for academic purposes",
     license="AGPL",
     author="Lund Info AB",
     author_email="mail@lundinfo.com",
     url="https://www.fiduswriter.org",
-    long_description=read('README.md'),
-    long_description_content_type='text/markdown',
-    classifiers = [
+    long_description=read("README.md"),
+    long_description_content_type="text/markdown",
+    classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Science/Research",
         "Framework :: Django :: 3.2",
@@ -163,7 +157,7 @@ setuptools.setup(
         "Topic :: Text Processing :: Markup :: XML",
         "Topic :: Utilities",
     ],
-    packages=setuptools.find_namespace_packages(include=['fiduswriter']),
+    packages=setuptools.find_namespace_packages(include=["fiduswriter"]),
     include_package_data=True,
     exclude_package_data={
         "": [
@@ -184,26 +178,21 @@ setuptools.setup(
             "fiduswriter/npm_mjs/*",
             "fiduswriter/ojs/*",
             "fiduswriter/phplist/*",
-            "fiduswriter/payment/*"
+            "fiduswriter/payment/*",
         ]
     },
-    python_requires='>=3',
-    install_requires=read('fiduswriter/requirements.txt').splitlines(),
+    python_requires=">=3",
+    install_requires=read("fiduswriter/requirements.txt").splitlines(),
     extras_require={
-        "books": "fiduswriter-books ~= 3.10.8",
+        "books": "fiduswriter-books ~= 3.10.9",
         "citation-api-import": "fiduswriter-citation-api-import ~= 3.10.2",
-        "languagetool": "fiduswriter-languagetool ~= 3.10.2",
-        "ojs": "fiduswriter-ojs ~= 3.10.2",
+        "languagetool": "fiduswriter-languagetool ~= 3.10.5",
+        "ojs": "fiduswriter-ojs ~= 3.10.4",
         "phplist": "fiduswriter-phplist ~= 3.10.2",
         "gitrepo-export": "fiduswriter-gitrepo-export ~= 3.10.7",
-        "mysql": read('fiduswriter/mysql-requirements.txt').splitlines(),
-        "postgresql": read(
-            'fiduswriter/postgresql-requirements.txt'
-        ).splitlines()
+        "payment-paddle": "fiduswriter-payment-paddle ~= 3.10.3",
+        "mysql": read("fiduswriter/mysql-requirements.txt").splitlines(),
+        "postgresql": read("fiduswriter/postgresql-requirements.txt").splitlines(),
     },
-    entry_points={
-        "console_scripts": [
-            "fiduswriter=fiduswriter.manage:entry"
-        ]
-    }
+    entry_points={"console_scripts": ["fiduswriter=fiduswriter.manage:entry"]},
 )

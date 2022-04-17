@@ -498,7 +498,7 @@ msgstr "Подзаглавие"
 #: document/static/js/modules/document_template/templates.js:70
 #: document/static/js/modules/document_template/templates.js:80
 #: document/static/js/modules/document_template/templates.js:184
-#: document/static/js/modules/documents/overview/index.js:295
+#: document/static/js/modules/documents/overview/index.js:327
 #: document/static/js/modules/editor/dialogs/citation.js:196
 #: document/static/js/modules/editor/dialogs/templates.js:35
 #: document/static/js/modules/editor/dialogs/templates.js:46
@@ -896,7 +896,7 @@ msgid "Finnish"
 msgstr "фински"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:200
-#: document/static/js/modules/editor/menus/headerbar/model.js:237
+#: document/static/js/modules/editor/menus/headerbar/model.js:240
 #: document/static/js/modules/schema/const.js:1
 msgid "French"
 msgstr "Френски"
@@ -933,13 +933,13 @@ msgid "Icelandic"
 msgstr "исландски"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:208
-#: document/static/js/modules/editor/menus/headerbar/model.js:237
+#: document/static/js/modules/editor/menus/headerbar/model.js:240
 #: document/static/js/modules/schema/const.js:1
 msgid "Italian"
 msgstr "Италиански"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:209
-#: document/static/js/modules/editor/menus/headerbar/model.js:237
+#: document/static/js/modules/editor/menus/headerbar/model.js:240
 #: document/static/js/modules/schema/const.js:1
 msgid "Japanese"
 msgstr "японски"
@@ -1015,7 +1015,7 @@ msgid "Slovene"
 msgstr "словенец"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:227
-#: document/static/js/modules/editor/menus/headerbar/model.js:237
+#: document/static/js/modules/editor/menus/headerbar/model.js:240
 #: document/static/js/modules/schema/const.js:1
 msgid "Spanish"
 msgstr "Испански"
@@ -1129,6 +1129,7 @@ msgstr "Редактирай категории"
 #: document/static/js/modules/document_template/templates.js:184
 #: document/static/js/modules/documents/access_rights/templates.js:9
 #: document/static/js/modules/documents/overview/actions.js:46
+#: document/static/js/modules/documents/overview/index.js:126
 #: document/static/js/modules/documents/revisions/index.js:122
 #: document/static/js/modules/documents/revisions/templates.js:6
 #: document/static/js/modules/editor/marginboxes/templates.js:263
@@ -1144,6 +1145,7 @@ msgstr "Изтрий"
 #: document/static/js/modules/document_template/document_style_dialog.js:134
 #: document/static/js/modules/document_template/export_template_dialog.js:134
 #: document/static/js/modules/documents/overview/actions.js:41
+#: document/static/js/modules/documents/overview/index.js:121
 #: document/static/js/modules/documents/revisions/index.js:139
 #: user/static/js/modules/contacts/delete_dialog.js:33
 #: user/static/js/modules/profile/delete_user.js:25
@@ -1247,30 +1249,30 @@ msgstr "Документът не може да бъде изтрит"
 msgid "Document has been deleted"
 msgstr "Документът е изтрит"
 
-#: document/static/js/modules/documents/overview/index.js:285
+#: document/static/js/modules/documents/overview/index.js:317
 msgid "No documents available"
 msgstr "Няма налични документи"
 
-#: document/static/js/modules/documents/overview/index.js:295
+#: document/static/js/modules/documents/overview/index.js:327
 msgid "Revisions"
 msgstr "Ревизиите"
 
-#: document/static/js/modules/documents/overview/index.js:295
+#: document/static/js/modules/documents/overview/index.js:327
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:85
 msgid "Created"
 msgstr "Създаден"
 
-#: document/static/js/modules/documents/overview/index.js:295
+#: document/static/js/modules/documents/overview/index.js:327
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:85
 msgid "Last changed"
 msgstr "Последна промяна"
 
-#: document/static/js/modules/documents/overview/index.js:295
+#: document/static/js/modules/documents/overview/index.js:327
 msgid "Owner"
 msgstr "Собственик"
 
 #: document/static/js/modules/documents/access_rights/templates.js:9
-#: document/static/js/modules/documents/overview/index.js:295
+#: document/static/js/modules/documents/overview/index.js:327
 msgid "Rights"
 msgstr "Права"
 
@@ -1442,7 +1444,7 @@ msgstr "Бретон"
 msgid "Catalan (Valencia)"
 msgstr "Каталунски (Валенсия)"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:237
+#: document/static/js/modules/editor/menus/headerbar/model.js:240
 #: document/static/js/modules/schema/const.js:1
 msgid "Chinese (Simplified)"
 msgstr "Опростен китайски)"
@@ -1463,12 +1465,12 @@ msgstr "Английски (Нова Зеландия)"
 msgid "English (South Africa)"
 msgstr "Английски (Южна Африка)"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:237
+#: document/static/js/modules/editor/menus/headerbar/model.js:240
 #: document/static/js/modules/schema/const.js:1
 msgid "English (United Kingdom)"
 msgstr "Английски (Обединено кралство)"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:237
+#: document/static/js/modules/editor/menus/headerbar/model.js:240
 #: document/static/js/modules/schema/const.js:1
 msgid "English (United States)"
 msgstr "Английски (Съединени щати)"
@@ -1481,7 +1483,7 @@ msgstr "есперанто"
 msgid "Galician"
 msgstr "галисийски"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:237
+#: document/static/js/modules/editor/menus/headerbar/model.js:240
 #: document/static/js/modules/schema/const.js:1
 msgid "German (Germany)"
 msgstr "Немски (Германия)"
@@ -1514,7 +1516,7 @@ msgstr "Норвежки (nynorsk)"
 msgid "Persian"
 msgstr "персийски"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:238
+#: document/static/js/modules/editor/menus/headerbar/model.js:241
 #: document/static/js/modules/schema/const.js:1
 msgid "Portuguese (Brazil)"
 msgstr "Португалски (Бразилия)"
@@ -1740,130 +1742,130 @@ msgstr "Сподели документа с други потребители"
 msgid "Close the document and return to the document overview menu."
 msgstr "Затвори документа и се върни към обзора на документа"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:69
+#: document/static/js/modules/editor/menus/headerbar/model.js:72
 #: document/static/js/modules/editor/tools/key_bindings/templates.js:1
 msgid "Save revision"
 msgstr "Запазване на ревизията"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:110
+#: document/static/js/modules/editor/menus/headerbar/model.js:113
 msgid "Either print or create a PDF using your browser print dialog."
 msgstr "Или отпечатайте, или създайте PDF, използвайки диалоговия прозорец за печат на браузъра."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:126
+#: document/static/js/modules/editor/menus/headerbar/model.js:129
 msgid "Export"
 msgstr "Експортиране"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:127
+#: document/static/js/modules/editor/menus/headerbar/model.js:130
 msgid "Export of the document contents"
 msgstr "Експортирай съдаржанието на документа"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:131
+#: document/static/js/modules/editor/menus/headerbar/model.js:134
 msgid "HTML"
 msgstr "HTML"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:133
+#: document/static/js/modules/editor/menus/headerbar/model.js:136
 msgid "Export the document to an HTML file."
 msgstr "Експортирайте документа в HTML файл."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:146
+#: document/static/js/modules/editor/menus/headerbar/model.js:149
 msgid "Epub"
 msgstr "Epub"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:148
+#: document/static/js/modules/editor/menus/headerbar/model.js:151
 msgid "Export the document to an Epub electronic reader file."
 msgstr "Експортирай документа като Epub електронна книга"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:162
+#: document/static/js/modules/editor/menus/headerbar/model.js:165
 msgid "LaTeX"
 msgstr "LaTeX"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:164
+#: document/static/js/modules/editor/menus/headerbar/model.js:167
 msgid "Export the document to an LaTeX file."
 msgstr "Експортирайте документа в LaTeX файл."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:204
+#: document/static/js/modules/editor/menus/headerbar/model.js:207
 msgid "Settings"
 msgstr "Настройки"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:205
+#: document/static/js/modules/editor/menus/headerbar/model.js:208
 msgid "Configure settings of this document."
 msgstr "Конфигурирайте настройките на този документ."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:210
+#: document/static/js/modules/editor/menus/headerbar/model.js:213
 msgid "Citation Style"
 msgstr "Сти на цтатите"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:212
+#: document/static/js/modules/editor/menus/headerbar/model.js:215
 msgid "Choose your preferred citation style."
 msgstr "Изберете предпочитан стил на цитатите."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:220
+#: document/static/js/modules/editor/menus/headerbar/model.js:223
 msgid "Document Style"
 msgstr "Стил на Документа"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:222
+#: document/static/js/modules/editor/menus/headerbar/model.js:225
 msgid "Choose your preferred document style."
 msgstr "Изберете предпочитания от вас стил на документ."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:230
+#: document/static/js/modules/editor/menus/headerbar/model.js:233
 msgid "Text Language"
 msgstr "Език на текста"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:232
+#: document/static/js/modules/editor/menus/headerbar/model.js:235
 msgid "Choose the language of the document."
 msgstr "Изберете езика на документа."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:249
+#: document/static/js/modules/editor/menus/headerbar/model.js:252
 msgid "Other"
 msgstr "друг"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:264
+#: document/static/js/modules/editor/menus/headerbar/model.js:267
 msgid "Paper Size"
 msgstr "Размер на лист"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:266
+#: document/static/js/modules/editor/menus/headerbar/model.js:269
 msgid "Choose a papersize for print and PDF generation."
 msgstr "Изберете размер на хартия за печат и генериране на PDF."
 
 #. es solo A4? no se si bien sobre "din"
-#: document/static/js/modules/editor/menus/headerbar/model.js:272
+#: document/static/js/modules/editor/menus/headerbar/model.js:275
 msgid "DIN A4"
 msgstr "DIN A4"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:274
+#: document/static/js/modules/editor/menus/headerbar/model.js:277
 msgid "A4 (DIN A4/ISO 216) which is used in most of the world."
 msgstr "A4 (DIN A4/ISO 216) използван в по голямата част от света"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:289
+#: document/static/js/modules/editor/menus/headerbar/model.js:292
 msgid "US Letter"
 msgstr "US Letter"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:291
+#: document/static/js/modules/editor/menus/headerbar/model.js:294
 msgid "The format used by the USA and some other American countries."
 msgstr "Форматът използван в USA и някои американски страни."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:328
+#: document/static/js/modules/editor/menus/headerbar/model.js:331
 msgid "Tools"
 msgstr "Инструменти"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:329
+#: document/static/js/modules/editor/menus/headerbar/model.js:332
 msgid "Select document editing tool."
 msgstr "Изберете инструмент за редактиране на документи."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:333
+#: document/static/js/modules/editor/menus/headerbar/model.js:336
 #: document/static/js/modules/editor/tools/word_count/index.js:10
 msgid "Word counter"
 msgstr "Брой Думи"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:335
+#: document/static/js/modules/editor/menus/headerbar/model.js:338
 msgid "See document statistics."
 msgstr "Вижте статистиката на документите."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:352
+#: document/static/js/modules/editor/menus/headerbar/model.js:355
 msgid "Keyboard shortcuts"
 msgstr "Комбинация от клавиши"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:354
+#: document/static/js/modules/editor/menus/headerbar/model.js:357
 msgid "Show an overview of available keyboard shortcuts."
 msgstr "Показване на преглед на наличните клавишни комбинации."
 
@@ -2413,7 +2415,7 @@ msgid "Description"
 msgstr "описание"
 
 #: document/static/js/modules/documents/revisions/templates.js:6
-#: document/static/js/modules/editor/menus/headerbar/model.js:97
+#: document/static/js/modules/editor/menus/headerbar/model.js:100
 #: user_template_manager/static/js/modules/user_template_manager/editor.js:40
 msgid "Download"
 msgstr "Изтегли"
@@ -2470,7 +2472,7 @@ msgstr "ок"
 msgid "Accept"
 msgstr "приемам"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:107
+#: document/static/js/modules/editor/menus/headerbar/model.js:110
 msgid "Print/PDF"
 msgstr "Печат/PDF"
 
@@ -3259,7 +3261,7 @@ msgstr "каня"
 msgid "Document Overview"
 msgstr "Преглед на документа"
 
-#: document/static/js/modules/documents/overview/index.js:398
+#: document/static/js/modules/documents/overview/index.js:430
 msgid "Undefined"
 msgstr "неопределен"
 
@@ -3486,39 +3488,39 @@ msgstr "Само основни коментари"
 msgid "Resolved comments"
 msgstr "Решени коментари"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:363
+#: document/static/js/modules/editor/menus/headerbar/model.js:366
 msgid "Track changes"
 msgstr "Проследяване на промените"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:180
+#: document/static/js/modules/editor/menus/headerbar/model.js:183
 msgid "Export the document to a Journal Archiving and Interchange Tag Library NISO JATS Version 1.2 file."
 msgstr "Експортирайте документа в библиотека с етикети за архивиране и обмен на журнали NISO JATS версия 1.2."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:365
+#: document/static/js/modules/editor/menus/headerbar/model.js:368
 msgid "Tracking changes to the document"
 msgstr "Проследяване на промените в документа"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:369
+#: document/static/js/modules/editor/menus/headerbar/model.js:372
 msgid "Record"
 msgstr "рекорд"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:371
+#: document/static/js/modules/editor/menus/headerbar/model.js:374
 msgid "Record document changes"
 msgstr "Записване на промените в документа"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:386
+#: document/static/js/modules/editor/menus/headerbar/model.js:389
 msgid "Accept all"
 msgstr "Приеми всички"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:388
+#: document/static/js/modules/editor/menus/headerbar/model.js:391
 msgid "Accept all tracked changes."
 msgstr "Приемете всички проследени промени."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:394
+#: document/static/js/modules/editor/menus/headerbar/model.js:397
 msgid "Reject all"
 msgstr "Отхвърли всички"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:396
+#: document/static/js/modules/editor/menus/headerbar/model.js:399
 msgid "Reject all tracked changes."
 msgstr "Отхвърлете всички проследени промени."
 
@@ -4051,7 +4053,7 @@ msgstr "Изберете шаблон за документ за копиран�
 msgid "Copy"
 msgstr "копие"
 
-#: document/static/js/modules/documents/overview/index.js:410
+#: document/static/js/modules/documents/overview/index.js:442
 msgid "Copy selected as..."
 msgstr "Копирането е избрано като ..."
 
@@ -4115,25 +4117,25 @@ msgstr "Информационна"
 msgid "Warnings"
 msgstr "Предупреждения"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:84
+#: document/static/js/modules/editor/menus/headerbar/model.js:87
 msgid "Create copy"
 msgstr "Създайте копие"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:178
+#: document/static/js/modules/editor/menus/headerbar/model.js:181
 msgid "JATS"
 msgstr "JATS"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:307
+#: document/static/js/modules/editor/menus/headerbar/model.js:310
 msgid "Copyright Information"
 msgstr "Информация за авторското право"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:342
+#: document/static/js/modules/editor/menus/headerbar/model.js:345
 #: document/static/js/modules/editor/tools/key_bindings/templates.js:1
 #: document/static/js/modules/editor/tools/search_replace/index.js:143
 msgid "Search and replace"
 msgstr "Търсете и заменете"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:344
+#: document/static/js/modules/editor/menus/headerbar/model.js:347
 msgid "Show a search and replace dialog."
 msgstr "Показване на диалогов прозорец за търсене и замяна."
 
@@ -4211,7 +4213,7 @@ msgstr "Редактиране на изображение"
 msgid "Delete selected images."
 msgstr "Изтрийте избраните изображения."
 
-#: document/static/js/modules/documents/overview/index.js:411
+#: document/static/js/modules/documents/overview/index.js:443
 msgid "Copy the documents and assign them to a specific template."
 msgstr "Копирайте документите и ги присвойте към определен шаблон."
 
@@ -4270,11 +4272,11 @@ msgstr "Не можете да изтриете документ, докато �
 msgid "You cannot access rights data of a document while you are offline."
 msgstr "Нямате достъп до данните за правата на документ, докато сте офлайн."
 
-#: document/static/js/modules/documents/overview/index.js:123
+#: document/static/js/modules/documents/overview/index.js:155
 msgid "You cannot open a document while you are offline."
 msgstr "Не можете да отворите документ, докато сте офлайн."
 
-#: document/static/js/modules/documents/overview/index.js:167
+#: document/static/js/modules/documents/overview/index.js:199
 msgid "Document data loading failed."
 msgstr "Зареждането на данните на документа не бе успешно."
 
@@ -4874,23 +4876,23 @@ msgstr "Експортирайте документите, които са из�
 msgid "Upload FIDUS document"
 msgstr "Качете документ FIDUS"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:72
+#: document/static/js/modules/editor/menus/headerbar/model.js:75
 msgid "Save a revision of the document."
 msgstr "Запазете редакция на документа."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:87
+#: document/static/js/modules/editor/menus/headerbar/model.js:90
 msgid "Create a copy of the document."
 msgstr "Създайте копие на документа."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:100
+#: document/static/js/modules/editor/menus/headerbar/model.js:103
 msgid "Export the document as a FIDUS file including its template."
 msgstr "Експортирайте документа като файл FIDUS, включително неговия шаблон."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:194
+#: document/static/js/modules/editor/menus/headerbar/model.js:197
 msgid "Slim FIDUS"
 msgstr "Тънък FIDUS"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:196
+#: document/static/js/modules/editor/menus/headerbar/model.js:199
 msgid "Export the document to a FIDUS file without its template."
 msgstr "Експортирайте документа във файл FIDUS без неговия шаблон."
 
@@ -4916,7 +4918,7 @@ msgstr "и"
 msgid "and others"
 msgstr "и други"
 
-#: document/static/js/modules/documents/overview/index.js:287
+#: document/static/js/modules/documents/overview/index.js:319
 msgid "No documents found"
 msgstr "Няма намерени документи"
 
@@ -4932,4 +4934,8 @@ msgstr "Няма намерени шаблони на документи"
 #: usermedia/static/js/modules/images/selection_dialog/index.js:101
 msgid "No images found"
 msgstr "Няма намерени изображения"
+
+#: document/static/js/modules/documents/overview/index.js:122
+msgid "Leaving an empty folder will delete it. Do you really want to delete this folder?"
+msgstr "Ако оставите празна папка, ще я изтриете. Наистина ли искате да изтриете тази папка?"
 

@@ -498,7 +498,7 @@ msgstr "Untertitel"
 #: document/static/js/modules/document_template/templates.js:70
 #: document/static/js/modules/document_template/templates.js:80
 #: document/static/js/modules/document_template/templates.js:184
-#: document/static/js/modules/documents/overview/index.js:295
+#: document/static/js/modules/documents/overview/index.js:327
 #: document/static/js/modules/editor/dialogs/citation.js:196
 #: document/static/js/modules/editor/dialogs/templates.js:35
 #: document/static/js/modules/editor/dialogs/templates.js:46
@@ -896,7 +896,7 @@ msgid "Finnish"
 msgstr "Finnisch"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:200
-#: document/static/js/modules/editor/menus/headerbar/model.js:237
+#: document/static/js/modules/editor/menus/headerbar/model.js:240
 #: document/static/js/modules/schema/const.js:1
 msgid "French"
 msgstr "Französisch"
@@ -933,13 +933,13 @@ msgid "Icelandic"
 msgstr "Isländisch"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:208
-#: document/static/js/modules/editor/menus/headerbar/model.js:237
+#: document/static/js/modules/editor/menus/headerbar/model.js:240
 #: document/static/js/modules/schema/const.js:1
 msgid "Italian"
 msgstr "Italienisch"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:209
-#: document/static/js/modules/editor/menus/headerbar/model.js:237
+#: document/static/js/modules/editor/menus/headerbar/model.js:240
 #: document/static/js/modules/schema/const.js:1
 msgid "Japanese"
 msgstr "Japanisch"
@@ -1015,7 +1015,7 @@ msgid "Slovene"
 msgstr "Slowenisch"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:227
-#: document/static/js/modules/editor/menus/headerbar/model.js:237
+#: document/static/js/modules/editor/menus/headerbar/model.js:240
 #: document/static/js/modules/schema/const.js:1
 msgid "Spanish"
 msgstr "Spanisch"
@@ -1129,6 +1129,7 @@ msgstr "Kategorien bearbeiten"
 #: document/static/js/modules/document_template/templates.js:184
 #: document/static/js/modules/documents/access_rights/templates.js:9
 #: document/static/js/modules/documents/overview/actions.js:46
+#: document/static/js/modules/documents/overview/index.js:126
 #: document/static/js/modules/documents/revisions/index.js:122
 #: document/static/js/modules/documents/revisions/templates.js:6
 #: document/static/js/modules/editor/marginboxes/templates.js:263
@@ -1144,6 +1145,7 @@ msgstr "Entfernen"
 #: document/static/js/modules/document_template/document_style_dialog.js:134
 #: document/static/js/modules/document_template/export_template_dialog.js:134
 #: document/static/js/modules/documents/overview/actions.js:41
+#: document/static/js/modules/documents/overview/index.js:121
 #: document/static/js/modules/documents/revisions/index.js:139
 #: user/static/js/modules/contacts/delete_dialog.js:33
 #: user/static/js/modules/profile/delete_user.js:25
@@ -1247,30 +1249,30 @@ msgstr "Dokument konnte nicht gelöscht werden"
 msgid "Document has been deleted"
 msgstr "Dokument wurde gelöscht"
 
-#: document/static/js/modules/documents/overview/index.js:285
+#: document/static/js/modules/documents/overview/index.js:317
 msgid "No documents available"
 msgstr "Keine Dokumente verfügbar"
 
-#: document/static/js/modules/documents/overview/index.js:295
+#: document/static/js/modules/documents/overview/index.js:327
 msgid "Revisions"
 msgstr "Revisionen"
 
-#: document/static/js/modules/documents/overview/index.js:295
+#: document/static/js/modules/documents/overview/index.js:327
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:85
 msgid "Created"
 msgstr "Erstellt"
 
-#: document/static/js/modules/documents/overview/index.js:295
+#: document/static/js/modules/documents/overview/index.js:327
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:85
 msgid "Last changed"
 msgstr "Letzte Änderungen"
 
-#: document/static/js/modules/documents/overview/index.js:295
+#: document/static/js/modules/documents/overview/index.js:327
 msgid "Owner"
 msgstr "Besitzer"
 
 #: document/static/js/modules/documents/access_rights/templates.js:9
-#: document/static/js/modules/documents/overview/index.js:295
+#: document/static/js/modules/documents/overview/index.js:327
 msgid "Rights"
 msgstr "Rechte"
 
@@ -1442,7 +1444,7 @@ msgstr "Bretonisch"
 msgid "Catalan (Valencia)"
 msgstr "Katalanisch (Valencia)"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:237
+#: document/static/js/modules/editor/menus/headerbar/model.js:240
 #: document/static/js/modules/schema/const.js:1
 msgid "Chinese (Simplified)"
 msgstr "Chinesisch (Vereinfacht)"
@@ -1463,12 +1465,12 @@ msgstr "Englisch (Neuseeland)"
 msgid "English (South Africa)"
 msgstr "Englisch (Südafrika)"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:237
+#: document/static/js/modules/editor/menus/headerbar/model.js:240
 #: document/static/js/modules/schema/const.js:1
 msgid "English (United Kingdom)"
 msgstr "Englisches Vereinigtes Königreich)"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:237
+#: document/static/js/modules/editor/menus/headerbar/model.js:240
 #: document/static/js/modules/schema/const.js:1
 msgid "English (United States)"
 msgstr "Englisch (USA)"
@@ -1481,7 +1483,7 @@ msgstr "Esperanto"
 msgid "Galician"
 msgstr "Galizisch"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:237
+#: document/static/js/modules/editor/menus/headerbar/model.js:240
 #: document/static/js/modules/schema/const.js:1
 msgid "German (Germany)"
 msgstr "Deutsches (Deutschland)"
@@ -1514,7 +1516,7 @@ msgstr "Norwegisch (Nynorsk)"
 msgid "Persian"
 msgstr "Persisch"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:238
+#: document/static/js/modules/editor/menus/headerbar/model.js:241
 #: document/static/js/modules/schema/const.js:1
 msgid "Portuguese (Brazil)"
 msgstr "Portugiesisch (Brasilien)"
@@ -1740,130 +1742,130 @@ msgstr "Teile das Dokument mit anderen Benutzern."
 msgid "Close the document and return to the document overview menu."
 msgstr "Dokument schließen und zur Übersicht zurückkehren."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:69
+#: document/static/js/modules/editor/menus/headerbar/model.js:72
 #: document/static/js/modules/editor/tools/key_bindings/templates.js:1
 msgid "Save revision"
 msgstr "Revision speichern"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:110
+#: document/static/js/modules/editor/menus/headerbar/model.js:113
 msgid "Either print or create a PDF using your browser print dialog."
 msgstr "Drucken oder erstellen Sie eine PDF-Datei mit dem Druckdialog Ihres Browsers."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:126
+#: document/static/js/modules/editor/menus/headerbar/model.js:129
 msgid "Export"
 msgstr "Exportieren"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:127
+#: document/static/js/modules/editor/menus/headerbar/model.js:130
 msgid "Export of the document contents"
 msgstr "Export des Inhaltes des Dokumentes"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:131
+#: document/static/js/modules/editor/menus/headerbar/model.js:134
 msgid "HTML"
 msgstr "HTML"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:133
+#: document/static/js/modules/editor/menus/headerbar/model.js:136
 msgid "Export the document to an HTML file."
 msgstr "Exportieren Sie das Dokument in eine HTML-Datei."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:146
+#: document/static/js/modules/editor/menus/headerbar/model.js:149
 msgid "Epub"
 msgstr "Epub"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:148
+#: document/static/js/modules/editor/menus/headerbar/model.js:151
 msgid "Export the document to an Epub electronic reader file."
 msgstr "Exportiere das Dokument in eine Epub Datei."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:162
+#: document/static/js/modules/editor/menus/headerbar/model.js:165
 msgid "LaTeX"
 msgstr "LaTeX"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:164
+#: document/static/js/modules/editor/menus/headerbar/model.js:167
 msgid "Export the document to an LaTeX file."
 msgstr "Exportieren Sie das Dokument in eine LaTeX-Datei."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:204
+#: document/static/js/modules/editor/menus/headerbar/model.js:207
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:205
+#: document/static/js/modules/editor/menus/headerbar/model.js:208
 msgid "Configure settings of this document."
 msgstr "Konfigurieren Sie die Einstellungen dieses Dokumentes."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:210
+#: document/static/js/modules/editor/menus/headerbar/model.js:213
 msgid "Citation Style"
 msgstr "Zitierstil"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:212
+#: document/static/js/modules/editor/menus/headerbar/model.js:215
 msgid "Choose your preferred citation style."
 msgstr "Wähle deinen bevorzugten Zitierstil."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:220
+#: document/static/js/modules/editor/menus/headerbar/model.js:223
 msgid "Document Style"
 msgstr "Dokumentenstil"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:222
+#: document/static/js/modules/editor/menus/headerbar/model.js:225
 msgid "Choose your preferred document style."
 msgstr "Wählen Sie Ihren bevorzugten Dokumentstil."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:230
+#: document/static/js/modules/editor/menus/headerbar/model.js:233
 msgid "Text Language"
 msgstr "Textsprache"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:232
+#: document/static/js/modules/editor/menus/headerbar/model.js:235
 msgid "Choose the language of the document."
 msgstr "Wählen Sie die Sprache des Dokumentes."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:249
+#: document/static/js/modules/editor/menus/headerbar/model.js:252
 msgid "Other"
 msgstr "Andere"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:264
+#: document/static/js/modules/editor/menus/headerbar/model.js:267
 msgid "Paper Size"
 msgstr "Papiergröße"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:266
+#: document/static/js/modules/editor/menus/headerbar/model.js:269
 msgid "Choose a papersize for print and PDF generation."
 msgstr "Wählen Sie ein Papierformat für die Druck- und PDF-Erzeugung."
 
 #. es solo A4? no se si bien sobre "din"
-#: document/static/js/modules/editor/menus/headerbar/model.js:272
+#: document/static/js/modules/editor/menus/headerbar/model.js:275
 msgid "DIN A4"
 msgstr "DIN A4"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:274
+#: document/static/js/modules/editor/menus/headerbar/model.js:277
 msgid "A4 (DIN A4/ISO 216) which is used in most of the world."
 msgstr "DIN A4 (ISO 216) welches das meißtverwendete Format weltweit ist."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:289
+#: document/static/js/modules/editor/menus/headerbar/model.js:292
 msgid "US Letter"
 msgstr "US Letter"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:291
+#: document/static/js/modules/editor/menus/headerbar/model.js:294
 msgid "The format used by the USA and some other American countries."
 msgstr "Das Format das in den USA und einigen amerikanischen Staaten verwendet wird."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:328
+#: document/static/js/modules/editor/menus/headerbar/model.js:331
 msgid "Tools"
 msgstr "Werkzeuge"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:329
+#: document/static/js/modules/editor/menus/headerbar/model.js:332
 msgid "Select document editing tool."
 msgstr "Wählen Sie das Dokumentbearbeitungswerkzeug."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:333
+#: document/static/js/modules/editor/menus/headerbar/model.js:336
 #: document/static/js/modules/editor/tools/word_count/index.js:10
 msgid "Word counter"
 msgstr "Wortzähler"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:335
+#: document/static/js/modules/editor/menus/headerbar/model.js:338
 msgid "See document statistics."
 msgstr "Dokumentstatistik einsehen."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:352
+#: document/static/js/modules/editor/menus/headerbar/model.js:355
 msgid "Keyboard shortcuts"
 msgstr "Tastatürkürzel"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:354
+#: document/static/js/modules/editor/menus/headerbar/model.js:357
 msgid "Show an overview of available keyboard shortcuts."
 msgstr "Zeige eine Übersicht der verfügbaren Tastaturkürzel an."
 
@@ -2413,7 +2415,7 @@ msgid "Description"
 msgstr "Beschreibung"
 
 #: document/static/js/modules/documents/revisions/templates.js:6
-#: document/static/js/modules/editor/menus/headerbar/model.js:97
+#: document/static/js/modules/editor/menus/headerbar/model.js:100
 #: user_template_manager/static/js/modules/user_template_manager/editor.js:40
 msgid "Download"
 msgstr "Download"
@@ -2470,7 +2472,7 @@ msgstr "Ca."
 msgid "Accept"
 msgstr "Akzeptieren"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:107
+#: document/static/js/modules/editor/menus/headerbar/model.js:110
 msgid "Print/PDF"
 msgstr "Drucken / PDF"
 
@@ -3259,7 +3261,7 @@ msgstr "Einladen"
 msgid "Document Overview"
 msgstr "Dokumentenübersicht"
 
-#: document/static/js/modules/documents/overview/index.js:398
+#: document/static/js/modules/documents/overview/index.js:430
 msgid "Undefined"
 msgstr "Nicht definiert"
 
@@ -3486,39 +3488,39 @@ msgstr "Nur wichtige Kommentare"
 msgid "Resolved comments"
 msgstr "Kommentare aufgelöst"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:363
+#: document/static/js/modules/editor/menus/headerbar/model.js:366
 msgid "Track changes"
 msgstr "Änderungen nachverfolgen"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:180
+#: document/static/js/modules/editor/menus/headerbar/model.js:183
 msgid "Export the document to a Journal Archiving and Interchange Tag Library NISO JATS Version 1.2 file."
 msgstr "Exportieren Sie das Dokument in eine NISO JATS Version 1.2-Datei."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:365
+#: document/static/js/modules/editor/menus/headerbar/model.js:368
 msgid "Tracking changes to the document"
 msgstr "Nachverfolgung von Änderungen am Dokument"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:369
+#: document/static/js/modules/editor/menus/headerbar/model.js:372
 msgid "Record"
 msgstr "Aufzeichnen"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:371
+#: document/static/js/modules/editor/menus/headerbar/model.js:374
 msgid "Record document changes"
 msgstr "Dokumentänderungen aufzeichnen"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:386
+#: document/static/js/modules/editor/menus/headerbar/model.js:389
 msgid "Accept all"
 msgstr "Alle Akzeptieren"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:388
+#: document/static/js/modules/editor/menus/headerbar/model.js:391
 msgid "Accept all tracked changes."
 msgstr "Akzeptieren Sie alle nachverfolgten Änderungen."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:394
+#: document/static/js/modules/editor/menus/headerbar/model.js:397
 msgid "Reject all"
 msgstr "Alle verwerfen"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:396
+#: document/static/js/modules/editor/menus/headerbar/model.js:399
 msgid "Reject all tracked changes."
 msgstr "Alle nachverfolgten Änderungen ablehnen."
 
@@ -4051,7 +4053,7 @@ msgstr "Wählen Sie die Dokumentvorlage zum die Kopie aus."
 msgid "Copy"
 msgstr "Kopieren"
 
-#: document/static/js/modules/documents/overview/index.js:410
+#: document/static/js/modules/documents/overview/index.js:442
 msgid "Copy selected as..."
 msgstr "Kopiere ausgewählte als ..."
 
@@ -4115,25 +4117,25 @@ msgstr "Informativ"
 msgid "Warnings"
 msgstr "Warnungen"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:84
+#: document/static/js/modules/editor/menus/headerbar/model.js:87
 msgid "Create copy"
 msgstr "Kopie erstellen"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:178
+#: document/static/js/modules/editor/menus/headerbar/model.js:181
 msgid "JATS"
 msgstr "JATS"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:307
+#: document/static/js/modules/editor/menus/headerbar/model.js:310
 msgid "Copyright Information"
 msgstr "Urheberrechtsinformation"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:342
+#: document/static/js/modules/editor/menus/headerbar/model.js:345
 #: document/static/js/modules/editor/tools/key_bindings/templates.js:1
 #: document/static/js/modules/editor/tools/search_replace/index.js:143
 msgid "Search and replace"
 msgstr "Suchen und ersetzen"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:344
+#: document/static/js/modules/editor/menus/headerbar/model.js:347
 msgid "Show a search and replace dialog."
 msgstr "Zeigen Sie einen Such- und Ersetzungsdialog an."
 
@@ -4211,7 +4213,7 @@ msgstr "Bild bearbeiten"
 msgid "Delete selected images."
 msgstr "Ausgewählte Bilder löschen."
 
-#: document/static/js/modules/documents/overview/index.js:411
+#: document/static/js/modules/documents/overview/index.js:443
 msgid "Copy the documents and assign them to a specific template."
 msgstr "Kopieren Sie die Dokumente und weisen Sie sie einer bestimmten Vorlage zu."
 
@@ -4270,11 +4272,11 @@ msgstr "Sie können ein Dokument nicht löschen, während Sie offline sind."
 msgid "You cannot access rights data of a document while you are offline."
 msgstr "Sie können nicht auf Rechte-Daten eines Dokuments zugreifen, während Sie offline sind."
 
-#: document/static/js/modules/documents/overview/index.js:123
+#: document/static/js/modules/documents/overview/index.js:155
 msgid "You cannot open a document while you are offline."
 msgstr "Sie können ein Dokument nicht öffnen, während Sie offline sind."
 
-#: document/static/js/modules/documents/overview/index.js:167
+#: document/static/js/modules/documents/overview/index.js:199
 msgid "Document data loading failed."
 msgstr "Laden der Dokumentdaten fehlgeschlagen."
 
@@ -4872,23 +4874,23 @@ msgstr "Exportieren Sie die ausgewählten Dokumente als FIDUS-Dateien ohne ihre 
 msgid "Upload FIDUS document"
 msgstr "FIDUS-Datei hochladen"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:72
+#: document/static/js/modules/editor/menus/headerbar/model.js:75
 msgid "Save a revision of the document."
 msgstr "Speichern Sie eine Überarbeitung des Dokuments."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:87
+#: document/static/js/modules/editor/menus/headerbar/model.js:90
 msgid "Create a copy of the document."
 msgstr "Erstellen Sie eine Kopie des Dokuments."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:100
+#: document/static/js/modules/editor/menus/headerbar/model.js:103
 msgid "Export the document as a FIDUS file including its template."
 msgstr "Exportieren Sie das Dokument als FIDUS-Datei inklusive Vorlage."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:194
+#: document/static/js/modules/editor/menus/headerbar/model.js:197
 msgid "Slim FIDUS"
 msgstr "Schlanke FIDUS-Datei"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:196
+#: document/static/js/modules/editor/menus/headerbar/model.js:199
 msgid "Export the document to a FIDUS file without its template."
 msgstr "Exportieren Sie das Dokument ohne Vorlage in eine FIDUS-Datei."
 
@@ -4914,7 +4916,7 @@ msgstr "und"
 msgid "and others"
 msgstr "und andere"
 
-#: document/static/js/modules/documents/overview/index.js:287
+#: document/static/js/modules/documents/overview/index.js:319
 msgid "No documents found"
 msgstr "Keine Dokumente gefunden"
 
@@ -4930,4 +4932,8 @@ msgstr "Keine Dokumentvorlagen gefunden"
 #: usermedia/static/js/modules/images/selection_dialog/index.js:101
 msgid "No images found"
 msgstr "Keine Bilder gefunden"
+
+#: document/static/js/modules/documents/overview/index.js:122
+msgid "Leaving an empty folder will delete it. Do you really want to delete this folder?"
+msgstr "Wenn Sie einen leeren Ordner verlassen, wird er gelöscht. Möchten Sie diesen Ordner wirklich löschen?"
 

@@ -261,6 +261,10 @@ class PathTest(LiveTornadoTestCase, SeleniumHelper):
         self.assertEqual(len(documents), 1)
         self.assertEqual(documents[0].text, "..")
         documents[0].click()
+        # Confirm deletion
+        self.driver.find_element_by_css_selector(
+            "button.delete-folder"
+        ).click()
         time.sleep(1)
         # Also the 2019 folder should be empty
         documents = self.driver.find_elements_by_css_selector(
@@ -269,6 +273,10 @@ class PathTest(LiveTornadoTestCase, SeleniumHelper):
         self.assertEqual(len(documents), 1)
         self.assertEqual(documents[0].text, "..")
         documents[0].click()
+        # Confirm deletion
+        self.driver.find_element_by_css_selector(
+            "button.delete-folder"
+        ).click()
         time.sleep(1)
         # Also the Reports folder should be empty
         documents = self.driver.find_elements_by_css_selector(
@@ -277,6 +285,10 @@ class PathTest(LiveTornadoTestCase, SeleniumHelper):
         self.assertEqual(len(documents), 1)
         self.assertEqual(documents[0].text, "..")
         documents[0].click()
+        # Confirm deletion
+        self.driver.find_element_by_css_selector(
+            "button.delete-folder"
+        ).click()
         time.sleep(1)
         # There should be just one folder in the top folder.
         # The Reports folder should have been auto-deleted.

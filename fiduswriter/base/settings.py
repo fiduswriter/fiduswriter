@@ -125,6 +125,7 @@ STATICFILES_DIRS = (
 )
 
 LOGIN_URL = "/"
+SOCIALACCOUNT_LOGIN_ON_GET = True
 
 # List of finder classes that know how to find static files in
 # various locations.

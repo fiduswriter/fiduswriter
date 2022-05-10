@@ -166,7 +166,7 @@ export const headerbarModel = () => ({
             order: 1,
             content: [
                 {
-                    title: gettext('HTML'),
+                    title: gettext('HTML (old)'),
                     type: 'action',
                     tooltip: gettext('Export the document to an HTML file.'),
                     order: 0,
@@ -186,10 +186,10 @@ export const headerbarModel = () => ({
                     }
                 },
                 {
-                    title: gettext('HTML 2'),
+                    title: gettext('HTML (new)'),
                     type: 'action',
                     tooltip: gettext('Export the document to an HTML file.'),
-                    order: 0,
+                    order: 0.5,
                     action: editor => {
                         import("../../../exporter/html2").then(({HTMLExporter}) => {
                             const exporter = new HTMLExporter(

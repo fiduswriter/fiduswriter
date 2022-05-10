@@ -6,12 +6,13 @@ import {CATS} from "../../schema/i18n"
 import {htmlExportTemplate} from "./templates"
 
 export class HTMLExporterConvert {
-    constructor(exporter, imageDB, bibDB, settings, xhtml = false) {
+    constructor(exporter, imageDB, bibDB, settings, xhtml = false, epub = false) {
         this.exporter = exporter
         this.settings = settings
         this.imageDB = imageDB
         this.bibDB = bibDB
         this.xhtml = xhtml
+        this.epub = epub
         this.endSlash = this.xhtml ? '/' : ''
 
         this.imageIds = []
@@ -130,8 +131,7 @@ export class HTMLExporterConvert {
     }
 
     assembleHead() {
-        let head = '<head>'
-        head += `<title>${escapeText(this.metaData.title)})</title>`
+        let head = `<title>${escapeText(this.metaData.title)})</title>`
         this.metaData.contributors.forEach(contributors => {
             head += this.walkJson(contributors)
         })
@@ -162,8 +162,6 @@ export class HTMLExporterConvert {
                 `<link rel="stylesheet" type="text/css" href="${sheet.filename}" />` :
                 `<style>${sheet.contents}</style>`
         ).join('')
-
-        head += '</head>'
         return head
     }
 
@@ -306,7 +304,7 @@ export class HTMLExporterConvert {
             end = '</li>' + end
             break
         case 'footnote':
-            content += `<xref ref-type="fn" rid="fn-${++this.fnCounter}">${this.fnCounter}</xref>`
+            content += `<a class="footnote"${this.epub ? 'epub:type="noteref" ' : ''} href="#fn-${++this.fnCounter}">${this.fnCounter}</a>`
             options = Object.assign({}, options)
             options.inFootnote = true
             this.footnotes.push(this.walkJson({
@@ -319,8 +317,8 @@ export class HTMLExporterConvert {
             }, options))
             break
         case 'footnotecontainer':
-            start += `<fn id="${node.attrs.id}"><label>${node.attrs.label}</label>`
-            end = '</fn>' + end
+            start += `<aside class="footnote"${this.epub ? 'epub:type="footnote" ' : ''} id="${node.attrs.id}"><label>${node.attrs.label}</label>`
+            end = '</aside>' + end
             break
         case 'text': {
             let strong, em, underline, hyperlink
@@ -361,9 +359,9 @@ export class HTMLExporterConvert {
             if (options.inFootnote || this.exporter.citations.citFm.citationType !== 'note') {
                 content += citationText
             } else {
-                content += `<xref ref-type="fn" rid="fn-${++this.fnCounter}">${this.fnCounter}</xref>`
+                content += `<a class="footnote"${this.epub ? 'epub:type="noteref" ' : ''} href="#fn-${++this.fnCounter}">${this.fnCounter}</a>`
                 this.footnotes.push(
-                    `<fn id="fn-${this.fnCounter}"><label>${this.fnCounter}</label><p id="p-${++this.parCounter}">${citationText}</p></fn>`
+                    `<aside class="footnote"${this.epub ? 'epub:type="footnote" ' : ''} id="fn-${this.fnCounter}"><label>${this.fnCounter}</label><p id="p-${++this.parCounter}">${citationText}</p></fn>`
                 )
             }
             break
@@ -390,44 +388,51 @@ export class HTMLExporterConvert {
                     !caption.length &&
                     (!copyright || !copyright.holder)
             ) {
-                content += `<img id="${node.attrs.id}" position="anchor" src="${imageFilename}"${this.endSlash}>`
+                content += `<img id="${node.attrs.id}" src="${imageFilename}"${this.endSlash}>`
             } else {
-                start += `<fig id="${node.attrs.id}">`
-                end = '</fig>' + end
+                start += `<figure id="${node.attrs.id}">`
+                end = '</figure>' + end
 
                 const category = node.attrs.category
-                if (category !== 'none') {
-                    if (!this.categoryCounter[category]) {
-                        this.categoryCounter[category] = 0
+                if (caption.length || category !== 'none') {
+                    let figcaption = '<figcaption>'
+                    if (category !== 'none') {
+                        if (!this.categoryCounter[category]) {
+                            this.categoryCounter[category] = 0
+                        }
+                        const catCount = ++this.categoryCounter[category]
+                        const catLabel = `${CATS[category][this.settings.language]} ${catCount}`
+                        figcaption += `<label>${escapeText(catLabel)}</label>`
                     }
-                    const catCount = ++this.categoryCounter[category]
-                    const catLabel = `${CATS[category][this.settings.language]} ${catCount}`
-                    start += `<label>${escapeText(catLabel)}</label>`
+                    if (caption.length) {
+                        figcaption += `<p>${caption.map(node => this.walkJson(node)).join('')}</p>`
+                    }
+                    figcaption += "</figcaption>"
+                    if (category === 'table') {
+                        end = figcaption + end
+                    } else {
+                        start += figcaption
+                    }
                 }
-                if (caption.length) {
-                    start += `<caption><p>${caption.map(node => this.walkJson(node)).join('')}</p></caption>`
-                }
+
                 const equation = node.content.find(node => node.type === 'figure_equation')?.attrs.equation
                 if (equation) {
-                    start += '<disp-formula>'
-                    end = '</disp-formula>' + end
-                    content = `<tex-math><![CDATA[${equation}]]></tex-math>`
+                    start += `<div class="figure-equation" data-equation="${escapeText(equation)}">`
+                    end = '</div>' + end
+                    content = convertLatexToMarkup(equation, {mathstyle: 'displaystyle'})
                 } else {
                     if (copyright?.holder) {
-                        start += '<permissions>'
+                        start += `<footer class="copyright ${copyright.freeToRead ? 'free-to-read' : 'not-free-to-read'}"><small>`
                         const year = copyright.year ? copyright.year : new Date().getFullYear()
-                        start += `<copyright-year>${year}</copyright-year>`
-                        start += `<copyright-holder>${escapeText(copyright.holder)}</copyright-holder>`
-                        if (copyright.freeToRead) {
-                            start += '<ali:free_to_read/>'
-                        }
+                        start += `<span class="copyright-year">${year}</span>`
+                        start += `<span class="copyright-holder">${escapeText(copyright.holder)}</span>`
                         start += copyright.licenses.map(license =>
-                            `<license><ali:license_ref${license.start ? ` start_date="${license.start}"` : ''}>${escapeText(license.url)}</ali:license_ref></license>`
+                            `<div class="license"><a rel="license"${license.start ? ` data-start="${license.start}"` : ''}>${escapeText(license.url)}</a></div>`
                         ).join('')
-                        start += '</permissions>'
+                        start += '</small></footer>'
                     }
                     if (imageFilename) {
-                        content += `<graphic position="anchor" xlink:href="${imageFilename}"/>`
+                        content += `<img src="${imageFilename}"${this.endSlash}>`
                     }
                 }
             }
@@ -507,14 +512,18 @@ export class HTMLExporterConvert {
     }
 
     assembleBack() {
-        let back = '<div class="back">'
-        if (this.footnotes.length) {
-            back += `<div class="footnotes">${this.footnotes.join('')}</div>`
+        let back = ''
+        if (this.footnotes.length || this.exporter.citations.htmlBib.length) {
+            back += '<div class="back">'
+            if (this.footnotes.length) {
+                back += `<div class="footnotes">${this.footnotes.join('')}</div>`
+            }
+            if (this.exporter.citations.htmlBib.length) {
+                back += `<div class="references">${this.exporter.citations.htmlBib}</div>`
+            }
+            back += '</div>'
         }
-        if (this.exporter.citations.htmlBib.length) {
-            back += `<div class="references">${this.exporter.citations.htmlBib}</div>`
-        }
-        back += '</div>'
+
         return back
     }
 

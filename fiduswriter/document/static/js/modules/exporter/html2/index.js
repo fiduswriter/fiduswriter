@@ -1,4 +1,5 @@
 import download from "downloadjs"
+import pretty from "pretty"
 
 import {shortFileTitle, get} from "../../common"
 import {createSlug} from "../tools/file"
@@ -42,7 +43,7 @@ export class HTMLExporter {
             () => this.converter.init(this.docContent)
         ).then(
             ({html, imageIds}) => {
-                this.textFiles.push({filename: 'document.html', contents: html})
+                this.textFiles.push({filename: 'document.html', contents: pretty(html, {ocd: true})})
                 const images = imageIds.map(
                     id => {
                         const imageEntry = this.imageDB.db[id]
@@ -120,8 +121,11 @@ export class HTMLExporter {
         return Promise.all(p)
     }
 
-    createZip() {
+    addMathliveStylesheet() {
+        this.styleSheets.push({filename: `css/mathlive.css`})
+    }
 
+    createZip() {
         const zipper = new ZipFileCreator(
             this.textFiles,
             this.httpFiles,

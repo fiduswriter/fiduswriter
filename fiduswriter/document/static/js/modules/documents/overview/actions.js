@@ -285,6 +285,29 @@ export class DocumentOverviewActions {
         )
     }
 
+    downloadHtml2Files(ids) {
+        getMissingDocumentListData(
+            ids,
+            this.documentOverview.documentList,
+            this.documentOverview.schema
+        ).then(
+            () => ids.forEach(id => {
+                const doc = this.documentOverview.documentList.find(entry => entry.id === id)
+                import("../../exporter/html2").then(({HTMLExporter}) => {
+                    const exporter = new HTMLExporter(
+                        doc,
+                        {db: doc.bibliography},
+                        {db: doc.images},
+                        this.documentOverview.app.csl,
+                        new Date(doc.updated * 1000),
+                        this.documentOverview.documentStyles
+                    )
+                    exporter.init()
+                })
+            })
+        )
+    }
+
     downloadTemplateExportFiles(ids, templateUrl, templateType) {
         getMissingDocumentListData(
             ids,

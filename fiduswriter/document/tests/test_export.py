@@ -386,13 +386,26 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         # Document with many features has been created let's see if we can
         # export it from the editor.
 
-        # HTML
+        # HTML (old)
         self.driver.find_element(
             By.CSS_SELECTOR,
             '.header-nav-item[title="Export of the document contents"]',
         ).click()
         self.driver.find_element_by_xpath(
-            '//*[normalize-space()="HTML"]'
+            '//*[normalize-space()="HTML (old)"]'
+        ).click()
+        path = os.path.join(self.download_dir, "title.html.zip")
+        self.wait_until_file_exists(path, self.wait_time)
+        assert os.path.isfile(path)
+        os.remove(path)
+
+        # HTML (new)
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            '.header-nav-item[title="Export of the document contents"]',
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="HTML (new)"]'
         ).click()
         path = os.path.join(self.download_dir, "title.html.zip")
         self.wait_until_file_exists(path, self.wait_time)
@@ -530,12 +543,24 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         assert os.path.isfile(path)
         os.remove(path)
 
-        # HTML
+        # HTML (old)
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, ".dt-bulk-dropdown"))
         ).click()
         self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Export selected as HTML"]'
+            '//*[normalize-space()="Export selected as HTML (old)"]'
+        ).click()
+        path = os.path.join(self.download_dir, "title.html.zip")
+        self.wait_until_file_exists(path, self.wait_time)
+        assert os.path.isfile(path)
+        os.remove(path)
+
+        # HTML (new)
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, ".dt-bulk-dropdown"))
+        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[normalize-space()="Export selected as HTML (new)"]'
         ).click()
         path = os.path.join(self.download_dir, "title.html.zip")
         self.wait_until_file_exists(path, self.wait_time)

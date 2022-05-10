@@ -514,12 +514,12 @@ export class HTMLExporterConvert {
     assembleBack() {
         let back = ''
         if (this.footnotes.length || this.exporter.citations.htmlBib.length) {
-            back += '<div class="back">'
+            back += '<div id="back">'
             if (this.footnotes.length) {
-                back += `<div class="footnotes">${this.footnotes.join('')}</div>`
+                back += `<div id="footnotes">${this.footnotes.join('')}</div>`
             }
             if (this.exporter.citations.htmlBib.length) {
-                back += `<div class="references">${this.exporter.citations.htmlBib}</div>`
+                back += `<div id="references">${this.exporter.citations.htmlBib}</div>`
             }
             back += '</div>'
         }

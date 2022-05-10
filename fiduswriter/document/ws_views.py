@@ -1,6 +1,7 @@
 import uuid
 import atexit
 import logging
+import json
 from time import mktime, time
 from copy import deepcopy
 
@@ -25,7 +26,6 @@ from usermedia.models import Image, DocumentImage, UserImage
 
 # settings_JSONPATCH
 from jsonpatch import apply_patch, JsonPatchConflict, JsonPointerException
-from tornado.escape import json_encode
 
 # end settings_JSONPATCH
 
@@ -472,13 +472,13 @@ class WebSocket(BaseWebSocketHandler):
                         logger.error(
                             f"Action:Patch Exception URL:{self.endpoint} "
                             f"User:{self.user.id} ParticipantID:{self.id} "
-                            f"Message:{json_encode(message)}"
+                            f"Message:{json.dumps(message)}"
                         )
                         logger.error(
                             f"Action:Patch Exception URL:{self.endpoint} "
                             f"User:{self.user.id} ParticipantID:{self.id} "
                             f"Document:"
-                            f"{json_encode(self.session['doc'].content)}"
+                            f"{json.dumps(self.session['doc'].content)}"
                         )
                         self.unfixable()
                         patch_msg = {

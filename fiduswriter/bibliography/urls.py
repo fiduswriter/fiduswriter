@@ -1,19 +1,19 @@
-from django.conf.urls import url
+from django.urls import re_path
 
 from . import views
 
 urlpatterns = [
-    url("^save/$", views.save, name="bibliography_save"),
-    url("^delete/$", views.delete, name="bibliography_delete"),
-    url(
+    re_path("^save/$", views.save, name="bibliography_save"),
+    re_path("^delete/$", views.delete, name="bibliography_delete"),
+    re_path(
         "^save_category/$",
         views.save_category,
         name="bibliopgraphy_save_category",
     ),
-    url(
+    re_path(
         "^delete_category/$",
         views.delete_category,
         name="bibliography_delete_category",
     ),
-    url("^biblist/$", views.biblist, name="bibliography_biblist"),
+    re_path("^biblist/$", views.biblist, name="bibliography_biblist"),
 ]

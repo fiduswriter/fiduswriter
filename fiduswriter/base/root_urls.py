@@ -2,7 +2,8 @@ import os
 
 from importlib import import_module
 
-from django.conf.urls import include, url
+from django.conf.urls import include
+from django.urls import re_path
 from django.http import HttpResponse
 from django.contrib import admin
 from django.urls import path
@@ -21,7 +22,7 @@ admin.site.index_title = settings.ADMIN_INDEX_TITLE
 admin.site.index_template = "admin/overview.html"
 admin_site_urls = (
     [
-        url(
+        re_path(
             "console/",
             admin.site.admin_view(admin_console_view, cacheable=True),
             name="admin_console",
@@ -34,15 +35,15 @@ admin_site_urls = (
 # Django URLs -- Notice that these are only consulted after the
 # tornado_url_list found in base/servers/tornado_django_hybrid.py
 urlpatterns = [
-    url(
+    re_path(
         "^robots.txt$",
         lambda r: HttpResponse(
             "User-agent: *\nDisallow: /document/\nDisallow: /bibliography/",
             mimetype="text/plain",
         ),
     ),
-    url("^manifest.json$", manifest_json, name="manifest_json"),
-    url(
+    re_path("^manifest.json$", manifest_json, name="manifest_json"),
+    re_path(
         "^sw.js$",
         static_serve,
         {
@@ -53,9 +54,9 @@ urlpatterns = [
         },
     ),
     # I18n manual language switcher
-    url("^api/i18n/", include("django.conf.urls.i18n")),
+    re_path("^api/i18n/", include("django.conf.urls.i18n")),
     # I18n Javascript translations
-    url(
+    re_path(
         r"^api/jsi18n/$",
         JavaScriptCatalog.as_view(),
         name="javascript-catalog",
@@ -73,19 +74,19 @@ for app in settings.INSTALLED_APPS:
         pass
     else:
         app_name = app.rsplit(".", 1).pop()
-        urlpatterns += [url("^api/%s/" % app_name, include("%s.urls" % app))]
+        urlpatterns += [re_path("^api/%s/" % app_name, include("%s.urls" % app))]
 
 if hasattr(settings, "EXTRA_URLS"):
     for extra_url in settings.EXTRA_URLS:
         urlpatterns += [
-            url(extra_url[0], include(extra_url[1])),
+            re_path(extra_url[0], include(extra_url[1])),
         ]
 if not settings.DEBUG:
     urlpatterns += [
-        url("^api/.*", api_404_view, name="api_404"),
+        re_path("^api/.*", api_404_view, name="api_404"),
     ]
 
 urlpatterns += [
-    url("^.*/$", app_view, name="app"),
-    url("^$", app_view, name="app"),
+    re_path("^.*/$", app_view, name="app"),
+    re_path("^$", app_view, name="app"),
 ]

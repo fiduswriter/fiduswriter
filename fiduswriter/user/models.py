@@ -45,7 +45,7 @@ class User(AbstractUser):
     # Deprecated - remove avatar_url in 3.11
     @property
     def avatar_url(self):
-        # We use our own method to find the avatar to instead of
+        # Here we use our own method to find the avatar to instead of
         # "get_primary_avatar" as this way we can minimize the reading from
         # disk and set a default thumbnail in case we could not create one.
         # See https://github.com/grantmcconnaughey/django-avatar/pull/187

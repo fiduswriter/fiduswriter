@@ -456,7 +456,7 @@ def invites_accept(request):
             .first()
         )
         if ui:
-            avatars = ui.avatar_set.all()
+            avatars = ui.by.avatar_set.all()
             response["contacts"].append(
                 {
                     "id": ui.by.id,

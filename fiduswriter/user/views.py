@@ -392,14 +392,11 @@ def invites_add(request):
             request, invite.get_relative_url()
         )
         emails.send_invite_notification(sender, email, link)
-        avatars = invite.avatar_set.filter(primary=True)
         response["contact"] = {
             "id": invite.pk,
             "name": invite.username,
             "email": invite.email,
-            "avatar": avatars[0].avatar_url(AVATAR_SIZE)
-            if len(avatars)
-            else None,
+            "avatar": None,
             "type": "userinvite",
         }
         status = 201

@@ -188,8 +188,6 @@ def upload_avatar(request):
         avatar_updated.send(sender=Avatar, user=request.user, avatar=avatar)
         response["avatar"] = avatar.avatar_url(AVATAR_SIZE)
         status = 200
-    else:
-        print(upload_avatar_form.errorlist)
     return JsonResponse(response, status=status)
 
 

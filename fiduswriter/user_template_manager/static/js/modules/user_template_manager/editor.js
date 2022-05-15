@@ -30,6 +30,10 @@ export class DocTemplatesEditor {
             }
         ).then(
             () => {
+                if (!this.app.page === this) {
+                    // page has changed
+                    return
+                }
                 this.render()
                 this.templateDesigner = new DocumentTemplateDesigner(
                     this.id,

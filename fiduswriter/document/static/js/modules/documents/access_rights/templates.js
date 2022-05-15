@@ -1,4 +1,4 @@
-import {escapeText} from "../../common"
+import {avatarTemplate, escapeText} from "../../common"
 
 /** The access rights dialogue template */
 export const accessRightOverviewTemplate = ({contacts, collaborators}) =>
@@ -33,7 +33,7 @@ export const contactsTemplate = ({contacts}) =>
     contacts.map(contact =>
         `<tr>
             <td width="337" data-id="${contact.id}" data-type="${contact.type}" class="fw-checkable fw-checkable-td">
-                <span>${contact.avatar.html}</span>
+                <span>${avatarTemplate({user: contact})}</span>
                 <span class="fw-inline">
                 ${
     contact.type === 'userinvite' ?
@@ -54,7 +54,7 @@ export const collaboratorsTemplate = ({collaborators}) =>
     data-type="${collaborator.holder.type}" data-id="${collaborator.holder.id}"
     class="collaborator-tr" data-rights="${collaborator.rights}">
         <td width="215">
-            <span>${collaborator.holder.avatar.html}</span>
+            <span>${avatarTemplate({user: collaborator.holder})}</span>
             <span class="fw-inline">${
     collaborator.holder.type === 'userinvite' ?
         `${gettext('Invite')}: ` :

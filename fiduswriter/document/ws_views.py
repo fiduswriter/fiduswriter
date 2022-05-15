@@ -22,6 +22,7 @@ from document.models import (
     Document,
 )
 from usermedia.models import Image, DocumentImage, UserImage
+from user.models import AVATAR_SIZE
 
 # settings_JSONPATCH
 from jsonpatch import apply_patch, JsonPatchConflict, JsonPointerException
@@ -155,6 +156,7 @@ class WebSocket(BaseWebSocketHandler):
         response = dict()
         response["type"] = "doc_data"
         doc_owner = self.session["doc"].owner
+        avatars = doc_owner.avatar_set.all()
         response["doc_info"] = {
             "id": self.session["doc"].id,
             "is_owner": self.user_info.is_owner,
@@ -164,7 +166,9 @@ class WebSocket(BaseWebSocketHandler):
                 "id": doc_owner.id,
                 "name": doc_owner.readable_name,
                 "username": doc_owner.username,
-                "avatar": doc_owner.avatar_url,
+                "avatar": avatars[0].avatar_url(AVATAR_SIZE)
+                if len(avatars)
+                else None,
                 "contacts": [],
             },
         }
@@ -213,21 +217,27 @@ class WebSocket(BaseWebSocketHandler):
         else:
             response["doc"]["comments"] = self.session["doc"].comments
         for contact in doc_owner.contacts.all():
+            avatars = contact.avatar_set.all()
             contact_object = {
                 "id": contact.id,
                 "name": contact.readable_name,
                 "username": contact.get_username(),
-                "avatar": contact.avatar_url,
+                "avatar": avatars[0].avatar_url(AVATAR_SIZE)
+                if len(avatars)
+                else None,
                 "type": "user",
             }
             response["doc_info"]["owner"]["contacts"].append(contact_object)
         if self.user_info.is_owner:
             for contact in doc_owner.invites_by.all():
+                avatars = contact.avatar_set.all()
                 contact_object = {
                     "id": contact.id,
                     "name": contact.username,
                     "username": contact.username,
-                    "avatar": contact.avatar_url,
+                    "avatar": avatars[0].avatar_url(AVATAR_SIZE)
+                    if len(avatars)
+                    else None,
                     "type": "userinvite",
                 }
                 response["doc_info"]["owner"]["contacts"].append(
@@ -645,12 +655,15 @@ class WebSocket(BaseWebSocketHandler):
                 access_rights = waiter.user_info.access_rights
                 if access_rights not in CAN_COMMUNICATE:
                     continue
+                avatars = waiter.user_info.user.avatar_set.all()
                 participant_list.append(
                     {
                         "session_id": session_id,
                         "id": waiter.user_info.user.id,
                         "name": waiter.user_info.user.readable_name,
-                        "avatar": waiter.user_info.user.avatar_url,
+                        "avatar": avatars[0].avatar_url(AVATAR_SIZE)
+                        if len(avatars)
+                        else None,
                     }
                 )
             message = {

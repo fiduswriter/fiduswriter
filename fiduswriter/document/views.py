@@ -12,7 +12,7 @@ from django.db import transaction
 from django.core.files import File
 from django.utils.translation import ugettext as _
 from django.conf import settings
-from django.db.models import F, Q
+from django.db.models import F, Q, Prefetch
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import get_user_model
 
@@ -31,8 +31,9 @@ from document.helpers.serializers import PythonWithURLSerializer
 from bibliography.views import serializer
 from style.models import DocumentStyle, DocumentStyleFile, ExportTemplate
 from base.decorators import ajax_required
-from user.models import UserInvite
+from user.models import UserInvite, AVATAR_SIZE
 from . import emails
+from avatar.models import Avatar
 
 
 @login_required
@@ -42,9 +43,13 @@ def get_documentlist_extra(request):
     response = {}
     status = 200
     ids = request.POST["ids"].split(",")
-    docs = Document.objects.filter(
-        Q(owner=request.user) | Q(accessright__user=request.user)
-    ).filter(id__in=ids)
+    docs = (
+        Document.objects.filter(
+            Q(owner=request.user) | Q(accessright__user=request.user)
+        )
+        .filter(id__in=ids)
+        .prefetch_related("documentimage_set")
+    )
     response["documents"] = []
     for doc in docs:
         images = {}
@@ -87,6 +92,15 @@ def documents_list(request):
             Q(owner=request.user) | Q(accessright__user=request.user),
             listed=True,
         )
+        .select_related("owner")
+        .prefetch_related(
+            "accessright_set",
+            "documentrevision_set",
+            Prefetch(
+                "owner__avatar_set",
+                queryset=Avatar.objects.filter(primary=True),
+            ),
+        )
         .distinct()
         .order_by("-updated")
     )
@@ -96,21 +110,19 @@ def documents_list(request):
             access_right = "write"
             path = document.path
         else:
-            access_object = AccessRight.objects.get(
-                user=request.user, document=document
-            )
+            access_object = document.accessright_set.filter(
+                user=request.user
+            ).first()
             access_right = access_object.rights
             path = access_object.path
         if (
             request.user.is_staff
             or document.owner == request.user
-            or AccessRight.objects.filter(
-                document=document,
-                user=request.user,
-                rights__in=CAN_COMMUNICATE,
+            or document.accessright_set.filter(
+                user=request.user, rights__in=CAN_COMMUNICATE
             ).first()
         ):
-            revisions = DocumentRevision.objects.filter(document=document)
+            revisions = document.documentrevision_set.all()
             revision_list = []
             for revision in revisions:
                 revision_list.append(
@@ -128,6 +140,7 @@ def documents_list(request):
         is_owner = False
         if document.owner == request.user:
             is_owner = True
+        avatars = document.owner.avatar_set.all()
         output_list.append(
             {
                 "id": document.id,
@@ -137,7 +150,9 @@ def documents_list(request):
                 "owner": {
                     "id": document.owner.id,
                     "name": document.owner.readable_name,
-                    "avatar": document.owner.avatar_url,
+                    "avatar": avatars[0].avatar_url(AVATAR_SIZE)
+                    if len(avatars)
+                    else None,
                 },
                 "added": added,
                 "updated": updated,
@@ -154,12 +169,21 @@ def documents_list(request):
 def get_access_rights(request):
     response = {}
     status = 200
-    ar_qs = AccessRight.objects.filter(document__owner=request.user)
+    ar_qs = (
+        AccessRight.objects.filter(document__owner=request.user)
+        .prefetch_related(
+            Prefetch(
+                "holder_obj__avatar_set",
+                queryset=Avatar.objects.filter(primary=True),
+            )
+        )
+    )
     doc_ids = request.POST.getlist("document_ids[]")
     if len(doc_ids) > 0:
         ar_qs = ar_qs.filter(document_id__in=doc_ids)
     access_rights = []
     for ar in ar_qs:
+        avatars = ar.holder_obj.avatar_set.all()
         access_rights.append(
             {
                 "document_id": ar.document.id,
@@ -168,7 +192,9 @@ def get_access_rights(request):
                     "id": ar.holder_id,
                     "type": ar.holder_type.model,
                     "name": ar.holder_obj.readable_name,
-                    "avatar": ar.holder_obj.avatar_url,
+                    "avatar": avatars[0].avatar_url(AVATAR_SIZE)
+                    if len(avatars)
+                    else None,
                 },
             }
         )
@@ -276,21 +302,31 @@ def get_documentlist(request):
     status = 200
     response["documents"] = documents_list(request)
     response["contacts"] = []
-    for contact in request.user.contacts.all():
+    for contact in request.user.contacts.all().prefetch_related(
+        Prefetch("avatar_set", queryset=Avatar.objects.filter(primary=True))
+    ):
+        avatars = contact.avatar_set.all()
         contact_object = {
             "id": contact.id,
             "name": contact.readable_name,
             "username": contact.get_username(),
-            "avatar": contact.avatar_url,
+            "avatar": avatars[0].avatar_url(AVATAR_SIZE)
+            if len(avatars)
+            else None,
             "type": "user",
         }
         response["contacts"].append(contact_object)
-    for contact in request.user.invites_by.all():
+    for contact in request.user.invites_by.all().prefetch_related(
+        Prefetch("avatar_set", queryset=Avatar.objects.filter(primary=True))
+    ):
+        avatars = contact.avatar_set.all()
         contact_object = {
             "id": contact.id,
             "name": contact.username,
             "username": contact.username,
-            "avatar": contact.avatar_url,
+            "avatar": avatars[0].avatar_url(AVATAR_SIZE)
+            if len(avatars)
+            else None,
             "type": "userinvite",
         }
         response["contacts"].append(contact_object)

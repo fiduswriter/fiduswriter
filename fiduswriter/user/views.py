@@ -1,7 +1,7 @@
 import json
 
 from django.http import JsonResponse, HttpRequest
-from django.db.models import Q
+from django.db.models import Q, Prefetch
 from django.contrib.auth import logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
@@ -10,11 +10,12 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth import get_user_model
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+from django.core.files import File
 
 from base.decorators import ajax_required
 from .forms import UserForm
 from document.models import AccessRight
-from .models import UserInvite
+from .models import UserInvite, AVATAR_SIZE
 from . import emails
 
 from allauth.account.models import (
@@ -148,6 +149,19 @@ def delete_socialaccount(request):
     return JsonResponse({"msg": "Deleted account"}, status=200)
 
 
+def create_avatar_thumbnail(avatar):
+    if not avatar.thumbnail_exists(AVATAR_SIZE):
+        avatar.create_thumbnail(AVATAR_SIZE)
+        # Now check if the thumbnail was actually created
+        if not avatar.thumbnail_exists(AVATAR_SIZE):
+            # Thumbnail was not saved. There must be some PIL bug
+            # with this image type. We store the original file instead.
+            avatar.avatar.storage.save(
+                avatar.avatar_name(AVATAR_SIZE),
+                File(avatar.avatar.storage.open(avatar.avatar.name, "rb")),
+            )
+
+
 @login_required
 @ajax_required
 @require_POST
@@ -170,9 +184,12 @@ def upload_avatar(request):
         image_file = request.FILES["avatar"]
         avatar.avatar.save(image_file.name, image_file)
         avatar.save()
+        create_avatar_thumbnail(avatar)
         avatar_updated.send(sender=Avatar, user=request.user, avatar=avatar)
-        response["avatar"] = request.user.avatar_url["url"]
+        response["avatar"] = avatar.avatar_url(AVATAR_SIZE)
         status = 200
+    else:
+        print(upload_avatar_form.errorlist)
     return JsonResponse(response, status=status)
 
 
@@ -191,15 +208,14 @@ def delete_avatar(request):
     else:
         aid = avatar.id
         for a in avatars:
-            if a.id == aid:
+            # Find the next best avatar, and set it as the new primary
+            if a.id != aid:
                 a.primary = True
                 a.save()
-                avatar_updated.send(
-                    sender=Avatar, user=request.user, avatar=avatar
-                )
+                avatar_updated.send(sender=Avatar, user=request.user, avatar=a)
+                response["avatar"] = a.avatar_url(AVATAR_SIZE)
                 break
         Avatar.objects.filter(pk=aid).delete()
-        response["avatar"] = request.user.avatar_url["url"]
         status = 200
     return JsonResponse(response, status=status)
 
@@ -255,36 +271,57 @@ def list_contacts(request):
     response = {}
     status = 200
     response["contacts"] = []
-    for user in request.user.contacts.all():
+    for user in request.user.contacts.all().prefetch_related(
+        Prefetch("avatar_set", queryset=Avatar.objects.filter(primary=True))
+    ):
+        avatars = user.avatar_set.all()
         response["contacts"].append(
             {
                 "id": user.id,
                 "name": user.readable_name,
                 "username": user.get_username(),
                 "email": user.email,
-                "avatar": user.avatar_url,
+                "avatar": avatars[0].avatar_url(AVATAR_SIZE)
+                if len(avatars)
+                else None,
                 "type": "user",
             }
         )
-    for invite in request.user.invites_by.all():
+    for invite in request.user.invites_by.all().prefetch_related(
+        Prefetch("avatar_set", queryset=Avatar.objects.filter(primary=True))
+    ):
+        avatars = user.avatar_set.all()
         response["contacts"].append(
             {
                 "id": invite.id,
                 "name": invite.username,
                 "username": invite.username,
                 "email": invite.email,
-                "avatar": invite.avatar_url,
+                "avatar": avatars[0].avatar_url(AVATAR_SIZE)
+                if len(avatars)
+                else None,
                 "type": "userinvite",
             }
         )
-    for invite in request.user.invites_to.select_related("by").all():
+    for invite in (
+        request.user.invites_to.select_related("by")
+        .prefetch_related(
+            Prefetch(
+                "by__avatar_set", queryset=Avatar.objects.filter(primary=True)
+            )
+        )
+        .all()
+    ):
+        avatars = invite.by.avatar_set.all()
         response["contacts"].append(
             {
                 "id": invite.id,
                 "name": invite.by.readable_name,
                 "username": invite.by.get_username(),
                 "email": invite.by.email,
-                "avatar": invite.by.avatar_url,
+                "avatar": avatars[0].avatar_url(AVATAR_SIZE)
+                if len(avatars)
+                else None,
                 "type": "to_userinvite",
             }
         )
@@ -355,11 +392,14 @@ def invites_add(request):
             request, invite.get_relative_url()
         )
         emails.send_invite_notification(sender, email, link)
+        avatars = invite.avatar_set.filter(primary=True)
         response["contact"] = {
             "id": invite.pk,
             "name": invite.username,
             "email": invite.email,
-            "avatar": invite.avatar_url,
+            "avatar": avatars[0].avatar_url(AVATAR_SIZE)
+            if len(avatars)
+            else None,
             "type": "userinvite",
         }
         status = 201
@@ -408,16 +448,26 @@ def invites_accept(request):
     invites = json.loads(request.POST["invites"])
     response["contacts"] = []
     for invite in invites:
-        ui = UserInvite.objects.filter(
-            id=invite["id"], to=request.user
-        ).first()
+        ui = (
+            UserInvite.objects.filter(id=invite["id"], to=request.user)
+            .prefetch_related(
+                Prefetch(
+                    "by__avatar_set",
+                    queryset=Avatar.objects.filter(primary=True),
+                )
+            )
+            .first()
+        )
         if ui:
+            avatars = ui.avatar_set.all()
             response["contacts"].append(
                 {
                     "id": ui.by.id,
                     "name": ui.by.readable_name,
                     "email": ui.by.email,
-                    "avatar": ui.by.avatar_url,
+                    "avatar": avatars[0].avatar_url(AVATAR_SIZE)
+                    if len(avatars)
+                    else None,
                     "type": "user",
                 }
             )

@@ -10,6 +10,8 @@ from allauth.socialaccount.models import providers
 from .decorators import ajax_required
 from . import get_version
 
+from user.models import AVATAR_SIZE
+
 
 @ensure_csrf_cookie
 def app(request):
@@ -47,13 +49,14 @@ def configuration(request):
         "socialaccount_providers": socialaccount_providers,
     }
     if request.user.is_authenticated:
+        avatar = request.user.avatar_set.filter(primary=True).first()
         response["user"] = {
             "id": request.user.id,
             "username": request.user.username,
             "first_name": request.user.first_name,
             "name": request.user.readable_name,
             "last_name": request.user.last_name,
-            "avatar": request.user.avatar_url,
+            "avatar": avatar.avatar_url(AVATAR_SIZE) if avatar else None,
             "emails": [],
             "socialaccounts": [],
             "is_authenticated": True,

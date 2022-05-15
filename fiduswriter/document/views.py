@@ -311,17 +311,12 @@ def get_documentlist(request):
             "type": "user",
         }
         response["contacts"].append(contact_object)
-    for contact in request.user.invites_by.all().prefetch_related(
-        Prefetch("avatar_set", queryset=Avatar.objects.filter(primary=True))
-    ):
-        avatars = contact.avatar_set.all()
+    for contact in request.user.invites_by.all():
         contact_object = {
             "id": contact.id,
             "name": contact.username,
             "username": contact.username,
-            "avatar": avatars[0].avatar_url(AVATAR_SIZE)
-            if len(avatars)
-            else None,
+            "avatar": None,
             "type": "userinvite",
         }
         response["contacts"].append(contact_object)

@@ -169,13 +169,12 @@ def documents_list(request):
 def get_access_rights(request):
     response = {}
     status = 200
-    ar_qs = (
-        AccessRight.objects.filter(document__owner=request.user)
-        .prefetch_related(
-            Prefetch(
-                "holder_obj__avatar_set",
-                queryset=Avatar.objects.filter(primary=True),
-            )
+    ar_qs = AccessRight.objects.filter(
+        document__owner=request.user
+    ).prefetch_related(
+        Prefetch(
+            "holder_obj__avatar_set",
+            queryset=Avatar.objects.filter(primary=True),
         )
     )
     doc_ids = request.POST.getlist("document_ids[]")

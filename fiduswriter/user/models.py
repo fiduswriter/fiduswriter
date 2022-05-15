@@ -9,6 +9,8 @@ from avatar.utils import get_default_avatar_url
 
 from document.models import AccessRight
 
+AVATAR_SIZE = 80
+
 
 def auto_avatar(username):
     hash = 0
@@ -40,30 +42,30 @@ class User(AbstractUser):
         related_query_name="user",
     )
 
+    # Deprecated - remove avatar_url in 3.11
     @property
     def avatar_url(self):
-        size = 80
-        # We use our own method to find the avatar to instead of
+        # Here we use our own method to find the avatar to instead of
         # "get_primary_avatar" as this way we can minimize the reading from
         # disk and set a default thumbnail in case we could not create one.
         # See https://github.com/grantmcconnaughey/django-avatar/pull/187
         avatar = self.avatar_set.order_by("-primary", "-date_uploaded").first()
         if avatar:
-            if not avatar.thumbnail_exists(size):
-                avatar.create_thumbnail(size)
+            if not avatar.thumbnail_exists(AVATAR_SIZE):
+                avatar.create_thumbnail(AVATAR_SIZE)
                 # Now check if the thumbnail was actually created
-                if not avatar.thumbnail_exists(size):
+                if not avatar.thumbnail_exists(AVATAR_SIZE):
                     # Thumbnail was not saved. There must be some PIL bug
                     # with this image type. We store the original file instead.
                     avatar.avatar.storage.save(
-                        avatar.avatar_name(size),
+                        avatar.avatar_name(AVATAR_SIZE),
                         File(
                             avatar.avatar.storage.open(
                                 avatar.avatar.name, "rb"
                             )
                         ),
                     )
-            url = avatar.avatar_url(size)
+            url = avatar.avatar_url(AVATAR_SIZE)
             return {
                 "url": url,
                 "uploaded": True,

@@ -183,8 +183,10 @@ export class DocTemplatesOverview {
     }
 
     initializeView(json) {
-        this.templateList = json.document_templates
-        this.initTable()
+        if (this.app.page === this) {
+            this.templateList = json.document_templates
+            this.initTable()
+        }
     }
 
     showCached() {

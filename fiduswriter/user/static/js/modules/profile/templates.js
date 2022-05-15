@@ -1,4 +1,4 @@
-import {escapeText} from "../common"
+import {avatarTemplate, escapeText} from "../common"
 
 /** A template to confirm the deletion of a user avatar. */
 export const confirmDeleteAvatarTemplate = () =>
@@ -66,17 +66,17 @@ export const changePwdDialogTemplate = ({username}) =>
         <tr><td><span id="fw-password-change-error" class="warning"></span></td></tr>
     </tbody></table>`
 
-export const profileContents = ({avatar, username, first_name, last_name, emails, socialaccounts}, socialaccount_providers) =>
+export const profileContents = (user, socialaccount_providers) =>
     `<div id="profile-wrapper" class="clearfix">
         <div id="profile-avatar">
-            ${avatar.html}
+            ${avatarTemplate({user})}
             <div id="avatar-pulldown-wrapper">
                 <span id="edit-avatar-btn" class="fw-link-text">
                     ${gettext('Edit profile picture')}
                 </span>
                 <select id="edit-avatar-pulldown">
                     <option value="change">${gettext('Change picture')}</option>
-                    ${avatar.uploaded ? `<option value="delete">${gettext('Delete picture')}</option>` : ''}
+                    ${user.avatar ? `<option value="delete">${gettext('Delete picture')}</option>` : ''}
                 </select>
             </div>
         </div>
@@ -84,15 +84,15 @@ export const profileContents = ({avatar, username, first_name, last_name, emails
             <form>
                 <div class="profile-data-row">
                     <label class="form-label">${gettext('Username')}</label>
-                    <input type="text" name="username" id="username" autocomplete="username" value="${escapeText(username)}" />
+                    <input type="text" name="username" id="username" autocomplete="username" value="${escapeText(user.username)}" />
                 </div>
                 <div class="profile-data-row">
                     <label class="form-label">${gettext('First name')}</label>
-                    <input type="text" name="firstname" id="first_name" autocomplete="given-name" value="${escapeText(first_name)}" />
+                    <input type="text" name="firstname" id="first_name" autocomplete="given-name" value="${escapeText(user.first_name)}" />
                 </div>
                 <div class="profile-data-row">
                     <label class="form-label">${gettext('Last name')}</label>
-                    <input type="text" name="lastname" id="last_name" autocomplete="family-name" value="${escapeText(last_name)}" />
+                    <input type="text" name="lastname" id="last_name" autocomplete="family-name" value="${escapeText(user.last_name)}" />
                 </div>
                 <div class="profile-data-row">
                     <label class="form-label">${gettext('Password')}</label>
@@ -112,7 +112,7 @@ export const profileContents = ({avatar, username, first_name, last_name, emails
                     </thead>
                     <tbody>
                         ${
-    emails.map(
+    user.emails.map(
         email => `<tr${email.primary ? ' class="primary-email-tr"' : ''}>
                                     <td class="emailaddress">${email.address}</td>
                                     <td>
@@ -164,7 +164,7 @@ export const profileContents = ({avatar, username, first_name, last_name, emails
                                 ${
     socialaccount_providers.map(
         provider => {
-            const account = socialaccounts.find(saccount => saccount.provider === provider.id)
+            const account = user.socialaccounts.find(saccount => saccount.provider === provider.id)
             if (account) {
                 return `<tr>
                                                     <td>${escapeText(provider.name)}</td>
@@ -194,7 +194,7 @@ export const profileContents = ({avatar, username, first_name, last_name, emails
                 <span id="submit-profile" class="fw-button fw-dark">
                     ${gettext('Submit')}
                 </span>
-                <span id="delete-account" data-username="${username}" class="fw-button fw-orange">
+                <span id="delete-account" data-username="${user.username}" class="fw-button fw-orange">
                     ${gettext('Delete account')}
                 </span>
             </div>

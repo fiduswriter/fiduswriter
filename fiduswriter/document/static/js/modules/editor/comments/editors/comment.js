@@ -6,7 +6,7 @@ import {baseKeymap} from "prosemirror-commands"
 import {keymap} from "prosemirror-keymap"
 import {suggestionsPlugin, triggerCharacter} from "prosemirror-suggestions"
 
-import {escapeText, findTarget} from "../../../common"
+import {escapeText, findTarget, avatarTemplate} from "../../../common"
 
 import {commentSchema} from "./schema"
 import {notifyMentionedUser} from "./notify"
@@ -208,7 +208,7 @@ export class CommentEditor {
         }
         this.dom.querySelector('div.tagger').innerHTML = this.userTaggerList.map((user, index) =>
             `<div class="tag-user tag${index === this.selectedTag ? ' selected' : ''}" data-index="${index}">
-                ${user ? user.avatar.html : `<span class="fw-string-avatar"></span>`}
+                ${user ? avatarTemplate({user}) : `<span class="fw-string-avatar"></span>`}
                 <h5 class="comment-user-name">${escapeText(user.name)}</h5>
             </div>`
         ).join('')

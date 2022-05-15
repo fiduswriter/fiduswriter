@@ -1,4 +1,4 @@
-import {localizeDate, escapeText} from "../../common"
+import {localizeDate, escapeText, avatarTemplate} from "../../common"
 import {serializeComment} from "../comments/editors"
 import {serializeHelp} from "../../document_template"
 import {READ_ONLY_ROLES} from "../"
@@ -14,7 +14,7 @@ const answerCommentTemplate = ({
 }) =>
     `<div class="comment-item comment-answer collapse ${active ? 'show' : ''}" id="comment-answer-${answer.id}">
         <div class="comment-user">
-            ${author ? author.avatar.html : `<span class="fw-string-avatar"></span>`}
+            ${author ? avatarTemplate({user: author}) : `<span class="fw-string-avatar"></span>`}
             <h5 class="comment-user-name">${escapeText(author ? author.name : answer.username)}</h5>
             <p class="comment-date">${localizeDate(answer.date)}</p>
         </div>
@@ -48,7 +48,7 @@ const singleCommentTemplate = ({
 }) =>
     `<div class="comment-item">
         <div class="comment-user">
-            ${author ? author.avatar.html : `<span class="fw-string-avatar"></span>`}
+            ${author ? avatarTemplate({user: author}) : `<span class="fw-string-avatar"></span>`}
             <h5 class="comment-user-name">${escapeText(author ? author.name : comment.username)}</h5>
             <p class="comment-date">${localizeDate(comment.date)}</p>
         </div>
@@ -74,7 +74,7 @@ const firstCommentTemplate = ({
 }) =>
     `<div class="comment-item">
         <div class="comment-user">
-            ${author ? author.avatar.html : `<span class="fw-string-avatar"></span>`}
+            ${author ? avatarTemplate({user: author}) : `<span class="fw-string-avatar"></span>`}
             <h5 class="comment-user-name">${escapeText(author ? author.name : comment.username)}</h5>
             <p class="comment-date">${localizeDate(comment.date)}</p>
         </div>
@@ -249,7 +249,7 @@ const trackTemplate = ({type, data, node, active, docInfo, filterOptions}) => {
         <div class="margin-box track ${active ? 'active' : 'inactive'}" data-type="${type}">
             <div class="track-${type}">
                 <div class="comment-user">
-                    ${author ? author.avatar.html : `<span class="fw-string-avatar"></span>`}
+                    ${author ? avatarTemplate({user: author}) : `<span class="fw-string-avatar"></span>`}
                     <h5 class="comment-user-name">${escapeText(author ? author.name : data.username)}</h5>
                     <p class="comment-date">${node.type.name === 'text' ? `${gettext('ca.')} ` : ''}${localizeDate(data.date * 60000, 'minutes')}</p>
                 </div>

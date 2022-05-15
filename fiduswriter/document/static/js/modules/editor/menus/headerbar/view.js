@@ -1,6 +1,6 @@
 import {DiffDOM} from "diff-dom"
 import {keyName} from "w3c-keyname"
-import {addAlert, escapeText, findTarget, cleanPath} from "../../../common"
+import {addAlert, escapeText, findTarget, cleanPath, avatarTemplate} from "../../../common"
 
 export class HeaderbarView {
     constructor(editorView, options) {
@@ -352,7 +352,7 @@ export class HeaderbarView {
                 <div id="connected-collaborators">
                     ${
     participants.map(participant =>
-        participant.avatar.html).join('')
+        avatarTemplate({user: participant})).join('')
 }
                 </div>
             `

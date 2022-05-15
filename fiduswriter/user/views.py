@@ -287,19 +287,14 @@ def list_contacts(request):
                 "type": "user",
             }
         )
-    for invite in request.user.invites_by.all().prefetch_related(
-        Prefetch("avatar_set", queryset=Avatar.objects.filter(primary=True))
-    ):
-        avatars = user.avatar_set.all()
+    for invite in request.user.invites_by.all():
         response["contacts"].append(
             {
                 "id": invite.id,
                 "name": invite.username,
                 "username": invite.username,
                 "email": invite.email,
-                "avatar": avatars[0].avatar_url(AVATAR_SIZE)
-                if len(avatars)
-                else None,
+                "avatar": None,
                 "type": "userinvite",
             }
         )

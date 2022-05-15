@@ -230,14 +230,11 @@ class WebSocket(BaseWebSocketHandler):
             response["doc_info"]["owner"]["contacts"].append(contact_object)
         if self.user_info.is_owner:
             for contact in doc_owner.invites_by.all():
-                avatars = contact.avatar_set.all()
                 contact_object = {
                     "id": contact.id,
                     "name": contact.username,
                     "username": contact.username,
-                    "avatar": avatars[0].avatar_url(AVATAR_SIZE)
-                    if len(avatars)
-                    else None,
+                    "avatar": None,
                     "type": "userinvite",
                 }
                 response["doc_info"]["owner"]["contacts"].append(

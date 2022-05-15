@@ -169,20 +169,16 @@ def documents_list(request):
 def get_access_rights(request):
     response = {}
     status = 200
-    ar_qs = AccessRight.objects.filter(
-        document__owner=request.user
-    ).prefetch_related(
-        Prefetch(
-            "holder_obj__avatar_set",
-            queryset=Avatar.objects.filter(primary=True),
-        )
-    )
+    ar_qs = AccessRight.objects.filter(document__owner=request.user)
     doc_ids = request.POST.getlist("document_ids[]")
     if len(doc_ids) > 0:
         ar_qs = ar_qs.filter(document_id__in=doc_ids)
     access_rights = []
     for ar in ar_qs:
-        avatars = ar.holder_obj.avatar_set.all()
+        if ar.holder_type.model == "user":
+            avatars = ar.holder_obj.avatar_set.all()
+        else:
+            avatars = []
         access_rights.append(
             {
                 "document_id": ar.document.id,

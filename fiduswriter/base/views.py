@@ -7,10 +7,9 @@ from django.views.decorators.http import require_POST
 
 from allauth.socialaccount.models import providers
 
+from user.helpers import Avatars
 from .decorators import ajax_required
 from . import get_version
-
-from user.models import AVATAR_SIZE
 
 
 @ensure_csrf_cookie
@@ -49,14 +48,14 @@ def configuration(request):
         "socialaccount_providers": socialaccount_providers,
     }
     if request.user.is_authenticated:
-        avatar = request.user.avatar_set.filter(primary=True).first()
+        avatars = Avatars()
         response["user"] = {
             "id": request.user.id,
             "username": request.user.username,
             "first_name": request.user.first_name,
             "name": request.user.readable_name,
             "last_name": request.user.last_name,
-            "avatar": avatar.avatar_url(AVATAR_SIZE) if avatar else None,
+            "avatar": avatars.get_url(request.user),
             "emails": [],
             "socialaccounts": [],
             "is_authenticated": True,

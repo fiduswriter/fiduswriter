@@ -5,11 +5,10 @@ from django.utils.translation import ugettext as _
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.auth.models import AbstractUser
 from django.core.files import File
+from django.conf import settings
 from avatar.utils import get_default_avatar_url
 
 from document.models import AccessRight
-
-AVATAR_SIZE = 80
 
 
 def auto_avatar(username):
@@ -50,22 +49,23 @@ class User(AbstractUser):
         # disk and set a default thumbnail in case we could not create one.
         # See https://github.com/grantmcconnaughey/django-avatar/pull/187
         avatar = self.avatar_set.order_by("-primary", "-date_uploaded").first()
+        size = settings.AVATAR_DEFAULT_SIZE
         if avatar:
-            if not avatar.thumbnail_exists(AVATAR_SIZE):
-                avatar.create_thumbnail(AVATAR_SIZE)
+            if not avatar.thumbnail_exists(size):
+                avatar.create_thumbnail(size)
                 # Now check if the thumbnail was actually created
-                if not avatar.thumbnail_exists(AVATAR_SIZE):
+                if not avatar.thumbnail_exists(size):
                     # Thumbnail was not saved. There must be some PIL bug
                     # with this image type. We store the original file instead.
                     avatar.avatar.storage.save(
-                        avatar.avatar_name(AVATAR_SIZE),
+                        avatar.avatar_name(size),
                         File(
                             avatar.avatar.storage.open(
                                 avatar.avatar.name, "rb"
                             )
                         ),
                     )
-            url = avatar.avatar_url(AVATAR_SIZE)
+            url = avatar.avatar_url(size)
             return {
                 "url": url,
                 "uploaded": True,

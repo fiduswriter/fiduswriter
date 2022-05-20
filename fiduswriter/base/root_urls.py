@@ -74,7 +74,9 @@ for app in settings.INSTALLED_APPS:
         pass
     else:
         app_name = app.rsplit(".", 1).pop()
-        urlpatterns += [re_path("^api/%s/" % app_name, include("%s.urls" % app))]
+        urlpatterns += [
+            re_path("^api/%s/" % app_name, include("%s.urls" % app))
+        ]
 
 if hasattr(settings, "EXTRA_URLS"):
     for extra_url in settings.EXTRA_URLS:

@@ -3,7 +3,9 @@ from django.urls import re_path
 from . import views
 
 urlpatterns = [
-    re_path("^documentlist/$", views.get_documentlist, name="get_documentlist"),
+    re_path(
+        "^documentlist/$", views.get_documentlist, name="get_documentlist"
+    ),
     re_path(
         "^documentlist/extra/$",
         views.get_documentlist_extra,
@@ -21,7 +23,9 @@ urlpatterns = [
         views.get_revision,
         name="get_revision",
     ),
-    re_path("^delete_revision/$", views.delete_revision, name="delete_revision"),
+    re_path(
+        "^delete_revision/$", views.delete_revision, name="delete_revision"
+    ),
     re_path(
         "^get_access_rights/$",
         views.get_access_rights,
@@ -72,7 +76,9 @@ urlpatterns = [
         views.get_all_template_ids,
         name="get_all_template_ids",
     ),
-    re_path("^admin/save_template/$", views.save_template, name="save_template"),
+    re_path(
+        "^admin/save_template/$", views.save_template, name="save_template"
+    ),
     re_path(
         "^admin/get_user_biblist/$",
         views.get_user_biblist,

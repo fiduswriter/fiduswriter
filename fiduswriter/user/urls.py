@@ -8,7 +8,9 @@ urlpatterns = [
     re_path("^save/$", views.save_profile, name="save_profile"),
     re_path("^avatar/delete/$", views.delete_avatar, name="delete_avatar"),
     re_path("^avatar/upload/$", views.upload_avatar, name="upload_avatar"),
-    re_path("^passwordchange/$", views.password_change, name="password_change"),
+    re_path(
+        "^passwordchange/$", views.password_change, name="password_change"
+    ),
     re_path("^email/add/$", views.add_email, name="add_email"),
     re_path("^email/delete/$", views.delete_email, name="delete_email"),
     re_path("^email/primary/$", views.primary_email, name="primary_email"),
@@ -21,11 +23,15 @@ urlpatterns = [
     re_path("^delete/$", views.delete_user, name="delete_user"),
     # Show contacts
     re_path("^contacts/list/$", views.list_contacts, name="list_contacts"),
-    re_path("^contacts/delete/$", views.delete_contacts, name="delete_contacts"),
+    re_path(
+        "^contacts/delete/$", views.delete_contacts, name="delete_contacts"
+    ),
     re_path("^invite/$", views.invite, name="invite"),
     re_path("^invites/add/$", views.invites_add, name="invites_add"),
     re_path("^invites/accept/$", views.invites_accept, name="invites_accept"),
-    re_path("^invites/decline/$", views.invites_decline, name="invites_decline"),
+    re_path(
+        "^invites/decline/$", views.invites_decline, name="invites_decline"
+    ),
     # User avatar handling
     re_path("^avatar/", include("avatar.urls")),
     re_path(

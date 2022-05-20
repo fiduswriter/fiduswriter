@@ -1,8 +1,8 @@
-import {escapeText, localizeDate} from "../../common"
+import {escapeText, localizeDate, avatarTemplate} from "../../common"
 export const messageTemplate = ({message, theChatter}) =>
     `<div class="message" id="m${message.id}">
         <div class="comment-user">
-            ${theChatter.avatar.html}
+            ${avatarTemplate({user: theChatter})}
             <h5 class="comment-user-name">${escapeText(theChatter.name)}</h5>
             <p class="comment-date">${localizeDate(new Date())}</p>
         </div>

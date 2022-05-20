@@ -7,6 +7,7 @@ from django.views.decorators.http import require_POST
 
 from allauth.socialaccount.models import providers
 
+from user.helpers import Avatars
 from .decorators import ajax_required
 from . import get_version
 
@@ -47,13 +48,14 @@ def configuration(request):
         "socialaccount_providers": socialaccount_providers,
     }
     if request.user.is_authenticated:
+        avatars = Avatars()
         response["user"] = {
             "id": request.user.id,
             "username": request.user.username,
             "first_name": request.user.first_name,
             "name": request.user.readable_name,
             "last_name": request.user.last_name,
-            "avatar": request.user.avatar_url,
+            "avatar": avatars.get_url(request.user),
             "emails": [],
             "socialaccounts": [],
             "is_authenticated": True,

@@ -3,7 +3,7 @@ import {DataTable} from "simple-datatables"
 import {deleteContactCell, respondInviteCell, displayContactType} from "./templates"
 import {DeleteContactDialog} from "./delete_dialog"
 import {RespondInviteDialog} from "./respond_invite"
-import {postJson, addAlert, OverviewMenuView, findTarget, whenReady, baseBodyTemplate, setDocTitle, DatatableBulk, escapeText} from "../common"
+import {postJson, addAlert, OverviewMenuView, findTarget, whenReady, baseBodyTemplate, setDocTitle, DatatableBulk, escapeText, avatarTemplate} from "../common"
 import {FeedbackTab} from "../feedback"
 import {SiteMenu} from "../menu"
 import {menuModel, bulkMenuModel} from "./menu"
@@ -103,7 +103,7 @@ export class ContactsOverview {
             String(contact.id),
             contact.type,
             `<input type="checkbox" class="entry-select fw-check ${contact.type}" id="contact-${contact.type}-${contact.id}" data-id="${contact.id}" data-type="${contact.type}"><label for="contact-${contact.type}-${contact.id}"></label`,
-            `${contact.avatar.html} ${escapeText(contact.name)}`,
+            `${avatarTemplate({user: contact})} ${escapeText(contact.name)}`,
             displayContactType(contact),
             contact.email,
             contact.type === 'to_userinvite' ? respondInviteCell(contact) : deleteContactCell(contact)
@@ -142,7 +142,9 @@ export class ContactsOverview {
     }
 
     initializeView() {
-        this.initTable()
+        if (this.app.page === this) {
+            this.initTable()
+        }
     }
 
     showCached() {

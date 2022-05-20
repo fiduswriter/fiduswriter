@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import login_required
 from document.helpers.serializers import PythonWithURLSerializer
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 
 from base.decorators import ajax_required

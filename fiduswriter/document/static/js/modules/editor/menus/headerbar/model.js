@@ -69,7 +69,7 @@ export const headerbarModel = () => ({
                             0,
                             editor.docInfo.path.lastIndexOf('/')
                         )
-                        if (!folderPath.length) {
+                        if (!folderPath.length && editor.app.routes[''].app === "document") {
                             editor.app.goTo('/')
                         } else {
                             editor.app.goTo(`/documents${folderPath}/`)

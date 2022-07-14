@@ -1,16 +1,16 @@
-bleach==3.3.0
+bleach==5.0.1
 Django==4.0.6
-django-allauth==0.49.0
+django-allauth==0.51.0
 #django-avatar==5.0.0
 git+https://github.com/grantmcconnaughey/django-avatar@51cbdbd#egg=django-avatar
 django-js-error-hook==0.8
-django-npm-mjs==2.1.0
+django-npm-mjs==2.2.0
 django-loginas==0.3.10
-Pillow==9.0.1
-python-dateutil==2.8.1
-python-magic==0.4.18
-tornado==6.0.4
-prosemirror-py==0.1.5
+Pillow==9.2.0
+python-dateutil==2.8.2
+python-magic==0.4.27
+tornado==6.2
+prosemirror-py==0.3.1
 # settings_JSONPATCH
-jsonpatch==1.26
+jsonpatch==1.32
 # end settings_JSONPATCH

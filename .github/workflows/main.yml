@@ -24,7 +24,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v1
         with:
-          python-version: 3.9
+          python-version: 3.10
       - name: Install Python dependencies
         run: |
           cd fiduswriter
@@ -58,7 +58,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v1
       with:
-        python-version: 3.9
+        python-version: 3.10
     - uses: actions/checkout@v2
     - uses: nanasess/setup-chromedriver@master
     - name: Install dependencies
@@ -70,7 +70,7 @@ jobs:
         pip install requests[security]
         pip install -r requirements.txt
         pip install -r dev-requirements.txt
-        pip install coverage==6.1.2
+        pip install coverage
         pip install coveralls
         coverage run manage.py setup --no-static
     - name: Run test ${{ matrix.test }}

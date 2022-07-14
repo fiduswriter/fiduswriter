@@ -65,6 +65,6 @@ class SendFeedbackTest(LiveTornadoTestCase, SeleniumHelper):
         )
         self.driver.find_element(By.ID, "close-feedback").click()
         self.driver.find_element(By.ID, "preferences-btn").click()
-        self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Log out"]'
+        self.driver.find_element(
+            By.XPATH, '//*[normalize-space()="Log out"]'
         ).click()

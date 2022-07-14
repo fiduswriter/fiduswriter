@@ -36,126 +36,148 @@ class UsermediaOverviewTest(LiveTornadoTestCase, SeleniumHelper):
     def test_overview(self):
         driver = self.driver
         driver.get(f"{self.base_url}/usermedia/")
-        driver.find_element_by_xpath(
+        driver.find_element(
+            By.XPATH,
             "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'All categories'])[1]/following::button[1]"
+            "'All categories'])[1]/following::button[1]",
         ).click()
-        driver.find_element_by_xpath(
+        driver.find_element(
+            By.XPATH,
             "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::input[1]"
+            "'Edit Categories'])[1]/following::input[1]",
         ).click()
-        driver.find_element_by_xpath(
+        driver.find_element(
+            By.XPATH,
             "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::input[1]"
+            "'Edit Categories'])[1]/following::input[1]",
         ).clear()
-        driver.find_element_by_xpath(
+        driver.find_element(
+            By.XPATH,
             "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::input[1]"
+            "'Edit Categories'])[1]/following::input[1]",
         ).send_keys("landscape")
-        driver.find_element_by_xpath(
+        driver.find_element(
+            By.XPATH,
             "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::span[3]"
+            "'Edit Categories'])[1]/following::span[3]",
         ).click()
-        driver.find_element_by_xpath(
+        driver.find_element(
+            By.XPATH,
             "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::input[2]"
+            "'Edit Categories'])[1]/following::input[2]",
         ).click()
-        driver.find_element_by_xpath(
+        driver.find_element(
+            By.XPATH,
             "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::input[2]"
+            "'Edit Categories'])[1]/following::input[2]",
         ).clear()
-        driver.find_element_by_xpath(
+        driver.find_element(
+            By.XPATH,
             "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::input[2]"
+            "'Edit Categories'])[1]/following::input[2]",
         ).send_keys("people")
-        driver.find_element_by_xpath(
+        driver.find_element(
+            By.XPATH,
             "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::span[4]"
+            "'Edit Categories'])[1]/following::span[4]",
         ).click()
-        driver.find_element_by_xpath(
+        driver.find_element(
+            By.XPATH,
             "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::input[3]"
+            "'Edit Categories'])[1]/following::input[3]",
         ).click()
-        driver.find_element_by_xpath(
+        driver.find_element(
+            By.XPATH,
             "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::input[3]"
+            "'Edit Categories'])[1]/following::input[3]",
         ).clear()
-        driver.find_element_by_xpath(
+        driver.find_element(
+            By.XPATH,
             "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::input[3]"
+            "'Edit Categories'])[1]/following::input[3]",
         ).send_keys("scientific")
-        driver.find_element_by_xpath(
+        driver.find_element(
+            By.XPATH,
             "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::button[2]"
+            "'Edit Categories'])[1]/following::button[2]",
         ).click()
         driver.refresh()
-        driver.find_element_by_xpath(
+        driver.find_element(
+            By.XPATH,
             "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'All categories'])[1]/following::button[1]"
+            "'All categories'])[1]/following::button[1]",
         ).click()
         self.assertEqual(
             "landscape",
-            driver.find_element_by_id("categoryTitle_1").get_attribute(
+            driver.find_element(By.ID, "categoryTitle_1").get_attribute(
                 "value"
             ),
         )
         self.assertEqual(
             "people",
-            driver.find_element_by_id("categoryTitle_2").get_attribute(
+            driver.find_element(By.ID, "categoryTitle_2").get_attribute(
                 "value"
             ),
         )
         self.assertEqual(
             "scientific",
-            driver.find_element_by_id("categoryTitle_3").get_attribute(
+            driver.find_element(By.ID, "categoryTitle_3").get_attribute(
                 "value"
             ),
         )
-        driver.find_element_by_xpath(
+        driver.find_element(
+            By.XPATH,
             "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Submit'])[1]/following::button[1]"
+            "'Submit'])[1]/following::button[1]",
         ).click()
-        driver.find_element_by_xpath(
+        driver.find_element(
+            By.XPATH,
             "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit categories'])[1]/following::button[1]"
+            "'Edit categories'])[1]/following::button[1]",
         ).click()
-        driver.find_element_by_name("title").click()
-        driver.find_element_by_name("title").send_keys("An image")
-        driver.find_element_by_xpath(
+        driver.find_element(By.NAME, "title").click()
+        driver.find_element(By.NAME, "title").send_keys("An image")
+        driver.find_element(
+            By.XPATH,
             "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Select categories'])[1]/following::label[1]"
+            "'Select categories'])[1]/following::label[1]",
         ).click()
-        driver.find_element_by_xpath(
+        driver.find_element(
+            By.XPATH,
             "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'landscape'])[1]/following::label[1]"
+            "'landscape'])[1]/following::label[1]",
         ).click()
-        driver.find_element_by_xpath(
+        driver.find_element(
+            By.XPATH,
             "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'people'])[1]/following::label[1]"
+            "'people'])[1]/following::label[1]",
         ).click()
         # image path
         imagePath = os.path.join(
             settings.PROJECT_PATH, "usermedia/tests/uploads/image.png"
         )
-        driver.find_element_by_name("image").send_keys(imagePath)
-        driver.find_element_by_xpath(
+        driver.find_element(By.NAME, "image").send_keys(imagePath)
+        driver.find_element(
+            By.XPATH,
             "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'scientific'])[1]/following::button[1]"
+            "'scientific'])[1]/following::button[1]",
         ).click()
         image_title = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "edit-image"))
         )
         self.assertEqual("An image", image_title.text)
-        search_input = driver.find_element_by_css_selector(
-            ".fw-overview-menu-item .fw-button input[type=text]"
+        search_input = driver.find_element(
+            By.CSS_SELECTOR,
+            ".fw-overview-menu-item .fw-button input[type=text]",
         )
         search_input.click()
         search_input.send_keys("fish")
         self.assertEqual(
             "No images found",
-            driver.find_element_by_xpath(
+            driver.find_element(
+                By.XPATH,
                 "(.//*[normalize-space(text()) and normalize-space(.)="
-                "'Size (px)'])[1]/following::td[1]"
+                "'Size (px)'])[1]/following::td[1]",
             ).text,
         )
         search_input.send_keys(Keys.BACKSPACE)
@@ -164,18 +186,21 @@ class UsermediaOverviewTest(LiveTornadoTestCase, SeleniumHelper):
         search_input.send_keys(Keys.BACKSPACE)
         self.assertEqual(
             "An image",
-            driver.find_element_by_xpath(
+            driver.find_element(
+                By.XPATH,
                 "(.//*[normalize-space(text()) and normalize-space(.)="
-                "'Size (px)'])[1]/following::span[3]"
+                "'Size (px)'])[1]/following::span[3]",
             ).text,
         )
-        driver.find_element_by_xpath(
+        driver.find_element(
+            By.XPATH,
             "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'PNG'])[1]/following::i[1]"
+            "'PNG'])[1]/following::i[1]",
         ).click()
-        driver.find_element_by_xpath(
+        driver.find_element(
+            By.XPATH,
             "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Confirm deletion'])[1]/following::button[2]"
+            "'Confirm deletion'])[1]/following::button[2]",
         ).click()
         image_placeholder = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "dataTables-empty"))

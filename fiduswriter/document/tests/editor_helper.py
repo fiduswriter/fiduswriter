@@ -46,7 +46,7 @@ class EditorHelper(SeleniumHelper):
 
     def add_title(self, driver):
         title = "My title"
-        self.driver.find_element_by_class_name("article-title").send_keys(
+        self.driver.find_element(By.CLASS_NAME, "article-title").send_keys(
             title
         )
 
@@ -87,10 +87,11 @@ class EditorHelper(SeleniumHelper):
         driver.execute_script(
             f"window.testCaret.setSelection({footnote_pos},{footnote_pos})"
         )
-        driver.find_element_by_xpath('//*[@title="Footnote"]').click()
+        driver.find_element(By.XPATH, '//*[@title="Footnote"]').click()
 
-        driver.find_element_by_xpath(
-            f'//*[@id="footnote-box-container"]/div[2]/div[{footnote_num}]'
+        driver.find_element(
+            By.XPATH,
+            f'//*[@id="footnote-box-container"]/div[2]/div[{footnote_num}]',
         ).send_keys(footnote_content)
 
-        driver.find_element_by_class_name("article-body").click()
+        driver.find_element(By.CLASS_NAME, "article-body").click()

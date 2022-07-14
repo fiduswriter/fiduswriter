@@ -127,8 +127,8 @@ class PathTest(LiveTornadoTestCase, SeleniumHelper):
             urlparse(self.driver.current_url).path,
             "/documents/Reports/2019/February/",
         )
-        documents = self.driver.find_elements_by_css_selector(
-            ".fw-contents tbody tr a.fw-data-table-title"
+        documents = self.driver.find_elements(
+            By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
         )
         self.assertEqual(len(documents), 2)
         self.assertEqual(documents[0].text, "..")
@@ -139,22 +139,22 @@ class PathTest(LiveTornadoTestCase, SeleniumHelper):
         self.assertEqual(
             urlparse(self.driver.current_url).path, "/documents/Reports/2019/"
         )
-        documents = self.driver.find_elements_by_css_selector(
-            ".fw-contents tbody tr a.fw-data-table-title"
+        documents = self.driver.find_elements(
+            By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
         )
         self.assertEqual(len(documents), 3)
         self.assertEqual(documents[0].text, "..")
         self.assertEqual(documents[1].text, "February")
         self.assertEqual(documents[2].text, "Report 23")
         # Move initial document via overview page
-        self.driver.find_element_by_css_selector(
-            "tr:nth-child(3) > td > label"
+        self.driver.find_element(
+            By.CSS_SELECTOR, "tr:nth-child(3) > td > label"
         ).click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, ".dt-bulk-dropdown"))
         ).click()
-        self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Move selected"]'
+        self.driver.find_element(
+            By.XPATH, '//*[normalize-space()="Move selected"]'
         ).click()
         time.sleep(1)
         self.assertEqual(
@@ -192,8 +192,8 @@ class PathTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         time.sleep(1)
         # Document should be gone as it is moved into the February subfolder
-        documents = self.driver.find_elements_by_css_selector(
-            ".fw-contents tbody tr a.fw-data-table-title"
+        documents = self.driver.find_elements(
+            By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
         )
         self.assertEqual(len(documents), 2)
         self.assertEqual(documents[0].text, "..")
@@ -201,25 +201,25 @@ class PathTest(LiveTornadoTestCase, SeleniumHelper):
         # We enter the February folder. There should be two files now
         documents[1].click()
         time.sleep(1)
-        documents = self.driver.find_elements_by_css_selector(
-            ".fw-contents tbody tr a.fw-data-table-title"
+        documents = self.driver.find_elements(
+            By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
         )
         self.assertEqual(len(documents), 3)
         self.assertEqual(documents[0].text, "..")
         self.assertEqual(documents[1].text, "Report 23")
         self.assertEqual(documents[2].text, "February Doc")
         # Move both docs to a new folder
-        self.driver.find_element_by_css_selector(
-            "tr:nth-child(2) > td > label"
+        self.driver.find_element(
+            By.CSS_SELECTOR, "tr:nth-child(2) > td > label"
         ).click()
-        self.driver.find_element_by_css_selector(
-            "tr:nth-child(3) > td > label"
+        self.driver.find_element(
+            By.CSS_SELECTOR, "tr:nth-child(3) > td > label"
         ).click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, ".dt-bulk-dropdown"))
         ).click()
-        self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Move selected"]'
+        self.driver.find_element(
+            By.XPATH, '//*[normalize-space()="Move selected"]'
         ).click()
         time.sleep(1)
         self.assertEqual(
@@ -228,8 +228,8 @@ class PathTest(LiveTornadoTestCase, SeleniumHelper):
             ).get_attribute("value"),
             "/Reports/2019/February/",
         )
-        self.driver.find_element_by_xpath(
-            '//*[normalize-space()="New folder"]'
+        self.driver.find_element(
+            By.XPATH, '//*[normalize-space()="New folder"]'
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, "#new-folder-name").click()
         self.driver.find_element(
@@ -255,53 +255,53 @@ class PathTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         time.sleep(1)
         # Documents should be gone as it is moved into the February subfolder
-        documents = self.driver.find_elements_by_css_selector(
-            ".fw-contents tbody tr a.fw-data-table-title"
+        documents = self.driver.find_elements(
+            By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
         )
         self.assertEqual(len(documents), 1)
         self.assertEqual(documents[0].text, "..")
         documents[0].click()
         # Confirm deletion
-        self.driver.find_element_by_css_selector(
-            "button.delete-folder"
+        self.driver.find_element(
+            By.CSS_SELECTOR, "button.delete-folder"
         ).click()
         time.sleep(1)
         # Also the 2019 folder should be empty
-        documents = self.driver.find_elements_by_css_selector(
-            ".fw-contents tbody tr a.fw-data-table-title"
+        documents = self.driver.find_elements(
+            By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
         )
         self.assertEqual(len(documents), 1)
         self.assertEqual(documents[0].text, "..")
         documents[0].click()
         # Confirm deletion
-        self.driver.find_element_by_css_selector(
-            "button.delete-folder"
+        self.driver.find_element(
+            By.CSS_SELECTOR, "button.delete-folder"
         ).click()
         time.sleep(1)
         # Also the Reports folder should be empty
-        documents = self.driver.find_elements_by_css_selector(
-            ".fw-contents tbody tr a.fw-data-table-title"
+        documents = self.driver.find_elements(
+            By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
         )
         self.assertEqual(len(documents), 1)
         self.assertEqual(documents[0].text, "..")
         documents[0].click()
         # Confirm deletion
-        self.driver.find_element_by_css_selector(
-            "button.delete-folder"
+        self.driver.find_element(
+            By.CSS_SELECTOR, "button.delete-folder"
         ).click()
         time.sleep(1)
         # There should be just one folder in the top folder.
         # The Reports folder should have been auto-deleted.
-        documents = self.driver.find_elements_by_css_selector(
-            ".fw-contents tbody tr a.fw-data-table-title"
+        documents = self.driver.find_elements(
+            By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
         )
         self.assertEqual(len(documents), 1)
         self.assertEqual(documents[0].text, "Documents")
         documents[0].click()
         time.sleep(1)
         # There should be two docs in the Documents folder
-        documents = self.driver.find_elements_by_css_selector(
-            ".fw-contents tbody tr a.fw-data-table-title"
+        documents = self.driver.find_elements(
+            By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
         )
         self.assertEqual(len(documents), 3)
         self.assertEqual(documents[1].text, "Report 23")

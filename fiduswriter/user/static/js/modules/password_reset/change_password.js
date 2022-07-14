@@ -16,7 +16,7 @@ export class PasswordResetChangePassword extends PreloginPage {
         </div>
         <div class="fw-login-right">
             <form>
-                <ul id="non_field_errors" class="errorlist"></ul>
+                <ul id="non-field-errors" class="errorlist"></ul>
                 <div class="input-wrapper">
                     <label for="id-password1">${gettext('Create a password')}</label>
                     <input type="password" name="password1" placeholder="${gettext('Password')}" required="" id="id-password1" autocomplete="new-password">
@@ -48,7 +48,7 @@ export class PasswordResetChangePassword extends PreloginPage {
 
         document.getElementById('change-password-submit').addEventListener('click', event => {
             event.preventDefault()
-            document.querySelector('#non_field_errors').innerHTML = ''
+            document.querySelector('#non-field-errors').innerHTML = ''
             document.querySelector('#id-password1-errors').innerHTML = ''
             document.querySelector('#id-password2-errors').innerHTML = ''
 
@@ -91,7 +91,7 @@ export class PasswordResetChangePassword extends PreloginPage {
                 response => response.json().then(
                     json => {
                         json.form.errors.forEach(
-                            error => document.querySelector("#non_field_errors").innerHTML += `<li>${escapeText(error)}</li>`
+                            error => document.querySelector("#non-field-errors").innerHTML += `<li>${escapeText(error)}</li>`
                         )
                         if (json.form.fields.password1) {
                             json.form.fields.password1.errors.forEach(

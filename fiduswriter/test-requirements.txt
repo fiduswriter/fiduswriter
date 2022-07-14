@@ -1,2 +1,2 @@
-chromedriver-binary
+webdriver-manager
 selenium==4.3.0

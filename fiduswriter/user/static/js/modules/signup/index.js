@@ -16,11 +16,11 @@ export class Signup extends PreloginPage {
             </div>
             <div class="fw-login-right">
                 <form>
-                    <ul id="non_field_errors" class="errorlist"></ul>
+                    <ul id="non-field-errors" class="errorlist"></ul>
                     <div class="input-wrapper">
-                        <label for="id_username">${gettext('Choose your username')}</label>
-                        <input type="text" name="username" placeholder="${gettext('Username')}" autofocus="autofocus" minlength="1" maxlength="150" required="" id="id_username" autocomplete="username">
-                        <ul id="id_username_errors" class="errorlist"></ul>
+                        <label for="id-username">${gettext('Choose your username')}</label>
+                        <input type="text" name="username" placeholder="${gettext('Username')}" autofocus="autofocus" minlength="1" maxlength="150" required="" id="id-username" autocomplete="username">
+                        <ul id="id-username-errors" class="errorlist"></ul>
                     </div>
                     <div class="input-wrapper">
                         <label for="id-password1">${gettext('Create a password')}</label>
@@ -33,9 +33,9 @@ export class Signup extends PreloginPage {
                         <ul id="id-password2-errors" class="errorlist"></ul>
                     </div>
                     <div class="input-wrapper">
-                        <label for="id_email">${gettext('E-mail address')}</label>
-                        <input type="email" name="email" placeholder="${gettext('E-mail address')}" required="" id="id_email" autocomplete="email">
-                        <ul id="id_email_errors" class="errorlist"></ul>
+                        <label for="id-email">${gettext('E-mail address')}</label>
+                        <input type="email" name="email" placeholder="${gettext('E-mail address')}" required="" id="id-email" autocomplete="email">
+                        <ul id="id-email-errors" class="errorlist"></ul>
                     </div>
                     <div class="submit-wrapper">
                         <button class="fw-button fw-dark fw-uppercase" id="signup-submit" type="submit">${gettext('Sign up')}</button>
@@ -64,15 +64,15 @@ export class Signup extends PreloginPage {
         signupSubmit.addEventListener('click', event => {
             event.preventDefault()
 
-            const nonFieldErrors = document.querySelector('#non_field_errors'),
-                idUsername = document.querySelector('#id_username'),
-                idUsernameErrors = document.querySelector('#id_username_errors'),
+            const nonFieldErrors = document.querySelector('#non-field-errors'),
+                idUsername = document.querySelector('#id-username'),
+                idUsernameErrors = document.querySelector('#id-username-errors'),
                 idPassword1 = document.querySelector('#id-password1'),
                 idPassword1Errors = document.querySelector('#id-password1-errors'),
                 idPassword2 = document.querySelector('#id-password2'),
                 idPassword2Errors = document.querySelector('#id-password2-errors'),
-                idEmail = document.querySelector('#id_email'),
-                idEmailErrors = document.querySelector('#id_email_errors'),
+                idEmail = document.querySelector('#id-email'),
+                idEmailErrors = document.querySelector('#id-email-errors'),
                 fwContents = document.querySelector('.fw-contents')
 
             if (

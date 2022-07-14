@@ -58,7 +58,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.get(self.base_admin_url)
         username = self.driver.find_element(By.ID, "id_username")
         username.send_keys("Admin")
-        self.driver.find_element(By.ID, "id-password").send_keys("password")
+        self.driver.find_element(By.ID, "id_password").send_keys("password")
         self.driver.find_element(By.CSS_SELECTOR, "input[type=submit]").click()
         time.sleep(2)
         self.driver.find_element(
@@ -68,7 +68,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         self.assertEqual(
             1,
             len(
-                self.driver.find_elements_by_css_selector("#update[disabled]")
+                self.driver.find_elements(By.CSS_SELECTOR, "#update[disabled]")
             ),
         )
 
@@ -76,14 +76,14 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.get(self.base_admin_url)
         username = self.driver.find_element(By.ID, "id_username")
         username.send_keys("Admin")
-        self.driver.find_element(By.ID, "id-password").send_keys("password")
+        self.driver.find_element(By.ID, "id_password").send_keys("password")
         self.driver.find_element(By.CSS_SELECTOR, "input[type=submit]").click()
         time.sleep(2)
         self.driver.find_element(
             By.CSS_SELECTOR, "a[href='/admin/document/documenttemplate/']"
         ).click()
-        template_links = self.driver.find_elements_by_css_selector(
-            "#result_list tbody a"
+        template_links = self.driver.find_elements(
+            By.CSS_SELECTOR, "#result_list tbody a"
         )
         self.assertEqual(1, len(template_links))
         self.driver.find_element(
@@ -98,8 +98,8 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(
             By.CSS_SELECTOR, "button[type=submit]"
         ).click()
-        template_links = self.driver.find_elements_by_css_selector(
-            "#result_list tbody a"
+        template_links = self.driver.find_elements(
+            By.CSS_SELECTOR, "#result_list tbody a"
         )
         self.assertEqual(2, len(template_links))
         self.driver.find_element(By.CSS_SELECTOR, ".field-title a").click()
@@ -226,7 +226,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         assert os.path.isfile(os.path.join(self.download_dir, et_file))
         # Delete export template
         old_len_export_templates = len(
-            self.driver.find_elements_by_css_selector(".export-template")
+            self.driver.find_elements(By.CSS_SELECTOR, ".export-template")
         )
         self.driver.find_element(
             By.CSS_SELECTOR,
@@ -238,7 +238,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         time.sleep(1)
         len_export_templates = len(
-            self.driver.find_elements_by_css_selector(".export-template")
+            self.driver.find_elements(By.CSS_SELECTOR, ".export-template")
         )
         self.assertEqual(old_len_export_templates - 1, len_export_templates)
         old_len_export_templates = len_export_templates
@@ -257,7 +257,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         time.sleep(1)
         len_export_templates = len(
-            self.driver.find_elements_by_css_selector(".export-template")
+            self.driver.find_elements(By.CSS_SELECTOR, ".export-template")
         )
         self.assertEqual(old_len_export_templates + 1, len_export_templates)
         os.remove(os.path.join(self.download_dir, et_file))
@@ -276,7 +276,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.get(self.base_url)
         # Logging in as User 1
         self.driver.find_element(By.ID, "id_login").send_keys("User1")
-        self.driver.find_element(By.ID, "id-password").send_keys("password")
+        self.driver.find_element(By.ID, "id_password").send_keys("password")
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable(
@@ -322,8 +322,8 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
                 (By.CSS_SELECTOR, ".collaborator-tr .fa-caret-down")
             )
         ).click()
-        self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Write"]'
+        self.driver.find_element(
+            By.XPATH, '//*[normalize-space()="Write"]'
         ).click()
         self.driver.find_element(
             By.CSS_SELECTOR, ".ui-dialog .fw-dark"
@@ -332,22 +332,22 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.ID, "preferences-btn"))
         ).click()
-        self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Log out"]'
+        self.driver.find_element(
+            By.XPATH, '//*[normalize-space()="Log out"]'
         ).click()
         # Login as User2
         self.driver.find_element(By.ID, "id_login").send_keys("User2")
-        self.driver.find_element(By.ID, "id-password").send_keys("password")
+        self.driver.find_element(By.ID, "id_password").send_keys("password")
         self.driver.find_element(By.ID, "login-submit").click()
-        self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Go to contacts"]'
+        self.driver.find_element(
+            By.XPATH, '//*[normalize-space()="Go to contacts"]'
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, ".respond-invite").click()
-        self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Accept invite"]'
+        self.driver.find_element(
+            By.XPATH, '//*[normalize-space()="Accept invite"]'
         ).click()
-        self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Documents"]'
+        self.driver.find_element(
+            By.XPATH, '//*[normalize-space()="Documents"]'
         ).click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable(
@@ -428,8 +428,8 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         # The text should still be the same, but there should be no
         # instruction boxes in this template.
         self.assertEqual(body_text, "Initial text")
-        instruction_boxes = self.driver.find_elements_by_css_selector(
-            ".margin-box.help"
+        instruction_boxes = self.driver.find_elements(
+            By.CSS_SELECTOR, ".margin-box.help"
         )
         self.assertEqual(0, len(instruction_boxes))
 
@@ -437,15 +437,15 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.get(self.base_admin_url)
         username = self.driver.find_element(By.ID, "id_username")
         username.send_keys("Admin")
-        self.driver.find_element(By.ID, "id-password").send_keys("password")
+        self.driver.find_element(By.ID, "id_password").send_keys("password")
         self.driver.find_element(By.CSS_SELECTOR, "input[type=submit]").click()
         time.sleep(2)
         self.driver.find_element(
             By.CSS_SELECTOR, "a[href='/admin/document/documenttemplate/']"
         ).click()
         # Download template
-        template_links = self.driver.find_elements_by_css_selector(
-            "#result_list tbody a"
+        template_links = self.driver.find_elements(
+            By.CSS_SELECTOR, "#result_list tbody a"
         )
         self.assertEqual(1, len(template_links))
         self.driver.find_element(
@@ -475,15 +475,15 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
             )
         )
         # Upload template again
-        self.driver.find_element_by_css_selector("#upload-template").click()
+        self.driver.find_element(By.CSS_SELECTOR, "#upload-template").click()
         time.sleep(1)
-        self.driver.find_element_by_css_selector(
-            "#fidus-template-uploader"
+        self.driver.find_element(
+            By.CSS_SELECTOR, "#fidus-template-uploader"
         ).send_keys(path)
         # Check whether there now are two templates
         time.sleep(1)
-        template_links = self.driver.find_elements_by_css_selector(
-            "#result_list tbody a"
+        template_links = self.driver.find_elements(
+            By.CSS_SELECTOR, "#result_list tbody a"
         )
         self.assertEqual(2, len(template_links))
         # Delete file

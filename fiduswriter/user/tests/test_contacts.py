@@ -83,60 +83,60 @@ class ContactsTest(LiveTornadoTestCase, SeleniumHelper):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.ID, "preferences-btn"))
         ).click()
-        self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Contacts"]'
+        self.driver.find_element(
+            By.XPATH, '//*[normalize-space()="Contacts"]'
         ).click()
         self.assertEqual(
             len(
-                self.driver.find_elements_by_css_selector(
-                    ".contacts-table .entry-select"
+                self.driver.find_elements(
+                    By.CSS_SELECTOR, ".contacts-table .entry-select"
                 )
             ),
             1,
         )
-        self.driver.find_element_by_css_selector(
-            "button[title='Invite contact']"
+        self.driver.find_element(
+            By.CSS_SELECTOR, "button[title='Invite contact']"
         ).click()
-        self.driver.find_element_by_id("new-contact-user-string").send_keys(
+        self.driver.find_element(By.ID, "new-contact-user-string").send_keys(
             "contact2@snowman.com"
         )
-        self.driver.find_element_by_css_selector("button.fw-dark").click()
+        self.driver.find_element(By.CSS_SELECTOR, "button.fw-dark").click()
         time.sleep(1)
         self.assertEqual(
             len(
-                self.driver.find_elements_by_css_selector(
-                    ".contacts-table .entry-select"
+                self.driver.find_elements(
+                    By.CSS_SELECTOR, ".contacts-table .entry-select"
                 )
             ),
             2,
         )
         # Delete individual
-        self.driver.find_element_by_css_selector(
-            ".delete-single-contact"
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".delete-single-contact"
         ).click()
-        self.driver.find_element_by_css_selector("button.fw-dark").click()
+        self.driver.find_element(By.CSS_SELECTOR, "button.fw-dark").click()
         time.sleep(1)
         self.assertEqual(
             len(
-                self.driver.find_elements_by_css_selector(
-                    ".contacts-table .entry-select"
+                self.driver.find_elements(
+                    By.CSS_SELECTOR, ".contacts-table .entry-select"
                 )
             ),
             1,
         )
-        self.driver.find_element_by_css_selector(
-            ".contacts-table td:nth-child(1) > label"
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".contacts-table td:nth-child(1) > label"
         ).click()
-        self.driver.find_element_by_css_selector(".dt-bulk-dropdown").click()
-        self.driver.find_element_by_css_selector(
-            "li[title='Delete selected contacts.']"
+        self.driver.find_element(By.CSS_SELECTOR, ".dt-bulk-dropdown").click()
+        self.driver.find_element(
+            By.CSS_SELECTOR, "li[title='Delete selected contacts.']"
         ).click()
-        self.driver.find_element_by_css_selector("button.fw-dark").click()
+        self.driver.find_element(By.CSS_SELECTOR, "button.fw-dark").click()
         time.sleep(1)
         self.assertEqual(
             len(
-                self.driver.find_elements_by_css_selector(
-                    ".contacts-table .entry-select"
+                self.driver.find_elements(
+                    By.CSS_SELECTOR, ".contacts-table .entry-select"
                 )
             ),
             0,

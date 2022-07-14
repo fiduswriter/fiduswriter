@@ -41,50 +41,50 @@ class UserTemplateManagerTest(LiveTornadoTestCase, SeleniumHelper):
     def test_template_export_import(self):
         driver = self.driver
         driver.get(f"{self.base_url}/templates/")
-        templates = self.driver.find_elements_by_css_selector(
-            ".fw-contents tbody tr .far.fa-file"
+        templates = self.driver.find_elements(
+            By.CSS_SELECTOR, ".fw-contents tbody tr .far.fa-file"
         )
         self.assertEqual(len(templates), 1)
-        editable_templates = self.driver.find_elements_by_css_selector(
-            ".fw-contents tbody tr .fw-data-table-title a"
+        editable_templates = self.driver.find_elements(
+            By.CSS_SELECTOR, ".fw-contents tbody tr .fw-data-table-title a"
         )
         self.assertEqual(len(editable_templates), 0)
-        self.driver.find_element_by_css_selector(".entry-select").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".entry-select").click()
         # Try to delete the default template - should fail
-        self.driver.find_element_by_css_selector(".dt-bulk-dropdown").click()
-        self.driver.find_element_by_css_selector(
-            'li.content-menu-item[data-index="0"]'
+        self.driver.find_element(By.CSS_SELECTOR, ".dt-bulk-dropdown").click()
+        self.driver.find_element(
+            By.CSS_SELECTOR, 'li.content-menu-item[data-index="0"]'
         ).click()
         alert_element = WebDriverWait(self.driver, self.wait_time).until(
             EC.visibility_of_element_located((By.CLASS_NAME, "alerts-error"))
         )
         self.assertEqual(alert_element.is_displayed(), True)
         # Duplicate default template
-        self.driver.find_element_by_css_selector(".dt-bulk-dropdown").click()
-        self.driver.find_element_by_css_selector(
-            'li.content-menu-item[data-index="1"]'
+        self.driver.find_element(By.CSS_SELECTOR, ".dt-bulk-dropdown").click()
+        self.driver.find_element(
+            By.CSS_SELECTOR, 'li.content-menu-item[data-index="1"]'
         ).click()
         time.sleep(1)
-        editable_templates = self.driver.find_elements_by_css_selector(
-            ".fw-contents tbody tr .fw-data-table-title a"
+        editable_templates = self.driver.find_elements(
+            By.CSS_SELECTOR, ".fw-contents tbody tr .fw-data-table-title a"
         )
         self.assertEqual(len(editable_templates), 1)
         # Enter copied template and modify title
         editable_templates[0].click()
-        title_field = self.driver.find_element_by_css_selector("input.title")
+        title_field = self.driver.find_element(By.CSS_SELECTOR, "input.title")
         title_field.send_keys(" COPY")
-        import_id_field = self.driver.find_element_by_css_selector(
-            "input.import-id"
+        import_id_field = self.driver.find_element(
+            By.CSS_SELECTOR, "input.import-id"
         )
         import_id_field.send_keys("-1")
-        self.driver.find_element_by_css_selector("button.save").click()
+        self.driver.find_element(By.CSS_SELECTOR, "button.save").click()
         alert_element = WebDriverWait(self.driver, self.wait_time).until(
             EC.visibility_of_element_located((By.CLASS_NAME, "alerts-info"))
         )
         self.assertEqual(alert_element.is_displayed(), True)
         self.driver.refresh()
         # Download the file
-        self.driver.find_element_by_css_selector("button.download").click()
+        self.driver.find_element(By.CSS_SELECTOR, "button.download").click()
         alert_element = WebDriverWait(self.driver, self.wait_time).until(
             EC.visibility_of_element_located((By.CLASS_NAME, "alerts-info"))
         )
@@ -96,7 +96,7 @@ class UserTemplateManagerTest(LiveTornadoTestCase, SeleniumHelper):
         self.wait_until_file_exists(file_path, self.wait_time)
         assert os.path.isfile(file_path)
         self.driver.refresh()
-        self.driver.find_element_by_css_selector("button.close").click()
+        self.driver.find_element(By.CSS_SELECTOR, "button.close").click()
         time.sleep(1)
         upload_button = WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
@@ -107,34 +107,34 @@ class UserTemplateManagerTest(LiveTornadoTestCase, SeleniumHelper):
             )
         )
         upload_button.click()
-        self.driver.find_element_by_css_selector(
-            "#fidus-template-uploader"
+        self.driver.find_element(
+            By.CSS_SELECTOR, "#fidus-template-uploader"
         ).send_keys(file_path)
-        self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Import"]'
+        self.driver.find_element(
+            By.XPATH, '//*[normalize-space()="Import"]'
         ).click()
         time.sleep(1)
-        editable_templates = self.driver.find_elements_by_css_selector(
-            ".fw-contents tbody tr .fw-data-table-title a"
+        editable_templates = self.driver.find_elements(
+            By.CSS_SELECTOR, ".fw-contents tbody tr .fw-data-table-title a"
         )
         self.assertEqual(len(editable_templates), 2)
         os.remove(file_path)
         editable_templates[1].click()
-        export_template_buttons = self.driver.find_elements_by_css_selector(
-            ".export-templates button"
+        export_template_buttons = self.driver.find_elements(
+            By.CSS_SELECTOR, ".export-templates button"
         )
         self.assertEqual(len(export_template_buttons), 3)
-        self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Close"]'
+        self.driver.find_element(
+            By.XPATH, '//*[normalize-space()="Close"]'
         ).click()
         # Create file based on copied template
-        self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Documents"]'
+        self.driver.find_element(
+            By.XPATH, '//*[normalize-space()="Documents"]'
         ).click()
-        self.driver.find_element_by_css_selector(
-            "li.new_document .dropdown"
+        self.driver.find_element(
+            By.CSS_SELECTOR, "li.new_document .dropdown"
         ).click()
-        self.driver.find_elements_by_css_selector(".fw-pulldown-item")[
+        self.driver.find_elements(By.CSS_SELECTOR, ".fw-pulldown-item")[
             1
         ].click()
         WebDriverWait(self.driver, self.wait_time).until(
@@ -149,8 +149,8 @@ class UserTemplateManagerTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(
             By.CSS_SELECTOR, '.header-nav-item[title="File handling"]'
         ).click()
-        self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Download"]'
+        self.driver.find_element(
+            By.XPATH, '//*[normalize-space()="Download"]'
         ).click()
         path = os.path.join(self.download_dir, "article.fidus")
         self.wait_until_file_exists(path, self.wait_time)
@@ -162,8 +162,8 @@ class UserTemplateManagerTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR,
             '.header-nav-item[title="Export of the document contents"]',
         ).click()
-        self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Slim FIDUS"]'
+        self.driver.find_element(
+            By.XPATH, '//*[normalize-space()="Slim FIDUS"]'
         ).click()
         self.wait_until_file_exists(path, self.wait_time)
         assert os.path.isfile(path)
@@ -175,111 +175,111 @@ class UserTemplateManagerTest(LiveTornadoTestCase, SeleniumHelper):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, ".delete-document"))
         ).click()
-        self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Delete"]'
+        self.driver.find_element(
+            By.XPATH, '//*[normalize-space()="Delete"]'
         ).click()
         alert_element = WebDriverWait(self.driver, self.wait_time).until(
             EC.visibility_of_element_located((By.CLASS_NAME, "alerts-success"))
         )
         self.assertEqual(alert_element.is_displayed(), True)
         # Delete templates
-        self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Templates"]'
+        self.driver.find_element(
+            By.XPATH, '//*[normalize-space()="Templates"]'
         ).click()
         self.driver.find_element(
             By.CSS_SELECTOR, ".delete-doc-template"
         ).click()
-        self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Delete"]'
+        self.driver.find_element(
+            By.XPATH, '//*[normalize-space()="Delete"]'
         ).click()
         time.sleep(1)
         self.driver.find_element(
             By.CSS_SELECTOR, ".delete-doc-template"
         ).click()
-        self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Delete"]'
+        self.driver.find_element(
+            By.XPATH, '//*[normalize-space()="Delete"]'
         ).click()
         time.sleep(1)
         # Import slim document
-        self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Documents"]'
+        self.driver.find_element(
+            By.XPATH, '//*[normalize-space()="Documents"]'
         ).click()
-        self.driver.find_element_by_css_selector(
-            "button[title='Upload FIDUS document']"
+        self.driver.find_element(
+            By.CSS_SELECTOR, "button[title='Upload FIDUS document']"
         ).click()
-        self.driver.find_element_by_css_selector("#fidus-uploader").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, "#fidus-uploader").send_keys(
             slim_file_path
         )
-        self.driver.find_element_by_css_selector(".fw-dark").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".fw-dark").click()
         # Delete document
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, ".delete-document"))
         ).click()
-        self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Delete"]'
+        self.driver.find_element(
+            By.XPATH, '//*[normalize-space()="Delete"]'
         ).click()
         alert_element = WebDriverWait(self.driver, self.wait_time).until(
             EC.visibility_of_element_located((By.CLASS_NAME, "alerts-success"))
         )
         self.assertEqual(alert_element.is_displayed(), True)
         # Check that document template has no export templates
-        self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Templates"]'
+        self.driver.find_element(
+            By.XPATH, '//*[normalize-space()="Templates"]'
         ).click()
-        self.driver.find_element_by_css_selector(
-            ".fw-data-table-title"
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".fw-data-table-title"
         ).click()
-        export_template_buttons = self.driver.find_elements_by_css_selector(
-            ".export-templates button"
+        export_template_buttons = self.driver.find_elements(
+            By.CSS_SELECTOR, ".export-templates button"
         )
         self.assertEqual(len(export_template_buttons), 1)
-        self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Close"]'
+        self.driver.find_element(
+            By.XPATH, '//*[normalize-space()="Close"]'
         ).click()
         # Delete template
         self.driver.find_element(
             By.CSS_SELECTOR, ".delete-doc-template"
         ).click()
-        self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Delete"]'
+        self.driver.find_element(
+            By.XPATH, '//*[normalize-space()="Delete"]'
         ).click()
         # Import fat file
-        self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Documents"]'
+        self.driver.find_element(
+            By.XPATH, '//*[normalize-space()="Documents"]'
         ).click()
-        self.driver.find_element_by_css_selector(
-            "button[title='Upload FIDUS document']"
+        self.driver.find_element(
+            By.CSS_SELECTOR, "button[title='Upload FIDUS document']"
         ).click()
-        self.driver.find_element_by_css_selector("#fidus-uploader").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, "#fidus-uploader").send_keys(
             fat_file_path
         )
-        self.driver.find_element_by_css_selector(".fw-dark").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".fw-dark").click()
         # Import slim file
-        self.driver.find_element_by_css_selector(
-            "button[title='Upload FIDUS document']"
+        self.driver.find_element(
+            By.CSS_SELECTOR, "button[title='Upload FIDUS document']"
         ).click()
-        self.driver.find_element_by_css_selector("#fidus-uploader").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, "#fidus-uploader").send_keys(
             slim_file_path
         )
-        self.driver.find_element_by_css_selector(".fw-dark").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".fw-dark").click()
         time.sleep(1)
         # Check number of documents
-        delete_links = self.driver.find_elements_by_css_selector(
-            ".delete-document"
+        delete_links = self.driver.find_elements(
+            By.CSS_SELECTOR, ".delete-document"
         )
         self.assertEqual(len(delete_links), 2)
         # Check number of templates
-        self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Templates"]'
+        self.driver.find_element(
+            By.XPATH, '//*[normalize-space()="Templates"]'
         ).click()
-        template_links = self.driver.find_elements_by_css_selector(
-            ".fw-data-table-title a"
+        template_links = self.driver.find_elements(
+            By.CSS_SELECTOR, ".fw-data-table-title a"
         )
         self.assertEqual(len(template_links), 1)
         # Check export templates in template
         template_links[0].click()
-        export_template_buttons = self.driver.find_elements_by_css_selector(
-            ".export-templates button"
+        export_template_buttons = self.driver.find_elements(
+            By.CSS_SELECTOR, ".export-templates button"
         )
         self.assertEqual(len(export_template_buttons), 3)
         os.remove(slim_file_path)

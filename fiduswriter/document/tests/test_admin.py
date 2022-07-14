@@ -275,8 +275,8 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         self.driver.get(self.base_url)
         # Logging in as User 1
-        self.driver.find_element(By.ID, "id_login").send_keys("User1")
-        self.driver.find_element(By.ID, "id_password").send_keys("password")
+        self.driver.find_element(By.ID, "id-login").send_keys("User1")
+        self.driver.find_element(By.ID, "id-password").send_keys("password")
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable(
@@ -336,8 +336,8 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
             By.XPATH, '//*[normalize-space()="Log out"]'
         ).click()
         # Login as User2
-        self.driver.find_element(By.ID, "id_login").send_keys("User2")
-        self.driver.find_element(By.ID, "id_password").send_keys("password")
+        self.driver.find_element(By.ID, "id-login").send_keys("User2")
+        self.driver.find_element(By.ID, "id-password").send_keys("password")
         self.driver.find_element(By.ID, "login-submit").click()
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Go to contacts"]'

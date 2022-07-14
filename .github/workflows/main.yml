@@ -24,7 +24,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
       - name: Set up Python
         uses: actions/setup-python@v1
         with:
@@ -38,7 +38,6 @@ jobs:
       - name: Run linters
         run: |
           cd fiduswriter
-          unset NODE_OPTIONS
           ./manage.py lint
   test:
     runs-on: ubuntu-latest
@@ -67,7 +66,7 @@ jobs:
     - name: Set up Node
       uses: actions/setup-node@v3
       with:
-        node-version: 16
+        node-version: 18
     - uses: actions/checkout@v2
     - uses: nanasess/setup-chromedriver@master
     - name: Install dependencies

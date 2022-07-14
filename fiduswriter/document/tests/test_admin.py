@@ -291,6 +291,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
                 "span"
             ),
         ).click()
+        time.sleep(1)
         body_text = (
             WebDriverWait(self.driver, self.wait_time)
             .until(

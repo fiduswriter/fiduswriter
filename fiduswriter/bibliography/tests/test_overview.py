@@ -166,7 +166,7 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
         date_field = driver.find_element(By.CSS_SELECTOR, "input.date")
         date_field.click()
         date_field.send_keys("1984")
-        driver.find_element_by_link_text("Categories").click()
+        driver.find_element(By.LINK_TEXT, "Categories").click()
         driver.find_element(
             By.XPATH,
             "(.//*[normalize-space(text()) and normalize-space(.)="

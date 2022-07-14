@@ -17,11 +17,11 @@ module.exports = { // eslint-disable-line no-undef
             }
         ],
         'selector-class-pattern': [
-			'^(([a-z][a-z0-9]*)(-[a-z0-9]+)*)|(ProseMirror(-[a-z0-9]+)*)$',
-			{
-				message:
+            '^(([a-z][a-z0-9]*)(-[a-z0-9]+)*)|(ProseMirror(-[a-z0-9]+)*)$',
+            {
+                message:
 					'Selector should use lowercase and separate words with hyphens (selector-class-pattern)',
-			},
-		],
+            },
+        ],
     }
 }

@@ -77,7 +77,7 @@ jobs:
         mv ../ci/configuration.py ./
         pip install requests[security]
         pip install -r requirements.txt
-        pip install -r dev-requirements.txt
+        pip install -r test-requirements.txt
         pip install coverage
         pip install coveralls
         coverage run manage.py setup --no-static

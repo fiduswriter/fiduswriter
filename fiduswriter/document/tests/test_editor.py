@@ -48,7 +48,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
 
     def test_crossrefs_and_internal_links(self):
         self.driver.get(self.base_url)
-        self.driver.find_element(By.ID, "id_login").send_keys("Yeti")
+        self.driver.find_element(By.ID, "id-login").send_keys("Yeti")
         self.driver.find_element(By.ID, "id-password").send_keys("otter")
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(
@@ -396,7 +396,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
 
     def test_track_changes(self):
         self.driver.get(self.base_url)
-        self.driver.find_element(By.ID, "id_login").send_keys("Yeti")
+        self.driver.find_element(By.ID, "id-login").send_keys("Yeti")
         self.driver.find_element(By.ID, "id-password").send_keys("otter")
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(
@@ -503,7 +503,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             username="Yeti2", email="yeti2@snowman.com", passtext="otter"
         )
         self.driver.get(self.base_url)
-        self.driver.find_element(By.ID, "id_login").send_keys("Yeti")
+        self.driver.find_element(By.ID, "id-login").send_keys("Yeti")
         self.driver.find_element(By.ID, "id-password").send_keys("otter")
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(
@@ -640,7 +640,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.XPATH, '//*[normalize-space()="Log out"]'
         ).click()
         # Second user logs in, verifies that he has access
-        self.driver.find_element(By.ID, "id_login").send_keys("Yeti2")
+        self.driver.find_element(By.ID, "id-login").send_keys("Yeti2")
         self.driver.find_element(By.ID, "id-password").send_keys("otter")
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(
@@ -687,7 +687,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.XPATH, '//*[normalize-space()="Log out"]'
         ).click()
         # First user logs in again, removes access rights of second user
-        self.driver.find_element(By.ID, "id_login").send_keys("Yeti")
+        self.driver.find_element(By.ID, "id-login").send_keys("Yeti")
         self.driver.find_element(By.ID, "id-password").send_keys("otter")
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(
@@ -724,7 +724,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.XPATH, '//*[normalize-space()="Log out"]'
         ).click()
         # Second user logs in again to verify that access rights are gone
-        self.driver.find_element(By.ID, "id_login").send_keys("Yeti2")
+        self.driver.find_element(By.ID, "id-login").send_keys("Yeti2")
         self.driver.find_element(By.ID, "id-password").send_keys("otter")
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(
@@ -776,7 +776,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             )
         )
         self.driver.find_element(By.CSS_SELECTOR, 'a[href="/"]').click()
-        self.driver.find_element(By.ID, "id_login").send_keys("Yeti3")
+        self.driver.find_element(By.ID, "id-login").send_keys("Yeti3")
         self.driver.find_element(By.ID, "id-password").send_keys("password")
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(
@@ -965,7 +965,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             )
         )
         self.driver.find_element(By.CSS_SELECTOR, 'a[href="/"]').click()
-        self.driver.find_element(By.ID, "id_login").send_keys("Yeti4")
+        self.driver.find_element(By.ID, "id-login").send_keys("Yeti4")
         self.driver.find_element(By.ID, "id-password").send_keys("password")
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(
@@ -998,7 +998,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         self.create_user(
             username="Yeti5", email="yeti5a@snowman.com", passtext="password"
         )
-        self.driver.find_element(By.ID, "id_login").send_keys("Yeti5")
+        self.driver.find_element(By.ID, "id-login").send_keys("Yeti5")
         self.driver.find_element(By.ID, "id-password").send_keys("password")
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(
@@ -1037,7 +1037,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         self.create_user(
             username="Yeti6", email="yeti6a@snowman.com", passtext="password"
         )
-        self.driver.find_element(By.ID, "id_login").send_keys("Yeti6")
+        self.driver.find_element(By.ID, "id-login").send_keys("Yeti6")
         self.driver.find_element(By.ID, "id-password").send_keys("password")
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(
@@ -1073,7 +1073,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         # User 3 signs in and accepts the invite of user 7. Access rights
         # should be upgraded to write access.
-        self.driver.find_element(By.ID, "id_login").send_keys("Yeti3")
+        self.driver.find_element(By.ID, "id-login").send_keys("Yeti3")
         self.driver.find_element(By.ID, "id-password").send_keys("password")
         self.driver.find_element(By.ID, "login-submit").click()
         time.sleep(1)
@@ -1133,7 +1133,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.XPATH, '//*[normalize-space()="Log out"]'
         ).click()
         # Log in as document owner and downgrade access right of user 3.
-        self.driver.find_element(By.ID, "id_login").send_keys("Yeti")
+        self.driver.find_element(By.ID, "id-login").send_keys("Yeti")
         self.driver.find_element(By.ID, "id-password").send_keys("otter")
         self.driver.find_element(By.ID, "login-submit").click()
         time.sleep(1)
@@ -1193,7 +1193,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Log out"]'
         ).click()
-        self.driver.find_element(By.ID, "id_login").send_keys("Yeti3")
+        self.driver.find_element(By.ID, "id-login").send_keys("Yeti3")
         self.driver.find_element(By.ID, "id-password").send_keys("password")
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(
@@ -1213,7 +1213,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Log out"]'
         ).click()
-        self.driver.find_element(By.ID, "id_login").send_keys("Yeti4")
+        self.driver.find_element(By.ID, "id-login").send_keys("Yeti4")
         self.driver.find_element(By.ID, "id-password").send_keys("password")
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(

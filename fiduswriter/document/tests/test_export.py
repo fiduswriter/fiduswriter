@@ -50,7 +50,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
 
     def test_export(self):
         self.driver.get(self.base_url)
-        self.driver.find_element(By.ID, "id_login").send_keys("Yeti")
+        self.driver.find_element(By.ID, "id-login").send_keys("Yeti")
         self.driver.find_element(By.ID, "id-password").send_keys("otter")
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(

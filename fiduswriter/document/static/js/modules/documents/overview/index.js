@@ -311,7 +311,7 @@ export class DocumentOverview {
             pathParts.pop()
             pathParts.pop()
             const parentPath = pathParts.join('/') + '/'
-            const href = parentPath === "/" ? parentPath : `/documents${encodeURI(parentPath)}`
+            const href = parentPath === "/" && this.app.routes[""].app === "document" ? parentPath : `/documents${encodeURI(parentPath)}`
             fileList.unshift([
                 '-1',
                 'top',

@@ -42,7 +42,7 @@ class PathTest(LiveTornadoTestCase, SeleniumHelper):
 
     def test_move_document(self):
         self.driver.get(self.base_url)
-        self.driver.find_element(By.ID, "id_login").send_keys("Yeti")
+        self.driver.find_element(By.ID, "id-login").send_keys("Yeti")
         self.driver.find_element(By.ID, "id-password").send_keys("otter")
         self.driver.find_element(By.ID, "login-submit").click()
         # Enter editor

@@ -77,26 +77,26 @@ export class FeedbackTab {
 
     openFeedback() {
         const messageEl = document.querySelector("textarea#message"),
-            close-feedbackEl = document.querySelector('#close-feedback'),
+            closeFeedbackEl = document.querySelector('#close-feedback'),
             feedbackFormEl = document.querySelector('#feedback-form'),
             responseEl = document.querySelector('#response-message')
         if (!messageEl.value.length) {
             return
         }
 
-        close-feedbackEl.style.display = 'none'
+        closeFeedbackEl.style.display = 'none'
         feedbackFormEl.style.visibility = 'hidden'
 
         post('/api/feedback/feedback/', {message: messageEl.value}).then(
             () => {
                 messageEl.value = ''
-                close-feedbackEl.style.display = 'block'
+                closeFeedbackEl.style.display = 'block'
                 responseEl.style.display = 'block'
             }
         ).catch(
             (_error) => {
                 messageEl.value = ''
-                close-feedbackEl.style.display = 'block'
+                closeFeedbackEl.style.display = 'block'
             }
         )
         return false

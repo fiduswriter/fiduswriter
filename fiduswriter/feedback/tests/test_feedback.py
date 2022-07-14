@@ -44,7 +44,7 @@ class SendFeedbackTest(LiveTornadoTestCase, SeleniumHelper):
             == "Thank you for your report!"
         )
         self.driver.find_element(By.ID, "close-feedback").click()
-        self.driver.find_element(By.ID, "id_login").send_keys("Yeti")
+        self.driver.find_element(By.ID, "id-login").send_keys("Yeti")
         self.driver.find_element(By.ID, "id-password").send_keys("otter1")
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(

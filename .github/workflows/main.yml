@@ -24,7 +24,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v1
         with:
-          python-version: 3.10
+          python-version: "3.10"
       - name: Install Python dependencies
         run: |
           cd fiduswriter
@@ -58,7 +58,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v1
       with:
-        python-version: 3.10
+        python-version: "3.10"
     - uses: actions/checkout@v2
     - uses: nanasess/setup-chromedriver@master
     - name: Install dependencies

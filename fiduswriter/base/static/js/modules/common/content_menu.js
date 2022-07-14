@@ -1,9 +1,9 @@
 
 const menuTemplate = ({id, classes, height, width, zIndex, menu, scroll, page}) =>
     `<div tabindex="-1" role="incontent_menu"
-        class="ui-content_menu ui-corner-all ui-widget ui-widget-content ui-front"
+        class="ui-content-menu ui-corner-all ui-widget ui-widget-content ui-front"
         ${id ? `aria-describedby="${id}"` : ''} style="z-index: ${zIndex};">
-    <div ${id ? `id="${id}"` : ''} class="ui-content_menu-content ui-widget-content${classes ? ` ${classes}` : ''}${scroll ? ` ui-scrollable` : ''}" style="width: ${width}; height: ${height};">
+    <div ${id ? `id="${id}"` : ''} class="ui-content-menu-content ui-widget-content${classes ? ` ${classes}` : ''}${scroll ? ` ui-scrollable` : ''}" style="width: ${width}; height: ${height};">
     <div>
         <ul class="content-menu-list">
         ${
@@ -146,7 +146,7 @@ export class ContentMenu {
 
     getHighestDialogZIndex() {
         let zIndex = 100
-        document.querySelectorAll('div.ui-content_menu').forEach(dialogEl => zIndex = Math.max(zIndex, dialogEl.style.zIndex))
+        document.querySelectorAll('div.ui-content-menu').forEach(dialogEl => zIndex = Math.max(zIndex, dialogEl.style.zIndex))
         document.querySelectorAll('div.ui-dialog').forEach(dialogEl => zIndex = Math.max(zIndex, dialogEl.style.zIndex))
         return zIndex
     }

@@ -23,14 +23,14 @@ export class Signup extends PreloginPage {
                         <ul id="id_username_errors" class="errorlist"></ul>
                     </div>
                     <div class="input-wrapper">
-                        <label for="id_password1">${gettext('Create a password')}</label>
-                        <input type="password" name="password1" placeholder="${gettext('Password')}" required="" id="id_password1" autocomplete="new-password">
-                        <ul id="id_password1_errors" class="errorlist"></ul>
+                        <label for="id-password1">${gettext('Create a password')}</label>
+                        <input type="password" name="password1" placeholder="${gettext('Password')}" required="" id="id-password1" autocomplete="new-password">
+                        <ul id="id-password1-errors" class="errorlist"></ul>
                     </div>
                     <div class="input-wrapper">
-                        <label for="id_password2">${gettext('Confirm your password')}</label>
-                        <input type="password" name="password2" placeholder="${gettext('Password (again)')}" required="" id="id_password2" autocomplete="new-password">
-                        <ul id="id_password2_errors" class="errorlist"></ul>
+                        <label for="id-password2">${gettext('Confirm your password')}</label>
+                        <input type="password" name="password2" placeholder="${gettext('Password (again)')}" required="" id="id-password2" autocomplete="new-password">
+                        <ul id="id-password2-errors" class="errorlist"></ul>
                     </div>
                     <div class="input-wrapper">
                         <label for="id_email">${gettext('E-mail address')}</label>
@@ -67,10 +67,10 @@ export class Signup extends PreloginPage {
             const nonFieldErrors = document.querySelector('#non_field_errors'),
                 idUsername = document.querySelector('#id_username'),
                 idUsernameErrors = document.querySelector('#id_username_errors'),
-                idPassword1 = document.querySelector('#id_password1'),
-                idPassword1Errors = document.querySelector('#id_password1_errors'),
-                idPassword2 = document.querySelector('#id_password2'),
-                idPassword2Errors = document.querySelector('#id_password2_errors'),
+                idPassword1 = document.querySelector('#id-password1'),
+                idPassword1Errors = document.querySelector('#id-password1-errors'),
+                idPassword2 = document.querySelector('#id-password2'),
+                idPassword2Errors = document.querySelector('#id-password2-errors'),
                 idEmail = document.querySelector('#id_email'),
                 idEmailErrors = document.querySelector('#id_email_errors'),
                 fwContents = document.querySelector('.fw-contents')

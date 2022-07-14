@@ -3,7 +3,7 @@
     right: 22px;
     bottom: 10px;
     direction: rtl;
-    -webkit-column-width: 328px;
+    column-width: 328px;
     z-index: 101;
 }
 
@@ -62,7 +62,7 @@
 
 /* A form wasn't filled out correctly and the warning was added to the form. */
 div.warning {
-    margin: 0 0 5px 0;
+    margin: 0 0 5px;
     border: 1px solid rgba(var(--warning-border-color));
     background-color: rgba(var(--warning-background-color));
     padding: 6px;

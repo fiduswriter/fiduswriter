@@ -1,4 +1,4 @@
-.ui-content_menu {
+.ui-content-menu {
     position: absolute;
     color: var(--cs-white-text);
     background-color: var(--cs-white-background);
@@ -13,11 +13,11 @@
     outline: 0;
 }
 
-.ui-content_menu-content.ui-scrollable {
+.ui-content-menu-content.ui-scrollable {
     overflow-y: scroll;
 }
 
-.ui-content_menu-content {
+.ui-content-menu-content {
     position: relative;
     margin-top: 8px;
     overflow: hidden;
@@ -35,12 +35,12 @@
 
 .content-menu-list {
     list-style: none;
-    padding: 0 0 5px 0;
+    padding: 0 0 5px;
     cursor: pointer;
 }
 
 .content-menu-item {
-    padding: 18px 31px 15px 31px;
+    padding: 18px 31px 15px;
     color: var(--cs-white-text);
     font-family: Lato, sans-serif;
     font-size: 14px;

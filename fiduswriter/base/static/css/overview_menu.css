@@ -77,7 +77,7 @@ div.select-action {
     min-width: 38px;
 }
 
-div.select-action input[type=checkbox] {
+div.select-action input[type='checkbox'] {
     cursor: default;
 }
 
@@ -85,13 +85,13 @@ span.select-action-dropdown {
     margin-left: 5px;
 }
 
-.fw-button input[type=text] {
+.fw-button input[type='text'] {
     width: calc(100% - 30px);
     height: 30px;
     border: 0;
 }
 
-.fw-white input[type=text] {
+.fw-white input[type='text'] {
     color: var(--cs-light-text);
     background-color: var(--cs-light-background);
 }
@@ -100,7 +100,7 @@ span.select-action-dropdown {
     background-color: var(--input-focus-background-color);
 }
 
-.fw-button.fw-white input[type=text]:focus,
+.fw-button.fw-white input[type='text']:focus,
 .fw-white.fw-input:hover {
     background-color: var(--input-focus-background-color);
 }

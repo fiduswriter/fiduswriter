@@ -60,9 +60,9 @@ export class LoginPage extends PreloginPage {
                         <ul id="id_login_errors" class="errorlist"></ul>
                     </div>
                     <div class="input-wrapper">
-                        <label for="id_password">${gettext("Password")}</label>
-                        <input type="password" name="password" placeholder="${gettext("Password")}" required="" id="id_password" autocomplete="current-password">
-                        <ul id="id_password_errors" class="errorlist"></ul>
+                        <label for="id-password">${gettext("Password")}</label>
+                        <input type="password" name="password" placeholder="${gettext("Password")}" required="" id="id-password" autocomplete="current-password">
+                        <ul id="id-password-errors" class="errorlist"></ul>
                     </div>
                     <div class="submit-wrapper">
                         <button class="fw-button fw-dark fw-uppercase" type="submit" id="login-submit">${gettext("Log in")}</button>
@@ -107,8 +107,8 @@ export class LoginPage extends PreloginPage {
             const nonFieldErrors = document.querySelector('#non_field_errors'),
                 idLogin = document.querySelector('#id_login'),
                 idLoginErrors = document.querySelector('#id_login_errors'),
-                idPassword = document.querySelector('#id_password'),
-                idPasswordErrors = document.querySelector('#id_password_errors'),
+                idPassword = document.querySelector('#id-password'),
+                idPasswordErrors = document.querySelector('#id-password-errors'),
                 idRemember = document.querySelector('#id_remember'),
                 fwContents = document.querySelector('.fw-contents')
 

@@ -109,6 +109,6 @@
     margin-left: 0;
 }
 
-.fw-pulldown input[type=radio] {
+.fw-pulldown input[type='radio'] {
     display: none;
 }

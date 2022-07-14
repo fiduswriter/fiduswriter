@@ -185,10 +185,8 @@
     text-align: center;
     font-size: 15px;
     margin-right: 12px;
-    border-right-style: solid;
-    border-right-width: 1px;
     line-height: 37px;
-    border-right-color: var(--cs-2-border);
+    border-right: 1px solid var(--cs-2-border);
     box-shadow: 1px 0 0 0 var(--cs-2-box-shadow);
 }
 

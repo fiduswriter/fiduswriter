@@ -120,11 +120,11 @@ pre.long-literal em {
     right: 10px;
 }
 
-#editCategories {
+#edit-categories {
     width: 369px !important;
 }
 
-#editCategories input[type='text'] {
+#edit-categories input[type='text'] {
     width: 310px;
 }
 

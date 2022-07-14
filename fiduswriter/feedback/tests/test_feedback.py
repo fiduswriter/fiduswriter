@@ -43,9 +43,9 @@ class SendFeedbackTest(LiveTornadoTestCase, SeleniumHelper):
             self.driver.find_element(By.ID, "response-message").text
             == "Thank you for your report!"
         )
-        self.driver.find_element(By.ID, "closeFeedback").click()
+        self.driver.find_element(By.ID, "close-feedback").click()
         self.driver.find_element(By.ID, "id_login").send_keys("Yeti")
-        self.driver.find_element(By.ID, "id_password").send_keys("otter1")
+        self.driver.find_element(By.ID, "id-password").send_keys("otter1")
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.ID, "preferences-btn"))
@@ -63,7 +63,7 @@ class SendFeedbackTest(LiveTornadoTestCase, SeleniumHelper):
             self.driver.find_element(By.ID, "response-message").text
             == "Thank you for your report!"
         )
-        self.driver.find_element(By.ID, "closeFeedback").click()
+        self.driver.find_element(By.ID, "close-feedback").click()
         self.driver.find_element(By.ID, "preferences-btn").click()
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Log out"]'

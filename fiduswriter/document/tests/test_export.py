@@ -51,7 +51,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
     def test_export(self):
         self.driver.get(self.base_url)
         self.driver.find_element(By.ID, "id_login").send_keys("Yeti")
-        self.driver.find_element(By.ID, "id_password").send_keys("otter")
+        self.driver.find_element(By.ID, "id-password").send_keys("otter")
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable(
@@ -295,7 +295,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         self.driver.find_element_by_css_selector(
             (
-                "body > div.ui-content_menu.ui-corner-all.ui-widget."
+                "body > div.ui-content-menu.ui-corner-all.ui-widget."
                 "ui-widget-content.ui-front > div > div > ul > li:nth-child(1)"
             )
         ).click()
@@ -363,7 +363,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         self.driver.find_element(
             By.CSS_SELECTOR,
-            "body > div.ui-content_menu > div > div > ul > li:nth-child(16)",
+            "body > div.ui-content-menu > div > div > ul > li:nth-child(16)",
         ).click()
         self.driver.find_element_by_css_selector("div.table-category").click()
         self.driver.find_element_by_xpath(

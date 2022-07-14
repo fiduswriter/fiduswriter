@@ -31,7 +31,7 @@ export class FeedbackTab {
                 <div id="response-message">
                   ${gettext("Thank you for your report!")}
                 </div>
-                <span id="closeFeedback" class="fa fa-times-circle"></span>
+                <span id="close-feedback" class="fa fa-times-circle"></span>
               </div>
             </div>`
         )
@@ -65,7 +65,7 @@ export class FeedbackTab {
             event.preventDefault()
         })
 
-        document.querySelector('#closeFeedback').addEventListener('click', event => {
+        document.querySelector('#close-feedback').addEventListener('click', event => {
             document.querySelector('.feedback-panel').style.display = 'none'
             document.querySelector('#feedback-form').style.visibility = 'visible'
             document.querySelector('#response-message').style.display = 'none'
@@ -77,26 +77,26 @@ export class FeedbackTab {
 
     openFeedback() {
         const messageEl = document.querySelector("textarea#message"),
-            closeFeedbackEl = document.querySelector('#closeFeedback'),
+            close-feedbackEl = document.querySelector('#close-feedback'),
             feedbackFormEl = document.querySelector('#feedback-form'),
             responseEl = document.querySelector('#response-message')
         if (!messageEl.value.length) {
             return
         }
 
-        closeFeedbackEl.style.display = 'none'
+        close-feedbackEl.style.display = 'none'
         feedbackFormEl.style.visibility = 'hidden'
 
         post('/api/feedback/feedback/', {message: messageEl.value}).then(
             () => {
                 messageEl.value = ''
-                closeFeedbackEl.style.display = 'block'
+                close-feedbackEl.style.display = 'block'
                 responseEl.style.display = 'block'
             }
         ).catch(
             (_error) => {
                 messageEl.value = ''
-                closeFeedbackEl.style.display = 'block'
+                close-feedbackEl.style.display = 'block'
             }
         )
         return false

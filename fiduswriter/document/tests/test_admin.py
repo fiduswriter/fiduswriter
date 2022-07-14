@@ -58,7 +58,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.get(self.base_admin_url)
         username = self.driver.find_element(By.ID, "id_username")
         username.send_keys("Admin")
-        self.driver.find_element(By.ID, "id_password").send_keys("password")
+        self.driver.find_element(By.ID, "id-password").send_keys("password")
         self.driver.find_element(By.CSS_SELECTOR, "input[type=submit]").click()
         time.sleep(2)
         self.driver.find_element(
@@ -76,7 +76,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.get(self.base_admin_url)
         username = self.driver.find_element(By.ID, "id_username")
         username.send_keys("Admin")
-        self.driver.find_element(By.ID, "id_password").send_keys("password")
+        self.driver.find_element(By.ID, "id-password").send_keys("password")
         self.driver.find_element(By.CSS_SELECTOR, "input[type=submit]").click()
         time.sleep(2)
         self.driver.find_element(
@@ -276,7 +276,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.get(self.base_url)
         # Logging in as User 1
         self.driver.find_element(By.ID, "id_login").send_keys("User1")
-        self.driver.find_element(By.ID, "id_password").send_keys("password")
+        self.driver.find_element(By.ID, "id-password").send_keys("password")
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable(
@@ -337,7 +337,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         # Login as User2
         self.driver.find_element(By.ID, "id_login").send_keys("User2")
-        self.driver.find_element(By.ID, "id_password").send_keys("password")
+        self.driver.find_element(By.ID, "id-password").send_keys("password")
         self.driver.find_element(By.ID, "login-submit").click()
         self.driver.find_element_by_xpath(
             '//*[normalize-space()="Go to contacts"]'
@@ -437,7 +437,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.get(self.base_admin_url)
         username = self.driver.find_element(By.ID, "id_username")
         username.send_keys("Admin")
-        self.driver.find_element(By.ID, "id_password").send_keys("password")
+        self.driver.find_element(By.ID, "id-password").send_keys("password")
         self.driver.find_element(By.CSS_SELECTOR, "input[type=submit]").click()
         time.sleep(2)
         self.driver.find_element(

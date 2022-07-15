@@ -68,6 +68,8 @@ class EditorHelper(SeleniumHelper):
             self.wait_for_doc_size(driver, size, seconds - 0.1)
 
     def wait_for_doc_sync(self, driver, driver2, seconds=False):
+        # Wait at least 1/4 second just in case documents are about to change.
+        time.sleep(0.25)
         if seconds is False:
             seconds = self.wait_time
         doc_str = driver.execute_script(

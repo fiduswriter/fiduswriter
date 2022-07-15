@@ -25,10 +25,12 @@ export class App {
         this.config.app = this
         this.routes = {
             "": {
+                app: "document",
                 requireLogin: true,
                 open: () => import(/* webpackPrefetch: true */"../documents/overview").then(({DocumentOverview}) => new DocumentOverview(this.config))
             },
             "account": {
+                app: "user",
                 requireLogin: false,
                 open: pathnameParts => {
                     let returnValue
@@ -56,10 +58,12 @@ export class App {
                 }
             },
             "bibliography": {
+                app: "bibliography",
                 requireLogin: true,
                 open: () => import("../bibliography/overview").then(({BibliographyOverview}) => new BibliographyOverview(this.config))
             },
             "document": {
+                app: "document",
                 requireLogin: true,
                 open: pathnameParts => {
                     let id = pathnameParts.pop()
@@ -76,19 +80,22 @@ export class App {
                 }
             },
             "documents": {
+                app: "document",
                 requireLogin: true,
                 open: pathnameParts => {
-                    const path = ('/' + pathnameParts.slice(2).join('/').replace(/\/?$/, '/'))
+                    const path = (('/' + pathnameParts.slice(2).join('/')).replace(/\/?$/, '/'))
                     return import(/* webpackPrefetch: true */"../documents/overview").then(({DocumentOverview}) => new DocumentOverview(this.config, path))
                 }
             },
             "pages": {
+                app: "base",
                 open: pathnameParts => {
                     const url = `/${pathnameParts[2]}/`
                     return new FlatPage(this.config, url)
                 }
             },
             "user": {
+                app: "user",
                 requireLogin: true,
                 open: pathnameParts => {
                     let returnValue
@@ -111,12 +118,14 @@ export class App {
                 }
             },
             "invite": {
+                app: "user",
                 open: pathnameParts => {
                     const id = pathnameParts[2]
                     return new ContactInvite(this.config, id)
                 }
             },
             "usermedia": {
+                app: "usermedia",
                 requireLogin: true,
                 open: () => new ImageOverview(this.config)
             }

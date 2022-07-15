@@ -232,8 +232,8 @@ export class ToolbarView {
         if (menuIndexToDrop) {
             return `
                 <div class="ui-buttonset more-button">
-                    <div class="multiButtons">
-                        <span class="multibuttonsCover fw-button fw-white fw-large edit-button">
+                    <div class="multi-buttons">
+                        <span class="multi-buttons-cover fw-button fw-white fw-large edit-button">
                             ${gettext('More')}
                         </span>
                         ${this.getMoreButtonListHTML(menuIndexToDrop)}
@@ -264,8 +264,8 @@ export class ToolbarView {
 
     getDropdownHTML(menuItem) {
         return `
-        <div class="multiButtons">
-            <span class="multibuttonsCover fw-button fw-white fw-large edit-button${menuItem.disabled && menuItem.disabled(this.editor) ? ' disabled' : ''}">
+        <div class="multi-buttons">
+            <span class="multi-buttons-cover fw-button fw-white fw-large edit-button${menuItem.disabled && menuItem.disabled(this.editor) ? ' disabled' : ''}">
                 ${menuItem.show(this.editor)}
             </span>
             ${this.getDropdownListHTML(menuItem)}

@@ -31,7 +31,8 @@ export {
 }
     from "./network"
 export {
-    setLanguage
+    setLanguage,
+    avatarTemplate
 } from "./user"
 export {
     Dialog,

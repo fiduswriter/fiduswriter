@@ -6,9 +6,12 @@ import time
 
 from django.test import Client
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service as ChromiumService
 from allauth.account.models import EmailAddress
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import get_user_model
+from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.core.utils import ChromeType
 
 
 class SeleniumHelper(object):
@@ -38,19 +41,18 @@ class SeleniumHelper(object):
             options.binary_location = "/usr/bin/google-chrome-stable"
             options.add_argument("--headless")
             options.add_argument("--disable-gpu")
-            chromedriver_filename = None
             wait_time = 13
         else:
-            from chromedriver_binary import chromedriver_filename
-
             wait_time = 6
         for i in range(number):
-            if chromedriver_filename:
-                driver = webdriver.Chrome(
-                    chromedriver_filename, options=options
-                )
-            else:
-                driver = webdriver.Chrome(options=options)
+            driver = webdriver.Chrome(
+                service=ChromiumService(
+                    ChromeDriverManager(
+                        chrome_type=ChromeType.GOOGLE
+                    ).install()
+                ),
+                options=options,
+            )
             drivers.append(driver)
         for driver in drivers:
             # Set sizes of browsers so that all buttons are visible.

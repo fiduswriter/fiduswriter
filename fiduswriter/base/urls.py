@@ -1,8 +1,8 @@
-from django.conf.urls import url
+from django.urls import re_path
 
 from . import views
 
 urlpatterns = [
-    url("^flatpage/$", views.flatpage, name="flatpage"),
-    url("^configuration/$", views.configuration, name="configuration"),
+    re_path("^flatpage/$", views.flatpage, name="flatpage"),
+    re_path("^configuration/$", views.configuration, name="configuration"),
 ]

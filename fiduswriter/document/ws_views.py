@@ -1,6 +1,7 @@
 import uuid
 import atexit
 import logging
+import json
 from time import mktime, time
 from copy import deepcopy
 
@@ -22,10 +23,10 @@ from document.models import (
     Document,
 )
 from usermedia.models import Image, DocumentImage, UserImage
+from user.helpers import Avatars
 
 # settings_JSONPATCH
 from jsonpatch import apply_patch, JsonPatchConflict, JsonPointerException
-from tornado.escape import json_encode
 
 # end settings_JSONPATCH
 
@@ -155,6 +156,7 @@ class WebSocket(BaseWebSocketHandler):
         response = dict()
         response["type"] = "doc_data"
         doc_owner = self.session["doc"].owner
+        avatars = Avatars()
         response["doc_info"] = {
             "id": self.session["doc"].id,
             "is_owner": self.user_info.is_owner,
@@ -164,7 +166,7 @@ class WebSocket(BaseWebSocketHandler):
                 "id": doc_owner.id,
                 "name": doc_owner.readable_name,
                 "username": doc_owner.username,
-                "avatar": doc_owner.avatar_url,
+                "avatar": avatars.get_url(doc_owner),
                 "contacts": [],
             },
         }
@@ -217,7 +219,7 @@ class WebSocket(BaseWebSocketHandler):
                 "id": contact.id,
                 "name": contact.readable_name,
                 "username": contact.get_username(),
-                "avatar": contact.avatar_url,
+                "avatar": avatars.get_url(contact),
                 "type": "user",
             }
             response["doc_info"]["owner"]["contacts"].append(contact_object)
@@ -227,7 +229,7 @@ class WebSocket(BaseWebSocketHandler):
                     "id": contact.id,
                     "name": contact.username,
                     "username": contact.username,
-                    "avatar": contact.avatar_url,
+                    "avatar": None,
                     "type": "userinvite",
                 }
                 response["doc_info"]["owner"]["contacts"].append(
@@ -472,13 +474,13 @@ class WebSocket(BaseWebSocketHandler):
                         logger.error(
                             f"Action:Patch Exception URL:{self.endpoint} "
                             f"User:{self.user.id} ParticipantID:{self.id} "
-                            f"Message:{json_encode(message)}"
+                            f"Message:{json.dumps(message)}"
                         )
                         logger.error(
                             f"Action:Patch Exception URL:{self.endpoint} "
                             f"User:{self.user.id} ParticipantID:{self.id} "
                             f"Document:"
-                            f"{json_encode(self.session['doc'].content)}"
+                            f"{json.dumps(self.session['doc'].content)}"
                         )
                         self.unfixable()
                         patch_msg = {
@@ -638,6 +640,7 @@ class WebSocket(BaseWebSocketHandler):
     @classmethod
     def send_participant_list(cls, document_id):
         if document_id in WebSocket.sessions:
+            avatars = Avatars()
             participant_list = []
             for session_id, waiter in list(
                 cls.sessions[document_id]["participants"].items()
@@ -650,7 +653,7 @@ class WebSocket(BaseWebSocketHandler):
                         "session_id": session_id,
                         "id": waiter.user_info.user.id,
                         "name": waiter.user_info.user.readable_name,
-                        "avatar": waiter.user_info.user.avatar_url,
+                        "avatar": avatars.get_url(waiter.user_info.user),
                     }
                 )
             message = {

@@ -4,7 +4,7 @@ import * as plugins from "../../../plugins/documents_overview"
 import {DocumentOverviewActions} from "./actions"
 import {DocumentAccessRightsDialog} from "../access_rights"
 import {menuModel, bulkMenuModel} from "./menu"
-import {activateWait, deactivateWait, addAlert, escapeText, postJson, OverviewMenuView, findTarget, whenReady, baseBodyTemplate, ensureCSS, setDocTitle, DatatableBulk, shortFileTitle, Dialog} from "../../common"
+import {activateWait, deactivateWait, addAlert, escapeText, postJson, OverviewMenuView, findTarget, whenReady, baseBodyTemplate, ensureCSS, setDocTitle, DatatableBulk, shortFileTitle, Dialog, avatarTemplate} from "../../common"
 import {SiteMenu} from "../../menu"
 import {FeedbackTab} from "../../feedback"
 import {
@@ -239,6 +239,10 @@ export class DocumentOverview {
     }
 
     initializeView(json) {
+        if (!this.app.page === this) {
+            // page has been updated
+            return json
+        }
         const ids = new Set()
         this.documentList = json.documents.filter(doc => {
             if (ids.has(doc.id)) {
@@ -307,7 +311,7 @@ export class DocumentOverview {
             pathParts.pop()
             pathParts.pop()
             const parentPath = pathParts.join('/') + '/'
-            const href = parentPath === "/" ? parentPath : `/documents${encodeURI(parentPath)}`
+            const href = parentPath === "/" && this.app.routes[""].app === "document" ? parentPath : `/documents${encodeURI(parentPath)}`
             fileList.unshift([
                 '-1',
                 'top',
@@ -447,7 +451,7 @@ export class DocumentOverview {
             dateCell({date: doc.added}),
             dateCell({date: doc.updated}),
             `<span>
-                ${doc.owner.avatar.html}
+                ${avatarTemplate({user: doc.owner})}
             </span>
             <span class="fw-searchable">${escapeText(doc.owner.name)}</span>`,
             `<span class="rights${doc.is_owner ? ' owned-by-user' : ''}" data-id="${doc.id}" title="${doc.rights}">

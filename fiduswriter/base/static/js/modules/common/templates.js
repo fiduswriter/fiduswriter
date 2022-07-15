@@ -1,3 +1,4 @@
+import {avatarTemplate} from "./user"
 import {filterPrimaryEmail} from "./user_util"
 
 export const baseBodyTemplate = ({user, contents, hasOverview}) => `
@@ -15,12 +16,12 @@ export const baseBodyTemplate = ({user, contents, hasOverview}) => `
         <nav id="header-nav"></nav>
         <div id="user-preferences" class="fw-user-preferences fw-header-text">
             <div id="preferences-btn" class="fw-button">
-                ${user.avatar.html}
+                ${avatarTemplate({user})}
             </div>
             <div id="user-preferences-pulldown" class="fw-pulldown fw-right">
                 <div data-value="profile">
                     <span class='fw-avatar-card'>
-                        <span class='fw-avatar-card-avatar'>${user.avatar.html}</span>
+                        <span class='fw-avatar-card-avatar'>${avatarTemplate({user})}</span>
                         <span class='fw-avatar-card-name'>
                             ${user.username}
                             <span class='fw-avatar-card-email'>${filterPrimaryEmail(user.emails)}</span>

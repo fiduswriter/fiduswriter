@@ -1,6 +1,6 @@
-from django.conf.urls import url
+from django.urls import re_path
 from . import views
 
 urlpatterns = [
-    url("^feedback/$", views.feedback, name="feedback"),
+    re_path("^feedback/$", views.feedback, name="feedback"),
 ]

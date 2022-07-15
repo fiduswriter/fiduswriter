@@ -8,6 +8,7 @@ export function randomFigureId() {
 let imageDBBroken = false
 
 export const figure = {
+    inline: false,
     allowGapCursor: false,
     selectable: true,
     group: "block",

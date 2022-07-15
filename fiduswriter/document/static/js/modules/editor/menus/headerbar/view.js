@@ -1,6 +1,6 @@
 import {DiffDOM} from "diff-dom"
 import {keyName} from "w3c-keyname"
-import {addAlert, escapeText, findTarget, cleanPath} from "../../../common"
+import {addAlert, escapeText, findTarget, cleanPath, avatarTemplate} from "../../../common"
 
 export class HeaderbarView {
     constructor(editorView, options) {
@@ -328,7 +328,7 @@ export class HeaderbarView {
             0,
             this.editor.docInfo.path.lastIndexOf('/')
         )
-        const exitUrl = folderPath.length ? `/documents${encodeURI(folderPath)}/` : '/'
+        const exitUrl = !folderPath.length && this.editor.app.routes[''].app ? '/' : `/documents${encodeURI(folderPath)}/`
         return `<div>
             <div id="close-document-top" title="${gettext("Close the document and return to the document overview menu.")}">
                 <a href="${exitUrl}">
@@ -352,7 +352,7 @@ export class HeaderbarView {
                 <div id="connected-collaborators">
                     ${
     participants.map(participant =>
-        participant.avatar.html).join('')
+        avatarTemplate({user: participant})).join('')
 }
                 </div>
             `

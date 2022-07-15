@@ -32,7 +32,7 @@ body.scrollable {
     height: auto;
     min-width: 985px;
     margin: 0 213px;
-    padding: 40px 8px 20px 8px;
+    padding: 40px 8px 20px;
 }
 
 @media (max-width: 1429px) {
@@ -62,13 +62,13 @@ body.scrollable {
     display: none;
 }
 
-.fw-contents label[for='id_password1'],
-.fw-contents label[for='id_password2'] {
+.fw-contents label[for='id-password1'],
+.fw-contents label[for='id-password2'] {
     display: none;
 }
 
-.fw-contents input#id_password1,
-.fw-contents input#id_password2 {
+.fw-contents input#id-password1,
+.fw-contents input#id-password2 {
     margin: 10px 0;
 }
 

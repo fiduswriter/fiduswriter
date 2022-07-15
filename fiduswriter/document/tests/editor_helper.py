@@ -46,7 +46,7 @@ class EditorHelper(SeleniumHelper):
 
     def add_title(self, driver):
         title = "My title"
-        self.driver.find_element_by_class_name("article-title").send_keys(
+        self.driver.find_element(By.CLASS_NAME, "article-title").send_keys(
             title
         )
 
@@ -68,6 +68,8 @@ class EditorHelper(SeleniumHelper):
             self.wait_for_doc_size(driver, size, seconds - 0.1)
 
     def wait_for_doc_sync(self, driver, driver2, seconds=False):
+        # Wait at least 1/4 second just in case documents are about to change.
+        time.sleep(0.25)
         if seconds is False:
             seconds = self.wait_time
         doc_str = driver.execute_script(
@@ -87,10 +89,11 @@ class EditorHelper(SeleniumHelper):
         driver.execute_script(
             f"window.testCaret.setSelection({footnote_pos},{footnote_pos})"
         )
-        driver.find_element_by_xpath('//*[@title="Footnote"]').click()
+        driver.find_element(By.XPATH, '//*[@title="Footnote"]').click()
 
-        driver.find_element_by_xpath(
-            f'//*[@id="footnote-box-container"]/div[2]/div[{footnote_num}]'
+        driver.find_element(
+            By.XPATH,
+            f'//*[@id="footnote-box-container"]/div[2]/div[{footnote_num}]',
         ).send_keys(footnote_content)
 
-        driver.find_element_by_class_name("article-body").click()
+        driver.find_element(By.CLASS_NAME, "article-body").click()

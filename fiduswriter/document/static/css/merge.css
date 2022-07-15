@@ -69,7 +69,7 @@ hr.selected-dec {
 
 /* Footnote Node View Related CSS */
 span.footnote-change {
-    background: rgb(140, 191, 250);
+    background: rgb(140 191 250);
 }
 
 footnote { /* stylelint-disable-line */
@@ -89,16 +89,12 @@ footnote::after { /* stylelint-disable-line */
     background-color: transparent;
 }
 
-.ProseMirror-hideselection .footnote-tooltip *::-moz-selection {
-    background-color: transparent;
-}
-
 .footnote-tooltip {
     cursor: auto;
     position: absolute;
     left: -30px;
     top: calc(100% + 10px);
-    background: rgb(140, 191, 250);
+    background: rgb(140 191 250);
     padding: 3px;
     border-radius: 2px;
     width: auto;
@@ -165,11 +161,8 @@ footnote div.footnote-tooltip p { /* stylelint-disable-line */
     padding: 5px;
     float: none;
     display: block;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 5px auto;
     align-content: center;
-    margin-top: 5px;
-    margin-bottom: 5px;
     border: 1px solid black;
 }
 

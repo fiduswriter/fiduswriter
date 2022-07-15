@@ -72,7 +72,7 @@ body.header-closed #margin-box-filter {
 
 #margin-box-container div.margin-box {
     width: 218px;
-    margin: 2px 0 0 0;
+    margin: 2px 0 0;
     position: relative;
     padding: 0;
     border: 0;
@@ -252,7 +252,7 @@ body.header-closed #margin-box-filter {
 .assigned-user {
     border: 1px solid var(--cs-white-border);
     padding: 5px;
-    margin: 10px 0 10px 0;
+    margin: 10px 0;
     font-size: .9em;
     text-align: center;
 }
@@ -322,7 +322,7 @@ body.header-closed #margin-box-filter {
     width: 0;
     height: 0;
     border-style: solid;
-    border-width: 0 9px 7px 9px;
+    border-width: 0 9px 7px;
     border-color: transparent;
 }
 
@@ -363,7 +363,7 @@ body.header-closed #margin-box-filter {
     background-color: var(--editor-major-comment-background-color);
 }
 
-.comment.resolved .comment-item [class^=comment-] {
+.comment.resolved .comment-item [class^='comment-'] {
     opacity: var(--editor-comment-resolved-opacity);
 }
 
@@ -404,7 +404,7 @@ body.header-closed #margin-box-filter {
 
 #comment-editor .tagger,
 #answer-editor .tagger {
-    margin: 5px -10px -11px -10px;
+    margin: 5px -10px -11px;
     background-color: var(--cs-light-background);
     border: 1px solid var(--cs-light-border);
 }
@@ -437,7 +437,7 @@ body.header-closed #margin-box-filter {
 
 
 .help-text-wrapper {
-    padding: 10px 10px 10px 10px;
+    padding: 10px;
 }
 
 .help-text-wrapper p {

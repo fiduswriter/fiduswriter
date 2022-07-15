@@ -19,7 +19,7 @@
     line-height: 0;
     position: relative;
     top: -4px;
-    font-family: 'Roboto', sans-serif;
+    font-family: Roboto, sans-serif;
     text-transform: uppercase;
     color: var(--cs-5-text);
     font-size: 15pt;

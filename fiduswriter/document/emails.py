@@ -1,6 +1,6 @@
 from django.core.mail import send_mail
 from django.conf import settings
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from base.html_email import html_email
 

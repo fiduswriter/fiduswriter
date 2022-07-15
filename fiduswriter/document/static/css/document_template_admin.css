@@ -1,4 +1,6 @@
-/* stylelint-disable csstools/value-no-unknown-custom-properties -- This file is used only on the admin screen and therefore contains original Django colors. */
+/* stylelint-disable csstools/value-no-unknown-custom-properties */
+
+/* This file is used only on the admin screen and therefore contains original Django colors. */
 
 form .aligned ul.object-tools.right {
     margin-left: inherit;

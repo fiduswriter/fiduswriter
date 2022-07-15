@@ -62,7 +62,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element_by_class_name("article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "article-body").click()
 
         p1 = multiprocessing.Process(
             target=self.type_text, args=(self.driver, self.TEST_TEXT)
@@ -75,7 +75,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         # driver 2 goes offline
         self.driver2.execute_script("window.theApp.page.ws.goOffline()")
 
-        self.driver2.find_element_by_class_name("article-body").click()
+        self.driver2.find_element(By.CLASS_NAME, "article-body").click()
 
         # Total: 25
         self.driver2.execute_script("window.testCaret.setSelection(25,25)")
@@ -116,7 +116,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element_by_class_name("article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "article-body").click()
 
         p1 = multiprocessing.Process(
             target=self.type_text, args=(self.driver, self.TEST_TEXT)
@@ -129,7 +129,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         # driver 2 goes offline
         self.driver2.execute_script("window.theApp.page.ws.goOffline()")
 
-        self.driver2.find_element_by_class_name("article-body").click()
+        self.driver2.find_element(By.CLASS_NAME, "article-body").click()
 
         # Total: 25
         self.driver2.execute_script("window.testCaret.setSelection(25,25)")
@@ -168,7 +168,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element_by_class_name("article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "article-body").click()
 
         p1 = multiprocessing.Process(
             target=self.type_text, args=(self.driver, self.TEST_TEXT)
@@ -193,7 +193,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         # driver 2 goes offline
         self.driver2.execute_script("window.theApp.page.ws.goOffline()")
 
-        self.driver2.find_element_by_class_name("article-body").click()
+        self.driver2.find_element(By.CLASS_NAME, "article-body").click()
 
         # Total: 25
         self.driver2.execute_script("window.testCaret.setSelection(25,25)")
@@ -223,12 +223,12 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         )
 
         assert dialogtitle.text == "System message"
-        self.driver2.find_element_by_css_selector(
-            ".ui-dialog button.fw-orange.fw-button"
+        self.driver2.find_element(
+            By.CSS_SELECTOR, ".ui-dialog button.fw-orange.fw-button"
         ).click()
 
-        change_tracking_boxes = self.driver2.find_elements_by_css_selector(
-            ".margin-box.track"
+        change_tracking_boxes = self.driver2.find_elements(
+            By.CSS_SELECTOR, ".margin-box.track"
         )
         self.assertEqual(len(change_tracking_boxes), 1)
 
@@ -244,7 +244,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element_by_class_name("article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "article-body").click()
 
         p1 = multiprocessing.Process(
             target=self.type_text, args=(self.driver, self.TEST_TEXT)
@@ -271,7 +271,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         # driver 2 goes offline
         self.driver2.execute_script("window.theApp.page.ws.goOffline()")
 
-        self.driver2.find_element_by_class_name("article-body").click()
+        self.driver2.find_element(By.CLASS_NAME, "article-body").click()
 
         # Total: 25
         self.driver2.execute_script("window.testCaret.setSelection(25,25)")
@@ -301,12 +301,12 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         )
 
         assert dialogtitle.text == "System message"
-        self.driver2.find_element_by_css_selector(
-            ".ui-dialog button.fw-orange.fw-button"
+        self.driver2.find_element(
+            By.CSS_SELECTOR, ".ui-dialog button.fw-orange.fw-button"
         ).click()
 
-        change_tracking_boxes = self.driver2.find_elements_by_css_selector(
-            ".margin-box.track"
+        change_tracking_boxes = self.driver2.find_elements(
+            By.CSS_SELECTOR, ".margin-box.track"
         )
         self.assertEqual(len(change_tracking_boxes), 1)
 
@@ -326,7 +326,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element_by_class_name("article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "article-body").click()
 
         p1 = multiprocessing.Process(
             target=self.type_text, args=(self.driver, self.TEST_TEXT)
@@ -344,7 +344,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         # driver 2 goes offline
         self.driver2.execute_script("window.theApp.page.ws.goOffline()")
 
-        self.driver2.find_element_by_class_name("article-body").click()
+        self.driver2.find_element(By.CLASS_NAME, "article-body").click()
 
         # Total: 25
         self.driver2.execute_script("window.testCaret.setSelection(25,25)")
@@ -374,12 +374,12 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         )
 
         assert dialogtitle.text == "System message"
-        self.driver2.find_element_by_css_selector(
-            ".ui-dialog button.fw-orange.fw-button"
+        self.driver2.find_element(
+            By.CSS_SELECTOR, ".ui-dialog button.fw-orange.fw-button"
         ).click()
 
-        change_tracking_boxes = self.driver2.find_elements_by_css_selector(
-            ".margin-box.track"
+        change_tracking_boxes = self.driver2.find_elements(
+            By.CSS_SELECTOR, ".margin-box.track"
         )
         self.assertEqual(len(change_tracking_boxes), 1)
 
@@ -397,7 +397,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element_by_class_name("article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "article-body").click()
 
         p1 = multiprocessing.Process(
             target=self.type_text, args=(self.driver, self.TEST_TEXT)
@@ -410,7 +410,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         # driver 2 goes offline
         self.driver2.execute_script("window.theApp.page.ws.goOffline()")
 
-        self.driver2.find_element_by_class_name("article-body").click()
+        self.driver2.find_element(By.CLASS_NAME, "article-body").click()
 
         # Total: 25
         self.driver2.execute_script("window.testCaret.setSelection(25,25)")
@@ -450,7 +450,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element_by_class_name("article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "article-body").click()
 
         p1 = multiprocessing.Process(
             target=self.type_text, args=(self.driver, self.TEST_TEXT)
@@ -463,7 +463,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         # driver 2 goes offline
         self.driver2.execute_script("window.theApp.page.ws.goOffline()")
 
-        self.driver2.find_element_by_class_name("article-body").click()
+        self.driver2.find_element(By.CLASS_NAME, "article-body").click()
 
         # Start writing text in the middle to cause conflict
         # when online user deletes data.
@@ -544,12 +544,12 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element_by_class_name("article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "article-body").click()
 
         self.type_text(self.driver, self.TEST_TEXT)
 
         # We add a figure
-        button = self.driver.find_element_by_xpath('//*[@title="Figure"]')
+        button = self.driver.find_element(By.XPATH, '//*[@title="Figure"]')
         button.click()
 
         WebDriverWait(self.driver, self.wait_time).until(
@@ -557,13 +557,15 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
                 (By.CSS_SELECTOR, "span.math-field")
             )
         )
-        self.driver.find_element_by_css_selector("div.figure-category").click()
-        self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Photo"]'
+        self.driver.find_element(
+            By.CSS_SELECTOR, "div.figure-category"
+        ).click()
+        self.driver.find_element(
+            By.XPATH, '//*[normalize-space()="Photo"]'
         ).click()
 
         # click on 'Insert image' button
-        self.driver.find_element_by_id("insert-figure-image").click()
+        self.driver.find_element(By.ID, "insert-figure-image").click()
 
         upload_button = WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
@@ -587,8 +589,9 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
         upload_image_url.send_keys(image_path)
 
         # click on 'Upload' button
-        self.driver.find_element_by_xpath(
-            '//*[contains(@class, "ui-button") and normalize-space()="Upload"]'
+        self.driver.find_element(
+            By.XPATH,
+            '//*[contains(@class, "ui-button") and normalize-space()="Upload"]',
         ).click()
 
         # click on 'Use image' button
@@ -598,10 +601,10 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
             )
         )
 
-        self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Use image"]'
+        self.driver.find_element(
+            By.XPATH, '//*[normalize-space()="Use image"]'
         ).click()
-        self.driver.find_element_by_css_selector("button.fw-dark").click()
+        self.driver.find_element(By.CSS_SELECTOR, "button.fw-dark").click()
 
         caption = WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
@@ -620,13 +623,15 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
 
         # Check that the html export works fine!
         # Click on the menu
-        self.driver.find_element_by_xpath(
-            "//span[contains(@title,'Export of the document contents')]"
+        self.driver.find_element(
+            By.XPATH,
+            "//span[contains(@title,'Export of the document contents')]",
         ).click()
 
         # Click on the HTML export
-        self.driver.find_element_by_xpath(
-            "//span[contains(@title,'Export the document to an HTML file.')]"
+        self.driver.find_element(
+            By.XPATH,
+            "//span[contains(@title,'Export the document to an HTML file.')]",
         ).click()
 
         # Check that the alert box is displayed.
@@ -637,15 +642,16 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
         time.sleep(1)
         # Check the same for PDF export too !
         # Click on the file menu
-        self.driver.find_element_by_xpath(
-            "//span[contains(@title,'File handling')]"
+        self.driver.find_element(
+            By.XPATH, "//span[contains(@title,'File handling')]"
         ).click()
         time.sleep(1)
 
         # Click on the Print PDF button
-        self.driver.find_element_by_xpath(
+        self.driver.find_element(
+            By.XPATH,
             "//span[contains(@title,'Either print or"
-            + " create a PDF using your browser print dialog.')]"
+            + " create a PDF using your browser print dialog.')]",
         ).click()
 
         # Check that the alert box is displayed.
@@ -668,26 +674,28 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
         self.driver.execute_script("window.theApp.page.ws.goOffline()")
         self.driver.execute_script("window.theApp.ws.goOffline()")
 
-        self.driver.find_element_by_class_name("article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "article-body").click()
 
         # Type some text
         self.type_text(self.driver, self.TEST_TEXT)
 
         # Check the share and create revision buttons are disabled.
-        file_menu = self.driver.find_element_by_xpath(
-            "//span[contains(@title,'File handling')]"
+        file_menu = self.driver.find_element(
+            By.XPATH, "//span[contains(@title,'File handling')]"
         )
         file_menu.click()
         time.sleep(1)
 
-        share_button = self.driver.find_element_by_xpath(
-            "//span[contains(@title,'Share the document with other users.')]"
+        share_button = self.driver.find_element(
+            By.XPATH,
+            "//span[contains(@title,'Share the document with other users.')]",
         )
         share_button_classes = share_button.get_attribute("class").split(" ")
         self.assertEqual("disabled" in share_button_classes, True)
 
-        save_revision_button = self.driver.find_element_by_xpath(
-            "//span[contains(@title,'Save a revision of " + "the document.')]"
+        save_revision_button = self.driver.find_element(
+            By.XPATH,
+            "//span[contains(@title,'Save a revision of " + "the document.')]",
         )
         save_revision_button_classes = save_revision_button.get_attribute(
             "class"
@@ -696,32 +704,36 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
 
         # Check that the EPUB, LaTex and JATS exports are disabled
         # when user is offline.
-        export_menu = self.driver.find_element_by_xpath(
-            "//span[contains(@title,'Export of the document contents')]"
+        export_menu = self.driver.find_element(
+            By.XPATH,
+            "//span[contains(@title,'Export of the document contents')]",
         )
         export_menu.click()
 
-        epub_export_button = self.driver.find_element_by_xpath(
+        epub_export_button = self.driver.find_element(
+            By.XPATH,
             "//span[contains(@title,'Export the document to "
-            + "an Epub electronic reader file.')]"
+            + "an Epub electronic reader file.')]",
         )
         epub_export_button_classes = epub_export_button.get_attribute(
             "class"
         ).split(" ")
         self.assertEqual("disabled" in epub_export_button_classes, True)
 
-        latex_export_button = self.driver.find_element_by_xpath(
-            "//span[contains(@title,'Export the document to an LaTeX file.')]"
+        latex_export_button = self.driver.find_element(
+            By.XPATH,
+            "//span[contains(@title,'Export the document to an LaTeX file.')]",
         )
         latex_export_button_classes = latex_export_button.get_attribute(
             "class"
         ).split(" ")
         self.assertEqual("disabled" in latex_export_button_classes, True)
 
-        jats_export_button = self.driver.find_element_by_xpath(
+        jats_export_button = self.driver.find_element(
+            By.XPATH,
             "//span[contains(@title,'Export the document to a Journal "
             + "Archiving and Interchange Tag Library NISO JATS Version 1.2 "
-            + "file.')]"
+            + "file.')]",
         )
         jats_export_button_classes = jats_export_button.get_attribute(
             "class"
@@ -729,13 +741,15 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
         self.assertEqual("disabled" in jats_export_button_classes, True)
 
         # Check that the Switching between styles is disabled.
-        settings_menu = self.driver.find_element_by_xpath(
-            "//span[contains(@title,'Configure settings of this document.')]"
+        settings_menu = self.driver.find_element(
+            By.XPATH,
+            "//span[contains(@title,'Configure settings of this document.')]",
         )
         settings_menu.click()
 
-        doc_style_button = self.driver.find_element_by_xpath(
-            "//span[contains(@title,'Choose your preferred document style.')]"
+        doc_style_button = self.driver.find_element(
+            By.XPATH,
+            "//span[contains(@title,'Choose your preferred document style.')]",
         )
         doc_style_button_classes = doc_style_button.get_attribute(
             "class"
@@ -743,7 +757,7 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
         self.assertEqual("disabled" in doc_style_button_classes, True)
 
         # Try to upload a figure
-        button = self.driver.find_element_by_xpath('//*[@title="Figure"]')
+        button = self.driver.find_element(By.XPATH, '//*[@title="Figure"]')
         button.click()
 
         WebDriverWait(self.driver, self.wait_time).until(
@@ -751,13 +765,15 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
                 (By.CSS_SELECTOR, "span.math-field")
             )
         )
-        self.driver.find_element_by_css_selector("div.figure-category").click()
-        self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Photo"]'
+        self.driver.find_element(
+            By.CSS_SELECTOR, "div.figure-category"
+        ).click()
+        self.driver.find_element(
+            By.XPATH, '//*[normalize-space()="Photo"]'
         ).click()
 
         # click on 'Insert image' button
-        self.driver.find_element_by_id("insert-figure-image").click()
+        self.driver.find_element(By.ID, "insert-figure-image").click()
 
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
@@ -765,8 +781,8 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
             )
         )
 
-        upload_buttons = self.driver.find_elements_by_xpath(
-            '//*[normalize-space()="Add new image"]'
+        upload_buttons = self.driver.find_elements(
+            By.XPATH, '//*[normalize-space()="Add new image"]'
         )
         self.assertEqual(len(upload_buttons), 0)
 
@@ -797,8 +813,8 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
 
         # Click the documents overview page button to see
         # if it's loaded from indexed DB
-        doc_overview_menu = self.driver.find_element_by_xpath(
-            "//a[contains(@title,'edit documents')]"
+        doc_overview_menu = self.driver.find_element(
+            By.XPATH, "//a[contains(@title,'edit documents')]"
         )
         doc_overview_menu.click()
 
@@ -806,13 +822,13 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "fw-contents"))
         )
-        doc_row = self.driver.find_element_by_xpath(
-            f"//a[@href='/document/{self.doc.id}']"
+        doc_row = self.driver.find_element(
+            By.XPATH, f"//a[@href='/document/{self.doc.id}']"
         )
         self.assertEqual(doc_row.is_displayed(), True)
 
         # Check that the alert regarding offline is shown.
-        alert_element = self.driver.find_element_by_class_name("alerts-info")
+        alert_element = self.driver.find_element(By.CLASS_NAME, "alerts-info")
         self.assertEqual(alert_element.is_displayed(), True)
 
 
@@ -875,7 +891,7 @@ class AccessRightsOfflineTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element_by_class_name("article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "article-body").click()
 
         p1 = multiprocessing.Process(
             target=self.type_text, args=(self.driver, self.TEST_TEXT)
@@ -888,7 +904,7 @@ class AccessRightsOfflineTests(LiveTornadoTestCase, EditorHelper):
         # driver 2 goes offline
         self.driver2.execute_script("window.theApp.page.ws.goOffline()")
 
-        self.driver2.find_element_by_class_name("article-body").click()
+        self.driver2.find_element(By.CLASS_NAME, "article-body").click()
 
         # Total: 25
         self.driver2.execute_script("window.testCaret.setSelection(25,25)")
@@ -933,7 +949,7 @@ class AccessRightsOfflineTests(LiveTornadoTestCase, EditorHelper):
 
         # Add some test text
         self.add_title(self.driver)
-        self.driver.find_element_by_class_name("article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "article-body").click()
 
         self.type_text(self.driver, self.TEST_TEXT)
 
@@ -955,7 +971,7 @@ class AccessRightsOfflineTests(LiveTornadoTestCase, EditorHelper):
         self.assertEqual(alert_element.is_displayed(), True)
 
         # Write some test text wuith user2
-        self.driver2.find_element_by_class_name("article-body").click()
+        self.driver2.find_element(By.CLASS_NAME, "article-body").click()
 
         self.driver2.execute_script("window.testCaret.setSelection(25,25)")
         self.type_text(self.driver2, self.TEST_TEXT)
@@ -990,7 +1006,7 @@ class AccessRightsOfflineTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element_by_class_name("article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "article-body").click()
 
         p1 = multiprocessing.Process(
             target=self.type_text, args=(self.driver, self.TEST_TEXT)
@@ -1003,7 +1019,7 @@ class AccessRightsOfflineTests(LiveTornadoTestCase, EditorHelper):
         # driver 2 goes offline
         self.driver2.execute_script("window.theApp.page.ws.goOffline()")
 
-        self.driver2.find_element_by_class_name("article-body").click()
+        self.driver2.find_element(By.CLASS_NAME, "article-body").click()
 
         # Total: 25
         self.driver2.execute_script("window.testCaret.setSelection(25,25)")

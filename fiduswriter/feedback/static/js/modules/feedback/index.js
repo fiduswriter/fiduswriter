@@ -31,7 +31,7 @@ export class FeedbackTab {
                 <div id="response-message">
                   ${gettext("Thank you for your report!")}
                 </div>
-                <span id="closeFeedback" class="fa fa-times-circle"></span>
+                <span id="close-feedback" class="fa fa-times-circle"></span>
               </div>
             </div>`
         )
@@ -65,7 +65,7 @@ export class FeedbackTab {
             event.preventDefault()
         })
 
-        document.querySelector('#closeFeedback').addEventListener('click', event => {
+        document.querySelector('#close-feedback').addEventListener('click', event => {
             document.querySelector('.feedback-panel').style.display = 'none'
             document.querySelector('#feedback-form').style.visibility = 'visible'
             document.querySelector('#response-message').style.display = 'none'
@@ -77,7 +77,7 @@ export class FeedbackTab {
 
     openFeedback() {
         const messageEl = document.querySelector("textarea#message"),
-            closeFeedbackEl = document.querySelector('#closeFeedback'),
+            closeFeedbackEl = document.querySelector('#close-feedback'),
             feedbackFormEl = document.querySelector('#feedback-form'),
             responseEl = document.querySelector('#response-message')
         if (!messageEl.value.length) {

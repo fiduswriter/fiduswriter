@@ -2,6 +2,7 @@ import multiprocessing
 from testing.testcases import LiveTornadoTestCase
 from .editor_helper import EditorHelper
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
 
 
 class AutoMergeTests(LiveTornadoTestCase, EditorHelper):
@@ -57,7 +58,7 @@ class AutoMergeTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element_by_class_name("article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "article-body").click()
 
         # Add some initial text and wait for doc to be synced.
         self.type_text(self.driver, self.TEST_TEXT)
@@ -103,13 +104,13 @@ class AutoMergeTests(LiveTornadoTestCase, EditorHelper):
         )
 
         # Check that the footnote counters and editor is aligned.
-        footnote_containers = self.driver2.find_elements_by_class_name(
-            "footnote-marker"
+        footnote_containers = self.driver2.find_elements(
+            By.CLASS_NAME, "footnote-marker"
         )
         self.assertEqual(len(footnote_containers), 5)
 
-        footnote_containers = self.driver.find_elements_by_class_name(
-            "footnote-marker"
+        footnote_containers = self.driver.find_elements(
+            By.CLASS_NAME, "footnote-marker"
         )
         self.assertEqual(len(footnote_containers), 5)
 
@@ -125,15 +126,15 @@ class AutoMergeTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element_by_class_name("article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "article-body").click()
 
         # Add some initial text and wait for doc to be synced.
         self.type_text(self.driver, self.TEST_TEXT)
         self.type_text(self.driver, self.NEWLINE)
 
         # Add a list item
-        button = self.driver.find_element_by_xpath(
-            '//*[@title="Numbered list"]'
+        button = self.driver.find_element(
+            By.XPATH, '//*[@title="Numbered list"]'
         )
         button.click()
         self.type_text(self.driver, self.MULTILINE_TEST_TEXT)
@@ -149,10 +150,10 @@ class AutoMergeTests(LiveTornadoTestCase, EditorHelper):
         # one too.
         self.driver2.execute_script("window.testCaret.setSelection(86,86)")
         self.driver2.execute_script("window.testCaret.setSelection(56,86)")
-        self.driver2.find_element_by_class_name("article-body").send_keys(
+        self.driver2.find_element(By.CLASS_NAME, "article-body").send_keys(
             Keys.BACKSPACE
         )
-        self.driver2.find_element_by_class_name("article-body").send_keys(
+        self.driver2.find_element(By.CLASS_NAME, "article-body").send_keys(
             Keys.BACKSPACE
         )
 
@@ -174,16 +175,16 @@ class AutoMergeTests(LiveTornadoTestCase, EditorHelper):
         )
 
         # Check that the list items aren't deleted
-        numberedTags = self.driver.find_elements_by_xpath(
-            '//*[contains(@class, "article-body")]//ol//li'
+        numberedTags = self.driver.find_elements(
+            By.XPATH, '//*[contains(@class, "article-body")]//ol//li'
         )
         self.assertEqual(len(numberedTags), 4)
-        numberedTags = self.driver2.find_elements_by_xpath(
-            '//*[contains(@class, "article-body")]//ol//li'
+        numberedTags = self.driver2.find_elements(
+            By.XPATH, '//*[contains(@class, "article-body")]//ol//li'
         )
         self.assertEqual(len(numberedTags), 4)
 
-        change_tracking_boxes = self.driver2.find_elements_by_css_selector(
-            ".margin-box.track"
+        change_tracking_boxes = self.driver2.find_elements(
+            By.CSS_SELECTOR, ".margin-box.track"
         )
         self.assertEqual(len(change_tracking_boxes), 7)

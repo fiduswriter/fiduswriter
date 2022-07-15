@@ -201,7 +201,7 @@ export class BibliographyOverview {
                 classes: "fw-dark",
                 click: () => {
                     const cats = {ids: [], titles: []}
-                    this.dom.querySelectorAll('#editCategories .category-form').forEach(
+                    this.dom.querySelectorAll('#edit-categories .category-form').forEach(
                         el => {
                             const title = el.value.trim()
                             if (title.length) {
@@ -224,7 +224,7 @@ export class BibliographyOverview {
         ]
 
         const dialog = new Dialog({
-            id: 'editCategories',
+            id: 'edit-categories',
             width: 350,
             height: 350,
             title: gettext('Edit Categories'),

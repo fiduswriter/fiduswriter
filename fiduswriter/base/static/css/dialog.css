@@ -88,8 +88,8 @@
     display: inline;
 }
 
-.entry-field input[type=text],
-.entry-field input[type=number] {
+.entry-field input[type='text'],
+.entry-field input[type='number'] {
     margin: 0;
 }
 

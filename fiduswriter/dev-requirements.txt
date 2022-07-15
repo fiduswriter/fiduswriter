@@ -1,5 +1,4 @@
-flake8==3.9.2
-selenium==3.141.0
-setuptools==47.3.1
-twine==3.2.0
-black==21.7b0
+flake8==4.0.1
+setuptools==63.2.0
+twine==4.0.1
+black==22.6.0

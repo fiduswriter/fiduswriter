@@ -607,7 +607,7 @@ export const exportTemplatesTemplate = ({exportTemplates}) => `${exportTemplates
 </button>`
 
 export const documentDesignerTemplate = ({id, value, title, documentStyles, exportTemplates, citationStyles}) =>
-    `<table class="title_id"><tbody>
+    `<table class="title-id"><tbody>
     <tr><td>${gettext('Title')}</td><td><input type="text" class="title vTextField fw-inline" value="${escapeText(title)}"></td></tr>
     <tr><td>${gettext('ID')}</td><td><input type="text" class="import-id vTextField fw-inline" value="${escapeText(value.attrs.import_id || '')}"></td></tr>
     </tbody></table>

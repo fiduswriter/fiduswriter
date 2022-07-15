@@ -2,7 +2,7 @@ import {
     Dialog,
     addAlert
 }
-from "../../../common"
+    from "../../../common"
 import {
     endSearch,
     setSearchTerm,
@@ -12,16 +12,16 @@ import {
     deselectSearchMatch,
     getProtectedRanges
 }
-from "../../state_plugins"
+    from "../../state_plugins"
 import {
     searchDialogTemplate
 }
-from "./templates"
+    from "./templates"
 import {
     READ_ONLY_ROLES,
     COMMENT_ONLY_ROLES
 }
-from "../.."
+    from "../.."
 
 export class SearchReplaceDialog {
     constructor(editor) {

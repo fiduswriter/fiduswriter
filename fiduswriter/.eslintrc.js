@@ -17,14 +17,17 @@ module.exports = { // eslint-disable-line no-undef
             [process.env.SRC_PATH + "/testing/eslint_import_resolver"]: {}
         }
     },
-    "parser": "babel-eslint",
     "parserOptions": {
         "sourceType": "module",
         "allowImportExportEverywhere": true,
         "ecmaFeatures": {
             "globalReturn": false,
         },
-        "ecmaVersion": 2020
+        "ecmaVersion": 2022,
+        "requireConfigFile": false,
+        "babelOptions": {
+            "presets": ["@babel/preset-env"]
+        }
     },
     "rules": {
         "accessor-pairs": "error",

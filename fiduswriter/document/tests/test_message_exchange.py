@@ -4,6 +4,7 @@ from testing.testcases import LiveTornadoTestCase
 from .editor_helper import EditorHelper
 from document.ws_views import WebSocket
 from document import prosemirror
+from selenium.webdriver.common.by import By
 
 
 class SimpleMessageExchangeTests(LiveTornadoTestCase, EditorHelper):
@@ -50,7 +51,7 @@ class SimpleMessageExchangeTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element_by_class_name("article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "article-body").click()
 
         # Type lots of text to increment the server message count.
         socket_object = WebSocket.sessions[self.doc.id]["participants"][0]
@@ -112,14 +113,15 @@ class SimpleMessageExchangeTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element_by_css_selector(
-            "#header-navigation > div:nth-child(3) > span"  # Settings
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#header-navigation > div:nth-child(3) > span",  # Settings
         ).click()
-        self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Text Language"]'
+        self.driver.find_element(
+            By.XPATH, '//*[normalize-space()="Text Language"]'
         ).click()
-        self.driver.find_element_by_xpath(
-            '//*[normalize-space()="Spanish"]'
+        self.driver.find_element(
+            By.XPATH, '//*[normalize-space()="Spanish"]'
         ).click()
         socket_object = WebSocket.sessions[self.doc.id]["participants"][0]
         diff_script = (
@@ -150,8 +152,8 @@ class SimpleMessageExchangeTests(LiveTornadoTestCase, EditorHelper):
         self.assertEqual(doc_data["attrs"]["language"], "es")
         # There should be one patch error
         self.assertEqual(patch_error, 1)
-        system_message = self.driver.find_element_by_css_selector(
-            "div.ui-dialog-content.ui-widget-content > p"
+        system_message = self.driver.find_element(
+            By.CSS_SELECTOR, "div.ui-dialog-content.ui-widget-content > p"
         )
         assert system_message.text == (
             "Your document was out of sync and has been reset."

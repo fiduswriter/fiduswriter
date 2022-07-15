@@ -67,7 +67,7 @@ export class ImageOverviewCategories {
                         'ids': [],
                         'titles': []
                     }
-                    document.querySelectorAll('#editCategories .category-form').forEach(el => {
+                    document.querySelectorAll('#edit-categories .category-form').forEach(el => {
                         const thisVal = el.value.trim()
                         let thisId = el.dataset.id
                         if ('undefined' == typeof (thisId)) {
@@ -88,7 +88,7 @@ export class ImageOverviewCategories {
         ]
 
         const dialog = new Dialog({
-            id: 'editCategories',
+            id: 'edit-categories',
             title: gettext('Edit Categories'),
             body: usermediaEditcategoriesTemplate({
                 categories: this.imageOverview.app.imageDB.cats

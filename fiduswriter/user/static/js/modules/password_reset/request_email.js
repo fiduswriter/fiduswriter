@@ -22,11 +22,11 @@ export class PasswordResetRequest extends PreloginPage {
         </div>
         <div class="fw-login-right">
             <form>
-                <ul id="non_field_errors" class="errorlist"></ul>
+                <ul id="non-field-errors" class="errorlist"></ul>
                 <div class="input-wrapper">
-                    <label for="id_email">${gettext('E-mail address')}</label>
-                    <input type="email" name="email" size="30" placeholder="${gettext('E-mail address')}" required="" id="id_email" autocomplete="email">
-                    <ul id="id_email_errors" class="errorlist"></ul>
+                    <label for="id-email">${gettext('E-mail address')}</label>
+                    <input type="email" name="email" size="30" placeholder="${gettext('E-mail address')}" required="" id="id-email" autocomplete="email">
+                    <ul id="id-email-errors" class="errorlist"></ul>
                 </div>
                 <div class="submit-wrapper">
                     <button class="fw-button fw-dark fw-uppercase" id="email-submit" type="submit">${gettext("Reset My Password")}</button>
@@ -39,24 +39,24 @@ export class PasswordResetRequest extends PreloginPage {
     bind() {
         super.bind()
 
-        const emailInput = document.getElementById('id_email')
+        const emailInput = document.getElementById('id-email')
         if (emailInput) {
             emailInput.focus()
         }
 
         document.getElementById('email-submit').addEventListener('click', event => {
             event.preventDefault()
-            document.querySelector('#non_field_errors').innerHTML = ''
-            document.querySelector('#id_email_errors').innerHTML = ''
+            document.querySelector('#non-field-errors').innerHTML = ''
+            document.querySelector('#id-email-errors').innerHTML = ''
 
-            const emailEl = document.getElementById('id_email'),
+            const emailEl = document.getElementById('id-email'),
                 email = emailEl.value
             let errors = false
             if (!emailEl.checkValidity()) {
-                document.querySelector('#id_email_errors').innerHTML = `<li>${gettext('This is not a valid email.')}</li>`
+                document.querySelector('#id-email-errors').innerHTML = `<li>${gettext('This is not a valid email.')}</li>`
                 errors = true
             } else if (!email.length) {
-                document.querySelector('#id_email_errors').innerHTML = `<li>${gettext('This field is required.')}</li>`
+                document.querySelector('#id-email-errors').innerHTML = `<li>${gettext('This field is required.')}</li>`
                 errors = true
             }
             if (errors) {
@@ -85,10 +85,10 @@ export class PasswordResetRequest extends PreloginPage {
                 response => response.json().then(
                     json => {
                         json.form.errors.forEach(
-                            error => document.querySelector("#non_field_errors").innerHTML += `<li>${escapeText(error)}</li>`
+                            error => document.querySelector("#non-field-errors").innerHTML += `<li>${escapeText(error)}</li>`
                         )
                         json.form.fields.email.errors.forEach(
-                            error => document.querySelector('#id_email_errors').innerHTML += `<li>${escapeText(error)}</li>`
+                            error => document.querySelector('#id-email-errors').innerHTML += `<li>${escapeText(error)}</li>`
                         )
                     }
                 )

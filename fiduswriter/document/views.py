@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.db import transaction
 from django.core.files import File
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.conf import settings
 from django.db.models import F, Q
 from django.contrib.admin.views.decorators import staff_member_required
@@ -33,6 +33,7 @@ from style.models import DocumentStyle, DocumentStyleFile, ExportTemplate
 from base.decorators import ajax_required
 from user.models import UserInvite
 from . import emails
+from user.helpers import Avatars
 
 
 @login_required
@@ -42,9 +43,13 @@ def get_documentlist_extra(request):
     response = {}
     status = 200
     ids = request.POST["ids"].split(",")
-    docs = Document.objects.filter(
-        Q(owner=request.user) | Q(accessright__user=request.user)
-    ).filter(id__in=ids)
+    docs = (
+        Document.objects.filter(
+            Q(owner=request.user) | Q(accessright__user=request.user)
+        )
+        .filter(id__in=ids)
+        .prefetch_related("documentimage_set")
+    )
     response["documents"] = []
     for doc in docs:
         images = {}
@@ -82,10 +87,17 @@ def get_documentlist_extra(request):
 
 
 def documents_list(request):
+    avatars = Avatars()
     documents = (
         Document.objects.filter(
             Q(owner=request.user) | Q(accessright__user=request.user),
             listed=True,
+        )
+        .defer("content", "comments", "bibliography", "doc_version", "diffs")
+        .select_related("owner")
+        .prefetch_related(
+            "accessright_set",
+            "documentrevision_set",
         )
         .distinct()
         .order_by("-updated")
@@ -96,21 +108,19 @@ def documents_list(request):
             access_right = "write"
             path = document.path
         else:
-            access_object = AccessRight.objects.get(
-                user=request.user, document=document
-            )
+            access_object = document.accessright_set.filter(
+                user=request.user
+            ).first()
             access_right = access_object.rights
             path = access_object.path
         if (
             request.user.is_staff
             or document.owner == request.user
-            or AccessRight.objects.filter(
-                document=document,
-                user=request.user,
-                rights__in=CAN_COMMUNICATE,
+            or document.accessright_set.filter(
+                user=request.user, rights__in=CAN_COMMUNICATE
             ).first()
         ):
-            revisions = DocumentRevision.objects.filter(document=document)
+            revisions = document.documentrevision_set.all()
             revision_list = []
             for revision in revisions:
                 revision_list.append(
@@ -137,7 +147,7 @@ def documents_list(request):
                 "owner": {
                     "id": document.owner.id,
                     "name": document.owner.readable_name,
-                    "avatar": document.owner.avatar_url,
+                    "avatar": avatars.get_url(document.owner),
                 },
                 "added": added,
                 "updated": updated,
@@ -154,12 +164,17 @@ def documents_list(request):
 def get_access_rights(request):
     response = {}
     status = 200
+    avatars = Avatars()
     ar_qs = AccessRight.objects.filter(document__owner=request.user)
     doc_ids = request.POST.getlist("document_ids[]")
     if len(doc_ids) > 0:
         ar_qs = ar_qs.filter(document_id__in=doc_ids)
     access_rights = []
     for ar in ar_qs:
+        if ar.holder_type.model == "user":
+            avatar = avatars.get_url(ar.holder_obj)
+        else:
+            avatar = None
         access_rights.append(
             {
                 "document_id": ar.document.id,
@@ -168,7 +183,7 @@ def get_access_rights(request):
                     "id": ar.holder_id,
                     "type": ar.holder_type.model,
                     "name": ar.holder_obj.readable_name,
-                    "avatar": ar.holder_obj.avatar_url,
+                    "avatar": avatar,
                 },
             }
         )
@@ -276,12 +291,13 @@ def get_documentlist(request):
     status = 200
     response["documents"] = documents_list(request)
     response["contacts"] = []
+    avatars = Avatars()
     for contact in request.user.contacts.all():
         contact_object = {
             "id": contact.id,
             "name": contact.readable_name,
             "username": contact.get_username(),
-            "avatar": contact.avatar_url,
+            "avatar": avatars.get_url(contact),
             "type": "user",
         }
         response["contacts"].append(contact_object)
@@ -290,7 +306,7 @@ def get_documentlist(request):
             "id": contact.id,
             "name": contact.username,
             "username": contact.username,
-            "avatar": contact.avatar_url,
+            "avatar": None,
             "type": "userinvite",
         }
         response["contacts"].append(contact_object)

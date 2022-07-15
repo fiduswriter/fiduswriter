@@ -68,8 +68,10 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver, self.doc)
         self.load_document_editor(self.driver2, self.doc)
 
-        title_input = self.driver.find_element_by_class_name("article-title")
-        title_input2 = self.driver2.find_element_by_class_name("article-title")
+        title_input = self.driver.find_element(By.CLASS_NAME, "article-title")
+        title_input2 = self.driver2.find_element(
+            By.CLASS_NAME, "article-title"
+        )
 
         first_part = "Here is "
         second_part = "my title"
@@ -89,8 +91,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             self.get_title(self.driver2), self.get_title(self.driver)
         )
 
-        body_input = self.driver.find_element_by_class_name("article-body")
-        body_input2 = self.driver2.find_element_by_class_name("article-body")
+        body_input = self.driver.find_element(By.CLASS_NAME, "article-body")
+        body_input2 = self.driver2.find_element(By.CLASS_NAME, "article-body")
         body_input.click()
         body_input2.click()
 
@@ -122,8 +124,10 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver, self.doc)
         self.load_document_editor(self.driver2, self.doc)
 
-        title_input = self.driver.find_element_by_class_name("article-title")
-        title_input2 = self.driver2.find_element_by_class_name("article-title")
+        title_input = self.driver.find_element(By.CLASS_NAME, "article-title")
+        title_input2 = self.driver2.find_element(
+            By.CLASS_NAME, "article-title"
+        )
 
         first_part = "Here is "
         second_part = "my title"
@@ -148,8 +152,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             self.get_title(self.driver2), self.get_title(self.driver)
         )
 
-        body_input = self.driver.find_element_by_class_name("article-body")
-        body_input2 = self.driver2.find_element_by_class_name("article-body")
+        body_input = self.driver.find_element(By.CLASS_NAME, "article-body")
+        body_input2 = self.driver2.find_element(By.CLASS_NAME, "article-body")
         body_input.click()
         body_input2.click()
 
@@ -179,12 +183,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def make_bold(self, driver):
-        button = driver.find_element_by_xpath('//*[@title="Strong"]')
+        button = driver.find_element(By.XPATH, '//*[@title="Strong"]')
         button.click()
 
     def get_boldtext(self, driver):
-        btext = driver.find_element_by_xpath(
-            '//*[contains(@class, "article-body")]/p/strong'
+        btext = driver.find_element(
+            By.XPATH, '//*[contains(@class, "article-body")]/p/strong'
         )
         return btext.text
 
@@ -198,7 +202,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         self.add_title(self.driver)
 
-        document_input = self.driver.find_element_by_class_name("ProseMirror")
+        document_input = self.driver.find_element(By.CLASS_NAME, "ProseMirror")
 
         # Total: 22
         self.driver.execute_script("window.testCaret.setSelection(25,25)")
@@ -212,7 +216,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.wait_for_doc_size(self.driver2, 34)
 
         # without clicking on content the buttons will not work
-        content = self.driver2.find_element_by_class_name("ProseMirror")
+        content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
         content.click()
 
         self.driver2.execute_script("window.testCaret.setSelection(25,30)")
@@ -234,12 +238,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def make_italic(self, driver):
-        button = driver.find_element_by_xpath('//*[@title="Emphasis"]')
+        button = driver.find_element(By.XPATH, '//*[@title="Emphasis"]')
         button.click()
 
     def get_italictext(self, driver):
-        itext = driver.find_element_by_xpath(
-            '//*[contains(@class, "article-body")]/p/em'
+        itext = driver.find_element(
+            By.XPATH, '//*[contains(@class, "article-body")]/p/em'
         )
         return itext.text
 
@@ -253,7 +257,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         self.add_title(self.driver)
 
-        document_input = self.driver.find_element_by_class_name("ProseMirror")
+        document_input = self.driver.find_element(By.CLASS_NAME, "ProseMirror")
 
         # Total: 23
         self.driver.execute_script("window.testCaret.setSelection(25,25)")
@@ -267,7 +271,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.wait_for_doc_size(self.driver2, 34)
 
         # without clicking on content the buttons will not work
-        content = self.driver2.find_element_by_class_name("ProseMirror")
+        content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
         content.click()
 
         self.driver2.execute_script("window.testCaret.setSelection(25,30)")
@@ -289,12 +293,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def make_numberedlist(self, driver):
-        button = driver.find_element_by_xpath('//*[@title="Numbered list"]')
+        button = driver.find_element(By.XPATH, '//*[@title="Numbered list"]')
         button.click()
 
     def get_numberedlist(self, driver):
-        numberedTags = driver.find_elements_by_xpath(
-            '//*[contains(@class, "article-body")]//ol//li'
+        numberedTags = driver.find_elements(
+            By.XPATH, '//*[contains(@class, "article-body")]//ol//li'
         )
         return numberedTags
 
@@ -307,7 +311,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver2, self.doc)
         self.add_title(self.driver)
 
-        document_input = self.driver.find_element_by_class_name("ProseMirror")
+        document_input = self.driver.find_element(By.CLASS_NAME, "ProseMirror")
 
         # Total: 23
         self.driver.execute_script("window.testCaret.setSelection(25,25)")
@@ -322,7 +326,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.wait_for_doc_size(self.driver2, 34)
 
         # without clicking on content the buttons will not work
-        content = self.driver2.find_element_by_class_name("ProseMirror")
+        content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
         content.click()
 
         self.driver2.execute_script("window.testCaret.setSelection(25,25)")
@@ -356,12 +360,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.assertEqual(2, len(self.get_numberedlist(self.driver2)))
 
     def make_bulletlist(self, driver):
-        button = driver.find_element_by_xpath('//*[@title="Bullet list"]')
+        button = driver.find_element(By.XPATH, '//*[@title="Bullet list"]')
         button.click()
 
     def get_bulletlist(self, driver):
-        bulletTags = driver.find_elements_by_xpath(
-            '//*[contains(@class, "article-body")]//ul//li'
+        bulletTags = driver.find_elements(
+            By.XPATH, '//*[contains(@class, "article-body")]//ul//li'
         )
         return bulletTags
 
@@ -375,7 +379,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         self.add_title(self.driver)
 
-        document_input = self.driver.find_element_by_class_name("ProseMirror")
+        document_input = self.driver.find_element(By.CLASS_NAME, "ProseMirror")
 
         # Total: 23
         self.driver.execute_script("window.testCaret.setSelection(25,25)")
@@ -390,7 +394,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.wait_for_doc_size(self.driver2, 34)
 
         # without clicking on content the buttons will not work
-        content = self.driver2.find_element_by_class_name("ProseMirror")
+        content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
         content.click()
 
         self.driver2.execute_script("window.testCaret.setSelection(25,25)")
@@ -424,12 +428,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def make_blockquote(self, driver):
-        button = driver.find_element_by_xpath('//*[@title="Blockquote"]')
+        button = driver.find_element(By.XPATH, '//*[@title="Blockquote"]')
         button.click()
 
     def get_blockquote(self, driver):
-        blockquoteTags = driver.find_elements_by_xpath(
-            '//*[contains(@class, "article-body")]/blockquote'
+        blockquoteTags = driver.find_elements(
+            By.XPATH, '//*[contains(@class, "article-body")]/blockquote'
         )
         return blockquoteTags
 
@@ -443,7 +447,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         self.add_title(self.driver)
 
-        document_input = self.driver.find_element_by_class_name("ProseMirror")
+        document_input = self.driver.find_element(By.CLASS_NAME, "ProseMirror")
 
         # Total: 22
         self.driver.execute_script("window.testCaret.setSelection(25,25)")
@@ -457,7 +461,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.wait_for_doc_size(self.driver2, 25)
 
         # without clicking on content the buttons will not work
-        content = self.driver2.find_element_by_class_name("ProseMirror")
+        content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
         content.click()
 
         self.driver2.execute_script("window.testCaret.setSelection(25,25)")
@@ -479,7 +483,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def addlink(self, driver):
-        button = driver.find_element_by_xpath('//*[@title="Link"]')
+        button = driver.find_element(By.XPATH, '//*[@title="Link"]')
         button.click()
 
         # wait to load popup
@@ -489,14 +493,14 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         linktitle.click()
         self.input_text(linktitle, "Test link")
 
-        link = driver.find_element_by_class_name("link")
+        link = driver.find_element(By.CLASS_NAME, "link")
         self.input_text(link, "example.com")
 
-        driver.find_element_by_css_selector("button.fw-dark").click()
+        driver.find_element(By.CSS_SELECTOR, "button.fw-dark").click()
 
     def get_link(self, driver):
-        atag = driver.find_element_by_xpath(
-            '//*[contains(@class, "article-body")]/p/a'
+        atag = driver.find_element(
+            By.XPATH, '//*[contains(@class, "article-body")]/p/a'
         )
         return atag.text
 
@@ -511,7 +515,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         self.add_title(self.driver)
 
-        document_input = self.driver.find_element_by_class_name("ProseMirror")
+        document_input = self.driver.find_element(By.CLASS_NAME, "ProseMirror")
 
         # Total: 23
         self.driver.execute_script("window.testCaret.setSelection(25,25)")
@@ -525,7 +529,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.wait_for_doc_size(self.driver2, 34)
 
         # without clicking on content the buttons will not work
-        content = self.driver2.find_element_by_class_name("ProseMirror")
+        content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
         content.click()
 
         self.driver2.execute_script("window.testCaret.setSelection(25,30)")
@@ -542,7 +546,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def make_footnote(self, driver):
-        button = driver.find_element_by_xpath('//*[@title="Footnote"]')
+        button = driver.find_element(By.XPATH, '//*[@title="Footnote"]')
         button.click()
 
         # wait for footnote to be created
@@ -552,17 +556,17 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             )
         )
 
-        footnote_box = driver.find_element_by_id("footnote-box-container")
-        footnote_editor = footnote_box.find_element_by_class_name(
-            "ProseMirror"
+        footnote_box = driver.find_element(By.ID, "footnote-box-container")
+        footnote_editor = footnote_box.find_element(
+            By.CLASS_NAME, "ProseMirror"
         )
         footnote_editor.click()
 
         self.input_text(footnote_editor, "footnote Text")
 
     def get_footnote(self, driver):
-        atag = driver.find_element_by_xpath(
-            '//*[@id="footnote-box-container"]/div[2]/div[1]/p[1]'
+        atag = driver.find_element(
+            By.XPATH, '//*[@id="footnote-box-container"]/div[2]/div[1]/p[1]'
         )
         return atag.text
 
@@ -576,7 +580,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         self.add_title(self.driver)
 
-        document_input = self.driver.find_element_by_class_name("ProseMirror")
+        document_input = self.driver.find_element(By.CLASS_NAME, "ProseMirror")
 
         # Total: 22
         self.driver.execute_script("window.testCaret.setSelection(25,25)")
@@ -590,7 +594,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.wait_for_doc_size(self.driver2, 34)
 
         # without clicking on content the buttons will not work
-        content = self.driver2.find_element_by_class_name("ProseMirror")
+        content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
         content.click()
 
         self.driver2.execute_script("window.testCaret.setSelection(28,28)")
@@ -616,11 +620,11 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         actions.send_keys(Keys.BACKSPACE)
         actions.perform()
 
-        button = driver.find_element_by_xpath('//*[@title="Undo"]')
+        button = driver.find_element(By.XPATH, '//*[@title="Undo"]')
         button.click()
 
     def get_undo(self, driver):
-        content = driver.find_element_by_class_name("article-body")
+        content = driver.find_element(By.CLASS_NAME, "article-body")
         return (
             content.get_attribute("innerText")
             .rstrip("\ufeff\n")
@@ -638,7 +642,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         self.add_title(self.driver)
 
-        document_input = self.driver.find_element_by_class_name("ProseMirror")
+        document_input = self.driver.find_element(By.CLASS_NAME, "ProseMirror")
 
         # Total: 22
         self.driver.execute_script("window.testCaret.setSelection(25,25)")
@@ -652,7 +656,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.wait_for_doc_size(self.driver2, 34)
 
         # without clicking on content the buttons will not work
-        content = self.driver2.find_element_by_class_name("article-title")
+        content = self.driver2.find_element(By.CLASS_NAME, "article-title")
         content.click()
 
         self.driver2.execute_script("window.testCaret.setSelection(25,30)")
@@ -674,7 +678,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def make_mathequation(self, driver):
-        button = driver.find_element_by_xpath('//*[@title="Math"]')
+        button = driver.find_element(By.XPATH, '//*[@title="Math"]')
         button.click()
 
         # wait for load of popup
@@ -712,19 +716,19 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
                 )
             ).click()
 
-        driver.find_element_by_css_selector(
-            'li[data-alt-keys="x-var"]'
+        driver.find_element(
+            By.CSS_SELECTOR, 'li[data-alt-keys="x-var"]'
         ).click()
-        driver.find_element_by_css_selector('li[data-alt-keys="+"]').click()
-        driver.find_element_by_css_selector('li[data-alt-keys="3"]').click()
-        driver.find_element_by_css_selector('li[data-alt-keys="="]').click()
-        driver.find_element_by_css_selector('li[data-alt-keys="7"]').click()
+        driver.find_element(By.CSS_SELECTOR, 'li[data-alt-keys="+"]').click()
+        driver.find_element(By.CSS_SELECTOR, 'li[data-alt-keys="3"]').click()
+        driver.find_element(By.CSS_SELECTOR, 'li[data-alt-keys="="]').click()
+        driver.find_element(By.CSS_SELECTOR, 'li[data-alt-keys="7"]').click()
         # close keyboard
-        driver.find_element_by_class_name("ui-dialog-titlebar").click()
+        driver.find_element(By.CLASS_NAME, "ui-dialog-titlebar").click()
         insert_button.click()
 
     def get_mathequation(self, driver):
-        math = driver.find_element_by_xpath('//*[@class="equation"]')
+        math = driver.find_element(By.XPATH, '//*[@class="equation"]')
 
         return math.get_attribute("data-equation")
 
@@ -739,7 +743,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         self.add_title(self.driver)
 
-        document_input = self.driver.find_element_by_class_name("ProseMirror")
+        document_input = self.driver.find_element(By.CLASS_NAME, "ProseMirror")
 
         # Total: 23
         self.driver.execute_script("window.testCaret.setSelection(25,25)")
@@ -753,7 +757,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.wait_for_doc_size(self.driver2, 30)
 
         # without clicking on content the buttons will not work
-        content = self.driver2.find_element_by_class_name("ProseMirror")
+        content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
         content.click()
 
         self.driver2.execute_script("window.testCaret.setSelection(28,28)")
@@ -776,7 +780,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.assertEqual(6, len(self.get_mathequation(self.driver2)))
 
     def add_comment(self, driver):
-        button = driver.find_element_by_xpath('//*[@title="Comment"]')
+        button = driver.find_element(By.XPATH, '//*[@title="Comment"]')
         button.click()
 
         textArea = WebDriverWait(driver, self.wait_time).until(
@@ -788,12 +792,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         self.input_text(textArea, "My comment")
 
-        driver.find_element_by_css_selector(
-            "div#comment-editor button.submit"
+        driver.find_element(
+            By.CSS_SELECTOR, "div#comment-editor button.submit"
         ).click()
 
     def get_comment(self, driver):
-        comment = driver.find_element_by_class_name("comment-text-wrapper")
+        comment = driver.find_element(By.CLASS_NAME, "comment-text-wrapper")
 
         return comment.text
 
@@ -808,7 +812,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         self.add_title(self.driver)
 
-        document_input = self.driver.find_element_by_class_name("ProseMirror")
+        document_input = self.driver.find_element(By.CLASS_NAME, "ProseMirror")
 
         # Total: 22
         self.driver.execute_script("window.testCaret.setSelection(25,25)")
@@ -822,7 +826,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.wait_for_doc_size(self.driver2, 33)
 
         # without clicking on content the buttons will not work
-        content = self.driver2.find_element_by_class_name("ProseMirror")
+        content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
         content.click()
 
         self.driver2.execute_script("window.testCaret.setSelection(25,30)")
@@ -844,16 +848,16 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
         # Change comment
-        self.driver.find_element_by_css_selector(
-            ".margin-box.comment .show-marginbox-options"
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".margin-box.comment .show-marginbox-options"
         ).click()
-        self.driver.find_element_by_css_selector(".edit-comment").click()
-        self.driver.find_element_by_css_selector(
-            "#comment-editor p"
+        self.driver.find_element(By.CSS_SELECTOR, ".edit-comment").click()
+        self.driver.find_element(
+            By.CSS_SELECTOR, "#comment-editor p"
         ).send_keys("MODIFICATION")
-        self.driver.find_element_by_css_selector(".comment-is-major").click()
-        self.driver.find_element_by_css_selector(
-            "#comment-editor .submit"
+        self.driver.find_element(By.CSS_SELECTOR, ".comment-is-major").click()
+        self.driver.find_element(
+            By.CSS_SELECTOR, "#comment-editor .submit"
         ).click()
         WebDriverWait(self.driver2, self.wait_time).until(
             EC.presence_of_element_located(
@@ -867,16 +871,18 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
         # Add comment answer
-        self.driver2.find_element_by_css_selector(
-            ".margin-box.comment"
+        self.driver2.find_element(
+            By.CSS_SELECTOR, ".margin-box.comment"
         ).click()
-        self.driver2.find_element_by_css_selector(
-            "#answer-editor .ProseMirror"
+        self.driver2.find_element(
+            By.CSS_SELECTOR, "#answer-editor .ProseMirror"
         ).send_keys("My answer")
-        self.driver2.find_element_by_css_selector(
-            ".comment-answer .submit"
+        self.driver2.find_element(
+            By.CSS_SELECTOR, ".comment-answer .submit"
         ).click()
-        self.driver.find_element_by_css_selector(".margin-box.comment").click()
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".margin-box.comment"
+        ).click()
         comment_answer = WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
                 (By.CSS_SELECTOR, ".comment-answer .comment-text-wrapper p")
@@ -886,17 +892,17 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # Modify comment answer
         comment_answer.click()
-        self.driver.find_element_by_css_selector(
-            ".comment-answer .show-marginbox-options"
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".comment-answer .show-marginbox-options"
         ).click()
-        self.driver.find_element_by_css_selector(
-            ".edit-comment-answer"
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".edit-comment-answer"
         ).click()
-        self.driver.find_element_by_css_selector("#answer-editor p").send_keys(
-            "\nMODIFICATION"
-        )
-        self.driver.find_element_by_css_selector(
-            ".comment-answer .submit"
+        self.driver.find_element(
+            By.CSS_SELECTOR, "#answer-editor p"
+        ).send_keys("\nMODIFICATION")
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".comment-answer .submit"
         ).click()
         answer_addition = WebDriverWait(self.driver2, self.wait_time).until(
             EC.presence_of_element_located(
@@ -907,11 +913,11 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # Delete comment answer
         answer_addition.click()
-        self.driver2.find_element_by_css_selector(
-            ".comment-answer .show-marginbox-options"
+        self.driver2.find_element(
+            By.CSS_SELECTOR, ".comment-answer .show-marginbox-options"
         ).click()
-        self.driver2.find_element_by_css_selector(
-            ".delete-comment-answer"
+        self.driver2.find_element(
+            By.CSS_SELECTOR, ".delete-comment-answer"
         ).click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.invisibility_of_element_located(
@@ -920,11 +926,13 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
         # Delete comment
-        self.driver.find_element_by_css_selector(".margin-box.comment").click()
-        self.driver.find_element_by_css_selector(
-            ".margin-box.comment .show-marginbox-options"
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".margin-box.comment"
         ).click()
-        self.driver.find_element_by_css_selector(".delete-comment").click()
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".margin-box.comment .show-marginbox-options"
+        ).click()
+        self.driver.find_element(By.CSS_SELECTOR, ".delete-comment").click()
         WebDriverWait(self.driver2, self.wait_time).until(
             EC.invisibility_of_element_located(
                 (By.CSS_SELECTOR, ".margin-box.comment")
@@ -932,7 +940,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def add_figure(self, driver):
-        button = driver.find_element_by_xpath('//*[@title="Figure"]')
+        button = driver.find_element(By.XPATH, '//*[@title="Figure"]')
         button.click()
         time.sleep(1)
         # click on 'Insert image' button
@@ -965,8 +973,9 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         upload_image_url.send_keys(image_path)
 
         # click on 'Upload' button
-        driver.find_element_by_xpath(
-            '//*[contains(@class, "ui-button") and normalize-space()="Upload"]'
+        driver.find_element(
+            By.XPATH,
+            '//*[contains(@class, "ui-button") and normalize-space()="Upload"]',
         ).click()
 
         # click on 'Use image' button
@@ -976,12 +985,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             )
         )
 
-        driver.find_element_by_xpath(
-            '//*[normalize-space()="Use image"]'
+        driver.find_element(
+            By.XPATH, '//*[normalize-space()="Use image"]'
         ).click()
 
         # click on 'Insert' button
-        driver.find_element_by_css_selector("button.fw-dark").click()
+        driver.find_element(By.CSS_SELECTOR, "button.fw-dark").click()
 
         caption = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located(
@@ -992,14 +1001,16 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.input_text(caption, "My figure")
 
     def get_image(self, driver):
-        figure = driver.find_element_by_css_selector("div.article-body figure")
-        image = figure.find_elements_by_tag_name("img")
+        figure = driver.find_element(
+            By.CSS_SELECTOR, "div.article-body figure"
+        )
+        image = figure.find_elements(By.TAG_NAME, "img")
 
         return image
 
     def get_caption(self, driver):
-        caption = driver.find_element_by_css_selector(
-            "div.article-body figure figcaption"
+        caption = driver.find_element(
+            By.CSS_SELECTOR, "div.article-body figure figcaption"
         )
 
         return caption.text
@@ -1014,7 +1025,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         self.add_title(self.driver)
 
-        document_input = self.driver.find_element_by_class_name("ProseMirror")
+        document_input = self.driver.find_element(By.CLASS_NAME, "ProseMirror")
 
         # Total: 23
         self.driver.execute_script("window.testCaret.setSelection(25,25)")
@@ -1028,7 +1039,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.wait_for_doc_size(self.driver2, 34)
 
         # without clicking on content the buttons will not work
-        content = self.driver2.find_element_by_class_name("ProseMirror")
+        content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
         content.click()
 
         self.driver2.execute_script("window.testCaret.setSelection(28,28)")
@@ -1065,7 +1076,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.assertEqual(1, len(self.get_image(self.driver)))
 
     def add_citation(self, driver):
-        button = driver.find_element_by_xpath('//*[@title="Cite"]')
+        button = driver.find_element(By.XPATH, '//*[@title="Cite"]')
         button.click()
 
         # click on 'Register new source' button
@@ -1083,39 +1094,40 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # click on article
         Select(
-            driver.find_element_by_id("select-bibtype")
+            driver.find_element(By.ID, "select-bibtype")
         ).select_by_visible_text("Article")
 
         # fill the values
-        title_of_publication = driver.find_element_by_css_selector(
-            ".journaltitle .ProseMirror"
+        title_of_publication = driver.find_element(
+            By.CSS_SELECTOR, ".journaltitle .ProseMirror"
         )
         title_of_publication.click()
         title_of_publication.send_keys("My publication title")
 
-        title = driver.find_element_by_css_selector(".title .ProseMirror")
+        title = driver.find_element(By.CSS_SELECTOR, ".title .ProseMirror")
         title.click()
         title.send_keys("My title")
 
-        author_firstName = driver.find_element_by_css_selector(
-            ".author .given .ProseMirror"
+        author_firstName = driver.find_element(
+            By.CSS_SELECTOR, ".author .given .ProseMirror"
         )
         author_firstName.click()
         author_firstName.send_keys("John")
 
-        author_lastName = driver.find_element_by_css_selector(
-            ".family .ProseMirror"
+        author_lastName = driver.find_element(
+            By.CSS_SELECTOR, ".family .ProseMirror"
         )
         author_lastName.click()
         author_lastName.send_keys("Doe")
 
-        publication_date = driver.find_element_by_css_selector(".date .date")
+        publication_date = driver.find_element(By.CSS_SELECTOR, ".date .date")
         publication_date.click()
         publication_date.send_keys("2012")
 
         # click on Submit button
-        driver.find_element_by_xpath(
-            '//*[contains(@class, "ui-button") and normalize-space()="Submit"]'
+        driver.find_element(
+            By.XPATH,
+            '//*[contains(@class, "ui-button") and normalize-space()="Submit"]',
         ).click()
 
         # Wait for source to be listed
@@ -1129,16 +1141,16 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
         # click on Insert button
-        driver.find_element_by_css_selector(".insert-citation").click()
+        driver.find_element(By.CSS_SELECTOR, ".insert-citation").click()
 
     def get_citation_within_text(self, driver):
-        cite_within_doc = driver.find_element_by_css_selector(
-            "div.article-body span.citation"
+        cite_within_doc = driver.find_element(
+            By.CSS_SELECTOR, "div.article-body span.citation"
         )
         return cite_within_doc.text
 
     def get_citation_bib(self, driver):
-        cite_bib = driver.find_element_by_class_name("article-bibliography")
+        cite_bib = driver.find_element(By.CLASS_NAME, "article-bibliography")
         return cite_bib.text
 
     def test_citation(self):
@@ -1150,7 +1162,9 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        document_input = self.driver.find_element_by_class_name("article-body")
+        document_input = self.driver.find_element(
+            By.CLASS_NAME, "article-body"
+        )
 
         # Total: 22
         self.driver.execute_script("window.testCaret.setSelection(25,25)")
@@ -1164,7 +1178,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.wait_for_doc_size(self.driver2, 34)
 
         # without clicking on content the buttons will not work
-        content = self.driver2.find_element_by_class_name("article-body")
+        content = self.driver2.find_element(By.CLASS_NAME, "article-body")
         content.click()
 
         p2 = multiprocessing.Process(
@@ -1192,8 +1206,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # We delete the citation again
         ActionChains(self.driver).double_click(
-            self.driver.find_element_by_css_selector(
-                "div.article-body span.citation"
+            self.driver.find_element(
+                By.CSS_SELECTOR, "div.article-body span.citation"
             )
         ).send_keys(Keys.BACKSPACE).perform()
 
@@ -1201,8 +1215,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         self.assertEqual(
             len(
-                self.driver2.find_elements_by_css_selector(
-                    "div.article-body span.citation"
+                self.driver2.find_elements(
+                    By.CSS_SELECTOR, "div.article-body span.citation"
                 )
             ),
             0,
@@ -1219,7 +1233,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         "Test whether chat messages can be delivered"
         self.load_document_editor(self.driver, self.doc)
         self.load_document_editor(self.driver2, self.doc)
-        self.driver.find_element_by_id("messageform").click()
+        self.driver.find_element(By.ID, "messageform").click()
         actions = ActionChains(self.driver)
         actions.send_keys("hello\n")
         actions.perform()

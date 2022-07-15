@@ -53,22 +53,22 @@ export class LoginPage extends PreloginPage {
     settings_PASSWORD_LOGIN ?
         `<div class="fw-login-right">
             <form>
-                    <ul id="non_field_errors" class="errorlist"></ul>
+                    <ul id="non-field-errors" class="errorlist"></ul>
                     <div class="input-wrapper">
-                        <label for="id_login">${gettext("Username")}</label>
-                        <input type="text" name="login" placeholder="${gettext("Username or e-mail")}" autofocus="autofocus" required="" id="id_login" autocomplete="username email">
-                        <ul id="id_login_errors" class="errorlist"></ul>
+                        <label for="id-login">${gettext("Username")}</label>
+                        <input type="text" name="login" placeholder="${gettext("Username or e-mail")}" autofocus="autofocus" required="" id="id-login" autocomplete="username email">
+                        <ul id="id-login-errors" class="errorlist"></ul>
                     </div>
                     <div class="input-wrapper">
-                        <label for="id_password">${gettext("Password")}</label>
-                        <input type="password" name="password" placeholder="${gettext("Password")}" required="" id="id_password" autocomplete="current-password">
-                        <ul id="id_password_errors" class="errorlist"></ul>
+                        <label for="id-password">${gettext("Password")}</label>
+                        <input type="password" name="password" placeholder="${gettext("Password")}" required="" id="id-password" autocomplete="current-password">
+                        <ul id="id-password-errors" class="errorlist"></ul>
                     </div>
                     <div class="submit-wrapper">
                         <button class="fw-button fw-dark fw-uppercase" type="submit" id="login-submit">${gettext("Log in")}</button>
                         <br>
-                        <input type="checkbox" name="remember" id="id_remember">
-                        <label for="id_remember">${gettext("Remember me")}</label>
+                        <input type="checkbox" name="remember" id="id-remember">
+                        <label for="id-remember">${gettext("Remember me")}</label>
                     </div>
                     <a id="lost-passwd" href="/account/password-reset/">${gettext("Forgot Password?")}</a>
                 </form>
@@ -104,12 +104,12 @@ export class LoginPage extends PreloginPage {
         loginSubmit.addEventListener('click', event => {
             event.preventDefault()
 
-            const nonFieldErrors = document.querySelector('#non_field_errors'),
-                idLogin = document.querySelector('#id_login'),
-                idLoginErrors = document.querySelector('#id_login_errors'),
-                idPassword = document.querySelector('#id_password'),
-                idPasswordErrors = document.querySelector('#id_password_errors'),
-                idRemember = document.querySelector('#id_remember'),
+            const nonFieldErrors = document.querySelector('#non-field-errors'),
+                idLogin = document.querySelector('#id-login'),
+                idLoginErrors = document.querySelector('#id-login-errors'),
+                idPassword = document.querySelector('#id-password'),
+                idPasswordErrors = document.querySelector('#id-password-errors'),
+                idRemember = document.querySelector('#id-remember'),
                 fwContents = document.querySelector('.fw-contents')
 
             if (

@@ -1,7 +1,7 @@
 input,
 textarea,
 button {
-    font-family: 'Lato', sans-serif;
+    font-family: Lato, sans-serif;
     margin: 0;
     outline-width: 0;
 }
@@ -28,7 +28,7 @@ textarea {
     line-height: 1.33em;
     box-shadow: none;
     border-radius: 0;
-    margin: 5px 0 5px 0;
+    margin: 5px 0;
     color: var(--cs-white-text);
     background-color: var(--input-background-color);
     border: 0 none;
@@ -129,7 +129,13 @@ tr.fw-checkable.checked > td:last-child::after {
     height: 13px;
     border: 1px solid var(--overview-checkbox-border);
     border-radius: 2px;
-    background: linear-gradient(to bottom, rgba(var(--overview-checkbox-background-color-from)) 0%, rgba(var(--overview-checkbox-background-color-to)) 100%);
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(var(--overview-checkbox-background-color-from)) 0%,
+            rgba(var(--overview-checkbox-background-color-to))
+            100%
+        );
 }
 
 .fw-check:checked + label::after {
@@ -203,7 +209,7 @@ tr.fw-checkable.checked > td:last-child::after {
 /*
  * radio buttons
  */
-.fw-radio input[type=radio] {
+.fw-radio input[type='radio'] {
     display: inline-block;
     width: 40px;
     margin-bottom: 20px;
@@ -219,8 +225,6 @@ tr.fw-checkable.checked > td:last-child::after {
     display: inline-block;
     width: calc(100% - 22px);
     appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
     cursor: pointer;
 }
 
@@ -240,20 +244,20 @@ tr.fw-checkable.checked > td:last-child::after {
 
 
 .entry-field .ProseMirror,
-.entry-field input[type=text],
-.entry-field input[type=number] {
+.entry-field input[type='text'],
+.entry-field input[type='number'] {
     width: 686px;
     max-width: 80vw;
 }
 
 
-.entry-field.fw-fomt-error input[type=text],
-.entry-field.fw-fomt-error input[type=number] {
+.entry-field.fw-fomt-error input[type='text'],
+.entry-field.fw-fomt-error input[type='number'] {
     background-color: var(--input-error-background-color);
 }
 
 
-.entry-field input[type=checkbox] {
+.entry-field input[type='checkbox'] {
     margin-top: 12px;
 }
 
@@ -269,8 +273,6 @@ tr.fw-checkable.checked > td:last-child::after {
     height: 38px;
     width: 561px;
     appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
     cursor: pointer;
     display: inline-block;
 }
@@ -425,7 +427,7 @@ tr.fw-checkable.checked > td:last-child::after {
     display: block;
     position: relative;
     font-size: 14px;
-    line-height: 1.42857;
+    line-height: 1.4286;
     color: var(--tokenfield-color);
     background-color: var(--cs-light-background-hover);
 }
@@ -483,8 +485,8 @@ tr.fw-checkable.checked > td:last-child::after {
 
 @media screen and (max-width: 740px) {
     .entry-field .ProseMirror,
-    .entry-field input[type=text],
-    .entry-field input[type=number] {
+    .entry-field input[type='text'],
+    .entry-field input[type='number'] {
         max-width: 70vw;
     }
 
@@ -499,8 +501,8 @@ tr.fw-checkable.checked > td:last-child::after {
 
 @media screen and (max-width: 560px) {
     .entry-field .ProseMirror,
-    .entry-field input[type=text],
-    .entry-field input[type=number] {
+    .entry-field input[type='text'],
+    .entry-field input[type='number'] {
         max-width: 50vw;
     }
 
@@ -524,8 +526,8 @@ tr.fw-checkable.checked > td:last-child::after {
 
 @media screen and (max-width: 460px) {
     .entry-field .ProseMirror,
-    .entry-field input[type=text],
-    .entry-field input[type=number] {
+    .entry-field input[type='text'],
+    .entry-field input[type='number'] {
         max-width: 40vw;
     }
 

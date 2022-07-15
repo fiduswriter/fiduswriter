@@ -290,7 +290,7 @@ export class Editor {
                     this.mod.collab.doc.awaitingDiffResponse = true // wait sending diffs till the version is confirmed
                 },
                 restartMessage: () => ({type: 'get_document'}), // Too many messages have been lost and we need to restart
-                messagesElement: () => this.dom.querySelector('#unobtrusive_messages'),
+                messagesElement: () => this.dom.querySelector('#unobtrusive-messages'),
                 warningNotAllSent: gettext('Warning! Not all your changes have been saved! You could suffer data loss. Attempting to reconnect...'),
                 infoDisconnected: gettext('Disconnected. Attempting to reconnect...'),
                 receiveData: data => {
@@ -498,7 +498,7 @@ export class Editor {
                 </audio>
             </div>
         </div>
-        <div id="unobtrusive_messages"></div>`
+        <div id="unobtrusive-messages"></div>`
         const feedbackTab = new FeedbackTab()
         feedbackTab.init()
     }

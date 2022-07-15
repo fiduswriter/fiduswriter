@@ -5,7 +5,7 @@
     background-color: var(--cs-white-background);
     border: solid 1px var(--cs-white-border);
     vertical-align: middle;
-    padding: 20px 14px 0 14px;
+    padding: 20px 14px 0;
     overflow-y: auto;
     margin-bottom: 16px;
 }

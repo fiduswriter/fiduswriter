@@ -16,16 +16,16 @@ export class PasswordResetChangePassword extends PreloginPage {
         </div>
         <div class="fw-login-right">
             <form>
-                <ul id="non_field_errors" class="errorlist"></ul>
+                <ul id="non-field-errors" class="errorlist"></ul>
                 <div class="input-wrapper">
-                    <label for="id_password1">${gettext('Create a password')}</label>
-                    <input type="password" name="password1" placeholder="${gettext('Password')}" required="" id="id_password1" autocomplete="new-password">
-                    <ul id="id_password1_errors" class="errorlist"></ul>
+                    <label for="id-password1">${gettext('Create a password')}</label>
+                    <input type="password" name="password1" placeholder="${gettext('Password')}" required="" id="id-password1" autocomplete="new-password">
+                    <ul id="id-password1-errors" class="errorlist"></ul>
                 </div>
                 <div class="input-wrapper">
-                    <label for="id_password2">${gettext('Confirm your password')}</label>
-                    <input type="password" name="password2" placeholder="${gettext('Password (again)')}" required="" id="id_password2" autocomplete="new-password">
-                    <ul id="id_password2_errors" class="errorlist"></ul>
+                    <label for="id-password2">${gettext('Confirm your password')}</label>
+                    <input type="password" name="password2" placeholder="${gettext('Password (again)')}" required="" id="id-password2" autocomplete="new-password">
+                    <ul id="id-password2-errors" class="errorlist"></ul>
                 </div>
                 <div class="submit-wrapper">
                     <button class="fw-button fw-dark fw-uppercase" id="change-password-submit" type="submit">${gettext("Change My Password")}</button>
@@ -41,30 +41,30 @@ export class PasswordResetChangePassword extends PreloginPage {
         // We remove the key from the URL to prevent leakage.
         window.history.replaceState({}, "", '/account/change-password/')
 
-        const passwordInput = document.getElementById('id_password1')
+        const passwordInput = document.getElementById('id-password1')
         if (passwordInput) {
             passwordInput.focus()
         }
 
         document.getElementById('change-password-submit').addEventListener('click', event => {
             event.preventDefault()
-            document.querySelector('#non_field_errors').innerHTML = ''
-            document.querySelector('#id_password1_errors').innerHTML = ''
-            document.querySelector('#id_password2_errors').innerHTML = ''
+            document.querySelector('#non-field-errors').innerHTML = ''
+            document.querySelector('#id-password1-errors').innerHTML = ''
+            document.querySelector('#id-password2-errors').innerHTML = ''
 
-            const password1 = document.getElementById('id_password1').value,
-                password2 = document.getElementById('id_password2').value
+            const password1 = document.getElementById('id-password1').value,
+                password2 = document.getElementById('id-password2').value
             let errors = false
             if (!password1.length) {
-                document.querySelector('#id_password1_errors').innerHTML = `<li>${gettext('This field is required.')}</li>`
+                document.querySelector('#id-password1-errors').innerHTML = `<li>${gettext('This field is required.')}</li>`
                 errors = true
             }
             if (!password2.length) {
-                document.querySelector('#id_password2_errors').innerHTML = `<li>${gettext('This field is required.')}</li>`
+                document.querySelector('#id-password2-errors').innerHTML = `<li>${gettext('This field is required.')}</li>`
                 errors = true
             }
             if (password1 !== password2) {
-                document.querySelector('#id_password2_errors').innerHTML = `<li>${gettext('You must type the same password each time.')}</li>`
+                document.querySelector('#id-password2-errors').innerHTML = `<li>${gettext('You must type the same password each time.')}</li>`
                 errors = true
             }
 
@@ -91,16 +91,16 @@ export class PasswordResetChangePassword extends PreloginPage {
                 response => response.json().then(
                     json => {
                         json.form.errors.forEach(
-                            error => document.querySelector("#non_field_errors").innerHTML += `<li>${escapeText(error)}</li>`
+                            error => document.querySelector("#non-field-errors").innerHTML += `<li>${escapeText(error)}</li>`
                         )
                         if (json.form.fields.password1) {
                             json.form.fields.password1.errors.forEach(
-                                error => document.querySelector('#id_password1_errors').innerHTML += `<li>${escapeText(error)}</li>`
+                                error => document.querySelector('#id-password1-errors').innerHTML += `<li>${escapeText(error)}</li>`
                             )
                         }
                         if (json.form.fields.password2) {
                             json.form.fields.password2.errors.forEach(
-                                error => document.querySelector('#id_password2_errors').innerHTML += `<li>${escapeText(error)}</li>`
+                                error => document.querySelector('#id-password2-errors').innerHTML += `<li>${escapeText(error)}</li>`
                             )
                         }
                     }

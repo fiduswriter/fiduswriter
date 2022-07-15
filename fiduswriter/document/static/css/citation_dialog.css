@@ -7,11 +7,11 @@
     overflow-y: auto;
 }
 
-#cite-source-table_filter {
+#cite-source-table_filter { /* stylelint-disable-line */
     text-align: left;
 }
 
-#cite-source-table_filter input[type='text'] {
+#cite-source-table_filter input[type='text'] { /* stylelint-disable-line */
     width: 332px;
     height: 33px;
 }

@@ -499,7 +499,7 @@ export const toolbarModel = () => ({
             icon: 'asterisk',
             action: editor => {
                 const node = editor.view.state.schema.nodes['footnote']
-                const tr = editor.view.state.tr.replaceSelectionWith(node.createAndFill())
+                const tr = editor.view.state.tr.replaceSelectionWith(node.createAndFill(), false)
                 editor.view.dispatch(tr)
                 return false
             },

@@ -57,7 +57,8 @@ export class TableDialog {
                 const schema = this.editor.currentView.state.schema
                 this.editor.currentView.dispatch(
                     this.editor.currentView.state.tr.replaceSelectionWith(
-                        schema.nodeFromJSON(table)
+                        schema.nodeFromJSON(table),
+                        false
                     )
                 )
                 this.dialog.close()

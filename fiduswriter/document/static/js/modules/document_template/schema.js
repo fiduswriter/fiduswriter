@@ -89,7 +89,8 @@ richtextMenuContent[1][0].content.push(blockTypeItem(type, {
         const table = {type: 'table', content: [{type: 'table_caption'}, {type: 'table_body', content: [{type: 'table_row', content: [{type: 'table_cell', content: [{type: 'paragraph'}]}]}]}]}
         const schema = state.schema
         dispatch(state.tr.replaceSelectionWith(
-            schema.nodeFromJSON(table))
+            schema.nodeFromJSON(table)),
+            false
         )
     }
 }))

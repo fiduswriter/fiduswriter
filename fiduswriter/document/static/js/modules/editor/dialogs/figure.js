@@ -231,7 +231,8 @@ export class FigureDialog {
                     id: this.insideFigure ? this.node.attrs.id : randomFigureId()
                 },
                 content
-            )
+            ),
+            false
         )
         this.editor.currentView.dispatch(tr)
 

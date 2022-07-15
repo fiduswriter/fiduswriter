@@ -131,7 +131,7 @@ class Document(models.Model):
 
     def save(self, *args, **kwargs):
         self.clean()
-        super().save(*args, **kwargs)
+        return super().save(*args, **kwargs)
 
     def get_absolute_url(self):
         return "/document/%i/" % self.id

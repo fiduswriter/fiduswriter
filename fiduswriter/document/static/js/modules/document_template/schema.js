@@ -90,7 +90,7 @@ richtextMenuContent[1][0].content.push(blockTypeItem(type, {
         const schema = state.schema
         dispatch(state.tr.replaceSelectionWith(
             schema.nodeFromJSON(table)),
-            false
+        false
         )
     }
 }))

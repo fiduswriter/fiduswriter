@@ -56,7 +56,8 @@ export class ImageOverview {
             contents: '',
             user: this.user,
             staticUrl: this.staticUrl,
-            hasOverview: true
+            hasOverview: true,
+            app: this.app
         })
         document.body = this.dom
         ensureCSS([

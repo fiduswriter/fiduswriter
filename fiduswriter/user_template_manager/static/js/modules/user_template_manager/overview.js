@@ -37,7 +37,8 @@ export class DocTemplatesOverview {
         this.dom.innerHTML = baseBodyTemplate({
             contents: '',
             user: this.user,
-            hasOverview: true
+            hasOverview: true,
+            app: this.app
         })
         document.body = this.dom
         ensureCSS([

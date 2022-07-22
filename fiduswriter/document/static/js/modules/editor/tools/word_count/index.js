@@ -19,7 +19,16 @@ export class WordCountDialog {
     getNonDeletedTextContent(topNode) {
         let text = ''
         topNode.descendants((node) => {
-            if (node.marks.find(mark => mark.type.name === 'deletion')) {
+            if (
+                node.marks.find(mark => mark.type.name === 'deletion') ||
+                (
+                    node.attrs &&
+                    (
+                        node.attrs.track.find(track => track.type === 'deletion') ||
+                        node.attrs.hidden
+                    )
+                )
+            ) {
                 return
             } else if (node.isBlock) {
                 text += '\n'

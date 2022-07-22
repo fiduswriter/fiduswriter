@@ -4,8 +4,6 @@ import {getNonDeletedTextContent} from "../../../schema/text"
 import {wordCounterDialogTemplate} from "./templates"
 
 
-
-
 export class WordCountDialog {
     constructor(editor) {
         this.editor = editor

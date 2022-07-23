@@ -40,8 +40,10 @@ build
 /fiduswriter/ojs
 /fiduswriter/phplist
 /fiduswriter/payment
+/fiduswriter/publish
 /fiduswriter/github_export
 /fiduswriter/gitlab_export
 /fiduswriter/gitrepo_export
 /fiduswriter/tum
+/fiduswriter/simlev
 .history

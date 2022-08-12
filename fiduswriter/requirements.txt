@@ -4,7 +4,7 @@ django-allauth==0.51.0
 #django-avatar==5.0.0
 git+https://github.com/grantmcconnaughey/django-avatar@51cbdbd#egg=django-avatar
 django-js-error-hook==0.8
-django-npm-mjs==2.2.0
+django-npm-mjs==2.2.4
 django-loginas==0.3.10
 Pillow==9.2.0
 python-dateutil==2.8.2

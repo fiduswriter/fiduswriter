@@ -73,7 +73,8 @@ export class Profile {
         this.dom.classList.add('scrollable')
         this.dom.innerHTML = baseBodyTemplate({
             contents: profileContents(this.user, this.socialaccount_providers),
-            user: this.user
+            user: this.user,
+            app: this.app
         })
         document.body = this.dom
 

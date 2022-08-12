@@ -1,13 +1,13 @@
 import {avatarTemplate} from "./user"
 import {filterPrimaryEmail} from "./user_util"
 
-export const baseBodyTemplate = ({user, contents, hasOverview}) => `
+export const baseBodyTemplate = ({user, contents, hasOverview, app}) => `
 <div id="wait">
     <i class="fa fa-spinner fa-pulse"></i>
 </div>
 <header class="fw-header">
     <div class="fw-container">
-        <a href="/">
+        <a href="${app && app.routes[''].app === "document" ? '/' : `/documents/`}">
             <h1 class="fw-logo">
                 <span class="fw-logo-text"></span>
                 <img src="${settings_STATIC_URL}svg/icon.svg?v=${transpile_VERSION}" />

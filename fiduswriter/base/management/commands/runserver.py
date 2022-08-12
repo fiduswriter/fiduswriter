@@ -38,7 +38,7 @@ naiveip_re = re.compile(
 class Command(BaseCommand):
     help = "Run django using the tornado server"
     requires_migrations_checks = True
-    requires_system_checks = True
+    requires_system_checks = "__all__"
     leave_locale_alone = True
     default_addr = "127.0.0.1"
     default_port = str(settings.PORT)

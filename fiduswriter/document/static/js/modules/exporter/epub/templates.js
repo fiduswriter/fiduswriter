@@ -129,7 +129,7 @@ ${
     ).join('')
 }
     </head>
-    <body class="${currentPart && currentPart.length ? `${currentPart.toLowerCase().replace(/[^a-z]/g, '')} content` : 'content'}"${currentPart && currentPart.length ? ` data-part="${escapeText(currentPart)}"` : ''} data-title="${escapeText(title)}">${
+    <body class="${currentPart && currentPart.length ? `epub ${currentPart.toLowerCase().replace(/[^a-z]/g, '')} content` : 'epub content'}"${currentPart && currentPart.length ? ` data-part="${escapeText(currentPart)}"` : ''} data-title="${escapeText(title)}">${
     part && part.length ?
         `<h1 class="part">${escapeText(part)}</h1>` :
         ''
@@ -183,7 +183,7 @@ export const navTemplate = ({shortLang, contentItems, styleSheets}) =>
     ).join('')
 }
     </head>
-    <body class="navigation">
+    <body class="epub navigation">
         <nav epub:type="toc" id="toc">
             <ol>
 ${

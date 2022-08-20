@@ -96,7 +96,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR, "option[value=duplicate]"
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR, "button[type=submit]"
+            By.CSS_SELECTOR, "button.button[type=submit]"
         ).click()
         template_links = self.driver.find_elements(
             By.CSS_SELECTOR, "#result_list tbody a"
@@ -271,7 +271,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
             "Special Article",
         )
         self.driver.find_element(
-            By.CSS_SELECTOR, "a[href='/admin/logout/']"
+            By.CSS_SELECTOR, "button[type=submit]"
         ).click()
         self.driver.get(self.base_url)
         # Logging in as User 1

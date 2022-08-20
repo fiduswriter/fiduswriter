@@ -93,7 +93,6 @@ jobs:
     - name: Coveralls
       run: |
           cd fiduswriter
-          coverage combine
           coveralls --service=github
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

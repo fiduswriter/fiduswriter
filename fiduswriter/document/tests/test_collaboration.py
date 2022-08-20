@@ -1000,13 +1000,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         caption.click()
         self.input_text(caption, "My figure")
 
-    def get_image(self, driver):
-        figure = driver.find_element(
-            By.CSS_SELECTOR, "div.article-body figure"
+    def get_images(self, driver):
+        images = driver.find_elements(
+            By.CSS_SELECTOR, "div.article-body figure img[data-image]"
         )
-        image = figure.find_elements(By.TAG_NAME, "img")
 
-        return image
+        return images
 
     def get_caption(self, driver):
         caption = driver.find_element(
@@ -1054,10 +1053,10 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         # Wait for the two editors to be synched
         self.wait_for_doc_sync(self.driver, self.driver2)
 
-        self.assertEqual(1, len(self.get_image(self.driver2)))
+        self.assertEqual(1, len(self.get_images(self.driver2)))
 
         self.assertEqual(
-            len(self.get_image(self.driver)), len(self.get_image(self.driver2))
+            len(self.get_images(self.driver)), len(self.get_images(self.driver2))
         )
 
         self.assertEqual(9, len(self.get_caption(self.driver2)))
@@ -1073,7 +1072,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
                 (By.CSS_SELECTOR, "div.article-body figure")
             )
         )
-        self.assertEqual(1, len(self.get_image(self.driver)))
+        self.assertEqual(1, len(self.get_images(self.driver)))
 
     def add_citation(self, driver):
         button = driver.find_element(By.XPATH, '//*[@title="Cite"]')

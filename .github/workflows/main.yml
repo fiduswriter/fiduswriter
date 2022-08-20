@@ -80,7 +80,7 @@ jobs:
         pip install -r test-requirements.txt
         pip install coverage
         pip install coveralls
-        coverage run manage.py setup --no-static
+        coverage run --concurrency=multiprocessing manage.py setup --no-static
     - name: Run test ${{ matrix.test }}
       uses: nick-invision/retry@v2
       with:

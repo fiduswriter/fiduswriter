@@ -89,7 +89,7 @@ jobs:
         retry_on: error
         command: |
           cd fiduswriter
-          coverage run --concurrency=multiprocessing manage.py test ${{ matrix.test }}
+          coverage run --concurrency=multiprocessing,thread manage.py test ${{ matrix.test }}
     - name: Coveralls
       run: |
           cd fiduswriter

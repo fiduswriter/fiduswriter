@@ -1056,7 +1056,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.assertEqual(1, len(self.get_images(self.driver2)))
 
         self.assertEqual(
-            len(self.get_images(self.driver)), len(self.get_images(self.driver2))
+            len(self.get_images(self.driver)),
+            len(self.get_images(self.driver2)),
         )
 
         self.assertEqual(9, len(self.get_caption(self.driver2)))

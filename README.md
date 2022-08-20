@@ -14,7 +14,7 @@ Fidus Writer is an online collaborative editor especially made for academics who
 Installation
 ------------
 
-Installation procedures can be found in our [WIKI](https://github.com/fiduswriter/fiduswriter/wiki/).
+The installation procedures can be found in our [WIKI](https://github.com/fiduswriter/fiduswriter/wiki/).
 
 
 Contributing

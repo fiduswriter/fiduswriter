@@ -1,3 +1,5 @@
+import {mml2omml} from "mathml2omml"
+
 import {noSpaceTmp} from "../../common"
 
 // Not entirely sure if we need this font here. This is included whenever Word
@@ -16,7 +18,6 @@ export class DocxExporterMath {
         this.exporter = exporter
         this.fontTableXml = false
         this.addedCambriaMath = false
-        this.processor = new window.XSLTProcessor()
         this.domParser = new DOMParser()
     }
 
@@ -24,23 +25,11 @@ export class DocxExporterMath {
         return this.exporter.xml.getXml("word/fontTable.xml").then(
             fontTableXml => {
                 this.fontTableXml = fontTableXml
-                return this.setupXslt()
+                return import("mathlive")
             }
-        ).then(
-            () => import("mathlive")
         ).then(
             MathLive => this.mathLive = MathLive
         )
-    }
-
-    setupXslt() {
-        return fetch(`${settings_STATIC_URL}xsl/mml2omml.xsl?v=${transpile_VERSION}`)
-            .then(response => response.text())
-            .then(xmlString => {
-                const parser = new window.DOMParser()
-                const xsl = parser.parseFromString(xmlString, "text/xml").querySelector('stylesheet')
-                this.processor.importStylesheet(xsl)
-            })
     }
 
     latexToMathML(latex) {
@@ -59,24 +48,9 @@ export class DocxExporterMath {
             fontsEl.insertAdjacentHTML('beforeEnd', CAMBRIA_MATH_FONT_DECLARATION)
             this.addedCambriaMath = true
         }
-        const mathml = this.domParser.parseFromString(
-            `<math xmlns="http://www.w3.org/1998/Math/MathML"><semantics>${this.latexToMathML(latex)}</semantics></math>`,
-            "application/xml"
-        ).documentElement
-        const omml = this.processor.transformToDocument(mathml)
-        let ommlString = omml.firstChild.outerHTML
-        // Firefox 73 doesn't wrap the omml properly, so we remove the transformiix:result and add the m:oMath
-        if (ommlString.startsWith('<transformiix:result')) {
-            ommlString = omml.firstChild.innerHTML
-        }
-        if (!ommlString.startsWith('<m:oMath')) {
-            ommlString = this.domParser.parseFromString(
-                `<m:oMath xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" xmlns:mml="http://www.w3.org/1998/Math/MathML">${ommlString}</m:oMath>`,
-                "application/xml"
-            ).documentElement.outerHTML
-        }
+        const mathmlString = `<math xmlns="http://www.w3.org/1998/Math/MathML"><semantics>${this.latexToMathML(latex)}</semantics></math>`
+        const ommlString = mml2omml(mathmlString)
         return ommlString
-
     }
 
 }

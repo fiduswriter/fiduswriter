@@ -4,7 +4,7 @@ import {Selection, TextSelection, EditorState} from "prosemirror-state"
 import {liftListItem} from "prosemirror-schema-list"
 
 export const deleteNode = function(tr, node, nodePos, map, accept) { // Delete a node either because a deletion has been accepted or an insertion rejected.
-    const newNodePos = map.map(nodePos), trackType = accept ? 'deletion' : 'insertion'
+    const newNodePos = map.map(nodePos), trackType = accept ? "deletion" : "insertion"
     let delStep
     if (node.isTextblock) {
         const selectionBefore = Selection.findFrom(tr.doc.resolve(newNodePos), -1)
@@ -36,13 +36,13 @@ export const deleteNode = function(tr, node, nodePos, map, accept) { // Delete a
             const track = node.attrs.track.filter(track => track.type !== trackType)
             tr.setNodeMarkup(newNodePos, null, Object.assign({}, node.attrs, {track}), node.marks)
         }
-    } else if (node.isLeaf || ['figure', 'table'].includes(node.type.name)) {
+    } else if (node.isLeaf || ["figure", "table"].includes(node.type.name)) {
         delStep = new ReplaceStep(
             newNodePos,
             map.map(nodePos + node.nodeSize),
             Slice.empty
         )
-    } else if (node.type === tr.doc.type.schema.nodes['list_item']) {
+    } else if (node.type === tr.doc.type.schema.nodes["list_item"]) {
         const state = EditorState.create({
             doc: tr.doc,
             selection: Selection.findFrom(tr.doc.resolve(newNodePos), 1)

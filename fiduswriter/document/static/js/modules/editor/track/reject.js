@@ -4,7 +4,7 @@ import {deactivateAllSelectedChanges} from "../state_plugins"
 import {deleteNode} from "./delete"
 
 export const reject = function(type, pos, view) {
-    const tr = view.state.tr.setMeta('track', true), map = new Mapping()
+    const tr = view.state.tr.setMeta("track", true), map = new Mapping()
     let reachedEnd = false, inlineChange = false
     const trackMark = view.state.doc.nodeAt(pos).marks.find(mark => mark.type.name === type)
     view.state.doc.nodesBetween(pos, view.state.doc.nodeSize - 2, (node, nodePos) => {
@@ -25,11 +25,11 @@ export const reject = function(type, pos, view) {
         } else {
             inlineChange = true
         }
-        if (type === 'insertion') {
+        if (type === "insertion") {
             deleteNode(tr, node, nodePos, map, false)
-        } else if (type === 'deletion') {
+        } else if (type === "deletion") {
             if (node.attrs.track) {
-                const track = node.attrs.track.filter(track => track.type !== 'deletion')
+                const track = node.attrs.track.filter(track => track.type !== "deletion")
                 tr.setNodeMarkup(map.map(nodePos), null, Object.assign({}, node.attrs, {track}), node.marks)
                 reachedEnd = true
             } else {
@@ -39,7 +39,7 @@ export const reject = function(type, pos, view) {
                     view.state.schema.marks.deletion
                 )
             }
-        } else if (type === 'format_change') {
+        } else if (type === "format_change") {
             trackMark.attrs.before.forEach(oldMark =>
                 tr.step(
                     new AddMarkStep(
@@ -65,8 +65,8 @@ export const reject = function(type, pos, view) {
                     trackMark
                 )
             )
-        } else if (type === 'block_change') {
-            const blockChangeTrack = node.attrs.track?.find(track => track.type === 'block_change'),
+        } else if (type === "block_change") {
+            const blockChangeTrack = node.attrs.track?.find(track => track.type === "block_change"),
                 track = node.attrs.track?.filter(track => track !== blockChangeTrack)
             if (!blockChangeTrack) {
                 return true

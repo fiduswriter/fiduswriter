@@ -11,11 +11,11 @@ export class RespondInviteDialog {
     init() {
         const buttons = [
             {
-                text: this.invites.length > 1 ? gettext('Accept all invites') : gettext('Accept invite'),
+                text: this.invites.length > 1 ? gettext("Accept all invites") : gettext("Accept invite"),
                 classes: "fw-dark",
                 click: () => {
                     postJson(
-                        '/api/user/invites/accept/',
+                        "/api/user/invites/accept/",
                         {invites: JSON.stringify(this.invites)}
                     ).then(
                         ({json, status}) => {
@@ -30,11 +30,11 @@ export class RespondInviteDialog {
                 }
             },
             {
-                text: this.invites.length > 1 ? gettext('Decline all invites') : gettext('Decline invite'),
+                text: this.invites.length > 1 ? gettext("Decline all invites") : gettext("Decline invite"),
                 classes: "fw-dark",
                 click: () => {
                     postJson(
-                        '/api/user/invites/decline/',
+                        "/api/user/invites/decline/",
                         {invites: JSON.stringify(this.invites)}
                     ).then(
                         ({status}) => {
@@ -48,18 +48,18 @@ export class RespondInviteDialog {
                 }
             },
             {
-                type: 'cancel'
+                type: "cancel"
             }
         ]
         const dialog = new Dialog({
-            title: gettext('Accept of invite'),
-            id: 'confirmaccept',
+            title: gettext("Accept of invite"),
+            id: "confirmaccept",
             body: `<p>${
                 this.invites.length > 1 ?
-                    gettext('Do you want to accept the below invites?') :
-                    gettext('Do you want to accept the below invite?')
+                    gettext("Do you want to accept the below invites?") :
+                    gettext("Do you want to accept the below invite?")
             }</p>
-            ${this.invites.map(invite => `<p>${invite.name} (${invite.email})</p>`).join('')}`,
+            ${this.invites.map(invite => `<p>${invite.name} (${invite.email})</p>`).join("")}`,
             height: 60,
             buttons
         })

@@ -1,8 +1,8 @@
 export const bulkMenuModel = () => ({
     content: [
         {
-            title: gettext('Delete selected'),
-            tooltip: gettext('Delete selected images.'),
+            title: gettext("Delete selected"),
+            tooltip: gettext("Delete selected images."),
             action: overview => {
                 const ids = overview.getSelected()
                 if (ids.length) {
@@ -17,29 +17,29 @@ export const bulkMenuModel = () => ({
 export const menuModel = () => ({
     content: [
         {
-            type: 'dropdown',
-            id: 'cat_selector',
+            type: "dropdown",
+            id: "cat_selector",
             content: [
                 {
-                    title: gettext('All categories'),
+                    title: gettext("All categories"),
                     action: _overview => {
-                        const trs = document.querySelectorAll('#imagelist > tbody > tr')
-                        trs.forEach(tr => tr.style.display = '')
+                        const trs = document.querySelectorAll("#imagelist > tbody > tr")
+                        trs.forEach(tr => tr.style.display = "")
                     }
                 }
             ],
             order: 1
         },
         {
-            type: 'text',
-            title: gettext('Edit categories'),
+            type: "text",
+            title: gettext("Edit categories"),
             action: overview => overview.mod.categories.editCategoryDialog(),
             order: 2,
             disabled: overview => overview.app.isOffline()
         },
         {
-            type: 'text',
-            title: gettext('Upload new image'),
+            type: "text",
+            title: gettext("Upload new image"),
             action: overview => {
                 import("../edit_dialog").then(({ImageEditDialog}) => {
                     const imageUpload = new ImageEditDialog(
@@ -58,9 +58,9 @@ export const menuModel = () => ({
             disabled: overview => overview.app.isOffline()
         },
         {
-            type: 'search',
-            icon: 'search',
-            title: gettext('Search images'),
+            type: "search",
+            icon: "search",
+            title: gettext("Search images"),
             input: (overview, text) => overview.table.search(text),
             order: 4
         }

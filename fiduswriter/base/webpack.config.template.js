@@ -20,7 +20,7 @@ if (settings.DEBUG) {
 }
 
 module.exports = { // eslint-disable-line no-undef
-    mode: settings.DEBUG ? 'development' : 'production',
+    mode: settings.DEBUG ? "development" : "production",
     devtool: settings.SOURCE_MAPS || false,
     module: {
         rules: [
@@ -33,7 +33,7 @@ module.exports = { // eslint-disable-line no-undef
                 test: /\.(csljson)$/i,
                 use: [
                     {
-                        loader: 'file-loader',
+                        loader: "file-loader",
                     },
                 ],
             },
@@ -44,7 +44,7 @@ module.exports = { // eslint-disable-line no-undef
         path: transpile.OUT_DIR,
         chunkFilename: "[id]-" + transpile.VERSION + ".js",
         publicPath: transpile.BASE_URL,
-        crossOriginLoading: 'anonymous'
+        crossOriginLoading: "anonymous"
     },
     plugins: [
         new webpack.DefinePlugin({
@@ -69,19 +69,19 @@ module.exports = { // eslint-disable-line no-undef
                 {
                     match: function(url) {
                         if (
-                            url.pathname.startsWith('/admin') ||
-                            url.pathname.startsWith('/api/') ||
-                            url.pathname.startsWith('/media/')
+                            url.pathname.startsWith("/admin") ||
+                            url.pathname.startsWith("/api/") ||
+                            url.pathname.startsWith("/media/")
                         ) {
                             return true
                         }
-                        return new URL('/', url)
+                        return new URL("/", url)
                     },
-                    requestTypes: ['navigate']
+                    requestTypes: ["navigate"]
                 }
             ],
             ServiceWorker: {
-                publicPath: '/sw.js',
+                publicPath: "/sw.js",
                 events: true,
                 entry: "./js/sw-template.js"
             },
@@ -97,14 +97,14 @@ module.exports = { // eslint-disable-line no-undef
             AppCache: false,
             version: transpile.VERSION,
             excludes: [
-                'admin_console.js',
-                'maintenance.js',
-                'schema_export.js',
-                'test_caret.js',
-                'document_template_admin.js',
-                '**/.*',
-                '**/*.map',
-                '**/*.gz'
+                "admin_console.js",
+                "maintenance.js",
+                "schema_export.js",
+                "test_caret.js",
+                "document_template_admin.js",
+                "**/.*",
+                "**/*.map",
+                "**/*.gz"
             ]
         })
     ],

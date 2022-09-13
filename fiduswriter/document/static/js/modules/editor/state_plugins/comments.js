@@ -2,7 +2,7 @@ import {Plugin, PluginKey} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
 import {AddMarkStep} from "prosemirror-transform"
 
-const key = new PluginKey('comments')
+const key = new PluginKey("comments")
 
 const commentDuringCreationDecoSpec = {}
 
@@ -73,7 +73,7 @@ export const addCommentDuringCreationDecoration = function(state, tr) {
     }
 
     decos = decos.add(tr.doc, [
-        Decoration.inline(tr.selection.from, tr.selection.to, {class: 'active-comment'}, commentDuringCreationDecoSpec)
+        Decoration.inline(tr.selection.from, tr.selection.to, {class: "active-comment"}, commentDuringCreationDecoSpec)
     ])
 
     return tr.setMeta(key, {decos})
@@ -141,7 +141,7 @@ export const commentsPlugin = function(options) {
         appendTransaction: (trs, oldState, state) => {
             // Check if any of the transactions are local.
             if (trs.every(tr => tr.getMeta(
-                'remote'))) {
+                "remote"))) {
                 // All transactions are remote. Give up.
                 return
             }
@@ -155,14 +155,14 @@ export const commentsPlugin = function(options) {
                     deletedComments[commentId] = tr.mapping.map(deletedComments[commentId])
                 })
                 tr.steps.forEach((step, index) => {
-                    if (step.jsonID === 'replace' || step.jsonID === 'replaceAround') {
+                    if (step.jsonID === "replace" || step.jsonID === "replaceAround") {
                         if (step.from !== step.to) {
                             tr.docs[index].nodesBetween(
                                 step.from,
                                 step.to,
                                 node => {
                                     node.marks.filter(
-                                        mark => mark.type.name === 'comment' && mark.attrs.id
+                                        mark => mark.type.name === "comment" && mark.attrs.id
                                     ).map(mark => mark.attrs.id).forEach(commentId => {
                                         if (!deletedComments.hasOwnProperty(commentId)) {
                                             deletedComments[commentId] = step.from
@@ -186,7 +186,7 @@ export const commentsPlugin = function(options) {
                 }
 
                 node.marks.filter(
-                    mark => mark.type.name === 'comment' && mark.attrs.id
+                    mark => mark.type.name === "comment" && mark.attrs.id
                 ).map(mark => mark.attrs.id).forEach(commentId => {
                     if (deletedComments.hasOwnProperty(commentId)) {
                         delete deletedComments[commentId]
@@ -207,7 +207,7 @@ export const commentsPlugin = function(options) {
                 // had no content.
                 // Add an empty space to the title, increase all positions, by 1, then
                 // try again.
-                tr = state.tr.insertText(' ', 2)
+                tr = state.tr.insertText(" ", 2)
                 state = tr.state
                 steps = []
                 Object.entries(deletedComments).forEach(([id, pos]) => {

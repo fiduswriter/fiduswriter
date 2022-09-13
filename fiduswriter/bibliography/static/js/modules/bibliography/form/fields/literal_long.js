@@ -18,9 +18,9 @@ export class LiteralLongFieldForm {
             state: EditorState.create({
                 schema: longLitSchema,
                 doc: longLitSchema.nodeFromJSON({
-                    type: 'doc',
+                    type: "doc",
                     content: [{
-                        type: 'longliteral',
+                        type: "longliteral",
                         content: this.initialValue
                     }]
                 }),
@@ -32,22 +32,22 @@ export class LiteralLongFieldForm {
                         "Mod-shift-z": undo,
                         "Mod-y": redo,
                         "Mod-b": () => {
-                            const sMark = this.view.state.schema.marks['strong']
+                            const sMark = this.view.state.schema.marks["strong"]
                             const command = toggleMark(sMark)
                             command(this.view.state, tr => this.view.dispatch(tr))
                         },
                         "Mod-i": () => {
-                            const sMark = this.view.state.schema.marks['em']
+                            const sMark = this.view.state.schema.marks["em"]
                             const command = toggleMark(sMark)
                             command(this.view.state, tr => this.view.dispatch(tr))
                         }
                     }),
                     InlineTools([
-                        {command: toggleMark(longLitSchema.marks.strong), dom: icon("strong", gettext('Strong'))},
-                        {command: toggleMark(longLitSchema.marks.em), dom: icon("em", gettext('Emphasis'))},
-                        {command: toggleMark(longLitSchema.marks.smallcaps), dom: icon("smallcaps", gettext('Small caps'))},
-                        {command: toggleMark(longLitSchema.marks.sub), dom: icon("sub", gettext('Subscript₊'))},
-                        {command: toggleMark(longLitSchema.marks.sup), dom: icon("sup", gettext('Supscript²'))}
+                        {command: toggleMark(longLitSchema.marks.strong), dom: icon("strong", gettext("Strong"))},
+                        {command: toggleMark(longLitSchema.marks.em), dom: icon("em", gettext("Emphasis"))},
+                        {command: toggleMark(longLitSchema.marks.smallcaps), dom: icon("smallcaps", gettext("Small caps"))},
+                        {command: toggleMark(longLitSchema.marks.sub), dom: icon("sub", gettext("Subscript₊"))},
+                        {command: toggleMark(longLitSchema.marks.sup), dom: icon("sup", gettext("Supscript²"))}
                     ])
                 ]
             }),

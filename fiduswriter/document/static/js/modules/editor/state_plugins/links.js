@@ -7,7 +7,7 @@ import {randomHeadingId, randomFigureId, randomListId, randomTableId} from "../.
 import {CATS} from "../../schema/i18n"
 import {LinkDialog} from "../dialogs"
 
-const key = new PluginKey('links')
+const key = new PluginKey("links")
 
 const copyLink = function(href) {
     const textarea = document.createElement("textarea")
@@ -18,18 +18,18 @@ const copyLink = function(href) {
     try {
         document.execCommand("copy") // Security exception may be thrown by some browsers.
         document.body.removeChild(textarea)
-        addAlert('info', gettext('Link copied to clipboard'))
+        addAlert("info", gettext("Link copied to clipboard"))
     } catch (ex) {
-        addAlert('info', gettext(
-            'Copy to clipboard failed. Please copy manually.'
+        addAlert("info", gettext(
+            "Copy to clipboard failed. Please copy manually."
         ))
     }
 }
 
 const nonDeletedTextContent = node => {
-    let text = ''
+    let text = ""
     node.descendants(subNode => {
-        if (subNode.isText && !subNode.marks.find(mark => mark.type.name === 'deletion')) {
+        if (subNode.isText && !subNode.marks.find(mark => mark.type.name === "deletion")) {
             text += subNode.text
         }
     })
@@ -42,10 +42,10 @@ export const getInternalTargets = function(state, language, editor) {
     const categories = {}
 
     state.doc.descendants(node => {
-        if (node.attrs.track?.find(track => track.type === 'deletion')) {
+        if (node.attrs.track?.find(track => track.type === "deletion")) {
             return true
         }
-        if (node.type.groups.includes('heading')) {
+        if (node.type.groups.includes("heading")) {
             const textContent = nonDeletedTextContent(node)
             if (textContent.length) {
                 internalTargets.push({
@@ -56,7 +56,7 @@ export const getInternalTargets = function(state, language, editor) {
             return true
         }
 
-        if (['figure', 'table'].includes(node.type.name) && node.attrs.category && node.attrs.category !== 'none') {
+        if (["figure", "table"].includes(node.type.name) && node.attrs.category && node.attrs.category !== "none") {
             if (!categories[node.attrs.category]) {
                 categories[node.attrs.category] = 0
             }
@@ -64,16 +64,16 @@ export const getInternalTargets = function(state, language, editor) {
 
             internalTargets.push({
                 id: node.attrs.id,
-                text: editor === 'main' ?
+                text: editor === "main" ?
                     `${CATS[node.attrs.category][language]} ${categories[node.attrs.category]}` :
                     `${CATS[node.attrs.category][language]} ${categories[node.attrs.category]}A`
             })
             return true
         }
-        if (node.type.name === 'text') {
-            const anchor = node.marks.find(mark => mark.type.name === 'anchor')
+        if (node.type.name === "text") {
+            const anchor = node.marks.find(mark => mark.type.name === "anchor")
             if (anchor) {
-                anchors[anchor.attrs.id] = (anchors[anchor.attrs.id] || '') + node.text
+                anchors[anchor.attrs.id] = (anchors[anchor.attrs.id] || "") + node.text
             }
         }
     })
@@ -87,8 +87,8 @@ export const linksPlugin = function(options) {
     function getUrl(state, oldState, oldUrl) {
         const id = state.selection.$head.parent.attrs.id,
             mark = state.selection.$head.marks().find(mark =>
-                mark.type.name === 'anchor')
-        let newUrl = oldUrl.split('#')[0]
+                mark.type.name === "anchor")
+        let newUrl = oldUrl.split("#")[0]
         if (mark) {
             newUrl += `#${mark.attrs.id}`
         } else if (id) {
@@ -105,12 +105,12 @@ export const linksPlugin = function(options) {
 
     function getLinkMark(state) {
         return state.selection.$head.marks().find(mark =>
-            mark.type.name === 'link')
+            mark.type.name === "link")
     }
 
     function getAnchorMark(state) {
         return state.selection.$head.marks().find(mark =>
-            mark.type.name === 'anchor')
+            mark.type.name === "anchor")
     }
 
     function getCrossReference(state) {
@@ -121,10 +121,10 @@ export const linksPlugin = function(options) {
         const $head = state.selection.$head
         const currentMarks = [],
             linkMark = $head.marks().find(
-                mark => mark.type.name === 'link'
+                mark => mark.type.name === "link"
             ),
             anchorMark = $head.marks().find(
-                mark => mark.type.name === 'anchor'
+                mark => mark.type.name === "anchor"
             )
         const crossRef = state.selection instanceof NodeSelection ? (state.selection.node.type.name == "cross_reference" ? state.selection.node : undefined) : undefined
 
@@ -164,27 +164,27 @@ export const linksPlugin = function(options) {
     }
 
     function createDropUp(linkMark, anchorMark, crossRef, $head) {
-        const dropUp = document.createElement('span'),
+        const dropUp = document.createElement("span"),
             editor = options.editor,
-            writeAccess = editor.docInfo.access_rights === 'write' ? true : false,
-            editAccess = ['write', 'write-tracked', 'review-tracked'].includes(editor.docInfo.access_rights) ? true : false
+            writeAccess = editor.docInfo.access_rights === "write" ? true : false,
+            editAccess = ["write", "write-tracked", "review-tracked"].includes(editor.docInfo.access_rights) ? true : false
         let linkType, linkHref, anchorHref, requiredPx = 10
 
         if (linkMark) {
-            linkType = linkMark.attrs.href[0] === '#' ? 'internal' : 'external'
-            linkHref = linkType === 'internal' ?
-                window.location.href.split('#')[0] + linkMark.attrs.href :
+            linkType = linkMark.attrs.href[0] === "#" ? "internal" : "external"
+            linkHref = linkType === "internal" ?
+                window.location.href.split("#")[0] + linkMark.attrs.href :
                 linkMark.attrs.href
             requiredPx += 120
         }
 
         if (anchorMark) {
-            anchorHref = window.location.href.split('#')[0] + '#' + anchorMark.attrs.id
+            anchorHref = window.location.href.split("#")[0] + "#" + anchorMark.attrs.id
             requiredPx += 92
         }
 
 
-        dropUp.classList.add('drop-up-outer')
+        dropUp.classList.add("drop-up-outer")
 
         dropUp.innerHTML = noSpaceTmp`
             <div class="link drop-up-inner" style="top: -${requiredPx}px;">
@@ -193,36 +193,36 @@ export const linksPlugin = function(options) {
         `<div class="drop-up-head">
                         ${
     linkMark.attrs.title ?
-        `<div class="link-title">${gettext('Title')}:&nbsp;${linkMark.attrs.title}</div>` :
-        ''
+        `<div class="link-title">${gettext("Title")}:&nbsp;${linkMark.attrs.title}</div>` :
+        ""
 }
                         <div class="link-href">
-                            <a class="href${linkType === 'internal' ? ' internal' : ''}" ${linkType === 'external' ? 'target="_blank"' : ''} href="${linkHref}">
+                            <a class="href${linkType === "internal" ? " internal" : ""}" ${linkType === "external" ? "target=\"_blank\"" : ""} href="${linkHref}">
             		            ${linkHref}
             		        </a>
                         </div>
                     </div>
                     <ul class="drop-up-options">
-                        <li class="copy-link" title="${gettext('Copy link')}">
-                            ${gettext('Copy link')}
+                        <li class="copy-link" title="${gettext("Copy link")}">
+                            ${gettext("Copy link")}
                         </li>
                         ${
     writeAccess ?
-        `<li class="edit-link" title="${gettext('Edit link')}">
-                                ${gettext('Edit')}
+        `<li class="edit-link" title="${gettext("Edit link")}">
+                                ${gettext("Edit")}
                             </li>
-                            <li class="remove-link" title="${gettext('Remove link')}">
-                                ${gettext('Remove')}
+                            <li class="remove-link" title="${gettext("Remove link")}">
+                                ${gettext("Remove")}
                             </li>` :
-        ''
+        ""
 }
                     </ul>` :
-        ''
+        ""
 }
                 ${
     anchorMark ?
         `<div class="drop-up-head">
-                        <div class="link-title">${gettext('Anchor')}</div>
+                        <div class="link-title">${gettext("Anchor")}</div>
                         <div class="link-href">
                         <a class="href" target="_blank" href="${anchorHref}">
                             ${anchorHref}
@@ -230,49 +230,49 @@ export const linksPlugin = function(options) {
                         </div>
                     </div>
                     <ul class="drop-up-options">
-                        <li class="copy-anchor" title="${gettext('Copy anchor')}">
-                            ${gettext('Copy anchor')}
+                        <li class="copy-anchor" title="${gettext("Copy anchor")}">
+                            ${gettext("Copy anchor")}
                         </li>
                         ${
     writeAccess ?
-        `<li class="remove-anchor" title="${gettext('Remove anchor')}">
-                                ${gettext('Remove')}
+        `<li class="remove-anchor" title="${gettext("Remove anchor")}">
+                                ${gettext("Remove")}
                             </li>` :
-        ''
+        ""
 }
                     </ul>` :
-        ''
+        ""
 }
 ${
     crossRef ?
-        `<div class="drop-up-head" ${ editAccess ? '' : 'style="border-radius:6px;"'}>
-                        <div class="link-title">${gettext('Cross Reference')}</div>
+        `<div class="drop-up-head" ${ editAccess ? "" : "style=\"border-radius:6px;\""}>
+                        <div class="link-title">${gettext("Cross Reference")}</div>
                         <div class="link-href">
                         <span>
-                            ${crossRef.attrs.title ? crossRef.attrs.title : `Target Lost`}
+                            ${crossRef.attrs.title ? crossRef.attrs.title : "Target Lost"}
                         </a>
                         </div>
                     </div>
                         ${
     editAccess ?
         `<ul class="drop-up-options">
-        <li class="edit-crossRef" title="${gettext('Edit cross reference')}">
-                                ${gettext('Edit')}
+        <li class="edit-crossRef" title="${gettext("Edit cross reference")}">
+                                ${gettext("Edit")}
                             </li>
-                            <li class="remove-crossRef" title="${gettext('Remove cross reference')}">
-                                ${gettext('Remove')}
+                            <li class="remove-crossRef" title="${gettext("Remove cross reference")}">
+                                ${gettext("Remove")}
                             </li>
                             </ul>` :
-        ''
+        ""
 }
                     ` :
-        ''
+        ""
 }
             </div>`
 
-        if (linkType === 'internal') {
-            const el = dropUp.querySelector('a.internal')
-            el.addEventListener('click',
+        if (linkType === "internal") {
+            const el = dropUp.querySelector("a.internal")
+            el.addEventListener("click",
                 event => {
                     event.preventDefault()
                     event.stopImmediatePropagation()
@@ -281,9 +281,9 @@ ${
             )
         }
 
-        const copyLinkHref = dropUp.querySelector('.copy-link')
+        const copyLinkHref = dropUp.querySelector(".copy-link")
         if (copyLinkHref) {
-            copyLinkHref.addEventListener('mousedown',
+            copyLinkHref.addEventListener("mousedown",
                 event => {
                     event.preventDefault()
                     event.stopImmediatePropagation()
@@ -291,9 +291,9 @@ ${
                 }
             )
         }
-        const copyAnchorHref = dropUp.querySelector('.copy-anchor')
+        const copyAnchorHref = dropUp.querySelector(".copy-anchor")
         if (copyAnchorHref) {
-            copyAnchorHref.addEventListener('mousedown',
+            copyAnchorHref.addEventListener("mousedown",
                 () => {
                     event.preventDefault()
                     event.stopImmediatePropagation()
@@ -302,9 +302,9 @@ ${
             )
         }
 
-        const editLink = dropUp.querySelector('.edit-link')
+        const editLink = dropUp.querySelector(".edit-link")
         if (editLink) {
-            editLink.addEventListener('mousedown',
+            editLink.addEventListener("mousedown",
                 event => {
                     event.preventDefault()
                     event.stopImmediatePropagation()
@@ -314,9 +314,9 @@ ${
             )
         }
 
-        const editCrossRef = dropUp.querySelector('.edit-crossRef')
+        const editCrossRef = dropUp.querySelector(".edit-crossRef")
         if (editCrossRef) {
-            editCrossRef.addEventListener('mousedown',
+            editCrossRef.addEventListener("mousedown",
                 event => {
                     event.preventDefault()
                     event.stopImmediatePropagation()
@@ -326,9 +326,9 @@ ${
             )
         }
 
-        const removeLink = dropUp.querySelector('.remove-link')
+        const removeLink = dropUp.querySelector(".remove-link")
         if (removeLink) {
-            removeLink.addEventListener('mousedown',
+            removeLink.addEventListener("mousedown",
                 event => {
                     event.preventDefault()
                     event.stopImmediatePropagation()
@@ -338,9 +338,9 @@ ${
             )
         }
 
-        const removeAnchor = dropUp.querySelector('.remove-anchor')
+        const removeAnchor = dropUp.querySelector(".remove-anchor")
         if (removeAnchor) {
-            removeAnchor.addEventListener('mousedown',
+            removeAnchor.addEventListener("mousedown",
                 event => {
                     event.preventDefault()
                     event.stopImmediatePropagation()
@@ -350,9 +350,9 @@ ${
             )
         }
 
-        const removeCrossRef = dropUp.querySelector('.remove-crossRef')
+        const removeCrossRef = dropUp.querySelector(".remove-crossRef")
         if (removeCrossRef) {
-            removeCrossRef.addEventListener('mousedown',
+            removeCrossRef.addEventListener("mousedown",
                 event => {
                     event.preventDefault()
                     event.stopImmediatePropagation()
@@ -394,7 +394,7 @@ ${
                     anchorMark = newAnchorMark
                     crossReference = newCrossReference
                 }
-                if (!tr.getMeta('remote')) {
+                if (!tr.getMeta("remote")) {
                     // We look for changes to figures or headings.
                     let foundIdElement = false // found heading or figure
                     let ranges = []
@@ -405,8 +405,8 @@ ${
                             step.to,
                             node => {
                                 if (
-                                    node.type.groups.includes('heading') ||
-                                    node.type.name === 'figure'
+                                    node.type.groups.includes("heading") ||
+                                    node.type.name === "figure"
                                 ) {
                                     foundIdElement = true
                                 }
@@ -428,15 +428,15 @@ ${
                                 if (
                                     !foundIdElement &&
                                     (
-                                        node.type.groups.includes('heading') ||
-                                        ['figure', 'table', 'bullet_list', 'ordered_list'].includes(node.type.name)
+                                        node.type.groups.includes("heading") ||
+                                        ["figure", "table", "bullet_list", "ordered_list"].includes(node.type.name)
                                     )
                                 ) {
                                     foundIdElement = true
                                 }
                                 if (!foundAnchorWithoutId) {
                                     node.marks.forEach(mark => {
-                                        if (mark.type.name === 'anchor' && !mark.attrs.id) {
+                                        if (mark.type.name === "anchor" && !mark.attrs.id) {
                                             foundAnchorWithoutId = true
                                         }
                                     })
@@ -447,11 +447,11 @@ ${
 
                     if (foundIdElement || foundAnchorWithoutId) {
                         const linkUpdate = {foundAnchorWithoutId}
-                        tr.setMeta('linkUpdate', linkUpdate)
+                        tr.setMeta("linkUpdate", linkUpdate)
                         if (oldState.schema === options.editor.view.state.schema) {
-                            tr.setMeta('toFoot', {linkUpdate: true})
+                            tr.setMeta("toFoot", {linkUpdate: true})
                         } else {
-                            tr.setMeta('toMain', {linkUpdate: true})
+                            tr.setMeta("toMain", {linkUpdate: true})
                         }
                     }
                 }
@@ -468,13 +468,13 @@ ${
         },
         appendTransaction: (trs, oldState, newState) => {
             // Check if any of the transactions are local.
-            if (trs.every(tr => !tr.getMeta('linkUpdate'))) {
+            if (trs.every(tr => !tr.getMeta("linkUpdate"))) {
                 // All transactions are remote or don't change anything. Give up.
                 return
             }
 
             const foundAnchorWithoutId = trs.find(tr => {
-                const linkUpdate = tr.getMeta('linkUpdate')
+                const linkUpdate = tr.getMeta("linkUpdate")
                 return linkUpdate && linkUpdate.foundAnchorWithoutId
             })
             // ID should not be found in the other pm either. So we look through
@@ -489,8 +489,8 @@ ${
             }
 
 
-            const internalTargets = getInternalTargets(newState, language, oldState.schema === options.editor.view.state.schema ? 'main' : 'foot').concat(
-                getInternalTargets(otherState, language, oldState.schema === options.editor.view.state.schema ? 'foot' : 'main')
+            const internalTargets = getInternalTargets(newState, language, oldState.schema === options.editor.view.state.schema ? "main" : "foot").concat(
+                getInternalTargets(otherState, language, oldState.schema === options.editor.view.state.schema ? "foot" : "main")
             )
 
             // Check if there are any headings or figures in the affected range.
@@ -504,18 +504,18 @@ ${
             const ids = []
 
             otherState.doc.descendants(node => {
-                if (node.type.groups.includes('heading') || ['figure', 'table', 'bullet_list', 'ordered_list'].includes(node.type.name)) {
+                if (node.type.groups.includes("heading") || ["figure", "table", "bullet_list", "ordered_list"].includes(node.type.name)) {
                     ids.push(node.attrs.id)
                 }
             })
 
-            const newTr = newState.tr.setMeta('fixIds', true)
+            const newTr = newState.tr.setMeta("fixIds", true)
 
             newState.doc.descendants((node, pos) => {
-                if (node.type.groups.includes('heading') || ['figure', 'table', 'bullet_list', 'ordered_list'].includes(node.type.name)) {
+                if (node.type.groups.includes("heading") || ["figure", "table", "bullet_list", "ordered_list"].includes(node.type.name)) {
                     if (ids.includes(node.attrs.id) || !node.attrs.id) {
                         // Add node if the id is false (default) or it is present twice
-                        const randomIdGenerator = node.type.groups.includes('heading') ? randomHeadingId : node.type.name === 'figure' ? randomFigureId : node.type.name === 'table' ? randomTableId : randomListId
+                        const randomIdGenerator = node.type.groups.includes("heading") ? randomHeadingId : node.type.name === "figure" ? randomFigureId : node.type.name === "table" ? randomTableId : randomListId
                         let id
 
                         while (!id || ids.includes(id)) {
@@ -534,7 +534,7 @@ ${
                         ids.push(node.attrs.id)
                     }
                 } else if (
-                    node.type.name === 'cross_reference' &&
+                    node.type.name === "cross_reference" &&
                     !internalTargets.find(it => it.id === node.attrs.id && it.text === node.attrs.title)
                 ) {
                     const iTarget = internalTargets.find(it => it.id === node.attrs.id)
@@ -543,8 +543,8 @@ ${
                 }
                 node.marks.forEach(mark => {
                     if (
-                        mark.type.name === 'link' &&
-                        mark.attrs.href[0] === '#' &&
+                        mark.type.name === "link" &&
+                        mark.attrs.href[0] === "#" &&
                         !internalTargets.find(it => it.id === mark.attrs.href.slice(1) && it.text === node.attrs.title)
                     ) {
                         const iTarget = internalTargets.find(it => it.id === mark.attrs.href.slice(1))

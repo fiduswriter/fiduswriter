@@ -6,17 +6,17 @@ export class LoginPage extends PreloginPage {
     constructor({app, language, socialaccount_providers}) {
         super({app, language})
         this.socialaccount_providers = socialaccount_providers
-        this.title = gettext('Login')
+        this.title = gettext("Login")
         this.pluginLoaders = pluginLoaders
         this.headerLinks = settings_REGISTRATION_OPEN && settings_PASSWORD_LOGIN ? [
             {
-                type: 'label',
-                text: gettext('New here?')
+                type: "label",
+                text: gettext("New here?")
             },
             {
-                type: 'button',
-                text: gettext('Sign up'),
-                link: '/account/sign-up/'
+                type: "button",
+                text: gettext("Sign up"),
+                link: "/account/sign-up/"
             }
         ] : []
     }
@@ -39,14 +39,14 @@ export class LoginPage extends PreloginPage {
                                             ${gettext("Login with")} ${provider.name}
                                 </a>
                             </li>`
-            ).join('')
+            ).join("")
             }
                     </ul>
                 </div>` :
-                ''
+                ""
         )
         :
-        ''
+        ""
 }
         </div>
             ${
@@ -73,14 +73,14 @@ export class LoginPage extends PreloginPage {
                     <a id="lost-passwd" href="/account/password-reset/">${gettext("Forgot Password?")}</a>
                 </form>
             </div>` :
-        ''
+        ""
 }`
         super.render()
     }
 
     bind() {
         super.bind()
-        const socialButtons = document.body.querySelectorAll('.fw-button.fw-socialaccount')
+        const socialButtons = document.body.querySelectorAll(".fw-button.fw-socialaccount")
         let btnWidth = 1
 
         socialButtons.forEach(
@@ -96,21 +96,21 @@ export class LoginPage extends PreloginPage {
             button => button.style.width = `${btnWidth}px`
         )
 
-        const loginSubmit = document.querySelector('#login-submit')
+        const loginSubmit = document.querySelector("#login-submit")
         if (!loginSubmit) {
             return
         }
 
-        loginSubmit.addEventListener('click', event => {
+        loginSubmit.addEventListener("click", event => {
             event.preventDefault()
 
-            const nonFieldErrors = document.querySelector('#non_field_errors'),
-                idLogin = document.querySelector('#id_login'),
-                idLoginErrors = document.querySelector('#id_login_errors'),
-                idPassword = document.querySelector('#id_password'),
-                idPasswordErrors = document.querySelector('#id_password_errors'),
-                idRemember = document.querySelector('#id_remember'),
-                fwContents = document.querySelector('.fw-contents')
+            const nonFieldErrors = document.querySelector("#non_field_errors"),
+                idLogin = document.querySelector("#id_login"),
+                idLoginErrors = document.querySelector("#id_login_errors"),
+                idPassword = document.querySelector("#id_password"),
+                idPasswordErrors = document.querySelector("#id_password_errors"),
+                idRemember = document.querySelector("#id_remember"),
+                fwContents = document.querySelector(".fw-contents")
 
             if (
                 !idLogin ||
@@ -123,39 +123,39 @@ export class LoginPage extends PreloginPage {
                 return
             }
 
-            nonFieldErrors.innerHTML = ''
-            idLoginErrors.innerHTML = ''
-            idPasswordErrors.innerHTML = ''
+            nonFieldErrors.innerHTML = ""
+            idLoginErrors.innerHTML = ""
+            idPasswordErrors.innerHTML = ""
 
             const login = idLogin.value,
                 password = idPassword.value,
                 remember = idRemember.checked
             let errors = false
             if (!login.length) {
-                idLoginErrors.innerHTML = `<li>${gettext('This field is required.')}</li>`
+                idLoginErrors.innerHTML = `<li>${gettext("This field is required.")}</li>`
                 errors = true
             }
             if (!password.length) {
-                idPasswordErrors.innerHTML = `<li>${gettext('This field is required.')}</li>`
+                idPasswordErrors.innerHTML = `<li>${gettext("This field is required.")}</li>`
                 errors = true
             }
             if (errors) {
                 return
             }
-            return postJson('/api/user/login/', {login, password, remember}).then(
+            return postJson("/api/user/login/", {login, password, remember}).then(
                 ({json}) => {
-                    if (json.location === '/api/account/confirm-email/') {
+                    if (json.location === "/api/account/confirm-email/") {
                         // Email has not yet been confirmed.
                         fwContents.innerHTML =
                             `<div class="fw-login-left">
-                                <h1 class="fw-login-title">${gettext('Verify Your E-mail Address')}</h1>
+                                <h1 class="fw-login-title">${gettext("Verify Your E-mail Address")}</h1>
                                 <p>
                                     ${
-    gettext('We have sent an e-mail to your email address for verification. Follow the link provided to finalize the signup process.')
+    gettext("We have sent an e-mail to your email address for verification. Follow the link provided to finalize the signup process.")
 }
                                     <br />
                                     ${
-    gettext('Please contact us if you do not receive it within a few minutes.')
+    gettext("Please contact us if you do not receive it within a few minutes.")
 }
                                 </p>
                             </div>`

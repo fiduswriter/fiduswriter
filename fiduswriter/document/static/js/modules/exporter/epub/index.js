@@ -21,7 +21,7 @@ export class EpubExporter extends DOMExporter {
         this.imageDB = imageDB
         this.updated = updated
 
-        this.shortLang = this.doc.settings.language.split('-')[0]
+        this.shortLang = this.doc.settings.language.split("-")[0]
         this.lang = this.doc.settings.language
 
         this.outputList = []
@@ -29,8 +29,8 @@ export class EpubExporter extends DOMExporter {
     }
 
     init() {
-        addAlert('info', this.docTitle + ': ' + gettext(
-            'Epub export has been initiated.'))
+        addAlert("info", this.docTitle + ": " + gettext(
+            "Epub export has been initiated."))
         this.docContent = removeHidden(this.doc.content, false)
         this.addDocStyle(this.doc)
 
@@ -44,7 +44,7 @@ export class EpubExporter extends DOMExporter {
     }
 
     addCategoryLabels(language) {
-        const fnListEl = this.content.querySelector('section.fnlist')
+        const fnListEl = this.content.querySelector("section.fnlist")
         if (fnListEl) {
             addCategoryLabels(fnListEl, language, true)
         }
@@ -58,13 +58,13 @@ export class EpubExporter extends DOMExporter {
 
         const images = modifyImages(contents)
 
-        const contentsBody = document.createElement('body')
+        const contentsBody = document.createElement("body")
 
         while (contents.firstChild) {
             contentsBody.appendChild(contents.firstChild)
         }
 
-        const equations = contentsBody.querySelectorAll('.equation, .figure-equation')
+        const equations = contentsBody.querySelectorAll(".equation, .figure-equation")
 
         const math = equations.length ? true : false
         // Make links to all H1-3 and create a TOC list of them
@@ -81,7 +81,7 @@ export class EpubExporter extends DOMExporter {
             title,
             styleSheets: this.styleSheets,
             math,
-            body: obj2Node(node2Obj(contentsBodyEpubPrepared), 'xhtml').innerHTML
+            body: obj2Node(node2Obj(contentsBodyEpubPrepared), "xhtml").innerHTML
         })
 
         xhtmlCode = this.replaceImgSrc(xhtmlCode)
@@ -92,7 +92,7 @@ export class EpubExporter extends DOMExporter {
 
         const authors = this.docContent.content.reduce(
             (authors, part) => {
-                if (part.type === 'contributors_part' && part.attrs.metadata === 'authors' && part.content) {
+                if (part.type === "contributors_part" && part.attrs.metadata === "authors" && part.content) {
                     return authors.concat(part.content.map(
                         authorNode => {
                             const nameParts = []
@@ -106,7 +106,7 @@ export class EpubExporter extends DOMExporter {
                                 // We have an institution but no names. Use institution as name.
                                 nameParts.push(authorNode.attrs.institution)
                             }
-                            return nameParts.join(' ')
+                            return nameParts.join(" ")
                         }
                     ))
                 } else {
@@ -116,7 +116,7 @@ export class EpubExporter extends DOMExporter {
             [])
         const keywords = this.docContent.content.reduce(
             (keywords, part) => {
-                if (part.type === 'tags_part' && part.attrs.metadata === 'keywords' && part.content) {
+                if (part.type === "tags_part" && part.attrs.metadata === "keywords" && part.content) {
                     return keywords.concat(part.content.map(keywordNode => keywordNode.attrs.tag))
                 } else {
                     return keywords
@@ -130,7 +130,7 @@ export class EpubExporter extends DOMExporter {
             title,
             authors,
             keywords,
-            idType: 'fidus',
+            idType: "fidus",
             id: this.doc.id,
             date: timestamp.slice(0, 10),
             modified: timestamp,
@@ -144,7 +144,7 @@ export class EpubExporter extends DOMExporter {
         const ncxCode = ncxTemplate({
             shortLang: this.shortLang,
             title,
-            idType: 'fidus',
+            idType: "fidus",
             id: this.doc.id,
             contentItems
         })
@@ -156,45 +156,45 @@ export class EpubExporter extends DOMExporter {
         })
 
         this.outputList.push({
-            filename: 'META-INF/container.xml',
+            filename: "META-INF/container.xml",
             contents: pretty(containerCode, {ocd: true})
         }, {
-            filename: 'EPUB/document.opf',
+            filename: "EPUB/document.opf",
             contents: pretty(opfCode, {ocd: true})
         }, {
-            filename: 'EPUB/document.ncx',
+            filename: "EPUB/document.ncx",
             contents: pretty(ncxCode, {ocd: true})
         }, {
-            filename: 'EPUB/document-nav.xhtml',
+            filename: "EPUB/document-nav.xhtml",
             contents: pretty(navCode, {ocd: true})
         }, {
-            filename: 'EPUB/document.xhtml',
+            filename: "EPUB/document.xhtml",
             contents: pretty(xhtmlCode, {ocd: true})
         })
 
         this.styleSheets.forEach(styleSheet => {
             this.outputList.push({
-                filename: 'EPUB/' + styleSheet.filename,
+                filename: "EPUB/" + styleSheet.filename,
                 contents: styleSheet.contents
             })
         })
         images.forEach(image => {
             this.binaryFiles.push({
-                filename: 'EPUB/' + image.filename,
+                filename: "EPUB/" + image.filename,
                 url: image.url
             })
         })
         this.fontFiles.forEach(font => {
             this.binaryFiles.push({
-                filename: 'EPUB/' + font.filename,
+                filename: "EPUB/" + font.filename,
                 url: font.url
             })
         })
 
         if (math) {
             this.includeZips.push({
-                'directory': 'EPUB/css',
-                'url': `${settings_STATIC_URL}zip/mathlive_style.zip?v=${transpile_VERSION}`
+                "directory": "EPUB/css",
+                "url": `${settings_STATIC_URL}zip/mathlive_style.zip?v=${transpile_VERSION}`
             })
         }
         return this.createZip()
@@ -205,7 +205,7 @@ export class EpubExporter extends DOMExporter {
             this.outputList,
             this.binaryFiles,
             this.includeZips,
-            'application/epub+zip',
+            "application/epub+zip",
             this.updated
         )
 
@@ -215,6 +215,6 @@ export class EpubExporter extends DOMExporter {
     }
 
     download(blob) {
-        return download(blob, createSlug(this.docTitle) + '.epub', 'application/epub+zip')
+        return download(blob, createSlug(this.docTitle) + ".epub", "application/epub+zip")
     }
 }

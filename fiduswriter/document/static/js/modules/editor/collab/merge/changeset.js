@@ -1,6 +1,6 @@
 import {
     ChangeSet
-} from 'prosemirror-changeset'
+} from "prosemirror-changeset"
 import {
     Mapping
 } from "prosemirror-transform"

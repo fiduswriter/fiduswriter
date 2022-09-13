@@ -5,7 +5,7 @@ export class DocTemplatesAppItem {
     }
 
     init() {
-        this.app.routes['templates'] = {
+        this.app.routes["templates"] = {
             requireLogin: true,
             open: pathnameParts => {
                 if (pathnameParts.length < 4) {
@@ -16,7 +16,7 @@ export class DocTemplatesAppItem {
                 }
             },
             dbTables: {
-                'list': {
+                "list": {
                     keyPath: "id"
                 }
             }

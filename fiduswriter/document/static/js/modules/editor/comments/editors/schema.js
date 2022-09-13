@@ -6,14 +6,14 @@ const collaborator = {
     group: "inline",
     attrs: {
         name: {
-            default: ''
+            default: ""
         },
         id: {
             default: 0
         }
     },
     parseDOM: [{
-        tag: 'span.collaborator',
+        tag: "span.collaborator",
         getAttrs(dom) {
             return {
                 username: dom.dataset.name,
@@ -23,15 +23,15 @@ const collaborator = {
     }],
     toDOM(node) {
         return ["span", {
-            class: 'collaborator',
-            'data-name': node.attrs.name,
-            'data-id': node.attrs.id
+            class: "collaborator",
+            "data-name": node.attrs.name,
+            "data-id": node.attrs.id
         }, node.attrs.name]
     }
 }
 
 const doc = {
-    content: 'block+',
+    content: "block+",
     toDOM(_node) {
         return ["div", 0]
     }
@@ -54,6 +54,6 @@ export const serializeCommentNode = pmNode => {
 }
 
 export const serializeComment = content => {
-    const pmNode = commentSchema.nodeFromJSON({type: 'doc', content})
+    const pmNode = commentSchema.nodeFromJSON({type: "doc", content})
     return serializeCommentNode(pmNode)
 }

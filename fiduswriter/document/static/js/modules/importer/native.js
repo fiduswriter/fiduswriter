@@ -4,7 +4,7 @@ import {extractTemplate} from "../document_template"
 
 export class ImportNative {
     /* Save document information into the database */
-    constructor(doc, bibliography, images, otherFiles, user, importId = null, requestedPath = '', template = null) {
+    constructor(doc, bibliography, images, otherFiles, user, importId = null, requestedPath = "", template = null) {
         this.doc = doc
         this.docId = false
         this.path = false
@@ -22,7 +22,7 @@ export class ImportNative {
         return this.createDoc().then(
             () => {
                 if (!this.docId) {
-                    return Promise.reject(new Error('document not created'))
+                    return Promise.reject(new Error("document not created"))
                 }
                 // We first create any new entries in the DB for images.
                 const imageGetter = new GetImages(this.images, this.otherFiles)
@@ -41,7 +41,7 @@ export class ImportNative {
                 return this.saveDocument()
             }).catch(
             error => {
-                addAlert('error', 'Could not create document')
+                addAlert("error", "Could not create document")
                 throw error
             }
         )
@@ -51,18 +51,18 @@ export class ImportNative {
     saveImages(images, ImageTranslationTable) {
         const sendPromises = Object.values(images).map(
             imageEntry => {
-                return postJson('/api/document/import/image/', {
+                return postJson("/api/document/import/image/", {
                     doc_id: this.docId,
                     title: imageEntry.title,
                     copyright: imageEntry.copyright,
                     checksum: imageEntry.checksum,
-                    image: {file: imageEntry.file, filename: imageEntry.image.split('/').pop()}
+                    image: {file: imageEntry.file, filename: imageEntry.image.split("/").pop()}
                 }).then(
                     ({json}) => ImageTranslationTable[imageEntry.id] = json.id
                 ).catch(error => {
                     addAlert(
-                        'error',
-                        `${gettext('Could not save Image')} ${imageEntry.checksum}`
+                        "error",
+                        `${gettext("Could not save Image")} ${imageEntry.checksum}`
                     )
                     throw (error)
                 })
@@ -74,12 +74,12 @@ export class ImportNative {
     translateReferenceIds(ImageTranslationTable) {
         function walkTree(node) {
             switch (node.type) {
-            case 'image':
+            case "image":
                 if (node.attrs.image !== false) {
                     node.attrs.image = ImageTranslationTable[node.attrs.image]
                 }
                 break
-            case 'footnote':
+            case "footnote":
                 if (node.attrs?.footnote) {
                     node.attrs.footnote.forEach(childNode => {
                         walkTree(childNode)
@@ -102,7 +102,7 @@ export class ImportNative {
         // We create the document on the sever so that we have an ID for it and
         // can link the images to it.
         return postJson(
-            '/api/document/import/create/',
+            "/api/document/import/create/",
             {
                 template: JSON.stringify(template),
                 export_templates: JSON.stringify(
@@ -122,14 +122,14 @@ export class ImportNative {
                 this.path = json.path
             }
         ).catch(error => {
-            addAlert('error', gettext('Could not create document'))
+            addAlert("error", gettext("Could not create document"))
             throw error
         })
     }
 
     saveDocument() {
         return postJson(
-            '/api/document/import/',
+            "/api/document/import/",
             {
                 id: this.docId,
                 title: this.doc.title,
@@ -141,7 +141,7 @@ export class ImportNative {
             ({json}) => {
                 const docInfo = {
                     is_owner: true,
-                    access_rights: 'write',
+                    access_rights: "write",
                     id: this.docId
                 }
                 this.doc.owner = {
@@ -163,7 +163,7 @@ export class ImportNative {
             }
         ).catch(
             error => {
-                addAlert('error', `${gettext('Could not save ')} ${shortFileTitle(this.doc.title, this.doc.path)}`)
+                addAlert("error", `${gettext("Could not save ")} ${shortFileTitle(this.doc.title, this.doc.path)}`)
                 throw error
             }
         )

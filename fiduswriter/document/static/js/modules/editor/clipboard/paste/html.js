@@ -25,25 +25,25 @@ export class HTMLPaste {
 
     parseHTML() {
         const parser = new window.DOMParser()
-        this.htmlDoc = parser.parseFromString(this.inHTML, "text/html").getElementsByTagName('html')[0]
+        this.htmlDoc = parser.parseFromString(this.inHTML, "text/html").getElementsByTagName("html")[0]
     }
 
     // Find out what the source of the paste is and choose a corresponding
     // handler.
     selectHandler() {
         // For LibreOffice
-        const head = this.htmlDoc.getElementsByTagName('head')[0]
-        const generatorMetaTag = head.querySelector('meta[name=generator]')
+        const head = this.htmlDoc.getElementsByTagName("head")[0]
+        const generatorMetaTag = head.querySelector("meta[name=generator]")
         // For Google Docs
-        const body = this.htmlDoc.getElementsByTagName('body')[0]
-        const firstB = body.querySelector('b')
+        const body = this.htmlDoc.getElementsByTagName("body")[0]
+        const firstB = body.querySelector("b")
         // For Fidus Writer
-        const pmSlice = this.htmlDoc.querySelector('[data-pm-slice]')
-        if (this.htmlDoc.hasAttribute('xmlns:w') &&
-            this.htmlDoc.getAttribute('xmlns:w') === "urn:schemas-microsoft-com:office:word"
+        const pmSlice = this.htmlDoc.querySelector("[data-pm-slice]")
+        if (this.htmlDoc.hasAttribute("xmlns:w") &&
+            this.htmlDoc.getAttribute("xmlns:w") === "urn:schemas-microsoft-com:office:word"
         ) {
             this.handler = MicrosoftWordPasteHandler
-        } else if (generatorMetaTag?.content?.startsWith('LibreOffice')) {
+        } else if (generatorMetaTag?.content?.startsWith("LibreOffice")) {
             this.handler = LibreOfficeWriterPasteHandler
         } else if (firstB?.id.startsWith("docs-internal-guid")) {
             this.handler = GoogleDocsPasteHandler

@@ -120,7 +120,7 @@ export class MergeEditor {
     init() {
         /* Create the diff editors */
         ensureCSS([
-            'merge.css'
+            "merge.css"
         ])
         // Activate wait overlay
         activateWait()
@@ -128,9 +128,9 @@ export class MergeEditor {
         this.mergeDialog.open()
 
         // Create multiple editor views
-        this.mergeView1 = this.bindEditorView('editor-diff-common', this.cpDoc)
-        this.mergeView2 = this.bindEditorView('editor-diff-online', this.onlineDoc)
-        this.mergeView3 = this.bindEditorView('editor-diff-offline', this.offlineDoc)
+        this.mergeView1 = this.bindEditorView("editor-diff-common", this.cpDoc)
+        this.mergeView2 = this.bindEditorView("editor-diff-online", this.onlineDoc)
+        this.mergeView3 = this.bindEditorView("editor-diff-offline", this.offlineDoc)
 
         const offlineChangeset = new changeSet(this.offlineTr).getChangeSet()
         const onlineChangeset = new changeSet(this.onlineTr).getChangeSet()
@@ -147,14 +147,14 @@ export class MergeEditor {
             const attrs = Object.assign({}, article.attrs)
             attrs.tracked = true
             this.mergeView2.dispatch(
-                this.mergeView2.state.tr.setNodeMarkup(0, false, attrs).setMeta('notrack', true).setMeta('mapAppended', true)
+                this.mergeView2.state.tr.setNodeMarkup(0, false, attrs).setMeta("notrack", true).setMeta("mapAppended", true)
             )
         }
 
 
-        this.renderCitation(this.mergeView1, 'editor-diff-common')
-        this.renderCitation(this.mergeView2, 'editor-diff-online')
-        this.renderCitation(this.mergeView3, 'editor-diff-offline')
+        this.renderCitation(this.mergeView1, "editor-diff-common")
+        this.renderCitation(this.mergeView2, "editor-diff-online")
+        this.renderCitation(this.mergeView3, "editor-diff-offline")
 
         this.offStepsNotTracked = this.findNotTrackedSteps(this.offlineTr, this.offlineTrackedSteps)
 
@@ -167,18 +167,18 @@ export class MergeEditor {
     createMergeDialog(offlineTr, onlineDoc) {
         const buttons = [{
             text: gettext("Merge Complete"),
-            classes: 'fw-dark',
+            classes: "fw-dark",
             click: () => {
                 if (!this.checkResolution()) {
                     this.startMerge(offlineTr, onlineDoc)
                 } else {
                     this.warningDialog = new Dialog({
-                        id: 'merge-res-warning',
+                        id: "merge-res-warning",
                         title: gettext("Merge Resolution warning"),
                         body: gettext("Not all changes have been resolved. Please make sure to review all the changes to before proceeding."),
                         buttons: [{
                             text: gettext("Proceed to Merge"),
-                            classes: 'fw-dark',
+                            classes: "fw-dark",
                             click: () => {
                                 this.startMerge(offlineTr, onlineDoc)
                                 this.warningDialog.close()
@@ -190,14 +190,14 @@ export class MergeEditor {
             }
         }]
         const dialog = new Dialog({
-            id: 'editor-merge-view',
+            id: "editor-merge-view",
             title: gettext("Merging Offline Document"),
             body: `<div style="display:flex"><div class="offline-heading">${gettext("Common Document")}</div><div class="merged-heading">${gettext("Online Document")}</div> <div class="online-heading">${gettext("Offline Document")}</div></div><div class= "user-contents" style="display:flex;"><div id="editor-diff-common" style="float:left;padding:15px;"></div><div id="editor-diff-online" class="merged-view" style="padding:15px;"></div><div id="editor-diff-offline" style="float:right;padding:15px;"></div></div>`,
             fullScreen: true,
             canClose: false,
             help: () => {
                 const helpDialog = new faqDialog({
-                    title: gettext('Merge Dialog Frequent Questions'),
+                    title: gettext("Merge Dialog Frequent Questions"),
                     questions: [
                         [
                             gettext("Why am I seeing this merge dialog?"),
@@ -378,7 +378,7 @@ export class MergeEditor {
         })
 
         // Dispatch the transactions
-        insertionMarksTr.setMeta('initialDiffMap', true).setMeta('mapAppended', true).setMeta('notrack', true)
+        insertionMarksTr.setMeta("initialDiffMap", true).setMeta("mapAppended", true).setMeta("notrack", true)
         view.dispatch(insertionMarksTr)
 
         //Return steps that are tracked in the diff editor
@@ -406,8 +406,8 @@ export class MergeEditor {
                 dispatchTransaction: tr => {
                     let mapTr = tr
                     if (tr.docChanged) {
-                        const mapAppended = tr.getMeta('mapAppended')
-                        const noTrack = tr.getMeta('notrack')
+                        const mapAppended = tr.getMeta("mapAppended")
+                        const noTrack = tr.getMeta("notrack")
                         if (!mapAppended) {
                             this.mergedDocMap.appendMapping(tr.mapping)
                         }
@@ -416,7 +416,7 @@ export class MergeEditor {
                                 mapTr,
                                 this.mergeView2.state,
                                 this.editor.user,
-                                !this.mergeView2.state.doc.firstChild.attrs.tracked && !['write-tracked', 'review-tracked'].includes(this.editor.docInfo.access_rights),
+                                !this.mergeView2.state.doc.firstChild.attrs.tracked && !["write-tracked", "review-tracked"].includes(this.editor.docInfo.access_rights),
                                 Date.now() - this.editor.clientTimeAdjustment
                             )
                         }
@@ -522,7 +522,7 @@ export class MergeEditor {
                 offset = 1
             }
         })
-        unHideSectionTr.setMeta("notrack", true).setMeta('mapAppended', true)
+        unHideSectionTr.setMeta("notrack", true).setMeta("mapAppended", true)
         view.dispatch(unHideSectionTr)
     }
 
@@ -556,7 +556,7 @@ export class MergeEditor {
                     maps.setMirror(tr.steps.length - index - 1, (tr.steps.length + OnlineStepsLost.steps.length + newTr.steps.length - 1))
                 }
             })
-            newTr.setMeta('remote', true)
+            newTr.setMeta("remote", true)
 
             // Re-render the fn editor for all the users.
             this.editor.mod.collab.doc.footnoteRender = true
@@ -585,7 +585,7 @@ export class MergeEditor {
             from,
             to,
             (node, pos) => {
-                if (pos < from || ['bullet_list', 'ordered_list'].includes(node.type.name)) {
+                if (pos < from || ["bullet_list", "ordered_list"].includes(node.type.name)) {
                     return true
                 } else if (node.isInline) {
                     return false
@@ -605,9 +605,9 @@ export class MergeEditor {
         let usedImages = []
         const usedBibs = []
         const footnoteFind = (node, usedImages, usedBibs) => {
-            if (node.name === 'citation') {
+            if (node.name === "citation") {
                 node.attrs.references.forEach(ref => usedBibs.push(parseInt(ref.id)))
-            } else if (node.name === 'image' && node.attrs.image) {
+            } else if (node.name === "image" && node.attrs.image) {
                 usedImages.push(node.attrs.image)
             } else if (node.content) {
                 node.content.forEach(subNode => footnoteFind(subNode, usedImages, usedBibs))
@@ -616,11 +616,11 @@ export class MergeEditor {
 
         // Looking at rebased doc so that it contains the merged document !!!
         offlineDoc.descendants(node => {
-            if (node.type.name === 'citation') {
+            if (node.type.name === "citation") {
                 node.attrs.references.forEach(ref => usedBibs.push(parseInt(ref.id)))
-            } else if (node.type.name === 'image' && node.attrs.image) {
+            } else if (node.type.name === "image" && node.attrs.image) {
                 usedImages.push(node.attrs.image)
-            } else if (node.type.name === 'footnote' && node.attrs.footnote) {
+            } else if (node.type.name === "footnote" && node.attrs.footnote) {
                 node.attrs.footnote.forEach(subNode => footnoteFind(subNode, usedImages, usedBibs))
             }
         })
@@ -650,22 +650,22 @@ export class MergeEditor {
                             this.imageDataModified[id] = newId
                             // Update the image node if there are any re uploaded images.
                             this.mergeView1.state.doc.descendants((node, pos) => {
-                                if (node.type.name === 'image' && node.attrs.image == id) {
+                                if (node.type.name === "image" && node.attrs.image == id) {
                                     const attrs = Object.assign({}, node.attrs)
                                     attrs["image"] = newId
-                                    const nodeType = this.mergeView1.state.schema.nodes['image']
+                                    const nodeType = this.mergeView1.state.schema.nodes["image"]
                                     const transaction = this.mergeView1.state.tr.setNodeMarkup(pos, nodeType, attrs)
-                                    transaction.setMeta('mapAppended', true)
+                                    transaction.setMeta("mapAppended", true)
                                     this.mergeView1.dispatch(transaction)
                                 }
                             })
                             this.mergeView3.state.doc.descendants((node, pos) => {
-                                if (node.type.name === 'image' && node.attrs.image == id) {
+                                if (node.type.name === "image" && node.attrs.image == id) {
                                     const attrs = Object.assign({}, node.attrs)
                                     attrs["image"] = newId
-                                    const nodeType = this.mergeView3.state.schema.nodes['image']
+                                    const nodeType = this.mergeView3.state.schema.nodes["image"]
                                     const transaction = this.mergeView3.state.tr.setNodeMarkup(pos, nodeType, attrs)
-                                    transaction.setMeta('mapAppended', true)
+                                    transaction.setMeta("mapAppended", true)
                                     this.mergeView3.dispatch(transaction)
                                 }
                             })
@@ -673,22 +673,22 @@ export class MergeEditor {
                         (id) => {
                             // In case of failure make the id as false so the failed upload image is empty for the offline user too!
                             this.mergeView1.state.doc.descendants((node, pos) => {
-                                if (node.type.name === 'image' && node.attrs.image == id) {
+                                if (node.type.name === "image" && node.attrs.image == id) {
                                     const attrs = Object.assign({}, node.attrs)
                                     attrs["image"] = false
-                                    const nodeType = this.mergeView1.state.schema.nodes['image']
+                                    const nodeType = this.mergeView1.state.schema.nodes["image"]
                                     const transaction = this.mergeView1.state.tr.setNodeMarkup(pos, nodeType, attrs)
-                                    transaction.setMeta('mapAppended', true)
+                                    transaction.setMeta("mapAppended", true)
                                     this.mergeView1.dispatch(transaction)
                                 }
                             })
                             this.mergeView3.state.doc.descendants((node, pos) => {
-                                if (node.type.name === 'image' && node.attrs.image == id) {
+                                if (node.type.name === "image" && node.attrs.image == id) {
                                     const attrs = Object.assign({}, node.attrs)
                                     attrs["image"] = false
-                                    const nodeType = this.mergeView3.state.schema.nodes['image']
+                                    const nodeType = this.mergeView3.state.schema.nodes["image"]
                                     const transaction = this.mergeView3.state.tr.setNodeMarkup(pos, nodeType, attrs)
-                                    transaction.setMeta('mapAppended', true)
+                                    transaction.setMeta("mapAppended", true)
                                     this.mergeView3.dispatch(transaction)
                                 }
                             })

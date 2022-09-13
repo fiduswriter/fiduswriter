@@ -37,10 +37,10 @@ class ClipboardDOMSerializer {
         )
         if (citRenderer.init()) {
             if (citRenderer.fm.bibHTML.length) {
-                const bibDiv = document.createElement('div')
-                bibDiv.classList.add('fiduswriter-clipboard-bibliography')
+                const bibDiv = document.createElement("div")
+                bibDiv.classList.add("fiduswriter-clipboard-bibliography")
                 bibDiv.innerHTML = citRenderer.fm.bibHTML
-                bibDiv.firstElementChild.innerHTML = gettext('Bibliography')
+                bibDiv.firstElementChild.innerHTML = gettext("Bibliography")
                 domFragment.appendChild(bibDiv)
             }
             return citRenderer.fm
@@ -51,32 +51,32 @@ class ClipboardDOMSerializer {
     }
 
     renderFootnotes(domFragment, citationFormatter) {
-        const footnoteSelector = citationFormatter && citationFormatter.citationType === 'note' ?
-            '.footnote-marker, .citation' :
-            '.footnote-marker'
+        const footnoteSelector = citationFormatter && citationFormatter.citationType === "note" ?
+            ".footnote-marker, .citation" :
+            ".footnote-marker"
         // Inside of footnote markers add anchors and put footnotes with content
         // at the back of the document.
         // Also, link the footnote anchor with the footnote.
         const footnotes = domFragment.querySelectorAll(footnoteSelector)
-        const footnotesContainer = document.createElement('section')
+        const footnotesContainer = document.createElement("section")
         let citationCount = 0
-        footnotesContainer.setAttribute('role', 'doc-footnotes')
-        footnotesContainer.classList.add('fnlist')
-        footnotesContainer.classList.add('fiduswriter-clipboard-footnotes')
+        footnotesContainer.setAttribute("role", "doc-footnotes")
+        footnotesContainer.classList.add("fnlist")
+        footnotesContainer.classList.add("fiduswriter-clipboard-footnotes")
         footnotes.forEach(
             (footnote, index) => {
                 const counter = index + 1, id = this.getRandomID()
                 const footnoteAnchor = this.getFootnoteAnchor(counter, id)
                 footnote.appendChild(footnoteAnchor)
-                const newFootnote = document.createElement('h6') // We use H6 as Wordpress Gutenberg only allows IDs on H1-6 elements.
-                newFootnote.setAttribute('role', 'doc-footnote')
-                newFootnote.innerHTML = footnote.matches('.footnote-marker') ?
+                const newFootnote = document.createElement("h6") // We use H6 as Wordpress Gutenberg only allows IDs on H1-6 elements.
+                newFootnote.setAttribute("role", "doc-footnote")
+                newFootnote.innerHTML = footnote.matches(".footnote-marker") ?
                     footnote.dataset.footnote :
                     `<p>${citationFormatter.citationTexts[citationCount++] || " "}</p>`
-                if (newFootnote.firstElementChild && newFootnote.firstElementChild.matches('p')) {
-                    newFootnote.firstElementChild.insertAdjacentHTML('afterbegin', `${counter}. `)
+                if (newFootnote.firstElementChild && newFootnote.firstElementChild.matches("p")) {
+                    newFootnote.firstElementChild.insertAdjacentHTML("afterbegin", `${counter}. `)
                 } else {
-                    newFootnote.insertAdjacentHTML('afterbegin', `<p>${counter}. </p>`)
+                    newFootnote.insertAdjacentHTML("afterbegin", `<p>${counter}. </p>`)
                 }
                 newFootnote.id = `fn-${id}`
                 footnotesContainer.appendChild(newFootnote)
@@ -90,25 +90,25 @@ class ClipboardDOMSerializer {
     addFigureNumbers(domFragment) {
         domFragment.querySelectorAll("figure[data-category='figure'] figcaption span.label").forEach(
             (el, index) => {
-                el.innerHTML += ' ' + (index + 1) + ': '
+                el.innerHTML += " " + (index + 1) + ": "
             }
         )
 
         domFragment.querySelectorAll("figure[data-category='photo'] figcaption span.label").forEach(
             (el, index) => {
-                el.innerHTML += ' ' + (index + 1) + ': '
+                el.innerHTML += " " + (index + 1) + ": "
             }
         )
 
         domFragment.querySelectorAll("figure[data-category='table'] figcaption span.label").forEach(
             (el, index) => {
-                el.innerHTML += ' ' + (index + 1) + ': '
+                el.innerHTML += " " + (index + 1) + ": "
             }
         )
     }
 
     addBaseUrlToImages(domFragment) {
-        domFragment.querySelectorAll('img').forEach(el => el.setAttribute('src', el.src))
+        domFragment.querySelectorAll("img").forEach(el => el.setAttribute("src", el.src))
     }
 
     getRandomID() {
@@ -116,18 +116,18 @@ class ClipboardDOMSerializer {
     }
 
     getFootnoteAnchor(counter, id) {
-        const footnoteAnchor = document.createElement('a')
-        footnoteAnchor.setAttribute('href', `#fn-${id}`)
-        footnoteAnchor.classList.add('fn')
-        footnoteAnchor.classList.add('sdfootnoteanc')
+        const footnoteAnchor = document.createElement("a")
+        footnoteAnchor.setAttribute("href", `#fn-${id}`)
+        footnoteAnchor.classList.add("fn")
+        footnoteAnchor.classList.add("sdfootnoteanc")
         footnoteAnchor.innerHTML = `<sup>${counter}</sup>`
         return footnoteAnchor
     }
 
 
     removeTrackingData(domFragment) {
-        domFragment.querySelectorAll('.approved-insertion, .insertion').forEach(el => el.outerHTML = el.innerHTML)
-        domFragment.querySelectorAll('.deletion').forEach(el => el.parentElement.removeChild(el))
+        domFragment.querySelectorAll(".approved-insertion, .insertion").forEach(el => el.outerHTML = el.innerHTML)
+        domFragment.querySelectorAll(".deletion").forEach(el => el.parentElement.removeChild(el))
     }
 
 

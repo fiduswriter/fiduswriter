@@ -10,11 +10,11 @@ export class DeleteContactDialog {
         return new Promise((resolve, reject) => {
             const buttons = [
                 {
-                    text: gettext('Delete'),
+                    text: gettext("Delete"),
                     classes: "fw-dark",
                     click: () => {
                         postJson(
-                            '/api/user/contacts/delete/',
+                            "/api/user/contacts/delete/",
                             {contacts: JSON.stringify(this.contacts)}
                         ).then(
                             ({status}) => {
@@ -28,13 +28,13 @@ export class DeleteContactDialog {
                     }
                 },
                 {
-                    type: 'cancel'
+                    type: "cancel"
                 }
             ]
             const dialog = new Dialog({
-                title: gettext('Confirm deletion'),
-                id: 'confirmdeletion',
-                body: `<p>${gettext('Remove from contacts')}?</p>`,
+                title: gettext("Confirm deletion"),
+                id: "confirmdeletion",
+                body: `<p>${gettext("Remove from contacts")}?</p>`,
                 height: 60,
                 buttons
             })

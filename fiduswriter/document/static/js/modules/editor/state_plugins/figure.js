@@ -1,8 +1,8 @@
 import {Plugin, PluginKey, NodeSelection} from "prosemirror-state"
 import {DOMSerializer} from "prosemirror-model"
-import {ContentMenu} from '../../common'
+import {ContentMenu} from "../../common"
 
-const key = new PluginKey('figureMenu')
+const key = new PluginKey("figureMenu")
 
 class FigureView {
     constructor(node, view, getPos, options) {
@@ -12,22 +12,22 @@ class FigureView {
         this.getPos = getPos
         this.options = options
         this.dom = document.createElement("div")
-        this.dom.classList.add('figure')
+        this.dom.classList.add("figure")
         this.serializer = DOMSerializer.fromSchema(node.type.schema)
         const contentDOM = this.serializer.serializeNode(this.node)
         contentDOM.classList.forEach(className => this.dom.classList.add(className))
-        contentDOM.classList.value = ''
+        contentDOM.classList.value = ""
         this.dom.appendChild(contentDOM)
         this.contentDOM = contentDOM
         this.menuButton = document.createElement("button")
-        this.menuButton.classList.add('figure-menu-btn')
-        this.menuButton.innerHTML = '<span class="dot-menu-icon"><i class="fa fa-ellipsis-v"></i></span>'
+        this.menuButton.classList.add("figure-menu-btn")
+        this.menuButton.innerHTML = "<span class=\"dot-menu-icon\"><i class=\"fa fa-ellipsis-v\"></i></span>"
         this.dom.insertBefore(this.menuButton, this.dom.firstChild)
     }
 
     stopEvent(event) {
         let stopped = false
-        if (event.type === 'mousedown') {
+        if (event.type === "mousedown") {
             const composedPath = event.composedPath()
             if (composedPath.includes(this.menuButton)) {
                 stopped = true
@@ -45,7 +45,7 @@ class FigureView {
                     }
                 })
                 contentMenu.open()
-            } else if (composedPath.includes(this.dom) && !composedPath.find(el => el.matches && el.matches('figcaption'))) {
+            } else if (composedPath.includes(this.dom) && !composedPath.find(el => el.matches && el.matches("figcaption"))) {
                 stopped = true
                 const tr = this.view.state.tr
                 const $pos = this.view.state.doc.resolve(this.getPos())
@@ -68,7 +68,7 @@ class FigureCaptionView {
         this.options = options
 
         this.dom = document.createElement("figcaption")
-        this.dom.innerHTML = '<span class="text"></span>'
+        this.dom.innerHTML = "<span class=\"text\"></span>"
         this.contentDOM = this.dom.lastElementChild
     }
 }
@@ -79,11 +79,11 @@ export const figurePlugin = function(options) {
         key,
         state: {
             init(_config, _state) {
-                if (options.editor.docInfo.access_rights === 'write') {
-                    this.spec.props.nodeViews['figure'] =
+                if (options.editor.docInfo.access_rights === "write") {
+                    this.spec.props.nodeViews["figure"] =
                         (node, view, getPos) => new FigureView(node, view, getPos, options)
                 }
-                this.spec.props.nodeViews['figure_caption'] =
+                this.spec.props.nodeViews["figure_caption"] =
                     (node, view, getPos) => new FigureCaptionView(node, view, getPos, options)
                 return {}
             },

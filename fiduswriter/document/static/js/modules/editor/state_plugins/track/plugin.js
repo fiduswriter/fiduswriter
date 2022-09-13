@@ -4,7 +4,7 @@ import {Decoration, DecorationSet} from "prosemirror-view"
 import {findSelectedChanges} from "./find_selected_changes"
 import {deactivateAllSelectedChanges} from "./helpers"
 
-export const key = new PluginKey('track')
+export const key = new PluginKey("track")
 export const selectedInsertionSpec = {}
 export const selectedDeletionSpec = {}
 export const selectedChangeFormatSpec = {}
@@ -32,7 +32,7 @@ export function trackPlugin(options) {
                     } else {
                         node.marks.forEach(mark => {
                             if (
-                                ['deletion', 'insertion', 'format_change'].includes(mark.type.name) &&
+                                ["deletion", "insertion", "format_change"].includes(mark.type.name) &&
                                 !users[mark.attrs.user] && mark.attrs.user !== 0
                             ) {
                                 users[mark.attrs.user] = mark.attrs.username
@@ -76,17 +76,17 @@ export function trackPlugin(options) {
                     const decoType = tr.selection.node ? Decoration.node : Decoration.inline
                     if (insertion) {
                         decos = decos.add(tr.doc, [decoType(insertion.from, insertion.to, {
-                            class: 'selected-insertion'
+                            class: "selected-insertion"
                         }, selectedInsertionSpec)])
                     }
                     if (deletion) {
                         decos = decos.add(tr.doc, [decoType(deletion.from, deletion.to, {
-                            class: 'selected-deletion'
+                            class: "selected-deletion"
                         }, selectedDeletionSpec)])
                     }
                     if (formatChange) {
                         decos = decos.add(tr.doc, [decoType(formatChange.from, formatChange.to, {
-                            class: 'selected-format_change'
+                            class: "selected-format_change"
                         }, selectedChangeFormatSpec)])
                     }
                 } else {

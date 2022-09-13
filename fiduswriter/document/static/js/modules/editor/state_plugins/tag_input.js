@@ -6,19 +6,19 @@ import {keymap} from "prosemirror-keymap"
 
 import {addDeletedPartWidget} from "./document_template"
 
-const key = new PluginKey('tagInput')
+const key = new PluginKey("tagInput")
 
-const doc = {content: 'tag'},
+const doc = {content: "tag"},
     tag = {
-        content: 'inline*',
-        parseDOM: [{tag: 'div.tag-input-editor'}],
+        content: "inline*",
+        parseDOM: [{tag: "div.tag-input-editor"}],
         toDOM() {
             return ["div", {
-                class: 'tag-input-editor'
+                class: "tag-input-editor"
             }, 0]
         }
     },
-    text = {group: 'inline'}
+    text = {group: "inline"}
 
 const schema = new Schema({
     nodes: {doc, tag, text},
@@ -36,13 +36,13 @@ const placeholderPlugin = function(nodeTitle) {
                     doc.firstChild.isTextblock &&
                     doc.firstChild.content.size === 0
                 ) {
-                    const placeHolder = document.createElement('span')
-                    placeHolder.classList.add('placeholder')
+                    const placeHolder = document.createElement("span")
+                    placeHolder.classList.add("placeholder")
                     // There is only one field, so we know the selection is there
-                    placeHolder.classList.add('selected')
+                    placeHolder.classList.add("selected")
                     placeHolder.setAttribute(
-                        'data-placeholder',
-                        `${gettext('Add')} ${nodeTitle.toLowerCase()}...`
+                        "data-placeholder",
+                        `${gettext("Add")} ${nodeTitle.toLowerCase()}...`
                     )
                     return DecorationSet.create(doc, [Decoration.widget(1, placeHolder)])
                 }
@@ -65,7 +65,7 @@ const pastePlugin = view => {
     return new Plugin({
         props: {
             transformPastedHTML: inHTML => {
-                const dom = document.createElement('div')
+                const dom = document.createElement("div")
                 dom.innerHTML = inHTML
                 const tags = dom.innerText.split(/[,;]+/).filter(tag => tag.length)
                 if (tags.length) {
@@ -109,16 +109,16 @@ const submitTag = (tagState, dispatch, tagInputView, view, getPos) => {
 
 
 const createTagInputEditor = (view, getPos, node) => {
-    const dom = document.createElement('div')
-    dom.classList.add('tag-input')
-    dom.setAttribute('contenteditable', false)
+    const dom = document.createElement("div")
+    dom.classList.add("tag-input")
+    dom.setAttribute("contenteditable", false)
     const tagInputView = new EditorView(dom, {
         state: EditorState.create({
             schema,
             doc: schema.nodeFromJSON({
-                type: 'doc',
+                type: "doc",
                 content: [{
-                    type: 'tag',
+                    type: "tag",
                     content: []
                 }]
             }),
@@ -170,8 +170,8 @@ export class TagsPartView {
         this.node = node
         this.view = view
         this.getPos = getPos
-        this.dom = document.createElement('div')
-        this.dom.classList.add('article-part')
+        this.dom = document.createElement("div")
+        this.dom.classList.add("article-part")
         this.dom.classList.add(`article-${this.node.type.name}`)
         this.dom.classList.add(`article-${this.node.attrs.id}`)
         this.dom.contentEditable = false
@@ -180,8 +180,8 @@ export class TagsPartView {
         }
         const [tagInputDOM, tagInputView] = createTagInputEditor(view, getPos, node)
         this.tagInputView = tagInputView
-        this.contentDOM = document.createElement('span')
-        this.contentDOM.classList.add('tags-inner')
+        this.contentDOM = document.createElement("span")
+        this.contentDOM.classList.add("tags-inner")
         this.dom.appendChild(this.contentDOM)
         this.dom.appendChild(tagInputDOM)
         if (node.attrs.deleted) {
@@ -190,11 +190,11 @@ export class TagsPartView {
     }
 
     stopEvent(event) {
-        if (['click', 'mousedown'].includes(event.type)) {
+        if (["click", "mousedown"].includes(event.type)) {
             return false
         } else if (
-            event.type === 'keydown' &&
-            event.key === 'ArrowRight' &&
+            event.type === "keydown" &&
+            event.key === "ArrowRight" &&
             this.tagInputView.state.selection.from ===
                 this.tagInputView.state.doc.nodeSize - 3
         ) {
@@ -207,8 +207,8 @@ export class TagsPartView {
             )
             return false
         } else if (
-            event.type === 'keydown' &&
-            event.key === 'ArrowLeft' &&
+            event.type === "keydown" &&
+            event.key === "ArrowLeft" &&
             this.tagInputView.state.selection.to === 1
         ) {
             this.view.focus()
@@ -235,8 +235,8 @@ export const tagInputPlugin = function(options) {
         key,
         state: {
             init(_config, _state) {
-                if (options.editor.docInfo.access_rights === 'write') {
-                    this.spec.props.nodeViews['tags_part'] =
+                if (options.editor.docInfo.access_rights === "write") {
+                    this.spec.props.nodeViews["tags_part"] =
                         (node, view, getPos) => new TagsPartView(node, view, getPos)
                 }
 

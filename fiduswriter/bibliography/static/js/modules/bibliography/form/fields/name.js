@@ -35,18 +35,18 @@ export class NameFieldForm {
                 <div class="type-switch-input-wrapper">
                     <button class="type-switch">
                         <span class="type-switch-inner">
-                            <span class="type-switch-label">${gettext('Person')}</span>
-                            <span class="type-switch-label">${gettext('Organization')}</span>
+                            <span class="type-switch-label">${gettext("Person")}</span>
+                            <span class="type-switch-label">${gettext("Organization")}</span>
                         </span>
                     </button>
                     <div class="type-switch-input-inner"></div>
                 </div>
             `
 
-        this.switcher = this.dom.querySelector('.type-switch')
-        this.inner = this.dom.querySelector('.type-switch-input-inner')
+        this.switcher = this.dom.querySelector(".type-switch")
+        this.inner = this.dom.querySelector(".type-switch-input-inner")
 
-        this.switcher.addEventListener('click', () => this.switchMode())
+        this.switcher.addEventListener("click", () => this.switchMode())
     }
 
     switchMode() {
@@ -67,8 +67,8 @@ export class NameFieldForm {
     }
 
     drawPersonForm() {
-        this.switcher.classList.add('value1')
-        this.switcher.classList.remove('value2')
+        this.switcher.classList.add("value1")
+        this.switcher.classList.remove("value2")
 
         this.fields = {}
         this.inner.innerHTML =
@@ -79,46 +79,46 @@ export class NameFieldForm {
                 <div class='suffix field-part field-part-short'></div>
                 <div class='useprefix field-part'>
                     <input type='checkbox' class='useprefix'
-                        ${this.currentValue.useprefix ? 'checked' : ''}>
-                    &nbsp;${gettext('Prefix used')}
+                        ${this.currentValue.useprefix ? "checked" : ""}>
+                    &nbsp;${gettext("Prefix used")}
                 </div>
             `
-        this.fields['given'] = new LiteralFieldForm(
-            this.dom.querySelector('.given'),
+        this.fields["given"] = new LiteralFieldForm(
+            this.dom.querySelector(".given"),
             this.currentValue.given,
-            gettext('First name')
+            gettext("First name")
         )
         this.fields.given.init()
-        this.fields['prefix'] = new LiteralFieldForm(
-            this.dom.querySelector('.prefix'),
+        this.fields["prefix"] = new LiteralFieldForm(
+            this.dom.querySelector(".prefix"),
             this.currentValue.prefix,
-            gettext('Prefix')
+            gettext("Prefix")
         )
         this.fields.prefix.init()
-        this.fields['family'] = new LiteralFieldForm(
-            this.dom.querySelector('.family'),
+        this.fields["family"] = new LiteralFieldForm(
+            this.dom.querySelector(".family"),
             this.currentValue.family,
-            gettext('Last name')
+            gettext("Last name")
         )
         this.fields.family.init()
-        this.fields['suffix'] = new LiteralFieldForm(
-            this.dom.querySelector('.suffix'),
+        this.fields["suffix"] = new LiteralFieldForm(
+            this.dom.querySelector(".suffix"),
             this.currentValue.suffix,
-            gettext('Suffix')
+            gettext("Suffix")
         )
         this.fields.suffix.init()
     }
 
     drawOrganizationForm() {
-        this.switcher.classList.add('value2')
-        this.switcher.classList.remove('value1')
+        this.switcher.classList.add("value2")
+        this.switcher.classList.remove("value1")
 
         this.fields = {}
         this.inner.innerHTML = noSpaceTmp`<div class='literal-text field-part field-part-single'></div>`
-        this.fields['literal'] = new LiteralFieldForm(
-            this.dom.querySelector('.literal-text'),
+        this.fields["literal"] = new LiteralFieldForm(
+            this.dom.querySelector(".literal-text"),
             this.currentValue.literal,
-            gettext('Organization name')
+            gettext("Organization name")
         )
         this.fields.literal.init()
     }
@@ -138,11 +138,11 @@ export class NameFieldForm {
                 given: this.fields.given.value ? this.fields.given.value : [],
             }
             if (this.fields.prefix.value) {
-                returnObject['prefix'] = this.fields.prefix.value
-                returnObject['useprefix'] = this.dom.querySelector('input.useprefix').checked ? true : false
+                returnObject["prefix"] = this.fields.prefix.value
+                returnObject["useprefix"] = this.dom.querySelector("input.useprefix").checked ? true : false
             }
             if (this.fields.suffix.value) {
-                returnObject['suffix'] = this.fields.suffix.value
+                returnObject["suffix"] = this.fields.suffix.value
             }
             return returnObject
         } else {

@@ -38,7 +38,7 @@ export class XmlZip {
             // file has been loaded already.
             return Promise.resolve(this.docs[filePath])
         } else if (this.zip.files[filePath]) {
-            return this.zip.file(filePath).async('string').then(
+            return this.zip.file(filePath).async("string").then(
                 string => {
                     const parser = new window.DOMParser()
                     this.docs[filePath] = parser.parseFromString(string, "text/xml")

@@ -1,1 +1,1 @@
-export {navigatorFilterModel} from './model'
+export {navigatorFilterModel} from "./model"

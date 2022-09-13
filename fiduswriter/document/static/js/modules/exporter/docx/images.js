@@ -23,18 +23,18 @@ export class DocxExporterImages {
     // add an image to the list of files
     addImage(imgFileName, image) {
         const rId = this.rels.addImageRel(imgFileName)
-        this.addContentType(imgFileName.split('.').pop())
+        this.addContentType(imgFileName.split(".").pop())
         this.exporter.xml.addExtraFile(`word/media/${imgFileName}`, image)
         return rId
     }
 
     // add a global contenttype declaration for an image type (if needed)
     addContentType(fileEnding) {
-        const types = this.ctXml.querySelector('Types')
-        const contentDec = types.querySelector('Default[Extension=' + fileEnding + ']')
+        const types = this.ctXml.querySelector("Types")
+        const contentDec = types.querySelector("Default[Extension=" + fileEnding + "]")
         if (!contentDec) {
             const string = `<Default ContentType="image/${fileEnding}" Extension="${fileEnding}"/>`
-            types.insertAdjacentHTML('beforeEnd', string)
+            types.insertAdjacentHTML("beforeEnd", string)
         }
     }
 
@@ -45,7 +45,7 @@ export class DocxExporterImages {
         const usedImgs = []
         descendantNodes(this.docContent).forEach(
             node => {
-                if (node.type === 'image' && node.attrs.image !== false) {
+                if (node.type === "image" && node.attrs.image !== false) {
                     if (!(node.attrs.image in usedImgs)) {
                         usedImgs.push(node.attrs.image)
                     }
@@ -62,7 +62,7 @@ export class DocxExporterImages {
                     ).then(
                         blob => {
                             const wImgId = this.addImage(
-                                imgDBEntry.image.split('/').pop(),
+                                imgDBEntry.image.split("/").pop(),
                                 blob
                             )
                             this.imgIdTranslation[image] = wImgId

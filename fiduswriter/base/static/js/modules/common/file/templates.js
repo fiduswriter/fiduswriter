@@ -2,7 +2,7 @@ import {escapeText} from "../"
 
 export const moveTemplate = ({path}) =>
     `<div>
-    <span>${gettext('Path')}:</span>
+    <span>${gettext("Path")}:</span>
     <input type="text" value="${escapeText(path)}" id="path" placeholder="${gettext("Insert path")}">
     <div class="file-selector"></div>
     </div>`

@@ -7,7 +7,7 @@ export class GoogleDocsPasteHandler extends GeneralPasteHandler {
     convertNode(node) {
         // Replace  nodes with other nodes to not change the number of child nodes
         // <b style="font-weight:normal;">...</b> => <span>...</span>
-        if (node.tagName === 'B' && node.style.fontWeight === 'normal') {
+        if (node.tagName === "B" && node.style.fontWeight === "normal") {
             node = this.neutralizeInlineNode(node)
         }
         return node
@@ -15,7 +15,7 @@ export class GoogleDocsPasteHandler extends GeneralPasteHandler {
 
     // Replace any type of inline node with a span node.
     neutralizeInlineNode(node) {
-        const newNode = document.createElement('span')
+        const newNode = document.createElement("span")
         while (node.firstChild) {
             newNode.appendChild(node.firstChild)
         }

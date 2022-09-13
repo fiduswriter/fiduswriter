@@ -1,14 +1,14 @@
 import {Plugin, PluginKey} from "prosemirror-state"
 import {READ_ONLY_ROLES, COMMENT_ONLY_ROLES} from ".."
 
-const key = new PluginKey('accessRights')
+const key = new PluginKey("accessRights")
 
 export const accessRightsPlugin = function(options) {
     return new Plugin({
         key,
         filterTransaction: (tr, _state) => {
             let allowed = true
-            const remote = tr.getMeta('remote')
+            const remote = tr.getMeta("remote")
             if (remote) {
                 return allowed
             }
@@ -22,8 +22,8 @@ export const accessRightsPlugin = function(options) {
                 //Check all transaction steps. If step type not allowed = prohibit
                 //check if in allowed array. if false - exit loop
                 if (!tr.steps.every(step =>
-                    (step.jsonID === 'addMark' || step.jsonID === 'removeMark') &&
-                    step.mark.type.name === 'comment'
+                    (step.jsonID === "addMark" || step.jsonID === "removeMark") &&
+                    step.mark.type.name === "comment"
                 )) {
                     allowed = false
                 }

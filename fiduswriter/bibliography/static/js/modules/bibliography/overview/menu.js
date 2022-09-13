@@ -4,8 +4,8 @@ import {BibLatexFileExporter} from "../export"
 export const bulkMenuModel = () => ({
     content: [
         {
-            title: gettext('Delete selected'),
-            tooltip: gettext('Delete selected bibliography entries.'),
+            title: gettext("Delete selected"),
+            tooltip: gettext("Delete selected bibliography entries."),
             action: overview => {
                 const ids = overview.getSelected().map(id => parseInt(id))
                 if (ids.length) {
@@ -14,8 +14,8 @@ export const bulkMenuModel = () => ({
             },
             disabled: overview => !overview.getSelected().length || overview.app.isOffline()
         }, {
-            title: gettext('Export selected'),
-            tooltip: gettext('Export selected bibliography entries.'),
+            title: gettext("Export selected"),
+            tooltip: gettext("Export selected bibliography entries."),
             action: overview => {
                 const ids = overview.getSelected()
                 if (ids.length) {
@@ -31,28 +31,28 @@ export const bulkMenuModel = () => ({
 export const menuModel = () => ({
     content: [
         {
-            type: 'dropdown',
-            id: 'cat_selector',
+            type: "dropdown",
+            id: "cat_selector",
             content: [
                 {
-                    title: gettext('All categories'),
+                    title: gettext("All categories"),
                     action: _overview => {
-                        const trs = document.querySelectorAll('#bibliography > tbody > tr')
-                        trs.forEach(tr => tr.style.display = '')
+                        const trs = document.querySelectorAll("#bibliography > tbody > tr")
+                        trs.forEach(tr => tr.style.display = "")
                     }
                 }
             ],
             order: 1
         },
         {
-            type: 'text',
-            title: gettext('Edit categories'),
+            type: "text",
+            title: gettext("Edit categories"),
             action: overview => overview.editCategoriesDialog(),
             order: 2
         },
         {
-            type: 'text',
-            title: gettext('Register new source'),
+            type: "text",
+            title: gettext("Register new source"),
             action: overview => {
                 import("../form").then(({BibEntryForm}) => {
                     const form = new BibEntryForm(overview.app.bibDB, overview.app)
@@ -67,8 +67,8 @@ export const menuModel = () => ({
             order: 3
         },
         {
-            type: 'text',
-            title: gettext('Upload BibTeX file'),
+            type: "text",
+            title: gettext("Upload BibTeX file"),
             action: overview => {
                 const fileImporter = new BibLatexFileImportDialog(
                     overview.app.bibDB,
@@ -80,9 +80,9 @@ export const menuModel = () => ({
             order: 4
         },
         {
-            type: 'search',
-            icon: 'search',
-            title: gettext('Search bibliography'),
+            type: "search",
+            icon: "search",
+            title: gettext("Search bibliography"),
             input: (overview, text) => overview.table.search(text),
             order: 5
         }

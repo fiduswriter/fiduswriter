@@ -37,7 +37,7 @@ export class DocxExporter {
         this.pmBib = false
         this.docContent = false
         this.docTitle = false
-        this.mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        this.mimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     }
 
 
@@ -49,7 +49,7 @@ export class DocxExporter {
         this.metadata = new DocxExporterMetadata(this, this.docContent)
         this.footnotes = new DocxExporterFootnotes(this, this.docContent)
         this.render = new DocxExporterRender(this, this.docContent)
-        this.rels = new DocxExporterRels(this, 'document')
+        this.rels = new DocxExporterRels(this, "document")
         this.images = new DocxExporterImages(this, this.imageDB, this.rels, this.docContent)
         this.lists = new DocxExporterLists(this, this.rels, this.docContent)
         this.citations = new DocxExporterCitations(this, this.bibDB, this.csl, this.docContent)
@@ -97,7 +97,7 @@ export class DocxExporter {
         )
     }
     download(blob) {
-        return download(blob, createSlug(this.docTitle) + '.docx', this.mimeType)
+        return download(blob, createSlug(this.docTitle) + ".docx", this.mimeType)
     }
 
 }

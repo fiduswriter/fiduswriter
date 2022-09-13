@@ -28,10 +28,10 @@ export class OdtExporterImages {
 
     // add a an image file to the manifest
     addFileToManifest(imgFileName) {
-        const fileNameParts = imgFileName.split('.')
+        const fileNameParts = imgFileName.split(".")
         const fileNameEnding = fileNameParts.pop()
-        const fileNameStart = fileNameParts.join('.')
-        const manifestEl = this.manifestXml.querySelector('manifest')
+        const fileNameStart = fileNameParts.join(".")
+        const manifestEl = this.manifestXml.querySelector("manifest")
         let imgManifest = manifestEl.querySelector(`file-entry[*|full-path="Pictures/${imgFileName}"]`)
         let counter = 0
         while (imgManifest) {
@@ -40,7 +40,7 @@ export class OdtExporterImages {
             imgManifest = manifestEl.querySelector(`file-entry[*|full-path="Pictures/${imgFileName}"]`)
         }
         const string = `  <manifest:file-entry manifest:full-path="Pictures/${imgFileName}" manifest:media-type="image/${fileNameEnding}"/>`
-        manifestEl.insertAdjacentHTML('beforeEnd', string)
+        manifestEl.insertAdjacentHTML("beforeEnd", string)
         return imgFileName
     }
 
@@ -52,7 +52,7 @@ export class OdtExporterImages {
 
         descendantNodes(this.docContent).forEach(
             node => {
-                if (node.type === 'image' && node.attrs.image !== false) {
+                if (node.type === "image" && node.attrs.image !== false) {
                     if (!(node.attrs.image in usedImgs)) {
                         usedImgs.push(node.attrs.image)
                     }
@@ -71,7 +71,7 @@ export class OdtExporterImages {
                     ).then(
                         blob => {
                             const wImgId = this.addImage(
-                                imgDBEntry.image.split('/').pop(),
+                                imgDBEntry.image.split("/").pop(),
                                 blob
                             )
                             this.imgIdTranslation[image] = wImgId

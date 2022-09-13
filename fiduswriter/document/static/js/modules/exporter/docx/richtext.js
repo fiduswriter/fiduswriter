@@ -20,14 +20,14 @@ export class DocxExporterRichtext {
     }
 
     transformRichtext(node, options = {}) {
-        let start = '',
-            content = '',
-            end = ''
+        let start = "",
+            content = "",
+            end = ""
 
         switch (node.type) {
-        case 'paragraph':
+        case "paragraph":
             if (!options.section) {
-                options.section = 'Normal'
+                options.section = "Normal"
             }
             // This should really be something like
             // '<w:p w:rsidR="A437D321" w:rsidRDefault="2B935ADC">'
@@ -37,8 +37,8 @@ export class DocxExporterRichtext {
             // We may need to add them later, if it turns out this is a problem
             // for other versions of Word. In that case we should also add
             // it to settings.xml as described in above link.
-            if (options.section === 'Normal' && !options.list_type && !(node.content?.length)) {
-                start += '<w:p/>'
+            if (options.section === "Normal" && !options.list_type && !(node.content?.length)) {
+                start += "<w:p/>"
             } else {
                 start += noSpaceTmp`
                         <w:p>
@@ -47,22 +47,22 @@ export class DocxExporterRichtext {
                     start += `<w:numPr><w:ilvl w:val="${options.list_depth}"/>`
                     start += `<w:numId w:val="${options.list_type}"/></w:numPr>`
                 } else {
-                    start += '<w:rPr></w:rPr>'
+                    start += "<w:rPr></w:rPr>"
                 }
-                start += '</w:pPr>'
-                end = '</w:p>' + end
+                start += "</w:pPr>"
+                end = "</w:p>" + end
             }
             break
-        case 'bibliography_heading':
+        case "bibliography_heading":
             start += noSpaceTmp`
                     <w:p>
                         <w:pPr>
                             <w:pStyle w:val="BibliographyHeading"/>
                             <w:rPr></w:rPr>
                         </w:pPr>`
-            end = '</w:p>' + end
+            end = "</w:p>" + end
             break
-        case 'heading1':
+        case "heading1":
             start += noSpaceTmp`
                     <w:p>
                         <w:pPr>
@@ -71,9 +71,9 @@ export class DocxExporterRichtext {
                         </w:pPr>
                         <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
                         <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
-            end = '</w:p>' + end
+            end = "</w:p>" + end
             break
-        case 'heading2':
+        case "heading2":
             start += noSpaceTmp`
                     <w:p>
                         <w:pPr>
@@ -82,9 +82,9 @@ export class DocxExporterRichtext {
                         </w:pPr>
                         <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
                         <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
-            end = '</w:p>' + end
+            end = "</w:p>" + end
             break
-        case 'heading3':
+        case "heading3":
             start += noSpaceTmp`
                     <w:p>
                         <w:pPr>
@@ -93,9 +93,9 @@ export class DocxExporterRichtext {
                         </w:pPr>
                         <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
                         <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
-            end = '</w:p>' + end
+            end = "</w:p>" + end
             break
-        case 'heading4':
+        case "heading4":
             start += noSpaceTmp`
                     <w:p>
                         <w:pPr>
@@ -104,9 +104,9 @@ export class DocxExporterRichtext {
                         </w:pPr>
                         <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
                         <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
-            end = '</w:p>' + end
+            end = "</w:p>" + end
             break
-        case 'heading5':
+        case "heading5":
             start += noSpaceTmp`
                     <w:p>
                         <w:pPr>
@@ -115,9 +115,9 @@ export class DocxExporterRichtext {
                         </w:pPr>
                         <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
                         <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
-            end = '</w:p>' + end
+            end = "</w:p>" + end
             break
-        case 'heading6':
+        case "heading6":
             start += noSpaceTmp`
                     <w:p>
                         <w:pPr>
@@ -126,21 +126,21 @@ export class DocxExporterRichtext {
                         </w:pPr>
                         <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
                         <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
-            end = '</w:p>' + end
+            end = "</w:p>" + end
             break
-        case 'code_block':
-            start += '<w:p>'
-            start += '<w:pPr><w:pStyle w:val="Code"/><w:rPr></w:rPr></w:pPr>'
-            end = '</w:p>' + end
+        case "code_block":
+            start += "<w:p>"
+            start += "<w:pPr><w:pStyle w:val=\"Code\"/><w:rPr></w:rPr></w:pPr>"
+            end = "</w:p>" + end
             break
-        case 'blockquote':
+        case "blockquote":
             // This is imperfect, but Word doesn't seem to provide section/quotation nesting
             options = Object.assign({}, options)
-            options.section = 'Quote'
+            options.section = "Quote"
             break
-        case 'ordered_list':
+        case "ordered_list":
             options = Object.assign({}, options)
-            options.section = 'ListParagraph'
+            options.section = "ListParagraph"
             if (options.list_depth === undefined) {
                 options.list_depth = 0
             } else {
@@ -148,9 +148,9 @@ export class DocxExporterRichtext {
             }
             options.list_type = this.exporter.lists.getNumberedType()
             break
-        case 'bullet_list':
+        case "bullet_list":
             options = Object.assign({}, options)
-            options.section = 'ListParagraph'
+            options.section = "ListParagraph"
             options.list_type = this.exporter.lists.getBulletType()
             if (options.list_depth === undefined) {
                 options.list_depth = 0
@@ -158,20 +158,20 @@ export class DocxExporterRichtext {
                 options.list_depth += 1
             }
             break
-        case 'list_item':
+        case "list_item":
             // Word seems to lack complex nesting options. The styling is applied
             // to child paragraphs. This will deliver correct results in most
             // cases.
             break
-        case 'footnotecontainer':
+        case "footnotecontainer":
             options = Object.assign({}, options)
-            options.section = 'Footnote'
+            options.section = "Footnote"
             options.inFootnote = true
             start += `<w:footnote w:id="${this.fnCounter++}">`
-            end = '</w:footnote>' + end
+            end = "</w:footnote>" + end
             options.footnoteRefMissing = true
             break
-        case 'footnote':
+        case "footnote":
             content += noSpaceTmp`
                     <w:r>
                         <w:rPr>
@@ -180,23 +180,23 @@ export class DocxExporterRichtext {
                         <w:footnoteReference w:id="${this.fnCounter++}"/>
                     </w:r>`
             break
-        case 'text':
+        case "text":
         {
             let hyperlink, em, strong, underline, smallcaps, sup, sub
             // Check for hyperlink, bold/strong and italic/em
             if (node.marks) {
-                hyperlink = node.marks.find(mark => mark.type === 'link')
-                em = node.marks.find(mark => mark.type === 'em')
-                strong = node.marks.find(mark => mark.type === 'strong')
-                underline = node.marks.find(mark => mark.type === 'underline')
-                smallcaps = node.marks.find(mark => mark.type === 'smallcaps')
-                sup = node.marks.find(mark => mark.type === 'sup')
-                sub = node.marks.find(mark => mark.type === 'sub')
+                hyperlink = node.marks.find(mark => mark.type === "link")
+                em = node.marks.find(mark => mark.type === "em")
+                strong = node.marks.find(mark => mark.type === "strong")
+                underline = node.marks.find(mark => mark.type === "underline")
+                smallcaps = node.marks.find(mark => mark.type === "smallcaps")
+                sup = node.marks.find(mark => mark.type === "sup")
+                sub = node.marks.find(mark => mark.type === "sub")
             }
 
             if (hyperlink) {
                 const href = hyperlink.attrs.href
-                if (href[0] === '#') {
+                if (href[0] === "#") {
                     // Internal link
                     start += `<w:hyperlink w:anchor="${href.slice(1)}">`
                 } else {
@@ -204,69 +204,69 @@ export class DocxExporterRichtext {
                     const refId = this.rels.addLinkRel(href)
                     start += `<w:hyperlink r:id="rId${refId}">`
                 }
-                start += '<w:r>'
-                end = '</w:t></w:r></w:hyperlink>' + end
+                start += "<w:r>"
+                end = "</w:t></w:r></w:hyperlink>" + end
             } else {
-                start += '<w:r>'
-                end = '</w:t></w:r>' + end
+                start += "<w:r>"
+                end = "</w:t></w:r>" + end
             }
 
             if (hyperlink || em || strong || underline || smallcaps || sup || sub) {
-                start += '<w:rPr>'
+                start += "<w:rPr>"
                 if (hyperlink) {
-                    start += '<w:rStyle w:val="Hyperlink"/>'
+                    start += "<w:rStyle w:val=\"Hyperlink\"/>"
                 }
                 if (em) {
-                    start += '<w:i/><w:iCs/>'
+                    start += "<w:i/><w:iCs/>"
                 }
                 if (strong) {
-                    start += '<w:b/><w:bCs/>'
+                    start += "<w:b/><w:bCs/>"
                 }
                 if (underline) {
-                    start += '<w:u w:val="single"/>'
+                    start += "<w:u w:val=\"single\"/>"
                 }
                 if (smallcaps) {
-                    start += '<w:smallCaps/>'
+                    start += "<w:smallCaps/>"
                 }
                 if (sup) {
-                    start += '<w:vertAlign w:val="superscript"/>'
+                    start += "<w:vertAlign w:val=\"superscript\"/>"
                 } else if (sub) {
-                    start += '<w:vertAlign w:val="subscript"/>'
+                    start += "<w:vertAlign w:val=\"subscript\"/>"
                 }
 
-                start += '</w:rPr>'
+                start += "</w:rPr>"
             }
             if (options.footnoteRefMissing) {
-                start += '<w:footnoteRef /><w:tab />'
+                start += "<w:footnoteRef /><w:tab />"
                 options.footnoteRefMissing = false
             }
-            let textAttr = ''
-            if (node.text[0] === ' ' || node.text[node.text.length - 1] === ' ') {
-                textAttr += 'xml:space="preserve"'
+            let textAttr = ""
+            if (node.text[0] === " " || node.text[node.text.length - 1] === " ") {
+                textAttr += "xml:space=\"preserve\""
             }
             start += `<w:t ${textAttr}>`
 
             content += escapeText(node.text)
             break
         }
-        case 'cross_reference': {
+        case "cross_reference": {
             const title = node.attrs.title
             const id = node.attrs.id
             if (title) {
                 start += `<w:hyperlink w:anchor="${id}"><w:r><w:rPr><w:rStyle w:val="Hyperlink"/></w:rPr><w:t>`
-                end = '</w:t></w:r></w:hyperlink>' + end
+                end = "</w:t></w:r></w:hyperlink>" + end
             } else {
-                start += '<w:r><w:t>'
-                end = '</w:t></w:r>' + end
+                start += "<w:r><w:t>"
+                end = "</w:t></w:r>" + end
             }
-            content += escapeText(title || 'MISSING TARGET')
+            content += escapeText(title || "MISSING TARGET")
             break
         }
-        case 'citation':
+        case "citation":
         {
             // We take the first citation from the stack and remove it.
             const cit = this.citations.pmCits.shift()
-            if (options.citationType === 'note'  && !options.inFootnote) {
+            if (options.citationType === "note"  && !options.inFootnote) {
                 // If the citations are in notes (footnotes), we need to
                 // put the content of this citation in a footnote.
                 // We then add the footnote to the footnote file and
@@ -281,20 +281,20 @@ export class DocxExporterRichtext {
                         </w:r>`
                 const fnContents = this.transformRichtext(cit, {
                     footnoteRefMissing: true,
-                    section: 'Footnote'
+                    section: "Footnote"
                 })
                 const fnXml = `<w:footnote w:id="${this.fnCounter}">${fnContents}</w:footnote>`
                 const xml = this.exporter.footnotes.xml
                 const lastId = this.fnCounter - 1
-                const footnotes = xml.querySelectorAll('footnote')
+                const footnotes = xml.querySelectorAll("footnote")
                 footnotes.forEach(
                     footnote => {
-                        const id = parseInt(footnote.getAttribute('w:id'))
+                        const id = parseInt(footnote.getAttribute("w:id"))
                         if (id >= this.fnCounter) {
-                            footnote.setAttribute('w:id', id + 1)
+                            footnote.setAttribute("w:id", id + 1)
                         }
                         if (id === lastId) {
-                            footnote.insertAdjacentHTML('afterend', fnXml)
+                            footnote.insertAdjacentHTML("afterend", fnXml)
                         }
                     }
                 )
@@ -306,12 +306,12 @@ export class DocxExporterRichtext {
             }
             break
         }
-        case 'figure':
+        case "figure":
         {
             const category = node.attrs.category
-            let caption = node.attrs.caption ? node.content.find(node => node.type === 'figure_caption')?.content || [] : []
-            let catCountXml = ''
-            if (category !== 'none') {
+            let caption = node.attrs.caption ? node.content.find(node => node.type === "figure_caption")?.content || [] : []
+            let catCountXml = ""
+            if (category !== "none") {
                 const categoryCounter = options.inFootnote ? this.fncategoryCounter : this.categoryCounter
                 if (!categoryCounter[category]) {
                     categoryCounter[category] = 1
@@ -333,18 +333,18 @@ export class DocxExporterRichtext {
                     </w:r>
                     <w:r>
                         <w:rPr></w:rPr>
-                        <w:t>${categoryCounter[category]++}${ options.inFootnote ? 'A' : ''}</w:t>
+                        <w:t>${categoryCounter[category]++}${ options.inFootnote ? "A" : ""}</w:t>
                     </w:r>
                     <w:r>
                         <w:rPr></w:rPr>
                         <w:fldChar w:fldCharType="end" />
                     </w:r>`
                 if (caption.length) {
-                    caption = [{type: 'text', text: ': '}].concat(caption)
+                    caption = [{type: "text", text: ": "}].concat(caption)
                 }
             }
             let cx, cy
-            const image = node.content.find(node => node.type === 'image')?.attrs.image || false
+            const image = node.content.find(node => node.type === "image")?.attrs.image || false
             if (image !== false) {
                 const imgDBEntry = this.images.imageDB.db[image]
                 cx = imgDBEntry.width * 9525 // width in EMU
@@ -417,11 +417,11 @@ export class DocxExporterRichtext {
             } else {
                 cx = 9525 * 100 // We pick a random size of 100x100. We hope this will fit the formula
                 cy = 9525 * 100
-                const latex = node.content.find(node => node.type === 'figure_equation')?.attrs.equation || ''
+                const latex = node.content.find(node => node.type === "figure_equation")?.attrs.equation || ""
                 content += this.exporter.math.getOmml(latex)
             }
             const captionSpace = !!(catCountXml.length || caption.length)
-            if (node.attrs.aligned === 'center') {
+            if (node.attrs.aligned === "center") {
                 start += noSpaceTmp`
                     <w:p>
                       <w:pPr>
@@ -435,8 +435,8 @@ export class DocxExporterRichtext {
         noSpaceTmp`<w:p>
                           <w:pPr><w:pStyle w:val="Caption"/><w:rPr></w:rPr></w:pPr>
                           ${catCountXml}
-                          ${caption.map(node => this.transformRichtext(node)).join('')}
-                    </w:p>` : ''
+                          ${caption.map(node => this.transformRichtext(node)).join("")}
+                    </w:p>` : ""
 }` + end
             } else {
                 start += noSpaceTmp`
@@ -483,7 +483,7 @@ export class DocxExporterRichtext {
 
                 end = noSpaceTmp`
                                                         ${catCountXml}
-                                                        ${caption.map(node => this.transformRichtext(node)).join('')}
+                                                        ${caption.map(node => this.transformRichtext(node)).join("")}
                                                     </w:p>
                                                 </w:txbxContent>
                                             </wps:txbx>
@@ -503,21 +503,21 @@ export class DocxExporterRichtext {
             }
             break
         }
-        case 'figure_caption':
+        case "figure_caption":
             // We are already dealing with this in the figure. Prevent content from being added a second time.
-            return ''
-        case 'figure_equation':
+            return ""
+        case "figure_equation":
             // We are already dealing with this in the figure.
             break
-        case 'image':
+        case "image":
             // We are already dealing with this in the figure.
             break
-        case 'table':
+        case "table":
         {
             const category = node.attrs.category
             let caption = node.attrs.caption ? node.content[0].content || [] : []
-            let catCountXml = ''
-            if (category !== 'none') {
+            let catCountXml = ""
+            if (category !== "none") {
                 const categoryCounter = options.inFootnote ? this.fncategoryCounter : this.categoryCounter
                 if (!categoryCounter[category]) {
                     categoryCounter[category] = 1
@@ -539,14 +539,14 @@ export class DocxExporterRichtext {
                     </w:r>
                     <w:r>
                         <w:rPr></w:rPr>
-                        <w:t>${categoryCounter[category]++}${ options.inFootnote ? 'A' : ''}</w:t>
+                        <w:t>${categoryCounter[category]++}${ options.inFootnote ? "A" : ""}</w:t>
                     </w:r>
                     <w:r>
                         <w:rPr></w:rPr>
                         <w:fldChar w:fldCharType="end" />
                     </w:r>`
                 if (caption.length) {
-                    caption = [{type: 'text', text: ': '}].concat(caption)
+                    caption = [{type: "text", text: ": "}].concat(caption)
                 }
             }
             const captionSpace = !!(catCountXml.length || caption.length)
@@ -560,7 +560,7 @@ export class DocxExporterRichtext {
                         <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
                         <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>
                         ${catCountXml}
-                        ${caption.map(node => this.transformRichtext(node)).join('')}
+                        ${caption.map(node => this.transformRichtext(node)).join("")}
                     </w:p>`
             }
             this.exporter.tables.addTableGridStyle()
@@ -569,8 +569,8 @@ export class DocxExporterRichtext {
                         <w:tblPr>
                             <w:tblStyle w:val="${this.exporter.tables.tableGridStyle}" />
                             ${
-    node.attrs.width === '100' ?
-        '<w:tblW w:w="0" w:type="auto" />' :
+    node.attrs.width === "100" ?
+        "<w:tblW w:w=\"0\" w:type=\"auto\" />" :
         noSpaceTmp`<w:tblW w:w="${50 * parseInt(node.attrs.width)}" w:type="pct" />
                                     <w:jc w:val="${node.attrs.aligned}" />`
 }
@@ -592,89 +592,89 @@ export class DocxExporterRichtext {
             for (let i = 0; i < columns; i++) {
                 start += `<w:gridCol w:w="${parseInt(cellWidth / 635)}" />`
             }
-            start += '</w:tblGrid>'
-            end = '</w:tbl>' + end
+            start += "</w:tblGrid>"
+            end = "</w:tbl>" + end
 
             break
         }
-        case 'table_body':
+        case "table_body":
             // Pass through to table.
             break
-        case 'table_caption':
+        case "table_caption":
             // We already deal with this in 'table'.
-            return ''
-        case 'table_row':
-            start += '<w:tr>'
-            end = '</w:tr>' + end
+            return ""
+        case "table_row":
+            start += "<w:tr>"
+            end = "</w:tr>" + end
             break
-        case 'table_cell':
-        case 'table_header':
+        case "table_cell":
+        case "table_header":
             start += noSpaceTmp`
                     <w:tc>
                         <w:tcPr>
                             ${
     node.attrs.rowspan && node.attrs.colspan ?
         `<w:tcW w:w="${parseInt(options.dimensions.width  / 635)}" w:type="dxa" />` :
-        '<w:tcW w:w="0" w:type="auto" />'
+        "<w:tcW w:w=\"0\" w:type=\"auto\" />"
 }
                             ${
     node.attrs.rowspan ?
         node.attrs.rowspan > 1 ?
-            '<w:vMerge w:val="restart" />' :
-            '' :
-        '<w:vMerge/>'
+            "<w:vMerge w:val=\"restart\" />" :
+            "" :
+        "<w:vMerge/>"
 }
                             ${
     node.attrs.colspan ?
         node.attrs.colspan > 1 ?
-            '<w:hMerge w:val="restart" />' :
-            '' :
-        '<w:hMerge/>'
+            "<w:hMerge w:val=\"restart\" />" :
+            "" :
+        "<w:hMerge/>"
 }
                         </w:tcPr>
                         ${
     node.content ?
-        '' :
-        '<w:p/>'
+        "" :
+        "<w:p/>"
 }`
-            end = '</w:tc>' + end
+            end = "</w:tc>" + end
 
             break
-        case 'equation':
+        case "equation":
         {
             const latex = node.attrs.equation
             content += this.exporter.math.getOmml(latex)
             break
         }
-        case 'hard_break':
-            content += '<w:r><w:br/></w:r>'
+        case "hard_break":
+            content += "<w:r><w:br/></w:r>"
             break
             // CSL bib entries
-        case 'cslbib':
+        case "cslbib":
             options = Object.assign({}, options)
-            options.section = 'Bibliography1'
+            options.section = "Bibliography1"
             break
-        case 'cslblock':
-            end = '<w:r><w:br/></w:r>' + end
+        case "cslblock":
+            end = "<w:r><w:br/></w:r>" + end
             break
-        case 'cslleftmargin':
-            end = '<w:r><w:tab/></w:r>' + end
+        case "cslleftmargin":
+            end = "<w:r><w:tab/></w:r>" + end
             break
-        case 'cslindent':
-            start += '<w:r><w:tab/></w:r>'
-            end = '<w:r><w:br/></w:r>' + end
+        case "cslindent":
+            start += "<w:r><w:tab/></w:r>"
+            end = "<w:r><w:br/></w:r>" + end
             break
-        case 'cslentry':
+        case "cslentry":
             start += noSpaceTmp`
                     <w:p>
                         <w:pPr>
                             <w:pStyle w:val="${options.section}"/>
                             <w:rPr></w:rPr>
                         </w:pPr>`
-            end = '</w:p>' + end
+            end = "</w:p>" + end
             break
-        case 'cslinline':
-        case 'cslrightinline':
+        case "cslinline":
+        case "cslrightinline":
             break
         default:
             break

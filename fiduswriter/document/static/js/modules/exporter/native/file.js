@@ -29,7 +29,7 @@ export class ExportFidusFile {
                 return zipper.init()
             }
         ).then(
-            blob => download(blob, createSlug(shortFileTitle(this.doc.title, this.doc.path)) + '.fidus', 'application/fidus+zip')
+            blob => download(blob, createSlug(shortFileTitle(this.doc.title, this.doc.path)) + ".fidus", "application/fidus+zip")
         )
     }
 }

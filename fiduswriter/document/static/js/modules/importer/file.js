@@ -8,7 +8,7 @@ import {updateFile} from "./update"
  */
 export const MIN_FW_DOCUMENT_VERSION = 1.6, MAX_FW_DOCUMENT_VERSION = parseFloat(FW_DOCUMENT_VERSION)
 
-const TEXT_FILENAMES = ['mimetype', 'filetype-version', 'document.json', 'images.json', 'bibliography.json']
+const TEXT_FILENAMES = ["mimetype", "filetype-version", "document.json", "images.json", "bibliography.json"]
 
 
 export class ImportFidusFile {
@@ -16,7 +16,7 @@ export class ImportFidusFile {
     /* Process a packaged Fidus File, either through user upload, or by reloading
       a saved revision which was saved in the same ZIP-baseformat. */
 
-    constructor(file, user, path =  '', check = false, contacts = []) {
+    constructor(file, user, path =  "", check = false, contacts = []) {
         this.file = file
         this.user = user
         this.path = path
@@ -41,10 +41,10 @@ export class ImportFidusFile {
             // use a BlobReader to read the zip from a Blob object
             const reader = new window.FileReader()
             reader.onloadend = () => {
-                if (reader.result.length > 60 && reader.result.substring(0, 2) === 'PK') {
+                if (reader.result.length > 60 && reader.result.substring(0, 2) === "PK") {
                     this.initZipFileRead().then(() => resolve(this))
                 } else {
-                    this.statusText = gettext('The uploaded file does not appear to be a Fidus Writer file.')
+                    this.statusText = gettext("The uploaded file does not appear to be a Fidus Writer file.")
                     resolve(this)
                 }
 
@@ -69,26 +69,26 @@ export class ImportFidusFile {
                 }
             })
             if (!validFile) {
-                this.statusText = gettext('The uploaded file does not appear to be a Fidus Writer file.')
+                this.statusText = gettext("The uploaded file does not appear to be a Fidus Writer file.")
                 return
             }
 
             filenames.filter(
-                filename => !filename.endsWith('/')
+                filename => !filename.endsWith("/")
             ).forEach(
                 filename => {
                     p.push(new Promise(resolve => {
                         let fileType, fileList
                         if (
-                            ['mimetype', 'filetype-version'].includes(
+                            ["mimetype", "filetype-version"].includes(
                                 filename
                             ) ||
-                            filename.endsWith('.json')
+                            filename.endsWith(".json")
                         ) {
-                            fileType = 'string'
+                            fileType = "string"
                             fileList = this.textFiles
                         } else {
-                            fileType = 'blob'
+                            fileType = "blob"
                             fileList = this.otherFiles
                         }
                         zipfs.files[filename].async(fileType).then(content => {
@@ -103,17 +103,17 @@ export class ImportFidusFile {
     }
 
     processFidusFile() {
-        const filetypeVersion = parseFloat(this.textFiles.find(file => file.filename === 'filetype-version').content),
-            mimeType = this.textFiles.find(file => file.filename === 'mimetype').content
-        if (mimeType === 'application/fidus+zip' &&
+        const filetypeVersion = parseFloat(this.textFiles.find(file => file.filename === "filetype-version").content),
+            mimeType = this.textFiles.find(file => file.filename === "mimetype").content
+        if (mimeType === "application/fidus+zip" &&
             filetypeVersion >= MIN_FW_DOCUMENT_VERSION &&
             filetypeVersion <= MAX_FW_DOCUMENT_VERSION) {
             // This seems to be a valid fidus file with current version number.
             const updatedFile =  updateFile(
-                    JSON.parse(this.textFiles.find(file => file.filename === 'document.json').content),
+                    JSON.parse(this.textFiles.find(file => file.filename === "document.json").content),
                     filetypeVersion,
-                    JSON.parse(this.textFiles.find(file => file.filename === 'bibliography.json').content),
-                    JSON.parse(this.textFiles.find(file => file.filename === 'images.json').content)
+                    JSON.parse(this.textFiles.find(file => file.filename === "bibliography.json").content),
+                    JSON.parse(this.textFiles.find(file => file.filename === "images.json").content)
                 ),
                 {bibliography} = updatedFile,
                 {images} = updatedFile
@@ -121,19 +121,19 @@ export class ImportFidusFile {
             if (this.check) {
                 doc = this.checkDocUsers(doc)
             }
-            const templateFile = this.textFiles.find(file => file.filename === 'template.json')
+            const templateFile = this.textFiles.find(file => file.filename === "template.json")
             if (templateFile) {
                 // A template is included in the file
                 const templateDef = JSON.parse(templateFile.content)
                 this.template = updateTemplateFile(
                     templateDef.attrs.template,
                     templateDef,
-                    JSON.parse(this.textFiles.find(file => file.filename === 'exporttemplates.json').content),
-                    JSON.parse(this.textFiles.find(file => file.filename === 'documentstyles.json').content),
+                    JSON.parse(this.textFiles.find(file => file.filename === "exporttemplates.json").content),
+                    JSON.parse(this.textFiles.find(file => file.filename === "documentstyles.json").content),
                     filetypeVersion
                 )
                 this.template.files = this.otherFiles.filter(
-                    file => file.filename.startsWith('exporttemplates/') || file.filename.startsWith('documentstyles/')
+                    file => file.filename.startsWith("exporttemplates/") || file.filename.startsWith("documentstyles/")
                 )
                 this.otherFiles = this.otherFiles.filter(
                     file => !this.template.files.includes(file)
@@ -146,20 +146,20 @@ export class ImportFidusFile {
                 this.otherFiles,
                 this.user,
                 null,
-                this.path.endsWith('/') ? this.path + doc.title : this.path,
+                this.path.endsWith("/") ? this.path + doc.title : this.path,
                 this.template
             )
             return importer.init().then(({doc, docInfo}) => {
                 this.ok = true
                 this.doc = doc
                 this.docInfo = docInfo
-                this.statusText = `${doc.title} ${gettext('successfully imported.')}`
+                this.statusText = `${doc.title} ${gettext("successfully imported.")}`
                 return this
             })
 
         } else {
             // The file is not a Fidus Writer file.
-            this.statusText = gettext('The uploaded file does not appear to be of the version used on this server: ') +
+            this.statusText = gettext("The uploaded file does not appear to be of the version used on this server: ") +
             FW_DOCUMENT_VERSION
             return this
         }
@@ -207,7 +207,7 @@ export class ImportFidusFile {
     checkDocUsersNode(node) { // Check whether all users connected to insertion/deletion marks are known on this system.
         if (node.marks) {
             node.marks.forEach(mark => {
-                if (['insertion', 'deletion'].includes(mark.type)) {
+                if (["insertion", "deletion"].includes(mark.type)) {
                     if (!
                     (
                         this.contacts.find(member => member.id === mark.attrs.user && member.username === mark.attrs.username) ||

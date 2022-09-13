@@ -37,7 +37,7 @@ export class OdtExporter {
         this.pmBib = false
         this.docContent = false
         this.docTitle = false
-        this.mimeType = 'application/vnd.oasis.opendocument.text'
+        this.mimeType = "application/vnd.oasis.opendocument.text"
     }
 
 
@@ -86,7 +86,7 @@ export class OdtExporter {
     }
 
     download(blob) {
-        return download(blob, createSlug(this.docTitle) + '.odt', this.mimeType)
+        return download(blob, createSlug(this.docTitle) + ".odt", this.mimeType)
     }
 
 }

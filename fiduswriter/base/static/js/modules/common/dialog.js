@@ -5,24 +5,24 @@ import {findTarget} from "./basic"
 const dialogTemplate = ({id, classes, title, height, width, icon, buttons, zIndex, body, scroll, help, canClose, note}) =>
     `<div tabindex="-1" role="dialog"
         class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front ui-dialog-buttons"
-        ${id ? `aria-describedby="${id}"` : ''} style="z-index: ${zIndex};">
+        ${id ? `aria-describedby="${id}"` : ""} style="z-index: ${zIndex};">
     <div class="ui-dialog-titlebar ui-corner-all ui-widget-header ui-helper-clearfix">
-        ${icon ? `<i class="fa fa-${icon}" aria-hidden="true"></i>` : ''}
+        ${icon ? `<i class="fa fa-${icon}" aria-hidden="true"></i>` : ""}
         <span id="ui-id-2" class="ui-dialog-title">${title}</span>
-        ${help ? `<button type="button" class="ui-button ui-corner-all ui-widget ui-button-icon-only ui-dialog-titlebar-help" title="${gettext('Help')}">
+        ${help ? `<button type="button" class="ui-button ui-corner-all ui-widget ui-button-icon-only ui-dialog-titlebar-help" title="${gettext("Help")}">
             <span class="ui-button-icon ui-icon ui-icon-help"> </span>
             <span class="ui-button-icon-space"> </span>
-            ${gettext('Help')}
-        </button>` : ''}
-        ${canClose ? `<button type="button" class="ui-button ui-corner-all ui-widget ui-button-icon-only ui-dialog-titlebar-close" title="${gettext('Close')}">
+            ${gettext("Help")}
+        </button>` : ""}
+        ${canClose ? `<button type="button" class="ui-button ui-corner-all ui-widget ui-button-icon-only ui-dialog-titlebar-close" title="${gettext("Close")}">
             <span class="ui-button-icon ui-icon ui-icon-closethick"> </span>
             <span class="ui-button-icon-space"> </span>
-            ${gettext('Close')}
-        </button>` : ''}
+            ${gettext("Close")}
+        </button>` : ""}
 
     </div>
-    <div ${id ? `id="${id}"` : ''} class="ui-dialog-content ui-widget-content${classes ? ` ${classes}` : ''}${scroll ? ` ui-scrollable` : ''}" style="width: ${width}; height: ${height};">
-        ${note.text ? `<div class="note-container">${noteTemplate(note)}</div>` : ''}
+    <div ${id ? `id="${id}"` : ""} class="ui-dialog-content ui-widget-content${classes ? ` ${classes}` : ""}${scroll ? " ui-scrollable" : ""}" style="width: ${width}; height: ${height};">
+        ${note.text ? `<div class="note-container">${noteTemplate(note)}</div>` : ""}
         ${body}
     </div>
     <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
@@ -32,31 +32,31 @@ const dialogTemplate = ({id, classes, title, height, width, icon, buttons, zInde
 <div class="ui-widget-overlay ui-front" style="z-index: ${zIndex - 1}"></div>`
 
 const noteTemplate = (note) => {
-    return note.text ? `<p class="noteEl ${note.display ? `` : `hide`}">${note.text}</p>` : ``
+    return note.text ? `<p class="noteEl ${note.display ? "" : "hide"}">${note.text}</p>` : ""
 }
 
-const buttonsTemplate = ({buttons}) => buttons.map(button => buttonTemplate(button)).join('')
+const buttonsTemplate = ({buttons}) => buttons.map(button => buttonTemplate(button)).join("")
 
-const buttonTemplate = ({text, classes, icon, dropdown}) => `<button type="button" class="${classes ? classes : 'fw-light'} fw-button ui-button ui-corner-all ui-widget">
-    ${icon ? `<i class="fa fa-${icon}" aria-hidden="true"></i>` : ''}
+const buttonTemplate = ({text, classes, icon, dropdown}) => `<button type="button" class="${classes ? classes : "fw-light"} fw-button ui-button ui-corner-all ui-widget">
+    ${icon ? `<i class="fa fa-${icon}" aria-hidden="true"></i>` : ""}
     ${text}
-    ${dropdown ? `<i class="fa fa-caret-down" aria-hidden="true"></i>` : ''}
+    ${dropdown ? "<i class=\"fa fa-caret-down\" aria-hidden=\"true\"></i>" : ""}
 </button>`
 
 const BUTTON_TYPES = {
     close: {
-        text: gettext('Close'),
-        classes: 'fw-orange',
+        text: gettext("Close"),
+        classes: "fw-orange",
         click: dialog => () => dialog.close()
     },
     cancel: {
-        text: gettext('Cancel'),
-        classes: 'fw-orange',
+        text: gettext("Cancel"),
+        classes: "fw-orange",
         click: dialog => () => dialog.close()
     },
     ok: {
-        text: gettext('OK'),
-        classes: 'fw-dark',
+        text: gettext("OK"),
+        classes: "fw-dark",
         click: dialog => () => dialog.close()
     }
 }
@@ -65,13 +65,13 @@ export class Dialog {
     constructor(options) {
         this.id = options.id || false
         this.classes = options.classes || false
-        this.title = options.title || ''
-        this.body = options.body || ''
-        this.height = options.height ? `${options.height}px` : 'auto'
-        this.width = options.width ? `${options.width}px` : 'auto'
-        this.canClose = 'canClose' in options ? options.canClose : true
-        this.help = 'help' in options ? options.help : false
-        this.note = 'note' in options ? options.note : {}
+        this.title = options.title || ""
+        this.body = options.body || ""
+        this.height = options.height ? `${options.height}px` : "auto"
+        this.width = options.width ? `${options.width}px` : "auto"
+        this.canClose = "canClose" in options ? options.canClose : true
+        this.help = "help" in options ? options.help : false
+        this.note = "note" in options ? options.note : {}
         this.buttons = []
         if (options.buttons) {
             this.setButtons(options.buttons)
@@ -91,9 +91,9 @@ export class Dialog {
 
     setButtons(buttons) {
         this.buttons = buttons.map(button => ({
-            text: button.text ? button.text : button.type ? BUTTON_TYPES[button.type].text : '',
+            text: button.text ? button.text : button.type ? BUTTON_TYPES[button.type].text : "",
             classes: button.classes ? button.classes : button.type ? BUTTON_TYPES[button.type].classes : false,
-            click: button.click ? button.click : button.type ? BUTTON_TYPES[button.type].click(this) : '',
+            click: button.click ? button.click : button.type ? BUTTON_TYPES[button.type].click(this) : "",
             icon: button.icon ? button.icon : false,
             dropdown: button.dropdown ? true : false
         }))
@@ -108,7 +108,7 @@ export class Dialog {
         }
 
         document.body.insertAdjacentHTML(
-            'beforeend',
+            "beforeend",
             dialogTemplate({
                 id: this.id,
                 classes: this.classes,
@@ -128,9 +128,9 @@ export class Dialog {
         this.backdropEl = document.body.lastElementChild
         this.dialogEl = this.backdropEl.previousElementSibling
         if (this.fullScreen) {
-            this.dialogEl.style.width = '98%'
-            this.dialogEl.style.height = '100%'
-            this.dialogEl.style.position = 'fixed'
+            this.dialogEl.style.width = "98%"
+            this.dialogEl.style.height = "100%"
+            this.dialogEl.style.position = "fixed"
             this.dialogEl.style.top = "0px"
         } else {
             this.centerDialog()
@@ -139,7 +139,7 @@ export class Dialog {
     }
 
     refreshButtons() {
-        this.dialogEl.querySelector('.ui-dialog-buttonset').innerHTML = buttonsTemplate({buttons: this.buttons})
+        this.dialogEl.querySelector(".ui-dialog-buttonset").innerHTML = buttonsTemplate({buttons: this.buttons})
     }
 
     refreshNote() {
@@ -209,18 +209,18 @@ export class Dialog {
         if (event.shiftKey) {
             name = "Shift-" + name
         }
-        if (name === 'Escape' && this.canEscape) {
+        if (name === "Escape" && this.canEscape) {
             this.close()
         }
     }
 
     bind() {
         this.listeners.onKeydown = event => this.onKeydown(event)
-        document.body.addEventListener('keydown', this.listeners.onKeydown)
-        this.dialogEl.addEventListener('click', event => {
+        document.body.addEventListener("keydown", this.listeners.onKeydown)
+        this.dialogEl.addEventListener("click", event => {
             const el = {}
             switch (true) {
-            case findTarget(event, '.ui-dialog-buttonpane button', el): {
+            case findTarget(event, ".ui-dialog-buttonpane button", el): {
                 event.preventDefault()
                 let buttonNumber = 0
                 let seekItem = el.target
@@ -231,11 +231,11 @@ export class Dialog {
                 this.buttons[buttonNumber].click(event)
                 break
             }
-            case findTarget(event, '.ui-dialog-titlebar-close', el):
+            case findTarget(event, ".ui-dialog-titlebar-close", el):
                 event.preventDefault()
                 this.close()
                 break
-            case findTarget(event, '.ui-dialog-titlebar-help', el):
+            case findTarget(event, ".ui-dialog-titlebar-help", el):
                 event.preventDefault()
                 this.help()
                 break
@@ -245,11 +245,11 @@ export class Dialog {
         })
         if (!this.fullScreen) {
             this.listeners.onScroll = event => this.onScroll(event)
-            window.addEventListener('scroll', this.listeners.onScroll, false)
-            this.dialogEl.addEventListener('mousedown', event => {
+            window.addEventListener("scroll", this.listeners.onScroll, false)
+            this.dialogEl.addEventListener("mousedown", event => {
                 const el = {}
                 switch (true) {
-                case findTarget(event, '.ui-dialog-titlebar', el):
+                case findTarget(event, ".ui-dialog-titlebar", el):
                     this.dragging = {
                         x: event.clientX - this.dialogEl.offsetLeft,
                         y: event.clientY - this.dialogEl.offsetTop
@@ -259,17 +259,17 @@ export class Dialog {
                     break
                 }
             })
-            this.dialogEl.addEventListener('mouseup', event => {
+            this.dialogEl.addEventListener("mouseup", event => {
                 const el = {}
                 switch (true) {
-                case findTarget(event, '.ui-dialog-titlebar', el):
+                case findTarget(event, ".ui-dialog-titlebar", el):
                     this.dragging = false
                     break
                 default:
                     break
                 }
             })
-            this.dialogEl.addEventListener('mousemove', event => {
+            this.dialogEl.addEventListener("mousemove", event => {
                 if (!this.dragging) {
                     return
                 }
@@ -281,7 +281,7 @@ export class Dialog {
 
     getHighestDialogZIndex() {
         let zIndex = 100
-        document.querySelectorAll('div.ui-dialog').forEach(dialogEl => zIndex = Math.max(zIndex, dialogEl.style.zIndex))
+        document.querySelectorAll("div.ui-dialog").forEach(dialogEl => zIndex = Math.max(zIndex, dialogEl.style.zIndex))
         return zIndex
     }
 

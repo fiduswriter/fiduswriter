@@ -7,7 +7,7 @@ export class IndexedDB {
     }
 
     init() {
-        this.app['db_config'] = {
+        this.app["db_config"] = {
             "db_name": this.app.config.user.username,
         }
 
@@ -50,7 +50,7 @@ export class IndexedDB {
 
         request.onsuccess = (event) => {
             const db = event.target.result
-            const objectStore = db.transaction(objectStoreName, 'readwrite').objectStore(
+            const objectStore = db.transaction(objectStoreName, "readwrite").objectStore(
                 objectStoreName
             )
             for (const d in data) {
@@ -71,7 +71,7 @@ export class IndexedDB {
         request.onsuccess = (event) => {
             const db = event.target.result
             try {
-                const transaction = db.transaction(objectStoreName, 'readwrite')
+                const transaction = db.transaction(objectStoreName, "readwrite")
                 const objectStore = transaction.objectStore(objectStoreName)
                 if (data !== undefined) {
                     data.forEach(document => {
@@ -115,7 +115,7 @@ export class IndexedDB {
             request.onsuccess = event => {
                 const db = event.target.result
                 try {
-                    const objectStore = db.transaction(objectStoreName, 'readwrite').objectStore(objectStoreName)
+                    const objectStore = db.transaction(objectStoreName, "readwrite").objectStore(objectStoreName)
                     const objectStoreReq = objectStore.clear()
                     objectStoreReq.onsuccess = () => {
                         db.close()
@@ -126,7 +126,7 @@ export class IndexedDB {
                     // Before resetting IndexedDB make sure to close connections to avoid blocking the
                     // delete IndexedDB process
                     db.close()
-                    if (error.name === 'NotFoundError') {
+                    if (error.name === "NotFoundError") {
                         // Resolve the promise after indexed DB is set up.
                         this.reset().then(() => resolve())
                     } else {
@@ -154,7 +154,7 @@ export class IndexedDB {
                         readPromise => resolve(readPromise)
                     )
                 }
-                const objectStore = db.transaction(objectStoreName, 'readwrite').objectStore(objectStoreName)
+                const objectStore = db.transaction(objectStoreName, "readwrite").objectStore(objectStoreName)
                 const readAllRequest = objectStore.getAll()
                 readAllRequest.onerror = function(event) {
                     reject(event)

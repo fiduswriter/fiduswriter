@@ -38,7 +38,7 @@ export class OdtExporterCitations {
 
         descendantNodes(this.docContent).forEach(
             node => {
-                if (node.type === 'citation') {
+                if (node.type === "citation") {
                     this.citInfos.push(JSON.parse(JSON.stringify(node.attrs)))
                 }
             }
@@ -47,7 +47,7 @@ export class OdtExporterCitations {
             this.csl,
             this.citInfos,
             this.exporter.doc.settings.citationstyle,
-            '',
+            "",
             this.bibDB
         )
         return this.citFm.init().then(
@@ -69,7 +69,7 @@ export class OdtExporterCitations {
         // We need to put the citations each in a paragraph so that it works with
         // the fiduswriter schema and so that the converter doesn't mash them together.
         if (this.citationTexts.length) {
-            let citationsHTML = ''
+            let citationsHTML = ""
             this.citationTexts.forEach(
                 ct => {
                     citationsHTML += `<p>${ct}</p>`
@@ -78,7 +78,7 @@ export class OdtExporterCitations {
 
             // We create a standard footnote container DOM node,
             // add the citations into it, and parse it back.
-            const fnNode = fnSchema.nodeFromJSON({type: 'footnotecontainer'})
+            const fnNode = fnSchema.nodeFromJSON({type: "footnotecontainer"})
             const serializer = DOMSerializer.fromSchema(fnSchema)
             const dom = serializer.serializeNode(fnNode)
             dom.innerHTML = citationsHTML
@@ -91,10 +91,10 @@ export class OdtExporterCitations {
         const cslBib = this.citFm.bibliography
         if (cslBib && cslBib[1].length > 0) {
             this.exporter.styles.addReferenceStyle(cslBib[0])
-            const bibNode = cslBibSchema.nodeFromJSON({type: 'cslbib'})
+            const bibNode = cslBibSchema.nodeFromJSON({type: "cslbib"})
             const serializer = DOMSerializer.fromSchema(cslBibSchema)
             const dom = serializer.serializeNode(bibNode)
-            dom.innerHTML = cslBib[1].join('')
+            dom.innerHTML = cslBib[1].join("")
             this.pmBib = DOMParser.fromSchema(cslBibSchema).parse(dom, {topNode: bibNode}).toJSON()
         }
     }

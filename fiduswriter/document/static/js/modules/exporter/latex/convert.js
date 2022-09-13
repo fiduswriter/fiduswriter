@@ -15,7 +15,7 @@ export class LatexExporterConvert {
         this.features = {}
         this.internalLinks = []
         this.categoryCounter = {} // counters for each type of figure (figure/table/photo)
-        this.authorsTex = ''
+        this.authorsTex = ""
     }
 
     init(docContent) {
@@ -25,7 +25,7 @@ export class LatexExporterConvert {
         const copyright = this.assembleCopyright()
         const preamble = this.assemblePreamble()
         const epilogue = this.assembleEpilogue()
-        const latex = copyright + this.docDeclaration + preamble + this.authorsTex + '\n\\begin{document}\n' + body + epilogue + '\n\\end{document}\n'
+        const latex = copyright + this.docDeclaration + preamble + this.authorsTex + "\n\\begin{document}\n" + body + epilogue + "\n\\end{document}\n"
         const returnObject = {
             latex,
             imageIds: this.imageIds,
@@ -35,7 +35,7 @@ export class LatexExporterConvert {
     }
 
     get docDeclaration() {
-        return '\\documentclass{article}\n'
+        return "\\documentclass{article}\n"
     }
 
     // Check for things needed before creating raw transform
@@ -43,12 +43,12 @@ export class LatexExporterConvert {
         switch (node.type) {
         // Collect all internal links so that we only set the anchors for those
         // that are being linked to.
-        case 'text':
+        case "text":
             if (node.marks) {
-                const hyperlink = node.marks.find(mark => mark.type === 'link')
+                const hyperlink = node.marks.find(mark => mark.type === "link")
                 if (hyperlink) {
                     const href = hyperlink.attrs.href
-                    if (href[0] === '#' && !this.internalLinks.includes(href)) {
+                    if (href[0] === "#" && !this.internalLinks.includes(href)) {
                         this.internalLinks.push(href.slice(1))
                     }
                 }
@@ -62,33 +62,33 @@ export class LatexExporterConvert {
 
 
     walkJson(node, options = {}) {
-        let start = '', content = '', end = '',
+        let start = "", content = "", end = "",
             placeFootnotesAfterBlock = false
         switch (node.type) {
-        case 'article':
+        case "article":
             break
-        case 'title':
-            start += '\n\\title{'
-            end = '}' + end
+        case "title":
+            start += "\n\\title{"
+            end = "}" + end
             break
-        case 'heading_part':
-            if (node.attrs.metadata === 'subtitle' && node.content) {
-                start += '\n\\subtitle{'
-                end = '}' + end
+        case "heading_part":
+            if (node.attrs.metadata === "subtitle" && node.content) {
+                start += "\n\\subtitle{"
+                end = "}" + end
                 this.features.subtitle = true
                 options = Object.assign({}, options)
                 options.ignoreHeading = true
             } else if (!options.madeTitle) {
-                start += '\n\n\\maketitle\n'
+                start += "\n\n\\maketitle\n"
                 options.madeTitle = true
             }
             break
-        case 'contributor':
+        case "contributor":
             // Ignore - we deal with contributors_part instead.
             break
-        case 'contributors_part':
+        case "contributors_part":
             if (node.content) {
-                if (node.attrs.metadata === 'authors') {
+                if (node.attrs.metadata === "authors") {
                     // TODO: deal with node.attrs.metadata === 'editors'
                     const authorsPerAffil = node.content.map(node => {
                         const author = node.attrs,
@@ -107,7 +107,7 @@ export class LatexExporterConvert {
                             nameParts.push(author.institution)
                         }
                         return {
-                            name: nameParts.join(' '),
+                            name: nameParts.join(" "),
                             affiliation,
                             email: author.email
                         }
@@ -128,7 +128,7 @@ export class LatexExporterConvert {
                                                     `\\thanks{${
                                                         escapeLatexText(author.email)
                                                     }}` :
-                                                    ''
+                                                    ""
                                             }}`
                                 }
                             )
@@ -136,7 +136,7 @@ export class LatexExporterConvert {
                             this.authorsTex += `\n\\affil{${
                                 affil[0].affiliation ?
                                     escapeLatexText(affil[0].affiliation) :
-                                    ''
+                                    ""
                             }}`
                         }
                     )
@@ -144,7 +144,7 @@ export class LatexExporterConvert {
                     this.features.authors = true
                 } else {
                     if (!options.madeTitle) {
-                        start += '\n\n\\maketitle\n'
+                        start += "\n\n\\maketitle\n"
                         options.madeTitle = true
                     }
                     // TODO: deal with contributor lists of non-authors properly
@@ -161,78 +161,78 @@ export class LatexExporterConvert {
                                 // We have an institution but no names. Use institution as name.
                                 nameParts.push(contributorNode.attrs.institution)
                             }
-                            return nameParts.join(' ')
+                            return nameParts.join(" ")
                         }
-                    ).join(', ')
+                    ).join(", ")
                     content += "\n\n"
                 }
 
             }
 
             break
-        case 'tags_part':
+        case "tags_part":
             if (node.content) {
-                if (node.attrs.metadata === 'keywords') {
-                    start += '\n\\keywords{'
-                    end = '}' + end
+                if (node.attrs.metadata === "keywords") {
+                    start += "\n\\keywords{"
+                    end = "}" + end
                     this.features.keywords = true
                 } else if (!options.madeTitle) {
-                    start += '\n\n\\maketitle\n'
+                    start += "\n\n\\maketitle\n"
                     options.madeTitle = true
                 }
                 content += node.content.map(
                     keyword => escapeLatexText(keyword.attrs.tag)
-                ).join('\\sep ')
+                ).join("\\sep ")
             }
             break
-        case 'tag':
+        case "tag":
             // Ignore - we already took all the tags_part from the keywords node.
             break
-        case 'richtext_part':
+        case "richtext_part":
             if (!options.madeTitle) {
-                start += '\n\n\\maketitle\n'
+                start += "\n\n\\maketitle\n"
                 options.madeTitle = true
             }
-            if (node.content && node.attrs.metadata === 'abstract') {
-                start += '\n\\begin{abstract}\n'
-                end = '\n\\end{abstract}\n' + end
+            if (node.content && node.attrs.metadata === "abstract") {
+                start += "\n\\begin{abstract}\n"
+                end = "\n\\end{abstract}\n" + end
             }
             break
-        case 'table_of_contents':
-            start += '\n\n\\tableofcontents\n'
+        case "table_of_contents":
+            start += "\n\n\\tableofcontents\n"
             break
-        case 'separator_part':
-        case 'table_part':
+        case "separator_part":
+        case "table_part":
             // part separators as in page breaks should usually already be handled
             // by LaTeX and table parts will simply show the table inside of them.
             break
-        case 'paragraph':
-            start += '\n\n'
-            end = '\n' + end
+        case "paragraph":
+            start += "\n\n"
+            end = "\n" + end
             break
-        case 'heading1':
-        case 'heading2':
-        case 'heading3':
-        case 'heading4':
-        case 'heading5':
-        case 'heading6': {
+        case "heading1":
+        case "heading2":
+        case "heading3":
+        case "heading4":
+        case "heading5":
+        case "heading6": {
             if (options.ignoreHeading) {
                 break
             }
             const level = parseInt(node.type.slice(-1))
             switch (level) {
             case 1:
-                start += '\n\n\\section{'
+                start += "\n\n\\section{"
                 break
             case 2:
-                start += '\n\n\\subsection{'
+                start += "\n\n\\subsection{"
                 break
             case 3:
             case 4:
             case 5:
             case 6:
                 // TODO: Add support for levels 4/5/6
-                start += '\n\n\\subsubsection{'
+                start += "\n\n\\subsubsection{"
                 break
             }
             end = `}\\label{${node.attrs.id}}\n\n` + end
@@ -252,23 +252,23 @@ export class LatexExporterConvert {
             }
             break
         }
-        case 'code_block':
-            start += '\n\\begin{code}\n\n'
-            end = '\n\n\\end{code}\n' + end
+        case "code_block":
+            start += "\n\\begin{code}\n\n"
+            end = "\n\n\\end{code}\n" + end
             this.features.code = true
             break
-        case 'blockquote':
-            start += '\n\\begin{quote}\n\n'
-            end = '\n\n\\end{quote}\n' + end
+        case "blockquote":
+            start += "\n\\begin{quote}\n\n"
+            end = "\n\n\\end{quote}\n" + end
             break
-        case 'ordered_list':
+        case "ordered_list":
             if (node.attrs.order !== 1) {
                 start += `\n\\begin{enumerate}[start=${node.attrs.order}]`
                 this.features.orderedListStart = true
             } else {
-                start += '\n\\begin{enumerate}'
+                start += "\n\\begin{enumerate}"
             }
-            end = '\n\\end{enumerate}' + end
+            end = "\n\\end{enumerate}" + end
             if (!options.onlyFootnoteMarkers) {
                 placeFootnotesAfterBlock = true
                 options = Object.assign({}, options)
@@ -276,9 +276,9 @@ export class LatexExporterConvert {
                 options.unplacedFootnotes = []
             }
             break
-        case 'bullet_list':
-            start += '\n\\begin{itemize}'
-            end = '\n\\end{itemize}' + end
+        case "bullet_list":
+            start += "\n\\begin{itemize}"
+            end = "\n\\end{itemize}" + end
             if (!options.onlyFootnoteMarkers) {
                 placeFootnotesAfterBlock = true
                 options = Object.assign({}, options)
@@ -286,76 +286,76 @@ export class LatexExporterConvert {
                 options.unplacedFootnotes = []
             }
             break
-        case 'list_item':
-            start += '\n\\item '
-            end = '\n' + end
+        case "list_item":
+            start += "\n\\item "
+            end = "\n" + end
             break
-        case 'footnote':
+        case "footnote":
             if (options.onlyFootnoteMarkers) {
                 // We are inside a headline or a list and can only place a
                 // footnote marker here. The footnote will have to be put
                 // beyond the block node instead.
-                start += '\\protect\\footnotemark{}'
+                start += "\\protect\\footnotemark{}"
                 options.unplacedFootnotes.push(node.attrs.footnote)
             } else {
-                if (!node.attrs.footnote.find(par => par.type === 'figure')) {
+                if (!node.attrs.footnote.find(par => par.type === "figure")) {
                     // LaTeX doesn't allow figures in footnotes, so well move
                     // this footnote into the regular text.
-                    start += '\\footnote{'
-                    end = '}' + end
+                    start += "\\footnote{"
+                    end = "}" + end
                 }
-                let fnContent = ''
+                let fnContent = ""
                 node.attrs.footnote.forEach(footPar => {
                     fnContent += this.walkJson(footPar, options)
                 })
-                content += fnContent.replace(/^\s+|\s+$/g, '')
+                content += fnContent.replace(/^\s+|\s+$/g, "")
             }
             break
-        case 'text': {
+        case "text": {
             let strong, em, underline, hyperlink
             // Check for hyperlink, bold/strong, italic/em and underline
             if (node.marks) {
-                strong = node.marks.find(mark => mark.type === 'strong')
-                em = node.marks.find(mark => mark.type === 'em')
-                underline = node.marks.find(mark => mark.type === 'underline')
-                hyperlink = node.marks.find(mark => mark.type === 'link')
+                strong = node.marks.find(mark => mark.type === "strong")
+                em = node.marks.find(mark => mark.type === "em")
+                underline = node.marks.find(mark => mark.type === "underline")
+                hyperlink = node.marks.find(mark => mark.type === "link")
             }
             if (em) {
-                start += '\\emph{'
-                end = '}' + end
+                start += "\\emph{"
+                end = "}" + end
             }
             if (strong) {
-                start += '\\textbf{'
-                end = '}' + end
+                start += "\\textbf{"
+                end = "}" + end
             }
             if (underline) {
-                start += '\\underline{'
-                end = '}' + end
+                start += "\\underline{"
+                end = "}" + end
             }
             if (hyperlink) {
                 const href = hyperlink.attrs.href
-                if (href[0] === '#') {
+                if (href[0] === "#") {
                     // Internal link
                     start += `\\hyperlink{${href.slice(1)}}{`
                 } else {
                     // External link
                     start += `\\href{${href}}{`
                 }
-                end = '}' + end
+                end = "}" + end
                 this.features.hyperlinks = true
             }
             content += escapeLatexText(node.text)
             break
         }
-        case 'cross_reference': {
-            content += `\\hyperref[${node.attrs.id}]{${node.attrs.title || 'MISSING TARGET'}}`
+        case "cross_reference": {
+            content += `\\hyperref[${node.attrs.id}]{${node.attrs.title || "MISSING TARGET"}}`
             this.features.hyperlinks = true
             break
         }
-        case 'citation': {
+        case "citation": {
             const references = node.attrs.references
             const format = node.attrs.format
-            let citationCommand = '\\' + format
+            let citationCommand = "\\" + format
 
             if (references.length > 1 &&
                     references.every(ref => !ref.locator && !ref.prefix)
@@ -385,13 +385,13 @@ export class LatexExporterConvert {
                     }
                 )
                 if (allCitationItemsPresent) {
-                    citationCommand += `{${citationEntryKeys.join(',')}}`
+                    citationCommand += `{${citationEntryKeys.join(",")}}`
                 } else {
                     citationCommand = false
                 }
             } else {
                 if (references.length > 1) {
-                    citationCommand += 's' // Switching from \autocite to \autocites
+                    citationCommand += "s" // Switching from \autocite to \autocites
                 }
 
                 const allCitationItemsPresent = references.every(
@@ -406,13 +406,13 @@ export class LatexExporterConvert {
                         if (ref.prefix) {
                             citationCommand += `[${ref.prefix}]`
                             if (!ref.locator) {
-                                citationCommand += '[]'
+                                citationCommand += "[]"
                             }
                         }
                         if (ref.locator) {
                             citationCommand += `[${ref.locator}]`
                         }
-                        citationCommand += '{'
+                        citationCommand += "{"
 
                         if (!this.usedBibDB[ref.id]) {
                             const citationKey = this.createUniqueCitationKey(
@@ -422,7 +422,7 @@ export class LatexExporterConvert {
                             this.usedBibDB[ref.id].entry_key = citationKey
                         }
                         citationCommand += this.usedBibDB[ref.id].entry_key
-                        citationCommand += '}'
+                        citationCommand += "}"
 
                         return true
                     }
@@ -438,34 +438,34 @@ export class LatexExporterConvert {
             }
             break
         }
-        case 'figure': {
+        case "figure": {
             const category = node.attrs.category
-            const captionContent = node.attrs.caption ? node.content.find(node => node.type === 'figure_caption')?.content || [] : []
+            const captionContent = node.attrs.caption ? node.content.find(node => node.type === "figure_caption")?.content || [] : []
             let caption
-            if (category !== 'none') {
+            if (category !== "none") {
                 if (!this.categoryCounter[category]) {
                     this.categoryCounter[category] = 1
                 }
                 const catCount = this.categoryCounter[category]++
                 const catLabel = `${CATS[category][this.settings.language]} ${catCount}`
                 if (captionContent.length) {
-                    caption = `${catLabel}: ${captionContent.map(node => this.walkJson(node)).join('')}`
+                    caption = `${catLabel}: ${captionContent.map(node => this.walkJson(node)).join("")}`
                 } else {
                     caption = catLabel
                 }
             } else {
-                caption = captionContent.map(node => this.walkJson(node)).join('')
+                caption = captionContent.map(node => this.walkJson(node)).join("")
             }
-            let innerFigure = ''
+            let innerFigure = ""
             let copyright
-            const image = node.content.find(node => node.type === 'image')?.attrs.image || false
+            const image = node.content.find(node => node.type === "image")?.attrs.image || false
             if (image) {
                 this.imageIds.push(image)
                 const imageDBEntry = this.imageDB.db[image],
                     filePathName = imageDBEntry.image,
-                    filename = filePathName.split('/').pop()
+                    filename = filePathName.split("/").pop()
                 copyright = imageDBEntry.copyright
-                if (filename.split('.').pop() === 'svg') {
+                if (filename.split(".").pop() === "svg") {
                     innerFigure += `\\includesvg[width=${parseInt(node.attrs.width) / 100}\\textwidth]{${filename}}\n`
                     this.features.SVGs = true
                 } else {
@@ -473,33 +473,33 @@ export class LatexExporterConvert {
                     this.features.images = true
                 }
             } else {
-                const equation = node.content.find(node => node.type === 'figure_equation')?.attrs.equation || ''
+                const equation = node.content.find(node => node.type === "figure_equation")?.attrs.equation || ""
                 innerFigure += `\\begin{displaymath}\n${equation}\n\\end{displaymath}\n`
             }
-            if (category === 'table') {
-                const aligned = node.attrs.width === '100' ? 'left' : node.attrs.aligned
-                if (aligned === 'center') {
-                    start += '\n\n\\begin{center}'
-                    end = '\n\n\\end{center}\n' + end
-                } else if (aligned === 'right') {
-                    start += '\n\n{\\raggedleft' // This is not a typo - raggedleft = aligned: right
-                    end = '\n\n}\n' + end
+            if (category === "table") {
+                const aligned = node.attrs.width === "100" ? "left" : node.attrs.aligned
+                if (aligned === "center") {
+                    start += "\n\n\\begin{center}"
+                    end = "\n\n\\end{center}\n" + end
+                } else if (aligned === "right") {
+                    start += "\n\n{\\raggedleft" // This is not a typo - raggedleft = aligned: right
+                    end = "\n\n}\n" + end
                 } // aligned === 'left' is default
-                start += `\n\\begin{table}\n`
-                content += caption.length ? `\\caption*{${caption}}` : ''
+                start += "\n\\begin{table}\n"
+                content += caption.length ? `\\caption*{${caption}}` : ""
                 content += `\\label{${node.attrs.id}}\n${innerFigure}`
-                end = `\\end{table}\n` + end
+                end = "\\end{table}\n" + end
             } else { // TODO: handle photo figure types in a special way
-                if (node.attrs.width === '100' || node.attrs.aligned === 'center') {
-                    start += `\n\\begin{figure}\n`
-                    end = `\\end{figure}\n` + end
+                if (node.attrs.width === "100" || node.attrs.aligned === "center") {
+                    start += "\n\\begin{figure}\n"
+                    end = "\\end{figure}\n" + end
                 } else {
                     const aligned = node.attrs.aligned[0]
                     start += `\n\\begin{wrapfigure}{${aligned}}{${parseInt(node.attrs.width) / 100}\\textwidth}\n`
-                    end = `\\end{wrapfigure}\n` + end
+                    end = "\\end{wrapfigure}\n" + end
                     this.features.wrapfig = true
                 }
-                content += `${innerFigure}${caption.length ? `\\caption*{${caption}}` : ''}\\label{${node.attrs.id}}\n`
+                content += `${innerFigure}${caption.length ? `\\caption*{${caption}}` : ""}\\label{${node.attrs.id}}\n`
             }
             if (copyright?.holder) {
                 content += `% © ${copyright.year ? copyright.year : new Date().getFullYear()} ${copyright.holder}\n`
@@ -507,7 +507,7 @@ export class LatexExporterConvert {
             if (copyright?.licenses.length) {
                 copyright.licenses.forEach(
                     license => {
-                        content += `% ${license.title}: ${license.url}${license.start ? ` (${license.start})\n` : ''}\n`
+                        content += `% ${license.title}: ${license.url}${license.start ? ` (${license.start})\n` : ""}\n`
                     }
                 )
             }
@@ -518,91 +518,91 @@ export class LatexExporterConvert {
             this.features.captions = true
             break
         }
-        case 'figure_caption':
+        case "figure_caption":
             // We are already dealing with this in the figure. Prevent content from being added a second time.
-            return ''
-        case 'figure_equation':
+            return ""
+        case "figure_equation":
             // We are already dealing with this in the figure.
             break
-        case 'image':
+        case "image":
             // We are already dealing with this in the figure.
             break
-        case 'table':
+        case "table":
             if (node.content?.length) {
                 const category = node.attrs.category
 
                 const captionContent = node.attrs.caption ? node.content[0].content || [] : []
                 let caption
-                if (category !== 'none') {
+                if (category !== "none") {
                     if (!this.categoryCounter[category]) {
                         this.categoryCounter[category] = 1
                     }
                     const catCount = this.categoryCounter[category]++
                     const catLabel = `${CATS[category][this.settings.language]} ${catCount}`
                     if (captionContent.length) {
-                        caption = `${catLabel}: ${captionContent.map(node => this.walkJson(node)).join('')}`
+                        caption = `${catLabel}: ${captionContent.map(node => this.walkJson(node)).join("")}`
                     } else {
                         caption = catLabel
                     }
                 } else {
-                    caption = captionContent.map(node => this.walkJson(node)).join('')
+                    caption = captionContent.map(node => this.walkJson(node)).join("")
                 }
 
                 const columns = node.content[1].content[0].content.reduce(
                     (columns, node) => columns + node.attrs.colspan,
                     0
                 )
-                const aligned = node.attrs.width === '100' ? 'left' : node.attrs.aligned
-                if (aligned === 'center') {
-                    start += '\n\n\\begin{center}'
-                    end = '\n\n\\end{center}\n' + end
-                } else if (aligned === 'right') {
-                    start += '\n\n{\\raggedleft' // This is not a typo - raggedleft = aligned: right
-                    end = '\n\n}\n'
+                const aligned = node.attrs.width === "100" ? "left" : node.attrs.aligned
+                if (aligned === "center") {
+                    start += "\n\n\\begin{center}"
+                    end = "\n\n\\end{center}\n" + end
+                } else if (aligned === "right") {
+                    start += "\n\n{\\raggedleft" // This is not a typo - raggedleft = aligned: right
+                    end = "\n\n}\n"
                 } // aligned === 'left' is default
                 if (caption.length) {
-                    start += `\n\\begin{table}\n`
+                    start += "\n\\begin{table}\n"
                     start += `\\caption*{${caption}}\\label{${node.attrs.id}}`
-                    end = `\\end{table}\n` + end
+                    end = "\\end{table}\n" + end
                     this.features.captions = true
                 }
                 start += `\n\n\\begin{tabu} to ${
-                    node.attrs.width === '100' ? '' : parseInt(node.attrs.width) / 100
-                }\\textwidth { |${'X|'.repeat(columns)} }\n\\hline\n\n`
-                end = `\\hline\n\n\\end{tabu}` + end
+                    node.attrs.width === "100" ? "" : parseInt(node.attrs.width) / 100
+                }\\textwidth { |${"X|".repeat(columns)} }\n\\hline\n\n`
+                end = "\\hline\n\n\\end{tabu}" + end
                 this.features.tables = true
             }
             break
-        case 'table_body':
+        case "table_body":
             // Pass through to table.
             break
-        case 'table_caption':
+        case "table_caption":
             // We already deal with this in 'table'.
-            return ''
-        case 'table_row':
-            end += ' \\\\\n'
+            return ""
+        case "table_row":
+            end += " \\\\\n"
             break
-        case 'table_cell':
-        case 'table_header':
+        case "table_cell":
+        case "table_header":
             if (node.attrs.colspan > 1) {
                 start += `\\multicolumn{${node.attrs.colspan}}{c}{`
-                end += '}'
+                end += "}"
             }
             // TODO: these multirow outputs don't work very well with longer text.
             // If there is another alternative, please change!
             if (node.attrs.rowspan > 1) {
                 start += `\\multirow{${node.attrs.rowspan}}{*}{`
-                end += '}'
+                end += "}"
                 this.features.rowspan = true
             }
-            end += ' & '
+            end += " & "
             break
-        case 'equation':
+        case "equation":
             content += `$${node.attrs.equation}$`
             break
-        case 'hard_break':
+        case "hard_break":
             if (!options.noLineBreak) {
-                content += '\n\n'
+                content += "\n\n"
             }
             break
         default:
@@ -622,20 +622,20 @@ export class LatexExporterConvert {
             // This happens in the case of headlines and lists.
             end += `\\addtocounter{footnote}{-${(options.unplacedFootnotes.length)}}`
             options.unplacedFootnotes.forEach(footnote => {
-                end += '\\stepcounter{footnote}\n'
-                end += '\\footnotetext{'
-                let fnContent = ''
+                end += "\\stepcounter{footnote}\n"
+                end += "\\footnotetext{"
+                let fnContent = ""
                 footnote.forEach(footPar => {
                     fnContent += this.walkJson(footPar, options)
                 })
-                end += fnContent.replace(/^\s+|\s+$/g, '')
-                end += '}'
+                end += fnContent.replace(/^\s+|\s+$/g, "")
+                end += "}"
             })
             options.unplacedFootnotes = []
         }
-        if (['table_cell', 'table_header'].includes(node.type) && node.attrs.rowspan > 1) {
+        if (["table_cell", "table_header"].includes(node.type) && node.attrs.rowspan > 1) {
             // \multirow doesn't allow multiple paragraphs.
-            content = content.trim().replace(/\n\n/g, ' \\\\ ')
+            content = content.trim().replace(/\n\n/g, " \\\\ ")
         }
 
         return start + content + end
@@ -649,7 +649,7 @@ export class LatexExporterConvert {
             return this.usedBibDB[key].entry_key
         })
         if (usedKeys.includes(suggestedKey)) {
-            suggestedKey += 'X'
+            suggestedKey += "X"
             return this.createUniqueCitationKey(suggestedKey)
         } else {
             return suggestedKey
@@ -659,18 +659,18 @@ export class LatexExporterConvert {
     postProcess(latex) {
         return latex
         // join blocks of the same type that follow oneanother.
-            .replace(/\\end{code}\n\n\\begin{code}\n\n/g, '')
-            .replace(/\\end{quote}\n\n\\begin{quote}\n\n/g, '')
+            .replace(/\\end{code}\n\n\\begin{code}\n\n/g, "")
+            .replace(/\\end{quote}\n\n\\begin{quote}\n\n/g, "")
         // Remove the last divider in any any table row.
-            .replace(/& {2}\\\\/g, '\\\\')
+            .replace(/& {2}\\\\/g, "\\\\")
         // Remove new lines between table cells.
-            .replace(/\n & \n\n/g, ' & ')
+            .replace(/\n & \n\n/g, " & ")
         // Remove new lines within itemization
-            .replace(/\\item \n\n/g, '\\item ')
+            .replace(/\\item \n\n/g, "\\item ")
     }
 
     assembleEpilogue() {
-        let epilogue = ''
+        let epilogue = ""
         if (this.features.citations) {
             const bibliographyHeader = this.settings.bibliography_header[this.settings.language] || BIBLIOGRAPHY_HEADERS[this.settings.language]
             epilogue += `\n\n\\printbibliography[title={${escapeLatexText(bibliographyHeader)}}]`
@@ -679,7 +679,7 @@ export class LatexExporterConvert {
     }
 
     assembleCopyright() {
-        let note = ''
+        let note = ""
         if (this.settings.copyright) {
             if (this.settings.copyright.holder) {
                 note += `% © ${this.settings.copyright.year ? this.settings.copyright.year : new Date().getFullYear()} ${this.settings.copyright.holder}\n`
@@ -687,20 +687,20 @@ export class LatexExporterConvert {
             if (this.settings.copyright.licenses.length) {
                 this.settings.copyright.licenses.forEach(
                     license => {
-                        note += `% ${license.url}${license.start ? ` (${license.start})` : ''}\n`
+                        note += `% ${license.url}${license.start ? ` (${license.start})` : ""}\n`
                     }
                 )
             }
         }
 
         if (note.length) {
-            note += '\n\n'
+            note += "\n\n"
         }
         return note
     }
 
     assemblePreamble() {
-        let preamble = ''
+        let preamble = ""
 
         if (this.features.subtitle) {
             preamble += `
@@ -733,15 +733,15 @@ export class LatexExporterConvert {
         }
 
         if (this.features.hyperlinks) {
-            preamble += '\n\\usepackage{hyperref}'
+            preamble += "\n\\usepackage{hyperref}"
         }
 
         if (this.features.captions) {
-            preamble += '\n\\usepackage{caption}'
+            preamble += "\n\\usepackage{caption}"
         }
 
         if (this.features.wrapfig) {
-            preamble += '\n\\usepackage{wrapfig}'
+            preamble += "\n\\usepackage{wrapfig}"
         }
 
         if (this.features.citations) {
@@ -752,11 +752,11 @@ export class LatexExporterConvert {
         }
 
         if (this.features.SVGs) {
-            preamble += '\n\\usepackage{svg}'
+            preamble += "\n\\usepackage{svg}"
         }
 
         if (this.features.images) {
-            preamble += '\n\\usepackage{graphicx}'
+            preamble += "\n\\usepackage{graphicx}"
             // The following scales graphics down to text width, but not scaling them up if they are smaller
             preamble += `
                 \n\\usepackage{calc}
@@ -770,15 +770,15 @@ export class LatexExporterConvert {
         }
 
         if (this.features.tables) {
-            preamble += '\n\\usepackage{tabu}'
+            preamble += "\n\\usepackage{tabu}"
         }
 
         if (this.features.orderedListStart) {
-            preamble += '\n\\usepackage{enumitem}'
+            preamble += "\n\\usepackage{enumitem}"
         }
 
         if (this.features.rowspan) {
-            preamble += '\n\\usepackage{multirow}'
+            preamble += "\n\\usepackage{multirow}"
         }
 
         if (this.features.code) {

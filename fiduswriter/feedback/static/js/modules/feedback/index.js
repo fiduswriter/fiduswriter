@@ -16,7 +16,7 @@ export class FeedbackTab {
 
     render() {
         document.body.insertAdjacentHTML(
-            'beforeend',
+            "beforeend",
             `<div class="feedback-panel">
               <div id="feedback-wrapper">
                 <div id="feedback-title">${gettext("Tech support")}</div>
@@ -36,14 +36,14 @@ export class FeedbackTab {
             </div>`
         )
 
-        let headerNavWrapper = document.querySelector('#footer-menu.prelogin .fw-container')
+        let headerNavWrapper = document.querySelector("#footer-menu.prelogin .fw-container")
 
         if (null === headerNavWrapper) {
-            headerNavWrapper = document.querySelector('.fw-header .fw-container')
+            headerNavWrapper = document.querySelector(".fw-header .fw-container")
         }
 
         if (null === headerNavWrapper) {
-            headerNavWrapper = document.querySelector('#headerbar')
+            headerNavWrapper = document.querySelector("#headerbar")
         }
 
         if (null === headerNavWrapper) {
@@ -51,52 +51,52 @@ export class FeedbackTab {
         }
 
         headerNavWrapper.insertAdjacentHTML(
-            'beforeend',
-            `<a class="feedback-tab" aria-label="${gettext('Technical support')}" href="#"></a>`
+            "beforeend",
+            `<a class="feedback-tab" aria-label="${gettext("Technical support")}" href="#"></a>`
         )
 
-        ensureCSS('feedback/feedback.css')
+        ensureCSS("feedback/feedback.css")
     }
 
     bind() {
 
-        document.querySelector('a.feedback-tab').addEventListener('click', event => {
-            document.querySelector('.feedback-panel').style.display = 'block'
+        document.querySelector("a.feedback-tab").addEventListener("click", event => {
+            document.querySelector(".feedback-panel").style.display = "block"
             event.preventDefault()
         })
 
-        document.querySelector('#closeFeedback').addEventListener('click', event => {
-            document.querySelector('.feedback-panel').style.display = 'none'
-            document.querySelector('#feedback-form').style.visibility = 'visible'
-            document.querySelector('#response-message').style.display = 'none'
+        document.querySelector("#closeFeedback").addEventListener("click", event => {
+            document.querySelector(".feedback-panel").style.display = "none"
+            document.querySelector("#feedback-form").style.visibility = "visible"
+            document.querySelector("#response-message").style.display = "none"
             event.preventDefault()
         })
 
-        document.querySelector('#feedbackbutton').addEventListener('click', () => this.openFeedback())
+        document.querySelector("#feedbackbutton").addEventListener("click", () => this.openFeedback())
     }
 
     openFeedback() {
         const messageEl = document.querySelector("textarea#message"),
-            closeFeedbackEl = document.querySelector('#closeFeedback'),
-            feedbackFormEl = document.querySelector('#feedback-form'),
-            responseEl = document.querySelector('#response-message')
+            closeFeedbackEl = document.querySelector("#closeFeedback"),
+            feedbackFormEl = document.querySelector("#feedback-form"),
+            responseEl = document.querySelector("#response-message")
         if (!messageEl.value.length) {
             return
         }
 
-        closeFeedbackEl.style.display = 'none'
-        feedbackFormEl.style.visibility = 'hidden'
+        closeFeedbackEl.style.display = "none"
+        feedbackFormEl.style.visibility = "hidden"
 
-        post('/api/feedback/feedback/', {message: messageEl.value}).then(
+        post("/api/feedback/feedback/", {message: messageEl.value}).then(
             () => {
-                messageEl.value = ''
-                closeFeedbackEl.style.display = 'block'
-                responseEl.style.display = 'block'
+                messageEl.value = ""
+                closeFeedbackEl.style.display = "block"
+                responseEl.style.display = "block"
             }
         ).catch(
             (_error) => {
-                messageEl.value = ''
-                closeFeedbackEl.style.display = 'block'
+                messageEl.value = ""
+                closeFeedbackEl.style.display = "block"
             }
         )
         return false

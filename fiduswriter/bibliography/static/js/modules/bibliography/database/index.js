@@ -16,10 +16,10 @@ export class BibliographyDB {
      */
 
     getDB() {
-        const localStorageVersion = window.localStorage.getItem('version')
-        let lastModified = parseInt(window.localStorage.getItem('last_modified_biblist')),
-            numberOfEntries = parseInt(window.localStorage.getItem('number_of_entries')),
-            localStorageOwnerId = parseInt(window.localStorage.getItem('owner_id'))
+        const localStorageVersion = window.localStorage.getItem("version")
+        let lastModified = parseInt(window.localStorage.getItem("last_modified_biblist")),
+            numberOfEntries = parseInt(window.localStorage.getItem("number_of_entries")),
+            localStorageOwnerId = parseInt(window.localStorage.getItem("owner_id"))
 
         // A dictionary to look up bib fields by their fw type name.
         // Needed for translation to CSL and Biblatex.
@@ -50,17 +50,17 @@ export class BibliographyDB {
                 bibCats.forEach(bibCat => this.cats.push(bibCat))
                 if (bibList) {
                     try {
-                        window.localStorage.setItem('biblist', JSON.stringify(bibList))
-                        window.localStorage.setItem('last_modified_biblist', lastModified)
-                        window.localStorage.setItem('number_of_entries', numberOfEntries)
-                        window.localStorage.setItem('owner_id', userId)
-                        window.localStorage.setItem('version', FW_LOCALSTORAGE_VERSION)
+                        window.localStorage.setItem("biblist", JSON.stringify(bibList))
+                        window.localStorage.setItem("last_modified_biblist", lastModified)
+                        window.localStorage.setItem("number_of_entries", numberOfEntries)
+                        window.localStorage.setItem("owner_id", userId)
+                        window.localStorage.setItem("version", FW_LOCALSTORAGE_VERSION)
                     } catch (error) {
                         // The local storage was likely too small
                         throw (error)
                     }
                 } else {
-                    bibList = JSON.parse(window.localStorage.getItem('biblist'))
+                    bibList = JSON.parse(window.localStorage.getItem("biblist"))
                 }
                 bibList.forEach(({id, bibDBEntry}) => {
                     this.db[id] = bibDBEntry
@@ -70,7 +70,7 @@ export class BibliographyDB {
             }
         ).catch(
             error => {
-                addAlert('error', gettext('Could not obtain bibliography data'))
+                addAlert("error", gettext("Could not obtain bibliography data"))
                 deactivateWait()
                 throw (error)
             }
@@ -86,9 +86,9 @@ export class BibliographyDB {
             idTranslations => this.updateLocalBibEntries(tmpDB, idTranslations)
         ).catch(
             error => {
-                addAlert('error', gettext('The bibliography could not be updated'))
+                addAlert("error", gettext("The bibliography could not be updated"))
                 if (this.app.isOffline()) {
-                    addAlert('info', gettext('You are currently offline. Please try again when you are back online.'))
+                    addAlert("info", gettext("You are currently offline. Please try again when you are back online."))
                 } else {
                     throw (error)
                 }
@@ -101,7 +101,7 @@ export class BibliographyDB {
         idTranslations.forEach(bibTrans => {
             this.db[bibTrans[1]] = tmpDB[bibTrans[0]]
         })
-        addAlert('success', gettext('The bibliography has been updated.'))
+        addAlert("success", gettext("The bibliography has been updated."))
         return idTranslations
     }
 
@@ -122,16 +122,16 @@ export class BibliographyDB {
                 while (bibCats.length > 0) {
                     this.cats.push(bibCats.pop())
                 }
-                addAlert('success', gettext('The categories have been updated'))
+                addAlert("success", gettext("The categories have been updated"))
                 deactivateWait()
                 return this.cats
             }
         ).catch(
             error => {
-                addAlert('error', gettext('The categories could not be updated'))
+                addAlert("error", gettext("The categories could not be updated"))
                 deactivateWait()
                 if (this.app.isOffline()) {
-                    addAlert('info', gettext('You are currently offline. Please try again when you are back online.'))
+                    addAlert("info", gettext("You are currently offline. Please try again when you are back online."))
                 } else {
                     throw (error)
                 }
@@ -176,17 +176,17 @@ export class BibliographyDB {
                 ids.forEach(id => {
                     delete this.db[id]
                 })
-                addAlert('success', gettext(
-                    'The bibliography item(s) have been deleted'))
+                addAlert("success", gettext(
+                    "The bibliography item(s) have been deleted"))
                 deactivateWait()
                 return ids
             }
         ).catch(
             error => {
-                addAlert('error', 'The bibliography item(s) could not be deleted')
+                addAlert("error", "The bibliography item(s) could not be deleted")
                 deactivateWait()
                 if (this.app.isOffline()) {
-                    addAlert('info', gettext('You are currently offline. Please try again when you are back online.'))
+                    addAlert("info", gettext("You are currently offline. Please try again when you are back online."))
                 } else {
                     throw (error)
                 }

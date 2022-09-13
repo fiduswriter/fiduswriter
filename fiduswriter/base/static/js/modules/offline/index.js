@@ -3,12 +3,12 @@ import {PreloginPage} from "../prelogin"
 export class OfflinePage extends PreloginPage {
     constructor({app, language}) {
         super({app, language})
-        this.title = gettext('Disconnected')
+        this.title = gettext("Disconnected")
         this.contents = `<div class="fw-login-left">
-            <h1 class="fw-login-title">${gettext('Disconnected')}</h1>
+            <h1 class="fw-login-title">${gettext("Disconnected")}</h1>
             <p>${interpolate(
         gettext(
-            'You are currently disconnected from the %(appName)s server.'
+            "You are currently disconnected from the %(appName)s server."
         ),
         {appName: this.app.name},
         true
@@ -19,8 +19,8 @@ export class OfflinePage extends PreloginPage {
 
         this.headerLinks = [
             {
-                type: 'button',
-                text: gettext('Reload page'),
+                type: "button",
+                text: gettext("Reload page"),
                 link: window.location.pathname
             }
         ]
@@ -28,7 +28,7 @@ export class OfflinePage extends PreloginPage {
 
     init() {
         return super.init().then(
-            () => document.querySelectorAll('#lang-selection,.feedback-tab').forEach(el => el.style.visibility = 'hidden')
+            () => document.querySelectorAll("#lang-selection,.feedback-tab").forEach(el => el.style.visibility = "hidden")
         )
     }
 }

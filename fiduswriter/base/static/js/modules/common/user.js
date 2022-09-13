@@ -1,7 +1,7 @@
 import {post} from "./network"
 
 export const setLanguage = function(config, language) {
-    return post('/api/i18n/setlang/', {language}).then(
+    return post("/api/i18n/setlang/", {language}).then(
         () => {
             // We delete the network cache as this contains the JS
             // translations.
@@ -20,7 +20,7 @@ const COLOR_CACHE = {}
 const userColor = (string) => {
     // Source https://gist.github.com/0x263b/2bdd90886c2036a1ad5bcf06d6e6fb37
     if (string.length === 0) {
-        return 'rgb(0,0,0)'
+        return "rgb(0,0,0)"
     } else if (COLOR_CACHE[string]) {
         return COLOR_CACHE[string]
     }
@@ -39,7 +39,7 @@ const userColor = (string) => {
 
 /** A template for the default round avatar view. */
 export const avatarTemplate = ({user}) => {
-    const name = user.username || user.name || 'A'
+    const name = user.username || user.name || "A"
     if (user.avatar) {
         return `<img class="fw-avatar" src="${user.avatar}" alt="${name}">`
     } else {

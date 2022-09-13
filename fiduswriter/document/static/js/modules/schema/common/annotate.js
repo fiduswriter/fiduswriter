@@ -2,13 +2,13 @@
 export const annotation_tag = {
     attrs: {
         type: {
-            default: '' // Make this a string unique to your plugin so that you avoid handling tags of other plugins. For example 'rdfa' for an rdfa-tagging plugin.
+            default: "" // Make this a string unique to your plugin so that you avoid handling tags of other plugins. For example 'rdfa' for an rdfa-tagging plugin.
         },
         key: {
-            default: '' // key or variable/tag name
+            default: "" // key or variable/tag name
         },
         value: {
-            default: '' // value of variable/tag
+            default: "" // value of variable/tag
         }
     },
     inclusive: false,
@@ -19,23 +19,23 @@ export const annotation_tag = {
         getAttrs(dom) {
             return {
                 type: dom.dataset.type,
-                key: dom.dataset.key ? dom.dataset.key : '',
-                value: dom.dataset.value ? dom.dataset.value : ''
+                key: dom.dataset.key ? dom.dataset.key : "",
+                value: dom.dataset.value ? dom.dataset.value : ""
             }
         }
     }],
     toDOM(node) {
         const attrs = {
-            class: 'annotation-tag',
-            'data-type': node.attrs.type
+            class: "annotation-tag",
+            "data-type": node.attrs.type
         }
         if (node.attrs.key?.length) {
-            attrs['data-key'] = node.attrs.key
+            attrs["data-key"] = node.attrs.key
         }
         if (node.attrs.value?.length) {
-            attrs['data-value'] = node.attrs.value
+            attrs["data-value"] = node.attrs.value
         }
-        return ['span', attrs]
+        return ["span", attrs]
     }
 }
 
@@ -58,9 +58,9 @@ export const comment = {
         }
     }],
     toDOM(node) {
-        return ['span', {
-            class: 'comment',
-            'data-id': node.attrs.id
+        return ["span", {
+            class: "comment",
+            "data-id": node.attrs.id
         }]
     }
 }

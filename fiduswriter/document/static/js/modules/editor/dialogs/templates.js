@@ -21,11 +21,11 @@ export const linkDialogTemplate = ({defaultLink, internalTargets, linkType, titl
         `<option class="cross-reference-item" type="text" value="${iTarget.id}" ${target === iTarget.id ? "selected" : ""}>
                             ${escapeText(iTarget.text)}
                         </option>`
-    ).join('')
+    ).join("")
 }
             </select>
             <div class="fw-select-arrow fa fa-caret-down"></div>
-        </div><p></p>` : ''
+        </div><p></p>` : ""
     }${
         allowedContent.link && internalTargets.length ?
             `<div class="fw-radio">
@@ -42,7 +42,7 @@ export const linkDialogTemplate = ({defaultLink, internalTargets, linkType, titl
         `<option class="link-item" type="text" value="${iTarget.id}" ${target === iTarget.id ? "selected" : ""}>
                             ${escapeText(iTarget.text)}
                         </option>`
-    ).join('')
+    ).join("")
 }
             </select>
             <div class="fw-select-arrow fa fa-caret-down"></div>
@@ -53,13 +53,13 @@ export const linkDialogTemplate = ({defaultLink, internalTargets, linkType, titl
             <label class="link-external-label">${gettext("External")}</label>
         </div>`
             :
-            ''
+            ""
     }${
         allowedContent.link ?
             `<input class="link-title" type="text" value="${escapeText(title)}" placeholder="${gettext("Link title")}"/>
         <p></p>
-        <input class="link" type="text" value="${target && linkType === 'external' ? target : defaultLink}" placeholder="${gettext("URL")}"/>` :
-            ''
+        <input class="link" type="text" value="${target && linkType === "external" ? target : defaultLink}" placeholder="${gettext("URL")}"/>` :
+            ""
     }`
 
 /** Dialog to add a note to a revision before saving. */
@@ -159,7 +159,7 @@ export const tableConfigurationTemplate = ({language}) =>
                 <td>
                     <select class="table-category">
                         <option value="none">${gettext("None")}</option>
-                        <option value="table">${CATS['table'][language]}</option>
+                        <option value="table">${CATS["table"][language]}</option>
                     </select>
                 </td>
             </tr>
@@ -266,7 +266,7 @@ export const configureFigureTemplate = ({language}) =>
                                 ${
     Object.entries(CATS).map(([id, titleObject]) =>
         `<option value="${id}">${titleObject[language]}</option>`
-    ).join('')
+    ).join("")
 }
                             </select>
                         </td>
@@ -355,19 +355,19 @@ export const selectedCitationTemplate = ({title, author, id, db, prefix, locator
 
 
 export const contributorTemplate = ({contributor}) =>
-    `<input type="text" name="firstname" value="${contributor.firstname ? contributor.firstname : ''}" placeholder="${gettext("Firstname")}"/>
-    <input type="text" name="lastname" value="${contributor.lastname ? contributor.lastname : ''}" placeholder="${gettext("Lastname")}"/>
-    <input type="text" name="email" value="${contributor.email ? contributor.email : ''}" placeholder="${gettext("Email")}"/>
-    <input type="text" name="institution" value="${contributor.institution ? contributor.institution : ''}" placeholder="${gettext("Institution")}"/>
+    `<input type="text" name="firstname" value="${contributor.firstname ? contributor.firstname : ""}" placeholder="${gettext("Firstname")}"/>
+    <input type="text" name="lastname" value="${contributor.lastname ? contributor.lastname : ""}" placeholder="${gettext("Lastname")}"/>
+    <input type="text" name="email" value="${contributor.email ? contributor.email : ""}" placeholder="${gettext("Email")}"/>
+    <input type="text" name="institution" value="${contributor.institution ? contributor.institution : ""}" placeholder="${gettext("Institution")}"/>
     `
 
 export const languageTemplate = ({currentLanguage, allowedLanguages}) =>
     `<select class="fw-button fw-light fw-large">
         ${
     allowedLanguages.map(language =>
-        `<option value="${language[0]}" ${language[0] === currentLanguage ? 'selected' : ''}>
+        `<option value="${language[0]}" ${language[0] === currentLanguage ? "selected" : ""}>
                     ${language[1]}
                 </option>`
-    ).join('')
+    ).join("")
 }
     </select>`

@@ -20,7 +20,7 @@ export class ContactInvite {
         }
 
         return postJson(
-            '/api/user/invite/',
+            "/api/user/invite/",
             {key: this.key}
         ).then(
             ({json}) => {

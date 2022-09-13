@@ -1,7 +1,7 @@
 import {parseTracks} from "./track"
 
 export function randomFigureId() {
-    return 'F' + Math.round(Math.random() * 10000000) + 1
+    return "F" + Math.round(Math.random() * 10000000) + 1
 }
 
 
@@ -21,7 +21,7 @@ export const figure = {
     },
     content: "figure_caption image|figure_caption figure_equation|image figure_caption|figure_equation figure_caption",
     parseDOM: [{
-        tag: 'figure',
+        tag: "figure",
         getAttrs(dom) {
             return {
                 category: dom.dataset.category,
@@ -38,15 +38,15 @@ export const figure = {
         const attrs = {
             id: node.attrs.id,
             class: `aligned-${node.attrs.aligned} image-width-${node.attrs.width}`,
-            'data-aligned': node.attrs.aligned,
-            'data-width': node.attrs.width,
-            'data-category': node.attrs.category
+            "data-aligned": node.attrs.aligned,
+            "data-width": node.attrs.width,
+            "data-category": node.attrs.category
         }
         if (!node.attrs.caption) {
-            attrs['data-caption-hidden'] = true
+            attrs["data-caption-hidden"] = true
         }
         if (node.attrs.track?.length) {
-            attrs['data-track'] = JSON.stringify(node.attrs.track)
+            attrs["data-track"] = JSON.stringify(node.attrs.track)
         }
         return ["figure", attrs, 0]
     }
@@ -60,7 +60,7 @@ export const image = {
         image: {default: false},
     },
     parseDOM: [{
-        tag: 'img',
+        tag: "img",
         getAttrs(dom) {
             const image = parseInt(dom.dataset.image)
             return {
@@ -69,13 +69,13 @@ export const image = {
         }
     }],
     toDOM(node) {
-        const dom = document.createElement('img')
+        const dom = document.createElement("img")
         if (node.attrs.image !== false) {
             dom.dataset.image = node.attrs.image
             if (node.type.schema.cached.imageDB) {
                 if (node.type.schema.cached.imageDB.db[node.attrs.image]?.image) {
                     const imgSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
-                    dom.setAttribute('src', imgSrc)
+                    dom.setAttribute("src", imgSrc)
                     dom.dataset.imageSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
                 } else {
                     /* The image was not present in the imageDB -- possibly because a collaborator just added ut.
@@ -83,12 +83,12 @@ export const image = {
                     imageDB, do not attempt at reloading the imageDB if an image cannot be
                     found. */
                     if (imageDBBroken) {
-                        dom.setAttribute('src', `${settings_STATIC_URL}img/error.png?v=${transpile_VERSION}`)
+                        dom.setAttribute("src", `${settings_STATIC_URL}img/error.png?v=${transpile_VERSION}`)
                     } else {
                         node.type.schema.cached.imageDB.getDB().then(() => {
                             if (node.type.schema.cached.imageDB.db[node.attrs.image]?.image) {
                                 const imgSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
-                                dom.setAttribute('src', imgSrc)
+                                dom.setAttribute("src", imgSrc)
                                 dom.dataset.imageSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
                             } else {
                                 imageDBBroken = true
@@ -111,7 +111,7 @@ export const figure_equation = {
         }
     },
     parseDOM: [{
-        tag: 'div.figure-equation[data-equation]',
+        tag: "div.figure-equation[data-equation]",
         getAttrs(dom) {
             return {
                 equation: dom.dataset.equation
@@ -119,12 +119,12 @@ export const figure_equation = {
         }
     }],
     toDOM(node) {
-        const dom = document.createElement('div')
+        const dom = document.createElement("div")
         dom.dataset.equation = node.attrs.equation
-        dom.classList.add('figure-equation')
+        dom.classList.add("figure-equation")
         if (node.attrs.equation !== false) {
             import("mathlive").then(MathLive => {
-                dom.innerHTML = MathLive.convertLatexToMarkup(node.attrs.equation, {mathstyle: 'displaystyle'})
+                dom.innerHTML = MathLive.convertLatexToMarkup(node.attrs.equation, {mathstyle: "displaystyle"})
             })
         }
         return dom

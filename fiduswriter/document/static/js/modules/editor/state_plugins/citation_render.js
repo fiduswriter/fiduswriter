@@ -1,7 +1,7 @@
 import {Plugin, PluginKey} from "prosemirror-state"
 import {ReplaceStep, ReplaceAroundStep} from "prosemirror-transform"
 
-const key = new PluginKey('citationRender')
+const key = new PluginKey("citationRender")
 
 export const citationRenderPlugin = function(options) {
     return new Plugin({
@@ -19,7 +19,7 @@ export const citationRenderPlugin = function(options) {
                 }
                 let {action} = this.getState(oldState)
 
-                if (action || tr.getMeta('settings')) {
+                if (action || tr.getMeta("settings")) {
                     return {action} // We already need to reset the bibliography or another setting is used. Don't bother checking for more reasons to do so.
                 }
                 tr.steps.forEach((step, index) => {
@@ -29,22 +29,22 @@ export const citationRenderPlugin = function(options) {
                                 step.from,
                                 step.to,
                                 node => {
-                                    if (node.type.name === 'citation') {
+                                    if (node.type.name === "citation") {
                                         // A citation was replaced. We need to reset
-                                        action = 'reset'
-                                    } else if (!action && node.type.name === 'footnote') {
-                                        action = 'numbers'
+                                        action = "reset"
+                                    } else if (!action && node.type.name === "footnote") {
+                                        action = "numbers"
                                     }
                                 }
                             )
                         }
                         if (step.slice?.content) {
                             step.slice.content.descendants(node => {
-                                if (node.type.name === 'citation') {
+                                if (node.type.name === "citation") {
                                     // A citation was added. We need to reset
-                                    action = 'reset'
-                                } else if (!action && node.type.name === 'footnote') {
-                                    action = 'numbers'
+                                    action = "reset"
+                                } else if (!action && node.type.name === "footnote") {
+                                    action = "numbers"
                                 }
                             })
                         }
@@ -60,15 +60,15 @@ export const citationRenderPlugin = function(options) {
             return {
                 update: (view, _prevState) => {
                     const {action} = key.getState(view.state)
-                    if (action === 'reset') {
+                    if (action === "reset") {
                         options.editor.mod.citations.resetCitations()
                         const tr = view.state.tr.setMeta(key, {action: false})
                         view.dispatch(tr)
-                    } else if (action === 'numbers') {
+                    } else if (action === "numbers") {
                         options.editor.mod.citations.footnoteNumberOverride()
                         const tr = view.state.tr.setMeta(key, {action: false})
                         view.dispatch(tr)
-                    } else if (view.dom.querySelector('.citation:empty')) {
+                    } else if (view.dom.querySelector(".citation:empty")) {
                         options.editor.mod.citations.resetCitations()
                     }
                 },

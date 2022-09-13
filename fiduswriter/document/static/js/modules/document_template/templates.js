@@ -4,113 +4,113 @@ import {LANGUAGES, PAPER_SIZES} from "../schema/const"
 
 const allowedElementsTemplate = ({elements}, footnote = true, table = true) =>
     `<div class="label">
-    ${gettext('Allowed elements')}
+    ${gettext("Allowed elements")}
 </div>
 <label>
-    <input type="checkbox" class="elements" value="paragraph" ${elements.includes('paragraph') ? 'checked' : ''}/>
-    ${gettext('Paragraph')}
+    <input type="checkbox" class="elements" value="paragraph" ${elements.includes("paragraph") ? "checked" : ""}/>
+    ${gettext("Paragraph")}
 </label>
 <label>
-    <input type="checkbox" class="elements" value="heading1" ${elements.includes('heading1') ? 'checked' : ''}/>
-    ${gettext('Heading 1')}
+    <input type="checkbox" class="elements" value="heading1" ${elements.includes("heading1") ? "checked" : ""}/>
+    ${gettext("Heading 1")}
 </label>
 <label>
-    <input type="checkbox" class="elements" value="heading2" ${elements.includes('heading2') ? 'checked' : ''}/>
-    ${gettext('Heading 2')}
+    <input type="checkbox" class="elements" value="heading2" ${elements.includes("heading2") ? "checked" : ""}/>
+    ${gettext("Heading 2")}
 </label>
 <label>
-    <input type="checkbox" class="elements" value="heading3" ${elements.includes('heading3') ? 'checked' : ''}/>
-    ${gettext('Heading 3')}
+    <input type="checkbox" class="elements" value="heading3" ${elements.includes("heading3") ? "checked" : ""}/>
+    ${gettext("Heading 3")}
 </label>
 <label>
-    <input type="checkbox" class="elements" value="heading4" ${elements.includes('heading4') ? 'checked' : ''}/>
-    ${gettext('Heading 4')}
+    <input type="checkbox" class="elements" value="heading4" ${elements.includes("heading4") ? "checked" : ""}/>
+    ${gettext("Heading 4")}
 </label>
 <label>
-    <input type="checkbox" class="elements" value="heading5" ${elements.includes('heading5') ? 'checked' : ''}/>
-    ${gettext('Heading 5')}
+    <input type="checkbox" class="elements" value="heading5" ${elements.includes("heading5") ? "checked" : ""}/>
+    ${gettext("Heading 5")}
 </label>
 <label>
-    <input type="checkbox" class="elements" value="heading6" ${elements.includes('heading6') ? 'checked' : ''}/>
-    ${gettext('Heading 6')}
+    <input type="checkbox" class="elements" value="heading6" ${elements.includes("heading6") ? "checked" : ""}/>
+    ${gettext("Heading 6")}
 </label>
 ${
     footnote ?
-        '' :
+        "" :
         `<label>
-        <input type="checkbox" class="elements" value="code_block" ${elements.includes('code_block') ? 'checked' : ''}/>
-        ${gettext('Code')}
+        <input type="checkbox" class="elements" value="code_block" ${elements.includes("code_block") ? "checked" : ""}/>
+        ${gettext("Code")}
     </label>`
 }
 <label>
-    <input type="checkbox" class="elements" value="figure" ${elements.includes('figure') ? 'checked' : ''}/>
-    ${gettext('Figure')}
+    <input type="checkbox" class="elements" value="figure" ${elements.includes("figure") ? "checked" : ""}/>
+    ${gettext("Figure")}
 </label>
 <label>
-    <input type="checkbox" class="elements" value="ordered_list" ${elements.includes('ordered_list') ? 'checked' : ''}/>
-    ${gettext('Ordered list')}
+    <input type="checkbox" class="elements" value="ordered_list" ${elements.includes("ordered_list") ? "checked" : ""}/>
+    ${gettext("Ordered list")}
 </label>
 <label>
-    <input type="checkbox" class="elements" value="bullet_list" ${elements.includes('bullet_list') ? 'checked' : ''}/>
-    ${gettext('Bullet list')}
+    <input type="checkbox" class="elements" value="bullet_list" ${elements.includes("bullet_list") ? "checked" : ""}/>
+    ${gettext("Bullet list")}
 </label>
 <label>
-    <input type="checkbox" class="elements" value="horizontal_rule" ${elements.includes('horizontal_rule') ? 'checked' : ''}/>
-    ${gettext('Horizontal rule')}
+    <input type="checkbox" class="elements" value="horizontal_rule" ${elements.includes("horizontal_rule") ? "checked" : ""}/>
+    ${gettext("Horizontal rule")}
 </label>
 <label>
-    <input type="checkbox" class="elements" value="equation" ${elements.includes('equation') ? 'checked' : ''}/>
-    ${gettext('Equation')}
+    <input type="checkbox" class="elements" value="equation" ${elements.includes("equation") ? "checked" : ""}/>
+    ${gettext("Equation")}
 </label>
 <label>
-    <input type="checkbox" class="elements" value="citation" ${elements.includes('citation') ? 'checked' : ''}/>
-    ${gettext('Citation')}
+    <input type="checkbox" class="elements" value="citation" ${elements.includes("citation") ? "checked" : ""}/>
+    ${gettext("Citation")}
 </label>
 <label>
-    <input type="checkbox" class="elements" value="cross_reference" ${elements.includes('cross_reference') ? 'checked' : ''}/>
-    ${gettext('Cross reference')}
+    <input type="checkbox" class="elements" value="cross_reference" ${elements.includes("cross_reference") ? "checked" : ""}/>
+    ${gettext("Cross reference")}
 </label>
 <label>
-    <input type="checkbox" class="elements" value="blockquote" ${elements.includes('blockquote') ? 'checked' : ''}/>
-    ${gettext('Blockquote')}
+    <input type="checkbox" class="elements" value="blockquote" ${elements.includes("blockquote") ? "checked" : ""}/>
+    ${gettext("Blockquote")}
 </label>
 ${
     footnote ?
         `<label>
-        <input type="checkbox" class="elements" value="footnote" ${elements.includes('footnote') ? 'checked' : ''}/>
-        ${gettext('Footnote')}
+        <input type="checkbox" class="elements" value="footnote" ${elements.includes("footnote") ? "checked" : ""}/>
+        ${gettext("Footnote")}
     </label>` :
-        ''
+        ""
 }
 ${
     table ?
         `<label>
-        <input type="checkbox" class="elements" value="table" ${elements.includes('table') ? 'checked' : ''}/>
-        ${gettext('Table')}
+        <input type="checkbox" class="elements" value="table" ${elements.includes("table") ? "checked" : ""}/>
+        ${gettext("Table")}
     </label>` :
-        ''
+        ""
 }`
 
 
 const allowedMarksTemplate = ({marks}) =>
     `<div class="label">
-    ${gettext('Allowed marks')}
+    ${gettext("Allowed marks")}
 </div>
 <label>
-    <input type="checkbox" class="marks" value="strong" ${marks.includes('strong') ? 'checked' : ''}/>
-    ${gettext('Strong')}
+    <input type="checkbox" class="marks" value="strong" ${marks.includes("strong") ? "checked" : ""}/>
+    ${gettext("Strong")}
 </label>
 <label>
-    <input type="checkbox" class="marks" value="em" ${marks.includes('em') ? 'checked' : ''}/>
-    ${gettext('Emphasis')}
+    <input type="checkbox" class="marks" value="em" ${marks.includes("em") ? "checked" : ""}/>
+    ${gettext("Emphasis")}
 </label>
 <label>
-    <input type="checkbox" class="marks" value="underline" ${marks.includes('underline') ? 'checked' : ''}/>
-    ${gettext('Underline')}
+    <input type="checkbox" class="marks" value="underline" ${marks.includes("underline") ? "checked" : ""}/>
+    ${gettext("Underline")}
 </label>
 <label>
-    <input type="checkbox" class="marks" value="link" ${marks.includes('link') ? 'checked' : ''}/>
-    ${gettext('Link')}
+    <input type="checkbox" class="marks" value="link" ${marks.includes("link") ? "checked" : ""}/>
+    ${gettext("Link")}
 </label>`
 
 const headingTemplate = ({
@@ -125,83 +125,83 @@ const headingTemplate = ({
 }) =>
     `<div class="doc-part" data-type="heading_part">
     <div class="doc-part-header">
-        ${gettext('Heading')}
+        ${gettext("Heading")}
         <ul class="object-tools right">
             <li>
-                <span class="link configure">${gettext('Configure')}</span>
+                <span class="link configure">${gettext("Configure")}</span>
             </li>
         </ul>
         <div class="label">
-            ${gettext('ID')} <input type="text" class="id fw-inline" value="${escapeText(id)}">
-            ${gettext('Title')} <input type="text" class="title fw-inline" value="${escapeText(title)}">
+            ${gettext("ID")} <input type="text" class="id fw-inline" value="${escapeText(id)}">
+            ${gettext("Title")} <input type="text" class="title fw-inline" value="${escapeText(title)}">
         </div>
     </div>
     <div class="attrs hidden">
-        <div class="label">${gettext('Metadata function')}
+        <div class="label">${gettext("Metadata function")}
             <select class="metadata">
-                <option value="false" ${metadata === false ? "selected" : ""}>${gettext('None')}</option>
-                <option value="subtitle" ${metadata === 'subtitle' ? "selected" : ""}>${gettext('Subtitle')}</option>
-                <option value="title" ${metadata === 'title' ? "selected" : ""}>${gettext('Title (translated)')}</option>
+                <option value="false" ${metadata === false ? "selected" : ""}>${gettext("None")}</option>
+                <option value="subtitle" ${metadata === "subtitle" ? "selected" : ""}>${gettext("Subtitle")}</option>
+                <option value="title" ${metadata === "title" ? "selected" : ""}>${gettext("Title (translated)")}</option>
             </select>
         </div>
-        <div class="label">${gettext('Locking')}
+        <div class="label">${gettext("Locking")}
             <select class="locking">
-                <option value="false" ${locking === 'false' ? "selected" : ""}>${gettext('User can change contents')}</option>
-                <option value="fixed" ${locking === 'fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
-                <option value="start" ${locking === 'start' ? "selected" : ""}>${gettext('User can only add content')}</option>
+                <option value="false" ${locking === "false" ? "selected" : ""}>${gettext("User can change contents")}</option>
+                <option value="fixed" ${locking === "fixed" ? "selected" : ""}>${gettext("User can not change contents")}</option>
+                <option value="start" ${locking === "start" ? "selected" : ""}>${gettext("User can only add content")}</option>
             </select>
         </div>
-        <div class="label">${gettext('Optional')}
+        <div class="label">${gettext("Optional")}
             <select class="optional">
-                <option value="false" ${optional === 'false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
-                <option value="shown" ${optional === 'shown' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
-                <option value="hidden" ${optional === 'hidden' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
+                <option value="false" ${optional === "false" ? "selected" : ""}>${gettext("Obligatory field")}</option>
+                <option value="shown" ${optional === "shown" ? "selected" : ""}>${gettext("Optional, shown by default")}</option>
+                <option value="hidden" ${optional === "hidden" ? "selected" : ""}>${gettext("Optional, not shown by default")}</option>
             </select>
         </div>
         <div class="label">
-            ${gettext('Allowed headings')}
+            ${gettext("Allowed headings")}
         </div>
         <label>
-            <input type="checkbox" class="elements" value="heading1" ${elements.includes('heading1') ? 'checked' : ''}/>
-            ${gettext('Heading 1')}
+            <input type="checkbox" class="elements" value="heading1" ${elements.includes("heading1") ? "checked" : ""}/>
+            ${gettext("Heading 1")}
         </label>
         <label>
-            <input type="checkbox" class="elements" value="heading2" ${elements.includes('heading2') ? 'checked' : ''}/>
-            ${gettext('Heading 2')}
+            <input type="checkbox" class="elements" value="heading2" ${elements.includes("heading2") ? "checked" : ""}/>
+            ${gettext("Heading 2")}
         </label>
         <label>
-            <input type="checkbox" class="elements" value="heading3" ${elements.includes('heading3') ? 'checked' : ''}/>
-            ${gettext('Heading 3')}
+            <input type="checkbox" class="elements" value="heading3" ${elements.includes("heading3") ? "checked" : ""}/>
+            ${gettext("Heading 3")}
         </label>
         <label>
-            <input type="checkbox" class="elements" value="heading4" ${elements.includes('heading4') ? 'checked' : ''}/>
-            ${gettext('Heading 4')}
+            <input type="checkbox" class="elements" value="heading4" ${elements.includes("heading4") ? "checked" : ""}/>
+            ${gettext("Heading 4")}
         </label>
         <label>
-            <input type="checkbox" class="elements" value="heading5" ${elements.includes('heading5') ? 'checked' : ''}/>
-            ${gettext('Heading 5')}
+            <input type="checkbox" class="elements" value="heading5" ${elements.includes("heading5") ? "checked" : ""}/>
+            ${gettext("Heading 5")}
         </label>
         <label>
-            <input type="checkbox" class="elements" value="heading6" ${elements.includes('heading6') ? 'checked' : ''}/>
-            ${gettext('Heading 6')}
+            <input type="checkbox" class="elements" value="heading6" ${elements.includes("heading6") ? "checked" : ""}/>
+            ${gettext("Heading 6")}
         </label>
         ${allowedMarksTemplate({marks})}
-        <div class="label">${gettext('Language')}
+        <div class="label">${gettext("Language")}
             <select class="language">
-                <option value="false" ${language === false ? "selected" : ""}>${gettext('Document language')}</option>
+                <option value="false" ${language === false ? "selected" : ""}>${gettext("Document language")}</option>
                 ${
     LANGUAGES.map(([code, name]) =>
         `<option value="${code}" ${language === code ? "selected" : ""}>${name}</option>`
-    ).join('')
+    ).join("")
 }
             </select>
         </div>
         <div>
-            <div class="label">${gettext('Initial content')}</div>
+            <div class="label">${gettext("Initial content")}</div>
             <div class="initial"></div>
         </div>
         <div>
-            <div class="label">${gettext('Instructions')}</div>
+            <div class="label">${gettext("Instructions")}</div>
             <div class="instructions"></div>
         </div>
     </div>
@@ -217,46 +217,46 @@ const contributorsTemplate = ({
 }) =>
     `<div class="doc-part" data-type="contributors_part">
     <div class="doc-part-header">
-        ${gettext('Namelist')}
+        ${gettext("Namelist")}
         <ul class="object-tools right">
             <li>
-                <span class="link configure">${gettext('Configure')}</span>
+                <span class="link configure">${gettext("Configure")}</span>
             </li>
         </ul>
         <div class="label">
-            ${gettext('ID')} <input type="text" class="id fw-inline" value="${escapeText(id)}">
-            ${gettext('Title')} <input type="text" class="title fw-inline" value="${escapeText(title)}">
+            ${gettext("ID")} <input type="text" class="id fw-inline" value="${escapeText(id)}">
+            ${gettext("Title")} <input type="text" class="title fw-inline" value="${escapeText(title)}">
         </div>
     </div>
     <div class="attrs hidden">
-        <div class="label">${gettext('Item title')} <input type="text" class="item_title fw-inline" value="${escapeText(item_title)}"></div>
-        <div class="label">${gettext('Metadata function')}
+        <div class="label">${gettext("Item title")} <input type="text" class="item_title fw-inline" value="${escapeText(item_title)}"></div>
+        <div class="label">${gettext("Metadata function")}
             <select class="metadata">
-                <option value="false" ${metadata === false ? "selected" : ""}>${gettext('None')}</option>
-                <option value="authors" ${metadata === 'authors' ? "selected" : ""}>${gettext('Authors')}</option>
-                <option value="editors" ${metadata === 'editors' ? "selected" : ""}>${gettext('Editors')}</option>
+                <option value="false" ${metadata === false ? "selected" : ""}>${gettext("None")}</option>
+                <option value="authors" ${metadata === "authors" ? "selected" : ""}>${gettext("Authors")}</option>
+                <option value="editors" ${metadata === "editors" ? "selected" : ""}>${gettext("Editors")}</option>
             </select>
         </div>
-        <div class="label">${gettext('Locking')}
+        <div class="label">${gettext("Locking")}
             <select class="locking">
-                <option value="false" ${locking === 'false' ? "selected" : ""}>${gettext('User can change contents')}</option>
-                <option value="fixed" ${locking === 'fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
-                <option value="start" ${locking === 'start' ? "selected" : ""}>${gettext('User can only add content')}</option>
+                <option value="false" ${locking === "false" ? "selected" : ""}>${gettext("User can change contents")}</option>
+                <option value="fixed" ${locking === "fixed" ? "selected" : ""}>${gettext("User can not change contents")}</option>
+                <option value="start" ${locking === "start" ? "selected" : ""}>${gettext("User can only add content")}</option>
             </select>
         </div>
-        <div class="label">${gettext('Optional')}
+        <div class="label">${gettext("Optional")}
             <select class="optional">
-                <option value="false" ${optional === 'false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
-                <option value="shown" ${optional === 'shown' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
-                <option value="hidden" ${optional === 'hidden' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
+                <option value="false" ${optional === "false" ? "selected" : ""}>${gettext("Obligatory field")}</option>
+                <option value="shown" ${optional === "shown" ? "selected" : ""}>${gettext("Optional, shown by default")}</option>
+                <option value="hidden" ${optional === "hidden" ? "selected" : ""}>${gettext("Optional, not shown by default")}</option>
             </select>
         </div>
         <div>
-            <div class="label">${gettext('Initial content')}</div>
+            <div class="label">${gettext("Initial content")}</div>
             <div class="initial"></div>
         </div>
         <div>
-            <div class="label">${gettext('Instructions')}</div>
+            <div class="label">${gettext("Instructions")}</div>
             <div class="instructions"></div>
         </div>
     </div>
@@ -273,65 +273,65 @@ const richtextTemplate = ({
     metadata = false
 }) => `<div class="doc-part" data-type="richtext_part">
     <div class="doc-part-header">
-        ${gettext('Richtext')}
+        ${gettext("Richtext")}
         <ul class="object-tools right">
             <li>
-                <span class="link configure">${gettext('Configure')}</span>
+                <span class="link configure">${gettext("Configure")}</span>
             </li>
         </ul>
         <div class="label">
-            ${gettext('ID')} <input type="text" class="id fw-inline" value="${escapeText(id)}">
-            ${gettext('Title')} <input type="text" class="title fw-inline" value="${escapeText(title)}">
+            ${gettext("ID")} <input type="text" class="id fw-inline" value="${escapeText(id)}">
+            ${gettext("Title")} <input type="text" class="title fw-inline" value="${escapeText(title)}">
         </div>
     </div>
     <div class="attrs hidden">
-        <div class="label">${gettext('Metadata function')}
+        <div class="label">${gettext("Metadata function")}
             <select class="metadata">
-                <option value="false" ${metadata === false ? "selected" : ""}>${gettext('None')}</option>
-                <option value="abstract" ${metadata === 'abstract' ? "selected" : ""}>${gettext('Abstract')}</option>
-                <option value="cases" ${metadata === 'cases' ? "selected" : ""}>${gettext('Cases/Case Reports')}</option>
-                <option value="conclusions" ${metadata === 'conclusions' ? "selected" : ""}>${gettext('Conclusions/Comment')}</option>
-                <option value="discussion" ${metadata === 'discussion' ? "selected" : ""}>${gettext('Discussion/Interpretation')}</option>
-                <option value="intro" ${metadata === 'intro' ? "selected" : ""}>${gettext('Introduction/Synopsis')}</option>
-                <option value="materials" ${metadata === 'materials' ? "selected" : ""}>${gettext('Materials')}</option>
-                <option value="methods" ${metadata === 'methods' ? "selected" : ""}>${gettext('Methods/Methodology/Procedures')}</option>
-                <option value="results" ${metadata === 'results' ? "selected" : ""}>${gettext('Results/Statement of Findings')}</option>
-                <option value="subjects" ${metadata === 'subjects' ? "selected" : ""}>${gettext('Subjects/Participants/Patients')}</option>
-                <option value="supplementary-material" ${metadata === 'supplementary-material' ? "selected" : ""}>${gettext('Supplementary materials')}</option>
+                <option value="false" ${metadata === false ? "selected" : ""}>${gettext("None")}</option>
+                <option value="abstract" ${metadata === "abstract" ? "selected" : ""}>${gettext("Abstract")}</option>
+                <option value="cases" ${metadata === "cases" ? "selected" : ""}>${gettext("Cases/Case Reports")}</option>
+                <option value="conclusions" ${metadata === "conclusions" ? "selected" : ""}>${gettext("Conclusions/Comment")}</option>
+                <option value="discussion" ${metadata === "discussion" ? "selected" : ""}>${gettext("Discussion/Interpretation")}</option>
+                <option value="intro" ${metadata === "intro" ? "selected" : ""}>${gettext("Introduction/Synopsis")}</option>
+                <option value="materials" ${metadata === "materials" ? "selected" : ""}>${gettext("Materials")}</option>
+                <option value="methods" ${metadata === "methods" ? "selected" : ""}>${gettext("Methods/Methodology/Procedures")}</option>
+                <option value="results" ${metadata === "results" ? "selected" : ""}>${gettext("Results/Statement of Findings")}</option>
+                <option value="subjects" ${metadata === "subjects" ? "selected" : ""}>${gettext("Subjects/Participants/Patients")}</option>
+                <option value="supplementary-material" ${metadata === "supplementary-material" ? "selected" : ""}>${gettext("Supplementary materials")}</option>
             </select>
         </div>
-        <div class="label">${gettext('Locking')}
+        <div class="label">${gettext("Locking")}
             <select class="locking">
-                <option value="false" ${locking === 'false' ? "selected" : ""}>${gettext('User can change contents')}</option>
-                <option value="fixed" ${locking === 'fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
-                <option value="start" ${locking === 'start' ? "selected" : ""}>${gettext('User can only add content')}</option>
+                <option value="false" ${locking === "false" ? "selected" : ""}>${gettext("User can change contents")}</option>
+                <option value="fixed" ${locking === "fixed" ? "selected" : ""}>${gettext("User can not change contents")}</option>
+                <option value="start" ${locking === "start" ? "selected" : ""}>${gettext("User can only add content")}</option>
             </select>
         </div>
-        <div class="label">${gettext('Optional')}
+        <div class="label">${gettext("Optional")}
             <select class="optional">
-                <option value="false" ${optional === 'false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
-                <option value="shown" ${optional === 'shown' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
-                <option value="hidden" ${optional === 'hidden' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
+                <option value="false" ${optional === "false" ? "selected" : ""}>${gettext("Obligatory field")}</option>
+                <option value="shown" ${optional === "shown" ? "selected" : ""}>${gettext("Optional, shown by default")}</option>
+                <option value="hidden" ${optional === "hidden" ? "selected" : ""}>${gettext("Optional, not shown by default")}</option>
             </select>
         </div>
         ${allowedElementsTemplate({elements})}
         ${allowedMarksTemplate({marks})}
-        <div class="label">${gettext('Language')}
+        <div class="label">${gettext("Language")}
             <select class="language">
-                <option value="false" ${language === false ? "selected" : ""}>${gettext('Document language')}</option>
+                <option value="false" ${language === false ? "selected" : ""}>${gettext("Document language")}</option>
                 ${
     LANGUAGES.map(([code, name]) =>
         `<option value="${code}" ${language === code ? "selected" : ""}>${name}</option>`
-    ).join('')
+    ).join("")
 }
             </select>
         </div>
         <div>
-            <div class="label">${gettext('Initial content')}</div>
+            <div class="label">${gettext("Initial content")}</div>
             <div class="initial"></div>
         </div>
         <div>
-            <div class="label">${gettext('Instructions')}</div>
+            <div class="label">${gettext("Instructions")}</div>
             <div class="instructions"></div>
         </div>
     </div>
@@ -343,9 +343,9 @@ const separatorTemplate = ({
 }) =>
     `<div class="doc-part" data-type="separator_part">
     <div class="doc-part-header">
-        ${gettext('Separator')}
+        ${gettext("Separator")}
         <div class="label">
-            ${gettext('ID')} <input type="text" class="id fw-inline" value="${escapeText(id)}">
+            ${gettext("ID")} <input type="text" class="id fw-inline" value="${escapeText(id)}">
         </div>
     </div>
 </div>`
@@ -360,45 +360,45 @@ const tagsTemplate = ({
 }) =>
     `<div class="doc-part" data-type="tags_part">
     <div class="doc-part-header">
-        ${gettext('Tags')}
+        ${gettext("Tags")}
         <ul class="object-tools right">
             <li>
-                <span class="link configure">${gettext('Configure')}</span>
+                <span class="link configure">${gettext("Configure")}</span>
             </li>
         </ul>
         <div class="label">
-            ${gettext('ID')} <input type="text" class="id fw-inline" value="${escapeText(id)}">
-            ${gettext('Title')} <input type="text" class="title fw-inline" value="${escapeText(title)}">
+            ${gettext("ID")} <input type="text" class="id fw-inline" value="${escapeText(id)}">
+            ${gettext("Title")} <input type="text" class="title fw-inline" value="${escapeText(title)}">
         </div>
     </div>
     <div class="attrs hidden">
-        <div class="label">${gettext('Item title')} <input type="text fw-inline" class="item_title" value="${escapeText(item_title)}"></div>
-        <div class="label">${gettext('Metadata function')}
+        <div class="label">${gettext("Item title")} <input type="text fw-inline" class="item_title" value="${escapeText(item_title)}"></div>
+        <div class="label">${gettext("Metadata function")}
             <select class="metadata">
-                <option value="false" ${metadata === false ? "selected" : ""}>${gettext('None')}</option>
-                <option value="keywords" ${metadata === 'keywords' ? "selected" : ""}>${gettext('Keywords')}</option>
+                <option value="false" ${metadata === false ? "selected" : ""}>${gettext("None")}</option>
+                <option value="keywords" ${metadata === "keywords" ? "selected" : ""}>${gettext("Keywords")}</option>
             </select>
         </div>
-        <div class="label">${gettext('Locking')}
+        <div class="label">${gettext("Locking")}
             <select class="locking">
-                <option value="false" ${locking === 'false' ? "selected" : ""}>${gettext('User can change contents')}</option>
-                <option value="fixed" ${locking === 'fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
-                <option value="start" ${locking === 'start' ? "selected" : ""}>${gettext('User can only add content')}</option>
+                <option value="false" ${locking === "false" ? "selected" : ""}>${gettext("User can change contents")}</option>
+                <option value="fixed" ${locking === "fixed" ? "selected" : ""}>${gettext("User can not change contents")}</option>
+                <option value="start" ${locking === "start" ? "selected" : ""}>${gettext("User can only add content")}</option>
             </select>
         </div>
-        <div class="label">${gettext('Optional')}
+        <div class="label">${gettext("Optional")}
             <select class="optional">
-                <option value="false" ${optional === 'false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
-                <option value="shown" ${optional === 'shown' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
-                <option value="hidden" ${optional === 'hidden' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
+                <option value="false" ${optional === "false" ? "selected" : ""}>${gettext("Obligatory field")}</option>
+                <option value="shown" ${optional === "shown" ? "selected" : ""}>${gettext("Optional, shown by default")}</option>
+                <option value="hidden" ${optional === "hidden" ? "selected" : ""}>${gettext("Optional, not shown by default")}</option>
             </select>
         </div>
         <div>
-            <div class="label">${gettext('Initial content')}</div>
+            <div class="label">${gettext("Initial content")}</div>
             <div class="initial"></div>
         </div>
         <div>
-            <div class="label">${gettext('Instructions')}</div>
+            <div class="label">${gettext("Instructions")}</div>
             <div class="instructions"></div>
         </div>
     </div>
@@ -415,50 +415,50 @@ const tableTemplate = ({
 }) =>
     `<div class="doc-part" data-type="table_part">
     <div class="doc-part-header">
-        ${gettext('Table')}
+        ${gettext("Table")}
         <ul class="object-tools right">
             <li>
-                <span class="link configure">${gettext('Configure')}</span>
+                <span class="link configure">${gettext("Configure")}</span>
             </li>
         </ul>
         <div class="label">
-            ${gettext('ID')} <input type="text" class="id fw-inline" value="${escapeText(id)}">
-            ${gettext('Title')} <input type="text" class="title fw-inline" value="${escapeText(title)}">
+            ${gettext("ID")} <input type="text" class="id fw-inline" value="${escapeText(id)}">
+            ${gettext("Title")} <input type="text" class="title fw-inline" value="${escapeText(title)}">
         </div>
     </div>
     <div class="attrs hidden">
-        <div class="label">${gettext('Locking')}
+        <div class="label">${gettext("Locking")}
             <select class="locking">
-                <option value="false" ${locking === 'false' ? "selected" : ""}>${gettext('User can change contents')}</option>
-                <option value="fixed" ${locking === 'fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
-                <option value="header" ${locking === 'header' ? "selected" : ""}>${gettext('User can not change first row')}</option>
+                <option value="false" ${locking === "false" ? "selected" : ""}>${gettext("User can change contents")}</option>
+                <option value="fixed" ${locking === "fixed" ? "selected" : ""}>${gettext("User can not change contents")}</option>
+                <option value="header" ${locking === "header" ? "selected" : ""}>${gettext("User can not change first row")}</option>
             </select>
         </div>
-        <div class="label">${gettext('Optional')}
+        <div class="label">${gettext("Optional")}
             <select class="optional">
-                <option value="false" ${optional === 'false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
-                <option value="shown" ${optional === 'shown' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
-                <option value="hidden" ${optional === 'hidden' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
+                <option value="false" ${optional === "false" ? "selected" : ""}>${gettext("Obligatory field")}</option>
+                <option value="shown" ${optional === "shown" ? "selected" : ""}>${gettext("Optional, shown by default")}</option>
+                <option value="hidden" ${optional === "hidden" ? "selected" : ""}>${gettext("Optional, not shown by default")}</option>
             </select>
         </div>
         ${allowedElementsTemplate({elements}, true, false)}
         ${allowedMarksTemplate({marks})}
-        <div class="label">${gettext('Language')}
+        <div class="label">${gettext("Language")}
             <select class="language">
-                <option value="false" ${language === false ? "selected" : ""}>${gettext('Document language')}</option>
+                <option value="false" ${language === false ? "selected" : ""}>${gettext("Document language")}</option>
                 ${
     LANGUAGES.map(([code, name]) =>
         `<option value="${code}" ${language === code ? "selected" : ""}>${name}</option>`
-    ).join('')
+    ).join("")
 }
             </select>
         </div>
         <div>
-            <div class="label">${gettext('Initial content')}</div>
+            <div class="label">${gettext("Initial content")}</div>
             <div class="initial"></div>
         </div>
         <div>
-            <div class="label">${gettext('Instructions')}</div>
+            <div class="label">${gettext("Instructions")}</div>
             <div class="instructions"></div>
         </div>
     </div>
@@ -471,23 +471,23 @@ const tocTemplate = ({
 }) =>
     `<div class="doc-part" data-type="table_of_contents">
     <div class="doc-part-header">
-        ${gettext('Table of Contents')}
+        ${gettext("Table of Contents")}
         <ul class="object-tools right">
             <li>
-                <span class="link configure">${gettext('Configure')}</span>
+                <span class="link configure">${gettext("Configure")}</span>
             </li>
         </ul>
         <div class="label">
-            ${gettext('ID')} <input type="text" class="id fw-inline" value="${escapeText(id)}">
-            ${gettext('Title')} <input type="text" class="title fw-inline" value="${escapeText(title)}">
+            ${gettext("ID")} <input type="text" class="id fw-inline" value="${escapeText(id)}">
+            ${gettext("Title")} <input type="text" class="title fw-inline" value="${escapeText(title)}">
         </div>
     </div>
     <div class="attrs hidden">
-        <div class="label">${gettext('Optional')}
+        <div class="label">${gettext("Optional")}
             <select class="optional">
-                <option value="false" ${optional === 'false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
-                <option value="shown" ${optional === 'shown' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
-                <option value="hidden" ${optional === 'hidden' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
+                <option value="false" ${optional === "false" ? "selected" : ""}>${gettext("Obligatory field")}</option>
+                <option value="shown" ${optional === "shown" ? "selected" : ""}>${gettext("Optional, shown by default")}</option>
+                <option value="hidden" ${optional === "hidden" ? "selected" : ""}>${gettext("Optional, not shown by default")}</option>
             </select>
         </div>
     </div>
@@ -498,52 +498,52 @@ const footnoteTemplate = ({
     footnote_marks = ["strong", "em", "underline", "link"]
 }) => `<div class="doc-part attrs">${allowedElementsTemplate({elements: footnote_elements}, false)}${allowedMarksTemplate({marks: footnote_marks})}</div>`
 
-const citationstylesTemplate = ({citationstyles = ['apa']}, allCitationStyles) =>
+const citationstylesTemplate = ({citationstyles = ["apa"]}, allCitationStyles) =>
     `<select multiple size=5>
-${Object.entries(allCitationStyles).map(([key, value]) => `<option value="${key}"${citationstyles.includes(key) ? ' selected' : ''}>${value}</option>`).join('')}
+${Object.entries(allCitationStyles).map(([key, value]) => `<option value="${key}"${citationstyles.includes(key) ? " selected" : ""}>${value}</option>`).join("")}
 </select>`
 
-export const citationstyleTemplate = ({citationstyle = 'apa', citationstyles = ['apa']}, allCitationStyles) => {
+export const citationstyleTemplate = ({citationstyle = "apa", citationstyles = ["apa"]}, allCitationStyles) => {
     if (!citationstyles.includes(citationstyle)) {
         citationstyle = citationstyles[0]
     }
     return `<select>
         ${
     citationstyles.map(
-        key => `<option value="${key}"${citationstyle === key ? ' selected' : ''}>${
+        key => `<option value="${key}"${citationstyle === key ? " selected" : ""}>${
             allCitationStyles[key]
-        }</option>`).join('')}
+        }</option>`).join("")}
     </select>`
 }
 
 const languagesTemplate = ({languages = LANGUAGES.map(lang => lang[0])}) =>
     `<select multiple size=5>
-${LANGUAGES.map(lang => `<option value="${lang[0]}"${languages.includes(lang[0]) ? ' selected' : ''}>${lang[1]}</option>`).join('')}
+${LANGUAGES.map(lang => `<option value="${lang[0]}"${languages.includes(lang[0]) ? " selected" : ""}>${lang[1]}</option>`).join("")}
 </select>`
 
-export const languageTemplate = ({language = 'en-US', languages = LANGUAGES.map(lang => lang[0])}) => {
+export const languageTemplate = ({language = "en-US", languages = LANGUAGES.map(lang => lang[0])}) => {
     if (!languages.includes(language)) {
         language = languages[0]
     }
     return `<select>
-        ${LANGUAGES.filter(lang => languages.includes(lang[0])).map(lang => `<option value="${lang[0]}"${language === lang[0] ? ' selected' : ''}>${lang[1]}</option>`).join('')}
+        ${LANGUAGES.filter(lang => languages.includes(lang[0])).map(lang => `<option value="${lang[0]}"${language === lang[0] ? " selected" : ""}>${lang[1]}</option>`).join("")}
     </select>`
 }
 
 const papersizesTemplate = ({papersizes = PAPER_SIZES.map(size => size[0])}) =>
     `<select multiple size=5>
-${PAPER_SIZES.map(size => `<option value="${size[0]}"${papersizes.includes(size[0]) ? ' selected' : ''}>${size[0]}</option>`).join('')}
+${PAPER_SIZES.map(size => `<option value="${size[0]}"${papersizes.includes(size[0]) ? " selected" : ""}>${size[0]}</option>`).join("")}
 </select>`
 
 const languageSelector = language =>
     `<select>
-${LANGUAGES.map(lang => `<option value="${lang[0]}"${language === lang[0] ? ' selected' : ''}>${lang[1]}</option>`).join('')}
+${LANGUAGES.map(lang => `<option value="${lang[0]}"${language === lang[0] ? " selected" : ""}>${lang[1]}</option>`).join("")}
 </select>`
 
-export const bibliographyHeaderTemplate = ({bibliography_header = {zzz: ''}}) => {
+export const bibliographyHeaderTemplate = ({bibliography_header = {zzz: ""}}) => {
     let translations = Object.entries(bibliography_header)
     if (!translations.length) {
-        translations = [['zzz', '']]
+        translations = [["zzz", ""]]
     }
     return `<table class="fw-dialog-table fw-small input-list-wrapper">${
         translations.map(
@@ -559,7 +559,7 @@ export const bibliographyHeaderTemplate = ({bibliography_header = {zzz: ''}}) =>
                         <span class="fa fa-minus-circle"></span>&nbsp;<span class="fa fa-plus-circle"></span>
                     </td>
                 </tr>`
-        ).join('')
+        ).join("")
     }</table>`
 }
 
@@ -567,56 +567,56 @@ export const bibliographyHeaderTemplate = ({bibliography_header = {zzz: ''}}) =>
 const templateEditorValueTemplate = ({content}) =>
     content.map(docPart => {
         switch (docPart.type) {
-        case 'heading_part':
+        case "heading_part":
             return headingTemplate(docPart.attrs)
-        case 'contributors_part':
+        case "contributors_part":
             return contributorsTemplate(docPart.attrs)
-        case 'richtext_part':
+        case "richtext_part":
             return richtextTemplate(docPart.attrs)
-        case 'tags_part':
+        case "tags_part":
             return tagsTemplate(docPart.attrs)
-        case 'table_part':
+        case "table_part":
             return tableTemplate(docPart.attrs)
-        case 'table_of_contents':
+        case "table_of_contents":
             return tocTemplate(docPart.attrs)
-        case 'separator_part':
+        case "separator_part":
             return separatorTemplate(docPart.attrs)
         default:
-            return ''
+            return ""
         }
-    }).join('')
+    }).join("")
 
 export const documentStylesTemplate = ({documentStyles}) => `${documentStyles.map(
     style => `<button class="fw-green fw-small fw-button ui-button document-style" data-id="${style.pk}">
         ${escapeText(style.fields.title)}
     </button>`
-).join('')}
+).join("")}
 <button class="fw-green fw-small fw-button ui-button document-style" data-id="0">
     <i class="fas fa-plus-circle"></i>
-    ${gettext('Add new document style')}
+    ${gettext("Add new document style")}
 </button>`
 
 export const exportTemplatesTemplate = ({exportTemplates}) => `${exportTemplates.map(
     template => `<button class="fw-green fw-small fw-button ui-button export-template" data-id="${template.pk}">
         ${escapeText(template.fields.title)}
     </button>`
-).join('')}
+).join("")}
 <button class="fw-green fw-small fw-button ui-button export-template" data-id="0">
     <i class="fas fa-plus-circle"></i>
-    ${gettext('Add new export template')}
+    ${gettext("Add new export template")}
 </button>`
 
 export const documentDesignerTemplate = ({id, value, title, documentStyles, exportTemplates, citationStyles}) =>
     `<table class="title_id"><tbody>
-    <tr><td>${gettext('Title')}</td><td><input type="text" class="title vTextField fw-inline" value="${escapeText(title)}"></td></tr>
-    <tr><td>${gettext('ID')}</td><td><input type="text" class="import-id vTextField fw-inline" value="${escapeText(value.attrs.import_id || '')}"></td></tr>
+    <tr><td>${gettext("Title")}</td><td><input type="text" class="title vTextField fw-inline" value="${escapeText(title)}"></td></tr>
+    <tr><td>${gettext("ID")}</td><td><input type="text" class="import-id vTextField fw-inline" value="${escapeText(value.attrs.import_id || "")}"></td></tr>
     </tbody></table>
     <table>
         <thead>
             <tr>
-                <th>${gettext('Element types')}</th>
-                <th>${gettext('Document structure')}</th>
-                <th>${gettext('Delete')}</th>
+                <th>${gettext("Element types")}</th>
+                <th>${gettext("Document structure")}</th>
+                <th>${gettext("Delete")}</th>
             </tr>
         </thead>
         <tbody>
@@ -631,7 +631,7 @@ export const documentDesignerTemplate = ({id, value, title, documentStyles, expo
                     ${separatorTemplate({})}
                 </td>
                 <td class="to-column">
-                    <div class="doc-part fixed" data-type="initial">${gettext('Title')}</div>
+                    <div class="doc-part fixed" data-type="initial">${gettext("Title")}</div>
                     <div class="to-container">${templateEditorValueTemplate({content: value.content || []})}</div>
                 </td>
                 <td class="trash">
@@ -642,14 +642,14 @@ export const documentDesignerTemplate = ({id, value, title, documentStyles, expo
     <table class="fw-data-table">
         <thead>
             <tr>
-                <th>${gettext('Setting')}</th>
-                <th>${gettext('Value')}</th>
+                <th>${gettext("Setting")}</th>
+                <th>${gettext("Value")}</th>
             </tr>
         </thead>
         <tbody>
             <tr>
                 <td>
-                    ${gettext('Footnote specifications')}
+                    ${gettext("Footnote specifications")}
                 </td>
                 <td class="footnote-value">
                     ${footnoteTemplate(value.attrs || {})}
@@ -657,7 +657,7 @@ export const documentDesignerTemplate = ({id, value, title, documentStyles, expo
             </tr>
             <tr>
                 <td>
-                    ${gettext('Available languages')}
+                    ${gettext("Available languages")}
                 </td>
                 <td class="languages-value">
                     ${languagesTemplate(value.attrs || {})}
@@ -665,7 +665,7 @@ export const documentDesignerTemplate = ({id, value, title, documentStyles, expo
             </tr>
             <tr>
                 <td>
-                    ${gettext('Default language')}
+                    ${gettext("Default language")}
                 </td>
                 <td class="language-value">
                     ${languageTemplate(value.attrs || {})}
@@ -673,7 +673,7 @@ export const documentDesignerTemplate = ({id, value, title, documentStyles, expo
             </tr>
             <tr>
                 <td>
-                    ${gettext('Permitted paper sizes')}
+                    ${gettext("Permitted paper sizes")}
                 </td>
                 <td class="papersizes-value">
                     ${papersizesTemplate(value.attrs || {})}
@@ -681,7 +681,7 @@ export const documentDesignerTemplate = ({id, value, title, documentStyles, expo
             </tr>
             <tr>
                 <td>
-                    ${gettext('Custom bibliography header')}
+                    ${gettext("Custom bibliography header")}
                 </td>
                 <td class="bibliography-header-value">
                     ${bibliographyHeaderTemplate(value.attrs || {})}
@@ -689,7 +689,7 @@ export const documentDesignerTemplate = ({id, value, title, documentStyles, expo
             </tr>
             <tr>
                 <td>
-                    ${gettext('Available citation styles')}
+                    ${gettext("Available citation styles")}
                 </td>
                 <td class="citationstyles-value">
                     ${citationstylesTemplate(value.attrs || {}, citationStyles)}
@@ -697,7 +697,7 @@ export const documentDesignerTemplate = ({id, value, title, documentStyles, expo
             </tr>
             <tr>
                 <td>
-                    ${gettext('Default citation style')}
+                    ${gettext("Default citation style")}
                 </td>
                 <td class="citationstyle-value">
                     ${citationstyleTemplate(value.attrs || {}, citationStyles)}
@@ -707,7 +707,7 @@ export const documentDesignerTemplate = ({id, value, title, documentStyles, expo
     id ?
         `<tr>
                     <td>
-                        ${gettext('Document styles')}
+                        ${gettext("Document styles")}
                     </td>
                     <td>
                         <div class="ui-dialog-buttonset document-styles">
@@ -717,7 +717,7 @@ export const documentDesignerTemplate = ({id, value, title, documentStyles, expo
                 </tr>
                 <tr>
                     <td>
-                        ${gettext('Export templates')}
+                        ${gettext("Export templates")}
                     </td>
                     <td>
                         <div class="ui-dialog-buttonset export-templates">
@@ -725,7 +725,7 @@ export const documentDesignerTemplate = ({id, value, title, documentStyles, expo
                         </div>
                     </td>
                 </tr>` :
-        ''
+        ""
 }
         </tbody>
     </table>`

@@ -12,18 +12,18 @@ export class DocumentTemplateListAdmin {
     init() {
         if (
             window.location.search.length &&
-            window.location.search.includes('debug=true')
+            window.location.search.includes("debug=true")
         ) {
             return
         }
         ensureCSS([
-            'document_template_admin.css',
-            'admin.css'
+            "document_template_admin.css",
+            "admin.css"
         ])
 
         whenReady().then(() => {
-            this.objectTools = document.querySelector('ul.object-tools')
-            this.actionDropdown = document.querySelector('select[name="action"]')
+            this.objectTools = document.querySelector("ul.object-tools")
+            this.actionDropdown = document.querySelector("select[name=\"action\"]")
             this.modifyDOM()
             this.bind()
         })
@@ -31,39 +31,39 @@ export class DocumentTemplateListAdmin {
 
     modifyDOM() {
         this.objectTools.insertAdjacentHTML(
-            'beforeend',
+            "beforeend",
             `<li>
-                <span class="link" id="upload-template">${gettext('Upload FIDUSTEMPLATE')}</span>
+                <span class="link" id="upload-template">${gettext("Upload FIDUSTEMPLATE")}</span>
             </li>`
         )
         this.actionDropdown.insertAdjacentHTML(
-            'beforeend',
-            `<option value="download">${gettext('Download selected as FIDUSTEMPLATE')}</option>`
+            "beforeend",
+            `<option value="download">${gettext("Download selected as FIDUSTEMPLATE")}</option>`
         )
     }
 
     showErrors(errors) {
-        this.templateDesignerBlock.querySelector('ul.errorlist').innerHTML =
-            Object.values(errors).map(error => `<li>${escapeText(error)}</li>`).join('')
+        this.templateDesignerBlock.querySelector("ul.errorlist").innerHTML =
+            Object.values(errors).map(error => `<li>${escapeText(error)}</li>`).join("")
     }
 
 
     bind() {
 
-        document.body.addEventListener('click', event => {
+        document.body.addEventListener("click", event => {
             const el = {}
             switch (true) {
-            case findTarget(event, '#upload-template', el):
+            case findTarget(event, "#upload-template", el):
             {
                 event.preventDefault()
-                const fileSelector = document.createElement('input')
-                fileSelector.id = 'fidus-template-uploader'
-                fileSelector.setAttribute('type', 'file')
-                fileSelector.setAttribute('multiple', '')
-                fileSelector.setAttribute('accept', '.fidustemplate')
+                const fileSelector = document.createElement("input")
+                fileSelector.id = "fidus-template-uploader"
+                fileSelector.setAttribute("type", "file")
+                fileSelector.setAttribute("multiple", "")
+                fileSelector.setAttribute("accept", ".fidustemplate")
                 document.body.appendChild(fileSelector)
                 fileSelector.click()
-                fileSelector.addEventListener('change', () => {
+                fileSelector.addEventListener("change", () => {
                     const files = Array.from(fileSelector.files).filter(file => {
                         //TODO: This is an arbitrary size. What should be done with huge import files?
                         if (file.length === 0 || file.size > 104857600) {
@@ -80,10 +80,10 @@ export class DocumentTemplateListAdmin {
                 })
                 break
             }
-            case findTarget(event, 'button[type=submit]', el):
-                if (this.actionDropdown.value === 'download') {
+            case findTarget(event, "button[type=submit]", el):
+                if (this.actionDropdown.value === "download") {
                     event.preventDefault()
-                    const ids = Array.from(document.querySelectorAll('#result_list tr.selected input[type="checkbox"]')).map(
+                    const ids = Array.from(document.querySelectorAll("#result_list tr.selected input[type=\"checkbox\"]")).map(
                         el => parseInt(el.value)
                     )
                     ids.forEach(id => {

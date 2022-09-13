@@ -1,8 +1,8 @@
 // Takes any richtext text field as used in bibliography and returns the text contents
 export function litToText(litStringArray) {
-    let outText = ''
+    let outText = ""
     litStringArray.forEach((litString) => {
-        if (litString.type === 'text') {
+        if (litString.type === "text") {
             outText += litString.text
         }
     })
@@ -10,14 +10,14 @@ export function litToText(litStringArray) {
 }
 
 function nameListItemToString(nameListItem) {
-    let nameString = ''
-    if (nameListItem['family']) {
-        nameString += litToText(nameListItem['family'])
-        if (nameListItem['given']) {
-            nameString += `, ${litToText(nameListItem['given'])}`
+    let nameString = ""
+    if (nameListItem["family"]) {
+        nameString += litToText(nameListItem["family"])
+        if (nameListItem["given"]) {
+            nameString += `, ${litToText(nameListItem["given"])}`
         }
-    } else if (nameListItem['literal']) {
-        nameString += litToText(nameListItem['literal'])
+    } else if (nameListItem["literal"]) {
+        nameString += litToText(nameListItem["literal"])
     }
     return nameString
 }
@@ -26,7 +26,7 @@ export function nameToText(nameList) {
     let nameString
     switch (nameList.length) {
     case 0:
-        nameString = ''
+        nameString = ""
         break
     case 1:
         nameString = nameListItemToString(nameList[0])
@@ -35,7 +35,7 @@ export function nameToText(nameList) {
         nameString = `${
             nameListItemToString(nameList[0])
         } ${
-            gettext('and')
+            gettext("and")
         } ${
             nameListItemToString(nameList[1])
         }`
@@ -44,7 +44,7 @@ export function nameToText(nameList) {
         nameString = `${
             nameListItemToString(nameList[0])
         } ${
-            gettext('and others')
+            gettext("and others")
         }`
         break
     }

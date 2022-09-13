@@ -3,7 +3,7 @@ import {marks} from "prosemirror-schema-basic"
 import {Schema} from "prosemirror-model"
 
 const doc = {
-    content: 'literal'
+    content: "literal"
 }
 
 export const litSchema = new Schema({

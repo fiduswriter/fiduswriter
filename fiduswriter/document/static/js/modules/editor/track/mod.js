@@ -17,29 +17,29 @@ export class ModTrack {
 
     bindEvents() {
         // Bind all the click events related to track changes
-        document.body.addEventListener('click', event => {
+        document.body.addEventListener("click", event => {
             const el = {}
             switch (true) {
-            case findTarget(event, '.track-accept', el): {
+            case findTarget(event, ".track-accept", el): {
                 let boxNumber = 0
-                let seekItem = el.target.closest('.margin-box')
+                let seekItem = el.target.closest(".margin-box")
                 while (seekItem.previousElementSibling) {
                     boxNumber += 1
                     seekItem = seekItem.previousElementSibling
                 }
                 const box = this.editor.mod.marginboxes.marginBoxes[boxNumber]
-                accept(el.target.dataset.type, box.pos, box.view === 'main' ? this.editor.view : this.editor.mod.footnotes.fnEditor.view)
+                accept(el.target.dataset.type, box.pos, box.view === "main" ? this.editor.view : this.editor.mod.footnotes.fnEditor.view)
                 break
             }
-            case findTarget(event, '.track-reject', el): {
+            case findTarget(event, ".track-reject", el): {
                 let boxNumber = 0
-                let seekItem = el.target.closest('.margin-box')
+                let seekItem = el.target.closest(".margin-box")
                 while (seekItem.previousElementSibling) {
                     boxNumber += 1
                     seekItem = seekItem.previousElementSibling
                 }
                 const box = this.editor.mod.marginboxes.marginBoxes[boxNumber]
-                reject(el.target.dataset.type, box.pos, box.view === 'main' ? this.editor.view : this.editor.mod.footnotes.fnEditor.view)
+                reject(el.target.dataset.type, box.pos, box.view === "main" ? this.editor.view : this.editor.mod.footnotes.fnEditor.view)
                 break
             }
             default:
@@ -50,8 +50,8 @@ export class ModTrack {
 
     activateTrack(viewName, type, pos) {
         this.editor.mod.comments.interactions.deactivateAll()
-        const view = viewName === 'main' ? this.editor.view : this.editor.mod.footnotes.fnEditor.view
-        const otherView = viewName === 'main' ? this.editor.mod.footnotes.fnEditor.view : this.editor.view
+        const view = viewName === "main" ? this.editor.view : this.editor.mod.footnotes.fnEditor.view
+        const otherView = viewName === "main" ? this.editor.mod.footnotes.fnEditor.view : this.editor.view
         // remove all selected changes in other view
         otherView.dispatch(deactivateAllSelectedChanges(otherView.state.tr))
         // activate selected change in relevant view

@@ -1,8 +1,8 @@
 import {Plugin, PluginKey, Selection} from "prosemirror-state"
-import {ContentMenu} from '../../common'
+import {ContentMenu} from "../../common"
 import {WRITE_ROLES} from "../"
 
-const key = new PluginKey('table')
+const key = new PluginKey("table")
 
 class TableView {
     constructor(node, view, getPos, options) {
@@ -11,13 +11,13 @@ class TableView {
         this.getPos = getPos
         this.options = options
         this.dom = document.createElement("div")
-        this.dom.classList.add(`table-${node.attrs.width}`, `table-${node.attrs.aligned}`, 'content-container')
+        this.dom.classList.add(`table-${node.attrs.width}`, `table-${node.attrs.aligned}`, "content-container")
         this.dom.id = node.attrs.id
         this.menuButton = document.createElement("button")
-        this.menuButton.classList.add('content-menu-btn')
-        this.menuButton.innerHTML = '<span class="dot-menu-icon"><i class="fa fa-ellipsis-v"></i></span>'
+        this.menuButton.classList.add("content-menu-btn")
+        this.menuButton.innerHTML = "<span class=\"dot-menu-icon\"><i class=\"fa fa-ellipsis-v\"></i></span>"
         this.dom.appendChild(this.menuButton)
-        const dom = document.createElement('table')
+        const dom = document.createElement("table")
         if (node.attrs.track.length) {
             dom.dataset.track = JSON.stringify(node.attrs.track)
         }
@@ -36,7 +36,7 @@ class TableView {
 
     stopEvent(event) {
         let stopped = false
-        if (event.type === 'mousedown' && event.composedPath().includes(this.menuButton)) {
+        if (event.type === "mousedown" && event.composedPath().includes(this.menuButton)) {
             stopped = true
             if (!isSelectedTableClicked(this.view.state, this.getPos())) {
                 const tr = this.view.state.tr
@@ -68,7 +68,7 @@ class TableCaptionView {
         this.options = options
 
         this.dom = document.createElement("caption")
-        this.dom.innerHTML = '<span class="text"></span>'
+        this.dom.innerHTML = "<span class=\"text\"></span>"
         this.contentDOM = this.dom.lastElementChild
     }
 }
@@ -89,10 +89,10 @@ export const tablePlugin = function(options) {
         state: {
             init(_config, _state) {
                 if (WRITE_ROLES.includes(options.editor.docInfo.access_rights)) {
-                    this.spec.props.nodeViews['table'] =
+                    this.spec.props.nodeViews["table"] =
                         (node, view, getPos) => new TableView(node, view, getPos, options)
                 }
-                this.spec.props.nodeViews['table_caption'] =
+                this.spec.props.nodeViews["table_caption"] =
                     (node, view, getPos) => new TableCaptionView(node, view, getPos, options)
 
                 return {}

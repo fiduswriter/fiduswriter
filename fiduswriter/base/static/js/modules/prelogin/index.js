@@ -9,38 +9,38 @@ export class PreloginPage {
         this.app = app
         this.language = language
         this.pluginLoaders = {}
-        this.title = ''
-        this.contents = ''
+        this.title = ""
+        this.contents = ""
         this.footerLinks = [
             {
                 text: gettext("Terms and Conditions"),
-                link: '/pages/terms/'
+                link: "/pages/terms/"
             },
             {
                 text: gettext("Privacy policy"),
-                link: '/pages/privacy/'
+                link: "/pages/privacy/"
             },
             {
                 text: gettext("Equations and Math with MathLive"),
-                link: 'https://mathlive.io/',
+                link: "https://mathlive.io/",
                 external: true
             },
             {
                 text: gettext("Citations with Citation Style Language"),
-                link: 'https://citationstyles.org/',
+                link: "https://citationstyles.org/",
                 external: true
             },
             {
                 text: gettext("Editing with ProseMirror"),
-                link: 'https://prosemirror.net/',
+                link: "https://prosemirror.net/",
                 external: true
             }
         ]
         this.headerLinks = [
             {
-                type: 'button',
-                text: gettext('Log in'),
-                link: '/'
+                type: "button",
+                text: gettext("Log in"),
+                link: "/"
             }
         ]
     }
@@ -51,7 +51,7 @@ export class PreloginPage {
 
         // Plugins for the specific page
         Object.keys(this.pluginLoaders).forEach(plugin => {
-            if (typeof this.pluginLoaders[plugin] === 'function') {
+            if (typeof this.pluginLoaders[plugin] === "function") {
                 this.plugins[plugin] = new this.pluginLoaders[plugin]({page: this})
                 this.plugins[plugin].init()
             }
@@ -59,7 +59,7 @@ export class PreloginPage {
 
         // General plugins for all prelogin pages
         Object.keys(plugins).forEach(plugin => {
-            if (typeof plugins[plugin] === 'function') {
+            if (typeof plugins[plugin] === "function") {
                 this.plugins[plugin] = new plugins[plugin]({page: this})
                 this.plugins[plugin].init()
             }
@@ -75,17 +75,17 @@ export class PreloginPage {
     }
 
     bind() {
-        this.dom.querySelector('.fw-login-logo').addEventListener('click', () => this.app.goTo('/'))
-        this.dom.querySelector('#lang-selection').addEventListener('change', event => {
+        this.dom.querySelector(".fw-login-logo").addEventListener("click", () => this.app.goTo("/"))
+        this.dom.querySelector("#lang-selection").addEventListener("change", event => {
             this.language = event.target.value
             return setLanguage(this.app.config, this.language)
         })
     }
 
     render() {
-        this.dom = document.createElement('body')
-        this.dom.classList.add('prelogin')
-        this.dom.classList.add('scrollable')
+        this.dom = document.createElement("body")
+        this.dom.classList.add("prelogin")
+        this.dom.classList.add("scrollable")
         this.dom.innerHTML = basePreloginTemplate({
             language: this.language,
             headerLinks: this.headerLinks,
@@ -94,7 +94,7 @@ export class PreloginPage {
         })
         document.body = this.dom
         ensureCSS([
-            'prelogin.css'
+            "prelogin.css"
         ])
         setDocTitle(this.title, this.app)
         const feedbackTab = new FeedbackTab()

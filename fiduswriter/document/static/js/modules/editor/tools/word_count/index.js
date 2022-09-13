@@ -11,9 +11,9 @@ export class WordCountDialog {
 
     init() {
         const dialog = new Dialog({
-            title: gettext('Word counter'),
+            title: gettext("Word counter"),
             body: wordCounterDialogTemplate(this.countWords()),
-            buttons: [{type: 'close'}],
+            buttons: [{type: "close"}],
             canEscape: true
         })
         dialog.open()
@@ -22,12 +22,12 @@ export class WordCountDialog {
     countWords() {
         const textContent = getNonDeletedTextContent(this.editor.view.state.doc),
             footnoteContent = getNonDeletedTextContent(this.editor.mod.footnotes.fnEditor.view.state.doc),
-            bibliographyContent = document.querySelector('.article-bibliography').textContent
-        const docContent = textContent + ' ' + footnoteContent + ' ' + bibliographyContent
-        const docNumChars = docContent.split('\n').join('').length - 2 // Subtract two for added spaces
+            bibliographyContent = document.querySelector(".article-bibliography").textContent
+        const docContent = textContent + " " + footnoteContent + " " + bibliographyContent
+        const docNumChars = docContent.split("\n").join("").length - 2 // Subtract two for added spaces
         const docWords = docContent.split(/[\n ]+/)
 
-        const docNumNoSpace = docWords.join('').length
+        const docNumNoSpace = docWords.join("").length
         const docNumWords = docNumNoSpace ? docWords.length : 0
 
         const selectionContent = getNonDeletedTextContent(
@@ -36,9 +36,9 @@ export class WordCountDialog {
                 this.editor.currentView.state.selection.to
             )
         )
-        const selectionNumChars = selectionContent.split('\n').join('').length
+        const selectionNumChars = selectionContent.split("\n").join("").length
         const selectionWords = selectionContent.split(/[\n ]+/)
-        const selectionNumNoSpace = selectionWords.join('').length
+        const selectionNumNoSpace = selectionWords.join("").length
         const selectionNumWords = selectionNumNoSpace ? selectionWords.length : 0
 
         return {

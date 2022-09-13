@@ -14,7 +14,7 @@ export class ImageDB {
 
         activateWait()
 
-        return postJson('/api/usermedia/images/').then(
+        return postJson("/api/usermedia/images/").then(
             ({json}) => {
                 this.cats = json.imageCategories
                 json.images.forEach(
@@ -35,7 +35,7 @@ export class ImageDB {
         })
 
         return postJson(
-            '/api/usermedia/save/',
+            "/api/usermedia/save/",
             postData
         ).then(
             ({json}) => {
@@ -50,11 +50,11 @@ export class ImageDB {
         ).catch(
             error => {
                 if (error.status === 413) {
-                    addAlert('error', `${gettext('Image is larger than the maximum permitted size')}${settings_MEDIA_MAX_SIZE ? `: ${parseInt(settings_MEDIA_MAX_SIZE / 1000000)}MB` : '.'}`)
+                    addAlert("error", `${gettext("Image is larger than the maximum permitted size")}${settings_MEDIA_MAX_SIZE ? `: ${parseInt(settings_MEDIA_MAX_SIZE / 1000000)}MB` : "."}`)
                 } else if (error.message) {
-                    addAlert('error', gettext(error.message))
+                    addAlert("error", gettext(error.message))
                 } else {
-                    addAlert('error', gettext(error.statusText))
+                    addAlert("error", gettext(error.statusText))
                 }
                 deactivateWait()
                 throw (error)

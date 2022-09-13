@@ -11,8 +11,8 @@ export class DocxExporterMetadata {
             authors: this.docContent.content.reduce(
                 (authors, part) => {
                     if (
-                        part.type === 'contributors_part' &&
-                        part.attrs.metadata === 'authors' &&
+                        part.type === "contributors_part" &&
+                        part.attrs.metadata === "authors" &&
                         part.content
                     ) {
                         return authors.concat(part.content.map(authorNode => authorNode.attrs))
@@ -24,8 +24,8 @@ export class DocxExporterMetadata {
             keywords: this.docContent.content.reduce(
                 (keywords, part) => {
                     if (
-                        part.type === 'tags_part' &&
-                        part.attrs.metadata === 'keywords' &&
+                        part.type === "tags_part" &&
+                        part.attrs.metadata === "keywords" &&
                         part.content
                     ) {
                         return keywords.concat(part.content.map(keywordNode => keywordNode.attrs.tag))
@@ -50,13 +50,13 @@ export class DocxExporterMetadata {
 
 
     addMetadata() {
-        const corePropertiesEl = this.coreXml.querySelector('coreProperties')
+        const corePropertiesEl = this.coreXml.querySelector("coreProperties")
 
         // Title
-        let titleEl = this.coreXml.querySelector('title')
+        let titleEl = this.coreXml.querySelector("title")
         if (!titleEl) {
-            corePropertiesEl.insertAdjacentHTML('beforeEnd', '<dc:title></dc:title>')
-            titleEl = this.coreXml.querySelector('title')
+            corePropertiesEl.insertAdjacentHTML("beforeEnd", "<dc:title></dc:title>")
+            titleEl = this.coreXml.querySelector("title")
         }
         titleEl.innerHTML = escapeText(this.metadata.title)
 
@@ -74,20 +74,20 @@ export class DocxExporterMetadata {
                 // We have an institution but no names. Use institution as name.
                 nameParts.push(author.institution)
             }
-            return nameParts.join(' ')
+            return nameParts.join(" ")
         })
-        const lastAuthor = authors.length ? escapeText(authors[0]) : gettext('Unknown')
-        const allAuthors = authors.length ? escapeText(authors.join(';')) : gettext('Unknown')
-        let allAuthorsEl = this.coreXml.querySelector('creator')
+        const lastAuthor = authors.length ? escapeText(authors[0]) : gettext("Unknown")
+        const allAuthors = authors.length ? escapeText(authors.join(";")) : gettext("Unknown")
+        let allAuthorsEl = this.coreXml.querySelector("creator")
         if (!allAuthorsEl) {
-            corePropertiesEl.insertAdjacentHTML('beforeEnd', '<dc:creator></dc:creator>')
-            allAuthorsEl = this.coreXml.querySelector('creator')
+            corePropertiesEl.insertAdjacentHTML("beforeEnd", "<dc:creator></dc:creator>")
+            allAuthorsEl = this.coreXml.querySelector("creator")
         }
         allAuthorsEl.innerHTML = allAuthors
-        let lastAuthorEl = this.coreXml.querySelector('lastModifiedBy')
+        let lastAuthorEl = this.coreXml.querySelector("lastModifiedBy")
         if (!lastAuthorEl) {
-            corePropertiesEl.insertAdjacentHTML('beforeEnd', '<dc:lastModifiedBy></dc:lastModifiedBy>')
-            lastAuthorEl = this.coreXml.querySelector('lastModifiedBy')
+            corePropertiesEl.insertAdjacentHTML("beforeEnd", "<dc:lastModifiedBy></dc:lastModifiedBy>")
+            lastAuthorEl = this.coreXml.querySelector("lastModifiedBy")
         }
         lastAuthorEl.innerHTML = lastAuthor
 
@@ -95,12 +95,12 @@ export class DocxExporterMetadata {
         if (this.metadata.keywords.length) {
             // It is not really clear how keywords should be separated in DOCX files,
             // so we use ", ".
-            const keywordsString = escapeText(this.metadata.keywords.join(', '))
+            const keywordsString = escapeText(this.metadata.keywords.join(", "))
 
-            let keywordsEl = this.coreXml.querySelector('keywords')
+            let keywordsEl = this.coreXml.querySelector("keywords")
             if (!keywordsEl) {
-                corePropertiesEl.insertAdjacentHTML('beforeEnd', '<cp:keywords></cp:keywords>')
-                keywordsEl = this.coreXml.querySelector('keywords')
+                corePropertiesEl.insertAdjacentHTML("beforeEnd", "<cp:keywords></cp:keywords>")
+                keywordsEl = this.coreXml.querySelector("keywords")
             }
             keywordsEl.innerHTML = keywordsString
         }
@@ -108,13 +108,13 @@ export class DocxExporterMetadata {
 
         // time
         const date = new Date()
-        const dateString = date.toISOString().split('.')[0] + 'Z'
-        const createdEl = this.coreXml.querySelector('created')
+        const dateString = date.toISOString().split(".")[0] + "Z"
+        const createdEl = this.coreXml.querySelector("created")
         createdEl.innerHTML = dateString
-        let modifiedEl = this.coreXml.querySelector('modified')
+        let modifiedEl = this.coreXml.querySelector("modified")
         if (!modifiedEl) {
-            corePropertiesEl.insertAdjacentHTML('beforeEnd', '<dcterms:modified xsi:type="dcterms:W3CDTF"></dcterms:modified>')
-            modifiedEl = this.coreXml.querySelector('modified')
+            corePropertiesEl.insertAdjacentHTML("beforeEnd", "<dcterms:modified xsi:type=\"dcterms:W3CDTF\"></dcterms:modified>")
+            modifiedEl = this.coreXml.querySelector("modified")
         }
         modifiedEl.innerHTML = dateString
     }

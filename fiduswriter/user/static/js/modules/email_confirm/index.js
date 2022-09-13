@@ -7,7 +7,7 @@ export class EmailConfirm extends PreloginPage {
     constructor({app, language}, key) {
         super({app, language})
 
-        this.title = gettext('Confirm Email')
+        this.title = gettext("Confirm Email")
         this.pluginLoaders = pluginLoaders
 
         this.key = key
@@ -15,8 +15,8 @@ export class EmailConfirm extends PreloginPage {
         this.validKey = false
         this.loggedIn = false
         this.verified = false
-        this.username = ''
-        this.email = ''
+        this.username = ""
+        this.email = ""
 
         this.submissionReady = false
         this.formChecks = []
@@ -36,7 +36,7 @@ export class EmailConfirm extends PreloginPage {
     }
 
     getConfirmData() {
-        return postJson('/api/user/get_confirmkey_data/', {key: this.key}).then(
+        return postJson("/api/user/get_confirmkey_data/", {key: this.key}).then(
             ({json}) => {
                 this.username = json.username
                 this.email = json.email
@@ -54,14 +54,14 @@ export class EmailConfirm extends PreloginPage {
         if (!this.verified) {
             if (settings_TEST_SERVER) {
                 this.formChecks.push(
-                    () => document.getElementById('test-check').matches(':checked')
+                    () => document.getElementById("test-check").matches(":checked")
                 )
                 this.confirmQuestionsTemplates.unshift(
                     testServerQuestionTemplate
                 )
             }
             this.formChecks.push(
-                () => document.getElementById('terms-check').matches(':checked')
+                () => document.getElementById("terms-check").matches(":checked")
             )
             this.confirmQuestionsTemplates.unshift(checkTermsTemplate)
         }
@@ -78,23 +78,23 @@ export class EmailConfirm extends PreloginPage {
     bind() {
         super.bind()
         if (!this.formChecks.length) {
-            document.getElementById('submit').removeAttribute("disabled")
+            document.getElementById("submit").removeAttribute("disabled")
             this.submissionReady = true
         }
-        document.querySelectorAll('.checker').forEach(el => el.addEventListener(
-            'click',
+        document.querySelectorAll(".checker").forEach(el => el.addEventListener(
+            "click",
             () => {
                 if (this.formChecks.every(check => check())) {
-                    document.getElementById('submit').removeAttribute("disabled")
+                    document.getElementById("submit").removeAttribute("disabled")
                     this.submissionReady = true
                 } else {
-                    document.getElementById('submit').setAttribute("disabled", "disabled")
+                    document.getElementById("submit").setAttribute("disabled", "disabled")
                     this.submissionReady = false
                 }
             }
         ))
-        const submissionButton = document.getElementById('submit')
-        submissionButton.addEventListener('click', () => {
+        const submissionButton = document.getElementById("submit")
+        submissionButton.addEventListener("click", () => {
             if (!this.submissionReady) {
                 return
             }
@@ -107,11 +107,11 @@ export class EmailConfirm extends PreloginPage {
                         if (emailObject) {
                             emailObject.verified = true
                         }
-                        return this.app.goTo('/user/profile/').then(
-                            () => addAlert('info', gettext('Email verified!'))
+                        return this.app.goTo("/user/profile/").then(
+                            () => addAlert("info", gettext("Email verified!"))
                         )
                     } else {
-                        const contentsDOM = document.querySelector('.fw-contents')
+                        const contentsDOM = document.querySelector(".fw-contents")
                         contentsDOM.innerHTML = verifiedAccountTemplate()
                     }
                 }

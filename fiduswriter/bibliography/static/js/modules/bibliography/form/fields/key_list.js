@@ -2,7 +2,7 @@ import {KeyFieldForm} from "./key"
 import {noSpaceTmp} from "../../../common"
 
 export class KeyListForm {
-    constructor(dom, initialValue = [''], unused, fieldType = undefined) {
+    constructor(dom, initialValue = [""], unused, fieldType = undefined) {
         this.currentValue = initialValue
         this.dom = dom
         this.fieldType = fieldType
@@ -14,7 +14,7 @@ export class KeyListForm {
 
     drawForm() {
         this.fields = []
-        this.dom.innerHTML = '<table class="input-list-wrapper"><tbody></tbody></table>'
+        this.dom.innerHTML = "<table class=\"input-list-wrapper\"><tbody></tbody></table>"
         this.currentValue.forEach((fieldValue, index) => {
             this.addField(fieldValue, index)
         })
@@ -22,7 +22,7 @@ export class KeyListForm {
 
     addField(fieldValue, index) {
         this.dom.firstChild.firstChild.insertAdjacentHTML(
-            'beforeend',
+            "beforeend",
             noSpaceTmp`
             <tr>
                 <td></td>
@@ -38,26 +38,26 @@ export class KeyListForm {
         this.fields.push(fieldHandler)
 
         // click on plus
-        const addItemEl = fieldDOM.querySelector('.fa-plus-circle')
-        addItemEl.addEventListener('click', () => {
+        const addItemEl = fieldDOM.querySelector(".fa-plus-circle")
+        addItemEl.addEventListener("click", () => {
             if (!this.value) {
                 return
             }
             this.currentValue = this.value
-            this.currentValue.splice(index + 1, 0, '')
+            this.currentValue.splice(index + 1, 0, "")
             this.drawForm()
         })
 
         // Click on minus
-        const removeItemEl = fieldDOM.querySelector('.fa-minus-circle')
-        removeItemEl.addEventListener('click', () => {
+        const removeItemEl = fieldDOM.querySelector(".fa-minus-circle")
+        removeItemEl.addEventListener("click", () => {
             if (!this.value) {
                 return
             }
             this.currentValue = this.value
             this.currentValue.splice(index, 1)
             if (this.currentValue.length === 0) {
-                this.currentValue = ['']
+                this.currentValue = [""]
             }
             this.drawForm()
         })

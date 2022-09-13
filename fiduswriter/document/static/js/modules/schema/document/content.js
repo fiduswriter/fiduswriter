@@ -13,7 +13,7 @@ export const contributor = {
         institution: {default: false}
     },
     parseDOM: [{
-        tag: 'span.contributor',
+        tag: "span.contributor",
         getAttrs(dom) {
             return {
                 firstname: dom.dataset.firstname,
@@ -24,8 +24,8 @@ export const contributor = {
         }
     }],
     toDOM(node) {
-        const dom = document.createElement('span')
-        dom.classList.add('contributor')
+        const dom = document.createElement("span")
+        dom.classList.add("contributor")
         dom.dataset.firstname = node.attrs.firstname
         dom.dataset.lastname = node.attrs.lastname
         dom.dataset.email = node.attrs.email
@@ -38,13 +38,13 @@ export const contributor = {
             content.push(escapeText(node.attrs.lastname))
         }
         if (node.attrs.email) {
-            content.push(`<i>${gettext('Email')}: ${escapeText(node.attrs.email)}</i>`)
+            content.push(`<i>${gettext("Email")}: ${escapeText(node.attrs.email)}</i>`)
         }
         if (node.attrs.institution) {
             content.push(`(${escapeText(node.attrs.institution)})`)
         }
 
-        dom.innerHTML = content.join(' ')
+        dom.innerHTML = content.join(" ")
 
         return dom
     }
@@ -56,11 +56,11 @@ export const tag = {
     draggable: true,
     attrs: {
         tag: {
-            default: ''
+            default: ""
         }
     },
     parseDOM: [{
-        tag: 'span.tag',
+        tag: "span.tag",
         getAttrs(dom) {
             return {
                 tag: dom.innerText
@@ -68,7 +68,7 @@ export const tag = {
         }
     }],
     toDOM(node) {
-        return ["span", {class: 'tag'}, node.attrs.tag]
+        return ["span", {class: "tag"}, node.attrs.tag]
     }
 }
 
@@ -79,7 +79,7 @@ export const footnote = {
     attrs: {
         footnote: {
             default: [{
-                type: 'paragraph'
+                type: "paragraph"
             }]
         }
     },
@@ -95,7 +95,7 @@ export const footnote = {
         const dom = document.createElement("span")
         dom.classList.add("footnote-marker")
         dom.dataset.footnote = fnNodeToHtml(node.attrs.footnote)
-        dom.innerHTML = '&nbsp;'
+        dom.innerHTML = "&nbsp;"
         return dom
     }
 }
@@ -121,7 +121,7 @@ export const code_block = {
         }
     }],
     toDOM(node) {
-        const attrs = node.attrs.track.length ? {'data-track': JSON.stringify(node.attrs.track)} : {}
+        const attrs = node.attrs.track.length ? {"data-track": JSON.stringify(node.attrs.track)} : {}
         return ["pre", attrs, ["code", 0]]
     }
 }

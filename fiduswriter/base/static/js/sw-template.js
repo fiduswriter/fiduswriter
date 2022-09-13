@@ -5,7 +5,7 @@ const reg_exp_font = new RegExp("(https?:\/\/.*\.(?:woff|woff2|ttf))") // eslint
 const reg_exp_docx = new RegExp("(https?:\/\/.*\.(?:docx))") // eslint-disable-line
 
 
-self.addEventListener('activate', _event => {
+self.addEventListener("activate", _event => {
     self.caches.keys().then((names) => {
         if (names == secondary_cache_name) {
             caches.delete(names)
@@ -13,7 +13,7 @@ self.addEventListener('activate', _event => {
     })
 })
 
-self.addEventListener('fetch', function(event) {
+self.addEventListener("fetch", function(event) {
     const url = event.request.url
     if ((reg_exp_img.test(url) || reg_exp_font.test(url) || reg_exp_docx.test(url)) && event.request.method == "GET") {
         event.respondWith(

@@ -10,7 +10,7 @@ export class ErrorHook {
     init() {
         window.onerror = (msg, url, lineNumber, columnNumber, errorObj) => this.onError(msg, url, lineNumber, columnNumber, errorObj)
         if (window.addEventListener) {
-            window.addEventListener('unhandledrejection', rejection => this.onUnhandledRejection(rejection))
+            window.addEventListener("unhandledrejection", rejection => this.onUnhandledRejection(rejection))
         }
 
     }
@@ -19,8 +19,8 @@ export class ErrorHook {
         const xhr = new XMLHttpRequest()
 
         xhr.open("POST", "/api/django_js_error_hook/", true)
-        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
-        const cookie = getCookie('csrftoken')
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+        const cookie = getCookie("csrftoken")
         if (cookie) {
             xhr.setRequestHeader("X-CSRFToken", cookie)
         }
@@ -29,15 +29,15 @@ export class ErrorHook {
             details
         }
         for (const key in data) {
-            query.push(encodeURIComponent(key) + '=' + encodeURIComponent(data[key]))
+            query.push(encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
         }
-        xhr.send(query.join('&'))
+        xhr.send(query.join("&"))
     }
 
     onError(msg, url, lineNumber, columnNumber, errorObj) {
         if (settings_SOURCE_MAPS && errorObj) {
             StackTrace.fromError(errorObj).then(
-                stackFrames => this.logError(msg, url, lineNumber, columnNumber, errorObj, stackFrames.map(sf => sf.toString()).join('\n'))
+                stackFrames => this.logError(msg, url, lineNumber, columnNumber, errorObj, stackFrames.map(sf => sf.toString()).join("\n"))
             ).catch(
                 () => this.logError(msg, url, lineNumber, columnNumber, errorObj)
             )
@@ -48,7 +48,7 @@ export class ErrorHook {
 
     logError(msg, url, lineNumber, columnNumber, errorObj, mappedStack = false) {
 
-        let logMessage = url + ': ' + lineNumber + ': ' + msg
+        let logMessage = url + ": " + lineNumber + ": " + msg
         if (columnNumber) {
             logMessage += ", " + columnNumber
         }
@@ -64,7 +64,7 @@ export class ErrorHook {
     onUnhandledRejection(rejection) {
         if (settings_SOURCE_MAPS && rejection.reason?.stack) {
             StackTrace.fromError(rejection.reason).then(
-                stackFrames => this.logUnhandledRejection(rejection, stackFrames.map(sf => sf.toString()).join('\n'))
+                stackFrames => this.logUnhandledRejection(rejection, stackFrames.map(sf => sf.toString()).join("\n"))
             ).catch(
                 () => this.logUnhandledRejection(rejection)
             )

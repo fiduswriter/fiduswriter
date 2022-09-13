@@ -36,16 +36,16 @@ export const contactsTemplate = ({contacts}) =>
                 <span>${avatarTemplate({user: contact})}</span>
                 <span class="fw-inline">
                 ${
-    contact.type === 'userinvite' ?
-        `${gettext('Invite')}:&nbsp;` :
-        ''
+    contact.type === "userinvite" ?
+        `${gettext("Invite")}:&nbsp;` :
+        ""
 }
                     ${escapeText(contact.name)}
 
                 </span>
             </td>
         </tr>`
-    ).join('')
+    ).join("")
 
 /** The template for the right hand side list of users (the collaborators of the current document) of the access rights dialogue. */
 export const collaboratorsTemplate = ({collaborators}) =>
@@ -56,9 +56,9 @@ export const collaboratorsTemplate = ({collaborators}) =>
         <td width="215">
             <span>${avatarTemplate({user: collaborator.holder})}</span>
             <span class="fw-inline">${
-    collaborator.holder.type === 'userinvite' ?
-        `${gettext('Invite')}: ` :
-        ''
+    collaborator.holder.type === "userinvite" ?
+        `${gettext("Invite")}: ` :
+        ""
 }${escapeText(collaborator.holder.name)}</span>
         </td>
         <td width="50" align="center">
@@ -73,4 +73,4 @@ export const collaboratorsTemplate = ({collaborators}) =>
             </span>
         </td>
     </tr>`
-    ).join('')
+    ).join("")

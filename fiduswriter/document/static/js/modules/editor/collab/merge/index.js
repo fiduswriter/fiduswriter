@@ -76,9 +76,9 @@ export class Merge {
             this.mod.editor.view.dispatch(receiveTransaction(
                 this.mod.editor.view.state,
                 rollbackTr.steps,
-                rollbackTr.steps.map(_step => 'remote')
-            ).setMeta('remote', true))
-            const toDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [data.doc.content]})
+                rollbackTr.steps.map(_step => "remote")
+            ).setMeta("remote", true))
+            const toDoc = this.mod.editor.schema.nodeFromJSON({type: "doc", content: [data.doc.content]})
             // Apply the online Transaction
             let lostTr
             if (data.m) {
@@ -99,8 +99,8 @@ export class Merge {
             this.mod.editor.view.dispatch(receiveTransaction(
                 this.mod.editor.view.state,
                 lostTr.steps,
-                lostTr.steps.map(_step => 'remote')
-            ).setMeta('remote', true))
+                lostTr.steps.map(_step => "remote")
+            ).setMeta("remote", true))
 
             // We split the complex steps that delete and insert into simple steps so that finding conflicts is more pronounced.
             const modifiedLostTr = simplifyTransform(lostTr)
@@ -154,8 +154,8 @@ export class Merge {
 
     autoMerge(unconfirmedTr, lostTr, data) {
         /* This automerges documents incase of no conflicts */
-        const toDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [data.doc.content]})
-        const rebasedTr = EditorState.create({doc: toDoc}).tr.setMeta('remote', true)
+        const toDoc = this.mod.editor.schema.nodeFromJSON({type: "doc", content: [data.doc.content]})
+        const rebasedTr = EditorState.create({doc: toDoc}).tr.setMeta("remote", true)
         const maps = new Mapping([].concat(unconfirmedTr.mapping.maps.slice().reverse().map(map => map.invert())).concat(lostTr.mapping.maps.slice()))
 
         unconfirmedTr.steps.forEach(
@@ -196,20 +196,20 @@ export class Merge {
         let usedImages = []
         const usedBibs = []
         const footnoteFind = (node, usedImages, usedBibs) => {
-            if (node.name === 'citation') {
+            if (node.name === "citation") {
                 node.attrs.references.forEach(ref => usedBibs.push(parseInt(ref.id)))
-            } else if (node.name === 'image' && node.attrs.image) {
+            } else if (node.name === "image" && node.attrs.image) {
                 usedImages.push(node.attrs.image)
             } else if (node.content) {
                 node.content.forEach(subNode => footnoteFind(subNode, usedImages, usedBibs))
             }
         }
         rebasedTr.doc.descendants(node => {
-            if (node.type.name === 'citation') {
+            if (node.type.name === "citation") {
                 node.attrs.references.forEach(ref => usedBibs.push(parseInt(ref.id)))
-            } else if (node.type.name === 'image' && node.attrs.image) {
+            } else if (node.type.name === "image" && node.attrs.image) {
                 usedImages.push(node.attrs.image)
-            } else if (node.type.name === 'footnote' && node.attrs.footnote) {
+            } else if (node.type.name === "footnote" && node.attrs.footnote) {
                 node.attrs.footnote.forEach(subNode => footnoteFind(subNode, usedImages, usedBibs))
             }
         })
@@ -237,15 +237,15 @@ export class Merge {
                         (id) => {
                             const transaction = this.mod.editor.view.state.tr
                             this.mod.editor.view.state.doc.descendants((node, pos) => {
-                                if (node.type.name === 'image' && node.attrs.image == id) {
+                                if (node.type.name === "image" && node.attrs.image == id) {
                                     const attrs = Object.assign({}, node.attrs)
                                     attrs["image"] = false
-                                    const nodeType = this.mod.editor.currentView.state.schema.nodes['image']
+                                    const nodeType = this.mod.editor.currentView.state.schema.nodes["image"]
                                     transaction.setNodeMarkup(pos, nodeType, attrs)
                                 }
                             })
                             this.mod.editor.view.dispatch(transaction)
-                            addAlert('error', gettext("One of the image(s) you copied could not be found on the server. Please try uploading it again."))
+                            addAlert("error", gettext("One of the image(s) you copied could not be found on the server. Please try uploading it again."))
                         }
                     )
                 }
@@ -253,13 +253,13 @@ export class Merge {
         })
 
         // this.mod.editor.docInfo.version = data.doc.v
-        rebasedTrackedTr.setMeta('remote', true)
+        rebasedTrackedTr.setMeta("remote", true)
         this.mod.editor.view.dispatch(rebasedTrackedTr)
 
         if (tracked) {
             showSystemMessage(
                 gettext(
-                    'The document was modified substantially by other users while you were offline. We have merged your changes in as tracked changes. You should verify that your edits still make sense.'
+                    "The document was modified substantially by other users while you were offline. We have merged your changes in as tracked changes. You should verify that your edits still make sense."
                 )
             )
         }
@@ -272,7 +272,7 @@ export class Merge {
         let title = ""
         pmArticle.firstChild.forEach(
             child => {
-                if (!child.marks.find(mark => mark.type.name === 'deletion')) {
+                if (!child.marks.find(mark => mark.type.name === "deletion")) {
                     title += child.textContent
                 }
             }
@@ -295,10 +295,10 @@ export class Merge {
         // make a copy of the offline doc available for download.
 
         // Close the merge window if open
-        if (mergeEditor && document.querySelector('#editor-merge-view')) {
+        if (mergeEditor && document.querySelector("#editor-merge-view")) {
             mergeEditor.mergeDialog.close()
             // Close merge resolution warning if open
-            if (document.querySelector('#merge-res-warning')) {
+            if (document.querySelector("#merge-res-warning")) {
                 mergeEditor.warningDialog.close()
             }
         }
@@ -312,14 +312,14 @@ export class Merge {
 
         // Show up proper message
         const mergeFailedDialog = new Dialog({
-            title: gettext('Merge failed'),
+            title: gettext("Merge failed"),
             id: "merge_failed",
-            body: gettext('An error occurred during the merge process, so we cannot save your work to the server any longer, and it is downloaded to your computer instead. Please consider importing it into a new document.'),
+            body: gettext("An error occurred during the merge process, so we cannot save your work to the server any longer, and it is downloaded to your computer instead. Please consider importing it into a new document."),
             buttons: [{
-                text: gettext('Leave editor'),
-                classes: 'fw-dark',
+                text: gettext("Leave editor"),
+                classes: "fw-dark",
                 click: () => {
-                    window.location.href = '/'
+                    window.location.href = "/"
                 }
             }],
             canClose: false

@@ -6,7 +6,7 @@ import {
 } from "../../schema/i18n"
 import {setDocTitle} from "../../common"
 
-const key = new PluginKey('settings')
+const key = new PluginKey("settings")
 
 export const settingsPlugin = function(options) {
 
@@ -17,7 +17,7 @@ export const settingsPlugin = function(options) {
         Object.keys(settings).forEach(key => {
             const value = settings[key]
             switch (key) {
-            case 'documentstyle':
+            case "documentstyle":
                 if (
                     !options.editor.mod.documentTemplate.documentStyles.find(d => d.slug === value) &&
                         options.editor.mod.documentTemplate.documentStyles.length
@@ -26,7 +26,7 @@ export const settingsPlugin = function(options) {
                     changed = true
                 }
                 break
-            case 'citationstyle':
+            case "citationstyle":
                 if (
                     !settings.citationstyles.includes(value) &&
                         settings.citationstyles.length
@@ -51,24 +51,24 @@ export const settingsPlugin = function(options) {
             const newValue = newSettings[key]
             if (oldSettings[key] !== newValue) {
                 switch (key) {
-                case 'documentstyle':
+                case "documentstyle":
                     if (newValue.length) {
                         updateDocStyleCSS(newValue)
                     } else {
                         settingsValid = false
                     }
                     break
-                case 'citationstyle':
+                case "citationstyle":
                     if (newValue.length) {
                         options.editor.mod.citations.resetCitations()
                     } else {
                         settingsValid = false
                     }
                     break
-                case 'language':
+                case "language":
                     if (newValue.length) {
                         const lang = LANGUAGES.find(lang => lang[0] === newValue)
-                        document.querySelectorAll('.ProseMirror').forEach(el => el.dir = lang[2])
+                        document.querySelectorAll(".ProseMirror").forEach(el => el.dir = lang[2])
                         options.editor.docInfo.dir = lang[2]
                         updateLanguageCSS(newValue)
                     } else {
@@ -90,21 +90,21 @@ export const settingsPlugin = function(options) {
         ) ||
             (options.editor.mod.documentTemplate.documentStyles.length ?
                 options.editor.mod.documentTemplate.documentStyles[0] :
-                {contents: '', documentstylefile_set: []})
+                {contents: "", documentstylefile_set: []})
 
         let docStyleCSS = docStyle.contents
         docStyle.documentstylefile_set.forEach(
             ([url, filename]) => docStyleCSS = docStyleCSS.replace(
-                new RegExp(filename, 'g'),
+                new RegExp(filename, "g"),
                 url
             )
         )
 
-        let docStyleEl = document.getElementById('document-style')
+        let docStyleEl = document.getElementById("document-style")
 
         if (!docStyleEl) {
-            docStyleEl = document.createElement('style')
-            docStyleEl.id = 'document-style'
+            docStyleEl = document.createElement("style")
+            docStyleEl.id = "document-style"
             document.body.appendChild(docStyleEl)
         }
 
@@ -120,10 +120,10 @@ export const settingsPlugin = function(options) {
     }
 
     const updateLanguageCSS = function(language) {
-        let langStyleEl = document.getElementById('language-style')
+        let langStyleEl = document.getElementById("language-style")
         if (!langStyleEl) {
-            langStyleEl = document.createElement('style')
-            langStyleEl.id = 'language-style'
+            langStyleEl = document.createElement("style")
+            langStyleEl.id = "language-style"
             document.body.appendChild(langStyleEl)
         }
 
@@ -132,40 +132,40 @@ export const settingsPlugin = function(options) {
 
         figure[data-category='figure'] figcaption::before {
             counter-increment: cat-figure;
-            content: '${CATS['figure'][language]} ' counter(cat-figure);
+            content: '${CATS["figure"][language]} ' counter(cat-figure);
         }
 
         #footnote-box-container figure[data-category='figure'] figcaption::before {
-            content: '${CATS['figure'][language]} ' counter(cat-figure) 'A';
+            content: '${CATS["figure"][language]} ' counter(cat-figure) 'A';
         }
 
         figure[data-category='equation'] figcaption::before {
             counter-increment: cat-equation;
-            content: '${CATS['equation'][language]} ' counter(cat-equation);
+            content: '${CATS["equation"][language]} ' counter(cat-equation);
         }
 
         #footnote-box-container figure[data-category='euqation'] figcaption::before {
-            content: '${CATS['equation'][language]} ' counter(cat-equation) 'A';
+            content: '${CATS["equation"][language]} ' counter(cat-equation) 'A';
         }
 
         figure[data-category='photo'] figcaption::before {
             counter-increment: cat-photo;
-            content: '${CATS['photo'][language]} ' counter(cat-photo);
+            content: '${CATS["photo"][language]} ' counter(cat-photo);
         }
 
         #footnote-box-container figure[data-category='photo'] figcaption::before {
-            content: '${CATS['photo'][language]} ' counter(cat-photo) 'A';
+            content: '${CATS["photo"][language]} ' counter(cat-photo) 'A';
         }
 
         figure[data-category='table'] figcaption::before,
         table[data-category='table'] caption::before {
             counter-increment: cat-table;
-            content: '${CATS['table'][language]} ' counter(cat-table);
+            content: '${CATS["table"][language]} ' counter(cat-table);
         }
 
         #footnote-box-container figure[data-category='table'] figcaption::before ,
         #footnote-box-container table[data-category='table'] caption::before {
-            content: '${CATS['table'][language]} ' counter(cat-table) 'A';
+            content: '${CATS["table"][language]} ' counter(cat-table) 'A';
         }`
     }
 
@@ -174,7 +174,7 @@ export const settingsPlugin = function(options) {
         key,
         appendTransaction(trs, oldState, newState) { // Ensure that there are always settings set.
             if (
-                trs.every(tr => tr.getMeta('remote') || tr.from > 0)
+                trs.every(tr => tr.getMeta("remote") || tr.from > 0)
             ) {
                 // All transactions are remote. Give up.
                 return false
@@ -190,7 +190,7 @@ export const settingsPlugin = function(options) {
             const tr = newState.tr
 
             tr.setNodeMarkup(0, false, fixedSettings)
-            tr.setMeta('settings', true)
+            tr.setMeta("settings", true)
 
             return tr
 
@@ -201,7 +201,7 @@ export const settingsPlugin = function(options) {
                     () => {
                         const tr = view.state.tr
                         tr.setNodeMarkup(0, false, fixSettings(view.state.doc.firstChild.attrs))
-                        tr.setMeta('settings', true)
+                        tr.setMeta("settings", true)
                         view.dispatch(tr)
                     },
                     0

@@ -70,7 +70,7 @@ import {
 } from "./track"
 import {
     ModNavigator
-} from './navigator'
+} from "./navigator"
 import {
     headerbarModel,
     imageMenuModel,
@@ -127,10 +127,10 @@ import {
     imageEditModel
 } from "../images/edit_dialog/model"
 
-export const COMMENT_ONLY_ROLES = ['review', 'comment']
-export const READ_ONLY_ROLES = ['read', 'read-without-comments']
-export const REVIEW_ROLES = ['review', 'review-tracked']
-export const WRITE_ROLES = ['write', 'write-tracked', 'review-tracked']
+export const COMMENT_ONLY_ROLES = ["review", "comment"]
+export const READ_ONLY_ROLES = ["read", "read-without-comments"]
+export const REVIEW_ROLES = ["review", "review-tracked"]
+export const WRITE_ROLES = ["write", "write-tracked", "review-tracked"]
 
 export class Editor {
     // A class that contains everything that happens on the editor page.
@@ -146,12 +146,12 @@ export class Editor {
         this.waitingForDocument = true
 
         this.docInfo = {
-            rights: '',
+            rights: "",
             owner: undefined,
             is_owner: false,
             confirmedDoc: false, // The latest doc as confirmed by the server.
             updated: false, // Latest update time stamp
-            dir: 'ltr', // standard direction, used in input fields, etc.
+            dir: "ltr", // standard direction, used in input fields, etc.
             path // Default doc path.
         }
         let id = parseInt(idString)
@@ -205,7 +205,7 @@ export class Editor {
             [marginboxesPlugin, () => ({editor: this})],
             [tagInputPlugin, () => ({editor: this})],
             [contributorInputPlugin, () => ({editor: this})],
-            [clipboardPlugin, () => ({editor: this, viewType: 'main'})],
+            [clipboardPlugin, () => ({editor: this, viewType: "main"})],
             [accessRightsPlugin, () => ({editor: this})],
             [settingsPlugin, () => ({editor: this})],
             [documentTemplatePlugin, () => ({editor: this})],
@@ -220,35 +220,35 @@ export class Editor {
 
     init() {
         ensureCSS([
-            'mathlive.css',
-            'editor.css',
-            'tags.css',
-            'contributors.css',
-            'document.css',
-            'carets.css',
-            'tracking.css',
-            'margin_boxes.css',
-            'prosemirror.css',
-            'footnotes.css',
-            'chat.css',
-            'access_rights_dialog.css',
-            'citation_dialog.css',
-            'review.css',
-            'add_remove_dialog.css',
-            'bibliography.css',
-            'dot_menu.css',
-            'cropper.min.css',
-            'inline_tools.css'
+            "mathlive.css",
+            "editor.css",
+            "tags.css",
+            "contributors.css",
+            "document.css",
+            "carets.css",
+            "tracking.css",
+            "margin_boxes.css",
+            "prosemirror.css",
+            "footnotes.css",
+            "chat.css",
+            "access_rights_dialog.css",
+            "citation_dialog.css",
+            "review.css",
+            "add_remove_dialog.css",
+            "bibliography.css",
+            "dot_menu.css",
+            "cropper.min.css",
+            "inline_tools.css"
         ])
         new ModDocumentTemplate(this)
         const initPromises = [
             whenReady(),
             this.mod.documentTemplate.getCitationStyles()
         ]
-        if (this.docInfo.hasOwnProperty('templateId')) {
+        if (this.docInfo.hasOwnProperty("templateId")) {
             initPromises.push(
                 postJson(
-                    '/api/document/create_doc/',
+                    "/api/document/create_doc/",
                     {
                         template_id: this.docInfo.templateId,
                         path: this.docInfo.path
@@ -273,7 +273,7 @@ export class Editor {
                 anythingToSend: () => sendableSteps(this.view.state),
                 initialMessage: () => {
                     const message = {
-                        'type': 'subscribe'
+                        "type": "subscribe"
                     }
 
                     if (this.ws.connectionCount) {
@@ -289,32 +289,32 @@ export class Editor {
                     this.mod.footnotes.fnEditor.renderAllFootnotes()
                     this.mod.collab.doc.awaitingDiffResponse = true // wait sending diffs till the version is confirmed
                 },
-                restartMessage: () => ({type: 'get_document'}), // Too many messages have been lost and we need to restart
-                messagesElement: () => this.dom.querySelector('#unobtrusive_messages'),
-                warningNotAllSent: gettext('Warning! Not all your changes have been saved! You could suffer data loss. Attempting to reconnect...'),
-                infoDisconnected: gettext('Disconnected. Attempting to reconnect...'),
+                restartMessage: () => ({type: "get_document"}), // Too many messages have been lost and we need to restart
+                messagesElement: () => this.dom.querySelector("#unobtrusive_messages"),
+                warningNotAllSent: gettext("Warning! Not all your changes have been saved! You could suffer data loss. Attempting to reconnect..."),
+                infoDisconnected: gettext("Disconnected. Attempting to reconnect..."),
                 receiveData: data => {
                     if (document.body !== this.dom) {
                         return // user navigated away.
                     }
                     switch (data.type) {
-                    case 'chat':
+                    case "chat":
                         this.mod.collab.chat.newMessage(data)
                         break
-                    case 'connections':
+                    case "connections":
                         this.mod.collab.updateParticipantList(data.participant_list)
                         if (resubScribed) { // check version if only reconnected after being offline
                             this.mod.collab.doc.checkVersion() // check version to sync the doc
                             resubScribed = false
                         }
                         break
-                    case 'styles':
+                    case "styles":
                         this.mod.documentTemplate.setStyles(data.styles)
                         break
-                    case 'doc_data':
+                    case "doc_data":
                         this.mod.collab.doc.receiveDocument(data)
                         break
-                    case 'confirm_version':
+                    case "confirm_version":
                         this.mod.collab.doc.cancelCurrentlyCheckingVersion()
                         if (data["v"] !== this.docInfo.version) {
                             this.mod.collab.doc.checkVersion()
@@ -322,7 +322,7 @@ export class Editor {
                         }
                         this.mod.collab.doc.enableDiffSending()
                         break
-                    case 'selection_change':
+                    case "selection_change":
                         this.mod.collab.doc.cancelCurrentlyCheckingVersion()
                         if (data["v"] !== this.docInfo.version) {
                             this.mod.collab.doc.checkVersion()
@@ -330,11 +330,11 @@ export class Editor {
                         }
                         this.mod.collab.doc.receiveSelectionChange(data)
                         break
-                    case 'path_change':
+                    case "path_change":
                         this.docInfo.path = data["path"]
                         this.menu.headerView.update()
                         break
-                    case 'diff':
+                    case "diff":
                         if (data["cid"] === this.client_id) {
                             // The diff origins from the local user.
                             this.mod.collab.doc.confirmDiff(data["rid"])
@@ -346,16 +346,16 @@ export class Editor {
                         }
                         this.mod.collab.doc.receiveDiff(data)
                         break
-                    case 'confirm_diff':
+                    case "confirm_diff":
                         this.mod.collab.doc.confirmDiff(data["rid"])
                         break
-                    case 'reject_diff':
+                    case "reject_diff":
                         this.mod.collab.doc.rejectDiff(data["rid"])
                         break
-                    case 'patch_error':
-                        showSystemMessage(gettext('Your document was out of sync and has been reset.'))
+                    case "patch_error":
+                        showSystemMessage(gettext("Your document was out of sync and has been reset."))
                         break
-                    case 'access_right':
+                    case "access_right":
                         if (data.access_right !== this.docInfo.access_rights) {
                             if (sendableSteps(this.view.state) && !(WRITE_ROLES).includes(data.access_right)) {
                                 // If the user's new rights does not allow him to update document , then download a copy of the
@@ -363,9 +363,9 @@ export class Editor {
                                 this.handleAccessRightModification()
                             } else {
                                 addAlert(
-                                    'info',
+                                    "info",
                                     interpolate(
-                                        gettext('Your Access rights have been modified. You now have %(accessRight)s access to this document.'),
+                                        gettext("Your Access rights have been modified. You now have %(accessRight)s access to this document."),
                                         {accessRight: data.access_right},
                                         true
                                     )
@@ -382,26 +382,26 @@ export class Editor {
                     if (this.view.state.plugins.length && sendableSteps(this.view.state) && this.ws.connectionCount > 0) {
                         this.ws.online = false // To avoid Websocket trying to reconnect.
                         new ExportFidusFile(
-                            this.getDoc({'use_current_view': true}),
+                            this.getDoc({"use_current_view": true}),
                             this.mod.db.bibDB,
                             this.mod.db.imageDB
                         )
                         const sessionDialog = new Dialog({
-                            title: gettext('Session Expired'),
+                            title: gettext("Session Expired"),
                             id: "session_expiration_dialog",
-                            body: gettext('Your session expired while you were offline, so we cannot save your work to the server any longer, and it is downloaded to your computer instead. Please consider importing it into a new document.'),
+                            body: gettext("Your session expired while you were offline, so we cannot save your work to the server any longer, and it is downloaded to your computer instead. Please consider importing it into a new document."),
                             buttons: [{
-                                text: gettext('Proceed to Login page'),
-                                classes: 'fw-dark',
+                                text: gettext("Proceed to Login page"),
+                                classes: "fw-dark",
                                 click: () => {
-                                    window.location.href = '/'
+                                    window.location.href = "/"
                                 }
                             }],
                             canClose: false
                         })
                         sessionDialog.open()
                     } else {
-                        window.location.href = '/'
+                        window.location.href = "/"
                     }
                 }
             })
@@ -409,7 +409,7 @@ export class Editor {
             activateWait(true)
             this.initEditor()
 
-            this.ws.ws.addEventListener('close', () => {
+            this.ws.ws.addEventListener("close", () => {
                 // Listen to close event and update the headerbar and toolbar view.
                 if (this.menu.toolbarViews) {
                     this.menu.toolbarViews.forEach(view => view.update())
@@ -425,19 +425,19 @@ export class Editor {
     handleAccessRightModification() {
         // This function when invoked creates a copy of document in FW format and closes editor operation.
         new ExportFidusFile(
-            this.getDoc({'use_current_view': true}),
+            this.getDoc({"use_current_view": true}),
             this.mod.db.bibDB,
             this.mod.db.imageDB
         )
         const accessRightModifiedDialog = new Dialog({
-            title: gettext('Access rights modified'),
+            title: gettext("Access rights modified"),
             id: "access_rights_modified",
-            body: gettext('Your access rights were modified while you were offline, so we cannot save your work to the server any longer, and it is downloaded to your computer instead. Please consider importing it into a new document.'),
+            body: gettext("Your access rights were modified while you were offline, so we cannot save your work to the server any longer, and it is downloaded to your computer instead. Please consider importing it into a new document."),
             buttons: [{
-                text: gettext('Leave editor'),
-                classes: 'fw-dark',
+                text: gettext("Leave editor"),
+                classes: "fw-dark",
                 click: () => {
-                    window.location.href = '/'
+                    window.location.href = "/"
                 }
             }],
             canClose: false
@@ -462,10 +462,10 @@ export class Editor {
     }
 
     render() {
-        this.dom = document.createElement('body')
+        this.dom = document.createElement("body")
         document.body = this.dom
-        this.dom.classList.add('editor')
-        this.dom.classList.add('scrollable')
+        this.dom.classList.add("editor")
+        this.dom.classList.add("scrollable")
         this.dom.innerHTML = `<div id="editor">
             <div id="wait"><i class="fa fa-spinner fa-pulse"></i></div>
             <header>
@@ -523,7 +523,7 @@ export class Editor {
 
     initEditor() {
         let setFocus = false
-        this.view = new EditorView(this.dom.querySelector('#document-editable'), {
+        this.view = new EditorView(this.dom.querySelector("#document-editable"), {
             state: EditorState.create({
                 schema: this.schema
             }),
@@ -544,7 +544,7 @@ export class Editor {
                 const {state: newState, transactions} = this.view.state.applyTransaction(trackedTr)
                 this.view.updateState(newState)
                 transactions.forEach(subTr => {
-                    const footTr = subTr.getMeta('footTr')
+                    const footTr = subTr.getMeta("footTr")
                     if (footTr) {
                         this.mod.footnotes.fnEditor.view.dispatch(footTr)
                     }
@@ -579,7 +579,7 @@ export class Editor {
         this.plugins = {}
 
         Object.keys(plugins).forEach(plugin => {
-            if (typeof plugins[plugin] === 'function') {
+            if (typeof plugins[plugin] === "function") {
                 this.plugins[plugin] = new plugins[plugin](this)
                 this.plugins[plugin].init()
             }
@@ -590,14 +590,14 @@ export class Editor {
     // filters
     getDoc(options = {}) {
         const doc = (this.app.isOffline() || Boolean(options.use_current_view)) ? this.view.docView.node : this.docInfo.confirmedDoc
-        const pmArticle = options.changes === 'acceptAllNoInsertions' ?
+        const pmArticle = options.changes === "acceptAllNoInsertions" ?
             acceptAllNoInsertions(doc).firstChild :
             doc.firstChild
 
         let title = ""
         pmArticle.firstChild.forEach(
             child => {
-                if (!child.marks.find(mark => mark.type.name === 'deletion')) {
+                if (!child.marks.find(mark => mark.type.name === "deletion")) {
                     title += child.textContent
                 }
             }
@@ -623,11 +623,11 @@ export class Editor {
         this.view.state.doc.descendants((node, pos) => {
             if (foundPos) {
                 return
-            } else if ((node.type.groups.includes('heading') || node.type.name === 'figure') && node.attrs.id === id) {
-                foundPos = node.type.name === 'figure' ? pos : pos + 1
+            } else if ((node.type.groups.includes("heading") || node.type.name === "figure") && node.attrs.id === id) {
+                foundPos = node.type.name === "figure" ? pos : pos + 1
                 view = this.view
             } else {
-                const anchorMark = node.marks.find(mark => mark.type.name === 'anchor')
+                const anchorMark = node.marks.find(mark => mark.type.name === "anchor")
                 if (anchorMark?.attrs.id === id) {
                     foundPos = pos + 1
                     view = this.view
@@ -639,11 +639,11 @@ export class Editor {
             this.mod.footnotes.fnEditor.view.state.doc.descendants((node, pos) => {
                 if (foundPos) {
                     return
-                } else if ((node.type.groups.includes('heading') || node.type.name === 'figure') && node.attrs.id === id) {
-                    foundPos = node.type.name === 'figure' ? pos : pos + 1
+                } else if ((node.type.groups.includes("heading") || node.type.name === "figure") && node.attrs.id === id) {
+                    foundPos = node.type.name === "figure" ? pos : pos + 1
                     view = this.mod.footnotes.fnEditor.view
                 } else {
-                    const anchorMark = node.marks.find(mark => mark.type.name === 'anchor')
+                    const anchorMark = node.marks.find(mark => mark.type.name === "anchor")
                     if (anchorMark?.attrs.id === id) {
                         foundPos = pos + 1
                         view = this.mod.footnotes.fnEditor.view
@@ -658,7 +658,7 @@ export class Editor {
     }
 
     scrollPosIntoView(pos, view) {
-        const topMenuHeight = this.dom.querySelector('header').offsetHeight + 10
+        const topMenuHeight = this.dom.querySelector("header").offsetHeight + 10
         const $pos = view.state.doc.resolve(pos)
         view.dispatch(view.state.tr.setSelection(new TextSelection($pos, $pos)))
         view.focus()
@@ -668,8 +668,8 @@ export class Editor {
     }
 
     scrollBibliographyIntoView() {
-        const topMenuHeight = this.dom.querySelector('header').offsetHeight + 10
-        const bibliographyHeaderEl = document.querySelector('h1.article-bibliography-header')
+        const topMenuHeight = this.dom.querySelector("header").offsetHeight + 10
+        const bibliographyHeaderEl = document.querySelector("h1.article-bibliography-header")
         const distanceFromTop = bibliographyHeaderEl.getBoundingClientRect().top - topMenuHeight
         window.scrollBy({left: 0, top: distanceFromTop, behavior: "smooth", block: "center"})
         return

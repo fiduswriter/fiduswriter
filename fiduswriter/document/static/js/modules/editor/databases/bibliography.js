@@ -131,20 +131,20 @@ export class ModBibliographyDB {
     unsentEvents() {
         return this.unsent.map(
             event => {
-                if (event.type === 'delete') {
+                if (event.type === "delete") {
                     return event
-                } else if (event.type === 'update') {
+                } else if (event.type === "update") {
                     // Check bib entry still exists. Otherwise ignore.
                     const reference = this.db[event.id]
                     if (reference) {
                         return {
-                            type: 'update',
+                            type: "update",
                             id: event.id,
                             reference
                         }
                     } else {
                         return {
-                            type: 'ignore'
+                            type: "ignore"
                         }
                     }
 

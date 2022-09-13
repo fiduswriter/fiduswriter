@@ -21,16 +21,16 @@ export class ZipFidus {
         this.includeTemplate = includeTemplate
 
         this.textFiles = [{
-            filename: 'document.json',
+            filename: "document.json",
             contents: JSON.stringify(this.doc),
         }, {
-            filename: 'images.json',
+            filename: "images.json",
             contents: JSON.stringify(this.shrunkImageDB)
         }, {
-            filename: 'bibliography.json',
+            filename: "bibliography.json",
             contents: JSON.stringify(this.shrunkBibDB)
         }, {
-            filename: 'filetype-version',
+            filename: "filetype-version",
             contents: FW_DOCUMENT_VERSION
         }]
     }
@@ -41,7 +41,7 @@ export class ZipFidus {
         }
         const templateExporter = new DocumentTemplateExporter(
             this.docId,
-            '/api/document/get_template_for_doc/',
+            "/api/document/get_template_for_doc/",
             false
         )
         return templateExporter.init().then(
@@ -63,7 +63,7 @@ export class ZipFidus {
             this.textFiles,
             this.httpFiles,
             [],
-            'application/fidus+zip'
+            "application/fidus+zip"
         )
         return zipper.init()
     }

@@ -2,15 +2,15 @@ import {Plugin, PluginKey} from "prosemirror-state"
 
 import {READ_ONLY_ROLES, COMMENT_ONLY_ROLES} from "../.."
 
-const key = new PluginKey('accessRights')
+const key = new PluginKey("accessRights")
 
 export const accessRightsPlugin = function(options) {
     return new Plugin({
         key,
         filterTransaction: (tr, _state) => {
             let allowed = true
-            const remote = tr.getMeta('remote')
-            const fromMain = tr.getMeta('fromMain')
+            const remote = tr.getMeta("remote")
+            const fromMain = tr.getMeta("fromMain")
             if (remote || fromMain) {
                 return allowed
             }

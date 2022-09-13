@@ -15,7 +15,7 @@ export class BibLatexImportWorker {
         this.tmpDB =  bibDataOutput.entries
         this.bibKeys = Object.keys(this.tmpDB)
         if (!this.bibKeys.length) {
-            this.sendMessage({type: 'error', errorCode: 'no_Entries', done: true})
+            this.sendMessage({type: "error", errorCode: "no_Entries", done: true})
             return
         } else {
             this.bibKeys.forEach((bibKey) => {
@@ -28,22 +28,22 @@ export class BibLatexImportWorker {
                 }
                 // If the entry has no date, add an uncertain date
                 if (!bibEntry.fields.date) {
-                    bibEntry.fields.date = 'uuuu'
+                    bibEntry.fields.date = "uuuu"
                 }
                 // If the entry has no editor or author, add empty author
                 if (!bibEntry.fields.author && !bibEntry.fields.editor) {
-                    bibEntry.fields.author = [{'literal': []}]
+                    bibEntry.fields.author = [{"literal": []}]
                 }
             })
             bibData.errors.forEach(error => {
                 error.errorType = error.type
-                error.errorCode = 'entry_error'
-                error.type = 'error'
+                error.errorCode = "entry_error"
+                error.type = "error"
                 this.sendMessage(error)
             })
             bibData.warnings.forEach(warning => {
                 warning.errorCode = warning.type
-                warning.type = 'warning'
+                warning.type = "warning"
                 this.sendMessage(warning)
             })
             this.totalChunks = Math.ceil(this.bibKeys.length / 50)
@@ -61,11 +61,11 @@ export class BibLatexImportWorker {
             this.bibKeys.slice(fromNumber, toNumber).forEach((bibKey) => {
                 currentChunk[bibKey] = this.tmpDB[bibKey]
             })
-            this.sendMessage({type: 'data', data: currentChunk})
+            this.sendMessage({type: "data", data: currentChunk})
             this.currentChunkNumber++
             this.processChunk()
         } else {
-            this.sendMessage({type: 'ok', done: true})
+            this.sendMessage({type: "ok", done: true})
         }
     }
 }

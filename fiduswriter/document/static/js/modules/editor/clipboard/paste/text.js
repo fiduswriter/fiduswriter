@@ -23,10 +23,10 @@ export class TextPaste {
                 this.editor.mod.db.bibDB,
                 newIds => {
                     this.foundBibEntries = true
-                    const format = 'autocite',
+                    const format = "autocite",
                         references = newIds.map(id => ({id}))
 
-                    const citationNode = this.editor.currentView.state.schema.nodes['citation'].create(
+                    const citationNode = this.editor.currentView.state.schema.nodes["citation"].create(
                         {format, references}
                     )
                     const tr = this.editor.currentView.state.tr.replaceSelectionWith(
@@ -60,7 +60,7 @@ export class TextPaste {
         })
         const html = dom.innerHTML
 
-        const slice = __parseFromClipboard(this.view, '', html, this.view.shiftKey, this.view.state.selection.$from)
+        const slice = __parseFromClipboard(this.view, "", html, this.view.shiftKey, this.view.state.selection.$from)
 
         if (!slice) {
             return

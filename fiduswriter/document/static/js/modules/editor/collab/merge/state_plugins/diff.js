@@ -40,20 +40,20 @@ import {
 function createHiglightDecoration(from, to, state) {
     /* Creates a yellow coloured highlight decoration when the user
     tries to look at a change */
-    const inlineDeco = Decoration.inline(from, to, {class: 'selected-dec'})
+    const inlineDeco = Decoration.inline(from, to, {class: "selected-dec"})
     const deco = []
     deco.push(inlineDeco)
     state.doc.nodesBetween(
         from,
         to,
         (node, pos) => {
-            if (pos < from || ['bullet_list', 'ordered_list'].includes(node.type.name)) {
+            if (pos < from || ["bullet_list", "ordered_list"].includes(node.type.name)) {
                 return true
             } else if (node.isInline) {
                 return false
             }
             if (node && node.attrs.diffdata && node.attrs.diffdata.length > 0) {
-                deco.push(Decoration.node(pos, pos + node.nodeSize, {class: 'selected-dec'}, {}))
+                deco.push(Decoration.node(pos, pos + node.nodeSize, {class: "selected-dec"}, {}))
             }
         }
     )
@@ -67,28 +67,28 @@ function createDeletionHighlight(decos, from, to, state, options) {
     decos.find(from + 1, to).forEach(deco => {
         const decoId = deco.spec.id
         if (decoId !== undefined) {
-            const specDecoration = options.merge.mergeView2.dom.querySelector('[data-decoid="' + decoId + '"]')
-            const parentEl = specDecoration.closest('.deletion-decoration')
+            const specDecoration = options.merge.mergeView2.dom.querySelector("[data-decoid=\"" + decoId + "\"]")
+            const parentEl = specDecoration.closest(".deletion-decoration")
             parentEl.querySelectorAll(".online-deleted").forEach(ele => {
                 ele.classList.add("selected-dec")
                 ele.classList.add("deletion-highlight")
             })
         }
     })
-    const inlineDeco = Decoration.inline(from, to, {class: 'selected-dec'}, {type: "deletion-highlight"})
+    const inlineDeco = Decoration.inline(from, to, {class: "selected-dec"}, {type: "deletion-highlight"})
     const deco = []
     deco.push(inlineDeco)
     state.doc.nodesBetween(
         from,
         to,
         (node, pos) => {
-            if (pos < from || ['bullet_list', 'ordered_list'].includes(node.type.name)) {
+            if (pos < from || ["bullet_list", "ordered_list"].includes(node.type.name)) {
                 return true
             } else if (node.isInline) {
                 return false
             }
             if (node.attrs.diffdata) {
-                deco.push(Decoration.node(pos, pos + node.nodeSize, {class: 'selected-dec'}, {type: "deletion-highlight"}))
+                deco.push(Decoration.node(pos, pos + node.nodeSize, {class: "selected-dec"}, {type: "deletion-highlight"}))
             }
         }
     )
@@ -112,10 +112,10 @@ function getDecos(decos, merge, state) {
     const $head = state.selection.$head
     const currentMarks = [],
         diffMark = $head.marks().find(
-            mark => mark.type.name === 'diffdata'
+            mark => mark.type.name === "diffdata"
         )
     const linkMark = $head.marks().find(
-        mark => mark.type.name === 'link'
+        mark => mark.type.name === "link"
     )
 
     decos = decos.remove(decos.find(null, null,
@@ -134,16 +134,16 @@ function getDecos(decos, merge, state) {
         const node = state.selection instanceof NodeSelection ? state.selection.node : state.selection.$head.parent
         const markFound = {}
         if (node && node.attrs.diffdata && node.attrs.diffdata.length > 0) {
-            markFound['attrs'] = {}
-            markFound['attrs']['diff'] = node.attrs.diffdata[0].type
-            markFound['attrs']['from'] = node.attrs.diffdata[0].from
-            markFound['attrs']['to'] = node.attrs.diffdata[0].to
-            markFound['attrs']['steps'] = JSON.stringify(node.attrs.diffdata[0].steps)
+            markFound["attrs"] = {}
+            markFound["attrs"]["diff"] = node.attrs.diffdata[0].type
+            markFound["attrs"]["from"] = node.attrs.diffdata[0].from
+            markFound["attrs"]["to"] = node.attrs.diffdata[0].to
+            markFound["attrs"]["steps"] = JSON.stringify(node.attrs.diffdata[0].steps)
 
             const startPos = $head.pos// position of block start.
             const dom = createDropUp(merge, markFound, linkMark),
                 deco = Decoration.widget(startPos, dom)
-            const highlightDecos = createHiglightDecoration(markFound['attrs']["from"], markFound['attrs']["to"], state)
+            const highlightDecos = createHiglightDecoration(markFound["attrs"]["from"], markFound["attrs"]["to"], state)
             highlightDecos.push(deco)
             return decos.add(state.doc, highlightDecos)
         } else if (node.marks.find(mark => mark.type.name == "diffdata")) {
@@ -242,11 +242,11 @@ function deletionDecorations(decos, merge, doc, tr, deletionClass) {
 
 function createDropUp(merge, diffMark, linkMark) {
     /* The actual function that creates a drop up */
-    const dropUp = document.createElement('span'),
+    const dropUp = document.createElement("span"),
         requiredPx = 10,
-        tr = diffMark.attrs.diff.search('offline') != -1 ? merge.offlineTr : merge.onlineTr,
-        trType = diffMark.attrs.diff.search('offline') != -1 ? "offline" : "online",
-        opType = diffMark.attrs.diff.search('inserted') != -1 ? "insertion" : "deletion"
+        tr = diffMark.attrs.diff.search("offline") != -1 ? merge.offlineTr : merge.onlineTr,
+        trType = diffMark.attrs.diff.search("offline") != -1 ? "offline" : "online",
+        opType = diffMark.attrs.diff.search("inserted") != -1 ? "insertion" : "deletion"
     let textToBeDisplayed = ""
 
     if (diffMark.attrs.markOnly) {
@@ -267,7 +267,7 @@ function createDropUp(merge, diffMark, linkMark) {
         }
     }
     linkMark = linkMark === undefined ? false : linkMark
-    dropUp.classList.add('drop-up-outer')
+    dropUp.classList.add("drop-up-outer")
     dropUp.innerHTML = noSpaceTmp`
         <div class="link drop-up-inner" style="top: -${requiredPx}px;">
             ${
@@ -275,34 +275,34 @@ function createDropUp(merge, diffMark, linkMark) {
         `<div class="drop-up-head">
                     ${
     diffMark.attrs.diff ?
-        `<div class="link-title">${gettext('Change')}:&nbsp; ${textToBeDisplayed}</div>` :
-        ''
+        `<div class="link-title">${gettext("Change")}:&nbsp; ${textToBeDisplayed}</div>` :
+        ""
 }
                     ${
-    linkMark ? `<div> Link : ${linkMark.attrs.href}</div>` : ``
+    linkMark ? `<div> Link : ${linkMark.attrs.href}</div>` : ""
 }
                     ${
-    linkMark ? `<div> Type : ${linkMark.attrs.href[0] == "#" ? `internal` : `external`}</div>` : ``
+    linkMark ? `<div> Type : ${linkMark.attrs.href[0] == "#" ? "internal" : "external"}</div>` : ""
 }
                 </div>
                 <ul class="drop-up-options">
-                    <li class="accept-change" title="${gettext('Accept change')}">
-                        ${gettext('Accept Change')}
+                    <li class="accept-change" title="${gettext("Accept change")}">
+                        ${gettext("Accept Change")}
                     </li>
-                    <li class="reject-change" title="${gettext('Reject change')}">
-                        ${gettext('Reject Change')}
+                    <li class="reject-change" title="${gettext("Reject change")}">
+                        ${gettext("Reject Change")}
                     </li>
-                    <li class="copy-data" title="${gettext('Copy content')}">
-                        ${gettext('Copy')}
+                    <li class="copy-data" title="${gettext("Copy content")}">
+                        ${gettext("Copy")}
                     </li>
                 </ul>` :
-        ''
+        ""
 }
         </div>`
 
-    const acceptChange = dropUp.querySelector('.accept-change')
+    const acceptChange = dropUp.querySelector(".accept-change")
     if (acceptChange) {
-        acceptChange.addEventListener('mousedown',
+        acceptChange.addEventListener("mousedown",
             event => {
                 event.preventDefault()
                 event.stopImmediatePropagation()
@@ -337,9 +337,9 @@ function createDropUp(merge, diffMark, linkMark) {
             }
         )
     }
-    const rejectChange = dropUp.querySelector('.reject-change')
+    const rejectChange = dropUp.querySelector(".reject-change")
     if (rejectChange) {
-        rejectChange.addEventListener('mousedown',
+        rejectChange.addEventListener("mousedown",
             (event) => {
                 event.preventDefault()
                 event.stopImmediatePropagation()
@@ -386,9 +386,9 @@ function createDropUp(merge, diffMark, linkMark) {
         )
     }
 
-    const copyData = dropUp.querySelector('.copy-data')
+    const copyData = dropUp.querySelector(".copy-data")
     if (copyData) {
-        copyData.addEventListener('mousedown',
+        copyData.addEventListener("mousedown",
             event => {
                 event.preventDefault()
                 event.stopImmediatePropagation()
@@ -411,7 +411,7 @@ function createDropUp(merge, diffMark, linkMark) {
     return dropUp
 }
 
-export const key = new PluginKey('mergeDiff')
+export const key = new PluginKey("mergeDiff")
 
 export const diffPlugin = function(options) {
 
@@ -512,8 +512,8 @@ export const diffPlugin = function(options) {
                     delFnToolTip.forEach(tooltip => tooltip.childNodes[0].style.display = "none")
                 }
                 options.merge.mergeView2.dispatch(options.merge.mergeView2.state.tr.setMeta("removeHighlight", true))
-                if (event.target.closest('.offline-deleted')) {
-                    const parentEl = event.target.closest('.deletion-decoration')
+                if (event.target.closest(".offline-deleted")) {
+                    const parentEl = event.target.closest(".deletion-decoration")
                     const highlightEle = parentEl.querySelectorAll(".offline-deleted")
                     if (highlightEle) {
                         highlightEle.forEach(ele => ele.classList.add("selected-dec"))
@@ -523,8 +523,8 @@ export const diffPlugin = function(options) {
                     // Add a decoration to highlight decoration to the online/merged view
                     options.merge.mergeView2.dispatch(options.merge.mergeView2.state.tr.setMeta("highlight", {from: parentEl.dataset.delfrom, to: parentEl.dataset.delto}))
 
-                } else if (event.target.closest('.online-deleted')) {
-                    const parentEl = event.target.closest('.deletion-decoration')
+                } else if (event.target.closest(".online-deleted")) {
+                    const parentEl = event.target.closest(".deletion-decoration")
                     const highlightEle = parentEl.querySelectorAll(".online-deleted")
                     if (highlightEle) {
                         highlightEle.forEach(ele => ele.classList.add("selected-dec"))
@@ -544,25 +544,25 @@ export const diffPlugin = function(options) {
             return {
                 update: view => {
                     // Make sure that pop stays inside the view.
-                    const changePopUp = view.dom.querySelector('.drop-up-outer')
+                    const changePopUp = view.dom.querySelector(".drop-up-outer")
                     if (changePopUp) {
                         const bounding = changePopUp.getBoundingClientRect()
-                        const dialogBox = document.querySelector('#editor-merge-view')
+                        const dialogBox = document.querySelector("#editor-merge-view")
                         if (dialogBox) {
                             if (bounding.right > dialogBox.offsetWidth || bounding.right > (window.innerWidth || document.documentElement.clientWidth)) {
-                                changePopUp.style.left = '100px'
+                                changePopUp.style.left = "100px"
                             }
                         }
                     }
 
                     // Make sure that the deletion decoration footnote stays inside the view
-                    const footnote = view.dom.querySelector('.offline-deleted.deleted-footnote-element .footnote-tooltip')
+                    const footnote = view.dom.querySelector(".offline-deleted.deleted-footnote-element .footnote-tooltip")
                     if (footnote) {
                         const bounding = footnote.getBoundingClientRect()
-                        const dialogBox = document.querySelector('#editor-merge-view')
+                        const dialogBox = document.querySelector("#editor-merge-view")
                         if (dialogBox) {
                             if (bounding.right > dialogBox.offsetWidth || bounding.right > (window.innerWidth || document.documentElement.clientWidth)) {
-                                footnote.style.left = '-100px'
+                                footnote.style.left = "-100px"
                             }
                         }
                     }

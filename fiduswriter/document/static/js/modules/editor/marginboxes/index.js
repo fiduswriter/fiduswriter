@@ -10,7 +10,7 @@ export class ModMarginboxes {
     constructor(editor) {
         editor.mod.marginboxes = this
         this.editor = editor
-        this.activeCommentStyle = ''
+        this.activeCommentStyle = ""
         this.filterOptions = {
             track: true,
             comments: true,
@@ -22,99 +22,99 @@ export class ModMarginboxes {
             assigned: 0
         }
         this.commentColors = {
-            isMajor: '#f4c9d9',
-            marker: '#f9f9f9',
-            active: '#fffacf'
+            isMajor: "#f4c9d9",
+            marker: "#f9f9f9",
+            active: "#fffacf"
         }
         this.dd = new DiffDOM({
             valueDiffing: false
         })
-        this.marginBoxesContainerString = '<div id="margin-box-container"><div></div></div>'
+        this.marginBoxesContainerString = "<div id=\"margin-box-container\"><div></div></div>"
         this.marginBoxesContainerObj = stringToObj(this.marginBoxesContainerString)
-        this.marginBoxesPlacementStyle = ''
+        this.marginBoxesPlacementStyle = ""
         this.marginBoxes = []
     }
 
     init() {
         // Add two elements to hold dynamic CSS info about comments.
         document.body.insertAdjacentHTML(
-            'beforeend',
-            '<style type="text/css" id="active-comment-style"></style><style type="text/css" id="track-options-style"></style><style type="text/css" id="margin-box-placement-style"></style>'
+            "beforeend",
+            "<style type=\"text/css\" id=\"active-comment-style\"></style><style type=\"text/css\" id=\"track-options-style\"></style><style type=\"text/css\" id=\"margin-box-placement-style\"></style>"
         )
-        this.marginBoxesContainer = document.getElementById('margin-box-container')
-        this.activeCommentStyleElement = document.getElementById('active-comment-style')
-        this.trackOptionsStyleElement = document.getElementById('track-options-style')
+        this.marginBoxesContainer = document.getElementById("margin-box-container")
+        this.activeCommentStyleElement = document.getElementById("active-comment-style")
+        this.trackOptionsStyleElement = document.getElementById("track-options-style")
         this.bindEvents()
     }
 
     bindEvents() {
         // Bind all the click events related to the margin box filter
-        document.body.addEventListener('click', event => {
+        document.body.addEventListener("click", event => {
             const el = {}
             switch (true) {
-            case findTarget(event, '.margin-box-filter-check', el):
+            case findTarget(event, ".margin-box-filter-check", el):
                 // do not react to clicks on checkboxes within sub menus
                 break
-            case findTarget(event, '.margin-box-filter-comments-author', el):
+            case findTarget(event, ".margin-box-filter-comments-author", el):
                 this.filterOptions.commentsAuthor = parseInt(el.target.dataset.id)
                 this.view(this.editor.currentView)
                 break
-            case findTarget(event, '.margin-box-filter-comments-assigned', el):
+            case findTarget(event, ".margin-box-filter-comments-assigned", el):
                 this.filterOptions.assigned = parseInt(el.target.dataset.id)
                 this.view(this.editor.currentView)
                 break
-            case findTarget(event, '.show-marginbox-options-submenu', el):
-                this.closeAllMenus('.marginbox-options-submenu.fw-open')
-                Array.from(el.target.parentElement.children).find(node => node.matches('.marginbox-options-submenu')).classList.add('fw-open')
+            case findTarget(event, ".show-marginbox-options-submenu", el):
+                this.closeAllMenus(".marginbox-options-submenu.fw-open")
+                Array.from(el.target.parentElement.children).find(node => node.matches(".marginbox-options-submenu")).classList.add("fw-open")
                 break
-            case findTarget(event, '.show-marginbox-options', el):
+            case findTarget(event, ".show-marginbox-options", el):
                 this.closeAllMenus()
-                if (el.target.parentElement.classList.contains('margin-box-filter-button')) {
-                    Array.from(el.target.parentElement.children).find(node => node.matches('.marginbox-options')).classList.add('fw-open')
+                if (el.target.parentElement.classList.contains("margin-box-filter-button")) {
+                    Array.from(el.target.parentElement.children).find(node => node.matches(".marginbox-options")).classList.add("fw-open")
                 } else {
                     let resolved = false
                     if (el.target.parentElement?.parentElement) {
-                        resolved =  el.target.parentElement.parentElement.classList.contains('resolved')
+                        resolved =  el.target.parentElement.parentElement.classList.contains("resolved")
                     }
                     const user = this.editor.user
                     const docInfo = this.editor.docInfo
                     const elData = el.target.dataset
                     const comment = {
-                        'answer': elData.hasOwnProperty('answer'),
-                        'id': elData.id,
-                        'commentId': elData.commentid,
-                        'user': Number(elData.commentuser),
-                        'resolved': resolved
+                        "answer": elData.hasOwnProperty("answer"),
+                        "id": elData.id,
+                        "commentId": elData.commentid,
+                        "user": Number(elData.commentuser),
+                        "resolved": resolved
                     }
-                    document.body.insertAdjacentHTML('beforeend', marginBoxOptions(comment, user, docInfo))
-                    const marginboxOptions = document.body.querySelector('.comment-answer-options.marginbox-options')
-                    marginboxOptions.classList.add('fw-open')
+                    document.body.insertAdjacentHTML("beforeend", marginBoxOptions(comment, user, docInfo))
+                    const marginboxOptions = document.body.querySelector(".comment-answer-options.marginbox-options")
+                    marginboxOptions.classList.add("fw-open")
                     this.positionMarginBoxOptions(marginboxOptions, el.target)
                 }
                 break
-            case findTarget(event, '.margin-box-filter-track-author', el):
+            case findTarget(event, ".margin-box-filter-track-author", el):
                 this.filterOptions.trackAuthor = parseInt(el.target.dataset.id)
                 this.setTrackStyle()
                 this.view(this.editor.currentView)
                 break
-            case findTarget(event, '#margin-box-filter-track', el):
+            case findTarget(event, "#margin-box-filter-track", el):
                 this.filterOptions.track = !this.filterOptions.track
                 this.setTrackStyle()
                 this.view(this.editor.currentView)
                 break
-            case findTarget(event, '#margin-box-filter-comments', el):
+            case findTarget(event, "#margin-box-filter-comments", el):
                 this.filterOptions.comments = !this.filterOptions.comments
                 this.view(this.editor.currentView)
                 break
-            case findTarget(event, '#margin-box-filter-info', el):
+            case findTarget(event, "#margin-box-filter-info", el):
                 this.filterOptions.info = !this.filterOptions.info
                 this.view(this.editor.currentView)
                 break
-            case findTarget(event, '.margin-box.comment.inactive', el):
+            case findTarget(event, ".margin-box.comment.inactive", el):
                 this.editor.mod.comments.interactions.deactivateSelectedChanges()
                 this.editor.mod.comments.interactions.activateComment(el.target.dataset.id)
                 break
-            case findTarget(event, '.margin-box.track.inactive', el): {
+            case findTarget(event, ".margin-box.track.inactive", el): {
                 let boxNumber = 0
                 let seekItem = el.target
                 while (seekItem.previousElementSibling) {
@@ -129,7 +129,7 @@ export class ModMarginboxes {
                 )
                 break
             }
-            case findTarget(event, '.margin-box.comment.active .show-more-less', el):
+            case findTarget(event, ".margin-box.comment.active .show-more-less", el):
                 this.toggleShowMore(el)
                 break
             default:
@@ -139,7 +139,7 @@ export class ModMarginboxes {
             }
         })
 
-        document.body.addEventListener('change', evt => {
+        document.body.addEventListener("change", evt => {
             switch (evt.target.id) {
             case "margin-box-filter-comments-resolved":
                 this.filterOptions.commentsResolved = evt.target.checked
@@ -167,13 +167,13 @@ export class ModMarginboxes {
 
     }
 
-    closeAllMenus(selector = '.marginbox-options-submenu.fw-open, .marginbox-options.fw-open') {
+    closeAllMenus(selector = ".marginbox-options-submenu.fw-open, .marginbox-options.fw-open") {
         document.querySelectorAll(selector).forEach(
             el => {
-                if (el.classList.contains('comment-answer-options')) {
+                if (el.classList.contains("comment-answer-options")) {
                     el.parentElement.removeChild(el)
                 } else {
-                    el.classList.remove('fw-open')
+                    el.classList.remove("fw-open")
                 }
             }
         )
@@ -199,7 +199,7 @@ export class ModMarginboxes {
             lastNodeTracks = [],
             lastNode = this.editor.view.state.doc
 
-        this.activeCommentStyle = ''
+        this.activeCommentStyle = ""
         this.editor.view.state.doc.descendants(
             (node, pos) => {
                 if (node.attrs.hidden) {
@@ -211,7 +211,7 @@ export class ModMarginboxes {
                     pos,
                     lastNode,
                     lastNodeTracks,
-                    'main',
+                    "main",
                     marginBoxes,
                     referrers,
                     selectedChanges,
@@ -219,7 +219,7 @@ export class ModMarginboxes {
                 )
                 lastNode = node
 
-                if (node.type.name === 'footnote') {
+                if (node.type.name === "footnote") {
                     let lastFnNode = this.editor.mod.footnotes.fnEditor.view.state.doc,
                         lastFnNodeTracks = []
                     const footnote = lastFnNode.childCount > fnIndex ? lastFnNode.child(fnIndex) : false
@@ -239,7 +239,7 @@ export class ModMarginboxes {
                                 pos,
                                 lastFnNode,
                                 lastFnNodeTracks,
-                                'footnote',
+                                "footnote",
                                 marginBoxes,
                                 referrers,
                                 selectedChanges,
@@ -260,12 +260,12 @@ export class ModMarginboxes {
             let pos, view
             if (deco) {
                 pos = deco.from
-                view = 'main'
+                view = "main"
             } else {
                 const fnDeco = getCommentDuringCreationDecoration(this.editor.mod.footnotes.fnEditor.view.state)
                 if (fnDeco) {
                     pos = this.fnPosToPos(fnDeco.from)
-                    view = 'footnote'
+                    view = "footnote"
                 }
             }
             if (pos) {
@@ -276,9 +276,9 @@ export class ModMarginboxes {
                 while (referrers.length > index && referrers[index] < pos) {
                     index++
                 }
-                marginBoxes.splice(index, 0, {type: 'comment', data: comment, view, pos, active: true})
+                marginBoxes.splice(index, 0, {type: "comment", data: comment, view, pos, active: true})
                 referrers.splice(index, 0, pos)
-                this.activeCommentStyle += '.active-comment, .active-comment .comment {background-color: #fffacf !important;}'
+                this.activeCommentStyle += ".active-comment, .active-comment .comment {background-color: #fffacf !important;}"
             }
         }
 
@@ -311,7 +311,7 @@ export class ModMarginboxes {
             pastParticipants: this.editor.mod.collab.pastParticipants
         })
 
-        const marginBoxFilterElement = document.getElementById('margin-box-filter')
+        const marginBoxFilterElement = document.getElementById("margin-box-filter")
 
         if (!marginBoxFilterElement) {
             // User has navigated away already.
@@ -326,11 +326,11 @@ export class ModMarginboxes {
 
             fastdom.measure(() => {
                 // DOM read phase
-                let marginBoxesPlacementStyle = ''
-                if (getComputedStyle(marginBoxFilterElement).position === 'fixed') {
+                let marginBoxesPlacementStyle = ""
+                if (getComputedStyle(marginBoxFilterElement).position === "fixed") {
                     // We are in mobile/tablet mode. We don't need to place margin boxes.
                 } else {
-                    const marginBoxesDOM = document.querySelectorAll('#margin-box-container .margin-box')
+                    const marginBoxesDOM = document.querySelectorAll("#margin-box-container .margin-box")
                     if (marginBoxesDOM.length !== referrers.length || !marginBoxesDOM.length) {
                         // Number of comment boxes and referrers differ.
                         // This isn't right. Abort.
@@ -379,15 +379,15 @@ export class ModMarginboxes {
                         activeIndex++
                     }
 
-                    const initialOffset = document.body.classList.contains('header-closed') ? 72 + 90 : 225 + 90
+                    const initialOffset = document.body.classList.contains("header-closed") ? 72 + 90 : 225 + 90
                     let totalOffset = 0
 
                     marginBoxesPlacementStyle = marginBoxPlacements.map((mboxPlacement, index) => {
                         if (mboxPlacement.height === 0) {
-                            return ''
+                            return ""
                         }
                         const pos = mboxPlacement.pos - initialOffset
-                        let css = ''
+                        let css = ""
                         if (pos !== totalOffset) {
                             const topMargin = parseInt(pos - totalOffset)
                             css += `#margin-box-container div.margin-box:nth-of-type(${(index + 1)}) {margin-top: ${topMargin}px;}\n`
@@ -395,9 +395,9 @@ export class ModMarginboxes {
                         }
                         totalOffset += mboxPlacement.height + 2
                         return css
-                    }).join('')
+                    }).join("")
                     if (firstActiveIndex > -1) {
-                        const topMenuHeight = this.editor.dom.querySelector('header').offsetHeight
+                        const topMenuHeight = this.editor.dom.querySelector("header").offsetHeight
                         const refDistanceFromTop = this.editor.view.coordsAtPos(referrers[firstActiveIndex]).top
 
                         if (refDistanceFromTop - topMenuHeight < 0 || refDistanceFromTop > window.innerHeight - 30) {
@@ -410,7 +410,7 @@ export class ModMarginboxes {
                 fastdom.mutate(() => {
                     //DOM write phase
                     if (this.marginBoxesPlacementStyle !== marginBoxesPlacementStyle) {
-                        document.getElementById('margin-box-placement-style').innerHTML = marginBoxesPlacementStyle
+                        document.getElementById("margin-box-placement-style").innerHTML = marginBoxesPlacementStyle
                         this.marginBoxesPlacementStyle = marginBoxesPlacementStyle
                     }
                     if (this.editor.mod.comments.store.commentDuringCreation) {
@@ -447,7 +447,7 @@ export class ModMarginboxes {
 
         if (node.attrs.help) { // Help/instruction margin boxes
             const helpBox = {
-                type: 'help',
+                type: "help",
                 data: {
                     active: selection.$anchor.node(2) === node ? true : false,
                     help: node.attrs.help
@@ -457,25 +457,25 @@ export class ModMarginboxes {
             referrers.push(refPos)
         }
 
-        if (node.type.name === 'cross_reference' && !node.attrs.title) {
+        if (node.type.name === "cross_reference" && !node.attrs.title) {
             const warningBox = {
-                type: 'warning',
+                type: "warning",
                 data: {
                     active: selection.node && selection.node === node,
-                    warning: gettext('A cross reference has lost its target.')
+                    warning: gettext("A cross reference has lost its target.")
                 }
             }
             marginBoxes.push(warningBox)
             referrers.push(refPos)
         }
 
-        if (node.marks.find(mark => mark.type.name === 'link' && mark.attrs.href.charAt(0) === '#' && !mark.attrs.title)) {
-            const linkMark = node.marks.find(mark => mark.type.name === 'link')
+        if (node.marks.find(mark => mark.type.name === "link" && mark.attrs.href.charAt(0) === "#" && !mark.attrs.title)) {
+            const linkMark = node.marks.find(mark => mark.type.name === "link")
             const warningBox = {
-                type: 'warning',
+                type: "warning",
                 data: {
                     active: linkMark.isInSet(selection.$anchor.marks()),
-                    warning: gettext('An internal link has lost its target.')
+                    warning: gettext("An internal link has lost its target.")
                 }
             }
             marginBoxes.push(warningBox)
@@ -487,14 +487,14 @@ export class ModMarginboxes {
         const nodeTracks = node.attrs.track ?
             node.attrs.track.map(track => {
                 const nodeTrack = {type: track.type, data: {user: track.user, username: track.username, date: track.date}}
-                if (track.type === 'block_change') {
+                if (track.type === "block_change") {
                     nodeTrack.data.before = track.before
                 }
                 return nodeTrack
             }) :
             node.marks.filter(mark =>
-                ['deletion', 'format_change'].includes(mark.type.name) ||
-                (mark.type.name === 'insertion' && !mark.attrs.approved)
+                ["deletion", "format_change"].includes(mark.type.name) ||
+                (mark.type.name === "insertion" && !mark.attrs.approved)
             ).map(mark => ({type: mark.type.name, data: mark.attrs}))
 
         // Filter out trackmarks already present in the last node (if it's an inline node).
@@ -507,19 +507,19 @@ export class ModMarginboxes {
                         track.data.date === lastTrack.data.date &&
                         (
                             node.isInline || // block level changes almost always need new boxes
-                            (node.type.name === 'paragraph' && lastNode.type.name === 'list_item' && lastTrack.type === 'insertion') // Don't show first paragraphs in list items.
+                            (node.type.name === "paragraph" && lastNode.type.name === "list_item" && lastTrack.type === "insertion") // Don't show first paragraphs in list items.
                         ) &&
                         (
-                            ['insertion', 'deletion'].includes(track.type) ||
+                            ["insertion", "deletion"].includes(track.type) ||
                             (
-                                track.type === 'format_change' &&
+                                track.type === "format_change" &&
                                 track.data.before.length === lastTrack.data.before.length &&
                                 track.data.after.length === lastTrack.data.after.length &&
                                 track.data.before.every(markName => lastTrack.data.before.includes(markName)) &&
                                 track.data.after.every(markName => lastTrack.data.after.includes(markName))
                             ) ||
                             (
-                                track.type === 'block_change' &&
+                                track.type === "block_change" &&
                                 track.data.before.type === lastTrack.data.before.type &&
                                 track.data.before.attrs.level === lastTrack.data.before.attrs.level
                             )
@@ -568,17 +568,17 @@ export class ModMarginboxes {
                         `#paper-editable .comment[data-id="${comment.id}"] {background-color: ${this.commentColors.marker};}`
                 }
             }
-            marginBoxes.push({type: 'comment', data: comment, pos, view, active})
+            marginBoxes.push({type: "comment", data: comment, pos, view, active})
             referrers.push(refPos)
         })
 
         return nodeTracks
     }
 
-    closeAllLongComments(selector = '.comment-p.show-more') {
+    closeAllLongComments(selector = ".comment-p.show-more") {
         document.body.querySelectorAll(selector).forEach(
             el => {
-                el.classList.remove('show-more')
+                el.classList.remove("show-more")
                 const showMoreButton = el.parentElement.parentElement.querySelector(".show-more-less")
                 if (showMoreButton) {
                     showMoreButton.innerText = `${gettext("show more")}`
@@ -605,7 +605,7 @@ export class ModMarginboxes {
                     if (scrollTop > 50) {
                         marginBoxOption?.classList.add("hide")
                     } else {
-                        marginBoxOption?.classList.remove('hide')
+                        marginBoxOption?.classList.remove("hide")
                     }
                 })
             }
@@ -614,11 +614,11 @@ export class ModMarginboxes {
 
     toggleShowMore(element) {
         const commentText = element.target.parentElement.parentElement.querySelector(".comment-p")
-        commentText.classList.toggle('show-more')
-        if (commentText.classList.contains('show-more')) {
-            element.target.innerText = `${gettext('show less')}`
+        commentText.classList.toggle("show-more")
+        if (commentText.classList.contains("show-more")) {
+            element.target.innerText = `${gettext("show less")}`
         } else {
-            element.target.innerText = `${gettext('show more')}`
+            element.target.innerText = `${gettext("show more")}`
         }
     }
 
@@ -645,7 +645,7 @@ export class ModMarginboxes {
                 display: none;
             }`
         } else {
-            this.trackOptionsStyleElement.innerHTML = ''
+            this.trackOptionsStyleElement.innerHTML = ""
         }
 
     }

@@ -19,11 +19,11 @@ export class ModCommentInteractions {
 
     bindEvents() {
         // Bind all the click events related to comments
-        document.body.addEventListener('click', event => {
+        document.body.addEventListener("click", event => {
             const el = {}
             let id
             switch (true) {
-            case findTarget(event, '.edit-comment', el):
+            case findTarget(event, ".edit-comment", el):
                 this.editComment = true
                 this.activeCommentAnswerId = false
                 id = el.target.dataset.id
@@ -37,33 +37,33 @@ export class ModCommentInteractions {
                     this.updateDOM()
                 }
                 break
-            case findTarget(event, '.edit-comment-answer', el):
+            case findTarget(event, ".edit-comment-answer", el):
                 this.editComment = false
                 this.editAnswer(
                     el.target.dataset.id,
                     el.target.dataset.answer
                 )
                 break
-            case findTarget(event, '.resolve-comment', el):
+            case findTarget(event, ".resolve-comment", el):
                 this.resolveComment(el.target.dataset.id)
                 break
-            case findTarget(event, '.recreate-comment', el):
+            case findTarget(event, ".recreate-comment", el):
                 this.recreateComment(el.target.dataset.id)
                 break
-            case findTarget(event, '.assign-comment', el):
+            case findTarget(event, ".assign-comment", el):
                 this.assignComment(
                     el.target.dataset.id,
                     parseInt(el.target.dataset.user),
                     el.target.dataset.username
                 )
                 break
-            case findTarget(event, '.unassign-comment', el):
+            case findTarget(event, ".unassign-comment", el):
                 this.unassignComment(el.target.dataset.id)
                 break
-            case findTarget(event, '.delete-comment', el):
+            case findTarget(event, ".delete-comment", el):
                 this.deleteComment(el.target.dataset.id)
                 break
-            case findTarget(event, '.delete-comment-answer', el):
+            case findTarget(event, ".delete-comment-answer", el):
                 this.deleteCommentAnswer(
                     el.target.dataset.id,
                     el.target.dataset.answer
@@ -76,12 +76,12 @@ export class ModCommentInteractions {
     }
 
     initEditor() {
-        const commentEditorDOM = document.querySelector('#comment-editor'),
-            answerEditorDOM = document.querySelector('#answer-editor')
+        const commentEditorDOM = document.querySelector("#comment-editor"),
+            answerEditorDOM = document.querySelector("#answer-editor")
 
         if (
-            (commentEditorDOM?.matches(':not(:empty)')) ||
-            (answerEditorDOM?.matches(':not(:empty)'))
+            (commentEditorDOM?.matches(":not(:empty)")) ||
+            (answerEditorDOM?.matches(":not(:empty)"))
         ) {
             // Editor has been set up already. Abort.
             return
@@ -93,7 +93,7 @@ export class ModCommentInteractions {
         }
         const id = this.activeCommentId
         if (commentEditorDOM) {
-            const value = id === '-1' ?
+            const value = id === "-1" ?
                 {text: [], isMajor: false} :
                 {
                     text: this.mod.store.comments[id].comment,
@@ -118,7 +118,7 @@ export class ModCommentInteractions {
 
     findCommentIds(node) {
         return node.marks.filter(
-            mark => mark.type.name === 'comment' && mark.attrs.id
+            mark => mark.type.name === "comment" && mark.attrs.id
         ).map(mark => mark.attrs.id)
     }
 
@@ -209,7 +209,7 @@ export class ModCommentInteractions {
         if (!this.activeCommentId) {
             return false
         }
-        if (document.querySelector('.submit-comment-answer-edit')) {
+        if (document.querySelector(".submit-comment-answer-edit")) {
             // a comment answer edit form is currently open
             return true
         }
@@ -221,7 +221,7 @@ export class ModCommentInteractions {
             // Part of a comment (answer) has been entered/changed.
             return true
         }
-        if (document.querySelector('div.marginbox-options.fw-open')) {
+        if (document.querySelector("div.marginbox-options.fw-open")) {
             // A margin box options menu is open.
             return true
         }
@@ -238,14 +238,14 @@ export class ModCommentInteractions {
     createNewComment() {
         this.deactivateAll()
         this.mod.store.addCommentDuringCreation(this.mod.editor.currentView)
-        this.activeCommentId = '-1'
+        this.activeCommentId = "-1"
         this.editComment = true
         this.updateDOM()
         this.editor.view.focus()
     }
 
     deleteComment(id) {
-        if (id === '-1') {
+        if (id === "-1") {
             this.deactivateAll()
         } else {
             // Handle the deletion of a comment.
@@ -287,13 +287,13 @@ export class ModCommentInteractions {
         const {html, text} = serializeComment(comment.comment)
 
         post(
-            '/api/document/comment_notify/',
+            "/api/document/comment_notify/",
             {
                 doc_id: this.mod.editor.docInfo.id,
                 collaborator_id: user,
                 comment_html: html,
                 comment_text: text,
-                type: 'assign'
+                type: "assign"
             }
         )
     }
@@ -301,14 +301,14 @@ export class ModCommentInteractions {
 
     updateComment({id, comment, isMajor}) {
         // Save the change to a comment and mark that the document has been changed
-        if (id === '-1') {
+        if (id === "-1") {
             const referrer = getCommentDuringCreationDecoration(this.mod.store.commentDuringCreation.view.state)
             // This is a new comment. We need to get an ID for it if it has content.
 
             let username
 
-            if (['review', 'review-tracked'].includes(this.mod.editor.docInfo.access_rights)) {
-                username = `${gettext('Reviewer')} ${this.mod.editor.user.id}`
+            if (["review", "review-tracked"].includes(this.mod.editor.docInfo.access_rights)) {
+                username = `${gettext("Reviewer")} ${this.mod.editor.user.id}`
             } else {
                 username = this.mod.editor.user.username
             }
@@ -338,7 +338,7 @@ export class ModCommentInteractions {
         // Handle a click on the cancel button of the comment submit form.
         const id = this.activeCommentId
         if (
-            id === '-1' ||
+            id === "-1" ||
             this.mod.store.comments[id]?.comment.length === 0
         ) {
             this.deleteComment(id)
@@ -368,8 +368,8 @@ export class ModCommentInteractions {
 
         let username
 
-        if (['review', 'review-tracked'].includes(this.mod.editor.docInfo.access_rights)) {
-            username = `${gettext('Reviewer')} ${this.mod.editor.user.id}`
+        if (["review", "review-tracked"].includes(this.mod.editor.docInfo.access_rights)) {
+            username = `${gettext("Reviewer")} ${this.mod.editor.user.id}`
         } else {
             username = this.mod.editor.user.username
         }

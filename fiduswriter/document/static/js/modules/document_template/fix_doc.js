@@ -41,26 +41,26 @@ export function adjustDocToTemplate(miniDoc, miniTemplate, documentStyleSlugs, s
         removedFootnoteMarks = doc.attrs.footnote_marks.filter(
             mark => !template.attrs.footnote_marks.includes(mark)
         ),
-        attrs = ['footnote_marks', 'footnote_elements', 'languages', 'citationstyles', 'papersizes', 'bibliography_header', 'template', 'import_id']
+        attrs = ["footnote_marks", "footnote_elements", "languages", "citationstyles", "papersizes", "bibliography_header", "template", "import_id"]
     attrs.forEach(attr => doc.attrs[attr] = template.attrs[attr])
 
     if (!doc.attrs.citationstyles.includes(doc.attrs.citationstyle)) {
         if (!doc.attrs.citationstyles.length) {
-            throw new Error('Document template allows no citation styles.')
+            throw new Error("Document template allows no citation styles.")
         }
         doc.attrs.citationstyle = template.attrs.citationstyle
     }
 
     if (!doc.attrs.languages.includes(doc.attrs.language)) {
         if (!doc.attrs.languages.length) {
-            throw new Error('Document template allows no languages.')
+            throw new Error("Document template allows no languages.")
         }
         doc.attrs.language = template.attrs.language
     }
 
     if (!doc.attrs.papersizes.includes(doc.attrs.papersize)) {
         if (!doc.attrs.papersizes.length) {
-            throw new Error('Document template allows no paper sizes.')
+            throw new Error("Document template allows no paper sizes.")
         }
         doc.attrs.papersize = doc.attrs.papersizes[0]
     }
@@ -75,7 +75,7 @@ export function adjustDocToTemplate(miniDoc, miniTemplate, documentStyleSlugs, s
 
     if (!doc.attrs.citationstyles.includes(doc.attrs.citationstyle)) {
         if (!doc.attrs.citationstyles.length) {
-            throw new Error('No citation styles have been defined for document template.')
+            throw new Error("No citation styles have been defined for document template.")
         }
         doc.attrs.citationstyle = doc.attrs.citationstyles[0]
     }
@@ -112,10 +112,10 @@ export function adjustDocToTemplate(miniDoc, miniTemplate, documentStyleSlugs, s
                     } else if (
                         firstOldContent.content &&
                         !firstOldContent.attrs.hidden &&
-                        firstOldContent.attrs.locking !== 'fixed' &&
+                        firstOldContent.attrs.locking !== "fixed" &&
                         !(
                             // table with just first row, which is fixed.
-                            firstOldContent.attrs.locking === 'header' &&
+                            firstOldContent.attrs.locking === "header" &&
                             firstOldContent.content.length === 1
                         ) &&
                         !(
@@ -158,7 +158,7 @@ export function adjustDocToTemplate(miniDoc, miniTemplate, documentStyleSlugs, s
                 if (
                     (newNode.attrs.initial || oldNode.attrs.initial) &&
                     (
-                        oldNode.attrs.locking === 'fixed' ||
+                        oldNode.attrs.locking === "fixed" ||
                         deepEqual(oldNode.attrs.initial || {}, oldNode.content || {})
                     )
                 ) {
@@ -179,13 +179,13 @@ export function adjustDocToTemplate(miniDoc, miniTemplate, documentStyleSlugs, s
                     )
                     if (removedElements.length || removedMarks.length) {
                         cleanNode(newNode, removedElements, removedMarks)
-                        if (!newNode.content && ['richtext_part', 'heading_part'].includes(part.type)) {
+                        if (!newNode.content && ["richtext_part", "heading_part"].includes(part.type)) {
                             newNode.content = [{type: part.attrs.elements[0]}]
-                        } else if (!newNode.content && part.type === 'table_part') {
+                        } else if (!newNode.content && part.type === "table_part") {
                             newNode.content = [
-                                {type: 'table', content: [
-                                    {type: 'table_row', content: [
-                                        {type: 'table_cell', content: [{type: 'paragraph'}]}
+                                {type: "table", content: [
+                                    {type: "table_row", content: [
+                                        {type: "table_cell", content: [{type: "paragraph"}]}
                                     ]}
                                 ]}
                             ]
@@ -205,7 +205,7 @@ export function adjustDocToTemplate(miniDoc, miniTemplate, documentStyleSlugs, s
     while (oldContent.length) {
         const newNode = oldContent.shift()
         const attrs = Object.assign({}, newNode.attrs)
-        if (attrs.hasOwnProperty('deleted')) {
+        if (attrs.hasOwnProperty("deleted")) {
             newNode.attrs.deleted = true
             doc.content.push(newNode)
         }

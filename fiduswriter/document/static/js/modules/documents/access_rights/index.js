@@ -16,11 +16,11 @@ export class DocumentAccessRightsDialog {
 
     init() {
         postJson(
-            '/api/document/get_access_rights/',
+            "/api/document/get_access_rights/",
             {document_ids: this.documentIds}
         ).catch(
             error => {
-                addAlert('error', gettext('Cannot load document access data.'))
+                addAlert("error", gettext("Cannot load document access data."))
                 throw error
             }
         ).then(
@@ -34,29 +34,29 @@ export class DocumentAccessRightsDialog {
     getDropdownMenu(currentRight, onChange) {
         return {
             content: [
-                {type: 'header', title: gettext('Basic'), tooltip: gettext("Basic access rights")},
-                {type: 'action', title: gettext('Write'), icon: 'pencil-alt', tooltip: gettext("Write"), action: () => {
-                    onChange('write')
-                }, selected: currentRight === 'write'},
-                {type: 'action', title: gettext('Write tracked'), icon: 'pencil-alt', tooltip: gettext("Write with changes tracked"), action: () => {
-                    onChange('write-tracked')
-                }, selected: currentRight === 'write-tracked'},
-                {type: 'action', title: gettext('Comment'), icon: 'comment', tooltip: gettext("Comment"), action: () => {
-                    onChange('comment')
-                }, selected: currentRight === 'comment'},
-                {type: 'action', title: gettext('Read'), icon: 'eye', tooltip: gettext("Read"), action: () => {
-                    onChange('read')
-                }, selected: currentRight === 'read'},
-                {type: 'header', title: gettext('Review'), tooltip: gettext("Access rights used within document review")},
-                {type: 'action', title: gettext('No comments'), icon: 'eye', tooltip: gettext("Read document but not see comments and chats of others"), action: () => {
-                    onChange('read-without-comments')
-                }, selected: currentRight === 'read-without-comments'},
-                {type: 'action', title: gettext('Review'), icon: 'comment', tooltip: gettext("Comment, but not see comments and chats of others"), action: () => {
-                    onChange('review')
-                }, selected: currentRight === 'review'},
-                {type: 'action', title: gettext('Review tracked'), icon: 'pencil-alt', tooltip: gettext("Write with tracked changes, but not see comments and chats of others"), action: () => {
-                    onChange('review-tracked')
-                }, selected: currentRight === 'review-tracked'},
+                {type: "header", title: gettext("Basic"), tooltip: gettext("Basic access rights")},
+                {type: "action", title: gettext("Write"), icon: "pencil-alt", tooltip: gettext("Write"), action: () => {
+                    onChange("write")
+                }, selected: currentRight === "write"},
+                {type: "action", title: gettext("Write tracked"), icon: "pencil-alt", tooltip: gettext("Write with changes tracked"), action: () => {
+                    onChange("write-tracked")
+                }, selected: currentRight === "write-tracked"},
+                {type: "action", title: gettext("Comment"), icon: "comment", tooltip: gettext("Comment"), action: () => {
+                    onChange("comment")
+                }, selected: currentRight === "comment"},
+                {type: "action", title: gettext("Read"), icon: "eye", tooltip: gettext("Read"), action: () => {
+                    onChange("read")
+                }, selected: currentRight === "read"},
+                {type: "header", title: gettext("Review"), tooltip: gettext("Access rights used within document review")},
+                {type: "action", title: gettext("No comments"), icon: "eye", tooltip: gettext("Read document but not see comments and chats of others"), action: () => {
+                    onChange("read-without-comments")
+                }, selected: currentRight === "read-without-comments"},
+                {type: "action", title: gettext("Review"), icon: "comment", tooltip: gettext("Comment, but not see comments and chats of others"), action: () => {
+                    onChange("review")
+                }, selected: currentRight === "review"},
+                {type: "action", title: gettext("Review tracked"), icon: "pencil-alt", tooltip: gettext("Write with tracked changes, but not see comments and chats of others"), action: () => {
+                    onChange("review-tracked")
+                }, selected: currentRight === "review-tracked"},
             ]
         }
     }
@@ -76,7 +76,7 @@ export class DocumentAccessRightsDialog {
             if (docCollabs[holderIdent]) {
                 if (docCollabs[holderIdent].rights != ar.rights) {
                     // We use read rights if the user has different rights on different docs.
-                    docCollabs[holderIdent].rights = 'read'
+                    docCollabs[holderIdent].rights = "read"
                 }
                 docCollabs[holderIdent].count += 1
             } else {
@@ -91,7 +91,7 @@ export class DocumentAccessRightsDialog {
 
         const buttons = [
             {
-                text: (settings_REGISTRATION_OPEN || settings_SOCIALACCOUNT_OPEN) ? gettext('Add contact or invite new user') : gettext('Add contact'),
+                text: (settings_REGISTRATION_OPEN || settings_SOCIALACCOUNT_OPEN) ? gettext("Add contact or invite new user") : gettext("Add contact"),
                 classes: "fw-light fw-add-button",
                 click: () => {
                     const dialog = new AddContactDialog()
@@ -100,24 +100,24 @@ export class DocumentAccessRightsDialog {
                             contactsData.forEach(
                                 contactData => {
                                     if (contactData.id) {
-                                        document.querySelector('#my-contacts .fw-data-table-body').insertAdjacentHTML(
-                                            'beforeend',
+                                        document.querySelector("#my-contacts .fw-data-table-body").insertAdjacentHTML(
+                                            "beforeend",
                                             contactsTemplate({contacts: [contactData]})
                                         )
-                                        document.querySelector('#share-contact table tbody').insertAdjacentHTML(
-                                            'beforeend',
-                                            collaboratorsTemplate({'collaborators': [{
+                                        document.querySelector("#share-contact table tbody").insertAdjacentHTML(
+                                            "beforeend",
+                                            collaboratorsTemplate({"collaborators": [{
                                                 holder: contactData,
-                                                rights: 'read'
+                                                rights: "read"
                                             }]})
                                         )
                                         this.newContactCall(contactData)
                                     } else {
-                                        document.querySelector('#share-contact table tbody').insertAdjacentHTML(
-                                            'beforeend',
-                                            collaboratorsTemplate({'collaborators': [{
+                                        document.querySelector("#share-contact table tbody").insertAdjacentHTML(
+                                            "beforeend",
+                                            collaboratorsTemplate({"collaborators": [{
                                                 holder: contactData,
-                                                rights: 'read'
+                                                rights: "read"
                                             }]})
                                         )
                                     }
@@ -128,12 +128,12 @@ export class DocumentAccessRightsDialog {
                 }
             },
             {
-                text: gettext('Submit'),
+                text: gettext("Submit"),
                 classes: "fw-dark",
                 click: () => {
                     //apply the current state to server
                     const accessRights = []
-                    document.querySelectorAll('#share-contact .collaborator-tr').forEach(el => {
+                    document.querySelectorAll("#share-contact .collaborator-tr").forEach(el => {
                         accessRights.push({
                             holder: {
                                 id: parseInt(el.dataset.id),
@@ -147,12 +147,12 @@ export class DocumentAccessRightsDialog {
                 }
             },
             {
-                type: 'cancel'
+                type: "cancel"
             }
         ]
         this.dialog = new Dialog({
-            title: gettext('Share your document with others'),
-            id: 'access-rights-dialog',
+            title: gettext("Share your document with others"),
+            id: "access-rights-dialog",
             width: 820,
             height: 440,
             body: accessRightOverviewTemplate({
@@ -166,16 +166,16 @@ export class DocumentAccessRightsDialog {
     }
 
     bindDialogEvents() {
-        this.dialog.dialogEl.querySelector('#add-share-contact').addEventListener('click', () => {
+        this.dialog.dialogEl.querySelector("#add-share-contact").addEventListener("click", () => {
             const selectedData = []
-            document.querySelectorAll('#my-contacts .fw-checkable.checked').forEach(el => {
+            document.querySelectorAll("#my-contacts .fw-checkable.checked").forEach(el => {
                 const collaboratorEl = document.getElementById(`collaborator-${el.dataset.type}-${el.dataset.id}`)
                 if (collaboratorEl) {
-                    if (collaboratorEl.dataset.rights === 'delete') {
-                        collaboratorEl.dataset.rights = 'read'
-                        const accessRightIcon = collaboratorEl.querySelector('.icon-access-right')
-                        accessRightIcon.classList.remove('icon-access-delete')
-                        accessRightIcon.classList.add('icon-access-read')
+                    if (collaboratorEl.dataset.rights === "delete") {
+                        collaboratorEl.dataset.rights = "read"
+                        const accessRightIcon = collaboratorEl.querySelector(".icon-access-right")
+                        accessRightIcon.classList.remove("icon-access-delete")
+                        accessRightIcon.classList.add("icon-access-read")
                     }
                 } else {
                     const collaborator = this.contacts.find(
@@ -192,41 +192,41 @@ export class DocumentAccessRightsDialog {
                             name: collaborator.name,
                             avatar: collaborator.avatar,
                         },
-                        rights: 'read'
+                        rights: "read"
                     })
                 }
             })
 
-            document.querySelectorAll('#my-contacts .checkable-label.checked').forEach(el => el.classList.remove('checked'))
-            document.querySelector('#share-contact table tbody').insertAdjacentHTML(
-                'beforeend',
+            document.querySelectorAll("#my-contacts .checkable-label.checked").forEach(el => el.classList.remove("checked"))
+            document.querySelector("#share-contact table tbody").insertAdjacentHTML(
+                "beforeend",
                 collaboratorsTemplate({
-                    'collaborators': selectedData
+                    "collaborators": selectedData
                 })
             )
         })
-        this.dialog.dialogEl.addEventListener('click', event => {
+        this.dialog.dialogEl.addEventListener("click", event => {
             const el = {}
             switch (true) {
-            case findTarget(event, '.fw-checkable', el):
+            case findTarget(event, ".fw-checkable", el):
                 setCheckableLabel(el.target)
                 break
-            case findTarget(event, '.delete-collaborator', el): {
-                const colRow = el.target.closest('.collaborator-tr')
-                colRow.dataset.rights = 'delete'
-                colRow.querySelector('.icon-access-right').setAttribute(
-                    'class',
-                    'icon-access-right icon-access-delete'
+            case findTarget(event, ".delete-collaborator", el): {
+                const colRow = el.target.closest(".collaborator-tr")
+                colRow.dataset.rights = "delete"
+                colRow.querySelector(".icon-access-right").setAttribute(
+                    "class",
+                    "icon-access-right icon-access-delete"
                 )
                 break
             }
-            case findTarget(event, '.edit-right', el): {
-                const colRow = el.target.closest('.collaborator-tr')
+            case findTarget(event, ".edit-right", el): {
+                const colRow = el.target.closest(".collaborator-tr")
                 const currentRight = colRow.dataset.rights
                 const menu = this.getDropdownMenu(currentRight, newRight => {
                     colRow.dataset.rights = newRight
-                    colRow.querySelector('.icon-access-right').setAttribute(
-                        'class',
+                    colRow.querySelector(".icon-access-right").setAttribute(
+                        "class",
                         `icon-access-right icon-access-${newRight}`
                     )
                 })
@@ -247,17 +247,17 @@ export class DocumentAccessRightsDialog {
 
     submitAccessRight(newAccessRights) {
         postJson(
-            '/api/document/save_access_rights/',
+            "/api/document/save_access_rights/",
             {
                 document_ids: JSON.stringify(this.documentIds),
                 access_rights: JSON.stringify(newAccessRights),
             }
         ).then(
             () => {
-                addAlert('success', gettext('Access rights have been saved'))
+                addAlert("success", gettext("Access rights have been saved"))
             }
         ).catch(
-            () => addAlert('error', gettext('Access rights could not be saved'))
+            () => addAlert("error", gettext("Access rights could not be saved"))
         )
 
     }

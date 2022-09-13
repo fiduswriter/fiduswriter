@@ -22,7 +22,7 @@ export class citeprocSys {
                 Object.assign(this.items, cslOutput)
             } else {
                 this.missingItems.push(id)
-                this.items[id] = {author: [{literal: ''}], type: 'article', id}
+                this.items[id] = {author: [{literal: ""}], type: "article", id}
             }
         }
         return this.items[id]

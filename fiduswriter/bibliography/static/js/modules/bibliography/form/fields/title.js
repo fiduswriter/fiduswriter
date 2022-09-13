@@ -18,9 +18,9 @@ export class TitleFieldForm {
             state: EditorState.create({
                 schema: titleSchema,
                 doc: titleSchema.nodeFromJSON({
-                    type: 'doc',
+                    type: "doc",
                     content: [{
-                        type: 'literal',
+                        type: "literal",
                         content: this.initialValue
                     }]
                 }),
@@ -32,23 +32,23 @@ export class TitleFieldForm {
                         "Mod-shift-z": undo,
                         "Mod-y": redo,
                         "Mod-b": () => {
-                            const sMark = this.view.state.schema.marks['strong']
+                            const sMark = this.view.state.schema.marks["strong"]
                             const command = toggleMark(sMark)
                             command(this.view.state, tr => this.view.dispatch(tr))
                         },
                         "Mod-i": () => {
-                            const sMark = this.view.state.schema.marks['em']
+                            const sMark = this.view.state.schema.marks["em"]
                             const command = toggleMark(sMark)
                             command(this.view.state, tr => this.view.dispatch(tr))
                         }
                     }),
                     InlineTools([
-                        {command: toggleMark(titleSchema.marks.strong), dom: icon("strong", gettext('Strong'))},
-                        {command: toggleMark(titleSchema.marks.em), dom: icon("em", gettext('Emphasis'))},
-                        {command: toggleMark(titleSchema.marks.smallcaps), dom: icon("smallcaps", gettext('Small caps'))},
-                        {command: toggleMark(titleSchema.marks.sub), dom: icon("sub", gettext('Subscript₊'))},
-                        {command: toggleMark(titleSchema.marks.sup), dom: icon("sup", gettext('Supscript²'))},
-                        {command: toggleMark(titleSchema.marks.nocase), dom: icon("nocase", gettext('CasE ProTecT'))}
+                        {command: toggleMark(titleSchema.marks.strong), dom: icon("strong", gettext("Strong"))},
+                        {command: toggleMark(titleSchema.marks.em), dom: icon("em", gettext("Emphasis"))},
+                        {command: toggleMark(titleSchema.marks.smallcaps), dom: icon("smallcaps", gettext("Small caps"))},
+                        {command: toggleMark(titleSchema.marks.sub), dom: icon("sub", gettext("Subscript₊"))},
+                        {command: toggleMark(titleSchema.marks.sup), dom: icon("sup", gettext("Supscript²"))},
+                        {command: toggleMark(titleSchema.marks.nocase), dom: icon("nocase", gettext("CasE ProTecT"))}
                     ])
                 ]
             }),

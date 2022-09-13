@@ -7,9 +7,9 @@ export const getMissingDocumentListData = function(ids, documentList, schema, ra
     // documentList correspondingly.
     const incompleteIds = []
     ids.forEach(id => {
-        if (!documentList.find(doc => doc.id === parseInt(id)).hasOwnProperty('content')) {
+        if (!documentList.find(doc => doc.id === parseInt(id)).hasOwnProperty("content")) {
             incompleteIds.push(parseInt(id))
-        } else if (rawContent && !documentList.find(doc => doc.id === parseInt(id)).hasOwnProperty('rawContent')) {
+        } else if (rawContent && !documentList.find(doc => doc.id === parseInt(id)).hasOwnProperty("rawContent")) {
             incompleteIds.push(parseInt(id))
         }
 
@@ -17,9 +17,9 @@ export const getMissingDocumentListData = function(ids, documentList, schema, ra
 
     if (incompleteIds.length > 0) {
         return postJson(
-            '/api/document/documentlist/extra/',
+            "/api/document/documentlist/extra/",
             {
-                ids: incompleteIds.join(',')
+                ids: incompleteIds.join(",")
             }
         ).then(
             ({json}) => {
@@ -31,7 +31,7 @@ export const getMissingDocumentListData = function(ids, documentList, schema, ra
                         }
                         doc.content = acceptAllNoInsertions(
                             schema.nodeFromJSON(
-                                {type: 'doc', content: [extraValues.content]}
+                                {type: "doc", content: [extraValues.content]}
                             )
                         ).firstChild.toJSON()
                         doc.comments = extraValues.comments
@@ -43,7 +43,7 @@ export const getMissingDocumentListData = function(ids, documentList, schema, ra
             }
         ).catch(
             error => {
-                addAlert('error', gettext('Could not obtain extra document data'))
+                addAlert("error", gettext("Could not obtain extra document data"))
                 throw error
             }
         )

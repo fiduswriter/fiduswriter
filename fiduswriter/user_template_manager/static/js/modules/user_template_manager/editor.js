@@ -12,14 +12,14 @@ export class DocTemplatesEditor {
 
     init() {
         ensureCSS([
-            'errorlist.css',
-            'editor.css',
-            'user_template_manager.css'
+            "errorlist.css",
+            "editor.css",
+            "user_template_manager.css"
         ])
         return this.app.csl.getStyles().then(
             styles => {
                 this.citationStyles = styles
-                return postJson('/api/user_template_manager/get/', {id: this.id})
+                return postJson("/api/user_template_manager/get/", {id: this.id})
             }
         ).then(
             ({json}) => {
@@ -42,7 +42,7 @@ export class DocTemplatesEditor {
                     this.template.document_styles,
                     this.citationStyles,
                     this.template.export_templates,
-                    this.dom.querySelector('#template-editor')
+                    this.dom.querySelector("#template-editor")
                 )
                 this.templateDesigner.init()
                 this.bind()
@@ -51,20 +51,20 @@ export class DocTemplatesEditor {
     }
 
     render() {
-        this.dom = document.createElement('body')
-        this.dom.classList.add('scrollable')
+        this.dom = document.createElement("body")
+        this.dom.classList.add("scrollable")
         this.dom.innerHTML =
         `<div id="wait" class="">
             <i class="fa fa-spinner fa-pulse"></i>
         </div>
         <nav id="headerbar"><div>
-            <div id="close-document-top" title="${gettext('Close the template without saving and return to the overview')}">
+            <div id="close-document-top" title="${gettext("Close the template without saving and return to the overview")}">
                 <span class="fw-link-text close">
                     <i class="fa fa-times"></i>
                 </span>
             </div>
             <div id="document-top">
-                <h1>${gettext('Template Editor')}</h1>
+                <h1>${gettext("Template Editor")}</h1>
             </div>
         </div>
         <div>
@@ -73,41 +73,41 @@ export class DocTemplatesEditor {
                 <ul class="errorlist"></ul>
                 <div class="ui-dialog-buttonset">
                     <button type="button" class="fw-dark fw-button ui-button ui-corner-all ui-widget save">
-                        ${gettext('Save')}
+                        ${gettext("Save")}
                     </button>
                     <button type="button" class="fw-dark fw-button ui-button ui-corner-all ui-widget download">
-                        ${gettext('Download')}
+                        ${gettext("Download")}
                     </button>
                     <button type="button" class="fw-orange fw-button ui-button ui-corner-all ui-widget close">
-                        ${gettext('Close')}
+                        ${gettext("Close")}
                     </button>
                 </div>
             </div>
         </div>`
         document.body = this.dom
-        setDocTitle(gettext('Template Editor'), this.app)
+        setDocTitle(gettext("Template Editor"), this.app)
         const feedbackTab = new FeedbackTab()
         feedbackTab.init()
     }
 
     showErrors(errors) {
-        this.dom.querySelector('.errorlist').innerHTML = Object.values(errors).map(error => `<li>${error}</li>`).join('')
+        this.dom.querySelector(".errorlist").innerHTML = Object.values(errors).map(error => `<li>${error}</li>`).join("")
     }
 
     save() {
-        this.dom.querySelector('.errorlist').innerHTML = ''
+        this.dom.querySelector(".errorlist").innerHTML = ""
         const {valid, value, errors, import_id, title} = this.templateDesigner.getCurrentValue()
         if (!valid) {
             this.showErrors(errors)
             return Promise.reject()
         } else {
-            return post('/api/user_template_manager/save/', {
+            return post("/api/user_template_manager/save/", {
                 id: this.id,
                 value,
                 import_id,
                 title
             }).then(
-                () => addAlert('info', gettext('Saved template'))
+                () => addAlert("info", gettext("Saved template"))
             )
         }
     }
@@ -117,7 +117,7 @@ export class DocTemplatesEditor {
             () => {
                 const exporter = new DocumentTemplateExporter(
                     this.id,
-                    '/api/user_template_manager/get/'
+                    "/api/user_template_manager/get/"
                 )
                 exporter.init()
             }
@@ -125,20 +125,20 @@ export class DocTemplatesEditor {
     }
 
     bind() {
-        this.dom.addEventListener('click', event => {
+        this.dom.addEventListener("click", event => {
             const el = {}
             switch (true) {
-            case findTarget(event, 'button.save', el):
+            case findTarget(event, "button.save", el):
                 event.preventDefault()
                 this.save()
                 break
-            case findTarget(event, 'button.download', el):
+            case findTarget(event, "button.download", el):
                 event.preventDefault()
                 this.download()
                 break
-            case findTarget(event, 'button.close, span.close', el):
+            case findTarget(event, "button.close, span.close", el):
                 event.preventDefault()
-                this.app.goTo('/templates/')
+                this.app.goTo("/templates/")
                 break
             default:
                 break

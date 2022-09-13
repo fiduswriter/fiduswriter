@@ -10,11 +10,11 @@ export class AddContactDialog  {
         return new Promise(resolve => {
             const buttons = [
                 {
-                    text: gettext('Submit'),
+                    text: gettext("Submit"),
                     classes: "fw-dark",
                     click: () => {
-                        const userString = document.getElementById('new-contact-user-string').value
-                        document.querySelectorAll('#add-new-contact .warning').forEach(el => el.parentElement.removeChild(el))
+                        const userString = document.getElementById("new-contact-user-string").value
+                        document.querySelectorAll("#add-new-contact .warning").forEach(el => el.parentElement.removeChild(el))
                         return Promise.all(userString.split(/[\s,;]+/).map(singleUserString => {
                             if (!singleUserString.length) {
                                 return false
@@ -31,13 +31,13 @@ export class AddContactDialog  {
                     }
                 },
                 {
-                    type: 'cancel'
+                    type: "cancel"
                 }
             ]
 
             const dialog = new Dialog({
-                id: 'add-new-contact',
-                title: (settings_REGISTRATION_OPEN || settings_SOCIALACCOUNT_OPEN) ? gettext('Add contact or invite new user') : gettext('Add contact'),
+                id: "add-new-contact",
+                title: (settings_REGISTRATION_OPEN || settings_SOCIALACCOUNT_OPEN) ? gettext("Add contact or invite new user") : gettext("Add contact"),
                 body: addContactTemplate(),
                 width: 350,
                 height: 250,
@@ -46,23 +46,23 @@ export class AddContactDialog  {
 
             dialog.open()
 
-            document.getElementById('new-contact-user-string').style.width = '340'
+            document.getElementById("new-contact-user-string").style.width = "340"
         })
     }
 
     addContact(userString) {
         //add a user to contact per ajax
-        if (null === userString || 'undefined' == typeof(userString)) {
+        if (null === userString || "undefined" == typeof(userString)) {
             return cancelPromise()
         }
 
         userString = userString.trim()
-        if ('' === userString) {
+        if ("" === userString) {
             return cancelPromise()
         }
 
         return postJson(
-            '/api/user/invites/add/',
+            "/api/user/invites/add/",
             {
                 user_string: userString
             }
@@ -73,14 +73,14 @@ export class AddContactDialog  {
                 } else { //user not found
                     let responseHtml
                     if (json.error === 1) {
-                        responseHtml = gettext('You cannot add yourself to your contacts!')
+                        responseHtml = gettext("You cannot add yourself to your contacts!")
                     } else if (json.error === 2) {
-                        responseHtml = gettext('This person is already in your contacts!')
+                        responseHtml = gettext("This person is already in your contacts!")
                     } else if (json.error === 3) {
-                        responseHtml = gettext('Invalid email!')
+                        responseHtml = gettext("Invalid email!")
                     }
-                    document.getElementById('add-new-contact').insertAdjacentHTML(
-                        'beforeend',
+                    document.getElementById("add-new-contact").insertAdjacentHTML(
+                        "beforeend",
                         `<div class="warning" style="padding: 8px;">${escapeText(userString)}: ${responseHtml}</div>`
                     )
                     return cancelPromise()

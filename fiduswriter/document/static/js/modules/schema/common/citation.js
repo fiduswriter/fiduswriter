@@ -12,7 +12,7 @@ function parseReferences(str) {
         return []
     }
     return references.filter(
-        ref => ref.hasOwnProperty('id') // ensure there is an id.
+        ref => ref.hasOwnProperty("id") // ensure there is an id.
     ).map(
         ref => {
             const mRef = {id: ref.id}
@@ -32,26 +32,26 @@ export const citation = {
     group: "inline",
     attrs: {
         format: {
-            default: 'autocite' // "autocite" or "textcite"
+            default: "autocite" // "autocite" or "textcite"
         },
         references: {
             default: [] // array of {id[, locator][, prefix]}
         }
     },
     parseDOM: [{
-        tag: 'span.citation',
+        tag: "span.citation",
         getAttrs(dom) {
             return {
-                format: dom.dataset.format || '',
+                format: dom.dataset.format || "",
                 references: parseReferences(dom.dataset.references)
             }
         }
     }],
     toDOM(node) {
         return ["span", {
-            class: 'citation',
-            'data-format': node.attrs.format,
-            'data-references': JSON.stringify(node.attrs.references)
+            class: "citation",
+            "data-format": node.attrs.format,
+            "data-references": JSON.stringify(node.attrs.references)
         }]
     }
 }

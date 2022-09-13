@@ -53,15 +53,15 @@ export class ModCommentStore {
 
         let username
 
-        if (['review', 'review-tracked'].includes(this.mod.editor.docInfo.access_rights)) {
-            username = `${gettext('Reviewer')} ${this.mod.editor.user.id}`
+        if (["review", "review-tracked"].includes(this.mod.editor.docInfo.access_rights)) {
+            username = `${gettext("Reviewer")} ${this.mod.editor.user.id}`
         } else {
             username = this.mod.editor.user.username
         }
 
         this.commentDuringCreation = {
             comment: new Comment({
-                id: '-1',
+                id: "-1",
                 user: this.mod.editor.user.id,
                 username,
                 date: Date.now() - this.mod.editor.clientTimeAdjustment
@@ -165,7 +165,7 @@ export class ModCommentStore {
             participant => participant.id === commentData.assignedUser
         )) {
             this.mod.editor.mod.collab.pastParticipants.push(
-                {id: commentData.assignedUser, name: commentData.assignedUsername || ''}
+                {id: commentData.assignedUser, name: commentData.assignedUsername || ""}
             )
         }
         if (!this.comments[commentData.id]) {
@@ -190,7 +190,7 @@ export class ModCommentStore {
             participant => participant.id === commentData.assignedUser
         )) {
             this.mod.editor.mod.collab.pastParticipants.push(
-                {id: commentData.assignedUser, name: commentData.assignedUsername || ''}
+                {id: commentData.assignedUser, name: commentData.assignedUsername || ""}
             )
         }
         if (this.comments[commentData.id]) {
@@ -210,7 +210,7 @@ export class ModCommentStore {
                 const nodeStart = pos,
                     nodeEnd = pos + node.nodeSize
                 node.marks.forEach(mark => {
-                    if (mark.type.name === 'comment' && mark.attrs.id === id) {
+                    if (mark.type.name === "comment" && mark.attrs.id === id) {
                         this.removeMark(tr, nodeStart, nodeEnd, markType)
                     }
                 })
@@ -329,7 +329,7 @@ export class ModCommentStore {
             } else if (event.type == "update") {
                 const found = this.comments[event.id]
                 if (found?.id) {
-                    result.push(Object.assign({type: 'update'}, found))
+                    result.push(Object.assign({type: "update"}, found))
                 } else {
                     result.push({
                         type: "ignore"
@@ -338,7 +338,7 @@ export class ModCommentStore {
             } else if (event.type == "create") {
                 const found = this.comments[event.id]
                 if (found?.id) {
-                    result.push(Object.assign({type: 'create'}, found))
+                    result.push(Object.assign({type: "create"}, found))
                 } else {
                     result.push({
                         type: "ignore"
@@ -352,7 +352,7 @@ export class ModCommentStore {
                 }
                 if (foundAnswer) {
                     result.push(
-                        Object.assign({}, foundAnswer, {type: 'add_answer', id: event.id, answerId: foundAnswer.id})
+                        Object.assign({}, foundAnswer, {type: "add_answer", id: event.id, answerId: foundAnswer.id})
                     )
                 } else {
                     result.push({
@@ -381,7 +381,7 @@ export class ModCommentStore {
                 }
                 if (foundAnswer) {
                     result.push(
-                        Object.assign({}, foundAnswer, {type: 'update_answer', id: event.id, answerId: foundAnswer.id})
+                        Object.assign({}, foundAnswer, {type: "update_answer", id: event.id, answerId: foundAnswer.id})
                     )
                 } else {
                     result.push({

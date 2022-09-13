@@ -9,19 +9,19 @@ export function getTimestamp(date) {
     const year = date.getUTCFullYear()
 
     if (second < 10) {
-        second = '0' + second
+        second = "0" + second
     }
     if (minute < 10) {
-        minute = '0' + minute
+        minute = "0" + minute
     }
     if (hour < 10) {
-        hour = '0' + hour
+        hour = "0" + hour
     }
     if (day < 10) {
-        day = '0' + day
+        day = "0" + day
     }
     if (month < 10) {
-        month = '0' + month
+        month = "0" + month
     }
 
     return `${year}-${month}-${day}T${hour}:${minute}:${second}Z`
@@ -29,37 +29,37 @@ export function getTimestamp(date) {
 
 export function styleEpubFootnotes(htmlEl) {
     // Converts RASH style footnotes into epub footnotes
-    const fnListEl = htmlEl.querySelector('section.fnlist')
+    const fnListEl = htmlEl.querySelector("section.fnlist")
     if (!fnListEl) {
         // There are no footnotes.
         return htmlEl
     }
-    fnListEl.setAttribute('role', 'doc-endnotes')
-    const footnotes = fnListEl.querySelectorAll('section[role=doc-footnote]')
+    fnListEl.setAttribute("role", "doc-endnotes")
+    const footnotes = fnListEl.querySelectorAll("section[role=doc-footnote]")
     let footnoteCounter = 1
     footnotes.forEach(footnote => {
-        const newFootnote = document.createElement('aside')
-        newFootnote.setAttribute('epub:type', 'footnote')
+        const newFootnote = document.createElement("aside")
+        newFootnote.setAttribute("epub:type", "footnote")
         newFootnote.id = footnote.id
         if (footnote.firstChild) {
             while (footnote.firstChild) {
                 newFootnote.appendChild(footnote.firstChild)
             }
-            newFootnote.firstChild.innerHTML = footnoteCounter + ' ' + newFootnote.firstChild.innerHTML
+            newFootnote.firstChild.innerHTML = footnoteCounter + " " + newFootnote.firstChild.innerHTML
         } else {
-            newFootnote.innerHTML = '<p>' + footnoteCounter + '</p>'
+            newFootnote.innerHTML = "<p>" + footnoteCounter + "</p>"
         }
 
         footnote.parentNode.replaceChild(newFootnote, footnote)
         footnoteCounter++
     })
-    const footnoteMarkers = htmlEl.querySelectorAll('a.fn')
+    const footnoteMarkers = htmlEl.querySelectorAll("a.fn")
     let footnoteMarkerCounter = 1
     footnoteMarkers.forEach(fnMarker => {
-        const newFnMarker = document.createElement('sup')
-        const newFnMarkerLink = document.createElement('a')
-        newFnMarkerLink.setAttribute('epub:type', 'noteref')
-        newFnMarkerLink.setAttribute('href', fnMarker.getAttribute('href'))
+        const newFnMarker = document.createElement("sup")
+        const newFnMarkerLink = document.createElement("a")
+        newFnMarkerLink.setAttribute("epub:type", "noteref")
+        newFnMarkerLink.setAttribute("href", fnMarker.getAttribute("href"))
         newFnMarkerLink.innerHTML = footnoteMarkerCounter
         newFnMarker.appendChild(newFnMarkerLink)
         fnMarker.parentNode.replaceChild(newFnMarker, fnMarker)
@@ -74,12 +74,12 @@ export function setLinks(htmlEl, docNum = 0) {
     let title
     let idCount = 0
 
-    htmlEl.querySelectorAll('div.article-title,h1,h2,h3,h4,h5,h6').forEach(el => {
+    htmlEl.querySelectorAll("div.article-title,h1,h2,h3,h4,h5,h6").forEach(el => {
         title = el.textContent.trim()
-        if (title !== '' || el.classList.contains('article-title')) {
+        if (title !== "" || el.classList.contains("article-title")) {
             const contentItem = {}
             contentItem.title = title
-            contentItem.level = el.classList.contains('article-title') ? 0 : parseInt(el.tagName.substring(1, 2))
+            contentItem.level = el.classList.contains("article-title") ? 0 : parseInt(el.tagName.substring(1, 2))
             if (docNum) {
                 contentItem.docNum = docNum
             }
@@ -122,33 +122,33 @@ export function addCategoryLabels(htmlEl, language, footnote = false) {
     // Due to lacking CSS support in ereaders, figure numbers need to be hardcoded.
     htmlEl.querySelectorAll("figure[data-category='figure'] figcaption span.label").forEach(
         (el, index) => {
-            const suffix = el.parentElement.innerText.trim().length ? ': ' : ''
-            el.innerHTML = `${CATS['figure'][language]} ${(index + 1)}${footnote ? 'A' : ''}${suffix}`
-            el.classList.remove('label')
+            const suffix = el.parentElement.innerText.trim().length ? ": " : ""
+            el.innerHTML = `${CATS["figure"][language]} ${(index + 1)}${footnote ? "A" : ""}${suffix}`
+            el.classList.remove("label")
         }
     )
 
     htmlEl.querySelectorAll("figure[data-category='equation'] figcaption span.label").forEach(
         (el, index) => {
-            const suffix = el.parentElement.innerText.trim().length ? ': ' : ''
-            el.innerHTML = `${CATS['equation'][language]} ${(index + 1)}${footnote ? 'A' : ''}${suffix}`
-            el.classList.remove('label')
+            const suffix = el.parentElement.innerText.trim().length ? ": " : ""
+            el.innerHTML = `${CATS["equation"][language]} ${(index + 1)}${footnote ? "A" : ""}${suffix}`
+            el.classList.remove("label")
         }
     )
 
     htmlEl.querySelectorAll("figure[data-category='photo'] figcaption span.label").forEach(
         (el, index) => {
-            const suffix = el.parentElement.innerText.trim().length ? ': ' : ''
-            el.innerHTML = `${CATS['photo'][language]} ${(index + 1)}${footnote ? 'A' : ''}${suffix}`
-            el.classList.remove('label')
+            const suffix = el.parentElement.innerText.trim().length ? ": " : ""
+            el.innerHTML = `${CATS["photo"][language]} ${(index + 1)}${footnote ? "A" : ""}${suffix}`
+            el.classList.remove("label")
         }
     )
 
     htmlEl.querySelectorAll("figure[data-category='table'] figcaption span.label,table[data-category='table'] caption span.label").forEach(
         (el, index) => {
-            const suffix = el.parentElement.innerText.trim().length ? ': ' : ''
-            el.innerHTML = `${CATS['table'][language]} ${(index + 1)}${footnote ? 'A' : ''}${suffix}`
-            el.classList.remove('label')
+            const suffix = el.parentElement.innerText.trim().length ? ": " : ""
+            el.innerHTML = `${CATS["table"][language]} ${(index + 1)}${footnote ? "A" : ""}${suffix}`
+            el.classList.remove("label")
         }
     )
     return htmlEl

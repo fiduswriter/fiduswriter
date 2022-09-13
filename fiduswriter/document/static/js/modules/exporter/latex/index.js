@@ -32,14 +32,14 @@ export class LatexExporter {
         this.conversion = this.converter.init(this.docContent)
         if (Object.keys(this.conversion.usedBibDB).length > 0) {
             const bibExport = new BibLatexExporter(this.conversion.usedBibDB)
-            this.textFiles.push({filename: 'bibliography.bib', contents: bibExport.parse()})
+            this.textFiles.push({filename: "bibliography.bib", contents: bibExport.parse()})
         }
-        this.textFiles.push({filename: 'document.tex', contents: this.conversion.latex})
-        this.textFiles.push({filename: 'README.txt', contents: readMe})
+        this.textFiles.push({filename: "document.tex", contents: this.conversion.latex})
+        this.textFiles.push({filename: "README.txt", contents: readMe})
         this.conversion.imageIds.forEach(
             id => {
                 this.httpFiles.push({
-                    filename: this.imageDB.db[id].image.split('/').pop(),
+                    filename: this.imageDB.db[id].image.split("/").pop(),
                     url: this.imageDB.db[id].image
                 })
             }
@@ -62,7 +62,7 @@ export class LatexExporter {
     }
 
     download(blob) {
-        return download(blob, this.zipFileName, 'application/zip')
+        return download(blob, this.zipFileName, "application/zip")
     }
 
 

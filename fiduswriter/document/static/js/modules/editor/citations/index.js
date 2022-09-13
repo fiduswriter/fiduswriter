@@ -6,7 +6,7 @@ export class ModCitations {
     constructor(editor) {
         editor.mod.citations = this
         this.editor = editor
-        this.citationType = ''
+        this.citationType = ""
         this.fnOverrideElement =  false
     }
 
@@ -17,25 +17,25 @@ export class ModCitations {
          * we need to organize the numbering manually.
          */
         document.body.insertAdjacentHTML(
-            'beforeend',
-            '<style type="text/css" id="footnote-numbering-override"></style>'
+            "beforeend",
+            "<style type=\"text/css\" id=\"footnote-numbering-override\"></style>"
         )
-        this.fnOverrideElement = document.getElementById('footnote-numbering-override')
+        this.fnOverrideElement = document.getElementById("footnote-numbering-override")
     }
 
     resetCitations() {
-        const citations = document.querySelectorAll('#paper-editable span.citation')
-        citations.forEach(citation => citation.innerHTML = '')
-        const articleBibliography = document.querySelector('.article-bibliography')
-        const citationsContainer = document.getElementById('citation-footnote-box-container')
+        const citations = document.querySelectorAll("#paper-editable span.citation")
+        citations.forEach(citation => citation.innerHTML = "")
+        const articleBibliography = document.querySelector(".article-bibliography")
+        const citationsContainer = document.getElementById("citation-footnote-box-container")
         if (!articleBibliography || !citationsContainer) {
             return
         }
-        if (articleBibliography.innerHTML !== '') {
-            articleBibliography.innerHTML = ''
+        if (articleBibliography.innerHTML !== "") {
+            articleBibliography.innerHTML = ""
         }
-        if (citationsContainer.innerHTML !== '') {
-            citationsContainer.innerHTML = ''
+        if (citationsContainer.innerHTML !== "") {
+            citationsContainer.innerHTML = ""
         }
         this.layoutCitations()
     }
@@ -45,12 +45,12 @@ export class ModCitations {
             // bibliography hasn't been loaded yet
             return
         }
-        const emptyCitations = document.querySelectorAll('#paper-editable span.citation:empty')
+        const emptyCitations = document.querySelectorAll("#paper-editable span.citation:empty")
         if (emptyCitations.length) {
             const settings = this.editor.view.state.doc.firstChild.attrs,
                 bibliographyHeader = settings.bibliography_header[settings.language] || BIBLIOGRAPHY_HEADERS[settings.language]
             this.citRenderer = new RenderCitations(
-                document.getElementById('paper-editable'),
+                document.getElementById("paper-editable"),
                 settings.citationstyle,
                 bibliographyHeader,
                 this.editor.mod.db.bibDB,
@@ -65,8 +65,8 @@ export class ModCitations {
     }
 
     bindBibliographyClicks() {
-        document.querySelectorAll('div.csl-entry').forEach((el, index) => {
-            el.addEventListener('click', () => {
+        document.querySelectorAll("div.csl-entry").forEach((el, index) => {
+            el.addEventListener("click", () => {
                 const eID = parseInt(this.citRenderer.fm.bibliography[0].entry_ids[index][0])
                 this.checkTrackingDialog().then(
                     () => import("../../bibliography/form")
@@ -87,14 +87,14 @@ export class ModCitations {
         const buttons = [],
             promise = new Promise(resolve => {
                 buttons.push({
-                    type: 'cancel',
+                    type: "cancel",
                     click: () => {
                         dialog.close()
                         resolve(cancelPromise())
                     }
                 })
                 buttons.push({
-                    type: 'ok',
+                    type: "ok",
                     click: () => {
                         dialog.close()
                         resolve()
@@ -103,9 +103,9 @@ export class ModCitations {
             })
 
         const dialog = new Dialog({
-            title: gettext('No tracking'),
-            body: gettext('Changes to citation sources are not being tracked!'),
-            icon: 'exclamation-triangle',
+            title: gettext("No tracking"),
+            body: gettext("Changes to citation sources are not being tracked!"),
+            icon: "exclamation-triangle",
             width: 400,
             height: 100,
             buttons
@@ -123,18 +123,18 @@ export class ModCitations {
         }
         this.citationType = citRenderer.fm.citationType
         // Add the rendered html and css of the bibliography to the DOM.
-        const articleBibliography = document.querySelector('.article-bibliography')
+        const articleBibliography = document.querySelector(".article-bibliography")
         if (!articleBibliography) {
             return
         }
         articleBibliography.innerHTML = citRenderer.fm.bibHTML
-        let styleEl = document.querySelector('.article-bibliography-style')
+        let styleEl = document.querySelector(".article-bibliography-style")
         if (!styleEl) {
-            document.body.insertAdjacentHTML('beforeend', '<style type="text/css" class="article-bibliography-style"></style>')
-            styleEl = document.querySelector('.article-bibliography-style')
+            document.body.insertAdjacentHTML("beforeend", "<style type=\"text/css\" class=\"article-bibliography-style\"></style>")
+            styleEl = document.querySelector(".article-bibliography-style")
         }
         let css = citRenderer.fm.bibCSS
-        if (this.editor.docInfo.access_rights === 'write') {
+        if (this.editor.docInfo.access_rights === "write") {
             this.bindBibliographyClicks()
             css += `
                 div.csl-entry {
@@ -148,25 +148,25 @@ export class ModCitations {
             styleEl.innerHTML = css
         }
 
-        const citationsContainer = document.getElementById('citation-footnote-box-container')
-        if (this.citationType === 'note') {
+        const citationsContainer = document.getElementById("citation-footnote-box-container")
+        if (this.citationType === "note") {
 
             // Check if there is an empty citation in the main body text (not footnotes)
-            const emptyCitations = document.querySelector('span.citation:empty')
+            const emptyCitations = document.querySelector("span.citation:empty")
 
             if (emptyCitations) {
                 // Find all the citations in the main body text (not footnotes)
-                const citationNodes = document.querySelectorAll('#document-editable span.citation'),
+                const citationNodes = document.querySelectorAll("#document-editable span.citation"),
                     citationsHTML = citRenderer.fm.citationTexts.slice(0, citationNodes.length).map(
                         citText => `<div class="footnote-citation">${citText}</div>`
-                    ).join('')
+                    ).join("")
                 if (citationsContainer.innerHTML !== citationsHTML) {
                     citationsContainer.innerHTML = citationsHTML
                 }
                 // The citations have not been filled, so we do so manually.
-                citationNodes.forEach(citationNode => citationNode.innerHTML = '<span class="citation-footnote-marker"></span>')
+                citationNodes.forEach(citationNode => citationNode.innerHTML = "<span class=\"citation-footnote-marker\"></span>")
 
-                const footnoteCitationNodes = document.querySelectorAll('#footnote-box-container span.citation')
+                const footnoteCitationNodes = document.querySelectorAll("#footnote-box-container span.citation")
                 const footnoteCitTexts = citRenderer.fm.citationTexts.slice(citationNodes.length)
 
                 footnoteCitTexts.forEach(
@@ -182,8 +182,8 @@ export class ModCitations {
             }
 
         } else {
-            if (citationsContainer.innerHTML !== '') {
-                citationsContainer.innerHTML = ''
+            if (citationsContainer.innerHTML !== "") {
+                citationsContainer.innerHTML = ""
             }
         }
 
@@ -199,16 +199,16 @@ export class ModCitations {
          * correspondingly. Update footnote-numbering-override correspondingly.
          */
 
-        let outputCSS = ''
+        let outputCSS = ""
 
-        if (this.citationType === 'note') {
+        if (this.citationType === "note") {
             let editorFootnoteCounter = 1,
                 citationFootnoteCounter = 1,
                 footnoteCounter = 1
 
             this.editor.view.state.doc.descendants(node => {
-                if (node.isInline && (node.type.name === 'footnote' || node.type.name === 'citation')) {
-                    if (node.type.name === 'footnote') {
+                if (node.isInline && (node.type.name === "footnote" || node.type.name === "citation")) {
+                    if (node.type.name === "footnote") {
                         outputCSS += `#footnote-box-container .footnote-container:nth-of-type(${editorFootnoteCounter}) > *:first-child::before {
                              content: "${footnoteCounter} ";
                          }\n`

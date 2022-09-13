@@ -6,7 +6,7 @@ import {
     Step,
     RemoveMarkStep,
     AddMarkStep
-} from 'prosemirror-transform'
+} from "prosemirror-transform"
 import {
     __serializeForClipboard
 } from "prosemirror-view"
@@ -41,11 +41,11 @@ export const copyChange = function(view, from, to) {
         document.execCommand("copy") // Security exception may be thrown by some browsers.
         document.body.removeChild(dom)
         showSystemMessage(gettext(
-            'Change copied to clipboard.'
+            "Change copied to clipboard."
         ))
     } catch (ex) {
         showSystemMessage(gettext(
-            'Copy to clipboard failed. Please copy manually.'
+            "Copy to clipboard failed. Please copy manually."
         ))
     }
     window.getSelection().removeAllRanges()
@@ -84,8 +84,8 @@ export const acceptChanges = function(merge, mark, mergeView, originalView, tr) 
     } else {
         dispatchRemoveDiffdata(originalView, from, to)
         merge.mergedDocMap = mergedDocMap
-        insertionTr.setMeta('mapAppended', true)
-        insertionTr.setMeta('notrack', true)
+        insertionTr.setMeta("mapAppended", true)
+        insertionTr.setMeta("notrack", true)
         mergeView.dispatch(insertionTr)
     }
 }
@@ -108,8 +108,8 @@ export const deleteContent = function(merge, view, diffMark, mappingNeeded = tru
     if (rebasedFrom && rebasedTo) {
         tr.delete(rebasedFrom, rebasedTo)
         merge.mergedDocMap.appendMapping(tr.mapping)
-        tr.setMeta('mapAppended', true)
-        tr.setMeta('notrack', true)
+        tr.setMeta("mapAppended", true)
+        tr.setMeta("notrack", true)
         view.dispatch(tr)
         return true
     }
@@ -126,8 +126,8 @@ export const addDeletedContentBack  = function(merge, view, diffMark) {
     const insertionPoint = rebasedMapping.map(diffMark.attrs.from)
     if (insertionPoint) {
         tr.insert(insertionPoint, slice.content)
-        tr.setMeta('mapAppended', true)
-        tr.setMeta('notrack', true)
+        tr.setMeta("mapAppended", true)
+        tr.setMeta("notrack", true)
         view.dispatch(tr)
         merge.mergedDocMap.appendMapping(tr.mapping)
         return true
@@ -154,7 +154,7 @@ export const handleMarks = function(view, mark, tr, schema) {
     marksToBeRemoved.forEach(removalMark => newTr.removeMark(mark.attrs.from, mark.attrs.to, schema.marks[removalMark]))
     marksToBeAdded.forEach(AddMark => newTr.addMark(mark.attrs.from, mark.attrs.to, AddMark))
     newTr.setMeta("notrack", true)
-    newTr.setMeta('mapAppended', true)
+    newTr.setMeta("mapAppended", true)
     view.dispatch(newTr)
 
 }

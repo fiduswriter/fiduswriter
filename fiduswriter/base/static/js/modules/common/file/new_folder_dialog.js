@@ -5,18 +5,18 @@ export class NewFolderDialog {
     constructor(callback = _foldername => {}) {
         this.callback = callback
         this.dialog = new Dialog({
-            title: gettext('New folder'),
-            id: 'new-folder',
+            title: gettext("New folder"),
+            id: "new-folder",
             width: 400,
             height: 150,
             body: newFolderTemplate(),
             buttons: [
-                {type: 'cancel'},
+                {type: "cancel"},
                 {
-                    text: gettext('Create folder'),
+                    text: gettext("Create folder"),
                     classes: "fw-dark",
                     click: () => {
-                        const folderName = this.dialog.dialogEl.querySelector('#new-folder-name').value
+                        const folderName = this.dialog.dialogEl.querySelector("#new-folder-name").value
                         this.dialog.close()
                         if (
                             !folderName.length

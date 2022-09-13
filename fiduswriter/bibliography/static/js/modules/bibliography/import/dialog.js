@@ -15,15 +15,15 @@ export class BibLatexFileImportDialog {
 
     init() {
         if (this.app.isOffline()) {
-            addAlert('info', gettext('You are currently offline. Please try again when you are back online.'))
+            addAlert("info", gettext("You are currently offline. Please try again when you are back online."))
             return
         }
         const buttons = [
             {
-                text: gettext('Import'),
-                classes: 'fw-dark submit-import',
+                text: gettext("Import"),
+                classes: "fw-dark submit-import",
                 click: () => {
-                    let bibFile = document.getElementById('bib-uploader').files
+                    let bibFile = document.getElementById("bib-uploader").files
                     if (0 === bibFile.length) {
                         return false
                     }
@@ -32,7 +32,7 @@ export class BibLatexFileImportDialog {
                         return false
                     }
                     if (this.app.isOffline()) {
-                        addAlert('info', gettext('You are currently offline. Please try again when you are back online.'))
+                        addAlert("info", gettext("You are currently offline. Please try again when you are back online."))
                         dialog.close()
                         return false
                     }
@@ -55,25 +55,25 @@ export class BibLatexFileImportDialog {
                 }
             },
             {
-                type: 'cancel'
+                type: "cancel"
             }
         ]
         const dialog = new Dialog({
-            id: 'importbibtex',
-            title: gettext('Import a BibTex library'),
+            id: "importbibtex",
+            title: gettext("Import a BibTex library"),
             body: importBibFileTemplate(),
             height: 180,
             buttons
         })
         dialog.open()
-        document.getElementById('bib-uploader').addEventListener(
-            'change',
-            () => document.getElementById('import-bib-name').innerHTML =
-                document.getElementById('bib-uploader').value.replace(/C:\\fakepath\\/i, '')
+        document.getElementById("bib-uploader").addEventListener(
+            "change",
+            () => document.getElementById("import-bib-name").innerHTML =
+                document.getElementById("bib-uploader").value.replace(/C:\\fakepath\\/i, "")
         )
-        document.getElementById('import-bib-btn').addEventListener(
-            'click',
-            () => document.getElementById('bib-uploader').click()
+        document.getElementById("import-bib-btn").addEventListener(
+            "click",
+            () => document.getElementById("bib-uploader").click()
         )
     }
 

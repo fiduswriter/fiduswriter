@@ -1,12 +1,12 @@
 import {addAlert, makeWorker} from "../../common"
 
 const ERROR_MSG = {
-    'no_entries': gettext('No bibliography entries could be found in import file.'),
-    'entry_error': gettext('An error occured while reading a bibtex entry'),
-    'unknown_field': gettext('Field cannot not be saved. Fidus Writer does not support the field.'),
-    'unknown_type': gettext('Entry has been saved as "misc". Fidus Writer does not support the entry type.'),
-    'unknown_date': gettext('Field does not contain a valid EDTF string.'),
-    'server_save': gettext('The bibliography could not be updated')
+    "no_entries": gettext("No bibliography entries could be found in import file."),
+    "entry_error": gettext("An error occured while reading a bibtex entry"),
+    "unknown_field": gettext("Field cannot not be saved. Fidus Writer does not support the field."),
+    "unknown_type": gettext("Entry has been saved as \"misc\". Fidus Writer does not support the entry type."),
+    "unknown_date": gettext("Field does not contain a valid EDTF string."),
+    "server_save": gettext("The bibliography could not be updated")
 }
 
 
@@ -28,11 +28,11 @@ export class BibLatexImporter {
     onMessage(message) {
         let errorMsg, data
         switch (message.type) {
-        case 'error':
-        case 'warning':
+        case "error":
+        case "warning":
             errorMsg = ERROR_MSG[message.errorCode]
             if (!errorMsg) {
-                errorMsg = gettext('There was an issue with the bibtex import')
+                errorMsg = gettext("There was an issue with the bibtex import")
             }
             if (message.errorType) {
                 errorMsg += `, error_type: ${message.errorType}`
@@ -53,7 +53,7 @@ export class BibLatexImporter {
                 addAlert(message.type, errorMsg)
             }
             break
-        case 'data':
+        case "data":
             data = message.data
             this.bibDB.saveBibEntries(data, true).then(
                 idTranslations => {

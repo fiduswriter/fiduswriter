@@ -22,8 +22,8 @@ export class DatatableBulk {
     }
 
     bindEvents() {
-        this.page.dom.addEventListener('click', this.onClick.bind(this))
-        this.table.addEventListener('change', this.onTableCheckChange.bind(this))
+        this.page.dom.addEventListener("click", this.onClick.bind(this))
+        this.table.addEventListener("change", this.onTableCheckChange.bind(this))
         this.onTableCheckChange()
     }
 
@@ -34,14 +34,14 @@ export class DatatableBulk {
         }
 
         if (this.isAllChecked()) {
-            el.querySelector('input[type=checkbox]').checked = true
+            el.querySelector("input[type=checkbox]").checked = true
         } else {
-            el.querySelector('input[type=checkbox]').checked = false
+            el.querySelector("input[type=checkbox]").checked = false
         }
     }
 
     isAllChecked() {
-        const checkBoxes = Array.from(this.table.querySelectorAll('input.entry-select[type=checkbox]'))
+        const checkBoxes = Array.from(this.table.querySelectorAll("input.entry-select[type=checkbox]"))
         const unchecked = checkBoxes.filter(box => !box.checked)
         return !unchecked.length && checkBoxes.length
     }
@@ -54,7 +54,7 @@ export class DatatableBulk {
             event.stopImmediatePropagation()
             event.stopPropagation()
 
-            if (target.matches('.dt-bulk-dropdown, .dt-bulk-dropdown *')) {
+            if (target.matches(".dt-bulk-dropdown, .dt-bulk-dropdown *")) {
                 // Dropdown
                 const el = document.querySelector(`#${this.id}`)
                 if (el) {
@@ -67,14 +67,14 @@ export class DatatableBulk {
                     contentMenu.open()
                 }
 
-            } else if (target.matches('.fw-check + label, .fw-check + label *')) {
+            } else if (target.matches(".fw-check + label, .fw-check + label *")) {
                 // Click on bulk checkbox
                 const isChecked = this.isAllChecked()
-                target.closest('div.dataTable-wrapper').querySelector('input[type=checkbox]').checked = !isChecked
-                this.table.querySelectorAll('input.entry-select[type=checkbox]').forEach(checkbox => checkbox.checked = !isChecked)
+                target.closest("div.dataTable-wrapper").querySelector("input[type=checkbox]").checked = !isChecked
+                this.table.querySelectorAll("input.entry-select[type=checkbox]").forEach(checkbox => checkbox.checked = !isChecked)
                 this.onTableCheckChange()
             }
-        } else if (target.matches('.fw-data-table .entry-select + label')) {
+        } else if (target.matches(".fw-data-table .entry-select + label")) {
             // The browser will try to scroll the checkbox into view and that will break the page layout.
             event.preventDefault()
             event.stopImmediatePropagation()

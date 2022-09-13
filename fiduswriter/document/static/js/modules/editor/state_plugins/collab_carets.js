@@ -2,7 +2,7 @@ import {Plugin, PluginKey} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
 import {sendableSteps} from "prosemirror-collab"
 
-const key = new PluginKey('collabCarets')
+const key = new PluginKey("collabCarets")
 
 export const getSelectionUpdate = function(state) {
     const {caretUpdate} = key.getState(state)
@@ -23,11 +23,11 @@ export const updateCollaboratorSelection = function(state, collaborator, data) {
         decos = decos.remove(removeDecos)
     }
 
-    const widgetDom = document.createElement('div')
+    const widgetDom = document.createElement("div")
     const className = `user-${collaborator.id}`
-    widgetDom.classList.add('caret')
+    widgetDom.classList.add("caret")
     widgetDom.classList.add(className)
-    widgetDom.innerHTML = '<div class="caret-head"></div>'
+    widgetDom.innerHTML = "<div class=\"caret-head\"></div>"
     widgetDom.firstChild.classList.add(className)
     const tooltip = collaborator.name
     widgetDom.title = tooltip
@@ -119,7 +119,7 @@ export const collabCaretsPlugin = function(options) {
                 if (
                     tr.selectionSet &&
                     !sendableSteps(state) &&
-                    !['review', 'review-tracked'].includes(options.editor.docInfo.access_rights)
+                    !["review", "review-tracked"].includes(options.editor.docInfo.access_rights)
                 ) {
                     caretUpdate = {anchor: tr.selection.anchor, head: tr.selection.head}
                 }

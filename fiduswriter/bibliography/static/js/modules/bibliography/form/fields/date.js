@@ -1,7 +1,7 @@
 import {edtfParse} from "biblatex-csl-converter"
 
 export class DateFieldForm {
-    constructor(dom, initialValue = '', placeHolder = '') {
+    constructor(dom, initialValue = "", placeHolder = "") {
         this.dom = dom
         this.initialValue = initialValue
         this.placeHolder = placeHolder
@@ -12,7 +12,7 @@ export class DateFieldForm {
     }
 
     get value() {
-        const formValue = this.dom.querySelector('input.date').value
+        const formValue = this.dom.querySelector("input.date").value
         // If the form has not been filled out, don't consider this form
         return formValue.length > 0 ? formValue : false
     }
@@ -22,7 +22,7 @@ export class DateFieldForm {
         if (formValue) {
             const checkValue = edtfParse(formValue).valid
             if (!checkValue) {
-                this.dom.classList.add('fw-fomt-error')
+                this.dom.classList.add("fw-fomt-error")
                 return false
             }
         }

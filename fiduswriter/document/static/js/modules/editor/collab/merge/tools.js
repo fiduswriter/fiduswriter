@@ -1,5 +1,5 @@
 import {EditorState} from "prosemirror-state"
-import {ReplaceStep} from 'prosemirror-transform'
+import {ReplaceStep} from "prosemirror-transform"
 import {Slice, Fragment} from "prosemirror-model"
 
 export const checkPresenceOfdiffdata = function(doc, from, to) {
@@ -63,7 +63,7 @@ export const removeDiffdata = function(tr, from, to) {
         from,
         to,
         (node, pos) => {
-            if (pos < from || ['bullet_list', 'ordered_list'].includes(node.type.name)) {
+            if (pos < from || ["bullet_list", "ordered_list"].includes(node.type.name)) {
                 return true
             } else if (node.isInline) {
                 return false
@@ -79,8 +79,8 @@ export const removeDiffdata = function(tr, from, to) {
 
 export const dispatchRemoveDiffdata = function(view, from, to) {
     const tr = removeDiffdata(view.state.tr, from, to)
-    tr.setMeta('initialDiffMap', true).setMeta('mapAppended', true)
-    tr.setMeta('notrack', true)
+    tr.setMeta("initialDiffMap", true).setMeta("mapAppended", true)
+    tr.setMeta("notrack", true)
     view.dispatch(tr)
 }
 
@@ -88,13 +88,13 @@ export const updateMarkData = function(tr, imageDataModified, newTr) {
     /* Update the range inside the marks and also if we have a image that
     was reuploaded , then while accepting it into the middle editor,
     update its attrs */
-    const initialdiffMap = tr.getMeta('initialDiffMap')
+    const initialdiffMap = tr.getMeta("initialDiffMap")
     if (!initialdiffMap && (tr.steps.length > 0 || tr.docChanged)) {
         tr.doc.nodesBetween(
             0,
             tr.doc.content.size,
             (node, pos) => {
-                if (['bullet_list', 'ordered_list'].includes(node.type.name)) {
+                if (["bullet_list", "ordered_list"].includes(node.type.name)) {
                     return true
                 } else if (node.isInline) {
                     let diffMark = node.marks.find(mark => mark.type.name == "diffdata")
@@ -107,10 +107,10 @@ export const updateMarkData = function(tr, imageDataModified, newTr) {
                         newTr.addMark(pos, pos + node.nodeSize, mark)
                     }
                 }
-                if (node.type.name === 'image' && Object.keys(imageDataModified).includes(String(node.attrs.image))) {
+                if (node.type.name === "image" && Object.keys(imageDataModified).includes(String(node.attrs.image))) {
                     const attrs = Object.assign({}, node.attrs)
                     attrs["image"] = imageDataModified[String(node.attrs.image)]
-                    const nodeType = tr.doc.type.schema.nodes['image']
+                    const nodeType = tr.doc.type.schema.nodes["image"]
                     newTr.setNodeMarkup(pos, nodeType, attrs)
                 }
                 if (node.attrs.diffdata && node.attrs.diffdata.length > 0) {
@@ -131,7 +131,7 @@ export const removeDiffFromJson = function(object) {
         delete object.attrs.diffdata
     }
     if (object.marks) {
-        object.marks = object.marks.filter(mark => mark.type !== 'diffdata')
+        object.marks = object.marks.filter(mark => mark.type !== "diffdata")
     }
     if (object.content) {
         object.content.forEach(child => removeDiffFromJson(child))

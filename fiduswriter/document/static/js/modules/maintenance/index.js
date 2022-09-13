@@ -16,13 +16,13 @@ export class DocMaintenance {
 
     init() {
         whenReady().then(
-            () => document.body.addEventListener('click', event => {
+            () => document.body.addEventListener("click", event => {
                 const el = {}
                 switch (true) {
-                case findTarget(event, 'input#update:not(.disabled)', el):
-                    document.querySelector('input#update').disabled = true
-                    document.querySelector('input#update').value = gettext('Updating...')
-                    addAlert('info', gettext('Updating documents.'))
+                case findTarget(event, "input#update:not(.disabled)", el):
+                    document.querySelector("input#update").disabled = true
+                    document.querySelector("input#update").value = gettext("Updating...")
+                    addAlert("info", gettext("Updating documents."))
                     this.getDocBatch()
                     break
                 default:
@@ -36,27 +36,27 @@ export class DocMaintenance {
     getDocBatch() {
         this.batch++
         postJson(
-            '/api/document/admin/get_all_old/'
+            "/api/document/admin/get_all_old/"
         ).then(
             ({json}) => {
                 const docs = window.JSON.parse(json.docs)
                 if (docs.length) {
-                    addAlert('info', `${gettext('Downloaded batch')}: ${this.batch}`)
+                    addAlert("info", `${gettext("Downloaded batch")}: ${this.batch}`)
                     Promise.all(docs.map(doc => this.fixDoc(doc))).then(
                         () => this.getDocBatch()
                     )
                 } else {
                     if (this.batch > 1) {
-                        addAlert('success', gettext('All documents updated!'))
+                        addAlert("success", gettext("All documents updated!"))
                     } else {
-                        addAlert('info', gettext('No documents to update.'))
+                        addAlert("info", gettext("No documents to update."))
                     }
                     this.updateDocumentTemplates()
                 }
             }
         ).catch(
             error => {
-                addAlert('error', `${gettext('Could not download batch')}: ${this.batch}`)
+                addAlert("error", `${gettext("Could not download batch")}: ${this.batch}`)
                 throw (error)
             }
         )
@@ -79,18 +79,18 @@ export class DocMaintenance {
             // the document user.
 
             p = postJson(
-                '/api/document/admin/get_user_biblist/',
+                "/api/document/admin/get_user_biblist/",
                 {
                     user_id: doc.fields.owner
                 }
             ).then(
                 ({json}) => {
                     return json.bibList.reduce((db, item) => {
-                        const id = item['id']
+                        const id = item["id"]
                         const bibDBEntry = {}
-                        bibDBEntry['fields'] = JSON.parse(item['fields'])
-                        bibDBEntry['bib_type'] = item['bib_type']
-                        bibDBEntry['entry_key'] = item['entry_key']
+                        bibDBEntry["fields"] = JSON.parse(item["fields"])
+                        bibDBEntry["bib_type"] = item["bib_type"]
+                        bibDBEntry["entry_key"] = item["entry_key"]
                         db[id] = bibDBEntry
                         return db
                     }, {})
@@ -109,7 +109,7 @@ export class DocMaintenance {
 
     saveDoc(doc) {
         const p1 = post(
-                '/api/document/admin/save_doc/',
+                "/api/document/admin/save_doc/",
                 {
                     id: doc.id,
                     content: doc.content,
@@ -121,7 +121,7 @@ export class DocMaintenance {
             ), promises = [p1]
         if (doc.imageIds) {
             const p2 = post(
-                '/api/document/admin/add_images_to_doc/',
+                "/api/document/admin/add_images_to_doc/",
                 {
                     doc_id: doc.id,
                     ids: doc.imageIds
@@ -130,14 +130,14 @@ export class DocMaintenance {
             promises.push(p2)
         }
         return Promise.all(promises).then(() => {
-            addAlert('success', `${gettext('The document has been updated')}: ${doc.id}`)
+            addAlert("success", `${gettext("The document has been updated")}: ${doc.id}`)
         })
     }
 
     updateDocumentTemplates() {
-        addAlert('info', gettext('Updating document templates.'))
+        addAlert("info", gettext("Updating document templates."))
         postJson(
-            '/api/document/admin/get_all_template_ids/'
+            "/api/document/admin/get_all_template_ids/"
         ).then(
             ({json}) => {
                 const count = json.template_ids.length
@@ -146,7 +146,7 @@ export class DocMaintenance {
                         templateId => this.updateDocumentTemplate(templateId)
                     )
                 } else {
-                    addAlert('info', gettext('No document templates to update.'))
+                    addAlert("info", gettext("No document templates to update."))
                     this.updateRevisions()
                 }
             }
@@ -155,7 +155,7 @@ export class DocMaintenance {
 
     updateDocumentTemplate(id) {
         postJson(
-            `/api/document/admin/get_template/base/`, {id}
+            "/api/document/admin/get_template/base/", {id}
         ).then(
             // The field 'content' of the document template module has the same
             // structure as the field 'contents' of the document module.
@@ -185,32 +185,32 @@ export class DocMaintenance {
     saveDocumentTemplate(doc) {
         this.docTemplatesSavesLeft++
         post(
-            '/api/document/admin/save_template/',
+            "/api/document/admin/save_template/",
             {
                 id: doc.id,
                 content: doc.content
             }
         ).then(() => {
-            addAlert('success', `${gettext('The document template has been updated')}: ${doc.id}`)
+            addAlert("success", `${gettext("The document template has been updated")}: ${doc.id}`)
             this.docTemplatesSavesLeft--
             if (!this.docTemplatesSavesLeft) {
-                addAlert('success', gettext('All document templates updated!'))
+                addAlert("success", gettext("All document templates updated!"))
                 this.updateRevisions()
             }
         })
     }
 
     updateRevisions() {
-        addAlert('info', gettext('Updating saved revisions.'))
+        addAlert("info", gettext("Updating saved revisions."))
         postJson(
-            '/api/document/admin/get_all_revision_ids/'
+            "/api/document/admin/get_all_revision_ids/"
         ).then(
             ({json}) => {
                 this.revSavesLeft = json.revision_ids.length
                 if (this.revSavesLeft) {
                     json.revision_ids.forEach(revId => this.updateRevision(revId))
                 } else {
-                    addAlert('info', gettext('No document revisions to update.'))
+                    addAlert("info", gettext("No document revisions to update."))
                     this.done()
                 }
             }
@@ -255,17 +255,17 @@ export class DocMaintenance {
         zipfs.generateAsync({type: "blob", mimeType: "application/fidus+zip"}).then(blob => {
 
             post(
-                '/api/document/admin/update_revision/',
+                "/api/document/admin/update_revision/",
                 {
                     id,
                     file: {
                         file: blob,
-                        filename: 'some_file.fidus'
+                        filename: "some_file.fidus"
                     }
                 }
             ).then(
                 () => {
-                    addAlert('success', gettext('The document revision has been updated: ') + id)
+                    addAlert("success", gettext("The document revision has been updated: ") + id)
                     this.revSavesLeft--
                     if (this.revSavesLeft === 0) {
                         this.done()
@@ -276,7 +276,7 @@ export class DocMaintenance {
     }
 
     done() {
-        document.querySelector('input#update').value = gettext('All documents, document templates and document revisions updated!')
+        document.querySelector("input#update").value = gettext("All documents, document templates and document revisions updated!")
     }
 
 }

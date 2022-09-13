@@ -51,7 +51,7 @@ export class DocxExporterTables {
         this.tableGridStyle = false
         this.tableNormalStyle = false
         this.styleXml = false
-        this.styleFilePath = 'word/styles.xml'
+        this.styleFilePath = "word/styles.xml"
     }
 
     init() {
@@ -68,13 +68,13 @@ export class DocxExporterTables {
             // already added
             return
         }
-        const tableNormalEl = this.styleXml.querySelector(`style[*|type="table"][*|default="1"]`)
+        const tableNormalEl = this.styleXml.querySelector("style[*|type=\"table\"][*|default=\"1\"]")
         if (tableNormalEl) {
-            this.tableNormalStyle = tableNormalEl.getAttribute('w:styleId')
+            this.tableNormalStyle = tableNormalEl.getAttribute("w:styleId")
         } else {
-            const stylesEl = this.styleXml.querySelector('styles')
-            stylesEl.insertAdjacentHTML('beforeEnd', DEFAULT_TABLENORMAL_XML)
-            this.tableNormalStyle = 'TableNormal'
+            const stylesEl = this.styleXml.querySelector("styles")
+            stylesEl.insertAdjacentHTML("beforeEnd", DEFAULT_TABLENORMAL_XML)
+            this.tableNormalStyle = "TableNormal"
         }
     }
 
@@ -84,23 +84,23 @@ export class DocxExporterTables {
             return
         }
         this.addTableNormalStyle()
-        const tableGridEl = this.styleXml.querySelector('style[*|type="table"][*|customStyle="1"]')
+        const tableGridEl = this.styleXml.querySelector("style[*|type=\"table\"][*|customStyle=\"1\"]")
         if (tableGridEl) {
-            this.tableGridStyle = tableGridEl.getAttribute('w:styleId')
+            this.tableGridStyle = tableGridEl.getAttribute("w:styleId")
         } else {
-            const stylesEl = this.styleXml.querySelector('styles')
-            stylesEl.insertAdjacentHTML('beforeEnd', DEFAULT_TABLEGRID_XML(this.tableNormalStyle))
-            this.tableGridStyle = 'TableGrid'
+            const stylesEl = this.styleXml.querySelector("styles")
+            stylesEl.insertAdjacentHTML("beforeEnd", DEFAULT_TABLEGRID_XML(this.tableNormalStyle))
+            this.tableGridStyle = "TableGrid"
         }
     }
 
     getSideMargins() {
         if (!this.sideMargins) {
             const marginsEl = this.styleXml.querySelector(`style[*|styleId="${this.tableGridStyle}"]`)
-            const leftEl = marginsEl.querySelector('left')
-            const rightEl = marginsEl.querySelector('right')
-            const left = parseInt(leftEl.getAttribute('w:w'))
-            const right = parseInt(rightEl.getAttribute('w:w'))
+            const leftEl = marginsEl.querySelector("left")
+            const rightEl = marginsEl.querySelector("right")
+            const left = parseInt(leftEl.getAttribute("w:w"))
+            const right = parseInt(rightEl.getAttribute("w:w"))
             this.sideMargins = (left + right) * 635
         }
         return this.sideMargins

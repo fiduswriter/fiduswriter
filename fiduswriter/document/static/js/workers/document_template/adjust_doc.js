@@ -18,8 +18,8 @@ export class AdjustDocToTemplateWorker {
     }
 
     init() {
-        const stateDoc = this.schema.nodeFromJSON({type: 'doc', content: [this.doc]})
-        const newStateDoc = this.schema.nodeFromJSON({type: 'doc', content: [adjustDocToTemplate(
+        const stateDoc = this.schema.nodeFromJSON({type: "doc", content: [this.doc]})
+        const newStateDoc = this.schema.nodeFromJSON({type: "doc", content: [adjustDocToTemplate(
             this.doc,
             this.template,
             this.documentStyleSlugs,
@@ -30,7 +30,7 @@ export class AdjustDocToTemplateWorker {
         transform.steps.forEach(step => steps.push(step.toJSON()))
         // To test replace last line with:
         // setTimeout(() => this.sendMessage({type: 'result', steps}), 100000)
-        this.sendMessage({type: 'result', steps})
+        this.sendMessage({type: "result", steps})
     }
 
 }

@@ -16,17 +16,17 @@ export const wordCounterDialogTemplate = ({
         </thead>
         <tbody class="fw-word-counter-tbody">
             <tr>
-                <td>&nbsp;${gettext('Words')}&nbsp;</td>
+                <td>&nbsp;${gettext("Words")}&nbsp;</td>
                 <td>&nbsp;${docNumWords}&nbsp;</td>
                 <td>&nbsp;${selectionNumWords}&nbsp;</td>
             </tr>
             <tr>
-                <td>&nbsp;${gettext('Characters without blanks')}&nbsp;</td>
+                <td>&nbsp;${gettext("Characters without blanks")}&nbsp;</td>
                 <td>&nbsp;${docNumNoSpace}&nbsp;</td>
                 <td>&nbsp;${selectionNumNoSpace}&nbsp;</td>
             </tr>
             <tr>
-                <td>&nbsp;${gettext('Characters with blanks')}&nbsp;</td>
+                <td>&nbsp;${gettext("Characters with blanks")}&nbsp;</td>
                 <td>&nbsp;${docNumChars}&nbsp;</td>
                 <td>&nbsp;${selectionNumChars}&nbsp;</td>
             </tr>

@@ -32,7 +32,7 @@ export class OdtExporterFootnotes {
         this.images = false
         this.citations = false
         this.footnotes = []
-        this.styleFilePath = 'styles.xml'
+        this.styleFilePath = "styles.xml"
     }
 
     init() {
@@ -40,7 +40,7 @@ export class OdtExporterFootnotes {
         if (
             this.footnotes.length ||
             (
-                this.exporter.citations.citFm.citationType === 'note' &&
+                this.exporter.citations.citFm.citationType === "note" &&
                 this.exporter.citations.citInfos.length
             )
         ) {
@@ -82,9 +82,9 @@ export class OdtExporterFootnotes {
         return this.exporter.xml.getXml(this.styleFilePath).then(
             styleXml => {
                 this.styleXml = styleXml
-                this.addStyle('Footnote', DEFAULT_STYLE_FOOTNOTE)
-                this.addStyle('Footnote_20_anchor', DEFAULT_STYLE_FOOTNOTE_ANCHOR)
-                this.addStyle('Footnote_20_Symbol', DEFAULT_STYLE_FOOTNOTE_SYMBOL)
+                this.addStyle("Footnote", DEFAULT_STYLE_FOOTNOTE)
+                this.addStyle("Footnote_20_anchor", DEFAULT_STYLE_FOOTNOTE_ANCHOR)
+                this.addStyle("Footnote_20_Symbol", DEFAULT_STYLE_FOOTNOTE_SYMBOL)
                 this.setStyleConfig()
                 return Promise.resolve()
             }
@@ -93,24 +93,24 @@ export class OdtExporterFootnotes {
 
     addStyle(styleName, xml) {
         if (!this.styleXml.querySelector(`style[*|name="${styleName}"]`)) {
-            const stylesEl = this.styleXml.querySelector('styles')
-            stylesEl.insertAdjacentHTML('beforeEnd', xml)
+            const stylesEl = this.styleXml.querySelector("styles")
+            stylesEl.insertAdjacentHTML("beforeEnd", xml)
         }
     }
 
     setStyleConfig() {
-        const oldFnStyleConfigEl = this.styleXml.querySelector('notes-configuration[*|note-class="footnote"]')
+        const oldFnStyleConfigEl = this.styleXml.querySelector("notes-configuration[*|note-class=\"footnote\"]")
         if (oldFnStyleConfigEl) {
             oldFnStyleConfigEl.parentNode.removeChild(oldFnStyleConfigEl)
         }
-        const stylesEl = this.styleXml.querySelector('styles')
-        stylesEl.insertAdjacentHTML('beforeEnd', DEFAULT_STYLE_FOOTNOTE_CONFIGURATION)
+        const stylesEl = this.styleXml.querySelector("styles")
+        stylesEl.insertAdjacentHTML("beforeEnd", DEFAULT_STYLE_FOOTNOTE_CONFIGURATION)
     }
 
     findFootnotes() {
         descendantNodes(this.docContent).forEach(
             node => {
-                if (node.type === 'footnote') {
+                if (node.type === "footnote") {
                     this.footnotes.push(node.attrs.footnote)
                 }
             }
@@ -122,13 +122,13 @@ export class OdtExporterFootnotes {
         this.footnotes.forEach(
             footnote => {
                 fnContent.push({
-                    type: 'footnotecontainer',
+                    type: "footnotecontainer",
                     content: footnote
                 })
             }
         )
         this.fnPmJSON = {
-            type: 'doc',
+            type: "doc",
             content: fnContent
         }
     }

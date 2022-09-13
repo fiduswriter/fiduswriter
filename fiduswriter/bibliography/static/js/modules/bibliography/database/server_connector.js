@@ -9,7 +9,7 @@ export class BibliographyDBServerConnector {
 
     getDB(lastModified, numberOfEntries, localStorageOwnerId) {
         return postJson(
-            '/api/bibliography/biblist/',
+            "/api/bibliography/biblist/",
             {
                 last_modified: lastModified,
                 number_of_entries: numberOfEntries,
@@ -18,11 +18,11 @@ export class BibliographyDBServerConnector {
         ).then(
             ({json}) => {
                 return {
-                    bibCats: json['bib_categories'],
-                    bibList: json.hasOwnProperty('bib_list') ? json['bib_list'].map(item => this.serverBibItemToBibDB(item)) : false,
-                    lastModified: json['last_modified'],
-                    numberOfEntries: json['number_of_entries'],
-                    userId: json['user_id']
+                    bibCats: json["bib_categories"],
+                    bibList: json.hasOwnProperty("bib_list") ? json["bib_list"].map(item => this.serverBibItemToBibDB(item)) : false,
+                    lastModified: json["last_modified"],
+                    numberOfEntries: json["number_of_entries"],
+                    userId: json["user_id"]
                 }
             }
         )
@@ -33,25 +33,25 @@ export class BibliographyDBServerConnector {
      * @param item The bibliography item from the server.
      */
     serverBibItemToBibDB(bibDBEntry) {
-        return {id: bibDBEntry['id'], bibDBEntry}
+        return {id: bibDBEntry["id"], bibDBEntry}
     }
 
 
     saveBibEntries(tmpDB, isNew) {
         return postJson(
-            '/api/bibliography/save/',
+            "/api/bibliography/save/",
             {
                 is_new: isNew,
                 bibs: JSON.stringify(tmpDB)
             }
         ).then(
-            ({json}) => json['id_translations']
+            ({json}) => json["id_translations"]
         )
     }
 
     saveCategories(cats) {
         return postJson(
-            '/api/bibliography/save_category/',
+            "/api/bibliography/save_category/",
             cats
         ).then(
             ({json}) => {
@@ -62,14 +62,14 @@ export class BibliographyDBServerConnector {
 
     deleteCategory(ids) {
         return post(
-            '/api/bibliography/delete_category/',
+            "/api/bibliography/delete_category/",
             {ids}
         )
     }
 
     deleteBibEntries(ids) {
         return post(
-            '/api/bibliography/delete/',
+            "/api/bibliography/delete/",
             {ids}
         )
     }

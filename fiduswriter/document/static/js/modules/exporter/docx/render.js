@@ -21,20 +21,20 @@ export class DocxExporterRender {
         this.tags = this.docContent.content.map(node => {
             const tag = {}
             switch (node.type) {
-            case 'title':
-                tag.title = 'title'
+            case "title":
+                tag.title = "title"
                 tag.content = textContent(node)
                 break
-            case 'heading_part':
+            case "heading_part":
                 tag.title = node.attrs.id
                 tag.content = textContent(node)
                 break
-            case 'table_part':
-            case 'richtext_part':
+            case "table_part":
+            case "richtext_part":
                 tag.title = `@${node.attrs.id}`
                 tag.content = node.content
                 break
-            case 'contributors_part':
+            case "contributors_part":
                 tag.title = node.attrs.id
                 // TODO: This is a very basic reduction of the author info into
                 // a simple string. We should expand the templating system so
@@ -59,23 +59,23 @@ export class DocxExporterRender {
                                     nameParts.push(contributor.institution)
                                 }
                             }
-                            const parts = [nameParts.join(' ')]
+                            const parts = [nameParts.join(" ")]
                             if (affiliation) {
                                 parts.push(affiliation)
                             }
                             if (contributor.email) {
                                 parts.push(contributor.email)
                             }
-                            return parts.join(', ')
+                            return parts.join(", ")
                         }
-                    ).join('; ') :
-                    ''
+                    ).join("; ") :
+                    ""
                 break
-            case 'tags_part':
+            case "tags_part":
                 tag.title = node.attrs.id
                 tag.content = node.content ?
-                    node.content.map(node => node.attrs.tag).join(', ') :
-                    ''
+                    node.content.map(node => node.attrs.tag).join(", ") :
+                    ""
                 break
             }
             return tag
@@ -83,27 +83,27 @@ export class DocxExporterRender {
         const settings = this.exporter.doc.settings,
             bibliographyHeader = settings.bibliography_header[settings.language] || BIBLIOGRAPHY_HEADERS[settings.language]
         this.tags.push({
-            title: '@bibliography', // The '@' triggers handling as block
+            title: "@bibliography", // The '@' triggers handling as block
             content: pmBib ?
-                [{type: 'bibliography_heading', content: [{type: 'text', text: bibliographyHeader}]}].concat(pmBib.content) :
-                [{type: 'paragraph', content: [{type: 'text', text: ' '}]}]
+                [{type: "bibliography_heading", content: [{type: "text", text: bibliographyHeader}]}].concat(pmBib.content) :
+                [{type: "paragraph", content: [{type: "text", text: " "}]}]
         })
         this.tags.push({
-            title: '@copyright', // The '@' triggers handling as block
+            title: "@copyright", // The '@' triggers handling as block
             content: settings.copyright && settings.copyright.holder ?
-                [{type: 'paragraph', content: [{type: 'text', text: `© ${settings.copyright.year ? settings.copyright.year : new Date().getFullYear()} ${settings.copyright.holder}`}]}] :
-                [{type: 'paragraph', content: [{type: 'text', text: ' '}]}]
+                [{type: "paragraph", content: [{type: "text", text: `© ${settings.copyright.year ? settings.copyright.year : new Date().getFullYear()} ${settings.copyright.holder}`}]}] :
+                [{type: "paragraph", content: [{type: "text", text: " "}]}]
         })
         this.tags.push({
-            title: '@licenses', // The '@' triggers handling as block
+            title: "@licenses", // The '@' triggers handling as block
             content: settings.copyright && settings.copyright.licenses.length ?
                 settings.copyright.licenses.map(
-                    license => ({type: 'paragraph', content: [
-                        {type: 'text', marks: [{type: 'link', attrs: {href: license.url, title: license.title}}], text: license.title},
-                        {type: 'text', text: license.start ? ` (${license.start})` : ''}
+                    license => ({type: "paragraph", content: [
+                        {type: "text", marks: [{type: "link", attrs: {href: license.url, title: license.title}}], text: license.title},
+                        {type: "text", text: license.start ? ` (${license.start})` : ""}
                     ]})
                 ) :
-                [{type: 'paragraph', content: [{type: 'text', text: ' '}]}]
+                [{type: "paragraph", content: [{type: "text", text: " "}]}]
         })
 
     }
@@ -112,7 +112,7 @@ export class DocxExporterRender {
     // replacements.
     render() {
         // Including global page definition at end
-        const pars = this.xml.querySelectorAll('p,sectPr')
+        const pars = this.xml.querySelectorAll("p,sectPr")
         const currentTags = []
 
         pars.forEach(
@@ -131,22 +131,22 @@ export class DocxExporterRender {
                     }
                 )
 
-                const pageSize = par.querySelector('pgSz')
-                const pageMargins = par.querySelector('pgMar')
-                const cols = par.querySelector('cols')
+                const pageSize = par.querySelector("pgSz")
+                const pageMargins = par.querySelector("pgMar")
+                const cols = par.querySelector("cols")
                 if (pageSize && pageMargins) { // Not sure if these all need to come together
-                    let width = parseInt(pageSize.getAttribute('w:w')) -
-                    parseInt(pageMargins.getAttribute('w:right')) -
-                    parseInt(pageMargins.getAttribute('w:left'))
-                    const height = parseInt(pageSize.getAttribute('w:h')) -
-                    parseInt(pageMargins.getAttribute('w:bottom')) -
-                    parseInt(pageMargins.getAttribute('w:top')) -
-                    parseInt(pageMargins.getAttribute('w:header')) -
-                    parseInt(pageMargins.getAttribute('w:footer'))
+                    let width = parseInt(pageSize.getAttribute("w:w")) -
+                    parseInt(pageMargins.getAttribute("w:right")) -
+                    parseInt(pageMargins.getAttribute("w:left"))
+                    const height = parseInt(pageSize.getAttribute("w:h")) -
+                    parseInt(pageMargins.getAttribute("w:bottom")) -
+                    parseInt(pageMargins.getAttribute("w:top")) -
+                    parseInt(pageMargins.getAttribute("w:header")) -
+                    parseInt(pageMargins.getAttribute("w:footer"))
 
-                    const colCount = cols ? parseInt(cols.getAttribute('w:num')) : 1
+                    const colCount = cols ? parseInt(cols.getAttribute("w:num")) : 1
                     if (colCount > 1) {
-                        const colSpace = parseInt(cols.getAttribute('w:space'))
+                        const colSpace = parseInt(cols.getAttribute("w:space"))
                         width = width - (colSpace * (colCount - 1))
                         width = width / colCount
                     }
@@ -166,7 +166,7 @@ export class DocxExporterRender {
             tag => {
                 if (!tag.title) {
                     return
-                } else if (tag.title[0] === '@') {
+                } else if (tag.title[0] === "@") {
                     this.parRender(tag)
                 } else {
                     this.inlineRender(tag)
@@ -179,16 +179,16 @@ export class DocxExporterRender {
     inlineRender(tag) {
         const texts = tag.par.textContent.split(`{${tag.title}}`)
         const fullText = texts[0] + escapeText(tag.content) + texts[1]
-        const rs = Array.from(tag.par.querySelectorAll('r'))
+        const rs = Array.from(tag.par.querySelectorAll("r"))
         while (rs.length > 1) {
             rs[0].parentNode.removeChild(rs[0])
             rs.shift()
         }
         const r = rs[0]
         if (fullText.length) {
-            let textAttr = ''
-            if (fullText[0] === ' ' || fullText[fullText.length - 1] === ' ') {
-                textAttr += 'xml:space="preserve"'
+            let textAttr = ""
+            if (fullText[0] === " " || fullText[fullText.length - 1] === " ") {
+                textAttr += "xml:space=\"preserve\""
             }
             r.innerHTML = `<w:t ${textAttr}>${fullText}</w:t>`
         } else {
@@ -201,21 +201,21 @@ export class DocxExporterRender {
         if (!tag.par) {
             return
         }
-        const pStyle = tag.par.querySelector('pStyle')
+        const pStyle = tag.par.querySelector("pStyle")
         const options = {
             dimensions: tag.dimensions,
             citationType: this.exporter.citations.citFm.citationType,
-            section: pStyle ? pStyle.getAttribute('w:val') : 'Normal'
+            section: pStyle ? pStyle.getAttribute("w:val") : "Normal"
         }
         const outXML = tag.content ? tag.content.map(
             content => this.exporter.richtext.transformRichtext(content, options)
-        ).join('') : ''
-        tag.par.insertAdjacentHTML('beforebegin', outXML)
+        ).join("") : ""
+        tag.par.insertAdjacentHTML("beforebegin", outXML)
         // sectPr contains information about columns, etc. We need to move this
         // to the last paragraph we will be adding.
-        const sectPr = tag.par.querySelector('sectPr')
+        const sectPr = tag.par.querySelector("sectPr")
         if (sectPr) {
-            const pPr = tag.par.previousElementSibling.querySelector('pPr')
+            const pPr = tag.par.previousElementSibling.querySelector("pPr")
             pPr.appendChild(sectPr)
         }
         tag.par.parentNode.removeChild(tag.par)

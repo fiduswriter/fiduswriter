@@ -3,10 +3,10 @@ export class ModNavigator {
     constructor(editor) {
         editor.mod.navigator = this
         this.editor = editor
-        this.navigatorEl = document.querySelector('#navigator')
+        this.navigatorEl = document.querySelector("#navigator")
         this.listeners = {}
         this.navigatorFilters = editor.menu.navigatorFilterModel.content
-        this.defaultFilters = ['heading1', 'heading2', 'heading3']
+        this.defaultFilters = ["heading1", "heading2", "heading3"]
     }
 
     init() {
@@ -19,21 +19,21 @@ export class ModNavigator {
     }
 
     bindEvents() {
-        document.body.addEventListener('click', event => {
+        document.body.addEventListener("click", event => {
             const el = {}
             switch (true) {
-            case findTarget(event, '#navigator-button', el):
-                if (this.navigatorEl.classList.contains('opened')) {
+            case findTarget(event, "#navigator-button", el):
+                if (this.navigatorEl.classList.contains("opened")) {
                     this.closeNavigator()
                 } else {
-                    document.querySelector('#navigator-list').innerHTML = this.populateNavigator() || ""   //Populating the list
+                    document.querySelector("#navigator-list").innerHTML = this.populateNavigator() || ""   //Populating the list
                     this.openNavigator()
                 }
                 break
-            case findTarget(event, '#navigator-list a', el): {
+            case findTarget(event, "#navigator-list a", el): {
                 event.preventDefault()
                 event.stopImmediatePropagation()
-                const target = el.target.getAttribute('href').slice(1)
+                const target = el.target.getAttribute("href").slice(1)
                 if (target == "bibliography") {
                     this.editor.scrollBibliographyIntoView(target)
                 } else {
@@ -42,28 +42,28 @@ export class ModNavigator {
                 }
                 break
             }
-            case findTarget(event, '#navigator-filter-icon', el):
-                if (document.getElementById("navigator-filter").classList.contains('hide')) {
+            case findTarget(event, "#navigator-filter-icon", el):
+                if (document.getElementById("navigator-filter").classList.contains("hide")) {
                     this.showFilters()
                 } else {
                     this.hideFilters()
                 }
                 break
-            case findTarget(event, '#navigator-filter-back', el):
+            case findTarget(event, "#navigator-filter-back", el):
                 this.defaultFilters = []
-                document.querySelectorAll('#navigator-filter input').forEach(
+                document.querySelectorAll("#navigator-filter input").forEach(
                     item => {
                         if (item.checked) {
                             this.defaultFilters.push(item.id)
                         }
                     }
                 )
-                document.querySelector('#navigator-list').innerHTML = this.populateNavigator() || ""
+                document.querySelector("#navigator-list").innerHTML = this.populateNavigator() || ""
                 this.hideFilters()
                 break
-            case findTarget(event, 'input', el):
+            case findTarget(event, "input", el):
                 break
-            case findTarget(event, 'label', el):
+            case findTarget(event, "label", el):
                 break
             default:
                 this.closeNavigator()
@@ -71,54 +71,54 @@ export class ModNavigator {
             }
         })
 
-        document.querySelector('#navigator-list').addEventListener('mouseover', () => {
-            document.body.classList.add('no-scroll')
+        document.querySelector("#navigator-list").addEventListener("mouseover", () => {
+            document.body.classList.add("no-scroll")
         })
-        document.querySelector('#navigator-list').addEventListener('mouseout', () => {
-            document.body.classList.remove('no-scroll')
+        document.querySelector("#navigator-list").addEventListener("mouseout", () => {
+            document.body.classList.remove("no-scroll")
         })
     }
 
     switchActiveHeading(new_heading) {
-        Array.prototype.forEach.call(document.querySelectorAll("#navigator-list .active-heading"), active_heading => active_heading.classList.remove('active-heading'))
-        new_heading.classList.add('active-heading')
+        Array.prototype.forEach.call(document.querySelectorAll("#navigator-list .active-heading"), active_heading => active_heading.classList.remove("active-heading"))
+        new_heading.classList.add("active-heading")
     }
 
     openNavigator() {
-        document.getElementById('navigator').classList.add('opened')
-        document.getElementById("navigator-filter").classList.add('hide')
-        document.getElementById("navigator-list").classList.remove('hide')
-        document.getElementById('navigator-filter-back').classList.add('hide')
-        document.getElementById('navigator-filter-icon').classList.remove('hide')
+        document.getElementById("navigator").classList.add("opened")
+        document.getElementById("navigator-filter").classList.add("hide")
+        document.getElementById("navigator-list").classList.remove("hide")
+        document.getElementById("navigator-filter-back").classList.add("hide")
+        document.getElementById("navigator-filter-icon").classList.remove("hide")
         this.scrollToActiveHeading()
     }
 
     scrollToActiveHeading() {
         const listDOM = document.getElementById("navigator-list")
-        const activeHeading = listDOM.getElementsByClassName('active-heading')[0]
+        const activeHeading = listDOM.getElementsByClassName("active-heading")[0]
         if (activeHeading) {
             activeHeading.scrollIntoView()
         }
     }
 
     closeNavigator() {
-        document.getElementById('navigator').classList.remove('opened')
+        document.getElementById("navigator").classList.remove("opened")
     }
 
     showFilters() {
-        document.getElementById("navigator-filter").classList.remove('hide')
-        document.getElementById('navigator-filter-back').classList.remove('hide')
-        document.getElementById("navigator-list").classList.add('hide')
-        document.getElementById('navigator-filter-icon').classList.add('hide')
+        document.getElementById("navigator-filter").classList.remove("hide")
+        document.getElementById("navigator-filter-back").classList.remove("hide")
+        document.getElementById("navigator-list").classList.add("hide")
+        document.getElementById("navigator-filter-icon").classList.add("hide")
         //populating the filter list
-        document.getElementById('navigator-filter').innerHTML = this.populateNavFilter()
+        document.getElementById("navigator-filter").innerHTML = this.populateNavFilter()
     }
 
     hideFilters() {
-        document.getElementById("navigator-filter").classList.add('hide')
-        document.getElementById('navigator-filter-back').classList.add('hide')
-        document.getElementById("navigator-list").classList.remove('hide')
-        document.getElementById('navigator-filter-icon').classList.remove('hide')
+        document.getElementById("navigator-filter").classList.add("hide")
+        document.getElementById("navigator-filter-back").classList.add("hide")
+        document.getElementById("navigator-list").classList.remove("hide")
+        document.getElementById("navigator-filter-icon").classList.remove("hide")
 
         this.scrollToActiveHeading()
     }
@@ -137,16 +137,16 @@ export class ModNavigator {
                     items[items.length - 1] = Object.assign(
                         {},
                         items[items.length - 1],
-                        {class: 'active-heading'}
+                        {class: "active-heading"}
                     )
                     nearestHeader = ""
                 }
                 items.push({id: node.attrs.id, textContent: node.textContent, type: node.type})
             }
         })
-        const bibHeader = document.querySelector('h1.article-bibliography-header')
+        const bibHeader = document.querySelector("h1.article-bibliography-header")
         if (bibHeader) {
-            items.push({id: 'bibliography', textContent: bibHeader.innerText, type: {name: 'h1'}})
+            items.push({id: "bibliography", textContent: bibHeader.innerText, type: {name: "h1"}})
         }
         if (items.length) {
             return this.navigatorHTML(items)
@@ -164,15 +164,15 @@ export class ModNavigator {
                                 <label class="navigator-label" for="heading${level}">${item.title}</label>
                             </span>`
                 }
-            ).join('')
+            ).join("")
         )
     }
 
     inDefault(level) {
-        if (this.defaultFilters.includes('heading' + level)) {
-            return 'checked'
+        if (this.defaultFilters.includes("heading" + level)) {
+            return "checked"
         } else {
-            return ''
+            return ""
         }
     }
 
@@ -188,7 +188,7 @@ export class ModNavigator {
                 return `<h${level}><a href="#${item.id}">${escapeText(item.textContent)}</a></h${level}>`
             }
         }
-    ).join('')
+    ).join("")
 }`
     }
 
@@ -197,7 +197,7 @@ export class ModNavigator {
                 <div id="navigator-content">
                     <div class="header-container">
                         <span id="navigator-filter-back" class="hide"><i class="fas fa-arrow-left"></i></span>
-                        <h1 class="header">${gettext('Document Navigator')}</h1>
+                        <h1 class="header">${gettext("Document Navigator")}</h1>
                         <span id="navigator-filter-icon"><i class="fas fa-cog"></i></span>
                     </div>
                     <div id="navigator-list"></div>

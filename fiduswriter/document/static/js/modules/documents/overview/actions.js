@@ -17,16 +17,16 @@ export class DocumentOverviewActions {
             return Promise.resolve()
         }
         return postJson(
-            '/api/document/delete/',
+            "/api/document/delete/",
             {id}
         ).then(
             ({json}) => {
                 if (json.done) {
-                    addAlert('success', `${gettext('Document has been deleted')}: '${longFilePath(doc.title, doc.path)}'`)
+                    addAlert("success", `${gettext("Document has been deleted")}: '${longFilePath(doc.title, doc.path)}'`)
                     this.documentOverview.documentList = this.documentOverview.documentList.filter(doc => doc.id !== id)
                     this.documentOverview.initTable()
                 } else {
-                    addAlert('error', `${gettext('Could not delete document')}: '${longFilePath(doc.title, doc.path)}'`)
+                    addAlert("error", `${gettext("Could not delete document")}: '${longFilePath(doc.title, doc.path)}'`)
                 }
             }
         )
@@ -38,21 +38,21 @@ export class DocumentOverviewActions {
             return escapeText(longFilePath(doc.title, doc.path))
         })
         const confirmDeletionDialog = new Dialog({
-            title: gettext('Confirm deletion'),
+            title: gettext("Confirm deletion"),
             body: `<p>
                 ${  ids.length > 1 ?
-        gettext('Do you really want to delete the following documents?') :
-        gettext('Do you really want to delete the following document?')
+        gettext("Do you really want to delete the following documents?") :
+        gettext("Do you really want to delete the following document?")
 }
                 </p>
                 <p>
-                ${docPaths.join('<br>')}
+                ${docPaths.join("<br>")}
                 </p>`,
-            id: 'confirmdeletion',
-            icon: 'exclamation-triangle',
+            id: "confirmdeletion",
+            icon: "exclamation-triangle",
             buttons: [
                 {
-                    text: gettext('Delete'),
+                    text: gettext("Delete"),
                     classes: "fw-dark",
                     height: Math.min(50 + 15 * ids.length, 500),
                     click: () => {
@@ -66,7 +66,7 @@ export class DocumentOverviewActions {
                     }
                 },
                 {
-                    type: 'cancel'
+                    type: "cancel"
                 }
             ]
         })
@@ -77,10 +77,10 @@ export class DocumentOverviewActions {
     importFidus() {
         const buttons = [
             {
-                text: gettext('Import'),
+                text: gettext("Import"),
                 classes: "fw-dark",
                 click: () => {
-                    let fidusFile = document.getElementById('fidus-uploader').files
+                    let fidusFile = document.getElementById("fidus-uploader").files
                     if (0 === fidusFile.length) {
                         return false
                     }
@@ -103,9 +103,9 @@ export class DocumentOverviewActions {
                         ({ok, statusText, doc}) => {
                             deactivateWait()
                             if (ok) {
-                                addAlert('info', statusText)
+                                addAlert("info", statusText)
                             } else {
-                                addAlert('error', statusText)
+                                addAlert("error", statusText)
                                 return
                             }
                             this.documentOverview.documentList.push(doc)
@@ -119,28 +119,28 @@ export class DocumentOverviewActions {
                 }
             },
             {
-                type: 'cancel'
+                type: "cancel"
             }
         ]
         const importDialog = new Dialog({
-            id: 'importfidus',
-            title: gettext('Import a Fidus file'),
+            id: "importfidus",
+            title: gettext("Import a Fidus file"),
             body: importFidusTemplate(),
             height: 100,
             buttons
         })
         importDialog.open()
 
-        document.getElementById('fidus-uploader').addEventListener(
-            'change',
+        document.getElementById("fidus-uploader").addEventListener(
+            "change",
             () => {
-                document.getElementById('import-fidus-name').innerHTML =
-                    document.getElementById('fidus-uploader').value.replace(/C:\\fakepath\\/i, '')
+                document.getElementById("import-fidus-name").innerHTML =
+                    document.getElementById("fidus-uploader").value.replace(/C:\\fakepath\\/i, "")
             }
         )
 
-        document.getElementById('import-fidus-btn').addEventListener('click', event => {
-            document.getElementById('fidus-uploader').click()
+        document.getElementById("import-fidus-btn").addEventListener("click", event => {
+            document.getElementById("fidus-uploader").click()
             event.preventDefault()
         })
 
@@ -182,18 +182,18 @@ export class DocumentOverviewActions {
             () => {
 
                 const selectTemplateDialog = new Dialog({
-                    title: gettext('Choose document template'),
+                    title: gettext("Choose document template"),
                     body: `<p>
-                        ${ids.length > 1 ? gettext('Select document template for copies') : gettext('Select document template for copy.')}
+                        ${ids.length > 1 ? gettext("Select document template for copies") : gettext("Select document template for copy.")}
                         </p>
                         <select class="fw-button fw-large fw-light">${
     Object.entries(this.documentOverview.documentTemplates).map(
         ([importId, dt]) => `<option value="${escapeText(importId)}">${escapeText(dt.title)}</option>`
-    ).join('')
+    ).join("")
 }</select>`,
                     buttons: [
                         {
-                            text: gettext('Copy'),
+                            text: gettext("Copy"),
                             classes: "fw-dark",
                             click: () => {
                                 ids.forEach(id => {
@@ -203,7 +203,7 @@ export class DocumentOverviewActions {
                                         {db: doc.bibliography},
                                         {db: doc.images},
                                         this.documentOverview.user,
-                                        selectTemplateDialog.dialogEl.querySelector('select').value
+                                        selectTemplateDialog.dialogEl.querySelector("select").value
                                     )
 
                                     copier.init().then(
@@ -217,7 +217,7 @@ export class DocumentOverviewActions {
                             }
                         },
                         {
-                            type: 'cancel'
+                            type: "cancel"
                         }
                     ]
                 })
@@ -294,7 +294,7 @@ export class DocumentOverviewActions {
             () => {
                 ids.forEach(id => {
                     const doc = this.documentOverview.documentList.find(entry => entry.id === id)
-                    if (templateType === 'docx') {
+                    if (templateType === "docx") {
                         import("../../exporter/docx").then(({DocxExporter}) => {
                             const exporter = new DocxExporter(
                                 doc,
@@ -401,11 +401,11 @@ export class DocumentOverviewActions {
         revDialog.init().then(
             actionObject => {
                 switch (actionObject.action) {
-                case 'added-document':
+                case "added-document":
                     this.documentOverview.documentList.push(actionObject.doc)
                     this.documentOverview.initTable()
                     break
-                case 'deleted-revision':
+                case "deleted-revision":
                     actionObject.doc.revisions = actionObject.doc.revisions.filter(rev => rev.pk !== actionObject.id)
                     this.documentOverview.initTable()
                     break

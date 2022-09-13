@@ -22,7 +22,7 @@ export const createDiffSchema = function(docSchema) {
 
     specNodes.forEach(nodeTypeName => {
         const nodeType = specNodes.get(nodeTypeName)
-        if (nodeType.group !== 'block') {
+        if (nodeType.group !== "block") {
             return
         }
         const attrs = nodeType.attrs
@@ -37,14 +37,14 @@ export const createDiffSchema = function(docSchema) {
                         let dom = nodeType.toDOM(node)
                         if (node.attrs.diffdata && node.attrs.diffdata.length) {
                             if (dom[1].class) {
-                                dom[1].class = dom[1].class + ' ' + node.attrs.diffdata[0].type
+                                dom[1].class = dom[1].class + " " + node.attrs.diffdata[0].type
                             } else {
-                                dom[1]['class'] = node.attrs.diffdata[0].type
+                                dom[1]["class"] = node.attrs.diffdata[0].type
                             }
                             dom = [
                                 dom[0],
                                 Object.assign({
-                                    'data-diffdata': JSON.stringify(node.attrs.diffdata),
+                                    "data-diffdata": JSON.stringify(node.attrs.diffdata),
                                 }, dom[1]),
                                 dom[2]
                             ]
@@ -75,10 +75,10 @@ export const createDiffSchema = function(docSchema) {
                 default: []
             },
             from: {
-                default: ''
+                default: ""
             },
             to: {
-                default: ''
+                default: ""
             },
             markOnly: false
         },
@@ -95,20 +95,20 @@ export const createDiffSchema = function(docSchema) {
             }
         ],
         toDOM(node) {
-            return ['span', {
+            return ["span", {
                 class: `diff ${node.attrs.diff}`,
-                'data-diff': node.attrs.diff,
-                'data-steps': node.attrs.steps,
-                'data-from': node.attrs.from,
-                'data-to': node.attrs.to,
-                'data-markOnly': node.attrs.markOnly
+                "data-diff": node.attrs.diff,
+                "data-steps": node.attrs.steps,
+                "data-from": node.attrs.from,
+                "data-to": node.attrs.to,
+                "data-markOnly": node.attrs.markOnly
             }]
         }
     }
 
     const spec = {
         nodes: specNodes,
-        marks: docSchema.spec.marks.addToEnd('diffdata', diffdata)
+        marks: docSchema.spec.marks.addToEnd("diffdata", diffdata)
     }
 
     // Update link mark toDom to render a span instead of anchor tag

@@ -11,7 +11,7 @@ export class GeneralPasteHandler {
 
     // Iterate over each node in the body of the pasted content.
     getOutput() {
-        this.dom = this.htmlDoc.getElementsByTagName('body')[0]
+        this.dom = this.htmlDoc.getElementsByTagName("body")[0]
         this.inHTML = this.dom.innerHTML
         this.iterateNode(this.dom)
         this.cleanDOM()
@@ -54,9 +54,9 @@ export class GeneralPasteHandler {
 
         this.footnoteMarkers.forEach((fnM, index) => {
             const footnote = this.footnotes[index]
-            const newFnM = document.createElement('span')
-            newFnM.classList.add('footnote-marker')
-            const footnoteContents = footnote.innerHTML.replace(/\s+/g, ' ')
+            const newFnM = document.createElement("span")
+            newFnM.classList.add("footnote-marker")
+            const footnoteContents = footnote.innerHTML.replace(/\s+/g, " ")
             // Remove linebreaks in string (not <BR>)
             // Turn multiple white spaces into single space
             newFnM.dataset.footnote = footnoteContents

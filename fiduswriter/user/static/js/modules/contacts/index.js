@@ -31,15 +31,15 @@ export class ContactsOverview {
     render() {
         this.dtBulk = new DatatableBulk(this, bulkMenuModel())
 
-        this.dom = document.createElement('body')
+        this.dom = document.createElement("body")
         this.dom.innerHTML = baseBodyTemplate({
-            contents: '',
+            contents: "",
             user: this.user,
             hasOverview: true,
             app: this.app
         })
         document.body = this.dom
-        setDocTitle(gettext('Contacts'), this.app)
+        setDocTitle(gettext("Contacts"), this.app)
         const feedbackTab = new FeedbackTab()
         feedbackTab.init()
 
@@ -51,12 +51,12 @@ export class ContactsOverview {
             this.table.destroy()
             this.table = false
         }
-        const tableEl = document.createElement('table')
-        tableEl.classList.add('fw-data-table')
-        tableEl.classList.add('fw-large')
-        tableEl.classList.add('contacts-table')
-        const contentsEl = document.querySelector('.fw-contents')
-        contentsEl.innerHTML = '' // Delete any old table
+        const tableEl = document.createElement("table")
+        tableEl.classList.add("fw-data-table")
+        tableEl.classList.add("fw-large")
+        tableEl.classList.add("contacts-table")
+        const contentsEl = document.querySelector(".fw-contents")
+        contentsEl.innerHTML = "" // Delete any old table
         contentsEl.appendChild(tableEl)
 
         this.dtBulk = new DatatableBulk(this, bulkMenuModel())
@@ -74,13 +74,13 @@ export class ContactsOverview {
             },
             data: {
                 headings: [
-                    '',
-                    '',
+                    "",
+                    "",
                     this.dtBulk.getHTML(),
                     gettext("Name"),
                     gettext("Type"),
                     gettext("Email address"),
-                    '',
+                    "",
                 ],
                 data: this.contacts.map(contact => this.createTableRow(contact))
             },
@@ -107,7 +107,7 @@ export class ContactsOverview {
             `${avatarTemplate({user: contact})} ${escapeText(contact.name)}`,
             displayContactType(contact),
             contact.email,
-            contact.type === 'to_userinvite' ? respondInviteCell(contact) : deleteContactCell(contact)
+            contact.type === "to_userinvite" ? respondInviteCell(contact) : deleteContactCell(contact)
         ]
     }
 
@@ -117,7 +117,7 @@ export class ContactsOverview {
         if (this.app.isOffline()) {
             return cachedPromise
         }
-        return postJson('/api/user/contacts/list/').then(
+        return postJson("/api/user/contacts/list/").then(
             ({json}) => {
                 return cachedPromise.then(oldJson => {
                     if (!deepEqual(json, oldJson)) {
@@ -131,7 +131,7 @@ export class ContactsOverview {
         ).catch(
             error => {
                 if (!this.app.isOffline()) {
-                    addAlert('error', gettext('Could not obtain contacts list'))
+                    addAlert("error", gettext("Could not obtain contacts list"))
                     throw (error)
                 }
             }
@@ -182,10 +182,10 @@ export class ContactsOverview {
     }
 
     bind() {
-        this.dom.addEventListener('click', event => {
+        this.dom.addEventListener("click", event => {
             const el = {}
             switch (true) {
-            case findTarget(event, '.delete-single-contact', el): {
+            case findTarget(event, ".delete-single-contact", el): {
                 //delete single user
                 const id = parseInt(el.target.dataset.id)
                 const type = el.target.dataset.type
@@ -198,9 +198,9 @@ export class ContactsOverview {
                 })
                 break
             }
-            case findTarget(event, '.respond-invite', el): {
+            case findTarget(event, ".respond-invite", el): {
                 const id = parseInt(el.target.dataset.id)
-                const invite = this.contacts.find(contact => contact.id === id && contact.type === 'to_userinvite')
+                const invite = this.contacts.find(contact => contact.id === id && contact.type === "to_userinvite")
                 const dialog = new RespondInviteDialog(
                     [invite],
                     contacts => this.contacts = this.contacts.concat(contacts),
@@ -223,7 +223,7 @@ export class ContactsOverview {
     // get IDs of selected contacts
     getSelected() {
         return Array.from(
-            this.dom.querySelectorAll('.entry-select:checked:not(:disabled)')
+            this.dom.querySelectorAll(".entry-select:checked:not(:disabled)")
         ).map(el => ({id: parseInt(el.dataset.id), type: el.dataset.type}))
     }
 

@@ -1,7 +1,7 @@
 import {Plugin, PluginKey} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
 
-const key = new PluginKey('search')
+const key = new PluginKey("search")
 
 
 function findMatches(doc, term) {
@@ -13,7 +13,7 @@ function findMatches(doc, term) {
 
     doc.descendants(
         (node, pos, parent) => {
-            if (!node.isInline || node.marks.find(mark => mark.type.name === 'deletion')) {
+            if (!node.isInline || node.marks.find(mark => mark.type.name === "deletion")) {
                 return
             }
             if (stringObj && (parent !== stringObj.parent || !node.isText)) {
@@ -23,7 +23,7 @@ function findMatches(doc, term) {
 
             if (node.isText) {
                 if (!stringObj) {
-                    stringObj = {parent, pos: [], text: ''}
+                    stringObj = {parent, pos: [], text: ""}
                 }
                 stringObj.text += node.text
                 stringObj.pos.push([pos, pos + node.text.length])
@@ -67,7 +67,7 @@ function matchesToDecos(doc, matches, selected) {
     }
     const decorations = matches.map((match, index) => {
         return Decoration.inline(match.from, match.to, {
-            class: `search${ index === selected ? ' selected' : ''}`
+            class: `search${ index === selected ? " selected" : ""}`
         })
     })
     return DecorationSet.create(doc, decorations)
@@ -99,7 +99,7 @@ export const endSearch = function(state) {
     return state.tr.setMeta(
         key,
         {
-            term: '',
+            term: "",
             decos: DecorationSet.empty,
             matches: [],
             selected: 0,
@@ -188,7 +188,7 @@ export const searchPlugin = function(_options) {
         state: {
             init() {
                 return {
-                    term: '',
+                    term: "",
                     decos: DecorationSet.empty,
                     matches: [],
                     selected: 0,
@@ -211,7 +211,7 @@ export const searchPlugin = function(_options) {
                     selected
                 } = pluginState
 
-                if (term === '' || !tr.docChanged) {
+                if (term === "" || !tr.docChanged) {
                     return {
                         term,
                         decos, // empty if term === ''

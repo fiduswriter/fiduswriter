@@ -48,11 +48,11 @@ export class FootnoteView {
         // Append a tooltip to the outer node
         const tooltip = this.dom.appendChild(document.createElement("div"))
         tooltip.className = "footnote-tooltip"
-        const diffMark = this.node.marks.find(mark => mark.type.name === 'diffdata')
+        const diffMark = this.node.marks.find(mark => mark.type.name === "diffdata")
         if (diffMark === undefined) {
-            tooltip.classList.add('render-arrow')
+            tooltip.classList.add("render-arrow")
         } else {
-            tooltip.style.top = '-30px'
+            tooltip.style.top = "-30px"
         }
 
         const doc = fnSchema.nodeFromJSON({
@@ -102,7 +102,7 @@ export class FootnoteView {
             })
         }
         if (outerTr.docChanged) {
-            outerTr.setMeta('fromFootnote', true)
+            outerTr.setMeta("fromFootnote", true)
             this.updatedMainEditor = true
             this.outerView.dispatch(outerTr)
         }
@@ -113,7 +113,7 @@ export class FootnoteView {
             tr,
             this.innerView.state,
             this.editor.user,
-            !this.outerView.state.doc.firstChild.attrs.tracked && !['write-tracked', 'review-tracked'].includes(this.editor.docInfo.access_rights),
+            !this.outerView.state.doc.firstChild.attrs.tracked && !["write-tracked", "review-tracked"].includes(this.editor.docInfo.access_rights),
             Date.now() - this.editor.clientTimeAdjustment
         )
         const {
@@ -150,7 +150,7 @@ export const readOnlyFnEditor = function(footnoteElement) {
     newFnElement.dataset.footnote = footnoteElement.dataset.footnote
     const tooltip = newFnElement.appendChild(document.createElement("div"))
     tooltip.className = "footnote-tooltip"
-    tooltip.classList.add('render-arrow')
+    tooltip.classList.add("render-arrow")
     tooltip.style.display = "none"
 
     // Parse Footnote node's data

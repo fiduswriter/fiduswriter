@@ -11,10 +11,10 @@ export class KeyBindingsDialog {
 
     init() {
         const dialog = new Dialog({
-            title: gettext('Keyboard Shortcuts'),
+            title: gettext("Keyboard Shortcuts"),
             body: keyBindingsTemplate(),
             width: 850,
-            buttons: [{type: 'close'}],
+            buttons: [{type: "close"}],
             canEscape: true
         })
         dialog.open()

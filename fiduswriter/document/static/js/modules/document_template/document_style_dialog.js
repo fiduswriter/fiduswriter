@@ -15,8 +15,8 @@ export class DocumentStyleDialog {
     init() {
         const buttons = [
             {
-                text: gettext('Save'),
-                classes: 'fw-dark',
+                text: gettext("Save"),
+                classes: "fw-dark",
                 click: () => {
                     const {title, slug, contents, errors} = this.getCurrentValue()
                     if (errors.length) {
@@ -60,36 +60,36 @@ export class DocumentStyleDialog {
                     )
                 }
             },
-            {type: 'cancel'}
+            {type: "cancel"}
         ]
         if (this.allStyles.length > 1 && this.id) {
             buttons.unshift({
-                text: gettext('Delete'),
-                classes: 'fw-orange',
+                text: gettext("Delete"),
+                classes: "fw-orange",
                 click: () => this.deleteStyleDialog()
             })
         }
         this.dialog = new Dialog({
-            id: 'document-style-dialog',
+            id: "document-style-dialog",
             title: gettext("Document style"),
             body:
                 `<table class="fw-dialog-table"><tbody>
                 <tr>
                     <th><h4 class="fw-tablerow-title">${gettext("Title")}</h4></th>
                     <td>
-                        <input class="title" type="text" value="${this.style ? escapeText(this.style.fields.title) : ''}">
+                        <input class="title" type="text" value="${this.style ? escapeText(this.style.fields.title) : ""}">
                     </td>
                 </tr>
                 <tr>
                     <th><h4 class="fw-tablerow-title">${gettext("Slug")}</h4></th>
                     <td>
-                        <input class="slug" type="text" value="${this.style ? escapeText(this.style.fields.slug) : ''}">
+                        <input class="slug" type="text" value="${this.style ? escapeText(this.style.fields.slug) : ""}">
                     </td>
                 </tr>
                 <tr>
                     <th><h4 class="fw-tablerow-title">${gettext("CSS Style")}</h4></th>
                     <td>
-                        <textarea class="contents">${this.style ? escapeText(this.style.fields.contents) : ''}</textarea>
+                        <textarea class="contents">${this.style ? escapeText(this.style.fields.contents) : ""}</textarea>
                     </td>
                 </tr>
                 <tr>
@@ -104,13 +104,13 @@ export class DocumentStyleDialog {
                                             <td><a href="${url}">${escapeText(title)}</a></td>
                                             <td><span class="fw-link-text"><i class="fas fa-trash-alt delete-document-style-file" data-filename="${escapeText(title)}"></i></span></td>
                                         </tr>`
-            ).join('<br>')
+            ).join("<br>")
         }`
         :
-        ''
+        ""
 }</tbody></table>
                         <button type="button" class="fw-media-select-button fw-button fw-light">
-                            ${gettext('Add a file')}
+                            ${gettext("Add a file")}
                         </button>
                         <input name="image" type="file" class="fw-media-file-input">
                     </td>
@@ -125,15 +125,15 @@ export class DocumentStyleDialog {
     }
 
     showErrors(errors) {
-        this.dialog.dialogEl.querySelector('ul.errorlist').innerHTML =
-            errors.map(error => `<li>${escapeText(error)}</li>`).join('')
+        this.dialog.dialogEl.querySelector("ul.errorlist").innerHTML =
+            errors.map(error => `<li>${escapeText(error)}</li>`).join("")
     }
 
     deleteStyle() {
-        postJson('/api/style/delete_document_style/', {id: this.id}).then(
+        postJson("/api/style/delete_document_style/", {id: this.id}).then(
             () => {
                 const oldStyleIndex = this.allStyles.findIndex(style => style.pk === this.id)
-                if (!(typeof oldStyleIndex === 'undefined')) {
+                if (!(typeof oldStyleIndex === "undefined")) {
                     this.allStyles.splice(oldStyleIndex, 1)
                     this.refresh()
                 }
@@ -165,7 +165,7 @@ export class DocumentStyleDialog {
     deleteStyleDialog() {
         const buttons = [
             {
-                text: gettext('Delete'),
+                text: gettext("Delete"),
                 classes: "fw-dark",
                 click: () => {
                     dialog.close()
@@ -173,14 +173,14 @@ export class DocumentStyleDialog {
                 }
             },
             {
-                type: 'cancel'
+                type: "cancel"
             }
         ]
         const dialog = new Dialog({
-            id: 'confirmdeletion',
-            icon: 'exclamation-triangle',
-            title: gettext('Confirm deletion'),
-            body: `<p>${gettext('Do you really want to delete the document style?')}</p>`,
+            id: "confirmdeletion",
+            icon: "exclamation-triangle",
+            title: gettext("Confirm deletion"),
+            body: `<p>${gettext("Do you really want to delete the document style?")}</p>`,
             height: 180,
             buttons
         })
@@ -190,25 +190,25 @@ export class DocumentStyleDialog {
     getCurrentValue() {
         const errors = []
 
-        const title = this.dialog.dialogEl.querySelector('.title').value
-        const slug = this.dialog.dialogEl.querySelector('.slug').value
-        const contents = this.dialog.dialogEl.querySelector('.contents').value
+        const title = this.dialog.dialogEl.querySelector(".title").value
+        const slug = this.dialog.dialogEl.querySelector(".slug").value
+        const contents = this.dialog.dialogEl.querySelector(".contents").value
 
         if (!title.length || !slug.length || !contents.length) {
-            errors.push(gettext('All fields need to be filled out.'))
+            errors.push(gettext("All fields need to be filled out."))
         }
         if (!/^[A-Za-z0-9\-_]+$/.test(slug)) {
-            errors.push(gettext('A slug can only contain letters, numbers, hyphens and underscores.'))
+            errors.push(gettext("A slug can only contain letters, numbers, hyphens and underscores."))
         }
         if (this.allStyles.find(style => style.fields.slug === slug && style.pk !== this.id)) {
-            errors.push(gettext('The slug has to be unique.'))
+            errors.push(gettext("The slug has to be unique."))
         }
         return {title, slug, contents, errors}
     }
 
     save({title, slug, contents}) {
         return postJson(
-            '/api/style/save_document_style/',
+            "/api/style/save_document_style/",
             {
                 id: this.id,
                 title,
@@ -222,22 +222,22 @@ export class DocumentStyleDialog {
     }
 
     bind() {
-        const mediaInputSelector = this.dialog.dialogEl.querySelector('.fw-media-file-input')
-        this.dialog.dialogEl.addEventListener('click', event => {
+        const mediaInputSelector = this.dialog.dialogEl.querySelector(".fw-media-file-input")
+        this.dialog.dialogEl.addEventListener("click", event => {
             const el = {}
             switch (true) {
-            case findTarget(event, '.delete-document-style-file', el): {
+            case findTarget(event, ".delete-document-style-file", el): {
                 event.preventDefault()
                 this.deletedFiles.push(el.target.dataset.filename)
-                const tr = el.target.closest('tr')
+                const tr = el.target.closest("tr")
                 tr.parentElement.removeChild(tr)
                 break
             }
-            case findTarget(event, '.delete-new-document-style-file', el): {
+            case findTarget(event, ".delete-new-document-style-file", el): {
                 event.preventDefault()
-                const tr = el.target.closest('tr')
+                const tr = el.target.closest("tr")
                 let count = 0, findTr = tr
-                while (findTr.previousElementSibling.classList.contains('new-document-style-file')) {
+                while (findTr.previousElementSibling.classList.contains("new-document-style-file")) {
                     findTr = findTr.previousElementSibling
                     count++
                 }
@@ -245,7 +245,7 @@ export class DocumentStyleDialog {
                 tr.parentElement.removeChild(tr)
                 break
             }
-            case findTarget(event, '.fw-media-select-button', el): {
+            case findTarget(event, ".fw-media-select-button", el): {
                 event.preventDefault()
                 mediaInputSelector.click()
                 break
@@ -254,7 +254,7 @@ export class DocumentStyleDialog {
 
         })
 
-        mediaInputSelector.addEventListener('change', () => {
+        mediaInputSelector.addEventListener("change", () => {
             this.showErrors([])
             const mediaInput = mediaInputSelector.files[0]
             if (!mediaInput) {
@@ -267,12 +267,12 @@ export class DocumentStyleDialog {
                 ).map(([_url, name]) => name)
             }
             if (currentFiles.includes(mediaInput.name)) {
-                this.showErrors([gettext('A file with the same name exists already.')])
+                this.showErrors([gettext("A file with the same name exists already.")])
                 return
             }
 
             this.addedFiles.push(mediaInput)
-            this.dialog.dialogEl.querySelector('.document-style-files').innerHTML +=
+            this.dialog.dialogEl.querySelector(".document-style-files").innerHTML +=
                 `<tr class="new-document-style-file">
                     <td>${escapeText(mediaInput.name)}</td>
                     <td><span class="fw-link-text"><i class="fas fa-trash-alt delete-new-document-style-file"></i></span></td>

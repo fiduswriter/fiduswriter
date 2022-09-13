@@ -11,8 +11,8 @@ export class OdtExporterMetadata {
             authors: this.docContent.content.reduce(
                 (authors, part) => {
                     if (
-                        part.type === 'contributors_part' &&
-                        part.attrs.metadata === 'authors' &&
+                        part.type === "contributors_part" &&
+                        part.attrs.metadata === "authors" &&
                         part.content
                     ) {
                         return authors.concat(part.content.map(authorNode => authorNode.attrs))
@@ -24,8 +24,8 @@ export class OdtExporterMetadata {
             keywords: this.docContent.content.reduce(
                 (keywords, part) => {
                     if (
-                        part.type === 'tags_part' &&
-                        part.attrs.metadata === 'keywords' &&
+                        part.type === "tags_part" &&
+                        part.attrs.metadata === "keywords" &&
                         part.content
                     ) {
                         return keywords.concat(part.content.map(keywordNode => keywordNode.attrs.tag))
@@ -51,13 +51,13 @@ export class OdtExporterMetadata {
 
 
     addMetadata() {
-        const metaEl = this.metaXml.querySelector('meta')
+        const metaEl = this.metaXml.querySelector("meta")
 
         // Title
-        let titleEl = this.metaXml.querySelector('title')
+        let titleEl = this.metaXml.querySelector("title")
         if (!titleEl) {
-            metaEl.insertAdjacentHTML('beforeEnd', '<dc:title></dc:title>')
-            titleEl = this.metaXml.querySelector('title')
+            metaEl.insertAdjacentHTML("beforeEnd", "<dc:title></dc:title>")
+            titleEl = this.metaXml.querySelector("title")
         }
         titleEl.innerHTML = escapeText(this.metadata.title)
 
@@ -74,59 +74,59 @@ export class OdtExporterMetadata {
                 // We have an institution but no names. Use institution as name.
                 nameParts.push(author.institution)
             }
-            return nameParts.join(' ')
+            return nameParts.join(" ")
         })
 
         const initialAuthor = authors.length ?
             escapeText(authors[0]) :
-            gettext('Unknown')
+            gettext("Unknown")
         // TODO: We likely want to differentiate between first and last author.
         const lastAuthor = initialAuthor
 
-        let lastAuthorEl = this.metaXml.querySelector('creator')
+        let lastAuthorEl = this.metaXml.querySelector("creator")
         if (!lastAuthorEl) {
-            metaEl.insertAdjacentHTML('beforeEnd', '<dc:creator></dc:creator>')
-            lastAuthorEl = this.metaXml.querySelector('creator')
+            metaEl.insertAdjacentHTML("beforeEnd", "<dc:creator></dc:creator>")
+            lastAuthorEl = this.metaXml.querySelector("creator")
         }
         lastAuthorEl.innerHTML = lastAuthor
-        let initialAuthorEl = this.metaXml.querySelector('initial-creator')
+        let initialAuthorEl = this.metaXml.querySelector("initial-creator")
         if (!initialAuthorEl) {
-            metaEl.insertAdjacentHTML('beforeEnd', '<meta:initial-creator></meta:initial-creator>')
-            initialAuthorEl = this.metaXml.querySelector('initial-creator')
+            metaEl.insertAdjacentHTML("beforeEnd", "<meta:initial-creator></meta:initial-creator>")
+            initialAuthorEl = this.metaXml.querySelector("initial-creator")
         }
         initialAuthorEl.innerHTML = initialAuthor
 
         // Keywords
         // Remove all existing keywords
-        const keywordEls = this.metaXml.querySelectorAll('keywords')
+        const keywordEls = this.metaXml.querySelectorAll("keywords")
         keywordEls.forEach(
             keywordEl => keywordEl.parentNode.removeChild(keywordEl)
         )
         // Add new keywords
         const keywords = this.metadata.keywords
         keywords.forEach(
-            keyword => metaEl.insertAdjacentHTML('beforeEnd', `<meta:keyword>${escapeText(keyword)}</meta:keyword>`)
+            keyword => metaEl.insertAdjacentHTML("beforeEnd", `<meta:keyword>${escapeText(keyword)}</meta:keyword>`)
         )
 
         // language
         // LibreOffice seems to ignore the value set in metadata and instead uses
         // the one set in default styles. So we set both.
         this.exporter.styles.setLanguage(this.metadata.language)
-        let languageEl = this.metaXml.querySelector('language')
+        let languageEl = this.metaXml.querySelector("language")
         if (!languageEl) {
-            metaEl.insertAdjacentHTML('beforeEnd', '<dc:language></dc:language>')
-            languageEl = this.metaXml.querySelector('language')
+            metaEl.insertAdjacentHTML("beforeEnd", "<dc:language></dc:language>")
+            languageEl = this.metaXml.querySelector("language")
         }
         languageEl.innerHTML = this.metadata.language
         // time
         const date = new Date()
-        const dateString = date.toISOString().split('.')[0]
-        const createdEl = this.metaXml.querySelector('creation-date')
+        const dateString = date.toISOString().split(".")[0]
+        const createdEl = this.metaXml.querySelector("creation-date")
         createdEl.innerHTML = dateString
-        let dateEl = this.metaXml.querySelector('date')
+        let dateEl = this.metaXml.querySelector("date")
         if (!dateEl) {
-            metaEl.insertAdjacentHTML('beforeEnd', '<dc:date></dc:date>')
-            dateEl = this.metaXml.querySelector('date')
+            metaEl.insertAdjacentHTML("beforeEnd", "<dc:date></dc:date>")
+            dateEl = this.metaXml.querySelector("date")
         }
         dateEl.innerHTML = `${dateString}.000000000`
     }

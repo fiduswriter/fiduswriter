@@ -16,8 +16,8 @@ export const paragraph = {
         }
     }}],
     toDOM(node) {
-        const attrs = node.attrs.track && node.attrs.track.length ? {'data-track': JSON.stringify(node.attrs.track)} : {}
-        return ['p', attrs, 0]
+        const attrs = node.attrs.track && node.attrs.track.length ? {"data-track": JSON.stringify(node.attrs.track)} : {}
+        return ["p", attrs, 0]
     }
 }
 
@@ -38,7 +38,7 @@ export const blockquote = {
         }
     }}],
     toDOM(node) {
-        const attrs = node.attrs.track && node.attrs.track.length ? {'data-track': JSON.stringify(node.attrs.track)} : {}
+        const attrs = node.attrs.track && node.attrs.track.length ? {"data-track": JSON.stringify(node.attrs.track)} : {}
         return ["blockquote", attrs, 0]
     }
 }
@@ -57,7 +57,7 @@ export const horizontal_rule = {
         }
     }}],
     toDOM(node) {
-        const attrs = node.attrs.track && node.attrs.track.length ? {'data-track': JSON.stringify(node.attrs.track)} : {}
+        const attrs = node.attrs.track && node.attrs.track.length ? {"data-track": JSON.stringify(node.attrs.track)} : {}
         return ["hr", attrs]
     }
 }
@@ -65,6 +65,6 @@ export const horizontal_rule = {
 export const underline = {
     parseDOM: [{tag: "span.underline"}],
     toDOM() {
-        return ["span", {class: 'underline'}, 0]
+        return ["span", {class: "underline"}, 0]
     }
 }

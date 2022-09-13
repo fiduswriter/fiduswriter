@@ -4,8 +4,8 @@ import {fnSchema} from "./footnotes"
 
 // Convert the footnote HTML stored with the marker to a PM node representation of the footnote.
 export const htmlToFnNode = function(content) {
-    const footnoteDOM = document.createElement('div')
-    footnoteDOM.classList.add('footnote-container')
+    const footnoteDOM = document.createElement("div")
+    footnoteDOM.classList.add("footnote-container")
     footnoteDOM.innerHTML = content
     const node = DOMParser.fromSchema(fnSchema).parse(footnoteDOM, {
         preserveWhitespace: true,
@@ -18,7 +18,7 @@ export const htmlToFnNode = function(content) {
 
 export const fnNodeToPmNode = function(fnContents) {
     const footnote = {
-        type: 'footnotecontainer',
+        type: "footnotecontainer",
         content: fnContents
     }
     return Node.fromJSON(fnSchema, footnote)

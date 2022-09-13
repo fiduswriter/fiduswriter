@@ -4,8 +4,8 @@ import {DeleteContactDialog} from "./delete_dialog"
 export const bulkMenuModel = () => ({
     content: [
         {
-            title: gettext('Delete selected'),
-            tooltip: gettext('Delete selected contacts.'),
+            title: gettext("Delete selected"),
+            tooltip: gettext("Delete selected contacts."),
             action: overview => {
                 const selected = overview.getSelected()
                 if (selected.length) {
@@ -29,8 +29,8 @@ export const bulkMenuModel = () => ({
 export const menuModel = () => ({
     content: [
         {
-            type: 'text',
-            title: gettext('Invite contact'),
+            type: "text",
+            title: gettext("Invite contact"),
             action: overview => {
                 const dialog = new AddContactDialog()
                 dialog.init().then(contacts => {

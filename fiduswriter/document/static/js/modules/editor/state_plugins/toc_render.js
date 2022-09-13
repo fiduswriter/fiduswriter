@@ -2,7 +2,7 @@ import {Plugin, PluginKey} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
 import {escapeText, findTarget} from "../../common"
 
-const key = new PluginKey('tocRender')
+const key = new PluginKey("tocRender")
 
 
 function getTocItems(decorations) {
@@ -26,26 +26,26 @@ function tocHTML(tocItems, title) {
             const level = item.type.name.substr(-1)
             return `<h${level}><a href="#${item.id}">${escapeText(item.textContent)}</a></h${level}>`
         }
-    ).join('')
+    ).join("")
 }`
 }
 
 class ToCView {
     constructor(node, view, getPos, decorations, options) {
-        this.dom = document.createElement('div')
-        this.dom.classList.add('article-part', 'table-of-contents')
+        this.dom = document.createElement("div")
+        this.dom.classList.add("article-part", "table-of-contents")
         if (node.attrs.hidden) {
-            this.dom.dataset.hidden = 'true'
+            this.dom.dataset.hidden = "true"
         }
         const tocItems = getTocItems(decorations) || []
         this.dom.innerHTML = tocHTML(tocItems, node.attrs.title)
-        this.dom.addEventListener('click', event => {
+        this.dom.addEventListener("click", event => {
             const el = {}
             switch (true) {
-            case findTarget(event, 'a', el):
+            case findTarget(event, "a", el):
                 event.preventDefault()
                 event.stopImmediatePropagation()
-                el.id = el.target.getAttribute('href').slice(1)
+                el.id = el.target.getAttribute("href").slice(1)
                 options.editor.scrollIdIntoView(el.id)
                 break
             }
@@ -69,9 +69,9 @@ function getDecos(state) {
     state.doc.descendants((node, offset) => {
         if (node.attrs?.hidden) {
             return false
-        } else if (node.type.name === 'table_of_contents') {
+        } else if (node.type.name === "table_of_contents") {
             decoPos.push(offset)
-        } else if (node.type.groups.includes('heading')) {
+        } else if (node.type.groups.includes("heading")) {
             tocItems.push({id: node.attrs.id, textContent: node.textContent, type: node.type})
         }
     })
@@ -110,7 +110,7 @@ export const tocRenderPlugin = function(options) {
                             oldDoc.nodesBetween(oldStart, oldEnd, node => {
                                 if (updateToc) {
                                     return false
-                                } else if (node.type.groups.includes('heading')) {
+                                } else if (node.type.groups.includes("heading")) {
                                     updateToc = true
                                 } else if (node.attrs?.hidden) {
                                     hidden = true // was hidden
@@ -120,7 +120,7 @@ export const tocRenderPlugin = function(options) {
                             newDoc.nodesBetween(newStart, newEnd, node => {
                                 if (updateToc) {
                                     return false
-                                } else if (node.type.groups.includes('heading')) {
+                                } else if (node.type.groups.includes("heading")) {
                                     updateToc = true
                                 } else if (node.attrs?.hidden) {
                                     hidden = hidden ? false : true // is hidden
@@ -155,7 +155,7 @@ export const tocRenderPlugin = function(options) {
                 return decos
             },
             nodeViews: {
-                'table_of_contents': (node, view, getPos, decorations) => new ToCView(node, view, getPos, decorations, options)
+                "table_of_contents": (node, view, getPos, decorations) => new ToCView(node, view, getPos, decorations, options)
             }
         }
     })

@@ -9,7 +9,7 @@ import {get} from "../../common"
  */
 
 export class ZipFileCreator {
-    constructor(textFiles = [], binaryFiles = [], zipFiles = [], mimeType = 'application/zip', date = new Date()) {
+    constructor(textFiles = [], binaryFiles = [], zipFiles = [], mimeType = "application/zip", date = new Date()) {
         this.textFiles = textFiles
         this.binaryFiles = binaryFiles
         this.zipFiles = zipFiles
@@ -21,8 +21,8 @@ export class ZipFileCreator {
         return import("jszip").then(({default: JSZip}) => {
             JSZip.defaults.date = this.date
             this.zipFs = new JSZip()
-            if (this.mimeType !== 'application/zip') {
-                this.zipFs.file('mimetype', this.mimeType, {compression: 'STORE'})
+            if (this.mimeType !== "application/zip") {
+                this.zipFs.file("mimetype", this.mimeType, {compression: "STORE"})
             }
 
             return this.includeZips()
@@ -40,7 +40,7 @@ export class ZipFileCreator {
         return Promise.all(getZipBlobs).then(
             () => {
                 return this.zipFiles.map(zipFile => {
-                    const zipDir = zipFile.directory === '' ?
+                    const zipDir = zipFile.directory === "" ?
                         this.zipFs :
                         this.zipFs.folder(zipFile.directory)
                     return zipDir.loadAsync(zipFile.blob)
@@ -53,7 +53,7 @@ export class ZipFileCreator {
 
     createZip() {
         this.textFiles.forEach(textFile => {
-            this.zipFs.file(textFile.filename, textFile.contents, {compression: 'DEFLATE'})
+            this.zipFs.file(textFile.filename, textFile.contents, {compression: "DEFLATE"})
         })
         const blobPromises = this.binaryFiles.map(binaryFile =>
             get(binaryFile.url).then(
@@ -64,15 +64,15 @@ export class ZipFileCreator {
         )
         return Promise.all(blobPromises).then(
             promises => {
-                promises.forEach(promise => this.zipFs.file(promise.filename, promise.blob, {binary: true, compression: 'DEFLATE'}))
+                promises.forEach(promise => this.zipFs.file(promise.filename, promise.blob, {binary: true, compression: "DEFLATE"}))
                 return this.zipFs.generateAsync({type: "blob", mimeType: this.mimeType})
             }
         )
     }
 
     convertDataURIToBlob(datauri) {
-        const byteString = atob(datauri.split(',')[1])
-        const mimeString = datauri.split(',')[0].split(':')[1].split(';')[0]
+        const byteString = atob(datauri.split(",")[1])
+        const mimeString = datauri.split(",")[0].split(":")[1].split(";")[0]
         const ab = new ArrayBuffer(byteString.length)
         const ia = new Uint8Array(ab)
         for (let i = 0; i < byteString.length; i++) {

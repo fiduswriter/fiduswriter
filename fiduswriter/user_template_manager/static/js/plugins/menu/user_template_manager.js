@@ -8,9 +8,9 @@ export class DocTemplatesMenuItem {
     init() {
         this.menu.navItems.push({
             id: "templates",
-            title: gettext('Document Templates'),
+            title: gettext("Document Templates"),
             url: "/templates/",
-            text: gettext('Templates'),
+            text: gettext("Templates"),
             order: 4
         })
     }

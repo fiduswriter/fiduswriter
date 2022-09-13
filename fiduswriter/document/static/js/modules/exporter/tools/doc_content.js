@@ -12,13 +12,13 @@ export const removeHidden = function(
     const returnNode = {}
 
     Object.keys(node).forEach(key => {
-        if (key !== 'content') {
+        if (key !== "content") {
             returnNode[key] = node[key]
         }
     })
     if (node.attrs?.hidden) {
         return leaveStub ? returnNode : false
-    } else if (['table_caption', 'figure_caption'].includes(node.type)) {
+    } else if (["table_caption", "figure_caption"].includes(node.type)) {
         if (removeCaption) {
             return leaveStub ? returnNode : false
         } else if (removeCaptionText) {
@@ -27,7 +27,7 @@ export const removeHidden = function(
 
     }
     if (node.attrs?.caption === false) {
-        if (node.attrs.category === 'none') {
+        if (node.attrs.category === "none") {
             removeCaption = true
         } else {
             removeCaptionText = true
@@ -66,7 +66,7 @@ export const textContent = function(node) {
             }
             return returnString
         },
-        ''
+        ""
     )
 
 }
@@ -79,7 +79,7 @@ const addCoveredTableCells = function(node) {
     const rows = node.content.length
     // Add empty cells for col/rowspan
     const fixedTableMatrix = Array.apply(0, {length: rows}).map(
-        _item => ({type: 'table_row', content: Array.apply(0, {length: columns})})
+        _item => ({type: "table_row", content: Array.apply(0, {length: columns})})
     )
     let rowIndex = -1
     node.content.forEach(row => {
@@ -101,7 +101,7 @@ const addCoveredTableCells = function(node) {
                         fixedCell = cell
                     } else {
                         fixedCell = {
-                            type: 'table_cell',
+                            type: "table_cell",
                             attrs: {
                                 rowspan: cell.attrs.rowspan > 1 ? 0 : 1,
                                 colspan: cell.attrs.colspan > 1 ? 0 : 1
@@ -117,7 +117,7 @@ const addCoveredTableCells = function(node) {
 }
 
 export const fixTables = function(node) {
-    if (node.type === 'table_body') {
+    if (node.type === "table_body") {
         addCoveredTableCells(node)
     }
     if (node.content) {

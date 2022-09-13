@@ -43,13 +43,13 @@ export class HTMLExporter {
             () => this.converter.init(this.docContent)
         ).then(
             ({html, imageIds}) => {
-                this.textFiles.push({filename: 'document.html', contents: pretty(html, {ocd: true})})
+                this.textFiles.push({filename: "document.html", contents: pretty(html, {ocd: true})})
                 const images = imageIds.map(
                     id => {
                         const imageEntry = this.imageDB.db[id]
                         return {
                             title: imageEntry.title,
-                            filename: imageEntry.image.split('/').pop(),
+                            filename: imageEntry.image.split("/").pop(),
                             url: imageEntry.image
                         }
                     }
@@ -67,10 +67,10 @@ export class HTMLExporter {
                 })
 
                 if (this.converter.features.math) {
-                    this.styleSheets.push({filename: `css/mathlive.css`})
+                    this.styleSheets.push({filename: "css/mathlive.css"})
                     this.includeZips.push({
-                        'directory': 'css',
-                        'url': `${settings_STATIC_URL}zip/mathlive_style.zip?v=${transpile_VERSION}`,
+                        "directory": "css",
+                        "url": `${settings_STATIC_URL}zip/mathlive_style.zip?v=${transpile_VERSION}`,
                     })
                 }
 
@@ -90,7 +90,7 @@ export class HTMLExporter {
         let contents = docStyle.contents
         docStyle.documentstylefile_set.forEach(
             ([_url, filename]) => contents = contents.replace(
-                new RegExp(filename, 'g'),
+                new RegExp(filename, "g"),
                 `media/${filename}`
             )
         )
@@ -111,7 +111,7 @@ export class HTMLExporter {
                     ).then(
                         response => {
                             sheet.contents = response
-                            sheet.filename = `css/${sheet.url.split('/').pop().split('?')[0]}`
+                            sheet.filename = `css/${sheet.url.split("/").pop().split("?")[0]}`
                             delete sheet.url
                         }
                     )
@@ -122,7 +122,7 @@ export class HTMLExporter {
     }
 
     addMathliveStylesheet() {
-        this.styleSheets.push({filename: `css/mathlive.css`})
+        this.styleSheets.push({filename: "css/mathlive.css"})
     }
 
     createZip() {
@@ -139,6 +139,6 @@ export class HTMLExporter {
     }
 
     download(blob) {
-        return download(blob, this.zipFileName, 'application/zip')
+        return download(blob, this.zipFileName, "application/zip")
     }
 }

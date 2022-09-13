@@ -14,12 +14,12 @@ export class BibLatexFileExporter {
 
             const zipper = new ZipFileCreator(
                 [{
-                    'filename': 'bibliography.bib',
-                    'contents': exporter.output
+                    "filename": "bibliography.bib",
+                    "contents": exporter.output
                 }]
             )
             zipper.init().then(
-                blob => download(blob, 'bibliography.zip', 'application/zip')
+                blob => download(blob, "bibliography.zip", "application/zip")
             )
         })
     }

@@ -10,24 +10,24 @@ export class SiteMenu {
         this.activeItem = activeItem
         this.navItems = [
             {
-                text: gettext('Documents'),
-                url: '/',
-                title: gettext('edit documents'),
-                id: 'documents',
+                text: gettext("Documents"),
+                url: "/",
+                title: gettext("edit documents"),
+                id: "documents",
                 order: 0
             },
             {
-                text: gettext('Bibliography'),
-                url: '/bibliography/',
-                title: gettext('manage bibliography library'),
-                id: 'bibliography',
+                text: gettext("Bibliography"),
+                url: "/bibliography/",
+                title: gettext("manage bibliography library"),
+                id: "bibliography",
                 order: 1
             },
             {
-                text: gettext('Images'),
-                url: '/usermedia/',
-                title: gettext('manage image files'),
-                id: 'images',
+                text: gettext("Images"),
+                url: "/usermedia/",
+                title: gettext("manage image files"),
+                id: "images",
                 order: 2
             }
         ]
@@ -52,26 +52,26 @@ export class SiteMenu {
     }
 
     renderMenu() {
-        const headerNav = document.getElementById('header-nav')
+        const headerNav = document.getElementById("header-nav")
         headerNav.innerHTML = headerNavTemplate({navItems: this.navItems})
     }
 
     bindPreferencePullDown() {
         dropdownSelect(
-            document.getElementById('user-preferences-pulldown'),
+            document.getElementById("user-preferences-pulldown"),
             {
-                button: document.getElementById('preferences-btn'),
+                button: document.getElementById("preferences-btn"),
                 onChange: value => {
                     switch (value) {
-                    case 'profile':
-                        this.app.goTo('/user/profile/')
+                    case "profile":
+                        this.app.goTo("/user/profile/")
                         break
-                    case 'contacts':
-                        this.app.goTo('/user/contacts/')
+                    case "contacts":
+                        this.app.goTo("/user/contacts/")
                         break
-                    case 'logout':
-                        post('/api/user/logout/').then(
-                            () => window.location = '/'
+                    case "logout":
+                        post("/api/user/logout/").then(
+                            () => window.location = "/"
                         )
                         break
                     }
@@ -86,7 +86,7 @@ export class SiteMenu {
             this.plugins = {}
 
             Object.keys(plugins).forEach(plugin => {
-                if (typeof plugins[plugin] === 'function') {
+                if (typeof plugins[plugin] === "function") {
                     this.plugins[plugin] = new plugins[plugin](this)
                     this.plugins[plugin].init()
                 }

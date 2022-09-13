@@ -3,20 +3,20 @@ import {marks} from "prosemirror-schema-basic"
 import {Schema} from "prosemirror-model"
 
 const longliteral = {
-    content: 'inline*',
+    content: "inline*",
     marks: "_",
     code: true,
     defining: true,
-    parseDOM: [{tag: 'pre.long-literal'}],
+    parseDOM: [{tag: "pre.long-literal"}],
     toDOM(_node) {
         return ["pre", {
-            class: 'long-literal'
+            class: "long-literal"
         }, 0]
     }
 }
 
 const doc = {
-    content: 'longliteral'
+    content: "longliteral"
 }
 
 export const longLitSchema = new Schema({

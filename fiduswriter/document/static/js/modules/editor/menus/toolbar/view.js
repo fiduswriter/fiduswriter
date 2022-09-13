@@ -36,7 +36,7 @@ export class ToolbarView {
         menu.content = menu.content.filter(item => {
             if (item.available && !item.available(this.editor)) {
                 return false
-            } else if (item.type === 'menu') {
+            } else if (item.type === "menu") {
                 this.removeUnavailable(item)
             }
             return true
@@ -45,11 +45,11 @@ export class ToolbarView {
 
     bindEvents() {
         this.listeners.onclick = event => this.onclick(event)
-        document.body.addEventListener('click', this.listeners.onclick)
+        document.body.addEventListener("click", this.listeners.onclick)
     }
 
     destroy() {
-        document.body.removeEventListener('click', this.listeners.onclick)
+        document.body.removeEventListener("click", this.listeners.onclick)
         this.editor.menu.toolbarViews = this.editor.menu.toolbarViews.filter(view => view !== this)
     }
 
@@ -65,9 +65,9 @@ export class ToolbarView {
             return
         }
         const target = event.target
-        if (target.matches('.editor-toolbar .more-button li:not(.disabled), .editor-toolbar .more-button li:not(.disabled) *')) {
+        if (target.matches(".editor-toolbar .more-button li:not(.disabled), .editor-toolbar .more-button li:not(.disabled) *")) {
             let menuNumber = 0
-            let seekItem = target.closest('li')
+            let seekItem = target.closest("li")
             while (seekItem.previousElementSibling) {
                 menuNumber++
                 seekItem = seekItem.previousElementSibling
@@ -80,7 +80,7 @@ export class ToolbarView {
             const menuItem = this.editor.menu.toolbarModel.content[menuNumber]
             // if it is a menu, open it. Otherwise execute an
             // associated action.
-            if (menuItem.type === 'menu') {
+            if (menuItem.type === "menu") {
                 menuItem.open = true
                 this.openedMenu = menuNumber
                 event.preventDefault()
@@ -95,17 +95,17 @@ export class ToolbarView {
                 }
             }
 
-        } else if (target.matches('.editor-toolbar .more-button, .editor-toolbar .more-button *')) {
+        } else if (target.matches(".editor-toolbar .more-button, .editor-toolbar .more-button *")) {
             this.editor.menu.toolbarModel.openMore = true
             if (this.openedMenu) {
                 this.editor.menu.toolbarModel.content[this.openedMenu].open = false
             }
             this.update()
-        } else if (target.matches('.editor-toolbar li:not(.disabled), .editor-toolbar li:not(.disabled) *')) {
+        } else if (target.matches(".editor-toolbar li:not(.disabled), .editor-toolbar li:not(.disabled) *")) {
             // A toolbar menu item was clicked. We just need to
             // find out which one
             let itemNumber = 0
-            let seekItem = target.closest('li')
+            let seekItem = target.closest("li")
             while (seekItem.previousElementSibling) {
                 itemNumber++
                 seekItem = seekItem.previousElementSibling
@@ -124,10 +124,10 @@ export class ToolbarView {
             if (focus !== false) {
                 this.editor.currentView.focus()
             }
-        } else if (target.matches('.editor-toolbar > div:not(.disabled), .editor-toolbar > div:not(.disabled) *')) {
+        } else if (target.matches(".editor-toolbar > div:not(.disabled), .editor-toolbar > div:not(.disabled) *")) {
             // A menu item has been clicked, lets find out which one.
             let menuNumber = 0
-            let seekItem = target.closest('div.ui-buttonset')
+            let seekItem = target.closest("div.ui-buttonset")
             while (seekItem.previousElementSibling) {
                 menuNumber++
                 seekItem = seekItem.previousElementSibling
@@ -135,7 +135,7 @@ export class ToolbarView {
             const menuItem = this.editor.menu.toolbarModel.content[menuNumber]
             // if it is a menu, open it. Otherwise execute an
             // associated action.
-            if (menuItem.type === 'menu') {
+            if (menuItem.type === "menu") {
                 menuItem.open = true
                 this.openedMenu = menuNumber
                 this.editor.menu.toolbarModel.openMore = false
@@ -168,10 +168,10 @@ export class ToolbarView {
         let menuIndexToDrop = false
         this.editor.menu.toolbarModel.content.some((menuItem, index) => {
             switch (menuItem.type) {
-            case 'info':
+            case "info":
                 spaceCounter -= 94
                 break
-            case 'menu':
+            case "menu":
                 spaceCounter -= 138
                 break
             default:
@@ -182,7 +182,7 @@ export class ToolbarView {
                 return true
             }
         })
-        const toolbarEl = (document.querySelector('#toolbar') || {}).firstElementChild
+        const toolbarEl = (document.querySelector("#toolbar") || {}).firstElementChild
         if (!toolbarEl) {
             return
         }
@@ -196,14 +196,14 @@ export class ToolbarView {
                 ${this.editor.menu.toolbarModel.content.map((menuItem, index) => {
         if (!menuIndexToDrop || index < menuIndexToDrop) {
             return `
-                            <div class="ui-buttonset${menuItem.disabled && menuItem.disabled(this.editor) ? ' disabled' : ''}">
+                            <div class="ui-buttonset${menuItem.disabled && menuItem.disabled(this.editor) ? " disabled" : ""}">
                                 ${this.getToolbarMenuItemHTML(menuItem, index)}
                             </div>
                         `
         } else {
-            return ''
+            return ""
         }
-    }).join('')}
+    }).join("")}
                 ${this.getMoreButtonHTML(menuIndexToDrop)}
             </div>
         </div>`
@@ -212,17 +212,17 @@ export class ToolbarView {
     getToolbarMenuItemHTML(menuItem, _index) {
         let returnValue
         switch (menuItem.type) {
-        case 'info':
+        case "info":
             returnValue = this.getInfoHTML(menuItem)
             break
-        case 'menu':
+        case "menu":
             returnValue = this.getDropdownHTML(menuItem)
             break
-        case 'button':
+        case "button":
             returnValue = this.getButtonHTML(menuItem)
             break
         default:
-            returnValue = ''
+            returnValue = ""
             break
         }
         return returnValue
@@ -234,14 +234,14 @@ export class ToolbarView {
                 <div class="ui-buttonset more-button">
                     <div class="multi-buttons">
                         <span class="multi-buttons-cover fw-button fw-white fw-large edit-button">
-                            ${gettext('More')}
+                            ${gettext("More")}
                         </span>
                         ${this.getMoreButtonListHTML(menuIndexToDrop)}
                     </div>
                 </div>
             `
         } else {
-            return ''
+            return ""
         }
     }
 
@@ -250,11 +250,11 @@ export class ToolbarView {
             const remainingItems = this.editor.menu.toolbarModel.content.slice(menuIndexToDrop)
             return `
                 <div class="fw-pulldown fw-left" style="display: block;">
-                    <ul>${remainingItems.map(menuOption => this.getDropdownOptionHTML(menuOption)).join('')}</ul>
+                    <ul>${remainingItems.map(menuOption => this.getDropdownOptionHTML(menuOption)).join("")}</ul>
                 </div>
             `
         } else {
-            return ''
+            return ""
         }
     }
 
@@ -265,7 +265,7 @@ export class ToolbarView {
     getDropdownHTML(menuItem) {
         return `
         <div class="multi-buttons">
-            <span class="multi-buttons-cover fw-button fw-white fw-large edit-button${menuItem.disabled && menuItem.disabled(this.editor) ? ' disabled' : ''}">
+            <span class="multi-buttons-cover fw-button fw-white fw-large edit-button${menuItem.disabled && menuItem.disabled(this.editor) ? " disabled" : ""}">
                 ${menuItem.show(this.editor)}
             </span>
             ${this.getDropdownListHTML(menuItem)}
@@ -275,15 +275,15 @@ export class ToolbarView {
 
     getDropdownListHTML(menuItem) {
         if (menuItem.open) {
-            return `<div class="fw-pulldown fw-left" style="display: block;"><ul>${menuItem.content.map(menuOption => this.getDropdownOptionHTML(menuOption)).join('')}</ul></div>`
+            return `<div class="fw-pulldown fw-left" style="display: block;"><ul>${menuItem.content.map(menuOption => this.getDropdownOptionHTML(menuOption)).join("")}</ul></div>`
         } else {
-            return ''
+            return ""
         }
     }
 
     getDropdownOptionHTML(menuOption) {
         return `
-        <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only${menuOption.disabled && menuOption.disabled(this.editor) ? ' disabled' : ''}" role="button" aria-disabled="false">
+        <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only${menuOption.disabled && menuOption.disabled(this.editor) ? " disabled" : ""}" role="button" aria-disabled="false">
             <span class="ui-button-text">
                 <input type="radio" >
                 <label class="fw-pulldown-item">${menuOption.title}</label>
@@ -294,9 +294,9 @@ export class ToolbarView {
 
     getButtonHTML(menuItem) {
         return `
-        <button aria-label="${menuItem.title}" class="fw-button fw-white fw-large fw-square edit-button${menuItem.disabled && menuItem.disabled(this.editor) ? ' disabled' : ''}${menuItem.selected && menuItem.selected(this.editor) ? ' ui-state-active' : ''}${menuItem.class ? ` ${menuItem.class(this.editor)}` : ''}" title="${menuItem.title}" >
+        <button aria-label="${menuItem.title}" class="fw-button fw-white fw-large fw-square edit-button${menuItem.disabled && menuItem.disabled(this.editor) ? " disabled" : ""}${menuItem.selected && menuItem.selected(this.editor) ? " ui-state-active" : ""}${menuItem.class ? ` ${menuItem.class(this.editor)}` : ""}" title="${menuItem.title}" >
             <span class="ui-button-text">
-                <i class="fa fa-${typeof(menuItem.icon) === 'function' ? menuItem.icon(this.editor) : menuItem.icon}"></i>
+                <i class="fa fa-${typeof(menuItem.icon) === "function" ? menuItem.icon(this.editor) : menuItem.icon}"></i>
             </span>
         </button>`
     }

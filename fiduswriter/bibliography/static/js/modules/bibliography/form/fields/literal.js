@@ -18,9 +18,9 @@ export class LiteralFieldForm {
     init() {
 
         const doc = litSchema.nodeFromJSON({
-            type: 'doc',
+            type: "doc",
             content: [{
-                type: 'literal',
+                type: "literal",
                 content: this.initialValue
             }]
         })
@@ -37,23 +37,23 @@ export class LiteralFieldForm {
                         "Mod-shift-z": undo,
                         "Mod-y": redo,
                         "Mod-b": () => {
-                            const sMark = this.view.state.schema.marks['strong']
+                            const sMark = this.view.state.schema.marks["strong"]
                             const command = toggleMark(sMark)
                             command(this.view.state, tr => this.view.dispatch(tr))
                         },
                         "Mod-i": () => {
-                            const sMark = this.view.state.schema.marks['em']
+                            const sMark = this.view.state.schema.marks["em"]
                             const command = toggleMark(sMark)
                             command(this.view.state, tr => this.view.dispatch(tr))
                         }
                     }),
                     this.placeholderPlugin(),
                     InlineTools([
-                        {command: toggleMark(litSchema.marks.strong), dom: icon("strong", gettext('Strong'))},
-                        {command: toggleMark(litSchema.marks.em), dom: icon("em", gettext('Emphasis'))},
-                        {command: toggleMark(litSchema.marks.smallcaps), dom: icon("smallcaps", gettext('Small caps'))},
-                        {command: toggleMark(litSchema.marks.sub), dom: icon("sub", gettext('Subscript₊'))},
-                        {command: toggleMark(litSchema.marks.sup), dom: icon("sup", gettext('Supscript²'))}
+                        {command: toggleMark(litSchema.marks.strong), dom: icon("strong", gettext("Strong"))},
+                        {command: toggleMark(litSchema.marks.em), dom: icon("em", gettext("Emphasis"))},
+                        {command: toggleMark(litSchema.marks.smallcaps), dom: icon("smallcaps", gettext("Small caps"))},
+                        {command: toggleMark(litSchema.marks.sub), dom: icon("sub", gettext("Subscript₊"))},
+                        {command: toggleMark(litSchema.marks.sup), dom: icon("sup", gettext("Supscript²"))}
                     ])
                 ]
             }),
@@ -84,11 +84,11 @@ export class LiteralFieldForm {
                         doc.firstChild.content.size === 0 &&
                         this.placeHolder
                     ) {
-                        const placeHolder = document.createElement('span')
-                        placeHolder.classList.add('placeholder')
+                        const placeHolder = document.createElement("span")
+                        placeHolder.classList.add("placeholder")
                         // There is only one field, so we know the selection is there
-                        placeHolder.classList.add('selected')
-                        placeHolder.setAttribute('data-placeholder', this.placeHolder)
+                        placeHolder.classList.add("selected")
+                        placeHolder.setAttribute("data-placeholder", this.placeHolder)
                         return DecorationSet.create(doc, [Decoration.widget(1, placeHolder)])
                     }
                 }

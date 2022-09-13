@@ -32,7 +32,7 @@ export const ordered_list = {
 }
 
 export function randomListId() {
-    return 'L' + Math.round(Math.random() * 10000000) + 1
+    return "L" + Math.round(Math.random() * 10000000) + 1
 }
 
 // :: NodeSpec

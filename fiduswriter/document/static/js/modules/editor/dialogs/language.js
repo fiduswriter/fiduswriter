@@ -14,10 +14,10 @@ export class LanguageDialog {
     init() {
         const buttons = []
         buttons.push({
-            text: gettext('Change'),
-            classes: 'fw-dark',
+            text: gettext("Change"),
+            classes: "fw-dark",
             click: () => {
-                const language = this.dialog.dialogEl.querySelector('select').value
+                const language = this.dialog.dialogEl.querySelector("select").value
                 this.dialog.close()
 
                 if (language === this.language) {
@@ -29,21 +29,21 @@ export class LanguageDialog {
                 const attrs = Object.assign({}, article.attrs, {language})
 
                 this.editor.view.dispatch(
-                    this.editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta('settings', true)
+                    this.editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta("settings", true)
                 )
                 return
             }
         })
 
         buttons.push({
-            type: 'cancel'
+            type: "cancel"
         })
 
         this.dialog = new Dialog({
             width: 300,
             height: 180,
-            id: 'select-document-language',
-            title: gettext('Change language of the document'),
+            id: "select-document-language",
+            title: gettext("Change language of the document"),
             body: languageTemplate({
                 currentLanguage: this.language,
                 allowedLanguages: LANGUAGES.filter(lang => this.editor.view.state.doc.firstChild.attrs.languages.includes(lang[0]))

@@ -66,7 +66,7 @@ export class ModCollabDoc {
                 this.disableDiffSending()
             }
             return {
-                type: 'check_version',
+                type: "check_version",
                 v: this.mod.editor.docInfo.version
             }
         })
@@ -119,7 +119,7 @@ export class ModCollabDoc {
         }
         this.mod.editor.mod.db.bibDB.setDB(doc.bibliography)
         this.mod.editor.mod.db.imageDB.setDB(doc.images)
-        const stateDoc = this.mod.editor.schema.nodeFromJSON({type: 'doc', content: [doc.content]})
+        const stateDoc = this.mod.editor.schema.nodeFromJSON({type: "doc", content: [doc.content]})
         const plugins = this.mod.editor.statePlugins.map(plugin => {
             if (plugin[1]) {
                 return plugin[0](plugin[1](doc))
@@ -161,11 +161,11 @@ export class ModCollabDoc {
             }, 60000)
             const adjustWorker = makeWorker(`${settings_STATIC_URL}js/adjust_doc_to_template_worker.js?v=${transpile_VERSION}`)
             adjustWorker.onmessage = message => {
-                if (message.data.type === 'result') {
+                if (message.data.type === "result") {
                     if (message.data.steps.length) {
                         const tr = this.mod.editor.view.state.tr
                         message.data.steps.forEach(step => tr.step(Step.fromJSON(this.mod.editor.schema, step)))
-                        tr.setMeta('remote', true)
+                        tr.setMeta("remote", true)
                         this.mod.editor.view.dispatch(tr)
                     }
                     // clearing timer for updating message since operation is completed
@@ -231,19 +231,19 @@ export class ModCollabDoc {
                 }
                 const rid = this.confirmStepsRequestCounter++,
                     unconfirmedDiff = {
-                        type: 'diff',
+                        type: "diff",
                         v: this.mod.editor.docInfo.version,
                         rid
                     }
 
-                unconfirmedDiff['cid'] = this.mod.editor.client_id
+                unconfirmedDiff["cid"] = this.mod.editor.client_id
 
                 if (stepsToSend) {
-                    unconfirmedDiff['ds'] = stepsToSend.steps.map(
+                    unconfirmedDiff["ds"] = stepsToSend.steps.map(
                         s => s.toJSON()
                     )
                     if (settings_JSONPATCH) {
-                        unconfirmedDiff['jd'] = compare(
+                        unconfirmedDiff["jd"] = compare(
                             this.confirmedJson,
                             toMiniJSON(
                                 this.mod.editor.view.state.doc.firstChild
@@ -256,7 +256,7 @@ export class ModCollabDoc {
                     let newTitle = ""
                     this.mod.editor.view.state.doc.firstChild.firstChild.forEach(
                         child => {
-                            if (!child.marks.find(mark => mark.type.name === 'deletion')) {
+                            if (!child.marks.find(mark => mark.type.name === "deletion")) {
                                 newTitle += child.textContent
                             }
                         }
@@ -265,7 +265,7 @@ export class ModCollabDoc {
                     let oldTitle = ""
                     this.mod.editor.docInfo.confirmedDoc.firstChild.firstChild.forEach(
                         child => {
-                            if (!child.marks.find(mark => mark.type.name === 'deletion')) {
+                            if (!child.marks.find(mark => mark.type.name === "deletion")) {
                                 oldTitle += child.textContent
                             }
                         }
@@ -274,18 +274,18 @@ export class ModCollabDoc {
                     if (
                         newTitle !== oldTitle
                     ) {
-                        unconfirmedDiff['ti'] = newTitle
+                        unconfirmedDiff["ti"] = newTitle
                     }
                 }
 
                 if (fnStepsToSend) {
                     // We add the client ID to every single step
-                    unconfirmedDiff['fs'] = fnStepsToSend.steps.map(
+                    unconfirmedDiff["fs"] = fnStepsToSend.steps.map(
                         s => s.toJSON()
                     )
                 }
                 if (this.footnoteRender) {
-                    unconfirmedDiff['footnoterender'] = true
+                    unconfirmedDiff["footnoterender"] = true
                     this.footnoteRender = false
                 }
                 if (commentUpdates.length) {
@@ -315,7 +315,7 @@ export class ModCollabDoc {
                 // Create a new caret as the current user
                 const selectionUpdate = getSelectionUpdate(currentView.state)
                 return {
-                    type: 'selection_change',
+                    type: "selection_change",
                     id: this.mod.editor.user.id,
                     v: this.mod.editor.docInfo.version,
                     session_id: this.mod.editor.docInfo.session_id,
@@ -323,7 +323,7 @@ export class ModCollabDoc {
                     head: selectionUpdate.head,
                     // Whether the selection is in the footnote or the main editor
                     editor: currentView === this.mod.editor.view ?
-                        'main' : 'footnotes'
+                        "main" : "footnotes"
                 }
             } else {
                 return false
@@ -340,7 +340,7 @@ export class ModCollabDoc {
             // participant is still unknown to us. Ignore
             return
         }
-        if (data.editor === 'footnotes') {
+        if (data.editor === "footnotes") {
             fnTr = updateCollaboratorSelection(
                 this.mod.editor.mod.footnotes.fnEditor.view.state,
                 participant,
@@ -393,7 +393,7 @@ export class ModCollabDoc {
 
         if (serverFix) {
             // Diff is a fix created by server due to missing diffs.
-            if ('reject_request_id' in data) {
+            if ("reject_request_id" in data) {
                 delete this.unconfirmedDiffs[data.reject_request_id]
             }
             this.cancelCurrentlyCheckingVersion()
@@ -490,7 +490,7 @@ export class ModCollabDoc {
             steps,
             clientIds
         )
-        tr.setMeta('remote', true)
+        tr.setMeta("remote", true)
         this.mod.editor.view.dispatch(tr)
         this.setConfirmedDoc(tr, steps.length)
         this.receiving = false

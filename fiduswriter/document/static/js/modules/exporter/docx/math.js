@@ -34,18 +34,18 @@ export class DocxExporterMath {
 
     latexToMathML(latex) {
         return this.mathLive.convertLatexToMathMl(latex)
-            .replace(/&InvisibleTimes;/g, '&#8290;')
-            .replace(/&ApplyFunction;/g, '&#x2061;')
-            .replace(/&PlusMinus;/g, '&#177;')
-            .replace(/&times;/g, '&#215;')
-            .replace(/&x2061;/g, '&#x2061;') // Bug in mathlive 0.59. Has been fixed since.
+            .replace(/&InvisibleTimes;/g, "&#8290;")
+            .replace(/&ApplyFunction;/g, "&#x2061;")
+            .replace(/&PlusMinus;/g, "&#177;")
+            .replace(/&times;/g, "&#215;")
+            .replace(/&x2061;/g, "&#x2061;") // Bug in mathlive 0.59. Has been fixed since.
     }
 
 
     getOmml(latex) {
         if (!this.addedCambriaMath) {
-            const fontsEl = this.fontTableXml.querySelector('fonts')
-            fontsEl.insertAdjacentHTML('beforeEnd', CAMBRIA_MATH_FONT_DECLARATION)
+            const fontsEl = this.fontTableXml.querySelector("fonts")
+            fontsEl.insertAdjacentHTML("beforeEnd", CAMBRIA_MATH_FONT_DECLARATION)
             this.addedCambriaMath = true
         }
         const mathmlString = `<math xmlns="http://www.w3.org/1998/Math/MathML"><semantics>${this.latexToMathML(latex)}</semantics></math>`

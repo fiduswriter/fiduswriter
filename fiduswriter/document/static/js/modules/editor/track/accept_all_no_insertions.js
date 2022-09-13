@@ -10,16 +10,16 @@ export function acceptAllNoInsertions(doc) {
     const tr = new Transform(doc), map = new Mapping()
     doc.descendants((node, pos) => {
         const deletionTrack = node.attrs.track ?
-                node.attrs.track.find(track => track.type === 'deletion') :
-                node.marks.find(mark => mark.type.name === 'deletion'),
+                node.attrs.track.find(track => track.type === "deletion") :
+                node.marks.find(mark => mark.type.name === "deletion"),
             insertionTrack = node.attrs.track ?
-                node.attrs.track.find(track => track.type === 'insertion') :
-                node.marks.find(mark => mark.type.name === 'insertion'),
-            formatChangeMark = node.marks.find(mark => mark.type.name === 'format_change'),
+                node.attrs.track.find(track => track.type === "insertion") :
+                node.marks.find(mark => mark.type.name === "insertion"),
+            formatChangeMark = node.marks.find(mark => mark.type.name === "format_change"),
             blockChangeTrack = node.attrs.track ?
-                node.attrs.track.find(track => track.name === 'block_change') :
+                node.attrs.track.find(track => track.name === "block_change") :
                 false
-        if (node.type.name === 'footnote' && node.attrs.footnote) {
+        if (node.type.name === "footnote" && node.attrs.footnote) {
             const fnDoc = fnSchema.nodeFromJSON({
                     type: "doc",
                     content: [{

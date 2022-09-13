@@ -18,14 +18,14 @@ const faqTemplate = ({escapedQuestions}) =>
                     <div class="faq-question fw-button fw-light"><i class="fas fa-plus-circle"></i>${question[0]}</div>
                     <div class="faq-answer" style="display: none;">${question[1]}</div>
                 </div>
-            </li>`).join('')
+            </li>`).join("")
 }
     </ol>
 </div>`
 
 export class faqDialog {
-    constructor({title = '', questions = []}) {
-        ensureCSS('faq_dialog.css')
+    constructor({title = "", questions = []}) {
+        ensureCSS("faq_dialog.css")
         const escapedQuestions = []
 
         questions.forEach(q => {
@@ -51,8 +51,8 @@ export class faqDialog {
 
     open() {
         this.faqDialog.open()
-        this.faqDialog.dialogEl.querySelectorAll('.faq-question').forEach(element => {
-            element.addEventListener('click', () => {
+        this.faqDialog.dialogEl.querySelectorAll(".faq-question").forEach(element => {
+            element.addEventListener("click", () => {
                 const iconEle = element.firstElementChild
                 const answerEle = element.nextElementSibling
                 if (answerEle.style.display == "") {

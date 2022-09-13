@@ -15,7 +15,7 @@ export class ShrinkFidus {
         const shrunkImageDB = {},
             httpIncludes = []
 
-        addAlert('info', gettext('File export has been initiated.'))
+        addAlert("info", gettext("File export has been initiated."))
 
         this.walkTree(this.doc.content)
 
@@ -29,7 +29,7 @@ export class ShrinkFidus {
             delete shrunkImageDB[itemId].pk
             delete shrunkImageDB[itemId].added
             const imageUrl = shrunkImageDB[itemId].image
-            const filename = `images/${imageUrl.split('/').pop()}`
+            const filename = `images/${imageUrl.split("/").pop()}`
             shrunkImageDB[itemId].image = filename
             httpIncludes.push({
                 url: imageUrl,
@@ -72,15 +72,15 @@ export class ShrinkFidus {
 
     walkTree(node) {
         switch (node.type) {
-        case 'citation':
+        case "citation":
             this.citeList = this.citeList.concat(node.attrs.references.map(ref => ref.id))
             break
-        case 'image':
+        case "image":
             if (node.attrs.image !== false) {
                 this.imageList.push(node.attrs.image)
             }
             break
-        case 'footnote':
+        case "footnote":
             if (node.attrs?.footnote) {
                 node.attrs.footnote.forEach(childNode => this.walkTree(childNode))
             }

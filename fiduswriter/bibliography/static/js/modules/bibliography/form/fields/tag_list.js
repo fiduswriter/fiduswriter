@@ -7,14 +7,14 @@ export class TagListForm {
     }
 
     init() {
-        this.dom.innerHTML = `<input class="tags" type="text">`
+        this.dom.innerHTML = "<input class=\"tags\" type=\"text\">"
         this.tokenInput = new TokenField({
-            el: this.dom.querySelector('.tags'),
+            el: this.dom.querySelector(".tags"),
             setItems: this.initialValue.map((key, index) => {
                 return {id: index, name: key}
             }),
             keys: {
-                188: 'delimiter'
+                188: "delimiter"
             }
         })
     }

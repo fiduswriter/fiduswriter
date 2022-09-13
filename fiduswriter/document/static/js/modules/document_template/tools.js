@@ -36,13 +36,13 @@ export function addHeadingIds(oldState, newState, editors) {
             return
         }
         view.state.doc.descendants(node => {
-            if (node.type.groups.includes('heading')) {
+            if (node.type.groups.includes("heading")) {
                 usedHeadingIds.push(node.attrs.id)
             }
         })
     })
     newState.doc.descendants((node, pos) => {
-        if (node.type.groups.includes('heading')) {
+        if (node.type.groups.includes("heading")) {
             if (node.attrs.id === false || usedHeadingIds.includes(node.attrs.id)) {
                 newHeadings.push({pos, node})
             } else {

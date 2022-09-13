@@ -1,7 +1,7 @@
 import {Plugin, PluginKey} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
 
-const key = new PluginKey('placeholders')
+const key = new PluginKey("placeholders")
 export const placeholdersPlugin = function(options) {
 
     function calculatePlaceHolderDecorations(state) {
@@ -27,10 +27,10 @@ export const placeholdersPlugin = function(options) {
             ) {
                 if (
                     [
-                        state.schema.nodes['tags_part'],
-                        state.schema.nodes['contributors_part']
+                        state.schema.nodes["tags_part"],
+                        state.schema.nodes["contributors_part"]
                     ].includes(partElement.type) &&
-                    options.editor.docInfo.access_rights === 'write'
+                    options.editor.docInfo.access_rights === "write"
                 ) {
                     // We don't need to render placeholders for these kinds
                     // of nodes in write mode as their nodeviews will take
@@ -38,12 +38,12 @@ export const placeholdersPlugin = function(options) {
                     return
                 }
 
-                const text = partElement.type === state.schema.nodes['title'] ? `${gettext('Title')}...` : `${partElement.attrs.title}...`
-                const placeHolder = document.createElement('span')
-                placeHolder.classList.add('placeholder')
-                placeHolder.setAttribute('data-placeholder', text)
+                const text = partElement.type === state.schema.nodes["title"] ? `${gettext("Title")}...` : `${partElement.attrs.title}...`
+                const placeHolder = document.createElement("span")
+                placeHolder.classList.add("placeholder")
+                placeHolder.setAttribute("data-placeholder", text)
                 if (currentPart === partElement) {
-                    placeHolder.classList.add('selected')
+                    placeHolder.classList.add("selected")
                 }
                 let position = 2 + offset
                 // position of decorator: 2 to get inside (doc (1) + article (1))
@@ -59,16 +59,16 @@ export const placeholdersPlugin = function(options) {
                         side: 1
                     }
                 ))
-            } else if (['richtext_part', 'table_part'].includes(partElement.type.name)) {
+            } else if (["richtext_part", "table_part"].includes(partElement.type.name)) {
                 partElement.descendants((node, pos) => {
-                    if (['figure', 'table'].includes(node.type.name) && !node.attrs.caption) {
+                    if (["figure", "table"].includes(node.type.name) && !node.attrs.caption) {
                         return false
                     }
-                    if (['figure_caption', 'table_caption'].includes(node.type.name) && node.childCount === 0 && state.selection.$anchor.parent !== node) {
+                    if (["figure_caption", "table_caption"].includes(node.type.name) && node.childCount === 0 && state.selection.$anchor.parent !== node) {
                         decorations.push(
                             Decoration.node(2 + offset + pos, 2 + offset + pos + node.nodeSize, {
                                 class: "empty",
-                                'data-placeholder': `${gettext('Caption')}...`
+                                "data-placeholder": `${gettext("Caption")}...`
                             })
                         )
                     }

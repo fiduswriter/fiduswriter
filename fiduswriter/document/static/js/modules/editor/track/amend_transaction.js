@@ -15,19 +15,19 @@ function markInsertion(tr, from, to, user, date1, date10, approved) {
                 tr.removeMark(Math.max(from, pos), Math.min(pos + node.nodeSize, to), tr.doc.type.schema.marks.insertion)
                 tr.addMark(Math.max(from, pos), Math.min(pos + node.nodeSize, to), insertionMark)
                 return false
-            } else if (pos < from || ['bullet_list', 'ordered_list'].includes(node.type.name)) {
+            } else if (pos < from || ["bullet_list", "ordered_list"].includes(node.type.name)) {
                 return true
-            } else if (['table_row', 'table_cell'].includes(node.type.name)) {
+            } else if (["table_row", "table_cell"].includes(node.type.name)) {
                 return false
             }
             if (node.attrs.track) {
                 const track = []
                 if (!approved) {
-                    track.push({type: 'insertion', user: user.id, username: user.username, date: date1})
+                    track.push({type: "insertion", user: user.id, username: user.username, date: date1})
                 }
                 tr.setNodeMarkup(pos, null, Object.assign({}, node.attrs, {track}), node.marks)
             }
-            if (['figure', 'table'].includes(node.type.name)) {
+            if (["figure", "table"].includes(node.type.name)) {
                 // A table or figure was inserted. We don't add track marks to elements inside of it.
                 return false
             }
@@ -45,15 +45,15 @@ function markDeletion(tr, from, to, user, date1, date10) {
         from,
         to,
         (node, pos, _parent, _index) => {
-            if (pos < from && node.type.name === 'table_cell') {
+            if (pos < from && node.type.name === "table_cell") {
                 firstTableCellChild = true
                 return true
             } else if (pos < from && node.isBlock || firstTableCellChild) {
                 firstTableCellChild = false
                 return true
-            } else if (['table_row', 'table_cell'].includes(node.type.name)) {
+            } else if (["table_row", "table_cell"].includes(node.type.name)) {
                 return false
-            } else if (node.isInline && node.marks.find(mark => mark.type.name === 'insertion' && mark.attrs.user === user.id && !mark.attrs.approved)) {
+            } else if (node.isInline && node.marks.find(mark => mark.type.name === "insertion" && mark.attrs.user === user.id && !mark.attrs.approved)) {
                 const removeStep = new ReplaceStep(
                     deletionMap.map(Math.max(from, pos)),
                     deletionMap.map(Math.min(to, pos + node.nodeSize)),
@@ -62,18 +62,18 @@ function markDeletion(tr, from, to, user, date1, date10) {
                 if (!tr.maybeStep(removeStep).failed) {
                     deletionMap.appendMap(removeStep.getMap())
                 }
-            } else if (node.isInline && !node.marks.find(mark => mark.type.name === 'deletion')) {
+            } else if (node.isInline && !node.marks.find(mark => mark.type.name === "deletion")) {
                 tr.addMark(
                     deletionMap.map(Math.max(from, pos)),
                     deletionMap.map(Math.min(to, pos + node.nodeSize)),
                     deletionMark
                 )
             } else if (
-                !node.attrs.track?.find(trackAttr => trackAttr.type === 'deletion') &&
-                !['bullet_list', 'ordered_list'].includes(node.type.name)
+                !node.attrs.track?.find(trackAttr => trackAttr.type === "deletion") &&
+                !["bullet_list", "ordered_list"].includes(node.type.name)
             ) {
                 if (node.attrs.track?.find(
-                    trackAttr => trackAttr.type === 'insertion' && trackAttr.user === user.id
+                    trackAttr => trackAttr.type === "insertion" && trackAttr.user === user.id
                 )) {
                     let removeStep
                     // user has created element. so (s)he is allowed to delete it again.
@@ -99,11 +99,11 @@ function markDeletion(tr, from, to, user, date1, date10) {
                     if (!tr.maybeStep(removeStep).failed) {
                         deletionMap.appendMap(removeStep.getMap())
                     }
-                    if (node.type.name === 'list_item' && listItem) {
+                    if (node.type.name === "list_item" && listItem) {
                         listItem = false
                     }
                 } else if (node.attrs.track) {
-                    if (node.type.name === 'list_item') {
+                    if (node.type.name === "list_item") {
                         listItem = true
                     } else if (listItem) {
                         // The first child of the first list item (likely a par) will not be merged with the paragraph
@@ -112,10 +112,10 @@ function markDeletion(tr, from, to, user, date1, date10) {
                         return
                     }
                     const track = node.attrs.track.slice()
-                    track.push({type: 'deletion', user: user.id, username: user.username, date: date1})
+                    track.push({type: "deletion", user: user.id, username: user.username, date: date1})
                     tr.setNodeMarkup(deletionMap.map(pos), null, Object.assign({}, node.attrs, {track}), node.marks)
                 }
-                if (node.type.name === 'figure') {
+                if (node.type.name === "figure") {
                     return false
                 }
             }
@@ -164,10 +164,10 @@ export function amendTransaction(tr, state, editor) {
         !tr.steps.length ||
             tr.meta && !Object.keys(tr.meta).every(
                 // Only replace TRs that have no metadata or only inputType metadata
-                metadata => ['inputType', 'uiEvent', 'paste'].includes(metadata)
+                metadata => ["inputType", "uiEvent", "paste"].includes(metadata)
             ) ||
             // don't replace history TRs
-            ['historyUndo', 'historyRedo'].includes(tr.getMeta('inputType'))
+            ["historyUndo", "historyRedo"].includes(tr.getMeta("inputType"))
     ) {
         // None of the transactions change the doc, or all are remote, come from footnotes,
         // are footnote creations, history or fixing IDs. Give up.
@@ -177,7 +177,7 @@ export function amendTransaction(tr, state, editor) {
             tr,
             state,
             editor.user,
-            !editor.view.state.doc.firstChild.attrs.tracked && !['write-tracked', 'review-tracked'].includes(editor.docInfo.access_rights),
+            !editor.view.state.doc.firstChild.attrs.tracked && !["write-tracked", "review-tracked"].includes(editor.docInfo.access_rights),
             Date.now() - editor.clientTimeAdjustment
         )
     }
@@ -190,7 +190,7 @@ export function trackedTransaction(tr, state, user, approved, date) {
         date1 = Math.floor(date / 60000), // 1 minute interval
         // We only insert content if this is not directly a tr for cell deletion. This is because tables delete rows by deleting the
         // content of each cell and replacing it with an empty paragraph.
-        cellDeleteTr = ['deleteContentBackward', 'deleteContentForward'].includes(tr.getMeta('inputType')) && (state.selection instanceof CellSelection)
+        cellDeleteTr = ["deleteContentBackward", "deleteContentForward"].includes(tr.getMeta("inputType")) && (state.selection instanceof CellSelection)
     tr.steps.forEach((originalStep, originalStepIndex) => {
         const step = originalStep.map(map),
             doc = newTr.doc
@@ -289,7 +289,7 @@ export function trackedTransaction(tr, state, user, approved, date) {
                 if (!node.isInline) {
                     return true
                 }
-                if (node.marks.find(mark => mark.type.name === 'deletion')) {
+                if (node.marks.find(mark => mark.type.name === "deletion")) {
                     return false
                 } else {
                     newTr.addMark(
@@ -299,10 +299,10 @@ export function trackedTransaction(tr, state, user, approved, date) {
                     )
                 }
                 if (
-                    ['em', 'strong', 'underline'].includes(step.mark.type.name) &&
+                    ["em", "strong", "underline"].includes(step.mark.type.name) &&
                     !node.marks.find(mark => mark.type === step.mark.type)
                 ) {
-                    const formatChangeMark = node.marks.find(mark => mark.type.name === 'format_change')
+                    const formatChangeMark = node.marks.find(mark => mark.type.name === "format_change")
                     let after, before
                     if (formatChangeMark) {
                         if (formatChangeMark.attrs.before.includes(step.mark.type.name)) {
@@ -337,7 +337,7 @@ export function trackedTransaction(tr, state, user, approved, date) {
                 if (!node.isInline) {
                     return true
                 }
-                if (node.marks.find(mark => mark.type.name === 'deletion')) {
+                if (node.marks.find(mark => mark.type.name === "deletion")) {
                     return false
                 } else {
                     newTr.removeMark(
@@ -348,10 +348,10 @@ export function trackedTransaction(tr, state, user, approved, date) {
                 }
 
                 if (
-                    ['em', 'strong', 'underline'].includes(step.mark.type.name) &&
+                    ["em", "strong", "underline"].includes(step.mark.type.name) &&
                     node.marks.find(mark => mark.type === step.mark.type)
                 ) {
-                    const formatChangeMark = node.marks.find(mark => mark.type.name === 'format_change')
+                    const formatChangeMark = node.marks.find(mark => mark.type.name === "format_change")
                     let after, before
                     if (formatChangeMark) {
                         if (formatChangeMark.attrs.after.includes(step.mark.type.name)) {
@@ -386,16 +386,16 @@ export function trackedTransaction(tr, state, user, approved, date) {
     })
 
     // We copy the input type meta data from the original transaction.
-    if (tr.getMeta('inputType')) {
-        newTr.setMeta(tr.getMeta('inputType'))
+    if (tr.getMeta("inputType")) {
+        newTr.setMeta(tr.getMeta("inputType"))
     }
-    if (tr.getMeta('uiEvent')) {
-        newTr.setMeta(tr.getMeta('uiEvent'))
+    if (tr.getMeta("uiEvent")) {
+        newTr.setMeta(tr.getMeta("uiEvent"))
     }
 
     if (tr.selectionSet) {
         if (tr.selection instanceof TextSelection && (
-            tr.selection.from < state.selection.from || tr.getMeta('inputType') === 'deleteContentBackward'
+            tr.selection.from < state.selection.from || tr.getMeta("inputType") === "deleteContentBackward"
         )) {
             const caretPos = map.map(tr.selection.from, -1)
             newTr.setSelection(

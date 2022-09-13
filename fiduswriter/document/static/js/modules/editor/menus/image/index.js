@@ -1,1 +1,1 @@
-export {imageMenuModel} from './model'
+export {imageMenuModel} from "./model"

@@ -3,14 +3,14 @@ import {marks} from "prosemirror-schema-basic"
 import {Schema} from "prosemirror-model"
 
 const nocase = {
-    parseDOM: [{tag: 'span.nocase'}],
+    parseDOM: [{tag: "span.nocase"}],
     toDOM() {
         return ["span", {class: "nocase"}]
     }
 }
 
 const doc = {
-    content: 'literal'
+    content: "literal"
 }
 
 export const titleSchema = new Schema({

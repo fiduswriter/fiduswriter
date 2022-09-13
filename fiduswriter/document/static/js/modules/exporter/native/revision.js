@@ -40,9 +40,9 @@ export class SaveRevision {
             blob => this.uploadRevision(blob)
         ).catch(
             (error) => {
-                addAlert('error', gettext("Revision file could not be generated."))
+                addAlert("error", gettext("Revision file could not be generated."))
                 if (this.app.isOffline()) {
-                    addAlert('info', gettext('You are currently offline. Please try again when you are back online.'))
+                    addAlert("info", gettext("You are currently offline. Please try again when you are back online."))
                 } else {
                     throw (error)
                 }
@@ -52,21 +52,21 @@ export class SaveRevision {
 
     uploadRevision(blob) {
 
-        post('/api/document/upload/', {
+        post("/api/document/upload/", {
             note: this.note,
             file: {
                 file: blob,
-                filename: createSlug(this.doc.title) + '.fidus'
+                filename: createSlug(this.doc.title) + ".fidus"
             },
             document_id: this.doc.id
         }).then(
             () => {
-                addAlert('success', gettext('Revision saved'))
+                addAlert("success", gettext("Revision saved"))
             },
             () => {
-                addAlert('error', gettext('Revision could not be saved.'))
+                addAlert("error", gettext("Revision could not be saved."))
                 if (this.app.isOffline()) {
-                    addAlert('info', gettext('You are currently offline. Please try again when you are back online.'))
+                    addAlert("info", gettext("You are currently offline. Please try again when you are back online."))
                 }
             }
         ).catch(

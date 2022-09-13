@@ -13,14 +13,14 @@ export class ImageOverviewCategories {
         activateWait()
 
         postJson(
-            '/api/usermedia/save_category/',
+            "/api/usermedia/save_category/",
             {
-                'ids': cats.ids,
-                'titles': cats.titles
+                "ids": cats.ids,
+                "titles": cats.titles
             }
         ).catch(
             error => {
-                addAlert('error', gettext('Could not update categories'))
+                addAlert("error", gettext("Could not update categories"))
                 deactivateWait()
                 throw (error)
             }
@@ -28,26 +28,26 @@ export class ImageOverviewCategories {
             ({json}) => {
                 this.imageOverview.app.imageDB.cats = json.entries
                 this.setImageCategoryList(json.entries)
-                addAlert('success', gettext('The categories have been updated'))
+                addAlert("success", gettext("The categories have been updated"))
                 deactivateWait()
             }
         )
     }
 
     setImageCategoryList(imageCategories) {
-        const catSelector = this.imageOverview.menu.model.content.find(menuItem => menuItem.id === 'cat_selector')
-        catSelector.content = catSelector.content.filter(cat => cat.type !== 'category')
+        const catSelector = this.imageOverview.menu.model.content.find(menuItem => menuItem.id === "cat_selector")
+        catSelector.content = catSelector.content.filter(cat => cat.type !== "category")
         catSelector.content = catSelector.content.concat(
             imageCategories.map(cat => ({
-                type: 'category',
+                type: "category",
                 title: cat.category_title,
                 action: _overview => {
-                    const trs = document.querySelectorAll('#imagelist > tbody > tr')
+                    const trs = document.querySelectorAll("#imagelist > tbody > tr")
                     trs.forEach(tr => {
-                        if (tr.querySelector('.fw-usermedia-image').classList.contains(`cat_${cat.id}`)) {
-                            tr.style.display = ''
+                        if (tr.querySelector(".fw-usermedia-image").classList.contains(`cat_${cat.id}`)) {
+                            tr.style.display = ""
                         } else {
-                            tr.style.display = 'none'
+                            tr.style.display = "none"
                         }
                     })
                 }
@@ -60,20 +60,20 @@ export class ImageOverviewCategories {
     editCategoryDialog() {
         const buttons = [
             {
-                text: gettext('Submit'),
+                text: gettext("Submit"),
                 classes: "fw-dark",
                 click: () => {
                     const cats = {
-                        'ids': [],
-                        'titles': []
+                        "ids": [],
+                        "titles": []
                     }
-                    document.querySelectorAll('#edit-categories .category-form').forEach(el => {
+                    document.querySelectorAll("#edit-categories .category-form").forEach(el => {
                         const thisVal = el.value.trim()
                         let thisId = el.dataset.id
-                        if ('undefined' == typeof (thisId)) {
+                        if ("undefined" == typeof (thisId)) {
                             thisId = 0
                         }
-                        if ('' !== thisVal) {
+                        if ("" !== thisVal) {
                             cats.ids.push(thisId)
                             cats.titles.push(thisVal)
                         }
@@ -83,13 +83,13 @@ export class ImageOverviewCategories {
                 }
             },
             {
-                type: 'cancel'
+                type: "cancel"
             }
         ]
 
         const dialog = new Dialog({
-            id: 'edit-categories',
-            title: gettext('Edit Categories'),
+            id: "edit-categories",
+            title: gettext("Edit Categories"),
             body: usermediaEditcategoriesTemplate({
                 categories: this.imageOverview.app.imageDB.cats
             }),

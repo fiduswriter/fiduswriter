@@ -9,7 +9,7 @@ export class DocumentTemplateAdmin {
         this.templateDesigner = false
         this.templateExtras = false
         this.citationStyles = false
-        const locationParts = window.location.href.split('/')
+        const locationParts = window.location.href.split("/")
         let id = parseInt(locationParts[locationParts.length - 3])
         if (isNaN(id)) {
             id = 0
@@ -20,16 +20,16 @@ export class DocumentTemplateAdmin {
     init() {
         if (
             window.location.search.length &&
-            window.location.search.includes('debug=true')
+            window.location.search.includes("debug=true")
         ) {
             return
         }
         ensureCSS([
-            'colors.css',
-            'document_template_admin.css',
-            'admin.css',
-            'ui_dialogs.css',
-            'buttons.css'
+            "colors.css",
+            "document_template_admin.css",
+            "admin.css",
+            "ui_dialogs.css",
+            "buttons.css"
         ])
         const csl = new CSL()
         const initialTasks = [
@@ -40,20 +40,20 @@ export class DocumentTemplateAdmin {
         ]
         if (this.id) {
             initialTasks.push(
-                postJson('/api/document/admin/get_template/extras/', {id: this.id}).then(
+                postJson("/api/document/admin/get_template/extras/", {id: this.id}).then(
                     ({json}) => this.templateExtras = json
                 )
             )
         }
 
         Promise.all(initialTasks).then(() => {
-            this.objectTools = document.querySelector('ul.object-tools')
-            this.titleInput = document.querySelector('#id_title')
-            this.titleBlock = document.querySelector('div.field-title')
-            this.contentTextarea = document.querySelector('textarea[name=content]')
-            this.contentImportIdInput = document.querySelector('#id_import_id')
-            this.contentImportIdBlock = document.querySelector('div.field-import_id')
-            this.contentBlock = document.querySelector('div.field-content')
+            this.objectTools = document.querySelector("ul.object-tools")
+            this.titleInput = document.querySelector("#id_title")
+            this.titleBlock = document.querySelector("div.field-title")
+            this.contentTextarea = document.querySelector("textarea[name=content]")
+            this.contentImportIdInput = document.querySelector("#id_import_id")
+            this.contentImportIdBlock = document.querySelector("div.field-import_id")
+            this.contentBlock = document.querySelector("div.field-content")
             this.modifyDOM()
             this.initDesigner()
             this.bind()
@@ -68,30 +68,30 @@ export class DocumentTemplateAdmin {
             this.templateExtras.document_styles || [],
             this.citationStyles,
             this.templateExtras.export_templates || [],
-            document.getElementById('template-editor')
+            document.getElementById("template-editor")
         )
         this.templateDesigner.init()
     }
 
     modifyDOM() {
-        this.contentBlock.style.display = 'none'
-        this.contentImportIdBlock.style.display = 'none'
-        this.titleBlock.style.display = 'none'
+        this.contentBlock.style.display = "none"
+        this.contentImportIdBlock.style.display = "none"
+        this.titleBlock.style.display = "none"
         this.objectTools.insertAdjacentHTML(
-            'beforeend',
+            "beforeend",
             `<li>
-                <span class="link" id="toggle-editor">${gettext('Source/Editor')}</span>
+                <span class="link" id="toggle-editor">${gettext("Source/Editor")}</span>
             </li>`
         )
         this.titleBlock.insertAdjacentHTML(
-            'beforebegin',
+            "beforebegin",
             `<div class="form-row template-editor">
                 <ul class="errorlist"></ul>
                 <div id="template-editor"></div>
             </div>`
         )
 
-        this.templateDesignerBlock = document.querySelector('div.template-editor')
+        this.templateDesignerBlock = document.querySelector("div.template-editor")
     }
 
     setCurrentValue() {
@@ -104,36 +104,36 @@ export class DocumentTemplateAdmin {
     }
 
     showErrors(errors) {
-        this.templateDesignerBlock.querySelector('ul.errorlist').innerHTML =
-            Object.values(errors).map(error => `<li>${escapeText(error)}</li>`).join('')
+        this.templateDesignerBlock.querySelector("ul.errorlist").innerHTML =
+            Object.values(errors).map(error => `<li>${escapeText(error)}</li>`).join("")
     }
 
 
     bind() {
 
-        document.body.addEventListener('click', event => {
+        document.body.addEventListener("click", event => {
             const el = {}
             switch (true) {
-            case findTarget(event, '#toggle-editor', el):
+            case findTarget(event, "#toggle-editor", el):
                 event.preventDefault()
-                if (this.contentBlock.style.display === 'none') {
-                    this.contentBlock.style.display = ''
-                    this.contentImportIdBlock.style.display = ''
-                    this.titleBlock.style.display = ''
+                if (this.contentBlock.style.display === "none") {
+                    this.contentBlock.style.display = ""
+                    this.contentImportIdBlock.style.display = ""
+                    this.titleBlock.style.display = ""
                     this.setCurrentValue()
                     this.templateDesigner.close()
                     this.templateDesigner = false
-                    this.templateDesignerBlock.style.display = 'none'
+                    this.templateDesignerBlock.style.display = "none"
                 } else {
-                    this.contentBlock.style.display = 'none'
-                    this.contentImportIdBlock.style.display = 'none'
-                    this.titleBlock.style.display = 'none'
-                    this.templateDesignerBlock.style.display = ''
+                    this.contentBlock.style.display = "none"
+                    this.contentImportIdBlock.style.display = "none"
+                    this.titleBlock.style.display = "none"
+                    this.templateDesignerBlock.style.display = ""
                     this.initDesigner()
                 }
                 break
-            case findTarget(event, 'div.submit-row input[type=submit]', el):
-                if (this.contentBlock.style.display === 'none' && !this.setCurrentValue()) {
+            case findTarget(event, "div.submit-row input[type=submit]", el):
+                if (this.contentBlock.style.display === "none" && !this.setCurrentValue()) {
                     event.preventDefault()
                 }
                 break

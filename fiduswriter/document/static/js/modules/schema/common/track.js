@@ -12,15 +12,15 @@ export function parseTracks(str) {
         return []
     }
     return tracks.filter(track => // ensure required fields are present
-        track.hasOwnProperty('user') &&
-        track.hasOwnProperty('username') &&
-        track.hasOwnProperty('date')
+        track.hasOwnProperty("user") &&
+        track.hasOwnProperty("username") &&
+        track.hasOwnProperty("date")
     )
 }
 
 export function addTracks(node, attrs) {
     if (node.attrs.track?.length) {
-        attrs['data-track'] = JSON.stringify(node.attrs.track)
+        attrs["data-track"] = JSON.stringify(node.attrs.track)
     }
 }
 
@@ -30,7 +30,7 @@ export const deletion = {
             default: 0
         },
         username: {
-            default: ''
+            default: ""
         },
         date: {
             default: 0
@@ -51,11 +51,11 @@ export const deletion = {
         }
     ],
     toDOM(node) {
-        return ['span', {
+        return ["span", {
             class: `deletion user-${node.attrs.user}`,
-            'data-user': node.attrs.user,
-            'data-username': node.attrs.username,
-            'data-date': node.attrs.date
+            "data-user": node.attrs.user,
+            "data-username": node.attrs.username,
+            "data-date": node.attrs.date
         }]
     }
 }
@@ -73,7 +73,7 @@ function parseFormatList(str) {
     if (!Array.isArray(formatList)) {
         return []
     }
-    return formatList.filter(format => typeof(format) === 'string') // ensure there are only strings in list
+    return formatList.filter(format => typeof(format) === "string") // ensure there are only strings in list
 }
 
 export const format_change = {
@@ -82,7 +82,7 @@ export const format_change = {
             default: 0
         },
         username: {
-            default: ''
+            default: ""
         },
         date: {
             default: 0
@@ -111,13 +111,13 @@ export const format_change = {
         }
     ],
     toDOM(node) {
-        return ['span', {
+        return ["span", {
             class: `format-change user-${node.attrs.user}`,
-            'data-user': node.attrs.user,
-            'data-username': node.attrs.username,
-            'data-date': node.attrs.date,
-            'data-before': JSON.stringify(node.attrs.before),
-            'data-after': JSON.stringify(node.attrs.after)
+            "data-user": node.attrs.user,
+            "data-username": node.attrs.username,
+            "data-date": node.attrs.date,
+            "data-before": JSON.stringify(node.attrs.before),
+            "data-after": JSON.stringify(node.attrs.after)
         }]
     }
 }
@@ -128,7 +128,7 @@ export const insertion = {
             default: 0
         },
         username: {
-            default: ''
+            default: ""
         },
         date: {
             default: 0
@@ -166,11 +166,11 @@ export const insertion = {
         }
     ],
     toDOM(node) {
-        return ['span', {
-            class: node.attrs.approved ? 'approved-insertion' : `insertion user-${node.attrs.user}`,
-            'data-user': node.attrs.user,
-            'data-username': node.attrs.username,
-            'data-date': node.attrs.date
+        return ["span", {
+            class: node.attrs.approved ? "approved-insertion" : `insertion user-${node.attrs.user}`,
+            "data-user": node.attrs.user,
+            "data-username": node.attrs.username,
+            "data-date": node.attrs.date
         }]
     }
 }

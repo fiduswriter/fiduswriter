@@ -12,7 +12,7 @@ export class FlatPage extends PreloginPage {
             whenReady(),
             this.getPageData(),
             ensureCSS([
-                'flatpage.css'
+                "flatpage.css"
             ])
         ]).then(() => {
             this.activateFidusPlugins()
@@ -22,7 +22,7 @@ export class FlatPage extends PreloginPage {
     }
 
     getPageData() {
-        return postJson(`/api/base/flatpage/`, {url: this.url}).then(
+        return postJson("/api/base/flatpage/", {url: this.url}).then(
             ({json}) => {
                 this.title = json.title
                 this.contents = `<div class="fw-flatpage">
@@ -32,10 +32,10 @@ export class FlatPage extends PreloginPage {
             }
         ).catch(
             () => {
-                this.title = gettext('Page not found')
+                this.title = gettext("Page not found")
                 this.contents = `<div>
-                    <h1 class="fw-login-title">${gettext('Error 404')}</h1>
-                    <p>${gettext('The page you are looking for cannot be found.')}</p>
+                    <h1 class="fw-login-title">${gettext("Error 404")}</h1>
+                    <p>${gettext("The page you are looking for cannot be found.")}</p>
                 </div>`
             }
         )

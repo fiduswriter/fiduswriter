@@ -35,20 +35,20 @@ export class BibliographyOverview {
     }
 
     render() {
-        this.dom = document.createElement('body')
+        this.dom = document.createElement("body")
         this.dom.innerHTML = baseBodyTemplate({
-            contents: '',
+            contents: "",
             user: this.user,
             hasOverview: true,
             app: this.app
         })
         document.body = this.dom
         ensureCSS([
-            'bibliography.css',
-            'prosemirror.css',
-            'inline_tools.css'
+            "bibliography.css",
+            "prosemirror.css",
+            "inline_tools.css"
         ])
-        setDocTitle(gettext('Bibliography Manager'), this.app)
+        setDocTitle(gettext("Bibliography Manager"), this.app)
         const feedbackTab = new FeedbackTab()
         feedbackTab.init()
     }
@@ -63,12 +63,12 @@ export class BibliographyOverview {
 
     /* Initialize the overview table */
     initTable(ids) {
-        const tableEl = document.createElement('table')
+        const tableEl = document.createElement("table")
         tableEl.id = "bibliography"
-        tableEl.classList.add('fw-data-table')
-        tableEl.classList.add('fw-large')
-        this.dom.querySelector('.fw-contents').innerHTML = ''
-        this.dom.querySelector('.fw-contents').appendChild(tableEl)
+        tableEl.classList.add("fw-data-table")
+        tableEl.classList.add("fw-large")
+        this.dom.querySelector(".fw-contents").innerHTML = ""
+        this.dom.querySelector(".fw-contents").appendChild(tableEl)
 
         this.dtBulk = new DatatableBulk(this, bulkMenuModel())
 
@@ -94,7 +94,7 @@ export class BibliographyOverview {
                 bottom: ""
             },
             data: {
-                headings: ['', this.dtBulk.getHTML(), gettext("Title"), gettext("Sourcetype"), gettext("Author"), gettext("Published"), ''],
+                headings: ["", this.dtBulk.getHTML(), gettext("Title"), gettext("Sourcetype"), gettext("Author"), gettext("Published"), ""],
                 data: ids.map(id => this.createTableRow(id))
             },
             columns: [
@@ -108,9 +108,9 @@ export class BibliographyOverview {
                 }
             ]
         })
-        this.lastSort = {column: 0, dir: 'asc'}
+        this.lastSort = {column: 0, dir: "asc"}
 
-        this.table.on('datatable.sort', (column, dir) => {
+        this.table.on("datatable.sort", (column, dir) => {
             this.lastSort = {column, dir}
         })
 
@@ -122,19 +122,19 @@ export class BibliographyOverview {
      * @param newBibCategories The new categories which will be added to the existing ones.
      */
     setBibCategoryList(bibCategories) {
-        const catSelector = this.menu.model.content.find(menuItem => menuItem.id === 'cat_selector')
-        catSelector.content = catSelector.content.filter(cat => cat.type !== 'category')
+        const catSelector = this.menu.model.content.find(menuItem => menuItem.id === "cat_selector")
+        catSelector.content = catSelector.content.filter(cat => cat.type !== "category")
 
         catSelector.content = catSelector.content.concat(bibCategories.map(cat => ({
             title: cat.category_title,
-            type: 'category',
+            type: "category",
             action: _overview => {
-                const trs = this.dom.querySelectorAll('#bibliography > tbody > tr')
+                const trs = this.dom.querySelectorAll("#bibliography > tbody > tr")
                 trs.forEach(tr => {
-                    if (tr.querySelector('.fw-data-table-title').classList.contains(`cat_${cat.id}`)) {
-                        tr.style.display = ''
+                    if (tr.querySelector(".fw-data-table-title").classList.contains(`cat_${cat.id}`)) {
+                        tr.style.display = ""
                     } else {
-                        tr.style.display = 'none'
+                        tr.style.display = "none"
                     }
                 })
             }
@@ -160,15 +160,15 @@ export class BibliographyOverview {
         return [
             String(id),
             `<input type="checkbox" class="entry-select fw-check" data-id="${id}" id="bib-${id}"><label for="bib-${id}"></label>`, // checkbox
-            `<span class="fw-data-table-title ${cats.join(' ')}">
+            `<span class="fw-data-table-title ${cats.join(" ")}">
                 <i class="fa fa-book"></i>
                 <span class="edit-bib fw-link-text fw-searchable" data-id="${id}">
-                    ${bibInfo.fields.title?.length ? escapeText(litToText(bibInfo.fields.title)) : gettext('Untitled')}
+                    ${bibInfo.fields.title?.length ? escapeText(litToText(bibInfo.fields.title)) : gettext("Untitled")}
                 </span>
             </span>`, // title
             BibTypeTitles[bibInfo.bib_type], // sourcetype
-            bibauthors ? nameToText(bibauthors) : '', // author
-            `<span class="date">${bibInfo.fields.date ? bibInfo.fields.date.replace('/', ' ') : ''}</span>`, // published,
+            bibauthors ? nameToText(bibauthors) : "", // author
+            `<span class="date">${bibInfo.fields.date ? bibInfo.fields.date.replace("/", " ") : ""}</span>`, // published,
             `<span class="delete-bib fw-link-text" data-id="${id}"><i class="fa fa-trash-alt">&nbsp;&nbsp;</i></span>` // delete icon
         ]
     }
@@ -193,26 +193,26 @@ export class BibliographyOverview {
      */
     editCategoriesDialog() {
         if (this.app.isOffline()) {
-            addAlert('info', gettext('You are currently offline. Please try again when you are back online.'))
+            addAlert("info", gettext("You are currently offline. Please try again when you are back online."))
             return
         }
         const buttons = [
             {
-                text: gettext('Submit'),
+                text: gettext("Submit"),
                 classes: "fw-dark",
                 click: () => {
                     const cats = {ids: [], titles: []}
-                    this.dom.querySelectorAll('#edit-categories .category-form').forEach(
+                    this.dom.querySelectorAll("#edit-categories .category-form").forEach(
                         el => {
                             const title = el.value.trim()
                             if (title.length) {
-                                cats.ids.push(parseInt(el.getAttribute('data-id') || 0))
+                                cats.ids.push(parseInt(el.getAttribute("data-id") || 0))
                                 cats.titles.push(title)
                             }
                         }
                     )
                     if (this.app.isOffline()) {
-                        addAlert('info', gettext('You are currently offline. Please try again when you are back online.'))
+                        addAlert("info", gettext("You are currently offline. Please try again when you are back online."))
                     } else {
                         this.saveCategories(cats)
                     }
@@ -220,15 +220,15 @@ export class BibliographyOverview {
                 }
             },
             {
-                type: 'cancel'
+                type: "cancel"
             }
         ]
 
         const dialog = new Dialog({
-            id: 'edit-categories',
+            id: "edit-categories",
             width: 350,
             height: 350,
-            title: gettext('Edit Categories'),
+            title: gettext("Edit Categories"),
             body: editCategoriesTemplate({
                 categories: this.app.bibDB.cats
             }),
@@ -245,7 +245,7 @@ export class BibliographyOverview {
     deleteBibEntryDialog(ids) {
         const buttons = [
             {
-                text: gettext('Delete'),
+                text: gettext("Delete"),
                 classes: "fw-dark",
                 click: () => {
                     this.deleteBibEntries(ids)
@@ -253,16 +253,16 @@ export class BibliographyOverview {
                 }
             },
             {
-                type: 'cancel'
+                type: "cancel"
             }
         ]
 
         const dialog = new Dialog({
-            id: 'confirmdeletion',
-            title: gettext('Confirm deletion'),
-            body: `<p>${gettext('Delete the bibliography item(s)')}?</p>`,
+            id: "confirmdeletion",
+            title: gettext("Confirm deletion"),
+            body: `<p>${gettext("Delete the bibliography item(s)")}?</p>`,
             buttons,
-            icon: 'exclamation-triangle'
+            icon: "exclamation-triangle"
         })
         dialog.open()
     }
@@ -270,8 +270,8 @@ export class BibliographyOverview {
     // get IDs of selected bib entries
     getSelected() {
         return Array.from(
-            this.dom.querySelectorAll('.entry-select:checked:not(:disabled)')
-        ).map(el => parseInt(el.getAttribute('data-id')))
+            this.dom.querySelectorAll(".entry-select:checked:not(:disabled)")
+        ).map(el => parseInt(el.getAttribute("data-id")))
     }
 
     activatePlugins() {
@@ -279,7 +279,7 @@ export class BibliographyOverview {
         this.plugins = {}
 
         Object.keys(plugins).forEach(plugin => {
-            if (typeof plugins[plugin] === 'function') {
+            if (typeof plugins[plugin] === "function") {
                 this.plugins[plugin] = new plugins[plugin](this)
                 this.plugins[plugin].init()
             }
@@ -290,15 +290,15 @@ export class BibliographyOverview {
      * @function bibEvents
           */
     bindEvents() {
-        this.dom.addEventListener('click', event => {
+        this.dom.addEventListener("click", event => {
             const el = {}
             switch (true) {
-            case findTarget(event, '.delete-bib', el): {
+            case findTarget(event, ".delete-bib", el): {
                 const bookId = parseInt(el.target.dataset.id)
                 this.deleteBibEntryDialog([bookId])
                 break
             }
-            case findTarget(event, '.edit-bib', el): {
+            case findTarget(event, ".edit-bib", el): {
                 const bookId = parseInt(el.target.dataset.id)
                 import("../form").then(({BibEntryForm}) => {
                     const form = new BibEntryForm(this.app.bibDB, this.app, bookId)
@@ -311,11 +311,11 @@ export class BibliographyOverview {
                 })
                 break
             }
-            case findTarget(event, '.fw-add-input', el): {
-                const itemEl = el.target.closest('.fw-list-input')
+            case findTarget(event, ".fw-add-input", el): {
+                const itemEl = el.target.closest(".fw-list-input")
                 if (!itemEl.nextElementSibling) {
                     itemEl.insertAdjacentHTML(
-                        'afterend',
+                        "afterend",
                         `<tr class="fw-list-input">
                                 <td>
                                     <input type="text" class="category-form">
@@ -334,35 +334,35 @@ export class BibliographyOverview {
         })
 
         // Allow pasting of bibtex data.
-        this.dom.addEventListener('paste', event => {
-            if (event.target.nodeName === 'INPUT') {
+        this.dom.addEventListener("paste", event => {
+            if (event.target.nodeName === "INPUT") {
                 // We are inside of an input element, cancel.
                 return false
             }
-            const text = event.clipboardData.getData('text')
+            const text = event.clipboardData.getData("text")
             return this.getBibtex(text)
         })
 
         // The two drag events are needed to allow dropping
-        this.dom.addEventListener('dragover', event => {
-            if (event.dataTransfer.types.includes('text/plain')) {
+        this.dom.addEventListener("dragover", event => {
+            if (event.dataTransfer.types.includes("text/plain")) {
                 event.preventDefault()
             }
         })
 
-        this.dom.addEventListener('dragenter', event => {
-            if (event.dataTransfer.types.includes('text/plain')) {
+        this.dom.addEventListener("dragenter", event => {
+            if (event.dataTransfer.types.includes("text/plain")) {
                 event.preventDefault()
             }
         })
 
         // Allow dropping of bibtex data
-        this.dom.addEventListener('drop', event => {
-            if (event.target.nodeName === 'INPUT') {
+        this.dom.addEventListener("drop", event => {
+            if (event.target.nodeName === "INPUT") {
                 // We are inside of an input element, cancel.
                 return false
             }
-            const text = fixUTF8(event.dataTransfer.getData('text'))
+            const text = fixUTF8(event.dataTransfer.getData("text"))
             return this.getBibtex(text)
         })
     }

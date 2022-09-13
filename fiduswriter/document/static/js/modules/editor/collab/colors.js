@@ -1,15 +1,15 @@
 import {noSpaceTmp} from "../../common"
 
 const CSS_COLORS = [
-    '0,119,190',
-    '217,58,50',
-    '0,0,160',
-    '119,190,0',
-    '97,255,105',
-    '173,216,230',
-    '128,0,128',
-    '128,128,128',
-    '255,165,0'
+    "0,119,190",
+    "217,58,50",
+    "0,0,160",
+    "119,190,0",
+    "97,255,105",
+    "173,216,230",
+    "128,0,128",
+    "128,128,128",
+    "255,165,0"
 ]
 
 /* Create a CSS stylesheet for the colors of all users. */
@@ -23,12 +23,12 @@ export class ModCollabColors {
     }
 
     setup() {
-        const styleContainers = document.createElement('temp')
-        styleContainers.innerHTML = `<style type="text/css" id="user-colors"></style>`
+        const styleContainers = document.createElement("temp")
+        styleContainers.innerHTML = "<style type=\"text/css\" id=\"user-colors\"></style>"
         while (styleContainers.firstElementChild) {
             document.body.appendChild(styleContainers.firstElementChild)
         }
-        this.userColorStyle = document.getElementById('user-colors')
+        this.userColorStyle = document.getElementById("user-colors")
     }
 
     ensureUserColor(userId) {
@@ -57,7 +57,7 @@ export class ModCollabColors {
                 .user-bg-${id} {
                     background-color: rgba(${color},0.2);
                 }`
-        }).join('\n')
+        }).join("\n")
 
     }
 

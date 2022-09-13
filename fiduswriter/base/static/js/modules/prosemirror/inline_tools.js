@@ -5,7 +5,7 @@ export const icon = (text, name) => {
     span.className = "menuicon " + text
     span.title = name
     span.textContent = text
-    span.setAttribute('data-type', text)
+    span.setAttribute("data-type", text)
     return span
 }
 
@@ -42,10 +42,10 @@ class MenuView {
         }
 
         this.items.forEach(({dom}) => {
-            if (activeMarks[dom.getAttribute('data-type')]) {
-                dom.classList.add('active')
+            if (activeMarks[dom.getAttribute("data-type")]) {
+                dom.classList.add("active")
             } else {
-                dom.classList.remove('active')
+                dom.classList.remove("active")
             }
         })
     }

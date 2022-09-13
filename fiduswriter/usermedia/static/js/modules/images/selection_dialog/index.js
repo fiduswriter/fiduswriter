@@ -8,7 +8,7 @@ export class ImageSelectionDialog {
         this.userImageDB = userImageDB
         this.page = page
         this.imgId = imgId // a preselected image
-        this.imgDb = 'document' // the preselection image will always come from the document
+        this.imgDb = "document" // the preselection image will always come from the document
         this.images = [] // images from both databases
     }
 
@@ -16,7 +16,7 @@ export class ImageSelectionDialog {
         this.images = Object.values(this.imageDB.db).map(image => {
             return {
                 image,
-                db: 'document'
+                db: "document"
             }
         })
         Object.values(this.userImageDB.db).forEach(image => {
@@ -25,7 +25,7 @@ export class ImageSelectionDialog {
             }
             this.images.push({
                 image,
-                db: 'user'
+                db: "user"
             })
         })
         const buttons = []
@@ -33,7 +33,7 @@ export class ImageSelectionDialog {
             if (!this.page.app.isOffline()) {
                 buttons.push(
                     {
-                        text: gettext('Add new image'),
+                        text: gettext("Add new image"),
                         icon: "plus-circle",
                         click: () => {
                             import("../edit_dialog").then(({ImageEditDialog}) => {
@@ -47,7 +47,7 @@ export class ImageSelectionDialog {
                                     imageUpload.init().then(
                                         imageId => {
                                             this.imgId = imageId
-                                            this.imgDb = 'user'
+                                            this.imgDb = "user"
                                             this.imageDialog.close()
                                             return this.init()
                                         }
@@ -61,7 +61,7 @@ export class ImageSelectionDialog {
 
             buttons.push(
                 {
-                    text: gettext('Use image'),
+                    text: gettext("Use image"),
                     classes: "fw-dark",
                     click: () => {
                         this.imageDialog.close()
@@ -72,7 +72,7 @@ export class ImageSelectionDialog {
 
             buttons.push(
                 {
-                    type: 'cancel',
+                    type: "cancel",
                     click: () => {
                         this.imageDialog.close()
                         resolve(cancelPromise())
@@ -84,9 +84,9 @@ export class ImageSelectionDialog {
         this.imageDialog = new Dialog({
             buttons,
             width: 300,
-            body: '<div class="image-selection-table"></div>',
+            body: "<div class=\"image-selection-table\"></div>",
             title: gettext("Images"),
-            id: 'select-image-dialog'
+            id: "select-image-dialog"
         })
         this.imageDialog.open()
         this.initTable()
@@ -97,10 +97,10 @@ export class ImageSelectionDialog {
 
     initTable() {
         /* Initialize the overview table */
-        const tableEl = document.createElement('table')
-        tableEl.classList.add('fw-data-table')
-        tableEl.classList.add('fw-small')
-        this.imageDialog.dialogEl.querySelector('div.image-selection-table').appendChild(tableEl)
+        const tableEl = document.createElement("table")
+        tableEl.classList.add("fw-data-table")
+        tableEl.classList.add("fw-small")
+        this.imageDialog.dialogEl.querySelector("div.image-selection-table").appendChild(tableEl)
         this.table = new DataTable(tableEl, {
             searchable: true,
             paging: false,
@@ -128,9 +128,9 @@ export class ImageSelectionDialog {
                 }
             ]
         })
-        this.lastSort = {column: 0, dir: 'asc'}
+        this.lastSort = {column: 0, dir: "asc"}
 
-        this.table.on('datatable.sort', (column, dir) => {
+        this.table.on("datatable.sort", (column, dir) => {
             this.lastSort = {column, dir}
         })
     }
@@ -143,13 +143,13 @@ export class ImageSelectionDialog {
                 `<img src="${image.image.thumbnail}" style="max-heigth:30px;max-width:30px;">`,
             escapeText(image.image.title),
             image.db === this.imgDb && image.image.id === this.imgId ?
-                '<i class="fa fa-check" aria-hidden="true"></i>' :
-                '&emsp;'
+                "<i class=\"fa fa-check\" aria-hidden=\"true\"></i>" :
+                "&emsp;"
         ]
     }
 
     checkRow(dataIndex) {
-        const [db, id] = this.table.data[dataIndex].cells[0].textContent.split('-').map(
+        const [db, id] = this.table.data[dataIndex].cells[0].textContent.split("-").map(
             (val, index) => index ? parseInt(val) : val // only parseInt id (where index > 0)
         )
         if (id === this.imgId) {
@@ -159,17 +159,17 @@ export class ImageSelectionDialog {
         }
         this.imgDb = db
         this.table.data.forEach((data, index) => {
-            data.cells[3].innerHTML = index === dataIndex && this.imgId ? '<i class="fa fa-check" aria-hidden="true"></i>' : '&emsp;'
+            data.cells[3].innerHTML = index === dataIndex && this.imgId ? "<i class=\"fa fa-check\" aria-hidden=\"true\"></i>" : "&emsp;"
         })
         this.table.columns().rebuild()
     }
 
     bindEvents() {
         // functions for the image selection dialog
-        this.table.body.addEventListener('click', event => {
+        this.table.body.addEventListener("click", event => {
             const el = {}
             switch (true) {
-            case findTarget(event, 'tr', el):
+            case findTarget(event, "tr", el):
                 this.checkRow(el.target.dataIndex)
                 break
             default:

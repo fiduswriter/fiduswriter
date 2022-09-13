@@ -10,7 +10,7 @@ export class GetImages {
 
     init() {
         if (this.entries.length > 0) {
-            if (this.entries[0].hasOwnProperty('url')) {
+            if (this.entries[0].hasOwnProperty("url")) {
                 return this.getImageUrlEntry()
             } else {
                 return this.getImageZipEntry()
@@ -26,7 +26,7 @@ export class GetImages {
                 const fc = this.entries.find(entry => entry.filename === this.imageEntries[
                     this.counter
                 ].image).content
-                this.imageEntries[this.counter]['file'] = new window.Blob(
+                this.imageEntries[this.counter]["file"] = new window.Blob(
                     [fc],
                     {type: this.imageEntries[this.counter].file_type}
                 )
@@ -43,7 +43,7 @@ export class GetImages {
     getImageUrlEntry() {
         if (this.counter < this.imageEntries.length) {
             const getUrl = this.entries.find(
-                entry => entry.filename === `images/${this.imageEntries[this.counter].image.split('/').pop()}`
+                entry => entry.filename === `images/${this.imageEntries[this.counter].image.split("/").pop()}`
             ).url
             return get(getUrl).then(
                 response => response.blob()
@@ -53,7 +53,7 @@ export class GetImages {
                     // const dataView = new DataView(blob)
                     // const newBlob = new window.Blob([dataView], {type: mimeString})
                     // this.imageEntries[this.counter]['file'] = newBlob
-                    this.imageEntries[this.counter]['file'] = blob
+                    this.imageEntries[this.counter]["file"] = blob
                     this.counter++
                     return this.getImageUrlEntry()
                 }

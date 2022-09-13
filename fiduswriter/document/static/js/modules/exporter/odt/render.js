@@ -24,20 +24,20 @@ export class OdtExporterRender {
         this.tags = this.docContent.content.map(node => {
             const tag = {}
             switch (node.type) {
-            case 'title':
-                tag.title = 'title'
+            case "title":
+                tag.title = "title"
                 tag.content = textContent(node)
                 break
-            case 'heading_part':
+            case "heading_part":
                 tag.title = node.attrs.id
                 tag.content = textContent(node)
                 break
-            case 'table_part':
-            case 'richtext_part':
+            case "table_part":
+            case "richtext_part":
                 tag.title = `@${node.attrs.id}`
                 tag.content = node.content
                 break
-            case 'contributors_part':
+            case "contributors_part":
                 tag.title = node.attrs.id
                 // TODO: This is a very basic reduction of the author info into
                 // a simple string. We should expand the templating system so
@@ -62,23 +62,23 @@ export class OdtExporterRender {
                                     nameParts.push(contributor.institution)
                                 }
                             }
-                            const parts = [nameParts.join(' ')]
+                            const parts = [nameParts.join(" ")]
                             if (affiliation) {
                                 parts.push(affiliation)
                             }
                             if (contributor.email) {
                                 parts.push(contributor.email)
                             }
-                            return parts.join(', ')
+                            return parts.join(", ")
                         }
-                    ).join('; ') :
-                    ''
+                    ).join("; ") :
+                    ""
                 break
-            case 'tags_part':
+            case "tags_part":
                 tag.title = node.attrs.id
                 tag.content = node.content ?
-                    node.content.map(node => node.attrs.tag).join(', ') :
-                    ''
+                    node.content.map(node => node.attrs.tag).join(", ") :
+                    ""
                 break
             }
             return tag
@@ -86,27 +86,27 @@ export class OdtExporterRender {
         const settings = this.exporter.doc.settings,
             bibliographyHeader = settings.bibliography_header[settings.language] || BIBLIOGRAPHY_HEADERS[settings.language]
         this.tags.push({
-            title: '@bibliography', // The '@' triggers handling as block
+            title: "@bibliography", // The '@' triggers handling as block
             content: pmBib ?
-                [{type: 'bibliography_heading', content: [{type: 'text', text: bibliographyHeader}]}].concat(pmBib.content) :
-                [{type: 'paragraph', content: [{type: 'text', text: ' '}]}]
+                [{type: "bibliography_heading", content: [{type: "text", text: bibliographyHeader}]}].concat(pmBib.content) :
+                [{type: "paragraph", content: [{type: "text", text: " "}]}]
         })
         this.tags.push({
-            title: '@copyright', // The '@' triggers handling as block
+            title: "@copyright", // The '@' triggers handling as block
             content: settings.copyright && settings.copyright.holder ?
-                [{type: 'paragraph', content: [{type: 'text', text: `© ${settings.copyright.year ? settings.copyright.year : new Date().getFullYear()} ${settings.copyright.holder}`}]}] :
-                [{type: 'paragraph', content: [{type: 'text', text: ' '}]}]
+                [{type: "paragraph", content: [{type: "text", text: `© ${settings.copyright.year ? settings.copyright.year : new Date().getFullYear()} ${settings.copyright.holder}`}]}] :
+                [{type: "paragraph", content: [{type: "text", text: " "}]}]
         })
         this.tags.push({
-            title: '@licenses', // The '@' triggers handling as block
+            title: "@licenses", // The '@' triggers handling as block
             content: settings.copyright && settings.copyright.licenses.length ?
                 settings.copyright.licenses.map(
-                    license => ({type: 'paragraph', content: [
-                        {type: 'text', marks: [{type: 'link', attrs: {href: license.url, title: license.url}}], text: license.title},
-                        {type: 'text', text: license.start ? ` (${license.start})` : ''}
+                    license => ({type: "paragraph", content: [
+                        {type: "text", marks: [{type: "link", attrs: {href: license.url, title: license.url}}], text: license.title},
+                        {type: "text", text: license.start ? ` (${license.start})` : ""}
                     ]})
                 ) :
-                [{type: 'paragraph', content: [{type: 'text', text: ' '}]}]
+                [{type: "paragraph", content: [{type: "text", text: " "}]}]
         })
     }
 
@@ -114,7 +114,7 @@ export class OdtExporterRender {
     // replacements.
     render() {
 
-        const pars = this.xml.querySelectorAll('p')
+        const pars = this.xml.querySelectorAll("p")
 
         pars.forEach(par => {
             const text = par.textContent
@@ -122,7 +122,7 @@ export class OdtExporterRender {
                 const tagString = tag.title
                 if (text.includes(`{${tagString}}`)) {
                     tag.par = par
-                    if (tag.title[0] === '@') {
+                    if (tag.title[0] === "@") {
                         this.parRender(tag)
                     } else {
                         this.inlineRender(tag)
@@ -135,13 +135,13 @@ export class OdtExporterRender {
     // Render Tags that only exchange inline content
     inlineRender(tag) {
         const texts = tag.par.textContent.split(`{${tag.title}}`)
-        const fullText = texts[0] + (tag.content ? tag.content : '') + texts[1]
+        const fullText = texts[0] + (tag.content ? tag.content : "") + texts[1]
         tag.par.innerHTML = escapeText(fullText)
     }
 
     // Render tags that exchange paragraphs
     parRender(tag) {
-        const section = tag.par.hasAttribute('text:style-name') ? tag.par.getAttribute('text:style-name') : 'Text_20_body'
+        const section = tag.par.hasAttribute("text:style-name") ? tag.par.getAttribute("text:style-name") : "Text_20_body"
         const outXml = tag.content ? tag.content.map(
             content => this.exporter.richtext.transformRichtext(
                 content,
@@ -150,8 +150,8 @@ export class OdtExporterRender {
                     section
                 }
             )
-        ).join('') : ''
-        tag.par.insertAdjacentHTML('beforebegin', outXml)
+        ).join("") : ""
+        tag.par.insertAdjacentHTML("beforebegin", outXml)
         tag.par.parentNode.removeChild(tag.par)
     }
 

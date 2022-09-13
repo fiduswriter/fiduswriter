@@ -3,7 +3,7 @@ import {Plugin, PluginKey, TextSelection} from "prosemirror-state"
 import {HTMLPaste, TextPaste} from "../clipboard/paste"
 import {docClipboardSerializer, fnClipboardSerializer} from "../clipboard/copy"
 
-const key = new PluginKey('clipboard')
+const key = new PluginKey("clipboard")
 export const clipboardPlugin = function(options) {
     let shiftPressed = false
     return new Plugin({
@@ -44,9 +44,9 @@ export const clipboardPlugin = function(options) {
                 }
                 const ph = new TextPaste(options.editor, inText, options.editor.currentView)
                 ph.init()
-                return '' // We need to analyze it asynchronously, so we always need to turn this into an empty string for now.
+                return "" // We need to analyze it asynchronously, so we always need to turn this into an empty string for now.
             },
-            clipboardSerializer: options.viewType === 'main' ?
+            clipboardSerializer: options.viewType === "main" ?
                 docClipboardSerializer(options.editor) :
                 fnClipboardSerializer(options.editor)
         }

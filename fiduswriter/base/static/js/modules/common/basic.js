@@ -19,12 +19,12 @@ export const dropdownSelect = function(
         buttonDOM = button
         selectDOM.parentElement.removeChild(selectDOM) // Remove the <select> from the main dom.
     } else {
-        buttonDOM = document.createElement('div')
-        buttonDOM.innerHTML = '<label></label>&nbsp;<span class="fa fa-caret-down"></span>'
-        buttonDOM.classList.add('fw-button')
-        buttonDOM.classList.add('fw-light')
-        buttonDOM.classList.add('fw-large')
-        buttonDOM.classList.add('fw-dropdown')
+        buttonDOM = document.createElement("div")
+        buttonDOM.innerHTML = "<label></label>&nbsp;<span class=\"fa fa-caret-down\"></span>"
+        buttonDOM.classList.add("fw-button")
+        buttonDOM.classList.add("fw-light")
+        buttonDOM.classList.add("fw-large")
+        buttonDOM.classList.add("fw-dropdown")
         if (width) {
             buttonDOM.style.width = Number.isInteger(width) ? `${width}px` : width
         }
@@ -51,8 +51,8 @@ export const dropdownSelect = function(
             }
             return {
                 title: option.innerHTML,
-                type: 'action',
-                tooltip: option.title || '',
+                type: "action",
+                tooltip: option.title || "",
                 order,
                 action: () => {
                     if (!button) {
@@ -80,10 +80,10 @@ export const dropdownSelect = function(
 
     value = selected ? selected.value : false
 
-    buttonDOM.addEventListener('click', event => {
+    buttonDOM.addEventListener("click", event => {
         event.preventDefault()
         event.stopPropagation()
-        if (buttonDOM.classList.contains('disabled')) {
+        if (buttonDOM.classList.contains("disabled")) {
             return
         }
         const contentMenu = new ContentMenu({
@@ -108,8 +108,8 @@ export const dropdownSelect = function(
             value = newValue
         },
         getValue: () => value,
-        enable: () => buttonDOM.classList.remove('disabled'),
-        disable: () => buttonDOM.classList.add('disabled')
+        enable: () => buttonDOM.classList.remove("disabled"),
+        disable: () => buttonDOM.classList.add("disabled")
     }
 }
 
@@ -117,21 +117,21 @@ export const dropdownSelect = function(
  * @param label The node who's parent has to be checked or unchecked.
  */
 export const setCheckableLabel = function(labelEl) {
-    if (labelEl.classList.contains('checked')) {
-        labelEl.classList.remove('checked')
+    if (labelEl.classList.contains("checked")) {
+        labelEl.classList.remove("checked")
     } else {
-        labelEl.classList.add('checked')
+        labelEl.classList.add("checked")
     }
 }
 
 let messageWaiter = false
-let waitMessage = ''
+let waitMessage = ""
 /** Cover the page signaling to the user to wait.
  */
-export const activateWait = function(full = false, message = '') {
-    const waitEl = document.getElementById('wait')
+export const activateWait = function(full = false, message = "") {
+    const waitEl = document.getElementById("wait")
     if (message) {
-        let messageEl = waitEl.querySelector('span.message')
+        let messageEl = waitEl.querySelector("span.message")
         if (messageEl) {
             // Another message is already showing. We update directly.
             messageEl.innerText = message
@@ -140,7 +140,7 @@ export const activateWait = function(full = false, message = '') {
             if (!messageWaiter) {
                 messageWaiter = setTimeout(() => {
                     messageEl = document.createElement("span")
-                    messageEl.classList.add('message')
+                    messageEl.classList.add("message")
                     messageEl.innerText = waitMessage
                     waitEl.appendChild(messageEl)
                     messageWaiter = false
@@ -149,9 +149,9 @@ export const activateWait = function(full = false, message = '') {
         }
     }
     if (waitEl) {
-        waitEl.classList.add('active')
+        waitEl.classList.add("active")
         if (full) {
-            waitEl.classList.add('full')
+            waitEl.classList.add("full")
         }
     }
 }
@@ -159,12 +159,12 @@ export const activateWait = function(full = false, message = '') {
 /** Remove the wait cover.
  */
 export const deactivateWait = function() {
-    const waitEl = document.getElementById('wait')
+    const waitEl = document.getElementById("wait")
     if (waitEl) {
-        waitEl.classList.remove('active')
-        waitEl.classList.remove('full')
+        waitEl.classList.remove("active")
+        waitEl.classList.remove("full")
     }
-    const messageEl = waitEl.querySelector('span.message')
+    const messageEl = waitEl.querySelector("span.message")
     if (messageEl) {
         messageEl.parentElement.removeChild(messageEl)
     }
@@ -183,30 +183,30 @@ export const addAlert = function(alertType, alertMsg) {
         return
     }
     const iconNames = {
-        'error': 'exclamation-circle',
-        'warning': 'exclamation-circle',
-        'info': 'info-circle',
-        'success': 'check-circle'
+        "error": "exclamation-circle",
+        "warning": "exclamation-circle",
+        "info": "info-circle",
+        "success": "check-circle"
     }
-    if (!document.getElementById('#alerts-outer-wrapper')) {
-        document.body.insertAdjacentHTML('beforeend', '<div id="alerts-outer-wrapper"><ul id="alerts-wrapper"></ul></div>')
+    if (!document.getElementById("#alerts-outer-wrapper")) {
+        document.body.insertAdjacentHTML("beforeend", "<div id=\"alerts-outer-wrapper\"><ul id=\"alerts-wrapper\"></ul></div>")
     }
-    const alertsWrapper = document.getElementById('alerts-wrapper')
-    alertsWrapper.insertAdjacentHTML('beforeend', `<li class="alerts-${alertType} fa fa-${iconNames[alertType]}">${alertMsg}</li>`)
+    const alertsWrapper = document.getElementById("alerts-wrapper")
+    alertsWrapper.insertAdjacentHTML("beforeend", `<li class="alerts-${alertType} fa fa-${iconNames[alertType]}">${alertMsg}</li>`)
     const alertBox = alertsWrapper.lastElementChild
     setTimeout(() => {
-        alertBox.classList.add('visible')
+        alertBox.classList.add("visible")
         setTimeout(() => {
-            alertBox.classList.remove('visible')
+            alertBox.classList.remove("visible")
             setTimeout(() => alertsWrapper.removeChild(alertBox), 2000)
         }, 4000)
     }, 1)
 }
 
 // Used for system mesages
-export const showSystemMessage = function(message, buttons = [{type: 'close'}]) {
+export const showSystemMessage = function(message, buttons = [{type: "close"}]) {
     const dialog = new Dialog({
-        title: gettext('System message'),
+        title: gettext("System message"),
         body: `<p>${escapeText(message)}</p>`,
         buttons
     })
@@ -219,28 +219,28 @@ export const showSystemMessage = function(message, buttons = [{type: 'close'}]) 
  * @param {boolean} type 'full' for full date (default), 'sortable-date' for sortable date, 'minutes' for minute accuracy
  */
 const CACHED_DATES = {
-    'sortable-date': {},
-    'minutes': {},
-    'full': {}
+    "sortable-date": {},
+    "minutes": {},
+    "full": {}
 }
-export const localizeDate = function(milliseconds, type = 'full') {
+export const localizeDate = function(milliseconds, type = "full") {
     if (milliseconds === 0) {
-        return ''
+        return ""
     } else if (CACHED_DATES[type][milliseconds]) {
         return CACHED_DATES[type][milliseconds]
     }
     const theDate = new Date(milliseconds)
     let returnValue
     switch (type) {
-    case 'sortable-date': {
+    case "sortable-date": {
         const yyyy = theDate.getFullYear()
         const mm = theDate.getMonth() + 1
         const dd = theDate.getDate()
-        returnValue = `${yyyy}-${String(mm).padStart(2, '0')}-${String(dd).padStart(2, '0')}`
+        returnValue = `${yyyy}-${String(mm).padStart(2, "0")}-${String(dd).padStart(2, "0")}`
         break
     }
-    case 'minutes':
-        returnValue = theDate.toLocaleString([], {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'})
+    case "minutes":
+        returnValue = theDate.toLocaleString([], {year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit"})
         break
     default:
         returnValue = theDate.toLocaleString()
@@ -271,26 +271,26 @@ export const noSpaceTmp = function(_strings) {
     }
 
     let out = ""
-    combined.split('\n').forEach(line => {
-        out += line.replace(/^\s*/g, '')
+    combined.split("\n").forEach(line => {
+        out += line.replace(/^\s*/g, "")
     })
     return out
 }
 
 export const escapeText = function(text) {
     return text
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
 }
 
 export const unescapeText = function(text) {
     return text
-        .replace(/&lt;/g, '<')
-        .replace(/&gt;/g, '>')
-        .replace(/&quot;/g, '"')
-        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&quot;/g, "\"")
+        .replace(/&amp;/g, "&")
 }
 /**
  * Return a cancel promise if you need to cancel a promise chain. Import as

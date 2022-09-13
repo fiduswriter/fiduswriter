@@ -14,19 +14,19 @@ export class RevisionDialog {
                 text: gettext("Save"),
                 classes: "fw-dark",
                 click: () => {
-                    const note = this.dialog.dialogEl.querySelector('.revision-note').value
+                    const note = this.dialog.dialogEl.querySelector(".revision-note").value
                     this.dialog.close()
                     return resolve(note)
                 }
             })
 
             buttons.push({
-                type: 'cancel'
+                type: "cancel"
             })
         })
 
         this.dialog = new Dialog({
-            title: gettext('Revision description'),
+            title: gettext("Revision description"),
             body: revisionDialogTemplate({dir: this.dir}),
             height: 100,
             width: 300,

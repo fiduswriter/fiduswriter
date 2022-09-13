@@ -2,11 +2,11 @@
  * @param name The name of the token to look for in the cookie.
  */
 export const getCookie = function(name) {
-    if (!document.cookie || document.cookie === '') {
+    if (!document.cookie || document.cookie === "") {
         return null
     }
-    const cookie = document.cookie.split(';').map(cookie => cookie.trim()).find(cookie => {
-        if (cookie.substring(0, name.length + 1) == (name + '=')) {
+    const cookie = document.cookie.split(";").map(cookie => cookie.trim()).find(cookie => {
+        if (cookie.substring(0, name.length + 1) == (name + "=")) {
             return true
         } else {
             return false
@@ -19,11 +19,11 @@ export const getCookie = function(name) {
 }
 
 const deleteCookie = function(name) {
-    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
+    document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
 }
 
 const getCsrfToken = function() {
-    return getCookie('csrftoken')
+    return getCookie("csrftoken")
 }
 
 /* from https://www.tjvantoll.com/2015/09/13/fetch-and-errors/ */
@@ -39,7 +39,7 @@ const handleFetchErrors = function(response) {
 // To prevent it from displaying lots of old login/logout messages, we delete the
 // messages after each post/get.
 const removeDjangoMessages = function(response) {
-    deleteCookie('messages')
+    deleteCookie("messages")
     return response
 }
 
@@ -49,18 +49,18 @@ export const get = function(url, params = {}, csrfToken = false) {
     }
     const queryString = Object.keys(params).map(
         key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`
-    ).join('&')
+    ).join("&")
     if (queryString.length) {
         url = `${url}?${queryString}`
     }
     return fetch(url, {
         method: "GET",
         headers: {
-            'X-CSRFToken': csrfToken,
-            'Accept': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest'
+            "X-CSRFToken": csrfToken,
+            "Accept": "application/json",
+            "X-Requested-With": "XMLHttpRequest"
         },
-        credentials: 'include'
+        credentials: "include"
     }).then(
         removeDjangoMessages
     ).then(
@@ -79,7 +79,7 @@ export const postBare = function(url, params = {}, csrfToken = false) {
         csrfToken = getCsrfToken() // Won't work in web worker.
     }
     const body = new FormData()
-    body.append('csrfmiddlewaretoken', csrfToken)
+    body.append("csrfmiddlewaretoken", csrfToken)
     Object.keys(params).forEach(key => {
         const value = params[key]
         if (typeof(value) === "object" && value.file && value.filename) {
@@ -87,7 +87,7 @@ export const postBare = function(url, params = {}, csrfToken = false) {
         } else if (Array.isArray(value)) {
             value.forEach(item => body.append(`${key}[]`, item))
         } else if (typeof(value) === "object" && (
-            value.constructor === undefined || value.constructor.name !== 'File'
+            value.constructor === undefined || value.constructor.name !== "File"
         )) {
             body.append(key, JSON.stringify(value))
         } else {
@@ -98,11 +98,11 @@ export const postBare = function(url, params = {}, csrfToken = false) {
     return fetch(url, {
         method: "POST",
         headers: {
-            'X-CSRFToken': csrfToken,
-            'Accept': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest'
+            "X-CSRFToken": csrfToken,
+            "Accept": "application/json",
+            "X-Requested-With": "XMLHttpRequest"
         },
-        credentials: 'include',
+        credentials: "include",
         body
     })
 }
@@ -125,7 +125,7 @@ export const postJson = function(url, params = {}, csrfToken = false) {
 }
 
 export const ensureCSS = function(cssUrl) {
-    if (typeof cssUrl === 'object') {
+    if (typeof cssUrl === "object") {
         cssUrl.forEach(url => ensureCSS(url))
         return
     }

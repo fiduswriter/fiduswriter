@@ -23,7 +23,7 @@ export class HTMLExporter extends DOMExporter {
     }
 
     init() {
-        addAlert('info', `${this.docTitle}: ${gettext('HTML export has been initiated.')}`)
+        addAlert("info", `${this.docTitle}: ${gettext("HTML export has been initiated.")}`)
         this.docContent = removeHidden(this.doc.content, false)
 
         this.addDocStyle(this.doc)
@@ -48,7 +48,7 @@ export class HTMLExporter extends DOMExporter {
 
         const title = this.docTitle
 
-        const math = this.content.querySelectorAll('.equation, .figure-equation').length ? true : false
+        const math = this.content.querySelectorAll(".equation, .figure-equation").length ? true : false
 
         if (math) {
             this.addMathliveStylesheet()
@@ -68,7 +68,7 @@ export class HTMLExporter extends DOMExporter {
 
     save({html, math}) {
         this.outputList.push({
-            filename: 'document.html',
+            filename: "document.html",
             contents: pretty(this.replaceImgSrc(html), {ocd: true})
         })
 
@@ -80,8 +80,8 @@ export class HTMLExporter extends DOMExporter {
 
         if (math) {
             this.includeZips.push({
-                'directory': 'css',
-                'url': `${settings_STATIC_URL}zip/mathlive_style.zip?v=${transpile_VERSION}`,
+                "directory": "css",
+                "url": `${settings_STATIC_URL}zip/mathlive_style.zip?v=${transpile_VERSION}`,
             })
         }
 
@@ -89,7 +89,7 @@ export class HTMLExporter extends DOMExporter {
     }
 
     addMathliveStylesheet() {
-        this.styleSheets.push({filename: `css/mathlive.css`})
+        this.styleSheets.push({filename: "css/mathlive.css"})
     }
 
     createZip() {
@@ -107,7 +107,7 @@ export class HTMLExporter extends DOMExporter {
     }
 
     download(blob) {
-        return download(blob, createSlug(this.docTitle) + '.html.zip', 'application/zip')
+        return download(blob, createSlug(this.docTitle) + ".html.zip", "application/zip")
     }
 
 }

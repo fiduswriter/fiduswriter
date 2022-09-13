@@ -23,11 +23,11 @@ export class DocumentRevisionsDialog {
     init() {
         const doc = this.documentList.find(doc => doc.id === this.documentId)
         this.dialog = new Dialog({
-            title: `${gettext('Saved revisions of')} ${escapeText(shortFileTitle(doc.title, doc.path))}`,
-            id: 'revisions-dialog',
+            title: `${gettext("Saved revisions of")} ${escapeText(shortFileTitle(doc.title, doc.path))}`,
+            id: "revisions-dialog",
             width: 620,
             height: 480,
-            buttons: [{type: 'close'}],
+            buttons: [{type: "close"}],
             body: documentrevisionsTemplate({doc})
         })
         this.dialog.open()
@@ -39,20 +39,20 @@ export class DocumentRevisionsDialog {
         const dialogEl = this.dialog.dialogEl
 
         return new Promise(resolve => {
-            dialogEl.addEventListener('click', event => {
+            dialogEl.addEventListener("click", event => {
                 const el = {}
                 let revisionId, revisionFilename
                 switch (true) {
-                case findTarget(event, '.download-revision', el):
+                case findTarget(event, ".download-revision", el):
                     revisionId = parseInt(el.target.dataset.id)
                     revisionFilename = el.target.dataset.filename
                     this.download(revisionId, revisionFilename)
                     break
-                case findTarget(event, '.recreate-revision', el):
+                case findTarget(event, ".recreate-revision", el):
                     revisionId = parseInt(el.target.dataset.id)
                     resolve(this.recreate(revisionId, this.user))
                     break
-                case findTarget(event, '.delete-revision', el):
+                case findTarget(event, ".delete-revision", el):
                     revisionId = parseInt(el.target.dataset.id)
                     resolve(this.delete(revisionId))
                     break
@@ -78,7 +78,7 @@ export class DocumentRevisionsDialog {
                 const importer = new ImportFidusFile(
                     blob,
                     user,
-                    longFilePath(doc.title, doc.path, `${gettext('Revision of')} `)
+                    longFilePath(doc.title, doc.path, `${gettext("Revision of")} `)
                 )
                 return importer.init()
             }
@@ -86,13 +86,13 @@ export class DocumentRevisionsDialog {
             ({ok, statusText, doc}) => {
                 deactivateWait()
                 if (ok) {
-                    addAlert('info', statusText)
+                    addAlert("info", statusText)
                     return {
-                        action: 'added-document',
+                        action: "added-document",
                         doc
                     }
                 } else {
-                    addAlert('error', statusText)
+                    addAlert("error", statusText)
                     return Promise.reject(new Error(statusText))
                 }
 
@@ -109,7 +109,7 @@ export class DocumentRevisionsDialog {
         get(`/api/document/get_revision/${id}/`).then(
             response => response.blob()
         ).then(
-            blob => download(blob, filename, 'application/fidus+zip')
+            blob => download(blob, filename, "application/fidus+zip")
         )
     }
 
@@ -123,7 +123,7 @@ export class DocumentRevisionsDialog {
         const returnPromise = new Promise(resolve => {
 
             buttons.push({
-                text: gettext('Delete'),
+                text: gettext("Delete"),
                 classes: "fw-dark",
                 click: () => {
                     revisionsConfirmDeleteDialog.close()
@@ -131,7 +131,7 @@ export class DocumentRevisionsDialog {
                 }
             })
             buttons.push({
-                type: 'cancel',
+                type: "cancel",
                 click: () => {
                     revisionsConfirmDeleteDialog.close()
                     resolve(cancelPromise())
@@ -140,10 +140,10 @@ export class DocumentRevisionsDialog {
         })
 
         const revisionsConfirmDeleteDialog = new Dialog({
-            id: 'confirmdeletion',
-            title: gettext('Confirm deletion'),
-            icon: 'exclamation-triangle',
-            body: `${gettext('Do you really want to delete the revision?')}`,
+            id: "confirmdeletion",
+            title: gettext("Confirm deletion"),
+            icon: "exclamation-triangle",
+            body: `${gettext("Do you really want to delete the revision?")}`,
             height: 80,
             buttons
         })
@@ -155,7 +155,7 @@ export class DocumentRevisionsDialog {
 
     deleteRevision(id) {
         return post(
-            '/api/document/delete_revision/',
+            "/api/document/delete_revision/",
             {id}
         ).then(
             () => {
@@ -163,9 +163,9 @@ export class DocumentRevisionsDialog {
                     documentId = thisTr.dataset.document,
                     doc = this.documentList.find(doc => doc.id === parseInt(documentId))
                 thisTr.parentElement.removeChild(thisTr)
-                addAlert('success', gettext('Revision deleted'))
+                addAlert("success", gettext("Revision deleted"))
                 return Promise.resolve({
-                    action: 'deleted-revision',
+                    action: "deleted-revision",
                     id,
                     doc
                 })
@@ -173,8 +173,8 @@ export class DocumentRevisionsDialog {
             }
         ).catch(
             () => {
-                addAlert('error', gettext('Could not delete revision.'))
-                return Promise.reject(new Error('Could not delete revision.'))
+                addAlert("error", gettext("Could not delete revision."))
+                return Promise.reject(new Error("Could not delete revision."))
             }
         )
 

@@ -20,7 +20,7 @@ export class DocxExporterCitations {
         this.citFm = false
         this.pmBib = false
         this.styleXml = false
-        this.styleFilePath = 'word/styles.xml'
+        this.styleFilePath = "word/styles.xml"
     }
 
     init() {
@@ -46,7 +46,7 @@ export class DocxExporterCitations {
 
         descendantNodes(this.docContent).forEach(
             node => {
-                if (node.type === 'citation') {
+                if (node.type === "citation") {
                     this.citInfos.push(JSON.parse(JSON.stringify(node.attrs)))
                 }
             }
@@ -55,7 +55,7 @@ export class DocxExporterCitations {
             this.csl,
             this.citInfos,
             this.exporter.doc.settings.citationstyle,
-            '',
+            "",
             this.bibDB
         )
         return this.citFm.init().then(
@@ -75,13 +75,13 @@ export class DocxExporterCitations {
         // There could be some formatting in the citations, so we parse them through the PM schema for final formatting.
         // We need to put the citations each in a paragraph so that it works with
         // the fiduswriter schema and so that the converter doesn't mash them together.
-        let citationsHTML = ''
+        let citationsHTML = ""
         this.citationTexts.forEach(ct => {
             citationsHTML += `<p>${ct}</p>`
         })
 
         // We create a standard body footnotecontainer node, add the citations into it, and parse it back.
-        const fnNode = fnSchema.nodeFromJSON({type: 'footnotecontainer'})
+        const fnNode = fnSchema.nodeFromJSON({type: "footnotecontainer"})
 
         const serializer = DOMSerializer.fromSchema(fnSchema)
         let dom = serializer.serializeNode(fnNode)
@@ -92,17 +92,17 @@ export class DocxExporterCitations {
         const cslBib = this.citFm.bibliography
         if (cslBib && cslBib[1].length > 0) {
             this.addReferenceStyle(cslBib[0])
-            const bibNode = cslBibSchema.nodeFromJSON({type: 'cslbib'})
+            const bibNode = cslBibSchema.nodeFromJSON({type: "cslbib"})
             const cslSerializer = DOMSerializer.fromSchema(cslBibSchema)
             dom = cslSerializer.serializeNode(bibNode)
-            dom.innerHTML = cslBib[1].join('')
+            dom.innerHTML = cslBib[1].join("")
             this.pmBib = DOMParser.fromSchema(cslBibSchema).parse(dom, {topNode: bibNode}).toJSON()
         }
     }
 
     addReferenceStyle(bibInfo) {
-        const stylesEl = this.styleXml.querySelector('styles')
-        if (!this.styleXml.querySelector(`style[*|styleId="BibliographyHeading"]`)) {
+        const stylesEl = this.styleXml.querySelector("styles")
+        if (!this.styleXml.querySelector("style[*|styleId=\"BibliographyHeading\"]")) {
             // There is no style definition for the bibliography heading. We have to add it.
             const headingStyleDef = noSpaceTmp`
                 <w:style w:type="paragraph" w:styleId="BibliographyHeading">
@@ -119,18 +119,18 @@ export class DocxExporterCitations {
                         <w:szCs w:val="32"/>
                     </w:rPr>
                 </w:style>`
-            stylesEl.insertAdjacentHTML('beforeEnd', headingStyleDef)
+            stylesEl.insertAdjacentHTML("beforeEnd", headingStyleDef)
         }
         // The style called "Bibliography1" will override any previous style
         // of the same name.
-        const stylesParStyle = this.styleXml.querySelector(`style[*|styleId="Bibliography1"]`)
+        const stylesParStyle = this.styleXml.querySelector("style[*|styleId=\"Bibliography1\"]")
         if (stylesParStyle) {
             stylesParStyle.parentNode.removeChild(stylesParStyle)
         }
 
         const lineHeight = 240 * bibInfo.linespacing
         const marginBottom = 240 * bibInfo.entryspacing
-        let marginLeft = 0, hangingIndent = 0, tabStops = ''
+        let marginLeft = 0, hangingIndent = 0, tabStops = ""
 
         if (bibInfo.hangingindent) {
             marginLeft = 720
@@ -138,9 +138,9 @@ export class DocxExporterCitations {
         } else if (bibInfo["second-field-align"]) {
             // We calculate 120 as roughly equivalent to one letter width.
             const firstFieldWidth = (bibInfo.maxoffset + 1) * 120
-            if (bibInfo["second-field-align"] === 'margin') {
+            if (bibInfo["second-field-align"] === "margin") {
                 hangingIndent =  firstFieldWidth
-                tabStops = '<w:tabs><w:tab w:val="left" w:pos="0" w:leader="none"/></w:tabs>'
+                tabStops = "<w:tabs><w:tab w:val=\"left\" w:pos=\"0\" w:leader=\"none\"/></w:tabs>"
             } else {
                 hangingIndent = firstFieldWidth
                 marginLeft = firstFieldWidth
@@ -160,7 +160,7 @@ export class DocxExporterCitations {
                 <w:rPr></w:rPr>
             </w:style>`
 
-        stylesEl.insertAdjacentHTML('beforeEnd', styleDef)
+        stylesEl.insertAdjacentHTML("beforeEnd", styleDef)
     }
 
 }

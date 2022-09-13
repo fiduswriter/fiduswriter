@@ -11,7 +11,7 @@ const categoryFormsTemplate = ({categories}) =>
                     <span class="fw-add-input icon-addremove"></span>
                 </td>
             </tr>`
-        ).join('')
+        ).join("")
     }
     <tr class="fw-list-input">
         <td>

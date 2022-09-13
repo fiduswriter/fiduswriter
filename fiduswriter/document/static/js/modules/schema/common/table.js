@@ -8,9 +8,9 @@ export const table = {
     attrs: {
         id: {default: false},
         track: {default: []},
-        width: {default: '100'},
-        aligned: {default: 'center'},
-        layout: {default: 'fixed'},
+        width: {default: "100"},
+        aligned: {default: "center"},
+        layout: {default: "fixed"},
         category: {default: "none"},
         caption: {default: false},
     },
@@ -18,7 +18,7 @@ export const table = {
     parseDOM: [{tag: "table", getAttrs(dom) {
         const track = parseTracks(dom.dataset.track),
             width = dom.dataset.width,
-            aligned = width === '100' ? 'center' : dom.dataset.aligned,
+            aligned = width === "100" ? "center" : dom.dataset.aligned,
             layout = dom.dataset.layout,
             id = dom.id || dom.dataset.id
         return {
@@ -35,16 +35,16 @@ export const table = {
         const attrs = {
             id: node.attrs.id,
             class: `table-${node.attrs.width} table-${node.attrs.aligned} table-${node.attrs.layout}`,
-            'data-width': node.attrs.width,
-            'data-aligned': node.attrs.aligned,
-            'data-layout': node.attrs.layout,
-            'data-category': node.attrs.category
+            "data-width": node.attrs.width,
+            "data-aligned": node.attrs.aligned,
+            "data-layout": node.attrs.layout,
+            "data-category": node.attrs.category
         }
         if (node.attrs.track.length) {
-            attrs['data-track'] = JSON.stringify(node.attrs.track)
+            attrs["data-track"] = JSON.stringify(node.attrs.track)
         }
         if (!node.attrs.caption) {
-            attrs['data-caption-hidden'] = true
+            attrs["data-caption-hidden"] = true
         }
         return ["table", attrs, 0]
     }
@@ -52,7 +52,7 @@ export const table = {
 
 export const table_caption = {
     content: "inline*",
-    parseDOM: [{tag: 'caption span.text'}],
+    parseDOM: [{tag: "caption span.text"}],
     toDOM() {
         return ["caption", ["span", {class: "label"}], ["span", {class: "text"}, 0]]
     }
@@ -93,5 +93,5 @@ export const table_cell = Object.assign(
 )
 
 export function randomTableId() {
-    return 'T' + Math.round(Math.random() * 10000000) + 1
+    return "T" + Math.round(Math.random() * 10000000) + 1
 }

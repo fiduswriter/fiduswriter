@@ -19,22 +19,22 @@ export class DocTemplatesActions {
         }
 
         postJson(
-            '/api/user_template_manager/delete/',
+            "/api/user_template_manager/delete/",
             {id}
         ).catch(
             error => {
-                addAlert('error', `${gettext('Could not delete document template')}: '${docTemplate.title}'`)
+                addAlert("error", `${gettext("Could not delete document template")}: '${docTemplate.title}'`)
                 throw (error)
             }
         ).then(({json}) => {
             if (json.done) {
-                addAlert('success', `${gettext('Document template successfully deleted')}: '${docTemplate.title}'`)
+                addAlert("success", `${gettext("Document template successfully deleted")}: '${docTemplate.title}'`)
                 this.docTemplatesOverview.removeTableRows([id])
                 this.docTemplatesOverview.templateList = this.docTemplatesOverview.templateList.filter(
                     docTemplate => docTemplate.id !== id
                 )
             } else {
-                addAlert('error', `${gettext('Document template still required by documents')}: '${docTemplate.title}'`)
+                addAlert("error", `${gettext("Document template still required by documents")}: '${docTemplate.title}'`)
             }
         })
 
@@ -43,7 +43,7 @@ export class DocTemplatesActions {
     deleteDocTemplatesDialog(ids) {
         const buttons = [
             {
-                text: gettext('Delete'),
+                text: gettext("Delete"),
                 classes: "fw-dark",
                 click: () => {
                     ids.forEach(id => this.deleteDocTemplate(parseInt(id)))
@@ -51,15 +51,15 @@ export class DocTemplatesActions {
                 }
             },
             {
-                type: 'close'
+                type: "close"
             }
         ]
 
         const dialog = new Dialog({
-            title: gettext('Confirm deletion'),
-            id: 'confirmdeletion',
-            icon: 'exclamation-triangle',
-            body: `<p>${ids.length > 1 ? gettext('Delete the document templates?') : gettext('Delete the document template?')}</p>`,
+            title: gettext("Confirm deletion"),
+            id: "confirmdeletion",
+            icon: "exclamation-triangle",
+            body: `<p>${ids.length > 1 ? gettext("Delete the document templates?") : gettext("Delete the document template?")}</p>`,
             buttons
         })
         dialog.open()
@@ -67,22 +67,22 @@ export class DocTemplatesActions {
 
     copyDocTemplate(oldDocTemplate) {
         return postJson(
-            '/api/user_template_manager/copy/',
+            "/api/user_template_manager/copy/",
             {
                 id: oldDocTemplate.id,
-                title: `${gettext('Copy of')} ${oldDocTemplate.title}`
+                title: `${gettext("Copy of")} ${oldDocTemplate.title}`
             }
         ).catch(
             error => {
-                addAlert('error', gettext('The document template could not be copied'))
+                addAlert("error", gettext("The document template could not be copied"))
                 throw (error)
             }
         ).then(
             ({json}) => {
                 const docTemplate = JSON.parse(JSON.stringify(oldDocTemplate))
                 docTemplate.is_owner = true
-                docTemplate.id = json['id']
-                docTemplate.title = json['title']
+                docTemplate.id = json["id"]
+                docTemplate.title = json["title"]
                 this.docTemplatesOverview.templateList.push(docTemplate)
                 this.docTemplatesOverview.addDocTemplateToTable(docTemplate)
             }
@@ -92,7 +92,7 @@ export class DocTemplatesActions {
     downloadDocTemplate(id) {
         const exporter = new DocumentTemplateExporter(
             id,
-            '/api/user_template_manager/get/'
+            "/api/user_template_manager/get/"
         )
         exporter.init()
     }
@@ -100,10 +100,10 @@ export class DocTemplatesActions {
     uploadDocTemplate() {
         const buttons = [
             {
-                text: gettext('Import'),
+                text: gettext("Import"),
                 classes: "fw-dark",
                 click: () => {
-                    let fidusTemplateFile = document.getElementById('fidus-template-uploader').files
+                    let fidusTemplateFile = document.getElementById("fidus-template-uploader").files
                     if (0 === fidusTemplateFile.length) {
                         return false
                     }
@@ -116,16 +116,16 @@ export class DocTemplatesActions {
 
                     const importer = new DocumentTemplateImporter(
                         fidusTemplateFile,
-                        '/api/user_template_manager/create/'
+                        "/api/user_template_manager/create/"
                     )
 
                     importer.init().then(
                         ({ok, statusText, docTemplate}) => {
                             deactivateWait()
                             if (ok) {
-                                addAlert('info', statusText)
+                                addAlert("info", statusText)
                             } else {
-                                addAlert('error', statusText)
+                                addAlert("error", statusText)
                                 return
                             }
 
@@ -142,28 +142,28 @@ export class DocTemplatesActions {
                 }
             },
             {
-                type: 'cancel'
+                type: "cancel"
             }
         ]
         const importDialog = new Dialog({
-            id: 'importfidustemplate',
-            title: gettext('Import a Fidus Template file'),
+            id: "importfidustemplate",
+            title: gettext("Import a Fidus Template file"),
             body: importFidusTemplateTemplate(),
             height: 100,
             buttons
         })
         importDialog.open()
 
-        document.getElementById('fidus-template-uploader').addEventListener(
-            'change',
+        document.getElementById("fidus-template-uploader").addEventListener(
+            "change",
             () => {
-                document.getElementById('import-fidus-template-name').innerHTML =
-                    document.getElementById('fidus-template-uploader').value.replace(/C:\\fakepath\\/i, '')
+                document.getElementById("import-fidus-template-name").innerHTML =
+                    document.getElementById("fidus-template-uploader").value.replace(/C:\\fakepath\\/i, "")
             }
         )
 
-        document.getElementById('import-fidus-template-btn').addEventListener('click', event => {
-            document.getElementById('fidus-template-uploader').click()
+        document.getElementById("import-fidus-template-btn").addEventListener("click", event => {
+            document.getElementById("fidus-template-uploader").click()
             event.preventDefault()
         })
 

@@ -7,7 +7,7 @@ export const equation = {
         }
     },
     parseDOM: [{
-        tag: 'span.equation',
+        tag: "span.equation",
         getAttrs(dom) {
             return {
                 equation: dom.dataset.equation
@@ -15,13 +15,13 @@ export const equation = {
         }
     }],
     toDOM(node) {
-        const dom = document.createElement('span')
+        const dom = document.createElement("span")
         dom.dataset.equation = node.attrs.equation
-        dom.classList.add('equation')
+        dom.classList.add("equation")
         import("mathlive").then(MathLive => {
-            dom.innerHTML = MathLive.convertLatexToMarkup(node.attrs.equation, {mathstyle: 'textstyle'})
+            dom.innerHTML = MathLive.convertLatexToMarkup(node.attrs.equation, {mathstyle: "textstyle"})
         })
-        dom.setAttribute('contenteditable', 'false')
+        dom.setAttribute("contenteditable", "false")
         return dom
     }
 }

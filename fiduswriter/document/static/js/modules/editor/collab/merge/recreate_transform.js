@@ -4,11 +4,11 @@
 
 import {
     Transform, ReplaceStep
-} from 'prosemirror-transform'
+} from "prosemirror-transform"
 import {
     applyPatch, createPatch
-} from 'rfc6902'
-import {diffWordsWithSpace, diffChars} from 'diff'
+} from "rfc6902"
+import {diffWordsWithSpace, diffChars} from "diff"
 
 function getReplaceStep(fromDoc, toDoc) {
     let start = toDoc.content.findDiffStart(fromDoc.content)
@@ -75,7 +75,7 @@ class RecreateTransform {
         while (this.ops.length) {
             let op = this.ops.shift(),
                 toDoc = false
-            const pathParts = op.path.split('/')
+            const pathParts = op.path.split("/")
             ops.push(op)
             while (!toDoc) {
                 applyPatch(afterStepJSON, [op])
@@ -93,12 +93,12 @@ class RecreateTransform {
                 }
             }
 
-            if (this.complexSteps && ops.length === 1 && (pathParts.includes('attrs') || pathParts.includes('type'))) {
+            if (this.complexSteps && ops.length === 1 && (pathParts.includes("attrs") || pathParts.includes("type"))) {
                 // Node markup is changing
                 this.addSetNodeMarkup()
                 ops = []
                 afterStepJSON = JSON.parse(JSON.stringify(this.currentJSON))
-            } else if (ops.length === 1 && op.op === 'replace' && pathParts[pathParts.length - 1] === 'text') {
+            } else if (ops.length === 1 && op.op === "replace" && pathParts[pathParts.length - 1] === "text") {
                 // Text is being replaced, we apply text diffing to find the smallest possible diffs.
                 this.addReplaceTextSteps(op, afterStepJSON)
                 ops = []
@@ -156,7 +156,7 @@ class RecreateTransform {
             this.currentJSON = afterStepJSON
             return true
         } else {
-            throw new Error('No valid step found.')
+            throw new Error("No valid step found.")
         }
     }
 
@@ -180,12 +180,12 @@ class RecreateTransform {
 
     addReplaceTextSteps(op, afterStepJSON) {
         // We find the position number of the first character in the string
-        const op1 = Object.assign({}, op, {value: 'xx'}),
-            op2 = Object.assign({}, op, {value: 'yy'})
+        const op1 = Object.assign({}, op, {value: "xx"}),
+            op2 = Object.assign({}, op, {value: "yy"})
 
         const afterOP1JSON = JSON.parse(JSON.stringify(this.currentJSON)),
             afterOP2JSON = JSON.parse(JSON.stringify(this.currentJSON)),
-            pathParts = op.path.split('/')
+            pathParts = op.path.split("/")
 
         let obj = this.currentJSON
 
@@ -218,12 +218,12 @@ class RecreateTransform {
                     this.tr.replaceWith(
                         offset,
                         offset + nextDiff.value.length,
-                        this.schema.nodeFromJSON({type: 'text', text: diff.value}).mark(marks)
+                        this.schema.nodeFromJSON({type: "text", text: diff.value}).mark(marks)
                     )
                 } else {
                     this.tr.insert(
                         offset,
-                        this.schema.nodeFromJSON({type: 'text', text: diff.value}).mark(marks)
+                        this.schema.nodeFromJSON({type: "text", text: diff.value}).mark(marks)
                     )
                 }
                 offset += diff.value.length
@@ -233,7 +233,7 @@ class RecreateTransform {
                     this.tr.replaceWith(
                         offset,
                         offset + diff.value.length,
-                        this.schema.nodeFromJSON({type: 'text', text: nextDiff.value}).mark(marks)
+                        this.schema.nodeFromJSON({type: "text", text: nextDiff.value}).mark(marks)
                     )
                     offset += nextDiff.value.length
                 } else {

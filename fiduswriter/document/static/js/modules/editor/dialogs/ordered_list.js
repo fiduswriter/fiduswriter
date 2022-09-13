@@ -41,19 +41,19 @@ export class OrderedListStartDialog {
     insertDialog() {
         const buttons = []
         buttons.push({
-            text: gettext('Update'),
-            classes: 'fw-dark',
+            text: gettext("Update"),
+            classes: "fw-dark",
             click: () => {
                 this.submitForm()
                 this.dialog.close()
             }
         })
         buttons.push({
-            type: 'cancel'
+            type: "cancel"
         })
 
         this.dialog = new Dialog({
-            title: gettext('Set list start number'),
+            title: gettext("Set list start number"),
             body: orderedListStartTemplate({order: this.order}),
             width: 300,
             height: 100,
@@ -63,8 +63,8 @@ export class OrderedListStartDialog {
 
         this.dialog.open()
 
-        const listStartInput = document.querySelector('input.list-start')
-        listStartInput.addEventListener('change', _event => {
+        const listStartInput = document.querySelector("input.list-start")
+        listStartInput.addEventListener("change", _event => {
             this.order = parseInt(listStartInput.value) || 1
         })
     }

@@ -27,9 +27,9 @@ export class TableDialog {
             rowCount += 1
         }
         // add hover class.
-        const rows = this.dialog.dialogEl.querySelectorAll('tr')
+        const rows = this.dialog.dialogEl.querySelectorAll("tr")
         for (let i = 0;i < rowCount;i++) {
-            const cols = rows[i].querySelectorAll('td')
+            const cols = rows[i].querySelectorAll("td")
             for (let j = 0;j < colCount;j++) {
                 cols[j].classList.add(className)
             }
@@ -41,16 +41,16 @@ export class TableDialog {
         let rowCount = 1, colCount = 1
         const buttons = []
         buttons.push({
-            text: gettext('Insert'),
-            classes: 'fw-dark',
+            text: gettext("Insert"),
+            classes: "fw-dark",
             click: () => {
-                const table = {type: 'table', content: [{type: 'table_caption'}, {type: 'table_body', content: []}]}
+                const table = {type: "table", content: [{type: "table_caption"}, {type: "table_body", content: []}]}
                 const table_body = table.content[1]
 
                 for (let i = 0;i < rowCount;i++) {
-                    const row = {type: 'table_row', content: []}
+                    const row = {type: "table_row", content: []}
                     for (let j = 0;j < colCount;j++) {
-                        row.content.push({type: 'table_cell', content: [{type: 'paragraph'}]})
+                        row.content.push({type: "table_cell", content: [{type: "paragraph"}]})
                     }
                     table_body.content.push(row)
                 }
@@ -65,11 +65,11 @@ export class TableDialog {
             }
         })
         buttons.push({
-            type: 'cancel'
+            type: "cancel"
         })
 
         this.dialog = new Dialog({
-            title: gettext('Insert table'),
+            title: gettext("Insert table"),
             body: tableInsertTemplate(),
             width: 360,
             height: 360,
@@ -80,17 +80,17 @@ export class TableDialog {
         this.dialog.open()
 
         // manage hovering over table cells
-        this.dialog.dialogEl.querySelectorAll('td').forEach(el => el.addEventListener('mouseenter', () => {
-            this.markInsertTable(el, 'hover')
+        this.dialog.dialogEl.querySelectorAll("td").forEach(el => el.addEventListener("mouseenter", () => {
+            this.markInsertTable(el, "hover")
         }))
-        this.dialog.dialogEl.querySelectorAll('td').forEach(el => el.addEventListener('mouseleave', () => {
-            this.dialog.dialogEl.querySelectorAll('td.hover').forEach(mEl => mEl.classList.remove('hover'))
+        this.dialog.dialogEl.querySelectorAll("td").forEach(el => el.addEventListener("mouseleave", () => {
+            this.dialog.dialogEl.querySelectorAll("td.hover").forEach(mEl => mEl.classList.remove("hover"))
         }))
 
-        this.dialog.dialogEl.querySelectorAll('td').forEach(el => el.addEventListener('click', event => {
+        this.dialog.dialogEl.querySelectorAll("td").forEach(el => el.addEventListener("click", event => {
             event.preventDefault()
             event.stopImmediatePropagation()
-            const newCounts = this.markInsertTable(el, 'selected')
+            const newCounts = this.markInsertTable(el, "selected")
             rowCount = newCounts.rowCount
             colCount = newCounts.colCount
         }))
@@ -102,10 +102,10 @@ export class TableConfigurationDialog {
     constructor(editor) {
         this.editor = editor
         this.dialogEl = false
-        this.aligned = 'center'
-        this.width = '100'
-        this.layout = 'fixed'
-        this.category = 'none'
+        this.aligned = "center"
+        this.width = "100"
+        this.layout = "fixed"
+        this.category = "none"
         this.caption = false
     }
 
@@ -150,19 +150,19 @@ export class TableConfigurationDialog {
     insertDialog() {
         const buttons = []
         buttons.push({
-            text: gettext('Update'),
-            classes: 'fw-dark',
+            text: gettext("Update"),
+            classes: "fw-dark",
             click: () => {
                 this.submitForm()
                 this.dialog.close()
             }
         })
         buttons.push({
-            type: 'cancel'
+            type: "cancel"
         })
 
         this.dialog = new Dialog({
-            title: gettext('Configure table'),
+            title: gettext("Configure table"),
             body: tableConfigurationTemplate({
                 language: this.editor.view.state.doc.firstChild.attrs.language
             }),
@@ -175,70 +175,70 @@ export class TableConfigurationDialog {
         this.dialog.open()
 
         const alignmentSelector = dropdownSelect(
-            this.dialog.dialogEl.querySelector('.table-alignment'),
+            this.dialog.dialogEl.querySelector(".table-alignment"),
             {
                 onChange: newValue => {
                     this.aligned = newValue
                 },
-                width: '80%',
+                width: "80%",
                 value: this.aligned
             }
         )
 
         if (this.width == "100") {
-            alignmentSelector.setValue('center')
+            alignmentSelector.setValue("center")
             alignmentSelector.disable()
-            this.aligned = 'center'
+            this.aligned = "center"
         }
 
         dropdownSelect(
-            this.dialog.dialogEl.querySelector('.table-width'),
+            this.dialog.dialogEl.querySelector(".table-width"),
             {
                 onChange: newValue => {
                     this.width = newValue
                     if (this.width == "100") {
-                        alignmentSelector.setValue('center')
+                        alignmentSelector.setValue("center")
                         alignmentSelector.disable()
-                        this.aligned = 'center'
+                        this.aligned = "center"
                     } else {
                         alignmentSelector.enable()
                     }
                 },
-                width: '80%',
+                width: "80%",
                 value: this.width
             }
         )
 
 
         dropdownSelect(
-            this.dialog.dialogEl.querySelector('.table-layout'),
+            this.dialog.dialogEl.querySelector(".table-layout"),
             {
                 onChange: newValue => {
                     this.layout = newValue
                 },
-                width: '80%',
+                width: "80%",
                 value: this.layout
             }
         )
 
         dropdownSelect(
-            this.dialog.dialogEl.querySelector('.table-category'),
+            this.dialog.dialogEl.querySelector(".table-category"),
             {
                 onChange: newValue => {
                     this.category = newValue
                 },
-                width: '80%',
+                width: "80%",
                 value: this.category
             }
         )
 
         dropdownSelect(
-            this.dialog.dialogEl.querySelector('.table-caption'),
+            this.dialog.dialogEl.querySelector(".table-caption"),
             {
                 onChange: newValue => {
                     this.caption = newValue === "true"
                 },
-                width: '80%',
+                width: "80%",
                 value: String(this.caption)
             }
         )

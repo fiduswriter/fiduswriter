@@ -7,7 +7,7 @@ export const baseBodyTemplate = ({user, contents, hasOverview, app}) => `
 </div>
 <header class="fw-header">
     <div class="fw-container">
-        <a href="${app && app.routes[''].app === "document" ? '/' : `/documents/`}">
+        <a href="${app && app.routes[""].app === "document" ? "/" : "/documents/"}">
             <h1 class="fw-logo">
                 <span class="fw-logo-text"></span>
                 <img src="${settings_STATIC_URL}svg/icon.svg?v=${transpile_VERSION}" />
@@ -35,7 +35,7 @@ export const baseBodyTemplate = ({user, contents, hasOverview, app}) => `
     </div><!-- end container -->
 </header>
 <div class="fw-contents-outer">
-    ${hasOverview ? `<div class="fw-overview-menu-wrapper"><ul id="fw-overview-menu"></ul></div>` : ''}
+    ${hasOverview ? "<div class=\"fw-overview-menu-wrapper\"><ul id=\"fw-overview-menu\"></ul></div>" : ""}
     <div class="fw-contents">
         ${contents}
     </div>

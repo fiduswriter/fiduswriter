@@ -29,7 +29,7 @@ export class CommentEditor {
             history(),
             suggestionsPlugin({
                 escapeOnSelectionChange: true,
-                matcher: triggerCharacter('@'),
+                matcher: triggerCharacter("@"),
                 onEnter: (args) => {
                     this.selectedTag = 0
                     this.tagRange = args.range
@@ -53,24 +53,24 @@ export class CommentEditor {
                     this.removeTagger()
                 },
                 onKeyDown: ({event}) => {
-                    if (event.key === 'ArrowDown') {
+                    if (event.key === "ArrowDown") {
                         if (this.userTaggerList.length > this.selectedTag + 1) {
                             this.selectedTag += 1
                             this.showUserTagger()
                         }
                         return true
-                    } else if (event.key === 'ArrowUp') {
+                    } else if (event.key === "ArrowUp") {
                         if (this.selectedTag > 0) {
                             this.selectedTag -= 1
                             this.showUserTagger()
                         }
                         return true
-                    } else if (event.key === 'Enter') {
+                    } else if (event.key === "Enter") {
                         return this.selectUserTag()
                     }
                     return false
                 },
-                escapeKeys: ['Escape', 'ArrowRight', 'ArrowLeft']
+                escapeKeys: ["Escape", "ArrowRight", "ArrowLeft"]
             }),
             keymap(baseKeymap),
             keymap({
@@ -88,17 +88,17 @@ export class CommentEditor {
     }
 
     initViewDOM() {
-        this.viewDOM = document.createElement('div')
-        this.viewDOM.classList.add('ProseMirror-wrapper')
+        this.viewDOM = document.createElement("div")
+        this.viewDOM.classList.add("ProseMirror-wrapper")
         this.dom.appendChild(this.viewDOM)
         this.dom.insertAdjacentHTML(
-            'beforeend',
+            "beforeend",
             `<input class="comment-is-major" type="checkbox" name="isMajor"
-                ${this.options.isMajor ? 'checked' : ''}/>
+                ${this.options.isMajor ? "checked" : ""}/>
             <label>${gettext("High priority")}</label>
             <div class="comment-btns">
                 <button class="submit fw-button fw-dark disabled" type="submit">
-                    ${this.id !== '-1' ? gettext("Edit") : gettext("Submit")}
+                    ${this.id !== "-1" ? gettext("Edit") : gettext("Submit")}
                 </button>
                 <button class="cancel fw-button fw-orange" type="submit">
                     ${gettext("Cancel")}
@@ -113,7 +113,7 @@ export class CommentEditor {
             state: EditorState.create({
                 schema: commentSchema,
                 doc: commentSchema.nodeFromJSON({
-                    type: 'doc',
+                    type: "doc",
                     content: this.text
                 }),
                 plugins: this.plugins
@@ -129,10 +129,10 @@ export class CommentEditor {
     }
 
     bind() {
-        this.dom.addEventListener('click', event => {
+        this.dom.addEventListener("click", event => {
             const el = {}
             switch (true) {
-            case findTarget(event, 'button.submit:not(.disabled)', el):
+            case findTarget(event, "button.submit:not(.disabled)", el):
                 this.submit()
                 if (this.keepOpenAfterSubmit) {
                     this.scrollToBottom()
@@ -142,18 +142,18 @@ export class CommentEditor {
                     this.mod.interactions.collapseSelectionToEnd()
                 }
                 break
-            case findTarget(event, 'button.cancel', el):
+            case findTarget(event, "button.cancel", el):
                 this.mod.interactions.cancelSubmit()
                 break
-            case findTarget(event, '.ProseMirror-wrapper', el):
+            case findTarget(event, ".ProseMirror-wrapper", el):
                 this.view.focus()
                 break
-            case findTarget(event, '.tag-user', el):
+            case findTarget(event, ".tag-user", el):
                 this.selectedTag = parseInt(el.target.dataset.index)
                 this.selectUserTag()
                 this.view.focus()
                 break
-            case findTarget(event, '.comment-is-major', el):
+            case findTarget(event, ".comment-is-major", el):
                 this.isMajor = !this.isMajor
                 this.updateButtons()
                 break
@@ -163,16 +163,16 @@ export class CommentEditor {
 
     hasChanged() {
         return (!deepEqual(
-            this.text.length ? this.text : [{type: 'paragraph'}],
-            this.view.state.doc.toJSON().content || [{type: 'paragraph'}]
+            this.text.length ? this.text : [{type: "paragraph"}],
+            this.view.state.doc.toJSON().content || [{type: "paragraph"}]
         ) || this.options.isMajor !== this.isMajor)
     }
 
     updateButtons() {
         if (this.hasChanged()) {
-            this.dom.querySelector('button.submit').classList.remove('disabled')
+            this.dom.querySelector("button.submit").classList.remove("disabled")
         } else {
-            this.dom.querySelector('button.submit').classList.add('disabled')
+            this.dom.querySelector("button.submit").classList.add("disabled")
         }
     }
 
@@ -206,12 +206,12 @@ export class CommentEditor {
         if (!this.userTaggerList.length) {
             return
         }
-        this.dom.querySelector('div.tagger').innerHTML = this.userTaggerList.map((user, index) =>
-            `<div class="tag-user tag${index === this.selectedTag ? ' selected' : ''}" data-index="${index}">
-                ${user ? avatarTemplate({user}) : `<span class="fw-string-avatar"></span>`}
+        this.dom.querySelector("div.tagger").innerHTML = this.userTaggerList.map((user, index) =>
+            `<div class="tag-user tag${index === this.selectedTag ? " selected" : ""}" data-index="${index}">
+                ${user ? avatarTemplate({user}) : "<span class=\"fw-string-avatar\"></span>"}
                 <h5 class="comment-user-name">${escapeText(user.name)}</h5>
             </div>`
-        ).join('')
+        ).join("")
     }
 
     selectUserTag() {
@@ -231,7 +231,7 @@ export class CommentEditor {
     getUserTags() {
         const users = []
         this.view.state.doc.descendants(node => {
-            if (node.type.name === 'collaborator') {
+            if (node.type.name === "collaborator") {
                 users.push(node.attrs.id)
             }
         })
@@ -239,7 +239,7 @@ export class CommentEditor {
     }
 
     removeTagger() {
-        this.dom.querySelector('div.tagger').innerHTML = ''
+        this.dom.querySelector("div.tagger").innerHTML = ""
         this.tagRange = false
         this.userTaggerList = []
     }

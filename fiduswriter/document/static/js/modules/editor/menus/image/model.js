@@ -5,9 +5,9 @@ import {
 export const imageMenuModel = () => ({
     content: [
         {
-            title: gettext('Set Copyright'),
-            type: 'action',
-            tooltip: gettext('Specify copyright information'),
+            title: gettext("Set Copyright"),
+            type: "action",
+            tooltip: gettext("Specify copyright information"),
             order: 0,
             action: figureDialog => {
                 const dialog = new CopyrightDialog(figureDialog.copyright)
@@ -21,9 +21,9 @@ export const imageMenuModel = () => ({
             }
         },
         {
-            title: gettext('Remove image'),
-            type: 'action',
-            tooltip: gettext('Remove the image that is previewed'),
+            title: gettext("Remove image"),
+            type: "action",
+            tooltip: gettext("Remove the image that is previewed"),
             order: 1,
             action: figureDialog => {
                 figureDialog.imgId = false

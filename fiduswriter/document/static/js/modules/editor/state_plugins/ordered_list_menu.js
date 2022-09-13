@@ -1,8 +1,8 @@
 import {Plugin, PluginKey, Selection} from "prosemirror-state"
-import {ContentMenu} from '../../common'
+import {ContentMenu} from "../../common"
 import {WRITE_ROLES} from "../"
 
-const key = new PluginKey('tableMenu')
+const key = new PluginKey("tableMenu")
 
 class OrderedListView {
     constructor(node, view, getPos, options) {
@@ -11,11 +11,11 @@ class OrderedListView {
         this.getPos = getPos
         this.options = options
         this.dom = document.createElement("div")
-        this.dom.classList.add('content-container')
+        this.dom.classList.add("content-container")
         this.dom.id = node.attrs.id
         this.menuButton = document.createElement("button")
-        this.menuButton.classList.add('content-menu-btn')
-        this.menuButton.innerHTML = '<span class="dot-menu-icon"><i class="fa fa-ellipsis-v"></i></span>'
+        this.menuButton.classList.add("content-menu-btn")
+        this.menuButton.innerHTML = "<span class=\"dot-menu-icon\"><i class=\"fa fa-ellipsis-v\"></i></span>"
         this.dom.appendChild(this.menuButton)
         const orderedList = document.createElement("ol")
         if (node.attrs.order !== 1) {
@@ -30,7 +30,7 @@ class OrderedListView {
 
     stopEvent(event) {
         let stopped = false
-        if (event.type === 'mousedown' && event.composedPath().includes(this.menuButton)) {
+        if (event.type === "mousedown" && event.composedPath().includes(this.menuButton)) {
             stopped = true
             const tr = this.view.state.tr
             const $pos = this.view.state.doc.resolve(this.getPos())
@@ -58,7 +58,7 @@ export const orderedListMenuPlugin = function(options) {
         state: {
             init(_config, _state) {
                 if (WRITE_ROLES.includes(options.editor.docInfo.access_rights)) {
-                    this.spec.props.nodeViews['ordered_list'] =
+                    this.spec.props.nodeViews["ordered_list"] =
                         (node, view, getPos) => new OrderedListView(node, view, getPos, options)
                 }
                 return {}

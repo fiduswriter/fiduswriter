@@ -18,19 +18,19 @@ import {KeyListForm} from "./fields/key_list"
 import {nameToText} from "../tools"
 
 const FIELD_FORMS = {
-    'f_date': DateFieldForm,
-    'f_integer': LiteralFieldForm,
-    'f_literal': LiteralFieldForm,
-    'l_literal': LiteralListForm,
-    'f_long_literal': LiteralLongFieldForm,
-    'f_key': KeyFieldForm,
-    'l_key': KeyListForm,
-    'l_name': NameListForm,
-    'l_range': RangeListForm,
-    'l_tag': TagListForm,
-    'f_title': TitleFieldForm,
-    'f_uri': URIFieldForm,
-    'f_verbatim': VerbatimFieldForm
+    "f_date": DateFieldForm,
+    "f_integer": LiteralFieldForm,
+    "f_literal": LiteralFieldForm,
+    "l_literal": LiteralListForm,
+    "f_long_literal": LiteralLongFieldForm,
+    "f_key": KeyFieldForm,
+    "l_key": KeyListForm,
+    "l_name": NameListForm,
+    "l_range": RangeListForm,
+    "l_tag": TagListForm,
+    "f_title": TitleFieldForm,
+    "f_uri": URIFieldForm,
+    "f_verbatim": VerbatimFieldForm
 }
 
 export class BibEntryForm {
@@ -45,19 +45,19 @@ export class BibEntryForm {
     init() {
         if (this.app && this.app.isOffline()) {
             // Diable the editing of main user bibliography , since Document bibliography is stored in Editor/Document.
-            addAlert('info', gettext('You are currently offline. Please try again when you are back online.'))
+            addAlert("info", gettext("You are currently offline. Please try again when you are back online."))
             return Promise.resolve()
         }
         if (this.itemId !== false) {
-            this.dialogHeader = gettext('Edit Source')
+            this.dialogHeader = gettext("Edit Source")
             const bibEntry = this.bibDB.db[this.itemId]
             this.currentValues = JSON.parse(JSON.stringify(bibEntry)) // copy current values
         } else {
-            this.dialogHeader = gettext('Register New Source')
+            this.dialogHeader = gettext("Register New Source")
             this.currentValues = {
                 bib_type: false,
                 cats: [],
-                entry_key: 'FidusWriter',
+                entry_key: "FidusWriter",
                 fields: {}
             }
         }
@@ -68,14 +68,14 @@ export class BibEntryForm {
         // Add form to DOM
         const buttons = [
             {
-                type: 'close'
+                type: "close"
             }
         ]
 
         return new Promise(resolve => {
             buttons.push({
                 classes: "fw-dark",
-                text: gettext('Submit'),
+                text: gettext("Submit"),
                 click: () => {
                     if (this.check()) {
                         const returnValue = this.save()
@@ -87,10 +87,10 @@ export class BibEntryForm {
 
             this.dialog = new Dialog({
                 title: this.dialogHeader,
-                id: 'bib-dialog',
+                id: "bib-dialog",
                 width: 940,
                 body: bibDialog({
-                    'bib_type': this.currentValues.bib_type,
+                    "bib_type": this.currentValues.bib_type,
                     BibTypes,
                     BibTypeTitles
                 }),
@@ -102,34 +102,34 @@ export class BibEntryForm {
             // init ui tabs
 
             // Hide all but first tab
-            this.dialog.dialogEl.querySelectorAll('#bib-dialog-tabs .tab-content').forEach((el, index) => {
+            this.dialog.dialogEl.querySelectorAll("#bib-dialog-tabs .tab-content").forEach((el, index) => {
                 if (index) {
-                    el.style.display = 'none'
+                    el.style.display = "none"
                 }
             })
 
-            this.dialog.dialogEl.querySelector('#bib-dialog-tabs .tab-link').classList.add('current-tab')
+            this.dialog.dialogEl.querySelector("#bib-dialog-tabs .tab-link").classList.add("current-tab")
 
             // Handle tab link clicking
-            this.dialog.dialogEl.querySelectorAll('#bib-dialog-tabs .tab-link a').forEach(el => el.addEventListener('click', event => {
+            this.dialog.dialogEl.querySelectorAll("#bib-dialog-tabs .tab-link a").forEach(el => el.addEventListener("click", event => {
                 event.preventDefault()
 
-                el.parentNode.parentNode.querySelectorAll('.tab-link.current-tab').forEach(el => el.classList.remove('current-tab'))
-                el.parentNode.classList.add('current-tab')
+                el.parentNode.parentNode.querySelectorAll(".tab-link.current-tab").forEach(el => el.classList.remove("current-tab"))
+                el.parentNode.classList.add("current-tab")
 
-                const link = el.getAttribute('href')
-                this.dialog.dialogEl.querySelectorAll('#bib-dialog-tabs .tab-content').forEach(el => {
+                const link = el.getAttribute("href")
+                this.dialog.dialogEl.querySelectorAll("#bib-dialog-tabs .tab-content").forEach(el => {
                     if (el.matches(link)) {
-                        el.style.display = ''
+                        el.style.display = ""
                     } else {
-                        el.style.display = 'none'
+                        el.style.display = "none"
                     }
                 })
 
             }))
 
-            document.getElementById('select-bibtype').addEventListener(
-                'change',
+            document.getElementById("select-bibtype").addEventListener(
+                "change",
                 () => resolve(this.changeBibType())
             )
         })
@@ -155,7 +155,7 @@ export class BibEntryForm {
         }
 
         dom.insertAdjacentHTML(
-            'beforeend',
+            "beforeend",
             noSpaceTmp`
                 <tr>
                     <th>${fieldTitle}</th>
@@ -174,25 +174,25 @@ export class BibEntryForm {
     createForm() {
         const dialogPromise = this.addDialogToDOM()
         if (this.currentValues.bib_type !== false) {
-            const eitherOrFields = document.getElementById('eo-fields')
+            const eitherOrFields = document.getElementById("eo-fields")
             BibTypes[this.currentValues.bib_type].eitheror.forEach(fieldName => {
                 this.addField(fieldName, eitherOrFields)
             })
-            const reqFields = document.getElementById('req-fields')
+            const reqFields = document.getElementById("req-fields")
             BibTypes[this.currentValues.bib_type].required.forEach(fieldName => {
                 this.addField(fieldName, reqFields)
             })
-            const optFields = document.getElementById('opt-fields')
+            const optFields = document.getElementById("opt-fields")
             BibTypes[this.currentValues.bib_type].optional.forEach(fieldName => {
                 this.addField(fieldName, optFields)
             })
-            const catsField = document.getElementById('categories-field')
+            const catsField = document.getElementById("categories-field")
             this.catsForm = new CatsForm(catsField, this.currentValues.cats, this.bibDB.cats)
             this.catsForm.init()
 
             if (!this.bibDB.cats.length) {
                 // There are no ctaegories to select from, so remove the categories tab.
-                document.querySelectorAll('#categories-tab, #categories-link').forEach(
+                document.querySelectorAll("#categories-tab, #categories-link").forEach(
                     el => el.parentElement.removeChild(el)
                 )
             }
@@ -216,14 +216,14 @@ export class BibEntryForm {
     createEntryKey(bibItem) {
         // We attempt to create a biblatex compatible entry key if there is no entry
         // key so far.
-        let entryKey = ''
+        let entryKey = ""
         if (bibItem.fields.author) {
-            entryKey += nameToText(bibItem.fields.author).replace(/\s|,|=|;|:|{|}/g, '')
+            entryKey += nameToText(bibItem.fields.author).replace(/\s|,|=|;|:|{|}/g, "")
         } else if (bibItem.fields.editor) {
-            entryKey += nameToText(bibItem.fields.editor).replace(/\s|,|=|;|:|{|}/g, '')
+            entryKey += nameToText(bibItem.fields.editor).replace(/\s|,|=|;|:|{|}/g, "")
         }
         if (bibItem.fields.date) {
-            entryKey += bibItem.fields.date.split('/')[0].replace(/\?|\*|u|~|-/g, '')
+            entryKey += bibItem.fields.date.split("/")[0].replace(/\?|\*|u|~|-/g, "")
         }
         if (entryKey.length) {
             bibItem.entry_key = entryKey
@@ -232,7 +232,7 @@ export class BibEntryForm {
 
     get value() {
         const returnObj = {
-            bib_type: document.querySelector('#select-bibtype').value,
+            bib_type: document.querySelector("#select-bibtype").value,
             cats: this.catsForm ? this.catsForm.value : [],
             entry_key: this.currentValues.entry_key, // is never updated.
             fields: {}
@@ -240,7 +240,7 @@ export class BibEntryForm {
         Object.keys(this.fields).forEach(fieldName => {
             const fieldValue = this.fields[fieldName].value
             if (fieldValue !== false) {
-                returnObj['fields'][fieldName] = fieldValue
+                returnObj["fields"][fieldName] = fieldValue
             }
         })
         return returnObj
@@ -251,7 +251,7 @@ export class BibEntryForm {
             itemId = this.itemId === false ? 0 : this.itemId,
             item = this.value
 
-        if (item.entry_key === 'FidusWriter') {
+        if (item.entry_key === "FidusWriter") {
             this.createEntryKey(item)
         }
         const saveObj = {}
@@ -273,7 +273,7 @@ export class BibEntryForm {
             }
         })
         if (!passed) {
-            addAlert('error', gettext('Error in form, check highlighted values!'))
+            addAlert("error", gettext("Error in form, check highlighted values!"))
         }
         return passed
     }

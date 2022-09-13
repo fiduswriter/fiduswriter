@@ -4,14 +4,14 @@ import {localizeDate, escapeText} from "../../common"
 export const documentrevisionsTemplate = ({doc}) =>
     `<table class="fw-data-table" style="width:342px;">
         <thead class="fw-data-table-header">
-            <th width="80">${gettext('Time')}</th>
-            <th width="300">${gettext('Description')}</th>
-            <th width="50">${gettext('Recreate')}</th>
-            <th width="50">${gettext('Download')}</th>
+            <th width="80">${gettext("Time")}</th>
+            <th width="300">${gettext("Description")}</th>
+            <th width="50">${gettext("Recreate")}</th>
+            <th width="50">${gettext("Download")}</th>
             ${
     doc.is_owner ?
-        `<th width="50">${gettext('Delete')}</th>` :
-        ''
+        `<th width="50">${gettext("Delete")}</th>` :
+        ""
 }
         </thead>
         <tbody class="fw-data-table-body fw-middle">
@@ -35,7 +35,7 @@ export const documentrevisionsTemplate = ({doc}) =>
                                     <i class="fa fa-trash"></i>
                                 </span>
                             </td>` :
-        ''
+        ""
 }
                     </tr>`
     )

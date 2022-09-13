@@ -25,12 +25,12 @@ export class SaveCopy {
                     httpIncludes,
                     this.newUser,
                     this.importId,
-                    longFilePath(doc.title, doc.path, `${gettext('Copy of')} `)
+                    longFilePath(doc.title, doc.path, `${gettext("Copy of")} `)
                 )
                 return importer.init()
             }).then(
             ({doc, docInfo}) => {
-                addAlert('info', `${doc.title} ${gettext(' successfully copied.')}`)
+                addAlert("info", `${doc.title} ${gettext(" successfully copied.")}`)
                 return Promise.resolve({doc, docInfo})
             }
         )

@@ -30,27 +30,27 @@ export function setSelectedChanges(state, type, pos) {
     }
     const selectedChange = node.isInline ? getFromToMark(tr.doc, pos, mark) : {from: pos, to: pos + node.nodeSize}
     let decos = DecorationSet.empty, spec
-    if (type === 'insertion') {
+    if (type === "insertion") {
         spec = selectedInsertionSpec
-    } else if (type === 'deletion') {
+    } else if (type === "deletion") {
         spec = selectedDeletionSpec
-    } else if (type === 'format_change') {
+    } else if (type === "format_change") {
         spec = selectedChangeFormatSpec
-    } else if (type === 'block_change') {
+    } else if (type === "block_change") {
         spec = selectedChangeBlockSpec
     }
     const decoType = node.isInline ? Decoration.inline : Decoration.node
     decos = decos.add(tr.doc, [decoType(selectedChange.from, selectedChange.to, {
         class: `selected-${type}`
     }, spec)])
-    return tr.setMeta(key, {decos}).setMeta('track', true)
+    return tr.setMeta(key, {decos}).setMeta("track", true)
 }
 
 export function deactivateAllSelectedChanges(tr) {
     const pluginState = {
         decos: DecorationSet.empty
     }
-    return tr.setMeta(key, pluginState).setMeta('track', true)
+    return tr.setMeta(key, pluginState).setMeta("track", true)
 }
 
 // From https://discuss.prosemirror.net/t/expanding-the-selection-to-the-active-mark/478/2 with some bugs fixed

@@ -1,40 +1,40 @@
 import {postJson} from "../network"
 
 export const shortFileTitle = function(title, path) {
-    if (!path.length || path.endsWith('/')) {
-        return title || gettext('Untitled')
+    if (!path.length || path.endsWith("/")) {
+        return title || gettext("Untitled")
     }
-    return path.split('/').pop()
+    return path.split("/").pop()
 }
 
-export const longFilePath = function(title, path, prefix = '') {
+export const longFilePath = function(title, path, prefix = "") {
     if (!path.length) {
-        path = '/'
+        path = "/"
     }
-    if (path.endsWith('/')) {
-        path += title.replace(/\//g, '') || gettext('Untitled')
+    if (path.endsWith("/")) {
+        path += title.replace(/\//g, "") || gettext("Untitled")
     }
     if (prefix.length) {
-        const pathParts = path.split('/')
+        const pathParts = path.split("/")
         const fileName = pathParts.pop()
         pathParts.push(prefix + fileName)
-        path = pathParts.join('/')
+        path = pathParts.join("/")
     }
 
     return path
 }
 
 export const cleanPath = function(title, path) {
-    if (!path.startsWith('/')) {
-        path = '/' + path
+    if (!path.startsWith("/")) {
+        path = "/" + path
     }
-    path = path.replace(/\/{2,}/g, '/') // replace multiple backslashes
+    path = path.replace(/\/{2,}/g, "/") // replace multiple backslashes
 
-    if (path.endsWith(`/${title.replace(/\//g, '')}` || `/${gettext('Untitled')}`)) {
-        path = path.split('/').slice(0, -1).join('/') + '/'
+    if (path.endsWith(`/${title.replace(/\//g, "")}` || `/${gettext("Untitled")}`)) {
+        path = path.split("/").slice(0, -1).join("/") + "/"
     }
-    if (path === '/') {
-        path = ''
+    if (path === "/") {
+        path = ""
     }
     return path
 }

@@ -25,7 +25,7 @@ export class SchemaExport {
         this.plugins = {}
 
         Object.keys(plugins).forEach(plugin => {
-            if (typeof plugins[plugin] === 'function') {
+            if (typeof plugins[plugin] === "function") {
                 this.plugins[plugin] = new plugins[plugin](this)
                 this.plugins[plugin].init()
             }

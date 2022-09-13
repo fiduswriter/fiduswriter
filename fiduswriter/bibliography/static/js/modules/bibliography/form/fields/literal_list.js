@@ -13,7 +13,7 @@ export class LiteralListForm {
 
     drawForm() {
         this.fields = []
-        this.dom.innerHTML = '<table class="input-list-wrapper"><tbody></tbody></table>'
+        this.dom.innerHTML = "<table class=\"input-list-wrapper\"><tbody></tbody></table>"
         this.currentValue.forEach((fieldValue, index) => {
             this.addField(fieldValue, index)
         })
@@ -21,7 +21,7 @@ export class LiteralListForm {
 
     addField(fieldValue, index) {
         this.dom.firstChild.firstChild.insertAdjacentHTML(
-            'beforeend',
+            "beforeend",
             noSpaceTmp`
             <tr>
                 <td></td>
@@ -37,8 +37,8 @@ export class LiteralListForm {
         this.fields.push(fieldHandler)
 
         // click on plus
-        const addItemEl = fieldDOM.querySelector('.fa-plus-circle')
-        addItemEl.addEventListener('click', () => {
+        const addItemEl = fieldDOM.querySelector(".fa-plus-circle")
+        addItemEl.addEventListener("click", () => {
             if (!this.value) {
                 return
             }
@@ -48,8 +48,8 @@ export class LiteralListForm {
         })
 
         // Click on minus
-        const removeItemEl = fieldDOM.querySelector('.fa-minus-circle')
-        removeItemEl.addEventListener('click', () => {
+        const removeItemEl = fieldDOM.querySelector(".fa-minus-circle")
+        removeItemEl.addEventListener("click", () => {
             if (!this.value) {
                 return
             }

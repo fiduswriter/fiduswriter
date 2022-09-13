@@ -1,6 +1,6 @@
 import {Plugin, PluginKey} from "prosemirror-state"
 
-const key = new PluginKey('footnoteMarkers')
+const key = new PluginKey("footnoteMarkers")
 
 export const findFootnoteMarkers = function(fromPos, toPos, doc) {
     const footnoteMarkers = []
@@ -8,7 +8,7 @@ export const findFootnoteMarkers = function(fromPos, toPos, doc) {
         if (!node.isInline) {
             return
         }
-        if (node.type.name === 'footnote') {
+        if (node.type.name === "footnote") {
             const from = pos
             const to = pos + node.nodeSize
             const footnoteMarker = {from, to}
@@ -77,7 +77,7 @@ export const updateFootnoteMarker = function(state, tr, index, content) {
     tr.setNodeMarkup(footnote.from, node.type, {
         footnote: content
     })
-    tr.setMeta('fromFootnote', true)
+    tr.setMeta("fromFootnote", true)
     return
 }
 
@@ -95,7 +95,7 @@ export const footnoteMarkersPlugin = function(options) {
             init(config, state) {
                 const fnMarkers = []
                 state.doc.descendants((node, pos) => {
-                    if (node.type.name === 'footnote') {
+                    if (node.type.name === "footnote") {
                         fnMarkers.push({
                             from: pos,
                             to: pos + node.nodeSize
@@ -126,8 +126,8 @@ export const footnoteMarkersPlugin = function(options) {
                     }
                 }
 
-                const remote = tr.getMeta('remote'),
-                    fromFootnote = tr.getMeta('fromFootnote'),
+                const remote = tr.getMeta("remote"),
+                    fromFootnote = tr.getMeta("fromFootnote"),
                     ranges = getAddedRanges(tr), deletedFootnotesIndexes = []
                 fnMarkers = fnMarkers.map(marker => ({
                     from: tr.mapping.map(marker.from, 1),
@@ -148,7 +148,7 @@ export const footnoteMarkersPlugin = function(options) {
                 }
                 const footTr = options.editor.mod.footnotes.fnEditor.view.state.tr
 
-                footTr.setMeta('fromMain', true)
+                footTr.setMeta("fromMain", true)
 
                 deletedFootnotesIndexes.forEach(index =>
                     options.editor.mod.footnotes.fnEditor.removeFootnote(index, footTr)
@@ -185,7 +185,7 @@ export const footnoteMarkersPlugin = function(options) {
                     }
                 })
 
-                const footMeta = tr.getMeta('toFoot')
+                const footMeta = tr.getMeta("toFoot")
 
                 if (footMeta) {
                     Object.entries(footMeta).forEach(([key, value]) => {
@@ -194,7 +194,7 @@ export const footnoteMarkersPlugin = function(options) {
                 }
 
                 if (footTr.docChanged || footMeta) {
-                    tr.setMeta('footTr', footTr)
+                    tr.setMeta("footTr", footTr)
                 }
 
                 return {

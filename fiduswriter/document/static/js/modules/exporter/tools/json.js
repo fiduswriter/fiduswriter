@@ -4,25 +4,25 @@ export const obj2Node = function(obj, docType) {
     if (obj === undefined) {
         return false
     }
-    if (docType === 'xhtml') {
-        parser = new window.DOMParser().parseFromString('<xml/>', "text/xml")
+    if (docType === "xhtml") {
+        parser = new window.DOMParser().parseFromString("<xml/>", "text/xml")
     } else {
         parser = document
     }
 
     function inner(obj, insideSvg) {
         let node
-        if (obj.hasOwnProperty('t')) {
+        if (obj.hasOwnProperty("t")) {
             node = parser.createTextNode(obj.t)
-        } else if (obj.hasOwnProperty('co')) {
+        } else if (obj.hasOwnProperty("co")) {
             node = parser.createComment(obj.co)
         } else {
-            if (obj.nn === 'svg' || insideSvg) {
-                node = parser.createElementNS('http://www.w3.org/2000/svg', obj.nn)
+            if (obj.nn === "svg" || insideSvg) {
+                node = parser.createElementNS("http://www.w3.org/2000/svg", obj.nn)
                 insideSvg = true
-            } else if (obj.nn === 'script') {
+            } else if (obj.nn === "script") {
                 // Do not allow scripts
-                return parser.createTextNode('')
+                return parser.createTextNode("")
             } else {
                 node = parser.createElement(obj.nn.toLowerCase())
             }

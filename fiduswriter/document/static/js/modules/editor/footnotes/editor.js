@@ -51,7 +51,7 @@ export class ModFootnoteEditor {
             [toolbarPlugin, () => ({editor: this.mod.editor})],
             [citationRenderPlugin, () => ({editor: this.mod.editor})],
             [collabCaretsPlugin, () => ({editor: this.mod.editor})],
-            [clipboardPlugin, () => ({editor: this.mod.editor, viewType: 'footnotes'})],
+            [clipboardPlugin, () => ({editor: this.mod.editor, viewType: "footnotes"})],
             [accessRightsPlugin, () => ({editor: this.mod.editor})],
             [commentsPlugin, () => ({editor: this.mod.editor})],
             [trackPlugin, () => ({editor: this.mod.editor})],
@@ -71,7 +71,7 @@ export class ModFootnoteEditor {
                 }
             })
 
-        this.view = new EditorView(document.getElementById('footnote-box-container'), {
+        this.view = new EditorView(document.getElementById("footnote-box-container"), {
             state: EditorState.create({
                 schema: this.schema,
                 doc,
@@ -83,12 +83,12 @@ export class ModFootnoteEditor {
                 }
             },
             dispatchTransaction: (tr) => {
-                const remote = tr.getMeta('remote'),
-                    fromMain = tr.getMeta('fromMain')
+                const remote = tr.getMeta("remote"),
+                    fromMain = tr.getMeta("fromMain")
                 // Skip if creating new footnote by typing directly into empty footnote editor.
                 if (
                     tr.docChanged &&
-                    tr.steps[0].jsonID === 'replace' &&
+                    tr.steps[0].jsonID === "replace" &&
                     tr.steps[0].from === 0 &&
                     tr.steps[0].to === 0 &&
                     !remote &&
@@ -108,8 +108,8 @@ export class ModFootnoteEditor {
 
     // Find out if we need to recalculate the bibliography
     onTransaction(tr) {
-        const mainMeta = tr.getMeta('toMain')
-        if (tr.getMeta('remote') || (!mainMeta && !tr.docChanged)) {
+        const mainMeta = tr.getMeta("toMain")
+        if (tr.getMeta("remote") || (!mainMeta && !tr.docChanged)) {
             return
         }
         const mainTr = this.mod.editor.view.state.tr,
@@ -117,7 +117,7 @@ export class ModFootnoteEditor {
 
         if (tr.docChanged) {
             const fns = [...new Set(tr.steps.map((step, index) => {
-                if (!step.hasOwnProperty('from')) {
+                if (!step.hasOwnProperty("from")) {
                     return -1
                 }
                 // Full insertion or deletion of footnotes mean that the from will be in-between footnotes
@@ -154,13 +154,13 @@ export class ModFootnoteEditor {
             steps,
             clientIds
         )
-        tr.setMeta('remote', true)
+        tr.setMeta("remote", true)
         this.view.dispatch(tr)
     }
 
     renderAllFootnotes() {
         const content = getFootnoteMarkerContents(this.mod.editor.view.state).map(fnContent => ({
-            type: 'footnotecontainer',
+            type: "footnotecontainer",
             content: fnContent
         }))
         const doc = this.schema.nodeFromJSON(

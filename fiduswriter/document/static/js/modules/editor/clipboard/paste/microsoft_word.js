@@ -7,7 +7,7 @@ export class MicrosoftWordPasteHandler extends GeneralPasteHandler {
     cleanDOM() {
         // Remove footnote list container with separator line
         const removableElements = this.dom.querySelectorAll(
-            'div[style*="mso-element:footnote-list"]'
+            "div[style*=\"mso-element:footnote-list\"]"
         )
 
         removableElements.forEach(el => el.parentNode.removeChild(el))
@@ -51,8 +51,8 @@ export class MicrosoftWordPasteHandler extends GeneralPasteHandler {
     // Convert an existing node to a different node, if needed.
     convertNode(node) {
         // Footnote markers (only in main pm instance):
-        if (node.tagName === 'A' &&
-            node.firstChild?.tagName === 'SPAN' &&
+        if (node.tagName === "A" &&
+            node.firstChild?.tagName === "SPAN" &&
             node.firstChild?.classList.contains("MsoFootnoteReference") &&
             this.pmType === "main") {
             // Remove "#_ftn" from the selector (#_ftn1)
@@ -62,7 +62,7 @@ export class MicrosoftWordPasteHandler extends GeneralPasteHandler {
             ).substring(5, fnSelector.length)
             const footnote = this.dom.querySelector("#ftn" + fnNumber)
             if (footnote) {
-                const footnoteCounter = footnote.querySelector('a[href="#_ftnref' + fnNumber + '"]')
+                const footnoteCounter = footnote.querySelector("a[href=\"#_ftnref" + fnNumber + "\"]")
                 if (footnoteCounter) {
                     const followingNode = footnoteCounter.nextSibling
                     footnoteCounter.parentNode.removeChild(footnoteCounter)

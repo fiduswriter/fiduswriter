@@ -1,19 +1,19 @@
 export function getNonDeletedTextContent(topNode) {
-    let text = ''
+    let text = ""
     topNode.descendants((node) => {
         if (
-            node.marks.find(mark => mark.type.name === 'deletion') ||
+            node.marks.find(mark => mark.type.name === "deletion") ||
             (
                 node.attrs &&
                 (
-                    node.attrs.track.find(track => track.type === 'deletion') ||
+                    node.attrs.track.find(track => track.type === "deletion") ||
                     node.attrs.hidden
                 )
             )
         ) {
             return
         } else if (node.isBlock) {
-            text += '\n'
+            text += "\n"
         } else if (node.isText) {
             text += node.text
         }

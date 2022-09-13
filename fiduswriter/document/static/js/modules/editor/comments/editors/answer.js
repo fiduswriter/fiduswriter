@@ -8,11 +8,11 @@ export class CommentAnswerEditor extends CommentEditor {
     }
 
     initViewDOM() {
-        this.viewDOM = document.createElement('div')
-        this.viewDOM.classList.add('ProseMirror-wrapper')
+        this.viewDOM = document.createElement("div")
+        this.viewDOM.classList.add("ProseMirror-wrapper")
         this.dom.appendChild(this.viewDOM)
         this.dom.insertAdjacentHTML(
-            'beforeend',
+            "beforeend",
             `<div class="comment-btns">
                 <button class="submit fw-button fw-dark disabled" type="submit">
                     ${this.options.answerId ? gettext("Edit") : gettext("Submit")}

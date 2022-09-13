@@ -77,17 +77,17 @@ export class DocumentTemplateDesigner {
             citationStyles: this.citationStyles
         })
         ensureCSS([
-            'common.css',
-            'dialog.css',
-            'prosemirror.css',
-            'prosemirror-menu.css',
-            'prosemirror-example-setup.css',
-            'document_template_designer.css',
-            'tags.css',
-            'contributors.css',
-            'dialog.css',
-            'table.css',
-            'dialog_table.css'
+            "common.css",
+            "dialog.css",
+            "prosemirror.css",
+            "prosemirror-menu.css",
+            "prosemirror-example-setup.css",
+            "document_template_designer.css",
+            "tags.css",
+            "contributors.css",
+            "dialog.css",
+            "table.css",
+            "dialog_table.css"
         ])
         this.setupInitialEditors()
         this.bind()
@@ -97,50 +97,50 @@ export class DocumentTemplateDesigner {
         let valid = true
         const ids = []
         const errors = {}
-        const titleEl = this.dom.querySelector('input.title')
+        const titleEl = this.dom.querySelector("input.title")
         if (titleEl.classList.contains("error-element")) {
             titleEl.classList.remove("error-element")
         }
         this.title = titleEl.value
         if (!this.title.length) {
             valid = false
-            errors.empty_template_title = gettext('The template needs a title.')
+            errors.empty_template_title = gettext("The template needs a title.")
             titleEl.classList.add("error-element")
             titleEl.scrollIntoView({block: "center", behavior: "smooth"})
         }
-        const importIdEl = this.dom.querySelector('input.import-id')
+        const importIdEl = this.dom.querySelector("input.import-id")
         const importId = importIdEl.value
         if (!importId.length) {
             valid = false
-            errors.empty_import_id = gettext('The template needs an ID.')
+            errors.empty_import_id = gettext("The template needs an ID.")
             importIdEl.classList.add("error-element")
             importIdEl.scrollIntoView({block: "center", behavior: "smooth"})
         }
         if (/\s/.test(importId)) {
             valid = false
-            errors.no_spaces = gettext('The template ID cannot contain spaces.')
+            errors.no_spaces = gettext("The template ID cannot contain spaces.")
             importIdEl.classList.add("error-element")
             importIdEl.scrollIntoView({block: "center", behavior: "smooth"})
         }
 
 
         this.value = {
-            type: 'article',
-            content: [{type: 'title'}].concat(
-                Array.from(this.dom.querySelectorAll('.to-container .doc-part:not(.fixed)')).map(
+            type: "article",
+            content: [{type: "title"}].concat(
+                Array.from(this.dom.querySelectorAll(".to-container .doc-part:not(.fixed)")).map(
                     el => {
                         const type = el.dataset.type,
-                            id = el.querySelector('input.id').value,
-                            title = el.querySelector('input.title') ? el.querySelector('input.title').value : false,
-                            help = this.getEditorValue(el.querySelector('.instructions')),
+                            id = el.querySelector("input.id").value,
+                            title = el.querySelector("input.title") ? el.querySelector("input.title").value : false,
+                            help = this.getEditorValue(el.querySelector(".instructions")),
                             initial = this.getEditorValue(
-                                el.querySelector('.initial'),
+                                el.querySelector(".initial"),
                                 true
                             ),
-                            locking = el.querySelector('.locking option:checked') ?
-                                el.querySelector('.locking option:checked').value :
-                                'false',
-                            optional = el.querySelector('.optional option:checked') ? el.querySelector('.optional option:checked').value : false,
+                            locking = el.querySelector(".locking option:checked") ?
+                                el.querySelector(".locking option:checked").value :
+                                "false",
+                            optional = el.querySelector(".optional option:checked") ? el.querySelector(".optional option:checked").value : false,
                             attrs = {id, title},
                             node = {type, attrs}
                         if (help) {
@@ -150,57 +150,57 @@ export class DocumentTemplateDesigner {
                             attrs.initial = initial
                             node.content = JSON.parse(JSON.stringify(initial))
                         }
-                        if (optional !== 'false') {
+                        if (optional !== "false") {
                             attrs.optional = optional
                         }
-                        if (optional === 'hidden') {
+                        if (optional === "hidden") {
                             attrs.hidden = true
                         }
-                        if (locking !== 'false') {
+                        if (locking !== "false") {
                             attrs.locking = locking
                         }
                         switch (type) {
-                        case 'richtext_part':
-                        case 'heading_part': {
-                            attrs.elements = Array.from(el.querySelectorAll('.elements:checked')).map(el => el.value)
+                        case "richtext_part":
+                        case "heading_part": {
+                            attrs.elements = Array.from(el.querySelectorAll(".elements:checked")).map(el => el.value)
                             if (!attrs.elements.length) {
-                                attrs.elements = ['paragraph']
+                                attrs.elements = ["paragraph"]
                             }
-                            attrs.marks = Array.from(el.querySelectorAll('.marks:checked')).map(el => el.value)
-                            const language = el.querySelector('.language').value
-                            if (language !== 'false') {
+                            attrs.marks = Array.from(el.querySelectorAll(".marks:checked")).map(el => el.value)
+                            const language = el.querySelector(".language").value
+                            if (language !== "false") {
                                 attrs.language = language
                             }
                             if (!node.content) {
                                 node.content = [{type: attrs.elements[0]}]
                             }
-                            const metadata = el.querySelector('select.metadata').value
-                            if (metadata !== 'false') {
+                            const metadata = el.querySelector("select.metadata").value
+                            if (metadata !== "false") {
                                 attrs.metadata = metadata
                             }
                             break
                         }
-                        case 'table_part': {
-                            attrs.elements = Array.from(el.querySelectorAll('.elements:checked')).map(el => el.value)
-                            if (!attrs.elements.includes('paragraph')) {
+                        case "table_part": {
+                            attrs.elements = Array.from(el.querySelectorAll(".elements:checked")).map(el => el.value)
+                            if (!attrs.elements.includes("paragraph")) {
                                 // tables need to allow paragraphs
-                                attrs.elements.push('paragraph')
+                                attrs.elements.push("paragraph")
                             }
-                            attrs.marks = Array.from(el.querySelectorAll('.marks:checked')).map(el => el.value)
-                            const language = el.querySelector('.language').value
-                            if (language !== 'false') {
+                            attrs.marks = Array.from(el.querySelectorAll(".marks:checked")).map(el => el.value)
+                            const language = el.querySelector(".language").value
+                            if (language !== "false") {
                                 attrs.language = language
                             }
                             if (!node.content) {
-                                node.content = [{type: 'table', content: [{type: 'table_row', content: [{type: 'table_cell', content: [{type: 'paragraph'}]}]}]}]
+                                node.content = [{type: "table", content: [{type: "table_row", content: [{type: "table_cell", content: [{type: "paragraph"}]}]}]}]
                             }
                             break
                         }
-                        case 'contributors_part':
-                        case 'tags_part': {
-                            attrs.item_title = el.querySelector('input.item_title').value
-                            const metadata = el.querySelector('select.metadata').value
-                            if (metadata !== 'false') {
+                        case "contributors_part":
+                        case "tags_part": {
+                            attrs.item_title = el.querySelector("input.item_title").value
+                            const metadata = el.querySelector("select.metadata").value
+                            if (metadata !== "false") {
                                 attrs.metadata = metadata
                             }
                             break
@@ -213,27 +213,27 @@ export class DocumentTemplateDesigner {
                         }
                         if (!id.length) {
                             valid = false
-                            errors.missing_id = gettext('All document parts need an ID.')
+                            errors.missing_id = gettext("All document parts need an ID.")
                             el.classList.add("error-element")
                             el.scrollIntoView({block: "center", behavior: "smooth"})
                         }
                         if (/\s/.test(id)) {
                             valid = false
-                            errors.no_spaces = gettext('IDs cannot contain spaces.')
+                            errors.no_spaces = gettext("IDs cannot contain spaces.")
                             el.classList.add("error-element")
                             el.scrollIntoView({block: "center", behavior: "smooth"})
                         }
                         if (ids.includes(id)) {
                             valid = false
-                            Array.from(this.dom.querySelectorAll('.to-container .doc-part:not(.fixed)')).map(
+                            Array.from(this.dom.querySelectorAll(".to-container .doc-part:not(.fixed)")).map(
                                 el => {
-                                    const id_duplicate = el.querySelector('input.id').value
+                                    const id_duplicate = el.querySelector("input.id").value
                                     if (id_duplicate == id) {
                                         el.classList.add("error-element")
                                     }
                                 })
                             el.scrollIntoView({block: "center", behavior: "smooth"})
-                            errors.unique_id = gettext('IDs have to be unique.')
+                            errors.unique_id = gettext("IDs have to be unique.")
                         }
                         ids.push(id)
                         return node
@@ -242,22 +242,22 @@ export class DocumentTemplateDesigner {
             ),
             attrs: {
                 import_id: importId,
-                footnote_elements: Array.from(this.dom.querySelectorAll('.footnote-value .elements:checked')).map(el => el.value),
-                footnote_marks: Array.from(this.dom.querySelectorAll('.footnote-value .marks:checked')).map(el => el.value),
-                language: this.dom.querySelector('.language-value option:checked') ? this.dom.querySelector('.language-value option:checked').value : false,
-                languages: Array.from(this.dom.querySelectorAll('.languages-value option:checked')).map(el => el.value),
-                citationstyle: this.dom.querySelector('.citationstyle-value option:checked') ? this.dom.querySelector('.citationstyle-value option:checked').value : false,
+                footnote_elements: Array.from(this.dom.querySelectorAll(".footnote-value .elements:checked")).map(el => el.value),
+                footnote_marks: Array.from(this.dom.querySelectorAll(".footnote-value .marks:checked")).map(el => el.value),
+                language: this.dom.querySelector(".language-value option:checked") ? this.dom.querySelector(".language-value option:checked").value : false,
+                languages: Array.from(this.dom.querySelectorAll(".languages-value option:checked")).map(el => el.value),
+                citationstyle: this.dom.querySelector(".citationstyle-value option:checked") ? this.dom.querySelector(".citationstyle-value option:checked").value : false,
                 citationstyles: Array.from(
-                    this.dom.querySelectorAll('.citationstyles-value option:checked')
+                    this.dom.querySelectorAll(".citationstyles-value option:checked")
                 ).map(el => el.value).slice(0, 30),
-                papersizes: Array.from(this.dom.querySelectorAll('.papersizes-value option:checked')).map(el => el.value),
-                bibliography_header: Array.from(this.dom.querySelectorAll('.bibliography-header-value tr')).reduce(
+                papersizes: Array.from(this.dom.querySelectorAll(".papersizes-value option:checked")).map(el => el.value),
+                bibliography_header: Array.from(this.dom.querySelectorAll(".bibliography-header-value tr")).reduce(
                     (stringObj, trEl) => {
-                        const inputEl = trEl.querySelector('input')
+                        const inputEl = trEl.querySelector("input")
                         if (!inputEl.value.length) {
                             return stringObj
                         }
-                        const selectEl = trEl.querySelector('select')
+                        const selectEl = trEl.querySelector("select")
                         stringObj[selectEl.value] = inputEl.value
                         return stringObj
                     },
@@ -267,20 +267,20 @@ export class DocumentTemplateDesigner {
             }
         }
         if (!this.value.attrs.papersizes.length) {
-            this.value.attrs.papersizes = ['A4']
+            this.value.attrs.papersizes = ["A4"]
         }
         this.value.attrs.papersize = this.value.attrs.papersizes[0]
         if (!this.value.attrs.footnote_elements.length) {
-            this.value.attrs.footnote_elements = ['paragraph']
+            this.value.attrs.footnote_elements = ["paragraph"]
         }
         if (!this.value.attrs.languages.length) {
-            this.value.attrs.languages = ['en-US']
+            this.value.attrs.languages = ["en-US"]
         }
         if (!this.value.attrs.languages.includes(this.value.attrs.language)) {
             this.value.attrs.language = this.value.attrs.languages[0]
         }
         if (!this.value.attrs.citationstyles.length) {
-            this.value.attrs.citationstyles = ['apa']
+            this.value.attrs.citationstyles = ["apa"]
         }
         if (!this.value.attrs.citationstyles.includes(this.value.attrs.citationstyle)) {
             this.value.attrs.language = this.value.attrs.citationstyles[0]
@@ -296,7 +296,7 @@ export class DocumentTemplateDesigner {
     }
 
     setupInitialEditors() {
-        Array.from(this.dom.querySelectorAll('.to-container .doc-part:not(.fixed)')).forEach((el, index) => {
+        Array.from(this.dom.querySelectorAll(".to-container .doc-part:not(.fixed)")).forEach((el, index) => {
             const value = this.value.content[index + 1], // offset by title
                 help = value.attrs.help,
                 initial = value.attrs.initial,
@@ -306,12 +306,12 @@ export class DocumentTemplateDesigner {
     }
 
     setupEditors(el, type, help = false, initial = false) {
-        const helpEl = el.querySelector('.instructions')
+        const helpEl = el.querySelector(".instructions")
         if (!helpEl) {
             return
         }
         const helpDoc = help ?
-                helpSchema.nodeFromJSON({type: 'doc', content: help}) :
+                helpSchema.nodeFromJSON({type: "doc", content: help}) :
                 helpSchema.nodes.doc.createAndFill(),
             helpView = new EditorView(helpEl, {
                 state: EditorState.create({
@@ -341,21 +341,21 @@ export class DocumentTemplateDesigner {
         })]
         let menuContent = [], schema
         switch (type) {
-        case 'richtext_part':
+        case "richtext_part":
             schema = richtextPartSchema
             menuContent = richtextMenuContent
             plugins.push(tableEditing())
             break
-        case 'table_part':
+        case "table_part":
             schema = tablePartSchema
             menuContent = tableMenuContent
             plugins.push(tableEditing())
             break
-        case 'heading_part':
+        case "heading_part":
             schema = headingPartSchema
             menuContent = headingMenuContent
             break
-        case 'tags_part':
+        case "tags_part":
             schema = tagsPartSchema
             plugins.push(new Plugin({
                 props: {
@@ -365,7 +365,7 @@ export class DocumentTemplateDesigner {
                 }
             }))
             break
-        case 'contributors_part':
+        case "contributors_part":
             schema = contributorsPartSchema
             plugins.push(new Plugin({
                 props: {
@@ -393,10 +393,10 @@ export class DocumentTemplateDesigner {
             }),
             history()
         )
-        const initialEl = el.querySelector('.initial'),
+        const initialEl = el.querySelector(".initial"),
             doc = initial ?
                 schema.nodeFromJSON({
-                    type: 'doc',
+                    type: "doc",
                     content: [{
                         type: type,
                         content: initial
@@ -425,7 +425,7 @@ export class DocumentTemplateDesigner {
         // Only return if there is more content that a recently initiated doc
         // would have. The number varies between part types.
         if (
-            state.doc.firstChild.type.name === 'heading_part' ||
+            state.doc.firstChild.type.name === "heading_part" ||
             state.doc.nodeSize > state.schema.nodes.doc.createAndFill().nodeSize
         ) {
             return initial ? noTrack(state.doc.firstChild.toJSON()).content : noTrack(state.doc.toJSON()).content
@@ -434,32 +434,32 @@ export class DocumentTemplateDesigner {
     }
 
     close() {
-        this.dom.innerHTML = ''
-        document.removeEventListener('scroll', this.listeners.onScroll)
+        this.dom.innerHTML = ""
+        document.removeEventListener("scroll", this.listeners.onScroll)
     }
 
     bind() {
         new sortable(
-            this.dom.querySelector('.from-container'),
+            this.dom.querySelector(".from-container"),
             {
                 group: {
-                    name: 'document',
-                    pull: 'clone',
+                    name: "document",
+                    pull: "clone",
                     put: false
                 },
                 sort: false,
-                handle: '.doc-part-header'
+                handle: ".doc-part-header"
             }
         )
         new sortable(
-            this.dom.querySelector('.to-container'),
+            this.dom.querySelector(".to-container"),
             {
                 group: {
-                    name: 'document',
+                    name: "document",
                     pull: true,
                     put: true
                 },
-                handle: '.doc-part-header',
+                handle: ".doc-part-header",
                 onAdd: event => {
                     this.setupEditors(
                         event.item,
@@ -469,39 +469,39 @@ export class DocumentTemplateDesigner {
             }
         )
         new sortable(
-            this.dom.querySelector('.trash'),
+            this.dom.querySelector(".trash"),
             {
                 group: {
-                    name: 'document',
+                    name: "document",
                     put: true
                 },
-                handle: '.doc-part-header',
+                handle: ".doc-part-header",
                 onAdd: event => event.to.removeChild(event.to.firstElementChild) // Remove the item that was just added
             }
         )
 
-        this.dom.addEventListener('click', event => {
+        this.dom.addEventListener("click", event => {
             const el = {}
             switch (true) {
-            case findTarget(event, '.doc-part .configure', el):
+            case findTarget(event, ".doc-part .configure", el):
                 event.preventDefault()
-                el.target.closest('.doc-part').querySelector('.attrs').classList.toggle('hidden')
+                el.target.closest(".doc-part").querySelector(".attrs").classList.toggle("hidden")
                 break
-            case findTarget(event, '.bibliography-header-value .fa-plus-circle', el):
+            case findTarget(event, ".bibliography-header-value .fa-plus-circle", el):
                 event.preventDefault()
                 this.getCurrentValue()
-                this.dom.querySelector('.bibliography-header-value').innerHTML =
+                this.dom.querySelector(".bibliography-header-value").innerHTML =
                         bibliographyHeaderTemplate({
-                            bibliography_header: Object.assign({}, this.value.attrs.bibliography_header, {zzz: ''}) // 'zzz' so that the entry is added at the of the list
+                            bibliography_header: Object.assign({}, this.value.attrs.bibliography_header, {zzz: ""}) // 'zzz' so that the entry is added at the of the list
                         })
                 break
-            case findTarget(event, '.bibliography-header-value .fa-minus-circle', el): {
+            case findTarget(event, ".bibliography-header-value .fa-minus-circle", el): {
                 event.preventDefault()
-                const trEl = el.target.closest('tr')
+                const trEl = el.target.closest("tr")
                 trEl.parentElement.removeChild(trEl)
                 break
             }
-            case findTarget(event, 'button.document-style', el): {
+            case findTarget(event, "button.document-style", el): {
                 event.preventDefault()
                 const id = parseInt(el.target.dataset.id)
                 const style = this.documentStyles.find(style => style.pk === id)
@@ -510,13 +510,13 @@ export class DocumentTemplateDesigner {
                     style,
                     this.id,
                     this.documentStyles,
-                    () => this.dom.querySelector('.document-styles').innerHTML =
+                    () => this.dom.querySelector(".document-styles").innerHTML =
                             documentStylesTemplate({documentStyles: this.documentStyles})
                 )
                 dialog.init()
                 break
             }
-            case findTarget(event, 'button.export-template', el): {
+            case findTarget(event, "button.export-template", el): {
                 event.preventDefault()
                 const id = parseInt(el.target.dataset.id)
                 const template = this.exportTemplates.find(template => template.pk === id)
@@ -527,7 +527,7 @@ export class DocumentTemplateDesigner {
                         template,
                         this.id,
                         this.exportTemplates,
-                        () => this.dom.querySelector('.export-templates').innerHTML =
+                        () => this.dom.querySelector(".export-templates").innerHTML =
                                 exportTemplatesTemplate({exportTemplates: this.exportTemplates}),
                         value
                     )
@@ -540,15 +540,15 @@ export class DocumentTemplateDesigner {
             }
         })
 
-        document.addEventListener('scroll', this.listeners.onScroll)
+        document.addEventListener("scroll", this.listeners.onScroll)
 
-        this.dom.querySelector('.languages-value').addEventListener('change', () => {
+        this.dom.querySelector(".languages-value").addEventListener("change", () => {
             this.getCurrentValue()
-            this.dom.querySelector('.language-value').innerHTML = languageTemplate(this.value.attrs)
+            this.dom.querySelector(".language-value").innerHTML = languageTemplate(this.value.attrs)
         })
 
-        this.dom.querySelector('.citationstyles-value').addEventListener('change', () => {
-            const checkedElements = Array.from(this.dom.querySelectorAll('.citationstyles-value option:checked'))
+        this.dom.querySelector(".citationstyles-value").addEventListener("change", () => {
+            const checkedElements = Array.from(this.dom.querySelectorAll(".citationstyles-value option:checked"))
             this.getCurrentValue()
             if (checkedElements.length > this.value.attrs.citationstyles.length) {
                 // Selected more than the max limit. We deselect the remaining.
@@ -558,7 +558,7 @@ export class DocumentTemplateDesigner {
                     }
                 })
             }
-            this.dom.querySelector('.citationstyle-value').innerHTML = citationstyleTemplate(
+            this.dom.querySelector(".citationstyle-value").innerHTML = citationstyleTemplate(
                 this.value.attrs,
                 this.citationStyles
             )
@@ -566,8 +566,8 @@ export class DocumentTemplateDesigner {
     }
 
     onScroll() {
-        const fromContainer = this.dom.querySelector('.from-container'),
-            toContainer = this.dom.querySelector('.to-container'),
+        const fromContainer = this.dom.querySelector(".from-container"),
+            toContainer = this.dom.querySelector(".to-container"),
             fromRect = fromContainer.getBoundingClientRect(),
             toRect = toContainer.getBoundingClientRect()
         if (toRect.height + 25 + fromRect.top > 0) {

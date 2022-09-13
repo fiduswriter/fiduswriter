@@ -32,19 +32,19 @@ export class JATSExporter {
         this.converter = new JATSExporterConvert(this, this.imageDB, this.bibDB, this.doc.settings)
         this.citations = new JATSExporterCitations(this, this.bibDB, this.csl)
         return this.converter.init(this.docContent).then(({jats, imageIds}) => {
-            this.textFiles.push({filename: 'manuscript.xml', contents: jats})
+            this.textFiles.push({filename: "manuscript.xml", contents: jats})
             const images = imageIds.map(
                 id => {
                     const imageEntry = this.imageDB.db[id]
                     return {
                         title: imageEntry.title,
-                        filename: imageEntry.image.split('/').pop(),
+                        filename: imageEntry.image.split("/").pop(),
                         url: imageEntry.image
                     }
                 }
             )
             this.textFiles.push({
-                filename: 'manifest.xml',
+                filename: "manifest.xml",
                 contents: darManifest({title: this.docTitle, images})
             })
             images.forEach(image => {
@@ -69,6 +69,6 @@ export class JATSExporter {
     }
 
     download(blob) {
-        return download(blob, this.zipFileName, 'application/zip')
+        return download(blob, this.zipFileName, "application/zip")
     }
 }

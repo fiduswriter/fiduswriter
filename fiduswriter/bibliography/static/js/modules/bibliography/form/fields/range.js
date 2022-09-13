@@ -28,18 +28,18 @@ export class RangeFieldForm {
                 <div class="type-switch-input-wrapper">
                     <button class="type-switch">
                         <span class="type-switch-inner">
-                            <span class="type-switch-label">${gettext('Single value')}</span>
-                            <span class="type-switch-label">${gettext('Range')}</span>
+                            <span class="type-switch-label">${gettext("Single value")}</span>
+                            <span class="type-switch-label">${gettext("Range")}</span>
                         </span>
                     </button>
                     <div class="type-switch-input-inner"></div>
                 </div>
             `
 
-        this.switcher = this.dom.querySelector('.type-switch')
-        this.inner = this.dom.querySelector('.type-switch-input-inner')
+        this.switcher = this.dom.querySelector(".type-switch")
+        this.inner = this.dom.querySelector(".type-switch-input-inner")
 
-        this.switcher.addEventListener('click', () => this.switchMode())
+        this.switcher.addEventListener("click", () => this.switchMode())
     }
 
     switchMode() {
@@ -60,21 +60,21 @@ export class RangeFieldForm {
     }
 
     drawSingleValueForm() {
-        this.switcher.classList.add('value1')
-        this.switcher.classList.remove('value2')
+        this.switcher.classList.add("value1")
+        this.switcher.classList.remove("value2")
 
         this.fields = {}
         this.inner.innerHTML = noSpaceTmp`<div class='single-value field-part field-part-single'></div>`
-        this.fields['single'] = new LiteralFieldForm(
-            this.dom.querySelector('.single-value'),
+        this.fields["single"] = new LiteralFieldForm(
+            this.dom.querySelector(".single-value"),
             this.currentValue[0]
         )
         this.fields.single.init()
     }
 
     drawRangeForm() {
-        this.switcher.classList.remove('value1')
-        this.switcher.classList.add('value2')
+        this.switcher.classList.remove("value1")
+        this.switcher.classList.add("value2")
 
         this.fields = {}
         this.inner.innerHTML =
@@ -82,16 +82,16 @@ export class RangeFieldForm {
                 <div class='range-from field-part field-part-huge'></div>
                 <div class='range-to field-part field-part-huge'></div>
             `
-        this.fields['from'] = new LiteralFieldForm(
-            this.dom.querySelector('.range-from'),
+        this.fields["from"] = new LiteralFieldForm(
+            this.dom.querySelector(".range-from"),
             this.currentValue[0],
-            gettext('From')
+            gettext("From")
         )
         this.fields.from.init()
-        this.fields['to'] = new LiteralFieldForm(
-            this.dom.querySelector('.range-to'),
+        this.fields["to"] = new LiteralFieldForm(
+            this.dom.querySelector(".range-to"),
             this.currentValue[1],
-            gettext('To')
+            gettext("To")
         )
         this.fields.to.init()
     }
@@ -105,8 +105,8 @@ export class RangeFieldForm {
                 return false
             }
             return [
-                this.fields.from.value ? this.fields.from.value : [{type: 'text', text: ''}],
-                this.fields.to.value ? this.fields.to.value : [{type: 'text', text: ''}]
+                this.fields.from.value ? this.fields.from.value : [{type: "text", text: ""}],
+                this.fields.to.value ? this.fields.to.value : [{type: "text", text: ""}]
             ]
         } else {
             if (!this.fields.single.value) {

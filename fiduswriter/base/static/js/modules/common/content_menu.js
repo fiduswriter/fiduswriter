@@ -2,42 +2,42 @@
 const menuTemplate = ({id, classes, height, width, zIndex, menu, scroll, page}) =>
     `<div tabindex="-1" role="incontent_menu"
         class="ui-content-menu ui-corner-all ui-widget ui-widget-content ui-front"
-        ${id ? `aria-describedby="${id}"` : ''} style="z-index: ${zIndex};">
-    <div ${id ? `id="${id}"` : ''} class="ui-content-menu-content ui-widget-content${classes ? ` ${classes}` : ''}${scroll ? ` ui-scrollable` : ''}" style="width: ${width}; height: ${height};">
+        ${id ? `aria-describedby="${id}"` : ""} style="z-index: ${zIndex};">
+    <div ${id ? `id="${id}"` : ""} class="ui-content-menu-content ui-widget-content${classes ? ` ${classes}` : ""}${scroll ? " ui-scrollable" : ""}" style="width: ${width}; height: ${height};">
     <div>
         <ul class="content-menu-list">
         ${
     menu.content.map((menuItem, index) => {
         switch (menuItem.type) {
-        case 'header':
+        case "header":
             return `<li><span class="content-menu-item-header" title="${menuItem.tooltip}">${
-                typeof menuItem.title === 'function' ?
+                typeof menuItem.title === "function" ?
                     menuItem.title(page) :
                     menuItem.title
             }</span></li>`
-        case 'separator':
-            return '<li><hr class="content-menu-item-divider"/></li>'
+        case "separator":
+            return "<li><hr class=\"content-menu-item-divider\"/></li>"
         default:
             return `<li data-index="${index}" class="content-menu-item${
                 menuItem.disabled && menuItem.disabled(page) ?
-                    ' disabled' :
+                    " disabled" :
                     menuItem.selected ?
-                        ' selected' :
-                        ''
+                        " selected" :
+                        ""
             }" title='${menuItem.tooltip}'>
                         ${
-    typeof menuItem.title === 'function' ?
+    typeof menuItem.title === "function" ?
         menuItem.title(page) :
         menuItem.title
 } ${
     menuItem.icon ?
         `<span class="content-menu-item-icon"><i class="fa fa-${menuItem.icon}"></i></span>` :
-        ''
+        ""
 }
                         </li>`
         }
 
-    }).join('')
+    }).join("")
 }
         </ul>
     </div>
@@ -63,8 +63,8 @@ export class ContentMenu {
         this.page = page
         this.classes = classes
         this.menu = menu
-        this.height = height ? `${height}px` : 'auto'
-        this.width = width ? `${width}px` : 'auto'
+        this.height = height ? `${height}px` : "auto"
+        this.width = width ? `${width}px` : "auto"
         this.onClose = onClose
         this.scroll = scroll
         this.dialogEl = dialogEl
@@ -77,7 +77,7 @@ export class ContentMenu {
             return
         }
         document.body.insertAdjacentHTML(
-            'beforeend',
+            "beforeend",
             menuTemplate({
                 id: this.id,
                 classes: this.classes,
@@ -140,14 +140,14 @@ export class ContentMenu {
     }
 
     bind() {
-        this.backdropEl.addEventListener('click', () => this.close())
-        this.dialogEl.addEventListener('click', event => this.onclick(event))
+        this.backdropEl.addEventListener("click", () => this.close())
+        this.dialogEl.addEventListener("click", event => this.onclick(event))
     }
 
     getHighestDialogZIndex() {
         let zIndex = 100
-        document.querySelectorAll('div.ui-content-menu').forEach(dialogEl => zIndex = Math.max(zIndex, dialogEl.style.zIndex))
-        document.querySelectorAll('div.ui-dialog').forEach(dialogEl => zIndex = Math.max(zIndex, dialogEl.style.zIndex))
+        document.querySelectorAll("div.ui-content-menu").forEach(dialogEl => zIndex = Math.max(zIndex, dialogEl.style.zIndex))
+        document.querySelectorAll("div.ui-dialog").forEach(dialogEl => zIndex = Math.max(zIndex, dialogEl.style.zIndex))
         return zIndex
     }
 
@@ -165,7 +165,7 @@ export class ContentMenu {
     onclick(event) {
         event.preventDefault()
         event.stopImmediatePropagation()
-        const target = event.target.closest('li.content-menu-item')
+        const target = event.target.closest("li.content-menu-item")
         if (target) {
             const menuNumber = target.dataset.index
             const menuItem = this.menu.content[menuNumber]

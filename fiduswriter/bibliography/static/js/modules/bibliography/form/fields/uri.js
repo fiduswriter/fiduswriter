@@ -1,5 +1,5 @@
 export class URIFieldForm {
-    constructor(dom, initialValue = '', placeHolder = '') {
+    constructor(dom, initialValue = "", placeHolder = "") {
         this.dom = dom
         this.initialValue = initialValue
         this.placeHolder = placeHolder
@@ -10,7 +10,7 @@ export class URIFieldForm {
     }
 
     get value() {
-        const formValue = this.dom.querySelector('input.uri').value
+        const formValue = this.dom.querySelector("input.uri").value
         // If the form has not been filled out, don't consider this form
         return formValue.length > 0 ? formValue : false
     }
@@ -27,7 +27,7 @@ export class URIFieldForm {
             )
 
             if (!regTest.test(formValue)) {
-                this.dom.classList.add('fw-fomt-error')
+                this.dom.classList.add("fw-fomt-error")
                 return false
             }
         }

@@ -23,8 +23,8 @@ const tracksInSelection = view => {
                 tracks = true
             } else if (node.marks?.find(mark => {
                 if (
-                    ['deletion', 'format_change'].includes(mark.type.name) ||
-                    mark.type.name === 'insertion' && !mark.attrs.approved
+                    ["deletion", "format_change"].includes(mark.type.name) ||
+                    mark.type.name === "insertion" && !mark.attrs.approved
                 ) {
                     return true
                 } else {
@@ -42,16 +42,16 @@ const tracksInSelection = view => {
 export const selectionMenuModel = () => ({
     content: [
         {
-            type: 'button',
-            title: gettext('Comment'),
-            icon: 'comment',
+            type: "button",
+            title: gettext("Comment"),
+            icon: "comment",
             action: editor => {
                 editor.mod.comments.interactions.createNewComment()
                 return false
             },
             hidden: editor => editor.currentView.state.selection.$anchor.depth < 2,
             selected: editor => !!editor.currentView.state.selection.$head.marks().some(
-                mark => mark.type.name === 'comment'
+                mark => mark.type.name === "comment"
             ),
             disabled: editor => {
                 if (editor.currentView === editor.view) {
@@ -65,11 +65,11 @@ export const selectionMenuModel = () => ({
             order: 1
         },
         {
-            type: 'button',
-            title: gettext('Anchor'),
-            icon: 'anchor',
+            type: "button",
+            title: gettext("Anchor"),
+            icon: "anchor",
             action: editor => {
-                const mark = editor.currentView.state.schema.marks['anchor']
+                const mark = editor.currentView.state.schema.marks["anchor"]
                 const command = toggleMark(mark, {id: randomAnchorId()})
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
@@ -85,14 +85,14 @@ export const selectionMenuModel = () => ({
             },
             hidden: editor => editor.currentView.state.selection.$anchor.depth < 2,
             selected: editor => !!editor.currentView.state.selection.$head.marks().some(
-                mark => mark.type.name === 'anchor'
+                mark => mark.type.name === "anchor"
             ),
             order: 2
         },
         {
-            type: 'button',
-            title: gettext('Accept all in selection'),
-            icon: 'check-double',
+            type: "button",
+            title: gettext("Accept all in selection"),
+            icon: "check-double",
             action: editor => acceptAll(
                 editor.currentView,
                 editor.currentView.state.selection.from,
@@ -103,9 +103,9 @@ export const selectionMenuModel = () => ({
             order: 3
         },
         {
-            type: 'button',
-            title: gettext('Reject all in selection'),
-            icon: 'trash',
+            type: "button",
+            title: gettext("Reject all in selection"),
+            icon: "trash",
             action: editor => rejectAll(
                 editor.currentView,
                 editor.currentView.state.selection.from,

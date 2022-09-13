@@ -8,14 +8,14 @@ const posHidden = function($pos) {
     let hidden = false
     for (let i = $pos.depth; i > 0; i--) {
         const node = $pos.node(i)
-        if (node.attrs.hidden || ['table_caption', 'figure_caption'].includes(node.type.name) && $pos.node(i - 1).attrs.caption === false) {
+        if (node.attrs.hidden || ["table_caption", "figure_caption"].includes(node.type.name) && $pos.node(i - 1).attrs.caption === false) {
             hidden = true
         }
     }
     return hidden
 }
 
-const key = new PluginKey('jump-hidden-nodes')
+const key = new PluginKey("jump-hidden-nodes")
 export const jumpHiddenNodesPlugin = function(_options) {
 
     return new Plugin({

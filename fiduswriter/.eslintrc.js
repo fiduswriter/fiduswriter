@@ -250,7 +250,7 @@ module.exports = { // eslint-disable-line no-undef
         "prefer-spread": "error",
         "prefer-template": "off",
         "quote-props": "off",
-        "quotes": "off",
+        "quotes": "error",
         "radix": [
             "error",
             "as-needed"

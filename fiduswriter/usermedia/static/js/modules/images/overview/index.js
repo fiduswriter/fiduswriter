@@ -32,8 +32,8 @@ export class ImageOverview {
 
     init() {
         ensureCSS([
-            'dialog_usermedia.css',
-            'dot_menu.css'
+            "dialog_usermedia.css",
+            "dot_menu.css"
         ], this.staticUrl)
 
         return whenReady().then(() => {
@@ -51,9 +51,9 @@ export class ImageOverview {
     }
 
     render() {
-        this.dom = document.createElement('body')
+        this.dom = document.createElement("body")
         this.dom.innerHTML = baseBodyTemplate({
-            contents: '',
+            contents: "",
             user: this.user,
             staticUrl: this.staticUrl,
             hasOverview: true,
@@ -61,9 +61,9 @@ export class ImageOverview {
         })
         document.body = this.dom
         ensureCSS([
-            'cropper.min.css'
+            "cropper.min.css"
         ], this.staticUrl)
-        setDocTitle(gettext('Media Manager'), this.app)
+        setDocTitle(gettext("Media Manager"), this.app)
         const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
         feedbackTab.init()
     }
@@ -73,7 +73,7 @@ export class ImageOverview {
         this.plugins = {}
 
         Object.keys(plugins).forEach(plugin => {
-            if (typeof plugins[plugin] === 'function') {
+            if (typeof plugins[plugin] === "function") {
                 this.plugins[plugin] = new plugins[plugin](this)
                 this.plugins[plugin].init()
             }
@@ -84,19 +84,19 @@ export class ImageOverview {
     deleteImage(ids) {
         ids = ids.map(id => parseInt(id))
         if (this.app.isOffline()) {
-            addAlert('error', gettext('You are currently offline. Please try again when you are back online.'))
+            addAlert("error", gettext("You are currently offline. Please try again when you are back online."))
             return
         }
         activateWait()
         post(
-            '/api/usermedia/delete/',
+            "/api/usermedia/delete/",
             {ids}
         ).catch(
             error => {
-                addAlert('error', gettext('The image(s) could not be deleted'))
+                addAlert("error", gettext("The image(s) could not be deleted"))
                 deactivateWait()
                 if (this.app.isOffline()) {
-                    addAlert('error', gettext('You are currently offline. Please try again when you are back online.'))
+                    addAlert("error", gettext("You are currently offline. Please try again when you are back online."))
                 } else {
                     throw (error)
                 }
@@ -105,7 +105,7 @@ export class ImageOverview {
             () => {
                 ids.forEach(id => delete this.app.imageDB.db[id])
                 this.removeTableRows(ids)
-                addAlert('success', gettext('The image(s) have been deleted'))
+                addAlert("success", gettext("The image(s) have been deleted"))
             }
         ).then(
             () => deactivateWait()
@@ -116,7 +116,7 @@ export class ImageOverview {
 
         const buttons = [
             {
-                text: gettext('Delete'),
+                text: gettext("Delete"),
                 classes: "fw-dark",
                 click: () => {
                     this.deleteImage(ids)
@@ -124,14 +124,14 @@ export class ImageOverview {
                 }
             },
             {
-                type: 'cancel'
+                type: "cancel"
             }
         ]
         const dialog = new Dialog({
-            id: 'confirmdeletion',
-            icon: 'exclamation-triangle',
-            title: gettext('Confirm deletion'),
-            body: `<p>${gettext('Delete the image(s)')}?</p>`,
+            id: "confirmdeletion",
+            icon: "exclamation-triangle",
+            title: gettext("Confirm deletion"),
+            body: `<p>${gettext("Delete the image(s)")}?</p>`,
             buttons
         })
         dialog.open()
@@ -150,7 +150,7 @@ export class ImageOverview {
         const image = this.app.imageDB.db[id]
         const cats = image.cats.map(cat => `cat_${cat}`)
 
-        let fileType = image.file_type.split('/')
+        let fileType = image.file_type.split("/")
 
         if (1 < fileType.length) {
             fileType = fileType[1].toUpperCase()
@@ -161,17 +161,17 @@ export class ImageOverview {
         return [
             String(id),
             `<input type="checkbox" class="entry-select fw-check" id="doc-img-${id}" data-id="${id}"><label for="doc-img-${id}"></label>`,
-            `<span class="fw-usermedia-image ${cats.join(' ')}">
+            `<span class="fw-usermedia-image ${cats.join(" ")}">
                 <img src="${image.thumbnail ? image.thumbnail : image.image}">
             </span>
             <span class="fw-usermedia-title">
                 <span class="edit-image fw-link-text fw-searchable" data-id="${id}">
-                    ${image.title.length ? escapeText(image.title) : gettext('Untitled')}
+                    ${image.title.length ? escapeText(image.title) : gettext("Untitled")}
                 </span>
                 <span class="fw-usermedia-type">${fileType}</span>
             </span>`,
             `<span>${image.width} x ${image.height}</span>`,
-            `<span class="date">${localizeDate(image.added, 'sortable-date')}</span>`,
+            `<span class="date">${localizeDate(image.added, "sortable-date")}</span>`,
             `<span class="delete-image fw-link-text" data-id="${id}">
                 <i class="fa fa-trash-alt"></i>
             </span>`
@@ -204,12 +204,12 @@ export class ImageOverview {
 
     /* Initialize the overview table */
     initTable(ids) {
-        const tableEl = document.createElement('table')
+        const tableEl = document.createElement("table")
         tableEl.id = "imagelist"
-        tableEl.classList.add('fw-data-table')
-        tableEl.classList.add('fw-large')
-        this.dom.querySelector('.fw-contents').innerHTML = ''
-        this.dom.querySelector('.fw-contents').appendChild(tableEl)
+        tableEl.classList.add("fw-data-table")
+        tableEl.classList.add("fw-large")
+        this.dom.querySelector(".fw-contents").innerHTML = ""
+        this.dom.querySelector(".fw-contents").appendChild(tableEl)
 
         this.dtBulk = new DatatableBulk(this, bulkMenuModel())
 
@@ -231,7 +231,7 @@ export class ImageOverview {
                 top: ""
             },
             data: {
-                headings: ['', this.dtBulk.getHTML(), gettext("File"), gettext("Size (px)"), gettext("Added"), ''],
+                headings: ["", this.dtBulk.getHTML(), gettext("File"), gettext("Size (px)"), gettext("Added"), ""],
                 data: ids.map(id => this.createTableRow(id))
             },
             columns: [
@@ -245,9 +245,9 @@ export class ImageOverview {
                 }
             ]
         })
-        this.lastSort = {column: 0, dir: 'asc'}
+        this.lastSort = {column: 0, dir: "asc"}
 
-        this.table.on('datatable.sort', (column, dir) => {
+        this.table.on("datatable.sort", (column, dir) => {
             this.lastSort = {column, dir}
         })
 
@@ -257,20 +257,20 @@ export class ImageOverview {
     // get IDs of selected bib entries
     getSelected() {
         return Array.from(
-            this.dom.querySelectorAll('.entry-select:checked:not(:disabled)')
-        ).map(el => parseInt(el.getAttribute('data-id')))
+            this.dom.querySelectorAll(".entry-select:checked:not(:disabled)")
+        ).map(el => parseInt(el.getAttribute("data-id")))
     }
 
     bindEvents() {
-        this.dom.addEventListener('click', event => {
+        this.dom.addEventListener("click", event => {
             const el = {}
             switch (true) {
-            case findTarget(event, '.delete-image', el): {
+            case findTarget(event, ".delete-image", el): {
                 const imageId = el.target.dataset.id
                 this.deleteImageDialog([imageId])
                 break
             }
-            case findTarget(event, '.edit-image', el): {
+            case findTarget(event, ".edit-image", el): {
                 const imageId = el.target.dataset.id
                 import("../edit_dialog").then(({ImageEditDialog}) => {
                     const dialog = new ImageEditDialog(this.app.imageDB, imageId, this)
@@ -282,11 +282,11 @@ export class ImageOverview {
                 })
                 break
             }
-            case findTarget(event, '.fw-add-input', el): {
-                const itemEl = el.target.closest('.fw-list-input')
+            case findTarget(event, ".fw-add-input", el): {
+                const itemEl = el.target.closest(".fw-list-input")
                 if (!itemEl.nextElementSibling) {
                     itemEl.insertAdjacentHTML(
-                        'afterend',
+                        "afterend",
                         `<tr class="fw-list-input">
                                 <td>
                                     <input type="text" class="category-form">

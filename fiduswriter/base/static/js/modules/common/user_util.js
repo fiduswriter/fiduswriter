@@ -9,7 +9,7 @@ export const filterPrimaryEmail = function(emails) {
         if (emails.length) {
             return emails[0].address
         } else {
-            return ''
+            return ""
         }
     }
     return primaryEmails[0].address

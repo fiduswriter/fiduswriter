@@ -17,20 +17,20 @@ export class OverviewMenuView {
     }
 
     bindEvents() {
-        this.menuEl = document.getElementById('fw-overview-menu')
+        this.menuEl = document.getElementById("fw-overview-menu")
         this.listeners.onclick = event => this.onclick(event)
-        document.body.addEventListener('click', this.listeners.onclick)
+        document.body.addEventListener("click", this.listeners.onclick)
         this.listeners.oninput = event => this.oninput(event)
-        document.body.addEventListener('input', this.listeners.oninput)
+        document.body.addEventListener("input", this.listeners.oninput)
         this.update()
     }
 
     oninput(event) {
         const target = event.target
-        if (target.matches('#fw-overview-menu > li > .fw-button > input')) {
+        if (target.matches("#fw-overview-menu > li > .fw-button > input")) {
             // A text was enetered in a top entry. we find which one.
             let menuNumber = 0
-            let seekItem = target.closest('li')
+            let seekItem = target.closest("li")
             while (seekItem.previousElementSibling) {
                 menuNumber++
                 seekItem = seekItem.previousElementSibling
@@ -45,10 +45,10 @@ export class OverviewMenuView {
 
     onclick(event) {
         const target = event.target
-        if (target.matches('#fw-overview-menu li li, #fw-overview-menu li li *')) {
+        if (target.matches("#fw-overview-menu li li, #fw-overview-menu li li *")) {
             event.preventDefault()
             let itemNumber = 0
-            let seekItem = target.closest('li')
+            let seekItem = target.closest("li")
             while (seekItem.previousElementSibling) {
                 itemNumber++
                 seekItem = seekItem.previousElementSibling
@@ -62,20 +62,20 @@ export class OverviewMenuView {
             this.model.content[menuNumber].content[itemNumber].action(this.overview)
             this.model.content[menuNumber].open = false
 
-            if (this.model.content[menuNumber].type === 'dropdown') {
+            if (this.model.content[menuNumber].type === "dropdown") {
                 this.model.content[menuNumber].title = this.model.content[menuNumber].content[itemNumber].title
                 this.openedMenu = false
                 this.update()
             }
             return false
-        } else if (target.matches('#fw-overview-menu li .select-action input[type=checkbox]')) {
+        } else if (target.matches("#fw-overview-menu li .select-action input[type=checkbox]")) {
             event.preventDefault()
             event.stopImmediatePropagation()
             event.stopPropagation()
             // A toolbar dropdown menu item was clicked. We just need to
             // find out which one
             let menuNumber = 0
-            let seekItem = target.closest('li')
+            let seekItem = target.closest("li")
             while (seekItem.previousElementSibling) {
                 menuNumber++
                 seekItem = seekItem.previousElementSibling
@@ -90,11 +90,11 @@ export class OverviewMenuView {
                 menuItem.checkAction(this.overview)
             }
             return true
-        } else if (target.matches('#fw-overview-menu li, #fw-overview-menu li *')) {
+        } else if (target.matches("#fw-overview-menu li, #fw-overview-menu li *")) {
             // A toolbar dropdown menu item was clicked. We just need to
             // find out which one
             let menuNumber = 0
-            let seekItem = target.closest('li')
+            let seekItem = target.closest("li")
             while (seekItem.previousElementSibling) {
                 menuNumber++
                 seekItem = seekItem.previousElementSibling
@@ -102,7 +102,7 @@ export class OverviewMenuView {
             const menuItem = this.model.content[menuNumber]
             // if it is a dropdown menu, open it. Otherwise execute an
             // associated action.
-            if (['dropdown', 'select-action-dropdown'].includes(menuItem.type)) {
+            if (["dropdown", "select-action-dropdown"].includes(menuItem.type)) {
                 event.preventDefault()
                 if (this.openedMenu === menuNumber) {
                     this.model.content[this.openedMenu].open = false
@@ -144,33 +144,33 @@ export class OverviewMenuView {
     getMenuHTML() {
         return `<ul id="fw-overview-menu">${
             this.model.content.map(menuItem =>
-                `<li class="fw-overview-menu-item${menuItem.id ? ` ${menuItem.id}` : ''} ${menuItem.type}">${
+                `<li class="fw-overview-menu-item${menuItem.id ? ` ${menuItem.id}` : ""} ${menuItem.type}">${
                     this.getMenuItemHTML(menuItem)
                 }</li>`
-            ).join('')
+            ).join("")
         }</ul>`
     }
 
     getMenuItemHTML(menuItem) {
         let returnValue
         switch (menuItem.type) {
-        case 'dropdown':
+        case "dropdown":
             returnValue = this.getDropdownHTML(menuItem)
             break
-        case 'select-action-dropdown':
+        case "select-action-dropdown":
             returnValue = this.getSelectionActionDropdownHTML(menuItem)
             break
-        case 'text':
+        case "text":
             returnValue = this.getTextHTML(menuItem)
             break
-        case 'button':
+        case "button":
             returnValue = this.getButtonHTML(menuItem)
             break
-        case 'search':
+        case "search":
             returnValue = this.getSearchHTML(menuItem)
             break
         default:
-            returnValue = ''
+            returnValue = ""
             break
         }
         return returnValue
@@ -182,8 +182,8 @@ export class OverviewMenuView {
         <div class="select-action fw-button fw-light fw-large">
             <input type="checkbox" ${
     menuItem.checked ?
-        'checked' :
-        ''
+        "checked" :
+        ""
 }>
             <span class="select-action-dropdown"><i class="fa fa-caret-down"></i></span>
         </div>
@@ -199,7 +199,7 @@ export class OverviewMenuView {
         escapeText(menuItem.title) :
         menuItem.content.length ?
             escapeText(menuItem.content[0].title) :
-            ''
+            ""
 }</label>
             <span class="dropdown"><i class="fa fa-caret-down"></i></span>
         </div>
@@ -210,10 +210,10 @@ export class OverviewMenuView {
     getDropdownListHTML(menuItem) {
         if (menuItem.open) {
             return `<div class="fw-pulldown fw-left" style="display: block;"><ul>${
-                menuItem.content.map(menuOption => this.getDropdownOptionHTML(menuOption)).join('')
+                menuItem.content.map(menuOption => this.getDropdownOptionHTML(menuOption)).join("")
             }</ul></div>`
         } else {
-            return ''
+            return ""
         }
     }
 
@@ -234,7 +234,7 @@ export class OverviewMenuView {
             ${
     menuItem.icon ?
         `<i class="fa fa-${menuItem.icon}"></i>` :
-        ''
+        ""
 }
         </button>`
     }
@@ -247,7 +247,7 @@ export class OverviewMenuView {
         return `
         <div class="fw-button fw-light fw-large disabled">
             <input type="text" placeholder="${menuItem.title}" aria-label="${menuItem.title}">
-            ${menuItem.icon ? `<i class="fa fa-${menuItem.icon}"></i>` : ''}
+            ${menuItem.icon ? `<i class="fa fa-${menuItem.icon}"></i>` : ""}
         </div>`
     }
 

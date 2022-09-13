@@ -19,13 +19,13 @@ export class ContributorDialog {
     init() {
         const buttons = []
         buttons.push({
-            text: this.contributor ? gettext('Update') : gettext('Add'),
-            classes: 'fw-dark',
+            text: this.contributor ? gettext("Update") : gettext("Add"),
+            classes: "fw-dark",
             click: () => {
-                let firstname = this.dialog.dialogEl.querySelector('input[name=firstname]').value,
-                    lastname = this.dialog.dialogEl.querySelector('input[name=lastname]').value,
-                    email = this.dialog.dialogEl.querySelector('input[name=email]').value,
-                    institution = this.dialog.dialogEl.querySelector('input[name=institution]').value
+                let firstname = this.dialog.dialogEl.querySelector("input[name=firstname]").value,
+                    lastname = this.dialog.dialogEl.querySelector("input[name=lastname]").value,
+                    email = this.dialog.dialogEl.querySelector("input[name=email]").value,
+                    institution = this.dialog.dialogEl.querySelector("input[name=institution]").value
 
                 firstname = firstname.length ? firstname : false
                 lastname = lastname.length ? lastname : false
@@ -36,7 +36,7 @@ export class ContributorDialog {
                     email &&
                     !emailRegExp.test(email)
                 ) {
-                    addAlert('error', gettext('Email is in incorrect format!'))
+                    addAlert("error", gettext("Email is in incorrect format!"))
                     return
                 }
 
@@ -55,8 +55,8 @@ export class ContributorDialog {
 
                 if (
                     this.contributor &&
-                    view.state.selection.jsonID === 'node' &&
-                    view.state.selection.node.type.name === 'contributor'
+                    view.state.selection.jsonID === "node" &&
+                    view.state.selection.node.type.name === "contributor"
                 ) {
                     posFrom = view.state.selection.from
                     posTo = view.state.selection.to
@@ -66,7 +66,7 @@ export class ContributorDialog {
                             posFrom = posTo = pos + node.nodeSize - 1
                             // - 1 to go to end of node contributors container node
                         }
-                        if ('id' in node.attrs) {
+                        if ("id" in node.attrs) {
                             return false
                         }
                     })
@@ -81,12 +81,12 @@ export class ContributorDialog {
         })
 
         buttons.push({
-            type: 'cancel'
+            type: "cancel"
         })
 
         this.dialog = new Dialog({
-            id: 'edit-contributor',
-            title: `${this.contributor ? gettext('Update') : gettext('Add')} ${this.node.attrs.item_title.toLowerCase()}`,
+            id: "edit-contributor",
+            title: `${this.contributor ? gettext("Update") : gettext("Add")} ${this.node.attrs.item_title.toLowerCase()}`,
             body: contributorTemplate({
                 contributor: this.contributor ? this.contributor : {},
             }),

@@ -130,17 +130,17 @@ const convertDocV1 = function(doc) {
 const convertNodeV1 = function(node) {
     let prefixes, locators, ids, references
     switch (node.type) {
-    case 'citation':
-        prefixes = node.attrs.bibBefore ? node.attrs.bibBefore.split(',,,') : []
-        locators = node.attrs.bibPage ? node.attrs.bibPage.split(',,,') : []
-        ids = node.attrs.bibEntry ? node.attrs.bibEntry.split(',') : []
+    case "citation":
+        prefixes = node.attrs.bibBefore ? node.attrs.bibBefore.split(",,,") : []
+        locators = node.attrs.bibPage ? node.attrs.bibPage.split(",,,") : []
+        ids = node.attrs.bibEntry ? node.attrs.bibEntry.split(",") : []
         references = ids.map((id, index) => {
             const returnObj = {id: parseInt(id)}
-            if (prefixes[index] !== '') {
-                returnObj['prefix'] = prefixes[index]
+            if (prefixes[index] !== "") {
+                returnObj["prefix"] = prefixes[index]
             }
-            if (locators[index] !== '') {
-                returnObj['locator'] = locators[index]
+            if (locators[index] !== "") {
+                returnObj["locator"] = locators[index]
             }
             return returnObj
         })
@@ -149,7 +149,7 @@ const convertNodeV1 = function(node) {
             references
         }
         break
-    case 'footnote':
+    case "footnote":
         if (node.attrs?.footnote) {
             node.attrs.footnote.forEach(childNode => {
                 convertNodeV1(childNode)
@@ -173,7 +173,7 @@ const convertDocV11 = function(doc) {
 const convertNodeV11 = function(node, ids = []) {
     let blockId
     switch (node.type) {
-    case 'heading':
+    case "heading":
         blockId = node.attrs.id
         while (!blockId || ids.includes(blockId)) {
             blockId = randomHeadingId()
@@ -198,7 +198,7 @@ const convertDocV12 = function(doc) {
 const convertNodeV12 = function(node, ids = []) {
     let blockId
     switch (node.type) {
-    case 'figure':
+    case "figure":
         blockId = node.attrs.id
         while (!blockId || ids.includes(blockId)) {
             blockId = randomFigureId()
@@ -227,25 +227,25 @@ const convertDocV13 = function(doc, bibliography) {
 const convertNodeV13 = function(node, shrunkBib, fullBib, imageIds) {
     let authorsText, keywordsText
     switch (node.type) {
-    case 'article':
-        node.attrs.language = 'en-US'
+    case "article":
+        node.attrs.language = "en-US"
         break
-    case 'authors':
+    case "authors":
         authorsText = node.content ? node.content.reduce(
-            (text, item) => item.type === 'text' ? text + item.text : text,
-            ''
-        ) : ''
+            (text, item) => item.type === "text" ? text + item.text : text,
+            ""
+        ) : ""
         node.content = authorsText.split(/[,;]/g).map(authorString => {
             const author = authorString.trim()
             if (!author.length) {
                 return false
             }
-            const authorParts = author.split(' ')
+            const authorParts = author.split(" ")
             return {
-                type: 'author',
+                type: "author",
                 attrs: {
                     firstname: authorParts.length > 1 ? authorParts.shift() : false,
-                    lastname: authorParts.join(' '),
+                    lastname: authorParts.join(" "),
                     institution: false,
                     email: false
                 }
@@ -255,7 +255,7 @@ const convertNodeV13 = function(node, shrunkBib, fullBib, imageIds) {
             delete node.content
         }
         break
-    case 'citation':
+    case "citation":
         node.attrs.references.forEach(ref => {
             let item = fullBib[ref.id]
             if (!item) {
@@ -270,18 +270,18 @@ const convertNodeV13 = function(node, shrunkBib, fullBib, imageIds) {
             shrunkBib[ref.id] = item
         })
         break
-    case 'keywords':
+    case "keywords":
         keywordsText = node.content ? node.content.reduce(
-            (text, item) => item.type === 'text' ? text + item.text : text,
-            ''
-        ) : ''
+            (text, item) => item.type === "text" ? text + item.text : text,
+            ""
+        ) : ""
         node.content = keywordsText.split(/[,;]/g).map(keywordString => {
             const keyword = keywordString.trim()
             if (!keyword.length) {
                 return false
             }
             return {
-                type: 'keyword',
+                type: "keyword",
                 attrs: {
                     keyword
                 }
@@ -291,7 +291,7 @@ const convertNodeV13 = function(node, shrunkBib, fullBib, imageIds) {
             delete node.content
         }
         break
-    case 'figure':
+    case "figure":
         if (isNaN(parseInt(node.attrs.image))) {
             node.attrs.image = false
         } else {
@@ -318,10 +318,10 @@ const convertDocV20 = function(doc) {
     }
     Object.values(returnDoc.comments).forEach(comment => {
         comment.username = comment.userName
-        comment.isMajor = comment['review:isMajor']
+        comment.isMajor = comment["review:isMajor"]
         delete(comment.userAvatar)
         delete(comment.userName)
-        delete(comment['review:isMajor'])
+        delete(comment["review:isMajor"])
         if (comment.answers) {
             comment.answers.forEach(answer => {
                 answer.username = answer.userName
@@ -335,7 +335,7 @@ const convertDocV20 = function(doc) {
 
 const convertNodeV21 = function(node) {
     let commentMark
-    if (node.marks && (commentMark = node.marks.find(mark => mark.type === 'comment'))) {
+    if (node.marks && (commentMark = node.marks.find(mark => mark.type === "comment"))) {
         commentMark.attrs.id = String(commentMark.attrs.id)
     }
     if (node.content) {
@@ -351,8 +351,8 @@ const convertDocV21 = function(doc) {
         comment.assignedUser = false
         comment.assignedUsername = false
         comment.resolved = false
-        comment.comment = comment.comment.split('\n').map(text =>
-            ({type: 'paragraph', content: [{type: 'text', text}]})
+        comment.comment = comment.comment.split("\n").map(text =>
+            ({type: "paragraph", content: [{type: "text", text}]})
         )
         if (comment.answers) {
             comment.answers.forEach(answer => {
@@ -360,8 +360,8 @@ const convertDocV21 = function(doc) {
                     answer.id && String(answer.id) !== String(commentId) ? String(answer.id) :
                         String(Math.floor(Math.random() * 0xffffffff))
                 delete(answer.answerId)
-                answer.answer = answer.answer.split('\n').map(text =>
-                    ({type: 'paragraph', content: [{type: 'text', text}]})
+                answer.answer = answer.answer.split("\n").map(text =>
+                    ({type: "paragraph", content: [{type: "text", text}]})
                 )
             })
         }
@@ -371,7 +371,7 @@ const convertDocV21 = function(doc) {
 
 const convertNodeV22 = function(node, imageIds) {
     switch (node.type) {
-    case 'figure':
+    case "figure":
         if (!isNaN(parseInt(node.attrs.image))) {
             imageIds.push(parseInt(node.attrs.image))
         }
@@ -382,7 +382,7 @@ const convertNodeV22 = function(node, imageIds) {
     if (node.content) {
         const deleteChildren = []
         node.content.forEach(childNode => {
-            if (childNode.type === 'text' && !childNode.text.length) {
+            if (childNode.type === "text" && !childNode.text.length) {
                 deleteChildren.push(childNode)
             } else {
                 convertNodeV22(childNode, imageIds)
@@ -421,17 +421,17 @@ const v23ExtraAttrs = {
 
 const convertNodeV23 = function(node) {
     switch (node.type) {
-    case 'article':
+    case "article":
         node.attrs = Object.assign({}, node.attrs, v23ExtraAttrs)
         break
-    case 'title':
+    case "title":
         node.attrs = {
             "title": "Title",
             "id": "title"
         }
         break
-    case 'subtitle':
-        node.type = 'heading_part'
+    case "subtitle":
+        node.type = "heading_part"
         node.attrs = {
             "title": "Subtitle",
             "id": "subtitle",
@@ -453,8 +453,8 @@ const convertNodeV23 = function(node) {
             "content": node.content
         }]
         break
-    case 'authors':
-        node.type = 'contributors_part'
+    case "authors":
+        node.type = "contributors_part"
         node.attrs = {
             "title": "Authors",
             "id": "authors",
@@ -467,11 +467,11 @@ const convertNodeV23 = function(node) {
             "item_title": "Author"
         }
         break
-    case 'author':
-        node.type = 'contributor'
+    case "author":
+        node.type = "contributor"
         break
-    case 'abstract':
-        node.type = 'richtext_part'
+    case "abstract":
+        node.type = "richtext_part"
         node.attrs = {
             "title": "Abstract",
             "id": "abstract",
@@ -485,8 +485,8 @@ const convertNodeV23 = function(node) {
             "marks": ["strong", "em", "link", "anchor"]
         }
         break
-    case 'keywords':
-        node.type = 'tags_part'
+    case "keywords":
+        node.type = "tags_part"
         node.attrs = {
             "title": "Keywords",
             "id": "keywords",
@@ -499,14 +499,14 @@ const convertNodeV23 = function(node) {
             "item_title": "Keyword"
         }
         break
-    case 'keyword':
-        node.type = 'tag'
+    case "keyword":
+        node.type = "tag"
         node.attrs = {
             "tag": node.attrs.keyword
         }
         break
-    case 'body':
-        node.type = 'richtext_part'
+    case "body":
+        node.type = "richtext_part"
         node.attrs = {
             "title": "Body",
             "id": "body",
@@ -520,7 +520,7 @@ const convertNodeV23 = function(node) {
             "marks": ["strong", "em", "link", "anchor"]
         }
         break
-    case 'heading':
+    case "heading":
         node.type = `heading${node.attrs.level}`
         delete node.attrs.level
         break
@@ -543,35 +543,35 @@ const convertDocV23 = function(doc) {
 
 const convertNodeV30 = function(node) {
     if (node.attrs?.marks) {
-        node.attrs.marks = node.attrs.marks.filter(mark => mark !== 'anchor')
+        node.attrs.marks = node.attrs.marks.filter(mark => mark !== "anchor")
     }
     if (node.attrs?.footnote_marks) {
-        node.attrs.footnote_marks = node.attrs.footnote_marks.filter(mark => mark !== 'anchor')
+        node.attrs.footnote_marks = node.attrs.footnote_marks.filter(mark => mark !== "anchor")
     }
     let attrs
     switch (node.type) {
-    case 'article':
+    case "article":
         attrs = {
-            documentstyle: '',
+            documentstyle: "",
             tracked: false,
-            citationstyle: 'apa',
-            language: 'en-US',
+            citationstyle: "apa",
+            language: "en-US",
             languages: ["af-ZA", "sq-AL", "ar", "ast", "be", "br", "bg", "ca",
                 "ca-ES-Valencia", "zh-CN", "da", "nl", "en-AU", "en-CA", "en-NZ", "en-ZA", "en-GB",
                 "en-US", "eo", "fr", "gl", "de-DE", "de-AU", "de-CH", "el", "he", "is", "it",
                 "ja", "km", "lt", "ml", "nb-NO", "nn-NO", "fa", "pl", "pt-BR", "pt-PT", "ro",
                 "ru", "tr", "sr-SP-Cy", "sr-SP-Lt", "sk", "sl", "es", "sv", "ta", "tl", "uk"
             ],
-            papersize: 'A4',
+            papersize: "A4",
             papersizes: ["A4", "US Letter"],
-            footnote_marks: ['strong', 'em', 'link'],
+            footnote_marks: ["strong", "em", "link"],
             footnote_elements: ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "table"]
         }
         break
-    case 'richtext_part':
+    case "richtext_part":
         attrs = {
-            title: '',
-            id: '',
+            title: "",
+            id: "",
             locking: false,
             language: false,
             optional: false,
@@ -580,14 +580,14 @@ const convertNodeV30 = function(node) {
             initial: false,
             deleted: false,
             elements: ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote", "table"],
-            marks: ['strong', 'em', 'link'],
+            marks: ["strong", "em", "link"],
             metadata: false
         }
         break
-    case 'heading_part':
+    case "heading_part":
         attrs = {
-            title: '',
-            id: '',
+            title: "",
+            id: "",
             locking: false,
             language: false,
             optional: false,
@@ -596,14 +596,14 @@ const convertNodeV30 = function(node) {
             initial: false,
             deleted: false,
             elements: ["heading1"],
-            marks: ['strong', 'em', 'link'],
+            marks: ["strong", "em", "link"],
             metadata: false
         }
         break
-    case 'contributors_part':
+    case "contributors_part":
         attrs = {
-            title: '',
-            id: '',
+            title: "",
+            id: "",
             locking: false,
             language: false,
             optional: false,
@@ -611,14 +611,14 @@ const convertNodeV30 = function(node) {
             help: false,
             initial: false,
             deleted: false,
-            item_title: 'Contributor',
+            item_title: "Contributor",
             metadata: false
         }
         break
-    case 'tags_part':
+    case "tags_part":
         attrs = {
-            title: '',
-            id: '',
+            title: "",
+            id: "",
             locking: false,
             language: false,
             optional: false,
@@ -626,14 +626,14 @@ const convertNodeV30 = function(node) {
             help: false,
             initial: false,
             deleted: false,
-            item_title: 'Tag',
+            item_title: "Tag",
             metadata: false
         }
         break
-    case 'table_part':
+    case "table_part":
         attrs = {
-            title: '',
-            id: '',
+            title: "",
+            id: "",
             locking: false,
             language: false,
             optional: false,
@@ -642,29 +642,29 @@ const convertNodeV30 = function(node) {
             initial: false,
             deleted: false,
             elements: ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote"],
-            marks: ['strong', 'em', 'link'],
+            marks: ["strong", "em", "link"],
             metadata: false
         }
         break
-    case 'table_of_contents':
+    case "table_of_contents":
         attrs = {
-            title: 'Table of Contents',
-            id: 'toc',
+            title: "Table of Contents",
+            id: "toc",
             optional: false,
             hidden: false
         }
         break
-    case 'separator_part':
+    case "separator_part":
         attrs = {
-            id: 'separator'
+            id: "separator"
         }
         break
-    case 'title':
+    case "title":
         attrs = {
-            id: 'title'
+            id: "title"
         }
         break
-    case 'contributor':
+    case "contributor":
         attrs = {
             firstname: false,
             lastname: false,
@@ -672,63 +672,63 @@ const convertNodeV30 = function(node) {
             institution: false
         }
         break
-    case 'tag':
+    case "tag":
         attrs = {
-            tag: ''
+            tag: ""
         }
         break
-    case 'footnote':
+    case "footnote":
         attrs = {
             footnote: [{
-                type: 'paragraph'
+                type: "paragraph"
             }]
         }
         break
-    case 'code_block':
-    case 'paragraph':
-    case 'blockquote':
-    case 'horizontal_rule':
-    case 'bullet_list':
-    case 'list_item':
+    case "code_block":
+    case "paragraph":
+    case "blockquote":
+    case "horizontal_rule":
+    case "bullet_list":
+    case "list_item":
         attrs = {
             track: []
         }
         break
-    case 'ordered_list':
+    case "ordered_list":
         attrs = {
             order: 1,
             track: []
         }
         break
-    case 'citation':
+    case "citation":
         attrs = {
-            format: 'autocite',
+            format: "autocite",
             references: []
         }
         break
-    case 'equation':
+    case "equation":
         attrs = {
-            equation: ''
+            equation: ""
         }
         break
-    case 'figure':
+    case "figure":
         attrs = {
-            equation: '',
+            equation: "",
             image: false,
-            figureCategory: '',
-            caption: '',
+            figureCategory: "",
+            caption: "",
             id: false,
             track: [],
-            aligned: 'center',
-            width: '100'
+            aligned: "center",
+            width: "100"
         }
         break
-    case 'heading1':
-    case 'heading2':
-    case 'heading3':
-    case 'heading4':
-    case 'heading5':
-    case 'heading6':
+    case "heading1":
+    case "heading2":
+    case "heading3":
+    case "heading4":
+    case "heading5":
+    case "heading6":
         attrs = {
             id: false,
             track: []
@@ -745,31 +745,31 @@ const convertNodeV30 = function(node) {
             }
         }
         switch (node.type) {
-        case 'article': {
-            if (node.attrs.language === '') {
+        case "article": {
+            if (node.attrs.language === "") {
                 delete node.attrs.language
             }
-            const template = node.attrs.template || 'default'
-            node.attrs.import_id = template.normalize('NFKC').replace(/[^\w\s-]/g, '').toLowerCase().trim().replace(/[-\s]+/g, '-')
+            const template = node.attrs.template || "default"
+            node.attrs.import_id = template.normalize("NFKC").replace(/[^\w\s-]/g, "").toLowerCase().trim().replace(/[-\s]+/g, "-")
             switch (node.attrs.citationstyle) {
-            case 'harvard1':
-                node.attrs.citationstyle = 'harvard-cite-them-right'
+            case "harvard1":
+                node.attrs.citationstyle = "harvard-cite-them-right"
                 break
-            case 'mla':
-                node.attrs.citationstyle = 'modern-language-association'
+            case "mla":
+                node.attrs.citationstyle = "modern-language-association"
                 break
-            case 'american-anthropological-association':
-            case 'chicago-author-date':
-            case 'chicago-note-bibliography':
-            case 'oxford-university-press-humsoc':
-            case 'nature':
+            case "american-anthropological-association":
+            case "chicago-author-date":
+            case "chicago-note-bibliography":
+            case "oxford-university-press-humsoc":
+            case "nature":
                 break
             default:
                 delete node.attrs.citationstyle
             }
             break
         }
-        case 'title':
+        case "title":
             delete node.attrs.title
             break
         default:
@@ -781,42 +781,42 @@ const convertNodeV30 = function(node) {
         for (const mark in node.marks) {
             let attrs
             switch (mark.type) {
-            case 'comment':
+            case "comment":
                 attrs = {
                     id: false
                 }
                 break
-            case 'annotation_tag':
+            case "annotation_tag":
                 attrs = {
-                    type: '',
-                    key: '',
-                    value: ''
+                    type: "",
+                    key: "",
+                    value: ""
                 }
                 break
-            case 'anchor':
+            case "anchor":
                 attrs = {
                     id: false
                 }
                 break
-            case 'deletion':
+            case "deletion":
                 attrs = {
                     user: 0,
-                    username: '',
+                    username: "",
                     date: 0
                 }
                 break
-            case 'insertion':
+            case "insertion":
                 attrs = {
                     user: 0,
-                    username: '',
+                    username: "",
                     date: 0,
                     approved: true
                 }
                 break
-            case 'format_change':
+            case "format_change":
                 attrs = {
                     user: 0,
-                    username: '',
+                    username: "",
                     date: 0,
                     before: [],
                     after: []
@@ -857,7 +857,7 @@ const convertDocV31 = function(doc) {
 const convertNodeV32 = function(node, ids = []) {
     let blockId, attrs
     switch (node.type) {
-    case 'table':
+    case "table":
         attrs = node.attrs || {}
         blockId = attrs.id
         while (!blockId || ids.includes(blockId)) {
@@ -868,25 +868,25 @@ const convertNodeV32 = function(node, ids = []) {
         node.attrs = attrs
         ids.push(blockId)
         node.content = [
-            {type: 'table_caption'},
+            {type: "table_caption"},
             {
-                type: 'table_body',
+                type: "table_body",
                 content: node.content
             }
         ]
         break
-    case 'table_cell':
+    case "table_cell":
         if (!node.content || !node.content.length) {
-            node.content = [{type: 'paragraph'}]
+            node.content = [{type: "paragraph"}]
         }
         break
-    case 'table_header':
+    case "table_header":
         if (!node.content || !node.content.length) {
-            node.content = [{type: 'paragraph'}]
+            node.content = [{type: "paragraph"}]
         }
         break
-    case 'bullet_list':
-    case 'ordered_list':
+    case "bullet_list":
+    case "ordered_list":
         attrs = node.attrs || {}
         blockId = attrs.id
         while (!blockId || ids.includes(blockId)) {
@@ -896,7 +896,7 @@ const convertNodeV32 = function(node, ids = []) {
         node.attrs = attrs
         ids.push(blockId)
         break
-    case 'figure': {
+    case "figure": {
         attrs = node.attrs || {}
         if (attrs.figureCategory) {
             attrs.category = attrs.figureCategory
@@ -904,17 +904,17 @@ const convertNodeV32 = function(node, ids = []) {
         }
         node.content = []
         if (attrs.image) {
-            node.content.push({type: 'image', attrs: {image: attrs.image}})
+            node.content.push({type: "image", attrs: {image: attrs.image}})
         } else {
-            node.content.push({type: 'figure_equation', attrs: {equation: attrs.equation || ''}})
+            node.content.push({type: "figure_equation", attrs: {equation: attrs.equation || ""}})
         }
         delete attrs.image
         delete attrs.equation
 
-        const caption = {type: 'figure_caption'}
+        const caption = {type: "figure_caption"}
         if (attrs.caption) {
             if (attrs.caption.length) {
-                caption.content = [{type: 'text', text: attrs.caption}]
+                caption.content = [{type: "text", text: attrs.caption}]
                 attrs.caption = true
             } else {
                 attrs.caption = false
@@ -922,7 +922,7 @@ const convertNodeV32 = function(node, ids = []) {
         } else {
             attrs.caption = false
         }
-        if (attrs.category === 'table') {
+        if (attrs.category === "table") {
             node.content.unshift(caption)
         } else {
             node.content.push(caption)
@@ -930,7 +930,7 @@ const convertNodeV32 = function(node, ids = []) {
         node.attrs = attrs
         break
     }
-    case 'footnote':
+    case "footnote":
         if (node.attrs?.footnote) {
             node.attrs.footnote.forEach(childNode => {
                 convertNodeV32(childNode, ids)

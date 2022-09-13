@@ -19,7 +19,7 @@ export class FormatCitations {
         this.citations = []
         this.bibFormats = []
         this.citationTexts = []
-        this.citationType = ''
+        this.citationType = ""
         this.formatAllCitations()
         return this.getFormattedCitations()
     }
@@ -38,20 +38,20 @@ export class FormatCitations {
 
     get bibHTML() {
         if (!this.bibliography || !this.bibliography[0].entry_ids.length) {
-            return ''
+            return ""
         }
         const bib = this.bibliography,
-            bibHTML = bib[0].bibstart + bib[1].join('') + bib[0].bibend
+            bibHTML = bib[0].bibstart + bib[1].join("") + bib[0].bibend
         return `<h1 class="article-bibliography-header">${escapeText(this.bibliographyHeader)}</h1>${bibHTML}`
     }
 
     // CSS
     get bibCSS()  {
         if (!this.bibliography || !this.bibliography[0].entry_ids.length) {
-            return ''
+            return ""
         }
         const bibInfo = this.bibliography[0]
-        let css = '\n'
+        let css = "\n"
         css += `.csl-entry {padding-bottom: ${bibInfo.entryspacing + 1}em;}\n`
         css += `.csl-bib-body {line-height: ${bibInfo.linespacing};}\n`
         if (bibInfo.hangingindent) {
@@ -60,14 +60,14 @@ export class FormatCitations {
                         text-indent: -0.5in;
                         padding-left: 0.5in;
                     }\n`
-        } else if (bibInfo["second-field-align"] === 'margin') {
+        } else if (bibInfo["second-field-align"] === "margin") {
             css += `
                     .csl-left-margin {
                         text-indent: -${bibInfo.maxoffset}ch;
                         width: ${bibInfo.maxoffset}ch;
                     }
                 `
-        } else if (bibInfo["second-field-align"] === 'flush') {
+        } else if (bibInfo["second-field-align"] === "flush") {
             css += `
                     .csl-left-margin {
                         width: ${bibInfo.maxoffset}ch;
@@ -122,14 +122,14 @@ export class FormatCitations {
         )
         citeprocInstance.updateItems(allIds)
 
-        const inText = citeprocInstance.cslXml.dataObj.attrs.class === 'in-text'
+        const inText = citeprocInstance.cslXml.dataObj.attrs.class === "in-text"
         const len = this.citations.length
         for (let i = 0; i < len; i++) {
             const citation = this.citations[i],
                 citationTexts = citeprocInstance.appendCitationCluster(citation, true)
-            if (inText && 'textcite' == this.bibFormats[i]) {
+            if (inText && "textcite" == this.bibFormats[i]) {
                 const items = citation.citationItems
-                let newCiteText = ''
+                let newCiteText = ""
 
                 for (let j = 0; j < items.length; j++) {
                     const onlyNameOption = [{
@@ -151,7 +151,7 @@ export class FormatCitations {
                     }
 
                     if (0 < j) {
-                        newCiteText += citeprocInstance.citation.opt.layout_delimiter || '; '
+                        newCiteText += citeprocInstance.citation.opt.layout_delimiter || "; "
                     }
                     newCiteText += `${citeprocInstance.makeCitationCluster(onlyNameOption)} ${citeprocInstance.makeCitationCluster(onlyDateOption)}`
                 }

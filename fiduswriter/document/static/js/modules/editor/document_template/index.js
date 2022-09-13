@@ -43,16 +43,16 @@ export class ModDocumentTemplate {
             return
         }
         const metadataMenu = {
-            id: 'metadata',
-            title: gettext('Optional sections'),
-            type: 'menu',
-            tooltip: gettext('Choose which optional sections to enable.'),
+            id: "metadata",
+            title: gettext("Optional sections"),
+            type: "menu",
+            tooltip: gettext("Choose which optional sections to enable."),
             order: 0,
-            disabled: editor => editor.docInfo.access_rights !== 'write',
+            disabled: editor => editor.docInfo.access_rights !== "write",
             content: hideableDocParts.map(([node, index]) => ({
                 title: node.attrs.title,
-                type: 'setting',
-                tooltip: `${gettext('Show/hide')} ${node.attrs.title}`,
+                type: "setting",
+                tooltip: `${gettext("Show/hide")} ${node.attrs.title}`,
                 order: index,
                 action: editor => {
                     let offset = 1, // We need to add one as we are looking at offset values within the firstChild
@@ -65,57 +65,57 @@ export class ModDocumentTemplate {
                         }
                     })
                     editor.view.dispatch(
-                        editor.view.state.tr.setNodeMarkup(offset, false, attrs).setMeta('settings', true)
+                        editor.view.state.tr.setNodeMarkup(offset, false, attrs).setMeta("settings", true)
                     )
                 },
                 selected: editor => !editor.view.state.doc.firstChild.child(index).attrs.hidden
             }))
         }
-        const settingsMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id === 'settings')
+        const settingsMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id === "settings")
         settingsMenu.content = settingsMenu.content.filter(item => item.id !== "metadata")
         settingsMenu.content.unshift(metadataMenu)
     }
 
     showSafariErrorMessage() {
         const dialog = new Dialog({
-            title: gettext('Safari bug warning'),
+            title: gettext("Safari bug warning"),
             height: 100,
-            body: gettext('Unfortunately Safari has a bug which makes it impossible to export to this format. Please use Chrome or Firefox (on a desktop computer).'),
-            buttons: [{type: 'close'}]
+            body: gettext("Unfortunately Safari has a bug which makes it impossible to export to this format. Please use Chrome or Firefox (on a desktop computer)."),
+            buttons: [{type: "close"}]
         })
         dialog.open()
     }
 
     addCopyAsMenuEntry() {
-        const fileMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id === 'file')
+        const fileMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id === "file")
         // Cancel if run already
-        if (fileMenu.content.find(menuItem => menuItem.id === 'copy_as')) {
+        if (fileMenu.content.find(menuItem => menuItem.id === "copy_as")) {
             return
         }
         fileMenu.content.push({
-            id: 'copy_as',
-            title: gettext('Create copy as ...'),
-            type: 'action',
-            tooltip: gettext('Create copy of the current document with a specific template.'),
+            id: "copy_as",
+            title: gettext("Create copy as ..."),
+            type: "action",
+            tooltip: gettext("Create copy of the current document with a specific template."),
             order: 3.5,
             action: editor => {
                 const selectTemplateDialog = new Dialog({
-                    title: gettext('Choose document template'),
+                    title: gettext("Choose document template"),
                     body: `<p>
-                        ${gettext('Select document template for copy.')}
+                        ${gettext("Select document template for copy.")}
                         </p>
                         <select class="fw-button fw-large fw-light">${
     Object.entries(editor.mod.documentTemplate.documentTemplates).map(
         ([importId, dt]) => `<option value="${escapeText(importId)}">${escapeText(dt.title)}</option>`
-    ).join('')
+    ).join("")
 }</select>`,
                     buttons: [
                         {
-                            text: gettext('Copy'),
+                            text: gettext("Copy"),
                             classes: "fw-dark",
                             click: () => {
                                 if (editor.app.isOffline()) {
-                                    addAlert('error', "You are offline. Please try again after you are online.")
+                                    addAlert("error", "You are offline. Please try again after you are online.")
                                     selectTemplateDialog.close()
                                 } else {
                                     const copier = new SaveCopy(
@@ -123,7 +123,7 @@ export class ModDocumentTemplate {
                                         editor.mod.db.bibDB,
                                         editor.mod.db.imageDB,
                                         editor.user,
-                                        selectTemplateDialog.dialogEl.querySelector('select').value
+                                        selectTemplateDialog.dialogEl.querySelector("select").value
                                     )
                                     copier.init().then(({docInfo}) =>
                                         editor.app.goTo(`/document/${docInfo.id}/`)
@@ -134,7 +134,7 @@ export class ModDocumentTemplate {
                             }
                         },
                         {
-                            type: 'cancel'
+                            type: "cancel"
                         }
                     ]
                 })
@@ -147,16 +147,16 @@ export class ModDocumentTemplate {
     }
 
     addExportTemplateMenuEntries() {
-        const exportMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id === 'export')
+        const exportMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id === "export")
         // Remove any previous entries in case we run this a second time
-        exportMenu.content = exportMenu.content.filter(menuItem => menuItem.class !== 'export_template')
+        exportMenu.content = exportMenu.content.filter(menuItem => menuItem.class !== "export_template")
         const exportMenuEntries = this.exportTemplates.map(template => {
-            if (template.file_type === 'docx') {
+            if (template.file_type === "docx") {
                 return {
-                    class: 'export_template',
+                    class: "export_template",
                     title: `${template.title} (DOCX)`,
-                    type: 'action',
-                    tooltip: gettext('Export the document to a DOCX file with the given template.'),
+                    type: "action",
+                    tooltip: gettext("Export the document to a DOCX file with the given template."),
                     action: editor => {
                         if (navigator.vendor ===  "Apple Computer, Inc.") {
                             this.showSafariErrorMessage()
@@ -164,7 +164,7 @@ export class ModDocumentTemplate {
                         }
                         import("../../exporter/docx").then(({DocxExporter}) => {
                             const exporter = new DocxExporter(
-                                editor.getDoc({changes: 'acceptAllNoInsertions'}),
+                                editor.getDoc({changes: "acceptAllNoInsertions"}),
                                 template.template_file,
                                 editor.mod.db.bibDB,
                                 editor.mod.db.imageDB,
@@ -177,10 +177,10 @@ export class ModDocumentTemplate {
                 }
             } else {
                 return {
-                    class: 'export_template',
+                    class: "export_template",
                     title: `${template.title} (ODT)`,
-                    type: 'action',
-                    tooltip: gettext('Export the document to an ODT file with the given template.'),
+                    type: "action",
+                    tooltip: gettext("Export the document to an ODT file with the given template."),
                     action: editor => {
                         if (navigator.vendor ===  "Apple Computer, Inc.") {
                             this.showSafariErrorMessage()
@@ -188,7 +188,7 @@ export class ModDocumentTemplate {
                         }
                         import("../../exporter/odt").then(({OdtExporter}) => {
                             const exporter = new OdtExporter(
-                                editor.getDoc({changes: 'acceptAllNoInsertions'}),
+                                editor.getDoc({changes: "acceptAllNoInsertions"}),
                                 template.template_file,
                                 editor.mod.db.bibDB,
                                 editor.mod.db.imageDB,
@@ -205,19 +205,19 @@ export class ModDocumentTemplate {
     }
 
     addDocumentStylesMenuEntries() {
-        const settingsMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id === 'settings'),
-            documentStyleMenu = settingsMenu.content.find(menu => menu.id === 'document_style')
+        const settingsMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id === "settings"),
+            documentStyleMenu = settingsMenu.content.find(menu => menu.id === "document_style")
 
         documentStyleMenu.content = this.documentStyles.map(docStyle => {
             return {
                 title: docStyle.title,
-                type: 'setting',
+                type: "setting",
                 action: editor => {
                     const article = editor.view.state.doc.firstChild
                     const attrs = Object.assign({}, article.attrs)
                     attrs.documentstyle = docStyle.slug
                     editor.view.dispatch(
-                        editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta('settings', true)
+                        editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta("settings", true)
                     )
                 },
                 selected: editor => editor.view.state.doc.firstChild.attrs.documentstyle === docStyle.slug,
@@ -235,18 +235,18 @@ export class ModDocumentTemplate {
     }
 
     addCitationStylesMenuEntries() {
-        const settingsMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id === 'settings'),
-            citationStyleMenu = settingsMenu.content.find(menu => menu.id === 'citation_style')
+        const settingsMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id === "settings"),
+            citationStyleMenu = settingsMenu.content.find(menu => menu.id === "citation_style")
         if (citationStyleMenu) {
             citationStyleMenu.content = this.editor.view.state.doc.firstChild.attrs.citationstyles.map(citationstyle => {
                 return {
                     title: this.citationStyles[citationstyle],
-                    type: 'setting',
+                    type: "setting",
                     action: editor => {
                         const article = editor.view.state.doc.firstChild
                         const attrs = Object.assign({}, article.attrs, {citationstyle})
                         editor.view.dispatch(
-                            editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta('settings', true)
+                            editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta("settings", true)
                         )
                     },
                     selected: editor => {

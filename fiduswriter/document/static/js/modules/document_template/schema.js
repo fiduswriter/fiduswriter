@@ -18,7 +18,7 @@ import {
 
 import {docSchema} from "../schema/document"
 const doc = {
-    content: 'block+',
+    content: "block+",
     toDOM(_node) {
         return ["div", 0]
     }
@@ -36,8 +36,8 @@ const findTable = function(state) {
 }
 
 export const helpSchema = new Schema({
-    nodes: schema.spec.nodes.remove('code_block').remove('image').remove('heading').remove('horizontal_rule').update('doc', doc),
-    marks: schema.spec.marks.remove('code').update('link', {
+    nodes: schema.spec.nodes.remove("code_block").remove("image").remove("heading").remove("horizontal_rule").update("doc", doc),
+    marks: schema.spec.marks.remove("code").update("link", {
         attrs: {
             href: {},
             title: {default: null}
@@ -47,7 +47,7 @@ export const helpSchema = new Schema({
             return {href: dom.getAttribute("href"), title: dom.getAttribute("title")}
         }}],
         toDOM(node) {
-            return ["a", Object.assign({target: '_blank'}, node.attrs), 0]
+            return ["a", Object.assign({target: "_blank"}, node.attrs), 0]
         }
     })
 })
@@ -58,14 +58,14 @@ helpMenuContent.splice(1, 1) // full menu minus drop downs
 const helpSerializer = DOMSerializer.fromSchema(helpSchema)
 
 export const serializeHelp = content => {
-    const doc = {type: 'doc', content},
+    const doc = {type: "doc", content},
         pmNode = helpSchema.nodeFromJSON(doc),
         dom = helpSerializer.serializeNode(pmNode)
     return dom.innerHTML
 }
 
 export const richtextPartSchema = new Schema({
-    nodes: docSchema.spec.nodes.update('doc', {content: 'richtext_part'}),
+    nodes: docSchema.spec.nodes.update("doc", {content: "richtext_part"}),
     marks: docSchema.spec.marks
 })
 
@@ -78,7 +78,7 @@ for (let i = 1; i <= 6; i++) {
     }))
 }
 
-const type = richtextPartSchema.nodes['table']
+const type = richtextPartSchema.nodes["table"]
 richtextMenuContent[1][0].content.push(blockTypeItem(type, {
     title: gettext("Insert Table"),
     label: gettext("Table"),
@@ -86,7 +86,7 @@ richtextMenuContent[1][0].content.push(blockTypeItem(type, {
         return !findTable(state)
     },
     run(state, dispatch) {
-        const table = {type: 'table', content: [{type: 'table_caption'}, {type: 'table_body', content: [{type: 'table_row', content: [{type: 'table_cell', content: [{type: 'paragraph'}]}]}]}]}
+        const table = {type: "table", content: [{type: "table_caption"}, {type: "table_body", content: [{type: "table_row", content: [{type: "table_cell", content: [{type: "paragraph"}]}]}]}]}
         const schema = state.schema
         dispatch(state.tr.replaceSelectionWith(
             schema.nodeFromJSON(table)),
@@ -97,7 +97,7 @@ richtextMenuContent[1][0].content.push(blockTypeItem(type, {
 
 
 export const tablePartSchema = new Schema({
-    nodes: docSchema.spec.nodes.update('doc', {content: 'table_part'}).update('table_row', {
+    nodes: docSchema.spec.nodes.update("doc", {content: "table_part"}).update("table_row", {
         content: "(table_cell | table_header)+",
         tableRole: "row",
         parseDOM: [{tag: "tr"}],
@@ -152,7 +152,7 @@ tableMenuContent.splice(2, 0, [new Dropdown(tableMenu, {label: gettext("Table")}
 richtextMenuContent.splice(2, 0, [new Dropdown(tableMenu, {label: gettext("Table")})])
 
 export const headingPartSchema = new Schema({
-    nodes: docSchema.spec.nodes.update('doc', {content: 'heading_part'}).remove('horizontal_rule').remove('paragraph').remove('code_block'),
+    nodes: docSchema.spec.nodes.update("doc", {content: "heading_part"}).remove("horizontal_rule").remove("paragraph").remove("code_block"),
     marks: docSchema.spec.marks
 })
 
@@ -168,9 +168,9 @@ for (let i = 1; i <= 6; i++) {
 export const tagsPartSchema = new Schema({
     nodes: {
         doc: {content: "tags_part"},
-        tags_part: docSchema.spec.nodes.get('tags_part'),
-        tag: docSchema.spec.nodes.get('tag'),
-        text: docSchema.spec.nodes.get('text')
+        tags_part: docSchema.spec.nodes.get("tags_part"),
+        tag: docSchema.spec.nodes.get("tag"),
+        text: docSchema.spec.nodes.get("text")
     },
     marks: docSchema.spec.marks
 })
@@ -178,9 +178,9 @@ export const tagsPartSchema = new Schema({
 export const contributorsPartSchema = new Schema({
     nodes: {
         doc: {content: "contributors_part"},
-        contributors_part: docSchema.spec.nodes.get('contributors_part'),
-        contributor: docSchema.spec.nodes.get('contributor'),
-        text: docSchema.spec.nodes.get('text')
+        contributors_part: docSchema.spec.nodes.get("contributors_part"),
+        contributor: docSchema.spec.nodes.get("contributor"),
+        text: docSchema.spec.nodes.get("text")
     },
     marks: docSchema.spec.marks
 })

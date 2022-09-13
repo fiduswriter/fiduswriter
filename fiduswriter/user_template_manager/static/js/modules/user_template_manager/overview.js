@@ -33,19 +33,19 @@ export class DocTemplatesOverview {
     }
 
     render() {
-        this.dom = document.createElement('body')
+        this.dom = document.createElement("body")
         this.dom.innerHTML = baseBodyTemplate({
-            contents: '',
+            contents: "",
             user: this.user,
             hasOverview: true,
             app: this.app
         })
         document.body = this.dom
         ensureCSS([
-            'add_remove_dialog.css',
-            'access_rights_dialog.css'
+            "add_remove_dialog.css",
+            "access_rights_dialog.css"
         ])
-        setDocTitle(gettext('Document Templates Overview'), this.app)
+        setDocTitle(gettext("Document Templates Overview"), this.app)
         const feedbackTab = new FeedbackTab()
         feedbackTab.init()
     }
@@ -59,11 +59,11 @@ export class DocTemplatesOverview {
 
     /* Initialize the overview table */
     initTable() {
-        const tableEl = document.createElement('table')
-        tableEl.classList.add('fw-data-table')
-        tableEl.classList.add('fw-large')
-        this.dom.querySelector('.fw-contents').innerHTML = ''
-        this.dom.querySelector('.fw-contents').appendChild(tableEl)
+        const tableEl = document.createElement("table")
+        tableEl.classList.add("fw-data-table")
+        tableEl.classList.add("fw-large")
+        this.dom.querySelector(".fw-contents").innerHTML = ""
+        this.dom.querySelector(".fw-contents").appendChild(tableEl)
 
         this.dtBulk = new DatatableBulk(this, bulkMenuModel())
 
@@ -85,7 +85,7 @@ export class DocTemplatesOverview {
                 top: ""
             },
             data: {
-                headings: ['', this.dtBulk.getHTML(), gettext("Title"), gettext("Created"), gettext("Last changed"), ''],
+                headings: ["", this.dtBulk.getHTML(), gettext("Title"), gettext("Created"), gettext("Last changed"), ""],
                 data: this.templateList.map(docTemplate => this.createTableRow(docTemplate))
             },
             columns: [
@@ -99,9 +99,9 @@ export class DocTemplatesOverview {
                 }
             ]
         })
-        this.lastSort = {column: 0, dir: 'asc'}
+        this.lastSort = {column: 0, dir: "asc"}
 
-        this.table.on('datatable.sort', (column, dir) => {
+        this.table.on("datatable.sort", (column, dir) => {
             this.lastSort = {column, dir}
         })
 
@@ -112,7 +112,7 @@ export class DocTemplatesOverview {
         return [
             String(docTemplate.id),
             `<input type="checkbox" class="entry-select" data-id="${docTemplate.id}">`,
-            `<span class="${ docTemplate.is_owner ? 'fw-data-table-title ' : '' }fw-inline">
+            `<span class="${ docTemplate.is_owner ? "fw-data-table-title " : "" }fw-inline">
                 <i class="far fa-file"></i>
                 ${
     docTemplate.is_owner ?
@@ -120,18 +120,18 @@ export class DocTemplatesOverview {
                         ${
     docTemplate.title.length ?
         escapeText(docTemplate.title) :
-        gettext('Untitled')
+        gettext("Untitled")
 }
                     </a>` :
         docTemplate.title.length ?
             escapeText(docTemplate.title) :
-            gettext('Untitled')
+            gettext("Untitled")
 }
             </span>`,
             docTemplate.added, // format?
             docTemplate.updated, // format ?
             `<span class="delete-doc-template fw-inline fw-link-text" data-id="${docTemplate.id}" data-title="${escapeText(docTemplate.title)}">
-                ${docTemplate.is_owner ? '<i class="fa fa-trash-alt"></i>' : ''}
+                ${docTemplate.is_owner ? "<i class=\"fa fa-trash-alt\"></i>" : ""}
            </span>`
         ]
     }
@@ -162,7 +162,7 @@ export class DocTemplatesOverview {
             return this.showCached()
         }
         return postJson(
-            '/api/user_template_manager/list/'
+            "/api/user_template_manager/list/"
         ).then(
             ({json}) => {
                 this.updateIndexedDB(json)
@@ -174,8 +174,8 @@ export class DocTemplatesOverview {
                     return this.showCached()
                 } else {
                     addAlert(
-                        'error',
-                        gettext('Document templates loading failed.')
+                        "error",
+                        gettext("Document templates loading failed.")
                     )
                     throw (error)
                 }
@@ -207,16 +207,16 @@ export class DocTemplatesOverview {
 
 
     bind() {
-        this.dom.addEventListener('click', event => {
+        this.dom.addEventListener("click", event => {
             const el = {}
             switch (true) {
-            case findTarget(event, '.delete-doc-template', el): {
+            case findTarget(event, ".delete-doc-template", el): {
                 const docTemplateId = parseInt(el.target.dataset.id)
                 this.mod.actions.deleteDocTemplatesDialog([docTemplateId])
                 break
             }
-            case findTarget(event, 'a', el):
-                if (el.target.hostname === window.location.hostname && el.target.getAttribute('href')[0] === '/') {
+            case findTarget(event, "a", el):
+                if (el.target.hostname === window.location.hostname && el.target.getAttribute("href")[0] === "/") {
                     event.preventDefault()
                     this.app.goTo(el.target.href)
                 }
@@ -229,7 +229,7 @@ export class DocTemplatesOverview {
 
     getSelected() {
         return Array.from(
-            this.dom.querySelectorAll('.entry-select:checked:not(:disabled)')
-        ).map(el => parseInt(el.getAttribute('data-id')))
+            this.dom.querySelectorAll(".entry-select:checked:not(:disabled)")
+        ).map(el => parseInt(el.getAttribute("data-id")))
     }
 }

@@ -1,5 +1,5 @@
-import {CSL} from 'citeproc-plus'
-import * as OfflinePluginRuntime from '@lcdp/offline-plugin/runtime'
+import {CSL} from "citeproc-plus"
+import * as OfflinePluginRuntime from "@lcdp/offline-plugin/runtime"
 import {ContactInvite} from "../contacts/invite"
 import {ImageOverview} from "../images/overview"
 import {ContactsOverview} from "../contacts"
@@ -16,12 +16,12 @@ import {OfflinePage} from "../offline"
 import {SetupPage} from "../setup"
 import {FlatPage} from "../flatpage"
 import * as plugins from "../../plugins/app"
-import {IndexedDB} from '../indexed_db'
+import {IndexedDB} from "../indexed_db"
 
 export class App {
     constructor() {
         this.config = {}
-        this.name = 'Fidus Writer'
+        this.name = "Fidus Writer"
         this.config.app = this
         this.routes = {
             "": {
@@ -70,8 +70,8 @@ export class App {
                     if (!id.length) {
                         id = pathnameParts.pop()
                     }
-                    const path = ('/' + pathnameParts.slice(2).join('/')).replace(/\/?$/, '/')
-                    return import(/* webpackPrefetch: true *//* webpackChunkName: "editor" */'../editor').then(({Editor}) => new Editor(this.config, path, id))
+                    const path = ("/" + pathnameParts.slice(2).join("/")).replace(/\/?$/, "/")
+                    return import(/* webpackPrefetch: true *//* webpackChunkName: "editor" */"../editor").then(({Editor}) => new Editor(this.config, path, id))
                 },
                 dbTables: {
                     "data": {
@@ -83,7 +83,7 @@ export class App {
                 app: "document",
                 requireLogin: true,
                 open: pathnameParts => {
-                    const path = (('/' + pathnameParts.slice(2).join('/')).replace(/\/?$/, '/'))
+                    const path = (("/" + pathnameParts.slice(2).join("/")).replace(/\/?$/, "/"))
                     return import(/* webpackPrefetch: true */"../documents/overview").then(({DocumentOverview}) => new DocumentOverview(this.config, path))
                 }
             },
@@ -142,7 +142,7 @@ export class App {
     }
 
     alertCached() {
-        addAlert('info', gettext('You are viewing a cached version of this page.'))
+        addAlert("info", gettext("You are viewing a cached version of this page."))
     }
 
     installServiceWorker() {
@@ -161,7 +161,7 @@ export class App {
             })
         }
         ensureCSS([
-            'fontawesome/css/all.css'
+            "fontawesome/css/all.css"
         ])
         if (this.isOffline()) {
             this.page = this.openOfflinePage()
@@ -234,15 +234,15 @@ export class App {
 
     bind() {
         window.onpopstate = () => this.selectPage()
-        document.addEventListener('click', event => {
+        document.addEventListener("click", event => {
             const el = {}
             switch (true) {
-            case findTarget(event, 'a', el):
+            case findTarget(event, "a", el):
                 if (
                     el.target.hostname === window.location.hostname &&
-                        el.target.getAttribute('href')[0] === '/' &&
-                        el.target.getAttribute('href').slice(0, 7) !== '/media/' &&
-                        el.target.getAttribute('href').slice(0, 5) !== '/api/'
+                        el.target.getAttribute("href")[0] === "/" &&
+                        el.target.getAttribute("href").slice(0, 7) !== "/media/" &&
+                        el.target.getAttribute("href").slice(0, 5) !== "/api/"
                 ) {
                     event.preventDefault()
                     event.stopImmediatePropagation()
@@ -252,7 +252,7 @@ export class App {
             }
         })
         let resizeDone
-        window.addEventListener('resize', () => {
+        window.addEventListener("resize", () => {
             clearTimeout(resizeDone)
             resizeDone = setTimeout(() => {
                 if (this.page && this.page.onResize) {
@@ -260,13 +260,13 @@ export class App {
                 }
             }, 250)
         })
-        window.addEventListener('beforeunload', event => {
+        window.addEventListener("beforeunload", event => {
             if (this.page && this.page.onBeforeUnload) {
                 if (this.page.onBeforeUnload()) {
                     event.preventDefault()
                     // To stop the event for chrome and safari
-                    event.returnValue = ''
-                    return ''
+                    event.returnValue = ""
+                    return ""
                 }
             }
         })
@@ -274,20 +274,20 @@ export class App {
 
     showNews() {
         if (
-            window.location.pathname !== '/user/contacts/' &&
+            window.location.pathname !== "/user/contacts/" &&
             this.config.user.waiting_invites
         ) {
             showSystemMessage(
-                gettext('Other users have requested to connect with you. Go to the contacts page to accept their invites.'),
+                gettext("Other users have requested to connect with you. Go to the contacts page to accept their invites."),
                 [
                     {
-                        text: gettext('Go to contacts'),
-                        classes: 'fw-dark',
+                        text: gettext("Go to contacts"),
+                        classes: "fw-dark",
                         click: _event => {
-                            return this.goTo('/user/contacts/')
+                            return this.goTo("/user/contacts/")
                         }
                     },
-                    {type: 'close'}
+                    {type: "close"}
                 ]
             )
         }
@@ -295,11 +295,11 @@ export class App {
 
     connectWs() {
         this.ws = new WebSocketConnector({
-            url: '/ws/base/',
+            url: "/ws/base/",
             appLoaded: () => true,
             receiveData: data => {
                 switch (data.type) {
-                case 'message':
+                case "message":
                     showSystemMessage(data.message)
                     break
                 default:
@@ -320,7 +320,7 @@ export class App {
         this.plugins = {}
 
         Object.keys(plugins).forEach(plugin => {
-            if (typeof plugins[plugin] === 'function') {
+            if (typeof plugins[plugin] === "function") {
                 this.plugins[plugin] = new plugins[plugin](this)
                 this.plugins[plugin].init()
             }
@@ -331,7 +331,7 @@ export class App {
         if (this.page && this.page.close) {
             this.page.close()
         }
-        const pathnameParts = decodeURI(window.location.pathname).split('/')
+        const pathnameParts = decodeURI(window.location.pathname).split("/")
         const route = this.routes[pathnameParts[1]]
         if (route) {
             if (
@@ -369,7 +369,7 @@ export class App {
     }
 
     getUserInfo() {
-        return postJson('/api/base/configuration/').then(
+        return postJson("/api/base/configuration/").then(
             ({json}) => Object.entries(json).forEach(([key, value]) => this.config[key] = value)
         )
     }

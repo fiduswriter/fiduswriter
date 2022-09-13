@@ -6,7 +6,7 @@ import {DocxExporterRichtext} from "./richtext"
 import {noSpaceTmp} from "../../common"
 import {descendantNodes} from "../tools/doc_content"
 
-const DEFAULT_XML = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' + noSpaceTmp`
+const DEFAULT_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" + noSpaceTmp`
     <w:footnotes xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:w10="urn:schemas-microsoft-com:office:word" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:wps="http://schemas.microsoft.com/office/word/2010/wordprocessingShape" xmlns:wpg="http://schemas.microsoft.com/office/word/2010/wordprocessingGroup" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:wp14="http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing" xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml" mc:Ignorable="w14 wp14">
         <w:footnote w:id="0" w:type="separator">
             <w:p>
@@ -69,17 +69,17 @@ export class DocxExporterFootnotes {
         this.fnXml = false
         this.ctXml = false
         this.styleXml = false
-        this.filePath = 'word/footnotes.xml'
+        this.filePath = "word/footnotes.xml"
         this.ctFilePath = "[Content_Types].xml"
-        this.settingsFilePath = 'word/settings.xml'
-        this.styleFilePath = 'word/styles.xml'
+        this.settingsFilePath = "word/settings.xml"
+        this.styleFilePath = "word/styles.xml"
     }
 
     init() {
         this.findFootnotes()
-        if (this.footnotes.length || (this.exporter.citations.citFm.citationType === 'note' && this.exporter.citations.citInfos.length)) {
+        if (this.footnotes.length || (this.exporter.citations.citFm.citationType === "note" && this.exporter.citations.citInfos.length)) {
             this.convertFootnotes()
-            this.rels = new DocxExporterRels(this.exporter, 'footnotes')
+            this.rels = new DocxExporterRels(this.exporter, "footnotes")
             // Include the citinfos from the main body document so that they will be
             // used for calculating the bibliography as well
             this.citations = new DocxExporterCitations(
@@ -140,8 +140,8 @@ export class DocxExporterFootnotes {
     addRelsToCt() {
         const override = this.ctXml.querySelector(`Override[PartName="/${this.filePath}"]`)
         if (!override) {
-            const types = this.ctXml.querySelector('Types')
-            types.insertAdjacentHTML('beforeEnd', `<Override PartName="/${this.filePath}" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footnotes+xml"/>`)
+            const types = this.ctXml.querySelector("Types")
+            types.insertAdjacentHTML("beforeEnd", `<Override PartName="/${this.filePath}" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footnotes+xml"/>`)
         }
     }
 
@@ -149,8 +149,8 @@ export class DocxExporterFootnotes {
         return this.exporter.xml.getXml(this.styleFilePath).then(
             styleXml => {
                 this.styleXml = styleXml
-                this.addStyle('Footnote', DEFAULT_STYLE_FOOTNOTE)
-                this.addStyle('FootnoteAnchor', DEFAULT_STYLE_FOOTNOTE_ANCHOR)
+                this.addStyle("Footnote", DEFAULT_STYLE_FOOTNOTE)
+                this.addStyle("FootnoteAnchor", DEFAULT_STYLE_FOOTNOTE_ANCHOR)
                 return Promise.resolve()
             }
         )
@@ -158,15 +158,15 @@ export class DocxExporterFootnotes {
 
     addStyle(styleName, xml) {
         if (!this.styleXml.querySelector(`style[*|styleId="${styleName}"]`)) {
-            const stylesEl = this.styleXml.querySelector('styles')
-            stylesEl.insertAdjacentHTML('beforeEnd', xml)
+            const stylesEl = this.styleXml.querySelector("styles")
+            stylesEl.insertAdjacentHTML("beforeEnd", xml)
         }
     }
 
     findFootnotes() {
         descendantNodes(this.docContent).forEach(
             node => {
-                if (node.type === 'footnote') {
+                if (node.type === "footnote") {
                     this.footnotes.push(node.attrs.footnote)
                 }
             }
@@ -178,13 +178,13 @@ export class DocxExporterFootnotes {
         this.footnotes.forEach(
             footnote => {
                 fnContent.push({
-                    type: 'footnotecontainer',
+                    type: "footnotecontainer",
                     content: footnote
                 })
             }
         )
         this.fnPmJSON = {
-            type: 'doc',
+            type: "doc",
             content: fnContent
         }
     }
@@ -201,8 +201,8 @@ export class DocxExporterFootnotes {
         this.exporter.rels.addFootnoteRel()
         return this.exporter.xml.getXml(this.filePath, DEFAULT_XML).then(
             xml => {
-                const footnotesEl = xml.querySelector('footnotes')
-                footnotesEl.insertAdjacentHTML('beforeEnd', this.fnXml)
+                const footnotesEl = xml.querySelector("footnotes")
+                footnotesEl.insertAdjacentHTML("beforeEnd", this.fnXml)
                 this.xml = xml
             }
         )
@@ -211,10 +211,10 @@ export class DocxExporterFootnotes {
     setSettings() {
         return this.exporter.xml.getXml(this.settingsFilePath).then(
             settingsXml => {
-                const footnotePr = settingsXml.querySelector('footnotePr')
+                const footnotePr = settingsXml.querySelector("footnotePr")
                 if (!footnotePr) {
-                    const settingsEl = settingsXml.querySelector('settings')
-                    settingsEl.insertAdjacentHTML('beforeEnd', DEFAULT_SETTINGS_XML)
+                    const settingsEl = settingsXml.querySelector("settings")
+                    settingsEl.insertAdjacentHTML("beforeEnd", DEFAULT_SETTINGS_XML)
                 }
                 this.settingsXml = settingsXml
                 return Promise.resolve()

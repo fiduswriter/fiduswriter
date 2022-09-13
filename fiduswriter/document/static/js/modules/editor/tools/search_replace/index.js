@@ -35,8 +35,8 @@ export class SearchReplaceDialog {
     init() {
         let buttons = [
             {
-                text: gettext('Previous'),
-                classes: 'fw-light disabled',
+                text: gettext("Previous"),
+                classes: "fw-light disabled",
                 click: () => {
                     if (this.matches.selected !== false) {
                         if (this.matches.selected > 0 || !this.fnMatches.matches.length) {
@@ -68,8 +68,8 @@ export class SearchReplaceDialog {
                 }
             },
             {
-                text: gettext('Next'),
-                classes: 'fw-light disabled',
+                text: gettext("Next"),
+                classes: "fw-light disabled",
                 click: () => {
                     if (this.matches.selected !== false) {
                         if (this.matches.selected < this.matches.matches.length - 1 || !this.fnMatches.matches.length) {
@@ -105,8 +105,8 @@ export class SearchReplaceDialog {
         if (this.canWrite) {
             buttons = buttons.concat([
                 {
-                    text: gettext('Replace'),
-                    classes: 'fw-dark disabled',
+                    text: gettext("Replace"),
+                    classes: "fw-dark disabled",
                     click: () => {
                         if (this.matches.selected !== false) {
                             const match = this.matches.matches[this.matches.selected]
@@ -116,7 +116,7 @@ export class SearchReplaceDialog {
                             // In case there was a match within protected range , the change
                             // would be rejected. Show alert when replace is successfull.
                             if (!this.editor.view.state.doc.eq(originalDoc)) {
-                                addAlert('info', gettext('Text replaced successfully'))
+                                addAlert("info", gettext("Text replaced successfully"))
                             }
                         } else if (this.fnMatches.selected !== false) {
                             const match = this.fnMatches.matches[this.fnMatches.selected]
@@ -126,14 +126,14 @@ export class SearchReplaceDialog {
                             // In case there was a match within protected range , the change
                             // would be rejected. Show alert when replace is successfull.
                             if (!this.editor.mod.footnotes.fnEditor.view.state.doc.eq(originalDoc)) {
-                                addAlert('info', gettext('Text replaced successfully'))
+                                addAlert("info", gettext("Text replaced successfully"))
                             }
                         }
                     }
                 },
                 {
-                    text: gettext('Replace All'),
-                    classes: 'fw-dark disabled',
+                    text: gettext("Replace All"),
+                    classes: "fw-dark disabled",
                     click: () => {
                         if (this.matches.matches.length) {
                             const tr = this.editor.view.state.tr
@@ -155,7 +155,7 @@ export class SearchReplaceDialog {
                             // In case there was a match within protected range , the change
                             // would be rejected. Show alert when replace is successfull.
                             if (!this.editor.view.state.doc.eq(originalDoc)) {
-                                addAlert('info', gettext('Text replaced successfully'))
+                                addAlert("info", gettext("Text replaced successfully"))
                             }
                         }
                         if (this.fnMatches.matches.length) {
@@ -170,7 +170,7 @@ export class SearchReplaceDialog {
                             // In case there was a match within protected range , the change
                             // would be rejected. Show alert when replace is successfull.
                             if (!this.editor.mod.footnotes.fnEditor.view.state.doc.eq(originalDoc)) {
-                                addAlert('info', gettext('Text replaced successfully'))
+                                addAlert("info", gettext("Text replaced successfully"))
                             }
                         }
                     }
@@ -180,7 +180,7 @@ export class SearchReplaceDialog {
 
 
         this.dialog = new Dialog({
-            title: this.canWrite ? gettext('Search and replace') : gettext('Search'),
+            title: this.canWrite ? gettext("Search and replace") : gettext("Search"),
             body: searchDialogTemplate({canWrite: this.canWrite}),
             buttons,
             onClose: () => {
@@ -196,28 +196,28 @@ export class SearchReplaceDialog {
 
         this.dialog.open()
 
-        this.searchInput = this.dialog.dialogEl.querySelector('.search')
-        this.replaceInput = this.dialog.dialogEl.querySelector('.replace')
-        this.dialog.dialogEl.querySelector('input[type=text]').focus()
+        this.searchInput = this.dialog.dialogEl.querySelector(".search")
+        this.replaceInput = this.dialog.dialogEl.querySelector(".replace")
+        this.dialog.dialogEl.querySelector("input[type=text]").focus()
 
         this.bind()
     }
 
     setButtonState() {
         if (this.matches.matches.length + this.fnMatches.matches.length > 1) {
-            this.dialog.buttons[0].classes = 'fw-light'
-            this.dialog.buttons[1].classes = 'fw-light'
+            this.dialog.buttons[0].classes = "fw-light"
+            this.dialog.buttons[1].classes = "fw-light"
         } else {
-            this.dialog.buttons[0].classes = 'fw-light disabled'
-            this.dialog.buttons[1].classes = 'fw-light disabled'
+            this.dialog.buttons[0].classes = "fw-light disabled"
+            this.dialog.buttons[1].classes = "fw-light disabled"
         }
         if (this.canWrite) {
             if (this.matches.matches.length || this.fnMatches.matches.length) {
-                this.dialog.buttons[2].classes = 'fw-dark'
-                this.dialog.buttons[3].classes = 'fw-dark'
+                this.dialog.buttons[2].classes = "fw-dark"
+                this.dialog.buttons[3].classes = "fw-dark"
             } else {
-                this.dialog.buttons[2].classes = 'fw-dark disabled'
-                this.dialog.buttons[3].classes = 'fw-dark disabled'
+                this.dialog.buttons[2].classes = "fw-dark disabled"
+                this.dialog.buttons[3].classes = "fw-dark disabled"
             }
         }
 
@@ -250,12 +250,12 @@ export class SearchReplaceDialog {
     }
 
     bind() {
-        this.searchInput.addEventListener('input', () => {
+        this.searchInput.addEventListener("input", () => {
             this.search(this.searchInput.value)
             this.setNoteState()
         })
         if (this.canWrite) {
-            this.replaceInput.addEventListener('input', () => {
+            this.replaceInput.addEventListener("input", () => {
                 this.setButtonState()
             })
         }
@@ -264,7 +264,7 @@ export class SearchReplaceDialog {
     onUpdate() {
         this.matches = getSearchMatches(this.editor.view.state)
         this.fnMatches = getSearchMatches(this.editor.mod.footnotes.fnEditor.view.state)
-        const selectedSearch = document.querySelector('#paper-editable .search.selected')
+        const selectedSearch = document.querySelector("#paper-editable .search.selected")
 
         if (selectedSearch) {
             selectedSearch.scrollIntoView(false)

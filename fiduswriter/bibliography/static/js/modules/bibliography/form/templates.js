@@ -6,8 +6,8 @@ export const bibDialog = ({bib_type, BibTypes, BibTypeTitles}) =>
                 <select id="select-bibtype" class="fw-button fw-light fw-large" required>
                     ${
     bib_type === false ?
-        `<option class="placeholder" selected disabled value="">${gettext('Select source type')}</option>` :
-        ''
+        `<option class="placeholder" selected disabled value="">${gettext("Select source type")}</option>` :
+        ""
 }
                     ${
     Object.keys(BibTypes).map(key =>
@@ -19,20 +19,20 @@ export const bibDialog = ({bib_type, BibTypes, BibTypeTitles}) =>
 }>
                                 ${BibTypeTitles[key]}
                             </option>`
-    ).join('')
+    ).join("")
 }
                 </select>
                 <div class="fw-select-arrow fa fa-caret-down"></div>
             </div>
             <ul class="ui-tabs-nav">
                 <li class="tab-link"><a href="#req-fields-tab" class="tab-link-inner">
-                    ${gettext('Required Fields')}
+                    ${gettext("Required Fields")}
                 </a></li>
                 <li class="tab-link"><a href="#opt-fields-tab" class="tab-link-inner">
-                    ${gettext('Optional Fields')}
+                    ${gettext("Optional Fields")}
                 </a></li>
                 <li class="tab-link" id="categories-link"><a href="#categories-tab" class="tab-link-inner">
-                    ${gettext('Categories')}
+                    ${gettext("Categories")}
                 </a></li>
             </ul>
         </div>
@@ -47,7 +47,7 @@ export const bibDialog = ({bib_type, BibTypes, BibTypeTitles}) =>
             <table class="fw-dialog-table">
                 <tbody>
                     <tr>
-                        <th><h4 class="fw-tablerow-title">${gettext('Categories')}</h4></th>
+                        <th><h4 class="fw-tablerow-title">${gettext("Categories")}</h4></th>
                         <td id="categories-field"></td>
                     </tr>
                 </tbody>

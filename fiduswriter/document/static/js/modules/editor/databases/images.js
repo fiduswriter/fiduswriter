@@ -70,7 +70,7 @@ export class ModImageDB {
     deleteLocalImage(id) {
         const usedImages = []
         this.mod.editor.view.state.doc.descendants(node => {
-            if (node.type.name === 'figure' && node.attrs.image) {
+            if (node.type.name === "figure" && node.attrs.image) {
                 usedImages.push(node.attrs.image)
             }
         })
@@ -88,15 +88,15 @@ export class ModImageDB {
                         delete this.db[id]
                         const transaction = this.mod.editor.view.state.tr
                         this.mod.editor.view.state.doc.descendants((node, pos) => {
-                            if (node.type.name === 'figure' && node.attrs.image == id) {
+                            if (node.type.name === "figure" && node.attrs.image == id) {
                                 const attrs = Object.assign({}, node.attrs)
                                 attrs["image"] = false
-                                const nodeType = this.mod.editor.currentView.state.schema.nodes['figure']
+                                const nodeType = this.mod.editor.currentView.state.schema.nodes["figure"]
                                 transaction.setNodeMarkup(pos, nodeType, attrs)
                             }
                         })
                         this.mod.editor.view.dispatch(transaction)
-                        addAlert('error', gettext("One of the Image(s) you copied could not be found on the server. Please try uploading it again."))
+                        addAlert("error", gettext("One of the Image(s) you copied could not be found on the server. Please try uploading it again."))
                     }
                 )
             }
@@ -110,7 +110,7 @@ export class ModImageDB {
                 response => response.blob()
             ).then(
                 blob => {
-                    const filename = imageUrl.split('/').pop()
+                    const filename = imageUrl.split("/").pop()
                     const file = new File([blob], filename, {type: blob.type})
                     const x = {"image": file, "title": title, "cats": [], "copyright": copyright}
                     this.mod.editor.app.imageDB.saveImage(x).then(
@@ -118,10 +118,10 @@ export class ModImageDB {
                             const imageData = JSON.parse(JSON.stringify(this.mod.editor.app.imageDB.db[newId]))
                             this.setImage(newId, imageData)
                             this.mod.editor.view.state.doc.descendants((node, pos) => {
-                                if (node.type.name === 'image' && node.attrs.image == id) {
+                                if (node.type.name === "image" && node.attrs.image == id) {
                                     const attrs = Object.assign({}, node.attrs)
                                     attrs["image"] = newId
-                                    const nodeType = this.mod.editor.currentView.state.schema.nodes['image']
+                                    const nodeType = this.mod.editor.currentView.state.schema.nodes["image"]
                                     const transaction = this.mod.editor.view.state.tr.setNodeMarkup(pos, nodeType, attrs)
                                     this.mod.editor.view.dispatch(transaction)
                                 }
@@ -145,20 +145,20 @@ export class ModImageDB {
     unsentEvents() {
         return this.unsent.map(
             event => {
-                if (event.type === 'delete') {
+                if (event.type === "delete") {
                     return event
-                } else if (event.type === 'update') {
+                } else if (event.type === "update") {
                     // Check image entry still exists. Otherwise ignore.
                     const image = this.db[event.id]
                     if (image) {
                         return {
-                            type: 'update',
+                            type: "update",
                             id: event.id,
                             image
                         }
                     } else {
                         return {
-                            type: 'ignore'
+                            type: "ignore"
                         }
                     }
 

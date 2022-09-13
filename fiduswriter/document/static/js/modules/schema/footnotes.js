@@ -39,7 +39,7 @@ const footnotecontainer = {
     marks: "annotation",
     parseDOM: [{tag: "div.footnote-container"}],
     toDOM(_node) {
-        return ['div', {class: 'footnote-container'}, 0]
+        return ["div", {class: "footnote-container"}, 0]
     }
 }
 
@@ -110,7 +110,7 @@ spec.nodes = spec.nodes.update(
             toDOM(node) {
                 const attrs = {}
                 if (node.attrs.track.length) {
-                    attrs['data-track'] = JSON.stringify(node.attrs.track)
+                    attrs["data-track"] = JSON.stringify(node.attrs.track)
                 }
                 return ["table", attrs, ["tbody", 0]]
             }

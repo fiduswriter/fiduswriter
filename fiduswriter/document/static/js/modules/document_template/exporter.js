@@ -8,7 +8,7 @@ import {ZipFileCreator} from "../exporter/tools/zip"
 export class DocumentTemplateExporter {
     constructor(
         id,
-        getUrl = '/api/document/admin/get_template/',
+        getUrl = "/api/document/admin/get_template/",
         download = true
     ) {
         this.id = id
@@ -28,10 +28,10 @@ export class DocumentTemplateExporter {
         ).then(({json}) => {
             this.docVersion = json.doc_version
             this.zipFileName = `${createSlug(json.title)}.fidustemplate`
-            this.textFiles.push({filename: 'template.json', contents: JSON.stringify(json.content)})
+            this.textFiles.push({filename: "template.json", contents: JSON.stringify(json.content)})
             const exportTemplates = []
             json.export_templates.forEach(template => {
-                const filename = `exporttemplates/${template.fields.template_file.split('/').slice(-1)[0]}`
+                const filename = `exporttemplates/${template.fields.template_file.split("/").slice(-1)[0]}`
                 this.httpFiles.push({
                     filename,
                     url: template.fields.template_file
@@ -43,7 +43,7 @@ export class DocumentTemplateExporter {
                 })
             })
             this.textFiles.push({
-                filename: 'exporttemplates.json',
+                filename: "exporttemplates.json",
                 contents: JSON.stringify(exportTemplates)
             })
             const documentStyles = []
@@ -64,7 +64,7 @@ export class DocumentTemplateExporter {
                 })
                 documentStyles.push(style)
             })
-            this.textFiles.push({filename: 'documentstyles.json', contents: JSON.stringify(documentStyles)})
+            this.textFiles.push({filename: "documentstyles.json", contents: JSON.stringify(documentStyles)})
             if (this.download) {
                 return this.createZip()
             }
@@ -73,15 +73,15 @@ export class DocumentTemplateExporter {
     }
 
     createZip() {
-        this.textFiles.push({filename: 'filetype-version', contents: this.docVersion})
+        this.textFiles.push({filename: "filetype-version", contents: this.docVersion})
         const zipper = new ZipFileCreator(
             this.textFiles,
             this.httpFiles,
             undefined,
-            'application/fidustemplate+zip'
+            "application/fidustemplate+zip"
         )
         return zipper.init().then(
-            blob => download(blob, this.zipFileName, 'application/zip')
+            blob => download(blob, this.zipFileName, "application/zip")
         )
     }
 

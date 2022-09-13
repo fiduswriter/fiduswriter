@@ -11,7 +11,7 @@ export class MathDialog {
         this.editor = editor
         this.node = this.editor.currentView.state.selection.node
         this.equationSelected = this.node && this.node.attrs && this.node.attrs.equation ? true : false
-        this.equation = this.equationSelected ? this.node.attrs.equation : ''
+        this.equation = this.equationSelected ? this.node.attrs.equation : ""
     }
 
     init() {
@@ -23,8 +23,8 @@ export class MathDialog {
             height: 100,
             buttons: [
                 {
-                    text: this.equationSelected ? gettext('Update') : gettext('Insert'),
-                    classes: 'fw-dark insert-math',
+                    text: this.equationSelected ? gettext("Update") : gettext("Insert"),
+                    classes: "fw-dark insert-math",
                     click: () => {
                         const view = this.editor.currentView,
                             state = view.state
@@ -63,7 +63,7 @@ export class MathDialog {
                             this.dialog.close()
                             return
                         }
-                        const nodeType = state.schema.nodes['equation']
+                        const nodeType = state.schema.nodes["equation"]
                         view.dispatch(
                             state.tr.replaceSelectionWith(nodeType.createAndFill({
                                 equation: this.equation
@@ -73,16 +73,16 @@ export class MathDialog {
                     }
                 },
                 {
-                    type: 'cancel'
+                    type: "cancel"
                 }
             ],
-            title: gettext('Mathematical formula'),
+            title: gettext("Mathematical formula"),
             beforeClose: () => {
                 if (this.mathField) {
                     this.mathField = false
                 }
             },
-            classes: 'math',
+            classes: "math",
             onClose: () => this.editor.currentView.focus()
         })
         this.dialog.open()
@@ -91,12 +91,12 @@ export class MathDialog {
 
         import("mathlive").then(MathLive => {
             this.mathField = new MathLive.MathfieldElement({
-                virtualKeyboardMode: 'onfocus',
+                virtualKeyboardMode: "onfocus",
                 keypressSound: null,
                 plonkSound: null,
-                locale: 'int',
+                locale: "int",
                 strings: {
-                    'int': {
+                    "int": {
                         "keyboard.tooltip.functions": gettext("Functions"),
                         "keyboard.tooltip.greek": gettext("Greek Letters"),
                         "keyboard.tooltip.command": gettext("LaTeX Command Mode"),

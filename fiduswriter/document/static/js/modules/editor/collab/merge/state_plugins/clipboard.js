@@ -10,7 +10,7 @@ import {
     docClipboardSerializer
 } from "../../../clipboard/copy"
 
-const key = new PluginKey('clipboard')
+const key = new PluginKey("clipboard")
 export const clipboardPlugin = function(options) {
     let shiftPressed = false
     return new Plugin({
@@ -42,7 +42,7 @@ export const clipboardPlugin = function(options) {
                 if (shiftPressed) {
                     return inHTML
                 }
-                const ph = new HTMLPaste(options.editor, inHTML, 'main')
+                const ph = new HTMLPaste(options.editor, inHTML, "main")
                 return ph.getOutput()
             },
             clipboardSerializer: docClipboardSerializer(options.editor)

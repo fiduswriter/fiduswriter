@@ -2,15 +2,15 @@
  */
 export class WebSocketConnector {
     constructor({
-        url = '', // needs to be specified
+        url = "", // needs to be specified
         appLoaded = () => false, // required argument
         anythingToSend = () => false, // required argument
         messagesElement = () => false, // element in which to show connection messages
-        initialMessage = () => ({type: 'subscribe'}),
+        initialMessage = () => ({type: "subscribe"}),
         resubScribed = () => {}, // Cleanup when the client connects a second or subsequent time
-        restartMessage = () => ({type: 'restart'}), // Too many messages have been lost and we need to restart
-        warningNotAllSent = gettext('Warning! Some data is unsaved'), // Info to show while disconnected WITH unsaved data
-        infoDisconnected = gettext('Disconnected. Attempting to reconnect...'), // Info to show while disconnected WITHOUT unsaved data
+        restartMessage = () => ({type: "restart"}), // Too many messages have been lost and we need to restart
+        warningNotAllSent = gettext("Warning! Some data is unsaved"), // Info to show while disconnected WITH unsaved data
+        infoDisconnected = gettext("Disconnected. Attempting to reconnect..."), // Info to show while disconnected WITHOUT unsaved data
         receiveData = _data => {},
         failedAuth = () => {
             window.location.href = "/"
@@ -48,7 +48,7 @@ export class WebSocketConnector {
 
         // Close the socket manually for now when the connection is lost. Sometimes the socket isn't closed on disconnection.
         this.listeners.onOffline = _event => this.ws.close()
-        window.addEventListener('offline', this.listeners.onOffline)
+        window.addEventListener("offline", this.listeners.onOffline)
     }
 
     goOffline() {
@@ -69,7 +69,7 @@ export class WebSocketConnector {
             this.ws.onclose = () => {}
             this.ws.close()
         }
-        window.removeEventListener('offline', this.listeners.onOffline)
+        window.removeEventListener("offline", this.listeners.onOffline)
     }
 
     createWSConnection() {
@@ -81,33 +81,33 @@ export class WebSocketConnector {
         }
         const url = this.online ?
             `${
-                location.protocol === 'https:' ?
-                    'wss://' :
-                    'ws://'
+                location.protocol === "https:" ?
+                    "wss://" :
+                    "ws://"
             }${
                 settings_WS_SERVER ?
                     settings_WS_SERVER :
-                    location.host.split(':')[0]
+                    location.host.split(":")[0]
             }${
                 settings_WS_PORT ?
                     `:${settings_WS_PORT}` :
                     location.port.length ?
                         `:${location.port}` :
-                        ''
+                        ""
             }${
                 this.url
             }` :
             `${
-                location.protocol === 'https:' ?
-                    'wss://offline' :
-                    'ws://offline'
+                location.protocol === "https:" ?
+                    "wss://offline" :
+                    "ws://offline"
             }`
         this.ws = new window.WebSocket(url)
 
         this.ws.onmessage = event => {
             const data = JSON.parse(event.data)
             const expectedServer = this.messages.server + 1
-            if (data.type === 'request_resend') {
+            if (data.type === "request_resend") {
                 this.resend_messages(data.from)
             } else if (data.s < expectedServer) {
                 // Receive a message already received at least once. Ignore.
@@ -116,7 +116,7 @@ export class WebSocketConnector {
                 // Messages from the server have been lost.
                 // Request resend.
                 this.ws.send(JSON.stringify({
-                    type: 'request_resend',
+                    type: "request_resend",
                     from: this.messages.server
                 }))
             } else {
@@ -135,7 +135,7 @@ export class WebSocketConnector {
                         this.send(this.restartMessage)
                         return
                     }
-                    this.messages['lastTen'].slice(0 - clientDifference).forEach(data => {
+                    this.messages["lastTen"].slice(0 - clientDifference).forEach(data => {
                         this.messages.client += 1
                         data.c = this.messages.client
                         data.s = this.messages.server
@@ -173,7 +173,7 @@ export class WebSocketConnector {
     open() {
         const messagesElement = this.messagesElement()
         if (messagesElement) {
-            messagesElement.innerHTML = ''
+            messagesElement.innerHTML = ""
         }
         this.connected = true
 
@@ -209,7 +209,7 @@ export class WebSocketConnector {
             data.c = this.messages.client
             data.s = this.messages.server
             this.messages.lastTen.push(data)
-            this.messages.lastTen = this.messages['lastTen'].slice(-10)
+            this.messages.lastTen = this.messages["lastTen"].slice(-10)
             this.ws.send(JSON.stringify(data))
             this.setRecentlySentTimer(timer)
         } else {
@@ -248,13 +248,13 @@ export class WebSocketConnector {
 
     receive(data) {
         switch (data.type) {
-        case 'welcome':
+        case "welcome":
             this.open()
             break
-        case 'subscribed':
+        case "subscribed":
             this.subscribed()
             break
-        case 'access_denied':
+        case "access_denied":
             this.failedAuth()
             break
         default:

@@ -7,7 +7,7 @@ export const changeAvatarDialog = function(app) {
 
     const buttons = [
         {
-            text: gettext('Upload'),
+            text: gettext("Upload"),
             classes: "fw-dark",
             click: () => {
 
@@ -21,7 +21,7 @@ export const changeAvatarDialog = function(app) {
                 const file = avatarUploader.files[0]
 
                 post(
-                    '/api/user/avatar/upload/',
+                    "/api/user/avatar/upload/",
                     {
                         avatar: {
                             file,
@@ -37,36 +37,36 @@ export const changeAvatarDialog = function(app) {
                 ).catch(
                     () => {
                         deactivateWait()
-                        addAlert('error', gettext('Could not update profile avatar'))
+                        addAlert("error", gettext("Could not update profile avatar"))
                     }
                 )
                 dialog.close()
             }
         },
         {
-            type: 'cancel'
+            type: "cancel"
         }
     ]
 
-    const avatarUploader = document.createElement('input')
-    avatarUploader.type = 'file'
+    const avatarUploader = document.createElement("input")
+    avatarUploader.type = "file"
     avatarUploader.accept = ".png, .jpg, .jpeg"
-    avatarUploader.style.display = 'none'
+    avatarUploader.style.display = "none"
 
     const dialog = new Dialog({
-        id: 'change-avatar-dialog',
-        title: gettext('Upload your profile picture'),
+        id: "change-avatar-dialog",
+        title: gettext("Upload your profile picture"),
         body: changeAvatarDialogTemplate(),
         buttons
     })
     dialog.open()
     dialog.dialogEl.appendChild(avatarUploader)
 
-    avatarUploader.addEventListener('change', () => {
-        document.getElementById('uploaded-avatar-name').innerHTML = avatarUploader.value.replace(/C:\\fakepath\\/i, '')
+    avatarUploader.addEventListener("change", () => {
+        document.getElementById("uploaded-avatar-name").innerHTML = avatarUploader.value.replace(/C:\\fakepath\\/i, "")
     })
-    document.getElementById('upload-avatar-btn').addEventListener(
-        'click',
+    document.getElementById("upload-avatar-btn").addEventListener(
+        "click",
         event => {
             event.preventDefault()
             avatarUploader.click()
@@ -79,7 +79,7 @@ const deleteAvatar = function(app) {
     activateWait()
 
     post(
-        '/api/user/avatar/delete/'
+        "/api/user/avatar/delete/"
     ).then(
         () => deactivateWait()
     ).then(
@@ -89,7 +89,7 @@ const deleteAvatar = function(app) {
     ).catch(
         () => {
             deactivateWait()
-            addAlert('error', gettext('Could not delete avatar'))
+            addAlert("error", gettext("Could not delete avatar"))
         }
     )
 }
@@ -97,7 +97,7 @@ const deleteAvatar = function(app) {
 export const deleteAvatarDialog = function(app) {
     const buttons = [
         {
-            text: gettext('Delete'),
+            text: gettext("Delete"),
             classes: "fw-dark",
             click: () => {
                 deleteAvatar(app)
@@ -105,13 +105,13 @@ export const deleteAvatarDialog = function(app) {
             }
         },
         {
-            type: 'cancel'
+            type: "cancel"
         }
     ]
     const dialog = new Dialog({
-        title: gettext('Confirm deletion'),
-        id: 'confirmdeletion',
-        icon: 'exclamation-triangle',
+        title: gettext("Confirm deletion"),
+        id: "confirmdeletion",
+        icon: "exclamation-triangle",
         body: confirmDeleteAvatarTemplate(),
         buttons
     })
@@ -121,22 +121,22 @@ export const deleteAvatarDialog = function(app) {
 export const changePwdDialog = function({username}) {
     const buttons = [
         {
-            text: gettext('Submit'),
+            text: gettext("Submit"),
             classes: "fw-dark",
             click: () => {
-                const oldPwd = document.getElementById('old-password-input').value,
-                    newPwd1 = document.getElementById('new-password-input1').value,
-                    newPwd2 = document.getElementById('new-password-input2').value
+                const oldPwd = document.getElementById("old-password-input").value,
+                    newPwd1 = document.getElementById("new-password-input1").value,
+                    newPwd2 = document.getElementById("new-password-input2").value
 
-                document.getElementById('fw-password-change-error').innerHTML = ''
+                document.getElementById("fw-password-change-error").innerHTML = ""
 
-                if ('' === oldPwd || '' === newPwd1 || '' === newPwd2) {
-                    document.getElementById('fw-password-change-error').innerHTML = gettext('All fields are required!')
+                if ("" === oldPwd || "" === newPwd1 || "" === newPwd2) {
+                    document.getElementById("fw-password-change-error").innerHTML = gettext("All fields are required!")
                     return
                 }
 
                 if (newPwd1 !== newPwd2) {
-                    document.getElementById('fw-password-change-error').innerHTML = gettext('Please confirm the new password!')
+                    document.getElementById("fw-password-change-error").innerHTML = gettext("Please confirm the new password!")
                     return
                 }
 
@@ -144,7 +144,7 @@ export const changePwdDialog = function({username}) {
                 activateWait()
 
                 postJson(
-                    '/api/user/passwordchange/',
+                    "/api/user/passwordchange/",
                     {
                         old_password: oldPwd,
                         new_password1: newPwd1,
@@ -154,35 +154,35 @@ export const changePwdDialog = function({username}) {
                     ({json, status}) => {
                         if (200 === status) {
                             dialog.close()
-                            addAlert('info', gettext('The password has been changed.'))
+                            addAlert("info", gettext("The password has been changed."))
                         } else {
                             let eMsg
-                            if (json.msg.hasOwnProperty('old_password')) {
-                                eMsg = json.msg['old_password'][0]
-                            } else if (json.msg.hasOwnProperty('new_password1')) {
-                                eMsg = json.msg['new_password1'][0]
-                            } else if (json.msg.hasOwnProperty('new_password2')) {
-                                eMsg = json.msg['new_password2'][0]
+                            if (json.msg.hasOwnProperty("old_password")) {
+                                eMsg = json.msg["old_password"][0]
+                            } else if (json.msg.hasOwnProperty("new_password1")) {
+                                eMsg = json.msg["new_password1"][0]
+                            } else if (json.msg.hasOwnProperty("new_password2")) {
+                                eMsg = json.msg["new_password2"][0]
                             } else {
-                                eMsg = gettext('The password could not be changed!')
+                                eMsg = gettext("The password could not be changed!")
                             }
-                            document.getElementById('fw-password-change-error').innerHTML = eMsg
+                            document.getElementById("fw-password-change-error").innerHTML = eMsg
                         }
                     }
                 ).catch(
-                    () => addAlert('error', gettext('The password could not be changed'))
+                    () => addAlert("error", gettext("The password could not be changed"))
                 ).then(
                     () => deactivateWait()
                 )
             }
         },
         {
-            type: 'cancel'
+            type: "cancel"
         }
     ]
     const dialog = new Dialog({
-        id: 'fw-change-pwd-dialog',
-        title: gettext('Change Password'),
+        id: "fw-change-pwd-dialog",
+        title: gettext("Change Password"),
         body: changePwdDialogTemplate({username}),
         buttons
     })
@@ -194,22 +194,22 @@ export const addEmailDialog = function(app) {
 
     const buttons = [
         {
-            text: gettext('Submit'),
+            text: gettext("Submit"),
             classes: "fw-dark",
             click: () => {
-                const email = document.getElementById('new-profile-email').value.replace(/(^\s+)|(\s+$)/g, "")
+                const email = document.getElementById("new-profile-email").value.replace(/(^\s+)|(\s+$)/g, "")
 
-                document.getElementById('fw-add-email-error').innerHTML = ''
+                document.getElementById("fw-add-email-error").innerHTML = ""
 
-                if ('' === email) {
-                    document.getElementById('fw-add-email-error').innerHTML = gettext('New email address is required!')
+                if ("" === email) {
+                    document.getElementById("fw-add-email-error").innerHTML = gettext("New email address is required!")
                     return
                 }
 
-                document.getElementById('new-profile-email').value = email
+                document.getElementById("new-profile-email").value = email
 
                 postJson(
-                    '/api/user/email/add/',
+                    "/api/user/email/add/",
                     {
                         email
                     }
@@ -221,28 +221,28 @@ export const addEmailDialog = function(app) {
                             return app.getUserInfo().then(
                                 () => app.selectPage()
                             ).then(
-                                () => addAlert('info', `${gettext('Confirmation e-mail sent to')}: ${email}`)
+                                () => addAlert("info", `${gettext("Confirmation e-mail sent to")}: ${email}`)
                             )
                         } else {
-                            document.getElementById('fw-add-email-error').innerHTML = json.msg['email'][0]
+                            document.getElementById("fw-add-email-error").innerHTML = json.msg["email"][0]
                         }
                     }
                 ).catch(
                     () => {
                         deactivateWait()
-                        addAlert('error', gettext('The email could not be added!'))
+                        addAlert("error", gettext("The email could not be added!"))
                     }
                 )
             }
         },
         {
-            type: 'cancel'
+            type: "cancel"
         }
     ]
 
     const dialog = new Dialog({
-        id: 'fw-add-email-dialog',
-        title: gettext('Add Email'),
+        id: "fw-add-email-dialog",
+        title: gettext("Add Email"),
         body: changeEmailDialogTemplate(),
         buttons,
         width: 400
@@ -255,13 +255,13 @@ export const deleteEmailDialog = function(target, app) {
 
     const buttons = [
         {
-            text: gettext('Remove'),
+            text: gettext("Remove"),
             classes: "fw-dark",
             click: () => {
                 activateWait()
 
                 post(
-                    '/api/user/email/delete/',
+                    "/api/user/email/delete/",
                     {
                         email
                     }
@@ -275,28 +275,28 @@ export const deleteEmailDialog = function(target, app) {
                 ).then(
                     () => app.selectPage()
                 ).then(
-                    () => addAlert('info', gettext('Email successfully deleted!'))
+                    () => addAlert("info", gettext("Email successfully deleted!"))
                 ).catch(
                     () => {
                         deactivateWait()
-                        addAlert('error', gettext('The email could not be deleted!'))
+                        addAlert("error", gettext("The email could not be deleted!"))
                     }
                 )
             }
         },
         {
-            type: 'cancel'
+            type: "cancel"
         }
     ]
 
     const dialog = new Dialog({
-        id: 'fw-confirm-email-dialog',
-        title: gettext('Confirm remove'),
+        id: "fw-confirm-email-dialog",
+        title: gettext("Confirm remove"),
         body: deleteEmailDialogTemplate({
-            'text': `${gettext('Remove the email address')}: ${escapeText(email)}?`
+            "text": `${gettext("Remove the email address")}: ${escapeText(email)}?`
         }),
         buttons,
-        icon: 'exclamation-triangle'
+        icon: "exclamation-triangle"
     })
     dialog.open()
 }
@@ -307,13 +307,13 @@ export const deleteSocialaccountDialog = function(target, app) {
 
     const buttons = [
         {
-            text: gettext('Remove'),
+            text: gettext("Remove"),
             classes: "fw-dark",
             click: () => {
                 activateWait()
 
                 post(
-                    '/api/user/socialaccountdelete/',
+                    "/api/user/socialaccountdelete/",
                     {
                         socialaccount
                     }
@@ -327,45 +327,45 @@ export const deleteSocialaccountDialog = function(target, app) {
                 ).then(
                     () => app.selectPage()
                 ).then(
-                    () => addAlert('info', `${escapeText(provider)} ${gettext('account successfully deleted!')}`)
+                    () => addAlert("info", `${escapeText(provider)} ${gettext("account successfully deleted!")}`)
                 ).catch(
                     () => {
                         deactivateWait()
-                        addAlert('error', gettext('The account could not be deleted!'))
+                        addAlert("error", gettext("The account could not be deleted!"))
                     }
                 )
             }
         },
         {
-            type: 'cancel'
+            type: "cancel"
         }
     ]
 
     const dialog = new Dialog({
-        id: 'fw-confirm-email-dialog',
-        title: gettext('Confirm remove'),
+        id: "fw-confirm-email-dialog",
+        title: gettext("Confirm remove"),
         body: deleteEmailDialogTemplate({
-            'text': `${gettext('Remove the link to the account at')} ${escapeText(provider)}?`
+            "text": `${gettext("Remove the link to the account at")} ${escapeText(provider)}?`
         }),
         buttons,
-        icon: 'exclamation-triangle'
+        icon: "exclamation-triangle"
     })
     dialog.open()
 
 }
 
 export const changePrimaryEmailDialog = function(app) {
-    const primEmailRadio = document.querySelector('.primary-email-radio:checked'),
+    const primEmailRadio = document.querySelector(".primary-email-radio:checked"),
         email = primEmailRadio.value
     const buttons = [
         {
-            text: gettext('Submit'),
+            text: gettext("Submit"),
             classes: "fw-dark",
             click: () => {
                 activateWait()
 
                 post(
-                    '/api/user/email/primary/',
+                    "/api/user/email/primary/",
                     {
                         email
                     }
@@ -378,25 +378,25 @@ export const changePrimaryEmailDialog = function(app) {
                 ).then(
                     () => app.selectPage()
                 ).then(
-                    () => addAlert('info', gettext('The primary email has been updated.'))
+                    () => addAlert("info", gettext("The primary email has been updated."))
                 ).catch(
                     _error => {
                         deactivateWait()
-                        addAlert('error', gettext('The email could not be set to be primary email.'))
+                        addAlert("error", gettext("The email could not be set to be primary email."))
                     }
                 )
             }
         },
         {
-            type: 'cancel'
+            type: "cancel"
         }
     ]
 
     const dialog = new Dialog({
-        id: 'change-primary-email',
-        title: gettext('Confirm set primary'),
+        id: "change-primary-email",
+        title: gettext("Confirm set primary"),
         body: changePrimaryEmailDialogTemplate({
-            'text': `${gettext('Set this email as the address primary')}: ${email}?`
+            "text": `${gettext("Set this email as the address primary")}: ${email}?`
         }),
         buttons
     })

@@ -20,10 +20,10 @@ export const cross_reference = {
     }],
     toDOM(node) {
         return ["span", {
-            class: `cross-reference${ node.attrs.title ? '' : ' missing-target'}`,
-            'data-id': node.attrs.id,
-            'data-title': node.attrs.title
-        }, node.attrs.title ? node.attrs.title : gettext('Missing Target')]
+            class: `cross-reference${ node.attrs.title ? "" : " missing-target"}`,
+            "data-id": node.attrs.id,
+            "data-title": node.attrs.title
+        }, node.attrs.title ? node.attrs.title : gettext("Missing Target")]
     }
 }
 
@@ -49,7 +49,7 @@ export const link = {
     ],
     toDOM(node) {
         const {href, title} = node.attrs
-        const attrs = title || href.charAt(0) !== '#' ? {href, title} : {href, title: gettext('Missing target'), class: 'missing-target'}
+        const attrs = title || href.charAt(0) !== "#" ? {href, title} : {href, title: gettext("Missing target"), class: "missing-target"}
         return ["a", attrs, 0]
     }
 }
@@ -75,9 +75,9 @@ export const anchor = {
         }
     }],
     toDOM(node) {
-        return ['span', {
-            class: 'anchor',
-            'data-id': node.attrs.id
+        return ["span", {
+            class: "anchor",
+            "data-id": node.attrs.id
         }]
     }
 }

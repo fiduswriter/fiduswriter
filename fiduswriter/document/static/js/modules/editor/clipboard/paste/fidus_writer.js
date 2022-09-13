@@ -7,7 +7,7 @@ export class FidusWriterPasteHandler extends GeneralPasteHandler {
     convertNode(node) {
         // Replace  nodes with other nodes to not change the number of child nodes
         // <b style="font-weight:normal;">...</b> => <span>...</span>
-        if (node.tagName === 'SPAN' && node.classList.contains('citation')) {
+        if (node.tagName === "SPAN" && node.classList.contains("citation")) {
             node = this.verifyCitationNode(node)
         }
         return node
@@ -44,7 +44,7 @@ export class FidusWriterPasteHandler extends GeneralPasteHandler {
     cleanDOM() {
         // Remove the bibliography that was added by the copy serializer
         const clipboardArtifacts = this.dom.querySelectorAll(
-            '.fiduswriter-clipboard-bibliography, .fiduswriter-clipboard-footnotes'
+            ".fiduswriter-clipboard-bibliography, .fiduswriter-clipboard-footnotes"
         )
         clipboardArtifacts.forEach(el => el.parentElement.removeChild(el))
     }

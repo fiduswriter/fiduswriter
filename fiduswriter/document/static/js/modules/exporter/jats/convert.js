@@ -2,6 +2,7 @@ import {escapeText} from "../../common"
 import {CATS} from "../../schema/i18n"
 
 import {articleTemplate} from "./templates"
+import {convertText} from "./text"
 
 export class JATSExporterConvert {
     constructor(exporter, imageDB, bibDB, settings) {
@@ -463,39 +464,7 @@ export class JATSExporterConvert {
             end = "</fn>" + end
             break
         case "text": {
-            let strong, em, underline, hyperlink
-            // Check for hyperlink, bold/strong, italic/em and underline
-            if (node.marks) {
-                strong = node.marks.find(mark => mark.type === "strong")
-                em = node.marks.find(mark => mark.type === "em")
-                underline = node.marks.find(mark => mark.type === "underline")
-                hyperlink = node.marks.find(mark => mark.type === "link")
-            }
-            if (em) {
-                start += "<italic>"
-                end = "</italic>" + end
-            }
-            if (strong) {
-                start += "<bold>"
-                end = "</bold>" + end
-            }
-            if (underline) {
-                start += "<underline>"
-                end = "</underline>" + end
-            }
-            if (hyperlink) {
-                const href = hyperlink.attrs.href
-                if (href[0] === "#") {
-                    // Internal link
-                    start += `<xref rid="${href.substring(1)}">`
-                    end = "</xref>" + end
-                } else {
-                    // External link
-                    start += `<ext-link xlink:href="${href}" ext-link-type="uri" xlink:title="${hyperlink.attrs.title}">`
-                    end = "</ext-link>" + end
-                }
-            }
-            content += escapeText(node.text)
+            content += convertText(node)
             break
         }
         case "cross_reference": {

@@ -1,5 +1,7 @@
 import {FormatCitations} from "../../citations/format"
 
+import {jatsBib} from "./bibliography"
+
 export class JATSExporterCitations {
     constructor(exporter, bibDB, csl) {
         this.exporter = exporter
@@ -8,7 +10,6 @@ export class JATSExporterCitations {
 
         this.citationTexts = []
         this.citFm = false
-        this.citJATSFm = false
         this.jatsBib = ""
         this.jatsIdConvert = {}
     }
@@ -23,8 +24,7 @@ export class JATSExporterCitations {
 
     // Citations are highly interdependent -- so we need to format them all
     // together before laying out the document.
-    // We need to run this twice - once using the current document style for
-    // citations and once for the JATS bibliography.
+    // We disregard the tyling of the bibliography and instead create our own, JATS-specific bibliography.
     formatCitations() {
         return this.csl.getStyle(this.exporter.doc.settings.citationstyle).then(
             citationstyle => {
@@ -41,17 +41,9 @@ export class JATSExporterCitations {
                     "",
                     this.bibDB
                 )
-                this.citJATSFm = new FormatCitations(
-                    this.csl,
-                    this.citInfos,
-                    "jats",
-                    "",
-                    this.bibDB
-                )
                 return Promise.all([
                     Promise.resolve(origCitationLayout),
-                    this.citFm.init(),
-                    this.citJATSFm.init()
+                    this.citFm.init()
                 ])
             }
         ).then(
@@ -60,7 +52,10 @@ export class JATSExporterCitations {
                 // so we need to first split, then add the links and eventually put the citation back together
                 // again.
                 // The IDs used in the jats bibliography are 1 and up in this order
-                this.citJATSFm.bibliography[0].entry_ids.forEach((id, index) => this.jatsIdConvert[id] = index + 1)
+                this.citFm.bibliography[0].entry_ids.forEach((id, index) => {
+                    this.jatsIdConvert[id] = index + 1
+                    this.jatsBib += jatsBib(this.bibDB.db[id], index + 1)
+                })
                 this.citationTexts = this.citFm.citationTexts.map(
                     (ref, index) => {
                         const content = ref.split("{{delimiter}}").map((citationText, conIndex) => {
@@ -80,23 +75,6 @@ export class JATSExporterCitations {
 
                     }
                 )
-                this.jatsBib = this.citJATSFm.bibliography[1].map(entry =>
-                    entry.substring(
-                        entry.indexOf("{{jats}}"),
-                        entry.lastIndexOf("{{/jats}}")
-                    ).split("{{jats}}").map(
-                        part => {
-                            const parts = part.split("{{/jats}}")
-                            return parts[0].replace(/&#60;/g, "<").replace(/&#62;/g, ">") + (
-                                parts[1] ?
-                                    parts[1].replace(/<b>/g, "<bold>").replace(/<\/b>/g, "</bold>")
-                                        .replace(/<i>/g, "<italic>").replace(/<\/i>/g, "</italic>")
-                                        .replace(/<span style="font-variant:small-caps;">/g, "<sc>").replace(/<\/span>/g, "</sc>") :
-                                    ""
-                            )
-                        }
-                    ).join("")
-                ).join("")
                 return Promise.resolve()
             }
         )

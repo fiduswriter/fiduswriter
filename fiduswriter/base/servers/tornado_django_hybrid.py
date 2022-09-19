@@ -5,11 +5,12 @@ from django.core.asgi import get_asgi_application
 
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
-from tornado.web import Application, FallbackHandler, StaticFileHandler
+from tornado.web import Application, StaticFileHandler
 
 from base.handlers import DjangoStaticFilesHandler, HelloHandler, RobotsHandler
 
 from . import asgi
+
 
 def make_tornado_server():
     tornado_url_list = [
@@ -47,7 +48,9 @@ def make_tornado_server():
                     dict(app_name=app_name),
                 )
             ]
-    tornado_url_list += [(".*", asgi.AsgiHandler, dict(asgi_app=get_asgi_application()))]
+    tornado_url_list += [
+        (".*", asgi.AsgiHandler, dict(asgi_app=get_asgi_application()))
+    ]
     tornado_app = Application(
         tornado_url_list,
         debug=settings.DEBUG,

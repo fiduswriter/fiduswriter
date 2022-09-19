@@ -51,7 +51,9 @@ class AsgiHandler(RequestHandler):
                             h[1].decode(GLOBAL_CHARSET),
                         )
             elif data["type"] == "http.response.body":
-                self.write(data["body"])
+                status = self.get_status()
+                if status != 204:
+                    self.write(data["body"])
             else:
                 raise RuntimeError(
                     f"Unsupported response type \"{data['type']}\" for asgi app"

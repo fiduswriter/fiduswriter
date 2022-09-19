@@ -4,6 +4,8 @@ import sys
 from importlib import import_module
 
 
+os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
+
 if "COVERAGE_PROCESS_START" in os.environ:
     import coverage
 

@@ -13,3 +13,4 @@ prosemirror-py==0.3.1
 # settings_JSONPATCH
 jsonpatch==1.32
 # end settings_JSONPATCH
+httpx==0.23.0

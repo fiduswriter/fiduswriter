@@ -43,7 +43,7 @@ export class DeleteUserDialog {
         ).then(
             response => {
                 switch (response.status) {
-                case 204:
+                case 200:
                     window.location = "/"
                     break
                 case 403:

@@ -237,7 +237,7 @@ def delete_user(request):
     else:
         logout(request)
         user.delete()
-        status = 204
+        status = 200
     return JsonResponse(response, status=status)
 
 

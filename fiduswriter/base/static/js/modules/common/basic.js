@@ -192,7 +192,7 @@ export const addAlert = function(alertType, alertMsg) {
         document.body.insertAdjacentHTML("beforeend", "<div id=\"alerts-outer-wrapper\"><ul id=\"alerts-wrapper\"></ul></div>")
     }
     const alertsWrapper = document.getElementById("alerts-wrapper")
-    alertsWrapper.insertAdjacentHTML("beforeend", `<li class="alerts-${alertType} fa fa-${iconNames[alertType]}">${alertMsg}</li>`)
+    alertsWrapper.insertAdjacentHTML("beforeend", `<li class="alerts-${alertType} fa-before fa-${iconNames[alertType]}">${alertMsg}</li>`)
     const alertBox = alertsWrapper.lastElementChild
     setTimeout(() => {
         alertBox.classList.add("visible")

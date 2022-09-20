@@ -6,12 +6,18 @@
 [class^='icon-'],
 [class*=' icon-'] {
     display: inline-block;
-    font-family: 'Font Awesome 5 Free', monospace;
+    font-family: 'Font Awesome 6 Free', monospace;
     font-weight: 900;
     font-size: inherit;
     text-rendering: auto;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+/* Used instead of .fa when only ::before is to be styled. */
+.fa-before::before {
+    font-family: var(--fa-style-family, "Font Awesome 6 Free");
+    font-weight: var(--fa-style, 900);
 }
 
 /* last list item is a plus, others are minuses */
@@ -41,7 +47,7 @@
 .fw-checkable.checked::after,
 tr.fw-checkable.checked > td:last-child::after {
     display: inline-block;
-    font-family: 'Font Awesome 5 Free', monospace;
+    font-family: 'Font Awesome 6 Free', monospace;
     font-weight: 900;
     font-size: inherit;
     text-rendering: auto;
@@ -54,7 +60,7 @@ tr.fw-checkable.checked > td:last-child::after {
 
 .editor-toolbar div.multi-buttons .multi-buttons-cover::after {
     display: inline-block;
-    font-family: 'Font Awesome 5 Free', monospace;
+    font-family: 'Font Awesome 6 Free', monospace;
     font-weight: 900;
     font-size: inherit;
     text-rendering: auto;
@@ -65,7 +71,7 @@ tr.fw-checkable.checked > td:last-child::after {
 
 #cite-source-table_filter label::after { /* stylelint-disable-line */
     display: inline-block;
-    font-family: 'Font Awesome 5 Free', monospace;
+    font-family: 'Font Awesome 6 Free', monospace;
     font-weight: 900;
     font-size: inherit;
     text-rendering: auto;
@@ -77,7 +83,7 @@ tr.fw-checkable.checked > td:last-child::after {
 
 .margin-box.active::after {
     display: block;
-    font-family: 'Font Awesome 5 Free', monospace;
+    font-family: 'Font Awesome 6 Free', monospace;
     font-weight: 900;
     font-size: inherit;
     text-rendering: auto;
@@ -88,7 +94,7 @@ tr.fw-checkable.checked > td:last-child::after {
 
 .fw-nav-item.active-menu-wrapper::after {
     display: block;
-    font-family: 'Font Awesome 5 Free', monospace;
+    font-family: 'Font Awesome 6 Free', monospace;
     font-weight: 900;
     font-size: inherit;
     text-rendering: auto;
@@ -100,7 +106,7 @@ tr.fw-checkable.checked > td:last-child::after {
 .ui-icon-closethick::before,
 .ui-icon-help::before {
     display: inline-block;
-    font-family: 'Font Awesome 5 Free', monospace;
+    font-family: 'Font Awesome 6 Free', monospace;
     font-weight: 900;
     font-size: inherit;
     text-rendering: auto;
@@ -111,7 +117,7 @@ tr.fw-checkable.checked > td:last-child::after {
 
 .fw-add-button::after {
     display: inline-block;
-    font-family: 'Font Awesome 5 Free', monospace;
+    font-family: 'Font Awesome 6 Free', monospace;
     font-weight: 900;
     font-size: inherit;
     text-rendering: auto;
@@ -121,7 +127,7 @@ tr.fw-checkable.checked > td:last-child::after {
 }
 
 table.dataTable-table thead th a::after {
-    font-family: 'Font Awesome 5 Free', monospace;
+    font-family: 'Font Awesome 6 Free', monospace;
     font-weight: 900;
     font-size: 80%;
     text-rendering: auto;
@@ -144,7 +150,7 @@ table.dataTable-table thead th[data-sortable]:not([data-sortable='false']).desc 
 
 .fw-data-table-body tr.checked td.checkable::after {
     display: inline-block;
-    font-family: 'Font Awesome 5 Free', monospace;
+    font-family: 'Font Awesome 6 Free', monospace;
     font-weight: 900;
     font-size: inherit;
     text-rendering: auto;

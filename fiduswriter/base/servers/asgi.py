@@ -52,7 +52,7 @@ class AsgiHandler(RequestHandler):
                         )
             elif data["type"] == "http.response.body":
                 status = self.get_status()
-                if status != 204:
+                if status != 204 and "body" in data:
                     self.write(data["body"])
             else:
                 raise RuntimeError(

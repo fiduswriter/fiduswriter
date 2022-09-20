@@ -16,7 +16,7 @@
 
 /* Used instead of .fa when only ::before is to be styled. */
 .fa-before::before {
-    font-family: var(--fa-style-family, "Font Awesome 6 Free");
+    font-family: var(--fa-style-family, 'Font Awesome 6 Free');
     font-weight: var(--fa-style, 900);
 }
 

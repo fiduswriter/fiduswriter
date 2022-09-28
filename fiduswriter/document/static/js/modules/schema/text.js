@@ -6,7 +6,7 @@ export function getNonDeletedTextContent(topNode) {
             (
                 node.attrs &&
                 (
-                    node.attrs.track.find(track => track.type === "deletion") ||
+                    node.attrs.track?.find(track => track.type === "deletion") ||
                     node.attrs.hidden
                 )
             )

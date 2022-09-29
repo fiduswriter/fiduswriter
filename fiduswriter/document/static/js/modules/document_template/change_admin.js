@@ -48,6 +48,14 @@ export class DocumentTemplateAdmin {
 
         Promise.all(initialTasks).then(() => {
             this.objectTools = document.querySelector("ul.object-tools")
+            if (!this.objectTools) {
+                const mainContent = document.querySelector('#content-main')
+                mainContent.insertAdjacentHTML(
+                    "afterbegin",
+                    '<ul class="object-tools"></ul>'
+                )
+                this.objectTools = document.querySelector("ul.object-tools")
+            }
             this.titleInput = document.querySelector("#id_title")
             this.titleBlock = document.querySelector("div.field-title")
             this.contentTextarea = document.querySelector("textarea[name=content]")

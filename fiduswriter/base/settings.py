@@ -351,6 +351,7 @@ JAVASCRIPT_ERROR_BLACKLIST = [
     "the operation is insecure",
     "parse error",
     "unhandledrejection, {}",
+    "An unknown error occurred",
 ]
 
 # The page to show while transpilation takes place.

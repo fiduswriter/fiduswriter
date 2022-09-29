@@ -33,49 +33,13 @@ def auto_avatar(username):
 
 
 class User(AbstractUser):
-    contacts = models.ManyToManyField("self", symmetrical=True)
+    contacts = models.ManyToManyField("self", blank=True, symmetrical=True)
     document_rights = GenericRelation(
         "document.AccessRight",
         content_type_field="holder_type",
         object_id_field="holder_id",
         related_query_name="user",
     )
-
-    # Deprecated - remove avatar_url in 3.11
-    @property
-    def avatar_url(self):
-        # Here we use our own method to find the avatar to instead of
-        # "get_primary_avatar" as this way we can minimize the reading from
-        # disk and set a default thumbnail in case we could not create one.
-        # See https://github.com/grantmcconnaughey/django-avatar/pull/187
-        avatar = self.avatar_set.order_by("-primary", "-date_uploaded").first()
-        size = settings.AVATAR_DEFAULT_SIZE
-        if avatar:
-            if not avatar.thumbnail_exists(size):
-                avatar.create_thumbnail(size)
-                # Now check if the thumbnail was actually created
-                if not avatar.thumbnail_exists(size):
-                    # Thumbnail was not saved. There must be some PIL bug
-                    # with this image type. We store the original file instead.
-                    avatar.avatar.storage.save(
-                        avatar.avatar_name(size),
-                        File(
-                            avatar.avatar.storage.open(
-                                avatar.avatar.name, "rb"
-                            )
-                        ),
-                    )
-            url = avatar.avatar_url(size)
-            return {
-                "url": url,
-                "uploaded": True,
-                "html": (
-                    f'<img class="fw-avatar" src="{url}" '
-                    f'alt="{self.username}">'
-                ),
-            }
-        else:
-            return auto_avatar(self.username)
 
     @property
     def readable_name(self):

@@ -64,7 +64,11 @@ export class PasswordResetRequest extends PreloginPage {
             }
 
             post("/api/user/password/reset/", {email}).then(
-                () => document.querySelector(".fw-contents").innerHTML = document.querySelector(".fw-contents").innerHTML =
+                () => {
+                    if (document.body !== this.dom) {
+                        return
+                    }
+                    document.querySelector(".fw-contents").innerHTML =
                     `<div class="fw-login-left">
                         <h1 class="fw-login-title">${gettext("Instructions emailed")}</h1>
                         <p>
@@ -81,7 +85,7 @@ export class PasswordResetRequest extends PreloginPage {
 }
                         </p>
                     </div>`
-            ).catch(
+            }).catch(
                 response => response.json().then(
                     json => {
                         json.form.errors.forEach(

@@ -77,7 +77,10 @@ export class PasswordResetChangePassword extends PreloginPage {
                 }
             ).then(
                 () => {
-                    document.querySelector(".fw-contents").innerHTML = document.querySelector(".fw-contents").innerHTML =
+                    if (document.body !== this.dom) {
+                        return
+                    }
+                    document.querySelector(".fw-contents").innerHTML =
                     `<div class="fw-login-left">
                         <h1 class="fw-login-title">${gettext("Password reset")}</h1>
                         <p>

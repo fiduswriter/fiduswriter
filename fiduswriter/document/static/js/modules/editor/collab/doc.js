@@ -159,7 +159,7 @@ export class ModCollabDoc {
             const activateWaitTimer = setTimeout(() => {
                 activateWait(true, gettext("It's taking a bit longer than usual, but it should be ready soon. Please wait..."))
             }, 60000)
-            const adjustWorker = makeWorker(`${settings_STATIC_URL}js/adjust_doc_to_template_worker.js?v=${transpile_VERSION}`)
+            const adjustWorker = makeWorker(staticUrl('js/adjust_doc_to_template_worker.js'))
             adjustWorker.onmessage = message => {
                 if (message.data.type === "result") {
                     if (message.data.steps.length) {

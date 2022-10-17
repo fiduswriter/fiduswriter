@@ -25,11 +25,11 @@ export class DocumentTemplateAdmin {
             return
         }
         ensureCSS([
-            "colors.css",
-            "document_template_admin.css",
-            "admin.css",
-            "ui_dialogs.css",
-            "buttons.css"
+            staticUrl("css/colors.css"),
+            staticUrl("css/document_template_admin.css"),
+            staticUrl("css/admin.css"),
+            staticUrl("css/ui_dialogs.css"),
+            staticUrl("css/buttons.css")
         ])
         const csl = new CSL()
         const initialTasks = [

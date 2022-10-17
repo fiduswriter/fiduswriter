@@ -94,7 +94,7 @@ export class PreloginPage {
         })
         document.body = this.dom
         ensureCSS([
-            "prelogin.css"
+            staticUrl("css/prelogin.css")
         ])
         setDocTitle(this.title, this.app)
         const feedbackTab = new FeedbackTab()

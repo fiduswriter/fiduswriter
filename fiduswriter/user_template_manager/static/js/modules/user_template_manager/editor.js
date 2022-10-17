@@ -12,9 +12,9 @@ export class DocTemplatesEditor {
 
     init() {
         ensureCSS([
-            "errorlist.css",
-            "editor.css",
-            "user_template_manager.css"
+            staticUrl("css/errorlist.css"),
+            staticUrl("css/editor.css"),
+            staticUrl("user_template_manager.css")
         ])
         return this.app.csl.getStyles().then(
             styles => {

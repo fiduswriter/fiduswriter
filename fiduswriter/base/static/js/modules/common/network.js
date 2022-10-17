@@ -129,10 +129,9 @@ export const ensureCSS = function(cssUrl) {
         cssUrl.forEach(url => ensureCSS(url))
         return
     }
-    const url = `${settings_STATIC_URL}css/${cssUrl}?v=${transpile_VERSION}`,
-        link = document.createElement("link")
+    const link = document.createElement("link")
     link.rel = "stylesheet"
-    link.href = url
+    link.href = cssUrl
     const styleSheet = Array.from(document.styleSheets).find(styleSheet => styleSheet.href === link.href)
     if (!styleSheet) {
         document.head.appendChild(link)

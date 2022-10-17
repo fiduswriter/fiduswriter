@@ -25,7 +25,7 @@ const faqTemplate = ({escapedQuestions}) =>
 
 export class faqDialog {
     constructor({title = "", questions = []}) {
-        ensureCSS("faq_dialog.css")
+        ensureCSS(staticUrl("css/faq_dialog.css"))
         const escapedQuestions = []
 
         questions.forEach(q => {

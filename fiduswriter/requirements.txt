@@ -2,8 +2,8 @@ bleach==5.0.1
 Django==4.1.0
 django-allauth==0.51.0
 django-avatar==6.0.1
-django-js-error-hook==0.8
-django-npm-mjs==2.2.4
+django-js-error-hook==1.0
+django-npm-mjs==2.3.0
 django-loginas==0.3.10
 Pillow==9.2.0
 python-dateutil==2.8.2

@@ -84,7 +84,7 @@ export const image = {
                     imageDB, do not attempt at reloading the imageDB if an image cannot be
                     found. */
                     if (imageDBBroken) {
-                        dom.setAttribute("src", `${settings_STATIC_URL}img/error.png?v=${transpile_VERSION}`)
+                        dom.setAttribute("src", staticUrl('img/error.png'))
                     } else {
                         node.type.schema.cached.imageDB.getDB().then(() => {
                             if (node.type.schema.cached.imageDB.db[node.attrs.image]?.image) {

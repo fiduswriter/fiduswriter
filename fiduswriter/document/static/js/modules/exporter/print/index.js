@@ -158,7 +158,7 @@ export class PrintExporter extends HTMLExporter {
     }
 
     addMathliveStylesheet() {
-        this.styleSheets.push({url: `${settings_STATIC_URL}css/libs/mathlive/mathlive.css?v=${transpile_VERSION}`})
+        this.styleSheets.push({url: staticUrl('css/libs/mathlive/mathlive.css')})
     }
 
     getFootnoteAnchor(counter) {

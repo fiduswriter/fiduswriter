@@ -1,5 +1,5 @@
 const webpack = require("webpack") // eslint-disable-line no-undef
-const OfflinePlugin = require("@lcdp/offline-plugin") // eslint-disable-line no-undef
+const WorkboxPlugin = require('workbox-webpack-plugin') // eslint-disable-line no-undef
 
 const settings = window.settings // Replaced by django-npm-mjs
 const transpile = window.transpile // Replaced by django-npm-mjs
@@ -14,8 +14,29 @@ const baseRule = {
     }
 }
 
+const predefinedVariables = {
+    "settings_STATIC_URL": JSON.stringify(settings.STATIC_URL),
+    "settings_REGISTRATION_OPEN": settings.REGISTRATION_OPEN,
+    "settings_SOCIALACCOUNT_OPEN": settings.SOCIALACCOUNT_OPEN,
+    "settings_PASSWORD_LOGIN": settings.PASSWORD_LOGIN,
+    "settings_CONTACT_EMAIL": JSON.stringify(settings.CONTACT_EMAIL),
+    "settings_WS_SERVER": settings.WS_SERVER ? JSON.stringify(settings.WS_SERVER) : false,
+    "settings_WS_PORT": settings.WS_PORT,
+    "settings_IS_FREE": settings.IS_FREE,
+    "settings_TEST_SERVER": settings.TEST_SERVER,
+    "settings_DEBUG": settings.DEBUG,
+    "settings_SOURCE_MAPS": JSON.stringify(settings.SOURCE_MAPS) || false,
+    "settings_USE_SERVICE_WORKER": settings.USE_SERVICE_WORKER,
+    "settings_JSONPATCH": settings.JSONPATCH,
+    "settings_MEDIA_MAX_SIZE": settings.MEDIA_MAX_SIZE,
+    "transpile_VERSION": transpile.VERSION
+}
+
 if (settings.DEBUG) {
     baseRule.exclude = /node_modules/
+    predefinedVariables.staticUrl = `(url => (${settings.STATIC_URL} + url))`
+} else {
+    predefinedVariables.staticUrl = `(url => (${settings.STATIC_URL} + url)+ "?v=" + ${transpile.VERSION})`
 }
 
 module.exports = { // eslint-disable-line no-undef
@@ -46,56 +67,13 @@ module.exports = { // eslint-disable-line no-undef
         crossOriginLoading: "anonymous"
     },
     plugins: [
-        new webpack.DefinePlugin({
-            "settings_STATIC_URL": JSON.stringify(settings.STATIC_URL),
-            "settings_REGISTRATION_OPEN": settings.REGISTRATION_OPEN,
-            "settings_SOCIALACCOUNT_OPEN": settings.SOCIALACCOUNT_OPEN,
-            "settings_PASSWORD_LOGIN": settings.PASSWORD_LOGIN,
-            "settings_CONTACT_EMAIL": JSON.stringify(settings.CONTACT_EMAIL),
-            "settings_WS_SERVER": settings.WS_SERVER ? JSON.stringify(settings.WS_SERVER) : false,
-            "settings_WS_PORT": settings.WS_PORT,
-            "settings_IS_FREE": settings.IS_FREE,
-            "settings_TEST_SERVER": settings.TEST_SERVER,
-            "settings_DEBUG": settings.DEBUG,
-            "settings_SOURCE_MAPS": JSON.stringify(settings.SOURCE_MAPS) || false,
-            "settings_USE_SERVICE_WORKER": settings.USE_SERVICE_WORKER,
-            "settings_JSONPATCH": settings.JSONPATCH,
-            "settings_MEDIA_MAX_SIZE": settings.MEDIA_MAX_SIZE,
-            "transpile_VERSION": transpile.VERSION
-        }),
-        new OfflinePlugin({
-            cacheMaps: [
-                {
-                    match: function(url) {
-                        if (
-                            url.pathname.startsWith("/admin") ||
-                            url.pathname.startsWith("/api/") ||
-                            url.pathname.startsWith("/media/")
-                        ) {
-                            return true
-                        }
-                        return new URL("/", url)
-                    },
-                    requestTypes: ["navigate"]
-                }
-            ],
-            ServiceWorker: {
-                publicPath: "/sw.js",
-                events: true,
-                entry: "./js/sw-template.js"
-            },
-            autoUpdate: true,
-            appShell: "/",
-            externals: transpile.STATIC_FRONTEND_FILES.concat([
-                "/",
-                "/api/django_js_error_hook/utils.js",
-                "/api/jsi18n/",
-                transpile.BASE_URL + "browser_check.js",
-                "/manifest.json"
-            ]),
-            AppCache: false,
-            version: transpile.VERSION,
-            excludes: [
+        new webpack.DefinePlugin(predefinedVariables),
+        new WorkboxPlugin.GenerateSW({
+            clientsClaim: true,
+            skipWaiting: true,
+            inlineWorkboxRuntime: true,
+            swDest: 'sw.js',
+            exclude: [
                 "admin_console.js",
                 "maintenance.js",
                 "schema_export.js",
@@ -104,8 +82,35 @@ module.exports = { // eslint-disable-line no-undef
                 "**/.*",
                 "**/*.map",
                 "**/*.gz"
-            ]
-        })
+            ],
+            manifestTransforms: [
+                manifestEntries => ({
+                    manifest: manifestEntries.map((entry) => {
+                        if (!entry.url.includes(String(transpile.VERSION))) {
+                            entry.url += `?v=${transpile.VERSION}`
+                        }
+                        return entry
+                    })
+                })
+            ],
+            additionalManifestEntries: transpile.STATIC_FRONTEND_FILES.map(
+                url => {
+                    if (url.includes('/fonts/')) {
+                        return {url, revision: transpile.VERSION.toString()}
+                    } else {
+                        return {url: `${url}?v=${transpile.VERSION}`, revision: null}
+                    }
+                }
+            ).concat(
+                [
+                    "/",
+                    "/api/jsi18n/",
+                    "/manifest.json"
+                ].map(
+                    url => ({url, revision: transpile.VERSION.toString()})
+                )
+            ),
+        }),
     ],
     entry: transpile.ENTRIES
 }

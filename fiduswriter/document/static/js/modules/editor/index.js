@@ -220,25 +220,25 @@ export class Editor {
 
     init() {
         ensureCSS([
-            "mathlive.css",
-            "editor.css",
-            "tags.css",
-            "contributors.css",
-            "document.css",
-            "carets.css",
-            "tracking.css",
-            "margin_boxes.css",
-            "prosemirror.css",
-            "footnotes.css",
-            "chat.css",
-            "access_rights_dialog.css",
-            "citation_dialog.css",
-            "review.css",
-            "add_remove_dialog.css",
-            "bibliography.css",
-            "dot_menu.css",
-            "cropper.min.css",
-            "inline_tools.css"
+            staticUrl("css/mathlive.css"),
+            staticUrl("css/editor.css"),
+            staticUrl("css/tags.css"),
+            staticUrl("css/contributors.css"),
+            staticUrl("css/document.css"),
+            staticUrl("css/carets.css"),
+            staticUrl("css/tracking.css"),
+            staticUrl("css/margin_boxes.css"),
+            staticUrl("css/prosemirror.css"),
+            staticUrl("css/footnotes.css"),
+            staticUrl("css/chat.css"),
+            staticUrl("css/access_rights_dialog.css"),
+            staticUrl("css/citation_dialog.css"),
+            staticUrl("css/review.css"),
+            staticUrl("css/add_remove_dialog.css"),
+            staticUrl("css/bibliography.css"),
+            staticUrl("css/dot_menu.css"),
+            staticUrl("css/cropper.min.css"),
+            staticUrl("css/inline_tools.css")
         ])
         new ModDocumentTemplate(this)
         const initPromises = [
@@ -494,7 +494,7 @@ export class Editor {
                 <div id="chat-container"></div>
                 <div id="messageform" contentEditable="true" class="empty"></div>
                 <audio id="chat-notification">
-                    <source src="${settings_STATIC_URL}ogg/chat_notification.ogg?v=${transpile_VERSION}" type="audio/ogg">
+                    <source src="${staticUrl('ogg/chat_notification.ogg')}" type="audio/ogg">
                 </audio>
             </div>
         </div>

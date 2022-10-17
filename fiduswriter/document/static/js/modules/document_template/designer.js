@@ -77,17 +77,17 @@ export class DocumentTemplateDesigner {
             citationStyles: this.citationStyles
         })
         ensureCSS([
-            "common.css",
-            "dialog.css",
-            "prosemirror.css",
-            "prosemirror-menu.css",
-            "prosemirror-example-setup.css",
-            "document_template_designer.css",
-            "tags.css",
-            "contributors.css",
-            "dialog.css",
-            "table.css",
-            "dialog_table.css"
+            staticUrl("css/common.css"),
+            staticUrl("css/dialog.css"),
+            staticUrl("css/prosemirror.css"),
+            staticUrl("css/prosemirror-menu.css"),
+            staticUrl("css/prosemirror-example-setup.css"),
+            staticUrl("css/document_template_designer.css"),
+            staticUrl("css/tags.css"),
+            staticUrl("css/contributors.css"),
+            staticUrl("css/dialog.css"),
+            staticUrl("css/table.css"),
+            staticUrl("css/dialog_table.css")
         ])
         this.setupInitialEditors()
         this.bind()

@@ -194,7 +194,7 @@ export class EpubExporter extends DOMExporter {
         if (math) {
             this.includeZips.push({
                 "directory": "EPUB/css",
-                "url": `${settings_STATIC_URL}zip/mathlive_style.zip?v=${transpile_VERSION}`
+                "url": staticUrl('zip/mathlive_style.zip')
             })
         }
         return this.createZip()

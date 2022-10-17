@@ -79,7 +79,7 @@ export class Profile {
         document.body = this.dom
 
         ensureCSS([
-            "show_profile.css"
+            staticUrl("css/show_profile.css")
         ])
 
         setDocTitle(gettext("Configure profile"), this.app)

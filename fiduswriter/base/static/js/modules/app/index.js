@@ -1,5 +1,6 @@
 import {CSL} from "citeproc-plus"
-import * as OfflinePluginRuntime from "@lcdp/offline-plugin/runtime"
+//import * as OfflinePluginRuntime from "@lcdp/offline-plugin/runtime"
+
 import {ContactInvite} from "../contacts/invite"
 import {ImageOverview} from "../images/overview"
 import {ContactsOverview} from "../contacts"
@@ -147,21 +148,33 @@ export class App {
 
     installServiceWorker() {
         /* This function is used for testing SW with Django tests */
-        OfflinePluginRuntime.install({
-            onUpdateReady: () => OfflinePluginRuntime.applyUpdate(),
-            onUpdated: () => window.location.reload()
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register(`/sw.js`).then(registration => {
+            console.log('SW registered: ', registration)
+        }).catch(registrationError => {
+            console.log('SW registration failed: ', registrationError)
         })
     }
 
+        // OfflinePluginRuntime.install({
+        //     onUpdateReady: () => OfflinePluginRuntime.applyUpdate(),
+        //     onUpdated: () => window.location.reload()
+        // })
+    }
+
     init() {
-        if (!settings_DEBUG && settings_USE_SERVICE_WORKER) {
-            OfflinePluginRuntime.install({
-                onUpdateReady: () => OfflinePluginRuntime.applyUpdate(),
-                onUpdated: () => this.handleSWUpdate()
-            })
+        if (!settings_DEBUG && settings_USE_SERVICE_WORKER && 'serviceWorker' in navigator) {
+            navigator.serviceWorker.register(`/sw.js`).then(
+                registration => { console.log('SW registered: ', registration)}).catch(
+                registrationError => { console.log('SW registration failed: ', registrationError) }
+            )
         }
+            // OfflinePluginRuntime.install({
+            //     onUpdateReady: () => OfflinePluginRuntime.applyUpdate(),
+            //     onUpdated: () => this.handleSWUpdate()
+            // })
         ensureCSS([
-            "fontawesome/css/all.css"
+            staticUrl("css/fontawesome/css/all.css")
         ])
         if (this.isOffline()) {
             this.page = this.openOfflinePage()

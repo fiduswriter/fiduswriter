@@ -16,22 +16,19 @@ export class ErrorHook {
     }
 
     sendLog(details) {
-        const xhr = new XMLHttpRequest()
 
-        xhr.open("POST", "/api/django_js_error_hook/", true)
-        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
-        const cookie = getCookie("csrftoken")
-        if (cookie) {
-            xhr.setRequestHeader("X-CSRFToken", cookie)
-        }
-        const query = [], data = {
-            context: navigator.userAgent,
-            details
-        }
-        for (const key in data) {
-            query.push(encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
-        }
-        xhr.send(query.join("&"))
+        const body = new FormData()
+        body.append('context', data.context)
+        body.append('details', data.details)
+
+        return fetch("/api/django_js_error_hook/", {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie("csrftoken")
+            },
+            credentials: 'include',
+            body
+        })
     }
 
     onError(msg, url, lineNumber, columnNumber, errorObj) {

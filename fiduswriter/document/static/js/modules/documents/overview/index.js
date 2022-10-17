@@ -58,9 +58,9 @@ export class DocumentOverview {
             app: this.app
         })
         ensureCSS([
-            "document_overview.css",
-            "add_remove_dialog.css",
-            "access_rights_dialog.css"
+            staticUrl("css/document_overview.css"),
+            staticUrl("css/add_remove_dialog.css"),
+            staticUrl("css/access_rights_dialog.css")
         ])
         document.body = this.dom
         setDocTitle(gettext("Document Overview"), this.app)

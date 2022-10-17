@@ -31,7 +31,7 @@ export class FileSelector {
     init() {
         this.readDirStructure()
         this.sortDirStructure()
-        ensureCSS("file_selector.css")
+        ensureCSS(staticUrl("css/file_selector.css"))
         this.dom.classList.add("fw-file-selector")
         this.render()
         this.bind()

@@ -23,18 +23,17 @@ import * as plugins from "../../../plugins/images_overview"
 /** Helper functions for user added images/SVGs.*/
 
 export class ImageOverview {
-    constructor({app, staticUrl, user}) {
+    constructor({app, user}) {
         this.app = app
-        this.staticUrl = staticUrl
         this.user = user
         this.mod = {}
     }
 
     init() {
         ensureCSS([
-            "dialog_usermedia.css",
-            "dot_menu.css"
-        ], this.staticUrl)
+            staticUrl("css/dialog_usermedia.css"),
+            staticUrl("css/dot_menu.css")
+        ])
 
         return whenReady().then(() => {
             this.render()
@@ -55,16 +54,15 @@ export class ImageOverview {
         this.dom.innerHTML = baseBodyTemplate({
             contents: "",
             user: this.user,
-            staticUrl: this.staticUrl,
             hasOverview: true,
             app: this.app
         })
         document.body = this.dom
         ensureCSS([
-            "cropper.min.css"
-        ], this.staticUrl)
+            staticUrl("css/cropper.min.css")
+        ])
         setDocTitle(gettext("Media Manager"), this.app)
-        const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
+        const feedbackTab = new FeedbackTab()
         feedbackTab.init()
     }
 

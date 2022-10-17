@@ -12,7 +12,7 @@ export class FlatPage extends PreloginPage {
             whenReady(),
             this.getPageData(),
             ensureCSS([
-                "flatpage.css"
+                staticUrl("css/flatpage.css")
             ])
         ]).then(() => {
             this.activateFidusPlugins()

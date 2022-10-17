@@ -17,8 +17,8 @@ export class DocumentTemplateListAdmin {
             return
         }
         ensureCSS([
-            "document_template_admin.css",
-            "admin.css"
+            staticUrl("css/document_template_admin.css"),
+            staticUrl("css/admin.css")
         ])
 
         whenReady().then(() => {

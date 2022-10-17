@@ -49,10 +49,10 @@ export class DocumentTemplateAdmin {
         Promise.all(initialTasks).then(() => {
             this.objectTools = document.querySelector("ul.object-tools")
             if (!this.objectTools) {
-                const mainContent = document.querySelector('#content-main')
+                const mainContent = document.querySelector("#content-main")
                 mainContent.insertAdjacentHTML(
                     "afterbegin",
-                    '<ul class="object-tools"></ul>'
+                    "<ul class=\"object-tools\"></ul>"
                 )
                 this.objectTools = document.querySelector("ul.object-tools")
             }

@@ -81,7 +81,7 @@ export class HTMLExporter extends DOMExporter {
         if (math) {
             this.includeZips.push({
                 "directory": "css",
-                "url": staticUrl('zip/mathlive_style.zip'),
+                "url": staticUrl("zip/mathlive_style.zip"),
             })
         }
 

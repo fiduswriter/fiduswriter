@@ -10,7 +10,7 @@ export const baseBodyTemplate = ({user, contents, hasOverview, app}) => `
         <a href="${app && app.routes[""].app === "document" ? "/" : "/documents/"}">
             <h1 class="fw-logo">
                 <span class="fw-logo-text"></span>
-                <img src="${staticUrl('/svg/icon.svg')}" />
+                <img src="${staticUrl("/svg/icon.svg")}" />
             </h1>
         </a>
         <nav id="header-nav"></nav>

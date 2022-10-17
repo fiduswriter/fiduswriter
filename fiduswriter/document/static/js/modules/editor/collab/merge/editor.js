@@ -223,7 +223,7 @@ export class MergeEditor {
                             gettext("How do I accept or reject a particular change?"),
                             // Add images in dictionary.They'd be interpolated later.
                             gettext("Accepting or rejecting a change in the merge editor in the middle or the offline editor on the right causes a change in the merge editor. You can accept a change by directly clicking on the highlighted text. A dropdown menu will appear and you can then either accept or reject the change. When you click on the highlighted text, it also highlights the changes that will get accepted. %(mergeImage)s As shown in the above image one can click on a highlighted change, and click on accept change. On accepting a change it will be reflected in the merged document editor in the middle. Rejecting a change works in the same way except on reject a change the highlight of the change will be lost, with it the ability to accept, reject or copy a change."),
-                            {mergeImage: `<img src="${staticUrl('img/accept-change.png')}" class = "merge-img">`},
+                            {mergeImage: `<img src="${staticUrl("img/accept-change.png")}" class = "merge-img">`},
                             {hasImage: true}
                         ],
                         [

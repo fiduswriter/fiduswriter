@@ -29,7 +29,7 @@ export class HTMLExporter {
         this.fontFiles = []
         this.includeZips = []
         this.styleSheets = [
-            {url: staticUrl('css/document.css')}
+            {url: staticUrl("css/document.css")}
         ]
     }
 
@@ -70,7 +70,7 @@ export class HTMLExporter {
                     this.styleSheets.push({filename: "css/mathlive.css"})
                     this.includeZips.push({
                         "directory": "css",
-                        "url": staticUrl('zip/mathlive_style.zip'),
+                        "url": staticUrl("zip/mathlive_style.zip"),
                     })
                 }
 

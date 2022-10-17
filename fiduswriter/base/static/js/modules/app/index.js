@@ -148,13 +148,13 @@ export class App {
 
     installServiceWorker() {
         /* This function is used for testing SW with Django tests */
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register(`/sw.js`).then(registration => {
-            console.log('SW registered: ', registration)
-        }).catch(registrationError => {
-            console.log('SW registration failed: ', registrationError)
-        })
-    }
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("/sw.js").then(registration => {
+                console.log("SW registered: ", registration)
+            }).catch(registrationError => {
+                console.log("SW registration failed: ", registrationError)
+            })
+        }
 
         // OfflinePluginRuntime.install({
         //     onUpdateReady: () => OfflinePluginRuntime.applyUpdate(),
@@ -163,16 +163,20 @@ export class App {
     }
 
     init() {
-        if (!settings_DEBUG && settings_USE_SERVICE_WORKER && 'serviceWorker' in navigator) {
-            navigator.serviceWorker.register(`/sw.js`).then(
-                registration => { console.log('SW registered: ', registration)}).catch(
-                registrationError => { console.log('SW registration failed: ', registrationError) }
+        if (!settings_DEBUG && settings_USE_SERVICE_WORKER && "serviceWorker" in navigator) {
+            navigator.serviceWorker.register("/sw.js").then(
+                registration => {
+                    console.log("SW registered: ", registration)
+                }).catch(
+                registrationError => {
+                    console.log("SW registration failed: ", registrationError)
+                }
             )
         }
-            // OfflinePluginRuntime.install({
-            //     onUpdateReady: () => OfflinePluginRuntime.applyUpdate(),
-            //     onUpdated: () => this.handleSWUpdate()
-            // })
+        // OfflinePluginRuntime.install({
+        //     onUpdateReady: () => OfflinePluginRuntime.applyUpdate(),
+        //     onUpdated: () => this.handleSWUpdate()
+        // })
         ensureCSS([
             staticUrl("css/fontawesome/css/all.css")
         ])

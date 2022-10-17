@@ -25,7 +25,7 @@ export class DOMExporter {
         this.fontFiles = []
         this.binaryFiles = []
         this.styleSheets = [
-            {url: staticUrl('css/document.css')}
+            {url: staticUrl("css/document.css")}
         ]
     }
 

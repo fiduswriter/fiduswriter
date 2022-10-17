@@ -1,5 +1,5 @@
 const webpack = require("webpack") // eslint-disable-line no-undef
-const WorkboxPlugin = require('workbox-webpack-plugin') // eslint-disable-line no-undef
+const WorkboxPlugin = require("workbox-webpack-plugin") // eslint-disable-line no-undef
 
 const settings = window.settings // Replaced by django-npm-mjs
 const transpile = window.transpile // Replaced by django-npm-mjs
@@ -34,9 +34,9 @@ const predefinedVariables = {
 
 if (settings.DEBUG) {
     baseRule.exclude = /node_modules/
-    predefinedVariables.staticUrl = `(url => (${settings.STATIC_URL} + url))`
+    predefinedVariables.staticUrl = `(url => ${settings.STATIC_URL} + url)`
 } else {
-    predefinedVariables.staticUrl = `(url => (${settings.STATIC_URL} + url)+ "?v=" + ${transpile.VERSION})`
+    predefinedVariables.staticUrl = `(url => ${settings.STATIC_URL} + url + "?v=" + ${transpile.VERSION})`
 }
 
 module.exports = { // eslint-disable-line no-undef
@@ -72,7 +72,7 @@ module.exports = { // eslint-disable-line no-undef
             clientsClaim: true,
             skipWaiting: true,
             inlineWorkboxRuntime: true,
-            swDest: 'sw.js',
+            swDest: "sw.js",
             exclude: [
                 "admin_console.js",
                 "maintenance.js",
@@ -95,7 +95,7 @@ module.exports = { // eslint-disable-line no-undef
             ],
             additionalManifestEntries: transpile.STATIC_FRONTEND_FILES.map(
                 url => {
-                    if (url.includes('/fonts/')) {
+                    if (url.includes("/fonts/")) {
                         return {url, revision: transpile.VERSION.toString()}
                     } else {
                         return {url: `${url}?v=${transpile.VERSION}`, revision: null}

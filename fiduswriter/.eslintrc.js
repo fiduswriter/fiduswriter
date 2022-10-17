@@ -298,6 +298,7 @@ module.exports = { // eslint-disable-line no-undef
     },
     "globals": {
         "gettext": "readonly",
+        "staticUrl": "readonly",
         "interpolate": "readonly",
         "settings_STATIC_URL": "readonly",
         "settings_REGISTRATION_OPEN": "readonly",

@@ -4,8 +4,6 @@ from django.db import models
 from django.utils.translation import gettext as _
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.auth.models import AbstractUser
-from django.core.files import File
-from django.conf import settings
 from avatar.utils import get_default_avatar_url
 
 from document.models import AccessRight

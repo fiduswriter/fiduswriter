@@ -20,7 +20,7 @@ export class BibLatexImporter {
     }
 
     init() {
-        const importWorker = makeWorker(staticUrl('js/biblatex_import_worker.js'))
+        const importWorker = makeWorker(staticUrl("js/biblatex_import_worker.js"))
         importWorker.onmessage = message => this.onMessage(message.data)
         importWorker.postMessage({fileContents: this.fileContents})
     }

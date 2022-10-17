@@ -18,15 +18,15 @@ export class ErrorHook {
     sendLog(details) {
 
         const body = new FormData()
-        body.append('context', data.context)
-        body.append('details', data.details)
+        body.append("context", navigator.userAgent)
+        body.append("details", details)
 
         return fetch("/api/django_js_error_hook/", {
-            method: 'POST',
+            method: "POST",
             headers: {
-                'X-CSRFToken': getCookie("csrftoken")
+                "X-CSRFToken": getCookie("csrftoken")
             },
-            credentials: 'include',
+            credentials: "include",
             body
         })
     }

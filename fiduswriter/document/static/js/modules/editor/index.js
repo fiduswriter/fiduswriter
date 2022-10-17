@@ -494,7 +494,7 @@ export class Editor {
                 <div id="chat-container"></div>
                 <div id="messageform" contentEditable="true" class="empty"></div>
                 <audio id="chat-notification">
-                    <source src="${staticUrl('ogg/chat_notification.ogg')}" type="audio/ogg">
+                    <source src="${staticUrl("ogg/chat_notification.ogg")}" type="audio/ogg">
                 </audio>
             </div>
         </div>

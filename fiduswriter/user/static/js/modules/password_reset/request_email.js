@@ -85,7 +85,7 @@ export class PasswordResetRequest extends PreloginPage {
 }
                         </p>
                     </div>`
-            }).catch(
+                }).catch(
                 response => response.json().then(
                     json => {
                         json.form.errors.forEach(

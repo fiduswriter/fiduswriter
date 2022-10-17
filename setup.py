@@ -190,7 +190,7 @@ setuptools.setup(
         "ojs": "fiduswriter-ojs ~= 3.10.10",
         "phplist": "fiduswriter-phplist ~= 3.10.2",
         "gitrepo-export": "fiduswriter-gitrepo-export ~= 3.10.9",
-        "payment-paddle": "fiduswriter-payment-paddle ~= 3.10.4",
+        "payment-paddle": "fiduswriter-payment-paddle ~= 3.10.5",
         "mysql": read("fiduswriter/mysql-requirements.txt").splitlines(),
         "postgresql": read("fiduswriter/postgresql-requirements.txt").splitlines(),
     },

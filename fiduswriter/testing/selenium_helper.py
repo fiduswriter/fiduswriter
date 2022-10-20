@@ -41,7 +41,7 @@ class SeleniumHelper(object):
             options.binary_location = "/usr/bin/google-chrome-stable"
             options.add_argument("--headless")
             options.add_argument("--disable-gpu")
-            wait_time = 14
+            wait_time = 18
         else:
             wait_time = 6
         for i in range(number):

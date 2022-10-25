@@ -3,7 +3,7 @@ import {escapeText} from "../../common"
 /** A template for HTML export of a document. */
 export const htmlExportTemplate = ({contents, settings, styleSheets, title}) =>
     `<!DOCTYPE html>
-<html>
+<html lang="${settings.language.split("-")[0]}">
     <head>
         <meta charset="UTF-8">
         ${settings.copyright && settings.copyright.holder ? `<meta name="copyright" content="© ${settings.copyright.year ? settings.copyright.year : new Date().getFullYear()} ${escapeText(settings.copyright.holder)}" />` : ""}

@@ -26,7 +26,6 @@ export class HTMLExporter {
         this.zipFileName = false
         this.textFiles = []
         this.httpFiles = []
-        this.fontFiles = []
         this.includeZips = []
         this.styleSheets = [
             {url: staticUrl("css/document.css")}
@@ -49,7 +48,7 @@ export class HTMLExporter {
                         const imageEntry = this.imageDB.db[id]
                         return {
                             title: imageEntry.title,
-                            filename: imageEntry.image.split("/").pop(),
+                            filename: `images/${imageEntry.image.split("/").pop()}`,
                             url: imageEntry.image
                         }
                     }
@@ -95,7 +94,7 @@ export class HTMLExporter {
             )
         )
         this.styleSheets.push({contents, filename: `css/${docStyle.slug}.css`})
-        this.fontFiles = this.fontFiles.concat(docStyle.documentstylefile_set.map(([url, filename]) => ({
+        this.httpFiles = this.httpFiles.concat(docStyle.documentstylefile_set.map(([url, filename]) => ({
             filename: `css/media/${filename}`,
             url
         })))

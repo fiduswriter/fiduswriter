@@ -388,7 +388,7 @@ export class HTMLExporterConvert {
                     !caption.length &&
                     (!copyright || !copyright.holder)
             ) {
-                content += `<img id="${node.attrs.id}" src="${imageFilename}"${this.endSlash}>`
+                content += `<img id="${node.attrs.id}" src="images/${imageFilename}"${this.endSlash}>`
             } else {
                 start += `<figure id="${node.attrs.id}">`
                 end = "</figure>" + end

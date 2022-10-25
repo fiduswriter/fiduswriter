@@ -131,7 +131,7 @@ export class HTMLExporterConvert {
     }
 
     assembleHead() {
-        let head = `<title>${escapeText(this.metaData.title)})</title>`
+        let head = `<title>${escapeText(this.metaData.title)}</title>`
         this.metaData.contributors.forEach(contributors => {
             head += this.walkJson(contributors)
         })
@@ -159,7 +159,7 @@ export class HTMLExporterConvert {
         }
         head += this.exporter.styleSheets.map(
             sheet => sheet.filename ?
-                `<link rel="stylesheet" type="text/css" href="${sheet.filename}" />` :
+                `<link rel="stylesheet" type="text/css" href="${sheet.filename}"${this.endSlash}>` :
                 `<style>${sheet.contents}</style>`
         ).join("")
         return head
@@ -169,7 +169,7 @@ export class HTMLExporterConvert {
     textWalkJson(node) {
         let content = ""
         if (node.type === "text") {
-            content += escapeText(node.text)
+            content += escapeText(node.text).normalize("NFC")
         } else if (node.content) {
             node.content.forEach(child => {
                 content += this.textWalkJson(child)
@@ -345,7 +345,7 @@ export class HTMLExporterConvert {
                 start += `<a href="${hyperlink.attrs.href}">`
                 end = "</a>" + end
             }
-            content += escapeText(node.text)
+            content += escapeText(node.text).normalize("NFC")
             break
         }
         case "cross_reference": {

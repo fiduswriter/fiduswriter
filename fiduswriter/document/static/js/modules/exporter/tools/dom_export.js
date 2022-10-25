@@ -190,9 +190,8 @@ export class DOMExporter {
                 }
                 if (footnote.matches("section.fnlist .citation")) {
                     // The citation is already in a footnote. Do not add a second footnote.
-                    footnote.innerHTML = `<p><span class="citation">${citationFormatter.citationTexts[
-                        counter
-                    ] || " "}</span></p>`
+                    footnote.innerHTML = citationFormatter.citationTexts[counter] || " "
+                    counter += 1
                     return
                 }
                 const id = fnCountOffset + counter + 1

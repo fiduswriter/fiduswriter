@@ -103,25 +103,15 @@ export class WebSocketConnector {
                     "ws://offline"
             }`
         this.ws = new window.WebSocket(url)
-
-        //this.waitForWS().then(
-        //    () => {
-        console.log("wait is over")
         this.ws.onmessage = event => this.onmessage(event)
         this.ws.onclose = () => this.onclose()
-    //        }
-    //    )
     }
 
     waitForWS() {
-        console.log("waitForWS")
         return new Promise((resolve) => {
-            console.log("Promise")
-            if (this.ws.readyState === WebSocket.OPEN) {
-                console.log("Open")
+            if (this.ws && this.ws.readyState === this.ws.OPEN) {
                 return resolve()
             } else {
-                console.log("Closed")
                 return new Promise(resolveTimer => setTimeout(resolveTimer, 100)).then(
                     () => this.waitForWS()
                 ).then(
@@ -228,7 +218,7 @@ export class WebSocketConnector {
 
     /** Sends data to server or keeps it in a list if currently offline. */
     send(getData, timer = 80) {
-        if (this.connected && this.ws.readyState !== window.Websocket.OPEN) {
+        if (this.connected && this.ws.readyState !== this.ws.OPEN) {
             this.ws.onclose()
             return
         }

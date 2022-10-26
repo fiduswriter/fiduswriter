@@ -22,7 +22,7 @@ class AsgiHandler(RequestHandler):
                 )
 
         scope = {
-            "type": self.request.protocol,
+            "type": "http",
             "http_version": self.request.version,
             "path": self.request.path,
             "method": self.request.method,

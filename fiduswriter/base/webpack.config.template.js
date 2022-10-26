@@ -73,6 +73,7 @@ module.exports = { // eslint-disable-line no-undef
             skipWaiting: true,
             inlineWorkboxRuntime: true,
             swDest: "sw.js",
+            disableDevLogs: true,
             exclude: [
                 "admin_console.js",
                 "maintenance.js",

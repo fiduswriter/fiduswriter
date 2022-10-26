@@ -104,30 +104,61 @@ export class WebSocketConnector {
             }`
         this.ws = new window.WebSocket(url)
 
-        this.ws.onmessage = event => {
-            const data = JSON.parse(event.data)
-            const expectedServer = this.messages.server + 1
-            if (data.type === "request_resend") {
-                this.resend_messages(data.from)
-            } else if (data.s < expectedServer) {
-                // Receive a message already received at least once. Ignore.
-                return
-            } else if (data.s > expectedServer) {
-                // Messages from the server have been lost.
-                // Request resend.
+        //this.waitForWS().then(
+        //    () => {
+        console.log("wait is over")
+        this.ws.onmessage = event => this.onmessage(event)
+        this.ws.onclose = () => this.onclose()
+    //        }
+    //    )
+    }
+
+    waitForWS() {
+        console.log("waitForWS")
+        return new Promise((resolve) => {
+            console.log("Promise")
+            if (this.ws.readyState === WebSocket.OPEN) {
+                console.log("Open")
+                return resolve()
+            } else {
+                console.log("Closed")
+                return new Promise(resolveTimer => setTimeout(resolveTimer, 100)).then(
+                    () => this.waitForWS()
+                ).then(
+                    () => resolve()
+                )
+            }
+
+        })
+    }
+
+    onmessage(event) {
+        const data = JSON.parse(event.data)
+        const expectedServer = this.messages.server + 1
+        if (data.type === "request_resend") {
+            this.resend_messages(data.from)
+        } else if (data.s < expectedServer) {
+            // Receive a message already received at least once. Ignore.
+            return
+        } else if (data.s > expectedServer) {
+            // Messages from the server have been lost.
+            // Request resend.
+            this.waitForWS().then(() =>
                 this.ws.send(JSON.stringify({
                     type: "request_resend",
                     from: this.messages.server
                 }))
-            } else {
-                this.messages.server = expectedServer
-                if (data.c === this.messages.client) {
-                    this.receive(data)
-                } else if (data.c < this.messages.client) {
-                    // We have received all server messages, but the server seems
-                    // to have missed some of the client's messages. They could
-                    // have been sent simultaneously.
-                    // The server wins over the client in this case.
+            )
+        } else {
+            this.messages.server = expectedServer
+            if (data.c === this.messages.client) {
+                this.receive(data)
+            } else if (data.c < this.messages.client) {
+                // We have received all server messages, but the server seems
+                // to have missed some of the client's messages. They could
+                // have been sent simultaneously.
+                // The server wins over the client in this case.
+                this.waitForWS().then(() => {
                     const clientDifference = this.messages.client - data.c
                     this.messages.client = data.c
                     if (clientDifference > this.messages.lastTen.length) {
@@ -139,32 +170,33 @@ export class WebSocketConnector {
                         this.messages.client += 1
                         data.c = this.messages.client
                         data.s = this.messages.server
+
                         this.ws.send(JSON.stringify(data))
+
                     })
                     this.receive(data)
-                }
+                })
             }
         }
+    }
 
-        this.ws.onclose = () => {
-            this.connected = false
-            window.setTimeout(() => {
-                this.createWSConnection()
-            }, 2000)
-            if (!this.appLoaded()) {
-                // doc not initiated
-                return
-            }
+    onclose() {
+        this.connected = false
+        window.setTimeout(() => {
+            this.createWSConnection()
+        }, 2000)
+        if (!this.appLoaded()) {
+            // doc not initiated
+            return
+        }
 
-            const messagesElement = this.messagesElement()
-            if (messagesElement) {
-                if (this.anythingToSend()) {
-                    messagesElement.innerHTML =
-                        `<span class="warn">${this.warningNotAllSent}</span>`
-                } else {
-                    messagesElement.innerHTML = this.infoDisconnected
-                }
-
+        const messagesElement = this.messagesElement()
+        if (messagesElement) {
+            if (this.anythingToSend()) {
+                messagesElement.innerHTML =
+                    `<span class="warn">${this.warningNotAllSent}</span>`
+            } else {
+                messagesElement.innerHTML = this.infoDisconnected
             }
 
         }
@@ -196,8 +228,9 @@ export class WebSocketConnector {
 
     /** Sends data to server or keeps it in a list if currently offline. */
     send(getData, timer = 80) {
-        if (this.connected && this.ws.readyState !== this.ws.OPEN) {
+        if (this.connected && this.ws.readyState !== window.Websocket.OPEN) {
             this.ws.onclose()
+            return
         }
         if (this.connected && !this.recentlySent) {
             const data = getData()
@@ -210,8 +243,10 @@ export class WebSocketConnector {
             data.s = this.messages.server
             this.messages.lastTen.push(data)
             this.messages.lastTen = this.messages["lastTen"].slice(-10)
-            this.ws.send(JSON.stringify(data))
-            this.setRecentlySentTimer(timer)
+            this.waitForWS().then(() => {
+                this.ws.send(JSON.stringify(data))
+                this.setRecentlySentTimer(timer)
+            })
         } else {
             this.messagesToSend.push(getData)
         }
@@ -231,18 +266,20 @@ export class WebSocketConnector {
     }
 
     resend_messages(from) {
-        const toSend = this.messages.client - from
-        this.messages.client = from
-        if (toSend > this.messages.lastTen.length) {
-            // Too many messages requested. Abort.
-            this.send(this.restartMessage)
-            return
-        }
-        this.messages.lastTen.slice(0 - toSend).forEach(data => {
-            this.messages.client += 1
-            data.c = this.messages.client
-            data.s = this.messages.server
-            this.ws.send(JSON.stringify(data))
+        return this.waitForWS().then(() => {
+            const toSend = this.messages.client - from
+            this.messages.client = from
+            if (toSend > this.messages.lastTen.length) {
+                // Too many messages requested. Abort.
+                this.send(this.restartMessage)
+                return
+            }
+            this.messages.lastTen.slice(0 - toSend).forEach(data => {
+                this.messages.client += 1
+                data.c = this.messages.client
+                data.s = this.messages.server
+                this.ws.send(JSON.stringify(data))
+            })
         })
     }
 

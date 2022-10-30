@@ -14,6 +14,9 @@ export const dropdownSelect = function(
         button = false
     }
 ) {
+    if (!selectDOM.parentElement) {
+        return
+    }
     let buttonDOM
     if (button) {
         buttonDOM = button

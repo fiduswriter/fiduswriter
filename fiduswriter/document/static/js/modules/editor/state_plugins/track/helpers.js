@@ -9,7 +9,11 @@ import {
 } from "./plugin"
 
 export function getSelectedChanges(state) {
-    const {decos} = key.getState(state)
+    const keyState = key.getState(state)
+    if (!keyState) {
+        return {}
+    }
+    const {decos} = keyState
 
     const insertion = decos.find(undefined, undefined, spec => spec === selectedInsertionSpec)[0],
         deletion = decos.find(undefined, undefined, spec => spec === selectedDeletionSpec)[0],

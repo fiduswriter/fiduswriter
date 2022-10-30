@@ -361,7 +361,7 @@ SETUP_PAGE_PATH = os.path.join(SRC_PATH, "base/setup_page/")
 # Tests have shown that the JSON patch method is faster for now. This setting
 # will likely be removed once the prosemirror-py method has reached a similar
 # speed.
-JSONPATCH = True
+JSONPATCH = False
 
 # Whether to create a service worker on production sites
 USE_SERVICE_WORKER = True

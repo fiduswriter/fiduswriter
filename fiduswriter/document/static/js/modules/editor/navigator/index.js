@@ -26,7 +26,10 @@ export class ModNavigator {
                 if (this.navigatorEl.classList.contains("opened")) {
                     this.closeNavigator()
                 } else {
-                    document.querySelector("#navigator-list").innerHTML = this.populateNavigator() || ""   //Populating the list
+                    const navigatorListEl = document.getElementById("navigator-list")
+                    if (navigatorListEl) {
+                        navigatorListEl.innerHTML = this.populateNavigator() || ""   //Populating the list
+                    }
                     this.openNavigator()
                 }
                 break
@@ -42,14 +45,16 @@ export class ModNavigator {
                 }
                 break
             }
-            case findTarget(event, "#navigator-filter-icon", el):
-                if (document.getElementById("navigator-filter").classList.contains("hide")) {
+            case findTarget(event, "#navigator-filter-icon", el): {
+                const navigatorFilterEl = document.getElementById("navigator-filter")
+                if (navigatorFilterEl?.classList.contains("hide")) {
                     this.showFilters()
                 } else {
                     this.hideFilters()
                 }
                 break
-            case findTarget(event, "#navigator-filter-back", el):
+            }
+            case findTarget(event, "#navigator-filter-back", el): {
                 this.defaultFilters = []
                 document.querySelectorAll("#navigator-filter input").forEach(
                     item => {
@@ -58,9 +63,13 @@ export class ModNavigator {
                         }
                     }
                 )
-                document.querySelector("#navigator-list").innerHTML = this.populateNavigator() || ""
+                const navigatorListEl = document.getElementById("navigator-list")
+                if (navigatorListEl) {
+                    navigatorListEl.innerHTML = this.populateNavigator() || ""
+                }
                 this.hideFilters()
                 break
+            }
             case findTarget(event, "input", el):
                 break
             case findTarget(event, "label", el):
@@ -71,10 +80,10 @@ export class ModNavigator {
             }
         })
 
-        document.querySelector("#navigator-list").addEventListener("mouseover", () => {
+        document.body.querySelector("#navigator-list").addEventListener("mouseover", () => {
             document.body.classList.add("no-scroll")
         })
-        document.querySelector("#navigator-list").addEventListener("mouseout", () => {
+        document.body.querySelector("#navigator-list").addEventListener("mouseout", () => {
             document.body.classList.remove("no-scroll")
         })
     }
@@ -85,40 +94,65 @@ export class ModNavigator {
     }
 
     openNavigator() {
-        document.getElementById("navigator").classList.add("opened")
-        document.getElementById("navigator-filter").classList.add("hide")
-        document.getElementById("navigator-list").classList.remove("hide")
-        document.getElementById("navigator-filter-back").classList.add("hide")
-        document.getElementById("navigator-filter-icon").classList.remove("hide")
+        const navigatorEl = document.getElementById("navigator")
+        const navigatorFilterEl = document.getElementById("navigator-filter")
+        const navigatorListEl = document.getElementById("navigator-list")
+        const navigatorFilterBackEl = document.getElementById("navigator-filter-back")
+        const navigatorFilterIconEl = document.getElementById("navigator-filter-icon")
+        if (!navigatorEl || !navigatorFilterEl || !navigatorListEl || navigatorFilterBackEl || navigatorFilterIconEl) {
+            return
+        }
+        navigatorEl.classList.add("opened")
+        navigatorFilterEl.classList.add("hide")
+        navigatorListEl.classList.remove("hide")
+        navigatorFilterBackEl.classList.add("hide")
+        navigatorFilterIconEl.classList.remove("hide")
         this.scrollToActiveHeading()
     }
 
     scrollToActiveHeading() {
-        const listDOM = document.getElementById("navigator-list")
-        const activeHeading = listDOM.getElementsByClassName("active-heading")[0]
+        const listEl = document.getElementById("navigator-list")
+        const activeHeading = listEl?.querySelector(".active-heading")
         if (activeHeading) {
             activeHeading.scrollIntoView()
         }
     }
 
     closeNavigator() {
-        document.getElementById("navigator").classList.remove("opened")
+        const navigatorEl = document.getElementById("navigator")
+        if (navigatorEl) {
+            navigatorEl.classList.remove("opened")
+        }
     }
 
     showFilters() {
-        document.getElementById("navigator-filter").classList.remove("hide")
-        document.getElementById("navigator-filter-back").classList.remove("hide")
-        document.getElementById("navigator-list").classList.add("hide")
-        document.getElementById("navigator-filter-icon").classList.add("hide")
+        const navigatorFilterEl = document.getElementById("navigator-filter")
+        const navigatorListEl = document.getElementById("navigator-list")
+        const navigatorFilterBackEl = document.getElementById("navigator-filter-back")
+        const navigatorFilterIconEl = document.getElementById("navigator-filter-icon")
+        if (!navigatorFilterEl || !navigatorFilterBackEl || !navigatorListEl || !navigatorFilterIconEl) {
+            return
+        }
+        navigatorFilterEl.classList.remove("hide")
+        navigatorFilterBackEl.classList.remove("hide")
+        navigatorListEl.classList.add("hide")
+        navigatorFilterIconEl.classList.add("hide")
         //populating the filter list
-        document.getElementById("navigator-filter").innerHTML = this.populateNavFilter()
+        navigatorFilterEl.innerHTML = this.populateNavFilter()
     }
 
     hideFilters() {
-        document.getElementById("navigator-filter").classList.add("hide")
-        document.getElementById("navigator-filter-back").classList.add("hide")
-        document.getElementById("navigator-list").classList.remove("hide")
-        document.getElementById("navigator-filter-icon").classList.remove("hide")
+        const navigatorFilterEl = document.getElementById("navigator-filter")
+        const navigatorListEl = document.getElementById("navigator-list")
+        const navigatorFilterBackEl = document.getElementById("navigator-filter-back")
+        const navigatorFilterIconEl = document.getElementById("navigator-filter-icon")
+        if (!navigatorFilterEl || !navigatorFilterBackEl || !navigatorListEl || !navigatorFilterIconEl) {
+            return
+        }
+        navigatorFilterEl.classList.add("hide")
+        navigatorFilterBackEl.classList.add("hide")
+        navigatorListEl.classList.remove("hide")
+        navigatorFilterIconEl.classList.remove("hide")
 
         this.scrollToActiveHeading()
     }

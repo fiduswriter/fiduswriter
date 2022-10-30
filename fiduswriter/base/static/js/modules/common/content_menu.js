@@ -152,7 +152,7 @@ export class ContentMenu {
     }
 
     close() {
-        if (!this.dialogEl) {
+        if (!this.dialogEl || !this.dialogEl.parentElement) {
             return
         }
         this.dialogEl.parentElement.removeChild(this.dialogEl)

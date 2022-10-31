@@ -99,7 +99,7 @@ export class ModNavigator {
         const navigatorListEl = document.getElementById("navigator-list")
         const navigatorFilterBackEl = document.getElementById("navigator-filter-back")
         const navigatorFilterIconEl = document.getElementById("navigator-filter-icon")
-        if (!navigatorEl || !navigatorFilterEl || !navigatorListEl || navigatorFilterBackEl || navigatorFilterIconEl) {
+        if (!navigatorEl || !navigatorFilterEl || !navigatorListEl || !navigatorFilterBackEl || !navigatorFilterIconEl) {
             return
         }
         navigatorEl.classList.add("opened")

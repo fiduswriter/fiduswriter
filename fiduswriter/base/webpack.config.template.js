@@ -34,9 +34,9 @@ const predefinedVariables = {
 
 if (settings.DEBUG) {
     baseRule.exclude = /node_modules/
-    predefinedVariables.staticUrl = `(url => ${settings.STATIC_URL} + url)`
+    predefinedVariables.staticUrl = `(url => ${JSON.stringify(settings.STATIC_URL)} + url)`
 } else {
-    predefinedVariables.staticUrl = `(url => ${settings.STATIC_URL} + url + "?v=" + ${transpile.VERSION})`
+    predefinedVariables.staticUrl = `(url => ${JSON.stringify(settings.STATIC_URL)} + url + "?v=" + ${transpile.VERSION})`
 }
 
 module.exports = { // eslint-disable-line no-undef

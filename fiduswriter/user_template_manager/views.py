@@ -22,9 +22,11 @@ def get_template(request):
         doc_template.save()
         status = 201
     else:
-        doc_template = DocumentTemplate.objects.filter(
-            id=id, user=request.user
-        ).first()
+        doc_template = (
+            DocumentTemplate.objects.filter(id=id)
+            .filter(Q(user=request.user) | Q(user=None))
+            .first()
+        )
         status = 200
     if doc_template is None:
         return JsonResponse({}, status=405)

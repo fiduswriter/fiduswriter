@@ -50,6 +50,7 @@ PASSWORD_LOGIN = True
 # Whether anyone surfing to the site can open an account or login with a
 # socialaccount.
 SOCIALACCOUNT_OPEN = True
+SOCIALACCOUNT_STORE_TOKENS = True
 
 # This determines whether there is a star labeled "Free" on the login page
 IS_FREE = True

@@ -1,4 +1,4 @@
-import {get} from "../../common"
+import {convertDataURIToBlob, get} from "../../common"
 
 /** Creates a zip file.
  * @function zipFileCreator
@@ -70,15 +70,10 @@ export class ZipFileCreator {
         )
     }
 
-    convertDataURIToBlob(datauri) {
-        const byteString = atob(datauri.split(",")[1])
-        const mimeString = datauri.split(",")[0].split(":")[1].split(";")[0]
-        const ab = new ArrayBuffer(byteString.length)
-        const ia = new Uint8Array(ab)
-        for (let i = 0; i < byteString.length; i++) {
-            ia[i] = byteString.charCodeAt(i)
-        }
-        return new Blob([ab], {type: mimeString})
+    // Legacy - remove in 3.12. Can be sued directly from function in common/blob.js
+    convertDataURIToBlob(dataURI) {
+        return convertDataURIToBlob(dataURI)
     }
+
 
 }

@@ -21,6 +21,11 @@ export {
     from "./basic"
 
 export {
+    convertDataURIToBlob
+}
+    from "./blob"
+
+export {
     get,
     getJson,
     post,

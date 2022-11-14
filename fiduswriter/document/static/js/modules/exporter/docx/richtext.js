@@ -346,10 +346,10 @@ export class DocxExporterRichtext {
             let cx, cy
             const image = node.content.find(node => node.type === "image")?.attrs.image || false
             if (image !== false) {
-                const imgDBEntry = this.images.imageDB.db[image]
-                cx = imgDBEntry.width * 9525 // width in EMU
-                cy = imgDBEntry.height * 9525 // height in EMU
-                const imgTitle = imgDBEntry.title
+                const imageEntry = this.images.images[image]
+                cx = imageEntry.width * 9525 // width in EMU
+                cy = imageEntry.height * 9525 // height in EMU
+                const imgTitle = imageEntry.title
                 // Shrink image if too large for paper.
                 if (options.dimensions) {
                     let width = options.dimensions.width
@@ -370,7 +370,7 @@ export class DocxExporterRichtext {
                 }
                 cy = Math.round(cy)
                 cx = Math.round(cx)
-                const rId = this.images.imgIdTranslation[image]
+                const rId = imageEntry.id
                 content += noSpaceTmp`<w:r>
                       <w:rPr/>
                       <w:drawing>

@@ -1,12 +1,13 @@
 import {get} from "../../common"
 import {descendantNodes} from "../tools/doc_content"
+import {svg2png} from "../tools/svg"
 
 export class OdtExporterImages {
     constructor(exporter, imageDB, docContent) {
         this.exporter = exporter
         this.imageDB = imageDB
         this.docContent = docContent
-        this.imgIdTranslation = {}
+        this.images = {}
         this.manifestXml = false
     }
 
@@ -74,7 +75,32 @@ export class OdtExporterImages {
                                 imgDBEntry.image.split("/").pop(),
                                 blob
                             )
-                            this.imgIdTranslation[image] = wImgId
+                            if (blob.type === "image/svg+xml") {
+                                // Add PNG version in addition to SVG
+                                return svg2png(blob).then(({blob: pngBlob, width, height}) => {
+                                    const pngWImgId = this.addImage(
+                                        imgDBEntry.image.split("/").pop().replace(/.svg$/g, ".png"),
+                                        pngBlob
+                                    )
+                                    this.images[image] = {
+                                        id: pngWImgId,
+                                        width,
+                                        height,
+                                        title: imgDBEntry.title,
+                                        type: blob.type,
+                                        svg: wImgId
+                                    }
+                                })
+                            } else {
+                                this.images[image] = {
+                                    id: wImgId,
+                                    width: imgDBEntry.width,
+                                    height: imgDBEntry.height,
+                                    title: imgDBEntry.title,
+                                    type: blob.type,
+                                    svg: false
+                                }
+                            }
                         }
                     )
                 )

@@ -248,14 +248,18 @@ export class OdtExporterRichtext {
                 }
             }
             if (image !== false) {
-                const imgDBEntry = this.images.imageDB.db[image]
-                const imgFileName = this.images.imgIdTranslation[image]
-                const height = imgDBEntry.height * 3 / 4 // more or less px to point
-                const width = imgDBEntry.width * 3 / 4 // more or less px to point
+                const imageEntry = this.images.images[image]
+                const height = imageEntry.height * 3 / 4 // more or less px to point
+                const width = imageEntry.width * 3 / 4 // more or less px to point
                 const graphicStyleId = this.exporter.styles.getGraphicStyleId("Graphics", aligned)
                 content += noSpaceTmp`
                         <draw:frame draw:style-name="${graphicStyleId}" draw:name="Image${this.imgCounter++}" text:anchor-type="${frame ? "paragraph" : "as-char"}" style:rel-width="${relWidth}%" style:rel-height="scale" svg:width="${width}pt" svg:height="${height}pt" draw:z-index="${this.zIndex++}">
-                            <draw:image xlink:href="Pictures/${imgFileName}" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/>
+                            ${
+    imageEntry.svg ?
+        `<draw:image xlink:href="Pictures/${imageEntry.svg}" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad" draw:mime-type="image/svg+xml"/>` :
+        ""
+}
+                            <draw:image xlink:href="Pictures/${imageEntry.id}" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad" draw:mime-type="${imageEntry.type}"/>
                         </draw:frame>`
             } else {
                 const latex = node.content.find(node => node.type === "figure_equation")?.attrs.equation

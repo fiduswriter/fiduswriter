@@ -118,6 +118,9 @@ class UserInvite(models.Model):
         self._apply = True
         self.delete()
 
+    def __str__(self):
+        return f"{self.to or self.username} by {self.by}"
+
 
 class LoginAs(models.Model):
     class Meta:

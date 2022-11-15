@@ -31,6 +31,7 @@ build
 /fiduswriter/fiduswriter.sql.backup
 /fiduswriter/.transpile/
 /fiduswriter/media/
+/fiduswriter/screenshots/
 /fiduswriter/media.backup/
 /fiduswriter/static-collected/
 /fiduswriter/static-transpile/

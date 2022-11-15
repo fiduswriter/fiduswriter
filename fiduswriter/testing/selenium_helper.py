@@ -3,6 +3,7 @@ from builtins import object
 import re
 import os
 import time
+import logging
 
 from django.test import Client
 from selenium import webdriver
@@ -12,6 +13,9 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth import get_user_model
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.core.utils import ChromeType
+
+
+logger = logging.getLogger(__name__)
 
 
 class SeleniumHelper(object):
@@ -58,6 +62,7 @@ class SeleniumHelper(object):
             # Set sizes of browsers so that all buttons are visible.
             driver.set_window_position(0, 0)
             driver.set_window_size(1920, 1080)
+        cls.drivers = drivers
         return {"clients": clients, "drivers": drivers, "wait_time": wait_time}
 
     def find_urls(self, string):
@@ -115,3 +120,26 @@ class SeleniumHelper(object):
             count += 1
             if count > wait_time:
                 break
+
+    def tearDown(self):
+        # Source: https://stackoverflow.com/a/39606065
+        if hasattr(self._outcome, "errors"):
+            # Python 3.4 - 3.10  (These two methods have no side effects)
+            result = self.defaultTestResult()
+            self._feedErrorsToResult(result, self._outcome.errors)
+        else:
+            # Python 3.11+
+            result = self._outcome.result
+        ok = all(
+            test != self for test, text in result.errors + result.failures
+        )
+        if not ok:
+            if not os.path.exists("screenshots"):
+                os.makedirs("screenshots")
+            for id, driver in enumerate(self.drivers, start=1):
+                screenshotfile = (
+                    f"screenshots/driver{id}/{self._testMethodName}.png"
+                )
+                logger.info(f"Saving {screenshotfile}")
+                driver.save_screenshot(screenshotfile)
+        return super().tearDown()

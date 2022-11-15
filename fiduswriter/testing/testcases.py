@@ -5,6 +5,7 @@ import os
 import socket
 import threading
 
+from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db import connections
 from django.test.testcases import TransactionTestCase
@@ -105,6 +106,7 @@ class LiveTornadoTestCase(TransactionTestCase):
 
     @classmethod
     def setUpClass(cls):
+        settings.TESTING = True
         connections_override = {}
         for conn in connections.all():
             # If using in-memory sqlite databases, pass the connections to

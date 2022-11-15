@@ -91,11 +91,11 @@ jobs:
           cd fiduswriter
           coverage run --concurrency=multiprocessing,thread manage.py test ${{ matrix.test }}
     - name: Upload failed test screenshots
-          if: ${{ failure() }}
-          uses: actions/upload-artifact@v3
-          with:
-            name: failure-artifacts
-            path: ${{ github.workspace }}/fiduswriter/screenshots/
+      if: ${{ failure() }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: failure-artifacts
+        path: ${{ github.workspace }}/fiduswriter/screenshots/
     - name: Coveralls
       run: |
           cd fiduswriter

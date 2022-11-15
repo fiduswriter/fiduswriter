@@ -208,5 +208,5 @@ class UsermediaOverviewTest(LiveTornadoTestCase, SeleniumHelper):
         self.assertEqual("No images available", image_placeholder.text)
 
     def tearDown(self):
-        self.driver.quit()
         self.assertEqual([], self.verificationErrors)
+        return super().tearDown()

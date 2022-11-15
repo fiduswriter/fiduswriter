@@ -40,10 +40,6 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
             username="User1", email="user1@user.com", passtext="password"
         )
 
-    def tearDown(self):
-        self.admin.delete()
-        self.user1.delete()
-
     def test_system_message(self):
         self.login_user(self.user1, self.driver, self.client)
         self.login_user(self.admin, self.driver2, self.client2)

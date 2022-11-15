@@ -48,10 +48,6 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         self.login_user(self.user, self.driver2, self.client2)
         self.doc = self.create_new_document()
 
-    def tearDown(self):
-        self.leave_site(self.driver)
-        self.leave_site(self.driver2)
-
     def test_simple(self):
         """
         Test one client going offline in collaborative mode while both clients

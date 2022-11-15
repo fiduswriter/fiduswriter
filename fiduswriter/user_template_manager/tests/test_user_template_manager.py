@@ -35,9 +35,6 @@ class UserTemplateManagerTest(LiveTornadoTestCase, SeleniumHelper):
         )
         self.login_user(self.user, self.driver, self.client)
 
-    def tearDown(self):
-        self.leave_site(self.driver)
-
     def test_template_export_import(self):
         driver = self.driver
         driver.get(f"{self.base_url}/templates/")

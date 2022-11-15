@@ -4,7 +4,14 @@ import errno
 import os
 import socket
 import threading
+import logging
 
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service as ChromiumService
+from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.core.utils import ChromeType
+
+from django.test import Client
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db import connections
@@ -18,6 +25,9 @@ from base.servers.tornado_django_hybrid import make_tornado_server
 
 
 set_event_loop_policy(AnyThreadEventLoopPolicy())
+
+
+logger = logging.getLogger(__name__)
 
 
 class LiveTornadoThread(threading.Thread):
@@ -184,3 +194,72 @@ class LiveTornadoTestCase(TransactionTestCase):
     def tearDownClass(cls):
         cls._tearDownClassInternal()
         super().tearDownClass()
+
+    @classmethod
+    def get_drivers(cls, number, download_dir=False, user_agent=False):
+        # django native clients, to be used for faster login.
+        clients = []
+        for i in range(number):
+            clients.append(Client())
+        drivers = []
+        wait_time = 0
+        options = webdriver.ChromeOptions()
+        if download_dir:
+            prefs = {
+                "download.default_directory": download_dir,
+                "download.prompt_for_download": False,
+                "download.directory_upgrade": True,
+            }
+            options.add_experimental_option("prefs", prefs)
+        if user_agent:
+            options.add_argument("user-agent={}".format(user_agent))
+        if os.getenv("CI"):
+            options.binary_location = "/usr/bin/google-chrome-stable"
+            options.add_argument("--headless")
+            options.add_argument("--disable-gpu")
+            wait_time = 20
+        else:
+            wait_time = 6
+        for i in range(number):
+            driver = webdriver.Chrome(
+                service=ChromiumService(
+                    ChromeDriverManager(
+                        chrome_type=ChromeType.GOOGLE
+                    ).install()
+                ),
+                options=options,
+            )
+            drivers.append(driver)
+        for driver in drivers:
+            # Set sizes of browsers so that all buttons are visible.
+            driver.set_window_position(0, 0)
+            driver.set_window_size(1920, 1080)
+        cls.drivers = drivers
+        return {"clients": clients, "drivers": drivers, "wait_time": wait_time}
+
+    def tearDown(self):
+        # Source: https://stackoverflow.com/a/39606065
+        if hasattr(self._outcome, "errors"):
+            # Python 3.4 - 3.10  (These two methods have no side effects)
+            result = self.defaultTestResult()
+            self._feedErrorsToResult(result, self._outcome.errors)
+        else:
+            # Python 3.11+
+            result = self._outcome.result
+        ok = all(
+            test != self for test, text in result.errors + result.failures
+        )
+        if not ok:
+            if not os.path.exists("screenshots"):
+                os.makedirs("screenshots")
+            for id, driver in enumerate(self.drivers, start=1):
+                screenshotfile = (
+                    f"screenshots/driver{id}-{self._testMethodName}.png"
+                )
+                logger.info(f"Saving {screenshotfile}")
+                driver.save_screenshot(screenshotfile)
+                self.leave_site(driver)
+        return super().tearDown()
+
+    def leave_site(self, driver):
+        driver.get("data:,")

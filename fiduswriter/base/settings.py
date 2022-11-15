@@ -51,6 +51,7 @@ PASSWORD_LOGIN = True
 # socialaccount.
 SOCIALACCOUNT_OPEN = True
 SOCIALACCOUNT_STORE_TOKENS = True
+SOCIALACCOUNT_EMAIL_VERIFICATION = "none"
 
 # This determines whether there is a star labeled "Free" on the login page
 IS_FREE = True

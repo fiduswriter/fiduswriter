@@ -316,3 +316,4 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
 
     def tearDown(self):
         self.assertEqual([], self.verificationErrors)
+        return super().tearDown()

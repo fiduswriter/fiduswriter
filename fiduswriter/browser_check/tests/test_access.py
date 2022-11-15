@@ -10,10 +10,6 @@ class AccessTest(LiveTornadoTestCase, SeleniumHelper):
         cls.base_url = cls.live_server_url
         cls.wait_time = 10
 
-    @classmethod
-    def tearDownClass(cls):
-        super().tearDownClass()
-
     def test_ie11(self):
         driver_data = self.get_drivers(
             1,

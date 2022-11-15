@@ -39,7 +39,9 @@ export class JATSExporterCitations {
                     this.citInfos,
                     modStyle,
                     "",
-                    this.bibDB
+                    this.bibDB,
+                    false,
+                    this.exporter.doc.settings.language
                 )
                 return Promise.all([
                     Promise.resolve(origCitationLayout),

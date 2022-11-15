@@ -39,14 +39,18 @@ export class HTMLExporterCitations {
                     this.citInfos,
                     modStyle,
                     "",
-                    this.bibDB
+                    this.bibDB,
+                    false,
+                    this.exporter.doc.settings.language
                 )
                 this.citHTMLFm = new FormatCitations(
                     this.csl,
                     this.citInfos,
                     "html",
                     "",
-                    this.bibDB
+                    this.bibDB,
+                    false,
+                    this.exporter.doc.settings.language
                 )
                 return Promise.all([
                     Promise.resolve(origCitationLayout),

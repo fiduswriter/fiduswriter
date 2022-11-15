@@ -5,13 +5,14 @@ import {citeprocSys} from "./citeproc_sys"
 */
 
 export class FormatCitations {
-    constructor(csl, allCitationInfos, citationStyle, bibliographyHeader, bibDB, synchronous = false) {
+    constructor(csl, allCitationInfos, citationStyle, bibliographyHeader, bibDB, synchronous = false, lang = "en-US") {
         this.csl = csl
         this.allCitationInfos = allCitationInfos
         this.citationStyle = citationStyle
         this.bibliographyHeader = bibliographyHeader
         this.bibDB = bibDB
         this.synchronous = synchronous
+        this.lang = lang
     }
 
     init() {
@@ -96,7 +97,7 @@ export class FormatCitations {
     getFormattedCitations() {
         const citeprocConnector = new citeprocSys(this.bibDB)
         if (this.synchronous) {
-            const citeprocInstance = this.csl.getEngineSync(citeprocConnector, this.citationStyle)
+            const citeprocInstance = this.csl.getEngineSync(citeprocConnector, this.citationStyle, this.lang)
             if (!citeprocInstance) {
                 return false
             }
@@ -104,7 +105,7 @@ export class FormatCitations {
             return true
 
         } else {
-            return this.csl.getEngine(citeprocConnector, this.citationStyle).then(citeprocInstance => {
+            return this.csl.getEngine(citeprocConnector, this.citationStyle, this.lang).then(citeprocInstance => {
                 this.process(citeprocInstance)
                 if (citeprocConnector.missingItems.length > 0) {
                     return this.reloadCitations(citeprocConnector.missingItems)

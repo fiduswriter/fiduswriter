@@ -4,13 +4,14 @@ import {FormatCitations} from "./format"
  */
 
 export class RenderCitations {
-    constructor(contentElement, citationStyle, bibliographyHeader, bibDB, csl, synchronous = false) {
+    constructor(contentElement, citationStyle, bibliographyHeader, bibDB, csl, synchronous = false, lang = "en-US") {
         this.contentElement = contentElement
         this.citationStyle = citationStyle
         this.bibliographyHeader = bibliographyHeader
         this.bibDB = bibDB
         this.csl = csl
         this.synchronous = synchronous
+        this.lang = lang
 
         this.allCitationNodes = []
         this.allCitationInfos = []
@@ -30,7 +31,8 @@ export class RenderCitations {
             this.citationStyle,
             this.bibliographyHeader,
             this.bibDB,
-            this.synchronous
+            this.synchronous,
+            this.lang
         )
         if (this.synchronous) {
             if (!this.fm.init()) {

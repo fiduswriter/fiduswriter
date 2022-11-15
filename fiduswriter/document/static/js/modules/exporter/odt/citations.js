@@ -48,7 +48,9 @@ export class OdtExporterCitations {
             this.citInfos,
             this.exporter.doc.settings.citationstyle,
             "",
-            this.bibDB
+            this.bibDB,
+            false,
+            this.exporter.doc.settings.language
         )
         return this.citFm.init().then(
             () => {

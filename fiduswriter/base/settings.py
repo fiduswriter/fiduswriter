@@ -229,7 +229,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 TEST_RUNNER = "django.test.runner.DiscoverRunner"
-TESTING = False # Overriden by test runner
+TESTING = False  # Overriden by test runner
 
 # Define available languages
 # You only need to change this in very advanced setups.

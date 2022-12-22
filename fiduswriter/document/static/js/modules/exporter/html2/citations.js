@@ -1,4 +1,6 @@
 import {FormatCitations} from "../../citations/format"
+import {escapeText} from "../../common"
+import {BIBLIOGRAPHY_HEADERS} from "../../schema/i18n"
 
 export class HTMLExporterCitations {
     constructor(exporter, bibDB, csl) {
@@ -8,8 +10,8 @@ export class HTMLExporterCitations {
 
         this.citationTexts = []
         this.citFm = false
-        this.citHTMLFm = false
-        this.htmlBib = ""
+        this.bibHTML = ""
+        this.bibCSS = ""
         this.htmlIdConvert = {}
     }
 
@@ -23,8 +25,6 @@ export class HTMLExporterCitations {
 
     // Citations are highly interdependent -- so we need to format them all
     // together before laying out the document.
-    // We need to run this twice - once using the current document style for
-    // citations and once for the HTML bibliography.
     formatCitations() {
         return this.csl.getStyle(this.exporter.doc.settings.citationstyle).then(
             citationstyle => {
@@ -43,19 +43,9 @@ export class HTMLExporterCitations {
                     false,
                     this.exporter.doc.settings.language
                 )
-                this.citHTMLFm = new FormatCitations(
-                    this.csl,
-                    this.citInfos,
-                    "html",
-                    "",
-                    this.bibDB,
-                    false,
-                    this.exporter.doc.settings.language
-                )
                 return Promise.all([
                     Promise.resolve(origCitationLayout),
-                    this.citFm.init(),
-                    this.citHTMLFm.init()
+                    this.citFm.init()
                 ])
             }
         ).then(
@@ -64,7 +54,7 @@ export class HTMLExporterCitations {
                 // so we need to first split, then add the links and eventually put the citation back together
                 // again.
                 // The IDs used in the html bibliography are 1 and up in this order
-                this.citHTMLFm.bibliography[0].entry_ids.forEach((id, index) => this.htmlIdConvert[id] = index + 1)
+                this.citFm.bibliography[0].entry_ids.forEach((id, index) => this.htmlIdConvert[id] = index + 1)
                 this.citationTexts = this.citFm.citationTexts.map(
                     (ref, index) => {
                         const content = ref.split("{{delimiter}}").map((citationText, conIndex) => {
@@ -79,25 +69,27 @@ export class HTMLExporterCitations {
                             return `${prefix}<a href="#ref-${htmlId}">${citationText}</a>${suffix}`
                         }).join((origCitationLayout.delimiter || ""))
                         return content
-
                     }
                 )
-                this.htmlBib = this.citHTMLFm.bibliography[1].map(entry =>
-                    entry.substring(
-                        entry.indexOf("{{html}}"),
-                        entry.lastIndexOf("{{/html}}")
-                    ).split("{{html}}").map(
-                        part => {
-                            const parts = part.split("{{/html}}")
-                            return parts[0].replace(/&#60;/g, "<").replace(/&#62;/g, ">") + (
-                                parts[1] || ""
-                            )
-                        }
-                    ).join("")
-                ).join("")
+
+                if (this.citFm.bibliography && this.citFm.bibliography[0].entry_ids.length) {
+                    this.assembleBib()
+                }
+
                 return Promise.resolve()
             }
         )
 
+    }
+
+    assembleBib() {
+        const settings = this.exporter.doc.settings
+        const bibliographyHeader = settings.bibliography_header[settings.language] || BIBLIOGRAPHY_HEADERS[settings.language]
+        let bibHTML = `<h1 class="article-bibliography-header">${escapeText(bibliographyHeader)}</h1>`
+        bibHTML += this.citFm.bibliography[0].bibstart
+        bibHTML += this.citFm.bibliography[1].map((reference, index) => `<div id="ref-${index + 1}">${reference}</div>`).join("")
+        bibHTML += this.citFm.bibliography[0].bibend
+        this.bibHTML = bibHTML
+        this.bibCSS = this.citFm.bibCSS
     }
 }

@@ -1,4 +1,5 @@
 import {convertLatexToMarkup} from "mathlive"
+import pretty from "pretty"
 
 import {escapeText} from "../../common"
 import {CATS} from "../../schema/i18n"
@@ -46,9 +47,9 @@ export class HTMLExporterConvert {
         this.preWalkJson(docContent)
         this.findCitations(docContent)
         return this.exporter.citations.init(this.citInfos).then(() => {
-            const head = this.assembleHead()
             const body = this.assembleBody(docContent)
             const back = this.assembleBack()
+            const head = this.assembleHead()
             const html = htmlExportTemplate({
                 head,
                 body,
@@ -513,13 +514,14 @@ export class HTMLExporterConvert {
 
     assembleBack() {
         let back = ""
-        if (this.footnotes.length || this.exporter.citations.htmlBib.length) {
+        if (this.footnotes.length || this.exporter.citations.bibHTML.length) {
             back += "<div id=\"back\">"
             if (this.footnotes.length) {
                 back += `<div id="footnotes">${this.footnotes.join("")}</div>`
             }
-            if (this.exporter.citations.htmlBib.length) {
-                back += `<div id="references">${this.exporter.citations.htmlBib}</div>`
+            if (this.exporter.citations.bibHTML.length) {
+                back += `<div id="references">${this.exporter.citations.bibHTML}</div>`
+                this.exporter.styleSheets.push({filename: "css/bibliography.css", contents: pretty(this.exporter.citations.bibCSS, {ocd: true})})
             }
             back += "</div>"
         }

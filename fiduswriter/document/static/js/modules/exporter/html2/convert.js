@@ -433,7 +433,7 @@ export class HTMLExporterConvert {
                         start += "</small></footer>"
                     }
                     if (imageFilename) {
-                        content += `<img src="${imageFilename}"${this.endSlash}>`
+                        content += `<img src="images/${imageFilename}"${this.endSlash}>`
                     }
                 }
             }

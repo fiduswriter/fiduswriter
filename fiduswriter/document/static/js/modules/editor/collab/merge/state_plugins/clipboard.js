@@ -38,7 +38,7 @@ export const clipboardPlugin = function(options) {
                 view.dispatch(tr)
                 return true
             },
-            transformPastedHTML: inHTML => {
+            transformPastedHTML: (inHTML, _view) => {
                 if (shiftPressed) {
                     return inHTML
                 }

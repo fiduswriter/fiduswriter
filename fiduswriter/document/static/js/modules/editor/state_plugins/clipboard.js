@@ -31,14 +31,14 @@ export const clipboardPlugin = function(options) {
                 view.dispatch(tr)
                 return true
             },
-            transformPastedHTML: inHTML => {
+            transformPastedHTML: (inHTML, _view) => {
                 if (shiftPressed) {
                     return inHTML
                 }
                 const ph = new HTMLPaste(options.editor, inHTML, options.viewType)
                 return ph.getOutput()
             },
-            transformPastedText: inText => {
+            transformPastedText: (inText, _view) => {
                 if (shiftPressed) {
                     return inText
                 }

@@ -64,7 +64,7 @@ const pastePlugin = view => {
 
     return new Plugin({
         props: {
-            transformPastedHTML: inHTML => {
+            transformPastedHTML: (inHTML, _view) => {
                 const dom = document.createElement("div")
                 dom.innerHTML = inHTML
                 const tags = dom.innerText.split(/[,;]+/).filter(tag => tag.length)
@@ -76,7 +76,7 @@ const pastePlugin = view => {
                     return inHTML
                 }
             },
-            transformPastedText: inText => {
+            transformPastedText: (inText, _view) => {
                 const tags = inText.split(/[,;]+/).filter(tag => tag.length)
                 if (tags.length) {
                     const lastTag = tags.pop()

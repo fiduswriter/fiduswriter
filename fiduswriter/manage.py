@@ -71,7 +71,7 @@ def inner(default_project_path):
         ),
     )
     os.environ["TZ"] = settings.TIME_ZONE
-    if sys_argv[1] in ["version", "--version"]:
+    if len(sys_argv) > 1 and sys_argv[1] in ["version", "--version"]:
         from base import get_version
 
         sys.stdout.write(get_version() + "\n")

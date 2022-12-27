@@ -1,4 +1,4 @@
 flake8==4.0.1
-setuptools==63.2.0
+setuptools==65.5.1
 twine==4.0.1
 black==22.6.0

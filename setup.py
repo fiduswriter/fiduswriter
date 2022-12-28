@@ -1,12 +1,14 @@
 import os
-import distutils
-import setuptools
-from subprocess import call
+import subprocess
+from pathlib import Path
+from subprocess import call, check_call
 from glob import glob
+from setuptools import Command, find_namespace_packages, setup
 from setuptools.command.sdist import sdist as _sdist
 from setuptools.command.bdist_egg import bdist_egg as _bdist_egg
-from setuptools.command.install import install as _install
+from setuptools.command.install import install
 from setuptools.command.build_py import build_py as _build_py
+from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
 
 
 def read(name):
@@ -14,7 +16,7 @@ def read(name):
         return f.read()
 
 
-class compilemessages(distutils.cmd.Command):
+class compilemessages(Command):
     """A custom command to create *.mo files for each language."""
 
     description = "Create *.mo files to be included in the final package."
@@ -29,8 +31,6 @@ class compilemessages(distutils.cmd.Command):
         pass
 
     def run(self):
-        import subprocess
-        from pathlib import Path
 
         for path in Path(
             os.path.join(
@@ -40,9 +40,9 @@ class compilemessages(distutils.cmd.Command):
             command = ["msgfmt", "-o", path.name.replace(".po", ".mo"), path.name]
             self.announce(
                 "Running command: %s in %s" % (str(" ".join(command)), path.parent),
-                level=distutils.log.INFO,
+                level=self.distribution.verbose,
             )
-            subprocess.check_call(command, cwd=path.parent)
+            check_call(command, cwd=path.parent)
 
 
 # From https://github.com/pypa/setuptools/pull/1574
@@ -66,35 +66,6 @@ class build_py(_build_py):
         return modules
 
 
-class install(_install):
-    def run(self):
-        call(["pip install wheel --no-clean"], shell=True)
-        # From https://stackoverflow.com/questions/21915469/python-setuptoo
-        # ls-install-requires-is-ignored-when-overriding-cmdclass
-        if self.old_and_unmanageable or self.single_version_externally_managed:
-            return _install.run(self)
-
-        # Attempt to detect whether we were called from setup() or by another
-        # command.  If we were called by setup(), our caller will be the
-        # 'run_command' method in 'distutils.dist', and *its* caller will be
-        # the 'run_commands' method.  If we were called any other way, our
-        # immediate caller *might* be 'run_command', but it won't have been
-        # called by 'run_commands'.  This is slightly kludgy, but seems to
-        # work.
-        #
-        caller = sys._getframe(2)
-        caller_module = caller.f_globals.get("__name__", "")
-        caller_name = caller.f_code.co_name
-
-        if caller_module != "distutils.dist" or caller_name != "run_commands":
-            # We weren't called from the command line or setup(), so we
-            # should run in backward-compatibility mode to support bdist_*
-            # commands.
-            _install.run(self)
-        else:
-            self.do_egg_install()
-
-
 class bdist_egg(_bdist_egg):
     def run(self):
         self.run_command("compilemessages")
@@ -109,30 +80,25 @@ class sdist(_sdist):
         _sdist.run(self)
 
 
+class bdist_wheel(_bdist_wheel):
+    """Custom build command."""
+
+    def run(self):
+        self.run_command("compilemessages")
+        _bdist_wheel.run(self)
+
+
 cmdclass = {
     "compilemessages": compilemessages,
     "sdist": sdist,
     "build_py": build_py,
     "bdist_egg": bdist_egg,
+    "bdist_wheel": bdist_wheel,
     "install": install,
 }
 
-try:
-    from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
 
-    class bdist_wheel(_bdist_wheel):
-        """Custom build command."""
-
-        def run(self):
-            self.run_command("compilemessages")
-            _bdist_wheel.run(self)
-
-    cmdclass["bdist_wheel"] = bdist_wheel
-except ImportError:
-    pass
-
-
-setuptools.setup(
+setup(
     cmdclass=cmdclass,
     name="fiduswriter",
     version=read("fiduswriter/version.txt").splitlines()[0],
@@ -157,7 +123,7 @@ setuptools.setup(
         "Topic :: Text Processing :: Markup :: XML",
         "Topic :: Utilities",
     ],
-    packages=setuptools.find_namespace_packages(include=["fiduswriter"]),
+    packages=find_namespace_packages(include=["fiduswriter"]),
     include_package_data=True,
     exclude_package_data={
         "": [

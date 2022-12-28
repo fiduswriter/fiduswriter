@@ -2884,7 +2884,7 @@ msgid "Insert row after"
 msgstr "Insertar fila después"
 
 #. Prestar compu de Johannes sí o sí
-#. 
+#.
 #. Encabezado de celda?
 #: document/static/js/modules/document_template/schema.js:154
 msgid "Toggle header cells"
@@ -3661,7 +3661,7 @@ msgstr "Confirme que es el propietario del correo electrónico <a href=\"mailto:
 
 #: user/static/js/modules/email_confirm/templates.js:22
 msgid "Please confirm that you own the email <a href=\"mailto:%(email)s\">%(email)s</a>, that you apply for the username %(username)s, and that you have read and agree to our <a href=\"/pages/terms/\" target=\"_blank\">Terms and Conditions</a> and <a href=\"/pages/privacy/\" target=\"_blank\">Privacy Policy</a>."
-msgstr "Por favor, confirma que <a href=\"mailto:%(email)s\">%(email)s</a> es tu correo, que quieres obtener el usuario %(user_display)s y que has leído y aceptado nuestros <a href=\"http://www.fiduswriter.com/?page_id=41\">Términos y Condiciones</a>."
+msgstr "Por favor, confirma que <a href=\"mailto:%(email)s\">%(email)s</a> es tu correo, que quieres obtener el usuario %(username)s y que has leído y aceptado nuestros <a href=\"/pages/terms/\">Términos y Condiciones</a> y <a href=\"/pages/privacy/\" target=\"_blank\">Política de Privacidad</a>."
 
 #: user/static/js/modules/email_confirm/templates.js:30
 msgid "This e-mail confirmation link expired or is invalid. Please try to open another account."
@@ -4936,4 +4936,3 @@ msgstr "No se encontraron imágenes"
 #: document/static/js/modules/documents/overview/index.js:122
 msgid "Leaving an empty folder will delete it. Do you really want to delete this folder?"
 msgstr "Si deja una carpeta vacía, se eliminará. ¿Realmente desea eliminar esta carpeta?"
-

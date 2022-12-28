@@ -9,6 +9,7 @@ from setuptools.command.bdist_egg import bdist_egg as _bdist_egg
 from setuptools.command.install import install
 from setuptools.command.build_py import build_py as _build_py
 from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
+from babel.messages.frontend import compile_catalog as _compile_catalog
 
 
 def read(name):
@@ -16,33 +17,11 @@ def read(name):
         return f.read()
 
 
-class compilemessages(Command):
-    """A custom command to create *.mo files for each language."""
-
-    description = "Create *.mo files to be included in the final package."
-    user_options = []
-
+class compile_catalog(_compile_catalog):
     def initialize_options(self):
-        """Set default values for options."""
-        pass
-
-    def finalize_options(self):
-        """Post-process options."""
-        pass
-
-    def run(self):
-
-        for path in Path(
-            os.path.join(
-                os.path.dirname(os.path.realpath(__file__)), "fiduswriter/locale"
-            )
-        ).rglob("*.po"):
-            command = ["msgfmt", "-o", path.name.replace(".po", ".mo"), path.name]
-            self.announce(
-                "Running command: %s in %s" % (str(" ".join(command)), path.parent),
-                level=self.distribution.verbose,
-            )
-            check_call(command, cwd=path.parent)
+        super().initialize_options()
+        self.domain = ["django", "djangojs"]
+        self.directory = "fiduswriter/locale"
 
 
 # From https://github.com/pypa/setuptools/pull/1574
@@ -68,7 +47,7 @@ class build_py(_build_py):
 
 class bdist_egg(_bdist_egg):
     def run(self):
-        self.run_command("compilemessages")
+        self.run_command("compile_catalog")
         _bdist_egg.run(self)
 
 
@@ -76,7 +55,7 @@ class sdist(_sdist):
     """Custom build command."""
 
     def run(self):
-        self.run_command("compilemessages")
+        self.run_command("compile_catalog")
         _sdist.run(self)
 
 
@@ -84,12 +63,12 @@ class bdist_wheel(_bdist_wheel):
     """Custom build command."""
 
     def run(self):
-        self.run_command("compilemessages")
+        self.run_command("compile_catalog")
         _bdist_wheel.run(self)
 
 
 cmdclass = {
-    "compilemessages": compilemessages,
+    "compile_catalog": compile_catalog,
     "sdist": sdist,
     "build_py": build_py,
     "bdist_egg": bdist_egg,

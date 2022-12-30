@@ -264,7 +264,7 @@ export class Editor {
             )
         }
         return Promise.all(initPromises).then(
-          () => this.activateFidusPlugins()
+            () => this.activateFidusPlugins()
         ).then(() => {
             new ModCitations(this)
             new ModFootnotes(this)

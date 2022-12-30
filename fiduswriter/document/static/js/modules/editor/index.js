@@ -263,7 +263,9 @@ export class Editor {
                 )
             )
         }
-        return Promise.all(initPromises).then(() => {
+        return Promise.all(initPromises).then(
+          () => this.activateFidusPlugins()
+        ).then(() => {
             new ModCitations(this)
             new ModFootnotes(this)
             let resubScribed = false
@@ -569,7 +571,6 @@ export class Editor {
         new ModComments(this)
         new ModNavigator(this)
         this.mod.navigator.init()
-        this.activateFidusPlugins()
         this.ws.init()
 
     }
@@ -578,12 +579,13 @@ export class Editor {
         // Add plugins.
         this.plugins = {}
 
-        Object.keys(plugins).forEach(plugin => {
+        return Promise.all(Object.keys(plugins).map(plugin => {
             if (typeof plugins[plugin] === "function") {
                 this.plugins[plugin] = new plugins[plugin](this)
-                this.plugins[plugin].init()
+                return this.plugins[plugin].init() || Promise.resolve()
             }
-        })
+            return Promise.resolve()
+        }))
     }
 
     // Collect all components of the current doc. Needed for saving and export

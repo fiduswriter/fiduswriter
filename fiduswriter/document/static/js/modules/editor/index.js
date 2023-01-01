@@ -264,10 +264,12 @@ export class Editor {
             )
         }
         return Promise.all(initPromises).then(
-            () => this.activateFidusPlugins()
+            () => {
+              new ModCitations(this)
+              new ModFootnotes(this)
+              return this.activateFidusPlugins()
+            }
         ).then(() => {
-            new ModCitations(this)
-            new ModFootnotes(this)
             let resubScribed = false
             this.ws = new WebSocketConnector({
                 url: `/ws/document/${this.docInfo.id}/`,

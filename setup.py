@@ -12,11 +12,6 @@ from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
 from babel.messages.frontend import compile_catalog as _compile_catalog
 
 
-def read(name):
-    with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), name)) as f:
-        return f.read()
-
-
 class compile_catalog(_compile_catalog):
     def initialize_options(self):
         super().initialize_options()
@@ -79,29 +74,6 @@ cmdclass = {
 
 setup(
     cmdclass=cmdclass,
-    name="fiduswriter",
-    version=read("fiduswriter/version.txt").splitlines()[0],
-    description="A semantic wordprocessor for academic purposes",
-    license="AGPL",
-    author="Lund Info AB",
-    author_email="mail@lundinfo.com",
-    url="https://www.fiduswriter.org",
-    long_description=read("README.md"),
-    long_description_content_type="text/markdown",
-    classifiers=[
-        "Development Status :: 5 - Production/Stable",
-        "Intended Audience :: Science/Research",
-        "Framework :: Django :: 4.1",
-        "License :: OSI Approved :: GNU Affero General Public License v3",
-        "Programming Language :: Python :: 3",
-        "Topic :: Scientific/Engineering",
-        "Topic :: Text Editors :: Word Processors",
-        "Topic :: Text Processing",
-        "Topic :: Text Processing :: Markup :: HTML",
-        "Topic :: Text Processing :: Markup :: LaTeX",
-        "Topic :: Text Processing :: Markup :: XML",
-        "Topic :: Utilities",
-    ],
     packages=find_namespace_packages(include=["fiduswriter"]),
     include_package_data=True,
     exclude_package_data={
@@ -126,18 +98,4 @@ setup(
             "fiduswriter/payment/*",
         ]
     },
-    python_requires=">=3",
-    install_requires=read("fiduswriter/requirements.txt").splitlines(),
-    extras_require={
-        "books": "fiduswriter-books ~= 3.11.2",
-        "citation-api-import": "fiduswriter-citation-api-import ~= 3.11.1",
-        "languagetool": "fiduswriter-languagetool ~= 3.11.1",
-        "ojs": "fiduswriter-ojs ~= 3.11.2",
-        "phplist": "fiduswriter-phplist ~= 3.11.1",
-        "gitrepo-export": "fiduswriter-gitrepo-export ~= 3.11.1",
-        "payment-paddle": "fiduswriter-payment-paddle ~= 3.11.2",
-        "mysql": read("fiduswriter/mysql-requirements.txt").splitlines(),
-        "postgresql": read("fiduswriter/postgresql-requirements.txt").splitlines(),
-    },
-    entry_points={"console_scripts": ["fiduswriter=fiduswriter.manage:entry"]},
 )

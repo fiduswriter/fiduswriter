@@ -4,8 +4,6 @@ import pretty from "pretty"
 import {escapeText} from "../../common"
 import {CATS} from "../../schema/i18n"
 
-import {htmlExportTemplate} from "./templates"
-
 export class HTMLExporterConvert {
     constructor(exporter, imageDB, bibDB, settings, xhtml = false, epub = false) {
         this.exporter = exporter
@@ -50,7 +48,7 @@ export class HTMLExporterConvert {
             const body = this.assembleBody(docContent)
             const back = this.assembleBack()
             const head = this.assembleHead()
-            const html = htmlExportTemplate({
+            const html = this.exporter.htmlExportTemplate({
                 head,
                 body,
                 back,

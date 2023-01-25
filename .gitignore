@@ -44,6 +44,7 @@ build
 /fiduswriter/phplist
 /fiduswriter/payment
 /fiduswriter/publish
+/fiduswriter/website
 /fiduswriter/github_export
 /fiduswriter/gitlab_export
 /fiduswriter/gitrepo_export

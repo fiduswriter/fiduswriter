@@ -4,9 +4,11 @@ import pretty from "pretty"
 import {shortFileTitle, get} from "../../common"
 import {createSlug} from "../tools/file"
 import {removeHidden} from "../tools/doc_content"
+import {ZipFileCreator} from "../tools/zip"
+
 import {HTMLExporterConvert} from "./convert"
 import {HTMLExporterCitations} from "./citations"
-import {ZipFileCreator} from "../tools/zip"
+import {htmlExportTemplate} from "./templates"
 /*
  Exporter to HTML
 */
@@ -30,6 +32,7 @@ export class HTMLExporter {
         this.styleSheets = [
             {url: staticUrl("css/document.css")}
         ]
+        this.htmlExportTemplate = htmlExportTemplate
     }
 
     init() {

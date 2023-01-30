@@ -38,6 +38,7 @@ ojs = ["fiduswriter-ojs ~= 3.11.2"]
 phplist = ["fiduswriter-phplist ~= 3.11.1"]
 gitrepo-export = ["fiduswriter-gitrepo-export ~= 3.11.1"]
 payment-paddle = ["fiduswriter-payment-paddle ~= 3.11.2"]
+website = ["fiduswriter-website ~= 3.11.0"]
 mysql = ["mysqlclient"]
 postgresql = ["psycopg2"]
 

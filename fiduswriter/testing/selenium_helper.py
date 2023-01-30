@@ -59,6 +59,10 @@ class SeleniumHelper(object):
             }
         )
 
+    def logout_user(self, driver, client):
+        client.logout()
+        driver.delete_cookie("sessionid")
+
     def wait_until_file_exists(self, path, wait_time):
         count = 0
         while not os.path.exists(path):

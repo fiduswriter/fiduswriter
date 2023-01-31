@@ -605,8 +605,10 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         ).perform()
         time.sleep(1)
         # Downgrade the write rights to read rights for user4
-        self.driver.find_element(
-            By.CSS_SELECTOR, "tr:nth-child(3) .fa-caret-down.edit-right"
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, "tr:nth-child(3) .fa-caret-down.edit-right")
+            )
         ).click()
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Read"]'

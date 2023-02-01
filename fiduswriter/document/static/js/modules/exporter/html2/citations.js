@@ -66,7 +66,7 @@ export class HTMLExporterCitations {
                             citationText = suffixSplit[0]
                             const citId = this.citFm.citations[index].sortedItems[conIndex][1].id
                             const htmlId = this.htmlIdConvert[citId]
-                            return `${prefix}<a href="#ref-${htmlId}">${citationText}</a>${suffix}`
+                            return `${prefix}<a class="bibliography" href="#ref-${htmlId}">${citationText}</a>${suffix}`
                         }).join((origCitationLayout.delimiter || ""))
                         return content
                     }

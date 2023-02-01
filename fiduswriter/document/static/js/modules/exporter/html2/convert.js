@@ -360,7 +360,7 @@ export class HTMLExporterConvert {
             } else {
                 content += `<a class="footnote"${this.epub ? "epub:type=\"noteref\" " : ""} href="#fn-${++this.fnCounter}">${this.fnCounter}</a>`
                 this.footnotes.push(
-                    `<aside class="footnote"${this.epub ? "epub:type=\"footnote\" " : ""} id="fn-${this.fnCounter}"><label>${this.fnCounter}</label><p id="p-${++this.parCounter}">${citationText}</p></fn>`
+                    `<aside class="footnote"${this.epub ? "epub:type=\"footnote\" " : ""} id="fn-${this.fnCounter}"><label>${this.fnCounter}</label><p id="p-${++this.parCounter}">${citationText}</p></aside>`
                 )
             }
             break

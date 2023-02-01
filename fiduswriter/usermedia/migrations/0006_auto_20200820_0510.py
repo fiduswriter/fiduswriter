@@ -5,7 +5,6 @@ import usermedia.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("usermedia", "0005_move_json_data"),
     ]

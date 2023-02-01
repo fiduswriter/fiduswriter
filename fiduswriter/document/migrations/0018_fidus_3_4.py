@@ -64,7 +64,6 @@ def update_documents(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("document", "0017_auto_20210607_0857"),
     ]

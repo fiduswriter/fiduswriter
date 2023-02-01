@@ -65,7 +65,6 @@ def set_document_version(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("document", "0001_squashed_20200219"),
     ]

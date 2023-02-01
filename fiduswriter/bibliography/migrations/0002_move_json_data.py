@@ -21,7 +21,6 @@ def json_to_text(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("bibliography", "0001_squashed_0011_auto_20170101_1647"),
     ]

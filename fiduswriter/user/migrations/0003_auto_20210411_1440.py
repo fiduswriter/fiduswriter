@@ -13,7 +13,6 @@ def change_user_type(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("user", "0002_loginas"),
     ]

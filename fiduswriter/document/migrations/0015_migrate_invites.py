@@ -34,7 +34,6 @@ def userinvites_to_accessrightinvites(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("document", "0014_allow_userinvite_accessrightholder"),
     ]

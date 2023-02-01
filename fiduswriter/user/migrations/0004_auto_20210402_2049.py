@@ -25,7 +25,6 @@ def contacts_to_teammembers(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("user", "0003_auto_20210411_1440"),
     ]

@@ -9,7 +9,6 @@ import uuid
 
 
 class Migration(migrations.Migration):
-
     replaces = [
         ("document", "0001_squashed_0032_document_listed"),
         ("document", "0002_auto_20180814_1946"),

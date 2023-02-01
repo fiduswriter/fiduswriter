@@ -39,7 +39,6 @@ class Command(django.core.management.commands.loaddata.Command):
                 continue
             find_file = False
             for fixture_path in self.fixture_media_paths:
-
                 filepath = join(fixture_path, path.name)
                 if isfile(filepath):
                     find_file = filepath

@@ -5,7 +5,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     replaces = [
         ("bibliography", "0001_initial"),
         ("bibliography", "0002_entry_bib_type"),

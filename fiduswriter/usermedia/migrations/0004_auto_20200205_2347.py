@@ -12,7 +12,6 @@ def update_cat_field(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("usermedia", "0003_auto_20200205_2230"),
     ]

@@ -83,7 +83,6 @@ def update_documents(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("document", "0007_fix_fidus_3_3"),
     ]

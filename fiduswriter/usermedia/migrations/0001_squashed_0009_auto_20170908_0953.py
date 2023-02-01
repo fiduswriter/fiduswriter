@@ -6,7 +6,6 @@ import usermedia.models
 
 
 class Migration(migrations.Migration):
-
     replaces = [
         ("usermedia", "0001_initial"),
         ("usermedia", "0002_auto_20151226_1110"),

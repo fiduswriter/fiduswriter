@@ -14,7 +14,6 @@ def send_share_notification(
     rights,
     change,
 ):
-
     if len(document_title) == 0:
         document_title = _("Untitled")
     if change:
@@ -128,7 +127,6 @@ def send_comment_notification(
     comment_html,
 ):
     if notification_type == "mention":
-
         message_text = _(
             (
                 "Hey %(collaborator_name)s,\n%(commentator)s has mentioned you "

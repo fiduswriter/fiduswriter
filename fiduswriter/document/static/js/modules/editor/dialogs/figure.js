@@ -55,8 +55,6 @@ export class FigureDialog {
                 virtualKeyboardMode: "manual",
                 keypressSound: null,
                 plonkSound: null,
-                onBlur: () => this.showPlaceHolder(),
-                onFocus: () => this.hidePlaceHolder(),
                 locale: "int",
                 strings: {
                     "int": {
@@ -71,10 +69,12 @@ export class FigureDialog {
                         "tooltip.undo": gettext("Undo")
                     }
                 },
-                onContentDidChange: () => {
-                    this.equation = this.mathField.getValue()
-                    this.showHideNonMathElements()
-                }
+            })
+            this.mathField.addEventListener("blur", () => this.showPlaceHolder())
+            this.mathField.addEventListener("focus", () => this.hidePlaceHolder())
+            this.mathField.addEventListener("input", () => {
+                this.equation = this.mathField.getValue()
+                this.showHideNonMathElements()
             })
             this.mathField.value = this.equation
             this.mathliveDOM.appendChild(this.mathField)

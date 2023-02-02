@@ -27,7 +27,7 @@ export class HTMLExporterConvert {
         this.fnCounter = 0
         this.metaData = {
             title: this.exporter.docTitle,
-            contributors: [],
+            authors: [],
             abstract: false,
             keywords: [],
             copyright: {
@@ -64,7 +64,7 @@ export class HTMLExporterConvert {
     }
 
     // Find information for meta tags in header
-    preWalkJson(node, parentNode = false) {
+    preWalkJson(node) {
         switch (node.type) {
         case "article":
             this.metaData.copyright = node.attrs.copyright
@@ -97,8 +97,14 @@ export class HTMLExporterConvert {
             }
             break
         case "contributors_part":
-            this.metaData.contributors.push(node)
-            parentNode.content = parentNode.content.filter(child => child !== node)
+            if (
+                node.attrs.metadata === "authors" &&
+                node.content
+            ) {
+                node.content.forEach(author => {
+                    this.metaData.authors.push(author)
+                })
+            }
             break
         case "equation":
         case "figure_equation":
@@ -109,7 +115,7 @@ export class HTMLExporterConvert {
             break
         }
         if (node.content) {
-            node.content.forEach(child => this.preWalkJson(child, node))
+            node.content.forEach(child => this.preWalkJson(child))
         }
     }
 
@@ -131,11 +137,25 @@ export class HTMLExporterConvert {
 
     assembleHead() {
         let head = `<title>${escapeText(this.metaData.title)}</title>`
-        this.metaData.contributors.forEach(contributors => {
-            head += this.walkJson(contributors)
-        })
-        Object.entries(this.affiliations).forEach(([institution, index]) => head += `<aff id="aff${index}"><institution>${escapeText(institution)}</institution></aff>`)
-        // https://validator.jats4r.org/ requires a <permissions> element here, but is OK with it being empty.
+        if (this.metaData.authors.length) {
+            const authorString = this.metaData.authors.map(author => {
+                if (author.firstname || author.lastname) {
+                    const nameParts = []
+                    if (author.firstname) {
+                        nameParts.push(author.firstname)
+                    }
+                    if (author.lastname) {
+                        nameParts.push(author.lastname)
+                    }
+                    return nameParts.join(" ")
+                } else if (author.institution) {
+                    return author.institution
+                }
+            }).join(", ")
+            if (authorString.length) {
+                head += `<meta name="author" content="${escapeText(authorString)}">`
+            }
+        }
         if (this.metaData.copyright.holder) {
             head  += `<link rel="schema.dcterms" href="http://purl.org/dc/terms/"${this.endSlash}>`
             const year = this.metaData.copyright.year ? this.metaData.copyright.year : new Date().getFullYear()
@@ -177,7 +197,6 @@ export class HTMLExporterConvert {
         return content
     }
 
-
     walkJson(node, options = {}) {
         let start = "", content = "", end = ""
         switch (node.type) {
@@ -198,7 +217,7 @@ export class HTMLExporterConvert {
                 start += `<div class="article-part article-contributors ${node.attrs.metadata || "other"}">`
                 end = "</div>" + end
                 const contributorTypeId = node.attrs.id
-                let counter = 1
+                let counter = 0
                 const contributorOutputs = []
                 node.content.forEach(childNode => {
                     const contributor = childNode.attrs
@@ -206,11 +225,11 @@ export class HTMLExporterConvert {
                     if (contributor.firstname || contributor.lastname) {
                         output += `<span id="${contributorTypeId}-${counter++}" class="person">`
                         const nameParts = []
-                        if (contributor.lastname) {
-                            nameParts.push(`<span class="lastname">${escapeText(contributor.lastname)}</span>`)
-                        }
                         if (contributor.firstname) {
                             nameParts.push(`<span class="firstname">${escapeText(contributor.firstname)}</span>`)
+                        }
+                        if (contributor.lastname) {
+                            nameParts.push(`<span class="lastname">${escapeText(contributor.lastname)}</span>`)
                         }
                         if (nameParts.length) {
                             output += `<span class="name">${nameParts.join(" ")}</span>`
@@ -223,7 +242,7 @@ export class HTMLExporterConvert {
                                 affNumber = ++this.affCounter
                                 this.affiliations[contributor.institution] = affNumber
                             }
-                            output += `<a class="affiliation" href="#aff${affNumber}">${affNumber}</a>`
+                            output += `<a class="affiliation" href="#aff-${affNumber}">${affNumber}</a>`
                         }
                         output += "</span>"
                     } else if (contributor.institution) {
@@ -235,7 +254,7 @@ export class HTMLExporterConvert {
                     }
                     contributorOutputs.push(output)
                 })
-                content += contributorOutputs.join(" ")
+                content += contributorOutputs.join(", ")
             }
             break
         case "tags_part":
@@ -348,7 +367,7 @@ export class HTMLExporterConvert {
             break
         }
         case "cross_reference": {
-            start += `<a href="#${node.attrs.id}">`
+            start += `<a class="reference" href="#${node.attrs.id}">`
             content += escapeText(node.attrs.title || "MISSING TARGET")
             end = "</a>" + end
             break
@@ -366,11 +385,6 @@ export class HTMLExporterConvert {
             break
         }
         case "figure": {
-            // Note: width and alignment are not stored due to lack of corresponding attributes in JATS.
-            if (options.inFootnote) {
-                // only allows <p> block level elements https://jats.nlm.nih.gov/archiving/tag-library/1.2/element/fn.html
-                break
-            }
             let imageFilename, copyright
             const image = node.content.find(node => node.type === "image")?.attrs.image || false
             if (image !== false) {
@@ -389,8 +403,30 @@ export class HTMLExporterConvert {
             ) {
                 content += `<img id="${node.attrs.id}" src="images/${imageFilename}"${this.endSlash}>`
             } else {
-                start += `<figure id="${node.attrs.id}">`
+                start +=
+                    `<figure
+                        id="${node.attrs.id}"
+                        class="aligned-${node.attrs.aligned} image-width-${node.attrs.width}"
+                        data-aligned="${node.attrs.aligned}"
+                        data-width="${node.attrs.width}"
+                        data-category="${node.attrs.category}"
+                    >`
                 end = "</figure>" + end
+
+                const equation = node.content.find(node => node.type === "figure_equation")?.attrs.equation
+
+                if (image && copyright?.holder) {
+                    let figureFooter = `<footer class="copyright ${copyright.freeToRead ? "free-to-read" : "not-free-to-read"}"><small>`
+                    figureFooter += "© "
+                    const year = copyright.year ? copyright.year : new Date().getFullYear()
+                    figureFooter += `<span class="copyright-year">${year}</span> `
+                    figureFooter += `<span class="copyright-holder">${escapeText(copyright.holder)}</span> `
+                    figureFooter += copyright.licenses.map(license =>
+                        `<span class="license"><a rel="license"${license.start ? ` data-start="${license.start}"` : ""}>${escapeText(license.url)}</a></span>`
+                    ).join("")
+                    figureFooter += "</small></footer>"
+                    end = figureFooter + end
+                }
 
                 const category = node.attrs.category
                 if (caption.length || category !== "none") {
@@ -408,28 +444,17 @@ export class HTMLExporterConvert {
                     }
                     figcaption += "</figcaption>"
                     if (category === "table") {
-                        end = figcaption + end
-                    } else {
                         start += figcaption
+                    } else {
+                        end = figcaption + end
                     }
                 }
 
-                const equation = node.content.find(node => node.type === "figure_equation")?.attrs.equation
                 if (equation) {
                     start += `<div class="figure-equation" data-equation="${escapeText(equation)}">`
                     end = "</div>" + end
                     content = convertLatexToMarkup(equation, {mathstyle: "displaystyle"})
                 } else {
-                    if (copyright?.holder) {
-                        start += `<footer class="copyright ${copyright.freeToRead ? "free-to-read" : "not-free-to-read"}"><small>`
-                        const year = copyright.year ? copyright.year : new Date().getFullYear()
-                        start += `<span class="copyright-year">${year}</span>`
-                        start += `<span class="copyright-holder">${escapeText(copyright.holder)}</span>`
-                        start += copyright.licenses.map(license =>
-                            `<div class="license"><a rel="license"${license.start ? ` data-start="${license.start}"` : ""}>${escapeText(license.url)}</a></div>`
-                        ).join("")
-                        start += "</small></footer>"
-                    }
                     if (imageFilename) {
                         content += `<img src="images/${imageFilename}"${this.endSlash}>`
                     }
@@ -447,8 +472,15 @@ export class HTMLExporterConvert {
             // We are already dealing with this in the figure.
             break
         case "table": {
-            // Note: We ignore right/left/center aligned and table layout
-            start += `<table class="table-${node.attrs.width} table-${node.attrs.aligned} table-${node.attrs.layout}">`
+            start += `<table
+                class="table-${node.attrs.width}
+                table-${node.attrs.aligned}
+                table-${node.attrs.layout}"
+                data-width="${node.attrs.width}"
+                data-aligned="${node.attrs.aligned}"
+                data-layout="${node.attrs.layout}"
+                data-category="${node.attrs.category}"
+            >`
             end = "</table>" + end
             const category = node.attrs.category
             if (category !== "none") {
@@ -512,8 +544,13 @@ export class HTMLExporterConvert {
 
     assembleBack() {
         let back = ""
-        if (this.footnotes.length || this.exporter.citations.bibHTML.length) {
+        if (this.footnotes.length || this.exporter.citations.bibHTML.length || Object.keys(this.affiliations).length) {
             back += "<div id=\"back\">"
+            if (Object.keys(this.affiliations).length) {
+                back += `<div id="affiliations">${Object.entries(this.affiliations).map(
+                    ([name, id]) => `<aside class="affiliation" id="aff-${id}"><label>${id}</label> <div>${escapeText(name)}</div></aside>`
+                ).join("")}</div>`
+            }
             if (this.footnotes.length) {
                 back += `<div id="footnotes">${this.footnotes.join("")}</div>`
             }

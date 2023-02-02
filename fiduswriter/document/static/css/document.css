@@ -100,15 +100,11 @@ figure {
 
 .image-width-50 {
     width: 40%;
-    margin-left: 5%;
-    margin-right: 5%;
     box-sizing: border-box;
 }
 
 .image-width-25 {
     width: 21%;
-    margin-left: 2%;
-    margin-right: 2%;
     box-sizing: border-box;
 }
 

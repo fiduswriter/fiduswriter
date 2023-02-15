@@ -46,8 +46,8 @@ export class GeneralPasteHandler {
     // Convert an existing node to a different node, if needed.
     convertNode(node) {
         if (node.tagName === "TABLE" && node.firstElementChild?.tagName !== "CAPTION") {
-            const caption = document.createElement('caption')
-            caption.innerHTML="<span class='text'></span>"
+            const caption = document.createElement("caption")
+            caption.innerHTML = "<span class='text'></span>"
             node.insertBefore(caption, node.firstChild)
         }
         return node

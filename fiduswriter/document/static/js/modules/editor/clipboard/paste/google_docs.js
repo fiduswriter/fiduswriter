@@ -5,6 +5,7 @@ export class GoogleDocsPasteHandler extends GeneralPasteHandler {
 
     // Convert an existing node to a different node, if needed.
     convertNode(node) {
+        node = super.convertNode(node)
         // Replace  nodes with other nodes to not change the number of child nodes
         // <b style="font-weight:normal;">...</b> => <span>...</span>
         if (node.tagName === "B" && node.style.fontWeight === "normal") {

@@ -15,6 +15,7 @@ export class MicrosoftWordPasteHandler extends GeneralPasteHandler {
 
     // Iterate over pasted nodes and their children
     iterateNode(node) {
+        node = super.convertNode(node)
         if (node.tagName === "P" & ! node.firstChild) {
             node.parentNode.removeChild(node)
             return true

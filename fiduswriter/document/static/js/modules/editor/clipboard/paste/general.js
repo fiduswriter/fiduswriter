@@ -29,10 +29,10 @@ export class GeneralPasteHandler {
         if (node.tagName === "P" & ! node.firstChild) {
             node.parentNode.removeChild(node)
             return
-        } else if (node.nodeType === 8) {
+        } else if (node.nodeType === 8) { // comment node
             node.parentNode.removeChild(node)
             return
-        } else if (node.nodeType === 1) {
+        } else if (node.nodeType === 1) { // element node
             let childNode = node.firstChild
             while (childNode) {
                 const nextChildNode = childNode.nextSibling
@@ -45,6 +45,11 @@ export class GeneralPasteHandler {
 
     // Convert an existing node to a different node, if needed.
     convertNode(node) {
+        if (node.tagName === "TABLE" && node.firstElementChild?.tagName !== "CAPTION") {
+            const caption = document.createElement('caption')
+            caption.innerHTML="<span class='text'></span>"
+            node.insertBefore(caption, node.firstChild)
+        }
         return node
     }
 

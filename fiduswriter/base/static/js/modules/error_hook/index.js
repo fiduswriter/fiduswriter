@@ -28,6 +28,8 @@ export class ErrorHook {
             },
             credentials: "include",
             body
+        }).catch((error) => {
+            console.warn(error)
         })
     }
 

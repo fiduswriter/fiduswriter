@@ -549,7 +549,7 @@ export class Editor {
                 this.view.updateState(newState)
                 transactions.forEach(subTr => {
                     const footTr = subTr.getMeta("footTr")
-                    if (footTr) {
+                    if (footTr && footTr.steps.length) {
                         this.mod.footnotes.fnEditor.view.dispatch(footTr)
                     }
                 })

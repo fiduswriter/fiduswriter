@@ -70,7 +70,7 @@
     overflow-y: auto;
     max-height: calc(100vh - 133px);
     min-height: 20px;
-    max-width: calc(100vw - 38px);
+    max-width: calc(100vw - 4px);
     overflow-x: hidden;
 }
 

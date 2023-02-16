@@ -603,25 +603,30 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         ActionChains(self.driver).send_keys(Keys.TAB).send_keys(
             Keys.RETURN
         ).perform()
-        time.sleep(1)
+        time.sleep(2)
         # Downgrade the write rights to read rights for user4
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable(
                 (By.CSS_SELECTOR, "tr:nth-child(3) .fa-caret-down.edit-right")
             )
         ).click()
-        self.driver.find_element(
-            By.XPATH, '//*[normalize-space()="Read"]'
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, "li[title=Read]")
+            )
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, "#my-contacts").click()
         # Upgrade the read rights to write rights for user7
         self.driver.find_element(
             By.CSS_SELECTOR, "tr:nth-child(6) .fa-caret-down.edit-right"
         ).click()
-        self.driver.find_element(
-            By.XPATH, '//*[normalize-space()="Write"]'
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, "li[title=Write]")
+            )
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, "#my-contacts").click()
+        time.sleep(1)
         self.driver.find_element(
             By.CSS_SELECTOR, ".ui-dialog .fw-dark"
         ).click()

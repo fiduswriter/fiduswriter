@@ -611,9 +611,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             )
         ).click()
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.element_to_be_clickable(
-                (By.CSS_SELECTOR, "li[title=Read]")
-            )
+            EC.element_to_be_clickable((By.CSS_SELECTOR, "li[title=Read]"))
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, "#my-contacts").click()
         # Upgrade the read rights to write rights for user7
@@ -621,9 +619,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR, "tr:nth-child(6) .fa-caret-down.edit-right"
         ).click()
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.element_to_be_clickable(
-                (By.CSS_SELECTOR, "li[title=Write]")
-            )
+            EC.element_to_be_clickable((By.CSS_SELECTOR, "li[title=Write]"))
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, "#my-contacts").click()
         time.sleep(1)

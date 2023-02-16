@@ -47,3 +47,12 @@
     width: 278px;
     border-radius: 4px;
 }
+
+
+.selected-source:first-child .order-up {
+    display: none;
+}
+
+.selected-source:last-child .order-down {
+    display: none;
+}

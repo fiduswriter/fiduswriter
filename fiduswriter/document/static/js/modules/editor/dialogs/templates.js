@@ -303,6 +303,7 @@ export const configureCitationTemplate = ({citedItemsHTML, citeFormat}) =>
                 <thead class="fw-data-table-header"><tr>
                     <th width="135">${gettext("Title")}</th>
                     <th width="135">${gettext("Author")}</th>
+                    <th width="50" align="center">${gettext("Order")}</th>
                     <th width="50" align="center">${gettext("Remove")}</th>
                 </tr></thead>
                 <tbody class="fw-data-table-body fw-min">
@@ -315,7 +316,7 @@ export const configureCitationTemplate = ({citedItemsHTML, citeFormat}) =>
     dialog of the editor. */
 export const selectedCitationTemplate = ({title, author, id, db, prefix, locator}) =>
     `<tr id="selected-source-${db}-${id}" class="selected-source">
-        <td colspan="3" width="335">
+        <td colspan="4" width="385">
           <table class="fw-cite-parts-table">
               <tr>
                   <td width="135">
@@ -329,6 +330,14 @@ export const selectedCitationTemplate = ({title, author, id, db, prefix, locator
                   <td width="135">
                       <span class="fw-inline">
                           ${escapeText(author)}
+                      </span>
+                  </td>
+                  <td width="50" align="center">
+                      <span class="order-down fw-inline fw-link-text" data-id="${id}" data-db="${db}">
+                          <i class="fa fa-sort-down"></i>
+                      </span>
+                      <span class="order-up fw-inline fw-link-text" data-id="${id}" data-db="${db}">
+                          <i class="fa fa-sort-up"></i>
                       </span>
                   </td>
                   <td width="50" align="center">

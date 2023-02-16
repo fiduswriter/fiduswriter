@@ -71,7 +71,7 @@ export class SiteMenu {
                         break
                     case "logout":
                         post("/api/user/logout/").then(
-                            () => window.location = "/"
+                            () => window.location = this.app.routes[""].app === "document" ? "/" : "/documents/"
                         )
                         break
                     }

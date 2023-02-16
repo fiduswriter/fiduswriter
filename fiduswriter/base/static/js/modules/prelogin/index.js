@@ -40,7 +40,7 @@ export class PreloginPage {
             {
                 type: "button",
                 text: gettext("Log in"),
-                link: "/"
+                link: this.app.routes[""].app === "document" ? "/" : "/documents/"
             }
         ]
     }

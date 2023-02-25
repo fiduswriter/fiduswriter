@@ -547,11 +547,13 @@ export class LatexExporterConvert {
                 } else {
                     caption = captionContent.map(node => this.walkJson(node)).join("")
                 }
-
-                const columns = node.content[1].content[0].content.reduce(
-                    (columns, node) => columns + node.attrs.colspan,
-                    0
-                )
+                let columns = 1
+                if (node.content.length > 1 && node.content[1].content?.length) {
+                    columns = node.content[1].content[0].content.reduce(
+                        (columns, node) => columns + node.attrs.colspan,
+                        0
+                    )
+                }
                 const aligned = node.attrs.width === "100" ? "left" : node.attrs.aligned
                 if (aligned === "center") {
                     start += "\n\n\\begin{center}"

@@ -147,6 +147,8 @@ class AutoMergeTests(LiveTornadoTestCase, EditorHelper):
         # one too.
         self.driver2.execute_script("window.testCaret.setSelection(86,86)")
         self.driver2.execute_script("window.testCaret.setSelection(56,86)")
+        # Wait for a second.
+        time.sleep(1)
         self.driver2.find_element(By.CLASS_NAME, "article-body").send_keys(
             Keys.BACKSPACE
         )
@@ -162,8 +164,6 @@ class AutoMergeTests(LiveTornadoTestCase, EditorHelper):
         self.driver2.execute_script(
             "window.theApp.page.mod.collab.doc.merge.trackOfflineLimit = 0"
         )
-        # wait for a second.
-        time.sleep(1)
         # driver 2 goes online
         self.driver2.execute_script("window.theApp.page.ws.goOnline()")
 

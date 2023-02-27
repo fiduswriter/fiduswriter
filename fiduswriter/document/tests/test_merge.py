@@ -144,6 +144,7 @@ class AutoMergeTests(LiveTornadoTestCase, EditorHelper):
         # Select all the list item except the last one
         # delete them and then delete the remaining
         # one too.
+        self.driver2.find_element(By.CLASS_NAME, "article-body").click()
         self.driver2.execute_script("window.testCaret.setSelection(86,86)")
         self.driver2.execute_script("window.testCaret.setSelection(56,86)")
         self.driver2.find_element(By.CLASS_NAME, "article-body").send_keys(

@@ -215,7 +215,7 @@ class LiveTornadoTestCase(TransactionTestCase):
             options.add_argument("user-agent={}".format(user_agent))
         if os.getenv("CI"):
             options.binary_location = "/usr/bin/google-chrome-stable"
-            options.add_argument("--headless")
+            options.add_argument("--headless=new")
             options.add_argument("--disable-gpu")
             wait_time = 20
         else:

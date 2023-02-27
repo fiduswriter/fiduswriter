@@ -66,3 +66,6 @@ class AsgiHandler(RequestHandler):
 
     async def post(self):
         await self.handle_request()
+
+    async def patch(self):
+        await self.handle_request()

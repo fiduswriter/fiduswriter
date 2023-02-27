@@ -1,4 +1,5 @@
 import multiprocessing
+import time
 from testing.testcases import LiveTornadoTestCase
 from .editor_helper import EditorHelper
 from selenium.webdriver.common.keys import Keys
@@ -161,6 +162,8 @@ class AutoMergeTests(LiveTornadoTestCase, EditorHelper):
         self.driver2.execute_script(
             "window.theApp.page.mod.collab.doc.merge.trackOfflineLimit = 0"
         )
+        # wait for a second.
+        time.sleep(1)
         # driver 2 goes online
         self.driver2.execute_script("window.theApp.page.ws.goOnline()")
 

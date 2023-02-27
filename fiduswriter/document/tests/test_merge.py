@@ -1,5 +1,4 @@
 import multiprocessing
-import time
 from testing.testcases import LiveTornadoTestCase
 from .editor_helper import EditorHelper
 from selenium.webdriver.common.keys import Keys
@@ -145,10 +144,9 @@ class AutoMergeTests(LiveTornadoTestCase, EditorHelper):
         # Select all the list item except the last one
         # delete them and then delete the remaining
         # one too.
+        self.driver2.find_element(By.CLASS_NAME, "article-body").click()
         self.driver2.execute_script("window.testCaret.setSelection(86,86)")
         self.driver2.execute_script("window.testCaret.setSelection(56,86)")
-        # Wait for a second.
-        time.sleep(1)
         self.driver2.find_element(By.CLASS_NAME, "article-body").send_keys(
             Keys.BACKSPACE
         )

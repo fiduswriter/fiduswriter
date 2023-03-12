@@ -236,6 +236,8 @@ export class ModCommentInteractions {
     // Create a temporary empty comment for the current user that is not shared
     // with collaborators.
     createNewComment() {
+        // Unhide comments if they had been hidden.
+        this.mod.editor.mod.marginboxes.filterOptions.comments = true
         this.deactivateAll()
         this.mod.store.addCommentDuringCreation(this.mod.editor.currentView)
         this.activeCommentId = "-1"

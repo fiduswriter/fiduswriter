@@ -2,7 +2,6 @@ import {Plugin, PluginKey} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
 
 import {findSelectedChanges} from "./find_selected_changes"
-import {deactivateAllSelectedChanges} from "./helpers"
 
 export const key = new PluginKey("track")
 export const selectedInsertionSpec = {}
@@ -105,9 +104,8 @@ export function trackPlugin(options) {
                 return decos
             },
             handleDOMEvents: {
-                focus: (view, _event) => {
-                    const otherView = view === options.editor.view ? options.editor.mod.footnotes.fnEditor.view : options.editor.view
-                    otherView.dispatch(deactivateAllSelectedChanges(otherView.state.tr))
+                focus: (_view, _event) => {
+                    options.editor.mod.comments.interactions.deactivateSelectedChanges()
                 }
             }
         }

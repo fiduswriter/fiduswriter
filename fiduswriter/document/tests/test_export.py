@@ -409,7 +409,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
             '.header-nav-item[title="Export of the document contents"]',
         ).click()
         self.driver.find_element(
-            By.XPATH, '//*[normalize-space()="HTML (new)"]'
+            By.XPATH, '//*[normalize-space()="HTML"]'
         ).click()
         path = os.path.join(self.download_dir, "title.html.zip")
         self.wait_until_file_exists(path, self.wait_time)
@@ -564,7 +564,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
             EC.element_to_be_clickable((By.CSS_SELECTOR, ".dt-bulk-dropdown"))
         ).click()
         self.driver.find_element(
-            By.XPATH, '//*[normalize-space()="Export selected as HTML (new)"]'
+            By.XPATH, '//*[normalize-space()="Export selected as HTML"]'
         ).click()
         path = os.path.join(self.download_dir, "title.html.zip")
         self.wait_until_file_exists(path, self.wait_time)

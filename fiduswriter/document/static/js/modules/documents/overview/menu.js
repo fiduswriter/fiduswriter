@@ -86,7 +86,7 @@ export const bulkMenuModel = () => ({
             order: 4
         },
         {
-            title: gettext("Export selected as HTML (new)"),
+            title: gettext("Export selected as HTML"),
             tooltip: gettext("Export the documents that have been selected as HTML files."),
             action: overview => {
                 const ids = overview.getSelected()

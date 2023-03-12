@@ -186,7 +186,7 @@ export const headerbarModel = () => ({
                     }
                 },
                 {
-                    title: gettext("HTML (new)"),
+                    title: gettext("HTML"),
                     type: "action",
                     tooltip: gettext("Export the document to an HTML file."),
                     order: 0.5,

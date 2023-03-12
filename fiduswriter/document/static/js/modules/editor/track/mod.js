@@ -29,6 +29,15 @@ export class ModTrack {
                 }
                 const box = this.editor.mod.marginboxes.marginBoxes[boxNumber]
                 accept(el.target.dataset.type, box.pos, box.view === "main" ? this.editor.view : this.editor.mod.footnotes.fnEditor.view)
+                // Activate the next margin box with the same number
+                const newBox = this.editor.mod.marginboxes.marginBoxes[boxNumber]
+                if (newBox) {
+                    this.editor.mod.track.activateTrack(
+                        newBox.view,
+                        newBox.type,
+                        newBox.pos
+                    )
+                }
                 break
             }
             case findTarget(event, ".track-reject", el): {
@@ -40,6 +49,15 @@ export class ModTrack {
                 }
                 const box = this.editor.mod.marginboxes.marginBoxes[boxNumber]
                 reject(el.target.dataset.type, box.pos, box.view === "main" ? this.editor.view : this.editor.mod.footnotes.fnEditor.view)
+                // Activate the next margin box with the same number
+                const newBox = this.editor.mod.marginboxes.marginBoxes[boxNumber]
+                if (newBox) {
+                    this.editor.mod.track.activateTrack(
+                        newBox.view,
+                        newBox.type,
+                        newBox.pos
+                    )
+                }
                 break
             }
             default:

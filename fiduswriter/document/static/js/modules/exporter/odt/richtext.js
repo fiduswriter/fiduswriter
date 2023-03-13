@@ -15,8 +15,59 @@ export class OdtExporterRichtext {
         this.zIndex = 0
     }
 
+    init(node, options = {}) {
+        options.comments = this.findComments(node) // Data related to comments. We need to mark the first and last occurence of comment
+        return this.transformRichtext(node, options)
+    }
+
+    findComments(node, comments = {}) {
+        if (node.marks) {
+            const comment = node.marks.find(mark => mark.type === "comment")
+            if (comment) {
+                if (!comments[comment.attrs.id]) {
+                    comments[comment.attrs.id] = {start: node, end: node, content: this.exporter.doc.comments[comment.attrs.id]}
+                } else {
+                    comments[comment.attrs.id]["end"] = node
+                }
+            }
+        }
+        if (node.content) {
+            for (let i = 0; i < node.content.length; i++) {
+                this.findComments(node.content[i], comments)
+            }
+        }
+        return comments
+    }
+
     transformRichtext(node, options = {}) {
         let start = "", content = "", end = ""
+
+        if (node.marks) {
+            const comment = node.marks.find(mark => mark.type === "comment")
+            if (comment) {
+                const commentData = options.comments[comment.attrs.id]
+
+                if (commentData.start === node) {
+                    start += `<office:annotation office:name="comment_${options.tag}_${comment.attrs.id}" loext:resolved="${commentData.content.resolved}">
+                                    <dc:creator>${escapeText(commentData.content.username)}</dc:creator>
+                                    <dc:date>${new Date(commentData.content.date).toISOString().slice(0, -1)}000000</dc:date>
+                                    ${commentData.content.comment.map(node => this.transformRichtext(node)).join("")}
+                                </office:annotation>`
+                }
+                if (commentData.end === node) {
+                    end = `<office:annotation-end office:name="comment_${options.tag}_${comment.attrs.id}"/>` +
+                        commentData.content.answers.map(answer =>
+                            `<office:annotation loext:resolved="${commentData.content.resolved}">
+                                <dc:creator>${escapeText(answer.username)}</dc:creator>
+                                <dc:date>${new Date(answer.date).toISOString().slice(0, -1)}000000</dc:date>
+                                ${answer.answer.map(node => this.transformRichtext(node)).join("")}
+                            </office:annotation>`
+                        ).join("") +
+                        end
+                }
+            }
+        }
+
         switch (node.type) {
         case "paragraph":
             if (!options.section) {

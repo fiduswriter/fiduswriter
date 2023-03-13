@@ -143,11 +143,12 @@ export class OdtExporterRender {
     parRender(tag) {
         const section = tag.par.hasAttribute("text:style-name") ? tag.par.getAttribute("text:style-name") : "Text_20_body"
         const outXml = tag.content ? tag.content.map(
-            content => this.exporter.richtext.transformRichtext(
+            content => this.exporter.richtext.init(
                 content,
                 {
                     citationType: this.exporter.citations.citFm.citationType,
-                    section
+                    section,
+                    tag: tag.title.slice(1)
                 }
             )
         ).join("") : ""

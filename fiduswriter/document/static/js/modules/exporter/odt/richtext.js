@@ -15,7 +15,7 @@ export class OdtExporterRichtext {
         this.zIndex = 0
     }
 
-    init(node, options = {}) {
+    run(node, options = {}) {
         options.comments = this.findComments(node) // Data related to comments. We need to mark the first and last occurence of comment
         return this.transformRichtext(node, options)
     }
@@ -150,23 +150,28 @@ export class OdtExporterRichtext {
             break
         case "footnotecontainer":
             break
-        case "footnote":
-            options = Object.assign({}, options)
-            options.section = "Footnote"
-            options.inFootnote = true
-            content += this.transformRichtext({
+        case "footnote": {
+            const fnCounter = this.fnAlikeCounter++
+            const fnOptions = Object.assign({}, options)
+            fnOptions.section = "Footnote"
+            fnOptions.tag = `footnote${fnCounter}`
+            fnOptions.inFootnote = true
+            const fnNode = {
                 type: "footnotecontainer",
                 content: node.attrs.footnote
-            }, options)
+            }
+            fnOptions.comments = this.findComments(fnNode)
+            content += this.transformRichtext(fnNode, fnOptions)
             start += noSpaceTmp`
-                <text:note text:id="ftn${this.fnAlikeCounter++}" text:note-class="footnote">
-                    <text:note-citation>${this.fnAlikeCounter}</text:note-citation>
+                <text:note text:id="ftn${fnCounter}" text:note-class="footnote">
+                    <text:note-citation>${fnCounter}</text:note-citation>
                     <text:note-body>`
             end = noSpaceTmp`
                     </text:note-body>
                 </text:note>` + end
 
             break
+        }
         case "text": {
             let hyperlink, strong, em, underline, sup, sub, smallcaps
             // Check for hyperlink, bold/strong and italic/em

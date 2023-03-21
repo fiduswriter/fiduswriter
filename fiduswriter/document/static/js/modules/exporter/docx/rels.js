@@ -4,6 +4,15 @@ import {escapeText} from "../../common"
 const DEFAULT_XML = `<?xml version="1.0" encoding="UTF-8"?>
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"></Relationships>`
 
+const DEFAULT_HYPERLINK_STYLE =
+`<w:style w:type="character" w:styleId="InternetLink">
+    <w:name w:val="Hyperlink"/>
+    <w:rPr>
+        <w:color w:val="000080"/>
+        <w:u w:val="single"/>
+    </w:rPr>
+</w:style>`
+
 export class DocxExporterRels {
     constructor(exporter, docName) {
         this.exporter = exporter
@@ -13,15 +22,26 @@ export class DocxExporterRels {
         this.maxRelId = 0
         this.filePath = `word/_rels/${this.docName}.xml.rels`
         this.ctFilePath = "[Content_Types].xml"
+        this.styleXml = false
+        this.styleFilePath = "word/styles.xml"
+        this.hyperLinkStyle = false
     }
 
     init() {
-        return this.initCt().then(() => {
-            return this.exporter.xml.getXml(this.filePath, DEFAULT_XML)
-        }).then(xml => {
-            this.xml = xml
-            this.findMaxRelId()
-        })
+        return Promise.all([
+            this.initCt().then(() => {
+                return this.exporter.xml.getXml(this.filePath, DEFAULT_XML)
+            }).then(xml => {
+                this.xml = xml
+                this.findMaxRelId()
+            }),
+            this.exporter.xml.getXml(this.styleFilePath).then(
+                styleXml => {
+                    this.styleXml = styleXml
+                    return Promise.resolve()
+                }
+            )
+        ])
     }
 
     initCt() {
@@ -55,6 +75,7 @@ export class DocxExporterRels {
             types.insertAdjacentHTML("beforeEnd", `<Override PartName="/${this.filePath}" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>`)
         }
     }
+
     // Add a relationship for a link
     addLinkRel(link) {
         const rels = this.xml.querySelector("Relationships")
@@ -63,6 +84,21 @@ export class DocxExporterRels {
         rels.insertAdjacentHTML("beforeEnd", string)
         this.maxRelId = rId
         return rId
+    }
+
+    addLinkStyle() {
+        if (this.hyperLinkStyle) {
+            // already added
+            return
+        }
+        const hyperLinkEl = this.styleXml.querySelector("name[*|val=\"Hyperlink\"]")
+        if (hyperLinkEl) {
+            this.hyperLinkStyle = el.parentElement.getAttribute("w:styleId")
+        } else {
+            const stylesEl = this.styleXml.querySelector("styles")
+            stylesEl.insertAdjacentHTML("beforeEnd", DEFAULT_HYPERLINK_STYLE)
+            this.hyperLinkStyle = "InternetLink"
+        }
     }
 
     // add a relationship for an image
@@ -100,6 +136,20 @@ export class DocxExporterRels {
         const rels = this.xml.querySelector("Relationships")
         const rId = this.maxRelId + 1
         const string = `<Relationship Id="rId${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering" Target="numbering.xml"/>`
+        rels.insertAdjacentHTML("beforeEnd", string)
+        this.maxRelId = rId
+        return rId
+    }
+
+    addCommentsRel() {
+        const commentsRel = this.xml.querySelector("Relationship[Target=\"comments.xml\"]")
+        if (commentsRel) {
+            const commentsRId = parseInt(commentsRel.getAttribute("Id").replace(/\D/g, ""))
+            return commentsRId
+        }
+        const rels = this.xml.querySelector("Relationships")
+        const rId = this.maxRelId + 1
+        const string = `<Relationship Id="rId${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments" Target="comments.xml"/>`
         rels.insertAdjacentHTML("beforeEnd", string)
         this.maxRelId = rId
         return rId

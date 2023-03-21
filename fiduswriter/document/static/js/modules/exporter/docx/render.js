@@ -205,10 +205,11 @@ export class DocxExporterRender {
         const options = {
             dimensions: tag.dimensions,
             citationType: this.exporter.citations.citFm.citationType,
-            section: pStyle ? pStyle.getAttribute("w:val") : "Normal"
+            section: pStyle ? pStyle.getAttribute("w:val") : "Normal",
+            tag: tag.title.slice(1)
         }
         const outXML = tag.content ? tag.content.map(
-            content => this.exporter.richtext.transformRichtext(content, options)
+            content => this.exporter.richtext.run(content, options)
         ).join("") : ""
         tag.par.insertAdjacentHTML("beforebegin", outXML)
         // sectPr contains information about columns, etc. We need to move this

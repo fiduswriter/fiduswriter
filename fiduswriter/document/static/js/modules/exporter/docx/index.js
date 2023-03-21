@@ -5,6 +5,7 @@ import {createSlug} from "../tools/file"
 import {XmlZip} from "../tools/xml_zip"
 import {removeHidden, fixTables} from "../tools/doc_content"
 import {DocxExporterCitations} from "./citations"
+import {DocxExporterComments} from "./comments"
 import {DocxExporterImages} from "./images"
 import {DocxExporterRender} from "./render"
 import {DocxExporterRichtext} from "./richtext"
@@ -53,11 +54,13 @@ export class DocxExporter {
         this.images = new DocxExporterImages(this, this.imageDB, this.rels, this.docContent)
         this.lists = new DocxExporterLists(this, this.rels, this.docContent)
         this.citations = new DocxExporterCitations(this, this.bibDB, this.csl, this.docContent)
+        this.comments = new DocxExporterComments(this, this.doc.comments, this.docContent)
         this.richtext = new DocxExporterRichtext(
             this,
             this.rels,
             this.citations,
-            this.images
+            this.images,
+            this.comments,
         )
 
         this.xml = new XmlZip(
@@ -82,6 +85,8 @@ export class DocxExporter {
             () => this.rels.init()
         ).then(
             () => this.images.init()
+        ).then(
+            () => this.comments.init()
         ).then(
             () => this.lists.init()
         ).then(

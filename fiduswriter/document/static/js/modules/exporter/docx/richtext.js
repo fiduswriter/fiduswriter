@@ -7,11 +7,13 @@ import {
 } from "../../schema/i18n"
 
 export class DocxExporterRichtext {
-    constructor(exporter, rels, citations, images) {
+    constructor(exporter, rels, citations, images, comments) {
         this.exporter = exporter
         this.rels = rels
         this.citations = citations
         this.images = images
+        this.comments = comments
+        this.commentRangeCounter = -1
         this.fnCounter = 2 // footnotes 0 and 1 are occupied by separators by default.
         this.bookmarkCounter = 0
         this.categoryCounter = {} // counters for each type of figure (figure/table/photo)
@@ -19,10 +21,66 @@ export class DocxExporterRichtext {
         this.docPrCount = 0
     }
 
+    run(node, options = {}) {
+        options.comments = this.findComments(node) // Data related to comments. We need to mark the first and last occurence of comment
+        return this.transformRichtext(node, options)
+    }
+
+    findComments(node, comments = {}) {
+
+        if (node.marks) {
+            const comment = node.marks.find(mark => mark.type === "comment")
+            if (comment) {
+                if (!comments[comment.attrs.id]) {
+                    comments[comment.attrs.id] = {start: node, end: node, content: this.exporter.doc.comments[comment.attrs.id]}
+                } else {
+                    comments[comment.attrs.id]["end"] = node
+                }
+            }
+        }
+        if (node.content) {
+            for (let i = 0; i < node.content.length; i++) {
+                this.findComments(node.content[i], comments)
+            }
+        }
+        return comments
+    }
+
     transformRichtext(node, options = {}) {
         let start = "",
             content = "",
             end = ""
+
+        if (node.marks && options.comments) { // Footnotes don't allow comments in DOCX
+            const comment = node.marks.find(mark => mark.type === "comment")
+            if (comment) {
+                const commentData = options.comments[comment.attrs.id]
+
+                if (commentData.start === node) {
+                    const commentRange =
+                    start += `<w:commentRangeStart w:id="${++this.commentRangeCounter}"/>`
+                }
+                if (commentData.end === node) {
+                    let commentId = this.comments.comments[comment.attrs.id]
+                    end = `
+                        <w:r>
+                            <w:rPr/>
+                        </w:r>
+                        <w:commentRangeEnd w:id="${this.commentRangeCounter}"/>
+                        <w:r>
+                            <w:commentReference w:id="${commentId}"/>
+                        </w:r>
+                        ${commentData.content.answers.map(
+                            _answer => `<w:r>
+                                <w:rPr/>
+                                <w:commentReference w:id="${++commentId}"/>
+                            </w:r>`
+                        ).join("")}
+                        ` +
+                        end
+                }
+            }
+        }
 
         switch (node.type) {
         case "paragraph":
@@ -214,7 +272,8 @@ export class DocxExporterRichtext {
             if (hyperlink || em || strong || underline || smallcaps || sup || sub) {
                 start += "<w:rPr>"
                 if (hyperlink) {
-                    start += "<w:rStyle w:val=\"Hyperlink\"/>"
+                    this.rels.addLinkStyle()
+                    start += `<w:rStyle w:val="${this.rels.hyperLinkStyle}"/>`
                 }
                 if (em) {
                     start += "<w:i/><w:iCs/>"
@@ -252,8 +311,10 @@ export class DocxExporterRichtext {
         case "cross_reference": {
             const title = node.attrs.title
             const id = node.attrs.id
+            this.rels.addLinkStyle()
+
             if (title) {
-                start += `<w:hyperlink w:anchor="${id}"><w:r><w:rPr><w:rStyle w:val="Hyperlink"/></w:rPr><w:t>`
+                start += `<w:hyperlink w:anchor="${id}"><w:r><w:rPr><w:rStyle w:val="${this.rels.hyperLinkStyle}"/></w:rPr><w:t>`
                 end = "</w:t></w:r></w:hyperlink>" + end
             } else {
                 start += "<w:r><w:t>"

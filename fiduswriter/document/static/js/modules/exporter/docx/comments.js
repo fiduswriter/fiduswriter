@@ -18,25 +18,51 @@ export class DocxExporterComments {
         this.commentsDB = commentsDB
         this.docContent = docContent
         this.comments = {}
+        this.usedComments = []
         this.commentsXml = false
         this.commentsExtendedXml = false
         this.commentsFilePath = "word/comments.xml"
         this.commentsExtendedFilePath = "word/commentsExtended.xml"
-        this.maxCommentId = -1
+        this.commentIdCounter = -1
     }
 
     init() {
+        let useExtended = false
+        descendantNodes(this.docContent).forEach(
+            node => {
+                if (node.marks) {
+                    const comments = node.marks.filter(mark => mark.type === "comment")
+                    comments.forEach(
+                        comment => {
+                            if (!this.usedComments.includes(comment.attrs.id)) {
+                                this.usedComments.push(comment.attrs.id)
+                                if (this.commentsDB[comment.attrs.id].resolved) {
+                                    useExtended = true
+                                }
+                            }
+                        }
+                    )
+                }
+            }
+        )
+        if (!this.usedComments.length) {
+            return Promise.resolve()
+        }
         this.exporter.rels.addCommentsRel()
-        return Promise.all([
-            this.exporter.xml.getXml(this.commentsFilePath, DEFAULT_COMMENTS_XML).then(commentsXml => this.commentsXml = commentsXml),
-            this.exporter.xml.getXml(this.commentsExtendedFilePath, DEFAULT_COMMENTS_EXTENDED_XML).then(commentsExtendedXml => this.commentsExtendedXml = commentsExtendedXml)
-        ]).then(
+        const addCommentXMLs = [
+            this.exporter.xml.getXml(this.commentsFilePath, DEFAULT_COMMENTS_XML).then(commentsXml => this.commentsXml = commentsXml)
+        ]
+        if (useExtended) {
+            this.exporter.rels.addCommentsExtendedRel()
+            addCommentXMLs.push(this.exporter.xml.getXml(this.commentsExtendedFilePath, DEFAULT_COMMENTS_EXTENDED_XML).then(commentsExtendedXml => this.commentsExtendedXml = commentsExtendedXml))
+        }
+        return Promise.all(addCommentXMLs).then(
             () => {
-                Array.from(this.commentsXml.querySelectorAll('comment')).forEach(
+                Array.from(this.commentsXml.querySelectorAll("comment")).forEach(
                     el => {
-                        const id = parseInt(el.getAttribute('w:id'))
-                        if (id > this.maxCommentId) {
-                            this.maxCommentId = id
+                        const id = parseInt(el.getAttribute("w:id"))
+                        if (id > this.commentIdCounter) {
+                            this.commentIdCounter = id
                         }
                     }
                 )
@@ -46,35 +72,49 @@ export class DocxExporterComments {
     }
 
     addComment(id) {
-        const commentId = ++this.maxCommentId
+        const commentId = ++this.commentIdCounter
         this.comments[id] = commentId
         const commentDBEntry = this.commentsDB[id]
         const comments = this.commentsXml.querySelector("comments")
         let string = `<w:comment w:id="${commentId}" w:author="${escapeText(commentDBEntry.username)}" w:date="${new Date(commentDBEntry.date).toISOString()}" w:initials="">`
-        string += commentDBEntry.comment.map(node => this.exporter.richtext.transformRichtext(node)).join("")
-        string += `</w:comment>`
+        string += commentDBEntry.comment.map((node, index) => {
+            const options = {}
+            if (commentDBEntry.resolved && index === (commentDBEntry.comment.length - 1)) {
+                // If comment has been resolved, we need to add an id to the last paragraph of the comment
+                // And add an entry into commentsExtended.xml
+                const paragraphId = String(++this.exporter.richtext.paragraphIdCounter).padStart(8, "0")
+                options.paragraphId = paragraphId
+                const extendedString = `<w15:commentEx w15:paraId="${paragraphId}" w15:done="1"/>`
+                const extendedComments = this.commentsExtendedXml.querySelector("commentsEx")
+                extendedComments.insertAdjacentHTML("beforeEnd", extendedString)
+            }
+            return this.exporter.richtext.transformRichtext(node, options)
+        }).join("")
+        string += "</w:comment>"
         commentDBEntry.answers.forEach(answer => {
-            const answerId = ++this.maxCommentId
+            const answerId = ++this.commentIdCounter
             string += `<w:comment w:id="${answerId}" w:author="${escapeText(answer.username)}" w:date="${new Date(answer.date).toISOString()}" w:initials="">`
-            string += answer.answer.map(node => this.exporter.richtext.transformRichtext(node)).join("")
-            string += `</w:comment>`
+            string += answer.answer.map((node, index) => {
+                const options = {}
+                if (commentDBEntry.resolved && index === (answer.answer.length - 1)) {
+                    // If comment has been resolved, we need to add an id to the last paragraph of the comment
+                    // And add an entry into commentsExtended.xml
+                    const paragraphId = String(++this.exporter.richtext.paragraphIdCounter).padStart(8, "0")
+                    options.paragraphId = paragraphId
+                    const extendedString = `<w15:commentEx w15:paraId="${paragraphId}" w15:done="1"/>`
+                    const extendedComments = this.commentsExtendedXml.querySelector("commentsEx")
+                    extendedComments.insertAdjacentHTML("beforeEnd", extendedString)
+                }
+                return this.exporter.richtext.transformRichtext(node, options)
+            }).join("")
+            string += "</w:comment>"
         })
         comments.insertAdjacentHTML("beforeEnd", string)
     }
 
     exportComments() {
-        const usedComments = []
-        descendantNodes(this.docContent).forEach(
-            node => {
-                if (node.marks) {
-                    const comment = node.marks.find(mark => mark.type === "comment")
-                    if (comment && !usedComments.includes(comment.attrs.id)) {
-                        usedComments.push(comment.attrs.id)
-                    }
-                }
-            }
-        )
-        usedComments.forEach((comment) => {
+
+        this.usedComments.forEach((comment) => {
             this.addComment(comment)
         })
         return Promise.resolve()

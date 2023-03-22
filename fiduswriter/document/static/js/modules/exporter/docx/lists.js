@@ -30,8 +30,8 @@ export class DocxExporterLists {
         this.usedNumberedList = []
         this.styleXml = false
         this.numberingXml = false
-        this.maxAbstractNumId = -1
-        this.maxNumId = 0
+        this.abstractNumIdCounter = -1
+        this.numIdCounter = -1
         // We only need one bulletType for all bullet lists, but a new
         // numberedType for each numbered list so that the numbering starts in 1
         // each time.
@@ -149,8 +149,8 @@ export class DocxExporterLists {
                 } else if (levelZeroFormat !== "bullet" && !(this.numberFormat)) {
                     this.numberFormat = levelZeroFormat
                 }
-                if (this.maxAbstractNumId < abstractNumId) {
-                    this.maxAbstractNumId = abstractNumId
+                if (this.abstractNumIdCounter < abstractNumId) {
+                    this.abstractNumIdCounter = abstractNumId
                 }
 
             }
@@ -158,25 +158,22 @@ export class DocxExporterLists {
         const allNum = this.numberingXml.querySelectorAll("num")
         allNum.forEach(numEl => {
             const numId = parseInt(numEl.getAttribute("w:val"))
-            if (this.maxNumId < numId) {
-                this.maxNumId = numId
+            if (this.numIdCounter < numId) {
+                this.numIdCounter = numId
             }
         })
 
         if (!(this.bulletType) && this.useBulletList) {
-            this.maxNumId++
-            this.maxAbstractNumId++
-            this.addBulletNumType(this.maxNumId, this.maxAbstractNumId)
-            this.bulletType = this.maxNumId
+            this.addBulletNumType(++this.numIdCounter, ++this.abstractNumIdCounter)
+            this.bulletType = this.numIdCounter
         }
         if (this.usedNumberedList.length > 0) {
-            this.maxAbstractNumId++
+            this.abstractNumIdCounter++
 
-            this.numberedAbstractType = this.maxAbstractNumId
+            this.numberedAbstractType = this.abstractNumIdCounter
         }
         for (let i = 0;i < this.usedNumberedList.length;i++) {
-            this.maxNumId++
-            const numId = this.maxNumId
+            const numId = ++this.numIdCounter
             this.addNumberedNumType(numId, this.usedNumberedList[i])
             this.numberedTypes.push(numId)
         }
@@ -225,12 +222,12 @@ export class DocxExporterLists {
     }
 
     addNumberedNumType(numId, start) {
-        this.maxAbstractNumId++
-        this.addNumberedAbstractNumType(this.maxAbstractNumId, start)
+        this.abstractNumIdCounter++
+        this.addNumberedAbstractNumType(this.abstractNumIdCounter, start)
         const numberingEl = this.numberingXml.querySelector("numbering")
         numberingEl.insertAdjacentHTML("beforeEnd", noSpaceTmp`
             <w:num w:numId="${numId}">
-                <w:abstractNumId w:val="${this.maxAbstractNumId}" />
+                <w:abstractNumId w:val="${this.abstractNumIdCounter}" />
             </w:num>
         `)
     }

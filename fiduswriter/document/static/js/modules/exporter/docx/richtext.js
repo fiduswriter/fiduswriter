@@ -14,11 +14,12 @@ export class DocxExporterRichtext {
         this.images = images
         this.comments = comments
         this.commentRangeCounter = -1
-        this.fnCounter = 2 // footnotes 0 and 1 are occupied by separators by default.
-        this.bookmarkCounter = 0
+        this.paragraphIdCounter = 0
+        this.fnCounter = 1 // footnotes 0 and 1 are occupied by separators by default.
+        this.bookmarkCounter = -1
         this.categoryCounter = {} // counters for each type of figure (figure/table/photo)
         this.fncategoryCounter = {}
-        this.docPrCount = 0
+        this.docPrCount = -1
     }
 
     run(node, options = {}) {
@@ -29,14 +30,13 @@ export class DocxExporterRichtext {
     findComments(node, comments = {}) {
 
         if (node.marks) {
-            const comment = node.marks.find(mark => mark.type === "comment")
-            if (comment) {
+            node.marks.filter(mark => mark.type === "comment").forEach(comment => {
                 if (!comments[comment.attrs.id]) {
-                    comments[comment.attrs.id] = {start: node, end: node, content: this.exporter.doc.comments[comment.attrs.id]}
+                    comments[comment.attrs.id] = {start: node, end: node, rangeId: ++this.commentRangeCounter, content: this.exporter.doc.comments[comment.attrs.id]}
                 } else {
                     comments[comment.attrs.id]["end"] = node
                 }
-            }
+            })
         }
         if (node.content) {
             for (let i = 0; i < node.content.length; i++) {
@@ -52,34 +52,33 @@ export class DocxExporterRichtext {
             end = ""
 
         if (node.marks && options.comments) { // Footnotes don't allow comments in DOCX
-            const comment = node.marks.find(mark => mark.type === "comment")
-            if (comment) {
-                const commentData = options.comments[comment.attrs.id]
+            node.marks.filter(mark => mark.type === "comment").forEach(
+                comment => {
+                    const commentData = options.comments[comment.attrs.id]
 
-                if (commentData.start === node) {
-                    const commentRange =
-                    start += `<w:commentRangeStart w:id="${++this.commentRangeCounter}"/>`
-                }
-                if (commentData.end === node) {
-                    let commentId = this.comments.comments[comment.attrs.id]
-                    end = `
-                        <w:r>
-                            <w:rPr/>
-                        </w:r>
-                        <w:commentRangeEnd w:id="${this.commentRangeCounter}"/>
-                        <w:r>
-                            <w:commentReference w:id="${commentId}"/>
-                        </w:r>
-                        ${commentData.content.answers.map(
-                            _answer => `<w:r>
+                    if (commentData.start === node) {
+                        start += `<w:commentRangeStart w:id="${commentData.rangeId}"/>`
+                    }
+                    if (commentData.end === node) {
+                        let commentId = this.comments.comments[comment.attrs.id]
+                        end = `
+                            <w:r>
                                 <w:rPr/>
-                                <w:commentReference w:id="${++commentId}"/>
-                            </w:r>`
-                        ).join("")}
-                        ` +
-                        end
+                            </w:r>
+                            <w:commentRangeEnd w:id="${commentData.rangeId}"/>
+                            <w:r>
+                                <w:commentReference w:id="${commentId}"/>
+                            </w:r>
+                            ${commentData.content.answers.map(
+        _answer => `<w:r>
+                                    <w:rPr/>
+                                    <w:commentReference w:id="${++commentId}"/>
+                                </w:r>`
+    ).join("")}` +
+                            end
+                    }
                 }
-            }
+            )
         }
 
         switch (node.type) {
@@ -99,7 +98,7 @@ export class DocxExporterRichtext {
                 start += "<w:p/>"
             } else {
                 start += noSpaceTmp`
-                        <w:p>
+                        <w:p${options.paragraphId ? ` w14:paraId="${options.paragraphId}"` : ""}>
                             <w:pPr><w:pStyle w:val="${options.section}"/>`
                 if (options.list_type) {
                     start += `<w:numPr><w:ilvl w:val="${options.list_depth}"/>`
@@ -127,8 +126,8 @@ export class DocxExporterRichtext {
                             <w:pStyle w:val="Heading1"/>
                             <w:rPr></w:rPr>
                         </w:pPr>
-                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
-                        <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
+                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/>
+                        <w:bookmarkEnd w:id="${this.bookmarkCounter}"/>`
             end = "</w:p>" + end
             break
         case "heading2":
@@ -138,8 +137,8 @@ export class DocxExporterRichtext {
                             <w:pStyle w:val="Heading2"/>
                             <w:rPr></w:rPr>
                         </w:pPr>
-                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
-                        <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
+                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/>
+                        <w:bookmarkEnd w:id="${this.bookmarkCounter}"/>`
             end = "</w:p>" + end
             break
         case "heading3":
@@ -149,8 +148,8 @@ export class DocxExporterRichtext {
                             <w:pStyle w:val="Heading3"/>
                             <w:rPr></w:rPr>
                         </w:pPr>
-                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
-                        <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
+                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/>
+                        <w:bookmarkEnd w:id="${this.bookmarkCounter}"/>`
             end = "</w:p>" + end
             break
         case "heading4":
@@ -160,8 +159,8 @@ export class DocxExporterRichtext {
                             <w:pStyle w:val="Heading4"/>
                             <w:rPr></w:rPr>
                         </w:pPr>
-                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
-                        <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
+                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/>
+                        <w:bookmarkEnd w:id="${this.bookmarkCounter}"/>`
             end = "</w:p>" + end
             break
         case "heading5":
@@ -171,8 +170,8 @@ export class DocxExporterRichtext {
                             <w:pStyle w:val="Heading5"/>
                             <w:rPr></w:rPr>
                         </w:pPr>
-                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
-                        <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
+                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/>
+                        <w:bookmarkEnd w:id="${this.bookmarkCounter}"/>`
             end = "</w:p>" + end
             break
         case "heading6":
@@ -182,8 +181,8 @@ export class DocxExporterRichtext {
                             <w:pStyle w:val="Heading6"/>
                             <w:rPr></w:rPr>
                         </w:pPr>
-                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
-                        <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
+                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/>
+                        <w:bookmarkEnd w:id="${this.bookmarkCounter}"/>`
             end = "</w:p>" + end
             break
         case "code_block":
@@ -225,7 +224,7 @@ export class DocxExporterRichtext {
             options = Object.assign({}, options)
             options.section = "Footnote"
             options.inFootnote = true
-            start += `<w:footnote w:id="${this.fnCounter++}">`
+            start += `<w:footnote w:id="${++this.fnCounter}">`
             end = "</w:footnote>" + end
             options.footnoteRefMissing = true
             break
@@ -235,7 +234,7 @@ export class DocxExporterRichtext {
                         <w:rPr>
                             <w:rStyle w:val="FootnoteAnchor"/>
                         </w:rPr>
-                        <w:footnoteReference w:id="${this.fnCounter++}"/>
+                        <w:footnoteReference w:id="${++this.fnCounter}"/>
                     </w:r>`
             break
         case "text":
@@ -294,6 +293,8 @@ export class DocxExporterRichtext {
                 }
 
                 start += "</w:rPr>"
+            } else {
+                start += "<w:rPr/>"
             }
             if (options.footnoteRefMissing) {
                 start += "<w:footnoteRef /><w:tab />"
@@ -301,9 +302,9 @@ export class DocxExporterRichtext {
             }
             let textAttr = ""
             if (node.text[0] === " " || node.text[node.text.length - 1] === " ") {
-                textAttr += "xml:space=\"preserve\""
+                textAttr += " xml:space=\"preserve\""
             }
-            start += `<w:t ${textAttr}>`
+            start += `<w:t${textAttr}>`
 
             content += escapeText(node.text)
             break
@@ -437,7 +438,7 @@ export class DocxExporterRichtext {
                       <w:drawing>
                         <wp:inline distT="0" distB="0" distL="0" distR="0">
                           <wp:extent cx="${cx}" cy="${cy}"/>
-                          <wp:docPr id="${this.docPrCount}" name="Picture${this.docPrCount++}" descr=""/>
+                          <wp:docPr id="${++this.docPrCount}" name="Picture${this.docPrCount}" descr=""/>
                           <a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
                             <a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture">
                               <pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">
@@ -488,8 +489,8 @@ export class DocxExporterRichtext {
                       <w:pPr>
                         <w:jc w:val="center"/>
                       </w:pPr>
-                      <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
-                      <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
+                      <w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/>
+                      <w:bookmarkEnd w:id="${this.bookmarkCounter}"/>`
                 end = `
                     </w:p>
                     ${ captionSpace ?
@@ -519,7 +520,7 @@ export class DocxExporterRichtext {
                                 <wp:extent cx="${cx}" cy="${captionSpace ? cy + 350520 : cy}" />
                                 <wp:effectExtent l="0" t="0" r="0" b="0" />
                                 <wp:wrapSquare wrapText="largest" />
-                                <wp:docPr id="${this.docPrCount}" name="Frame${this.docPrCount++}" />
+                                <wp:docPr id="${++this.docPrCount}" name="Frame${this.docPrCount}" />
                                 <a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
                                     <a:graphicData uri="http://schemas.microsoft.com/office/word/2010/wordprocessingShape">
                                         <wps:wsp>
@@ -539,8 +540,8 @@ export class DocxExporterRichtext {
                                                             <w:spacing w:before="20" w:after="220" />
                                                             <w:rPr></w:rPr>
                                                         </w:pPr>
-                                                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
-                                                        <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
+                                                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/>
+                                                        <w:bookmarkEnd w:id="${this.bookmarkCounter}"/>`
 
                 end = noSpaceTmp`
                                                         ${catCountXml}
@@ -618,8 +619,8 @@ export class DocxExporterRichtext {
                             <w:pStyle w:val="Caption"/>
                             <w:keepNext/>
                         </w:pPr>
-                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
-                        <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>
+                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/>
+                        <w:bookmarkEnd w:id="${this.bookmarkCounter}"/>
                         ${catCountXml}
                         ${caption.map(node => this.transformRichtext(node)).join("")}
                     </w:p>`

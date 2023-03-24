@@ -6,13 +6,37 @@ export class DocxExporterRender {
     constructor(exporter, docContent) {
         this.exporter = exporter
         this.docContent = docContent
-        this.filePath = "word/document.xml"
+        this.filePath = false // "word/document.xml" or "word/document2.xml" in some cases
         this.xml = false
+        this.ctXml = false
     }
 
     init() {
-        return this.exporter.xml.getXml(this.filePath).then(
-            xml => this.xml = xml
+        return this.exporter.xml.getXml("[Content_Types].xml").then(
+            ctXml => {
+                this.ctXml = ctXml
+                const documentOverride = this.ctXml.querySelector("Override[ContentType=\"application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml\"]")
+                this.filePath = documentOverride.getAttribute("PartName").slice(1)
+                return this.exporter.xml.getXml(this.filePath)
+            }
+        ).then(
+            xml => {
+                this.xml = xml
+                // Ensure we support the three latest docx feature sets:
+                // wp14 (drawing 2010), w14 (word 2010), w15 (word 2012)
+                const documentEl = this.xml.querySelector("document")
+                if (!documentEl.getAttribute("xmlns:wp14")) {
+                    documentEl.setAttribute("xmlns:wp14", "http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing")
+                }
+                if (!documentEl.getAttribute("xmlns:w14")) {
+                    documentEl.setAttribute("xmlns:w14", "http://schemas.microsoft.com/office/word/2010/wordml")
+                }
+                if (!documentEl.getAttribute("xmlns:w15")) {
+                    documentEl.setAttribute("xmlns:w15", "http://schemas.microsoft.com/office/word/2012/wordml")
+                }
+                const ignorable = [...new Set(["w14", "wp14", "w15"].concat(documentEl.getAttribute("mc:Ignorable", "").split(" ").filter(item => item.length)))]
+                documentEl.setAttribute("mc:Ignorable", ignorable.join(" "))
+            }
         )
     }
 

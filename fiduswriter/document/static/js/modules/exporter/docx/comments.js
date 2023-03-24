@@ -36,7 +36,7 @@ export class DocxExporterComments {
                         comment => {
                             if (!this.usedComments.includes(comment.attrs.id)) {
                                 this.usedComments.push(comment.attrs.id)
-                                if (this.commentsDB[comment.attrs.id].resolved) {
+                                if (this.commentsDB[comment.attrs.id].resolved || this.commentsDB[comment.attrs.id].answers.length) {
                                     useExtended = true
                                 }
                             }
@@ -60,7 +60,7 @@ export class DocxExporterComments {
             () => {
                 Array.from(this.commentsXml.querySelectorAll("comment")).forEach(
                     el => {
-                        const id = parseInt(el.getAttribute("w:id"))
+                        const id = parseInt(el.getAttribute("w:id"), 16)
                         if (id > this.commentIdCounter) {
                             this.commentIdCounter = id
                         }
@@ -72,40 +72,49 @@ export class DocxExporterComments {
     }
 
     addComment(id) {
-        const commentId = ++this.commentIdCounter
+        const commentId = (++this.commentIdCounter).toString(16)
         this.comments[id] = commentId
         const commentDBEntry = this.commentsDB[id]
         const comments = this.commentsXml.querySelector("comments")
-        let string = `<w:comment w:id="${commentId}" w:author="${escapeText(commentDBEntry.username)}" w:date="${new Date(commentDBEntry.date).toISOString()}" w:initials="">`
+        let string = `<w:comment w:id="${commentId}" w:author="${escapeText(commentDBEntry.username)}" w:date="${new Date(commentDBEntry.date).toISOString().split(".")[0]}Z" w:initials="${escapeText(commentDBEntry.username.split(" ").map((n) => n[0]).join("").toUpperCase())}">`
+        let parentParagraphId = ""
         string += commentDBEntry.comment.map((node, index) => {
-            const options = {}
-            if (commentDBEntry.resolved && index === (commentDBEntry.comment.length - 1)) {
-                // If comment has been resolved, we need to add an id to the last paragraph of the comment
-                // And add an entry into commentsExtended.xml
-                const paragraphId = String(++this.exporter.richtext.paragraphIdCounter).padStart(8, "0")
-                options.paragraphId = paragraphId
-                const extendedString = `<w15:commentEx w15:paraId="${paragraphId}" w15:done="1"/>`
+            const options = {section: "Comment"}
+            if ((commentDBEntry.resolved || commentDBEntry.answers.length) && index === (commentDBEntry.comment.length - 1)) {
+                // If comment has been resolved or there are answers, we need to add an id to the last paragraph
+                // of the comment and add an entry into commentsExtended.xml.
+                parentParagraphId = (++this.exporter.richtext.paragraphIdCounter).toString(16).padStart(8, "0")
+                options.paragraphId = parentParagraphId
+                const extendedString = `<w15:commentEx w15:paraId="${parentParagraphId}" w15:done="${commentDBEntry.resolved ? "1" : "0"}"/>`
                 const extendedComments = this.commentsExtendedXml.querySelector("commentsEx")
                 extendedComments.insertAdjacentHTML("beforeEnd", extendedString)
             }
-            return this.exporter.richtext.transformRichtext(node, options)
+            let markup = this.exporter.richtext.transformRichtext(node, options)
+            if (!index) {
+                markup += "<w:r><w:rPr><w:rStyle w:val=\"CommentReference\"/></w:rPr><w:annotationRef/></w:r>"
+            }
+            return markup
         }).join("")
         string += "</w:comment>"
         commentDBEntry.answers.forEach(answer => {
-            const answerId = ++this.commentIdCounter
-            string += `<w:comment w:id="${answerId}" w:author="${escapeText(answer.username)}" w:date="${new Date(answer.date).toISOString()}" w:initials="">`
+            const answerId = (++this.commentIdCounter).toString(16)
+            string += `<w:comment w:id="${answerId}" w:author="${escapeText(answer.username)}" w:date="${new Date(answer.date).toISOString().split(".")[0]}Z" w:initials="${escapeText(answer.username.split(" ").map((n) => n[0]).join("").toUpperCase())}">`
             string += answer.answer.map((node, index) => {
-                const options = {}
-                if (commentDBEntry.resolved && index === (answer.answer.length - 1)) {
-                    // If comment has been resolved, we need to add an id to the last paragraph of the comment
-                    // And add an entry into commentsExtended.xml
-                    const paragraphId = String(++this.exporter.richtext.paragraphIdCounter).padStart(8, "0")
+                const options = {section: "CommentText"}
+                if (index === (answer.answer.length - 1)) {
+                    // We need to add an id to the last paragraph of the comment and add an entry
+                    // into commentsExtended.xml pointing to the last paragraph of the parent comment.
+                    const paragraphId = (++this.exporter.richtext.paragraphIdCounter).toString(16).padStart(8, "0")
                     options.paragraphId = paragraphId
-                    const extendedString = `<w15:commentEx w15:paraId="${paragraphId}" w15:done="1"/>`
+                    const extendedString = `<w15:commentEx w15:paraId="${paragraphId}" w15:done="${commentDBEntry.resolved ? "1" : "0"}" w15:paraIdParent="${parentParagraphId}"/>`
                     const extendedComments = this.commentsExtendedXml.querySelector("commentsEx")
                     extendedComments.insertAdjacentHTML("beforeEnd", extendedString)
                 }
-                return this.exporter.richtext.transformRichtext(node, options)
+                let markup = this.exporter.richtext.transformRichtext(node, options)
+                if (!index) {
+                    markup += "<w:r><w:rPr><w:rStyle w:val=\"CommentReference\"/></w:rPr><w:annotationRef/></w:r>"
+                }
+                return markup
             }).join("")
             string += "</w:comment>"
         })

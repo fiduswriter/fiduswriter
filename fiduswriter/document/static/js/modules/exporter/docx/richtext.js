@@ -32,7 +32,7 @@ export class DocxExporterRichtext {
         if (node.marks) {
             node.marks.filter(mark => mark.type === "comment").forEach(comment => {
                 if (!comments[comment.attrs.id]) {
-                    comments[comment.attrs.id] = {start: node, end: node, rangeId: ++this.commentRangeCounter, content: this.exporter.doc.comments[comment.attrs.id]}
+                    comments[comment.attrs.id] = {start: node, end: node, content: this.exporter.doc.comments[comment.attrs.id]}
                 } else {
                     comments[comment.attrs.id]["end"] = node
                 }
@@ -55,27 +55,23 @@ export class DocxExporterRichtext {
             node.marks.filter(mark => mark.type === "comment").forEach(
                 comment => {
                     const commentData = options.comments[comment.attrs.id]
-
                     if (commentData.start === node) {
-                        start += `<w:commentRangeStart w:id="${commentData.rangeId}"/>`
+                        let commentId = this.comments.comments[comment.attrs.id]
+                        start += `<w:commentRangeStart w:id="${commentId}"/>`
+                        commentData.content.answers.forEach(
+                            _answer => start += `<w:commentRangeStart w:id="${++commentId}"/>`
+                        )
                     }
+
                     if (commentData.end === node) {
                         let commentId = this.comments.comments[comment.attrs.id]
-                        end = `
-                            <w:r>
-                                <w:rPr/>
-                            </w:r>
-                            <w:commentRangeEnd w:id="${commentData.rangeId}"/>
-                            <w:r>
-                                <w:commentReference w:id="${commentId}"/>
-                            </w:r>
-                            ${commentData.content.answers.map(
-        _answer => `<w:r>
-                                    <w:rPr/>
-                                    <w:commentReference w:id="${++commentId}"/>
-                                </w:r>`
-    ).join("")}` +
-                            end
+                        end = `<w:commentRangeEnd w:id="${commentId}"/><w:r><w:commentReference w:id="${
+                            commentId
+                        }"/></w:r>${
+                            commentData.content.answers.map(
+                                _answer => `<w:commentRangeEnd w:id="${++commentId}"/><w:r><w:commentReference w:id="${commentId}"/></w:r>`
+                            ).join("")
+                        }` + end
                     }
                 }
             )
@@ -108,6 +104,9 @@ export class DocxExporterRichtext {
                 }
                 start += "</w:pPr>"
                 end = "</w:p>" + end
+                if (!(node.content?.length)) {
+                    start += "<w:r><w:rPr></w:rPr></w:r>"
+                }
             }
             break
         case "bibliography_heading":
@@ -267,9 +266,8 @@ export class DocxExporterRichtext {
                 start += "<w:r>"
                 end = "</w:t></w:r>" + end
             }
-
+            start += "<w:rPr>"
             if (hyperlink || em || strong || underline || smallcaps || sup || sub) {
-                start += "<w:rPr>"
                 if (hyperlink) {
                     this.rels.addLinkStyle()
                     start += `<w:rStyle w:val="${this.rels.hyperLinkStyle}"/>`
@@ -291,11 +289,8 @@ export class DocxExporterRichtext {
                 } else if (sub) {
                     start += "<w:vertAlign w:val=\"subscript\"/>"
                 }
-
-                start += "</w:rPr>"
-            } else {
-                start += "<w:rPr/>"
             }
+            start += "</w:rPr>"
             if (options.footnoteRefMissing) {
                 start += "<w:footnoteRef /><w:tab />"
                 options.footnoteRefMissing = false
@@ -318,7 +313,7 @@ export class DocxExporterRichtext {
                 start += `<w:hyperlink w:anchor="${id}"><w:r><w:rPr><w:rStyle w:val="${this.rels.hyperLinkStyle}"/></w:rPr><w:t>`
                 end = "</w:t></w:r></w:hyperlink>" + end
             } else {
-                start += "<w:r><w:t>"
+                start += "<w:r><w:rPr></w:rPr><w:t>"
                 end = "</w:t></w:r>" + end
             }
             content += escapeText(title || "MISSING TARGET")
@@ -434,7 +429,7 @@ export class DocxExporterRichtext {
                 cx = Math.round(cx)
                 const rId = imageEntry.id
                 content += noSpaceTmp`<w:r>
-                      <w:rPr/>
+                      <w:rPr></w:rPr>
                       <w:drawing>
                         <wp:inline distT="0" distB="0" distL="0" distR="0">
                           <wp:extent cx="${cx}" cy="${cy}"/>
@@ -507,7 +502,7 @@ export class DocxExporterRichtext {
                         <w:jc w:val="center"/>
                       </w:pPr>
                       <w:r>
-                        <w:rPr/>
+                        <w:rPr></w:rPr>
                           <w:drawing>
                             <wp:anchor behindDoc="0" distT="95250" distB="95250" distL="95250" distR="95250" simplePos="0" locked="0" layoutInCell="1" allowOverlap="0" relativeHeight="2">
                                 <wp:simplePos x="0" y="0" />

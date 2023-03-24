@@ -39,7 +39,7 @@
     "regenerator-runtime": "0.13.11",
     "@babel/eslint-parser": "7.19.1",
     "babel-loader": "9.1.0",
-    "webpack": "5.76.0",
+    "webpack": "5.76.3",
     "webpack-cli": "5.0.1",
     "workbox-webpack-plugin": "6.5.4"
   },

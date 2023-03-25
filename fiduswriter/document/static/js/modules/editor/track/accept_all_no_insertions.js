@@ -19,6 +19,7 @@ export function acceptAllNoInsertions(doc) {
             blockChangeTrack = node.attrs.track ?
                 node.attrs.track.find(track => track.name === "block_change") :
                 false
+
         if (node.type.name === "footnote" && node.attrs.footnote) {
             const fnDoc = fnSchema.nodeFromJSON({
                     type: "doc",
@@ -42,7 +43,13 @@ export function acceptAllNoInsertions(doc) {
         }
         if (deletionTrack) {
             deleteNode(tr, node, pos, map, true)
-            return false
+            if (node.isInline) {
+                return false
+            } else {
+                // Deleting a block level node will in many cases not delete the contents of the node but rather
+                // merge it with the previous node.
+                return true
+            }
         } else if (insertionTrack) {
             if (node.isInline) {
                 tr.step(

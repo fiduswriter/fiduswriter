@@ -108,6 +108,9 @@ export class DocxExporterRichtext {
                     start += "<w:r><w:rPr></w:rPr></w:r>"
                 }
             }
+            if (options.commentReference) {
+                end = "<w:r><w:rPr><w:rStyle w:val=\"CommentReference\"/></w:rPr><w:annotationRef/></w:r>" + end
+            }
             break
         case "bibliography_heading":
             start += noSpaceTmp`

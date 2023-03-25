@@ -79,7 +79,7 @@ export class DocxExporterComments {
         let string = `<w:comment w:id="${commentId}" w:author="${escapeText(commentDBEntry.username)}" w:date="${new Date(commentDBEntry.date).toISOString().split(".")[0]}Z" w:initials="${escapeText(commentDBEntry.username.split(" ").map((n) => n[0]).join("").toUpperCase())}">`
         let parentParagraphId = ""
         string += commentDBEntry.comment.map((node, index) => {
-            const options = {section: "Comment"}
+            const options = {section: "CommentText"}
             if ((commentDBEntry.resolved || commentDBEntry.answers.length) && index === (commentDBEntry.comment.length - 1)) {
                 // If comment has been resolved or there are answers, we need to add an id to the last paragraph
                 // of the comment and add an entry into commentsExtended.xml.
@@ -89,11 +89,10 @@ export class DocxExporterComments {
                 const extendedComments = this.commentsExtendedXml.querySelector("commentsEx")
                 extendedComments.insertAdjacentHTML("beforeEnd", extendedString)
             }
-            let markup = this.exporter.richtext.transformRichtext(node, options)
             if (!index) {
-                markup += "<w:r><w:rPr><w:rStyle w:val=\"CommentReference\"/></w:rPr><w:annotationRef/></w:r>"
+                options.commentReference = true
             }
-            return markup
+            return this.exporter.richtext.transformRichtext(node, options)
         }).join("")
         string += "</w:comment>"
         commentDBEntry.answers.forEach(answer => {
@@ -110,11 +109,10 @@ export class DocxExporterComments {
                     const extendedComments = this.commentsExtendedXml.querySelector("commentsEx")
                     extendedComments.insertAdjacentHTML("beforeEnd", extendedString)
                 }
-                let markup = this.exporter.richtext.transformRichtext(node, options)
                 if (!index) {
-                    markup += "<w:r><w:rPr><w:rStyle w:val=\"CommentReference\"/></w:rPr><w:annotationRef/></w:r>"
+                    options.commentReference = true
                 }
-                return markup
+                return this.exporter.richtext.transformRichtext(node, options)
             }).join("")
             string += "</w:comment>"
         })

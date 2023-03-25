@@ -6,8 +6,10 @@ export const removeHidden = function(
     // Whether to leave the outer part of the removed node.
     // True for tree-walking exporters, false for DOM-changing exporters.
     leaveStub = true,
-    removeCaption = false,
-    removeCaptionText = false
+    removeTableCaption = false,
+    removeTableCaptionText = false,
+    removeFigureCaption = false,
+    removeFigureCaptionText = false,
 ) {
     const returnNode = {}
 
@@ -18,26 +20,48 @@ export const removeHidden = function(
     })
     if (node.attrs?.hidden) {
         return leaveStub ? returnNode : false
-    } else if (["table_caption", "figure_caption"].includes(node.type)) {
-        if (removeCaption) {
+    } else if ("table_caption" === node.type) {
+        if (removeTableCaption) {
             return leaveStub ? returnNode : false
-        } else if (removeCaptionText) {
+        } else if (removeTableCaptionText) {
+            return returnNode
+        }
+
+    } else if ("figure_caption" === node.type) {
+        if (removeFigureCaption) {
+            return leaveStub ? returnNode : false
+        } else if (removeFigureCaptionText) {
             return returnNode
         }
 
     }
     if (node.attrs?.caption === false) {
         if (node.attrs.category === "none") {
-            removeCaption = true
+            if (node.type === "figure") {
+                removeFigureCaption = true
+            } else {
+                removeTableCaption = true
+            }
         } else {
-            removeCaptionText = true
+            if (node.type === "figure") {
+                removeFigureCaptionText = true
+            } else {
+                removeTableCaptionText = true
+            }
         }
 
     }
     if (node.content) {
         returnNode.content = []
         node.content.forEach(child => {
-            const cleanedChild = removeHidden(child, leaveStub, removeCaption, removeCaptionText)
+            const cleanedChild = removeHidden(
+                child,
+                leaveStub,
+                removeTableCaption,
+                removeTableCaptionText,
+                removeFigureCaption,
+                removeFigureCaptionText
+            )
             if (cleanedChild) {
                 returnNode.content.push(cleanedChild)
             }

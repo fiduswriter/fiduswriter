@@ -21,7 +21,7 @@ Exporter to Open Document Text (LibreOffice)
 
 /*
 TODO:
-* - Export comments
+* - Export tracked changes
 * - Templating of tag/contributor output
 */
 

@@ -4,6 +4,7 @@ import {shortFileTitle} from "../../common"
 import {createSlug} from "../tools/file"
 import {XmlZip} from "../tools/xml_zip"
 import {removeHidden, fixTables} from "../tools/doc_content"
+import {moveFootnoteComments} from "./tools"
 import {DocxExporterCitations} from "./citations"
 import {DocxExporterComments} from "./comments"
 import {DocxExporterImages} from "./images"
@@ -43,7 +44,7 @@ export class DocxExporter {
 
 
     init() {
-        this.docContent = fixTables(removeHidden(this.doc.content))
+        this.docContent = moveFootnoteComments(fixTables(removeHidden(this.doc.content)))
         this.docTitle = shortFileTitle(this.doc.title, this.doc.path)
         this.tables = new DocxExporterTables(this)
         this.math = new DocxExporterMath(this)

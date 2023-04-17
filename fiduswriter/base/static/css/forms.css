@@ -53,7 +53,7 @@ textarea:focus {
 /*
  * Bibliography entry input
  */
-#uploadimage input.entryForm,
+#uploadimage input.entry-form,
 #uploadimage input.fw-input {
     width: 486px;
 }
@@ -269,7 +269,7 @@ tr.fw-checkable.checked > td:last-child::after {
     padding: 0 3px 0 13px;
     border: 0 none;
     color: var(--cs-light-text);
-    background-color: var(--cs-light-background);
+    background-color: var(--input-background-color);
     height: 38px;
     width: 561px;
     appearance: none;

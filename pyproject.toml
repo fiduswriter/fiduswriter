@@ -32,11 +32,11 @@ repository = "https://www.github.com/fiduswriter/fiduswriter"
 
 [project.optional-dependencies]
 books = ["fiduswriter-books ~= 3.11.3"]
-citation-api-import = ["fiduswriter-citation-api-import ~= 3.11.3"]
+citation-api-import = ["fiduswriter-citation-api-import ~= 3.11.2"]
 languagetool = ["fiduswriter-languagetool ~= 3.11.2"]
 ojs = ["fiduswriter-ojs ~= 3.11.4"]
 phplist = ["fiduswriter-phplist ~= 3.11.5"]
-gitrepo-export = ["fiduswriter-gitrepo-export ~= 3.11.2"]
+gitrepo-export = ["fiduswriter-gitrepo-export ~= 3.11.3"]
 payment-paddle = ["fiduswriter-payment-paddle ~= 3.11.3"]
 website = ["fiduswriter-website ~= 3.11.4"]
 mysql = ["mysqlclient"]

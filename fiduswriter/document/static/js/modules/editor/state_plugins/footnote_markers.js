@@ -57,7 +57,7 @@ const getAddedRanges = function(tr) {
 
 export const getFootnoteMarkerContents = function(state) {
     const fnState = key.getState(state)
-    if (!fnState) {
+    if (!fnState || !fnState.fnMarkers) {
         return []
     }
     const fnMarkers = fnState.fnMarkers

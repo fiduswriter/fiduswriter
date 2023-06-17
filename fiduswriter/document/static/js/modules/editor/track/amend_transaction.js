@@ -230,7 +230,7 @@ export function trackedTransaction(tr, state, user, approved, date) {
                     const mirrorIndex = map.maps.length - 1
                     map.appendMap(condensedStep.getMap(), mirrorIndex)
                     if (!newTr.selection.eq(trTemp.selection)) {
-                        newTr.setSelection(newTr.doc, Selection.fromJSON(trTemp.selection.toJSON()))
+                        newTr.setSelection(Selection.fromJSON(trTemp.selection.toJSON()))
                     }
                 }
 
@@ -387,10 +387,10 @@ export function trackedTransaction(tr, state, user, approved, date) {
 
     // We copy the input type meta data from the original transaction.
     if (tr.getMeta("inputType")) {
-        newTr.setMeta(tr.getMeta("inputType"))
+        newTr.setMeta("inputType", tr.getMeta("inputType"))
     }
     if (tr.getMeta("uiEvent")) {
-        newTr.setMeta(tr.getMeta("uiEvent"))
+        newTr.setMeta("uiEvent", tr.getMeta("uiEvent"))
     }
 
     if (tr.selectionSet) {

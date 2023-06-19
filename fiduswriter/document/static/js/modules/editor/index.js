@@ -553,7 +553,7 @@ export class Editor {
                         this.mod.footnotes.fnEditor.view.dispatch(footTr)
                     }
                 })
-                if (tr.steps) {
+                if (tr.steps.length) {
                     this.docInfo.updated = new Date()
                 }
 

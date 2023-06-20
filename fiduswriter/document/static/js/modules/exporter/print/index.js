@@ -47,9 +47,12 @@ export class PrintExporter extends HTMLExporter {
             }
             section:footnote-content {
                 display: block;
-                font-style:normal;
-                font-weight:normal;
-                text-decoration:none;
+                font-size: small;
+                font-style: normal;
+                font-weight: normal;
+                text-decoration: none;
+                text-indent: 0;
+                text-align: initial;
             }
             .table-of-contents a {
             	display: inline-flex;

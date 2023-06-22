@@ -135,7 +135,7 @@ export class Merge {
                 }
             } else {
                 try {
-                    this.autoMerge(unconfirmedTr, lostTr, data)
+                    this.autoMerge(unconfirmedTr, lostTr, data, this.mod.editor.view.state.selection)
                 } catch (error) {
                     this.handleMergeFailure(error, unconfirmedTr.doc, toDoc)
                 }
@@ -152,10 +152,10 @@ export class Merge {
         }
     }
 
-    autoMerge(unconfirmedTr, lostTr, data) {
+    autoMerge(unconfirmedTr, lostTr, data, selection) {
         /* This automerges documents incase of no conflicts */
         const toDoc = this.mod.editor.schema.nodeFromJSON({type: "doc", content: [data.doc.content]})
-        const rebasedTr = EditorState.create({doc: toDoc}).tr.setMeta("remote", true)
+        const rebasedTr = EditorState.create({doc: toDoc, selection}).tr.setMeta("remote", true)
         const maps = new Mapping([].concat(unconfirmedTr.mapping.maps.slice().reverse().map(map => map.invert())).concat(lostTr.mapping.maps.slice()))
 
         unconfirmedTr.steps.forEach(

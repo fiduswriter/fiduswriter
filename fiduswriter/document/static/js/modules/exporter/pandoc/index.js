@@ -1,6 +1,688 @@
 // Sample Fidus Writer JSON input
 const fidusData =
-{"type": "article", "attrs": {"template": "Standard Article", "import_id": "standard-article", "documentstyle": "elephant"}, "content": [{"type": "title", "content": [{"text": "The title of the document", "type": "text", "marks": [{"type": "insertion", "attrs": {"date": 28194510, "user": 1, "username": "jw"}}]}]}, {"type": "heading_part", "attrs": {"id": "subtitle", "marks": ["strong", "em", "link"], "title": "Subtitle", "initial": [{"type": "heading1", "attrs": {"id": "H3465720"}}], "metadata": "subtitle", "optional": "hidden"}, "content": [{"type": "heading1", "attrs": {"id": "H2845406"}, "content": [{"text": "The subtitle", "type": "text", "marks": [{"type": "insertion", "attrs": {"date": 28194510, "user": 1, "username": "jw"}}]}]}]}, {"type": "contributors_part", "attrs": {"id": "authors", "title": "Authors", "metadata": "authors", "optional": "hidden", "item_title": "Author"}, "content": [{"type": "contributor", "attrs": {"email": "j@rv.no", "lastname": "Wilm", "firstname": "Johannes", "institution": "University of Florida"}, "marks": [{"type": "insertion", "attrs": {"date": 28194510, "user": 1, "username": "jw"}}]}]}, {"type": "richtext_part", "attrs": {"id": "abstract", "marks": ["strong", "em", "link"], "title": "Abstract", "elements": ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "cross_reference", "blockquote", "footnote", "table"], "metadata": "abstract", "optional": "hidden"}, "content": [{"type": "paragraph", "content": [{"text": "This is the abstract of the document.", "type": "text", "marks": [{"type": "insertion", "attrs": {"date": 28194510, "user": 1, "username": "jw"}}]}]}]}, {"type": "tags_part", "attrs": {"id": "keywords", "title": "Keywords", "metadata": "keywords", "optional": "hidden", "item_title": "Keyword"}, "content": [{"type": "tag", "attrs": {"tag": "Keyword 1"}, "marks": [{"type": "insertion", "attrs": {"date": 28194510, "user": 1, "username": "jw"}}]}, {"type": "tag", "attrs": {"tag": "Keyword 2"}, "marks": [{"type": "insertion", "attrs": {"date": 28194510, "user": 1, "username": "jw"}}]}, {"type": "tag", "attrs": {"tag": "Keyword 3"}, "marks": [{"type": "insertion", "attrs": {"date": 28194510, "user": 1, "username": "jw"}}]}]}, {"type": "richtext_part", "attrs": {"id": "body", "marks": ["strong", "em", "link"], "title": "Body", "elements": ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "cross_reference", "blockquote", "footnote", "table"]}, "content": [{"type": "paragraph", "content": [{"text": "And this is the body.", "type": "text", "marks": [{"type": "insertion", "attrs": {"date": 26393570, "user": 1, "username": "jw"}}]}]}, {"type": "figure", "attrs": {"id": "F10024511", "width": "50", "caption": true, "category": "figure"}, "content": [{"type": "image", "attrs": {"image": 769}}, {"type": "figure_caption", "content": [{"text": "This is a figure showing a person.", "type": "text", "marks": [{"type": "insertion", "attrs": {"date": 28194510, "user": 1, "username": "jw"}}]}]}]}, {"type": "ordered_list", "attrs": {"id": "L00001747"}, "content": [{"type": "list_item", "content": [{"type": "paragraph", "content": [{"text": "lalal", "type": "text", "marks": [{"type": "insertion", "attrs": {"date": 26395540, "user": 1, "username": "jw"}}]}, {"text": "DADA", "type": "text", "marks": [{"type": "insertion", "attrs": {"date": 26395540, "user": 1, "approved": false, "username": "jw"}}]}, {"text": "mum", "type": "text", "marks": [{"type": "insertion", "attrs": {"date": 26395540, "user": 1, "username": "jw"}}]}]}]}, {"type": "list_item", "content": [{"type": "paragraph", "content": [{"text": "two", "type": "text", "marks": [{"type": "insertion", "attrs": {"date": 26556280, "user": 1, "username": "jw"}}]}, {"text": " iz a ", "type": "text", "marks": [{"type": "insertion", "attrs": {"date": 27953960, "user": 1, "username": "jw"}}]}, {"text": "goood", "type": "text", "marks": [{"type": "link", "attrs": {"href": "https://www.sports.com", "title": "A link to sports.com"}}, {"type": "insertion", "attrs": {"date": 27953960, "user": 1, "username": "jw"}}]}, {"text": " number. ", "type": "text", "marks": [{"type": "insertion", "attrs": {"date": 27953960, "user": 1, "username": "jw"}}]}]}]}, {"type": "list_item", "content": [{"type": "paragraph", "content": [{"text": "thre", "type": "text", "marks": [{"type": "strong"}, {"type": "insertion", "attrs": {"date": 26556280, "user": 1, "username": "jw"}}]}, {"text": "e", "type": "text", "marks": [{"type": "insertion", "attrs": {"date": 26556280, "user": 1, "username": "jw"}}]}]}, {"type": "bullet_list", "attrs": {"id": "L00001748"}, "content": [{"type": "list_item", "content": [{"type": "paragraph", "content": [{"text": "b", "type": "text", "marks": [{"type": "insertion", "attrs": {"date": 26556280, "user": 1, "username": "jw"}}]}, {"text": "ulle", "type": "text", "marks": [{"type": "em"}, {"type": "insertion", "attrs": {"date": 26556280, "user": 1, "username": "jw"}}]}, {"text": "t", "type": "text", "marks": [{"type": "insertion", "attrs": {"date": 26556280, "user": 1, "username": "jw"}}]}]}]}]}]}]}, {"type": "bullet_list", "attrs": {"id": "L00001749"}, "content": [{"type": "list_item", "content": [{"type": "paragraph", "content": [{"text": "bullet", "type": "text", "marks": [{"type": "insertion", "attrs": {"date": 26556280, "user": 1, "username": "jw"}}]}]}]}]}, {"type": "ordered_list", "attrs": {"id": "L00001750"}, "content": [{"type": "list_item", "content": [{"type": "paragraph", "content": [{"text": "one", "type": "text", "marks": [{"type": "insertion", "attrs": {"date": 26556280, "user": 1, "username": "jw"}}]}]}]}, {"type": "list_item", "content": [{"type": "paragraph", "content": [{"text": "two", "type": "text", "marks": [{"type": "insertion", "attrs": {"date": 26556280, "user": 1, "username": "jw"}}]}]}]}, {"type": "list_item", "content": [{"type": "paragraph", "content": [{"text": "three", "type": "text", "marks": [{"type": "insertion", "attrs": {"date": 26556280, "user": 1, "username": "jw"}}]}, {"text": " ", "type": "text", "marks": [{"type": "insertion", "attrs": {"date": 28194510, "user": 1, "username": "jw"}}]}, {"type": "citation", "attrs": {"references": [{"id": 55244, "prefix": "for example", "locator": "34"}]}, "marks": [{"type": "insertion", "attrs": {"date": 28194510, "user": 1, "username": "jw"}}]}]}]}]}, {"type": "paragraph"}, {"type": "paragraph", "content": [{"text": "This is a text that is followed by a footnote.", "type": "text", "marks": [{"type": "insertion", "attrs": {"date": 28194510, "user": 1, "username": "jw"}}]}, {"type": "footnote", "attrs": {"footnote": [{"type": "paragraph", "attrs": {"track": []}, "content": [{"text": "This is a footnote.", "type": "text", "marks": [{"type": "insertion", "attrs": {"date": 28194510, "user": 1, "approved": true, "username": "jw"}}]}]}]}, "marks": [{"type": "insertion", "attrs": {"date": 28194510, "user": 1, "username": "jw"}}]}]}, {"type": "heading3", "attrs": {"id": "H5841327"}, "content": [{"text": "A headline of level 3", "type": "text", "marks": [{"type": "insertion", "attrs": {"date": 28194510, "user": 1, "username": "jw"}}]}]}, {"type": "blockquote", "content": [{"type": "paragraph", "content": [{"text": "Here is a block quote", "type": "text", "marks": [{"type": "insertion", "attrs": {"date": 28194510, "user": 1, "username": "jw"}}]}]}]}, {"type": "table", "attrs": {"id": "T53655251"}, "content": [{"type": "table_caption"}, {"type": "table_body", "content": [{"type": "table_row", "content": [{"type": "table_cell", "content": [{"type": "paragraph", "content": [{"text": "Table cell 1", "type": "text", "marks": [{"type": "insertion", "attrs": {"date": 28194510, "user": 1, "username": "jw"}}]}]}]}, {"type": "table_cell", "content": [{"type": "paragraph", "content": [{"text": "Table cell 2", "type": "text", "marks": [{"type": "insertion", "attrs": {"date": 28194510, "user": 1, "username": "jw"}}]}]}]}]}, {"type": "table_row", "content": [{"type": "table_cell", "attrs": {"colspan": 2}, "content": [{"type": "paragraph", "content": [{"text": "Merged table cells 3 and 4 in the middle", "type": "text", "marks": [{"type": "insertion", "attrs": {"date": 28194510, "user": 1, "username": "jw"}}]}]}]}]}, {"type": "table_row", "content": [{"type": "table_cell", "content": [{"type": "paragraph", "content": [{"text": "Table cell 5", "type": "text", "marks": [{"type": "insertion", "attrs": {"date": 28194510, "user": 1, "username": "jw"}}]}]}]}, {"type": "table_cell", "content": [{"type": "paragraph", "content": [{"text": "Table cell 6", "type": "text", "marks": [{"type": "insertion", "attrs": {"date": 28194510, "user": 1, "username": "jw"}}]}]}]}]}]}]}]}]}
+{
+    "type": "article",
+    "attrs": {
+        "template": "Standard Article",
+        "import_id": "standard-article",
+        "documentstyle": "elephant"
+    },
+    "content": [{
+        "type": "title",
+        "content": [{
+            "text": "The title of the document",
+            "type": "text",
+            "marks": [{
+                "type": "insertion",
+                "attrs": {
+                    "date": 28194510,
+                    "user": 1,
+                    "username": "jw"
+                }
+            }]
+        }]
+    }, {
+        "type": "heading_part",
+        "attrs": {
+            "id": "subtitle",
+            "marks": ["strong", "em", "link"],
+            "title": "Subtitle",
+            "initial": [{
+                "type": "heading1",
+                "attrs": {
+                    "id": "H3465720"
+                }
+            }],
+            "metadata": "subtitle",
+            "optional": "hidden"
+        },
+        "content": [{
+            "type": "heading1",
+            "attrs": {
+                "id": "H2845406"
+            },
+            "content": [{
+                "text": "The subtitle",
+                "type": "text",
+                "marks": [{
+                    "type": "insertion",
+                    "attrs": {
+                        "date": 28194510,
+                        "user": 1,
+                        "username": "jw"
+                    }
+                }]
+            }]
+        }]
+    }, {
+        "type": "contributors_part",
+        "attrs": {
+            "id": "authors",
+            "title": "Authors",
+            "metadata": "authors",
+            "optional": "hidden",
+            "item_title": "Author"
+        },
+        "content": [{
+            "type": "contributor",
+            "attrs": {
+                "email": "j@rv.no",
+                "lastname": "Wilm",
+                "firstname": "Johannes",
+                "institution": "University of Florida"
+            },
+            "marks": [{
+                "type": "insertion",
+                "attrs": {
+                    "date": 28194510,
+                    "user": 1,
+                    "username": "jw"
+                }
+            }]
+        }]
+    }, {
+        "type": "richtext_part",
+        "attrs": {
+            "id": "abstract",
+            "marks": ["strong", "em", "link"],
+            "title": "Abstract",
+            "elements": ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "cross_reference", "blockquote", "footnote", "table"],
+            "metadata": "abstract",
+            "optional": "hidden"
+        },
+        "content": [{
+            "type": "paragraph",
+            "content": [{
+                "text": "This is the abstract of the document.",
+                "type": "text",
+                "marks": [{
+                    "type": "insertion",
+                    "attrs": {
+                        "date": 28194510,
+                        "user": 1,
+                        "username": "jw"
+                    }
+                }]
+            }]
+        }]
+    }, {
+        "type": "tags_part",
+        "attrs": {
+            "id": "keywords",
+            "title": "Keywords",
+            "metadata": "keywords",
+            "optional": "hidden",
+            "item_title": "Keyword"
+        },
+        "content": [{
+            "type": "tag",
+            "attrs": {
+                "tag": "Keyword 1"
+            },
+            "marks": [{
+                "type": "insertion",
+                "attrs": {
+                    "date": 28194510,
+                    "user": 1,
+                    "username": "jw"
+                }
+            }]
+        }, {
+            "type": "tag",
+            "attrs": {
+                "tag": "Keyword 2"
+            },
+            "marks": [{
+                "type": "insertion",
+                "attrs": {
+                    "date": 28194510,
+                    "user": 1,
+                    "username": "jw"
+                }
+            }]
+        }, {
+            "type": "tag",
+            "attrs": {
+                "tag": "Keyword 3"
+            },
+            "marks": [{
+                "type": "insertion",
+                "attrs": {
+                    "date": 28194510,
+                    "user": 1,
+                    "username": "jw"
+                }
+            }]
+        }]
+    }, {
+        "type": "richtext_part",
+        "attrs": {
+            "id": "body",
+            "marks": ["strong", "em", "link"],
+            "title": "Body",
+            "elements": ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "cross_reference", "blockquote", "footnote", "table"]
+        },
+        "content": [{
+            "type": "paragraph",
+            "content": [{
+                "text": "And this is the body.",
+                "type": "text",
+                "marks": [{
+                    "type": "insertion",
+                    "attrs": {
+                        "date": 26393570,
+                        "user": 1,
+                        "username": "jw"
+                    }
+                }]
+            }]
+        }, {
+            "type": "figure",
+            "attrs": {
+                "id": "F10024511",
+                "width": "50",
+                "caption": true,
+                "category": "figure"
+            },
+            "content": [{
+                "type": "image",
+                "attrs": {
+                    "image": 769
+                }
+            }, {
+                "type": "figure_caption",
+                "content": [{
+                    "text": "This is a figure showing a person.",
+                    "type": "text",
+                    "marks": [{
+                        "type": "insertion",
+                        "attrs": {
+                            "date": 28194510,
+                            "user": 1,
+                            "username": "jw"
+                        }
+                    }]
+                }]
+            }]
+        }, {
+            "type": "ordered_list",
+            "attrs": {
+                "id": "L00001747"
+            },
+            "content": [{
+                "type": "list_item",
+                "content": [{
+                    "type": "paragraph",
+                    "content": [{
+                        "text": "lalal",
+                        "type": "text",
+                        "marks": [{
+                            "type": "insertion",
+                            "attrs": {
+                                "date": 26395540,
+                                "user": 1,
+                                "username": "jw"
+                            }
+                        }]
+                    }, {
+                        "text": "DADA",
+                        "type": "text",
+                        "marks": [{
+                            "type": "insertion",
+                            "attrs": {
+                                "date": 26395540,
+                                "user": 1,
+                                "approved": false,
+                                "username": "jw"
+                            }
+                        }]
+                    }, {
+                        "text": "mum",
+                        "type": "text",
+                        "marks": [{
+                            "type": "insertion",
+                            "attrs": {
+                                "date": 26395540,
+                                "user": 1,
+                                "username": "jw"
+                            }
+                        }]
+                    }]
+                }]
+            }, {
+                "type": "list_item",
+                "content": [{
+                    "type": "paragraph",
+                    "content": [{
+                        "text": "two",
+                        "type": "text",
+                        "marks": [{
+                            "type": "insertion",
+                            "attrs": {
+                                "date": 26556280,
+                                "user": 1,
+                                "username": "jw"
+                            }
+                        }]
+                    }, {
+                        "text": " iz a ",
+                        "type": "text",
+                        "marks": [{
+                            "type": "insertion",
+                            "attrs": {
+                                "date": 27953960,
+                                "user": 1,
+                                "username": "jw"
+                            }
+                        }]
+                    }, {
+                        "text": "goood",
+                        "type": "text",
+                        "marks": [{
+                            "type": "link",
+                            "attrs": {
+                                "href": "https://www.sports.com",
+                                "title": "A link to sports.com"
+                            }
+                        }, {
+                            "type": "insertion",
+                            "attrs": {
+                                "date": 27953960,
+                                "user": 1,
+                                "username": "jw"
+                            }
+                        }]
+                    }, {
+                        "text": " number. ",
+                        "type": "text",
+                        "marks": [{
+                            "type": "insertion",
+                            "attrs": {
+                                "date": 27953960,
+                                "user": 1,
+                                "username": "jw"
+                            }
+                        }]
+                    }]
+                }]
+            }, {
+                "type": "list_item",
+                "content": [{
+                    "type": "paragraph",
+                    "content": [{
+                        "text": "thre",
+                        "type": "text",
+                        "marks": [{
+                            "type": "strong"
+                        }, {
+                            "type": "insertion",
+                            "attrs": {
+                                "date": 26556280,
+                                "user": 1,
+                                "username": "jw"
+                            }
+                        }]
+                    }, {
+                        "text": "e",
+                        "type": "text",
+                        "marks": [{
+                            "type": "insertion",
+                            "attrs": {
+                                "date": 26556280,
+                                "user": 1,
+                                "username": "jw"
+                            }
+                        }]
+                    }]
+                }, {
+                    "type": "bullet_list",
+                    "attrs": {
+                        "id": "L00001748"
+                    },
+                    "content": [{
+                        "type": "list_item",
+                        "content": [{
+                            "type": "paragraph",
+                            "content": [{
+                                "text": "b",
+                                "type": "text",
+                                "marks": [{
+                                    "type": "insertion",
+                                    "attrs": {
+                                        "date": 26556280,
+                                        "user": 1,
+                                        "username": "jw"
+                                    }
+                                }]
+                            }, {
+                                "text": "ulle",
+                                "type": "text",
+                                "marks": [{
+                                    "type": "em"
+                                }, {
+                                    "type": "insertion",
+                                    "attrs": {
+                                        "date": 26556280,
+                                        "user": 1,
+                                        "username": "jw"
+                                    }
+                                }]
+                            }, {
+                                "text": "t",
+                                "type": "text",
+                                "marks": [{
+                                    "type": "insertion",
+                                    "attrs": {
+                                        "date": 26556280,
+                                        "user": 1,
+                                        "username": "jw"
+                                    }
+                                }]
+                            }]
+                        }]
+                    }]
+                }]
+            }]
+        }, {
+            "type": "bullet_list",
+            "attrs": {
+                "id": "L00001749"
+            },
+            "content": [{
+                "type": "list_item",
+                "content": [{
+                    "type": "paragraph",
+                    "content": [{
+                        "text": "bullet",
+                        "type": "text",
+                        "marks": [{
+                            "type": "insertion",
+                            "attrs": {
+                                "date": 26556280,
+                                "user": 1,
+                                "username": "jw"
+                            }
+                        }]
+                    }]
+                }]
+            }]
+        }, {
+            "type": "ordered_list",
+            "attrs": {
+                "id": "L00001750"
+            },
+            "content": [{
+                "type": "list_item",
+                "content": [{
+                    "type": "paragraph",
+                    "content": [{
+                        "text": "one",
+                        "type": "text",
+                        "marks": [{
+                            "type": "insertion",
+                            "attrs": {
+                                "date": 26556280,
+                                "user": 1,
+                                "username": "jw"
+                            }
+                        }]
+                    }]
+                }]
+            }, {
+                "type": "list_item",
+                "content": [{
+                    "type": "paragraph",
+                    "content": [{
+                        "text": "two",
+                        "type": "text",
+                        "marks": [{
+                            "type": "insertion",
+                            "attrs": {
+                                "date": 26556280,
+                                "user": 1,
+                                "username": "jw"
+                            }
+                        }]
+                    }]
+                }]
+            }, {
+                "type": "list_item",
+                "content": [{
+                    "type": "paragraph",
+                    "content": [{
+                        "text": "three",
+                        "type": "text",
+                        "marks": [{
+                            "type": "insertion",
+                            "attrs": {
+                                "date": 26556280,
+                                "user": 1,
+                                "username": "jw"
+                            }
+                        }]
+                    }, {
+                        "text": " ",
+                        "type": "text",
+                        "marks": [{
+                            "type": "insertion",
+                            "attrs": {
+                                "date": 28194510,
+                                "user": 1,
+                                "username": "jw"
+                            }
+                        }]
+                    }, {
+                        "type": "citation",
+                        "attrs": {
+                            "references": [{
+                                "id": 55244,
+                                "prefix": "for example",
+                                "locator": "34"
+                            }]
+                        },
+                        "marks": [{
+                            "type": "insertion",
+                            "attrs": {
+                                "date": 28194510,
+                                "user": 1,
+                                "username": "jw"
+                            }
+                        }]
+                    }]
+                }]
+            }]
+        }, {
+            "type": "paragraph"
+        }, {
+            "type": "paragraph",
+            "content": [{
+                "text": "This is a text that is followed by a footnote.",
+                "type": "text",
+                "marks": [{
+                    "type": "insertion",
+                    "attrs": {
+                        "date": 28194510,
+                        "user": 1,
+                        "username": "jw"
+                    }
+                }]
+            }, {
+                "type": "footnote",
+                "attrs": {
+                    "footnote": [{
+                        "type": "paragraph",
+                        "attrs": {
+                            "track": []
+                        },
+                        "content": [{
+                            "text": "This is a footnote.",
+                            "type": "text",
+                            "marks": [{
+                                "type": "insertion",
+                                "attrs": {
+                                    "date": 28194510,
+                                    "user": 1,
+                                    "approved": true,
+                                    "username": "jw"
+                                }
+                            }]
+                        }]
+                    }]
+                },
+                "marks": [{
+                    "type": "insertion",
+                    "attrs": {
+                        "date": 28194510,
+                        "user": 1,
+                        "username": "jw"
+                    }
+                }]
+            }]
+        }, {
+            "type": "heading3",
+            "attrs": {
+                "id": "H5841327"
+            },
+            "content": [{
+                "text": "A headline of level 3",
+                "type": "text",
+                "marks": [{
+                    "type": "insertion",
+                    "attrs": {
+                        "date": 28194510,
+                        "user": 1,
+                        "username": "jw"
+                    }
+                }]
+            }]
+        }, {
+            "type": "blockquote",
+            "content": [{
+                "type": "paragraph",
+                "content": [{
+                    "text": "Here is a block quote",
+                    "type": "text",
+                    "marks": [{
+                        "type": "insertion",
+                        "attrs": {
+                            "date": 28194510,
+                            "user": 1,
+                            "username": "jw"
+                        }
+                    }]
+                }]
+            }]
+        }, {
+            "type": "table",
+            "attrs": {
+                "id": "T53655251"
+            },
+            "content": [{
+                "type": "table_caption"
+            }, {
+                "type": "table_body",
+                "content": [{
+                    "type": "table_row",
+                    "content": [{
+                        "type": "table_cell",
+                        "content": [{
+                            "type": "paragraph",
+                            "content": [{
+                                "text": "Table cell 1",
+                                "type": "text",
+                                "marks": [{
+                                    "type": "insertion",
+                                    "attrs": {
+                                        "date": 28194510,
+                                        "user": 1,
+                                        "username": "jw"
+                                    }
+                                }]
+                            }]
+                        }]
+                    }, {
+                        "type": "table_cell",
+                        "content": [{
+                            "type": "paragraph",
+                            "content": [{
+                                "text": "Table cell 2",
+                                "type": "text",
+                                "marks": [{
+                                    "type": "insertion",
+                                    "attrs": {
+                                        "date": 28194510,
+                                        "user": 1,
+                                        "username": "jw"
+                                    }
+                                }]
+                            }]
+                        }]
+                    }]
+                }, {
+                    "type": "table_row",
+                    "content": [{
+                        "type": "table_cell",
+                        "attrs": {
+                            "colspan": 2
+                        },
+                        "content": [{
+                            "type": "paragraph",
+                            "content": [{
+                                "text": "Merged table cells 3 and 4 in the middle",
+                                "type": "text",
+                                "marks": [{
+                                    "type": "insertion",
+                                    "attrs": {
+                                        "date": 28194510,
+                                        "user": 1,
+                                        "username": "jw"
+                                    }
+                                }]
+                            }]
+                        }]
+                    }]
+                }, {
+                    "type": "table_row",
+                    "content": [{
+                        "type": "table_cell",
+                        "content": [{
+                            "type": "paragraph",
+                            "content": [{
+                                "text": "Table cell 5",
+                                "type": "text",
+                                "marks": [{
+                                    "type": "insertion",
+                                    "attrs": {
+                                        "date": 28194510,
+                                        "user": 1,
+                                        "username": "jw"
+                                    }
+                                }]
+                            }]
+                        }]
+                    }, {
+                        "type": "table_cell",
+                        "content": [{
+                            "type": "paragraph",
+                            "content": [{
+                                "text": "Table cell 6",
+                                "type": "text",
+                                "marks": [{
+                                    "type": "insertion",
+                                    "attrs": {
+                                        "date": 28194510,
+                                        "user": 1,
+                                        "username": "jw"
+                                    }
+                                }]
+                            }]
+                        }]
+                    }]
+                }]
+            }]
+        }]
+    }]
+}
 
 const fidusWriterSettings = {
     "documentstyle": "elephant",
@@ -163,6 +845,18 @@ function convertContent(fidusContent) {
             c.push(...convertContent(node.attrs.footnote))
             break
         }
+        case "heading1":
+        case "heading2":
+        case "heading3":
+        case "heading4":
+        case "heading5":
+        case "heading6":
+        {
+            const level = parseInt(node.type.slice(-1))
+            pandocElement.t = "Header"
+            pandocElement.c = [level, ["", [], []]]
+            break
+        }
         case "richtext_part": {
             if (node.attrs?.metadata === "abstract" && !pandocData.meta.abstract) {
                 pandocData.meta.abstract = {
@@ -263,6 +957,8 @@ function convertContent(fidusContent) {
                 pandocElement.c.push(...convertContent(node.content))
             }
             pandocContent.push(pandocElement)
+        } else if (!ignoreContent) {
+
         }
     }
     return pandocContent

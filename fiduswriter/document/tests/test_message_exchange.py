@@ -1,3 +1,5 @@
+from django.test import override_settings
+
 import time
 import logging
 from testing.testcases import LiveTornadoTestCase
@@ -100,9 +102,10 @@ class SimpleMessageExchangeTests(LiveTornadoTestCase, EditorHelper):
 
         self.assertEqual(doc_data, doc_content)
 
+    @override_settings(JSONPATCH=True)
     def test_server_receives_failing_patch(self):
         """
-        The server receives a patch from the server that is failing. It should
+        The server receives a patch from the client that is failing. It should
         be stopped at the server and not be applied. If the patch has one part
         that is valid and another that is invalid, none of them should be
         applied.
@@ -133,11 +136,10 @@ class SimpleMessageExchangeTests(LiveTornadoTestCase, EditorHelper):
             "]"
             "}))"
         )
-        with self.settings(JSONPATCH=True):
-            logging.disable(logging.CRITICAL)
-            self.driver.execute_script(diff_script)
-            time.sleep(1)
-            logging.disable(logging.NOTSET)
+        logging.disable(logging.CRITICAL)
+        self.driver.execute_script(diff_script)
+        time.sleep(1)
+        logging.disable(logging.NOTSET)
         doc_data = False
         patch_error = 0
         for message in socket_object.messages["last_ten"]:

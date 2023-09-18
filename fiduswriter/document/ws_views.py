@@ -98,6 +98,7 @@ class WebSocket(BaseWebSocketHandler):
                 self.session = {
                     "doc": doc_db,
                     "node": node,
+                    "node_updates": False,
                     "participants": {0: self},
                     "last_saved_version": doc_db.version,
                 }
@@ -177,8 +178,7 @@ class WebSocket(BaseWebSocketHandler):
                 "contacts": [],
             },
         }
-        if not settings.JSONPATCH:
-            WebSocket.serialize_content(self.session)
+        WebSocket.serialize_content(self.session)
         response["doc"] = {
             "v": self.session["doc"].version,
             "content": self.session["doc"].content,
@@ -512,6 +512,7 @@ class WebSocket(BaseWebSocketHandler):
                 )
                 if updated_node:
                     self.session["node"] = updated_node
+                    self.session["node_updates"] = True
                 else:
                     self.unfixable()
                     patch_msg = {
@@ -731,9 +732,11 @@ class WebSocket(BaseWebSocketHandler):
 
     @classmethod
     def serialize_content(cls, session):
-        session["doc"].content = prosemirror.to_mini_json(
-            session["node"].first_child
-        )
+        if "node_updates" in session and session["node_updates"]:
+            session["doc"].content = prosemirror.to_mini_json(
+                session["node"].first_child
+            )
+            session["node_updates"] = False
 
     @classmethod
     def save_document(cls, document_id):
@@ -744,8 +747,7 @@ class WebSocket(BaseWebSocketHandler):
             f"Action:Saving document to DB. DocumentID:{session['doc'].id} "
             f"Doc version:{session['doc'].version}"
         )
-        if not settings.JSONPATCH:
-            cls.serialize_content(session)
+        cls.serialize_content(session)
         try:
             # this try block is to avoid a db exception
             # in case the doc has been deleted from the db

@@ -34,7 +34,7 @@ export class DocxExporterComments {
                     const comments = node.marks.filter(mark => mark.type === "comment")
                     comments.forEach(
                         comment => {
-                            if (!this.usedComments.includes(comment.attrs.id)) {
+                            if (!this.usedComments.includes(comment.attrs.id) && this.commentsDB[comment.attrs.id]) {
                                 this.usedComments.push(comment.attrs.id)
                                 if (this.commentsDB[comment.attrs.id].resolved || this.commentsDB[comment.attrs.id].answers.length) {
                                     useExtended = true

@@ -15,7 +15,7 @@ CONTACT_EMAIL = "mail@email.com"
 # If websockets is running on a non-standard port, add it here:
 WS_PORT = False
 # Interval between document saves
-DOC_SAVE_INTERVAL = 1
+DOC_SAVE_INTERVAL = 30
 
 ADMINS = (("Your Name", "your_email@example.com"),)
 

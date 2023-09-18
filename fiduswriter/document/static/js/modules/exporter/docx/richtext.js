@@ -31,6 +31,9 @@ export class DocxExporterRichtext {
 
         if (node.marks) {
             node.marks.filter(mark => mark.type === "comment").forEach(comment => {
+                if (!this.exporter.doc.comments[comment.attrs.id]) {
+                    return
+                }
                 if (!comments[comment.attrs.id]) {
                     comments[comment.attrs.id] = {start: node, end: node, content: this.exporter.doc.comments[comment.attrs.id]}
                 } else {

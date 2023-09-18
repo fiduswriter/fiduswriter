@@ -42,6 +42,17 @@ export function extractTemplate(doc) {
             delete part.attrs.optional
         }
     })
-    return toMiniJSON(docSchema.nodeFromJSON(template))
+    const documentStyles = [{
+        title: template.attrs.documentstyle,
+        slug: template.attrs.documentstyle,
+        contents: "",
+        files: []
+    }]
+    return {
+        content: toMiniJSON(docSchema.nodeFromJSON(template)),
+        documentStyles,
+        exportTemplates: [],
+        files: []
+    }
 
 }

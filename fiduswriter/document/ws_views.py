@@ -85,15 +85,22 @@ class WebSocket(BaseWebSocketHandler):
                 if "content" not in doc_db.content:
                     doc_db.content["content"] = [{type: "title"}]
                 doc_db.save()
-            node = prosemirror.from_json(
-                {"type": "doc", "content": [doc_db.content]}
-            )
-            self.session = {
-                "doc": doc_db,
-                "node": node,
-                "participants": {0: self},
-                "last_saved_version": doc_db.version,
-            }
+            if settings.JSONPATCH:
+                self.session = {
+                    "doc": doc_db,
+                    "participants": {0: self},
+                    "last_saved_version": doc_db.version,
+                }
+            else:
+                node = prosemirror.from_json(
+                    {"type": "doc", "content": [doc_db.content]}
+                )
+                self.session = {
+                    "doc": doc_db,
+                    "node": node,
+                    "participants": {0: self},
+                    "last_saved_version": doc_db.version,
+                }
             WebSocket.sessions[doc_db.id] = self.session
             if self.user_info.access_rights == "write":
                 template = True
@@ -170,6 +177,8 @@ class WebSocket(BaseWebSocketHandler):
                 "contacts": [],
             },
         }
+        if not settings.JSONPATCH:
+            WebSocket.serialize_content(self.session)
         response["doc"] = {
             "v": self.session["doc"].version,
             "content": self.session["doc"].content,
@@ -515,9 +524,6 @@ class WebSocket(BaseWebSocketHandler):
                         patch_msg, self.user_info.document_id, self.id
                     )
                     return
-                self.session["doc"].content = prosemirror.to_mini_json(
-                    self.session["node"].first_child
-                )
             self.session["doc"].diffs.append(message)
             self.session["doc"].diffs = self.session["doc"].diffs[
                 -self.history_length :
@@ -724,6 +730,12 @@ class WebSocket(BaseWebSocketHandler):
                 waiter.send_message(message)
 
     @classmethod
+    def serialize_content(cls, session):
+        session["doc"].content = prosemirror.to_mini_json(
+            session["node"].first_child
+        )
+
+    @classmethod
     def save_document(cls, document_id):
         session = cls.sessions[document_id]
         if session["doc"].version == session["last_saved_version"]:
@@ -732,6 +744,8 @@ class WebSocket(BaseWebSocketHandler):
             f"Action:Saving document to DB. DocumentID:{session['doc'].id} "
             f"Doc version:{session['doc'].version}"
         )
+        if not settings.JSONPATCH:
+            cls.serialize_content(session)
         try:
             # this try block is to avoid a db exception
             # in case the doc has been deleted from the db

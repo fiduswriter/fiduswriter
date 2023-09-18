@@ -40,12 +40,14 @@ def to_mini_json(node):
     # Adapted from https://github.com/ProseMirror/prosemirror-model/blob/
     # 6d970507cd0da48653d3b72f2731a71a144a364b/src/node.js#L340-L351
     obj = {"type": node.type.name}
-
-    for attr in node.attrs:
-        if node.type.attrs[attr].default != node.attrs[attr]:
-            if "attrs" not in obj:
-                obj["attrs"] = {}
-            obj["attrs"][attr] = deepcopy(node.attrs[attr])
+    if node.type.name == "article":
+        obj["attrs"] = deepcopy(node.attrs)
+    else:
+        for attr in node.attrs:
+            if node.type.attrs[attr].default != node.attrs[attr]:
+                if "attrs" not in obj:
+                    obj["attrs"] = {}
+                obj["attrs"][attr] = deepcopy(node.attrs[attr])
     if getattr(node.content, "size", None):
         obj["content"] = list(map(to_mini_json, node.content.content))
     if len(node.marks):

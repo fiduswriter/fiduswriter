@@ -97,23 +97,18 @@ export class ImportNative {
     }
 
     createDoc() {
-        const template = this.template ? this.template.content : extractTemplate(this.doc.content)
-
+        const template = this.template ? this.template : extractTemplate(this.doc.content)
         // We create the document on the sever so that we have an ID for it and
         // can link the images to it.
         return postJson(
             "/api/document/import/create/",
             {
-                template: JSON.stringify(template),
-                export_templates: JSON.stringify(
-                    this.template?.exportTemplates || []
-                ),
-                document_styles: JSON.stringify(
-                    this.template?.documentStyles || []
-                ),
-                files: this.template?.files.map(({filename, content}) => new File([content], filename)) || [],
-                import_id: this.importId ? this.importId : template.attrs.import_id,
-                template_title: template.attrs.template,
+                template: JSON.stringify(template.content),
+                export_templates: JSON.stringify(template.exportTemplates),
+                document_styles: JSON.stringify(template.documentStyles),
+                files: template.files.map(({filename, content}) => new File([content], filename)) || [],
+                import_id: this.importId ? this.importId : template.content.attrs.import_id,
+                template_title: template.content.attrs.template,
                 path: this.requestedPath
             }
         ).then(

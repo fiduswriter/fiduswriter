@@ -27,7 +27,10 @@ class Command(BaseCommand):
                 "--extend-ignore",
                 "E203,E501",
                 "--exclude",
-                "node_modules/*,venv/*,.direnv/*,configuration.py",
+                (
+                    "node_modules/*,venv/*,.direnv/*,"
+                    ".transpile/node_modules/*,configuration.py"
+                ),
                 "./",
             ]
         )

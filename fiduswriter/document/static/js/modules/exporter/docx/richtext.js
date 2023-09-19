@@ -58,6 +58,9 @@ export class DocxExporterRichtext {
             node.marks.filter(mark => mark.type === "comment").forEach(
                 comment => {
                     const commentData = options.comments[comment.attrs.id]
+                    if (!commentData) {
+                        return
+                    }
                     if (commentData.start === node) {
                         let commentId = this.comments.comments[comment.attrs.id]
                         start += `<w:commentRangeStart w:id="${commentId}"/>`

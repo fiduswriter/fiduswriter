@@ -47,7 +47,9 @@ export class OdtExporterRichtext {
             node.marks.filter(mark => mark.type === "comment").forEach(
                 comment => {
                     const commentData = options.comments[comment.attrs.id]
-
+                    if (!commentData || !commentData.content) {
+                        return
+                    }
                     if (commentData.start === node) {
                         start += `<office:annotation office:name="comment_${options.tag}_${comment.attrs.id}" loext:resolved="${commentData.content.resolved}">
                                         <dc:creator>${escapeText(commentData.content.username)}</dc:creator>

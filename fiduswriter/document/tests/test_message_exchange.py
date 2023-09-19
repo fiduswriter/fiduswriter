@@ -112,18 +112,8 @@ class SimpleMessageExchangeTests(LiveTornadoTestCase, EditorHelper):
         """
         self.load_document_editor(self.driver, self.doc)
 
-        self.add_title(self.driver)
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            "#header-navigation > div:nth-child(3) > span",  # Settings
-        ).click()
-        self.driver.find_element(
-            By.XPATH, '//*[normalize-space()="Text Language"]'
-        ).click()
-        self.driver.find_element(
-            By.XPATH, '//*[normalize-space()="Spanish"]'
-        ).click()
-        socket_object = WebSocket.sessions[self.doc.id]["participants"][0]
+        session = WebSocket.sessions[self.doc.id]
+        socket_object = session["participants"][0]
         diff_script = (
             "theApp.page.ws.send(()=>({"
             "type: 'diff',"
@@ -148,7 +138,7 @@ class SimpleMessageExchangeTests(LiveTornadoTestCase, EditorHelper):
             elif message["type"] == "patch_error":
                 patch_error += 1
         # The language should still be Spanish
-        self.assertEqual(doc_data["attrs"]["language"], "es")
+        self.assertFalse("language" in doc_data["attrs"])
         # There should be one patch error
         self.assertEqual(patch_error, 1)
         system_message = self.driver.find_element(

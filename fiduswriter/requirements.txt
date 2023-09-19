@@ -8,7 +8,7 @@ django-loginas==0.3.10
 Pillow==9.3.0
 python-dateutil==2.8.2
 python-magic==0.4.27
-tornado==6.2
+tornado==6.3.3
 prosemirror-py==0.3.1
 # settings_JSONPATCH
 jsonpatch==1.32

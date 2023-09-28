@@ -7,7 +7,12 @@ import django.core.serializers
 from django.db.models import signals
 from django.db.models.fields.files import FileField
 from django.apps import apps
-
+from django.core import serializers
+from django.core.management.utils import parse_apps_and_model_labels
+from django.db import (
+    connections,
+    transaction,
+)
 
 def get_apps():
     return [
@@ -59,17 +64,41 @@ class Command(django.core.management.commands.loaddata.Command):
             signals.pre_save.connect(
                 self.load_images_for_signal, sender=modelclass
             )
-        fixture_paths = self.find_fixture_paths()
+
+        self.ignore = options["ignore"]
+        self.using = options["database"]
+        self.app_label = options["app_label"]
+        self.verbosity = options["verbosity"]
+        self.excluded_models, self.excluded_apps = parse_apps_and_model_labels(
+            options["exclude"]
+        )
+        self.format = options["format"]
+
+        fixture_paths = []
+        self.serialization_formats = serializers.get_public_serializer_formats()
+        for fixture_label in fixture_labels:
+            for fixture in self.find_fixtures(fixture_label):
+                fixture_paths.extend(fixture)
+        fixture_paths.extend(self.find_fixture_paths())
         fixture_paths = (join(path, "media") for path in fixture_paths)
         fixture_paths = [path for path in fixture_paths if isdir(path)]
         self.fixture_media_paths = fixture_paths
-        return_value = super().handle(*fixture_labels, **options)
+
+        with transaction.atomic(using=self.using):
+            self.loaddata(fixture_labels)
+
+        # Close the DB connection -- unless we're still in a transaction. This
+        # is required as a workaround for an edge case in MySQL: if the same
+        # connection is used to create tables, load data, and query, the query
+        # can return incorrect results. See Django #7572, MySQL #37735.
+        if transaction.get_autocommit(self.using):
+            connections[self.using].close()
         # Disconnect signal listeners
         for modelclass in models_with_filefields():
             signals.pre_save.disconnect(
                 self.load_images_for_signal, sender=modelclass
             )
-        return return_value
+        return
 
     def find_fixture_paths(self):
         """Return the full paths to all possible fixture directories."""

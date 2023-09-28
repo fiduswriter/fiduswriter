@@ -12,7 +12,7 @@ from django.core.files.base import File
 from fixturemedia.management.commands.loaddata import models_with_filefields
 
 
-pre_dump = django.dispatch.Signal(providing_args=("instance",))
+pre_dump = django.dispatch.Signal()
 
 
 class Command(django.core.management.commands.dumpdata.Command):

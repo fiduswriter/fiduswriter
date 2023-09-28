@@ -46,6 +46,11 @@ class User(AbstractUser):
             readable_name = self.username
         return readable_name
 
+    class Meta:
+        permissions = (
+            ('can_login_as', _('Can login as another user')),
+        )
+
 
 class UserInvite(models.Model):
     key = models.UUIDField(
@@ -120,11 +125,3 @@ class UserInvite(models.Model):
 
     def __str__(self):
         return f"{self.to or self.username} by {self.by}"
-
-
-class LoginAs(models.Model):
-    class Meta:
-        managed = False
-        default_permissions = ()
-
-        permissions = (("can_login_as", _("Can login as another user")),)

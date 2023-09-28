@@ -47,9 +47,7 @@ class User(AbstractUser):
         return readable_name
 
     class Meta:
-        permissions = (
-            ('can_login_as', _('Can login as another user')),
-        )
+        permissions = (("can_login_as", _("Can login as another user")),)
 
 
 class UserInvite(models.Model):

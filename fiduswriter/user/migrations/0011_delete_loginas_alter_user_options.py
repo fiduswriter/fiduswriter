@@ -14,6 +14,8 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterModelOptions(
             name="user",
-            options={"permissions": (("can_login_as", "Can login as another user"),)},
+            options={
+                "permissions": (("can_login_as", "Can login as another user"),)
+            },
         ),
     ]

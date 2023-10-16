@@ -149,9 +149,10 @@ class Image(models.Model):
 
         # We use our PIL Image object to create the thumbnail, which already
         # has a thumbnail() convenience method that contrains proportions.
-        # Additionally, we use Image.ANTIALIAS to make the image look better.
+        # Additionally, we use Image.Resampling.LANCZOS to make the image look
+        # better.
         # Without antialiasing the image pattern artifacts may result.
-        image.thumbnail((dst_width, dst_height), PilImage.ANTIALIAS)
+        image.thumbnail((dst_width, dst_height), PilImage.Resampling.LANCZOS)
 
         # Save the thumbnail
         temp_handle = BytesIO()

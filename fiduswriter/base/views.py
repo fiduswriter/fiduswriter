@@ -5,7 +5,7 @@ from django.contrib.flatpages.models import FlatPage
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 
-from allauth.socialaccount.models import providers
+from allauth.socialaccount.adapter import get_adapter
 
 from user.helpers import Avatars
 from .decorators import ajax_required
@@ -35,7 +35,7 @@ def configuration(request):
     Load the configuration options of the page that are request dependent.
     """
     socialaccount_providers = []
-    for provider in providers.registry.get_list():
+    for provider in get_adapter(request).list_providers(request):
         socialaccount_providers.append(
             {
                 "id": provider.id,

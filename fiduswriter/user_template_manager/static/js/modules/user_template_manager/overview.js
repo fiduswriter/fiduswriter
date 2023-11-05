@@ -81,9 +81,10 @@ export class DocTemplatesOverview {
                 noRows: gettext("No document templates available"),
                 noResults: gettext("No document templates found") // Message shown when there are no search results
             },
-            layout: {
-                top: ""
-            },
+            template: (options, dom) => `<div class='${options.classes.container}'${options.scrollY.length ? ` style='height: ${options.scrollY}; overflow-Y: auto;'` : ""}></div>
+            <div class='${options.classes.bottom}'>
+                <nav class='${options.classes.pagination}'></nav>
+            </div>`,
             data: {
                 headings: ["", this.dtBulk.getHTML(), gettext("Title"), gettext("Created"), gettext("Last changed"), ""],
                 data: this.templateList.map(docTemplate => this.createTableRow(docTemplate))
@@ -105,7 +106,7 @@ export class DocTemplatesOverview {
             this.lastSort = {column, dir}
         })
 
-        this.dtBulk.init(this.table.table)
+        this.dtBulk.init(this.table.dom)
     }
 
     createTableRow(docTemplate) {

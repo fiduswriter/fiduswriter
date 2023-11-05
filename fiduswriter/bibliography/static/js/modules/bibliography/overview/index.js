@@ -89,10 +89,7 @@ export class BibliographyOverview {
                 noRows: gettext("No sources registered"),
                 noResults: gettext("No sources found") // Message shown when there are no search results
             },
-            layout: {
-                top: "",
-                bottom: ""
-            },
+            template: (options, dom) => `<div class='${options.classes.container}'${options.scrollY.length ? ` style='height: ${options.scrollY}; overflow-Y: auto;'` : ""}></div>`,
             data: {
                 headings: ["", this.dtBulk.getHTML(), gettext("Title"), gettext("Sourcetype"), gettext("Author"), gettext("Published"), ""],
                 data: ids.map(id => this.createTableRow(id))
@@ -114,7 +111,7 @@ export class BibliographyOverview {
             this.lastSort = {column, dir}
         })
 
-        this.dtBulk.init(this.table.table)
+        this.dtBulk.init(this.table.dom)
     }
 
     /** Adds a list of bibliography categories to current list of bibliography categories.

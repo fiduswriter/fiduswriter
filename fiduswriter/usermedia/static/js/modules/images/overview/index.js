@@ -225,9 +225,16 @@ export class ImageOverview {
                 noRows: gettext("No images available"), // Message shown when there are no images
                 noResults: gettext("No images found") // Message shown when no images are found after search
             },
-            layout: {
-                top: ""
-            },
+            template: (options, dom) =>
+            `<div class='${options.classes.container}'${options.scrollY.length ? ` style='height: ${options.scrollY}; overflow-Y: auto;'` : ""}></div>
+            <div class='${options.classes.bottom}'>
+                ${
+                options.paging ?
+                    `<div class='${options.classes.info}'></div>` :
+                    ""
+            }
+                <nav class='${options.classes.pagination}'></nav>
+            </div>`,
             data: {
                 headings: ["", this.dtBulk.getHTML(), gettext("File"), gettext("Size (px)"), gettext("Added"), ""],
                 data: ids.map(id => this.createTableRow(id))
@@ -249,7 +256,7 @@ export class ImageOverview {
             this.lastSort = {column, dir}
         })
 
-        this.dtBulk.init(this.table.table)
+        this.dtBulk.init(this.table.dom)
     }
 
     // get IDs of selected bib entries

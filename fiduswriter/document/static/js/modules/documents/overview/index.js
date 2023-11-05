@@ -338,10 +338,7 @@ export class DocumentOverview {
                 noRows: gettext("No documents available"), // Message shown when there are no entries
                 noResults: gettext("No documents found") // Message shown when there are no search results
             },
-            layout: {
-                top: "",
-                bottom: ""
-            },
+            template: (options, dom) => `<div class='${options.classes.container}'style='height: ${options.scrollY}; overflow-Y: auto;'></div>`,
             data: {
                 headings: [
                     "",
@@ -376,7 +373,7 @@ export class DocumentOverview {
             this.lastSort = {column, dir}
         })
 
-        this.dtBulk.init(this.table.table)
+        this.dtBulk.init(this.table.dom)
     }
 
     createTableRow(doc, subdirs, searching) {

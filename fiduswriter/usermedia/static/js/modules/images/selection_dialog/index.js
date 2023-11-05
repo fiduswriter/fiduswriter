@@ -110,9 +110,12 @@ export class ImageSelectionDialog {
                 noResults: gettext("No images found"), // Message shown when no images are found after search
                 placeholder: gettext("Search...") // placeholder for search field
             },
-            layout: {
-                top: "{search}"
-            },
+            template: (options, dom) => `<div class='${options.classes.top}'>
+                <div class='${options.classes.search}'>
+                    <input class='${options.classes.input}' placeholder='${options.labels.placeholder}' type='search' title='${options.labels.searchTitle}'${dom.id ? ` aria-controls="${dom.id}"` : ""}>
+                </div>
+            </div>
+            <div class='${options.classes.container}' style='height: ${options.scrollY}; overflow-Y: auto;'></div>`,
             data: {
                 headings: ["", gettext("Image"), gettext("Title"), ""],
                 data: this.images.map(image => this.createTableRow(image))

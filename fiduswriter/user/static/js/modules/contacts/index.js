@@ -68,10 +68,7 @@ export class ContactsOverview {
                 noRows: gettext("No contacts available"),
                 noResults: gettext("No contacts found") // Message shown when there are no search results
             },
-            layout: {
-                top: "",
-                bottom: ""
-            },
+            template: (options, dom) => `<div class='${options.classes.container}'style='height: ${options.scrollY}; overflow-Y: auto;'></div>`,
             data: {
                 headings: [
                     "",
@@ -96,7 +93,7 @@ export class ContactsOverview {
             ],
         })
 
-        this.dtBulk.init(this.table.table)
+        this.dtBulk.init(this.table.dom)
     }
 
     createTableRow(contact) {

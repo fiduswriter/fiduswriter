@@ -865,13 +865,14 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             len(self.get_comment(self.driver)),
             len(self.get_comment(self.driver2)),
         )
-
         # Add comment answer
         self.driver2.find_element(
             By.CSS_SELECTOR, ".margin-box.comment"
         ).click()
-        self.driver2.find_element(
-            By.CSS_SELECTOR, "#answer-editor .ProseMirror"
+        WebDriverWait(self.driver2, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, "#answer-editor .ProseMirror")
+            )
         ).send_keys("My answer")
         self.driver2.find_element(
             By.CSS_SELECTOR, ".comment-answer .submit"

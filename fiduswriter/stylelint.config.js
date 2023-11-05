@@ -4,12 +4,8 @@ module.exports = { // eslint-disable-line no-undef
         process.env.PROJECT_PATH + "/.transpile/node_modules/stylelint-value-no-unknown-custom-properties"
     ],
     "rules": {
-        "max-empty-lines": 4,
-        "string-quotes": "single",
         "color-hex-length": "long",
-        "number-leading-zero": "never",
         "max-nesting-depth": 2,
-        "indentation": 4,
         "csstools/value-no-unknown-custom-properties": [
             true,
             {

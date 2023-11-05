@@ -68,7 +68,7 @@ a.feedback-tab::before {
     margin-left: 10px;
 }
 
-@media (max-width: 1079px) {
+@media (width <= 1079px) {
     #footer-menu.prelogin a.feedback-tab {
         margin-left: 12px;
     }

@@ -479,8 +479,7 @@ body.header-closed #margin-box-filter {
 
 .margin-box.comment.active .comment-answer-container {
     max-height: 325px;
-    overflow-y: scroll;
-    overflow-x: hidden;
+    overflow: hidden scroll;
 }
 
 .comment-option {

@@ -483,7 +483,7 @@ tr.fw-checkable.checked > td:last-child::after {
 }
 
 
-@media screen and (max-width: 740px) {
+@media screen and (width <= 740px) {
     .entry-field .ProseMirror,
     .entry-field input[type='text'],
     .entry-field input[type='number'] {
@@ -499,7 +499,7 @@ tr.fw-checkable.checked > td:last-child::after {
     }
 }
 
-@media screen and (max-width: 560px) {
+@media screen and (width <= 560px) {
     .entry-field .ProseMirror,
     .entry-field input[type='text'],
     .entry-field input[type='number'] {
@@ -524,7 +524,7 @@ tr.fw-checkable.checked > td:last-child::after {
     }
 }
 
-@media screen and (max-width: 460px) {
+@media screen and (width <= 460px) {
     .entry-field .ProseMirror,
     .entry-field input[type='text'],
     .entry-field input[type='number'] {

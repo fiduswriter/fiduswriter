@@ -67,11 +67,10 @@
 .ui-dialog-content {
     position: relative;
     margin-top: 24px;
-    overflow-y: auto;
+    overflow: hidden auto;
     max-height: calc(100vh - 133px);
     min-height: 20px;
     max-width: calc(100vw - 4px);
-    overflow-x: hidden;
 }
 
 .input-list-wrapper > tbody > tr:last-child > td {

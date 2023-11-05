@@ -872,9 +872,7 @@ html[hc='a5'] #toolbar {
 
 #navigator-list {
     max-height: min(550px, 100vh - 315px);
-    overflow-y: scroll;
-    -ms-overflow-style: none;
-    overflow: -moz-scrollbars-none;
+    overflow-y: hidden scroll;
 }
 
 #navigator-filter span {
@@ -1035,7 +1033,7 @@ body.no-scroll {
 }
 
 /* Additions for tablets + mobile */
-@media screen and (max-width: 1279px) {
+@media screen and (width <= 1279px) {
     #document-top > h1 {
         padding-left: 52px;
         background-position: 14px 0;
@@ -1060,7 +1058,7 @@ body.no-scroll {
 }
 
 
-@media screen and (max-width: 1023px) {
+@media screen and (width <= 1023px) {
     #toolbar {
         padding-bottom: 6px;
     }
@@ -1132,8 +1130,7 @@ body.no-scroll {
     }
 
     #margin-box-container {
-        overflow-y: auto;
-        overflow-x: hidden;
+        overflow: hidden auto;
         bottom: 0;
         position: fixed;
         left: -1px;
@@ -1162,7 +1159,7 @@ body.no-scroll {
     }
 }
 
-@media screen and (max-width: 420px) {
+@media screen and (width <= 420px) {
     .editor-toolbar div.ui-buttonset {
         margin-right: 0;
     }

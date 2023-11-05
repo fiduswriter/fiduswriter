@@ -18,7 +18,7 @@
     line-height: 34px;
 }
 
-@media (max-width: 540px) {
+@media (width <= 540px) {
     .prelogin #header-nav {
         top: 2px;
     }

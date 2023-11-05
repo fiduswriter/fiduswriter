@@ -35,7 +35,7 @@ body.scrollable {
     padding: 40px 8px 20px;
 }
 
-@media (max-width: 1429px) {
+@media (width <= 1429px) {
     .fw-contents {
         min-width: unset;
         margin: 0 auto;

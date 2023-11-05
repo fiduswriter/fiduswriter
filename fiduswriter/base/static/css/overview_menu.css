@@ -15,7 +15,7 @@
     clear: both;
 }
 
-@media (max-width: 1429px) {
+@media (width <= 1429px) {
     #fw-overview-menu {
         margin: 0 auto;
         max-width: 1004px;

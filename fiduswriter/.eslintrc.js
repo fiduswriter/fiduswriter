@@ -2,12 +2,13 @@ module.exports = { // eslint-disable-line no-undef
     "env": {
         "jest": true,
         "browser": true,
-        "es6": true
+        "es6": true,
+        "node": true
     },
     "extends": [
         "eslint:recommended",
         "plugin:import/errors",
-        "plugin:import/warnings"
+        "plugin:import/warnings",
     ],
     "settings": {
         "import/resolver": {
@@ -294,7 +295,8 @@ module.exports = { // eslint-disable-line no-undef
         "wrap-iife": "error",
         "wrap-regex": "off",
         "yield-star-spacing": "error",
-        "yoda": "off"
+        "yoda": "off",
+        //"prettier/prettier": ["error"]
     },
     "globals": {
         "gettext": "readonly",

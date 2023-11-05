@@ -50,7 +50,7 @@
 
 .content-menu-item.disabled {
     pointer-events: none;
-    opacity: .6;
+    opacity: 0.6;
 }
 
 .content-menu-item.selected {

@@ -35,7 +35,6 @@ pre.long-literal em {
     font-style: italic;
 }
 
-
 #bib-dialog .ProseMirror-focused div.literal,
 #bib-dialog .ProseMirror-focused pre.long-literal {
     background-color: var(--input-focus-background-color);
@@ -124,7 +123,7 @@ pre.long-literal em {
     width: 369px !important;
 }
 
-#edit-categories input[type='text'] {
+#edit-categories input[type="text"] {
     width: 310px;
 }
 
@@ -139,7 +138,6 @@ pre.long-literal em {
 #bibimport-api-search div.item {
     margin-bottom: 10px;
 }
-
 
 #bibimport-api-search h3 {
     font-weight: 700;

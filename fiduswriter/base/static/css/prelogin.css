@@ -40,7 +40,7 @@
 
 .fw-contents.prelogin::after {
     display: block;
-    content: ' ';
+    content: " ";
     clear: both;
 }
 

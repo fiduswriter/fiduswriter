@@ -23,7 +23,8 @@ export class FootnoteView {
         this.editor = editor
 
         // The node's representation in the editor (empty, for now)
-        this.dom = document.createElement("footnote")
+        this.dom = document.createElement("div")
+        this.dom.className = "footnote-view"
         // These are used when the footnote is selected
         this.innerView = null
         // Updated main editor state
@@ -146,7 +147,8 @@ export class FootnoteView {
 export const readOnlyFnEditor = function(footnoteElement) {
     // This function creates a read only footnote editor for the purpose of showing the
     // footnote nodes which are drawn as part of deletion decoration.
-    const newFnElement = document.createElement("footnote")
+    const newFnElement = document.createElement("div")
+    newFnElement.className = "footnote-view"
     newFnElement.dataset.footnote = footnoteElement.dataset.footnote
     const tooltip = newFnElement.appendChild(document.createElement("div"))
     tooltip.className = "footnote-tooltip"

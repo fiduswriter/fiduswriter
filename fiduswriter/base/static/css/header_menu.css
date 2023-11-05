@@ -34,12 +34,12 @@
 }
 
 .fw-logo-text::before {
-    content: 'Fidus';
+    content: "Fidus";
     font-weight: 700;
 }
 
 .fw-logo-text::after {
-    content: 'Writer ';
+    content: "Writer ";
     font-weight: 300;
 }
 
@@ -103,5 +103,5 @@
 
 #preferences-btn .fw-avatar:hover,
 #preferences-btn .fw-string-avatar:hover {
-    opacity: .7;
+    opacity: 0.7;
 }

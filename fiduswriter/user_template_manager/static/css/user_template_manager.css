@@ -1,4 +1,4 @@
-.bibliography-header-value input[type='text'] {
+.bibliography-header-value input[type="text"] {
     margin: 10px;
     background-color: var(--cs-white-background);
     border: 1px solid var(--cs-white-border);
@@ -8,7 +8,7 @@
     width: 100%;
 }
 
-#template-editor table.title-id input[type='text'] {
+#template-editor table.title-id input[type="text"] {
     margin-bottom: 4px;
 }
 

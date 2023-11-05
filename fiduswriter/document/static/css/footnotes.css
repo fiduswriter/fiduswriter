@@ -1,6 +1,5 @@
 /* Footnotes */
 
-
 .user-contents .footnote-container h1,
 .user-contents .footnote-container h2,
 .user-contents .footnote-container h3,
@@ -28,17 +27,16 @@
     margin-top: 10px;
 }
 
-
 /* footnotes in footnote in print */
 
 .pagination-footnotes .footnote-marker::before {
-    content: '';
+    content: "";
     counter-increment: none;
 }
 
 .pagination-footnotes .footnote-marker > *:first-child::before {
     counter-increment: footnote-counter;
-    content: counter(footnote-counter) ' ';
+    content: counter(footnote-counter) " ";
 }
 
 .pagination-contents .footnote-marker > * {
@@ -50,17 +48,14 @@
     font-size: 75%;
     position: relative;
     vertical-align: baseline;
-    top: -.5em;
+    top: -0.5em;
 }
-
-
 
 #footnote-box-container {
     display: table-cell;
     width: 20vw;
     vertical-align: top;
 }
-
 
 /* Make the <hr> at the end of the footnote editor not show. It is only there
 because PM needs some content. */
@@ -75,7 +70,7 @@ because PM needs some content. */
 
 #footnote-box-container .footnote-container > *:first-child::before {
     counter-increment: footnote-counter;
-    content: counter(footnote-counter) ' ';
+    content: counter(footnote-counter) " ";
 }
 
 #footnote-box-container .ProseMirror {

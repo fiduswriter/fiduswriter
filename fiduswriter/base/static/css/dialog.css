@@ -87,8 +87,8 @@
     display: inline;
 }
 
-.entry-field input[type='text'],
-.entry-field input[type='number'] {
+.entry-field input[type="text"],
+.entry-field input[type="number"] {
     margin: 0;
 }
 
@@ -104,7 +104,6 @@
 .ui-dialog-buttonset .fw-button {
     margin-left: 6px;
 }
-
 
 .ui-widget-overlay {
     position: fixed;

@@ -11,7 +11,9 @@ footer,
 header,
 hgroup,
 nav,
-section { display: block; }
+section {
+    display: block;
+}
 
 audio,
 canvas,
@@ -20,7 +22,10 @@ video {
     *display: inline;
     *zoom: 1;
 }
-[hidden] { display: none; }
+
+[hidden] {
+    display: none;
+}
 
 /* http://meyerweb.com/eric/tools/css/reset/
    v2.0 | 20110126
@@ -115,7 +120,9 @@ video {
     vertical-align: baseline;
 }
 
-audio:not([controls]) { display: none; }
+audio:not([controls]) {
+    display: none;
+}
 
 /* HTML5 display-role reset for older browsers */
 article,
@@ -150,7 +157,7 @@ blockquote::before,
 blockquote::after,
 q::before,
 q::after {
-    content: '';
+    content: "";
     content: none;
 }
 

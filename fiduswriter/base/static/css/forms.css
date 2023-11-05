@@ -6,7 +6,7 @@ button {
     outline-width: 0;
 }
 
-input[type='text'].category-form {
+input[type="text"].category-form {
     width: calc(100% - 38px);
 }
 
@@ -14,11 +14,11 @@ textarea {
     padding: 2px;
 }
 
-input[type='text']:not(.fw-inline),
-input[type='password']:not(.fw-inline),
-input[type='search']:not(.fw-inline),
-input[type='email']:not(.fw-inline),
-input[type='number']:not(.fw-inline),
+input[type="text"]:not(.fw-inline),
+input[type="password"]:not(.fw-inline),
+input[type="search"]:not(.fw-inline),
+input[type="email"]:not(.fw-inline),
+input[type="number"]:not(.fw-inline),
 textarea {
     box-sizing: border-box;
     width: 100%;
@@ -34,11 +34,11 @@ textarea {
     border: 0 none;
 }
 
-input[type='text']:focus,
-input[type='number']:focus,
-input[type='password']:focus,
-input[type='search']:focus,
-input[type='email']:focus,
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="password"]:focus,
+input[type="search"]:focus,
+input[type="email"]:focus,
 div.input:focus-within,
 textarea:focus {
     background-color: var(--input-focus-background-color);
@@ -78,7 +78,7 @@ textarea:focus {
 
 tr.fw-checkable.checked::after {
     display: none;
-    content: '';
+    content: "";
 }
 
 .fw-checkable-td,
@@ -122,24 +122,22 @@ tr.fw-checkable.checked > td:last-child::after {
 }
 
 .fw-check + label::before {
-    content: '';
+    content: "";
     position: relative;
     display: block;
     width: 13px;
     height: 13px;
     border: 1px solid var(--overview-checkbox-border);
     border-radius: 2px;
-    background:
-        linear-gradient(
-            to bottom,
-            rgba(var(--overview-checkbox-background-color-from)) 0%,
-            rgba(var(--overview-checkbox-background-color-to))
-            100%
-        );
+    background: linear-gradient(
+        to bottom,
+        rgba(var(--overview-checkbox-background-color-from)) 0%,
+        rgba(var(--overview-checkbox-background-color-to)) 100%
+    );
 }
 
 .fw-check:checked + label::after {
-    content: '';
+    content: "";
     position: absolute;
     left: 5px;
     top: 2px;
@@ -170,7 +168,7 @@ tr.fw-checkable.checked > td:last-child::after {
 }
 
 .fw-add-input::before {
-    width: .7em;
+    width: 0.7em;
 }
 
 .fw-list-input {
@@ -191,7 +189,7 @@ tr.fw-checkable.checked > td:last-child::after {
 /*
  * ajax file uploader
  */
-.ajax-upload input[type='file'] {
+.ajax-upload input[type="file"] {
     display: none;
 }
 
@@ -202,19 +200,18 @@ tr.fw-checkable.checked > td:last-child::after {
 /*
  * checkbox in a fw-button
  */
-.fw-button input[type='checkbox'] {
+.fw-button input[type="checkbox"] {
     margin-right: 3px;
 }
 
 /*
  * radio buttons
  */
-.fw-radio input[type='radio'] {
+.fw-radio input[type="radio"] {
     display: inline-block;
     width: 40px;
     margin-bottom: 20px;
 }
-
 
 .fw-select-container {
     margin-bottom: 18px;
@@ -241,23 +238,19 @@ tr.fw-checkable.checked > td:last-child::after {
 
 /* bibliography and license form input */
 
-
-
 .entry-field .ProseMirror,
-.entry-field input[type='text'],
-.entry-field input[type='number'] {
+.entry-field input[type="text"],
+.entry-field input[type="number"] {
     width: 686px;
     max-width: 80vw;
 }
 
-
-.entry-field.fw-fomt-error input[type='text'],
-.entry-field.fw-fomt-error input[type='number'] {
+.entry-field.fw-fomt-error input[type="text"],
+.entry-field.fw-fomt-error input[type="number"] {
     background-color: var(--input-error-background-color);
 }
 
-
-.entry-field input[type='checkbox'] {
+.entry-field input[type="checkbox"] {
     margin-top: 12px;
 }
 
@@ -317,7 +310,7 @@ tr.fw-checkable.checked > td:last-child::after {
     left: 0;
     top: 0;
     width: calc(200% - 38px);
-    transition: left .3s;
+    transition: left 0.3s;
 }
 
 .type-switch-inner::after {
@@ -326,7 +319,7 @@ tr.fw-checkable.checked > td:last-child::after {
     position: absolute;
     left: calc(50% - 19px);
     top: 0;
-    content: '';
+    content: "";
     width: 38px;
     height: 38px;
     border-radius: 19px;
@@ -359,7 +352,7 @@ tr.fw-checkable.checked > td:last-child::after {
 }
 
 .type-switch-input-wrapper::after {
-    content: '';
+    content: "";
     display: table;
     clear: both;
 }
@@ -415,7 +408,7 @@ tr.fw-checkable.checked > td:last-child::after {
 
 .tokenfield::before,
 .tokenfield::after {
-    content: ' ';
+    content: " ";
     display: table;
 }
 
@@ -474,19 +467,18 @@ tr.fw-checkable.checked > td:last-child::after {
 }
 
 .list-input-wrapper .add-remove-list::before {
-    content: '\2796';
-    width: .7em;
+    content: "\2796";
+    width: 0.7em;
 }
 
 .list-input-wrapper:last-child .add-remove-list::before {
-    content: '\2795';
+    content: "\2795";
 }
-
 
 @media screen and (width <= 740px) {
     .entry-field .ProseMirror,
-    .entry-field input[type='text'],
-    .entry-field input[type='number'] {
+    .entry-field input[type="text"],
+    .entry-field input[type="number"] {
         max-width: 70vw;
     }
 
@@ -501,8 +493,8 @@ tr.fw-checkable.checked > td:last-child::after {
 
 @media screen and (width <= 560px) {
     .entry-field .ProseMirror,
-    .entry-field input[type='text'],
-    .entry-field input[type='number'] {
+    .entry-field input[type="text"],
+    .entry-field input[type="number"] {
         max-width: 50vw;
     }
 
@@ -526,8 +518,8 @@ tr.fw-checkable.checked > td:last-child::after {
 
 @media screen and (width <= 460px) {
     .entry-field .ProseMirror,
-    .entry-field input[type='text'],
-    .entry-field input[type='number'] {
+    .entry-field input[type="text"],
+    .entry-field input[type="number"] {
         max-width: 40vw;
     }
 

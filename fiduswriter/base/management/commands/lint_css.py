@@ -21,7 +21,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.stdout.write("Linting CSS code...")
-        call_command("npm_install", post_npm_signal=False)
+        call_command("npm_install")
         shutil.os.chdir(settings.PROJECT_PATH)
         command_array = [
             os.path.join(

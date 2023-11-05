@@ -28,7 +28,7 @@ class Command(BaseCommand):
         self.stdout.write(
             "Prettifying frontend files code (except JavaScript)..."
         )
-        call_command("npm_install", post_npm_signal=False)
+        call_command("npm_install")
         shutil.os.chdir(settings.PROJECT_PATH)
         apps_paths = []
         for app in list(apps.get_app_configs()):

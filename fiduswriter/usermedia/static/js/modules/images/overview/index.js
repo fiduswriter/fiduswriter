@@ -141,7 +141,7 @@ export class ImageOverview {
         this.removeTableRows(ids)
         this.table.insert({data: ids.map(id => this.createTableRow(id))})
         // Redo last sort
-        this.table.columns().sort(this.lastSort.column, this.lastSort.dir)
+        this.table.columns.sort(this.lastSort.column, this.lastSort.dir)
     }
 
     createTableRow(id) {
@@ -179,8 +179,8 @@ export class ImageOverview {
     removeTableRows(ids) {
         ids = ids.map(id => parseInt(id))
 
-        const existingRows = this.table.data.map((data, index) => {
-            const id = parseInt(data.cells[0].textContent)
+        const existingRows = this.table.data.data.map((row, index) => {
+            const id = parseInt(row[0].data)
             if (ids.includes(id)) {
                 return index
             } else {
@@ -189,7 +189,7 @@ export class ImageOverview {
         }).filter(rowIndex => rowIndex !== false)
 
         if (existingRows.length) {
-            this.table.rows().remove(existingRows)
+            this.table.rows.remove(existingRows)
         }
     }
 

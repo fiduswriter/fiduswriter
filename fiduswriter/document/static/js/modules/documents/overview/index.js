@@ -113,7 +113,7 @@ export class DocumentOverview {
             }
             case findTarget(event, "a.fw-data-table-title.parentdir", el):
                 event.preventDefault()
-                if (this.table.data.length > 1) {
+                if (this.table.data.data.length > 1) {
                     this.path = el.target.dataset.path
                     window.history.pushState({}, "", el.target.getAttribute("href"))
                     this.initTable()

@@ -152,7 +152,8 @@ export class ImageSelectionDialog {
     }
 
     checkRow(dataIndex) {
-        const [db, id] = this.table.data[dataIndex].cells[0].textContent.split("-").map(
+        const cell = this.table.data.data[dataIndex]
+        const [db, id] = (cell.text || cell.data).split("-").map(
             (val, index) => index ? parseInt(val) : val // only parseInt id (where index > 0)
         )
         if (id === this.imgId) {
@@ -161,10 +162,14 @@ export class ImageSelectionDialog {
             this.imgId = id
         }
         this.imgDb = db
-        this.table.data.forEach((data, index) => {
-            data.cells[3].innerHTML = index === dataIndex && this.imgId ? "<i class=\"fa fa-check\" aria-hidden=\"true\"></i>" : "&emsp;"
+        this.table.data.data.forEach((row, index) => {
+            if (index === dataIndex && this.imgId) {
+                row[3] = {data: "<i class=\"fa fa-check\" aria-hidden=\"true\"></i>"}
+            } else {
+                row[3] = {data: "&emsp;"}
+            }
         })
-        this.table.columns().rebuild()
+        this.table.render()
     }
 
     bindEvents() {

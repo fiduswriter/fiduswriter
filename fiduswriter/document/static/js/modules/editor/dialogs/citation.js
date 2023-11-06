@@ -164,7 +164,7 @@ export class CitationDialog {
         })
 
         this.table.insert({data})
-        this.table.columns().sort(this.lastSort.column, this.lastSort.dir)
+        this.table.columns.sort(this.lastSort.column, this.lastSort.dir)
     }
 
     // Update the citation dialog with new items in 'cited' column.
@@ -225,22 +225,21 @@ export class CitationDialog {
         this.table.on("datatable.sort", (column, dir) => {
             this.lastSort = {column, dir}
         })
-        this.table.columns().sort(0, "asc")
+        this.table.columns.sort(0, "asc")
     }
 
     checkRow(dataIndex) {
-        const data = this.table.data[dataIndex]
-        if (!data) {
+        const row = this.table.data.data[dataIndex]
+        if (!row) {
             return
         }
-        const checkCell = data.cells[3]
 
-        if (checkCell.innerHTML.trim().length) {
-            checkCell.innerHTML = ""
+        if (row[3].data.trim().length) {
+            row[3] = {data: ""}
         } else {
-            checkCell.innerHTML = "<i class=\"fa fa-check\" aria-hidden=\"true\"></i>"
+            row[3] = {data: "<i class=\"fa fa-check\" aria-hidden=\"true\"></i>"}
         }
-        this.table.columns().rebuild()
+        this.table.render()
     }
 
 
@@ -259,13 +258,13 @@ export class CitationDialog {
         this.dialog.dialogEl.querySelector("#add-cite-source").addEventListener("click", () => {
             const selectedItems = []
 
-            this.table.data.forEach(
-                data => {
-                    if (!data.cells[3].innerHTML.trim().length) {
+            this.table.data.data.forEach(
+                row => {
+                    if (!row[3].data.trim().length) {
                         return
                     }
-                    data.cells[3].innerHTML = ""
-                    const [db, id] = data.cells[0].textContent.split("-").map(
+                    row[3].data = ""
+                    const [db, id] = row[0].data.split("-").map(
                         (val, index) => index ? parseInt(val) : val // only parseInt id (where index > 0)
                     )
                     if (this.dialog.dialogEl.querySelector(`#selected-source-${db}-${id}`)) {
@@ -274,14 +273,14 @@ export class CitationDialog {
                     selectedItems.push({
                         id,
                         db,
-                        title: data.cells[1].textContent,
-                        author: data.cells[2].textContent
+                        title: row[1].data,
+                        author: row[2].data
                     })
                 }
             )
 
             this.addToCitedItems(selectedItems)
-            this.table.columns().rebuild()
+            this.table.update()
         })
 
         this.dialog.dialogEl.addEventListener("click", event => {

@@ -138,8 +138,8 @@ export class DocTemplatesOverview {
     }
 
     removeTableRows(ids) {
-        const existingRows = this.table.data.map((data, index) => {
-            const id = parseInt(data.cells[0].textContent)
+        const existingRows = this.table.data.data.map((row, index) => {
+            const id = parseInt(row[0].text)
             if (ids.includes(id)) {
                 return index
             } else {
@@ -148,14 +148,14 @@ export class DocTemplatesOverview {
         }).filter(rowIndex => rowIndex !== false)
 
         if (existingRows.length) {
-            this.table.rows().remove(existingRows)
+            this.table.rows.remove(existingRows)
         }
     }
 
     addDocTemplateToTable(docTemplate) {
         this.table.insert({data: [this.createTableRow(docTemplate)]})
         // Redo last sort
-        this.table.columns().sort(this.lastSort.column, this.lastSort.dir)
+        this.table.columns.sort(this.lastSort.column, this.lastSort.dir)
     }
 
     getTemplateListData() {

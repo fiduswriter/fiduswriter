@@ -338,7 +338,7 @@ export class DocumentOverview {
                 noRows: gettext("No documents available"), // Message shown when there are no entries
                 noResults: gettext("No documents found") // Message shown when there are no search results
             },
-            template: (options, dom) => `<div class='${options.classes.container}'style='height: ${options.scrollY}; overflow-Y: auto;'></div>`,
+            template: (options, _dom) => `<div class='${options.classes.container}'style='height: ${options.scrollY}; overflow-Y: auto;'></div>`,
             data: {
                 headings: [
                     "",

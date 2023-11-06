@@ -68,7 +68,7 @@ export class ContactsOverview {
                 noRows: gettext("No contacts available"),
                 noResults: gettext("No contacts found") // Message shown when there are no search results
             },
-            template: (options, dom) => `<div class='${options.classes.container}'style='height: ${options.scrollY}; overflow-Y: auto;'></div>`,
+            template: (options, _dom) => `<div class='${options.classes.container}'style='height: ${options.scrollY}; overflow-Y: auto;'></div>`,
             data: {
                 headings: [
                     "",

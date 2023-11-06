@@ -225,14 +225,14 @@ export class ImageOverview {
                 noRows: gettext("No images available"), // Message shown when there are no images
                 noResults: gettext("No images found") // Message shown when no images are found after search
             },
-            template: (options, dom) =>
-            `<div class='${options.classes.container}'${options.scrollY.length ? ` style='height: ${options.scrollY}; overflow-Y: auto;'` : ""}></div>
+            template: (options, _dom) =>
+                `<div class='${options.classes.container}'${options.scrollY.length ? ` style='height: ${options.scrollY}; overflow-Y: auto;'` : ""}></div>
             <div class='${options.classes.bottom}'>
                 ${
-                options.paging ?
-                    `<div class='${options.classes.info}'></div>` :
-                    ""
-            }
+    options.paging ?
+        `<div class='${options.classes.info}'></div>` :
+        ""
+}
                 <nav class='${options.classes.pagination}'></nav>
             </div>`,
             data: {

@@ -133,7 +133,8 @@ class PathTest(LiveTornadoTestCase, SeleniumHelper):
         # Go up one folder
         documents[0].click()
         WebDriverWait(self.driver, self.wait_time).until(
-            lambda driver: urlparse(driver.current_url).path == "/documents/Reports/2019/"
+            lambda driver: urlparse(driver.current_url).path
+            == "/documents/Reports/2019/"
         )
         documents = self.driver.find_elements(
             By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
@@ -250,7 +251,13 @@ class PathTest(LiveTornadoTestCase, SeleniumHelper):
             '//*[contains(@class, "fw-dark") and normalize-space()="Submit"]',
         ).click()
         WebDriverWait(self.driver, self.wait_time).until(
-            lambda driver: len(driver.find_elements(By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title")) == 1
+            lambda driver: len(
+                driver.find_elements(
+                    By.CSS_SELECTOR,
+                    ".fw-contents tbody tr a.fw-data-table-title",
+                )
+            )
+            == 1
         )
         # Documents should be gone as it is moved into the February subfolder
         document = self.driver.find_element(
@@ -260,11 +267,19 @@ class PathTest(LiveTornadoTestCase, SeleniumHelper):
         document.click()
         # Confirm deletion
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, "button.delete-folder"))
+            EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, "button.delete-folder")
+            )
         ).click()
         # Also the 2019 folder should be empty
         WebDriverWait(self.driver, self.wait_time).until(
-            lambda driver: len(driver.find_elements(By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title")) == 1
+            lambda driver: len(
+                driver.find_elements(
+                    By.CSS_SELECTOR,
+                    ".fw-contents tbody tr a.fw-data-table-title",
+                )
+            )
+            == 1
         )
         document = self.driver.find_element(
             By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
@@ -273,11 +288,19 @@ class PathTest(LiveTornadoTestCase, SeleniumHelper):
         document.click()
         # Confirm deletion
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, "button.delete-folder"))
+            EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, "button.delete-folder")
+            )
         ).click()
         # Also the Reports folder should be empty
         WebDriverWait(self.driver, self.wait_time).until(
-            lambda driver: len(driver.find_elements(By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title")) == 1
+            lambda driver: len(
+                driver.find_elements(
+                    By.CSS_SELECTOR,
+                    ".fw-contents tbody tr a.fw-data-table-title",
+                )
+            )
+            == 1
         )
         document = self.driver.find_element(
             By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
@@ -286,12 +309,20 @@ class PathTest(LiveTornadoTestCase, SeleniumHelper):
         document.click()
         # Confirm deletion
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, "button.delete-folder"))
+            EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, "button.delete-folder")
+            )
         ).click()
         # There should be just one folder in the top folder.
         # The Reports folder should have been auto-deleted.
         WebDriverWait(self.driver, self.wait_time).until(
-            lambda driver: len(driver.find_elements(By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title")) == 1
+            lambda driver: len(
+                driver.find_elements(
+                    By.CSS_SELECTOR,
+                    ".fw-contents tbody tr a.fw-data-table-title",
+                )
+            )
+            == 1
         )
         document = self.driver.find_element(
             By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
@@ -300,7 +331,13 @@ class PathTest(LiveTornadoTestCase, SeleniumHelper):
         document.click()
         # There should be two docs in the Documents folder
         WebDriverWait(self.driver, self.wait_time).until(
-            lambda driver: len(driver.find_elements(By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title")) == 3
+            lambda driver: len(
+                driver.find_elements(
+                    By.CSS_SELECTOR,
+                    ".fw-contents tbody tr a.fw-data-table-title",
+                )
+            )
+            == 3
         )
         documents = self.driver.find_elements(
             By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"

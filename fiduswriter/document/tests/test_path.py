@@ -132,9 +132,8 @@ class PathTest(LiveTornadoTestCase, SeleniumHelper):
         self.assertEqual(documents[1].text, "February Doc")
         # Go up one folder
         documents[0].click()
-        time.sleep(1)
-        self.assertEqual(
-            urlparse(self.driver.current_url).path, "/documents/Reports/2019/"
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda driver: urlparse(driver.current_url).path == "/documents/Reports/2019/"
         )
         documents = self.driver.find_elements(
             By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
@@ -250,56 +249,61 @@ class PathTest(LiveTornadoTestCase, SeleniumHelper):
             By.XPATH,
             '//*[contains(@class, "fw-dark") and normalize-space()="Submit"]',
         ).click()
-        time.sleep(1)
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda driver: len(driver.find_elements(By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title")) == 1
+        )
         # Documents should be gone as it is moved into the February subfolder
-        documents = self.driver.find_elements(
+        document = self.driver.find_element(
             By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
         )
-        self.assertEqual(len(documents), 1)
-        self.assertEqual(documents[0].text, "..")
-        documents[0].click()
+        self.assertEqual(document.text, "..")
+        document.click()
         # Confirm deletion
-        self.driver.find_element(
-            By.CSS_SELECTOR, "button.delete-folder"
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, "button.delete-folder"))
         ).click()
-        time.sleep(1)
         # Also the 2019 folder should be empty
-        documents = self.driver.find_elements(
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda driver: len(driver.find_elements(By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title")) == 1
+        )
+        document = self.driver.find_element(
             By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
         )
-        self.assertEqual(len(documents), 1)
-        self.assertEqual(documents[0].text, "..")
-        documents[0].click()
+        self.assertEqual(document.text, "..")
+        document.click()
         # Confirm deletion
-        self.driver.find_element(
-            By.CSS_SELECTOR, "button.delete-folder"
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, "button.delete-folder"))
         ).click()
-        time.sleep(1)
         # Also the Reports folder should be empty
-        documents = self.driver.find_elements(
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda driver: len(driver.find_elements(By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title")) == 1
+        )
+        document = self.driver.find_element(
             By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
         )
-        self.assertEqual(len(documents), 1)
-        self.assertEqual(documents[0].text, "..")
-        documents[0].click()
+        self.assertEqual(document.text, "..")
+        document.click()
         # Confirm deletion
-        self.driver.find_element(
-            By.CSS_SELECTOR, "button.delete-folder"
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, "button.delete-folder"))
         ).click()
-        time.sleep(1)
         # There should be just one folder in the top folder.
         # The Reports folder should have been auto-deleted.
-        documents = self.driver.find_elements(
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda driver: len(driver.find_elements(By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title")) == 1
+        )
+        document = self.driver.find_element(
             By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
         )
-        self.assertEqual(len(documents), 1)
-        self.assertEqual(documents[0].text, "Documents")
-        documents[0].click()
-        time.sleep(1)
+        self.assertEqual(document.text, "Documents")
+        document.click()
         # There should be two docs in the Documents folder
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda driver: len(driver.find_elements(By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title")) == 3
+        )
         documents = self.driver.find_elements(
             By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
         )
-        self.assertEqual(len(documents), 3)
         self.assertEqual(documents[1].text, "Report 23")
         self.assertEqual(documents[2].text, "February Doc")

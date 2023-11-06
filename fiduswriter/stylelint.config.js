@@ -1,7 +1,7 @@
 module.exports = { // eslint-disable-line no-undef
     "extends": process.env.PROJECT_PATH + "/.transpile/node_modules/stylelint-config-standard",
     "plugins": [
-        process.env.PROJECT_PATH + "/.transpile/node_modules/@alex-e-leon/stylelint-value-no-unknown-custom-properties"
+        process.env.PROJECT_PATH + "/.transpile/node_modules/stylelint-value-no-unknown-custom-properties"
     ],
     "rules": {
         "color-hex-length": "long",

@@ -312,10 +312,24 @@ body.editor header {
 }
 
 /* stylelint-disable selector-class-pattern */
+.ML__popover {
+    z-index: 1000;
+}
+
 .ML__fieldcontainer__field {
     min-height: 23px;
 }
 /* stylelint-enable selector-class-pattern */
+
+math-field {
+    border: 0;
+    min-width: calc(100% - 10px);
+}
+
+/* Hide the virtual keyboard toggle */
+math-field::part(virtual-keyboard-toggle) {
+    display: none;
+}
 
 #editor-content {
     display: flex;
@@ -597,12 +611,6 @@ span.delete {
     font-size: 18px;
     padding-left: 5px;
 }
-
-/* stylelint-disable selector-class-pattern */
-.ML__popover {
-    z-index: 1000;
-}
-/* stylelint-enable selector-class-pattern */
 
 div.table-edit-button-group {
     margin-bottom: 10px;

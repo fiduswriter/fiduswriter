@@ -52,33 +52,39 @@ export class FigureDialog {
         ]
         import("mathlive").then(MathLive => {
             this.mathField = new MathLive.MathfieldElement({
-                virtualKeyboardMode: "manual",
-                keypressSound: null,
-                plonkSound: null,
-                locale: "int",
-                strings: {
-                    "int": {
-                        "keyboard.tooltip.functions": gettext("Functions"),
-                        "keyboard.tooltip.greek": gettext("Greek Letters"),
-                        "keyboard.tooltip.command": gettext("LaTeX Command Mode"),
-                        "keyboard.tooltip.numeric": gettext("Numeric"),
-                        "keyboard.tooltip.roman": gettext("Symbols and Roman Letters"),
-                        "tooltip.copy to clipboard": gettext("Copy to Clipboard"),
-                        "tooltip.redo": gettext("Redo"),
-                        "tooltip.toggle virtual keyboard": gettext("Toggle Virtual Keyboard"),
-                        "tooltip.undo": gettext("Undo")
-                    }
-                },
+                mathVirtualKeyboardPolicy: "manual",
             })
-            this.mathField.addEventListener("blur", () => this.showPlaceHolder())
+            this.mathField.strings = {
+                "int": {
+                    "keyboard.tooltip.functions": gettext("Functions"),
+                    "keyboard.tooltip.greek": gettext("Greek Letters"),
+                    "keyboard.tooltip.command": gettext("LaTeX Command Mode"),
+                    "keyboard.tooltip.numeric": gettext("Numeric"),
+                    "keyboard.tooltip.roman": gettext("Symbols and Roman Letters"),
+                    "tooltip.copy to clipboard": gettext("Copy to Clipboard"),
+                    "tooltip.redo": gettext("Redo"),
+                    "tooltip.toggle virtual keyboard": gettext("Toggle Virtual Keyboard"),
+                    "tooltip.undo": gettext("Undo")
+                }
+            }
+            this.mathField.locale = "int"
+            this.mathField.plonkSound = null
+            this.mathField.keypressSound = null
+            this.mathField.value = this.equation
+            this.mathliveDOM.appendChild(this.mathField)
+            this.mathField.addEventListener("focusin", () => window.mathVirtualKeyboard.show())
+            this.mathField.addEventListener("focusout", () => window.mathVirtualKeyboard.hide())
+
+
+            this.mathField.addEventListener("focusout", () => this.showPlaceHolder())
             this.mathField.addEventListener("focus", () => this.hidePlaceHolder())
             this.mathField.addEventListener("input", () => {
                 this.equation = this.mathField.getValue()
                 this.showHideNonMathElements()
             })
+            this.mathField.select()
             this.mathField.value = this.equation
-            this.mathliveDOM.appendChild(this.mathField)
-            this.showPlaceHolder()
+
             this.showHideNonMathElements()
             this.dialog.dialogEl.querySelector("#insert-figure-image").addEventListener(
                 "click",
@@ -89,7 +95,7 @@ export class FigureDialog {
     }
 
     showPlaceHolder() {
-        if (!this.mathField.getValue().length) {
+        if (!this.mathField.getValue().length && !this.mathliveDOM.querySelector(".placeholder")) {
             this.mathliveDOM.insertAdjacentHTML("beforeend", `<span class="placeholder" >${gettext("Type formula")}</span>`)
         }
     }

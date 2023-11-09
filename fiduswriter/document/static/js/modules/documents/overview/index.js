@@ -113,7 +113,7 @@ export class DocumentOverview {
             }
             case findTarget(event, "a.fw-data-table-title.parentdir", el):
                 event.preventDefault()
-                if (this.table.data.data.length > 1) {
+                if (this.table.data.data.length > 0) {
                     this.path = el.target.dataset.path
                     window.history.pushState({}, "", el.target.getAttribute("href"))
                     this.initTable()
@@ -307,33 +307,86 @@ export class DocumentOverview {
             doc => this.createTableRow(doc, subdirs, searching)
         ).filter(row => !!row)
 
+        let tableRender = false
         if (!searching && this.path !== "/") {
             const pathParts = this.path.split("/")
             pathParts.pop()
             pathParts.pop()
             const parentPath = pathParts.join("/") + "/"
             const href = parentPath === "/" && this.app.routes[""].app === "document" ? parentPath : `/documents${encodeURI(parentPath)}`
-            fileList.unshift([
-                "-1",
-                "top",
-                "",
-                `<a class="fw-data-table-title fw-link-text parentdir" href="${href}" data-path="${parentPath}">
-                    <i class="fas fa-folder"></i>
-                    <span>..</span>
-                </a>`,
-                "",
-                "",
-                "",
-                "",
-                "",
-                ""
-            ])
-        }
+            tableRender = function(data, table, type) {
+                if (!["main", "message"].includes(type)) {
+                    return
+                }
+                // Add a row at top of the table to go to parent directory.
+                table.childNodes[1].childNodes.unshift({
+                    "nodeName": "TR",
+                    "attributes": {
+                        "data-index": "0"
+                    },
+                    "childNodes": [
+                        {
+                            "nodeName": "TD"
+                        },
+                        {
+                            "nodeName": "TD",
+                            "childNodes": [
+                                {
+                                    "nodeName": "a",
+                                    "attributes": {
+                                        "class": "fw-data-table-title fw-link-text parentdir",
+                                        "href": href,
+                                        "data-path": parentPath
+                                    },
+                                    "childNodes": [
+                                        {
+                                            "nodeName": "i",
+                                            "attributes": {
+                                                "class": "fas fa-folder"
+                                            }
+                                        },
+                                        {
+                                            "nodeName": "span",
+                                            "attributes": {},
+                                            "childNodes": [
+                                                {
+                                                    "nodeName": "#text",
+                                                    "data": ".."
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "nodeName": "TD"
+                        },
+                        {
+                            "nodeName": "TD"
+                        },
+                        {
+                            "nodeName": "TD"
+                        },
+                        {
+                            "nodeName": "TD"
+                        },
+                        {
+                            "nodeName": "TD"
+                        },
+                        {
+                            "nodeName": "TD"
+                        }
+                    ]
+                })
 
+            }
+        }
         this.table = new DataTable(tableEl, {
             searchable: searching,
             paging: false,
             scrollY: `${Math.max(window.innerHeight - 360, 200)}px`,
+            tableRender,
             labels: {
                 noRows: gettext("No documents available"), // Message shown when there are no entries
                 noResults: gettext("No documents found") // Message shown when there are no search results
@@ -355,6 +408,18 @@ export class DocumentOverview {
                 data: fileList
             },
             columns: [
+                {
+                    select: 0,
+                    type: "number"
+                },
+                {
+                    select: 1,
+                    type: "string"
+                },
+                {
+                    select: [5, 6],
+                    type: "date"
+                },
                 {
                     select: hiddenCols,
                     hidden: true

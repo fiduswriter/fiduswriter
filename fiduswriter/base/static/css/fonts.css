@@ -146,7 +146,18 @@ tr.fw-checkable.checked > td:last-child::after {
     content: "\f055";
 }
 
-table.dataTable-table thead th a::after {
+.datatable-pagination-list button,
+table.datatable-table th button {
+    color: inherit;
+    border: 0;
+    background-color: inherit;
+    cursor: pointer;
+    text-align: inherit;
+    font-weight: inherit;
+    font-size: inherit;
+}
+
+table.datatable-table thead th button::after {
     font-family: "Font Awesome 6 Free", monospace;
     font-weight: 900;
     font-size: 80%;
@@ -156,24 +167,24 @@ table.dataTable-table thead th a::after {
     margin-left: 8px;
 }
 
-table.dataTable-table
+table.datatable-table
     thead
     th[data-sortable]:not([data-sortable="false"])
-    a::after {
+    button::after {
     content: "\f0dc";
 }
 
-table.dataTable-table
+table.datatable-table
     thead
     th[data-sortable]:not([data-sortable="false"]).asc
-    a::after {
+    button::after {
     content: "\f0de";
 }
 
-table.dataTable-table
+table.datatable-table
     thead
     th[data-sortable]:not([data-sortable="false"]).desc
-    a::after {
+    button::after {
     content: "\f0dd";
 }
 

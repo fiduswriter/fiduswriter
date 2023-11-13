@@ -210,7 +210,7 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
                 "No sources found",
                 driver.find_element(
                     By.CSS_SELECTOR,
-                    ".fw-data-table.fw-large.dataTable-table td",
+                    ".fw-data-table.fw-large.datatable-table td",
                 ).text,
             )
         except AssertionError as e:

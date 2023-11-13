@@ -70,7 +70,7 @@ export class DatatableBulk {
             } else if (target.matches(".fw-check + label, .fw-check + label *")) {
                 // Click on bulk checkbox
                 const isChecked = this.isAllChecked()
-                target.closest("div.dataTable-wrapper").querySelector("input[type=checkbox]").checked = !isChecked
+                target.closest("div.datatable-wrapper").querySelector("input[type=checkbox]").checked = !isChecked
                 this.table.querySelectorAll("input.entry-select[type=checkbox]").forEach(checkbox => checkbox.checked = !isChecked)
                 this.onTableCheckChange()
             }

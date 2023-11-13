@@ -291,7 +291,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         # click on 'Use image' button
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable(
-                (By.CSS_SELECTOR, ".dataTable-container img")
+                (By.CSS_SELECTOR, ".datatable-container img")
             )
         ).click()
 

@@ -4,26 +4,26 @@
 }
 
 .fw-data-table thead,
-.dataTable-table thead {
+.datatable-table thead {
     font-weight: 900;
     font-size: 11px;
 }
 
-.dataTable-table thead th a {
+.datatable-table thead th a {
     color: var(--cs-1-hover);
 }
 
 .fw-data-table th,
 .fw-data-table td,
-.dataTable-table th,
-.dataTable-table td {
+.datatable-table th,
+.datatable-table td {
     padding: 15px 0;
     vertical-align: top;
     border-bottom: solid 1px var(--cs-white-border);
 }
 
 .fw-data-table .date,
-.dataTable-table .date {
+.datatable-table .date {
     white-space: nowrap;
 }
 
@@ -54,8 +54,8 @@
 
 .fw-data-table th:last-child,
 .fw-data-table td:last-child,
-.dataTable-table th:last-child,
-.dataTable-table td:last-child {
+.datatable-table th:last-child,
+.datatable-table td:last-child {
     padding-right: 0;
 }
 

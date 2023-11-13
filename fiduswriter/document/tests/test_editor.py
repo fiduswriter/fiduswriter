@@ -110,10 +110,11 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(
             By.CSS_SELECTOR, "div.figure-category"
         ).click()
-        self.driver.find_element(
-            By.XPATH, '//*[normalize-space()="Photo"]'
-        ).click()
-
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (By.XPATH, '//*[normalize-space()="Photo"]')
+            )
+        )
         # click on 'Insert image' button
         self.driver.find_element(By.ID, "insert-figure-image").click()
 
@@ -603,7 +604,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         ActionChains(self.driver).send_keys(Keys.TAB).send_keys(
             Keys.RETURN
         ).perform()
-        time.sleep(2)
+        time.sleep((self.wait_time / 3))
         # Downgrade the write rights to read rights for user4
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable(

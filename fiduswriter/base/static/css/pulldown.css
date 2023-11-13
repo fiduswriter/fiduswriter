@@ -98,9 +98,9 @@
 }
 
 .fw-pulldown .delete-comment::after {
-    font-family: 'Font Awesome 5 Free', monospace;
-    content: '\f2ed';
-    opacity: .4;
+    font-family: "Font Awesome 5 Free", monospace;
+    content: "\f2ed";
+    opacity: 0.4;
     float: right;
     display: block;
 }
@@ -109,6 +109,6 @@
     margin-left: 0;
 }
 
-.fw-pulldown input[type='radio'] {
+.fw-pulldown input[type="radio"] {
     display: none;
 }

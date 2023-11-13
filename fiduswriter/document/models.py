@@ -61,9 +61,9 @@ class DocumentTemplate(models.Model):
     @classmethod
     def _check_doc_versions(cls, **kwargs):
         try:
-            if len(
-                cls.objects.filter(doc_version__lt=str(FW_DOCUMENT_VERSION))
-            ):
+            if cls.objects.filter(
+                doc_version__lt=str(FW_DOCUMENT_VERSION)
+            ).exists():
                 return [
                     checks.Warning(
                         "Document templates need to be upgraded. Please "

@@ -67,11 +67,10 @@
 .ui-dialog-content {
     position: relative;
     margin-top: 24px;
-    overflow-y: auto;
+    overflow: hidden auto;
     max-height: calc(100vh - 133px);
     min-height: 20px;
     max-width: calc(100vw - 4px);
-    overflow-x: hidden;
 }
 
 .input-list-wrapper > tbody > tr:last-child > td {
@@ -88,8 +87,8 @@
     display: inline;
 }
 
-.entry-field input[type='text'],
-.entry-field input[type='number'] {
+.entry-field input[type="text"],
+.entry-field input[type="number"] {
     margin: 0;
 }
 
@@ -105,7 +104,6 @@
 .ui-dialog-buttonset .fw-button {
     margin-left: 6px;
 }
-
 
 .ui-widget-overlay {
     position: fixed;

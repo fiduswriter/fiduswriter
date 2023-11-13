@@ -1,0 +1,15 @@
+.transpile-cache/
+venv/
+static-transpile/
+static-libs/
+static-collected/
+testing/
+.eslintrc.js
+**/*.js
+**/*.mjs
+**/*.json
+**/*.html
+.direnv
+venv
+.transpile
+.babelrc

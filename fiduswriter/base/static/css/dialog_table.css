@@ -27,7 +27,7 @@
 .fw-tablerow-title.wtooltip::after {
     display: inline-block;
     vertical-align: baseline;
-    content: '?';
+    content: "?";
     line-height: 1;
     color: white;
     background-color: rgba(var(--tooltip-background-color));

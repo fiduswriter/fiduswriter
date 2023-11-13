@@ -44,27 +44,27 @@ table td {
     padding: 4px;
 }
 
-.doc-part[data-type='heading_part'] {
+.doc-part[data-type="heading_part"] {
     background-color: var(--part-heading-background-color);
 }
 
-.doc-part[data-type='contributors_part'] {
+.doc-part[data-type="contributors_part"] {
     background-color: var(--part-contributors-background-color);
 }
 
-.doc-part[data-type='richtext_part'] {
+.doc-part[data-type="richtext_part"] {
     background-color: var(--part-richtext-background-color);
 }
 
-.doc-part[data-type='tags_part'] {
+.doc-part[data-type="tags_part"] {
     background-color: var(--part-tags-background-color);
 }
 
-.doc-part[data-type='table_part'] {
+.doc-part[data-type="table_part"] {
     background-color: var(--part-table-background-color);
 }
 
-.doc-part[data-type='table_of_contents'] {
+.doc-part[data-type="table_of_contents"] {
     background-color: var(--part-toc-background-color);
 }
 

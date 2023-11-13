@@ -68,7 +68,8 @@
 }
 
 .fw-data-table-title i.fa,
-.fw-data-table-title i.far {
+.fw-data-table-title i.far,
+.fw-data-table-title i.fas {
     margin-right: 10px;
 }
 
@@ -94,7 +95,7 @@
 }
 
 /* A deleted access rights row */
-.collaborator-tr[data-right='delete'] {
+.collaborator-tr[data-right="delete"] {
     display: none;
 }
 

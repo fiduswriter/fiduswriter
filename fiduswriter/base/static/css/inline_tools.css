@@ -52,33 +52,33 @@
 .menuicon.em::before,
 .menuicon.sup::before,
 .menuicon.sub::before {
-    font-family: 'Font Awesome 5 Free', monospace;
+    font-family: "Font Awesome 5 Free", monospace;
     font-weight: 900;
 }
 
 .menuicon.strong::before {
-    content: '\f032';
+    content: "\f032";
 }
 
 .menuicon.em::before {
-    content: '\f033';
+    content: "\f033";
 }
 
 .menuicon.sup::before {
-    content: '\f12b';
+    content: "\f12b";
 }
 
 .menuicon.sub::before {
-    content: '\f12c';
+    content: "\f12c";
 }
 
 .menuicon.smallcaps::before {
-    content: 'Tt';
+    content: "Tt";
     font-weight: bold;
     font-variant: small-caps;
 }
 
 .menuicon.nocase::before {
-    content: 'cP';
+    content: "cP";
     font-weight: bold;
 }

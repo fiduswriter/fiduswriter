@@ -81,9 +81,10 @@ export class DocTemplatesOverview {
                 noRows: gettext("No document templates available"),
                 noResults: gettext("No document templates found") // Message shown when there are no search results
             },
-            layout: {
-                top: ""
-            },
+            template: (options, _dom) => `<div class='${options.classes.container}'${options.scrollY.length ? ` style='height: ${options.scrollY}; overflow-Y: auto;'` : ""}></div>
+            <div class='${options.classes.bottom}'>
+                <nav class='${options.classes.pagination}'></nav>
+            </div>`,
             data: {
                 headings: ["", this.dtBulk.getHTML(), gettext("Title"), gettext("Created"), gettext("Last changed"), ""],
                 data: this.templateList.map(docTemplate => this.createTableRow(docTemplate))
@@ -105,7 +106,7 @@ export class DocTemplatesOverview {
             this.lastSort = {column, dir}
         })
 
-        this.dtBulk.init(this.table.table)
+        this.dtBulk.init(this.table.dom)
     }
 
     createTableRow(docTemplate) {
@@ -137,8 +138,8 @@ export class DocTemplatesOverview {
     }
 
     removeTableRows(ids) {
-        const existingRows = this.table.data.map((data, index) => {
-            const id = parseInt(data.cells[0].textContent)
+        const existingRows = this.table.data.data.map((row, index) => {
+            const id = parseInt(row[0].text)
             if (ids.includes(id)) {
                 return index
             } else {
@@ -147,14 +148,14 @@ export class DocTemplatesOverview {
         }).filter(rowIndex => rowIndex !== false)
 
         if (existingRows.length) {
-            this.table.rows().remove(existingRows)
+            this.table.rows.remove(existingRows)
         }
     }
 
     addDocTemplateToTable(docTemplate) {
         this.table.insert({data: [this.createTableRow(docTemplate)]})
         // Redo last sort
-        this.table.columns().sort(this.lastSort.column, this.lastSort.dir)
+        this.table.columns.sort(this.lastSort.column, this.lastSort.dir)
     }
 
     getTemplateListData() {

@@ -1,6 +1,6 @@
 /* Styles for showing diff changes */
-span[data-diff='offline-inserted'],
-span[data-diff='online-inserted'] {
+span[data-diff="offline-inserted"],
+span[data-diff="online-inserted"] {
     background-color: lightgreen;
 }
 
@@ -58,11 +58,12 @@ hr.selected-dec {
 #editor-diff-common,
 #editor-diff-online {
     width: 33%;
-    counter-reset: prosemirror-footnote cat-figure cat-equation cat-photo cat-table;
+    counter-reset: prosemirror-footnote cat-figure cat-equation cat-photo
+        cat-table;
 }
 
 #editor-merge-view figure figcaption span.label::after,
-#editor-merge-view table[data-category='table'] caption span.label::after {
+#editor-merge-view table[data-category="table"] caption span.label::after {
     content: none !important;
     display: none;
 }
@@ -72,13 +73,13 @@ span.footnote-change {
     background: rgb(140 191 250);
 }
 
-footnote { /* stylelint-disable-line */
+div.footnote-view {
     display: inline-block;
     position: relative;
     cursor: pointer;
 }
 
-footnote::after { /* stylelint-disable-line */
+div.footnote-view::after {
     content: counter(prosemirror-footnote);
     vertical-align: super;
     font-size: 75%;
@@ -110,12 +111,12 @@ footnote::after { /* stylelint-disable-line */
     position: absolute;
     top: -5px;
     left: 27px;
-    content: ' ';
+    content: " ";
     height: 0;
     width: 0;
 }
 
-footnote div.footnote-tooltip p { /* stylelint-disable-line */
+div.footnote-view div.footnote-tooltip p {
     margin-bottom: 0 !important;
 }
 
@@ -139,7 +140,7 @@ footnote div.footnote-tooltip p { /* stylelint-disable-line */
 #editor-diff-common .citation::before,
 #editor-diff-offline .citation::before,
 #editor-diff-online .citation::before {
-    content: '\f02d';
+    content: "\f02d";
     font-family: FontAwesome; /* stylelint-disable-line */
     font-style: normal;
     font-weight: normal;
@@ -186,7 +187,7 @@ span[href] {
     font-size: 13px;
     font-weight: 400;
     line-height: 18px;
-    letter-spacing: .13px;
+    letter-spacing: 0.13px;
     cursor: auto;
     border-radius: 5px;
 }

@@ -89,10 +89,7 @@ export class BibliographyOverview {
                 noRows: gettext("No sources registered"),
                 noResults: gettext("No sources found") // Message shown when there are no search results
             },
-            layout: {
-                top: "",
-                bottom: ""
-            },
+            template: (options, _dom) => `<div class='${options.classes.container}'${options.scrollY.length ? ` style='height: ${options.scrollY}; overflow-Y: auto;'` : ""}></div>`,
             data: {
                 headings: ["", this.dtBulk.getHTML(), gettext("Title"), gettext("Sourcetype"), gettext("Author"), gettext("Published"), ""],
                 data: ids.map(id => this.createTableRow(id))
@@ -114,7 +111,7 @@ export class BibliographyOverview {
             this.lastSort = {column, dir}
         })
 
-        this.dtBulk.init(this.table.table)
+        this.dtBulk.init(this.table.dom)
     }
 
     /** Adds a list of bibliography categories to current list of bibliography categories.
@@ -150,7 +147,7 @@ export class BibliographyOverview {
         this.removeTableRows(ids)
         this.table.insert({data: ids.map(id => this.createTableRow(id))})
         // Redo last sort
-        this.table.columns().sort(this.lastSort.column, this.lastSort.dir)
+        this.table.columns.sort(this.lastSort.column, this.lastSort.dir)
     }
 
     createTableRow(id) {
@@ -174,8 +171,8 @@ export class BibliographyOverview {
     }
 
     removeTableRows(ids) {
-        const existingRows = this.table.data.map((data, index) => {
-            const id = parseInt(data.cells[0].textContent)
+        const existingRows = this.table.data.data.map((row, index) => {
+            const id = parseInt(row[0].data)
             if (ids.includes(id)) {
                 return index
             } else {
@@ -184,7 +181,7 @@ export class BibliographyOverview {
         }).filter(rowIndex => rowIndex !== false)
 
         if (existingRows.length) {
-            this.table.rows().remove(existingRows)
+            this.table.rows.remove(existingRows)
         }
     }
 

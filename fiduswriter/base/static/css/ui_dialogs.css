@@ -49,7 +49,7 @@
 .ui-dialog-titlebar-close,
 .ui-dialog-titlebar-help {
     position: absolute;
-    right: .3em;
+    right: 0.3em;
     top: 50%;
     width: 20px;
     margin: -10px 0 0;
@@ -82,17 +82,17 @@
 }
 
 .ui-icon-closethick::before {
-    width: .7em;
+    width: 0.7em;
     height: 1em;
     padding-top: 5px;
-    content: '\f00d';
+    content: "\f00d";
 }
 
 .ui-icon-help::before {
-    width: .7em;
+    width: 0.7em;
     height: 1em;
     padding-top: 5px;
-    content: '\f128';
+    content: "\f128";
 }
 
 .ui-dialog-content {

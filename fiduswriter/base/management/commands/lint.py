@@ -16,6 +16,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         fix = options["fix"]
+        call_command("prettier", fix=fix)
         call_command("lint_js", fix=fix)
         call_command("lint_css", fix=fix)
         call_command("lint_py", fix=fix)

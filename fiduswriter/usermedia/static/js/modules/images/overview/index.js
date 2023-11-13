@@ -141,7 +141,7 @@ export class ImageOverview {
         this.removeTableRows(ids)
         this.table.insert({data: ids.map(id => this.createTableRow(id))})
         // Redo last sort
-        this.table.columns().sort(this.lastSort.column, this.lastSort.dir)
+        this.table.columns.sort(this.lastSort.column, this.lastSort.dir)
     }
 
     createTableRow(id) {
@@ -179,8 +179,8 @@ export class ImageOverview {
     removeTableRows(ids) {
         ids = ids.map(id => parseInt(id))
 
-        const existingRows = this.table.data.map((data, index) => {
-            const id = parseInt(data.cells[0].textContent)
+        const existingRows = this.table.data.data.map((row, index) => {
+            const id = parseInt(row[0].data)
             if (ids.includes(id)) {
                 return index
             } else {
@@ -189,7 +189,7 @@ export class ImageOverview {
         }).filter(rowIndex => rowIndex !== false)
 
         if (existingRows.length) {
-            this.table.rows().remove(existingRows)
+            this.table.rows.remove(existingRows)
         }
     }
 
@@ -225,9 +225,16 @@ export class ImageOverview {
                 noRows: gettext("No images available"), // Message shown when there are no images
                 noResults: gettext("No images found") // Message shown when no images are found after search
             },
-            layout: {
-                top: ""
-            },
+            template: (options, _dom) =>
+                `<div class='${options.classes.container}'${options.scrollY.length ? ` style='height: ${options.scrollY}; overflow-Y: auto;'` : ""}></div>
+            <div class='${options.classes.bottom}'>
+                ${
+    options.paging ?
+        `<div class='${options.classes.info}'></div>` :
+        ""
+}
+                <nav class='${options.classes.pagination}'></nav>
+            </div>`,
             data: {
                 headings: ["", this.dtBulk.getHTML(), gettext("File"), gettext("Size (px)"), gettext("Added"), ""],
                 data: ids.map(id => this.createTableRow(id))
@@ -249,7 +256,7 @@ export class ImageOverview {
             this.lastSort = {column, dir}
         })
 
-        this.dtBulk.init(this.table.table)
+        this.dtBulk.init(this.table.dom)
     }
 
     // get IDs of selected bib entries

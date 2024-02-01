@@ -314,6 +314,7 @@ module.exports = { // eslint-disable-line no-undef
         "settings_USE_SERVICE_WORKER": "readonly",
         "settings_MEDIA_MAX_SIZE": "readonly",
         "settings_JSONPATCH": "readonly",
+        "settings_FOOTER_LINKS": "readonly",
         "transpile_VERSION": "readonly",
         "process": "readonly"
     }

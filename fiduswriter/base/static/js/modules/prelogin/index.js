@@ -11,31 +11,33 @@ export class PreloginPage {
         this.pluginLoaders = {}
         this.title = ""
         this.contents = ""
-        this.footerLinks = [
-            {
-                text: gettext("Terms and Conditions"),
-                link: "/pages/terms/"
-            },
-            {
-                text: gettext("Privacy policy"),
-                link: "/pages/privacy/"
-            },
-            {
-                text: gettext("Equations and Math with MathLive"),
-                link: "https://mathlive.io/",
-                external: true
-            },
-            {
-                text: gettext("Citations with Citation Style Language"),
-                link: "https://citationstyles.org/",
-                external: true
-            },
-            {
-                text: gettext("Editing with ProseMirror"),
-                link: "https://prosemirror.net/",
-                external: true
-            }
-        ]
+        this.footerLinks = settings_FOOTER_LINKS.length ?
+            settings_FOOTER_LINKS :
+            [
+                {
+                    text: gettext("Terms and Conditions"),
+                    link: "/pages/terms/"
+                },
+                {
+                    text: gettext("Privacy policy"),
+                    link: "/pages/privacy/"
+                },
+                {
+                    text: gettext("Equations and Math with MathLive"),
+                    link: "https://github.com/arnog/mathlive#readme",
+                    external: true
+                },
+                {
+                    text: gettext("Citations with Citation Style Language"),
+                    link: "https://citationstyles.org/",
+                    external: true
+                },
+                {
+                    text: gettext("Editing with ProseMirror"),
+                    link: "https://prosemirror.net/",
+                    external: true
+                }
+            ]
         this.headerLinks = [
             {
                 type: "button",

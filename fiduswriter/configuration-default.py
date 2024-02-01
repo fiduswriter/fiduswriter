@@ -98,6 +98,33 @@ MANAGERS = ADMINS
 # DEFAULT_FROM_EMAIL = 'mail@email.com' # For messages to end users
 # SERVER_EMAIL = 'mail@email.com' # For messages to server administrators
 
+# FOOTER_LINKS = [
+#     {
+#         "text": "Terms and Conditions",
+#         "link": "/pages/terms/"
+#     },
+#     {
+#         "text": "Privacy policy",
+#         "link": "/pages/privacy/"
+#     },
+#     {
+#         "text": "Equations and Math with MathLive",
+#         "link": "https://github.com/arnog/mathlive#readme",
+#         "external": True
+#     },
+#     {
+#         "text": "Citations with Citation Style Language",
+#         "link": "https://citationstyles.org/",
+#         "external": True
+#     },
+#     {
+#         "text": "Editing with ProseMirror",
+#         "link": "https://prosemirror.net/",
+#         "external": True
+#     }
+# ]
+
+
 INSTALLED_APPS = [
     # If you want to enable one or several of the social network login options
     # below, make sure you add the authorization keys at:

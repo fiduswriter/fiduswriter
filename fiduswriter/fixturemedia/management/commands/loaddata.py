@@ -35,6 +35,10 @@ def models_with_filefields():
 
 
 class Command(django.core.management.commands.loaddata.Command):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fixture_media_paths = []
+
     def load_images_for_signal(self, sender, **kwargs):
         instance = kwargs["instance"]
         for field in sender._meta.fields:

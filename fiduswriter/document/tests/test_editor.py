@@ -604,7 +604,8 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             Keys.RETURN
         ).perform()
         self.retry_click(
-            (By.CSS_SELECTOR, "tr:nth-child(3) .fa-caret-down.edit-right")
+            self.driver,
+            (By.CSS_SELECTOR, "tr:nth-child(3) .fa-caret-down.edit-right"),
         )
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, "li[title=Read]"))

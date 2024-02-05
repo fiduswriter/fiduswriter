@@ -73,12 +73,12 @@ class SeleniumHelper(object):
             if count > wait_time:
                 break
 
-    def retry_click(self, selector, retries=5):
+    def retry_click(self, driver, selector, retries=5):
         count = 0
         while count < retries:
             try:
-                WebDriverWait(self.driver, self.wait_time).until(
-                    EC.presence_of_element_located(selector)
+                WebDriverWait(driver, self.wait_time).until(
+                    EC.element_to_be_clickable(selector)
                 ).click()
                 break
             except ElementClickInterceptedException:

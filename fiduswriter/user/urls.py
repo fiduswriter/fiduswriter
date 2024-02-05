@@ -32,8 +32,6 @@ urlpatterns = [
     re_path(
         "^invites/decline/$", views.invites_decline, name="invites_decline"
     ),
-    # User avatar handling
-    re_path("^avatar/", include("avatar.urls")),
     re_path(
         "^get_confirmkey_data/$",
         views.get_confirmkey_data,

@@ -15,6 +15,7 @@ const baseRule = {
 }
 
 const predefinedVariables = {
+    "settings_BRANDING_LOGO": settings.BRANDING_LOGO ? JSON.stringify(settings.BRANDING_LOGO) : false,
     "settings_STATIC_URL": JSON.stringify(settings.STATIC_URL),
     "settings_REGISTRATION_OPEN": settings.REGISTRATION_OPEN,
     "settings_SOCIALACCOUNT_OPEN": settings.SOCIALACCOUNT_OPEN,

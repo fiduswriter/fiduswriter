@@ -10,13 +10,25 @@
 }
 
 .prelogin #header-nav {
-    position: absolute;
-    right: 40px;
-    top: 38px;
+    float: right;
     font-size: 14px;
     color: var(--cs-5-text);
     line-height: 34px;
+    margin-left: 25px;
 }
+
+.prelogin .fw-login-branding-logo {
+    float: right;
+}
+
+.prelogin .fw-login-branding-logo img {
+    max-height: 34px;
+}
+
+.prelogin .fw-header > .fw-container {
+    padding-right: 19.5px;
+}
+
 
 @media (max-width: 540px) {
     .prelogin #header-nav {

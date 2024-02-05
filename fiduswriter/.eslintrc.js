@@ -300,6 +300,7 @@ module.exports = { // eslint-disable-line no-undef
         "gettext": "readonly",
         "staticUrl": "readonly",
         "interpolate": "readonly",
+        "settings_BRANDING_LOGO": "readonly",
         "settings_STATIC_URL": "readonly",
         "settings_REGISTRATION_OPEN": "readonly",
         "settings_SOCIALACCOUNT_OPEN": "readonly",

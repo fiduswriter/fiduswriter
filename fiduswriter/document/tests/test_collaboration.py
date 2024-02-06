@@ -870,8 +870,10 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.driver2.find_element(
             By.CSS_SELECTOR, ".margin-box.comment"
         ).click()
-        self.driver2.find_element(
-            By.CSS_SELECTOR, "#answer-editor .ProseMirror"
+        WebDriverWait(self.driver2, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, "#answer-editor .ProseMirror")
+            )
         ).send_keys("My answer")
         self.driver2.find_element(
             By.CSS_SELECTOR, ".comment-answer .submit"
@@ -1174,7 +1176,9 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.wait_for_doc_size(self.driver2, 34)
 
         # without clicking on content the buttons will not work
-        content = self.driver2.find_element(By.CLASS_NAME, "article-body")
+        content = self.driver2.find_element(
+            By.CSS_SELECTOR, "div.article-body p"
+        )
         content.click()
 
         p2 = multiprocessing.Process(

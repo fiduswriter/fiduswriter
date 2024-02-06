@@ -159,3 +159,6 @@ MEDIA_MAX_SIZE = False
 # Which domains served over http to allow post requests from. Should be the same as ALLOWED_HOSTS
 # But including https://, for example "https://www.domain.com".
 # CSRF_TRUSTED_ORIGINS = []
+
+# Add branding logo inside of "static-libs" folder. For example: static-libs/svg/logo.svg
+# BRANDING_LOGO = "svg/logo.svg"

@@ -865,10 +865,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             len(self.get_comment(self.driver)),
             len(self.get_comment(self.driver2)),
         )
-
+        time.sleep(1)
         # Add comment answer
-        self.driver2.find_element(
-            By.CSS_SELECTOR, ".margin-box.comment"
+        WebDriverWait(self.driver2, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, ".margin-box.comment")
+            )
         ).click()
         WebDriverWait(self.driver2, self.wait_time).until(
             EC.presence_of_element_located(

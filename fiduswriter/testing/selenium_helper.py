@@ -2,7 +2,9 @@ from builtins import object
 import re
 import os
 import time
-
+from selenium.common.exceptions import ElementClickInterceptedException
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 from allauth.account.models import EmailAddress
 from django.contrib.auth.hashers import make_password
@@ -70,3 +72,15 @@ class SeleniumHelper(object):
             count += 1
             if count > wait_time:
                 break
+
+    def retry_click(self, driver, selector, retries=5):
+        count = 0
+        while count < retries:
+            try:
+                WebDriverWait(driver, self.wait_time).until(
+                    EC.element_to_be_clickable(selector)
+                ).click()
+                break
+            except ElementClickInterceptedException:
+                count += 1
+                time.sleep(1)

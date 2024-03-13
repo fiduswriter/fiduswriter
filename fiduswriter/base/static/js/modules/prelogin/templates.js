@@ -21,6 +21,11 @@ export const basePreloginTemplate = ({contents, language, headerLinks = [], foot
         return returnValue
     }).join("")
 }</nav>
+${
+    settings_BRANDING_LOGO ?
+        `<div class="fw-login-branding-logo"><img src="${staticUrl(settings_BRANDING_LOGO)}" /></div>` :
+        ""
+}
    </div>
    ${settings_IS_FREE ?
         `<div class="star" style="position:relative;margin:0 auto;"><img src="${staticUrl("img/free_star.png")}" style="position:absolute;top:0px;left:0px;z-index:3;height:73px;"></div>` :

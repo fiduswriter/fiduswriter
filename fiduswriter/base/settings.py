@@ -134,7 +134,7 @@ SOCIALACCOUNT_LOGIN_ON_GET = True
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
-    # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    #    "django.contrib.staticfiles.finders.DefaultStorageFinder",
 )
 
 # Make this unique, and don't share it with anybody. Change the default string.
@@ -373,3 +373,6 @@ USE_SERVICE_WORKER = True
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 SILENCED_SYSTEM_CHECKS = ["models.W042"]
+
+FOOTER_LINKS = []
+BRANDING_LOGO = False

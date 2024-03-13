@@ -24,7 +24,7 @@ class Command(BaseCommand):
         if not os.path.exists(TARGET_PATH):
             os.makedirs(TARGET_PATH)
         SRC_PATH = settings.SRC_PATH
-        with open(os.path.join(SRC_PATH, "configuration.py-default")) as file:
+        with open(os.path.join(SRC_PATH, "configuration-default.py")) as file:
             CONFIGURATION = file.read()
         CONFIGURATION += "\n# Don't share the SECRET_KEY with anyone."
         CONFIGURATION += "\nSECRET_KEY = '{}'".format(SECRET_KEY)

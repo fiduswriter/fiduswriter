@@ -302,6 +302,7 @@ module.exports = { // eslint-disable-line no-undef
         "gettext": "readonly",
         "staticUrl": "readonly",
         "interpolate": "readonly",
+        "settings_BRANDING_LOGO": "readonly",
         "settings_STATIC_URL": "readonly",
         "settings_REGISTRATION_OPEN": "readonly",
         "settings_SOCIALACCOUNT_OPEN": "readonly",
@@ -316,6 +317,7 @@ module.exports = { // eslint-disable-line no-undef
         "settings_USE_SERVICE_WORKER": "readonly",
         "settings_MEDIA_MAX_SIZE": "readonly",
         "settings_JSONPATCH": "readonly",
+        "settings_FOOTER_LINKS": "readonly",
         "transpile_VERSION": "readonly",
         "process": "readonly"
     }

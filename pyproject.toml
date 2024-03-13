@@ -32,7 +32,7 @@ repository = "https://www.github.com/fiduswriter/fiduswriter"
 
 [project.optional-dependencies]
 books = ["fiduswriter-books ~= 3.11.4"]
-citation-api-import = ["fiduswriter-citation-api-import ~= 3.11.2"]
+citation-api-import = ["fiduswriter-citation-api-import ~= 3.11.4"]
 languagetool = ["fiduswriter-languagetool ~= 3.11.2"]
 ojs = ["fiduswriter-ojs ~= 3.11.4"]
 phplist = ["fiduswriter-phplist ~= 3.11.5"]

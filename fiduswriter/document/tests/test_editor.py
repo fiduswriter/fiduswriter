@@ -604,13 +604,11 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         ActionChains(self.driver).send_keys(Keys.TAB).send_keys(
             Keys.RETURN
         ).perform()
-        time.sleep((self.wait_time / 3))
         # Downgrade the write rights to read rights for user4
-        WebDriverWait(self.driver, self.wait_time).until(
-            EC.element_to_be_clickable(
-                (By.CSS_SELECTOR, "tr:nth-child(3) .fa-caret-down.edit-right")
-            )
-        ).click()
+        self.retry_click(
+            self.driver,
+            (By.CSS_SELECTOR, "tr:nth-child(3) .fa-caret-down.edit-right"),
+        )
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, "li[title=Read]"))
         ).click()
@@ -622,16 +620,30 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, "li[title=Write]"))
         ).click()
-        self.driver.find_element(By.CSS_SELECTOR, "#my-contacts").click()
-        time.sleep(1)
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, "tr:nth-child(6) i.icon-access-write")
+            )
+        )
         self.driver.find_element(
             By.CSS_SELECTOR, ".ui-dialog .fw-dark"
         ).click()
         time.sleep(1)
         # We keep track of the invitation email to open it later.
-        user5_invitation_email = mail.outbox[-3].body
-        user6_invitation_email = mail.outbox[-2].body
-        user7_invitation_email = mail.outbox[-1].body
+        last_three_emails = [
+            mail.outbox[-3].body,
+            mail.outbox[-2].body,
+            mail.outbox[-1].body,
+        ]
+        user5_invitation_email = next(
+            (s for s in last_three_emails if "yeti5" in s), None
+        )
+        user6_invitation_email = next(
+            (s for s in last_three_emails if "yeti6" in s), None
+        )
+        user7_invitation_email = next(
+            (s for s in last_three_emails if "yeti7" in s), None
+        )
         # We close the editor
         self.driver.find_element(By.ID, "close-document-top").click()
         WebDriverWait(self.driver, self.wait_time).until(
@@ -1072,7 +1084,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Log out"]'
         ).click()
-        # User 3 signs in and accepts the invite of user 7. Access rights
+        # User3 signs in and accepts the invite of user7. Access rights
         # should be upgraded to write access.
         self.driver.find_element(By.ID, "id-login").send_keys("Yeti3")
         self.driver.find_element(By.ID, "id-password").send_keys("password")

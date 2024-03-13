@@ -98,6 +98,33 @@ MANAGERS = ADMINS
 # DEFAULT_FROM_EMAIL = 'mail@email.com' # For messages to end users
 # SERVER_EMAIL = 'mail@email.com' # For messages to server administrators
 
+# FOOTER_LINKS = [
+#     {
+#         "text": "Terms and Conditions",
+#         "link": "/pages/terms/"
+#     },
+#     {
+#         "text": "Privacy policy",
+#         "link": "/pages/privacy/"
+#     },
+#     {
+#         "text": "Equations and Math with MathLive",
+#         "link": "https://github.com/arnog/mathlive#readme",
+#         "external": True
+#     },
+#     {
+#         "text": "Citations with Citation Style Language",
+#         "link": "https://citationstyles.org/",
+#         "external": True
+#     },
+#     {
+#         "text": "Editing with ProseMirror",
+#         "link": "https://prosemirror.net/",
+#         "external": True
+#     }
+# ]
+
+
 INSTALLED_APPS = [
     # If you want to enable one or several of the social network login options
     # below, make sure you add the authorization keys at:
@@ -111,6 +138,7 @@ INSTALLED_APPS = [
     # 'allauth.socialaccount.providers.persona',
     # 'allauth.socialaccount.providers.soundcloud',
     # 'allauth.socialaccount.providers.stackexchange',
+    "user_template_manager",
 ]
 
 # A list of allowed hostnames of this Fidus Writer installation
@@ -131,3 +159,6 @@ MEDIA_MAX_SIZE = False
 # Which domains served over http to allow post requests from. Should be the same as ALLOWED_HOSTS
 # But including https://, for example "https://www.domain.com".
 # CSRF_TRUSTED_ORIGINS = []
+
+# Add branding logo inside of "static-libs" folder. For example: static-libs/svg/logo.svg
+# BRANDING_LOGO = "svg/logo.svg"

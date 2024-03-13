@@ -865,9 +865,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             len(self.get_comment(self.driver)),
             len(self.get_comment(self.driver2)),
         )
+        time.sleep(1)
         # Add comment answer
-        self.driver2.find_element(
-            By.CSS_SELECTOR, ".margin-box.comment"
+        WebDriverWait(self.driver2, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, ".margin-box.comment")
+            )
         ).click()
         WebDriverWait(self.driver2, self.wait_time).until(
             EC.presence_of_element_located(
@@ -1175,7 +1178,9 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.wait_for_doc_size(self.driver2, 34)
 
         # without clicking on content the buttons will not work
-        content = self.driver2.find_element(By.CLASS_NAME, "article-body")
+        content = self.driver2.find_element(
+            By.CSS_SELECTOR, "div.article-body p"
+        )
         content.click()
 
         p2 = multiprocessing.Process(

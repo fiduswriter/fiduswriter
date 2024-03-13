@@ -24,4 +24,5 @@ prune fiduswriter/npm_mjs
 prune fiduswriter/ojs
 prune fiduswriter/phplist
 prune fiduswriter/payment
+prune fiduswriter/screenshots
 prune travis

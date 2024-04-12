@@ -628,9 +628,9 @@ def get_revision(request, revision_id):
             content_type="application/zip; charset=x-user-defined",
             status=200,
         )
-        http_response[
-            "Content-Disposition"
-        ] = "attachment; filename=some_name.zip"
+        http_response["Content-Disposition"] = (
+            "attachment; filename=some_name.zip"
+        )
     else:
         http_response = HttpResponse(status=404)
     return http_response

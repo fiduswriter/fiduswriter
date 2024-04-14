@@ -158,3 +158,16 @@ footer.prelogin {
     vertical-align: top;
     margin-bottom: 10px;
 }
+
+.star {
+    position: relative;
+    margin: 0 auto;
+}
+
+.star img {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 3;
+    height: 73px;
+}

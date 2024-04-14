@@ -5,12 +5,12 @@ export const baseBodyTemplate = ({user, contents, hasOverview, app}) => `
 <div id="wait">
     <i class="fa fa-spinner fa-pulse"></i>
 </div>
-<header class="fw-header">
+<header class="fw-header" role="banner">
     <div class="fw-container">
         <a href="${app && app.routes[""].app === "document" ? "/" : "/documents/"}">
             <h1 class="fw-logo">
                 <span class="fw-logo-text"></span>
-                <img src="${staticUrl("svg/icon.svg")}" />
+                <img src="${staticUrl("svg/icon.svg")}" alt="Logo" />
             </h1>
         </a>
         <nav id="header-nav"></nav>

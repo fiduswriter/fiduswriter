@@ -123,7 +123,8 @@ export class ImageSelectionDialog {
             columns: [
                 {
                     select: 0,
-                    hidden: true
+                    hidden: true,
+                    type: "string"
                 },
                 {
                     select: [1, 3],
@@ -152,8 +153,12 @@ export class ImageSelectionDialog {
     }
 
     checkRow(dataIndex) {
-        const cell = this.table.data.data[dataIndex]
-        const [db, id] = (cell.text || cell.data).split("-").map(
+        const row = this.table.data.data[dataIndex]
+        if (!row) {
+            return
+        }
+        const cell = row.cells[0]
+        const [db, id] = cell.text.split("-").map(
             (val, index) => index ? parseInt(val) : val // only parseInt id (where index > 0)
         )
         if (id === this.imgId) {
@@ -164,9 +169,9 @@ export class ImageSelectionDialog {
         this.imgDb = db
         this.table.data.data.forEach((row, index) => {
             if (index === dataIndex && this.imgId) {
-                row[3] = {data: "<i class=\"fa fa-check\" aria-hidden=\"true\"></i>"}
+                row.cells[3].data = [{nodeName: "i", attributes: {class: "fa fa-check", "aria-hidden": "true"}}]
             } else {
-                row[3] = {data: "&emsp;"}
+                row.cells[3].data = []
             }
         })
         this.table.render()

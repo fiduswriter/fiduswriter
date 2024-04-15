@@ -180,7 +180,7 @@ export class ImageOverview {
         ids = ids.map(id => parseInt(id))
 
         const existingRows = this.table.data.data.map((row, index) => {
-            const id = parseInt(row[0].data)
+            const id = row.cells[0].data
             if (ids.includes(id)) {
                 return index
             } else {
@@ -240,6 +240,10 @@ export class ImageOverview {
                 data: ids.map(id => this.createTableRow(id))
             },
             columns: [
+                {
+                    select: 0,
+                    type: "number"
+                },
                 {
                     select: hiddenCols,
                     hidden: true

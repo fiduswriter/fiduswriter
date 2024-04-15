@@ -203,9 +203,9 @@ class UsermediaOverviewTest(LiveTornadoTestCase, SeleniumHelper):
             "'Confirm deletion'])[1]/following::button[2]",
         ).click()
         image_placeholder = WebDriverWait(driver, self.wait_time).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "datatables-empty"))
+            EC.presence_of_element_located((By.CLASS_NAME, "datatable-empty"))
         )
-        self.assertEqual("No images available", image_placeholder.text)
+        self.assertEqual("File Size (px) Added\nNo images available", image_placeholder.text)
 
     def tearDown(self):
         self.assertEqual([], self.verificationErrors)

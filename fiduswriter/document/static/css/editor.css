@@ -584,6 +584,10 @@ span.delete {
     cursor: pointer;
 }
 
+.image-selection-table .datatable-container tbody tr:nth-child(2n + 1) {
+    background-color: var(--table-row-background-color);
+}
+
 /* MathLive Editor Overwrite */
 
 .math-field {

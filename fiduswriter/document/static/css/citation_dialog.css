@@ -26,6 +26,14 @@
     width: 128px;
 }
 
+#configure-citation .datatable-container tbody tr {
+    cursor: pointer;
+}
+
+#configure-citation .datatable-container tbody tr:nth-child(2n + 1) {
+    background-color: var(--table-row-background-color);
+}
+
 .fw-cite-parts-table td {
     border: none;
     padding: 0;

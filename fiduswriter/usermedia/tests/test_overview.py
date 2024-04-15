@@ -205,7 +205,9 @@ class UsermediaOverviewTest(LiveTornadoTestCase, SeleniumHelper):
         image_placeholder = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "datatable-empty"))
         )
-        self.assertEqual("File Size (px) Added\nNo images available", image_placeholder.text)
+        self.assertEqual(
+            "File Size (px) Added\nNo images available", image_placeholder.text
+        )
 
     def tearDown(self):
         self.assertEqual([], self.verificationErrors)

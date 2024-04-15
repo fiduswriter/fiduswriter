@@ -56,7 +56,7 @@ export class LoginPage extends PreloginPage {
                     <ul id="non-field-errors" class="errorlist"></ul>
                     <div class="input-wrapper">
                         <label for="id-login">${gettext("Username")}</label>
-                        <input type="text" name="login" placeholder="${gettext("Username or e-mail")}" autofocus="autofocus" required="" id="id-login" autocomplete="username email">
+                        <input type="text" name="login" placeholder="${gettext("Username or e-mail")}" autofocus="autofocus" required="" id="id-login" autocomplete="username">
                         <ul id="id-login-errors" class="errorlist"></ul>
                     </div>
                     <div class="input-wrapper">

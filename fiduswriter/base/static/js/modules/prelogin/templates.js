@@ -28,7 +28,7 @@ ${
 }
    </div>
    ${settings_IS_FREE ?
-        `<div class="star"><img src="${staticUrl("img/free_star.png")}" alt"Free"></div>` :
+        `<div class="star"><img src="${staticUrl("img/free_star.png")}" alt="Free"></div>` :
         ""
 }
 </header>

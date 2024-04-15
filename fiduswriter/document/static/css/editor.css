@@ -107,12 +107,14 @@ body.editor header {
 }
 
 #header-navigation .header-nav-item {
-    opacity: 0.6;
     line-height: 35px;
+    color: var(--nagivation-link-text-color);
+    letter-spacing: 1px;
 }
 
 #header-navigation .header-nav-item:hover {
-    opacity: 1;
+    color: var(--nagivation-link-active-text-color);
+    text-shadow: 1px 0 0 var(--nagivation-link-active-text-color);
 }
 
 #header-navigation span.deactivated {

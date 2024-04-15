@@ -84,7 +84,7 @@
 .fw-nav-item a:hover,
 .fw-nav-item.active-menu-wrapper a {
     color: var(--nagivation-link-active-text-color);
-    text-shadow: 1px 0px 0px var(--nagivation-link-active-text-color);
+    text-shadow: 1px 0 0 var(--nagivation-link-active-text-color);
 }
 
 #user-preferences {

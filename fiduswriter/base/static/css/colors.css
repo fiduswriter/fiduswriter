@@ -12,7 +12,7 @@
     --alert-box-shadow-color: 240, 240, 240, 1;
     --dropup-box-shadow-color: 0, 0, 0, 0.11;
     --nagivation-link-text-color: #dde7e3;
-    --nagivation-link-active-text-color: #fff;
+    --nagivation-link-active-text-color: #ffffff;
     --tokenfield-color: #555555;
     --tooltip-background-color: 38, 38, 38, 0.6;
     --chat-highlight-background-color: #6495ed;
@@ -85,7 +85,7 @@
     /* dark on white-ish background */
     --cs-light-text: #2c2723;
     --cs-light-hover: #000000;
-    --cs-light-text-secondary: #999999;
+    --cs-light-text-secondary: #6e6e6e;
     --cs-light-border: #e0e0e0;
     --cs-light-background: #f9f9f9;
     --cs-light-background-hover: #e0e0e0;

@@ -123,7 +123,10 @@ export class ImageSelectionDialog {
             columns: [
                 {
                     select: 0,
-                    hidden: true,
+                    hidden: true
+                },
+                {
+                    select: [0, 2],
                     type: "string"
                 },
                 {
@@ -147,18 +150,19 @@ export class ImageSelectionDialog {
                 `<img src="${image.image.thumbnail}" style="max-heigth:30px;max-width:30px;">`,
             escapeText(image.image.title),
             image.db === this.imgDb && image.image.id === this.imgId ?
-                "<i class=\"fa fa-check\" aria-hidden=\"true\"></i>" :
-                "&emsp;"
+                [{nodeName: "i", attributes: {class: "fa fa-check", "aria-hidden": "true"}}] :
+                []
         ]
     }
 
     checkRow(dataIndex) {
         const row = this.table.data.data[dataIndex]
+        console.log({row, dataIndex})
         if (!row) {
             return
         }
         const cell = row.cells[0]
-        const [db, id] = cell.text.split("-").map(
+        const [db, id] = cell.data.split("-").map(
             (val, index) => index ? parseInt(val) : val // only parseInt id (where index > 0)
         )
         if (id === this.imgId) {
@@ -174,17 +178,18 @@ export class ImageSelectionDialog {
                 row.cells[3].data = []
             }
         })
-        this.table.render()
+        this.table.refresh()
     }
 
     bindEvents() {
         // functions for the image selection dialog
-        this.table.body.addEventListener("click", event => {
+        this.table.dom.addEventListener("click", event => {
             const el = {}
             switch (true) {
-            case findTarget(event, "tr", el):
-                this.checkRow(el.target.dataIndex)
+            case findTarget(event, "tr", el): {
+                this.checkRow(parseInt(el.target.dataset.index))
                 break
+            }
             default:
                 break
             }

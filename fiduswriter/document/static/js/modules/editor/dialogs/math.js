@@ -20,7 +20,7 @@ export class MathDialog {
         //initialize dialog and open it
         this.dialog = new Dialog({
             body: mathDialogTemplate(),
-            height: 100,
+            height: 150,
             buttons: [
                 {
                     text: this.equationSelected ? gettext("Update") : gettext("Insert"),
@@ -91,10 +91,7 @@ export class MathDialog {
         this.mathliveDOM = this.dialog.dialogEl.querySelector(".math-field")
 
         import("mathlive").then(MathLive => {
-            this.mathField = new MathLive.MathfieldElement({
-                mathVirtualKeyboardPolicy: "manual",
-            })
-            this.mathField.strings = {
+            MathLive.MathfieldElement.strings = {
                 "int": {
                     "keyboard.tooltip.functions": gettext("Functions"),
                     "keyboard.tooltip.greek": gettext("Greek Letters"),
@@ -107,13 +104,16 @@ export class MathDialog {
                     "tooltip.undo": gettext("Undo")
                 }
             }
-            this.mathField.locale = "int"
-            this.mathField.plonkSound = null
-            this.mathField.keypressSound = null
+            MathLive.MathfieldElement.locale = "int"
+            MathLive.MathfieldElement.plonkSound = null
+            MathLive.MathfieldElement.keypressSound = null
+            this.mathField = new MathLive.MathfieldElement({
+                mathVirtualKeyboardPolicy: "manual",
+            })
             this.mathField.value = this.equation
             this.mathliveDOM.appendChild(this.mathField)
-            this.mathField.addEventListener("focusin", () => window.mathVirtualKeyboard.show())
-            this.mathField.addEventListener("focusout", () => window.mathVirtualKeyboard.hide())
+            //this.mathField.addEventListener("focusin", () => window.mathVirtualKeyboard.show())
+            //this.mathField.addEventListener("focusout", () => window.mathVirtualKeyboard.hide())
             this.mathField.select()
         })
     }

@@ -591,8 +591,7 @@ span.delete {
     padding-left: 5px;
     font-size: 20px;
     display: block;
-    padding-top: 10px;
-    padding-bottom: 10px;
+    height: 59px;
     border: solid 1px var(--cs-white-border);
     cursor: text;
     position: relative;
@@ -611,6 +610,15 @@ span.delete {
     margin: 5px 0;
     font-size: 18px;
     padding-left: 5px;
+}
+
+.fw-media-uploader {
+    margin-top: 15px;
+    margin-right: 30px;
+}
+
+.math-field-outer {
+    margin-top: 32px;
 }
 
 div.table-edit-button-group {

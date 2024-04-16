@@ -724,7 +724,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
                 )
             ).click()
         driver.find_element(
-            By.CSS_SELECTOR, "div.MLK__keycap"  #  The first key - X
+            By.CSS_SELECTOR, "div.MLK__keycap"  # The first key - X
         ).click()
         driver.find_element(
             By.XPATH, "//div[contains(@class, 'MLK__keycap') and text()='+']"

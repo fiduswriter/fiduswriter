@@ -328,11 +328,6 @@ math-field {
     min-width: calc(100% - 10px);
 }
 
-/* Hide the virtual keyboard toggle */
-math-field::part(virtual-keyboard-toggle) {
-    display: none;
-}
-
 #editor-content {
     display: flex;
     position: relative;

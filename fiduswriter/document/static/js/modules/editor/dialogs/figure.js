@@ -72,9 +72,6 @@ export class FigureDialog {
             this.mathField.keypressSound = null
             this.mathField.value = this.equation
             this.mathliveDOM.appendChild(this.mathField)
-            this.mathField.addEventListener("focusin", () => window.mathVirtualKeyboard.show())
-            this.mathField.addEventListener("focusout", () => window.mathVirtualKeyboard.hide())
-
 
             this.mathField.addEventListener("focusout", () => this.showPlaceHolder())
             this.mathField.addEventListener("focus", () => this.hidePlaceHolder())

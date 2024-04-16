@@ -114,7 +114,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             EC.element_to_be_clickable(
                 (By.XPATH, '//*[normalize-space()="Photo"]')
             )
-        )
+        ).click()
         # click on 'Insert image' button
         self.driver.find_element(By.ID, "insert-figure-image").click()
 

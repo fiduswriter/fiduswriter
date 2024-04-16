@@ -15,12 +15,17 @@ export class AddContactDialog  {
                     click: () => {
                         const userString = document.getElementById("new-contact-user-string").value
                         document.querySelectorAll("#add-new-contact .warning").forEach(el => el.parentElement.removeChild(el))
-                        return Promise.all(userString.split(/[\s,;]+/).map(singleUserString => {
-                            if (!singleUserString.length) {
-                                return false
-                            }
-                            return this.addContact(singleUserString)
-                        }).filter(promise => !!promise)).then(
+                        const userStrings = userString.split(/[\s,;]+/)
+                        let chain = Promise.resolve([])
+
+                        userStrings.filter(singleUserString => singleUserString.length).forEach(singleUserString =>
+                            chain = chain.then(responses =>
+                                this.addContact(singleUserString).then(
+                                    data => [...responses, data]
+                                )
+                            )
+                        )
+                        Promise.resolve(chain).then(
                             contactData => {
                                 if (contactData.length) {
                                     dialog.close()

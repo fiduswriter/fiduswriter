@@ -9,16 +9,16 @@ logger = logging.getLogger(__name__)
 class BaseWebsocketConsumer(WebsocketConsumer):
 
     def connect(self):
-        if "user" not in self.scope or not self.scope["user"].is_authenticated:
-            self.access_denied()
-            return
-        self.accept()
-        logger.debug("Action:Opening Websocket")
         self.id = 0
-
-        self.user = self.scope["user"]
-        self.endpoint = self.scope["path"]
+        self.accept()
         self.messages = {"server": 0, "client": 0, "last_ten": []}
+        self.endpoint = self.scope["path"]
+        self.user = self.scope["user"]
+        if not self.user.is_authenticated:
+            self.access_denied()
+            return False
+        logger.debug("Action:Opening Websocket")
+
         logger.debug(
             f"Action:Opening Websocket URL:{self.endpoint}"
             f" User:{self.user.id} ParticipantID:{self.id}"
@@ -26,11 +26,10 @@ class BaseWebsocketConsumer(WebsocketConsumer):
         response = dict()
         response["type"] = "welcome"
         self.send_message(response)
+        return True
 
     def access_denied(self):
-        response = dict()
-        response["type"] = "access_denied"
-        self.send_message(response)
+        self.send_message({"type": "access_denied"})
         self.do_close()
         return
 
@@ -45,7 +44,7 @@ class BaseWebsocketConsumer(WebsocketConsumer):
             self.resend_messages(message["from"])
             return
         if "c" not in message and "s" not in message:
-            self.send({"type": "access_denied"})
+            self.access_denied()
             # Message doesn't contain needed client/server info. Ignore.
             return
         logger.debug(

@@ -2,7 +2,7 @@ import os
 import time
 from tempfile import mkdtemp
 
-from testing.testcases import LiveTornadoTestCase
+from channels.testing import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -12,7 +12,7 @@ from selenium.webdriver.common.keys import Keys
 from django.conf import settings
 
 
-class ExportTest(LiveTornadoTestCase, SeleniumHelper):
+class ExportTest(ChannelsLiveServerTestCase, SeleniumHelper):
     """Test whether Fidus Writer exports files in all the formats.
     Note that it does not validate the export files."""
 
@@ -24,7 +24,6 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.base_url = cls.live_server_url
         cls.download_dir = mkdtemp()
         driver_data = cls.get_drivers(1, cls.download_dir)
         cls.driver = driver_data["drivers"][0]
@@ -39,6 +38,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         super().tearDownClass()
 
     def setUp(self):
+        self.base_url = self.live_server_url
         self.verificationErrors = []
         self.accept_next_alert = True
         self.user1 = self.create_user(

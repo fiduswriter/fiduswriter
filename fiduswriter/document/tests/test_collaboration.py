@@ -9,11 +9,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import ElementClickInterceptedException
 from django.conf import settings
-from testing.testcases import LiveTornadoTestCase
+from channels.testing import ChannelsLiveServerTestCase
 from .editor_helper import EditorHelper
 
 
-class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
+class OneUserTwoBrowsersTests(ChannelsLiveServerTestCase, EditorHelper):
     """
     Tests in which collaboration between two browsers with the same user logged
     into both browsers.

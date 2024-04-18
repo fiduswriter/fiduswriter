@@ -1,11 +1,11 @@
 import multiprocessing
-from testing.testcases import LiveTornadoTestCase
+from channels.testing import ChannelsLiveServerTestCase
 from .editor_helper import EditorHelper
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 
 
-class AutoMergeTests(LiveTornadoTestCase, EditorHelper):
+class AutoMergeTests(ChannelsLiveServerTestCase, EditorHelper):
     """
     Tests in which two browsers collaborate and the connection is interrupted.
     Auto merge would be triggered when the connection is restored.

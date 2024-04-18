@@ -3,7 +3,7 @@ import multiprocessing
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from testing.testcases import LiveTornadoTestCase
+from channels.testing import ChannelsLiveServerTestCase
 from .editor_helper import EditorHelper
 from document.ws_views import WebSocket
 from django.conf import settings
@@ -13,7 +13,7 @@ from selenium.webdriver.common.keys import Keys
 from document.models import AccessRight
 
 
-class OfflineTests(LiveTornadoTestCase, EditorHelper):
+class OfflineTests(ChannelsLiveServerTestCase, EditorHelper):
     """
     Tests in which two browsers collaborate and the connection is interrupted.
     """
@@ -495,7 +495,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         WebSocket.history_length = 1000
 
 
-class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
+class FunctionalOfflineTests(ChannelsLiveServerTestCase, EditorHelper):
     """
     Tests in which one user works offline. The Service Worker is
     also installed in these tests.
@@ -828,7 +828,7 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
         self.assertEqual(alert_element.is_displayed(), True)
 
 
-class AccessRightsOfflineTests(LiveTornadoTestCase, EditorHelper):
+class AccessRightsOfflineTests(ChannelsLiveServerTestCase, EditorHelper):
     """
     Tests in which one user works offline. During which the
     access rights of the user has been modified/deleted.

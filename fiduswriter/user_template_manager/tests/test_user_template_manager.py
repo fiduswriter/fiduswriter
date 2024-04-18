@@ -5,17 +5,16 @@ from tempfile import mkdtemp
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
-from testing.testcases import LiveTornadoTestCase
+from channels.testing import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
 
 
-class UserTemplateManagerTest(LiveTornadoTestCase, SeleniumHelper):
+class UserTemplateManagerTest(ChannelsLiveServerTestCase, SeleniumHelper):
     fixtures = ["initial_documenttemplates.json", "initial_styles.json"]
 
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.base_url = cls.live_server_url
         cls.download_dir = mkdtemp()
         driver_data = cls.get_drivers(1, cls.download_dir)
         cls.driver = driver_data["drivers"][0]
@@ -30,6 +29,7 @@ class UserTemplateManagerTest(LiveTornadoTestCase, SeleniumHelper):
         super().tearDownClass()
 
     def setUp(self):
+        self.base_url = self.live_server_url
         self.user = self.create_user(
             username="Yeti", email="yeti@snowman.com", passtext="otter1"
         )

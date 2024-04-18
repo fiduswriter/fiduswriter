@@ -1,11 +1,11 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from testing.testcases import LiveTornadoTestCase
+from channels.testing import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
 
 
-class PreloginTest(LiveTornadoTestCase, SeleniumHelper):
+class PreloginTest(ChannelsLiveServerTestCase, SeleniumHelper):
     fixtures = [
         "initial_terms.json",
     ]
@@ -13,7 +13,6 @@ class PreloginTest(LiveTornadoTestCase, SeleniumHelper):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.base_url = cls.live_server_url
         driver_data = cls.get_drivers(1)
         cls.driver = driver_data["drivers"][0]
         cls.client = driver_data["clients"][0]
@@ -24,6 +23,9 @@ class PreloginTest(LiveTornadoTestCase, SeleniumHelper):
     def tearDownClass(cls):
         cls.driver.quit()
         super().tearDownClass()
+
+    def setUp(self):
+        self.base_url = self.live_server_url
 
     def test_flatpage(self):
         self.driver.get(self.base_url + "/")

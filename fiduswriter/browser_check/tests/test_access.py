@@ -39,7 +39,10 @@ class AccessTest(ChannelsLiveServerTestCase, SeleniumHelper):
         driver.implicitly_wait(driver_data["wait_time"])
         driver.get(self.base_url + "/robots.txt")
         body = driver.find_element(By.CSS_SELECTOR, "body")
-        self.assertEqual(body.text, "User-agent: *\nDisallow: /document/\nDisallow: /bibliography/")
+        self.assertEqual(
+            body.text,
+            "User-agent: *\nDisallow: /document/\nDisallow: /bibliography/",
+        )
         driver.quit()
 
     def test_hello(self):

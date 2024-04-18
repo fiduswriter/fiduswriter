@@ -13,5 +13,5 @@ prosemirror==0.3.7
 jsonpatch==1.33
 # end settings_JSONPATCH
 httpx==0.25.0
-channels=4.1.0
-daphne=4.1.2
+channels==4.1.0
+daphne==4.1.2

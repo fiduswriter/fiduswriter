@@ -38,7 +38,9 @@ class WebsocketConsumer(BaseWebsocketConsumer):
     history_length = 1000  # Only keep the last 1000 diffs
 
     def connect(self):
-        super().connect()
+        connected = super().connect()
+        if not connected:
+            return
         self.sessionument_id = int(
             self.scope["url_route"]["kwargs"]["sessionument_id"]
         )

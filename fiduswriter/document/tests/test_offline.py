@@ -5,7 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from channels.testing import ChannelsLiveServerTestCase
 from .editor_helper import EditorHelper
-from document.ws_views import WebSocket
+from document.consumers import WebsocketConsumer
 from django.conf import settings
 import os
 from selenium.webdriver.common.action_chains import ActionChains
@@ -47,6 +47,11 @@ class OfflineTests(ChannelsLiveServerTestCase, EditorHelper):
         self.login_user(self.user, self.driver, self.client)
         self.login_user(self.user, self.driver2, self.client2)
         self.doc = self.create_new_document()
+
+    def tearDown(self):
+        super().tearDown()
+        self.leave_site(self.driver)
+        self.leave_site(self.driver2)
 
     def test_simple(self):
         """
@@ -106,7 +111,7 @@ class OfflineTests(ChannelsLiveServerTestCase, EditorHelper):
         """
 
         # The history length stored by the server is shortened from 1000 to 1.
-        WebSocket.history_length = 1
+        WebsocketConsumer.history_length = 1
 
         self.load_document_editor(self.driver, self.doc)
         self.load_document_editor(self.driver2, self.doc)
@@ -150,7 +155,7 @@ class OfflineTests(ChannelsLiveServerTestCase, EditorHelper):
             self.get_contents(self.driver2), self.get_contents(self.driver)
         )
 
-        WebSocket.history_length = 1000
+        WebsocketConsumer.history_length = 1000
 
     def test_tracking_local_changes(self):
         """
@@ -316,7 +321,7 @@ class OfflineTests(ChannelsLiveServerTestCase, EditorHelper):
         """
 
         # The history length stored by the server is shortened from 1000 to 1.
-        WebSocket.history_length = 1
+        WebsocketConsumer.history_length = 1
 
         self.load_document_editor(self.driver, self.doc)
         self.load_document_editor(self.driver2, self.doc)
@@ -379,7 +384,7 @@ class OfflineTests(ChannelsLiveServerTestCase, EditorHelper):
         )
         self.assertEqual(len(change_tracking_boxes), 1)
 
-        WebSocket.history_length = 1000
+        WebsocketConsumer.history_length = 1000
 
     def test_failed_authentication(self):
         """
@@ -440,7 +445,7 @@ class OfflineTests(ChannelsLiveServerTestCase, EditorHelper):
         Because of this conflict, the merge window opens up.
         """
         # The history length stored by the server is shortened from 1000 to 1.
-        WebSocket.history_length = 1
+        WebsocketConsumer.history_length = 1
 
         self.load_document_editor(self.driver, self.doc)
         self.load_document_editor(self.driver2, self.doc)
@@ -492,7 +497,7 @@ class OfflineTests(ChannelsLiveServerTestCase, EditorHelper):
         )
 
         # Change the websocket history length back to its original value
-        WebSocket.history_length = 1000
+        WebsocketConsumer.history_length = 1000
 
 
 class FunctionalOfflineTests(ChannelsLiveServerTestCase, EditorHelper):
@@ -919,7 +924,6 @@ class AccessRightsOfflineTests(ChannelsLiveServerTestCase, EditorHelper):
 
         # driver 2 goes online
         self.driver2.execute_script("window.theApp.page.ws.goOnline()")
-
         # Check that dialog is displayed
         element = WebDriverWait(self.driver2, self.wait_time).until(
             EC.visibility_of_element_located(

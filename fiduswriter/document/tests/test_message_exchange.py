@@ -9,7 +9,6 @@ from document import prosemirror
 from selenium.webdriver.common.by import By
 
 
-
 class SimpleMessageExchangeTests(ChannelsLiveServerTestCase, EditorHelper):
     """
     Tests in which one user works on the document and simulates
@@ -59,7 +58,9 @@ class SimpleMessageExchangeTests(ChannelsLiveServerTestCase, EditorHelper):
         WebsocketConsumer = urlpatterns[0].callback.consumer_class
         # Type lots of text to increment the server message count.
         print(WebsocketConsumer.sessions)
-        socket_object = WebsocketConsumer.sessions[self.doc.id]["participants"][0]
+        socket_object = WebsocketConsumer.sessions[self.doc.id][
+            "participants"
+        ][0]
         self.type_text(self.driver, self.TEST_TEXT)
         self.type_text(self.driver, self.TEST_TEXT)
         self.type_text(self.driver, self.TEST_TEXT)

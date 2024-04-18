@@ -46,8 +46,8 @@ class ExportTest(ChannelsLiveServerTestCase, SeleniumHelper):
         )
 
     def tearDown(self):
-        self.leave_site(self.driver)
         super().tearDown()
+        self.leave_site(self.driver)
 
     def test_export(self):
         self.driver.get(self.base_url)

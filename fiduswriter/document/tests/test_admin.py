@@ -52,8 +52,8 @@ class AdminTest(ChannelsLiveServerTestCase, SeleniumHelper):
         )
 
     def tearDown(self):
-        self.leave_site(self.driver)
         super().tearDown()
+        self.leave_site(self.driver)
 
     def test_maintenance(self):
         self.driver.get(self.base_admin_url)

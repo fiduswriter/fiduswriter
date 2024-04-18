@@ -2,14 +2,14 @@ from django.test import override_settings
 
 import time
 import logging
-from testing.testcases import LiveTornadoTestCase
+from channels.testing import ChannelsLiveServerTestCase
 from .editor_helper import EditorHelper
 from document.ws_views import WebSocket
 from document import prosemirror
 from selenium.webdriver.common.by import By
 
 
-class SimpleMessageExchangeTests(LiveTornadoTestCase, EditorHelper):
+class SimpleMessageExchangeTests(ChannelsLiveServerTestCase, EditorHelper):
     """
     Tests in which one user works on the document and simulates
     loss of socket messages.

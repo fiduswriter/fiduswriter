@@ -13,7 +13,7 @@ from django.conf import settings
 from document.helpers.session_user_info import SessionUserInfo
 from document import prosemirror
 from document.helpers.serializers import PythonWithURLSerializer
-from base.ws_handler import BaseWebSocketHandler
+from base.base_consumer import BaseWebsocketConsumer
 from document.models import (
     COMMENT_ONLY,
     CAN_UPDATE_DOCUMENT,
@@ -33,16 +33,15 @@ from jsonpatch import apply_patch, JsonPatchConflict, JsonPointerException
 logger = logging.getLogger(__name__)
 
 
-class WebSocket(BaseWebSocketHandler):
+class WebsocketConsumer(BaseWebsocketConsumer):
     sessions = dict()
     history_length = 1000  # Only keep the last 1000 diffs
 
-    def open(self, arg):
-        super().open(arg)
-        if len(self.args) < 2:
-            self.access_denied()
-            return
-        self.sessionument_id = int(self.args[0])
+    def connect(self):
+        super().connect()
+        self.sessionument_id = int(
+            self.scope["url_route"]["kwargs"]["sessionument_id"]
+        )
         logger.debug(
             f"Action:Document socket opened by user. "
             f"URL:{self.endpoint} User:{self.user.id} ParticipantID:{self.id}"
@@ -59,15 +58,15 @@ class WebSocket(BaseWebSocketHandler):
             self.access_denied()
             return
         if (
-            doc_db.id in WebSocket.sessions
-            and len(WebSocket.sessions[doc_db.id]["participants"]) > 0
+            doc_db.id in WebsocketConsumer.sessions
+            and len(WebsocketConsumer.sessions[doc_db.id]["participants"]) > 0
         ):
             logger.debug(
                 f"Action:Serving already opened document. "
                 f"URL:{self.endpoint} User:{self.user.id} "
                 f" ParticipantID:{self.id}"
             )
-            self.session = WebSocket.sessions[doc_db.id]
+            self.session = WebsocketConsumer.sessions[doc_db.id]
             self.id = max(self.session["participants"]) + 1
             self.session["participants"][self.id] = self
             template = False
@@ -102,7 +101,7 @@ class WebSocket(BaseWebSocketHandler):
                     "participants": {0: self},
                     "last_saved_version": doc_db.version,
                 }
-            WebSocket.sessions[doc_db.id] = self.session
+            WebsocketConsumer.sessions[doc_db.id] = self.session
             if self.user_info.access_rights == "write":
                 template = True
             else:
@@ -178,7 +177,7 @@ class WebSocket(BaseWebSocketHandler):
                 "contacts": [],
             },
         }
-        WebSocket.serialize_content(self.session)
+        WebsocketConsumer.serialize_content(self.session)
         response["doc"] = {
             "v": self.session["doc"].version,
             "content": self.session["doc"].content,
@@ -258,7 +257,7 @@ class WebSocket(BaseWebSocketHandler):
                 connection_count = message["connection"]
             self.subscribe_doc(connection_count)
             return
-        if self.user_info.document_id not in WebSocket.sessions:
+        if self.user_info.document_id not in WebsocketConsumer.sessions:
             logger.debug(
                 f"Action:Receiving message for closed document. "
                 f"URL:{self.endpoint} User:{self.user.id} "
@@ -386,7 +385,7 @@ class WebSocket(BaseWebSocketHandler):
                         answer["answer"] = cd["answer"]
 
     def handle_participant_update(self):
-        WebSocket.send_participant_list(self.user_info.document_id)
+        WebsocketConsumer.send_participant_list(self.user_info.document_id)
 
     def handle_chat(self, message):
         chat = {
@@ -395,14 +394,14 @@ class WebSocket(BaseWebSocketHandler):
             "from": self.user_info.user.id,
             "type": "chat",
         }
-        WebSocket.send_updates(chat, self.user_info.document_id)
+        WebsocketConsumer.send_updates(chat, self.user_info.document_id)
 
     def handle_selection_change(self, message):
         if (
-            self.user_info.document_id in WebSocket.sessions
+            self.user_info.document_id in WebsocketConsumer.sessions
             and message["v"] == self.session["doc"].version
         ):
-            WebSocket.send_updates(
+            WebsocketConsumer.send_updates(
                 message,
                 self.user_info.document_id,
                 self.id,
@@ -411,7 +410,7 @@ class WebSocket(BaseWebSocketHandler):
 
     def handle_path_change(self, message):
         if (
-            self.user_info.document_id in WebSocket.sessions
+            self.user_info.document_id in WebsocketConsumer.sessions
             and self.user_info.path_object
         ):
             self.user_info.path_object.path = message["path"]
@@ -420,7 +419,7 @@ class WebSocket(BaseWebSocketHandler):
                     "path",
                 ]
             )
-            WebSocket.send_updates(
+            WebsocketConsumer.send_updates(
                 message,
                 self.user_info.document_id,
                 self.id,
@@ -539,9 +538,9 @@ class WebSocket(BaseWebSocketHandler):
             if "iu" in message:  # iu = image updates
                 self.update_images(message["iu"])
             if self.session["doc"].version % settings.DOC_SAVE_INTERVAL == 0:
-                WebSocket.save_document(self.user_info.document_id)
+                WebsocketConsumer.save_document(self.user_info.document_id)
             self.confirm_diff(message["rid"])
-            WebSocket.send_updates(
+            WebsocketConsumer.send_updates(
                 message,
                 self.user_info.document_id,
                 self.id,
@@ -628,25 +627,29 @@ class WebSocket(BaseWebSocketHandler):
             hasattr(self, "session")
             and hasattr(self, "user_info")
             and hasattr(self.user_info, "document_id")
-            and self.user_info.document_id in WebSocket.sessions
+            and self.user_info.document_id in WebsocketConsumer.sessions
             and hasattr(self, "id")
             and self.id
-            in WebSocket.sessions[self.user_info.document_id]["participants"]
+            in WebsocketConsumer.sessions[self.user_info.document_id][
+                "participants"
+            ]
         ):
             del self.session["participants"][self.id]
             if len(self.session["participants"]) == 0:
-                WebSocket.save_document(self.user_info.document_id)
-                del WebSocket.sessions[self.user_info.document_id]
+                WebsocketConsumer.save_document(self.user_info.document_id)
+                del WebsocketConsumer.sessions[self.user_info.document_id]
                 logger.debug(
                     f"Action:No participants for the document. "
                     f"URL:{self.endpoint} User:{self.user.id}"
                 )
             else:
-                WebSocket.send_participant_list(self.user_info.document_id)
+                WebsocketConsumer.send_participant_list(
+                    self.user_info.document_id
+                )
 
     @classmethod
     def send_participant_list(cls, document_id):
-        if document_id in WebSocket.sessions:
+        if document_id in WebsocketConsumer.sessions:
             avatars = Avatars()
             participant_list = []
             for session_id, waiter in list(
@@ -667,7 +670,7 @@ class WebSocket(BaseWebSocketHandler):
                 "participant_list": participant_list,
                 "type": "connections",
             }
-            WebSocket.send_updates(message, document_id)
+            WebsocketConsumer.send_updates(message, document_id)
 
     @classmethod
     def reset_collaboration(cls, patch_exception_msg, document_id, sender_id):
@@ -807,4 +810,4 @@ class WebSocket(BaseWebSocketHandler):
             cls.save_document(document_id)
 
 
-atexit.register(WebSocket.save_all_docs)
+atexit.register(WebsocketConsumer.save_all_docs)

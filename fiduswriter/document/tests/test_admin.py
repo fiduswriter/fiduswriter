@@ -2,7 +2,7 @@ import time
 import os
 from tempfile import mkdtemp
 
-from testing.testcases import LiveTornadoTestCase
+from channels.testing import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -11,7 +11,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
 
-class AdminTest(LiveTornadoTestCase, SeleniumHelper):
+class AdminTest(ChannelsLiveServerTestCase, SeleniumHelper):
     fixtures = [
         "initial_documenttemplates.json",
         "initial_styles.json",
@@ -20,9 +20,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.base_url = cls.live_server_url
         cls.download_dir = mkdtemp()
-        cls.base_admin_url = f"{cls.base_url}/admin/"
         driver_data = cls.get_drivers(1, cls.download_dir)
         cls.driver = driver_data["drivers"][0]
         cls.client = driver_data["clients"][0]
@@ -36,6 +34,8 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         super().tearDownClass()
 
     def setUp(self):
+        self.base_url = self.live_server_url
+        self.base_admin_url = f"{self.base_url}/admin/"
         self.verificationErrors = []
         self.accept_next_alert = True
         self.admin = self.create_user(

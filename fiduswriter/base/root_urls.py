@@ -33,13 +33,20 @@ admin_site_urls = (
     admin.site.urls[2],
 )
 # Django URLs -- Notice that these are only consulted after the
-# tornado_url_list found in base/servers/tornado_django_hybrid.py
+# protocol based routing in routing.py
 urlpatterns = [
     re_path(
         "^robots.txt$",
         lambda r: HttpResponse(
             "User-agent: *\nDisallow: /document/\nDisallow: /bibliography/",
-            mimetype="text/plain",
+            content_type="text/plain",
+        ),
+    ),
+    re_path(
+        "^hello-fiduswriter$",
+        lambda r: HttpResponse(
+            "Hello from Fidus Writer",
+            content_type="text/plain",
         ),
     ),
     re_path("^manifest.json$", manifest_json, name="manifest_json"),

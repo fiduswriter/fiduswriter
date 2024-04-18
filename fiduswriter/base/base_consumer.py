@@ -1,35 +1,24 @@
 import json
 
-from urllib.parse import urlparse
-from tornado.websocket import WebSocketHandler
-from tornado.websocket import WebSocketClosedError
-from tornado.iostream import StreamClosedError
-import tornado
-from django.db import connection
+from channels.generic.websocket import WebsocketConsumer
 import logging
-from logging import info, debug
-from tornado.ioloop import IOLoop
-
-from .django_handler_mixin import DjangoHandlerMixin
 
 logger = logging.getLogger(__name__)
 
 
-class BaseWebSocketHandler(DjangoHandlerMixin, WebSocketHandler):
-    def initialize(self, app_name):
-        self.app_name = app_name
+class BaseWebsocketConsumer(WebsocketConsumer):
 
-    def open(self, arg):
-        self.set_nodelay(True)
-        logger.debug("Action:Opening Websocket")
-        self.id = 0
-        self.user = self.get_current_user()
-        self.endpoint = self.app_name + "/" + arg
-        self.args = arg.split("/")
-        self.messages = {"server": 0, "client": 0, "last_ten": []}
-        if not self.user.is_authenticated:
+    def connect(self):
+        if "user" not in self.scope or not self.scope["user"].is_authenticated:
             self.access_denied()
             return
+        self.accept()
+        logger.debug("Action:Opening Websocket")
+        self.id = 0
+
+        self.user = self.scope["user"]
+        self.endpoint = self.scope["path"]
+        self.messages = {"server": 0, "client": 0, "last_ten": []}
         logger.debug(
             f"Action:Opening Websocket URL:{self.endpoint}"
             f" User:{self.user.id} ParticipantID:{self.id}"
@@ -42,14 +31,16 @@ class BaseWebSocketHandler(DjangoHandlerMixin, WebSocketHandler):
         response = dict()
         response["type"] = "access_denied"
         self.send_message(response)
-        IOLoop.current().add_callback(self.do_close)
+        self.do_close()
         return
 
     def do_close(self):
         self.close()
 
-    def on_message(self, data):
-        message = json.loads(data)
+    def receive(self, text_data=None):
+        if not text_data:
+            return
+        message = json.loads(text_data)
         if message["type"] == "request_resend":
             self.resend_messages(message["from"])
             return
@@ -116,14 +107,7 @@ class BaseWebSocketHandler(DjangoHandlerMixin, WebSocketHandler):
             f"ParticipantID:{self.id} Type:{message['type']} "
             f"S count server:{message['s']} C count server:{message['c']}"
         )
-        self.send(message)
-
-    @tornado.gen.coroutine
-    def send(self, message):
-        try:
-            yield self.write_message(message)
-        except (WebSocketClosedError, StreamClosedError):
-            pass
+        self.send(text_data=json.dumps(message))
 
     def unfixable(self):
         pass
@@ -148,37 +132,3 @@ class BaseWebSocketHandler(DjangoHandlerMixin, WebSocketHandler):
             return
         for message in self.messages["last_ten"][0 - to_send :]:
             self.send_message(message)
-
-    def check_origin(self, origin):
-        parsed_origin = urlparse(origin)
-        origin = parsed_origin.netloc
-        # remove port if present
-        origin = origin.split(":")[0]
-        origin = origin.lower()
-
-        host = self.request.headers.get("Host")
-        # remove port if present
-        host = host.split(":")[0]
-        # Check to see that origin matches host directly, EXCLUDING ports
-        return origin == host
-
-    def prepare(self):
-        super(BaseWebSocketHandler, self).prepare()
-
-    def finish(self, chunk=None):
-        super(BaseWebSocketHandler, self).finish(chunk=chunk)
-
-        # Clean up django ORM connections
-
-        connection.close()
-        if False:
-            info("%d sql queries" % len(connection.queries))
-            for query in connection.queries:
-                debug("%s [%s seconds]" % (query["sql"], query["time"]))
-
-        # Clean up after python-memcached
-
-        from django.core.cache import cache
-
-        if hasattr(cache, "close"):
-            cache.close()

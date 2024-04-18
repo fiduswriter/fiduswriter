@@ -1,7 +1,7 @@
 import time
 import os
 
-from testing.testcases import LiveTornadoTestCase
+from channels.testing import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -15,7 +15,7 @@ from django.conf import settings
 from allauth.account.models import EmailConfirmationHMAC, EmailAddress
 
 
-class EditorTest(LiveTornadoTestCase, SeleniumHelper):
+class EditorTest(ChannelsLiveServerTestCase, SeleniumHelper):
     fixtures = [
         "initial_documenttemplates.json",
         "initial_styles.json",
@@ -24,7 +24,6 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.base_url = cls.live_server_url
         driver_data = cls.get_drivers(1)
         cls.driver = driver_data["drivers"][0]
         cls.client = driver_data["clients"][0]
@@ -37,6 +36,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         super().tearDownClass()
 
     def setUp(self):
+        self.base_url = self.live_server_url
         self.verificationErrors = []
         self.accept_next_alert = True
         self.user1 = self.create_user(

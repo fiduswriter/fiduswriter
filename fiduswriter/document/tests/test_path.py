@@ -38,8 +38,8 @@ class PathTest(ChannelsLiveServerTestCase, SeleniumHelper):
         )
 
     def tearDown(self):
-        self.leave_site(self.driver)
         super().tearDown()
+        self.leave_site(self.driver)
 
     def test_move_document(self):
         self.driver.get(self.base_url)

@@ -50,9 +50,9 @@ class OneUserTwoBrowsersTests(ChannelsLiveServerTestCase, EditorHelper):
         self.doc = self.create_new_document()
 
     def tearDown(self):
+        super().tearDown()
         self.leave_site(self.driver)
         self.leave_site(self.driver2)
-        super().tearDown()
 
     def get_title(self, driver):
         # Title is child 0.

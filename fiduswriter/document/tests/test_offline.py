@@ -529,6 +529,7 @@ class FunctionalOfflineTests(ChannelsLiveServerTestCase, EditorHelper):
         self.doc = self.create_new_document()
 
     def tearDown(self):
+        super().tearDown()
         self.leave_site(self.driver)
 
     def test_service_workers(self):
@@ -872,6 +873,7 @@ class AccessRightsOfflineTests(ChannelsLiveServerTestCase, EditorHelper):
         )
 
     def tearDown(self):
+        super().tearDown()
         self.leave_site(self.driver)
         self.leave_site(self.driver2)
 

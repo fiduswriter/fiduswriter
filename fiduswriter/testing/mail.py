@@ -5,8 +5,8 @@ from django.core.mail.backends.base import BaseEmailBackend
 
 # Source: https://github.com/jricardo27/channels_example/commit/637b689870c2f879286f30eeb0c3e1d65283d557#diff-180eb8ba4002fc012b871a9b0c0ba23b31727c34a20d8470421841e9e3bb637b
 
-MAIL_STORAGE = '.test_mail_storage'
-OUTBOX = 'outbox'
+MAIL_STORAGE = ".test_mail_storage"
+OUTBOX = "outbox"
 
 
 class EmailBackend(BaseEmailBackend):

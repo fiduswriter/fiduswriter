@@ -1,5 +1,6 @@
 import os
 import shelve
+import time
 
 from django.core.mail.backends.base import BaseEmailBackend
 from django.conf import settings
@@ -47,6 +48,7 @@ class EmailBackend(BaseEmailBackend):
 
 
 def get_outbox(mail_storage_name=None):
+    time.sleep(1)
     if mail_storage_name:
         mail_storage = MAIL_STORAGE_BASE + mail_storage_name
     else:
@@ -54,6 +56,10 @@ def get_outbox(mail_storage_name=None):
     storage = shelve.open(mail_storage)
     outbox = storage[OUTBOX]
     storage.close()
+    print(f"Mailbox length: {len(outbox)}")
+    for mail in outbox:
+        print(f"{mail.subject}, {mail.to}")
+    print("-----")
     return outbox
 
 

@@ -8,7 +8,7 @@ __pycache__/
 .coverage
 .DS_Store
 .test_mail_storage
-.test_mail_storage.db
+.test_mail_storage*.db
 .pydevproject
 build
 .project

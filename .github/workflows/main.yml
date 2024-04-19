@@ -81,7 +81,7 @@ jobs:
         pip install coveralls
         coverage run --concurrency=multiprocessing,thread manage.py setup --no-static
     - name: Run test ${{ matrix.test }}
-      uses: nick-invision/retry@v2
+      uses: nick-invision/retry@v3
       with:
         timeout_minutes: 8
         max_attempts: 3

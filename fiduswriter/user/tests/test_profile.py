@@ -9,11 +9,13 @@ from channels.testing import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
 from selenium.common.exceptions import StaleElementReferenceException
 
-from django.core import mail
+from testing.mail import get_outbox, empty_outbox
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.test import override_settings
 
 
+@override_settings(EMAIL_BACKEND="testing.mail.EmailBackend")
 class ProfileTest(ChannelsLiveServerTestCase, SeleniumHelper):
     @classmethod
     def setUpClass(cls):
@@ -37,6 +39,11 @@ class ProfileTest(ChannelsLiveServerTestCase, SeleniumHelper):
             username="Yeti", email="yeti@snowman.com", passtext="otter1"
         )
         self.login_user(self.user, self.driver, self.client)
+
+    def tearDown(self):
+        empty_outbox()
+        self.assertEqual([], self.verificationErrors)
+        return super().tearDown()
 
     def assertInfoAlert(self, message):
         i = 0
@@ -169,7 +176,8 @@ class ProfileTest(ChannelsLiveServerTestCase, SeleniumHelper):
             ).text
             == "yeti@snowman2.com"
         )
-        self.assertEqual(1, len(mail.outbox))
+        outbox = get_outbox()
+        self.assertEqual(1, len(outbox))
         # We check that yeti@snowman2.com is not verified and does not have a
         # radio button for primary email account
         self.assertEqual(
@@ -185,7 +193,7 @@ class ProfileTest(ChannelsLiveServerTestCase, SeleniumHelper):
             ),
             0,
         )
-        urls = self.find_urls(mail.outbox[0].body)
+        urls = self.find_urls(outbox[0].body)
         self.driver.get(urls[0])
         assert (
             self.driver.find_element(By.CSS_SELECTOR, ".fw-login-title").text
@@ -240,7 +248,8 @@ class ProfileTest(ChannelsLiveServerTestCase, SeleniumHelper):
             ).text
             == "yeti@snowman3.com"
         )
-        self.assertEqual(2, len(mail.outbox))
+        outbox = get_outbox()
+        self.assertEqual(2, len(outbox))
         driver.find_element(By.ID, "add-profile-email").click()
         driver.find_element(By.ID, "new-profile-email").send_keys(
             "yeti@snowman4.com"
@@ -254,8 +263,9 @@ class ProfileTest(ChannelsLiveServerTestCase, SeleniumHelper):
             ).text
             == "yeti@snowman4.com"
         )
-        self.assertEqual(3, len(mail.outbox))
-        # This time we log out first. We shoudld then be redirected to the page
+        outbox = get_outbox()
+        self.assertEqual(3, len(outbox))
+        # This time we log out first. We should then be redirected to the page
         # that tells us to log in after verification.
         self.driver.find_element(By.ID, "preferences-btn").click()
         self.driver.find_element(
@@ -264,7 +274,7 @@ class ProfileTest(ChannelsLiveServerTestCase, SeleniumHelper):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.title_is("Login - Fidus Writer")
         )
-        urls = self.find_urls(mail.outbox[1].body)
+        urls = self.find_urls(outbox[1].body)
         self.driver.get(urls[0])
         assert (
             self.driver.find_element(By.CSS_SELECTOR, ".fw-login-title").text
@@ -285,7 +295,7 @@ class ProfileTest(ChannelsLiveServerTestCase, SeleniumHelper):
         )
         self.login_user(user2, self.driver, self.client)
         driver.get(self.base_url + "/")
-        urls = self.find_urls(mail.outbox[2].body)
+        urls = self.find_urls(outbox[2].body)
         self.driver.get(urls[0])
         assert (
             self.driver.find_element(By.CSS_SELECTOR, ".fw-login-title").text
@@ -322,7 +332,3 @@ class ProfileTest(ChannelsLiveServerTestCase, SeleniumHelper):
         except NoSuchElementException:
             return False
         return True
-
-    def tearDown(self):
-        self.assertEqual([], self.verificationErrors)
-        return super().tearDown()

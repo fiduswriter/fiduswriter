@@ -179,6 +179,7 @@ class ProfileTest(ChannelsLiveServerTestCase, SeleniumHelper):
             ).text
             == "yeti@snowman2.com"
         )
+        time.sleep(2)
         outbox = get_outbox(MAIL_STORAGE_NAME)
         self.assertEqual(1, len(outbox))
         # We check that yeti@snowman2.com is not verified and does not have a
@@ -251,6 +252,7 @@ class ProfileTest(ChannelsLiveServerTestCase, SeleniumHelper):
             ).text
             == "yeti@snowman3.com"
         )
+        time.sleep(2)
         outbox = get_outbox(MAIL_STORAGE_NAME)
         self.assertEqual(2, len(outbox))
         driver.find_element(By.ID, "add-profile-email").click()
@@ -266,6 +268,7 @@ class ProfileTest(ChannelsLiveServerTestCase, SeleniumHelper):
             ).text
             == "yeti@snowman4.com"
         )
+        time.sleep(2)
         outbox = get_outbox(MAIL_STORAGE_NAME)
         self.assertEqual(3, len(outbox))
         # This time we log out first. We should then be redirected to the page

@@ -595,7 +595,7 @@ class EditorTest(ChannelsLiveServerTestCase, SeleniumHelper):
         self.driver.find_element(
             By.CSS_SELECTOR, ".ui-dialog .fw-dark"
         ).click()
-        time.sleep(1)
+        time.sleep(2)
         outbox = get_outbox(MAIL_STORAGE_NAME)
         # We keep track of the invitation email to open it later.
         user4_invitation_email = outbox[-1].body
@@ -640,7 +640,7 @@ class EditorTest(ChannelsLiveServerTestCase, SeleniumHelper):
         self.driver.find_element(
             By.CSS_SELECTOR, ".ui-dialog .fw-dark"
         ).click()
-        time.sleep(1)
+        time.sleep(2)
         outbox = get_outbox(MAIL_STORAGE_NAME)
         # We keep track of the invitation email to open it later.
         last_three_emails = [
@@ -950,7 +950,7 @@ class EditorTest(ChannelsLiveServerTestCase, SeleniumHelper):
         self.driver.find_element(
             By.CSS_SELECTOR, ".comment-btns .submit"
         ).click()
-        time.sleep(1)
+        time.sleep(2)
         outbox = get_outbox(MAIL_STORAGE_NAME)
         self.assertEqual(emails_sent_before_comment + 1, len(outbox))
         self.driver.find_element(By.ID, "close-document-top").click()
@@ -982,6 +982,7 @@ class EditorTest(ChannelsLiveServerTestCase, SeleniumHelper):
                 (By.CSS_SELECTOR, 'a[href="mailto:yeti4a@snowman.com"]')
             )
         )
+        time.sleep(2)
         outbox = get_outbox(MAIL_STORAGE_NAME)
         confirmation_link = self.find_urls(outbox[-1].body)[0]
         self.driver.get(confirmation_link)

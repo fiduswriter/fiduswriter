@@ -73,15 +73,19 @@ urlpatterns = [
     path("admin/", admin_site_urls),
     # Login as other user
     path("admin/", include("loginas.urls")),
-    # media files
-    re_path(
-        r"^%s(?P<path>.*)$" % re.escape(settings.MEDIA_URL.lstrip("/")),
-        static_serve,
-        {"document_root": settings.MEDIA_ROOT},
-    ),
 ]
+if settings.MEDIA_URL[0] == "/":
+    urlpatterns += [
+        # media files
+        re_path(
+            r"^%s(?P<path>.*)$" % re.escape(settings.MEDIA_URL.lstrip("/")),
+            static_serve,
+            {"document_root": settings.MEDIA_ROOT},
+        ),
+    ]
 
-if not settings.DEBUG:
+
+if not settings.DEBUG and settings.STATIC_URL[0] == "/":
     # Only serve static files from collecting folder if not running in debug mode.
     urlpatterns += [
         re_path(

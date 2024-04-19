@@ -15,7 +15,10 @@ from django.test import override_settings
 
 from allauth.account.models import EmailConfirmationHMAC, EmailAddress
 
+MAIL_STORAGE_NAME = "editor"
 
+
+@override_settings(MAIL_STORAGE_NAME=MAIL_STORAGE_NAME)
 @override_settings(EMAIL_BACKEND="testing.mail.EmailBackend")
 class EditorTest(ChannelsLiveServerTestCase, SeleniumHelper):
     fixtures = [
@@ -47,7 +50,7 @@ class EditorTest(ChannelsLiveServerTestCase, SeleniumHelper):
 
     def tearDown(self):
         super().tearDown()
-        empty_outbox()
+        empty_outbox(MAIL_STORAGE_NAME)
         self.leave_site(self.driver)
 
     def test_crossrefs_and_internal_links(self):
@@ -593,7 +596,7 @@ class EditorTest(ChannelsLiveServerTestCase, SeleniumHelper):
             By.CSS_SELECTOR, ".ui-dialog .fw-dark"
         ).click()
         time.sleep(1)
-        outbox = get_outbox()
+        outbox = get_outbox(MAIL_STORAGE_NAME)
         # We keep track of the invitation email to open it later.
         user4_invitation_email = outbox[-1].body
         #  Reopen the share dialog and add users 5-7
@@ -638,7 +641,7 @@ class EditorTest(ChannelsLiveServerTestCase, SeleniumHelper):
             By.CSS_SELECTOR, ".ui-dialog .fw-dark"
         ).click()
         time.sleep(1)
-        outbox = get_outbox()
+        outbox = get_outbox(MAIL_STORAGE_NAME)
         # We keep track of the invitation email to open it later.
         last_three_emails = [
             outbox[-3].body,
@@ -942,13 +945,13 @@ class EditorTest(ChannelsLiveServerTestCase, SeleniumHelper):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, ".tag-user"))
         ).click()
-        outbox = get_outbox()
+        outbox = get_outbox(MAIL_STORAGE_NAME)
         emails_sent_before_comment = len(outbox)
         self.driver.find_element(
             By.CSS_SELECTOR, ".comment-btns .submit"
         ).click()
         time.sleep(1)
-        outbox = get_outbox()
+        outbox = get_outbox(MAIL_STORAGE_NAME)
         self.assertEqual(emails_sent_before_comment + 1, len(outbox))
         self.driver.find_element(By.ID, "close-document-top").click()
         WebDriverWait(self.driver, self.wait_time).until(
@@ -979,7 +982,7 @@ class EditorTest(ChannelsLiveServerTestCase, SeleniumHelper):
                 (By.CSS_SELECTOR, 'a[href="mailto:yeti4a@snowman.com"]')
             )
         )
-        outbox = get_outbox()
+        outbox = get_outbox(MAIL_STORAGE_NAME)
         confirmation_link = self.find_urls(outbox[-1].body)[0]
         self.driver.get(confirmation_link)
         self.driver.find_element(By.ID, "terms-check").click()

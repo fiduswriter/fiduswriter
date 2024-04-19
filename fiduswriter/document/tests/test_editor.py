@@ -503,7 +503,6 @@ class EditorTest(ChannelsLiveServerTestCase, SeleniumHelper):
         )
         self.assertEqual(len(change_tracking_boxes), 6)
 
-    @override_settings(EMAIL_BACKEND="testing.mail.EmailBackend")
     def test_share_document(self):
         self.create_user(
             username="Yeti2", email="yeti2@snowman.com", passtext="otter"

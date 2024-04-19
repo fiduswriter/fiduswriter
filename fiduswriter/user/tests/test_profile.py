@@ -14,7 +14,10 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import override_settings
 
+MAIL_STORAGE_NAME = "user_profile"
 
+
+@override_settings(MAIL_STORAGE_NAME=MAIL_STORAGE_NAME)
 @override_settings(EMAIL_BACKEND="testing.mail.EmailBackend")
 class ProfileTest(ChannelsLiveServerTestCase, SeleniumHelper):
     @classmethod
@@ -41,7 +44,7 @@ class ProfileTest(ChannelsLiveServerTestCase, SeleniumHelper):
         self.login_user(self.user, self.driver, self.client)
 
     def tearDown(self):
-        empty_outbox()
+        empty_outbox(MAIL_STORAGE_NAME)
         self.assertEqual([], self.verificationErrors)
         return super().tearDown()
 
@@ -176,7 +179,7 @@ class ProfileTest(ChannelsLiveServerTestCase, SeleniumHelper):
             ).text
             == "yeti@snowman2.com"
         )
-        outbox = get_outbox()
+        outbox = get_outbox(MAIL_STORAGE_NAME)
         self.assertEqual(1, len(outbox))
         # We check that yeti@snowman2.com is not verified and does not have a
         # radio button for primary email account
@@ -248,7 +251,7 @@ class ProfileTest(ChannelsLiveServerTestCase, SeleniumHelper):
             ).text
             == "yeti@snowman3.com"
         )
-        outbox = get_outbox()
+        outbox = get_outbox(MAIL_STORAGE_NAME)
         self.assertEqual(2, len(outbox))
         driver.find_element(By.ID, "add-profile-email").click()
         driver.find_element(By.ID, "new-profile-email").send_keys(
@@ -263,7 +266,7 @@ class ProfileTest(ChannelsLiveServerTestCase, SeleniumHelper):
             ).text
             == "yeti@snowman4.com"
         )
-        outbox = get_outbox()
+        outbox = get_outbox(MAIL_STORAGE_NAME)
         self.assertEqual(3, len(outbox))
         # This time we log out first. We should then be redirected to the page
         # that tells us to log in after verification.

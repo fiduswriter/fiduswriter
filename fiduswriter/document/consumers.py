@@ -620,11 +620,16 @@ class WebsocketConsumer(BaseWebsocketConsumer):
     def can_communicate(self):
         return self.user_info.access_rights in CAN_COMMUNICATE
 
-    def on_close(self):
-        logger.debug(
-            f"Action:Closing websocket. URL:{self.endpoint} "
-            f"User:{self.user.id} ParticipantID:{self.id}"
-        )
+    def disconnect(self, close_code):
+        if (
+            hasattr(self, "endpoint")
+            and hasattr(self, "user")
+            and hasattr(self, "id")
+        ):
+            logger.debug(
+                f"Action:Closing websocket. URL:{self.endpoint} "
+                f"User:{self.user.id} ParticipantID:{self.id}"
+            )
         if (
             hasattr(self, "session")
             and hasattr(self, "user_info")
@@ -648,6 +653,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 WebsocketConsumer.send_participant_list(
                     self.user_info.document_id
                 )
+        self.close()
 
     @classmethod
     def send_participant_list(cls, document_id):

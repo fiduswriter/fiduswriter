@@ -27,23 +27,21 @@ class EmailBackend(BaseEmailBackend):
 
     def send_messages(self, messages):
         """Redirect messages to the dummy outbox"""
+        print(f"send_messages: {len(messages)}")
         if hasattr(settings, "MAIL_STORAGE_NAME"):
             mail_storage = MAIL_STORAGE_BASE + settings.MAIL_STORAGE_NAME
         else:
             mail_storage = MAIL_STORAGE_BASE
-
+        storage = shelve.open(mail_storage)
+        outbox = storage.get(OUTBOX, [])
         msg_count = 0
         for message in messages:  # .message() triggers header validation
             message.message()
-
-            storage = shelve.open(mail_storage)
-            outbox = storage.get(OUTBOX, [])
             outbox.append(message)
-            storage[OUTBOX] = outbox
-            storage.close()
-
             msg_count += 1
-
+        storage[OUTBOX] = outbox
+        storage.close()
+        print(f"Total length: {len(outbox)}")
         return msg_count
 
 

@@ -12,6 +12,7 @@ OUTBOX = "outbox"
 
 
 class EmailBackend(BaseEmailBackend):
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -25,6 +26,8 @@ class EmailBackend(BaseEmailBackend):
         except OSError:
             pass
 
+        self.outbox = []
+
     def send_messages(self, messages):
         """Redirect messages to the dummy outbox"""
         print(f"send_messages: {len(messages)}")
@@ -33,15 +36,14 @@ class EmailBackend(BaseEmailBackend):
         else:
             mail_storage = MAIL_STORAGE_BASE
         storage = shelve.open(mail_storage)
-        outbox = storage.get(OUTBOX, [])
         msg_count = 0
         for message in messages:  # .message() triggers header validation
             message.message()
-            outbox.append(message)
+            self.outbox.append(message)
             msg_count += 1
-        storage[OUTBOX] = outbox
+        storage[OUTBOX] = self.outbox
         storage.close()
-        print(f"Total length: {len(outbox)}")
+        print(f"Total length: {len(self.outbox)}")
         return msg_count
 
 

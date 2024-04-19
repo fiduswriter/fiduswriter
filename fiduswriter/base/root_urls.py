@@ -1,4 +1,5 @@
 import os
+import re
 
 from importlib import import_module
 
@@ -10,7 +11,6 @@ from django.urls import path
 from django.conf import settings
 from django.views.i18n import JavaScriptCatalog
 from django.views.static import serve as static_serve
-from django.conf.urls.static import static
 
 from .views import app as app_view, api_404 as api_404_view
 from .views import admin_console as admin_console_view
@@ -73,7 +73,23 @@ urlpatterns = [
     path("admin/", admin_site_urls),
     # Login as other user
     path("admin/", include("loginas.urls")),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    # media files
+    re_path(
+        r"^%s(?P<path>.*)$" % re.escape(settings.MEDIA_URL.lstrip("/")),
+        static_serve,
+        {"document_root": settings.MEDIA_ROOT},
+    ),
+]
+
+if not settings.DEBUG:
+    # Only serve static files from collecting folder if not running in debug mode.
+    urlpatterns += [
+        re_path(
+            r"^%s(?P<path>.*)$" % re.escape(settings.STATIC_URL.lstrip("/")),
+            static_serve,
+            {"document_root": settings.STATIC_ROOT},
+        ),
+    ]
 
 for app in settings.INSTALLED_APPS:
     try:

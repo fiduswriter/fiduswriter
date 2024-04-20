@@ -5,6 +5,10 @@ import time
 from django.core.mail.backends.base import BaseEmailBackend
 from django.conf import settings
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 # Source: https://github.com/jricardo27/channels_example/commit/637b689870c2f879286f30eeb0c3e1d65283d557#diff-180eb8ba4002fc012b871a9b0c0ba23b31727c34a20d8470421841e9e3bb637b
 
 MAIL_STORAGE_BASE = ".test_mail_storage_"
@@ -23,7 +27,7 @@ class EmailBackend(BaseEmailBackend):
 
     def send_messages(self, messages):
         """Redirect messages to the dummy outbox"""
-        print(f"send_messages: {len(messages)}")
+        logger.info(f"send_messages: {len(messages)}")
         storage = shelve.open(self.mail_storage)
         outbox = storage.get(OUTBOX, [])
         storage.close()
@@ -35,7 +39,7 @@ class EmailBackend(BaseEmailBackend):
         storage = shelve.open(self.mail_storage)
         storage[OUTBOX] = outbox
         storage.close()
-        print(f"Total length: {len(outbox)}")
+        logger.info(f"Total length: {len(outbox)}")
         return msg_count
 
 
@@ -48,10 +52,7 @@ def get_outbox(mail_storage_name=None):
     storage = shelve.open(mail_storage)
     outbox = storage[OUTBOX]
     storage.close()
-    print(f"Mailbox length: {len(outbox)}")
-    for mail in outbox:
-        print(f"{mail.subject}, {mail.to}")
-    print("-----")
+    logger.info(f"Mailbox length: {len(outbox)}")
     return outbox
 
 

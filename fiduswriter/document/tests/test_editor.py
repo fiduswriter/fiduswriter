@@ -3,7 +3,7 @@ import os
 
 from channels.testing import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
-from testing.mail import get_outbox, empty_outbox
+from testing.mail import get_outbox, empty_outbox, delete_outbox
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
@@ -38,6 +38,7 @@ class EditorTest(ChannelsLiveServerTestCase, SeleniumHelper):
     @classmethod
     def tearDownClass(cls):
         cls.driver.quit()
+        delete_outbox(MAIL_STORAGE_NAME)
         super().tearDownClass()
 
     def setUp(self):

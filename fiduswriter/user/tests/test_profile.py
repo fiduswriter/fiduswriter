@@ -9,7 +9,7 @@ from channels.testing import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
 from selenium.common.exceptions import StaleElementReferenceException
 
-from testing.mail import get_outbox, empty_outbox
+from testing.mail import get_outbox, empty_outbox, delete_outbox
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import override_settings
@@ -32,6 +32,7 @@ class ProfileTest(ChannelsLiveServerTestCase, SeleniumHelper):
     @classmethod
     def tearDownClass(cls):
         cls.driver.quit()
+        delete_outbox(MAIL_STORAGE_NAME)
         super().tearDownClass()
 
     def setUp(self):

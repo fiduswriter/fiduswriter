@@ -17,33 +17,25 @@ class EmailBackend(BaseEmailBackend):
         super().__init__(*args, **kwargs)
 
         if hasattr(settings, "MAIL_STORAGE_NAME"):
-            mail_storage = MAIL_STORAGE_BASE + settings.MAIL_STORAGE_NAME
+            self.mail_storage = MAIL_STORAGE_BASE + settings.MAIL_STORAGE_NAME
         else:
-            mail_storage = MAIL_STORAGE_BASE
-        # Clean outbox.
-        try:
-            os.remove(mail_storage)
-        except OSError:
-            pass
-
-        self.outbox = []
+            self.mail_storage = MAIL_STORAGE_BASE
 
     def send_messages(self, messages):
         """Redirect messages to the dummy outbox"""
         print(f"send_messages: {len(messages)}")
-        if hasattr(settings, "MAIL_STORAGE_NAME"):
-            mail_storage = MAIL_STORAGE_BASE + settings.MAIL_STORAGE_NAME
-        else:
-            mail_storage = MAIL_STORAGE_BASE
-        storage = shelve.open(mail_storage)
+        storage = shelve.open(self.mail_storage)
+        outbox = storage.get(OUTBOX, [])
+        storage.close()
         msg_count = 0
         for message in messages:  # .message() triggers header validation
             message.message()
-            self.outbox.append(message)
+            outbox.append(message)
             msg_count += 1
-        storage[OUTBOX] = self.outbox
+        storage = shelve.open(self.mail_storage)
+        storage[OUTBOX] = outbox
         storage.close()
-        print(f"Total length: {len(self.outbox)}")
+        print(f"Total length: {len(outbox)}")
         return msg_count
 
 
@@ -71,3 +63,15 @@ def empty_outbox(mail_storage_name=None):
     storage = shelve.open(mail_storage)
     storage[OUTBOX] = []
     storage.close()
+
+
+def delete_outbox(mail_storage_name=None):
+    if mail_storage_name:
+        mail_storage = MAIL_STORAGE_BASE + mail_storage_name
+    else:
+        mail_storage = MAIL_STORAGE_BASE
+    # Clean outbox.
+    try:
+        os.remove(mail_storage)
+    except OSError:
+        pass

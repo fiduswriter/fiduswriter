@@ -202,6 +202,7 @@ BASE_INSTALLED_APPS = [
     "django.contrib.admindocs",
     "django.contrib.flatpages",
     "channels",
+    "channels_presence",
     "django_js_error_hook",
     "loginas",
     "fixturemedia",
@@ -382,5 +383,6 @@ CHANNEL_LAYERS = {
         "BACKEND": "channels.layers.InMemoryChannelLayer",
     },
 }
+CHANNELS_PRESENCE_MAX_AGE = 240
 
 ASGI_APPLICATION = "base.routing.application"

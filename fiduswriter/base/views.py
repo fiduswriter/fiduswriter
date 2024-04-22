@@ -1,11 +1,18 @@
+import json
+
 from django.shortcuts import render
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.flatpages.models import FlatPage
 from django.http import JsonResponse
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_GET, require_POST
+from django.contrib.admin.views.decorators import staff_member_required
 
 from allauth.socialaccount.adapter import get_adapter
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+from channels_presence.models import Room, Presence
+
 
 from user.helpers import Avatars
 from .decorators import ajax_required
@@ -103,6 +110,47 @@ def admin_console(request):
     Load the admin console page.
     """
     return render(request, "admin/console.html")
+
+
+@ajax_required
+@require_GET
+@staff_member_required
+def connection_info(request):
+    """
+    Return info about currently connected clients.
+    """
+    response = {}
+    Room.objects.prune_presences()
+    Room.objects.prune_rooms()
+    room = Room.objects.filter(channel_name="system_messages").first()
+    if room:
+        response["sessions"] = Presence.objects.filter(room=room).count()
+        response["users"] = room.get_users().count()
+    else:
+        response["sessions"] = 0
+        response["users"] = 0
+    return JsonResponse(response, status=200)
+
+
+@ajax_required
+@require_POST
+@staff_member_required
+def send_system_message(request):
+    """
+    Send out a system message to all clients connected to the frontend.
+    """
+    response = {}
+    message = request.POST["message"]
+    channel_layer = get_channel_layer()
+
+    async_to_sync(channel_layer.group_send)(
+        "system_messages",
+        {
+            "type": "forward.message",
+            "message": json.dumps({"type": "message", "message": message}),
+        },
+    )
+    return JsonResponse(response, status=200)
 
 
 @ajax_required

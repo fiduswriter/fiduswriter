@@ -1,4 +1,4 @@
-import {findTarget, addAlert, whenReady, WebSocketConnector} from "../common"
+import {findTarget, addAlert, whenReady, getJson, postJson} from "../common"
 
 // To see how many users are currently online and send them maintenance messages
 
@@ -8,34 +8,13 @@ export class AdminConsole {
 
     init() {
         whenReady().then(() => {
+            this.render()
             this.bind()
         })
 
     }
 
     bind() {
-        this.ws = new WebSocketConnector({
-            url: "/ws/base/",
-            appLoaded: () => true,
-            initialMessage: () => ({type: "subscribe_admin"}),
-            receiveData: data => {
-                switch (data.type) {
-                case "connection_info":
-                    this.renderConnectionInfo(data.sessions)
-                    break
-                case "message_delivered": {
-                    addAlert("info", gettext("Message delivered successfully!"))
-                    const button = document.querySelector("input#submit_user_message")
-                    button.value = gettext("Message delivered")
-                    break
-                }
-                default:
-                    break
-                }
-            }
-
-        })
-        this.ws.init()
         document.body.addEventListener("click", event => {
             const el = {}
             switch (true) {
@@ -47,7 +26,7 @@ export class AdminConsole {
                 document.querySelector("textarea#user_message").disabled = true
                 document.querySelector("input#submit_user_message").disabled = true
                 document.querySelector("input#submit_user_message").value = gettext("Sending...")
-                this.sendUserMessage(message)
+                this.sendSystemMessage(message)
                 break
             }
             default:
@@ -56,15 +35,27 @@ export class AdminConsole {
         })
     }
 
-    sendUserMessage(message) {
-        this.ws.send(() => ({type: "message", message}))
+    sendSystemMessage(message) {
+        return postJson("/api/base/send_system_message/", {message}).then(
+            () => {
+                addAlert("info", gettext("Message delivered successfully!"))
+                const button = document.querySelector("input#submit_user_message")
+                button.value = gettext("Message delivered")
+            }
+        )
     }
 
-    renderConnectionInfo(sessions) {
-        const counterEl = document.getElementById("session_count")
-        if (counterEl) {
-            counterEl.innerHTML = sessions
-        }
-    }
+    render() {
+        return getJson("/api/base/connection_info/").then(({sessions, users}) => {
+            const sessionCounterEl = document.getElementById("session_count")
+            if (sessionCounterEl) {
+                sessionCounterEl.innerHTML = String(sessions)
+            }
+            const userCounterEl = document.getElementById("user_count")
+            if (userCounterEl) {
+                userCounterEl.innerHTML = String(users)
+            }
 
+        })
+    }
 }

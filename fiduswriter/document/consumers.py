@@ -53,7 +53,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         response = {"type": "confirm_diff", "rid": rid}
         self.send_message(response)
 
-    def subscribe_doc(self, connection_count=0):
+    def subscribe(self, connection_count=0):
         self.user_info = SessionUserInfo(self.user)
         doc_db, can_access = self.user_info.init_access(self.sessionument_id)
         if not can_access or float(doc_db.doc_version) != FW_DOCUMENT_VERSION:
@@ -253,12 +253,6 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             self.send_message({"type": "reject_diff", "rid": message["rid"]})
 
     def handle_message(self, message):
-        if message["type"] == "subscribe":
-            connection_count = 0
-            if "connection" in message:
-                connection_count = message["connection"]
-            self.subscribe_doc(connection_count)
-            return
         if self.user_info.document_id not in WebsocketConsumer.sessions:
             logger.debug(
                 f"Action:Receiving message for closed document. "

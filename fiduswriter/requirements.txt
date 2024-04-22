@@ -15,3 +15,4 @@ jsonpatch==1.33
 httpx==0.25.0
 channels==4.1.0
 daphne==4.1.2
+django-channels-presence-4.0==1.1.2

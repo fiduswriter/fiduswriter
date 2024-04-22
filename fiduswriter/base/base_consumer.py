@@ -40,6 +40,9 @@ class BaseWebsocketConsumer(WebsocketConsumer):
         if not text_data:
             return
         message = json.loads(text_data)
+        if message["type"] == "ping":
+            self.send_pong()
+            return
         if message["type"] == "request_resend":
             self.resend_messages(message["from"])
             return
@@ -87,13 +90,22 @@ class BaseWebsocketConsumer(WebsocketConsumer):
             return
         # Message order is correct. We continue processing the data.
         self.messages["client"] += 1
+        if message["type"] == "subscribe":
+            connection_count = 0
+            if "connection" in message:
+                connection_count = message["connection"]
+            self.subscribe(connection_count)
+            return
         self.handle_message(message)
 
-    def handle_message(message):
+    def handle_message(self, message):
         pass
 
-    def reject_message(message):
+    def reject_message(self, message):
         pass
+
+    def subscribe(self, connection_count):
+        self.send_message({"type": "subscribed"})
 
     def send_message(self, message):
         self.messages["server"] += 1
@@ -131,3 +143,6 @@ class BaseWebsocketConsumer(WebsocketConsumer):
             return
         for message in self.messages["last_ten"][0 - to_send :]:
             self.send_message(message)
+
+    def send_pong(self):
+        self.send(text_data='{"type": "pong"}')

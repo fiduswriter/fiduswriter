@@ -1,72 +1,33 @@
+import json
+from asgiref.sync import async_to_sync
+
 from base.base_consumer import BaseWebsocketConsumer
 
+from channels_presence.models import Room, Presence
 
-class WebsocketConsumer(BaseWebsocketConsumer):
-    sessions = dict()
-    admin_sessions = dict()
+# Prune stale connections upon startup
+Room.objects.prune_presences()
+Room.objects.prune_rooms()
 
-    def handle_message(self, message):
-        if message["type"] == "subscribe":
-            self.subscribe()
-            return
-        if message["type"] == "subscribe_admin":
-            self.subscribe_admin()
-            return
-        if message["type"] == "message" and self.type == "admin":
-            WebsocketConsumer.send_message_to_users(message)
-            self.send_message({"type": "message_delivered"})
-            return
 
-    def subscribe(self):
-        self.type = "user"
-        if len(WebsocketConsumer.sessions) == 0:
-            self.id = 1
-        else:
-            self.id = max(WebsocketConsumer.sessions) + 1
-        WebsocketConsumer.sessions[self.id] = self
-        self.send_connection_info_update()
+class SystemMessageConsumer(BaseWebsocketConsumer):
 
-    def subscribe_admin(self):
-        if not self.user.is_staff:
-            # User does not have access
-            self.access_denied()
-            return
-        self.type = "admin"
-        if len(WebsocketConsumer.admin_sessions) == 0:
-            self.id = 1
-        else:
-            self.id = max(WebsocketConsumer.admin_sessions) + 1
-        WebsocketConsumer.admin_sessions[self.id] = self
-        self.send_message(self.get_connection_info_message())
+    def subscribe(self, connection_count):
+        Room.objects.add(
+            "system_messages", self.channel_name, self.scope["user"]
+        )
+        super().subscribe(connection_count)
 
-    def send_connection_info_update(self):
-        connection_info_message = self.get_connection_info_message()
-        WebsocketConsumer.send_message_to_admins(connection_info_message)
+    def send_pong(self):
+        Presence.objects.touch(self.channel_name)
+        super().send_pong()
 
-    def get_connection_info_message(self):
-        return {
-            "type": "connection_info",
-            "sessions": len(WebsocketConsumer.sessions),
-        }
+    def disconnect(self, disconnect_code):
+        Room.objects.remove("system_messages", self.channel_name)
 
-    @classmethod
-    def send_message_to_users(cls, message):
-        for waiter in list(cls.sessions.values()):
-            waiter.send_message(message)
-
-    @classmethod
-    def send_message_to_admins(cls, message):
-        for waiter in list(cls.admin_sessions.values()):
-            waiter.send_message(message)
-
-    def on_close(self):
-        if not hasattr(self, "type"):
-            return
-        if self.type == "user" and self.id in WebsocketConsumer.sessions:
-            del WebsocketConsumer.sessions[self.id]
-            self.send_connection_info_update()
-        elif (
-            self.type == "admin"
-            and self.id in WebsocketConsumer.admin_sessions
-        ):
-            del WebsocketConsumer.admin_sessions[self.id]
+    def forward_message(self, event):
+        """
+        Utility handler for messages to be broadcasted to groups.  Will be
+        called from channel layer messages with `"type": "forward.message"`.
+        """
+        self.send_message(json.loads(event["message"]))

@@ -1,13 +1,9 @@
 import json
-from asgiref.sync import async_to_sync
+import atexit
 
 from base.base_consumer import BaseWebsocketConsumer
 
 from channels_presence.models import Room, Presence
-
-# Prune stale connections upon startup
-Room.objects.prune_presences()
-Room.objects.prune_rooms()
 
 
 class SystemMessageConsumer(BaseWebsocketConsumer):
@@ -31,3 +27,10 @@ class SystemMessageConsumer(BaseWebsocketConsumer):
         called from channel layer messages with `"type": "forward.message"`.
         """
         self.send_message(json.loads(event["message"]))
+
+
+def remove_all_presences():
+    Presence.objects.filter(room__channel_name="system_messages").delete()
+
+
+atexit.register(remove_all_presences)

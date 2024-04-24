@@ -4,9 +4,14 @@ import time
 import logging
 from channels.testing import ChannelsLiveServerTestCase
 from .editor_helper import EditorHelper
-from document.ws_urls import urlpatterns
+from document.consumers import WebsocketConsumer
 from document import prosemirror
 from selenium.webdriver.common.by import By
+import multiprocessing
+
+
+manager = multiprocessing.Manager()
+WebsocketConsumer.sessions = manager.dict()
 
 
 class SimpleMessageExchangeTests(ChannelsLiveServerTestCase, EditorHelper):
@@ -55,7 +60,6 @@ class SimpleMessageExchangeTests(ChannelsLiveServerTestCase, EditorHelper):
 
         self.add_title(self.driver)
         self.driver.find_element(By.CLASS_NAME, "article-body").click()
-        WebsocketConsumer = urlpatterns[0].callback.consumer_class
         # Type lots of text to increment the server message count.
         print(WebsocketConsumer.sessions)
         socket_object = WebsocketConsumer.sessions[self.doc.id][
@@ -119,7 +123,6 @@ class SimpleMessageExchangeTests(ChannelsLiveServerTestCase, EditorHelper):
         """
         self.load_document_editor(self.driver, self.doc)
 
-        WebsocketConsumer = urlpatterns[0].callback.consumer_class
         session = WebsocketConsumer.sessions[self.doc.id]
         socket_object = session["participants"][0]
         diff_script = (

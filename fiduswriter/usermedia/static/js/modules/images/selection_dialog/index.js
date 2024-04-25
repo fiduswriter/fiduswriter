@@ -126,6 +126,10 @@ export class ImageSelectionDialog {
                     hidden: true
                 },
                 {
+                    select: [0, 2],
+                    type: "string"
+                },
+                {
                     select: [1, 3],
                     sortable: false
                 }
@@ -146,14 +150,19 @@ export class ImageSelectionDialog {
                 `<img src="${image.image.thumbnail}" style="max-heigth:30px;max-width:30px;">`,
             escapeText(image.image.title),
             image.db === this.imgDb && image.image.id === this.imgId ?
-                "<i class=\"fa fa-check\" aria-hidden=\"true\"></i>" :
-                "&emsp;"
+                [{nodeName: "i", attributes: {class: "fa fa-check", "aria-hidden": "true"}}] :
+                []
         ]
     }
 
     checkRow(dataIndex) {
-        const cell = this.table.data.data[dataIndex]
-        const [db, id] = (cell.text || cell.data).split("-").map(
+        const row = this.table.data.data[dataIndex]
+        console.log({row, dataIndex})
+        if (!row) {
+            return
+        }
+        const cell = row.cells[0]
+        const [db, id] = cell.data.split("-").map(
             (val, index) => index ? parseInt(val) : val // only parseInt id (where index > 0)
         )
         if (id === this.imgId) {
@@ -164,22 +173,23 @@ export class ImageSelectionDialog {
         this.imgDb = db
         this.table.data.data.forEach((row, index) => {
             if (index === dataIndex && this.imgId) {
-                row[3] = {data: "<i class=\"fa fa-check\" aria-hidden=\"true\"></i>"}
+                row.cells[3].data = [{nodeName: "i", attributes: {class: "fa fa-check", "aria-hidden": "true"}}]
             } else {
-                row[3] = {data: "&emsp;"}
+                row.cells[3].data = []
             }
         })
-        this.table.render()
+        this.table.refresh()
     }
 
     bindEvents() {
         // functions for the image selection dialog
-        this.table.body.addEventListener("click", event => {
+        this.table.dom.addEventListener("click", event => {
             const el = {}
             switch (true) {
-            case findTarget(event, "tr", el):
-                this.checkRow(el.target.dataIndex)
+            case findTarget(event, "tr", el): {
+                this.checkRow(parseInt(el.target.dataset.index))
                 break
+            }
             default:
                 break
             }

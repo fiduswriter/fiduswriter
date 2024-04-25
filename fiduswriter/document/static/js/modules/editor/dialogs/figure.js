@@ -51,10 +51,8 @@ export class FigureDialog {
             this.dialog.dialogEl.querySelector(".formula-or-figure")
         ]
         import("mathlive").then(MathLive => {
-            this.mathField = new MathLive.MathfieldElement({
-                mathVirtualKeyboardPolicy: "manual",
-            })
-            this.mathField.strings = {
+
+            MathLive.MathfieldElement.strings = {
                 "int": {
                     "keyboard.tooltip.functions": gettext("Functions"),
                     "keyboard.tooltip.greek": gettext("Greek Letters"),
@@ -67,14 +65,14 @@ export class FigureDialog {
                     "tooltip.undo": gettext("Undo")
                 }
             }
-            this.mathField.locale = "int"
-            this.mathField.plonkSound = null
-            this.mathField.keypressSound = null
+            MathLive.MathfieldElement.locale = "int"
+            MathLive.MathfieldElement.plonkSound = null
+            MathLive.MathfieldElement.keypressSound = null
+            this.mathField = new MathLive.MathfieldElement({
+                mathVirtualKeyboardPolicy: "manual",
+            })
             this.mathField.value = this.equation
             this.mathliveDOM.appendChild(this.mathField)
-            this.mathField.addEventListener("focusin", () => window.mathVirtualKeyboard.show())
-            this.mathField.addEventListener("focusout", () => window.mathVirtualKeyboard.hide())
-
 
             this.mathField.addEventListener("focusout", () => this.showPlaceHolder())
             this.mathField.addEventListener("focus", () => this.hidePlaceHolder())
@@ -328,7 +326,7 @@ export class FigureDialog {
             }
         )
 
-        if (this.width == "100") {
+        if (this.width === "100") {
             alignmentSelector.setValue("center")
             alignmentSelector.disable()
             this.aligned = "center"

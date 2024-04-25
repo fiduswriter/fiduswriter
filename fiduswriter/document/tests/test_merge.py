@@ -1,11 +1,11 @@
 import multiprocessing
-from testing.testcases import LiveTornadoTestCase
+from channels.testing import ChannelsLiveServerTestCase
 from .editor_helper import EditorHelper
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 
 
-class AutoMergeTests(LiveTornadoTestCase, EditorHelper):
+class AutoMergeTests(ChannelsLiveServerTestCase, EditorHelper):
     """
     Tests in which two browsers collaborate and the connection is interrupted.
     Auto merge would be triggered when the connection is restored.
@@ -41,6 +41,11 @@ class AutoMergeTests(LiveTornadoTestCase, EditorHelper):
         self.login_user(self.user, self.driver, self.client)
         self.login_user(self.user, self.driver2, self.client2)
         self.doc = self.create_new_document()
+
+    def tearDown(self):
+        super().tearDown()
+        self.leave_site(self.driver)
+        self.leave_site(self.driver2)
 
     def test_footnotes_automerge(self):
         """

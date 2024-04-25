@@ -9,15 +9,14 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from django.conf import settings
 
-from testing.testcases import LiveTornadoTestCase
 from testing.selenium_helper import SeleniumHelper
+from channels.testing import ChannelsLiveServerTestCase
 
 
-class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
+class BibliographyOverviewTest(ChannelsLiveServerTestCase, SeleniumHelper):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.base_url = cls.live_server_url
         cls.download_dir = mkdtemp()
         driver_data = cls.get_drivers(1, cls.download_dir)
         cls.driver = driver_data["drivers"][0]
@@ -32,6 +31,7 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
         super().tearDownClass()
 
     def setUp(self):
+        self.base_url = self.live_server_url
         self.verificationErrors = []
         self.accept_next_alert = True
         self.user = self.create_user(

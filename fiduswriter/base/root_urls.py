@@ -1,4 +1,5 @@
 import os
+import re
 
 from importlib import import_module
 
@@ -33,13 +34,20 @@ admin_site_urls = (
     admin.site.urls[2],
 )
 # Django URLs -- Notice that these are only consulted after the
-# tornado_url_list found in base/servers/tornado_django_hybrid.py
+# protocol based routing in routing.py
 urlpatterns = [
     re_path(
         "^robots.txt$",
         lambda r: HttpResponse(
             "User-agent: *\nDisallow: /document/\nDisallow: /bibliography/",
-            mimetype="text/plain",
+            content_type="text/plain",
+        ),
+    ),
+    re_path(
+        "^hello-fiduswriter$",
+        lambda r: HttpResponse(
+            "Hello from Fidus Writer",
+            content_type="text/plain",
         ),
     ),
     re_path("^manifest.json$", manifest_json, name="manifest_json"),
@@ -66,6 +74,26 @@ urlpatterns = [
     # Login as other user
     path("admin/", include("loginas.urls")),
 ]
+if settings.MEDIA_URL[0] == "/":
+    urlpatterns += [
+        # media files
+        re_path(
+            r"^%s(?P<path>.*)$" % re.escape(settings.MEDIA_URL.lstrip("/")),
+            static_serve,
+            {"document_root": settings.MEDIA_ROOT},
+        ),
+    ]
+
+
+if not settings.DEBUG and settings.STATIC_URL[0] == "/":
+    # Only serve static files from collecting folder if not running in debug mode.
+    urlpatterns += [
+        re_path(
+            r"^%s(?P<path>.*)$" % re.escape(settings.STATIC_URL.lstrip("/")),
+            static_serve,
+            {"document_root": settings.STATIC_ROOT},
+        ),
+    ]
 
 for app in settings.INSTALLED_APPS:
     try:

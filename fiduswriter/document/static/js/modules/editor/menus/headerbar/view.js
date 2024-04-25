@@ -331,7 +331,7 @@ export class HeaderbarView {
         const exitUrl = !folderPath.length && this.editor.app.routes[""].app === "document" ? "/" : `/documents${encodeURI(folderPath)}/`
         return `<div>
             <div id="close-document-top" title="${gettext("Close the document and return to the document overview menu.")}">
-                <a href="${exitUrl}">
+                <a href="${exitUrl}" aria-label="Close document">
                     <i class="fa fa-times"></i>
                 </a>
             </div>

@@ -3,9 +3,9 @@ import multiprocessing
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from testing.testcases import LiveTornadoTestCase
+from channels.testing import ChannelsLiveServerTestCase
 from .editor_helper import EditorHelper
-from document.ws_views import WebSocket
+from document.consumers import WebsocketConsumer
 from django.conf import settings
 import os
 from selenium.webdriver.common.action_chains import ActionChains
@@ -13,7 +13,7 @@ from selenium.webdriver.common.keys import Keys
 from document.models import AccessRight
 
 
-class OfflineTests(LiveTornadoTestCase, EditorHelper):
+class OfflineTests(ChannelsLiveServerTestCase, EditorHelper):
     """
     Tests in which two browsers collaborate and the connection is interrupted.
     """
@@ -47,6 +47,11 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         self.login_user(self.user, self.driver, self.client)
         self.login_user(self.user, self.driver2, self.client2)
         self.doc = self.create_new_document()
+
+    def tearDown(self):
+        super().tearDown()
+        self.leave_site(self.driver)
+        self.leave_site(self.driver2)
 
     def test_simple(self):
         """
@@ -106,7 +111,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         """
 
         # The history length stored by the server is shortened from 1000 to 1.
-        WebSocket.history_length = 1
+        WebsocketConsumer.history_length = 1
 
         self.load_document_editor(self.driver, self.doc)
         self.load_document_editor(self.driver2, self.doc)
@@ -150,7 +155,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
             self.get_contents(self.driver2), self.get_contents(self.driver)
         )
 
-        WebSocket.history_length = 1000
+        WebsocketConsumer.history_length = 1000
 
     def test_tracking_local_changes(self):
         """
@@ -316,7 +321,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         """
 
         # The history length stored by the server is shortened from 1000 to 1.
-        WebSocket.history_length = 1
+        WebsocketConsumer.history_length = 1
 
         self.load_document_editor(self.driver, self.doc)
         self.load_document_editor(self.driver2, self.doc)
@@ -379,7 +384,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         )
         self.assertEqual(len(change_tracking_boxes), 1)
 
-        WebSocket.history_length = 1000
+        WebsocketConsumer.history_length = 1000
 
     def test_failed_authentication(self):
         """
@@ -440,7 +445,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         Because of this conflict, the merge window opens up.
         """
         # The history length stored by the server is shortened from 1000 to 1.
-        WebSocket.history_length = 1
+        WebsocketConsumer.history_length = 1
 
         self.load_document_editor(self.driver, self.doc)
         self.load_document_editor(self.driver2, self.doc)
@@ -492,10 +497,10 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         )
 
         # Change the websocket history length back to its original value
-        WebSocket.history_length = 1000
+        WebsocketConsumer.history_length = 1000
 
 
-class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
+class FunctionalOfflineTests(ChannelsLiveServerTestCase, EditorHelper):
     """
     Tests in which one user works offline. The Service Worker is
     also installed in these tests.
@@ -529,6 +534,7 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
         self.doc = self.create_new_document()
 
     def tearDown(self):
+        super().tearDown()
         self.leave_site(self.driver)
 
     def test_service_workers(self):
@@ -828,7 +834,7 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
         self.assertEqual(alert_element.is_displayed(), True)
 
 
-class AccessRightsOfflineTests(LiveTornadoTestCase, EditorHelper):
+class AccessRightsOfflineTests(ChannelsLiveServerTestCase, EditorHelper):
     """
     Tests in which one user works offline. During which the
     access rights of the user has been modified/deleted.
@@ -872,6 +878,7 @@ class AccessRightsOfflineTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def tearDown(self):
+        super().tearDown()
         self.leave_site(self.driver)
         self.leave_site(self.driver2)
 
@@ -917,7 +924,6 @@ class AccessRightsOfflineTests(LiveTornadoTestCase, EditorHelper):
 
         # driver 2 goes online
         self.driver2.execute_script("window.theApp.page.ws.goOnline()")
-
         # Check that dialog is displayed
         element = WebDriverWait(self.driver2, self.wait_time).until(
             EC.visibility_of_element_located(

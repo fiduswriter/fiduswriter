@@ -2,14 +2,19 @@ from django.test import override_settings
 
 import time
 import logging
-from testing.testcases import LiveTornadoTestCase
+from channels.testing import ChannelsLiveServerTestCase
 from .editor_helper import EditorHelper
-from document.ws_views import WebSocket
+from document.consumers import WebsocketConsumer
 from document import prosemirror
 from selenium.webdriver.common.by import By
+import multiprocessing
 
 
-class SimpleMessageExchangeTests(LiveTornadoTestCase, EditorHelper):
+manager = multiprocessing.Manager()
+WebsocketConsumer.sessions = manager.dict()
+
+
+class SimpleMessageExchangeTests(ChannelsLiveServerTestCase, EditorHelper):
     """
     Tests in which one user works on the document and simulates
     loss of socket messages.
@@ -40,6 +45,10 @@ class SimpleMessageExchangeTests(LiveTornadoTestCase, EditorHelper):
         self.login_user(self.user, self.driver, self.client)
         self.doc = self.create_new_document()
 
+    def tearDown(self):
+        super().tearDown()
+        self.leave_site(self.driver)
+
     def test_client_losing_server_messages(self):
         """
         Test one client trying to edit document while online.
@@ -51,9 +60,11 @@ class SimpleMessageExchangeTests(LiveTornadoTestCase, EditorHelper):
 
         self.add_title(self.driver)
         self.driver.find_element(By.CLASS_NAME, "article-body").click()
-
         # Type lots of text to increment the server message count.
-        socket_object = WebSocket.sessions[self.doc.id]["participants"][0]
+        print(WebsocketConsumer.sessions)
+        socket_object = WebsocketConsumer.sessions[self.doc.id][
+            "participants"
+        ][0]
         self.type_text(self.driver, self.TEST_TEXT)
         self.type_text(self.driver, self.TEST_TEXT)
         self.type_text(self.driver, self.TEST_TEXT)
@@ -112,7 +123,7 @@ class SimpleMessageExchangeTests(LiveTornadoTestCase, EditorHelper):
         """
         self.load_document_editor(self.driver, self.doc)
 
-        session = WebSocket.sessions[self.doc.id]
+        session = WebsocketConsumer.sessions[self.doc.id]
         socket_object = session["participants"][0]
         diff_script = (
             "theApp.page.ws.send(()=>({"

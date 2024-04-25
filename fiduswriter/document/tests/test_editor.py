@@ -1,21 +1,26 @@
 import time
 import os
 
-from testing.testcases import LiveTornadoTestCase
+from channels.testing import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
+from testing.mail import get_outbox, empty_outbox, delete_outbox
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
-from django.core import mail
 from django.conf import settings
+from django.test import override_settings
 
 from allauth.account.models import EmailConfirmationHMAC, EmailAddress
 
+MAIL_STORAGE_NAME = "editor"
 
-class EditorTest(LiveTornadoTestCase, SeleniumHelper):
+
+@override_settings(MAIL_STORAGE_NAME=MAIL_STORAGE_NAME)
+@override_settings(EMAIL_BACKEND="testing.mail.EmailBackend")
+class EditorTest(ChannelsLiveServerTestCase, SeleniumHelper):
     fixtures = [
         "initial_documenttemplates.json",
         "initial_styles.json",
@@ -24,7 +29,6 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.base_url = cls.live_server_url
         driver_data = cls.get_drivers(1)
         cls.driver = driver_data["drivers"][0]
         cls.client = driver_data["clients"][0]
@@ -34,14 +38,21 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
     @classmethod
     def tearDownClass(cls):
         cls.driver.quit()
+        delete_outbox(MAIL_STORAGE_NAME)
         super().tearDownClass()
 
     def setUp(self):
+        self.base_url = self.live_server_url
         self.verificationErrors = []
         self.accept_next_alert = True
         self.user1 = self.create_user(
             username="Yeti", email="yeti@snowman.com", passtext="otter"
         )
+
+    def tearDown(self):
+        super().tearDown()
+        empty_outbox(MAIL_STORAGE_NAME)
+        self.leave_site(self.driver)
 
     def test_crossrefs_and_internal_links(self):
         self.driver.get(self.base_url)
@@ -114,7 +125,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             EC.element_to_be_clickable(
                 (By.XPATH, '//*[normalize-space()="Photo"]')
             )
-        )
+        ).click()
         # click on 'Insert image' button
         self.driver.find_element(By.ID, "insert-figure-image").click()
 
@@ -581,12 +592,13 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.XPATH, '//*[normalize-space()="Write"]'
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, "#my-contacts").click()
+        time.sleep(2)
         self.driver.find_element(
             By.CSS_SELECTOR, ".ui-dialog .fw-dark"
         ).click()
-        time.sleep(1)
+        outbox = get_outbox(MAIL_STORAGE_NAME)
         # We keep track of the invitation email to open it later.
-        user4_invitation_email = mail.outbox[-1].body
+        user4_invitation_email = outbox[-1].body
         #  Reopen the share dialog and add users 5-7
         self.driver.find_element(
             By.CSS_SELECTOR, ".header-menu:nth-child(1) > .header-nav-item"
@@ -628,12 +640,12 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(
             By.CSS_SELECTOR, ".ui-dialog .fw-dark"
         ).click()
-        time.sleep(1)
+        outbox = get_outbox(MAIL_STORAGE_NAME)
         # We keep track of the invitation email to open it later.
         last_three_emails = [
-            mail.outbox[-3].body,
-            mail.outbox[-2].body,
-            mail.outbox[-1].body,
+            outbox[-3].body,
+            outbox[-2].body,
+            outbox[-1].body,
         ]
         user5_invitation_email = next(
             (s for s in last_three_emails if "yeti5" in s), None
@@ -932,12 +944,13 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, ".tag-user"))
         ).click()
-        emails_sent_before_comment = len(mail.outbox)
+        outbox = get_outbox(MAIL_STORAGE_NAME)
+        emails_sent_before_comment = len(outbox)
         self.driver.find_element(
             By.CSS_SELECTOR, ".comment-btns .submit"
         ).click()
-        time.sleep(1)
-        self.assertEqual(emails_sent_before_comment + 1, len(mail.outbox))
+        outbox = get_outbox(MAIL_STORAGE_NAME)
+        self.assertEqual(emails_sent_before_comment + 1, len(outbox))
         self.driver.find_element(By.ID, "close-document-top").click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.ID, "preferences-btn"))
@@ -967,7 +980,8 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
                 (By.CSS_SELECTOR, 'a[href="mailto:yeti4a@snowman.com"]')
             )
         )
-        confirmation_link = self.find_urls(mail.outbox[-1].body)[0]
+        outbox = get_outbox(MAIL_STORAGE_NAME)
+        confirmation_link = self.find_urls(outbox[-1].body)[0]
         self.driver.get(confirmation_link)
         self.driver.find_element(By.ID, "terms-check").click()
         self.driver.find_element(By.ID, "test-check").click()

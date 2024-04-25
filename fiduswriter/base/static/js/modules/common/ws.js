@@ -41,6 +41,10 @@ export class WebSocketConnector {
         this.connectionCount = 0
         this.recentlySent = false
         this.listeners = {}
+
+        //heartbeat
+        this.pingTimer = false
+        this.pongTimer = false
     }
 
     init() {
@@ -127,6 +131,8 @@ export class WebSocketConnector {
         const expectedServer = this.messages.server + 1
         if (data.type === "request_resend") {
             this.resend_messages(data.from)
+        } else if (data.type === "pong") {
+            this.heartbeat()
         } else if (data.s < expectedServer) {
             // Receive a message already received at least once. Ignore.
             return
@@ -280,6 +286,7 @@ export class WebSocketConnector {
             break
         case "subscribed":
             this.subscribed()
+            this.heartbeat()
             break
         case "access_denied":
             this.failedAuth()
@@ -290,4 +297,14 @@ export class WebSocketConnector {
         }
     }
 
+    heartbeat() {
+        clearTimeout(this.pingTimer)
+        clearTimeout(this.pongTimer)
+        this.pingTimer = setTimeout(() => {
+            this.ws.send("{\"type\": \"ping\"}")
+            this.pongTimer = setTimeout(() => {
+                this.listeners.onOffline()
+            }, 10000)
+        }, 60000)
+    }
 }

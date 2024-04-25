@@ -31,8 +31,9 @@ SRC_PATH = os.environ.get("SRC_PATH")
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(PROJECT_PATH, "fiduswriter.sql"),
+        "NAME": os.path.join(PROJECT_PATH, "fiduswriter.sqlite3"),
         "CONN_MAX_AGE": None,
+        "TEST": {"NAME": "testdb.sqlite3"},
     }
 }
 
@@ -188,6 +189,7 @@ TEMPLATES = [
 # The following are the apps needed by Fidus Writer.
 
 BASE_INSTALLED_APPS = [
+    "daphne",
     "npm_mjs",
     "base",
     "django.contrib.auth",
@@ -199,6 +201,8 @@ BASE_INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.admindocs",
     "django.contrib.flatpages",
+    "channels",
+    "channels_presence",
     "django_js_error_hook",
     "loginas",
     "fixturemedia",
@@ -316,10 +320,6 @@ LOGGING = {
             "level": "ERROR",
             "propagate": True,
         },
-        "tornado.access": {
-            "handlers": ["null"],
-            "propagate": False,
-        },
     },
 }
 
@@ -376,3 +376,13 @@ SILENCED_SYSTEM_CHECKS = ["models.W042"]
 
 FOOTER_LINKS = []
 BRANDING_LOGO = False
+
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    },
+}
+CHANNELS_PRESENCE_MAX_AGE = 240
+
+ASGI_APPLICATION = "base.routing.application"

@@ -11,8 +11,8 @@
     --highcontrast-border-color: #e0e0e0;
     --alert-box-shadow-color: 240, 240, 240, 1;
     --dropup-box-shadow-color: 0, 0, 0, 0.11;
-    --nagivation-link-text-color: 255, 255, 255, 0.7;
-    --nagivation-link-active-text-color: 255, 255, 255, 1;
+    --nagivation-link-text-color: #dde7e3;
+    --nagivation-link-active-text-color: #ffffff;
     --tokenfield-color: #555555;
     --tooltip-background-color: 38, 38, 38, 0.6;
     --chat-highlight-background-color: #6495ed;
@@ -31,6 +31,7 @@
     --pulldown-header-background-color: #2c2723;
     --pulldown-separator-color: #f2f2f2;
     --pulldown-box-shadow-color: 0, 0, 0, 0.2;
+    --table-row-background-color: #bfedc1;
 
     /* Color Schemes (CS) */
 
@@ -57,17 +58,17 @@
     --cs-3-border: #7d331f;
 
     /* light green text */
-    --cs-4-text: #84b4a7;
+    --cs-4-text: #4c6860;
 
     /* white on light green */
     --cs-5-text: #ffffff;
-    --cs-5-background: #84b4a7;
+    --cs-5-background: #4c6860;
     --cs-5-border: #f2f2f2;
     --cs-5-background-hover: #97cdbe;
 
     /* white on dark green */
     --cs-6-text: #ffffff;
-    --cs-6-background: #76a698;
+    --cs-6-background: #5a7e73;
     --cs-6-border: #7d948e;
     --cs-6-background-focus: #8ab5a6;
     --cs-6-background-hover: #96c6b8;
@@ -85,7 +86,7 @@
     /* dark on white-ish background */
     --cs-light-text: #2c2723;
     --cs-light-hover: #000000;
-    --cs-light-text-secondary: #999999;
+    --cs-light-text-secondary: #6e6e6e;
     --cs-light-border: #e0e0e0;
     --cs-light-background: #f9f9f9;
     --cs-light-background-hover: #e0e0e0;
@@ -96,7 +97,7 @@
     --cs-white-hover: #000000;
     --cs-white-selected: #000000;
     --cs-white-border: #cccccc;
-    --cs-white-text-secondary: #a8a8a8;
+    --cs-white-text-secondary: #727272;
     --cs-white-placeholder-text: #cecece;
     --cs-white-background: #ffffff;
     --cs-white-background-hover: #cccccc;

@@ -9,11 +9,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import ElementClickInterceptedException
 from django.conf import settings
-from testing.testcases import LiveTornadoTestCase
+from channels.testing import ChannelsLiveServerTestCase
 from .editor_helper import EditorHelper
 
 
-class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
+class OneUserTwoBrowsersTests(ChannelsLiveServerTestCase, EditorHelper):
     """
     Tests in which collaboration between two browsers with the same user logged
     into both browsers.
@@ -48,6 +48,11 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.login_user(self.user, self.driver, self.client)
         self.login_user(self.user, self.driver2, self.client2)
         self.doc = self.create_new_document()
+
+    def tearDown(self):
+        super().tearDown()
+        self.leave_site(self.driver)
+        self.leave_site(self.driver2)
 
     def get_title(self, driver):
         # Title is child 0.
@@ -673,10 +678,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             self.get_undo(self.driver), self.get_undo(self.driver2)
         )
 
+    def get_shadow_root(self, driver, element):
+        return driver.execute_script("return arguments[0].shadowRoot", element)
+
     def make_mathequation(self, driver):
         button = driver.find_element(By.XPATH, '//*[@title="Math"]')
         button.click()
-
         # wait for load of popup
         insert_button = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "insert-math"))
@@ -684,22 +691,29 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # type formula
         math_field = WebDriverWait(driver, self.wait_time).until(
-            EC.visibility_of_element_located((By.CSS_SELECTOR, ".math-field"))
+            EC.visibility_of_element_located((By.CSS_SELECTOR, "math-field"))
         )
         math_field.click()
-
+        math_field_shadow_dom = self.get_shadow_root(driver, math_field)
+        keyboard_toggle = math_field_shadow_dom.find_element(
+            By.CSS_SELECTOR, "div.ML__virtual-keyboard-toggle"
+        )
+        keyboard_toggle.click()
         # wait for keyboard
-        WebDriverWait(driver, self.wait_time).until(
+        element = WebDriverWait(driver, self.wait_time).until(
             EC.visibility_of_element_located(
                 (
-                    By.CSS_SELECTOR,
-                    'div.ML__keyboard.is-visible li[data-alt-keys="="]',
+                    By.XPATH,
+                    "//div[contains(@class, 'MLK__keycap')]",
                 )
             )
         )
         element = WebDriverWait(driver, self.wait_time).until(
             EC.element_to_be_clickable(
-                (By.CSS_SELECTOR, 'li[data-alt-keys="2"]')
+                (
+                    By.XPATH,
+                    "//div[contains(@class, 'MLK__keycap') and text()='2']",
+                )
             )
         )
         try:
@@ -708,17 +722,27 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             time.sleep(1)
             WebDriverWait(driver, self.wait_time).until(
                 EC.element_to_be_clickable(
-                    (By.CSS_SELECTOR, 'li[data-alt-keys="2"]')
+                    (
+                        By.XPATH,
+                        "//div[contains(@class, 'MLK__keycap') and text()='2']",
+                    )
                 )
             ).click()
-
         driver.find_element(
-            By.CSS_SELECTOR, 'li[data-alt-keys="x-var"]'
+            By.CSS_SELECTOR, "div.MLK__keycap"  # The first key - X
         ).click()
-        driver.find_element(By.CSS_SELECTOR, 'li[data-alt-keys="+"]').click()
-        driver.find_element(By.CSS_SELECTOR, 'li[data-alt-keys="3"]').click()
-        driver.find_element(By.CSS_SELECTOR, 'li[data-alt-keys="="]').click()
-        driver.find_element(By.CSS_SELECTOR, 'li[data-alt-keys="7"]').click()
+        driver.find_element(
+            By.XPATH, "//div[contains(@class, 'MLK__keycap') and text()='+']"
+        ).click()
+        driver.find_element(
+            By.XPATH, "//div[contains(@class, 'MLK__keycap') and text()='3']"
+        ).click()
+        driver.find_element(
+            By.XPATH, "//div[contains(@class, 'MLK__keycap') and text()='=']"
+        ).click()
+        driver.find_element(
+            By.XPATH, "//div[contains(@class, 'MLK__keycap') and text()='7']"
+        ).click()
         # close keyboard
         driver.find_element(By.CLASS_NAME, "ui-dialog-titlebar").click()
         insert_button.click()

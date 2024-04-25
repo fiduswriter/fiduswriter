@@ -6,11 +6,11 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
-from testing.testcases import LiveTornadoTestCase
+from channels.testing import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
 
 
-class ContactsTest(LiveTornadoTestCase, SeleniumHelper):
+class ContactsTest(ChannelsLiveServerTestCase, SeleniumHelper):
     fixtures = [
         "initial_documenttemplates.json",
         "initial_styles.json",
@@ -19,7 +19,6 @@ class ContactsTest(LiveTornadoTestCase, SeleniumHelper):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.base_url = cls.live_server_url
         driver_data = cls.get_drivers(1)
         cls.driver = driver_data["drivers"][0]
         cls.client = driver_data["clients"][0]
@@ -32,6 +31,7 @@ class ContactsTest(LiveTornadoTestCase, SeleniumHelper):
         super().tearDownClass()
 
     def setUp(self):
+        self.base_url = self.live_server_url
         self.user = self.create_user(
             username="Yeti", email="yeti@snowman.com", passtext="password"
         )

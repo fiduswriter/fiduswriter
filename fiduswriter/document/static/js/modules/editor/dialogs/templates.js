@@ -181,8 +181,8 @@ export const orderedListStartTemplate = ({order}) =>
     </div>`
 
 export const mathDialogTemplate = () =>
-    `<div title="${gettext("Math")}">
-        <p><span class="math-field" type="text" name="math" ></span></p>
+    `<div class="math-field-outer">
+        <div class="math-field" type="text" name="math" ></div>
     </div>`
 
 export const figureImageItemTemplate =  ({id, cats, image, thumbnail, title}) =>

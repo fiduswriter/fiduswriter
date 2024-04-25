@@ -107,12 +107,14 @@ body.editor header {
 }
 
 #header-navigation .header-nav-item {
-    opacity: 0.6;
     line-height: 35px;
+    color: var(--nagivation-link-text-color);
+    letter-spacing: 1px;
 }
 
 #header-navigation .header-nav-item:hover {
-    opacity: 1;
+    color: var(--nagivation-link-active-text-color);
+    text-shadow: 1px 0 0 var(--nagivation-link-active-text-color);
 }
 
 #header-navigation span.deactivated {
@@ -324,11 +326,6 @@ body.editor header {
 math-field {
     border: 0;
     min-width: calc(100% - 10px);
-}
-
-/* Hide the virtual keyboard toggle */
-math-field::part(virtual-keyboard-toggle) {
-    display: none;
 }
 
 #editor-content {
@@ -582,6 +579,10 @@ span.delete {
     cursor: pointer;
 }
 
+.image-selection-table .datatable-container tbody tr:nth-child(2n + 1) {
+    background-color: var(--table-row-background-color);
+}
+
 /* MathLive Editor Overwrite */
 
 .math-field {
@@ -590,8 +591,7 @@ span.delete {
     padding-left: 5px;
     font-size: 20px;
     display: block;
-    padding-top: 10px;
-    padding-bottom: 10px;
+    height: 59px;
     border: solid 1px var(--cs-white-border);
     cursor: text;
     position: relative;
@@ -610,6 +610,15 @@ span.delete {
     margin: 5px 0;
     font-size: 18px;
     padding-left: 5px;
+}
+
+.fw-media-uploader {
+    margin-top: 15px;
+    margin-right: 30px;
+}
+
+.math-field-outer {
+    margin-top: 32px;
 }
 
 div.table-edit-button-group {

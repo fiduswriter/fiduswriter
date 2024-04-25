@@ -91,6 +91,10 @@ export class DocTemplatesOverview {
             },
             columns: [
                 {
+                    select: 0,
+                    type: "number"
+                },
+                {
                     select: hiddenCols,
                     hidden: true
                 },
@@ -139,7 +143,7 @@ export class DocTemplatesOverview {
 
     removeTableRows(ids) {
         const existingRows = this.table.data.data.map((row, index) => {
-            const id = parseInt(row[0].text)
+            const id = row.cells[0].data
             if (ids.includes(id)) {
                 return index
             } else {

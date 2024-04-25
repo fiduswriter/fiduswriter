@@ -1,5 +1,5 @@
 import os
-from testing.testcases import LiveTornadoTestCase
+from channels.testing import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.keys import Keys
@@ -9,11 +9,10 @@ from selenium.webdriver.support import expected_conditions as EC
 from django.conf import settings
 
 
-class UsermediaOverviewTest(LiveTornadoTestCase, SeleniumHelper):
+class UsermediaOverviewTest(ChannelsLiveServerTestCase, SeleniumHelper):
     @classmethod
     def setUpClass(cls):
-        super(UsermediaOverviewTest, cls).setUpClass()
-        cls.base_url = cls.live_server_url
+        super().setUpClass()
         driver_data = cls.get_drivers(1)
         cls.driver = driver_data["drivers"][0]
         cls.client = driver_data["clients"][0]
@@ -26,6 +25,7 @@ class UsermediaOverviewTest(LiveTornadoTestCase, SeleniumHelper):
         super(UsermediaOverviewTest, cls).tearDownClass()
 
     def setUp(self):
+        self.base_url = self.live_server_url
         self.verificationErrors = []
         self.accept_next_alert = True
         self.user = self.create_user(
@@ -203,9 +203,11 @@ class UsermediaOverviewTest(LiveTornadoTestCase, SeleniumHelper):
             "'Confirm deletion'])[1]/following::button[2]",
         ).click()
         image_placeholder = WebDriverWait(driver, self.wait_time).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "datatables-empty"))
+            EC.presence_of_element_located((By.CLASS_NAME, "datatable-empty"))
         )
-        self.assertEqual("No images available", image_placeholder.text)
+        self.assertEqual(
+            "File Size (px) Added\nNo images available", image_placeholder.text
+        )
 
     def tearDown(self):
         self.assertEqual([], self.verificationErrors)

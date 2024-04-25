@@ -2,9 +2,9 @@ export const basePreloginTemplate = ({contents, language, headerLinks = [], foot
 <div id="wait">
    <i class="fa fa-spinner fa-pulse"></i>
 </div>
-<header class="fw-header prelogin">
+<header class="fw-header prelogin" role="banner">
    <div class="fw-container">
-      <h1 class="fw-login-logo"><span class="fw-logo-text"></span><img src="${staticUrl("svg/icon.svg")}" /></h1>
+      <h1 class="fw-login-logo"><span class="fw-logo-text"></span><img src="${staticUrl("svg/icon.svg")}" alt="Logo"/></h1>
       <nav id="header-nav">${
     headerLinks.map(hLink => {
         let returnValue
@@ -23,12 +23,12 @@ export const basePreloginTemplate = ({contents, language, headerLinks = [], foot
 }</nav>
 ${
     settings_BRANDING_LOGO ?
-        `<div class="fw-login-branding-logo"><img src="${staticUrl(settings_BRANDING_LOGO)}" /></div>` :
+        `<div class="fw-login-branding-logo"><img src="${staticUrl(settings_BRANDING_LOGO)}" alt="Brand logo" /></div>` :
         ""
 }
    </div>
    ${settings_IS_FREE ?
-        `<div class="star" style="position:relative;margin:0 auto;"><img src="${staticUrl("img/free_star.png")}" style="position:absolute;top:0px;left:0px;z-index:3;height:73px;"></div>` :
+        `<div class="star"><img src="${staticUrl("img/free_star.png")}" alt="Free"></div>` :
         ""
 }
 </header>

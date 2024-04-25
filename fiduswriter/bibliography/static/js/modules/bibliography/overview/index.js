@@ -96,6 +96,10 @@ export class BibliographyOverview {
             },
             columns: [
                 {
+                    select: 0,
+                    type: "number"
+                },
+                {
                     select: hiddenCols,
                     hidden: true
                 },
@@ -166,13 +170,13 @@ export class BibliographyOverview {
             BibTypeTitles[bibInfo.bib_type], // sourcetype
             bibauthors ? nameToText(bibauthors) : "", // author
             `<span class="date">${bibInfo.fields.date ? bibInfo.fields.date.replace("/", " ") : ""}</span>`, // published,
-            `<span class="delete-bib fw-link-text" data-id="${id}"><i class="fa fa-trash-alt">&nbsp;&nbsp;</i></span>` // delete icon
+            `<span class="delete-bib fw-link-text" data-id="${id}"><i class="fa fa-trash-alt">  </i></span>` // delete icon
         ]
     }
 
     removeTableRows(ids) {
         const existingRows = this.table.data.data.map((row, index) => {
-            const id = parseInt(row[0].data)
+            const id = row.cells[0].data
             if (ids.includes(id)) {
                 return index
             } else {

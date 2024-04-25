@@ -263,10 +263,29 @@ export const headerbarModel = () => ({
                     disabled: editor => editor.app.isOffline()
                 },
                 {
+                    title: gettext("Pandoc JSON"),
+                    type: "action",
+                    tooltip: gettext("Export the document to a Pandoc JSON file."),
+                    order: 3,
+                    action: editor => {
+                        import("../../../exporter/pandoc").then(({PandocExporter}) => {
+                            const exporter = new PandocExporter(
+                                editor.getDoc({changes: "acceptAllNoInsertions"}),
+                                editor.mod.db.bibDB,
+                                editor.mod.db.imageDB,
+                                editor.app.csl,
+                                editor.docInfo.updated
+                            )
+                            exporter.init()
+                        })
+                    },
+                    disabled: editor => editor.app.isOffline()
+                },
+                {
                     title: gettext("Slim FIDUS"),
                     type: "action",
                     tooltip: gettext("Export the document to a FIDUS file without its template."),
-                    order: 3,
+                    order: 4,
                     action: editor => {
                         new ExportFidusFile(
                             editor.getDoc(),

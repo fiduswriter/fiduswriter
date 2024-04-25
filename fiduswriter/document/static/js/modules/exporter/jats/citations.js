@@ -24,7 +24,7 @@ export class JATSExporterCitations {
 
     // Citations are highly interdependent -- so we need to format them all
     // together before laying out the document.
-    // We disregard the tyling of the bibliography and instead create our own, JATS-specific bibliography.
+    // We disregard the styling of the bibliography and instead create our own, JATS-specific bibliography.
     formatCitations() {
         return this.csl.getStyle(this.exporter.doc.settings.citationstyle).then(
             citationstyle => {

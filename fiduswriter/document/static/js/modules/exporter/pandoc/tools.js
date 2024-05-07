@@ -1,14 +1,3 @@
-// Mapping between Fidus Writer elements and Pandoc elements
-export const elementMapping = {
-    blockquote: "BlockQuote",
-    bullet_list: "BulletList",
-    contributors_part: "Div",
-    heading_part: "Header",
-    list_item: "ListItem",
-    ordered_list: "OrderedList",
-    paragraph: "Para"
-}
-
 export const convertText = (text) => {
     const textContent = []
     if (!text.length) {
@@ -48,7 +37,7 @@ export const convertContributor = (contributor) => {
             "t": "Note",
             "c": [{
                 "t": "Para",
-                "c": [convertText(contributor.email)]
+                "c": convertText(contributor.email)
             }]
         })
     }

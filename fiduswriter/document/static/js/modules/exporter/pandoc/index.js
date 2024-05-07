@@ -29,6 +29,7 @@ export class PandocExporter {
 
     init() {
         this.zipFileName = `${createSlug(this.docTitle)}.pandoc.json.zip`
+        //this.docContent = removeHidden(this.doc.content) //
         this.docContent = fixTables(removeHidden(this.doc.content))
         this.citations = new PandocExporterCitations(this, this.bibDB, this.csl, this.docContent)
         this.converter = new PandocExporterConvert(this, this.imageDB, this.bibDB, this.doc.settings)

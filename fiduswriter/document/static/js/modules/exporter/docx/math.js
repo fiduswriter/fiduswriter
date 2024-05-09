@@ -34,11 +34,6 @@ export class DocxExporterMath {
 
     latexToMathML(latex) {
         return this.mathLive.convertLatexToMathMl(latex)
-            .replace(/&InvisibleTimes;/g, "&#8290;")
-            .replace(/&ApplyFunction;/g, "&#x2061;")
-            .replace(/&PlusMinus;/g, "&#177;")
-            .replace(/&times;/g, "&#215;")
-            .replace(/&x2061;/g, "&#x2061;") // Bug in mathlive 0.59. Has been fixed since.
     }
 
 

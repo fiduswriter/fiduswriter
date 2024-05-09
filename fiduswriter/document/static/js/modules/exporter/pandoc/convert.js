@@ -38,12 +38,12 @@ export class PandocExporterConvert {
             switch (node.type) {
 
             case "article":
-                // // TODO:
+                // We only handle article children
                 break
             case "blockquote": {
                 pandocContent.push({
                     t: "BlockQuote",
-                    c: this.convertContent(node.content, meta, options).forEach(el => pandocElement.c.push(el))
+                    c: this.convertContent(node.content, meta, options)
                 })
                 break
             }
@@ -130,9 +130,15 @@ export class PandocExporterConvert {
                     convertedContributors.forEach(contributor => meta.author.c.push(contributor))
                 } else {
                     pandocContent.push({
-                        t: "Para",
-                        c: convertText(node.content.map(contributor => `${contributor.attrs.firstname} ${contributor.attrs.lastname}, ${contributor.attrs.institution}, ${contributor.attrs.email}`).join("; "))
-                    })
+                        t: "Div",
+                        c: [
+                          [node.attrs.id, ["article-part", "article-contributors", `article-${node.attrs.id}`, `article-${node.attrs.metadata || "other"}`], []],
+                          [{
+                              t: "Para",
+                              c: convertText(node.content.map(contributor => `${contributor.attrs.firstname} ${contributor.attrs.lastname}, ${contributor.attrs.institution}, ${contributor.attrs.email}`).join("; "))
+                          }]
+                      ]
+                  })
                 }
                 break
             }
@@ -140,17 +146,11 @@ export class PandocExporterConvert {
                 // TODO: use real cross reference instead of link.
                 pandocContent.push(
                     {
-                        "t": "Link",
-                        "c": [
+                        t: "Link",
+                        c: [
                           ["", ["reference"], []],
-                          convertText(node.attrs.title || "MISSING TARGET")
-                          [
-
-                            { "t": "Str", "c": "Second" },
-                            { "t": "Space" },
-                            { "t": "Str", "c": "heading" }
-                          ],
-                          [node.attrs.id, ""]
+                          convertText(node.attrs.title || "MISSING TARGET"),
+                          [`#${node.attrs.id}`, ""]
                         ]
                      }
                 )
@@ -173,14 +173,20 @@ export class PandocExporterConvert {
                         }
                     }
                 } else {
-                    const pandocContent = {
+                    const pandocElement = {
                         t: "Header",
                         c: [2, [node.attrs?.metadata || "", [], []]]
                     }
                     if (node.content) {
                         this.convertContent(node.content, meta, options).forEach(el => pandocElement.c.push(el))
                     }
-                    pandocContent.push(pandocElement)
+                    pandocContent.push({
+                        t: "Div",
+                        c: [
+                            [node.attrs.id, ["article-part", "article-heading", `article-${node.attrs.id}`, `article-${node.attrs.metadata || "other"}`], []],
+                            [pandocElement]
+                        ]
+                    })
                 }
                 break
             }
@@ -324,7 +330,7 @@ export class PandocExporterConvert {
                 // Dealt with in footnote
                 break
             case "hard_break":
-                // TODO
+                pandocContent.push({t: "LineBreak"})
                 break
             case "heading1":
             case "heading2":
@@ -382,12 +388,24 @@ export class PandocExporterConvert {
                         c: this.convertContent(node.content, meta, options)
                     }
                 } else {
-                    pandocContent.push(...this.convertContent(node.content, meta, options))
+                    pandocContent.push({
+                        t: "Div",
+                        c: [
+                            [node.attrs.id, ["article-part", "article-richtext", `article-${node.attrs.id}`, `article-${node.attrs.metadata || "other"}`], []],
+                            this.convertContent(node.content, meta, options)
+                        ]
+                    })
                 }
                 break
             }
             case "separator_part":
-                // TODO
+                pandocContent.push({
+                    t: "HorizontalRule",
+                    c: [
+                        [node.attrs.id, ["article-part", "article-separator", `article-${node.attrs.id}`, `article-${node.attrs.metadata || "other"}`], []],
+                        []
+                    ]
+                })
                 break
             case "tag":
                 // Handled by tags_part
@@ -397,8 +415,14 @@ export class PandocExporterConvert {
                     break
                 }
                 pandocContent.push({
-                    t: "Para",
-                    c: convertText(node.content.map(tag => tag.attrs.tag).join("; "))
+                    t: "Div",
+                    c: [
+                        [node.attrs.id, ["article-part", "article-tags", `article-${node.attrs.id}`, `article-${node.attrs.metadata || "other"}`], []],
+                        [{
+                            t: "Para",
+                            c: convertText(node.content.map(tag => tag.attrs.tag).join("; "))
+                        }]
+                    ]
                 })
                 break
             }
@@ -475,10 +499,30 @@ export class PandocExporterConvert {
                 break
             }
             case "table_part":
-                // TODO
+                pandocContent.push({
+                    t: "Div",
+                    c: [
+                        [node.attrs.id, ["article-part", "article-table", `article-${node.attrs.id}`, `article-${node.attrs.metadata || "other"}`], []],
+                        this.convertContent(node.content, meta, options)
+                    ]
+                })
                 break
             case "table_of_contents":
-                // TODO
+                pandocContent.push({
+                    t: "Div",
+                    c: [
+                        [node.attrs.id, ["article-part", "article-table-of-contents", `article-${node.attrs.id}`, `article-${node.attrs.metadata || "other"}`], []],
+                        [{
+                            t: "Header",
+                            c: [
+                                1,
+                                ["", ["toc"], []],
+                                convertText(node.attrs.title)
+                            ]
+                        }]
+                    ]
+                })
+                // TODO: fill with contents?
                 break
             case "table_row": {
                 pandocContent.push([["", [], []], this.convertContent(node.content, meta, options)])
@@ -522,7 +566,11 @@ export class PandocExporterConvert {
                         const c = []
                         containerContent.push({
                             t: "Link",
-                            c
+                            c: [
+                                ["", [], []],
+                                c,
+                                [hyperlink.attrs.href, ""]
+                            ]
                         })
                         containerContent = c
                     }
@@ -537,12 +585,6 @@ export class PandocExporterConvert {
                     } else {
                         containerContent.push(...convertText(node.text || ""))
                     }
-
-                    if (hyperlink) {
-                        // link address is added at end of content
-                        containerContent.push([hyperlink.attrs.href, ""])
-                    }
-
                 }
                 break
             }

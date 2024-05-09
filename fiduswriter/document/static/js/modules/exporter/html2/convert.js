@@ -207,23 +207,23 @@ export class HTMLExporterConvert {
             end = "</div>" + end
             break
         case "heading_part":
-            // Ignore - we deal with the heading inside
+            start += `<div class="article-part article-heading article-${node.attrs.id} ${node.attrs.metadata || "other"}" id="${node.attrs.id}"${ node.attrs.language ? ` lang="${node.attrs.language}"` : ""}>`
+            end = "</div>" + end
             break
         case "contributor":
             // Ignore - we deal with contributors_part instead.
             break
         case "contributors_part":
             if (node.content) {
-                start += `<div class="article-part article-contributors ${node.attrs.metadata || "other"}">`
+                start += `<div class="article-part article-contributors article-${node.attrs.id} ${node.attrs.metadata || "other"}" id="${node.attrs.id}"${ node.attrs.language ? ` lang="${node.attrs.language}"` : ""}>`
                 end = "</div>" + end
-                const contributorTypeId = node.attrs.id
                 let counter = 0
                 const contributorOutputs = []
                 node.content.forEach(childNode => {
                     const contributor = childNode.attrs
                     let output = ""
                     if (contributor.firstname || contributor.lastname) {
-                        output += `<span id="${contributorTypeId}-${counter++}" class="person">`
+                        output += `<span id="${node.attrs.id}-${counter++}" class="person">`
                         const nameParts = []
                         if (contributor.firstname) {
                             nameParts.push(`<span class="firstname">${escapeText(contributor.firstname)}</span>`)
@@ -248,7 +248,7 @@ export class HTMLExporterConvert {
                     } else if (contributor.institution) {
                         // There is an affiliation but no first/last name. We take this
                         // as a group collaboration.
-                        output += `<span id="${contributorTypeId}-${counter++}" class="group">`
+                        output += `<span id="${node.attrs.id}-${counter++}" class="group">`
                         output += `<span class="name">${escapeText(contributor.institution)}</span>`
                         output += "</span>"
                     }
@@ -259,7 +259,7 @@ export class HTMLExporterConvert {
             break
         case "tags_part":
             if (node.content) {
-                start += `<div class="article-part article-tags" id="${node.attrs.id}"${ node.attrs.language ? ` lang="${node.attrs.language}"` : ""}>`
+                start += `<div class="article-part article-tags article-${node.attrs.id} article-${node.attrs.metadata || "other"}" id="${node.attrs.id}"${ node.attrs.language ? ` lang="${node.attrs.language}"` : ""}>`
                 end = "</div>" + end
             }
             break
@@ -268,7 +268,7 @@ export class HTMLExporterConvert {
             break
         case "richtext_part":
             if (node.content) {
-                start += `<div class="article-part article-richtext article-${node.attrs.id}"${ node.attrs.language ? ` lang="${node.attrs.language}"` : ""}>`
+                start += `<div class="article-part article-richtext article-${node.attrs.id} article-${node.attrs.metadata || "other"}" id="${node.attrs.id}"${ node.attrs.language ? ` lang="${node.attrs.language}"` : ""}>`
                 end = "</div>" + end
             }
             break
@@ -276,10 +276,13 @@ export class HTMLExporterConvert {
             content += `<div class="article-part table-of-contents"><h1>${escapeText(node.attrs.title)}</h1></div>`
             break
         case "separator_part":
-            content += `<hr class="article-separator_part article-${node.attrs.id}">`
+            content += `<hr class="article-part article-separator article-${node.attrs.id} article-${node.attrs.metadata || "other"}" id="${node.attrs.id}">`
             break
         case "table_part":
-            // table parts will simply show the table inside of them.
+            if (node.content) {
+                start += `<div class="article-part article-table article-${node.attrs.id} article-${node.attrs.metadata || "other"}" id="${node.attrs.id}"${ node.attrs.language ? ` lang="${node.attrs.language}"` : ""}>`
+                end = "</div>" + end
+            }
             break
         case "paragraph":
             start += `<p id="p-${++this.parCounter}">`

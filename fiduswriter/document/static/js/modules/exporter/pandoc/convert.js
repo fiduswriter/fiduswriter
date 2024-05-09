@@ -35,14 +35,16 @@ export class PandocExporterConvert {
     convertContent(docContent, meta, options = {inFootnote: false, inCode: false}) {
         const pandocContent = []
         for (const node of docContent) {
-            const pandocElement = {}
             switch (node.type) {
 
             case "article":
                 // // TODO:
                 break
             case "blockquote": {
-                pandocElement.t = "BlockQuote"
+                pandocContent.push({
+                    t: "BlockQuote",
+                    c: this.convertContent(node.content, meta, options).forEach(el => pandocElement.c.push(el))
+                })
                 break
             }
             case "bullet_list": {
@@ -94,18 +96,23 @@ export class PandocExporterConvert {
                     break
                 }
                 const pandocRendering = this.convertContent(cit.content, meta, options)
-
-                pandocElement.t = "Cite"
-                pandocElement.c = [
-                    pandocReferences,
-                    pandocRendering
-                ]
+                const pandocElement = {
+                    t: "Cite",
+                    c: [pandocReferences, pandocRendering]
+                }
+                if (node.content) {
+                    this.convertContent(node.content, meta, options).forEach(el => pandocElement.c.push(el))
+                }
+                pandocContent.push(pandocElement)
                 break
             }
             case "code_block": {
                 options = Object.assign({}, options)
                 options.inCode = true
-                pandocElement.t = "Plain"
+                pandocContent.push({
+                    t: 'Plain',
+                    c: this.convertContent(node.content, meta, options)
+                })
                 break
             }
             case "contributor":
@@ -122,9 +129,10 @@ export class PandocExporterConvert {
                     const convertedContributors = node.content.map(contributor => convertContributor(contributor.attrs)).filter(convertedContributor => convertedContributor)
                     convertedContributors.forEach(contributor => meta.author.c.push(contributor))
                 } else {
-                    pandocElement.t = "Para"
-                    const contributorText = node.content.map(contributor => `${contributor.attrs.firstname} ${contributor.attrs.lastname}, ${contributor.attrs.institution}, ${contributor.attrs.email}`).join("; ")
-                    pandocElement.c = convertText(contributorText)
+                    pandocContent.push({
+                        t: "Para",
+                        c: convertText(node.content.map(contributor => `${contributor.attrs.firstname} ${contributor.attrs.lastname}, ${contributor.attrs.institution}, ${contributor.attrs.email}`).join("; "))
+                    })
                 }
                 break
             }
@@ -165,8 +173,14 @@ export class PandocExporterConvert {
                         }
                     }
                 } else {
-                    pandocElement.t = "Header"
-                    pandocElement.c = [2, [node.attrs?.metadata || "", [], []]]
+                    const pandocContent = {
+                        t: "Header",
+                        c: [2, [node.attrs?.metadata || "", [], []]]
+                    }
+                    if (node.content) {
+                        this.convertContent(node.content, meta, options).forEach(el => pandocElement.c.push(el))
+                    }
+                    pandocContent.push(pandocElement)
                 }
                 break
             }
@@ -352,7 +366,10 @@ export class PandocExporterConvert {
                 break
             }
             case "paragraph": {
-                pandocElement.t = "Para"
+                pandocContent.push({
+                    t: "Para",
+                    c: node.content ? this.convertContent(node.content, meta, options) : []
+                })
                 break
             }
             case "richtext_part": {
@@ -539,8 +556,14 @@ export class PandocExporterConvert {
                         c: this.convertContent(node.content, meta, options)
                     }
                 } else {
-                    pandocElement.t = "Header"
-                    pandocElement.c = [1, ["title", [], []]]
+                    const pandocElement = {
+                        t: "Header",
+                        c: [1, ["title", [], []]]
+                    }
+                    if (node.content) {
+                        this.convertContent(node.content, meta, options).forEach(el => pandocElement.c.push(el))
+                    }
+                    pandocContent.push(pandocElement)
                 }
                 break
             }
@@ -548,13 +571,6 @@ export class PandocExporterConvert {
                 console.log(`Not handled: ${node.type}`, {node})
                 break
             }
-            }
-            if (pandocElement.t) {
-                if (node.content) {
-                    pandocElement.c = pandocElement.c || []
-                    this.convertContent(node.content, meta, options).forEach(el => pandocElement.c.push(el))
-                }
-                pandocContent.push(pandocElement)
             }
         }
         return pandocContent

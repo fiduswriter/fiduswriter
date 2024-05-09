@@ -1,4 +1,4 @@
-import {convertLatexToMarkup} from "mathlive"
+import {convertLatexToMarkup, convertLatexToMathMl} from "mathlive"
 import pretty from "pretty"
 
 import {escapeText} from "../../common"
@@ -292,7 +292,7 @@ export class HTMLExporterConvert {
         case "heading5":
         case "heading6": {
             const level = parseInt(node.type.slice(-1))
-            start += `<h${level}>`
+            start += `<h${level} id="${node.attrs.id}">`
             end = `</h${level}>` + end
             break
         }

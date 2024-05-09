@@ -37,6 +37,10 @@ export class PandocExporterConvert {
         for (const node of docContent) {
             const pandocElement = {}
             switch (node.type) {
+
+            case "article":
+                // // TODO:
+                break
             case "blockquote": {
                 pandocElement.t = "BlockQuote"
                 break
@@ -104,6 +108,9 @@ export class PandocExporterConvert {
                 pandocElement.t = "Plain"
                 break
             }
+            case "contributor":
+                // dealt with in contributors_part
+                break
             case "contributors_part": {
                 if (!node.content || !node.content.length) {
                     break
@@ -119,6 +126,26 @@ export class PandocExporterConvert {
                     const contributorText = node.content.map(contributor => `${contributor.attrs.firstname} ${contributor.attrs.lastname}, ${contributor.attrs.institution}, ${contributor.attrs.email}`).join("; ")
                     pandocElement.c = convertText(contributorText)
                 }
+                break
+            }
+            case "cross_reference": {
+                // TODO: use real cross reference instead of link.
+                pandocContent.push(
+                    {
+                        "t": "Link",
+                        "c": [
+                          ["", ["reference"], []],
+                          convertText(node.attrs.title || "MISSING TARGET")
+                          [
+
+                            { "t": "Str", "c": "Second" },
+                            { "t": "Space" },
+                            { "t": "Str", "c": "heading" }
+                          ],
+                          [node.attrs.id, ""]
+                        ]
+                     }
+                )
                 break
             }
             case "heading_part":
@@ -143,10 +170,29 @@ export class PandocExporterConvert {
                 }
                 break
             }
+            case "equation": {
+                pandocContent.push({
+                  "t": "Span",
+                  "c": [
+                    ["", ["equation"], []],
+                    [
+                      {
+                        "t": "Math",
+                        "c": [
+                          { "t": "InlineMath" },
+                          node.attrs.equation
+                        ]
+                      },
+                    ]
+                  ]
+                })
+                break
+            }
             case "figure":
             {
                 const image = node.content.find(node => node.type === "image")?.attrs.image || false
                 const caption = node.attrs.caption ? node.content.find(node => node.type === "figure_caption")?.content || [] : []
+                const equation = node.content.find(node => node.type === "figure_equation")?.attrs.equation
                 if (image !== false) {
                     this.imageIds.push(image)
                     const imageDBEntry = this.imageDB.db[image],
@@ -208,10 +254,48 @@ export class PandocExporterConvert {
                             ]
                         })
                     }
+                } else if (equation) {
+                    pandocContent.push({
+                        t: "Figure",
+                        c: [
+                            [
+                                node.attrs.id,
+                                [
+                                    `aligned-${node.attrs.aligned}`,
+                                    `image-width-${node.attrs.width}`
+                                ],
+                                [
+                                    ["aligned", node.attrs.aligned],
+                                    ["data-width", String(node.attrs.width)],
+                                    ["category", node.attrs.category]
+                                ]
+                            ],
+                            [
+                                null,
+                                caption.length ?
+                                    [{
+                                        t: "Para",
+                                        c: this.convertContent(caption, meta, options),
+                                    }] :
+                                    []
+                            ],
+                            [{
+                              "t": "Math",
+                              "c": [
+                                { "t": "DisplayMath" },
+                                node.attrs.equation
+                              ]
+                            }]
+                        ]
+                    })
                 }
-                // TODO: equation figure and figure attributes like 50% width, copyright info etc.
+                // TODO: figure attributes like 50% width, copyright info etc.
                 break
             }
+            case "figure_caption":
+            case "figure_equation":
+                // Dealt with in figure
+                break
             case "footnote":
             {
                 options = Object.assign({}, options)
@@ -222,6 +306,12 @@ export class PandocExporterConvert {
                 })
                 break
             }
+            case "footnotecontainer":
+                // Dealt with in footnote
+                break
+            case "hard_break":
+                // TODO
+                break
             case "heading1":
             case "heading2":
             case "heading3":
@@ -232,10 +322,13 @@ export class PandocExporterConvert {
                 const level = parseInt(node.type.slice(-1))
                 pandocContent.push({
                     t: "Header",
-                    c: [level, ["", [], []], this.convertContent(node.content || [], meta, options)]
+                    c: [level, [node.attrs.id, [], []], this.convertContent(node.content || [], meta, options)]
                 })
                 break
             }
+            case "image":
+                // Handled by figure
+                break
             case "list_item":
                 // handled by ordered_list and bullet_list
                 break
@@ -276,6 +369,12 @@ export class PandocExporterConvert {
                 }
                 break
             }
+            case "separator_part":
+                // TODO
+                break
+            case "tag":
+                // Handled by tags_part
+                break
             case "tags_part": {
                 if (!node.content || !node.content.length) {
                     break
@@ -358,6 +457,12 @@ export class PandocExporterConvert {
                 }
                 break
             }
+            case "table_part":
+                // TODO
+                break
+            case "table_of_contents":
+                // TODO
+                break
             case "table_row": {
                 pandocContent.push([["", [], []], this.convertContent(node.content, meta, options)])
                 break

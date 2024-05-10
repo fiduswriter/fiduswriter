@@ -22,13 +22,11 @@ export class PandocExporter {
         this.updated = updated
 
         this.docContent = false
-        this.zipFileName = false
         this.textFiles = []
         this.httpFiles = []
     }
 
     init() {
-        this.zipFileName = `${createSlug(this.docTitle)}.pandoc.json.zip`
         //this.docContent = removeHidden(this.doc.content) //
         this.docContent = fixTables(removeHidden(this.doc.content))
         this.citations = new PandocExporterCitations(this, this.bibDB, this.csl, this.docContent)
@@ -50,12 +48,15 @@ export class PandocExporter {
                         })
                     }
                 )
-                return this.createZip()
+                return this.createDownload()
             }
         )
     }
 
-    createZip() {
+    createDownload() {
+        // This crreates a ZIP file with JSON sources included and then returns a promise for the download of the file.
+        // Override this function if adding a conversion-through-pandoc step.
+        const zipFileName = `${createSlug(this.docTitle)}.pandoc.json.zip`
         const zipper = new ZipFileCreator(
             this.textFiles,
             this.httpFiles,
@@ -65,13 +66,8 @@ export class PandocExporter {
         )
 
         return zipper.init().then(
-            blob => this.download(blob)
+            blob => download(blob, zipFileName, "application/zip")
         )
     }
-
-    download(blob) {
-        return download(blob, this.zipFileName, "application/zip")
-    }
-
 
 }

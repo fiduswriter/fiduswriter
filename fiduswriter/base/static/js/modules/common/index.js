@@ -26,6 +26,7 @@ export {
     from "./blob"
 
 export {
+    jsonPost,
     get,
     getJson,
     post,

@@ -124,6 +124,29 @@ export const postJson = function(url, params = {}, csrfToken = false) {
     )
 }
 
+export const jsonPost = function(url, object, csrfToken = false) {
+    // post json object rather than form data.
+    if (!csrfToken) {
+        csrfToken = getCsrfToken() // Won't work in web worker.
+    }
+    return fetch(url, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": csrfToken,
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "X-Requested-With": "XMLHttpRequest"
+        },
+        credentials: "include",
+        body: JSON.stringify(object)
+    }).then(
+        removeDjangoMessages
+    ).then(
+        handleFetchErrors
+    )
+
+}
+
 export const ensureCSS = function(cssUrl) {
     if (typeof cssUrl === "object") {
         cssUrl.forEach(url => ensureCSS(url))

@@ -1,4 +1,4 @@
-import {convertLatexToMarkup, convertLatexToMathMl} from "mathlive"
+import {convertLatexToMathMl} from "mathlive"
 import pretty from "pretty"
 
 import {escapeText} from "../../common"
@@ -109,7 +109,6 @@ export class HTMLExporterConvert {
         case "equation":
         case "figure_equation":
             this.features.math = true
-            this.exporter.addMathliveStylesheet()
             break
         default:
             break
@@ -454,9 +453,9 @@ export class HTMLExporterConvert {
                 }
 
                 if (equation) {
-                    start += `<div class="figure-equation" data-equation="${escapeText(equation)}">`
-                    end = "</div>" + end
-                    content = convertLatexToMarkup(equation, {mathstyle: "displaystyle"})
+                    start += `<div class="figure-equation" data-equation="${escapeText(equation)}"><math display="block">`
+                    end = "</math></div>" + end
+                    content = convertLatexToMathMl(equation)
                 } else {
                     if (imageFilename) {
                         content += `<img src="images/${imageFilename}"${this.endSlash}>`
@@ -521,9 +520,9 @@ export class HTMLExporterConvert {
             end = "</th>" + end
             break
         case "equation":
-            start += "<span class=\"equation\">"
-            end = "</span>" + end
-            content = convertLatexToMarkup(node.attrs.equation, {mathstyle: "textstyle"})
+            start += "<span class=\"equation\"><math>"
+            end = "</math></span>" + end
+            content = convertLatexToMathMl(node.attrs.equation)
             break
         case "hard_break":
             content += `<br${this.endSlash}>`

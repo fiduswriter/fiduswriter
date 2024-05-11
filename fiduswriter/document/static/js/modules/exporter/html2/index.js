@@ -123,10 +123,6 @@ export class HTMLExporter {
         return Promise.all(p)
     }
 
-    addMathliveStylesheet() {
-        this.styleSheets.push({filename: "css/mathlive.css"})
-    }
-
     createZip() {
         const zipper = new ZipFileCreator(
             this.textFiles,

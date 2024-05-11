@@ -45,8 +45,9 @@ build
 /fiduswriter/languagetool
 /fiduswriter/npm_mjs
 /fiduswriter/ojs
-/fiduswriter/phplist
+/fiduswriter/pandoc
 /fiduswriter/payment
+/fiduswriter/phplist
 /fiduswriter/publish
 /fiduswriter/website
 /fiduswriter/github_export

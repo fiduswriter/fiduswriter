@@ -110,7 +110,7 @@ export class PandocExporterConvert {
                 options = Object.assign({}, options)
                 options.inCode = true
                 pandocContent.push({
-                    t: 'Plain',
+                    t: "Plain",
                     c: this.convertContent(node.content, meta, options)
                 })
                 break
@@ -132,13 +132,13 @@ export class PandocExporterConvert {
                     pandocContent.push({
                         t: "Div",
                         c: [
-                          [node.attrs.id, ["article-part", "article-contributors", `article-${node.attrs.id}`, `article-${node.attrs.metadata || "other"}`], []],
-                          [{
-                              t: "Para",
-                              c: convertText(node.content.map(contributor => `${contributor.attrs.firstname} ${contributor.attrs.lastname}, ${contributor.attrs.institution}, ${contributor.attrs.email}`).join("; "))
-                          }]
-                      ]
-                  })
+                            [node.attrs.id, ["article-part", "article-contributors", `article-${node.attrs.id}`, `article-${node.attrs.metadata || "other"}`], []],
+                            [{
+                                t: "Para",
+                                c: convertText(node.content.map(contributor => `${contributor.attrs.firstname} ${contributor.attrs.lastname}, ${contributor.attrs.institution}, ${contributor.attrs.email}`).join("; "))
+                            }]
+                        ]
+                    })
                 }
                 break
             }
@@ -148,11 +148,11 @@ export class PandocExporterConvert {
                     {
                         t: "Link",
                         c: [
-                          ["", ["reference"], []],
-                          convertText(node.attrs.title || "MISSING TARGET"),
-                          [`#${node.attrs.id}`, ""]
+                            ["", ["reference"], []],
+                            convertText(node.attrs.title || "MISSING TARGET"),
+                            [`#${node.attrs.id}`, ""]
                         ]
-                     }
+                    }
                 )
                 break
             }
@@ -192,19 +192,19 @@ export class PandocExporterConvert {
             }
             case "equation": {
                 pandocContent.push({
-                  "t": "Span",
-                  "c": [
-                    ["", ["equation"], []],
-                    [
-                      {
-                        "t": "Math",
-                        "c": [
-                          { "t": "InlineMath" },
-                          node.attrs.equation
+                    "t": "Span",
+                    "c": [
+                        ["", ["equation"], []],
+                        [
+                            {
+                                "t": "Math",
+                                "c": [
+                                    {"t": "InlineMath"},
+                                    node.attrs.equation
+                                ]
+                            },
                         ]
-                      },
                     ]
-                  ]
                 })
                 break
             }
@@ -300,11 +300,11 @@ export class PandocExporterConvert {
                                     []
                             ],
                             [{
-                              "t": "Math",
-                              "c": [
-                                { "t": "DisplayMath" },
-                                node.attrs.equation
-                              ]
+                                "t": "Math",
+                                "c": [
+                                    {"t": "DisplayMath"},
+                                    node.attrs.equation
+                                ]
                             }]
                         ]
                     })

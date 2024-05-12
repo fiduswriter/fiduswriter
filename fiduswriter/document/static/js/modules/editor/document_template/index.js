@@ -150,12 +150,20 @@ export class ModDocumentTemplate {
         const exportMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id === "export")
         // Remove any previous entries in case we run this a second time
         exportMenu.content = exportMenu.content.filter(menuItem => menuItem.class !== "export_template")
+        // Find highest menu item under 100 to put templates at end of native exporter options.
+        let order = 1
+        exportMenu.forEach(menuItem => {
+            if (menuItem.order < 100 && menuItem.order > order) {
+                order = menuItem.order
+            }
+        })
         const exportMenuEntries = this.exportTemplates.map(template => {
             if (template.file_type === "docx") {
                 return {
                     class: "export_template",
                     title: `${template.title} (DOCX)`,
                     type: "action",
+                    order: ++order,
                     tooltip: gettext("Export the document to a DOCX file with the given template."),
                     action: editor => {
                         if (navigator.vendor ===  "Apple Computer, Inc.") {
@@ -180,6 +188,7 @@ export class ModDocumentTemplate {
                     class: "export_template",
                     title: `${template.title} (ODT)`,
                     type: "action",
+                    order: ++order,
                     tooltip: gettext("Export the document to an ODT file with the given template."),
                     action: editor => {
                         if (navigator.vendor ===  "Apple Computer, Inc.") {

@@ -152,7 +152,7 @@ export class ModDocumentTemplate {
         exportMenu.content = exportMenu.content.filter(menuItem => menuItem.class !== "export_template")
         // Find highest menu item under 100 to put templates at end of native exporter options.
         let order = 1
-        exportMenu.forEach(menuItem => {
+        exportMenu.content.forEach(menuItem => {
             if (menuItem.order < 100 && menuItem.order > order) {
                 order = menuItem.order
             }

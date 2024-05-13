@@ -32,7 +32,8 @@ export class HTMLExporterConvert {
             keywords: [],
             copyright: {
                 licenses: []
-            }
+            },
+            toc: []
         }
         this.features = {
             math: false
@@ -69,6 +70,18 @@ export class HTMLExporterConvert {
         case "article":
             this.metaData.copyright = node.attrs.copyright
             break
+        case "heading1":
+        case "heading2":
+        case "heading3":
+        case "heading4":
+        case "heading5":
+        case "heading6": {
+            const level = parseInt(node.type.slice(-1))
+            this.metaData.toc.push(
+                `<h${level}><a href="#${node.attrs.id}">${(node.content || []).map(subNode => this.walkJson(subNode)).join('')}</a></h${level}>`
+            )
+            break
+        }
         case "title":
         {
             const title = this.textWalkJson(node)
@@ -117,7 +130,6 @@ export class HTMLExporterConvert {
             node.content.forEach(child => this.preWalkJson(child))
         }
     }
-
     findCitations(node) {
         switch (node.type) {
         case "citation":
@@ -272,7 +284,9 @@ export class HTMLExporterConvert {
             }
             break
         case "table_of_contents":
-            content += `<div class="article-part table-of-contents"><h1>${escapeText(node.attrs.title)}</h1></div>`
+            start += `<div class="article-part table-of-contents"><h1>${escapeText(node.attrs.title)}</h1>`
+            content += this.metaData.toc.join('')
+            end += "</div>"
             break
         case "separator_part":
             content += `<hr class="article-part article-separator article-${node.attrs.id} article-${node.attrs.metadata || "other"}" id="${node.attrs.id}">`

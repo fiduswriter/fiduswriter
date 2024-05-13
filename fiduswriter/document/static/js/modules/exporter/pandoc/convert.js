@@ -11,9 +11,14 @@ export class PandocExporterConvert {
 
         this.internalLinks = []
         this.categoryCounter = {} // counters for each type of figure (figure/table/photo)
+
+        this.metaData = {
+            toc: [],
+        }
     }
 
     init(article) {
+        this.preWalkJson(article)
         const meta = {
             lang: {"t": "MetaInlines", "c": [{"t": "Str", "c": this.settings.language.split("-")[0]}]}
         }
@@ -28,6 +33,34 @@ export class PandocExporterConvert {
             usedBibDB: this.usedBibDB
         }
         return returnObject
+    }
+
+
+    // Find information for meta tags in header
+    preWalkJson(node) {
+        switch (node.type) {
+            case "heading1":
+            case "heading2":
+            case "heading3":
+            case "heading4":
+            case "heading5":
+            case "heading6": {
+                const level = parseInt(node.type.slice(-1))
+                this.metaData.toc.push(
+                    {
+                        t: "Header",
+                        c: [level, [node.attrs.id, [], []], this.convertContent(node.content || [])]
+                    }
+                )
+                break
+            }
+            default:
+                break
+        }
+        if (node.content) {
+            node.content.forEach(child => this.preWalkJson(child))
+        }
+
     }
 
 
@@ -226,11 +259,24 @@ export class PandocExporterConvert {
                             (!copyright || !copyright.holder)
                     ) {
                         pandocContent.push({
-                            t: "Image",
+                            t: "Plain",
                             c: [
-                                [node.attrs.id, [], []],
-                                [],
-                                [imageFilename, ""]
+
+                                {
+                                    t: "Image",
+                                    c: [
+                                        [
+                                            node.attrs.id,
+                                            [],
+                                            [
+                                                ["data-width", String(node.attrs.width)],
+                                                ["width", `${node.attrs.width}%`],
+                                            ]
+                                        ],
+                                        [],
+                                        [imageFilename, ""]
+                                    ]
+                                }
                             ]
                         })
                     } else {
@@ -246,6 +292,7 @@ export class PandocExporterConvert {
                                     [
                                         ["aligned", node.attrs.aligned],
                                         ["data-width", String(node.attrs.width)],
+                                        ["width", `${node.attrs.width}%`],
                                         ["category", node.attrs.category]
                                     ]
                                 ],
@@ -263,8 +310,11 @@ export class PandocExporterConvert {
                                     c: [{
                                         t: "Image",
                                         c: [
-                                            ["", [],
-                                                []
+                                            ["",
+                                                [],
+                                                [
+                                                    ["width", `${node.attrs.width}%`],
+                                                ]
                                             ],
                                             [],
                                             [imageFilename, ""]
@@ -287,6 +337,7 @@ export class PandocExporterConvert {
                                 [
                                     ["aligned", node.attrs.aligned],
                                     ["data-width", String(node.attrs.width)],
+                                    ["width", `${node.attrs.width}%`],
                                     ["category", node.attrs.category]
                                 ]
                             ],
@@ -309,7 +360,7 @@ export class PandocExporterConvert {
                         ]
                     })
                 }
-                // TODO: figure attributes like 50% width, copyright info etc.
+                // TODO: figure attributes like copyright info etc.
                 break
             }
             case "figure_caption":
@@ -447,10 +498,11 @@ export class PandocExporterConvert {
                     `table-${node.attrs.layout}`
                 ], [
                     ["data-width", String(node.attrs.width)],
+                    ["width", `${node.attrs.width}%`],
                     ["aligned", node.attrs.aligned],
                     ["layout", node.attrs.layout],
                     ["category", node.attrs.category]
-                ]]) // TODO: Add table width attribute
+                ]])
                 // child 1: table caption
                 const tableCaptionNode =  node.content.find(childNode => childNode.type === "table_caption" && childNode.content && childNode.content.length)
                 if (tableCaptionNode) {
@@ -507,7 +559,7 @@ export class PandocExporterConvert {
                     ]
                 })
                 break
-            case "table_of_contents":
+            case "table_of_contents": {
                 pandocContent.push({
                     t: "Div",
                     c: [
@@ -519,11 +571,11 @@ export class PandocExporterConvert {
                                 ["", ["toc"], []],
                                 convertText(node.attrs.title)
                             ]
-                        }]
+                        }].concat(this.metaData.toc)
                     ]
                 })
-                // TODO: fill with contents?
                 break
+            }
             case "table_row": {
                 pandocContent.push([["", [], []], this.convertContent(node.content, meta, options)])
                 break

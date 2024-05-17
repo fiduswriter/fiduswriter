@@ -110,6 +110,7 @@ MEDIA_URL = "/media/"
 # The maximum size of user uploaded images in bytes. If you use NGINX, note
 # that also it needs to support at least this size.
 MEDIA_MAX_SIZE = False
+DATA_UPLOAD_MAX_MEMORY_SIZE = None
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files

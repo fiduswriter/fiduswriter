@@ -39,23 +39,23 @@ export class PandocExporterConvert {
     // Find information for meta tags in header
     preWalkJson(node) {
         switch (node.type) {
-            case "heading1":
-            case "heading2":
-            case "heading3":
-            case "heading4":
-            case "heading5":
-            case "heading6": {
-                const level = parseInt(node.type.slice(-1))
-                this.metaData.toc.push(
-                    {
-                        t: "Header",
-                        c: [level, [node.attrs.id, [], []], this.convertContent(node.content || [])]
-                    }
-                )
-                break
-            }
-            default:
-                break
+        case "heading1":
+        case "heading2":
+        case "heading3":
+        case "heading4":
+        case "heading5":
+        case "heading6": {
+            const level = parseInt(node.type.slice(-1))
+            this.metaData.toc.push(
+                {
+                    t: "Header",
+                    c: [level, [node.attrs.id, [], []], this.convertContent(node.content || [])]
+                }
+            )
+            break
+        }
+        default:
+            break
         }
         if (node.content) {
             node.content.forEach(child => this.preWalkJson(child))

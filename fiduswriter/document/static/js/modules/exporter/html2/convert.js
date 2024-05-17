@@ -78,7 +78,7 @@ export class HTMLExporterConvert {
         case "heading6": {
             const level = parseInt(node.type.slice(-1))
             this.metaData.toc.push(
-                `<h${level}><a href="#${node.attrs.id}">${(node.content || []).map(subNode => this.walkJson(subNode)).join('')}</a></h${level}>`
+                `<h${level}><a href="#${node.attrs.id}">${(node.content || []).map(subNode => this.walkJson(subNode)).join("")}</a></h${level}>`
             )
             break
         }
@@ -285,7 +285,7 @@ export class HTMLExporterConvert {
             break
         case "table_of_contents":
             start += `<div class="article-part table-of-contents"><h1>${escapeText(node.attrs.title)}</h1>`
-            content += this.metaData.toc.join('')
+            content += this.metaData.toc.join("")
             end += "</div>"
             break
         case "separator_part":

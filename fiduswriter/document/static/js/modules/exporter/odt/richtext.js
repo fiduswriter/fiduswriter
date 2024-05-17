@@ -54,7 +54,7 @@ export class OdtExporterRichtext {
                         start += `<office:annotation office:name="comment_${options.tag}_${comment.attrs.id}" loext:resolved="${commentData.content.resolved}">
                                         <dc:creator>${escapeText(commentData.content.username)}</dc:creator>
                                         <dc:date>${new Date(commentData.content.date).toISOString().slice(0, -1)}000000</dc:date>
-                                        ${commentData.content.comment.map(node => this.transformRichtext(node)).join("")}
+                                        ${commentData.content.comment.map(node => this.transformRichtext(node, options)).join("")}
                                     </office:annotation>`
                     }
                     if (commentData.end === node) {
@@ -63,7 +63,7 @@ export class OdtExporterRichtext {
                                 `<office:annotation loext:resolved="${commentData.content.resolved}">
                                     <dc:creator>${escapeText(answer.username)}</dc:creator>
                                     <dc:date>${new Date(answer.date).toISOString().slice(0, -1)}000000</dc:date>
-                                    ${answer.answer.map(node => this.transformRichtext(node)).join("")}
+                                    ${answer.answer.map(node => this.transformRichtext(node, options)).join("")}
                                 </office:annotation>`
                             ).join("") +
                             end
@@ -265,7 +265,7 @@ export class OdtExporterRichtext {
                 // Needed to prevent subsequent image from overlapping
                 end = end + "<text:p text:style-name=\"Standard\"></text:p>"
             }
-            let caption = node.attrs.caption ? node.content.find(node => node.type === "figure_caption")?.content?.map(node => this.transformRichtext(node)).join("") || "" : ""
+            let caption = node.attrs.caption ? node.content.find(node => node.type === "figure_caption")?.content?.map(node => this.transformRichtext(node, options)).join("") || "" : ""
             // The figure category should not be in the
             // user's language but rather the document language
             const category = node.attrs.category
@@ -309,6 +309,7 @@ export class OdtExporterRichtext {
             }
             if (image !== false) {
                 const imageEntry = this.images.images[image]
+
                 const height = imageEntry.height * 3 / 4 // more or less px to point
                 const width = imageEntry.width * 3 / 4 // more or less px to point
                 const graphicStyleId = this.exporter.styles.getGraphicStyleId("Graphics", aligned)
@@ -346,7 +347,7 @@ export class OdtExporterRichtext {
             // We are already dealing with this in the figure.
             break
         case "table": {
-            let caption = node.attrs.caption ? node.content[0].content?.map(node => this.transformRichtext(node)).join("") || "" : ""
+            let caption = node.attrs.caption ? node.content[0].content?.map(node => this.transformRichtext(node, options)).join("") || "" : ""
             // The table category should not be in the
             // user's language but rather the document language
             const category = node.attrs.category

@@ -72,7 +72,7 @@ export class DocxExporterComments {
     }
 
     addComment(id) {
-        const commentId = (++this.commentIdCounter).toString(16)
+        const commentId = ++this.commentIdCounter
         this.comments[id] = commentId
         const commentDBEntry = this.commentsDB[id]
         const comments = this.commentsXml.querySelector("comments")

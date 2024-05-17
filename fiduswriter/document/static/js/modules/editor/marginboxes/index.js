@@ -393,7 +393,7 @@ export class ModMarginboxes {
                             css += `#margin-box-container div.margin-box:nth-of-type(${(index + 1)}) {margin-top: ${topMargin}px;}\n`
                             totalOffset += topMargin
                         }
-                        totalOffset += mboxPlacement.height + 2
+                        totalOffset += mboxPlacement.height
                         return css
                     }).join("")
                     if (firstActiveIndex > -1) {

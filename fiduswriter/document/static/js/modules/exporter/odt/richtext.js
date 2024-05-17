@@ -323,6 +323,7 @@ export class OdtExporterRichtext {
                             <draw:image xlink:href="Pictures/${imageEntry.id}" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad" draw:mime-type="${imageEntry.type}"/>
                         </draw:frame>`
             } else {
+                const latex = node.content.find(node => node.type === "figure_equation")?.attrs.equation
                 const objectNumber = this.exporter.math.addMath(latex)
                 const graphicStyleId = this.exporter.styles.getGraphicStyleId("Formula")
                 content += noSpaceTmp`

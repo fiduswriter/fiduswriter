@@ -501,7 +501,7 @@ export class DocxExporterRichtext {
         noSpaceTmp`<w:p>
                           <w:pPr><w:pStyle w:val="Caption"/><w:rPr></w:rPr></w:pPr>
                           ${catCountXml}
-                          ${caption.map(node => this.transformRichtext(node)).join("")}
+                          ${caption.map(node => this.transformRichtext(node, options)).join("")}
                     </w:p>` : ""
 }` + end
             } else {
@@ -549,7 +549,7 @@ export class DocxExporterRichtext {
 
                 end = noSpaceTmp`
                                                         ${catCountXml}
-                                                        ${caption.map(node => this.transformRichtext(node)).join("")}
+                                                        ${caption.map(node => this.transformRichtext(node, options)).join("")}
                                                     </w:p>
                                                 </w:txbxContent>
                                             </wps:txbx>
@@ -626,7 +626,7 @@ export class DocxExporterRichtext {
                         <w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/>
                         <w:bookmarkEnd w:id="${this.bookmarkCounter}"/>
                         ${catCountXml}
-                        ${caption.map(node => this.transformRichtext(node)).join("")}
+                        ${caption.map(node => this.transformRichtext(node, options)).join("")}
                     </w:p>`
             }
             this.exporter.tables.addTableGridStyle()
@@ -680,7 +680,7 @@ export class DocxExporterRichtext {
                         <w:tcPr>
                             ${
     node.attrs.rowspan && node.attrs.colspan ?
-        `<w:tcW w:w="${parseInt(options.dimensions.width  / 635)}" w:type="dxa" />` :
+        `<w:tcW w:w="${parseInt((options.dimensions?.width || 0)  / 635)}" w:type="dxa" />` :
         "<w:tcW w:w=\"0\" w:type=\"auto\" />"
 }
                             ${
@@ -734,7 +734,7 @@ export class DocxExporterRichtext {
             start += noSpaceTmp`
                     <w:p>
                         <w:pPr>
-                            <w:pStyle w:val="${options.section}"/>
+                            <w:pStyle w:val="${options.section || ""}"/>
                             <w:rPr></w:rPr>
                         </w:pPr>`
             end = "</w:p>" + end

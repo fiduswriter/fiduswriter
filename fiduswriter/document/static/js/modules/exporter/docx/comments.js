@@ -60,7 +60,7 @@ export class DocxExporterComments {
             () => {
                 Array.from(this.commentsXml.querySelectorAll("comment")).forEach(
                     el => {
-                        const id = parseInt(el.getAttribute("w:id"), 16)
+                        const id = parseInt(el.getAttribute("w:id"))
                         if (id > this.commentIdCounter) {
                             this.commentIdCounter = id
                         }
@@ -96,7 +96,7 @@ export class DocxExporterComments {
         }).join("")
         string += "</w:comment>"
         commentDBEntry.answers.forEach(answer => {
-            const answerId = (++this.commentIdCounter).toString(16)
+            const answerId = ++this.commentIdCounter
             string += `<w:comment w:id="${answerId}" w:author="${escapeText(answer.username)}" w:date="${new Date(answer.date).toISOString().split(".")[0]}Z" w:initials="${escapeText(answer.username.split(" ").map((n) => n[0]).join("").toUpperCase())}">`
             string += answer.answer.map((node, index) => {
                 const options = {section: "CommentText"}

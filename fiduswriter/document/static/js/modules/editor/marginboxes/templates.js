@@ -111,11 +111,11 @@ const commentTemplate = ({comment, view, active, editComment, activeCommentAnswe
     ) {
         return "<div class=\"margin-box comment hidden\"></div>"
     }
-    const author = comment.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.contacts.find(contact => contact.id === comment.user),
+    const author = comment.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.contacts.find(contact => contact.id === comment.user && contact.type === "user"),
         assignedUser = comment.assignedUser ?
             comment.assignedUser === docInfo.owner.id ?
                 docInfo.owner :
-                docInfo.owner.contacts.find(contact => contact.id === comment.assignedUser)  ||
+                docInfo.owner.contacts.find(contact => contact.id === comment.assignedUser && contact.type === "user")  ||
                 {
                     name: comment.assignedUsername || ""
                 } :
@@ -140,7 +140,7 @@ ${
         comment.answers.map(answer =>
             answerCommentTemplate({
                 answer,
-                author: answer.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.contacts.find(contact => contact.id === answer.user),
+                author: answer.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.contacts.find(contact => contact.id === answer.user && contact.type === "user"),
                 commentId: comment.id,
                 active,
                 activeCommentAnswerId,
@@ -242,7 +242,7 @@ const trackTemplate = ({type, data, node, active, docInfo, filterOptions}) => {
         return "<div class=\"margin-box track hidden\"></div>"
     }
 
-    const author = data.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.contacts.find(contact => contact.id === data.user),
+    const author = data.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.contacts.find(contact => contact.id === data.user && contact.type === "user"),
         nodeActionType = `${type}_${node.type.name}`
 
     return `
@@ -454,7 +454,7 @@ export const marginBoxOptions = (comment, user, docInfo) => {
                         <ul>
                             <li><span class="fw-pulldown-item unassign-comment" data-id="${comment.id}" title="${gettext("Remove user assignment from comment")}">${gettext("No-one")}</span></li>
                         ${
-    docInfo.owner.contacts.concat(docInfo.owner).map(
+    docInfo.owner.contacts.concat(docInfo.owner).filter(contact => contact.type !== "userinvite").map(
         user => `<li><span class="fw-pulldown-item assign-comment" data-id="${comment.id}" data-user="${user.id}" data-username="${escapeText(user.name)}" title="${gettext("Assign comment to")} ${escapeText(user.name)}">${escapeText(user.name)}</span></li>`
     ).join("")
 }

@@ -126,7 +126,14 @@ class ClipboardDOMSerializer {
 
 
     removeTrackingData(domFragment) {
-        domFragment.querySelectorAll(".approved-insertion, .insertion").forEach(el => el.outerHTML = el.innerHTML)
+        domFragment.querySelectorAll(".approved-insertion, .insertion").forEach(el => {
+            const parent = el.parentNode
+            const fragment = document.createDocumentFragment()
+            while (el.firstChild) {
+                fragment.appendChild(el.firstChild)
+            }
+            parent.replaceChild(fragment, el)
+        })
         domFragment.querySelectorAll(".deletion").forEach(el => el.parentElement.removeChild(el))
     }
 

@@ -172,7 +172,8 @@ export class ModDocumentTemplate {
                         }
                         import("../../exporter/docx").then(({DocxExporter}) => {
                             const exporter = new DocxExporter(
-                                editor.getDoc({changes: "acceptAllNoInsertions"}),
+                                //editor.getDoc({changes: "acceptAllNoInsertions"}),
+                                editor.getDoc(),
                                 template.template_file,
                                 editor.mod.db.bibDB,
                                 editor.mod.db.imageDB,

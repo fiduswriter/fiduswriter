@@ -23,7 +23,11 @@ export class DocxExporterRichtext {
     }
 
     run(node, options = {}) {
-        options.comments = this.findComments(node) // Data related to comments. We need to mark the first and last occurence of comment
+        if (this.exporter.options.removeComments) {
+            options.comments = {}
+        } else {
+            options.comments = this.findComments(node) // Data related to comments. We need to mark the first and last occurence of comment
+        }
         return this.transformRichtext(node, options)
     }
 
@@ -247,7 +251,7 @@ export class DocxExporterRichtext {
             break
         case "text":
         {
-            let hyperlink, em, strong, underline, smallcaps, sup, sub
+            let hyperlink, em, strong, underline, smallcaps, sup, sub, insertion, deletion
             // Check for hyperlink, bold/strong and italic/em
             if (node.marks) {
                 hyperlink = node.marks.find(mark => mark.type === "link")
@@ -257,8 +261,19 @@ export class DocxExporterRichtext {
                 smallcaps = node.marks.find(mark => mark.type === "smallcaps")
                 sup = node.marks.find(mark => mark.type === "sup")
                 sub = node.marks.find(mark => mark.type === "sub")
+                insertion = node.marks.find(mark => mark.type === "insertion" && mark.attrs.approved === false)
+                deletion = node.marks.find(mark => mark.type === "deletion")
             }
-
+            if (insertion || deletion) {
+                if (insertion) {
+                    start += `<w:ins w:author="${escapeText(insertion.attrs.username)}" w:date="${new Date(insertion.attrs.date * 60000).toISOString().split(".")[0]}Z">`
+                    end = "</w:ins>" + end
+                }
+                if (deletion) {
+                    start += `<w:del w:author="${escapeText(deletion.attrs.username)}" w:date="${new Date(deletion.attrs.date * 60000).toISOString().split(".")[0]}Z">`
+                    end = "</w:del>" + end
+                }
+            }
             if (hyperlink) {
                 const href = hyperlink.attrs.href
                 if (href[0] === "#") {
@@ -270,10 +285,10 @@ export class DocxExporterRichtext {
                     start += `<w:hyperlink r:id="rId${refId}">`
                 }
                 start += "<w:r>"
-                end = "</w:t></w:r></w:hyperlink>" + end
+                end = "</w:r></w:hyperlink>" + end
             } else {
                 start += "<w:r>"
-                end = "</w:t></w:r>" + end
+                end = "</w:r>" + end
             }
             start += "<w:rPr>"
             if (hyperlink || em || strong || underline || smallcaps || sup || sub) {
@@ -308,8 +323,13 @@ export class DocxExporterRichtext {
             if (node.text[0] === " " || node.text[node.text.length - 1] === " ") {
                 textAttr += " xml:space=\"preserve\""
             }
-            start += `<w:t${textAttr}>`
-
+            if (deletion) {
+                start += `<w:delText${textAttr}>`
+                end = "</w:delText>" + end
+            } else {
+                start += `<w:t${textAttr}>`
+                end = "</w:t>" + end
+            }
             content += escapeText(node.text)
             break
         }

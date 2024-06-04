@@ -24,17 +24,19 @@ Exporter to Office Open XML docx (Microsoft Word)
 /*
 TODO:
 * - Export tracked changes
+* - Remove comments
 * - Export document language
 * - Templating of tag/contributor output
 */
 
 export class DocxExporter {
-    constructor(doc, templateUrl, bibDB, imageDB, csl) {
+    constructor(doc, templateUrl, bibDB, imageDB, csl, options = {removeComments: false}) {
         this.doc = doc
         this.templateUrl = templateUrl
         this.bibDB = bibDB
         this.imageDB = imageDB
         this.csl = csl
+        this.options = options
 
         this.pmBib = false
         this.docContent = false

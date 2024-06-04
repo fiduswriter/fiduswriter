@@ -27,6 +27,9 @@ export class DocxExporterComments {
     }
 
     init() {
+        if (this.exporter.options.removeComments) {
+            return Promise.resolve()
+        }
         let useExtended = false
         descendantNodes(this.docContent).forEach(
             node => {

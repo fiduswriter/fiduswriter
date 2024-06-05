@@ -233,7 +233,7 @@ export class DocxExporterRender {
             tag: tag.title.slice(1)
         }
         const outXML = tag.content ? tag.content.map(
-            content => this.exporter.richtext.run(content, options)
+            (content, i) => this.exporter.richtext.run(content, options, tag.content[i + 1])
         ).join("") : ""
         tag.par.insertAdjacentHTML("beforebegin", outXML)
         // sectPr contains information about columns, etc. We need to move this

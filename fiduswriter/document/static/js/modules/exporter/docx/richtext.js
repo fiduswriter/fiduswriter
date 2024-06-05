@@ -22,13 +22,9 @@ export class DocxExporterRichtext {
         this.docPrCount = -1
     }
 
-    run(node, options = {}) {
-        if (this.exporter.options.removeComments) {
-            options.comments = {}
-        } else {
-            options.comments = this.findComments(node) // Data related to comments. We need to mark the first and last occurence of comment
-        }
-        return this.transformRichtext(node, options)
+    run(node, options = {}, nextNode = null) {
+        options.comments = this.findComments(node) // Data related to comments. We need to mark the first and last occurence of comment
+        return this.transformRichtext(node, options, nextNode)
     }
 
     findComments(node, comments = {}) {
@@ -53,7 +49,7 @@ export class DocxExporterRichtext {
         return comments
     }
 
-    transformRichtext(node, options = {}) {
+    transformRichtext(node, options = {}, nextNode = null) {
         let start = "",
             content = "",
             end = ""
@@ -86,7 +82,8 @@ export class DocxExporterRichtext {
                 }
             )
         }
-
+        const nextDelete = nextNode && nextNode.attrs?.track && nextNode.attrs.track.find(mark => mark.type === "deletion")
+        const nextInsert = nextNode && nextNode.attrs?.track && nextNode.attrs.track.find(mark => mark.type === "insertion")
         switch (node.type) {
         case "paragraph":
             if (!options.section) {
@@ -110,7 +107,19 @@ export class DocxExporterRichtext {
                     start += `<w:numPr><w:ilvl w:val="${options.list_depth}"/>`
                     start += `<w:numId w:val="${options.list_type}"/></w:numPr>`
                 } else {
-                    start += "<w:rPr></w:rPr>"
+                    start += noSpaceTmp`
+                        <w:rPr>
+                        ${
+    nextInsert ?
+        `<w:ins w:author="${escapeText(nextInsert.username)}" w:date="${new Date(nextInsert.date * 60000).toISOString().split(".")[0]}Z"/>` :
+        ""
+}
+                        ${
+    nextDelete ?
+        `<w:del w:author="${escapeText(nextDelete.username)}" w:date="${new Date(nextDelete.date * 60000).toISOString().split(".")[0]}Z"/>` :
+        ""
+}
+                        </w:rPr>`
                 }
                 start += "</w:pPr>"
                 end = "</w:p>" + end
@@ -136,7 +145,18 @@ export class DocxExporterRichtext {
                     <w:p>
                         <w:pPr>
                             <w:pStyle w:val="Heading1"/>
-                            <w:rPr></w:rPr>
+                            <w:rPr>
+                            ${
+    nextInsert ?
+        `<w:ins w:author="${escapeText(nextInsert.username)}" w:date="${new Date(nextInsert.date * 60000).toISOString().split(".")[0]}Z"/>` :
+        ""
+}
+                            ${
+    nextDelete ?
+        `<w:del w:author="${escapeText(nextDelete.username)}" w:date="${new Date(nextDelete.date * 60000).toISOString().split(".")[0]}Z"/>` :
+        ""
+}
+                            </w:rPr>
                         </w:pPr>
                         <w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/>
                         <w:bookmarkEnd w:id="${this.bookmarkCounter}"/>`
@@ -147,7 +167,18 @@ export class DocxExporterRichtext {
                     <w:p>
                         <w:pPr>
                             <w:pStyle w:val="Heading2"/>
-                            <w:rPr></w:rPr>
+                            <w:rPr>
+                            ${
+    nextInsert ?
+        `<w:ins w:author="${escapeText(nextInsert.username)}" w:date="${new Date(nextInsert.date * 60000).toISOString().split(".")[0]}Z"/>` :
+        ""
+}
+                            ${
+    nextDelete ?
+        `<w:del w:author="${escapeText(nextDelete.username)}" w:date="${new Date(nextDelete.date * 60000).toISOString().split(".")[0]}Z"/>` :
+        ""
+}
+                            </w:rPr>
                         </w:pPr>
                         <w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/>
                         <w:bookmarkEnd w:id="${this.bookmarkCounter}"/>`
@@ -158,7 +189,18 @@ export class DocxExporterRichtext {
                     <w:p>
                         <w:pPr>
                             <w:pStyle w:val="Heading3"/>
-                            <w:rPr></w:rPr>
+                            <w:rPr>
+                            ${
+    nextInsert ?
+        `<w:ins w:author="${escapeText(nextInsert.username)}" w:date="${new Date(nextInsert.date * 60000).toISOString().split(".")[0]}Z"/>` :
+        ""
+}
+                            ${
+    nextDelete ?
+        `<w:del w:author="${escapeText(nextDelete.username)}" w:date="${new Date(nextDelete.date * 60000).toISOString().split(".")[0]}Z"/>` :
+        ""
+}
+                            </w:rPr>
                         </w:pPr>
                         <w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/>
                         <w:bookmarkEnd w:id="${this.bookmarkCounter}"/>`
@@ -169,7 +211,18 @@ export class DocxExporterRichtext {
                     <w:p>
                         <w:pPr>
                             <w:pStyle w:val="Heading4"/>
-                            <w:rPr></w:rPr>
+                            <w:rPr>
+                            ${
+    nextInsert ?
+        `<w:ins w:author="${escapeText(nextInsert.username)}" w:date="${new Date(nextInsert.date * 60000).toISOString().split(".")[0]}Z"/>` :
+        ""
+}
+                            ${
+    nextDelete ?
+        `<w:del w:author="${escapeText(nextDelete.username)}" w:date="${new Date(nextDelete.date * 60000).toISOString().split(".")[0]}Z"/>` :
+        ""
+}
+                            </w:rPr>
                         </w:pPr>
                         <w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/>
                         <w:bookmarkEnd w:id="${this.bookmarkCounter}"/>`
@@ -180,7 +233,18 @@ export class DocxExporterRichtext {
                     <w:p>
                         <w:pPr>
                             <w:pStyle w:val="Heading5"/>
-                            <w:rPr></w:rPr>
+                            <w:rPr>
+                            ${
+    nextInsert ?
+        `<w:ins w:author="${escapeText(nextInsert.username)}" w:date="${new Date(nextInsert.date * 60000).toISOString().split(".")[0]}Z"/>` :
+        ""
+}
+                            ${
+    nextDelete ?
+        `<w:del w:author="${escapeText(nextDelete.username)}" w:date="${new Date(nextDelete.date * 60000).toISOString().split(".")[0]}Z"/>` :
+        ""
+}
+                            </w:rPr>
                         </w:pPr>
                         <w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/>
                         <w:bookmarkEnd w:id="${this.bookmarkCounter}"/>`
@@ -191,7 +255,18 @@ export class DocxExporterRichtext {
                     <w:p>
                         <w:pPr>
                             <w:pStyle w:val="Heading6"/>
-                            <w:rPr></w:rPr>
+                            <w:rPr>
+                            ${
+    nextInsert ?
+        `<w:ins w:author="${escapeText(nextInsert.username)}" w:date="${new Date(nextInsert.date * 60000).toISOString().split(".")[0]}Z"/>` :
+        ""
+}
+                            ${
+    nextDelete ?
+        `<w:del w:author="${escapeText(nextDelete.username)}" w:date="${new Date(nextDelete.date * 60000).toISOString().split(".")[0]}Z"/>` :
+        ""
+}
+                            </w:rPr>
                         </w:pPr>
                         <w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/>
                         <w:bookmarkEnd w:id="${this.bookmarkCounter}"/>`
@@ -199,7 +274,22 @@ export class DocxExporterRichtext {
             break
         case "code_block":
             start += "<w:p>"
-            start += "<w:pPr><w:pStyle w:val=\"Code\"/><w:rPr></w:rPr></w:pPr>"
+            start += noSpaceTmp`
+                <w:pPr>
+                    <w:pStyle w:val=\"Code\"/>
+                    <w:rPr>
+                    ${
+    nextInsert ?
+        `<w:ins w:author="${escapeText(nextInsert.username)}" w:date="${new Date(nextInsert.date * 60000).toISOString().split(".")[0]}Z"/>` :
+        ""
+}
+                    ${
+    nextDelete ?
+        `<w:del w:author="${escapeText(nextDelete.username)}" w:date="${new Date(nextDelete.date * 60000).toISOString().split(".")[0]}Z"/>` :
+        ""
+}
+                    </w:rPr>
+                </w:pPr>`
             end = "</w:p>" + end
             break
         case "blockquote":
@@ -387,7 +477,7 @@ export class DocxExporterRichtext {
                 this.fnCounter++
             } else {
                 for (let i = 0; i < cit.content.length; i++) {
-                    content += this.transformRichtext(cit.content[i], options)
+                    content += this.transformRichtext(cit.content[i], options, cit.content[i + 1])
                 }
             }
             break
@@ -521,7 +611,7 @@ export class DocxExporterRichtext {
         noSpaceTmp`<w:p>
                           <w:pPr><w:pStyle w:val="Caption"/><w:rPr></w:rPr></w:pPr>
                           ${catCountXml}
-                          ${caption.map(node => this.transformRichtext(node, options)).join("")}
+                          ${caption.map((node, i) => this.transformRichtext(node, options, caption[i + 1])).join("")}
                     </w:p>` : ""
 }` + end
             } else {
@@ -569,7 +659,7 @@ export class DocxExporterRichtext {
 
                 end = noSpaceTmp`
                                                         ${catCountXml}
-                                                        ${caption.map(node => this.transformRichtext(node, options)).join("")}
+                                                        ${caption.map((node, i) => this.transformRichtext(node, options, caption[i + 1])).join("")}
                                                     </w:p>
                                                 </w:txbxContent>
                                             </wps:txbx>
@@ -646,7 +736,7 @@ export class DocxExporterRichtext {
                         <w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/>
                         <w:bookmarkEnd w:id="${this.bookmarkCounter}"/>
                         ${catCountXml}
-                        ${caption.map(node => this.transformRichtext(node, options)).join("")}
+                        ${caption.map((node, i) => this.transformRichtext(node, options, caption[i + 1])).join("")}
                     </w:p>`
             }
             this.exporter.tables.addTableGridStyle()
@@ -768,7 +858,7 @@ export class DocxExporterRichtext {
 
         if (node.content) {
             for (let i = 0; i < node.content.length; i++) {
-                content += this.transformRichtext(node.content[i], options)
+                content += this.transformRichtext(node.content[i], options, node.content[i + 1])
             }
         }
         return start + content + end

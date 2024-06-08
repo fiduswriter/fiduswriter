@@ -401,7 +401,6 @@ export const toolbarModel = () => ({
                 } else {
                     return false
                 }
-
             },
             order: 5
         },

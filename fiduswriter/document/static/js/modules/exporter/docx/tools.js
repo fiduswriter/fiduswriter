@@ -23,3 +23,26 @@ export const moveFootnoteComments = (topNode) => {
     return topNode
 
 }
+
+export const translateBlockType = (blockType) => {
+    switch (blockType) {
+        case "heading1":
+            return "Heading1"
+        case "heading2":
+            return "Heading2"
+        case "heading3":
+            return "Heading3"
+        case "heading4":
+            return "Heading4"
+        case "heading5":
+            return "Heading5"
+        case "heading6":
+            return "Heading6"
+        case "code_block":
+            return "Code"
+        case "blockquote":
+            return "Quote"
+        default:
+            return "Normal"
+    }
+}

@@ -6,6 +6,10 @@ import {
     CATS
 } from "../../schema/i18n"
 
+import {
+    translateBlockType
+} from "./tools"
+
 export class DocxExporterRichtext {
     constructor(exporter, rels, citations, images, comments) {
         this.exporter = exporter
@@ -84,6 +88,8 @@ export class DocxExporterRichtext {
         }
         const nextDelete = nextNode && nextNode.attrs?.track && nextNode.attrs.track.find(mark => mark.type === "deletion")
         const nextInsert = nextNode && nextNode.attrs?.track && nextNode.attrs.track.find(mark => mark.type === "insertion")
+        const blockChange = node.attrs?.track && node.attrs.track.find(mark => mark.type === "block_change")
+        if (blockChange) { console.log("blockChange", blockChange)}
         switch (node.type) {
         case "paragraph":
             if (!options.section) {
@@ -121,6 +127,14 @@ export class DocxExporterRichtext {
 }
                         </w:rPr>`
                 }
+                if (blockChange) {
+                    start += noSpaceTmp`
+                        <w:pPrChange w:id="${++this.changeCounter}" w:author="${escapeText(blockChange.username)}" w:date="${new Date(blockChange.date * 60000).toISOString().split(".")[0]}Z">
+                            <w:pPr>
+                                <w:pStyle w:val="${translateBlockType(blockChange.before.type)}"/>
+                            </w:pPr>
+                        </w:pPrChange>`
+                }
                 start += "</w:pPr>"
                 end = "</w:p>" + end
                 if (!(node.content?.length)) {
@@ -141,120 +155,15 @@ export class DocxExporterRichtext {
             end = "</w:p>" + end
             break
         case "heading1":
-            start += noSpaceTmp`
-                    <w:p>
-                        <w:pPr>
-                            <w:pStyle w:val="Heading1"/>
-                            <w:rPr>
-                            ${
-    nextInsert ?
-        `<w:ins w:author="${escapeText(nextInsert.username)}" w:date="${new Date(nextInsert.date * 60000).toISOString().split(".")[0]}Z"/>` :
-        ""
-}
-                            ${
-    nextDelete ?
-        `<w:del w:author="${escapeText(nextDelete.username)}" w:date="${new Date(nextDelete.date * 60000).toISOString().split(".")[0]}Z"/>` :
-        ""
-}
-                            </w:rPr>
-                        </w:pPr>
-                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/>
-                        <w:bookmarkEnd w:id="${this.bookmarkCounter}"/>`
-            end = "</w:p>" + end
-            break
         case "heading2":
-            start += noSpaceTmp`
-                    <w:p>
-                        <w:pPr>
-                            <w:pStyle w:val="Heading2"/>
-                            <w:rPr>
-                            ${
-    nextInsert ?
-        `<w:ins w:author="${escapeText(nextInsert.username)}" w:date="${new Date(nextInsert.date * 60000).toISOString().split(".")[0]}Z"/>` :
-        ""
-}
-                            ${
-    nextDelete ?
-        `<w:del w:author="${escapeText(nextDelete.username)}" w:date="${new Date(nextDelete.date * 60000).toISOString().split(".")[0]}Z"/>` :
-        ""
-}
-                            </w:rPr>
-                        </w:pPr>
-                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/>
-                        <w:bookmarkEnd w:id="${this.bookmarkCounter}"/>`
-            end = "</w:p>" + end
-            break
         case "heading3":
-            start += noSpaceTmp`
-                    <w:p>
-                        <w:pPr>
-                            <w:pStyle w:val="Heading3"/>
-                            <w:rPr>
-                            ${
-    nextInsert ?
-        `<w:ins w:author="${escapeText(nextInsert.username)}" w:date="${new Date(nextInsert.date * 60000).toISOString().split(".")[0]}Z"/>` :
-        ""
-}
-                            ${
-    nextDelete ?
-        `<w:del w:author="${escapeText(nextDelete.username)}" w:date="${new Date(nextDelete.date * 60000).toISOString().split(".")[0]}Z"/>` :
-        ""
-}
-                            </w:rPr>
-                        </w:pPr>
-                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/>
-                        <w:bookmarkEnd w:id="${this.bookmarkCounter}"/>`
-            end = "</w:p>" + end
-            break
         case "heading4":
-            start += noSpaceTmp`
-                    <w:p>
-                        <w:pPr>
-                            <w:pStyle w:val="Heading4"/>
-                            <w:rPr>
-                            ${
-    nextInsert ?
-        `<w:ins w:author="${escapeText(nextInsert.username)}" w:date="${new Date(nextInsert.date * 60000).toISOString().split(".")[0]}Z"/>` :
-        ""
-}
-                            ${
-    nextDelete ?
-        `<w:del w:author="${escapeText(nextDelete.username)}" w:date="${new Date(nextDelete.date * 60000).toISOString().split(".")[0]}Z"/>` :
-        ""
-}
-                            </w:rPr>
-                        </w:pPr>
-                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/>
-                        <w:bookmarkEnd w:id="${this.bookmarkCounter}"/>`
-            end = "</w:p>" + end
-            break
         case "heading5":
-            start += noSpaceTmp`
-                    <w:p>
-                        <w:pPr>
-                            <w:pStyle w:val="Heading5"/>
-                            <w:rPr>
-                            ${
-    nextInsert ?
-        `<w:ins w:author="${escapeText(nextInsert.username)}" w:date="${new Date(nextInsert.date * 60000).toISOString().split(".")[0]}Z"/>` :
-        ""
-}
-                            ${
-    nextDelete ?
-        `<w:del w:author="${escapeText(nextDelete.username)}" w:date="${new Date(nextDelete.date * 60000).toISOString().split(".")[0]}Z"/>` :
-        ""
-}
-                            </w:rPr>
-                        </w:pPr>
-                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/>
-                        <w:bookmarkEnd w:id="${this.bookmarkCounter}"/>`
-            end = "</w:p>" + end
-            break
         case "heading6":
             start += noSpaceTmp`
                     <w:p>
                         <w:pPr>
-                            <w:pStyle w:val="Heading6"/>
+                            <w:pStyle w:val="${translateBlockType(node.type)}"/>
                             <w:rPr>
                             ${
     nextInsert ?
@@ -267,29 +176,20 @@ export class DocxExporterRichtext {
         ""
 }
                             </w:rPr>
+                            ${
+    blockChange ?
+        blockChange.before.type === "paragraph" ?
+            `<w:pPrChange w:id="${++this.changeCounter}" w:author="${escapeText(blockChange.username)}" w:date="${new Date(blockChange.date * 60000).toISOString().split(".")[0]}Z"/>` :
+            noSpaceTmp`<w:pPrChange w:id="${++this.changeCounter}" w:author="${escapeText(blockChange.username)}" w:date="${new Date(blockChange.date * 60000).toISOString().split(".")[0]}Z">
+                <w:pPr>
+                    <w:pStyle w:val="${translateBlockType(blockChange.before.type)}"/>
+                </w:pPr>
+            </w:pPrChange>`
+                : ''
+                            }
                         </w:pPr>
                         <w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/>
                         <w:bookmarkEnd w:id="${this.bookmarkCounter}"/>`
-            end = "</w:p>" + end
-            break
-        case "code_block":
-            start += "<w:p>"
-            start += noSpaceTmp`
-                <w:pPr>
-                    <w:pStyle w:val=\"Code\"/>
-                    <w:rPr>
-                    ${
-    nextInsert ?
-        `<w:ins w:author="${escapeText(nextInsert.username)}" w:date="${new Date(nextInsert.date * 60000).toISOString().split(".")[0]}Z"/>` :
-        ""
-}
-                    ${
-    nextDelete ?
-        `<w:del w:author="${escapeText(nextDelete.username)}" w:date="${new Date(nextDelete.date * 60000).toISOString().split(".")[0]}Z"/>` :
-        ""
-}
-                    </w:rPr>
-                </w:pPr>`
             end = "</w:p>" + end
             break
         case "blockquote":

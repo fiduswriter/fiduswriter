@@ -86,12 +86,15 @@ export class DocxExporterRichtext {
                 }
             )
         }
-        const nextDelete = nextNode && nextNode.attrs?.track && nextNode.attrs.track.find(mark => mark.type === "deletion")
-        const nextInsert = nextNode && nextNode.attrs?.track && nextNode.attrs.track.find(mark => mark.type === "insertion")
-        const blockChange = node.attrs?.track && node.attrs.track.find(mark => mark.type === "block_change")
-        if (blockChange) {
-            console.log("blockChange", blockChange)
-        }
+        const nextDelete = nextNode?.attrs?.track?.find(
+            mark => mark.type === "deletion"
+        )
+        const nextInsert = nextNode?.attrs?.track?.find(
+            mark => mark.type === "insertion"
+        )
+        const blockChange = node.attrs?.track?.find(
+            mark => mark.type === "block_change"
+        )
         switch (node.type) {
         case "paragraph":
             if (!options.section) {
@@ -196,6 +199,7 @@ export class DocxExporterRichtext {
             break
         case "blockquote":
             // This is imperfect, but Word doesn't seem to provide section/quotation nesting
+            // Also, track information on wrapping into blockquote is not exported.
             options = Object.assign({}, options)
             options.section = "Quote"
             break

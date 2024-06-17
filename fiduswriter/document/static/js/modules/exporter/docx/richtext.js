@@ -148,6 +148,8 @@ export class DocxExporterRichtext {
             }
             if (options.commentReference) {
                 end = "<w:r><w:rPr><w:rStyle w:val=\"CommentReference\"/></w:rPr><w:annotationRef/></w:r>" + end
+                options = Object.assign({}, options)
+                options.commentReference = false
             }
             break
         case "bibliography_heading":

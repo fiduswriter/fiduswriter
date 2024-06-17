@@ -423,6 +423,19 @@ export const toolbarModel = () => ({
                     return true
                 }
             },
+            selected: editor => {
+                const depth = editor.currentView.state.selection.$head.sharedDepth(
+                    editor.currentView.state.selection.anchor
+                )
+                const nodeType = editor.currentView.state.schema.nodes["ordered_list"]
+                for (let i = 0; i < depth; i++) {
+                    const node = editor.currentView.state.selection.$head.node(i)
+                    if (node.type === nodeType) {
+                        return true
+                    }
+                }
+                return false
+            },
             order: 6
         },
         {
@@ -444,6 +457,19 @@ export const toolbarModel = () => ({
                     return true
                 }
             },
+            selected: editor => {
+                const depth = editor.currentView.state.selection.$head.sharedDepth(
+                    editor.currentView.state.selection.anchor
+                )
+                const nodeType = editor.currentView.state.schema.nodes["bullet_list"]
+                for (let i = 0; i < depth; i++) {
+                    const node = editor.currentView.state.selection.$head.node(i)
+                    if (node.type === nodeType) {
+                        return true
+                    }
+                }
+                return false
+            },
             order: 7
         },
         {
@@ -464,6 +490,19 @@ export const toolbarModel = () => ({
                 ) {
                     return true
                 }
+            },
+            selected: editor => {
+                const depth = editor.currentView.state.selection.$head.sharedDepth(
+                    editor.currentView.state.selection.anchor
+                )
+                const nodeType = editor.currentView.state.schema.nodes["blockquote"]
+                for (let i = 0; i < depth; i++) {
+                    const node = editor.currentView.state.selection.$head.node(i)
+                    if (node.type === nodeType) {
+                        return true
+                    }
+                }
+                return false
             },
             order: 8
         },

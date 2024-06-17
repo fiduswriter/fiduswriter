@@ -89,7 +89,9 @@ export class DocxExporterRichtext {
         const nextDelete = nextNode && nextNode.attrs?.track && nextNode.attrs.track.find(mark => mark.type === "deletion")
         const nextInsert = nextNode && nextNode.attrs?.track && nextNode.attrs.track.find(mark => mark.type === "insertion")
         const blockChange = node.attrs?.track && node.attrs.track.find(mark => mark.type === "block_change")
-        if (blockChange) { console.log("blockChange", blockChange)}
+        if (blockChange) {
+            console.log("blockChange", blockChange)
+        }
         switch (node.type) {
         case "paragraph":
             if (!options.section) {
@@ -185,8 +187,8 @@ export class DocxExporterRichtext {
                     <w:pStyle w:val="${translateBlockType(blockChange.before.type)}"/>
                 </w:pPr>
             </w:pPrChange>`
-                : ''
-                            }
+        : ""
+}
                         </w:pPr>
                         <w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/>
                         <w:bookmarkEnd w:id="${this.bookmarkCounter}"/>`

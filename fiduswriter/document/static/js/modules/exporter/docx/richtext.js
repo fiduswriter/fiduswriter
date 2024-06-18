@@ -18,7 +18,7 @@ export class DocxExporterRichtext {
         this.images = images
         this.comments = comments
         this.commentRangeCounter = -1
-        this.paragraphIdCounter = 0
+        this.changeCounter = 0
         this.fnCounter = 1 // footnotes 0 and 1 are occupied by separators by default.
         this.bookmarkCounter = -1
         this.categoryCounter = {} // counters for each type of figure (figure/table/photo)
@@ -95,6 +95,16 @@ export class DocxExporterRichtext {
         const blockChange = node.attrs?.track?.find(
             mark => mark.type === "block_change"
         )
+        const insertion = node.marks?.find(mark => mark.type === "insertion" && mark.attrs.approved === false)
+        const deletion = node.marks?.find(mark => mark.type === "deletion")
+        if (insertion) {
+            start += `<w:ins w:id="${++this.changeCounter}" w:author="${escapeText(insertion.attrs.username)}" w:date="${new Date(insertion.attrs.date * 60000).toISOString().split(".")[0]}Z">`
+            end = "</w:ins>" + end
+        }
+        if (deletion) {
+            start += `<w:del w:id="${++this.changeCounter}" w:author="${escapeText(deletion.attrs.username)}" w:date="${new Date(deletion.attrs.date * 60000).toISOString().split(".")[0]}Z">`
+            end = "</w:del>" + end
+        }
         switch (node.type) {
         case "paragraph":
             if (!options.section) {
@@ -122,12 +132,12 @@ export class DocxExporterRichtext {
                         <w:rPr>
                         ${
     nextInsert ?
-        `<w:ins w:author="${escapeText(nextInsert.username)}" w:date="${new Date(nextInsert.date * 60000).toISOString().split(".")[0]}Z"/>` :
+        `<w:ins w:id="${++this.changeCounter}" w:author="${escapeText(nextInsert.username)}" w:date="${new Date(nextInsert.date * 60000).toISOString().split(".")[0]}Z"/>` :
         ""
 }
                         ${
     nextDelete ?
-        `<w:del w:author="${escapeText(nextDelete.username)}" w:date="${new Date(nextDelete.date * 60000).toISOString().split(".")[0]}Z"/>` :
+        `<w:del w:id="${++this.changeCounter}" w:author="${escapeText(nextDelete.username)}" w:date="${new Date(nextDelete.date * 60000).toISOString().split(".")[0]}Z"/>` :
         ""
 }
                         </w:rPr>`
@@ -174,12 +184,12 @@ export class DocxExporterRichtext {
                             <w:rPr>
                             ${
     nextInsert ?
-        `<w:ins w:author="${escapeText(nextInsert.username)}" w:date="${new Date(nextInsert.date * 60000).toISOString().split(".")[0]}Z"/>` :
+        `<w:ins w:id="${++this.changeCounter}" w:author="${escapeText(nextInsert.username)}" w:date="${new Date(nextInsert.date * 60000).toISOString().split(".")[0]}Z"/>` :
         ""
 }
                             ${
     nextDelete ?
-        `<w:del w:author="${escapeText(nextDelete.username)}" w:date="${new Date(nextDelete.date * 60000).toISOString().split(".")[0]}Z"/>` :
+        `<w:del w:id="${++this.changeCounter}" w:author="${escapeText(nextDelete.username)}" w:date="${new Date(nextDelete.date * 60000).toISOString().split(".")[0]}Z"/>` :
         ""
 }
                             </w:rPr>
@@ -249,7 +259,7 @@ export class DocxExporterRichtext {
             break
         case "text":
         {
-            let hyperlink, em, strong, underline, smallcaps, sup, sub, insertion, deletion
+            let hyperlink, em, strong, underline, smallcaps, sup, sub, formatChange
             // Check for hyperlink, bold/strong and italic/em
             if (node.marks) {
                 hyperlink = node.marks.find(mark => mark.type === "link")
@@ -259,18 +269,7 @@ export class DocxExporterRichtext {
                 smallcaps = node.marks.find(mark => mark.type === "smallcaps")
                 sup = node.marks.find(mark => mark.type === "sup")
                 sub = node.marks.find(mark => mark.type === "sub")
-                insertion = node.marks.find(mark => mark.type === "insertion" && mark.attrs.approved === false)
-                deletion = node.marks.find(mark => mark.type === "deletion")
-            }
-            if (insertion || deletion) {
-                if (insertion) {
-                    start += `<w:ins w:author="${escapeText(insertion.attrs.username)}" w:date="${new Date(insertion.attrs.date * 60000).toISOString().split(".")[0]}Z">`
-                    end = "</w:ins>" + end
-                }
-                if (deletion) {
-                    start += `<w:del w:author="${escapeText(deletion.attrs.username)}" w:date="${new Date(deletion.attrs.date * 60000).toISOString().split(".")[0]}Z">`
-                    end = "</w:del>" + end
-                }
+                formatChange = node.marks.find(mark => mark.type === "format_change")
             }
             if (hyperlink) {
                 const href = hyperlink.attrs.href
@@ -312,6 +311,20 @@ export class DocxExporterRichtext {
                     start += "<w:vertAlign w:val=\"subscript\"/>"
                 }
             }
+            if (formatChange) {
+                const beforeStyle = formatChange.attrs.before
+                start += `<w:rPrChange w:id="${++this.changeCounter}" w:author="${escapeText(formatChange.attrs.username)}" w:date="${new Date(formatChange.attrs.date * 60000).toISOString().split(".")[0]}Z"><w:rPr>`
+                if (beforeStyle.includes("em")) {
+                    start += "<w:i/><w:iCs/>"
+                }
+                if (beforeStyle.includes("strong")) {
+                    start += "<w:b/><w:bCs/>"
+                }
+                if (beforeStyle.includes("underline")) {
+                    start += "<w:u w:val=\"single\"/>"
+                }
+                start += "</w:rPr></w:rPrChange>"
+            }
             start += "</w:rPr>"
             if (options.footnoteRefMissing) {
                 start += "<w:footnoteRef /><w:tab />"
@@ -334,16 +347,21 @@ export class DocxExporterRichtext {
         case "cross_reference": {
             const title = node.attrs.title
             const id = node.attrs.id
-            this.rels.addLinkStyle()
-
-            if (title) {
-                start += `<w:hyperlink w:anchor="${id}"><w:r><w:rPr><w:rStyle w:val="${this.rels.hyperLinkStyle}"/></w:rPr><w:t>`
-                end = "</w:t></w:r></w:hyperlink>" + end
-            } else {
-                start += "<w:r><w:rPr></w:rPr><w:t>"
-                end = "</w:t></w:r>" + end
+            let marks = node.marks.slice()
+            if (title && id) {
+                const hyperlink = {type: "link", attrs: {href: `#${id}`, title}}
+                marks = marks.filter(mark => mark.type !== "link")
+                marks.push(hyperlink)
             }
-            content += escapeText(title || "MISSING TARGET")
+            content += this.transformRichtext(
+                {
+                    type: "text",
+                    text: title || "MISSING TARGET",
+                    marks
+                },
+                options,
+                nextNode
+            )
             break
         }
         case "citation":

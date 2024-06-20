@@ -7,6 +7,8 @@ import {
 import {deleteNode} from "./delete"
 
 export function acceptAllNoInsertions(doc) {
+    // Same as accept all and additionally remove insertion marks/tracks
+    // and no dependence on view.
     const tr = new Transform(doc), map = new Mapping()
     doc.descendants((node, pos) => {
         const deletionTrack = node.attrs.track ?

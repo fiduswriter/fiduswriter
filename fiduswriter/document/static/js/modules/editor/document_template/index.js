@@ -197,7 +197,7 @@ export class ModDocumentTemplate {
                         }
                         import("../../exporter/odt").then(({OdtExporter}) => {
                             const exporter = new OdtExporter(
-                                editor.getDoc({changes: "acceptAllNoInsertions"}),
+                                editor.getDoc(),
                                 template.template_file,
                                 editor.mod.db.bibDB,
                                 editor.mod.db.imageDB,

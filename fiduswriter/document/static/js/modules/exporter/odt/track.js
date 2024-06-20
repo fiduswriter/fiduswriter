@@ -35,29 +35,30 @@ export class OdtExporterTracks {
             this.checkTrackedChangesSection()
         }
         const trackId = `ct${Date.now() + this.counter++}`
-        this.trackChangesSection.insertAdjacentHTML(
-            "beforeend",
-            noSpaceTmp`
-            <text:changed-region xml:id="${trackId}" text:id="${trackId}">
-                ${
+        const changeXml = noSpaceTmp`
+        <text:changed-region xml:id="${trackId}" text:id="${trackId}">
+            ${
     trackInfo.type === "deletion" ?
         noSpaceTmp`<text:deletion>
-                        <office:change-info>
-                            <dc:creator>${escapeText(trackInfo.username)}</dc:creator>
-                            <dc:date>${new Date(trackInfo.date * 60000).toISOString().slice(0, 19)}</dc:date>
-                        </office:change-info>
-                        ${deletionString}
-                    </text:deletion>` :
+                    <office:change-info>
+                        <dc:creator>${escapeText(trackInfo.username || trackInfo.attrs.username)}</dc:creator>
+                        <dc:date>${new Date((trackInfo.date || trackInfo.attrs.date) * 60000).toISOString().slice(0, 19)}</dc:date>
+                    </office:change-info>
+                    ${deletionString}
+                </text:deletion>` :
         trackInfo.type === "insertion" ?
             noSpaceTmp`<text:insertion>
-            <office:change-info>
-                <dc:creator>${escapeText(trackInfo.username)}</dc:creator>
-                <dc:date>${new Date(trackInfo.date * 60000).toISOString().slice(0, 19)}</dc:date>
-            </office:change-info>
-        </text:insertion>` :
+        <office:change-info>
+            <dc:creator>${escapeText(trackInfo.username || trackInfo.attrs.username)}</dc:creator>
+            <dc:date>${new Date((trackInfo.date || trackInfo.attrs.date) * 60000).toISOString().slice(0, 19)}</dc:date>
+        </office:change-info>
+    </text:insertion>` :
             ""
 }
-            </text:changed-region>` // TODO: Add insertion track element
+        </text:changed-region>`
+        this.trackChangesSection.insertAdjacentHTML(
+            "beforeend",
+            changeXml
         )
         return trackId
     }

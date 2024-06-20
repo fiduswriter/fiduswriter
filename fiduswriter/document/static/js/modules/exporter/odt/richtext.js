@@ -27,9 +27,9 @@ export class OdtExporterRichtext {
         this.zIndex = 0
     }
 
-    run(node, options = {}, siblings = [], siblingIndex = 0) {
+    run(node, options = {}, parent = null, siblingIndex = 0) {
         options.comments = this.findComments(node) // Data related to comments. We need to mark the first and last occurence of comment
-        return this.transformRichtext(node, options, siblings, siblingIndex)
+        return this.transformRichtext(node, options, parent, siblingIndex)
     }
 
     findComments(node, comments = {}) {
@@ -52,13 +52,13 @@ export class OdtExporterRichtext {
         return comments
     }
 
-    transformRichtext(node, options = {}, siblings = [], siblingIndex = 0) {
+    transformRichtext(node, options = {}, parent = null, siblingIndex = 0) {
         let start = "", content = "", end = ""
-
+        const siblings = parent?.content || []
         const previousSibling = siblings[siblingIndex - 1]
         const nextSibling = siblings[siblingIndex + 1]
 
-        let blockDelete, blockInsert, nextBlockDelete, nextBlockInsert
+        let blockDelete, blockInsert
 
         if (node.attrs?.track) {
             blockDelete = node.attrs.track.find(
@@ -67,19 +67,13 @@ export class OdtExporterRichtext {
             blockInsert = node.attrs.track.find(
                 mark => mark.type === "insertion"
             )
-            nextBlockDelete = nextSibling?.attrs?.track?.find(
-                mark => mark.type === "deletion"
-            )
-            nextBlockInsert = nextSibling?.attrs?.track?.find(
-                mark => mark.type === "insertion"
-            )
         }
+
 
         // const blockChange = node.attrs?.track?.find(
         //     mark => mark.type === "block_change"
         // )
-        // const inlineInsert = node.marks?.find(mark => mark.type === "insertion" && mark.attrs.approved === false)
-        // const inlineDelete = node.marks?.find(mark => mark.type === "deletion")
+
         if (node.marks) {
             node.marks.filter(mark => mark.type === "comment").forEach(
                 comment => {
@@ -89,7 +83,7 @@ export class OdtExporterRichtext {
                     }
                     if (commentData.start === node) {
                         start += noSpaceTmp`<office:annotation office:name="comment_${options.tag}_${comment.attrs.id}" loext:resolved="${commentData.content.resolved}">
-                                        <dc:creator>${escapeText(commentData.content.username)}</dc:creator>
+                                     <dc:creator>${escapeText(commentData.content.username)}</dc:creator>
                                         <dc:date>${new Date(commentData.content.date).toISOString().slice(0, -1)}000000</dc:date>
                                         ${commentData.content.comment.map(node => this.transformRichtext(node, options)).join("")}
                                     </office:annotation>`
@@ -108,6 +102,7 @@ export class OdtExporterRichtext {
                 }
             )
         }
+
 
         switch (node.type) {
         case "bibliography_heading":
@@ -133,8 +128,13 @@ export class OdtExporterRichtext {
                 }
                 this.exporter.styles.checkParStyle(options.section)
             }
+            const nextBlockDelete = nextSibling?.attrs?.track?.find(
+                mark => mark.type === "deletion"
+            )
+            const nextBlockInsert = nextSibling?.attrs?.track?.find(
+                mark => mark.type === "insertion"
+            )
             let lastNonMergedBlock
-
             if (blockDelete) {
                 // This block has been deleted, so we need to check which text block
                 // it is being merged in to. If it has, we need to merge the
@@ -259,6 +259,7 @@ export class OdtExporterRichtext {
             break
         }
         case "text": {
+
             let hyperlink, strong, em, underline, sup, sub, smallcaps
             // Check for hyperlink, bold/strong and italic/em
             if (node.marks) {
@@ -302,7 +303,9 @@ export class OdtExporterRichtext {
                 end = "</text:span>" + end
             }
 
-            content += escapeText(node.text)
+            content += escapeText(node.text).replace(
+                /^\s+|\s+$/g,
+                match => "<text:s/>".repeat(match.length))
             break
         }
         case "citation": {
@@ -347,7 +350,8 @@ export class OdtExporterRichtext {
                 // Needed to prevent subsequent image from overlapping
                 end = end + "<text:p text:style-name=\"Standard\"></text:p>"
             }
-            let caption = node.attrs.caption ? node.content.find(node => node.type === "figure_caption")?.content?.map(node => this.transformRichtext(node, options)).join("") || "" : ""
+            const figureCaption = node.content.find(node => node.type === "figure_caption")
+            let caption = node.attrs.caption ? figureCaption?.content?.map((node, index) => this.transformRichtext(node, options, figureCaption, index)).join("") || "" : ""
             // The figure category should not be in the
             // user's language but rather the document language
             const category = node.attrs.category
@@ -429,7 +433,8 @@ export class OdtExporterRichtext {
             // We are already dealing with this in the figure.
             break
         case "table": {
-            let caption = node.attrs.caption ? node.content[0].content?.map(node => this.transformRichtext(node, options)).join("") || "" : ""
+            const tableCaption = node.content[0]
+            let caption = node.attrs.caption ? tableCaption?.content?.map((node, index) => this.transformRichtext(node, options, tableCaption, index)).join("") || "" : ""
             // The table category should not be in the
             // user's language but rather the document language
             const category = node.attrs.category
@@ -547,10 +552,35 @@ export class OdtExporterRichtext {
 
         if (node.content) {
             for (let i = 0; i < node.content.length; i++) {
-                content += this.transformRichtext(node.content[i], options, node.content, i)
+                content += this.transformRichtext(node.content[i], options, node, i)
             }
         }
 
+        if (node.marks) {
+            const inlineInsert = node.marks.find(mark => mark.type === "insertion" && mark.attrs.approved === false)
+            const inlineDelete = node.marks.find(mark => mark.type === "deletion")
+            if (inlineDelete) {
+                if (parent) {
+                    const trackId = this.exporter.tracks.addChange(
+                        inlineDelete,
+                        `<${TEXT_TYPES[parent.type].tag} ${TEXT_TYPES[parent.type].attrs(options)}>${
+                            start + content + end
+                        }</${TEXT_TYPES[parent.type].tag}>`
+                    )
+                    content = `<text:change text:change-id="${trackId}"/>`
+                } else {
+                    content = ""
+                }
+                start = ""
+                end = ""
+            }
+            if (inlineInsert) {
+                const trackId = this.exporter.tracks.addChange(inlineInsert)
+                start += `<text:change-start text:change-id="${trackId}"/>`
+                end = `<text:change-end text:change-id="${trackId}"/>` + end
+            }
+
+        }
         return start + content + end
     }
 

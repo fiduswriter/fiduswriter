@@ -5,6 +5,7 @@ export class OdtExporterTracks {
         this.exporter = exporter
         this.contentXml = false
         this.trackChangesSection = false
+        this.counter = 0
     }
 
     init() {
@@ -33,21 +34,28 @@ export class OdtExporterTracks {
         if (!this.trackChangesSection) {
             this.checkTrackedChangesSection()
         }
-        const trackId = `ct${Date.now()}`
+        const trackId = `ct${Date.now() + this.counter++}`
         this.trackChangesSection.insertAdjacentHTML(
             "beforeend",
             noSpaceTmp`
             <text:changed-region xml:id="${trackId}" text:id="${trackId}">
                 ${
     trackInfo.type === "deletion" ?
-        `<text:deletion>
+        noSpaceTmp`<text:deletion>
                         <office:change-info>
                             <dc:creator>${escapeText(trackInfo.username)}</dc:creator>
                             <dc:date>${new Date(trackInfo.date * 60000).toISOString().slice(0, 19)}</dc:date>
                         </office:change-info>
                         ${deletionString}
                     </text:deletion>` :
-        ""
+        trackInfo.type === "insertion" ?
+            noSpaceTmp`<text:insertion>
+            <office:change-info>
+                <dc:creator>${escapeText(trackInfo.username)}</dc:creator>
+                <dc:date>${new Date(trackInfo.date * 60000).toISOString().slice(0, 19)}</dc:date>
+            </office:change-info>
+        </text:insertion>` :
+            ""
 }
             </text:changed-region>` // TODO: Add insertion track element
         )

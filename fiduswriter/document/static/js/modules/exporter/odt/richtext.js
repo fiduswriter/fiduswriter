@@ -10,7 +10,7 @@ const TEXT_TYPES = {
     "heading4": {tag: "text:h", attrs: (_options) => "text:outline-level=\"4\""},
     "heading5": {tag: "text:h", attrs: (_options) => "text:outline-level=\"5\""},
     "heading6": {tag: "text:h", attrs: (_options) => "text:outline-level=\"6\""},
-    "paragraph": {tag: "text:p", attrs: (options) => `text:style-name="${options.section || "Text_20_body"}"`},
+    "paragraph": {tag: "text:p", attrs: (options) => `text:style-name="${options.section}"`},
     "code_block": {tag: "text:p", attrs: (_options) => "text:style-name=\"Preformatted_20_Text\""},
 }
 
@@ -55,18 +55,26 @@ export class OdtExporterRichtext {
     transformRichtext(node, options = {}, siblings = [], siblingIndex = 0) {
         let start = "", content = "", end = ""
 
-        let blockDelete = siblingIndex > 0 && node?.attrs?.track?.find(
-            mark => mark.type === "deletion"
-        )
         const previousSibling = siblings[siblingIndex - 1]
         const nextSibling = siblings[siblingIndex + 1]
 
-        const nextBlockDelete = nextSibling?.attrs?.track?.find(
-            mark => mark.type === "deletion"
-        )
-        // const blockInsert = nextNode?.attrs?.track?.find(
-        //     mark => mark.type === "insertion"
-        // )
+        let blockDelete, blockInsert, nextBlockDelete, nextBlockInsert
+
+        if (node.attrs?.track) {
+            blockDelete = node.attrs.track.find(
+                mark => mark.type === "deletion"
+            )
+            blockInsert = node.attrs.track.find(
+                mark => mark.type === "insertion"
+            )
+            nextBlockDelete = nextSibling?.attrs?.track?.find(
+                mark => mark.type === "deletion"
+            )
+            nextBlockInsert = nextSibling?.attrs?.track?.find(
+                mark => mark.type === "insertion"
+            )
+        }
+
         // const blockChange = node.attrs?.track?.find(
         //     mark => mark.type === "block_change"
         // )
@@ -116,6 +124,7 @@ export class OdtExporterRichtext {
         case "heading6":
         case "paragraph":
         {
+            // Handles all types of text blocks.
             if (node.type === "code_block") {
                 this.exporter.styles.checkParStyle("Preformatted_20_Text")
             } else if (node.type === "paragraph") {
@@ -151,6 +160,12 @@ export class OdtExporterRichtext {
             if (blockDelete) {
                 // This block has been deleted, so instead we just add a text
                 // change marker.
+                if (previousSibling.type === "paragraph") {
+                    if (!options.section) {
+                        options.section = "Text_20_body"
+                    }
+                    this.exporter.styles.checkParStyle(options.section)
+                }
                 const trackId = this.exporter.tracks.addChange(
                     blockDelete,
                     noSpaceTmp`
@@ -161,9 +176,10 @@ export class OdtExporterRichtext {
             } else {
                 start += `<${TEXT_TYPES[node.type].tag} ${TEXT_TYPES[node.type].attrs(options)}>`
             }
-            if (TEXT_TYPES[node.type].tag === "text:h") {
-                start += `<text:bookmark-start text:name="${node.attrs.id}"/>`
-                end += `<text:bookmark-end text:name="${node.attrs.id}"/>`
+            if (blockInsert && blockInsert.trackId) {
+                // The previous block node is a text node , so the insertion is a textblock split.
+                // We need to put change track marks in both this and the previous text block.
+                start += `<text:change-end text:change-id="${blockInsert.trackId}"/>`
             }
             const nextBlockDeleteTextType = nextBlockDelete && TEXT_TYPES[nextSibling.type]
             if (!nextBlockDeleteTextType) {
@@ -176,6 +192,20 @@ export class OdtExporterRichtext {
                     // The next block is not deleted, so we close this block.
                     end = `</${TEXT_TYPES[node.type].tag}>` + end
                 }
+            }
+            if (nextBlockInsert && TEXT_TYPES[nextSibling.type]) {
+                // The following block node is a text node , so the insertion is a textblock split.
+                // We need to put change track marks in both this and the next text block.
+                const trackId = this.exporter.tracks.addChange(
+                    nextBlockInsert
+                )
+                end = `<text:change-start text:change-id="${trackId}"/>` + end
+                // Adding the track id here so that we can add find it at the beginning of the next text block.
+                nextBlockInsert.trackId = trackId
+            }
+            if (TEXT_TYPES[node.type].tag === "text:h") {
+                start += `<text:bookmark-start text:name="${node.attrs.id}"/>`
+                end = `<text:bookmark-end text:name="${node.attrs.id}"/>` + end
             }
             break
         }

@@ -86,23 +86,23 @@ export class DocxExporterRichtext {
                 }
             )
         }
-        const nextDelete = nextNode?.attrs?.track?.find(
+        const nextBlockDelete = nextNode?.attrs?.track?.find(
             mark => mark.type === "deletion"
         )
-        const nextInsert = nextNode?.attrs?.track?.find(
+        const nextBlockInsert = nextNode?.attrs?.track?.find(
             mark => mark.type === "insertion"
         )
         const blockChange = node.attrs?.track?.find(
             mark => mark.type === "block_change"
         )
-        const insertion = node.marks?.find(mark => mark.type === "insertion" && mark.attrs.approved === false)
-        const deletion = node.marks?.find(mark => mark.type === "deletion")
-        if (insertion) {
-            start += `<w:ins w:id="${++this.changeCounter}" w:author="${escapeText(insertion.attrs.username)}" w:date="${new Date(insertion.attrs.date * 60000).toISOString().split(".")[0]}Z">`
+        const inlineInsert = node.marks?.find(mark => mark.type === "insertion" && mark.attrs.approved === false)
+        const inlineDelete = node.marks?.find(mark => mark.type === "deletion")
+        if (inlineInsert) {
+            start += `<w:ins w:id="${++this.changeCounter}" w:author="${escapeText(inlineInsert.attrs.username)}" w:date="${new Date(inlineInsert.attrs.date * 60000).toISOString().split(".")[0]}Z">`
             end = "</w:ins>" + end
         }
-        if (deletion) {
-            start += `<w:del w:id="${++this.changeCounter}" w:author="${escapeText(deletion.attrs.username)}" w:date="${new Date(deletion.attrs.date * 60000).toISOString().split(".")[0]}Z">`
+        if (inlineDelete) {
+            start += `<w:del w:id="${++this.changeCounter}" w:author="${escapeText(inlineDelete.attrs.username)}" w:date="${new Date(inlineDelete.attrs.date * 60000).toISOString().split(".")[0]}Z">`
             end = "</w:del>" + end
         }
         switch (node.type) {
@@ -131,13 +131,13 @@ export class DocxExporterRichtext {
                     start += noSpaceTmp`
                         <w:rPr>
                         ${
-    nextInsert ?
-        `<w:ins w:id="${++this.changeCounter}" w:author="${escapeText(nextInsert.username)}" w:date="${new Date(nextInsert.date * 60000).toISOString().split(".")[0]}Z"/>` :
+    nextBlockInsert ?
+        `<w:ins w:id="${++this.changeCounter}" w:author="${escapeText(nextBlockInsert.username)}" w:date="${new Date(nextBlockInsert.date * 60000).toISOString().split(".")[0]}Z"/>` :
         ""
 }
                         ${
-    nextDelete ?
-        `<w:del w:id="${++this.changeCounter}" w:author="${escapeText(nextDelete.username)}" w:date="${new Date(nextDelete.date * 60000).toISOString().split(".")[0]}Z"/>` :
+    nextBlockDelete ?
+        `<w:del w:id="${++this.changeCounter}" w:author="${escapeText(nextBlockDelete.username)}" w:date="${new Date(nextBlockDelete.date * 60000).toISOString().split(".")[0]}Z"/>` :
         ""
 }
                         </w:rPr>`
@@ -183,13 +183,13 @@ export class DocxExporterRichtext {
                             <w:pStyle w:val="${translateBlockType(node.type)}"/>
                             <w:rPr>
                             ${
-    nextInsert ?
-        `<w:ins w:id="${++this.changeCounter}" w:author="${escapeText(nextInsert.username)}" w:date="${new Date(nextInsert.date * 60000).toISOString().split(".")[0]}Z"/>` :
+    nextBlockInsert ?
+        `<w:ins w:id="${++this.changeCounter}" w:author="${escapeText(nextBlockInsert.username)}" w:date="${new Date(nextBlockInsert.date * 60000).toISOString().split(".")[0]}Z"/>` :
         ""
 }
                             ${
-    nextDelete ?
-        `<w:del w:id="${++this.changeCounter}" w:author="${escapeText(nextDelete.username)}" w:date="${new Date(nextDelete.date * 60000).toISOString().split(".")[0]}Z"/>` :
+    nextBlockDelete ?
+        `<w:del w:id="${++this.changeCounter}" w:author="${escapeText(nextBlockDelete.username)}" w:date="${new Date(nextBlockDelete.date * 60000).toISOString().split(".")[0]}Z"/>` :
         ""
 }
                             </w:rPr>
@@ -334,7 +334,7 @@ export class DocxExporterRichtext {
             if (node.text[0] === " " || node.text[node.text.length - 1] === " ") {
                 textAttr += " xml:space=\"preserve\""
             }
-            if (deletion) {
+            if (inlineDelete) {
                 start += `<w:delText${textAttr}>`
                 end = "</w:delText>" + end
             } else {

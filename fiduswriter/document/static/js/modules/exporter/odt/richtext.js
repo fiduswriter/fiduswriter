@@ -3,6 +3,18 @@ import {
     CATS
 } from "../../schema/i18n"
 
+const TEXT_TYPES = {
+    "heading1": {tag: "text:h", attrs: (_options) => "text:outline-level=\"1\""},
+    "heading2": {tag: "text:h", attrs: (_options) => "text:outline-level=\"2\""},
+    "heading3": {tag: "text:h", attrs: (_options) => "text:outline-level=\"3\""},
+    "heading4": {tag: "text:h", attrs: (_options) => "text:outline-level=\"4\""},
+    "heading5": {tag: "text:h", attrs: (_options) => "text:outline-level=\"5\""},
+    "heading6": {tag: "text:h", attrs: (_options) => "text:outline-level=\"6\""},
+    "paragraph": {tag: "text:p", attrs: (options) => `text:style-name="${options.section || "Text_20_body"}"`},
+    "code_block": {tag: "text:p", attrs: (_options) => "text:style-name=\"Preformatted_20_Text\""},
+}
+
+
 export class OdtExporterRichtext {
     constructor(exporter, images) {
         this.exporter = exporter
@@ -15,9 +27,9 @@ export class OdtExporterRichtext {
         this.zIndex = 0
     }
 
-    run(node, options = {}) {
+    run(node, options = {}, siblings = [], siblingIndex = 0) {
         options.comments = this.findComments(node) // Data related to comments. We need to mark the first and last occurence of comment
-        return this.transformRichtext(node, options)
+        return this.transformRichtext(node, options, siblings, siblingIndex)
     }
 
     findComments(node, comments = {}) {
@@ -40,9 +52,26 @@ export class OdtExporterRichtext {
         return comments
     }
 
-    transformRichtext(node, options = {}) {
+    transformRichtext(node, options = {}, siblings = [], siblingIndex = 0) {
         let start = "", content = "", end = ""
 
+        let blockDelete = siblingIndex > 0 && node?.attrs?.track?.find(
+            mark => mark.type === "deletion"
+        )
+        const previousSibling = siblings[siblingIndex - 1]
+        const nextSibling = siblings[siblingIndex + 1]
+
+        const nextBlockDelete = nextSibling?.attrs?.track?.find(
+            mark => mark.type === "deletion"
+        )
+        // const blockInsert = nextNode?.attrs?.track?.find(
+        //     mark => mark.type === "insertion"
+        // )
+        // const blockChange = node.attrs?.track?.find(
+        //     mark => mark.type === "block_change"
+        // )
+        // const inlineInsert = node.marks?.find(mark => mark.type === "insertion" && mark.attrs.approved === false)
+        // const inlineDelete = node.marks?.find(mark => mark.type === "deletion")
         if (node.marks) {
             node.marks.filter(mark => mark.type === "comment").forEach(
                 comment => {
@@ -51,7 +80,7 @@ export class OdtExporterRichtext {
                         return
                     }
                     if (commentData.start === node) {
-                        start += `<office:annotation office:name="comment_${options.tag}_${comment.attrs.id}" loext:resolved="${commentData.content.resolved}">
+                        start += noSpaceTmp`<office:annotation office:name="comment_${options.tag}_${comment.attrs.id}" loext:resolved="${commentData.content.resolved}">
                                         <dc:creator>${escapeText(commentData.content.username)}</dc:creator>
                                         <dc:date>${new Date(commentData.content.date).toISOString().slice(0, -1)}000000</dc:date>
                                         ${commentData.content.comment.map(node => this.transformRichtext(node, options)).join("")}
@@ -60,7 +89,7 @@ export class OdtExporterRichtext {
                     if (commentData.end === node) {
                         end = `<office:annotation-end office:name="comment_${options.tag}_${comment.attrs.id}"/>` +
                             commentData.content.answers.map(answer =>
-                                `<office:annotation loext:resolved="${commentData.content.resolved}">
+                                noSpaceTmp`<office:annotation loext:resolved="${commentData.content.resolved}">
                                     <dc:creator>${escapeText(answer.username)}</dc:creator>
                                     <dc:date>${new Date(answer.date).toISOString().slice(0, -1)}000000</dc:date>
                                     ${answer.answer.map(node => this.transformRichtext(node, options)).join("")}
@@ -73,60 +102,83 @@ export class OdtExporterRichtext {
         }
 
         switch (node.type) {
-        case "paragraph":
-            if (!options.section) {
-                options.section = "Text_20_body"
-            }
-            this.exporter.styles.checkParStyle(options.section)
-            start += `<text:p text:style-name="${options.section}">`
-            end = "</text:p>" + end
-            break
         case "bibliography_heading":
             this.exporter.styles.checkParStyle("Bibliography_20_Heading")
             start += "<text:p text:style-name=\"Bibliography_20_Heading\">"
             end = "</text:p>" + end
             break
-        case "heading1":
-            start += `
-                    <text:h text:outline-level="1">
-                    <text:bookmark-start text:name="${node.attrs.id}"/>`
-            end = `<text:bookmark-end text:name="${node.attrs.id}"/></text:h>` + end
-            break
-        case "heading2":
-            start += `
-                    <text:h text:outline-level="2">
-                    <text:bookmark-start text:name="${node.attrs.id}"/>`
-            end = `<text:bookmark-end text:name="${node.attrs.id}"/></text:h>` + end
-            break
-        case "heading3":
-            start += `
-                    <text:h text:outline-level="3">
-                    <text:bookmark-start text:name="${node.attrs.id}"/>`
-            end = `<text:bookmark-end text:name="${node.attrs.id}"/></text:h>` + end
-            break
-        case "heading4":
-            start += `
-                    <text:h text:outline-level="4">
-                    <text:bookmark-start text:name="${node.attrs.id}"/>`
-            end = `<text:bookmark-end text:name="${node.attrs.id}"/></text:h>` + end
-            break
-        case "heading5":
-            start += `
-                    <text:h text:outline-level="5">
-                    <text:bookmark-start text:name="${node.attrs.id}"/>`
-            end = `<text:bookmark-end text:name="${node.attrs.id}"/></text:h>` + end
-            break
-        case "heading6":
-            start += `
-                    <text:h text:outline-level="6">
-                    <text:bookmark-start text:name="${node.attrs.id}"/>`
-            end = `<text:bookmark-end text:name="${node.attrs.id}"/></text:h>` + end
-            break
         case "code_block":
-            this.exporter.styles.checkParStyle("Preformatted_20_Text")
-            start += "<text:p text:style-name=\"Preformatted_20_Text\">"
-            end = "</text:p>" + end
+        case "heading1":
+        case "heading2":
+        case "heading3":
+        case "heading4":
+        case "heading5":
+        case "heading6":
+        case "paragraph":
+        {
+            if (node.type === "code_block") {
+                this.exporter.styles.checkParStyle("Preformatted_20_Text")
+            } else if (node.type === "paragraph") {
+                if (!options.section) {
+                    options.section = "Text_20_body"
+                }
+                this.exporter.styles.checkParStyle(options.section)
+            }
+            let lastNonMergedBlock
+
+            if (blockDelete) {
+                // This block has been deleted, so we need to check which text block
+                // it is being merged in to. If it has, we need to merge the
+                // two blocks.
+                if (!previousSibling || !TEXT_TYPES[previousSibling.type]) {
+                    // We cannot merge into previous block. Therefore, we don't consider
+                    // this text block as merged.
+                    blockDelete = false
+                } else {
+                    let searchNode = previousSibling
+                    while (searchNode && TEXT_TYPES[searchNode.type]) {
+                        lastNonMergedBlock = searchNode
+                        if (searchNode?.attrs?.track?.find(
+                            mark => mark.type === "deletion"
+                        )) {
+                            searchNode = siblings[siblings.indexOf(searchNode) - 1]
+                        } else {
+                            searchNode = false
+                        }
+                    }
+                }
+            }
+            if (blockDelete) {
+                // This block has been deleted, so instead we just add a text
+                // change marker.
+                const trackId = this.exporter.tracks.addChange(
+                    blockDelete,
+                    noSpaceTmp`
+                        <${TEXT_TYPES[previousSibling.type].tag} ${TEXT_TYPES[previousSibling.type].attrs(options)}/>
+                        <${TEXT_TYPES[node.type].tag} ${TEXT_TYPES[node.type].attrs(options)}/>`
+                )
+                start += `<text:change text:change-id="${trackId}"/>`
+            } else {
+                start += `<${TEXT_TYPES[node.type].tag} ${TEXT_TYPES[node.type].attrs(options)}>`
+            }
+            if (TEXT_TYPES[node.type].tag === "text:h") {
+                start += `<text:bookmark-start text:name="${node.attrs.id}"/>`
+                end += `<text:bookmark-end text:name="${node.attrs.id}"/>`
+            }
+            const nextBlockDeleteTextType = nextBlockDelete && TEXT_TYPES[nextSibling.type]
+            if (!nextBlockDeleteTextType) {
+                const lastNonMergedBlockTextType = lastNonMergedBlock && TEXT_TYPES[lastNonMergedBlock.type]
+                if (lastNonMergedBlockTextType) {
+                    // This block has been deleted and the next block is not.
+                    // So we end it here as the last known non-deleted block type.
+                    end = `</${lastNonMergedBlockTextType.tag}>` + end
+                } else {
+                    // The next block is not deleted, so we close this block.
+                    end = `</${TEXT_TYPES[node.type].tag}>` + end
+                }
+            }
             break
+        }
         case "blockquote":
             // This is imperfect, but Word doesn't seem to provide section/quotation nesting
             options = Object.assign({}, options)
@@ -465,7 +517,7 @@ export class OdtExporterRichtext {
 
         if (node.content) {
             for (let i = 0; i < node.content.length; i++) {
-                content += this.transformRichtext(node.content[i], options)
+                content += this.transformRichtext(node.content[i], options, node.content, i)
             }
         }
 

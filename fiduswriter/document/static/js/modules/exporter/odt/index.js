@@ -14,6 +14,7 @@ import {OdtExporterFootnotes} from "./footnotes"
 import {OdtExporterMetadata} from "./metadata"
 import {OdtExporterStyles} from "./styles"
 import {OdtExporterMath} from "./math"
+import {OdtExporterTracks} from "./track"
 
 /*
 Exporter to Open Document Text (LibreOffice)
@@ -51,6 +52,7 @@ export class OdtExporter {
         this.math = new OdtExporterMath(this)
         this.images = new OdtExporterImages(this, this.imageDB, this.docContent)
         this.citations = new OdtExporterCitations(this, this.bibDB, this.csl, this.docContent)
+        this.tracks = new OdtExporterTracks(this)
         this.richtext = new OdtExporterRichtext(this, this.images)
 
         this.xml = new XmlZip(
@@ -59,6 +61,8 @@ export class OdtExporter {
         )
         return this.xml.init().then(
             () => this.styles.init()
+        ).then(
+            () => this.tracks.init()
         ).then(
             () => this.metadata.init()
         ).then(

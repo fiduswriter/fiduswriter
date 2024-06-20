@@ -143,13 +143,15 @@ export class OdtExporterRender {
     parRender(tag) {
         const section = tag.par.hasAttribute("text:style-name") ? tag.par.getAttribute("text:style-name") : "Text_20_body"
         const outXml = tag.content ? tag.content.map(
-            content => this.exporter.richtext.run(
+            (content, contentIndex) => this.exporter.richtext.run(
                 content,
                 {
                     citationType: this.exporter.citations.citFm.citationType,
                     section,
                     tag: tag.title.slice(1)
-                }
+                },
+                tag.content,
+                contentIndex
             )
         ).join("") : ""
         tag.par.insertAdjacentHTML("beforebegin", outXml)

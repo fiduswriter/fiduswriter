@@ -136,7 +136,9 @@ export class OdtExporterRender {
     inlineRender(tag) {
         const texts = tag.par.textContent.split(`{${tag.title}}`)
         const fullText = texts[0] + (tag.content ? tag.content : "") + texts[1]
-        tag.par.innerHTML = escapeText(fullText)
+        tag.par.innerHTML = escapeText(fullText).replace(
+            /^\s+|\s+$/g,
+            match => "<text:s/>".repeat(match.length))
     }
 
     // Render tags that exchange paragraphs
@@ -150,7 +152,7 @@ export class OdtExporterRender {
                     section,
                     tag: tag.title.slice(1)
                 },
-                tag.content,
+                tag,
                 contentIndex
             )
         ).join("") : ""

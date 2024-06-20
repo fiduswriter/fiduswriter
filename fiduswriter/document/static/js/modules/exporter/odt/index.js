@@ -22,8 +22,8 @@ Exporter to Open Document Text (LibreOffice)
 
 /*
 TODO:
-* - Export tracked changes
-* - Templating of tag/contributor output
+* - Export tracked changes of block changes and inline format changes
+*    (this feature is lacking in ODT files created with LibreOffice 7.6.7.2)
 */
 
 export class OdtExporter {

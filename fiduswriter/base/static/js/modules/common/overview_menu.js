@@ -28,7 +28,7 @@ export class OverviewMenuView {
     oninput(event) {
         const target = event.target
         if (target.matches("#fw-overview-menu > li > .fw-button > input")) {
-            // A text was enetered in a top entry. we find which one.
+            // A text was entered in a top entry. we find which one.
             let menuNumber = 0
             let seekItem = target.closest("li")
             while (seekItem.previousElementSibling) {

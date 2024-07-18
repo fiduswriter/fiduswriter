@@ -36,6 +36,7 @@ export const headerbarModel = () => ({
             title: gettext("File"),
             tooltip: gettext("File handling"),
             type: "menu",
+            keys: "Alt-f",
             order: 0,
             content: [
                 {
@@ -164,6 +165,7 @@ export const headerbarModel = () => ({
             tooltip: gettext("Export of the document contents"),
             type: "menu",
             order: 1,
+            keys: "Alt-e",
             content: [
                 {
                     title: gettext("HTML (old)"),
@@ -303,6 +305,7 @@ export const headerbarModel = () => ({
             tooltip: gettext("Configure settings of this document."),
             type: "menu",
             order: 2,
+            keys: "Alt-s",
             content: [
                 {
                     id: "citation_style",
@@ -516,6 +519,7 @@ export const headerbarModel = () => ({
             tooltip: gettext("Select document editing tool."),
             type: "menu",
             order: 3,
+            keys: "Alt-t",
             content: [
                 {
                     title: gettext("Word counter"),
@@ -556,6 +560,7 @@ export const headerbarModel = () => ({
             type: "menu",
             tooltip: gettext("Tracking changes to the document"),
             order: 4,
+            keys: "Alt-c",
             disabled: editor => editor.docInfo.access_rights !== "write",
             content: [
                 {

@@ -112,6 +112,10 @@ body.editor header {
     letter-spacing: 1px;
 }
 
+.fw-pulldown-item.cursor {
+    border-left: 3px var(--menu-cursor-border-color) solid;
+}
+
 #header-navigation .header-nav-item:hover {
     color: var(--nagivation-link-active-text-color);
     text-shadow: 1px 0 0 var(--nagivation-link-active-text-color);

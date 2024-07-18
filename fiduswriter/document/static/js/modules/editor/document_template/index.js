@@ -211,6 +211,7 @@ export class ModDocumentTemplate {
             }
         })
         exportMenu.content = exportMenu.content.concat(exportMenuEntries)
+        exportMenu.content = exportMenu.content.sort((a, b) => a.order - b.order)
     }
 
     addDocumentStylesMenuEntries() {

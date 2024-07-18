@@ -5,7 +5,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 
 
-class AutoMergeTests(ChannelsLiveServerTestCase, EditorHelper):
+class AutoMergeTests(EditorHelper, ChannelsLiveServerTestCase):
     """
     Tests in which two browsers collaborate and the connection is interrupted.
     Auto merge would be triggered when the connection is restored.

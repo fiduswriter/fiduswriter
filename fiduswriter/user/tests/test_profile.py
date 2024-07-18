@@ -19,7 +19,7 @@ MAIL_STORAGE_NAME = "user_profile"
 
 @override_settings(MAIL_STORAGE_NAME=MAIL_STORAGE_NAME)
 @override_settings(EMAIL_BACKEND="testing.mail.EmailBackend")
-class ProfileTest(ChannelsLiveServerTestCase, SeleniumHelper):
+class ProfileTest(SeleniumHelper, ChannelsLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()

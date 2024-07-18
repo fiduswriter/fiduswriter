@@ -13,7 +13,7 @@ from channels.testing import ChannelsLiveServerTestCase
 from .editor_helper import EditorHelper
 
 
-class OneUserTwoBrowsersTests(ChannelsLiveServerTestCase, EditorHelper):
+class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
     """
     Tests in which collaboration between two browsers with the same user logged
     into both browsers.

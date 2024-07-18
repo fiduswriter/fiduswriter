@@ -12,7 +12,7 @@ from selenium.webdriver.common.keys import Keys
 from django.conf import settings
 
 
-class ExportTest(ChannelsLiveServerTestCase, SeleniumHelper):
+class ExportTest(SeleniumHelper, ChannelsLiveServerTestCase):
     """Test whether Fidus Writer exports files in all the formats.
     Note that it does not validate the export files."""
 

@@ -11,7 +11,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
 
-class AdminTest(ChannelsLiveServerTestCase, SeleniumHelper):
+class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
     fixtures = [
         "initial_documenttemplates.json",
         "initial_styles.json",

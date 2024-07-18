@@ -825,7 +825,7 @@ class FunctionalOfflineTests(ChannelsLiveServerTestCase, EditorHelper):
         self.assertEqual(alert_element.is_displayed(), True)
 
 
-class AccessRightsOfflineTests(ChannelsLiveServerTestCase, EditorHelper):
+class AccessRightsOfflineTests(EditorHelper, ChannelsLiveServerTestCase):
     """
     Tests in which one user works offline. During which the
     access rights of the user has been modified/deleted.

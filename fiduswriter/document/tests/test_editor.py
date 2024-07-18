@@ -20,7 +20,7 @@ MAIL_STORAGE_NAME = "editor"
 
 @override_settings(MAIL_STORAGE_NAME=MAIL_STORAGE_NAME)
 @override_settings(EMAIL_BACKEND="testing.mail.EmailBackend")
-class EditorTest(ChannelsLiveServerTestCase, SeleniumHelper):
+class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
     fixtures = [
         "initial_documenttemplates.json",
         "initial_styles.json",

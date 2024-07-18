@@ -14,7 +14,7 @@ manager = multiprocessing.Manager()
 WebsocketConsumer.sessions = manager.dict()
 
 
-class SimpleMessageExchangeTests(ChannelsLiveServerTestCase, EditorHelper):
+class SimpleMessageExchangeTests(EditorHelper, ChannelsLiveServerTestCase):
     """
     Tests in which one user works on the document and simulates
     loss of socket messages.

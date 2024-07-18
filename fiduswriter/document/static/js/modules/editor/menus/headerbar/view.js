@@ -249,7 +249,7 @@ export class HeaderbarView {
             if (["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight"].includes(name)) {
                 event.preventDefault()
                 event.stopPropagation()
-                this.changecursorMenuItem(name)
+                this.changeCursorMenuItem(name)
                 return
             } else if (["Enter", " "].includes(name) && this.cursorMenuItem) {
                 event.preventDefault()
@@ -289,7 +289,7 @@ export class HeaderbarView {
         docTitleEl.blur()
     }
 
-    changecursorMenuItem(name) {
+    changeCursorMenuItem(name) {
         if (!this.cursorMenuItem) {
             this.cursorMenuItem = this.parentChain[0].content[0]
         } else {

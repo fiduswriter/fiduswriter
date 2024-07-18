@@ -45,10 +45,6 @@ class ExportTest(ChannelsLiveServerTestCase, SeleniumHelper):
             username="Yeti", email="yeti@snowman.com", passtext="otter"
         )
 
-    def tearDown(self):
-        super().tearDown()
-        self.leave_site(self.driver)
-
     def test_export(self):
         self.driver.get(self.base_url)
         self.driver.find_element(By.ID, "id-login").send_keys("Yeti")

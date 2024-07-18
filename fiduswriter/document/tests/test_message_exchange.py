@@ -45,10 +45,6 @@ class SimpleMessageExchangeTests(ChannelsLiveServerTestCase, EditorHelper):
         self.login_user(self.user, self.driver, self.client)
         self.doc = self.create_new_document()
 
-    def tearDown(self):
-        super().tearDown()
-        self.leave_site(self.driver)
-
     def test_client_losing_server_messages(self):
         """
         Test one client trying to edit document while online.

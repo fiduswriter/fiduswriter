@@ -51,10 +51,6 @@ class AdminTest(ChannelsLiveServerTestCase, SeleniumHelper):
             username="User2", email="user2@user.com", passtext="password"
         )
 
-    def tearDown(self):
-        super().tearDown()
-        self.leave_site(self.driver)
-
     def test_maintenance(self):
         self.driver.get(self.base_admin_url)
         username = self.driver.find_element(By.ID, "id_username")

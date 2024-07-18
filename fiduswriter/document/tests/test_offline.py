@@ -48,11 +48,6 @@ class OfflineTests(ChannelsLiveServerTestCase, EditorHelper):
         self.login_user(self.user, self.driver2, self.client2)
         self.doc = self.create_new_document()
 
-    def tearDown(self):
-        super().tearDown()
-        self.leave_site(self.driver)
-        self.leave_site(self.driver2)
-
     def test_simple(self):
         """
         Test one client going offline in collaborative mode while both clients
@@ -533,10 +528,6 @@ class FunctionalOfflineTests(ChannelsLiveServerTestCase, EditorHelper):
         self.driver.execute_script("window.theApp.installServiceWorker()")
         self.doc = self.create_new_document()
 
-    def tearDown(self):
-        super().tearDown()
-        self.leave_site(self.driver)
-
     def test_service_workers(self):
         """
         Test one client going offline after writing some text and inserting
@@ -876,11 +867,6 @@ class AccessRightsOfflineTests(ChannelsLiveServerTestCase, EditorHelper):
         AccessRight.objects.create(
             holder_obj=self.user2, document=self.doc, rights="write"
         )
-
-    def tearDown(self):
-        super().tearDown()
-        self.leave_site(self.driver)
-        self.leave_site(self.driver2)
 
     def test_access_rights_deletion(self):
         """

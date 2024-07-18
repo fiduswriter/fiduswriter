@@ -91,7 +91,7 @@ jobs:
                       coverage run --concurrency=multiprocessing,thread manage.py test ${{ matrix.test }}
             - name: Upload failed test screenshots
               if: ${{ failure() }}
-              uses: actions/upload-artifact@v4.3.3
+              uses: actions/upload-artifact@v4.3.4
               with:
                   name: failure-artifacts
                   path: ${{ github.workspace }}/fiduswriter/screenshots/

@@ -52,7 +52,6 @@ class EditorTest(ChannelsLiveServerTestCase, SeleniumHelper):
     def tearDown(self):
         super().tearDown()
         empty_outbox(MAIL_STORAGE_NAME)
-        self.leave_site(self.driver)
 
     def test_crossrefs_and_internal_links(self):
         self.driver.get(self.base_url)

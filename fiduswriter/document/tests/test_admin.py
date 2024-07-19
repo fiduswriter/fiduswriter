@@ -50,6 +50,7 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.user2 = self.create_user(
             username="User2", email="user2@user.com", passtext="password"
         )
+        return super().setUp()
 
     def test_maintenance(self):
         self.driver.get(self.base_admin_url)
@@ -62,6 +63,7 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.CSS_SELECTOR, "a[href='/admin/document/document/maintenance/']"
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, "#update").click()
+        time.sleep(self.wait_time)  # Give some time to update database
         self.assertEqual(
             1,
             len(

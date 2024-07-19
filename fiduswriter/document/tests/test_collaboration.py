@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 import multiprocessing
 from random import randrange
@@ -43,11 +44,18 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         cls.driver2.quit()
         super().tearDownClass()
 
+    def tearDown(self):
+        super().tearDown()
+        if "coverage" in sys.modules.keys():
+            # Cool down
+            time.sleep(self.wait_time / 3)
+
     def setUp(self):
         self.user = self.create_user()
         self.login_user(self.user, self.driver, self.client)
         self.login_user(self.user, self.driver2, self.client2)
         self.doc = self.create_new_document()
+        super().setUp()
 
     def get_title(self, driver):
         # Title is child 0.
@@ -534,6 +542,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         p2.start()
         p1.join()
         p2.join()
+        self.wait_for_doc_sync(self.driver, self.driver2)
 
         self.assertEqual(5, len(self.get_link(self.driver2)))
 

@@ -158,5 +158,5 @@ class SeleniumHelper(object):
         return super().tearDown()
 
     def leave_site(self, driver):
-        driver.execute_script("if (theApp) {theApp.page = null;}")
+        driver.execute_script("if (window.theApp) {window.theApp.page = null;}")
         driver.get("data:,")

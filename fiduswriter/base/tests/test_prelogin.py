@@ -5,7 +5,7 @@ from channels.testing import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
 
 
-class PreloginTest(ChannelsLiveServerTestCase, SeleniumHelper):
+class PreloginTest(SeleniumHelper, ChannelsLiveServerTestCase):
     fixtures = [
         "initial_terms.json",
     ]

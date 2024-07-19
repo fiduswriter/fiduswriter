@@ -14,7 +14,7 @@ manager = multiprocessing.Manager()
 WebsocketConsumer.sessions = manager.dict()
 
 
-class SimpleMessageExchangeTests(ChannelsLiveServerTestCase, EditorHelper):
+class SimpleMessageExchangeTests(EditorHelper, ChannelsLiveServerTestCase):
     """
     Tests in which one user works on the document and simulates
     loss of socket messages.
@@ -44,10 +44,6 @@ class SimpleMessageExchangeTests(ChannelsLiveServerTestCase, EditorHelper):
         self.user = self.create_user()
         self.login_user(self.user, self.driver, self.client)
         self.doc = self.create_new_document()
-
-    def tearDown(self):
-        super().tearDown()
-        self.leave_site(self.driver)
 
     def test_client_losing_server_messages(self):
         """

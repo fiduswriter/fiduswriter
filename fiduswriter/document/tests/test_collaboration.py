@@ -13,7 +13,7 @@ from channels.testing import ChannelsLiveServerTestCase
 from .editor_helper import EditorHelper
 
 
-class OneUserTwoBrowsersTests(ChannelsLiveServerTestCase, EditorHelper):
+class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
     """
     Tests in which collaboration between two browsers with the same user logged
     into both browsers.
@@ -48,11 +48,6 @@ class OneUserTwoBrowsersTests(ChannelsLiveServerTestCase, EditorHelper):
         self.login_user(self.user, self.driver, self.client)
         self.login_user(self.user, self.driver2, self.client2)
         self.doc = self.create_new_document()
-
-    def tearDown(self):
-        super().tearDown()
-        self.leave_site(self.driver)
-        self.leave_site(self.driver2)
 
     def get_title(self, driver):
         # Title is child 0.

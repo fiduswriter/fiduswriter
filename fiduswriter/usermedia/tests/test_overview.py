@@ -9,7 +9,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from django.conf import settings
 
 
-class UsermediaOverviewTest(ChannelsLiveServerTestCase, SeleniumHelper):
+class UsermediaOverviewTest(SeleniumHelper, ChannelsLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()

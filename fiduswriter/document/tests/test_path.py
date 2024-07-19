@@ -9,7 +9,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
-class PathTest(ChannelsLiveServerTestCase, SeleniumHelper):
+class PathTest(SeleniumHelper, ChannelsLiveServerTestCase):
     fixtures = [
         "initial_documenttemplates.json",
         "initial_styles.json",
@@ -36,10 +36,6 @@ class PathTest(ChannelsLiveServerTestCase, SeleniumHelper):
         self.user1 = self.create_user(
             username="Yeti", email="yeti@snowman.com", passtext="otter"
         )
-
-    def tearDown(self):
-        super().tearDown()
-        self.leave_site(self.driver)
 
     def test_move_document(self):
         self.driver.get(self.base_url)

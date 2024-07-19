@@ -13,7 +13,7 @@ from testing.selenium_helper import SeleniumHelper
 from channels.testing import ChannelsLiveServerTestCase
 
 
-class BibliographyOverviewTest(ChannelsLiveServerTestCase, SeleniumHelper):
+class BibliographyOverviewTest(SeleniumHelper, ChannelsLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()

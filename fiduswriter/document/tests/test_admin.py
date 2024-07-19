@@ -11,7 +11,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
 
-class AdminTest(ChannelsLiveServerTestCase, SeleniumHelper):
+class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
     fixtures = [
         "initial_documenttemplates.json",
         "initial_styles.json",
@@ -50,10 +50,6 @@ class AdminTest(ChannelsLiveServerTestCase, SeleniumHelper):
         self.user2 = self.create_user(
             username="User2", email="user2@user.com", passtext="password"
         )
-
-    def tearDown(self):
-        super().tearDown()
-        self.leave_site(self.driver)
 
     def test_maintenance(self):
         self.driver.get(self.base_admin_url)

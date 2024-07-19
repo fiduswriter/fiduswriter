@@ -138,17 +138,14 @@ class SeleniumHelper(object):
 
     def tearDown(self):
         # Source: https://stackoverflow.com/a/39606065
-        if hasattr(self._outcome, "errors"):
-            # Python 3.4 - 3.10  (These two methods have no side effects)
-            result = self.defaultTestResult()
-            self._feedErrorsToResult(result, self._outcome.errors)
-        else:
-            # Python 3.11+
-            result = self._outcome.result
+        result = self._outcome.result
         ok = all(
             test != self for test, text in result.errors + result.failures
         )
-        if not ok:
+        if ok:
+            for driver in self.drivers:
+                self.leave_site(driver)
+        else:
             if not os.path.exists("screenshots"):
                 os.makedirs("screenshots")
             for id, driver in enumerate(self.drivers, start=1):
@@ -161,4 +158,7 @@ class SeleniumHelper(object):
         return super().tearDown()
 
     def leave_site(self, driver):
+        driver.execute_script(
+            "if (window.theApp) {window.theApp.page = null;}"
+        )
         driver.get("data:,")

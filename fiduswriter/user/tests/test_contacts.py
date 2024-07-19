@@ -10,7 +10,7 @@ from channels.testing import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
 
 
-class ContactsTest(ChannelsLiveServerTestCase, SeleniumHelper):
+class ContactsTest(SeleniumHelper, ChannelsLiveServerTestCase):
     fixtures = [
         "initial_documenttemplates.json",
         "initial_styles.json",

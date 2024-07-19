@@ -5,7 +5,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
-class SendFeedbackTest(ChannelsLiveServerTestCase, SeleniumHelper):
+class SendFeedbackTest(SeleniumHelper, ChannelsLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()

@@ -21,6 +21,9 @@ export class HeaderbarView {
         this.bindEvents()
         this.update()
         this.parentChain = []
+
+        this.openMenu = null
+        this.cursorMenuItem = null
     }
 
     removeUnavailable(menu) {
@@ -96,65 +99,7 @@ export class HeaderbarView {
             while (searchPath.length) {
                 menuItem = menuItem.content[searchPath.pop()]
             }
-
-            switch (menuItem.type) {
-            case "action":
-                if (menuItem.disabled?.(this.editor)) {
-                    return
-                }
-                menuItem.action(this.editor)
-                menu.open = false
-                this.closeAllMenu(menu)
-                this.parentChain = []
-                this.update()
-                break
-            case "setting":
-                // Similar to 'action' but not closing menu.
-                if (menuItem.disabled?.(this.editor)) {
-                    return
-                }
-                menuItem.action(this.editor)
-                this.update()
-                break
-            case "menu":
-                if (this.parentChain.length == 0) {
-                    //simple case
-                    this.parentChain = [menuItem]
-                    this.closeOtherMenu(menu, menuItem)
-                } else {
-                    let flagCloseAllMenu = true
-                    const isMenuItemInParentChain = this.parentChain[this.parentChain.length - 1].content.find(menu => menu.id === menuItem.id)
-                    if (isMenuItemInParentChain) {
-                        //Do not close all open menus
-                        this.parentChain.push(menuItem)
-                    } else if (!isMenuItemInParentChain) {
-
-                        for (let index = this.parentChain.length - 2; index >= 0; index--) {
-
-                            if (this.parentChain[index].content.find(menu => menu.id === menuItem.id)) {
-
-                                const noOfRemovals = this.parentChain.length - (index + 1)
-                                if (noOfRemovals > 0) {//not last element
-                                    this.parentChain.splice(index + 1, noOfRemovals)
-                                }
-                                this.parentChain.push(menuItem)
-                                this.closeOtherMenu(menu, menuItem)
-                                flagCloseAllMenu = false
-                                break
-                            }
-                        }
-                    }
-                    if (flagCloseAllMenu && !isMenuItemInParentChain) {
-                        this.closeAllMenu(menu)
-                        this.parentChain = [menuItem]
-                    }
-                }
-                menuItem.open = true
-                this.update()
-                break
-            default:
-                break
-            }
+            this.executeMenuItem(menuItem, menu)
         } else if (target.matches("#headerbar #header-navigation .header-nav-item:not(.disabled)")) {
             // A menu has been clicked, lets find out which one.
             let menuNumber = 0
@@ -166,26 +111,97 @@ export class HeaderbarView {
             this.editor.menu.headerbarModel.content.forEach((menu, index) => {
                 if (index === menuNumber) {
                     menu.open = true
+                    this.openMenu = menu
+                    this.parentChain = [menu]
                 } else if (menu.open) {
                     menu.open = false
+                    this.openMenu = null
                     this.closeAllMenu(menu)
                     this.parentChain = []
                 }
             })
+            this.cursorMenuItem = null
             this.update()
         } else {
             let needUpdate = false
+            this.cursorMenuItem = null
             this.editor.menu.headerbarModel.content.forEach(menu => {
                 if (menu.open) {
                     needUpdate = true
                     menu.open = false
                     this.closeAllMenu(menu)
                     this.parentChain = []
+
                 }
             })
             if (needUpdate) {
+                this.openMenu = null
                 this.update()
             }
+        }
+    }
+
+    executeMenuItem(menuItem, menu) {
+        switch (menuItem.type) {
+        case "action":
+            if (menuItem.disabled?.(this.editor)) {
+                return
+            }
+            menuItem.action(this.editor)
+            menu.open = false
+            this.openMenu = null
+            this.closeAllMenu(menu)
+            this.parentChain = []
+            this.cursorMenuItem = null
+            this.update()
+            break
+        case "setting":
+            // Similar to 'action' but not closing menu.
+            if (menuItem.disabled?.(this.editor)) {
+                return
+            }
+            menuItem.action(this.editor)
+            this.update()
+            break
+        case "menu": {
+            let flagCloseAllMenu = true
+            if (!this.parentChain.length) {
+                this.parentChain = [menuItem]
+                this.openMenu = menuItem
+                this.openMenu.open = true
+            } else {
+                const isMenuItemInParentChain = this.parentChain[this.parentChain.length - 1].content.find(menu => menu.id === menuItem.id)
+                if (isMenuItemInParentChain) {
+                    //Do not close all open menus
+                    this.parentChain.push(menuItem)
+                } else if (!isMenuItemInParentChain) {
+
+                    for (let index = this.parentChain.length - 2; index >= 0; index--) {
+
+                        if (this.parentChain[index].content.find(menu => menu.id === menuItem.id)) {
+
+                            const noOfRemovals = this.parentChain.length - (index + 1)
+                            if (noOfRemovals > 0) {//not last element
+                                this.parentChain.splice(index + 1, noOfRemovals)
+                            }
+                            this.closeOtherMenu(this.parentChain[this.parentChain.length - 1], menuItem)
+                            this.parentChain.push(menuItem)
+                            flagCloseAllMenu = false
+                            break
+                        }
+                    }
+                }
+                if (flagCloseAllMenu && !isMenuItemInParentChain) {
+                    this.closeAllMenu(menu)
+                    this.parentChain = [menuItem]
+                }
+            }
+            menuItem.open = true
+            this.update()
+            break
+        }
+        default:
+            break
         }
     }
 
@@ -229,7 +245,33 @@ export class HeaderbarView {
             name = "Shift-" + name
         }
 
-        this.editor.menu.headerbarModel.content.forEach(menu => this.checkKeys(event, menu, name))
+        if (this.openMenu) {
+            if (["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight"].includes(name)) {
+                event.preventDefault()
+                event.stopPropagation()
+                this.changeCursorMenuItem(name)
+                return
+            } else if (["Enter", " "].includes(name) && this.cursorMenuItem) {
+                event.preventDefault()
+                event.stopPropagation()
+                const menuItem = this.cursorMenuItem
+                if (menuItem.type === "menu") {
+                    this.cursorMenuItem = menuItem.content[0]
+                }
+                this.executeMenuItem(menuItem, this.parentChain[this.parentChain.length - 1])
+                return
+            } else if (name === "Escape") {
+                event.preventDefault()
+                event.stopPropagation()
+                this.openMenu.open = false
+                this.cursorMenuItem = null
+                this.openMenu = null
+                this.parentChain = []
+                this.update()
+                return
+            }
+        }
+        this.checkKeys(event, this.editor.menu.headerbarModel, name)
     }
 
     onKeyup(event) {
@@ -245,6 +287,59 @@ export class HeaderbarView {
         // Special key was pressed, we reset to text only and blur
         docTitleEl.innerHTML = docTitleEl.innerText.trim().replace(/\r?\n|\r/g, "")
         docTitleEl.blur()
+    }
+
+    changeCursorMenuItem(name) {
+        if (!this.cursorMenuItem) {
+            this.cursorMenuItem = this.parentChain[0].content[0]
+        } else {
+            if (["ArrowDown", "ArrowUp"].includes(name)) {
+                let index = this.parentChain[this.parentChain.length - 1].content.indexOf(this.cursorMenuItem)
+                if (name === "ArrowDown") {
+                    if (index < this.parentChain[this.parentChain.length - 1].content.length - 1) {
+                        index++
+                    } else {
+                        index = 0
+                    }
+                } else {
+                    if (index > 0) {
+                        index--
+                    } else {
+                        index = this.parentChain[this.parentChain.length - 1].content.length - 1
+                    }
+                }
+                this.cursorMenuItem = this.parentChain[this.parentChain.length - 1].content[index]
+            } else if (name === "ArrowLeft") {
+                if (this.parentChain.length > 1) {
+                    this.cursorMenuItem = this.parentChain[this.parentChain.length - 1]
+                    this.parentChain.pop()
+                    this.closeAllMenu(this.parentChain[this.parentChain.length - 1])
+                } else {
+                    const currentMenuIndex = this.editor.menu.headerbarModel.content.findIndex(menu => menu.open)
+                    const newMenuIndex = currentMenuIndex ? currentMenuIndex - 1 : this.editor.menu.headerbarModel.content.length - 1
+                    this.openMenu.open = false
+                    this.openMenu = this.editor.menu.headerbarModel.content[newMenuIndex]
+                    this.openMenu.open = true
+                    this.cursorMenuItem = this.openMenu.content[0]
+                    this.parentChain = [this.openMenu]
+                }
+            } else if (name === "ArrowRight") {
+                if (this.cursorMenuItem.type === "menu") {
+                    const menuItem = this.cursorMenuItem
+                    this.cursorMenuItem = menuItem.content[0]
+                    this.executeMenuItem(menuItem, this.parentChain[this.parentChain.length - 1])
+                } else {
+                    const currentMenuIndex = this.editor.menu.headerbarModel.content.findIndex(menu => menu.open)
+                    const newMenuIndex = currentMenuIndex === this.editor.menu.headerbarModel.content.length - 1 ? 0 : currentMenuIndex + 1
+                    this.openMenu.open = false
+                    this.openMenu = this.editor.menu.headerbarModel.content[newMenuIndex]
+                    this.openMenu.open = true
+                    this.cursorMenuItem = this.openMenu.content[0]
+                    this.parentChain = [this.openMenu]
+                }
+            }
+        }
+        this.update()
     }
 
     saveFileName() {
@@ -275,7 +370,7 @@ export class HeaderbarView {
         menu.content.forEach(menuItem => {
             if (menuItem.keys === nameKey) {
                 event.preventDefault()
-                menuItem.action(this.editor)
+                this.executeMenuItem(menuItem, menu)
             } else if (menuItem.content) {
                 this.checkKeys(event, menuItem, nameKey)
             }
@@ -418,6 +513,10 @@ export class HeaderbarView {
             menuItem.disabled && menuItem.disabled(this.editor) ?
                 " disabled" :
                 ""
+        }${
+            menuItem === this.cursorMenuItem ?
+                " cursor" :
+                ""
         }" ${
             menuItem.tooltip ?
                 `title="${menuItem.tooltip}"` :
@@ -440,6 +539,10 @@ export class HeaderbarView {
         }${
             menuItem.disabled && menuItem.disabled(this.editor) ?
                 " disabled" :
+                ""
+        }${
+            menuItem === this.cursorMenuItem ?
+                " cursor" :
                 ""
         }" ${
             menuItem.tooltip ?

@@ -8,7 +8,7 @@ from channels.testing import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
 
 
-class AdminTest(ChannelsLiveServerTestCase, SeleniumHelper):
+class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()

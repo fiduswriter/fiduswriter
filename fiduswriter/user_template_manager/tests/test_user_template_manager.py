@@ -9,7 +9,7 @@ from channels.testing import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
 
 
-class UserTemplateManagerTest(ChannelsLiveServerTestCase, SeleniumHelper):
+class UserTemplateManagerTest(SeleniumHelper, ChannelsLiveServerTestCase):
     fixtures = ["initial_documenttemplates.json", "initial_styles.json"]
 
     @classmethod

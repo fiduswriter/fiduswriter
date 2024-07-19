@@ -3,7 +3,7 @@ from channels.testing import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
 
 
-class AccessTest(ChannelsLiveServerTestCase, SeleniumHelper):
+class AccessTest(SeleniumHelper, ChannelsLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()

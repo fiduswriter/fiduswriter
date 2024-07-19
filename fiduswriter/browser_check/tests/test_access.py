@@ -11,6 +11,7 @@ class AccessTest(SeleniumHelper, ChannelsLiveServerTestCase):
 
     def setUp(self):
         self.base_url = self.live_server_url
+        return super().setUp()
 
     def test_ie11(self):
         driver_data = self.get_drivers(

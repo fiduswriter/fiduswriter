@@ -2,6 +2,7 @@ from builtins import object
 import re
 import os
 import time
+from urllib3.exceptions import MaxRetryError
 from selenium.common.exceptions import ElementClickInterceptedException
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -158,7 +159,10 @@ class SeleniumHelper(object):
         return super().tearDown()
 
     def leave_site(self, driver):
-        driver.execute_script(
-            "if (window.theApp) {window.theApp.page = null;}"
-        )
-        driver.get("data:,")
+        try:
+            driver.execute_script(
+                "if (window.theApp) {window.theApp.page = null;}"
+            )
+            driver.get("data:,")
+        except MaxRetryError:
+            pass

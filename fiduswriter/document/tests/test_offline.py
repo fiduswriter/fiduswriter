@@ -1,4 +1,5 @@
 import time
+import sys
 import multiprocessing
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -13,7 +14,7 @@ from selenium.webdriver.common.keys import Keys
 from document.models import AccessRight
 
 
-class OfflineTests(ChannelsLiveServerTestCase, EditorHelper):
+class OfflineTests(EditorHelper, ChannelsLiveServerTestCase):
     """
     Tests in which two browsers collaborate and the connection is interrupted.
     """
@@ -47,6 +48,12 @@ class OfflineTests(ChannelsLiveServerTestCase, EditorHelper):
         self.login_user(self.user, self.driver, self.client)
         self.login_user(self.user, self.driver2, self.client2)
         self.doc = self.create_new_document()
+
+    def tearDown(self):
+        super().tearDown()
+        if "coverage" in sys.modules.keys():
+            # Cool down
+            time.sleep(self.wait_time / 3)
 
     def test_simple(self):
         """
@@ -495,7 +502,7 @@ class OfflineTests(ChannelsLiveServerTestCase, EditorHelper):
         WebsocketConsumer.history_length = 1000
 
 
-class FunctionalOfflineTests(ChannelsLiveServerTestCase, EditorHelper):
+class FunctionalOfflineTests(EditorHelper, ChannelsLiveServerTestCase):
     """
     Tests in which one user works offline. The Service Worker is
     also installed in these tests.
@@ -527,6 +534,12 @@ class FunctionalOfflineTests(ChannelsLiveServerTestCase, EditorHelper):
         self.login_user(self.user, self.driver, self.client)
         self.driver.execute_script("window.theApp.installServiceWorker()")
         self.doc = self.create_new_document()
+
+    def tearDown(self):
+        super().tearDown()
+        if "coverage" in sys.modules.keys():
+            # Cool down
+            time.sleep(self.wait_time / 3)
 
     def test_service_workers(self):
         """
@@ -867,6 +880,12 @@ class AccessRightsOfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         AccessRight.objects.create(
             holder_obj=self.user2, document=self.doc, rights="write"
         )
+
+    def tearDown(self):
+        super().tearDown()
+        if "coverage" in sys.modules.keys():
+            # Cool down
+            time.sleep(self.wait_time / 3)
 
     def test_access_rights_deletion(self):
         """

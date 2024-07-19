@@ -1,3 +1,5 @@
+import sys
+import time
 import multiprocessing
 from channels.testing import ChannelsLiveServerTestCase
 from .editor_helper import EditorHelper
@@ -41,6 +43,12 @@ class AutoMergeTests(EditorHelper, ChannelsLiveServerTestCase):
         self.login_user(self.user, self.driver, self.client)
         self.login_user(self.user, self.driver2, self.client2)
         self.doc = self.create_new_document()
+
+    def tearDown(self):
+        super().tearDown()
+        if "coverage" in sys.modules.keys():
+            # Cool down
+            time.sleep(self.wait_time / 3)
 
     def test_footnotes_automerge(self):
         """

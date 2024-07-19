@@ -1,4 +1,6 @@
 import os
+import time
+import sys
 from channels.testing import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
 from selenium.webdriver.support.ui import WebDriverWait
@@ -32,6 +34,12 @@ class UsermediaOverviewTest(SeleniumHelper, ChannelsLiveServerTestCase):
             username="Yeti", email="yeti@snowman.com", passtext="otter1"
         )
         self.login_user(self.user, self.driver, self.client)
+
+    def tearDown(self):
+        super().tearDown()
+        if "coverage" in sys.modules.keys():
+            # Cool down
+            time.sleep(self.wait_time / 3)
 
     def test_overview(self):
         driver = self.driver
@@ -208,7 +216,4 @@ class UsermediaOverviewTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.assertEqual(
             "File Size (px) Added\nNo images available", image_placeholder.text
         )
-
-    def tearDown(self):
         self.assertEqual([], self.verificationErrors)
-        return super().tearDown()

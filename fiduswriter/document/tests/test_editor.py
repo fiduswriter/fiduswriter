@@ -1,5 +1,6 @@
-import time
 import os
+import time
+import sys
 
 from channels.testing import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
@@ -52,6 +53,9 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
     def tearDown(self):
         super().tearDown()
         empty_outbox(MAIL_STORAGE_NAME)
+        if "coverage" in sys.modules.keys():
+            # Cool down
+            time.sleep(self.wait_time / 3)
 
     def test_crossrefs_and_internal_links(self):
         self.driver.get(self.base_url)

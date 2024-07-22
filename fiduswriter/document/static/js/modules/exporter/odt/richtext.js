@@ -14,6 +14,22 @@ const TEXT_TYPES = {
     "code_block": {tag: "text:p", attrs: (_options) => "text:style-name=\"Preformatted_20_Text\""},
 }
 
+const INLINE_TYPES = [
+    "citation",
+    "cross_reference",
+    "cslbib",
+    "cslblock",
+    "cslindent",
+    "cslinline",
+    "cslleftmargin",
+    "cslrightinline",
+    "equation",
+    "footnote",
+    "hard_break",
+    "image",
+    "text"
+]
+
 
 export class OdtExporterRichtext {
     constructor(exporter, images) {
@@ -58,21 +74,26 @@ export class OdtExporterRichtext {
         const previousSibling = siblings[siblingIndex - 1]
         const nextSibling = siblings[siblingIndex + 1]
 
+        const inlineNode = INLINE_TYPES.includes(node.type)
+
         let blockDelete, blockInsert
 
-        if (node.attrs?.track) {
+        if (!inlineNode && node.attrs?.track) {
             blockDelete = node.attrs.track.find(
                 mark => mark.type === "deletion"
             )
+            if (blockDelete) {
+                options = Object.assign({}, options)
+                options.blockDelete = blockDelete
+            }
             blockInsert = node.attrs.track.find(
                 mark => mark.type === "insertion"
             )
+            if (blockInsert) {
+                options = Object.assign({}, options)
+                options.blockInsert = blockInsert
+            }
         }
-
-
-        // const blockChange = node.attrs?.track?.find(
-        //     mark => mark.type === "block_change"
-        // )
 
         if (node.marks) {
             node.marks.filter(mark => mark.type === "comment").forEach(
@@ -342,8 +363,10 @@ export class OdtExporterRichtext {
             // alignments/widths not overlap one-another. The below code
             // makes a reasonable attempt at that, but it seems there is no
             // way to guarantee it from happening.
-            this.exporter.styles.checkParStyle("Standard")
-            start += "<text:p text:style-name=\"Standard\">"
+            options = Object.assign({}, options)
+            options.section = "Standard"
+            this.exporter.styles.checkParStyle(options.section)
+            start += `<text:p text:style-name="${options.section}">`
             end = "</text:p>" + end
 
             if (node.attrs.aligned === "center") {
@@ -400,7 +423,7 @@ export class OdtExporterRichtext {
                 const width = imageEntry.width * 3 / 4 // more or less px to point
                 const graphicStyleId = this.exporter.styles.getGraphicStyleId("Graphics", aligned)
                 content += noSpaceTmp`
-                        <draw:frame draw:style-name="${graphicStyleId}" draw:name="Image${this.imgCounter++}" text:anchor-type="${frame ? "paragraph" : "as-char"}" style:rel-width="${relWidth}%" style:rel-height="scale" svg:width="${width}pt" svg:height="${height}pt" draw:z-index="${this.zIndex++}">
+                        <draw:frame draw:style-name="${graphicStyleId}" draw:name="Image${this.imgCounter++}" text:anchor-type="${(frame && !blockInsert) ? "char" : "as-char"}" style:rel-width="${relWidth}%" style:rel-height="scale" svg:width="${width}pt" svg:height="${height}pt" draw:z-index="${this.zIndex++}">
                             ${
     imageEntry.svg ?
         `<draw:image xlink:href="Pictures/${imageEntry.svg}" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad" draw:mime-type="image/svg+xml"/>` :
@@ -419,7 +442,21 @@ export class OdtExporterRichtext {
                         </draw:frame>`
             }
             if (category === "none") {
-                content += `<text:bookmark text:name="${node.attrs.id}"/>`
+                content = `<text:bookmark-start text:name="${node.attrs.id}"/>${content}<text:bookmark-end text:name="${node.attrs.id}"/>`
+            }
+            if (blockDelete) {
+                const trackId = this.exporter.tracks.addChange(
+                    blockDelete,
+                    `<text:p text:style-name="Figure">${content}<text:span>‍‍</text:span></text:p>`
+                )
+                content = `<text:change text:change-id="${trackId}"/>`
+            }
+            if (blockInsert) {
+                const trackId = this.exporter.tracks.addChange(
+                    blockInsert
+                )
+                start += `<text:change-start text:change-id="${trackId}"/>`
+                end = `<text:change-end text:change-id="${trackId}"/>` + end
             }
             break
         }
@@ -556,16 +593,18 @@ export class OdtExporterRichtext {
             }
         }
 
-        if (node.marks) {
-            const inlineInsert = node.marks.find(mark => mark.type === "insertion" && mark.attrs.approved === false)
-            const inlineDelete = node.marks.find(mark => mark.type === "deletion")
+        if (inlineNode) {
+            const inlineInsert = node.marks?.find(mark => mark.type === "insertion" && mark.attrs.approved === false)?.attrs || blockInsert
+            const inlineDelete = node.marks?.find(
+                mark => mark.type === "deletion"
+            )?.attrs || options.blockDelete
             if (inlineDelete) {
                 if (parent) {
                     const trackId = this.exporter.tracks.addChange(
-                        inlineDelete,
-                        `<${TEXT_TYPES[parent.type].tag} ${TEXT_TYPES[parent.type].attrs(options)}>${
+                        Object.assign({type: "deletion"}, inlineDelete),
+                        `<${TEXT_TYPES[parent.type]?.tag || "text:p"} ${TEXT_TYPES[parent.type]?.attrs(options) || `text:style-name="${options.section}"`}>${
                             start + content + end
-                        }</${TEXT_TYPES[parent.type].tag}>`
+                        }</${TEXT_TYPES[parent.type]?.tag || "text:p"}>`
                     )
                     content = `<text:change text:change-id="${trackId}"/>`
                 } else {
@@ -575,7 +614,7 @@ export class OdtExporterRichtext {
                 end = ""
             }
             if (inlineInsert) {
-                const trackId = this.exporter.tracks.addChange(inlineInsert)
+                const trackId = this.exporter.tracks.addChange(Object.assign({type: "insertion"}, inlineInsert))
                 start += `<text:change-start text:change-id="${trackId}"/>`
                 end = `<text:change-end text:change-id="${trackId}"/>` + end
             }

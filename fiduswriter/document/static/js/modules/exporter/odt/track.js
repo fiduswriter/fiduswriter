@@ -41,16 +41,16 @@ export class OdtExporterTracks {
     trackInfo.type === "deletion" ?
         noSpaceTmp`<text:deletion>
                     <office:change-info>
-                        <dc:creator>${escapeText(trackInfo.username || trackInfo.attrs.username)}</dc:creator>
-                        <dc:date>${new Date((trackInfo.date || trackInfo.attrs.date) * 60000).toISOString().slice(0, 19)}</dc:date>
+                        <dc:creator>${escapeText(trackInfo.username)}</dc:creator>
+                        <dc:date>${new Date((trackInfo.date) * 60000).toISOString().slice(0, 19)}</dc:date>
                     </office:change-info>
                     ${deletionString}
                 </text:deletion>` :
         trackInfo.type === "insertion" ?
             noSpaceTmp`<text:insertion>
         <office:change-info>
-            <dc:creator>${escapeText(trackInfo.username || trackInfo.attrs.username)}</dc:creator>
-            <dc:date>${new Date((trackInfo.date || trackInfo.attrs.date) * 60000).toISOString().slice(0, 19)}</dc:date>
+            <dc:creator>${escapeText(trackInfo.username)}</dc:creator>
+            <dc:date>${new Date((trackInfo.date) * 60000).toISOString().slice(0, 19)}</dc:date>
         </office:change-info>
     </text:insertion>` :
             ""

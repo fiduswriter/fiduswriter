@@ -10,6 +10,26 @@ import {
     translateBlockType
 } from "./tools"
 
+const TEXT_BLOCK_TYPES = [
+    "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "paragraph", "code_block"
+]
+
+const INLINE_TYPES = [
+    "citation",
+    "cross_reference",
+    "cslbib",
+    "cslblock",
+    "cslindent",
+    "cslinline",
+    "cslleftmargin",
+    "cslrightinline",
+    "equation",
+    "footnote",
+    "hard_break",
+    "image",
+    "text"
+]
+
 export class DocxExporterRichtext {
     constructor(exporter, rels, citations, images, comments) {
         this.exporter = exporter
@@ -86,24 +106,54 @@ export class DocxExporterRichtext {
                 }
             )
         }
-        const nextBlockDelete = nextNode?.attrs?.track?.find(
-            mark => mark.type === "deletion"
-        )
-        const nextBlockInsert = nextNode?.attrs?.track?.find(
-            mark => mark.type === "insertion"
-        )
-        const blockChange = node.attrs?.track?.find(
-            mark => mark.type === "block_change"
-        )
-        const inlineInsert = node.marks?.find(mark => mark.type === "insertion" && mark.attrs.approved === false)
-        const inlineDelete = node.marks?.find(mark => mark.type === "deletion")
-        if (inlineInsert) {
-            start += `<w:ins w:id="${++this.changeCounter}" w:author="${escapeText(inlineInsert.attrs.username)}" w:date="${new Date(inlineInsert.attrs.date * 60000).toISOString().split(".")[0]}Z">`
-            end = "</w:ins>" + end
-        }
-        if (inlineDelete) {
-            start += `<w:del w:id="${++this.changeCounter}" w:author="${escapeText(inlineDelete.attrs.username)}" w:date="${new Date(inlineDelete.attrs.date * 60000).toISOString().split(".")[0]}Z">`
-            end = "</w:del>" + end
+
+        const inlineType = INLINE_TYPES.includes(node.type)
+
+        let inlineDelete, nextBlockDelete, nextBlockInsert, blockChange, blockDelete, blockInsert
+        if (inlineType) {
+            const inlineInsert = inlineType && (node.marks?.find(mark => mark.type === "insertion" && mark.attrs.approved === false)?.attrs || options.blockInsert)
+            inlineDelete = inlineType && (node.marks?.find(mark => mark.type === "deletion")?.attrs || options.blockDelete)
+            if (inlineInsert && inlineDelete && inlineInsert.username === inlineDelete.username) {
+                // In DOCX, the same user cannot both have a pending insertion and deletion of the same inline content. We remove it.
+                return ""
+            } else {
+                if (inlineInsert) {
+                    start += `<w:ins w:id="${++this.changeCounter}" w:author="${escapeText(inlineInsert.username)}" w:date="${new Date(inlineInsert.date * 60000).toISOString().split(".")[0]}Z">`
+                    end = "</w:ins>" + end
+                }
+                if (inlineDelete) {
+                    start += `<w:del w:id="${++this.changeCounter}" w:author="${escapeText(inlineDelete.username)}" w:date="${new Date(inlineDelete.date * 60000).toISOString().split(".")[0]}Z">`
+                    end = "</w:del>" + end
+                }
+            }
+        } else if (TEXT_BLOCK_TYPES.includes(node.type)) {
+            blockChange = node.attrs?.track?.find(
+                mark => mark.type === "block_change"
+            )
+
+            if (nextNode && TEXT_BLOCK_TYPES.includes(nextNode.type)) {
+                nextBlockDelete = nextNode.attrs?.track?.find(
+                    mark => mark.type === "deletion"
+                )
+                nextBlockInsert = nextNode.attrs?.track?.find(
+                    mark => mark.type === "insertion"
+                )
+            }
+        } else {
+            blockDelete = node.attrs?.track?.find(
+                mark => mark.type === "deletion"
+            )
+            if (blockDelete) {
+                options = Object.assign({}, options)
+                options.blockDelete = blockDelete
+            }
+            blockInsert = node.attrs?.track?.find(
+                mark => mark.type === "insertion"
+            )
+            if (blockInsert) {
+                options = Object.assign({}, options)
+                options.blockInsert = blockInsert
+            }
         }
         switch (node.type) {
         case "paragraph":
@@ -528,10 +578,9 @@ export class DocxExporterRichtext {
                     <w:p>
                       <w:pPr>
                         <w:jc w:val="center"/>
-                      </w:pPr>
-                      <w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/>
-                      <w:bookmarkEnd w:id="${this.bookmarkCounter}"/>`
-                end = `
+                      </w:pPr>`
+                content = `<w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/><w:bookmarkEnd w:id="${this.bookmarkCounter}"/>` + content
+                end = noSpaceTmp`
                     </w:p>
                     ${ captionSpace ?
         noSpaceTmp`<w:p>
@@ -579,10 +628,8 @@ export class DocxExporterRichtext {
                                                             <w:pStyle w:val="Caption" />
                                                             <w:spacing w:before="20" w:after="220" />
                                                             <w:rPr></w:rPr>
-                                                        </w:pPr>
-                                                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/>
-                                                        <w:bookmarkEnd w:id="${this.bookmarkCounter}"/>`
-
+                                                        </w:pPr>`
+                content = `<w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/><w:bookmarkEnd w:id="${this.bookmarkCounter}"/>` + content
                 end = noSpaceTmp`
                                                         ${catCountXml}
                                                         ${caption.map((node, i) => this.transformRichtext(node, options, caption[i + 1])).join("")}
@@ -602,6 +649,14 @@ export class DocxExporterRichtext {
                         </w:drawing>
                       </w:r>
                     </w:p>` + end
+            }
+            if (blockInsert) {
+                start += `<w:ins w:id="${++this.changeCounter}" w:author="${escapeText(blockInsert.username)}" w:date="${new Date(blockInsert.date * 60000).toISOString().split(".")[0]}Z">`
+                end = "</w:ins>" + end
+            }
+            if (blockDelete) {
+                start += `<w:del w:id="${++this.changeCounter}" w:author="${escapeText(blockDelete.username)}" w:date="${new Date(blockDelete.date * 60000).toISOString().split(".")[0]}Z">`
+                end = "</w:del>" + end
             }
             break
         }

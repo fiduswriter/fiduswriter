@@ -48,12 +48,13 @@ class OfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         self.login_user(self.user, self.driver, self.client)
         self.login_user(self.user, self.driver2, self.client2)
         self.doc = self.create_new_document()
+        super().setUp()
 
     def tearDown(self):
         super().tearDown()
         if "coverage" in sys.modules.keys():
             # Cool down
-            time.sleep(self.wait_time / 3)
+            time.sleep(self.wait_time / 2)
 
     def test_simple(self):
         """

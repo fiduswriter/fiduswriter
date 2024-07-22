@@ -1,3 +1,6 @@
+import sys
+import time
+
 from channels.testing import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
 from selenium.webdriver.common.by import By
@@ -27,6 +30,13 @@ class SendFeedbackTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.user = self.create_user(
             username="Yeti", email="yeti@snowman.com", passtext="otter1"
         )
+        super().setUp()
+
+    def tearDown(self):
+        super().tearDown()
+        if "coverage" in sys.modules.keys():
+            # Cool down
+            time.sleep(self.wait_time / 2)
 
     def test_sendfeedback(self):
         self.driver.get(self.base_url)

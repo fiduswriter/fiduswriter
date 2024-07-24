@@ -146,7 +146,7 @@ export function jatsBib(bib, id) {
 
     // url
     if (bib.fields.url && bib.fields.url.length) {
-        start += `<ext-link ext-link-type="web" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="${bib.fields.url}"/>`
+        start += `<ext-link ext-link-type="web" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="${escapeText(bib.fields.url)}"/>`
     }
 
     // url date

@@ -122,6 +122,18 @@ export const bulkMenuModel = () => ({
             order: 6
         },
         {
+            title: gettext("Export selected as BITS"),
+            tooltip: gettext("Export the documents that have been selected as BITS files."),
+            action: overview => {
+                const ids = overview.getSelected()
+                if (ids.length) {
+                    overview.mod.actions.downloadBITSFiles(ids)
+                }
+            },
+            disabled: overview => !overview.getSelected().length || overview.app.isOffline(),
+            order: 7
+        },
+        {
             title: gettext("Export selected as FIDUS"),
             tooltip: gettext("Export the documents that have been selected as FIDUS files including their templates."),
             action: overview => {
@@ -131,7 +143,7 @@ export const bulkMenuModel = () => ({
                 }
             },
             disabled: overview => !overview.getSelected().length || overview.app.isOffline(),
-            order: 7
+            order: 8
         },
         {
             title: gettext("Export selected as Slim FIDUS"),
@@ -143,7 +155,7 @@ export const bulkMenuModel = () => ({
                 }
             },
             disabled: overview => !overview.getSelected().length || overview.app.isOffline(),
-            order: 8
+            order: 9
         },
         {
             title: gettext("Delete selected"),
@@ -159,7 +171,7 @@ export const bulkMenuModel = () => ({
                 }
             },
             disabled: overview => !overview.getSelected().length || overview.app.isOffline(),
-            order: 9
+            order: 10
         }
     ]
 })

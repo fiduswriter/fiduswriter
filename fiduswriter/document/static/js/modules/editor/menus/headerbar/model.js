@@ -257,7 +257,28 @@ export const headerbarModel = () => ({
                                 editor.mod.db.bibDB,
                                 editor.mod.db.imageDB,
                                 editor.app.csl,
-                                editor.docInfo.updated
+                                editor.docInfo.updated,
+                                "article"
+                            )
+                            exporter.init()
+                        })
+                    },
+                    disabled: editor => editor.app.isOffline()
+                },
+                {
+                    title: gettext("BITS"),
+                    type: "action",
+                    tooltip: gettext("Export the document to a Book Interchange Tag Set BITS Version 2.1 file."),
+                    order: 2,
+                    action: editor => {
+                        import("../../../exporter/jats").then(({JATSExporter}) => {
+                            const exporter = new JATSExporter(
+                                editor.getDoc({changes: "acceptAllNoInsertions"}),
+                                editor.mod.db.bibDB,
+                                editor.mod.db.imageDB,
+                                editor.app.csl,
+                                editor.docInfo.updated,
+                                "book-part-wrapper"
                             )
                             exporter.init()
                         })

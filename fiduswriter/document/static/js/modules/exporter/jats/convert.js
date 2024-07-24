@@ -1,7 +1,7 @@
 import {escapeText} from "../../common"
 import {CATS} from "../../schema/i18n"
 
-import {articleTemplate} from "./templates"
+import {articleTemplate, bookPartWrapperTemplate} from "./templates"
 import {convertText} from "./text"
 
 export class JATSExporterConvert {
@@ -40,10 +40,10 @@ export class JATSExporterConvert {
         this.preWalkJson(docContent)
         this.findAllCitations(docContent)
         return this.exporter.citations.init(this.citInfos).then(() => {
-            const front = this.assembleFront()
+            const front = this.exporter.type === "article" ? this.assembleArticleFront() : this.assembleBookPartFront()
             const body = this.assembleBody(docContent)
             const back = this.assembleBack()
-            const jats = articleTemplate({front, body, back})
+            const jats = this.exporter.type === "article" ? articleTemplate({front, body, back}) : bookPartWrapperTemplate({front, body, back})
             return {
                 jats,
                 imageIds: this.imageIds
@@ -163,8 +163,10 @@ export class JATSExporterConvert {
         }
     }
 
-    assembleFront() {
-        let front = "<front><article-meta>"
+    assembleArticleFront() {
+        let front = "<front>"
+        front += "<journal-meta><journal-id></journal-id><issn></issn></journal-meta>" // Required by DTD
+        front += "<article-meta>"
         if (this.frontMatter.tags.length) {
             front += `<article-categories>${this.frontMatter.tags.map(node => this.walkJson(node)).join("")}</article-categories>`
         }
@@ -223,6 +225,66 @@ export class JATSExporterConvert {
         return front
     }
 
+    assembleBookPartFront() {
+        let front = "<front-matter><book-part-meta>"
+        if (this.frontMatter.tags.length) {
+            front += `<subj-group>${this.frontMatter.tags.map(node => this.walkJson(node)).join("")}</subj-group>`
+        }
+        Object.keys(this.frontMatter.subtitle).filter(language => language !== "default").forEach(language => {
+            // Making sure there is a title for each subtitle
+            if (!this.frontMatter.title[language]) {
+                this.frontMatter.title[language] = {type: "trans_title", attrs: {language}}
+            }
+        })
+        front += "<title-group>"
+        front += this.walkJson(this.frontMatter.title.default)
+        if (this.frontMatter.subtitle.default) {
+            front += this.walkJson(this.frontMatter.subtitle.default)
+        }
+        Object.keys(this.frontMatter.title).filter(language => language !== "default").forEach(language => {
+            front += `<trans-title-group @xml:lang="${language}">`
+            front += this.walkJson(this.frontMatter.title[language])
+            if (this.frontMatter.subtitle[language]) {
+                front += this.walkJson(this.frontMatter.subtitle[language])
+            }
+            front += "</trans-title-group>"
+        })
+        front += "</title-group>"
+        this.frontMatter.contributors.forEach(contributors => {
+            front += this.walkJson(contributors)
+        })
+        Object.entries(this.affiliations).forEach(([institution, index]) => front += `<aff id="aff${index}"><institution>${escapeText(institution)}</institution></aff>`)
+        // https://validator.jats4r.org/ requires a <permissions> element here, but is OK with it being empty.
+        if (this.frontMatter.copyright.holder) {
+            front += "<permissions>"
+            const year = this.frontMatter.copyright.year ? this.frontMatter.copyright.year : new Date().getFullYear()
+            front += `<copyright-year>${year}</copyright-year>`
+            front += `<copyright-holder>${escapeText(this.frontMatter.copyright.holder)}</copyright-holder>`
+            if (this.frontMatter.copyright.freeToRead) {
+                front += "<ali:free_to_read/>"
+            }
+            front += this.frontMatter.copyright.licenses.map(license =>
+                `<license><ali:license_ref${license.start ? ` start_date="${license.start}"` : ""}>${escapeText(license.url)}</ali:license_ref></license>`
+            ).join("")
+            front += "</permissions>"
+        } else {
+            front += "<permissions/>"
+        }
+        if (this.frontMatter.abstract.default) {
+            front += this.walkJson(this.frontMatter.abstract.default)
+            front += this.closeSections(0)
+        }
+        Object.keys(this.frontMatter.abstract).filter(language => language !== "default").forEach(language => {
+            front += this.walkJson(this.frontMatter.abstract[language])
+            front += this.closeSections(0)
+        })
+        this.frontMatter.keywords.forEach(keywords => {
+            front += this.walkJson(keywords)
+        })
+        front += "</book-part-meta></front-matter>"
+        return front
+    }
+
 
     walkJson(node, options = {}) {
         let start = "", content = "", end = ""
@@ -230,23 +292,36 @@ export class JATSExporterConvert {
         case "article":
             break
         case "title":
-            start += "<article-title>"
-            end = "</article-title>" + end
+            if (this.exporter.type === "article") {
+                start += "<article-title>"
+                end = "</article-title>" + end
+            } else {
+                start += "<title>"
+                end = "</title>" + end
+            }
+            options = Object.assign({}, options)
+            options.breakAllowed = true
             break
         case "trans_title":
             start += "<trans-title>"
             end = "</trans-title>" + end
+            options = Object.assign({}, options)
+            options.breakAllowed = true
             break
         case "subtitle":
             if (node.content) {
                 start += "<subtitle>"
                 end = "</subtitle>" + end
+                options = Object.assign({}, options)
+                options.breakAllowed = true
             }
             break
         case "trans_subtitle":
             if (node.content) {
                 start += "<trans-subtitle>"
                 end = "</trans-subtitle>" + end
+                options = Object.assign({}, options)
+                options.breakAllowed = true
             }
             break
         case "heading_part":
@@ -383,6 +458,8 @@ export class JATSExporterConvert {
             }
             start += "<title>"
             end = "</title>" + end
+            options = Object.assign({}, options)
+            options.breakAllowed = true
             break
         }
         case "code_block":
@@ -507,7 +584,9 @@ export class JATSExporterConvert {
                     !caption.length &&
                     (!copyright || !copyright.holder)
             ) {
-                content += `<graphic id="${node.attrs.id}" position="anchor" xlink:href="${imageFilename}"/>`
+                content += `<graphic id="${node.attrs.id}" position="anchor" xlink:href="${imageFilename}">`
+                content += `<alt-text>${escapeText(caption.map(node => node.text || "").join("") || imageFilename)}</alt-text>`
+                content += "</graphic>"
             } else {
                 start += `<fig id="${node.attrs.id}">`
                 end = "</fig>" + end
@@ -544,7 +623,9 @@ export class JATSExporterConvert {
                         start += "</permissions>"
                     }
                     if (imageFilename) {
-                        content += `<graphic position="anchor" xlink:href="${imageFilename}"/>`
+                        content += `<graphic position="anchor" xlink:href="${imageFilename}">`
+                        content += `<alt-text>${escapeText(caption.map(node => node.text || "").join("") || imageFilename)}</alt-text>`
+                        content += "</graphic>"
                     }
                 }
             }
@@ -608,11 +689,13 @@ export class JATSExporterConvert {
             content = `<tex-math><![CDATA[${node.attrs.equation}]]></tex-math>`
             break
         case "hard_break":
-            // Apparently forbidden inside of <p> and a number of
-            // other elements, but not inside of <bold>, which is
-            // why we add that.
-            // https://jats.nlm.nih.gov/archiving/tag-library/1.2/element/break.html
-            content += "<bold><break /></bold>"
+            // Forbidden inside of most elements. We only render it if explicitly allowed.
+            // https://jats.nlm.nih.gov/publishing/tag-library/1.3/element/break.html
+            if (options.breakAllowed) {
+                content += "<break />"
+            } else {
+                content += " "
+            }
             break
         default:
             break

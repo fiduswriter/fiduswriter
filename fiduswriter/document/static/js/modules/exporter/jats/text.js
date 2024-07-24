@@ -35,7 +35,7 @@ export function convertText(node) {
             end = "</xref>" + end
         } else {
             // External link
-            start += `<ext-link xlink:href="${href}" ext-link-type="uri" xlink:title="${hyperlink.attrs.title}">`
+            start += `<ext-link xlink:href="${escapeText(href)}" ext-link-type="uri" xlink:title="${escapeText(hyperlink.attrs.title)}">`
             end = "</ext-link>" + end
         }
     }

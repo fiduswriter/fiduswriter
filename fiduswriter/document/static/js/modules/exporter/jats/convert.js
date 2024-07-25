@@ -1,13 +1,15 @@
 import {escapeText} from "../../common"
 import {CATS} from "../../schema/i18n"
 
-import {articleTemplate, bookPartWrapperTemplate} from "./templates"
+import {removeHidden} from "../tools/doc_content"
+
+import {JATSExporterCitations} from "./citations"
 import {convertText} from "./text"
 
-export class JATSExporterConvert {
-    constructor(exporter, imageDB, bibDB, settings) {
-        this.exporter = exporter
-        this.settings = settings
+export class JATSExporterConverter {
+    constructor(type, doc, imageDB, bibDB) {
+        this.type = type
+        this.doc = doc
         this.imageDB = imageDB
         this.bibDB = bibDB
         this.imageIds = []
@@ -34,18 +36,21 @@ export class JATSExporterConvert {
         }
         this.citInfos = []
         this.citationCount = 0
+        this.citations = new JATSExporterCitations(this.doc, this.bibDB, this.csl)
     }
 
-    init(docContent) {
+    init() {
+        const docContent = removeHidden(this.doc.content)
         this.preWalkJson(docContent)
         this.findAllCitations(docContent)
-        return this.exporter.citations.init(this.citInfos).then(() => {
-            const front = this.exporter.type === "article" ? this.assembleArticleFront() : this.assembleBookPartFront()
+        return this.citations.init(this.citInfos).then(() => {
+            const front = this.type === "article" ? this.assembleArticleFront() : this.assembleBookPartFront()
             const body = this.assembleBody(docContent)
             const back = this.assembleBack()
-            const jats = this.exporter.type === "article" ? articleTemplate({front, body, back}) : bookPartWrapperTemplate({front, body, back})
             return {
-                jats,
+                front,
+                body,
+                back,
                 imageIds: this.imageIds
             }
         })
@@ -292,7 +297,7 @@ export class JATSExporterConvert {
         case "article":
             break
         case "title":
-            if (this.exporter.type === "article") {
+            if (this.type === "article") {
                 start += "<article-title>"
                 end = "</article-title>" + end
             } else {
@@ -551,8 +556,8 @@ export class JATSExporterConvert {
             break
         }
         case "citation": {
-            const citationText = this.exporter.citations.citationTexts[this.citationCount++]
-            if (options.inFootnote || this.exporter.citations.citFm.citationType !== "note") {
+            const citationText = this.citations.citationTexts[this.citationCount++]
+            if (options.inFootnote || this.citations.citFm.citationType !== "note") {
                 content += citationText
             } else {
                 content += `<xref ref-type="fn" rid="fn-${++this.fnCounter}">${this.fnCounter}</xref>`
@@ -597,7 +602,7 @@ export class JATSExporterConvert {
                         this.categoryCounter[category] = 0
                     }
                     const catCount = ++this.categoryCounter[category]
-                    const catLabel = `${CATS[category][this.settings.language]} ${catCount}`
+                    const catLabel = `${CATS[category][this.doc.settings.language]} ${catCount}`
                     start += `<label>${escapeText(catLabel)}</label>`
                 }
                 if (caption.length) {
@@ -654,7 +659,7 @@ export class JATSExporterConvert {
                     this.categoryCounter[category] = 0
                 }
                 const catCount = ++this.categoryCounter[category]
-                const catLabel = `${CATS[category][this.settings.language]} ${catCount}`
+                const catLabel = `${CATS[category][this.doc.settings.language]} ${catCount}`
                 start += `<label>${escapeText(catLabel)}</label>`
             }
             const caption = node.attrs.caption ? node.content[0].content || [] : []
@@ -729,8 +734,8 @@ export class JATSExporterConvert {
         if (this.footnotes.length) {
             back += `<fn-group>${this.footnotes.join("")}</fn-group>`
         }
-        if (this.exporter.citations.jatsBib.length) {
-            back += `<ref-list>${this.exporter.citations.jatsBib}</ref-list>`
+        if (this.citations.jatsBib.length) {
+            back += `<ref-list>${this.citations.jatsBib}</ref-list>`
         }
         back += "</back>"
         return back

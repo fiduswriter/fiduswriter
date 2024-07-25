@@ -3,8 +3,8 @@ import {FormatCitations} from "../../citations/format"
 import {jatsBib} from "./bibliography"
 
 export class JATSExporterCitations {
-    constructor(exporter, bibDB, csl) {
-        this.exporter = exporter
+    constructor(doc, bibDB, csl) {
+        this.doc = doc
         this.bibDB = bibDB
         this.csl = csl
 
@@ -26,7 +26,7 @@ export class JATSExporterCitations {
     // together before laying out the document.
     // We disregard the styling of the bibliography and instead create our own, JATS-specific bibliography.
     formatCitations() {
-        return this.csl.getStyle(this.exporter.doc.settings.citationstyle).then(
+        return this.csl.getStyle(this.doc.settings.citationstyle).then(
             citationstyle => {
                 const modStyle = JSON.parse(JSON.stringify(citationstyle))
                 const citationLayout = modStyle.children.find(section => section.name === "citation").children.find(section => section.name === "layout").attrs
@@ -41,7 +41,7 @@ export class JATSExporterCitations {
                     "",
                     this.bibDB,
                     false,
-                    this.exporter.doc.settings.language
+                    this.doc.settings.language
                 )
                 return Promise.all([
                     Promise.resolve(origCitationLayout),

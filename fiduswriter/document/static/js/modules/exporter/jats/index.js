@@ -3,11 +3,9 @@ import pretty from "pretty"
 
 import {shortFileTitle} from "../../common"
 import {createSlug} from "../tools/file"
-import {removeHidden} from "../tools/doc_content"
-import {JATSExporterConvert} from "./convert"
-import {JATSExporterCitations} from "./citations"
+import {JATSExporterConverter} from "./convert"
 import {ZipFileCreator} from "../tools/zip"
-import {darManifest} from "./templates"
+import {articleTemplate, bookPartWrapperTemplate, darManifest} from "./templates"
 /*
  Exporter to JATS
 */
@@ -22,7 +20,6 @@ export class JATSExporter {
         this.updated = updated
         this.type = type // "article", "book-part-wrapper" (for documents) or "book" (for document collections)
 
-        this.docContent = false
         this.zipFileName = false
         this.textFiles = []
         this.httpFiles = []
@@ -31,10 +28,9 @@ export class JATSExporter {
     init() {
         const fileFormat = this.type === "article" ? "jats" : "bits"
         this.zipFileName = `${createSlug(this.docTitle)}.${fileFormat}.zip`
-        this.docContent = removeHidden(this.doc.content)
-        this.converter = new JATSExporterConvert(this, this.imageDB, this.bibDB, this.doc.settings)
-        this.citations = new JATSExporterCitations(this, this.bibDB, this.csl)
-        return this.converter.init(this.docContent).then(({jats, imageIds}) => {
+        this.converter = new JATSExporterConverter(this.type, this.doc, this.imageDB, this.bibDB)
+        return this.converter.init().then(({front, body, back, imageIds}) => {
+            const jats = this.type === "article" ? articleTemplate({front, body, back}) : bookPartWrapperTemplate({front, body, back})
             this.textFiles.push({filename: "manuscript.xml", contents: pretty(jats, {ocd: true})})
             const images = imageIds.map(
                 id => {

@@ -28,7 +28,7 @@ export class JATSExporter {
     init() {
         const fileFormat = this.type === "article" ? "jats" : "bits"
         this.zipFileName = `${createSlug(this.docTitle)}.${fileFormat}.zip`
-        this.converter = new JATSExporterConverter(this.type, this.doc, this.imageDB, this.bibDB)
+        this.converter = new JATSExporterConverter(this.type, this.doc, this.csl, this.imageDB, this.bibDB)
         return this.converter.init().then(({front, body, back, imageIds}) => {
             const jats = this.type === "article" ? articleTemplate({front, body, back}) : bookPartWrapperTemplate({front, body, back})
             this.textFiles.push({filename: "manuscript.xml", contents: pretty(jats, {ocd: true})})

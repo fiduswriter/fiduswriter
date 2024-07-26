@@ -7,9 +7,10 @@ import {JATSExporterCitations} from "./citations"
 import {convertText} from "./text"
 
 export class JATSExporterConverter {
-    constructor(type, doc, imageDB, bibDB) {
+    constructor(type, doc, csl, imageDB, bibDB) {
         this.type = type
         this.doc = doc
+        this.csl = csl
         this.imageDB = imageDB
         this.bibDB = bibDB
         this.imageIds = []

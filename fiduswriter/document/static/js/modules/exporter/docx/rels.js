@@ -13,7 +13,7 @@ const DEFAULT_HYPERLINK_STYLE =
     </w:rPr>
 </w:style>`
 
-export class DocxExporterRels {
+export class DOCXExporterRels {
     constructor(exporter, docName) {
         this.exporter = exporter
         this.docName = docName

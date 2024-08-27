@@ -13,7 +13,7 @@ const CAMBRIA_MATH_FONT_DECLARATION = noSpaceTmp`
         <w:sig w:usb0="E00002FF" w:usb1="420024FF" w:usb2="00000000" w:usb3="00000000" w:csb0="0000019F" w:csb1="00000000" />
     </w:font>`
 
-export class DocxExporterMath {
+export class DOCXExporterMath {
     constructor(exporter) {
         this.exporter = exporter
         this.fontTableXml = false

@@ -1,6 +1,6 @@
 import {noSpaceTmp, escapeText} from "../../common"
 
-export class OdtExporterTracks {
+export class ODTExporterTracks {
     constructor(exporter) {
         this.exporter = exporter
         this.contentXml = false

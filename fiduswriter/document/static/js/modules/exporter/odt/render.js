@@ -2,18 +2,20 @@ import {textContent} from "../tools/doc_content"
 import {escapeText} from "../../common"
 import {BIBLIOGRAPHY_HEADERS} from "../../schema/i18n"
 
-export class OdtExporterRender {
+export class ODTExporterRender {
     constructor(exporter, docContent) {
         this.exporter = exporter
         this.docContent = docContent
         this.filePath = "content.xml"
         this.xml = false
+        this.text = false
     }
 
     init() {
         return this.exporter.xml.getXml(this.filePath).then(
             xml => {
                 this.xml = xml
+                this.text = xml.querySelector("text")
                 return Promise.resolve()
             }
         )
@@ -113,17 +115,19 @@ export class OdtExporterRender {
     // go through content.xml looking for tags and replace them with the given
     // replacements.
     render() {
-
-        const pars = this.xml.querySelectorAll("p")
-
-        pars.forEach(par => {
-            const text = par.textContent
+        const textBlocks = this.text.querySelectorAll("p, h")
+        textBlocks.forEach(block => {
+            if (block.parentNode.nodeName === "text:deletion") {
+                // Inside of tracked changes deletion, don't do anything
+                return
+            }
+            const text = block.textContent
             this.tags.forEach(tag => {
                 const tagString = tag.title
                 if (text.includes(`{${tagString}}`)) {
-                    tag.par = par
+                    tag.block = block
                     if (tag.title[0] === "@") {
-                        this.parRender(tag)
+                        this.blockRender(tag)
                     } else {
                         this.inlineRender(tag)
                     }
@@ -134,16 +138,16 @@ export class OdtExporterRender {
 
     // Render Tags that only exchange inline content
     inlineRender(tag) {
-        const texts = tag.par.textContent.split(`{${tag.title}}`)
+        const texts = tag.block.textContent.split(`{${tag.title}}`)
         const fullText = texts[0] + (tag.content ? tag.content : "") + texts[1]
-        tag.par.innerHTML = escapeText(fullText).replace(
+        tag.block.innerHTML = escapeText(fullText).replace(
             /^\s+|\s+$/g,
             match => "<text:s/>".repeat(match.length))
     }
 
-    // Render tags that exchange paragraphs
-    parRender(tag) {
-        const section = tag.par.hasAttribute("text:style-name") ? tag.par.getAttribute("text:style-name") : "Text_20_body"
+    // Render tags that exchange text blocks
+    blockRender(tag) {
+        const section = tag.block.hasAttribute("text:style-name") ? tag.block.getAttribute("text:style-name") : "Text_20_body"
         const outXml = tag.content ? tag.content.map(
             (content, contentIndex) => this.exporter.richtext.run(
                 content,
@@ -156,8 +160,8 @@ export class OdtExporterRender {
                 contentIndex
             )
         ).join("") : ""
-        tag.par.insertAdjacentHTML("beforebegin", outXml)
-        tag.par.parentNode.removeChild(tag.par)
+        tag.block.insertAdjacentHTML("beforebegin", outXml)
+        tag.block.parentNode.removeChild(tag.block)
     }
 
 

@@ -318,8 +318,8 @@ export class DocumentOverviewActions {
                 ids.forEach(id => {
                     const doc = this.documentOverview.documentList.find(entry => entry.id === id)
                     if (templateType === "docx") {
-                        import("../../exporter/docx").then(({DocxExporter}) => {
-                            const exporter = new DocxExporter(
+                        import("../../exporter/docx").then(({DOCXExporter}) => {
+                            const exporter = new DOCXExporter(
                                 doc,
                                 templateUrl,
                                 {db: doc.bibliography},
@@ -329,8 +329,8 @@ export class DocumentOverviewActions {
                             exporter.init()
                         })
                     } else {
-                        import("../../exporter/odt").then(({OdtExporter}) => {
-                            const exporter = new OdtExporter(
+                        import("../../exporter/odt").then(({ODTExporter}) => {
+                            const exporter = new ODTExporter(
                                 doc,
                                 templateUrl,
                                 {db: doc.bibliography},

@@ -6,7 +6,7 @@ import {cslBibSchema} from "../../bibliography/schema/csl_bib"
 import {descendantNodes} from "../tools/doc_content"
 import {noSpaceTmp} from "../../common"
 
-export class DocxExporterCitations {
+export class DOCXExporterCitations {
     constructor(exporter, bibDB, csl, docContent, origCitInfos = []) {
         this.exporter = exporter
         this.bibDB = bibDB

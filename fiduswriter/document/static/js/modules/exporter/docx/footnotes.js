@@ -1,8 +1,8 @@
-import {DocxExporterRels} from "./rels"
-import {DocxExporterCitations} from "./citations"
-import {DocxExporterImages} from "./images"
-import {DocxExporterLists} from "./lists"
-import {DocxExporterRichtext} from "./richtext"
+import {DOCXExporterRels} from "./rels"
+import {DOCXExporterCitations} from "./citations"
+import {DOCXExporterImages} from "./images"
+import {DOCXExporterLists} from "./lists"
+import {DOCXExporterRichtext} from "./richtext"
 import {noSpaceTmp} from "../../common"
 import {descendantNodes} from "../tools/doc_content"
 
@@ -58,7 +58,7 @@ const DEFAULT_STYLE_FOOTNOTE_ANCHOR = noSpaceTmp`
     `
 
 
-export class DocxExporterFootnotes {
+export class DOCXExporterFootnotes {
     constructor(exporter, docContent) {
         this.exporter = exporter
         this.docContent = docContent
@@ -79,10 +79,10 @@ export class DocxExporterFootnotes {
         this.findFootnotes()
         if (this.footnotes.length || (this.exporter.citations.citFm.citationType === "note" && this.exporter.citations.citInfos.length)) {
             this.convertFootnotes()
-            this.rels = new DocxExporterRels(this.exporter, "footnotes")
+            this.rels = new DOCXExporterRels(this.exporter, "footnotes")
             // Include the citinfos from the main body document so that they will be
             // used for calculating the bibliography as well
-            this.citations = new DocxExporterCitations(
+            this.citations = new DOCXExporterCitations(
                 this.exporter,
                 this.exporter.bibDB,
                 this.exporter.csl,
@@ -90,13 +90,13 @@ export class DocxExporterFootnotes {
                 this.exporter.citations.citInfos
             )
 
-            this.images = new DocxExporterImages(
+            this.images = new DOCXExporterImages(
                 this.exporter,
                 this.exporter.imageDB,
                 this.rels,
                 this.fnPmJSON
             )
-            this.lists = new DocxExporterLists(
+            this.lists = new DOCXExporterLists(
                 this.exporter,
                 this.rels,
                 this.fnPmJSON
@@ -190,7 +190,7 @@ export class DocxExporterFootnotes {
     }
 
     createXml() {
-        this.richtext = new DocxExporterRichtext(
+        this.richtext = new DOCXExporterRichtext(
             this.exporter,
             this.rels,
             this.citations,

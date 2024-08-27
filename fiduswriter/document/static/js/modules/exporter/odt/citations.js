@@ -5,7 +5,7 @@ import {fnSchema} from "../../schema/footnotes"
 import {cslBibSchema} from "../../bibliography/schema/csl_bib"
 import {descendantNodes} from "../tools/doc_content"
 
-export class OdtExporterCitations {
+export class ODTExporterCitations {
     constructor(exporter, bibDB, csl, docContent, origCitInfos = []) {
         this.exporter = exporter
         this.bibDB = bibDB

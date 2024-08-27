@@ -2,7 +2,7 @@ import {textContent} from "../tools/doc_content"
 import {escapeText} from "../../common"
 
 
-export class DocxExporterMetadata {
+export class DOCXExporterMetadata {
     constructor(exporter, docContent) {
         this.exporter = exporter
         this.docContent = docContent

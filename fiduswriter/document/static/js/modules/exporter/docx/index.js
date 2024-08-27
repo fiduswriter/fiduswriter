@@ -5,17 +5,17 @@ import {createSlug} from "../tools/file"
 import {XmlZip} from "../tools/xml_zip"
 import {removeHidden, fixTables} from "../tools/doc_content"
 import {moveFootnoteComments} from "./tools"
-import {DocxExporterCitations} from "./citations"
-import {DocxExporterComments} from "./comments"
-import {DocxExporterImages} from "./images"
-import {DocxExporterRender} from "./render"
-import {DocxExporterRichtext} from "./richtext"
-import {DocxExporterRels} from "./rels"
-import {DocxExporterFootnotes} from "./footnotes"
-import {DocxExporterMetadata} from "./metadata"
-import {DocxExporterMath} from "./math"
-import {DocxExporterTables} from "./tables"
-import {DocxExporterLists} from "./lists"
+import {DOCXExporterCitations} from "./citations"
+import {DOCXExporterComments} from "./comments"
+import {DOCXExporterImages} from "./images"
+import {DOCXExporterRender} from "./render"
+import {DOCXExporterRichtext} from "./richtext"
+import {DOCXExporterRels} from "./rels"
+import {DOCXExporterFootnotes} from "./footnotes"
+import {DOCXExporterMetadata} from "./metadata"
+import {DOCXExporterMath} from "./math"
+import {DOCXExporterTables} from "./tables"
+import {DOCXExporterLists} from "./lists"
 
 /*
 Exporter to Office Open XML docx (Microsoft Word)
@@ -29,7 +29,7 @@ TODO:
 * - Templating of tag/contributor output
 */
 
-export class DocxExporter {
+export class DOCXExporter {
     constructor(doc, templateUrl, bibDB, imageDB, csl) {
         this.doc = doc
         this.templateUrl = templateUrl
@@ -47,17 +47,17 @@ export class DocxExporter {
     init() {
         this.docContent = moveFootnoteComments(fixTables(removeHidden(this.doc.content)))
         this.docTitle = shortFileTitle(this.doc.title, this.doc.path)
-        this.tables = new DocxExporterTables(this)
-        this.math = new DocxExporterMath(this)
-        this.metadata = new DocxExporterMetadata(this, this.docContent)
-        this.footnotes = new DocxExporterFootnotes(this, this.docContent)
-        this.render = new DocxExporterRender(this, this.docContent)
-        this.rels = new DocxExporterRels(this, "document")
-        this.images = new DocxExporterImages(this, this.imageDB, this.rels, this.docContent)
-        this.lists = new DocxExporterLists(this, this.rels, this.docContent)
-        this.citations = new DocxExporterCitations(this, this.bibDB, this.csl, this.docContent)
-        this.comments = new DocxExporterComments(this, this.doc.comments, this.docContent)
-        this.richtext = new DocxExporterRichtext(
+        this.tables = new DOCXExporterTables(this)
+        this.math = new DOCXExporterMath(this)
+        this.metadata = new DOCXExporterMetadata(this, this.docContent)
+        this.footnotes = new DOCXExporterFootnotes(this, this.docContent)
+        this.render = new DOCXExporterRender(this, this.docContent)
+        this.rels = new DOCXExporterRels(this, "document")
+        this.images = new DOCXExporterImages(this, this.imageDB, this.rels, this.docContent)
+        this.lists = new DOCXExporterLists(this, this.rels, this.docContent)
+        this.citations = new DOCXExporterCitations(this, this.bibDB, this.csl, this.docContent)
+        this.comments = new DOCXExporterComments(this, this.doc.comments, this.docContent)
+        this.richtext = new DOCXExporterRichtext(
             this,
             this.rels,
             this.citations,

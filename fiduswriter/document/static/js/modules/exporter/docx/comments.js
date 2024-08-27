@@ -12,7 +12,7 @@ const DEFAULT_COMMENTS_EXTENDED_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\" 
     `
 
 
-export class DocxExporterComments {
+export class DOCXExporterComments {
     constructor(exporter, commentsDB, docContent) {
         this.exporter = exporter
         this.commentsDB = commentsDB

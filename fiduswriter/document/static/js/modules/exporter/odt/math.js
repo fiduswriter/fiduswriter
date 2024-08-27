@@ -1,4 +1,4 @@
-export class OdtExporterMath {
+export class ODTExporterMath {
     constructor(exporter) {
         this.exporter = exporter
         this.objectCounter = 1

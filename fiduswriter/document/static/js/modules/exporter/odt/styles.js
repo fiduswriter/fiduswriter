@@ -29,7 +29,7 @@ const PAR_STYLES = {
     Standard: "<style:style style:name=\"Standard\" style:family=\"paragraph\" style:class=\"text\" />"
 }
 
-export class OdtExporterStyles {
+export class ODTExporterStyles {
     constructor(exporter) {
         this.exporter = exporter
         this.contentXml = false

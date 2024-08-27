@@ -6,15 +6,15 @@ import {createSlug} from "../tools/file"
 import {XmlZip} from "../tools/xml_zip"
 
 import {removeHidden, fixTables} from "../tools/doc_content"
-import {OdtExporterCitations} from "./citations"
-import {OdtExporterImages} from "./images"
-import {OdtExporterRender} from "./render"
-import {OdtExporterRichtext} from "./richtext"
-import {OdtExporterFootnotes} from "./footnotes"
-import {OdtExporterMetadata} from "./metadata"
-import {OdtExporterStyles} from "./styles"
-import {OdtExporterMath} from "./math"
-import {OdtExporterTracks} from "./track"
+import {ODTExporterCitations} from "./citations"
+import {ODTExporterImages} from "./images"
+import {ODTExporterRender} from "./render"
+import {ODTExporterRichtext} from "./richtext"
+import {ODTExporterFootnotes} from "./footnotes"
+import {ODTExporterMetadata} from "./metadata"
+import {ODTExporterStyles} from "./styles"
+import {ODTExporterMath} from "./math"
+import {ODTExporterTracks} from "./track"
 
 /*
 Exporter to Open Document Text (LibreOffice)
@@ -26,7 +26,7 @@ TODO:
 *    (this feature is lacking in ODT files created with LibreOffice 7.6.7.2)
 */
 
-export class OdtExporter {
+export class ODTExporter {
     constructor(doc, templateUrl, bibDB, imageDB, csl) {
         this.doc = doc
         this.templateUrl = templateUrl
@@ -45,15 +45,15 @@ export class OdtExporter {
     init() {
         this.docContent = fixTables(removeHidden(this.doc.content))
         this.docTitle = shortFileTitle(this.doc.title, this.doc.path)
-        this.metadata = new OdtExporterMetadata(this, this.docContent)
-        this.footnotes = new OdtExporterFootnotes(this, this.docContent)
-        this.render = new OdtExporterRender(this, this.docContent)
-        this.styles = new OdtExporterStyles(this)
-        this.math = new OdtExporterMath(this)
-        this.images = new OdtExporterImages(this, this.imageDB, this.docContent)
-        this.citations = new OdtExporterCitations(this, this.bibDB, this.csl, this.docContent)
-        this.tracks = new OdtExporterTracks(this)
-        this.richtext = new OdtExporterRichtext(this, this.images)
+        this.metadata = new ODTExporterMetadata(this, this.docContent)
+        this.footnotes = new ODTExporterFootnotes(this, this.docContent)
+        this.render = new ODTExporterRender(this, this.docContent)
+        this.styles = new ODTExporterStyles(this)
+        this.math = new ODTExporterMath(this)
+        this.images = new ODTExporterImages(this, this.imageDB, this.docContent)
+        this.citations = new ODTExporterCitations(this, this.bibDB, this.csl, this.docContent)
+        this.tracks = new ODTExporterTracks(this)
+        this.richtext = new ODTExporterRichtext(this, this.images)
 
         this.xml = new XmlZip(
             this.templateUrl,

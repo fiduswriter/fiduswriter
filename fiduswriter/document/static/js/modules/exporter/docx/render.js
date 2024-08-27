@@ -2,7 +2,7 @@ import {textContent} from "../tools/doc_content"
 import {escapeText} from "../../common"
 import {BIBLIOGRAPHY_HEADERS} from "../../schema/i18n"
 
-export class DocxExporterRender {
+export class DOCXExporterRender {
     constructor(exporter, docContent) {
         this.exporter = exporter
         this.docContent = docContent

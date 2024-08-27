@@ -44,7 +44,7 @@ const DEFAULT_TABLEGRID_XML = tableNormalStyle => noSpaceTmp`
     </w:style>
     `
 
-export class DocxExporterTables {
+export class DOCXExporterTables {
     constructor(exporter) {
         this.exporter = exporter
         this.sideMargins = false

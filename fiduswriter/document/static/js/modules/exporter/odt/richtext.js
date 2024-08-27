@@ -31,7 +31,7 @@ const INLINE_TYPES = [
 ]
 
 
-export class OdtExporterRichtext {
+export class ODTExporterRichtext {
     constructor(exporter, images) {
         this.exporter = exporter
         this.images = images

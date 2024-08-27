@@ -170,8 +170,8 @@ export class ModDocumentTemplate {
                             this.showSafariErrorMessage()
                             return
                         }
-                        import("../../exporter/docx").then(({DocxExporter}) => {
-                            const exporter = new DocxExporter(
+                        import("../../exporter/docx").then(({DOCXExporter}) => {
+                            const exporter = new DOCXExporter(
                                 editor.getDoc(),
                                 template.template_file,
                                 editor.mod.db.bibDB,
@@ -195,8 +195,8 @@ export class ModDocumentTemplate {
                             this.showSafariErrorMessage()
                             return
                         }
-                        import("../../exporter/odt").then(({OdtExporter}) => {
-                            const exporter = new OdtExporter(
+                        import("../../exporter/odt").then(({ODTExporter}) => {
+                            const exporter = new ODTExporter(
                                 editor.getDoc(),
                                 template.template_file,
                                 editor.mod.db.bibDB,

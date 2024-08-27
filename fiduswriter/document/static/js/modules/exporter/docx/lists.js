@@ -21,7 +21,7 @@ const DEFAULT_NUMBERING_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalo
     `
 
 
-export class DocxExporterLists {
+export class DOCXExporterLists {
     constructor(exporter, rels, docContent) {
         this.exporter = exporter
         this.rels = rels

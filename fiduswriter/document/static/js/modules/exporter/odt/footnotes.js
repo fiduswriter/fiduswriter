@@ -1,5 +1,5 @@
-import {OdtExporterCitations} from "./citations"
-import {OdtExporterImages} from "./images"
+import {ODTExporterCitations} from "./citations"
+import {ODTExporterImages} from "./images"
 import {noSpaceTmp} from "../../common"
 import {descendantNodes} from "../tools/doc_content"
 
@@ -24,7 +24,7 @@ const DEFAULT_STYLE_FOOTNOTE_CONFIGURATION = noSpaceTmp`
     <text:notes-configuration text:note-class="footnote" text:citation-style-name="Footnote_20_Symbol" text:citation-body-style-name="Footnote_20_anchor" style:num-format="1" text:start-value="0" text:footnotes-position="page" text:start-numbering-at="document" />
     `
 
-export class OdtExporterFootnotes {
+export class ODTExporterFootnotes {
     constructor(exporter, docContent) {
         this.exporter = exporter
         this.docContent = docContent
@@ -47,14 +47,14 @@ export class OdtExporterFootnotes {
             this.convertFootnotes()
             // Include the citinfos from the main document so that they will be
             // used for calculating the bibliography as well
-            this.citations = new OdtExporterCitations(
+            this.citations = new ODTExporterCitations(
                 this.exporter,
                 this.exporter.bibDB,
                 this.exporter.csl,
                 this.fnPmJSON,
                 this.exporter.citations.citInfos
             )
-            this.images = new OdtExporterImages(
+            this.images = new ODTExporterImages(
                 this.exporter,
                 this.exporter.imageDB,
                 this.fnPmJSON

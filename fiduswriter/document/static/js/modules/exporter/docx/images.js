@@ -2,7 +2,7 @@ import {get} from "../../common"
 import {descendantNodes} from "../tools/doc_content"
 import {svg2png} from "../tools/svg"
 
-export class DocxExporterImages {
+export class DOCXExporterImages {
     constructor(exporter, imageDB, rels, docContent) {
         this.exporter = exporter
         this.imageDB = imageDB

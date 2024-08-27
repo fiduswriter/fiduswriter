@@ -30,7 +30,7 @@ const INLINE_TYPES = [
     "text"
 ]
 
-export class DocxExporterRichtext {
+export class DOCXExporterRichtext {
     constructor(exporter, rels, citations, images, comments) {
         this.exporter = exporter
         this.rels = rels

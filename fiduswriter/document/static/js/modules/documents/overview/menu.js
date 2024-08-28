@@ -79,7 +79,7 @@ export const bulkMenuModel = () => ({
             action: overview => {
                 const ids = overview.getSelected()
                 if (ids.length) {
-                    overview.mod.actions.downloadHtmlFiles(ids)
+                    overview.mod.actions.downloadOldHTMLFiles(ids)
                 }
             },
             disabled: overview => !overview.getSelected().length || overview.app.isOffline(),
@@ -91,7 +91,7 @@ export const bulkMenuModel = () => ({
             action: overview => {
                 const ids = overview.getSelected()
                 if (ids.length) {
-                    overview.mod.actions.downloadHtml2Files(ids)
+                    overview.mod.actions.downloadHTMLFiles(ids)
                 }
             },
             disabled: overview => !overview.getSelected().length || overview.app.isOffline(),

@@ -1,113 +1,142 @@
 import download from "downloadjs"
 import pretty from "pretty"
 
+import {shortFileTitle, get} from "../../common"
 import {createSlug} from "../tools/file"
-import {modifyImages} from "../tools/html"
-import {ZipFileCreator} from "../tools/zip"
 import {removeHidden} from "../tools/doc_content"
-import {htmlExportTemplate} from "../html/templates"
-import {addAlert, shortFileTitle} from "../../common"
-import {DOMExporter} from "../tools/dom_export"
+import {ZipFileCreator} from "../tools/zip"
 
-export class HTMLExporter extends DOMExporter {
-    constructor(schema, csl, documentStyles, doc, bibDB, imageDB, updated) {
-        super(schema, csl, documentStyles)
+import {HTMLExporterConvert} from "./convert"
+import {HTMLExporterCitations} from "./citations"
+import {htmlExportTemplate} from "./templates"
+/*
+ Exporter to HTML
+*/
+
+export class HTMLExporter {
+    constructor(doc, bibDB, imageDB, csl, updated, documentStyles) {
         this.doc = doc
-        this.docTitle = shortFileTitle(this.doc.title, this.doc.path)
         this.bibDB = bibDB
         this.imageDB = imageDB
+        this.csl = csl
         this.updated = updated
+        this.documentStyles = documentStyles
 
-        this.outputList = []
+        this.docTitle = shortFileTitle(this.doc.title, this.doc.path)
+
+        this.docContent = false
+        this.zipFileName = false
+        this.textFiles = []
+        this.httpFiles = []
         this.includeZips = []
+        this.styleSheets = [
+            {url: staticUrl("css/document.css")}
+        ]
+        this.htmlExportTemplate = htmlExportTemplate
     }
 
     init() {
-        addAlert("info", `${this.docTitle}: ${gettext("HTML export has been initiated.")}`)
-        this.docContent = removeHidden(this.doc.content, false)
-
+        this.zipFileName = `${createSlug(this.docTitle)}.html.zip`
+        this.docContent = removeHidden(this.doc.content)
         this.addDocStyle(this.doc)
-
+        this.converter = new HTMLExporterConvert(this, this.imageDB, this.bibDB, this.doc.settings)
+        this.citations = new HTMLExporterCitations(this, this.bibDB, this.csl)
         return this.loadStyles().then(
-            () => this.joinDocumentParts()
+            () => this.converter.init(this.docContent)
         ).then(
-            () => this.fillToc()
+            ({html, imageIds}) => {
+                this.textFiles.push({filename: "document.html", contents: pretty(html, {ocd: true})})
+                const images = imageIds.map(
+                    id => {
+                        const imageEntry = this.imageDB.db[id]
+                        return {
+                            title: imageEntry.title,
+                            filename: `images/${imageEntry.image.split("/").pop()}`,
+                            url: imageEntry.image
+                        }
+                    }
+                )
+                images.forEach(image => {
+                    this.httpFiles.push({filename: image.filename, url: image.url})
+                })
+            }
         ).then(
-            () => this.postProcess()
-        ).then(
-            ({title, html, math}) => this.save({title, html, math})
+            () => {
+                this.styleSheets.forEach(styleSheet => {
+                    if (styleSheet.filename) {
+                        this.textFiles.push(styleSheet)
+                    }
+                })
+
+                if (this.converter.features.math) {
+                    this.styleSheets.push({filename: "css/mathlive.css"})
+                    this.includeZips.push({
+                        "directory": "css",
+                        "url": staticUrl("zip/mathlive_style.zip"),
+                    })
+                }
+
+                return this.createZip()
+            }
         )
-
     }
 
-    prepareBinaryFiles() {
-        this.binaryFiles = this.binaryFiles.concat(modifyImages(this.content)).concat(this.fontFiles)
-    }
+    addDocStyle(doc) {
+        const docStyle = this.documentStyles.find(docStyle => docStyle.slug === doc.settings.documentstyle)
 
-    postProcess() {
-
-        const title = this.docTitle
-
-        const math = this.content.querySelectorAll(".equation, .figure-equation").length ? true : false
-
-        if (math) {
-            this.addMathliveStylesheet()
+        // The files will be in the base directory. The filenames of
+        // DocumentStyleFiles will therefore not need to replaced with their URLs.
+        if (!docStyle) {
+            return
         }
-
-        this.prepareBinaryFiles()
-
-        const html = htmlExportTemplate({
-            contents: this.content,
-            settings: this.doc.settings,
-            styleSheets: this.styleSheets,
-            title
-        })
-
-        return {html, title, math}
+        let contents = docStyle.contents
+        docStyle.documentstylefile_set.forEach(
+            ([_url, filename]) => contents = contents.replace(
+                new RegExp(filename, "g"),
+                `media/${filename}`
+            )
+        )
+        this.styleSheets.push({contents, filename: `css/${docStyle.slug}.css`})
+        this.httpFiles = this.httpFiles.concat(docStyle.documentstylefile_set.map(([url, filename]) => ({
+            filename: `css/media/${filename}`,
+            url
+        })))
     }
 
-    save({html, math}) {
-        this.outputList.push({
-            filename: "document.html",
-            contents: pretty(this.replaceImgSrc(html), {ocd: true})
-        })
-
-        this.styleSheets.forEach(styleSheet => {
-            if (styleSheet.filename) {
-                this.outputList.push(styleSheet)
+    loadStyles() {
+        const p = []
+        this.styleSheets.forEach(sheet => {
+            if (sheet.url) {
+                p.push(
+                    get(sheet.url).then(
+                        response => response.text()
+                    ).then(
+                        response => {
+                            sheet.contents = response
+                            sheet.filename = `css/${sheet.url.split("/").pop().split("?")[0]}`
+                            delete sheet.url
+                        }
+                    )
+                )
             }
         })
-
-        if (math) {
-            this.includeZips.push({
-                "directory": "css",
-                "url": staticUrl("zip/mathlive_style.zip"),
-            })
-        }
-
-        return this.createZip()
-    }
-
-    addMathliveStylesheet() {
-        this.styleSheets.push({filename: "css/mathlive.css"})
+        return Promise.all(p)
     }
 
     createZip() {
         const zipper = new ZipFileCreator(
-            this.outputList,
-            this.binaryFiles,
+            this.textFiles,
+            this.httpFiles,
             this.includeZips,
             undefined,
             this.updated
         )
-
         return zipper.init().then(
             blob => this.download(blob)
         )
     }
 
     download(blob) {
-        return download(blob, createSlug(this.docTitle) + ".html.zip", "application/zip")
+        return download(blob, this.zipFileName, "application/zip")
     }
-
 }

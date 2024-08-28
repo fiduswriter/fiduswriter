@@ -1,10 +1,10 @@
 import {PAPER_SIZES} from "../../schema/const"
-import {HTMLExporter} from "../html"
+import {OldHTMLExporter} from "../html_old"
 import {addAlert, shortFileTitle} from "../../common"
 import {removeHidden} from "../tools/doc_content"
 import {printHTML} from "@vivliostyle/print"
 
-export class PrintExporter extends HTMLExporter {
+export class PrintExporter extends OldHTMLExporter {
 
     constructor(schema, csl, documentStyles, doc, bibDB, imageDB) {
         super(schema, csl, documentStyles, doc, bibDB, imageDB)

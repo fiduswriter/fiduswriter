@@ -1,21 +1,23 @@
 import {escapeText} from "../../common"
 
 /** A template for HTML export of a document. */
-export const htmlExportTemplate = ({head, body, back, settings, lang, xhtml}) =>
-    `${
-        xhtml ?
-            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" :
-            "<!DOCTYPE html>"
-    }
-<html lang="${lang}"${xhtml ? ` xmlns="http://www.w3.org/1999/xhtml" xml:lang="${lang}"` : ""}>
+export const htmlExportTemplate = ({contents, settings, styleSheets, title}) =>
+    `<!DOCTYPE html>
+<html lang="${settings.language.split("-")[0]}">
     <head>
         <meta charset="UTF-8">
         ${settings.copyright && settings.copyright.holder ? `<meta name="copyright" content="© ${settings.copyright.year ? settings.copyright.year : new Date().getFullYear()} ${escapeText(settings.copyright.holder)}" />` : ""}
-        ${head}
+        <title>${escapeText(title)}</title>
+${
+    styleSheets.map(
+        sheet => sheet.filename ?
+            `<link rel="stylesheet" type="text/css" href="${sheet.filename}" />` :
+            `<style>${sheet.contents}</style>`
+    ).join("")
+}
     </head>
     <body class="article">
-        ${body}
-        ${back}
+        ${contents.innerHTML}
         ${
     settings.copyright && settings.copyright.holder ?
         `<div>© ${settings.copyright.year ? settings.copyright.year : new Date().getFullYear()} ${settings.copyright.holder}</div>` :

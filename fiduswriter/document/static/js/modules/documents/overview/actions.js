@@ -261,7 +261,7 @@ export class DocumentOverviewActions {
         )
     }
 
-    downloadHtmlFiles(ids) {
+    downloadOldHTMLFiles(ids) {
         getMissingDocumentListData(
             ids,
             this.documentOverview.documentList,
@@ -269,8 +269,8 @@ export class DocumentOverviewActions {
         ).then(
             () => ids.forEach(id => {
                 const doc = this.documentOverview.documentList.find(entry => entry.id === id)
-                import("../../exporter/html").then(({HTMLExporter}) => {
-                    const exporter = new HTMLExporter(
+                import("../../exporter/html_old").then(({OldHTMLExporter}) => {
+                    const exporter = new OldHTMLExporter(
                         this.documentOverview.schema,
                         this.documentOverview.app.csl,
                         this.documentOverview.documentStyles,
@@ -285,7 +285,7 @@ export class DocumentOverviewActions {
         )
     }
 
-    downloadHtml2Files(ids) {
+    downloadHTMLFiles(ids) {
         getMissingDocumentListData(
             ids,
             this.documentOverview.documentList,
@@ -293,7 +293,7 @@ export class DocumentOverviewActions {
         ).then(
             () => ids.forEach(id => {
                 const doc = this.documentOverview.documentList.find(entry => entry.id === id)
-                import("../../exporter/html2").then(({HTMLExporter}) => {
+                import("../../exporter/html").then(({HTMLExporter}) => {
                     const exporter = new HTMLExporter(
                         doc,
                         {db: doc.bibliography},

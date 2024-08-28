@@ -173,7 +173,7 @@ export const headerbarModel = () => ({
                     tooltip: gettext("Export the document to an HTML file."),
                     order: 0,
                     action: editor => {
-                        import("../../../exporter/html").then(({HTMLExporter}) => {
+                        import("../../../exporter/html_old").then(({HTMLExporter}) => {
                             const exporter = new HTMLExporter(
                                 editor.schema,
                                 editor.app.csl,
@@ -193,7 +193,7 @@ export const headerbarModel = () => ({
                     tooltip: gettext("Export the document to an HTML file."),
                     order: 0.5,
                     action: editor => {
-                        import("../../../exporter/html2").then(({HTMLExporter}) => {
+                        import("../../../exporter/html").then(({HTMLExporter}) => {
                             const exporter = new HTMLExporter(
                                 editor.getDoc({changes: "acceptAllNoInsertions"}),
                                 editor.mod.db.bibDB,

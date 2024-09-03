@@ -170,8 +170,8 @@ export const headerbarModel = () => ({
                     tooltip: gettext("Export the document to an HTML file."),
                     order: 0,
                     action: editor => {
-                        import("../../../exporter/html_old").then(({HTMLExporter}) => {
-                            const exporter = new HTMLExporter(
+                        import("../../../exporter/html_old").then(({OldHTMLExporter}) => {
+                            const exporter = new OldHTMLExporter(
                                 editor.schema,
                                 editor.app.csl,
                                 editor.mod.documentTemplate.documentStyles,

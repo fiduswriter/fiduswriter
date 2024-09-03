@@ -55,7 +55,7 @@ class SimpleMessageExchangeTests(EditorHelper, ChannelsLiveServerTestCase):
         self.load_document_editor(self.driver, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "doc-body").click()
         # Type lots of text to increment the server message count.
         print(WebsocketConsumer.sessions)
         socket_object = WebsocketConsumer.sessions[self.doc.id][

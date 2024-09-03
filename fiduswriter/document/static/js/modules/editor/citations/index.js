@@ -26,13 +26,13 @@ export class ModCitations {
     resetCitations() {
         const citations = document.querySelectorAll("#paper-editable span.citation")
         citations.forEach(citation => citation.innerHTML = "")
-        const articleBibliography = document.querySelector(".article-bibliography")
+        const docBibliography = document.querySelector(".doc-bibliography")
         const citationsContainer = document.getElementById("citation-footnote-box-container")
-        if (!articleBibliography || !citationsContainer) {
+        if (!docBibliography || !citationsContainer) {
             return
         }
-        if (articleBibliography.innerHTML !== "") {
-            articleBibliography.innerHTML = ""
+        if (docBibliography.innerHTML !== "") {
+            docBibliography.innerHTML = ""
         }
         if (citationsContainer.innerHTML !== "") {
             citationsContainer.innerHTML = ""
@@ -123,15 +123,15 @@ export class ModCitations {
         }
         this.citationType = citRenderer.fm.citationType
         // Add the rendered html and css of the bibliography to the DOM.
-        const articleBibliography = document.querySelector(".article-bibliography")
-        if (!articleBibliography) {
+        const docBibliography = document.querySelector(".doc-bibliography")
+        if (!docBibliography) {
             return
         }
-        articleBibliography.innerHTML = citRenderer.fm.bibHTML
-        let styleEl = document.querySelector(".article-bibliography-style")
+        docBibliography.innerHTML = citRenderer.fm.bibHTML
+        let styleEl = document.querySelector(".doc-bibliography-style")
         if (!styleEl) {
-            document.body.insertAdjacentHTML("beforeend", "<style type=\"text/css\" class=\"article-bibliography-style\"></style>")
-            styleEl = document.querySelector(".article-bibliography-style")
+            document.body.insertAdjacentHTML("beforeend", "<style type=\"text/css\" class=\"doc-bibliography-style\"></style>")
+            styleEl = document.querySelector(".doc-bibliography-style")
         }
         let css = citRenderer.fm.bibCSS
         if (this.editor.docInfo.access_rights === "write") {

@@ -22,7 +22,7 @@ export class WordCountDialog {
     countWords() {
         const textContent = getNonDeletedTextContent(this.editor.view.state.doc),
             footnoteContent = getNonDeletedTextContent(this.editor.mod.footnotes.fnEditor.view.state.doc),
-            bibliographyContent = document.querySelector(".article-bibliography").textContent
+            bibliographyContent = document.querySelector(".doc-bibliography").textContent
         const docContent = textContent + " " + footnoteContent + " " + bibliographyContent
         const docNumChars = docContent.split("\n").join("").length - 2 // Subtract two for added spaces
         const docWords = docContent.split(/[\n ]+/)

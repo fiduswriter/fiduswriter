@@ -66,7 +66,7 @@ class OfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "doc-body").click()
 
         p1 = multiprocessing.Process(
             target=self.type_text, args=(self.driver, self.TEST_TEXT)
@@ -79,7 +79,7 @@ class OfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         # driver 2 goes offline
         self.driver2.execute_script("window.theApp.page.ws.goOffline()")
 
-        self.driver2.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver2.find_element(By.CLASS_NAME, "doc-body").click()
 
         # Total: 25
         self.driver2.execute_script("window.testCaret.setSelection(25,25)")
@@ -120,7 +120,7 @@ class OfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "doc-body").click()
 
         p1 = multiprocessing.Process(
             target=self.type_text, args=(self.driver, self.TEST_TEXT)
@@ -133,7 +133,7 @@ class OfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         # driver 2 goes offline
         self.driver2.execute_script("window.theApp.page.ws.goOffline()")
 
-        self.driver2.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver2.find_element(By.CLASS_NAME, "doc-body").click()
 
         # Total: 25
         self.driver2.execute_script("window.testCaret.setSelection(25,25)")
@@ -172,7 +172,7 @@ class OfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "doc-body").click()
 
         p1 = multiprocessing.Process(
             target=self.type_text, args=(self.driver, self.TEST_TEXT)
@@ -197,7 +197,7 @@ class OfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         # driver 2 goes offline
         self.driver2.execute_script("window.theApp.page.ws.goOffline()")
 
-        self.driver2.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver2.find_element(By.CLASS_NAME, "doc-body").click()
 
         # Total: 25
         self.driver2.execute_script("window.testCaret.setSelection(25,25)")
@@ -248,7 +248,7 @@ class OfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "doc-body").click()
 
         p1 = multiprocessing.Process(
             target=self.type_text, args=(self.driver, self.TEST_TEXT)
@@ -275,7 +275,7 @@ class OfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         # driver 2 goes offline
         self.driver2.execute_script("window.theApp.page.ws.goOffline()")
 
-        self.driver2.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver2.find_element(By.CLASS_NAME, "doc-body").click()
 
         # Total: 25
         self.driver2.execute_script("window.testCaret.setSelection(25,25)")
@@ -330,7 +330,7 @@ class OfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "doc-body").click()
 
         p1 = multiprocessing.Process(
             target=self.type_text, args=(self.driver, self.TEST_TEXT)
@@ -348,7 +348,7 @@ class OfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         # driver 2 goes offline
         self.driver2.execute_script("window.theApp.page.ws.goOffline()")
 
-        self.driver2.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver2.find_element(By.CLASS_NAME, "doc-body").click()
 
         # Total: 25
         self.driver2.execute_script("window.testCaret.setSelection(25,25)")
@@ -401,7 +401,7 @@ class OfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "doc-body").click()
 
         p1 = multiprocessing.Process(
             target=self.type_text, args=(self.driver, self.TEST_TEXT)
@@ -414,7 +414,7 @@ class OfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         # driver 2 goes offline
         self.driver2.execute_script("window.theApp.page.ws.goOffline()")
 
-        self.driver2.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver2.find_element(By.CLASS_NAME, "doc-body").click()
 
         # Total: 25
         self.driver2.execute_script("window.testCaret.setSelection(25,25)")
@@ -454,7 +454,7 @@ class OfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "doc-body").click()
 
         p1 = multiprocessing.Process(
             target=self.type_text, args=(self.driver, self.TEST_TEXT)
@@ -467,7 +467,7 @@ class OfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         # driver 2 goes offline
         self.driver2.execute_script("window.theApp.page.ws.goOffline()")
 
-        self.driver2.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver2.find_element(By.CLASS_NAME, "doc-body").click()
 
         # Start writing text in the middle to cause conflict
         # when online user deletes data.
@@ -551,7 +551,7 @@ class FunctionalOfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         self.load_document_editor(self.driver, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "doc-body").click()
 
         self.type_text(self.driver, self.TEST_TEXT)
 
@@ -681,7 +681,7 @@ class FunctionalOfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         self.driver.execute_script("window.theApp.page.ws.goOffline()")
         self.driver.execute_script("window.theApp.ws.goOffline()")
 
-        self.driver.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "doc-body").click()
 
         # Type some text
         self.type_text(self.driver, self.TEST_TEXT)
@@ -900,7 +900,7 @@ class AccessRightsOfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "doc-body").click()
 
         p1 = multiprocessing.Process(
             target=self.type_text, args=(self.driver, self.TEST_TEXT)
@@ -913,7 +913,7 @@ class AccessRightsOfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         # driver 2 goes offline
         self.driver2.execute_script("window.theApp.page.ws.goOffline()")
 
-        self.driver2.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver2.find_element(By.CLASS_NAME, "doc-body").click()
 
         # Total: 25
         self.driver2.execute_script("window.testCaret.setSelection(25,25)")
@@ -957,7 +957,7 @@ class AccessRightsOfflineTests(EditorHelper, ChannelsLiveServerTestCase):
 
         # Add some test text
         self.add_title(self.driver)
-        self.driver.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "doc-body").click()
 
         self.type_text(self.driver, self.TEST_TEXT)
 
@@ -979,7 +979,7 @@ class AccessRightsOfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         self.assertEqual(alert_element.is_displayed(), True)
 
         # Write some test text wuith user2
-        self.driver2.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver2.find_element(By.CLASS_NAME, "doc-body").click()
 
         self.driver2.execute_script("window.testCaret.setSelection(25,25)")
         self.type_text(self.driver2, self.TEST_TEXT)
@@ -1014,7 +1014,7 @@ class AccessRightsOfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "doc-body").click()
 
         p1 = multiprocessing.Process(
             target=self.type_text, args=(self.driver, self.TEST_TEXT)
@@ -1027,7 +1027,7 @@ class AccessRightsOfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         # driver 2 goes offline
         self.driver2.execute_script("window.theApp.page.ws.goOffline()")
 
-        self.driver2.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver2.find_element(By.CLASS_NAME, "doc-body").click()
 
         # Total: 25
         self.driver2.execute_script("window.testCaret.setSelection(25,25)")

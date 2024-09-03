@@ -46,9 +46,7 @@ class EditorHelper(SeleniumHelper):
 
     def add_title(self, driver):
         title = "My title"
-        self.driver.find_element(By.CLASS_NAME, "article-title").send_keys(
-            title
-        )
+        self.driver.find_element(By.CLASS_NAME, "doc-title").send_keys(title)
 
     def get_contents(self, driver):
         # Contents is child 5.
@@ -95,4 +93,4 @@ class EditorHelper(SeleniumHelper):
             f'//*[@id="footnote-box-container"]/div[2]/div[{footnote_num}]',
         ).send_keys(footnote_content)
 
-        driver.find_element(By.CLASS_NAME, "article-body").click()
+        driver.find_element(By.CLASS_NAME, "doc-body").click()

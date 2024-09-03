@@ -178,7 +178,7 @@ export class ModNavigator {
                 items.push({id: node.attrs.id, textContent: node.textContent, type: node.type})
             }
         })
-        const bibHeader = document.querySelector("h1.article-bibliography-header")
+        const bibHeader = document.querySelector("h1.doc-bibliography-header")
         if (bibHeader) {
             items.push({id: "bibliography", textContent: bibHeader.innerText, type: {name: "h1"}})
         }

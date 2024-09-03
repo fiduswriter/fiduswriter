@@ -71,10 +71,8 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         self.load_document_editor(self.driver, self.doc)
         self.load_document_editor(self.driver2, self.doc)
 
-        title_input = self.driver.find_element(By.CLASS_NAME, "article-title")
-        title_input2 = self.driver2.find_element(
-            By.CLASS_NAME, "article-title"
-        )
+        title_input = self.driver.find_element(By.CLASS_NAME, "doc-title")
+        title_input2 = self.driver2.find_element(By.CLASS_NAME, "doc-title")
 
         first_part = "Here is "
         second_part = "my title"
@@ -94,8 +92,8 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
             self.get_title(self.driver2), self.get_title(self.driver)
         )
 
-        body_input = self.driver.find_element(By.CLASS_NAME, "article-body")
-        body_input2 = self.driver2.find_element(By.CLASS_NAME, "article-body")
+        body_input = self.driver.find_element(By.CLASS_NAME, "doc-body")
+        body_input2 = self.driver2.find_element(By.CLASS_NAME, "doc-body")
         body_input.click()
         body_input2.click()
 
@@ -127,10 +125,8 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         self.load_document_editor(self.driver, self.doc)
         self.load_document_editor(self.driver2, self.doc)
 
-        title_input = self.driver.find_element(By.CLASS_NAME, "article-title")
-        title_input2 = self.driver2.find_element(
-            By.CLASS_NAME, "article-title"
-        )
+        title_input = self.driver.find_element(By.CLASS_NAME, "doc-title")
+        title_input2 = self.driver2.find_element(By.CLASS_NAME, "doc-title")
 
         first_part = "Here is "
         second_part = "my title"
@@ -155,8 +151,8 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
             self.get_title(self.driver2), self.get_title(self.driver)
         )
 
-        body_input = self.driver.find_element(By.CLASS_NAME, "article-body")
-        body_input2 = self.driver2.find_element(By.CLASS_NAME, "article-body")
+        body_input = self.driver.find_element(By.CLASS_NAME, "doc-body")
+        body_input2 = self.driver2.find_element(By.CLASS_NAME, "doc-body")
         body_input.click()
         body_input2.click()
 
@@ -191,7 +187,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
 
     def get_boldtext(self, driver):
         btext = driver.find_element(
-            By.XPATH, '//*[contains(@class, "article-body")]/p/strong'
+            By.XPATH, '//*[contains(@class, "doc-body")]/p/strong'
         )
         return btext.text
 
@@ -246,7 +242,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
 
     def get_italictext(self, driver):
         itext = driver.find_element(
-            By.XPATH, '//*[contains(@class, "article-body")]/p/em'
+            By.XPATH, '//*[contains(@class, "doc-body")]/p/em'
         )
         return itext.text
 
@@ -301,7 +297,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
 
     def get_numberedlist(self, driver):
         numberedTags = driver.find_elements(
-            By.XPATH, '//*[contains(@class, "article-body")]//ol//li'
+            By.XPATH, '//*[contains(@class, "doc-body")]//ol//li'
         )
         return numberedTags
 
@@ -368,7 +364,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
 
     def get_bulletlist(self, driver):
         bulletTags = driver.find_elements(
-            By.XPATH, '//*[contains(@class, "article-body")]//ul//li'
+            By.XPATH, '//*[contains(@class, "doc-body")]//ul//li'
         )
         return bulletTags
 
@@ -436,7 +432,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
 
     def get_blockquote(self, driver):
         blockquoteTags = driver.find_elements(
-            By.XPATH, '//*[contains(@class, "article-body")]/blockquote'
+            By.XPATH, '//*[contains(@class, "doc-body")]/blockquote'
         )
         return blockquoteTags
 
@@ -503,7 +499,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
 
     def get_link(self, driver):
         atag = driver.find_element(
-            By.XPATH, '//*[contains(@class, "article-body")]/p/a'
+            By.XPATH, '//*[contains(@class, "doc-body")]/p/a'
         )
         return atag.text
 
@@ -628,7 +624,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         button.click()
 
     def get_undo(self, driver):
-        content = driver.find_element(By.CLASS_NAME, "article-body")
+        content = driver.find_element(By.CLASS_NAME, "doc-body")
         return (
             content.get_attribute("innerText")
             .rstrip("\ufeff\n")
@@ -660,7 +656,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
-        content = self.driver2.find_element(By.CLASS_NAME, "article-title")
+        content = self.driver2.find_element(By.CLASS_NAME, "doc-title")
         content.click()
 
         self.driver2.execute_script("window.testCaret.setSelection(25,30)")
@@ -1177,7 +1173,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         return cite_within_doc.text
 
     def get_citation_bib(self, driver):
-        cite_bib = driver.find_element(By.CLASS_NAME, "article-bibliography")
+        cite_bib = driver.find_element(By.CLASS_NAME, "doc-bibliography")
         return cite_bib.text
 
     def test_citation(self):
@@ -1189,9 +1185,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        document_input = self.driver.find_element(
-            By.CLASS_NAME, "article-body"
-        )
+        document_input = self.driver.find_element(By.CLASS_NAME, "doc-body")
 
         # Total: 22
         self.driver.execute_script("window.testCaret.setSelection(25,25)")
@@ -1332,7 +1326,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
             self.driver.find_element(By.CSS_SELECTOR, "#document-title").text,
             "/Reports/2019/Report 23",
         )
-        # Delete entire path to obtain article title again.
+        # Delete entire path to obtain doc title again.
         self.driver2.find_element(By.CSS_SELECTOR, "#document-title").click()
         self.driver2.find_element(
             By.CSS_SELECTOR, "#document-title"

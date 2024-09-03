@@ -485,7 +485,7 @@ export class Editor {
                             <div id="citation-footnote-box-container"></div>
                         </div>
                     </div>
-                    <div id="bibliography" class="article-bibliography user-contents"></div>
+                    <div id="bibliography" class="doc-bibliography user-contents"></div>
                 </div>
                 <nav id="selection-menu"><div></div></nav>
                 <div id="margin-box-column">
@@ -672,7 +672,7 @@ export class Editor {
 
     scrollBibliographyIntoView() {
         const topMenuHeight = this.dom.querySelector("header").offsetHeight + 10
-        const bibliographyHeaderEl = document.querySelector("h1.article-bibliography-header")
+        const bibliographyHeaderEl = document.querySelector("h1.doc-bibliography-header")
         const distanceFromTop = bibliographyHeaderEl.getBoundingClientRect().top - topMenuHeight
         window.scrollBy({left: 0, top: distanceFromTop, behavior: "smooth", block: "center"})
         return

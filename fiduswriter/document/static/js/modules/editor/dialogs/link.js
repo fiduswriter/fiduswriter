@@ -72,7 +72,7 @@ export class LinkDialog {
     // To check whether links, cross references or both can be added in current position.
     checkAllowedContent() {
         if (this.editor.currentView === this.editor.view) {
-            const settings = this.editor.view.state.selection.$anchor.node(2).attrs
+            const settings = this.editor.view.state.selection.$anchor.node(1).attrs
             return {
                 link: settings.marks.includes("link"),
                 cross_reference: settings.elements.includes("cross_reference")

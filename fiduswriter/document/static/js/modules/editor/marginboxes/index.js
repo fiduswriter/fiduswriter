@@ -449,7 +449,7 @@ export class ModMarginboxes {
             const helpBox = {
                 type: "help",
                 data: {
-                    active: selection.$anchor.node(2) === node ? true : false,
+                    active: selection.$anchor.node(1) === node ? true : false,
                     help: node.attrs.help
                 }
             }

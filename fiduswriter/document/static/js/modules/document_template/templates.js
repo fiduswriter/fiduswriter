@@ -123,7 +123,7 @@ const headingTemplate = ({
     language = false,
     metadata = false
 }) =>
-    `<div class="doc-part" data-type="heading_part">
+    `<div class="doc-part-block" data-type="heading_part">
     <div class="doc-part-header">
         ${gettext("Heading")}
         <ul class="object-tools right">
@@ -215,7 +215,7 @@ const contributorsTemplate = ({
     optional = "false",
     metadata = false
 }) =>
-    `<div class="doc-part" data-type="contributors_part">
+    `<div class="doc-part-block" data-type="contributors_part">
     <div class="doc-part-header">
         ${gettext("Namelist")}
         <ul class="object-tools right">
@@ -271,7 +271,7 @@ const richtextTemplate = ({
     optional = "false",
     language = false,
     metadata = false
-}) => `<div class="doc-part" data-type="richtext_part">
+}) => `<div class="doc-part-block" data-type="richtext_part">
     <div class="doc-part-header">
         ${gettext("Richtext")}
         <ul class="object-tools right">
@@ -341,7 +341,7 @@ const richtextTemplate = ({
 const separatorTemplate = ({
     id = ""
 }) =>
-    `<div class="doc-part" data-type="separator_part">
+    `<div class="doc-part-block" data-type="separator_part">
     <div class="doc-part-header">
         ${gettext("Separator")}
         <div class="label">
@@ -358,7 +358,7 @@ const tagsTemplate = ({
     optional = "false",
     metadata = false
 }) =>
-    `<div class="doc-part" data-type="tags_part">
+    `<div class="doc-part-block" data-type="tags_part">
     <div class="doc-part-header">
         ${gettext("Tags")}
         <ul class="object-tools right">
@@ -413,7 +413,7 @@ const tableTemplate = ({
     optional = "false",
     language = false
 }) =>
-    `<div class="doc-part" data-type="table_part">
+    `<div class="doc-part-block" data-type="table_part">
     <div class="doc-part-header">
         ${gettext("Table")}
         <ul class="object-tools right">
@@ -469,7 +469,7 @@ const tocTemplate = ({
     title = "",
     optional = "false"
 }) =>
-    `<div class="doc-part" data-type="table_of_contents">
+    `<div class="doc-part-block" data-type="table_of_contents">
     <div class="doc-part-header">
         ${gettext("Table of Contents")}
         <ul class="object-tools right">
@@ -496,7 +496,7 @@ const tocTemplate = ({
 const footnoteTemplate = ({
     footnote_elements = ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "cross_reference", "blockquote", "table"],
     footnote_marks = ["strong", "em", "underline", "link"]
-}) => `<div class="doc-part attrs">${allowedElementsTemplate({elements: footnote_elements}, false)}${allowedMarksTemplate({marks: footnote_marks})}</div>`
+}) => `<div class="doc-part-block attrs">${allowedElementsTemplate({elements: footnote_elements}, false)}${allowedMarksTemplate({marks: footnote_marks})}</div>`
 
 const citationstylesTemplate = ({citationstyles = ["apa"]}, allCitationStyles) =>
     `<select multiple size=5>
@@ -631,7 +631,7 @@ export const documentDesignerTemplate = ({id, value, title, documentStyles, expo
                     ${separatorTemplate({})}
                 </td>
                 <td class="to-column">
-                    <div class="doc-part fixed" data-type="initial">${gettext("Title")}</div>
+                    <div class="doc-part-block fixed" data-type="initial">${gettext("Title")}</div>
                     <div class="to-container">${templateEditorValueTemplate({content: value.content || []})}</div>
                 </td>
                 <td class="trash">

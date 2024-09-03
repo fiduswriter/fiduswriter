@@ -60,8 +60,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
     def get_title(self, driver):
         # Title is child 0.
         return driver.execute_script(
-            "return window.theApp.page.view.state.doc.firstChild"
-            ".firstChild.textContent;"
+            "return window.theApp.page.view.state.doc.firstChild.textContent;"
         )
 
     def test_typing(self):
@@ -217,7 +216,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
@@ -272,7 +271,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
@@ -327,7 +326,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
@@ -342,7 +341,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         p2.join()
 
         # Wait for the first processor to write some text and go to next line
-        self.wait_for_doc_size(self.driver2, 49)
+        self.wait_for_doc_size(self.driver2, 47)
 
         self.driver2.execute_script("window.testCaret.setSelection(43,43)")
 
@@ -395,7 +394,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
@@ -410,7 +409,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         p2.join()
 
         # Wait for the first processor to write enough text and go to next line
-        self.wait_for_doc_size(self.driver2, 49)
+        self.wait_for_doc_size(self.driver2, 47)
 
         self.driver2.execute_script("window.testCaret.setSelection(43,43)")
 
@@ -462,7 +461,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 25)
+        self.wait_for_doc_size(self.driver2, 23)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
@@ -530,7 +529,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
@@ -596,7 +595,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
@@ -658,7 +657,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element(By.CLASS_NAME, "article-title")
@@ -778,7 +777,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 30)
+        self.wait_for_doc_size(self.driver2, 28)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
@@ -847,7 +846,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 33)
+        self.wait_for_doc_size(self.driver2, 31)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
@@ -1022,7 +1021,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
 
         caption = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located(
-                (By.CSS_SELECTOR, "div.article-body figure figcaption")
+                (By.CSS_SELECTOR, "div.doc-body figure figcaption")
             )
         )
         caption.click()
@@ -1030,14 +1029,14 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
 
     def get_images(self, driver):
         images = driver.find_elements(
-            By.CSS_SELECTOR, "div.article-body figure img[data-image]"
+            By.CSS_SELECTOR, "div.doc-body figure img[data-image]"
         )
 
         return images
 
     def get_caption(self, driver):
         caption = driver.find_element(
-            By.CSS_SELECTOR, "div.article-body figure figcaption"
+            By.CSS_SELECTOR, "div.doc-body figure figcaption"
         )
 
         return caption.text
@@ -1063,7 +1062,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
@@ -1098,7 +1097,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         self.driver.refresh()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
-                (By.CSS_SELECTOR, "div.article-body figure")
+                (By.CSS_SELECTOR, "div.doc-body figure")
             )
         )
         self.assertEqual(1, len(self.get_images(self.driver)))
@@ -1173,7 +1172,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
 
     def get_citation_within_text(self, driver):
         cite_within_doc = driver.find_element(
-            By.CSS_SELECTOR, "div.article-body span.citation"
+            By.CSS_SELECTOR, "div.doc-body span.citation"
         )
         return cite_within_doc.text
 
@@ -1203,12 +1202,10 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
-        content = self.driver2.find_element(
-            By.CSS_SELECTOR, "div.article-body p"
-        )
+        content = self.driver2.find_element(By.CSS_SELECTOR, "div.doc-body p")
         content.click()
 
         p2 = multiprocessing.Process(
@@ -1237,7 +1234,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         # We delete the citation again
         ActionChains(self.driver).double_click(
             self.driver.find_element(
-                By.CSS_SELECTOR, "div.article-body span.citation"
+                By.CSS_SELECTOR, "div.doc-body span.citation"
             )
         ).send_keys(Keys.BACKSPACE).perform()
 
@@ -1246,7 +1243,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         self.assertEqual(
             len(
                 self.driver2.find_elements(
-                    By.CSS_SELECTOR, "div.article-body span.citation"
+                    By.CSS_SELECTOR, "div.doc-body span.citation"
                 )
             ),
             0,
@@ -1281,8 +1278,8 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         "Test whether changing the path in one editor changes it in the other"
         self.load_document_editor(self.driver, self.doc)
         self.load_document_editor(self.driver2, self.doc)
-        self.driver.find_element(By.CSS_SELECTOR, ".article-title").click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-title").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-title").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-title").send_keys(
             "Test Article"
         )
         self.wait_for_doc_sync(self.driver, self.driver2)
@@ -1301,7 +1298,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         self.driver2.find_element(
             By.CSS_SELECTOR, "#document-title"
         ).send_keys("/Reports/2019/")
-        self.driver2.find_element(By.CSS_SELECTOR, ".article-title").click()
+        self.driver2.find_element(By.CSS_SELECTOR, ".doc-title").click()
         self.wait_for_doc_sync(self.driver, self.driver2)
         self.assertEqual(
             self.driver.find_element(By.CSS_SELECTOR, "#document-title").text,
@@ -1318,7 +1315,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(By.CSS_SELECTOR, "#document-title").send_keys(
             "/Reports/2019/Report 23"
         )
-        self.driver.find_element(By.CSS_SELECTOR, ".article-title").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-title").click()
         self.wait_for_doc_sync(self.driver, self.driver2)
         self.assertEqual(
             self.driver2.find_element(By.CSS_SELECTOR, "#document-title").text,
@@ -1343,7 +1340,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         self.driver2.find_element(
             By.CSS_SELECTOR, "#document-title"
         ).send_keys(Keys.DELETE)
-        self.driver2.find_element(By.CSS_SELECTOR, ".article-title").click()
+        self.driver2.find_element(By.CSS_SELECTOR, ".doc-title").click()
         self.wait_for_doc_sync(self.driver, self.driver2)
         self.assertEqual(
             self.driver.find_element(By.CSS_SELECTOR, "#document-title").text,

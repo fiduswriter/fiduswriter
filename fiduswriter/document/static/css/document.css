@@ -197,50 +197,50 @@ table {
     text-decoration: underline;
 }
 
-.article table[data-layout="fixed"] {
+.doc table[data-layout="fixed"] {
     table-layout: fixed !important;
 }
 
-.article table[data-layout="auto"] {
+.doc table[data-layout="auto"] {
     table-layout: auto !important;
 }
 
-.article-title {
+.doc-title {
     font-size: 48px;
 }
 
-.article .table-of-contents h1,
-.article .table-of-contents h2,
-.article .table-of-contents h3,
-.article .table-of-contents h4,
-.article .table-of-contents h5,
-.article .table-of-contents h6 {
+.doc .table-of-contents h1,
+.doc .table-of-contents h2,
+.doc .table-of-contents h3,
+.doc .table-of-contents h4,
+.doc .table-of-contents h5,
+.doc .table-of-contents h6 {
     font-size: 1em;
     font-weight: normal;
     margin-bottom: unset;
 }
 
-.article .table-of-contents h2 {
+.doc .table-of-contents h2 {
     padding-left: 1em;
 }
 
-.article .table-of-contents h3 {
+.doc .table-of-contents h3 {
     padding-left: 2em;
 }
 
-.article .table-of-contents h4 {
+.doc .table-of-contents h4 {
     padding-left: 3em;
 }
 
-.article .table-of-contents h5 {
+.doc .table-of-contents h5 {
     padding-left: 4em;
 }
 
-.article .table-of-contents h6 {
+.doc .table-of-contents h6 {
     padding-left: 5em;
 }
 
-.article .table-of-contents h1.toc {
+.doc .table-of-contents h1.toc {
     font-style: italic;
 }
 

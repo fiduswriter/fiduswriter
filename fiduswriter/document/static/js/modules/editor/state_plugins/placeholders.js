@@ -10,17 +10,16 @@ export const placeholdersPlugin = function(options) {
         if (!anchor || !head) {
             return
         }
-        const anchorPart = anchor.node(2)
-        const headPart = head.node(2)
+        const anchorPart = anchor.node(1)
+        const headPart = head.node(1)
         if (!anchorPart || !headPart) {
             return
         }
         const currentPart = anchorPart === headPart ? anchorPart : false
-        const articleNode = state.doc.firstChild
 
         const decorations = []
 
-        articleNode.forEach((partElement, offset) => {
+        state.doc.forEach((partElement, offset) => {
             if (
                 (partElement.isTextblock && partElement.childCount === 0) ||
                 (!partElement.isTextblock && partElement.nodeSize === 4)
@@ -45,8 +44,8 @@ export const placeholdersPlugin = function(options) {
                 if (currentPart === partElement) {
                     placeHolder.classList.add("selected")
                 }
-                let position = 2 + offset
-                // position of decorator: 2 to get inside (doc (1) + article (1))
+                let position = 1 + offset
+                // position of decorator: 2 to get inside (doc (1))
                 if (!partElement.isTextblock) {
                     // In block nodes that are not text blocks (body + abstract)
                     // place inside the first child node (a paragraph).
@@ -66,7 +65,7 @@ export const placeholdersPlugin = function(options) {
                     }
                     if (["figure_caption", "table_caption"].includes(node.type.name) && node.childCount === 0 && state.selection.$anchor.parent !== node) {
                         decorations.push(
-                            Decoration.node(2 + offset + pos, 2 + offset + pos + node.nodeSize, {
+                            Decoration.node(1 + offset + pos, 1 + offset + pos + node.nodeSize, {
                                 class: "empty",
                                 "data-placeholder": `${gettext("Caption")}...`
                             })

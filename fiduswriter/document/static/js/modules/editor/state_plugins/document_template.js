@@ -5,10 +5,10 @@ import {Fragment} from "prosemirror-model"
 const key = new PluginKey("documentTemplate")
 
 export function addDeletedPartWidget(dom, view, getPos) {
-    dom.classList.add("article-deleted")
+    dom.classList.add("doc-deleted")
     dom.insertAdjacentHTML(
         "beforeend",
-        "<div class=\"remove-article-part\"><i class=\"fa fa-trash-alt\"></i></div>"
+        "<div class=\"remove-doc-part\"><i class=\"fa fa-trash-alt\"></i></div>"
     )
     const removeButton = dom.lastElementChild
     removeButton.addEventListener("click", () => {
@@ -27,8 +27,8 @@ export function getProtectedRanges(state) {
 export function checkProtectedInSelection(state) {
     // Checks whether there is a protected range
     // within a selection
-    const anchorDocPart = state.selection.$anchor.node(2),
-        headDocPart = state.selection.$head.node(2)
+    const anchorDocPart = state.selection.$anchor.node(1),
+        headDocPart = state.selection.$head.node(1)
 
     // If the protection is of header/start check if selection falls within the
     // protected range
@@ -52,9 +52,9 @@ export class PartView {
         this.view = view
         this.getPos = getPos
         this.dom = document.createElement("div")
-        this.dom.classList.add("article-part")
-        this.dom.classList.add(`article-${this.node.type.name}`)
-        this.dom.classList.add(`article-${this.node.attrs.id}`)
+        this.dom.classList.add("doc-part")
+        this.dom.classList.add(`doc-${this.node.type.name}`)
+        this.dom.classList.add(`doc-${this.node.attrs.id}`)
         if (node.attrs.hidden) {
             this.dom.dataset.hidden = true
         }
@@ -99,9 +99,9 @@ export const documentTemplatePlugin = function(options) {
                 const protectedRanges = [
                     {from: 0, to: 1} // article node
                 ]
-                state.doc.firstChild.forEach((node, pos) => {
-                    const from = pos + 1 // + 1 to get inside the article node
-                    let to = from + 1 // + 1 for the part node
+                state.doc.forEach((node, pos) => {
+                    const from = pos
+                    let to = from
                     if (node.attrs.locking === "fixed") {
                         to = from + node.nodeSize
                     } else if (node.attrs.locking === "header") { // only relevant for tables
@@ -165,7 +165,7 @@ export const documentTemplatePlugin = function(options) {
             ) {
                 return true
             }
-            if (state.doc.firstChild.childCount !== tr.doc.firstChild.childCount) {
+            if (state.doc.childCount !== tr.doc.childCount) {
                 return false
             }
             const {
@@ -204,7 +204,7 @@ export const documentTemplatePlugin = function(options) {
             let allowedElements = false, allowedMarks = false
 
             changingRanges.forEach(range => state.doc.nodesBetween(range.from, range.to, (node, pos, parent, _index) => {
-                if (parent === tr.doc.firstChild) {
+                if (parent === tr.doc) {
                     allowedElements = node.attrs.elements ?
                         node.attrs.elements.concat("table_row", "table_cell", "table_header", "list_item", "text") :
                         false

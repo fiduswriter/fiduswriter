@@ -74,7 +74,7 @@ class OfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # driver 2 goes offline
         self.driver2.execute_script("window.theApp.page.ws.goOffline()")
@@ -128,7 +128,7 @@ class OfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # driver 2 goes offline
         self.driver2.execute_script("window.theApp.page.ws.goOffline()")
@@ -180,7 +180,7 @@ class OfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # driver 2 sets local tracking limit that will be reached
         self.driver2.execute_script(
@@ -256,7 +256,7 @@ class OfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # driver 2 sets remote tracking limit that will be reached
         self.driver2.execute_script(
@@ -338,7 +338,7 @@ class OfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # driver 2 sets tracking limit
         self.driver2.execute_script(
@@ -409,7 +409,7 @@ class OfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # driver 2 goes offline
         self.driver2.execute_script("window.theApp.page.ws.goOffline()")
@@ -462,7 +462,7 @@ class OfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # driver 2 goes offline
         self.driver2.execute_script("window.theApp.page.ws.goOffline()")
@@ -615,7 +615,7 @@ class FunctionalOfflineTests(EditorHelper, ChannelsLiveServerTestCase):
 
         caption = WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
-                (By.CSS_SELECTOR, "div.article-body figure figcaption")
+                (By.CSS_SELECTOR, "div.doc-body figure figcaption")
             )
         )
 
@@ -908,7 +908,7 @@ class AccessRightsOfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # driver 2 goes offline
         self.driver2.execute_script("window.theApp.page.ws.goOffline()")
@@ -1022,7 +1022,7 @@ class AccessRightsOfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # driver 2 goes offline
         self.driver2.execute_script("window.theApp.page.ws.goOffline()")

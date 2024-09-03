@@ -53,8 +53,7 @@ class EditorHelper(SeleniumHelper):
     def get_contents(self, driver):
         # Contents is child 5.
         return driver.execute_script(
-            "return window.theApp.page.view.state.doc.firstChild"
-            ".child(5).textContent;"
+            "return window.theApp.page.view.state.doc.child(5).textContent;"
         )
 
     def wait_for_doc_size(self, driver, size, seconds=False):

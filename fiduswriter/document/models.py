@@ -12,7 +12,7 @@ from django.contrib.contenttypes.models import ContentType
 # Also defined in frontend
 # document/static/js/modules/schema/index.js
 
-FW_DOCUMENT_VERSION = 3.4
+FW_DOCUMENT_VERSION = 3.5
 
 
 class DocumentTemplate(models.Model):

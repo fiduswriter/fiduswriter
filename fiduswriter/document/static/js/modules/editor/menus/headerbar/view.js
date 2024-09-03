@@ -404,7 +404,7 @@ export class HeaderbarView {
     getTitle() {
         const doc = this.editor.view.state.doc
         let title = ""
-        doc.firstChild.firstChild.forEach(
+        doc.firstChild.forEach(
             child => {
                 if (!child.marks.find(mark => mark.type.name === "deletion")) {
                     title += escapeText(child.textContent)

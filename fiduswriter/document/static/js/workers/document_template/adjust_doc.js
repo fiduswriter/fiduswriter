@@ -18,13 +18,13 @@ export class AdjustDocToTemplateWorker {
     }
 
     init() {
-        const stateDoc = this.schema.nodeFromJSON({type: "doc", content: [this.doc]})
-        const newStateDoc = this.schema.nodeFromJSON({type: "doc", content: [adjustDocToTemplate(
+        const stateDoc = this.schema.nodeFromJSON(this.doc)
+        const newStateDoc = this.schema.nodeFromJSON(adjustDocToTemplate(
             this.doc,
             this.template,
             this.documentStyleSlugs,
             this.schema
-        )]})
+        ))
         const transform = recreateTransform(stateDoc, newStateDoc)
         const steps = []
         transform.steps.forEach(step => steps.push(step.toJSON()))

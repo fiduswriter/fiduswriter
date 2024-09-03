@@ -594,12 +594,12 @@ export class Editor {
     // filters
     getDoc(options = {}) {
         const doc = (this.app.isOffline() || Boolean(options.use_current_view)) ? this.view.docView.node : this.docInfo.confirmedDoc
-        const pmArticle = options.changes === "acceptAllNoInsertions" ?
-            acceptAllNoInsertions(doc).firstChild :
-            doc.firstChild
+        const pmDoc = options.changes === "acceptAllNoInsertions" ?
+            acceptAllNoInsertions(doc) :
+            doc
 
         let title = ""
-        pmArticle.firstChild.forEach(
+        pmDoc.firstChild.forEach(
             child => {
                 if (!child.marks.find(mark => mark.type.name === "deletion")) {
                     title += child.textContent
@@ -607,8 +607,8 @@ export class Editor {
             }
         )
         return {
-            content: pmArticle.toJSON(),
-            settings: getSettings(pmArticle),
+            content: pmDoc.toJSON(),
+            settings: getSettings(pmDoc),
             title: title.substring(0, 255),
             path: this.docInfo.path,
             version: this.docInfo.version,
@@ -620,7 +620,6 @@ export class Editor {
 
     // Use PMs scrollIntoView function and adjust for top menu
     scrollIdIntoView(id) {
-
         let foundPos = false,
             view
 

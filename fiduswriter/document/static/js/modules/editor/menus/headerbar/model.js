@@ -5,24 +5,21 @@ import {CopyrightDialog} from "../../../copyright_dialog"
 import {RevisionDialog, LanguageDialog} from "../../dialogs"
 import {WordCountDialog, KeyBindingsDialog, SearchReplaceDialog} from "../../tools"
 
-const languageItem = function(code, name, order) {
+const languageItem = function(language, name, order) {
     return {
         title: name,
         type: "setting",
         order,
         action: editor => {
-            const article = editor.view.state.doc.firstChild
-            const attrs = Object.assign({}, article.attrs)
-            attrs.language = code
             editor.view.dispatch(
-                editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta("settings", true)
+                editor.view.state.tr.setDocAttribute("language", language).setMeta("settings", true)
             )
         },
         selected: editor => {
-            return editor.view.state.doc.firstChild.attrs.language === code
+            return editor.view.state.doc.attrs.language === language
         },
         available: editor => {
-            return editor.view.state.doc.firstChild.attrs.languages.includes(code)
+            return editor.view.state.doc.attrs.languages.includes(language)
         }
     }
 }
@@ -378,7 +375,7 @@ export const headerbarModel = () => ({
                             available: editor => {
                                 // There has to be at least one language of the default languages
                                 // among the default ones and one that is not among the default ones.
-                                return !!editor.view.state.doc.firstChild.attrs.languages.find(
+                                return !!editor.view.state.doc.attrs.languages.find(
                                     lang => [
                                         "en-US",
                                         "en-GB",
@@ -393,7 +390,7 @@ export const headerbarModel = () => ({
                                         "nl",
                                         "ru"
                                     ].includes(lang)
-                                ) && !!editor.view.state.doc.firstChild.attrs.languages.find(
+                                ) && !!editor.view.state.doc.attrs.languages.find(
                                     lang => ![
                                         "en-US",
                                         "en-GB",
@@ -417,7 +414,7 @@ export const headerbarModel = () => ({
                             type: "setting",
                             order: 13,
                             action: editor => {
-                                const language = editor.view.state.doc.firstChild.attrs.language,
+                                const language = editor.view.state.doc.attrs.language,
                                     dialog = new LanguageDialog(editor, language)
                                 dialog.init()
                             },
@@ -436,10 +433,10 @@ export const headerbarModel = () => ({
                                     "nl",
                                     "ru"
                                 ].includes(
-                                    editor.view.state.doc.firstChild.attrs.language
+                                    editor.view.state.doc.attrs.language
                                 )
                             },
-                            available: editor => !!editor.view.state.doc.firstChild.attrs.languages.find(
+                            available: editor => !!editor.view.state.doc.attrs.languages.find(
                                 lang => ![
                                     "en-US",
                                     "en-GB",
@@ -474,18 +471,15 @@ export const headerbarModel = () => ({
                             tooltip: gettext("A4 (DIN A4/ISO 216) which is used in most of the world."),
                             order: 0,
                             action: editor => {
-                                const article = editor.view.state.doc.firstChild
-                                const attrs = Object.assign({}, article.attrs)
-                                attrs.papersize = "A4"
                                 editor.view.dispatch(
-                                    editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta("settings", true)
+                                    editor.view.state.tr.setDocAttribute("papersize", "A4").setMeta("settings", true)
                                 )
                             },
                             selected: editor => {
-                                return editor.view.state.doc.firstChild.attrs.papersize === "A4"
+                                return editor.view.state.doc.attrs.papersize === "A4"
                             },
                             available: editor => {
-                                return editor.view.state.doc.firstChild.attrs.papersizes.includes("A4")
+                                return editor.view.state.doc.attrs.papersizes.includes("A4")
                             }
                         },
                         {
@@ -494,18 +488,15 @@ export const headerbarModel = () => ({
                             tooltip: gettext("The format used by the USA and some other American countries."),
                             order: 1,
                             action: editor => {
-                                const article = editor.view.state.doc.firstChild
-                                const attrs = Object.assign({}, article.attrs)
-                                attrs.papersize = "US Letter"
                                 editor.view.dispatch(
-                                    editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta("settings", true)
+                                    editor.view.state.tr.setDocAttribute("papersize", "US Letter").setMeta("settings", true)
                                 )
                             },
                             selected: editor => {
-                                return editor.view.state.doc.firstChild.attrs.papersize === "US Letter"
+                                return editor.view.state.doc.attrs.papersize === "US Letter"
                             },
                             available: editor => {
-                                return editor.view.state.doc.firstChild.attrs.papersizes.includes("US Letter")
+                                return editor.view.state.doc.attrs.papersizes.includes("US Letter")
                             }
                         }
                     ]
@@ -515,15 +506,12 @@ export const headerbarModel = () => ({
                     type: "setting",
                     order: 5,
                     action: editor => {
-                        const dialog = new CopyrightDialog(editor.view.state.doc.firstChild.attrs.copyright)
+                        const dialog = new CopyrightDialog(editor.view.state.doc.attrs.copyright)
                         dialog.init().then(
                             copyright => {
                                 if (copyright) {
-                                    const article = editor.view.state.doc.firstChild
-                                    const attrs = Object.assign({}, article.attrs, {copyright})
-
                                     editor.view.dispatch(
-                                        editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta("settings", true)
+                                        editor.view.state.tr.setDocAttribute("copyright", copyright).setMeta("settings", true)
                                     )
                                 }
                                 editor.currentView.focus()
@@ -593,15 +581,13 @@ export const headerbarModel = () => ({
                         return editor.docInfo.access_rights !== "write"
                     },
                     action: editor => {
-                        const article = editor.view.state.doc.firstChild
-                        const attrs = Object.assign({}, article.attrs)
-                        attrs.tracked = !attrs.tracked
+                        const tracked = !editor.view.state.doc.attrs.tracked
                         editor.view.dispatch(
-                            editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta("settings", true)
+                            editor.view.state.tr.setDocAttribute("tracked", tracked).setMeta("settings", true)
                         )
                     },
                     selected: editor => {
-                        return editor.view.state.doc.firstChild.attrs.tracked === true
+                        return editor.view.state.doc.attrs.tracked === true
                     }
                 },
                 {

@@ -114,7 +114,7 @@ export class FootnoteView {
             tr,
             this.innerView.state,
             this.editor.user,
-            !this.outerView.state.doc.firstChild.attrs.tracked && !["write-tracked", "review-tracked"].includes(this.editor.docInfo.access_rights),
+            !this.outerView.state.doc.attrs.tracked && !["write-tracked", "review-tracked"].includes(this.editor.docInfo.access_rights),
             Date.now() - this.editor.clientTimeAdjustment
         )
         const {

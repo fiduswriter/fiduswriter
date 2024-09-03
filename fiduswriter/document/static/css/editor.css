@@ -62,7 +62,7 @@ body.editor header {
     margin-left: 15px;
 }
 
-.article-body,
+.doc-body,
 .pagination-footnote > * > * {
     font-size: 12pt;
 }
@@ -348,7 +348,7 @@ body.header-closed #editor-content {
     top: 72px;
 }
 
-#flow .article-bibliography {
+#flow .doc-bibliography {
     background-color: var(--editor-text-content-item-background-color);
 }
 
@@ -448,7 +448,7 @@ font {
 
 /* Don't show parts marked as hidden */
 
-.ProseMirror .article-part[data-hidden] {
+.ProseMirror .doc-part[data-hidden] {
     display: none;
 }
 
@@ -463,14 +463,14 @@ font {
 
 /* For default contents of title and contents field */
 
-.article-part::before {
+.doc-part::before {
     text-transform: none;
     color: var(--cs-white-border);
 }
 
 /* For Firefox problem: shows input fields without height. */
 
-.article-part {
+.doc-part {
     min-height: 1.5em;
     line-height: initial;
 
@@ -491,8 +491,8 @@ span.delete {
     cursor: pointer;
 }
 
-.article-title:focus,
-.article-body:focus {
+.doc-title:focus,
+.doc-body:focus {
     outline: none;
 }
 
@@ -828,7 +828,7 @@ html[hc="a5"] #toolbar {
     letter-spacing: -0.35px;
 }
 
-.article-part.article-deleted {
+.doc-part.doc-deleted {
     border: 3px solid rgba(var(--warning-border-color));
     border-radius: 5px;
     padding: 10px 20px 10px 10px;
@@ -836,7 +836,7 @@ html[hc="a5"] #toolbar {
     position: relative;
 }
 
-.remove-article-part {
+.remove-doc-part {
     position: absolute;
     top: 5px;
     right: 5px;
@@ -845,11 +845,11 @@ html[hc="a5"] #toolbar {
     color: var(--cs-1-icon);
 }
 
-.remove-article-part:hover {
+.remove-doc-part:hover {
     color: var(--cs-1-hover);
 }
 
-.editor .article .table-of-contents {
+.editor .doc .table-of-contents {
     background-color: var(--editor-text-content-item-background-color);
     font-family: Lato, sans-serif;
     padding: 10px;

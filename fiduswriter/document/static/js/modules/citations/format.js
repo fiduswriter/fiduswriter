@@ -43,7 +43,7 @@ export class FormatCitations {
         }
         const bib = this.bibliography,
             bibHTML = bib[0].bibstart + bib[1].join("") + bib[0].bibend
-        return `<h1 class="article-bibliography-header">${escapeText(this.bibliographyHeader)}</h1>${bibHTML}`
+        return `<h1 class="doc-bibliography-header">${escapeText(this.bibliographyHeader)}</h1>${bibHTML}`
     }
 
     // CSS

@@ -171,9 +171,9 @@ export class TagsPartView {
         this.view = view
         this.getPos = getPos
         this.dom = document.createElement("div")
-        this.dom.classList.add("article-part")
-        this.dom.classList.add(`article-${this.node.type.name}`)
-        this.dom.classList.add(`article-${this.node.attrs.id}`)
+        this.dom.classList.add("doc-part")
+        this.dom.classList.add(`doc-${this.node.type.name}`)
+        this.dom.classList.add(`doc-${this.node.attrs.id}`)
         this.dom.contentEditable = false
         if (node.attrs.hidden) {
             this.dom.dataset.hidden = true

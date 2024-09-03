@@ -45,7 +45,6 @@ import {
 import {
     doc,
     title,
-    article,
     richtext_part,
     heading_part,
     contributors_part,
@@ -57,7 +56,6 @@ import {
 
 const specNodes = OrderedMap.from({
     doc,
-    article,
     richtext_part,
     heading_part,
     contributors_part,

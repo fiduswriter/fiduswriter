@@ -74,12 +74,12 @@ export function setLinks(htmlEl, docNum = 0) {
     let title
     let idCount = 0
 
-    htmlEl.querySelectorAll("div.article-title,h1,h2,h3,h4,h5,h6").forEach(el => {
+    htmlEl.querySelectorAll("div.doc-title,h1,h2,h3,h4,h5,h6").forEach(el => {
         title = el.textContent.trim()
-        if (title !== "" || el.classList.contains("article-title")) {
+        if (title !== "" || el.classList.contains("doc-title")) {
             const contentItem = {}
             contentItem.title = title
-            contentItem.level = el.classList.contains("article-title") ? 0 : parseInt(el.tagName.substring(1, 2))
+            contentItem.level = el.classList.contains("doc-title") ? 0 : parseInt(el.tagName.substring(1, 2))
             if (docNum) {
                 contentItem.docNum = docNum
             }

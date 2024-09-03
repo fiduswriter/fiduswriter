@@ -164,7 +164,7 @@ export class TableConfigurationDialog {
         this.dialog = new Dialog({
             title: gettext("Configure table"),
             body: tableConfigurationTemplate({
-                language: this.editor.view.state.doc.firstChild.attrs.language
+                language: this.editor.view.state.doc.attrs.language
             }),
             width: 400,
             height: 360,

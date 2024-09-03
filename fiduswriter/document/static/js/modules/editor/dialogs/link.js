@@ -24,12 +24,12 @@ export class LinkDialog {
         }
         this.internalTargets = getInternalTargets(
             this.editor.view.state,
-            this.editor.view.state.doc.firstChild.attrs.language,
+            this.editor.view.state.doc.attrs.language,
             "main"
         ).concat(
             getInternalTargets(
                 this.editor.mod.footnotes.fnEditor.view.state,
-                this.editor.view.state.doc.firstChild.attrs.language,
+                this.editor.view.state.doc.attrs.language,
                 "foot"
             )
         )
@@ -78,7 +78,7 @@ export class LinkDialog {
                 cross_reference: settings.elements.includes("cross_reference")
             }
         } else {
-            const settings = this.editor.view.state.doc.firstChild.attrs
+            const settings = this.editor.view.state.doc.attrs
             return {
                 link: settings.footnote_marks.includes("link"),
                 cross_reference: settings.footnote_elements.includes("cross_reference")

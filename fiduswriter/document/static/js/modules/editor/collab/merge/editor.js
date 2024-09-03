@@ -142,12 +142,9 @@ export class MergeEditor {
         this.markChangesinDiffEditor(onlineChangeset, this.mergeView2, "online-inserted", this.onlineTr)
         this.offlineTrackedSteps = this.offlineTrackedSteps.concat(offlineTrackedSteps)
 
-        if (this.mergeView2.state.doc.firstChild.attrs.tracked || this.mergeView3.state.doc.firstChild.attrs.tracked) {
-            const article = this.mergeView2.state.doc.firstChild
-            const attrs = Object.assign({}, article.attrs)
-            attrs.tracked = true
+        if (this.mergeView2.state.doc.attrs.tracked || this.mergeView3.state.doc.attrs.tracked) {
             this.mergeView2.dispatch(
-                this.mergeView2.state.tr.setNodeMarkup(0, false, attrs).setMeta("notrack", true).setMeta("mapAppended", true)
+                this.mergeView2.state.tr.setDocAttribute("tracked", true).setMeta("notrack", true).setMeta("mapAppended", true)
             )
         }
 
@@ -416,7 +413,7 @@ export class MergeEditor {
                                 mapTr,
                                 this.mergeView2.state,
                                 this.editor.user,
-                                !this.mergeView2.state.doc.firstChild.attrs.tracked && !["write-tracked", "review-tracked"].includes(this.editor.docInfo.access_rights),
+                                !this.mergeView2.state.doc.attrs.tracked && !["write-tracked", "review-tracked"].includes(this.editor.docInfo.access_rights),
                                 Date.now() - this.editor.clientTimeAdjustment
                             )
                         }
@@ -456,7 +453,7 @@ export class MergeEditor {
     }
 
     renderCitation(view, elementId) {
-        const settings = view.state.doc.firstChild.attrs,
+        const settings = view.state.doc.attrs,
             bibliographyHeader = settings.bibliography_header[settings.language] || BIBLIOGRAPHY_HEADERS[settings.language]
         const citRenderer = new RenderCitations(
             document.getElementById(elementId),
@@ -513,7 +510,7 @@ export class MergeEditor {
     unHideSections(view) {
         let offset = 1, attrs
         const unHideSectionTr = view.state.tr
-        view.state.doc.firstChild.forEach((child, docNodeOffset, _index) => {
+        view.state.doc.forEach((child, docNodeOffset, _index) => {
             if (child.attrs.optional) {
                 offset += docNodeOffset
                 attrs = Object.assign({}, child.attrs)

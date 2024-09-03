@@ -102,7 +102,7 @@ class SimpleMessageExchangeTests(EditorHelper, ChannelsLiveServerTestCase):
             prosemirror.from_json(
                 self.driver.execute_script(
                     "return window.theApp.page.docInfo."
-                    "confirmedDoc.firstChild.toJSON()"
+                    "confirmedDoc.toJSON()"
                 )
             )
         )

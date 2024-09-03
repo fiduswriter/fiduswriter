@@ -119,7 +119,7 @@ export class ModCollabDoc {
         }
         this.mod.editor.mod.db.bibDB.setDB(doc.bibliography)
         this.mod.editor.mod.db.imageDB.setDB(doc.images)
-        const stateDoc = this.mod.editor.schema.nodeFromJSON({type: "doc", content: [doc.content]})
+        const stateDoc = this.mod.editor.schema.nodeFromJSON(doc.content)
         const plugins = this.mod.editor.statePlugins.map(plugin => {
             if (plugin[1]) {
                 return plugin[0](plugin[1](doc))
@@ -246,7 +246,7 @@ export class ModCollabDoc {
                         unconfirmedDiff["jd"] = compare(
                             this.confirmedJson,
                             toMiniJSON(
-                                this.mod.editor.view.state.doc.firstChild
+                                this.mod.editor.view.state.doc
                             )
                         )
                     }
@@ -254,7 +254,7 @@ export class ModCollabDoc {
                     // update the title field instantly - important for the
                     // document overview page.
                     let newTitle = ""
-                    this.mod.editor.view.state.doc.firstChild.firstChild.forEach(
+                    this.mod.editor.view.state.doc.firstChild.forEach(
                         child => {
                             if (!child.marks.find(mark => mark.type.name === "deletion")) {
                                 newTitle += child.textContent
@@ -263,7 +263,7 @@ export class ModCollabDoc {
                     )
                     newTitle = newTitle.slice(0, 255)
                     let oldTitle = ""
-                    this.mod.editor.docInfo.confirmedDoc.firstChild.firstChild.forEach(
+                    this.mod.editor.docInfo.confirmedDoc.firstChild.forEach(
                         child => {
                             if (!child.marks.find(mark => mark.type.name === "deletion")) {
                                 oldTitle += child.textContent
@@ -416,7 +416,7 @@ export class ModCollabDoc {
             tr.doc :
             tr.docs[docNumber]
         if (settings_JSONPATCH) {
-            this.confirmedJson = toMiniJSON(this.mod.editor.docInfo.confirmedDoc.firstChild)
+            this.confirmedJson = toMiniJSON(this.mod.editor.docInfo.confirmedDoc)
         }
 
     }
@@ -441,7 +441,7 @@ export class ModCollabDoc {
             this.mod.editor.view.dispatch(tr)
             this.mod.editor.docInfo.confirmedDoc = unconfirmedDiffs["doc"]
             if (settings_JSONPATCH) {
-                this.confirmedJson = toMiniJSON(this.mod.editor.docInfo.confirmedDoc.firstChild)
+                this.confirmedJson = toMiniJSON(this.mod.editor.docInfo.confirmedDoc)
             }
         }
 

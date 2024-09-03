@@ -70,8 +70,8 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))
         )
-        self.driver.find_element(By.CSS_SELECTOR, ".article-title").click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-title").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-title").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-title").send_keys(
             "Test"
         )
         # We enable the abstract
@@ -92,7 +92,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
                 "> ul > li:nth-child(1) > div > ul > li:nth-child(3) > span"
             ),
         ).click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").click()
         ActionChains(self.driver).send_keys(Keys.LEFT).send_keys(
             "An abstract title"
         ).perform()
@@ -108,8 +108,8 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             ),
         ).click()
         # We type in the body
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
             "Body"
         )
         # We add a figure
@@ -174,7 +174,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
 
         caption = WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
-                (By.CSS_SELECTOR, "div.article-body figure figcaption")
+                (By.CSS_SELECTOR, "div.doc-body figure figcaption")
             )
         )
 
@@ -206,7 +206,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             ),
         ).click()
         cross_reference = self.driver.find_element(
-            By.CSS_SELECTOR, ".article-body .cross-reference"
+            By.CSS_SELECTOR, ".doc-body .cross-reference"
         )
         assert cross_reference.text == "An abstract title"
         # We add a second cross reference to the figure
@@ -232,7 +232,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             ),
         ).click()
         figure_cross_reference = self.driver.find_elements(
-            By.CSS_SELECTOR, ".article-body .cross-reference"
+            By.CSS_SELECTOR, ".doc-body .cross-reference"
         )[1]
         assert figure_cross_reference.text == "Photo 1"
         # We add an internal link
@@ -258,13 +258,11 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             ),
         ).click()
         internal_link = self.driver.find_element(
-            By.CSS_SELECTOR, ".article-body a"
+            By.CSS_SELECTOR, ".doc-body a"
         )
         assert internal_link.text == "An abstract title"
         # We change the link text.
-        self.driver.find_element(
-            By.CSS_SELECTOR, ".article-abstract h3"
-        ).click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-abstract h3").click()
         ActionChains(self.driver).send_keys(Keys.BACKSPACE).send_keys(
             Keys.BACKSPACE
         ).send_keys(Keys.BACKSPACE).send_keys(Keys.BACKSPACE).send_keys(
@@ -273,18 +271,16 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             Keys.BACKSPACE
         ).perform()
         internal_link = self.driver.find_element(
-            By.CSS_SELECTOR, ".article-body a"
+            By.CSS_SELECTOR, ".doc-body a"
         )
         assert internal_link.text == "An abstract title"
         assert internal_link.get_attribute("title") == "An abstract"
         cross_reference = self.driver.find_element(
-            By.CSS_SELECTOR, ".article-body .cross-reference"
+            By.CSS_SELECTOR, ".doc-body .cross-reference"
         )
         assert cross_reference.text == "An abstract"
         # We add a second photo figure to increase the count
-        self.driver.find_element(
-            By.CSS_SELECTOR, ".article-body figure"
-        ).click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body figure").click()
         ActionChains(self.driver).send_keys(Keys.LEFT).perform()
         button = self.driver.find_element(By.XPATH, '//*[@title="Figure"]')
         button.click()
@@ -315,14 +311,12 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(By.CSS_SELECTOR, "button.fw-dark").click()
         time.sleep(1)
         figure_cross_reference = self.driver.find_elements(
-            By.CSS_SELECTOR, ".article-body .cross-reference"
+            By.CSS_SELECTOR, ".doc-body .cross-reference"
         )[1]
         assert figure_cross_reference.text == "Photo 2"
 
         # We delete the contents from the heading
-        self.driver.find_element(
-            By.CSS_SELECTOR, ".article-abstract h3"
-        ).click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-abstract h3").click()
         ActionChains(self.driver).send_keys(Keys.BACKSPACE).send_keys(
             Keys.BACKSPACE
         ).send_keys(Keys.BACKSPACE).send_keys(Keys.BACKSPACE).send_keys(
@@ -341,11 +335,11 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             Keys.BACKSPACE
         ).perform()
         cross_reference = self.driver.find_element(
-            By.CSS_SELECTOR, ".article-body .cross-reference.missing-target"
+            By.CSS_SELECTOR, ".doc-body .cross-reference.missing-target"
         )
         assert cross_reference.text == "MISSING TARGET"
         internal_link = self.driver.find_element(
-            By.CSS_SELECTOR, ".article-body a.missing-target"
+            By.CSS_SELECTOR, ".doc-body a.missing-target"
         )
         assert internal_link.get_attribute("title") == "Missing target"
         self.assertEqual(
@@ -359,11 +353,11 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         # We add text to the heading again
         ActionChains(self.driver).send_keys("Title").perform()
         cross_reference = self.driver.find_element(
-            By.CSS_SELECTOR, ".article-body .cross-reference"
+            By.CSS_SELECTOR, ".doc-body .cross-reference"
         )
         assert cross_reference.text == "Title"
         internal_link = self.driver.find_element(
-            By.CSS_SELECTOR, ".article-body a"
+            By.CSS_SELECTOR, ".doc-body a"
         )
         assert internal_link.get_attribute("title") == "Title"
         self.assertEqual(
@@ -375,7 +369,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             0,
         )
         # We remove the second figure
-        self.driver.find_elements(By.CSS_SELECTOR, ".article-body figure")[
+        self.driver.find_elements(By.CSS_SELECTOR, ".doc-body figure")[
             1
         ].click()
         button = self.driver.find_element(By.XPATH, '//*[@title="Figure"]')
@@ -386,7 +380,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         ).click()
         time.sleep(1)
         figure_cross_reference = self.driver.find_elements(
-            By.CSS_SELECTOR, ".article-body .cross-reference"
+            By.CSS_SELECTOR, ".doc-body .cross-reference"
         )[1]
         assert figure_cross_reference.text == "MISSING TARGET"
 
@@ -395,8 +389,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             seconds = self.wait_time
         # Contents is child 5.
         current_body_text = driver.execute_script(
-            "return window.theApp.page.view.state.doc.firstChild"
-            ".child(5).textContent;"
+            "return window.theApp.page.view.state.doc.child(5).textContent;"
         )
         if seconds < 0:
             assert False, "Body text incorrect: {}".format(current_body_text)
@@ -419,36 +412,36 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))
         )
-        self.driver.find_element(By.CSS_SELECTOR, ".article-title").click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-title").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-title").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-title").send_keys(
             "A test article with tracked changes"
         )
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
             "First I type "
         )
         self.driver.find_element(
             By.CSS_SELECTOR, "button[title=Strong]"
         ).click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
             "some"
         )
         self.driver.find_element(
             By.CSS_SELECTOR, "button[title=Strong]"
         ).click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
             " standard "
         )
         self.driver.find_element(
             By.CSS_SELECTOR, "button[title=Emphasis]"
         ).click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
             "text"
         )
         self.driver.find_element(
             By.CSS_SELECTOR, "button[title=Emphasis]"
         ).click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
             " here.\nI'll even write a second paragraph."
         )
         # Turn on tracked changes
@@ -459,15 +452,15 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.CSS_SELECTOR, "li:nth-child(1) > .fw-pulldown-item"
         ).click()
         # Make changes
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").click()
         ActionChains(self.driver).double_click(
-            self.driver.find_element(By.CSS_SELECTOR, ".article-body strong")
+            self.driver.find_element(By.CSS_SELECTOR, ".doc-body strong")
         ).perform()
         self.driver.find_element(
             By.CSS_SELECTOR, "button[title=Strong]"
         ).click()
         ActionChains(self.driver).double_click(
-            self.driver.find_element(By.CSS_SELECTOR, ".article-body em")
+            self.driver.find_element(By.CSS_SELECTOR, ".doc-body em")
         ).perform()
         self.driver.find_element(
             By.CSS_SELECTOR, "button[title=Strong]"
@@ -526,8 +519,8 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))
         )
-        self.driver.find_element(By.CSS_SELECTOR, ".article-title").click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-title").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-title").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-title").send_keys(
             "A test article to share"
         )
         # Turn on tracked changes
@@ -537,8 +530,8 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(
             By.CSS_SELECTOR, "li:nth-child(1) > .fw-pulldown-item"
         ).click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
             "With tracked changes\n"
         )
 
@@ -697,13 +690,13 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))
         )
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").click()
         ActionChains(self.driver).send_keys("... in the body").send_keys(
             Keys.ENTER
         ).perform()
         time.sleep(1)
         assert (
-            self.driver.find_element(By.CSS_SELECTOR, ".article-title").text
+            self.driver.find_element(By.CSS_SELECTOR, ".doc-title").text
             == "A test article to share"
         )
         self.check_body(self.driver, "With tracked changes... in the body")
@@ -838,17 +831,17 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))
         )
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
             "Some extra content that doesn't show"
         )
         assert (
-            self.driver.find_element(By.CSS_SELECTOR, ".article-title").text
+            self.driver.find_element(By.CSS_SELECTOR, ".doc-title").text
             == "A test article to share"
         )
         self.check_body(self.driver, "With tracked changes... in the body")
         # Make a copy of the file
-        old_body = self.driver.find_element(By.CSS_SELECTOR, ".article-body")
+        old_body = self.driver.find_element(By.CSS_SELECTOR, ".doc-body")
         self.driver.find_element(
             By.CSS_SELECTOR, ".header-menu:nth-child(1) > .header-nav-item"
         ).click()
@@ -859,8 +852,8 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.staleness_of(old_body)
         )
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
             "Some extra content that does show"
         )
         self.check_body(
@@ -934,7 +927,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.CSS_SELECTOR, ".ui-dialog .fw-dark"
         ).click()
         # Tag user 1 in comment
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").click()
         ActionChains(self.driver).key_down(Keys.SHIFT).send_keys(
             Keys.LEFT
         ).send_keys(Keys.LEFT).send_keys(Keys.LEFT).send_keys(

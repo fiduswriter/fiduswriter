@@ -293,9 +293,7 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         time.sleep(1)
         body_text = (
             WebDriverWait(self.driver, self.wait_time)
-            .until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR, ".article-body"))
-            )
+            .until(EC.element_to_be_clickable((By.CSS_SELECTOR, ".doc-body")))
             .text
         )
         self.assertEqual(body_text, "Initial body")
@@ -356,9 +354,7 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         ).click()
         body_text = (
             WebDriverWait(self.driver, self.wait_time)
-            .until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR, ".article-body"))
-            )
+            .until(EC.element_to_be_clickable((By.CSS_SELECTOR, ".doc-body")))
             .text
         )
         self.assertEqual(body_text, "Initial body")
@@ -366,7 +362,7 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
             self.driver.find_element(By.CSS_SELECTOR, ".margin-box.help").text,
             "Body instructions",
         )
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").click()
         ActionChains(self.driver).send_keys(Keys.BACKSPACE).send_keys(
             Keys.BACKSPACE
         ).send_keys(Keys.BACKSPACE).send_keys(Keys.BACKSPACE).send_keys(
@@ -374,7 +370,7 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         ).perform()
         time.sleep(1)
         # Create regular copy
-        old_body = self.driver.find_element(By.CSS_SELECTOR, ".article-body")
+        old_body = self.driver.find_element(By.CSS_SELECTOR, ".doc-body")
         self.driver.find_element(
             By.CSS_SELECTOR, ".header-menu:nth-child(1) > .header-nav-item"
         ).click()
@@ -386,9 +382,7 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
         body_text = (
             WebDriverWait(self.driver, self.wait_time)
-            .until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR, ".article-body"))
-            )
+            .until(EC.element_to_be_clickable((By.CSS_SELECTOR, ".doc-body")))
             .text
         )
 
@@ -399,7 +393,7 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
             "Body instructions",
         )
         # Create copy with different template
-        old_body = self.driver.find_element(By.CSS_SELECTOR, ".article-body")
+        old_body = self.driver.find_element(By.CSS_SELECTOR, ".doc-body")
         self.driver.find_element(
             By.CSS_SELECTOR, ".header-menu:nth-child(1) > .header-nav-item"
         ).click()
@@ -420,9 +414,7 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
         body_text = (
             WebDriverWait(self.driver, self.wait_time)
-            .until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR, ".article-body"))
-            )
+            .until(EC.element_to_be_clickable((By.CSS_SELECTOR, ".doc-body")))
             .text
         )
         # The text should still be the same, but there should be no

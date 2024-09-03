@@ -24,12 +24,8 @@ export class LanguageDialog {
                     // No change.
                     return
                 }
-
-                const article = this.editor.view.state.doc.firstChild
-                const attrs = Object.assign({}, article.attrs, {language})
-
                 this.editor.view.dispatch(
-                    this.editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta("settings", true)
+                    this.editor.view.state.tr.setDocAttribute("language", language).setMeta("settings", true)
                 )
                 return
             }
@@ -46,7 +42,7 @@ export class LanguageDialog {
             title: gettext("Change language of the document"),
             body: languageTemplate({
                 currentLanguage: this.language,
-                allowedLanguages: LANGUAGES.filter(lang => this.editor.view.state.doc.firstChild.attrs.languages.includes(lang[0]))
+                allowedLanguages: LANGUAGES.filter(lang => this.editor.view.state.doc.attrs.languages.includes(lang[0]))
             }),
             buttons,
             onClose: () => this.editor.currentView.focus()

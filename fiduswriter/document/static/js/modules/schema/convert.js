@@ -4,8 +4,8 @@
 import deepEqual from "fast-deep-equal"
 import {randomHeadingId, randomFigureId, randomListId, randomTableId} from "./common"
 
-export const getSettings = function(pmArticle) {
-    const settings = JSON.parse(JSON.stringify(pmArticle.attrs))
+export const getSettings = function(pmDoc) {
+    const settings = JSON.parse(JSON.stringify(pmDoc.attrs))
     return settings
 }
 
@@ -116,6 +116,9 @@ export const updateDoc = function(doc, docVersion, bibliography = false) {
         doc = convertDocV33(doc)
         break
     case 3.4: // Fidus Writer 3.10
+        doc = convertDocV34(doc)
+        break
+    case 3.5: // Fidus Writer 3.12
         break
     }
     return doc
@@ -961,5 +964,12 @@ const convertDocV33 = function(doc) {
     // We just need to increase the version number so that documents cannot
     // be moved from a 3.10 to an 3.9 system, but 3.3 files should be readable
     // as 3.4 files.
+    return JSON.parse(JSON.stringify(doc))
+}
+
+const convertDocV34 = function(doc) {
+    // The top node needs to be changed from "article" to "doc".
+    const returnDoc = JSON.parse(JSON.stringify(doc))
+    returnDoc.content.type = "doc"
     return JSON.parse(JSON.stringify(doc))
 }

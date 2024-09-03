@@ -180,7 +180,7 @@ export const settingsPlugin = function(options) {
                 return false
             }
             const lastTr = trs[trs.length - 1]
-            const attrs = lastTr.doc.firstChild.attrs
+            const attrs = lastTr.doc.attrs
             const fixedSettings = fixSettings(attrs)
 
             if (!fixedSettings) {
@@ -188,19 +188,23 @@ export const settingsPlugin = function(options) {
             }
 
             const tr = newState.tr
-
-            tr.setNodeMarkup(0, false, fixedSettings)
+            Object.entries(fixedSettings).forEach(([key, value]) => {
+                tr.setDocAttribute(key, value)
+            })
             tr.setMeta("settings", true)
 
             return tr
 
         },
         view(view) {
-            if (!updateSettings(view.state.doc.firstChild.attrs, {})) {
+            if (!updateSettings(view.state.doc.attrs, {})) {
                 setTimeout(
                     () => {
                         const tr = view.state.tr
-                        tr.setNodeMarkup(0, false, fixSettings(view.state.doc.firstChild.attrs))
+                        const fixedSettings = fixSettings(view.state.doc.attrs)
+                        Object.entries(fixedSettings).forEach(([key, value]) => {
+                            tr.setDocAttribute(key, value)
+                        })
                         tr.setMeta("settings", true)
                         view.dispatch(tr)
                     },
@@ -210,8 +214,8 @@ export const settingsPlugin = function(options) {
             }
             return {
                 update: (view, prevState) => {
-                    updateSettings(view.state.doc.firstChild.attrs, prevState.doc.firstChild.attrs)
-                    setDocTitle(view.state.doc.firstChild.firstChild.textContent, options.editor.app)
+                    updateSettings(view.state.doc.attrs, prevState.doc.attrs)
+                    setDocTitle(view.state.doc.firstChild.textContent, options.editor.app)
                 }
             }
         }

@@ -34,7 +34,7 @@ export class ModDocumentTemplate {
 
     addDocPartSettings() {
         const hideableDocParts = []
-        this.editor.view.state.doc.firstChild.forEach((child, offset, index) => {
+        this.editor.view.state.doc.forEach((child, offset, index) => {
             if (child.attrs.optional) {
                 hideableDocParts.push([child, index])
             }
@@ -57,7 +57,7 @@ export class ModDocumentTemplate {
                 action: editor => {
                     let offset = 1, // We need to add one as we are looking at offset values within the firstChild
                         attrs
-                    editor.view.state.doc.firstChild.forEach((docNode, docNodeOffset) => {
+                    editor.view.state.doc.forEach((docNode, docNodeOffset) => {
                         if (docNode.attrs.id === node.attrs.id) {
                             offset += docNodeOffset
                             attrs = Object.assign({}, docNode.attrs)
@@ -68,7 +68,7 @@ export class ModDocumentTemplate {
                         editor.view.state.tr.setNodeMarkup(offset, false, attrs).setMeta("settings", true)
                     )
                 },
-                selected: editor => !editor.view.state.doc.firstChild.child(index).attrs.hidden
+                selected: editor => !editor.view.state.doc.child(index).attrs.hidden
             }))
         }
         const settingsMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id === "settings")
@@ -223,14 +223,11 @@ export class ModDocumentTemplate {
                 title: docStyle.title,
                 type: "setting",
                 action: editor => {
-                    const article = editor.view.state.doc.firstChild
-                    const attrs = Object.assign({}, article.attrs)
-                    attrs.documentstyle = docStyle.slug
                     editor.view.dispatch(
-                        editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta("settings", true)
+                        editor.view.state.tr.setDocAttribute("documentstyle", docStyle.slug).setMeta("settings", true)
                     )
                 },
-                selected: editor => editor.view.state.doc.firstChild.attrs.documentstyle === docStyle.slug,
+                selected: editor => editor.view.state.doc.attrs.documentstyle === docStyle.slug,
                 disabled: editor => editor.app.isOffline(),
             }
         })
@@ -248,19 +245,17 @@ export class ModDocumentTemplate {
         const settingsMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id === "settings"),
             citationStyleMenu = settingsMenu.content.find(menu => menu.id === "citation_style")
         if (citationStyleMenu) {
-            citationStyleMenu.content = this.editor.view.state.doc.firstChild.attrs.citationstyles.map(citationstyle => {
+            citationStyleMenu.content = this.editor.view.state.doc.attrs.citationstyles.map(citationstyle => {
                 return {
                     title: this.citationStyles[citationstyle],
                     type: "setting",
                     action: editor => {
-                        const article = editor.view.state.doc.firstChild
-                        const attrs = Object.assign({}, article.attrs, {citationstyle})
                         editor.view.dispatch(
-                            editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta("settings", true)
+                            editor.view.state.tr.setDocAttribute("citationstyle", citationstyle).setMeta("settings", true)
                         )
                     },
                     selected: editor => {
-                        return editor.view.state.doc.firstChild.attrs.citationstyle === citationstyle
+                        return editor.view.state.doc.attrs.citationstyle === citationstyle
                     }
                 }
             })

@@ -47,7 +47,7 @@ export class ModCitations {
         }
         const emptyCitations = document.querySelectorAll("#paper-editable span.citation:empty")
         if (emptyCitations.length) {
-            const settings = this.editor.view.state.doc.firstChild.attrs,
+            const settings = this.editor.view.state.doc.attrs,
                 bibliographyHeader = settings.bibliography_header[settings.language] || BIBLIOGRAPHY_HEADERS[settings.language]
             this.citRenderer = new RenderCitations(
                 document.getElementById("paper-editable"),
@@ -81,7 +81,7 @@ export class ModCitations {
     }
 
     checkTrackingDialog() {
-        if (!this.editor.view.state.doc.firstChild.attrs.tracked) {
+        if (!this.editor.view.state.doc.attrs.tracked) {
             return Promise.resolve()
         }
         const buttons = [],

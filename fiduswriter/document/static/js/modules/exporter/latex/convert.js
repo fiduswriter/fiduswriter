@@ -65,7 +65,7 @@ export class LatexExporterConvert {
         let start = "", content = "", end = "",
             placeFootnotesAfterBlock = false
         switch (node.type) {
-        case "article":
+        case "doc":
             break
         case "title":
             start += "\n\\title{"

@@ -34,9 +34,9 @@ export class ModDocumentTemplate {
 
     addDocPartSettings() {
         const hideableDocParts = []
-        this.editor.view.state.doc.forEach((child, offset, index) => {
+        this.editor.view.state.doc.forEach((child, _offset, index) => {
             if (child.attrs.optional) {
-                hideableDocParts.push([{title: child.attrs.title, id: child.attrs.id}, index])
+                hideableDocParts.push({title: child.attrs.title, id: child.attrs.id, index})
             }
         })
         if (!hideableDocParts.length) {
@@ -49,17 +49,17 @@ export class ModDocumentTemplate {
             tooltip: gettext("Choose which optional sections to enable."),
             order: 0,
             disabled: editor => editor.docInfo.access_rights !== "write",
-            content: hideableDocParts.map(([docPart, index]) => ({
+            content: hideableDocParts.map(docPart => ({
                 title: docPart.title,
                 type: "setting",
                 tooltip: `${gettext("Show/hide")} ${docPart.title}`,
-                order: index,
+                order: docPart.index,
                 action: editor => {
                     let offset = 0
-                    for (let i = 0; i < index; i++) {
+                    for (let i = 0; i < docPart.index; i++) {
                         offset += editor.view.state.doc.child(i).nodeSize
                     }
-                    const node = editor.view.state.doc.child(index)
+                    const node = editor.view.state.doc.child(docPart.index)
                     editor.view.dispatch(
                         editor.view.state.tr.setNodeMarkup(
                             offset,
@@ -71,7 +71,7 @@ export class ModDocumentTemplate {
                         )
                     )
                 },
-                selected: editor => !editor.view.state.doc.child(index).attrs.hidden
+                selected: editor => !editor.view.state.doc.child(docPart.index).attrs.hidden
             }))
         }
         const settingsMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id === "settings")

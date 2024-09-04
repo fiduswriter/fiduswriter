@@ -508,15 +508,11 @@ export class MergeEditor {
     }
 
     unHideSections(view) {
-        let offset = 1, attrs
         const unHideSectionTr = view.state.tr
-        view.state.doc.forEach((child, docNodeOffset, _index) => {
+        view.state.doc.forEach((child, offset, _index) => {
             if (child.attrs.optional) {
-                offset += docNodeOffset
-                attrs = Object.assign({}, child.attrs)
-                attrs.hidden = false
+                const attrs = Object.assign({}, child.attrs, {hidden: false})
                 unHideSectionTr.setNodeMarkup(offset, false, attrs)
-                offset = 1
             }
         })
         unHideSectionTr.setMeta("notrack", true).setMeta("mapAppended", true)

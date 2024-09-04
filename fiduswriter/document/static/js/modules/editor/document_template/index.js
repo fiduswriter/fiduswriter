@@ -36,7 +36,7 @@ export class ModDocumentTemplate {
         const hideableDocParts = []
         this.editor.view.state.doc.forEach((child, offset, index) => {
             if (child.attrs.optional) {
-                hideableDocParts.push([child, index])
+                hideableDocParts.push([{title: child.attrs.title, id: child.attrs.id}, index])
             }
         })
         if (!hideableDocParts.length) {
@@ -49,23 +49,26 @@ export class ModDocumentTemplate {
             tooltip: gettext("Choose which optional sections to enable."),
             order: 0,
             disabled: editor => editor.docInfo.access_rights !== "write",
-            content: hideableDocParts.map(([node, index]) => ({
-                title: node.attrs.title,
+            content: hideableDocParts.map(([docPart, index]) => ({
+                title: docPart.title,
                 type: "setting",
-                tooltip: `${gettext("Show/hide")} ${node.attrs.title}`,
+                tooltip: `${gettext("Show/hide")} ${docPart.title}`,
                 order: index,
                 action: editor => {
-                    let offset = 1, // We need to add one as we are looking at offset values within the firstChild
-                        attrs
-                    editor.view.state.doc.forEach((docNode, docNodeOffset) => {
-                        if (docNode.attrs.id === node.attrs.id) {
-                            offset += docNodeOffset
-                            attrs = Object.assign({}, docNode.attrs)
-                            attrs.hidden = (!attrs.hidden)
-                        }
-                    })
+                    let offset = 0
+                    for (let i = 0; i < index; i++) {
+                        offset += editor.view.state.doc.child(i).nodeSize
+                    }
+                    const node = editor.view.state.doc.child(index)
                     editor.view.dispatch(
-                        editor.view.state.tr.setNodeMarkup(offset, false, attrs).setMeta("settings", true)
+                        editor.view.state.tr.setNodeMarkup(
+                            offset,
+                            false,
+                            Object.assign({}, node.attrs, {hidden: !node.attrs.hidden})
+                        ).setMeta(
+                            "settings",
+                            true
+                        )
                     )
                 },
                 selected: editor => !editor.view.state.doc.child(index).attrs.hidden

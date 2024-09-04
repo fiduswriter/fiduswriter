@@ -204,7 +204,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         document_input = self.driver.find_element(By.CLASS_NAME, "ProseMirror")
 
         # Total: 22
-        self.driver.execute_script("window.testCaret.setSelection(25,25)")
+        self.driver.execute_script("window.testCaret.setSelection(24,24)")
 
         p1 = multiprocessing.Process(
             target=self.input_text, args=(document_input, self.TEST_TEXT)
@@ -218,7 +218,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
         content.click()
 
-        self.driver2.execute_script("window.testCaret.setSelection(25,30)")
+        self.driver2.execute_script("window.testCaret.setSelection(24,29)")
 
         p2 = multiprocessing.Process(
             target=self.make_bold, args=(self.driver2,)
@@ -259,7 +259,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         document_input = self.driver.find_element(By.CLASS_NAME, "ProseMirror")
 
         # Total: 23
-        self.driver.execute_script("window.testCaret.setSelection(25,25)")
+        self.driver.execute_script("window.testCaret.setSelection(24,24)")
 
         p1 = multiprocessing.Process(
             target=self.input_text, args=(document_input, self.TEST_TEXT)
@@ -273,7 +273,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
         content.click()
 
-        self.driver2.execute_script("window.testCaret.setSelection(25,30)")
+        self.driver2.execute_script("window.testCaret.setSelection(24,29)")
 
         p2 = multiprocessing.Process(
             target=self.make_italic, args=(self.driver2,)
@@ -313,7 +313,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         document_input = self.driver.find_element(By.CLASS_NAME, "ProseMirror")
 
         # Total: 23
-        self.driver.execute_script("window.testCaret.setSelection(25,25)")
+        self.driver.execute_script("window.testCaret.setSelection(24,24)")
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -328,7 +328,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
         content.click()
 
-        self.driver2.execute_script("window.testCaret.setSelection(25,25)")
+        self.driver2.execute_script("window.testCaret.setSelection(24,24)")
 
         p2 = multiprocessing.Process(
             target=self.make_numberedlist, args=(self.driver2,)
@@ -339,7 +339,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         # Wait for the first processor to write some text and go to next line
         self.wait_for_doc_size(self.driver2, 47)
 
-        self.driver2.execute_script("window.testCaret.setSelection(43,43)")
+        self.driver2.execute_script("window.testCaret.setSelection(42,42)")
 
         p2 = multiprocessing.Process(
             target=self.make_numberedlist, args=(self.driver2,)
@@ -381,7 +381,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         document_input = self.driver.find_element(By.CLASS_NAME, "ProseMirror")
 
         # Total: 23
-        self.driver.execute_script("window.testCaret.setSelection(25,25)")
+        self.driver.execute_script("window.testCaret.setSelection(24,24)")
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -396,7 +396,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
         content.click()
 
-        self.driver2.execute_script("window.testCaret.setSelection(25,25)")
+        self.driver2.execute_script("window.testCaret.setSelection(24,24)")
 
         p2 = multiprocessing.Process(
             target=self.make_bulletlist, args=(self.driver2,)
@@ -407,7 +407,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         # Wait for the first processor to write enough text and go to next line
         self.wait_for_doc_size(self.driver2, 47)
 
-        self.driver2.execute_script("window.testCaret.setSelection(43,43)")
+        self.driver2.execute_script("window.testCaret.setSelection(42,42)")
 
         p2 = multiprocessing.Process(
             target=self.make_bulletlist, args=(self.driver2,)
@@ -449,7 +449,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         document_input = self.driver.find_element(By.CLASS_NAME, "ProseMirror")
 
         # Total: 22
-        self.driver.execute_script("window.testCaret.setSelection(25,25)")
+        self.driver.execute_script("window.testCaret.setSelection(24,24)")
 
         p1 = multiprocessing.Process(
             target=self.input_text, args=(document_input, self.TEST_TEXT)
@@ -463,7 +463,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
         content.click()
 
-        self.driver2.execute_script("window.testCaret.setSelection(25,25)")
+        self.driver2.execute_script("window.testCaret.setSelection(24,24)")
 
         p2 = multiprocessing.Process(
             target=self.make_blockquote, args=(self.driver2,)
@@ -517,7 +517,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         document_input = self.driver.find_element(By.CLASS_NAME, "ProseMirror")
 
         # Total: 23
-        self.driver.execute_script("window.testCaret.setSelection(25,25)")
+        self.driver.execute_script("window.testCaret.setSelection(24,24)")
 
         p1 = multiprocessing.Process(
             target=self.input_text, args=(document_input, self.TEST_TEXT)
@@ -531,7 +531,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
         content.click()
 
-        self.driver2.execute_script("window.testCaret.setSelection(25,30)")
+        self.driver2.execute_script("window.testCaret.setSelection(24,29)")
 
         p2 = multiprocessing.Process(target=self.addlink, args=(self.driver2,))
         p2.start()
@@ -583,7 +583,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         document_input = self.driver.find_element(By.CLASS_NAME, "ProseMirror")
 
         # Total: 22
-        self.driver.execute_script("window.testCaret.setSelection(25,25)")
+        self.driver.execute_script("window.testCaret.setSelection(24,24)")
 
         p1 = multiprocessing.Process(
             target=self.input_text, args=(document_input, self.TEST_TEXT)
@@ -597,7 +597,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
         content.click()
 
-        self.driver2.execute_script("window.testCaret.setSelection(28,28)")
+        self.driver2.execute_script("window.testCaret.setSelection(27,27)")
 
         p2 = multiprocessing.Process(
             target=self.make_footnote, args=(self.driver2,)
@@ -645,7 +645,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         document_input = self.driver.find_element(By.CLASS_NAME, "ProseMirror")
 
         # Total: 22
-        self.driver.execute_script("window.testCaret.setSelection(25,25)")
+        self.driver.execute_script("window.testCaret.setSelection(24,24)")
 
         p1 = multiprocessing.Process(
             target=self.input_text, args=(document_input, self.TEST_TEXT)
@@ -659,7 +659,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         content = self.driver2.find_element(By.CLASS_NAME, "doc-title")
         content.click()
 
-        self.driver2.execute_script("window.testCaret.setSelection(25,30)")
+        self.driver2.execute_script("window.testCaret.setSelection(24,29)")
 
         p2 = multiprocessing.Process(
             target=self.perform_delete_undo, args=(self.driver2,)
@@ -765,7 +765,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         document_input = self.driver.find_element(By.CLASS_NAME, "ProseMirror")
 
         # Total: 23
-        self.driver.execute_script("window.testCaret.setSelection(25,25)")
+        self.driver.execute_script("window.testCaret.setSelection(24,24)")
 
         p1 = multiprocessing.Process(
             target=self.input_text, args=(document_input, self.TEST_TEXT)
@@ -779,7 +779,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
         content.click()
 
-        self.driver2.execute_script("window.testCaret.setSelection(28,28)")
+        self.driver2.execute_script("window.testCaret.setSelection(27,27)")
 
         p2 = multiprocessing.Process(
             target=self.make_mathequation, args=(self.driver2,)
@@ -834,7 +834,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         document_input = self.driver.find_element(By.CLASS_NAME, "ProseMirror")
 
         # Total: 22
-        self.driver.execute_script("window.testCaret.setSelection(25,25)")
+        self.driver.execute_script("window.testCaret.setSelection(24,24)")
 
         p1 = multiprocessing.Process(
             target=self.input_text, args=(document_input, self.TEST_TEXT)
@@ -848,7 +848,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
         content.click()
 
-        self.driver2.execute_script("window.testCaret.setSelection(25,30)")
+        self.driver2.execute_script("window.testCaret.setSelection(24,29)")
 
         p2 = multiprocessing.Process(
             target=self.add_comment, args=(self.driver2,)
@@ -1050,7 +1050,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         document_input = self.driver.find_element(By.CLASS_NAME, "ProseMirror")
 
         # Total: 23
-        self.driver.execute_script("window.testCaret.setSelection(25,25)")
+        self.driver.execute_script("window.testCaret.setSelection(24,24)")
 
         p1 = multiprocessing.Process(
             target=self.input_text, args=(document_input, self.TEST_TEXT)
@@ -1064,7 +1064,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
         content.click()
 
-        self.driver2.execute_script("window.testCaret.setSelection(28,28)")
+        self.driver2.execute_script("window.testCaret.setSelection(27,27)")
 
         p2 = multiprocessing.Process(
             target=self.add_figure, args=(self.driver2,)
@@ -1188,7 +1188,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         document_input = self.driver.find_element(By.CLASS_NAME, "doc-body")
 
         # Total: 22
-        self.driver.execute_script("window.testCaret.setSelection(25,25)")
+        self.driver.execute_script("window.testCaret.setSelection(24,24)")
 
         p1 = multiprocessing.Process(
             target=self.input_text, args=(document_input, self.TEST_TEXT)

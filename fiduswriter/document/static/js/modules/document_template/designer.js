@@ -125,9 +125,9 @@ export class DocumentTemplateDesigner {
 
 
         this.value = {
-            type: "article",
+            type: "doc",
             content: [{type: "title"}].concat(
-                Array.from(this.dom.querySelectorAll(".to-container .doc-part:not(.fixed)")).map(
+                Array.from(this.dom.querySelectorAll(".to-container .doc-part-block:not(.fixed)")).map(
                     el => {
                         const type = el.dataset.type,
                             id = el.querySelector("input.id").value,
@@ -225,7 +225,7 @@ export class DocumentTemplateDesigner {
                         }
                         if (ids.includes(id)) {
                             valid = false
-                            Array.from(this.dom.querySelectorAll(".to-container .doc-part:not(.fixed)")).map(
+                            Array.from(this.dom.querySelectorAll(".to-container .doc-part-block:not(.fixed)")).map(
                                 el => {
                                     const id_duplicate = el.querySelector("input.id").value
                                     if (id_duplicate == id) {
@@ -296,7 +296,7 @@ export class DocumentTemplateDesigner {
     }
 
     setupInitialEditors() {
-        Array.from(this.dom.querySelectorAll(".to-container .doc-part:not(.fixed)")).forEach((el, index) => {
+        Array.from(this.dom.querySelectorAll(".to-container .doc-part-block:not(.fixed)")).forEach((el, index) => {
             const value = this.value.content[index + 1], // offset by title
                 help = value.attrs.help,
                 initial = value.attrs.initial,
@@ -483,9 +483,9 @@ export class DocumentTemplateDesigner {
         this.dom.addEventListener("click", event => {
             const el = {}
             switch (true) {
-            case findTarget(event, ".doc-part .configure", el):
+            case findTarget(event, ".doc-part-block .configure", el):
                 event.preventDefault()
-                el.target.closest(".doc-part").querySelector(".attrs").classList.toggle("hidden")
+                el.target.closest(".doc-part-block").querySelector(".attrs").classList.toggle("hidden")
                 break
             case findTarget(event, ".bibliography-header-value .fa-plus-circle", el):
                 event.preventDefault()

@@ -24,12 +24,12 @@ export class LinkDialog {
         }
         this.internalTargets = getInternalTargets(
             this.editor.view.state,
-            this.editor.view.state.doc.firstChild.attrs.language,
+            this.editor.view.state.doc.attrs.language,
             "main"
         ).concat(
             getInternalTargets(
                 this.editor.mod.footnotes.fnEditor.view.state,
-                this.editor.view.state.doc.firstChild.attrs.language,
+                this.editor.view.state.doc.attrs.language,
                 "foot"
             )
         )
@@ -72,13 +72,13 @@ export class LinkDialog {
     // To check whether links, cross references or both can be added in current position.
     checkAllowedContent() {
         if (this.editor.currentView === this.editor.view) {
-            const settings = this.editor.view.state.selection.$anchor.node(2).attrs
+            const settings = this.editor.view.state.selection.$anchor.node(1).attrs
             return {
                 link: settings.marks.includes("link"),
                 cross_reference: settings.elements.includes("cross_reference")
             }
         } else {
-            const settings = this.editor.view.state.doc.firstChild.attrs
+            const settings = this.editor.view.state.doc.attrs
             return {
                 link: settings.footnote_marks.includes("link"),
                 cross_reference: settings.footnote_elements.includes("cross_reference")

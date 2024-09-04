@@ -67,7 +67,7 @@ export class HTMLExporterConvert {
     // Find information for meta tags in header
     preWalkJson(node) {
         switch (node.type) {
-        case "article":
+        case "doc":
             this.metaData.copyright = node.attrs.copyright
             break
         case "heading1":
@@ -211,14 +211,14 @@ export class HTMLExporterConvert {
     walkJson(node, options = {}) {
         let start = "", content = "", end = ""
         switch (node.type) {
-        case "article":
+        case "doc":
             break
         case "title":
-            start += "<div class=\"article-part article-title\" id=\"title\">"
+            start += "<div class=\"doc-part doc-title\" id=\"title\">"
             end = "</div>" + end
             break
         case "heading_part":
-            start += `<div class="article-part article-heading article-${node.attrs.id} ${node.attrs.metadata || "other"}" id="${node.attrs.id}"${ node.attrs.language ? ` lang="${node.attrs.language}"` : ""}>`
+            start += `<div class="doc-part doc-heading doc-${node.attrs.id} ${node.attrs.metadata || "other"}" id="${node.attrs.id}"${ node.attrs.language ? ` lang="${node.attrs.language}"` : ""}>`
             end = "</div>" + end
             break
         case "contributor":
@@ -226,7 +226,7 @@ export class HTMLExporterConvert {
             break
         case "contributors_part":
             if (node.content) {
-                start += `<div class="article-part article-contributors article-${node.attrs.id} ${node.attrs.metadata || "other"}" id="${node.attrs.id}"${ node.attrs.language ? ` lang="${node.attrs.language}"` : ""}>`
+                start += `<div class="doc-part doc-contributors doc-${node.attrs.id} ${node.attrs.metadata || "other"}" id="${node.attrs.id}"${ node.attrs.language ? ` lang="${node.attrs.language}"` : ""}>`
                 end = "</div>" + end
                 let counter = 0
                 const contributorOutputs = []
@@ -270,7 +270,7 @@ export class HTMLExporterConvert {
             break
         case "tags_part":
             if (node.content) {
-                start += `<div class="article-part article-tags article-${node.attrs.id} article-${node.attrs.metadata || "other"}" id="${node.attrs.id}"${ node.attrs.language ? ` lang="${node.attrs.language}"` : ""}>`
+                start += `<div class="doc-part doc-tags doc-${node.attrs.id} doc-${node.attrs.metadata || "other"}" id="${node.attrs.id}"${ node.attrs.language ? ` lang="${node.attrs.language}"` : ""}>`
                 end = "</div>" + end
             }
             break
@@ -279,21 +279,21 @@ export class HTMLExporterConvert {
             break
         case "richtext_part":
             if (node.content) {
-                start += `<div class="article-part article-richtext article-${node.attrs.id} article-${node.attrs.metadata || "other"}" id="${node.attrs.id}"${ node.attrs.language ? ` lang="${node.attrs.language}"` : ""}>`
+                start += `<div class="doc-part doc-richtext doc-${node.attrs.id} doc-${node.attrs.metadata || "other"}" id="${node.attrs.id}"${ node.attrs.language ? ` lang="${node.attrs.language}"` : ""}>`
                 end = "</div>" + end
             }
             break
         case "table_of_contents":
-            start += `<div class="article-part table-of-contents"><h1>${escapeText(node.attrs.title)}</h1>`
+            start += `<div class="doc-part table-of-contents"><h1>${escapeText(node.attrs.title)}</h1>`
             content += this.metaData.toc.join("")
             end += "</div>"
             break
         case "separator_part":
-            content += `<hr class="article-part article-separator article-${node.attrs.id} article-${node.attrs.metadata || "other"}" id="${node.attrs.id}">`
+            content += `<hr class="doc-part doc-separator doc-${node.attrs.id} doc-${node.attrs.metadata || "other"}" id="${node.attrs.id}">`
             break
         case "table_part":
             if (node.content) {
-                start += `<div class="article-part article-table article-${node.attrs.id} article-${node.attrs.metadata || "other"}" id="${node.attrs.id}"${ node.attrs.language ? ` lang="${node.attrs.language}"` : ""}>`
+                start += `<div class="doc-part doc-table doc-${node.attrs.id} doc-${node.attrs.metadata || "other"}" id="${node.attrs.id}"${ node.attrs.language ? ` lang="${node.attrs.language}"` : ""}>`
                 end = "</div>" + end
             }
             break

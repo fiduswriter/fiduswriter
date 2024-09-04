@@ -482,10 +482,10 @@ ${
             let otherState, language
             if (oldState.schema === options.editor.view.state.schema) {
                 otherState = options.editor.mod.footnotes.fnEditor.view.state
-                language = newState.doc.firstChild.attrs.language
+                language = newState.doc.attrs.language
             } else {
                 otherState = options.editor.view.state
-                language = options.editor.view.state.doc.firstChild.attrs.language
+                language = options.editor.view.state.doc.attrs.language
             }
 
 

@@ -60,7 +60,7 @@ export class JATSExporterConverter {
     // Remove items from the body that should be in the front.
     preWalkJson(node, parentNode = false) {
         switch (node.type) {
-        case "article":
+        case "doc":
             this.frontMatter.copyright = node.attrs.copyright
             break
         case "title":
@@ -295,7 +295,7 @@ export class JATSExporterConverter {
     walkJson(node, options = {}) {
         let start = "", content = "", end = ""
         switch (node.type) {
-        case "article":
+        case "doc":
             break
         case "title":
             if (this.type === "article") {

@@ -162,11 +162,22 @@ class RecreateTransform {
 
     addSetNodeMarkup() {
         const fromDoc = this.schema.nodeFromJSON(this.currentJSON),
-            toDoc = this.schema.nodeFromJSON(this.finalJSON),
-            start = toDoc.content.findDiffStart(fromDoc.content),
-            fromNode = fromDoc.nodeAt(start),
-            toNode = toDoc.nodeAt(start)
+            toDoc = this.schema.nodeFromJSON(this.finalJSON)
+        let updatedSettings = false
+        Object.entries(fromDoc.attrs).forEach(([key, value]) => {
+            if (toDoc.attrs[key] !== value) {
+                this.tr.setDocAttribute(key, toDoc.attrs[key])
+                updatedSettings = true
+            }
+        })
+        if (updatedSettings) {
+            this.currentJSON = this.marklessDoc(this.tr.doc).toJSON()
+            this.ops = createPatch(this.currentJSON, this.finalJSON)
+        }
+        const start = toDoc.content.findDiffStart(fromDoc.content)
         if (start !== null) {
+            const fromNode = fromDoc.nodeAt(start),
+                toNode = toDoc.nodeAt(start)
             try {
                 this.tr.setNodeMarkup(start, fromNode.type === toNode.type ? null : toNode.type, toNode.attrs, toNode.marks)
             } catch (error) {

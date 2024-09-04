@@ -16,7 +16,7 @@ ${
     ).join("")
 }
     </head>
-    <body class="article">
+    <body class="doc">
         ${contents.innerHTML}
         ${
     settings.copyright && settings.copyright.holder ?

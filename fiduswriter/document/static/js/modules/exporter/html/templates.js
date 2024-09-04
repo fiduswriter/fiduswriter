@@ -13,7 +13,7 @@ export const htmlExportTemplate = ({head, body, back, settings, lang, xhtml}) =>
         ${settings.copyright && settings.copyright.holder ? `<meta name="copyright" content="© ${settings.copyright.year ? settings.copyright.year : new Date().getFullYear()} ${escapeText(settings.copyright.holder)}" />` : ""}
         ${head}
     </head>
-    <body class="article">
+    <body class="doc">
         ${body}
         ${back}
         ${

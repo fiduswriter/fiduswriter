@@ -51,8 +51,8 @@ class PathTest(SeleniumHelper, ChannelsLiveServerTestCase):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))
         )
-        self.driver.find_element(By.CSS_SELECTOR, ".article-title").click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-title").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-title").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-title").send_keys(
             "Test"
         )
         time.sleep(1)
@@ -104,8 +104,8 @@ class PathTest(SeleniumHelper, ChannelsLiveServerTestCase):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))
         )
-        self.driver.find_element(By.CSS_SELECTOR, ".article-title").click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-title").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-title").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-title").send_keys(
             "February Doc"
         )
         time.sleep(1)

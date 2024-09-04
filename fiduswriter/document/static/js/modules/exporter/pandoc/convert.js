@@ -17,15 +17,15 @@ export class PandocExporterConvert {
         }
     }
 
-    init(article) {
-        this.preWalkJson(article)
+    init(doc) {
+        this.preWalkJson(doc)
         const meta = {
             lang: {"t": "MetaInlines", "c": [{"t": "Str", "c": this.settings.language.split("-")[0]}]}
         }
         const json = {
             "pandoc-api-version": [1, 23, 1],
             meta,
-            blocks: this.convertContent(article.content, meta)
+            blocks: this.convertContent(doc.content, meta)
         }
         const returnObject = {
             json,
@@ -70,8 +70,8 @@ export class PandocExporterConvert {
         for (const node of docContent) {
             switch (node.type) {
 
-            case "article":
-                // We only handle article children
+            case "doc":
+                // We only handle doc children
                 break
             case "blockquote": {
                 pandocContent.push({
@@ -165,7 +165,7 @@ export class PandocExporterConvert {
                     pandocContent.push({
                         t: "Div",
                         c: [
-                            [node.attrs.id, ["article-part", "article-contributors", `article-${node.attrs.id}`, `article-${node.attrs.metadata || "other"}`], []],
+                            [node.attrs.id, ["doc-part", "doc-contributors", `doc-${node.attrs.id}`, `doc-${node.attrs.metadata || "other"}`], []],
                             [{
                                 t: "Para",
                                 c: convertText(node.content.map(contributor => `${contributor.attrs.firstname} ${contributor.attrs.lastname}, ${contributor.attrs.institution}, ${contributor.attrs.email}`).join("; "))
@@ -216,7 +216,7 @@ export class PandocExporterConvert {
                     pandocContent.push({
                         t: "Div",
                         c: [
-                            [node.attrs.id, ["article-part", "article-heading", `article-${node.attrs.id}`, `article-${node.attrs.metadata || "other"}`], []],
+                            [node.attrs.id, ["doc-part", "doc-heading", `doc-${node.attrs.id}`, `doc-${node.attrs.metadata || "other"}`], []],
                             [pandocElement]
                         ]
                     })
@@ -442,7 +442,7 @@ export class PandocExporterConvert {
                     pandocContent.push({
                         t: "Div",
                         c: [
-                            [node.attrs.id, ["article-part", "article-richtext", `article-${node.attrs.id}`, `article-${node.attrs.metadata || "other"}`], []],
+                            [node.attrs.id, ["doc-part", "doc-richtext", `doc-${node.attrs.id}`, `doc-${node.attrs.metadata || "other"}`], []],
                             this.convertContent(node.content, meta, options)
                         ]
                     })
@@ -453,7 +453,7 @@ export class PandocExporterConvert {
                 pandocContent.push({
                     t: "HorizontalRule",
                     c: [
-                        [node.attrs.id, ["article-part", "article-separator", `article-${node.attrs.id}`, `article-${node.attrs.metadata || "other"}`], []],
+                        [node.attrs.id, ["doc-part", "doc-separator", `doc-${node.attrs.id}`, `doc-${node.attrs.metadata || "other"}`], []],
                         []
                     ]
                 })
@@ -468,7 +468,7 @@ export class PandocExporterConvert {
                 pandocContent.push({
                     t: "Div",
                     c: [
-                        [node.attrs.id, ["article-part", "article-tags", `article-${node.attrs.id}`, `article-${node.attrs.metadata || "other"}`], []],
+                        [node.attrs.id, ["doc-part", "doc-tags", `doc-${node.attrs.id}`, `doc-${node.attrs.metadata || "other"}`], []],
                         [{
                             t: "Para",
                             c: convertText(node.content.map(tag => tag.attrs.tag).join("; "))
@@ -554,7 +554,7 @@ export class PandocExporterConvert {
                 pandocContent.push({
                     t: "Div",
                     c: [
-                        [node.attrs.id, ["article-part", "article-table", `article-${node.attrs.id}`, `article-${node.attrs.metadata || "other"}`], []],
+                        [node.attrs.id, ["doc-part", "doc-table", `doc-${node.attrs.id}`, `doc-${node.attrs.metadata || "other"}`], []],
                         this.convertContent(node.content, meta, options)
                     ]
                 })
@@ -563,7 +563,7 @@ export class PandocExporterConvert {
                 pandocContent.push({
                     t: "Div",
                     c: [
-                        [node.attrs.id, ["article-part", "article-table-of-contents", `article-${node.attrs.id}`, `article-${node.attrs.metadata || "other"}`], []],
+                        [node.attrs.id, ["doc-part", "doc-table-of-contents", `doc-${node.attrs.id}`, `doc-${node.attrs.metadata || "other"}`], []],
                         [{
                             t: "Header",
                             c: [

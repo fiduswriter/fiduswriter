@@ -70,7 +70,7 @@ def get_documentlist_extra(request):
         if "type" not in doc.content:
             doc.content = deepcopy(doc.template.content)
             if "type" not in doc.content:
-                doc.content["type"] = "article"
+                doc.content["type"] = "doc"
             if "content" not in doc.content:
                 doc.content["content"] = [{type: "title"}]
             doc.save()

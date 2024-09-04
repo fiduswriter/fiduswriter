@@ -485,7 +485,7 @@ export class Editor {
                             <div id="citation-footnote-box-container"></div>
                         </div>
                     </div>
-                    <div id="bibliography" class="article-bibliography user-contents"></div>
+                    <div id="bibliography" class="doc-bibliography user-contents"></div>
                 </div>
                 <nav id="selection-menu"><div></div></nav>
                 <div id="margin-box-column">
@@ -594,12 +594,12 @@ export class Editor {
     // filters
     getDoc(options = {}) {
         const doc = (this.app.isOffline() || Boolean(options.use_current_view)) ? this.view.docView.node : this.docInfo.confirmedDoc
-        const pmArticle = options.changes === "acceptAllNoInsertions" ?
-            acceptAllNoInsertions(doc).firstChild :
-            doc.firstChild
+        const pmDoc = options.changes === "acceptAllNoInsertions" ?
+            acceptAllNoInsertions(doc) :
+            doc
 
         let title = ""
-        pmArticle.firstChild.forEach(
+        pmDoc.firstChild.forEach(
             child => {
                 if (!child.marks.find(mark => mark.type.name === "deletion")) {
                     title += child.textContent
@@ -607,8 +607,8 @@ export class Editor {
             }
         )
         return {
-            content: pmArticle.toJSON(),
-            settings: getSettings(pmArticle),
+            content: pmDoc.toJSON(),
+            settings: getSettings(pmDoc),
             title: title.substring(0, 255),
             path: this.docInfo.path,
             version: this.docInfo.version,
@@ -620,7 +620,6 @@ export class Editor {
 
     // Use PMs scrollIntoView function and adjust for top menu
     scrollIdIntoView(id) {
-
         let foundPos = false,
             view
 
@@ -673,7 +672,7 @@ export class Editor {
 
     scrollBibliographyIntoView() {
         const topMenuHeight = this.dom.querySelector("header").offsetHeight + 10
-        const bibliographyHeaderEl = document.querySelector("h1.article-bibliography-header")
+        const bibliographyHeaderEl = document.querySelector("h1.doc-bibliography-header")
         const distanceFromTop = bibliographyHeaderEl.getBoundingClientRect().top - topMenuHeight
         window.scrollBy({left: 0, top: distanceFromTop, behavior: "smooth", block: "center"})
         return

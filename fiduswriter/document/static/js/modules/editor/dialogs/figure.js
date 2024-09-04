@@ -302,7 +302,7 @@ export class FigureDialog {
             id: "figure-dialog",
             title: gettext("Enter latex math or insert an image"),
             body: configureFigureTemplate({
-                language: this.editor.view.state.doc.firstChild.attrs.language
+                language: this.editor.view.state.doc.attrs.language
             }),
             buttons,
             beforeClose: () => {

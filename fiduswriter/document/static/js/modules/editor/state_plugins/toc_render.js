@@ -33,7 +33,7 @@ function tocHTML(tocItems, title) {
 class ToCView {
     constructor(node, view, getPos, decorations, options) {
         this.dom = document.createElement("div")
-        this.dom.classList.add("article-part", "table-of-contents")
+        this.dom.classList.add("doc-part", "table-of-contents")
         if (node.attrs.hidden) {
             this.dom.dataset.hidden = "true"
         }

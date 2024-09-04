@@ -46,15 +46,12 @@ class EditorHelper(SeleniumHelper):
 
     def add_title(self, driver):
         title = "My title"
-        self.driver.find_element(By.CLASS_NAME, "article-title").send_keys(
-            title
-        )
+        self.driver.find_element(By.CLASS_NAME, "doc-title").send_keys(title)
 
     def get_contents(self, driver):
         # Contents is child 5.
         return driver.execute_script(
-            "return window.theApp.page.view.state.doc.firstChild"
-            ".child(5).textContent;"
+            "return window.theApp.page.view.state.doc.child(5).textContent;"
         )
 
     def wait_for_doc_size(self, driver, size, seconds=False):
@@ -96,4 +93,4 @@ class EditorHelper(SeleniumHelper):
             f'//*[@id="footnote-box-container"]/div[2]/div[{footnote_num}]',
         ).send_keys(footnote_content)
 
-        driver.find_element(By.CLASS_NAME, "article-body").click()
+        driver.find_element(By.CLASS_NAME, "doc-body").click()

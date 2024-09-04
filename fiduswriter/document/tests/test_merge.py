@@ -62,7 +62,7 @@ class AutoMergeTests(EditorHelper, ChannelsLiveServerTestCase):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "doc-body").click()
 
         # Add some initial text and wait for doc to be synced.
         self.type_text(self.driver, self.TEST_TEXT)
@@ -130,7 +130,7 @@ class AutoMergeTests(EditorHelper, ChannelsLiveServerTestCase):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "doc-body").click()
 
         # Add some initial text and wait for doc to be synced.
         self.type_text(self.driver, self.TEST_TEXT)
@@ -152,13 +152,13 @@ class AutoMergeTests(EditorHelper, ChannelsLiveServerTestCase):
         # Select all the list item except the last one
         # delete them and then delete the remaining
         # one too.
-        self.driver2.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver2.find_element(By.CLASS_NAME, "doc-body").click()
         self.driver2.execute_script("window.testCaret.setSelection(86,86)")
         self.driver2.execute_script("window.testCaret.setSelection(56,86)")
-        self.driver2.find_element(By.CLASS_NAME, "article-body").send_keys(
+        self.driver2.find_element(By.CLASS_NAME, "doc-body").send_keys(
             Keys.BACKSPACE
         )
-        self.driver2.find_element(By.CLASS_NAME, "article-body").send_keys(
+        self.driver2.find_element(By.CLASS_NAME, "doc-body").send_keys(
             Keys.BACKSPACE
         )
 
@@ -181,11 +181,11 @@ class AutoMergeTests(EditorHelper, ChannelsLiveServerTestCase):
 
         # Check that the list items aren't deleted
         numberedTags = self.driver.find_elements(
-            By.XPATH, '//*[contains(@class, "article-body")]//ol//li'
+            By.XPATH, '//*[contains(@class, "doc-body")]//ol//li'
         )
         self.assertEqual(len(numberedTags), 4)
         numberedTags = self.driver2.find_elements(
-            By.XPATH, '//*[contains(@class, "article-body")]//ol//li'
+            By.XPATH, '//*[contains(@class, "doc-body")]//ol//li'
         )
         self.assertEqual(len(numberedTags), 4)
 

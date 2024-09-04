@@ -48,7 +48,7 @@ const tableAddedByUser = function(table, userId) {
 export const tableMenuModel = () => ({
     content: [
         {
-            title: editor => `${gettext("Add row above")}${editor.view.state.doc.firstChild.attrs.tracked ? ` (${gettext("Not tracked")})` : ""}`,
+            title: editor => `${gettext("Add row above")}${editor.view.state.doc.attrs.tracked ? ` (${gettext("Not tracked")})` : ""}`,
             type: "action",
             tooltip: gettext("Add a row above the current row"),
             order: 0,
@@ -71,7 +71,7 @@ export const tableMenuModel = () => ({
             }
         },
         {
-            title: editor => `${gettext("Add row below")}${editor.view.state.doc.firstChild.attrs.tracked ? ` (${gettext("Not tracked")})` : ""}`,
+            title: editor => `${gettext("Add row below")}${editor.view.state.doc.attrs.tracked ? ` (${gettext("Not tracked")})` : ""}`,
             type: "action",
             tooltip: gettext("Add a row below the current row"),
             order: 1,
@@ -94,7 +94,7 @@ export const tableMenuModel = () => ({
             }
         },
         {
-            title: editor => `${gettext("Add column left")}${editor.view.state.doc.firstChild.attrs.tracked ? ` (${gettext("Not tracked")})` : ""}`,
+            title: editor => `${gettext("Add column left")}${editor.view.state.doc.attrs.tracked ? ` (${gettext("Not tracked")})` : ""}`,
             type: "action",
             tooltip: gettext("Add a column to the left of the current column"),
             order: 2,
@@ -117,7 +117,7 @@ export const tableMenuModel = () => ({
             }
         },
         {
-            title: editor => `${gettext("Add column right")}${editor.view.state.doc.firstChild.attrs.tracked ? ` (${gettext("Not tracked")})` : ""}`,
+            title: editor => `${gettext("Add column right")}${editor.view.state.doc.attrs.tracked ? ` (${gettext("Not tracked")})` : ""}`,
             type: "action",
             tooltip: gettext("Add a column to the right of the current column"),
             order: 3,
@@ -144,7 +144,7 @@ export const tableMenuModel = () => ({
             order: 4
         },
         {
-            title: editor => `${gettext("Delete row")}${editor.view.state.doc.firstChild.attrs.tracked ? ` (${gettext("Not tracked")})` : ""}`,
+            title: editor => `${gettext("Delete row")}${editor.view.state.doc.attrs.tracked ? ` (${gettext("Not tracked")})` : ""}`,
             type: "action",
             tooltip: gettext("Delete current row"),
             order: 5,
@@ -167,7 +167,7 @@ export const tableMenuModel = () => ({
             }
         },
         {
-            title: editor => `${gettext("Delete column")}${editor.view.state.doc.firstChild.attrs.tracked ? ` (${gettext("Not tracked")})` : ""}`,
+            title: editor => `${gettext("Delete column")}${editor.view.state.doc.attrs.tracked ? ` (${gettext("Not tracked")})` : ""}`,
             type: "action",
             tooltip: gettext("Delete current column"),
             order: 6,
@@ -194,7 +194,7 @@ export const tableMenuModel = () => ({
             order: 7,
         },
         {
-            title: editor => `${gettext("Merge cells")}${editor.view.state.doc.firstChild.attrs.tracked ? ` (${gettext("Not tracked")})` : ""}`,
+            title: editor => `${gettext("Merge cells")}${editor.view.state.doc.attrs.tracked ? ` (${gettext("Not tracked")})` : ""}`,
             type: "action",
             tooltip: gettext("Merge selected cells"),
             order: 8,
@@ -221,7 +221,7 @@ export const tableMenuModel = () => ({
 
         },
         {
-            title: editor => `${gettext("Split cells")}${editor.view.state.doc.firstChild.attrs.tracked ? ` (${gettext("Not tracked")})` : ""}`,
+            title: editor => `${gettext("Split cells")}${editor.view.state.doc.attrs.tracked ? ` (${gettext("Not tracked")})` : ""}`,
             type: "action",
             tooltip: gettext("Split selected cell"),
             order: 9,
@@ -255,7 +255,7 @@ export const tableMenuModel = () => ({
             order: 10,
         },
         {
-            title: editor => `${gettext("Toggle header row")}${editor.view.state.doc.firstChild.attrs.tracked ? ` (${gettext("Not tracked")})` : ""}`,
+            title: editor => `${gettext("Toggle header row")}${editor.view.state.doc.attrs.tracked ? ` (${gettext("Not tracked")})` : ""}`,
             type: "action",
             tooltip: gettext("Toggle header-status of currently selected row"),
             order: 11,
@@ -278,7 +278,7 @@ export const tableMenuModel = () => ({
             }
         },
         {
-            title: editor => `${gettext("Toggle header column")}${editor.view.state.doc.firstChild.attrs.tracked ? ` (${gettext("Not tracked")})` : ""}`,
+            title: editor => `${gettext("Toggle header column")}${editor.view.state.doc.attrs.tracked ? ` (${gettext("Not tracked")})` : ""}`,
             type: "action",
             tooltip: gettext("Toggle header-status of currently selected column"),
             order: 12,
@@ -301,7 +301,7 @@ export const tableMenuModel = () => ({
             }
         },
         {
-            title: editor => `${gettext("Toggle header cell")}${editor.view.state.doc.firstChild.attrs.tracked ? ` (${gettext("Not tracked")})` : ""}`,
+            title: editor => `${gettext("Toggle header cell")}${editor.view.state.doc.attrs.tracked ? ` (${gettext("Not tracked")})` : ""}`,
             type: "action",
             tooltip: gettext("Toggle header-status of currently selected cells"),
             order: 13,

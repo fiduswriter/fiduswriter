@@ -85,7 +85,7 @@ export class HTMLExporterCitations {
     assembleBib() {
         const settings = this.exporter.doc.settings
         const bibliographyHeader = settings.bibliography_header[settings.language] || BIBLIOGRAPHY_HEADERS[settings.language]
-        let bibHTML = `<h1 class="article-bibliography-header">${escapeText(bibliographyHeader)}</h1>`
+        let bibHTML = `<h1 class="doc-bibliography-header">${escapeText(bibliographyHeader)}</h1>`
         bibHTML += this.citFm.bibliography[0].bibstart
         bibHTML += this.citFm.bibliography[1].map((reference, index) => `<div id="ref-${index + 1}">${reference}</div>`).join("")
         bibHTML += this.citFm.bibliography[0].bibend

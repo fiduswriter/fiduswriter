@@ -32,13 +32,13 @@ const findTable = function(state) {
 
 function elementAvailable(editor, elementName) {
     let elementInDocParts = false
-    editor.view.state.doc.firstChild.forEach(docPart => {
+    editor.view.state.doc.forEach(docPart => {
         if (docPart.attrs.elements && docPart.attrs.elements.includes(elementName)) {
             elementInDocParts = true
         }
     })
     return (
-        editor.view.state.doc.firstChild.attrs.footnote_elements.includes(elementName) ||
+        editor.view.state.doc.attrs.footnote_elements.includes(elementName) ||
           elementInDocParts
     )
 }
@@ -46,8 +46,8 @@ function elementAvailable(editor, elementName) {
 export function elementDisabled(editor, elementName) {
     if (editor.currentView === editor.view) {
         // main editor
-        const anchorDocPart = editor.currentView.state.selection.$anchor.node(2),
-            headDocPart = editor.currentView.state.selection.$head.node(2)
+        const anchorDocPart = editor.currentView.state.selection.$anchor.node(1),
+            headDocPart = editor.currentView.state.selection.$head.node(1)
 
         return !anchorDocPart ||
             headDocPart !== anchorDocPart ||
@@ -61,20 +61,20 @@ export function elementDisabled(editor, elementName) {
 
         return !anchorFootnote ||
             headFootnote !== anchorFootnote ||
-            !editor.view.state.doc.firstChild.attrs.footnote_elements.includes(elementName)
+            !editor.view.state.doc.attrs.footnote_elements.includes(elementName)
     }
 
 }
 
 function markAvailable(editor, markName) {
     let markInDocParts = false
-    editor.view.state.doc.firstChild.forEach(docPart => {
+    editor.view.state.doc.forEach(docPart => {
         if (docPart.attrs.elements && docPart.attrs.marks.includes(markName)) {
             markInDocParts = true
         }
     })
     return (
-        editor.view.state.doc.firstChild.attrs.footnote_marks.includes(markName) ||
+        editor.view.state.doc.attrs.footnote_marks.includes(markName) ||
           markInDocParts
     )
 }
@@ -82,8 +82,8 @@ function markAvailable(editor, markName) {
 function markDisabled(editor, markName) {
     if (editor.currentView === editor.view) {
         // main editor
-        const anchorDocPart = editor.currentView.state.selection.$anchor.node(2),
-            headDocPart = editor.currentView.state.selection.$head.node(2)
+        const anchorDocPart = editor.currentView.state.selection.$anchor.node(1),
+            headDocPart = editor.currentView.state.selection.$head.node(1)
 
         return !anchorDocPart ||
             headDocPart !== anchorDocPart ||
@@ -97,7 +97,7 @@ function markDisabled(editor, markName) {
 
         return !anchorFootnote ||
             headFootnote !== anchorFootnote ||
-            !editor.view.state.doc.firstChild.attrs.footnote_marks.includes(markName)
+            !editor.view.state.doc.attrs.footnote_marks.includes(markName)
     }
 
 }
@@ -137,11 +137,11 @@ export const toolbarModel = () => ({
                 if (editor.currentView !== editor.view) {
                     return gettext("Footnote")
                 } else if (
-                    editor.currentView.state.selection.$anchor.node(2) &&
-                    editor.currentView.state.selection.$anchor.node(2) ===
-                        editor.currentView.state.selection.$head.node(2)
+                    editor.currentView.state.selection.$anchor.node(1) &&
+                    editor.currentView.state.selection.$anchor.node(1) ===
+                        editor.currentView.state.selection.$head.node(1)
                 ) {
-                    title = editor.currentView.state.selection.$anchor.node(2).attrs.title || gettext("Title")
+                    title = editor.currentView.state.selection.$anchor.node(1).attrs.title || gettext("Title")
                     return title.length > 20 ? title.slice(0, 20) + "..." : title
                 } else if (
                     editor.currentView.state.selection.$anchor.depth === 1 &&
@@ -168,8 +168,8 @@ export const toolbarModel = () => ({
             type: "menu",
             show: editor => {
                 if (
-                    editor.currentView.state.selection.$anchor.node(2) &&
-                    !editor.view.state.selection.$anchor.node(2).attrs.elements
+                    editor.currentView.state.selection.$anchor.node(1) &&
+                    !editor.view.state.selection.$anchor.node(1).attrs.elements
                 ) {
                     return ""
                 }
@@ -216,8 +216,8 @@ export const toolbarModel = () => ({
             disabled: editor =>
                 READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
                     COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
-                    !editor.currentView.state.selection.$anchor.node(2) ||
-                    !editor.currentView.state.selection.$anchor.node(2).attrs.elements ||
+                    !editor.currentView.state.selection.$anchor.node(1) ||
+                    !editor.currentView.state.selection.$anchor.node(1).attrs.elements ||
                     (
                         editor.currentView.state.selection.jsonID === "node" &&
                         editor.currentView.state.selection.node.isBlock &&

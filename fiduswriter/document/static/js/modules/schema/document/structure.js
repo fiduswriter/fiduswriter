@@ -1,10 +1,4 @@
 export const doc = {
-    content: "article", // Transformations don't work well on the top most element
-    selectable: false
-}
-
-export const article = {
-    defining: true,
     content: "title part*",
     selectable: false,
     allowGapCursor: false,
@@ -118,7 +112,7 @@ export const article = {
         }
     },
     parseDOM: [{
-        tag: "div.article",
+        tag: "div.doc",
         getAttrs(dom) {
             return {
                 papersize: dom.dataset.papersize,
@@ -129,7 +123,7 @@ export const article = {
     }],
     toDOM(node) {
         return ["div", {
-            class: "article",
+            class: "doc",
             "data-papersize": node.attrs.papersize,
             "data-citationstyle": node.attrs.citationstyle,
             "data-documentstyle": node.attrs.documentstyle
@@ -172,7 +166,7 @@ const partSpec = (type, content, attrs = {}) => ({
         }
     }, attrs),
     parseDOM: [{
-        tag: `div.article-${type}`,
+        tag: `div.doc-${type}`,
         getAttrs(dom) {
             return {
                 hidden: dom.dataset.hidden === "true" ? true : false
@@ -181,13 +175,13 @@ const partSpec = (type, content, attrs = {}) => ({
     }],
     toDOM(node) {
         const attrs = {
-            class: `article-part article-${type} article-${node.attrs.id}`
+            class: `doc-part doc-${type} ${node.attrs.id ? `doc-${node.attrs.id}` : "doc-no-id"}`
         }
         if (node.attrs.hidden) {
             attrs["data-hidden"] = "true"
         }
         if (node.attrs.deleted) {
-            attrs.class += " article-deleted"
+            attrs.class += " doc-deleted"
         }
         return ["div", attrs, 0]
     }
@@ -263,7 +257,7 @@ export const table_of_contents = {
     },
     toDOM(node) {
         const dom = document.createElement("div")
-        dom.classList.add("article-part", "table-of-contents")
+        dom.classList.add("doc-part", "table-of-contents")
         if (node.attrs.hidden) {
             dom.dataset.hidden = "true"
         }
@@ -283,12 +277,12 @@ export const separator_part = {
         }
     },
     parseDOM: [{
-        tag: "hr.article-separator_part"
+        tag: "hr.doc-separator_part"
     }],
     toDOM(node) {
         const dom = document.createElement("hr")
-        dom.classList.add("article-separator_part")
-        dom.classList.add(`article-${node.attrs.id}`)
+        dom.classList.add("doc-separator_part")
+        dom.classList.add(`doc-${node.attrs.id}`)
         return dom
     }
 }
@@ -305,11 +299,11 @@ export const title = {
         }
     },
     parseDOM: [{
-        tag: "div.article-title"
+        tag: "div.doc-title"
     }],
     toDOM(_node) {
         return ["div", {
-            class: "article-part article-title"
+            class: "doc-part doc-title"
         }, 0]
     }
 }

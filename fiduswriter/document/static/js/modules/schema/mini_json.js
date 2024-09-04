@@ -49,7 +49,7 @@ function toMiniMarkJSON(mark) {
 
 export function toFullJSON(miniJson, schema) {
     if (!miniJson.type) {
-        miniJson.type = "article"
+        miniJson.type = "doc"
     }
     return schema.nodeFromJSON(miniJson).toJSON()
 }

@@ -82,7 +82,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             if "type" not in doc_db.content:
                 doc_db.content = deepcopy(doc_db.template.content)
                 if "type" not in doc_db.content:
-                    doc_db.content["type"] = "article"
+                    doc_db.content["type"] = "doc"
                 if "content" not in doc_db.content:
                     doc_db.content["content"] = [{type: "title"}]
                 doc_db.save()
@@ -93,9 +93,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                     "last_saved_version": doc_db.version,
                 }
             else:
-                node = prosemirror.from_json(
-                    {"type": "doc", "content": [doc_db.content]}
-                )
+                node = prosemirror.from_json(doc_db.content)
                 self.session = {
                     "doc": doc_db,
                     "node": node,
@@ -738,9 +736,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
     @classmethod
     def serialize_content(cls, session):
         if "node_updates" in session and session["node_updates"]:
-            session["doc"].content = prosemirror.to_mini_json(
-                session["node"].first_child
-            )
+            session["doc"].content = prosemirror.to_mini_json(session["node"])
             session["node_updates"] = False
 
     @classmethod

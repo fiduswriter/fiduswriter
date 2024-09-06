@@ -3,16 +3,19 @@ import {escapeText} from "../../common"
 import {BIBLIOGRAPHY_HEADERS} from "../../schema/i18n"
 
 export class ODTExporterRender {
-    constructor(exporter, docContent) {
-        this.exporter = exporter
+    constructor(docContent, settings, xml, richtext, citations) {
         this.docContent = docContent
+        this.settings = settings
+        this.xml = xml
+        this.richtext = richtext
+        this.citations = citations
+
         this.filePath = "content.xml"
-        this.xml = false
         this.text = false
     }
 
     init() {
-        return this.exporter.xml.getXml(this.filePath).then(
+        return this.xml.getXml(this.filePath).then(
             xml => {
                 this.xml = xml
                 this.text = xml.querySelector("text")
@@ -85,7 +88,7 @@ export class ODTExporterRender {
             }
             return tag
         })
-        const settings = this.exporter.doc.settings,
+        const settings = this.settings,
             bibliographyHeader = settings.bibliography_header[settings.language] || BIBLIOGRAPHY_HEADERS[settings.language]
         this.tags.push({
             title: "@bibliography", // The '@' triggers handling as block
@@ -149,10 +152,10 @@ export class ODTExporterRender {
     blockRender(tag) {
         const section = tag.block.hasAttribute("text:style-name") ? tag.block.getAttribute("text:style-name") : "Text_20_body"
         const outXml = tag.content ? tag.content.map(
-            (content, contentIndex) => this.exporter.richtext.run(
+            (content, contentIndex) => this.richtext.run(
                 content,
                 {
-                    citationType: this.exporter.citations.citFm.citationType,
+                    citationType: this.citations.citFm.citationType,
                     section,
                     tag: tag.title.slice(1)
                 },

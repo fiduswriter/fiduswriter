@@ -2,10 +2,10 @@ import download from "downloadjs"
 
 import {shortFileTitle} from "../../common"
 
+import {textContent, removeHidden, fixTables} from "../tools/doc_content"
 import {createSlug} from "../tools/file"
 import {XmlZip} from "../tools/xml_zip"
 
-import {removeHidden, fixTables} from "../tools/doc_content"
 import {ODTExporterCitations} from "./citations"
 import {ODTExporterImages} from "./images"
 import {ODTExporterRender} from "./render"
@@ -35,58 +35,119 @@ export class ODTExporter {
         this.csl = csl
 
         this.pmCits = false
-        this.pmBib = false
-        this.docContent = false
-        this.docTitle = false
+        this.docContent = fixTables(removeHidden(this.doc.content))
+        this.docTitle = shortFileTitle(this.doc.title, this.doc.path)
         this.mimeType = "application/vnd.oasis.opendocument.text"
     }
 
 
     init() {
-        this.docContent = fixTables(removeHidden(this.doc.content))
-        this.docTitle = shortFileTitle(this.doc.title, this.doc.path)
-        this.metadata = new ODTExporterMetadata(this, this.docContent)
-        this.footnotes = new ODTExporterFootnotes(this, this.docContent)
-        this.render = new ODTExporterRender(this, this.docContent)
-        this.styles = new ODTExporterStyles(this)
-        this.math = new ODTExporterMath(this)
-        this.images = new ODTExporterImages(this, this.imageDB, this.docContent)
-        this.citations = new ODTExporterCitations(this, this.bibDB, this.csl, this.docContent)
-        this.tracks = new ODTExporterTracks(this)
-        this.richtext = new ODTExporterRichtext(this, this.images)
-
-        this.xml = new XmlZip(
+        const xml = new XmlZip(
             this.templateUrl,
             this.mimeType
         )
-        return this.xml.init().then(
-            () => this.styles.init()
+        const styles = new ODTExporterStyles(xml)
+        const metadata = new ODTExporterMetadata(
+            xml,
+            styles,
+            this.getBaseMetadata()
+        )
+        const citations = new ODTExporterCitations(
+            this.docContent,
+            this.doc.settings,
+            styles,
+            this.bibDB,
+            this.csl
+        )
+        const footnotes = new ODTExporterFootnotes(
+            this.docContent,
+            this.doc.settings,
+            xml,
+            citations,
+            styles,
+            this.bibDB,
+            this.imageDB,
+            this.csl
+        )
+        const math = new ODTExporterMath(xml)
+        const images = new ODTExporterImages(this.docContent, xml, this.imageDB)
+        const tracks = new ODTExporterTracks(xml)
+        const richtext = new ODTExporterRichtext(
+            this.doc.comments,
+            this.doc.settings,
+            styles,
+            tracks,
+            footnotes,
+            citations,
+            math,
+            images)
+        const render = new ODTExporterRender(
+            this.docContent,
+            this.doc.settings,
+            xml,
+            richtext,
+            citations,
+        )
+
+        return xml.init().then(
+            () => styles.init()
         ).then(
-            () => this.tracks.init()
+            () => tracks.init()
         ).then(
-            () => this.metadata.init()
+            () => metadata.init()
         ).then(
-            () => this.citations.init()
+            () => citations.init()
+        ).then(
+            () => math.init()
+        ).then(
+            () => render.init()
+        ).then(
+            () => images.init()
+        ).then(
+            () => footnotes.init()
         ).then(
             () => {
-                this.pmBib = this.citations.pmBib
-                return this.math.init()
-            }
-        ).then(
-            () => this.render.init()
-        ).then(
-            () => this.images.init()
-        ).then(
-            () => this.footnotes.init()
-        ).then(
-            () => {
-                this.render.getTagData(this.pmBib)
-                this.render.render()
-                return this.xml.prepareBlob()
+                const pmBib = footnotes.pmBib || citations.pmBib
+                render.getTagData(pmBib)
+                render.render()
+                return xml.prepareBlob()
             }
         ).then(
             blob => this.download(blob)
         )
+    }
+
+    getBaseMetadata() {
+        return {
+            authors: this.docContent.content.reduce(
+                (authors, part) => {
+                    if (
+                        part.type === "contributors_part" &&
+                        part.attrs.metadata === "authors" &&
+                        part.content
+                    ) {
+                        return authors.concat(part.content.map(authorNode => authorNode.attrs))
+                    } else {
+                        return authors
+                    }
+                },
+                []),
+            keywords: this.docContent.content.reduce(
+                (keywords, part) => {
+                    if (
+                        part.type === "tags_part" &&
+                        part.attrs.metadata === "keywords" &&
+                        part.content
+                    ) {
+                        return keywords.concat(part.content.map(keywordNode => keywordNode.attrs.tag))
+                    } else {
+                        return keywords
+                    }
+                },
+                []),
+            title: textContent(this.docContent.content[0]),
+            language: this.doc.settings.language
+        }
     }
 
     download(blob) {

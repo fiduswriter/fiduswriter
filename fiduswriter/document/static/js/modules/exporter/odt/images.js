@@ -3,16 +3,16 @@ import {descendantNodes} from "../tools/doc_content"
 import {svg2png} from "../tools/svg"
 
 export class ODTExporterImages {
-    constructor(exporter, imageDB, docContent) {
-        this.exporter = exporter
-        this.imageDB = imageDB
+    constructor(docContent, xml, imageDB) {
         this.docContent = docContent
+        this.xml = xml
+        this.imageDB = imageDB
         this.images = {}
         this.manifestXml = false
     }
 
     init() {
-        return this.exporter.xml.getXml("META-INF/manifest.xml").then(
+        return this.xml.getXml("META-INF/manifest.xml").then(
             manifestXml => {
                 this.manifestXml = manifestXml
                 return this.exportImages()
@@ -23,7 +23,7 @@ export class ODTExporterImages {
     // add an image to the list of files
     addImage(imgFileName, image) {
         imgFileName = this.addFileToManifest(imgFileName)
-        this.exporter.xml.addExtraFile(`Pictures/${imgFileName}`, image)
+        this.xml.addExtraFile(`Pictures/${imgFileName}`, image)
         return imgFileName
     }
 

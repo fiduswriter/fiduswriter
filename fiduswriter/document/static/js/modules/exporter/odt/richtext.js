@@ -32,9 +32,16 @@ const INLINE_TYPES = [
 
 
 export class ODTExporterRichtext {
-    constructor(exporter, images) {
-        this.exporter = exporter
+    constructor(comments, settings, styles, tracks, footnotes, citations, math, images) {
+        this.comments = comments
+        this.styles = styles
+        this.tracks = tracks
+        this.footnotes = footnotes
+        this.citations = citations
+        this.settings = settings
+        this.math = math
         this.images = images
+
         this.imgCounter = 1
         this.fnCounter = 0 // real footnotes
         this.fnAlikeCounter = 0 // real footnotes and citations as footnotes
@@ -53,7 +60,7 @@ export class ODTExporterRichtext {
             node.marks.filter(mark => mark.type === "comment").forEach(
                 comment => {
                     if (!comments[comment.attrs.id]) {
-                        comments[comment.attrs.id] = {start: node, end: node, content: this.exporter.doc.comments[comment.attrs.id]}
+                        comments[comment.attrs.id] = {start: node, end: node, content: this.comments[comment.attrs.id]}
                     } else {
                         comments[comment.attrs.id]["end"] = node
                     }
@@ -127,7 +134,7 @@ export class ODTExporterRichtext {
 
         switch (node.type) {
         case "bibliography_heading":
-            this.exporter.styles.checkParStyle("Bibliography_20_Heading")
+            this.styles.checkParStyle("Bibliography_20_Heading")
             start += "<text:p text:style-name=\"Bibliography_20_Heading\">"
             end = "</text:p>" + end
             break
@@ -142,12 +149,12 @@ export class ODTExporterRichtext {
         {
             // Handles all types of text blocks.
             if (node.type === "code_block") {
-                this.exporter.styles.checkParStyle("Preformatted_20_Text")
+                this.styles.checkParStyle("Preformatted_20_Text")
             } else if (node.type === "paragraph") {
                 if (!options.section) {
                     options.section = "Text_20_body"
                 }
-                this.exporter.styles.checkParStyle(options.section)
+                this.styles.checkParStyle(options.section)
             }
             const nextBlockDelete = nextSibling?.attrs?.track?.find(
                 mark => mark.type === "deletion"
@@ -185,9 +192,9 @@ export class ODTExporterRichtext {
                     if (!options.section) {
                         options.section = "Text_20_body"
                     }
-                    this.exporter.styles.checkParStyle(options.section)
+                    this.styles.checkParStyle(options.section)
                 }
-                const trackId = this.exporter.tracks.addChange(
+                const trackId = this.tracks.addChange(
                     blockDelete,
                     noSpaceTmp`
                         <${TEXT_TYPES[previousSibling.type].tag} ${TEXT_TYPES[previousSibling.type].attrs(options)}/>
@@ -217,7 +224,7 @@ export class ODTExporterRichtext {
             if (nextBlockInsert && TEXT_TYPES[nextSibling.type]) {
                 // The following block node is a text node , so the insertion is a textblock split.
                 // We need to put change track marks in both this and the next text block.
-                const trackId = this.exporter.tracks.addChange(
+                const trackId = this.tracks.addChange(
                     nextBlockInsert
                 )
                 end = `<text:change-start text:change-id="${trackId}"/>` + end
@@ -236,7 +243,7 @@ export class ODTExporterRichtext {
             options.section = "Quote"
             break
         case "ordered_list": {
-            const olId = this.exporter.styles.getOrderedListStyleId(node.attrs.order)
+            const olId = this.styles.getOrderedListStyleId(node.attrs.order)
             start += `<text:list text:style-name="L${olId[0]}">`
             end = "</text:list>" + end
             options = Object.assign({}, options)
@@ -244,7 +251,7 @@ export class ODTExporterRichtext {
             break
         }
         case "bullet_list": {
-            const ulId = this.exporter.styles.getBulletListStyleId()
+            const ulId = this.styles.getBulletListStyleId()
             start += `<text:list text:style-name="L${ulId[0]}">`
             end = "</text:list>" + end
             options = Object.assign({}, options)
@@ -276,7 +283,6 @@ export class ODTExporterRichtext {
             end = noSpaceTmp`
                     </text:note-body>
                 </text:note>` + end
-
             break
         }
         case "text": {
@@ -319,7 +325,7 @@ export class ODTExporterRichtext {
             }
 
             if (attributes.length) {
-                const styleId = this.exporter.styles.getInlineStyleId(attributes)
+                const styleId = this.styles.getInlineStyleId(attributes)
                 start += `<text:span text:style-name="T${styleId}">`
                 end = "</text:span>" + end
             }
@@ -333,9 +339,9 @@ export class ODTExporterRichtext {
             let cit
             // We take the first citation from the stack and remove it.
             if (options.inFootnote) {
-                cit = this.exporter.footnotes.citations.pmCits.shift()
+                cit = this.footnotes.citations.pmCits.shift()
             } else {
-                cit = this.exporter.citations.pmCits.shift()
+                cit = this.citations.pmCits.shift()
             }
             if (options.citationType === "note" && !options.inFootnote) {
                 // If the citations are in notes (footnotes), we need to
@@ -365,7 +371,7 @@ export class ODTExporterRichtext {
             // way to guarantee it from happening.
             options = Object.assign({}, options)
             options.section = "Standard"
-            this.exporter.styles.checkParStyle(options.section)
+            this.styles.checkParStyle(options.section)
             start += `<text:p text:style-name="${options.section}">`
             end = "</text:p>" + end
 
@@ -386,9 +392,9 @@ export class ODTExporterRichtext {
                 const catCount = categoryCounter[category]++
                 const catCountXml = `<text:sequence text:ref-name="ref${category}${catCount - 1}${options.inFootnote ? "A" : ""}" text:name="${category}" text:formula="ooow:${category}+1" style:num-format="1">${catCount}${options.inFootnote ? "A" : ""}</text:sequence>`
                 if (caption.length) {
-                    caption = `<text:bookmark-start text:name="${node.attrs.id}"/>${CATS[category][this.exporter.doc.settings.language]} ${catCountXml}<text:bookmark-end text:name="${node.attrs.id}"/>: ${caption}`
+                    caption = `<text:bookmark-start text:name="${node.attrs.id}"/>${CATS[category][this.settings.language]} ${catCountXml}<text:bookmark-end text:name="${node.attrs.id}"/>: ${caption}`
                 } else {
-                    caption = `<text:bookmark-start text:name="${node.attrs.id}"/>${CATS[category][this.exporter.doc.settings.language]} ${catCountXml}<text:bookmark-end text:name="${node.attrs.id}"/>`
+                    caption = `<text:bookmark-start text:name="${node.attrs.id}"/>${CATS[category][this.settings.language]} ${catCountXml}<text:bookmark-end text:name="${node.attrs.id}"/>`
                 }
             }
             let relWidth = node.attrs.width
@@ -400,9 +406,9 @@ export class ODTExporterRichtext {
                     image === false
             ) {
                 frame = true
-                this.exporter.styles.checkParStyle("Caption")
-                this.exporter.styles.checkParStyle("Figure")
-                const graphicStyleId = this.exporter.styles.getGraphicStyleId("Frame", aligned)
+                this.styles.checkParStyle("Caption")
+                this.styles.checkParStyle("Figure")
+                const graphicStyleId = this.styles.getGraphicStyleId("Frame", aligned)
                 start += noSpaceTmp`<draw:frame draw:style-name="fr${graphicStyleId}" draw:name="Frame${graphicStyleId}" text:anchor-type="paragraph" svg:width="0.0161in" style:rel-width="${relWidth}%" draw:z-index="${this.zIndex++}">
                         <draw:text-box fo:min-height="0in">
                             <text:p text:style-name="Figure">`
@@ -421,7 +427,7 @@ export class ODTExporterRichtext {
 
                 const height = imageEntry.height * 3 / 4 // more or less px to point
                 const width = imageEntry.width * 3 / 4 // more or less px to point
-                const graphicStyleId = this.exporter.styles.getGraphicStyleId("Graphics", aligned)
+                const graphicStyleId = this.styles.getGraphicStyleId("Graphics", aligned)
                 content += noSpaceTmp`
                         <draw:frame draw:style-name="${graphicStyleId}" draw:name="Image${this.imgCounter++}" text:anchor-type="${(frame && !blockInsert) ? "char" : "as-char"}" style:rel-width="${relWidth}%" style:rel-height="scale" svg:width="${width}pt" svg:height="${height}pt" draw:z-index="${this.zIndex++}">
                             ${
@@ -433,8 +439,8 @@ export class ODTExporterRichtext {
                         </draw:frame>`
             } else {
                 const latex = node.content.find(node => node.type === "figure_equation")?.attrs.equation
-                const objectNumber = this.exporter.math.addMath(latex)
-                const graphicStyleId = this.exporter.styles.getGraphicStyleId("Formula")
+                const objectNumber = this.math.addMath(latex)
+                const graphicStyleId = this.styles.getGraphicStyleId("Formula")
                 content += noSpaceTmp`
                         <draw:frame draw:style-name="${graphicStyleId}" draw:name="Object${objectNumber}" text:anchor-type="as-char" draw:z-index="${this.zIndex++}">
                             <draw:object xlink:href="./Object ${objectNumber}" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/>
@@ -445,14 +451,14 @@ export class ODTExporterRichtext {
                 content = `<text:bookmark-start text:name="${node.attrs.id}"/>${content}<text:bookmark-end text:name="${node.attrs.id}"/>`
             }
             if (blockDelete) {
-                const trackId = this.exporter.tracks.addChange(
+                const trackId = this.tracks.addChange(
                     blockDelete,
                     `<text:p text:style-name="Figure">${content}<text:span>‍‍</text:span></text:p>`
                 )
                 content = `<text:change text:change-id="${trackId}"/>`
             }
             if (blockInsert) {
-                const trackId = this.exporter.tracks.addChange(
+                const trackId = this.tracks.addChange(
                     blockInsert
                 )
                 start += `<text:change-start text:change-id="${trackId}"/>`
@@ -483,23 +489,23 @@ export class ODTExporterRichtext {
                 const catCount = categoryCounter[category]++
                 const catCountXml = `<text:sequence text:ref-name="ref${category}${catCount - 1}${options.inFootnote ? "A" : ""}" text:name="${category}" text:formula="ooow:${category}+1" style:num-format="1">${catCount}${options.inFootnote ? "A" : ""}</text:sequence>`
                 if (caption.length) {
-                    caption = `<text:bookmark-start text:name="${node.attrs.id}"/>${CATS[category][this.exporter.doc.settings.language]} ${catCountXml}<text:bookmark-end text:name="${node.attrs.id}"/>: ${caption}`
+                    caption = `<text:bookmark-start text:name="${node.attrs.id}"/>${CATS[category][this.settings.language]} ${catCountXml}<text:bookmark-end text:name="${node.attrs.id}"/>: ${caption}`
                 } else {
-                    caption = `<text:bookmark-start text:name="${node.attrs.id}"/>${CATS[category][this.exporter.doc.settings.language]} ${catCountXml}<text:bookmark-end text:name="${node.attrs.id}"/>`
+                    caption = `<text:bookmark-start text:name="${node.attrs.id}"/>${CATS[category][this.settings.language]} ${catCountXml}<text:bookmark-end text:name="${node.attrs.id}"/>`
                 }
             }
             if (caption.length) {
                 if (!options.section) {
                     options.section = "Text_20_body"
                 }
-                this.exporter.styles.checkParStyle(options.section)
+                this.styles.checkParStyle(options.section)
                 start += `<text:p text:style-name="${options.section}">${caption}</text:p>`
             }
             const columns = node.content[1].content[0].content.length
             if (node.attrs.width === "100") {
                 start += "<table:table>"
             } else {
-                const styleId = this.exporter.styles.getTableStyleId(
+                const styleId = this.styles.getTableStyleId(
                     node.attrs.aligned,
                     node.attrs.width
                 )
@@ -538,8 +544,8 @@ export class ODTExporterRichtext {
             break
         case "equation": {
             const latex = node.attrs.equation
-            const objectNumber = this.exporter.math.addMath(latex)
-            const styleId = this.exporter.styles.getGraphicStyleId("Formula")
+            const objectNumber = this.math.addMath(latex)
+            const styleId = this.styles.getGraphicStyleId("Formula")
             content += noSpaceTmp`
                     <draw:frame draw:style-name="${styleId}" draw:name="Object${objectNumber}" text:anchor-type="as-char" draw:z-index="${this.zIndex++}">
                         <draw:object xlink:href="./Object ${objectNumber}" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/>
@@ -576,7 +582,7 @@ export class ODTExporterRichtext {
             end = "<text:line-break/>" + end
             break
         case "cslentry":
-            this.exporter.styles.checkParStyle(options.section)
+            this.styles.checkParStyle(options.section)
             start += `<text:p text:style-name="${options.section}">`
             end = "</text:p>" + end
             break
@@ -600,7 +606,7 @@ export class ODTExporterRichtext {
             )?.attrs || options.blockDelete
             if (inlineDelete) {
                 if (parent) {
-                    const trackId = this.exporter.tracks.addChange(
+                    const trackId = this.tracks.addChange(
                         Object.assign({type: "deletion"}, inlineDelete),
                         `<${TEXT_TYPES[parent.type]?.tag || "text:p"} ${TEXT_TYPES[parent.type]?.attrs(options) || `text:style-name="${options.section}"`}>${
                             start + content + end
@@ -614,7 +620,7 @@ export class ODTExporterRichtext {
                 end = ""
             }
             if (inlineInsert) {
-                const trackId = this.exporter.tracks.addChange(Object.assign({type: "insertion"}, inlineInsert))
+                const trackId = this.tracks.addChange(Object.assign({type: "insertion"}, inlineInsert))
                 start += `<text:change-start text:change-id="${trackId}"/>`
                 end = `<text:change-end text:change-id="${trackId}"/>` + end
             }

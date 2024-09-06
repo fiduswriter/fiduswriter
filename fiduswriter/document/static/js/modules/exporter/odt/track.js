@@ -1,15 +1,16 @@
 import {noSpaceTmp, escapeText} from "../../common"
 
 export class ODTExporterTracks {
-    constructor(exporter) {
-        this.exporter = exporter
+    constructor(xml) {
+        this.xml = xml
+
         this.contentXml = false
         this.trackChangesSection = false
         this.counter = 0
     }
 
     init() {
-        return this.exporter.xml.getXml("content.xml").then(
+        return this.xml.getXml("content.xml").then(
             contentXml => {
                 this.contentXml = contentXml
             }

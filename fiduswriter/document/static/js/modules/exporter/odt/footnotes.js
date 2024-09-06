@@ -25,12 +25,19 @@ const DEFAULT_STYLE_FOOTNOTE_CONFIGURATION = noSpaceTmp`
     `
 
 export class ODTExporterFootnotes {
-    constructor(exporter, docContent) {
-        this.exporter = exporter
+    constructor(docContent, settings, xml, citations, styles, bibDB, imageDB, csl) {
         this.docContent = docContent
+        this.settings = settings
+        this.xml = xml
+        this.citations = citations
+        this.styles = styles
+        this.bibDB = bibDB
+        this.imageDB = imageDB
+        this.csl = csl
+
+        this.pmBib = false
         this.fnPmJSON = false
         this.images = false
-        this.citations = false
         this.footnotes = []
         this.styleFilePath = "styles.xml"
     }
@@ -40,31 +47,32 @@ export class ODTExporterFootnotes {
         if (
             this.footnotes.length ||
             (
-                this.exporter.citations.citFm.citationType === "note" &&
-                this.exporter.citations.citInfos.length
+                this.citations.citFm.citationType === "note" &&
+                this.citations.citInfos.length
             )
         ) {
             this.convertFootnotes()
             // Include the citinfos from the main document so that they will be
             // used for calculating the bibliography as well
-            this.citations = new ODTExporterCitations(
-                this.exporter,
-                this.exporter.bibDB,
-                this.exporter.csl,
+            const augmentedCitations = new ODTExporterCitations(
                 this.fnPmJSON,
-                this.exporter.citations.citInfos
+                this.settings,
+                this.styles,
+                this.bibDB,
+                this.csl,
+                this.citations.citInfos
             )
             this.images = new ODTExporterImages(
-                this.exporter,
-                this.exporter.imageDB,
-                this.fnPmJSON
+                this.fnPmJSON,
+                this.xml,
+                this.imageDB
             )
 
-            return this.citations.init().then(
+            return augmentedCitations.init().then(
                 () => {
                     // Replace the main bibliography with the new one that includes
                     // both citations in main document and in the footnotes.
-                    this.exporter.pmBib = this.citations.pmBib
+                    this.pmBib = augmentedCitations.pmBib
                     return this.images.init()
                 }
             ).then(
@@ -79,7 +87,7 @@ export class ODTExporterFootnotes {
     }
 
     addStyles() {
-        return this.exporter.xml.getXml(this.styleFilePath).then(
+        return this.xml.getXml(this.styleFilePath).then(
             styleXml => {
                 this.styleXml = styleXml
                 this.addStyle("Footnote", DEFAULT_STYLE_FOOTNOTE)

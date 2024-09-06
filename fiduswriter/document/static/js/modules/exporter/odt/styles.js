@@ -30,8 +30,9 @@ const PAR_STYLES = {
 }
 
 export class ODTExporterStyles {
-    constructor(exporter) {
-        this.exporter = exporter
+    constructor(xml) {
+        this.xml = xml
+
         this.contentXml = false
         this.stylesXml = false
         this.boldStyleId = false
@@ -49,9 +50,9 @@ export class ODTExporterStyles {
     }
 
     init() {
-        return this.exporter.xml.getXml("styles.xml").then(stylesXml => {
+        return this.xml.getXml("styles.xml").then(stylesXml => {
             this.stylesXml = stylesXml
-            return this.exporter.xml.getXml("content.xml")
+            return this.xml.getXml("content.xml")
         }).then(contentXml => {
             this.contentXml = contentXml
             this.getStyleCounters()

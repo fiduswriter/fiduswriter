@@ -1,13 +1,13 @@
 export class ODTExporterMath {
-    constructor(exporter) {
-        this.exporter = exporter
+    constructor(xml) {
+        this.xml = xml
         this.objectCounter = 1
         this.manifestXml = false
         this.domParser = new DOMParser()
     }
 
     init() {
-        return this.exporter.xml.getXml("META-INF/manifest.xml").then(
+        return this.xml.getXml("META-INF/manifest.xml").then(
             manifestXml => {
                 this.manifestXml = manifestXml
                 this.checkObjectCounter()
@@ -45,7 +45,7 @@ export class ODTExporterMath {
 
     addMath(latex) {
         const objectNumber = this.objectCounter++
-        this.exporter.xml.addExtraFile(
+        this.xml.addExtraFile(
             `Object ${objectNumber}/content.xml`,
             `<math xmlns="http://www.w3.org/1998/Math/MathML">${
                 this.latexToMathML(latex)

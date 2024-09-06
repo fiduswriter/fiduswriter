@@ -1,46 +1,16 @@
-import {textContent} from "../tools/doc_content"
 import {escapeText} from "../../common"
 
 
 export class ODTExporterMetadata {
-    constructor(exporter, docContent) {
-        this.exporter = exporter
-        this.docContent = docContent
+    constructor(xml, styles, metadata) {
+        this.xml = xml
+        this.styles = styles
+        this.metadata = metadata
         this.metaXml = false
-        this.metadata = {
-            authors: this.docContent.content.reduce(
-                (authors, part) => {
-                    if (
-                        part.type === "contributors_part" &&
-                        part.attrs.metadata === "authors" &&
-                        part.content
-                    ) {
-                        return authors.concat(part.content.map(authorNode => authorNode.attrs))
-                    } else {
-                        return authors
-                    }
-                },
-                []),
-            keywords: this.docContent.content.reduce(
-                (keywords, part) => {
-                    if (
-                        part.type === "tags_part" &&
-                        part.attrs.metadata === "keywords" &&
-                        part.content
-                    ) {
-                        return keywords.concat(part.content.map(keywordNode => keywordNode.attrs.tag))
-                    } else {
-                        return keywords
-                    }
-                },
-                []),
-            title: textContent(this.docContent.content[0]),
-            language: this.exporter.doc.settings.language
-        }
     }
 
     init() {
-        return this.exporter.xml.getXml("meta.xml").then(
+        return this.xml.getXml("meta.xml").then(
             metaXml => {
                 this.metaXml = metaXml
                 this.addMetadata()
@@ -111,7 +81,7 @@ export class ODTExporterMetadata {
         // language
         // LibreOffice seems to ignore the value set in metadata and instead uses
         // the one set in default styles. So we set both.
-        this.exporter.styles.setLanguage(this.metadata.language)
+        this.styles.setLanguage(this.metadata.language)
         let languageEl = this.metaXml.querySelector("language")
         if (!languageEl) {
             metaEl.insertAdjacentHTML("beforeEnd", "<dc:language></dc:language>")

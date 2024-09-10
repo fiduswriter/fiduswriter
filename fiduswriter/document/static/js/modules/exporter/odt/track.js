@@ -1,4 +1,4 @@
-import {noSpaceTmp, escapeText} from "../../common"
+import {noSpaceTmp, escapeText, createXMLNode} from "../../common"
 
 export class ODTExporterTracks {
     constructor(xml) {
@@ -18,16 +18,16 @@ export class ODTExporterTracks {
     }
 
     checkTrackedChangesSection() {
-        const trackChangesSection = this.contentXml.querySelector("tracked-changes")
+        const trackChangesSection = this.contentXml.getElementsByTagName("text:tracked-changes")[0]
         if (trackChangesSection) {
             this.trackChangesSection = trackChangesSection
         } else {
-            const textElement = this.contentXml.querySelector("text")
+            const textElement = this.contentXml.getElementsByTagName("office:text")[0]
             if (!textElement) {
                 throw new Error("No text element found in content.xml")
             }
-            textElement.insertAdjacentHTML("afterbegin", "<text:tracked-changes></text:tracked-changes>")
-            this.trackChangesSection = this.contentXml.querySelector("tracked-changes")
+            textElement.insertBefore(createXMLNode("<text:tracked-changes></text:tracked-changes>"), textElement.firstElementChild)
+            this.trackChangesSection = textElement.firstElementChild
         }
     }
 

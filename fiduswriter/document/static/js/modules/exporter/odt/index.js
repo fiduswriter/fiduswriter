@@ -47,6 +47,9 @@ export class ODTExporter {
             this.mimeType
         )
         const styles = new ODTExporterStyles(xml)
+        const math = new ODTExporterMath(xml)
+        const tracks = new ODTExporterTracks(xml)
+
         const metadata = new ODTExporterMetadata(
             xml,
             styles,
@@ -69,9 +72,9 @@ export class ODTExporter {
             this.imageDB,
             this.csl
         )
-        const math = new ODTExporterMath(xml)
+
         const images = new ODTExporterImages(this.docContent, xml, this.imageDB)
-        const tracks = new ODTExporterTracks(xml)
+
         const richtext = new ODTExporterRichtext(
             this.doc.comments,
             this.doc.settings,
@@ -81,24 +84,19 @@ export class ODTExporter {
             citations,
             math,
             images)
-        const render = new ODTExporterRender(
-            this.docContent,
-            this.doc.settings,
-            xml,
-            richtext,
-            citations,
-        )
+
+        const render = new ODTExporterRender(xml)
 
         return xml.init().then(
             () => styles.init()
         ).then(
             () => tracks.init()
         ).then(
+            () => math.init()
+        ).then(
             () => metadata.init()
         ).then(
             () => citations.init()
-        ).then(
-            () => math.init()
         ).then(
             () => render.init()
         ).then(
@@ -108,8 +106,13 @@ export class ODTExporter {
         ).then(
             () => {
                 const pmBib = footnotes.pmBib || citations.pmBib
-                render.getTagData(pmBib)
-                render.render()
+                render.render(
+                    this.docContent,
+                    pmBib,
+                    this.doc.settings,
+                    richtext,
+                    citations
+                )
                 return xml.prepareBlob()
             }
         ).then(

@@ -1,4 +1,4 @@
-import {escapeText} from "../../common"
+import {escapeText, createXMLNode} from "../../common"
 
 
 export class ODTExporterMetadata {
@@ -21,13 +21,13 @@ export class ODTExporterMetadata {
 
 
     addMetadata() {
-        const metaEl = this.metaXml.querySelector("meta")
+        const metaEl = this.metaXml.getElementsByTagName("office:meta")[0]
 
         // Title
-        let titleEl = this.metaXml.querySelector("title")
+        let titleEl = this.metaXml.getElementsByTagName("dc:title")[0]
         if (!titleEl) {
-            metaEl.insertAdjacentHTML("beforeEnd", "<dc:title></dc:title>")
-            titleEl = this.metaXml.querySelector("title")
+            metaEl.appendChild(createXMLNode("<dc:title></dc:title>"))
+            titleEl = this.metaXml.lastElementChild
         }
         titleEl.innerHTML = escapeText(this.metadata.title)
 
@@ -53,50 +53,50 @@ export class ODTExporterMetadata {
         // TODO: We likely want to differentiate between first and last author.
         const lastAuthor = initialAuthor
 
-        let lastAuthorEl = this.metaXml.querySelector("creator")
+        let lastAuthorEl = this.metaXml.getElementsByTagName("dc:creator")[0]
         if (!lastAuthorEl) {
-            metaEl.insertAdjacentHTML("beforeEnd", "<dc:creator></dc:creator>")
-            lastAuthorEl = this.metaXml.querySelector("creator")
+            metaEl.appendChild(createXMLNode("<dc:creator></dc:creator>"))
+            lastAuthorEl = this.metaXml.lastElementChild
         }
         lastAuthorEl.innerHTML = lastAuthor
-        let initialAuthorEl = this.metaXml.querySelector("initial-creator")
+        let initialAuthorEl = this.metaXml.getElementsByTagName("meta:initial-creator")[0]
         if (!initialAuthorEl) {
-            metaEl.insertAdjacentHTML("beforeEnd", "<meta:initial-creator></meta:initial-creator>")
-            initialAuthorEl = this.metaXml.querySelector("initial-creator")
+            metaEl.appendChild(createXMLNode("<meta:initial-creator></meta:initial-creator>"))
+            initialAuthorEl = this.metaXml.lastElementChild
         }
         initialAuthorEl.innerHTML = initialAuthor
 
         // Keywords
         // Remove all existing keywords
-        const keywordEls = this.metaXml.querySelectorAll("keywords")
+        const keywordEls = Array.from(this.metaXml.getElementsByTagName("meta:keywords"))
         keywordEls.forEach(
             keywordEl => keywordEl.parentNode.removeChild(keywordEl)
         )
         // Add new keywords
         const keywords = this.metadata.keywords
         keywords.forEach(
-            keyword => metaEl.insertAdjacentHTML("beforeEnd", `<meta:keyword>${escapeText(keyword)}</meta:keyword>`)
+            keyword => metaEl.appendChild(createXMLNode(`<meta:keyword>${escapeText(keyword)}</meta:keyword>`))
         )
 
         // language
         // LibreOffice seems to ignore the value set in metadata and instead uses
         // the one set in default styles. So we set both.
         this.styles.setLanguage(this.metadata.language)
-        let languageEl = this.metaXml.querySelector("language")
+        let languageEl = this.metaXml.getElementsByTagName("dc:language")[0]
         if (!languageEl) {
-            metaEl.insertAdjacentHTML("beforeEnd", "<dc:language></dc:language>")
-            languageEl = this.metaXml.querySelector("language")
+            metaEl.appendChild(createXMLNode("<dc:language></dc:language>"))
+            languageEl = this.metaXml.lastElementChild
         }
         languageEl.innerHTML = this.metadata.language
         // time
         const date = new Date()
         const dateString = date.toISOString().split(".")[0]
-        const createdEl = this.metaXml.querySelector("creation-date")
+        const createdEl = metaEl.getElementsByTagName("meta:creation-date")[0]
         createdEl.innerHTML = dateString
-        let dateEl = this.metaXml.querySelector("date")
+        let dateEl = this.metaXml.getElementsByTagName("dc:date")[0]
         if (!dateEl) {
-            metaEl.insertAdjacentHTML("beforeEnd", "<dc:date></dc:date>")
-            dateEl = this.metaXml.querySelector("date")
+            metaEl.appendChild(createXMLNode("<dc:date></dc:date>"))
+            dateEl = this.metaXml.lastElementChild
         }
         dateEl.innerHTML = `${dateString}.000000000`
     }

@@ -2,6 +2,7 @@ import {ODTExporterCitations} from "./citations"
 import {ODTExporterImages} from "./images"
 import {noSpaceTmp} from "../../common"
 import {descendantNodes} from "../tools/doc_content"
+import {createXMLNode} from "../../common/xml"
 
 
 const DEFAULT_STYLE_FOOTNOTE = noSpaceTmp`
@@ -101,8 +102,8 @@ export class ODTExporterFootnotes {
 
     addStyle(styleName, xml) {
         if (!this.styleXml.querySelector(`style[*|name="${styleName}"]`)) {
-            const stylesEl = this.styleXml.querySelector("styles")
-            stylesEl.insertAdjacentHTML("beforeEnd", xml)
+            const stylesEl = this.styleXml.getElementsByTagName("office:styles")[0]
+            stylesEl.appendChild(createXMLNode(xml))
         }
     }
 
@@ -111,8 +112,8 @@ export class ODTExporterFootnotes {
         if (oldFnStyleConfigEl) {
             oldFnStyleConfigEl.parentNode.removeChild(oldFnStyleConfigEl)
         }
-        const stylesEl = this.styleXml.querySelector("styles")
-        stylesEl.insertAdjacentHTML("beforeEnd", DEFAULT_STYLE_FOOTNOTE_CONFIGURATION)
+        const stylesEl = this.styleXml.getElementsByTagName("office:styles")[0]
+        stylesEl.appendChild(createXMLNode(DEFAULT_STYLE_FOOTNOTE_CONFIGURATION))
     }
 
     findFootnotes() {

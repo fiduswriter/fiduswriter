@@ -118,7 +118,7 @@ export class ODTExporterRichtext {
                     }
                     if (commentData.end === node) {
                         end = `<office:annotation-end office:name="comment_${options.tag}_${comment.attrs.id}"/>` +
-                            commentData.content.answers.map(answer =>
+                            (commentData.content.answers || []).map(answer =>
                                 noSpaceTmp`<office:annotation loext:resolved="${commentData.content.resolved}">
                                     <dc:creator>${escapeText(answer.username)}</dc:creator>
                                     <dc:date>${new Date(answer.date).toISOString().slice(0, -1)}000000</dc:date>

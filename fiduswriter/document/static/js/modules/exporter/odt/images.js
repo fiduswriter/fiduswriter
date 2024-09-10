@@ -1,4 +1,4 @@
-import {get} from "../../common"
+import {get, createXMLNode} from "../../common"
 import {descendantNodes} from "../tools/doc_content"
 import {svg2png} from "../tools/svg"
 
@@ -32,7 +32,7 @@ export class ODTExporterImages {
         const fileNameParts = imgFileName.split(".")
         const fileNameEnding = fileNameParts.pop()
         const fileNameStart = fileNameParts.join(".")
-        const manifestEl = this.manifestXml.querySelector("manifest")
+        const manifestEl = this.manifestXml.getElementsByTagName("manifest:manifest")[0]
         let imgManifest = manifestEl.querySelector(`file-entry[*|full-path="Pictures/${imgFileName}"]`)
         let counter = 0
         while (imgManifest) {
@@ -41,7 +41,7 @@ export class ODTExporterImages {
             imgManifest = manifestEl.querySelector(`file-entry[*|full-path="Pictures/${imgFileName}"]`)
         }
         const string = `  <manifest:file-entry manifest:full-path="Pictures/${imgFileName}" manifest:media-type="image/${fileNameEnding}"/>`
-        manifestEl.insertAdjacentHTML("beforeEnd", string)
+        manifestEl.appendChild(createXMLNode(string))
         return imgFileName
     }
 

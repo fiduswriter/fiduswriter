@@ -1,4 +1,4 @@
-import {noSpaceTmp} from "../../common"
+import {createXMLNode, noSpaceTmp} from "../../common"
 
 const GRAPHIC_STYLES = {
     Formula: noSpaceTmp`
@@ -101,6 +101,7 @@ export class ODTExporterStyles {
     c = small caps
     p = super
     b = sub
+    n = new page
     */
     getInlineStyleId(attributes) {
         if (this.inlineStyleIds[attributes]) {
@@ -131,6 +132,11 @@ export class ODTExporterStyles {
         autoStylesEl.insertAdjacentHTML("beforeEnd", noSpaceTmp`
             <style:style style:name="T${styleCounter}" style:family="text">
                 <style:text-properties${styleProperties}/>
+                ${
+    attributes.includes("n") ?
+    '<style:paragraph-properties fo:break-before="page"/>' :
+    ''
+                }
             </style:style>
         `)
         return styleCounter
@@ -300,9 +306,23 @@ export class ODTExporterStyles {
         const autoStylesEl = this.contentXml.querySelector("automatic-styles")
         autoStylesEl.insertAdjacentHTML(
             "beforeEnd",
-            "<style:style style:name=\"P1\" style:family=\"paragraph\" style:parent-style-name=\"Standard\" style:list-style-name=\"L1\" />"
+            `<style:style style:name="P${parStyleId}" style:family="paragraph" style:parent-style-name="Standard" style:list-style-name="L1" />`
         )
         return parStyleId
+    }
+
+    addPageBreakStyle() {
+        const stylesEl = this.stylesXml.getElementsByTagName("office:styles")[0]
+        Array.from(stylesEl.getElementsByTagName("style:style")).forEach(style => {
+            if (style.getAttribute("style:name") === "PageBreak") {
+                return
+            }
+        })
+        stylesEl.appendChild(
+            createXMLNode(
+                "<style:style style:name=\"PageBreak\" style:family=\"paragraph\" style:parent-style-name=\"Standard\" style:class=\"extra\"><style:paragraph-properties fo:break-before=\"page\"/></style:style>"
+            )
+        )
     }
 
     setLanguage(langCode) {

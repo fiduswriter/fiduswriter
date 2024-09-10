@@ -1,3 +1,5 @@
+import {createXMLNode} from "../../common/xml"
+
 export class ODTExporterMath {
     constructor(xml) {
         this.xml = xml
@@ -21,8 +23,8 @@ export class ODTExporterMath {
     }
 
     checkObjectCounter() {
-        const manifestEl = this.manifestXml.querySelector("manifest")
-        const fileEntries = manifestEl.querySelectorAll("file-entry")
+        const manifestEl = this.manifestXml.getElementsByTagName("manifest:manifest")[0]
+        const fileEntries = Array.from(manifestEl.getElementsByTagName("manifest:file-entry"))
 
         fileEntries.forEach(
             fileEntry => {
@@ -51,11 +53,11 @@ export class ODTExporterMath {
                 this.latexToMathML(latex)
             }</math>`
         )
-        const manifestEl = this.manifestXml.querySelector("manifest")
+        const manifestEl = this.manifestXml.getElementsByTagName("manifest:manifest")[0]
         const stringOne = `<manifest:file-entry manifest:full-path="Object ${objectNumber}/content.xml" manifest:media-type="text/xml"/>`
-        manifestEl.insertAdjacentHTML("beforeEnd", stringOne)
+        manifestEl.appendChild(createXMLNode(stringOne))
         const stringTwo = `<manifest:file-entry manifest:full-path="Object ${objectNumber}/" manifest:version="1.2" manifest:media-type="application/vnd.oasis.opendocument.formula"/>`
-        manifestEl.insertAdjacentHTML("beforeEnd", stringTwo)
+        manifestEl.appendChild(createXMLNode(stringTwo))
         return objectNumber
     }
 

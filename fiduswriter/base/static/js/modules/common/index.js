@@ -73,3 +73,6 @@ export {
     longFilePath,
     NewFolderDialog
 } from "./file"
+export {
+    createXMLNode
+} from "./xml"

@@ -88,7 +88,7 @@ export class DOCXExporterRichtext {
                     if (commentData.start === node) {
                         let commentId = this.comments.comments[comment.attrs.id]
                         start += `<w:commentRangeStart w:id="${commentId}"/>`
-                        commentData.content.answers.forEach(
+                        commentData.content.answers?.forEach(
                             _answer => start += `<w:commentRangeStart w:id="${++commentId}"/>`
                         )
                     }
@@ -98,7 +98,7 @@ export class DOCXExporterRichtext {
                         end = `<w:commentRangeEnd w:id="${commentId}"/><w:r><w:commentReference w:id="${
                             commentId
                         }"/></w:r>${
-                            commentData.content.answers.map(
+                            (commentData.content.answers || []).map(
                                 _answer => `<w:commentRangeEnd w:id="${++commentId}"/><w:r><w:commentReference w:id="${commentId}"/></w:r>`
                             ).join("")
                         }` + end

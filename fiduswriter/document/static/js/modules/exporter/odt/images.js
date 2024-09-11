@@ -32,13 +32,13 @@ export class ODTExporterImages {
         const fileNameParts = imgFileName.split(".")
         const fileNameEnding = fileNameParts.pop()
         const fileNameStart = fileNameParts.join(".")
-        const manifestEl = this.manifestXml.getElementByTagName("manifest:manifest")
-        let imgManifest = manifestEl.getElementByTagNameAndAttribute("manifest:file-entry", "manifest:full-path", `Pictures/${imgFileName}`)
+        const manifestEl = this.manifestXml.query("manifest:manifest")
+        let imgManifest = manifestEl.query("manifest:file-entry", {"manifest:full-path": `Pictures/${imgFileName}`})
         let counter = 0
         while (imgManifest) {
             // Name exists already, we change the name until we get a file name not yet included in manifest.
             imgFileName = `${fileNameStart}_${counter++}.${fileNameEnding}`
-            imgManifest = manifestEl.getElementByTagNameAndAttribute("manifest:file-entry", "manifest:full-path", `Pictures/${imgFileName}`)
+            imgManifest = manifestEl.query("manifest:file-entry", {"manifest:full-path": `Pictures/${imgFileName}`})
         }
         const string = `  <manifest:file-entry manifest:full-path="Pictures/${imgFileName}" manifest:media-type="image/${fileNameEnding}"/>`
         manifestEl.appendXML(string)

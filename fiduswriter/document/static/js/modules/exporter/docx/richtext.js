@@ -442,7 +442,7 @@ export class DOCXExporterRichtext {
                 const fnXml = `<w:footnote w:id="${this.fnCounter}">${fnContents}</w:footnote>`
                 const xml = this.exporter.footnotes.xml
                 const lastId = this.fnCounter - 1
-                const footnotes = xml.getElementsByTagName("w:footnote")
+                const footnotes = xml.queryAll("w:footnote")
                 footnotes.forEach(
                     footnote => {
                         const id = parseInt(footnote.getAttribute("w:id"))

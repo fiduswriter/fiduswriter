@@ -50,10 +50,10 @@ export class DOCXExporterMetadata {
 
 
     addMetadata() {
-        const corePropertiesEl = this.coreXml.getElementByTagName("cp:coreProperties")
+        const corePropertiesEl = this.coreXml.query("cp:coreProperties")
 
         // Title
-        let titleEl = this.coreXml.getElementByTagName("dc:title")
+        let titleEl = this.coreXml.query("dc:title")
         if (!titleEl) {
             corePropertiesEl.appendXML("<dc:title></dc:title>")
             titleEl = corePropertiesEl.lastElementChild
@@ -77,14 +77,14 @@ export class DOCXExporterMetadata {
         })
         const lastAuthor = authors.length ? escapeText(authors[0]) : gettext("Unknown")
         const allAuthors = authors.length ? escapeText(authors.join(";")) : gettext("Unknown")
-        let allAuthorsEl = this.coreXml.getElementByTagName("dc:creator")
+        let allAuthorsEl = this.coreXml.query("dc:creator")
 
         if (!allAuthorsEl) {
             corePropertiesEl.appendXML("<dc:creator></dc:creator>")
             allAuthorsEl = corePropertiesEl.lastElementChild
         }
         allAuthorsEl.innerXML = allAuthors
-        let lastAuthorEl = this.coreXml.getElementByTagName("dc:lastModifiedBy")
+        let lastAuthorEl = this.coreXml.query("dc:lastModifiedBy")
         if (!lastAuthorEl) {
             corePropertiesEl.appendXML("<dc:lastModifiedBy></dc:lastModifiedBy>")
             lastAuthorEl = corePropertiesEl.lastElementChild
@@ -96,7 +96,7 @@ export class DOCXExporterMetadata {
             // so we use ", ".
             const keywordsString = escapeText(this.metadata.keywords.join(", "))
 
-            let keywordsEl = this.coreXml.getElementByTagName("cp:keywords")
+            let keywordsEl = this.coreXml.query("cp:keywords")
             if (!keywordsEl) {
                 corePropertiesEl.appendXML("<cp:keywords></cp:keywords>")
                 keywordsEl = corePropertiesEl.lastElementChild
@@ -107,9 +107,9 @@ export class DOCXExporterMetadata {
         // time
         const date = new Date()
         const dateString = date.toISOString().split(".")[0] + "Z"
-        const createdEl = this.coreXml.getElementByTagName("dcterms:created")
+        const createdEl = this.coreXml.query("dcterms:created")
         createdEl.innerXML = dateString
-        let modifiedEl = this.coreXml.getElementByTagName("dcterms:modified")
+        let modifiedEl = this.coreXml.query("dcterms:modified")
         if (!modifiedEl) {
             corePropertiesEl.appendXML("<dcterms:modified xsi:type=\"dcterms:W3CDTF\"></dcterms:modified>")
             modifiedEl = corePropertiesEl.lastElementChild

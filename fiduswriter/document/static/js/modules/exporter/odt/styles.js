@@ -61,8 +61,8 @@ export class ODTExporterStyles {
     }
 
     getStyleCounters() {
-        const autoStylesEl = this.contentXml.getElementByTagName("office:automatic-styles")
-        const styles = autoStylesEl.getElementsByTagName("style:style")
+        const autoStylesEl = this.contentXml.query("office:automatic-styles")
+        const styles = autoStylesEl.queryAll("style:style")
         styles.forEach(style => {
             const styleNumber = parseInt(style.getAttribute("style:name").replace(/\D/g, ""))
             const styleFamily = style.getAttribute("style:family")
@@ -84,7 +84,7 @@ export class ODTExporterStyles {
                 }
             }
         })
-        const listStyles = autoStylesEl.getElementsByTagName("text:list-style")
+        const listStyles = autoStylesEl.queryAll("text:list-style")
         listStyles.forEach(style => {
             const styleNumber = parseInt(style.getAttribute("style:name").replace(/\D/g, ""))
             if (styleNumber > this.listStyleCounter) {
@@ -128,7 +128,7 @@ export class ODTExporterStyles {
         }
         const styleCounter = ++this.inlineStyleCounter
         this.inlineStyleIds[attributes] = styleCounter
-        const autoStylesEl = this.contentXml.getElementByTagName("office:automatic-styles")
+        const autoStylesEl = this.contentXml.query("office:automatic-styles")
         autoStylesEl.appendXML(noSpaceTmp`
             <style:style style:name="T${styleCounter}" style:family="text">
                 <style:text-properties${styleProperties}/>
@@ -147,7 +147,7 @@ export class ODTExporterStyles {
         }
         const styleCounter = ++this.tableStyleCounter
         this.tableStyleIds[aligned + width] = styleCounter
-        const autoStylesEl = this.contentXml.getElementByTagName("office:automatic-styles")
+        const autoStylesEl = this.contentXml.query("office:automatic-styles")
         autoStylesEl.appendXML(noSpaceTmp`
             <style:style style:name="Table${styleCounter}" style:family="table">
                 <style:table-properties style:rel-width="${width}%" table:align="${aligned}"/>
@@ -157,10 +157,10 @@ export class ODTExporterStyles {
     }
 
     checkParStyle(styleName) {
-        const stylesParStyle = this.stylesXml.getElementByTagNameAndAttribute("style:style", "style:name", styleName)
-        const contentParStyle = this.contentXml.getElementByTagNameAndAttribute("style:style", "style:name", styleName)
+        const stylesParStyle = this.stylesXml.query("style:style", {"style:name": styleName})
+        const contentParStyle = this.contentXml.query("style:style", {"style:name": styleName})
         if ((!stylesParStyle) && (!contentParStyle)) {
-            const stylesEl = this.stylesXml.getElementByTagName("office:styles")
+            const stylesEl = this.stylesXml.query("office:styles")
             const displayName = styleName.split("_20_").join(" ")
             stylesEl.appendXML(
                 PAR_STYLES[styleName] ||
@@ -170,10 +170,10 @@ export class ODTExporterStyles {
     }
 
     checkGraphicStyle(styleName) {
-        const stylesParStyle = this.stylesXml.getElementByTagNameAndAttribute("style:style", "style:name", styleName)
-        const contentParStyle = this.contentXml.getElementByTagNameAndAttribute("style:style", "style:name", styleName)
+        const stylesParStyle = this.stylesXml.query("style:style", {"style:name": styleName})
+        const contentParStyle = this.contentXml.query("style:style", {"style:name": styleName})
         if ((!stylesParStyle) && (!contentParStyle)) {
-            const stylesEl = this.stylesXml.getElementByTagName("office:styles")
+            const stylesEl = this.stylesXml.query("office:styles")
             stylesEl.appendXML(
                 GRAPHIC_STYLES[styleName]
             )
@@ -192,7 +192,7 @@ export class ODTExporterStyles {
 
         const styleCounter = ++this.graphicStyleCounter
         this.graphicStyleIds[styleName + aligned] = styleCounter
-        const autoStylesEl = this.contentXml.getElementByTagName("office:automatic-styles")
+        const autoStylesEl = this.contentXml.query("office:automatic-styles")
         autoStylesEl.appendXML(noSpaceTmp`
             <style:style style:name="fr${styleCounter}" style:family="graphic" style:parent-style-name="${styleName}">
                 ${
@@ -207,11 +207,11 @@ export class ODTExporterStyles {
     addReferenceStyle(bibInfo) {
         // The style called "Bibliography_20_1" will override any previous style
         // of the same name.
-        const stylesParStyle = this.stylesXml.getElementByTagNameAndAttribute("style:style", "style:name", "Bibliography_20_1")
+        const stylesParStyle = this.stylesXml.query("style:style",{"style:name": "Bibliography_20_1"})
         if (stylesParStyle) {
             stylesParStyle.parentElement.removeChild(stylesParStyle)
         }
-        const contentParStyle = this.contentXml.getElementByTagNameAndAttribute("style:style", "style:name", "Bibliography_20_1")
+        const contentParStyle = this.contentXml.query("style:style", {"style:name": "Bibliography_20_1"})
         if (contentParStyle) {
             contentParStyle.parentElement.removeChild(contentParStyle)
         }
@@ -243,7 +243,7 @@ export class ODTExporterStyles {
                     ${tabStops}
                 </style:paragraph-properties>
             </style:style>`
-        const stylesEl = this.stylesXml.getElementByTagName("office:styles")
+        const stylesEl = this.stylesXml.query("office:styles")
         stylesEl.appendXML(styleDef)
     }
 
@@ -252,7 +252,7 @@ export class ODTExporterStyles {
             return this.bulletListStyleId
         }
         this.bulletListStyleId[0] = ++this.listStyleCounter
-        const autoStylesEl = this.contentXml.getElementByTagName("office:automatic-styles")
+        const autoStylesEl = this.contentXml.query("office:automatic-styles")
         autoStylesEl.appendXML(noSpaceTmp`
             <text:list-style style:name="L${this.bulletListStyleId[0]}">
             </text:list-style>
@@ -274,7 +274,7 @@ export class ODTExporterStyles {
 
     getOrderedListStyleId(start) {
         const orderedListStyleId = ++this.listStyleCounter
-        const autoStylesEl = this.contentXml.getElementByTagName("office:automatic-styles")
+        const autoStylesEl = this.contentXml.query("office:automatic-styles")
         autoStylesEl.appendXML(noSpaceTmp`
             <text:list-style style:name="L${orderedListStyleId}">
             </text:list-style>
@@ -296,7 +296,7 @@ export class ODTExporterStyles {
     // Add a paragraph style for either paragraph in bullet or numeric list
     addListParStyle(_listId) {
         const parStyleId = ++this.blockStyleCounter
-        const autoStylesEl = this.contentXml.getElementByTagName("office:automatic-styles")
+        const autoStylesEl = this.contentXml.query("office:automatic-styles")
         autoStylesEl.appendXML(
             `<style:style style:name="P${parStyleId}" style:family="paragraph" style:parent-style-name="Standard" text:list-style-name="L1" />`
         )
@@ -304,8 +304,8 @@ export class ODTExporterStyles {
     }
 
     addPageBreakStyle() {
-        const stylesEl = this.stylesXml.getElementByTagName("office:styles")
-        stylesEl.getElementsByTagName("style:style").forEach(style => {
+        const stylesEl = this.stylesXml.query("office:styles")
+        stylesEl.queryAll("style:style").forEach(style => {
             if (style.getAttribute("style:name") === "PageBreak") {
                 return
             }
@@ -324,9 +324,9 @@ export class ODTExporterStyles {
         if (!country) {
             country = "none"
         }
-        const stylesEl = this.stylesXml.getElementByTagName("office:styles")
-        stylesEl.getElementsByTagName("style:default-style").forEach(el => {
-            el.getElementsByTagName("style:text-properties").forEach(el => {
+        const stylesEl = this.stylesXml.query("office:styles")
+        stylesEl.queryAll("style:default-style").forEach(el => {
+            el.queryAll("style:text-properties").forEach(el => {
                 el.setAttribute("fo:language", language)
                 el.setAttribute("fo:country", country)
             })

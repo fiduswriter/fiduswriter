@@ -18,11 +18,11 @@ export class ODTExporterTracks {
     }
 
     checkTrackedChangesSection() {
-        const trackChangesSection = this.contentXml.getElementByTagName("text:tracked-changes")
+        const trackChangesSection = this.contentXml.query("text:tracked-changes")
         if (trackChangesSection) {
             this.trackChangesSection = trackChangesSection
         } else {
-            const textElement = this.contentXml.getElementByTagName("office:text")
+            const textElement = this.contentXml.query("office:text")
             if (!textElement) {
                 throw new Error("No text element found in content.xml")
             }

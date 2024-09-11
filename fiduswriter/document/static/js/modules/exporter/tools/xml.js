@@ -257,20 +257,17 @@ class XMLElement {
         }
     }
 
-    getElementsByTagName(tagName) {
-        return this.getElementsByTagNames([tagName])
+    query(tagName, attributes = {}) {
+        return this.queryAll(tagName, attributes, 1)[0]
     }
 
-    getElementByTagName(tagName) {
-        return this.getElementsByTagName(tagName, 1)[0]
-    }
-
-    getElementsByTagNames(tagNames, limit = false) {
+    queryAll(tagName, attributes = {}, limit = false) {
         const result = []
+        const tags = typeof tagName === "string" ? [tagName] : tagName
 
         function traverse(dom) {
             const currentTagName = Object.keys(dom.node).find(key => key !== ":@")
-            if (tagNames.includes(currentTagName)) {
+            if (tags.includes(currentTagName) && Object.keys(attributes).every(attr => dom.hasAttribute(attr) && (dom.getAttribute(attr) === attributes[attr] || attributes[attr] === null))) {
                 result.push(dom)
             }
             if (limit && result.length >= limit) {
@@ -289,13 +286,45 @@ class XMLElement {
         return result
     }
 
-    getElementByTagNameAndAttribute(tagName, attributeName, attributeValue = null) {
-        return this.getElementByTagNameAndAttributes(tagName, {[attributeName]: attributeValue})
-    }
+    // getElementsByTagName(tagName) {
+    //     return this.getElementsByTagNames([tagName])
+    // }
 
-    getElementByTagNameAndAttributes(tagName, attributes) {
-        return this.getElementsByTagName(tagName).find(element => Object.keys(attributes).every(attr => element.hasAttribute(attr) && (element.getAttribute(attr) === attributes[attr] || attributes[attr] === null)))
-    }
+    // getElementByTagName(tagName) {
+    //     return this.getElementsByTagName(tagName, 1)[0]
+    // }
+
+    // getElementsByTagNames(tagNames, limit = false) {
+    //     const result = []
+
+    //     function traverse(dom) {
+    //         const currentTagName = Object.keys(dom.node).find(key => key !== ":@")
+    //         if (tagNames.includes(currentTagName)) {
+    //             result.push(dom)
+    //         }
+    //         if (limit && result.length >= limit) {
+    //             return true
+    //         }
+    //         if (currentTagName && dom.node[currentTagName] && !isLeaf(currentTagName)) {
+    //             for (const childDOM of dom.node[currentTagName]) {
+    //                 if (traverse(childDOM)) {
+    //                     return true
+    //                 }
+    //             }
+    //         }
+    //     }
+
+    //     traverse(this)
+    //     return result
+    // }
+
+    // getElementByTagNameAndAttribute(tagName, attributeName, attributeValue = null) {
+    //     return this.getElementByTagNameAndAttributes(tagName, {[attributeName]: attributeValue})
+    // }
+
+    // getElementByTagNameAndAttributes(tagName, attributes) {
+    //     return this.getElementsByTagName(tagName).find(element => Object.keys(attributes).every(attr => element.hasAttribute(attr) && (element.getAttribute(attr) === attributes[attr] || attributes[attr] === null)))
+    // }
 
 
     // Serialize back to original structure (useful for debugging)

@@ -103,8 +103,8 @@ export class DOCXExporterCitations {
     }
 
     addReferenceStyle(bibInfo) {
-        const stylesEl = this.styleXml.getElementByTagName("w:styles")
-        if (!this.styleXml.getElementByTagNameAndAttribute("w:style", "w:styleId", "BibliographyHeading")) {
+        const stylesEl = this.styleXml.query("w:styles")
+        if (!this.styleXml.query("w:style", {"w:styleId": "BibliographyHeading"})) {
             // There is no style definition for the bibliography heading. We have to add it.
             const headingStyleDef = noSpaceTmp`
                 <w:style w:type="paragraph" w:styleId="BibliographyHeading">
@@ -125,7 +125,7 @@ export class DOCXExporterCitations {
         }
         // The style called "Bibliography1" will override any previous style
         // of the same name.
-        const stylesParStyle = this.styleXml.getElementByTagNameAndAttribute("w:style", "w:styleId", "Bibliography1")
+        const stylesParStyle = this.styleXml.query("w:style", {"w:styleId": "Bibliography1"})
         if (stylesParStyle) {
             stylesParStyle.parentElement.removeChild(stylesParStyle)
         }

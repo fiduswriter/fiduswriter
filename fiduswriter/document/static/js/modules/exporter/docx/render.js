@@ -16,7 +16,7 @@ export class DOCXExporterRender {
         return this.exporter.xml.getXml("[Content_Types].xml").then(
             ctXml => {
                 this.ctXml = ctXml
-                const documentOverride = this.ctXml.getElementByTagNameAndAttribute("Override", "ContentType", "application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml")
+                const documentOverride = this.ctXml.query("Override", {"ContentType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"})
                 this.filePath = documentOverride.getAttribute("PartName").slice(1)
                 return this.exporter.xml.getXml(this.filePath)
             }
@@ -25,7 +25,7 @@ export class DOCXExporterRender {
                 this.xml = xml
                 // Ensure we support the three latest docx feature sets:
                 // wp14 (drawing 2010), w14 (word 2010), w15 (word 2012)
-                const documentEl = this.xml.getElementByTagName("w:document")
+                const documentEl = this.xml.query("w:document")
                 if (!documentEl.getAttribute("xmlns:wp14")) {
                     documentEl.setAttribute("xmlns:wp14", "http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing")
                 }
@@ -137,7 +137,7 @@ export class DOCXExporterRender {
     // replacements.
     render() {
         // Including global page definition at end
-        const pars = this.xml.getElementsByTagNames(["w:p", "w:sectPr"])
+        const pars = this.xml.queryAll(["w:p", "w:sectPr"])
         const currentTags = []
         pars.forEach(
             par => {
@@ -155,9 +155,9 @@ export class DOCXExporterRender {
                     }
                 )
 
-                const pageSize = par.getElementByTagName("w:pgSz")
-                const pageMargins = par.getElementByTagName("w:pgMar")
-                const cols = par.getElementByTagName("w:cols")
+                const pageSize = par.query("w:pgSz")
+                const pageMargins = par.query("w:pgMar")
+                const cols = par.query("w:cols")
                 if (pageSize && pageMargins) { // Not sure if these all need to come together
                     let width = parseInt(pageSize.getAttribute("w:w")) -
                     parseInt(pageMargins.getAttribute("w:right")) -
@@ -203,7 +203,7 @@ export class DOCXExporterRender {
     inlineRender(tag) {
         const texts = tag.par.textContent.split(`{${tag.title}}`)
         const fullText = texts[0] + escapeText(tag.content) + texts[1]
-        const rs = tag.par.getElementsByTagName("w:r")
+        const rs = tag.par.queryAll("w:r")
         while (rs.length > 1) {
             rs[0].parentElement.removeChild(rs[0])
             rs.shift()
@@ -225,7 +225,7 @@ export class DOCXExporterRender {
         if (!tag.par) {
             return
         }
-        const pStyle = tag.par.getElementByTagName("w:pStyle")
+        const pStyle = tag.par.query("w:pStyle")
         const options = {
             dimensions: tag.dimensions,
             citationType: this.exporter.citations.citFm.citationType,
@@ -249,9 +249,9 @@ export class DOCXExporterRender {
         )
         // sectPr contains information about columns, etc. We need to move this
         // to the last paragraph we will be adding.
-        const sectPr = tag.par.getElementByTagName("w:sectPr")
+        const sectPr = tag.par.query("w:sectPr")
         if (sectPr) {
-            const pPr = tag.par.previousSibling.getElementByTagName("w:pPr")
+            const pPr = tag.par.previousSibling.query("w:pPr")
             pPr.appendChild(sectPr)
         }
         parentElement.removeChild(tag.par)

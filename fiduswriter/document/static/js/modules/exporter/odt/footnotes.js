@@ -100,18 +100,18 @@ export class ODTExporterFootnotes {
     }
 
     addStyle(styleName, xml) {
-        if (!this.styleXml.getElementByTagNameAndAttribute("style:style", "style:name", styleName)) {
-            const stylesEl = this.styleXml.getElementByTagName("office:styles")
+        if (!this.styleXml.query("style:style", {"style:name": styleName})) {
+            const stylesEl = this.styleXml.query("office:styles")
             stylesEl.appendXML(xml)
         }
     }
 
     setStyleConfig() {
-        const oldFnStyleConfigEl = this.styleXml.getElementByTagNameAndAttribute("text:notes-configuration", "text:note-class", "footnote")
+        const oldFnStyleConfigEl = this.styleXml.query("text:notes-configuration", {"text:note-class": "footnote"})
         if (oldFnStyleConfigEl) {
             oldFnStyleConfigEl.parentElement.removeChild(oldFnStyleConfigEl)
         }
-        const stylesEl = this.styleXml.getElementByTagName("office:styles")
+        const stylesEl = this.styleXml.query("office:styles")
         stylesEl.appendXML(DEFAULT_STYLE_FOOTNOTE_CONFIGURATION)
     }
 

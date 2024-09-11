@@ -138,9 +138,9 @@ export class DOCXExporterFootnotes {
     }
 
     addRelsToCt() {
-        const override = this.ctXml.getElementByTagNameAndAttribute("Override", "PartName", `/${this.filePath}`)
+        const override = this.ctXml.query("Override", {"PartName": `/${this.filePath}`})
         if (!override) {
-            const types = this.ctXml.getElementByTagName("Types")
+            const types = this.ctXml.query("Types")
             types.appendXML(`<Override PartName="/${this.filePath}" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footnotes+xml"/>`)
         }
     }
@@ -157,8 +157,8 @@ export class DOCXExporterFootnotes {
     }
 
     addStyle(styleName, xml) {
-        if (!this.styleXml.getElementByTagNameAndAttribute("w:style", "w:styleId", styleName)) {
-            const stylesEl = this.styleXml.getElementByTagName("w:styles")
+        if (!this.styleXml.query("w:style", {"w:styleId": styleName})) {
+            const stylesEl = this.styleXml.query("w:styles")
             stylesEl.appendXML(xml)
         }
     }
@@ -201,7 +201,7 @@ export class DOCXExporterFootnotes {
         this.exporter.rels.addFootnoteRel()
         return this.exporter.xml.getXml(this.filePath, DEFAULT_XML).then(
             xml => {
-                const footnotesEl = xml.getElementByTagName("w:footnotes")
+                const footnotesEl = xml.query("w:footnotes")
                 footnotesEl.appendXML(this.fnXml)
                 this.xml = xml
             }
@@ -211,9 +211,9 @@ export class DOCXExporterFootnotes {
     setSettings() {
         return this.exporter.xml.getXml(this.settingsFilePath).then(
             settingsXml => {
-                const footnotePr = settingsXml.getElementByTagName("w:footnotePr")
+                const footnotePr = settingsXml.query("w:footnotePr")
                 if (!footnotePr) {
-                    const settingsEl = settingsXml.getElementByTagName("w:settings")
+                    const settingsEl = settingsXml.query("w:settings")
                     settingsEl.appendXML(DEFAULT_SETTINGS_XML)
                 }
                 this.settingsXml = settingsXml

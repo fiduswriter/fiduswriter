@@ -14,7 +14,7 @@ export class ODTExporterRender {
     init() {
         return this.xml.getXml(this.filePath).then(
             xml => {
-                this.text = xml.getElementByTagName("office:text")
+                this.text = xml.query("office:text")
                 return Promise.resolve()
             }
         )
@@ -115,7 +115,7 @@ export class ODTExporterRender {
     // replacements.
     render(docContent, pmBib, settings, richtext, citations) {
         const tags = this.getTagData(docContent, settings, pmBib)
-        const textBlocks = this.text.getElementsByTagNames(["text:p", "text:h"])
+        const textBlocks = this.text.queryAll(["text:p", "text:h"])
         textBlocks.forEach(block => {
             if (block.parentElement.nodeName === "text:deletion") {
                 // Inside of tracked changes deletion, don't do anything

@@ -39,7 +39,7 @@ export class DOCXExporterMath {
 
     getOmml(latex) {
         if (!this.addedCambriaMath) {
-            const fontsEl = this.fontTableXml.getElementByTagName("w:fonts")
+            const fontsEl = this.fontTableXml.query("w:fonts")
             fontsEl.appendXML(CAMBRIA_MATH_FONT_DECLARATION)
             this.addedCambriaMath = true
         }

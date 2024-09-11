@@ -68,11 +68,11 @@ export class DOCXExporterTables {
             // already added
             return
         }
-        const tableNormalEl = this.styleXml.getElementByTagNameAndAttributes("w:style", {"w:type": "table", "w:default": "1"})
+        const tableNormalEl = this.styleXml.query("w:style", {"w:type": "table", "w:default": "1"})
         if (tableNormalEl) {
             this.tableNormalStyle = tableNormalEl.getAttribute("w:styleId")
         } else {
-            const stylesEl = this.styleXml.getElementByTagName("w:styles")
+            const stylesEl = this.styleXml.query("w:styles")
             stylesEl.appendXML(DEFAULT_TABLENORMAL_XML)
             this.tableNormalStyle = "TableNormal"
         }
@@ -84,11 +84,11 @@ export class DOCXExporterTables {
             return
         }
         this.addTableNormalStyle()
-        const tableGridEl = this.styleXml.getElementByTagNameAndAttributes("w:style", {"w:type": "table", "w:customStyle": "1"})
+        const tableGridEl = this.styleXml.query("w:style", {"w:type": "table", "w:customStyle": "1"})
         if (tableGridEl) {
             this.tableGridStyle = tableGridEl.getAttribute("w:styleId")
         } else {
-            const stylesEl = this.styleXml.getElementByTagName("w:styles")
+            const stylesEl = this.styleXml.query("w:styles")
             stylesEl.appendXML(DEFAULT_TABLEGRID_XML(this.tableNormalStyle))
             this.tableGridStyle = "TableGrid"
         }
@@ -96,9 +96,9 @@ export class DOCXExporterTables {
 
     getSideMargins() {
         if (!this.sideMargins) {
-            const marginsEl = this.styleXml.getElementByTagNameAndAttribute("w:style", "w:styleId", this.tableGridStyle)
-            const leftEl = marginsEl.getElementByTagName("w:left")
-            const rightEl = marginsEl.getElementByTagName("w:right")
+            const marginsEl = this.styleXml.query("w:style", {"w:styleId": this.tableGridStyle})
+            const leftEl = marginsEl.query("w:left")
+            const rightEl = marginsEl.query("w:right")
             const left = parseInt(leftEl.getAttribute("w:w"))
             const right = parseInt(rightEl.getAttribute("w:w"))
             this.sideMargins = (left + right) * 635

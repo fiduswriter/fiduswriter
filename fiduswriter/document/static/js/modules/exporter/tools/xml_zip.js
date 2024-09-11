@@ -88,7 +88,6 @@ export class XmlZip {
     // Put the xml identified by filePath into zip.
     xmlToZip(filePath) {
         const string = this.docs[filePath].toString()
-        //const string = this.docs[filePath].serialize()
         this.zip.file(filePath, string)
     }
 

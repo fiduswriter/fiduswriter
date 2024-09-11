@@ -200,7 +200,7 @@ export class DOCXExporterLists {
                 <w:abstractNumId w:val="${abstractNumId}" />
             </w:num>
         `)
-        const newAbstractNum = this.numberingXml.query("w:abstractNum", {"w:abstractNumId": abstractNumId})
+        const newAbstractNum = this.numberingXml.query("w:abstractNum", {"w:abstractNumId": String(abstractNumId)})
         // Definition seem to always define 9 levels (0-8).
         for (let level = 0; level < 9; level++) {
             newAbstractNum.appendXML(noSpaceTmp`
@@ -241,7 +241,7 @@ export class DOCXExporterLists {
                 <w:tmpl w:val="BFFEF214" />
             </w:abstractNum>
         `)
-        const newAbstractNum = this.numberingXml.query("w:abstractNum", {"w:abstractNumId": abstractNumId})
+        const newAbstractNum = this.numberingXml.query("w:abstractNum", {"w:abstractNumId": String(abstractNumId)})
         // Definition seem to always define 9 levels (0-8).
         for (let level = 0; level < 9; level++) {
             newAbstractNum.appendXML(noSpaceTmp`

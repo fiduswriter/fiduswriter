@@ -39,8 +39,8 @@ export class DOCXExporterMath {
 
     getOmml(latex) {
         if (!this.addedCambriaMath) {
-            const fontsEl = this.fontTableXml.querySelector("fonts")
-            fontsEl.insertAdjacentHTML("beforeEnd", CAMBRIA_MATH_FONT_DECLARATION)
+            const fontsEl = this.fontTableXml.getElementByTagName("w:fonts")
+            fontsEl.appendXML(CAMBRIA_MATH_FONT_DECLARATION)
             this.addedCambriaMath = true
         }
         const mathmlString = `<math xmlns="http://www.w3.org/1998/Math/MathML"><semantics>${this.latexToMathML(latex)}</semantics></math>`

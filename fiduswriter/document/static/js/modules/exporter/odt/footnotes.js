@@ -109,7 +109,7 @@ export class ODTExporterFootnotes {
     setStyleConfig() {
         const oldFnStyleConfigEl = this.styleXml.getElementByTagNameAndAttribute("text:notes-configuration", "text:note-class", "footnote")
         if (oldFnStyleConfigEl) {
-            oldFnStyleConfigEl.parentNode.removeChild(oldFnStyleConfigEl)
+            oldFnStyleConfigEl.parentElement.removeChild(oldFnStyleConfigEl)
         }
         const stylesEl = this.styleXml.getElementByTagName("office:styles")
         stylesEl.appendXML(DEFAULT_STYLE_FOOTNOTE_CONFIGURATION)

@@ -88,10 +88,10 @@ export class DOCXExporterLists {
     }
 
     addRelsToCt() {
-        const override = this.ctXml.querySelector(`Override[PartName="/${this.numberingFilePath}"]`)
+        const override = this.ctXml.getElementByTagNameAndAttribute("Override", "PartName", `/${this.numberingFilePath}`)
         if (!override) {
-            const types = this.ctXml.querySelector("Types")
-            types.insertAdjacentHTML("beforeEnd", `<Override PartName="/${this.numberingFilePath}" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml"/>`)
+            const types = this.ctXml.getElementByTagName("Types")
+            types.appendXML(`<Override PartName="/${this.numberingFilePath}" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml"/>`)
         }
     }
 
@@ -122,9 +122,9 @@ export class DOCXExporterLists {
         return this.exporter.xml.getXml(this.styleFilePath).then(
             styleXml => {
                 this.styleXml = styleXml
-                if (!this.styleXml.querySelector("style[*|styleId=\"ListParagraph\"]")) {
-                    const stylesEl = this.styleXml.querySelector("styles")
-                    stylesEl.insertAdjacentHTML("beforeEnd", DEFAULT_LISTPARAGRAPH_XML)
+                if (!this.styleXml.getElementByTagNameAndAttribute("w:style", "w:styleId", "ListParagraph")) {
+                    const stylesEl = this.styleXml.getElementByTagName("w:styles")
+                    stylesEl.appendXML(DEFAULT_LISTPARAGRAPH_XML)
                 }
                 return Promise.resolve()
             }
@@ -132,7 +132,7 @@ export class DOCXExporterLists {
     }
 
     addUsedListTypes() {
-        const allAbstractNum = this.numberingXml.querySelectorAll("abstractNum")
+        const allAbstractNum = this.numberingXml.getElementsByTagName("w:abstractNum")
         allAbstractNum.forEach(
             abstractNum => {
                 // We check the format for the lowest level list and use the first
@@ -140,10 +140,10 @@ export class DOCXExporterLists {
                 // This means that if a list is defined using anything else than
                 // bullets, it will be accepted as the format of
                 // the numeric list.
-                const levelZeroFormat = abstractNum.querySelector("lvl[*|ilvl=\"0\"] numFmt").getAttribute("w:val")
+                const levelZeroFormat = abstractNum.getElementByTagNameAndAttribute("w:lvl", "w:ilvl", "0").getElementByTagName("w:numFmt").getAttribute("w:val")
                 const abstractNumId = parseInt(abstractNum.getAttribute("w:abstractNumId"))
                 if (levelZeroFormat === "bullet" && !(this.bulletAbstractType)) {
-                    const numEl = this.numberingXml.querySelector(`abstractNumId[*|val="${abstractNumId}"]`).parentElement
+                    const numEl = this.numberingXml.getElementByTagNameAndAttribute("w:abstractNumId", "w:val", abstractNumId).parentElement
                     const numId = parseInt(numEl.getAttribute("w:numId"))
                     this.bulletType = numId
                 } else if (levelZeroFormat !== "bullet" && !(this.numberFormat)) {
@@ -155,7 +155,7 @@ export class DOCXExporterLists {
 
             }
         )
-        const allNum = this.numberingXml.querySelectorAll("num")
+        const allNum = this.numberingXml.getElementsByTagName("w:num")
         allNum.forEach(numEl => {
             const numId = parseInt(numEl.getAttribute("w:val"))
             if (this.numIdCounter < numId) {
@@ -189,8 +189,8 @@ export class DOCXExporterLists {
     }
 
     addBulletNumType(numId, abstractNumId) {
-        const numberingEl = this.numberingXml.querySelector("numbering")
-        numberingEl.insertAdjacentHTML("beforeEnd", noSpaceTmp`
+        const numberingEl = this.numberingXml.getElementByTagName("w:numbering")
+        numberingEl.appendXML(noSpaceTmp`
             <w:abstractNum w:abstractNumId="${abstractNumId}" w15:restartNumberingAfterBreak="0">
                 <w:nsid w:val="3620195A" />
                 <w:multiLevelType w:val="hybridMultilevel" />
@@ -200,10 +200,10 @@ export class DOCXExporterLists {
                 <w:abstractNumId w:val="${abstractNumId}" />
             </w:num>
         `)
-        const newAbstractNum = this.numberingXml.querySelector(`abstractNum[*|abstractNumId="${abstractNumId}"]`)
+        const newAbstractNum = this.numberingXml.getElementByTagNameAndAttribute("w:abstractNum", "w:abstractNumId", abstractNumId)
         // Definition seem to always define 9 levels (0-8).
         for (let level = 0; level < 9; level++) {
-            newAbstractNum.insertAdjacentHTML("beforeEnd", noSpaceTmp`
+            newAbstractNum.appendXML(noSpaceTmp`
                 <w:lvl w:ilvl="${level}" w:tplc="04090001" w:tentative="1">
                     <w:start w:val="1" />
                     <w:numFmt w:val="bullet" />
@@ -224,8 +224,8 @@ export class DOCXExporterLists {
     addNumberedNumType(numId, start) {
         this.abstractNumIdCounter++
         this.addNumberedAbstractNumType(this.abstractNumIdCounter, start)
-        const numberingEl = this.numberingXml.querySelector("numbering")
-        numberingEl.insertAdjacentHTML("beforeEnd", noSpaceTmp`
+        const numberingEl = this.numberingXml.getElementByTagName("w:numbering")
+        numberingEl.appendXML(noSpaceTmp`
             <w:num w:numId="${numId}">
                 <w:abstractNumId w:val="${this.abstractNumIdCounter}" />
             </w:num>
@@ -233,18 +233,18 @@ export class DOCXExporterLists {
     }
 
     addNumberedAbstractNumType(abstractNumId, start) {
-        const numberingEl = this.numberingXml.querySelector("numbering")
-        numberingEl.insertAdjacentHTML("beforeEnd", noSpaceTmp`
+        const numberingEl = this.numberingXml.getElementByTagName("w:numbering")
+        numberingEl.appendXML(noSpaceTmp`
             <w:abstractNum w:abstractNumId="${abstractNumId}" w15:restartNumberingAfterBreak="0">
                 <w:nsid w:val="7F6635F3" />
                 <w:multiLevelType w:val="hybridMultilevel" />
                 <w:tmpl w:val="BFFEF214" />
             </w:abstractNum>
         `)
-        const newAbstractNum = this.numberingXml.querySelector(`abstractNum[*|abstractNumId="${abstractNumId}"]`)
+        const newAbstractNum = this.numberingXml.getElementByTagNameAndAttribute("w:abstractNum", "w:abstractNumId", abstractNumId)
         // Definition seem to always define 9 levels (0-8).
         for (let level = 0; level < 9; level++) {
-            newAbstractNum.insertAdjacentHTML("beforeEnd", noSpaceTmp`
+            newAbstractNum.appendXML(noSpaceTmp`
                 <w:lvl w:ilvl="${level}" w:tplc="0409000F">
                     <w:start w:val="${start}" />
                     <w:numFmt w:val="${this.numberFormat}" />

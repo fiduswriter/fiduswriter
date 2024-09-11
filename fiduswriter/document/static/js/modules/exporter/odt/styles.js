@@ -209,11 +209,11 @@ export class ODTExporterStyles {
         // of the same name.
         const stylesParStyle = this.stylesXml.getElementByTagNameAndAttribute("style:style", "style:name", "Bibliography_20_1")
         if (stylesParStyle) {
-            stylesParStyle.parentNode.removeChild(stylesParStyle)
+            stylesParStyle.parentElement.removeChild(stylesParStyle)
         }
         const contentParStyle = this.contentXml.getElementByTagNameAndAttribute("style:style", "style:name", "Bibliography_20_1")
         if (contentParStyle) {
-            contentParStyle.parentNode.removeChild(contentParStyle)
+            contentParStyle.parentElement.removeChild(contentParStyle)
         }
 
         this.checkParStyle("Index")

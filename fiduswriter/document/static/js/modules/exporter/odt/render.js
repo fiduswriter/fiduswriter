@@ -1,6 +1,7 @@
 import {textContent} from "../tools/doc_content"
 import {escapeText} from "../../common"
 import {BIBLIOGRAPHY_HEADERS} from "../../schema/i18n"
+import {xmlDOM} from "../tools/xml"
 
 export class ODTExporterRender {
     constructor(xml) {
@@ -114,11 +115,9 @@ export class ODTExporterRender {
     // replacements.
     render(docContent, pmBib, settings, richtext, citations) {
         const tags = this.getTagData(docContent, settings, pmBib)
-        const textBlocks = this.text.getElementsByTagName("text:p").concat(
-            this.text.getElementsByTagName("text:h")
-        )
+        const textBlocks = this.text.getElementsByTagNames(["text:p", "text:h"])
         textBlocks.forEach(block => {
-            if (block.parentNode.nodeName === "text:deletion") {
+            if (block.parentElement.nodeName === "text:deletion") {
                 // Inside of tracked changes deletion, don't do anything
                 return
             }
@@ -149,7 +148,7 @@ export class ODTExporterRender {
     // Render tags that exchange text blocks
     blockRender(tag, richtext, citations) {
         const section = tag.block.hasAttribute("text:style-name") ? tag.block.getAttribute("text:style-name") : "Text_20_body"
-        const outXml = tag.content ? tag.content.map(
+        const outXML = tag.content ? tag.content.map(
             (content, contentIndex) => richtext.run(
                 content,
                 {
@@ -161,19 +160,20 @@ export class ODTExporterRender {
                 contentIndex
             )
         ).join("") : ""
-        if (!outXml.length) {
+        if (!outXML.length) {
             // If there is no content, we need to put in a space to prevent the
             // tag from being removed by LibreOffice.
             tag.block.innerXML = "<text:s/>"
             return
         }
-        const parentNode = tag.block.parentNode
-        const node = parentNode.cloneNode(false)
-        node.innerXML = outXml
-        while (node.children.length) {
-            parentNode.insertBefore(node.children[0], tag.block)
-        }
-        parentNode.removeChild(tag.block)
+        const parentElement = tag.block.parentElement
+        const dom = xmlDOM(outXML)
+        const domPars = dom.node["#document"]?.slice() || [dom]
+        domPars.forEach(
+            node => parentElement.insertBefore(node, tag.block)
+        )
+
+        parentElement.removeChild(tag.block)
 
     }
 

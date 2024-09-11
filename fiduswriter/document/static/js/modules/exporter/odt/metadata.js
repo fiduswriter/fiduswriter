@@ -70,7 +70,7 @@ export class ODTExporterMetadata {
         // Remove all existing keywords
         const keywordEls = this.metaXml.getElementsByTagName("meta:keywords")
         keywordEls.forEach(
-            keywordEl => keywordEl.parentNode.removeChild(keywordEl)
+            keywordEl => keywordEl.parentElement.removeChild(keywordEl)
         )
         // Add new keywords
         const keywords = this.metadata.keywords

@@ -138,10 +138,10 @@ export class DOCXExporterFootnotes {
     }
 
     addRelsToCt() {
-        const override = this.ctXml.querySelector(`Override[PartName="/${this.filePath}"]`)
+        const override = this.ctXml.getElementByTagNameAndAttribute("Override", "PartName", `/${this.filePath}`)
         if (!override) {
-            const types = this.ctXml.querySelector("Types")
-            types.insertAdjacentHTML("beforeEnd", `<Override PartName="/${this.filePath}" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footnotes+xml"/>`)
+            const types = this.ctXml.getElementByTagName("Types")
+            types.appendXML(`<Override PartName="/${this.filePath}" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footnotes+xml"/>`)
         }
     }
 
@@ -157,9 +157,9 @@ export class DOCXExporterFootnotes {
     }
 
     addStyle(styleName, xml) {
-        if (!this.styleXml.querySelector(`style[*|styleId="${styleName}"]`)) {
-            const stylesEl = this.styleXml.querySelector("styles")
-            stylesEl.insertAdjacentHTML("beforeEnd", xml)
+        if (!this.styleXml.getElementByTagNameAndAttribute("w:style", "w:styleId", styleName)) {
+            const stylesEl = this.styleXml.getElementByTagName("w:styles")
+            stylesEl.appendXML(xml)
         }
     }
 
@@ -201,8 +201,8 @@ export class DOCXExporterFootnotes {
         this.exporter.rels.addFootnoteRel()
         return this.exporter.xml.getXml(this.filePath, DEFAULT_XML).then(
             xml => {
-                const footnotesEl = xml.querySelector("footnotes")
-                footnotesEl.insertAdjacentHTML("beforeEnd", this.fnXml)
+                const footnotesEl = xml.getElementByTagName("w:footnotes")
+                footnotesEl.appendXML(this.fnXml)
                 this.xml = xml
             }
         )
@@ -211,10 +211,10 @@ export class DOCXExporterFootnotes {
     setSettings() {
         return this.exporter.xml.getXml(this.settingsFilePath).then(
             settingsXml => {
-                const footnotePr = settingsXml.querySelector("footnotePr")
+                const footnotePr = settingsXml.getElementByTagName("w:footnotePr")
                 if (!footnotePr) {
-                    const settingsEl = settingsXml.querySelector("settings")
-                    settingsEl.insertAdjacentHTML("beforeEnd", DEFAULT_SETTINGS_XML)
+                    const settingsEl = settingsXml.getElementByTagName("w:settings")
+                    settingsEl.appendXML(DEFAULT_SETTINGS_XML)
                 }
                 this.settingsXml = settingsXml
                 return Promise.resolve()

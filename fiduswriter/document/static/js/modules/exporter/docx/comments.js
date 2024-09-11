@@ -58,7 +58,7 @@ export class DOCXExporterComments {
         }
         return Promise.all(addCommentXMLs).then(
             () => {
-                Array.from(this.commentsXml.querySelectorAll("comment")).forEach(
+                this.commentsXml.getElementsByTagName("w:comment").forEach(
                     el => {
                         const id = parseInt(el.getAttribute("w:id"))
                         if (id > this.commentIdCounter) {
@@ -75,7 +75,7 @@ export class DOCXExporterComments {
         const commentId = ++this.commentIdCounter
         this.comments[id] = commentId
         const commentDBEntry = this.commentsDB[id]
-        const comments = this.commentsXml.querySelector("comments")
+        const comments = this.commentsXml.getElementByTagName("w:comments")
         let string = `<w:comment w:id="${commentId}" w:author="${escapeText(commentDBEntry.username)}" w:date="${new Date(commentDBEntry.date).toISOString().split(".")[0]}Z" w:initials="${escapeText(commentDBEntry.username.split(" ").map((n) => n[0]).join("").toUpperCase())}">`
         let parentParagraphId = ""
         string += commentDBEntry.comment.map((node, index) => {
@@ -86,8 +86,8 @@ export class DOCXExporterComments {
                 parentParagraphId = (++this.exporter.richtext.paragraphIdCounter).toString(16).padStart(8, "0")
                 options.paragraphId = parentParagraphId
                 const extendedString = `<w15:commentEx w15:paraId="${parentParagraphId}" w15:done="${commentDBEntry.resolved ? "1" : "0"}"/>`
-                const extendedComments = this.commentsExtendedXml.querySelector("commentsEx")
-                extendedComments.insertAdjacentHTML("beforeEnd", extendedString)
+                const extendedComments = this.commentsExtendedXml.getElementByTagName("w15:commentsEx")
+                extendedComments.appendXML(extendedString)
             }
             if (!index) {
                 options.commentReference = true
@@ -106,8 +106,8 @@ export class DOCXExporterComments {
                     const paragraphId = (++this.exporter.richtext.paragraphIdCounter).toString(16).padStart(8, "0")
                     options.paragraphId = paragraphId
                     const extendedString = `<w15:commentEx w15:paraId="${paragraphId}" w15:done="${commentDBEntry.resolved ? "1" : "0"}" w15:paraIdParent="${parentParagraphId}"/>`
-                    const extendedComments = this.commentsExtendedXml.querySelector("commentsEx")
-                    extendedComments.insertAdjacentHTML("beforeEnd", extendedString)
+                    const extendedComments = this.commentsExtendedXml.getElementByTagName("w15:commentsEx")
+                    extendedComments.appendXML(extendedString)
                 }
                 if (!index) {
                     options.commentReference = true
@@ -116,7 +116,7 @@ export class DOCXExporterComments {
             }).join("")
             string += "</w:comment>"
         })
-        comments.insertAdjacentHTML("beforeEnd", string)
+        comments.appendXML(string)
     }
 
     exportComments() {

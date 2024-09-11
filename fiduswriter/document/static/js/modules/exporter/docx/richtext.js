@@ -7,6 +7,10 @@ import {
 } from "../../schema/i18n"
 
 import {
+    xmlDOM
+} from "../tools/xml"
+
+import {
     translateBlockType
 } from "./tools"
 
@@ -438,7 +442,7 @@ export class DOCXExporterRichtext {
                 const fnXml = `<w:footnote w:id="${this.fnCounter}">${fnContents}</w:footnote>`
                 const xml = this.exporter.footnotes.xml
                 const lastId = this.fnCounter - 1
-                const footnotes = xml.querySelectorAll("footnote")
+                const footnotes = xml.getElementsByTagName("w:footnote")
                 footnotes.forEach(
                     footnote => {
                         const id = parseInt(footnote.getAttribute("w:id"))
@@ -446,7 +450,7 @@ export class DOCXExporterRichtext {
                             footnote.setAttribute("w:id", id + 1)
                         }
                         if (id === lastId) {
-                            footnote.insertAdjacentHTML("afterend", fnXml)
+                            footnote.parentElement.insertBefore(xmlDOM(fnXml), footnote.nextSibling)
                         }
                     }
                 )

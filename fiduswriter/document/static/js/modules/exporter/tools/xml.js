@@ -15,9 +15,9 @@ const fastXMLParserOptions = {
 const isLeaf = (tagName) => ["#text", "__cdata", "#comment"].includes(tagName)
 
 class XMLElement {
-    constructor(node, parentNode = null) {
+    constructor(node, parentElement = null) {
         this.node = node
-        this.parentNode = parentNode
+        this.parentElement = parentElement
 
         // Recursively wrap child elements if they exist
         const tagName = this.tagName
@@ -104,8 +104,30 @@ class XMLElement {
         return elements[elements.length - 1]
     }
 
-    setParent(node) {
-        this.parentNode = node
+    get nextSibling() {
+        if (this.parentElement) {
+            const siblings = this.parentElement.children
+            const index = siblings.indexOf(this)
+            if (index < siblings.length - 1) {
+                return siblings[index + 1]
+            }
+        }
+        return null
+    }
+
+    get previousSibling() {
+        if (this.parentElement) {
+            const siblings = this.parentElement.children
+            const index = siblings.indexOf(this)
+            if (index > 0) {
+                return siblings[index - 1]
+            }
+        }
+        return null
+    }
+
+    setParent(element) {
+        this.parentElement = element
         return this
     }
 
@@ -124,15 +146,15 @@ class XMLElement {
         this.attributes[name] = value
     }
 
-    cloneNode(deep = false, parentNode = null) {
+    cloneNode(deep = false, parentElement = null) {
         if (isLeaf(this.tagName)) {
-            return new XMLElement({...this.node}, parentNode)
+            return new XMLElement({...this.node}, parentElement)
         }
         const clonedNode = {
             ":@": {...this.node[":@"]}
         }
         clonedNode[this.tagName] = []
-        const clone = new XMLElement(clonedNode, parentNode)
+        const clone = new XMLElement(clonedNode, parentElement)
         if (deep) {
             clonedNode[this.tagName] = this.children.map(child => child.cloneNode(deep, clone))
         }
@@ -149,7 +171,7 @@ class XMLElement {
         let newChildElement
         // Wrap newChild in XMLElement if it's not already
         if (newChild instanceof XMLElement) {
-            newChild.parentNode?.removeChild(newChild)
+            newChild.parentElement?.removeChild(newChild)
             newChildElement = newChild.setParent(this)
         } else {
             newChildElement = new XMLElement(newChild, this)
@@ -168,7 +190,7 @@ class XMLElement {
         let newChildElement
         // Wrap newChild in XMLElement if it's not already
         if (newChild instanceof XMLElement) {
-            newChild.parentNode?.removeChild(newChild)
+            newChild.parentElement?.removeChild(newChild)
             newChildElement = newChild.setParent(this)
         } else {
             newChildElement = new XMLElement(newChild, this)
@@ -222,7 +244,7 @@ class XMLElement {
                 let newChildElement
                 // Wrap newChild in XMLElement if it's not already
                 if (newChild instanceof XMLElement) {
-                    newChild.parentNode?.removeChild(newChild)
+                    newChild.parentElement?.removeChild(newChild)
                     newChildElement = newChild.setParent(this)
                 } else {
                     newChildElement = new XMLElement(newChild, this)
@@ -236,19 +258,30 @@ class XMLElement {
     }
 
     getElementsByTagName(tagName) {
+        return this.getElementsByTagNames([tagName])
+    }
+
+    getElementByTagName(tagName) {
+        return this.getElementsByTagName(tagName, 1)[0]
+    }
+
+    getElementsByTagNames(tagNames, limit = false) {
         const result = []
 
         function traverse(dom) {
-        // Get current tag name dynamically
             const currentTagName = Object.keys(dom.node).find(key => key !== ":@")
-            if (currentTagName === tagName) {
+            if (tagNames.includes(currentTagName)) {
                 result.push(dom)
             }
-
+            if (limit && result.length >= limit) {
+                return true
+            }
             if (currentTagName && dom.node[currentTagName] && !isLeaf(currentTagName)) {
-                dom.node[currentTagName].forEach((childDOM) => {
-                    traverse(childDOM)
-                })
+                for (const childDOM of dom.node[currentTagName]) {
+                    if (traverse(childDOM)) {
+                        return true
+                    }
+                }
             }
         }
 
@@ -256,12 +289,12 @@ class XMLElement {
         return result
     }
 
-    getElementByTagName(tagName) {
-        return this.getElementsByTagName(tagName)[0]
+    getElementByTagNameAndAttribute(tagName, attributeName, attributeValue = null) {
+        return this.getElementByTagNameAndAttributes(tagName, {[attributeName]: attributeValue})
     }
 
-    getElementByTagNameAndAttribute(tagName, attributeName, attributeValue = null) {
-        return this.getElementsByTagName(tagName).find(element => element.hasAttribute(attributeName) && (attributeValue === null || element.getAttribute(attributeName) === attributeValue))
+    getElementByTagNameAndAttributes(tagName, attributes) {
+        return this.getElementsByTagName(tagName).find(element => Object.keys(attributes).every(attr => element.hasAttribute(attr) && (element.getAttribute(attr) === attributes[attr] || attributes[attr] === null)))
     }
 
 

@@ -207,7 +207,7 @@ export class ODTExporterStyles {
     addReferenceStyle(bibInfo) {
         // The style called "Bibliography_20_1" will override any previous style
         // of the same name.
-        const stylesParStyle = this.stylesXml.query("style:style",{"style:name": "Bibliography_20_1"})
+        const stylesParStyle = this.stylesXml.query("style:style", {"style:name": "Bibliography_20_1"})
         if (stylesParStyle) {
             stylesParStyle.parentElement.removeChild(stylesParStyle)
         }

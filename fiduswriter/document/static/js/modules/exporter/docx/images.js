@@ -32,7 +32,7 @@ export class DOCXExporterImages {
     // add a global contenttype declaration for an image type (if needed)
     addContentType(fileEnding) {
         const types = this.ctXml.query("Types")
-        const contentDec = types.query("Default",{"Extension": fileEnding})
+        const contentDec = types.query("Default", {"Extension": fileEnding})
         if (!contentDec) {
             const string = `<Default ContentType="image/${fileEnding}" Extension="${fileEnding}"/>`
             types.appendXML(string)

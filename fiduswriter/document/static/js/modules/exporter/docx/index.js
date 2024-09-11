@@ -23,7 +23,6 @@ Exporter to Office Open XML docx (Microsoft Word)
 
 /*
 TODO:
-* - Export tracked changes
 * - Remove comments
 * - Export document language
 * - Templating of tag/contributor output

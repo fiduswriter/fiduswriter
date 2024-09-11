@@ -140,7 +140,7 @@ export class DOCXExporterLists {
                 // This means that if a list is defined using anything else than
                 // bullets, it will be accepted as the format of
                 // the numeric list.
-                const levelZeroFormat = abstractNum.query("w:lvl",{"w:ilvl": "0"}).query("w:numFmt").getAttribute("w:val")
+                const levelZeroFormat = abstractNum.query("w:lvl", {"w:ilvl": "0"}).query("w:numFmt").getAttribute("w:val")
                 const abstractNumId = parseInt(abstractNum.getAttribute("w:abstractNumId"))
                 if (levelZeroFormat === "bullet" && !(this.bulletAbstractType)) {
                     const numEl = this.numberingXml.query("w:abstractNumId", {"w:val": abstractNumId}).parentElement
@@ -241,7 +241,7 @@ export class DOCXExporterLists {
                 <w:tmpl w:val="BFFEF214" />
             </w:abstractNum>
         `)
-        const newAbstractNum = this.numberingXml.query("w:abstractNum",{"w:abstractNumId": abstractNumId})
+        const newAbstractNum = this.numberingXml.query("w:abstractNum", {"w:abstractNumId": abstractNumId})
         // Definition seem to always define 9 levels (0-8).
         for (let level = 0; level < 9; level++) {
             newAbstractNum.appendXML(noSpaceTmp`

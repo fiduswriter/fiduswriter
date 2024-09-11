@@ -79,16 +79,6 @@ export class ModDocumentTemplate {
         settingsMenu.content.unshift(metadataMenu)
     }
 
-    showSafariErrorMessage() {
-        const dialog = new Dialog({
-            title: gettext("Safari bug warning"),
-            height: 100,
-            body: gettext("Unfortunately Safari has a bug which makes it impossible to export to this format. Please use Chrome or Firefox (on a desktop computer)."),
-            buttons: [{type: "close"}]
-        })
-        dialog.open()
-    }
-
     addCopyAsMenuEntry() {
         const fileMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id === "file")
         // Cancel if run already
@@ -169,10 +159,6 @@ export class ModDocumentTemplate {
                     order: ++order,
                     tooltip: gettext("Export the document to a DOCX file with the given template."),
                     action: editor => {
-                        if (navigator.vendor ===  "Apple Computer, Inc.") {
-                            this.showSafariErrorMessage()
-                            return
-                        }
                         import("../../exporter/docx").then(({DOCXExporter}) => {
                             const exporter = new DOCXExporter(
                                 editor.getDoc(),
@@ -194,10 +180,6 @@ export class ModDocumentTemplate {
                     order: ++order,
                     tooltip: gettext("Export the document to an ODT file with the given template."),
                     action: editor => {
-                        if (navigator.vendor ===  "Apple Computer, Inc.") {
-                            this.showSafariErrorMessage()
-                            return
-                        }
                         import("../../exporter/odt").then(({ODTExporter}) => {
                             const exporter = new ODTExporter(
                                 editor.getDoc(),

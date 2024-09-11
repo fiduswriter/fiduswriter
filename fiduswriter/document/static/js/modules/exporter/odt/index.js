@@ -86,7 +86,6 @@ export class ODTExporter {
             images)
 
         const render = new ODTExporterRender(xml)
-
         return xml.init().then(
             () => styles.init()
         ).then(

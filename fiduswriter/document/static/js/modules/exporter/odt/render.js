@@ -1,5 +1,5 @@
 import {textContent} from "../tools/doc_content"
-import {escapeText, createXMLNode} from "../../common"
+import {escapeText} from "../../common"
 import {BIBLIOGRAPHY_HEADERS} from "../../schema/i18n"
 
 export class ODTExporterRender {
@@ -13,7 +13,7 @@ export class ODTExporterRender {
     init() {
         return this.xml.getXml(this.filePath).then(
             xml => {
-                this.text = xml.getElementsByTagName("office:text")[0]
+                this.text = xml.getElementByTagName("office:text")
                 return Promise.resolve()
             }
         )
@@ -114,10 +114,8 @@ export class ODTExporterRender {
     // replacements.
     render(docContent, pmBib, settings, richtext, citations) {
         const tags = this.getTagData(docContent, settings, pmBib)
-        const textBlocks = Array.from(
-            this.text.getElementsByTagName("text:p")
-        ).concat(
-            Array.from(this.text.getElementsByTagName("text:h"))
+        const textBlocks = this.text.getElementsByTagName("text:p").concat(
+            this.text.getElementsByTagName("text:h")
         )
         textBlocks.forEach(block => {
             if (block.parentNode.nodeName === "text:deletion") {
@@ -137,21 +135,19 @@ export class ODTExporterRender {
                 }
             })
         })
-        console.log({tags})
     }
 
     // Render Tags that only exchange inline content
     inlineRender(tag) {
         const texts = tag.block.textContent.split(`{${tag.title}}`)
         const fullText = texts[0] + (tag.content ? tag.content : "") + texts[1]
-        tag.block.innerHTML = escapeText(fullText).replace(
+        tag.block.innerXML = escapeText(fullText).replace(
             /^\s+|\s+$/g,
             match => "<text:s/>".repeat(match.length))
     }
 
     // Render tags that exchange text blocks
     blockRender(tag, richtext, citations) {
-        console.log({tag, richtext, citations})
         const section = tag.block.hasAttribute("text:style-name") ? tag.block.getAttribute("text:style-name") : "Text_20_body"
         const outXml = tag.content ? tag.content.map(
             (content, contentIndex) => richtext.run(
@@ -165,22 +161,19 @@ export class ODTExporterRender {
                 contentIndex
             )
         ).join("") : ""
-        console.log({outXml})
         if (!outXml.length) {
             // If there is no content, we need to put in a space to prevent the
             // tag from being removed by LibreOffice.
-            tag.block.innerHTML = "<text:s/>"
+            tag.block.innerXML = "<text:s/>"
             return
         }
         const parentNode = tag.block.parentNode
         const node = parentNode.cloneNode(false)
-        node.innerHTML = outXml
-        console.log({node, innerHTML: node.innerHTML})
-        while (node.firstChild) {
-            parentNode.insertBefore(node.firstChild, tag.block)
+        node.innerXML = outXml
+        while (node.children.length) {
+            parentNode.insertBefore(node.children[0], tag.block)
         }
         parentNode.removeChild(tag.block)
-        console.log({parentNode, html: parentNode.innerHTML})
 
     }
 

@@ -1,4 +1,4 @@
-import {get, createXMLNode} from "../../common"
+import {get} from "../../common"
 import {descendantNodes} from "../tools/doc_content"
 import {svg2png} from "../tools/svg"
 
@@ -32,16 +32,16 @@ export class ODTExporterImages {
         const fileNameParts = imgFileName.split(".")
         const fileNameEnding = fileNameParts.pop()
         const fileNameStart = fileNameParts.join(".")
-        const manifestEl = this.manifestXml.getElementsByTagName("manifest:manifest")[0]
-        let imgManifest = manifestEl.querySelector(`file-entry[*|full-path="Pictures/${imgFileName}"]`)
+        const manifestEl = this.manifestXml.getElementByTagName("manifest:manifest")
+        let imgManifest = manifestEl.getElementByTagNameAndAttribute("manifest:file-entry", "manifest:full-path", `Pictures/${imgFileName}`)
         let counter = 0
         while (imgManifest) {
             // Name exists already, we change the name until we get a file name not yet included in manifest.
             imgFileName = `${fileNameStart}_${counter++}.${fileNameEnding}`
-            imgManifest = manifestEl.querySelector(`file-entry[*|full-path="Pictures/${imgFileName}"]`)
+            imgManifest = manifestEl.getElementByTagNameAndAttribute("manifest:file-entry", "manifest:full-path", `Pictures/${imgFileName}`)
         }
         const string = `  <manifest:file-entry manifest:full-path="Pictures/${imgFileName}" manifest:media-type="image/${fileNameEnding}"/>`
-        manifestEl.appendChild(createXMLNode(string))
+        manifestEl.appendXML(string)
         return imgFileName
     }
 

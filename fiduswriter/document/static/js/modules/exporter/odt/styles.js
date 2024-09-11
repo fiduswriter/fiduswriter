@@ -1,4 +1,4 @@
-import {createXMLNode, noSpaceTmp} from "../../common"
+import {noSpaceTmp} from "../../common"
 
 const GRAPHIC_STYLES = {
     Formula: noSpaceTmp`
@@ -61,7 +61,8 @@ export class ODTExporterStyles {
     }
 
     getStyleCounters() {
-        const styles = this.contentXml.querySelectorAll("automatic-styles style")
+        const autoStylesEl = this.contentXml.getElementByTagName("office:automatic-styles")
+        const styles = autoStylesEl.getElementsByTagName("style:style")
         styles.forEach(style => {
             const styleNumber = parseInt(style.getAttribute("style:name").replace(/\D/g, ""))
             const styleFamily = style.getAttribute("style:family")
@@ -83,7 +84,7 @@ export class ODTExporterStyles {
                 }
             }
         })
-        const listStyles = this.contentXml.querySelectorAll("automatic-styles list-style")
+        const listStyles = autoStylesEl.getElementsByTagName("text:list-style")
         listStyles.forEach(style => {
             const styleNumber = parseInt(style.getAttribute("style:name").replace(/\D/g, ""))
             if (styleNumber > this.listStyleCounter) {
@@ -101,7 +102,6 @@ export class ODTExporterStyles {
     c = small caps
     p = super
     b = sub
-    n = new page
     */
     getInlineStyleId(attributes) {
         if (this.inlineStyleIds[attributes]) {
@@ -128,15 +128,10 @@ export class ODTExporterStyles {
         }
         const styleCounter = ++this.inlineStyleCounter
         this.inlineStyleIds[attributes] = styleCounter
-        const autoStylesEl = this.contentXml.querySelector("automatic-styles")
-        autoStylesEl.insertAdjacentHTML("beforeEnd", noSpaceTmp`
+        const autoStylesEl = this.contentXml.getElementByTagName("office:automatic-styles")
+        autoStylesEl.appendXML(noSpaceTmp`
             <style:style style:name="T${styleCounter}" style:family="text">
                 <style:text-properties${styleProperties}/>
-                ${
-    attributes.includes("n") ?
-    '<style:paragraph-properties fo:break-before="page"/>' :
-    ''
-                }
             </style:style>
         `)
         return styleCounter
@@ -152,8 +147,8 @@ export class ODTExporterStyles {
         }
         const styleCounter = ++this.tableStyleCounter
         this.tableStyleIds[aligned + width] = styleCounter
-        const autoStylesEl = this.contentXml.querySelector("automatic-styles")
-        autoStylesEl.insertAdjacentHTML("beforeEnd", noSpaceTmp`
+        const autoStylesEl = this.contentXml.getElementByTagName("office:automatic-styles")
+        autoStylesEl.appendXML(noSpaceTmp`
             <style:style style:name="Table${styleCounter}" style:family="table">
                 <style:table-properties style:rel-width="${width}%" table:align="${aligned}"/>
             </style:style>
@@ -162,13 +157,12 @@ export class ODTExporterStyles {
     }
 
     checkParStyle(styleName) {
-        const stylesParStyle = this.stylesXml.querySelector(`style[*|name="${styleName}"]`)
-        const contentParStyle = this.contentXml.querySelector(`style[*|name="${styleName}"]`)
+        const stylesParStyle = this.stylesXml.getElementByTagNameAndAttribute("style:style", "style:name", styleName)
+        const contentParStyle = this.contentXml.getElementByTagNameAndAttribute("style:style", "style:name", styleName)
         if ((!stylesParStyle) && (!contentParStyle)) {
-            const stylesEl = this.stylesXml.querySelector("styles")
+            const stylesEl = this.stylesXml.getElementByTagName("office:styles")
             const displayName = styleName.split("_20_").join(" ")
-            stylesEl.insertAdjacentHTML(
-                "beforeEnd",
+            stylesEl.appendXML(
                 PAR_STYLES[styleName] ||
                 `<style:style style:name="${styleName}" style:display-name="${displayName}" style:family="paragraph" style:parent-style-name="Standard" style:class="text" />`
             )
@@ -176,12 +170,11 @@ export class ODTExporterStyles {
     }
 
     checkGraphicStyle(styleName) {
-        const stylesParStyle = this.stylesXml.querySelector(`style[*|name="${styleName}"]`)
-        const contentParStyle = this.contentXml.querySelector(`style[*|name="${styleName}"]`)
+        const stylesParStyle = this.stylesXml.getElementByTagNameAndAttribute("style:style", "style:name", styleName)
+        const contentParStyle = this.contentXml.getElementByTagNameAndAttribute("style:style", "style:name", styleName)
         if ((!stylesParStyle) && (!contentParStyle)) {
-            const stylesEl = this.stylesXml.querySelector("styles")
-            stylesEl.insertAdjacentHTML(
-                "beforeEnd",
+            const stylesEl = this.stylesXml.getElementByTagName("office:styles")
+            stylesEl.appendXML(
                 GRAPHIC_STYLES[styleName]
             )
         }
@@ -199,8 +192,8 @@ export class ODTExporterStyles {
 
         const styleCounter = ++this.graphicStyleCounter
         this.graphicStyleIds[styleName + aligned] = styleCounter
-        const autoStylesEl = this.contentXml.querySelector("automatic-styles")
-        autoStylesEl.insertAdjacentHTML("beforeEnd", noSpaceTmp`
+        const autoStylesEl = this.contentXml.getElementByTagName("office:automatic-styles")
+        autoStylesEl.appendXML(noSpaceTmp`
             <style:style style:name="fr${styleCounter}" style:family="graphic" style:parent-style-name="${styleName}">
                 ${
     styleName === "Formula" ?
@@ -214,11 +207,11 @@ export class ODTExporterStyles {
     addReferenceStyle(bibInfo) {
         // The style called "Bibliography_20_1" will override any previous style
         // of the same name.
-        const stylesParStyle = this.stylesXml.querySelector("style[*|name=\"Bibliography_20_1\"]")
+        const stylesParStyle = this.stylesXml.getElementByTagNameAndAttribute("style:style", "style:name", "Bibliography_20_1")
         if (stylesParStyle) {
             stylesParStyle.parentNode.removeChild(stylesParStyle)
         }
-        const contentParStyle = this.contentXml.querySelector("style[*|name=\"Bibliography_20_1\"]")
+        const contentParStyle = this.contentXml.getElementByTagNameAndAttribute("style:style", "style:name", "Bibliography_20_1")
         if (contentParStyle) {
             contentParStyle.parentNode.removeChild(contentParStyle)
         }
@@ -250,8 +243,8 @@ export class ODTExporterStyles {
                     ${tabStops}
                 </style:paragraph-properties>
             </style:style>`
-        const stylesEl = this.stylesXml.querySelector("styles")
-        stylesEl.insertAdjacentHTML("beforeEnd", styleDef)
+        const stylesEl = this.stylesXml.getElementByTagName("office:styles")
+        stylesEl.appendXML(styleDef)
     }
 
     getBulletListStyleId() {
@@ -259,15 +252,15 @@ export class ODTExporterStyles {
             return this.bulletListStyleId
         }
         this.bulletListStyleId[0] = ++this.listStyleCounter
-        const autoStylesEl = this.contentXml.querySelector("automatic-styles")
-        autoStylesEl.insertAdjacentHTML("beforeEnd", noSpaceTmp`
+        const autoStylesEl = this.contentXml.getElementByTagName("office:automatic-styles")
+        autoStylesEl.appendXML(noSpaceTmp`
             <text:list-style style:name="L${this.bulletListStyleId[0]}">
             </text:list-style>
         `)
-        const listStyleEl = autoStylesEl.lastChild
+        const listStyleEl = autoStylesEl.children[autoStylesEl.children.length - 1]
         // ODT files seem to contain ten levels of lists (1-10)
         for (let level = 1;level < 11;level++) {
-            listStyleEl.insertAdjacentHTML("beforeEnd", noSpaceTmp`
+            listStyleEl.appendXML(noSpaceTmp`
                 <text:list-level-style-bullet text:level="${level}" text:style-name="Bullet_20_Symbols" text:bullet-char="•">
                     <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
                         <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="${(level + 1) * 0.25}in" fo:text-indent="-0.25in" fo:margin-left="${(level + 1) * 0.25}in" />
@@ -281,15 +274,15 @@ export class ODTExporterStyles {
 
     getOrderedListStyleId(start) {
         const orderedListStyleId = ++this.listStyleCounter
-        const autoStylesEl = this.contentXml.querySelector("automatic-styles")
-        autoStylesEl.insertAdjacentHTML("beforeEnd", noSpaceTmp`
+        const autoStylesEl = this.contentXml.getElementByTagName("office:automatic-styles")
+        autoStylesEl.appendXML(noSpaceTmp`
             <text:list-style style:name="L${orderedListStyleId}">
             </text:list-style>
         `)
-        const listStyleEl = autoStylesEl.lastChild
+        const listStyleEl = autoStylesEl.children[autoStylesEl.children.length - 1]
         // ODT files seem to contain ten levels of lists (1-10)
         for (let level = 1;level < 11;level++) {
-            listStyleEl.insertAdjacentHTML("beforeEnd", noSpaceTmp`
+            listStyleEl.appendXML(noSpaceTmp`
                 <text:list-level-style-number text:level="${level}" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1"${ start > 1 ? ` text:start-value="${start}"` : ""}>
                     <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
                         <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="${(level + 1) * 0.25}in" fo:text-indent="-0.25in" fo:margin-left="${(level + 1) * 0.25}in" />
@@ -303,25 +296,22 @@ export class ODTExporterStyles {
     // Add a paragraph style for either paragraph in bullet or numeric list
     addListParStyle(_listId) {
         const parStyleId = ++this.blockStyleCounter
-        const autoStylesEl = this.contentXml.querySelector("automatic-styles")
-        autoStylesEl.insertAdjacentHTML(
-            "beforeEnd",
-            `<style:style style:name="P${parStyleId}" style:family="paragraph" style:parent-style-name="Standard" style:list-style-name="L1" />`
+        const autoStylesEl = this.contentXml.getElementByTagName("office:automatic-styles")
+        autoStylesEl.appendXML(
+            `<style:style style:name="P${parStyleId}" style:family="paragraph" style:parent-style-name="Standard" text:list-style-name="L1" />`
         )
         return parStyleId
     }
 
     addPageBreakStyle() {
-        const stylesEl = this.stylesXml.getElementsByTagName("office:styles")[0]
-        Array.from(stylesEl.getElementsByTagName("style:style")).forEach(style => {
+        const stylesEl = this.stylesXml.getElementByTagName("office:styles")
+        stylesEl.getElementsByTagName("style:style").forEach(style => {
             if (style.getAttribute("style:name") === "PageBreak") {
                 return
             }
         })
-        stylesEl.appendChild(
-            createXMLNode(
-                "<style:style style:name=\"PageBreak\" style:family=\"paragraph\" style:parent-style-name=\"Standard\" style:class=\"extra\"><style:paragraph-properties fo:break-before=\"page\"/></style:style>"
-            )
+        stylesEl.appendXML(
+            "<style:style style:name=\"PageBreak\" style:family=\"paragraph\" style:parent-style-name=\"Standard\" style:class=\"extra\"><style:paragraph-properties fo:break-before=\"page\"/></style:style>"
         )
     }
 
@@ -334,9 +324,12 @@ export class ODTExporterStyles {
         if (!country) {
             country = "none"
         }
-        this.stylesXml.querySelectorAll("styles default-style text-properties").forEach(el => {
-            el.setAttribute("fo:language", language)
-            el.setAttribute("fo:country", country)
+        const stylesEl = this.stylesXml.getElementByTagName("office:styles")
+        stylesEl.getElementsByTagName("style:default-style").forEach(el => {
+            el.getElementsByTagName("style:text-properties").forEach(el => {
+                el.setAttribute("fo:language", language)
+                el.setAttribute("fo:country", country)
+            })
         })
 
     }

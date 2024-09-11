@@ -1,4 +1,4 @@
-import { DOMParser, XMLSerializer } from '@xmldom/xmldom'
+import {xmlDOM} from "./xml"
 
 import {get} from "../../common"
 // Handle a zip file containing XML files. Make sure files are only opened once,
@@ -42,18 +42,14 @@ export class XmlZip {
         } else if (this.zip.files[filePath]) {
             return this.zip.file(filePath).async("string").then(
                 string => {
-                    const parser = new DOMParser()
-                    this.docs[filePath] = parser.parseFromString(string, "text/xml")
-                    //this.docs[filePath] = new JSDOM(string).window.document
+                    this.docs[filePath] = xmlDOM(string)
                     return Promise.resolve(this.docs[filePath])
                 }
             )
         } else if (defaultContents) {
             return Promise.resolve(defaultContents).then(
                 string => {
-                    const parser = new DOMParser()
-                    this.docs[filePath] = parser.parseFromString(string, "text/xml")
-                    //this.docs[filePath] = new JSDOM(string).window.document
+                    this.docs[filePath] = xmlDOM(string)
                     return Promise.resolve(this.docs[filePath])
                 }
             )
@@ -91,10 +87,9 @@ export class XmlZip {
 
     // Put the xml identified by filePath into zip.
     xmlToZip(filePath) {
-        const serializer = new XMLSerializer()
-        const string = serializer.serializeToString(this.docs[filePath])
+        const string = this.docs[filePath].toString()
         //const string = this.docs[filePath].serialize()
-        this.zip.file(filePath, string)//.replaceAll('xhtml:', ''))
+        this.zip.file(filePath, string)
     }
 
     prepareBlob() {

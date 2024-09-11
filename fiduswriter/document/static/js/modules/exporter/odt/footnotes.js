@@ -2,7 +2,6 @@ import {ODTExporterCitations} from "./citations"
 import {ODTExporterImages} from "./images"
 import {noSpaceTmp} from "../../common"
 import {descendantNodes} from "../tools/doc_content"
-import {createXMLNode} from "../../common/xml"
 
 
 const DEFAULT_STYLE_FOOTNOTE = noSpaceTmp`
@@ -101,19 +100,19 @@ export class ODTExporterFootnotes {
     }
 
     addStyle(styleName, xml) {
-        if (!this.styleXml.querySelector(`style[*|name="${styleName}"]`)) {
-            const stylesEl = this.styleXml.getElementsByTagName("office:styles")[0]
-            stylesEl.appendChild(createXMLNode(xml))
+        if (!this.styleXml.getElementByTagNameAndAttribute("style:style", "style:name", styleName)) {
+            const stylesEl = this.styleXml.getElementByTagName("office:styles")
+            stylesEl.appendXML(xml)
         }
     }
 
     setStyleConfig() {
-        const oldFnStyleConfigEl = this.styleXml.querySelector("notes-configuration[*|note-class=\"footnote\"]")
+        const oldFnStyleConfigEl = this.styleXml.getElementByTagNameAndAttribute("text:notes-configuration", "text:note-class", "footnote")
         if (oldFnStyleConfigEl) {
             oldFnStyleConfigEl.parentNode.removeChild(oldFnStyleConfigEl)
         }
-        const stylesEl = this.styleXml.getElementsByTagName("office:styles")[0]
-        stylesEl.appendChild(createXMLNode(DEFAULT_STYLE_FOOTNOTE_CONFIGURATION))
+        const stylesEl = this.styleXml.getElementByTagName("office:styles")
+        stylesEl.appendXML(DEFAULT_STYLE_FOOTNOTE_CONFIGURATION)
     }
 
     findFootnotes() {

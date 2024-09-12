@@ -36,67 +36,86 @@ export class DOCXExporter {
         this.imageDB = imageDB
         this.csl = csl
 
-        this.pmBib = false
-        this.docContent = false
-        this.docTitle = false
+        this.docTitle = shortFileTitle(this.doc.title, this.doc.path)
         this.mimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     }
 
 
     init() {
-        this.docContent = moveFootnoteComments(fixTables(removeHidden(this.doc.content)))
-        this.docTitle = shortFileTitle(this.doc.title, this.doc.path)
-        this.tables = new DOCXExporterTables(this)
-        this.math = new DOCXExporterMath(this)
-        this.metadata = new DOCXExporterMetadata(this, this.docContent)
-        this.footnotes = new DOCXExporterFootnotes(this, this.docContent)
-        this.render = new DOCXExporterRender(this, this.docContent)
-        this.rels = new DOCXExporterRels(this, "document")
-        this.images = new DOCXExporterImages(this, this.imageDB, this.rels, this.docContent)
-        this.lists = new DOCXExporterLists(this, this.rels, this.docContent)
-        this.citations = new DOCXExporterCitations(this, this.bibDB, this.csl, this.docContent)
-        this.comments = new DOCXExporterComments(this, this.doc.comments, this.docContent)
-        this.richtext = new DOCXExporterRichtext(
-            this,
-            this.rels,
-            this.citations,
-            this.images,
-            this.comments,
-        )
+        const docContent = moveFootnoteComments(fixTables(removeHidden(this.doc.content)))
 
-        this.xml = new XmlZip(
+        const xml = new XmlZip(
             this.templateUrl,
             this.mimeType
         )
 
-        return this.xml.init().then(
-            () => this.citations.init()
+        const tables = new DOCXExporterTables(xml)
+        const math = new DOCXExporterMath(xml)
+        const rels = new DOCXExporterRels(xml, "document")
+
+        const metadata = new DOCXExporterMetadata(docContent, xml)
+
+        const images = new DOCXExporterImages(docContent, this.imageDB, xml, rels)
+        const lists = new DOCXExporterLists(docContent, xml, rels)
+        const citations = new DOCXExporterCitations(docContent, this.doc.settings, this.bibDB, this.csl, xml)
+
+        const footnotes = new DOCXExporterFootnotes(
+            this.doc,
+            docContent,
+            this.doc.settings,
+            this.imageDB,
+            this.bibDB,
+            xml,
+            citations,
+            this.csl,
+            lists,
+            math,
+            tables,
+            rels
+        )
+
+        const richtext = new DOCXExporterRichtext(
+            this.doc,
+            this.doc.settings,
+            lists,
+            footnotes,
+            math,
+            tables,
+            rels,
+            citations,
+            images,
+        )
+
+        const comments = new DOCXExporterComments(docContent, this.doc.comments, xml, rels, richtext)
+
+        const render = new DOCXExporterRender(docContent, this.doc.settings, xml, citations, richtext)
+
+        return xml.init().then(
+            () => citations.init()
+        ).then(
+            () => metadata.init()
+        ).then(
+            () => tables.init()
+        ).then(
+            () => math.init()
+        ).then(
+            () => render.init()
+        ).then(
+            () => rels.init()
+        ).then(
+            () => images.init()
+        ).then(
+            () => comments.init()
+        ).then(
+            () => lists.init()
+        ).then(
+            () => footnotes.init()
         ).then(
             () => {
-                this.pmBib = this.citations.pmBib
-                return this.metadata.init()
-            }
-        ).then(
-            () => this.tables.init()
-        ).then(
-            () => this.math.init()
-        ).then(
-            () => this.render.init()
-        ).then(
-            () => this.rels.init()
-        ).then(
-            () => this.images.init()
-        ).then(
-            () => this.comments.init()
-        ).then(
-            () => this.lists.init()
-        ).then(
-            () => this.footnotes.init()
-        ).then(
-            () => {
-                this.render.getTagData(this.pmBib)
-                this.render.render()
-                return this.xml.prepareBlob()
+                const pmBib = footnotes.pmBib || citations.pmBib
+                render.getTagData(pmBib)
+                render.render()
+                return xml.prepareBlob()
             }
         ).then(
             blob => this.download(blob)

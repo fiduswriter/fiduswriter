@@ -7,11 +7,12 @@ import {descendantNodes} from "../tools/doc_content"
 import {noSpaceTmp} from "../../common"
 
 export class DOCXExporterCitations {
-    constructor(exporter, bibDB, csl, docContent, origCitInfos = []) {
-        this.exporter = exporter
+    constructor(docContent, settings, bibDB, csl, xml, origCitInfos = []) {
+        this.docContent = docContent
+        this.settings = settings
         this.bibDB = bibDB
         this.csl = csl
-        this.docContent = docContent
+        this.xml = xml
         this.origCitInfos = origCitInfos
 
         this.citInfos = []
@@ -19,14 +20,14 @@ export class DOCXExporterCitations {
         this.pmCits = []
         this.citFm = false
         this.pmBib = false
-        this.styleXml = false
+        this.styleXML = false
         this.styleFilePath = "word/styles.xml"
     }
 
     init() {
-        return this.exporter.xml.getXml(this.styleFilePath).then(
-            styleXml => {
-                this.styleXml = styleXml
+        return this.xml.getXml(this.styleFilePath).then(
+            styleXML => {
+                this.styleXML = styleXML
                 return Promise.resolve()
             }
         ).then(
@@ -54,11 +55,11 @@ export class DOCXExporterCitations {
         this.citFm = new FormatCitations(
             this.csl,
             this.citInfos,
-            this.exporter.doc.settings.citationstyle,
+            this.settings.citationstyle,
             "",
             this.bibDB,
             false,
-            this.exporter.doc.settings.language
+            this.settings.language
         )
         return this.citFm.init().then(
             () => {
@@ -103,8 +104,8 @@ export class DOCXExporterCitations {
     }
 
     addReferenceStyle(bibInfo) {
-        const stylesEl = this.styleXml.query("w:styles")
-        if (!this.styleXml.query("w:style", {"w:styleId": "BibliographyHeading"})) {
+        const stylesEl = this.styleXML.query("w:styles")
+        if (!this.styleXML.query("w:style", {"w:styleId": "BibliographyHeading"})) {
             // There is no style definition for the bibliography heading. We have to add it.
             const headingStyleDef = noSpaceTmp`
                 <w:style w:type="paragraph" w:styleId="BibliographyHeading">
@@ -125,7 +126,7 @@ export class DOCXExporterCitations {
         }
         // The style called "Bibliography1" will override any previous style
         // of the same name.
-        const stylesParStyle = this.styleXml.query("w:style", {"w:styleId": "Bibliography1"})
+        const stylesParStyle = this.styleXML.query("w:style", {"w:styleId": "Bibliography1"})
         if (stylesParStyle) {
             stylesParStyle.parentElement.removeChild(stylesParStyle)
         }

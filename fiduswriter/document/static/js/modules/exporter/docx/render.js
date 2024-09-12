@@ -4,28 +4,32 @@ import {BIBLIOGRAPHY_HEADERS} from "../../schema/i18n"
 import {xmlDOM} from "../tools/xml"
 
 export class DOCXExporterRender {
-    constructor(exporter, docContent) {
-        this.exporter = exporter
+    constructor(docContent, settings, xml, citations, richtext) {
         this.docContent = docContent
+        this.settings = settings
+        this.xml = xml
+        this.citations = citations
+        this.richtext = richtext
+
         this.filePath = false // "word/document.xml" or "word/document2.xml" in some cases
-        this.xml = false
-        this.ctXml = false
+        this.ctXML = false
+        this.docXML = false
     }
 
     init() {
-        return this.exporter.xml.getXml("[Content_Types].xml").then(
-            ctXml => {
-                this.ctXml = ctXml
-                const documentOverride = this.ctXml.query("Override", {"ContentType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"})
+        return this.xml.getXml("[Content_Types].xml").then(
+            ctXML => {
+                this.ctXML = ctXML
+                const documentOverride = this.ctXML.query("Override", {"ContentType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"})
                 this.filePath = documentOverride.getAttribute("PartName").slice(1)
-                return this.exporter.xml.getXml(this.filePath)
+                return this.xml.getXml(this.filePath)
             }
         ).then(
             xml => {
-                this.xml = xml
+                this.docXML = xml
                 // Ensure we support the three latest docx feature sets:
                 // wp14 (drawing 2010), w14 (word 2010), w15 (word 2012)
-                const documentEl = this.xml.query("w:document")
+                const documentEl = this.docXML.query("w:document")
                 if (!documentEl.getAttribute("xmlns:wp14")) {
                     documentEl.setAttribute("xmlns:wp14", "http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing")
                 }
@@ -105,7 +109,7 @@ export class DOCXExporterRender {
             }
             return tag
         })
-        const settings = this.exporter.doc.settings,
+        const settings = this.settings,
             bibliographyHeader = settings.bibliography_header[settings.language] || BIBLIOGRAPHY_HEADERS[settings.language]
         this.tags.push({
             title: "@bibliography", // The '@' triggers handling as block
@@ -137,7 +141,7 @@ export class DOCXExporterRender {
     // replacements.
     render() {
         // Including global page definition at end
-        const pars = this.xml.queryAll(["w:p", "w:sectPr"])
+        const pars = this.docXML.queryAll(["w:p", "w:sectPr"])
         const currentTags = []
         pars.forEach(
             par => {
@@ -228,12 +232,12 @@ export class DOCXExporterRender {
         const pStyle = tag.par.query("w:pStyle")
         const options = {
             dimensions: tag.dimensions,
-            citationType: this.exporter.citations.citFm.citationType,
+            citationType: this.citations.citFm.citationType,
             section: pStyle ? pStyle.getAttribute("w:val") : "Normal",
             tag: tag.title.slice(1)
         }
         const outXML = tag.content ? tag.content.map(
-            (content, i) => this.exporter.richtext.run(content, options, tag.content[i + 1])
+            (content, i) => this.richtext.run(content, options, tag.content[i + 1])
         ).join("") : ""
         if (!outXML.length) {
             // If there is no content, we need to put in a space to prevent the

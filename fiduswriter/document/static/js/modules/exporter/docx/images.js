@@ -3,19 +3,20 @@ import {descendantNodes} from "../tools/doc_content"
 import {svg2png} from "../tools/svg"
 
 export class DOCXExporterImages {
-    constructor(exporter, imageDB, rels, docContent) {
-        this.exporter = exporter
-        this.imageDB = imageDB
-        this.rels = rels
+    constructor(docContent, imageDB, xml, rels) {
         this.docContent = docContent
+        this.imageDB = imageDB
+        this.xml = xml
+        this.rels = rels
+
         this.images = {}
-        this.ctXml = false
+        this.ctXML = false
     }
 
     init() {
-        return this.exporter.xml.getXml("[Content_Types].xml").then(
-            ctXml => {
-                this.ctXml = ctXml
+        return this.xml.getXml("[Content_Types].xml").then(
+            ctXML => {
+                this.ctXML = ctXML
                 return this.exportImages()
             }
         )
@@ -25,13 +26,13 @@ export class DOCXExporterImages {
     addImage(imgFileName, image) {
         const rId = this.rels.addImageRel(imgFileName)
         this.addContentType(imgFileName.split(".").pop())
-        this.exporter.xml.addExtraFile(`word/media/${imgFileName}`, image)
+        this.xml.addExtraFile(`word/media/${imgFileName}`, image)
         return rId
     }
 
     // add a global contenttype declaration for an image type (if needed)
     addContentType(fileEnding) {
-        const types = this.ctXml.query("Types")
+        const types = this.ctXML.query("Types")
         const contentDec = types.query("Default", {"Extension": fileEnding})
         if (!contentDec) {
             const string = `<Default ContentType="image/${fileEnding}" Extension="${fileEnding}"/>`

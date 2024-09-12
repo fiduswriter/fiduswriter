@@ -14,15 +14,15 @@ const DEFAULT_HYPERLINK_STYLE =
 </w:style>`
 
 export class DOCXExporterRels {
-    constructor(exporter, docName) {
-        this.exporter = exporter
+    constructor(xml, docName) {
+        this.xml = xml
         this.docName = docName
-        this.xml = false
-        this.ctXml = false
+        this.relsXML = false
+        this.ctXML = false
         this.relIdCounter = -1
         this.filePath = `word/_rels/${this.docName}.xml.rels`
         this.ctFilePath = "[Content_Types].xml"
-        this.styleXml = false
+        this.styleXML = false
         this.styleFilePath = "word/styles.xml"
         this.hyperLinkStyle = false
     }
@@ -30,14 +30,14 @@ export class DOCXExporterRels {
     init() {
         return Promise.all([
             this.initCt().then(() => {
-                return this.exporter.xml.getXml(this.filePath, DEFAULT_XML)
+                return this.xml.getXml(this.filePath, DEFAULT_XML)
             }).then(xml => {
-                this.xml = xml
+                this.relsXML = xml
                 this.findMaxRelId()
             }),
-            this.exporter.xml.getXml(this.styleFilePath).then(
-                styleXml => {
-                    this.styleXml = styleXml
+            this.xml.getXml(this.styleFilePath).then(
+                styleXML => {
+                    this.styleXML = styleXML
                     return Promise.resolve()
                 }
             )
@@ -45,9 +45,9 @@ export class DOCXExporterRels {
     }
 
     initCt() {
-        return this.exporter.xml.getXml(this.ctFilePath).then(
-            ctXml => {
-                this.ctXml = ctXml
+        return this.xml.getXml(this.ctFilePath).then(
+            ctXML => {
+                this.ctXML = ctXML
                 this.addRelsToCt()
                 return Promise.resolve()
             }
@@ -56,7 +56,7 @@ export class DOCXExporterRels {
 
     // Go through a rels xml file and file all the listed relations
     findMaxRelId() {
-        const rels = this.xml.queryAll("Relationship")
+        const rels = this.relsXML.queryAll("Relationship")
 
         rels.forEach(
             rel => {
@@ -69,16 +69,16 @@ export class DOCXExporterRels {
     }
 
     addRelsToCt() {
-        const override = this.ctXml.query("Overrid", {"PartName": `/${this.filePath}`})
+        const override = this.ctXML.query("Overrid", {"PartName": `/${this.filePath}`})
         if (!override) {
-            const types = this.ctXml.query("Types")
+            const types = this.ctXML.query("Types")
             types.appendXML(`<Override PartName="/${this.filePath}" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>`)
         }
     }
 
     // Add a relationship for a link
     addLinkRel(link) {
-        const rels = this.xml.query("Relationships")
+        const rels = this.relsXML.query("Relationships")
         const rId = ++this.relIdCounter
         const string = `<Relationship Id="rId${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="${escapeText(link)}" TargetMode="External"/>`
         rels.appendXML(string)
@@ -90,11 +90,11 @@ export class DOCXExporterRels {
             // already added
             return
         }
-        const hyperLinkEl = this.styleXml.query("w:name", {"w:val": "Hyperlink"})
+        const hyperLinkEl = this.styleXML.query("w:name", {"w:val": "Hyperlink"})
         if (hyperLinkEl) {
             this.hyperLinkStyle = hyperLinkEl.parentElement.getAttribute("w:styleId")
         } else {
-            const stylesEl = this.styleXml.query("w:styles")
+            const stylesEl = this.styleXML.query("w:styles")
             stylesEl.appendXML(DEFAULT_HYPERLINK_STYLE)
             this.hyperLinkStyle = "InternetLink"
         }
@@ -102,7 +102,7 @@ export class DOCXExporterRels {
 
     // add a relationship for an image
     addImageRel(imgFileName) {
-        const rels = this.xml.query("Relationships")
+        const rels = this.relsXML.query("Relationships")
         const rId = ++this.relIdCounter
         const string = `<Relationship Id="rId${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/${escapeText(imgFileName)}"/>`
         rels.appendXML(string)
@@ -110,13 +110,13 @@ export class DOCXExporterRels {
     }
 
     addFootnoteRel() {
-        const footnotesRel = this.xml.query("Relationship", {"Target": "footnotes.xml"})
+        const footnotesRel = this.relsXML.query("Relationship", {"Target": "footnotes.xml"})
         if (footnotesRel) {
             // Rel exists already
             const fnRId = parseInt(footnotesRel.getAttribute("Id").replace(/\D/g, ""))
             return fnRId
         }
-        const rels = this.xml.query("Relationships")
+        const rels = this.relsXML.query("Relationships")
         const rId = ++this.relIdCounter
         const string = `<Relationship Id="rId${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footnotes" Target="footnotes.xml"/>`
         rels.appendXML(string)
@@ -124,13 +124,13 @@ export class DOCXExporterRels {
     }
 
     addNumberingRel() {
-        const numberingRel = this.xml.query("Relationship", {"Target": "numbering.xml"})
+        const numberingRel = this.relsXML.query("Relationship", {"Target": "numbering.xml"})
         if (numberingRel) {
             // Rel exists already
             const nuRId = parseInt(numberingRel.getAttribute("Id").replace(/\D/g, ""))
             return nuRId
         }
-        const rels = this.xml.query("Relationships")
+        const rels = this.relsXML.query("Relationships")
         const rId = ++this.relIdCounter
         const string = `<Relationship Id="rId${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering" Target="numbering.xml"/>`
         rels.appendXML(string)
@@ -138,31 +138,31 @@ export class DOCXExporterRels {
     }
 
     addCommentsRel() {
-        const commentsRel = this.xml.query("Relationship", {"Target": "comments.xml"})
+        const commentsRel = this.relsXML.query("Relationship", {"Target": "comments.xml"})
         if (commentsRel) {
             return
         }
-        const rels = this.xml.query("Relationships")
+        const rels = this.relsXML.query("Relationships")
         const string = `<Relationship Id="rId${++this.relIdCounter}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments" Target="comments.xml"/>`
         rels.appendXML(string)
-        const override = this.ctXml.query("Override", {"PartName": "/word/comments.xml"})
+        const override = this.ctXML.query("Override", {"PartName": "/word/comments.xml"})
         if (!override) {
-            const types = this.ctXml.query("Types")
+            const types = this.ctXML.query("Types")
             types.appendXML("<Override PartName=\"/word/comments.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.wordprocessingml.comments+xml\"/>")
         }
     }
 
     addCommentsExtendedRel() {
-        const commentsExtendedRel = this.xml.query("Relationship", {"Target": "commentsExtended.xml"})
+        const commentsExtendedRel = this.relsXML.query("Relationship", {"Target": "commentsExtended.xml"})
         if (commentsExtendedRel) {
             return
         }
-        const rels = this.xml.query("Relationships")
+        const rels = this.relsXML.query("Relationships")
         const string = `<Relationship Id="rId${++this.relIdCounter}" Type="http://schemas.microsoft.com/office/2011/relationships/commentsExtended" Target="commentsExtended.xml"/>`
         rels.appendXML(string)
-        const override = this.ctXml.query("Override", {"PartName": "/word/commentsExtended.xml"})
+        const override = this.ctXML.query("Override", {"PartName": "/word/commentsExtended.xml"})
         if (!override) {
-            const types = this.ctXml.query("Types")
+            const types = this.ctXML.query("Types")
             types.appendXML("<Override PartName=\"/word/commentsExtended.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.wordprocessingml.commentsExtended+xml\"/>")
         }
     }

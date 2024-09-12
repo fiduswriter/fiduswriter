@@ -13,14 +13,16 @@ const DEFAULT_COMMENTS_EXTENDED_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\" 
 
 
 export class DOCXExporterComments {
-    constructor(exporter, commentsDB, docContent) {
-        this.exporter = exporter
-        this.commentsDB = commentsDB
+    constructor(docContent, commentsDB, xml, rels, richtext) {
         this.docContent = docContent
-        this.comments = {}
+        this.commentsDB = commentsDB
+        this.xml = xml
+        this.rels = rels
+        this.richtext = richtext
+
         this.usedComments = []
-        this.commentsXml = false
-        this.commentsExtendedXml = false
+        this.commentsXML = false
+        this.commentsExtendedXML = false
         this.commentsFilePath = "word/comments.xml"
         this.commentsExtendedFilePath = "word/commentsExtended.xml"
         this.commentIdCounter = -1
@@ -48,17 +50,17 @@ export class DOCXExporterComments {
         if (!this.usedComments.length) {
             return Promise.resolve()
         }
-        this.exporter.rels.addCommentsRel()
+        this.rels.addCommentsRel()
         const addCommentXMLs = [
-            this.exporter.xml.getXml(this.commentsFilePath, DEFAULT_COMMENTS_XML).then(commentsXml => this.commentsXml = commentsXml)
+            this.xml.getXML(this.commentsFilePath, DEFAULT_COMMENTS_XML).then(commentsXML => this.commentsXML = commentsXML)
         ]
         if (useExtended) {
-            this.exporter.rels.addCommentsExtendedRel()
-            addCommentXMLs.push(this.exporter.xml.getXml(this.commentsExtendedFilePath, DEFAULT_COMMENTS_EXTENDED_XML).then(commentsExtendedXml => this.commentsExtendedXml = commentsExtendedXml))
+            this.rels.addCommentsExtendedRel()
+            addCommentXMLs.push(this.xml.getXML(this.commentsExtendedFilePath, DEFAULT_COMMENTS_EXTENDED_XML).then(commentsExtendedXML => this.commentsExtendedXML = commentsExtendedXML))
         }
         return Promise.all(addCommentXMLs).then(
             () => {
-                this.commentsXml.queryAll("w:comment").forEach(
+                this.commentsXML.queryAll("w:comment").forEach(
                     el => {
                         const id = parseInt(el.getAttribute("w:id"))
                         if (id > this.commentIdCounter) {
@@ -73,9 +75,9 @@ export class DOCXExporterComments {
 
     addComment(id) {
         const commentId = ++this.commentIdCounter
-        this.comments[id] = commentId
+        this.richtext.comments[id] = commentId
         const commentDBEntry = this.commentsDB[id]
-        const comments = this.commentsXml.query("w:comments")
+        const comments = this.commentsXML.query("w:comments")
         let string = `<w:comment w:id="${commentId}" w:author="${escapeText(commentDBEntry.username)}" w:date="${new Date(commentDBEntry.date).toISOString().split(".")[0]}Z" w:initials="${escapeText(commentDBEntry.username.split(" ").map((n) => n[0]).join("").toUpperCase())}">`
         let parentParagraphId = ""
         string += commentDBEntry.comment.map((node, index) => {
@@ -83,16 +85,16 @@ export class DOCXExporterComments {
             if ((commentDBEntry.resolved || commentDBEntry.answers?.length) && index === (commentDBEntry.comment.length - 1)) {
                 // If comment has been resolved or there are answers, we need to add an id to the last paragraph
                 // of the comment and add an entry into commentsExtended.xml.
-                parentParagraphId = (++this.exporter.richtext.paragraphIdCounter).toString(16).padStart(8, "0")
+                parentParagraphId = (++this.richtext.paragraphIdCounter).toString(16).padStart(8, "0")
                 options.paragraphId = parentParagraphId
                 const extendedString = `<w15:commentEx w15:paraId="${parentParagraphId}" w15:done="${commentDBEntry.resolved ? "1" : "0"}"/>`
-                const extendedComments = this.commentsExtendedXml.query("w15:commentsEx")
+                const extendedComments = this.commentsExtendedXML.query("w15:commentsEx")
                 extendedComments.appendXML(extendedString)
             }
             if (!index) {
                 options.commentReference = true
             }
-            return this.exporter.richtext.transformRichtext(node, options)
+            return this.richtext.transformRichtext(node, options)
         }).join("")
         string += "</w:comment>"
         commentDBEntry.answers?.forEach(answer => {
@@ -103,16 +105,16 @@ export class DOCXExporterComments {
                 if (index === (answer.answer.length - 1)) {
                     // We need to add an id to the last paragraph of the comment and add an entry
                     // into commentsExtended.xml pointing to the last paragraph of the parent comment.
-                    const paragraphId = (++this.exporter.richtext.paragraphIdCounter).toString(16).padStart(8, "0")
+                    const paragraphId = (++this.richtext.paragraphIdCounter).toString(16).padStart(8, "0")
                     options.paragraphId = paragraphId
                     const extendedString = `<w15:commentEx w15:paraId="${paragraphId}" w15:done="${commentDBEntry.resolved ? "1" : "0"}" w15:paraIdParent="${parentParagraphId}"/>`
-                    const extendedComments = this.commentsExtendedXml.query("w15:commentsEx")
+                    const extendedComments = this.commentsExtendedXML.query("w15:commentsEx")
                     extendedComments.appendXML(extendedString)
                 }
                 if (!index) {
                     options.commentReference = true
                 }
-                return this.exporter.richtext.transformRichtext(node, options)
+                return this.richtext.transformRichtext(node, options)
             }).join("")
             string += "</w:comment>"
         })

@@ -35,12 +35,18 @@ const INLINE_TYPES = [
 ]
 
 export class DOCXExporterRichtext {
-    constructor(exporter, rels, citations, images, comments) {
-        this.exporter = exporter
+    constructor(doc, settings, lists, footnotes, math, tables, rels, citations, images) {
+        this.doc = doc
+        this.settings = settings
+        this.lists = lists
+        this.footnotes = footnotes
+        this.math = math
+        this.tables = tables
         this.rels = rels
         this.citations = citations
         this.images = images
-        this.comments = comments
+
+        this.comments = {}
         this.commentRangeCounter = -1
         this.changeCounter = 0
         this.fnCounter = 1 // footnotes 0 and 1 are occupied by separators by default.
@@ -59,11 +65,11 @@ export class DOCXExporterRichtext {
 
         if (node.marks) {
             node.marks.filter(mark => mark.type === "comment").forEach(comment => {
-                if (!this.exporter.doc.comments[comment.attrs.id]) {
+                if (!this.doc.comments[comment.attrs.id]) {
                     return
                 }
                 if (!comments[comment.attrs.id]) {
-                    comments[comment.attrs.id] = {start: node, end: node, content: this.exporter.doc.comments[comment.attrs.id]}
+                    comments[comment.attrs.id] = {start: node, end: node, content: this.doc.comments[comment.attrs.id]}
                 } else {
                     comments[comment.attrs.id]["end"] = node
                 }
@@ -90,7 +96,7 @@ export class DOCXExporterRichtext {
                         return
                     }
                     if (commentData.start === node) {
-                        let commentId = this.comments.comments[comment.attrs.id]
+                        let commentId = this.comments[comment.attrs.id]
                         start += `<w:commentRangeStart w:id="${commentId}"/>`
                         commentData.content.answers?.forEach(
                             _answer => start += `<w:commentRangeStart w:id="${++commentId}"/>`
@@ -98,7 +104,7 @@ export class DOCXExporterRichtext {
                     }
 
                     if (commentData.end === node) {
-                        let commentId = this.comments.comments[comment.attrs.id]
+                        let commentId = this.comments[comment.attrs.id]
                         end = `<w:commentRangeEnd w:id="${commentId}"/><w:r><w:commentReference w:id="${
                             commentId
                         }"/></w:r>${
@@ -277,12 +283,12 @@ export class DOCXExporterRichtext {
             } else {
                 options.list_depth += 1
             }
-            options.list_type = this.exporter.lists.getNumberedType()
+            options.list_type = this.lists.getNumberedType()
             break
         case "bullet_list":
             options = Object.assign({}, options)
             options.section = "ListParagraph"
-            options.list_type = this.exporter.lists.getBulletType()
+            options.list_type = this.lists.getBulletType()
             if (options.list_depth === undefined) {
                 options.list_depth = 0
             } else {
@@ -439,8 +445,8 @@ export class DOCXExporterRichtext {
                     footnoteRefMissing: true,
                     section: "Footnote"
                 })
-                const fnXml = `<w:footnote w:id="${this.fnCounter}">${fnContents}</w:footnote>`
-                const xml = this.exporter.footnotes.xml
+                const fnXML = `<w:footnote w:id="${this.fnCounter}">${fnContents}</w:footnote>`
+                const xml = this.footnotes.xml
                 const lastId = this.fnCounter - 1
                 const footnotes = xml.queryAll("w:footnote")
                 footnotes.forEach(
@@ -450,7 +456,7 @@ export class DOCXExporterRichtext {
                             footnote.setAttribute("w:id", id + 1)
                         }
                         if (id === lastId) {
-                            footnote.parentElement.insertBefore(xmlDOM(fnXml), footnote.nextSibling)
+                            footnote.parentElement.insertBefore(xmlDOM(fnXML), footnote.nextSibling)
                         }
                     }
                 )
@@ -466,14 +472,14 @@ export class DOCXExporterRichtext {
         {
             const category = node.attrs.category
             let caption = node.attrs.caption ? node.content.find(node => node.type === "figure_caption")?.content || [] : []
-            let catCountXml = ""
+            let catCountXML = ""
             if (category !== "none") {
                 const categoryCounter = options.inFootnote ? this.fncategoryCounter : this.categoryCounter
                 if (!categoryCounter[category]) {
                     categoryCounter[category] = 1
                 }
-                catCountXml = `<w:r>
-                        <w:t xml:space="preserve">${CATS[category][this.exporter.doc.settings.language]} </w:t>
+                catCountXML = `<w:r>
+                        <w:t xml:space="preserve">${CATS[category][this.settings.language]} </w:t>
                     </w:r>
                     <w:r>
                         <w:rPr></w:rPr>
@@ -574,9 +580,9 @@ export class DOCXExporterRichtext {
                 cx = 9525 * 100 // We pick a random size of 100x100. We hope this will fit the formula
                 cy = 9525 * 100
                 const latex = node.content.find(node => node.type === "figure_equation")?.attrs.equation || ""
-                content += this.exporter.math.getOmml(latex)
+                content += this.math.getOmml(latex)
             }
-            const captionSpace = !!(catCountXml.length || caption.length)
+            const captionSpace = !!(catCountXML.length || caption.length)
             if (node.attrs.aligned === "center") {
                 start += noSpaceTmp`
                     <w:p>
@@ -589,7 +595,7 @@ export class DOCXExporterRichtext {
                     ${ captionSpace ?
         noSpaceTmp`<w:p>
                           <w:pPr><w:pStyle w:val="Caption"/><w:rPr></w:rPr></w:pPr>
-                          ${catCountXml}
+                          ${catCountXML}
                           ${caption.map((node, i) => this.transformRichtext(node, options, caption[i + 1])).join("")}
                     </w:p>` : ""
 }` + end
@@ -635,7 +641,7 @@ export class DOCXExporterRichtext {
                                                         </w:pPr>`
                 content = `<w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/><w:bookmarkEnd w:id="${this.bookmarkCounter}"/>` + content
                 end = noSpaceTmp`
-                                                        ${catCountXml}
+                                                        ${catCountXML}
                                                         ${caption.map((node, i) => this.transformRichtext(node, options, caption[i + 1])).join("")}
                                                     </w:p>
                                                 </w:txbxContent>
@@ -677,14 +683,14 @@ export class DOCXExporterRichtext {
         {
             const category = node.attrs.category
             let caption = node.attrs.caption ? node.content[0].content || [] : []
-            let catCountXml = ""
+            let catCountXML = ""
             if (category !== "none") {
                 const categoryCounter = options.inFootnote ? this.fncategoryCounter : this.categoryCounter
                 if (!categoryCounter[category]) {
                     categoryCounter[category] = 1
                 }
-                catCountXml = `<w:r>
-                        <w:t xml:space="preserve">${CATS[category][this.exporter.doc.settings.language]} </w:t>
+                catCountXML = `<w:r>
+                        <w:t xml:space="preserve">${CATS[category][this.settings.language]} </w:t>
                     </w:r>
                     <w:r>
                         <w:rPr></w:rPr>
@@ -710,7 +716,7 @@ export class DOCXExporterRichtext {
                     caption = [{type: "text", text: ": "}].concat(caption)
                 }
             }
-            const captionSpace = !!(catCountXml.length || caption.length)
+            const captionSpace = !!(catCountXML.length || caption.length)
             if (captionSpace) {
                 start += noSpaceTmp`
                     <w:p>
@@ -720,15 +726,15 @@ export class DOCXExporterRichtext {
                         </w:pPr>
                         <w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/>
                         <w:bookmarkEnd w:id="${this.bookmarkCounter}"/>
-                        ${catCountXml}
+                        ${catCountXML}
                         ${caption.map((node, i) => this.transformRichtext(node, options, caption[i + 1])).join("")}
                     </w:p>`
             }
-            this.exporter.tables.addTableGridStyle()
+            this.tables.addTableGridStyle()
             start += noSpaceTmp`
                     <w:tbl>
                         <w:tblPr>
-                            <w:tblStyle w:val="${this.exporter.tables.tableGridStyle}" />
+                            <w:tblStyle w:val="${this.tables.tableGridStyle}" />
                             ${
     node.attrs.width === "100" ?
         "<w:tblW w:w=\"0\" w:type=\"auto\" />" :
@@ -750,7 +756,7 @@ export class DOCXExporterRichtext {
             options.list_type = null
             options.dimensions = Object.assign({}, options.dimensions)
             options.dimensions.width = cellWidth
-            options.tableSideMargins = this.exporter.tables.getSideMargins()
+            options.tableSideMargins = this.tables.getSideMargins()
             for (let i = 0; i < columns; i++) {
                 start += `<w:gridCol w:w="${parseInt(cellWidth / 635)}" />`
             }
@@ -805,7 +811,7 @@ export class DOCXExporterRichtext {
         case "equation":
         {
             const latex = node.attrs.equation
-            content += this.exporter.math.getOmml(latex)
+            content += this.math.getOmml(latex)
             break
         }
         case "hard_break":

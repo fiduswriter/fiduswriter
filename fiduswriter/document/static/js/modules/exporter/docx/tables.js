@@ -45,19 +45,19 @@ const DEFAULT_TABLEGRID_XML = tableNormalStyle => noSpaceTmp`
     `
 
 export class DOCXExporterTables {
-    constructor(exporter) {
-        this.exporter = exporter
+    constructor(xml) {
+        this.xml = xml
         this.sideMargins = false
         this.tableGridStyle = false
         this.tableNormalStyle = false
-        this.styleXml = false
+        this.styleXML = false
         this.styleFilePath = "word/styles.xml"
     }
 
     init() {
-        return this.exporter.xml.getXml(this.styleFilePath).then(
-            styleXml => {
-                this.styleXml = styleXml
+        return this.xml.getXml(this.styleFilePath).then(
+            styleXML => {
+                this.styleXML = styleXML
                 return Promise.resolve()
             }
         )
@@ -68,11 +68,11 @@ export class DOCXExporterTables {
             // already added
             return
         }
-        const tableNormalEl = this.styleXml.query("w:style", {"w:type": "table", "w:default": "1"})
+        const tableNormalEl = this.styleXML.query("w:style", {"w:type": "table", "w:default": "1"})
         if (tableNormalEl) {
             this.tableNormalStyle = tableNormalEl.getAttribute("w:styleId")
         } else {
-            const stylesEl = this.styleXml.query("w:styles")
+            const stylesEl = this.styleXML.query("w:styles")
             stylesEl.appendXML(DEFAULT_TABLENORMAL_XML)
             this.tableNormalStyle = "TableNormal"
         }
@@ -84,11 +84,11 @@ export class DOCXExporterTables {
             return
         }
         this.addTableNormalStyle()
-        const tableGridEl = this.styleXml.query("w:style", {"w:type": "table", "w:customStyle": "1"})
+        const tableGridEl = this.styleXML.query("w:style", {"w:type": "table", "w:customStyle": "1"})
         if (tableGridEl) {
             this.tableGridStyle = tableGridEl.getAttribute("w:styleId")
         } else {
-            const stylesEl = this.styleXml.query("w:styles")
+            const stylesEl = this.styleXML.query("w:styles")
             stylesEl.appendXML(DEFAULT_TABLEGRID_XML(this.tableNormalStyle))
             this.tableGridStyle = "TableGrid"
         }
@@ -96,7 +96,7 @@ export class DOCXExporterTables {
 
     getSideMargins() {
         if (!this.sideMargins) {
-            const marginsEl = this.styleXml.query("w:style", {"w:styleId": this.tableGridStyle})
+            const marginsEl = this.styleXML.query("w:style", {"w:styleId": this.tableGridStyle})
             const leftEl = marginsEl.query("w:left")
             const rightEl = marginsEl.query("w:right")
             const left = parseInt(leftEl.getAttribute("w:w"))

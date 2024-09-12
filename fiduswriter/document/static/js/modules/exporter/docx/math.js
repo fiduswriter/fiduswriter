@@ -14,17 +14,17 @@ const CAMBRIA_MATH_FONT_DECLARATION = noSpaceTmp`
     </w:font>`
 
 export class DOCXExporterMath {
-    constructor(exporter) {
-        this.exporter = exporter
-        this.fontTableXml = false
+    constructor(xml) {
+        this.xml = xml
+        this.fontTableXML = false
         this.addedCambriaMath = false
         this.domParser = new DOMParser()
     }
 
     init() {
-        return this.exporter.xml.getXml("word/fontTable.xml").then(
-            fontTableXml => {
-                this.fontTableXml = fontTableXml
+        return this.xml.getXml("word/fontTable.xml").then(
+            fontTablesXML => {
+                this.fontTablesXML = fontTablesXML
                 return import("mathlive")
             }
         ).then(
@@ -39,7 +39,7 @@ export class DOCXExporterMath {
 
     getOmml(latex) {
         if (!this.addedCambriaMath) {
-            const fontsEl = this.fontTableXml.query("w:fonts")
+            const fontsEl = this.fontTablesXML.query("w:fonts")
             fontsEl.appendXML(CAMBRIA_MATH_FONT_DECLARATION)
             this.addedCambriaMath = true
         }

@@ -18,6 +18,9 @@ export class ODTExporterTracks {
     }
 
     checkTrackedChangesSection() {
+        if (this.trackChangesSection) {
+            return
+        }
         const trackChangesSection = this.contentXml.query("text:tracked-changes")
         if (trackChangesSection) {
             this.trackChangesSection = trackChangesSection

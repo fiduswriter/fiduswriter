@@ -322,7 +322,8 @@ class XMLElement {
             }
         }
         const builder = new XMLBuilder(fastXMLParserOptions)
-        return builder.build(this.toObject())
+        const object = this.toObject()
+        return builder.build(Array.isArray(object) ? object : [object])
     }
 }
 

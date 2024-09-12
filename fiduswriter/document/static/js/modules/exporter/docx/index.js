@@ -3,7 +3,7 @@ import download from "downloadjs"
 import {shortFileTitle} from "../../common"
 import {createSlug} from "../tools/file"
 import {XmlZip} from "../tools/xml_zip"
-import {removeHidden, fixTables} from "../tools/doc_content"
+import {removeHidden, fixTables, textContent} from "../tools/doc_content"
 import {moveFootnoteComments} from "./tools"
 import {DOCXExporterCitations} from "./citations"
 import {DOCXExporterComments} from "./comments"
@@ -38,11 +38,11 @@ export class DOCXExporter {
 
         this.docTitle = shortFileTitle(this.doc.title, this.doc.path)
         this.mimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        this.docContent = moveFootnoteComments(fixTables(removeHidden(this.doc.content)))
     }
 
 
     init() {
-        const docContent = moveFootnoteComments(fixTables(removeHidden(this.doc.content)))
 
         const xml = new XmlZip(
             this.templateUrl,
@@ -52,16 +52,16 @@ export class DOCXExporter {
         const tables = new DOCXExporterTables(xml)
         const math = new DOCXExporterMath(xml)
         const rels = new DOCXExporterRels(xml, "document")
+        const metadata = new DOCXExporterMetadata(xml, this.getBaseMetadata())
 
-        const metadata = new DOCXExporterMetadata(docContent, xml)
 
-        const images = new DOCXExporterImages(docContent, this.imageDB, xml, rels)
-        const lists = new DOCXExporterLists(docContent, xml, rels)
-        const citations = new DOCXExporterCitations(docContent, this.doc.settings, this.bibDB, this.csl, xml)
+        const images = new DOCXExporterImages(this.docContent, this.imageDB, xml, rels)
+        const lists = new DOCXExporterLists(this.docContent, xml, rels)
+        const citations = new DOCXExporterCitations(this.docContent, this.doc.settings, this.bibDB, this.csl, xml)
 
         const footnotes = new DOCXExporterFootnotes(
             this.doc,
-            docContent,
+            this.docContent,
             this.doc.settings,
             this.imageDB,
             this.bibDB,
@@ -86,9 +86,9 @@ export class DOCXExporter {
             images,
         )
 
-        const comments = new DOCXExporterComments(docContent, this.doc.comments, xml, rels, richtext)
+        const comments = new DOCXExporterComments(this.docContent, this.doc.comments, xml, rels, richtext)
 
-        const render = new DOCXExporterRender(docContent, this.doc.settings, xml, citations, richtext)
+        const render = new DOCXExporterRender(this.docContent, this.doc.settings, xml, citations, richtext)
 
         return xml.init().then(
             () => citations.init()
@@ -121,8 +121,43 @@ export class DOCXExporter {
             blob => this.download(blob)
         )
     }
+
+
     download(blob) {
         return download(blob, createSlug(this.docTitle) + ".docx", this.mimeType)
+    }
+
+    getBaseMetadata() {
+        return {
+            authors: this.docContent.content.reduce(
+                (authors, part) => {
+                    if (
+                        part.type === "contributors_part" &&
+                        part.attrs.metadata === "authors" &&
+                        part.content
+                    ) {
+                        return authors.concat(part.content.map(authorNode => authorNode.attrs))
+                    } else {
+                        return authors
+                    }
+                },
+                []),
+            keywords: this.docContent.content.reduce(
+                (keywords, part) => {
+                    if (
+                        part.type === "tags_part" &&
+                        part.attrs.metadata === "keywords" &&
+                        part.content
+                    ) {
+                        return keywords.concat(part.content.map(keywordNode => keywordNode.attrs.tag))
+                    } else {
+                        return keywords
+                    }
+                },
+                []),
+            title: textContent(this.docContent.content[0]),
+            language: this.doc.settings.language
+        }
     }
 
 }

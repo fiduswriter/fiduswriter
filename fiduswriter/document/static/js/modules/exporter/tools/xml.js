@@ -286,21 +286,29 @@ class XMLElement {
         return result
     }
 
-    // Serialize back to original structure (useful for debugging)
+    // Serialize back to original structure in a non-destructive way
     toObject() {
-        const tagName = this.tagName
 
-        if (tagName && this.node[tagName] && !isLeaf(tagName)) {
-            this.node[tagName] = this.node[tagName].map(child => {
-                return child instanceof XMLElement ? child.toObject() : child
-            })
+        const tagName = this.tagName
+        const node = {...this.node}
+        if (this.node[":@"]) {
+            node[":@"] = {...this.node[":@"]}
+        }
+        if (tagName && this.node[tagName]) {
+            if (Array.isArray(this.node[tagName])) {
+                node[tagName] = this.node[tagName].map(child => {
+                    return child instanceof XMLElement ? child.toObject() : child
+                })
+            } else {
+                node[tagName] = this.node[tagName] instanceof XMLElement ? this.node[tagName].toObject() : this.node[tagName]
+            }
         }
 
         if (tagName === "#document") {
-            return this.node["#document"]
+            return node["#document"]
         }
 
-        return this.node
+        return node
     }
 
     toString() {

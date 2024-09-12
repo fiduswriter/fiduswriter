@@ -27,7 +27,7 @@ export const getMissingDocumentListData = function(ids, documentList, schema, ra
                     extraValues => {
                         const doc = documentList.find(entry => entry.id === extraValues.id)
                         if (rawContent) {
-                            doc.rawContent = JSON.parse(JSON.stringify(extraValues.content))
+                            doc.rawContent = JSON.parse(JSON.stringify(schema.nodeFromJSON(extraValues.content).toJSON()))
                         }
                         doc.content = acceptAllNoInsertions(
                             schema.nodeFromJSON(

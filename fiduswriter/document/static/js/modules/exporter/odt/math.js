@@ -21,8 +21,8 @@ export class ODTExporterMath {
     }
 
     checkObjectCounter() {
-        const manifestEl = this.manifestXml.querySelector("manifest")
-        const fileEntries = manifestEl.querySelectorAll("file-entry")
+        const manifestEl = this.manifestXml.query("manifest:manifest")
+        const fileEntries = manifestEl.queryAll("manifest:file-entry")
 
         fileEntries.forEach(
             fileEntry => {
@@ -51,11 +51,11 @@ export class ODTExporterMath {
                 this.latexToMathML(latex)
             }</math>`
         )
-        const manifestEl = this.manifestXml.querySelector("manifest")
+        const manifestEl = this.manifestXml.query("manifest:manifest")
         const stringOne = `<manifest:file-entry manifest:full-path="Object ${objectNumber}/content.xml" manifest:media-type="text/xml"/>`
-        manifestEl.insertAdjacentHTML("beforeEnd", stringOne)
+        manifestEl.appendXML(stringOne)
         const stringTwo = `<manifest:file-entry manifest:full-path="Object ${objectNumber}/" manifest:version="1.2" manifest:media-type="application/vnd.oasis.opendocument.formula"/>`
-        manifestEl.insertAdjacentHTML("beforeEnd", stringTwo)
+        manifestEl.appendXML(stringTwo)
         return objectNumber
     }
 

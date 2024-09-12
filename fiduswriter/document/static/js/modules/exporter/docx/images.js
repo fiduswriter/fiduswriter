@@ -31,11 +31,11 @@ export class DOCXExporterImages {
 
     // add a global contenttype declaration for an image type (if needed)
     addContentType(fileEnding) {
-        const types = this.ctXml.querySelector("Types")
-        const contentDec = types.querySelector("Default[Extension=" + fileEnding + "]")
+        const types = this.ctXml.query("Types")
+        const contentDec = types.query("Default", {"Extension": fileEnding})
         if (!contentDec) {
             const string = `<Default ContentType="image/${fileEnding}" Extension="${fileEnding}"/>`
-            types.insertAdjacentHTML("beforeEnd", string)
+            types.appendXML(string)
         }
     }
 

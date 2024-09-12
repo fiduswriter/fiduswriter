@@ -50,16 +50,15 @@ export class DOCXExporterMetadata {
 
 
     addMetadata() {
-        const corePropertiesEl = this.coreXml.querySelector("coreProperties")
+        const corePropertiesEl = this.coreXml.query("cp:coreProperties")
 
         // Title
-        let titleEl = this.coreXml.querySelector("title")
+        let titleEl = this.coreXml.query("dc:title")
         if (!titleEl) {
-            corePropertiesEl.insertAdjacentHTML("beforeEnd", "<dc:title></dc:title>")
-            titleEl = this.coreXml.querySelector("title")
+            corePropertiesEl.appendXML("<dc:title></dc:title>")
+            titleEl = corePropertiesEl.lastElementChild
         }
-        titleEl.innerHTML = escapeText(this.metadata.title)
-
+        titleEl.innerXML = escapeText(this.metadata.title)
         // Authors
 
         const authors = this.metadata.authors.map(author => {
@@ -78,45 +77,44 @@ export class DOCXExporterMetadata {
         })
         const lastAuthor = authors.length ? escapeText(authors[0]) : gettext("Unknown")
         const allAuthors = authors.length ? escapeText(authors.join(";")) : gettext("Unknown")
-        let allAuthorsEl = this.coreXml.querySelector("creator")
-        if (!allAuthorsEl) {
-            corePropertiesEl.insertAdjacentHTML("beforeEnd", "<dc:creator></dc:creator>")
-            allAuthorsEl = this.coreXml.querySelector("creator")
-        }
-        allAuthorsEl.innerHTML = allAuthors
-        let lastAuthorEl = this.coreXml.querySelector("lastModifiedBy")
-        if (!lastAuthorEl) {
-            corePropertiesEl.insertAdjacentHTML("beforeEnd", "<dc:lastModifiedBy></dc:lastModifiedBy>")
-            lastAuthorEl = this.coreXml.querySelector("lastModifiedBy")
-        }
-        lastAuthorEl.innerHTML = lastAuthor
+        let allAuthorsEl = this.coreXml.query("dc:creator")
 
+        if (!allAuthorsEl) {
+            corePropertiesEl.appendXML("<dc:creator></dc:creator>")
+            allAuthorsEl = corePropertiesEl.lastElementChild
+        }
+        allAuthorsEl.innerXML = allAuthors
+        let lastAuthorEl = this.coreXml.query("dc:lastModifiedBy")
+        if (!lastAuthorEl) {
+            corePropertiesEl.appendXML("<dc:lastModifiedBy></dc:lastModifiedBy>")
+            lastAuthorEl = corePropertiesEl.lastElementChild
+        }
+        lastAuthorEl.innerXML = lastAuthor
         // Keywords
         if (this.metadata.keywords.length) {
             // It is not really clear how keywords should be separated in DOCX files,
             // so we use ", ".
             const keywordsString = escapeText(this.metadata.keywords.join(", "))
 
-            let keywordsEl = this.coreXml.querySelector("keywords")
+            let keywordsEl = this.coreXml.query("cp:keywords")
             if (!keywordsEl) {
-                corePropertiesEl.insertAdjacentHTML("beforeEnd", "<cp:keywords></cp:keywords>")
-                keywordsEl = this.coreXml.querySelector("keywords")
+                corePropertiesEl.appendXML("<cp:keywords></cp:keywords>")
+                keywordsEl = corePropertiesEl.lastElementChild
             }
-            keywordsEl.innerHTML = keywordsString
+            keywordsEl.innerXML = keywordsString
         }
-
 
         // time
         const date = new Date()
         const dateString = date.toISOString().split(".")[0] + "Z"
-        const createdEl = this.coreXml.querySelector("created")
-        createdEl.innerHTML = dateString
-        let modifiedEl = this.coreXml.querySelector("modified")
+        const createdEl = this.coreXml.query("dcterms:created")
+        createdEl.innerXML = dateString
+        let modifiedEl = this.coreXml.query("dcterms:modified")
         if (!modifiedEl) {
-            corePropertiesEl.insertAdjacentHTML("beforeEnd", "<dcterms:modified xsi:type=\"dcterms:W3CDTF\"></dcterms:modified>")
-            modifiedEl = this.coreXml.querySelector("modified")
+            corePropertiesEl.appendXML("<dcterms:modified xsi:type=\"dcterms:W3CDTF\"></dcterms:modified>")
+            modifiedEl = corePropertiesEl.lastElementChild
         }
-        modifiedEl.innerHTML = dateString
+        modifiedEl.innerXML = dateString
     }
 
 }

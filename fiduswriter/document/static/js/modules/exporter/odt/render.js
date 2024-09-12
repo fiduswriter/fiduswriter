@@ -1,14 +1,11 @@
 import {textContent} from "../tools/doc_content"
 import {escapeText} from "../../common"
 import {BIBLIOGRAPHY_HEADERS} from "../../schema/i18n"
+import {xmlDOM} from "../tools/xml"
 
 export class ODTExporterRender {
-    constructor(docContent, settings, xml, richtext, citations) {
-        this.docContent = docContent
-        this.settings = settings
+    constructor(xml) {
         this.xml = xml
-        this.richtext = richtext
-        this.citations = citations
 
         this.filePath = "content.xml"
         this.text = false
@@ -17,16 +14,15 @@ export class ODTExporterRender {
     init() {
         return this.xml.getXml(this.filePath).then(
             xml => {
-                this.xml = xml
-                this.text = xml.querySelector("text")
+                this.text = xml.query("office:text")
                 return Promise.resolve()
             }
         )
     }
 
     // Define the tags that are to be looked for in the document
-    getTagData(pmBib) {
-        this.tags = this.docContent.content.map(node => {
+    getTagData(docContent, settings, pmBib) {
+        const tags = docContent.content.map(node => {
             const tag = {}
             switch (node.type) {
             case "title":
@@ -88,21 +84,20 @@ export class ODTExporterRender {
             }
             return tag
         })
-        const settings = this.settings,
-            bibliographyHeader = settings.bibliography_header[settings.language] || BIBLIOGRAPHY_HEADERS[settings.language]
-        this.tags.push({
+        const bibliographyHeader = settings.bibliography_header[settings.language] || BIBLIOGRAPHY_HEADERS[settings.language]
+        tags.push({
             title: "@bibliography", // The '@' triggers handling as block
             content: pmBib ?
                 [{type: "bibliography_heading", content: [{type: "text", text: bibliographyHeader}]}].concat(pmBib.content) :
                 [{type: "paragraph", content: [{type: "text", text: " "}]}]
         })
-        this.tags.push({
+        tags.push({
             title: "@copyright", // The '@' triggers handling as block
             content: settings.copyright && settings.copyright.holder ?
                 [{type: "paragraph", content: [{type: "text", text: `© ${settings.copyright.year ? settings.copyright.year : new Date().getFullYear()} ${settings.copyright.holder}`}]}] :
                 [{type: "paragraph", content: [{type: "text", text: " "}]}]
         })
-        this.tags.push({
+        tags.push({
             title: "@licenses", // The '@' triggers handling as block
             content: settings.copyright && settings.copyright.licenses.length ?
                 settings.copyright.licenses.map(
@@ -113,24 +108,26 @@ export class ODTExporterRender {
                 ) :
                 [{type: "paragraph", content: [{type: "text", text: " "}]}]
         })
+        return tags
     }
 
     // go through content.xml looking for tags and replace them with the given
     // replacements.
-    render() {
-        const textBlocks = this.text.querySelectorAll("p, h")
+    render(docContent, pmBib, settings, richtext, citations) {
+        const tags = this.getTagData(docContent, settings, pmBib)
+        const textBlocks = this.text.queryAll(["text:p", "text:h"])
         textBlocks.forEach(block => {
-            if (block.parentNode.nodeName === "text:deletion") {
+            if (block.parentElement.nodeName === "text:deletion") {
                 // Inside of tracked changes deletion, don't do anything
                 return
             }
             const text = block.textContent
-            this.tags.forEach(tag => {
+            tags.forEach(tag => {
                 const tagString = tag.title
                 if (text.includes(`{${tagString}}`)) {
                     tag.block = block
                     if (tag.title[0] === "@") {
-                        this.blockRender(tag)
+                        this.blockRender(tag, richtext, citations)
                     } else {
                         this.inlineRender(tag)
                     }
@@ -143,19 +140,19 @@ export class ODTExporterRender {
     inlineRender(tag) {
         const texts = tag.block.textContent.split(`{${tag.title}}`)
         const fullText = texts[0] + (tag.content ? tag.content : "") + texts[1]
-        tag.block.innerHTML = escapeText(fullText).replace(
+        tag.block.innerXML = escapeText(fullText).replace(
             /^\s+|\s+$/g,
             match => "<text:s/>".repeat(match.length))
     }
 
     // Render tags that exchange text blocks
-    blockRender(tag) {
+    blockRender(tag, richtext, citations) {
         const section = tag.block.hasAttribute("text:style-name") ? tag.block.getAttribute("text:style-name") : "Text_20_body"
-        const outXml = tag.content ? tag.content.map(
-            (content, contentIndex) => this.richtext.run(
+        const outXML = tag.content ? tag.content.map(
+            (content, contentIndex) => richtext.run(
                 content,
                 {
-                    citationType: this.citations.citFm.citationType,
+                    citationType: citations.citFm.citationType,
                     section,
                     tag: tag.title.slice(1)
                 },
@@ -163,8 +160,21 @@ export class ODTExporterRender {
                 contentIndex
             )
         ).join("") : ""
-        tag.block.insertAdjacentHTML("beforebegin", outXml)
-        tag.block.parentNode.removeChild(tag.block)
+        if (!outXML.length) {
+            // If there is no content, we need to put in a space to prevent the
+            // tag from being removed by LibreOffice.
+            tag.block.innerXML = "<text:s/>"
+            return
+        }
+        const parentElement = tag.block.parentElement
+        const dom = xmlDOM(outXML)
+        const domPars = dom.node["#document"]?.slice() || [dom]
+        domPars.forEach(
+            node => parentElement.insertBefore(node, tag.block)
+        )
+
+        parentElement.removeChild(tag.block)
+
     }
 
 

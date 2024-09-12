@@ -56,7 +56,7 @@ export class DOCXExporterRels {
 
     // Go through a rels xml file and file all the listed relations
     findMaxRelId() {
-        const rels = this.xml.querySelectorAll("Relationship")
+        const rels = this.xml.queryAll("Relationship")
 
         rels.forEach(
             rel => {
@@ -69,19 +69,19 @@ export class DOCXExporterRels {
     }
 
     addRelsToCt() {
-        const override = this.ctXml.querySelector(`Override[PartName="/${this.filePath}"]`)
+        const override = this.ctXml.query("Overrid", {"PartName": `/${this.filePath}`})
         if (!override) {
-            const types = this.ctXml.querySelector("Types")
-            types.insertAdjacentHTML("beforeEnd", `<Override PartName="/${this.filePath}" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>`)
+            const types = this.ctXml.query("Types")
+            types.appendXML(`<Override PartName="/${this.filePath}" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>`)
         }
     }
 
     // Add a relationship for a link
     addLinkRel(link) {
-        const rels = this.xml.querySelector("Relationships")
+        const rels = this.xml.query("Relationships")
         const rId = ++this.relIdCounter
         const string = `<Relationship Id="rId${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="${escapeText(link)}" TargetMode="External"/>`
-        rels.insertAdjacentHTML("beforeEnd", string)
+        rels.appendXML(string)
         return rId
     }
 
@@ -90,80 +90,80 @@ export class DOCXExporterRels {
             // already added
             return
         }
-        const hyperLinkEl = this.styleXml.querySelector("name[*|val=\"Hyperlink\"]")
+        const hyperLinkEl = this.styleXml.query("w:name", {"w:val": "Hyperlink"})
         if (hyperLinkEl) {
             this.hyperLinkStyle = hyperLinkEl.parentElement.getAttribute("w:styleId")
         } else {
-            const stylesEl = this.styleXml.querySelector("styles")
-            stylesEl.insertAdjacentHTML("beforeEnd", DEFAULT_HYPERLINK_STYLE)
+            const stylesEl = this.styleXml.query("w:styles")
+            stylesEl.appendXML(DEFAULT_HYPERLINK_STYLE)
             this.hyperLinkStyle = "InternetLink"
         }
     }
 
     // add a relationship for an image
     addImageRel(imgFileName) {
-        const rels = this.xml.querySelector("Relationships")
+        const rels = this.xml.query("Relationships")
         const rId = ++this.relIdCounter
         const string = `<Relationship Id="rId${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/${escapeText(imgFileName)}"/>`
-        rels.insertAdjacentHTML("beforeEnd", string)
+        rels.appendXML(string)
         return rId
     }
 
     addFootnoteRel() {
-        const footnotesRel = this.xml.querySelector("Relationship[Target=\"footnotes.xml\"]")
+        const footnotesRel = this.xml.query("Relationship", {"Target": "footnotes.xml"})
         if (footnotesRel) {
             // Rel exists already
             const fnRId = parseInt(footnotesRel.getAttribute("Id").replace(/\D/g, ""))
             return fnRId
         }
-        const rels = this.xml.querySelector("Relationships")
+        const rels = this.xml.query("Relationships")
         const rId = ++this.relIdCounter
         const string = `<Relationship Id="rId${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footnotes" Target="footnotes.xml"/>`
-        rels.insertAdjacentHTML("beforeEnd", string)
+        rels.appendXML(string)
         return rId
     }
 
     addNumberingRel() {
-        const numberingRel = this.xml.querySelector("Relationship[Target=\"numbering.xml\"]")
+        const numberingRel = this.xml.query("Relationship", {"Target": "numbering.xml"})
         if (numberingRel) {
             // Rel exists already
             const nuRId = parseInt(numberingRel.getAttribute("Id").replace(/\D/g, ""))
             return nuRId
         }
-        const rels = this.xml.querySelector("Relationships")
+        const rels = this.xml.query("Relationships")
         const rId = ++this.relIdCounter
         const string = `<Relationship Id="rId${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering" Target="numbering.xml"/>`
-        rels.insertAdjacentHTML("beforeEnd", string)
+        rels.appendXML(string)
         return rId
     }
 
     addCommentsRel() {
-        const commentsRel = this.xml.querySelector("Relationship[Target=\"comments.xml\"]")
+        const commentsRel = this.xml.query("Relationship", {"Target": "comments.xml"})
         if (commentsRel) {
             return
         }
-        const rels = this.xml.querySelector("Relationships")
+        const rels = this.xml.query("Relationships")
         const string = `<Relationship Id="rId${++this.relIdCounter}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments" Target="comments.xml"/>`
-        rels.insertAdjacentHTML("beforeEnd", string)
-        const override = this.ctXml.querySelector("Override[PartName=\"/word/comments.xml\"]")
+        rels.appendXML(string)
+        const override = this.ctXml.query("Override", {"PartName": "/word/comments.xml"})
         if (!override) {
-            const types = this.ctXml.querySelector("Types")
-            types.insertAdjacentHTML("beforeEnd", "<Override PartName=\"/word/comments.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.wordprocessingml.comments+xml\"/>")
+            const types = this.ctXml.query("Types")
+            types.appendXML("<Override PartName=\"/word/comments.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.wordprocessingml.comments+xml\"/>")
         }
     }
 
     addCommentsExtendedRel() {
-        const commentsExtendedRel = this.xml.querySelector("Relationship[Target=\"commentsExtended.xml\"]")
+        const commentsExtendedRel = this.xml.query("Relationship", {"Target": "commentsExtended.xml"})
         if (commentsExtendedRel) {
             return
         }
-        const rels = this.xml.querySelector("Relationships")
+        const rels = this.xml.query("Relationships")
         const string = `<Relationship Id="rId${++this.relIdCounter}" Type="http://schemas.microsoft.com/office/2011/relationships/commentsExtended" Target="commentsExtended.xml"/>`
-        rels.insertAdjacentHTML("beforeEnd", string)
-        const override = this.ctXml.querySelector("Override[PartName=\"/word/commentsExtended.xml\"]")
+        rels.appendXML(string)
+        const override = this.ctXml.query("Override", {"PartName": "/word/commentsExtended.xml"})
         if (!override) {
-            const types = this.ctXml.querySelector("Types")
-            types.insertAdjacentHTML("beforeEnd", "<Override PartName=\"/word/commentsExtended.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.wordprocessingml.commentsExtended+xml\"/>")
+            const types = this.ctXml.query("Types")
+            types.appendXML("<Override PartName=\"/word/commentsExtended.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.wordprocessingml.commentsExtended+xml\"/>")
         }
     }
 

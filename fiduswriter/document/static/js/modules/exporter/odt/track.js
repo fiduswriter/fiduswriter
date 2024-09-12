@@ -18,16 +18,19 @@ export class ODTExporterTracks {
     }
 
     checkTrackedChangesSection() {
-        const trackChangesSection = this.contentXml.querySelector("tracked-changes")
+        if (this.trackChangesSection) {
+            return
+        }
+        const trackChangesSection = this.contentXml.query("text:tracked-changes")
         if (trackChangesSection) {
             this.trackChangesSection = trackChangesSection
         } else {
-            const textElement = this.contentXml.querySelector("text")
+            const textElement = this.contentXml.query("office:text")
             if (!textElement) {
                 throw new Error("No text element found in content.xml")
             }
-            textElement.insertAdjacentHTML("afterbegin", "<text:tracked-changes></text:tracked-changes>")
-            this.trackChangesSection = this.contentXml.querySelector("tracked-changes")
+            textElement.prependXML("<text:tracked-changes></text:tracked-changes>")
+            this.trackChangesSection = textElement.firstElementChild
         }
     }
 
@@ -57,10 +60,7 @@ export class ODTExporterTracks {
             ""
 }
         </text:changed-region>`
-        this.trackChangesSection.insertAdjacentHTML(
-            "beforeend",
-            changeXml
-        )
+        this.trackChangesSection.appendXML(changeXml)
         return trackId
     }
 }

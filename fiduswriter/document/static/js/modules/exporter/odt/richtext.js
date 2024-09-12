@@ -248,6 +248,7 @@ export class ODTExporterRichtext {
             end = "</text:list>" + end
             options = Object.assign({}, options)
             options.section = `P${olId[1]}`
+            options.listStyles = (options.listStyles || []).concat([`L${olId[0]}`])
             break
         }
         case "bullet_list": {
@@ -256,6 +257,7 @@ export class ODTExporterRichtext {
             end = "</text:list>" + end
             options = Object.assign({}, options)
             options.section = `P${ulId[1]}`
+            options.listStyles = (options.listStyles || []).concat([`L${ulId[0]}`])
             break
         }
         case "list_item":
@@ -476,6 +478,12 @@ export class ODTExporterRichtext {
             // We are already dealing with this in the figure.
             break
         case "table": {
+            if (options.listStyles) {
+                options.listStyles.forEach(listStyle => {
+                    end = `<text:list text:continue-numbering="true" text:style-name="${listStyle}"><text:list-item>` + end
+                    start += "</text:list-item></text:list>"
+                })
+            }
             const tableCaption = node.content[0]
             let caption = node.attrs.caption ? tableCaption?.content?.map((node, index) => this.transformRichtext(node, options, tableCaption, index)).join("") || "" : ""
             // The table category should not be in the
@@ -502,15 +510,11 @@ export class ODTExporterRichtext {
                 start += `<text:p text:style-name="${options.section}">${caption}</text:p>`
             }
             const columns = node.content[1].content[0].content.length
-            if (node.attrs.width === "100") {
-                start += "<table:table>"
-            } else {
-                const styleId = this.styles.getTableStyleId(
-                    node.attrs.aligned,
-                    node.attrs.width
-                )
-                start += `<table:table table:style-name="Table${styleId}">`
-            }
+            const styleId = this.styles.getTableStyleId(
+                node.attrs.aligned,
+                node.attrs.width
+            )
+            start += `<table:table table:name="Table${styleId}" table:style-name="Table${styleId}">`
             start += `<table:table-column table:number-columns-repeated="${columns}" />`
             end = "</table:table>" + end
             break
@@ -536,7 +540,7 @@ export class ODTExporterRichtext {
                     node.attrs.colspan > 1 ?
                         ` table:number-columns-spanned="${node.attrs.colspan}"` :
                         ""
-                }>`
+                } office:value-type="string">`
                 end = "</table:table-cell>" + end
             } else {
                 start += "<table:covered-table-cell/>"

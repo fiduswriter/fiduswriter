@@ -746,7 +746,8 @@ export class DOCXExporterRichtext {
             } else if (!options.dimensions) {
                 options.dimensions = {}
             }
-
+            options.section = "Normal"
+            options.list_type = null
             options.dimensions = Object.assign({}, options.dimensions)
             options.dimensions.width = cellWidth
             options.tableSideMargins = this.exporter.tables.getSideMargins()

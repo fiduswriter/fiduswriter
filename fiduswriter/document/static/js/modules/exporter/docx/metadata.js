@@ -1,42 +1,11 @@
-import {textContent} from "../tools/doc_content"
 import {escapeText} from "../../common"
 
 
 export class DOCXExporterMetadata {
-    constructor(docContent, xml) {
-        this.docContent = docContent
+    constructor(xml, metadata) {
         this.xml = xml
-
+        this.metadata = metadata
         this.coreXML = false
-        this.metadata = {
-            authors: this.docContent.content.reduce(
-                (authors, part) => {
-                    if (
-                        part.type === "contributors_part" &&
-                        part.attrs.metadata === "authors" &&
-                        part.content
-                    ) {
-                        return authors.concat(part.content.map(authorNode => authorNode.attrs))
-                    } else {
-                        return authors
-                    }
-                },
-                []),
-            keywords: this.docContent.content.reduce(
-                (keywords, part) => {
-                    if (
-                        part.type === "tags_part" &&
-                        part.attrs.metadata === "keywords" &&
-                        part.content
-                    ) {
-                        return keywords.concat(part.content.map(keywordNode => keywordNode.attrs.tag))
-                    } else {
-                        return keywords
-                    }
-                },
-                []),
-            title: textContent(this.docContent.content[0])
-        }
     }
 
     init() {

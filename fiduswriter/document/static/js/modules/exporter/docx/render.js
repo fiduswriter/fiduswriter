@@ -9,7 +9,7 @@ export class DOCXExporterRender {
 
         this.filePath = false // "word/document.xml" or "word/document2.xml" in some cases
         this.ctXML = false
-        this.docXML = false
+        this.text = false
     }
 
     init() {
@@ -22,10 +22,10 @@ export class DOCXExporterRender {
             }
         ).then(
             xml => {
-                this.docXML = xml
+                this.text = xml
                 // Ensure we support the three latest docx feature sets:
                 // wp14 (drawing 2010), w14 (word 2010), w15 (word 2012)
-                const documentEl = this.docXML.query("w:document")
+                const documentEl = this.text.query("w:document")
                 if (!documentEl.getAttribute("xmlns:wp14")) {
                     documentEl.setAttribute("xmlns:wp14", "http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing")
                 }
@@ -37,6 +37,7 @@ export class DOCXExporterRender {
                 }
                 const ignorable = [...new Set(["w14", "wp14", "w15"].concat(documentEl.getAttribute("mc:Ignorable", "").split(" ").filter(item => item.length)))]
                 documentEl.setAttribute("mc:Ignorable", ignorable.join(" "))
+                return Promise.resolve()
             }
         )
     }
@@ -141,7 +142,7 @@ export class DOCXExporterRender {
         const tags = this.getTagData(docContent, pmBib, settings)
 
         // Including global page definition at end
-        const pars = this.docXML.queryAll(["w:p", "w:sectPr"])
+        const pars = this.text.queryAll(["w:p", "w:sectPr"])
         const currentTags = []
         pars.forEach(
             par => {
@@ -152,13 +153,12 @@ export class DOCXExporterRender {
                         const tagString = tag.title
                         if (text.includes(`{${tagString}}`)) {
                             currentTags.push(tag)
-                            tag.par = par
+                            tag.block = par
                             // We don't worry about the same tag appearing twice in the document,
                             // as that would make no sense.
                         }
                     }
                 )
-
                 const pageSize = par.query("w:pgSz")
                 const pageMargins = par.query("w:pgMar")
                 const cols = par.query("w:cols")
@@ -205,9 +205,9 @@ export class DOCXExporterRender {
 
     // Render Tags that only exchange inline content
     inlineRender(tag) {
-        const texts = tag.par.textContent.split(`{${tag.title}}`)
+        const texts = tag.block.textContent.split(`{${tag.title}}`)
         const fullText = texts[0] + escapeText(tag.content) + texts[1]
-        const rs = tag.par.queryAll("w:r")
+        const rs = tag.block.queryAll("w:r")
         while (rs.length > 1) {
             rs[0].parentElement.removeChild(rs[0])
             rs.shift()
@@ -226,10 +226,10 @@ export class DOCXExporterRender {
 
     // Render tags that exchange paragraphs
     blockRender(tag, citations, richtext) {
-        if (!tag.par) {
+        if (!tag.block) {
             return
         }
-        const pStyle = tag.par.query("w:pStyle")
+        const pStyle = tag.block.query("w:pStyle")
         const options = {
             dimensions: tag.dimensions,
             citationType: citations.citFm.citationType,
@@ -242,10 +242,10 @@ export class DOCXExporterRender {
         if (!outXML.length) {
             // If there is no content, we need to put in a space to prevent the
             // tag from being removed.
-            tag.par.innerXML = "<w:r><w:t xml:space=\"preserve\"> </w:t></w:r>"
+            tag.block.innerXML = "<w:r><w:t xml:space=\"preserve\"> </w:t></w:r>"
             return
         }
-        const parentElement = tag.par.parentElement
+        const parentElement = tag.block.parentElement
         const dom = xmlDOM(outXML)
         const domPars = dom.node["#document"]?.slice() || [dom]
         domPars.forEach(
@@ -253,12 +253,12 @@ export class DOCXExporterRender {
         )
         // sectPr contains information about columns, etc. We need to move this
         // to the last paragraph we will be adding.
-        const sectPr = tag.par.query("w:sectPr")
+        const sectPr = tag.block.query("w:sectPr")
         if (sectPr) {
-            const pPr = tag.par.previousSibling.query("w:pPr")
+            const pPr = tag.block.previousSibling.query("w:pPr")
             pPr.appendChild(sectPr)
         }
-        parentElement.removeChild(tag.par)
+        parentElement.removeChild(tag.block)
     }
 
 

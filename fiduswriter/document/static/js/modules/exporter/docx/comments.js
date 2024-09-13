@@ -50,11 +50,11 @@ export class DOCXExporterComments {
         }
         this.rels.addCommentsRel()
         const addCommentXMLs = [
-            this.xml.getXML(this.commentsFilePath, DEFAULT_COMMENTS_XML).then(commentsXML => this.commentsXML = commentsXML)
+            this.xml.getXml(this.commentsFilePath, DEFAULT_COMMENTS_XML).then(commentsXML => this.commentsXML = commentsXML)
         ]
         if (useExtended) {
             this.rels.addCommentsExtendedRel()
-            addCommentXMLs.push(this.xml.getXML(this.commentsExtendedFilePath, DEFAULT_COMMENTS_EXTENDED_XML).then(commentsExtendedXML => this.commentsExtendedXML = commentsExtendedXML))
+            addCommentXMLs.push(this.xml.getXml(this.commentsExtendedFilePath, DEFAULT_COMMENTS_EXTENDED_XML).then(commentsExtendedXML => this.commentsExtendedXML = commentsExtendedXML))
         }
         return Promise.all(addCommentXMLs).then(
             () => {

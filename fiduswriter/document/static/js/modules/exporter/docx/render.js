@@ -4,12 +4,8 @@ import {BIBLIOGRAPHY_HEADERS} from "../../schema/i18n"
 import {xmlDOM} from "../tools/xml"
 
 export class DOCXExporterRender {
-    constructor(docContent, settings, xml, citations, richtext) {
-        this.docContent = docContent
-        this.settings = settings
+    constructor(xml) {
         this.xml = xml
-        this.citations = citations
-        this.richtext = richtext
 
         this.filePath = false // "word/document.xml" or "word/document2.xml" in some cases
         this.ctXML = false
@@ -46,8 +42,8 @@ export class DOCXExporterRender {
     }
 
     // Define the tags that are to be looked for in the document
-    getTagData(pmBib) {
-        this.tags = this.docContent.content.map(node => {
+    getTagData(docContent, pmBib, settings) {
+        const tags = docContent.content.map(node => {
             const tag = {}
             switch (node.type) {
             case "title":
@@ -109,21 +105,20 @@ export class DOCXExporterRender {
             }
             return tag
         })
-        const settings = this.settings,
-            bibliographyHeader = settings.bibliography_header[settings.language] || BIBLIOGRAPHY_HEADERS[settings.language]
-        this.tags.push({
+        const bibliographyHeader = settings.bibliography_header[settings.language] || BIBLIOGRAPHY_HEADERS[settings.language]
+        tags.push({
             title: "@bibliography", // The '@' triggers handling as block
             content: pmBib ?
                 [{type: "bibliography_heading", content: [{type: "text", text: bibliographyHeader}]}].concat(pmBib.content) :
                 [{type: "paragraph", content: [{type: "text", text: " "}]}]
         })
-        this.tags.push({
+        tags.push({
             title: "@copyright", // The '@' triggers handling as block
             content: settings.copyright && settings.copyright.holder ?
                 [{type: "paragraph", content: [{type: "text", text: `© ${settings.copyright.year ? settings.copyright.year : new Date().getFullYear()} ${settings.copyright.holder}`}]}] :
                 [{type: "paragraph", content: [{type: "text", text: " "}]}]
         })
-        this.tags.push({
+        tags.push({
             title: "@licenses", // The '@' triggers handling as block
             content: settings.copyright && settings.copyright.licenses.length ?
                 settings.copyright.licenses.map(
@@ -135,11 +130,16 @@ export class DOCXExporterRender {
                 [{type: "paragraph", content: [{type: "text", text: " "}]}]
         })
 
+        return tags
+
     }
 
     // go through document.xml looking for tags and replace them with the given
     // replacements.
-    render() {
+    render(docContent, pmBib, settings, richtext, citations) {
+
+        const tags = this.getTagData(docContent, pmBib, settings)
+
         // Including global page definition at end
         const pars = this.docXML.queryAll(["w:p", "w:sectPr"])
         const currentTags = []
@@ -147,7 +147,7 @@ export class DOCXExporterRender {
             par => {
                 // Assuming there is nothing outside of <w:t>...</w:t>
                 const text = par.textContent
-                this.tags.forEach(
+                tags.forEach(
                     tag => {
                         const tagString = tag.title
                         if (text.includes(`{${tagString}}`)) {
@@ -190,12 +190,12 @@ export class DOCXExporterRender {
 
             }
         )
-        this.tags.forEach(
+        tags.forEach(
             tag => {
                 if (!tag.title) {
                     return
                 } else if (tag.title[0] === "@") {
-                    this.parRender(tag)
+                    this.blockRender(tag, citations, richtext)
                 } else {
                     this.inlineRender(tag)
                 }
@@ -225,19 +225,19 @@ export class DOCXExporterRender {
     }
 
     // Render tags that exchange paragraphs
-    parRender(tag) {
+    blockRender(tag, citations, richtext) {
         if (!tag.par) {
             return
         }
         const pStyle = tag.par.query("w:pStyle")
         const options = {
             dimensions: tag.dimensions,
-            citationType: this.citations.citFm.citationType,
+            citationType: citations.citFm.citationType,
             section: pStyle ? pStyle.getAttribute("w:val") : "Normal",
             tag: tag.title.slice(1)
         }
         const outXML = tag.content ? tag.content.map(
-            (content, i) => this.richtext.run(content, options, tag.content[i + 1])
+            (content, i) => richtext.run(content, options, tag.content[i + 1])
         ).join("") : ""
         if (!outXML.length) {
             // If there is no content, we need to put in a space to prevent the

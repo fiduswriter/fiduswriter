@@ -51,6 +51,7 @@ export class DOCXExporter {
 
         const tables = new DOCXExporterTables(xml)
         const math = new DOCXExporterMath(xml)
+        const render = new DOCXExporterRender(xml)
         const rels = new DOCXExporterRels(xml, "document")
         const metadata = new DOCXExporterMetadata(xml, this.getBaseMetadata())
 
@@ -88,7 +89,6 @@ export class DOCXExporter {
 
         const comments = new DOCXExporterComments(this.docContent, this.doc.comments, xml, rels, richtext)
 
-        const render = new DOCXExporterRender(this.docContent, this.doc.settings, xml, citations, richtext)
 
         return xml.init().then(
             () => citations.init()
@@ -113,8 +113,7 @@ export class DOCXExporter {
         ).then(
             () => {
                 const pmBib = footnotes.pmBib || citations.pmBib
-                render.getTagData(pmBib)
-                render.render()
+                render.render(this.docContent, pmBib, this.doc.settings, richtext, citations)
                 return xml.prepareBlob()
             }
         ).then(

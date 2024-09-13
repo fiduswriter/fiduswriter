@@ -21,7 +21,7 @@ export class ODTExporterRender {
     }
 
     // Define the tags that are to be looked for in the document
-    getTagData(docContent, settings, pmBib) {
+    getTagData(docContent, pmBib, settings) {
         const tags = docContent.content.map(node => {
             const tag = {}
             switch (node.type) {
@@ -114,7 +114,7 @@ export class ODTExporterRender {
     // go through content.xml looking for tags and replace them with the given
     // replacements.
     render(docContent, pmBib, settings, richtext, citations) {
-        const tags = this.getTagData(docContent, settings, pmBib)
+        const tags = this.getTagData(docContent, pmBib, settings)
         const textBlocks = this.text.queryAll(["text:p", "text:h"])
         textBlocks.forEach(block => {
             if (block.parentElement.nodeName === "text:deletion") {

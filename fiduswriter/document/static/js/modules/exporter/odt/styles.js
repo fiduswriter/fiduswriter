@@ -1,15 +1,13 @@
-import {noSpaceTmp} from "../../common"
-
 const GRAPHIC_STYLES = {
-    Formula: noSpaceTmp`
+    Formula: `
         <style:style style:name="Formula" style:family="graphic">
             <style:graphic-properties text:anchor-type="as-char" svg:y="0in" fo:margin-left="0.0791in" fo:margin-right="0.0791in" style:vertical-pos="middle" style:vertical-rel="text"/>
         </style:style>`,
-    Graphics: noSpaceTmp`
+    Graphics: `
         <style:style style:name="Graphics" style:family="graphic">
             <style:graphic-properties text:anchor-type="paragraph" svg:x="0in" svg:y="0in" style:wrap="dynamic" style:number-wrapped-paragraphs="no-limit" style:wrap-contour="false" style:vertical-pos="top" style:vertical-rel="paragraph" style:horizontal-pos="center" style:horizontal-rel="paragraph"/>
         </style:style>`,
-    Frame: noSpaceTmp`
+    Frame: `
         <style:style style:name="Frame" style:family="graphic">
             <style:graphic-properties text:anchor-type="paragraph" svg:x="0in" svg:y="0in" style:wrap="dynamic" style:number-wrapped-paragraphs="no-limit" style:wrap-contour="false" style:vertical-pos="top" style:vertical-rel="paragraph" style:horizontal-pos="center" style:horizontal-rel="paragraph"/>
         </style:style>`
@@ -17,11 +15,11 @@ const GRAPHIC_STYLES = {
 
 
 const PAR_STYLES = {
-    Bibliography_20_Heading: noSpaceTmp`<style:style style:name="Bibliography_20_Heading" style:display-name="Bibliography Heading" style:family="paragraph" style:parent-style-name="Heading" style:class="index">
+    Bibliography_20_Heading: `<style:style style:name="Bibliography_20_Heading" style:display-name="Bibliography Heading" style:family="paragraph" style:parent-style-name="Heading" style:class="index">
         <style:paragraph-properties fo:margin-left="0in" fo:margin-right="0in" fo:text-indent="0in" style:auto-text-indent="false" text:number-lines="false" text:line-number="0"/>
         <style:text-properties fo:font-size="16pt" fo:font-weight="bold" style:font-size-asian="16pt" style:font-weight-asian="bold" style:font-size-complex="16pt" style:font-weight-complex="bold"/>
     </style:style>`,
-    Caption: noSpaceTmp`<style:style style:name="Caption" style:family="paragraph" style:parent-style-name="Standard" style:class="extra">
+    Caption: `<style:style style:name="Caption" style:family="paragraph" style:parent-style-name="Standard" style:class="extra">
             <style:paragraph-properties fo:margin-top="0.0835in" fo:margin-bottom="0.0835in" loext:contextual-spacing="false" text:number-lines="false" text:line-number="0" />
             <style:text-properties fo:font-style="italic" style:font-style-asian="italic" style:font-style-complex="italic" />
         </style:style>`,
@@ -129,7 +127,7 @@ export class ODTExporterStyles {
         const styleCounter = ++this.inlineStyleCounter
         this.inlineStyleIds[attributes] = styleCounter
         const autoStylesEl = this.contentXml.query("office:automatic-styles")
-        autoStylesEl.appendXML(noSpaceTmp`
+        autoStylesEl.appendXML(`
             <style:style style:name="T${styleCounter}" style:family="text">
                 <style:text-properties${styleProperties}/>
             </style:style>
@@ -148,7 +146,7 @@ export class ODTExporterStyles {
         const styleCounter = ++this.tableStyleCounter
         this.tableStyleIds[aligned + width] = styleCounter
         const autoStylesEl = this.contentXml.query("office:automatic-styles")
-        autoStylesEl.appendXML(noSpaceTmp`
+        autoStylesEl.appendXML(`
             <style:style style:name="Table${styleCounter}" style:family="table">
                 <style:table-properties style:rel-width="${width}%" table:align="${aligned}"/>
             </style:style>
@@ -193,7 +191,7 @@ export class ODTExporterStyles {
         const styleCounter = ++this.graphicStyleCounter
         this.graphicStyleIds[styleName + aligned] = styleCounter
         const autoStylesEl = this.contentXml.query("office:automatic-styles")
-        autoStylesEl.appendXML(noSpaceTmp`
+        autoStylesEl.appendXML(`
             <style:style style:name="fr${styleCounter}" style:family="graphic" style:parent-style-name="${styleName}">
                 ${
     styleName === "Formula" ?
@@ -237,7 +235,7 @@ export class ODTExporterStyles {
                 tabStops = `<style:tab-stops><style:tab-stop style:position="${firstFieldWidth}"/></style:tab-stops>`
             }
         }
-        const styleDef = noSpaceTmp`
+        const styleDef = `
             <style:style style:name="Bibliography_20_1" style:display-name="Bibliography 1" style:family="paragraph" style:parent-style-name="Index" style:class="index">
                 <style:paragraph-properties fo:margin-left="${marginLeft}" fo:margin-right="0in" fo:margin-top="0in" fo:margin-bottom="${marginBottom}" loext:contextual-spacing="false" fo:text-indent="${textIndent}" style:line-height-at-least="${lineHeight}" style:auto-text-indent="false">
                     ${tabStops}
@@ -253,14 +251,14 @@ export class ODTExporterStyles {
         }
         this.bulletListStyleId[0] = ++this.listStyleCounter
         const autoStylesEl = this.contentXml.query("office:automatic-styles")
-        autoStylesEl.appendXML(noSpaceTmp`
+        autoStylesEl.appendXML(`
             <text:list-style style:name="L${this.bulletListStyleId[0]}">
             </text:list-style>
         `)
         const listStyleEl = autoStylesEl.children[autoStylesEl.children.length - 1]
         // ODT files seem to contain ten levels of lists (1-10)
         for (let level = 1;level < 11;level++) {
-            listStyleEl.appendXML(noSpaceTmp`
+            listStyleEl.appendXML(`
                 <text:list-level-style-bullet text:level="${level}" text:style-name="Bullet_20_Symbols" text:bullet-char="•">
                     <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
                         <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="${(level + 1) * 0.25}in" fo:text-indent="-0.25in" fo:margin-left="${(level + 1) * 0.25}in" />
@@ -275,14 +273,14 @@ export class ODTExporterStyles {
     getOrderedListStyleId(start) {
         const orderedListStyleId = ++this.listStyleCounter
         const autoStylesEl = this.contentXml.query("office:automatic-styles")
-        autoStylesEl.appendXML(noSpaceTmp`
+        autoStylesEl.appendXML(`
             <text:list-style style:name="L${orderedListStyleId}">
             </text:list-style>
         `)
         const listStyleEl = autoStylesEl.children[autoStylesEl.children.length - 1]
         // ODT files seem to contain ten levels of lists (1-10)
         for (let level = 1;level < 11;level++) {
-            listStyleEl.appendXML(noSpaceTmp`
+            listStyleEl.appendXML(`
                 <text:list-level-style-number text:level="${level}" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1"${ start > 1 ? ` text:start-value="${start}"` : ""}>
                     <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
                         <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="${(level + 1) * 0.25}in" fo:text-indent="-0.25in" fo:margin-left="${(level + 1) * 0.25}in" />

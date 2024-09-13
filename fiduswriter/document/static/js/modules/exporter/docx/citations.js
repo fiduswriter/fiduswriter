@@ -4,7 +4,6 @@ import {FormatCitations} from "../../citations/format"
 import {fnSchema} from "../../schema/footnotes"
 import {cslBibSchema} from "../../bibliography/schema/csl_bib"
 import {descendantNodes} from "../tools/doc_content"
-import {noSpaceTmp} from "../../common"
 
 export class DOCXExporterCitations {
     constructor(docContent, settings, bibDB, csl, xml, origCitInfos = []) {
@@ -107,7 +106,7 @@ export class DOCXExporterCitations {
         const stylesEl = this.styleXML.query("w:styles")
         if (!this.styleXML.query("w:style", {"w:styleId": "BibliographyHeading"})) {
             // There is no style definition for the bibliography heading. We have to add it.
-            const headingStyleDef = noSpaceTmp`
+            const headingStyleDef = `
                 <w:style w:type="paragraph" w:styleId="BibliographyHeading">
                     <w:name w:val="Bibliography Heading"/>
                     <w:basedOn w:val="Heading"/>
@@ -150,7 +149,7 @@ export class DOCXExporterCitations {
                 tabStops = `<w:tabs><w:tab w:val="left" w:pos="${firstFieldWidth}" w:leader="none"/></w:tabs>`
             }
         }
-        const styleDef = noSpaceTmp`
+        const styleDef = `
             <w:style w:type="paragraph" w:styleId="Bibliography1">
                 <w:name w:val="Bibliography 1"/>
                 <w:basedOn w:val="Normal"/>

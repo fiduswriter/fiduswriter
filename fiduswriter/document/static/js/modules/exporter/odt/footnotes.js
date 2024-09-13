@@ -1,26 +1,25 @@
 import {ODTExporterCitations} from "./citations"
 import {ODTExporterImages} from "./images"
-import {noSpaceTmp} from "../../common"
 import {descendantNodes} from "../tools/doc_content"
 
 
-const DEFAULT_STYLE_FOOTNOTE = noSpaceTmp`
+const DEFAULT_STYLE_FOOTNOTE = `
     <style:style style:name="Footnote" style:family="paragraph" style:parent-style-name="Standard" style:class="extra">
         <style:paragraph-properties fo:margin-left="0.2354in" fo:margin-right="0in" fo:text-indent="-0.2354in" style:auto-text-indent="false" text:number-lines="false" text:line-number="0" />
         <style:text-properties fo:font-size="10pt" style:font-size-asian="10pt" style:font-size-complex="10pt" />
     </style:style>
     `
 
-const DEFAULT_STYLE_FOOTNOTE_ANCHOR = noSpaceTmp`
+const DEFAULT_STYLE_FOOTNOTE_ANCHOR = `
     <style:style style:name="Footnote_20_anchor" style:display-name="Footnote anchor" style:family="text">
         <style:text-properties style:text-position="super 58%" />
     </style:style>
     `
-const DEFAULT_STYLE_FOOTNOTE_SYMBOL = noSpaceTmp`
+const DEFAULT_STYLE_FOOTNOTE_SYMBOL = `
     <style:style style:name="Footnote_20_Symbol" style:display-name="Footnote Symbol" style:family="text" />
     `
 
-const DEFAULT_STYLE_FOOTNOTE_CONFIGURATION = noSpaceTmp`
+const DEFAULT_STYLE_FOOTNOTE_CONFIGURATION = `
     <text:notes-configuration text:note-class="footnote" text:citation-style-name="Footnote_20_Symbol" text:citation-body-style-name="Footnote_20_anchor" style:num-format="1" text:start-value="0" text:footnotes-position="page" text:start-numbering-at="document" />
     `
 

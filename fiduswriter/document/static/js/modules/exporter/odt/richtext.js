@@ -1,4 +1,4 @@
-import {noSpaceTmp, escapeText} from "../../common"
+import {escapeText} from "../../common"
 import {
     CATS
 } from "../../schema/i18n"
@@ -110,7 +110,7 @@ export class ODTExporterRichtext {
                         return
                     }
                     if (commentData.start === node) {
-                        start += noSpaceTmp`<office:annotation office:name="comment_${options.tag}_${comment.attrs.id}" loext:resolved="${commentData.content.resolved}">
+                        start += `<office:annotation office:name="comment_${options.tag}_${comment.attrs.id}" loext:resolved="${commentData.content.resolved}">
                                      <dc:creator>${escapeText(commentData.content.username)}</dc:creator>
                                         <dc:date>${new Date(commentData.content.date).toISOString().slice(0, -1)}000000</dc:date>
                                         ${commentData.content.comment.map(node => this.transformRichtext(node, options)).join("")}
@@ -119,7 +119,7 @@ export class ODTExporterRichtext {
                     if (commentData.end === node) {
                         end = `<office:annotation-end office:name="comment_${options.tag}_${comment.attrs.id}"/>` +
                             (commentData.content.answers || []).map(answer =>
-                                noSpaceTmp`<office:annotation loext:resolved="${commentData.content.resolved}">
+                                `<office:annotation loext:resolved="${commentData.content.resolved}">
                                     <dc:creator>${escapeText(answer.username)}</dc:creator>
                                     <dc:date>${new Date(answer.date).toISOString().slice(0, -1)}000000</dc:date>
                                     ${answer.answer.map(node => this.transformRichtext(node, options)).join("")}
@@ -196,7 +196,7 @@ export class ODTExporterRichtext {
                 }
                 const trackId = this.tracks.addChange(
                     blockDelete,
-                    noSpaceTmp`
+                    `
                         <${TEXT_TYPES[previousSibling.type].tag} ${TEXT_TYPES[previousSibling.type].attrs(options)}/>
                         <${TEXT_TYPES[node.type].tag} ${TEXT_TYPES[node.type].attrs(options)}/>`
                 )
@@ -278,11 +278,11 @@ export class ODTExporterRichtext {
             }
             fnOptions.comments = this.findComments(fnNode)
             content += this.transformRichtext(fnNode, fnOptions)
-            start += noSpaceTmp`
+            start += `
                 <text:note text:id="ftn${fnCounter}" text:note-class="footnote">
                     <text:note-citation>${fnCounter}</text:note-citation>
                     <text:note-body>`
-            end = noSpaceTmp`
+            end = `
                     </text:note-body>
                 </text:note>` + end
             break
@@ -348,11 +348,11 @@ export class ODTExporterRichtext {
             if (options.citationType === "note" && !options.inFootnote) {
                 // If the citations are in notes (footnotes), we need to
                 // put the contents of this citation in a footnote.
-                start += noSpaceTmp`
+                start += `
                     <text:note text:id="ftn${this.fnAlikeCounter++}" text:note-class="footnote">
                         <text:note-citation>${this.fnAlikeCounter}</text:note-citation>
                         <text:note-body>`
-                end = noSpaceTmp`
+                end = `
                         </text:note-body>
                     </text:note>` + end
                 options = Object.assign({}, options)
@@ -411,12 +411,12 @@ export class ODTExporterRichtext {
                 this.styles.checkParStyle("Caption")
                 this.styles.checkParStyle("Figure")
                 const graphicStyleId = this.styles.getGraphicStyleId("Frame", aligned)
-                start += noSpaceTmp`<draw:frame draw:style-name="fr${graphicStyleId}" draw:name="Frame${graphicStyleId}" text:anchor-type="paragraph" svg:width="0.0161in" style:rel-width="${relWidth}%" draw:z-index="${this.zIndex++}">
+                start += `<draw:frame draw:style-name="fr${graphicStyleId}" draw:name="Frame${graphicStyleId}" text:anchor-type="paragraph" svg:width="0.0161in" style:rel-width="${relWidth}%" draw:z-index="${this.zIndex++}">
                         <draw:text-box fo:min-height="0in">
                             <text:p text:style-name="Figure">`
                 relWidth = "100" // percentage width of image inside of frame is always 100
                 aligned = "center" // Aligned inside of frame is always 'center'
-                end = noSpaceTmp`
+                end = `
                             </text:p>
                         </draw:text-box>
                     </draw:frame>` + end
@@ -430,7 +430,7 @@ export class ODTExporterRichtext {
                 const height = imageEntry.height * 3 / 4 // more or less px to point
                 const width = imageEntry.width * 3 / 4 // more or less px to point
                 const graphicStyleId = this.styles.getGraphicStyleId("Graphics", aligned)
-                content += noSpaceTmp`
+                content += `
                         <draw:frame draw:style-name="${graphicStyleId}" draw:name="Image${this.imgCounter++}" text:anchor-type="${(frame && !blockInsert) ? "char" : "as-char"}" style:rel-width="${relWidth}%" style:rel-height="scale" svg:width="${width}pt" svg:height="${height}pt" draw:z-index="${this.zIndex++}">
                             ${
     imageEntry.svg ?
@@ -443,7 +443,7 @@ export class ODTExporterRichtext {
                 const latex = node.content.find(node => node.type === "figure_equation")?.attrs.equation
                 const objectNumber = this.math.addMath(latex)
                 const graphicStyleId = this.styles.getGraphicStyleId("Formula")
-                content += noSpaceTmp`
+                content += `
                         <draw:frame draw:style-name="${graphicStyleId}" draw:name="Object${objectNumber}" text:anchor-type="as-char" draw:z-index="${this.zIndex++}">
                             <draw:object xlink:href="./Object ${objectNumber}" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/>
                             <svg:desc>formula</svg:desc>
@@ -550,8 +550,8 @@ export class ODTExporterRichtext {
             const latex = node.attrs.equation
             const objectNumber = this.math.addMath(latex)
             const styleId = this.styles.getGraphicStyleId("Formula")
-            content += noSpaceTmp`
-                    <draw:frame draw:style-name="${styleId}" draw:name="Object${objectNumber}" text:anchor-type="as-char" draw:z-index="${this.zIndex++}">
+            content +=
+                    `<draw:frame draw:style-name="${styleId}" draw:name="Object${objectNumber}" text:anchor-type="as-char" draw:z-index="${this.zIndex++}">
                         <draw:object xlink:href="./Object ${objectNumber}" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/>
                         <svg:desc>formula</svg:desc>
                     </draw:frame>`

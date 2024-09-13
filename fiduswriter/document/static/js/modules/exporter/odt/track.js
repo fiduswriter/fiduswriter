@@ -1,4 +1,4 @@
-import {noSpaceTmp, escapeText} from "../../common"
+import {escapeText} from "../../common"
 
 export class ODTExporterTracks {
     constructor(xml) {
@@ -39,11 +39,11 @@ export class ODTExporterTracks {
             this.checkTrackedChangesSection()
         }
         const trackId = `ct${Date.now() + this.counter++}`
-        const changeXml = noSpaceTmp`
+        const changeXml = `
         <text:changed-region xml:id="${trackId}" text:id="${trackId}">
             ${
     trackInfo.type === "deletion" ?
-        noSpaceTmp`<text:deletion>
+        `<text:deletion>
                     <office:change-info>
                         <dc:creator>${escapeText(trackInfo.username)}</dc:creator>
                         <dc:date>${new Date((trackInfo.date) * 60000).toISOString().slice(0, 19)}</dc:date>
@@ -51,7 +51,7 @@ export class ODTExporterTracks {
                     ${deletionString}
                 </text:deletion>` :
         trackInfo.type === "insertion" ?
-            noSpaceTmp`<text:insertion>
+            `<text:insertion>
         <office:change-info>
             <dc:creator>${escapeText(trackInfo.username)}</dc:creator>
             <dc:date>${new Date((trackInfo.date) * 60000).toISOString().slice(0, 19)}</dc:date>

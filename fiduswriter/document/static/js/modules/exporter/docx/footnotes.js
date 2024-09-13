@@ -3,10 +3,9 @@ import {DOCXExporterCitations} from "./citations"
 import {DOCXExporterImages} from "./images"
 import {DOCXExporterLists} from "./lists"
 import {DOCXExporterRichtext} from "./richtext"
-import {noSpaceTmp} from "../../common"
 import {descendantNodes} from "../tools/doc_content"
 
-const DEFAULT_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" + noSpaceTmp`
+const DEFAULT_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" + `
     <w:footnotes xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:w10="urn:schemas-microsoft-com:office:word" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:wps="http://schemas.microsoft.com/office/word/2010/wordprocessingShape" xmlns:wpg="http://schemas.microsoft.com/office/word/2010/wordprocessingGroup" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:wp14="http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing" xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml" mc:Ignorable="w14 wp14">
         <w:footnote w:id="0" w:type="separator">
             <w:p>
@@ -25,7 +24,7 @@ const DEFAULT_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"
     </w:footnotes>
     `
 
-const DEFAULT_SETTINGS_XML = noSpaceTmp`
+const DEFAULT_SETTINGS_XML = `
     <w:footnotePr>
         <w:numFmt w:val="decimal"/>
         <w:footnote w:id="0"/>
@@ -33,7 +32,7 @@ const DEFAULT_SETTINGS_XML = noSpaceTmp`
     </w:footnotePr>
     `
 
-const DEFAULT_STYLE_FOOTNOTE = noSpaceTmp`
+const DEFAULT_STYLE_FOOTNOTE = `
     <w:style w:type="paragraph" w:styleId="Footnote">
         <w:name w:val="Footnote Text" />
         <w:basedOn w:val="Normal" />
@@ -48,7 +47,7 @@ const DEFAULT_STYLE_FOOTNOTE = noSpaceTmp`
     </w:style>
     `
 
-const DEFAULT_STYLE_FOOTNOTE_ANCHOR = noSpaceTmp`
+const DEFAULT_STYLE_FOOTNOTE_ANCHOR = `
     <w:style w:type="character" w:styleId="FootnoteAnchor">
         <w:name w:val="Footnote Anchor" />
         <w:rPr>

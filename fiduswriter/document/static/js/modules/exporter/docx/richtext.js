@@ -1,5 +1,4 @@
 import {
-    noSpaceTmp,
     escapeText
 } from "../../common"
 import {
@@ -181,14 +180,14 @@ export class DOCXExporterRichtext {
             if (options.section === "Normal" && !options.list_type && !(node.content?.length)) {
                 start += "<w:p/>"
             } else {
-                start += noSpaceTmp`
+                start += `
                         <w:p${options.paragraphId ? ` w14:paraId="${options.paragraphId}"` : ""}>
                             <w:pPr><w:pStyle w:val="${options.section}"/>`
                 if (options.list_type) {
                     start += `<w:numPr><w:ilvl w:val="${options.list_depth}"/>`
                     start += `<w:numId w:val="${options.list_type}"/></w:numPr>`
                 } else {
-                    start += noSpaceTmp`
+                    start += `
                         <w:rPr>
                         ${
     nextBlockInsert ?
@@ -203,7 +202,7 @@ export class DOCXExporterRichtext {
                         </w:rPr>`
                 }
                 if (blockChange) {
-                    start += noSpaceTmp`
+                    start += `
                         <w:pPrChange w:id="${++this.changeCounter}" w:author="${escapeText(blockChange.username)}" w:date="${new Date(blockChange.date * 60000).toISOString().split(".")[0]}Z">
                             <w:pPr>
                                 <w:pStyle w:val="${translateBlockType(blockChange.before.type)}"/>
@@ -223,7 +222,7 @@ export class DOCXExporterRichtext {
             }
             break
         case "bibliography_heading":
-            start += noSpaceTmp`
+            start += `
                     <w:p>
                         <w:pPr>
                             <w:pStyle w:val="BibliographyHeading"/>
@@ -237,7 +236,7 @@ export class DOCXExporterRichtext {
         case "heading4":
         case "heading5":
         case "heading6":
-            start += noSpaceTmp`
+            start += `
                     <w:p>
                         <w:pPr>
                             <w:pStyle w:val="${translateBlockType(node.type)}"/>
@@ -257,7 +256,7 @@ export class DOCXExporterRichtext {
     blockChange ?
         blockChange.before.type === "paragraph" ?
             `<w:pPrChange w:id="${++this.changeCounter}" w:author="${escapeText(blockChange.username)}" w:date="${new Date(blockChange.date * 60000).toISOString().split(".")[0]}Z"/>` :
-            noSpaceTmp`<w:pPrChange w:id="${++this.changeCounter}" w:author="${escapeText(blockChange.username)}" w:date="${new Date(blockChange.date * 60000).toISOString().split(".")[0]}Z">
+            `<w:pPrChange w:id="${++this.changeCounter}" w:author="${escapeText(blockChange.username)}" w:date="${new Date(blockChange.date * 60000).toISOString().split(".")[0]}Z">
                 <w:pPr>
                     <w:pStyle w:val="${translateBlockType(blockChange.before.type)}"/>
                 </w:pPr>
@@ -309,7 +308,7 @@ export class DOCXExporterRichtext {
             options.footnoteRefMissing = true
             break
         case "footnote":
-            content += noSpaceTmp`
+            content += `
                     <w:r>
                         <w:rPr>
                             <w:rStyle w:val="FootnoteAnchor"/>
@@ -434,7 +433,7 @@ export class DOCXExporterRichtext {
                 // We then add the footnote to the footnote file and
                 // adjust the ids of all subsequent footnotes to be one higher
                 // than what they were until now.
-                content += noSpaceTmp`
+                content += `
                         <w:r>
                             <w:rPr>
                                 <w:rStyle w:val="FootnoteAnchor"/>
@@ -533,7 +532,7 @@ export class DOCXExporterRichtext {
                 cy = Math.round(cy)
                 cx = Math.round(cx)
                 const rId = imageEntry.id
-                content += noSpaceTmp`<w:r>
+                content += `<w:r>
                       <w:rPr></w:rPr>
                       <w:drawing>
                         <wp:inline distT="0" distB="0" distL="0" distR="0">
@@ -584,23 +583,23 @@ export class DOCXExporterRichtext {
             }
             const captionSpace = !!(catCountXML.length || caption.length)
             if (node.attrs.aligned === "center") {
-                start += noSpaceTmp`
+                start += `
                     <w:p>
                       <w:pPr>
                         <w:jc w:val="center"/>
                       </w:pPr>`
                 content = `<w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/><w:bookmarkEnd w:id="${this.bookmarkCounter}"/>` + content
-                end = noSpaceTmp`
+                end = `
                     </w:p>
                     ${ captionSpace ?
-        noSpaceTmp`<w:p>
+        `<w:p>
                           <w:pPr><w:pStyle w:val="Caption"/><w:rPr></w:rPr></w:pPr>
                           ${catCountXML}
                           ${caption.map((node, i) => this.transformRichtext(node, options, caption[i + 1])).join("")}
                     </w:p>` : ""
 }` + end
             } else {
-                start += noSpaceTmp`
+                start += `
                     <w:p>
                       <w:pPr>
                         <w:jc w:val="center"/>
@@ -640,7 +639,7 @@ export class DOCXExporterRichtext {
                                                             <w:rPr></w:rPr>
                                                         </w:pPr>`
                 content = `<w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/><w:bookmarkEnd w:id="${this.bookmarkCounter}"/>` + content
-                end = noSpaceTmp`
+                end = `
                                                         ${catCountXML}
                                                         ${caption.map((node, i) => this.transformRichtext(node, options, caption[i + 1])).join("")}
                                                     </w:p>
@@ -718,7 +717,7 @@ export class DOCXExporterRichtext {
             }
             const captionSpace = !!(catCountXML.length || caption.length)
             if (captionSpace) {
-                start += noSpaceTmp`
+                start += `
                     <w:p>
                         <w:pPr>
                             <w:pStyle w:val="Caption"/>
@@ -731,14 +730,14 @@ export class DOCXExporterRichtext {
                     </w:p>`
             }
             this.tables.addTableGridStyle()
-            start += noSpaceTmp`
+            start += `
                     <w:tbl>
                         <w:tblPr>
                             <w:tblStyle w:val="${this.tables.tableGridStyle}" />
                             ${
     node.attrs.width === "100" ?
         "<w:tblW w:w=\"0\" w:type=\"auto\" />" :
-        noSpaceTmp`<w:tblW w:w="${50 * parseInt(node.attrs.width)}" w:type="pct" />
+        `<w:tblW w:w="${50 * parseInt(node.attrs.width)}" w:type="pct" />
                                     <w:jc w:val="${node.attrs.aligned}" />`
 }
                             <w:tblLook w:val="04A0" w:firstRow="1" w:lastRow="0" w:firstColumn="1" w:lastColumn="0" w:noHBand="0" w:noVBand="1" />
@@ -777,7 +776,7 @@ export class DOCXExporterRichtext {
             break
         case "table_cell":
         case "table_header":
-            start += noSpaceTmp`
+            start += `
                     <w:tc>
                         <w:tcPr>
                             ${
@@ -833,7 +832,7 @@ export class DOCXExporterRichtext {
             end = "<w:r><w:br/></w:r>" + end
             break
         case "cslentry":
-            start += noSpaceTmp`
+            start += `
                     <w:p>
                         <w:pPr>
                             <w:pStyle w:val="${options.section || ""}"/>

@@ -1,10 +1,8 @@
 import {mml2omml} from "mathml2omml"
 
-import {noSpaceTmp} from "../../common"
-
 // Not entirely sure if we need this font here. This is included whenever Word
 // itself adds a formula, but our ooml doesn't refer to the font, so it may be pointless.
-const CAMBRIA_MATH_FONT_DECLARATION = noSpaceTmp`
+const CAMBRIA_MATH_FONT_DECLARATION = `
     <w:font w:name="Cambria Math">
         <w:panose1 w:val="02040503050406030204" />
         <w:charset w:val="00" />

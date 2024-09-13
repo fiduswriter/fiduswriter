@@ -1,6 +1,5 @@
-import {noSpaceTmp} from "../../common"
 
-const DEFAULT_TABLENORMAL_XML = noSpaceTmp`
+const DEFAULT_TABLENORMAL_XML = `
     <w:style w:type="table" w:default="1" w:styleId="TableNormal">
         <w:name w:val="Normal Table"/>
         <w:uiPriority w:val="99"/>
@@ -18,7 +17,7 @@ const DEFAULT_TABLENORMAL_XML = noSpaceTmp`
     </w:style>
     `
 
-const DEFAULT_TABLEGRID_XML = tableNormalStyle => noSpaceTmp`
+const DEFAULT_TABLEGRID_XML = tableNormalStyle => `
     <w:style w:type="table" w:styleId="TableGrid">
         <w:name w:val="Table Grid"/>
         <w:basedOn w:val="${tableNormalStyle}"/>

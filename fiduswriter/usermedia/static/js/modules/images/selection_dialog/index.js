@@ -157,7 +157,6 @@ export class ImageSelectionDialog {
 
     checkRow(dataIndex) {
         const row = this.table.data.data[dataIndex]
-        console.log({row, dataIndex})
         if (!row) {
             return
         }

@@ -41,8 +41,8 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         connected = super().connect()
         if not connected:
             return
-        self.sessionument_id = int(
-            self.scope["url_route"]["kwargs"]["sessionument_id"]
+        self.document_id = int(
+            self.scope["url_route"]["kwargs"]["document_id"]
         )
         logger.debug(
             f"Action:Document socket opened by user. "
@@ -55,7 +55,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
 
     def subscribe(self, connection_count=0):
         self.user_info = SessionUserInfo(self.user)
-        doc_db, can_access = self.user_info.init_access(self.sessionument_id)
+        doc_db, can_access = self.user_info.init_access(self.document_id)
         if not can_access or float(doc_db.doc_version) != FW_DOCUMENT_VERSION:
             self.access_denied()
             return
@@ -68,7 +68,9 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 f"URL:{self.endpoint} User:{self.user.id} "
                 f" ParticipantID:{self.id}"
             )
-            self.session = WebsocketConsumer.sessions[doc_db.id]
+            self.session = {
+                "external": WebsocketConsumer.sessions[doc_db.id]
+            }
             self.id = max(self.session["participants"]) + 1
             self.session["participants"][self.id] = self
             template = False

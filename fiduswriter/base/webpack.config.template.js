@@ -28,7 +28,6 @@ const predefinedVariables = {
     "settings_DEBUG": settings.DEBUG,
     "settings_SOURCE_MAPS": JSON.stringify(settings.SOURCE_MAPS) || false,
     "settings_USE_SERVICE_WORKER": settings.USE_SERVICE_WORKER,
-    "settings_JSONPATCH": settings.JSONPATCH,
     "settings_MEDIA_MAX_SIZE": settings.MEDIA_MAX_SIZE,
     "settings_FOOTER_LINKS": JSON.stringify(settings.FOOTER_LINKS),
     "transpile_VERSION": transpile.VERSION

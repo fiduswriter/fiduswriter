@@ -362,12 +362,6 @@ JAVASCRIPT_ERROR_BLACKLIST = [
 # The page to show while transpilation takes place.
 SETUP_PAGE_PATH = os.path.join(SRC_PATH, "base/setup_page/")
 
-# Whether to use the old JSON patch method rather than prosemirror-py.
-# Tests have shown that the JSON patch method is faster for now. This setting
-# will likely be removed once the prosemirror-py method has reached a similar
-# speed.
-JSONPATCH = False
-
 # Whether to create a service worker on production sites
 USE_SERVICE_WORKER = True
 

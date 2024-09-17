@@ -68,9 +68,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 f"URL:{self.endpoint} User:{self.user.id} "
                 f" ParticipantID:{self.id}"
             )
-            self.session = {
-                "external": WebsocketConsumer.sessions[doc_db.id]
-            }
+            self.session = WebsocketConsumer.sessions[doc_db.id]
             self.id = max(self.session["participants"]) + 1
             self.session["participants"][self.id] = self
             template = False

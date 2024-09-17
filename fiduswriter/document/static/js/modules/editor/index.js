@@ -407,6 +407,14 @@ export class Editor {
                     } else {
                         window.location.href = "/"
                     }
+                },
+                getWsServer: () => {
+                    if (settings_WS_SERVERS.length > 0) {
+                        const serverIndex = this.docInfo.id % settings_WS_SERVERS.length
+                        return settings_WS_SERVERS[serverIndex]
+                    }
+                    const wsServer = settings_WS_SERVERS[0] ? settings_WS_SERVERS[0] : location.host
+                    return wsServer
                 }
             })
             this.render()

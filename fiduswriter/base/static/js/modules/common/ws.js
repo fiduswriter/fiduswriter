@@ -15,6 +15,10 @@ export class WebSocketConnector {
         failedAuth = () => {
             window.location.href = "/"
         },
+        getWsServer = () => {
+            const wsServer = settings_WS_SERVERS[0] ? settings_WS_SERVERS[0] : location.host
+            return wsServer
+        }
     }) {
         this.url = url
         this.appLoaded = appLoaded
@@ -27,6 +31,7 @@ export class WebSocketConnector {
         this.infoDisconnected = infoDisconnected
         this.receiveData = receiveData
         this.failedAuth = failedAuth
+        this.getWsServer = getWsServer
         /* A list of messages to be sent. Only used when temporarily offline.
             Messages will be sent when returning back online. */
         this.messagesToSend = []
@@ -83,21 +88,17 @@ export class WebSocketConnector {
             client: 0,
             lastTen: []
         }
+        let wsServer = this.getWsServer()
+        if (/\d/.test(String(wsServer))) {
+            wsServer = `${location.hostname}:${wsServer}`
+        }
         const url = this.online ?
             `${
                 location.protocol === "https:" ?
                     "wss://" :
                     "ws://"
             }${
-                settings_WS_SERVER ?
-                    settings_WS_SERVER :
-                    location.host.split(":")[0]
-            }${
-                settings_WS_PORT ?
-                    `:${settings_WS_PORT}` :
-                    location.port.length ?
-                        `:${location.port}` :
-                        ""
+                wsServer
             }${
                 this.url
             }` :

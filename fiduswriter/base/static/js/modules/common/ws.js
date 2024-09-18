@@ -2,7 +2,8 @@
  */
 export class WebSocketConnector {
     constructor({
-        url = "", // needs to be specified
+        host = "", // needs to be specified
+        path = "", // needs to be specified
         appLoaded = () => false, // required argument
         anythingToSend = () => false, // required argument
         messagesElement = () => false, // element in which to show connection messages
@@ -15,12 +16,9 @@ export class WebSocketConnector {
         failedAuth = () => {
             window.location.href = "/"
         },
-        getWsServer = () => {
-            const wsServer = settings_WS_SERVERS[0] ? settings_WS_SERVERS[0] : location.host
-            return wsServer
-        }
     }) {
-        this.url = url
+        this.host = host
+        this.path = path
         this.appLoaded = appLoaded
         this.anythingToSend = anythingToSend
         this.messagesElement = messagesElement
@@ -31,7 +29,6 @@ export class WebSocketConnector {
         this.infoDisconnected = infoDisconnected
         this.receiveData = receiveData
         this.failedAuth = failedAuth
-        this.getWsServer = getWsServer
         /* A list of messages to be sent. Only used when temporarily offline.
             Messages will be sent when returning back online. */
         this.messagesToSend = []
@@ -88,25 +85,22 @@ export class WebSocketConnector {
             client: 0,
             lastTen: []
         }
-        let wsServer = this.getWsServer()
-        if (/\d/.test(String(wsServer))) {
-            wsServer = `${location.hostname}:${wsServer}`
-        }
         const url = this.online ?
             `${
                 location.protocol === "https:" ?
                     "wss://" :
                     "ws://"
             }${
-                wsServer
+                this.host
             }${
-                this.url
+                this.path
             }` :
             `${
                 location.protocol === "https:" ?
                     "wss://offline" :
                     "ws://offline"
             }`
+        console.log({url, host: this.host, path: this.path})
         this.ws = new window.WebSocket(url)
         this.ws.onmessage = event => this.onmessage(event)
         this.ws.onclose = () => this.onclose()
@@ -282,6 +276,9 @@ export class WebSocketConnector {
 
     receive(data) {
         switch (data.type) {
+        case "redirect":
+            this.host = data.url
+            break
         case "welcome":
             this.open()
             break

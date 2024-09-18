@@ -308,7 +308,6 @@ module.exports = { // eslint-disable-line no-undef
         "settings_SOCIALACCOUNT_OPEN": "readonly",
         "settings_PASSWORD_LOGIN": "readonly",
         "settings_CONTACT_EMAIL": "readonly",
-        "settings_WS_SERVERS": "readonly",
         "settings_IS_FREE": "readonly",
         "settings_TEST_SERVER": "readonly",
         "settings_DEBUG": "readonly",

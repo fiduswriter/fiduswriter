@@ -1,5 +1,7 @@
 import json
+import random
 
+from django.conf import settings
 from django.shortcuts import render
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.sites.shortcuts import get_current_site
@@ -17,6 +19,7 @@ from channels_presence.models import Room, Presence
 from user.helpers import Avatars
 from .decorators import ajax_required
 from . import get_version
+from .helpers.host import get_host
 
 
 @ensure_csrf_cookie
@@ -41,6 +44,9 @@ def configuration(request):
     """
     Load the configuration options of the page that are request dependent.
     """
+    ws_host = get_host(
+        request.headers["Origin"], random.choice(settings.WS_SERVERS)
+    )
     socialaccount_providers = []
     for provider in get_adapter(request).list_providers(request):
         socialaccount_providers.append(
@@ -53,6 +59,7 @@ def configuration(request):
     response = {
         "language": request.LANGUAGE_CODE,
         "socialaccount_providers": socialaccount_providers,
+        "ws_host": ws_host,
     }
     if request.user.is_authenticated:
         avatars = Avatars()

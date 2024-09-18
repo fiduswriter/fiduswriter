@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 class BaseWebsocketConsumer(WebsocketConsumer):
 
-    def connect(self):
+    def init(self):
         self.id = 0
         self.accept()
         self.messages = {"server": 0, "client": 0, "last_ten": []}
@@ -18,6 +18,9 @@ class BaseWebsocketConsumer(WebsocketConsumer):
             self.access_denied()
             return False
         logger.debug("Action:Opening Websocket")
+
+    def connect(self):
+        self.init()
 
         logger.debug(
             f"Action:Opening Websocket URL:{self.endpoint}"

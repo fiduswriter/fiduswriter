@@ -184,7 +184,7 @@ export class App {
             this.page = this.openOfflinePage()
             return this.page.init()
         } else {
-            return this.getUserInfo().catch(
+            return this.getConfiguration().catch(
                 error => {
                     if (error instanceof TypeError) {
                         // We could not fetch user info from server, so let's
@@ -312,7 +312,8 @@ export class App {
 
     connectWs() {
         this.ws = new WebSocketConnector({
-            url: "/ws/base/",
+            host: this.config.ws_host,
+            path: "/ws/base/",
             appLoaded: () => true,
             receiveData: data => {
                 switch (data.type) {
@@ -385,7 +386,7 @@ export class App {
         return this.page.init()
     }
 
-    getUserInfo() {
+    getConfiguration() {
         return postJson("/api/base/configuration/").then(
             ({json}) => Object.entries(json).forEach(([key, value]) => this.config[key] = value)
         )

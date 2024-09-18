@@ -21,7 +21,6 @@ const predefinedVariables = {
     "settings_SOCIALACCOUNT_OPEN": settings.SOCIALACCOUNT_OPEN,
     "settings_PASSWORD_LOGIN": settings.PASSWORD_LOGIN,
     "settings_CONTACT_EMAIL": JSON.stringify(settings.CONTACT_EMAIL),
-    "settings_WS_SERVERS": settings.WS_SERVERS ? JSON.stringify(settings.WS_SERVERS) : [false],
     "settings_IS_FREE": settings.IS_FREE,
     "settings_TEST_SERVER": settings.TEST_SERVER,
     "settings_DEBUG": settings.DEBUG,

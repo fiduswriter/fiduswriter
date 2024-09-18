@@ -264,15 +264,26 @@ export class Editor {
             )
         }
         return Promise.all(initPromises).then(
+            () => postJson(
+                "/api/document/get_ws_host/",
+                {
+                    id: this.docInfo.id,
+                }).then(
+                ({json}) => {
+                    this.wsHost = json.ws_host
+                })
+        ).then(
             () => {
                 new ModCitations(this)
                 new ModFootnotes(this)
                 return this.activateFidusPlugins()
             }
         ).then(() => {
+
             let resubScribed = false
             this.ws = new WebSocketConnector({
-                url: `/ws/document/${this.docInfo.id}/`,
+                host: this.wsHost,
+                path: `/ws/document/${this.docInfo.id}/`,
                 appLoaded: () => this.view.state.plugins.length,
                 anythingToSend: () => sendableSteps(this.view.state),
                 initialMessage: () => {
@@ -407,14 +418,6 @@ export class Editor {
                     } else {
                         window.location.href = "/"
                     }
-                },
-                getWsServer: () => {
-                    if (settings_WS_SERVERS.length > 0) {
-                        const serverIndex = this.docInfo.id % settings_WS_SERVERS.length
-                        return settings_WS_SERVERS[serverIndex]
-                    }
-                    const wsServer = settings_WS_SERVERS[0] ? settings_WS_SERVERS[0] : location.host
-                    return wsServer
                 }
             })
             this.render()

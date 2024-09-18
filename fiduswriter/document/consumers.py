@@ -9,7 +9,10 @@ from django.db.utils import DatabaseError
 from django.db.models import F, Q
 from django.conf import settings
 
+from base.helpers.host import get_host
+
 from document.helpers.session_user_info import SessionUserInfo
+from document.helpers.host import compare_host_with_expected
 from document import prosemirror
 from document.helpers.serializers import PythonWithURLSerializer
 from base.base_consumer import BaseWebsocketConsumer
@@ -32,16 +35,39 @@ class WebsocketConsumer(BaseWebsocketConsumer):
     history_length = 1000  # Only keep the last 1000 diffs
 
     def connect(self):
-        connected = super().connect()
-        if not connected:
-            return
         self.document_id = int(
             self.scope["url_route"]["kwargs"]["document_id"]
         )
+        redirected = self.check_server()
+        if redirected:
+            return
+        connected = super().connect()
+        if not connected:
+            return
         logger.debug(
             f"Action:Document socket opened by user. "
             f"URL:{self.endpoint} User:{self.user.id} ParticipantID:{self.id}"
         )
+
+    def check_server(self):
+        if len(settings.WS_SERVERS) < 2:
+            return False
+        origin = (
+            dict(self.scope["headers"]).get(b"origin", b"").decode("utf-8")
+        )
+        ws_server = settings.WS_SERVERS[
+            self.document_id % len(settings.WS_SERVERS)
+        ]
+        expected = get_host(origin, ws_server)
+        host = f"{self.scope['server'][0]}:{self.scope['server'][1]}"
+        if not compare_host_with_expected(host, expected, origin):
+            # Redirect to the correct URL
+            self.init()
+            logger.debug(f"Redirecting from {host} to {expected}")
+            self.send_message({"type": "redirect", "url": f"{expected}"})
+            self.do_close()
+            return True
+        return False
 
     def confirm_diff(self, rid):
         response = {"type": "confirm_diff", "rid": rid}

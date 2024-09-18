@@ -31,6 +31,7 @@ from document.helpers.serializers import PythonWithURLSerializer
 from bibliography.views import serializer
 from style.models import DocumentStyle, DocumentStyleFile, ExportTemplate
 from base.decorators import ajax_required
+from base.helpers.host import get_host
 from user.models import UserInvite
 from . import emails
 from user.helpers import Avatars
@@ -739,6 +740,17 @@ def get_template_for_doc(request):
         "export_templates": export_templates,
         "document_styles": document_styles,
     }
+    return JsonResponse(response, status=200)
+
+
+@login_required
+@ajax_required
+@require_POST
+def get_ws_host(request):
+    response = {}
+    doc_id = int(request.POST.get("id"))
+    ws_server = settings.WS_SERVERS[doc_id % len(settings.WS_SERVERS)]
+    response["ws_host"] = get_host(request.headers["Origin"], ws_server)
     return JsonResponse(response, status=200)
 
 

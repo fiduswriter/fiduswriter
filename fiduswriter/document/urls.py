@@ -11,6 +11,7 @@ urlpatterns = [
         views.get_documentlist_extra,
         name="get_documentlist_extra",
     ),
+    re_path("^get_ws_host/$", views.get_ws_host, name="get_ws_host"),
     re_path("^delete/$", views.delete, name="delete"),
     re_path("^move/$", views.move, name="move"),
     re_path("^create_doc/$", views.create_doc, name="create_doc"),

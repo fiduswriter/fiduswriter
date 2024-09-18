@@ -100,7 +100,6 @@ export class WebSocketConnector {
                     "wss://offline" :
                     "ws://offline"
             }`
-        console.log({url, host: this.host, path: this.path})
         this.ws = new window.WebSocket(url)
         this.ws.onmessage = event => this.onmessage(event)
         this.ws.onclose = () => this.onclose()

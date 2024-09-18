@@ -6,8 +6,7 @@ import django
 from channels.routing import get_default_application
 
 
-
-#os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
+# os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 
 SRC_PATH = os.path.dirname(os.path.realpath(__file__))
 os.environ.setdefault("SRC_PATH", SRC_PATH)

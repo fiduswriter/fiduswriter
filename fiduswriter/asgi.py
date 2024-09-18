@@ -19,8 +19,8 @@ SETTINGS_MODULE = "configuration"
 mod = False
 # There are three levels of settings, each overiding the previous one:
 # global_settings.py, settings.py and configuration.py
-from django.conf import global_settings as CONFIGURATION
-from base import settings as SETTINGS
+from django.conf import global_settings as CONFIGURATION  # noqa
+from base import settings as SETTINGS  # noqa
 
 SETTINGS_PATHS = [SETTINGS.__file__]
 for setting in dir(SETTINGS):
@@ -40,7 +40,7 @@ INSTALLED_APPS = CONFIGURATION.BASE_INSTALLED_APPS + list(
 )
 for app in CONFIGURATION.REMOVED_APPS:
     INSTALLED_APPS.remove(app)
-from django.conf import settings
+from django.conf import settings  # noqa
 
 settings.configure(
     CONFIGURATION,

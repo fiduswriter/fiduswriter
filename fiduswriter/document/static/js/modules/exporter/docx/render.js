@@ -143,6 +143,7 @@ export class DOCXExporterRender {
 
         // Including global page definition at end
         const pars = this.text.queryAll(["w:p", "w:sectPr"])
+
         const currentTags = []
         pars.forEach(
             par => {
@@ -205,22 +206,36 @@ export class DOCXExporterRender {
 
     // Render Tags that only exchange inline content
     inlineRender(tag) {
+        if (!tag.block) {
+            return
+        }
         const texts = tag.block.textContent.split(`{${tag.title}}`)
         const fullText = texts[0] + escapeText(tag.content) + texts[1]
-        const rs = tag.block.queryAll("w:r")
-        while (rs.length > 1) {
-            rs[0].parentElement.removeChild(rs[0])
-            rs.shift()
+        const rs = tag.block.queryAll("w:r").reverse()
+        let lastR
+        // Remove all <w:r> with text in them (<w:t>).
+        // Exclude <w:r> used for other things, like page breaks.
+        rs.forEach(r => {
+            if(r.query("w:t")) {
+                if(lastR) {
+                    r.parentElement.removeChild(r)
+                } else {
+                    lastR = r
+                }
+            }
+        })
+        if (!lastR) {
+            // This should not be possible. Error.
+            return
         }
-        const r = rs[0]
         if (fullText.length) {
             let textAttr = ""
             if (fullText[0] === " " || fullText[fullText.length - 1] === " ") {
                 textAttr += "xml:space=\"preserve\""
             }
-            r.innerXML = `<w:t ${textAttr}>${fullText}</w:t>`
+            lastR.innerXML = `<w:t ${textAttr}>${fullText}</w:t>`
         } else {
-            r.parentElement.removeChild(r)
+            lastR.parentElement.removeChild(lastR)
         }
     }
 

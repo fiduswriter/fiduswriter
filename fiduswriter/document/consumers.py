@@ -1,7 +1,6 @@
 import uuid
 import atexit
 import logging
-import json
 from time import mktime, time
 from copy import deepcopy
 
@@ -10,7 +9,10 @@ from django.db.utils import DatabaseError
 from django.db.models import F, Q
 from django.conf import settings
 
+from base.helpers.host import get_host
+
 from document.helpers.session_user_info import SessionUserInfo
+from document.helpers.host import compare_host_with_expected
 from document import prosemirror
 from document.helpers.serializers import PythonWithURLSerializer
 from base.base_consumer import BaseWebsocketConsumer
@@ -25,11 +27,6 @@ from document.models import (
 from usermedia.models import Image, DocumentImage, UserImage
 from user.helpers import Avatars
 
-# settings_JSONPATCH
-from jsonpatch import apply_patch, JsonPatchConflict, JsonPointerException
-
-# end settings_JSONPATCH
-
 logger = logging.getLogger(__name__)
 
 
@@ -38,16 +35,39 @@ class WebsocketConsumer(BaseWebsocketConsumer):
     history_length = 1000  # Only keep the last 1000 diffs
 
     def connect(self):
-        connected = super().connect()
-        if not connected:
-            return
         self.document_id = int(
             self.scope["url_route"]["kwargs"]["document_id"]
         )
+        redirected = self.check_server()
+        if redirected:
+            return
+        connected = super().connect()
+        if not connected:
+            return
         logger.debug(
             f"Action:Document socket opened by user. "
             f"URL:{self.endpoint} User:{self.user.id} ParticipantID:{self.id}"
         )
+
+    def check_server(self):
+        if len(settings.WS_SERVERS) < 2:
+            return False
+        origin = (
+            dict(self.scope["headers"]).get(b"origin", b"").decode("utf-8")
+        )
+        ws_server = settings.WS_SERVERS[
+            self.document_id % len(settings.WS_SERVERS)
+        ]
+        expected = get_host(origin, ws_server)
+        host = f"{self.scope['server'][0]}:{self.scope['server'][1]}"
+        if not compare_host_with_expected(host, expected, origin):
+            # Redirect to the correct URL
+            self.init()
+            logger.debug(f"Redirecting from {host} to {expected}")
+            self.send_message({"type": "redirect", "url": f"{expected}"})
+            self.do_close()
+            return True
+        return False
 
     def confirm_diff(self, rid):
         response = {"type": "confirm_diff", "rid": rid}
@@ -86,21 +106,14 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 if "content" not in doc_db.content:
                     doc_db.content["content"] = [{type: "title"}]
                 doc_db.save()
-            if settings.JSONPATCH:
-                self.session = {
-                    "doc": doc_db,
-                    "participants": {0: self},
-                    "last_saved_version": doc_db.version,
-                }
-            else:
-                node = prosemirror.from_json(doc_db.content)
-                self.session = {
-                    "doc": doc_db,
-                    "node": node,
-                    "node_updates": False,
-                    "participants": {0: self},
-                    "last_saved_version": doc_db.version,
-                }
+            node = prosemirror.from_json(doc_db.content)
+            self.session = {
+                "doc": doc_db,
+                "node": node,
+                "node_updates": False,
+                "participants": {0: self},
+                "last_saved_version": doc_db.version,
+            }
             WebsocketConsumer.sessions[doc_db.id] = self.session
             if self.user_info.access_rights == "write":
                 template = True
@@ -452,54 +465,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             )
             return
         if pv == dv:
-            if settings.JSONPATCH:
-                if "jd" in message:  # jd = json diff
-                    backup = False
-                    if len(message["jd"]) > 1:
-                        # There is more than one patch operation so if the
-                        # patch fails, we might already have applied a previous
-                        # patch operation. Therefore we take a backup now so
-                        # that we can roll back if needed.
-                        backup = deepcopy(self.session["doc"].content)
-                    try:
-                        apply_patch(
-                            self.session["doc"].content, message["jd"], True
-                        )
-                    except (JsonPatchConflict, JsonPointerException):
-                        if backup:
-                            self.session["doc"].content = backup
-                        logger.exception(
-                            f"Action:Cannot apply json diff. "
-                            f"URL:{self.endpoint} User:{self.user.id} "
-                            f"ParticipantID:{self.id}"
-                        )
-                        logger.error(
-                            f"Action:Patch Exception URL:{self.endpoint} "
-                            f"User:{self.user.id} ParticipantID:{self.id} "
-                            f"Message:{json.dumps(message)}"
-                        )
-                        logger.error(
-                            f"Action:Patch Exception URL:{self.endpoint} "
-                            f"User:{self.user.id} ParticipantID:{self.id} "
-                            f"Document:"
-                            f"{json.dumps(self.session['doc'].content)}"
-                        )
-                        self.unfixable()
-                        patch_msg = {
-                            "type": "patch_error",
-                            "user_id": self.user.id,
-                        }
-                        self.send_message(patch_msg)
-                        # Reset collaboration to avoid any data loss issues.
-                        self.reset_collaboration(
-                            patch_msg, self.user_info.document_id, self.id
-                        )
-                        return
-                    # The json diff is only needed by the python backend which
-                    # does not understand the steps. It can therefore be
-                    # removed before broadcast to other clients.
-                    del message["jd"]
-            elif "ds" in message:  # ds = document steps
+            if "ds" in message:  # ds = document steps
                 updated_node = prosemirror.apply(
                     message["ds"], self.session["node"]
                 )

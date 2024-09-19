@@ -1,5 +1,8 @@
 import json
+import random
+from httpx_ws import connect_ws
 
+from django.conf import settings
 from django.shortcuts import render
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.sites.shortcuts import get_current_site
@@ -9,14 +12,12 @@ from django.views.decorators.http import require_GET, require_POST
 from django.contrib.admin.views.decorators import staff_member_required
 
 from allauth.socialaccount.adapter import get_adapter
-from asgiref.sync import async_to_sync
-from channels.layers import get_channel_layer
-from channels_presence.models import Room, Presence
-
 
 from user.helpers import Avatars
 from .decorators import ajax_required
 from . import get_version
+from .helpers.host import get_host
+from .models import Presence
 
 
 @ensure_csrf_cookie
@@ -41,6 +42,9 @@ def configuration(request):
     """
     Load the configuration options of the page that are request dependent.
     """
+    ws_host = get_host(
+        request.headers["Origin"], random.choice(settings.WS_SERVERS)
+    )
     socialaccount_providers = []
     for provider in get_adapter(request).list_providers(request):
         socialaccount_providers.append(
@@ -53,6 +57,7 @@ def configuration(request):
     response = {
         "language": request.LANGUAGE_CODE,
         "socialaccount_providers": socialaccount_providers,
+        "ws_host": ws_host,
     }
     if request.user.is_authenticated:
         avatars = Avatars()
@@ -120,16 +125,24 @@ def connection_info(request):
     Return info about currently connected clients.
     """
     response = {}
-    Room.objects.prune_presences()
-    Room.objects.prune_rooms()
-    room = Room.objects.filter(channel_name="system_messages").first()
-    if room:
-        response["sessions"] = Presence.objects.filter(room=room).count()
-        response["users"] = room.get_users().count()
-    else:
-        response["sessions"] = 0
-        response["users"] = 0
+    Presence.prune()
+    response["sessions"] = Presence.objects.all().count()
+    response["users"] = Presence.objects.values("user").distinct().count()
     return JsonResponse(response, status=200)
+
+
+def send_to_server(server_url, message, headers):
+    with connect_ws(
+        server_url,
+        headers={
+            "Origin": headers["Origin"],
+            "Cookie": headers["Cookie"],
+            "User-Agent": "Fidus Writer",
+        },
+    ) as websocket:
+        websocket.send_text(
+            json.dumps({"type": "system_message", "message": message})
+        )
 
 
 @ajax_required
@@ -141,15 +154,14 @@ def send_system_message(request):
     """
     response = {}
     message = request.POST["message"]
-    channel_layer = get_channel_layer()
 
-    async_to_sync(channel_layer.group_send)(
-        "system_messages",
-        {
-            "type": "forward.message",
-            "message": json.dumps({"type": "message", "message": message}),
-        },
+    servers = set(
+        Presence.objects.values_list("server_url", flat=True).distinct()
     )
+
+    for server in servers:
+        send_to_server(server, message, dict(request.headers))
+
     return JsonResponse(response, status=200)
 
 

@@ -1,7 +1,3 @@
-from django.test import override_settings
-
-import time
-import logging
 from channels.testing import ChannelsLiveServerTestCase
 from .editor_helper import EditorHelper
 from document.consumers import WebsocketConsumer
@@ -108,49 +104,3 @@ class SimpleMessageExchangeTests(EditorHelper, ChannelsLiveServerTestCase):
         )
 
         self.assertEqual(doc_data, doc_content)
-
-    @override_settings(JSONPATCH=True)
-    def test_server_receives_failing_patch(self):
-        """
-        The server receives a patch from the client that is failing. It should
-        be stopped at the server and not be applied. If the patch has one part
-        that is valid and another that is invalid, none of them should be
-        applied.
-        """
-        self.load_document_editor(self.driver, self.doc)
-
-        session = WebsocketConsumer.sessions[self.doc.id]
-        socket_object = session["participants"][0]
-        diff_script = (
-            "theApp.page.ws.send(()=>({"
-            "type: 'diff',"
-            "v: theApp.page.docInfo.version,"
-            "rid: theApp.page.mod.collab.doc.confirmStepsRequestCounter++,"
-            "cid: theApp.page.client_id,"
-            "jd: ["
-            "{op: 'add', path: '/attrs/language', value: 'de-DE'},"  # valid
-            "{op: 'remove', path: '/fish'}"  # invalid
-            "]"
-            "}))"
-        )
-        logging.disable(logging.CRITICAL)
-        self.driver.execute_script(diff_script)
-        time.sleep(1)
-        logging.disable(logging.NOTSET)
-        doc_data = False
-        patch_error = 0
-        for message in socket_object.messages["last_ten"]:
-            if message["type"] == "doc_data":
-                doc_data = message["doc"]["content"]
-            elif message["type"] == "patch_error":
-                patch_error += 1
-        # The language should still be Spanish
-        self.assertFalse("language" in doc_data["attrs"])
-        # There should be one patch error
-        self.assertEqual(patch_error, 1)
-        system_message = self.driver.find_element(
-            By.CSS_SELECTOR, "div.ui-dialog-content.ui-widget-content > p"
-        )
-        assert system_message.text == (
-            "Your document was out of sync and has been reset."
-        )

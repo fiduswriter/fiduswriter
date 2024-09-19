@@ -31,7 +31,7 @@ export const changeAvatarDialog = function(app) {
                 ).then(
                     () => deactivateWait()
                 ).then(
-                    () => app.getUserInfo()
+                    () => app.getConfiguration()
                 ).then(
                     () => app.selectPage()
                 ).catch(
@@ -83,7 +83,7 @@ const deleteAvatar = function(app) {
     ).then(
         () => deactivateWait()
     ).then(
-        () => app.getUserInfo()
+        () => app.getConfiguration()
     ).then(
         () => app.selectPage()
     ).catch(
@@ -218,7 +218,7 @@ export const addEmailDialog = function(app) {
                         deactivateWait()
                         if (200 === status) {
                             dialog.close()
-                            return app.getUserInfo().then(
+                            return app.getConfiguration().then(
                                 () => app.selectPage()
                             ).then(
                                 () => addAlert("info", `${gettext("Confirmation e-mail sent to")}: ${email}`)
@@ -271,7 +271,7 @@ export const deleteEmailDialog = function(target, app) {
                         deactivateWait()
                     }
                 ).then(
-                    () => app.getUserInfo()
+                    () => app.getConfiguration()
                 ).then(
                     () => app.selectPage()
                 ).then(
@@ -323,7 +323,7 @@ export const deleteSocialaccountDialog = function(target, app) {
                         deactivateWait()
                     }
                 ).then(
-                    () => app.getUserInfo()
+                    () => app.getConfiguration()
                 ).then(
                     () => app.selectPage()
                 ).then(
@@ -373,7 +373,7 @@ export const changePrimaryEmailDialog = function(app) {
                     () => {
                         dialog.close()
                         deactivateWait()
-                        return app.getUserInfo()
+                        return app.getConfiguration()
                     }
                 ).then(
                     () => app.selectPage()

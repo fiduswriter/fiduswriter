@@ -264,15 +264,26 @@ export class Editor {
             )
         }
         return Promise.all(initPromises).then(
+            () => postJson(
+                "/api/document/get_ws_host/",
+                {
+                    id: this.docInfo.id,
+                }).then(
+                ({json}) => {
+                    this.wsHost = json.ws_host
+                })
+        ).then(
             () => {
                 new ModCitations(this)
                 new ModFootnotes(this)
                 return this.activateFidusPlugins()
             }
         ).then(() => {
+
             let resubScribed = false
             this.ws = new WebSocketConnector({
-                url: `/ws/document/${this.docInfo.id}/`,
+                host: this.wsHost,
+                path: `/ws/document/${this.docInfo.id}/`,
                 appLoaded: () => this.view.state.plugins.length,
                 anythingToSend: () => sendableSteps(this.view.state),
                 initialMessage: () => {

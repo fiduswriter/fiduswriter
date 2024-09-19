@@ -106,7 +106,7 @@ export class Profile {
         ).then(
             () => {
                 deactivateWait()
-                return this.app.getUserInfo()
+                return this.app.getConfiguration()
             }
         ).then(
             () => this.app.selectPage()

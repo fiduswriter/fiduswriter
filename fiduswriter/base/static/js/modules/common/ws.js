@@ -2,7 +2,8 @@
  */
 export class WebSocketConnector {
     constructor({
-        url = "", // needs to be specified
+        host = "", // needs to be specified
+        path = "", // needs to be specified
         appLoaded = () => false, // required argument
         anythingToSend = () => false, // required argument
         messagesElement = () => false, // element in which to show connection messages
@@ -16,7 +17,8 @@ export class WebSocketConnector {
             window.location.href = "/"
         },
     }) {
-        this.url = url
+        this.host = host
+        this.path = path
         this.appLoaded = appLoaded
         this.anythingToSend = anythingToSend
         this.messagesElement = messagesElement
@@ -89,17 +91,9 @@ export class WebSocketConnector {
                     "wss://" :
                     "ws://"
             }${
-                settings_WS_SERVER ?
-                    settings_WS_SERVER :
-                    location.host.split(":")[0]
+                this.host
             }${
-                settings_WS_PORT ?
-                    `:${settings_WS_PORT}` :
-                    location.port.length ?
-                        `:${location.port}` :
-                        ""
-            }${
-                this.url
+                this.path
             }` :
             `${
                 location.protocol === "https:" ?
@@ -281,6 +275,9 @@ export class WebSocketConnector {
 
     receive(data) {
         switch (data.type) {
+        case "redirect":
+            this.host = data.url
+            break
         case "welcome":
             this.open()
             break

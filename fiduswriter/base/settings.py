@@ -12,8 +12,10 @@ TEST_SERVER = True
 # This is the contact email that will be shown in various places all over
 # the site.
 CONTACT_EMAIL = "mail@email.com"
-# If websockets is running on a non-standard port, add it here:
-WS_PORT = False
+# If websockets is running on a non-standard server/port, add it here:
+WS_SERVERS = [
+    False,  # Default websocket server
+]
 # Interval between document saves
 DOC_SAVE_INTERVAL = 30
 
@@ -203,7 +205,7 @@ BASE_INSTALLED_APPS = [
     "django.contrib.admindocs",
     "django.contrib.flatpages",
     "channels",
-    "channels_presence",
+    # "channels_presence",
     "django_js_error_hook",
     "loginas",
     "fixturemedia",
@@ -362,12 +364,6 @@ JAVASCRIPT_ERROR_BLACKLIST = [
 # The page to show while transpilation takes place.
 SETUP_PAGE_PATH = os.path.join(SRC_PATH, "base/setup_page/")
 
-# Whether to use the old JSON patch method rather than prosemirror-py.
-# Tests have shown that the JSON patch method is faster for now. This setting
-# will likely be removed once the prosemirror-py method has reached a similar
-# speed.
-JSONPATCH = False
-
 # Whether to create a service worker on production sites
 USE_SERVICE_WORKER = True
 
@@ -377,13 +373,5 @@ SILENCED_SYSTEM_CHECKS = ["models.W042"]
 
 FOOTER_LINKS = []
 BRANDING_LOGO = False
-
-
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
-    },
-}
-CHANNELS_PRESENCE_MAX_AGE = 240
 
 ASGI_APPLICATION = "base.routing.application"

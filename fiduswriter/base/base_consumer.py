@@ -18,9 +18,11 @@ class BaseWebsocketConsumer(WebsocketConsumer):
             self.access_denied()
             return False
         logger.debug("Action:Opening Websocket")
+        return True
 
     def connect(self):
-        self.init()
+        if not self.init():
+            return False
 
         logger.debug(
             f"Action:Opening Websocket URL:{self.endpoint}"

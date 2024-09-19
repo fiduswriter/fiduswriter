@@ -317,7 +317,7 @@ export class App {
             appLoaded: () => true,
             receiveData: data => {
                 switch (data.type) {
-                case "message":
+                case "system_message":
                     showSystemMessage(data.message)
                     break
                 default:

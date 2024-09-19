@@ -141,7 +141,9 @@ def send_to_server(server_url, message, headers):
         },
     ) as websocket:
         websocket.send_text(
-            json.dumps({"type": "system_message", "message": message})
+            json.dumps(
+                {"type": "system_message", "message": message, "s": 1, "c": 1}
+            )
         )
 
 

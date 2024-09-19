@@ -216,8 +216,8 @@ export class DOCXExporterRender {
         // Remove all <w:r> with text in them (<w:t>).
         // Exclude <w:r> used for other things, like page breaks.
         rs.forEach(r => {
-            if(r.query("w:t")) {
-                if(lastR) {
+            if (r.query("w:t")) {
+                if (lastR) {
                     r.parentElement.removeChild(r)
                 } else {
                     lastR = r

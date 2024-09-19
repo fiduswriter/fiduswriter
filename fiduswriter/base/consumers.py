@@ -1,4 +1,3 @@
-import json
 import atexit
 
 from base.models import Presence
@@ -10,45 +9,34 @@ class SystemMessageConsumer(BaseWebsocketConsumer):
 
     def connect(self):
         if not super().connect():
-            return False
+            return
         SystemMessageConsumer.clients.append(self)
-        self.presence = False
-        self.headers = dict(self.scope["headers"])
-        user_agent = self.headers.get(b"user-agent", b"").decode("utf-8")
-        if user_agent != "Fidus Writer":
-            self.update_presence(True)
+        headers = dict(self.scope["headers"])
+        user_agent = headers.get(b"user-agent", b"").decode("utf-8")
+        if user_agent == "Fidus Writer":
+            return
+        host = headers.get(b"host", b"").decode("utf-8")
+        origin = headers.get(b"origin", b"").decode("utf-8")
+        protocol = "wss://" if origin.startswith("https") else "ws://"
+        self.presence = Presence.objects.create(
+            user=self.user,
+            server_url=protocol + host + self.scope["path"],
+        )
 
     def disconnect(self, close_code):
-        self.update_presence(False)
+        if hasattr(self, "presence"):
+            self.presence.delete()
         SystemMessageConsumer.clients.remove(self)
         self.close()
 
-    def update_presence(self, is_connected):
-        if is_connected:
-            if self.presence:
-                self.presence.save()
-            else:
-                host = self.headers.get(b"host", b"").decode("utf-8")
-                origin = self.headers.get(b"origin", b"").decode("utf-8")
-                protocol = "wss://" if origin.startswith("https") else "ws://"
-                self.presence = Presence.objects.create(
-                    user=self.user,
-                    server_url=protocol + host + self.scope["path"],
-                )
-        else:
-            if self.presence:
-                self.presence.delete()
+    def send_pong(self):
+        self.presence.save()
+        super().send_pong()
 
-    def receive(self, text_data=None):
-        if not text_data:
-            return
-        data = json.loads(text_data)
-        if data["type"] == "ping":
-            self.update_presence(True)
-        elif data["type"] == "system_message":
+    def handle_message(self, message):
+        if message["type"] == "system_message":
             for client in SystemMessageConsumer.clients:
-                client.send_message(data)
-        return super().receive(text_data)
+                client.send_message(message)
 
 
 def remove_all_presences():

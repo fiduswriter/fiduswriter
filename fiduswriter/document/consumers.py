@@ -50,6 +50,10 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         )
 
     def check_server(self):
+        # The correct server for the document may have changed since the client
+        # received its initial connection information. For example, because the
+        # number of servers has increased (all servers need to restart to have
+        # the right setting).
         if len(settings.WS_SERVERS) < 2:
             return False
         origin = (

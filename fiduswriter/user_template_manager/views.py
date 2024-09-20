@@ -1,4 +1,5 @@
 import json
+from copy import deepcopy
 
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
@@ -150,6 +151,8 @@ def create(request):
 @ajax_required
 @require_POST
 def copy(request):
+    response = {}
+    status = 201
     id = request.POST["id"]
     title = request.POST["title"]
     doc_template = DocumentTemplate.objects.filter(
@@ -164,20 +167,29 @@ def copy(request):
     ).first():
         counter += 1
         title = f"{base_title} {counter}"
-    response = {}
-    status = 201
+    base_import_id = doc_template.import_id
+    counter = 0
+    import_id = f"{base_import_id}-{counter}"
+    while DocumentTemplate.objects.filter(
+        Q(import_id=import_id), Q(user=request.user) | Q(user=None)
+    ).first():
+        counter += 1
+        import_id = f"{base_import_id}-{counter}"
     document_styles = [style for style in doc_template.documentstyle_set.all()]
     export_templates = [
         template for template in doc_template.exporttemplate_set.all()
     ]
-    doc_template.pk = None
-    doc_template.title = title
-    doc_template.user = request.user
-    doc_template.save()
+    content = deepcopy(doc_template.content)
+    content["attrs"]["template"] = title
+    content["attrs"]["import_id"] = import_id
+    new_doc_template = DocumentTemplate(
+        title=title, import_id=import_id, user=request.user, content=content
+    )
+    new_doc_template.save()
     for ds in document_styles:
         style_files = [file for file in ds.documentstylefile_set.all()]
         ds.pk = None
-        ds.document_template = doc_template
+        ds.document_template = new_doc_template
         ds.save()
         for sf in style_files:
             sf.pk = None
@@ -185,10 +197,10 @@ def copy(request):
             sf.save()
     for et in export_templates:
         et.pk = None
-        et.document_template = doc_template
+        et.document_template = new_doc_template
         et.save()
-    response["id"] = doc_template.id
-    response["title"] = doc_template.title
+    response["id"] = new_doc_template.id
+    response["title"] = new_doc_template.title
     return JsonResponse(response, status=status)
 
 

@@ -142,27 +142,27 @@ export class DOCXExporterRender {
         const tags = this.getTagData(docContent, pmBib, settings)
 
         // Including global page definition at end
-        const pars = this.text.queryAll(["w:p", "w:sectPr"])
+        const blocks = this.text.queryAll(["w:p", "w:sectPr"])
 
         const currentTags = []
-        pars.forEach(
-            par => {
+        blocks.forEach(
+            block => {
                 // Assuming there is nothing outside of <w:t>...</w:t>
-                const text = par.textContent
+                const text = block.textContent
                 tags.forEach(
                     tag => {
                         const tagString = tag.title
                         if (text.includes(`{${tagString}}`)) {
                             currentTags.push(tag)
-                            tag.block = par
+                            tag.block = block
                             // We don't worry about the same tag appearing twice in the document,
                             // as that would make no sense.
                         }
                     }
                 )
-                const pageSize = par.query("w:pgSz")
-                const pageMargins = par.query("w:pgMar")
-                const cols = par.query("w:cols")
+                const pageSize = block.query("w:pgSz")
+                const pageMargins = block.query("w:pgMar")
+                const cols = block.query("w:cols")
                 if (pageSize && pageMargins) { // Not sure if these all need to come together
                     let width = parseInt(pageSize.getAttribute("w:w")) -
                     parseInt(pageMargins.getAttribute("w:right")) -

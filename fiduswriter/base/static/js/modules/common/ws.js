@@ -2,7 +2,7 @@
  */
 export class WebSocketConnector {
     constructor({
-        host = "", // needs to be specified
+        base = "", // needs to be specified
         path = "", // needs to be specified
         appLoaded = () => false, // required argument
         anythingToSend = () => false, // required argument
@@ -17,7 +17,7 @@ export class WebSocketConnector {
             window.location.href = "/"
         },
     }) {
-        this.host = host
+        this.base = base
         this.path = path
         this.appLoaded = appLoaded
         this.anythingToSend = anythingToSend
@@ -85,21 +85,22 @@ export class WebSocketConnector {
             client: 0,
             lastTen: []
         }
-        const url = this.online ?
-            `${
-                location.protocol === "https:" ?
-                    "wss://" :
-                    "ws://"
-            }${
-                this.host
-            }${
-                this.path
-            }` :
-            `${
-                location.protocol === "https:" ?
-                    "wss://offline" :
-                    "ws://offline"
-            }`
+        let url
+        if (this.online) {
+            if (this.base.startsWith("/")) {
+                url = this.base + this.path
+            } else if (location.protocol === "https:") {
+                url = `wss://${this.base}${this.path}`
+            } else {
+                url = `ws://${this.base}${this.path}`
+            }
+        } else {
+            if (location.protocol === "https:") {
+                url = "wss://offline"
+            } else {
+                url = "ws://offline"
+            }
+        }
         this.ws = new window.WebSocket(url)
         this.ws.onmessage = event => this.onmessage(event)
         this.ws.onclose = () => this.onclose()
@@ -276,7 +277,7 @@ export class WebSocketConnector {
     receive(data) {
         switch (data.type) {
         case "redirect":
-            this.host = data.url
+            this.base = data.base
             break
         case "welcome":
             this.open()

@@ -312,8 +312,8 @@ export class App {
 
     connectWs() {
         this.ws = new WebSocketConnector({
-            host: this.config.ws_host,
-            path: "/ws/base/",
+            base: this.config.ws_url_base,
+            path: "/base/",
             appLoaded: () => true,
             receiveData: data => {
                 switch (data.type) {

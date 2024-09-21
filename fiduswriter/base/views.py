@@ -16,7 +16,7 @@ from allauth.socialaccount.adapter import get_adapter
 from user.helpers import Avatars
 from .decorators import ajax_required
 from . import get_version
-from .helpers.host import get_host
+from .helpers.ws import get_url_base
 from .models import Presence
 
 
@@ -42,8 +42,8 @@ def configuration(request):
     """
     Load the configuration options of the page that are request dependent.
     """
-    ws_host = get_host(
-        request.headers["Origin"], random.choice(settings.WS_SERVERS)
+    ws_url_base = get_url_base(
+        request.headers["Origin"], random.choice(settings.WS_URLS)
     )
     socialaccount_providers = []
     for provider in get_adapter(request).list_providers(request):
@@ -57,7 +57,7 @@ def configuration(request):
     response = {
         "language": request.LANGUAGE_CODE,
         "socialaccount_providers": socialaccount_providers,
-        "ws_host": ws_host,
+        "ws_url_base": ws_url_base,
     }
     if request.user.is_authenticated:
         avatars = Avatars()

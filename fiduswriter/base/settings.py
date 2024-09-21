@@ -13,7 +13,7 @@ TEST_SERVER = True
 # the site.
 CONTACT_EMAIL = "mail@email.com"
 # If websockets is running on a non-standard server/port, add it here:
-WS_SERVERS = [
+WS_URLS = [
     False,  # Default websocket server
 ]
 # Interval between document saves

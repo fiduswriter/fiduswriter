@@ -1,4 +1,4 @@
-const rspack = require('@rspack/core') // eslint-disable-line no-undef
+const rspack = require("@rspack/core") // eslint-disable-line no-undef
 const WorkboxPlugin = require("@aaroon/workbox-rspack-plugin") // eslint-disable-line no-undef
 
 const settings = window.settings // Replaced by django-npm-mjs
@@ -39,7 +39,7 @@ module.exports = { // eslint-disable-line no-undef
             },
             {
                 test: /\.(csljson)$/,
-                type: 'asset/resource'
+                type: "asset/resource"
             },
         ]
     },

@@ -1,18 +1,8 @@
-const webpack = require("webpack") // eslint-disable-line no-undef
-const WorkboxPlugin = require("workbox-webpack-plugin") // eslint-disable-line no-undef
+const rspack = require('@rspack/core') // eslint-disable-line no-undef
+const WorkboxPlugin = require("@aaroon/workbox-rspack-plugin") // eslint-disable-line no-undef
 
 const settings = window.settings // Replaced by django-npm-mjs
 const transpile = window.transpile // Replaced by django-npm-mjs
-
-const baseRule = {
-    test: /\.(js|mjs)$/,
-    use: {
-        loader: "babel-loader",
-        options: {
-            presets: ["@babel/preset-env"]
-        }
-    }
-}
 
 const predefinedVariables = {
     "settings_BRANDING_LOGO": settings.BRANDING_LOGO ? JSON.stringify(settings.BRANDING_LOGO) : false,
@@ -32,7 +22,6 @@ const predefinedVariables = {
 }
 
 if (settings.DEBUG) {
-    baseRule.exclude = /node_modules/
     predefinedVariables.staticUrl = `(url => ${JSON.stringify(settings.STATIC_URL)} + url)`
 } else {
     predefinedVariables.staticUrl = `(url => ${JSON.stringify(settings.STATIC_URL)} + url + "?v=" + ${transpile.VERSION})`
@@ -49,14 +38,9 @@ module.exports = { // eslint-disable-line no-undef
                 enforce: "pre"
             },
             {
-                test: /\.(csljson)$/i,
-                use: [
-                    {
-                        loader: "file-loader",
-                    },
-                ],
+                test: /\.(csljson)$/,
+                type: 'asset/resource'
             },
-            baseRule
         ]
     },
     output: {
@@ -66,7 +50,7 @@ module.exports = { // eslint-disable-line no-undef
         crossOriginLoading: "anonymous"
     },
     plugins: [
-        new webpack.DefinePlugin(predefinedVariables),
+        new rspack.DefinePlugin(predefinedVariables),
         new WorkboxPlugin.GenerateSW({
             clientsClaim: true,
             skipWaiting: true,

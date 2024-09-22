@@ -53,6 +53,7 @@ module.exports = { // eslint-disable-line no-undef
         new rspack.DefinePlugin(predefinedVariables),
         new WorkboxPlugin.GenerateSW({
             clientsClaim: true,
+            maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10 MB
             skipWaiting: true,
             inlineWorkboxRuntime: true,
             swDest: "sw.js",

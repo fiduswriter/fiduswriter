@@ -58,6 +58,16 @@ class Command(BaseCommand):
         "with EPUB and HTML exports"
     )
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--force",
+            action="store_true",
+            dest="force",
+            default=False,
+            help="Whether to force the creation of the bundle even if the "
+            "content has not changed",
+        )
+
     def handle(self, *args, **options):
         self.stdout.write("Bundling MathLive")
 
@@ -65,7 +75,7 @@ class Command(BaseCommand):
         current_hash = self.calculate_source_hash()
 
         # Check if the hash has changed
-        if self.has_content_changed(current_hash):
+        if options["force"] or self.has_content_changed(current_hash):
             self.create_bundle()
             self.save_hash(current_hash)
             self.stdout.write("MathLive bundle updated.")

@@ -173,10 +173,6 @@ export class App {
                 }
             )
         }
-        // OfflinePluginRuntime.install({
-        //     onUpdateReady: () => OfflinePluginRuntime.applyUpdate(),
-        //     onUpdated: () => this.handleSWUpdate()
-        // })
         ensureCSS([
             staticUrl("css/fontawesome/css/all.css")
         ])

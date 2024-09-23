@@ -36,7 +36,10 @@ function resolveFilelocation(source, file, djangoApps) {
     const returnValue = {found: false, path: null}
     const fullPath = path.resolve(path.dirname(file), source)
 
-    if (fullPath.includes("/plugins/")) {
+    if (
+        fullPath.includes("/plugins/") ||
+        fullPath.includes("/mathlive/opf_includes")
+    ) {
         returnValue.found = true
         returnValue.path = null
         return returnValue
@@ -59,17 +62,6 @@ function resolveFilelocation(source, file, djangoApps) {
         }
         return false
     })
-
-    if (!returnValue.found) {
-        const resolvedPath = fullPath.replace(
-            /\/\w*\/static\/js\//g,
-            "/static-libs/js/"
-        )
-        if (isFile(`${resolvedPath}.js`)) {
-            returnValue.path = `${resolvedPath}.js`
-            returnValue.found = true
-        }
-    }
 
     return returnValue
 }

@@ -1,7 +1,7 @@
 import {DOMSerializer} from "prosemirror-model"
 import {RenderCitations} from "../../citations/render"
-import {BIBLIOGRAPHY_HEADERS, CATS} from "../../schema/i18n"
 import {get} from "../../common"
+import {BIBLIOGRAPHY_HEADERS, CATS} from "../../schema/i18n"
 
 /*
 
@@ -16,7 +16,6 @@ by little, and they are all based on the BaseDOMExporter class.
 */
 
 export class DOMExporter {
-
     constructor(schema, csl, documentStyles) {
         this.schema = schema
         this.csl = csl
@@ -24,13 +23,13 @@ export class DOMExporter {
 
         this.fontFiles = []
         this.binaryFiles = []
-        this.styleSheets = [
-            {url: staticUrl("css/document.css")}
-        ]
+        this.styleSheets = [{url: staticUrl("css/document.css")}]
     }
 
     addDocStyle(doc) {
-        const docStyle = this.documentStyles.find(docStyle => docStyle.slug === doc.settings.documentstyle)
+        const docStyle = this.documentStyles.find(
+            docStyle => docStyle.slug === doc.settings.documentstyle
+        )
 
         // The files will be in the base directory. The filenames of
         // DocumentStyleFiles will therefore not need to replaced with their URLs.
@@ -39,16 +38,19 @@ export class DOMExporter {
         }
         let contents = docStyle.contents
         docStyle.documentstylefile_set.forEach(
-            ([_url, filename]) => contents = contents.replace(
-                new RegExp(filename, "g"),
-                `media/${filename}`
-            )
+            ([_url, filename]) =>
+                (contents = contents.replace(
+                    new RegExp(filename, "g"),
+                    `media/${filename}`
+                ))
         )
         this.styleSheets.push({contents, filename: `css/${docStyle.slug}.css`})
-        this.fontFiles = this.fontFiles.concat(docStyle.documentstylefile_set.map(([url, filename]) => ({
-            filename: `css/media/${filename}`,
-            url
-        })))
+        this.fontFiles = this.fontFiles.concat(
+            docStyle.documentstylefile_set.map(([url, filename]) => ({
+                filename: `css/media/${filename}`,
+                url
+            }))
+        )
     }
 
     loadStyles() {
@@ -56,15 +58,13 @@ export class DOMExporter {
         this.styleSheets.forEach(sheet => {
             if (sheet.url) {
                 p.push(
-                    get(sheet.url).then(
-                        response => response.text()
-                    ).then(
-                        response => {
+                    get(sheet.url)
+                        .then(response => response.text())
+                        .then(response => {
                             sheet.contents = response
                             sheet.filename = `css/${sheet.url.split("/").pop().split("?")[0]}`
                             delete sheet.url
-                        }
-                    )
+                        })
                 )
             }
         })
@@ -74,10 +74,14 @@ export class DOMExporter {
     joinDocumentParts() {
         this.schema.cached.imageDB = this.imageDB
         const serializer = DOMSerializer.fromSchema(this.schema)
-        this.content = serializer.serializeNode(this.schema.nodeFromJSON(this.docContent))
+        this.content = serializer.serializeNode(
+            this.schema.nodeFromJSON(this.docContent)
+        )
 
         this.addFootnotes()
-        const bibliographyHeader = this.doc.settings.bibliography_header[this.doc.settings.language] || BIBLIOGRAPHY_HEADERS[this.doc.settings.language]
+        const bibliographyHeader =
+            this.doc.settings.bibliography_header[this.doc.settings.language] ||
+            BIBLIOGRAPHY_HEADERS[this.doc.settings.language]
         const citRenderer = new RenderCitations(
             this.content,
             this.doc.settings.citationstyle,
@@ -85,21 +89,22 @@ export class DOMExporter {
             this.bibDB,
             this.csl
         )
-        return citRenderer.init().then(
-            () => {
-                this.addBibliographyHTML(citRenderer.fm.bibHTML)
-                this.cleanHTML(citRenderer.fm)
-                this.addCategoryLabels(this.doc.settings.language)
-                return Promise.resolve()
-            }
-        )
+        return citRenderer.init().then(() => {
+            this.addBibliographyHTML(citRenderer.fm.bibHTML)
+            this.cleanHTML(citRenderer.fm)
+            this.addCategoryLabels(this.doc.settings.language)
+            return Promise.resolve()
+        })
     }
 
     addCategoryLabels(language) {
-        this.content.querySelectorAll("figcaption span.label,caption span.label").forEach(el => {
-            const category = el.parentElement.parentElement.dataset.category
-            el.innerHTML = category === "none" ? "" : CATS[category][language]
-        })
+        this.content
+            .querySelectorAll("figcaption span.label,caption span.label")
+            .forEach(el => {
+                const category = el.parentElement.parentElement.dataset.category
+                el.innerHTML =
+                    category === "none" ? "" : CATS[category][language]
+            })
     }
 
     addBibliographyHTML(bibliographyHTML) {
@@ -107,24 +112,35 @@ export class DOMExporter {
             const tempNode = document.createElement("div")
             tempNode.innerHTML = bibliographyHTML
             while (tempNode.firstChild) {
-                const footnotesContainer = this.content.querySelector("section.fnlist")
-                this.content.insertBefore(tempNode.firstChild, footnotesContainer)
+                const footnotesContainer =
+                    this.content.querySelector("section.fnlist")
+                this.content.insertBefore(
+                    tempNode.firstChild,
+                    footnotesContainer
+                )
             }
         }
     }
 
     replaceImgSrc(htmlString) {
-        htmlString = htmlString.replace(/<(img|IMG) data-src([^>]+)>/gm,
-            "<$1 src$2>")
+        htmlString = htmlString.replace(
+            /<(img|IMG) data-src([^>]+)>/gm,
+            "<$1 src$2>"
+        )
         return htmlString
     }
     // Replace all instances of the before string in all descendant textnodes of
     // node.
     replaceText(node, before, after) {
         if (node.nodeType === 1) {
-            [].forEach.call(node.childNodes, child => this.replaceText(child, before, after))
+            ;[].forEach.call(node.childNodes, child =>
+                this.replaceText(child, before, after)
+            )
         } else if (node.nodeType === 3) {
-            node.textContent = node.textContent.replace(window.RegExp(before, "g"), after)
+            node.textContent = node.textContent.replace(
+                new window.RegExp(before, "g"),
+                after
+            )
         }
     }
 
@@ -133,7 +149,9 @@ export class DOMExporter {
             node.removeAttribute("contentEditable")
         }
         if (node.children) {
-            Array.from(node.children).forEach(childNode => this.cleanNode(childNode))
+            Array.from(node.children).forEach(childNode =>
+                this.cleanNode(childNode)
+            )
         }
     }
 
@@ -155,18 +173,16 @@ export class DOMExporter {
         footnotesContainer.classList.add("fnlist")
         footnotesContainer.setAttribute("role", "doc-footnotes")
 
-        footnotes.forEach(
-            (footnote, index) => {
-                const counter = index + 1
-                const footnoteAnchor = this.getFootnoteAnchor(counter)
-                footnote.parentNode.replaceChild(footnoteAnchor, footnote)
-                const newFootnote = document.createElement("section")
-                newFootnote.id = "fn" + counter
-                newFootnote.setAttribute("role", "doc-footnote")
-                newFootnote.innerHTML = footnote.dataset.footnote
-                footnotesContainer.appendChild(newFootnote)
-            }
-        )
+        footnotes.forEach((footnote, index) => {
+            const counter = index + 1
+            const footnoteAnchor = this.getFootnoteAnchor(counter)
+            footnote.parentNode.replaceChild(footnoteAnchor, footnote)
+            const newFootnote = document.createElement("section")
+            newFootnote.id = "fn" + counter
+            newFootnote.setAttribute("role", "doc-footnote")
+            newFootnote.innerHTML = footnote.dataset.footnote
+            footnotesContainer.appendChild(newFootnote)
+        })
         this.content.appendChild(footnotesContainer)
     }
 
@@ -182,33 +198,33 @@ export class DOMExporter {
 
         let counter = 0
 
-        footnotes.forEach(
-            (footnote, index) => {
-                if (footnote.matches("a.fn")) {
-                    // Regular footnote - skip
-                    return
-                }
-                if (footnote.matches("section.fnlist .citation")) {
-                    // The citation is already in a footnote. Do not add a second footnote.
-                    footnote.innerHTML = citationFormatter.citationTexts[counter] || " "
-                    counter += 1
-                    return
-                }
-                const id = fnCountOffset + counter + 1
-                const footnoteAnchor = this.getFootnoteAnchor(id)
-                footnote.parentNode.replaceChild(footnoteAnchor, footnote)
-                const newFootnote = document.createElement("section")
-                newFootnote.id = "fn" + (id)
-                newFootnote.setAttribute("role", "doc-footnote")
-                newFootnote.innerHTML = `<p><span class="citation">${citationFormatter.citationTexts[
-                    counter
-                ] || " "}</span></p>`
-                footnotesContainer.insertBefore(
-                    newFootnote, footnotesContainer.childNodes[index]
-                )
-                counter += 1
+        footnotes.forEach((footnote, index) => {
+            if (footnote.matches("a.fn")) {
+                // Regular footnote - skip
+                return
             }
-        )
+            if (footnote.matches("section.fnlist .citation")) {
+                // The citation is already in a footnote. Do not add a second footnote.
+                footnote.innerHTML =
+                    citationFormatter.citationTexts[counter] || " "
+                counter += 1
+                return
+            }
+            const id = fnCountOffset + counter + 1
+            const footnoteAnchor = this.getFootnoteAnchor(id)
+            footnote.parentNode.replaceChild(footnoteAnchor, footnote)
+            const newFootnote = document.createElement("section")
+            newFootnote.id = "fn" + id
+            newFootnote.setAttribute("role", "doc-footnote")
+            newFootnote.innerHTML = `<p><span class="citation">${
+                citationFormatter.citationTexts[counter] || " "
+            }</span></p>`
+            footnotesContainer.insertBefore(
+                newFootnote,
+                footnotesContainer.childNodes[index]
+            )
+            counter += 1
+        })
     }
 
     cleanHTML(citationFormatter) {
@@ -222,10 +238,7 @@ export class DOMExporter {
         this.replaceText(this.content, "&nbsp;", " ")
 
         this.content.querySelectorAll(".comment").forEach(el => {
-            el.insertAdjacentHTML(
-                "afterend",
-                el.innerHTML
-            )
+            el.insertAdjacentHTML("afterend", el.innerHTML)
             el.parentElement.removeChild(el)
         })
 
@@ -243,9 +256,13 @@ export class DOMExporter {
             delete el.dataset.captionHidden
         })
 
-        this.content.querySelectorAll("figcaption span.text:empty,caption span.text:empty").forEach(el => {
-            el.parentElement.removeChild(el)
-        })
+        this.content
+            .querySelectorAll(
+                "figcaption span.text:empty,caption span.text:empty"
+            )
+            .forEach(el => {
+                el.parentElement.removeChild(el)
+            })
 
         this.content.querySelectorAll(".cross-reference").forEach(el => {
             el.innerHTML = `<a href="#${el.dataset.id}">${el.innerHTML}</a>`
@@ -254,17 +271,23 @@ export class DOMExporter {
 
     // Fill the contents of table of contents.
     fillToc() {
-        const headlines = Array.from(this.content.querySelectorAll("h1,h2,h3,h4,h5,h6"))
-        const tocs = Array.from(this.content.querySelectorAll("div.table-of-contents"))
+        const headlines = Array.from(
+            this.content.querySelectorAll("h1,h2,h3,h4,h5,h6")
+        )
+        const tocs = Array.from(
+            this.content.querySelectorAll("div.table-of-contents")
+        )
         tocs.forEach(toc => {
-            toc.innerHTML += headlines.map(headline => {
-                if (!headline.id || !headline.textContent.length) {
-                    // ignore the tocs own headlines
-                    return ""
-                }
-                const tagName = headline.tagName.toLowerCase()
-                return `<${tagName}><a href="#${headline.id}">${headline.innerHTML}</a></${tagName}>`
-            }).join("")
+            toc.innerHTML += headlines
+                .map(headline => {
+                    if (!headline.id || !headline.textContent.length) {
+                        // ignore the tocs own headlines
+                        return ""
+                    }
+                    const tagName = headline.tagName.toLowerCase()
+                    return `<${tagName}><a href="#${headline.id}">${headline.innerHTML}</a></${tagName}>`
+                })
+                .join("")
         })
     }
 }

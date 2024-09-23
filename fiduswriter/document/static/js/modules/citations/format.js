@@ -1,11 +1,19 @@
 import {escapeText} from "../common"
 import {citeprocSys} from "./citeproc_sys"
 /*
-* Use CSL and bibDB to format all citations for the given prosemirror json citation nodes
-*/
+ * Use CSL and bibDB to format all citations for the given prosemirror json citation nodes
+ */
 
 export class FormatCitations {
-    constructor(csl, allCitationInfos, citationStyle, bibliographyHeader, bibDB, synchronous = false, lang = "en-US") {
+    constructor(
+        csl,
+        allCitationInfos,
+        citationStyle,
+        bibliographyHeader,
+        bibDB,
+        synchronous = false,
+        lang = "en-US"
+    ) {
         this.csl = csl
         this.allCitationInfos = allCitationInfos
         this.citationStyle = citationStyle
@@ -47,7 +55,7 @@ export class FormatCitations {
     }
 
     // CSS
-    get bibCSS()  {
+    get bibCSS() {
         if (!this.bibliography || !this.bibliography[0].entry_ids.length) {
             return ""
         }
@@ -97,22 +105,29 @@ export class FormatCitations {
     getFormattedCitations() {
         const citeprocConnector = new citeprocSys(this.bibDB)
         if (this.synchronous) {
-            const citeprocInstance = this.csl.getEngineSync(citeprocConnector, this.citationStyle, this.lang)
+            const citeprocInstance = this.csl.getEngineSync(
+                citeprocConnector,
+                this.citationStyle,
+                this.lang
+            )
             if (!citeprocInstance) {
                 return false
             }
             this.process(citeprocInstance)
             return true
-
         } else {
-            return this.csl.getEngine(citeprocConnector, this.citationStyle, this.lang).then(citeprocInstance => {
-                this.process(citeprocInstance)
-                if (citeprocConnector.missingItems.length > 0) {
-                    return this.reloadCitations(citeprocConnector.missingItems)
-                } else {
-                    return Promise.resolve()
-                }
-            })
+            return this.csl
+                .getEngine(citeprocConnector, this.citationStyle, this.lang)
+                .then(citeprocInstance => {
+                    this.process(citeprocInstance)
+                    if (citeprocConnector.missingItems.length > 0) {
+                        return this.reloadCitations(
+                            citeprocConnector.missingItems
+                        )
+                    } else {
+                        return Promise.resolve()
+                    }
+                })
         }
     }
 
@@ -127,21 +142,28 @@ export class FormatCitations {
         const len = this.citations.length
         for (let i = 0; i < len; i++) {
             const citation = this.citations[i],
-                citationTexts = citeprocInstance.appendCitationCluster(citation, true)
+                citationTexts = citeprocInstance.appendCitationCluster(
+                    citation,
+                    true
+                )
             if (inText && "textcite" == this.bibFormats[i]) {
                 const items = citation.citationItems
                 let newCiteText = ""
 
                 for (let j = 0; j < items.length; j++) {
-                    const onlyNameOption = [{
-                        id: items[j].id,
-                        "author-only": 1
-                    }]
+                    const onlyNameOption = [
+                        {
+                            id: items[j].id,
+                            "author-only": 1
+                        }
+                    ]
 
-                    const onlyDateOption = [{
-                        id: items[j].id,
-                        "suppress-author": 1
-                    }]
+                    const onlyDateOption = [
+                        {
+                            id: items[j].id,
+                            "suppress-author": 1
+                        }
+                    ]
 
                     if (items[j].locator) {
                         onlyDateOption[0].locator = items[j].locator
@@ -152,13 +174,19 @@ export class FormatCitations {
                     }
 
                     if (0 < j) {
-                        newCiteText += citeprocInstance.citation.opt.layout_delimiter || "; "
+                        newCiteText +=
+                            citeprocInstance.citation.opt.layout_delimiter ||
+                            "; "
                     }
                     newCiteText += `${citeprocInstance.makeCitationCluster(onlyNameOption)} ${citeprocInstance.makeCitationCluster(onlyDateOption)}`
                 }
-                citationTexts.find(citationText => citationText[0] === i)[1] = newCiteText
+                citationTexts.find(citationText => citationText[0] === i)[1] =
+                    newCiteText
             }
-            citationTexts.forEach(([index, citationText]) => this.citationTexts[index] = citationText)
+            citationTexts.forEach(
+                ([index, citationText]) =>
+                    (this.citationTexts[index] = citationText)
+            )
         }
         this.citationType = citeprocInstance.cslXml.dataObj.attrs.class
         this.bibliography = citeprocInstance.makeBibliography()

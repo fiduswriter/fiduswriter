@@ -12,10 +12,12 @@ export const bulkMenuModel = () => ({
                     const dialog = new DeleteContactDialog(selected)
                     dialog.init().then(() => {
                         overview.contacts = overview.contacts.filter(
-                            ocontact => !selected.some(
-                                scontact => scontact.id == ocontact.id &&
-                                    scontact.type == ocontact.type
-                            )
+                            ocontact =>
+                                !selected.some(
+                                    scontact =>
+                                        scontact.id == ocontact.id &&
+                                        scontact.type == ocontact.type
+                                )
                         )
                         overview.initializeView()
                     })

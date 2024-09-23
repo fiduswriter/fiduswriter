@@ -1,25 +1,25 @@
 import {DataTable} from "simple-datatables"
-import {ImageOverviewCategories} from "./categories"
-import {
-    activateWait,
-    deactivateWait,
-    addAlert,
-    post,
-    findTarget,
-    whenReady,
-    Dialog,
-    localizeDate,
-    escapeText,
-    OverviewMenuView,
-    baseBodyTemplate,
-    setDocTitle,
-    ensureCSS,
-    DatatableBulk
-} from "../../common"
-import {SiteMenu} from "../../menu"
-import {FeedbackTab} from "../../feedback"
-import {menuModel, bulkMenuModel} from "./menu"
 import * as plugins from "../../../plugins/images_overview"
+import {
+    DatatableBulk,
+    Dialog,
+    OverviewMenuView,
+    activateWait,
+    addAlert,
+    baseBodyTemplate,
+    deactivateWait,
+    ensureCSS,
+    escapeText,
+    findTarget,
+    localizeDate,
+    post,
+    setDocTitle,
+    whenReady
+} from "../../common"
+import {FeedbackTab} from "../../feedback"
+import {SiteMenu} from "../../menu"
+import {ImageOverviewCategories} from "./categories"
+import {bulkMenuModel, menuModel} from "./menu"
 /** Helper functions for user added images/SVGs.*/
 
 export class ImageOverview {
@@ -58,9 +58,7 @@ export class ImageOverview {
             app: this.app
         })
         document.body = this.dom
-        ensureCSS([
-            staticUrl("css/cropper.min.css")
-        ])
+        ensureCSS([staticUrl("css/cropper.min.css")])
         setDocTitle(gettext("Media Manager"), this.app)
         const feedbackTab = new FeedbackTab()
         feedbackTab.init()
@@ -80,38 +78,41 @@ export class ImageOverview {
 
     //delete image
     deleteImage(ids) {
-        ids = ids.map(id => parseInt(id))
+        ids = ids.map(id => Number.parseInt(id))
         if (this.app.isOffline()) {
-            addAlert("error", gettext("You are currently offline. Please try again when you are back online."))
+            addAlert(
+                "error",
+                gettext(
+                    "You are currently offline. Please try again when you are back online."
+                )
+            )
             return
         }
         activateWait()
-        post(
-            "/api/usermedia/delete/",
-            {ids}
-        ).catch(
-            error => {
+        post("/api/usermedia/delete/", {ids})
+            .catch(error => {
                 addAlert("error", gettext("The image(s) could not be deleted"))
                 deactivateWait()
                 if (this.app.isOffline()) {
-                    addAlert("error", gettext("You are currently offline. Please try again when you are back online."))
+                    addAlert(
+                        "error",
+                        gettext(
+                            "You are currently offline. Please try again when you are back online."
+                        )
+                    )
                 } else {
-                    throw (error)
+                    throw error
                 }
-            }
-        ).then(
-            () => {
+            })
+            .then(() => {
                 ids.forEach(id => delete this.app.imageDB.db[id])
                 this.removeTableRows(ids)
                 addAlert("success", gettext("The image(s) have been deleted"))
-            }
-        ).then(
-            () => deactivateWait()
-        )
+            })
+            .then(() => deactivateWait())
     }
 
     deleteImageDialog(ids) {
-
         const buttons = [
             {
                 text: gettext("Delete"),
@@ -134,7 +135,6 @@ export class ImageOverview {
         })
         dialog.open()
     }
-
 
     updateTable(ids) {
         // Remove items that already exist
@@ -177,16 +177,18 @@ export class ImageOverview {
     }
 
     removeTableRows(ids) {
-        ids = ids.map(id => parseInt(id))
+        ids = ids.map(id => Number.parseInt(id))
 
-        const existingRows = this.table.data.data.map((row, index) => {
-            const id = row.cells[0].data
-            if (ids.includes(id)) {
-                return index
-            } else {
-                return false
-            }
-        }).filter(rowIndex => rowIndex !== false)
+        const existingRows = this.table.data.data
+            .map((row, index) => {
+                const id = row.cells[0].data
+                if (ids.includes(id)) {
+                    return index
+                } else {
+                    return false
+                }
+            })
+            .filter(rowIndex => rowIndex !== false)
 
         if (existingRows.length) {
             this.table.rows.remove(existingRows)
@@ -229,14 +231,21 @@ export class ImageOverview {
                 `<div class='${options.classes.container}'${options.scrollY.length ? ` style='height: ${options.scrollY}; overflow-Y: auto;'` : ""}></div>
             <div class='${options.classes.bottom}'>
                 ${
-    options.paging ?
-        `<div class='${options.classes.info}'></div>` :
-        ""
-}
+                    options.paging
+                        ? `<div class='${options.classes.info}'></div>`
+                        : ""
+                }
                 <nav class='${options.classes.pagination}'></nav>
             </div>`,
             data: {
-                headings: ["", this.dtBulk.getHTML(), gettext("File"), gettext("Size (px)"), gettext("Added"), ""],
+                headings: [
+                    "",
+                    this.dtBulk.getHTML(),
+                    gettext("File"),
+                    gettext("Size (px)"),
+                    gettext("Added"),
+                    ""
+                ],
                 data: ids.map(id => this.createTableRow(id))
             },
             columns: [
@@ -267,51 +276,52 @@ export class ImageOverview {
     getSelected() {
         return Array.from(
             this.dom.querySelectorAll(".entry-select:checked:not(:disabled)")
-        ).map(el => parseInt(el.getAttribute("data-id")))
+        ).map(el => Number.parseInt(el.getAttribute("data-id")))
     }
 
     bindEvents() {
         this.dom.addEventListener("click", event => {
             const el = {}
             switch (true) {
-            case findTarget(event, ".delete-image", el): {
-                const imageId = el.target.dataset.id
-                this.deleteImageDialog([imageId])
-                break
-            }
-            case findTarget(event, ".edit-image", el): {
-                const imageId = el.target.dataset.id
-                import("../edit_dialog").then(({ImageEditDialog}) => {
-                    const dialog = new ImageEditDialog(this.app.imageDB, imageId, this)
-                    dialog.init().then(
-                        () => {
+                case findTarget(event, ".delete-image", el): {
+                    const imageId = el.target.dataset.id
+                    this.deleteImageDialog([imageId])
+                    break
+                }
+                case findTarget(event, ".edit-image", el): {
+                    const imageId = el.target.dataset.id
+                    import("../edit_dialog").then(({ImageEditDialog}) => {
+                        const dialog = new ImageEditDialog(
+                            this.app.imageDB,
+                            imageId,
+                            this
+                        )
+                        dialog.init().then(() => {
                             this.updateTable([imageId])
-                        }
-                    )
-                })
-                break
-            }
-            case findTarget(event, ".fw-add-input", el): {
-                const itemEl = el.target.closest(".fw-list-input")
-                if (!itemEl.nextElementSibling) {
-                    itemEl.insertAdjacentHTML(
-                        "afterend",
-                        `<tr class="fw-list-input">
+                        })
+                    })
+                    break
+                }
+                case findTarget(event, ".fw-add-input", el): {
+                    const itemEl = el.target.closest(".fw-list-input")
+                    if (!itemEl.nextElementSibling) {
+                        itemEl.insertAdjacentHTML(
+                            "afterend",
+                            `<tr class="fw-list-input">
                                 <td>
                                     <input type="text" class="category-form">
                                     <span class="fw-add-input icon-addremove"></span>
                                 </td>
                             </tr>`
-                    )
-                } else {
-                    itemEl.parentElement.removeChild(itemEl)
+                        )
+                    } else {
+                        itemEl.parentElement.removeChild(itemEl)
+                    }
+                    break
                 }
-                break
-            }
-            default:
-                break
+                default:
+                    break
             }
         })
     }
-
 }

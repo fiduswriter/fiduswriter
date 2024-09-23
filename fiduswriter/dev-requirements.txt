@@ -1,4 +1,2 @@
-flake8==6.1.0
 setuptools==70.0.0
 twine==4.0.2
-black==24.3.0

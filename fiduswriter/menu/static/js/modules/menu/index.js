@@ -1,5 +1,5 @@
 import * as plugins from "../../plugins/menu"
-import {dropdownSelect, whenReady, post} from "../common"
+import {dropdownSelect, post, whenReady} from "../common"
 import {headerNavTemplate} from "./templates"
 
 // Bindings for the top menu on overview pages
@@ -35,7 +35,9 @@ export class SiteMenu {
 
     init() {
         this.activatePlugins()
-        const currentActive = this.navItems.find(item => item.id === this.activeItem)
+        const currentActive = this.navItems.find(
+            item => item.id === this.activeItem
+        )
         if (currentActive) {
             currentActive.active = true
         }
@@ -57,12 +59,10 @@ export class SiteMenu {
     }
 
     bindPreferencePullDown() {
-        dropdownSelect(
-            document.getElementById("user-preferences-pulldown"),
-            {
-                button: document.getElementById("preferences-btn"),
-                onChange: value => {
-                    switch (value) {
+        dropdownSelect(document.getElementById("user-preferences-pulldown"), {
+            button: document.getElementById("preferences-btn"),
+            onChange: value => {
+                switch (value) {
                     case "profile":
                         this.app.goTo("/user/profile/")
                         break
@@ -71,13 +71,16 @@ export class SiteMenu {
                         break
                     case "logout":
                         post("/api/user/logout/").then(
-                            () => window.location = this.app.routes[""].app === "document" ? "/" : "/documents/"
+                            () =>
+                                (window.location =
+                                    this.app.routes[""].app === "document"
+                                        ? "/"
+                                        : "/documents/")
                         )
                         break
-                    }
                 }
             }
-        )
+        })
     }
 
     activatePlugins() {
@@ -91,7 +94,6 @@ export class SiteMenu {
                     this.plugins[plugin].init()
                 }
             })
-
         }
     }
 }

@@ -1,5 +1,5 @@
-import {setLanguage, ensureCSS, setDocTitle, whenReady} from "../common"
 import * as plugins from "../../plugins/prelogin"
+import {ensureCSS, setDocTitle, setLanguage, whenReady} from "../common"
 import {FeedbackTab} from "../feedback"
 
 import {basePreloginTemplate} from "./templates"
@@ -11,38 +11,39 @@ export class PreloginPage {
         this.pluginLoaders = {}
         this.title = ""
         this.contents = ""
-        this.footerLinks = settings_FOOTER_LINKS.length ?
-            settings_FOOTER_LINKS :
-            [
-                {
-                    text: gettext("Terms and Conditions"),
-                    link: "/pages/terms/"
-                },
-                {
-                    text: gettext("Privacy policy"),
-                    link: "/pages/privacy/"
-                },
-                {
-                    text: gettext("Equations and Math with MathLive"),
-                    link: "https://github.com/arnog/mathlive#readme",
-                    external: true
-                },
-                {
-                    text: gettext("Citations with Citation Style Language"),
-                    link: "https://citationstyles.org/",
-                    external: true
-                },
-                {
-                    text: gettext("Editing with ProseMirror"),
-                    link: "https://prosemirror.net/",
-                    external: true
-                }
-            ]
+        this.footerLinks = settings_FOOTER_LINKS.length
+            ? settings_FOOTER_LINKS
+            : [
+                  {
+                      text: gettext("Terms and Conditions"),
+                      link: "/pages/terms/"
+                  },
+                  {
+                      text: gettext("Privacy policy"),
+                      link: "/pages/privacy/"
+                  },
+                  {
+                      text: gettext("Equations and Math with MathLive"),
+                      link: "https://github.com/arnog/mathlive#readme",
+                      external: true
+                  },
+                  {
+                      text: gettext("Citations with Citation Style Language"),
+                      link: "https://citationstyles.org/",
+                      external: true
+                  },
+                  {
+                      text: gettext("Editing with ProseMirror"),
+                      link: "https://prosemirror.net/",
+                      external: true
+                  }
+              ]
         this.headerLinks = [
             {
                 type: "button",
                 text: gettext("Log in"),
-                link: this.app.routes[""].app === "document" ? "/" : "/documents/"
+                link:
+                    this.app.routes[""].app === "document" ? "/" : "/documents/"
             }
         ]
     }
@@ -54,7 +55,9 @@ export class PreloginPage {
         // Plugins for the specific page
         Object.keys(this.pluginLoaders).forEach(plugin => {
             if (typeof this.pluginLoaders[plugin] === "function") {
-                this.plugins[plugin] = new this.pluginLoaders[plugin]({page: this})
+                this.plugins[plugin] = new this.pluginLoaders[plugin]({
+                    page: this
+                })
                 this.plugins[plugin].init()
             }
         })
@@ -77,11 +80,15 @@ export class PreloginPage {
     }
 
     bind() {
-        this.dom.querySelector(".fw-login-logo").addEventListener("click", () => this.app.goTo("/"))
-        this.dom.querySelector("#lang-selection").addEventListener("change", event => {
-            this.language = event.target.value
-            return setLanguage(this.app.config, this.language)
-        })
+        this.dom
+            .querySelector(".fw-login-logo")
+            .addEventListener("click", () => this.app.goTo("/"))
+        this.dom
+            .querySelector("#lang-selection")
+            .addEventListener("change", event => {
+                this.language = event.target.value
+                return setLanguage(this.app.config, this.language)
+            })
     }
 
     render() {
@@ -95,12 +102,9 @@ export class PreloginPage {
             contents: this.contents
         })
         document.body = this.dom
-        ensureCSS([
-            staticUrl("css/prelogin.css")
-        ])
+        ensureCSS([staticUrl("css/prelogin.css")])
         setDocTitle(this.title, this.app)
         const feedbackTab = new FeedbackTab()
         feedbackTab.init()
     }
-
 }

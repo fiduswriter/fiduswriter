@@ -35,7 +35,7 @@ export const baseBodyTemplate = ({user, contents, hasOverview, app}) => `
     </div><!-- end container -->
 </header>
 <div class="fw-contents-outer">
-    ${hasOverview ? "<div class=\"fw-overview-menu-wrapper\"><ul id=\"fw-overview-menu\"></ul></div>" : ""}
+    ${hasOverview ? '<div class="fw-overview-menu-wrapper"><ul id="fw-overview-menu"></ul></div>' : ""}
     <div class="fw-contents">
         ${contents}
     </div>

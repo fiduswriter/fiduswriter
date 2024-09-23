@@ -3,7 +3,7 @@ import {randomHeadingId} from "../schema/common"
 // from https://codeburst.io/throttling-and-debouncing-in-javascript-646d076d0a44
 export function debounced(delay, fn) {
     let timerId
-    return function(...args) {
+    return (...args) => {
         if (timerId) {
             clearTimeout(timerId)
         }
@@ -43,31 +43,31 @@ export function addHeadingIds(oldState, newState, editors) {
     })
     newState.doc.descendants((node, pos) => {
         if (node.type.groups.includes("heading")) {
-            if (node.attrs.id === false || usedHeadingIds.includes(node.attrs.id)) {
+            if (
+                node.attrs.id === false ||
+                usedHeadingIds.includes(node.attrs.id)
+            ) {
                 newHeadings.push({pos, node})
             } else {
                 usedHeadingIds.push(node.attrs.id)
             }
-
         }
     })
     if (!newHeadings.length) {
         return null
     }
     const newTr = newState.tr
-    newHeadings.forEach(
-        newHeading => {
-            let id
-            while (!id || usedHeadingIds.includes(id)) {
-                id = randomHeadingId()
-            }
-            usedHeadingIds.push(id)
-            newTr.setNodeMarkup(
-                newHeading.pos,
-                null,
-                Object.assign({}, newHeading.node.attrs, {id})
-            )
+    newHeadings.forEach(newHeading => {
+        let id
+        while (!id || usedHeadingIds.includes(id)) {
+            id = randomHeadingId()
         }
-    )
+        usedHeadingIds.push(id)
+        newTr.setNodeMarkup(
+            newHeading.pos,
+            null,
+            Object.assign({}, newHeading.node.attrs, {id})
+        )
+    })
     return newTr
 }

@@ -2,7 +2,6 @@ import {GeneralPasteHandler} from "./general"
 
 // Fidus Writer paste handler
 export class FidusWriterPasteHandler extends GeneralPasteHandler {
-
     // Convert an existing node to a different node, if needed.
     convertNode(node) {
         node = super.convertNode(node)
@@ -31,13 +30,17 @@ export class FidusWriterPasteHandler extends GeneralPasteHandler {
                 }
             })
 
-            if (Object.entries(idTranslations).every(trans => trans[0] === trans[1])) {
+            if (
+                Object.entries(idTranslations).every(
+                    trans => trans[0] === trans[1]
+                )
+            ) {
                 return node
             }
-            references.forEach(ref => ref.id = idTranslations[ref.id])
+            references.forEach(ref => (ref.id = idTranslations[ref.id]))
             node.dataset.references = JSON.stringify(references)
             return node
-        } catch (error) {
+        } catch (_error) {
             return node
         }
     }
@@ -49,5 +52,4 @@ export class FidusWriterPasteHandler extends GeneralPasteHandler {
         )
         clipboardArtifacts.forEach(el => el.parentElement.removeChild(el))
     }
-
 }

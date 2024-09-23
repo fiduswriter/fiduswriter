@@ -14,5 +14,4 @@ export class DocTemplatesMenuItem {
             order: 4
         })
     }
-
 }

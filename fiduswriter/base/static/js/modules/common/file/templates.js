@@ -7,4 +7,5 @@ export const moveTemplate = ({path}) =>
     <div class="file-selector"></div>
     </div>`
 
-export const newFolderTemplate = () => `<div><input type="text" id="new-folder-name" placeholder="${gettext("Insert folder name")}"></div>`
+export const newFolderTemplate = () =>
+    `<div><input type="text" id="new-folder-name" placeholder="${gettext("Insert folder name")}"></div>`

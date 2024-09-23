@@ -1,8 +1,8 @@
-import {GeneralPasteHandler} from "./general"
-import {MicrosoftWordPasteHandler} from "./microsoft_word"
-import {LibreOfficeWriterPasteHandler} from "./libreoffice_writer"
-import {GoogleDocsPasteHandler} from "./google_docs"
 import {FidusWriterPasteHandler} from "./fidus_writer"
+import {GeneralPasteHandler} from "./general"
+import {GoogleDocsPasteHandler} from "./google_docs"
+import {LibreOfficeWriterPasteHandler} from "./libreoffice_writer"
+import {MicrosoftWordPasteHandler} from "./microsoft_word"
 
 // Some pasted HTML will need slight conversions to work correctly.
 // We try to sniff whether paste comes from MsWord, LibreOffice or Google Docs
@@ -18,14 +18,20 @@ export class HTMLPaste {
     getOutput() {
         this.parseHTML()
         this.selectHandler()
-        this.handlerInstance = new this.handler(this.editor, this.htmlDoc, this.pmType)
+        this.handlerInstance = new this.handler(
+            this.editor,
+            this.htmlDoc,
+            this.pmType
+        )
         this.outHTML = this.handlerInstance.getOutput()
         return this.outHTML
     }
 
     parseHTML() {
         const parser = new window.DOMParser()
-        this.htmlDoc = parser.parseFromString(this.inHTML, "text/html").getElementsByTagName("html")[0]
+        this.htmlDoc = parser
+            .parseFromString(this.inHTML, "text/html")
+            .getElementsByTagName("html")[0]
     }
 
     // Find out what the source of the paste is and choose a corresponding
@@ -39,8 +45,10 @@ export class HTMLPaste {
         const firstB = body.querySelector("b")
         // For Fidus Writer
         const pmSlice = this.htmlDoc.querySelector("[data-pm-slice]")
-        if (this.htmlDoc.hasAttribute("xmlns:w") &&
-            this.htmlDoc.getAttribute("xmlns:w") === "urn:schemas-microsoft-com:office:word"
+        if (
+            this.htmlDoc.hasAttribute("xmlns:w") &&
+            this.htmlDoc.getAttribute("xmlns:w") ===
+                "urn:schemas-microsoft-com:office:word"
         ) {
             this.handler = MicrosoftWordPasteHandler
         } else if (generatorMetaTag?.content?.startsWith("LibreOffice")) {
@@ -53,5 +61,4 @@ export class HTMLPaste {
             this.handler = GeneralPasteHandler
         }
     }
-
 }

@@ -1,8 +1,14 @@
 import {updateDoc} from "../schema/convert"
 
-export function updateTemplateFile(title, content, exportTemplates, documentStyles, filetypeVersion) {
-// This function can be modified and used in case updting the template file is different
-// from updating the content itself some time in the future.
+export function updateTemplateFile(
+    title,
+    content,
+    exportTemplates,
+    documentStyles,
+    filetypeVersion
+) {
+    // This function can be modified and used in case updting the template file is different
+    // from updating the content itself some time in the future.
 
     const oldDoc = {
         content,

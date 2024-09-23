@@ -2,7 +2,7 @@ import {Plugin, PluginKey} from "prosemirror-state"
 
 const key = new PluginKey("footnoteMarkers")
 
-export const findFootnoteMarkers = function(fromPos, toPos, doc) {
+export const findFootnoteMarkers = (fromPos, toPos, doc) => {
     const footnoteMarkers = []
     doc.nodesBetween(fromPos, toPos, (node, pos) => {
         if (!node.isInline) {
@@ -18,8 +18,7 @@ export const findFootnoteMarkers = function(fromPos, toPos, doc) {
     return footnoteMarkers
 }
 
-
-const getAddedRanges = function(tr) {
+const getAddedRanges = tr => {
     /* find ranges of the current document that have been added by means of
      * a transaction.
      */
@@ -29,7 +28,10 @@ const getAddedRanges = function(tr) {
             ranges.push({from: step.from, to: step.to})
         }
         const map = tr.mapping.maps[index]
-        ranges = ranges.map(range => ({from: map.map(range.from, -1), to: map.map(range.to, 1)}))
+        ranges = ranges.map(range => ({
+            from: map.map(range.from, -1),
+            to: map.map(range.to, 1)
+        }))
     })
 
     const nonOverlappingRanges = []
@@ -37,12 +39,21 @@ const getAddedRanges = function(tr) {
     ranges.forEach(range => {
         let addedRange = false
         nonOverlappingRanges.forEach(noRange => {
-            if (!addedRange && range.from <= noRange.from && range.to >= noRange.from) {
+            if (
+                !addedRange &&
+                range.from <= noRange.from &&
+                range.to >= noRange.from
+            ) {
                 noRange.from = range.from
                 noRange.to = noRange.to > range.to ? noRange.to : range.to
                 addedRange = true
-            } else if (!addedRange && range.from <= noRange.to && range.to >= noRange.to) {
-                noRange.from = noRange.from < range.from ? noRange.from : range.from
+            } else if (
+                !addedRange &&
+                range.from <= noRange.to &&
+                range.to >= noRange.to
+            ) {
+                noRange.from =
+                    noRange.from < range.from ? noRange.from : range.from
                 noRange.to = range.to
                 addedRange = true
             }
@@ -55,19 +66,19 @@ const getAddedRanges = function(tr) {
     return nonOverlappingRanges
 }
 
-export const getFootnoteMarkerContents = function(state) {
+export const getFootnoteMarkerContents = state => {
     const fnState = key.getState(state)
     if (!fnState || !fnState.fnMarkers) {
         return []
     }
     const fnMarkers = fnState.fnMarkers
-    return fnMarkers.map(fnMarker => state.doc.nodeAt(fnMarker.from).attrs.footnote)
+    return fnMarkers.map(
+        fnMarker => state.doc.nodeAt(fnMarker.from).attrs.footnote
+    )
 }
 
-export const updateFootnoteMarker = function(state, tr, index, content) {
-    const {
-        fnMarkers
-    } = key.getState(state)
+export const updateFootnoteMarker = (state, tr, index, content) => {
+    const {fnMarkers} = key.getState(state)
 
     const footnote = fnMarkers[index]
     const node = state.doc.nodeAt(footnote.from)
@@ -81,18 +92,16 @@ export const updateFootnoteMarker = function(state, tr, index, content) {
     return
 }
 
-export const getFootnoteMarkers = function(state) {
-    const {
-        fnMarkers
-    } = key.getState(state)
+export const getFootnoteMarkers = state => {
+    const {fnMarkers} = key.getState(state)
     return fnMarkers
 }
 
-export const footnoteMarkersPlugin = function(options) {
-    return new Plugin({
+export const footnoteMarkersPlugin = options =>
+    new Plugin({
         key,
         state: {
-            init(config, state) {
+            init(_config, state) {
                 const fnMarkers = []
                 state.doc.descendants((node, pos) => {
                     if (node.type.name === "footnote") {
@@ -107,7 +116,7 @@ export const footnoteMarkersPlugin = function(options) {
                     fnMarkers
                 }
             },
-            apply(tr, prev, oldState, state) {
+            apply(tr, _prev, oldState, state) {
                 const meta = tr.getMeta(key)
                 if (meta) {
                     // There has been an update of a footnote marker,
@@ -116,9 +125,7 @@ export const footnoteMarkersPlugin = function(options) {
                     return meta
                 }
 
-                let {
-                    fnMarkers
-                } = this.getState(oldState)
+                let {fnMarkers} = this.getState(oldState)
 
                 if (!tr.docChanged) {
                     return {
@@ -128,37 +135,49 @@ export const footnoteMarkersPlugin = function(options) {
 
                 const remote = tr.getMeta("remote"),
                     fromFootnote = tr.getMeta("fromFootnote"),
-                    ranges = getAddedRanges(tr), deletedFootnotesIndexes = []
-                fnMarkers = fnMarkers.map(marker => ({
-                    from: tr.mapping.map(marker.from, 1),
-                    to: tr.mapping.map(marker.to, -1)
-                })).filter((marker, index) => {
-                    if (marker.from !== (marker.to - 1)) {
-                        // Add in reverse order as highest numbers need to be deleted
-                        // first so that index numbers of lower numbers continue
-                        // to be valid when these are deleted. Only relevant when
-                        // several footnotes are deleted simultaneously.
-                        deletedFootnotesIndexes.unshift(index)
-                        return false
-                    }
-                    return true
-                })
+                    ranges = getAddedRanges(tr),
+                    deletedFootnotesIndexes = []
+                fnMarkers = fnMarkers
+                    .map(marker => ({
+                        from: tr.mapping.map(marker.from, 1),
+                        to: tr.mapping.map(marker.to, -1)
+                    }))
+                    .filter((marker, index) => {
+                        if (marker.from !== marker.to - 1) {
+                            // Add in reverse order as highest numbers need to be deleted
+                            // first so that index numbers of lower numbers continue
+                            // to be valid when these are deleted. Only relevant when
+                            // several footnotes are deleted simultaneously.
+                            deletedFootnotesIndexes.unshift(index)
+                            return false
+                        }
+                        return true
+                    })
                 if (fromFootnote) {
                     return {fnMarkers}
                 }
-                const footTr = options.editor.mod.footnotes.fnEditor.view.state.tr
+                const footTr =
+                    options.editor.mod.footnotes.fnEditor.view.state.tr
 
                 footTr.setMeta("fromMain", true)
 
                 deletedFootnotesIndexes.forEach(index =>
-                    options.editor.mod.footnotes.fnEditor.removeFootnote(index, footTr)
+                    options.editor.mod.footnotes.fnEditor.removeFootnote(
+                        index,
+                        footTr
+                    )
                 )
                 ranges.forEach(range => {
-                    let newFootnotes = findFootnoteMarkers(range.from, range.to, tr.doc)
+                    let newFootnotes = findFootnoteMarkers(
+                        range.from,
+                        range.to,
+                        tr.doc
+                    )
                     if (newFootnotes.length) {
-
                         const firstFn = newFootnotes[0]
-                        let offset = fnMarkers.findIndex(marker => marker.from > firstFn.from)
+                        let offset = fnMarkers.findIndex(
+                            marker => marker.from > firstFn.from
+                        )
                         if (offset < 0) {
                             offset = fnMarkers.length
                         }
@@ -167,13 +186,18 @@ export const footnoteMarkersPlugin = function(options) {
                                 // In case of remote trasnactions, we cannot mark them as coming from footnote, so we
                                 // will need to remove duplicates instead.
                                 newMarker =>
-                                    fnMarkers.find(oldMarker => oldMarker.from === newMarker.from) ?
-                                        false :
-                                        true
+                                    fnMarkers.find(
+                                        oldMarker =>
+                                            oldMarker.from === newMarker.from
+                                    )
+                                        ? false
+                                        : true
                             )
                         } else {
                             newFootnotes.forEach((footnote, index) => {
-                                const fnContent = state.doc.nodeAt(footnote.from).attrs.footnote
+                                const fnContent = state.doc.nodeAt(
+                                    footnote.from
+                                ).attrs.footnote
                                 options.editor.mod.footnotes.fnEditor.renderFootnote(
                                     fnContent,
                                     offset + index,
@@ -181,7 +205,9 @@ export const footnoteMarkersPlugin = function(options) {
                                 )
                             })
                         }
-                        fnMarkers = fnMarkers.concat(newFootnotes).sort((a, b) => a.from > b.from ? 1 : -1)
+                        fnMarkers = fnMarkers
+                            .concat(newFootnotes)
+                            .sort((a, b) => (a.from > b.from ? 1 : -1))
                     }
                 })
 
@@ -208,6 +234,5 @@ export const footnoteMarkersPlugin = function(options) {
                     options.editor.mod.footnotes.layout.updateDOM()
                 }
             }
-        },
+        }
     })
-}

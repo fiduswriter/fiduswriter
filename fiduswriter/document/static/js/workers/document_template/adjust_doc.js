@@ -1,10 +1,6 @@
-import {
-    recreateTransform
-} from "../../modules/editor/collab/merge/recreate_transform"
+import {recreateTransform} from "../../modules/editor/collab/merge/recreate_transform"
 
-import {
-    adjustDocToTemplate
-} from "../../modules/document_template/fix_doc"
+import {adjustDocToTemplate} from "../../modules/document_template/fix_doc"
 
 import {Schema} from "prosemirror-model"
 
@@ -19,12 +15,14 @@ export class AdjustDocToTemplateWorker {
 
     init() {
         const stateDoc = this.schema.nodeFromJSON(this.doc)
-        const newStateDoc = this.schema.nodeFromJSON(adjustDocToTemplate(
-            this.doc,
-            this.template,
-            this.documentStyleSlugs,
-            this.schema
-        ))
+        const newStateDoc = this.schema.nodeFromJSON(
+            adjustDocToTemplate(
+                this.doc,
+                this.template,
+                this.documentStyleSlugs,
+                this.schema
+            )
+        )
         const transform = recreateTransform(stateDoc, newStateDoc)
         const steps = []
         transform.steps.forEach(step => steps.push(step.toJSON()))
@@ -32,5 +30,4 @@ export class AdjustDocToTemplateWorker {
         // setTimeout(() => this.sendMessage({type: 'result', steps}), 100000)
         this.sendMessage({type: "result", steps})
     }
-
 }

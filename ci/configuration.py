@@ -14,5 +14,5 @@
 #     },
 # }
 INSTALLED_APPS = [
-    'user_template_manager',
+    "user_template_manager",
 ]

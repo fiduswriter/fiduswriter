@@ -4,7 +4,6 @@ import {postJson} from "../common"
 import {createSlug} from "../exporter/tools/file"
 import {ZipFileCreator} from "../exporter/tools/zip"
 
-
 export class DocumentTemplateExporter {
     constructor(
         id,
@@ -22,13 +21,13 @@ export class DocumentTemplateExporter {
     }
 
     init() {
-        return postJson(
-            this.getUrl,
-            {id: this.id}
-        ).then(({json}) => {
+        return postJson(this.getUrl, {id: this.id}).then(({json}) => {
             this.docVersion = json.doc_version
             this.zipFileName = `${createSlug(json.title)}.fidustemplate`
-            this.textFiles.push({filename: "template.json", contents: JSON.stringify(json.content)})
+            this.textFiles.push({
+                filename: "template.json",
+                contents: JSON.stringify(json.content)
+            })
             const exportTemplates = []
             json.export_templates.forEach(template => {
                 const filename = `exporttemplates/${template.fields.template_file.split("/").slice(-1)[0]}`
@@ -64,7 +63,10 @@ export class DocumentTemplateExporter {
                 })
                 documentStyles.push(style)
             })
-            this.textFiles.push({filename: "documentstyles.json", contents: JSON.stringify(documentStyles)})
+            this.textFiles.push({
+                filename: "documentstyles.json",
+                contents: JSON.stringify(documentStyles)
+            })
             if (this.download) {
                 return this.createZip()
             }
@@ -73,16 +75,18 @@ export class DocumentTemplateExporter {
     }
 
     createZip() {
-        this.textFiles.push({filename: "filetype-version", contents: this.docVersion})
+        this.textFiles.push({
+            filename: "filetype-version",
+            contents: this.docVersion
+        })
         const zipper = new ZipFileCreator(
             this.textFiles,
             this.httpFiles,
             undefined,
             "application/fidustemplate+zip"
         )
-        return zipper.init().then(
-            blob => download(blob, this.zipFileName, "application/zip")
-        )
+        return zipper
+            .init()
+            .then(blob => download(blob, this.zipFileName, "application/zip"))
     }
-
 }

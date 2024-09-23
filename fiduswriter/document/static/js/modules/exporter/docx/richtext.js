@@ -1,20 +1,19 @@
-import {
-    escapeText
-} from "../../common"
-import {
-    CATS
-} from "../../schema/i18n"
+import {escapeText} from "../../common"
+import {CATS} from "../../schema/i18n"
 
-import {
-    xmlDOM
-} from "../tools/xml"
+import {xmlDOM} from "../tools/xml"
 
-import {
-    translateBlockType
-} from "./tools"
+import {translateBlockType} from "./tools"
 
 const TEXT_BLOCK_TYPES = [
-    "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "paragraph", "code_block"
+    "heading1",
+    "heading2",
+    "heading3",
+    "heading4",
+    "heading5",
+    "heading6",
+    "paragraph",
+    "code_block"
 ]
 
 const INLINE_TYPES = [
@@ -34,7 +33,17 @@ const INLINE_TYPES = [
 ]
 
 export class DOCXExporterRichtext {
-    constructor(doc, settings, lists, footnotes, math, tables, rels, citations, images) {
+    constructor(
+        doc,
+        settings,
+        lists,
+        footnotes,
+        math,
+        tables,
+        rels,
+        citations,
+        images
+    ) {
         this.doc = doc
         this.settings = settings
         this.lists = lists
@@ -61,18 +70,23 @@ export class DOCXExporterRichtext {
     }
 
     findComments(node, comments = {}) {
-
         if (node.marks) {
-            node.marks.filter(mark => mark.type === "comment").forEach(comment => {
-                if (!this.doc.comments[comment.attrs.id]) {
-                    return
-                }
-                if (!comments[comment.attrs.id]) {
-                    comments[comment.attrs.id] = {start: node, end: node, content: this.doc.comments[comment.attrs.id]}
-                } else {
-                    comments[comment.attrs.id]["end"] = node
-                }
-            })
+            node.marks
+                .filter(mark => mark.type === "comment")
+                .forEach(comment => {
+                    if (!this.doc.comments[comment.attrs.id]) {
+                        return
+                    }
+                    if (!comments[comment.attrs.id]) {
+                        comments[comment.attrs.id] = {
+                            start: node,
+                            end: node,
+                            content: this.doc.comments[comment.attrs.id]
+                        }
+                    } else {
+                        comments[comment.attrs.id]["end"] = node
+                    }
+                })
         }
         if (node.content) {
             for (let i = 0; i < node.content.length; i++) {
@@ -87,9 +101,11 @@ export class DOCXExporterRichtext {
             content = "",
             end = ""
 
-        if (node.marks && options.comments) { // Footnotes don't allow comments in DOCX
-            node.marks.filter(mark => mark.type === "comment").forEach(
-                comment => {
+        if (node.marks && options.comments) {
+            // Footnotes don't allow comments in DOCX
+            node.marks
+                .filter(mark => mark.type === "comment")
+                .forEach(comment => {
                     const commentData = options.comments[comment.attrs.id]
                     if (!commentData) {
                         return
@@ -98,31 +114,52 @@ export class DOCXExporterRichtext {
                         let commentId = this.comments[comment.attrs.id]
                         start += `<w:commentRangeStart w:id="${commentId}"/>`
                         commentData.content.answers?.forEach(
-                            _answer => start += `<w:commentRangeStart w:id="${++commentId}"/>`
+                            _answer =>
+                                (start += `<w:commentRangeStart w:id="${++commentId}"/>`)
                         )
                     }
 
                     if (commentData.end === node) {
                         let commentId = this.comments[comment.attrs.id]
-                        end = `<w:commentRangeEnd w:id="${commentId}"/><w:r><w:commentReference w:id="${
-                            commentId
-                        }"/></w:r>${
-                            (commentData.content.answers || []).map(
-                                _answer => `<w:commentRangeEnd w:id="${++commentId}"/><w:r><w:commentReference w:id="${commentId}"/></w:r>`
-                            ).join("")
-                        }` + end
+                        end =
+                            `<w:commentRangeEnd w:id="${commentId}"/><w:r><w:commentReference w:id="${
+                                commentId
+                            }"/></w:r>${(commentData.content.answers || [])
+                                .map(
+                                    _answer =>
+                                        `<w:commentRangeEnd w:id="${++commentId}"/><w:r><w:commentReference w:id="${commentId}"/></w:r>`
+                                )
+                                .join("")}` + end
                     }
-                }
-            )
+                })
         }
 
         const inlineType = INLINE_TYPES.includes(node.type)
 
-        let inlineDelete, nextBlockDelete, nextBlockInsert, blockChange, blockDelete, blockInsert
+        let inlineDelete,
+            nextBlockDelete,
+            nextBlockInsert,
+            blockChange,
+            blockDelete,
+            blockInsert
         if (inlineType) {
-            const inlineInsert = inlineType && (node.marks?.find(mark => mark.type === "insertion" && mark.attrs.approved === false)?.attrs || options.blockInsert)
-            inlineDelete = inlineType && (node.marks?.find(mark => mark.type === "deletion")?.attrs || options.blockDelete)
-            if (inlineInsert && inlineDelete && inlineInsert.username === inlineDelete.username) {
+            const inlineInsert =
+                inlineType &&
+                (node.marks?.find(
+                    mark =>
+                        mark.type === "insertion" &&
+                        mark.attrs.approved === false
+                )?.attrs ||
+                    options.blockInsert)
+            inlineDelete =
+                inlineType &&
+                (node.marks?.find(mark => mark.type === "deletion")?.attrs ||
+                    options.blockDelete)
+            if (
+                inlineInsert &&
+                inlineDelete &&
+                inlineInsert.username === inlineDelete.username
+            ) {
                 // In DOCX, the same user cannot both have a pending insertion and deletion of the same inline content. We remove it.
                 return ""
             } else {
@@ -165,319 +202,361 @@ export class DOCXExporterRichtext {
             }
         }
         switch (node.type) {
-        case "paragraph":
-            if (!options.section) {
-                options.section = "Normal"
-            }
-            // This should really be something like
-            // '<w:p w:rsidR="A437D321" w:rsidRDefault="2B935ADC">'
-            // See: https://blogs.msdn.microsoft.com/brian_jones/2006/12/11/whats-up-with-all-those-rsids/
-            // But tests with Word 2016/LibreOffice seem to indicate that it
-            // doesn't care if the attributes are missing.
-            // We may need to add them later, if it turns out this is a problem
-            // for other versions of Word. In that case we should also add
-            // it to settings.xml as described in above link.
-            if (options.section === "Normal" && !options.list_type && !(node.content?.length)) {
-                start += "<w:p/>"
-            } else {
-                start += `
-                        <w:p${options.paragraphId ? ` w14:paraId="${options.paragraphId}"` : ""}>
-                            <w:pPr><w:pStyle w:val="${options.section}"/>`
-                if (options.list_type) {
-                    start += `<w:numPr><w:ilvl w:val="${options.list_depth}"/>`
-                    start += `<w:numId w:val="${options.list_type}"/></w:numPr>`
+            case "paragraph":
+                if (!options.section) {
+                    options.section = "Normal"
+                }
+                // This should really be something like
+                // '<w:p w:rsidR="A437D321" w:rsidRDefault="2B935ADC">'
+                // See: https://blogs.msdn.microsoft.com/brian_jones/2006/12/11/whats-up-with-all-those-rsids/
+                // But tests with Word 2016/LibreOffice seem to indicate that it
+                // doesn't care if the attributes are missing.
+                // We may need to add them later, if it turns out this is a problem
+                // for other versions of Word. In that case we should also add
+                // it to settings.xml as described in above link.
+                if (
+                    options.section === "Normal" &&
+                    !options.list_type &&
+                    !node.content?.length
+                ) {
+                    start += "<w:p/>"
                 } else {
                     start += `
+                        <w:p${options.paragraphId ? ` w14:paraId="${options.paragraphId}"` : ""}>
+                            <w:pPr><w:pStyle w:val="${options.section}"/>`
+                    if (options.list_type) {
+                        start += `<w:numPr><w:ilvl w:val="${options.list_depth}"/>`
+                        start += `<w:numId w:val="${options.list_type}"/></w:numPr>`
+                    } else {
+                        start += `
                         <w:rPr>
                         ${
-    nextBlockInsert ?
-        `<w:ins w:id="${++this.changeCounter}" w:author="${escapeText(nextBlockInsert.username)}" w:date="${new Date(nextBlockInsert.date * 60000).toISOString().split(".")[0]}Z"/>` :
-        ""
-}
+                            nextBlockInsert
+                                ? `<w:ins w:id="${++this.changeCounter}" w:author="${escapeText(nextBlockInsert.username)}" w:date="${new Date(nextBlockInsert.date * 60000).toISOString().split(".")[0]}Z"/>`
+                                : ""
+                        }
                         ${
-    nextBlockDelete ?
-        `<w:del w:id="${++this.changeCounter}" w:author="${escapeText(nextBlockDelete.username)}" w:date="${new Date(nextBlockDelete.date * 60000).toISOString().split(".")[0]}Z"/>` :
-        ""
-}
+                            nextBlockDelete
+                                ? `<w:del w:id="${++this.changeCounter}" w:author="${escapeText(nextBlockDelete.username)}" w:date="${new Date(nextBlockDelete.date * 60000).toISOString().split(".")[0]}Z"/>`
+                                : ""
+                        }
                         </w:rPr>`
-                }
-                if (blockChange) {
-                    start += `
+                    }
+                    if (blockChange) {
+                        start += `
                         <w:pPrChange w:id="${++this.changeCounter}" w:author="${escapeText(blockChange.username)}" w:date="${new Date(blockChange.date * 60000).toISOString().split(".")[0]}Z">
                             <w:pPr>
                                 <w:pStyle w:val="${translateBlockType(blockChange.before.type)}"/>
                             </w:pPr>
                         </w:pPrChange>`
+                    }
+                    start += "</w:pPr>"
+                    end = "</w:p>" + end
+                    if (!node.content?.length) {
+                        start += "<w:r><w:rPr></w:rPr></w:r>"
+                    }
                 }
-                start += "</w:pPr>"
-                end = "</w:p>" + end
-                if (!(node.content?.length)) {
-                    start += "<w:r><w:rPr></w:rPr></w:r>"
+                if (options.commentReference) {
+                    end =
+                        '<w:r><w:rPr><w:rStyle w:val="CommentReference"/></w:rPr><w:annotationRef/></w:r>' +
+                        end
+                    options = Object.assign({}, options)
+                    options.commentReference = false
                 }
-            }
-            if (options.commentReference) {
-                end = "<w:r><w:rPr><w:rStyle w:val=\"CommentReference\"/></w:rPr><w:annotationRef/></w:r>" + end
-                options = Object.assign({}, options)
-                options.commentReference = false
-            }
-            break
-        case "bibliography_heading":
-            start += `
+                break
+            case "bibliography_heading":
+                start += `
                     <w:p>
                         <w:pPr>
                             <w:pStyle w:val="BibliographyHeading"/>
                             <w:rPr></w:rPr>
                         </w:pPr>`
-            end = "</w:p>" + end
-            break
-        case "heading1":
-        case "heading2":
-        case "heading3":
-        case "heading4":
-        case "heading5":
-        case "heading6":
-            start += `
+                end = "</w:p>" + end
+                break
+            case "heading1":
+            case "heading2":
+            case "heading3":
+            case "heading4":
+            case "heading5":
+            case "heading6":
+                start += `
                     <w:p>
                         <w:pPr>
                             <w:pStyle w:val="${translateBlockType(node.type)}"/>
                             <w:rPr>
                             ${
-    nextBlockInsert ?
-        `<w:ins w:id="${++this.changeCounter}" w:author="${escapeText(nextBlockInsert.username)}" w:date="${new Date(nextBlockInsert.date * 60000).toISOString().split(".")[0]}Z"/>` :
-        ""
-}
+                                nextBlockInsert
+                                    ? `<w:ins w:id="${++this.changeCounter}" w:author="${escapeText(nextBlockInsert.username)}" w:date="${new Date(nextBlockInsert.date * 60000).toISOString().split(".")[0]}Z"/>`
+                                    : ""
+                            }
                             ${
-    nextBlockDelete ?
-        `<w:del w:id="${++this.changeCounter}" w:author="${escapeText(nextBlockDelete.username)}" w:date="${new Date(nextBlockDelete.date * 60000).toISOString().split(".")[0]}Z"/>` :
-        ""
-}
+                                nextBlockDelete
+                                    ? `<w:del w:id="${++this.changeCounter}" w:author="${escapeText(nextBlockDelete.username)}" w:date="${new Date(nextBlockDelete.date * 60000).toISOString().split(".")[0]}Z"/>`
+                                    : ""
+                            }
                             </w:rPr>
                             ${
-    blockChange ?
-        blockChange.before.type === "paragraph" ?
-            `<w:pPrChange w:id="${++this.changeCounter}" w:author="${escapeText(blockChange.username)}" w:date="${new Date(blockChange.date * 60000).toISOString().split(".")[0]}Z"/>` :
-            `<w:pPrChange w:id="${++this.changeCounter}" w:author="${escapeText(blockChange.username)}" w:date="${new Date(blockChange.date * 60000).toISOString().split(".")[0]}Z">
+                                blockChange
+                                    ? blockChange.before.type === "paragraph"
+                                        ? `<w:pPrChange w:id="${++this.changeCounter}" w:author="${escapeText(blockChange.username)}" w:date="${new Date(blockChange.date * 60000).toISOString().split(".")[0]}Z"/>`
+                                        : `<w:pPrChange w:id="${++this.changeCounter}" w:author="${escapeText(blockChange.username)}" w:date="${new Date(blockChange.date * 60000).toISOString().split(".")[0]}Z">
                 <w:pPr>
                     <w:pStyle w:val="${translateBlockType(blockChange.before.type)}"/>
                 </w:pPr>
             </w:pPrChange>`
-        : ""
-}
+                                    : ""
+                            }
                         </w:pPr>
                         <w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/>
                         <w:bookmarkEnd w:id="${this.bookmarkCounter}"/>`
-            end = "</w:p>" + end
-            break
-        case "blockquote":
-            // This is imperfect, but Word doesn't seem to provide section/quotation nesting
-            // Also, track information on wrapping into blockquote is not exported.
-            options = Object.assign({}, options)
-            options.section = "Quote"
-            break
-        case "ordered_list":
-            options = Object.assign({}, options)
-            options.section = "ListParagraph"
-            if (options.list_depth === undefined) {
-                options.list_depth = 0
-            } else {
-                options.list_depth += 1
-            }
-            options.list_type = this.lists.getNumberedType()
-            break
-        case "bullet_list":
-            options = Object.assign({}, options)
-            options.section = "ListParagraph"
-            options.list_type = this.lists.getBulletType()
-            if (options.list_depth === undefined) {
-                options.list_depth = 0
-            } else {
-                options.list_depth += 1
-            }
-            break
-        case "list_item":
-            // Word seems to lack complex nesting options. The styling is applied
-            // to child paragraphs. This will deliver correct results in most
-            // cases.
-            break
-        case "footnotecontainer":
-            options = Object.assign({}, options)
-            options.section = "Footnote"
-            options.inFootnote = true
-            start += `<w:footnote w:id="${++this.fnCounter}">`
-            end = "</w:footnote>" + end
-            options.footnoteRefMissing = true
-            break
-        case "footnote":
-            content += `
+                end = "</w:p>" + end
+                break
+            case "blockquote":
+                // This is imperfect, but Word doesn't seem to provide section/quotation nesting
+                // Also, track information on wrapping into blockquote is not exported.
+                options = Object.assign({}, options)
+                options.section = "Quote"
+                break
+            case "ordered_list":
+                options = Object.assign({}, options)
+                options.section = "ListParagraph"
+                if (options.list_depth === undefined) {
+                    options.list_depth = 0
+                } else {
+                    options.list_depth += 1
+                }
+                options.list_type = this.lists.getNumberedType()
+                break
+            case "bullet_list":
+                options = Object.assign({}, options)
+                options.section = "ListParagraph"
+                options.list_type = this.lists.getBulletType()
+                if (options.list_depth === undefined) {
+                    options.list_depth = 0
+                } else {
+                    options.list_depth += 1
+                }
+                break
+            case "list_item":
+                // Word seems to lack complex nesting options. The styling is applied
+                // to child paragraphs. This will deliver correct results in most
+                // cases.
+                break
+            case "footnotecontainer":
+                options = Object.assign({}, options)
+                options.section = "Footnote"
+                options.inFootnote = true
+                start += `<w:footnote w:id="${++this.fnCounter}">`
+                end = "</w:footnote>" + end
+                options.footnoteRefMissing = true
+                break
+            case "footnote":
+                content += `
                     <w:r>
                         <w:rPr>
                             <w:rStyle w:val="FootnoteAnchor"/>
                         </w:rPr>
                         <w:footnoteReference w:id="${++this.fnCounter}"/>
                     </w:r>`
-            break
-        case "text":
-        {
-            let hyperlink, em, strong, underline, smallcaps, sup, sub, formatChange
-            // Check for hyperlink, bold/strong and italic/em
-            if (node.marks) {
-                hyperlink = node.marks.find(mark => mark.type === "link")
-                em = node.marks.find(mark => mark.type === "em")
-                strong = node.marks.find(mark => mark.type === "strong")
-                underline = node.marks.find(mark => mark.type === "underline")
-                smallcaps = node.marks.find(mark => mark.type === "smallcaps")
-                sup = node.marks.find(mark => mark.type === "sup")
-                sub = node.marks.find(mark => mark.type === "sub")
-                formatChange = node.marks.find(mark => mark.type === "format_change")
-            }
-            if (hyperlink) {
-                const href = hyperlink.attrs.href
-                if (href[0] === "#") {
-                    // Internal link
-                    start += `<w:hyperlink w:anchor="${href.slice(1)}">`
-                } else {
-                    // External link
-                    const refId = this.rels.addLinkRel(href)
-                    start += `<w:hyperlink r:id="rId${refId}">`
+                break
+            case "text": {
+                let hyperlink,
+                    em,
+                    strong,
+                    underline,
+                    smallcaps,
+                    sup,
+                    sub,
+                    formatChange
+                // Check for hyperlink, bold/strong and italic/em
+                if (node.marks) {
+                    hyperlink = node.marks.find(mark => mark.type === "link")
+                    em = node.marks.find(mark => mark.type === "em")
+                    strong = node.marks.find(mark => mark.type === "strong")
+                    underline = node.marks.find(
+                        mark => mark.type === "underline"
+                    )
+                    smallcaps = node.marks.find(
+                        mark => mark.type === "smallcaps"
+                    )
+                    sup = node.marks.find(mark => mark.type === "sup")
+                    sub = node.marks.find(mark => mark.type === "sub")
+                    formatChange = node.marks.find(
+                        mark => mark.type === "format_change"
+                    )
                 }
-                start += "<w:r>"
-                end = "</w:r></w:hyperlink>" + end
-            } else {
-                start += "<w:r>"
-                end = "</w:r>" + end
-            }
-            start += "<w:rPr>"
-            if (hyperlink || em || strong || underline || smallcaps || sup || sub) {
                 if (hyperlink) {
-                    this.rels.addLinkStyle()
-                    start += `<w:rStyle w:val="${this.rels.hyperLinkStyle}"/>`
+                    const href = hyperlink.attrs.href
+                    if (href[0] === "#") {
+                        // Internal link
+                        start += `<w:hyperlink w:anchor="${href.slice(1)}">`
+                    } else {
+                        // External link
+                        const refId = this.rels.addLinkRel(href)
+                        start += `<w:hyperlink r:id="rId${refId}">`
+                    }
+                    start += "<w:r>"
+                    end = "</w:r></w:hyperlink>" + end
+                } else {
+                    start += "<w:r>"
+                    end = "</w:r>" + end
                 }
-                if (em) {
-                    start += "<w:i/><w:iCs/>"
+                start += "<w:rPr>"
+                if (
+                    hyperlink ||
+                    em ||
+                    strong ||
+                    underline ||
+                    smallcaps ||
+                    sup ||
+                    sub
+                ) {
+                    if (hyperlink) {
+                        this.rels.addLinkStyle()
+                        start += `<w:rStyle w:val="${this.rels.hyperLinkStyle}"/>`
+                    }
+                    if (em) {
+                        start += "<w:i/><w:iCs/>"
+                    }
+                    if (strong) {
+                        start += "<w:b/><w:bCs/>"
+                    }
+                    if (underline) {
+                        start += '<w:u w:val="single"/>'
+                    }
+                    if (smallcaps) {
+                        start += "<w:smallCaps/>"
+                    }
+                    if (sup) {
+                        start += '<w:vertAlign w:val="superscript"/>'
+                    } else if (sub) {
+                        start += '<w:vertAlign w:val="subscript"/>'
+                    }
                 }
-                if (strong) {
-                    start += "<w:b/><w:bCs/>"
+                if (formatChange) {
+                    const beforeStyle = formatChange.attrs.before
+                    start += `<w:rPrChange w:id="${++this.changeCounter}" w:author="${escapeText(formatChange.attrs.username)}" w:date="${new Date(formatChange.attrs.date * 60000).toISOString().split(".")[0]}Z"><w:rPr>`
+                    if (beforeStyle.includes("em")) {
+                        start += "<w:i/><w:iCs/>"
+                    }
+                    if (beforeStyle.includes("strong")) {
+                        start += "<w:b/><w:bCs/>"
+                    }
+                    if (beforeStyle.includes("underline")) {
+                        start += '<w:u w:val="single"/>'
+                    }
+                    start += "</w:rPr></w:rPrChange>"
                 }
-                if (underline) {
-                    start += "<w:u w:val=\"single\"/>"
+                start += "</w:rPr>"
+                if (options.footnoteRefMissing) {
+                    start += "<w:footnoteRef /><w:tab />"
+                    options.footnoteRefMissing = false
                 }
-                if (smallcaps) {
-                    start += "<w:smallCaps/>"
+                let textAttr = ""
+                if (
+                    node.text[0] === " " ||
+                    node.text[node.text.length - 1] === " "
+                ) {
+                    textAttr += ' xml:space="preserve"'
                 }
-                if (sup) {
-                    start += "<w:vertAlign w:val=\"superscript\"/>"
-                } else if (sub) {
-                    start += "<w:vertAlign w:val=\"subscript\"/>"
+                if (inlineDelete) {
+                    start += `<w:delText${textAttr}>`
+                    end = "</w:delText>" + end
+                } else {
+                    start += `<w:t${textAttr}>`
+                    end = "</w:t>" + end
                 }
+                content += escapeText(node.text)
+                break
             }
-            if (formatChange) {
-                const beforeStyle = formatChange.attrs.before
-                start += `<w:rPrChange w:id="${++this.changeCounter}" w:author="${escapeText(formatChange.attrs.username)}" w:date="${new Date(formatChange.attrs.date * 60000).toISOString().split(".")[0]}Z"><w:rPr>`
-                if (beforeStyle.includes("em")) {
-                    start += "<w:i/><w:iCs/>"
+            case "cross_reference": {
+                const title = node.attrs.title
+                const id = node.attrs.id
+                let marks = node.marks.slice()
+                if (title && id) {
+                    const hyperlink = {
+                        type: "link",
+                        attrs: {href: `#${id}`, title}
+                    }
+                    marks = marks.filter(mark => mark.type !== "link")
+                    marks.push(hyperlink)
                 }
-                if (beforeStyle.includes("strong")) {
-                    start += "<w:b/><w:bCs/>"
-                }
-                if (beforeStyle.includes("underline")) {
-                    start += "<w:u w:val=\"single\"/>"
-                }
-                start += "</w:rPr></w:rPrChange>"
+                content += this.transformRichtext(
+                    {
+                        type: "text",
+                        text: title || "MISSING TARGET",
+                        marks
+                    },
+                    options,
+                    nextNode
+                )
+                break
             }
-            start += "</w:rPr>"
-            if (options.footnoteRefMissing) {
-                start += "<w:footnoteRef /><w:tab />"
-                options.footnoteRefMissing = false
-            }
-            let textAttr = ""
-            if (node.text[0] === " " || node.text[node.text.length - 1] === " ") {
-                textAttr += " xml:space=\"preserve\""
-            }
-            if (inlineDelete) {
-                start += `<w:delText${textAttr}>`
-                end = "</w:delText>" + end
-            } else {
-                start += `<w:t${textAttr}>`
-                end = "</w:t>" + end
-            }
-            content += escapeText(node.text)
-            break
-        }
-        case "cross_reference": {
-            const title = node.attrs.title
-            const id = node.attrs.id
-            let marks = node.marks.slice()
-            if (title && id) {
-                const hyperlink = {type: "link", attrs: {href: `#${id}`, title}}
-                marks = marks.filter(mark => mark.type !== "link")
-                marks.push(hyperlink)
-            }
-            content += this.transformRichtext(
-                {
-                    type: "text",
-                    text: title || "MISSING TARGET",
-                    marks
-                },
-                options,
-                nextNode
-            )
-            break
-        }
-        case "citation":
-        {
-            // We take the first citation from the stack and remove it.
-            const cit = this.citations.pmCits.shift()
-            if (options.citationType === "note"  && !options.inFootnote) {
-                // If the citations are in notes (footnotes), we need to
-                // put the content of this citation in a footnote.
-                // We then add the footnote to the footnote file and
-                // adjust the ids of all subsequent footnotes to be one higher
-                // than what they were until now.
-                content += `
+            case "citation": {
+                // We take the first citation from the stack and remove it.
+                const cit = this.citations.pmCits.shift()
+                if (options.citationType === "note" && !options.inFootnote) {
+                    // If the citations are in notes (footnotes), we need to
+                    // put the content of this citation in a footnote.
+                    // We then add the footnote to the footnote file and
+                    // adjust the ids of all subsequent footnotes to be one higher
+                    // than what they were until now.
+                    content += `
                         <w:r>
                             <w:rPr>
                                 <w:rStyle w:val="FootnoteAnchor"/>
                             </w:rPr>
                             <w:footnoteReference w:id="${this.fnCounter}"/>
                         </w:r>`
-                const fnContents = this.transformRichtext(cit, {
-                    footnoteRefMissing: true,
-                    section: "Footnote"
-                })
-                const fnXML = `<w:footnote w:id="${this.fnCounter}">${fnContents}</w:footnote>`
-                const xml = this.footnotes.xml
-                const lastId = this.fnCounter - 1
-                const footnotes = xml.queryAll("w:footnote")
-                footnotes.forEach(
-                    footnote => {
-                        const id = parseInt(footnote.getAttribute("w:id"))
+                    const fnContents = this.transformRichtext(cit, {
+                        footnoteRefMissing: true,
+                        section: "Footnote"
+                    })
+                    const fnXML = `<w:footnote w:id="${this.fnCounter}">${fnContents}</w:footnote>`
+                    const xml = this.footnotes.xml
+                    const lastId = this.fnCounter - 1
+                    const footnotes = xml.queryAll("w:footnote")
+                    footnotes.forEach(footnote => {
+                        const id = Number.parseInt(
+                            footnote.getAttribute("w:id")
+                        )
                         if (id >= this.fnCounter) {
                             footnote.setAttribute("w:id", id + 1)
                         }
                         if (id === lastId) {
-                            footnote.parentElement.insertBefore(xmlDOM(fnXML), footnote.nextSibling)
+                            footnote.parentElement.insertBefore(
+                                xmlDOM(fnXML),
+                                footnote.nextSibling
+                            )
                         }
+                    })
+                    this.fnCounter++
+                } else {
+                    for (let i = 0; i < cit.content.length; i++) {
+                        content += this.transformRichtext(
+                            cit.content[i],
+                            options,
+                            cit.content[i + 1]
+                        )
                     }
-                )
-                this.fnCounter++
-            } else {
-                for (let i = 0; i < cit.content.length; i++) {
-                    content += this.transformRichtext(cit.content[i], options, cit.content[i + 1])
                 }
+                break
             }
-            break
-        }
-        case "figure":
-        {
-            const category = node.attrs.category
-            let caption = node.attrs.caption ? node.content.find(node => node.type === "figure_caption")?.content || [] : []
-            let catCountXML = ""
-            if (category !== "none") {
-                const categoryCounter = options.inFootnote ? this.fncategoryCounter : this.categoryCounter
-                if (!categoryCounter[category]) {
-                    categoryCounter[category] = 1
-                }
-                catCountXML = `<w:r>
+            case "figure": {
+                const category = node.attrs.category
+                let caption = node.attrs.caption
+                    ? node.content.find(node => node.type === "figure_caption")
+                          ?.content || []
+                    : []
+                let catCountXML = ""
+                if (category !== "none") {
+                    const categoryCounter = options.inFootnote
+                        ? this.fncategoryCounter
+                        : this.categoryCounter
+                    if (!categoryCounter[category]) {
+                        categoryCounter[category] = 1
+                    }
+                    catCountXML = `<w:r>
                         <w:t xml:space="preserve">${CATS[category][this.settings.language]} </w:t>
                     </w:r>
                     <w:r>
@@ -494,45 +573,48 @@ export class DOCXExporterRichtext {
                     </w:r>
                     <w:r>
                         <w:rPr></w:rPr>
-                        <w:t>${categoryCounter[category]++}${ options.inFootnote ? "A" : ""}</w:t>
+                        <w:t>${categoryCounter[category]++}${options.inFootnote ? "A" : ""}</w:t>
                     </w:r>
                     <w:r>
                         <w:rPr></w:rPr>
                         <w:fldChar w:fldCharType="end" />
                     </w:r>`
-                if (caption.length) {
-                    caption = [{type: "text", text: ": "}].concat(caption)
-                }
-            }
-            let cx, cy
-            const image = node.content.find(node => node.type === "image")?.attrs.image || false
-            if (image !== false) {
-                const imageEntry = this.images.images[image]
-                cx = imageEntry.width * 9525 // width in EMU
-                cy = imageEntry.height * 9525 // height in EMU
-                const imgTitle = imageEntry.title
-                // Shrink image if too large for paper.
-                if (options.dimensions) {
-                    let width = options.dimensions.width
-                    if (options.tableSideMargins) {
-                        width = width - options.tableSideMargins
-                    }
-                    width = width * parseInt(node.attrs.width) / 100
-                    if (cx > width) {
-                        const rel = cy / cx
-                        cx = width
-                        cy = cx * rel
-                    }
-                    if (cy > options.dimensions.height) {
-                        const rel = cx / cy
-                        cy = options.dimensions.height
-                        cx = cy * rel
+                    if (caption.length) {
+                        caption = [{type: "text", text: ": "}].concat(caption)
                     }
                 }
-                cy = Math.round(cy)
-                cx = Math.round(cx)
-                const rId = imageEntry.id
-                content += `<w:r>
+                let cx, cy
+                const image =
+                    node.content.find(node => node.type === "image")?.attrs
+                        .image || false
+                if (image !== false) {
+                    const imageEntry = this.images.images[image]
+                    cx = imageEntry.width * 9525 // width in EMU
+                    cy = imageEntry.height * 9525 // height in EMU
+                    const imgTitle = imageEntry.title
+                    // Shrink image if too large for paper.
+                    if (options.dimensions) {
+                        let width = options.dimensions.width
+                        if (options.tableSideMargins) {
+                            width = width - options.tableSideMargins
+                        }
+                        width =
+                            (width * Number.parseInt(node.attrs.width)) / 100
+                        if (cx > width) {
+                            const rel = cy / cx
+                            cx = width
+                            cy = cx * rel
+                        }
+                        if (cy > options.dimensions.height) {
+                            const rel = cx / cy
+                            cy = options.dimensions.height
+                            cx = cy * rel
+                        }
+                    }
+                    cy = Math.round(cy)
+                    cx = Math.round(cx)
+                    const rId = imageEntry.id
+                    content += `<w:r>
                       <w:rPr></w:rPr>
                       <w:drawing>
                         <wp:inline distT="0" distB="0" distL="0" distR="0">
@@ -575,31 +657,39 @@ export class DOCXExporterRichtext {
                         </wp:inline>
                       </w:drawing>
                     </w:r>`
-            } else {
-                cx = 9525 * 100 // We pick a random size of 100x100. We hope this will fit the formula
-                cy = 9525 * 100
-                const latex = node.content.find(node => node.type === "figure_equation")?.attrs.equation || ""
-                content += this.math.getOmml(latex)
-            }
-            const captionSpace = !!(catCountXML.length || caption.length)
-            if (node.attrs.aligned === "center") {
-                start += `
+                } else {
+                    cx = 9525 * 100 // We pick a random size of 100x100. We hope this will fit the formula
+                    cy = 9525 * 100
+                    const latex =
+                        node.content.find(
+                            node => node.type === "figure_equation"
+                        )?.attrs.equation || ""
+                    content += this.math.getOmml(latex)
+                }
+                const captionSpace = !!(catCountXML.length || caption.length)
+                if (node.attrs.aligned === "center") {
+                    start += `
                     <w:p>
                       <w:pPr>
                         <w:jc w:val="center"/>
                       </w:pPr>`
-                content = `<w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/><w:bookmarkEnd w:id="${this.bookmarkCounter}"/>` + content
-                end = `
+                    content =
+                        `<w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/><w:bookmarkEnd w:id="${this.bookmarkCounter}"/>` +
+                        content
+                    end =
+                        `
                     </w:p>
-                    ${ captionSpace ?
-        `<w:p>
+                    ${
+                        captionSpace
+                            ? `<w:p>
                           <w:pPr><w:pStyle w:val="Caption"/><w:rPr></w:rPr></w:pPr>
                           ${catCountXML}
                           ${caption.map((node, i) => this.transformRichtext(node, options, caption[i + 1])).join("")}
-                    </w:p>` : ""
-}` + end
-            } else {
-                start += `
+                    </w:p>`
+                            : ""
+                    }` + end
+                } else {
+                    start += `
                     <w:p>
                       <w:pPr>
                         <w:jc w:val="center"/>
@@ -638,8 +728,11 @@ export class DOCXExporterRichtext {
                                                             <w:spacing w:before="20" w:after="220" />
                                                             <w:rPr></w:rPr>
                                                         </w:pPr>`
-                content = `<w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/><w:bookmarkEnd w:id="${this.bookmarkCounter}"/>` + content
-                end = `
+                    content =
+                        `<w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/><w:bookmarkEnd w:id="${this.bookmarkCounter}"/>` +
+                        content
+                    end =
+                        `
                                                         ${catCountXML}
                                                         ${caption.map((node, i) => this.transformRichtext(node, options, caption[i + 1])).join("")}
                                                     </w:p>
@@ -658,37 +751,40 @@ export class DOCXExporterRichtext {
                         </w:drawing>
                       </w:r>
                     </w:p>` + end
-            }
-            if (blockInsert) {
-                start += `<w:ins w:id="${++this.changeCounter}" w:author="${escapeText(blockInsert.username)}" w:date="${new Date(blockInsert.date * 60000).toISOString().split(".")[0]}Z">`
-                end = "</w:ins>" + end
-            }
-            if (blockDelete) {
-                start += `<w:del w:id="${++this.changeCounter}" w:author="${escapeText(blockDelete.username)}" w:date="${new Date(blockDelete.date * 60000).toISOString().split(".")[0]}Z">`
-                end = "</w:del>" + end
-            }
-            break
-        }
-        case "figure_caption":
-            // We are already dealing with this in the figure. Prevent content from being added a second time.
-            return ""
-        case "figure_equation":
-            // We are already dealing with this in the figure.
-            break
-        case "image":
-            // We are already dealing with this in the figure.
-            break
-        case "table":
-        {
-            const category = node.attrs.category
-            let caption = node.attrs.caption ? node.content[0].content || [] : []
-            let catCountXML = ""
-            if (category !== "none") {
-                const categoryCounter = options.inFootnote ? this.fncategoryCounter : this.categoryCounter
-                if (!categoryCounter[category]) {
-                    categoryCounter[category] = 1
                 }
-                catCountXML = `<w:r>
+                if (blockInsert) {
+                    start += `<w:ins w:id="${++this.changeCounter}" w:author="${escapeText(blockInsert.username)}" w:date="${new Date(blockInsert.date * 60000).toISOString().split(".")[0]}Z">`
+                    end = "</w:ins>" + end
+                }
+                if (blockDelete) {
+                    start += `<w:del w:id="${++this.changeCounter}" w:author="${escapeText(blockDelete.username)}" w:date="${new Date(blockDelete.date * 60000).toISOString().split(".")[0]}Z">`
+                    end = "</w:del>" + end
+                }
+                break
+            }
+            case "figure_caption":
+                // We are already dealing with this in the figure. Prevent content from being added a second time.
+                return ""
+            case "figure_equation":
+                // We are already dealing with this in the figure.
+                break
+            case "image":
+                // We are already dealing with this in the figure.
+                break
+            case "table": {
+                const category = node.attrs.category
+                let caption = node.attrs.caption
+                    ? node.content[0].content || []
+                    : []
+                let catCountXML = ""
+                if (category !== "none") {
+                    const categoryCounter = options.inFootnote
+                        ? this.fncategoryCounter
+                        : this.categoryCounter
+                    if (!categoryCounter[category]) {
+                        categoryCounter[category] = 1
+                    }
+                    catCountXML = `<w:r>
                         <w:t xml:space="preserve">${CATS[category][this.settings.language]} </w:t>
                     </w:r>
                     <w:r>
@@ -705,19 +801,19 @@ export class DOCXExporterRichtext {
                     </w:r>
                     <w:r>
                         <w:rPr></w:rPr>
-                        <w:t>${categoryCounter[category]++}${ options.inFootnote ? "A" : ""}</w:t>
+                        <w:t>${categoryCounter[category]++}${options.inFootnote ? "A" : ""}</w:t>
                     </w:r>
                     <w:r>
                         <w:rPr></w:rPr>
                         <w:fldChar w:fldCharType="end" />
                     </w:r>`
-                if (caption.length) {
-                    caption = [{type: "text", text: ": "}].concat(caption)
+                    if (caption.length) {
+                        caption = [{type: "text", text: ": "}].concat(caption)
+                    }
                 }
-            }
-            const captionSpace = !!(catCountXML.length || caption.length)
-            if (captionSpace) {
-                start += `
+                const captionSpace = !!(catCountXML.length || caption.length)
+                if (captionSpace) {
+                    start += `
                     <w:p>
                         <w:pPr>
                             <w:pStyle w:val="Caption"/>
@@ -728,128 +824,129 @@ export class DOCXExporterRichtext {
                         ${catCountXML}
                         ${caption.map((node, i) => this.transformRichtext(node, options, caption[i + 1])).join("")}
                     </w:p>`
-            }
-            this.tables.addTableGridStyle()
-            start += `
+                }
+                this.tables.addTableGridStyle()
+                start += `
                     <w:tbl>
                         <w:tblPr>
                             <w:tblStyle w:val="${this.tables.tableGridStyle}" />
                             ${
-    node.attrs.width === "100" ?
-        "<w:tblW w:w=\"0\" w:type=\"auto\" />" :
-        `<w:tblW w:w="${50 * parseInt(node.attrs.width)}" w:type="pct" />
+                                node.attrs.width === "100"
+                                    ? '<w:tblW w:w="0" w:type="auto" />'
+                                    : `<w:tblW w:w="${50 * Number.parseInt(node.attrs.width)}" w:type="pct" />
                                     <w:jc w:val="${node.attrs.aligned}" />`
-}
+                            }
                             <w:tblLook w:val="04A0" w:firstRow="1" w:lastRow="0" w:firstColumn="1" w:lastColumn="0" w:noHBand="0" w:noVBand="1" />
                         </w:tblPr>
                         <w:tblGrid>`
-            const columns = node.content[1].content[0].content.length
-            let cellWidth = 63500 // standard width
-            options = Object.assign({}, options)
-            if (options.dimensions?.width) {
-                cellWidth = parseInt(options.dimensions.width / columns) - 2540 // subtracting for border width
-            } else if (!options.dimensions) {
-                options.dimensions = {}
-            }
-            options.section = "Normal"
-            options.list_type = null
-            options.dimensions = Object.assign({}, options.dimensions)
-            options.dimensions.width = cellWidth
-            options.tableSideMargins = this.tables.getSideMargins()
-            for (let i = 0; i < columns; i++) {
-                start += `<w:gridCol w:w="${parseInt(cellWidth / 635)}" />`
-            }
-            start += "</w:tblGrid>"
-            end = "</w:tbl>" + end
+                const columns = node.content[1].content[0].content.length
+                let cellWidth = 63500 // standard width
+                options = Object.assign({}, options)
+                if (options.dimensions?.width) {
+                    cellWidth =
+                        Number.parseInt(options.dimensions.width / columns) -
+                        2540 // subtracting for border width
+                } else if (!options.dimensions) {
+                    options.dimensions = {}
+                }
+                options.section = "Normal"
+                options.list_type = null
+                options.dimensions = Object.assign({}, options.dimensions)
+                options.dimensions.width = cellWidth
+                options.tableSideMargins = this.tables.getSideMargins()
+                for (let i = 0; i < columns; i++) {
+                    start += `<w:gridCol w:w="${Number.parseInt(cellWidth / 635)}" />`
+                }
+                start += "</w:tblGrid>"
+                end = "</w:tbl>" + end
 
-            break
-        }
-        case "table_body":
-            // Pass through to table.
-            break
-        case "table_caption":
-            // We already deal with this in 'table'.
-            return ""
-        case "table_row":
-            start += "<w:tr>"
-            end = "</w:tr>" + end
-            break
-        case "table_cell":
-        case "table_header":
-            start += `
+                break
+            }
+            case "table_body":
+                // Pass through to table.
+                break
+            case "table_caption":
+                // We already deal with this in 'table'.
+                return ""
+            case "table_row":
+                start += "<w:tr>"
+                end = "</w:tr>" + end
+                break
+            case "table_cell":
+            case "table_header":
+                start += `
                     <w:tc>
                         <w:tcPr>
                             ${
-    node.attrs.rowspan && node.attrs.colspan ?
-        `<w:tcW w:w="${parseInt((options.dimensions?.width || 0)  / 635)}" w:type="dxa" />` :
-        "<w:tcW w:w=\"0\" w:type=\"auto\" />"
-}
+                                node.attrs.rowspan && node.attrs.colspan
+                                    ? `<w:tcW w:w="${Number.parseInt((options.dimensions?.width || 0) / 635)}" w:type="dxa" />`
+                                    : '<w:tcW w:w="0" w:type="auto" />'
+                            }
                             ${
-    node.attrs.rowspan ?
-        node.attrs.rowspan > 1 ?
-            "<w:vMerge w:val=\"restart\" />" :
-            "" :
-        "<w:vMerge/>"
-}
+                                node.attrs.rowspan
+                                    ? node.attrs.rowspan > 1
+                                        ? '<w:vMerge w:val="restart" />'
+                                        : ""
+                                    : "<w:vMerge/>"
+                            }
                             ${
-    node.attrs.colspan ?
-        node.attrs.colspan > 1 ?
-            "<w:hMerge w:val=\"restart\" />" :
-            "" :
-        "<w:hMerge/>"
-}
+                                node.attrs.colspan
+                                    ? node.attrs.colspan > 1
+                                        ? '<w:hMerge w:val="restart" />'
+                                        : ""
+                                    : "<w:hMerge/>"
+                            }
                         </w:tcPr>
-                        ${
-    node.content ?
-        "" :
-        "<w:p/>"
-}`
-            end = "</w:tc>" + end
+                        ${node.content ? "" : "<w:p/>"}`
+                end = "</w:tc>" + end
 
-            break
-        case "equation":
-        {
-            const latex = node.attrs.equation
-            content += this.math.getOmml(latex)
-            break
-        }
-        case "hard_break":
-            content += "<w:r><w:br/></w:r>"
-            break
+                break
+            case "equation": {
+                const latex = node.attrs.equation
+                content += this.math.getOmml(latex)
+                break
+            }
+            case "hard_break":
+                content += "<w:r><w:br/></w:r>"
+                break
             // CSL bib entries
-        case "cslbib":
-            options = Object.assign({}, options)
-            options.section = "Bibliography1"
-            break
-        case "cslblock":
-            end = "<w:r><w:br/></w:r>" + end
-            break
-        case "cslleftmargin":
-            end = "<w:r><w:tab/></w:r>" + end
-            break
-        case "cslindent":
-            start += "<w:r><w:tab/></w:r>"
-            end = "<w:r><w:br/></w:r>" + end
-            break
-        case "cslentry":
-            start += `
+            case "cslbib":
+                options = Object.assign({}, options)
+                options.section = "Bibliography1"
+                break
+            case "cslblock":
+                end = "<w:r><w:br/></w:r>" + end
+                break
+            case "cslleftmargin":
+                end = "<w:r><w:tab/></w:r>" + end
+                break
+            case "cslindent":
+                start += "<w:r><w:tab/></w:r>"
+                end = "<w:r><w:br/></w:r>" + end
+                break
+            case "cslentry":
+                start += `
                     <w:p>
                         <w:pPr>
                             <w:pStyle w:val="${options.section || ""}"/>
                             <w:rPr></w:rPr>
                         </w:pPr>`
-            end = "</w:p>" + end
-            break
-        case "cslinline":
-        case "cslrightinline":
-            break
-        default:
-            break
+                end = "</w:p>" + end
+                break
+            case "cslinline":
+            case "cslrightinline":
+                break
+            default:
+                break
         }
 
         if (node.content) {
             for (let i = 0; i < node.content.length; i++) {
-                content += this.transformRichtext(node.content[i], options, node.content[i + 1])
+                content += this.transformRichtext(
+                    node.content[i],
+                    options,
+                    node.content[i + 1]
+                )
             }
         }
         return start + content + end

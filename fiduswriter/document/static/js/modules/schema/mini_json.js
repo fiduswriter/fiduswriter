@@ -11,13 +11,17 @@ export function toMiniJSON(node) {
             if (!obj.attrs) {
                 obj.attrs = {}
             }
-            obj.attrs[attr] = ["string", "number", "boolean"].includes(typeof node.attrs[attr]) ?
-                node.attrs[attr] :
-                JSON.parse(JSON.stringify(node.attrs[attr]))
+            obj.attrs[attr] = ["string", "number", "boolean"].includes(
+                typeof node.attrs[attr]
+            )
+                ? node.attrs[attr]
+                : JSON.parse(JSON.stringify(node.attrs[attr]))
         }
     }
     if (node.content.size) {
-        obj.content = node.content.content.map(childNode => toMiniJSON(childNode))
+        obj.content = node.content.content.map(childNode =>
+            toMiniJSON(childNode)
+        )
     }
 
     if (node.marks.length) {
@@ -39,9 +43,11 @@ function toMiniMarkJSON(mark) {
             if (!obj.attrs) {
                 obj.attrs = {}
             }
-            obj.attrs[attr] = ["string", "number", "boolean"].includes(typeof mark.attrs[attr]) ?
-                mark.attrs[attr] :
-                JSON.parse(JSON.stringify(mark.attrs[attr]))
+            obj.attrs[attr] = ["string", "number", "boolean"].includes(
+                typeof mark.attrs[attr]
+            )
+                ? mark.attrs[attr]
+                : JSON.parse(JSON.stringify(mark.attrs[attr]))
         }
     }
     return obj

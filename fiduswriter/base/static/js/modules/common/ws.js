@@ -15,7 +15,7 @@ export class WebSocketConnector {
         receiveData = _data => {},
         failedAuth = () => {
             window.location.href = "/"
-        },
+        }
     }) {
         this.base = base
         this.path = path
@@ -107,17 +107,16 @@ export class WebSocketConnector {
     }
 
     waitForWS() {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             if (this.ws && this.ws.readyState === this.ws.OPEN) {
                 return resolve()
             } else {
-                return new Promise(resolveTimer => setTimeout(resolveTimer, 100)).then(
-                    () => this.waitForWS()
-                ).then(
-                    () => resolve()
+                return new Promise(resolveTimer =>
+                    setTimeout(resolveTimer, 100)
                 )
+                    .then(() => this.waitForWS())
+                    .then(() => resolve())
             }
-
         })
     }
 
@@ -135,10 +134,12 @@ export class WebSocketConnector {
             // Messages from the server have been lost.
             // Request resend.
             this.waitForWS().then(() =>
-                this.ws.send(JSON.stringify({
-                    type: "request_resend",
-                    from: this.messages.server
-                }))
+                this.ws.send(
+                    JSON.stringify({
+                        type: "request_resend",
+                        from: this.messages.server
+                    })
+                )
             )
         } else {
             this.messages.server = expectedServer
@@ -157,14 +158,15 @@ export class WebSocketConnector {
                         this.send(this.restartMessage)
                         return
                     }
-                    this.messages["lastTen"].slice(0 - clientDifference).forEach(data => {
-                        this.messages.client += 1
-                        data.c = this.messages.client
-                        data.s = this.messages.server
+                    this.messages["lastTen"]
+                        .slice(0 - clientDifference)
+                        .forEach(data => {
+                            this.messages.client += 1
+                            data.c = this.messages.client
+                            data.s = this.messages.server
 
-                        this.ws.send(JSON.stringify(data))
-
-                    })
+                            this.ws.send(JSON.stringify(data))
+                        })
                     this.receive(data)
                 })
             }
@@ -184,12 +186,10 @@ export class WebSocketConnector {
         const messagesElement = this.messagesElement()
         if (messagesElement) {
             if (this.anythingToSend()) {
-                messagesElement.innerHTML =
-                    `<span class="warn">${this.warningNotAllSent}</span>`
+                messagesElement.innerHTML = `<span class="warn">${this.warningNotAllSent}</span>`
             } else {
                 messagesElement.innerHTML = this.infoDisconnected
             }
-
         }
     }
 
@@ -205,7 +205,7 @@ export class WebSocketConnector {
         this.oldMessages = this.messagesToSend
         this.messagesToSend = []
 
-        this.send(() => (message))
+        this.send(() => message)
     }
 
     subscribed() {
@@ -276,22 +276,22 @@ export class WebSocketConnector {
 
     receive(data) {
         switch (data.type) {
-        case "redirect":
-            this.base = data.base
-            break
-        case "welcome":
-            this.open()
-            break
-        case "subscribed":
-            this.subscribed()
-            this.heartbeat()
-            break
-        case "access_denied":
-            this.failedAuth()
-            break
-        default:
-            this.receiveData(data)
-            break
+            case "redirect":
+                this.base = data.base
+                break
+            case "welcome":
+                this.open()
+                break
+            case "subscribed":
+                this.subscribed()
+                this.heartbeat()
+                break
+            case "access_denied":
+                this.failedAuth()
+                break
+            default:
+                this.receiveData(data)
+                break
         }
     }
 
@@ -299,7 +299,7 @@ export class WebSocketConnector {
         clearTimeout(this.pingTimer)
         clearTimeout(this.pongTimer)
         this.pingTimer = setTimeout(() => {
-            this.ws.send("{\"type\": \"ping\"}")
+            this.ws.send('{"type": "ping"}')
             this.pongTimer = setTimeout(() => {
                 this.listeners.onOffline()
             }, 10000)

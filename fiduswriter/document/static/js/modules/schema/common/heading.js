@@ -1,9 +1,8 @@
-import {parseTracks, addTracks} from "./track"
+import {addTracks, parseTracks} from "./track"
 
 export const randomHeadingId = () => {
     return `H${Math.round(Math.random() * 10000000) + 1}`
 }
-
 
 const createHeading = level => ({
     group: "block heading",

@@ -1,5 +1,4 @@
-export const readMe =
-`We strongly recommend using LuaTeX instead of PDFTeX or XeLaTeX for document
+export const readMe = `We strongly recommend using LuaTeX instead of PDFTeX or XeLaTeX for document
 compilation.
 
 In order to compile the LaTeX file, you need to use at least TeXLive 2016. If

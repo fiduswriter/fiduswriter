@@ -1,20 +1,17 @@
+import {printHTML} from "@vivliostyle/print"
+import {addAlert, shortFileTitle} from "../../common"
 import {PAPER_SIZES} from "../../schema/const"
 import {OldHTMLExporter} from "../html_old"
-import {addAlert, shortFileTitle} from "../../common"
 import {removeHidden} from "../tools/doc_content"
-import {printHTML} from "@vivliostyle/print"
 
 export class PrintExporter extends OldHTMLExporter {
-
     constructor(schema, csl, documentStyles, doc, bibDB, imageDB) {
         super(schema, csl, documentStyles, doc, bibDB, imageDB)
-        this.styleSheets.push({contents:
-            `a.fn {
-                -adapt-template: url(data:application/xml,${
-    encodeURI(
-        "<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:s=\"http://www.pyroxy.com/ns/shadow\"><head><style>.footnote-content{float:footnote}</style></head><body><s:template id=\"footnote\"><s:content/><s:include class=\"footnote-content\"/></s:template></body></html>#footnote"
-    )
-});
+        this.styleSheets.push({
+            contents: `a.fn {
+                -adapt-template: url(data:application/xml,${encodeURI(
+                    '<html xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://www.pyroxy.com/ns/shadow"><head><style>.footnote-content{float:footnote}</style></head><body><s:template id="footnote"><s:content/><s:include class="footnote-content"/></s:template></body></html>#footnote'
+                )});
                 text-decoration: none;
                 color: inherit;
                 vertical-align: baseline;
@@ -93,18 +90,18 @@ export class PrintExporter extends OldHTMLExporter {
     }
 
     init() {
-        addAlert("info", `${shortFileTitle(this.doc.title, this.doc.path)}: ${gettext("Printing has been initiated.")}`)
+        addAlert(
+            "info",
+            `${shortFileTitle(this.doc.title, this.doc.path)}: ${gettext("Printing has been initiated.")}`
+        )
         this.docContent = removeHidden(this.doc.content, false)
         this.addDocStyle(this.doc)
 
-        return this.loadStyles().then(
-            () => this.joinDocumentParts()
-        ).then(
-            () => this.fillToc()
-        ).then(
-            () => this.postProcess()
-        ).then(
-            ({html, title}) => {
+        return this.loadStyles()
+            .then(() => this.joinDocumentParts())
+            .then(() => this.fillToc())
+            .then(() => this.postProcess())
+            .then(({html, title}) => {
                 const config = {title}
 
                 if (navigator.userAgent.includes("Gecko/")) {
@@ -114,37 +111,39 @@ export class PrintExporter extends OldHTMLExporter {
                         const oldBody = document.body
                         document.body.parentElement.dataset.vivliostylePaginated = true
                         document.body = iframeWin.document.body
-                        document.body.querySelectorAll("figure, table").forEach(el => delete el.dataset.category)
-                        iframeWin.document.querySelectorAll("style").forEach(el => document.body.appendChild(el))
+                        document.body
+                            .querySelectorAll("figure, table")
+                            .forEach(el => delete el.dataset.category)
+                        iframeWin.document
+                            .querySelectorAll("style")
+                            .forEach(el => document.body.appendChild(el))
                         const backgroundStyle = document.createElement("style")
-                        backgroundStyle.innerHTML = "body {background-color: white;}"
+                        backgroundStyle.innerHTML =
+                            "body {background-color: white;}"
                         document.body.appendChild(backgroundStyle)
                         window.print()
                         document.body = oldBody
-                        delete document.body.parentElement.dataset.vivliostylePaginated
+                        delete document.body.parentElement.dataset
+                            .vivliostylePaginated
                     }
                 }
-                return printHTML(
-                    html,
-                    config
-                )
-            }
-        )
+                return printHTML(html, config)
+            })
     }
 
     addDocStyle(doc) {
         // Override the default as we need to use the original URLs in print.
-        const docStyle = this.documentStyles.find(docStyle => docStyle.slug === doc.settings.documentstyle)
+        const docStyle = this.documentStyles.find(
+            docStyle => docStyle.slug === doc.settings.documentstyle
+        )
 
         if (!docStyle) {
             return
         }
         let contents = docStyle.contents
         docStyle.documentstylefile_set.forEach(
-            ([url, filename]) => contents = contents.replace(
-                new RegExp(filename, "g"),
-                url
-            )
+            ([url, filename]) =>
+                (contents = contents.replace(new RegExp(filename, "g"), url))
         )
         this.styleSheets.push({contents})
     }
@@ -161,7 +160,9 @@ export class PrintExporter extends OldHTMLExporter {
     }
 
     addMathliveStylesheet() {
-        this.styleSheets.push({url: staticUrl("css/libs/mathlive/mathlive.css")})
+        this.styleSheets.push({
+            url: staticUrl("css/libs/mathlive/mathlive.css")
+        })
     }
 
     getFootnoteAnchor(counter) {

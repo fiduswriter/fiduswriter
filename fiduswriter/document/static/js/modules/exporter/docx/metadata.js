@@ -1,6 +1,5 @@
 import {escapeText} from "../../common"
 
-
 export class DOCXExporterMetadata {
     constructor(xml, metadata) {
         this.xml = xml
@@ -9,15 +8,12 @@ export class DOCXExporterMetadata {
     }
 
     init() {
-        return this.xml.getXml("docProps/core.xml").then(
-            coreXML => {
-                this.coreXML = coreXML
-                this.addMetadata()
-                return Promise.resolve()
-            }
-        )
+        return this.xml.getXml("docProps/core.xml").then(coreXML => {
+            this.coreXML = coreXML
+            this.addMetadata()
+            return Promise.resolve()
+        })
     }
-
 
     addMetadata() {
         const corePropertiesEl = this.coreXML.query("cp:coreProperties")
@@ -45,8 +41,12 @@ export class DOCXExporterMetadata {
             }
             return nameParts.join(" ")
         })
-        const lastAuthor = authors.length ? escapeText(authors[0]) : gettext("Unknown")
-        const allAuthors = authors.length ? escapeText(authors.join(";")) : gettext("Unknown")
+        const lastAuthor = authors.length
+            ? escapeText(authors[0])
+            : gettext("Unknown")
+        const allAuthors = authors.length
+            ? escapeText(authors.join(";"))
+            : gettext("Unknown")
         let allAuthorsEl = this.coreXML.query("dc:creator")
 
         if (!allAuthorsEl) {
@@ -56,7 +56,9 @@ export class DOCXExporterMetadata {
         allAuthorsEl.innerXML = allAuthors
         let lastAuthorEl = this.coreXML.query("dc:lastModifiedBy")
         if (!lastAuthorEl) {
-            corePropertiesEl.appendXML("<dc:lastModifiedBy></dc:lastModifiedBy>")
+            corePropertiesEl.appendXML(
+                "<dc:lastModifiedBy></dc:lastModifiedBy>"
+            )
             lastAuthorEl = corePropertiesEl.lastElementChild
         }
         lastAuthorEl.innerXML = lastAuthor
@@ -81,10 +83,11 @@ export class DOCXExporterMetadata {
         createdEl.innerXML = dateString
         let modifiedEl = this.coreXML.query("dcterms:modified")
         if (!modifiedEl) {
-            corePropertiesEl.appendXML("<dcterms:modified xsi:type=\"dcterms:W3CDTF\"></dcterms:modified>")
+            corePropertiesEl.appendXML(
+                '<dcterms:modified xsi:type="dcterms:W3CDTF"></dcterms:modified>'
+            )
             modifiedEl = corePropertiesEl.lastElementChild
         }
         modifiedEl.innerXML = dateString
     }
-
 }

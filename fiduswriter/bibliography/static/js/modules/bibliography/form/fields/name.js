@@ -1,19 +1,22 @@
-import {LiteralFieldForm} from "./literal"
 import {noSpaceTmp} from "../../../common"
+import {LiteralFieldForm} from "./literal"
 
 // There are only name lists, no name fields in the data format. The separation
 // between NameFieldForm and NameListForm is for keeping consistency with other fields
 // and lists.
 
 export class NameFieldForm {
-    constructor(dom, initialValue = {
-        given: [],
-        family: [],
-        prefix: [],
-        suffix: [],
-        useprefix: false,
-        literal: []
-    }) {
+    constructor(
+        dom,
+        initialValue = {
+            given: [],
+            family: [],
+            prefix: [],
+            suffix: [],
+            useprefix: false,
+            literal: []
+        }
+    ) {
         this.currentValue = initialValue
         this.dom = dom
         // We set the mode based on whether there was a literal name.
@@ -30,8 +33,7 @@ export class NameFieldForm {
     }
 
     prepareWrapper() {
-        this.dom.innerHTML =
-            noSpaceTmp`
+        this.dom.innerHTML = noSpaceTmp`
                 <div class="type-switch-input-wrapper">
                     <button class="type-switch">
                         <span class="type-switch-inner">
@@ -71,8 +73,7 @@ export class NameFieldForm {
         this.switcher.classList.remove("value2")
 
         this.fields = {}
-        this.inner.innerHTML =
-            noSpaceTmp`
+        this.inner.innerHTML = noSpaceTmp`
                 <div class='given field-part field-part-long'></div>
                 <div class='prefix field-part field-part-short'></div>
                 <div class='family field-part field-part-long'></div>
@@ -127,19 +128,25 @@ export class NameFieldForm {
         if (this.realPerson) {
             if (
                 !this.fields.family.value &&
-                    !this.fields.given.value &&
-                    !this.fields.prefix.value &&
-                    !this.fields.suffix.value
+                !this.fields.given.value &&
+                !this.fields.prefix.value &&
+                !this.fields.suffix.value
             ) {
                 return false
             }
             const returnObject = {
-                family: this.fields.family.value ? this.fields.family.value : [],
-                given: this.fields.given.value ? this.fields.given.value : [],
+                family: this.fields.family.value
+                    ? this.fields.family.value
+                    : [],
+                given: this.fields.given.value ? this.fields.given.value : []
             }
             if (this.fields.prefix.value) {
                 returnObject["prefix"] = this.fields.prefix.value
-                returnObject["useprefix"] = this.dom.querySelector("input.useprefix").checked ? true : false
+                returnObject["useprefix"] = this.dom.querySelector(
+                    "input.useprefix"
+                ).checked
+                    ? true
+                    : false
             }
             if (this.fields.suffix.value) {
                 returnObject["suffix"] = this.fields.suffix.value

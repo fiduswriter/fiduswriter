@@ -1,5 +1,5 @@
-import {ModCommentStore} from "./store"
 import {ModCommentInteractions} from "./interactions"
+import {ModCommentStore} from "./store"
 
 export class ModComments {
     constructor(editor) {

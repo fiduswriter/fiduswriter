@@ -1,9 +1,5 @@
-import os
-import subprocess
-from pathlib import Path
-from subprocess import call, check_call
 from glob import glob
-from setuptools import Command, find_namespace_packages, setup
+from setuptools import find_namespace_packages, setup
 from setuptools.command.sdist import sdist as _sdist
 from setuptools.command.bdist_egg import bdist_egg as _bdist_egg
 from setuptools.command.install import install

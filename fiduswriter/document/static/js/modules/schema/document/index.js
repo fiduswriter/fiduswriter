@@ -1,57 +1,52 @@
 import OrderedMap from "orderedmap"
 import {Schema} from "prosemirror-model"
-import {nodes, marks} from "prosemirror-schema-basic"
+import {marks, nodes} from "prosemirror-schema-basic"
 import {
-    figure,
-    image,
-    figure_equation,
-    figure_caption,
+    anchor,
+    annotation_tag,
+    blockquote,
+    bullet_list,
     citation,
+    comment,
+    cross_reference,
+    deletion,
     equation,
+    figure,
+    figure_caption,
+    figure_equation,
+    format_change,
     heading1,
     heading2,
     heading3,
     heading4,
     heading5,
     heading6,
-    anchor,
-    paragraph,
-    blockquote,
     horizontal_rule,
-    ordered_list,
-    bullet_list,
-    list_item,
-    underline,
-    deletion,
+    image,
     insertion,
-    format_change,
-    comment,
-    annotation_tag,
-    cross_reference,
     link,
+    list_item,
+    ordered_list,
+    paragraph,
     table,
-    table_caption,
     table_body,
-    table_row,
+    table_caption,
     table_cell,
-    table_header
+    table_header,
+    table_row,
+    underline
 } from "../common"
+import {code_block, contributor, footnote, tag} from "./content"
 import {
-    contributor,
-    tag,
-    code_block,
-    footnote
-} from "./content"
-import {
-    doc,
-    title,
-    richtext_part,
-    heading_part,
     contributors_part,
-    tags_part,
-    table_part,
+    doc,
+    heading_part,
+    richtext_part,
+    separator_part,
     table_of_contents,
-    separator_part
+    table_part,
+    tags_part,
+    title
 } from "./structure"
 
 const specNodes = OrderedMap.from({

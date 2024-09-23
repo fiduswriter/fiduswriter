@@ -1,8 +1,19 @@
 import download from "downloadjs"
 
-import {documentrevisionsTemplate} from "./templates"
+import {
+    Dialog,
+    addAlert,
+    cancelPromise,
+    deactivateWait,
+    escapeText,
+    findTarget,
+    get,
+    longFilePath,
+    post,
+    shortFileTitle
+} from "../../common"
 import {ImportFidusFile} from "../../importer/file"
-import {deactivateWait, addAlert, get, post, cancelPromise, findTarget, Dialog, escapeText, shortFileTitle, longFilePath} from "../../common"
+import {documentrevisionsTemplate} from "./templates"
 
 /**
  * Functions for the recovering previously created document revisions.
@@ -34,7 +45,6 @@ export class DocumentRevisionsDialog {
         return this.bind()
     }
 
-
     bind() {
         const dialogEl = this.dialog.dialogEl
 
@@ -43,21 +53,21 @@ export class DocumentRevisionsDialog {
                 const el = {}
                 let revisionId, revisionFilename
                 switch (true) {
-                case findTarget(event, ".download-revision", el):
-                    revisionId = parseInt(el.target.dataset.id)
-                    revisionFilename = el.target.dataset.filename
-                    this.download(revisionId, revisionFilename)
-                    break
-                case findTarget(event, ".recreate-revision", el):
-                    revisionId = parseInt(el.target.dataset.id)
-                    resolve(this.recreate(revisionId, this.user))
-                    break
-                case findTarget(event, ".delete-revision", el):
-                    revisionId = parseInt(el.target.dataset.id)
-                    resolve(this.delete(revisionId))
-                    break
-                default:
-                    break
+                    case findTarget(event, ".download-revision", el):
+                        revisionId = Number.parseInt(el.target.dataset.id)
+                        revisionFilename = el.target.dataset.filename
+                        this.download(revisionId, revisionFilename)
+                        break
+                    case findTarget(event, ".recreate-revision", el):
+                        revisionId = Number.parseInt(el.target.dataset.id)
+                        resolve(this.recreate(revisionId, this.user))
+                        break
+                    case findTarget(event, ".delete-revision", el):
+                        revisionId = Number.parseInt(el.target.dataset.id)
+                        resolve(this.delete(revisionId))
+                        break
+                    default:
+                        break
                 }
             })
         })
@@ -71,19 +81,21 @@ export class DocumentRevisionsDialog {
 
     recreate(id, user) {
         const doc = this.documentList.find(doc => doc.id === this.documentId)
-        return get(`/api/document/get_revision/${id}/`).then(
-            response => response.blob()
-        ).then(
-            blob => {
+        return get(`/api/document/get_revision/${id}/`)
+            .then(response => response.blob())
+            .then(blob => {
                 const importer = new ImportFidusFile(
                     blob,
                     user,
-                    longFilePath(doc.title, doc.path, `${gettext("Revision of")} `)
+                    longFilePath(
+                        doc.title,
+                        doc.path,
+                        `${gettext("Revision of")} `
+                    )
                 )
                 return importer.init()
-            }
-        ).then(
-            ({ok, statusText, doc}) => {
+            })
+            .then(({ok, statusText, doc}) => {
                 deactivateWait()
                 if (ok) {
                     addAlert("info", statusText)
@@ -95,9 +107,7 @@ export class DocumentRevisionsDialog {
                     addAlert("error", statusText)
                     return Promise.reject(new Error(statusText))
                 }
-
-            }
-        )
+            })
     }
 
     /**
@@ -106,11 +116,9 @@ export class DocumentRevisionsDialog {
      */
 
     download(id, filename) {
-        get(`/api/document/get_revision/${id}/`).then(
-            response => response.blob()
-        ).then(
-            blob => download(blob, filename, "application/fidus+zip")
-        )
+        get(`/api/document/get_revision/${id}/`)
+            .then(response => response.blob())
+            .then(blob => download(blob, filename, "application/fidus+zip"))
     }
 
     /**
@@ -121,7 +129,6 @@ export class DocumentRevisionsDialog {
     delete(id) {
         const buttons = []
         const returnPromise = new Promise(resolve => {
-
             buttons.push({
                 text: gettext("Delete"),
                 classes: "fw-dark",
@@ -150,18 +157,16 @@ export class DocumentRevisionsDialog {
         revisionsConfirmDeleteDialog.open()
 
         return returnPromise
-
     }
 
     deleteRevision(id) {
-        return post(
-            "/api/document/delete_revision/",
-            {id}
-        ).then(
-            () => {
+        return post("/api/document/delete_revision/", {id})
+            .then(() => {
                 const thisTr = document.querySelector(`tr.revision-${id}`),
                     documentId = thisTr.dataset.document,
-                    doc = this.documentList.find(doc => doc.id === parseInt(documentId))
+                    doc = this.documentList.find(
+                        doc => doc.id === Number.parseInt(documentId)
+                    )
                 thisTr.parentElement.removeChild(thisTr)
                 addAlert("success", gettext("Revision deleted"))
                 return Promise.resolve({
@@ -170,14 +175,10 @@ export class DocumentRevisionsDialog {
                     doc
                 })
                 // TODO: Remove from overview menu as well
-            }
-        ).catch(
-            () => {
+            })
+            .catch(() => {
                 addAlert("error", gettext("Could not delete revision."))
                 return Promise.reject(new Error("Could not delete revision."))
-            }
-        )
-
+            })
     }
-
 }

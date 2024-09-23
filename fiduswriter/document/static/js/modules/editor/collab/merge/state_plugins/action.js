@@ -1,23 +1,10 @@
-import {
-    TextSelection
-} from "prosemirror-state"
-import {
-    Mapping,
-    Step,
-    RemoveMarkStep,
-    AddMarkStep
-} from "prosemirror-transform"
-import {
-    __serializeForClipboard
-} from "prosemirror-view"
-import {
-    showSystemMessage
-} from "../../../../common"
-import {
-    dispatchRemoveDiffdata
-} from "../tools"
+import {TextSelection} from "prosemirror-state"
+import {AddMarkStep, Mapping, RemoveMarkStep, Step} from "prosemirror-transform"
+import {__serializeForClipboard} from "prosemirror-view"
+import {showSystemMessage} from "../../../../common"
+import {dispatchRemoveDiffdata} from "../tools"
 
-export const copyChange = function(view, from, to) {
+export const copyChange = (view, from, to) => {
     /* when a certain change cannot be applied automatically,
     we give users the ability to copy a change */
     const tr = view.state.tr
@@ -30,7 +17,7 @@ export const copyChange = function(view, from, to) {
     view.focus()
 
     const slice = view.state.selection.content()
-    const {dom} = (__serializeForClipboard(view, slice))
+    const {dom} = __serializeForClipboard(view, slice)
 
     // Copy data to clipboard!!
     document.body.appendChild(dom)
@@ -40,18 +27,16 @@ export const copyChange = function(view, from, to) {
     try {
         document.execCommand("copy") // Security exception may be thrown by some browsers.
         document.body.removeChild(dom)
-        showSystemMessage(gettext(
-            "Change copied to clipboard."
-        ))
-    } catch (ex) {
-        showSystemMessage(gettext(
-            "Copy to clipboard failed. Please copy manually."
-        ))
+        showSystemMessage(gettext("Change copied to clipboard."))
+    } catch (_ex) {
+        showSystemMessage(
+            gettext("Copy to clipboard failed. Please copy manually.")
+        )
     }
     window.getSelection().removeAllRanges()
 }
 
-export const acceptChanges = function(merge, mark, mergeView, originalView, tr) {
+export const acceptChanges = (merge, mark, mergeView, originalView, tr) => {
     /* This is used to accept a change either from the offline/online version or
     incase of deletion from the middle editor */
     const mergedDocMap = new Mapping()
@@ -60,14 +45,18 @@ export const acceptChanges = function(merge, mark, mergeView, originalView, tr) 
     const from = mark.attrs.from
     const to = mark.attrs.to
     const steps = JSON.parse(mark.attrs.steps)
-    const stepMaps = tr.mapping.maps.slice().reverse().map(map => map.invert())
+    const stepMaps = tr.mapping.maps
+        .slice()
+        .reverse()
+        .map(map => map.invert())
     const rebasedMapping = new Mapping(stepMaps)
     rebasedMapping.appendMapping(mergedDocMap)
     for (const stepIndex of steps) {
         const maps = rebasedMapping.slice(tr.steps.length - stepIndex)
         let mappedStep = tr.steps[stepIndex].map(maps)
         if (mappedStep) {
-            mappedStep = Step.fromJSON( // Switch from main editor schema to merge editor schema
+            mappedStep = Step.fromJSON(
+                // Switch from main editor schema to merge editor schema
                 insertionTr.doc.type.schema,
                 mappedStep.toJSON()
             )
@@ -75,12 +64,19 @@ export const acceptChanges = function(merge, mark, mergeView, originalView, tr) 
         if (mappedStep && !insertionTr.maybeStep(mappedStep).failed) {
             mergedDocMap.appendMap(mappedStep.getMap())
             rebasedMapping.appendMap(mappedStep.getMap())
-            rebasedMapping.setMirror(tr.steps.length - stepIndex - 1, (tr.steps.length + mergedDocMap.maps.length - 1))
+            rebasedMapping.setMirror(
+                tr.steps.length - stepIndex - 1,
+                tr.steps.length + mergedDocMap.maps.length - 1
+            )
         }
     }
     // Make sure that all the content steps are present in the new transaction
     if (insertionTr.steps.length < steps.length) {
-        showSystemMessage(gettext("The change could not be applied automatically. Please consider using the copy option to copy the changes."))
+        showSystemMessage(
+            gettext(
+                "The change could not be applied automatically. Please consider using the copy option to copy the changes."
+            )
+        )
     } else {
         dispatchRemoveDiffdata(originalView, from, to)
         merge.mergedDocMap = mergedDocMap
@@ -90,13 +86,13 @@ export const acceptChanges = function(merge, mark, mergeView, originalView, tr) 
     }
 }
 
-export const removeDecoration = function(view, decorationId) {
+export const removeDecoration = (view, decorationId) => {
     const tr = view.state.tr
     tr.setMeta("decorationId", decorationId)
     view.dispatch(tr)
 }
 
-export const deleteContent = function(merge, view, diffMark, mappingNeeded = true) {
+export const deleteContent = (merge, view, diffMark, mappingNeeded = true) => {
     // const originalOnlineMapping = merge.onlineTr.mapping
     const rebasedMapping = new Mapping()
     const tr = view.state.tr
@@ -113,11 +109,15 @@ export const deleteContent = function(merge, view, diffMark, mappingNeeded = tru
         view.dispatch(tr)
         return true
     }
-    showSystemMessage(gettext("The change could not be applied automatically. Please consider using the copy option to copy the changes."))
+    showSystemMessage(
+        gettext(
+            "The change could not be applied automatically. Please consider using the copy option to copy the changes."
+        )
+    )
     return false
 }
 
-export const addDeletedContentBack  = function(merge, view, diffMark) {
+export const addDeletedContentBack = (merge, view, diffMark) => {
     const commonDoc = merge.cpDoc
     const tr = view.state.tr
     const slice = commonDoc.slice(diffMark.attrs.from, diffMark.attrs.to)
@@ -132,15 +132,20 @@ export const addDeletedContentBack  = function(merge, view, diffMark) {
         merge.mergedDocMap.appendMapping(tr.mapping)
         return true
     }
-    showSystemMessage(gettext("The change could not be applied automatically. Please consider using the copy option to copy the changes."))
+    showSystemMessage(
+        gettext(
+            "The change could not be applied automatically. Please consider using the copy option to copy the changes."
+        )
+    )
     return false
 }
 
-export const handleMarks = function(view, mark, tr, schema) {
+export const handleMarks = (view, mark, tr, schema) => {
     // This function is used to remove the marks that have been applied in the online editor
     const newTr = view.state.tr
     const steps = JSON.parse(mark.attrs.steps)
-    const marksToBeRemoved = [], marksToBeAdded = []
+    const marksToBeRemoved = [],
+        marksToBeAdded = []
     steps.forEach(index => {
         const JSONStep = tr.steps[index].toJSON()
         if (JSONStep.mark && JSONStep.mark.type) {
@@ -151,10 +156,17 @@ export const handleMarks = function(view, mark, tr, schema) {
             }
         }
     })
-    marksToBeRemoved.forEach(removalMark => newTr.removeMark(mark.attrs.from, mark.attrs.to, schema.marks[removalMark]))
-    marksToBeAdded.forEach(AddMark => newTr.addMark(mark.attrs.from, mark.attrs.to, AddMark))
+    marksToBeRemoved.forEach(removalMark =>
+        newTr.removeMark(
+            mark.attrs.from,
+            mark.attrs.to,
+            schema.marks[removalMark]
+        )
+    )
+    marksToBeAdded.forEach(AddMark =>
+        newTr.addMark(mark.attrs.from, mark.attrs.to, AddMark)
+    )
     newTr.setMeta("notrack", true)
     newTr.setMeta("mapAppended", true)
     view.dispatch(newTr)
-
 }

@@ -1,5 +1,5 @@
-import {revisionDialogTemplate} from "./templates"
 import {Dialog} from "../../common"
+import {revisionDialogTemplate} from "./templates"
 
 export class RevisionDialog {
     constructor(dir) {
@@ -14,7 +14,10 @@ export class RevisionDialog {
                 text: gettext("Save"),
                 classes: "fw-dark",
                 click: () => {
-                    const note = this.dialog.dialogEl.querySelector(".revision-note").value
+                    const note =
+                        this.dialog.dialogEl.querySelector(
+                            ".revision-note"
+                        ).value
                     this.dialog.close()
                     return resolve(note)
                 }

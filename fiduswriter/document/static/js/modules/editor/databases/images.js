@@ -7,7 +7,7 @@
  copied to the doc's imageDB. The IDs used are the same for user and document,
  as they originate from the Image model (not UserImage or DocumentImage).
 */
-import {get, addAlert} from "../../common"
+import {addAlert, get} from "../../common"
 export class ModImageDB {
     constructor(mod) {
         mod.imageDB = this
@@ -36,10 +36,7 @@ export class ModImageDB {
     // for compatibility reasons.
     getDB() {
         return new Promise(resolve => {
-            window.setTimeout(
-                () => resolve([]),
-                100
-            )
+            window.setTimeout(() => resolve([]), 100)
         })
     }
 
@@ -74,7 +71,7 @@ export class ModImageDB {
                 usedImages.push(node.attrs.image)
             }
         })
-        if (!usedImages.includes(parseInt(id))) {
+        if (!usedImages.includes(Number.parseInt(id))) {
             delete this.db[id]
         } else {
             if (Object.keys(this.mod.editor.app.imageDB.db).includes(id)) {
@@ -82,21 +79,42 @@ export class ModImageDB {
                 this.setImage(id, this.mod.editor.app.imageDB.db[id])
             } else {
                 // If image is not present in both the userImage DB and docDB we can safely assume that we have to upload again.
-                this.reUploadImage(id, this.db[id].image, this.db[id].title, this.db[id].copyright).then(
+                this.reUploadImage(
+                    id,
+                    this.db[id].image,
+                    this.db[id].title,
+                    this.db[id].copyright
+                ).then(
                     ({id, _newId}) => delete this.db[id],
-                    (id) => {
+                    id => {
                         delete this.db[id]
                         const transaction = this.mod.editor.view.state.tr
-                        this.mod.editor.view.state.doc.descendants((node, pos) => {
-                            if (node.type.name === "figure" && node.attrs.image == id) {
-                                const attrs = Object.assign({}, node.attrs)
-                                attrs["image"] = false
-                                const nodeType = this.mod.editor.currentView.state.schema.nodes["figure"]
-                                transaction.setNodeMarkup(pos, nodeType, attrs)
+                        this.mod.editor.view.state.doc.descendants(
+                            (node, pos) => {
+                                if (
+                                    node.type.name === "figure" &&
+                                    node.attrs.image == id
+                                ) {
+                                    const attrs = Object.assign({}, node.attrs)
+                                    attrs["image"] = false
+                                    const nodeType =
+                                        this.mod.editor.currentView.state.schema
+                                            .nodes["figure"]
+                                    transaction.setNodeMarkup(
+                                        pos,
+                                        nodeType,
+                                        attrs
+                                    )
+                                }
                             }
-                        })
+                        )
                         this.mod.editor.view.dispatch(transaction)
-                        addAlert("error", gettext("One of the Image(s) you copied could not be found on the server. Please try uploading it again."))
+                        addAlert(
+                            "error",
+                            gettext(
+                                "One of the Image(s) you copied could not be found on the server. Please try uploading it again."
+                            )
+                        )
                     }
                 )
             }
@@ -106,34 +124,59 @@ export class ModImageDB {
     reUploadImage(id, imageUrl, title, copyright) {
         const newPromise = new Promise((resolve, reject) => {
             // Depends on the fact that service worker is working and cached the image basically.
-            get(imageUrl).then(
-                response => response.blob()
-            ).then(
-                blob => {
+            get(imageUrl)
+                .then(response => response.blob())
+                .then(blob => {
                     const filename = imageUrl.split("/").pop()
                     const file = new File([blob], filename, {type: blob.type})
-                    const x = {"image": file, "title": title, "cats": [], "copyright": copyright}
+                    const x = {
+                        image: file,
+                        title: title,
+                        cats: [],
+                        copyright: copyright
+                    }
                     this.mod.editor.app.imageDB.saveImage(x).then(
                         newId => {
-                            const imageData = JSON.parse(JSON.stringify(this.mod.editor.app.imageDB.db[newId]))
+                            const imageData = JSON.parse(
+                                JSON.stringify(
+                                    this.mod.editor.app.imageDB.db[newId]
+                                )
+                            )
                             this.setImage(newId, imageData)
-                            this.mod.editor.view.state.doc.descendants((node, pos) => {
-                                if (node.type.name === "image" && node.attrs.image == id) {
-                                    const attrs = Object.assign({}, node.attrs)
-                                    attrs["image"] = newId
-                                    const nodeType = this.mod.editor.currentView.state.schema.nodes["image"]
-                                    const transaction = this.mod.editor.view.state.tr.setNodeMarkup(pos, nodeType, attrs)
-                                    this.mod.editor.view.dispatch(transaction)
+                            this.mod.editor.view.state.doc.descendants(
+                                (node, pos) => {
+                                    if (
+                                        node.type.name === "image" &&
+                                        node.attrs.image == id
+                                    ) {
+                                        const attrs = Object.assign(
+                                            {},
+                                            node.attrs
+                                        )
+                                        attrs["image"] = newId
+                                        const nodeType =
+                                            this.mod.editor.currentView.state
+                                                .schema.nodes["image"]
+                                        const transaction =
+                                            this.mod.editor.view.state.tr.setNodeMarkup(
+                                                pos,
+                                                nodeType,
+                                                attrs
+                                            )
+                                        this.mod.editor.view.dispatch(
+                                            transaction
+                                        )
+                                    }
                                 }
-                            })
+                            )
                             resolve({id: id, newId: newId})
                         },
-                        _error => reject(id),
+                        _error => reject(id)
                     )
-                }
-            ).catch(_error => {
-                reject(id)
-            })
+                })
+                .catch(_error => {
+                    reject(id)
+                })
         })
         return newPromise
     }
@@ -143,28 +186,25 @@ export class ModImageDB {
     }
 
     unsentEvents() {
-        return this.unsent.map(
-            event => {
-                if (event.type === "delete") {
-                    return event
-                } else if (event.type === "update") {
-                    // Check image entry still exists. Otherwise ignore.
-                    const image = this.db[event.id]
-                    if (image) {
-                        return {
-                            type: "update",
-                            id: event.id,
-                            image
-                        }
-                    } else {
-                        return {
-                            type: "ignore"
-                        }
+        return this.unsent.map(event => {
+            if (event.type === "delete") {
+                return event
+            } else if (event.type === "update") {
+                // Check image entry still exists. Otherwise ignore.
+                const image = this.db[event.id]
+                if (image) {
+                    return {
+                        type: "update",
+                        id: event.id,
+                        image
                     }
-
+                } else {
+                    return {
+                        type: "ignore"
+                    }
                 }
             }
-        )
+        })
     }
 
     eventsSent(n) {
@@ -194,5 +234,4 @@ export class ModImageDB {
             return false
         }
     }
-
 }

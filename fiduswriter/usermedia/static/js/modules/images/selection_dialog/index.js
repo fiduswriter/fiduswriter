@@ -1,6 +1,6 @@
 import {DataTable} from "simple-datatables"
 
-import {cancelPromise, Dialog, escapeText, findTarget} from "../../common"
+import {Dialog, cancelPromise, escapeText, findTarget} from "../../common"
 
 export class ImageSelectionDialog {
     constructor(imageDB, userImageDB, imgId, page) {
@@ -31,60 +31,51 @@ export class ImageSelectionDialog {
         const buttons = []
         const p = new Promise(resolve => {
             if (!this.page.app.isOffline()) {
-                buttons.push(
-                    {
-                        text: gettext("Add new image"),
-                        icon: "plus-circle",
-                        click: () => {
-                            import("../edit_dialog").then(({ImageEditDialog}) => {
-                                const imageUpload = new ImageEditDialog(
-                                    this.userImageDB, // We can only upload to the user's image db
-                                    false,
-                                    this.page
-                                )
+                buttons.push({
+                    text: gettext("Add new image"),
+                    icon: "plus-circle",
+                    click: () => {
+                        import("../edit_dialog").then(({ImageEditDialog}) => {
+                            const imageUpload = new ImageEditDialog(
+                                this.userImageDB, // We can only upload to the user's image db
+                                false,
+                                this.page
+                            )
 
-                                resolve(
-                                    imageUpload.init().then(
-                                        imageId => {
-                                            this.imgId = imageId
-                                            this.imgDb = "user"
-                                            this.imageDialog.close()
-                                            return this.init()
-                                        }
-                                    )
-                                )
-                            })
-                        }
+                            resolve(
+                                imageUpload.init().then(imageId => {
+                                    this.imgId = imageId
+                                    this.imgDb = "user"
+                                    this.imageDialog.close()
+                                    return this.init()
+                                })
+                            )
+                        })
                     }
-                )
+                })
             }
 
-            buttons.push(
-                {
-                    text: gettext("Use image"),
-                    classes: "fw-dark",
-                    click: () => {
-                        this.imageDialog.close()
-                        resolve({id: this.imgId, db: this.imgDb})
-                    }
+            buttons.push({
+                text: gettext("Use image"),
+                classes: "fw-dark",
+                click: () => {
+                    this.imageDialog.close()
+                    resolve({id: this.imgId, db: this.imgDb})
                 }
-            )
+            })
 
-            buttons.push(
-                {
-                    type: "cancel",
-                    click: () => {
-                        this.imageDialog.close()
-                        resolve(cancelPromise())
-                    }
+            buttons.push({
+                type: "cancel",
+                click: () => {
+                    this.imageDialog.close()
+                    resolve(cancelPromise())
                 }
-            )
-
+            })
         })
         this.imageDialog = new Dialog({
             buttons,
             width: 300,
-            body: "<div class=\"image-selection-table\"></div>",
+            body: '<div class="image-selection-table"></div>',
             title: gettext("Images"),
             id: "select-image-dialog"
         })
@@ -100,7 +91,9 @@ export class ImageSelectionDialog {
         const tableEl = document.createElement("table")
         tableEl.classList.add("fw-data-table")
         tableEl.classList.add("fw-small")
-        this.imageDialog.dialogEl.querySelector("div.image-selection-table").appendChild(tableEl)
+        this.imageDialog.dialogEl
+            .querySelector("div.image-selection-table")
+            .appendChild(tableEl)
         this.table = new DataTable(tableEl, {
             searchable: true,
             paging: false,
@@ -145,13 +138,21 @@ export class ImageSelectionDialog {
     createTableRow(image) {
         return [
             `${image.db}-${image.image.id}`,
-            image.image.thumbnail === undefined ?
-                `<img src="${image.image.image}" style="max-heigth:30px;max-width:30px;">` :
-                `<img src="${image.image.thumbnail}" style="max-heigth:30px;max-width:30px;">`,
+            image.image.thumbnail === undefined
+                ? `<img src="${image.image.image}" style="max-heigth:30px;max-width:30px;">`
+                : `<img src="${image.image.thumbnail}" style="max-heigth:30px;max-width:30px;">`,
             escapeText(image.image.title),
-            image.db === this.imgDb && image.image.id === this.imgId ?
-                [{nodeName: "i", attributes: {class: "fa fa-check", "aria-hidden": "true"}}] :
-                []
+            image.db === this.imgDb && image.image.id === this.imgId
+                ? [
+                      {
+                          nodeName: "i",
+                          attributes: {
+                              class: "fa fa-check",
+                              "aria-hidden": "true"
+                          }
+                      }
+                  ]
+                : []
         ]
     }
 
@@ -162,7 +163,7 @@ export class ImageSelectionDialog {
         }
         const cell = row.cells[0]
         const [db, id] = cell.data.split("-").map(
-            (val, index) => index ? parseInt(val) : val // only parseInt id (where index > 0)
+            (val, index) => (index ? Number.parseInt(val) : val) // only parseInt id (where index > 0)
         )
         if (id === this.imgId) {
             this.imgId = false
@@ -172,7 +173,15 @@ export class ImageSelectionDialog {
         this.imgDb = db
         this.table.data.data.forEach((row, index) => {
             if (index === dataIndex && this.imgId) {
-                row.cells[3].data = [{nodeName: "i", attributes: {class: "fa fa-check", "aria-hidden": "true"}}]
+                row.cells[3].data = [
+                    {
+                        nodeName: "i",
+                        attributes: {
+                            class: "fa fa-check",
+                            "aria-hidden": "true"
+                        }
+                    }
+                ]
             } else {
                 row.cells[3].data = []
             }
@@ -185,12 +194,12 @@ export class ImageSelectionDialog {
         this.table.dom.addEventListener("click", event => {
             const el = {}
             switch (true) {
-            case findTarget(event, "tr", el): {
-                this.checkRow(parseInt(el.target.dataset.index))
-                break
-            }
-            default:
-                break
+                case findTarget(event, "tr", el): {
+                    this.checkRow(Number.parseInt(el.target.dataset.index))
+                    break
+                }
+                default:
+                    break
             }
         })
     }

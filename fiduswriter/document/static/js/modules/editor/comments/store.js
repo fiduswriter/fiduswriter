@@ -1,10 +1,8 @@
 import {
-    Comment
-} from "./comment"
-import {
     addCommentDuringCreationDecoration,
     removeCommentDuringCreationDecoration
 } from "../state_plugins"
+import {Comment} from "./comment"
 
 export class ModCommentStore {
     constructor(mod) {
@@ -40,7 +38,6 @@ export class ModCommentStore {
     // as it is empty, shouldn't be shared and if canceled, it should go away
     // entirely.
     addCommentDuringCreation(view) {
-
         const state = view.state,
             tr = addCommentDuringCreationDecoration(state, state.tr)
 
@@ -53,7 +50,11 @@ export class ModCommentStore {
 
         let username
 
-        if (["review", "review-tracked"].includes(this.mod.editor.docInfo.access_rights)) {
+        if (
+            ["review", "review-tracked"].includes(
+                this.mod.editor.docInfo.access_rights
+            )
+        ) {
             username = `${gettext("Reviewer")} ${this.mod.editor.user.id}`
         } else {
             username = this.mod.editor.user.username
@@ -69,7 +70,6 @@ export class ModCommentStore {
             inDOM: false,
             view
         }
-
     }
 
     removeCommentDuringCreation() {
@@ -85,12 +85,7 @@ export class ModCommentStore {
     }
 
     // Add a new comment to the comment database both remotely and locally.
-    addComment(
-        commentData,
-        posFrom,
-        posTo,
-        view
-    ) {
+    addComment(commentData, posFrom, posTo, view) {
         const id = randomID(),
             markType = view.state.schema.marks.comment.create({id}),
             tr = this.addMark(view.state.tr, posFrom, posTo, markType)
@@ -146,32 +141,37 @@ export class ModCommentStore {
     }
 
     loadComments(commentsData) {
-        Object.entries(commentsData).forEach(([id, comment]) => this.addLocalComment(Object.assign({id}, comment)))
+        Object.entries(commentsData).forEach(([id, comment]) =>
+            this.addLocalComment(Object.assign({id}, comment))
+        )
     }
 
-
-    addLocalComment(
-        commentData,
-        local
-    ) {
-        if (!this.mod.editor.mod.collab.pastParticipants.find(
-            participant => participant.id === commentData.user
-        )) {
-            this.mod.editor.mod.collab.pastParticipants.push(
-                {id: commentData.user, name: commentData.username}
+    addLocalComment(commentData, local) {
+        if (
+            !this.mod.editor.mod.collab.pastParticipants.find(
+                participant => participant.id === commentData.user
             )
+        ) {
+            this.mod.editor.mod.collab.pastParticipants.push({
+                id: commentData.user,
+                name: commentData.username
+            })
         }
-        if (commentData.assignedUser && !this.mod.editor.mod.collab.pastParticipants.find(
-            participant => participant.id === commentData.assignedUser
-        )) {
-            this.mod.editor.mod.collab.pastParticipants.push(
-                {id: commentData.assignedUser, name: commentData.assignedUsername || ""}
+        if (
+            commentData.assignedUser &&
+            !this.mod.editor.mod.collab.pastParticipants.find(
+                participant => participant.id === commentData.assignedUser
             )
+        ) {
+            this.mod.editor.mod.collab.pastParticipants.push({
+                id: commentData.assignedUser,
+                name: commentData.assignedUsername || ""
+            })
         }
         if (!this.comments[commentData.id]) {
             this.comments[commentData.id] = new Comment(commentData)
         }
-        if (local || (!this.mod.interactions.isCurrentlyEditing())) {
+        if (local || !this.mod.interactions.isCurrentlyEditing()) {
             this.mod.editor.mod.marginboxes.updateDOM()
         }
     }
@@ -186,24 +186,31 @@ export class ModCommentStore {
     }
 
     updateLocalComment(commentData, local) {
-        if (commentData.assignedUser && !this.mod.editor.mod.collab.pastParticipants.find(
-            participant => participant.id === commentData.assignedUser
-        )) {
-            this.mod.editor.mod.collab.pastParticipants.push(
-                {id: commentData.assignedUser, name: commentData.assignedUsername || ""}
+        if (
+            commentData.assignedUser &&
+            !this.mod.editor.mod.collab.pastParticipants.find(
+                participant => participant.id === commentData.assignedUser
             )
+        ) {
+            this.mod.editor.mod.collab.pastParticipants.push({
+                id: commentData.assignedUser,
+                name: commentData.assignedUsername || ""
+            })
         }
         if (this.comments[commentData.id]) {
             Object.assign(this.comments[commentData.id], commentData)
         }
-        if (local || (!this.mod.interactions.isCurrentlyEditing())) {
+        if (local || !this.mod.interactions.isCurrentlyEditing()) {
             this.mod.editor.mod.marginboxes.updateDOM()
         }
     }
 
     removeCommentMarks(id) {
         // remove comment marks with the given ID in both views.
-        [this.mod.editor.view, this.mod.editor.mod.footnotes.fnEditor.view].forEach(view => {
+        ;[
+            this.mod.editor.view,
+            this.mod.editor.mod.footnotes.fnEditor.view
+        ].forEach(view => {
             const tr = view.state.tr,
                 markType = view.state.schema.marks.comment.create({id})
             view.state.doc.descendants((node, pos) => {
@@ -227,7 +234,7 @@ export class ModCommentStore {
             delete this.comments[id]
             return true
         }
-        if (local || (!this.mod.interactions.isCurrentlyEditing())) {
+        if (local || !this.mod.interactions.isCurrentlyEditing()) {
             this.mod.editor.mod.marginboxes.updateDOM()
         }
     }
@@ -251,14 +258,15 @@ export class ModCommentStore {
             if (!this.comments[id].answers) {
                 this.comments[id].answers = []
             }
-            const answerFound = this.comments[id].answers.find(Answer => Answer.id ===
-                answer.id)
+            const answerFound = this.comments[id].answers.find(
+                Answer => Answer.id === answer.id
+            )
             if (!answerFound) {
                 this.comments[id].answers.push(answer)
             }
         }
 
-        if (local || (!this.mod.interactions.isCurrentlyEditing())) {
+        if (local || !this.mod.interactions.isCurrentlyEditing()) {
             this.mod.editor.mod.marginboxes.updateDOM()
         }
     }
@@ -277,9 +285,10 @@ export class ModCommentStore {
     deleteLocalAnswer(id, answerId, local) {
         if (this.comments[id]?.answers) {
             this.comments[id].answers = this.comments[id].answers.filter(
-                answer => answer.id !== answerId)
+                answer => answer.id !== answerId
+            )
         }
-        if (local || (!this.mod.interactions.isCurrentlyEditing())) {
+        if (local || !this.mod.interactions.isCurrentlyEditing()) {
             this.mod.editor.mod.marginboxes.updateDOM()
         }
     }
@@ -296,13 +305,14 @@ export class ModCommentStore {
 
     updateLocalAnswer(id, answerId, answerText, local) {
         if (this.comments[id]?.answers) {
-            const answer = this.comments[id].answers.find(answer => answer.id ===
-                answerId)
+            const answer = this.comments[id].answers.find(
+                answer => answer.id === answerId
+            )
             if (answer) {
                 answer.answer = answerText
             }
         }
-        if (local || (!this.mod.interactions.isCurrentlyEditing())) {
+        if (local || !this.mod.interactions.isCurrentlyEditing()) {
             this.mod.editor.mod.marginboxes.updateDOM()
         }
     }
@@ -348,11 +358,17 @@ export class ModCommentStore {
                 const found = this.comments[event.id]
                 let foundAnswer
                 if (found?.id && found?.answers) {
-                    foundAnswer = found.answers.find(answer => answer.id === event.answerId)
+                    foundAnswer = found.answers.find(
+                        answer => answer.id === event.answerId
+                    )
                 }
                 if (foundAnswer) {
                     result.push(
-                        Object.assign({}, foundAnswer, {type: "add_answer", id: event.id, answerId: foundAnswer.id})
+                        Object.assign({}, foundAnswer, {
+                            type: "add_answer",
+                            id: event.id,
+                            answerId: foundAnswer.id
+                        })
                     )
                 } else {
                     result.push({
@@ -376,12 +392,17 @@ export class ModCommentStore {
                 const found = this.comments[event.id]
                 let foundAnswer
                 if (found?.id && found?.answers) {
-                    foundAnswer = found.answers.find(answer => answer.id ===
-                        event.answerId)
+                    foundAnswer = found.answers.find(
+                        answer => answer.id === event.answerId
+                    )
                 }
                 if (foundAnswer) {
                     result.push(
-                        Object.assign({}, foundAnswer, {type: "update_answer", id: event.id, answerId: foundAnswer.id})
+                        Object.assign({}, foundAnswer, {
+                            type: "update_answer",
+                            id: event.id,
+                            answerId: foundAnswer.id
+                        })
                     )
                 } else {
                     result.push({
@@ -406,24 +427,29 @@ export class ModCommentStore {
             } else if (event.type == "update") {
                 this.updateLocalComment(event, false)
             } else if (event.type == "add_answer") {
-                this.addLocalAnswer(event.id, {
-                    answer: event.answer,
-                    id: event.answerId,
-                    date: event.date,
-                    user: event.user,
-                    username: event.username
-                }, false)
+                this.addLocalAnswer(
+                    event.id,
+                    {
+                        answer: event.answer,
+                        id: event.answerId,
+                        date: event.date,
+                        user: event.user,
+                        username: event.username
+                    },
+                    false
+                )
             } else if (event.type == "delete_answer") {
-                this.deleteLocalAnswer(event.id, event.answerId,
-                    false)
+                this.deleteLocalAnswer(event.id, event.answerId, false)
             } else if (event.type == "update_answer") {
-                this.updateLocalAnswer(event.id, event.answerId,
-                    event.answer, false)
+                this.updateLocalAnswer(
+                    event.id,
+                    event.answerId,
+                    event.answer,
+                    false
+                )
             }
         })
-
     }
-
 }
 
 function randomID() {

@@ -1,5 +1,5 @@
-import {RangeFieldForm} from "./range"
 import {noSpaceTmp} from "../../../common"
+import {RangeFieldForm} from "./range"
 
 export class RangeListForm {
     constructor(dom, initialValue = [[]]) {
@@ -13,12 +13,11 @@ export class RangeListForm {
 
     drawForm() {
         this.fields = []
-        this.dom.innerHTML = "<table class=\"input-list-wrapper\"><tbody></tbody></table>"
-        this.currentValue.forEach(
-            (fieldValue, index) => {
-                this.addField(fieldValue, index)
-            }
-        )
+        this.dom.innerHTML =
+            '<table class="input-list-wrapper"><tbody></tbody></table>'
+        this.currentValue.forEach((fieldValue, index) => {
+            this.addField(fieldValue, index)
+        })
     }
 
     addField(fieldValue, index) {
@@ -65,13 +64,13 @@ export class RangeListForm {
     }
 
     get value() {
-        const formValue = this.fields.map(field => {
-            return field.value
-        }).filter(
-            value => {
+        const formValue = this.fields
+            .map(field => {
+                return field.value
+            })
+            .filter(value => {
                 return value !== false
-            }
-        )
+            })
         if (formValue.length === 0) {
             return false
         }

@@ -5,13 +5,12 @@ export class citeprocSys {
     constructor(bibDB) {
         this.bibDB = bibDB
         this.abbreviations = {
-            "default": {}
+            default: {}
         }
         this.abbrevsname = "default"
         // We cache values retrieved once.
         this.items = {}
         this.missingItems = []
-
     }
 
     retrieveItem(id) {
@@ -28,14 +27,15 @@ export class citeprocSys {
         return this.items[id]
     }
 
-    getAbbreviation(dummy, obj, jurisdiction, vartype, key) {
+    getAbbreviation(_dummy, obj, _jurisdiction, vartype, key) {
         try {
             if (this.abbreviations[this.abbrevsname][vartype][key]) {
-                obj["default"][vartype][key] = this.abbreviations[this.abbrevsname][vartype][key]
+                obj["default"][vartype][key] =
+                    this.abbreviations[this.abbrevsname][vartype][key]
             } else {
                 obj["default"][vartype][key] = ""
             }
-        } catch (error) {
+        } catch (_error) {
             // There is breakage here that needs investigating.
         }
     }

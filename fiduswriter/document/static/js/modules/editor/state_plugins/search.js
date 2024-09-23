@@ -3,33 +3,34 @@ import {Decoration, DecorationSet} from "prosemirror-view"
 
 const key = new PluginKey("search")
 
-
 function findMatches(doc, term) {
-    let stringObj = false, matches = []
+    let stringObj = false,
+        matches = []
 
     if (!term.length) {
         return matches
     }
 
-    doc.descendants(
-        (node, pos, parent) => {
-            if (!node.isInline || node.marks.find(mark => mark.type.name === "deletion")) {
-                return
-            }
-            if (stringObj && (parent !== stringObj.parent || !node.isText)) {
-                matches = matches.concat(findTerm(term, stringObj))
-                stringObj = false
-            }
-
-            if (node.isText) {
-                if (!stringObj) {
-                    stringObj = {parent, pos: [], text: ""}
-                }
-                stringObj.text += node.text
-                stringObj.pos.push([pos, pos + node.text.length])
-            }
+    doc.descendants((node, pos, parent) => {
+        if (
+            !node.isInline ||
+            node.marks.find(mark => mark.type.name === "deletion")
+        ) {
+            return
         }
-    )
+        if (stringObj && (parent !== stringObj.parent || !node.isText)) {
+            matches = matches.concat(findTerm(term, stringObj))
+            stringObj = false
+        }
+
+        if (node.isText) {
+            if (!stringObj) {
+                stringObj = {parent, pos: [], text: ""}
+            }
+            stringObj.text += node.text
+            stringObj.pos.push([pos, pos + node.text.length])
+        }
+    })
     if (stringObj) {
         matches = matches.concat(findTerm(term, stringObj))
     }
@@ -39,7 +40,8 @@ function findMatches(doc, term) {
 // Find search term within stringObjects (strings that consist of several text nodes that hang together)
 function findTerm(term, stringObj) {
     const matches = []
-    let index = 0, foundIndex
+    let index = 0,
+        foundIndex
     while ((foundIndex = stringObj.text.indexOf(term, index)) !== -1) {
         index = foundIndex + term.length
 
@@ -53,9 +55,10 @@ function findTerm(term, stringObj) {
 
 // Translate the start and end position of the serach term within the strings to document positions
 function transPos(index, pos) {
-    let findIndex = index, posIndex = 0
-    while (findIndex > (pos[posIndex][1] - pos[posIndex][0])) {
-        findIndex -= (pos[posIndex][1] - pos[posIndex][0])
+    let findIndex = index,
+        posIndex = 0
+    while (findIndex > pos[posIndex][1] - pos[posIndex][0]) {
+        findIndex -= pos[posIndex][1] - pos[posIndex][0]
         posIndex++
     }
     return pos[posIndex][0] + findIndex
@@ -67,48 +70,49 @@ function matchesToDecos(doc, matches, selected) {
     }
     const decorations = matches.map((match, index) => {
         return Decoration.inline(match.from, match.to, {
-            class: `search${ index === selected ? " selected" : ""}`
+            class: `search${index === selected ? " selected" : ""}`
         })
     })
     return DecorationSet.create(doc, decorations)
-
 }
 
-
-export const setSearchTerm = function(state, term, selected = false, listener = false) {
+export const setSearchTerm = (
+    state,
+    term,
+    selected = false,
+    listener = false
+) => {
     const matches = findMatches(state.doc, term),
         decos = matchesToDecos(state.doc, matches, selected)
 
-    selected = selected !== false && matches.length > selected ? selected : matches.length ? matches.length - 1 : false
+    selected =
+        selected !== false && matches.length > selected
+            ? selected
+            : matches.length
+              ? matches.length - 1
+              : false
 
-    const tr = state.tr.setMeta(
-        key,
-        {
-            term,
-            decos,
-            matches,
-            selected,
-            listener
-        }
-    )
+    const tr = state.tr.setMeta(key, {
+        term,
+        decos,
+        matches,
+        selected,
+        listener
+    })
 
     return {tr, matches, selected}
 }
 
-export const endSearch = function(state) {
-    return state.tr.setMeta(
-        key,
-        {
-            term: "",
-            decos: DecorationSet.empty,
-            matches: [],
-            selected: 0,
-            listener: false
-        }
-    )
-}
+export const endSearch = state =>
+    state.tr.setMeta(key, {
+        term: "",
+        decos: DecorationSet.empty,
+        matches: [],
+        selected: 0,
+        listener: false
+    })
 
-export const selectNextSearchMatch = function(state) {
+export const selectNextSearchMatch = state => {
     const pluginState = key.getState(state),
         {term, matches, listener} = pluginState
     let {selected} = pluginState
@@ -116,25 +120,22 @@ export const selectNextSearchMatch = function(state) {
     if (selected === false) {
         selected = matches.length
     }
-    if (selected < (matches.length - 1)) {
+    if (selected < matches.length - 1) {
         selected++
     } else {
         selected = 0
     }
     const decos = matchesToDecos(state.doc, matches, selected)
-    return state.tr.setMeta(
-        key,
-        {
-            term,
-            decos,
-            matches,
-            selected,
-            listener
-        }
-    )
+    return state.tr.setMeta(key, {
+        term,
+        decos,
+        matches,
+        selected,
+        listener
+    })
 }
 
-export const selectPreviousSearchMatch = function(state) {
+export const selectPreviousSearchMatch = state => {
     const pluginState = key.getState(state),
         {term, matches, listener} = pluginState
     let {selected} = pluginState
@@ -148,42 +149,35 @@ export const selectPreviousSearchMatch = function(state) {
         selected = matches.length - 1
     }
     const decos = matchesToDecos(state.doc, matches, selected)
-    return state.tr.setMeta(
-        key,
-        {
-            term,
-            decos,
-            matches,
-            selected,
-            listener
-        }
-    )
+    return state.tr.setMeta(key, {
+        term,
+        decos,
+        matches,
+        selected,
+        listener
+    })
 }
 
-export const deselectSearchMatch = function(state) {
+export const deselectSearchMatch = state => {
     const {term, matches, listener} = key.getState(state),
         selected = false,
         decos = matchesToDecos(state.doc, matches, selected)
-    return state.tr.setMeta(
-        key,
-        {
-            term,
-            decos,
-            matches,
-            selected,
-            listener
-        }
-    )
+    return state.tr.setMeta(key, {
+        term,
+        decos,
+        matches,
+        selected,
+        listener
+    })
 }
 
-export const getSearchMatches = function(state) {
+export const getSearchMatches = state => {
     const {matches, selected} = key.getState(state)
     return {matches, selected}
 }
 
-
-export const searchPlugin = function(_options) {
-    return new Plugin({
+export const searchPlugin = _options =>
+    new Plugin({
         key,
         state: {
             init() {
@@ -205,11 +199,7 @@ export const searchPlugin = function(_options) {
 
                 const pluginState = this.getState(oldState),
                     {term, listener} = pluginState
-                let {
-                    matches,
-                    decos,
-                    selected
-                } = pluginState
+                let {matches, decos, selected} = pluginState
 
                 if (term === "" || !tr.docChanged) {
                     return {
@@ -244,9 +234,7 @@ export const searchPlugin = function(_options) {
         },
         props: {
             decorations(state) {
-                const {
-                    decos
-                } = this.getState(state)
+                const {decos} = this.getState(state)
                 return decos
             }
         },
@@ -261,4 +249,3 @@ export const searchPlugin = function(_options) {
             }
         }
     })
-}

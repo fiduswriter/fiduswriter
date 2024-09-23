@@ -9,7 +9,8 @@ export const bulkMenuModel = () => ({
                     overview.deleteImageDialog(ids)
                 }
             },
-            disabled: overview => !overview.getSelected().length || overview.app.isOffline()
+            disabled: overview =>
+                !overview.getSelected().length || overview.app.isOffline()
         }
     ]
 })
@@ -23,8 +24,10 @@ export const menuModel = () => ({
                 {
                     title: gettext("All categories"),
                     action: _overview => {
-                        const trs = document.querySelectorAll("#imagelist > tbody > tr")
-                        trs.forEach(tr => tr.style.display = "")
+                        const trs = document.querySelectorAll(
+                            "#imagelist > tbody > tr"
+                        )
+                        trs.forEach(tr => (tr.style.display = ""))
                     }
                 }
             ],
@@ -47,11 +50,9 @@ export const menuModel = () => ({
                         false,
                         overview
                     )
-                    imageUpload.init().then(
-                        imageId => {
-                            overview.updateTable([imageId])
-                        }
-                    )
+                    imageUpload.init().then(imageId => {
+                        overview.updateTable([imageId])
+                    })
                 })
             },
             order: 3,

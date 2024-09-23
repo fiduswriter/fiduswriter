@@ -1,7 +1,6 @@
 import {whenReady} from "./basic"
 import {ContentMenu} from "./content_menu"
 
-
 let bulkId = 0
 
 export class DatatableBulk {
@@ -16,14 +15,18 @@ export class DatatableBulk {
         whenReady().then(() => this.bindEvents())
     }
 
-
     update() {
-        this.model.content = this.model.content.sort((a, b) => a.order - b.order)
+        this.model.content = this.model.content.sort(
+            (a, b) => a.order - b.order
+        )
     }
 
     bindEvents() {
         this.page.dom.addEventListener("click", this.onClick.bind(this))
-        this.table.addEventListener("change", this.onTableCheckChange.bind(this))
+        this.table.addEventListener(
+            "change",
+            this.onTableCheckChange.bind(this)
+        )
         this.onTableCheckChange()
     }
 
@@ -41,7 +44,9 @@ export class DatatableBulk {
     }
 
     isAllChecked() {
-        const checkBoxes = Array.from(this.table.querySelectorAll("input.entry-select[type=checkbox]"))
+        const checkBoxes = Array.from(
+            this.table.querySelectorAll("input.entry-select[type=checkbox]")
+        )
         const unchecked = checkBoxes.filter(box => !box.checked)
         return !unchecked.length && checkBoxes.length
     }
@@ -62,16 +67,24 @@ export class DatatableBulk {
                         menu: this.model,
                         width: 280,
                         page: this.page,
-                        menuPos: {X: parseInt(event.pageX), Y: parseInt(event.pageY)}
+                        menuPos: {
+                            X: Number.parseInt(event.pageX),
+                            Y: Number.parseInt(event.pageY)
+                        }
                     })
                     contentMenu.open()
                 }
-
-            } else if (target.matches(".fw-check + label, .fw-check + label *")) {
+            } else if (
+                target.matches(".fw-check + label, .fw-check + label *")
+            ) {
                 // Click on bulk checkbox
                 const isChecked = this.isAllChecked()
-                target.closest("div.datatable-wrapper").querySelector("input[type=checkbox]").checked = !isChecked
-                this.table.querySelectorAll("input.entry-select[type=checkbox]").forEach(checkbox => checkbox.checked = !isChecked)
+                target
+                    .closest("div.datatable-wrapper")
+                    .querySelector("input[type=checkbox]").checked = !isChecked
+                this.table
+                    .querySelectorAll("input.entry-select[type=checkbox]")
+                    .forEach(checkbox => (checkbox.checked = !isChecked))
                 this.onTableCheckChange()
             }
         } else if (target.matches(".fw-data-table .entry-select + label")) {
@@ -79,16 +92,15 @@ export class DatatableBulk {
             event.preventDefault()
             event.stopImmediatePropagation()
             event.stopPropagation()
-            target.previousElementSibling.checked = !target.previousElementSibling.checked
+            target.previousElementSibling.checked =
+                !target.previousElementSibling.checked
         }
     }
 
     getHTML() {
-        return (
-            `<div id="${this.id}" class="dt-bulk">
+        return `<div id="${this.id}" class="dt-bulk">
                 <input type="checkbox" id="${this.id}_check" class="fw-check"><label for="${this.id}_check"></label>
                 <span class="dt-bulk-dropdown"><i class="fa fa-caret-down"></i></span>
             </div>`
-        )
     }
 }

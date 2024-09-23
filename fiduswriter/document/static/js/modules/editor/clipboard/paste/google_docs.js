@@ -2,7 +2,6 @@ import {GeneralPasteHandler} from "./general"
 
 // Google Docs (the writing component) paste handler
 export class GoogleDocsPasteHandler extends GeneralPasteHandler {
-
     // Convert an existing node to a different node, if needed.
     convertNode(node) {
         node = super.convertNode(node)

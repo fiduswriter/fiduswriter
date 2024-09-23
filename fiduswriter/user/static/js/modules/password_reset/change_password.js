@@ -1,4 +1,4 @@
-import {escapeText, post, get} from "../common"
+import {escapeText, get, post} from "../common"
 import {PreloginPage} from "../prelogin"
 
 export class PasswordResetChangePassword extends PreloginPage {
@@ -46,70 +46,82 @@ export class PasswordResetChangePassword extends PreloginPage {
             passwordInput.focus()
         }
 
-        document.getElementById("change-password-submit").addEventListener("click", event => {
-            event.preventDefault()
-            document.querySelector("#non-field-errors").innerHTML = ""
-            document.querySelector("#id-password1-errors").innerHTML = ""
-            document.querySelector("#id-password2-errors").innerHTML = ""
+        document
+            .getElementById("change-password-submit")
+            .addEventListener("click", event => {
+                event.preventDefault()
+                document.querySelector("#non-field-errors").innerHTML = ""
+                document.querySelector("#id-password1-errors").innerHTML = ""
+                document.querySelector("#id-password2-errors").innerHTML = ""
 
-            const password1 = document.getElementById("id-password1").value,
-                password2 = document.getElementById("id-password2").value
-            let errors = false
-            if (!password1.length) {
-                document.querySelector("#id-password1-errors").innerHTML = `<li>${gettext("This field is required.")}</li>`
-                errors = true
-            }
-            if (!password2.length) {
-                document.querySelector("#id-password2-errors").innerHTML = `<li>${gettext("This field is required.")}</li>`
-                errors = true
-            }
-            if (password1 !== password2) {
-                document.querySelector("#id-password2-errors").innerHTML = `<li>${gettext("You must type the same password each time.")}</li>`
-                errors = true
-            }
-
-            if (errors) {
-                return
-            }
-            get(`/api/account/password/reset/key/${this.key}/`).then(
-                response => {
-                    return post(response.url, {password1, password2})
+                const password1 = document.getElementById("id-password1").value,
+                    password2 = document.getElementById("id-password2").value
+                let errors = false
+                if (!password1.length) {
+                    document.querySelector("#id-password1-errors").innerHTML =
+                        `<li>${gettext("This field is required.")}</li>`
+                    errors = true
                 }
-            ).then(
-                () => {
-                    if (document.body !== this.dom) {
-                        return
-                    }
-                    document.querySelector(".fw-contents").innerHTML =
-                    `<div class="fw-login-left">
+                if (!password2.length) {
+                    document.querySelector("#id-password2-errors").innerHTML =
+                        `<li>${gettext("This field is required.")}</li>`
+                    errors = true
+                }
+                if (password1 !== password2) {
+                    document.querySelector("#id-password2-errors").innerHTML =
+                        `<li>${gettext("You must type the same password each time.")}</li>`
+                    errors = true
+                }
+
+                if (errors) {
+                    return
+                }
+                get(`/api/account/password/reset/key/${this.key}/`)
+                    .then(response => {
+                        return post(response.url, {password1, password2})
+                    })
+                    .then(() => {
+                        if (document.body !== this.dom) {
+                            return
+                        }
+                        document.querySelector(".fw-contents").innerHTML = `<div class="fw-login-left">
                         <h1 class="fw-login-title">${gettext("Password reset")}</h1>
                         <p>
-                            ${
-    gettext("Your password has been reset and you can now log in with the new password.")
-}
+                            ${gettext(
+                                "Your password has been reset and you can now log in with the new password."
+                            )}
                         </p>
                     </div>`
-                }
-            ).catch(
-                response => response.json().then(
-                    json => {
-                        json.form.errors.forEach(
-                            error => document.querySelector("#non-field-errors").innerHTML += `<li>${escapeText(error)}</li>`
-                        )
-                        if (json.form.fields.password1) {
-                            json.form.fields.password1.errors.forEach(
-                                error => document.querySelector("#id-password1-errors").innerHTML += `<li>${escapeText(error)}</li>`
+                    })
+                    .catch(response =>
+                        response.json().then(json => {
+                            json.form.errors.forEach(
+                                error =>
+                                    (document.querySelector(
+                                        "#non-field-errors"
+                                    ).innerHTML +=
+                                        `<li>${escapeText(error)}</li>`)
                             )
-                        }
-                        if (json.form.fields.password2) {
-                            json.form.fields.password2.errors.forEach(
-                                error => document.querySelector("#id-password2-errors").innerHTML += `<li>${escapeText(error)}</li>`
-                            )
-                        }
-                    }
-                )
-            )
-        })
-
+                            if (json.form.fields.password1) {
+                                json.form.fields.password1.errors.forEach(
+                                    error =>
+                                        (document.querySelector(
+                                            "#id-password1-errors"
+                                        ).innerHTML +=
+                                            `<li>${escapeText(error)}</li>`)
+                                )
+                            }
+                            if (json.form.fields.password2) {
+                                json.form.fields.password2.errors.forEach(
+                                    error =>
+                                        (document.querySelector(
+                                            "#id-password2-errors"
+                                        ).innerHTML +=
+                                            `<li>${escapeText(error)}</li>`)
+                                )
+                            }
+                        })
+                    )
+            })
     }
 }

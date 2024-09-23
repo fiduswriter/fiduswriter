@@ -1,8 +1,7 @@
-import {ModCollabDoc} from "./doc"
+import {removeCollaboratorSelection} from "../state_plugins"
 import {ModCollabChat} from "./chat"
 import {ModCollabColors} from "./colors"
-import {removeCollaboratorSelection} from "../state_plugins"
-
+import {ModCollabDoc} from "./doc"
 
 export class ModCollab {
     constructor(editor) {
@@ -50,10 +49,9 @@ export class ModCollab {
         // If not, remove the corresponding carets if any.
         this.sessionIds.forEach(session_id => {
             if (!allSessionIds.includes(session_id)) {
-                const tr = removeCollaboratorSelection(
-                    this.editor.view.state,
-                    {session_id}
-                )
+                const tr = removeCollaboratorSelection(this.editor.view.state, {
+                    session_id
+                })
                 const fnTr = removeCollaboratorSelection(
                     this.editor.mod.footnotes.fnEditor.view.state,
                     {session_id}

@@ -1,6 +1,6 @@
-import {whenReady, findTarget, postJson, escapeText, ensureCSS} from "../common"
-import {DocumentTemplateDesigner} from "./designer"
 import {CSL} from "citeproc-plus"
+import {ensureCSS, escapeText, findTarget, postJson, whenReady} from "../common"
+import {DocumentTemplateDesigner} from "./designer"
 
 export class DocumentTemplateAdmin {
     constructor() {
@@ -10,7 +10,7 @@ export class DocumentTemplateAdmin {
         this.templateExtras = false
         this.citationStyles = false
         const locationParts = window.location.href.split("/")
-        let id = parseInt(locationParts[locationParts.length - 3])
+        let id = Number.parseInt(locationParts[locationParts.length - 3])
         if (isNaN(id)) {
             id = 0
         }
@@ -34,15 +34,13 @@ export class DocumentTemplateAdmin {
         const csl = new CSL()
         const initialTasks = [
             whenReady(),
-            csl.getStyles().then(
-                styles => this.citationStyles = styles
-            )
+            csl.getStyles().then(styles => (this.citationStyles = styles))
         ]
         if (this.id) {
             initialTasks.push(
-                postJson("/api/document/admin/get_template/extras/", {id: this.id}).then(
-                    ({json}) => this.templateExtras = json
-                )
+                postJson("/api/document/admin/get_template/extras/", {
+                    id: this.id
+                }).then(({json}) => (this.templateExtras = json))
             )
         }
 
@@ -52,15 +50,19 @@ export class DocumentTemplateAdmin {
                 const mainContent = document.querySelector("#content-main")
                 mainContent.insertAdjacentHTML(
                     "afterbegin",
-                    "<ul class=\"object-tools\"></ul>"
+                    '<ul class="object-tools"></ul>'
                 )
                 this.objectTools = document.querySelector("ul.object-tools")
             }
             this.titleInput = document.querySelector("#id_title")
             this.titleBlock = document.querySelector("div.field-title")
-            this.contentTextarea = document.querySelector("textarea[name=content]")
+            this.contentTextarea = document.querySelector(
+                "textarea[name=content]"
+            )
             this.contentImportIdInput = document.querySelector("#id_import_id")
-            this.contentImportIdBlock = document.querySelector("div.field-import_id")
+            this.contentImportIdBlock = document.querySelector(
+                "div.field-import_id"
+            )
             this.contentBlock = document.querySelector("div.field-content")
             this.modifyDOM()
             this.initDesigner()
@@ -99,11 +101,14 @@ export class DocumentTemplateAdmin {
             </div>`
         )
 
-        this.templateDesignerBlock = document.querySelector("div.template-editor")
+        this.templateDesignerBlock = document.querySelector(
+            "div.template-editor"
+        )
     }
 
     setCurrentValue() {
-        const {valid, value, errors, import_id, title} = this.templateDesigner.getCurrentValue()
+        const {valid, value, errors, import_id, title} =
+            this.templateDesigner.getCurrentValue()
         this.contentTextarea.value = JSON.stringify(value)
         this.contentImportIdInput.value = import_id
         this.titleInput.value = title
@@ -113,40 +118,43 @@ export class DocumentTemplateAdmin {
 
     showErrors(errors) {
         this.templateDesignerBlock.querySelector("ul.errorlist").innerHTML =
-            Object.values(errors).map(error => `<li>${escapeText(error)}</li>`).join("")
+            Object.values(errors)
+                .map(error => `<li>${escapeText(error)}</li>`)
+                .join("")
     }
 
-
     bind() {
-
         document.body.addEventListener("click", event => {
             const el = {}
             switch (true) {
-            case findTarget(event, "#toggle-editor", el):
-                event.preventDefault()
-                if (this.contentBlock.style.display === "none") {
-                    this.contentBlock.style.display = ""
-                    this.contentImportIdBlock.style.display = ""
-                    this.titleBlock.style.display = ""
-                    this.setCurrentValue()
-                    this.templateDesigner.close()
-                    this.templateDesigner = false
-                    this.templateDesignerBlock.style.display = "none"
-                } else {
-                    this.contentBlock.style.display = "none"
-                    this.contentImportIdBlock.style.display = "none"
-                    this.titleBlock.style.display = "none"
-                    this.templateDesignerBlock.style.display = ""
-                    this.initDesigner()
-                }
-                break
-            case findTarget(event, "div.submit-row input[type=submit]", el):
-                if (this.contentBlock.style.display === "none" && !this.setCurrentValue()) {
+                case findTarget(event, "#toggle-editor", el):
                     event.preventDefault()
-                }
-                break
-            default:
-                break
+                    if (this.contentBlock.style.display === "none") {
+                        this.contentBlock.style.display = ""
+                        this.contentImportIdBlock.style.display = ""
+                        this.titleBlock.style.display = ""
+                        this.setCurrentValue()
+                        this.templateDesigner.close()
+                        this.templateDesigner = false
+                        this.templateDesignerBlock.style.display = "none"
+                    } else {
+                        this.contentBlock.style.display = "none"
+                        this.contentImportIdBlock.style.display = "none"
+                        this.titleBlock.style.display = "none"
+                        this.templateDesignerBlock.style.display = ""
+                        this.initDesigner()
+                    }
+                    break
+                case findTarget(event, "div.submit-row input[type=submit]", el):
+                    if (
+                        this.contentBlock.style.display === "none" &&
+                        !this.setCurrentValue()
+                    ) {
+                        event.preventDefault()
+                    }
+                    break
+                default:
+                    break
             }
         })
     }

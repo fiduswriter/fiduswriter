@@ -2,12 +2,11 @@ import {GeneralPasteHandler} from "./general"
 
 // Microsoft Word 2016 paste handler
 export class MicrosoftWordPasteHandler extends GeneralPasteHandler {
-
     // Remove unused content
     cleanDOM() {
         // Remove footnote list container with separator line
         const removableElements = this.dom.querySelectorAll(
-            "div[style*=\"mso-element:footnote-list\"]"
+            'div[style*="mso-element:footnote-list"]'
         )
 
         removableElements.forEach(el => el.parentNode.removeChild(el))
@@ -16,7 +15,7 @@ export class MicrosoftWordPasteHandler extends GeneralPasteHandler {
     // Iterate over pasted nodes and their children
     iterateNode(node) {
         node = super.convertNode(node)
-        if (node.tagName === "P" & ! node.firstChild) {
+        if ((node.tagName === "P") & !node.firstChild) {
             node.parentNode.removeChild(node)
             return true
         } else if (node.nodeType === 8) {
@@ -52,25 +51,30 @@ export class MicrosoftWordPasteHandler extends GeneralPasteHandler {
     // Convert an existing node to a different node, if needed.
     convertNode(node) {
         // Footnote markers (only in main pm instance):
-        if (node.tagName === "A" &&
+        if (
+            node.tagName === "A" &&
             node.firstChild?.tagName === "SPAN" &&
             node.firstChild?.classList.contains("MsoFootnoteReference") &&
-            this.pmType === "main") {
+            this.pmType === "main"
+        ) {
             // Remove "#_ftn" from the selector (#_ftn1)
             const fnSelector = node.getAttribute("href")
-            const fnNumber = node.getAttribute(
-                "href"
-            ).substring(5, fnSelector.length)
+            const fnNumber = node
+                .getAttribute("href")
+                .substring(5, fnSelector.length)
             const footnote = this.dom.querySelector("#ftn" + fnNumber)
             if (footnote) {
-                const footnoteCounter = footnote.querySelector("a[href=\"#_ftnref" + fnNumber + "\"]")
+                const footnoteCounter = footnote.querySelector(
+                    'a[href="#_ftnref' + fnNumber + '"]'
+                )
                 if (footnoteCounter) {
                     const followingNode = footnoteCounter.nextSibling
                     footnoteCounter.parentNode.removeChild(footnoteCounter)
                     if (followingNode?.nodeType === 3) {
                         // If there is a text string right after the footnote
                         // marker, remove any leading spaces.
-                        followingNode.nodeValue = followingNode.nodeValue.replace(/^\s+/, "")
+                        followingNode.nodeValue =
+                            followingNode.nodeValue.replace(/^\s+/, "")
                     }
                 }
                 this.footnoteMarkers.push(node)
@@ -79,7 +83,5 @@ export class MicrosoftWordPasteHandler extends GeneralPasteHandler {
         }
 
         return node
-
     }
-
 }

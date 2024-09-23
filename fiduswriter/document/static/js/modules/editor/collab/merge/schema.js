@@ -1,6 +1,4 @@
-import {
-    Schema
-} from "prosemirror-model"
+import {Schema} from "prosemirror-model"
 
 export function parseDiff(str) {
     if (!str) {
@@ -9,7 +7,7 @@ export function parseDiff(str) {
     let tracks
     try {
         tracks = JSON.parse(str)
-    } catch (error) {
+    } catch (_error) {
         return []
     }
     if (!Array.isArray(tracks)) {
@@ -17,7 +15,7 @@ export function parseDiff(str) {
     }
 }
 
-export const createDiffSchema = function(docSchema) {
+export const createDiffSchema = docSchema => {
     let specNodes = docSchema.spec.nodes
 
     specNodes.forEach(nodeTypeName => {
@@ -28,43 +26,47 @@ export const createDiffSchema = function(docSchema) {
         const attrs = nodeType.attrs
         specNodes = specNodes.update(
             nodeTypeName,
-            Object.assign(
-                {},
-                nodeType,
-                {
-                    attrs: Object.assign({diffdata: {default: []}}, attrs),
-                    toDOM: function(node) {
-                        let dom = nodeType.toDOM(node)
-                        if (node.attrs.diffdata && node.attrs.diffdata.length) {
-                            if (dom[1].class) {
-                                dom[1].class = dom[1].class + " " + node.attrs.diffdata[0].type
-                            } else {
-                                dom[1]["class"] = node.attrs.diffdata[0].type
-                            }
-                            dom = [
-                                dom[0],
-                                Object.assign({
-                                    "data-diffdata": JSON.stringify(node.attrs.diffdata),
-                                }, dom[1]),
-                                dom[2]
-                            ]
+            Object.assign({}, nodeType, {
+                attrs: Object.assign({diffdata: {default: []}}, attrs),
+                toDOM: node => {
+                    let dom = nodeType.toDOM(node)
+                    if (node.attrs.diffdata && node.attrs.diffdata.length) {
+                        if (dom[1].class) {
+                            dom[1].class =
+                                dom[1].class + " " + node.attrs.diffdata[0].type
+                        } else {
+                            dom[1]["class"] = node.attrs.diffdata[0].type
                         }
-                        return dom
-                    },
-                    parseDOM: nodeType.parseDOM.map(tag => ({
-                        tag: tag.tag,
-                        getAttrs: function(dom) {
-                            const attrs = tag.getAttrs(dom)
-                            return Object.assign({
+                        dom = [
+                            dom[0],
+                            Object.assign(
+                                {
+                                    "data-diffdata": JSON.stringify(
+                                        node.attrs.diffdata
+                                    )
+                                },
+                                dom[1]
+                            ),
+                            dom[2]
+                        ]
+                    }
+                    return dom
+                },
+                parseDOM: nodeType.parseDOM.map(tag => ({
+                    tag: tag.tag,
+                    getAttrs: dom => {
+                        const attrs = tag.getAttrs(dom)
+                        return Object.assign(
+                            {
                                 diffdata: parseDiff(dom.dataset.diffdata)
-                            }, attrs)
-                        }
-                    }))
-                }
-            )
+                            },
+                            attrs
+                        )
+                    }
+                }))
+            })
         )
     })
-
 
     const diffdata = {
         attrs: {
@@ -89,20 +91,23 @@ export const createDiffSchema = function(docSchema) {
                 getAttrs(dom) {
                     return {
                         diff: dom.dataset.diff,
-                        steps: dom.dataset.steps,
+                        steps: dom.dataset.steps
                     }
                 }
             }
         ],
         toDOM(node) {
-            return ["span", {
-                class: `diff ${node.attrs.diff}`,
-                "data-diff": node.attrs.diff,
-                "data-steps": node.attrs.steps,
-                "data-from": node.attrs.from,
-                "data-to": node.attrs.to,
-                "data-markOnly": node.attrs.markOnly
-            }]
+            return [
+                "span",
+                {
+                    class: `diff ${node.attrs.diff}`,
+                    "data-diff": node.attrs.diff,
+                    "data-steps": node.attrs.steps,
+                    "data-from": node.attrs.from,
+                    "data-to": node.attrs.to,
+                    "data-markOnly": node.attrs.markOnly
+                }
+            ]
         }
     }
 

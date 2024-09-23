@@ -1,12 +1,11 @@
 import {Plugin, PluginKey} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
 
-import {noSpaceTmp, escapeText} from "../../common"
+import {escapeText, noSpaceTmp} from "../../common"
 import {ContributorDialog} from "../dialogs"
 import {addDeletedPartWidget} from "./document_template"
 
 const key = new PluginKey("contributorInput")
-
 
 export class ContributorsPartView {
     constructor(node, view, getPos) {
@@ -41,9 +40,8 @@ export class ContributorsPartView {
     }
 }
 
-export const contributorInputPlugin = function(options) {
-
-    const createDropUp = function(selection) {
+export const contributorInputPlugin = options => {
+    const createDropUp = selection => {
         const dropUp = document.createElement("span"),
             requiredPx = 120,
             parentNode = selection.$anchor.parent
@@ -60,15 +58,17 @@ export const contributorInputPlugin = function(options) {
                 </ul>
             </div>`
 
-        dropUp.querySelector(".edit-contributor").addEventListener("click", event => {
-            event.preventDefault()
-            const dialog = new ContributorDialog(
-                parentNode,
-                options.editor.view,
-                selection.node.attrs
-            )
-            dialog.init()
-        })
+        dropUp
+            .querySelector(".edit-contributor")
+            .addEventListener("click", event => {
+                event.preventDefault()
+                const dialog = new ContributorDialog(
+                    parentNode,
+                    options.editor.view,
+                    selection.node.attrs
+                )
+                dialog.init()
+            })
         return dropUp
     }
 
@@ -79,22 +79,23 @@ export const contributorInputPlugin = function(options) {
                 const decos = DecorationSet.empty
 
                 if (options.editor.docInfo.access_rights === "write") {
-                    this.spec.props.nodeViews["contributors_part"] =
-                        (node, view, getPos) => new ContributorsPartView(node, view, getPos)
+                    this.spec.props.nodeViews["contributors_part"] = (
+                        node,
+                        view,
+                        getPos
+                    ) => new ContributorsPartView(node, view, getPos)
                 }
 
                 return {
                     decos
                 }
             },
-            apply(tr, prev, oldState, state) {
+            apply(tr, _prev, oldState, state) {
                 const pluginState = this.getState(oldState)
-                let {
-                    decos
-                } = pluginState
+                let {decos} = pluginState
 
                 if (
-                    (options.editor.docInfo.access_rights !== "write") ||
+                    options.editor.docInfo.access_rights !== "write" ||
                     (!tr.docChanged && !tr.selectionSet)
                 ) {
                     return {
@@ -108,7 +109,11 @@ export const contributorInputPlugin = function(options) {
                     oldState.selection.node.type.name === "contributor" &&
                     state.selection.node !== oldState.selection.node
                 ) {
-                    const oldDropUpDeco = decos.find(null, null, spec => spec.id === "contributorDropUp")
+                    const oldDropUpDeco = decos.find(
+                        null,
+                        null,
+                        spec => spec.id === "contributorDropUp"
+                    )
                     if (oldDropUpDeco && oldDropUpDeco.length) {
                         decos = decos.remove(oldDropUpDeco)
                     }
@@ -118,11 +123,15 @@ export const contributorInputPlugin = function(options) {
                     state.selection.node.type.name === "contributor" &&
                     state.selection.node !== oldState.selection.node
                 ) {
-                    const dropUpDeco = Decoration.widget(state.selection.from, createDropUp(state.selection), {
-                        side: -1,
-                        stopEvent: () => true,
-                        id: "contributorDropUp"
-                    })
+                    const dropUpDeco = Decoration.widget(
+                        state.selection.from,
+                        createDropUp(state.selection),
+                        {
+                            side: -1,
+                            stopEvent: () => true,
+                            id: "contributorDropUp"
+                        }
+                    )
 
                     decos = decos.add(state.doc, [dropUpDeco])
                 }
@@ -134,15 +143,11 @@ export const contributorInputPlugin = function(options) {
         },
         props: {
             decorations(state) {
-                const {
-                    decos
-                } = this.getState(state)
+                const {decos} = this.getState(state)
 
                 return decos
             },
-            nodeViews: {
-
-            }
+            nodeViews: {}
         }
     })
 }

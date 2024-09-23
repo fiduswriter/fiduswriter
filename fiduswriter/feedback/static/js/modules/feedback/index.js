@@ -1,13 +1,11 @@
-import {post, ensureCSS} from "../common"
+import {ensureCSS, post} from "../common"
 
 // Creates the feedback tab. The tab is meant for user feedback to the developers while FW is still in
 // a somewhat early stage. It is included in a way so it's easy to remove from all the templates.
 // This is also where browser sniffing happens to prevent still unsupported browsers from logging in.
 
 export class FeedbackTab {
-
-    constructor() {
-    }
+    constructor() {}
 
     init() {
         this.render()
@@ -36,10 +34,14 @@ export class FeedbackTab {
             </div>`
         )
 
-        let headerNavWrapper = document.querySelector("#footer-menu.prelogin .fw-container")
+        let headerNavWrapper = document.querySelector(
+            "#footer-menu.prelogin .fw-container"
+        )
 
         if (null === headerNavWrapper) {
-            headerNavWrapper = document.querySelector(".fw-header .fw-container")
+            headerNavWrapper = document.querySelector(
+                ".fw-header .fw-container"
+            )
         }
 
         if (null === headerNavWrapper) {
@@ -59,20 +61,28 @@ export class FeedbackTab {
     }
 
     bind() {
+        document
+            .querySelector("a.feedback-tab")
+            .addEventListener("click", event => {
+                document.querySelector(".feedback-panel").style.display =
+                    "block"
+                event.preventDefault()
+            })
 
-        document.querySelector("a.feedback-tab").addEventListener("click", event => {
-            document.querySelector(".feedback-panel").style.display = "block"
-            event.preventDefault()
-        })
+        document
+            .querySelector("#close-feedback")
+            .addEventListener("click", event => {
+                document.querySelector(".feedback-panel").style.display = "none"
+                document.querySelector("#feedback-form").style.visibility =
+                    "visible"
+                document.querySelector("#response-message").style.display =
+                    "none"
+                event.preventDefault()
+            })
 
-        document.querySelector("#close-feedback").addEventListener("click", event => {
-            document.querySelector(".feedback-panel").style.display = "none"
-            document.querySelector("#feedback-form").style.visibility = "visible"
-            document.querySelector("#response-message").style.display = "none"
-            event.preventDefault()
-        })
-
-        document.querySelector("#feedbackbutton").addEventListener("click", () => this.openFeedback())
+        document
+            .querySelector("#feedbackbutton")
+            .addEventListener("click", () => this.openFeedback())
     }
 
     openFeedback() {
@@ -87,19 +97,16 @@ export class FeedbackTab {
         closeFeedbackEl.style.display = "none"
         feedbackFormEl.style.visibility = "hidden"
 
-        post("/api/feedback/feedback/", {message: messageEl.value}).then(
-            () => {
+        post("/api/feedback/feedback/", {message: messageEl.value})
+            .then(() => {
                 messageEl.value = ""
                 closeFeedbackEl.style.display = "block"
                 responseEl.style.display = "block"
-            }
-        ).catch(
-            (_error) => {
+            })
+            .catch(_error => {
                 messageEl.value = ""
                 closeFeedbackEl.style.display = "block"
-            }
-        )
+            })
         return false
     }
-
 }

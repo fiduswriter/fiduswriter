@@ -1,5 +1,5 @@
-import {ImportNative} from "../../importer/native"
 import {addAlert, longFilePath} from "../../common"
+import {ImportNative} from "../../importer/native"
 import {ShrinkFidus} from "./shrink"
 
 /* Saves a copy of the document. The owner may change in that process, if the
@@ -16,8 +16,9 @@ export class SaveCopy {
 
     init() {
         const shrinker = new ShrinkFidus(this.doc, this.imageDB, this.bibDB)
-        return shrinker.init().then(
-            ({doc, shrunkImageDB, shrunkBibDB, httpIncludes}) => {
+        return shrinker
+            .init()
+            .then(({doc, shrunkImageDB, shrunkBibDB, httpIncludes}) => {
                 const importer = new ImportNative(
                     doc,
                     shrunkBibDB,
@@ -28,11 +29,13 @@ export class SaveCopy {
                     longFilePath(doc.title, doc.path, `${gettext("Copy of")} `)
                 )
                 return importer.init()
-            }).then(
-            ({doc, docInfo}) => {
-                addAlert("info", `${doc.title} ${gettext(" successfully copied.")}`)
+            })
+            .then(({doc, docInfo}) => {
+                addAlert(
+                    "info",
+                    `${doc.title} ${gettext(" successfully copied.")}`
+                )
                 return Promise.resolve({doc, docInfo})
-            }
-        )
+            })
     }
 }

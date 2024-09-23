@@ -23,12 +23,15 @@ export class GetImages {
     getImageZipEntry() {
         if (this.counter < this.imageEntries.length) {
             return new Promise(resolve => {
-                const fc = this.entries.find(entry => entry.filename === this.imageEntries[
-                    this.counter
-                ].image).content
+                const fc = this.entries.find(
+                    entry =>
+                        entry.filename === this.imageEntries[this.counter].image
+                ).content
                 this.imageEntries[this.counter]["file"] = new window.Blob(
                     [fc],
-                    {type: this.imageEntries[this.counter].file_type}
+                    {
+                        type: this.imageEntries[this.counter].file_type
+                    }
                 )
                 this.counter++
                 this.getImageZipEntry().then(() => {
@@ -43,12 +46,13 @@ export class GetImages {
     getImageUrlEntry() {
         if (this.counter < this.imageEntries.length) {
             const getUrl = this.entries.find(
-                entry => entry.filename === `images/${this.imageEntries[this.counter].image.split("/").pop()}`
+                entry =>
+                    entry.filename ===
+                    `images/${this.imageEntries[this.counter].image.split("/").pop()}`
             ).url
-            return get(getUrl).then(
-                response => response.blob()
-            ).then(
-                blob => {
+            return get(getUrl)
+                .then(response => response.blob())
+                .then(blob => {
                     // const mimeString = this.imageEntries[this.counter].file_type
                     // const dataView = new DataView(blob)
                     // const newBlob = new window.Blob([dataView], {type: mimeString})
@@ -56,8 +60,7 @@ export class GetImages {
                     this.imageEntries[this.counter]["file"] = blob
                     this.counter++
                     return this.getImageUrlEntry()
-                }
-            )
+                })
         } else {
             return Promise.resolve()
         }

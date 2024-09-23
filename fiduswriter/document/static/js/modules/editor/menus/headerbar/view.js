@@ -1,6 +1,12 @@
 import {DiffDOM} from "diff-dom"
 import {keyName} from "w3c-keyname"
-import {addAlert, escapeText, findTarget, cleanPath, avatarTemplate} from "../../../common"
+import {
+    addAlert,
+    avatarTemplate,
+    cleanPath,
+    escapeText,
+    findTarget
+} from "../../../common"
 
 export class HeaderbarView {
     constructor(editorView, options) {
@@ -68,9 +74,14 @@ export class HeaderbarView {
             if (this.editor.app.isOffline()) {
                 event.preventDefault()
                 event.stopPropagation()
-                addAlert("info", gettext("Cannot close a document when you're offline."))
+                addAlert(
+                    "info",
+                    gettext("Cannot close a document when you're offline.")
+                )
             }
-        } else if (target.matches("#headerbar #header-navigation .fw-pulldown-item")) {
+        } else if (
+            target.matches("#headerbar #header-navigation .fw-pulldown-item")
+        ) {
             // A header nav menu item was clicked. Now we just need to find
             // which one and execute the corresponding action.
             const searchPath = []
@@ -100,7 +111,11 @@ export class HeaderbarView {
                 menuItem = menuItem.content[searchPath.pop()]
             }
             this.executeMenuItem(menuItem, menu)
-        } else if (target.matches("#headerbar #header-navigation .header-nav-item:not(.disabled)")) {
+        } else if (
+            target.matches(
+                "#headerbar #header-navigation .header-nav-item:not(.disabled)"
+            )
+        ) {
             // A menu has been clicked, lets find out which one.
             let menuNumber = 0
             let seekItem = target.parentElement
@@ -131,7 +146,6 @@ export class HeaderbarView {
                     menu.open = false
                     this.closeAllMenu(menu)
                     this.parentChain = []
-
                 }
             })
             if (needUpdate) {
@@ -143,68 +157,84 @@ export class HeaderbarView {
 
     executeMenuItem(menuItem, menu) {
         switch (menuItem.type) {
-        case "action":
-            if (menuItem.disabled?.(this.editor)) {
-                return
-            }
-            menuItem.action(this.editor)
-            menu.open = false
-            this.openMenu = null
-            this.closeAllMenu(menu)
-            this.parentChain = []
-            this.cursorMenuItem = null
-            this.update()
-            break
-        case "setting":
-            // Similar to 'action' but not closing menu.
-            if (menuItem.disabled?.(this.editor)) {
-                return
-            }
-            menuItem.action(this.editor)
-            this.update()
-            break
-        case "menu": {
-            let flagCloseAllMenu = true
-            if (!this.parentChain.length) {
-                this.parentChain = [menuItem]
-                this.openMenu = menuItem
-                this.openMenu.open = true
-            } else {
-                const isMenuItemInParentChain = this.parentChain[this.parentChain.length - 1].content.find(menu => menu.id === menuItem.id)
-                if (isMenuItemInParentChain) {
-                    //Do not close all open menus
-                    this.parentChain.push(menuItem)
-                } else if (!isMenuItemInParentChain) {
-
-                    for (let index = this.parentChain.length - 2; index >= 0; index--) {
-
-                        if (this.parentChain[index].content.find(menu => menu.id === menuItem.id)) {
-
-                            const noOfRemovals = this.parentChain.length - (index + 1)
-                            if (noOfRemovals > 0) {//not last element
-                                this.parentChain.splice(index + 1, noOfRemovals)
+            case "action":
+                if (menuItem.disabled?.(this.editor)) {
+                    return
+                }
+                menuItem.action(this.editor)
+                menu.open = false
+                this.openMenu = null
+                this.closeAllMenu(menu)
+                this.parentChain = []
+                this.cursorMenuItem = null
+                this.update()
+                break
+            case "setting":
+                // Similar to 'action' but not closing menu.
+                if (menuItem.disabled?.(this.editor)) {
+                    return
+                }
+                menuItem.action(this.editor)
+                this.update()
+                break
+            case "menu": {
+                let flagCloseAllMenu = true
+                if (!this.parentChain.length) {
+                    this.parentChain = [menuItem]
+                    this.openMenu = menuItem
+                    this.openMenu.open = true
+                } else {
+                    const isMenuItemInParentChain = this.parentChain[
+                        this.parentChain.length - 1
+                    ].content.find(menu => menu.id === menuItem.id)
+                    if (isMenuItemInParentChain) {
+                        //Do not close all open menus
+                        this.parentChain.push(menuItem)
+                    } else if (!isMenuItemInParentChain) {
+                        for (
+                            let index = this.parentChain.length - 2;
+                            index >= 0;
+                            index--
+                        ) {
+                            if (
+                                this.parentChain[index].content.find(
+                                    menu => menu.id === menuItem.id
+                                )
+                            ) {
+                                const noOfRemovals =
+                                    this.parentChain.length - (index + 1)
+                                if (noOfRemovals > 0) {
+                                    //not last element
+                                    this.parentChain.splice(
+                                        index + 1,
+                                        noOfRemovals
+                                    )
+                                }
+                                this.closeOtherMenu(
+                                    this.parentChain[
+                                        this.parentChain.length - 1
+                                    ],
+                                    menuItem
+                                )
+                                this.parentChain.push(menuItem)
+                                flagCloseAllMenu = false
+                                break
                             }
-                            this.closeOtherMenu(this.parentChain[this.parentChain.length - 1], menuItem)
-                            this.parentChain.push(menuItem)
-                            flagCloseAllMenu = false
-                            break
                         }
                     }
+                    if (flagCloseAllMenu && !isMenuItemInParentChain) {
+                        this.closeAllMenu(menu)
+                        this.parentChain = [menuItem]
+                    }
                 }
-                if (flagCloseAllMenu && !isMenuItemInParentChain) {
-                    this.closeAllMenu(menu)
-                    this.parentChain = [menuItem]
-                }
+                menuItem.open = true
+                this.update()
+                break
             }
-            menuItem.open = true
-            this.update()
-            break
-        }
-        default:
-            break
+            default:
+                break
         }
     }
-
 
     closeAllMenu(menu) {
         menu.content.forEach(menuItem => {
@@ -218,14 +248,16 @@ export class HeaderbarView {
     closeOtherMenu(menu, currentMenuItem) {
         menu.content.forEach(menuItem => {
             if (menuItem.type === "menu" && menuItem.open) {
-                if (!this.parentChain.includes(menuItem) && currentMenuItem != menuItem) {
+                if (
+                    !this.parentChain.includes(menuItem) &&
+                    currentMenuItem != menuItem
+                ) {
                     menuItem.open = false
                 }
                 this.closeOtherMenu(menuItem, currentMenuItem)
             }
         })
     }
-
 
     onKeydown(event) {
         if (findTarget(event, "h1#document-title")) {
@@ -246,7 +278,11 @@ export class HeaderbarView {
         }
 
         if (this.openMenu) {
-            if (["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight"].includes(name)) {
+            if (
+                ["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight"].includes(
+                    name
+                )
+            ) {
                 event.preventDefault()
                 event.stopPropagation()
                 this.changeCursorMenuItem(name)
@@ -258,7 +294,10 @@ export class HeaderbarView {
                 if (menuItem.type === "menu") {
                     this.cursorMenuItem = menuItem.content[0]
                 }
-                this.executeMenuItem(menuItem, this.parentChain[this.parentChain.length - 1])
+                this.executeMenuItem(
+                    menuItem,
+                    this.parentChain[this.parentChain.length - 1]
+                )
                 return
             } else if (name === "Escape") {
                 event.preventDefault()
@@ -279,13 +318,17 @@ export class HeaderbarView {
             return
         }
         const docTitleEl = document.body.querySelector("h1#document-title")
-        if (!docTitleEl.childNodes.length ||
-            (docTitleEl.childNodes.length === 1 && docTitleEl.firstChild.nodeType === 3)
+        if (
+            !docTitleEl.childNodes.length ||
+            (docTitleEl.childNodes.length === 1 &&
+                docTitleEl.firstChild.nodeType === 3)
         ) {
             return
         }
         // Special key was pressed, we reset to text only and blur
-        docTitleEl.innerHTML = docTitleEl.innerText.trim().replace(/\r?\n|\r/g, "")
+        docTitleEl.innerHTML = docTitleEl.innerText
+            .trim()
+            .replace(/\r?\n|\r/g, "")
         docTitleEl.blur()
     }
 
@@ -294,9 +337,16 @@ export class HeaderbarView {
             this.cursorMenuItem = this.parentChain[0].content[0]
         } else {
             if (["ArrowDown", "ArrowUp"].includes(name)) {
-                let index = this.parentChain[this.parentChain.length - 1].content.indexOf(this.cursorMenuItem)
+                let index = this.parentChain[
+                    this.parentChain.length - 1
+                ].content.indexOf(this.cursorMenuItem)
                 if (name === "ArrowDown") {
-                    if (index < this.parentChain[this.parentChain.length - 1].content.length - 1) {
+                    if (
+                        index <
+                        this.parentChain[this.parentChain.length - 1].content
+                            .length -
+                            1
+                    ) {
                         index++
                     } else {
                         index = 0
@@ -305,20 +355,32 @@ export class HeaderbarView {
                     if (index > 0) {
                         index--
                     } else {
-                        index = this.parentChain[this.parentChain.length - 1].content.length - 1
+                        index =
+                            this.parentChain[this.parentChain.length - 1]
+                                .content.length - 1
                     }
                 }
-                this.cursorMenuItem = this.parentChain[this.parentChain.length - 1].content[index]
+                this.cursorMenuItem =
+                    this.parentChain[this.parentChain.length - 1].content[index]
             } else if (name === "ArrowLeft") {
                 if (this.parentChain.length > 1) {
-                    this.cursorMenuItem = this.parentChain[this.parentChain.length - 1]
+                    this.cursorMenuItem =
+                        this.parentChain[this.parentChain.length - 1]
                     this.parentChain.pop()
-                    this.closeAllMenu(this.parentChain[this.parentChain.length - 1])
+                    this.closeAllMenu(
+                        this.parentChain[this.parentChain.length - 1]
+                    )
                 } else {
-                    const currentMenuIndex = this.editor.menu.headerbarModel.content.findIndex(menu => menu.open)
-                    const newMenuIndex = currentMenuIndex ? currentMenuIndex - 1 : this.editor.menu.headerbarModel.content.length - 1
+                    const currentMenuIndex =
+                        this.editor.menu.headerbarModel.content.findIndex(
+                            menu => menu.open
+                        )
+                    const newMenuIndex = currentMenuIndex
+                        ? currentMenuIndex - 1
+                        : this.editor.menu.headerbarModel.content.length - 1
                     this.openMenu.open = false
-                    this.openMenu = this.editor.menu.headerbarModel.content[newMenuIndex]
+                    this.openMenu =
+                        this.editor.menu.headerbarModel.content[newMenuIndex]
                     this.openMenu.open = true
                     this.cursorMenuItem = this.openMenu.content[0]
                     this.parentChain = [this.openMenu]
@@ -327,12 +389,23 @@ export class HeaderbarView {
                 if (this.cursorMenuItem.type === "menu") {
                     const menuItem = this.cursorMenuItem
                     this.cursorMenuItem = menuItem.content[0]
-                    this.executeMenuItem(menuItem, this.parentChain[this.parentChain.length - 1])
+                    this.executeMenuItem(
+                        menuItem,
+                        this.parentChain[this.parentChain.length - 1]
+                    )
                 } else {
-                    const currentMenuIndex = this.editor.menu.headerbarModel.content.findIndex(menu => menu.open)
-                    const newMenuIndex = currentMenuIndex === this.editor.menu.headerbarModel.content.length - 1 ? 0 : currentMenuIndex + 1
+                    const currentMenuIndex =
+                        this.editor.menu.headerbarModel.content.findIndex(
+                            menu => menu.open
+                        )
+                    const newMenuIndex =
+                        currentMenuIndex ===
+                        this.editor.menu.headerbarModel.content.length - 1
+                            ? 0
+                            : currentMenuIndex + 1
                     this.openMenu.open = false
-                    this.openMenu = this.editor.menu.headerbarModel.content[newMenuIndex]
+                    this.openMenu =
+                        this.editor.menu.headerbarModel.content[newMenuIndex]
                     this.openMenu.open = true
                     this.cursorMenuItem = this.openMenu.content[0]
                     this.parentChain = [this.openMenu]
@@ -378,7 +451,10 @@ export class HeaderbarView {
     }
 
     update() {
-        if (document.activeElement && document.activeElement.matches("h1#document-title")) {
+        if (
+            document.activeElement &&
+            document.activeElement.matches("h1#document-title")
+        ) {
             return
         }
         const diff = this.dd.diff(this.headerEl, this.getHeaderHTML())
@@ -404,13 +480,11 @@ export class HeaderbarView {
     getTitle() {
         const doc = this.editor.view.state.doc
         let title = ""
-        doc.firstChild.forEach(
-            child => {
-                if (!child.marks.find(mark => mark.type.name === "deletion")) {
-                    title += escapeText(child.textContent)
-                }
+        doc.firstChild.forEach(child => {
+            if (!child.marks.find(mark => mark.type.name === "deletion")) {
+                title += escapeText(child.textContent)
             }
-        )
+        })
         return title.trim()
     }
 
@@ -423,7 +497,10 @@ export class HeaderbarView {
             0,
             this.editor.docInfo.path.lastIndexOf("/")
         )
-        const exitUrl = !folderPath.length && this.editor.app.routes[""].app === "document" ? "/" : `/documents${encodeURI(folderPath)}/`
+        const exitUrl =
+            !folderPath.length && this.editor.app.routes[""].app === "document"
+                ? "/"
+                : `/documents${encodeURI(folderPath)}/`
         return `<div>
             <div id="close-document-top" title="${gettext("Close the document and return to the document overview menu.")}">
                 <a href="${exitUrl}" aria-label="Close document">
@@ -431,7 +508,7 @@ export class HeaderbarView {
                 </a>
             </div>
             <div id="document-top">
-                <h1 id="document-title"${this.editor.app.isOffline() || !this.editor.pathEditable ? "" : " contenteditable=\"true\""}>${this.getPathText()}</h1>
+                <h1 id="document-title"${this.editor.app.isOffline() || !this.editor.pathEditable ? "" : ' contenteditable="true"'}>${this.getPathText()}</h1>
                 <nav id="header-navigation">
                     ${this.getHeaderNavHTML()}
                 </nav>
@@ -445,10 +522,9 @@ export class HeaderbarView {
         if (participants.length > 1) {
             return `
                 <div id="connected-collaborators">
-                    ${
-    participants.map(participant =>
-        avatarTemplate({user: participant})).join("")
-}
+                    ${participants
+                        .map(participant => avatarTemplate({user: participant}))
+                        .join("")}
                 </div>
             `
         } else {
@@ -457,30 +533,29 @@ export class HeaderbarView {
     }
 
     getHeaderNavHTML() {
-        return this.editor.menu.headerbarModel.content.map(menu =>
-            `
+        return this.editor.menu.headerbarModel.content
+            .map(
+                menu =>
+                    `
                 <div class="header-menu">
                     <span class="header-nav-item${menu.disabled && menu.disabled(this.editor) ? " disabled" : ""}" title="${menu.tooltip}">
                         ${typeof menu.title === "function" ? menu.title(this.editor) : menu.title}
                     </span>
-                    ${
-    menu.open ?
-        this.getMenuHTML(menu) :
-        ""
-}
+                    ${menu.open ? this.getMenuHTML(menu) : ""}
                 </div>
             `
-        ).join("")
+            )
+            .join("")
     }
 
     getMenuHTML(menu) {
         return `<div class="fw-pulldown fw-left fw-open">
             <ul>
-                ${
-    menu.content.map(menuItem =>
-        `<li>${this.getMenuItemHTML(menuItem)}</li>`
-    ).join("")
-}
+                ${menu.content
+                    .map(
+                        menuItem => `<li>${this.getMenuItemHTML(menuItem)}</li>`
+                    )
+                    .join("")}
             </ul>
         </div>`
     }
@@ -488,80 +563,47 @@ export class HeaderbarView {
     getMenuItemHTML(menuItem) {
         let returnValue
         switch (menuItem.type) {
-        case "action":
-        case "setting":
-            returnValue = this.getActionMenuItemHTML(menuItem)
-            break
-        case "menu":
-            returnValue = this.getMenuMenuItemHTML(menuItem)
-            break
-        case "separator":
-            returnValue = "<hr>"
-            break
-        default:
-            break
+            case "action":
+            case "setting":
+                returnValue = this.getActionMenuItemHTML(menuItem)
+                break
+            case "menu":
+                returnValue = this.getMenuMenuItemHTML(menuItem)
+                break
+            case "separator":
+                returnValue = "<hr>"
+                break
+            default:
+                break
         }
         return returnValue
     }
 
     getActionMenuItemHTML(menuItem) {
         return `<span class="fw-pulldown-item${
-            menuItem.selected && menuItem.selected(this.editor) ?
-                " selected" :
-                ""
-        }${
-            menuItem.disabled && menuItem.disabled(this.editor) ?
-                " disabled" :
-                ""
-        }${
-            menuItem === this.cursorMenuItem ?
-                " cursor" :
-                ""
-        }" ${
-            menuItem.tooltip ?
-                `title="${menuItem.tooltip}"` :
-                ""
-        }>
-            ${
-    menuItem.icon ?
-        `<i class="fa fa-${menuItem.icon}"></i>` :
-        ""
-}
+            menuItem.selected && menuItem.selected(this.editor)
+                ? " selected"
+                : ""
+        }${menuItem.disabled && menuItem.disabled(this.editor) ? " disabled" : ""}${
+            menuItem === this.cursorMenuItem ? " cursor" : ""
+        }" ${menuItem.tooltip ? `title="${menuItem.tooltip}"` : ""}>
+            ${menuItem.icon ? `<i class="fa fa-${menuItem.icon}"></i>` : ""}
             ${typeof menuItem.title === "function" ? menuItem.title(this.editor) : menuItem.title}
         </span>`
     }
 
     getMenuMenuItemHTML(menuItem) {
         return `<span class="fw-pulldown-item${
-            menuItem.selected && menuItem.selected(this.editor) ?
-                " selected" :
-                ""
-        }${
-            menuItem.disabled && menuItem.disabled(this.editor) ?
-                " disabled" :
-                ""
-        }${
-            menuItem === this.cursorMenuItem ?
-                " cursor" :
-                ""
-        }" ${
-            menuItem.tooltip ?
-                `title="${menuItem.tooltip}"` :
-                ""
-        }>
-            ${
-    menuItem.icon ?
-        `<i class="fa fa-${menuItem.icon}"></i>` :
-        ""
-}
+            menuItem.selected && menuItem.selected(this.editor)
+                ? " selected"
+                : ""
+        }${menuItem.disabled && menuItem.disabled(this.editor) ? " disabled" : ""}${
+            menuItem === this.cursorMenuItem ? " cursor" : ""
+        }" ${menuItem.tooltip ? `title="${menuItem.tooltip}"` : ""}>
+            ${menuItem.icon ? `<i class="fa fa-${menuItem.icon}"></i>` : ""}
             ${typeof menuItem.title === "function" ? menuItem.title(this.editor) : menuItem.title}
             <span class="fw-icon-right"><i class="fa fa-caret-right"></i></span>
         </span>
-        ${
-    menuItem.open ?
-        this.getMenuHTML(menuItem) :
-        ""
-}`
+        ${menuItem.open ? this.getMenuHTML(menuItem) : ""}`
     }
-
 }

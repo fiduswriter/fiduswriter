@@ -1,9 +1,12 @@
-import {TextSelection} from "prosemirror-state"
 import {GapCursor} from "prosemirror-gapcursor"
+import {TextSelection} from "prosemirror-state"
 
-import {getCommentDuringCreationDecoration, deactivateAllSelectedChanges} from "../state_plugins"
 import {findTarget, post} from "../../common"
-import {CommentEditor, CommentAnswerEditor, serializeComment} from "./editors"
+import {
+    deactivateAllSelectedChanges,
+    getCommentDuringCreationDecoration
+} from "../state_plugins"
+import {CommentAnswerEditor, CommentEditor, serializeComment} from "./editors"
 
 /* Functions related to user interactions with comments */
 export class ModCommentInteractions {
@@ -23,54 +26,54 @@ export class ModCommentInteractions {
             const el = {}
             let id
             switch (true) {
-            case findTarget(event, ".edit-comment", el):
-                this.editComment = true
-                this.activeCommentAnswerId = false
-                id = el.target.dataset.id
-
-                if (this.activeCommentId !== id) {
-                    this.deactivateSelectedChanges()
-                    this.activeCommentId = id
+                case findTarget(event, ".edit-comment", el):
                     this.editComment = true
-                    this.updateDOM()
-                } else {
-                    this.updateDOM()
-                }
-                break
-            case findTarget(event, ".edit-comment-answer", el):
-                this.editComment = false
-                this.editAnswer(
-                    el.target.dataset.id,
-                    el.target.dataset.answer
-                )
-                break
-            case findTarget(event, ".resolve-comment", el):
-                this.resolveComment(el.target.dataset.id)
-                break
-            case findTarget(event, ".recreate-comment", el):
-                this.recreateComment(el.target.dataset.id)
-                break
-            case findTarget(event, ".assign-comment", el):
-                this.assignComment(
-                    el.target.dataset.id,
-                    parseInt(el.target.dataset.user),
-                    el.target.dataset.username
-                )
-                break
-            case findTarget(event, ".unassign-comment", el):
-                this.unassignComment(el.target.dataset.id)
-                break
-            case findTarget(event, ".delete-comment", el):
-                this.deleteComment(el.target.dataset.id)
-                break
-            case findTarget(event, ".delete-comment-answer", el):
-                this.deleteCommentAnswer(
-                    el.target.dataset.id,
-                    el.target.dataset.answer
-                )
-                break
-            default:
-                break
+                    this.activeCommentAnswerId = false
+                    id = el.target.dataset.id
+
+                    if (this.activeCommentId !== id) {
+                        this.deactivateSelectedChanges()
+                        this.activeCommentId = id
+                        this.editComment = true
+                        this.updateDOM()
+                    } else {
+                        this.updateDOM()
+                    }
+                    break
+                case findTarget(event, ".edit-comment-answer", el):
+                    this.editComment = false
+                    this.editAnswer(
+                        el.target.dataset.id,
+                        el.target.dataset.answer
+                    )
+                    break
+                case findTarget(event, ".resolve-comment", el):
+                    this.resolveComment(el.target.dataset.id)
+                    break
+                case findTarget(event, ".recreate-comment", el):
+                    this.recreateComment(el.target.dataset.id)
+                    break
+                case findTarget(event, ".assign-comment", el):
+                    this.assignComment(
+                        el.target.dataset.id,
+                        Number.parseInt(el.target.dataset.user),
+                        el.target.dataset.username
+                    )
+                    break
+                case findTarget(event, ".unassign-comment", el):
+                    this.unassignComment(el.target.dataset.id)
+                    break
+                case findTarget(event, ".delete-comment", el):
+                    this.deleteComment(el.target.dataset.id)
+                    break
+                case findTarget(event, ".delete-comment-answer", el):
+                    this.deleteCommentAnswer(
+                        el.target.dataset.id,
+                        el.target.dataset.answer
+                    )
+                    break
+                default:
+                    break
             }
         })
     }
@@ -80,8 +83,8 @@ export class ModCommentInteractions {
             answerEditorDOM = document.querySelector("#answer-editor")
 
         if (
-            (commentEditorDOM?.matches(":not(:empty)")) ||
-            (answerEditorDOM?.matches(":not(:empty)"))
+            commentEditorDOM?.matches(":not(:empty)") ||
+            answerEditorDOM?.matches(":not(:empty)")
         ) {
             // Editor has been set up already. Abort.
             return
@@ -93,19 +96,34 @@ export class ModCommentInteractions {
         }
         const id = this.activeCommentId
         if (commentEditorDOM) {
-            const value = id === "-1" ?
-                {text: [], isMajor: false} :
-                {
-                    text: this.mod.store.comments[id].comment,
-                    isMajor: this.mod.store.comments[id].isMajor
-                }
-            this.editor = new CommentEditor(this.mod, id, commentEditorDOM, value.text, {isMajor: value.isMajor})
+            const value =
+                id === "-1"
+                    ? {text: [], isMajor: false}
+                    : {
+                          text: this.mod.store.comments[id].comment,
+                          isMajor: this.mod.store.comments[id].isMajor
+                      }
+            this.editor = new CommentEditor(
+                this.mod,
+                id,
+                commentEditorDOM,
+                value.text,
+                {isMajor: value.isMajor}
+            )
         } else {
             const answerId = this.activeCommentAnswerId,
-                text = answerId ?
-                    this.mod.store.comments[id].answers.find(answer => answer.id === answerId).answer :
-                    []
-            this.editor = new CommentAnswerEditor(this.mod, id, answerEditorDOM, text, {answerId})
+                text = answerId
+                    ? this.mod.store.comments[id].answers.find(
+                          answer => answer.id === answerId
+                      ).answer
+                    : []
+            this.editor = new CommentAnswerEditor(
+                this.mod,
+                id,
+                answerEditorDOM,
+                text,
+                {answerId}
+            )
         }
 
         this.editor.init()
@@ -117,13 +135,15 @@ export class ModCommentInteractions {
     }
 
     findCommentIds(node) {
-        return node.marks.filter(
-            mark => mark.type.name === "comment" && mark.attrs.id
-        ).map(mark => mark.attrs.id)
+        return node.marks
+            .filter(mark => mark.type.name === "comment" && mark.attrs.id)
+            .map(mark => mark.attrs.id)
     }
 
     findCommentsAt(node) {
-        return this.findCommentIds(node).map(id => this.mod.store.findComment(id))
+        return this.findCommentIds(node).map(id =>
+            this.mod.store.findComment(id)
+        )
     }
 
     deactivateSelectedChanges() {
@@ -131,7 +151,9 @@ export class ModCommentInteractions {
         if (tr) {
             this.mod.editor.view.dispatch(tr)
         }
-        const fnTr = deactivateAllSelectedChanges(this.mod.editor.mod.footnotes.fnEditor.view.state.tr)
+        const fnTr = deactivateAllSelectedChanges(
+            this.mod.editor.mod.footnotes.fnEditor.view.state.tr
+        )
         if (fnTr) {
             this.mod.editor.mod.footnotes.fnEditor.view.dispatch(fnTr)
         }
@@ -140,7 +162,9 @@ export class ModCommentInteractions {
     collapseSelectionToEnd() {
         const $pos = this.mod.editor.currentView.state.selection.$to
         const validTextSelection = $pos.parent.inlineContent
-        const selection = validTextSelection ? new TextSelection($pos) : new GapCursor($pos)
+        const selection = validTextSelection
+            ? new TextSelection($pos)
+            : new GapCursor($pos)
         const tr = this.mod.editor.currentView.state.tr.setSelection(selection)
         if (tr) {
             this.mod.editor.currentView.dispatch(tr)
@@ -164,7 +188,6 @@ export class ModCommentInteractions {
     // Activate the comments included in the selection or the comment where the
     // caret is placed, if the editor is in focus.
     activateSelectedComment(view) {
-
         const selection = view.state.selection
         let comments = []
 
@@ -174,16 +197,12 @@ export class ModCommentInteractions {
                 comments = this.findCommentsAt(node)
             }
         } else {
-            view.state.doc.nodesBetween(
-                selection.from,
-                selection.to,
-                node => {
-                    if (!node.isInline) {
-                        return
-                    }
-                    comments = comments.concat(this.findCommentsAt(node))
+            view.state.doc.nodesBetween(selection.from, selection.to, node => {
+                if (!node.isInline) {
+                    return
                 }
-            )
+                comments = comments.concat(this.findCommentsAt(node))
+            })
         }
 
         if (comments.length) {
@@ -195,7 +214,6 @@ export class ModCommentInteractions {
             this.updateDOM()
         }
     }
-
 
     isCurrentlyEditing() {
         // Returns true if
@@ -265,7 +283,11 @@ export class ModCommentInteractions {
             this.editor.dom.childNodes.forEach(node => {
                 if (node.classList && node.classList.contains("comment-btns")) {
                     node.childNodes.forEach(buttons => {
-                        if (buttons.classList && buttons.classList.contains("submit") && buttons.classList.contains("disabled")) {
+                        if (
+                            buttons.classList &&
+                            buttons.classList.contains("submit") &&
+                            buttons.classList.contains("disabled")
+                        ) {
                             buttons.classList.remove("disabled")
                         }
                     })
@@ -277,44 +299,53 @@ export class ModCommentInteractions {
 
     assignComment(id, user, username) {
         this.notifyAssignedUser(user, id)
-        this.mod.store.updateComment({id, assignedUser: user, assignedUsername: username})
+        this.mod.store.updateComment({
+            id,
+            assignedUser: user,
+            assignedUsername: username
+        })
     }
 
     unassignComment(id) {
-        this.mod.store.updateComment({id, assignedUser: false, assignedUsername: false})
+        this.mod.store.updateComment({
+            id,
+            assignedUser: false,
+            assignedUsername: false
+        })
     }
 
     notifyAssignedUser(user, id) {
         const comment = this.mod.store.findComment(id)
         const {html, text} = serializeComment(comment.comment)
 
-        post(
-            "/api/document/comment_notify/",
-            {
-                doc_id: this.mod.editor.docInfo.id,
-                collaborator_id: user,
-                comment_html: html,
-                comment_text: text,
-                type: "assign"
-            }
-        )
+        post("/api/document/comment_notify/", {
+            doc_id: this.mod.editor.docInfo.id,
+            collaborator_id: user,
+            comment_html: html,
+            comment_text: text,
+            type: "assign"
+        })
     }
-
 
     updateComment({id, comment, isMajor}) {
         // Save the change to a comment and mark that the document has been changed
         if (id === "-1") {
-            const referrer = getCommentDuringCreationDecoration(this.mod.store.commentDuringCreation.view.state)
+            const referrer = getCommentDuringCreationDecoration(
+                this.mod.store.commentDuringCreation.view.state
+            )
             // This is a new comment. We need to get an ID for it if it has content.
 
             let username
 
-            if (["review", "review-tracked"].includes(this.mod.editor.docInfo.access_rights)) {
+            if (
+                ["review", "review-tracked"].includes(
+                    this.mod.editor.docInfo.access_rights
+                )
+            ) {
                 username = `${gettext("Reviewer")} ${this.mod.editor.user.id}`
             } else {
                 username = this.mod.editor.user.username
             }
-
 
             this.mod.store.addComment(
                 {
@@ -333,16 +364,12 @@ export class ModCommentInteractions {
         }
         this.deactivateAll()
         this.updateDOM()
-
     }
 
     cancelSubmit() {
         // Handle a click on the cancel button of the comment submit form.
         const id = this.activeCommentId
-        if (
-            id === "-1" ||
-            this.mod.store.comments[id]?.comment.length === 0
-        ) {
+        if (id === "-1" || this.mod.store.comments[id]?.comment.length === 0) {
             this.deleteComment(id)
         } else {
             this.deactivateAll()
@@ -370,7 +397,11 @@ export class ModCommentInteractions {
 
         let username
 
-        if (["review", "review-tracked"].includes(this.mod.editor.docInfo.access_rights)) {
+        if (
+            ["review", "review-tracked"].includes(
+                this.mod.editor.docInfo.access_rights
+            )
+        ) {
             username = `${gettext("Reviewer")} ${this.mod.editor.user.id}`
         } else {
             username = this.mod.editor.user.username

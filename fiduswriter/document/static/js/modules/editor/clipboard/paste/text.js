@@ -2,7 +2,6 @@ import fixUTF8 from "fix-utf8"
 
 import {__parseFromClipboard} from "prosemirror-view"
 
-
 export class TextPaste {
     constructor(editor, inText, view) {
         this.editor = editor
@@ -26,12 +25,15 @@ export class TextPaste {
                     const format = "autocite",
                         references = newIds.map(id => ({id}))
 
-                    const citationNode = this.editor.currentView.state.schema.nodes["citation"].create(
-                        {format, references}
-                    )
-                    const tr = this.editor.currentView.state.tr.replaceSelectionWith(
-                        citationNode, true
-                    )
+                    const citationNode =
+                        this.editor.currentView.state.schema.nodes[
+                            "citation"
+                        ].create({format, references})
+                    const tr =
+                        this.editor.currentView.state.tr.replaceSelectionWith(
+                            citationNode,
+                            true
+                        )
                     this.view.dispatch(tr)
                 },
                 () => {
@@ -44,31 +46,47 @@ export class TextPaste {
             )
             importer.init()
         })
-
     }
 
     sliceSingleNode(slice) {
-        return slice.openStart == 0 && slice.openEnd == 0 && slice.content.childCount == 1 ? slice.content.firstChild : null
+        return slice.openStart == 0 &&
+            slice.openEnd == 0 &&
+            slice.content.childCount == 1
+            ? slice.content.firstChild
+            : null
     }
 
     insertText() {
         // Inserts text as if it was pasted. We do that by converting it to html and inserting it that way.
         // Adapted from prosemirror-view/src/input.js
         const dom = document.createElement("div")
-        this.text.trim().split(/(?:\r\n?|\n)+/).forEach(block => {
-            dom.appendChild(document.createElement("p")).textContent = block
-        })
+        this.text
+            .trim()
+            .split(/(?:\r\n?|\n)+/)
+            .forEach(block => {
+                dom.appendChild(document.createElement("p")).textContent = block
+            })
         const html = dom.innerHTML
 
-        const slice = __parseFromClipboard(this.view, "", html, this.view.shiftKey, this.view.state.selection.$from)
+        const slice = __parseFromClipboard(
+            this.view,
+            "",
+            html,
+            this.view.shiftKey,
+            this.view.state.selection.$from
+        )
 
         if (!slice) {
             return
         }
 
         const singleNode = this.sliceSingleNode(slice)
-        const tr = singleNode ? this.view.state.tr.replaceSelectionWith(singleNode, this.view.shiftKey) : this.view.state.tr.replaceSelection(slice)
+        const tr = singleNode
+            ? this.view.state.tr.replaceSelectionWith(
+                  singleNode,
+                  this.view.shiftKey
+              )
+            : this.view.state.tr.replaceSelection(slice)
         this.view.dispatch(tr.scrollIntoView())
     }
-
 }

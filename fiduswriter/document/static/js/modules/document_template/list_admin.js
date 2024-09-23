@@ -1,7 +1,6 @@
-import {whenReady, findTarget, escapeText, ensureCSS} from "../common"
-import {DocumentTemplateImporter} from "./importer"
+import {ensureCSS, escapeText, findTarget, whenReady} from "../common"
 import {DocumentTemplateExporter} from "./exporter"
-
+import {DocumentTemplateImporter} from "./importer"
 
 export class DocumentTemplateListAdmin {
     constructor() {
@@ -23,7 +22,9 @@ export class DocumentTemplateListAdmin {
 
         whenReady().then(() => {
             this.objectTools = document.querySelector("ul.object-tools")
-            this.actionDropdown = document.querySelector("select[name=\"action\"]")
+            this.actionDropdown = document.querySelector(
+                'select[name="action"]'
+            )
             this.modifyDOM()
             this.bind()
         })
@@ -44,56 +45,64 @@ export class DocumentTemplateListAdmin {
 
     showErrors(errors) {
         this.templateDesignerBlock.querySelector("ul.errorlist").innerHTML =
-            Object.values(errors).map(error => `<li>${escapeText(error)}</li>`).join("")
+            Object.values(errors)
+                .map(error => `<li>${escapeText(error)}</li>`)
+                .join("")
     }
 
-
     bind() {
-
         document.body.addEventListener("click", event => {
             const el = {}
             switch (true) {
-            case findTarget(event, "#upload-template", el):
-            {
-                event.preventDefault()
-                const fileSelector = document.createElement("input")
-                fileSelector.id = "fidus-template-uploader"
-                fileSelector.setAttribute("type", "file")
-                fileSelector.setAttribute("multiple", "")
-                fileSelector.setAttribute("accept", ".fidustemplate")
-                document.body.appendChild(fileSelector)
-                fileSelector.click()
-                fileSelector.addEventListener("change", () => {
-                    const files = Array.from(fileSelector.files).filter(file => {
-                        //TODO: This is an arbitrary size. What should be done with huge import files?
-                        if (file.length === 0 || file.size > 104857600) {
-                            return false
-                        }
-                        return true
-                    })
-                    Promise.all(files.map(file => {
-                        const importer = new DocumentTemplateImporter(file)
-                        return importer.init()
-                    })).then(
-                        () => window.location.reload()
-                    )
-                })
-                break
-            }
-            case findTarget(event, "button[type=submit]", el):
-                if (this.actionDropdown.value === "download") {
+                case findTarget(event, "#upload-template", el): {
                     event.preventDefault()
-                    const ids = Array.from(document.querySelectorAll("#result_list tr.selected input[type=\"checkbox\"]")).map(
-                        el => parseInt(el.value)
-                    )
-                    ids.forEach(id => {
-                        const exporter = new DocumentTemplateExporter(id)
-                        exporter.init()
+                    const fileSelector = document.createElement("input")
+                    fileSelector.id = "fidus-template-uploader"
+                    fileSelector.setAttribute("type", "file")
+                    fileSelector.setAttribute("multiple", "")
+                    fileSelector.setAttribute("accept", ".fidustemplate")
+                    document.body.appendChild(fileSelector)
+                    fileSelector.click()
+                    fileSelector.addEventListener("change", () => {
+                        const files = Array.from(fileSelector.files).filter(
+                            file => {
+                                //TODO: This is an arbitrary size. What should be done with huge import files?
+                                if (
+                                    file.length === 0 ||
+                                    file.size > 104857600
+                                ) {
+                                    return false
+                                }
+                                return true
+                            }
+                        )
+                        Promise.all(
+                            files.map(file => {
+                                const importer = new DocumentTemplateImporter(
+                                    file
+                                )
+                                return importer.init()
+                            })
+                        ).then(() => window.location.reload())
                     })
+                    break
                 }
-                break
-            default:
-                break
+                case findTarget(event, "button[type=submit]", el):
+                    if (this.actionDropdown.value === "download") {
+                        event.preventDefault()
+                        const ids = Array.from(
+                            document.querySelectorAll(
+                                '#result_list tr.selected input[type="checkbox"]'
+                            )
+                        ).map(el => Number.parseInt(el.value))
+                        ids.forEach(id => {
+                            const exporter = new DocumentTemplateExporter(id)
+                            exporter.init()
+                        })
+                    }
+                    break
+                default:
+                    break
             }
         })
     }

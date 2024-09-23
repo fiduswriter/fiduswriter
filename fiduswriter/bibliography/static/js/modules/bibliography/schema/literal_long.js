@@ -1,6 +1,6 @@
-import {enquote, sup, sub, smallcaps, url, text, variable} from "./common"
-import {marks} from "prosemirror-schema-basic"
 import {Schema} from "prosemirror-model"
+import {marks} from "prosemirror-schema-basic"
+import {url, enquote, smallcaps, sub, sup, text, variable} from "./common"
 
 const longliteral = {
     content: "inline*",
@@ -9,9 +9,13 @@ const longliteral = {
     defining: true,
     parseDOM: [{tag: "pre.long-literal"}],
     toDOM(_node) {
-        return ["pre", {
-            class: "long-literal"
-        }, 0]
+        return [
+            "pre",
+            {
+                class: "long-literal"
+            },
+            0
+        ]
     }
 }
 

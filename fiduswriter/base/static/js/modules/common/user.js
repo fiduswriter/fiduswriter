@@ -1,23 +1,20 @@
 import {post} from "./network"
 
-export const setLanguage = function(config, language) {
-    return post("/api/i18n/setlang/", {language}).then(
-        () => {
-            // We delete the network cache as this contains the JS
-            // translations.
-            caches.keys().then(names => {
-                for (const name of names) {
-                    caches.delete(name)
-                }
-                window.location.reload()
-            })
-        }
-    )
-}
+export const setLanguage = (_config, language) =>
+    post("/api/i18n/setlang/", {language}).then(() => {
+        // We delete the network cache as this contains the JS
+        // translations.
+        caches.keys().then(names => {
+            for (const name of names) {
+                caches.delete(name)
+            }
+            window.location.reload()
+        })
+    })
 
 const COLOR_CACHE = {}
 
-const userColor = (string) => {
+const userColor = string => {
     // Source https://gist.github.com/0x263b/2bdd90886c2036a1ad5bcf06d6e6fb37
     if (string.length === 0) {
         return "rgb(0,0,0)"

@@ -1,5 +1,5 @@
-import {newFolderTemplate} from "./templates"
 import {Dialog} from "../../common"
+import {newFolderTemplate} from "./templates"
 
 export class NewFolderDialog {
     constructor(callback = _foldername => {}) {
@@ -16,11 +16,12 @@ export class NewFolderDialog {
                     text: gettext("Create folder"),
                     classes: "fw-dark",
                     click: () => {
-                        const folderName = this.dialog.dialogEl.querySelector("#new-folder-name").value
+                        const folderName =
+                            this.dialog.dialogEl.querySelector(
+                                "#new-folder-name"
+                            ).value
                         this.dialog.close()
-                        if (
-                            !folderName.length
-                        ) {
+                        if (!folderName.length) {
                             return
                         }
                         this.callback(folderName)

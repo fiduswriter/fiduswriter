@@ -10,13 +10,21 @@ export const paragraph = {
             default: []
         }
     },
-    parseDOM: [{tag: "p", getAttrs(dom) {
-        return {
-            track: parseTracks(dom.dataset.track)
+    parseDOM: [
+        {
+            tag: "p",
+            getAttrs(dom) {
+                return {
+                    track: parseTracks(dom.dataset.track)
+                }
+            }
         }
-    }}],
+    ],
     toDOM(node) {
-        const attrs = node.attrs.track && node.attrs.track.length ? {"data-track": JSON.stringify(node.attrs.track)} : {}
+        const attrs =
+            node.attrs.track && node.attrs.track.length
+                ? {"data-track": JSON.stringify(node.attrs.track)}
+                : {}
         return ["p", attrs, 0]
     }
 }
@@ -32,13 +40,21 @@ export const blockquote = {
     },
     marks: "annotation",
     defining: true,
-    parseDOM: [{tag: "blockquote", getAttrs(dom) {
-        return {
-            track: parseTracks(dom.dataset.track)
+    parseDOM: [
+        {
+            tag: "blockquote",
+            getAttrs(dom) {
+                return {
+                    track: parseTracks(dom.dataset.track)
+                }
+            }
         }
-    }}],
+    ],
     toDOM(node) {
-        const attrs = node.attrs.track && node.attrs.track.length ? {"data-track": JSON.stringify(node.attrs.track)} : {}
+        const attrs =
+            node.attrs.track && node.attrs.track.length
+                ? {"data-track": JSON.stringify(node.attrs.track)}
+                : {}
         return ["blockquote", attrs, 0]
     }
 }
@@ -51,13 +67,21 @@ export const horizontal_rule = {
             default: []
         }
     },
-    parseDOM: [{tag: "hr", getAttrs(dom) {
-        return {
-            track: parseTracks(dom.dataset.track)
+    parseDOM: [
+        {
+            tag: "hr",
+            getAttrs(dom) {
+                return {
+                    track: parseTracks(dom.dataset.track)
+                }
+            }
         }
-    }}],
+    ],
     toDOM(node) {
-        const attrs = node.attrs.track && node.attrs.track.length ? {"data-track": JSON.stringify(node.attrs.track)} : {}
+        const attrs =
+            node.attrs.track && node.attrs.track.length
+                ? {"data-track": JSON.stringify(node.attrs.track)}
+                : {}
         return ["hr", attrs]
     }
 }

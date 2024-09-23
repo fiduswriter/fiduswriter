@@ -9,9 +9,9 @@ export class Signup extends PreloginPage {
             this.contents = `<div class="fw-login-left">
                 <h1 class="fw-login-title">${gettext("Sign up")}</h1>
                 <p>
-                    ${
-    gettext("Already have an account? Then please <a href=\"/\" title=\"Login\">login</a>.")
-}
+                    ${gettext(
+                        'Already have an account? Then please <a href="/" title="Login">login</a>.'
+                    )}
                 </p>
             </div>
             <div class="fw-login-right">
@@ -66,11 +66,17 @@ export class Signup extends PreloginPage {
 
             const nonFieldErrors = document.querySelector("#non-field-errors"),
                 idUsername = document.querySelector("#id-username"),
-                idUsernameErrors = document.querySelector("#id-username-errors"),
+                idUsernameErrors = document.querySelector(
+                    "#id-username-errors"
+                ),
                 idPassword1 = document.querySelector("#id-password1"),
-                idPassword1Errors = document.querySelector("#id-password1-errors"),
+                idPassword1Errors = document.querySelector(
+                    "#id-password1-errors"
+                ),
                 idPassword2 = document.querySelector("#id-password2"),
-                idPassword2Errors = document.querySelector("#id-password2-errors"),
+                idPassword2Errors = document.querySelector(
+                    "#id-password2-errors"
+                ),
                 idEmail = document.querySelector("#id-email"),
                 idEmailErrors = document.querySelector("#id-email-errors"),
                 fwContents = document.querySelector(".fw-contents")
@@ -127,56 +133,58 @@ export class Signup extends PreloginPage {
             if (errors) {
                 return
             }
-            const sendData  = {username, password1, password2, email}
+            const sendData = {username, password1, password2, email}
             if (this.app.inviteKey) {
                 sendData["invite_key"] = this.app.inviteKey
             }
-            postJson("/api/user/signup/", sendData).then(
-                ({json}) => {
+            postJson("/api/user/signup/", sendData)
+                .then(({json}) => {
                     if (json.location === "/api/account/confirm-email/") {
                         fwContents.innerHTML = `<div class="fw-login-left">
                             <h1 class="fw-login-title">${gettext("Verify Your E-mail Address")}</h1>
                             <p>
-                                ${
-    interpolate(
-        gettext("We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</a> for verification. Follow the link provided to finalize the signup process."),
-        {email},
-        true
-    )
-}
+                                ${interpolate(
+                                    gettext(
+                                        'We have sent an e-mail to <a href="mailto:%(email)s">%(email)s</a> for verification. Follow the link provided to finalize the signup process.'
+                                    ),
+                                    {email},
+                                    true
+                                )}
                                 <br />
-                                ${
-    gettext("Please contact us if you do not receive it within a few minutes.")
-}
+                                ${gettext(
+                                    "Please contact us if you do not receive it within a few minutes."
+                                )}
                             </p>
                         </div>`
                     } else {
                         window.history.pushState({}, "", "/")
                         this.app.init()
                     }
-                }
-            ).catch(
-                response => response.json().then(
-                    json => {
+                })
+                .catch(response =>
+                    response.json().then(json => {
                         json.form.errors.forEach(
-                            error => nonFieldErrors.innerHTML += `<li>${escapeText(error)}</li>`
+                            error =>
+                                (nonFieldErrors.innerHTML += `<li>${escapeText(error)}</li>`)
                         )
                         json.form.fields.username.errors.forEach(
-                            error => idUsernameErrors.innerHTML += `<li>${escapeText(error)}</li>`
+                            error =>
+                                (idUsernameErrors.innerHTML += `<li>${escapeText(error)}</li>`)
                         )
                         json.form.fields.password1.errors.forEach(
-                            error => idPassword1Errors.innerHTML += `<li>${escapeText(error)}</li>`
+                            error =>
+                                (idPassword1Errors.innerHTML += `<li>${escapeText(error)}</li>`)
                         )
                         json.form.fields.password2.errors.forEach(
-                            error => idPassword2Errors.innerHTML += `<li>${escapeText(error)}</li>`
+                            error =>
+                                (idPassword2Errors.innerHTML += `<li>${escapeText(error)}</li>`)
                         )
                         json.form.fields.email.errors.forEach(
-                            error => idEmailErrors.innerHTML += `<li>${escapeText(error)}</li>`
+                            error =>
+                                (idEmailErrors.innerHTML += `<li>${escapeText(error)}</li>`)
                         )
-                    }
+                    })
                 )
-            )
         })
-
     }
 }

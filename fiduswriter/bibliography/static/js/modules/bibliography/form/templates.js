@@ -5,22 +5,19 @@ export const bibDialog = ({bib_type, BibTypes, BibTypeTitles}) =>
             <div class="fw-select-container">
                 <select id="select-bibtype" class="fw-button fw-light fw-large" required>
                     ${
-    bib_type === false ?
-        `<option class="placeholder" selected disabled value="">${gettext("Select source type")}</option>` :
-        ""
-}
-                    ${
-    Object.keys(BibTypes).map(key =>
-        `<option value="${key}"
-                                    ${
-    key === bib_type ?
-        "selected" :
-        ""
-}>
+                        bib_type === false
+                            ? `<option class="placeholder" selected disabled value="">${gettext("Select source type")}</option>`
+                            : ""
+                    }
+                    ${Object.keys(BibTypes)
+                        .map(
+                            key =>
+                                `<option value="${key}"
+                                    ${key === bib_type ? "selected" : ""}>
                                 ${BibTypeTitles[key]}
                             </option>`
-    ).join("")
-}
+                        )
+                        .join("")}
                 </select>
                 <div class="fw-select-arrow fa fa-caret-down"></div>
             </div>

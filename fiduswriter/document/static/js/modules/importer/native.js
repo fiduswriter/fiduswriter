@@ -1,10 +1,19 @@
 import {addAlert, postJson, shortFileTitle} from "../common"
-import {GetImages} from "./get_images"
 import {extractTemplate} from "../document_template"
+import {GetImages} from "./get_images"
 
 export class ImportNative {
     /* Save document information into the database */
-    constructor(doc, bibliography, images, otherFiles, user, importId = null, requestedPath = "", template = null) {
+    constructor(
+        doc,
+        bibliography,
+        images,
+        otherFiles,
+        user,
+        importId = null,
+        requestedPath = "",
+        template = null
+    ) {
         this.doc = doc
         this.docId = false
         this.path = false
@@ -19,73 +28,73 @@ export class ImportNative {
 
     init() {
         const ImageTranslationTable = {}
-        return this.createDoc().then(
-            () => {
+        return this.createDoc()
+            .then(() => {
                 if (!this.docId) {
                     return Promise.reject(new Error("document not created"))
                 }
                 // We first create any new entries in the DB for images.
                 const imageGetter = new GetImages(this.images, this.otherFiles)
                 return imageGetter.init()
-            }
-        ).then(
-            () => this.saveImages(this.images, ImageTranslationTable)
-        ).then(
-            () => {
-            // We need to change some reference numbers in the document content
+            })
+            .then(() => this.saveImages(this.images, ImageTranslationTable))
+            .then(() => {
+                // We need to change some reference numbers in the document content
                 this.translateReferenceIds(ImageTranslationTable)
                 // We are good to go. All the used images and bibliography entries
                 // exist in the DB for this user with the same numbers.
                 // We can go ahead and create the new document entry in the
                 // bibliography without any changes.
                 return this.saveDocument()
-            }).catch(
-            error => {
+            })
+            .catch(error => {
                 addAlert("error", "Could not create document")
                 throw error
-            }
-        )
-
+            })
     }
 
     saveImages(images, ImageTranslationTable) {
-        const sendPromises = Object.values(images).map(
-            imageEntry => {
-                return postJson("/api/document/import/image/", {
-                    doc_id: this.docId,
-                    title: imageEntry.title,
-                    copyright: imageEntry.copyright,
-                    checksum: imageEntry.checksum,
-                    image: {file: imageEntry.file, filename: imageEntry.image.split("/").pop()}
-                }).then(
-                    ({json}) => ImageTranslationTable[imageEntry.id] = json.id
-                ).catch(error => {
+        const sendPromises = Object.values(images).map(imageEntry => {
+            return postJson("/api/document/import/image/", {
+                doc_id: this.docId,
+                title: imageEntry.title,
+                copyright: imageEntry.copyright,
+                checksum: imageEntry.checksum,
+                image: {
+                    file: imageEntry.file,
+                    filename: imageEntry.image.split("/").pop()
+                }
+            })
+                .then(
+                    ({json}) => (ImageTranslationTable[imageEntry.id] = json.id)
+                )
+                .catch(error => {
                     addAlert(
                         "error",
                         `${gettext("Could not save Image")} ${imageEntry.checksum}`
                     )
-                    throw (error)
+                    throw error
                 })
-            }
-        )
+        })
         return Promise.all(sendPromises)
     }
 
     translateReferenceIds(ImageTranslationTable) {
         function walkTree(node) {
             switch (node.type) {
-            case "image":
-                if (node.attrs.image !== false) {
-                    node.attrs.image = ImageTranslationTable[node.attrs.image]
-                }
-                break
-            case "footnote":
-                if (node.attrs?.footnote) {
-                    node.attrs.footnote.forEach(childNode => {
-                        walkTree(childNode)
-                    })
-                }
-                break
+                case "image":
+                    if (node.attrs.image !== false) {
+                        node.attrs.image =
+                            ImageTranslationTable[node.attrs.image]
+                    }
+                    break
+                case "footnote":
+                    if (node.attrs?.footnote) {
+                        node.attrs.footnote.forEach(childNode => {
+                            walkTree(childNode)
+                        })
+                    }
+                    break
             }
             if (node.content) {
                 node.content.forEach(childNode => {
@@ -97,43 +106,44 @@ export class ImportNative {
     }
 
     createDoc() {
-        const template = this.template ? this.template : extractTemplate(this.doc.content)
+        const template = this.template
+            ? this.template
+            : extractTemplate(this.doc.content)
         // We create the document on the sever so that we have an ID for it and
         // can link the images to it.
-        return postJson(
-            "/api/document/import/create/",
-            {
-                template: JSON.stringify(template.content),
-                export_templates: JSON.stringify(template.exportTemplates),
-                document_styles: JSON.stringify(template.documentStyles),
-                files: template.files.map(({filename, content}) => new File([content], filename)) || [],
-                import_id: this.importId ? this.importId : template.content.attrs.import_id,
-                template_title: template.content.attrs.template,
-                path: this.requestedPath
-            }
-        ).then(
-            ({json}) => {
+        return postJson("/api/document/import/create/", {
+            template: JSON.stringify(template.content),
+            export_templates: JSON.stringify(template.exportTemplates),
+            document_styles: JSON.stringify(template.documentStyles),
+            files:
+                template.files.map(
+                    ({filename, content}) => new File([content], filename)
+                ) || [],
+            import_id: this.importId
+                ? this.importId
+                : template.content.attrs.import_id,
+            template_title: template.content.attrs.template,
+            path: this.requestedPath
+        })
+            .then(({json}) => {
                 this.docId = json.id
                 this.path = json.path
-            }
-        ).catch(error => {
-            addAlert("error", gettext("Could not create document"))
-            throw error
-        })
+            })
+            .catch(error => {
+                addAlert("error", gettext("Could not create document"))
+                throw error
+            })
     }
 
     saveDocument() {
-        return postJson(
-            "/api/document/import/",
-            {
-                id: this.docId,
-                title: this.doc.title,
-                content: this.doc.content,
-                comments: this.doc.comments,
-                bibliography: this.bibliography
-            }
-        ).then(
-            ({json}) => {
+        return postJson("/api/document/import/", {
+            id: this.docId,
+            title: this.doc.title,
+            content: this.doc.content,
+            comments: this.doc.comments,
+            bibliography: this.bibliography
+        })
+            .then(({json}) => {
                 const docInfo = {
                     is_owner: true,
                     access_rights: "write",
@@ -154,13 +164,13 @@ export class ImportNative {
                 this.doc.rights = "write"
                 this.doc.path = this.path
                 return {doc: this.doc, docInfo}
-
-            }
-        ).catch(
-            error => {
-                addAlert("error", `${gettext("Could not save ")} ${shortFileTitle(this.doc.title, this.doc.path)}`)
+            })
+            .catch(error => {
+                addAlert(
+                    "error",
+                    `${gettext("Could not save ")} ${shortFileTitle(this.doc.title, this.doc.path)}`
+                )
                 throw error
-            }
-        )
+            })
     }
 }

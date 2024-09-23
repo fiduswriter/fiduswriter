@@ -14,12 +14,10 @@ export class DOCXExporterImages {
     }
 
     init() {
-        return this.xml.getXml("[Content_Types].xml").then(
-            ctXML => {
-                this.ctXML = ctXML
-                return this.exportImages()
-            }
-        )
+        return this.xml.getXml("[Content_Types].xml").then(ctXML => {
+            this.ctXML = ctXML
+            return this.exportImages()
+        })
     }
 
     // add an image to the list of files
@@ -33,7 +31,7 @@ export class DOCXExporterImages {
     // add a global contenttype declaration for an image type (if needed)
     addContentType(fileEnding) {
         const types = this.ctXML.query("Types")
-        const contentDec = types.query("Default", {"Extension": fileEnding})
+        const contentDec = types.query("Default", {Extension: fileEnding})
         if (!contentDec) {
             const string = `<Default ContentType="image/${fileEnding}" Extension="${fileEnding}"/>`
             types.appendXML(string)
@@ -45,38 +43,40 @@ export class DOCXExporterImages {
     // Try out and fix.
     exportImages() {
         const usedImgs = []
-        descendantNodes(this.docContent).forEach(
-            node => {
-                if (node.type === "image" && node.attrs.image !== false) {
-                    if (!usedImgs.includes(node.attrs.image)) {
-                        usedImgs.push(node.attrs.image)
-                    }
+        descendantNodes(this.docContent).forEach(node => {
+            if (node.type === "image" && node.attrs.image !== false) {
+                if (!usedImgs.includes(node.attrs.image)) {
+                    usedImgs.push(node.attrs.image)
                 }
             }
-        )
+        })
         return new Promise(resolveExportImages => {
             const p = []
-            usedImgs.forEach((image) => {
+            usedImgs.forEach(image => {
                 const imgDBEntry = this.imageDB.db[image]
                 p.push(
-                    get(imgDBEntry.image).then(
-                        response => response.blob()
-                    ).then(
-                        blob => {
+                    get(imgDBEntry.image)
+                        .then(response => response.blob())
+                        .then(blob => {
                             if (blob.type === "image/svg+xml") {
                                 // DOCX doesn't support SVG. Convert to PNG.
-                                return svg2png(blob).then(({blob: pngBlob, width, height}) => {
-                                    const wImgId = this.addImage(
-                                        imgDBEntry.image.split("/").pop().replace(/.svg$/g, ".png"),
-                                        pngBlob
-                                    )
-                                    this.images[image] = {
-                                        id: wImgId,
-                                        width,
-                                        height,
-                                        title: imgDBEntry.title
+                                return svg2png(blob).then(
+                                    ({blob: pngBlob, width, height}) => {
+                                        const wImgId = this.addImage(
+                                            imgDBEntry.image
+                                                .split("/")
+                                                .pop()
+                                                .replace(/.svg$/g, ".png"),
+                                            pngBlob
+                                        )
+                                        this.images[image] = {
+                                            id: wImgId,
+                                            width,
+                                            height,
+                                            title: imgDBEntry.title
+                                        }
                                     }
-                                })
+                                )
                             } else {
                                 const wImgId = this.addImage(
                                     imgDBEntry.image.split("/").pop(),
@@ -89,8 +89,7 @@ export class DOCXExporterImages {
                                     title: imgDBEntry.title
                                 }
                             }
-                        }
-                    )
+                        })
                 )
             })
 
@@ -99,5 +98,4 @@ export class DOCXExporterImages {
             })
         })
     }
-
 }

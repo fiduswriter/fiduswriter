@@ -1,11 +1,21 @@
 import {DataTable} from "simple-datatables"
 
-import {DocTemplatesActions} from "./actions"
-import {OverviewMenuView, escapeText, findTarget, whenReady, postJson, addAlert, baseBodyTemplate, ensureCSS, setDocTitle, DatatableBulk} from "../common"
-import {SiteMenu} from "../menu"
-import {menuModel, bulkMenuModel} from "./menu"
+import {
+    DatatableBulk,
+    OverviewMenuView,
+    addAlert,
+    baseBodyTemplate,
+    ensureCSS,
+    escapeText,
+    findTarget,
+    postJson,
+    setDocTitle,
+    whenReady
+} from "../common"
 import {FeedbackTab} from "../feedback"
-
+import {SiteMenu} from "../menu"
+import {DocTemplatesActions} from "./actions"
+import {bulkMenuModel, menuModel} from "./menu"
 
 export class DocTemplatesOverview {
     // A class that contains everything that happens on the templates page.
@@ -81,13 +91,25 @@ export class DocTemplatesOverview {
                 noRows: gettext("No document templates available"),
                 noResults: gettext("No document templates found") // Message shown when there are no search results
             },
-            template: (options, _dom) => `<div class='${options.classes.container}'${options.scrollY.length ? ` style='height: ${options.scrollY}; overflow-Y: auto;'` : ""}></div>
+            template: (
+                options,
+                _dom
+            ) => `<div class='${options.classes.container}'${options.scrollY.length ? ` style='height: ${options.scrollY}; overflow-Y: auto;'` : ""}></div>
             <div class='${options.classes.bottom}'>
                 <nav class='${options.classes.pagination}'></nav>
             </div>`,
             data: {
-                headings: ["", this.dtBulk.getHTML(), gettext("Title"), gettext("Created"), gettext("Last changed"), ""],
-                data: this.templateList.map(docTemplate => this.createTableRow(docTemplate))
+                headings: [
+                    "",
+                    this.dtBulk.getHTML(),
+                    gettext("Title"),
+                    gettext("Created"),
+                    gettext("Last changed"),
+                    ""
+                ],
+                data: this.templateList.map(docTemplate =>
+                    this.createTableRow(docTemplate)
+                )
             },
             columns: [
                 {
@@ -117,39 +139,41 @@ export class DocTemplatesOverview {
         return [
             String(docTemplate.id),
             `<input type="checkbox" class="entry-select" data-id="${docTemplate.id}">`,
-            `<span class="${ docTemplate.is_owner ? "fw-data-table-title " : "" }fw-inline">
+            `<span class="${docTemplate.is_owner ? "fw-data-table-title " : ""}fw-inline">
                 <i class="far fa-file"></i>
                 ${
-    docTemplate.is_owner ?
-        `<a href='/templates/${docTemplate.id}/'>
+                    docTemplate.is_owner
+                        ? `<a href='/templates/${docTemplate.id}/'>
                         ${
-    docTemplate.title.length ?
-        escapeText(docTemplate.title) :
-        gettext("Untitled")
-}
-                    </a>` :
-        docTemplate.title.length ?
-            escapeText(docTemplate.title) :
-            gettext("Untitled")
-}
+                            docTemplate.title.length
+                                ? escapeText(docTemplate.title)
+                                : gettext("Untitled")
+                        }
+                    </a>`
+                        : docTemplate.title.length
+                          ? escapeText(docTemplate.title)
+                          : gettext("Untitled")
+                }
             </span>`,
             docTemplate.added, // format?
             docTemplate.updated, // format ?
             `<span class="delete-doc-template fw-inline fw-link-text" data-id="${docTemplate.id}" data-title="${escapeText(docTemplate.title)}">
-                ${docTemplate.is_owner ? "<i class=\"fa fa-trash-alt\"></i>" : ""}
+                ${docTemplate.is_owner ? '<i class="fa fa-trash-alt"></i>' : ""}
            </span>`
         ]
     }
 
     removeTableRows(ids) {
-        const existingRows = this.table.data.data.map((row, index) => {
-            const id = row.cells[0].data
-            if (ids.includes(id)) {
-                return index
-            } else {
-                return false
-            }
-        }).filter(rowIndex => rowIndex !== false)
+        const existingRows = this.table.data.data
+            .map((row, index) => {
+                const id = row.cells[0].data
+                if (ids.includes(id)) {
+                    return index
+                } else {
+                    return false
+                }
+            })
+            .filter(rowIndex => rowIndex !== false)
 
         if (existingRows.length) {
             this.table.rows.remove(existingRows)
@@ -166,15 +190,12 @@ export class DocTemplatesOverview {
         if (this.app.isOffline()) {
             return this.showCached()
         }
-        return postJson(
-            "/api/user_template_manager/list/"
-        ).then(
-            ({json}) => {
+        return postJson("/api/user_template_manager/list/")
+            .then(({json}) => {
                 this.updateIndexedDB(json)
                 this.initializeView(json)
-            }
-        ).catch(
-            error => {
+            })
+            .catch(error => {
                 if (this.app.isOffline()) {
                     return this.showCached()
                 } else {
@@ -182,10 +203,9 @@ export class DocTemplatesOverview {
                         "error",
                         gettext("Document templates loading failed.")
                     )
-                    throw (error)
+                    throw error
                 }
-            }
-        )
+            })
     }
 
     initializeView(json) {
@@ -196,38 +216,47 @@ export class DocTemplatesOverview {
     }
 
     showCached() {
-        return this.loaddatafromIndexedDB().then(json => this.initializeView(json))
+        return this.loaddatafromIndexedDB().then(json =>
+            this.initializeView(json)
+        )
     }
 
     loaddatafromIndexedDB() {
-        return this.app.indexedDB.readAllData("templates_list").then(response => ({document_templates: response}))
+        return this.app.indexedDB
+            .readAllData("templates_list")
+            .then(response => ({document_templates: response}))
     }
 
     updateIndexedDB(json) {
         // Clear data if any present
         this.app.indexedDB.clearData("templates_list").then(() => {
-            this.app.indexedDB.insertData("templates_list", json.document_templates)
+            this.app.indexedDB.insertData(
+                "templates_list",
+                json.document_templates
+            )
         })
     }
-
 
     bind() {
         this.dom.addEventListener("click", event => {
             const el = {}
             switch (true) {
-            case findTarget(event, ".delete-doc-template", el): {
-                const docTemplateId = parseInt(el.target.dataset.id)
-                this.mod.actions.deleteDocTemplatesDialog([docTemplateId])
-                break
-            }
-            case findTarget(event, "a", el):
-                if (el.target.hostname === window.location.hostname && el.target.getAttribute("href")[0] === "/") {
-                    event.preventDefault()
-                    this.app.goTo(el.target.href)
+                case findTarget(event, ".delete-doc-template", el): {
+                    const docTemplateId = Number.parseInt(el.target.dataset.id)
+                    this.mod.actions.deleteDocTemplatesDialog([docTemplateId])
+                    break
                 }
-                break
-            default:
-                break
+                case findTarget(event, "a", el):
+                    if (
+                        el.target.hostname === window.location.hostname &&
+                        el.target.getAttribute("href")[0] === "/"
+                    ) {
+                        event.preventDefault()
+                        this.app.goTo(el.target.href)
+                    }
+                    break
+                default:
+                    break
             }
         })
     }
@@ -235,6 +264,6 @@ export class DocTemplatesOverview {
     getSelected() {
         return Array.from(
             this.dom.querySelectorAll(".entry-select:checked:not(:disabled)")
-        ).map(el => parseInt(el.getAttribute("data-id")))
+        ).map(el => Number.parseInt(el.getAttribute("data-id")))
     }
 }

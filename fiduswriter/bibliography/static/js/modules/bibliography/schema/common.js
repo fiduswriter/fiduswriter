@@ -7,9 +7,13 @@ export const literal = {
     marks: "_",
     parseDOM: [{tag: "div.literal"}],
     toDOM() {
-        return ["div", {
-            class: "literal"
-        }, 0]
+        return [
+            "div",
+            {
+                class: "literal"
+            },
+            0
+        ]
     }
 }
 
@@ -19,16 +23,22 @@ export const variable = {
     attrs: {
         variable: {default: ""}
     },
-    parseDOM: [{
-        tag: "span[data-variable]",
-        getAttrs(dom) {
-            return {
-                variable: dom.getAttribute("data-variable"),
+    parseDOM: [
+        {
+            tag: "span[data-variable]",
+            getAttrs(dom) {
+                return {
+                    variable: dom.getAttribute("data-variable")
+                }
             }
         }
-    }],
+    ],
     toDOM(node) {
-        return ["span", {"data-variable": node.attrs.variable}, node.attrs.variable]
+        return [
+            "span",
+            {"data-variable": node.attrs.variable},
+            node.attrs.variable
+        ]
     }
 }
 
@@ -55,7 +65,10 @@ export const sub = {
 export const smallcaps = {
     parseDOM: [
         {tag: "span.smallcaps"},
-        {style: "font-variant", getAttrs: value => value == "small-caps" && null}
+        {
+            style: "font-variant",
+            getAttrs: value => value == "small-caps" && null
+        }
     ],
     toDOM() {
         return ["span", {class: "smallcaps"}]

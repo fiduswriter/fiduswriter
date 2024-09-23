@@ -1,5 +1,5 @@
-import {LiteralFieldForm} from "./literal"
 import {noSpaceTmp} from "../../../common"
+import {LiteralFieldForm} from "./literal"
 
 // There are only range lists, no range fields in the data format. The separation
 // between RangeFieldForm and RangeListForm is for keeping consistency with other fields
@@ -23,8 +23,7 @@ export class RangeFieldForm {
     }
 
     prepareWrapper() {
-        this.dom.innerHTML =
-            noSpaceTmp`
+        this.dom.innerHTML = noSpaceTmp`
                 <div class="type-switch-input-wrapper">
                     <button class="type-switch">
                         <span class="type-switch-inner">
@@ -77,8 +76,7 @@ export class RangeFieldForm {
         this.switcher.classList.add("value2")
 
         this.fields = {}
-        this.inner.innerHTML =
-            noSpaceTmp`
+        this.inner.innerHTML = noSpaceTmp`
                 <div class='range-from field-part field-part-huge'></div>
                 <div class='range-to field-part field-part-huge'></div>
             `
@@ -98,23 +96,22 @@ export class RangeFieldForm {
 
     get value() {
         if (this.range) {
-            if (
-                !this.fields.from.value &&
-                    !this.fields.to.value
-            ) {
+            if (!this.fields.from.value && !this.fields.to.value) {
                 return false
             }
             return [
-                this.fields.from.value ? this.fields.from.value : [{type: "text", text: ""}],
-                this.fields.to.value ? this.fields.to.value : [{type: "text", text: ""}]
+                this.fields.from.value
+                    ? this.fields.from.value
+                    : [{type: "text", text: ""}],
+                this.fields.to.value
+                    ? this.fields.to.value
+                    : [{type: "text", text: ""}]
             ]
         } else {
             if (!this.fields.single.value) {
                 return false
             }
-            return [
-                this.fields.single.value
-            ]
+            return [this.fields.single.value]
         }
     }
 

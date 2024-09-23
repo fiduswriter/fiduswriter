@@ -1,4 +1,4 @@
-export const convertText = (text) => {
+export const convertText = text => {
     const textContent = []
     if (!text.length) {
         return []
@@ -18,7 +18,7 @@ export const convertText = (text) => {
     return textContent
 }
 
-export const convertContributor = (contributor) => {
+export const convertContributor = contributor => {
     const contributorContent = []
     if (contributor.firstname || contributor.lastname) {
         const nameParts = []
@@ -34,12 +34,16 @@ export const convertContributor = (contributor) => {
     }
     if (contributor.email) {
         contributorContent.push({
-            "t": "Note",
-            "c": [{
-                "t": "Para",
-                "c": convertText(contributor.email)
-            }]
+            t: "Note",
+            c: [
+                {
+                    t: "Para",
+                    c: convertText(contributor.email)
+                }
+            ]
         })
     }
-    return contributorContent.length ? {t: "MetaInlines", c: contributorContent} : false
+    return contributorContent.length
+        ? {t: "MetaInlines", c: contributorContent}
+        : false
 }

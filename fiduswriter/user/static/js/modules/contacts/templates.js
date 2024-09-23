@@ -1,4 +1,4 @@
-export const deleteContactCell = (contact) =>
+export const deleteContactCell = contact =>
     `<span class="fw-link-text delete-single-contact"
             data-type="${contact.type}" data-id="${contact.id}">
         <i class="fa fa-trash-alt"></i>
@@ -13,16 +13,16 @@ export const addContactTemplate = () =>
 
 export const displayContactType = ({type}) => {
     switch (type) {
-    case "user":
-        return gettext("User")
-    case "userinvite":
-        return gettext("Invite you sent")
-    case "to_userinvite":
-        return gettext("Invite you received")
+        case "user":
+            return gettext("User")
+        case "userinvite":
+            return gettext("Invite you sent")
+        case "to_userinvite":
+            return gettext("Invite you received")
     }
 }
 
-export const respondInviteCell = (contact) =>
+export const respondInviteCell = contact =>
     `<button class="fw-button fw-small fw-dark respond-invite" data-id="${contact.id}">
     ${gettext("Respond")}
 </button>`

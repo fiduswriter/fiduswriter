@@ -1,12 +1,11 @@
+import {Dialog, addAlert} from "../../common"
 import {contributorTemplate} from "./templates"
-import {addAlert, Dialog} from "../../common"
 /*
     Source for email regexp:
     https://html.spec.whatwg.org/multipage/input.html#e-mail-state-(type%3Demail)
 */
-const emailRegExp = new RegExp(
-    "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"
-)
+const emailRegExp =
+    /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
 
 export class ContributorDialog {
     constructor(node, view, contributor = false) {
@@ -22,20 +21,26 @@ export class ContributorDialog {
             text: this.contributor ? gettext("Update") : gettext("Add"),
             classes: "fw-dark",
             click: () => {
-                let firstname = this.dialog.dialogEl.querySelector("input[name=firstname]").value,
-                    lastname = this.dialog.dialogEl.querySelector("input[name=lastname]").value,
-                    email = this.dialog.dialogEl.querySelector("input[name=email]").value,
-                    institution = this.dialog.dialogEl.querySelector("input[name=institution]").value
+                let firstname = this.dialog.dialogEl.querySelector(
+                        "input[name=firstname]"
+                    ).value,
+                    lastname = this.dialog.dialogEl.querySelector(
+                        "input[name=lastname]"
+                    ).value,
+                    email =
+                        this.dialog.dialogEl.querySelector(
+                            "input[name=email]"
+                        ).value,
+                    institution = this.dialog.dialogEl.querySelector(
+                        "input[name=institution]"
+                    ).value
 
                 firstname = firstname.length ? firstname : false
                 lastname = lastname.length ? lastname : false
                 institution = institution.length ? institution : false
                 email = email.length ? email : false
 
-                if (
-                    email &&
-                    !emailRegExp.test(email)
-                ) {
+                if (email && !emailRegExp.test(email)) {
                     addAlert("error", gettext("Email is in incorrect format!"))
                     return
                 }
@@ -49,7 +54,10 @@ export class ContributorDialog {
 
                 const view = this.view,
                     node = view.state.schema.nodes.contributor.create({
-                        firstname, lastname, email, institution
+                        firstname,
+                        lastname,
+                        email,
+                        institution
                     })
                 let posFrom, posTo
 
@@ -71,11 +79,9 @@ export class ContributorDialog {
                         }
                     })
                 }
-                view.dispatch(view.state.tr.replaceRangeWith(
-                    posFrom,
-                    posTo,
-                    node
-                ))
+                view.dispatch(
+                    view.state.tr.replaceRangeWith(posFrom, posTo, node)
+                )
                 return
             }
         })
@@ -88,7 +94,7 @@ export class ContributorDialog {
             id: "edit-contributor",
             title: `${this.contributor ? gettext("Update") : gettext("Add")} ${this.node.attrs.item_title.toLowerCase()}`,
             body: contributorTemplate({
-                contributor: this.contributor ? this.contributor : {},
+                contributor: this.contributor ? this.contributor : {}
             }),
             width: 836,
             height: 360,
@@ -97,6 +103,5 @@ export class ContributorDialog {
         })
 
         this.dialog.open()
-
     }
 }

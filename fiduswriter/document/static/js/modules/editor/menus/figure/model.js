@@ -13,7 +13,14 @@ export const figureMenuModel = () => ({
                 dialog.init()
                 return false
             },
-            disabled: editor => !(editor.currentView.state.selection.node?.type.name === "figure") || editor.currentView.state.selection.node?.attrs.track?.find(track => track.type === "deletion")
+            disabled: editor =>
+                !(
+                    editor.currentView.state.selection.node?.type.name ===
+                    "figure"
+                ) ||
+                editor.currentView.state.selection.node?.attrs.track?.find(
+                    track => track.type === "deletion"
+                )
         },
         {
             title: gettext("Delete figure"),
@@ -26,7 +33,14 @@ export const figureMenuModel = () => ({
                 tr.deleteSelection()
                 editor.currentView.dispatch(tr)
             },
-            disabled: editor => !(editor.currentView.state.selection.node?.type.name === "figure") || editor.currentView.state.selection.node?.attrs.track?.find(track => track.type === "deletion")
+            disabled: editor =>
+                !(
+                    editor.currentView.state.selection.node?.type.name ===
+                    "figure"
+                ) ||
+                editor.currentView.state.selection.node?.attrs.track?.find(
+                    track => track.type === "deletion"
+                )
         }
     ]
 })

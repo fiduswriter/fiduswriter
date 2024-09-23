@@ -45,7 +45,8 @@ export function styleEpubFootnotes(htmlEl) {
             while (footnote.firstChild) {
                 newFootnote.appendChild(footnote.firstChild)
             }
-            newFootnote.firstChild.innerHTML = footnoteCounter + " " + newFootnote.firstChild.innerHTML
+            newFootnote.firstChild.innerHTML =
+                footnoteCounter + " " + newFootnote.firstChild.innerHTML
         } else {
             newFootnote.innerHTML = "<p>" + footnoteCounter + "</p>"
         }
@@ -79,7 +80,9 @@ export function setLinks(htmlEl, docNum = 0) {
         if (title !== "" || el.classList.contains("doc-title")) {
             const contentItem = {}
             contentItem.title = title
-            contentItem.level = el.classList.contains("doc-title") ? 0 : parseInt(el.tagName.substring(1, 2))
+            contentItem.level = el.classList.contains("doc-title")
+                ? 0
+                : Number.parseInt(el.tagName.substring(1, 2))
             if (docNum) {
                 contentItem.docNum = docNum
             }
@@ -106,7 +109,6 @@ export function orderLinks(contentItems) {
                 }
             }
         }
-
     }
 
     for (let i = contentItems.length; i > -1; i--) {
@@ -120,36 +122,42 @@ export function orderLinks(contentItems) {
 
 export function addCategoryLabels(htmlEl, language, footnote = false) {
     // Due to lacking CSS support in ereaders, figure numbers need to be hardcoded.
-    htmlEl.querySelectorAll("figure[data-category='figure'] figcaption span.label").forEach(
-        (el, index) => {
+    htmlEl
+        .querySelectorAll(
+            "figure[data-category='figure'] figcaption span.label"
+        )
+        .forEach((el, index) => {
             const suffix = el.parentElement.innerText.trim().length ? ": " : ""
-            el.innerHTML = `${CATS["figure"][language]} ${(index + 1)}${footnote ? "A" : ""}${suffix}`
+            el.innerHTML = `${CATS["figure"][language]} ${index + 1}${footnote ? "A" : ""}${suffix}`
             el.classList.remove("label")
-        }
-    )
+        })
 
-    htmlEl.querySelectorAll("figure[data-category='equation'] figcaption span.label").forEach(
-        (el, index) => {
+    htmlEl
+        .querySelectorAll(
+            "figure[data-category='equation'] figcaption span.label"
+        )
+        .forEach((el, index) => {
             const suffix = el.parentElement.innerText.trim().length ? ": " : ""
-            el.innerHTML = `${CATS["equation"][language]} ${(index + 1)}${footnote ? "A" : ""}${suffix}`
+            el.innerHTML = `${CATS["equation"][language]} ${index + 1}${footnote ? "A" : ""}${suffix}`
             el.classList.remove("label")
-        }
-    )
+        })
 
-    htmlEl.querySelectorAll("figure[data-category='photo'] figcaption span.label").forEach(
-        (el, index) => {
+    htmlEl
+        .querySelectorAll("figure[data-category='photo'] figcaption span.label")
+        .forEach((el, index) => {
             const suffix = el.parentElement.innerText.trim().length ? ": " : ""
-            el.innerHTML = `${CATS["photo"][language]} ${(index + 1)}${footnote ? "A" : ""}${suffix}`
+            el.innerHTML = `${CATS["photo"][language]} ${index + 1}${footnote ? "A" : ""}${suffix}`
             el.classList.remove("label")
-        }
-    )
+        })
 
-    htmlEl.querySelectorAll("figure[data-category='table'] figcaption span.label,table[data-category='table'] caption span.label").forEach(
-        (el, index) => {
+    htmlEl
+        .querySelectorAll(
+            "figure[data-category='table'] figcaption span.label,table[data-category='table'] caption span.label"
+        )
+        .forEach((el, index) => {
             const suffix = el.parentElement.innerText.trim().length ? ": " : ""
-            el.innerHTML = `${CATS["table"][language]} ${(index + 1)}${footnote ? "A" : ""}${suffix}`
+            el.innerHTML = `${CATS["table"][language]} ${index + 1}${footnote ? "A" : ""}${suffix}`
             el.classList.remove("label")
-        }
-    )
+        })
     return htmlEl
 }

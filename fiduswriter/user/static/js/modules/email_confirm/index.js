@@ -1,7 +1,19 @@
-import {whenReady, post, activateWait, deactivateWait, postJson, addAlert} from "../common"
-import {confirmAccountTemplate, verifiedAccountTemplate, checkTermsTemplate, testServerQuestionTemplate} from "./templates"
-import {PreloginPage} from "../prelogin"
 import * as pluginLoaders from "../../plugins/confirm_account"
+import {
+    activateWait,
+    addAlert,
+    deactivateWait,
+    post,
+    postJson,
+    whenReady
+} from "../common"
+import {PreloginPage} from "../prelogin"
+import {
+    checkTermsTemplate,
+    confirmAccountTemplate,
+    testServerQuestionTemplate,
+    verifiedAccountTemplate
+} from "./templates"
 
 export class EmailConfirm extends PreloginPage {
     constructor({app, language}, key) {
@@ -21,14 +33,13 @@ export class EmailConfirm extends PreloginPage {
         this.submissionReady = false
         this.formChecks = []
         this.confirmQuestionsTemplates = []
-        this.confirmMethods = [() => post(`/api/user/confirm-email/${this.key}/`)]
+        this.confirmMethods = [
+            () => post(`/api/user/confirm-email/${this.key}/`)
+        ]
     }
 
     init() {
-        return Promise.all([
-            whenReady(),
-            this.getConfirmData(),
-        ]).then(() => {
+        return Promise.all([whenReady(), this.getConfirmData()]).then(() => {
             this.activateFidusPlugins()
             this.render()
             this.bind()
@@ -36,8 +47,8 @@ export class EmailConfirm extends PreloginPage {
     }
 
     getConfirmData() {
-        return postJson("/api/user/get_confirmkey_data/", {key: this.key}).then(
-            ({json}) => {
+        return postJson("/api/user/get_confirmkey_data/", {key: this.key})
+            .then(({json}) => {
                 this.username = json.username
                 this.email = json.email
                 this.validKey = true
@@ -46,22 +57,22 @@ export class EmailConfirm extends PreloginPage {
                 if (json.logout) {
                     this.app.config.user = {is_authenticated: false}
                 }
-            }
-        ).catch(() => {})
+            })
+            .catch(() => {})
     }
 
     render() {
         if (!this.verified) {
             if (settings_TEST_SERVER) {
-                this.formChecks.push(
-                    () => document.getElementById("test-check").matches(":checked")
+                this.formChecks.push(() =>
+                    document.getElementById("test-check").matches(":checked")
                 )
                 this.confirmQuestionsTemplates.unshift(
                     testServerQuestionTemplate
                 )
             }
-            this.formChecks.push(
-                () => document.getElementById("terms-check").matches(":checked")
+            this.formChecks.push(() =>
+                document.getElementById("terms-check").matches(":checked")
             )
             this.confirmQuestionsTemplates.unshift(checkTermsTemplate)
         }
@@ -81,18 +92,21 @@ export class EmailConfirm extends PreloginPage {
             document.getElementById("submit").removeAttribute("disabled")
             this.submissionReady = true
         }
-        document.querySelectorAll(".checker").forEach(el => el.addEventListener(
-            "click",
-            () => {
+        document.querySelectorAll(".checker").forEach(el =>
+            el.addEventListener("click", () => {
                 if (this.formChecks.every(check => check())) {
-                    document.getElementById("submit").removeAttribute("disabled")
+                    document
+                        .getElementById("submit")
+                        .removeAttribute("disabled")
                     this.submissionReady = true
                 } else {
-                    document.getElementById("submit").setAttribute("disabled", "disabled")
+                    document
+                        .getElementById("submit")
+                        .setAttribute("disabled", "disabled")
                     this.submissionReady = false
                 }
-            }
-        ))
+            })
+        )
         const submissionButton = document.getElementById("submit")
         submissionButton.addEventListener("click", () => {
             if (!this.submissionReady) {
@@ -103,20 +117,24 @@ export class EmailConfirm extends PreloginPage {
                 () => {
                     deactivateWait()
                     if (this.app.config.user.is_authenticated) {
-                        const emailObject = this.app.config.user.emails.find(email => email.address === this.email)
+                        const emailObject = this.app.config.user.emails.find(
+                            email => email.address === this.email
+                        )
                         if (emailObject) {
                             emailObject.verified = true
                         }
-                        return this.app.goTo("/user/profile/").then(
-                            () => addAlert("info", gettext("Email verified!"))
-                        )
+                        return this.app
+                            .goTo("/user/profile/")
+                            .then(() =>
+                                addAlert("info", gettext("Email verified!"))
+                            )
                     } else {
-                        const contentsDOM = document.querySelector(".fw-contents")
+                        const contentsDOM =
+                            document.querySelector(".fw-contents")
                         contentsDOM.innerHTML = verifiedAccountTemplate()
                     }
                 }
             )
         })
     }
-
 }

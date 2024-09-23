@@ -1,5 +1,5 @@
-import {ModImageDB} from "./images"
 import {ModBibliographyDB} from "./bibliography"
+import {ModImageDB} from "./images"
 
 export class ModDB {
     constructor(editor) {
@@ -23,7 +23,9 @@ export class ModDB {
             usedBibs = []
         this.editor.view.state.doc.descendants(node => {
             if (node.type.name === "citation") {
-                node.attrs.references.forEach(ref => usedBibs.push(parseInt(ref.id)))
+                node.attrs.references.forEach(ref =>
+                    usedBibs.push(Number.parseInt(ref.id))
+                )
             } else if (node.type.name === "image" && node.attrs.image) {
                 usedImages.push(node.attrs.image)
             }
@@ -31,17 +33,19 @@ export class ModDB {
 
         this.editor.mod.footnotes.fnEditor.view.state.doc.descendants(node => {
             if (node.type.name === "citation") {
-                node.attrs.references.forEach(ref => usedBibs.push(parseInt(ref.id)))
+                node.attrs.references.forEach(ref =>
+                    usedBibs.push(Number.parseInt(ref.id))
+                )
             } else if (node.type.name === "image" && node.attrs.image) {
                 usedImages.push(node.attrs.image)
             }
         })
 
-        const unusedImages = Object.keys(this.imageDB.db).filter(value =>
-                !usedImages.includes(parseInt(value))
+        const unusedImages = Object.keys(this.imageDB.db).filter(
+                value => !usedImages.includes(Number.parseInt(value))
             ),
-            unusedBibs = Object.keys(this.bibDB.db).filter(value =>
-                !usedBibs.includes(parseInt(value))
+            unusedBibs = Object.keys(this.bibDB.db).filter(
+                value => !usedBibs.includes(Number.parseInt(value))
             )
         unusedImages.forEach(id => this.imageDB.deleteImage(id))
         unusedBibs.forEach(id => this.bibDB.deleteReference(id))

@@ -1,13 +1,13 @@
 import download from "downloadjs"
 import pretty from "pretty"
 
-import {shortFileTitle, get} from "../../common"
-import {createSlug} from "../tools/file"
+import {get, shortFileTitle} from "../../common"
 import {removeHidden} from "../tools/doc_content"
+import {createSlug} from "../tools/file"
 import {ZipFileCreator} from "../tools/zip"
 
-import {HTMLExporterConvert} from "./convert"
 import {HTMLExporterCitations} from "./citations"
+import {HTMLExporterConvert} from "./convert"
 import {htmlExportTemplate} from "./templates"
 /*
  Exporter to HTML
@@ -29,9 +29,7 @@ export class HTMLExporter {
         this.textFiles = []
         this.httpFiles = []
         this.includeZips = []
-        this.styleSheets = [
-            {url: staticUrl("css/document.css")}
-        ]
+        this.styleSheets = [{url: staticUrl("css/document.css")}]
         this.htmlExportTemplate = htmlExportTemplate
     }
 
@@ -39,29 +37,36 @@ export class HTMLExporter {
         this.zipFileName = `${createSlug(this.docTitle)}.html.zip`
         this.docContent = removeHidden(this.doc.content)
         this.addDocStyle(this.doc)
-        this.converter = new HTMLExporterConvert(this, this.imageDB, this.bibDB, this.doc.settings)
+        this.converter = new HTMLExporterConvert(
+            this,
+            this.imageDB,
+            this.bibDB,
+            this.doc.settings
+        )
         this.citations = new HTMLExporterCitations(this, this.bibDB, this.csl)
-        return this.loadStyles().then(
-            () => this.converter.init(this.docContent)
-        ).then(
-            ({html, imageIds}) => {
-                this.textFiles.push({filename: "document.html", contents: pretty(html, {ocd: true})})
-                const images = imageIds.map(
-                    id => {
-                        const imageEntry = this.imageDB.db[id]
-                        return {
-                            title: imageEntry.title,
-                            filename: `images/${imageEntry.image.split("/").pop()}`,
-                            url: imageEntry.image
-                        }
-                    }
-                )
-                images.forEach(image => {
-                    this.httpFiles.push({filename: image.filename, url: image.url})
+        return this.loadStyles()
+            .then(() => this.converter.init(this.docContent))
+            .then(({html, imageIds}) => {
+                this.textFiles.push({
+                    filename: "document.html",
+                    contents: pretty(html, {ocd: true})
                 })
-            }
-        ).then(
-            () => {
+                const images = imageIds.map(id => {
+                    const imageEntry = this.imageDB.db[id]
+                    return {
+                        title: imageEntry.title,
+                        filename: `images/${imageEntry.image.split("/").pop()}`,
+                        url: imageEntry.image
+                    }
+                })
+                images.forEach(image => {
+                    this.httpFiles.push({
+                        filename: image.filename,
+                        url: image.url
+                    })
+                })
+            })
+            .then(() => {
                 this.styleSheets.forEach(styleSheet => {
                     if (styleSheet.filename) {
                         this.textFiles.push(styleSheet)
@@ -71,18 +76,19 @@ export class HTMLExporter {
                 if (this.converter.features.math) {
                     this.styleSheets.push({filename: "css/mathlive.css"})
                     this.includeZips.push({
-                        "directory": "css",
-                        "url": staticUrl("zip/mathlive_style.zip"),
+                        directory: "css",
+                        url: staticUrl("zip/mathlive_style.zip")
                     })
                 }
 
                 return this.createZip()
-            }
-        )
+            })
     }
 
     addDocStyle(doc) {
-        const docStyle = this.documentStyles.find(docStyle => docStyle.slug === doc.settings.documentstyle)
+        const docStyle = this.documentStyles.find(
+            docStyle => docStyle.slug === doc.settings.documentstyle
+        )
 
         // The files will be in the base directory. The filenames of
         // DocumentStyleFiles will therefore not need to replaced with their URLs.
@@ -91,16 +97,19 @@ export class HTMLExporter {
         }
         let contents = docStyle.contents
         docStyle.documentstylefile_set.forEach(
-            ([_url, filename]) => contents = contents.replace(
-                new RegExp(filename, "g"),
-                `media/${filename}`
-            )
+            ([_url, filename]) =>
+                (contents = contents.replace(
+                    new RegExp(filename, "g"),
+                    `media/${filename}`
+                ))
         )
         this.styleSheets.push({contents, filename: `css/${docStyle.slug}.css`})
-        this.httpFiles = this.httpFiles.concat(docStyle.documentstylefile_set.map(([url, filename]) => ({
-            filename: `css/media/${filename}`,
-            url
-        })))
+        this.httpFiles = this.httpFiles.concat(
+            docStyle.documentstylefile_set.map(([url, filename]) => ({
+                filename: `css/media/${filename}`,
+                url
+            }))
+        )
     }
 
     loadStyles() {
@@ -108,15 +117,13 @@ export class HTMLExporter {
         this.styleSheets.forEach(sheet => {
             if (sheet.url) {
                 p.push(
-                    get(sheet.url).then(
-                        response => response.text()
-                    ).then(
-                        response => {
+                    get(sheet.url)
+                        .then(response => response.text())
+                        .then(response => {
                             sheet.contents = response
                             sheet.filename = `css/${sheet.url.split("/").pop().split("?")[0]}`
                             delete sheet.url
-                        }
-                    )
+                        })
                 )
             }
         })
@@ -131,9 +138,7 @@ export class HTMLExporter {
             undefined,
             this.updated
         )
-        return zipper.init().then(
-            blob => this.download(blob)
-        )
+        return zipper.init().then(blob => this.download(blob))
     }
 
     download(blob) {

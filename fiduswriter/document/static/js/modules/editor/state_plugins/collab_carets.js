@@ -1,25 +1,26 @@
+import {sendableSteps} from "prosemirror-collab"
 import {Plugin, PluginKey} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
-import {sendableSteps} from "prosemirror-collab"
 
 const key = new PluginKey("collabCarets")
 
-export const getSelectionUpdate = function(state) {
+export const getSelectionUpdate = state => {
     const {caretUpdate} = key.getState(state)
     return caretUpdate
 }
 
-export const updateCollaboratorSelection = function(state, collaborator, data) {
-    let {
-        decos,
-        caretPositions
-    } = key.getState(state)
+export const updateCollaboratorSelection = (state, collaborator, data) => {
+    let {decos, caretPositions} = key.getState(state)
 
-    const oldCarPos = caretPositions.find(carPos => carPos.sessionId === data.session_id)
+    const oldCarPos = caretPositions.find(
+        carPos => carPos.sessionId === data.session_id
+    )
 
     if (oldCarPos) {
         caretPositions = caretPositions.filter(carPos => carPos !== oldCarPos)
-        const removeDecos = decos.find().filter(deco => deco.spec === oldCarPos.decoSpec)
+        const removeDecos = decos
+            .find()
+            .filter(deco => deco.spec === oldCarPos.decoSpec)
         decos = decos.remove(removeDecos)
     }
 
@@ -27,7 +28,7 @@ export const updateCollaboratorSelection = function(state, collaborator, data) {
     const className = `user-${collaborator.id}`
     widgetDom.classList.add("caret")
     widgetDom.classList.add(className)
-    widgetDom.innerHTML = "<div class=\"caret-head\"></div>"
+    widgetDom.innerHTML = '<div class="caret-head"></div>'
     widgetDom.firstChild.classList.add(className)
     const tooltip = collaborator.name
     widgetDom.title = tooltip
@@ -48,9 +49,14 @@ export const updateCollaboratorSelection = function(state, collaborator, data) {
     if (data.anchor !== data.head) {
         const from = data.head > data.anchor ? data.anchor : data.head,
             to = data.anchor > data.head ? data.anchor : data.head,
-            inlineDeco = Decoration.inline(from, to, {
-                class: `user-bg-${collaborator.id}`
-            }, decoSpec)
+            inlineDeco = Decoration.inline(
+                from,
+                to,
+                {
+                    class: `user-bg-${collaborator.id}`
+                },
+                decoSpec
+            )
         addDecos.push(inlineDeco)
     }
     decos = decos.add(state.doc, addDecos)
@@ -63,17 +69,20 @@ export const updateCollaboratorSelection = function(state, collaborator, data) {
     return tr
 }
 
-export const removeCollaboratorSelection = function(state, data) {
-    let {
-        decos,
-        caretPositions
-    } = key.getState(state)
+export const removeCollaboratorSelection = (state, data) => {
+    let {decos, caretPositions} = key.getState(state)
 
-    const caretPosition = caretPositions.find(carPos => carPos.sessionId === data.session_id)
+    const caretPosition = caretPositions.find(
+        carPos => carPos.sessionId === data.session_id
+    )
 
     if (caretPosition) {
-        caretPositions = caretPositions.filter(carPos => carPos !== caretPosition)
-        const removeDecos = decos.find().filter(deco => deco.spec === caretPosition.decoSpec)
+        caretPositions = caretPositions.filter(
+            carPos => carPos !== caretPosition
+        )
+        const removeDecos = decos
+            .find()
+            .filter(deco => deco.spec === caretPosition.decoSpec)
         decos = decos.remove(removeDecos)
         const tr = state.tr.setMeta(key, {
             decos,
@@ -85,8 +94,8 @@ export const removeCollaboratorSelection = function(state, data) {
     return false
 }
 
-export const collabCaretsPlugin = function(options) {
-    return new Plugin({
+export const collabCaretsPlugin = options =>
+    new Plugin({
         key,
         state: {
             init() {
@@ -96,32 +105,35 @@ export const collabCaretsPlugin = function(options) {
                     caretUpdate: false
                 }
             },
-            apply(tr, prev, oldState, state) {
+            apply(tr, _prev, oldState, state) {
                 const meta = tr.getMeta(key)
                 if (meta) {
                     // There has been an update, return values from meta instead
                     // of previous values
                     return meta
                 }
-                let {
-                        decos,
-                        caretPositions
-                    } = this.getState(oldState),
+                let {decos, caretPositions} = this.getState(oldState),
                     caretUpdate = false
 
-                decos = decos.map(tr.mapping, tr.doc, {onRemove: decoSpec => {
-                    caretPositions = caretPositions.filter(
-                        carPos => carPos.decoSpec !== decoSpec
-                    )
-                }})
-
+                decos = decos.map(tr.mapping, tr.doc, {
+                    onRemove: decoSpec => {
+                        caretPositions = caretPositions.filter(
+                            carPos => carPos.decoSpec !== decoSpec
+                        )
+                    }
+                })
 
                 if (
                     tr.selectionSet &&
                     !sendableSteps(state) &&
-                    !["review", "review-tracked"].includes(options.editor.docInfo.access_rights)
+                    !["review", "review-tracked"].includes(
+                        options.editor.docInfo.access_rights
+                    )
                 ) {
-                    caretUpdate = {anchor: tr.selection.anchor, head: tr.selection.head}
+                    caretUpdate = {
+                        anchor: tr.selection.anchor,
+                        head: tr.selection.head
+                    }
                 }
 
                 return {
@@ -133,11 +145,8 @@ export const collabCaretsPlugin = function(options) {
         },
         props: {
             decorations(state) {
-                const {
-                    decos
-                } = this.getState(state)
+                const {decos} = this.getState(state)
                 return decos
             }
         }
     })
-}

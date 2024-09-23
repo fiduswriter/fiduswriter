@@ -1,10 +1,10 @@
-import {EditorState, Plugin} from "prosemirror-state"
-import {EditorView, Decoration, DecorationSet} from "prosemirror-view"
+import {baseKeymap, toggleMark} from "prosemirror-commands"
 import {history, redo, undo} from "prosemirror-history"
-import {toggleMark, baseKeymap} from "prosemirror-commands"
 import {keymap} from "prosemirror-keymap"
+import {EditorState, Plugin} from "prosemirror-state"
+import {Decoration, DecorationSet, EditorView} from "prosemirror-view"
 
-import {icon, InlineTools} from "../../../prosemirror/inline_tools"
+import {InlineTools, icon} from "../../../prosemirror/inline_tools"
 import {litSchema} from "../../schema/literal"
 
 export class LiteralFieldForm {
@@ -16,13 +16,14 @@ export class LiteralFieldForm {
     }
 
     init() {
-
         const doc = litSchema.nodeFromJSON({
             type: "doc",
-            content: [{
-                type: "literal",
-                content: this.initialValue
-            }]
+            content: [
+                {
+                    type: "literal",
+                    content: this.initialValue
+                }
+            ]
         })
 
         this.view = new EditorView(this.dom, {
@@ -39,21 +40,40 @@ export class LiteralFieldForm {
                         "Mod-b": () => {
                             const sMark = this.view.state.schema.marks["strong"]
                             const command = toggleMark(sMark)
-                            command(this.view.state, tr => this.view.dispatch(tr))
+                            command(this.view.state, tr =>
+                                this.view.dispatch(tr)
+                            )
                         },
                         "Mod-i": () => {
                             const sMark = this.view.state.schema.marks["em"]
                             const command = toggleMark(sMark)
-                            command(this.view.state, tr => this.view.dispatch(tr))
+                            command(this.view.state, tr =>
+                                this.view.dispatch(tr)
+                            )
                         }
                     }),
                     this.placeholderPlugin(),
                     InlineTools([
-                        {command: toggleMark(litSchema.marks.strong), dom: icon("strong", gettext("Strong"))},
-                        {command: toggleMark(litSchema.marks.em), dom: icon("em", gettext("Emphasis"))},
-                        {command: toggleMark(litSchema.marks.smallcaps), dom: icon("smallcaps", gettext("Small caps"))},
-                        {command: toggleMark(litSchema.marks.sub), dom: icon("sub", gettext("Subscript₊"))},
-                        {command: toggleMark(litSchema.marks.sup), dom: icon("sup", gettext("Supscript²"))}
+                        {
+                            command: toggleMark(litSchema.marks.strong),
+                            dom: icon("strong", gettext("Strong"))
+                        },
+                        {
+                            command: toggleMark(litSchema.marks.em),
+                            dom: icon("em", gettext("Emphasis"))
+                        },
+                        {
+                            command: toggleMark(litSchema.marks.smallcaps),
+                            dom: icon("smallcaps", gettext("Small caps"))
+                        },
+                        {
+                            command: toggleMark(litSchema.marks.sub),
+                            dom: icon("sub", gettext("Subscript₊"))
+                        },
+                        {
+                            command: toggleMark(litSchema.marks.sup),
+                            dom: icon("sup", gettext("Supscript²"))
+                        }
                     ])
                 ]
             }),
@@ -66,7 +86,9 @@ export class LiteralFieldForm {
 
     get value() {
         const literalContents = this.view.state.doc.firstChild.content.toJSON()
-        return literalContents && literalContents.length ? literalContents : false
+        return literalContents && literalContents.length
+            ? literalContents
+            : false
     }
 
     check() {
@@ -76,7 +98,7 @@ export class LiteralFieldForm {
     placeholderPlugin() {
         return new Plugin({
             props: {
-                decorations: (state) => {
+                decorations: state => {
                     const doc = state.doc
                     if (
                         doc.childCount === 1 &&
@@ -88,12 +110,16 @@ export class LiteralFieldForm {
                         placeHolder.classList.add("placeholder")
                         // There is only one field, so we know the selection is there
                         placeHolder.classList.add("selected")
-                        placeHolder.setAttribute("data-placeholder", this.placeHolder)
-                        return DecorationSet.create(doc, [Decoration.widget(1, placeHolder)])
+                        placeHolder.setAttribute(
+                            "data-placeholder",
+                            this.placeHolder
+                        )
+                        return DecorationSet.create(doc, [
+                            Decoration.widget(1, placeHolder)
+                        ])
                     }
                 }
             }
         })
     }
-
 }

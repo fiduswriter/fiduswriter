@@ -1,4 +1,4 @@
-export const modifyImages = function(htmlEl) {
+export const modifyImages = htmlEl => {
     const imageLinks = htmlEl.querySelectorAll("img"),
         images = []
 

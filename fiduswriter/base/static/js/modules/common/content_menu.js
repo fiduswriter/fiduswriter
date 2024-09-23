@@ -1,44 +1,51 @@
-
-const menuTemplate = ({id, classes, height, width, zIndex, menu, scroll, page}) =>
+const menuTemplate = ({
+    id,
+    classes,
+    height,
+    width,
+    zIndex,
+    menu,
+    scroll,
+    page
+}) =>
     `<div tabindex="-1" role="incontent_menu"
         class="ui-content-menu ui-corner-all ui-widget ui-widget-content ui-front"
         ${id ? `aria-describedby="${id}"` : ""} style="z-index: ${zIndex};">
     <div ${id ? `id="${id}"` : ""} class="ui-content-menu-content ui-widget-content${classes ? ` ${classes}` : ""}${scroll ? " ui-scrollable" : ""}" style="width: ${width}; height: ${height};">
     <div>
         <ul class="content-menu-list">
-        ${
-    menu.content.map((menuItem, index) => {
-        switch (menuItem.type) {
-        case "header":
-            return `<li><span class="content-menu-item-header" title="${menuItem.tooltip}">${
-                typeof menuItem.title === "function" ?
-                    menuItem.title(page) :
-                    menuItem.title
-            }</span></li>`
-        case "separator":
-            return "<li><hr class=\"content-menu-item-divider\"/></li>"
-        default:
-            return `<li data-index="${index}" class="content-menu-item${
-                menuItem.disabled && menuItem.disabled(page) ?
-                    " disabled" :
-                    menuItem.selected ?
-                        " selected" :
-                        ""
-            }" title='${menuItem.tooltip}'>
+        ${menu.content
+            .map((menuItem, index) => {
+                switch (menuItem.type) {
+                    case "header":
+                        return `<li><span class="content-menu-item-header" title="${menuItem.tooltip}">${
+                            typeof menuItem.title === "function"
+                                ? menuItem.title(page)
+                                : menuItem.title
+                        }</span></li>`
+                    case "separator":
+                        return '<li><hr class="content-menu-item-divider"/></li>'
+                    default:
+                        return `<li data-index="${index}" class="content-menu-item${
+                            menuItem.disabled && menuItem.disabled(page)
+                                ? " disabled"
+                                : menuItem.selected
+                                  ? " selected"
+                                  : ""
+                        }" title='${menuItem.tooltip}'>
                         ${
-    typeof menuItem.title === "function" ?
-        menuItem.title(page) :
-        menuItem.title
-} ${
-    menuItem.icon ?
-        `<span class="content-menu-item-icon"><i class="fa fa-${menuItem.icon}"></i></span>` :
-        ""
-}
+                            typeof menuItem.title === "function"
+                                ? menuItem.title(page)
+                                : menuItem.title
+                        } ${
+                            menuItem.icon
+                                ? `<span class="content-menu-item-icon"><i class="fa fa-${menuItem.icon}"></i></span>`
+                                : ""
+                        }
                         </li>`
-        }
-
-    }).join("")
-}
+                }
+            })
+            .join("")}
         </ul>
     </div>
     </div>
@@ -123,15 +130,15 @@ export class ContentMenu {
         let top = this.menuPos.Y,
             left = this.menuPos.X
 
-        if ((top + dialogHeight) > (scrollTopOffset + clientHeight)) {
-            top -= ((top + dialogHeight) - (scrollTopOffset + clientHeight))
+        if (top + dialogHeight > scrollTopOffset + clientHeight) {
+            top -= top + dialogHeight - (scrollTopOffset + clientHeight)
         }
 
         if (top < scrollTopOffset) {
             top = scrollTopOffset + 10
         }
 
-        if ((left + dialogWidth) > clientWidth) {
+        if (left + dialogWidth > clientWidth) {
             left -= left + dialogWidth - clientWidth
         }
 
@@ -146,8 +153,16 @@ export class ContentMenu {
 
     getHighestDialogZIndex() {
         let zIndex = 100
-        document.querySelectorAll("div.ui-content-menu").forEach(dialogEl => zIndex = Math.max(zIndex, dialogEl.style.zIndex))
-        document.querySelectorAll("div.ui-dialog").forEach(dialogEl => zIndex = Math.max(zIndex, dialogEl.style.zIndex))
+        document
+            .querySelectorAll("div.ui-content-menu")
+            .forEach(
+                dialogEl => (zIndex = Math.max(zIndex, dialogEl.style.zIndex))
+            )
+        document
+            .querySelectorAll("div.ui-dialog")
+            .forEach(
+                dialogEl => (zIndex = Math.max(zIndex, dialogEl.style.zIndex))
+            )
         return zIndex
     }
 

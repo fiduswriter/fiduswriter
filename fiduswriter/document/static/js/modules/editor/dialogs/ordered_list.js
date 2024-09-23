@@ -1,7 +1,6 @@
 import {Dialog} from "../../common"
 import {orderedListStartTemplate} from "./templates"
 
-
 export class OrderedListStartDialog {
     constructor(editor) {
         this.editor = editor
@@ -10,7 +9,9 @@ export class OrderedListStartDialog {
     }
 
     init() {
-        const {orderedList} = this.findOrderedList(this.editor.currentView.state)
+        const {orderedList} = this.findOrderedList(
+            this.editor.currentView.state
+        )
         if (orderedList) {
             this.order = orderedList.attrs.order
         }
@@ -21,21 +22,32 @@ export class OrderedListStartDialog {
         const $head = state.selection.$head
         for (let d = $head.depth; d > 0; d--) {
             if ($head.node(d).type.name == "ordered_list") {
-                return {orderedList: $head.node(d), orderedListPos: $head.before(d)}
+                return {
+                    orderedList: $head.node(d),
+                    orderedListPos: $head.before(d)
+                }
             }
         }
         return {orderedList: false, orderedListPos: false}
     }
 
     submitForm() {
-        const {orderedList, orderedListPos} = this.findOrderedList(this.editor.currentView.state)
+        const {orderedList, orderedListPos} = this.findOrderedList(
+            this.editor.currentView.state
+        )
         if (!orderedList) {
             return
         }
         const attrs = Object.assign({}, orderedList.attrs, {
             order: this.order
         })
-        this.editor.currentView.dispatch(this.editor.currentView.state.tr.setNodeMarkup(orderedListPos, false, attrs))
+        this.editor.currentView.dispatch(
+            this.editor.currentView.state.tr.setNodeMarkup(
+                orderedListPos,
+                false,
+                attrs
+            )
+        )
     }
 
     insertDialog() {
@@ -65,7 +77,7 @@ export class OrderedListStartDialog {
 
         const listStartInput = document.querySelector("input.list-start")
         listStartInput.addEventListener("change", _event => {
-            this.order = parseInt(listStartInput.value) || 1
+            this.order = Number.parseInt(listStartInput.value) || 1
         })
     }
 }

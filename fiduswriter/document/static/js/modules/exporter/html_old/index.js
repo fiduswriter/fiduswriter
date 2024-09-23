@@ -1,13 +1,13 @@
 import download from "downloadjs"
 import pretty from "pretty"
 
+import {addAlert, shortFileTitle} from "../../common"
+import {removeHidden} from "../tools/doc_content"
+import {DOMExporter} from "../tools/dom_export"
 import {createSlug} from "../tools/file"
 import {modifyImages} from "../tools/html"
 import {ZipFileCreator} from "../tools/zip"
-import {removeHidden} from "../tools/doc_content"
 import {htmlExportTemplate} from "./templates"
-import {addAlert, shortFileTitle} from "../../common"
-import {DOMExporter} from "../tools/dom_export"
 
 export class OldHTMLExporter extends DOMExporter {
     constructor(schema, csl, documentStyles, doc, bibDB, imageDB, updated) {
@@ -23,32 +23,35 @@ export class OldHTMLExporter extends DOMExporter {
     }
 
     init() {
-        addAlert("info", `${this.docTitle}: ${gettext("HTML export has been initiated.")}`)
+        addAlert(
+            "info",
+            `${this.docTitle}: ${gettext("HTML export has been initiated.")}`
+        )
         this.docContent = removeHidden(this.doc.content, false)
 
         this.addDocStyle(this.doc)
 
-        return this.loadStyles().then(
-            () => this.joinDocumentParts()
-        ).then(
-            () => this.fillToc()
-        ).then(
-            () => this.postProcess()
-        ).then(
-            ({title, html, math}) => this.save({title, html, math})
-        )
-
+        return this.loadStyles()
+            .then(() => this.joinDocumentParts())
+            .then(() => this.fillToc())
+            .then(() => this.postProcess())
+            .then(({title, html, math}) => this.save({title, html, math}))
     }
 
     prepareBinaryFiles() {
-        this.binaryFiles = this.binaryFiles.concat(modifyImages(this.content)).concat(this.fontFiles)
+        this.binaryFiles = this.binaryFiles
+            .concat(modifyImages(this.content))
+            .concat(this.fontFiles)
     }
 
     postProcess() {
-
         const title = this.docTitle
 
-        const math = this.content.querySelectorAll(".equation, .figure-equation").length ? true : false
+        const math = this.content.querySelectorAll(
+            ".equation, .figure-equation"
+        ).length
+            ? true
+            : false
 
         if (math) {
             this.addMathliveStylesheet()
@@ -80,8 +83,8 @@ export class OldHTMLExporter extends DOMExporter {
 
         if (math) {
             this.includeZips.push({
-                "directory": "css",
-                "url": staticUrl("zip/mathlive_style.zip"),
+                directory: "css",
+                url: staticUrl("zip/mathlive_style.zip")
             })
         }
 
@@ -101,13 +104,14 @@ export class OldHTMLExporter extends DOMExporter {
             this.updated
         )
 
-        return zipper.init().then(
-            blob => this.download(blob)
-        )
+        return zipper.init().then(blob => this.download(blob))
     }
 
     download(blob) {
-        return download(blob, createSlug(this.docTitle) + ".html.zip", "application/zip")
+        return download(
+            blob,
+            createSlug(this.docTitle) + ".html.zip",
+            "application/zip"
+        )
     }
-
 }

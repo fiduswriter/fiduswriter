@@ -1,7 +1,6 @@
-import {mathDialogTemplate} from "./templates"
 import {Dialog} from "../../common"
-import {sub, sup, subChars, supChars} from "./subsup"
-
+import {sub, subChars, sup, supChars} from "./subsup"
+import {mathDialogTemplate} from "./templates"
 
 /**
  * Class to work with formula dialog
@@ -10,7 +9,10 @@ export class MathDialog {
     constructor(editor) {
         this.editor = editor
         this.node = this.editor.currentView.state.selection.node
-        this.equationSelected = this.node && this.node.attrs && this.node.attrs.equation ? true : false
+        this.equationSelected =
+            this.node && this.node.attrs && this.node.attrs.equation
+                ? true
+                : false
         this.equation = this.equationSelected ? this.node.attrs.equation : ""
     }
 
@@ -23,7 +25,9 @@ export class MathDialog {
             height: 150,
             buttons: [
                 {
-                    text: this.equationSelected ? gettext("Update") : gettext("Insert"),
+                    text: this.equationSelected
+                        ? gettext("Update")
+                        : gettext("Insert"),
                     classes: "fw-dark insert-math",
                     click: () => {
                         const view = this.editor.currentView,
@@ -31,7 +35,7 @@ export class MathDialog {
 
                         this.equation = this.getLatex()
 
-                        if ((new RegExp(/^\s*$/)).test(this.equation)) {
+                        if (new RegExp(/^\s*$/).test(this.equation)) {
                             // The math input is empty. Delete a math node if it exist. Then close the dialog.
                             if (this.equationSelected) {
                                 view.dispatch(state.tr.deleteSelection())
@@ -39,8 +43,10 @@ export class MathDialog {
                             this.dialog.close()
                             return
                         } else if (
-                            (new RegExp(`^\\^({[${supChars}]*}|[${supChars}]?)$`)
-                            ).test(this.equation)) {
+                            new RegExp(
+                                `^\\^({[${supChars}]*}|[${supChars}]?)$`
+                            ).test(this.equation)
+                        ) {
                             // The math input is pure superscript and
                             // can be converted to ordinary characters.
                             view.dispatch(
@@ -49,8 +55,10 @@ export class MathDialog {
                             this.dialog.close()
                             return
                         } else if (
-                            (new RegExp(`^\\_({[${subChars}]*}|[${subChars}]?)$`)
-                            ).test(this.equation)) {
+                            new RegExp(
+                                `^\\_({[${subChars}]*}|[${subChars}]?)$`
+                            ).test(this.equation)
+                        ) {
                             // The math input is pure subscript and
                             // can be converted to ordinary characters.
                             view.dispatch(
@@ -58,16 +66,21 @@ export class MathDialog {
                             )
                             this.dialog.close()
                             return
-                        } else if (this.equationSelected && this.equation === this.node.attrs.equation) {
+                        } else if (
+                            this.equationSelected &&
+                            this.equation === this.node.attrs.equation
+                        ) {
                             // Equation selected, but has not changed from last time.
                             this.dialog.close()
                             return
                         }
                         const nodeType = state.schema.nodes["equation"]
                         view.dispatch(
-                            state.tr.replaceSelectionWith(nodeType.createAndFill({
-                                equation: this.equation
-                            }))
+                            state.tr.replaceSelectionWith(
+                                nodeType.createAndFill({
+                                    equation: this.equation
+                                })
+                            )
                         )
                         this.dialog.close()
                     }
@@ -92,15 +105,19 @@ export class MathDialog {
 
         import("mathlive").then(MathLive => {
             MathLive.MathfieldElement.strings = {
-                "int": {
+                int: {
                     "keyboard.tooltip.functions": gettext("Functions"),
                     "keyboard.tooltip.greek": gettext("Greek Letters"),
                     "keyboard.tooltip.command": gettext("LaTeX Command Mode"),
                     "keyboard.tooltip.numeric": gettext("Numeric"),
-                    "keyboard.tooltip.roman": gettext("Symbols and Roman Letters"),
+                    "keyboard.tooltip.roman": gettext(
+                        "Symbols and Roman Letters"
+                    ),
                     "tooltip.copy to clipboard": gettext("Copy to Clipboard"),
                     "tooltip.redo": gettext("Redo"),
-                    "tooltip.toggle virtual keyboard": gettext("Toggle Virtual Keyboard"),
+                    "tooltip.toggle virtual keyboard": gettext(
+                        "Toggle Virtual Keyboard"
+                    ),
                     "tooltip.undo": gettext("Undo")
                 }
             }
@@ -108,7 +125,7 @@ export class MathDialog {
             MathLive.MathfieldElement.plonkSound = null
             MathLive.MathfieldElement.keypressSound = null
             this.mathField = new MathLive.MathfieldElement({
-                mathVirtualKeyboardPolicy: "manual",
+                mathVirtualKeyboardPolicy: "manual"
             })
             this.mathField.value = this.equation
             this.mathliveDOM.appendChild(this.mathField)

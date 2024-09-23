@@ -1,8 +1,8 @@
-import {DOMSerializer, DOMParser} from "prosemirror-model"
+import {DOMParser, DOMSerializer} from "prosemirror-model"
 
+import {cslBibSchema} from "../../bibliography/schema/csl_bib"
 import {FormatCitations} from "../../citations/format"
 import {fnSchema} from "../../schema/footnotes"
-import {cslBibSchema} from "../../bibliography/schema/csl_bib"
 import {descendantNodes} from "../tools/doc_content"
 
 export class DOCXExporterCitations {
@@ -24,14 +24,13 @@ export class DOCXExporterCitations {
     }
 
     init() {
-        return this.xml.getXml(this.styleFilePath).then(
-            styleXML => {
+        return this.xml
+            .getXml(this.styleFilePath)
+            .then(styleXML => {
                 this.styleXML = styleXML
                 return Promise.resolve()
-            }
-        ).then(
-            () => this.formatCitations()
-        )
+            })
+            .then(() => this.formatCitations())
     }
 
     // Citations are highly interdependent -- so we need to format them all
@@ -44,13 +43,11 @@ export class DOCXExporterCitations {
             this.citInfos = this.citInfos.concat(this.origCitInfos)
         }
 
-        descendantNodes(this.docContent).forEach(
-            node => {
-                if (node.type === "citation") {
-                    this.citInfos.push(JSON.parse(JSON.stringify(node.attrs)))
-                }
+        descendantNodes(this.docContent).forEach(node => {
+            if (node.type === "citation") {
+                this.citInfos.push(JSON.parse(JSON.stringify(node.attrs)))
             }
-        )
+        })
         this.citFm = new FormatCitations(
             this.csl,
             this.citInfos,
@@ -60,17 +57,15 @@ export class DOCXExporterCitations {
             false,
             this.settings.language
         )
-        return this.citFm.init().then(
-            () => {
-                this.citationTexts = this.citFm.citationTexts
-                if (this.origCitInfos.length) {
-                    // Remove all citation texts originating from original starting citInfos
-                    this.citationTexts.splice(0, this.origCitInfos.length)
-                }
-                this.convertCitations()
-                return Promise.resolve()
+        return this.citFm.init().then(() => {
+            this.citationTexts = this.citFm.citationTexts
+            if (this.origCitInfos.length) {
+                // Remove all citation texts originating from original starting citInfos
+                this.citationTexts.splice(0, this.origCitInfos.length)
             }
-        )
+            this.convertCitations()
+            return Promise.resolve()
+        })
     }
 
     convertCitations() {
@@ -88,7 +83,9 @@ export class DOCXExporterCitations {
         const serializer = DOMSerializer.fromSchema(fnSchema)
         let dom = serializer.serializeNode(fnNode)
         dom.innerHTML = citationsHTML
-        this.pmCits = DOMParser.fromSchema(fnSchema).parse(dom, {topNode: fnNode}).toJSON().content
+        this.pmCits = DOMParser.fromSchema(fnSchema)
+            .parse(dom, {topNode: fnNode})
+            .toJSON().content
 
         // Now we do the same for the bibliography.
         const cslBib = this.citFm.bibliography
@@ -98,13 +95,19 @@ export class DOCXExporterCitations {
             const cslSerializer = DOMSerializer.fromSchema(cslBibSchema)
             dom = cslSerializer.serializeNode(bibNode)
             dom.innerHTML = cslBib[1].join("")
-            this.pmBib = DOMParser.fromSchema(cslBibSchema).parse(dom, {topNode: bibNode}).toJSON()
+            this.pmBib = DOMParser.fromSchema(cslBibSchema)
+                .parse(dom, {topNode: bibNode})
+                .toJSON()
         }
     }
 
     addReferenceStyle(bibInfo) {
         const stylesEl = this.styleXML.query("w:styles")
-        if (!this.styleXML.query("w:style", {"w:styleId": "BibliographyHeading"})) {
+        if (
+            !this.styleXML.query("w:style", {
+                "w:styleId": "BibliographyHeading"
+            })
+        ) {
             // There is no style definition for the bibliography heading. We have to add it.
             const headingStyleDef = `
                 <w:style w:type="paragraph" w:styleId="BibliographyHeading">
@@ -125,14 +128,18 @@ export class DOCXExporterCitations {
         }
         // The style called "Bibliography1" will override any previous style
         // of the same name.
-        const stylesParStyle = this.styleXML.query("w:style", {"w:styleId": "Bibliography1"})
+        const stylesParStyle = this.styleXML.query("w:style", {
+            "w:styleId": "Bibliography1"
+        })
         if (stylesParStyle) {
             stylesParStyle.parentElement.removeChild(stylesParStyle)
         }
 
         const lineHeight = 240 * bibInfo.linespacing
         const marginBottom = 240 * bibInfo.entryspacing
-        let marginLeft = 0, hangingIndent = 0, tabStops = ""
+        let marginLeft = 0,
+            hangingIndent = 0,
+            tabStops = ""
 
         if (bibInfo.hangingindent) {
             marginLeft = 720
@@ -141,8 +148,9 @@ export class DOCXExporterCitations {
             // We calculate 120 as roughly equivalent to one letter width.
             const firstFieldWidth = (bibInfo.maxoffset + 1) * 120
             if (bibInfo["second-field-align"] === "margin") {
-                hangingIndent =  firstFieldWidth
-                tabStops = "<w:tabs><w:tab w:val=\"left\" w:pos=\"0\" w:leader=\"none\"/></w:tabs>"
+                hangingIndent = firstFieldWidth
+                tabStops =
+                    '<w:tabs><w:tab w:val="left" w:pos="0" w:leader="none"/></w:tabs>'
             } else {
                 hangingIndent = firstFieldWidth
                 marginLeft = firstFieldWidth
@@ -164,5 +172,4 @@ export class DOCXExporterCitations {
 
         stylesEl.appendXML(styleDef)
     }
-
 }

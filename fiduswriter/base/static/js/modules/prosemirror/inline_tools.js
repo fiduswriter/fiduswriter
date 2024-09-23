@@ -34,7 +34,8 @@ class MenuView {
     update(view) {
         const activeMarks = []
 
-        const storedMarks = view.state?.storedMarks || view.state?.selection.$head.marks()
+        const storedMarks =
+            view.state?.storedMarks || view.state?.selection.$head.marks()
         if (storedMarks) {
             for (const mark of storedMarks) {
                 activeMarks[mark.type.name] = true
@@ -55,7 +56,7 @@ class MenuView {
     }
 }
 
-export const InlineTools = (tools) => {
+export const InlineTools = tools => {
     return new Plugin({
         view(view) {
             const menuView = new MenuView(tools, view)

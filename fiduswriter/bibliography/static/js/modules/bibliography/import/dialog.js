@@ -1,11 +1,9 @@
+import {Dialog, activateWait, addAlert, deactivateWait} from "../../common"
 import {importBibFileTemplate} from "./templates"
-import {activateWait, deactivateWait, Dialog, addAlert} from "../../common"
 /** First step of the BibTeX file import. Creates a dialog box to specify upload file.
  */
 
-
 export class BibLatexFileImportDialog {
-
     constructor(bibDB, addToListCall, app) {
         this.bibDB = bibDB
         this.addToListCall = addToListCall
@@ -15,7 +13,12 @@ export class BibLatexFileImportDialog {
 
     init() {
         if (this.app.isOffline()) {
-            addAlert("info", gettext("You are currently offline. Please try again when you are back online."))
+            addAlert(
+                "info",
+                gettext(
+                    "You are currently offline. Please try again when you are back online."
+                )
+            )
             return
         }
         const buttons = [
@@ -32,7 +35,12 @@ export class BibLatexFileImportDialog {
                         return false
                     }
                     if (this.app.isOffline()) {
-                        addAlert("info", gettext("You are currently offline. Please try again when you are back online."))
+                        addAlert(
+                            "info",
+                            gettext(
+                                "You are currently offline. Please try again when you are back online."
+                            )
+                        )
                         dialog.close()
                         return false
                     }
@@ -48,7 +56,6 @@ export class BibLatexFileImportDialog {
                             )
                             importer.init()
                         })
-
                     }
                     reader.readAsText(bibFile)
                     dialog.close()
@@ -66,16 +73,20 @@ export class BibLatexFileImportDialog {
             buttons
         })
         dialog.open()
-        document.getElementById("bib-uploader").addEventListener(
-            "change",
-            () => document.getElementById("import-bib-name").innerHTML =
-                document.getElementById("bib-uploader").value.replace(/C:\\fakepath\\/i, "")
-        )
-        document.getElementById("import-bib-btn").addEventListener(
-            "click",
-            () => document.getElementById("bib-uploader").click()
-        )
+        document
+            .getElementById("bib-uploader")
+            .addEventListener(
+                "change",
+                () =>
+                    (document.getElementById("import-bib-name").innerHTML =
+                        document
+                            .getElementById("bib-uploader")
+                            .value.replace(/C:\\fakepath\\/i, ""))
+            )
+        document
+            .getElementById("import-bib-btn")
+            .addEventListener("click", () =>
+                document.getElementById("bib-uploader").click()
+            )
     }
-
-
 }

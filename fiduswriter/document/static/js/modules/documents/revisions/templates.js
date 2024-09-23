@@ -1,4 +1,4 @@
-import {localizeDate, escapeText} from "../../common"
+import {escapeText, localizeDate} from "../../common"
 
 /** A template for listing the templates of a certain document */
 export const documentrevisionsTemplate = ({doc}) =>
@@ -8,16 +8,15 @@ export const documentrevisionsTemplate = ({doc}) =>
             <th width="300">${gettext("Description")}</th>
             <th width="50">${gettext("Recreate")}</th>
             <th width="50">${gettext("Download")}</th>
-            ${
-    doc.is_owner ?
-        `<th width="50">${gettext("Delete")}</th>` :
-        ""
-}
+            ${doc.is_owner ? `<th width="50">${gettext("Delete")}</th>` : ""}
         </thead>
         <tbody class="fw-data-table-body fw-middle">
-            ${
-    doc.revisions.slice().sort((a, b) => a.date > b.date).map(rev =>
-        `<tr class="revision-${rev.pk}" data-document="${doc.id}">
+            ${doc.revisions
+                .slice()
+                .sort((a, b) => a.date > b.date)
+                .map(
+                    rev =>
+                        `<tr class="revision-${rev.pk}" data-document="${doc.id}">
                         <td width="80"><span class="fw-inline">
                             ${localizeDate(rev.date * 1000)}
                         </span></td>
@@ -29,16 +28,15 @@ export const documentrevisionsTemplate = ({doc}) =>
                             <i class="fa fa-download"></i>
                         </span></td>
                         ${
-    doc.is_owner ?
-        `<td width="50">
+                            doc.is_owner
+                                ? `<td width="50">
                                 <span class="fw-inline delete-revision" data-id="${rev.pk}">
                                     <i class="fa fa-trash"></i>
                                 </span>
-                            </td>` :
-        ""
-}
+                            </td>`
+                                : ""
+                        }
                     </tr>`
-    )
-}
+                )}
         </tbody>
     </table>`

@@ -24,7 +24,8 @@ export class ModCollabColors {
 
     setup() {
         const styleContainers = document.createElement("temp")
-        styleContainers.innerHTML = "<style type=\"text/css\" id=\"user-colors\"></style>"
+        styleContainers.innerHTML =
+            '<style type="text/css" id="user-colors"></style>'
         while (styleContainers.firstElementChild) {
             document.body.appendChild(styleContainers.firstElementChild)
         }
@@ -33,9 +34,9 @@ export class ModCollabColors {
 
     ensureUserColor(userId) {
         /* We assign a color to each user. This color stays even if the user
-        * disconnects or the participant list is being updated.
-        */
-        if (!(this.colorIds.includes(userId))) {
+         * disconnects or the participant list is being updated.
+         */
+        if (!this.colorIds.includes(userId)) {
             this.colorIds.push(userId)
             this.provideUserColorStyles()
         }
@@ -43,10 +44,13 @@ export class ModCollabColors {
 
     // Ensure that there are at least the given number of user color styles.
     provideUserColorStyles() {
-        this.userColorStyle.innerHTML = this.colorIds.map((id, index) => {
-            const color = index < CSS_COLORS.length ? CSS_COLORS[index] :
-                `${Math.round(Math.random() * 255)},${Math.round(Math.random() * 255)},${Math.round(Math.random() * 255)}`
-            return noSpaceTmp`
+        this.userColorStyle.innerHTML = this.colorIds
+            .map((id, index) => {
+                const color =
+                    index < CSS_COLORS.length
+                        ? CSS_COLORS[index]
+                        : `${Math.round(Math.random() * 255)},${Math.round(Math.random() * 255)},${Math.round(Math.random() * 255)}`
+                return noSpaceTmp`
                 span.user-${id} {
                     border-color: rgba(${color},1);
                     text-decoration-color: rgba(${color},1);
@@ -57,8 +61,7 @@ export class ModCollabColors {
                 .user-bg-${id} {
                     background-color: rgba(${color},0.2);
                 }`
-        }).join("\n")
-
+            })
+            .join("\n")
     }
-
 }

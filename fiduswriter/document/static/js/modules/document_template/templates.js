@@ -1,7 +1,6 @@
 import {escapeText} from "../common"
 import {LANGUAGES, PAPER_SIZES} from "../schema/const"
 
-
 const allowedElementsTemplate = ({elements}, footnote = true, table = true) =>
     `<div class="label">
     ${gettext("Allowed elements")}
@@ -35,9 +34,9 @@ const allowedElementsTemplate = ({elements}, footnote = true, table = true) =>
     ${gettext("Heading 6")}
 </label>
 ${
-    footnote ?
-        "" :
-        `<label>
+    footnote
+        ? ""
+        : `<label>
         <input type="checkbox" class="elements" value="code_block" ${elements.includes("code_block") ? "checked" : ""}/>
         ${gettext("Code")}
     </label>`
@@ -75,22 +74,21 @@ ${
     ${gettext("Blockquote")}
 </label>
 ${
-    footnote ?
-        `<label>
+    footnote
+        ? `<label>
         <input type="checkbox" class="elements" value="footnote" ${elements.includes("footnote") ? "checked" : ""}/>
         ${gettext("Footnote")}
-    </label>` :
-        ""
+    </label>`
+        : ""
 }
 ${
-    table ?
-        `<label>
+    table
+        ? `<label>
         <input type="checkbox" class="elements" value="table" ${elements.includes("table") ? "checked" : ""}/>
         ${gettext("Table")}
-    </label>` :
-        ""
+    </label>`
+        : ""
 }`
-
 
 const allowedMarksTemplate = ({marks}) =>
     `<div class="label">
@@ -116,7 +114,14 @@ const allowedMarksTemplate = ({marks}) =>
 const headingTemplate = ({
     id = "",
     title = "",
-    elements = ["heading1", "heading2", "heading3", "heading4", "heading5", "heading6"],
+    elements = [
+        "heading1",
+        "heading2",
+        "heading3",
+        "heading4",
+        "heading5",
+        "heading6"
+    ],
     marks = ["strong", "em", "underline", "link"],
     locking = "false",
     optional = "false",
@@ -189,11 +194,10 @@ const headingTemplate = ({
         <div class="label">${gettext("Language")}
             <select class="language">
                 <option value="false" ${language === false ? "selected" : ""}>${gettext("Document language")}</option>
-                ${
-    LANGUAGES.map(([code, name]) =>
-        `<option value="${code}" ${language === code ? "selected" : ""}>${name}</option>`
-    ).join("")
-}
+                ${LANGUAGES.map(
+                    ([code, name]) =>
+                        `<option value="${code}" ${language === code ? "selected" : ""}>${name}</option>`
+                ).join("")}
             </select>
         </div>
         <div>
@@ -265,7 +269,24 @@ const contributorsTemplate = ({
 const richtextTemplate = ({
     id = "",
     title = "",
-    elements = ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "cross_reference", "blockquote", "footnote"],
+    elements = [
+        "paragraph",
+        "heading1",
+        "heading2",
+        "heading3",
+        "heading4",
+        "heading5",
+        "heading6",
+        "figure",
+        "ordered_list",
+        "bullet_list",
+        "horizontal_rule",
+        "equation",
+        "citation",
+        "cross_reference",
+        "blockquote",
+        "footnote"
+    ],
     marks = ["strong", "em", "underline", "link"],
     locking = "false",
     optional = "false",
@@ -319,11 +340,10 @@ const richtextTemplate = ({
         <div class="label">${gettext("Language")}
             <select class="language">
                 <option value="false" ${language === false ? "selected" : ""}>${gettext("Document language")}</option>
-                ${
-    LANGUAGES.map(([code, name]) =>
-        `<option value="${code}" ${language === code ? "selected" : ""}>${name}</option>`
-    ).join("")
-}
+                ${LANGUAGES.map(
+                    ([code, name]) =>
+                        `<option value="${code}" ${language === code ? "selected" : ""}>${name}</option>`
+                ).join("")}
             </select>
         </div>
         <div>
@@ -337,10 +357,7 @@ const richtextTemplate = ({
     </div>
 </div>`
 
-
-const separatorTemplate = ({
-    id = ""
-}) =>
+const separatorTemplate = ({id = ""}) =>
     `<div class="doc-part-block" data-type="separator_part">
     <div class="doc-part-header">
         ${gettext("Separator")}
@@ -407,7 +424,24 @@ const tagsTemplate = ({
 const tableTemplate = ({
     id = "",
     title = "",
-    elements = ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "cross_reference", "blockquote", "footnote"],
+    elements = [
+        "paragraph",
+        "heading1",
+        "heading2",
+        "heading3",
+        "heading4",
+        "heading5",
+        "heading6",
+        "figure",
+        "ordered_list",
+        "bullet_list",
+        "horizontal_rule",
+        "equation",
+        "citation",
+        "cross_reference",
+        "blockquote",
+        "footnote"
+    ],
     marks = ["strong", "em", "underline", "link"],
     locking = "false",
     optional = "false",
@@ -446,11 +480,10 @@ const tableTemplate = ({
         <div class="label">${gettext("Language")}
             <select class="language">
                 <option value="false" ${language === false ? "selected" : ""}>${gettext("Document language")}</option>
-                ${
-    LANGUAGES.map(([code, name]) =>
-        `<option value="${code}" ${language === code ? "selected" : ""}>${name}</option>`
-    ).join("")
-}
+                ${LANGUAGES.map(
+                    ([code, name]) =>
+                        `<option value="${code}" ${language === code ? "selected" : ""}>${name}</option>`
+                ).join("")}
             </select>
         </div>
         <div>
@@ -464,11 +497,7 @@ const tableTemplate = ({
     </div>
 </div>`
 
-const tocTemplate = ({
-    id = "",
-    title = "",
-    optional = "false"
-}) =>
+const tocTemplate = ({id = "", title = "", optional = "false"}) =>
     `<div class="doc-part-block" data-type="table_of_contents">
     <div class="doc-part-header">
         ${gettext("Table of Contents")}
@@ -494,25 +523,57 @@ const tocTemplate = ({
 </div>`
 
 const footnoteTemplate = ({
-    footnote_elements = ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "cross_reference", "blockquote", "table"],
+    footnote_elements = [
+        "paragraph",
+        "heading1",
+        "heading2",
+        "heading3",
+        "heading4",
+        "heading5",
+        "heading6",
+        "figure",
+        "ordered_list",
+        "bullet_list",
+        "horizontal_rule",
+        "equation",
+        "citation",
+        "cross_reference",
+        "blockquote",
+        "table"
+    ],
     footnote_marks = ["strong", "em", "underline", "link"]
-}) => `<div class="doc-part-block attrs">${allowedElementsTemplate({elements: footnote_elements}, false)}${allowedMarksTemplate({marks: footnote_marks})}</div>`
+}) =>
+    `<div class="doc-part-block attrs">${allowedElementsTemplate({elements: footnote_elements}, false)}${allowedMarksTemplate({marks: footnote_marks})}</div>`
 
-const citationstylesTemplate = ({citationstyles = ["apa"]}, allCitationStyles) =>
+const citationstylesTemplate = (
+    {citationstyles = ["apa"]},
+    allCitationStyles
+) =>
     `<select multiple size=5>
-${Object.entries(allCitationStyles).map(([key, value]) => `<option value="${key}"${citationstyles.includes(key) ? " selected" : ""}>${value}</option>`).join("")}
+${Object.entries(allCitationStyles)
+    .map(
+        ([key, value]) =>
+            `<option value="${key}"${citationstyles.includes(key) ? " selected" : ""}>${value}</option>`
+    )
+    .join("")}
 </select>`
 
-export const citationstyleTemplate = ({citationstyle = "apa", citationstyles = ["apa"]}, allCitationStyles) => {
+export const citationstyleTemplate = (
+    {citationstyle = "apa", citationstyles = ["apa"]},
+    allCitationStyles
+) => {
     if (!citationstyles.includes(citationstyle)) {
         citationstyle = citationstyles[0]
     }
     return `<select>
-        ${
-    citationstyles.map(
-        key => `<option value="${key}"${citationstyle === key ? " selected" : ""}>${
-            allCitationStyles[key]
-        }</option>`).join("")}
+        ${citationstyles
+            .map(
+                key =>
+                    `<option value="${key}"${citationstyle === key ? " selected" : ""}>${
+                        allCitationStyles[key]
+                    }</option>`
+            )
+            .join("")}
     </select>`
 }
 
@@ -521,12 +582,20 @@ const languagesTemplate = ({languages = LANGUAGES.map(lang => lang[0])}) =>
 ${LANGUAGES.map(lang => `<option value="${lang[0]}"${languages.includes(lang[0]) ? " selected" : ""}>${lang[1]}</option>`).join("")}
 </select>`
 
-export const languageTemplate = ({language = "en-US", languages = LANGUAGES.map(lang => lang[0])}) => {
+export const languageTemplate = ({
+    language = "en-US",
+    languages = LANGUAGES.map(lang => lang[0])
+}) => {
     if (!languages.includes(language)) {
         language = languages[0]
     }
     return `<select>
-        ${LANGUAGES.filter(lang => languages.includes(lang[0])).map(lang => `<option value="${lang[0]}"${language === lang[0] ? " selected" : ""}>${lang[1]}</option>`).join("")}
+        ${LANGUAGES.filter(lang => languages.includes(lang[0]))
+            .map(
+                lang =>
+                    `<option value="${lang[0]}"${language === lang[0] ? " selected" : ""}>${lang[1]}</option>`
+            )
+            .join("")}
     </select>`
 }
 
@@ -540,18 +609,18 @@ const languageSelector = language =>
 ${LANGUAGES.map(lang => `<option value="${lang[0]}"${language === lang[0] ? " selected" : ""}>${lang[1]}</option>`).join("")}
 </select>`
 
-export const bibliographyHeaderTemplate = ({bibliography_header = {zzz: ""}}) => {
+export const bibliographyHeaderTemplate = ({
+    bibliography_header = {zzz: ""}
+}) => {
     let translations = Object.entries(bibliography_header)
     if (!translations.length) {
         translations = [["zzz", ""]]
     }
-    return `<table class="fw-dialog-table fw-small input-list-wrapper">${
-        translations.map(
+    return `<table class="fw-dialog-table fw-small input-list-wrapper">${translations
+        .map(
             translation =>
                 `<tr>
-                    <td>${
-    languageSelector(translation[0])
-}</td>
+                    <td>${languageSelector(translation[0])}</td>
                     <td>
                         <input type="text" value="${escapeText(translation[1])}" >
                     </td>
@@ -559,54 +628,66 @@ export const bibliographyHeaderTemplate = ({bibliography_header = {zzz: ""}}) =>
                         <span class="fa fa-minus-circle"></span>&nbsp;<span class="fa fa-plus-circle"></span>
                     </td>
                 </tr>`
-        ).join("")
-    }</table>`
+        )
+        .join("")}</table>`
 }
 
-
 const templateEditorValueTemplate = ({content}) =>
-    content.map(docPart => {
-        switch (docPart.type) {
-        case "heading_part":
-            return headingTemplate(docPart.attrs)
-        case "contributors_part":
-            return contributorsTemplate(docPart.attrs)
-        case "richtext_part":
-            return richtextTemplate(docPart.attrs)
-        case "tags_part":
-            return tagsTemplate(docPart.attrs)
-        case "table_part":
-            return tableTemplate(docPart.attrs)
-        case "table_of_contents":
-            return tocTemplate(docPart.attrs)
-        case "separator_part":
-            return separatorTemplate(docPart.attrs)
-        default:
-            return ""
-        }
-    }).join("")
+    content
+        .map(docPart => {
+            switch (docPart.type) {
+                case "heading_part":
+                    return headingTemplate(docPart.attrs)
+                case "contributors_part":
+                    return contributorsTemplate(docPart.attrs)
+                case "richtext_part":
+                    return richtextTemplate(docPart.attrs)
+                case "tags_part":
+                    return tagsTemplate(docPart.attrs)
+                case "table_part":
+                    return tableTemplate(docPart.attrs)
+                case "table_of_contents":
+                    return tocTemplate(docPart.attrs)
+                case "separator_part":
+                    return separatorTemplate(docPart.attrs)
+                default:
+                    return ""
+            }
+        })
+        .join("")
 
-export const documentStylesTemplate = ({documentStyles}) => `${documentStyles.map(
-    style => `<button class="fw-green fw-small fw-button ui-button document-style" data-id="${style.pk}">
+export const documentStylesTemplate = ({documentStyles}) => `${documentStyles
+    .map(
+        style => `<button class="fw-green fw-small fw-button ui-button document-style" data-id="${style.pk}">
         ${escapeText(style.fields.title)}
     </button>`
-).join("")}
+    )
+    .join("")}
 <button class="fw-green fw-small fw-button ui-button document-style" data-id="0">
     <i class="fas fa-plus-circle"></i>
     ${gettext("Add new document style")}
 </button>`
 
-export const exportTemplatesTemplate = ({exportTemplates}) => `${exportTemplates.map(
-    template => `<button class="fw-green fw-small fw-button ui-button export-template" data-id="${template.pk}">
+export const exportTemplatesTemplate = ({exportTemplates}) => `${exportTemplates
+    .map(
+        template => `<button class="fw-green fw-small fw-button ui-button export-template" data-id="${template.pk}">
         ${escapeText(template.fields.title)}
     </button>`
-).join("")}
+    )
+    .join("")}
 <button class="fw-green fw-small fw-button ui-button export-template" data-id="0">
     <i class="fas fa-plus-circle"></i>
     ${gettext("Add new export template")}
 </button>`
 
-export const documentDesignerTemplate = ({id, value, title, documentStyles, exportTemplates, citationStyles}) =>
+export const documentDesignerTemplate = ({
+    id,
+    value,
+    title,
+    documentStyles,
+    exportTemplates,
+    citationStyles
+}) =>
     `<table class="title-id"><tbody>
     <tr><td>${gettext("Title")}</td><td><input type="text" class="title vTextField fw-inline" value="${escapeText(title)}"></td></tr>
     <tr><td>${gettext("ID")}</td><td><input type="text" class="import-id vTextField fw-inline" value="${escapeText(value.attrs.import_id || "")}"></td></tr>
@@ -704,8 +785,8 @@ export const documentDesignerTemplate = ({id, value, title, documentStyles, expo
                 </td>
             </tr>
             ${
-    id ?
-        `<tr>
+                id
+                    ? `<tr>
                     <td>
                         ${gettext("Document styles")}
                     </td>
@@ -724,8 +805,8 @@ export const documentDesignerTemplate = ({id, value, title, documentStyles, expo
                                 ${exportTemplatesTemplate({exportTemplates})}
                         </div>
                     </td>
-                </tr>` :
-        ""
-}
+                </tr>`
+                    : ""
+            }
         </tbody>
     </table>`

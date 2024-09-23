@@ -22,74 +22,86 @@ export class ModNavigator {
         document.body.addEventListener("click", event => {
             const el = {}
             switch (true) {
-            case findTarget(event, "#navigator-button", el):
-                if (this.navigatorEl.classList.contains("opened")) {
-                    this.closeNavigator()
-                } else {
-                    const navigatorListEl = document.getElementById("navigator-list")
-                    if (navigatorListEl) {
-                        navigatorListEl.innerHTML = this.populateNavigator() || ""   //Populating the list
-                    }
-                    this.openNavigator()
-                }
-                break
-            case findTarget(event, "#navigator-list a", el): {
-                event.preventDefault()
-                event.stopImmediatePropagation()
-                const target = el.target.getAttribute("href").slice(1)
-                if (target == "bibliography") {
-                    this.editor.scrollBibliographyIntoView(target)
-                } else {
-                    this.editor.scrollIdIntoView(target)
-                    this.switchActiveHeading(el.target.parentNode)
-                }
-                break
-            }
-            case findTarget(event, "#navigator-filter-icon", el): {
-                const navigatorFilterEl = document.getElementById("navigator-filter")
-                if (navigatorFilterEl?.classList.contains("hide")) {
-                    this.showFilters()
-                } else {
-                    this.hideFilters()
-                }
-                break
-            }
-            case findTarget(event, "#navigator-filter-back", el): {
-                this.defaultFilters = []
-                document.querySelectorAll("#navigator-filter input").forEach(
-                    item => {
-                        if (item.checked) {
-                            this.defaultFilters.push(item.id)
+                case findTarget(event, "#navigator-button", el):
+                    if (this.navigatorEl.classList.contains("opened")) {
+                        this.closeNavigator()
+                    } else {
+                        const navigatorListEl =
+                            document.getElementById("navigator-list")
+                        if (navigatorListEl) {
+                            navigatorListEl.innerHTML =
+                                this.populateNavigator() || "" //Populating the list
                         }
+                        this.openNavigator()
                     }
-                )
-                const navigatorListEl = document.getElementById("navigator-list")
-                if (navigatorListEl) {
-                    navigatorListEl.innerHTML = this.populateNavigator() || ""
+                    break
+                case findTarget(event, "#navigator-list a", el): {
+                    event.preventDefault()
+                    event.stopImmediatePropagation()
+                    const target = el.target.getAttribute("href").slice(1)
+                    if (target == "bibliography") {
+                        this.editor.scrollBibliographyIntoView(target)
+                    } else {
+                        this.editor.scrollIdIntoView(target)
+                        this.switchActiveHeading(el.target.parentNode)
+                    }
+                    break
                 }
-                this.hideFilters()
-                break
-            }
-            case findTarget(event, "input", el):
-                break
-            case findTarget(event, "label", el):
-                break
-            default:
-                this.closeNavigator()
-                break
+                case findTarget(event, "#navigator-filter-icon", el): {
+                    const navigatorFilterEl =
+                        document.getElementById("navigator-filter")
+                    if (navigatorFilterEl?.classList.contains("hide")) {
+                        this.showFilters()
+                    } else {
+                        this.hideFilters()
+                    }
+                    break
+                }
+                case findTarget(event, "#navigator-filter-back", el): {
+                    this.defaultFilters = []
+                    document
+                        .querySelectorAll("#navigator-filter input")
+                        .forEach(item => {
+                            if (item.checked) {
+                                this.defaultFilters.push(item.id)
+                            }
+                        })
+                    const navigatorListEl =
+                        document.getElementById("navigator-list")
+                    if (navigatorListEl) {
+                        navigatorListEl.innerHTML =
+                            this.populateNavigator() || ""
+                    }
+                    this.hideFilters()
+                    break
+                }
+                case findTarget(event, "input", el):
+                    break
+                case findTarget(event, "label", el):
+                    break
+                default:
+                    this.closeNavigator()
+                    break
             }
         })
 
-        document.body.querySelector("#navigator-list").addEventListener("mouseover", () => {
-            document.body.classList.add("no-scroll")
-        })
-        document.body.querySelector("#navigator-list").addEventListener("mouseout", () => {
-            document.body.classList.remove("no-scroll")
-        })
+        document.body
+            .querySelector("#navigator-list")
+            .addEventListener("mouseover", () => {
+                document.body.classList.add("no-scroll")
+            })
+        document.body
+            .querySelector("#navigator-list")
+            .addEventListener("mouseout", () => {
+                document.body.classList.remove("no-scroll")
+            })
     }
 
     switchActiveHeading(new_heading) {
-        Array.prototype.forEach.call(document.querySelectorAll("#navigator-list .active-heading"), active_heading => active_heading.classList.remove("active-heading"))
+        Array.prototype.forEach.call(
+            document.querySelectorAll("#navigator-list .active-heading"),
+            active_heading => active_heading.classList.remove("active-heading")
+        )
         new_heading.classList.add("active-heading")
     }
 
@@ -97,9 +109,19 @@ export class ModNavigator {
         const navigatorEl = document.getElementById("navigator")
         const navigatorFilterEl = document.getElementById("navigator-filter")
         const navigatorListEl = document.getElementById("navigator-list")
-        const navigatorFilterBackEl = document.getElementById("navigator-filter-back")
-        const navigatorFilterIconEl = document.getElementById("navigator-filter-icon")
-        if (!navigatorEl || !navigatorFilterEl || !navigatorListEl || !navigatorFilterBackEl || !navigatorFilterIconEl) {
+        const navigatorFilterBackEl = document.getElementById(
+            "navigator-filter-back"
+        )
+        const navigatorFilterIconEl = document.getElementById(
+            "navigator-filter-icon"
+        )
+        if (
+            !navigatorEl ||
+            !navigatorFilterEl ||
+            !navigatorListEl ||
+            !navigatorFilterBackEl ||
+            !navigatorFilterIconEl
+        ) {
             return
         }
         navigatorEl.classList.add("opened")
@@ -128,9 +150,18 @@ export class ModNavigator {
     showFilters() {
         const navigatorFilterEl = document.getElementById("navigator-filter")
         const navigatorListEl = document.getElementById("navigator-list")
-        const navigatorFilterBackEl = document.getElementById("navigator-filter-back")
-        const navigatorFilterIconEl = document.getElementById("navigator-filter-icon")
-        if (!navigatorFilterEl || !navigatorFilterBackEl || !navigatorListEl || !navigatorFilterIconEl) {
+        const navigatorFilterBackEl = document.getElementById(
+            "navigator-filter-back"
+        )
+        const navigatorFilterIconEl = document.getElementById(
+            "navigator-filter-icon"
+        )
+        if (
+            !navigatorFilterEl ||
+            !navigatorFilterBackEl ||
+            !navigatorListEl ||
+            !navigatorFilterIconEl
+        ) {
             return
         }
         navigatorFilterEl.classList.remove("hide")
@@ -144,9 +175,18 @@ export class ModNavigator {
     hideFilters() {
         const navigatorFilterEl = document.getElementById("navigator-filter")
         const navigatorListEl = document.getElementById("navigator-list")
-        const navigatorFilterBackEl = document.getElementById("navigator-filter-back")
-        const navigatorFilterIconEl = document.getElementById("navigator-filter-icon")
-        if (!navigatorFilterEl || !navigatorFilterBackEl || !navigatorListEl || !navigatorFilterIconEl) {
+        const navigatorFilterBackEl = document.getElementById(
+            "navigator-filter-back"
+        )
+        const navigatorFilterIconEl = document.getElementById(
+            "navigator-filter-icon"
+        )
+        if (
+            !navigatorFilterEl ||
+            !navigatorFilterBackEl ||
+            !navigatorListEl ||
+            !navigatorFilterIconEl
+        ) {
             return
         }
         navigatorFilterEl.classList.add("hide")
@@ -164,23 +204,36 @@ export class ModNavigator {
         this.editor.view.state.doc.descendants((node, pos) => {
             if (node.attrs?.hidden) {
                 return false
-            } else if (this.defaultFilters.includes(node.type.name) && node.textContent !== "") {
+            } else if (
+                this.defaultFilters.includes(node.type.name) &&
+                node.textContent !== ""
+            ) {
                 if (pos <= currentPos) {
                     nearestHeader = node
                 } else if (nearestHeader !== "") {
                     items[items.length - 1] = Object.assign(
                         {},
                         items[items.length - 1],
-                        {class: "active-heading"}
+                        {
+                            class: "active-heading"
+                        }
                     )
                     nearestHeader = ""
                 }
-                items.push({id: node.attrs.id, textContent: node.textContent, type: node.type})
+                items.push({
+                    id: node.attrs.id,
+                    textContent: node.textContent,
+                    type: node.type
+                })
             }
         })
         const bibHeader = document.querySelector("h1.doc-bibliography-header")
         if (bibHeader) {
-            items.push({id: "bibliography", textContent: bibHeader.innerText, type: {name: "h1"}})
+            items.push({
+                id: "bibliography",
+                textContent: bibHeader.innerText,
+                type: {name: "h1"}
+            })
         }
         if (items.length) {
             return this.navigatorHTML(items)
@@ -190,16 +243,14 @@ export class ModNavigator {
     }
 
     populateNavFilter() {
-        return (
-            this.navigatorFilters.map(
-                item => {
-                    const level = item.level
-                    return `<span><input type="checkbox" class="form-checkbox" id="heading${level}" ${this.inDefault(level)} />
+        return this.navigatorFilters
+            .map(item => {
+                const level = item.level
+                return `<span><input type="checkbox" class="form-checkbox" id="heading${level}" ${this.inDefault(level)} />
                                 <label class="navigator-label" for="heading${level}">${item.title}</label>
                             </span>`
-                }
-            ).join("")
-        )
+            })
+            .join("")
     }
 
     inDefault(level) {
@@ -212,18 +263,16 @@ export class ModNavigator {
 
     navigatorHTML(items) {
         return `
-        ${
-    items.map(
-        item => {
-            const level = item.type.name.substr(-1)
-            if (item.class) {
-                return `<h${level} class="${item.class}"><a href="#${item.id}">${escapeText(item.textContent)}</a></h${level}>`
-            } else {
-                return `<h${level}><a href="#${item.id}">${escapeText(item.textContent)}</a></h${level}>`
-            }
-        }
-    ).join("")
-}`
+        ${items
+            .map(item => {
+                const level = item.type.name.substr(-1)
+                if (item.class) {
+                    return `<h${level} class="${item.class}"><a href="#${item.id}">${escapeText(item.textContent)}</a></h${level}>`
+                } else {
+                    return `<h${level}><a href="#${item.id}">${escapeText(item.textContent)}</a></h${level}>`
+                }
+            })
+            .join("")}`
     }
 
     getNavigatorTemplate() {
@@ -243,5 +292,4 @@ export class ModNavigator {
                 </div>
                 `
     }
-
 }

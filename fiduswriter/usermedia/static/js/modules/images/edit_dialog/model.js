@@ -5,82 +5,109 @@ import {CopyrightDialog} from "../../copyright_dialog"
 let mediaPreviewerImg = false
 
 export const imageEditModel = () => ({
-    content: [{
-        title: gettext("Rotate Left"),
-        type: "action",
-        tooltip: gettext("Rotate-left"),
-        order: 0,
-        action: dialog => {
-            const mediaPreviewerStyle = dialog.mediaPreviewer.currentStyle || window.getComputedStyle(dialog.mediaPreviewer, false)
-            rotateBase64Image(mediaPreviewerStyle.backgroundImage.slice(4, -1).replace(/"/g, ""), dialog.mediaInput.type, "left").then(
-                response => dialog.mediaPreviewer.setAttribute("style", `background-image: url(${response});`)
-            )
-            if (dialog.rotation === 0) {
-                dialog.rotation = 270
-            } else {
-                dialog.rotation -= 90
-            }
-
+    content: [
+        {
+            title: gettext("Rotate Left"),
+            type: "action",
+            tooltip: gettext("Rotate-left"),
+            order: 0,
+            action: dialog => {
+                const mediaPreviewerStyle =
+                    dialog.mediaPreviewer.currentStyle ||
+                    window.getComputedStyle(dialog.mediaPreviewer, false)
+                rotateBase64Image(
+                    mediaPreviewerStyle.backgroundImage
+                        .slice(4, -1)
+                        .replace(/"/g, ""),
+                    dialog.mediaInput.type,
+                    "left"
+                ).then(response =>
+                    dialog.mediaPreviewer.setAttribute(
+                        "style",
+                        `background-image: url(${response});`
+                    )
+                )
+                if (dialog.rotation === 0) {
+                    dialog.rotation = 270
+                } else {
+                    dialog.rotation -= 90
+                }
+            },
+            disabled: dialog => dialog.imageId,
+            icon: "redo fa-rotate-180"
         },
-        disabled: dialog => dialog.imageId,
-        icon: "redo fa-rotate-180"
-    },
-    {
-        title: gettext("Rotate Right"),
-        type: "action",
-        tooltip: gettext("Rotate-right"),
-        order: 1,
-        action: dialog => {
-            const mediaPreviewerStyle = dialog.mediaPreviewer.currentStyle || window.getComputedStyle(dialog.mediaPreviewer, false)
-            rotateBase64Image(mediaPreviewerStyle.backgroundImage.slice(4, -1).replace(/"/g, ""), dialog.mediaInput.type, "right").then(
-                response => dialog.mediaPreviewer.setAttribute("style", `background-image: url(${response});`)
-            )
-            if (dialog.rotation === 270) {
-                dialog.rotation = 0
-            } else {
-                dialog.rotation += 90
-            }
+        {
+            title: gettext("Rotate Right"),
+            type: "action",
+            tooltip: gettext("Rotate-right"),
+            order: 1,
+            action: dialog => {
+                const mediaPreviewerStyle =
+                    dialog.mediaPreviewer.currentStyle ||
+                    window.getComputedStyle(dialog.mediaPreviewer, false)
+                rotateBase64Image(
+                    mediaPreviewerStyle.backgroundImage
+                        .slice(4, -1)
+                        .replace(/"/g, ""),
+                    dialog.mediaInput.type,
+                    "right"
+                ).then(response =>
+                    dialog.mediaPreviewer.setAttribute(
+                        "style",
+                        `background-image: url(${response});`
+                    )
+                )
+                if (dialog.rotation === 270) {
+                    dialog.rotation = 0
+                } else {
+                    dialog.rotation += 90
+                }
+            },
+            disabled: dialog => dialog.imageId,
+            icon: "undo"
         },
-        disabled: dialog => dialog.imageId,
-        icon: "undo"
-    },
-    {
-        title: gettext("Crop"),
-        type: "action",
-        tooltip: gettext("Crop image"),
-        order: 2,
-        action: dialog => {
-            const mediaPreviewerStyle = dialog.mediaPreviewer.currentStyle || window.getComputedStyle(dialog.mediaPreviewer, false)
-            //const base64data = mediaPreviewerStyle.backgroundImage.slice(4, -1).replace(/"/g, "")
-            mediaPreviewerImg = document.createElement("img")
-            //img.src = `url(${base64data})`
-            mediaPreviewerImg.src = mediaPreviewerStyle.backgroundImage.slice(4, -1).replace(/"/g, "")
-            dialog.mediaPreviewer.parentElement.replaceChild(mediaPreviewerImg, dialog.mediaPreviewer)
-            const cropper = new Cropper(mediaPreviewerImg, {
-                viewMode: 1,
-                responsive: true,
-            })
-            toggleCropMode(true, dialog, cropper)
+        {
+            title: gettext("Crop"),
+            type: "action",
+            tooltip: gettext("Crop image"),
+            order: 2,
+            action: dialog => {
+                const mediaPreviewerStyle =
+                    dialog.mediaPreviewer.currentStyle ||
+                    window.getComputedStyle(dialog.mediaPreviewer, false)
+                //const base64data = mediaPreviewerStyle.backgroundImage.slice(4, -1).replace(/"/g, "")
+                mediaPreviewerImg = document.createElement("img")
+                //img.src = `url(${base64data})`
+                mediaPreviewerImg.src = mediaPreviewerStyle.backgroundImage
+                    .slice(4, -1)
+                    .replace(/"/g, "")
+                dialog.mediaPreviewer.parentElement.replaceChild(
+                    mediaPreviewerImg,
+                    dialog.mediaPreviewer
+                )
+                const cropper = new Cropper(mediaPreviewerImg, {
+                    viewMode: 1,
+                    responsive: true
+                })
+                toggleCropMode(true, dialog, cropper)
+            },
+            disabled: dialog => dialog.imageId,
+            icon: "crop"
         },
-        disabled: dialog => dialog.imageId,
-        icon: "crop"
-    },
-    {
-        title: gettext("Set Copyright"),
-        type: "action",
-        tooltip: gettext("Specify copyright information"),
-        order: 3,
-        action: dialog => {
-            const crDialog = new CopyrightDialog(dialog.copyright)
-            crDialog.init().then(
-                copyright => {
+        {
+            title: gettext("Set Copyright"),
+            type: "action",
+            tooltip: gettext("Specify copyright information"),
+            order: 3,
+            action: dialog => {
+                const crDialog = new CopyrightDialog(dialog.copyright)
+                crDialog.init().then(copyright => {
                     if (copyright) {
                         dialog.copyright = copyright
                     }
-                }
-            )
+                })
+            }
         }
-    }
     ]
 })
 
@@ -94,11 +121,12 @@ const toggleCropMode = (val, dialog, cropper) => {
             {
                 text: gettext("Crop"),
                 click: () => {
-                    dialog.mediaPreviewer.setAttribute("style", `background-image: url(${
-                        cropper.getCroppedCanvas().toDataURL(
-                            dialog.mediaInput.type
-                        )
-                    });`)
+                    dialog.mediaPreviewer.setAttribute(
+                        "style",
+                        `background-image: url(${cropper
+                            .getCroppedCanvas()
+                            .toDataURL(dialog.mediaInput.type)});`
+                    )
                     dialog.cropped = true
                     cropper.destroy()
                     toggleCropMode(false, dialog, cropper)
@@ -117,7 +145,10 @@ const toggleCropMode = (val, dialog, cropper) => {
     } else {
         dialog.mediaPreviewerDiv.classList.remove("crop-mode")
         if (mediaPreviewerImg) {
-            mediaPreviewerImg.parentElement.replaceChild(dialog.mediaPreviewer, mediaPreviewerImg)
+            mediaPreviewerImg.parentElement.replaceChild(
+                dialog.mediaPreviewer,
+                mediaPreviewerImg
+            )
             mediaPreviewerImg = false
         }
         if (oldButtons) {
@@ -139,10 +170,10 @@ const rotateBase64Image = (base64data, type, direction) => {
             canvas.height = image.width
             canvas.width = image.height
             if (direction == "left") {
-                ctx.rotate(90 * Math.PI / 180)
+                ctx.rotate((90 * Math.PI) / 180)
                 ctx.translate(0, -canvas.width)
             } else {
-                ctx.rotate(-90 * Math.PI / 180)
+                ctx.rotate((-90 * Math.PI) / 180)
                 ctx.translate(-canvas.height, 0)
             }
             ctx.drawImage(image, 0, 0)

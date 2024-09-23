@@ -1,6 +1,6 @@
 import {Plugin, PluginKey, Selection} from "prosemirror-state"
-import {ContentMenu} from "../../common"
 import {WRITE_ROLES} from "../"
+import {ContentMenu} from "../../common"
 
 const key = new PluginKey("tableMenu")
 
@@ -15,7 +15,8 @@ class OrderedListView {
         this.dom.id = node.attrs.id
         this.menuButton = document.createElement("button")
         this.menuButton.classList.add("content-menu-btn")
-        this.menuButton.innerHTML = "<span class=\"dot-menu-icon\"><i class=\"fa fa-ellipsis-v\"></i></span>"
+        this.menuButton.innerHTML =
+            '<span class="dot-menu-icon"><i class="fa fa-ellipsis-v"></i></span>'
         this.dom.appendChild(this.menuButton)
         const orderedList = document.createElement("ol")
         if (node.attrs.order !== 1) {
@@ -30,7 +31,10 @@ class OrderedListView {
 
     stopEvent(event) {
         let stopped = false
-        if (event.type === "mousedown" && event.composedPath().includes(this.menuButton)) {
+        if (
+            event.type === "mousedown" &&
+            event.composedPath().includes(this.menuButton)
+        ) {
             stopped = true
             const tr = this.view.state.tr
             const $pos = this.view.state.doc.resolve(this.getPos())
@@ -40,7 +44,10 @@ class OrderedListView {
                 menu: this.options.editor.menu.orderedListMenuModel,
                 width: 280,
                 page: this.options.editor,
-                menuPos: {X: parseInt(event.pageX) + 20, Y: parseInt(event.pageY) - 100},
+                menuPos: {
+                    X: Number.parseInt(event.pageX) + 20,
+                    Y: Number.parseInt(event.pageY) - 100
+                },
                 onClose: () => {
                     this.view.focus()
                 }
@@ -49,21 +56,25 @@ class OrderedListView {
         }
         return stopped
     }
-
 }
 
-export const orderedListMenuPlugin = function(options) {
-    return new Plugin({
+export const orderedListMenuPlugin = options =>
+    new Plugin({
         key,
         state: {
             init(_config, _state) {
-                if (WRITE_ROLES.includes(options.editor.docInfo.access_rights)) {
-                    this.spec.props.nodeViews["ordered_list"] =
-                        (node, view, getPos) => new OrderedListView(node, view, getPos, options)
+                if (
+                    WRITE_ROLES.includes(options.editor.docInfo.access_rights)
+                ) {
+                    this.spec.props.nodeViews["ordered_list"] = (
+                        node,
+                        view,
+                        getPos
+                    ) => new OrderedListView(node, view, getPos, options)
                 }
                 return {}
             },
-            apply(tr, prev) {
+            apply(_tr, prev) {
                 return prev
             }
         },
@@ -71,4 +82,3 @@ export const orderedListMenuPlugin = function(options) {
             nodeViews: {}
         }
     })
-}

@@ -9,7 +9,13 @@ import {convertDataURIToBlob, get} from "../../common"
  */
 
 export class ZipFileCreator {
-    constructor(textFiles = [], binaryFiles = [], zipFiles = [], mimeType = "application/zip", date = new Date()) {
+    constructor(
+        textFiles = [],
+        binaryFiles = [],
+        zipFiles = [],
+        mimeType = "application/zip",
+        date = new Date()
+    ) {
         this.textFiles = textFiles
         this.binaryFiles = binaryFiles
         this.zipFiles = zipFiles
@@ -22,7 +28,9 @@ export class ZipFileCreator {
             JSZip.defaults.date = this.date
             this.zipFs = new JSZip()
             if (this.mimeType !== "application/zip") {
-                this.zipFs.file("mimetype", this.mimeType, {compression: "STORE"})
+                this.zipFs.file("mimetype", this.mimeType, {
+                    compression: "STORE"
+                })
             }
 
             return this.includeZips()
@@ -31,49 +39,52 @@ export class ZipFileCreator {
 
     includeZips() {
         const getZipBlobs = this.zipFiles.map(zipFile => {
-            return get(zipFile.url).then(
-                response => response.blob()
-            ).then(
-                blob => zipFile.blob = blob
-            )
+            return get(zipFile.url)
+                .then(response => response.blob())
+                .then(blob => (zipFile.blob = blob))
         })
-        return Promise.all(getZipBlobs).then(
-            () => {
+        return Promise.all(getZipBlobs)
+            .then(() => {
                 return this.zipFiles.map(zipFile => {
-                    const zipDir = zipFile.directory === "" ?
-                        this.zipFs :
-                        this.zipFs.folder(zipFile.directory)
+                    const zipDir =
+                        zipFile.directory === ""
+                            ? this.zipFs
+                            : this.zipFs.folder(zipFile.directory)
                     return zipDir.loadAsync(zipFile.blob)
                 })
-            }
-        ).then(
-            () => this.createZip()
-        )
+            })
+            .then(() => this.createZip())
     }
 
     createZip() {
         this.textFiles.forEach(textFile => {
-            this.zipFs.file(textFile.filename, textFile.contents, {compression: "DEFLATE"})
+            this.zipFs.file(textFile.filename, textFile.contents, {
+                compression: "DEFLATE"
+            })
         })
         const blobPromises = this.binaryFiles.map(binaryFile =>
-            get(binaryFile.url).then(
-                response => response.blob()
-            ).then(
-                blob => Promise.resolve({blob, filename: binaryFile.filename})
+            get(binaryFile.url)
+                .then(response => response.blob())
+                .then(blob =>
+                    Promise.resolve({blob, filename: binaryFile.filename})
+                )
+        )
+        return Promise.all(blobPromises).then(promises => {
+            promises.forEach(promise =>
+                this.zipFs.file(promise.filename, promise.blob, {
+                    binary: true,
+                    compression: "DEFLATE"
+                })
             )
-        )
-        return Promise.all(blobPromises).then(
-            promises => {
-                promises.forEach(promise => this.zipFs.file(promise.filename, promise.blob, {binary: true, compression: "DEFLATE"}))
-                return this.zipFs.generateAsync({type: "blob", mimeType: this.mimeType})
-            }
-        )
+            return this.zipFs.generateAsync({
+                type: "blob",
+                mimeType: this.mimeType
+            })
+        })
     }
 
     // Legacy - remove in 3.12. Can be sued directly from function in common/blob.js
     convertDataURIToBlob(dataURI) {
         return convertDataURIToBlob(dataURI)
     }
-
-
 }

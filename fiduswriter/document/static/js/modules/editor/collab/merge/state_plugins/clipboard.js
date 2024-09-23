@@ -1,22 +1,14 @@
-import {
-    Plugin,
-    PluginKey,
-    TextSelection
-} from "prosemirror-state"
-import {
-    HTMLPaste
-} from "../../../clipboard/paste"
-import {
-    docClipboardSerializer
-} from "../../../clipboard/copy"
+import {Plugin, PluginKey, TextSelection} from "prosemirror-state"
+import {docClipboardSerializer} from "../../../clipboard/copy"
+import {HTMLPaste} from "../../../clipboard/paste"
 
 const key = new PluginKey("clipboard")
-export const clipboardPlugin = function(options) {
+export const clipboardPlugin = options => {
     let shiftPressed = false
     return new Plugin({
         key,
         props: {
-            handleKeyDown: (view, event) => {
+            handleKeyDown: (_view, event) => {
                 shiftPressed = event.shiftKey
                 return false
             },
@@ -25,7 +17,10 @@ export const clipboardPlugin = function(options) {
                 if (dragging || (slice && slice.size)) {
                     return false // Something other than en empty plain text string from outside. Handled by PM already.
                 }
-                const eventPos = view.posAtCoords({left: event.clientX, top: event.clientY})
+                const eventPos = view.posAtCoords({
+                    left: event.clientX,
+                    top: event.clientY
+                })
                 if (!eventPos) {
                     return false
                 }

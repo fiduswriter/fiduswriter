@@ -3,20 +3,19 @@ import StackTrace from "stacktrace-js"
 import {getCookie} from "../common"
 
 export class ErrorHook {
-    constructor() {
-
-    }
+    constructor() {}
 
     init() {
-        window.onerror = (msg, url, lineNumber, columnNumber, errorObj) => this.onError(msg, url, lineNumber, columnNumber, errorObj)
+        window.onerror = (msg, url, lineNumber, columnNumber, errorObj) =>
+            this.onError(msg, url, lineNumber, columnNumber, errorObj)
         if (window.addEventListener) {
-            window.addEventListener("unhandledrejection", rejection => this.onUnhandledRejection(rejection))
+            window.addEventListener("unhandledrejection", rejection =>
+                this.onUnhandledRejection(rejection)
+            )
         }
-
     }
 
     sendLog(details) {
-
         const body = new FormData()
         body.append("context", navigator.userAgent)
         body.append("details", details)
@@ -28,25 +27,40 @@ export class ErrorHook {
             },
             credentials: "include",
             body
-        }).catch((error) => {
+        }).catch(error => {
             console.warn(error)
         })
     }
 
     onError(msg, url, lineNumber, columnNumber, errorObj) {
         if (settings_SOURCE_MAPS && errorObj) {
-            StackTrace.fromError(errorObj).then(
-                stackFrames => this.logError(msg, url, lineNumber, columnNumber, errorObj, stackFrames.map(sf => sf.toString()).join("\n"))
-            ).catch(
-                () => this.logError(msg, url, lineNumber, columnNumber, errorObj)
-            )
+            StackTrace.fromError(errorObj)
+                .then(stackFrames =>
+                    this.logError(
+                        msg,
+                        url,
+                        lineNumber,
+                        columnNumber,
+                        errorObj,
+                        stackFrames.map(sf => sf.toString()).join("\n")
+                    )
+                )
+                .catch(() =>
+                    this.logError(msg, url, lineNumber, columnNumber, errorObj)
+                )
         } else {
             this.logError(msg, url, lineNumber, columnNumber, errorObj)
         }
     }
 
-    logError(msg, url, lineNumber, columnNumber, errorObj, mappedStack = false) {
-
+    logError(
+        msg,
+        url,
+        lineNumber,
+        columnNumber,
+        errorObj,
+        mappedStack = false
+    ) {
         let logMessage = url + ": " + lineNumber + ": " + msg
         if (columnNumber) {
             logMessage += ", " + columnNumber
@@ -62,11 +76,14 @@ export class ErrorHook {
 
     onUnhandledRejection(rejection) {
         if (settings_SOURCE_MAPS && rejection.reason?.stack) {
-            StackTrace.fromError(rejection.reason).then(
-                stackFrames => this.logUnhandledRejection(rejection, stackFrames.map(sf => sf.toString()).join("\n"))
-            ).catch(
-                () => this.logUnhandledRejection(rejection)
-            )
+            StackTrace.fromError(rejection.reason)
+                .then(stackFrames =>
+                    this.logUnhandledRejection(
+                        rejection,
+                        stackFrames.map(sf => sf.toString()).join("\n")
+                    )
+                )
+                .catch(() => this.logUnhandledRejection(rejection))
         } else {
             this.logUnhandledRejection(rejection)
         }

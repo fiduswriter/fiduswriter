@@ -2,8 +2,7 @@ import {Plugin, PluginKey} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
 
 const key = new PluginKey("placeholders")
-export const placeholdersPlugin = function(options) {
-
+export const placeholdersPlugin = options => {
     function calculatePlaceHolderDecorations(state) {
         const anchor = state.selection.$anchor
         const head = state.selection.$head
@@ -37,7 +36,10 @@ export const placeholdersPlugin = function(options) {
                     return
                 }
 
-                const text = partElement.type === state.schema.nodes["title"] ? `${gettext("Title")}...` : `${partElement.attrs.title}...`
+                const text =
+                    partElement.type === state.schema.nodes["title"]
+                        ? `${gettext("Title")}...`
+                        : `${partElement.attrs.title}...`
                 const placeHolder = document.createElement("span")
                 placeHolder.classList.add("placeholder")
                 placeHolder.setAttribute("data-placeholder", text)
@@ -51,47 +53,58 @@ export const placeholdersPlugin = function(options) {
                     // place inside the first child node (a paragraph).
                     position += 1
                 }
-                decorations.push(Decoration.widget(
-                    position,
-                    placeHolder,
-                    {
+                decorations.push(
+                    Decoration.widget(position, placeHolder, {
                         side: 1
-                    }
-                ))
-            } else if (["richtext_part", "table_part"].includes(partElement.type.name)) {
+                    })
+                )
+            } else if (
+                ["richtext_part", "table_part"].includes(partElement.type.name)
+            ) {
                 partElement.descendants((node, pos) => {
-                    if (["figure", "table"].includes(node.type.name) && !node.attrs.caption) {
+                    if (
+                        ["figure", "table"].includes(node.type.name) &&
+                        !node.attrs.caption
+                    ) {
                         return false
                     }
-                    if (["figure_caption", "table_caption"].includes(node.type.name) && node.childCount === 0 && state.selection.$anchor.parent !== node) {
+                    if (
+                        ["figure_caption", "table_caption"].includes(
+                            node.type.name
+                        ) &&
+                        node.childCount === 0 &&
+                        state.selection.$anchor.parent !== node
+                    ) {
                         decorations.push(
-                            Decoration.node(1 + offset + pos, 1 + offset + pos + node.nodeSize, {
-                                class: "empty",
-                                "data-placeholder": `${gettext("Caption")}...`
-                            })
+                            Decoration.node(
+                                1 + offset + pos,
+                                1 + offset + pos + node.nodeSize,
+                                {
+                                    class: "empty",
+                                    "data-placeholder": `${gettext("Caption")}...`
+                                }
+                            )
                         )
                     }
                 })
             }
-
         })
 
-        return decorations.length ? DecorationSet.create(state.doc, decorations) : false
-
+        return decorations.length
+            ? DecorationSet.create(state.doc, decorations)
+            : false
     }
 
     return new Plugin({
         key,
         state: {
-            init(config, state) {
+            init(_config, state) {
                 return {
                     decos: calculatePlaceHolderDecorations(state)
                 }
             },
-            apply(tr, prev, oldState, state) {
-                let {
-                    decos
-                } = this.getState(oldState)
+            apply(tr, _prev, oldState, state) {
+                let {decos} = this.getState(oldState)
                 if (tr.docChanged || tr.selectionSet) {
                     decos = calculatePlaceHolderDecorations(state)
                 }
@@ -102,9 +115,7 @@ export const placeholdersPlugin = function(options) {
         },
         props: {
             decorations(state) {
-                const {
-                    decos
-                } = this.getState(state)
+                const {decos} = this.getState(state)
                 return decos
             }
         }

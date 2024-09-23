@@ -1,8 +1,8 @@
-import {KeyFieldForm} from "./key"
 import {noSpaceTmp} from "../../../common"
+import {KeyFieldForm} from "./key"
 
 export class KeyListForm {
-    constructor(dom, initialValue = [""], unused, fieldType = undefined) {
+    constructor(dom, initialValue = [""], _unused, fieldType = undefined) {
         this.currentValue = initialValue
         this.dom = dom
         this.fieldType = fieldType
@@ -14,7 +14,8 @@ export class KeyListForm {
 
     drawForm() {
         this.fields = []
-        this.dom.innerHTML = "<table class=\"input-list-wrapper\"><tbody></tbody></table>"
+        this.dom.innerHTML =
+            '<table class="input-list-wrapper"><tbody></tbody></table>'
         this.currentValue.forEach((fieldValue, index) => {
             this.addField(fieldValue, index)
         })
@@ -33,7 +34,12 @@ export class KeyListForm {
             </tr>`
         )
         const fieldDOM = this.dom.firstChild.firstChild.lastChild
-        const fieldHandler = new KeyFieldForm(fieldDOM.firstChild, fieldValue, false, this.fieldType)
+        const fieldHandler = new KeyFieldForm(
+            fieldDOM.firstChild,
+            fieldValue,
+            false,
+            this.fieldType
+        )
         fieldHandler.init()
         this.fields.push(fieldHandler)
 
@@ -64,13 +70,13 @@ export class KeyListForm {
     }
 
     get value() {
-        const formValue = this.fields.map(field => {
-            return field.value
-        }).filter(
-            value => {
+        const formValue = this.fields
+            .map(field => {
+                return field.value
+            })
+            .filter(value => {
                 return value !== false
-            }
-        )
+            })
         if (formValue.length === 0) {
             return false
         }

@@ -5,16 +5,19 @@ export function parseTracks(str) {
     let tracks
     try {
         tracks = JSON.parse(str)
-    } catch (error) {
+    } catch (_error) {
         return []
     }
     if (!Array.isArray(tracks)) {
         return []
     }
-    return tracks.filter(track => // ensure required fields are present
-        track.hasOwnProperty("user") &&
-        track.hasOwnProperty("username") &&
-        track.hasOwnProperty("date")
+    return tracks.filter(
+        (
+            track // ensure required fields are present
+        ) =>
+            track.hasOwnProperty("user") &&
+            track.hasOwnProperty("username") &&
+            track.hasOwnProperty("date")
     )
 }
 
@@ -43,20 +46,23 @@ export const deletion = {
             tag: "span.deletion",
             getAttrs(dom) {
                 return {
-                    user: parseInt(dom.dataset.user),
+                    user: Number.parseInt(dom.dataset.user),
                     username: dom.dataset.username,
-                    date: parseInt(dom.dataset.date)
+                    date: Number.parseInt(dom.dataset.date)
                 }
             }
         }
     ],
     toDOM(node) {
-        return ["span", {
-            class: `deletion user-${node.attrs.user}`,
-            "data-user": node.attrs.user,
-            "data-username": node.attrs.username,
-            "data-date": node.attrs.date
-        }]
+        return [
+            "span",
+            {
+                class: `deletion user-${node.attrs.user}`,
+                "data-user": node.attrs.user,
+                "data-username": node.attrs.username,
+                "data-date": node.attrs.date
+            }
+        ]
     }
 }
 
@@ -67,13 +73,13 @@ function parseFormatList(str) {
     let formatList
     try {
         formatList = JSON.parse(str)
-    } catch (error) {
+    } catch (_error) {
         return []
     }
     if (!Array.isArray(formatList)) {
         return []
     }
-    return formatList.filter(format => typeof(format) === "string") // ensure there are only strings in list
+    return formatList.filter(format => typeof format === "string") // ensure there are only strings in list
 }
 
 export const format_change = {
@@ -101,9 +107,9 @@ export const format_change = {
             tag: "span.format-change",
             getAttrs(dom) {
                 return {
-                    user: parseInt(dom.dataset.user),
+                    user: Number.parseInt(dom.dataset.user),
                     username: dom.dataset.username,
-                    date: parseInt(dom.dataset.date),
+                    date: Number.parseInt(dom.dataset.date),
                     before: parseFormatList(dom.dataset.before),
                     after: parseFormatList(dom.dataset.after)
                 }
@@ -111,14 +117,17 @@ export const format_change = {
         }
     ],
     toDOM(node) {
-        return ["span", {
-            class: `format-change user-${node.attrs.user}`,
-            "data-user": node.attrs.user,
-            "data-username": node.attrs.username,
-            "data-date": node.attrs.date,
-            "data-before": JSON.stringify(node.attrs.before),
-            "data-after": JSON.stringify(node.attrs.after)
-        }]
+        return [
+            "span",
+            {
+                class: `format-change user-${node.attrs.user}`,
+                "data-user": node.attrs.user,
+                "data-username": node.attrs.username,
+                "data-date": node.attrs.date,
+                "data-before": JSON.stringify(node.attrs.before),
+                "data-after": JSON.stringify(node.attrs.after)
+            }
+        ]
     }
 }
 
@@ -144,9 +153,9 @@ export const insertion = {
             tag: "span.insertion",
             getAttrs(dom) {
                 return {
-                    user: parseInt(dom.dataset.user),
+                    user: Number.parseInt(dom.dataset.user),
                     username: dom.dataset.username,
-                    date: parseInt(dom.dataset.date),
+                    date: Number.parseInt(dom.dataset.date),
                     inline: true,
                     approved: false
                 }
@@ -156,9 +165,9 @@ export const insertion = {
             tag: "span.approved-insertion",
             getAttrs(dom) {
                 return {
-                    user: parseInt(dom.dataset.user),
+                    user: Number.parseInt(dom.dataset.user),
                     username: dom.dataset.username,
-                    date: parseInt(dom.dataset.date),
+                    date: Number.parseInt(dom.dataset.date),
                     inline: true,
                     approved: true
                 }
@@ -166,11 +175,16 @@ export const insertion = {
         }
     ],
     toDOM(node) {
-        return ["span", {
-            class: node.attrs.approved ? "approved-insertion" : `insertion user-${node.attrs.user}`,
-            "data-user": node.attrs.user,
-            "data-username": node.attrs.username,
-            "data-date": node.attrs.date
-        }]
+        return [
+            "span",
+            {
+                class: node.attrs.approved
+                    ? "approved-insertion"
+                    : `insertion user-${node.attrs.user}`,
+                "data-user": node.attrs.user,
+                "data-username": node.attrs.username,
+                "data-date": node.attrs.date
+            }
+        ]
     }
 }

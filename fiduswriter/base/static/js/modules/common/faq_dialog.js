@@ -1,25 +1,20 @@
-import {
-    Dialog
-} from "./dialog"
-import {
-    escapeText
-} from "./basic"
-import {
-    ensureCSS
-} from "./network"
-
+import {escapeText} from "./basic"
+import {Dialog} from "./dialog"
+import {ensureCSS} from "./network"
 
 const faqTemplate = ({escapedQuestions}) =>
     `<div class="faq">
     <ol class="faq-list">
-        ${
-    escapedQuestions.map(question => `<li class="faq-item">
+        ${escapedQuestions
+            .map(
+                question => `<li class="faq-item">
                 <div>
                     <div class="faq-question fw-button fw-light"><i class="fas fa-plus-circle"></i>${question[0]}</div>
                     <div class="faq-answer" style="display: none;">${question[1]}</div>
                 </div>
-            </li>`).join("")
-}
+            </li>`
+            )
+            .join("")}
     </ol>
 </div>`
 
@@ -51,20 +46,22 @@ export class faqDialog {
 
     open() {
         this.faqDialog.open()
-        this.faqDialog.dialogEl.querySelectorAll(".faq-question").forEach(element => {
-            element.addEventListener("click", () => {
-                const iconEle = element.firstElementChild
-                const answerEle = element.nextElementSibling
-                if (answerEle.style.display == "") {
-                    iconEle.classList.remove("fa-minus-circle")
-                    iconEle.classList.add("fa-plus-circle")
-                    answerEle.style.display = "none"
-                } else if (answerEle.style.display == "none") {
-                    iconEle.classList.remove("fa-plus-circle")
-                    iconEle.classList.add("fa-minus-circle")
-                    answerEle.style.display = ""
-                }
+        this.faqDialog.dialogEl
+            .querySelectorAll(".faq-question")
+            .forEach(element => {
+                element.addEventListener("click", () => {
+                    const iconEle = element.firstElementChild
+                    const answerEle = element.nextElementSibling
+                    if (answerEle.style.display == "") {
+                        iconEle.classList.remove("fa-minus-circle")
+                        iconEle.classList.add("fa-plus-circle")
+                        answerEle.style.display = "none"
+                    } else if (answerEle.style.display == "none") {
+                        iconEle.classList.remove("fa-plus-circle")
+                        iconEle.classList.add("fa-minus-circle")
+                        answerEle.style.display = ""
+                    }
+                })
             })
-        })
     }
 }

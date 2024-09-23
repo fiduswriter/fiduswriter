@@ -1,5 +1,5 @@
+import {DOMSerializer, Schema} from "prosemirror-model"
 import {nodes} from "prosemirror-schema-basic"
-import {Schema, DOMSerializer} from "prosemirror-model"
 
 const collaborator = {
     inline: true,
@@ -12,21 +12,27 @@ const collaborator = {
             default: 0
         }
     },
-    parseDOM: [{
-        tag: "span.collaborator",
-        getAttrs(dom) {
-            return {
-                username: dom.dataset.name,
-                id: parseInt(dom.dataset.id)
+    parseDOM: [
+        {
+            tag: "span.collaborator",
+            getAttrs(dom) {
+                return {
+                    username: dom.dataset.name,
+                    id: Number.parseInt(dom.dataset.id)
+                }
             }
         }
-    }],
+    ],
     toDOM(node) {
-        return ["span", {
-            class: "collaborator",
-            "data-name": node.attrs.name,
-            "data-id": node.attrs.id
-        }, node.attrs.name]
+        return [
+            "span",
+            {
+                class: "collaborator",
+                "data-name": node.attrs.name,
+                "data-id": node.attrs.id
+            },
+            node.attrs.name
+        ]
     }
 }
 

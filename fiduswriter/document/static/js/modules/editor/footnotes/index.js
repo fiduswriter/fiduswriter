@@ -13,5 +13,4 @@ export class ModFootnotes {
         this.fnEditor.init()
         this.layout.init()
     }
-
 }

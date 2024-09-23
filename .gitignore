@@ -58,3 +58,4 @@ build
 /fiduswriter/data_import
 .history
 .vscode/
+*cache.json

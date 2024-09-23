@@ -1,4 +1,4 @@
-import {XMLParser, XMLBuilder} from "fast-xml-parser"
+import {XMLBuilder, XMLParser} from "fast-xml-parser"
 
 const fastXMLParserOptions = {
     attributeNamePrefix: "",
@@ -12,7 +12,7 @@ const fastXMLParserOptions = {
     suppressEmptyNode: true
 }
 
-const isLeaf = (tagName) => ["#text", "__cdata", "#comment"].includes(tagName)
+const isLeaf = tagName => ["#text", "__cdata", "#comment"].includes(tagName)
 
 class XMLElement {
     constructor(node, parentElement = null) {
@@ -24,7 +24,9 @@ class XMLElement {
         if (tagName && this.node[tagName] && !isLeaf(tagName)) {
             this.node[tagName] = this.node[tagName].map(child => {
                 // Only wrap objects (not text nodes)
-                return typeof child === "object" ? new XMLElement(child, this) : child
+                return typeof child === "object"
+                    ? new XMLElement(child, this)
+                    : child
             })
         }
     }
@@ -51,9 +53,11 @@ class XMLElement {
 
     get innerXML() {
         // Serialize the children back to XML
-        return this.children.map(child => {
-            return child.toString()
-        }).join("")
+        return this.children
+            .map(child => {
+                return child.toString()
+            })
+            .join("")
     }
 
     set innerXML(xmlString) {
@@ -65,7 +69,9 @@ class XMLElement {
 
         // Parse the new XML string
         const parser = new XMLParser(fastXMLParserOptions)
-        const xml = parser.parse(`<${this.tagName}>${xmlString}</${this.tagName}>`)
+        const xml = parser.parse(
+            `<${this.tagName}>${xmlString}</${this.tagName}>`
+        )
         // Append new children
         xml[0][this.tagName].forEach(child => {
             this.appendChild(child)
@@ -156,7 +162,9 @@ class XMLElement {
         clonedNode[this.tagName] = []
         const clone = new XMLElement(clonedNode, parentElement)
         if (deep) {
-            clonedNode[this.tagName] = this.children.map(child => child.cloneNode(deep, clone))
+            clonedNode[this.tagName] = this.children.map(child =>
+                child.cloneNode(deep, clone)
+            )
         }
         return clone
     }
@@ -204,7 +212,9 @@ class XMLElement {
             return false
         }
         const parser = new XMLParser(fastXMLParserOptions)
-        const xml = parser.parse(`<${this.tagName}>${xmlString}</${this.tagName}>`)
+        const xml = parser.parse(
+            `<${this.tagName}>${xmlString}</${this.tagName}>`
+        )
         xml[0][this.tagName].forEach(child => {
             this.appendChild(child)
         })
@@ -215,7 +225,9 @@ class XMLElement {
             return false
         }
         const parser = new XMLParser(fastXMLParserOptions)
-        const xml = parser.parse(`<${this.tagName}>${xmlString}</${this.tagName}>`)
+        const xml = parser.parse(
+            `<${this.tagName}>${xmlString}</${this.tagName}>`
+        )
         xml[0][this.tagName].reverse().forEach(child => {
             this.prependChild(child)
         })
@@ -266,14 +278,28 @@ class XMLElement {
         const tags = typeof tagName === "string" ? [tagName] : tagName
 
         function traverse(dom) {
-            const currentTagName = Object.keys(dom.node).find(key => key !== ":@")
-            if (tags.includes(currentTagName) && Object.keys(attributes).every(attr => dom.hasAttribute(attr) && (dom.getAttribute(attr) === attributes[attr] || attributes[attr] === null))) {
+            const currentTagName = Object.keys(dom.node).find(
+                key => key !== ":@"
+            )
+            if (
+                tags.includes(currentTagName) &&
+                Object.keys(attributes).every(
+                    attr =>
+                        dom.hasAttribute(attr) &&
+                        (dom.getAttribute(attr) === attributes[attr] ||
+                            attributes[attr] === null)
+                )
+            ) {
                 result.push(dom)
             }
             if (limit && result.length >= limit) {
                 return true
             }
-            if (currentTagName && dom.node[currentTagName] && !isLeaf(currentTagName)) {
+            if (
+                currentTagName &&
+                dom.node[currentTagName] &&
+                !isLeaf(currentTagName)
+            ) {
                 for (const childDOM of dom.node[currentTagName]) {
                     if (traverse(childDOM)) {
                         return true
@@ -288,7 +314,6 @@ class XMLElement {
 
     // Serialize back to original structure in a non-destructive way
     toObject() {
-
         const tagName = this.tagName
         const node = {...this.node}
         if (this.node[":@"]) {
@@ -297,10 +322,15 @@ class XMLElement {
         if (tagName && this.node[tagName]) {
             if (Array.isArray(this.node[tagName])) {
                 node[tagName] = this.node[tagName].map(child => {
-                    return child instanceof XMLElement ? child.toObject() : child
+                    return child instanceof XMLElement
+                        ? child.toObject()
+                        : child
                 })
             } else {
-                node[tagName] = this.node[tagName] instanceof XMLElement ? this.node[tagName].toObject() : this.node[tagName]
+                node[tagName] =
+                    this.node[tagName] instanceof XMLElement
+                        ? this.node[tagName].toObject()
+                        : this.node[tagName]
             }
         }
 
@@ -328,14 +358,15 @@ class XMLElement {
 }
 
 // Helper function to wrap the entire XML structure recursively
-export const xmlDOM = (xmlString) => {
+export const xmlDOM = xmlString => {
     const parser = new XMLParser(fastXMLParserOptions)
     // Parse the XML string into an object
     const xmlStructure = parser.parse(xmlString)
 
-    const node = xmlStructure.length === 1 ?
-        xmlStructure[0] :
-        {"#document": xmlStructure}
+    const node =
+        xmlStructure.length === 1
+            ? xmlStructure[0]
+            : {"#document": xmlStructure}
     // Recursively wrap each node in XMLElement
     return new XMLElement(node)
 }

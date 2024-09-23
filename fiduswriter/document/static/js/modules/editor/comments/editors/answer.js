@@ -31,11 +31,14 @@ export class CommentAnswerEditor extends CommentEditor {
             return
         }
         if (this.options.answerId) {
-            this.mod.interactions.submitAnswerUpdate(this.id, this.options.answerId, text)
+            this.mod.interactions.submitAnswerUpdate(
+                this.id,
+                this.options.answerId,
+                text
+            )
         } else {
             this.mod.interactions.createNewAnswer(this.id, text)
         }
         this.sendNotifications()
     }
-
 }

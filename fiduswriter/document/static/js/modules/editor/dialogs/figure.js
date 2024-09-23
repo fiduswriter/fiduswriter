@@ -1,19 +1,9 @@
 import deepEqual from "fast-deep-equal"
 
-import {
-    configureFigureTemplate
-} from "./templates"
-import {
-    ImageSelectionDialog
-} from "../../images/selection_dialog"
-import {
-    dropdownSelect,
-    Dialog,
-    ContentMenu
-} from "../../common"
-import {
-    randomFigureId
-} from "../../schema/common"
+import {ContentMenu, Dialog, dropdownSelect} from "../../common"
+import {ImageSelectionDialog} from "../../images/selection_dialog"
+import {randomFigureId} from "../../schema/common"
+import {configureFigureTemplate} from "./templates"
 
 export class FigureDialog {
     constructor(editor) {
@@ -36,7 +26,6 @@ export class FigureDialog {
         this.dialog = false
     }
 
-
     layoutMathEditor() {
         this.dialog.dialogEl.querySelector(".inner-figure-preview").innerHTML =
             `<div><span class="math-field" type="text" name="math" ></span></div>
@@ -51,17 +40,20 @@ export class FigureDialog {
             this.dialog.dialogEl.querySelector(".formula-or-figure")
         ]
         import("mathlive").then(MathLive => {
-
             MathLive.MathfieldElement.strings = {
-                "int": {
+                int: {
                     "keyboard.tooltip.functions": gettext("Functions"),
                     "keyboard.tooltip.greek": gettext("Greek Letters"),
                     "keyboard.tooltip.command": gettext("LaTeX Command Mode"),
                     "keyboard.tooltip.numeric": gettext("Numeric"),
-                    "keyboard.tooltip.roman": gettext("Symbols and Roman Letters"),
+                    "keyboard.tooltip.roman": gettext(
+                        "Symbols and Roman Letters"
+                    ),
                     "tooltip.copy to clipboard": gettext("Copy to Clipboard"),
                     "tooltip.redo": gettext("Redo"),
-                    "tooltip.toggle virtual keyboard": gettext("Toggle Virtual Keyboard"),
+                    "tooltip.toggle virtual keyboard": gettext(
+                        "Toggle Virtual Keyboard"
+                    ),
                     "tooltip.undo": gettext("Undo")
                 }
             }
@@ -69,13 +61,17 @@ export class FigureDialog {
             MathLive.MathfieldElement.plonkSound = null
             MathLive.MathfieldElement.keypressSound = null
             this.mathField = new MathLive.MathfieldElement({
-                mathVirtualKeyboardPolicy: "manual",
+                mathVirtualKeyboardPolicy: "manual"
             })
             this.mathField.value = this.equation
             this.mathliveDOM.appendChild(this.mathField)
 
-            this.mathField.addEventListener("focusout", () => this.showPlaceHolder())
-            this.mathField.addEventListener("focus", () => this.hidePlaceHolder())
+            this.mathField.addEventListener("focusout", () =>
+                this.showPlaceHolder()
+            )
+            this.mathField.addEventListener("focus", () =>
+                this.hidePlaceHolder()
+            )
             this.mathField.addEventListener("input", () => {
                 this.equation = this.mathField.getValue()
                 this.showHideNonMathElements()
@@ -84,17 +80,21 @@ export class FigureDialog {
             this.mathField.value = this.equation
 
             this.showHideNonMathElements()
-            this.dialog.dialogEl.querySelector("#insert-figure-image").addEventListener(
-                "click",
-                () => this.selectImage()
-            )
+            this.dialog.dialogEl
+                .querySelector("#insert-figure-image")
+                .addEventListener("click", () => this.selectImage())
         })
-
     }
 
     showPlaceHolder() {
-        if (!this.mathField.getValue().length && !this.mathliveDOM.querySelector(".placeholder")) {
-            this.mathliveDOM.insertAdjacentHTML("beforeend", `<span class="placeholder" >${gettext("Type formula")}</span>`)
+        if (
+            !this.mathField.getValue().length &&
+            !this.mathliveDOM.querySelector(".placeholder")
+        ) {
+            this.mathliveDOM.insertAdjacentHTML(
+                "beforeend",
+                `<span class="placeholder" >${gettext("Type formula")}</span>`
+            )
         }
     }
 
@@ -107,9 +107,9 @@ export class FigureDialog {
 
     showHideNonMathElements() {
         if (this.equation.length) {
-            this.nonMathElements.forEach(el => el.style.display = "none")
+            this.nonMathElements.forEach(el => (el.style.display = "none"))
         } else {
-            this.nonMathElements.forEach(el => el.style.display = "")
+            this.nonMathElements.forEach(el => (el.style.display = ""))
         }
     }
 
@@ -120,27 +120,27 @@ export class FigureDialog {
             this.imgId,
             this.editor
         )
-        imageSelection.init().then(
-            ({
-                id,
-                db
-            }) => {
-                if (id) {
-                    this.imgId = id
-                    this.imgDb = db
-                    // We take a copy of the object in case of the image coming from the user db in order
-                    // not to overwrite the copyright info from the user's image db.
-                    this.copyright = db === "document" ?
-                        this.imageDB.db[this.imgId].copyright :
-                        JSON.parse(JSON.stringify(this.userImageDB.db[this.imgId].copyright))
-                    this.layoutImagePreview()
-                } else {
-                    this.imgId = false
-                    this.imgDb = false
-                    this.layoutMathEditor()
-                }
+        imageSelection.init().then(({id, db}) => {
+            if (id) {
+                this.imgId = id
+                this.imgDb = db
+                // We take a copy of the object in case of the image coming from the user db in order
+                // not to overwrite the copyright info from the user's image db.
+                this.copyright =
+                    db === "document"
+                        ? this.imageDB.db[this.imgId].copyright
+                        : JSON.parse(
+                              JSON.stringify(
+                                  this.userImageDB.db[this.imgId].copyright
+                              )
+                          )
+                this.layoutImagePreview()
+            } else {
+                this.imgId = false
+                this.imgDb = false
+                this.layoutMathEditor()
             }
-        )
+        })
     }
 
     layoutImagePreview() {
@@ -148,30 +148,31 @@ export class FigureDialog {
             if (this.mathField) {
                 this.mathField = false
             }
-            const db = this.imgDb === "document" ? this.imageDB.db : this.userImageDB.db
+            const db =
+                this.imgDb === "document"
+                    ? this.imageDB.db
+                    : this.userImageDB.db
 
-            this.dialog.dialogEl.querySelector(".inner-figure-preview").innerHTML =
-                `<img src="${db[this.imgId].image}" style="max-width: 400px;max-height:220px">
+            this.dialog.dialogEl.querySelector(
+                ".inner-figure-preview"
+            ).innerHTML = `<img src="${db[this.imgId].image}" style="max-width: 400px;max-height:220px">
                 <span class="dot-menu-icon"><i class="fa fa-ellipsis-v"></i></span>`
 
-
-            this.dialog.dialogEl.querySelector(".dot-menu-icon").addEventListener(
-                "click",
-                event => {
+            this.dialog.dialogEl
+                .querySelector(".dot-menu-icon")
+                .addEventListener("click", event => {
                     const contentMenu = new ContentMenu({
                         menu: this.editor.menu.imageMenuModel,
                         page: this,
-                        menuPos: {X: event.pageX, Y: event.pageY},
+                        menuPos: {X: event.pageX, Y: event.pageY}
                     })
                     contentMenu.open()
-                }
-            )
+                })
         }
     }
 
     submitForm() {
-
-        if ((new RegExp(/^\s*$/)).test(this.equation) && (!this.imgId)) {
+        if (new RegExp(/^\s*$/).test(this.equation) && !this.imgId) {
             // The math input is empty. Delete a math node if it exist. Then close the dialog.
             if (this.insideFigure) {
                 const tr = this.editor.currentView.state.tr.deleteSelection()
@@ -183,21 +184,34 @@ export class FigureDialog {
 
         if (this.imgDb === "user") {
             // Add image to document db.
-            const imageEntry = JSON.parse(JSON.stringify(this.userImageDB.db[this.imgId]))
+            const imageEntry = JSON.parse(
+                JSON.stringify(this.userImageDB.db[this.imgId])
+            )
             imageEntry.copyright = this.copyright
             this.imageDB.setImage(this.imgId, imageEntry)
             this.imgDb = "document"
-        } else if (this.imgId && this.imageDB.db[this.imgId] && !deepEqual(this.copyright, this.imageDB.db[this.imgId].copyright)) {
-            const imageEntry = JSON.parse(JSON.stringify(this.imageDB.db[this.imgId]))
+        } else if (
+            this.imgId &&
+            this.imageDB.db[this.imgId] &&
+            !deepEqual(this.copyright, this.imageDB.db[this.imgId].copyright)
+        ) {
+            const imageEntry = JSON.parse(
+                JSON.stringify(this.imageDB.db[this.imgId])
+            )
             imageEntry.copyright = this.copyright
             this.imageDB.setImage(this.imgId, imageEntry)
         }
 
-
         if (
             this.insideFigure &&
-            this.equation === (this.node.content.content.find(node => node.type.name === "figure_equation")?.attrs.equation || "") &&
-            this.imgId === (this.node.content.content.find(node => node.type.name === "image")?.attrs.image || false) &&
+            this.equation ===
+                (this.node.content.content.find(
+                    node => node.type.name === "figure_equation"
+                )?.attrs.equation || "") &&
+            this.imgId ===
+                (this.node.content.content.find(
+                    node => node.type.name === "image"
+                )?.attrs.image || false) &&
             this.imgDb === "document" &&
             this.caption === this.node.attrs.caption &&
             this.category === this.node.attrs.category &&
@@ -211,15 +225,26 @@ export class FigureDialog {
         const content = []
         if (this.imgId) {
             content.push(
-                this.editor.currentView.state.schema.nodes["image"].create({image: this.imgId})
+                this.editor.currentView.state.schema.nodes["image"].create({
+                    image: this.imgId
+                })
             )
         } else {
             content.push(
-                this.editor.currentView.state.schema.nodes["figure_equation"].create({equation: this.equation})
+                this.editor.currentView.state.schema.nodes[
+                    "figure_equation"
+                ].create({
+                    equation: this.equation
+                })
             )
         }
-        const captionNode = this.node.content?.content.find(node => node.type.name === "figure_caption") ||
-            this.editor.currentView.state.schema.nodes["figure_caption"].create()
+        const captionNode =
+            this.node.content?.content.find(
+                node => node.type.name === "figure_caption"
+            ) ||
+            this.editor.currentView.state.schema.nodes[
+                "figure_caption"
+            ].create()
         if (this.category === "table") {
             content.unshift(captionNode)
         } else {
@@ -232,7 +257,9 @@ export class FigureDialog {
                     width: this.width,
                     category: this.category,
                     caption: this.caption,
-                    id: this.insideFigure ? this.node.attrs.id : randomFigureId()
+                    id: this.insideFigure
+                        ? this.node.attrs.id
+                        : randomFigureId()
                 },
                 content
             ),
@@ -244,7 +271,10 @@ export class FigureDialog {
     }
 
     findFigure(state) {
-        if (state.selection.node && state.selection.node.type.name == "figure") {
+        if (
+            state.selection.node &&
+            state.selection.node.type.name == "figure"
+        ) {
             return state.selection.node
         }
         const $head = state.selection.$head
@@ -269,8 +299,14 @@ export class FigureDialog {
         if (this.node?.type && this.node?.type.name === "figure") {
             this.insideFigure = true
             this.submitMessage = gettext("Update")
-            this.equation = this.node.content.content.find(node => node.type.name === "figure_equation")?.attrs.equation || ""
-            this.imgId = this.node.content.content.find(node => node.type.name === "image")?.attrs.image || false
+            this.equation =
+                this.node.content.content.find(
+                    node => node.type.name === "figure_equation"
+                )?.attrs.equation || ""
+            this.imgId =
+                this.node.content.content.find(
+                    node => node.type.name === "image"
+                )?.attrs.image || false
             this.imgDb = "document"
             this.category = this.node.attrs.category
             this.caption = this.node.attrs.caption
@@ -280,15 +316,16 @@ export class FigureDialog {
                 text: gettext("Remove"),
                 classes: "fw-orange",
                 click: () => {
-                    const tr = this.editor.currentView.state.tr.deleteSelection()
+                    const tr =
+                        this.editor.currentView.state.tr.deleteSelection()
                     this.editor.currentView.dispatch(tr)
                     this.dialog.close()
                 }
             })
-
         }
         // Image positioning both at the time of updating and inserting for the first time
-        buttons.push({ // Update
+        buttons.push({
+            // Update
             text: this.submitMessage,
             classes: "fw-dark",
             click: () => this.submitForm()
@@ -332,51 +369,43 @@ export class FigureDialog {
             this.aligned = "center"
         }
 
-        const figureWidthDOM = this.dialog.dialogEl.querySelector(".figure-width")
+        const figureWidthDOM =
+            this.dialog.dialogEl.querySelector(".figure-width")
         figureWidthDOM.style.width = "80%"
         figureWidthDOM.firstElementChild.innerText = `${this.width} %`
-        figureWidthDOM.addEventListener(
-            "click",
-            event => {
-                const contentMenu = new ContentMenu({
-                    menu: this.editor.menu.figureWidthMenuModel,
-                    page: this,
-                    menuPos: {X: event.pageX, Y: event.pageY},
-                    onClose: () => {
-                        if (this.width == "100") {
-                            alignmentSelector.setValue("center")
-                            alignmentSelector.disable()
-                            this.aligned = "center"
-                        } else {
-                            alignmentSelector.enable()
-                        }
+        figureWidthDOM.addEventListener("click", event => {
+            const contentMenu = new ContentMenu({
+                menu: this.editor.menu.figureWidthMenuModel,
+                page: this,
+                menuPos: {X: event.pageX, Y: event.pageY},
+                onClose: () => {
+                    if (this.width == "100") {
+                        alignmentSelector.setValue("center")
+                        alignmentSelector.disable()
+                        this.aligned = "center"
+                    } else {
+                        alignmentSelector.enable()
                     }
-                })
-                contentMenu.open()
-            }
-        )
+                }
+            })
+            contentMenu.open()
+        })
 
-        dropdownSelect(
-            this.dialog.dialogEl.querySelector(".figure-category"),
-            {
-                onChange: newValue => {
-                    this.category = newValue
-                },
-                width: "80%",
-                value: this.category
-            }
-        )
+        dropdownSelect(this.dialog.dialogEl.querySelector(".figure-category"), {
+            onChange: newValue => {
+                this.category = newValue
+            },
+            width: "80%",
+            value: this.category
+        })
 
-        dropdownSelect(
-            this.dialog.dialogEl.querySelector(".figure-caption"),
-            {
-                onChange: newValue => {
-                    this.caption = newValue === "true"
-                },
-                width: "80%",
-                value: String(this.caption)
-            }
-        )
+        dropdownSelect(this.dialog.dialogEl.querySelector(".figure-caption"), {
+            onChange: newValue => {
+                this.caption = newValue === "true"
+            },
+            width: "80%",
+            value: String(this.caption)
+        })
 
         if (this.imgId && this.imageDB.db[this.imgId]) {
             this.copyright = this.imageDB.db[this.imgId].copyright
@@ -384,6 +413,5 @@ export class FigureDialog {
         } else {
             this.layoutMathEditor()
         }
-
     }
 }

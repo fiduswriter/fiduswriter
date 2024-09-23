@@ -2,18 +2,18 @@ import download from "downloadjs"
 
 import {shortFileTitle} from "../../common"
 
-import {textContent, removeHidden, fixTables} from "../tools/doc_content"
+import {fixTables, removeHidden, textContent} from "../tools/doc_content"
 import {createSlug} from "../tools/file"
 import {XmlZip} from "../tools/xml_zip"
 
 import {ODTExporterCitations} from "./citations"
+import {ODTExporterFootnotes} from "./footnotes"
 import {ODTExporterImages} from "./images"
+import {ODTExporterMath} from "./math"
+import {ODTExporterMetadata} from "./metadata"
 import {ODTExporterRender} from "./render"
 import {ODTExporterRichtext} from "./richtext"
-import {ODTExporterFootnotes} from "./footnotes"
-import {ODTExporterMetadata} from "./metadata"
 import {ODTExporterStyles} from "./styles"
-import {ODTExporterMath} from "./math"
 import {ODTExporterTracks} from "./track"
 
 /*
@@ -40,12 +40,8 @@ export class ODTExporter {
         this.mimeType = "application/vnd.oasis.opendocument.text"
     }
 
-
     init() {
-        const xml = new XmlZip(
-            this.templateUrl,
-            this.mimeType
-        )
+        const xml = new XmlZip(this.templateUrl, this.mimeType)
         const styles = new ODTExporterStyles(xml)
         const math = new ODTExporterMath(xml)
         const tracks = new ODTExporterTracks(xml)
@@ -83,27 +79,21 @@ export class ODTExporter {
             footnotes,
             citations,
             math,
-            images)
+            images
+        )
 
         const render = new ODTExporterRender(xml)
-        return xml.init().then(
-            () => styles.init()
-        ).then(
-            () => tracks.init()
-        ).then(
-            () => math.init()
-        ).then(
-            () => metadata.init()
-        ).then(
-            () => citations.init()
-        ).then(
-            () => render.init()
-        ).then(
-            () => images.init()
-        ).then(
-            () => footnotes.init()
-        ).then(
-            () => {
+        return xml
+            .init()
+            .then(() => styles.init())
+            .then(() => tracks.init())
+            .then(() => math.init())
+            .then(() => metadata.init())
+            .then(() => citations.init())
+            .then(() => render.init())
+            .then(() => images.init())
+            .then(() => footnotes.init())
+            .then(() => {
                 const pmBib = footnotes.pmBib || citations.pmBib
                 render.render(
                     this.docContent,
@@ -113,40 +103,38 @@ export class ODTExporter {
                     citations
                 )
                 return xml.prepareBlob()
-            }
-        ).then(
-            blob => this.download(blob)
-        )
+            })
+            .then(blob => this.download(blob))
     }
 
     getBaseMetadata() {
         return {
-            authors: this.docContent.content.reduce(
-                (authors, part) => {
-                    if (
-                        part.type === "contributors_part" &&
-                        part.attrs.metadata === "authors" &&
-                        part.content
-                    ) {
-                        return authors.concat(part.content.map(authorNode => authorNode.attrs))
-                    } else {
-                        return authors
-                    }
-                },
-                []),
-            keywords: this.docContent.content.reduce(
-                (keywords, part) => {
-                    if (
-                        part.type === "tags_part" &&
-                        part.attrs.metadata === "keywords" &&
-                        part.content
-                    ) {
-                        return keywords.concat(part.content.map(keywordNode => keywordNode.attrs.tag))
-                    } else {
-                        return keywords
-                    }
-                },
-                []),
+            authors: this.docContent.content.reduce((authors, part) => {
+                if (
+                    part.type === "contributors_part" &&
+                    part.attrs.metadata === "authors" &&
+                    part.content
+                ) {
+                    return authors.concat(
+                        part.content.map(authorNode => authorNode.attrs)
+                    )
+                } else {
+                    return authors
+                }
+            }, []),
+            keywords: this.docContent.content.reduce((keywords, part) => {
+                if (
+                    part.type === "tags_part" &&
+                    part.attrs.metadata === "keywords" &&
+                    part.content
+                ) {
+                    return keywords.concat(
+                        part.content.map(keywordNode => keywordNode.attrs.tag)
+                    )
+                } else {
+                    return keywords
+                }
+            }, []),
             title: textContent(this.docContent.content[0]),
             language: this.doc.settings.language
         }
@@ -155,5 +143,4 @@ export class ODTExporter {
     download(blob) {
         return download(blob, createSlug(this.docTitle) + ".odt", this.mimeType)
     }
-
 }

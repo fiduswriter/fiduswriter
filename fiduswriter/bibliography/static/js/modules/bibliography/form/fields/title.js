@@ -1,10 +1,10 @@
+import {baseKeymap, toggleMark} from "prosemirror-commands"
+import {history, redo, undo} from "prosemirror-history"
+import {keymap} from "prosemirror-keymap"
 import {EditorState} from "prosemirror-state"
 import {EditorView} from "prosemirror-view"
-import {history, redo, undo} from "prosemirror-history"
-import {toggleMark, baseKeymap} from "prosemirror-commands"
-import {keymap} from "prosemirror-keymap"
 
-import {icon, InlineTools} from "../../../prosemirror/inline_tools"
+import {InlineTools, icon} from "../../../prosemirror/inline_tools"
 import {titleSchema} from "../../schema/title"
 
 export class TitleFieldForm {
@@ -19,10 +19,12 @@ export class TitleFieldForm {
                 schema: titleSchema,
                 doc: titleSchema.nodeFromJSON({
                     type: "doc",
-                    content: [{
-                        type: "literal",
-                        content: this.initialValue
-                    }]
+                    content: [
+                        {
+                            type: "literal",
+                            content: this.initialValue
+                        }
+                    ]
                 }),
                 plugins: [
                     history(),
@@ -34,21 +36,43 @@ export class TitleFieldForm {
                         "Mod-b": () => {
                             const sMark = this.view.state.schema.marks["strong"]
                             const command = toggleMark(sMark)
-                            command(this.view.state, tr => this.view.dispatch(tr))
+                            command(this.view.state, tr =>
+                                this.view.dispatch(tr)
+                            )
                         },
                         "Mod-i": () => {
                             const sMark = this.view.state.schema.marks["em"]
                             const command = toggleMark(sMark)
-                            command(this.view.state, tr => this.view.dispatch(tr))
+                            command(this.view.state, tr =>
+                                this.view.dispatch(tr)
+                            )
                         }
                     }),
                     InlineTools([
-                        {command: toggleMark(titleSchema.marks.strong), dom: icon("strong", gettext("Strong"))},
-                        {command: toggleMark(titleSchema.marks.em), dom: icon("em", gettext("Emphasis"))},
-                        {command: toggleMark(titleSchema.marks.smallcaps), dom: icon("smallcaps", gettext("Small caps"))},
-                        {command: toggleMark(titleSchema.marks.sub), dom: icon("sub", gettext("Subscript₊"))},
-                        {command: toggleMark(titleSchema.marks.sup), dom: icon("sup", gettext("Supscript²"))},
-                        {command: toggleMark(titleSchema.marks.nocase), dom: icon("nocase", gettext("CasE ProTecT"))}
+                        {
+                            command: toggleMark(titleSchema.marks.strong),
+                            dom: icon("strong", gettext("Strong"))
+                        },
+                        {
+                            command: toggleMark(titleSchema.marks.em),
+                            dom: icon("em", gettext("Emphasis"))
+                        },
+                        {
+                            command: toggleMark(titleSchema.marks.smallcaps),
+                            dom: icon("smallcaps", gettext("Small caps"))
+                        },
+                        {
+                            command: toggleMark(titleSchema.marks.sub),
+                            dom: icon("sub", gettext("Subscript₊"))
+                        },
+                        {
+                            command: toggleMark(titleSchema.marks.sup),
+                            dom: icon("sup", gettext("Supscript²"))
+                        },
+                        {
+                            command: toggleMark(titleSchema.marks.nocase),
+                            dom: icon("nocase", gettext("CasE ProTecT"))
+                        }
                     ])
                 ]
             }),

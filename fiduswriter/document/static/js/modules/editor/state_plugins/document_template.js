@@ -1,6 +1,5 @@
-import {Plugin, PluginKey} from "prosemirror-state"
 import {Fragment} from "prosemirror-model"
-
+import {Plugin, PluginKey} from "prosemirror-state"
 
 const key = new PluginKey("documentTemplate")
 
@@ -8,7 +7,7 @@ export function addDeletedPartWidget(dom, view, getPos) {
     dom.classList.add("doc-deleted")
     dom.insertAdjacentHTML(
         "beforeend",
-        "<div class=\"remove-doc-part\"><i class=\"fa fa-trash-alt\"></i></div>"
+        '<div class="remove-doc-part"><i class="fa fa-trash-alt"></i></div>'
     )
     const removeButton = dom.lastElementChild
     removeButton.addEventListener("click", () => {
@@ -32,18 +31,29 @@ export function checkProtectedInSelection(state) {
 
     // If the protection is of header/start check if selection falls within the
     // protected range
-    if (["start", "header"].includes(anchorDocPart.attrs.locking) || ["start", "header"].includes(headDocPart.attrs.locking)) {
+    if (
+        ["start", "header"].includes(anchorDocPart.attrs.locking) ||
+        ["start", "header"].includes(headDocPart.attrs.locking)
+    ) {
         const protectedRanges = key.getState(state).protectedRanges,
             start = state.selection.from,
             end = state.selection.to
-        if (protectedRanges.find(({from, to}) => !(
-            (start <= from && end <= from) ||
-            (start >= to && end >= to)
-        ))) {
+        if (
+            protectedRanges.find(
+                ({from, to}) =>
+                    !(
+                        (start <= from && end <= from) ||
+                        (start >= to && end >= to)
+                    )
+            )
+        ) {
             return true
         }
     }
-    return anchorDocPart.attrs.locking === "fixed" || headDocPart.attrs.locking === "fixed"
+    return (
+        anchorDocPart.attrs.locking === "fixed" ||
+        headDocPart.attrs.locking === "fixed"
+    )
 }
 
 export class PartView {
@@ -59,7 +69,9 @@ export class PartView {
             this.dom.dataset.hidden = true
         }
         if (node.attrs.deleted) {
-            this.contentDOM = this.dom.appendChild(document.createElement("div"))
+            this.contentDOM = this.dom.appendChild(
+                document.createElement("div")
+            )
             addDeletedPartWidget(this.dom, view, getPos)
         } else {
             this.contentDOM = this.dom
@@ -71,27 +83,27 @@ export class PartView {
     }
 }
 
-export const documentTemplatePlugin = function(options) {
-    return new Plugin({
+export const documentTemplatePlugin = options =>
+    new Plugin({
         key,
         state: {
-            init(config, state) {
+            init(_config, state) {
                 if (options.editor.docInfo.access_rights === "write") {
-                    this.spec.props.nodeViews["richtext_part"] = (node, view, getPos) => new PartView(
+                    this.spec.props.nodeViews["richtext_part"] = (
                         node,
                         view,
                         getPos
-                    )
-                    this.spec.props.nodeViews["heading_part"] = (node, view, getPos) => new PartView(
+                    ) => new PartView(node, view, getPos)
+                    this.spec.props.nodeViews["heading_part"] = (
                         node,
                         view,
                         getPos
-                    )
-                    this.spec.props.nodeViews["table_part"] = (node, view, getPos) => new PartView(
+                    ) => new PartView(node, view, getPos)
+                    this.spec.props.nodeViews["table_part"] = (
                         node,
                         view,
                         getPos
-                    )
+                    ) => new PartView(node, view, getPos)
                     // Tags and Contributors have node views defined in tag_input and contributor_input.
                     // TOCs have node views defined in toc_render.
                 }
@@ -104,10 +116,19 @@ export const documentTemplatePlugin = function(options) {
                     let to = from
                     if (node.attrs.locking === "fixed") {
                         to = from + node.nodeSize
-                    } else if (node.attrs.locking === "header") { // only relevant for tables
-                        to = from + 1 + 1 + 1 + node.firstChild.firstChild.nodeSize // + 1 for the part node + 1 for the table + 1 for the first row
+                    } else if (node.attrs.locking === "header") {
+                        // only relevant for tables
+                        to =
+                            from +
+                            1 +
+                            1 +
+                            1 +
+                            node.firstChild.firstChild.nodeSize // + 1 for the part node + 1 for the table + 1 for the first row
                     } else if (node.attrs.locking === "start") {
-                        let initialFragment = Fragment.fromJSON(options.editor.schema, node.attrs.initial)
+                        let initialFragment = Fragment.fromJSON(
+                            options.editor.schema,
+                            node.attrs.initial
+                        )
                         let protectionSize = initialFragment.size
                         if (initialFragment.lastChild?.isTextblock) {
                             protectionSize -= 1 // We allow writing at the end of the last text block.
@@ -115,8 +136,10 @@ export const documentTemplatePlugin = function(options) {
                                 // The last text block is empty, so we remove all protection from it, even node type
                                 protectionSize -= 1
                             }
-                            initialFragment = initialFragment.cut(0, protectionSize)
-
+                            initialFragment = initialFragment.cut(
+                                0,
+                                protectionSize
+                            )
                         }
                         if (
                             node.content.size >= protectionSize &&
@@ -136,10 +159,8 @@ export const documentTemplatePlugin = function(options) {
                     protectedRanges
                 }
             },
-            apply(tr, prev, oldState, _state) {
-                let {
-                    protectedRanges
-                } = this.getState(oldState)
+            apply(tr, _prev, oldState, _state) {
+                let {protectedRanges} = this.getState(oldState)
                 protectedRanges = protectedRanges.map(marker => ({
                     from: tr.mapping.map(marker.from, 1),
                     to: tr.mapping.map(marker.to, -1)
@@ -168,70 +189,92 @@ export const documentTemplatePlugin = function(options) {
             if (state.doc.childCount !== tr.doc.childCount) {
                 return false
             }
-            const {
-                protectedRanges
-            } = key.getState(state)
+            const {protectedRanges} = key.getState(state)
             let allowed = true
 
             let changingRanges = []
 
             // We map all changes back to the document before changes have been applied.
-            tr.steps.slice().reverse().forEach(step => {
-                const map = step.getMap()
-                if (changingRanges.length) {
-                    const mapInv = map.invert()
-                    changingRanges = changingRanges.map(range => (
-                        {start: mapInv.map(range.start, -1), end: mapInv.map(range.end, 1)}
-                    ))
-                }
-                if (["removeMark", "addMark"].includes(step.jsonID)) {
-                    changingRanges.push({start: step.from, end: step.to})
-                }
-                map.forEach((start, end) => {
-                    changingRanges.push({start, end})
+            tr.steps
+                .slice()
+                .reverse()
+                .forEach(step => {
+                    const map = step.getMap()
+                    if (changingRanges.length) {
+                        const mapInv = map.invert()
+                        changingRanges = changingRanges.map(range => ({
+                            start: mapInv.map(range.start, -1),
+                            end: mapInv.map(range.end, 1)
+                        }))
+                    }
+                    if (["removeMark", "addMark"].includes(step.jsonID)) {
+                        changingRanges.push({start: step.from, end: step.to})
+                    }
+                    map.forEach((start, end) => {
+                        changingRanges.push({start, end})
+                    })
                 })
-            })
             changingRanges.forEach(({start, end}) => {
-                if (protectedRanges.find(({from, to}) => !(
-                    (start <= from && end <= from) ||
-                    (start >= to && end >= to)
-                ))) {
-                    allowed = false
-                }
-
-            })
-
-            let allowedElements = false, allowedMarks = false
-
-            changingRanges.forEach(range => state.doc.nodesBetween(range.from, range.to, (node, pos, parent, _index) => {
-                if (parent === tr.doc) {
-                    allowedElements = node.attrs.elements ?
-                        node.attrs.elements.concat("table_row", "table_cell", "table_header", "list_item", "text") :
-                        false
-                    allowedMarks = node.attrs.marks ?
-                        node.attrs.marks.concat("insertion", "deletion", "comment", "anchor") :
-                        false
-                    return allowed
-                }
-                if (pos < range.from) {
-                    return true
-                }
                 if (
-                    allowedElements &&
-                    !allowedElements.includes(node.type.name)
+                    protectedRanges.find(
+                        ({from, to}) =>
+                            !(
+                                (start <= from && end <= from) ||
+                                (start >= to && end >= to)
+                            )
+                    )
                 ) {
                     allowed = false
-                } else if (allowedMarks) {
-                    node.marks.forEach(mark => {
-                        if (!allowedMarks.includes(mark.type.name)) {
-                            allowed = false
-                        }
-                    })
                 }
+            })
 
-            }))
+            let allowedElements = false,
+                allowedMarks = false
+
+            changingRanges.forEach(range =>
+                state.doc.nodesBetween(
+                    range.from,
+                    range.to,
+                    (node, pos, parent, _index) => {
+                        if (parent === tr.doc) {
+                            allowedElements = node.attrs.elements
+                                ? node.attrs.elements.concat(
+                                      "table_row",
+                                      "table_cell",
+                                      "table_header",
+                                      "list_item",
+                                      "text"
+                                  )
+                                : false
+                            allowedMarks = node.attrs.marks
+                                ? node.attrs.marks.concat(
+                                      "insertion",
+                                      "deletion",
+                                      "comment",
+                                      "anchor"
+                                  )
+                                : false
+                            return allowed
+                        }
+                        if (pos < range.from) {
+                            return true
+                        }
+                        if (
+                            allowedElements &&
+                            !allowedElements.includes(node.type.name)
+                        ) {
+                            allowed = false
+                        } else if (allowedMarks) {
+                            node.marks.forEach(mark => {
+                                if (!allowedMarks.includes(mark.type.name)) {
+                                    allowed = false
+                                }
+                            })
+                        }
+                    }
+                )
+            )
 
             return allowed
         }
     })
-}

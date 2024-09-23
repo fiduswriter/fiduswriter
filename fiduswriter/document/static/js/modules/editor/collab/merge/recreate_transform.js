@@ -2,29 +2,23 @@
 // We only need this file from the prosemirror-recreate-steps (apache) project, so it's copied
 // in here.
 
-import {
-    Transform, ReplaceStep
-} from "prosemirror-transform"
-import {
-    applyPatch, createPatch
-} from "rfc6902"
-import {diffWordsWithSpace, diffChars} from "diff"
+import {diffChars, diffWordsWithSpace} from "diff"
+import {ReplaceStep, Transform} from "prosemirror-transform"
+import {applyPatch, createPatch} from "rfc6902"
 
 function getReplaceStep(fromDoc, toDoc) {
     let start = toDoc.content.findDiffStart(fromDoc.content)
     if (start === null) {
         return false
     }
-    let {
-        a: endA,
-        b: endB
-    } = toDoc.content.findDiffEnd(fromDoc.content)
+    let {a: endA, b: endB} = toDoc.content.findDiffEnd(fromDoc.content)
     const overlap = start - Math.min(endA, endB)
     if (overlap > 0) {
         if (
             // If there is an overlap, there is some freedom of choise in how to calculate the start/end boundary.
             // for an inserted/removed slice. We choose the extreme with the lowest depth value.
-            fromDoc.resolve(start - overlap).depth < toDoc.resolve(endA + overlap).depth
+            fromDoc.resolve(start - overlap).depth <
+            toDoc.resolve(endA + overlap).depth
         ) {
             start -= overlap
         } else {
@@ -93,12 +87,20 @@ class RecreateTransform {
                 }
             }
 
-            if (this.complexSteps && ops.length === 1 && (pathParts.includes("attrs") || pathParts.includes("type"))) {
+            if (
+                this.complexSteps &&
+                ops.length === 1 &&
+                (pathParts.includes("attrs") || pathParts.includes("type"))
+            ) {
                 // Node markup is changing
                 this.addSetNodeMarkup()
                 ops = []
                 afterStepJSON = JSON.parse(JSON.stringify(this.currentJSON))
-            } else if (ops.length === 1 && op.op === "replace" && pathParts[pathParts.length - 1] === "text") {
+            } else if (
+                ops.length === 1 &&
+                op.op === "replace" &&
+                pathParts[pathParts.length - 1] === "text"
+            ) {
                 // Text is being replaced, we apply text diffing to find the smallest possible diffs.
                 this.addReplaceTextSteps(op, afterStepJSON)
                 ops = []
@@ -120,23 +122,30 @@ class RecreateTransform {
                 return true
             }
 
-            this.tr.doc.nodesBetween(tPos, tPos + tNode.nodeSize, (fNode, fPos) => {
-                if (!fNode.isInline) {
-                    return true
+            this.tr.doc.nodesBetween(
+                tPos,
+                tPos + tNode.nodeSize,
+                (fNode, fPos) => {
+                    if (!fNode.isInline) {
+                        return true
+                    }
+                    const from = Math.max(tPos, fPos),
+                        to = Math.min(
+                            tPos + tNode.nodeSize,
+                            fPos + fNode.nodeSize
+                        )
+                    fNode.marks.forEach(nodeMark => {
+                        if (!nodeMark.isInSet(tNode.marks)) {
+                            this.tr.removeMark(from, to, nodeMark)
+                        }
+                    })
+                    tNode.marks.forEach(nodeMark => {
+                        if (!nodeMark.isInSet(fNode.marks)) {
+                            this.tr.addMark(from, to, nodeMark)
+                        }
+                    })
                 }
-                const from = Math.max(tPos, fPos),
-                    to = Math.min(tPos + tNode.nodeSize, fPos + fNode.nodeSize)
-                fNode.marks.forEach(nodeMark => {
-                    if (!nodeMark.isInSet(tNode.marks)) {
-                        this.tr.removeMark(from, to, nodeMark)
-                    }
-                })
-                tNode.marks.forEach(nodeMark => {
-                    if (!nodeMark.isInSet(fNode.marks)) {
-                        this.tr.addMark(from, to, nodeMark)
-                    }
-                })
-            })
+            )
         })
     }
 
@@ -179,8 +188,13 @@ class RecreateTransform {
             const fromNode = fromDoc.nodeAt(start),
                 toNode = toDoc.nodeAt(start)
             try {
-                this.tr.setNodeMarkup(start, fromNode.type === toNode.type ? null : toNode.type, toNode.attrs, toNode.marks)
-            } catch (error) {
+                this.tr.setNodeMarkup(
+                    start,
+                    fromNode.type === toNode.type ? null : toNode.type,
+                    toNode.attrs,
+                    toNode.marks
+                )
+            } catch (_error) {
                 return
             }
             this.currentJSON = this.marklessDoc(this.tr.doc).toJSON()
@@ -219,7 +233,9 @@ class RecreateTransform {
         const finalText = op.value,
             currentText = obj
 
-        const textDiffs = this.wordDiffs ? diffWordsWithSpace(currentText, finalText) : diffChars(currentText, finalText)
+        const textDiffs = this.wordDiffs
+            ? diffWordsWithSpace(currentText, finalText)
+            : diffChars(currentText, finalText)
 
         while (textDiffs.length) {
             const diff = textDiffs.shift()
@@ -229,12 +245,16 @@ class RecreateTransform {
                     this.tr.replaceWith(
                         offset,
                         offset + nextDiff.value.length,
-                        this.schema.nodeFromJSON({type: "text", text: diff.value}).mark(marks)
+                        this.schema
+                            .nodeFromJSON({type: "text", text: diff.value})
+                            .mark(marks)
                     )
                 } else {
                     this.tr.insert(
                         offset,
-                        this.schema.nodeFromJSON({type: "text", text: diff.value}).mark(marks)
+                        this.schema
+                            .nodeFromJSON({type: "text", text: diff.value})
+                            .mark(marks)
                     )
                 }
                 offset += diff.value.length
@@ -244,7 +264,9 @@ class RecreateTransform {
                     this.tr.replaceWith(
                         offset,
                         offset + diff.value.length,
-                        this.schema.nodeFromJSON({type: "text", text: nextDiff.value}).mark(marks)
+                        this.schema
+                            .nodeFromJSON({type: "text", text: nextDiff.value})
+                            .mark(marks)
                     )
                     offset += nextDiff.value.length
                 } else {
@@ -269,8 +291,15 @@ class RecreateTransform {
             let step = oldSteps.shift()
             while (oldSteps.length && step.merge(oldSteps[0])) {
                 const addedStep = oldSteps.shift()
-                if (step instanceof ReplaceStep && addedStep instanceof ReplaceStep) {
-                    step = getReplaceStep(newTr.doc, addedStep.apply(step.apply(newTr.doc).doc).doc) || step.merge(addedStep)
+                if (
+                    step instanceof ReplaceStep &&
+                    addedStep instanceof ReplaceStep
+                ) {
+                    step =
+                        getReplaceStep(
+                            newTr.doc,
+                            addedStep.apply(step.apply(newTr.doc).doc).doc
+                        ) || step.merge(addedStep)
                 } else {
                     step = step.merge(addedStep)
                 }
@@ -281,7 +310,17 @@ class RecreateTransform {
     }
 }
 
-export function recreateTransform(fromDoc, toDoc, complexSteps = true, wordDiffs = true) {
-    const recreator = new RecreateTransform(fromDoc, toDoc, complexSteps, wordDiffs)
+export function recreateTransform(
+    fromDoc,
+    toDoc,
+    complexSteps = true,
+    wordDiffs = true
+) {
+    const recreator = new RecreateTransform(
+        fromDoc,
+        toDoc,
+        complexSteps,
+        wordDiffs
+    )
     return recreator.init()
 }

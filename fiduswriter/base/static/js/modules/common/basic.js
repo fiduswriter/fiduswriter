@@ -1,19 +1,15 @@
-import {Dialog} from "./dialog"
 import {ContentMenu} from "./content_menu"
+import {Dialog} from "./dialog"
 
 /** Creates a styled select with a contentmenu from a select tag.
  * @param select The select-tag which is to be replaced.
  * @param options
  */
 
-export const dropdownSelect = function(
-    selectDOM, {
-        onChange = _newValue => {},
-        width = false,
-        value = false,
-        button = false
-    }
-) {
+export const dropdownSelect = (
+    selectDOM,
+    {onChange = _newValue => {}, width = false, value = false, button = false}
+) => {
     if (!selectDOM.parentElement) {
         return
     }
@@ -23,15 +19,20 @@ export const dropdownSelect = function(
         selectDOM.parentElement.removeChild(selectDOM) // Remove the <select> from the main dom.
     } else {
         buttonDOM = document.createElement("div")
-        buttonDOM.innerHTML = "<label></label>&nbsp;<span class=\"fa fa-caret-down\"></span>"
+        buttonDOM.innerHTML =
+            '<label></label>&nbsp;<span class="fa fa-caret-down"></span>'
         buttonDOM.classList.add("fw-button")
         buttonDOM.classList.add("fw-light")
         buttonDOM.classList.add("fw-large")
         buttonDOM.classList.add("fw-dropdown")
         if (width) {
-            buttonDOM.style.width = Number.isInteger(width) ? `${width}px` : width
+            buttonDOM.style.width = Number.isInteger(width)
+                ? `${width}px`
+                : width
         }
-        selectDOM.classList.forEach(className => buttonDOM.classList.add(className))
+        selectDOM.classList.forEach(className =>
+            buttonDOM.classList.add(className)
+        )
         if (selectDOM.id) {
             buttonDOM.id = selectDOM.id
         }
@@ -63,13 +64,12 @@ export const dropdownSelect = function(
                     }
                     value = option.value || option.dataset.value
                     onChange(value)
-                    menu.content.forEach(item => item.selected = false)
+                    menu.content.forEach(item => (item.selected = false))
                     menu.content[order].selected = true
                     return false
                 },
                 selected: !!(option.selected || option.dataset.selected)
             }
-
         })
     }
     if (!selected && !button) {
@@ -98,11 +98,13 @@ export const dropdownSelect = function(
 
     return {
         setValue: newValue => {
-            const optionIndex = options.findIndex(option => option.value === newValue)
+            const optionIndex = options.findIndex(
+                option => option.value === newValue
+            )
             if (optionIndex === undefined) {
                 return
             }
-            menu.content.forEach(item => item.selected = false)
+            menu.content.forEach(item => (item.selected = false))
             menu.content[optionIndex].selected = true
             const option = options[optionIndex]
             if (!button) {
@@ -119,7 +121,7 @@ export const dropdownSelect = function(
 /** Checks or unchecks a checkable label. This is used for example for bibliography categories when editing bibliography items.
  * @param label The node who's parent has to be checked or unchecked.
  */
-export const setCheckableLabel = function(labelEl) {
+export const setCheckableLabel = labelEl => {
     if (labelEl.classList.contains("checked")) {
         labelEl.classList.remove("checked")
     } else {
@@ -131,7 +133,7 @@ let messageWaiter = false
 let waitMessage = ""
 /** Cover the page signaling to the user to wait.
  */
-export const activateWait = function(full = false, message = "") {
+export const activateWait = (full = false, message = "") => {
     const waitEl = document.getElementById("wait")
     if (message) {
         let messageEl = waitEl.querySelector("span.message")
@@ -161,7 +163,7 @@ export const activateWait = function(full = false, message = "") {
 
 /** Remove the wait cover.
  */
-export const deactivateWait = function() {
+export const deactivateWait = () => {
     const waitEl = document.getElementById("wait")
     if (waitEl) {
         waitEl.classList.remove("active")
@@ -181,21 +183,27 @@ export const deactivateWait = function() {
  * @param alertType The type of message that is shown (error, warning, info or success).
  * @param alertMsg The message text.
  */
-export const addAlert = function(alertType, alertMsg) {
+export const addAlert = (alertType, alertMsg) => {
     if (!document.body) {
         return
     }
     const iconNames = {
-        "error": "exclamation-circle",
-        "warning": "exclamation-circle",
-        "info": "info-circle",
-        "success": "check-circle"
+        error: "exclamation-circle",
+        warning: "exclamation-circle",
+        info: "info-circle",
+        success: "check-circle"
     }
     if (!document.getElementById("#alerts-outer-wrapper")) {
-        document.body.insertAdjacentHTML("beforeend", "<div id=\"alerts-outer-wrapper\"><ul id=\"alerts-wrapper\"></ul></div>")
+        document.body.insertAdjacentHTML(
+            "beforeend",
+            '<div id="alerts-outer-wrapper"><ul id="alerts-wrapper"></ul></div>'
+        )
     }
     const alertsWrapper = document.getElementById("alerts-wrapper")
-    alertsWrapper.insertAdjacentHTML("beforeend", `<li class="alerts-${alertType} fa-before fa-${iconNames[alertType]}">${alertMsg}</li>`)
+    alertsWrapper.insertAdjacentHTML(
+        "beforeend",
+        `<li class="alerts-${alertType} fa-before fa-${iconNames[alertType]}">${alertMsg}</li>`
+    )
     const alertBox = alertsWrapper.lastElementChild
     setTimeout(() => {
         alertBox.classList.add("visible")
@@ -207,7 +215,7 @@ export const addAlert = function(alertType, alertMsg) {
 }
 
 // Used for system mesages
-export const showSystemMessage = function(message, buttons = [{type: "close"}]) {
+export const showSystemMessage = (message, buttons = [{type: "close"}]) => {
     const dialog = new Dialog({
         title: gettext("System message"),
         body: `<p>${escapeText(message)}</p>`,
@@ -223,10 +231,10 @@ export const showSystemMessage = function(message, buttons = [{type: "close"}]) 
  */
 const CACHED_DATES = {
     "sortable-date": {},
-    "minutes": {},
-    "full": {}
+    minutes: {},
+    full: {}
 }
-export const localizeDate = function(milliseconds, type = "full") {
+export const localizeDate = (milliseconds, type = "full") => {
     if (milliseconds === 0) {
         return ""
     } else if (CACHED_DATES[type][milliseconds]) {
@@ -235,18 +243,24 @@ export const localizeDate = function(milliseconds, type = "full") {
     const theDate = new Date(milliseconds)
     let returnValue
     switch (type) {
-    case "sortable-date": {
-        const yyyy = theDate.getFullYear()
-        const mm = theDate.getMonth() + 1
-        const dd = theDate.getDate()
-        returnValue = `${yyyy}-${String(mm).padStart(2, "0")}-${String(dd).padStart(2, "0")}`
-        break
-    }
-    case "minutes":
-        returnValue = theDate.toLocaleString([], {year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit"})
-        break
-    default:
-        returnValue = theDate.toLocaleString()
+        case "sortable-date": {
+            const yyyy = theDate.getFullYear()
+            const mm = theDate.getMonth() + 1
+            const dd = theDate.getDate()
+            returnValue = `${yyyy}-${String(mm).padStart(2, "0")}-${String(dd).padStart(2, "0")}`
+            break
+        }
+        case "minutes":
+            returnValue = theDate.toLocaleString([], {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit"
+            })
+            break
+        default:
+            returnValue = theDate.toLocaleString()
     }
     if (Object.keys(CACHED_DATES[type]).length > 5000) {
         CACHED_DATES[type] = {}
@@ -259,9 +273,8 @@ export const localizeDate = function(milliseconds, type = "full") {
  * Turn string literals into single line, removing spaces at start of line
  */
 
-export const noSpaceTmp = function(_strings) {
-    const values = Array.from(arguments)
-    const tmpStrings = Array.from(values.shift())
+export const noSpaceTmp = (strings, ...values) => {
+    const tmpStrings = Array.from(strings)
 
     let combined = ""
     while (tmpStrings.length > 0 || values.length > 0) {
@@ -280,23 +293,22 @@ export const noSpaceTmp = function(_strings) {
     return out
 }
 
-export const escapeText = function(text) {
+export const escapeText = text => {
     return text
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
-        // eslint-disable-next-line no-control-regex
+
         .replace(/[^\x09\x0A\x0D\x20-\uD7FF\uE000-\uFFFD\u10000-\u10FFFF]/g, "") // invalid in XML chars
 }
 
-export const unescapeText = function(text) {
-    return text
+export const unescapeText = text =>
+    text
         .replace(/&lt;/g, "<")
         .replace(/&gt;/g, ">")
-        .replace(/&quot;/g, "\"")
+        .replace(/&quot;/g, '"')
         .replace(/&amp;/g, "&")
-}
 /**
  * Return a cancel promise if you need to cancel a promise chain. Import as
  * ES6 promises are not (yet) cancelable.
@@ -306,7 +318,7 @@ export const cancelPromise = () => new Promise(() => {})
 
 // Check if selector matches one of the ancestors of the event target.
 // Used in switch statements of document event listeners.
-export const findTarget = function(event, selector, el = {}) {
+export const findTarget = (event, selector, el = {}) => {
     el.target = event.target.closest(selector)
     if (el.target) {
         event.stopPropagation()
@@ -316,7 +328,7 @@ export const findTarget = function(event, selector, el = {}) {
 }
 
 // Promise when page has been loaded.
-export const whenReady = function() {
+export const whenReady = () => {
     if (document.readyState === "complete") {
         return Promise.resolve()
     } else {
@@ -330,7 +342,7 @@ export const whenReady = function() {
     }
 }
 
-export const setDocTitle = function(title, app) {
+export const setDocTitle = (title, app) => {
     const titleText = `${title} - ${app.name}`
     if (document.title !== titleText) {
         document.title = titleText

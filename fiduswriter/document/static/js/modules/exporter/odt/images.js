@@ -12,12 +12,10 @@ export class ODTExporterImages {
     }
 
     init() {
-        return this.xml.getXml("META-INF/manifest.xml").then(
-            manifestXml => {
-                this.manifestXml = manifestXml
-                return this.exportImages()
-            }
-        )
+        return this.xml.getXml("META-INF/manifest.xml").then(manifestXml => {
+            this.manifestXml = manifestXml
+            return this.exportImages()
+        })
     }
 
     // add an image to the list of files
@@ -33,12 +31,16 @@ export class ODTExporterImages {
         const fileNameEnding = fileNameParts.pop()
         const fileNameStart = fileNameParts.join(".")
         const manifestEl = this.manifestXml.query("manifest:manifest")
-        let imgManifest = manifestEl.query("manifest:file-entry", {"manifest:full-path": `Pictures/${imgFileName}`})
+        let imgManifest = manifestEl.query("manifest:file-entry", {
+            "manifest:full-path": `Pictures/${imgFileName}`
+        })
         let counter = 0
         while (imgManifest) {
             // Name exists already, we change the name until we get a file name not yet included in manifest.
             imgFileName = `${fileNameStart}_${counter++}.${fileNameEnding}`
-            imgManifest = manifestEl.query("manifest:file-entry", {"manifest:full-path": `Pictures/${imgFileName}`})
+            imgManifest = manifestEl.query("manifest:file-entry", {
+                "manifest:full-path": `Pictures/${imgFileName}`
+            })
         }
         const string = `  <manifest:file-entry manifest:full-path="Pictures/${imgFileName}" manifest:media-type="image/${fileNameEnding}"/>`
         manifestEl.appendXML(string)
@@ -51,46 +53,48 @@ export class ODTExporterImages {
     exportImages() {
         const usedImgs = []
 
-        descendantNodes(this.docContent).forEach(
-            node => {
-                if (node.type === "image" && node.attrs.image !== false) {
-                    if (!usedImgs.includes(node.attrs.image)) {
-                        usedImgs.push(node.attrs.image)
-                    }
+        descendantNodes(this.docContent).forEach(node => {
+            if (node.type === "image" && node.attrs.image !== false) {
+                if (!usedImgs.includes(node.attrs.image)) {
+                    usedImgs.push(node.attrs.image)
                 }
             }
-        )
+        })
 
-        return new Promise((resolveExportImages) => {
+        return new Promise(resolveExportImages => {
             const p = []
 
             usedImgs.forEach(image => {
                 const imgDBEntry = this.imageDB.db[image]
                 p.push(
-                    get(imgDBEntry.image).then(
-                        response => response.blob()
-                    ).then(
-                        blob => {
+                    get(imgDBEntry.image)
+                        .then(response => response.blob())
+                        .then(blob => {
                             const wImgId = this.addImage(
                                 imgDBEntry.image.split("/").pop(),
                                 blob
                             )
                             if (blob.type === "image/svg+xml") {
                                 // Add PNG version in addition to SVG
-                                return svg2png(blob).then(({blob: pngBlob, width, height}) => {
-                                    const pngWImgId = this.addImage(
-                                        imgDBEntry.image.split("/").pop().replace(/.svg$/g, ".png"),
-                                        pngBlob
-                                    )
-                                    this.images[image] = {
-                                        id: pngWImgId,
-                                        width,
-                                        height,
-                                        title: imgDBEntry.title,
-                                        type: blob.type,
-                                        svg: wImgId
+                                return svg2png(blob).then(
+                                    ({blob: pngBlob, width, height}) => {
+                                        const pngWImgId = this.addImage(
+                                            imgDBEntry.image
+                                                .split("/")
+                                                .pop()
+                                                .replace(/.svg$/g, ".png"),
+                                            pngBlob
+                                        )
+                                        this.images[image] = {
+                                            id: pngWImgId,
+                                            width,
+                                            height,
+                                            title: imgDBEntry.title,
+                                            type: blob.type,
+                                            svg: wImgId
+                                        }
                                     }
-                                })
+                                )
                             } else {
                                 this.images[image] = {
                                     id: wImgId,
@@ -101,15 +105,11 @@ export class ODTExporterImages {
                                     svg: false
                                 }
                             }
-                        }
-                    )
+                        })
                 )
             })
 
-            Promise.all(p).then(
-                () => resolveExportImages()
-            )
+            Promise.all(p).then(() => resolveExportImages())
         })
     }
-
 }

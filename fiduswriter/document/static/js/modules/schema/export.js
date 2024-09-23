@@ -1,8 +1,5 @@
-import {
-    docSchema
-} from "./document"
 import * as plugins from "../../plugins/schema_export"
-
+import {docSchema} from "./document"
 
 export class SchemaExport {
     constructor() {
@@ -15,8 +12,12 @@ export class SchemaExport {
             nodes: {},
             marks: {}
         }
-        this.schema.spec.nodes.forEach((key, value) => spec.nodes[key] = value)
-        this.schema.spec.marks.forEach((key, value) => spec.marks[key] = value)
+        this.schema.spec.nodes.forEach(
+            (key, value) => (spec.nodes[key] = value)
+        )
+        this.schema.spec.marks.forEach(
+            (key, value) => (spec.marks[key] = value)
+        )
         return JSON.stringify(spec)
     }
 
@@ -31,5 +32,4 @@ export class SchemaExport {
             }
         })
     }
-
 }

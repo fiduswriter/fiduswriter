@@ -3,7 +3,6 @@ import {getNonDeletedTextContent} from "../../../schema/text"
 
 import {wordCounterDialogTemplate} from "./templates"
 
-
 export class WordCountDialog {
     constructor(editor) {
         this.editor = editor
@@ -20,10 +19,16 @@ export class WordCountDialog {
     }
 
     countWords() {
-        const textContent = getNonDeletedTextContent(this.editor.view.state.doc),
-            footnoteContent = getNonDeletedTextContent(this.editor.mod.footnotes.fnEditor.view.state.doc),
-            bibliographyContent = document.querySelector(".doc-bibliography").textContent
-        const docContent = textContent + " " + footnoteContent + " " + bibliographyContent
+        const textContent = getNonDeletedTextContent(
+                this.editor.view.state.doc
+            ),
+            footnoteContent = getNonDeletedTextContent(
+                this.editor.mod.footnotes.fnEditor.view.state.doc
+            ),
+            bibliographyContent =
+                document.querySelector(".doc-bibliography").textContent
+        const docContent =
+            textContent + " " + footnoteContent + " " + bibliographyContent
         const docNumChars = docContent.split("\n").join("").length - 2 // Subtract two for added spaces
         const docWords = docContent.split(/[\n ]+/)
 
@@ -39,7 +44,9 @@ export class WordCountDialog {
         const selectionNumChars = selectionContent.split("\n").join("").length
         const selectionWords = selectionContent.split(/[\n ]+/)
         const selectionNumNoSpace = selectionWords.join("").length
-        const selectionNumWords = selectionNumNoSpace ? selectionWords.length : 0
+        const selectionNumWords = selectionNumNoSpace
+            ? selectionWords.length
+            : 0
 
         return {
             docNumWords,
@@ -50,6 +57,4 @@ export class WordCountDialog {
             selectionNumChars
         }
     }
-
-
 }

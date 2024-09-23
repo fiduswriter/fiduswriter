@@ -1,23 +1,33 @@
 import {CSL} from "citeproc-plus"
 //import * as OfflinePluginRuntime from "@lcdp/offline-plugin/runtime"
 
-import {ContactInvite} from "../contacts/invite"
-import {ImageOverview} from "../images/overview"
-import {ContactsOverview} from "../contacts"
-import {Profile} from "../profile"
-import {findTarget, WebSocketConnector, showSystemMessage, postJson, ensureCSS, addAlert} from "../common"
-import {LoginPage} from "../login"
-import {EmailConfirm} from "../email_confirm"
-import {PasswordResetRequest, PasswordResetChangePassword} from "../password_reset"
-import {Signup} from "../signup"
-import {ImageDB} from "../images/database"
-import {BibliographyDB} from "../bibliography/database"
-import {Page404} from "../404"
-import {OfflinePage} from "../offline"
-import {SetupPage} from "../setup"
-import {FlatPage} from "../flatpage"
 import * as plugins from "../../plugins/app"
+import {Page404} from "../404"
+import {BibliographyDB} from "../bibliography/database"
+import {
+    WebSocketConnector,
+    addAlert,
+    ensureCSS,
+    findTarget,
+    postJson,
+    showSystemMessage
+} from "../common"
+import {ContactsOverview} from "../contacts"
+import {ContactInvite} from "../contacts/invite"
+import {EmailConfirm} from "../email_confirm"
+import {FlatPage} from "../flatpage"
+import {ImageDB} from "../images/database"
+import {ImageOverview} from "../images/overview"
 import {IndexedDB} from "../indexed_db"
+import {LoginPage} from "../login"
+import {OfflinePage} from "../offline"
+import {
+    PasswordResetChangePassword,
+    PasswordResetRequest
+} from "../password_reset"
+import {Profile} from "../profile"
+import {SetupPage} from "../setup"
+import {Signup} from "../signup"
 
 export class App {
     constructor() {
@@ -28,42 +38,55 @@ export class App {
             "": {
                 app: "document",
                 requireLogin: true,
-                open: () => import(/* webpackPrefetch: true */"../documents/overview").then(({DocumentOverview}) => new DocumentOverview(this.config))
+                open: () =>
+                    import(
+                        /* webpackPrefetch: true */ "../documents/overview"
+                    ).then(
+                        ({DocumentOverview}) =>
+                            new DocumentOverview(this.config)
+                    )
             },
-            "account": {
+            account: {
                 app: "user",
                 requireLogin: false,
                 open: pathnameParts => {
                     let returnValue
                     switch (pathnameParts[2]) {
-                    case "confirm-email": {
-                        const key = pathnameParts[3]
-                        returnValue = new EmailConfirm(this.config, key)
-                        break
-                    }
-                    case "password-reset":
-                        returnValue = new PasswordResetRequest(this.config)
-                        break
-                    case "change-password": {
-                        const key = pathnameParts[3]
-                        returnValue = new PasswordResetChangePassword(this.config, key)
-                        break
-                    }
-                    case "sign-up":
-                        returnValue = new Signup(this.config)
-                        break
-                    default:
-                        returnValue = false
+                        case "confirm-email": {
+                            const key = pathnameParts[3]
+                            returnValue = new EmailConfirm(this.config, key)
+                            break
+                        }
+                        case "password-reset":
+                            returnValue = new PasswordResetRequest(this.config)
+                            break
+                        case "change-password": {
+                            const key = pathnameParts[3]
+                            returnValue = new PasswordResetChangePassword(
+                                this.config,
+                                key
+                            )
+                            break
+                        }
+                        case "sign-up":
+                            returnValue = new Signup(this.config)
+                            break
+                        default:
+                            returnValue = false
                     }
                     return returnValue
                 }
             },
-            "bibliography": {
+            bibliography: {
                 app: "bibliography",
                 requireLogin: true,
-                open: () => import("../bibliography/overview").then(({BibliographyOverview}) => new BibliographyOverview(this.config))
+                open: () =>
+                    import("../bibliography/overview").then(
+                        ({BibliographyOverview}) =>
+                            new BibliographyOverview(this.config)
+                    )
             },
-            "document": {
+            document: {
                 app: "document",
                 requireLogin: true,
                 open: pathnameParts => {
@@ -71,61 +94,72 @@ export class App {
                     if (!id.length) {
                         id = pathnameParts.pop()
                     }
-                    const path = ("/" + pathnameParts.slice(2).join("/")).replace(/\/?$/, "/")
-                    return import(/* webpackPrefetch: true *//* webpackChunkName: "editor" */"../editor").then(({Editor}) => new Editor(this.config, path, id))
+                    const path = (
+                        "/" + pathnameParts.slice(2).join("/")
+                    ).replace(/\/?$/, "/")
+                    return import(
+                        /* webpackPrefetch: true */ /* webpackChunkName: "editor" */ "../editor"
+                    ).then(({Editor}) => new Editor(this.config, path, id))
                 },
                 dbTables: {
-                    "data": {
+                    data: {
                         keyPath: "id"
                     }
                 }
             },
-            "documents": {
+            documents: {
                 app: "document",
                 requireLogin: true,
                 open: pathnameParts => {
-                    const path = (("/" + pathnameParts.slice(2).join("/")).replace(/\/?$/, "/"))
-                    return import(/* webpackPrefetch: true */"../documents/overview").then(({DocumentOverview}) => new DocumentOverview(this.config, path))
+                    const path = (
+                        "/" + pathnameParts.slice(2).join("/")
+                    ).replace(/\/?$/, "/")
+                    return import(
+                        /* webpackPrefetch: true */ "../documents/overview"
+                    ).then(
+                        ({DocumentOverview}) =>
+                            new DocumentOverview(this.config, path)
+                    )
                 }
             },
-            "pages": {
+            pages: {
                 app: "base",
                 open: pathnameParts => {
                     const url = `/${pathnameParts[2]}/`
                     return new FlatPage(this.config, url)
                 }
             },
-            "user": {
+            user: {
                 app: "user",
                 requireLogin: true,
                 open: pathnameParts => {
                     let returnValue
                     switch (pathnameParts[2]) {
-                    case "profile":
-                        returnValue = new Profile(this.config)
-                        break
-                    case "contacts":
-                        returnValue = new ContactsOverview(this.config)
-                        break
-                    default:
-                        returnValue = false
+                        case "profile":
+                            returnValue = new Profile(this.config)
+                            break
+                        case "contacts":
+                            returnValue = new ContactsOverview(this.config)
+                            break
+                        default:
+                            returnValue = false
                     }
                     return returnValue
                 },
                 dbTables: {
-                    "data": {
+                    data: {
                         keyPath: "id"
                     }
                 }
             },
-            "invite": {
+            invite: {
                 app: "user",
                 open: pathnameParts => {
                     const id = pathnameParts[2]
                     return new ContactInvite(this.config, id)
                 }
             },
-            "usermedia": {
+            usermedia: {
                 app: "usermedia",
                 requireLogin: true,
                 open: () => new ImageOverview(this.config)
@@ -139,21 +173,30 @@ export class App {
     }
 
     isOffline() {
-        return !navigator.onLine || (this.ws?.connectionCount > 0 && !this.ws?.connected)
+        return (
+            !navigator.onLine ||
+            (this.ws?.connectionCount > 0 && !this.ws?.connected)
+        )
     }
 
     alertCached() {
-        addAlert("info", gettext("You are viewing a cached version of this page."))
+        addAlert(
+            "info",
+            gettext("You are viewing a cached version of this page.")
+        )
     }
 
     installServiceWorker() {
         /* This function is used for testing SW with Django tests */
         if ("serviceWorker" in navigator) {
-            navigator.serviceWorker.register("/sw.js").then(registration => {
-                console.log("SW registered: ", registration)
-            }).catch(registrationError => {
-                console.log("SW registration failed: ", registrationError)
-            })
+            navigator.serviceWorker
+                .register("/sw.js")
+                .then(registration => {
+                    console.log("SW registered: ", registration)
+                })
+                .catch(registrationError => {
+                    console.log("SW registration failed: ", registrationError)
+                })
         }
 
         // OfflinePluginRuntime.install({
@@ -163,29 +206,27 @@ export class App {
     }
 
     init() {
-        if (!settings_DEBUG && settings_USE_SERVICE_WORKER && "serviceWorker" in navigator) {
-            navigator.serviceWorker.register("/sw.js").then(
-                registration => {
+        if (
+            !settings_DEBUG &&
+            settings_USE_SERVICE_WORKER &&
+            "serviceWorker" in navigator
+        ) {
+            navigator.serviceWorker
+                .register("/sw.js")
+                .then(registration => {
                     console.log("SW registered: ", registration)
-                }).catch(
-                registrationError => {
+                })
+                .catch(registrationError => {
                     console.log("SW registration failed: ", registrationError)
-                }
-            )
+                })
         }
-        // OfflinePluginRuntime.install({
-        //     onUpdateReady: () => OfflinePluginRuntime.applyUpdate(),
-        //     onUpdated: () => this.handleSWUpdate()
-        // })
-        ensureCSS([
-            staticUrl("css/fontawesome/css/all.css")
-        ])
+        ensureCSS([staticUrl("css/fontawesome/css/all.css")])
         if (this.isOffline()) {
             this.page = this.openOfflinePage()
             return this.page.init()
         } else {
-            return this.getConfiguration().catch(
-                error => {
+            return this.getConfiguration()
+                .catch(error => {
                     if (error instanceof TypeError) {
                         // We could not fetch user info from server, so let's
                         // assume we are disconnected.
@@ -206,47 +247,36 @@ export class App {
                         this.page.init()
                     }
                     return Promise.reject(false)
-                }
-            ).then(
-                () => this.setup()
-            ).catch(
-                error => {
+                })
+                .then(() => this.setup())
+                .catch(error => {
                     if (error === false) {
                         return
                     }
                     throw error
-                }
-            )
+                })
         }
     }
 
     setup() {
         if (!this.config.user.is_authenticated) {
             this.activateFidusPlugins()
-            return this.selectPage().then(
-                () => this.bind()
-            )
+            return this.selectPage().then(() => this.bind())
         }
         this.bibDB = new BibliographyDB(this)
         this.imageDB = new ImageDB()
         this.csl = new CSL()
         this.connectWs()
-        return Promise.all([
-            this.bibDB.getDB(),
-            this.imageDB.getDB(),
-        ]).then(
-            () => {
+        return Promise.all([this.bibDB.getDB(), this.imageDB.getDB()])
+            .then(() => {
                 this.activateFidusPlugins()
                 // Initialize the indexedDB after the plugins have loaded.
                 this.indexedDB = new IndexedDB(this)
                 this.indexedDB.init()
                 return this.selectPage()
-            }
-        ).then(
-            () => this.bind()
-        ).then(
-            () => this.showNews()
-        )
+            })
+            .then(() => this.bind())
+            .then(() => this.showNews())
     }
 
     bind() {
@@ -254,18 +284,19 @@ export class App {
         document.addEventListener("click", event => {
             const el = {}
             switch (true) {
-            case findTarget(event, "a", el):
-                if (
-                    el.target.hostname === window.location.hostname &&
+                case findTarget(event, "a", el):
+                    if (
+                        el.target.hostname === window.location.hostname &&
                         el.target.getAttribute("href")[0] === "/" &&
-                        el.target.getAttribute("href").slice(0, 7) !== "/media/" &&
+                        el.target.getAttribute("href").slice(0, 7) !==
+                            "/media/" &&
                         el.target.getAttribute("href").slice(0, 5) !== "/api/"
-                ) {
-                    event.preventDefault()
-                    event.stopImmediatePropagation()
-                    this.goTo(decodeURI(el.target.href))
-                }
-                break
+                    ) {
+                        event.preventDefault()
+                        event.stopImmediatePropagation()
+                        this.goTo(decodeURI(el.target.href))
+                    }
+                    break
             }
         })
         let resizeDone
@@ -295,7 +326,9 @@ export class App {
             this.config.user.waiting_invites
         ) {
             showSystemMessage(
-                gettext("Other users have requested to connect with you. Go to the contacts page to accept their invites."),
+                gettext(
+                    "Other users have requested to connect with you. Go to the contacts page to accept their invites."
+                ),
                 [
                     {
                         text: gettext("Go to contacts"),
@@ -317,14 +350,13 @@ export class App {
             appLoaded: () => true,
             receiveData: data => {
                 switch (data.type) {
-                case "system_message":
-                    showSystemMessage(data.message)
-                    break
-                default:
-                    break
+                    case "system_message":
+                        showSystemMessage(data.message)
+                        break
+                    default:
+                        break
                 }
             }
-
         })
         this.ws.init()
     }
@@ -363,23 +395,19 @@ export class App {
             if (page.then) {
                 return page.then(thisPage => {
                     this.page = thisPage
-                    return this.page.init().then(
-                        () => {
-                            if (this.isOffline()) {
-                                this.alertCached()
-                            }
-                        }
-                    )
-                })
-            } else if (page) {
-                this.page = page
-                return this.page.init().then(
-                    () => {
+                    return this.page.init().then(() => {
                         if (this.isOffline()) {
                             this.alertCached()
                         }
+                    })
+                })
+            } else if (page) {
+                this.page = page
+                return this.page.init().then(() => {
+                    if (this.isOffline()) {
+                        this.alertCached()
                     }
-                )
+                })
             }
         }
         this.page = this.open404Page()
@@ -387,8 +415,10 @@ export class App {
     }
 
     getConfiguration() {
-        return postJson("/api/base/configuration/").then(
-            ({json}) => Object.entries(json).forEach(([key, value]) => this.config[key] = value)
+        return postJson("/api/base/configuration/").then(({json}) =>
+            Object.entries(json).forEach(
+                ([key, value]) => (this.config[key] = value)
+            )
         )
     }
 
@@ -396,5 +426,4 @@ export class App {
         window.history.pushState({}, "", encodeURI(url))
         return this.selectPage()
     }
-
 }

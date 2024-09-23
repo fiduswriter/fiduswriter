@@ -1,5 +1,5 @@
-import {NameFieldForm} from "./name"
 import {noSpaceTmp} from "../../../common"
+import {NameFieldForm} from "./name"
 
 export class NameListForm {
     constructor(dom, initialValue = [[]]) {
@@ -13,7 +13,8 @@ export class NameListForm {
 
     drawForm() {
         this.fields = []
-        this.dom.innerHTML = "<table class=\"input-list-wrapper\"><tbody></tbody></table>"
+        this.dom.innerHTML =
+            '<table class="input-list-wrapper"><tbody></tbody></table>'
         this.currentValue.forEach((fieldValue, index) => {
             this.addField(fieldValue, index)
         })
@@ -63,13 +64,13 @@ export class NameListForm {
     }
 
     get value() {
-        const formValue = this.fields.map(field => {
-            return field.value
-        }).filter(
-            value => {
+        const formValue = this.fields
+            .map(field => {
+                return field.value
+            })
+            .filter(value => {
                 return value !== false
-            }
-        )
+            })
         if (formValue.length === 0) {
             return false
         }

@@ -8,14 +8,17 @@ export class IndexedDB {
 
     init() {
         this.app["db_config"] = {
-            "db_name": this.app.config.user.username,
+            db_name: this.app.config.user.username
         }
 
         // Open/Create db if it doesn't exist
-        const request = window.indexedDB.open(this.app.db_config.db_name, DB_VERSION)
-        request.onerror = (_event) => this.reset()
+        const request = window.indexedDB.open(
+            this.app.db_config.db_name,
+            DB_VERSION
+        )
+        request.onerror = _event => this.reset()
         return new Promise(resolve => {
-            request.onsuccess = (event) => {
+            request.onsuccess = event => {
                 const database = event.target.result
                 database.close()
                 resolve()
@@ -23,36 +26,40 @@ export class IndexedDB {
 
             request.onupgradeneeded = event => this.onUpgradeNeeded(event)
         })
-
     }
 
     onUpgradeNeeded(event) {
         const db = event.target.result
-        Array.from(db.objectStoreNames).forEach(name => db.deleteObjectStore(name))
-        Object.entries(this.app.routes).forEach(
-            ([route, props]) => {
-                if (props.dbTables) {
-                    Object.entries(props.dbTables).forEach(
-                        ([tableName, tableProperties]) => db.createObjectStore(`${route}_${tableName}`, tableProperties)
-                    )
-                }
-            }
+        Array.from(db.objectStoreNames).forEach(name =>
+            db.deleteObjectStore(name)
         )
+        Object.entries(this.app.routes).forEach(([route, props]) => {
+            if (props.dbTables) {
+                Object.entries(props.dbTables).forEach(
+                    ([tableName, tableProperties]) =>
+                        db.createObjectStore(
+                            `${route}_${tableName}`,
+                            tableProperties
+                        )
+                )
+            }
+        })
     }
 
     updateData(objectStoreName, data) {
-        const request = window.indexedDB.open(this.app.db_config.db_name, DB_VERSION)
-        request.onerror = (_event) => {
-            this.reset().then(
-                () => this.updateData(objectStoreName, data)
-            )
+        const request = window.indexedDB.open(
+            this.app.db_config.db_name,
+            DB_VERSION
+        )
+        request.onerror = _event => {
+            this.reset().then(() => this.updateData(objectStoreName, data))
         }
 
-        request.onsuccess = (event) => {
+        request.onsuccess = event => {
             const db = event.target.result
-            const objectStore = db.transaction(objectStoreName, "readwrite").objectStore(
-                objectStoreName
-            )
+            const objectStore = db
+                .transaction(objectStoreName, "readwrite")
+                .objectStore(objectStoreName)
             for (const d in data) {
                 objectStore.put(d)
             }
@@ -62,13 +69,16 @@ export class IndexedDB {
     }
 
     insertData(objectStoreName, data, retry = true) {
-        const request = window.indexedDB.open(this.app.db_config.db_name, DB_VERSION)
-        request.onerror = function(_event) {
-            return this.reset().then(
-                () => this.insertData(objectStoreName, data, false)
+        const request = window.indexedDB.open(
+            this.app.db_config.db_name,
+            DB_VERSION
+        )
+        request.onerror = function (_event) {
+            return this.reset().then(() =>
+                this.insertData(objectStoreName, data, false)
             )
         }
-        request.onsuccess = (event) => {
+        request.onsuccess = event => {
             const db = event.target.result
             try {
                 const transaction = db.transaction(objectStoreName, "readwrite")
@@ -90,7 +100,6 @@ export class IndexedDB {
                 } else {
                     throw error
                 }
-
             }
         }
 
@@ -99,23 +108,29 @@ export class IndexedDB {
 
     reset() {
         return new Promise(resolve => {
-            const delRequest = window.indexedDB.deleteDatabase(this.app.db_config.db_name)
+            const delRequest = window.indexedDB.deleteDatabase(
+                this.app.db_config.db_name
+            )
             delRequest.onsuccess = () => {
                 // Resolve the promise after the indexedDB is set up.
                 this.init().then(() => resolve())
             }
         })
-
     }
 
     clearData(objectStoreName) {
         return new Promise(resolve => {
-            const request = window.indexedDB.open(this.app.db_config.db_name, DB_VERSION)
+            const request = window.indexedDB.open(
+                this.app.db_config.db_name,
+                DB_VERSION
+            )
             request.onerror = () => {}
             request.onsuccess = event => {
                 const db = event.target.result
                 try {
-                    const objectStore = db.transaction(objectStoreName, "readwrite").objectStore(objectStoreName)
+                    const objectStore = db
+                        .transaction(objectStoreName, "readwrite")
+                        .objectStore(objectStoreName)
                     const objectStoreReq = objectStore.clear()
                     objectStoreReq.onsuccess = () => {
                         db.close()
@@ -140,26 +155,31 @@ export class IndexedDB {
 
     readAllData(objectStoreName) {
         return new Promise((resolve, reject) => {
-            const request = window.indexedDB.open(this.app.db_config.db_name, DB_VERSION)
-            request.onerror = function(event) {
+            const request = window.indexedDB.open(
+                this.app.db_config.db_name,
+                DB_VERSION
+            )
+            request.onerror = event => {
                 reject(event)
             }
-            request.onsuccess = (event) => {
+            request.onsuccess = event => {
                 const db = event.target.result
-                if (!Array.from(db.objectStoreNames).includes(objectStoreName)) {
+                if (
+                    !Array.from(db.objectStoreNames).includes(objectStoreName)
+                ) {
                     db.close()
-                    return this.reset().then(
-                        () => this.readAllData(objectStoreName)
-                    ).then(
-                        readPromise => resolve(readPromise)
-                    )
+                    return this.reset()
+                        .then(() => this.readAllData(objectStoreName))
+                        .then(readPromise => resolve(readPromise))
                 }
-                const objectStore = db.transaction(objectStoreName, "readwrite").objectStore(objectStoreName)
+                const objectStore = db
+                    .transaction(objectStoreName, "readwrite")
+                    .objectStore(objectStoreName)
                 const readAllRequest = objectStore.getAll()
-                readAllRequest.onerror = function(event) {
+                readAllRequest.onerror = event => {
                     reject(event)
                 }
-                readAllRequest.onsuccess = function(_event) {
+                readAllRequest.onsuccess = _event => {
                     // Do something with the request.result!
                     resolve(readAllRequest.result)
                 }

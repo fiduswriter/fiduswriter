@@ -1,4 +1,4 @@
-import {localizeDate, escapeText} from "../../common"
+import {escapeText, localizeDate} from "../../common"
 
 /** A template for the Fidus Writer document import dialog */
 export const importFidusTemplate = () =>

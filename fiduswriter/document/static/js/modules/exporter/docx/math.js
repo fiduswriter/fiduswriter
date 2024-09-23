@@ -20,20 +20,18 @@ export class DOCXExporterMath {
     }
 
     init() {
-        return this.xml.getXml("word/fontTable.xml").then(
-            fontTablesXML => {
+        return this.xml
+            .getXml("word/fontTable.xml")
+            .then(fontTablesXML => {
                 this.fontTablesXML = fontTablesXML
                 return import("mathlive")
-            }
-        ).then(
-            MathLive => this.mathLive = MathLive
-        )
+            })
+            .then(MathLive => (this.mathLive = MathLive))
     }
 
     latexToMathML(latex) {
         return this.mathLive.convertLatexToMathMl(latex)
     }
-
 
     getOmml(latex) {
         if (!this.addedCambriaMath) {
@@ -45,5 +43,4 @@ export class DOCXExporterMath {
         const ommlString = mml2omml(mathmlString)
         return ommlString
     }
-
 }

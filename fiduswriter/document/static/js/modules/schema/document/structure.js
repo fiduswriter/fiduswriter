@@ -9,10 +9,12 @@ export const doc = {
         tracked: {
             default: false
         },
-        citationstyle: { // Default citation style
+        citationstyle: {
+            // Default citation style
             default: "apa"
         },
-        citationstyles: { // Available citation styles
+        citationstyles: {
+            // Available citation styles
             default: [
                 "american-anthropological-association",
                 "apa",
@@ -24,10 +26,12 @@ export const doc = {
                 "oxford-university-press-humsoc"
             ]
         },
-        language: { // Default language
+        language: {
+            // Default language
             default: "en-US"
         },
-        languages: { // Available languages
+        languages: {
+            // Available languages
             default: [
                 "af-ZA",
                 "sq-AL",
@@ -81,17 +85,36 @@ export const doc = {
                 "uk"
             ]
         },
-        papersize: { // Default paper size
+        papersize: {
+            // Default paper size
             default: "A4"
         },
-        papersizes: { // Available paper sizes
+        papersizes: {
+            // Available paper sizes
             default: ["A4", "US Letter"]
         },
         footnote_marks: {
             default: ["strong", "em", "link"]
         },
         footnote_elements: {
-            default: ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "cross_reference", "blockquote", "table"]
+            default: [
+                "paragraph",
+                "heading1",
+                "heading2",
+                "heading3",
+                "heading4",
+                "heading5",
+                "heading6",
+                "figure",
+                "ordered_list",
+                "bullet_list",
+                "horizontal_rule",
+                "equation",
+                "citation",
+                "cross_reference",
+                "blockquote",
+                "table"
+            ]
         },
         bibliography_header: {
             default: {}
@@ -111,23 +134,29 @@ export const doc = {
             }
         }
     },
-    parseDOM: [{
-        tag: "div.doc",
-        getAttrs(dom) {
-            return {
-                papersize: dom.dataset.papersize,
-                citationstyle: dom.dataset.citationstyle,
-                documentstyle: dom.dataset.documentstyle
+    parseDOM: [
+        {
+            tag: "div.doc",
+            getAttrs(dom) {
+                return {
+                    papersize: dom.dataset.papersize,
+                    citationstyle: dom.dataset.citationstyle,
+                    documentstyle: dom.dataset.documentstyle
+                }
             }
         }
-    }],
+    ],
     toDOM(node) {
-        return ["div", {
-            class: "doc",
-            "data-papersize": node.attrs.papersize,
-            "data-citationstyle": node.attrs.citationstyle,
-            "data-documentstyle": node.attrs.documentstyle
-        }, 0]
+        return [
+            "div",
+            {
+                class: "doc",
+                "data-papersize": node.attrs.papersize,
+                "data-citationstyle": node.attrs.citationstyle,
+                "data-documentstyle": node.attrs.documentstyle
+            },
+            0
+        ]
     }
 }
 
@@ -136,43 +165,49 @@ const partSpec = (type, content, attrs = {}) => ({
     group: "part",
     marks: "annotation track",
     isolating: true,
-    attrs: Object.assign({
-        title: {
-            default: ""
+    attrs: Object.assign(
+        {
+            title: {
+                default: ""
+            },
+            id: {
+                default: ""
+            },
+            locking: {
+                default: false
+            },
+            language: {
+                default: false
+            },
+            optional: {
+                default: false
+            },
+            hidden: {
+                default: false
+            },
+            help: {
+                default: false
+            },
+            initial: {
+                default: false
+            },
+            deleted: {
+                // used when a part is present in a document but not part of the document template due to template changes
+                default: false
+            }
         },
-        id: {
-            default: ""
-        },
-        locking: {
-            default: false
-        },
-        language: {
-            default: false
-        },
-        optional: {
-            default: false
-        },
-        hidden: {
-            default: false
-        },
-        help: {
-            default: false
-        },
-        initial: {
-            default: false
-        },
-        deleted: { // used when a part is present in a document but not part of the document template due to template changes
-            default: false
-        }
-    }, attrs),
-    parseDOM: [{
-        tag: `div.doc-${type}`,
-        getAttrs(dom) {
-            return {
-                hidden: dom.dataset.hidden === "true" ? true : false
+        attrs
+    ),
+    parseDOM: [
+        {
+            tag: `div.doc-${type}`,
+            getAttrs(dom) {
+                return {
+                    hidden: dom.dataset.hidden === "true" ? true : false
+                }
             }
         }
-    }],
+    ],
     toDOM(node) {
         const attrs = {
             class: `doc-part doc-${type} ${node.attrs.id ? `doc-${node.attrs.id}` : "doc-no-id"}`
@@ -189,7 +224,26 @@ const partSpec = (type, content, attrs = {}) => ({
 
 export const richtext_part = partSpec("richtext", "block+", {
     elements: {
-        default: ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "code_block", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "cross_reference", "blockquote", "footnote", "table"]
+        default: [
+            "paragraph",
+            "heading1",
+            "heading2",
+            "heading3",
+            "heading4",
+            "heading5",
+            "heading6",
+            "code_block",
+            "figure",
+            "ordered_list",
+            "bullet_list",
+            "horizontal_rule",
+            "equation",
+            "citation",
+            "cross_reference",
+            "blockquote",
+            "footnote",
+            "table"
+        ]
     },
     marks: {
         default: ["strong", "em", "link", "anchor"]
@@ -227,7 +281,23 @@ export const tags_part = partSpec("tags", "tag*", {
 })
 export const table_part = partSpec("table", "table", {
     elements: {
-        default: ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote"]
+        default: [
+            "paragraph",
+            "heading1",
+            "heading2",
+            "heading3",
+            "heading4",
+            "heading5",
+            "heading6",
+            "figure",
+            "ordered_list",
+            "bullet_list",
+            "horizontal_rule",
+            "equation",
+            "citation",
+            "blockquote",
+            "footnote"
+        ]
     },
     marks: {
         default: ["strong", "em", "link", "anchor"]
@@ -238,9 +308,11 @@ export const table_of_contents = {
     group: "part",
     marks: "annotation track",
     defining: true,
-    parseDOM: [{
-        tag: "div.table-of-contents"
-    }],
+    parseDOM: [
+        {
+            tag: "div.table-of-contents"
+        }
+    ],
     attrs: {
         title: {
             default: "Table of Contents"
@@ -264,7 +336,6 @@ export const table_of_contents = {
         dom.innerHTML = `<h1 class="toc">${node.attrs.title}</h1>`
         return dom
     }
-
 }
 
 export const separator_part = {
@@ -276,9 +347,11 @@ export const separator_part = {
             default: "separator"
         }
     },
-    parseDOM: [{
-        tag: "hr.doc-separator_part"
-    }],
+    parseDOM: [
+        {
+            tag: "hr.doc-separator_part"
+        }
+    ],
     toDOM(node) {
         const dom = document.createElement("hr")
         dom.classList.add("doc-separator_part")
@@ -298,12 +371,18 @@ export const title = {
             default: "title"
         }
     },
-    parseDOM: [{
-        tag: "div.doc-title"
-    }],
+    parseDOM: [
+        {
+            tag: "div.doc-title"
+        }
+    ],
     toDOM(_node) {
-        return ["div", {
-            class: "doc-part doc-title"
-        }, 0]
+        return [
+            "div",
+            {
+                class: "doc-part doc-title"
+            },
+            0
+        ]
     }
 }

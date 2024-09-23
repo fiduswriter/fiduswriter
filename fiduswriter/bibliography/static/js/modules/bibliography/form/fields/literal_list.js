@@ -1,5 +1,5 @@
-import {LiteralFieldForm} from "./literal"
 import {noSpaceTmp} from "../../../common"
+import {LiteralFieldForm} from "./literal"
 
 export class LiteralListForm {
     constructor(dom, initialValue = [[]]) {
@@ -13,7 +13,8 @@ export class LiteralListForm {
 
     drawForm() {
         this.fields = []
-        this.dom.innerHTML = "<table class=\"input-list-wrapper\"><tbody></tbody></table>"
+        this.dom.innerHTML =
+            '<table class="input-list-wrapper"><tbody></tbody></table>'
         this.currentValue.forEach((fieldValue, index) => {
             this.addField(fieldValue, index)
         })
@@ -32,7 +33,10 @@ export class LiteralListForm {
             </tr>`
         )
         const fieldDOM = this.dom.firstChild.firstChild.lastChild
-        const fieldHandler = new LiteralFieldForm(fieldDOM.firstChild, fieldValue)
+        const fieldHandler = new LiteralFieldForm(
+            fieldDOM.firstChild,
+            fieldValue
+        )
         fieldHandler.init()
         this.fields.push(fieldHandler)
 
@@ -63,13 +67,13 @@ export class LiteralListForm {
     }
 
     get value() {
-        const formValue = this.fields.map(field => {
-            return field.value
-        }).filter(
-            value => {
+        const formValue = this.fields
+            .map(field => {
+                return field.value
+            })
+            .filter(value => {
                 return value !== false
-            }
-        )
+            })
         if (formValue.length === 0) {
             return false
         }

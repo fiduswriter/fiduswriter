@@ -1,6 +1,5 @@
 import {escapeText} from "../../common"
 
-
 export class ODTExporterMetadata {
     constructor(xml, styles, metadata) {
         this.xml = xml
@@ -10,15 +9,12 @@ export class ODTExporterMetadata {
     }
 
     init() {
-        return this.xml.getXml("meta.xml").then(
-            metaXml => {
-                this.metaXml = metaXml
-                this.addMetadata()
-                return Promise.resolve()
-            }
-        )
+        return this.xml.getXml("meta.xml").then(metaXml => {
+            this.metaXml = metaXml
+            this.addMetadata()
+            return Promise.resolve()
+        })
     }
-
 
     addMetadata() {
         const metaEl = this.metaXml.query("office:meta")
@@ -47,35 +43,39 @@ export class ODTExporterMetadata {
             return nameParts.join(" ")
         })
 
-        const initialAuthor = authors.length ?
-            escapeText(authors[0]) :
-            gettext("Unknown")
+        const initialAuthor = authors.length
+            ? escapeText(authors[0])
+            : gettext("Unknown")
         // TODO: We likely want to differentiate between first and last author.
         const lastAuthor = initialAuthor
 
         let lastAuthorEl = this.metaXml.query("dc:creator")
         if (!lastAuthorEl) {
             metaEl.appendXML("<dc:creator></dc:creator>")
-            lastAuthorEl = this.metaXml.children[this.metaXml.children.length - 1]
+            lastAuthorEl =
+                this.metaXml.children[this.metaXml.children.length - 1]
         }
         lastAuthorEl.innerXML = lastAuthor
         let initialAuthorEl = this.metaXml.query("meta:initial-creator")
         if (!initialAuthorEl) {
             metaEl.appendXML("<meta:initial-creator></meta:initial-creator>")
-            initialAuthorEl = this.metaXml.children[this.metaXml.children.length - 1]
+            initialAuthorEl =
+                this.metaXml.children[this.metaXml.children.length - 1]
         }
         initialAuthorEl.innerXML = initialAuthor
 
         // Keywords
         // Remove all existing keywords
         const keywordEls = this.metaXml.queryAll("meta:keywords")
-        keywordEls.forEach(
-            keywordEl => keywordEl.parentElement.removeChild(keywordEl)
+        keywordEls.forEach(keywordEl =>
+            keywordEl.parentElement.removeChild(keywordEl)
         )
         // Add new keywords
         const keywords = this.metadata.keywords
-        keywords.forEach(
-            keyword => metaEl.appendXML(`<meta:keyword>${escapeText(keyword)}</meta:keyword>`)
+        keywords.forEach(keyword =>
+            metaEl.appendXML(
+                `<meta:keyword>${escapeText(keyword)}</meta:keyword>`
+            )
         )
 
         // language
@@ -100,5 +100,4 @@ export class ODTExporterMetadata {
         }
         dateEl.innerXML = `${dateString}.000000000`
     }
-
 }

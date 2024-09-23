@@ -1,7 +1,4 @@
-export {
-    OverviewMenuView
-}
-    from "./overview_menu"
+export {OverviewMenuView} from "./overview_menu"
 export {
     dropdownSelect,
     setCheckableLabel,
@@ -17,13 +14,9 @@ export {
     whenReady,
     setDocTitle,
     showSystemMessage
-}
-    from "./basic"
+} from "./basic"
 
-export {
-    convertDataURIToBlob
-}
-    from "./blob"
+export {convertDataURIToBlob} from "./blob"
 
 export {
     jsonPost,
@@ -34,36 +27,19 @@ export {
     postBare,
     ensureCSS,
     getCookie
-}
-    from "./network"
+} from "./network"
 export {
     setLanguage,
     avatarTemplate
 } from "./user"
-export {
-    Dialog,
-} from "./dialog"
-export {
-    ContentMenu
-} from "./content_menu"
-export {
-    makeWorker
-} from "./worker"
-export {
-    baseBodyTemplate
-} from "./templates"
-export {
-    WebSocketConnector
-} from "./ws"
-export {
-    filterPrimaryEmail
-} from "./user_util"
-export {
-    DatatableBulk
-} from "./datatable_bulk"
-export {
-    faqDialog
-} from "./faq_dialog"
+export {Dialog} from "./dialog"
+export {ContentMenu} from "./content_menu"
+export {makeWorker} from "./worker"
+export {baseBodyTemplate} from "./templates"
+export {WebSocketConnector} from "./ws"
+export {filterPrimaryEmail} from "./user_util"
+export {DatatableBulk} from "./datatable_bulk"
+export {faqDialog} from "./faq_dialog"
 export {
     FileDialog,
     FileSelector,

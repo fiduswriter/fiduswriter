@@ -6,6 +6,10 @@ import importlib
 import logging
 import sys
 import threading
+import time
+import os
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
 
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 
@@ -53,7 +57,56 @@ def get_default_application():
 
 class MaintenancePageHandler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, directory=settings.SETUP_PAGE_PATH, **kwargs)
+        super().__init__(*args, **kwargs)
+
+    def do_GET(self):
+        self.path = "/index.html"
+        return SimpleHTTPRequestHandler.do_GET(self)
+
+    def translate_path(self, path):
+        return os.path.join(settings.SETUP_PAGE_PATH, "index.html")
+
+
+class JSFileHandler(FileSystemEventHandler):
+    def __init__(self, command_instance):
+        self.command_instance = command_instance
+        self.last_transpile = 0
+        self.watched_extensions = (".js", ".mjs", ".json5")
+        self.last_modified_times = {}
+
+    def on_any_event(self, event):
+        if event.event_type in ["created", "modified", "moved"]:
+            if event.src_path.endswith(self.watched_extensions):
+                if not self._should_ignore(event.src_path):
+                    self._handle_change(event.src_path)
+
+    def _should_ignore(self, path):
+        # Add any specific files or directories you want to ignore
+        ignore_list = ["node_modules", ".git"]
+        return any(ignore_item in path for ignore_item in ignore_list)
+
+    def _handle_change(self, path):
+        current_time = time.time()
+        try:
+            mtime = os.path.getmtime(path)
+        except OSError:
+            # File might have been deleted or moved
+            return
+
+        if path in self.last_modified_times:
+            if mtime == self.last_modified_times[path]:
+                # File hasn't actually changed
+                return
+
+        self.last_modified_times[path] = mtime
+
+        if current_time - self.last_transpile > 30:
+            print(f"File changed: {path}")
+            self.command_instance.stdout.write(
+                "JavaScript or related file changed. Transpiling..."
+            )
+            call_command("transpile")
+            self.last_transpile = current_time
 
 
 class Command(RunserverCommand):
@@ -157,6 +210,16 @@ class Command(RunserverCommand):
         endpoints = build_endpoint_description_strings(
             host=self.addr, port=self.port
         )
+
+        # Add JavaScript file watcher
+        if settings.DEBUG:
+            js_handler = JSFileHandler(self)
+            observer = Observer()
+            observer.schedule(
+                js_handler, path=settings.SRC_PATH, recursive=True
+            )
+            observer.start()
+
         try:
             self.server_cls(
                 application=self.get_application(options),
@@ -169,10 +232,16 @@ class Command(RunserverCommand):
             ).run()
             logger.debug("Fidus Writer exited")
         except KeyboardInterrupt:
+            if settings.DEBUG:
+                observer.stop()
             shutdown_message = options.get("shutdown_message", "")
             if shutdown_message:
                 self.stdout.write(shutdown_message)
             return
+
+        finally:
+            if settings.DEBUG:
+                observer.join()
 
     def get_application(self, options):
         """

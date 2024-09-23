@@ -1,7 +1,6 @@
+import {descendantNodes} from "../tools/doc_content"
 import {ODTExporterCitations} from "./citations"
 import {ODTExporterImages} from "./images"
-import {descendantNodes} from "../tools/doc_content"
-
 
 const DEFAULT_STYLE_FOOTNOTE = `
     <style:style style:name="Footnote" style:family="paragraph" style:parent-style-name="Standard" style:class="extra">
@@ -24,7 +23,16 @@ const DEFAULT_STYLE_FOOTNOTE_CONFIGURATION = `
     `
 
 export class ODTExporterFootnotes {
-    constructor(docContent, settings, xml, citations, styles, bibDB, imageDB, csl) {
+    constructor(
+        docContent,
+        settings,
+        xml,
+        citations,
+        styles,
+        bibDB,
+        imageDB,
+        csl
+    ) {
         this.docContent = docContent
         this.settings = settings
         this.xml = xml
@@ -45,10 +53,8 @@ export class ODTExporterFootnotes {
         this.findFootnotes()
         if (
             this.footnotes.length ||
-            (
-                this.citations.citFm.citationType === "note" &&
-                this.citations.citInfos.length
-            )
+            (this.citations.citFm.citationType === "note" &&
+                this.citations.citInfos.length)
         ) {
             this.convertFootnotes()
             // Include the citinfos from the main document so that they will be
@@ -67,18 +73,17 @@ export class ODTExporterFootnotes {
                 this.imageDB
             )
 
-            return augmentedCitations.init().then(
-                () => {
+            return augmentedCitations
+                .init()
+                .then(() => {
                     // Replace the main bibliography with the new one that includes
                     // both citations in main document and in the footnotes.
                     this.pmBib = augmentedCitations.pmBib
                     return this.images.init()
-                }
-            ).then(
-                () => {
+                })
+                .then(() => {
                     return this.addStyles()
-                }
-            )
+                })
         } else {
             // No footnotes were found.
             return Promise.resolve()
@@ -86,16 +91,14 @@ export class ODTExporterFootnotes {
     }
 
     addStyles() {
-        return this.xml.getXml(this.styleFilePath).then(
-            styleXml => {
-                this.styleXml = styleXml
-                this.addStyle("Footnote", DEFAULT_STYLE_FOOTNOTE)
-                this.addStyle("Footnote_20_anchor", DEFAULT_STYLE_FOOTNOTE_ANCHOR)
-                this.addStyle("Footnote_20_Symbol", DEFAULT_STYLE_FOOTNOTE_SYMBOL)
-                this.setStyleConfig()
-                return Promise.resolve()
-            }
-        )
+        return this.xml.getXml(this.styleFilePath).then(styleXml => {
+            this.styleXml = styleXml
+            this.addStyle("Footnote", DEFAULT_STYLE_FOOTNOTE)
+            this.addStyle("Footnote_20_anchor", DEFAULT_STYLE_FOOTNOTE_ANCHOR)
+            this.addStyle("Footnote_20_Symbol", DEFAULT_STYLE_FOOTNOTE_SYMBOL)
+            this.setStyleConfig()
+            return Promise.resolve()
+        })
     }
 
     addStyle(styleName, xml) {
@@ -106,7 +109,12 @@ export class ODTExporterFootnotes {
     }
 
     setStyleConfig() {
-        const oldFnStyleConfigEl = this.styleXml.query("text:notes-configuration", {"text:note-class": "footnote"})
+        const oldFnStyleConfigEl = this.styleXml.query(
+            "text:notes-configuration",
+            {
+                "text:note-class": "footnote"
+            }
+        )
         if (oldFnStyleConfigEl) {
             oldFnStyleConfigEl.parentElement.removeChild(oldFnStyleConfigEl)
         }
@@ -115,25 +123,21 @@ export class ODTExporterFootnotes {
     }
 
     findFootnotes() {
-        descendantNodes(this.docContent).forEach(
-            node => {
-                if (node.type === "footnote") {
-                    this.footnotes.push(node.attrs.footnote)
-                }
+        descendantNodes(this.docContent).forEach(node => {
+            if (node.type === "footnote") {
+                this.footnotes.push(node.attrs.footnote)
             }
-        )
+        })
     }
 
     convertFootnotes() {
         const fnContent = []
-        this.footnotes.forEach(
-            footnote => {
-                fnContent.push({
-                    type: "footnotecontainer",
-                    content: footnote
-                })
-            }
-        )
+        this.footnotes.forEach(footnote => {
+            fnContent.push({
+                type: "footnotecontainer",
+                content: footnote
+            })
+        })
         this.fnPmJSON = {
             type: "doc",
             content: fnContent

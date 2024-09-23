@@ -1,9 +1,15 @@
 import {DataTable} from "simple-datatables"
 
-import {configureCitationTemplate, selectedCitationTemplate} from "./templates"
-import {setCheckableLabel, Dialog, findTarget, escapeText, addAlert} from "../../common"
-import {nameToText, litToText} from "../../bibliography/tools"
 import * as plugins from "../../../plugins/citation_dialog"
+import {litToText, nameToText} from "../../bibliography/tools"
+import {
+    Dialog,
+    addAlert,
+    escapeText,
+    findTarget,
+    setCheckableLabel
+} from "../../common"
+import {configureCitationTemplate, selectedCitationTemplate} from "./templates"
 
 export class CitationDialog {
     constructor(editor) {
@@ -32,7 +38,8 @@ export class CitationDialog {
             this.buttons.push({
                 text: gettext("Remove"),
                 click: () => {
-                    const transaction = this.editor.currentView.state.tr.deleteSelection()
+                    const transaction =
+                        this.editor.currentView.state.tr.deleteSelection()
                     this.editor.currentView.dispatch(transaction)
                     this.dialog.close()
                 },
@@ -86,7 +93,14 @@ export class CitationDialog {
         const data = []
         // unify bibs from both document and user
         Object.keys(this.editor.mod.db.bibDB.db).forEach(id => {
-            data.push(this.createTableRow(this.editor.mod.db.bibDB.db[id], id, "document", false))
+            data.push(
+                this.createTableRow(
+                    this.editor.mod.db.bibDB.db[id],
+                    id,
+                    "document",
+                    false
+                )
+            )
         })
         Object.keys(this.editor.app.bibDB.db).forEach(id => {
             const bib = this.editor.app.bibDB.db[id]
@@ -106,23 +120,29 @@ export class CitationDialog {
                 <span class="fw-searchable">${bib.fields.title?.length ? escapeText(litToText(bib.fields.title)) : gettext("Untitled")}</span>
             </span>`,
             bibauthors ? escapeText(nameToText(bibauthors)) : "",
-            checked ? "<i class=\"fa fa-check\" aria-hidden=\"true\"></i>" : ""
+            checked ? '<i class="fa fa-check" aria-hidden="true"></i>' : ""
         ]
     }
 
     citationDialogHTML() {
         // Assemble the HTML of the 'cited' column of the dialog,
         // and return the templated dialog HTML.
-        const citedItemsHTML = this.initialReferences.map(citEntry => {
-            const id = citEntry.id
-            if (!this.editor.mod.db.bibDB.db[id]) {
-                return ""
-            }
-            const bibEntry = this.bibDBToBibEntry(this.editor.mod.db.bibDB.db[id], id, "document")
-            bibEntry.prefix = citEntry.prefix ?  citEntry.prefix : ""
-            bibEntry.locator = citEntry.locator ? citEntry.locator : ""
-            return selectedCitationTemplate(bibEntry)
-        }).join("")
+        const citedItemsHTML = this.initialReferences
+            .map(citEntry => {
+                const id = citEntry.id
+                if (!this.editor.mod.db.bibDB.db[id]) {
+                    return ""
+                }
+                const bibEntry = this.bibDBToBibEntry(
+                    this.editor.mod.db.bibDB.db[id],
+                    id,
+                    "document"
+                )
+                bibEntry.prefix = citEntry.prefix ? citEntry.prefix : ""
+                bibEntry.locator = citEntry.locator ? citEntry.locator : ""
+                return selectedCitationTemplate(bibEntry)
+            })
+            .join("")
 
         return configureCitationTemplate({
             citedItemsHTML,
@@ -133,12 +153,10 @@ export class CitationDialog {
     registerNewSource() {
         import("../../bibliography/form").then(({BibEntryForm}) => {
             const form = new BibEntryForm(this.editor.mod.db.bibDB)
-            form.init().then(
-                idTranslations => {
-                    const ids = idTranslations.map(idTrans => idTrans[1])
-                    this.addToCitableItems(ids)
-                }
-            )
+            form.init().then(idTranslations => {
+                const ids = idTranslations.map(idTrans => idTrans[1])
+                this.addToCitableItems(ids)
+            })
         })
     }
 
@@ -148,7 +166,9 @@ export class CitationDialog {
             id,
             db,
             bib_type: bib.bib_type,
-            title: bib.fields.title?.length ? litToText(bib.fields.title) : gettext("Untitled"),
+            title: bib.fields.title?.length
+                ? litToText(bib.fields.title)
+                : gettext("Untitled"),
             author: bibauthors ? nameToText(bibauthors) : ""
         }
     }
@@ -158,9 +178,20 @@ export class CitationDialog {
     addToCitableItems(ids) {
         const data = []
         ids.forEach(id => {
-            const citeItemData = this.bibDBToBibEntry(this.editor.mod.db.bibDB.db[id], id, "document")
+            const citeItemData = this.bibDBToBibEntry(
+                this.editor.mod.db.bibDB.db[id],
+                id,
+                "document"
+            )
             this.addToCitedItems([citeItemData])
-            data.push(this.createTableRow(this.editor.mod.db.bibDB.db[id], id, "document", false))
+            data.push(
+                this.createTableRow(
+                    this.editor.mod.db.bibDB.db[id],
+                    id,
+                    "document",
+                    false
+                )
+            )
         })
 
         this.table.insert({data})
@@ -171,19 +202,23 @@ export class CitationDialog {
     // Not when dialog is first opened.
     addToCitedItems(items) {
         const len = items.length
-        for (let i = 0; i < len; i ++) {
+        for (let i = 0; i < len; i++) {
             const item = items[i]
-            this.dialog.dialogEl.querySelector("#selected-cite-source-table .fw-data-table-body").insertAdjacentHTML(
-                "beforeend",
-                selectedCitationTemplate({
-                    id: item.id,
-                    db: item.db,
-                    title: item.title,
-                    author: item.author,
-                    locator: "",
-                    prefix: ""
-                })
-            )
+            this.dialog.dialogEl
+                .querySelector(
+                    "#selected-cite-source-table .fw-data-table-body"
+                )
+                .insertAdjacentHTML(
+                    "beforeend",
+                    selectedCitationTemplate({
+                        id: item.id,
+                        db: item.db,
+                        title: item.title,
+                        author: item.author,
+                        locator: "",
+                        prefix: ""
+                    })
+                )
         }
     }
 
@@ -241,38 +276,47 @@ export class CitationDialog {
         if (row.cells[3].data.length) {
             row.cells[3].data = []
         } else {
-            row.cells[3].data = [{nodeName: "i", attributes: {class: "fa fa-check", "aria-hidden": "true"}}]
+            row.cells[3].data = [
+                {
+                    nodeName: "i",
+                    attributes: {class: "fa fa-check", "aria-hidden": "true"}
+                }
+            ]
         }
         this.table.refresh()
     }
-
 
     bind() {
         this.table.dom.addEventListener("click", event => {
             const el = {}
             switch (true) {
-            case findTarget(event, "tr", el): {
-                this.checkRow(el.target.dataset.index)
-                break
-            }
-            default:
-                break
+                case findTarget(event, "tr", el): {
+                    this.checkRow(el.target.dataset.index)
+                    break
+                }
+                default:
+                    break
             }
         })
 
-        this.dialog.dialogEl.querySelector("#add-cite-source").addEventListener("click", () => {
-            const selectedItems = []
+        this.dialog.dialogEl
+            .querySelector("#add-cite-source")
+            .addEventListener("click", () => {
+                const selectedItems = []
 
-            this.table.data.data.forEach(
-                row => {
+                this.table.data.data.forEach(row => {
                     if (!row.cells[3].data.length) {
                         return
                     }
                     row.cells[3].data = []
                     const [db, id] = row.cells[0].data.split("-").map(
-                        (val, index) => index ? parseInt(val) : val // only parseInt id (where index > 0)
+                        (val, index) => (index ? Number.parseInt(val) : val) // only parseInt id (where index > 0)
                     )
-                    if (this.dialog.dialogEl.querySelector(`#selected-source-${db}-${id}`)) {
+                    if (
+                        this.dialog.dialogEl.querySelector(
+                            `#selected-source-${db}-${id}`
+                        )
+                    ) {
                         return
                     }
                     selectedItems.push({
@@ -281,51 +325,64 @@ export class CitationDialog {
                         title: row.cells[1].text,
                         author: row.cells[2].data
                     })
-                }
-            )
-            this.addToCitedItems(selectedItems)
-            this.table.refresh()
-        })
+                })
+                this.addToCitedItems(selectedItems)
+                this.table.refresh()
+            })
 
         this.dialog.dialogEl.addEventListener("click", event => {
             const el = {}
             let documentEl
             switch (true) {
-            case findTarget(event, ".selected-source .delete", el):
-                documentEl = this.dialog.dialogEl.querySelector(`#selected-source-${el.target.dataset.db}-${el.target.dataset.id}`)
-                if (documentEl) {
-                    documentEl.parentElement.removeChild(documentEl)
-                }
-                break
-            case findTarget(event, ".selected-source .order-up", el):
-                documentEl = this.dialog.dialogEl.querySelector(`#selected-source-${el.target.dataset.db}-${el.target.dataset.id}`)
-                if (documentEl && documentEl.previousElementSibling) {
-                    documentEl.parentElement.insertBefore(documentEl, documentEl.previousElementSibling)
-                }
-                break
-            case findTarget(event, ".selected-source .order-down", el):
-                documentEl = this.dialog.dialogEl.querySelector(`#selected-source-${el.target.dataset.db}-${el.target.dataset.id}`)
-                if (documentEl && documentEl.nextElementSibling) {
-                    documentEl.parentElement.insertBefore(documentEl, documentEl.nextElementSibling.nextElementSibling)
-                }
-                break
-            case findTarget(event, ".fw-checkable", el):
-                setCheckableLabel(el.target)
-                break
-            default:
-                break
+                case findTarget(event, ".selected-source .delete", el):
+                    documentEl = this.dialog.dialogEl.querySelector(
+                        `#selected-source-${el.target.dataset.db}-${el.target.dataset.id}`
+                    )
+                    if (documentEl) {
+                        documentEl.parentElement.removeChild(documentEl)
+                    }
+                    break
+                case findTarget(event, ".selected-source .order-up", el):
+                    documentEl = this.dialog.dialogEl.querySelector(
+                        `#selected-source-${el.target.dataset.db}-${el.target.dataset.id}`
+                    )
+                    if (documentEl && documentEl.previousElementSibling) {
+                        documentEl.parentElement.insertBefore(
+                            documentEl,
+                            documentEl.previousElementSibling
+                        )
+                    }
+                    break
+                case findTarget(event, ".selected-source .order-down", el):
+                    documentEl = this.dialog.dialogEl.querySelector(
+                        `#selected-source-${el.target.dataset.db}-${el.target.dataset.id}`
+                    )
+                    if (documentEl && documentEl.nextElementSibling) {
+                        documentEl.parentElement.insertBefore(
+                            documentEl,
+                            documentEl.nextElementSibling.nextElementSibling
+                        )
+                    }
+                    break
+                case findTarget(event, ".fw-checkable", el):
+                    setCheckableLabel(el.target)
+                    break
+                default:
+                    break
             }
         })
     }
 
     dialogSubmit() {
         const citeItems = Array.from(
-                this.dialog.dialogEl.querySelectorAll("#selected-cite-source-table .fw-cite-parts-table")
+                this.dialog.dialogEl.querySelectorAll(
+                    "#selected-cite-source-table .fw-cite-parts-table"
+                )
             ),
             references = citeItems.map(bibRef => {
                 const deleteButton = bibRef.querySelector(".delete"),
                     db = deleteButton.dataset.db
-                let id = parseInt(deleteButton.dataset.id)
+                let id = Number.parseInt(deleteButton.dataset.id)
                 if (db === "user") {
                     // entry is from user's bibDB. We need to import it into the
                     // document's bibDB.
@@ -347,22 +404,34 @@ export class CitationDialog {
             })
 
         if (!citeItems.length) {
-            addAlert("info", gettext("Please select at least one citation source!"))
+            addAlert(
+                "info",
+                gettext("Please select at least one citation source!")
+            )
             return false
         }
 
-        const format = this.dialog.dialogEl.querySelector("#citation-style-selector").value
+        const format = this.dialog.dialogEl.querySelector(
+            "#citation-style-selector"
+        ).value
 
         if (
-            JSON.stringify(references) === JSON.stringify(this.initialReferences) &&
+            JSON.stringify(references) ===
+                JSON.stringify(this.initialReferences) &&
             format == this.initialFormat
         ) {
             // Nothing has been changed, so we just close the dialog again
             return true
         }
 
-        const citationNode = this.editor.currentView.state.schema.nodes["citation"].create({format, references})
-        const transaction = this.editor.currentView.state.tr.replaceSelectionWith(citationNode, true)
+        const citationNode = this.editor.currentView.state.schema.nodes[
+            "citation"
+        ].create({format, references})
+        const transaction =
+            this.editor.currentView.state.tr.replaceSelectionWith(
+                citationNode,
+                true
+            )
         this.editor.currentView.dispatch(transaction)
         return true
     }

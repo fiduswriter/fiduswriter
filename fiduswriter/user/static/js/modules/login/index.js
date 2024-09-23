@@ -1,5 +1,5 @@
-import {escapeText, postJson} from "../common"
 import * as pluginLoaders from "../../plugins/login"
+import {escapeText, postJson} from "../common"
 import {PreloginPage} from "../prelogin"
 
 export class LoginPage extends PreloginPage {
@@ -8,50 +8,50 @@ export class LoginPage extends PreloginPage {
         this.socialaccount_providers = socialaccount_providers
         this.title = gettext("Login")
         this.pluginLoaders = pluginLoaders
-        this.headerLinks = settings_REGISTRATION_OPEN && settings_PASSWORD_LOGIN ? [
-            {
-                type: "label",
-                text: gettext("New here?")
-            },
-            {
-                type: "button",
-                text: gettext("Sign up"),
-                link: "/account/sign-up/"
-            }
-        ] : []
+        this.headerLinks =
+            settings_REGISTRATION_OPEN && settings_PASSWORD_LOGIN
+                ? [
+                      {
+                          type: "label",
+                          text: gettext("New here?")
+                      },
+                      {
+                          type: "button",
+                          text: gettext("Sign up"),
+                          link: "/account/sign-up/"
+                      }
+                  ]
+                : []
     }
 
     render() {
         this.contents = `<div class="fw-login-left">
             <h1 class="fw-login-title">${gettext("Log in")}</h1>
             ${
-    settings_SOCIALACCOUNT_OPEN ?
-        (
-            this.socialaccount_providers.length ?
-                `<div class="socialaccount_ballot">
+                settings_SOCIALACCOUNT_OPEN
+                    ? this.socialaccount_providers.length
+                        ? `<div class="socialaccount_ballot">
                     <ul class="socialaccount_providers">
-                        ${
-            this.socialaccount_providers.map(
-                provider => `<li>
+                        ${this.socialaccount_providers
+                            .map(
+                                provider => `<li>
                                 <a title="${provider.name}" class="fw-button fw-socialaccount fw-${provider.id}"
                                     href="${provider.login_url}">
                                         <span class="fab fa-${provider.id}"></span>
                                             ${gettext("Login with")} ${provider.name}
                                 </a>
                             </li>`
-            ).join("")
-            }
+                            )
+                            .join("")}
                     </ul>
-                </div>` :
-                ""
-        )
-        :
-        ""
-}
+                </div>`
+                        : ""
+                    : ""
+            }
         </div>
             ${
-    settings_PASSWORD_LOGIN ?
-        `<div class="fw-login-right">
+                settings_PASSWORD_LOGIN
+                    ? `<div class="fw-login-right">
             <form>
                     <ul id="non-field-errors" class="errorlist"></ul>
                     <div class="input-wrapper">
@@ -72,29 +72,27 @@ export class LoginPage extends PreloginPage {
                     </div>
                     <a id="lost-passwd" href="/account/password-reset/">${gettext("Forgot Password?")}</a>
                 </form>
-            </div>` :
-        ""
-}`
+            </div>`
+                    : ""
+            }`
         super.render()
     }
 
     bind() {
         super.bind()
-        const socialButtons = document.body.querySelectorAll(".fw-button.fw-socialaccount")
+        const socialButtons = document.body.querySelectorAll(
+            ".fw-button.fw-socialaccount"
+        )
         let btnWidth = 1
 
-        socialButtons.forEach(
-            button => {
-                const theWidth = button.clientWidth
-                if (btnWidth < theWidth) {
-                    btnWidth = theWidth
-                }
+        socialButtons.forEach(button => {
+            const theWidth = button.clientWidth
+            if (btnWidth < theWidth) {
+                btnWidth = theWidth
             }
-        )
+        })
         btnWidth += 15
-        socialButtons.forEach(
-            button => button.style.width = `${btnWidth}px`
-        )
+        socialButtons.forEach(button => (button.style.width = `${btnWidth}px`))
 
         const loginSubmit = document.querySelector("#login-submit")
         if (!loginSubmit) {
@@ -108,7 +106,9 @@ export class LoginPage extends PreloginPage {
                 idLogin = document.querySelector("#id-login"),
                 idLoginErrors = document.querySelector("#id-login-errors"),
                 idPassword = document.querySelector("#id-password"),
-                idPasswordErrors = document.querySelector("#id-password-errors"),
+                idPasswordErrors = document.querySelector(
+                    "#id-password-errors"
+                ),
                 idRemember = document.querySelector("#id-remember"),
                 fwContents = document.querySelector(".fw-contents")
 
@@ -142,42 +142,42 @@ export class LoginPage extends PreloginPage {
             if (errors) {
                 return
             }
-            return postJson("/api/user/login/", {login, password, remember}).then(
-                ({json}) => {
+            return postJson("/api/user/login/", {login, password, remember})
+                .then(({json}) => {
                     if (json.location === "/api/account/confirm-email/") {
                         // Email has not yet been confirmed.
-                        fwContents.innerHTML =
-                            `<div class="fw-login-left">
+                        fwContents.innerHTML = `<div class="fw-login-left">
                                 <h1 class="fw-login-title">${gettext("Verify Your E-mail Address")}</h1>
                                 <p>
-                                    ${
-    gettext("We have sent an e-mail to your email address for verification. Follow the link provided to finalize the signup process.")
-}
+                                    ${gettext(
+                                        "We have sent an e-mail to your email address for verification. Follow the link provided to finalize the signup process."
+                                    )}
                                     <br />
-                                    ${
-    gettext("Please contact us if you do not receive it within a few minutes.")
-}
+                                    ${gettext(
+                                        "Please contact us if you do not receive it within a few minutes."
+                                    )}
                                 </p>
                             </div>`
                     } else {
                         this.app.init()
                     }
-                }
-            ).catch(
-                response => response.json().then(
-                    json => {
+                })
+                .catch(response =>
+                    response.json().then(json => {
                         json.form.errors.forEach(
-                            error => nonFieldErrors.innerHTML += `<li>${escapeText(error)}</li>`
+                            error =>
+                                (nonFieldErrors.innerHTML += `<li>${escapeText(error)}</li>`)
                         )
                         json.form.fields.login.errors.forEach(
-                            error => idLoginErrors.innerHTML += `<li>${escapeText(error)}</li>`
+                            error =>
+                                (idLoginErrors.innerHTML += `<li>${escapeText(error)}</li>`)
                         )
                         json.form.fields.password.errors.forEach(
-                            error => idPasswordErrors.innerHTML += `<li>${escapeText(error)}</li>`
+                            error =>
+                                (idPasswordErrors.innerHTML += `<li>${escapeText(error)}</li>`)
                         )
-                    }
+                    })
                 )
-            )
         })
     }
 }

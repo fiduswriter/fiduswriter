@@ -1,6 +1,6 @@
 import {addAlert} from "../../common"
-import {toMiniJSON} from "../../schema/mini_json"
 import {docSchema} from "../../schema/document"
+import {toMiniJSON} from "../../schema/mini_json"
 // Generate a copy of the fidus doc, imageDB and bibDB with all clutter removed.
 export class ShrinkFidus {
     constructor(doc, imageDB, bibDB) {
@@ -50,41 +50,47 @@ export class ShrinkFidus {
         const docCopy = Object.assign({}, this.doc)
 
         // Remove items that aren't needed.
-        delete(docCopy.rights)
-        delete(docCopy.version)
-        delete(docCopy.comment_version)
-        delete(docCopy.owner)
-        delete(docCopy.id)
-        delete(docCopy.is_owner)
-        delete(docCopy.added)
-        delete(docCopy.updated)
-        delete(docCopy.revisions)
+        delete docCopy.rights
+        delete docCopy.version
+        delete docCopy.comment_version
+        delete docCopy.owner
+        delete docCopy.id
+        delete docCopy.is_owner
+        delete docCopy.added
+        delete docCopy.updated
+        delete docCopy.revisions
 
         docCopy.content = toMiniJSON(docSchema.nodeFromJSON(docCopy.content))
 
-        return new Promise(resolve => resolve({
-            doc: docCopy,
-            shrunkImageDB,
-            shrunkBibDB,
-            httpIncludes
-        }))
+        return new Promise(resolve =>
+            resolve({
+                doc: docCopy,
+                shrunkImageDB,
+                shrunkBibDB,
+                httpIncludes
+            })
+        )
     }
 
     walkTree(node) {
         switch (node.type) {
-        case "citation":
-            this.citeList = this.citeList.concat(node.attrs.references.map(ref => ref.id))
-            break
-        case "image":
-            if (node.attrs.image !== false) {
-                this.imageList.push(node.attrs.image)
-            }
-            break
-        case "footnote":
-            if (node.attrs?.footnote) {
-                node.attrs.footnote.forEach(childNode => this.walkTree(childNode))
-            }
-            break
+            case "citation":
+                this.citeList = this.citeList.concat(
+                    node.attrs.references.map(ref => ref.id)
+                )
+                break
+            case "image":
+                if (node.attrs.image !== false) {
+                    this.imageList.push(node.attrs.image)
+                }
+                break
+            case "footnote":
+                if (node.attrs?.footnote) {
+                    node.attrs.footnote.forEach(childNode =>
+                        this.walkTree(childNode)
+                    )
+                }
+                break
         }
         if (node.content) {
             node.content.forEach(childNode => this.walkTree(childNode))

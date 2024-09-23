@@ -1,7 +1,6 @@
 import {escapeText} from "../../common"
 import {parseTracks} from "../common"
-import {htmlToFnNode, fnNodeToHtml} from "../footnotes_convert"
-
+import {fnNodeToHtml, htmlToFnNode} from "../footnotes_convert"
 
 export const contributor = {
     inline: true,
@@ -12,17 +11,19 @@ export const contributor = {
         email: {default: false},
         institution: {default: false}
     },
-    parseDOM: [{
-        tag: "span.contributor",
-        getAttrs(dom) {
-            return {
-                firstname: dom.dataset.firstname,
-                lastname: dom.dataset.lastname,
-                email: dom.dataset.email,
-                institution: dom.dataset.institution
+    parseDOM: [
+        {
+            tag: "span.contributor",
+            getAttrs(dom) {
+                return {
+                    firstname: dom.dataset.firstname,
+                    lastname: dom.dataset.lastname,
+                    email: dom.dataset.email,
+                    institution: dom.dataset.institution
+                }
             }
         }
-    }],
+    ],
     toDOM(node) {
         const dom = document.createElement("span")
         dom.classList.add("contributor")
@@ -38,7 +39,9 @@ export const contributor = {
             content.push(escapeText(node.attrs.lastname))
         }
         if (node.attrs.email) {
-            content.push(`<i>${gettext("Email")}: ${escapeText(node.attrs.email)}</i>`)
+            content.push(
+                `<i>${gettext("Email")}: ${escapeText(node.attrs.email)}</i>`
+            )
         }
         if (node.attrs.institution) {
             content.push(`(${escapeText(node.attrs.institution)})`)
@@ -50,7 +53,6 @@ export const contributor = {
     }
 }
 
-
 export const tag = {
     inline: true,
     draggable: true,
@@ -59,38 +61,43 @@ export const tag = {
             default: ""
         }
     },
-    parseDOM: [{
-        tag: "span.tag",
-        getAttrs(dom) {
-            return {
-                tag: dom.innerText
+    parseDOM: [
+        {
+            tag: "span.tag",
+            getAttrs(dom) {
+                return {
+                    tag: dom.innerText
+                }
             }
         }
-    }],
+    ],
     toDOM(node) {
         return ["span", {class: "tag"}, node.attrs.tag]
     }
 }
-
 
 export const footnote = {
     inline: true,
     group: "inline",
     attrs: {
         footnote: {
-            default: [{
-                type: "paragraph"
-            }]
+            default: [
+                {
+                    type: "paragraph"
+                }
+            ]
         }
     },
-    parseDOM: [{
-        tag: "span.footnote-marker[data-footnote]",
-        getAttrs(dom) {
-            return {
-                footnote: htmlToFnNode(dom.dataset.footnote)
+    parseDOM: [
+        {
+            tag: "span.footnote-marker[data-footnote]",
+            getAttrs(dom) {
+                return {
+                    footnote: htmlToFnNode(dom.dataset.footnote)
+                }
             }
         }
-    }],
+    ],
     toDOM(node) {
         const dom = document.createElement("span")
         dom.classList.add("footnote-marker")
@@ -111,17 +118,21 @@ export const code_block = {
             default: []
         }
     },
-    parseDOM: [{
-        tag: "pre",
-        preserveWhitespace: "full",
-        getAttrs(dom) {
-            return {
-                track: parseTracks(dom.dataset.track)
+    parseDOM: [
+        {
+            tag: "pre",
+            preserveWhitespace: "full",
+            getAttrs(dom) {
+                return {
+                    track: parseTracks(dom.dataset.track)
+                }
             }
         }
-    }],
+    ],
     toDOM(node) {
-        const attrs = node.attrs.track.length ? {"data-track": JSON.stringify(node.attrs.track)} : {}
+        const attrs = node.attrs.track.length
+            ? {"data-track": JSON.stringify(node.attrs.track)}
+            : {}
         return ["pre", attrs, ["code", 0]]
     }
 }

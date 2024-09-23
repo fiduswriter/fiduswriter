@@ -1,14 +1,18 @@
-import {Plugin, PluginKey, TextSelection} from "prosemirror-state"
 import {GapCursor} from "prosemirror-gapcursor"
+import {Plugin, PluginKey, TextSelection} from "prosemirror-state"
 
 // A plugin that makes sure that the selecion is not put into a node that has been
 // hidden.
 
-const posHidden = function($pos) {
+const posHidden = $pos => {
     let hidden = false
     for (let i = $pos.depth; i > 0; i--) {
         const node = $pos.node(i)
-        if (node.attrs.hidden || ["table_caption", "figure_caption"].includes(node.type.name) && $pos.node(i - 1).attrs.caption === false) {
+        if (
+            node.attrs.hidden ||
+            (["table_caption", "figure_caption"].includes(node.type.name) &&
+                $pos.node(i - 1).attrs.caption === false)
+        ) {
             hidden = true
         }
     }
@@ -16,9 +20,8 @@ const posHidden = function($pos) {
 }
 
 const key = new PluginKey("jump-hidden-nodes")
-export const jumpHiddenNodesPlugin = function(_options) {
-
-    return new Plugin({
+export const jumpHiddenNodesPlugin = _options =>
+    new Plugin({
         key,
         appendTransaction: (trs, oldState, state) => {
             if (state.selection.from !== state.selection.to) {
@@ -28,7 +31,8 @@ export const jumpHiddenNodesPlugin = function(_options) {
             const selectionSet = trs.find(tr => tr.selectionSet)
 
             if (selectionSet && posHidden(state.selection.$from)) {
-                const dir = state.selection.from > oldState.selection.from ? 1 : -1
+                const dir =
+                    state.selection.from > oldState.selection.from ? 1 : -1
                 let newPos = state.selection.from,
                     hidden = true,
                     validTextSelection = false,
@@ -45,9 +49,10 @@ export const jumpHiddenNodesPlugin = function(_options) {
                     validGapCursor = GapCursor.valid($pos)
                     hidden = posHidden($pos)
                 }
-                const selection = validTextSelection ? new TextSelection($pos) : new GapCursor($pos)
+                const selection = validTextSelection
+                    ? new TextSelection($pos)
+                    : new GapCursor($pos)
                 return state.tr.setSelection(selection)
             }
         }
     })
-}

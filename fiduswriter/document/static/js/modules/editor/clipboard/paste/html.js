@@ -4,15 +4,18 @@ import {GoogleDocsPasteHandler} from "./google_docs"
 import {LibreOfficeWriterPasteHandler} from "./libreoffice_writer"
 import {MicrosoftWordPasteHandler} from "./microsoft_word"
 
+import {resetPasteRange} from "../../state_plugins/clipboard"
+
 // Some pasted HTML will need slight conversions to work correctly.
 // We try to sniff whether paste comes from MsWord, LibreOffice or Google Docs
 // and use specialized handlers for these and a general handler everything else.
 
 export class HTMLPaste {
-    constructor(editor, inHTML, pmType) {
+    constructor(editor, inHTML, pmType, view) {
         this.editor = editor
         this.inHTML = inHTML
         this.pmType = pmType
+        this.view = view
     }
 
     getOutput() {
@@ -24,6 +27,9 @@ export class HTMLPaste {
             this.pmType
         )
         this.outHTML = this.handlerInstance.getOutput()
+        setTimeout(() => {
+            this.resetPasteRange()
+        }, 0)
         return this.outHTML
     }
 
@@ -60,5 +66,11 @@ export class HTMLPaste {
         } else {
             this.handler = GeneralPasteHandler
         }
+    }
+
+    resetPasteRange() {
+        const tr = this.view.state.tr
+        resetPasteRange(tr)
+        this.view.dispatch(tr)
     }
 }

@@ -245,8 +245,8 @@ function deletionDecorations(decos, merge, doc, tr, deletionClass) {
             dropUp.style.display = "none"
             dom.appendChild(dropUp)
 
-            // Put decoration in proper place. In case foootnote change ,original content is put first,
-            //decoration is shown after the content
+            // Put decoration in proper place. In case of a footnote change, the original content
+            // is put first, decoration is shown after the content
             let pos = mapping.map(change.fromA)
             if (change.lenA == change.lenB && stepsInvolved.length == 1) {
                 const JSONSlice = slice.toJSON()

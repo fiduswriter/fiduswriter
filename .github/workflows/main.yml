@@ -20,7 +20,7 @@ jobs:
         - uses: actions/checkout@v4.1.2
         - uses: actions/setup-python@v5.1.0
           with:
-            python-version: "3.12"
+            python-version: "3.13"
         - uses: pre-commit/action@v3.0.1
     test:
         runs-on: ubuntu-latest
@@ -45,11 +45,11 @@ jobs:
             - name: Set up Python
               uses: actions/setup-python@v5.1.0
               with:
-                  python-version: "3.12"
+                  python-version: "3.13"
             - name: Set up Node
               uses: actions/setup-node@v4
               with:
-                  node-version: 20
+                  node-version: 22
             - uses: actions/checkout@v4.1.2
             - uses: nanasess/setup-chromedriver@master
             - name: Install dependencies

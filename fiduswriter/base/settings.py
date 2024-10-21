@@ -26,9 +26,11 @@ MANAGERS = ADMINS
 # The top path of the project. Depending on whether ./manage.py is executed or
 # the fiduswriter pip package, it is either the dir that contains manage.py or
 # the cwd.
-PROJECT_PATH = os.environ.get("PROJECT_PATH")
+PROJECT_PATH = os.environ.get("PROJECT_PATH", os.getcwd())
 # SRC_PATH is the root path of the FW sources.
-SRC_PATH = os.environ.get("SRC_PATH")
+SRC_PATH = os.environ.get(
+    "SRC_PATH", os.path.dirname(os.path.realpath(__file__))
+)
 
 DATABASES = {
     "default": {
@@ -147,7 +149,7 @@ SECRET_KEY = "2ouq2zgw5y-@w+t6!#zf#-z1inigg7$lg3p%8e3kkob1bf$#p4"
 
 # These middleware classes is what Fidus Writer needs in its standard setup.
 # You only need to change this in very advanced setups.
-BASE_MIDDLEWARE = [
+MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -156,8 +158,6 @@ BASE_MIDDLEWARE = [
     "django.middleware.locale.LocaleMiddleware",
     "allauth.account.middleware.AccountMiddleware",
 ]
-
-MIDDLEWARE = []
 
 
 # The location of the top urls.py file inside the base folder.
@@ -191,7 +191,7 @@ TEMPLATES = [
 
 # The following are the apps needed by Fidus Writer.
 
-BASE_INSTALLED_APPS = [
+INSTALLED_APPS = [
     "npm_mjs",
     "base",
     "daphne",
@@ -205,7 +205,6 @@ BASE_INSTALLED_APPS = [
     "django.contrib.admindocs",
     "django.contrib.flatpages",
     "channels",
-    # "channels_presence",
     "django_js_error_hook",
     "loginas",
     "fixturemedia",
@@ -222,9 +221,6 @@ BASE_INSTALLED_APPS = [
     "feedback",
     "style",
 ]
-
-# These are additional apps to be overriden by configuration.py
-INSTALLED_APPS = []
 
 # These are apps that are removed from core apps overriden by configuration.py
 REMOVED_APPS = []

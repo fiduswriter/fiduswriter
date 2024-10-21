@@ -53,22 +53,26 @@ def inner(default_project_path):
         SETTINGS_PATHS.append(mod.__file__)
         for setting in dir(mod):
             if setting.isupper():
-                setattr(CONFIGURATION, setting, getattr(mod, setting))
-    INSTALLED_APPS = CONFIGURATION.BASE_INSTALLED_APPS + list(
-        CONFIGURATION.INSTALLED_APPS
-    )
-    for app in CONFIGURATION.REMOVED_APPS:
-        INSTALLED_APPS.remove(app)
+                if setting == "INSTALLED_APPS" or setting == "MIDDLEWARE":
+                    setattr(
+                        CONFIGURATION,
+                        setting,
+                        CONFIGURATION.INSTALLED_APPS
+                        + list(getattr(mod, setting)),
+                    )
+                else:
+                    setattr(CONFIGURATION, setting, getattr(mod, setting))
+    if hasattr(CONFIGURATION, "REMOVED_APPS"):
+        for app in CONFIGURATION.REMOVED_APPS:
+            CONFIGURATION.INSTALLED_APPS.remove(app)
     from django.conf import settings
 
     settings.configure(
         CONFIGURATION,
         SETTINGS_MODULE=SETTINGS_MODULE,
         SETTINGS_PATHS=SETTINGS_PATHS,
-        INSTALLED_APPS=INSTALLED_APPS,
-        MIDDLEWARE=(
-            CONFIGURATION.BASE_MIDDLEWARE + list(CONFIGURATION.MIDDLEWARE)
-        ),
+        INSTALLED_APPS=CONFIGURATION.INSTALLED_APPS,
+        MIDDLEWARE=(CONFIGURATION.MIDDLEWARE),
     )
     os.environ["TZ"] = settings.TIME_ZONE
     if len(sys_argv) > 1 and sys_argv[1] in ["version", "--version"]:

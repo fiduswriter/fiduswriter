@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools>=65.6.3", "wheel", "babel"]
-build-backend = "setuptools.build_meta"
+requires = ["setuptools>=65.6.3", "wheel", "babel", "nuitka", "toml"]
+build-backend = "nuitka.distutils.Build"
 
 [project]
 name = "fiduswriter"

@@ -71,6 +71,7 @@ class PathTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(By.CSS_SELECTOR, "#document-title").send_keys(
             "/Reports/2019/Report 23"
         )
+        time.sleep(1)
         # Exit to overview page
         self.driver.find_element(
             By.CSS_SELECTOR, "#close-document-top"

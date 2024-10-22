@@ -111,6 +111,10 @@ class PathTest(SeleniumHelper, ChannelsLiveServerTestCase):
             self.driver.find_element(By.CSS_SELECTOR, "#document-title").text,
             "/Reports/2019/February/February Doc",
         )
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
+            "February Doc Content"
+        )
         # Exit to overview page
         self.driver.find_element(
             By.CSS_SELECTOR, "#close-document-top"
@@ -121,6 +125,15 @@ class PathTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.assertEqual(
             urlparse(self.driver.current_url).path,
             "/documents/Reports/2019/February/",
+        )
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda driver: len(
+                driver.find_elements(
+                    By.CSS_SELECTOR,
+                    ".fw-contents tbody tr a.fw-data-table-title",
+                )
+            )
+            >= 2
         )
         documents = self.driver.find_elements(
             By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"

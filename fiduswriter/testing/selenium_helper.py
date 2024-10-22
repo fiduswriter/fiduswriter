@@ -70,6 +70,7 @@ class SeleniumHelper(object):
                 "path": "/",
             }
         )
+        driver.refresh()
 
     def logout_user(self, driver, client):
         client.logout()

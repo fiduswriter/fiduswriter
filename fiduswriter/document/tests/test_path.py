@@ -78,6 +78,7 @@ class PathTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.assertEqual(
             urlparse(self.driver.current_url).path, "/documents/Reports/2019/"
         )
+        time.sleep(1)
         self.assertEqual(
             self.driver.find_element(By.CSS_SELECTOR, ".fw-contents h1").text,
             "/Reports/2019/",

@@ -59,6 +59,8 @@ class SeleniumHelper(object):
     def login_user(self, user, driver, client):
         client.force_login(user=user)
         cookie = client.cookies["sessionid"]
+        # output the cookie to the console for debugging
+        logger.info("cookie: %s" % cookie.value)
         if driver.current_url == "data:,":
             # To set the cookie at the right domain we load the front page.
             driver.get("%s%s" % (self.live_server_url, "/"))

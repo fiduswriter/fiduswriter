@@ -64,15 +64,26 @@ jobs:
                   pip install coverage
                   pip install coveralls
                   coverage run --concurrency=multiprocessing,thread manage.py setup --no-static
-            - name: Run test ${{ matrix.test }}
+            - name: Run test ${{ matrix.test }} without debug mode
+              if: runner.debug != '1'
               uses: nick-invision/retry@v3
               with:
-                  timeout_minutes: 10
-                  max_attempts: 3
-                  retry_on: error
-                  command: |
-                      cd fiduswriter
-                      coverage run --concurrency=multiprocessing,thread manage.py test ${{ matrix.test }} -v 2
+                timeout_minutes: 10
+                max_attempts: 3
+                retry_on: error
+                command: |
+                    cd fiduswriter
+                    coverage run --concurrency=multiprocessing,thread manage.py test ${{ matrix.test }} -v 2
+            - name: Run test ${{ matrix.test }} with debug mode
+              if: runner.debug == '1'
+              uses: nick-invision/retry@v3
+              with:
+                timeout_minutes: 10
+                max_attempts: 3
+                retry_on: error
+                command: |
+                    cd fiduswriter
+                    coverage run --concurrency=multiprocessing,thread manage.py test ${{ matrix.test }} -v 2 --debug-mode
             - name: Upload failed test screenshots
               if: ${{ failure() }}
               uses: actions/upload-artifact@v4.3.4

@@ -40,8 +40,8 @@ class AutoMergeTests(EditorHelper, ChannelsLiveServerTestCase):
 
     def setUp(self):
         self.user = self.create_user()
-        self.login_user(self.user, self.driver, self.client)
-        self.login_user(self.user, self.driver2, self.client2)
+        self.login_user_manually(self.user, self.driver)
+        self.login_user_manually(self.user, self.driver2)
         self.doc = self.create_new_document()
 
     def tearDown(self):

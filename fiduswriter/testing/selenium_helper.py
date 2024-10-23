@@ -81,6 +81,19 @@ class SeleniumHelper(object):
             time.sleep(1)
             self.login_user(user, driver, client)
 
+    def login_user_manually(self, user, driver, passtext="p4ssw0rd"):
+        username = user.username
+        driver.delete_cookie("sessionid")
+        driver.get("%s%s" % (self.live_server_url, "/"))
+        driver.find_element(By.ID, "id-login").send_keys(username)
+        driver.find_element(By.ID, "id-password").send_keys(passtext)
+        driver.find_element(By.ID, "login-submit").click()
+        # Wait until there is an element with the ID user-preferences
+        # which is only present on the dashboard.
+        WebDriverWait(driver, self.wait_time).until(
+            EC.presence_of_element_located((By.ID, "user-preferences"))
+        )
+
     def logout_user(self, driver, client):
         client.logout()
         driver.delete_cookie("sessionid")

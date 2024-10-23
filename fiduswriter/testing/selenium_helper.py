@@ -65,6 +65,9 @@ class SeleniumHelper(object):
         if driver.current_url == "data:,":
             # To set the cookie at the right domain we load the front page.
             driver.get("%s%s" % (self.live_server_url, "/"))
+            WebDriverWait(driver, self.wait_time).until(
+                EC.presence_of_element_located((By.ID, "id-login"))
+            )
         driver.add_cookie(
             {
                 "name": "sessionid",

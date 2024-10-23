@@ -27,7 +27,7 @@ class EmailBackend(BaseEmailBackend):
 
     def send_messages(self, messages):
         """Redirect messages to the dummy outbox"""
-        logger.info(f"send_messages: {len(messages)}")
+        logger.debug(f"send_messages: {len(messages)}")
         storage = shelve.open(self.mail_storage)
         outbox = storage.get(OUTBOX, [])
         storage.close()
@@ -39,7 +39,7 @@ class EmailBackend(BaseEmailBackend):
         storage = shelve.open(self.mail_storage)
         storage[OUTBOX] = outbox
         storage.close()
-        logger.info(f"Total length: {len(outbox)}")
+        logger.debug(f"Total length: {len(outbox)}")
         return msg_count
 
 

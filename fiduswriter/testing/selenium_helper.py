@@ -76,13 +76,13 @@ class SeleniumHelper(object):
                 "path": "/",
             }
         )
-        driver.refresh()
-        if len(driver.find_elements(By.CLASS_NAME, "fw-login-title")):
-            # If the login form is still present, the login failed.
-            # We'll try again.'
-            logger.debug("LOGIN FAILED. We'll try again.")
-            time.sleep(1)
-            self.login_user(user, driver, client)
+        # driver.refresh()
+        # if len(driver.find_elements(By.CLASS_NAME, "fw-login-title")):
+        #     # If the login form is still present, the login failed.
+        #     # We'll try again.'
+        #     logger.debug("LOGIN FAILED. We'll try again.")
+        #     time.sleep(1)
+        #     self.login_user(user, driver, client)
 
     def login_user_manually(self, user, driver, passtext="p4ssw0rd"):
         username = user.username

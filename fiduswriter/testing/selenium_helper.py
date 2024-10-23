@@ -6,6 +6,7 @@ from urllib3.exceptions import MaxRetryError
 from selenium.common.exceptions import ElementClickInterceptedException
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromiumService
@@ -60,7 +61,7 @@ class SeleniumHelper(object):
         client.force_login(user=user)
         cookie = client.cookies["sessionid"]
         # output the cookie to the console for debugging
-        logger.info("cookie: %s" % cookie.value)
+        logger.debug("cookie: %s" % cookie.value)
         if driver.current_url == "data:,":
             # To set the cookie at the right domain we load the front page.
             driver.get("%s%s" % (self.live_server_url, "/"))
@@ -73,6 +74,12 @@ class SeleniumHelper(object):
             }
         )
         driver.refresh()
+        if len(driver.find_elements(By.CLASS_NAME, "fw-login-title")):
+            # If the login form is still present, the login failed.
+            # We'll try again.'
+            logger.debug("LOGIN FAILED. We'll try again.")
+            time.sleep(1)
+            self.login_user(user, driver, client)
 
     def logout_user(self, driver, client):
         client.logout()

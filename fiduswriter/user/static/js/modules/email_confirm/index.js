@@ -108,33 +108,36 @@ export class EmailConfirm extends PreloginPage {
             })
         )
         const submissionButton = document.getElementById("submit")
-        submissionButton.addEventListener("click", () => {
-            if (!this.submissionReady) {
-                return
-            }
-            activateWait()
-            Promise.all(this.confirmMethods.map(method => method())).then(
-                () => {
-                    deactivateWait()
-                    if (this.app.config.user.is_authenticated) {
-                        const emailObject = this.app.config.user.emails.find(
-                            email => email.address === this.email
-                        )
-                        if (emailObject) {
-                            emailObject.verified = true
-                        }
-                        return this.app
-                            .goTo("/user/profile/")
-                            .then(() =>
-                                addAlert("info", gettext("Email verified!"))
-                            )
-                    } else {
-                        const contentsDOM =
-                            document.querySelector(".fw-contents")
-                        contentsDOM.innerHTML = verifiedAccountTemplate()
-                    }
+        if (submissionButton) {
+            submissionButton.addEventListener("click", () => {
+                if (!this.submissionReady) {
+                    return
                 }
-            )
-        })
+                activateWait()
+                Promise.all(this.confirmMethods.map(method => method())).then(
+                    () => {
+                        deactivateWait()
+                        if (this.app.config.user.is_authenticated) {
+                            const emailObject =
+                                this.app.config.user.emails.find(
+                                    email => email.address === this.email
+                                )
+                            if (emailObject) {
+                                emailObject.verified = true
+                            }
+                            return this.app
+                                .goTo("/user/profile/")
+                                .then(() =>
+                                    addAlert("info", gettext("Email verified!"))
+                                )
+                        } else {
+                            const contentsDOM =
+                                document.querySelector(".fw-contents")
+                            contentsDOM.innerHTML = verifiedAccountTemplate()
+                        }
+                    }
+                )
+            })
+        }
     }
 }

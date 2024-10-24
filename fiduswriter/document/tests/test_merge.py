@@ -48,7 +48,7 @@ class AutoMergeTests(EditorHelper, ChannelsLiveServerTestCase):
         super().tearDown()
         if "coverage" in sys.modules.keys():
             # Cool down
-            time.sleep(self.wait_time / 3)
+            time.sleep(self.wait_time)
 
     def test_footnotes_automerge(self):
         """

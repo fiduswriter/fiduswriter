@@ -20,7 +20,7 @@ jobs:
         - uses: actions/checkout@v4.1.2
         - uses: actions/setup-python@v5.1.0
           with:
-            python-version: "3.12"
+            python-version: "3.13"
         - uses: pre-commit/action@v3.0.1
     test:
         runs-on: ubuntu-latest
@@ -45,11 +45,11 @@ jobs:
             - name: Set up Python
               uses: actions/setup-python@v5.1.0
               with:
-                  python-version: "3.12"
+                  python-version: "3.13"
             - name: Set up Node
               uses: actions/setup-node@v4
               with:
-                  node-version: 20
+                  node-version: 22
             - uses: actions/checkout@v4.1.2
             - uses: nanasess/setup-chromedriver@master
             - name: Install dependencies
@@ -64,15 +64,26 @@ jobs:
                   pip install coverage
                   pip install coveralls
                   coverage run --concurrency=multiprocessing,thread manage.py setup --no-static
-            - name: Run test ${{ matrix.test }}
+            - name: Run test ${{ matrix.test }} without debug mode
+              if: runner.debug != '1'
               uses: nick-invision/retry@v3
               with:
-                  timeout_minutes: 10
-                  max_attempts: 3
-                  retry_on: error
-                  command: |
-                      cd fiduswriter
-                      coverage run --concurrency=multiprocessing,thread manage.py test ${{ matrix.test }}
+                timeout_minutes: 10
+                max_attempts: 3
+                retry_on: error
+                command: |
+                    cd fiduswriter
+                    coverage run --concurrency=multiprocessing,thread manage.py test ${{ matrix.test }} -v 2
+            - name: Run test ${{ matrix.test }} with debug mode
+              if: runner.debug == '1'
+              uses: nick-invision/retry@v3
+              with:
+                timeout_minutes: 10
+                max_attempts: 3
+                retry_on: error
+                command: |
+                    cd fiduswriter
+                    coverage run --concurrency=multiprocessing,thread manage.py test ${{ matrix.test }} -v 2 --debug-mode
             - name: Upload failed test screenshots
               if: ${{ failure() }}
               uses: actions/upload-artifact@v4.3.4

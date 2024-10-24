@@ -25,6 +25,7 @@ build
 /fiduswriter/venv/
 /fiduswriter/.envrc
 /fiduswriter/.direnv
+.envrc
 .direnv
 /fiduswriter/configuration.py
 /fiduswriter/chromedriver

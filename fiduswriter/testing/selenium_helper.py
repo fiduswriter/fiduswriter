@@ -6,6 +6,7 @@ from urllib3.exceptions import MaxRetryError
 from selenium.common.exceptions import ElementClickInterceptedException
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromiumService
@@ -59,9 +60,14 @@ class SeleniumHelper(object):
     def login_user(self, user, driver, client):
         client.force_login(user=user)
         cookie = client.cookies["sessionid"]
+        # output the cookie to the console for debugging
+        logger.debug("cookie: %s" % cookie.value)
         if driver.current_url == "data:,":
             # To set the cookie at the right domain we load the front page.
             driver.get("%s%s" % (self.live_server_url, "/"))
+            WebDriverWait(driver, self.wait_time).until(
+                EC.presence_of_element_located((By.ID, "id-login"))
+            )
         driver.add_cookie(
             {
                 "name": "sessionid",
@@ -69,6 +75,19 @@ class SeleniumHelper(object):
                 "secure": False,
                 "path": "/",
             }
+        )
+
+    def login_user_manually(self, user, driver, passtext="p4ssw0rd"):
+        username = user.username
+        driver.delete_cookie("sessionid")
+        driver.get("%s%s" % (self.live_server_url, "/"))
+        driver.find_element(By.ID, "id-login").send_keys(username)
+        driver.find_element(By.ID, "id-password").send_keys(passtext)
+        driver.find_element(By.ID, "login-submit").click()
+        # Wait until there is an element with the ID user-preferences
+        # which is only present on the dashboard.
+        WebDriverWait(driver, self.wait_time).until(
+            EC.presence_of_element_located((By.ID, "user-preferences"))
         )
 
     def logout_user(self, driver, client):

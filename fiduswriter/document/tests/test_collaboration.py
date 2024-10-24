@@ -1288,9 +1288,6 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         ).send_keys(Keys.CONTROL, "a")
         self.driver2.find_element(
             By.CSS_SELECTOR, "#document-title"
-        ).send_keys(Keys.DELETE)
-        self.driver2.find_element(
-            By.CSS_SELECTOR, "#document-title"
         ).send_keys("/Reports/2019/")
         self.driver2.find_element(By.CSS_SELECTOR, ".doc-title").click()
         self.wait_for_doc_sync(self.driver, self.driver2)
@@ -1302,9 +1299,6 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(By.CSS_SELECTOR, "#document-title").click()
         self.driver.find_element(By.CSS_SELECTOR, "#document-title").send_keys(
             Keys.CONTROL, "a"
-        )
-        self.driver.find_element(By.CSS_SELECTOR, "#document-title").send_keys(
-            Keys.DELETE
         )
         self.driver.find_element(By.CSS_SELECTOR, "#document-title").send_keys(
             "/Reports/2019/Report 23"

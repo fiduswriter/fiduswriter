@@ -1,6 +1,6 @@
 import {updateTemplateFile} from "../../document_template"
 import {FW_DOCUMENT_VERSION} from "../../schema"
-import {ImportNative} from "./native"
+import {ImportNative} from "./index"
 import {updateFile} from "./update"
 
 /** The current Fidus Writer filetype version. The importer will not import from

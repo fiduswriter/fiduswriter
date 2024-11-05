@@ -8,6 +8,7 @@ import {
     postJson
 } from "../../common"
 import {ExportFidusFile, SaveCopy} from "../../exporter/native"
+import {ImportNative} from "../../importer/native"
 import {ImportFidusFile} from "../../importer/native/file"
 import {DocumentRevisionsDialog} from "../revisions"
 import {getMissingDocumentListData} from "../tools"
@@ -163,6 +164,162 @@ export class DocumentOverviewActions {
             .getElementById("import-fidus-btn")
             .addEventListener("click", event => {
                 document.getElementById("fidus-uploader").click()
+                event.preventDefault()
+            })
+    }
+
+    importPandocJson() {
+        const importIds = Object.keys(this.documentOverview.documentTemplates)
+        let importId = importIds[0] // Default to first template if only one exists
+
+        const templateSelector =
+            importIds.length > 1
+                ? `<label for="import-template-selector">${gettext("Import as:")}</label>
+                <div class="fw-select-container">
+                    <select class="fw-button fw-light fw-large" id="import-template-selector">
+                        ${Object.entries(
+                            this.documentOverview.documentTemplates
+                        )
+                            .map(
+                                ([key, template]) =>
+                                    `<option value="${escapeText(key)}">${escapeText(template.title)}</option>`
+                            )
+                            .join("")}
+                    </select>
+                    <div class="fw-select-arrow fa fa-caret-down"></div>
+                </div>`
+                : ""
+
+        const buttons = [
+            {
+                text: gettext("Import"),
+                classes: "fw-dark",
+                click: () => {
+                    let jsonFile = document.getElementById(
+                        "pandoc-json-uploader"
+                    ).files
+                    if (0 === jsonFile.length) {
+                        return false
+                    }
+                    jsonFile = jsonFile[0]
+                    if (104857600 < jsonFile.size) {
+                        addAlert("error", gettext("File too large"))
+                        return false
+                    }
+
+                    // Get selected template if multiple templates exist
+                    if (importIds.length > 1) {
+                        importId = document.getElementById(
+                            "import-template-selector"
+                        ).value
+                    }
+
+                    activateWait() // Show loading indicator
+
+                    const reader = new FileReader()
+                    reader.onload = () => {
+                        try {
+                            const pandocJson = JSON.parse(reader.result)
+                            import("../../importer/pandoc").then(
+                                ({PandocImporter}) => {
+                                    const importer = new PandocImporter(
+                                        pandocJson,
+                                        importId
+                                    )
+                                    const convertedDoc = importer.init()
+                                    const title =
+                                        convertedDoc.content.content[0]
+                                            .content?.[0]?.text ||
+                                        gettext("Untitled")
+                                    // Create a new ImportNative instance
+                                    const nativeImporter = new ImportNative(
+                                        {
+                                            content: convertedDoc.content,
+                                            title,
+                                            comments: {},
+                                            settings: convertedDoc.settings
+                                        },
+                                        {}, // Empty bibliography for now
+                                        {}, // No images for now
+                                        [], // No other files
+                                        this.documentOverview.user,
+                                        null,
+                                        this.documentOverview.path + title
+                                    )
+                                    nativeImporter
+                                        .init()
+                                        .then(({doc}) => {
+                                            deactivateWait()
+                                            addAlert(
+                                                "info",
+                                                `${gettext("File has been imported")}: ${doc.title}`
+                                            )
+                                            this.documentOverview.documentList.push(
+                                                doc
+                                            )
+                                            this.documentOverview.initTable()
+                                            importDialog.close()
+                                        })
+                                        .catch(error => {
+                                            deactivateWait()
+                                            addAlert(
+                                                "error",
+                                                gettext("Could not import file")
+                                            )
+                                            console.error(error)
+                                        })
+                                }
+                            )
+                        } catch (error) {
+                            deactivateWait()
+                            addAlert(
+                                "error",
+                                gettext("Could not parse JSON file")
+                            )
+                            console.error(error)
+                        }
+                    }
+                    reader.readAsText(jsonFile)
+                }
+            },
+            {
+                type: "cancel"
+            }
+        ]
+
+        const importDialog = new Dialog({
+            id: "importpandocjson",
+            title: gettext("Import Pandoc JSON file"),
+            body: `<form>
+                ${templateSelector}
+                <div class="fw-select-container">
+                    <div class="fw-select-head">
+                        <button type="button" class="fw-button fw-light fw-large" id="import-pandoc-json-btn">
+                            ${gettext("Select a file")}
+                        </button>
+                        <label id="import-pandoc-json-name" class="ajax-upload-label"></label>
+                    </div>
+                    <input id="pandoc-json-uploader" type="file" accept=".json" style="display: none;">
+                </div>
+            </form>`,
+            height: importIds.length > 1 ? 150 : 100, // Increase height if we have template selector
+            buttons
+        })
+        importDialog.open()
+
+        document
+            .getElementById("pandoc-json-uploader")
+            .addEventListener("change", () => {
+                document.getElementById("import-pandoc-json-name").innerHTML =
+                    document
+                        .getElementById("pandoc-json-uploader")
+                        .value.replace(/C:\\fakepath\\/i, "")
+            })
+
+        document
+            .getElementById("import-pandoc-json-btn")
+            .addEventListener("click", event => {
+                document.getElementById("pandoc-json-uploader").click()
                 event.preventDefault()
             })
     }

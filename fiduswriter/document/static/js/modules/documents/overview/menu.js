@@ -258,6 +258,12 @@ export const menuModel = () => ({
             order: 3
         },
         {
+            type: "text",
+            title: gettext("Import Pandoc JSON"),
+            action: overview => overview.mod.actions.importPandocJson(),
+            order: 3.5
+        },
+        {
             type: "search",
             icon: "search",
             title: gettext("Search documents"),

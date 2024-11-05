@@ -66,6 +66,7 @@ export function extractTemplate(doc) {
             files: []
         }
     ]
+    console.log({template: JSON.stringify(template)})
     return {
         content: toMiniJSON(docSchema.nodeFromJSON(template)),
         documentStyles,

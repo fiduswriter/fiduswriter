@@ -1,5 +1,5 @@
-import {updateTemplateFile} from "../document_template"
-import {FW_DOCUMENT_VERSION} from "../schema"
+import {updateTemplateFile} from "../../document_template"
+import {FW_DOCUMENT_VERSION} from "../../schema"
 import {ImportNative} from "./native"
 import {updateFile} from "./update"
 

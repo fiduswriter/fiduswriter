@@ -1,4 +1,4 @@
-import {updateDoc} from "../schema/convert"
+import {updateDoc} from "../../schema/convert"
 
 export function updateFile(doc, filetypeVersion, bibliography, images) {
     // update bibliography -- currently not needed

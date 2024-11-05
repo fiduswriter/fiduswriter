@@ -1,5 +1,5 @@
-import {addAlert, postJson, shortFileTitle} from "../common"
-import {extractTemplate} from "../document_template"
+import {addAlert, postJson, shortFileTitle} from "../../common"
+import {extractTemplate} from "../../document_template"
 import {GetImages} from "./get_images"
 
 export class ImportNative {

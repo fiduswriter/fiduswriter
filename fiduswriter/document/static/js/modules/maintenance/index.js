@@ -1,7 +1,7 @@
 import JSZip from "jszip"
 
 import {addAlert, findTarget, get, post, postJson, whenReady} from "../common"
-import {updateFile} from "../importer/update"
+import {updateFile} from "../importer/native/update"
 import {FW_DOCUMENT_VERSION} from "../schema"
 import {updateDoc} from "../schema/convert"
 

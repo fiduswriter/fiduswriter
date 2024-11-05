@@ -8,7 +8,7 @@ import {
     postJson
 } from "../../common"
 import {ExportFidusFile, SaveCopy} from "../../exporter/native"
-import {ImportFidusFile} from "../../importer/file"
+import {ImportFidusFile} from "../../importer/native/file"
 import {DocumentRevisionsDialog} from "../revisions"
 import {getMissingDocumentListData} from "../tools"
 import {importFidusTemplate} from "./templates"

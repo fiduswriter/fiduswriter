@@ -1,4 +1,4 @@
-import {get} from "../common"
+import {get} from "../../common"
 
 export class GetImages {
     constructor(images, entries) {

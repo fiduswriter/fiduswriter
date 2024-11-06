@@ -12,7 +12,7 @@ import {
     post,
     shortFileTitle
 } from "../../common"
-import {ImportFidusFile} from "../../importer/native/file"
+import {ImportFidusFile} from "../../importer/native"
 import {documentrevisionsTemplate} from "./templates"
 
 /**

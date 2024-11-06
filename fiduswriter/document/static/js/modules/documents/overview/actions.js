@@ -8,8 +8,8 @@ import {
     postJson
 } from "../../common"
 import {ExportFidusFile, SaveCopy} from "../../exporter/native"
-import {ImportNative} from "../../importer/native"
-import {ImportFidusFile} from "../../importer/native/file"
+import {ImportFidusFile} from "../../importer/native"
+import {ImportPandocFile} from "../../importer/pandoc"
 import {DocumentRevisionsDialog} from "../revisions"
 import {getMissingDocumentListData} from "../tools"
 import {importFidusTemplate} from "./templates"
@@ -170,7 +170,7 @@ export class DocumentOverviewActions {
 
     importPandocJson() {
         const importIds = Object.keys(this.documentOverview.documentTemplates)
-        let importId = importIds[0] // Default to first template if only one exists
+        let importId = importIds[0] // Default to first template
 
         const templateSelector =
             importIds.length > 1
@@ -216,70 +216,28 @@ export class DocumentOverviewActions {
 
                     activateWait() // Show loading indicator
 
-                    const reader = new FileReader()
-                    reader.onload = () => {
-                        try {
-                            const pandocJson = JSON.parse(reader.result)
-                            import("../../importer/pandoc").then(
-                                ({PandocImporter}) => {
-                                    const importer = new PandocImporter(
-                                        pandocJson,
-                                        importId
-                                    )
-                                    const convertedDoc = importer.init()
-                                    const title =
-                                        convertedDoc.content.content[0]
-                                            .content?.[0]?.text ||
-                                        gettext("Untitled")
-                                    // Create a new ImportNative instance
-                                    const nativeImporter = new ImportNative(
-                                        {
-                                            content: convertedDoc.content,
-                                            title,
-                                            comments: {},
-                                            settings: convertedDoc.settings
-                                        },
-                                        {}, // Empty bibliography for now
-                                        {}, // No images for now
-                                        [], // No other files
-                                        this.documentOverview.user,
-                                        null,
-                                        this.documentOverview.path + title
-                                    )
-                                    nativeImporter
-                                        .init()
-                                        .then(({doc}) => {
-                                            deactivateWait()
-                                            addAlert(
-                                                "info",
-                                                `${gettext("File has been imported")}: ${doc.title}`
-                                            )
-                                            this.documentOverview.documentList.push(
-                                                doc
-                                            )
-                                            this.documentOverview.initTable()
-                                            importDialog.close()
-                                        })
-                                        .catch(error => {
-                                            deactivateWait()
-                                            addAlert(
-                                                "error",
-                                                gettext("Could not import file")
-                                            )
-                                            console.error(error)
-                                        })
-                                }
-                            )
-                        } catch (error) {
+                    const importer = new ImportPandocFile(
+                        jsonFile,
+                        this.documentOverview.user,
+                        this.documentOverview.path,
+                        importId
+                    )
+
+                    importer
+                        .init()
+                        .then(({ok, statusText, doc}) => {
                             deactivateWait()
-                            addAlert(
-                                "error",
-                                gettext("Could not parse JSON file")
-                            )
-                            console.error(error)
-                        }
-                    }
-                    reader.readAsText(jsonFile)
+                            if (ok) {
+                                addAlert("info", statusText)
+                            } else {
+                                addAlert("error", statusText)
+                                return
+                            }
+                            this.documentOverview.documentList.push(doc)
+                            this.documentOverview.initTable()
+                            importDialog.close()
+                        })
+                        .catch(() => false)
                 }
             },
             {
